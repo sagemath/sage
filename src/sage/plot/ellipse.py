@@ -15,7 +15,6 @@ Ellipses
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from .primitive import GraphicPrimitive
 from sage.misc.decorators import options, rename_keyword

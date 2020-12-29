@@ -14,7 +14,6 @@ AUTHORS:
 - Travis Scrimshaw (2020-08): Added support for ascii/unicode art
 """
 
-from __future__ import absolute_import, print_function
 
 from string import Template
 from sage.combinat.tableau import Tableaux

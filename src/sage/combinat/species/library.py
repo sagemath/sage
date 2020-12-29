@@ -15,7 +15,6 @@ Examples of Combinatorial Species
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from .set_species import SetSpecies
 from .partition_species import PartitionSpecies

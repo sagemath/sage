@@ -38,6 +38,18 @@ SAGE_SPKG_CONFIGURE([gp2c], [
       # by assuming the executable is in e.g. /usr/bin or /usr/local/bin and
       # then stripping off the "bin" component of that.
       gp_prefix=$(dirname -- "$(dirname -- "$GP")")
+
+      # During the great systemd /bin -> /usr/bin merge, there are
+      # systems where /bin is a symlink to /usr/bin. The real "gp"
+      # executable lives in /usr/bin, but (in at least one case, trac
+      # 31051) we find the copy in /bin first. Why Fedora 32 has the
+      # symlink /bin in front of /usr/bin in their PATH is a question
+      # I cannot answer; nevertheless, it's pretty easy to add back
+      # the "usr" here if we determine that the gp prefix is "/",
+      # which it ain't. This is viable only so long as nobody really
+      # puts "gp" in /bin, but... they should not.
+      AS_IF([test "x$gp_prefix" = "x/"], [gp_prefix=/usr])
+
       AC_MSG_NOTICE([gp prefix is $gp_prefix])
 
       # Gentoo:     $gp_prefix/share/pari/pari.cfg

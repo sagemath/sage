@@ -1,7 +1,6 @@
 r"""
 Congruence Subgroup `\Gamma(N)`
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify

@@ -25,4 +25,6 @@ Miscellaneous Modular-Form-Related Modules
 
    sage/modular/hypergeometric_motive
 
+   sage/modular/multiple_zeta
+
 .. include:: ../footer.txt

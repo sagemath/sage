@@ -213,9 +213,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: f((1, 0))
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0]) to coefficients in Real Field with 53 bits of precision
+            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0.000000000000000]) to coefficients in Real Field with 53 bits of precision
             sage: f((1, 0), coerce=False)
-            (1.00000000000000*I, 0)
+            (1.00000000000000*I, 0.000000000000000)
 
         """
         if self.domain().is_ambient():

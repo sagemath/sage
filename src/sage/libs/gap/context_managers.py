@@ -41,7 +41,6 @@ The value is reset even if exceptions occur::
 #   the License, or (at your option) any later version.
 #                   http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
 
 from sage.libs.gap.libgap import libgap
 

@@ -20,7 +20,7 @@ AUTHORS:
 #***********************************************************************
 
 from sage.categories.morphism import Morphism
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer

@@ -23,7 +23,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
 
 from .constructor import EllipticCurve, EllipticCurve_from_j
 from sage.schemes.curves.projective_curve import Hasse_bounds

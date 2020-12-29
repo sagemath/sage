@@ -1,3 +1,7 @@
+# If we are building gcc ourselves, usually the system compiler isn't suitable.
+export CFLAGS=$CFLAGS_NON_NATIVE
+export CXXFLAGS=$CXXFLAGS_NON_NATIVE
+
 # First, install any custom binaries or headers we created for macOS
 # workarounds
 for dir in bin include; do

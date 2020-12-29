@@ -68,7 +68,6 @@ The implementation works over any exact field that is embedded in
 # Compare with PPL if the base ring is QQ. Can be left enabled since
 # we don't use the Python fallback for polyhedra over QQ unless you
 # construct one by hand.
-from __future__ import division, absolute_import
 
 VERIFY_RESULT = True
 

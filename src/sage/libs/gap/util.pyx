@@ -227,6 +227,7 @@ cdef initialize():
     # global symbol table
     # Note: we could use RTLD_NOLOAD and avoid the subsequent dlclose() but
     # this isn't portable
+
     cdef void* handle
     libgapname = str_to_bytes(sage.env.GAP_SO)
     handle = dlopen(libgapname, RTLD_NOW | RTLD_GLOBAL)

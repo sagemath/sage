@@ -85,6 +85,22 @@ if test "$enable_build_as_root" != yes; then
    AX_CHECK_ROOT([AC_MSG_ERROR([You cannot build Sage as root, switch to an unprivileged user.  (If building in a container, use --enable-build-as-root.)])], [])
 fi
 
+AC_ARG_ENABLE([fat-binary],
+              [AS_HELP_STRING([--enable-fat-binary],
+                              [build binaries that will run on the widest range of target CPUs (but not relocatable)])],
+              [AC_SUBST(SAGE_FAT_BINARY, "yes")],
+              [])
+
+AC_ARG_VAR(SAGE_FAT_BINARY, set to "yes" to build binaries that will run on the widest range of target CPUs (but not relocatable))
+
+AC_ARG_ENABLE([debug],
+              [AS_HELP_STRING([--enable-debug={no|symbols|yes}],
+                              [controls debugging support: "no" debugging; debugging "symbols" (default); build debug version ("yes")])],
+              [AC_SUBST(SAGE_DEBUG, $enableval)],
+              [])
+
+AC_ARG_VAR(SAGE_DEBUG, controls debugging support: "no" debugging; debugging "symbols" (default); build debug version ("yes"))
+
 # Check whether we are on a supported platform
 AC_CANONICAL_BUILD()
 AC_CANONICAL_HOST()
@@ -270,8 +286,8 @@ fi
 
 # Check for system python
 AC_MSG_CHECKING([for Python])
-if SAGE_SYSTEM_PYTHON=$(build/bin/sage-system-python -c "import sys; print(sys.executable)"); then
-    AC_MSG_RESULT([$SAGE_SYSTEM_PYTHON])
+if SAGE_BOOTSTRAP_PYTHON=$(build/bin/sage-bootstrap-python -c "import sys; print(sys.executable)"); then
+    AC_MSG_RESULT([$SAGE_BOOTSTRAP_PYTHON])
 else
     AC_MSG_ERROR([You do not have a suitable version of Python installed])
 fi
@@ -299,6 +315,17 @@ AX_PROG_PERL_VERSION([5.8.0],[],[
 ###############################################################################
 # Check C/C++/Fortran compilers
 ###############################################################################
+
+# Save compiler flags as configured by the user.
+# We have to redo this, because otherwise `AC_PROG_CC` will just overwrite them.
+AC_SUBST(CFLAGS, "$CFLAGS")
+AC_SUBST(CXXFLAGS, "$CXXFLAGS")
+AC_SUBST(FCFLAGS, "$FCFLAGS")
+AC_SUBST(F77FLAGS, "$F77FLAGS")
+AC_ARG_VAR(CFLAGS, C compiler flags)
+AC_ARG_VAR(CXXFLAGS, C compiler flags)
+AC_ARG_VAR(FCFLAGS, Fortran compiler flags)
+AC_ARG_VAR(F77CFLAGS, Fortran 77 compiler flags)
 
 SAGE_CHECK_CONDA_COMPILERS
 
@@ -393,7 +420,7 @@ SAGE_SPKG_COLLECT()
 
 dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
-AC_CONFIG_FILES([src/bin/sage-env-config build/bin/sage-build-env-config])
+AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
 AC_CONFIG_FILES([build/pkgs/sage_conf/src/sage_conf.py build/pkgs/sage_conf/src/setup.cfg])
 

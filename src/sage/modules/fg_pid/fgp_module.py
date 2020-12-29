@@ -127,7 +127,8 @@ which is coerced into M0. ::
 Here we illustrate lifting an element of the image of f, i.e., finding
 an element of M0 that maps to a given element of M1::
 
-    sage: y = f.lift(3*M1.0); y
+    sage: y = f.lift(3*M1.0)
+    sage: y # random
     (0, 13)
     sage: f(y)
     (3)
@@ -207,7 +208,6 @@ AUTHOR:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.modules.module import Module
 from sage.modules.free_module import is_FreeModule
@@ -782,9 +782,9 @@ class FGP_Module_class(Module):
 
     def is_submodule(self, A):
         """
-        Return True if self is a submodule of A.
+        Return ``True`` if ``self`` is a submodule of ``A``.
 
-        More precisely, this returns True if if ``self.V()`` is a
+        More precisely, this returns ``True`` if ``self.V()`` is a
         submodule of ``A.V()``, with ``self.W()`` equal to ``A.W()``.
 
         Compare :meth:`.has_canonical_map_to`.
@@ -1285,7 +1285,7 @@ class FGP_Module_class(Module):
             (0, 4)
             sage: Q.coordinate_vector(x, reduce=True)
             (0, 4)
-            sage: Q.coordinate_vector(-x, reduce=False)
+            sage: Q.coordinate_vector(-x, reduce=False) # random
             (0, -4)
             sage: x == 4*Q.1
             True
@@ -1414,7 +1414,7 @@ class FGP_Module_class(Module):
             Echelon basis matrix:
             [ 0 12  0]
             [ 0  0  4]
-            sage: X
+            sage: X         # random
             [0 4 0]
             [0 1 0]
             [0 0 1]

@@ -40,7 +40,6 @@ AUTHORS:
     -- William Stein (first version)
     -- William Stein (2007-06-20): significant improvements.
 """
-from __future__ import absolute_import
 
 ##########################################################################
 #

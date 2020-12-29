@@ -28,13 +28,16 @@ export SAGE_ETC=/doesnotexist
 export SAGE_PKGCONFIG=/doesnotexist
 export SAGE_PKG_CONFIG_PATH=/doesnotexist
 export SAGE_SPKG_SCRIPTS=/doesnotexist
-export SAGE_DOC=/doesnotexist
 export SAGE_SHARE=/doesnotexist
 
 # Trac #29411: We cannot poison SAGE_LOCAL because the pkg-config script
 # installed by the pkgconf spkg, generated from build/pkgs/pkgconf/patches/pkg-config.in,
 # uses this variable.
 # export SAGE_LOCAL=/doesnotexist
+
+# Trac #30903: We cannot poison SAGE_DOC because setup.py installs the Jupyter kernel
+# spec, which includes setting a symlink to the installed documentation.
+# export SAGE_DOC=/doesnotexist
 
 time "$PYTHON" -u setup.py --no-user-cfg build install || exit 1
 if [ "$UNAME" = "CYGWIN" ]; then

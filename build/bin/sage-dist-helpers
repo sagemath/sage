@@ -200,6 +200,14 @@ sdh_make_install() {
         sdh_die "Error installing $PKG_NAME"
 }
 
+sdh_setup_bdist_wheel() {
+    mkdir -p dist
+    rm -f dist/*.whl
+    BDIST_DIR="$(mktemp -d)"
+    sage-python23 setup.py --no-user-cfg \
+         bdist_wheel --bdist-dir "$BDIST_DIR" \
+         "$@" || sdh_die "Error building a wheel for $PKG_NAME"
+}
 
 sdh_pip_install() {
     echo "Installing $PKG_NAME"

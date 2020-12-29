@@ -31,7 +31,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields

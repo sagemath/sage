@@ -40,8 +40,6 @@ Check that sphinx is not imported at Sage start-up::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 import re
@@ -121,6 +119,7 @@ nonmath_substitutes = [
     ('note{','NOTE: '),
 ]
 
+
 def _rmcmd(s, cmd, left='', right=''):
     """
     Remove the LaTeX command ``cmd`` from the string ``s``.  This
@@ -148,7 +147,7 @@ def _rmcmd(s, cmd, left='', right=''):
         sage: _rmcmd('This is a \\very{silly} example.', 'very', right='!?')
         'This is a silly!? example.'
     """
-    c = '\\%s{'%cmd
+    c = '\\%s{' % cmd
     while True:
         i = s.find(c)
         if i == -1:
@@ -1602,6 +1601,7 @@ with 'sage -docbuild {0} html --mathjax' and try again.""".format(name))
         """
         self._open("constructions")
 
+
 browse_sage_doc = _sage_doc()
 tutorial = browse_sage_doc.tutorial
 reference = browse_sage_doc.reference
@@ -1610,6 +1610,7 @@ developer = browse_sage_doc.developer
 constructions = browse_sage_doc.constructions
 
 python_help = pydoc.help
+
 
 def help(module=None):
     """
@@ -1622,7 +1623,7 @@ def help(module=None):
         sage: help()
         Welcome to Sage ...
     """
-    if not module is None:
+    if module is not None:
         python_help(module)
     else:
         print("""Welcome to Sage {}!

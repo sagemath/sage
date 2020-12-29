@@ -20,7 +20,6 @@ which can be found at http://www.math.lsa.umich.edu/~jrs/maple.html
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.combinat.partition import _Partitions
 from sage.combinat.partitions import ZS1_iterator

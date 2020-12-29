@@ -1,7 +1,6 @@
 """
 Neighbors
 """
-from __future__ import print_function
 
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ

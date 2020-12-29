@@ -1,7 +1,6 @@
 """
 Degeneracy maps
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Sage: Open Source Mathematical Software

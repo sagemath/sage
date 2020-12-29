@@ -19,7 +19,6 @@ All this is carefully explained in [PS2011]_.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.rings.padics.all import pAdicField
 from sage.rings.all import ZZ, QQ

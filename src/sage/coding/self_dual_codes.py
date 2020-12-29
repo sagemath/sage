@@ -85,7 +85,6 @@ REFERENCES:
   "A classification of self-orthogonal codes over GF(2)", Discrete
   Math 3 (1972) 209-246.
 """
-from __future__ import print_function
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.matrix.matrix_space import MatrixSpace

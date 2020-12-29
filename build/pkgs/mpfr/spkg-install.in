@@ -30,18 +30,18 @@ mpfr_configure()
     # Set up environment variables:
     ###########################################################################
 
-    user_cflags=$CFLAGS # Save them. 'sage-env' sets CC, but not CFLAGS.
+    user_cflags=$ORIGINAL_CFLAGS # Save them. 'sage-env' sets CC, but not CFLAGS.
     required_cflags="" # Additional mandatory settings required by Sage, accumulated below.
     default_cflags="" # Spkg defaults that can and might get overridden.
 
     if [ "$SAGE_DEBUG" = yes ]; then
         # Disable optimization, add debug symbols:
-        required_cflags="$required_cflags -g -O0"
+        required_cflags=$CFLAGS_NON_NATIVE
         echo >&2 "Warning: Building MPFR with SAGE_DEBUG=yes disables optimization."
     else
         # Add debug symbols by default, enable optimization, but do not (yet)
         # add processor-specific flags (these are eventually added later):
-        default_cflags="$default_cflags -g -O3"
+        default_cflags=$CFLAGS_O3_NON_NATIVE
     fi
 
     # Enabling thread-safe (which meanwhile is or at least may be the default)

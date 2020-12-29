@@ -77,7 +77,6 @@ AUTHORS:
 Methods
 =======
 """
-from __future__ import absolute_import
 # ****************************************************************************
 #       Copyright (C) 2017 Zachary Gershkoff <zgersh2@lsu.edu>
 #

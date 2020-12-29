@@ -1,12 +1,5 @@
 cd src
 
-if [ "$SAGE_DEBUG" = "yes" ]; then
-    echo "Building a debug version of BoehmGC."
-    export CFLAGS="-O0 -g $CFLAGS"
-else
-    export CFLAGS="-O2 -g $CFLAGS"
-fi
-
 GC_CONFIGURE="--enable-large-config"
 
 if [ "$UNAME" = "CYGWIN" ]; then

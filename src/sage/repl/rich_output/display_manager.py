@@ -584,7 +584,7 @@ class DisplayManager(SageObject):
             return obj._rich_repr_(self, **rich_repr_kwds)
         try:
             return obj._rich_repr_(self)
-        except NotImplementedError as e:
+        except NotImplementedError:
             # don't warn on NotImplementedErrors
             return None
         except Exception as e:
@@ -718,7 +718,7 @@ class DisplayManager(SageObject):
 
     def threejs_scripts(self, online):
         """
-        Return Three.js script tags for the current backend.
+        Return Three.js script tag for the current backend.
 
         INPUT:
 
@@ -726,19 +726,19 @@ class DisplayManager(SageObject):
 
         OUTPUT:
 
-        String containing script tags
+        String containing script tag
 
         .. NOTE::
 
             This base method handles ``online=True`` case only, serving CDN
-            script tags. Location of scripts for offline usage is
+            script tag. Location of script for offline usage is
             backend-specific.
 
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: get_display_manager().threejs_scripts(online=True)
-            '...<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@...'
+            '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
             sage: get_display_manager().threejs_scripts(online=False)
             Traceback (most recent call last):
             ...
@@ -749,12 +749,10 @@ class DisplayManager(SageObject):
             import sage.env
             import re
             import os
-            with open(os.path.join(sage.env.THREEJS_DIR, 'build', 'three.min.js')) as f:
-                text = f.read().replace('\n','')
-            version = re.search(r'REVISION="(\d+)"', text).group(1)
+            with open(os.path.join(sage.env.THREEJS_DIR, 'version')) as f:
+                version = f.read().strip()
             return """
-<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r{0}/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r{0}/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@{0}/build/three.min.js"></script>
             """.format(version)
         try:
             return self._backend.threejs_offline_scripts()

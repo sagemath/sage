@@ -30,7 +30,6 @@ method :meth:`~nauty`, which calls Brendan McKay's Nauty
 Functions and methods
 ---------------------
 """
-from __future__ import print_function
 from sage.env import SAGE_NAUTY_BINS_PREFIX as nautyprefix
 
 class HypergraphGenerators():

@@ -88,7 +88,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import
 
 from sage.misc.repr import repr_lincomb
 from sage.structure.richcmp import richcmp_method, richcmp

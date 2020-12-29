@@ -59,7 +59,6 @@ require, i.e. `SQS_{14}` and `SQS_{38}` as well as the systems of pairs
 Functions
 ---------
 """
-from __future__ import print_function
 
 from sage.misc.cachefunc import cached_function
 from sage.combinat.designs.incidence_structures import IncidenceStructure

@@ -2744,7 +2744,7 @@ cpdef GenericMatrix generic_identity(n, ring):
 
 cdef class PlusMinusOneMatrix(LeanMatrix):
     r"""
-    Matrix with nonzero entires of `\pm 1`.
+    Matrix with nonzero entries of `\pm 1`.
 
     INPUT:
 

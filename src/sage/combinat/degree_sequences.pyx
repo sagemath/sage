@@ -210,7 +210,7 @@ the run of ``enum``.
 **Extending the current partial sequence**
 
 The two cases for which the maximum degree of the partial sequence does not
-change are easy to detect. It is (sligthly) harder to enumerate all the sets
+change are easy to detect. It is (slightly) harder to enumerate all the sets
 `I` corresponding to possible extensions of the partial sequence. As said
 previously, to each set `I` one can associate an integer ``current_box`` such
 that `I` contains all the `i` satisfying `d_i>current\_box`. The variable

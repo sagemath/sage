@@ -2494,7 +2494,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         the `\mathbb{R}^2` plane, in such a way that `x` is strictly below `y`
         (on the vertical axis) whenever `x<y` in the lattice.
 
-        Note that the scientific litterature on posets often omits "upward" and
+        Note that the scientific literature on posets often omits "upward" and
         shortens it to "planar lattice" (e.g. [GW2014]_), which can cause
         confusion with the notion of graph planarity in graph theory.
 

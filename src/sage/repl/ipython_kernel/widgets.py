@@ -22,7 +22,6 @@ We need to setup a proper test environment for widgets::
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import unicode_literals
 
 from ipywidgets.widgets import (IntSlider, IntRangeSlider,
                                 FloatSlider, FloatRangeSlider, Text,

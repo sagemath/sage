@@ -3908,15 +3908,78 @@ def is_PrincipalIdealDomainElement(x):
     return isinstance(x, PrincipalIdealDomainElement)
 
 cdef class PrincipalIdealDomainElement(DedekindDomainElement):
+    def gcd(self, right):
+        r"""
+        Return the greatest common divisor of ``self`` and ``other``.
+
+        TESTS:
+
+        :trac:`30849`::
+
+            sage: 2.gcd(pari(3))
+            1
+            sage: type(2.gcd(pari(3)))
+            <class 'sage.rings.integer.Integer'>
+
+            sage: 2.gcd(pari('1/3'))
+            1/3
+            sage: type(2.gcd(pari('1/3')))
+            <class 'sage.rings.rational.Rational'>
+
+            sage: import gmpy2
+            sage: 2.gcd(gmpy2.mpz(3))
+            1
+            sage: type(2.gcd(gmpy2.mpz(3)))
+            <class 'sage.rings.integer.Integer'>
+
+            sage: 2.gcd(gmpy2.mpq(1,3))
+            1/3
+            sage: type(2.gcd(pari('1/3')))
+            <class 'sage.rings.rational.Rational'>
+        """
+        # NOTE: in order to handle nicely pari or gmpy2 integers we do not rely only on coercion
+        if not isinstance(right, Element):
+            right = py_scalar_to_element(right)
+            if not isinstance(right, Element):
+                right = right.sage()
+        if not ((<Element>right)._parent is self._parent):
+            from sage.arith.all import gcd
+            return coercion_model.bin_op(self, right, gcd)
+        return self._gcd(right)
+
     def lcm(self, right):
         """
         Return the least common multiple of ``self`` and ``right``.
+
+        TESTS:
+
+        :trac:`30849`::
+
+            sage: 2.lcm(pari(3))
+            6
+            sage: type(2.lcm(pari(3)))
+            <class 'sage.rings.integer.Integer'>
+
+            sage: 2.lcm(pari('1/3'))
+            2
+            sage: type(2.lcm(pari('1/3')))
+            <class 'sage.rings.rational.Rational'>
+
+            sage: import gmpy2
+            sage: 2.lcm(gmpy2.mpz(3))
+            6
+            sage: type(2.lcm(gmpy2.mpz(3)))
+            <class 'sage.rings.integer.Integer'>
         """
-        if not isinstance(right, Element) or not ((<Element>right)._parent is self._parent):
+        # NOTE: in order to handle nicely pari or gmpy2 integers we do not rely only on coercion
+        if not isinstance(right, Element):
+            right = py_scalar_to_element(right)
+            if not isinstance(right, Element):
+                right = right.sage()
+        if not ((<Element>right)._parent is self._parent):
             from sage.arith.all import lcm
             return coercion_model.bin_op(self, right, lcm)
         return self._lcm(right)
-
 
 # This is pretty nasty low level stuff. The idea is to speed up construction
 # of EuclideanDomainElements (in particular Integers) by skipping some tp_new

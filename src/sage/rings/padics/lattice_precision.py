@@ -30,7 +30,6 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import division
 from collections import defaultdict
 
 from sage.misc.misc import walltime

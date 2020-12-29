@@ -2,13 +2,7 @@
 Type ``groups.presentation.<tab>`` to access examples
 of groups implemented as finite presentations (quotients of
 free groups).
-
-TESTS::
-
-    sage: 'absolute_import' in dir(groups.presentation)
-    False
 """
-from __future__ import absolute_import
 
 # groups imported here will be available
 # via  groups.presentation.<tab>
@@ -29,6 +23,3 @@ from .finitely_presented_named import SymmetricPresentation as Symmetric
 from .finitely_presented_named import QuaternionPresentation as Quaternion
 from .finitely_presented_named import AlternatingPresentation as Alternating
 from .finitely_presented_named import BinaryDihedralPresentation as BinaryDihedral
-
-# We don't want this to appear in tab completion
-del absolute_import

@@ -39,7 +39,6 @@ REFERENCES:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 # This contains both the parent and element classes. These should be split if
 #   the classes grow larger.

@@ -210,7 +210,6 @@ subsequent papers on the representation theory of these algebras.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.words.word import Word

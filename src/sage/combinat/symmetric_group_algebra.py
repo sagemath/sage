@@ -1558,7 +1558,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         where the addends are transpositions in `S_n` (regarded as
         elements of `R S_n`). We note that there is not a dependence on `n`,
-        so it is often surpressed in the notation.
+        so it is often suppressed in the notation.
 
         EXAMPLES::
 

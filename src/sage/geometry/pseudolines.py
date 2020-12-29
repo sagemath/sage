@@ -162,7 +162,6 @@ Methods
 #  The full text of the GPL is available at:
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function
 
 from copy import deepcopy
 

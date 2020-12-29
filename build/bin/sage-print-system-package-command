@@ -5,9 +5,14 @@ shift
 IF_VERBOSE=:
 SUDO=
 PROMPT=
+COMMENT="# "
 while :
 do
     case "$1" in
+        --verbose=*)
+            IF_VERBOSE=
+            COMMENT="${1#--verbose=}"
+            ;;
         --verbose)
             IF_VERBOSE=
             ;;
@@ -16,10 +21,16 @@ do
             SUDO="sudo "
             ;;
         --prompt=*)
-            PROMPT=${1#--prompt=}
+            PROMPT="${1#--prompt=}"
             ;;
         --prompt)
             PROMPT='  $ '
+            ;;
+        --no-install-recommends)
+            NO_INSTALL_RECOMMENDS=yes
+            ;;
+        --yes)
+            YES=yes
             ;;
         -*)
             echo >&2 "$0: unknown option $1"
@@ -37,14 +48,19 @@ if [ -z "$system" -o -z "$command" ]; then
     exit 1
 fi
 system_packages="$*"
+options=
 shopt -s extglob
 case $system:$command in
     homebrew*:setup-build-env)
-        $IF_VERBOSE echo "# To automatically take care of homebrew messages regarding "
-        $IF_VERBOSE echo "# keg-only packages for the current shell session:"
+        $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE echo "${COMMENT}Homebrew can issue suggestions regarding keg-only packages."
+        $IF_VERBOSE echo "${COMMENT}The following command is to automatically apply these suggestions"
+        $IF_VERBOSE echo "${COMMENT}for packages relevant for Sage to make them available for the build."
+        $IF_VERBOSE echo "${COMMENT}Run it once to apply the suggestions for the current session."
+        $IF_VERBOSE echo "${COMMENT}Add it to your shell profile to apply them for all future sessions."
+        $IF_VERBOSE echo "${COMMENT}"
         [ -n "$SAGE_ROOT" ] || SAGE_ROOT=.
         echo "${PROMPT}source $SAGE_ROOT/.homebrew-build-env"
-        $IF_VERBOSE echo "# Add this to your shell profile if you want it to persist between shell sessions."
         ;;
     *:setup-build-env)
         # Nothing needed
@@ -56,22 +72,36 @@ case $system:$command in
         echo "${PROMPT}${SUDO}apt-get $command $system_packages"
         ;;
     @(debian*|ubuntu*):*)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}apt-get $command $system_packages"
+        [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
+        [ "$YES" = yes ] && options="$options --yes"
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}apt-get $command $options $system_packages"
         ;;
     @(fedora*|redhat*|centos*):install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}yum install $system_packages"
+        [ "$YES" = yes ] && options="$options -y"
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}yum install $options $system_packages"
         ;;
     gentoo*:install)
         [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}emerge $system_packages"
         ;;
-    arch*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}pacman -S $system_packages"
+    arch*:update)
+        echo "${PROMPT}${SUDO}pacman -Sy"
         ;;
-
+    arch*:install)
+        [ "$YES" = yes ] && options="$options --noconfirm"
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}pacman -S $options $system_packages"
+        ;;
+    void*:update)
+        echo "${PROMPT}${SUDO}xbps-install -Su"
+        ;;
     void*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}xbps-install $system_packages"
+        [ "$YES" = yes ] && options="$options --yes"
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}xbps-install $options $system_packages"
+        ;;
+    opensuse*:install)
+        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}zypper install $system_packages"
         ;;
     *conda*:install)
+        [ "$YES" = yes ] && options="$options --yes"
         [ -n "$system_packages" ] && echo "${PROMPT}conda install $system_packages"
         ;;
     homebrew*:install)

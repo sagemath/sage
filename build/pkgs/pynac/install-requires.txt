@@ -1,0 +1,2 @@
+# pynac depends on Python but is not available as a pip-installable package.
+# See Trac #30534 "Repackage pynac as a pip-installable package"

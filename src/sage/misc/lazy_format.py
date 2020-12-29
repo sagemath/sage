@@ -1,7 +1,6 @@
 """
 Lazy format strings
 """
-from __future__ import print_function
 
 
 class LazyFormat(str):

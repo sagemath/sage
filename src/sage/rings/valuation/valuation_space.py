@@ -53,7 +53,6 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.homset import Homset
 from sage.misc.lazy_attribute import lazy_attribute

@@ -70,7 +70,6 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, division, print_function
 
 from sage.symbolic.function import BuiltinFunction
 from sage.sets.real_set import RealSet

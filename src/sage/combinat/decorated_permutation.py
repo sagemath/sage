@@ -31,6 +31,7 @@ from sage.combinat.subset import Subsets
 from sage.combinat.colored_permutations import SignedPermutations
 from sage.structure.list_clone import ClonableArray
 
+
 class DecoratedPermutation(ClonableArray,
         metaclass=InheritComparisonClasscallMetaclass):
     r"""
@@ -79,7 +80,7 @@ class DecoratedPermutation(ClonableArray,
             sage: elt.check()
             sage: elt = S([2, -1, 3])
             Traceback (most recent call last):
-            ...            
+            ...
             ValueError: invalid decorated permutation
         """
         if self not in self.parent():
@@ -146,6 +147,7 @@ class DecoratedPermutation(ClonableArray,
             [2, 1, -3]
         """
         return SignedPermutations(len(self))(list(self))
+
 
 class DecoratedPermutations(UniqueRepresentation, Parent):
     r"""
@@ -214,7 +216,7 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
         for i, (v, abs_v) in enumerate(zip(values, abs_values), 1):
             if i != abs_v and v < 0:
                 return False
-        return sorted(abs_values) == list(range(1, self._n+1))
+        return sorted(abs_values) == list(range(1, self._n + 1))
 
     def _element_constructor_(self, pi, check=True):
         """
@@ -267,7 +269,8 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
             sage: [DecoratedPermutations(n).cardinality() for n in range(11)]
             [1, 2, 5, 16, 65, 326, 1957, 13700, 109601, 986410, 9864101]
         """
-        return Integer(sum(factorial(self._n)//factorial(k) for k in range(self._n+1)))
+        return Integer(sum(factorial(self._n) // factorial(k)
+                           for k in range(self._n + 1)))
 
     def __iter__(self):
         r"""
@@ -285,5 +288,5 @@ class DecoratedPermutations(UniqueRepresentation, Parent):
             for X in Subsets(F):
                 tau = list(sigma)
                 for i in X:
-                    tau[i-1] = -tau[i-1]
+                    tau[i - 1] = -tau[i - 1]
                 yield DecoratedPermutations(self._n)(tau)

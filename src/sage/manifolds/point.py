@@ -88,7 +88,6 @@ for the comparison::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import division
 from sage.structure.element import Element
 from sage.misc.decorators import options
 from sage.symbolic.expression import Expression

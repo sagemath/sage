@@ -1,7 +1,3 @@
-# distutils: depends = sage/geometry/polyhedron/combinatorial_polyhedron/bit_vector_operations.cc
-# distutils: language = c++
-# distutils: extra_compile_args = -std=c++11
-
 r"""
 Combinatorial face of a polyhedron
 
@@ -76,21 +72,8 @@ from .conversions               cimport bit_rep_to_Vrep_list
 from .base                      cimport CombinatorialPolyhedron
 from .face_iterator             cimport FaceIterator_base
 from .polyhedron_face_lattice   cimport PolyhedronFaceLattice
-from libc.string                cimport memcpy
-
-cdef extern from "bit_vector_operations.cc":
-    cdef size_t count_atoms(uint64_t *A, size_t face_length)
-#        Return the number of atoms/vertices in A.
-#        This is the number of set bits in A.
-#        ``face_length`` is the length of A in terms of uint64_t.
-
-    cdef size_t bit_rep_to_coatom_rep(
-            uint64_t *face, uint64_t **coatoms, size_t n_coatoms,
-            size_t face_length, size_t *output)
-#        Write the coatom-representation of face in output. Return length.
-#        ``face_length`` is the length of ``face`` and ``coatoms[i]``
-#        in terms of uint64_t.
-#        ``n_coatoms`` length of ``coatoms``.
+from .face_data_structure       cimport face_len_atoms, face_init, face_copy
+from .face_list_data_structure  cimport bit_rep_to_coatom_rep
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -113,7 +96,7 @@ cdef class CombinatorialFace(SageObject):
 
         sage: F = C.face_lattice()
         sage: F._elements[3]
-        29
+        34
         sage: C.face_by_face_lattice_index(29)
         A 1-dimensional face of a 5-dimensional combinatorial polyhedron
 
@@ -184,18 +167,21 @@ cdef class CombinatorialFace(SageObject):
             # Copy data from FaceIterator.
             it = data
             self._dual              = it.dual
-            self.face_mem           = ListOfFaces(1, it.structure.face_length*64)
-            self.face               = self.face_mem.data[0]
-            memcpy(self.face, it.structure.face, it.structure.face_length*8)
             self._mem               = MemoryAllocator()
+            self.atoms              = it.atoms
+            self.coatoms            = it.coatoms
+
+            if it.structure.face_status == 0:
+                raise LookupError("face iterator not set to a face")
+
+            face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms(), self._mem)
+            face_copy(self.face, it.structure.face)
+
             self._dimension         = it.structure.current_dimension
             self._ambient_dimension = it.structure.dimension
-            self.face_length        = it.structure.face_length
             self._ambient_Vrep      = it._Vrep
             self._ambient_facets    = it._facet_names
             self._equalities        = it._equalities
-            self.atoms              = it.atoms
-            self.coatoms            = it.coatoms
             self._hash_index        = it.structure._index
 
             self._initialized_from_face_lattice = False
@@ -209,18 +195,18 @@ cdef class CombinatorialFace(SageObject):
 
             # Copy data from PolyhedronFaceLattice.
             self._dual              = all_faces.dual
-            self.face_mem           = ListOfFaces(1, all_faces.face_length*64)
-            self.face               = self.face_mem.data[0]
-            memcpy(self.face, all_faces.faces[dimension+1][index], all_faces.face_length*8)
             self._mem               = MemoryAllocator()
+            self.atoms              = all_faces.atoms
+            self.coatoms            = all_faces.coatoms
+
+            face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms(), self._mem)
+            face_copy(self.face, all_faces.faces[dimension+1].faces[index])
+
             self._dimension         = dimension
             self._ambient_dimension = all_faces.dimension
-            self.face_length        = all_faces.face_length
             self._ambient_Vrep      = all_faces._Vrep
             self._ambient_facets    = all_faces._facet_names
             self._equalities        = all_faces._equalities
-            self.atoms              = all_faces.atoms
-            self.coatoms            = all_faces.coatoms
 
             self._initialized_from_face_lattice = True
 
@@ -770,32 +756,23 @@ cdef class CombinatorialFace(SageObject):
         Compute the number of atoms in the current face by counting the
         number of set bits.
         """
-        if self.face:
-            return count_atoms(self.face, self.face_length)
-
-        # The face was not initialized properly.
-        raise LookupError("``FaceIterator`` does not point to a face")
+        return face_len_atoms(self.face)
 
     cdef size_t set_coatom_rep(self) except -1:
         r"""
         Set ``coatom_rep`` to be the coatom-representation of the current face.
         Return its length.
         """
-        cdef size_t n_coatoms = self.coatoms.n_faces
-        cdef uint64_t **coatoms = self.coatoms.data
-        cdef size_t face_length = self.face_length
         if not self.coatom_rep:
-            self.coatom_rep = <size_t *> self._mem.allocarray(self.coatoms.n_faces, sizeof(size_t))
-        return bit_rep_to_coatom_rep(self.face, coatoms, n_coatoms,
-                                       face_length, self.coatom_rep)
+            self.coatom_rep = <size_t *> self._mem.allocarray(self.coatoms.n_faces(), sizeof(size_t))
+        return bit_rep_to_coatom_rep(self.face, self.coatoms.data, self.coatom_rep)
 
     cdef size_t set_atom_rep(self) except -1:
         r"""
         Set ``atom_rep`` to be the atom-representation of the current face.
         Return its length.
         """
-        cdef size_t face_length = self.face_length
         if not self.atom_rep:
-            self.atom_rep = <size_t *> self._mem.allocarray(self.coatoms.n_atoms, sizeof(size_t))
-        return bit_rep_to_Vrep_list(self.face, self.atom_rep, face_length)
+            self.atom_rep = <size_t *> self._mem.allocarray(self.coatoms.n_atoms(), sizeof(size_t))
+        return bit_rep_to_Vrep_list(self.face, self.atom_rep)
 

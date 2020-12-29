@@ -1,7 +1,6 @@
 r"""
 Root system features that are imported by default in the interpreter namespace
 """
-from __future__ import absolute_import
 
 from sage.misc.lazy_import import lazy_import
 
@@ -25,5 +24,3 @@ from .branching_rules import BranchingRule, branching_rule_from_plethysm, branch
 
 lazy_import('sage.combinat.root_system.non_symmetric_macdonald_polynomials', 'NonSymmetricMacdonaldPolynomials')
 lazy_import('sage.combinat.root_system.integrable_representations', 'IntegrableRepresentation')
-
-del absolute_import

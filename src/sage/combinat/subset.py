@@ -26,7 +26,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 import sage.misc.prandom as rnd
 import itertools

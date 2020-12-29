@@ -20,7 +20,8 @@ from cysignals.signals cimport sig_check
 from cypari2.gen cimport Gen
 from cypari2.types cimport typ, t_MAT, t_VEC, t_COL, t_VECSMALL, t_LIST, t_STR, t_CLOSURE
 
-from .matrix_space import MatrixSpace
+MatrixSpace = None
+
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
@@ -931,6 +932,9 @@ cdef class MatrixArgs:
             self.sparse = (self.typ & MA_FLAG_SPARSE) != 0
 
         if self.space is None:
+            global MatrixSpace
+            if MatrixSpace is None:
+                from .matrix_space import MatrixSpace
             self.space = MatrixSpace(self.base, self.nrows, self.ncols,
                     sparse=self.sparse, **self.kwds)
 

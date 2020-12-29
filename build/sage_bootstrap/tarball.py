@@ -132,6 +132,9 @@ class Tarball(object):
         sha1 = self._compute_sha1()
         return sha1 == self.package.sha1
 
+    def is_distributable(self):
+        return not 'do-not-distribute' in self.filename
+
     def download(self, allow_upstream=False):
         """
         Download the tarball to the upstream directory.
@@ -140,6 +143,8 @@ class Tarball(object):
         on the sage mirrors, fall back to downloading it from
         the upstream URL if the package has one.
         """
+        if not self.filename:
+            raise ValueError('non-normal package does define a tarball, so cannot download')
         destination = self.upstream_fqn
         if os.path.isfile(destination):
             if self.checksum_verifies():

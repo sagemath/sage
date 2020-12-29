@@ -17,7 +17,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import time
 from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree, get_orbits

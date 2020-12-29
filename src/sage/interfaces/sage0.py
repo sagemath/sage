@@ -4,7 +4,6 @@ Interface to Sage
 This is an expect interface to *another* copy of the Sage
 interpreter.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>

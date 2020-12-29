@@ -209,7 +209,6 @@ REFERENCES:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.functions.other import sqrt
 from sage.functions.log import exp

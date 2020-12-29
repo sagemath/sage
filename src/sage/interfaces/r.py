@@ -264,7 +264,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function, absolute_import
 
 from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
 from sage.env import DOT_SAGE
@@ -1000,14 +999,6 @@ class R(ExtraTabCompletion, Interface):
             raise ValueError("There is no help page for the given topic")
 
         s = pages_for_topic[0].to_docstring()
-
-        # Maybe this can be removed now (it is a leftover from the old expect
-        # interface). Since I don't understand why it was needed in the first
-        # place, I'm keeping it for now.
-        import sage.plot.plot
-        if sage.plot.plot.EMBEDDED_MODE:
-            s = s.replace('_\x08','')
-
         return HelpExpression(s)
 
     def _assign_symbol(self):

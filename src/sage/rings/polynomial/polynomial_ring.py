@@ -139,7 +139,6 @@ Check that :trac:`5562` has been fixed::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 import sys
 

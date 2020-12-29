@@ -348,7 +348,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         # Store the actual generators (torsion first):
         gens = [z] + fu + su
         values = Sequence(gens, immutable=True, universe=self, check=False)
-        # Construct the abtract group:
+        # Construct the abstract group:
         gens_orders = tuple([ZZ(n)]+[ZZ(0)]*(self.__rank))
         AbelianGroupWithValues_class.__init__(self, gens_orders, 'u', values, number_field)
 

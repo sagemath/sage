@@ -379,7 +379,6 @@ as Sage's `e` (:trac:`29833`)::
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 import os
 import re

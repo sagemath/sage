@@ -1,5 +1,7 @@
 from sage.rings.polynomial.pbori.pbori import mod_mon_set
-from .PyPolyBoRi import *
+from .PyPolyBoRi import (BooleSet, Monomial, Polynomial, Variable,
+                         GroebnerStrategy, ReductionStrategy, parallel_reduce,
+                         easy_linear_factors, BoolePolynomialVector)
 from .easy_polynomials import (easy_linear_polynomials as
                                easy_linear_polynomials_func)
 from .statistics import used_vars_set
@@ -68,7 +70,7 @@ def build_and_print_matrices(v, strat):
 
             im.putpixel((j, i), 0)
 
-    file_name = matrix_prefix + str(mat_counter) + ".png"
+    file_name = strat.matrix_prefix + str(mat_counter) + ".png"
     if os.path.exists(file_name):
         os.remove(file_name)
     im.save(file_name)
@@ -148,7 +150,7 @@ def build_and_print_matrices_deg_colored(v, strat):
             assert j < cols
             im.putpixel((j, i), ImageColor.getrgb("hsl(" + str(270 - (270 *
                 i2deg[j]) / max_deg) + ",100%,50%)"))
-    file_name = matrix_prefix + str(mat_counter) + ".png"
+    file_name = strat.matrix_prefix + str(mat_counter) + ".png"
     if os.path.exists(file_name):
         os.remove(file_name)
     im.save(file_name)
@@ -188,13 +190,13 @@ def high_probability_polynomials_trick(p, strat):
     lead = p.lead()
     for v in lead.variables():
         variable_selection = lead // v
-        vars_reversed = reversed(list(variable_selection.variables()))
+        vars_reversed = list(reversed(variable_selection.variables()))
         # it's just a way to loop over the cartesian product
         for assignment in variable_selection.divisors():
             c_p = assignment
-            for v in vars_reversed:
-                if not assignment.reducible_by(v):
-                    c_p = (v + 1) * c_p
+            for var in vars_reversed:
+                if not assignment.reducible_by(var):
+                    c_p = (var + 1) * c_p
 
             points = (c_p + 1).zeros_in(space)
             if p.zeros_in(points).empty():
@@ -382,7 +384,7 @@ def GPS(G, vars_start, vars_end):
             over_deg_bound=10)
         if var <= vars_start:
             strat = symmGB_F2_python(strat, prot=True, opt_lazy=False,
-                redTail=False)
+                                     opt_red_tail=False)
         if strat.containsOne():
             pass
         else:

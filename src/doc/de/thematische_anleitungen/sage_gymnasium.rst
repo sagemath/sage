@@ -665,14 +665,14 @@ Option auf ``True`` stellen, werden die Linien nicht mehr dargestellt::
 
     sage: f(x)=(x^2 +1)/(x^2-1)
     sage: plot(f, xmin=-2, xmax=2, ymin=-10, ymax = 10, detect_poles=True)
-    Graphics object consisting of 4 graphics primitives
+    Graphics object consisting of 3 graphics primitives
 
 Möchten wir hingegen die vertikalen Asymptoten trotzdem darstellen, aber nicht in derselben
 Farbe wie den Funktionsgraphen, können wir die Option ``detect_poles`` auf ``"show"`` stellen::
 
     sage: f(x)=(x^2 +1)/(x^2-1)
     sage: plot(f, xmin=-2, xmax=2, ymin=-10, ymax = 10, detect_poles="show")
-    Graphics object consisting of 6 graphics primitives
+    Graphics object consisting of 5 graphics primitives
 
 Logarithmen
 ===========

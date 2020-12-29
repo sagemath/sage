@@ -30,7 +30,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 import copy
 from sage.misc.classcall_metaclass import ClasscallMetaclass

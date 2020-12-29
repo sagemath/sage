@@ -13,7 +13,7 @@ AUTHORS:
 - Jean-Philippe Labbé (2019-04): Expose normaliz features and added functionalities
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2016 Matthias Köppe <mkoeppe at math.ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,14 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import absolute_import, print_function
+# ****************************************************************************
 
 from sage.structure.element import Element
 from sage.misc.all import cached_method, prod
 from sage.features import PythonModule
+from sage.misc.lazy_import import lazy_import
+lazy_import('PyNormaliz', ['NmzResult', 'NmzCompute', 'NmzCone', 'NmzConeCopy'],
+                    feature=PythonModule("PyNormaliz", spkg="pynormaliz"))
 
 from sage.rings.all import ZZ, QQ
 from sage.arith.functions import LCM_list
@@ -60,7 +61,8 @@ def _number_field_elements_from_algebraics_list_of_lists_of_lists(listss, **kwds
             numbers.extend(list)
     K, K_numbers, hom = number_field_elements_from_algebraics(numbers, **kwds)
     g = iter(K_numbers)
-    return K, [ [ [ next(g) for x in list ] for list in lists ] for lists in listss ], hom
+    return K, [ [ [ next(g) for _ in list ] for list in lists ] for lists in listss ], hom
+
 
 def _format_function_call(fn_name, *v, **k):
     """
@@ -76,6 +78,7 @@ def _format_function_call(fn_name, *v, **k):
     """
     args = [ repr(a) for a in v ] + [ "%s=%r" % (arg, val) for arg, val in sorted(k.items()) ]
     return "{}({})".format(fn_name, ", ".join(args))
+
 
 #########################################################################
 class Polyhedron_normaliz(Polyhedron_base):
@@ -255,7 +258,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: p = Polyhedron(vertices=[(0,0),(1,1),(a,3),(-1,a**2)], rays=[(-1,-a)], backend='normaliz') # optional - pynormaliz
             sage: sorted(p._nmz_result(p._normaliz_cone, 'VerticesOfPolyhedron')) # optional - pynormaliz
             [[-1, a^2, 1], [1, 1, 1], [a, 3, 1]]
-            sage: sorted(p._nmz_result(p._normaliz_cone, 'Generators')) # optional - pynormaliz
+            sage: sorted(p._nmz_result(p._normaliz_cone, 'TriangulationGenerators')) # optional - pynormaliz
             [[-a^2, -3, 0], [-1, a^2, 1], [0, 0, 1], [1, 1, 1], [a, 3, 1]]
             sage: p._nmz_result(p._normaliz_cone, 'AffineDim') == 2 # optional - pynormaliz
             True
@@ -273,11 +276,9 @@ class Polyhedron_normaliz(Polyhedron_base):
             # coords might be too short which is not accepted by Sage number field
             v = list(coords) + [0] * (self._normaliz_field.degree() - len(coords))
             return self._normaliz_field(v)
-
-        import PyNormaliz
-        return PyNormaliz.NmzResult(normaliz_cone, property,
-                                    RationalHandler=rational_handler,
-                                    NumberfieldElementHandler=nfelem_handler)
+        return NmzResult(normaliz_cone, property,
+                         RationalHandler=rational_handler,
+                         NumberfieldElementHandler=nfelem_handler)
 
     def _init_from_normaliz_cone(self, normaliz_cone, normaliz_field):
         """
@@ -416,9 +417,7 @@ class Polyhedron_normaliz(Polyhedron_base):
         if verbose:
             print("# Calling {}".format(_format_function_call('PyNormaliz.NmzCone', **data)))
 
-        PythonModule("PyNormaliz", spkg="pynormaliz").require()
-        import PyNormaliz
-        cone = PyNormaliz.NmzCone(**data)
+        cone = NmzCone(**data)
         assert cone, "{} did not return a cone".format(_format_function_call('PyNormaliz.NmzCone', **data))
         return cone
 
@@ -520,30 +519,30 @@ class Polyhedron_normaliz(Polyhedron_base):
             nmz_vertices = []
             for v in vertices:
                 d = LCM_list([denominator(v_i) for v_i in v])
-                dv = [ d*v_i for v_i in v ]
+                dv = [ d * v_i for v_i in v ]
                 nmz_vertices.append(dv + [d])
             nmz_rays = []
             for r in rays:
                 d = LCM_list([denominator(r_i) for r_i in r])
-                dr = [ d*r_i for r_i in r ]
+                dr = [ d * r_i for r_i in r ]
                 nmz_rays.append(dr)
             nmz_lines = []
             for l in lines:
                 d = LCM_list([denominator(l_i) for l_i in l])
-                dl = [ d*l_i for l_i in l ]
+                dl = [ d * l_i for l_i in l ]
                 nmz_lines.append(dl)
             return nmz_vertices, nmz_rays, nmz_lines
 
         def vert_ray_line_NF(vertices, rays, lines):
-            h_vertices = [ list(v) + [1] for v in vertices ]
+            h_vertices = [list(v) + [1] for v in vertices]
             return h_vertices, rays, lines
 
         if vertices is None:
-                vertices = []
+            vertices = []
         if rays is None:
-                rays = []
+            rays = []
         if lines is None:
-                lines = []
+            lines = []
 
         (nmz_vertices, nmz_rays, nmz_lines), normaliz_field \
             = self._compute_nmz_data_lists_and_field((vertices, rays, lines),
@@ -626,14 +625,14 @@ class Polyhedron_normaliz(Polyhedron_base):
             nmz_ieqs = []
             for ieq in ieqs:
                 d = LCM_list([denominator(ieq_i) for ieq_i in ieq])
-                dieq = [ ZZ(d*ieq_i) for ieq_i in ieq ]
+                dieq = [ ZZ(d * ieq_i) for ieq_i in ieq ]
                 b = dieq[0]
                 A = dieq[1:]
                 nmz_ieqs.append(A + [b])
             nmz_eqns = []
             for eqn in eqns:
                 d = LCM_list([denominator(eqn_i) for eqn_i in eqn])
-                deqn = [ ZZ(d*eqn_i) for eqn_i in eqn ]
+                deqn = [ ZZ(d * eqn_i) for eqn_i in eqn ]
                 b = deqn[0]
                 A = deqn[1:]
                 nmz_eqns.append(A + [b])
@@ -652,7 +651,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             # If normaliz gets an empty list of inequalities, it adds
             # nonnegativities. So let's add a tautological inequality to work
             # around this.
-            nmz_ieqs.append([0]*self.ambient_dim() + [0])
+            nmz_ieqs.append([0] * self.ambient_dim() + [0])
         data = {"inhom_equations": nmz_eqns,
                 "inhom_inequalities": nmz_ieqs}
         number_field_data = self._number_field_triple(normaliz_field)
@@ -765,6 +764,15 @@ class Polyhedron_normaliz(Polyhedron_base):
             Traceback (most recent call last):
             ...
             ValueError: the specification of this method has changed; please specify the lines as well
+
+        Check that :trac:`30891` is fixed::
+
+            sage: p = Polyhedron(vertices=[(-3,-3), (3,0), (3,3), (0,3)], backend='normaliz')  # optional - pynormaliz
+            sage: q = loads(p.dumps())                                                         # optional - pynormaliz
+            sage: q.volume()                                                                   # optional - pynormaliz
+            18
+            sage: q.ehrhart_series()                                                           # optional - pynormaliz
+            (13*t^2 + 22*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
         """
         if eqns in (True, False, None):
             # Previously, the method had input ``vertices, rays, ieqs, eqns`` (optionally ``verbose``).
@@ -781,29 +789,29 @@ class Polyhedron_normaliz(Polyhedron_base):
             nmz_vertices = []
             for v in vertices:
                 d = LCM_list([denominator(v_i) for v_i in v])
-                dv = [ d*v_i for v_i in v ]
+                dv = [ d * v_i for v_i in v ]
                 nmz_vertices.append(dv + [d])
             nmz_rays = []
             for r in rays:
                 d = LCM_list([denominator(r_i) for r_i in r])
-                dr = [ d*r_i for r_i in r ]
+                dr = [ d * r_i for r_i in r ]
                 nmz_rays.append(dr + [0])
             nmz_lines = []
             for l in lines:
                 d = LCM_list([denominator(l_i) for l_i in l])
-                dl = [ d*l_i for l_i in l ]
+                dl = [ d * l_i for l_i in l ]
                 nmz_lines.append(dl + [0])
 
             nmz_ieqs = []
             for ieq in ieqs:
                 d = LCM_list([denominator(ieq_i) for ieq_i in ieq])
-                dieq = [ ZZ(d*ieq_i) for ieq_i in ieq ]
+                dieq = [ ZZ(d * ieq_i) for ieq_i in ieq ]
                 b = dieq[0]
                 A = dieq[1:]
                 nmz_ieqs.append(A + [b])
 
             from sage.matrix.constructor import Matrix
-            lattice = Matrix(ZZ, nmz_vertices + nmz_rays + nmz_lines).row_space().basis()
+            lattice = Matrix(ZZ, nmz_vertices + nmz_rays + nmz_lines).saturation()
             nmz_lattice = [[x for x in y] for y in lattice]
 
             if Matrix(ZZ, nmz_vertices + nmz_rays).rank() == Matrix(ZZ, nmz_rays).rank() + 1:
@@ -811,7 +819,7 @@ class Polyhedron_normaliz(Polyhedron_base):
                 # In this case the homogenized inequalities
                 # do not ensure nonnegativy in the last coordinate.
                 # In the homogeneous cone the far face is a facet.
-                pos_ieq = [ZZ.zero()]*len(nmz_vertices[0])
+                pos_ieq = [ZZ.zero()] * len(nmz_vertices[0])
                 pos_ieq[-1] = ZZ.one()
                 nmz_ieqs.append(pos_ieq)
 
@@ -837,12 +845,11 @@ class Polyhedron_normaliz(Polyhedron_base):
                 # In this case the homogenized inequalities
                 # do not ensure nonnegativy in the last coordinate.
                 # In the homogeneous cone the far face is a facet.
-                pos_ieq = [0]*len(nmz_vertices[0])
+                pos_ieq = [0] * len(nmz_vertices[0])
                 pos_ieq[-1] = 1
                 nmz_ieqs.append(pos_ieq)
 
             return nmz_vertices + nmz_rays, nmz_lines, nmz_lattice, nmz_ieqs
-
 
         (nmz_extreme_rays, nmz_subspace, nmz_lattice, nmz_ieqs), normaliz_field \
             = self._compute_nmz_data_lists_and_field((vertices, rays, lines, ieqs),
@@ -856,7 +863,7 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         ambient_dim = len(data["extreme_rays"][0])
         if not homogeneous:
-            data["dehomogenization"] = [[0]*(ambient_dim-1) + [1]]
+            data["dehomogenization"] = [[0] * (ambient_dim - 1) + [1]]
 
         number_field_data = self._number_field_triple(normaliz_field)
         if number_field_data:
@@ -902,7 +909,7 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         if far_facet_condition:
             tester.assertEqual(self.n_inequalities() + 1, len(nmz_ieqs))
-            tester.assertTrue(any(ieq == [0]*self.ambient_dim() + [1] for ieq in nmz_ieqs))
+            tester.assertTrue(any(ieq == [0] * self.ambient_dim() + [1] for ieq in nmz_ieqs))
 
     def _compute_nmz_data_lists_and_field(self, data_lists, convert_QQ, convert_NF):
         r"""
@@ -993,7 +1000,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             if d == 1:
                 parent._make_Vertex(self, g[:-1])
             else:
-                parent._make_Vertex(self, [base_ring(x)/d for x in g[:-1]])
+                parent._make_Vertex(self, [base_ring(x) / d for x in g[:-1]])
         for g in self._nmz_result(cone, "ExtremeRays"):
             parent._make_Ray(self, g[:-1])
         for g in self._nmz_result(cone, "MaximalSubspace"):
@@ -1109,11 +1116,9 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: NmzResult(nmz_cone, "ExtremeRays")                                           # py3 # optional - pynormaliz
             [[1, 2, 0], [2, 1, 0]]
         """
-        PythonModule("PyNormaliz", spkg="pynormaliz").require()
-        import PyNormaliz
         if verbose:
             print("# Calling PyNormaliz.NmzCone(**{})".format(data))
-        cone = PyNormaliz.NmzCone(**data)
+        cone = NmzCone(**data)
         assert cone, "NmzCone(**{}) did not return a cone".format(data)
         return cone
 
@@ -1245,8 +1250,7 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         # Make a copy of the cone.
         cone = self._normaliz_cone
-        import PyNormaliz
-        conecopy = PyNormaliz.NmzConeCopy(cone)
+        conecopy = NmzConeCopy(cone)
         other._normaliz_cone = conecopy
         return other
 
@@ -1332,7 +1336,7 @@ class Polyhedron_normaliz(Polyhedron_base):
 
         self._normaliz_cone = \
             self._cone_from_Vrepresentation_and_Hrepresentation(
-                    self.vertices(), self.rays(), self.lines(), self.inequalities(), self.equations())
+                self.vertices(), self.rays(), self.lines(), self.inequalities(), self.equations())
 
     def integral_hull(self):
         r"""
@@ -1506,9 +1510,7 @@ class Polyhedron_normaliz(Polyhedron_base):
                 return infinity
 
             from sage.functions.other import factorial
-            volume = self._volume_normaliz('induced_lattice')/factorial(self.dim())
-
-            return volume
+            return self._volume_normaliz('induced_lattice') / factorial(self.dim())
 
         else:
             raise TypeError("the measure should be `ambient`, `euclidean`, or `induced_lattice`")
@@ -1585,8 +1587,8 @@ class Polyhedron_normaliz(Polyhedron_base):
         else:
             # Make a inhomogeneous copy of the cone.
             cone = self._cone_from_Vrepresentation_and_Hrepresentation(
-                    self.vertices(), self.rays(), self.lines(),
-                    self.inequalities(), self.equations(), homogeneous=True)
+                self.vertices(), self.rays(), self.lines(),
+                self.inequalities(), self.equations(), homogeneous=True)
 
         # Compute the triangulation.
         assert cone
@@ -1595,19 +1597,18 @@ class Polyhedron_normaliz(Polyhedron_base):
         # Normaliz does not guarantee that the order of generators is kept during
         # computation of the triangulation.
         # Those are the generators that the indices of the triangulation correspond to:
-        nmz_new_generators = self._nmz_result(cone, "Generators")
+        nmz_new_generators = self._nmz_result(cone, "TriangulationGenerators")
 
         base_ring = self.base_ring()
         v_list = self.vertices_list()
         r_list = self.rays_list()
 
         new_to_old = {}
-        for i,g in enumerate(nmz_new_generators):
+        for i, g in enumerate(nmz_new_generators):
             if self.is_compact():
                 d = base_ring(g[-1])
-                vertex = [base_ring(x)/d for x in g[:-1]]
+                vertex = [base_ring(x) / d for x in g[:-1]]
                 new_to_old[i] = v_list.index(vertex)
-                pass
             else:
                 if g[-1] > 0:
                     new_to_old[i] = None
@@ -1618,11 +1619,11 @@ class Polyhedron_normaliz(Polyhedron_base):
                         # Rays are only unique up to scaling.
                         new_ray = vector(base_ring, g[:-1])
 
-                        for j,r in enumerate(self.rays()):
+                        for j, r in enumerate(self.rays()):
                             ray = r.vector()
                             try:
                                 # Check for colinearity.
-                                _ = new_ray/ray
+                                _ = new_ray / ray
                                 new_to_old[i] = j
                                 break
                             except (TypeError, ArithmeticError):
@@ -1737,7 +1738,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         from sage.rings.fraction_field import FractionField
         poly_ring = FractionField(PolynomialRing(ZZ, variable))
         t = poly_ring.gens()[0]
-        es = sum([e[0][i]*t**i for i in range(len(e[0]))])
+        es = sum([e[0][i] * t**i for i in range(len(e[0]))])
         for expo in range(len(e[1])):
             es = es / (1 - t**e[1][expo])
 
@@ -1798,9 +1799,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         """
         cone = self._normaliz_cone
         # Normaliz needs to compute the EhrhartSeries first
-        PythonModule("PyNormaliz", spkg="pynormaliz").require()
-        import PyNormaliz
-        assert PyNormaliz.NmzCompute(cone, ["EhrhartSeries"])
+        assert NmzCompute(cone, ["EhrhartSeries"])
         e = self._nmz_result(cone, "EhrhartQuasiPolynomial")
 
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -1808,13 +1807,13 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         t = poly_ring.gens()[0]
         if len(e) == 2:
             # It is a polynomial
-            es = sum([e[0][i]*t**i for i in range(len(e[0]))])
+            es = sum([e[0][i] * t**i for i in range(len(e[0]))])
             return es / ZZ(e[1])
         else:
             # It is a quasipolynomial
             polynomials = []
             for p in e[:-1]:
-                es = sum([p[i]*t**i for i in range(len(p))]) / ZZ(e[-1])
+                es = sum([p[i] * t**i for i in range(len(p))]) / ZZ(e[-1])
                 polynomials += [es]
 
         return tuple(polynomials)
@@ -1904,7 +1903,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
         from sage.rings.fraction_field import FractionField
         poly_ring = FractionField(PolynomialRing(ZZ, variable))
         t = poly_ring.gens()[0]
-        hs = sum([h[0][i]*t**i for i in range(len(h[0]))])
+        hs = sum([h[0][i] * t**i for i in range(len(h[0]))])
         for expo in range(len(h[1])):
             hs = hs / (1 - t**h[1][expo])
 
@@ -2125,7 +2124,8 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             box_min, box_max = self.bounding_box(integral_hull=True)
             if box_min is None:
                 return ()
-            box_points = prod(max_coord-min_coord+1 for min_coord, max_coord in zip(box_min, box_max))
+            box_points = prod(max_coord - min_coord + 1
+                              for min_coord, max_coord in zip(box_min, box_max))
             if box_points < threshold:
                 from sage.geometry.integral_points import rectangular_box_points
                 return rectangular_box_points(list(box_min), list(box_max), self)

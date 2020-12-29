@@ -548,7 +548,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
     cdef int i
     cdef int next_set
 
-    # For each possible extension of the current set witha vertex, check whether
+    # For each possible extension of the current set with a vertex, check whether
     # there exists a cheap path toward {1..n}, and update the cost.
     for i in range(g.n):
         if (current >> i) & 1: # if i in S

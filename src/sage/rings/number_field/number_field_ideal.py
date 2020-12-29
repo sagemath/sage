@@ -35,7 +35,6 @@ We test that pickling works::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 SMALL_DISC = 1000000
 

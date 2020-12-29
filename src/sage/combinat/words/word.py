@@ -10,7 +10,6 @@ AUTHORS:
 - Franco Saliola
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Arnaud Bergeron <abergeron@gmail.com>,
 #                          Amy Glen <amy.glen@gmail.com>,

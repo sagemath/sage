@@ -29,7 +29,6 @@ EXAMPLES::
     q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)
     ]
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>

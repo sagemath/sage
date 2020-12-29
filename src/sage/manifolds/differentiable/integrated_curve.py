@@ -106,7 +106,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
-from __future__ import print_function
 from sage.symbolic.expression import Expression
 from sage.rings.infinity import Infinity
 from sage.calculus.desolvers import desolve_system_rk4

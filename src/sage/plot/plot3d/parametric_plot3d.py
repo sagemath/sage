@@ -2,7 +2,6 @@
 """
 Parametric Plots
 """
-from __future__ import absolute_import
 
 from .parametric_surface import ParametricSurface
 from .shapes2 import line3d

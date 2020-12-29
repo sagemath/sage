@@ -1,7 +1,6 @@
 r"""
 Decorate interface for parallel computation
 """
-from __future__ import print_function, absolute_import
 
 import types
 

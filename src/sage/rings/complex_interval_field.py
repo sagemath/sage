@@ -35,7 +35,6 @@ heavily modified:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 from sage.structure.parent import Parent
 from .integer_ring import ZZ

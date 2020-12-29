@@ -590,7 +590,7 @@ class AlgebraicForm(FormsBase):
           the homogeneous variables. If ``None``, a random matrix will
           be picked.
 
-        - ``invariant`` -- boolean. Whether to additionaly test that
+        - ``invariant`` -- boolean. Whether to additionally test that
           it is an invariant.
 
         EXAMPLES::
@@ -3321,7 +3321,7 @@ class SeveralAlgebraicForms(FormsBase):
           the homogeneous variables. If ``None``, a random matrix will
           be picked.
 
-        - ``invariant`` -- boolean. Whether to additionaly test that
+        - ``invariant`` -- boolean. Whether to additionally test that
           it is an invariant.
 
         EXAMPLES::

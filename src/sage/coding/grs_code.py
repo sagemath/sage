@@ -47,7 +47,6 @@ Here is a list of all content related to GRS codes:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.cartesian_product import cartesian_product
 

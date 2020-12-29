@@ -103,7 +103,6 @@ EXAMPLES::
     sage: a.plot(hyperplane_labels=True,label_colors=['red','green','black'])
     Graphics3d Object
 """
-from __future__ import print_function
 
 from copy import copy
 from colorsys import hsv_to_rgb

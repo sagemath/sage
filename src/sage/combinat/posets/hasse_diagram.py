@@ -24,9 +24,11 @@ from sage.misc.cachefunc import cached_method
 from sage.functions.other import binomial
 from sage.misc.rest_index_of_methods import gen_rest_table_index
 from sage.combinat.posets.hasse_cython import (moebius_matrix_fast,
-                                               coxeter_matrix_fast)
+                                               coxeter_matrix_fast,
+                                               IncreasingChains)
 
 from collections import deque
+
 
 class LatticeError(ValueError):
     """
@@ -2042,7 +2044,7 @@ class HasseDiagram(DiGraph):
 
         INPUT:
 
-        - upper, a Boolean -- if ``True``, test wheter the lattice is
+        - upper, a Boolean -- if ``True``, test whether the lattice is
           upper semimodular; otherwise test whether the lattice is
           lower semimodular.
 
@@ -2162,8 +2164,12 @@ class HasseDiagram(DiGraph):
             sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_incomparable(i,j)]
             [(1, 2), (1, 3), (2, 1), (3, 1)]
         """
+        if i == j:
+            return False
+        if i > j:
+            i, j = j, i
         mat = self._leq_matrix_boolean
-        return not mat[i, j] and not mat[j, i]
+        return not mat[i, j]
 
     def are_comparable(self, i, j):
         """
@@ -2182,8 +2188,12 @@ class HasseDiagram(DiGraph):
             sage: [ (i,j) for i in H.vertices() for j in H.vertices() if H.are_comparable(i,j)]
             [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (1, 0), (1, 1), (1, 4), (2, 0), (2, 2), (2, 3), (2, 4), (3, 0), (3, 2), (3, 3), (3, 4), (4, 0), (4, 1), (4, 2), (4, 3), (4, 4)]
         """
+        if i == j:
+            return True
+        if i > j:
+            i, j = j, i
         mat = self._leq_matrix_boolean
-        return bool(mat[i, j]) or bool(mat[j, i])
+        return bool(mat[i, j])
 
     def antichains(self, element_class=list):
         """
@@ -2221,22 +2231,28 @@ class HasseDiagram(DiGraph):
                                          self.are_incomparable,
                                          element_class=element_class)
 
-    def chains(self, element_class=list, exclude=None):
+    def chains(self, element_class=list, exclude=None, conversion=None):
         """
         Return all chains of ``self``, organized as a prefix tree.
 
         INPUT:
 
-        - ``element_class`` -- (default: ``list``) an iterable type
+        - ``element_class`` -- (optional, default: ``list``) an iterable type
 
         - ``exclude`` -- elements of the poset to be excluded
-          (default: ``None``)
+          (optional, default: ``None``)
+
+        - ``conversion`` -- (optional, default: ``None``) used to pass
+           the list of elements of the poset in their fixed order
 
         OUTPUT:
 
         The enumerated set (with a forest structure given by prefix
         ordering) consisting of all chains of ``self``, each of
         which is given as an ``element_class``.
+
+        If ``conversion`` is given, then the chains are converted
+        to chain of elements of this list.
 
         EXAMPLES::
 
@@ -2273,14 +2289,7 @@ class HasseDiagram(DiGraph):
 
         .. SEEALSO:: :meth:`antichains`
         """
-        from sage.combinat.subsets_pairwise import PairwiseCompatibleSubsets
-        if not(exclude is None):
-            vertices = [u for u in self.vertex_iterator() if u not in exclude]
-        else:
-            vertices = self.vertices()
-        return PairwiseCompatibleSubsets(vertices,
-                                         self.are_comparable,
-                                         element_class=element_class)
+        return IncreasingChains(self._leq_storage, element_class, exclude, conversion)
 
     def diamonds(self):
         r"""

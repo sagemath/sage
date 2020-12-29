@@ -105,7 +105,6 @@ method for :class:`SteenrodAlgebra_generic
 <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic>` in
 :file:`steenrod_algebra.py`.
 """
-from __future__ import absolute_import, division
 
 #*****************************************************************************
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>

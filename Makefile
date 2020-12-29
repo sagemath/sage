@@ -64,11 +64,11 @@ build/make/Makefile: configure $(SPKG_COLLECT_FILES) $(CONFIG_FILES:%=%.in)
 buildbot-python3:
 	$(MAKE)
 
-# Preemptively download all standard upstream source tarballs.
+# Preemptively download all source tarballs of normal packages.
 download:
 	export SAGE_ROOT=$$(pwd) && \
-	export PATH=$$SAGE_ROOT/src/bin:$$PATH && \
-	./src/bin/sage-download-upstream
+	export PATH=$$SAGE_ROOT/build/bin:$$PATH && \
+	sage-package download :all:
 
 dist: build/make/Makefile
 	./sage --sdist
@@ -111,6 +111,10 @@ bootstrap-clean:
 	rm -f src/doc/en/installation/*.txt
 	rm -rf src/doc/en/reference/spkg/*.rst
 	rm -f src/doc/en/reference/repl/*.txt
+	rm -f environment.yml
+	rm -f src/environment.yml
+	rm -f environment-optional.yml
+	rm -f src/environment-optional.yml
 
 # Remove absolutely everything which isn't part of the git repo
 maintainer-clean: distclean bootstrap-clean
@@ -147,15 +151,15 @@ micro_release:
 
 # Leaves everything that is needed to make the next "make" fast but removes
 # all the cheap build artifacts that can be quickly regenerated.
+# Trac #30960: We no longer uninstall sagelib.
 fast-rebuild-clean: misc-clean
 	rm -rf upstream/
-	rm -rf src/build/temp.*
-	# Without site-packages/sage sage does not start but copying/compiling
-	# them from src/build is very fast.
-	rm -rf local/lib/python*/site-packages/sage
+	rm -rf build/pkgs/sagelib/src/build/temp.*
 	# The .py files in src/build are restored from src/sage without their
 	# mtimes changed.
-	find src/build -name '*.py' -exec rm \{\} \;
+	-find build/pkgs/sagelib/src/build -name '*.py' -exec rm \{\} \;
+	# Remove leftovers from ancient branches
+	rm -rf src/build
 
 TESTALL = ./sage -t --all
 PTESTALL = ./sage -t -p --all

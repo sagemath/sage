@@ -166,7 +166,7 @@ from sage.symbolic.constants import pi
 from sage.symbolic.function import BuiltinFunction
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.functions.all import sqrt, sin, cot, exp
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 
 
 class SphericalHarmonic(BuiltinFunction):

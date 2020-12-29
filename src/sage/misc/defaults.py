@@ -3,8 +3,7 @@ Default Settings
 
 AUTHORS: William Stein and David Kohel
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -16,17 +15,16 @@ AUTHORS: William Stein and David Kohel
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # default variable name
 var_name = 'x'
 
 
-
 def variable_names(n, name=None):
     r"""
-    Converts a root string into a tuple of variable names by adding
+    Convert a root string into a tuple of variable names by adding
     numbers in sequence.
 
     INPUT:
@@ -53,11 +51,12 @@ def variable_names(n, name=None):
     n = int(n)
     if n == 1:
         return (name,)
-    return tuple(['%s%s'%(name,i) for i in range(n)])
+    return tuple(['%s%s' % (name, i) for i in range(n)])
+
 
 def latex_variable_names(n, name=None):
     r"""
-    Converts a root string into a tuple of variable names by adding
+    Convert a root string into a tuple of variable names by adding
     numbers in sequence.
 
     INPUT:
@@ -84,8 +83,8 @@ def latex_variable_names(n, name=None):
     n = int(n)
     if n == 1:
         return (name,)
-    v = tuple(['%s_{%s}'%(name,i) for i in range(n)])
-    return v
+    return tuple(['%s_{%s}' % (name, i) for i in range(n)])
+
 
 def set_default_variable_name(name, separator=''):
     r"""
@@ -99,6 +98,7 @@ def set_default_variable_name(name, separator=''):
 # default series precision
 series_prec = 20
 
+
 def series_precision():
     """
     Return the Sage-wide precision for series (symbolic,
@@ -110,6 +110,7 @@ def series_precision():
         20
     """
     return series_prec
+
 
 def set_series_precision(prec):
     """

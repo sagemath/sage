@@ -7,7 +7,6 @@ AUTHORS:
 - Jordi Quer
 - David Loeffler
 """
-from __future__ import absolute_import
 
 ################################################################################
 #

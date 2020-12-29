@@ -30,7 +30,6 @@ mutable version see :func:`DisjointSet`.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import, division
 
 from sage.sets.set import Set, Set_generic
 

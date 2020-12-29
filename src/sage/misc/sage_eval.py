@@ -10,7 +10,6 @@ Evaluating a String in Sage
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, division
 from copy import copy
 import sage.repl.preparse as preparser
 

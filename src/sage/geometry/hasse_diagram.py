@@ -14,7 +14,6 @@ example, the face lattice of a polyhedron.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.graphs.digraph import DiGraph
 from sage.combinat.posets.lattices import FiniteLatticePoset

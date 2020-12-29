@@ -41,7 +41,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.element import parent
 from sage.structure.parent import Parent

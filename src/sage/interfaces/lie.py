@@ -285,7 +285,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function, absolute_import
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 from sage.interfaces.interface import AsciiArtString

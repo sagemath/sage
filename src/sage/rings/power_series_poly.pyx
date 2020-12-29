@@ -1075,7 +1075,7 @@ cdef class PowerSeries_poly(PowerSeries):
 
             f(z) - Q(z)/P(z) = O(z^{m+n+1}).
 
-        The formal power series `f` must be known up to order `n + m + 1`.
+        The formal power series `f` must be known up to order `n + m`.
 
         See :wikipedia:`Padé\_approximant`
 
@@ -1141,14 +1141,19 @@ cdef class PowerSeries_poly(PowerSeries):
             sage: (1+x+O(x^100)).pade(2,2)
             x + 1
 
+        Check for correct precision::
+
+            sage: QQx.<x> = QQ[[]]
+            sage: (1+x+O(x^2)).pade(0,1)
+            -1/(x - 1)
         """
-        if self.precision_absolute() < n + m + 2:
+        if self.precision_absolute() < n + m + 1:
             raise ValueError("the precision of the series is not large enough")
         polyring = self.parent()._poly_ring()
         z = polyring.gen()
-        c = self.polynomial();
-        u, v = c.rational_reconstruct(z**(n + m + 1), m, n);
-        return u/v
+        c = self.polynomial()
+        u, v = c.rational_reconstruct(z**(n + m + 1), m, n)
+        return u / v
 
     def _symbolic_(self, ring):
         """

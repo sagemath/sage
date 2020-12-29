@@ -6,7 +6,6 @@ Hyperelliptic curves over the rationals
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.padics.all import is_pAdicField, is_pAdicRing, pAdicField
 

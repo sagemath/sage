@@ -2,7 +2,6 @@
 """
 Representations of objects
 """
-
 # ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
@@ -20,9 +19,9 @@ from IPython.lib.pretty import (
     _type_pprinters,
 )
 
-_baseclass_reprs = (object.__repr__,)
-
 from sage.repl.display.util import format_list
+
+_baseclass_reprs = (object.__repr__,)
 
 
 class ObjectReprABC(object):
@@ -216,7 +215,6 @@ class LargeMatrixHelpRepr(ObjectReprABC):
         return True
 
 
-
 class PlainPythonRepr(ObjectReprABC):
     """
     The ordinary Python representation
@@ -360,5 +358,3 @@ class TallListRepr(ObjectReprABC):
             return False
         p.text(output)
         return True
-
-

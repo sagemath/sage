@@ -1,7 +1,6 @@
 r"""
 Finite dimensional semisimple algebras with basis
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2011-2015 Nicolas M. Thiery <nthiery at users.sf.net>
 #                2014-2015 Aladin Virmaux <aladin.virmaux at u-psud.fr>

@@ -12,7 +12,8 @@ def _fglm(I, from_ring, to_ring):
 
 def fglm(I, from_ring, to_ring):
     r"""
-    Convert *reduced* Groebner Basis in from_ring to a GroebnerBasis in to_ring.
+    Convert *reduced* Groebner Basis in ``from_ring`` to a GroebnerBasis
+    in ``to_ring``.
 
     It acts independent of the global ring, which is restored at the end of the
     computation.
@@ -39,43 +40,47 @@ def fglm(I, from_ring, to_ring):
 
 def vars_real_divisors(monomial, monomial_set):
     r"""
-    Return all elements of of monomial_set, which result multiplied by a variable in monomial.
+    Return all elements of ``monomial_set``, which result multiplied by a variable in monomial.
 
-    TESTS::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
         sage: dp_asc = OrderCode.dp_asc
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import Ring
-        sage: r=Ring(1000)
+        sage: r = Ring(1000)
         sage: x = r.variable
-        sage: b=BooleSet([x(1)*x(2),x(2)])
+        sage: b = BooleSet([x(1)*x(2),x(2)])
         sage: from sage.rings.polynomial.pbori.fglm import vars_real_divisors
         sage: vars_real_divisors(x(1)*x(2)*x(3),b)
         {{x(1),x(2)}}
     """
-    return BooleSet(Polynomial(monomial_set.divisors_of(monomial)). \
-        graded_part(monomial.deg() - 1))
+    return BooleSet(Polynomial(monomial_set.divisors_of(monomial)).
+                    graded_part(monomial.deg() - 1))
 
 
 def m_k_plus_one(completed_elements, variables):
     r"""
-    Calculate $m_{k+1}$ from the FGLM algorithm as described in Wichmanns diploma thesis
+    Calculate $m_{k+1}$ from the FGLM algorithm.
 
-    It would be nice to be able to efficiently extract the smallest term of a polynomial.
+    Calculate $m_{k+1}$ from the FGLM algorithm as described in Wichmann [Wich1997]_.
 
-    TESTS::
+    .. NOTE::
+
+        It would be nice to be able to efficiently extract the smallest term of a polynomial.
+
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import OrderCode
+        sage: from sage.rings.polynomial.pbori.fglm import m_k_plus_one
         sage: dp_asc = OrderCode.dp_asc
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import Ring
-        sage: r=Ring(1000)
+        sage: r = Ring(1000)
         sage: x = r.variable
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import Monomial
-        sage: s=BooleSet([x(1)*x(2),x(1),x(2),Monomial(r),x(3)])
-        sage: from sage.rings.polynomial.pbori.fglm import m_k_plus_one
-        sage: variables=BooleSet([x(1),x(2),x(3)])
+        sage: s = BooleSet([x(1)*x(2),x(1),x(2),Monomial(r),x(3)])
+        sage: variables = BooleSet([x(1),x(2),x(3)])
         sage: m_k_plus_one(s,variables)
         x(2)*x(3)
         sage: r2 = r.clone(ordering=dp_asc)

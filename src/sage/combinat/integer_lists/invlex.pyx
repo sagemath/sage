@@ -1105,7 +1105,7 @@ class IntegerListsLexIter(builtins.object):
       ``_current_list``: the range for each part.
 
     Furthermore, we assume that there is no obvious contradiction
-    in the contraints:
+    in the constraints:
 
     - ``self.backend.min_length <= self.backend.max_length``;
     - ``self.backend.min_slope <= self.backend.max_slope``

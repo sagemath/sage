@@ -35,7 +35,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.misc.latex import latex
 from sage.misc.prandom import choice

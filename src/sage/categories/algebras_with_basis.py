@@ -1,13 +1,12 @@
 r"""
 Algebras With Basis
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #******************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -132,27 +131,31 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         # For backward compatibility
         one = UnitalAlgebras.WithBasis.ParentMethods.one
 
-        # Backward compatibility temporary cruft to help migrating form CombinatorialAlgebra
-        def _product_from_combinatorial_algebra_multiply(self,left,right):
+        # Backward compatibility temporary cruft to help migrating
+        # from CombinatorialAlgebra
+        def _product_from_combinatorial_algebra_multiply(self, left, right):
             r"""
-            Returns left\*right where left and right are elements of self.
-            product() uses either _multiply or _multiply basis to carry out
+            Return left\*right where left and right are elements of self.
+
+            product() uses _multiply basis to carry out
             the actual multiplication.
+
+            DO NOT USE, see :trac:`30959`.
 
             EXAMPLES::
 
-                sage: s = SymmetricFunctions(QQ).schur()
+                sage: Sym = SymmetricFunctions(QQ)
+                sage: s = Sym.kBoundedSubspace(3,1).kschur()
                 sage: a = s([2])
-                sage: s._product_from_combinatorial_algebra_multiply(a,a)
-                s[2, 2] + s[3, 1] + s[4]
-                sage: s.product(a,a)
-                s[2, 2] + s[3, 1] + s[4]
+                sage: s.product(a, a)  # indirect doctest
+                ks3[2, 2] + ks3[3, 1]
             """
+            # to be deprecated, once new_kschur is fixed
             A = left.parent()
             BR = A.base_ring()
             z_elt = {}
 
-            #Do the case where the user specifies how to multiply basis elements
+            # the case where the user specifies how to multiply basis elements
             if hasattr(self, '_multiply_basis'):
                 for (left_m, left_c) in left._monomial_coefficients.items():
                     for (right_m, right_c) in right._monomial_coefficients.items():
@@ -171,35 +174,10 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                                 z_elt[ m ] = z_elt[m] + left_c * right_c * res[m]
                             else:
                                 z_elt[ m ] = left_c * right_c * res[m]
+                return self._from_dict(z_elt)
 
-            #We assume that the user handles the multiplication correctly on
-            #his or her own, and returns a dict with monomials as keys and
-            #coefficients as values
-            else:
-                m = self._multiply(left, right)
-                if isinstance(m, self._element_class):
-                    return m
-                if not isinstance(m, dict):
-                    z_elt = m.monomial_coefficients()
-                else:
-                    z_elt = m
-
-            #Remove all entries that are equal to 0
-            BR = self.base_ring()
-            zero = BR(0)
-            del_list = []
-            for m, c in z_elt.items():
-                if c == zero:
-                    del_list.append(m)
-            for m in del_list:
-                del z_elt[m]
-
-            return self._from_dict(z_elt)
-
-        #def _test_product(self, **options):
-        #    tester = self._tester(**options)
-        #    tester.assertTrue(self.product is not None)
-        #    could check that self.product is in Hom( self x self, self)
+            # the usage of "_multiply" is no longer allowed, see ticket 31081
+            raise TypeError('using _multiply is no longer allowed')
 
         def hochschild_complex(self, M):
             """

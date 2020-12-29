@@ -141,7 +141,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 import inspect
 
 from .tri_plot import TrianglePlot

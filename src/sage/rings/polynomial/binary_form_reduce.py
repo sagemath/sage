@@ -25,7 +25,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 from sage.calculus.functions import jacobian
 from sage.functions.hyperbolic import cosh, sinh

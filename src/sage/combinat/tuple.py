@@ -15,7 +15,6 @@ Tuples
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.libs.gap.libgap import libgap
 from sage.rings.all import ZZ

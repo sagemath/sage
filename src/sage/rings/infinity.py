@@ -214,8 +214,6 @@ We check that :trac:`17990` is fixed::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-# python3
-from __future__ import division
 
 from sys import maxsize
 from sage.rings.ring import Ring
@@ -1273,6 +1271,17 @@ class InfinityRing_class(Singleton, Ring):
         except ImportError:
             pass
         return False
+
+    def _pushout_(self, other):
+        r"""
+        EXAMPLES::
+
+            sage: QQbar(-2*i)*infinity
+            (-I)*Infinity
+        """
+        from sage.symbolic.ring import SR
+        if SR.has_coerce_map_from(other):
+            return SR
 
 
 class FiniteNumber(RingElement):

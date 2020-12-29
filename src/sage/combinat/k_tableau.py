@@ -29,7 +29,6 @@ Authors:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets

@@ -30,7 +30,6 @@ called.
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import
 
 from .orthogonal_arrays import orthogonal_array, wilson_construction, is_orthogonal_array
 

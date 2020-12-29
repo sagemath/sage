@@ -227,7 +227,6 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 from collections import namedtuple
 
 from sage.misc.lazy_import import lazy_import
@@ -2129,7 +2128,7 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             sage: G_ZZ('x', raw_element=42)  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: Input is ambigous: x as well as raw_element=42 are specified.
+            ValueError: input is ambiguous: x as well as raw_element=42 are specified
 
         ::
 
@@ -2213,9 +2212,9 @@ class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
             if raw_element is None:
                 raise ValueError('%s is not in %s.' % (data, self))
         elif not isinstance(data, int) or data != 0:
-            raise ValueError('Input is ambigous: '
+            raise ValueError('input is ambiguous: '
                              '%s as well as raw_element=%s '
-                             'are specified.' % (data, raw_element))
+                             'are specified' % (data, raw_element))
 
         return self.element_class(self, raw_element)
 
@@ -3136,7 +3135,7 @@ class MonomialGrowthElement(GenericGrowthElement):
         The previous example does not work since the result would not
         live in a monomial growth group. When using
         :meth:`~GenericGrowthElement.rpow`, this
-        case is handeled by the calling method :meth:`_rpow_`.
+        case is handled by the calling method :meth:`_rpow_`.
 
         ::
 
@@ -5346,7 +5345,7 @@ class GrowthGroupFactory(UniqueFactory):
             sage: GrowthGroup('x^y^z')
             Traceback (most recent call last):
             ...
-            ValueError: 'x^y^z' is an ambigous substring of
+            ValueError: 'x^y^z' is an ambiguous substring of
             a growth group description of 'x^y^z'.
             Use parentheses to make it unique.
             sage: GrowthGroup('(x^y)^z')
@@ -5413,7 +5412,7 @@ class GrowthGroupFactory(UniqueFactory):
 
             split = split_str_by_op(factor, '^')
             if len(split) != 2:
-                raise ValueError("'{}' is an ambigous substring of a growth group "
+                raise ValueError("'{}' is an ambiguous substring of a growth group "
                                  "description of '{}'. Use parentheses to make it "
                                  "unique.".format(factor, ' * '.join(sfactors)))
 
@@ -5466,7 +5465,7 @@ class GrowthGroupFactory(UniqueFactory):
                     var=e,
                     extend_by_non_growth_group=extend_B_by_non_growth_group))
             else:
-                raise ValueError("'{}' is an ambigous substring of a growth group "
+                raise ValueError("'{}' is an ambiguous substring of a growth group "
                                  "description of '{}'.".format(factor, ' * '.join(factors)))
 
         return tuple(factors), kwds

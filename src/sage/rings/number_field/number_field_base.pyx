@@ -8,6 +8,7 @@ TESTS::
     True
 """
 
+
 def is_NumberField(x):
     """
     Return True if x is of number field type.
@@ -131,7 +132,7 @@ cdef class NumberField(Field):
 
     def ring_of_integers(self, *args, **kwds):
         r"""
-        Synomym for ``self.maximal_order(...)``.
+        Synonym for ``self.maximal_order(...)``.
 
         EXAMPLES::
 
@@ -143,7 +144,7 @@ cdef class NumberField(Field):
 
     def OK(self, *args, **kwds):
         r"""
-        Synomym for ``self.maximal_order(...)``.
+        Synonym for ``self.maximal_order(...)``.
 
         EXAMPLES::
 
@@ -340,7 +341,6 @@ cdef class NumberField(Field):
             from sage.rings.integer import Integer
             return Integer(1)
         return ans
-
 
     # Approximate embeddings for comparisons with respect to the order of RR or
     # CC

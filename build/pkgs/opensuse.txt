@@ -1,0 +1,22 @@
+# This file, build/pkgs/opensuse.txt, contains names of OpenSuse packages
+# needed for installation of Sage from source.
+#
+# In addition, the files build/pkgs/SPKG/opensuse.txt contain the names
+# of packages that provide the equivalent of SPKG.
+#
+# See build/bin/sage-spkg, where this information is processed
+# for use in "sage -info SPKG".
+#
+# Everything on a line after a # character is ignored.
+binutils
+make
+m4
+perl
+python3
+tar
+bc
+gcc
+# Needed if we download some packages from a https upstream URL
+ca-certificates
+# gunzip needed for ppl spkg
+gzip

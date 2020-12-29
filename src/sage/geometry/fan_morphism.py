@@ -74,7 +74,6 @@ As you see, it was necessary to insert two new rays (to prevent "upper" and
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import operator
 

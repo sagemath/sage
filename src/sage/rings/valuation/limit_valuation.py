@@ -80,7 +80,6 @@ overview can also be found in Section 4.6 of [Rüt2014]_.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.misc.abstract_method import abstract_method
 from .valuation import DiscretePseudoValuation, InfiniteDiscretePseudoValuation

@@ -8,4 +8,6 @@ Euclidean Spaces and Vector Calculus
 
    sage/manifolds/differentiable/examples/euclidean
 
+   sage/manifolds/differentiable/examples/sphere
+
    sage/manifolds/operators

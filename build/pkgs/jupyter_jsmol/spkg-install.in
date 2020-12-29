@@ -1,0 +1,3 @@
+cd src
+sdh_setup_bdist_wheel build --skip-npm
+sdh_store_and_pip_install_wheel .

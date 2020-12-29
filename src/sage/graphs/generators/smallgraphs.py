@@ -14,7 +14,6 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import, division
 
 # import from Sage library
 from sage.graphs.graph import Graph

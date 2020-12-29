@@ -311,10 +311,10 @@ Generating Dockerfiles
 Sage also provides a script for generating a ``Dockerfile``, which is
 a recipe for automatically building a new image::
 
-  [mkoeppe@sage sage]$ build/bin/write-dockerfile.sh debian "@(standard|optional)" > Dockerfile
+  [mkoeppe@sage sage]$ build/bin/write-dockerfile.sh debian ":standard: :optional:" > Dockerfile
 
-(The second argument is a bash extglob pattern for the package type.)
-  
+(The second argument is passed to ``sage -package list`` to find packages for the listed package types.)
+
 .. this interface should be improved obviously. See #29146 - Refactor tox.ini and build/bin/write_dockerfile.sh
 
 The ``Dockerfile`` instructs the command ``docker build`` to build a

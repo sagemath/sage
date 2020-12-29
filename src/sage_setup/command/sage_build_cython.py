@@ -13,12 +13,9 @@ from distutils.cmd import Command
 from distutils.errors import (DistutilsModuleError,
                               DistutilsOptionError)
 
-from Cython.Build.Dependencies import default_create_extension
 from sage_setup.util import stable_uniq
 from sage_setup.find import find_extra_files
-from sage_setup.library_order import library_order
-
-from sage.env import (cython_aliases, sage_include_directories)
+from sage_setup.cython_options import compiler_directives, compile_time_env_variables
 
 # Do not put all, but only the most common libraries and their headers
 # (that are likely to change on an upgrade) here:
@@ -56,13 +53,6 @@ import subprocess
 # * http://gcc.gnu.org/bugzilla/show_bug.cgi?id=56982
 if subprocess.call("""$CC --version | grep -i 'gcc.* 4[.]8' >/dev/null """, shell=True) == 0:
     extra_compile_args.append('-fno-tree-copyrename')
-
-# Search for dependencies in the source tree and add to the list of include directories
-include_dirs = sage_include_directories(use_sources=True)
-
-# Look for libraries only in what is configured already through distutils
-# and environment variables
-library_dirs = []
 
 class sage_build_cython(Command):
     name = 'build_cython'
@@ -149,23 +139,8 @@ class sage_build_cython(Command):
                 "Cython must be installed and importable in order to run "
                 "the cythonize command")
 
-        # Cython compiler directives
-        self.cython_directives = dict(
-            auto_pickle=False,
-            autotestdict=False,
-            cdivision=True,
-            embedsignature=True,
-            fast_getattr=True,
-            language_level="3str",
-            preliminary_late_includes_cy28=True,
-            profile=self.profile,
-        )
-        self.compile_time_env = dict(
-            PY_PLATFORM=sys.platform,
-            # The following two constants are here only for backwards compatibility of user packages
-            PY_VERSION_HEX=sys.hexversion,
-            PY_MAJOR_VERSION=sys.version_info[0]
-        )
+        self.cython_directives = compiler_directives(self.profile)
+        self.compile_time_env = compile_time_env_variables()
 
         # We check the Cython version and some relevant configuration
         # options from the earlier build to see if we need to force a
@@ -225,6 +200,13 @@ class sage_build_cython(Command):
         Call ``cythonize()`` to replace the ``ext_modules`` with the
         extensions containing Cython-generated C code.
         """
+        from sage.env import (cython_aliases, sage_include_directories)
+        # Set variables used in self.create_extension
+        from ..library_order import library_order
+        self.library_order = library_order
+        # Search for dependencies in the source tree and add to the list of include directories
+        self.sage_include_dirs = sage_include_directories(use_sources=True)
+
         from Cython.Build import cythonize
         import Cython.Compiler.Options
 
@@ -295,7 +277,7 @@ class sage_build_cython(Command):
         # Libraries: sort them
         libs = kwds.get('libraries', [])
         kwds['libraries'] = sorted(set(libs),
-                key=lambda lib: library_order.get(lib, 0))
+                key=lambda lib: self.library_order.get(lib, 0))
 
         # Dependencies: add setup.py and lib_headers
         depends = kwds.get('depends', []) + [self.distribution.script_name]
@@ -336,11 +318,13 @@ class sage_build_cython(Command):
         kwds['extra_link_args'] = stable_uniq(ldflags)
 
         # Process library_dirs
-        lib_dirs = kwds.get('library_dirs', []) + library_dirs
+        lib_dirs = kwds.get('library_dirs', [])
         kwds['library_dirs'] = stable_uniq(lib_dirs)
 
         # Process include_dirs
-        inc_dirs = kwds.get('include_dirs', []) + include_dirs + [self.build_dir]
+        inc_dirs = kwds.get('include_dirs', []) + self.sage_include_dirs + [self.build_dir]
         kwds['include_dirs'] = stable_uniq(inc_dirs)
+
+        from Cython.Build.Dependencies import default_create_extension
 
         return default_create_extension(template, kwds)

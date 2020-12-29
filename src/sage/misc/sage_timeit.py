@@ -90,9 +90,9 @@ class SageTimeitResult(object):
             1 loop, best of 2: 3.14 ns per loop
         """
         if self.stats[0] > 1:
-            s =  u"%d loops, best of %d: %.*g %s per loop" % self.stats
+            s = u"%d loops, best of %d: %.*g %s per loop" % self.stats
         else:
-            s =  u"%d loop, best of %d: %.*g %s per loop" % self.stats
+            s = u"%d loop, best of %d: %.*g %s per loop" % self.stats
 
         if isinstance(s, str):
             return s
@@ -235,7 +235,6 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     exec(code, globals_dict, ns)
     timer.inner = ns["inner"]
 
-
     try:
         import sys
         f = sys.stdout
@@ -249,7 +248,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
                 if timer.timeit(number) >= 0.2:
                     break
 
-        series = [s/number for s in timer.repeat(repeat, number)]
+        series = [s / number for s in timer.repeat(repeat, number)]
         best = min(series)
 
     finally:
@@ -266,5 +265,4 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     else:
         order = 3
     stats = (number, repeat, precision, best * scaling[order], units[order])
-    return SageTimeitResult(stats,series=series)
-
+    return SageTimeitResult(stats, series=series)

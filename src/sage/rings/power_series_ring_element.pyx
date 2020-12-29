@@ -97,6 +97,7 @@ With power series the behavior is the same.
 
 import operator
 
+from cpython.object cimport Py_EQ, Py_NE
 from .infinity import infinity, is_Infinite
 
 from sage.rings.rational_field import QQ
@@ -380,6 +381,10 @@ cdef class PowerSeries(AlgebraElement):
             sage: f == f.truncate()
             True
         """
+        if op == Py_EQ:
+            return not (self-right)
+        if op == Py_NE:
+            return bool(self-right)
         prec = self.common_prec(right)
         x = self.list()
         y = right.list()

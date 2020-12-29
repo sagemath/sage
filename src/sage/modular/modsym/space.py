@@ -5,7 +5,6 @@ Space of modular symbols (base class)
 All the spaces of modular symbols derive from this class. This class is an
 abstract base class.
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #       Sage: Open Source Mathematical Software

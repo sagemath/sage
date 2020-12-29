@@ -1,6 +1,7 @@
-#!/usr/bin/env sage-system-python
+#!/usr/bin/env python3
 #
 # Determine the number of threads to be used by Sage.
+# This is a simplified version of SAGE_ROOT/build/bin/sage-build-num-threads.py
 #
 # Outputs three space-separated numbers:
 # 1) The number of threads to use for Sage, based on MAKE, MAKEFLAGS
@@ -55,67 +56,10 @@ def number_of_cores():
     return 1
 
 
-def parse_jobs_from_MAKE(MAKE, unlimited=999999):
-    """
-    Parse an environment variable like :envvar:`MAKE` for the number of
-    jobs specified. This looks at arguments ``-j``, ``--jobs``, ``-l``,
-    ``--load-average``.
-
-    INPUT:
-
-    - ``MAKE`` -- The value of :envvar:`MAKE` or :envvar:`MAKEFLAGS`.
-
-    - ``unlimited`` -- The value to return when ``MAKE`` contains ``-j``
-      without argument and no ``-l`` option.  Normally this is interpreted
-      as "unlimited".
-
-    OUTPUT:
-
-    The number of jobs specified by that variable.  Raise ``KeyError``
-    if no number of jobs is specified in ``MAKE``.
-    """
-    # First, find value of -j
-    # Since this is doing a greedy match on the left and non-greedy on the right,
-    # we find the last -j or --jobs
-    (j, num) = re.subn(r'^(.* )?(-j *|--jobs(=(?=[0-9])| +))([0-9]*)( .*?)?$', r'\4', MAKE, count=1)
-    if num < 1:
-        # No replacement done, i.e. no -j option found
-        raise KeyError("No number of jobs specified")
-    elif j == "":
-        # j is empty: unlimited number of jobs! :-)
-        j = unlimited
-    else:
-        j = int(j)
-        if j <= 0:
-            raise ValueError("Non-positive value specified for -j")
-
-    # Next, find the value of -l
-    # If it is specified, use this as an upper bound on j
-    (l, num) = re.subn(r'^(.* )?(-l *|--(load-average|max-load)(=(?=[0-9])| +))([0-9.]*)( .*?)?$', r'\5', MAKE, count=1)
-    if num < 1:
-        # No replacement done, i.e. no -l option found
-        pass
-    elif not l:
-        # No load limit specified
-        pass
-    else:
-        l = int(math.ceil(float(l)))
-        # A load limit will never prevent starting at least one job
-        if l <= 1:
-            l = 1
-        j = min(j, l)
-
-    return j
-
-
 def num_threads():
     """
-    Determine the number of threads from the environment variables
-    (in decreasing priority) :envvar:`SAGE_NUM_THREADS`, :envvar:`MAKE`,
-    :envvar:`MAKEFLAGS` and :envvar:`MFLAGS`.
-
-    If :envvar:`SAGE_NUM_THREADS` is 0 and neither :envvar:`MAKE` nor
-    :envvar:`MAKEFLAGS` specifies a number of jobs, the use a default
+    Determine the number of threads from the environment variable
+    :envvar:`SAGE_NUM_THREADS`. If it is 0 or not provided, use a default
     of ``min(8, number_of_cores)``.
 
     OUTPUT:
@@ -125,27 +69,6 @@ def num_threads():
     num_cores = number_of_cores()
 
     num_threads = None
-    # Handle MFLAGS only for backwards compatibility
-    try:
-        num_threads = parse_jobs_from_MAKE(os.environ["MFLAGS"], unlimited=2)
-    except (ValueError, KeyError):
-        pass
-
-    try:
-        # Prepend hyphen to MAKEFLAGS if it does not start with one
-        MAKEFLAGS = os.environ["MAKEFLAGS"]
-        if MAKEFLAGS[0] != '-':
-            MAKEFLAGS = '-' + MAKEFLAGS
-        # In MAKEFLAGS, "-j" does not mean unlimited.  It probably
-        # means an inherited number of jobs, let us use 2 for safety.
-        num_threads = parse_jobs_from_MAKE(MAKEFLAGS, unlimited=2)
-    except (ValueError, KeyError, IndexError):
-        pass
-
-    try:
-        num_threads = parse_jobs_from_MAKE(os.environ["MAKE"])
-    except (ValueError, KeyError):
-        pass
 
     # Number of threads to use when parallel execution is explicitly
     # asked for

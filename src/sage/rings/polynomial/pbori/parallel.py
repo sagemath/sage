@@ -42,7 +42,7 @@ def to_fast_pickable(l):
 
         sage: from sage.rings.polynomial.pbori.frontend import *
         sage: from sage.rings.polynomial.pbori.parallel import to_fast_pickable, from_fast_pickable
-        sage: r=Ring(1000)
+        sage: r = Ring(1000)
         sage: x=r.variable
         sage: to_fast_pickable([Polynomial(1, r)])
         [[1], []]
@@ -79,7 +79,7 @@ def to_fast_pickable(l):
     nodes = set()
 
     def find_navs(nav):
-        if not nav in nodes and not nav.constant():
+        if nav not in nodes and not nav.constant():
             nodes.add(nav)
             find_navs(nav.then_branch())
             find_navs(nav.else_branch())
@@ -98,7 +98,7 @@ def to_fast_pickable(l):
         e = nodes2i[n.else_branch()]
         nodes_sorted[i] = (n.value(), t, e)
 
-    return [[nodes2i[f.set().navigation()] for f in  l], nodes_sorted]
+    return [[nodes2i[f.set().navigation()] for f in l], nodes_sorted]
 
 
 def from_fast_pickable(l, r):
@@ -119,7 +119,7 @@ def from_fast_pickable(l, r):
 
         sage: from sage.rings.polynomial.pbori.frontend import *
         sage: from sage.rings.polynomial.pbori.parallel import from_fast_pickable
-        sage: r=Ring(1000)
+        sage: r = Ring(1000)
         sage: x = r.variable
         sage: from_fast_pickable([[1], []], r)
         [1]
@@ -172,11 +172,13 @@ def _encode_polynomial(poly):
 def pickle_polynomial(self):
     return (_decode_polynomial, (_encode_polynomial(self), ))
 
+
 copyreg.pickle(Polynomial, pickle_polynomial)
 
 
 def pickle_bset(self):
     return (BooleSet, (Polynomial(self), ))
+
 
 copyreg.pickle(BooleSet, pickle_bset)
 
@@ -184,11 +186,13 @@ copyreg.pickle(BooleSet, pickle_bset)
 def pickle_monom(self):
     return (Monomial, ([var for var in self.variables()], ))
 
+
 copyreg.pickle(Monomial, pickle_monom)
 
 
 def pickle_var(self):
     return (Variable, (self.index(), self.ring()))
+
 
 copyreg.pickle(Variable, pickle_var)
 
@@ -242,8 +246,8 @@ def _encode_ring(ring):
     else:
         nvars = ring.n_variables()
         data = (nvars, ring.get_order_code())
-        varnames = '\n'.join([str(ring.variable(idx)) for idx in range(nvars)
-            ])
+        varnames = '\n'.join(str(ring.variable(idx))
+                             for idx in range(nvars))
         blocks = list(ring.blocks())
         code = (identifier, data, compress(varnames), blocks[:-1])
         _polybori_parallel_rings[identifier] = (WeakRingRef(ring), code)
@@ -253,6 +257,7 @@ def _encode_ring(ring):
 
 def pickle_ring(self):
     return (_decode_ring, (_encode_ring(self), ))
+
 
 copyreg.pickle(Ring, pickle_ring)
 
@@ -273,7 +278,7 @@ def groebner_basis_first_finished(I, *l):
     EXAMPLES::
 
         sage: from sage.rings.polynomial.pbori.PyPolyBoRi import Ring
-        sage: r=Ring(1000)
+        sage: r = Ring(1000)
         sage: ideal = [r.variable(1)*r.variable(2)+r.variable(2)+r.variable(1)]
         sage: from sage.rings.polynomial.pbori.parallel import groebner_basis_first_finished
         sage: groebner_basis_first_finished(ideal, dict(heuristic=True), dict(heuristic=False))

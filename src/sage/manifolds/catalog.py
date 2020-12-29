@@ -10,7 +10,7 @@ They are:
 - :class:`~sage.manifolds.differentiable.examples.euclidean.EuclideanSpace`: Euclidean space
 - :class:`~sage.manifolds.differentiable.examples.real_line.RealLine`: real line
 - :class:`~sage.manifolds.differentiable.examples.real_line.OpenInterval`: open interval on the real line
-- :func:`Sphere`: sphere embedded in Euclidean space
+- :class:`~sage.manifolds.differentiable.examples.sphere.Sphere`: sphere embedded in Euclidean space
 - :func:`Torus`: torus embedded in Euclidean space
 - :func:`Minkowski`: 4-dimensional Minkowski space
 - :func:`Kerr`: Kerr spacetime
@@ -35,6 +35,7 @@ from sage.misc.lazy_import import lazy_import as _lazy_import
 _lazy_import('sage.manifolds.differentiable.examples.real_line', 'OpenInterval')
 _lazy_import('sage.manifolds.differentiable.examples.real_line', 'RealLine')
 _lazy_import('sage.manifolds.differentiable.examples.euclidean', 'EuclideanSpace')
+_lazy_import('sage.manifolds.differentiable.examples.sphere', 'Sphere')
 
 def Minkowski(positive_spacelike=True, names=None):
     """
@@ -84,140 +85,6 @@ def Minkowski(positive_spacelike=True, names=None):
     sgn = 1 if positive_spacelike else -1
     g[0,0] = -sgn
     g[1,1], g[2,2], g[3,3] = sgn, sgn, sgn
-    return M
-
-def Sphere(dim=None, radius=1, names=None, stereo2d=False, stereo_lim=None):
-    """
-    Generate a sphere embedded in Euclidean space.
-
-    The shortcut operator ``.<,>`` can be used to specify the coordinates.
-
-    INPUT:
-
-    - ``dim`` -- (optional) the dimension of the sphere; if not specified,
-      equals to the number of coordinate names
-    - ``radius`` -- (default: ``1``) radius of the sphere
-    - ``names`` -- (default: ``None``) name of the coordinates,
-      automatically set by the shortcut operator
-    - ``stereo2d`` -- (default: ``False``) if ``True``, defines only the
-      stereographic charts, only implemented in 2d
-    - ``stereo_lim`` -- (default: ``None``) parameter used to restrict the
-      span of the stereographic charts, so that they don't cover the whole
-      sphere; valid domain will be ``x**2 + y**2 < stereo_lim**2``
-
-    OUTPUT:
-
-    - Riemannian manifold
-
-    EXAMPLES::
-
-        sage: S.<th, ph> = manifolds.Sphere()
-        sage: S
-        2-dimensional Riemannian submanifold S embedded in the Euclidean
-         space E^3
-        sage: S.atlas()
-        [Chart (S, (th, ph))]
-        sage: S.metric().display()
-        gamma = dth*dth + sin(th)^2 dph*dph
-
-        sage: S = manifolds.Sphere(2, stereo2d=True)  # long time
-        sage: S  # long time
-        2-dimensional Riemannian submanifold S embedded in the Euclidean
-         space E^3
-        sage: S.metric().display()  # long time
-        gamma = 4/(x^4 + y^4 + 2*(x^2 + 1)*y^2 + 2*x^2 + 1) dx*dx
-         + 4/(x^4 + y^4 + 2*(x^2 + 1)*y^2 + 2*x^2 + 1) dy*dy
-    """
-    from sage.functions.trig import cos, sin, atan, atan2
-    from sage.functions.other import sqrt
-    from sage.symbolic.constants import pi
-    from sage.misc.misc_c import prod
-    from sage.manifolds.manifold import Manifold
-    from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
-
-    if dim is None:
-        if names is None:
-            raise ValueError("either the names or the dimension must be specified")
-        dim = len(names)
-    else:
-        if names is not None and dim != len(names):
-            raise ValueError("the number of coordinates does not match the dimension")
-
-    if stereo2d:
-        if dim != 2:
-            raise NotImplementedError("stereographic charts only "
-                                      "implemented for 2d spheres")
-        E = EuclideanSpace(3, names=("X", "Y", "Z"))
-        S2 = Manifold(dim, 'S', ambient=E, structure='Riemannian')
-        U = S2.open_subset('U')
-        V = S2.open_subset('V')
-        stereoN = U.chart(names=("x", "y"))
-        x, y = stereoN[:]
-        stereoS = V.chart(names=("xp", "yp"))
-        xp, yp = stereoS[:]
-        if stereo_lim is not None:
-            stereoN.add_restrictions(x**2+y**2 < stereo_lim**2)
-            stereoS.add_restrictions(xp**2+yp**2 < stereo_lim**2)
-
-        stereoN_to_S = stereoN.transition_map(stereoS,
-          (x / (x**2 + y**2), y / (x**2 + y**2)), intersection_name='W',
-          restrictions1=x**2 + y**2 != 0, restrictions2=xp**2+yp**2!=0)
-        stereoN_to_S.set_inverse(xp / (xp**2 + yp**2), yp / (xp**2 + yp**2),
-                                 check=False)
-        W = U.intersection(V)
-        stereoN_W = stereoN.restrict(W)
-        stereoS_W = stereoS.restrict(W)
-        A = W.open_subset('A', coord_def={stereoN_W: (y != 0, x < 0),
-                                          stereoS_W: (yp != 0, xp < 0)})
-        stereoN_A = stereoN_W.restrict(A)
-        if names is None:
-            names = tuple(["phi_{}:(0,pi)".format(i) for i in range(dim - 1)] +
-                          ["phi_{}:(-pi,pi):periodic".format(dim - 1)])
-        else:
-            names = tuple([names[i] + ":(0,pi)" for i in range(dim - 1)] +
-                          [names[dim - 1] + ":(-pi,pi):periodic"])
-        spher = A.chart(names=names)
-        th, ph = spher[:]
-        spher_to_stereoN = spher.transition_map(stereoN_A, (sin(th)*cos(ph) / (1-cos(th)),
-                                                            sin(th)*sin(ph) / (1-cos(th))))
-        spher_to_stereoN.set_inverse(2*atan(1/sqrt(x**2+y**2)), atan2(-y, -x)+pi,
-                                     check=False)
-        stereoN_to_S_A = stereoN_to_S.restrict(A)
-        stereoN_to_S_A * spher_to_stereoN # generates spher_to_stereoS
-        stereoS_to_N_A = stereoN_to_S.inverse().restrict(A)
-        spher_to_stereoN.inverse() * stereoS_to_N_A  # generates stereoS_to_spher
-
-        coordfunc1 = [sin(th)*cos(ph), sin(th)*sin(ph), cos(th)]
-        coordfunc2 = [2*x/(1+x**2+y**2), 2*y/(1+x**2+y**2), (x**2+y**2-1)/(1+x**2+y**2)]
-        coordfunc3 = [2*xp/(1+xp**2+yp**2), 2*yp/(1+xp**2+yp**2),(1-xp**2-yp**2)/(1+xp**2+yp**2)]
-        imm = S2.diff_map(E, {(spher, E.default_chart()): coordfunc1,
-                              (stereoN, E.default_chart()): coordfunc2,
-                              (stereoS, E.default_chart()): coordfunc3})
-        S2.set_embedding(imm)
-        S2.induced_metric()
-
-        return S2
-
-    if dim != 2:
-        raise NotImplementedError("only implemented for 2 dimensional spheres")
-
-    E = EuclideanSpace(3, symbols='X Y Z')
-    M = Manifold(dim, 'S', ambient=E, structure='Riemannian')
-    if names is None:
-        names = tuple(["phi_{}:(0,pi)".format(i) for i in range(dim-1)] +
-                      ["phi_{}:(-pi,pi):periodic".format(dim-1)])
-    else:
-        names = tuple([names[i]+":(0,pi)"for i in range(dim - 1)] +
-                      [names[dim-1]+":(-pi,pi):periodic"])
-    C = M.chart(names=names)
-    M._first_ngens = C._first_ngens
-    phi = M._first_ngens(dim)[:]
-    coordfunc = ([radius * prod(sin(phi[j]) for j in range(dim))] +
-                 [radius * cos(phi[i]) * prod(sin(phi[j]) for j in range(i))
-                  for i in range(dim)])
-    imm = M.diff_map(E, coordfunc)
-    M.set_embedding(imm)
-    M.induced_metric()
     return M
 
 def Kerr(m=1, a=0, coordinates="BL", names=None):

@@ -2,14 +2,8 @@
 # Set up environment variables:
 ###############################################################################
 
-if [ "$SAGE_DEBUG" = yes ]; then
-    echo >&2 "Warning: Setting SAGE_DEBUG to 'yes' completely disables optimization."
-    CFLAGS="-O0 -g $CFLAGS -fPIC"
-    CXXFLAGS="-O0 -g $CXXFLAGS -fPIC"
-else
-    CFLAGS="-O3 -g $CFLAGS -fPIC"
-    CXXFLAGS="-O3 -g $CXXFLAGS -fPIC"
-fi
+CFLAGS="$CFLAGS_O3 -fPIC"
+CXXFLAGS="$CXXFLAGS_O3 -fPIC"
 
 export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS # Partially redundant, but safe.
 
@@ -42,7 +36,7 @@ echo "Now generating Makefile for zn_poly..."
 #       'makemakefile.py', and aren't available with vanilla upstream.
 #       Moreover, the generated Makefile now takes CC, CXX and CPP from the
 #       environment, so no need to pass them later explicitly to 'make'.
-sage-system-python makemakefile.py >Makefile \
+sage-bootstrap-python makemakefile.py >Makefile \
     --prefix="$SAGE_LOCAL" --cflags="$CFLAGS" --ldflags="$LDFLAGS" \
     --cppflags="$CPPFLAGS" --cxxflags="$CXXFLAGS" \
     --gmp-prefix="$SAGE_LOCAL" || sdh_die "Error generating Makefile."

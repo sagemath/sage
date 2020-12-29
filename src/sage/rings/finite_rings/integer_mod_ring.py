@@ -59,7 +59,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 import sage.misc.prandom as random
 

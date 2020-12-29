@@ -1,7 +1,6 @@
 r"""
 Ambient lattices and ambient spaces
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>

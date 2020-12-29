@@ -399,11 +399,11 @@ class BackendIPythonCommandline(BackendIPython):
 
     def threejs_offline_scripts(self):
         """
-        Three.js scripts for the IPython command line
+        Three.js script for the IPython command line
 
         OUTPUT:
 
-        String containing script tags
+        String containing script tag
 
         EXAMPLES::
 
@@ -414,22 +414,15 @@ class BackendIPythonCommandline(BackendIPython):
         """
         from sage.env import THREEJS_DIR
 
-        scripts = [
-            os.path.join(THREEJS_DIR, script)
-            for script in [
-                'build/three.min.js',
-                'examples/js/controls/OrbitControls.js',
-            ]
-        ]
+        script = os.path.join(THREEJS_DIR, 'build/three.min.js')
 
         if sys.platform == 'cygwin':
             import cygwin
             def normpath(p):
                 return 'file:///' + cygwin.cygpath(p, 'w').replace('\\', '/')
-            scripts = [normpath(script) for script in scripts]
+            script = normpath(script)
 
-        return '\n'.join('<script src="{0}"></script>'.format(script)
-                         for script in scripts)
+        return '\n<script src="{0}"></script>'.format(script)
 
 
 IFRAME_TEMPLATE = \
@@ -592,11 +585,11 @@ class BackendIPythonNotebook(BackendIPython):
 
     def threejs_offline_scripts(self):
         """
-        Three.js scripts for the IPython notebook
+        Three.js script for the IPython notebook
 
         OUTPUT:
 
-        String containing script tags
+        String containing script tag
 
         EXAMPLES::
 
@@ -606,11 +599,10 @@ class BackendIPythonNotebook(BackendIPython):
             '...<script src="/nbextensions/threejs/build/three.min...<\\/script>...'
         """
         from sage.repl.rich_output import get_display_manager
-        CDN_scripts = get_display_manager().threejs_scripts(online=True)
+        CDN_script = get_display_manager().threejs_scripts(online=True)
         return """
 <script src="/nbextensions/threejs/build/three.min.js"></script>
-<script src="/nbextensions/threejs/examples/js/controls/OrbitControls.js"></script>
 <script>
   if ( !window.THREE ) document.write('{}');
 </script>
-        """.format(CDN_scripts.replace('</script>', r'<\/script>').replace('\n', ' \\\n'))
+        """.format(CDN_script.replace('</script>', r'<\/script>').replace('\n', ' \\\n'))

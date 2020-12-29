@@ -8,7 +8,6 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 
 cdef extern from "string_impl.h":

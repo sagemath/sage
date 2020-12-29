@@ -1,7 +1,6 @@
 """
 Path Algebras
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #  Copyright (C) 2012 Jim Stark <jstarx@gmail.com>

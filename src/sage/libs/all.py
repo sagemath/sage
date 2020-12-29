@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 import sage.libs.ntl.all as ntl
 

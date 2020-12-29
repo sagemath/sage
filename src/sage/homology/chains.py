@@ -19,7 +19,6 @@ complex.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.rings.integer_ring import ZZ

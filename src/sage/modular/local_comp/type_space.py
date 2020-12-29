@@ -13,7 +13,6 @@ subgroup. This space is the key to computing the isomorphism class of the local
 component of the newform at `p`.
 
 """
-from __future__ import absolute_import
 
 import operator
 from sage.modular.arithgroup.all import GammaH

@@ -173,9 +173,6 @@ class GraphicsFile(SageObject):
         """
         if sage.doctest.DOCTEST_MODE:
             return
-        from sage.plot.plot import EMBEDDED_MODE
-        if EMBEDDED_MODE:
-            raise RuntimeError('should never launch viewer in embedded mode')
         if self.mime() == Mime.JMOL:
             return self._launch_jmol()
         from sage.misc.viewer import viewer

@@ -72,7 +72,6 @@ Derived Codes
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 # This module is imported as "codes" in all.py so that codes.<tab> is
 # available in the global namespace.

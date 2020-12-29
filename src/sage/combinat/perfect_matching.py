@@ -53,7 +53,6 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division, print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer

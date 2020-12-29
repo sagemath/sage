@@ -6,14 +6,14 @@ This module defines the rich output types for 2-d images, both vector
 and raster graphics.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import os
@@ -352,4 +352,3 @@ class OutputImageDvi(OutputBase):
         filename = os.path.join(SAGE_EXTCODE, 'doctest', 'rich_output', 'example.dvi')
         with open(filename, 'rb') as f:
             return cls(f.read())
-

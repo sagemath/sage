@@ -1,7 +1,6 @@
 r"""
 Six Vertex Model
 """
-from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation

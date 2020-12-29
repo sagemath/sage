@@ -1184,7 +1184,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         Type IV point of precision 100 with centers given by
         ((t^2 + 2*t + 1) + O(3^20))*x and radii given by (y + 1.00000000000000)/y
 
-    When creating a Berkovich space backed by a number field, points can be created similarily::
+    When creating a Berkovich space backed by a number field, points can be created similarly::
 
         sage: R.<x> = QQ[]
         sage: A.<a> = NumberField(x^3 + 20)
@@ -1550,7 +1550,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         """
         Computes the join of this point and ``other`` with respect to ``basepoint``.
 
-        The join is first point that lies on the interesection
+        The join is first point that lies on the intersection
         of the path from this point to ``basepoint`` and the path from ``other`` to
         ``basepoint``.
 
@@ -1667,7 +1667,7 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
             sage: B(0).involution_map()
             Traceback (most recent call last):
             ...
-            ValueError: involution map not deffined on affine type I point centered at 0
+            ValueError: involution map not defined on affine type I point centered at 0
 
         ::
 
@@ -1690,13 +1690,13 @@ class Berkovich_Element_Cp_Affine(Berkovich_Element_Cp):
         """
         if self.type_of_point() == 1:
             if self.center() == 0:
-                raise ValueError("involution map not deffined on affine type I point centered at 0")
+                raise ValueError("involution map not defined on affine type I point centered at 0")
             return self.parent()(1/self.center())
 
         zero = self.parent()(ZZ(0))
         radius = self.radius()
 
-        if self.type_of_point() in [2,3]:
+        if self.type_of_point() in [2, 3]:
             zero_contained_in_self = self.gt(zero)
             if zero_contained_in_self:
                 if self.type_of_point() == 2:
@@ -2231,7 +2231,7 @@ class Berkovich_Element_Cp_Projective(Berkovich_Element_Cp):
         """
         Computes the join of this point and ``other``, with respect to ``basepoint``.
 
-        The join is first point that lies on the interesection
+        The join is first point that lies on the intersection
         of the path from this point to ``basepoint`` and the path from ``other`` to
         ``basepoint``.
 

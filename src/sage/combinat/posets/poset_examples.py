@@ -83,7 +83,6 @@ Constructions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
@@ -1716,7 +1715,7 @@ class Posets(metaclass=ClasscallMetaclass):
         - ``pos`` -- a list of indices indicating a distinguished copy of
            ``bottom`` inside ``top`` (indexed starting at 0)
 
-        For futher information (and picture illustrating included example),
+        For further information (and picture illustrating included example),
         see [ST2010]_ .
 
         See :wikipedia:`Permutation_pattern`.

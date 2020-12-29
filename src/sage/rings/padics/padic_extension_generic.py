@@ -7,7 +7,6 @@ AUTHORS:
 
 - David Roe
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>

@@ -1398,7 +1398,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
         return R
 
     def defining_ideal(self):
-        """
+        r"""
         Return `I = <x_i^2 + x_i> \subset R` where ``R =
         self.cover_ring()``, and `x_i` any element in the set of
         variables of this ring.

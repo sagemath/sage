@@ -1,7 +1,7 @@
-diff --git a/pkg/cohomolo-1.6.7/standalone/progs.d/crp1.c b/pkg/cohomolo-1.6.7/standalone/progs.d/crp1.c
+diff --git a/pkg/cohomolo-1.6.8/standalone/progs.d/crp1.c b/pkg/cohomolo-1.6.8/standalone/progs.d/crp1.c
 index 3bbdc45..7df699f 100644
---- a/pkg/cohomolo-1.6.7/standalone/progs.d/crp1.c
-+++ b/pkg/cohomolo-1.6.7/standalone/progs.d/crp1.c
+--- a/pkg/cohomolo-1.6.8/standalone/progs.d/crp1.c
++++ b/pkg/cohomolo-1.6.8/standalone/progs.d/crp1.c
 @@ -8,9 +8,8 @@ extern short sp[],**mat[],*psp[],**imcos[],**cpco[],lorb[],
  short *cst,**cpst,***cdpst,**svptr,*cp,*rel;
  short *spst,**pspst,**pptr,**cpptr,npt,nb,nph,nph2,npg,npg2,
@@ -47,10 +47,10 @@ index 3bbdc45..7df699f 100644
    op=fopen(outft,"w");
  /* Now we have read everything in, and the computation can start */
    orno=0;
-diff --git a/pkg/cohomolo-1.6.7/standalone/progs.d/nq+chfns.c b/pkg/cohomolo-1.6.7/standalone/progs.d/nq+chfns.c
+diff --git a/pkg/cohomolo-1.6.8/standalone/progs.d/nq+chfns.c b/pkg/cohomolo-1.6.8/standalone/progs.d/nq+chfns.c
 index a7396b2..658496f 100644
---- a/pkg/cohomolo-1.6.7/standalone/progs.d/nq+chfns.c
-+++ b/pkg/cohomolo-1.6.7/standalone/progs.d/nq+chfns.c
+--- a/pkg/cohomolo-1.6.8/standalone/progs.d/nq+chfns.c
++++ b/pkg/cohomolo-1.6.8/standalone/progs.d/nq+chfns.c
 @@ -20,8 +20,6 @@ short  mexp=MEXP,mcl=MCL,no,rel[RSP],wt[MEXP],exp,*rpf,*rpb,
  extern short  prime,dim,*spv,**spm,mspace[],*vec[],**mat[],cp[],pinv[],opmats,
          mm,mv;
@@ -91,10 +91,10 @@ index a7396b2..658496f 100644
    ip=fopen(inf3,"r");
    if (ip==0) { fprintf(stderr,"Cannot open %s\n",inf3); return(-1); }
    fscanf(ip,"%hd%hd%hd%hd%hd%hd",&prime,&exp,&i,&no,&j,&m);
-diff --git a/pkg/cohomolo-1.6.7/standalone/progs.d/nqmfns.c b/pkg/cohomolo-1.6.7/standalone/progs.d/nqmfns.c
+diff --git a/pkg/cohomolo-1.6.8/standalone/progs.d/nqmfns.c b/pkg/cohomolo-1.6.8/standalone/progs.d/nqmfns.c
 index 0896551..6841bc8 100644
---- a/pkg/cohomolo-1.6.7/standalone/progs.d/nqmfns.c
-+++ b/pkg/cohomolo-1.6.7/standalone/progs.d/nqmfns.c
+--- a/pkg/cohomolo-1.6.8/standalone/progs.d/nqmfns.c
++++ b/pkg/cohomolo-1.6.8/standalone/progs.d/nqmfns.c
 @@ -9,7 +9,6 @@ extern short  intexp,mexp,mng,wksp,
         spugen[],*tlintg[];
  extern int ptrsp,rsp;
@@ -128,10 +128,10 @@ index 0896551..6841bc8 100644
          fclose(op);
          printf("All new generators eliminated. Multiplier is trivial.\n");
        }
-diff --git a/pkg/cohomolo-1.6.7/standalone/progs.d/nqmp.c b/pkg/cohomolo-1.6.7/standalone/progs.d/nqmp.c
+diff --git a/pkg/cohomolo-1.6.8/standalone/progs.d/nqmp.c b/pkg/cohomolo-1.6.8/standalone/progs.d/nqmp.c
 index 01cf914..0144883 100644
---- a/pkg/cohomolo-1.6.7/standalone/progs.d/nqmp.c
-+++ b/pkg/cohomolo-1.6.7/standalone/progs.d/nqmp.c
+--- a/pkg/cohomolo-1.6.8/standalone/progs.d/nqmp.c
++++ b/pkg/cohomolo-1.6.8/standalone/progs.d/nqmp.c
 @@ -9,7 +9,6 @@ extern short  intexp,mng,mexp,wksp,
         spugen[],*intg[],*imintg[],*tlintg[];
  extern int ptrsp,rsp;

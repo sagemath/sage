@@ -27,8 +27,6 @@ become symbolic inequalities::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-# python3
-from __future__ import division
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element

@@ -528,8 +528,6 @@ The components on the basis are returned by the square bracket operator for
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation

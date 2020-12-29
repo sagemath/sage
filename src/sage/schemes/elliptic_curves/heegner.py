@@ -92,7 +92,6 @@ The above is consistent with the following analytic computation::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import, division
 
 from sage.misc.all import prod
 from sage.misc.verbose import verbose

@@ -31,7 +31,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor

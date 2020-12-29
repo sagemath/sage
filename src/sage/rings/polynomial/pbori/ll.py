@@ -1,6 +1,9 @@
 from sage.rings.polynomial.pbori.pbori import (top_index, if_then_else,
                                                substitute_variables)
-from .PyPolyBoRi import *
+from .PyPolyBoRi import (BooleSet, Polynomial, Monomial, Ring,
+                         BoolePolynomialVector,
+                         ll_red_nf_redsb, ll_red_nf_noredsb,
+                         ll_red_nf_noredsb_single_recursive_call)
 from .statistics import used_vars_set
 from .rank import rank
 
@@ -106,15 +109,15 @@ def eliminate(polys, on_the_fly=False, prot=False, reduction_function=None,
         else:
             reduction_function = ll_red_nf_redsb
 
-    def llnf(p):
-        return reduction_function(p, reductors)
-    reduced_list = []
     if optimized:
         llnf, reduced_list = eliminate_ll_ranked(linear_leads, rest,
                                                  reduction_function=reduction_function,
                                                  reduce_ll_system=(not on_the_fly),
                                                  prot=prot)
     else:
+        def llnf(p):
+            return reduction_function(p, reductors)
+        reduced_list = []
         reductors = ll_encode(linear_leads, reduce=(not on_the_fly), prot=prot)
         for p in rest:
             p = reduction_function(p, reductors)

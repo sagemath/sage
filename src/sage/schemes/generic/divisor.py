@@ -31,7 +31,6 @@ EXAMPLES::
     sage: C.divisor([(3, pts[0]), (-1, pts[1]), (10,pts[5])])
     3*(x, y) - (x, z) + 10*(x + 2*z, y + z)
 """
-from __future__ import absolute_import
 #*******************************************************************************
 #  Copyright (C) 2010 Volker Braun <vbraun.name@gmail.com>
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu.au>

@@ -46,7 +46,6 @@ AUTHORS:
 # "adjuster" mechanism. The purpose of this is to allow us to seamlessly change
 # conventions for matrix actions (since there are several in use in the
 # literature and no natural "best" choice).
-from __future__ import print_function
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.abstract_method import abstract_method
 from sage.structure.factory import UniqueFactory

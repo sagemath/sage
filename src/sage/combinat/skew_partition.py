@@ -141,7 +141,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent

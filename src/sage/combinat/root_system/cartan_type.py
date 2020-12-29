@@ -475,7 +475,6 @@ this data.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import, division
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method

@@ -30,16 +30,15 @@ AUTHORS:
 - David Joyner (2008-10) small docstring changes to WalshCode and walsh_matrix
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Joyner <wdjoyner@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.all import prod
 from sage.arith.all import quadratic_residues, gcd
@@ -60,9 +59,10 @@ from .linear_code import LinearCode
 
 ############### utility functions ################
 
+
 def _is_a_splitting(S1, S2, n, return_automorphism=False):
     r"""
-    Check wether ``(S1,S2)`` is a splitting of `\ZZ/n\ZZ`.
+    Check whether ``(S1,S2)`` is a splitting of `\ZZ/n\ZZ`.
 
     A splitting of `R = \ZZ/n\ZZ` is a pair of subsets of `R` which is a
     partition of `R \\backslash \{0\}` and such that there exists an element `r`

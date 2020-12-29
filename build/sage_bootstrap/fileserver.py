@@ -39,6 +39,8 @@ class FileServer(object):
         """
         Upload the current tarball of package
         """
+        if not package.tarball.is_distributable():
+            raise ValueError('Tarball of {} is marked as not distributable'.format(package))
         subprocess.check_call([
             'ssh', 'sagemath@fileserver.sagemath.org',
             'mkdir -p {0} && touch {0}/index.html'.format(self.upstream_directory(package))

@@ -73,14 +73,14 @@ import weakref
 OrderCode = type('OrderCode', (object,), order_dict)
 
 
-def Ring(n, order='lp', names=None, blocks=[]):
-
+def Ring(n, order='lp', names=None, blocks=None):
+    if blocks is None:
+        blocks = []
     pbnames = names
     if pbnames is None:
         pbnames = ['x(' + str(idx) + ')' for idx in range(n)]
     order = TermOrder_from_pb_order(n, order, blocks)
-    R = BooleanPolynomialRing(n, names=pbnames, order=order)
-    return R
+    return BooleanPolynomialRing(n, names=pbnames, order=order)
 
 
 BoolePolynomialVector = BooleanPolynomialVector

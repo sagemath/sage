@@ -25,7 +25,6 @@ REFERENCES:
 
 - R. Roy, F. W. J. Olver, Elementary Functions, https://dlmf.nist.gov/4
 """
-from __future__ import division
 
 from sage.symbolic.function import GinacFunction
 

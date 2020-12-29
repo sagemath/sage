@@ -374,7 +374,9 @@ def package_systems():
         # to obtain system package advice.
         try:
             proc = run('sage-guess-package-system', shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True, check=True)
-            _cache_package_systems = [PackageSystem(proc.stdout.strip())]
+            system_name = proc.stdout.strip()
+            if system_name != 'unknown':
+                _cache_package_systems = [PackageSystem(system_name)]
         except CalledProcessError:
             pass
         more_package_systems = [SagePackageSystem(), PipPackageSystem()]

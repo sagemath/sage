@@ -39,8 +39,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-# python3
-from __future__ import division, print_function, absolute_import
 
 from sage.all import ZZ, Integer, vector, SageObject, binomial
 from .decoder import Decoder

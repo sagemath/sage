@@ -43,7 +43,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 import math
 
@@ -179,6 +178,51 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         """
         return (self.__base_ring, list(self.__ainvs))
 
+    def _equation_string(self):
+        """
+        String representation of the equation of elliptic curve.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve([1,2,3,4,5]); E._equation_string()
+            'y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5'
+        """
+        b = self.ainvs()
+        a = [z._coeff_repr() for z in b]
+        s = "y^2"
+        if a[0] == "-1":
+            s += " - x*y"
+        elif a[0] == '1':
+            s += " + x*y"
+        elif b[0]:
+            s += " + %s*x*y" % a[0]
+        if a[2] == "-1":
+            s += " - y"
+        elif a[2] == '1':
+            s += " + y"
+        elif b[2]:
+            s += " + %s*y" % a[2]
+        s += " = x^3"
+        if a[1] == "-1":
+            s += " - x^2"
+        elif a[1] == '1':
+            s += " + x^2"
+        elif b[1]:
+            s += " + %s*x^2" % a[1]
+        if a[3] == "-1":
+            s += " - x"
+        elif a[3] == '1':
+            s += " + x"
+        elif b[3]:
+            s += " + %s*x" % a[3]
+        if a[4] == '-1':
+            s += " - 1"
+        elif a[4] == '1':
+            s += " + 1"
+        elif b[4]:
+            s += " + %s" % a[4]
+        return s.replace("+ -","- ")
+
     def _repr_(self):
         """
         String representation of elliptic curve.
@@ -196,43 +240,9 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Elliptic Curve defined by y^2  = x^3 + (a^2-3)*x + (-2/3*a+3) over Number Field in a
             with defining polynomial x^3 - 17
         """
-        b = self.ainvs()
-        a = [z._coeff_repr() for z in b]
         s = "Elliptic Curve defined by "
-        s += "y^2 "
-        if a[0] == "-1":
-            s += "- x*y "
-        elif a[0] == '1':
-            s += "+ x*y "
-        elif b[0]:
-            s += "+ %s*x*y " % a[0]
-        if a[2] == "-1":
-            s += "- y "
-        elif a[2] == '1':
-            s += "+ y "
-        elif b[2]:
-            s += "+ %s*y " % a[2]
-        s += "= x^3 "
-        if a[1] == "-1":
-            s += "- x^2 "
-        elif a[1] == '1':
-            s += "+ x^2 "
-        elif b[1]:
-            s += "+ %s*x^2 " % a[1]
-        if a[3] == "-1":
-            s += "- x "
-        elif a[3] == '1':
-            s += "+ x "
-        elif b[3]:
-            s += "+ %s*x " % a[3]
-        if a[4] == '-1':
-            s += "- 1 "
-        elif a[4] == '1':
-            s += "+ 1 "
-        elif b[4]:
-            s += "+ %s " % a[4]
-        s = s.replace("+ -","- ")
-        s += "over %s" % self.base_ring()
+        s += self._equation_string()
+        s += " over %s" % self.base_ring()
         return s
 
     def _latex_(self):

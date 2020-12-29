@@ -4,6 +4,9 @@
 
 cd src
 
+export CFLAGS=$CFLAGS_NON_NATIVE
+export CXXFLAGS=$CXXFLAGS_NON_NATIVE
+
 GAP_BUILD_ROOT="$(pwd)"
 GAP_ROOT="$SAGE_LOCAL/share/gap"
 DESTDIR_GAP_ROOT="$SAGE_DESTDIR$GAP_ROOT"
@@ -12,9 +15,6 @@ DESTDIR_GAP_ROOT="$SAGE_DESTDIR$GAP_ROOT"
 # Note that -g3 allows you to use preprocessor macros in gdb which are widely used
 if [ "$SAGE_DEBUG" = yes ] ; then
     export CFLAGS="-O0 -g3 -DDEBUG_MASTERPOINTERS -DDEBUG_GLOBAL_BAGS -DDEBUG_FUNCTIONS_BAGS $CFLAGS"
-else
-    # Default flags
-    export CFLAGS="-O2 -g $CFLAGS"
 fi
 
 sdh_configure $SAGE_CONFIGURE_GMP
@@ -66,6 +66,7 @@ sdh_install \
     pkg/fga \
     pkg/irredsol-* \
     pkg/laguna-* \
+    pkg/PackageManager-* \
     pkg/polenta-* \
     pkg/polycyclic-* \
     pkg/resclasses-* \

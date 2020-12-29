@@ -1344,7 +1344,13 @@ cdef class SparseGraphBackend(CGraphBackend):
         cdef int v_int = self.get_vertex_checked(v)
         if u_int == -1 or v_int == -1:
             return False
+        return self._has_labeled_edge_unsafe(u_int, v_int, l)
 
+    cdef inline bint _has_labeled_edge_unsafe(self, int u_int, int v_int, object l) except -1:
+        """
+        Return whether ``self`` has an arc specified by indices of the vertices
+        and an arc label.
+        """
         cdef SparseGraph cg = self.cg()
         if l is None:
             return 1 == cg.has_arc_unsafe(u_int, v_int)

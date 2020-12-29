@@ -18,7 +18,6 @@ REFERENCES:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from .linear_code import AbstractLinearCode
 from sage.matrix.matrix_space import MatrixSpace

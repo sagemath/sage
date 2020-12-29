@@ -134,9 +134,7 @@ class CNFEncoder(object):
             return -1
 
         items = sorted(c.items(), reverse=True)
-        return " ".join(
-        [str(v) for v in
-            [
+        return " ".join([str(v) for v in [
             get_sign(value) * self.to_dimacs_index(variable)
             for (variable, value) in items] + [0]])
 

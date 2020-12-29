@@ -367,6 +367,8 @@ cdef class NCPolynomialRing_plural(Ring):
             True
             sage: H is loads(dumps(H))  # indirect doctest
             True
+            sage: A2.<x,y,z> = FreeAlgebra(GF(5), 3)
+            sage: R2 = A2.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y}, order=TermOrder('degrevlex', 2))
 
         Check that :trac:`17224` is fixed::
 

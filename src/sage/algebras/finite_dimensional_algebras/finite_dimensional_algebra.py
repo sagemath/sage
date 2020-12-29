@@ -11,7 +11,6 @@ Finite-Dimensional Algebras
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from .finite_dimensional_algebra_element import FiniteDimensionalAlgebraElement
 from .finite_dimensional_algebra_ideal import FiniteDimensionalAlgebraIdeal

@@ -1,33 +1,30 @@
-
-from .nf import *
-from .PyPolyBoRi import *
-from .ll import eliminate, ll_encode
 from copy import copy
 from itertools import chain
+from inspect import getfullargspec as getargspec
+
+from .nf import GeneratorLimitExceeded, symmGB_F2_C, symmGB_F2_python
+from .PyPolyBoRi import (Monomial, Polynomial,
+                         GroebnerStrategy, OrderCode, ll_red_nf_redsb)
+from .ll import eliminate, ll_encode
 from .statistics import used_vars_set
 from .heuristics import dense_system, gauss_on_linear
 from .easy_polynomials import easy_linear_polynomials
 from .interpolate import lex_groebner_basis_for_polynomial_via_variety
 from .fglm import _fglm
 
-from inspect import getfullargspec as getargspec
-
 
 def get_options_from_function(f):
     (argnames, varargs, varopts, defaults) = getargspec(f)[:4]
-    return dict(
-        zip(
-            argnames[-len(defaults):], defaults))
+    return dict(zip(argnames[-len(defaults):], defaults))
 
 
 def filter_oldstyle_options(**options):
     filtered = dict()
-    for key in options.keys():
+    for key in options:
         newkey = key
-        for prefix in ['', 'use_', 'opt_allow_', 'opt_']:
+        for prefix in ['use_', 'opt_allow_', 'opt_']:
             newkey = newkey.replace(prefix, '')
         filtered[newkey] = options[key]
-
     return filtered
 
 
@@ -42,27 +39,11 @@ def filter_newstyle_options(func, **options):
     return filtered
 
 
-def owns_one_constant(I):
-    """Determines whether I contains the constant one polynomial."""
-    for p in I:
-        if p.is_one():
-            return True
-    return False
-
-
 def want_interpolation_gb(G):
-    if not G:
-        return False
-    if G[0].ring().get_order_code() != OrderCode.lp:
-        return False
-    if len(G) != 1:
+    if not G or G[0].ring().get_order_code() != OrderCode.lp or len(G) != 1:
         return False
     p = Polynomial(G[0])
-    if p.lead_deg() <= 1:
-        return False
-    if p.set().n_nodes() > 1000:
-        return False
-    return True
+    return not (p.lead_deg() <= 1 or p.set().n_nodes() > 1000)
 
 
 def ll_is_good(I):
@@ -205,13 +186,9 @@ def with_heuristic(heuristic_function):
     return make_wrapper
 
 
-def clean_polys(I):
-    I = list(set((Polynomial(p) for p in I if not Polynomial(p).is_zero())))
-    return I
-
-
 def clean_polys_pre(I):
-    return (clean_polys(I), None)
+    wrap = (Polynomial(p) for p in I)
+    return (list(set(p for p in wrap if not p.is_zero())), None)
 
 
 def gb_with_pre_post_option(option, pre=None,
@@ -267,14 +244,14 @@ def gb_with_pre_post_option(option, pre=None,
 
 
 def redsb_post(I, state):
-    if I == []:
+    if not I:
         return []
     else:
         return I.minimalize_and_tail_reduce()
 
 
 def minsb_post(I, state):
-    if I == []:
+    if not I:
         return []
     else:
         return I.minimalize()
@@ -441,21 +418,19 @@ def llfirst_post(I, state, prot, kwds):
     for p in I:
         if p.is_one():
             return [p]
-    else:
-        if len(eliminated) > 0:
-            I = list(chain(I, eliminated))
-            # redsb just for safety, as don't know how option is set
-            kwds = copy(kwds)
-            kwds.update(
-                dict(llfirst=False,
-                llfirstonthefly=False,
-                ll_constants=False,
-                deg_bound=False,
-                other_ordering_first=False,
-                eliminate_identical_variables=False, redsb=True))
-            I = groebner_basis(
-                I, **kwds
-            )
+
+    if eliminated:
+        I = list(chain(I, eliminated))
+        # redsb just for safety, as don't know how option is set
+        kwds = copy(kwds)
+        kwds.update(
+            dict(llfirst=False,
+            llfirstonthefly=False,
+            ll_constants=False,
+            deg_bound=False,
+            other_ordering_first=False,
+            eliminate_identical_variables=False, redsb=True))
+        I = groebner_basis(I, **kwds)
     return I
 
 
@@ -464,11 +439,10 @@ def ll_constants_post(I, state):
     for p in I:
         if p.is_one():
             return [p]
-    else:
-        if len(eliminated) > 0:
-            I = list(chain(I, eliminated))
-            # redsb just for safety, as don't know how option is set
-        return I
+    if eliminated:
+        I = list(chain(I, eliminated))
+        # redsb just for safety, as don't know how option is set
+    return I
 
 
 def result_to_list_post(I, state):

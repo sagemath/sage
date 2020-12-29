@@ -9,7 +9,6 @@ AUTHORS:
 
 - Peter Bruin
 """
-from __future__ import absolute_import
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject

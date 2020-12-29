@@ -27,7 +27,6 @@ See :trac:`24508`
 #
 # Copyright (c) 1991-1995 Stichting Mathematisch Centrum.  All rights reserved.
 
-from __future__ import division
 
 from warnings import warn as _warn
 from types import MethodType as _MethodType, BuiltinMethodType as _BuiltinMethodType

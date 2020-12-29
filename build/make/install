@@ -33,6 +33,11 @@ export PATH="$SAGE_ROOT/build/bin:$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
 
 export PYTHONPATH="$SAGE_LOCAL"
 
+sage_num_threads_array=$(sage-build-num-threads 2>/dev/null || echo 1 2 1)
+sage_num_threads_array="${sage_num_threads_array% *}" # strip third item
+export SAGE_NUM_THREADS="${sage_num_threads_array% *}" # keep first item
+export SAGE_NUM_THREADS_PARALLEL="${sage_num_threads_array#* }" # keep second item
+
 ###############################################################################
 # Skip the rest if nothing to do (i.e., to [re]build).
 ###############################################################################

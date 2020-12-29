@@ -18,7 +18,6 @@ AUTHORS:
 #
 #                    https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.interfaces.gap import gap
 from sage.categories.morphism import Morphism

@@ -13,7 +13,6 @@
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 import time
 from math import floor

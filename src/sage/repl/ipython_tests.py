@@ -157,6 +157,6 @@ def dummy(argument, optional=None):
 
         sage: from sage.repl.ipython_tests import dummy
         sage: dummy(1)
-        'Source code would be here' 
+        'Source code would be here'
     """
     return 'Source code would be here'

@@ -6,7 +6,7 @@ diff --git a/src/env/error.c b/src/env/error.c
 index a898b76..154de0f 100644
 --- a/src/env/error.c
 +++ b/src/env/error.c
-@@ -50,6 +50,7 @@ static void errfunc(const char *fmt, ...)
+@@ -48,6 +48,7 @@ static void errfunc(const char *fmt, ...)
        va_end(arg);
        xprintf("Error detected in file %s at line %d\n",
           env->err_file, env->err_line);

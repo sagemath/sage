@@ -5,7 +5,6 @@
 ###############################################################################
 if [ "$SAGE_DEBUG" = "yes" ]; then
     echo "Building a debug version of FLINT."
-    CFLAGS="-O0 -g $CFLAGS"; export CFLAGS
     FLINT_TUNE=" $FLINT_TUNE"; export FLINT_TUNE
     FLINT_CONFIGURE="--enable-assert $FLINT_CONFIGURE"
 fi

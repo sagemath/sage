@@ -219,7 +219,6 @@ For more details, see the documentation for ``._sage_()``.
 #
 #                  https://www.gnu.org/licenses/
 #############################################################################
-from __future__ import print_function
 
 import os
 

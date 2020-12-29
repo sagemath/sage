@@ -10,7 +10,6 @@ AUTHORS:
 - Gonzalo Tornaria (2010-03-23): theta series of degree 2
 
 """
-from __future__ import print_function
 
 from copy import deepcopy
 

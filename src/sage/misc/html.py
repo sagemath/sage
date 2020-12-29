@@ -5,7 +5,6 @@ This module defines a HTML fragment class, which holds a piece of
 HTML. This is primarily used in browser-based notebooks, though it
 might be useful for creating static pages as well.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
@@ -63,7 +62,7 @@ class HtmlFragment(str, SageObject):
 def math_parse(s):
     r"""
     Replace TeX-``$`` with Mathjax equations.
-    
+
     Turn the HTML-ish string s that can have \$\$ and \$'s in it into
     pure HTML.  See below for a precise definition of what this means.
 
@@ -141,7 +140,7 @@ def math_parse(s):
 
         # Now find the matching $ sign and form the html string.
 
-        if len(disp) > 0:
+        if disp:
             j = s[i+2:].find('$$')
             if j == -1:
                 j = len(s)
@@ -158,10 +157,10 @@ def math_parse(s):
                 j += i + 2
             txt = s[i+1:j]
 
-        t += s[:i] + '<script type="math/tex%s">%s</script>'%(disp,
+        t += s[:i] + '<script type="math/tex%s">%s</script>' % (disp,
                       ' '.join(txt.splitlines()))
         s = s[j+1:]
-        if len(disp) > 0:
+        if disp:
             s = s[1:]
     return HtmlFragment(t)
 
@@ -177,27 +176,27 @@ class HTMLFragmentFactory(SageObject):
         String.
 
         EXAMPLES::
-        
+
             sage: html
             Create HTML output (see html? for details)
         """
         return 'Create HTML output (see html? for details)'
-    
+
     def __call__(self, obj):
         r"""
         Construct a HTML fragment
-     
+
         INPUT:
-     
+
         - ``obj`` -- anything. An object for which you want a HTML
           representation.
-     
+
         OUTPUT:
-     
+
         A :class:`HtmlFragment` instance.
-     
+
         EXAMPLES::
-     
+
             sage: h = html('<hr>');  pretty_print(h)
             <hr>
             sage: type(h)
@@ -229,7 +228,7 @@ class HTMLFragmentFactory(SageObject):
             return math_parse('${0}$'.format(obj._latex_()))
         # If all else fails
         return math_parse(str(obj))
-         
+
     def eval(self, s, locals=None):
         r"""
         Evaluate embedded <sage> tags
@@ -242,9 +241,9 @@ class HTMLFragmentFactory(SageObject):
           evaluating ``s``. Default: the current global variables.
 
         OUTPUT:
-     
+
         A :class:`HtmlFragment` instance.
-     
+
         EXAMPLES::
 
             sage: a = 123
@@ -289,7 +288,7 @@ class HTMLFragmentFactory(SageObject):
           Defaults to 800.
 
         OUTPUT:
-     
+
         A :class:`HtmlFragment` instance.
 
         EXAMPLES::
@@ -309,7 +308,7 @@ class HTMLFragmentFactory(SageObject):
             sage: pretty_print(html.iframe('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA'
             ....: 'AUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBA'
             ....: 'AO9TXL0Y4OHwAAAABJRU5ErkJggg=="'))
-            <iframe height="400" width="800" 
+            <iframe height="400" width="800"
             src="http://data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==""></iframe>
         """
         if url.startswith('/'):

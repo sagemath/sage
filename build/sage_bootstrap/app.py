@@ -20,7 +20,7 @@ import logging
 log = logging.getLogger()
 
 from sage_bootstrap.package import Package
-from sage_bootstrap.tarball import Tarball
+from sage_bootstrap.tarball import Tarball, FileNotMirroredError
 from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
 from sage_bootstrap.creator import PackageCreator
 from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound
@@ -43,7 +43,7 @@ class Application(object):
         from sage_bootstrap.config import Configuration
         print(Configuration())
 
-    def list_cls(self, package_class):
+    def list_cls(self, *package_classes, **filters):
         """
         Print a list of all available packages
 
@@ -54,9 +54,19 @@ class Application(object):
         autotools
         [...]
         zn_poly
+
+        $ sage -package list --has-file=spkg-configure.m4 :experimental:
+        perl_term_readline_gnu
+
+        $ sage -package list --has-file=spkg-configure.m4 --has-file=distros/debian.txt | sort
+        arb
+        boost_cropped
+        brial
+        [...]
+        zn_poly
         """
         log.debug('Listing packages')
-        pc = PackageClass(package_class)
+        pc = PackageClass(*package_classes, **filters)
         for pkg_name in pc.names:
             print(pkg_name)
 
@@ -157,9 +167,22 @@ class Application(object):
         package.tarball.download(allow_upstream=allow_upstream)
         print(package.tarball.upstream_fqn)
 
-    def download_cls(self, package_name_or_class):
-        pc = PackageClass(package_name_or_class)
-        pc.apply(self.download)
+    def download_cls(self, package_name_or_class, allow_upstream=False, on_error='stop'):
+        """
+        Download a package or a class of packages
+        """
+        pc = PackageClass(package_name_or_class, has_files=['checksums.ini'])
+        def download_with_args(package):
+            try:
+                self.download(package, allow_upstream=allow_upstream)
+            except FileNotMirroredError:
+                if on_error == 'stop':
+                    raise
+                elif on_error == 'warn':
+                    log.warn('Unable to download tarball of %s', package)
+                else:
+                    raise ValueError('on_error must be one of "stop" and "warn"')
+        pc.apply(download_with_args)
 
     def upload(self, package_name):
         """
@@ -170,7 +193,11 @@ class Application(object):
         """
         package = Package(package_name)
         if not os.path.exists(package.tarball.upstream_fqn):
-            log.debug('Skipping %s because there is no local tarbal', package_name)
+            log.debug('Skipping %s because there is no local tarball', package_name)
+            return
+        if not package.tarball.is_distributable():
+            log.info('Skipping %s because the tarball is marked as not distributable',
+                     package_name)
             return
         log.info('Uploading %s', package.tarball.upstream_fqn)
         fs = FileServer()
@@ -180,6 +207,7 @@ class Application(object):
         pc = PackageClass(package_name_or_class)
         pc.apply(self.upload)
         fs = FileServer()
+        log.info('Publishing')
         fs.publish()
         
     def fix_all_checksums(self):
@@ -215,13 +243,44 @@ class Application(object):
             print('Updating checksum of {0} (tarball {1})'.format(package_name, pkg.tarball_filename))
             update.fix_checksum()
         
-    def create(self, package_name, version, tarball, pkg_type, upstream_url):
+    def create(self, package_name, version=None, tarball=None, pkg_type=None, upstream_url=None,
+               description=None, license=None, upstream_contact=None, pypi=False, source='normal'):
+        """
+        Create a normal package
+        """
+        if '-' in package_name:
+            raise ValueError('package names must not contain dashes, use underscore instead')
+        if pypi:
+            pypi_version = PyPiVersion(package_name)
+            if source == 'normal':
+                if not tarball:
+                    # Guess the general format of the tarball name.
+                    tarball = pypi_version.tarball.replace(pypi_version.version, 'VERSION')
+                if not version:
+                    version = pypi_version.version
+                # Use a URL from pypi.io instead of the specific URL received from the PyPI query
+                # because it follows a simple pattern.
+                upstream_url = 'https://pypi.io/packages/source/{0:1.1}/{0}/{1}'.format(package_name, tarball)
+            if not description:
+                description = pypi_version.summary
+            if not license:
+                license = pypi_version.license
+            if not upstream_contact:
+                upstream_contact = pypi_version.package_url
+        if tarball and not pkg_type:
+            # If we set a tarball, also make sure to create a "type" file,
+            # so that subsequent operations (downloading of tarballs) work.
+            pkg_type = 'optional'
         log.debug('Creating %s: %s, %s, %s', package_name, version, tarball, pkg_type)
         creator = PackageCreator(package_name)
         if version:
             creator.set_version(version)
         if pkg_type:
             creator.set_type(pkg_type)
+        if description or license or upstream_contact:
+            creator.set_description(description, license, upstream_contact)
+        if pypi or source == 'pip':
+            creator.set_python_data_and_scripts(pypi_package_name=pypi_version.name, source=source)
         if tarball:
             creator.set_tarball(tarball, upstream_url)
             if upstream_url and version:

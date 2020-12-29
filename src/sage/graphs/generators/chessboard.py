@@ -21,7 +21,6 @@ AUTHORS:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 ################################################################################
-from __future__ import print_function
 
 def ChessboardGraphGenerator(dim_list,
                              rook = True,    rook_radius = None,

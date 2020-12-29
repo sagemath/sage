@@ -32,7 +32,12 @@ from sage_bootstrap.app import Application
 
 description = \
 """
-Sage Bootstrap Library
+SageMath Bootstrap Library
+
+Provides scripts to manage the packages of Sage-the-distribution,
+including SageMath's database of equivalent system packages,
+and to download and upload tarballs from/to SageMath servers.
+
 """
 
 
@@ -58,7 +63,7 @@ EXAMPLE:
 
 epilog_list = \
 """
-Print a list of all available packages
+Print a list of packages known to Sage
 
 EXAMPLE:
 
@@ -197,12 +202,17 @@ def make_parser():
     parser_list = subparsers.add_parser(
         'list', epilog=epilog_list,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Print a list of all available packages')
+        help='Print a list of packages known to Sage')
     parser_list.add_argument(
-        'package_class',
-        type=str, default=':all:', nargs='?',
-        help='Package class like :all: (default) or :standard:')
-
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, default=[':all:'], nargs='*',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, :experimental:, and :huge:); '
+              'default: :all:'))
+    parser_list.add_argument(
+        '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
+        help=('only include packages that have this file in their metadata directory'
+              '(examples: SPKG.rst, spkg-configure.m4, distros/debian.txt)'))
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -250,6 +260,9 @@ def make_parser():
     parser_download.add_argument(
         '--allow-upstream', action="store_true",
         help='Whether to fall back to downloading from the upstream URL')
+    parser_download.add_argument(
+        '--on-error', choices=['stop', 'warn'], default='stop',
+        help='What to do if the tarball cannot be downloaded')
 
     parser_upload = subparsers.add_parser(
         'upload', epilog=epilog_upload,
@@ -265,14 +278,16 @@ def make_parser():
     parser_fix_checksum.add_argument(
         'package_name', nargs='?', default=None, type=str,
         help='Package name. Default: fix all packages.')
-    
+
     parser_create = subparsers.add_parser(
         'create', epilog=epilog_create,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Create or overwrite package.')
     parser_create.add_argument(
-        'package_name', nargs='?', default=None, type=str,
-        help='Package name. Default: fix all packages.')
+        'package_name', default=None, type=str,
+        help='Package name.')
+    parser_create.add_argument(
+        '--source', type=str, default='normal', help='Package source (one of normal, script, pip)')
     parser_create.add_argument(
         '--version', type=str, default=None, help='Package version')
     parser_create.add_argument(
@@ -281,6 +296,15 @@ def make_parser():
         '--type', type=str, default=None, help='Package type')
     parser_create.add_argument(
         '--url', type=str, default=None, help='Download URL pattern, e.g. http://example.org/Foo-VERSION.tar.bz2')
+    parser_create.add_argument(
+        '--description', type=str, default=None, help='Short description of the package (for SPKG.rst)')
+    parser_create.add_argument(
+        '--license', type=str, default=None, help='License of the package (for SPKG.rst)')
+    parser_create.add_argument(
+        '--upstream-contact', type=str, default=None, help='Upstream contact (for SPKG.rst)')
+    parser_create.add_argument(
+        '--pypi', action="store_true",
+        help='Create a package for a Python package available on PyPI')
 
     return parser
 
@@ -300,7 +324,7 @@ def run():
     if args.subcommand == 'config':
         app.config()
     elif args.subcommand == 'list':
-        app.list_cls(args.package_class)
+        app.list_cls(*args.package_class, has_files=args.has_files)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':
@@ -315,9 +339,13 @@ def run():
         else:
             app.update_latest(args.package_name)
     elif args.subcommand == 'download':
-        app.download_cls(args.package_name, args.allow_upstream)
+        app.download_cls(args.package_name,
+                         allow_upstream=args.allow_upstream,
+                         on_error=args.on_error)
     elif args.subcommand == 'create':
-        app.create(args.package_name, args.version, args.tarball, args.type, args.url)
+        app.create(args.package_name, args.version, args.tarball, args.type, args.url,
+                   args.description, args.license, args.upstream_contact,
+                   pypi=args.pypi, source=args.source)
     elif args.subcommand == 'upload':
         app.upload_cls(args.package_name)
     elif args.subcommand == 'fix-checksum':

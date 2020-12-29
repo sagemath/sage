@@ -1,9 +1,3 @@
 cd src
 
-if [ "$SAGE_DEBUG" = "yes" ]; then
-    export CFLAGS="-O0 -g $CFLAGS"
-else
-    export CFLAGS="-O2 -g $CFLAGS"
-fi
-
 $MAKE check

@@ -7,6 +7,7 @@
 
 from sage.data_structures.bitset cimport bitset_t
 from .graph_backends cimport GenericGraphBackend
+from libc.stdint cimport uint32_t
 
 cdef class CGraph:
     cdef size_t num_verts
@@ -95,6 +96,10 @@ cdef class CGraphBackend(GenericGraphBackend):
     cdef bint _multiple_edges
     cdef CGraph cg(self)
     cpdef add_edge(self, object u, object v, object l, bint directed)
+    cpdef del_edge(self, object u, object v, object l, bint directed)
+    cdef bint _has_labeled_edge_unsafe(self, int, int, object) except -1
     cdef bint _delete_edge_before_adding(self)
     cdef int new_edge_label(self, object l) except -1
     cdef int free_edge_label(self, int l_int) except -1
+    cdef int _use_edge_iterator_on_subgraph(self, CGraphBackend other, object vertices, const int modus) except -1
+    cdef list _all_edge_labels(self, int u, int v, uint32_t* edge=*)

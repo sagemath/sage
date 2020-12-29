@@ -27,7 +27,6 @@ EXAMPLES::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.rings.all import Rational, Integer, ZZ, QQ
 from sage.rings.infinity import Infinity, InfinityRing

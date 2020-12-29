@@ -37,7 +37,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 import operator
 

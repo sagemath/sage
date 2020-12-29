@@ -216,7 +216,10 @@ CMD ["sage"]
 # stripped that can be quickly rebuild by make.                                #
 ################################################################################
 FROM make-all as make-fast-rebuild-clean
-RUN make fast-rebuild-clean
+# Of course, without site-packages/sage, sage does not start but copying/compiling
+# them from build/pkgs/sagelib/src/build is very fast.
+RUN make fast-rebuild-clean; \
+    rm -rf local/lib/python*/site-packages/sage
 
 ################################################################################
 # Depending on whether we built from source-clean or not, this image is either #

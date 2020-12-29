@@ -12,7 +12,6 @@ Arithmetic subgroups (finite index subgroups of `{\rm SL}_2(\ZZ)`)
 #                  https://www.gnu.org/licenses/
 #
 ################################################################################
-from __future__ import absolute_import
 
 from sage.groups.old import Group
 from sage.categories.groups import Groups

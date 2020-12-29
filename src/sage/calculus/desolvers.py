@@ -71,7 +71,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##########################################################################
-from __future__ import division
 
 import shutil
 import os

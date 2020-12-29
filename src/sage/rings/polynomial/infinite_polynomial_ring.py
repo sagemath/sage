@@ -1,4 +1,4 @@
-"""
+r"""
 Infinite Polynomial Rings
 
 By Infinite Polynomial Rings, we mean polynomial rings in a countably
@@ -10,8 +10,8 @@ AUTHORS:
 - Simon King <simon.king@nuigalway.ie>
 - Mike Hansen <mhansen@gmail.com>
 
-An Infinite Polynomial Ring has finitely many generators `x_\\ast,
-y_\\ast,...` and infinitely many variables of the form `x_0, x_1, x_2,
+An Infinite Polynomial Ring has finitely many generators `x_\ast,
+y_\ast,...` and infinitely many variables of the form `x_0, x_1, x_2,
 ..., y_0, y_1, y_2,...,...`.  We refer to the natural number `n` as
 the *index* of the variable `x_n`.
 
@@ -619,10 +619,10 @@ class GenDictWithBasering:
 ##  The sparse implementation
 
 class InfinitePolynomialRing_sparse(CommutativeRing):
-    """
+    r"""
     Sparse implementation of Infinite Polynomial Rings.
 
-    An Infinite Polynomial Ring with generators `x_\\ast, y_\\ast,
+    An Infinite Polynomial Ring with generators `x_\ast, y_\ast,
     ...` over a field `F` is a free commutative `F`-algebra generated
     by `x_0, x_1, x_2, ..., y_0, y_1, y_2, ..., ...` and is equipped
     with a permutation action on the generators, namely `x_n^P =

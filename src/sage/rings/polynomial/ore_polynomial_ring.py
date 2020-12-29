@@ -730,7 +730,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             sage: A.twisting_morphism()
 
         Here is an example where the twisting morphism is automatically
-        infered from the derivation::
+        inferred from the derivation::
 
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()

@@ -39,7 +39,6 @@ TODO -- much functionality of gfan-0.3 is still not exposed::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from subprocess import Popen, PIPE
 

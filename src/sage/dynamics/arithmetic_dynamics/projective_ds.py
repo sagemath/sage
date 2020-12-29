@@ -51,7 +51,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.arith.misc import is_prime
 from sage.categories.fields import Fields

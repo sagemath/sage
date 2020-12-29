@@ -1,13 +1,5 @@
 cd src
 
-if [ "x$SAGE_DEBUG" = "xyes" ] ; then
-    CFLAGS="-g -O0 $CFLAGS"
-    CXXFLAGS="-g -O0 $CXXFLAGS"
-else
-    CFLAGS="-g -O2 $CFLAGS"
-    CXXFLAGS="-g -O2 $CXXFLAGS"
-fi
-
 if [ "$UNAME" = "CYGWIN" ]; then
     # Some of ECL's sources rely on GNU-isms that are allowed by default on
     # most glibcs, but not in newlib; https://trac.sagemath.org/ticket/25057

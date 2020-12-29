@@ -32,7 +32,6 @@ EXAMPLES::
     [ 3  3  0 -3]
     [-3  6  3 -3]
 """
-from __future__ import absolute_import
 
 ###########################################################################
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>               #

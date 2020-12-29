@@ -19,7 +19,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function, division
 
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.misc.cachefunc import cached_method

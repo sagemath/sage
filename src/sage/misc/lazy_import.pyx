@@ -342,7 +342,11 @@ cdef class LazyImport(object):
             sage: repr(lazy_ZZ)
             'Integer Ring'
         """
-        return repr(self.get_object())
+        try:
+            obj = self.get_object()
+            return repr(obj)
+        except FeatureNotPresentError as e:
+            return "Failed lazy import:\n" + str(e)
 
     def __str__(self):
         """
@@ -960,6 +964,9 @@ def lazy_import(module, names, as_=None, *,
       ``deprecation`` should be either a trac number (integer) or a
       pair ``(trac_number, message)``
 
+    - ``feature`` -- a python module (optional), if it cannot be imported
+      an appropriate error is raised
+
     .. SEEALSO:: :mod:`sage.misc.lazy_import`, :class:`LazyImport`
 
     EXAMPLES::
@@ -1022,6 +1029,22 @@ def lazy_import(module, names, as_=None, *,
         doctest:...: DeprecationWarning: This is an example.
         See http://trac.sagemath.org/14275 for details.
         5-adic Field with capped relative precision 20
+
+    An example of an import relying on a feature::
+
+        sage: from sage.features import PythonModule
+        sage: lazy_import('ppl', 'equation', feature=PythonModule('ppl', spkg='pplpy'))
+        sage: equation
+        <built-in function equation>
+        sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
+        sage: NmzListConeProperties  # optional - pynormaliz
+        <built-in function NmzListConeProperties>
+        sage: lazy_import('foo', 'not_there', feature=PythonModule('foo', spkg='non-existing-package'))
+        sage: not_there
+        Failed lazy import:
+        foo is not available.
+        Importing not_there failed: No module named 'foo'...
+        No equivalent system packages for ... are known to Sage...
     """
     if as_ is None:
         as_ = names

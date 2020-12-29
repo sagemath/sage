@@ -232,7 +232,6 @@ Classes and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation

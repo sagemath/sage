@@ -1,7 +1,6 @@
 """
 Empty Species
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Florent Hivert <Florent.Hivert@univ-rouen,fr>,
 #

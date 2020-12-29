@@ -37,7 +37,6 @@ An introduction is also given in Chapter 4 of [Rüt2014]_.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from .valuation import DiscreteValuation, InfiniteDiscretePseudoValuation
 from .developing_valuation import DevelopingValuation

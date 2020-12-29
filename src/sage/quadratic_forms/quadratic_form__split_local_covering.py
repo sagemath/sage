@@ -5,7 +5,6 @@ Split Local Covering
 ## Routines that look for a split local covering for a given quadratic ##
 ## form in 4 variables.                                                ##
 #########################################################################
-from __future__ import print_function
 
 from copy import deepcopy
 

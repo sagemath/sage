@@ -1,15 +1,7 @@
-if [ "$SAGE_DEBUG" = yes ]; then
-    echo >&2 "Warning: Setting SAGE_DEBUG=yes completely disables optimization."
-    CFLAGS="$CFLAGS -g -O0"
-    CXXFLAGS="$CXXFLAGS -g -O0"
-else
-    # Add debug symbols by default, enable optimization, but let the user
-    # still override these settings:
-    CFLAGS="-g -O3 $CFLAGS"
-    CXXFLAGS="-g -O3 $CXXFLAGS"
-fi
+CFLAGS="$CFLAGS_O3_NON_NATIVE"
+CXXFLAGS="$CXXFLAGS_O3_NON_NATIVE"
 
-export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+export CFLAGS CXXFLAGS
 
 
 echo "Deleting old versions of eclib libraries, which"

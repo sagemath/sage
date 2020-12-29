@@ -31,7 +31,6 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
 
 from sage.categories.rings import Rings
 from sage.rings.infinity import infinity

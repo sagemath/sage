@@ -40,7 +40,8 @@ static inline int _bitset_issubset(mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs
     Test whether a is a subset of b (i.e., every element in a is also
     in b).
     */
-    for(mp_bitcnt_t i = 0; i < limbs; i++){
+    mp_bitcnt_t i;
+    for(i = 0; i < limbs; i++){
         if ((a[i] & ~b[i]) != 0)
             return 0;
     }
@@ -51,7 +52,8 @@ static inline int _bitset_are_disjoint(mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t l
     /*
     Tests whether ``a`` and ``b`` have an empty intersection.
     */
-    for(mp_bitcnt_t i = 0; i < limbs; i++){
+    mp_bitcnt_t i;
+    for(i = 0; i < limbs; i++){
         if (a[i] & b[i])
             return 0;
     }

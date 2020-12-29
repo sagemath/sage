@@ -2,7 +2,7 @@ compilers
 make
 m4
 perl
-"python<3.9"
+python
 tar
 bc
 pkg-config

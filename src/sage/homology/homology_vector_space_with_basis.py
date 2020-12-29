@@ -14,7 +14,6 @@ AUTHORS:
 
 - John H. Palmieri, Travis Scrimshaw (2015-09)
 """
-from __future__ import absolute_import
 
 ########################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>

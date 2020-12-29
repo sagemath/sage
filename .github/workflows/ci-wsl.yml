@@ -1,11 +1,19 @@
 name: Build & Test WSL
 
-on: [push, pull_request]
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    tags:
+      - '*'
+    branches:
+      - 'public/build/**wsl**'
+  workflow_dispatch:
 
 jobs:
   windows:
     runs-on: windows-latest
-    name: Windows (using WSL)
+    name: Ubuntu 20.04
     # Following https://trac.sagemath.org/ticket/25206#comment:63
     steps:
     - name: Configure git
@@ -18,22 +26,10 @@ jobs:
         Ubuntu\ubuntu2004.exe install --root
     - name: Install dependencies
       run: |
-        Function ExtractPackages
-        {
-           param($path)
-           @(Get-Content $path | Where-Object { !$_.StartsWith("#") })
-        }
-        $packages = Get-ChildItem build/pkgs -recurse -Include debian.txt, debian-bootstrap.txt | foreach-object { ExtractPackages $_.FullName } | sort -Unique
-        # Add tox which is use to build
-        $packages += 'tox'
-        echo "Install the following packages:" @packages
-        # Add deadsnakes so that libpython3.7-dev is found
-        & wsl sudo add-apt-repository ppa:deadsnakes/ppa
-        # Install
-        & wsl sudo apt-get update -y 
-        & wsl sudo apt-get install -y @packages
+        wsl sudo apt-get update -y 
+        wsl sudo apt-get install -y tox
     - name: Build
-      run: wsl tox -e local -- SAGE_NUM_THREADS=4 build
+      run: wsl tox -e local-sudo-ubuntu-standard -- SAGE_NUM_THREADS=4 build
       env:
         # WSL runs everything as root, so we have to enable build as root user
         EXTRA_CONFIGURE_ARGS: "--enable-build-as-root"
@@ -42,7 +38,7 @@ jobs:
         MAKE: "make -j2"
         WSLENV: EXTRA_CONFIGURE_ARGS:MAKE
     - name: Test
-      run: wsl tox -e local -- SAGE_NUM_THREADS=4 ptest
+      run: wsl tox -e local-sudo-ubuntu-standard -- SAGE_NUM_THREADS=4 ptest
     - name: Prepare logs artifact
       run: mkdir -p "artifacts/logs"; cp -r .tox/*/log "artifacts/logs"
       shell: bash

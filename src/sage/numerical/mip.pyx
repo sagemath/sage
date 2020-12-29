@@ -2527,7 +2527,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: b.solver_parameter("simplex_or_intopt", "simplex_only")
             sage: b.solver_parameter("verbosity_simplex", "GLP_MSG_ALL")
             sage: ans = p.solve()
-            GLPK Simplex Optimizer, v...
+            GLPK Simplex Optimizer...
             2 rows, 2 columns, 4 non-zeros
             *     0: obj =   7.000000000e+00 inf =   0.000e+00 (2)
             *     2: obj =   9.400000000e+00 inf =   0.000e+00 (0)

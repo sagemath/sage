@@ -1201,7 +1201,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: D = C2.semidirect_product(C8, hom); D
             Finitely presented group < a, b | a^2, b^8, a^-1*b*a*b >
             sage: D = C2.semidirect_product(C8, hom, reduced=True); D
-            Finitely presented group < a, b | a^2, (a*b)^2, b^8 >
+            Finitely presented group < a, b | a^2, a*b*a*b, b^8 >
 
             sage: C3 = groups.presentation.Cyclic(3)
             sage: C4 = groups.presentation.Cyclic(4)
@@ -1442,22 +1442,25 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: H = AlternatingGroup(3)
             sage: G.epimorphisms(H)
             [Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> ()
                      x1 |--> (1,3,2)
-                     x2 |--> (1,2,3), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (1,2,3),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,3,2)
                      x1 |--> ()
-                     x2 |--> (1,2,3), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (1,2,3),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,3,2)
                      x1 |--> (1,2,3)
-                     x2 |--> (), Generic morphism:
-               From: Finitely presented group < x0, x1, x2 | (x0*x1*x2)^2, x0^3 >
+                     x2 |--> (),
+             Generic morphism:
+               From: Finitely presented group < x0, x1, x2 | x0*x1*x2*x0*x1*x2, x0^3 >
                To:   Alternating group of order 3!/2 as a permutation group
                Defn: x0 |--> (1,2,3)
                      x1 |--> (1,2,3)
@@ -1548,11 +1551,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: G = F / [a^2,b^3,(a*b/a)^3,b*a*b*a]
             sage: k = G.rewriting_system()
             sage: k
-            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, (b*a)^2 >
+            Rewriting system of Finitely presented group < a, b | a^2, b^3, a*b^3*a^-1, b*a*b*a >
             with rules:
                 a^2    --->    1
                 b^3    --->    1
-                (b*a)^2    --->    1
+                b*a*b*a    --->    1
                 a*b^3*a^-1    --->    1
 
             sage: G([1,1,2,2,2])

@@ -51,7 +51,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ

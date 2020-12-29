@@ -21,7 +21,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.plot.bezier_path import BezierPath
 from sage.misc.decorators import options, rename_keyword

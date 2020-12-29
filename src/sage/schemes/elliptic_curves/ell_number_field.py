@@ -73,7 +73,6 @@ REFERENCE:
 - [Sil2] Silverman, Joseph H. Advanced topics in the arithmetic of elliptic curves. Graduate Texts in
   Mathematics, 151. Springer, 1994.
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>

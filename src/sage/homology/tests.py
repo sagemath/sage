@@ -16,7 +16,6 @@ TESTS::
     sage: test_random_simplicial_complex(level=2, trials=20)  # optional - CHomP
     sage: test_random_simplicial_complex(level=5/2, trials=10)  # long time # optional - CHomP
 """
-from __future__ import print_function
 
 from sage.misc.random_testing import random_testing
 from sage.misc.prandom import randint

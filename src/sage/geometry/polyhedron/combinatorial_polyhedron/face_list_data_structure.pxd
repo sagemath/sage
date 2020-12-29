@@ -11,7 +11,6 @@ Inline cython methods for lists of faces.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces cimport *
 from .face_data_structure             cimport *
 from libc.string                      cimport memset
 from cysignals.signals                cimport sig_on, sig_off

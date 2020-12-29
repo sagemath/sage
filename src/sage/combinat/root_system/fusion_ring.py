@@ -391,7 +391,7 @@ class FusionRing(WeylCharacterRing):
             [     x3      x2      x1      x0]
 
         We give an example where the variables are injected into the
-        global namepsace::
+        global namespace::
 
             sage: A13.fusion_labels("y", inject_variables=True)
             sage: y0

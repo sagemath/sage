@@ -40,8 +40,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 # TODO: check off this todo list:
 # - methods to cryptanalyze the Hill, substitution, transposition, and

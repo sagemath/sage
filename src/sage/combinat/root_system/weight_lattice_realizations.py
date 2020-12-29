@@ -1,7 +1,6 @@
 """
 Weight lattice realizations
 """
-from __future__ import absolute_import
 # ****************************************************************************
 #       Copyright (C) 2007-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #

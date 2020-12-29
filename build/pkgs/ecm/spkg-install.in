@@ -52,6 +52,8 @@ if [ -n "$system_gmp_h" ]; then
     esac
 fi
 
+CFLAGS="$CFLAGS_O3"
+
 
 # libtool should add the proper flags, but doesn't use "-fPIC"
 # for the *static* library (which the Sage library links to unless
@@ -62,6 +64,7 @@ if ! (echo $ECM_CONFIGURE | egrep -- "--enable-shared|--with-pic" >/dev/null) ||
 then
     echo "Adding '-fPIC' to CFLAGS since we don't (also) build a shared library."
     CFLAGS="$CFLAGS -fPIC" # alternatively add '--with-pic' to 'configure' options
+    ORIGINAL_CFLAGS="$ORIGINAL_CFLAGS -fPIC"
 else
     # PIC usually slows down the execution, so don't use it for the *static*
     # library (unless '--with-pic' was given). libtool does the right thing
@@ -79,7 +82,6 @@ fi
 if [ "$SAGE_DEBUG" = yes ]; then
     # Add debug symbols and disable optimization:
     echo >&2 "Warning: Setting SAGE_DEBUG=yes completely disables optimization."
-    CFLAGS="-g -O0 $CFLAGS"
     echo "You may in addition (or instead) pass '--enable-assert' and/or"
     echo "'--enable-memory-debug' to GMP-ECM's 'configure' by setting (and"
     echo "of course exporting) ECM_CONFIGURE accordingly."
@@ -96,10 +98,8 @@ else
             echo >&2 "See http://trac.sagemath.org/sage_trac/ticket/5847#comment:35" \
                 "ff. for details."
             echo >&2
-            CFLAGS="-O3 $CFLAGS"
+            CFLAGS="-O3 $ORIGINAL_CFLAGS"
             ;;
-        *)
-            CFLAGS="-g -O3 $CFLAGS"
     esac
 fi
 

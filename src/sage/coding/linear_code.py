@@ -201,7 +201,6 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import division, print_function, absolute_import
 
 import os
 import subprocess
@@ -234,9 +233,10 @@ from sage.coding.linear_code_no_metric import AbstractLinearCodeNoMetric
 from .encoder import Encoder
 from .decoder import Decoder
 
-#******************************************************************************
+# *****************************************************************************
 # coding theory functions
-#******************************************************************************
+# *****************************************************************************
+
 
 def _dump_code_in_leon_format(C):
     r"""
@@ -479,17 +479,17 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             0
             sage: C = codes.HammingCode(GF(4, 'z'), 3)
             sage: C.automorphism_group_gens()
-            ([((1, z, z + 1, z, z, 1, 1, z, z + 1, z, z, 1, z, z + 1, z, z, 1, z, z + 1, z, z); (1,5,18,7,11,8)(2,12,21)(3,20,14,10,19,15)(4,9)(13,17,16), Ring endomorphism of Finite Field in z of size 2^2
+            ([((1, 1, 1, 1, 1, z + 1, z, z + 1, z, z, z, 1, 1, z + 1, z + 1, z, z + 1, z, z + 1, z + 1, z + 1); (1,14,6,7,4,10,11,19)(2,8,16,13,3,17,21,15)(9,12,18,20), Ring endomorphism of Finite Field in z of size 2^2
                 Defn: z |--> z + 1),
-              ((1, 1, z, z + 1, z, z, z + 1, z + 1, z, 1, 1, z, z, z + 1, z + 1, 1, z, z, 1, z, z + 1); (2,11)(3,13)(4,14)(5,20)(6,17)(8,15)(16,19), Ring endomorphism of Finite Field in z of size 2^2
-                Defn: z |--> z + 1),
+              ((z + 1, 1, 1, z, z + 1, z, z, z + 1, z + 1, z + 1, 1, z + 1, z, z, 1, z + 1, 1, z, z + 1, z + 1, z); (1,18,6,19,2,9,17,10,13,14,21,11,4,5,12)(3,20,7,16,8), Ring endomorphism of Finite Field in z of size 2^2
+                Defn: z |--> z),
               ((z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z); (), Ring endomorphism of Finite Field in z of size 2^2
                 Defn: z |--> z)],
              362880)
             sage: C.automorphism_group_gens(equivalence="linear")
-            ([((z, 1, 1, z, z + 1, z, z, z + 1, z + 1, z + 1, 1, z + 1, z, z, 1, 1, 1, z, z, z + 1, z); (1,6)(2,20,9,16)(3,10,8,11)(4,15,21,5)(12,17)(13,14,19,18), Ring endomorphism of Finite Field in z of size 2^2
+            ([((z + 1, 1, z + 1, z + 1, z + 1, z, 1, z, 1, 1, 1, 1, z + 1, z + 1, z + 1, z, z, 1, z, z, z); (1,15,2,8,16,18,3)(4,9,12,13,20,10,11)(5,21,14,6,7,19,17), Ring endomorphism of Finite Field in z of size 2^2
                 Defn: z |--> z),
-              ((1, z, z + 1, z, z, z, z + 1, z + 1, 1, z, z, z, 1, z, 1, z + 1, z, z + 1, z, z + 1, 1); (1,15,20,5,8,6,12,14,13,7,16,11,19,3,21,4,9,10,18,17,2), Ring endomorphism of Finite Field in z of size 2^2
+              ((z + 1, z + 1, z + 1, z + 1, z + 1, 1, z, 1, z, z, z, 1, z, 1, 1, 1, z + 1, z + 1, z + 1, 1, z); (1,15,21,8,9)(2,18,5,3,11,16,7,10,19,13,12,4,17,6,20), Ring endomorphism of Finite Field in z of size 2^2
                 Defn: z |--> z),
               ((z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1, z + 1); (), Ring endomorphism of Finite Field in z of size 2^2
                 Defn: z |--> z)],
@@ -705,10 +705,10 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C_iso == aut_group_can_label.get_canonical_form()
             True
             sage: aut_group_can_label.get_autom_gens()
-            [((1, z, z + 1, z, z, 1, 1, z, z + 1, z, z, 1, z, z + 1, z, z, 1, z, z + 1, z, z); (1,5,18,7,11,8)(2,12,21)(3,20,14,10,19,15)(4,9)(13,17,16), Ring endomorphism of Finite Field in z of size 2^2
+            [((1, 1, 1, 1, 1, z + 1, z, z + 1, z, z, z, 1, 1, z + 1, z + 1, z, z + 1, z, z + 1, z + 1, z + 1); (1,14,6,7,4,10,11,19)(2,8,16,13,3,17,21,15)(9,12,18,20), Ring endomorphism of Finite Field in z of size 2^2
                Defn: z |--> z + 1),
-             ((1, 1, z, z + 1, z, z, z + 1, z + 1, z, 1, 1, z, z, z + 1, z + 1, 1, z, z, 1, z, z + 1); (2,11)(3,13)(4,14)(5,20)(6,17)(8,15)(16,19), Ring endomorphism of Finite Field in z of size 2^2
-               Defn: z |--> z + 1),
+             ((z + 1, 1, 1, z, z + 1, z, z, z + 1, z + 1, z + 1, 1, z + 1, z, z, 1, z + 1, 1, z, z + 1, z + 1, z); (1,18,6,19,2,9,17,10,13,14,21,11,4,5,12)(3,20,7,16,8), Ring endomorphism of Finite Field in z of size 2^2
+               Defn: z |--> z),
              ((z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z, z); (), Ring endomorphism of Finite Field in z of size 2^2
                Defn: z |--> z)]
         """
@@ -1303,13 +1303,12 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: C.is_galois_closed()
             False
         """
-        F = self.base_ring()
-        p = F.characteristic()
+        p = self.base_ring().characteristic()
         return self == self.galois_closure(GF(p))
 
     def _magma_init_(self, magma):
         r"""
-        Retun a string representation in Magma of this linear code.
+        Return a string representation in Magma of this linear code.
 
         EXAMPLES::
 
@@ -1317,11 +1316,9 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             sage: Cm = magma(C)                 # optional - magma, indirect doctest
             sage: Cm.MinimumWeight()            # optional - magma
             3
-
         """
         G = magma(self.generator_matrix())._ref()
-        s = 'LinearCode(%s)' % G
-        return s
+        return 'LinearCode(%s)' % G
 
     @cached_method
     def minimum_distance(self, algorithm=None):

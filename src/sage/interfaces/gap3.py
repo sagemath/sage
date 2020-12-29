@@ -226,7 +226,6 @@ Controlling variable names used by GAP3::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.interfaces.expect import Expect

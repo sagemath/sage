@@ -15,7 +15,6 @@ Hom spaces between Hecke modules
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace

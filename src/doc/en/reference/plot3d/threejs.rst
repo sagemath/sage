@@ -34,6 +34,11 @@ Options currently supported by the viewer:
 - ``axes_labels`` -- (default: ['x','y','z']) list or tuple of three strings;
   set to False to remove all labels
 
+- ``axes_labels_style`` -- (default: None) list of three dicts, one per axis, or
+  a single dict controlling all three axes; supports the same styling options as
+  :func:`~sage.plot.plot3d.shapes2.text3d` such as ``color``, ``opacity``, ``fontsize``,
+  ``fontweight``, ``fontstyle``, and ``fontfamily``
+
 - ``color`` -- (default: 'blue') color of the 3D object
 
 - ``decimals`` -- (default: 2) integer determining decimals displayed in labels
@@ -44,6 +49,9 @@ Options currently supported by the viewer:
   files are replaced by links to an online content delivery network
 
 - ``opacity`` -- (default: 1) numeric value for transparency of lines and surfaces
+
+- ``page_title`` -- (default: None) string containing the title of the generated HTML page; often
+  displayed in the browser window's title bar, its tab list, and/or the operating system's task bar
 
 - ``projection`` -- (default: 'perspective') the type of camera projection to use;
   'perspective' or 'orthographic'

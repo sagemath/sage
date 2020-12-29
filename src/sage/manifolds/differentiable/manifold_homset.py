@@ -19,7 +19,7 @@ differentiable curves that are defined as autoparallel curves with respect to
 a certain affine connection.
 
 The subclass :class:`IntegratedGeodesicSet` is devoted to differentiable
-curves that are defined as geodesics with respect to to a certain metric.
+curves that are defined as geodesics with respect to a certain metric.
 
 AUTHORS:
 

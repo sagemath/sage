@@ -56,7 +56,6 @@ REFERENCES:
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import
 
 from sage.combinat.designs.orthogonal_arrays import (OA_from_quasi_difference_matrix,
                                                      QDM_from_Vmt,

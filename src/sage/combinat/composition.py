@@ -28,7 +28,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #              http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -1248,23 +1247,26 @@ class Composition(CombinatorialElement):
         composition more than once since a composition can be a shuffle of two
         compositions in several ways. For example::
 
-            sage: S = Composition([1]).shuffle_product([1]); S
+            sage: w1 = Composition([1])
+            sage: S = w1.shuffle_product(w1); S
             Shuffle product of [1] and [1]
             sage: S.list()
             [[1, 1], [1, 1]]
-            sage: O = Composition([1]).shuffle_product([1], overlap=True); O
+            sage: O = w1.shuffle_product(w1, overlap=True); O
             Overlapping shuffle product of [1] and [1]
             sage: O.list()
             [[1, 1], [1, 1], [2]]
 
         TESTS::
 
-            sage: Composition([]).shuffle_product([]).list()
+            sage: empty = Composition([])
+            sage: empty.shuffle_product(empty).list()
             [[]]
         """
         if overlap:
             from sage.combinat.shuffle import ShuffleProduct_overlapping
-            return ShuffleProduct_overlapping(self, other, Compositions())
+            return ShuffleProduct_overlapping(self, other,
+                                              Compositions())
         else:
             from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
             return ShuffleProduct_w1w2(self, other)

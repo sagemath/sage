@@ -1,7 +1,6 @@
 r"""
 Word features that are imported by default in the interpreter namespace
 """
-from __future__ import absolute_import
 
 from .alphabet import Alphabet, build_alphabet
 from .morphism import WordMorphism

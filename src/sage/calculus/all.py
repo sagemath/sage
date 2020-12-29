@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .calculus import maxima as maxima_calculus
 from .calculus import (laplace, inverse_laplace,

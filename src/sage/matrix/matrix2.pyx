@@ -1881,7 +1881,7 @@ cdef class Matrix(Matrix1):
 
     def determinant(self, algorithm=None):
         r"""
-        Returns the determinant of self.
+        Return the determinant of ``self``.
 
         ALGORITHM:
 
@@ -1984,41 +1984,41 @@ cdef class Matrix(Matrix1):
             sage: _ = A.charpoly()
             sage: A.determinant() == B.determinant()
             True
-
         """
-
         from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+        from sage.symbolic.ring import is_SymbolicExpressionRing
 
-        if self._nrows != self._ncols:
+        cdef Py_ssize_t n
+        n = self._ncols
+
+        if self._nrows != n:
             raise ValueError("self must be a square matrix")
 
         d = self.fetch('det')
-        if not d is None:
-            return d
-
-        R = self._base_ring
-        if hasattr(R, '_matrix_determinant'):
-            d = R._matrix_determinant(self)
-            self.cache('det', d)
+        if d is not None:
             return d
 
         # If charpoly known, then det is easy.
         f = self.fetch('charpoly')
         if f is not None:
             c = f[0]
-            if self._nrows % 2:
+            if n % 2:
                 c = -c
             d = self._coerce_element(c)
             self.cache('det', d)
             return d
 
-        cdef Py_ssize_t n
-        n = self._ncols
+        # for base rings with their own specific determinant methods
+        R = self._base_ring
+        if hasattr(R, '_matrix_determinant'):
+            d = R._matrix_determinant(self)
+            self.cache('det', d)
+            return d
 
-        # For small matrices, you can't beat the naive formula.
+        # For small matrices, you cannot beat the naive formula.
         if n <= 3:
             if n == 0:
-                d = R(1)
+                d = R.one()
             elif n == 1:
                 d = self.get_unsafe(0,0)
             elif n == 2:
@@ -2057,10 +2057,11 @@ cdef class Matrix(Matrix1):
         # seems to be quite large for Q[x].)
         if (algorithm is None and R in _Fields and R.is_exact()) or (algorithm == "hessenberg"):
             try:
-                c = self.charpoly('x', algorithm="hessenberg")[0]
+                charp = self.charpoly('x', algorithm="hessenberg")
             except ValueError:
                 # Hessenberg algorithm not supported, so we use whatever the default algorithm is.
-                c = self.charpoly('x')[0]
+                charp = self.charpoly('x')
+            c = charp[0]
             if self._nrows % 2:
                 c = -c
             d = self._coerce_element(c)
@@ -2074,15 +2075,14 @@ cdef class Matrix(Matrix1):
         # nice to avoid hardcoding a reserved variable name as below, as this
         # is then assumed to not be a variable in the symbolic ring.  But this
         # resulted in further exceptions/ errors.
-        from sage.symbolic.ring import is_SymbolicExpressionRing
 
         var = 'A0123456789' if is_SymbolicExpressionRing(R) else 'x'
         try:
-            c = self.charpoly(var, algorithm="df")[0]
+            charp = self.charpoly(var, algorithm="df")
         except ValueError:
             # Division free algorithm not supported, so we use whatever the default algorithm is.
-            c = self.charpoly(var)[0]
-
+            charp = self.charpoly(var)
+        c = charp[0]
         if self._nrows % 2:
             c = -c
         d = self._coerce_element(c)

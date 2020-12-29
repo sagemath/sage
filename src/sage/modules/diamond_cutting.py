@@ -13,7 +13,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.matrix.constructor import matrix, identity_matrix

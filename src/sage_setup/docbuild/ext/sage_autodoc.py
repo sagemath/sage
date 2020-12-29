@@ -26,7 +26,6 @@ AUTHORS:
 - Kwankyu Lee (2018-12-26): rebase on the latest sphinx.ext.autodoc
 
 """
-from six import PY2, itervalues, text_type, class_types, string_types
 
 import inspect
 import re
@@ -1176,27 +1175,19 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
         if ret:
             module = getattr(self.object, '__module__', False)
             name = getattr(self.object, '__name__', False)
-            if PY2:
-                if name and module:
-                    cls = getattr(sys.modules[module], name, None)
-                    self.doc_as_attr = (self.objpath != name.split('.') and
-                                        self.object is cls)
-                else:
-                    self.doc_as_attr = True
+            qualname = getattr(self.object, '__qualname__', name)
+            if qualname and module:
+                # walk the standard attribute lookup path for this object
+                qualname_parts = qualname.split('.')
+                cls = getattr(sys.modules[module], qualname_parts[0], None)
+                for part in qualname_parts[1:]:
+                    if cls is None:
+                        break
+                    cls = getattr(cls, part, None)
+                self.doc_as_attr = (self.objpath != qualname_parts and
+                                    self.object is cls)
             else:
-                qualname = getattr(self.object, '__qualname__', name)
-                if qualname and module:
-                    # walk the standard attribute lookup path for this object
-                    qualname_parts = qualname.split('.')
-                    cls = getattr(sys.modules[module], qualname_parts[0], None)
-                    for part in qualname_parts[1:]:
-                        if cls is None:
-                            break
-                        cls = getattr(cls, part, None)
-                    self.doc_as_attr = (self.objpath != qualname_parts and
-                                        self.object is cls)
-                else:
-                    self.doc_as_attr = True
+                self.doc_as_attr = True
         return ret
 
     def format_args(self):

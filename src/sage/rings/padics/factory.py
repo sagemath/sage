@@ -27,7 +27,6 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import, print_function
 
 from sage.misc.superseded import experimental
 

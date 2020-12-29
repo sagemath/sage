@@ -123,7 +123,6 @@ AUTHORS:
   :meth:`~sage.logic.boolformula.BooleanFormula.implies()`
 
 """
-from __future__ import absolute_import, division
 # *****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein.gmail.com>
 #       Copyright (C) 2006 Chris Gorecki <chris.k.gorecki@gmail.com>

@@ -365,6 +365,19 @@ cdef class ModuleAction(Action):
             # In particular we will raise an error if res is None
             raise CoercionException("Result is None or has wrong parent.")
 
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: A = ZZ['x'].get_action(QQ, self_on_left=False, op=operator.mul)
+            sage: loads(dumps(A)) is not None
+            True
+        """
+        return (type(self), (self.G, self.underlying_set()))
 
     def _repr_name_(self):
         """
@@ -655,6 +668,23 @@ cdef class IntegerAction(Action):
             from sage.sets.pythonclass import Set_PythonType
             Z = Set_PythonType(Z)
         super().__init__(Z, S, is_left, op)
+
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: from sage.structure.coerce_actions import IntegerMulAction
+            sage: act = IntegerMulAction(ZZ, CDF)
+            sage: loads(dumps(act)) is not None
+            True
+        """
+        # All base classes must take the signature
+        #   (Z, S, is_left)
+        return (type(self), (self.G, self.underlying_set(), self._is_left))
 
     def __invert__(self):
         """

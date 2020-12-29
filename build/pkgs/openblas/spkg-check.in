@@ -8,7 +8,7 @@ cd src
 # We could also patch the Makefile to use a generic symlink pointing
 # to the archive with a specific name
 
-if [ `sage-system-python -c "from __future__ import print_function; import platform; print(platform.architecture()[0])"` = "32bit" ]; then
+if [ `sage-bootstrap-python -c "from __future__ import print_function; import platform; print(platform.architecture()[0])"` = "32bit" ]; then
     OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE BINARY=32"
 fi
 

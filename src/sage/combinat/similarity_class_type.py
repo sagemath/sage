@@ -174,7 +174,6 @@ AUTHOR:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from operator import mul
 from itertools import chain, product

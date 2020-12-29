@@ -171,9 +171,16 @@ fi
 . sage-env-config
 . sage-env
 
-
 if [ $? -ne 0 ]; then
     error_msg "Error setting environment variables by sourcing sage-env"
+    exit 1
+fi
+
+. sage-build-env-config
+. sage-build-env
+
+if [ $? -ne 0 ]; then
+    error_msg "Error setting environment variables by sourcing sage-build-env"
     exit 1
 fi
 

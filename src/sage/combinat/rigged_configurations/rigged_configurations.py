@@ -1622,7 +1622,7 @@ class RCTypeA2Dual(RCTypeA2Even):
 
         - ``a`` -- the rigged partition index
 
-        - ``i`` -- the row lenth
+        - ``i`` -- the row length
 
         TESTS::
 

@@ -69,7 +69,6 @@ EXAMPLES::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function
 
 import scipy
 import scipy.interpolate
@@ -99,7 +98,7 @@ def it(M, B1, nB1, lps):
 
     A tuple containing 4 elements in this order:
 
-    1. A dictionary containing 2-tuple (x,y) co-ordinates with
+    1. A dictionary containing 2-tuple (x,y) coordinates with
        ``M.simplify.groundset()`` elements that can be placed on the sides of
        the triangle as keys.
     2. A list of 3 lists of elements of ``M.simplify.groundset()`` that can
@@ -185,7 +184,7 @@ def trigrid(tripts):
     INPUT:
 
     - ``tripts`` -- A list of 3 lists of the form [x,y] where x and y are the
-      Cartesian co-ordinates of a point.
+      Cartesian coordinates of a point.
 
     OUTPUT:
 
@@ -284,16 +283,14 @@ def addnontripts(tripts_labels, nontripts_labels, ptsdict):
             n = n + 4
         else:
             n = n + 3
-    j = 0
-    for p in nontripts_labels:
+    for j, p in enumerate(nontripts_labels):
         ptsdict[p] = tuple(gridpts[j])
-        j = j + 1
     return ptsdict
 
 
 def createline(ptsdict, ll, lineorders2=None):
     """
-    Return ordered lists of co-ordinates of points to be traversed to draw a
+    Return ordered lists of coordinates of points to be traversed to draw a
     2D line.
 
     INPUT:

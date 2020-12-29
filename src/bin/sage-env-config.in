@@ -17,7 +17,7 @@
 #    file.
 #  - Environment variables that are only needed at the time of building
 #    SPKGs or sagelib should be set in build/bin/sage-build-env-config
-#    instead.
+#    or build/bin/sage-build-env instead.
 #  - Configuration variables that are only needed by the Sage runtime,
 #    but not as environment variables, should instead be set in
 #    build/pkgs/sage_conf/src/sage_conf.py
@@ -46,9 +46,9 @@ CONFIGURED_OBJCXX="@OBJCXX@"
 #######################################
 # Other configuration (exported)
 #######################################
-export PYTHON_FOR_VENV="@PYTHON_FOR_VENV@"
 
 #######################################
 # Other configuration (not exported, only used in sage-env)
 #######################################
 SAGE_PKG_CONFIG_PATH="@SAGE_PKG_CONFIG_PATH@"
+SAGE_MACOSX_DEPLOYMENT_TARGET="@SAGE_MACOSX_DEPLOYMENT_TARGET@"

@@ -125,7 +125,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import
 
 from sage.categories.number_fields import NumberFields
 
@@ -1215,7 +1214,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             w^5 - 2*z^3*v^2
             ]
 
-        We verify that the irrelevant ideal isn't accidently returned
+        We verify that the irrelevant ideal is not accidentally returned
         (see :trac:`6920`)::
 
             sage: PP.<x,y,z,w> = ProjectiveSpace(3,QQ)

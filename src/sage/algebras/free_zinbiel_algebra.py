@@ -21,6 +21,7 @@ from sage.categories.magmas import Magmas
 from sage.categories.pushout import (ConstructionFunctor,
                                      CompositeConstructionFunctor,
                                      IdentityConstructionFunctor)
+from sage.categories.coalgebras_with_basis import CoalgebrasWithBasis
 from sage.categories.rings import Rings
 from sage.categories.functor import Functor
 from sage.categories.sets_cat import Sets
@@ -45,6 +46,10 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
     Zinbiel algebras were first introduced by Loday (see [Lod1995]_ and
     [LV2012]_) as the Koszul dual to Leibniz algebras (hence the name
     coined by Lemaire).
+
+    By default, the convention above is used. The opposite product,
+    which satisfy the opposite axiom, can be used instead by setting
+    the ``side`` parameter to ``'>'`` instead of the default value ``'<'``.
 
     Zinbiel algebras are divided power algebras, in that for
 
@@ -139,8 +144,17 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         sage: (((x*x)*x)*x)*x
         24*Z[xxxxx]
 
+    A few tests with the opposite convention for the product::
+
+        sage: Z.<x,y,z> = algebras.FreeZinbiel(QQ, side='>')
+        sage: (x*y)*z
+        Z[xyz]
+        sage: x*(y*z)
+        Z[xyz] + Z[yxz]
+
     TESTS::
 
+        sage: Z.<x,y,z> = algebras.FreeZinbiel(QQ)
         sage: Z.basis().keys()
         Finite words over {'x', 'y', 'z'}
 
@@ -158,7 +172,8 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
     - [LV2012]_
     """
     @staticmethod
-    def __classcall_private__(cls, R, n=None, names=None, prefix=None):
+    def __classcall_private__(cls, R, n=None, names=None,
+                              prefix=None, side=None):
         """
         Standardize input to ensure a unique representation.
 
@@ -192,12 +207,16 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             raise TypeError("argument R must be a ring")
         if prefix is None:
             prefix = 'Z'
+        if side is None:
+            side = '<'
+        if side not in ['<', '>']:
+            raise ValueError("side must be either '<' or '>'")
         superclass = super(FreeZinbielAlgebra, cls)
         if names is None:
-            return superclass.__classcall__(cls, R, n, None, prefix)
-        return superclass.__classcall__(cls, R, n, tuple(names), prefix)
+            return superclass.__classcall__(cls, R, n, None, prefix, side)
+        return superclass.__classcall__(cls, R, n, tuple(names), prefix, side)
 
-    def __init__(self, R, n, names, prefix):
+    def __init__(self, R, n, names, prefix, side):
         """
         Initialize ``self``.
 
@@ -228,7 +247,13 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         else:
             indices = Words(Alphabet(n, names=names), infinite=False)
             self._n = n
+        self._side = side
+        if side == '<':
+            self.product_on_basis = self.product_on_basis_left
+        else:
+            self.product_on_basis = self.product_on_basis_right
         cat = MagmaticAlgebras(R).WithBasis().Graded()
+        cat &= CoalgebrasWithBasis(R)
         CombinatorialFreeModule.__init__(self, R, indices, prefix=prefix,
                                          category=cat)
         if self._n is not None:
@@ -266,6 +291,20 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         return "Free Zinbiel algebra on generators {} over {}".format(
             self.gens(), self.base_ring())
 
+    def side(self):
+        """
+        Return the choice of side for the product.
+
+        This is either ``'<'`` or ``'>'``.
+
+        EXAMPLES::
+
+            sage: Z.<x,y,z> = algebras.FreeZinbiel(QQ)
+            sage: Z.side()
+            '<'
+        """
+        return self._side
+
     @cached_method
     def algebra_generators(self):
         """
@@ -291,6 +330,8 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
 
         - ``R`` -- a ring
 
+        The same side convention is used for the product.
+
         EXAMPLES::
 
             sage: A = algebras.FreeZinbiel(ZZ, 'f,g,h')
@@ -299,7 +340,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             over Rational Field
         """
         A = self.variable_names()
-        return FreeZinbielAlgebra(R, n=len(A), names=A)
+        return FreeZinbielAlgebra(R, n=len(A), names=A, side=self._side)
 
     @cached_method
     def gens(self):
@@ -331,9 +372,12 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         """
         return len(t)
 
-    def product_on_basis(self, x, y):
+    def product_on_basis_left(self, x, y):
         """
-        Return the product of the basis elements indexed by ``x`` and ``y``.
+        Return the product < of the basis elements indexed by ``x`` and ``y``.
+
+        This is one half of the shuffle product, where the first letter
+        comes from the first letter of the first argument.
 
         INPUT:
 
@@ -355,6 +399,83 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             return self.monomial(y)
         x0 = self._indices([x[0]])
         return self.sum_of_monomials(x0 + sh for sh in x[1:].shuffle(y))
+
+    def product_on_basis_right(self, x, y):
+        """
+        Return the product > of the basis elements indexed by ``x`` and ``y``.
+
+        This is one half of the shuffle product, where the last letter
+        comes from the last letter of the second argument.
+
+        INPUT:
+
+        - ``x``, ``y`` -- two words
+
+        EXAMPLES::
+
+            sage: Z.<x,y,z> = algebras.FreeZinbiel(QQ, side='>')
+            sage: (x*y)*z  # indirect doctest
+            Z[xyz]
+
+        TESTS::
+
+            sage: Z.<x,y> = algebras.FreeZinbiel(QQ, side='>')
+            sage: Z.product_on_basis(Word('x'), Word())
+            Z[x]
+        """
+        if not y:
+            return self.monomial(x)
+        yf = self._indices([y[-1]])
+        return self.sum_of_monomials(sh + yf for sh in x.shuffle(y[:-1]))
+
+    def coproduct_on_basis(self, w):
+        """
+        Return the coproduct of the element of the basis indexed by
+        the word ``w``.
+
+        The coproduct is given by deconcatenation.
+
+        INPUT:
+
+        - ``w`` -- a word
+
+        EXAMPLES::
+
+            sage: F = algebras.FreeZinbiel(QQ,['a','b'])
+            sage: F.coproduct_on_basis(Word('a'))
+            Z[] # Z[a] + Z[a] # Z[]
+            sage: F.coproduct_on_basis(Word('aba'))
+            Z[] # Z[aba] + Z[a] # Z[ba] + Z[ab] # Z[a] + Z[aba] # Z[]
+            sage: F.coproduct_on_basis(Word())
+            Z[] # Z[]
+
+        TESTS::
+
+            sage: F = algebras.FreeZinbiel(QQ,['a','b'])
+            sage: S = F.an_element(); S
+            Z[] + 2*Z[a] + 3*Z[b] + Z[bab]
+            sage: F.coproduct(S)
+            Z[] # Z[] + 2*Z[] # Z[a] + 3*Z[] # Z[b] + Z[] # Z[bab] +
+            2*Z[a] # Z[] + 3*Z[b] # Z[] + Z[b] # Z[ab] + Z[ba] # Z[b] +
+            Z[bab] # Z[]
+        """
+        TS = self.tensor_square()
+        return TS.sum_of_monomials((w[:i], w[i:]) for i in range(len(w) + 1))
+
+    def counit(self, S):
+        """
+        Return the counit of ``S``.
+
+        EXAMPLES::
+
+            sage: F = algebras.FreeZinbiel(QQ,['a','b'])
+            sage: S = F.an_element(); S
+            Z[] + 2*Z[a] + 3*Z[b] + Z[bab]
+            sage: F.counit(S)
+            1
+        """
+        W = self.basis().keys()
+        return S.coefficient(W())
 
     def _element_constructor_(self, x):
         r"""
@@ -393,8 +514,15 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         except AttributeError:
             raise TypeError('not able to convert this to this algebra')
         if isinstance(P, FreeZinbielAlgebra) and self._coerce_map_from_(P):
-            return self.element_class(self,
-                                      x.monomial_coefficients(copy=False))
+            if self._side == P._side:
+                return self.element_class(self,
+                                          x.monomial_coefficients(copy=False))
+            else:
+                dic = x.monomial_coefficients(copy=False)
+                # canonical isomorphism when switching side
+                return self.element_class(self,
+                                          {w.reversal(): cf
+                                           for w, cf in dic.items()})
         else:
             raise TypeError('not able to convert this to this algebra')
         # Ok, not a Zinbiel algebra element (or should not be viewed as one).
@@ -472,8 +600,9 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
         if isinstance(R, FreeZinbielAlgebra):
             if self._n is None or R._n is None:
                 return False
-            return (all(x in self.variable_names() for x in R.variable_names())
-                    and self.base_ring().has_coerce_map_from(R.base_ring()))
+            return (all(x in self.variable_names()
+                        for x in R.variable_names()) and
+                    self.base_ring().has_coerce_map_from(R.base_ring()))
         return super(FreeZinbielAlgebra, self)._coerce_map_from_(R)
 
     def construction(self):
@@ -499,7 +628,7 @@ class FreeZinbielAlgebra(CombinatorialFreeModule):
             A = self._indices.alphabet()
         else:
             A = self.variable_names()
-        return ZinbielFunctor(A), self.base_ring()
+        return ZinbielFunctor(A, side=self._side), self.base_ring()
 
 
 class ZinbielFunctor(ConstructionFunctor):
@@ -524,24 +653,24 @@ class ZinbielFunctor(ConstructionFunctor):
         Generic endomorphism of Free Zinbiel algebra on generators (Z[x], Z[y])
         over Multivariate Polynomial Ring in a, b over Finite Field of size 5
 
-
         sage: F(f)(a * F(A)(x))
         (a+b)*Z[x]
     """
     rank = 9
 
-    def __init__(self, variables):
+    def __init__(self, variables, side):
         """
         EXAMPLES::
 
             sage: functor = sage.algebras.free_zinbiel_algebra.ZinbielFunctor
-            sage: F = functor(['x','y']); F
+            sage: F = functor(['x','y'], '<'); F
             Zinbiel[x,y]
             sage: F(ZZ)
             Free Zinbiel algebra on generators (Z[x], Z[y]) over Integer Ring
         """
         Functor.__init__(self, Rings(), Magmas())
         self.vars = variables
+        self._side = side
         self._finite_vars = bool(isinstance(variables, (list, tuple)) or variables in Sets().Finite())
 
     def _apply_functor(self, R):
@@ -566,8 +695,9 @@ class ZinbielFunctor(ConstructionFunctor):
             Free Zinbiel algebra on generators indexed by Integer Ring over Integer Ring
         """
         if self._finite_vars:
-            return FreeZinbielAlgebra(R, len(self.vars), self.vars)
-        return FreeZinbielAlgebra(R, self.vars)
+            return FreeZinbielAlgebra(R, len(self.vars), self.vars,
+                                      side=self._side)
+        return FreeZinbielAlgebra(R, self.vars, side=self._side)
 
     def _apply_functor_to_morphism(self, f):
         """
@@ -607,7 +737,7 @@ class ZinbielFunctor(ConstructionFunctor):
         """
         if not isinstance(other, ZinbielFunctor):
             return False
-        return self.vars == other.vars
+        return self.vars == other.vars and self._side == other._side
 
     def __hash__(self):
         """
@@ -630,14 +760,14 @@ class ZinbielFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: from sage.algebras.free_zinbiel_algebra import ZinbielFunctor as functor
-            sage: F = functor(['x','y'])
-            sage: G = functor(['t'])
+            sage: F = functor(['x','y'], '<')
+            sage: G = functor(['t'], '<')
             sage: G * F
             Zinbiel[x,y,t]
 
         With an infinite generating set::
 
-            sage: H = functor(ZZ)
+            sage: H = functor(ZZ, '<')
             sage: H * G
             Traceback (most recent call last):
             ...
@@ -650,12 +780,14 @@ class ZinbielFunctor(ConstructionFunctor):
         if isinstance(other, IdentityConstructionFunctor):
             return self
         if isinstance(other, ZinbielFunctor):
+            if self._side != other._side:
+                raise CoercionException("detection of distinct sides")
             if not self._finite_vars or not other._finite_vars:
                 raise CoercionException("Unable to determine overlap for infinite sets")
             if set(self.vars).intersection(other.vars):
                 raise CoercionException("Overlapping variables (%s,%s)" %
                                         (self.vars, other.vars))
-            return ZinbielFunctor(other.vars + self.vars)
+            return ZinbielFunctor(other.vars + self.vars, self._side)
         elif (isinstance(other, CompositeConstructionFunctor) and
               isinstance(other.all[-1], ZinbielFunctor)):
             return CompositeConstructionFunctor(other.all[:-1],
@@ -670,8 +802,8 @@ class ZinbielFunctor(ConstructionFunctor):
         EXAMPLES::
 
             sage: functor = sage.algebras.free_zinbiel_algebra.ZinbielFunctor
-            sage: F = functor(['x','y'])
-            sage: G = functor(['t'])
+            sage: F = functor(['x','y'], '<')
+            sage: G = functor(['t'], '<')
             sage: F.merge(G)
             Zinbiel[x,y,t]
             sage: F.merge(F)
@@ -679,7 +811,7 @@ class ZinbielFunctor(ConstructionFunctor):
 
         With an infinite generating set::
 
-            sage: H = functor(ZZ)
+            sage: H = functor(ZZ, '<')
             sage: H.merge(H) is H
             True
             sage: H.merge(F) is None
@@ -704,10 +836,28 @@ class ZinbielFunctor(ConstructionFunctor):
             sage: parent(x * t)
             Free Zinbiel algebra on generators (Z[z], Z[t], Z[x], Z[y])
             over Rational Field
+
+        TESTS:
+
+        Using the other side convention::
+
+            sage: F = functor(['x','y'], '>')
+            sage: G = functor(['t'], '>')
+            sage: H = functor(['t'], '<')
+            sage: F.merge(G)
+            Zinbiel[x,y,t]
+            sage: F.merge(H)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot merge free Zinbiel algebras with distinct sides
         """
         if isinstance(other, ZinbielFunctor):
+            if self._side != other._side:
+                raise TypeError('cannot merge free Zinbiel algebras '
+                                'with distinct sides')
             if self.vars == other.vars:
                 return self
+
             def check(x):
                 return isinstance(x, (list, tuple)) or x in Sets().Finite()
             if not check(self.vars) or not check(other.vars):
@@ -717,7 +867,7 @@ class ZinbielFunctor(ConstructionFunctor):
             for v in other.vars:
                 if v not in cur_vars:
                     ret.append(v)
-            return ZinbielFunctor(ret)
+            return ZinbielFunctor(ret, self._side)
         else:
             return None
 
@@ -734,4 +884,3 @@ class ZinbielFunctor(ConstructionFunctor):
         if self._finite_vars:
             return "Zinbiel[%s]" % ','.join(self.vars)
         return "Zinbiel[{}]".format(self.vars)
-

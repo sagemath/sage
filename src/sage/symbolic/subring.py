@@ -86,7 +86,6 @@ AUTHORS:
 Classes and Methods
 ===================
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 # Copyright (C) 2015 Daniel Krenn <dev@danielkrenn.at>

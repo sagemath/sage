@@ -1,10 +1,5 @@
-if gcc -lxml2 2>&1 | grep -q 'cannot find -lxml2'; then
-    echo "
-You need libxml2 to run igraph. On Ubuntu and Debian Linux, installing the build-essential and the libxml2-dev packages is sufficient."
-    exit 1
-fi
-
+export CFLAGS="$CFLAGS -Wno-strict-prototypes -Wno-implicit-function-declaration"
 cd src
-sdh_configure --with-external-glpk
+sdh_configure --with-external-blas --with-external-lapack --with-external-glpk
 sdh_make
 sdh_make_install -j1

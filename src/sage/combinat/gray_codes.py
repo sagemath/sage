@@ -4,7 +4,6 @@ Gray codes
 Functions
 ---------
 """
-from __future__ import print_function
 
 
 def product(m):

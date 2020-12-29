@@ -48,7 +48,6 @@ We check that ridiculous operations are being avoided::
       needed in order to be able to pass extra arguments to the
       subquotient's init method.
 """
-from __future__ import absolute_import
 
 from . import additive_abelian_group as addgp
 from sage.rings.all import ZZ

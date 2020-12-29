@@ -211,7 +211,6 @@ AUTHORS:
 - Brent Baccala (2019-12-20): added function fields over number fields and QQbar
 
 """
-from __future__ import absolute_import
 # ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2010 Robert Bradshaw <robertwb@math.washington.edu>
@@ -237,6 +236,7 @@ from sage.modules.free_module_element import vector
 
 from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
+from sage.structure.category_object import CategoryObject
 
 from .differential import DifferentialsSpace, DifferentialsSpace_global
 
@@ -257,7 +257,8 @@ def is_FunctionField(x):
         sage: is_FunctionField(FunctionField(QQ, 't'))
         True
     """
-    if isinstance(x, FunctionField): return True
+    if isinstance(x, FunctionField):
+        return True
     return x in FunctionFields()
 
 
@@ -669,6 +670,12 @@ class FunctionField(Field):
             sage: M.<x> = FunctionField(GaussianIntegers().fraction_field())
             sage: M.has_coerce_map_from(L)
             True
+
+        Check that :trac:`31072` is fixed::
+
+            sage: L.<t> = FunctionField(QQ)
+            sage: L(Sequence([1, 2]))
+            2*t + 1
         """
         from .order import FunctionFieldOrder_base
         if isinstance(source, FunctionFieldOrder_base):
@@ -679,7 +686,7 @@ class FunctionField(Field):
             K_to_self = self.coerce_map_from(K)
             if source_to_K and K_to_self:
                 return K_to_self * source_to_K
-        if source in FunctionFields():
+        if isinstance(source, CategoryObject) and source in FunctionFields():
             if source.base_field() is source:
                 if self.base_field() is self:
                     # source and self are rational function fields
@@ -1305,7 +1312,8 @@ class FunctionField_polymod(FunctionField):
             ...
             IndexError: there is only one generator
         """
-        if n != 0: raise IndexError("there is only one generator")
+        if n != 0:
+            raise IndexError("there is only one generator")
         return self._gen
 
     def ngens(self):
@@ -4344,7 +4352,6 @@ class RationalFunctionField(FunctionField):
             sage: f(x^2)
             5*y^2 + (x^3 + 6*x + 4)*y + 2*x^3 + 5*x + 4
         """
-        from sage.structure.category_object import CategoryObject
         if isinstance(im_gens, CategoryObject):
             return self.Hom(im_gens).natural_map()
         if not isinstance(im_gens, (list,tuple)):

@@ -162,7 +162,6 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from __future__ import print_function
 from cysignals.memory cimport sig_malloc, sig_free, sig_realloc
 from cysignals.signals cimport sig_check
 
@@ -1735,7 +1734,7 @@ cdef class ModularSymbolNumerical:
         elif T > 10080:
             A = 3/2
             T0 = 10080
-        else: # doesnt improve
+        else:  # does not improve
             A = 1
             T0 = T
 
@@ -3715,6 +3714,7 @@ def _test_integration_via_partials(E, y, m, T):
     res = [ra[j] for j in range(m)]
     sig_free(ra)
     return res
+
 
 def _test_against_table(range_of_conductors, other_implementation="sage", list_of_cusps=[], verb=False):
     r"""

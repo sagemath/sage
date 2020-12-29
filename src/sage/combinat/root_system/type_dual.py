@@ -8,7 +8,6 @@ Root system data for dual Cartan types
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.misc.call import attrcall
 from sage.misc.cachefunc import cached_method

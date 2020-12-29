@@ -18,12 +18,10 @@ if [ "$CONDA_PREFIX" != "" ]; then
 fi
 
 # Note: Avoid shared libraries inside egg files, Trac #19467
-sage-python23 setup.py \
-       --no-user-cfg \
-       bdist_wheel \
+sdh_setup_bdist_wheel \
        build_ext \
        --debug \
        --disable-jpeg \
-       $extra_build_ext || sdh_die "Error building/installing Pillow"
+       $extra_build_ext
 
 sdh_store_and_pip_install_wheel .

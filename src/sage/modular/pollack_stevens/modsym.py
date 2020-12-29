@@ -36,7 +36,6 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function, absolute_import
 import operator
 from sage.structure.element import ModuleElement
 from sage.structure.richcmp import op_EQ, op_NE

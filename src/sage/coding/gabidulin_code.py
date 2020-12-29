@@ -25,7 +25,7 @@ from sage.categories.fields import Fields
 
 
 class GabidulinCode(AbstractLinearRankMetricCode):
-    """
+    r"""
     A Gabidulin Code.
 
     DEFINITION:
@@ -233,7 +233,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
             return "[%s, %s, %s] linear Gabidulin code over %s/%s"%(self.length(), self.dimension(), self.minimum_distance(), R, S)
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES::
@@ -314,7 +314,7 @@ class GabidulinCode(AbstractLinearRankMetricCode):
 
     def parity_evaluation_points(self):
         r"""
-        Return the parity evalution points of ``self``.
+        Return the parity evaluation points of ``self``.
 
         These form the first row of the parity check matrix of ``self``.
 
@@ -442,7 +442,7 @@ class GabidulinVectorEvaluationEncoder(Encoder):
         return "Vector evaluation style encoder for %s" % self.code()
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES:
@@ -594,7 +594,7 @@ class GabidulinPolynomialEvaluationEncoder(Encoder):
         return "Polynomial evaluation style encoder for %s" % self.code()
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES:
@@ -823,7 +823,7 @@ class GabidulinGaoDecoder(Decoder):
         return "Gao decoder for %s" % self.code()
 
     def _latex_(self):
-        """
+        r"""
         Return a latex representation of ``self``.
 
         EXAMPLES:

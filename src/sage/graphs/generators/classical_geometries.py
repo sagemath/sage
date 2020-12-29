@@ -15,7 +15,6 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         https://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import absolute_import, division
 
 from sage.graphs.graph import Graph
 from sage.arith.all import is_prime_power

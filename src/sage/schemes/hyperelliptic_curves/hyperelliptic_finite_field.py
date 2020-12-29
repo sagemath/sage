@@ -47,7 +47,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.all import ZZ, RR, QQ, GF
 from sage.arith.all import binomial

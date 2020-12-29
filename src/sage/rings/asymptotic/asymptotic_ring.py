@@ -413,8 +413,6 @@ Classes and Methods
 # (at your option) any later version.
 # http://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.rings.ring import Algebra
 from sage.structure.element import CommutativeAlgebraElement
@@ -676,6 +674,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         if convert:
             from .misc import combine_exceptions
             from .term_monoid import ZeroCoefficientError
+
             def convert_terms(element):
                 T = self.parent().term_monoid(element.parent())
                 try:
@@ -694,7 +693,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         if simplify:
             self._simplify_()
-
 
     @property
     def summands(self):
@@ -2924,7 +2922,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             should be bounded.
 
             This method is mainly meant to have an easily usable
-            plausability check for asymptotic expansion created in
+            plausibility check for asymptotic expansion created in
             some way.
 
         EXAMPLES:

@@ -6,7 +6,6 @@ AUTHORS:
 - Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
 
 """
-from __future__ import absolute_import
 
 ################################################################################
 #

@@ -84,13 +84,13 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import string
 
 
 __symbols = '()&|~<->^'
 __op_list = ['~', '&', '|', '^', '->', '<->']
+
 
 def parse(s):
     r"""
@@ -102,10 +102,10 @@ def parse(s):
 
     OUTPUT:
 
-    A list containing the prase tree and a list containing the
+    A list containing the parse tree and a list containing the
     variables in a boolean formula in this order:
 
-    1. the list containing the pase tree
+    1. the list containing the parse tree
     2. the list containing the variables
 
     EXAMPLES:
@@ -125,6 +125,7 @@ def parse(s):
     if isinstance(tree, str):
         return ['&', tree, tree], vars_order
     return tree, vars_order
+
 
 def polish_parse(s):
     r"""

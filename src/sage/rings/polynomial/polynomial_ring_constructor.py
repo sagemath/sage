@@ -22,7 +22,6 @@ rings but rather quotients of them (see module
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 from sage.structure.category_object import normalize_names
 import sage.rings.ring as ring

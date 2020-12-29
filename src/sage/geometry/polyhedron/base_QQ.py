@@ -1,7 +1,6 @@
 r"""
 Base class for polyhedra over `\QQ`
 """
-from __future__ import absolute_import
 
 from sage.rings.all import QQ
 from sage.misc.all import cached_method, prod

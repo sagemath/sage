@@ -1,7 +1,7 @@
 """
 Dynamic classes
 
-.. rubric:: Why dynamic classes?
+.. RUBRIC:: Why dynamic classes?
 
 The short answer:
 
@@ -100,7 +100,7 @@ address. The purpose of this library is to standardize its use within
 Sage, and in particular to ensure that the constructed classes are
 reused whenever possible (unique representation), and can be pickled.
 
-.. rubric:: Combining dynamic classes and Cython classes
+.. RUBRIC:: Combining dynamic classes and Cython classes
 
 Cython classes cannot inherit from a dynamic class (there might be
 some partial support for this in the future). On the other hand, such

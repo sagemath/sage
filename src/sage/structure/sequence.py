@@ -69,7 +69,6 @@ specifying the universe of the sequence::
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
 
 import sage.structure.sage_object
 import sage.structure.coerce

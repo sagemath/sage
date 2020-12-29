@@ -78,7 +78,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.arith.all import gcd, binomial, srange
 from sage.rings.all import (PolynomialRing,

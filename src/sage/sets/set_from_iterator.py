@@ -60,7 +60,6 @@ The module also provides decorator for functions and methods::
 #
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets

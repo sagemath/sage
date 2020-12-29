@@ -1,7 +1,6 @@
 """
 all.py -- export of abelian groups to Sage
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #

@@ -22,7 +22,6 @@ following functions are available:
 Functions
 ---------
 """
-from __future__ import absolute_import, division
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify

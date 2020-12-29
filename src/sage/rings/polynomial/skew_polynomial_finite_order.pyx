@@ -16,8 +16,8 @@ AUTHOR::
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import copy
 import cysignals
@@ -396,7 +396,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             sage: b = a.bound(); b
             z^2 + z + 4
 
-        We observe that the bound is explicity given as an element of the
+        We observe that the bound is explicitly given as an element of the
         center (which is a univariate polynomial ring in the variable `z`).
         We can use conversion to send it in the skew polynomial ring::
 
@@ -465,7 +465,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             sage: b = a.optimal_bound(); b
             z + 3
 
-        We observe that the bound is explicity given as an element of the
+        We observe that the bound is explicitly given as an element of the
         center (which is a univariate polynomial ring in the variable `z`).
         We can use conversion to send it in the skew polynomial ring::
 

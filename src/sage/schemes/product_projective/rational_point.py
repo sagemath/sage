@@ -300,6 +300,7 @@ def enum_product_projective_finite_field(X):
 
     return pts
 
+
 def sieve(X, bound):
     r"""
     Returns the list of all rational points on scheme
@@ -309,7 +310,7 @@ def sieve(X, bound):
 
     Main idea behind the algorithm is to find points modulo primes
     and then reconstruct them using chinese remainder theorem.
-    We compute the points modulo primes parallely and then lift
+    We compute the points modulo primes parallelly and then lift
     them via chinese remainder theorem in parallel. The LLL reduction
     algorithm is applied to each component of the points, and finally
     the result is merged and converted to a point on the subscheme.
@@ -442,7 +443,7 @@ def sieve(X, bound):
     def points_modulo_primes(X, primes):
         r"""
         Return a list of rational points modulo all `p` in primes,
-        computed parallely.
+        computed parallelly.
         """
         normalized_input = []
         for p in primes_list:
@@ -501,7 +502,7 @@ def sieve(X, bound):
 
     def lift_all_points():
         r"""
-        Returns list of all rational points lifted parallely.
+        Return list of all rational points lifted parallelly.
         """
         normalized_input = []
         points = modulo_points.pop() # remove the list of points corresponding to largest prime

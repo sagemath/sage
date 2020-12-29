@@ -74,7 +74,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 import operator
 from sage.structure.element import Element, parent, coercion_model
@@ -433,9 +432,9 @@ class SchemeMorphism(Element):
         """
         return self.parent().homset_category()
 
-    def is_endomorphism(self):
+    def is_endomorphism(self) -> bool:
         """
-        Return wether the morphism is an endomorphism.
+        Return whether the morphism is an endomorphism.
 
         OUTPUT:
 

@@ -176,7 +176,6 @@ TESTS::
     sage: TestSuite(R).run()
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>

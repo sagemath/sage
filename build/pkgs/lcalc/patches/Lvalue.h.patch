@@ -1,0 +1,11 @@
+--- a/include/Lvalue.h
++++ b/include/Lvalue.h
+@@ -486,6 +486,8 @@
+             delete [] DELTA;
+             return L_value*exp(z-.5*log(OMEGA));
+         }
++
++        return L_value*exp(-log(Q)*s)/z; /* as in a later version */
+     }
+ 
+ 

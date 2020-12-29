@@ -121,7 +121,6 @@ TESTS::
     sage: TestSuite(M).run()
 
 """
-from __future__ import absolute_import
 
 from . import power_series_poly
 from . import power_series_mpoly

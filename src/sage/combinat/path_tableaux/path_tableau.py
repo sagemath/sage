@@ -119,7 +119,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             [0, 1, 2, 1, 0, 1, 0]
         """
         with self.clone() as result:
-            for i in range(1,len(result)-1):
+            for i in range(1,self.size()-1):
                 result = result.local_rule(i)
 
         return result
@@ -140,7 +140,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         L = list(self)
         result = []
         P = self.parent()
-        for i in range(len(self)):
+        for i in range(self.size()):
             L = list(P(L).promotion())
             result.append( L.pop() )
         result.reverse()
@@ -305,7 +305,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             sage: t._test_promotion()
         """
         tester = self._tester(**options)
-        n = self.size() - 1
+        n = self.size()
         tester.assertEqual(self.cactus(1,n-1).cactus(1,n).promotion(), self)
 
     def _test_commutation(self, **options):

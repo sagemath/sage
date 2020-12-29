@@ -44,6 +44,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.mpfi cimport *
 
+
 from sage.structure.parent_base cimport ParentWithBase
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool_sgn
@@ -1857,7 +1858,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             -1/2
             sage: SR(a)
             1/2*I*sqrt(3) - 1/2
-            sage: bool(I*a.imag() + a.real() == a)
+            sage: bool(QQbar(I)*QQbar(a.imag()) + QQbar(a.real()) == QQbar(a))
             True
 
         TESTS::
@@ -2372,6 +2373,79 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             return n + 1
         else:
             return n
+
+cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic):
+    r"""
+    An element of `\QQ[i]`.
+
+    Some methods of this class behave slightly differently than the
+    corresponding methods of general elements of quadratic number fields,
+    especially with regard to conversions to parents that can represent complex
+    numbers in rectangular form.
+
+    In addition, this class provides some convenience methods similar to methods
+    of symbolic expressions to make the behavior of ``a + I*b`` with rational
+    ``a``, ``b`` closer to that when ``a``, ``b`` are expressions.
+
+    TESTS::
+
+        sage: type(I)
+        <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
+    """
+
+    def _symbolic_(self, SR):
+        r"""
+        EXAMPLES::
+
+            sage: SR(1 + 2*i)
+            2*I + 1
+        """
+        from sage.symbolic.constants import I
+        return self[1]*I + self[0]
+
+    cpdef real_part(self):
+        r"""
+        Real part.
+
+        EXAMPLES::
+
+            sage: (1 + 2*I).real()
+            1
+            sage: (1 + 2*I).real().parent()
+            Rational Field
+        """
+        return self[0]
+
+    real = real_part
+
+    cpdef imag_part(self):
+        r"""
+        Imaginary part.
+
+        EXAMPLES::
+
+            sage: (1 + 2*I).imag()
+            2
+            sage: (1 + 2*I).imag().parent()
+            Rational Field
+        """
+        return self[1]
+
+    imag = imag_part
+
+    # for compatibility with the old symbolic I
+
+    def log(self, *args, **kwds):
+        r"""
+        Complex logarithm (standard branch).
+
+        EXAMPLES::
+
+            sage: I.log()
+            1/2*I*pi
+        """
+        from sage.symbolic.ring import SR
+        return SR(self).log(*args, **kwds)
 
 cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
     """

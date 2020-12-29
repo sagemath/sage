@@ -39,7 +39,6 @@ AUTHORS:
 ################################################################
 #   Distributed under GNU GPL3, see www.gnu.org
 ################################################################
-from __future__ import absolute_import
 
 #################         numbers and constants      ##############
 
@@ -397,7 +396,7 @@ def _sympysage_rf(self):
         sage: from sympy import Symbol, rf
         sage: _ = var('x, y')
         sage: rfxy = rf(Symbol('x'), Symbol('y'))
-        sage: assert rising_factorial(x,y)._sympy_() == rfxy.rewrite('gamma')
+        sage: assert rising_factorial(x,y)._sympy_() == rfxy.rewrite('gamma', piecewise=False)
         sage: assert rising_factorial(x,y) == rfxy._sage_()
     """
     from sage.arith.all import rising_factorial

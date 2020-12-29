@@ -36,7 +36,7 @@ of `G`.
 Computing the treewidth or a tree decomposition of a given graph is NP-hard in
 general.
 
-**This module containes the following functions** :
+**This module contains the following functions** :
 
 .. csv-table::
     :class: contentstable

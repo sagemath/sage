@@ -11,7 +11,6 @@ Interface to LattE integrale programs
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
 
 from sage.cpython.string import str_to_bytes, bytes_to_str
 

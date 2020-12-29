@@ -44,7 +44,6 @@ Classes and methods
 #
 #                         https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from urllib.request import urlopen
 

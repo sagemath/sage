@@ -8,7 +8,6 @@ AUTHOR:
 
 - William Stein (2012)
 """
-from __future__ import print_function
 
 from sage.misc.superseded import deprecation
 deprecation(27531, "sage.interacts.debugger is deprecated because it is meant for the deprecated Sage Notebook")
@@ -292,11 +291,4 @@ def debug():
         sage: debug()        # only works in the notebook
         You should use %debug on the command line.
     """
-    # "EMBEDDED_MODE" is True precisely when the Sage notebook is running.
-    from sage.plot.plot import EMBEDDED_MODE
-    if not EMBEDDED_MODE:
-        # Must be the command line, so suggest using the IPython debugger.
-        print("You should use %debug on the command line.")
-    else:
-        # Create the Debug object and make it interactive.
-        Debug().interact()
+    print("You should use %debug on the command line.")

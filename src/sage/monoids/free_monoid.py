@@ -23,7 +23,6 @@ the optional ``names`` argument to the
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.integer import Integer
 from sage.structure.category_object import normalize_names

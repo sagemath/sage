@@ -1694,7 +1694,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             OUTPUT:
 
             The resulting list P(current_node) with current_node have been
-            processed by ``node_processing``. The ouput is a pair ``(i,
+            processed by ``node_processing``. The output is a pair ``(i,
             pos)`` such that ``P[i][pos:]`` is the list of current_node.
             """
 
@@ -1781,15 +1781,15 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
         def treat_node(current_node, i, j):
             r"""
-            Execute a depht-first search on self and start a suffix walk for
-            labeled points on each edges of T. The fonction is recursive, call
+            Execute a depth-first search on self and start a suffix walk for
+            labeled points on each edges of T. The function is recursive, call
             treat_node(0,0,0) to initiate the search.
 
             INPUT:
 
             - ``current_node`` - The node to treat
             - ``(i, j)`` - Pair of index such that the path from 0 to
-            ``current_node`` reads ``self.word()[i:j]``
+              ``current_node`` reads ``self.word()[i:j]``
             """
 
             if current_node in D:

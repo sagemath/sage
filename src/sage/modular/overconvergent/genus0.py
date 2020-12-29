@@ -171,7 +171,6 @@ classical) does not apply.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.matrix.all        import matrix, MatrixSpace, diagonal_matrix
 from sage.misc.verbose      import verbose

@@ -279,7 +279,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: not a blob diagram of order 4
-            sage: BD4([[3,-3]], [[1,-1],[2,-2],[4,-4]])  # trapped propogating line
+            sage: BD4([[3,-3]], [[1,-1],[2,-2],[4,-4]])  # trapped propagating line
             Traceback (most recent call last):
             ...
             ValueError: not a blob diagram of order 4
@@ -297,7 +297,7 @@ class BlobDiagrams(Parent, UniqueRepresentation):
                     if P[1] < 0:  # P is a cap
                         continue
                     if P[1] < x:
-                        if P[0] < 0:  # A propogating line to the left
+                        if P[0] < 0:  # A propagating line to the left
                             return False
                     else:  # Note that P[1] != x
                         if 0 < P[0] < x:  # A nesting line
@@ -307,12 +307,12 @@ class BlobDiagrams(Parent, UniqueRepresentation):
                     if P[0] > 0:  # P is a cup
                         continue
                     if P[0] > y:
-                        if P[1] > 0:  # A propogating line to the left
+                        if P[1] > 0:  # A propagating line to the left
                             return False
                     else:  # Note that P[0] != y
                         if 0 > P[1] > y:  # A nesting line
                             return False
-            else:  # Must be a propogating line
+            else:  # Must be a propagating line
                 if any(P[0] < 0 and P[1] > 0 and P[1] < y for P in TL):
                     return False
         return True

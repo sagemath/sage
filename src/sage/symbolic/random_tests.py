@@ -10,7 +10,6 @@ Randomized tests of GiNaC / PyNaC
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
 
 
 from sage.misc.prandom import randint, random

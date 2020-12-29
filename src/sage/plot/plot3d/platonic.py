@@ -48,7 +48,6 @@ AUTHORS:
 
 - William Stein
 """
-from __future__ import absolute_import
 
 
 # ****************************************************************************

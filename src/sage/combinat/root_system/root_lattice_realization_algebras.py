@@ -1082,7 +1082,7 @@ class Algebras(AlgebrasCategory):
 
                 Investigate why `T_0^\vee` currently does not satisfy
                 the quadratic relation in type `BC`. This should
-                hopefuly be fixed when `T_0^\vee` will have a more
+                hopefully be fixed when `T_0^\vee` will have a more
                 uniform implementation::
 
                     sage: cartan_type = CartanType(["BC",1,2])

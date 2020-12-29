@@ -21,7 +21,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import division, absolute_import, print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.groups.free_group import FreeGroup

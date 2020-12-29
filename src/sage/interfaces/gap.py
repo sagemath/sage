@@ -175,7 +175,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import, print_function
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from .gap_workspace import gap_workspace_file, prepare_workspace_dir
@@ -277,7 +276,7 @@ def get_gap_memory_pool_size():
     # Don't eat all address space if the user set ulimit -v
     suggested_size = min(suggested_size, vmax // 10)
     # ~220MB is the minimum for long doctests
-    suggested_size = max(suggested_size, 250 * 1024**2)
+    suggested_size = max(suggested_size, 400 * 1024**2)
     return suggested_size
 
 
@@ -886,7 +885,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             sage: print(gap.version())
             4...
         """
-        return self.eval('VERSION')[1:-1]
+        return self.eval('GAPInfo.Version')[1:-1]
 
     def function_call(self, function, args=None, kwds=None):
         """
@@ -915,7 +914,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         properly::
 
             sage: g = Gap()
-            sage: g.function_call("ConjugacyClassesSubgroups", sage.interfaces.gap.GapElement(g, 'SymmetricGroup(2)', name = 'a_variable_with_a_very_very_very_long_name'))
+            sage: g.function_call("ConjugacyClassesSubgroups", sage.interfaces.gap.GapElement(g, 'SymmetricGroup(2)', name = 'a_variable_with_a_very_very_very_long_name')) # random
             [ ConjugacyClassSubgroups(SymmetricGroup( [ 1 .. 2 ] ),Group( () )),
               ConjugacyClassSubgroups(SymmetricGroup( [ 1 .. 2 ] ),Group( [ (1,2) ] )) ]
 
@@ -923,7 +922,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         file to be communicated to GAP, this does not cause problems since
         the file will contain a single command::
 
-            sage: g.function_call("ConjugacyClassesSubgroups", sage.interfaces.gap.GapElement(g, 'SymmetricGroup(2)', name = 'a_variable_with_a_name_so_very_very_very_long_that_even_by_itself_will_make_expect_use_a_file'))
+            sage: g.function_call("ConjugacyClassesSubgroups", sage.interfaces.gap.GapElement(g, 'SymmetricGroup(2)', name = 'a_variable_with_a_name_so_very_very_very_long_that_even_by_itself_will_make_expect_use_a_file')) # random
             [ ConjugacyClassSubgroups(SymmetricGroup( [ 1 .. 2 ] ),Group( () )),
               ConjugacyClassSubgroups(SymmetricGroup( [ 1 .. 2 ] ),Group( [ (1,2) ] )) ]
         """

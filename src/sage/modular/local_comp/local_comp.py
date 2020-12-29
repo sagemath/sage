@@ -18,7 +18,6 @@ AUTHORS:
 - David Loeffler
 - Jared Weinstein
 """
-from __future__ import absolute_import
 
 from sage.structure.sage_object     import SageObject
 from sage.rings.all                 import ZZ, Zmod, QQbar, PolynomialRing, polygen

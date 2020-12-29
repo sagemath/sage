@@ -109,6 +109,8 @@ from .complex_mpc import MPComplexField
 
 from sage.rings.complex_arb import ComplexBallField, CBF
 
+lazy_import("sage.rings.imaginary_unit", "I")
+
 # Power series rings
 from .power_series_ring import PowerSeriesRing
 from .power_series_ring_element import PowerSeries

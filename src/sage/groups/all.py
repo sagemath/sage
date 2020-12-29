@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
 from .pari_group import PariGroup

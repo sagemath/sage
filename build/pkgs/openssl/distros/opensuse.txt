@@ -1,1 +1,1 @@
-openssl
+"pkgconfig(libssl)"

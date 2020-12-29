@@ -51,7 +51,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function
 
 from sage.schemes.elliptic_curves.all import EllipticCurve
 

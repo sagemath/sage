@@ -131,7 +131,6 @@ Note that the letterplace implementation can only be used if the corresponding
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 from sage.categories.rings import Rings
 

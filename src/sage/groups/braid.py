@@ -79,7 +79,6 @@ from sage.categories.action import Action
 from sage.sets.set import Set
 from sage.groups.finitely_presented import FinitelyPresentedGroup
 from sage.groups.artin import FiniteTypeArtinGroup, FiniteTypeArtinGroupElement
-from sage.misc.package import PackageNotFoundError
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.features import PythonModule
 
@@ -88,6 +87,7 @@ lazy_import('sage.libs.braiding',
              'leastcommonmultiple', 'conjugatingbraid', 'ultrasummitset',
              'thurston_type', 'rigidity', 'sliding_circuits'],
             feature=PythonModule('sage.libs.braiding', spkg='libbraiding'))
+
 
 class Braid(FiniteTypeArtinGroupElement):
     """

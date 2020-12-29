@@ -315,7 +315,6 @@ implementing them on your own as a patch for inclusion!
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 import sys
 

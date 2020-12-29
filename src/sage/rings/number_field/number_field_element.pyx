@@ -2324,7 +2324,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: 2^a
             Traceback (most recent call last):
             ...
-            TypeError: an embedding into RR or CC must be specified
+            TypeError: no canonical coercion from Number Field in a with defining polynomial x^2 + 1 to Symbolic Ring
         """
         if (isinstance(base, NumberFieldElement) and
             (isinstance(exp, Integer) or type(exp) is int or exp in ZZ)):

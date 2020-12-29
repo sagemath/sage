@@ -1,0 +1,2 @@
+cd src
+sage-python23 setup.py

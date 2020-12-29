@@ -8,7 +8,6 @@ TESTS::
     sage: x+z
     z + x
 """
-from __future__ import print_function
 
 import sage.misc.prandom as random
 

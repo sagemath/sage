@@ -143,15 +143,15 @@ Augmentations are described originally in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Chapter 4 of [Rüt2014]_.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import islice
 
 from .inductive_valuation import _lift_to_maximal_precision
 from .inductive_valuation import FinalInductiveValuation, NonFinalInductiveValuation, FiniteInductiveValuation, InfiniteInductiveValuation, InductiveValuation
@@ -250,13 +250,15 @@ class AugmentedValuationFactory(UniqueFactory):
         else:
             return parent.__make_element_class__(InfiniteAugmentedValuation)(parent, base_valuation, phi, mu)
 
+        
 AugmentedValuation = AugmentedValuationFactory("sage.rings.valuation.augmented_valuation.AugmentedValuation")
+
 
 class AugmentedValuation_base(InductiveValuation):
     r"""
     An augmented valuation is a discrete valuation on a polynomial ring. It
     extends another discrete valuation `v` by setting the valuation of a
-    polynomial `f` to the minumum of `v(f_i)i\mu` when writing `f=\sum_i
+    polynomial `f` to the minimum of `v(f_i)i\mu` when writing `f=\sum_i
     f_i\phi^i`.
 
     INPUT:
@@ -1287,7 +1289,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         if coefficients is None:
             coefficients = self.coefficients(f)
             if degree_bound is not None:
-                from itertools import islice
                 coefficients = islice(coefficients, 0, tau*degree_bound + 1, 1)
         coefficients = list(coefficients)
 
@@ -1800,7 +1801,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         if effective_degree is not None:
             if (QQ(f.degree()) / self.phi().degree()).ceil() > effective_degree:
-                from itertools import islice
                 f = self.domain().change_ring(self.domain())(list(islice(self.coefficients(f), 0, int(effective_degree) + 1, 1)))(self.phi())
 
         if f.degree() < self.phi().degree():
@@ -1832,7 +1832,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
             # speed up the surrounding calls drastically.
             for i in range(f.degree(), -1, -1):
                 j = i // self.phi().degree()
-                from itertools import islice
+
                 coefficients = list(islice(f.list(), int(j * self.phi().degree()),
                                            int(i) + 1))
                 g = self.domain()(coefficients)

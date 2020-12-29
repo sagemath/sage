@@ -54,7 +54,6 @@ factor `x`.
     sage: M0.T(2).matrix().fcp('x')
     (x - 9)^2 * (x^2 - 2*x - 2)^2
 """
-from __future__ import absolute_import
 
 ################################################################################
 #       Sage: Open Source Mathematical Software
@@ -828,10 +827,9 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             deg = term.degree(X)
             a = self._modular_symbol_0_to_alpha(alpha, deg)
             b = self._modular_symbol_0_to_alpha(beta, deg)
-            s += f.monomial_coefficient(term) * (b-a)
+            s += f.monomial_coefficient(term) * (b - a)
 
         return s
-
 
     def _compute_dual_hecke_matrix(self, n):
         r"""
@@ -843,7 +841,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
         OUTPUT:
 
-        (matrix) The matrix of the dual od `T(n)`.
+        (matrix) The matrix of the dual of `T(n)`.
 
         EXAMPLES::
 

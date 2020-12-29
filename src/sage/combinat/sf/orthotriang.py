@@ -38,7 +38,6 @@ functions from this definition.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from . import sfa
 from sage.categories.morphism import SetMorphism
@@ -223,9 +222,9 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         f = lambda mu: self._self_to_base_cache[part].get(mu, 0)
         return f
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         """
-        Returns ``left`` * ``right`` by converting both to the base and then
+        Return ``left`` * ``right`` by converting both to the base and then
         converting back to ``self``.
 
         INPUT:
@@ -247,7 +246,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
             sage: s([1])*s([2,1]) #indirect doctest
             s[2, 1, 1] + s[2, 2] + s[3, 1]
         """
-        return self( self._sf_base(left)*self._sf_base(right) )
+        return self(self._sf_base(left) * self._sf_base(right))
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override

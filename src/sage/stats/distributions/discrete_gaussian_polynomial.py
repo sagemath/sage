@@ -52,7 +52,6 @@ EXAMPLES::
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of the FreeBSD Project.
 #*****************************************************************************/
-from __future__ import absolute_import
 
 from sage.rings.all import RR, ZZ
 from .discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler

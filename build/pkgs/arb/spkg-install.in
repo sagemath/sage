@@ -1,9 +1,5 @@
 cd src
 
-# The git head of arb now honors LDFLAGS; The following workaround can
-# be removed in arb >= 2.8 when it is released
-export EXTRA_SHARED_FLAGS=$LDFLAGS
-
 # Trac #29607: We must always supply --with-gmp, --with-mpfr,
 # --with-flint because otherwise ARB's configure script uses
 # /usr/local, which is always wrong.

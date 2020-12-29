@@ -387,14 +387,14 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
         return [self.one(), self([1]) + 2 * self([2, 1]),
                 self([4, 2, 1, 3]) - self([3, 2, 1])]
 
-    def _multiply_basis(self, left, right):
+    def product_on_basis(self, left, right):
         """
         EXAMPLES::
 
             sage: p1 = Permutation([3,2,1])
             sage: p2 = Permutation([2,1,3])
             sage: X = SchubertPolynomialRing(QQ)
-            sage: X._multiply_basis(p1,p2)
-            {[4, 2, 1, 3]: 1}
+            sage: X.product_on_basis(p1,p2)
+            X[4, 2, 1, 3]
         """
-        return symmetrica.mult_schubert_schubert(left, right).monomial_coefficients()
+        return symmetrica.mult_schubert_schubert(left, right)

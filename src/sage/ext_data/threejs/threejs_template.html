@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title></title>
+<title>SAGE_TITLE</title>
 <meta charset="utf-8">
 <meta name=viewport content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <style>
@@ -98,41 +98,56 @@ SAGE_SCRIPTS
         var d = options.decimals; // decimals
         var offsetRatio = 0.1;
         var al = options.axesLabels;
+        var als = options.axesLabelsStyle || [{}, {}, {}];
 
         var offset = offsetRatio * a[1]*( b[1].y - b[0].y );
         var xm = xMid.toFixed(d);
         if ( /^-0.?0*$/.test(xm) ) xm = xm.substr(1);
-        addLabel( al[0] + '=' + xm, a[0]*xMid, a[1]*b[1].y+offset, a[2]*b[0].z );
-        addLabel( ( b[0].x ).toFixed(d), a[0]*b[0].x, a[1]*b[1].y+offset, a[2]*b[0].z );
-        addLabel( ( b[1].x ).toFixed(d), a[0]*b[1].x, a[1]*b[1].y+offset, a[2]*b[0].z );
+        addLabel( al[0] + '=' + xm, a[0]*xMid, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
+        addLabel( ( b[0].x ).toFixed(d), a[0]*b[0].x, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
+        addLabel( ( b[1].x ).toFixed(d), a[0]*b[1].x, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
 
         var offset = offsetRatio * a[0]*( b[1].x - b[0].x );
         var ym = yMid.toFixed(d);
         if ( /^-0.?0*$/.test(ym) ) ym = ym.substr(1);
-        addLabel( al[1] + '=' + ym, a[0]*b[1].x+offset, a[1]*yMid, a[2]*b[0].z );
-        addLabel( ( b[0].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[0].y, a[2]*b[0].z );
-        addLabel( ( b[1].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[1].y, a[2]*b[0].z );
+        addLabel( al[1] + '=' + ym, a[0]*b[1].x+offset, a[1]*yMid, a[2]*b[0].z, als[1] );
+        addLabel( ( b[0].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[0].y, a[2]*b[0].z, als[1] );
+        addLabel( ( b[1].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[1].y, a[2]*b[0].z, als[1] );
 
         var offset = offsetRatio * a[1]*( b[1].y - b[0].y );
         var zm = zMid.toFixed(d);
         if ( /^-0.?0*$/.test(zm) ) zm = zm.substr(1);
-        addLabel( al[2] + '=' + zm, a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*zMid );
-        addLabel( ( b[0].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[0].z );
-        addLabel( ( b[1].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[1].z );
+        addLabel( al[2] + '=' + zm, a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*zMid, als[2] );
+        addLabel( ( b[0].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[0].z, als[2] );
+        addLabel( ( b[1].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[1].z, als[2] );
 
     }
 
-    function addLabel( text, x, y, z, color='black', fontSize=14, fontFamily='monospace',
-                       fontStyle='normal', fontWeight='normal', opacity=1 ) {
+    function addLabel( text, x, y, z, style ) {
+
+        var color = style.color || 'black';
+        var fontSize = style.fontSize || 14;
+        var fontFamily = style.fontFamily || 'monospace';
+        var fontStyle = style.fontStyle || 'normal';
+        var fontWeight = style.fontWeight || 'normal';
+        var opacity = style.opacity || 1;
 
         if ( options.theme === 'dark' )
             if ( color === 'black' || color === '#000000' )
                 color = 'white';
 
+        if ( Array.isArray( fontStyle ) ) {
+            fontFamily = fontFamily.map( function( f ) {
+                // Need to put quotes around fonts that have whitespace in their names.
+                return /\s/.test( f ) ? '"' + f + '"' : f;
+            }).join(', ');
+        }
+
         var canvas = document.createElement( 'canvas' );
         var context = canvas.getContext( '2d' );
         var pixelRatio = Math.round( window.devicePixelRatio );
 
+        // For example: italic bold 20px "Times New Roman", Georgia, serif
         var font = [fontStyle, fontWeight, fontSize + 'px', fontFamily].join(' ');
 
         context.font = font;
@@ -211,13 +226,17 @@ SAGE_SCRIPTS
 
         var aspect = window.innerWidth / window.innerHeight;
 
+        // Scale the near and far clipping planes along with the overall plot size.
+        var nearClip = 0.01 * midToCorner;
+        var farClip = 100 * midToCorner;
+
         if ( options.projection === 'orthographic' ) {
-            var camera = new THREE.OrthographicCamera( -1, 1, 1, -1, -1000, 1000 );
+            var camera = new THREE.OrthographicCamera( -1, 1, 1, -1, -farClip, farClip );
             updateCameraAspect( camera, aspect );
             return camera;
         }
 
-        return new THREE.PerspectiveCamera( 45, aspect, 0.1, 1000 );
+        return new THREE.PerspectiveCamera( 45, aspect, nearClip, farClip );
 
     }
 
@@ -274,13 +293,7 @@ SAGE_SCRIPTS
     for ( var i=0 ; i < texts.length ; i++ ) addText( texts[i] );
 
     function addText( json ) {
-        json.fontFamily = json.fontFamily.map( function( f ) {
-            // Need to put quotes around fonts that have whitespace in their names.
-            return /\s/.test( f ) ? '"' + f + '"' : f;
-        }).join(', ');
-        var sprite = addLabel( json.text, a[0]*json.x, a[1]*json.y, a[2]*json.z, json.color,
-                               json.fontSize, json.fontFamily, json.fontStyle, json.fontWeight,
-                               json.opacity );
+        var sprite = addLabel( json.text, a[0]*json.x, a[1]*json.y, a[2]*json.z, json );
         sprite.userData = json;
     }
 
@@ -469,8 +482,18 @@ SAGE_SCRIPTS
         var blob = new Blob( [ '<!DOCTYPE html>\n' + document.documentElement.outerHTML ] );
         var a = document.body.appendChild( document.createElement( 'a' ) );
         a.href = window.URL.createObjectURL( blob );
-        a.download = 'graphic.html';
+        a.download = suggestFilename();
         a.click();
+
+        function suggestFilename() {
+            if ( !document.title ) {
+                return 'graphic.html';
+            } else if ( /\.html?$/i.test( document.title ) ) {
+                return document.title; // already ends in .htm or .html
+            } else {
+                return document.title + '.html';
+            }
+        }
 
     }
 

@@ -63,7 +63,6 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.misc.repr import repr_lincomb
 import operator

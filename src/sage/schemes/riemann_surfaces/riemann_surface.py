@@ -62,7 +62,6 @@ In fact it is an order in a number field::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 from scipy.spatial import Voronoi
 from sage.arith.misc import GCD, algdep
@@ -464,7 +463,7 @@ class RiemannSurface(object):
             sage: RiemannSurface(f)
             Riemann surface defined by polynomial f = -z^4 + w^2 + 1 = 0, with 53 bits of precision
         """
-        s = 'Riemann surface defined by polynomial f = %s = 0, with %s bits of precision'%(self.f, self._prec)
+        s = 'Riemann surface defined by polynomial f = %s = 0, with %s bits of precision' % (self.f, self._prec)
         return s
 
     def w_values(self, z0):
@@ -547,7 +546,7 @@ class RiemannSurface(object):
 
     def downstairs_graph(self):
         r"""
-        Retun the Voronoi decomposition as a planar graph.
+        Return the Voronoi decomposition as a planar graph.
 
         The result of this routine can be useful to interpret the labelling of
         the vertices.
@@ -751,8 +750,8 @@ class RiemannSurface(object):
         A list of points the same length as ``oldw`` corresponding to the new
         newton iterated points.
 
-        However, if the newton iteration exceedes the alloted attempts, or exits
-        the ``epsilon`` ball, raises a convergence error.
+        However, if the Newton iteration exceeds the allotted attempts,
+        or exits the ``epsilon`` ball, raises a convergence error.
 
         EXAMPLES:
 
@@ -841,8 +840,8 @@ class RiemannSurface(object):
 
         A complex number, which should be a w-value above ``z0``.
 
-        However, if the Newton iteration exceedes the alloted attempts, or exits
-        the ``epsilon`` ball, raises a convergence error.
+        However, if the Newton iteration exceeds the allotted attempts,
+        or exits the ``epsilon`` ball, raises a convergence error.
 
         EXAMPLES:
 
@@ -2080,7 +2079,7 @@ def integer_matrix_relations(M1,M2,b=None,r=None):
       by `2^b` before rounding to integers.
 
     - ``r`` -- integer (default: ``b/4``). The vectors found by LLL that satisfy
-      the scaled equations to withing `2^r` are reported as solutions.
+      the scaled equations to within `2^r` are reported as solutions.
 
     OUTPUT:
 

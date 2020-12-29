@@ -100,7 +100,6 @@ Functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import
 
 from itertools import combinations
 from sage.matrix.constructor import Matrix

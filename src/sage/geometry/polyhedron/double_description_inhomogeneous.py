@@ -50,7 +50,6 @@ following are the inequalities and equations::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix

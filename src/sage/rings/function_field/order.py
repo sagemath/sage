@@ -94,7 +94,6 @@ AUTHORS:
 - Brent Baccala (2019-12-20): support orders in characteristic zero
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -337,7 +336,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
     def _element_constructor_(self, f):
         """
-        Constuct an element of this order from ``f``.
+        Construct an element of this order from ``f``.
 
         INPUT:
 
@@ -358,7 +357,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         V, fr_V, to_V = F.vector_space()
         f_vector = to_V(f)
-        if not f_vector in self._module:
+        if f_vector not in self._module:
             raise TypeError("{} is not an element of {}".format(f_vector, self))
 
         return f

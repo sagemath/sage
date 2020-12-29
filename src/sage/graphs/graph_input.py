@@ -18,7 +18,6 @@ Functions
 ---------
 
 """
-from __future__ import absolute_import, division
 from sage.cpython.string import bytes_to_str
 
 

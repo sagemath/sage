@@ -163,7 +163,6 @@ on k, given n, d, q, (b) seek bounds on R, delta, q (assuming n is
     - mrrw2_bound_asymp(delta,q), "second" asymptotic
       McEliese-Rumsey-Rodemich-Welsh bound for the information rate.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2006 David Joyner <wdj@usna.edu>

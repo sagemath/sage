@@ -19,7 +19,6 @@ TESTS::
     sage: loads(dumps(f)) == f
     True
 """
-from __future__ import absolute_import
 
 ####################################################################################
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
@@ -350,12 +349,14 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: V = X.span([[2, 0], [0, 8]], ZZ)
             sage: W = (QQ**1).span([[1/12]], ZZ)
             sage: f = V.hom([W([1/3]), W([1/2])], W)
-            sage: f.lift([1/3])
+            sage: l=f.lift([1/3]); l # random
             (8, -16)
-            sage: f.lift([1/2])
-            (12, -24)
-            sage: f.lift([1/6])
-            (4, -8)
+            sage: f(l)
+            (1/3)
+            sage: f(f.lift([1/2]))
+            (1/2)
+            sage: f(f.lift([1/6]))
+            (1/6)
             sage: f.lift([1/12])
             Traceback (most recent call last):
             ...

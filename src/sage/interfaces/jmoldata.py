@@ -18,7 +18,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*******************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 
@@ -30,6 +29,7 @@ import os
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 class JmolData(SageObject):
     r"""
@@ -178,5 +178,5 @@ class JmolData(SageObject):
                 "-J", launchscript, "-j", imagescript],
                 stdout=jout, stderr=jout, env=env)
         if not os.path.isfile(targetfile):
-            raise RuntimeError("Jmol failed to create file %s, see %s for details"%(repr(targetfile), repr(scratchout)))
+            raise RuntimeError(f"Jmol failed to create file {targetfile}: {Path(scratchout).read_text()}")
         os.unlink(scratchout)

@@ -85,8 +85,6 @@ AUTHORS:
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
-from __future__ import absolute_import
 
 # standard Python libraries
 import re

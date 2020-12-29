@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .r import ttest
 from .basic_stats import (mean, mode, std, variance, median, moving_average)

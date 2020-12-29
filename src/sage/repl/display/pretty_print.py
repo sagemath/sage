@@ -14,21 +14,21 @@ AUTHORS:
 - Volker Braun (2013): refactored into DisplayHookBase
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from IPython.lib.pretty import PrettyPrinter
 
-from sage.repl.display.fancy_repr import *
-
-
+from sage.repl.display.fancy_repr import (TallListRepr, PlainPythonRepr,
+                                          LargeMatrixHelpRepr,
+                                          SomeIPythonRepr)
 
 
 class SagePrettyPrinter(PrettyPrinter):
@@ -139,9 +139,11 @@ class SagePrettyPrinter(PrettyPrinter):
         try:
             ok = False
             for representation in self.pretty_repr:
-                if self.DEBUG: print('Trying {0}'.format(representation))
+                if self.DEBUG:
+                    print('Trying {0}'.format(representation))
                 ok = representation(obj, self, cycle)
-                if self.DEBUG: print('ok = {0}'.format(ok))
+                if self.DEBUG:
+                    print('ok = {0}'.format(ok))
                 if ok not in [True, False]:
                     raise RuntimeError('printer failed to return boolean')
                 if ok:
@@ -151,4 +153,3 @@ class SagePrettyPrinter(PrettyPrinter):
         finally:
             self.end_group()
             self.stack.pop()
-

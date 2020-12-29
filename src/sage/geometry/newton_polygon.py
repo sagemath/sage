@@ -13,7 +13,6 @@ slopes (and hence a last infinite slope).
 #
 #                  https://www.gnu.org/licenses/
 #############################################################################
-from __future__ import division
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent

@@ -150,7 +150,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     def __init__(self, x):
         """
-        Initalize ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 

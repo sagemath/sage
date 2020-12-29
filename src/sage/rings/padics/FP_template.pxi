@@ -883,11 +883,10 @@ cdef class FPElement(pAdicTemplateElement):
 
     def __nonzero__(self):
         """
-        Returns True if this element is distinguishable from zero.
+        Return ``True`` if this element is distinguishable from zero.
 
         For most applications, explicitly specifying the power of p
-        modulo which the element is supposed to be nonzero is
-        preferrable.
+        modulo which the element is supposed to be nonzero is preferable.
 
         EXAMPLES::
 

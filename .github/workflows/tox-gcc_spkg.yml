@@ -67,7 +67,7 @@ jobs:
               TOKEN="${{ secrets.GITHUB_TOKEN }}"
             fi
             if echo "$TOKEN" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin; then
-              echo "::set-env name=DOCKER_PUSH_REPOSITORY::docker.pkg.github.com/${{ github.repository }}/"
+              echo "DOCKER_PUSH_REPOSITORY=docker.pkg.github.com/${{ github.repository }}/" >> $GITHUB_ENV
             fi
       - run: |
           set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"

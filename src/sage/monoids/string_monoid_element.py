@@ -19,7 +19,6 @@ compression of FreeMonoid elements (a feature), and could be packed into words.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 # import operator
 from sage.rings.integer import Integer

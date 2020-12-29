@@ -10,17 +10,16 @@ AUTHORS:
 
 - Bruce Westbury (2019): initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2019 Bruce Westbury <bruce.westbury@gmail.com>,
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from six import add_metaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.parent import Parent
 from sage.categories.sets_cat import Sets
@@ -28,14 +27,17 @@ from sage.combinat.path_tableaux.path_tableau import PathTableau, PathTableaux, 
 from sage.categories.fields import Fields
 from sage.rings.all import QQ, ZZ
 
-###############################################################################
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class FriezePattern(PathTableau):
-    """
+class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
+    r"""
     A frieze pattern.
 
     We encode a frieze pattern as a sequence in a fixed ground field.
+
+    INPUT:
+
+    - ``fp`` -- a sequence of elements of ``field``
+    - ``field`` -- (default: ``QQ``) the ground field
 
     EXAMPLES::
 
@@ -114,12 +116,8 @@ class FriezePattern(PathTableau):
     """
     @staticmethod
     def __classcall_private__(cls, fp, field=QQ):
-        """
+        r"""
         This is the preprocessing for creating friezes.
-
-        INPUT:
-
-        - ``field`` -- a sequence of elements of the field
 
         EXAMPLES::
 
@@ -160,7 +158,7 @@ class FriezePattern(PathTableau):
         return FriezePatterns(field)(tuple(fp))
 
     def check(self):
-        """
+        r"""
         Check that ``self`` is a valid frieze pattern.
 
         TESTS::
@@ -172,7 +170,7 @@ class FriezePattern(PathTableau):
         pass
 
     def _repr_(self):
-        """
+        r"""
         Return the string representation of ``self``.
 
         This removes the leading and trailing zero.
@@ -210,9 +208,9 @@ class FriezePattern(PathTableau):
             """
             This is the rule on a sequence of three scalars.
             """
-            return (x[0]*x[2]+1) / x[1]
+            return (x[0] * x[2] + 1) / x[1]
 
-        if not (i > 0 and i < len(self) - 1):
+        if not (0 < i < len(self) - 1):
             raise ValueError(f"{i} is not a valid integer")
 
         with self.clone() as result:
@@ -258,7 +256,8 @@ class FriezePattern(PathTableau):
         r"""
         Return ``True`` if all elements of ``self`` are positive.
 
-        This implies that all entries of ``CylindricalDiagram(self)`` are positive.
+        This implies that all entries of ``CylindricalDiagram(self)``
+        are positive.
 
         .. WARNING::
 
@@ -282,7 +281,8 @@ class FriezePattern(PathTableau):
 
     def is_integral(self):
         r"""
-        Return ``True`` if all entries of the frieze pattern are positive integers.
+        Return ``True`` if all entries of the frieze pattern are
+        positive integers.
 
         EXAMPLES::
 
@@ -303,11 +303,10 @@ class FriezePattern(PathTableau):
         If ``self`` is positive and integral then this will be a triangulation.
 
         .. PLOT::
-            :width: 600 px
+            :width: 400 px
 
             G = path_tableaux.FriezePattern([1,2,7,5,3,7,4,1]).triangulation()
-            p = graphics_array(G, 7, 6)
-            sphinx_plot(p)
+            sphinx_plot(G)
 
         EXAMPLES::
 
@@ -331,14 +330,15 @@ class FriezePattern(PathTableau):
         G = Graphics()
         G.set_aspect_ratio(1.0)
 
-        vt = [(cos(2*theta*pi/(n)), sin(2*theta*pi/(n))) for theta in range(n+1)]
+        vt = [(cos(2*theta*pi/(n)), sin(2*theta*pi/(n)))
+              for theta in range(n+1)]
         for i, p in enumerate(vt):
-            G += text(str(i), [1.05*p[0],1.05*p[1]])
+            G += text(str(i), [1.05*p[0], 1.05*p[1]])
 
         for i, r in enumerate(cd):
             for j, a in enumerate(r[:n]):
                 if a == 1:
-                    G += line([vt[i],vt[j]])
+                    G += line([vt[i], vt[j]])
 
         G.axes(False)
         return G
@@ -354,14 +354,18 @@ class FriezePattern(PathTableau):
 
         The option ``model`` must be one of
 
-        * ``'UHP'``, for the upper half plane model
-        * ``'PD'``, for the Poincare disk model
-        * ``'KM'``, for the Klein model
+        * ``'UHP'`` - (default) for the upper half plane model
+        * ``'PD'`` - for the Poincare disk model
+        * ``'KM'`` - for the Klein model
 
         The hyperboloid model is not an option as this does not implement
         boundary points.
 
-        This can be omitted in which case it is taken to be UHP.
+        .. PLOT::
+            :width: 400 px
+
+            t = path_tableaux.FriezePattern([1,2,7,5,3,7,4,1])
+            sphinx_plot(t.plot())
 
         EXAMPLES::
 
@@ -394,7 +398,7 @@ class FriezePattern(PathTableau):
         cd = CylindricalDiagram(self).diagram
         num = cd[0][:-1]
         den = cd[1][2:]
-        vt = [M(U.get_point(x / (x+y))) for x,y in zip(num, den)]
+        vt = [M(U.get_point(x / (x+y))) for x, y in zip(num, den)]
         gd = [M.get_geodesic(vt[i-1], vt[i]) for i in range(len(vt))]
         return sum([a.plot() for a in gd], Graphics()).plot()
 
@@ -419,9 +423,10 @@ class FriezePattern(PathTableau):
         else:
             raise TypeError("no base extension defined")
 
+
 class FriezePatterns(PathTableaux):
     """
-    The parent class for path_tableaux.FriezePattern.
+    The set of all frieze patterns.
 
     EXAMPLES::
 
@@ -435,8 +440,8 @@ class FriezePatterns(PathTableaux):
         [ ,  , 1, 1, 1]
     """
     def __init__(self, field):
-        """
-        Initializes the class of all FriezePatterns
+        r"""
+        Initialize ``self``.
 
         TESTS::
 
@@ -454,7 +459,6 @@ class FriezePatterns(PathTableaux):
             sage: path_tableaux.FriezePatterns(QQ)._an_element_()
             [1, 1, 1]
         """
-        return FriezePattern((1,1,1))
+        return FriezePattern((1, 1, 1))
 
     Element = FriezePattern
-

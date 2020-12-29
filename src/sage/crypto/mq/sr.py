@@ -304,8 +304,6 @@ REFERENCES:
 
 - [MR2002]_
 """
-# python3
-from __future__ import division, print_function, absolute_import
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ

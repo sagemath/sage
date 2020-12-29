@@ -521,7 +521,6 @@ runs under 5 seconds (used to take ~40sec)::
     sage: cancel_alarm()
 """
 
-from __future__ import absolute_import, print_function, division
 
 import itertools
 import operator
@@ -542,7 +541,7 @@ from sage.rings.polynomial.all import PolynomialRing
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.number_field.number_field import NumberField, QuadraticField, CyclotomicField
+from sage.rings.number_field.number_field import NumberField, GaussianField, CyclotomicField
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
 from sage.arith.all import factor
 from . import infinity
@@ -8341,7 +8340,7 @@ def _init_qqbar():
 
     AA_0 = AA.zero()
 
-    QQbar_I_nf = QuadraticField(-1, 'I', embedding=CC.gen(), latex_name='i')
+    QQbar_I_nf = GaussianField()
     QQbar_I_generator = AlgebraicGenerator(QQbar_I_nf, ANRoot(AAPoly.gen()**2 + 1, CIF(0, 1)))
     QQbar_I = AlgebraicNumber(ANExtensionElement(QQbar_I_generator, QQbar_I_nf.gen()))
 

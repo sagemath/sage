@@ -3,7 +3,6 @@ Hall-Littlewood Polynomials
 
 Notation used in the definitions follows mainly [Mac1995]_.
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
@@ -486,7 +485,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             m.append( [z.coefficient(col_part) for col_part in Plist] )
         return matrix(m)
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         r"""
         Multiply an element of the Hall-Littlewood symmetric function
         basis ``self`` and another symmetric function
@@ -502,7 +501,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         OUTPUT:
 
-        - returns the product of ``left`` and ``right`` expanded in the basis ``self``
+        the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -519,9 +518,9 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: HLQp([2])^2 # indirect doctest
             HLQp[2, 2] + (-t+1)*HLQp[3, 1] + (-t+1)*HLQp[4]
         """
-        return self( self._s(left) * self._s(right) )
+        return self(self._s(left) * self._s(right))
 
-    def hall_littlewood_family( self ):
+    def hall_littlewood_family(self):
         r"""
         The family of Hall-Littlewood bases associated to ``self``
 
@@ -966,13 +965,12 @@ class HallLittlewood_qp(HallLittlewood_generic):
         """
         t = QQt.gen()
 
-        if part == []:
+        if not part:
             return lambda part2: QQt.one()
 
         res = hall_littlewood(part) # call to symmetrica (returns in variable x)
         f = lambda part2: res.coefficient(part2).subs(x=t)
         return f
-
 
     def _s_cache(self, n):
         r"""

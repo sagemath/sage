@@ -62,7 +62,6 @@ matrices and Latin squares. See:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import, division
 
 from sage.rings.ring import is_Ring
 import sage.matrix.matrix_space as matrix_space
@@ -1233,7 +1232,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
 
         sage: E = elementary_matrix(4, row1=1, scale=I)
         sage: E.parent()
-        Full MatrixSpace of 4 by 4 dense matrices over Symbolic Ring
+        Full MatrixSpace of 4 by 4 dense matrices over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
         sage: E = elementary_matrix(4, row1=1, scale=CDF(I))
         sage: E.parent()

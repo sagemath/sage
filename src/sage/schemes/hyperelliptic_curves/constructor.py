@@ -8,7 +8,6 @@ AUTHORS:
 - Anna Somoza (2019-04): dynamic class creation
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>

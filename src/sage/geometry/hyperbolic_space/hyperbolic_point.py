@@ -62,7 +62,7 @@ Some more examples::
 
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp, op_NE
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 from sage.misc.latex import latex
 from sage.structure.element import is_Matrix
 from sage.matrix.constructor import matrix

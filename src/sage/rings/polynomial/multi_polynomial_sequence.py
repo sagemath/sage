@@ -148,7 +148,6 @@ TESTS::
 Classes
 -------
 """
-from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 

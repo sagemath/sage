@@ -24,7 +24,6 @@ AUTHORS:
 - William Stein (2007-07-03): add more
 - Bobby Moretti (2007-07-03): add doctests
 """
-from __future__ import print_function, absolute_import
 
 import math
 import os

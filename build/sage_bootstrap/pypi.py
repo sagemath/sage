@@ -37,6 +37,8 @@ class PyPiVersion(object):
     def __init__(self, package_name):
         self.name = package_name
         self.json = self._get_json()
+        # Replace provided name with the canonical name
+        self.name = self.json['info']['name']
 
     def _get_json(self):
         response = urllib.urlopen(self.json_url)
@@ -66,7 +68,38 @@ class PyPiVersion(object):
             if download['python_version'] == 'source':
                 return download['url']
         raise PyPiError('No source url for %s found', self.name)
-            
+
+    @property
+    def tarball(self):
+        """
+        Return the source tarball name
+        """
+        for download in self.json['urls']:
+            if download['python_version'] == 'source':
+                return download['filename']
+        raise PyPiError('No source url for %s found', self.name)
+
+    @property
+    def package_url(self):
+        """
+        Return the package URL
+        """
+        return self.json['info']['package_url']
+
+    @property
+    def license(self):
+        """
+        Return the package license
+        """
+        return self.json['info']['license']
+
+    @property
+    def summary(self):
+        """
+        Return the package summary
+        """
+        return self.json['info']['summary']
+
     def update(self):
         package = Package(self.name)
         if package.version == self.version:

@@ -66,7 +66,6 @@ TESTS::
     sage: type(m)
     <class 'sage.modular.modform.ambient_eps.ModularFormsAmbient_eps_with_category'>
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>

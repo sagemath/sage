@@ -41,6 +41,7 @@ from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 from sage.manifolds.differentiable.multivectorfield import (
                                        MultivectorField, MultivectorFieldParal)
 
+
 class MultivectorModule(UniqueRepresentation, Parent):
     r"""
     Module of multivector fields of a given degree `p` (`p`-vector
@@ -98,7 +99,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         sage: latex(A)
         A^{2}\left(M\right)
 
-    ``A`` is nothing but the second exterior power of of ``XM``, i.e.
+    ``A`` is nothing but the second exterior power of ``XM``, i.e.
     we have `A^{2}(M) = \Lambda^2(\mathfrak{X}(M))`::
 
         sage: A is XM.exterior_power(2)
@@ -448,7 +449,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def base_module(self):
         r"""

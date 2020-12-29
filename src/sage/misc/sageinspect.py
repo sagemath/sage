@@ -112,7 +112,6 @@ defined Cython code, and with rather tricky argument lines::
     ArgSpec(args=['x', 'a', 'b'], varargs='args', keywords='kwds', defaults=(1, ')"', {False: 'bar'}))
 
 """
-from __future__ import print_function, absolute_import
 
 import ast
 import inspect
@@ -1285,17 +1284,18 @@ def _sage_getargspec_cython(source):
     if varargs is None:
         varargs = ''
     elif not py_units or py_units[-1] == ',':
-        varargs = '*'+varargs
+        varargs = '*' + varargs
     else:
-        varargs = ',*'+varargs
+        varargs = ',*' + varargs
     if keywords is None:
         keywords = ''
     elif varargs or (py_units and py_units[-1] != ','):
-        keywords = ',**'+keywords
+        keywords = ',**' + keywords
     else:
-        keywords = '**'+keywords
-    return _sage_getargspec_from_ast('def dummy('+''.join(py_units)
-                                     +varargs+keywords+'): pass')
+        keywords = '**' + keywords
+    return _sage_getargspec_from_ast('def dummy(' + ''.join(py_units) +
+                                     varargs + keywords + '): pass')
+
 
 def sage_getfile(obj):
     r"""
@@ -2242,7 +2242,7 @@ def sage_getsourcelines(obj):
 
         sage: cachedfib = cached_function(fibonacci)
         sage: sage_getsourcelines(cachedfib)[0][0]
-        'def fibonacci(n, algorithm="pari"):\n'
+        'def fibonacci(n, algorithm="pari") -> Integral:\n'
         sage: sage_getsourcelines(type(cachedfib))[0][0]
         'cdef class CachedFunction(object):\n'
 

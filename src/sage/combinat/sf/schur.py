@@ -16,7 +16,6 @@ Schur symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from . import classical
 import sage.libs.lrcalc.lrcalc as lrcalc
@@ -25,6 +24,7 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.functions.other import factorial
 from sage.combinat.tableau import StandardTableaux
+
 
 class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, Sym):
@@ -73,9 +73,9 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
         """
         return self
 
-    def _multiply_basis(self, left, right): # TODO: factor out this code for all bases (as is done for coercions)
+    def product_on_basis(self, left, right):
         """
-        Returns the product of ``left`` and ``right``.
+        Return the product of ``left`` and ``right``.
 
         INPUT:
 
@@ -117,7 +117,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: 0*s([2,1])
             0
         """
-        return lrcalc.mult(left,right)
+        return self._from_dict(lrcalc.mult(left, right))
 
     def coproduct_on_basis(self, mu):
         r"""
@@ -144,7 +144,7 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             s[] # s[2] + s[1] # s[1] + s[2] # s[]
         """
         T = self.tensor_square()
-        return T._from_dict( lrcalc.coprod(mu, all=1) )
+        return T._from_dict(lrcalc.coprod(mu, all=1))
 
     def _element_constructor_(self, x):
         """

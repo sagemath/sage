@@ -13,7 +13,6 @@ Any code in sage that uses a pager should use this pager.
 #
 #                  https://www.gnu.org/licenses/
 # ---------------------------------------------------------------------------
-from __future__ import print_function
 
 
 EMBEDDED_MODE = False

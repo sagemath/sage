@@ -1,7 +1,6 @@
 """
 A single element of an ambient space of modular symbols
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Sage: Open Source Mathematical Software

@@ -44,7 +44,6 @@ alternative is to use ClasscallMetaclass as metaclass::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function, absolute_import
 
 __all__ = []  # Don't document any parents
 

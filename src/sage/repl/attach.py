@@ -67,7 +67,6 @@ character-by-character::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import os
 import time
@@ -83,6 +82,7 @@ attached = {}
 
 load_debug_mode = False
 attach_debug_mode = True
+
 
 def load_attach_mode(load_debug=None, attach_debug=None):
     """
@@ -131,13 +131,14 @@ def load_attach_mode(load_debug=None, attach_debug=None):
     global load_debug_mode, attach_debug_mode
     if load_debug is None and attach_debug is None:
         return (load_debug_mode, attach_debug_mode)
-    if not load_debug is None:
+    if load_debug is not None:
         load_debug_mode = load_debug
-    if not attach_debug is None:
+    if attach_debug is not None:
         attach_debug_mode = attach_debug
 
 
 search_paths = []
+
 
 def load_attach_path(path=None, replace=False):
     """
@@ -169,7 +170,7 @@ def load_attach_path(path=None, replace=False):
         sage: with open(fullpath, 'w') as f:
         ....:     _ = f.write("print(37 * 3)")
 
-    We put SAGE_TMP on the attach path for testing (otherwise this will
+    We put ``SAGE_TMP`` on the attach path for testing (otherwise this will
     load ``test.py`` from the current working directory if that happens
     to exist)::
 
@@ -226,8 +227,7 @@ def load_attach_path(path=None, replace=False):
 
 def reset_load_attach_path():
     """
-    Resets the current search path for :func:`load` and
-    :func:`attach`.
+    Reset the current search path for :func:`load` and :func:`attach`.
 
     The default path is ``'.'`` plus any paths specified in the
     environment variable ``SAGE_LOAD_ATTACH_PATH``.
@@ -265,6 +265,7 @@ def reset_load_attach_path():
     search_paths = ['.']
     for path in os.environ.get('SAGE_LOAD_ATTACH_PATH', '').split(':'):
         load_attach_path(path=path)
+
 
 # Set up the initial search path for loading and attaching files.  A
 # user can modify the path with the function load_attach_path.
@@ -310,7 +311,7 @@ def attach(*files):
     .. SEEALSO::
 
         :meth:`~sage.repl.load.load` is the same as :func:`attach`, but
-        doesn't automatically reload a file when it changes.
+        does not automatically reload a file when it changes.
 
     EXAMPLES:
 
@@ -486,6 +487,7 @@ def detach(filename):
             raise ValueError("file '{0}' is not attached, see attached_files()".format(filename))
     if not attached:
         sage.repl.inputhook.uninstall()
+
 
 def reset():
     """

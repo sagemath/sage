@@ -49,7 +49,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function, division, absolute_import
 
 from . import constructor
 from . import BSD
@@ -83,6 +82,8 @@ from sage.rings.all import (
     IntegerRing, RealField,
     ComplexField, RationalField)
 
+from sage.structure.coerce import py_scalar_to_element
+from sage.structure.element import Element
 import sage.misc.all as misc
 from sage.misc.verbose import verbose as verbose_verbose
 
@@ -5410,13 +5411,17 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              0.0018604485340371083710285594393397945456,
             -0.0018743978548152085771342944989052703431]
 
-            sage: E.eval_modular_form(2.1+I, 100) # abs tol 1e-20
+            sage: E.eval_modular_form(2.1+I, 100) # abs tol 1e-16
+            [0.00150864362757267079 + 0.00109100341113449845*I]
+
+        TESTS::
+
+            sage: E.eval_modular_form(CDF(2.1+I), 100) # abs tol 1e-16
             [0.00150864362757267079 + 0.00109100341113449845*I]
         """
         if not isinstance(points, list):
-            try:
-                points = list(points)
-            except TypeError:
+            points = py_scalar_to_element(points)
+            if isinstance(points, Element):
                 return self.eval_modular_form([points], order)
         an = self.pari_mincurve().ellan(order)
         s = 0

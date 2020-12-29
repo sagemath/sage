@@ -23,14 +23,14 @@ EXAMPLES::
     <class 'sage.repl.image.Image'>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import io
 
@@ -48,7 +48,7 @@ class Image(SageObject):
 
         - ``mode`` -- string. The mode to use for the new image. Valid
           options are:
-                     
+
               * ``'1'`` (1-bit pixels, black and white, stored with
                 one pixel per byte)
 
@@ -77,7 +77,7 @@ class Image(SageObject):
 
         - ``size`` -- 2-tuple, containing (width, height) in pixels.
 
-        - ``color`` -- string or tuple of numeric. What colour to use
+        - ``color`` -- string, numeric or tuple of numeric. What colour to use
           for the image. Default is black.  If given, this should be a
           a tuple with one value per band. When creating RGB images,
           you can also use colour strings as supported by the
@@ -85,22 +85,28 @@ class Image(SageObject):
           initialised.
 
         OUTPUT:
-        
+
         A new :class:`Image` object.
 
         EXAMPLES::
 
             sage: from sage.repl.image import Image
-            sage: Image('P', (16, 16), (13,))
+            sage: Image('P', (16, 16), 13)
             16x16px 8-bit Color image
         """
+        # pillow does not support Sage integers as color
+        from sage.rings.integer import Integer
+        if isinstance(color, Integer):
+            color = int(color)
+        elif isinstance(color, tuple):
+            color = tuple(int(i) if isinstance(i, Integer) else i for i in color)
         self._pil = PIL.Image.new(mode, size, color)
 
     @property
     def pil(self):
         """
         Access the wrapped PIL(low) Image
-        
+
         OUTPUT:
 
         The underlying ``PIL.Image.Image object``.
@@ -131,7 +137,7 @@ class Image(SageObject):
             <PixelAccess object at 0x...>
         """
         return self._pil.load()
-    
+
     def _repr_(self):
         """
         Return string representation.
@@ -169,7 +175,7 @@ class Image(SageObject):
     def mode(self):
         """
         Return the color mode
-        
+
         OUTPUT:
 
         String. As given when constructing the image.
@@ -201,7 +207,7 @@ class Image(SageObject):
             34
         """
         return self.pil.size[0]
-    
+
     def height(self):
         """
         Return the vertical dimension in pixels
@@ -233,7 +239,7 @@ class Image(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.image import Image
-            sage: img = Image('P', (12, 34), (13,))
+            sage: img = Image('P', (12, 34), 13)
             sage: filename = tmp_filename(ext='.png')
             sage: img.save(filename)
             sage: with open(filename, 'rb') as f:

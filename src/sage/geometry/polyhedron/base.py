@@ -15,7 +15,6 @@ Base class for polyhedra
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import division, print_function, absolute_import
 
 import itertools
 from sage.structure.element import Element, coerce_binop, is_Vector, is_Matrix
@@ -814,7 +813,8 @@ class Polyhedron_base(Element):
     def plot(self,
              point=None, line=None, polygon=None,  # None means unspecified by the user
              wireframe='blue', fill='green',
-             projection_direction=None,
+             position=None,
+             orthonormal=True,  # whether to use orthonormal projections
              **kwds):
         """
         Return a graphical representation.
@@ -841,11 +841,11 @@ class Polyhedron_base(Element):
           for all lower-dimensional graphics objects
           (default: 'green' for ``fill`` and 'blue' for ``wireframe``)
 
-        - ``projection_direction`` -- coordinate list/tuple/iterable
-          or ``None`` (default). The direction to use for the
-          :meth:`schlegel_projection` of the polytope. If not
-          specified, no projection is used in dimensions `< 4` and
-          parallel projection is used in dimension `4`.
+        - ``position`` -- positive number; the position to take the projection
+          point in Schlegel diagrams.
+
+        - ``orthonormal`` -- Boolean (default: True); whether to use
+          orthonormal projections.
 
         - ``**kwds`` -- optional keyword parameters that are passed to
           all graphics objects.
@@ -915,6 +915,15 @@ class Polyhedron_base(Element):
             sage: hypercube.plot(fill='green', wireframe='red')
             Graphics3d Object
 
+        It is possible to draw polyhedra up to dimension 4, no matter what the
+        ambient dimension is::
+
+            sage: hcube = polytopes.hypercube(5)
+            sage: facet = hcube.facets()[0].as_polyhedron();facet
+            A 4-dimensional polyhedron in ZZ^5 defined as the convex hull of 16 vertices
+            sage: facet.plot()
+            Graphics3d Object
+
         TESTS::
 
             sage: for p in square.plot():
@@ -973,13 +982,6 @@ class Polyhedron_base(Element):
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 1 point(s)
 
-        The ``projection_direction`` option::
-
-            sage: line3d = Polyhedron([(-1,-1,-1), (1,1,1)])
-            sage: print(line3d.plot(projection_direction=[2,3,4]).description())
-            Line defined by 2 points:           [(-0.00..., 0.126...), (0.131..., -1.93...)]
-            Point set defined by 2 point(s):    [(-0.00..., 0.126...), (0.131..., -1.93...)]
-
         We try to draw the polytope in 2 or 3 dimensions::
 
             sage: type(Polyhedron(ieqs=[(1,)]).plot())
@@ -1009,9 +1011,24 @@ class Polyhedron_base(Element):
             sage: type(Polyhedron([(0,0,0), (1,1,1)]).plot())
             <class 'sage.plot.plot3d.base.Graphics3dGroup'>
             sage: type(Polyhedron([(0,0,0,0), (1,1,1,1)]).plot())
-            <class 'sage.plot.plot3d.base.Graphics3dGroup'>
+            <class 'sage.plot.graphics.Graphics'>
             sage: type(Polyhedron([(0,0,0,0,0), (1,1,1,1,1)]).plot())
             <class 'sage.plot.graphics.Graphics'>
+            sage: type(Polyhedron([(0,0,0,0), (1,1,1,1), (1,0,0,0)]).plot())
+            <class 'sage.plot.graphics.Graphics'>
+
+        TESTS:
+
+        Check that :trac:`30015` is fixed::
+
+            sage: fcube = polytopes.hypercube(4)
+            sage: tfcube = fcube.face_truncation(fcube.faces(0)[0])
+            sage: sp = tfcube.schlegel_projection()
+            sage: for face in tfcube.faces(2): 
+            ....:     vertices = face.ambient_Vrepresentation() 
+            ....:     indices = [sp.coord_index_of(vector(x)) for x in vertices] 
+            ....:     projected_vertices = [sp.transformed_coords[i] for i in indices] 
+            ....:     assert Polyhedron(projected_vertices).dim() == 2
         """
         def merge_options(*opts):
             merged = dict()
@@ -1033,24 +1050,25 @@ class Polyhedron_base(Element):
         opts = [merge_options(opt1, opt2, kwds)
                 for opt1, opt2 in zip(opts, [point, line, polygon])]
 
-        def project(polyhedron):
-            if projection_direction is not None:
-                return polyhedron.schlegel_projection(projection_direction)
-            elif polyhedron.ambient_dim() == 4:
-                # There is no 4-d screen, we must project down to 3d
-                return polyhedron.schlegel_projection()
+        def project(polyhedron, ortho):
+            if polyhedron.ambient_dim() <= 3:
+                return polyhedron.projection()
+            elif polyhedron.dim() <= 3:
+                if ortho:
+                    return polyhedron.affine_hull_projection(orthonormal=True, extend=True).projection()
+                else:
+                    return polyhedron.affine_hull_projection().projection()
+            elif polyhedron.dimension() == 4:
+                # For 4d-polyhedron, we can use schlegel projections:
+                return polyhedron.schlegel_projection(position=position)
             else:
                 return polyhedron.projection()
 
-        projection = project(self)
+        projection = project(self, orthonormal)
         try:
             plot_method = projection.plot
         except AttributeError:
-            projection = project(self.affine_hull_projection())
-            try:
-                plot_method = projection.plot
-            except AttributeError:
-                raise NotImplementedError('plotting of {0}-dimensional polyhedra not implemented'
+            raise NotImplementedError('plotting of {0}-dimensional polyhedra not implemented'
                                           .format(self.ambient_dim()))
         return plot_method(*opts)
 
@@ -1870,7 +1888,7 @@ class Polyhedron_base(Element):
 
     def Vrep_generator(self):
         """
-        Returns an iterator over the objects of the V-representation
+        Return an iterator over the objects of the V-representation
         (vertices, rays, and lines).
 
         EXAMPLES::
@@ -4231,7 +4249,7 @@ class Polyhedron_base(Element):
 
     def triangulate(self, engine='auto', connected=True, fine=False, regular=None, star=None):
         r"""
-        Returns a triangulation of the polytope.
+        Return a triangulation of the polytope.
 
         INPUT:
 
@@ -4747,7 +4765,7 @@ class Polyhedron_base(Element):
         if self.n_vertices() == 0 or other.n_vertices() == 0:
             # In this case we obtain the empty polyhedron.
             # There is not vertex to attach the rays or lines to.
-            # By our convenction, in this case the polyhedron shall also not have rays or lines.
+            # By our convention, in this case the polyhedron shall also not have rays or lines.
             rays = ()
             lines = ()
 
@@ -4789,8 +4807,10 @@ class Polyhedron_base(Element):
             # And that it changes the backend correctly where necessary.
             if self.base_ring() is not AA and AA.has_coerce_map_from(self.base_ring()):
                 R = self*polytopes.regular_polygon(5, exact=True)
+                assert R
             if RDF.has_coerce_map_from(self.base_ring()):
                 R = self*polytopes.regular_polygon(5, exact=False)
+                assert R
 
         if self.base_ring() in (ZZ, QQ):
             # Check that the double description is set up correctly.
@@ -5112,7 +5132,7 @@ class Polyhedron_base(Element):
             # Avoid long time computations.
             return
 
-        # Some sanity check on the volume (only run for relativly small instances).
+        # Some sanity check on the volume (only run for relatively small instances).
         if self.dim() > -1 and self.is_compact() and self.base_ring().is_exact():
             tester.assertEqual(self.dilation(3).volume(measure='induced'), self.volume(measure='induced')*3**self.dim())
 
@@ -5264,7 +5284,7 @@ class Polyhedron_base(Element):
             if self.is_compact() and self.n_vertices() and self.n_inequalities():
                 homogeneous_basis = matrix(R, ( [1] + list(v) for v in self.an_affine_basis() )).transpose()
 
-                # To convert first to a list and then to a matrix seems to be necesarry to obtain a meaningful error,
+                # To convert first to a list and then to a matrix seems to be necessary to obtain a meaningful error,
                 # in case the number of columns doesn't match the dimension.
                 new_homogeneous_basis = matrix(list( [1] + list(linear_transf*vector(R, v)) for v in self.an_affine_basis()) ).transpose()
 
@@ -5877,39 +5897,13 @@ class Polyhedron_base(Element):
             raise ValueError("cannot stack onto a vertex")
         elif face.dim() == -1 or face.dim() == self.dim():
             raise ValueError("can only stack on proper face")
-
         if position is None:
             position = 1
 
-        face_vertices = face.vertices()
-        n_vertices = len(face_vertices)
-        barycenter = ZZ.one()*sum([v.vector() for v in face_vertices]) / n_vertices
-
-        # Taking all facets that contain the face
-        if face.dim() == self.dim() - 1:
-            face_star = set([face.ambient_Hrepresentation()[-1]])
-        else:
-            face_star = set(facet for facet in self.Hrepresentation() if facet.is_inequality()
-                            if all(not facet.interior_contains(x) for x in face_vertices))
-
-        neighboring_facets = set()
-        for facet in face_star:
-            for neighbor_facet in facet.neighbors():
-                if neighbor_facet not in face_star:
-                    neighboring_facets.add(neighbor_facet)
-
-        # Create the polyhedron where we can put the new vertex
-        locus_ieqs = [facet.vector() for facet in neighboring_facets]
-        locus_ieqs += [-facet.vector() for facet in face_star]
-        locus_eqns = self.equations_list()
-
-        locus_polyhedron = Polyhedron(ieqs=locus_ieqs, eqns=locus_eqns,
-                                      base_ring=self.base_ring().fraction_field(),
-                                      backend=self.backend())
-
+        barycenter = ZZ.one()*sum([v.vector() for v in face.vertices()]) / len(face.vertices())
+        locus_polyhedron = face.stacking_locus()
         repr_point = locus_polyhedron.representative_point()
         new_vertex = (1-position)*barycenter + position*repr_point
-
         if not locus_polyhedron.relative_interior_contains(new_vertex):
             raise ValueError("the chosen position is too large")
 
@@ -6220,7 +6214,7 @@ class Polyhedron_base(Element):
                 with warnings.catch_warnings():
                     warnings.simplefilter("error")
                     try:
-                        # Implicitely checks :trac:`30328`.
+                        # Implicitly checks :trac:`30328`.
                         R = self.lawrence_extension(2.0*v - self.center())
                         tester.assertEqual(self.dim() + 1, R.dim())
                         tester.assertEqual(self.n_vertices() + 2, R.n_vertices())
@@ -6230,7 +6224,7 @@ class Polyhedron_base(Element):
                         # Data is numerically complicated.
                         pass
                     except ValueError as err:
-                        if not "Numerical inconsistency" in err.args[0]:
+                        if "Numerical inconsistency" not in err.args[0]:
                             raise err
 
         if self.n_vertices() >= 12 or (self.base_ring() not in (ZZ, QQ) and self.backend() == 'field'):
@@ -6904,7 +6898,7 @@ class Polyhedron_base(Element):
 
         OUTPUT:
 
-        Returns a vector whose `i`-th entry is the number of
+        Return a vector whose `i`-th entry is the number of
         `i-2`-dimensional faces of the polytope.
 
         .. NOTE::
@@ -7320,7 +7314,7 @@ class Polyhedron_base(Element):
         else:
             # Transform the equations such that the normals are pairwise orthogonal.
             t_eqns = list(t_eqns)
-            for i,h in enumerate(t_eqns):
+            for i, h in enumerate(t_eqns):
                 for h1 in t_eqns[:i]:
                     a = h[1:]*h1[1:]
                     if a:
@@ -7378,7 +7372,7 @@ class Polyhedron_base(Element):
 
     def pyramid(self):
         """
-        Returns a polyhedron that is a pyramid over the original.
+        Return a polyhedron that is a pyramid over the original.
 
         EXAMPLES::
 
@@ -7635,18 +7629,22 @@ class Polyhedron_base(Element):
         parent = self.parent().change_ring(self.base_ring().fraction_field(), ambient_dim=self.ambient_dim()+1)
         return parent.element_class(parent, [new_vertices, new_rays, new_lines], None)
 
-    def projection(self):
+    def projection(self, projection=None):
         """
         Return a projection object.
 
-        .. SEEALSO::
+        INPUT:
 
-            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.schlegel_projection` for a more interesting projection.
+        - ``proj`` -- a projection function
 
         OUTPUT:
 
         The identity projection. This is useful for plotting
         polyhedra.
+
+        .. SEEALSO::
+
+            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.schlegel_projection` for a more interesting projection.
 
         EXAMPLES::
 
@@ -7656,7 +7654,10 @@ class Polyhedron_base(Element):
             The projection of a polyhedron into 3 dimensions
         """
         from .plot import Projection
-        self.projection = Projection(self)
+        if projection is not None:
+            self.projection = Projection(self, projection)
+        else:
+            self.projection = Projection(self)
         return self.projection
 
     def render_solid(self, **kwds):
@@ -7696,29 +7697,24 @@ class Polyhedron_base(Element):
             return proj.render_outline_2d(**kwds)
         raise ValueError("render_wireframe is only defined for 2 and 3 dimensional polyhedra")
 
-    def schlegel_projection(self, projection_dir=None, height=1.1):
+    def schlegel_projection(self, facet=None, position=None):
         """
         Return the Schlegel projection.
 
-        * The polyhedron is translated such that its
-          :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.center`
-          is at the origin.
+        * The facet is orthonormally transformed into its affine hull.
 
-        * The vertices are then normalized to the unit sphere
-
-        * The normalized points are stereographically projected from a
-          point slightly outside of the sphere.
+        * The position specifies a point coming out of the barycenter of the
+          facet from which the other vertices will be projected into the facet.
 
         INPUT:
 
-        - ``projection_direction`` -- coordinate list/tuple/iterable
-          or ``None`` (default). The direction of the Schlegel
-          projection. For a full-dimensional polyhedron, the default
-          is the first facet normal; Otherwise, the vector consisting
-          of the first n primes is chosen.
+        - ``facet`` -- a PolyhedronFace. The facet into which the Schlegel
+          diagram is created. The default is the first facet.
 
-        - ``height`` -- float (default: `1.1`). How far outside of the
-          unit sphere the focal point is.
+        - ``position`` -- a positive number. Determines a relative distance
+          from the barycenter of ``facet``. A value close to 0 will place the
+          projection point close to the facet and a large value further away.
+          Default is `1`. If the given value is too large, an error is returned.
 
         OUTPUT:
 
@@ -7731,16 +7727,45 @@ class Polyhedron_base(Element):
             sage: schlegel_edge_indices = sch_proj.lines
             sage: schlegel_edges = [sch_proj.coordinates_of(x) for x in schlegel_edge_indices]
             sage: len([x for x in schlegel_edges if x[0][0] > 0])
-            5
+            8
+
+        The Schlegel projection preserves the convexity of facets, see :trac:`30015`::
+
+            sage: fcube = polytopes.hypercube(4)
+            sage: tfcube = fcube.face_truncation(fcube.faces(0)[0])
+            sage: tfcube.facets()[-1]
+            A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 8 vertices
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[-1])
+            sage: sp.plot()
+            Graphics3d Object
+
+        The same truncated cube but see inside the tetrahedral facet::
+
+            sage: tfcube.facets()[4]
+            A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4])
+            sage: sp.plot()
+            Graphics3d Object
+
+        A different values of ``position`` changes the projection::
+
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4],1/2)
+            sage: sp.plot()
+            Graphics3d Object
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4],4)
+            sage: sp.plot()
+            Graphics3d Object
+
+        A value which is too large give a projection point that sees more than
+        one facet resulting in a error::
+
+            sage: sp = tfcube.schlegel_projection(tfcube.facets()[4],5)
+            Traceback (most recent call last):
+            ...
+            ValueError: the chosen position is too large
         """
         proj = self.projection()
-        if projection_dir is None:
-            vertices = self.vertices()
-            facet = self.Hrepresentation(0)
-            f0 = [v.index() for v in facet.incident()]
-            projection_dir = [sum([vertices[f0[i]][j]/len(f0) for i in range(len(f0))])
-                              for j in range(self.ambient_dim())]
-        return proj.schlegel(projection_direction=projection_dir, height=height)
+        return proj.schlegel(facet, position)
 
     def _volume_lrs(self, verbose=False):
         """
@@ -9830,38 +9855,43 @@ class Polyhedron_base(Element):
             if self.n_vertices():
                 tester.assertTrue(self.is_combinatorially_isomorphic(self + self.center(), algorithm='face_lattice'))
 
-    def affine_hull_projection(self, as_affine_map=False, orthogonal=False, orthonormal=False, extend=False):
+    def affine_hull_projection(self, as_affine_map=False, orthogonal=False,
+                               orthonormal=False, extend=False, minimal=False):
         """
         Return the polyhedron projected into its affine hull.
 
         Each polyhedron is contained in some smallest affine subspace
         (possibly the entire ambient space) -- its affine hull.
         We provide a projection of the ambient
-        space of the polyhedron to Euclidian space of dimension of the
+        space of the polyhedron to Euclidean space of dimension of the
         polyhedron. Then the image of the polyhedron under this
         projection (or, depending on the parameter ``as_affine_map``,
         the projection itself) is returned.
 
         INPUT:
 
-        - ``as_affine_map`` (boolean, default = False) -- If ``False``, return
+        - ``as_affine_map`` -- boolean (default: ``False``); if ``False``, return
           a polyhedron. If ``True``, return the affine transformation,
           that sends the embedded polytope to a fulldimensional one.
           It is given as a pair ``(A, b)``, where A is a linear transformation
           and ``b`` is a vector, and the affine transformation sends ``v`` to
           ``A(v)+b``.
 
-        - ``orthogonal`` (boolean, default = False) -- if ``True``,
+        - ``orthogonal`` -- boolean (default: ``False``); if ``True``,
           provide an orthogonal transformation.
 
-        - ``orthonormal`` (boolean, default = False) -- if ``True``,
+        - ``orthonormal`` -- boolean (default: ``False``); if ``True``,
           provide an orthonormal transformation. If the base ring does not
           provide the necessary square roots, the extend parameter
           needs to be set to ``True``.
 
-        - ``extend`` (boolean, default = False) -- if ``True``,
+        - ``extend`` -- boolean (default: ``False``); if ``True``,
           allow base ring to be extended if necessary. This becomes
           relevant when requiring an orthonormal transformation.
+
+        - ``minimal`` -- boolean (default: ``False``); if ``True``,
+          when doing an extension, it computes the minimal base ring of the
+          extension, otherwise the base ring is ``AA``.
 
         OUTPUT:
 
@@ -9936,6 +9966,15 @@ class Polyhedron_base(Element):
              A vertex at (1.414213562373095?, 0.?e-18, 0.?e-18),
              A vertex at (0.?e-18, 0.?e-18, 0.?e-18))
 
+        With the parameter ``minimal`` one can get a minimal base ring::
+
+            sage: s = polytopes.simplex(3)
+            sage: s_AA = s.affine_hull_projection(orthonormal=True, extend=True)
+            sage: s_AA.base_ring()
+            Algebraic Real Field
+            sage: s_full = s.affine_hull_projection(orthonormal=True, extend=True, minimal=True)
+            sage: s_full.base_ring()
+            Number Field in a with defining polynomial y^4 - 4*y^2 + 1 with a = 0.5176380902050415?
 
         More examples with the ``orthonormal`` parameter::
 
@@ -9977,8 +10016,6 @@ class Polyhedron_base(Element):
             (A vertex at (0), A vertex at (2.449489742783178?))
             sage: sqrt(6).n()
             2.44948974278318
-
-
 
         The affine hull is combinatorially equivalent to the input::
 
@@ -10142,8 +10179,11 @@ class Polyhedron_base(Element):
         """
         # handle trivial full-dimensional case
         if self.ambient_dim() == self.dim():
-            if as_affine_map:
-                return linear_transformation(matrix(self.base_ring(), self.dim(), self.dim(), self.base_ring().one())), self.ambient_space().zero()
+            if as_affine_map: 
+                return linear_transformation(matrix(self.base_ring(), 
+                                                    self.dim(), 
+                                                    self.dim(), 
+                                                    self.base_ring().one())), self.ambient_space().zero()
             return self
 
         if orthogonal or orthonormal:
@@ -10166,12 +10206,16 @@ class Polyhedron_base(Element):
                     raise ValueError('the base ring needs to be extended; try with "extend=True"')
                 M = matrix(AA, M)
                 A = M.gram_schmidt(orthonormal=orthonormal)[0]
+                if minimal:
+                    from sage.rings.qqbar import number_field_elements_from_algebraics
+                    new_ring = number_field_elements_from_algebraics(A.list(), embedded=True, minimal=True)[0]
+                    A = A.change_ring(new_ring)
             if as_affine_map:
                 return linear_transformation(A, side='right'), -A*vector(A.base_ring(), affine_basis[0])
 
             translate_vector = vector(A.base_ring(), affine_basis[0])
 
-            # Note the order. We compute ``A*self`` and then substract the translation vector.
+            # Note the order. We compute ``A*self`` and then subtract the translation vector.
             # ``A*self`` uses the incidence matrix and we avoid recomputation.
             # Also, if the new base ring is ``AA``, we want to avoid computing the incidence matrix in that ring.
 

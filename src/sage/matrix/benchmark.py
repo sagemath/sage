@@ -16,8 +16,6 @@ The basic command syntax is as follows::
     ...
     ======================================================================
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .constructor import random_matrix, Matrix
 from sage.rings.integer_ring import ZZ

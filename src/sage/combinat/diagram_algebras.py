@@ -22,8 +22,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-# python3
-from __future__ import division
 
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets

@@ -27,8 +27,7 @@ command inside Sage::
      'arb',
      ...
      'zlib',
-     'zn_poly',
-     'zope_interface']
+     'zn_poly']
 
 Functions
 ---------
@@ -41,7 +40,6 @@ Functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import sage.env
 
@@ -196,8 +194,7 @@ def list_packages(*pkg_types, **opts):
          'arb',
          'babel',
          ...
-         'zn_poly',
-         'zope_interface']
+         'zn_poly']
         sage: sage_conf_info = L['sage_conf']  # optional - build
         sage: sage_conf_info['type'] # optional - build
         'standard'
@@ -426,9 +423,14 @@ def standard_packages():
 
         sage: from sage.misc.package import standard_packages
         sage: installed, not_installed = standard_packages()  # optional - build
+        doctest:...: DeprecationWarning: ...
         sage: installed[0], installed[-1]  # optional - build
-        ('alabaster', 'zope_interface')
+        ('alabaster', 'zn_poly')
     """
+    from sage.misc.superseded import deprecation
+    deprecation(30747,
+                'the functions standard_packages, optional_packages, experimental_packages'
+                'are deprecated, use sage.features instead')
     pkgs = list_packages('standard', local=True).values()
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
             sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
@@ -455,12 +457,17 @@ def optional_packages():
 
         sage: from sage.misc.package import optional_packages
         sage: installed, not_installed = optional_packages()  # optional - build
+        doctest:...: DeprecationWarning: ...
         sage: 'beautifulsoup4' in installed+not_installed  # optional - build
         True
 
         sage: 'beautifulsoup4' in installed   # optional - build beautifulsoup4
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(30747,
+                'the functions standard_packages, optional_packages, experimental_packages'
+                'are deprecated, use sage.features instead')
     pkgs = list_packages('optional', local=True)
     pkgs = pkgs.values()
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
@@ -488,7 +495,12 @@ def experimental_packages():
 
         sage: from sage.misc.package import experimental_packages
         sage: installed, not_installed = experimental_packages()  # optional - build
+        doctest:...: DeprecationWarning: ...
     """
+    from sage.misc.superseded import deprecation
+    deprecation(30747,
+                'the functions standard_packages, optional_packages, experimental_packages'
+                'are deprecated, use sage.features instead')
     pkgs = list_packages('experimental', local=True).values()
     return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
             sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))

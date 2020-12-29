@@ -11,7 +11,12 @@ SAGE_SPKG_CONFIGURE([python3], [
          [AC_MSG_ERROR([building Sage --without-python is not supported])])
    ac_path_PYTHON3="$with_python"
 
-   SAGE_SPKG_DEPCHECK([sqlite libpng bzip2 xz libffi], [
+   dnl Trac #30559:  Removed the DEPCHECK for sqlite.  We never use libsqlite3 from SPKG for anything
+   dnl other than building the python3 SPKG; so our libsqlite3 cannot create shared library conflicts.
+   dnl
+   dnl However, if we add another package (providing a shared library linked into a Python module)
+   dnl that also uses libsqlite3, then we will have to put the DEPCHECK back in.
+   SAGE_SPKG_DEPCHECK([libpng bzip2 xz libffi], [
       dnl Check if we can do venv with a system python3
       dnl instead of building our own copy.
       check_modules="sqlite3, ctypes, math, hashlib, crypt, readline, socket, zlib, distutils.core"
@@ -58,8 +63,11 @@ SAGE_SPKG_CONFIGURE([python3], [
     dnl PRE
 ], [
     dnl POST
-    AS_IF([test x$sage_spkg_install_python3 = xno], [PYTHON_FOR_VENV="$ac_cv_path_PYTHON3"])
+    AS_IF([test x$sage_spkg_install_python3 = xno],
+          [PYTHON_FOR_VENV="$ac_cv_path_PYTHON3"],
+          [SAGE_MACOSX_DEPLOYMENT_TARGET=legacy])
     AC_SUBST([PYTHON_FOR_VENV])
+    AC_SUBST([SAGE_MACOSX_DEPLOYMENT_TARGET])
 
     dnl These temporary directories are created by the check above
     dnl and need to be cleaned up to prevent the "rm -f conftest*"

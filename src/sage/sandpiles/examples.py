@@ -21,7 +21,6 @@ The examples are accessible by typing ``sandpiles.NAME``, where
 
 See the documentation for each particular type of example for full details.
 """
-from __future__ import print_function
 
 from sage.sandpiles.sandpile import Sandpile
 from sage.graphs.graph_generators import graphs

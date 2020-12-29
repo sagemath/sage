@@ -184,7 +184,7 @@ def InfinitePolynomial(A, p):
                     try:
                         return InfinitePolynomial_dense(A, f(p))
                     except (ValueError, TypeError):
-                        # last desparate attempt: String conversion
+                        # last desperate attempt: String conversion
                         from sage.misc.sage_eval import sage_eval
                         from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
                         # the base ring may be a function field, therefore
@@ -192,12 +192,12 @@ def InfinitePolynomial(A, p):
                         return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
                 return InfinitePolynomial_dense(A, A._P(p))
             # there is no coercion, so, we set up a name-preserving map.
-            SV = set([repr(x) for x in p.variables()])
+            SV = set(repr(x) for x in p.variables())
             f = PP.hom([x if x in SV else 0 for x in PP.variable_names()], A._P)
             try:
                 return InfinitePolynomial_dense(A, f(p))
             except (ValueError, TypeError):
-                # last desparate attempt: String conversion
+                # last desperate attempt: String conversion
                 from sage.misc.sage_eval import sage_eval
                 from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
                 # the base ring may be a function field, therefore
@@ -1285,7 +1285,7 @@ class InfinitePolynomial_sparse(RingElement):
 
     ## Further methods
     def stretch(self, k):
-        """
+        r"""
         Stretch ``self`` by a given factor.
 
         INPUT:
@@ -1294,7 +1294,7 @@ class InfinitePolynomial_sparse(RingElement):
 
         OUTPUT:
 
-        Replace `v_n` with `v_{n\\cdot k}` for all generators `v_\\ast` occurring in self.
+        Replace `v_n` with `v_{n\cdot k}` for all generators `v_\ast` occurring in self.
 
         EXAMPLES::
 

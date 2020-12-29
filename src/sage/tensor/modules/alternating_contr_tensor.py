@@ -37,7 +37,6 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
-from __future__ import absolute_import
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
 from sage.tensor.modules.comp import Components, CompFullyAntiSym
 

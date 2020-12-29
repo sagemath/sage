@@ -22,7 +22,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.sage_object import SageObject
 from sage.misc.fast_methods import Singleton

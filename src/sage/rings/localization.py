@@ -187,7 +187,7 @@ def normalize_additional_units(base_ring, add_units, warning=True):
 
     - ``base_ring`` -- an instance of :class:`IntegralDomain`
     - ``add_units`` -- list of elements from base ring
-    - ``warning`` -- (optional, default: True) to supress a warning which is thrown if no normalization was possible
+    - ``warning`` -- (optional, default: True) to suppress a warning which is thrown if no normalization was possible
 
     OUTPUT:
 
@@ -541,7 +541,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
     - ``names`` -- passed to :class:`IntegralDomain`
     - ``normalize`` -- (optional, default: True) passed to :class:`IntegralDomain`
     - ``category`` -- (optional, default: None) passed to :class:`IntegralDomain`
-    - ``warning`` -- (optional, default: True) to supress a warning which is thrown if self cannot be represented uniquely
+    - ``warning`` -- (optional, default: True) to suppress a warning which is thrown if self cannot be represented uniquely
 
     REFERENCES:
 

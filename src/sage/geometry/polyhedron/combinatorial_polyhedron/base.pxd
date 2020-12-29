@@ -1,9 +1,9 @@
 cimport cython
-from libc.stdint                cimport uint64_t
 from sage.ext.memory_allocator  cimport MemoryAllocator
 from sage.structure.sage_object cimport SageObject
 from .face_iterator             cimport FaceIterator, CombinatorialFace
 from .list_of_faces             cimport ListOfFaces
+from .face_data_structure       cimport face_t
 from .polyhedron_face_lattice   cimport PolyhedronFaceLattice
 
 @cython.final
@@ -21,7 +21,7 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef bint _bounded                     # ``True`` iff Polyhedron is bounded
     cdef ListOfFaces _bitrep_facets        # facets in bit representation
     cdef ListOfFaces _bitrep_Vrep          # vertices in bit representation
-    cdef ListOfFaces _far_face             # a 'face' containing all none-vertices of Vrep
+    cdef face_t _far_face                  # a 'face' containing all none-vertices of Vrep
     cdef tuple _far_face_tuple
     cdef tuple _f_vector
 
@@ -50,7 +50,6 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef bint is_bounded(self)
     cdef ListOfFaces bitrep_facets(self)
     cdef ListOfFaces bitrep_Vrep(self)
-    cdef ListOfFaces far_face(self)
     cdef tuple far_face_tuple(self)
 
     # Methods to obtain a different combinatorial polyhedron.

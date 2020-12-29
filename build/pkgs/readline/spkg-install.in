@@ -1,21 +1,3 @@
-if [[ $SAGE_DEBUG = yes ]]; then
-    CFLAGS="$CFLAGS -g -O0"
-else
-    CFLAGS="-g -O2 $CFLAGS"
-fi
-
-echo "The following environment variables will be exported:"
-echo "Using CC=$CC"
-echo "Using CFLAGS=$CFLAGS"
-echo "Using CPPFLAGS=$CPPFLAGS"
-echo "Using LDFLAGS=$LDFLAGS"
-echo "Configure scripts and/or makefiles might override these later."
-
-export CC
-export CFLAGS
-export CPPFLAGS
-export LDFLAGS
-
 cd src/
 
 sdh_configure --with-curses --enable-shared --disable-static

@@ -113,7 +113,6 @@ of the directory containing the Sage sources:
             ...
             sage/            # Sage library
                 ext_data/    # extra Sage resources (formerly src/ext)
-            mac-app/         # would no longer have to awkwardly be in extcode
             bin/             # the scripts in local/bin that are tracked
         upstream/            # tarballs of upstream sources
         local/               # installed binaries

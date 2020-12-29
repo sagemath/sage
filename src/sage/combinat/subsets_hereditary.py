@@ -7,7 +7,6 @@ Subsets satisfying a hereditary property
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 
 def subsets_with_hereditary_property(f,X,max_obstruction_size=None,ncpus=1):

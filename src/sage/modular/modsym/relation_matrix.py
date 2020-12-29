@@ -21,7 +21,6 @@ relations, using the standard methods based on Manin symbols.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 import sage.matrix.matrix_space as matrix_space
 from sage.rings.all import Ring

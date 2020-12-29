@@ -18,10 +18,8 @@ fi
 CPPFLAGS="$INCLUDES"
 
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
-   CFLAGS="-O0 $CFLAGS"
    ENABLE_DEBUG="--enable-debug"
 else
-   CFLAGS="-O2 $CFLAGS"
    ENABLE_DEBUG=""
 fi
 

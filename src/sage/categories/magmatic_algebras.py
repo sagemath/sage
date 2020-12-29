@@ -1,12 +1,12 @@
 r"""
 Non-unital non-associative algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
@@ -179,7 +179,6 @@ class MagmaticAlgebras(Category_over_base_ring):
                 methods, in the specified order:
 
                 - :meth:`.product_on_basis`
-                - :meth:`._multiply` or :meth:`._multiply_basis`
                 - :meth:`.product_by_coercion`
 
                 EXAMPLES::
@@ -193,8 +192,6 @@ class MagmaticAlgebras(Category_over_base_ring):
                     return self._product_from_product_on_basis_multiply
     #                return self._module_morphism(self._module_morphism(self.product_on_basis, position = 0, codomain=self),
     #                                                                                          position = 1)
-                elif hasattr(self, "_multiply") or hasattr(self, "_multiply_basis"):
-                    return self._product_from_combinatorial_algebra_multiply
                 elif hasattr(self, "product_by_coercion"):
                     return self.product_by_coercion
                 else:
@@ -203,7 +200,7 @@ class MagmaticAlgebras(Category_over_base_ring):
             # Provides a product using the product_on_basis by calling linear_combination only once
             def _product_from_product_on_basis_multiply( self, left, right ):
                 r"""
-                Computes the product of two elements by extending
+                Compute the product of two elements by extending
                 bilinearly the method :meth:`product_on_basis`.
 
                 EXAMPLES::
@@ -302,4 +299,3 @@ class MagmaticAlgebras(Category_over_base_ring):
                     mat = matrix(R, data, sparse=True)
                     return tuple([matrix(R, N, N, list(b))
                                   for b in mat.right_kernel().basis()])
-

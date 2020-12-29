@@ -148,7 +148,7 @@ cdef class DenseGraph(CGraph):
       vertices to allocate
     - ``verts`` -- list (default: ``None``); optional list of vertices to add
     - ``arcs`` -- list (default: ``None``); optional list of arcs to add
-    - ``directed`` -- boolean (defualt: ``None``); whether the graph is directed
+    - ``directed`` -- boolean (default: ``None``); whether the graph is directed
 
     The first ``nverts`` are created as vertices of the graph, and the next
     ``extra_vertices`` can be freely added without reallocation. See top level
@@ -632,7 +632,7 @@ cdef class DenseGraphBackend(CGraphBackend):
         if unlikely(l_int):
             raise ValueError("backend does not support labels")
 
-    def add_edges(self, object edges, bint directed):
+    def add_edges(self, object edges, bint directed, bint remove_loops=False):
         """
         Add edges from a list.
 
@@ -642,6 +642,8 @@ cdef class DenseGraphBackend(CGraphBackend):
            of the form ``(u, v)`` or ``(u, v, l)``
 
         - ``directed`` -- if ``False``, adds ``(v, u)`` as well as ``(u, v)``
+
+        - ``remove_loops`` -- if ``True``, remove loops
 
         EXAMPLES::
 
@@ -656,6 +658,8 @@ cdef class DenseGraphBackend(CGraphBackend):
         """
         for e in edges:
             u, v = e[:2]
+            if unlikely(remove_loops and u == v):
+                continue
             self.add_edge(u, v, None, directed)
 
     def get_edge_label(self, object u, object v):
@@ -723,6 +727,13 @@ cdef class DenseGraphBackend(CGraphBackend):
         cdef int v_int = self.get_vertex_checked(v)
         if u_int == -1 or v_int == -1:
             return False
+        return self._has_labeled_edge_unsafe(u_int, v_int, None)
+
+    cdef inline bint _has_labeled_edge_unsafe(self, int u_int, int v_int, object l) except -1:
+        """
+        Return whether ``self`` has an arc specified by indices of the vertices
+        and an arc label.
+        """
         return 1 == self.cg().has_arc_unsafe(u_int, v_int)
 
     def multiple_edges(self, new):

@@ -39,7 +39,6 @@ EXAMPLES::
     sage: f([0,1,-1])
     (3 : 0 : 1)
 """
-from __future__ import absolute_import
 
 ##############################################################################
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>

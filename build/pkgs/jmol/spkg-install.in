@@ -1,5 +1,4 @@
-# jsmol goes in a dedicated directory
-sdh_install src/jsmol "${SAGE_SHARE}/"
+# jsmol is installed using the separate package jupyter-jsmol
 rm -rf src/jsmol
 
 sdh_install -T src "${SAGE_SHARE}/jmol"

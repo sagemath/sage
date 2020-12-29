@@ -279,20 +279,20 @@ LaTeX output::
 When working with the symbolic complex number `I`, notice that comparisons do not
 automatically simplify even in trivial situations::
 
-    sage: I^2 == -1
+    sage: SR(I)^2 == -1
     -1 == -1
-    sage: I^2 < 0
+    sage: SR(I)^2 < 0
     -1 < 0
-    sage: (I+1)^4 > 0
+    sage: (SR(I)+1)^4 > 0
     -4 > 0
 
 Nevertheless, if you force the comparison, you get the right answer (:trac:`7160`)::
 
-    sage: bool(I^2 == -1)
+    sage: bool(SR(I)^2 == -1)
     True
-    sage: bool(I^2 < 0)
+    sage: bool(SR(I)^2 < 0)
     True
-    sage: bool((I+1)^4 > 0)
+    sage: bool((SR(I)+1)^4 > 0)
     False
 
 More Examples
@@ -357,7 +357,6 @@ AUTHORS:
 - William Stein (2007-07-16): added arithmetic with symbolic equations
 
 """
-from __future__ import print_function
 
 import operator
 

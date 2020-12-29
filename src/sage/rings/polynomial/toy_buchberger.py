@@ -137,7 +137,6 @@ AUTHORS:
 - Marshall Hampton (2009-07-08): some doctest additions
 
 """
-from __future__ import print_function
 
 from sage.misc.verbose import get_verbose
 from sage.structure.sequence import Sequence

@@ -572,7 +572,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from functools import reduce
 
@@ -582,7 +581,6 @@ from functools import reduce
 ## going to be used.
 
 #DEFAULT_FIGSIZE=(6, 3.70820393249937)
-EMBEDDED_MODE = False
 import sage.misc.verbose
 from sage.arith.srange import srange
 
@@ -590,7 +588,7 @@ from sage.misc.randstate import current_randstate #for plot adaptive refinement
 from math import sin, cos, pi, log, exp #for polar_plot and log scaling
 
 from sage.ext.fast_eval import fast_float, is_fast_float
-
+from sage.symbolic.expression import Expression
 from sage.misc.decorators import options
 
 from .graphics import Graphics
@@ -761,7 +759,7 @@ def SelectiveFormatter(formatter, skip_values):
 
 def xydata_from_point_list(points):
     r"""
-    Returns two lists (xdata, ydata), each coerced to a list of floats,
+    Return two lists (xdata, ydata), each coerced to a list of floats,
     which correspond to the x-coordinates and the y-coordinates of the
     points.
 
@@ -788,29 +786,41 @@ def xydata_from_point_list(points):
         sage: from builtins import zip
         sage: xydata_from_point_list(list(zip([2,3,5,7], [11, 13, 17, 19])))
         ([2.0, 3.0, 5.0, 7.0], [11.0, 13.0, 17.0, 19.0])
+
+    The code now accepts mixed lists of complex and real numbers::
+
+        sage: xydata_from_point_list(map(N,[0,1,1+I,I,I-1,-1,-1-I,-I,1-I]))
+        ([0.0, 1.0, 1.0, 0.0, -1.0, -1.0, -1.0, 0.0, 1.0],
+        [0.0, 0.0, 1.0, 1.0, 1.0, 0.0, -1.0, -1.0, -1.0])
+        sage: point2d([0, 1., CC(0,1)])
+        Graphics object consisting of 1 graphics primitive
+        sage: point2d((x^5-1).roots(multiplicities=False))
+        Graphics object consisting of 1 graphics primitive
     """
-    from sage.rings.complex_mpfr import ComplexNumber
+    import numbers
+    zero = float(0)
 
-    if not isinstance(points, (list, tuple)):
-        points = list(points)
-        try:
-            points = [[float(z) for z in points]]
-        except TypeError:
-            pass
-    elif len(points) == 2 and not isinstance(points[0], (list, tuple,
-                                                         ComplexNumber)):
-        try:
-            points = [[float(z) for z in points]]
-        except TypeError:
-            pass
-
-    if len(points) and len(list(points[0])) != 2:
-        raise ValueError("points must have 2 coordinates in a 2d line")
-
-    xdata = [float(z[0]) for z in points]
-    ydata = [float(z[1]) for z in points]
-
+    xdata = []
+    ydata = []
+    for xy in points:
+        if isinstance(xy, Expression):
+            xy = xy.n()
+        if isinstance(xy, numbers.Real):
+            xdata.append(float(xy))
+            ydata.append(zero)
+        elif isinstance(xy, numbers.Complex):
+            xdata.append(float(xy.real()))
+            ydata.append(float(xy.imag()))
+        else:
+            try:
+                x, y = xy
+            except TypeError:
+                raise TypeError('invalid input for 2D point')
+            else:
+                xdata.append(float(x))
+                ydata.append(float(y))
     return xdata, ydata
+
 
 @options(alpha=1, thickness=1, fill=False, fillcolor='automatic', fillalpha=0.5, plot_points=200,
          adaptive_tolerance=0.01, adaptive_recursion=5, detect_poles=False, exclude=None, legend_label=None,
@@ -2086,6 +2096,11 @@ def _plot(funcs, xrange, parametric=False,
         sage: parametric_plot((x, arcsec(x)), (x, -2, 2))
         Graphics object consisting of 2 graphics primitives
 
+    Verify that :trac:`31089` is fixed::
+
+        sage: plot(x, -1, 1, detect_poles=True)
+        Graphics object consisting of 1 graphics primitive
+
     """
     from sage.plot.colors import Color
     from sage.plot.misc import setup_for_eval_on_grid
@@ -2250,7 +2265,6 @@ def _plot(funcs, xrange, parametric=False,
 
     exclude = options.pop('exclude')
     if exclude is not None:
-        from sage.symbolic.expression import Expression
         if isinstance(exclude, Expression) and exclude.is_relational():
             if len(exclude.variables()) > 1:
                 raise ValueError('exclude has to be an equation of only one variable')
@@ -2404,9 +2418,12 @@ def _plot(funcs, xrange, parametric=False,
         pole_options['rgbcolor'] = '#ccc'
 
         # setup for exclusion points
-        exclusion_point = 0
         if excluded_points:
             exclusion_point = excluded_points.pop()
+        else:
+            # default value of exclusion point must be outside the plot interval
+            # (see :trac:`31089`)
+            exclusion_point = xmax + 1
 
         flag = True
         for i in range(len(data)-1):

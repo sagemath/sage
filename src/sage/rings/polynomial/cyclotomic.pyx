@@ -283,9 +283,7 @@ def cyclotomic_value(n, x):
     Check that the issue with symbolic element in :trac:`14982` is fixed::
 
         sage: a = cyclotomic_value(3, I)
-        sage: a.pyobject()
-        I
-        sage: parent(_)
+        sage: parent(a)
         Number Field in I with defining polynomial x^2 + 1 with I = 1*I
     """
     n = ZZ(n)

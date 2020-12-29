@@ -29,7 +29,6 @@ Vincent Delecroix, Ben Hutz (July 2016): initial implementation
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, print_function
 
 import itertools
 

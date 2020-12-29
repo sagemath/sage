@@ -23,7 +23,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
 
 from sage.schemes.curves.projective_curve import Hasse_bounds
 from .ell_field import EllipticCurve_field

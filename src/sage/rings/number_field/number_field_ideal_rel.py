@@ -22,7 +22,6 @@ EXAMPLES::
     sage: K.fractional_ideal(G).absolute_norm().factor()
     7^2
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>

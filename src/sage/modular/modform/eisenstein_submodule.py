@@ -2,7 +2,6 @@
 """
 The Eisenstein Subspace
 """
-from __future__ import absolute_import
 
 from sage.structure.all import Sequence
 from sage.misc.all import cached_method

@@ -128,7 +128,6 @@ TESTS::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.matrix.all import matrix
 from sage.rings.all import ZZ

@@ -53,7 +53,6 @@ AUTHORS:
 - Anna Haensch (2018-03): Added function ``quadratic_defect()``
 
 """
-from __future__ import print_function, absolute_import
 
 from .rational import Rational
 from .integer import Integer

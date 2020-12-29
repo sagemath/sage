@@ -27,7 +27,6 @@ EXAMPLES::
     5 (t^2 + 4*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     6 (t^2 + 4*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
 """
-from __future__ import print_function
 
 import os
 

@@ -884,7 +884,7 @@ class BruhatTitsTree(SageObject, UniqueRepresentation):
 
         - ``v`` - a 2x2 matrix representing a vertex ``boundary``
 
-        - a list of matrices (default: None). If ommitted, finds the
+        - a list of matrices (default: None). If omitted, finds the
           geodesic from ``v`` to the central vertex.
 
         OUTPUT:

@@ -4615,7 +4615,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
     def cos(self):
         """
-        Returnn the cosine of ``self``.
+        Return the cosine of ``self``.
 
         EXAMPLES::
 

@@ -9,7 +9,6 @@ Integer vectors modulo the action of a permutation group
 #              The full text of the GPL is available at:
 #                    https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.semirings.all import NN

@@ -1,7 +1,6 @@
 """
 Step function plots
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>,

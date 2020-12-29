@@ -101,8 +101,6 @@ EXAMPLES::
 #                  http://www.gnu.org/licenses/
 #
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.homology.simplicial_complex import Simplex, SimplicialComplex
 from sage.matrix.constructor import matrix, zero_matrix

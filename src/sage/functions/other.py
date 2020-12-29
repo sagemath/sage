@@ -12,7 +12,6 @@ Check that gamma function imports are deprecated (:trac:`24411`)::
     See http://trac.sagemath.org/24411 for details.
     beta(x, x)
 """
-from __future__ import print_function
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.functions.gamma',

@@ -6,7 +6,7 @@ This module implements method related to :wikipedia:`Comparability_graph` and
 :wikipedia:`Permutation_graph`, that is, for the moment, only recognition
 algorithms.
 
-Most of the information found here can alo be found in [ST1994]_ or [Sha1997]_.
+Most of the information found here can also be found in [ST1994]_ or [Sha1997]_.
 
 The following methods are implemented in this module
 

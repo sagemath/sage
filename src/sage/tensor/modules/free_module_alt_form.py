@@ -28,7 +28,6 @@ REFERENCES:
 - Chap. 15 of S. Lang : *Algebra* [Lan2002]_
 
 """
-from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>

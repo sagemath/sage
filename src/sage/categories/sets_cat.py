@@ -10,7 +10,6 @@ Sets
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.sage_unittest import TestSuite
@@ -23,9 +22,9 @@ from sage.categories.category_singleton import Category_singleton
 # Do not use sage.categories.all here to avoid initialization loop
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.categories.subquotients import SubquotientsCategory
-from sage.categories.quotients    import QuotientsCategory
-from sage.categories.subobjects   import SubobjectsCategory
-from sage.categories.isomorphic_objects   import IsomorphicObjectsCategory
+from sage.categories.quotients import QuotientsCategory
+from sage.categories.subobjects import SubobjectsCategory
+from sage.categories.isomorphic_objects import IsomorphicObjectsCategory
 from sage.categories.algebra_functor import AlgebrasCategory
 from sage.categories.cartesian_product import CartesianProductsCategory, CartesianProductFunctor
 from sage.categories.realizations import RealizationsCategory, Category_realization_of_parent
@@ -242,13 +241,13 @@ class Sets(Category_singleton):
            Proper forgetful functors will eventually be implemented, with
            another syntax.
         """
-        if enumerated_set and type(X) in (tuple,list,range):
+        if enumerated_set and type(X) in (tuple, list, range):
             from sage.categories.enumerated_sets import EnumeratedSets
             return EnumeratedSets()(X)
         from sage.sets.set import Set
         return Set(X)
 
-    def example(self, choice = None):
+    def example(self, choice=None):
         """
         Return examples of objects of ``Sets()``, as per
         :meth:`Category.example()
@@ -281,7 +280,7 @@ class Sets(Category_singleton):
             from sage.categories.examples.sets_cat import PrimeNumbers_Wrapper
             return PrimeNumbers_Wrapper()
         else:
-            raise ValueError("Unkown choice")
+            raise ValueError("unknown choice")
 
     class SubcategoryMethods:
 
@@ -2689,7 +2688,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: e = S.e(); e
                     Symmetric Functions over Integer Ring in the elementary basis
 
-                This method automatizes the process::
+                This method automates the process::
 
                     sage: S.inject_shorthands()
                     Defining e as shorthand for Symmetric Functions over Integer Ring in the elementary basis
@@ -2958,7 +2957,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: In = A.In(); In
                     The subset algebra of {1, 2, 3} over Rational Field in the In basis
 
-                In the example above, :meth:`repr` was overriden by
+                In the example above, :meth:`repr` was overridden by
                 the category ``A.Realizations()``. We now add a new
                 (fake) realization which is not in
                 ``A.Realizations()`` to actually exercise this

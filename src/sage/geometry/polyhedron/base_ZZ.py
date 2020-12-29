@@ -11,7 +11,6 @@ Base class for polyhedra over `\ZZ`
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.rings.all import ZZ, QQ
 from sage.misc.all import cached_method

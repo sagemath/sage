@@ -15,7 +15,6 @@ some utility functions for this purpose.
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
 
 # TODO: this module is a clear candidate for cythonizing. Need to
 # evaluate speed benefits.

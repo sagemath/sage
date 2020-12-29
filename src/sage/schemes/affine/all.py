@@ -1,7 +1,6 @@
 """nodoctest
 all.py -- export of affine to Sage
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #

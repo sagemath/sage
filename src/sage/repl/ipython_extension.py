@@ -60,7 +60,6 @@ In contrast, input to the ``%time`` magic command is preparsed::
     2 * 3^3 * 11
     sage: shell.quit()
 """
-from __future__ import absolute_import
 
 from IPython.core.magic import Magics, magics_class, line_magic, cell_magic
 

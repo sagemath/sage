@@ -15,12 +15,11 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
-from sage.rings.all import ZZ, QQ, AA, AlgebraicField, infinity, PolynomialRing, NumberField
+from sage.rings.all import ZZ, QQ, AA, AlgebraicField, infinity, I, PolynomialRing, NumberField
 from sage.functions.all import cos, exp, sec
 from sage.functions.gamma import psi1
-from sage.symbolic.all import pi, i
+from sage.symbolic.all import pi
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
@@ -300,7 +299,7 @@ class HeckeTriangleGroup(FinitelyGeneratedMatrixGroup_generic,
         if self._n == infinity:
             return coerce_AA(1)
         else:
-            rho = AlgebraicField()(exp(pi / self._n * i))
+            rho = AlgebraicField()(exp(pi / self._n * I))
             rho.simplify()
             return rho
 

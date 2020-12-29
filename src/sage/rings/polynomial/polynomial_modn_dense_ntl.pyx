@@ -564,7 +564,7 @@ def small_roots(self, X=None, beta=1.0, epsilon=None, **kwds):
 
     if epsilon is None:
         epsilon = beta/8
-    verbose("epsilon = %d"%epsilon, level=2)
+    verbose("epsilon = %f"%epsilon, level=2)
 
     m = max(beta**2/(delta * epsilon), 7*beta/delta).ceil()
     verbose("m = %d"%m, level=2)

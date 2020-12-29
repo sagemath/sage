@@ -14,6 +14,9 @@ url = https://www.sagemath.org
 py_modules =
     sage_conf
 
+scripts =
+    bin/sage-env-config
+
 [options.entry_points]
 console_scripts =
     sage-config = sage_conf:_main

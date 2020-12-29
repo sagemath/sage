@@ -8,8 +8,12 @@ ARB_LIBRARY = "@SAGE_ARB_LIBRARY@"
 
 SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
 
+# Colon-separated list of pkg-config modules to search for cblas functionality.
+# We hard-code it here as cblas because configure (build/pkgs/openblas/spkg-configure.m4)
+# always provides cblas.pc, if necessary by creating a facade pc file for a system BLAS.
+CBLAS_PC_MODULES = "cblas"
+
 # Used in sage.repl.ipython_kernel.install
-JSMOL_DIR   = "@prefix@/share/jsmol"
 MATHJAX_DIR = "@prefix@/share/mathjax"
 THREEJS_DIR = "@prefix@/share/threejs"
 

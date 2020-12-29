@@ -27,7 +27,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 from sage.categories.homset import End
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial

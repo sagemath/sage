@@ -186,7 +186,7 @@ Classes and Methods
 ===================
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Clemens Heuberger <clemens.heuberger@aau.at>
 #                     2017 Vincent Delecroix <20100.delecroix@gmail.com>
 #
@@ -194,8 +194,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
@@ -298,7 +298,9 @@ cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -
         ...
         ArithmeticError: Error converting arb to mpfi. Overflow?
         sage: RIF(RBF(2)**(2**100)) # arb218 # indirect doctest
-        [5.8756537891115869e1388255822130839282 .. +infinity]
+        [5.8756537891115869e1388255822130839282 .. +infinity] # 64-bit
+        [2.098... .. +infinity]                               # 32-bit
+
     """
     cdef mpfr_t left
     cdef mpfr_t right
@@ -316,6 +318,7 @@ cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -
     finally:
         mpfr_clear(left)
         mpfr_clear(right)
+
 
 class RealBallField(UniqueRepresentation, Field):
     r"""
@@ -532,7 +535,7 @@ class RealBallField(UniqueRepresentation, Field):
         # Symbolic expressions are handled in a special way, see
         # Expression._arb_(). A call like RBF(expr, rad) converts expr to a
         # ball using its _arb_() method and sends us the result to adjust the
-        # radius thanks to hte general mechanism implemented in
+        # radius thanks to the general mechanism implemented in
         # NamedConvertMap.
         try:
             return self.element_class(self, mid, rad)

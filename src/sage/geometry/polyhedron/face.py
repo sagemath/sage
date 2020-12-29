@@ -72,7 +72,6 @@ polyhedron with the :meth:`PolyhedronFace.as_polyhedron` method::
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -756,6 +755,55 @@ class PolyhedronFace(SageObject):
         origin = self.polyhedron().ambient_space().zero()
         return parent.element_class(parent, [[origin], rays, lines], None)
 
+    @cached_method
+    def stacking_locus(self):
+        """
+        Return the polyhedron containing the points that sees every facet
+        containing ``self``.
+
+        OUTPUT:
+
+        A polyhedron.
+
+        EXAMPLES::
+
+            sage: cp = polytopes.cross_polytope(4)
+            sage: facet = cp.facets()[0]
+            sage: facet.stacking_locus().vertices()
+            (A vertex at (1/2, 1/2, 1/2, 1/2),
+             A vertex at (1, 0, 0, 0),
+             A vertex at (0, 0, 0, 1),
+             A vertex at (0, 0, 1, 0),
+             A vertex at (0, 1, 0, 0))
+            sage: face = cp.faces(2)[0]
+            sage: face.stacking_locus().vertices()
+            (A vertex at (0, 1, 0, 0),
+             A vertex at (0, 0, 1, 0),
+             A vertex at (1, 0, 0, 0),
+             A vertex at (1, 1, 1, 0),
+             A vertex at (1/2, 1/2, 1/2, 1/2),
+             A vertex at (1/2, 1/2, 1/2, -1/2))
+        """
+        # Taking all facets that contain the face
+        if self.dim() == self.polyhedron().dim() - 1:
+            face_star = set([self.ambient_Hrepresentation()[-1]])
+        else:
+            face_star = set(facet for facet in self.ambient_Hrepresentation() if facet.is_inequality()
+                            if all(not facet.interior_contains(x) for x in self.vertices()))
+
+        neighboring_facets = set()
+        for facet in face_star:
+            for neighbor_facet in facet.neighbors():
+                if neighbor_facet not in face_star:
+                    neighboring_facets.add(neighbor_facet)
+
+        # Create the polyhedron where we can put the new vertex
+        locus_ieqs = [facet.vector() for facet in neighboring_facets]
+        locus_ieqs += [-facet.vector() for facet in face_star]
+        locus_eqns = self.polyhedron().equations_list()
+        parent = self.polyhedron().parent().change_ring(self.polyhedron().base_ring().fraction_field())
+
+        return parent.element_class(parent, None, [locus_ieqs, locus_eqns])
 
 def combinatorial_face_to_polyhedral_face(polyhedron, combinatorial_face):
     r"""

@@ -667,7 +667,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         else:
             try:
                 len = <unsigned long> (degree + 1)
-            except ValueError:
+            except (TypeError, ValueError):
                 raise ValueError('degree must be convertible to long')
 
         res = self._new()

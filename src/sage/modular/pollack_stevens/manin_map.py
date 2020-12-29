@@ -42,7 +42,6 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.rings.continued_fraction import convergents
 from .sigma0 import Sigma0

@@ -62,14 +62,14 @@ Values can also be specified as keyword arguments to the constructor::
     preference items.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from textwrap import dedent
@@ -78,7 +78,7 @@ from sage.structure.sage_object import SageObject
 
 
 class Property(property):
-    
+
     def __init__(self, name, allowed_values, doc=None):
         r"""
         Preference item
@@ -90,7 +90,7 @@ class Property(property):
         - ``allowed_values`` -- list/tuple/iterable of allowed values.
 
         - ``doc`` -- string (optional). The docstring of the property.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.rich_output.preferences import Property
@@ -162,11 +162,11 @@ class Property(property):
             'foo'
         """
         return self.name
-            
+
     def getter(self, prefs):
         """
         Get the current value of the property
-        
+
         INPUT:
 
         - ``prefs`` -- the :class:`PreferencesABC` instance that the
@@ -191,11 +191,11 @@ class Property(property):
             return getattr(prefs, self.underscore_name)
         except AttributeError:
             return None
-        
+
     def setter(self, prefs, value):
         """
         Get the current value of the property
-        
+
         INPUT:
 
         - ``prefs`` -- the :class:`PreferencesABC` instance that the
@@ -237,7 +237,7 @@ class Property(property):
     def deleter(self, prefs):
         """
         Delete the current value of the property
-        
+
         INPUT:
 
         - ``prefs`` -- the :class:`PreferencesABC` instance that the
@@ -263,7 +263,7 @@ class Property(property):
 
 
 class PreferencesABC(SageObject):
-    
+
     def __init__(self, *args, **kwds):
         """
         Preferences for displaying graphics
@@ -277,7 +277,7 @@ class PreferencesABC(SageObject):
           instances. The property values will be inherited from left
           to right, that is, later parents override values from
           earlier parents.
-        
+
         - ``**kwds`` -- keyword arguments. Will be used to initialize
           properties, and override inherited values if necessary.
 
@@ -347,7 +347,7 @@ class PreferencesABC(SageObject):
         """
         prop = Property(name, values, doc)
         setattr(cls, name, prop)
-    
+
     def available_options(self):
         """
         Return the available options
@@ -368,7 +368,7 @@ class PreferencesABC(SageObject):
             if isinstance(value, Property):
                 options.append(value)
         return tuple(sorted(options, key=str))
-    
+
     def _repr_(self):
         r"""
         Return a string representation
@@ -424,6 +424,3 @@ DisplayPreferences._add_option(
     show graphically and large objects as textual overview.
     """
 )
-
-
-

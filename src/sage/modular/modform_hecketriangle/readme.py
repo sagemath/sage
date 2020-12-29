@@ -19,7 +19,7 @@ Hecke triangle groups and elements:
 
   The group elements correspond to matrices over ZZ[lambda], namely the
   corresponding order in the number field defined by the minimal polynomial
-  of lambda (which embedds into ``AlgebraicReal`` accordingly).
+  of lambda (which embeds into ``AlgebraicReal`` accordingly).
 
   An exact symbolic expression of the corresponding transfinite diameter ``d``
   (which is used as a formal parameter for Fourier expansion of modular forms)

@@ -214,7 +214,6 @@ Check that :trac:`8237` is fixed::
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function, absolute_import
 
 import math
 from functools import partial
@@ -611,20 +610,20 @@ The formal square root of -1.
 
 EXAMPLES::
 
-    sage: I
+    sage: SR.I()
     I
-    sage: I^2
+    sage: SR.I()^2
     -1
 
 Note that conversions to real fields will give TypeErrors::
 
-    sage: float(I)
+    sage: float(SR.I())
     Traceback (most recent call last):
     ...
     TypeError: unable to simplify to float approximation
-    sage: gp(I)
+    sage: gp(SR.I())
     I
-    sage: RR(I)
+    sage: RR(SR.I())
     Traceback (most recent call last):
     ...
     TypeError: unable to convert '1.00000000000000*I' to a real number
@@ -640,42 +639,42 @@ We can convert to complex fields::
 
     sage: C = ComplexField(200); C
     Complex Field with 200 bits of precision
-    sage: C(I)
+    sage: C(SR.I())
     1.0000000000000000000000000000000000000000000000000000000000*I
-    sage: I._complex_mpfr_field_(ComplexField(53))
+    sage: SR.I()._complex_mpfr_field_(ComplexField(53))
     1.00000000000000*I
 
-    sage: I._complex_double_(CDF)
+    sage: SR.I()._complex_double_(CDF)
     1.0*I
-    sage: CDF(I)
+    sage: CDF(SR.I())
     1.0*I
 
-    sage: z = I + I; z
+    sage: z = SR.I() + I; z
     2*I
     sage: C(z)
     2.0000000000000000000000000000000000000000000000000000000000*I
-    sage: 1e8*I
+    sage: 1e8*SR.I()
     1.00000000000000e8*I
 
-    sage: complex(I)
+    sage: complex(SR.I())
     1j
 
-    sage: QQbar(I)
+    sage: QQbar(SR.I())
     I
 
-    sage: abs(I)
+    sage: abs(SR.I())
     1
 
-    sage: I.minpoly()
+    sage: SR.I().minpoly()
     x^2 + 1
-    sage: maxima(2*I)
+    sage: maxima(2*SR.I())
     2*%i
 
 TESTS::
 
-    sage: repr(I)
+    sage: repr(SR.I())
     'I'
-    sage: latex(I)
+    sage: latex(SR.I())
     i
 """
 

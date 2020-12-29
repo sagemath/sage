@@ -61,7 +61,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function
 
 from sage.rings.all import ZZ
 from sage.rings.all import QQbar
@@ -549,8 +548,8 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: MS = MatrixSpace(GF(2), 5, 5)
             sage: A = MS([[0,0,0,0,1],[0,0,0,1,0],[0,0,1,0,0],[0,1,0,0,0],[1,0,0,0,0]])
             sage: G = MatrixGroup([A])
-            sage: G.as_permutation_group()
-            Permutation Group with generators [(1,2)]
+            sage: G.as_permutation_group().order()
+            2
 
         A finite subgroup of  GL(12,Z) as a permutation group::
 
@@ -624,8 +623,8 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: MG = GU(3,2).as_matrix_group()
             sage: PG = MG.as_permutation_group()
             sage: mg = MG.an_element()
-            sage: PG(mg)
-            (1,2,6,19,35,33)(3,9,26,14,31,23)(4,13,5)(7,22,17)(8,24,12)(10,16,32,27,20,28)(11,30,18)(15,25,36,34,29,21)
+            sage: PG(mg).order() # particular element depends on the set of GAP packages installed
+            6
         """
         # Note that the output of IsomorphismPermGroup() depends on
         # memory locations and will change if you change the order of

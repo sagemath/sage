@@ -1,7 +1,6 @@
 r"""
 Commutative ring ideals
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>

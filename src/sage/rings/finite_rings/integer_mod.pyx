@@ -68,7 +68,6 @@ TESTS::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, division, absolute_import
 
 from cysignals.signals cimport sig_on, sig_off, sig_check
 

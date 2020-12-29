@@ -1,7 +1,6 @@
 """
 all.py -- export of schemes to Sage
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #

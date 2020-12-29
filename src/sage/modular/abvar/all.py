@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 ###########################################################################
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>               #
 #  Distributed under the terms of the GNU General Public License (GPL)    #

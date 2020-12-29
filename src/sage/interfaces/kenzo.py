@@ -23,7 +23,6 @@ but wrappers around ECL objects.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 
 from sage.structure.sage_object import SageObject

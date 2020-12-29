@@ -7,7 +7,6 @@ Jacobian of a general hyperelliptic curve
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.rings.all import Integer
 from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic

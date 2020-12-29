@@ -18,7 +18,6 @@ EXAMPLES::
     ]
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2004-2006 William Stein <wstein@gmail.com>

@@ -1,0 +1,2 @@
+cliquer
+cliquer-devel

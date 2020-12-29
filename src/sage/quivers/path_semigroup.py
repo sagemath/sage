@@ -18,7 +18,6 @@ Path Semigroups
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ

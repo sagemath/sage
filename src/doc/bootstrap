@@ -25,43 +25,76 @@ mkdir -p "$OUTPUT_DIR"
 
 shopt -s extglob
 
-for SYSTEM in arch debian fedora cygwin homebrew; do
+for SYSTEM in arch debian fedora cygwin homebrew conda; do
     SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} build/pkgs/$SYSTEM.txt))
     OPTIONAL_SYSTEM_PACKAGES=
+    SAGELIB_SYSTEM_PACKAGES=
+    SAGELIB_OPTIONAL_SYSTEM_PACKAGES=
     RECOMMENDED_SYSTEM_PACKAGES=
-    for PKG_SCRIPTS in build/pkgs/*; do
-        if [ -d $PKG_SCRIPTS ]; then
-            PKG_BASE=$(basename $PKG_SCRIPTS)
-            SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/$SYSTEM.txt
-            if [ ! -f $PKG_SCRIPTS/type ]; then
-                echo >&2 "Warning: $PKG_SCRIPTS/type is missing."
-                continue
-            fi
-            PKG_TYPE=$(cat $PKG_SCRIPTS/type)
-            if [ -f $SYSTEM_PACKAGES_FILE -a -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
-               PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
-               if [ -n "PKG_SYSTEM_PACKAGES" ]; then
-                   case "$PKG_BASE:$PKG_TYPE" in
-                       *:standard)
-                           SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                           ;;
-                       _recommended:optional)
-                           RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                           ;;
-                       *)
-                           OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
-                           ;;
-                   esac
-               fi
-            fi
-        fi
+    for PKG_BASE in $(./sage --package list --has-file distros/$SYSTEM.txt); do
+                PKG_SCRIPTS=build/pkgs/$PKG_BASE
+                SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/$SYSTEM.txt
+                PKG_TYPE=$(cat $PKG_SCRIPTS/type)
+                PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
+                if [ -n "PKG_SYSTEM_PACKAGES" ]; then
+                    if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
+                       case "$PKG_BASE:$PKG_TYPE" in
+                           *:standard)
+                               SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                               ;;
+                           _recommended:*|pandoc:*)
+                               RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                               ;;
+                           *)
+                               OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                               ;;
+                       esac
+                    else
+                        case "$PKG_TYPE" in
+                            standard)
+                                SAGELIB_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                                ;;
+                            *)
+                                SAGELIB_OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                                ;;
+                        esac
+                    fi
+                fi
     done
-    if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-        echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM\*.txt
+    if [ "${SYSTEM}" = "conda" ]; then
+        if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+            echo >&2 $0:$LINENO: installing environment.yml, environment-optional.yml, src/environment.yml and src/environment-optional.yml
+        fi
+        echo "name: sage-build" >  environment.yml
+        echo "channels:"        >> environment.yml
+        echo "  - conda-forge"  >> environment.yml
+        echo "  - nodefaults"   >> environment.yml
+        echo "dependencies:"    >> environment.yml
+        for pkg in $SYSTEM_PACKAGES; do
+            echo "  - $pkg" >> environment.yml
+        done
+        sed 's/name: sage-build/name: sage/' environment.yml > src/environment.yml
+        for pkg in $SAGELIB_SYSTEM_PACKAGES; do
+            echo "  - $pkg" >> src/environment.yml
+        done
+        cp environment.yml environment-optional.yml
+            echo "  # optional packages" >> environment-optional.yml
+        for pkg in $OPTIONAL_SYSTEM_PACKAGES; do
+            echo "  - $pkg" >> environment-optional.yml
+            done
+        cp src/environment.yml src/environment-optional.yml
+            echo "  # optional packages" >> src/environment-optional.yml
+        for pkg in $OPTIONAL_SYSTEM_PACKAGES $SAGELIB_OPTIONAL_SYSTEM_PACKAGES; do
+            echo "  - $pkg" >> src/environment-optional.yml
+        done
+    else
+        if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+            echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM.txt and "$OUTPUT_DIR"/$SYSTEM-optional.txt
+        fi
+        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM.txt
+        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
+        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
     fi
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM.txt
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
-    echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
 done
 
 OUTPUT_DIR="src/doc/en/reference/spkg"
@@ -79,16 +112,12 @@ External Packages
    :maxdepth: 1
 
 EOF
-for PKG_SCRIPTS in build/pkgs/*; do
-    if [ -d "$PKG_SCRIPTS" ]; then
-        PKG_BASE=$(basename "$PKG_SCRIPTS")
-        if [ -f "$PKG_SCRIPTS"/SPKG.rst ]; then
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst); do
+            PKG_SCRIPTS=build/pkgs/$PKG_BASE
             # Instead of just copying, we may want to call
             # a version of sage-spkg-info to format extra information.
             cp "$PKG_SCRIPTS"/SPKG.rst "$OUTPUT_DIR"/$PKG_BASE.rst
             echo >> "$OUTPUT_INDEX" "   $PKG_BASE"
-        fi
-    fi
 done
 cat >> "$OUTPUT_INDEX" <<EOF
 .. include:: ../footer.txt

@@ -28,7 +28,6 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.parent import Parent

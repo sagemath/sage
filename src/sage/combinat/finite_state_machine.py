@@ -6039,7 +6039,7 @@ class FiniteStateMachine(SageObject):
         accepted or not) usually corresponds to using the more
         specialized class :class:`Automaton`.
 
-        Non-deterministic finite state machines can be handeled as well.
+        Non-deterministic finite state machines can be handled as well.
 
         ::
 
@@ -8152,7 +8152,7 @@ class FiniteStateMachine(SageObject):
             sage: is_Automaton(A.composition(T, algorithm='explorative'))
             True
 
-        Non-deterministic final output cannot be handeled::
+        Non-deterministic final output cannot be handled::
 
             sage: F = Transducer([('I', 'A', 0, 42), ('I', 'B', 0, 42)],
             ....:                initial_states=['I'],
@@ -8845,11 +8845,10 @@ class FiniteStateMachine(SageObject):
     # simplifications
     # *************************************************************************
 
-
     def prepone_output(self):
         """
         For all paths, shift the output of the path from one
-        transition to the earliest possible preceeding transition of
+        transition to the earliest possible preceding transition of
         the path.
 
         INPUT:

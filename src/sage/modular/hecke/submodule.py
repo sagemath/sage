@@ -17,7 +17,6 @@ Submodules of Hecke modules
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 import sage.arith.all as arith
 from sage.misc.verbose import verbose

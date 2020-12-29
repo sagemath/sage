@@ -1,1 +1,1 @@
-suitesparse
+suitesparse-devel

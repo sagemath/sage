@@ -8,7 +8,6 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>

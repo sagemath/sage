@@ -60,7 +60,7 @@ solutions::
 Scott's pentamino problem
 -------------------------
 
-As mentionned in the introduction of [Knuth1]_, Scott's pentamino problem
+As mentioned in the introduction of [Knuth1]_, Scott's pentamino problem
 consists in tiling a chessboard leaving the center four squares vacant with
 the 12 distinct pentaminoes.
 
@@ -275,7 +275,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 import itertools
 from sage.structure.sage_object import SageObject
@@ -320,21 +319,21 @@ def ncube_isometry_group(n, orientation_preserving=True):
 
         sage: ncube_isometry_group(3)
         [
-        [1 0 0]  [ 1  0  0]  [ 0  1  0]  [ 0  0 -1]  [ 1  0  0]  [ 0  1  0]
-        [0 1 0]  [ 0  0  1]  [ 0  0 -1]  [ 0 -1  0]  [ 0  0 -1]  [-1  0  0]
-        [0 0 1], [ 0 -1  0], [-1  0  0], [-1  0  0], [ 0  1  0], [ 0  0  1],
+        [1 0 0]  [ 1  0  0]  [ 1  0  0]  [ 0  1  0]  [0 1 0]  [ 0  0  1]
+        [0 1 0]  [ 0  0  1]  [ 0  0 -1]  [-1  0  0]  [0 0 1]  [ 0 -1  0]
+        [0 0 1], [ 0 -1  0], [ 0  1  0], [ 0  0  1], [1 0 0], [ 1  0  0],
         <BLANKLINE>
-        [ 1  0  0]  [ 0  0  1]  [0 1 0]  [ 0  0  1]  [ 0  0 -1]  [ 0 -1  0]
-        [ 0 -1  0]  [-1  0  0]  [0 0 1]  [ 0 -1  0]  [-1  0  0]  [-1  0  0]
-        [ 0  0 -1], [ 0 -1  0], [1 0 0], [ 1  0  0], [ 0  1  0], [ 0  0 -1],
+        [-1  0  0]  [ 0 -1  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0  0 -1]
+        [ 0 -1  0]  [ 0  0 -1]  [ 0  0 -1]  [ 0  1  0]  [ 0  0  1]  [ 1  0  0]
+        [ 0  0  1], [ 1  0  0], [ 0 -1  0], [ 0  0 -1], [-1  0  0], [ 0 -1  0],
         <BLANKLINE>
-        [ 0  1  0]  [ 0  0  1]  [ 0  0 -1]  [ 0 -1  0]  [0 0 1]  [ 0 -1  0]
-        [ 1  0  0]  [ 0  1  0]  [ 1  0  0]  [ 0  0  1]  [1 0 0]  [ 1  0  0]
-        [ 0  0 -1], [-1  0  0], [ 0 -1  0], [-1  0  0], [0 1 0], [ 0  0  1],
+        [ 0  1  0]  [ 0  0  1]  [0 0 1]  [ 0 -1  0]  [ 0  0 -1]  [-1  0  0]
+        [ 1  0  0]  [ 0  1  0]  [1 0 0]  [ 1  0  0]  [ 0  1  0]  [ 0  0  1]
+        [ 0  0 -1], [-1  0  0], [0 1 0], [ 0  0  1], [ 1  0  0], [ 0  1  0],
         <BLANKLINE>
-        [-1  0  0]  [-1  0  0]  [ 0  0 -1]  [-1  0  0]  [ 0 -1  0]  [-1  0  0]
-        [ 0  1  0]  [ 0  0 -1]  [ 0  1  0]  [ 0  0  1]  [ 0  0 -1]  [ 0 -1  0]
-        [ 0  0 -1], [ 0 -1  0], [ 1  0  0], [ 0  1  0], [ 1  0  0], [ 0  0  1]
+        [ 0 -1  0]  [ 0  0 -1]  [ 0  0  1]  [ 1  0  0]  [ 0  0 -1]  [ 0  1  0]
+        [-1  0  0]  [-1  0  0]  [-1  0  0]  [ 0 -1  0]  [ 0 -1  0]  [ 0  0 -1]
+        [ 0  0 -1], [ 0  1  0], [ 0 -1  0], [ 0  0 -1], [-1  0  0], [-1  0  0]
         ]
 
     TESTS::

@@ -246,14 +246,14 @@ Sage example in ./domaines.tex, line 1020::
 Sage example in ./domaines.tex, line 1036::
 
   sage: I.parent()
-  Symbolic Ring
+  Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
 Sage example in ./domaines.tex, line 1043::
 
   sage: (1.+2.*I).parent()
-  Symbolic Ring
-  sage: CC(1.+2.*I).parent()
   Complex Field with 53 bits of precision
+  sage: (1.+2.*SR(I)).parent()
+  Symbolic Ring
 
 Sage example in ./domaines.tex, line 1064::
 
@@ -340,7 +340,7 @@ Sage example in ./domaines.tex, line 1422::
 Sage example in ./domaines.tex, line 1428::
 
   sage: SR.category()
-  Category of commutative rings
+  Category of fields
 
 Sage example in ./domaines.tex, line 1482::
 

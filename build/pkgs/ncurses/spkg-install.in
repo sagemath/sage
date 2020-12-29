@@ -1,22 +1,9 @@
 DEBUG_CONFIGURE_FLAG=''
 if [ "$SAGE_DEBUG" = yes ]; then
-    CFLAGS="-O0 -g $CFLAGS"
     DEBUG_CONFIGURE_FLAG='--with-debug'
 else
     DEBUG_CONFIGURE_FLAG='--without-debug'
 fi
-
-
-echo "The following environment variables will be exported:"
-echo "Using CC=$CC"
-echo "Using CFLAGS=$CFLAGS"
-echo "Using CPPFLAGS=$CPPFLAGS"
-echo "Using LDFLAGS=$LDFLAGS"
-echo
-
-export CFLAGS
-export CPPFLAGS
-export LDFLAGS
 
 cd src
 

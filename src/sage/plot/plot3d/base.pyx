@@ -398,6 +398,13 @@ cdef class Graphics3d(SageObject):
             sage: (css in str) or (html in str)
             False
 
+        If a page title is provided, it is stripped and HTML-escaped::
+
+            sage: d = dodecahedron(page_title='\t"Page" & <Title>\n')
+            sage: str = d._rich_repr_threejs(online=True).html.get_str()
+            sage: '<title>&quot;Page&quot; &amp; &lt;Title&gt;</title>' in str
+            True
+
         """
         options = self._process_viewing_options(kwds)
         options.setdefault('online', False)
@@ -410,6 +417,7 @@ cdef class Graphics3d(SageObject):
         js_options['autoPlay'] = options.get('auto_play', True)
         js_options['axes'] = options.get('axes', False)
         js_options['axesLabels'] = options.get('axes_labels', ['x','y','z'])
+        js_options['axesLabelsStyle'] = options.get('axes_labels_style')
         js_options['decimals'] = options.get('decimals', 2)
         js_options['delay'] = options.get('delay', 20)
         js_options['frame'] = options.get('frame', True)
@@ -448,6 +456,21 @@ cdef class Graphics3d(SageObject):
 
         if not js_options['frame']:
             js_options['axesLabels'] = False
+            js_options['axesLabelsStyle'] = None
+
+        if js_options['axesLabelsStyle'] is not None:
+            from .shapes import _validate_threejs_text_style
+            style = js_options['axesLabelsStyle']
+            if isinstance(style, dict):
+                style = _validate_threejs_text_style(style)
+                style = [style, style, style]
+            elif isinstance(style, list) and len(style) == 3 and all([isinstance(s, dict) for s in style]):
+                style = [_validate_threejs_text_style(s) for s in style]
+            else:
+                import warnings
+                warnings.warn("axes_labels_style must be a dict or a list of 3 dicts")
+                style = [dict(), dict(), dict()]
+            js_options['axesLabelsStyle'] = style
 
         from sage.repl.rich_output import get_display_manager
         scripts = get_display_manager().threejs_scripts(options['online'])
@@ -490,6 +513,14 @@ cdef class Graphics3d(SageObject):
             with open(os.path.join(SAGE_EXTCODE, 'threejs', 'animation.js')) as f:
                 extra_html += '<script>' + f.read() + '</script>'
 
+        page_title = options.get('page_title')
+        if page_title is None:
+            page_title = ""
+        else:
+            from html import escape as html_escape
+            page_title = html_escape(str(page_title).strip())
+
+        html = html.replace('SAGE_TITLE', page_title)
         html = html.replace('SAGE_SCRIPTS', scripts)
         html = html.replace('SAGE_STYLES', styles)
         html = html.replace('SAGE_EXTRA_HTML', extra_html)
@@ -1298,11 +1329,7 @@ end_scene""" % (render_params.antialiasing,
         return box_min, box_max
 
     def _prepare_for_jmol(self, frame, axes, frame_aspect_ratio, aspect_ratio, zoom):
-        from sage.plot.plot import EMBEDDED_MODE
-        if EMBEDDED_MODE:
-            s = 6
-        else:
-            s = 3
+        s = 3
         box_min, box_max = self._rescale_for_frame_aspect_ratio_and_zoom(s, frame_aspect_ratio, zoom)
         a_min, a_max = self._box_for_aspect_ratio(aspect_ratio, box_min, box_max)
         return self._transform_to_bounding_box(box_min, box_max, a_min, a_max, frame=frame,

@@ -80,23 +80,17 @@ install_config_rpath() {
 bootstrap () {
     rm -f m4/sage_spkg_configures.m4
     spkg_configures=""
-    for filename in $(find build/pkgs -type f -name type); do
-        pkgtype="$(cat $filename)"
-        pkgname="$(echo $filename | cut -d/ -f3)"
-        case "$pkgtype" in
-            optional|experimental)
+    for pkgname in $(./sage --package list :optional: :experimental: | sort); do
                 # Trac #29629: Temporary solution for Sage 9.1: Do not provide
                 # --enable-SPKG options for installing pip packages
-                if [ ! -f "$(dirname $filename)/requirements.txt" ]; then
+                if [ ! -f build/pkgs/$pkgname/requirements.txt ]; then
+                    pkgtype="$(cat build/pkgs/$pkgname/type)"
                     spkg_configures="$spkg_configures
 SAGE_SPKG_ENABLE([$pkgname], [$pkgtype])"
                 fi
-                ;;
-        esac
     done
-    for filename in $(find build/pkgs -type f -name spkg-configure.m4 | sort); do
-        pkgname="$(echo $filename | cut -d/ -f3)"
-        echo "m4_sinclude([$filename])" >> m4/sage_spkg_configures.m4
+    for pkgname in $(./sage --package list --has-file spkg-configure.m4 | sort); do
+        echo "m4_sinclude([build/pkgs/$pkgname/spkg-configure.m4])" >> m4/sage_spkg_configures.m4
         spkg_configures="$spkg_configures
 SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
     done
@@ -190,7 +184,11 @@ save () {
 	build/make/Makefile-auto.in \
 	src/doc/en/installation/*.txt \
 	src/doc/en/reference/spkg/*.rst \
-	src/doc/en/reference/repl/*.txt
+	src/doc/en/reference/repl/*.txt \
+	environment.yml \
+	src/environment.yml \
+	environment-optional.yml \
+	src/environment-optional.yml
 
     # Update version
     echo "$NEWCONFVERSION" >$PKG/package-version.txt

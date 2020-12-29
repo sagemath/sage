@@ -32,7 +32,7 @@ def sage_inputhook(context):
     while True:
         sage.repl.attach.reload_attached_files_if_modified()
         try:
-            r, w, e = select.select([f], [], [], TIMEOUT)
+            r, _, _ = select.select([f], [], [], TIMEOUT)
             if f in r:
                 return  # IPython signalled us to stop
         except select.error as e:

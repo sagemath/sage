@@ -351,19 +351,18 @@ doctest::
      Category of finite dimensional hopf algebras with basis over Rational Field,
      Category of finite enumerated permutation groups,
      Category of finite weyl groups,
-     Category of group algebras over Rational Field,
      Category of number fields]
 
 AUTHOR:
 
 - Nicolas M. Thiery (2012-09): initial version.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012-2013  Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.cachefunc import cached_function, cached_method

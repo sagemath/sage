@@ -19,7 +19,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import os
 import pickle
@@ -879,7 +878,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
 
         # If on the other hand, (c1 and c2) is isomorphic to a triangulated square, then
         # delete c1.  This ensures that c2 is an edge of the triangulated square, and we delete
-        # it irregardless of orientation.  Then check if the digraph has exactly two connected
+        # it regardless of orientation.  Then check if the digraph has exactly two connected
         # components, and again this testing method is rerun on both components.
 
         for c1 in Combinations( [ vertex for vertex in vertices if dg.degree(vertex) == 2], 2 ):

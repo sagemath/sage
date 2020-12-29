@@ -5,7 +5,6 @@ AUTHORS:
 
 - Vincent Delecroix, Travis Scrimshaw (2014-11-23)
 """
-from __future__ import print_function
 
 from sage.groups.conjugacy_classes import ConjugacyClass, ConjugacyClassGAP
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement

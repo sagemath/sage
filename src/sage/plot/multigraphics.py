@@ -15,7 +15,6 @@ AUTHORS:
   ``GraphicsArray`` that was defined in the module :mod:`~sage.plot.graphics`.
 
 """
-from __future__ import print_function, absolute_import
 import os
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject

@@ -17,10 +17,7 @@ if [ "$UNAME" = "CYGWIN" ]; then
 fi
 
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
-   CXXFLAGS="$CXXFLAGS -O0"
    CONFIGUREFLAGS="$CONFIGUREFLAGS --enable-debug"
-else
-   CXXFLAGS="$CXXFLAGS -O3"
 fi
 
 export CXXFLAGS="$CXXFLAGS"

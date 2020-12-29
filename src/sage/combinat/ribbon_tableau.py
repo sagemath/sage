@@ -15,7 +15,6 @@ Ribbon Tableaux
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division, print_function, absolute_import
 
 from sage.structure.parent import Parent
 from sage.structure.element import parent

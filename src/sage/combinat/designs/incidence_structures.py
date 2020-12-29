@@ -61,7 +61,7 @@ class IncidenceStructure(object):
 
       .. NOTE::
 
-          The following syntax, where ``points`` is ommitted, automatically
+          The following syntax, where ``points`` is omitted, automatically
           defines the ground set as the union of the blocks::
 
               sage: H = IncidenceStructure([['a','b','c'],['c','d','e']])
@@ -2183,12 +2183,29 @@ class IncidenceStructure(object):
             sage: sets = Set(map(Set,list(g.subgraph_search_iterator(C4))))
             sage: H = Hypergraph(sets)
             sage: view(H) # not tested
+
+        TESTS::
+
+            # verify that :trac:`30976` is fixed
+            sage: IS = IncidenceStructure([1,2,3], [[1,2], [2,3]])
+            sage: if latex.has_file("tikz.sty"):          # optional - latex
+            ....:     IS._latex_()                        # optional - latex
+            ...UserWarning:
+            The hypergraph is drawn as a set of closed curves...
+            \begin{tikzpicture}...
+            \draw... -- ...;
+            \draw... -- ...;
+             \draw node...;
+             \draw node...;
+             \draw node...;
+            \end{tikzpicture}
+
         """
         from sage.functions.trig import arctan2
 
-        from sage.misc.misc import warn
+        from warnings import warn
         warn("\nThe hypergraph is drawn as a set of closed curves. The curve "
-             "representing a set S go **THROUGH** the points contained "
+             "representing a set S goes **THROUGH** the points contained "
              "in S.\n A point which is encircled by a curve but is not located "
              "on its boundary is **NOT** included in the corresponding set.\n"
              "\n"

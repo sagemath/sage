@@ -25,7 +25,7 @@ EXAMPLES:
 No hypothesis on the structure
 ------------------------------
 
-What we mean by "no hypothesis" is that the the set is not known
+What we mean by "no hypothesis" is that the set is not known
 to be a forest, symmetric, or graded. However, it may have other
 structure, like not containing an oriented cycle, that does not
 help with the enumeration.

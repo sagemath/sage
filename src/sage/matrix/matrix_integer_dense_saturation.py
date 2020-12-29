@@ -1,7 +1,6 @@
 """
 Saturation over ZZ
 """
-from __future__ import absolute_import
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF

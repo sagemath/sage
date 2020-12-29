@@ -9,4 +9,8 @@ if [ $? -ne 0 ]; then
     echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
     exit 1
 fi
-cd src && sdh_pip_install .
+cd src
+# Need to build a wheel manually because pip does not
+# follow symlinks.
+sdh_setup_bdist_wheel
+sdh_store_and_pip_install_wheel .

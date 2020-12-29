@@ -1,7 +1,6 @@
 r"""
 Calculus functions
 """
-from __future__ import absolute_import
 from sage.matrix.all import matrix
 from sage.structure.element import is_Matrix
 from sage.structure.element import is_Vector

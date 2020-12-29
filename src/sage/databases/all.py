@@ -46,7 +46,6 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
 from .sql_db import SQLQuery, SQLDatabase

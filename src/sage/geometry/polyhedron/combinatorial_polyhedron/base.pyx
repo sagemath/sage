@@ -1,7 +1,3 @@
-# distutils: depends = sage/geometry/polyhedron/combinatorial_polyhedron/bit_vector_operations.cc
-# distutils: language = c++
-# distutils: extra_compile_args = -std=c++11
-
 r"""
 Combinatorial polyhedron
 
@@ -20,7 +16,7 @@ Terminology used in this module:
 - Facets                -- facets of the polyhedron.
 - Vrepresentation       -- represents a face by the list of Vrep it contains.
 - Hrepresentation       -- represents a face by a list of Hrep it is contained in.
-- bit representation    -- represents incidences as ``uint64_t``-array, where
+- bit representation    -- represents incidences as bitset, where
                            each bit represents one incidence. There might
                            be trailing zeros, to fit alignment requirements.
                            In most instances, faces are represented by the
@@ -100,17 +96,14 @@ from .conversions \
                incidence_matrix_to_bit_rep_of_Vrep, \
                facets_tuple_to_bit_rep_of_facets, \
                facets_tuple_to_bit_rep_of_Vrep
+from .conversions cimport Vrep_list_to_bit_rep
 from sage.misc.cachefunc            import cached_method
 
 from sage.rings.integer                cimport smallInteger
 from cysignals.signals                 cimport sig_check, sig_block, sig_unblock
 from sage.matrix.matrix_integer_dense  cimport Matrix_integer_dense
 
-cdef extern from "bit_vector_operations.cc":
-    cdef size_t count_atoms(uint64_t *A, size_t face_length)
-#        Return the number of atoms/vertices in A.
-#        This is the number of set bits in A.
-#        ``face_length`` is the length of A in terms of uint64_t.
+from .face_data_structure cimport face_len_atoms, face_init
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
@@ -347,6 +340,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         self._equalities = ()
         self._all_faces = None
         self._mem_tuple = ()
+        cdef MemoryAllocator mem
 
         # ``_length_edges_list`` should not be touched in an instance
         # of :class:`CombinatorialPolyhedron`. This number can be altered,
@@ -468,13 +462,14 @@ cdef class CombinatorialPolyhedron(SageObject):
             # Initializing the Vrep as their Bit-representation.
             self._bitrep_Vrep = incidence_matrix_to_bit_rep_of_Vrep(data_modified)
 
-            self._n_facets = self.bitrep_facets().n_faces
+            self._n_facets = self.bitrep_facets().n_faces()
 
             # Initialize far_face if unbounded.
             if not self._bounded:
-                self._far_face = facets_tuple_to_bit_rep_of_facets((tuple(far_face),), self._n_Vrepresentation)
-            else:
-                self._far_face = None
+                mem = MemoryAllocator()
+                self._mem_tuple += (mem,)
+                face_init(self._far_face, self.bitrep_facets().n_atoms(), self._n_facets, mem)
+                Vrep_list_to_bit_rep(tuple(far_face), self._far_face)
 
         elif isinstance(data, numbers.Integral):
             # To construct a trivial polyhedron, equal to its affine hull,
@@ -496,22 +491,21 @@ cdef class CombinatorialPolyhedron(SageObject):
             # Initializing the Vrep as their Bit-representation.
             self._bitrep_Vrep = facets_tuple_to_bit_rep_of_Vrep((), 0)
 
-            self._far_face = None
-
         elif isinstance(data, (tuple, list)) and len(data) == 2 and isinstance(data[0], ListOfFaces) and isinstance(data[1], ListOfFaces):
             # Initialize self from two ``ListOfFaces``.
             self._bitrep_facets = data[0]
             self._bitrep_Vrep   = data[1]
 
-            self._n_Hrepresentation = self._bitrep_facets.n_faces
-            self._n_Vrepresentation = self._bitrep_Vrep.n_faces
+            self._n_Hrepresentation = self._bitrep_facets.n_faces()
+            self._n_Vrepresentation = self._bitrep_Vrep.n_faces()
             self._n_facets = self._n_Hrepresentation
 
             # Initialize far_face if unbounded.
             if not self._bounded:
-                self._far_face = facets_tuple_to_bit_rep_of_facets((tuple(far_face),), self._n_Vrepresentation)
-            else:
-                self._far_face = None
+                mem = MemoryAllocator()
+                self._mem_tuple += (mem,)
+                face_init(self._far_face, self.bitrep_facets().n_atoms(), self._n_facets, mem)
+                Vrep_list_to_bit_rep(tuple(far_face), self._far_face)
 
         else:
             # Input is a "list" of facets.
@@ -552,9 +546,10 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             # Initialize far_face if unbounded.
             if not self._bounded:
-                self._far_face = facets_tuple_to_bit_rep_of_facets((tuple(far_face),), n_Vrepresentation)
-            else:
-                self._far_face = None
+                mem = MemoryAllocator()
+                self._mem_tuple += (mem,)
+                face_init(self._far_face, self.bitrep_facets().n_atoms(), self._n_facets, mem)
+                Vrep_list_to_bit_rep(tuple(far_face), self._far_face)
 
         if not self._bounded:
             self._far_face_tuple = tuple(far_face)
@@ -1876,13 +1871,12 @@ cdef class CombinatorialPolyhedron(SageObject):
             raise NotImplementedError("this function is implemented for polytopes only")
 
         cdef ListOfFaces facets = self._bitrep_facets
-        cdef size_t n_facets = facets.n_faces
-        cdef size_t face_length = facets.face_length
+        cdef size_t n_facets = facets.n_faces()
         cdef size_t i
         cdef int dim = self.dimension()
 
         for i in range(n_facets):
-            if count_atoms(facets.data[i], face_length) != dim:
+            if face_len_atoms(facets.data.faces[i]) != dim:
                 return False
         return True
 
@@ -1984,13 +1978,12 @@ cdef class CombinatorialPolyhedron(SageObject):
         if not self.is_bounded(): return False
 
         cdef ListOfFaces vertices = self._bitrep_Vrep
-        cdef size_t n_vertices = vertices.n_faces
-        cdef size_t face_length = vertices.face_length
+        cdef size_t n_vertices = vertices.n_faces()
         cdef size_t i
         cdef int dim = self.dimension()
 
         for i in range(n_vertices):
-            if count_atoms(vertices.data[i], face_length) != dim:
+            if face_len_atoms(vertices.data.faces[i]) != dim:
                 return False
         return True
 
@@ -2756,14 +2749,6 @@ cdef class CombinatorialPolyhedron(SageObject):
         Return the Vrepresentations in bit representation.
         """
         return self._bitrep_Vrep
-
-    cdef ListOfFaces far_face(self):
-        r"""
-        Return a list with only the far face.
-
-        This is a face containing all Vrepresentatives that are not vertices.
-        """
-        return self._far_face
 
     cdef tuple far_face_tuple(self):
         r"""

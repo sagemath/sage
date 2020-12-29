@@ -47,8 +47,6 @@ Functions
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-# python3
-from __future__ import division, print_function, absolute_import
 
 from sage.misc.cachefunc import cached_function
 
@@ -128,17 +126,18 @@ def block_stabilizer(G, B):
             S.append(bb0)
     return S
 
+
 def is_difference_family(G, D, v=None, k=None, l=None, verbose=False):
     r"""
-    Check wether ``D`` forms a difference family in the group ``G``.
+    Check whether ``D`` forms a difference family in the group ``G``.
 
     INPUT:
 
-    - ``G`` - group of cardinality ``v``
+    - ``G`` -- group of cardinality ``v``
 
-    - ``D`` - a set of ``k``-subsets of ``G``
+    - ``D`` -- a set of ``k``-subsets of ``G``
 
-    - ``v``, ``k`` and ``l`` - optional parameters of the difference family
+    - ``v``, ``k`` and ``l`` -- optional parameters of the difference family
 
     - ``verbose`` - whether to print additional information
 

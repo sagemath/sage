@@ -128,16 +128,6 @@ if [ "$1" = '-standard' -o "$1" = "--standard" ]; then
     exec sage-list-packages standard $@
 fi
 
-if [ "$1" = '-installed' -o "$1" = "--installed" ]; then
-    shift
-    exec sage-list-packages all --installed-only $@
-fi
-
-if [ "$1" = '-p' ]; then
-    echo "Error: Installing old-style SPKGs is no longer supported."
-    exit 1
-fi
-
 if [ "$1" = '-info' -o "$1" = '--info' ]; then
     shift
     for PKG in "$@"

@@ -22,7 +22,6 @@ Functions and classes
 #
 #                  https://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function, absolute_import
 
 from warnings import warn
 import inspect

@@ -1,12 +1,5 @@
 cd src
 
-if [ "$SAGE_DEBUG" = "yes" ]; then
-    echo "Building a debug version of libatomic_ops."
-    export CFLAGS="-O0 -g $CFLAGS"
-else
-    export CFLAGS="-O2 -g $CFLAGS"
-fi
-
 if [ "$SAGE64" = "yes" ]; then
     echo "Building a 64-bit version of libatomic_ops."
     export CFLAGS="-m64 $CFLAGS"

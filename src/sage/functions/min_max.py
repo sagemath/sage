@@ -33,7 +33,6 @@ This works as expected for more than two entries::
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import absolute_import
 
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression

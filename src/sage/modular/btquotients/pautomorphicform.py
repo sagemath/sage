@@ -39,7 +39,6 @@ This can then be lifted to an overconvergent `p`-adic modular form::
     sage: A.lift(a) # long time
     p-adic automorphic form of cohomological weight 0
 """
-from __future__ import print_function, division
 
 from sage.modular.btquotients.btquotient import DoubleCosetReduction
 from sage.structure.unique_representation import UniqueRepresentation
@@ -351,8 +350,8 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         """
         tmp = ''
         for e in range(self._nE):
-            tmp += str(e) + '\t|'+ str(self._F[e]) + '\n'
-        print (tmp[:-1])
+            tmp += str(e) + '\t|' + str(self._F[e]) + '\n'
+        print(tmp[:-1])
 
     def valuation(self):
         r"""
@@ -426,7 +425,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
             res = rest.transpose()
         return self.parent().free_module()(res.row(0))
 
-    #In BruhatTitsHarmonicCocycle
+    # In BruhatTitsHarmonicCocycle
     def evaluate(self, e1):
         r"""
         Evaluate a harmonic cocycle on an edge of the Bruhat-Tits tree.
@@ -463,7 +462,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         return u.igamma(self.parent().embed_quaternion, scale=p ** (-u.power)) * val
 
-    #In BruhatTitsHarmonicCocycle
+    # In BruhatTitsHarmonicCocycle
     def riemann_sum(self, f, center=1, level=0, E=None):
         r"""
         Evaluate the integral of the function ``f`` with respect
@@ -2424,7 +2423,7 @@ class pAdicAutomorphicForms(Module, UniqueRepresentation):
 
         OUTPUT:
 
-        A boolean value. True if adn only if ``S`` is coercible into self.
+        A boolean value. True if and only if ``S`` is coercible into self.
 
         EXAMPLES::
 

@@ -228,11 +228,14 @@ class InOutBlock(object):
 
 
 class MultiBlock(object):
-    def __init__(self, sizes=[], var_names=["v"],
-                 start_indices=[], reverses=[]):
-
-        self.start_indices = start_indices + [0] * (len(var_names) - len(
-            start_indices))
+    def __init__(self, sizes=None, var_names=["v"],
+                 start_indices=[], reverses=None):
+        if reverses is None:
+            reverses = []
+        if sizes is None:
+            sizes = []
+        self.start_indices = start_indices + [0] * (len(var_names) -
+                                                    len(start_indices))
         reverses += [False] * (len(var_names) - len(reverses))
         sizes += [1] * (len(var_names) - len(sizes))
 

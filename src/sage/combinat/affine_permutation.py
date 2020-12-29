@@ -28,9 +28,10 @@ from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.composition import Composition
 from sage.combinat.partition import Partition
 
+
 class AffinePermutation(ClonableArray):
     r"""
-    An affine permutation, representated in the window notation, and
+    An affine permutation, represented in the window notation, and
     considered as a bijection from `\ZZ` to `\ZZ`.
 
     EXAMPLES::

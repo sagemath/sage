@@ -60,7 +60,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ######################################################################
-from __future__ import print_function
 
 from sage.rings.integer_ring import   ZZ
 from sage.rings.rational_field import QQ

@@ -10,7 +10,6 @@ AUTHORS:
 
    ``J_inv_ZZ`` is the main function used to determine all Fourier expansions.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>

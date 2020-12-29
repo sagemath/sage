@@ -46,4 +46,5 @@ Special Update/Build Instructions
 
 We do not have permission to redistribute SCIP or SoPlex. Hence, you
 must download it yourself from http://scip.zib.de and put the tarball
-scipoptsuite-VERSION.tgz in $SAGE_ROOT/upstream
+``scipoptsuite-VERSION.tgz`` in ``$SAGE_ROOT/upstream``, renaming
+it to ``scipoptsuite-VERSION-do-not-distribute.tgz``.

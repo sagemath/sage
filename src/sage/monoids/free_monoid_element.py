@@ -140,7 +140,17 @@ class FreeMonoidElement(MonoidElement):
             'a_{0}^{5}a_{1}^{2}a_{0}^{12}a_{1}^{2}'
             sage: F.<alpha,beta,gamma> = FreeMonoid(3)
             sage: latex(alpha*beta*gamma)
-            \alpha\beta\gamma
+            \alpha \beta \gamma
+
+        Check that :trac:`14509` is fixed::
+
+            sage: K.< alpha,b > = FreeAlgebra(SR)
+            sage: latex(alpha*b)
+            \alpha b
+            sage: latex(b*alpha)
+            b \alpha
+            sage: "%s"%latex(alpha*b)                                                                                                                                                                                       
+            '\\alpha b'
         """
         s = ""
         v = self._element_list
@@ -149,9 +159,10 @@ class FreeMonoidElement(MonoidElement):
             g = x[int(v[i][0])]
             e = v[i][1]
             if e == 1:
-                s += "%s"%(g,)
+                s += "%s "%(g,)
             else:
                 s += "%s^{%s}"%(g,e)
+        s = s.rstrip(" ") # strip the trailing whitespace caused by adding a space after each element name
         if len(s) == 0:
             s = "1"
         return s

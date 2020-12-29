@@ -53,7 +53,6 @@ AUTHORS:
 - Vincent Delecroix (November 2013): additional methods
 
 """
-from __future__ import print_function
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById

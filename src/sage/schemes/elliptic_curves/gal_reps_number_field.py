@@ -44,7 +44,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 from sage.structure.sage_object import SageObject
 from sage.rings.number_field.number_field import NumberField

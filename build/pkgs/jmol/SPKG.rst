@@ -5,10 +5,10 @@ Jmol for Sage
 Description
 -----------
 
-This provides files necessary for Jmol(java) and JSmol (javascript) to
-operate from the command line and the Notebook. It does not contain the
-Notebook javascript library jmol_lib.js or changes to Notebook or Sage
-code.
+This provides files necessary for Jmol (java).
+
+This package does not install JSmol (javascript), which upstream bundles with Jmol.
+
 
 License
 -------

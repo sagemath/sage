@@ -106,6 +106,13 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         sage: type(prime_range(8,algorithm="pari_isprime")[0])
         <type 'sage.rings.integer.Integer'>
 
+    .. NOTE::
+
+        ``start`` and ``stop`` should be integers, but real numbers will also be accepted
+        as input. In this case, they will be rounded to nearby integers start\* and
+        stop\*, so the output will be the primes between start\* and stop\* - 1, which may
+        not be exactly the same as the primes between ``start`` and ``stop - 1``.
+
     TESTS::
 
         sage: prime_range(-1)
@@ -152,6 +159,26 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
     DEF small_prime_max = 436273009  #  a prime < init_primes_max (preferably the largest)
     DEF prime_gap_bound = 250        #  upper bound for gap between primes <= small_prime_max
 
+    # make sure that start and stop are integers
+    # First try coercing them. If that does not work, then try rounding them.
+    try:
+        start = Integer(start)
+    except TypeError as integer_error:
+        try:
+            start = Integer(round(float(start)))
+        except (ValueError, TypeError) as real_error:
+            raise TypeError(str(integer_error)
+                + "\nand argument is also not real: " + str(real_error))
+    if stop is not None:
+        try:
+            stop = Integer(stop)
+        except TypeError as integer_error:
+            try:
+                stop = Integer(round(float(stop)))
+            except (ValueError, TypeError) as real_error:
+                raise ValueError(str(integer_error)
+                    + "\nand argument is also not real: " + str(real_error))
+
     if algorithm is None:
         # if 'stop' is 'None', need to change it to an integer before comparing with 'start'
         if max(start, stop or 0) <= small_prime_max:
@@ -197,7 +224,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
                 res.append(z)
             NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
 
-    elif algorithm == "pari_isprime":
+    elif (algorithm == "pari_isprime") or (algorithm == "pari_primes"):
         from sage.arith.all import primes
         res = list(primes(start, stop))
     else:

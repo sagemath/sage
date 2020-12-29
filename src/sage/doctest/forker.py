@@ -33,7 +33,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function, division
 
 import os
 import sys
@@ -68,11 +67,6 @@ from sage.cpython.string import bytes_to_str, str_to_bytes
 # trac #27754.
 if os.uname().sysname == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
-
-# All doctests run as if the following future imports are present
-import __future__
-MANDATORY_COMPILE_FLAGS = __future__.print_function.compiler_flag
-
 
 # These lists are used on Python 3+ only for backwards compatibility with
 # Python 2 in traceback parsing
@@ -842,7 +836,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         self.total_performed_tests += tries
         return TestResults(failures, tries)
 
-    def run(self, test, compileflags=None, out=None, clear_globs=True):
+    def run(self, test, compileflags=0, out=None, clear_globs=True):
         """
         Runs the examples in a given doctest.
 
@@ -854,11 +848,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         - ``test`` -- an instance of :class:`doctest.DocTest`
 
-        - ``compileflags`` -- the set of compiler flags used to
-          execute examples (passed in to the :func:`compile`).  If
-          None, they are filled in from the result of
-          :func:`doctest._extract_future_flags` applied to
-          ``test.globs``.
+        - ``compileflags`` -- int (default: 0) the set of compiler flags used to
+          execute examples (passed in to the :func:`compile`).
 
         - ``out`` -- a function for writing the output (defaults to
           :func:`sys.stdout.write`).
@@ -892,9 +883,6 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         warnings.showwarning = showwarning_with_traceback
         self.running_doctest_digest = hashlib.md5()
         self.test = test
-        if compileflags is None:
-            compileflags = doctest._extract_future_flags(test.globs)
-        compileflags |= MANDATORY_COMPILE_FLAGS
         # We use this slightly modified version of Pdb because it
         # interacts better with the doctesting framework (like allowing
         # doctests for sys.settrace()). Since we already have output

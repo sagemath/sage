@@ -11,8 +11,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-# python3
-from __future__ import division
 
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method

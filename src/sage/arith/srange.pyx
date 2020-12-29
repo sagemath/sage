@@ -19,7 +19,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import division, print_function
 
 from libc.math cimport ceil
 from cysignals.signals cimport sig_check

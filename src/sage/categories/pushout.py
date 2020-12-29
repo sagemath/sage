@@ -1,7 +1,6 @@
 """
 Coercion via construction functors
 """
-from __future__ import print_function, absolute_import
 
 from sage.misc.lazy_import import lazy_import
 from sage.structure.coerce_exceptions import CoercionException
@@ -1147,7 +1146,7 @@ class MultiPolynomialFunctor(ConstructionFunctor):
 
 
 class InfinitePolynomialFunctor(ConstructionFunctor):
-    """
+    r"""
     A Construction Functor for Infinite Polynomial Rings (see :mod:`~sage.rings.polynomial.infinite_polynomial_ring`).
 
     AUTHOR:
@@ -1188,7 +1187,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
         ...
         CoercionException: Incompatible term orders lex, degrevlex
 
-    In an infinite polynomial ring with generator `a_\\ast`, the variable `a_3` will always be greater
+    In an infinite polynomial ring with generator `a_\ast`, the variable `a_3` will always be greater
     than the variable `a_1`. Hence, the orders are incompatible in the next example as well::
 
         sage: A.construction()[0]*PolynomialRing(QQ,names=['x','y','a_1','a_3'], order='lex').construction()[0]
@@ -1198,7 +1197,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
 
     Another requirement is that after merging the order of the remaining variables must be unique.
     This is not the case in the following example, since it is not clear whether the variables `x,y`
-    should be greater or smaller than the variables `b_\\ast`::
+    should be greater or smaller than the variables `b_\ast`::
 
         sage: A.construction()[0]*PolynomialRing(QQ,names=['a_3','a_1','x','y'], order='lex').construction()[0]
         Traceback (most recent call last):
@@ -1216,7 +1215,7 @@ class InfinitePolynomialFunctor(ConstructionFunctor):
         sage: X.<w,x,y> = InfinitePolynomialRing(ZZ)
         sage: Y.<x,y,z> = InfinitePolynomialRing(QQ)
 
-    `X` and `Y` have an overlapping generators `x_\\ast, y_\\ast`. Since the default lexicographic order is
+    `X` and `Y` have an overlapping generators `x_\ast, y_\ast`. Since the default lexicographic order is
     used in both rings, it gives rise to isomorphic sub-monoids in both `X` and `Y`. They are merged in the
     pushout, which also yields a common parent for doing arithmetic::
 

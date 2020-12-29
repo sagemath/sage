@@ -11,10 +11,8 @@ elif [ "$COMPILER" = "HP_on_HP-UX" ] ; then
 fi
 
 if [ "x$SAGE_DEBUG" = "xyes" ]; then
-   CFLAGS="$CFLAGS -O0"
    ENABLE_DEBUG="--enable-debug"
 else
-   CFLAGS="$CFLAGS -O2"
    ENABLE_DEBUG=""
 fi
 

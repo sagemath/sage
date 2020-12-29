@@ -1,7 +1,6 @@
 """
 Interactively tracing execution of a command
 """
-from __future__ import print_function
 
 
 def trace(code, preparse=True):
@@ -66,25 +65,13 @@ def trace(code, preparse=True):
 
         sage: print(s.before[s.before.find(b'--'):].decode())
         --...
-        ipdb> c
-        2 * 5
-
-    We test what happens in notebook embedded mode::
-
-        sage: sage.plot.plot.EMBEDDED_MODE = True
-        sage: trace('print(factor(10))')
-        Traceback (most recent call last):
-        ...
-        NotImplementedError: the trace command is not implemented in the Sage notebook; you must use the command line.
+        ...ipdb> c
+        ...2 * 5...
 
     Re-enable garbage collection::
 
         sage: gc.enable()
     """
-    from sage.plot.plot import EMBEDDED_MODE
-    if EMBEDDED_MODE:
-        raise NotImplementedError("the trace command is not implemented in the Sage notebook; you must use the command line.")
-
     from IPython.core.debugger import Pdb
     pdb = Pdb()
 

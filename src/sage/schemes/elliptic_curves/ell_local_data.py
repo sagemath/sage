@@ -85,7 +85,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.sage_object import SageObject
 from sage.misc.verbose import verbose

@@ -49,16 +49,6 @@ if [ -z "$CFLAG64" ]; then
 fi
 
 
-if [ "$SAGE_DEBUG" = yes ]; then
-    # Disable optimization, add debug symbols:
-    required_cflags="$required_cflags -g -O0"
-    echo >&2 "Warning: Building MPIR with SAGE_DEBUG=yes disables optimization."
-else
-    # Add debug symbols by default
-    required_cflags="$required_cflags -g"
-fi
-
-
 case "$UNAME" in
     SunOS)
         true;;  # Auto-detect ABI

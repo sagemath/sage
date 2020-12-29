@@ -1,7 +1,6 @@
 r"""
 Sets With a Grading
 """
-from __future__ import absolute_import
 # ****************************************************************************
 #  Copyright (C) 2010-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #

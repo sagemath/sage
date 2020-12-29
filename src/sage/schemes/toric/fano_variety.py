@@ -132,7 +132,6 @@ implementing them on your own as a patch for inclusion!
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 import re
 

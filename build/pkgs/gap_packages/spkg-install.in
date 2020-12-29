@@ -13,22 +13,21 @@ cd "$PKG_SRC_DIR"
 sdh_install \
     aclib-* \
     AutoDoc-* \
-    corelg \
+    corelg-* \
     crime-* \
     cryst \
     crystcat \
     design-* \
     gbnp \
     genss-* \
-    Hap* \
-    HAPcryst \
+    hap-* \
+    hapcryst-* \
     hecke-* \
     liealgdb-* \
     liepring-* \
     liering-* \
     loops-* \
     MapClass-* \
-    PackageManager-* \
     polymaking-* \
     qpa-* \
     quagroup-* \

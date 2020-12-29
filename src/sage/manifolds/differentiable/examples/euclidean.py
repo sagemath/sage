@@ -988,6 +988,75 @@ class EuclideanSpace(PseudoRiemannianManifold):
             d2 += dx*dx
         return sqrt(d2)
 
+    def sphere(self, radius=1, center=None, name=None, latex_name=None,
+               coordinates='spherical', names=None):
+        r"""
+        Return an `(n-1)`-sphere smoothly embedded in ``self``.
+
+        INPUT:
+
+        - ``radius`` -- (default: ``1``) the radius greater than 1 of the sphere
+        - ``center`` -- (default: ``None``) point on ``self`` representing the
+          barycenter of the sphere
+        - ``name`` -- (default: ``None``) string; name (symbol) given to the
+          sphere; if ``None``, the name will be generated according to the input
+        - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote
+          the sphere; if ``None``, the symbol will be generated according to
+          the input
+        - ``coordinates`` -- (default: ``'spherical'``) string describing the
+          type of coordinates to be initialized at the sphere's creation;
+          allowed values are
+
+          - ``'spherical'`` spherical coordinates (see
+            :meth:`~sage.manifolds.differentiable.examples.sphere.Sphere.spherical_coordinates`))
+          - ``'stereographic'`` stereographic coordinates given by the
+            stereographic projection (see
+            :meth:`~sage.manifolds.differentiable.examples.sphere.Sphere.stereographic_coordinates`)
+
+        - ``names`` -- (default: ``None``) must be a tuple containing
+          the coordinate symbols (this guarantees the shortcut operator
+          ``<,>`` to function); if ``None``, the usual conventions are used (see
+          examples in
+          :class:`~sage.manifolds.differentiable.examples.sphere.Sphere`
+          for details)
+
+        EXAMPLES:
+
+        Define a 2-sphere with radius 2 centered at `(1,2,3)` in Cartesian
+        coordinates::
+
+            sage: E3 = EuclideanSpace(3)
+            sage: c = E3.point((1,2,3), name='c'); c
+            Point c on the Euclidean space E^3
+            sage: S2_2 = E3.sphere(radius=2, center=c); S2_2
+            2-sphere S^2_2(c) of radius 2 smoothly embedded in the Euclidean
+             space E^3 centered at the Point c
+
+        The ambient space is precisely our previously defined Euclidean space::
+
+            sage: S2_2.ambient() is E3
+            True
+
+        The embedding into Euclidean space::
+
+            sage: S2_2.embedding().display()
+            iota: S^2_2(c) --> E^3
+            on A: (theta, phi) |--> (x, y, z) = (2*cos(phi)*sin(theta) + 1,
+                                                 2*sin(phi)*sin(theta) + 2,
+                                                 2*cos(theta) + 3)
+
+        See :class:`~sage.manifolds.differentiable.examples.sphere.Sphere`
+        for more examples.
+
+        """
+        n = self._dim
+        if n == 1:
+            raise ValueError('Euclidean space must have dimension of at least 2')
+        from .sphere import Sphere
+        return Sphere(n-1, radius=radius, ambient_space=self,
+                      center=center, name=name, latex_name=latex_name,
+                      coordinates=coordinates, names=names)
+
 ###############################################################################
 
 class EuclideanPlane(EuclideanSpace):

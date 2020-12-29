@@ -11,7 +11,6 @@ Computation of the Frobenius polynomial using Newton's identities
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from __future__ import division
 from sage.rings.integer_ring import ZZ
 from sage.functions.log import log
 

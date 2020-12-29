@@ -9,8 +9,6 @@ objects (or know if they can be built) with :func:`difference_matrix`::
 Functions
 ---------
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.misc.unknown import Unknown
 from sage.misc.cachefunc import cached_function

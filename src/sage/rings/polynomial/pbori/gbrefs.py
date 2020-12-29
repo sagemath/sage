@@ -1,4 +1,3 @@
-from re import sub
 import gzip
 from io import StringIO
 import uu
@@ -28,10 +27,10 @@ def parse_blocks(block_str, data):
 
 
 def load_ref_raw(s):
-    s = sub("data/", "", s)
-    s = sub(r"data\.", "", s)
-    s = sub(r"\.py", "", s)
-    s = sub(r"\.", "/", s)
+    s = re.sub("data/", "", s)
+    s = re.sub(r"data\.", "", s)
+    s = re.sub(r"\.py", "", s)
+    s = re.sub(r"\.", "/", s)
 
     ref_file = "ref/" + s + ".ref"
     res_f = open(ref_file)
@@ -62,10 +61,10 @@ def number_of_declared_vars(data):
 
 
 def load_ref_gz_uu(s, o, b):
-    s = sub("data/", "", s)
-    s = sub(r"data\.", "", s)
-    s = sub(r"\.py", "", s)
-    s = sub(r"\.", "/", s)
+    s = re.sub("data/", "", s)
+    s = re.sub(r"data\.", "", s)
+    s = re.sub(r"\.py", "", s)
+    s = re.sub(r"\.", "/", s)
 
     ref_file = "ref/" + s + ordering_suffix(o, b) + ".ref.gz.uu"
     res = StringIO()
@@ -87,18 +86,6 @@ def convert_refs(ref_file_orig):
     out = open(ref_file_orig + ".gz.uu", "w")
     uu.encode(out_file=out, in_file=StringIO(val))
     out.close()
-
-
-def my_import(name, globals=None, locals=None):
-    if globals is None:
-        globals = {}
-    if locals is None:
-        locals = {}
-    mod = __import__(name)
-    components = name.split('.')
-    for comp in components[1:]:
-        mod = getattr(mod, comp)
-    return mod
 
 
 def dyn_generate(content, name):
@@ -127,8 +114,8 @@ def load_data(file_name, base_dir="./"):
     in_file = file_name
     if not re.match("^data", in_file):
         in_file = "data/" + in_file
-    in_file = sub(r".py$", "", in_file)
-    in_file = sub(r"\.", "/", in_file)
+    in_file = re.sub(r".py$", "", in_file)
+    in_file = re.sub(r"\.", "/", in_file)
     in_file = in_file + ".py"
     in_file = open(base_dir + in_file).read()
     return dyn_generate(in_file, "pb_data")

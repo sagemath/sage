@@ -36,7 +36,7 @@ jobs:
       fail-fast: false
       max-parallel: 6
       matrix:
-        tox_system_factor: [ubuntu-trusty, ubuntu-xenial, ubuntu-bionic, ubuntu-eoan, ubuntu-focal, debian-jessie, debian-stretch, debian-buster, debian-bullseye, debian-sid, linuxmint-17, linuxmint-18, linuxmint-19, linuxmint-19.3, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, centos-7, centos-8, gentoo, archlinux-latest, slackware-14.2, conda-forge, ubuntu-bionic-i386, ubuntu-eoan-i386, debian-buster-i386, centos-7-i386]
+        tox_system_factor: [ubuntu-trusty, ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-groovy, ubuntu-hirsute, debian-jessie, debian-stretch, debian-buster, debian-bullseye, debian-sid, linuxmint-17, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, centos-7, centos-8, gentoo, archlinux-latest, slackware-14.2, conda-forge, ubuntu-bionic-i386, ubuntu-focal-i386, debian-buster-i386, centos-7-i386]
         tox_packages_factor: [maximal]
         targets_pattern: [0-g, h-o, p, q-z]
     env:
@@ -69,7 +69,7 @@ jobs:
               TOKEN="${{ secrets.GITHUB_TOKEN }}"
             fi
             if echo "$TOKEN" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin; then
-              echo "::set-env name=DOCKER_PUSH_REPOSITORY::docker.pkg.github.com/${{ github.repository }}/"
+              echo "DOCKER_PUSH_REPOSITORY=docker.pkg.github.com/${{ github.repository }}/" >> $GITHUB_ENV
             fi
       - run: |
           set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
@@ -99,20 +99,25 @@ jobs:
 
   local-macos:
 
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       max-parallel: 3
       matrix:
+        os: [ macos-10.15, macos-11.0 ]
         tox_system_factor: [homebrew-macos, homebrew-macos-python3_xcode, homebrew-macos-python3_xcode-nokegonly, homebrew-macos-python3_pythonorg, conda-forge-macos]
         tox_packages_factor: [maximal]
         targets_pattern: [0-g, h-o, p, q-z]
+        xcode_version_factor: [11.7, default, 12.3]
     env:
       TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
-      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}-${{ matrix.os }}-xcode_${{ matrix.xcode_version_factor }}
       TARGETS_OPTIONAL: "$( echo $(PATH=build/bin:$PATH build/bin/sage-package list :experimental: | grep -v  database_stein_watkins\\$ | grep -v polytopes_db_4d | grep '^[${{ matrix.targets_pattern }}]' ) )"
     steps:
       - uses: actions/checkout@v2
+      - name: Select Xcode version
+        run: |
+          if [ ${{ matrix.xcode_version_factor }} != default ]; then sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode_version_factor }}.app; fi
       - name: Install test prerequisites
         run: |
           brew install tox

@@ -118,7 +118,7 @@ from sage.libs.gmp.random cimport *
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.misc.misc import cputime
 from sage.misc.verbose import verbose, get_verbose
-from sage.modules.free_module import VectorSpace
+VectorSpace = None
 from sage.modules.vector_mod2_dense cimport Vector_mod2_dense
 from sage.structure.richcmp cimport rich_to_bool
 from sage.cpython.string cimport bytes_to_str, char_to_str, str_to_bytes
@@ -507,6 +507,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             return self.rows(copy=False)[i]
         cdef Py_ssize_t j
         cdef Vector_mod2_dense z = Vector_mod2_dense.__new__(Vector_mod2_dense)
+        global VectorSpace
+        if VectorSpace is None:
+            from sage.modules.free_module import VectorSpace
         z._init(self._ncols, VectorSpace(self.base_ring(),self._ncols))
         if self._ncols:
             mzd_submatrix(z._entries, self._entries, i, 0, i+1, self._ncols)
@@ -600,6 +603,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         """
         cdef mzd_t *tmp
+        global VectorSpace
+        if VectorSpace is None:
+            from sage.modules.free_module import VectorSpace
         VS = VectorSpace(self._base_ring, self._nrows)
         if not isinstance(v, Vector_mod2_dense):
             v = VS(v)

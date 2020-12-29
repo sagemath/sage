@@ -56,7 +56,6 @@ REFERENCES:
 - Anders N. Jensen; *Gfan, a software system for Groebner fans*;
   http://home.math.au.dk/jensen/software/gfan/gfan.html
 """
-from __future__ import print_function, absolute_import
 
 import string
 import pexpect

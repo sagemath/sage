@@ -140,8 +140,7 @@ Third-party packages in Sage consist of two parts:
    project name contains characters which are not alphanumeric
    and are not an underscore, those characters should be removed
    or replaced by an underscore. For example, the project
-   ``FFLAS-FFPACK`` is called ``fflas_ffpack`` in Sage and ``path.py``
-   is renamed ``pathpy`` in Sage.
+   ``FFLAS-FFPACK`` is called ``fflas_ffpack`` in Sage.
 
 As an example, let us consider a hypothetical FoO project. They
 (upstream) distribute a tarball ``FoO-1.3.tar.gz`` (that will be
@@ -252,6 +251,27 @@ something like the following to install it:
         sdh_install doc/ "$SAGE_SHARE"/doc/PACKAGE_NAME
     fi
 
+At build time :envvar:`CFLAGS`, :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`,
+and :envvar:`F77FLAGS` are usually set to ``-g -O2 -march=native``
+(according to `debugging options <../installation/source.html#sage-debug>`_
+and whether building
+`fat binaries <../installation/source.html#sage-fat-binary>`_).
+
+Slightly modified versions are available:
+
+.. CODE-BLOCK:: bash
+
+    # No ``-march=native``.
+    export CFLAGS=$CFLAGS_NON_NATIVE
+
+    # ``-O3`` instead of ``-O2``.
+    export CFLAGS=$CFLAGS_O3
+
+    # Use flags as set by the user, possibly empty.
+    export CFLAGS=$ORIGINAL_CFLAGS
+
+Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
+
 .. note::
 
     Prior to Sage 9.1, the script templates were called ``spkg-build``,
@@ -269,7 +289,7 @@ something like the following to install it:
 
     .. CODE-BLOCK:: text
 
-        exec sage-system-python spkg-install.py
+        exec sage-bootstrap-python spkg-install.py
 
     or
 
@@ -277,7 +297,7 @@ something like the following to install it:
 
         exec sage-python23 spkg-install.py
 
-   In more detail: ``sage-system-python`` runs the version of Python
+   In more detail: ``sage-bootstrap-python`` runs the version of Python
    pre-installed on the machine. Use this if the package may be
    installed before Sage has built its own Python. ``sage-python23``
    runs the version of Python built by Sage, either Python 2 or 3,
@@ -312,8 +332,8 @@ It needs to be an executable shell script; it is not subject to the templating
 described in the previous section.
 
 Sage runs ``spkg-install`` from the directory ``$SAGE_ROOT/build/pkgs/<package>``
-in the environment obtained by sourcing the files ``src/bin/sage-env`` and
-``build/bin/sage-build-env-config``.
+in the environment obtained by sourcing the files ``src/bin/sage-env``,
+``build/bin/sage-build-env-config``, and ``build/bin/sage-build-env``.
 
 .. _section-sdh-helpers:
 
@@ -371,6 +391,10 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
    installations. Additional arguments to ``$MAKE`` may be given as
    arguments. If ``$SAGE_DESTDIR`` is not set then the command is run
    with ``$SAGE_SUDO``, if set.
+
+- ``sdh_setup_bdist_wheel [...]``: Runs ``setup.py bdist_wheel`` with
+   the given arguments, as well as additional default arguments used for
+   installing packages into Sage.
 
 - ``sdh_pip_install [...]``: The equivalent of running ``pip install``
    with the given arguments, as well as additional default arguments used for
@@ -688,7 +712,7 @@ For example, considering the layout:
     SAGE_ROOT/build/pkgs/foo
     |-- patches
     |   |-- solaris
-    |   |   |-- solaris.patch 
+    |   |   |-- solaris.patch
     |   |-- bar.patch
     |   `-- baz.patch
 
@@ -743,7 +767,7 @@ When to patch, when to repackage, when to autoconfiscate
 
 - If the upstream Makefile does not build shared libraries,
   don't bother trying to patch it.
-  
+
   Autoconfiscate the package instead and use the standard facilities
   of Automake and Libtool.  This ensures that the shared library build
   is portable between Linux and macOS.
@@ -787,7 +811,7 @@ We recommend the following workflow for maintaining a set of patches.
       rm -Rf SAGE_ROOT/build/pkgs/PACKAGE/patches
       mkdir SAGE_ROOT/build/pkgs/PACKAGE/patches
       git format-patch -o SAGE_ROOT/build/pkgs/PACKAGE/patches/ upstream
-  
+
 - Optionally, create an ``spkg-src`` file in the Sage package's
   directory that regenerates the patch directory using the above
   commands.
@@ -855,8 +879,8 @@ account.
 
 .. _section-spkg-checksums:
 
-Checksums
----------
+Checksums and Tarball Names
+---------------------------
 
 The ``checksums.ini`` file contains the filename pattern of the
 upstream tarball (without the actual version) and its checksums. So if
@@ -876,8 +900,57 @@ which will modify the ``checksums.ini`` file with the correct
 checksums.
 
 
-Utility script to create package
-================================
+Upstream URLs
+-------------
+
+In addition to these fields in ``checksums.ini``, the optional field
+``upstream_url`` holds an URL to the upstream package archive.
+
+The Release Manager uses the information in ``upstream_url`` to
+download the upstream package archvive and to make it available on the
+Sage mirrors when a new release is prepared.  On Trac tickets
+upgrading a package, the ticket description should no longer contain
+the upstream URL to avoid duplication of information.
+
+Note that, like the ``tarball`` field, the ``upstream_url`` is a
+template; the substring ``VERSION`` is substituted with the actual
+version.
+
+For Python packages available from PyPI, you should use an
+``upstream_url`` from ``pypi.io``, which follows the format
+
+.. CODE-BLOCK:: bash
+
+    upstream_url=https://pypi.io/packages/source/m/matplotlib/matplotlib-VERSION.tar.gz
+
+A package that has the ``upstream_url`` information can be updated by
+simply typing::
+
+    [user@localhost]$ sage --package update numpy 3.14.59
+
+which will automatically download the archive and update the
+information in ``build/pkgs/``.
+
+For Python packages available from PyPI, there is another shortcut::
+
+    [user@localhost]$ sage --package update-latest matplotlib
+    Updating matplotlib: 3.3.0 -> 3.3.1
+    Downloading tarball to ...matplotlib-3.3.1.tar.bz2
+    [...............................................................]
+
+The ``upstream_url`` information serves yet another purpose.
+Developers who wish to test a package update from a Trac branch before
+the archive is available on a Sage mirror can do so by configuring
+their Sage tree using ``./configure
+--enable-download-from-upstream-url``.  Then Sage will fall back to
+downloading package tarballs from the ``upstream_url`` after trying all
+Sage mirrors.  (To speed up this process,  trim ``upstream/mirror_list``
+to fewer mirrors.)
+It is then no longer necessary to manually download upstream tarballs.
+
+
+Utility script to create packages
+=================================
 
 Assuming that you have downloaded
 ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use::
@@ -886,6 +959,24 @@ Assuming that you have downloaded
 
 to create ``$SAGE_ROOT/build/pkgs/foo/package-version.txt``,
 ``checksums.ini``, and ``type`` in one step.
+
+You can skip the manual downloading of the upstream tarball by using
+the additional argument ``--upstream-url``.  This command will also
+set the ``upstream_url`` field in ``checksums.ini`` described above.
+
+For Python packages available from PyPI, you can use::
+
+    [user@localhost]$ sage -package create scikit_spatial --pypi --type optional
+
+This automatically downloads the most recent version from PyPI and also
+obtains most of the necessary information by querying PyPI.
+The ``dependencies`` file may need editing, and also you may want to set
+lower and upper bounds for acceptable package versions in the file
+``install-requires.txt``.
+
+To create a pip package rather than a normal package, you can use::
+
+    [user@localhost]$ sage -package create scikit_spatial --pypi --source pip --type optional
 
 
 .. _section-manual-build:
@@ -955,6 +1046,18 @@ the license information for that package is up-to-date, both in its
 ``SPKG.rst`` or ``SPKG.txt`` file and in the file ``SAGE_ROOT/COPYING.txt``.  For
 example, if you are producing an spkg which upgrades the vanilla source
 to a new version, check whether the license changed between versions.
+
+If an upstream tarball of a package cannot be redistributed for license
+reasons, rename it to include the string ``do-not-distribute``.  This
+will keep the release management scripts from uploading it to the Sage mirrors.
+For an example, see the ``scipoptsuite`` package, which has an "academic"
+proprietary license.
+
+Sometimes an upstream tarball contains some distributable parts using
+a free software license and some non-free parts.  In this case, it can
+be a good solution to make a custom tarball consisting of only the free
+parts; see :ref:`section-spkg-src` and the ``giac`` package as an example.
+
 
 Prerequisites for New Standard Packages
 ---------------------------------------

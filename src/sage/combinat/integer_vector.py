@@ -27,7 +27,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import, division
 
 from sage.combinat.integer_lists import IntegerListsLex
 from itertools import product

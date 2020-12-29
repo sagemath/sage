@@ -10,7 +10,6 @@ Root system data for type E
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from . import ambient_space
 from sage.rings.all import ZZ

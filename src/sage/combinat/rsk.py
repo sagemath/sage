@@ -2859,7 +2859,7 @@ class RuleStar(Rule):
         ``r`` using `\star`-insertion defined in [MPPS2020]_.
 
         The row `r` is modified in place if bumping occurs and `b` is not in
-        row `r`. The bumped-out entry, if if exists, is returned.
+        row `r`. The bumped-out entry, if it exists, is returned.
 
         EXAMPLES::
 
@@ -2872,7 +2872,7 @@ class RuleStar(Rule):
             True
         """
         if r[-1] < b:
-            return None # append b to the end of row r
+            return None  # append b to the end of row r
         if b in r:
             k = b
             while k in r:

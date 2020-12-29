@@ -151,6 +151,10 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
                     # Install our own GCC if the system-provided one is newer than 10.x.
                     # See https://trac.sagemath.org/ticket/29456
                     SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
+                ],
+                [4.[[8-9]].*|5.[[0-1]].*], [
+                    # GCC less than 5.1 is not ready for AVX512.
+                    sage_use_march_native=no
                 ])
         fi
 
@@ -201,6 +205,19 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
             SAGE_SRC="$SAGE_SRC"
         ])
     fi
+
+    # Determine which compiler flags should be set.
+    if test x$sage_use_march_native = xno; then
+        CFLAGS_MARCH=""
+    elif test x$SAGE_FAT_BINARY = xyes; then
+        CFLAGS_MARCH=""
+    elif test x$sage_spkg_install_gcc = xyes; then
+        CFLAGS_MARCH="-march=native"
+    else
+        AX_CHECK_COMPILE_FLAG("-march=native", [CFLAGS_MARCH="-march=native"], [CFLAGS_MARCH=""], [], [])
+    fi
+    AC_SUBST(CFLAGS_MARCH)
+
 ], , , [
     # Trac #27907: Find location of crti.o from the system CC, in case we build our own gcc
     AC_MSG_CHECKING([for the location of crti.o])

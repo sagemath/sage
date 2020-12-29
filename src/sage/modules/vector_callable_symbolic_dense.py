@@ -33,7 +33,6 @@ TESTS::
 
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2010 Jason Grout <jason-sage@creativetrax.com>

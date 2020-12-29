@@ -4,7 +4,6 @@ Homogeneous symmetric functions
 By this we mean the basis formed of the complete homogeneous
 symmetric functions `h_\lambda`, not an arbitrary graded basis.
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -55,7 +54,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
     def _dual_basis_default(self):
         r"""
-        Returns the dual basis to ``self``.
+        Return the dual basis to ``self``.
 
         INPUT:
 
@@ -101,7 +100,7 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
 
     def coproduct_on_generators(self, i):
         r"""
-        Returns the coproduct on `h_i`.
+        Return the coproduct on `h_i`.
 
         INPUT:
 

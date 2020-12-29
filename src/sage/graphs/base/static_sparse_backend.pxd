@@ -20,3 +20,4 @@ cdef class StaticSparseBackend(CGraphBackend):
     cdef StaticSparseCGraph _cg
     cdef inline CGraph cg(self):
         return <CGraph> self._cg
+    cdef int _use_edge_iterator_on_subgraph(self, CGraphBackend other, object vertices, const int modus) except -1

@@ -192,7 +192,6 @@ tensor ``t`` acts on pairs formed by a linear form and a module element::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.integer import Integer
 from sage.structure.element import ModuleElementWithMutability

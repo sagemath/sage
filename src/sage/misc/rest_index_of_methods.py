@@ -7,7 +7,6 @@ for use in doc-strings.
 {INDEX_OF_FUNCTIONS}
 
 """
-from __future__ import print_function
 
 import inspect
 

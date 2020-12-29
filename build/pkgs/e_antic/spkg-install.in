@@ -3,10 +3,6 @@
 # e-antic Sage install script
 #
 ###############################################################################
-if [ "$SAGE_DEBUG" = "yes" ]; then
-    CFLAGS="-O0 -g $CFLAGS"; export CFLAGS
-fi
-
 cd src
 
 sdh_configure

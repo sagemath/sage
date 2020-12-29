@@ -8,7 +8,6 @@ Big O for various types (power series, p-adics, etc.)
     - `power series <../../../power_series/index.html>`_
     - `polynomials <../../../polynomial_rings/index.html>`_
 """
-from __future__ import absolute_import
 
 import sage.arith.all as arith
 from . import laurent_series_ring_element

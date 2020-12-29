@@ -36,7 +36,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 import sage.rings.number_field.all
 from . import polynomial_element

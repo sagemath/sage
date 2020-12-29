@@ -30,7 +30,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.arith.all import binomial
 from sage.rings.integer_ring import ZZ

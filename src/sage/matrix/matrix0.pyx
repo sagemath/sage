@@ -2467,9 +2467,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         Permute the columns of ``self`` by applying the permutation
         group element ``permutation``.
 
-        As a permutation group element acts on integers `\{1, \hdots, n\}`
-        the columns are considered as being numbered from 1 for this
-        operation.
+        As permutation group elements act on integers `\{1,\dots,n\}`,
+        columns are considered numbered from 1 for this operation.
 
         INPUT:
 
@@ -2515,9 +2514,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         of ``self`` by applying the permutation group element
         ``permutation``.
 
-        As a permutation group element acts on integers `\{1,\hdots,n\}`
-        the columns are considered as being numbered from 1 for this
-        operation.
+        As permutation group elements act on integers `\{1,\dots,n\}`,
+        columns are considered numbered from 1 for this operation.
 
         INPUT:
 
@@ -2652,9 +2650,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         Permute the rows of ``self`` by applying the permutation
         group element ``permutation``.
 
-        As a permutation group element acts on integers `\{1,\hdots,n\}`
-        the rows are considered as being numbered from 1 for this
-        operation.
+        As permutation group elements act on integers `\{1,\dots,n\}`,
+        rows are considered numbered from 1 for this operation.
 
         INPUT:
 
@@ -2698,9 +2695,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         of ``self`` by applying the permutation group element
         ``permutation``.
 
-        As a permutation group element acts on integers `\{1,\hdots,n\}`
-        the rows are considered as being numbered from 1 for this
-        operation.
+        As permutation group elements act on integers `\{1,\dots,n\}`,
+        rows are considered numbered from 1 for this operation.
 
         INPUT:
 
@@ -2756,9 +2752,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         group elements ``row_permutation`` and ``column_permutation``
         respectively.
 
-        As a permutation group element acts on integers `\{1,\hdots,n\}`
-        the rows and columns are considered as being numbered from 1 for
-        this operation.
+        As permutation group elements act on integers `\{1,\dots,n\}`,
+        rows and columns are considered numbered from 1 for this operation.
 
         INPUT:
 
@@ -2802,9 +2797,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         columns of ``self`` by applying the permutation group
         elements ``row_permutation`` and ``column_permutation``.
 
-        As a permutation group element acts on integers `\{1,\hdots,n\}`
-        the rows are considered as being numbered from 1 for this
-        operation.
+        As permutation group elements act on integers `\{1,\dots,n\}`,
+        rows and columns are considered numbered from 1 for this operation.
 
         INPUT:
 
@@ -2865,7 +2859,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         If not, we get an error message::
 
-            sage: a.add_multiple_of_row(1,0,i)
+            sage: a.add_multiple_of_row(1,0,SR.I())
             Traceback (most recent call last):
             ...
             TypeError: Multiplying row by Symbolic Ring element cannot be done over Rational Field, use change_ring or with_added_multiple_of_row instead.
@@ -2949,7 +2943,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         If not, we get an error message::
 
-            sage: a.add_multiple_of_column(1,0,i)
+            sage: a.add_multiple_of_column(1,0,SR.I())
             Traceback (most recent call last):
             ...
             TypeError: Multiplying column by Symbolic Ring element cannot be done over Rational Field, use change_ring or with_added_multiple_of_column instead.
@@ -4869,14 +4863,14 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         .. MATH::
 
-                       v, v A, v A^2, \ldots, v A^{n-1}.
+                       v, v A, v A^2, \dots, v A^{n-1}.
 
         If rows is False, return a matrix whose columns are the entries of
         the following vectors:
 
         .. MATH::
 
-                       v, Av, A^2 v, \ldots, A^{n-1} v.
+                       v, Av, A^2 v, \dots, A^{n-1} v.
 
         INPUT:
 

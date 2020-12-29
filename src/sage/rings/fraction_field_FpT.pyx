@@ -56,7 +56,7 @@ class FpT(FractionField_1poly_field):
         assert 2 < p < FpT.INTEGER_LIMIT
         self.p = p
         self.poly_ring = R
-        FractionField_1poly_field.__init__(self, R, element_class = FpTElement)
+        FractionField_1poly_field.__init__(self, R, element_class=FpTElement)
         self._populate_coercion_lists_(coerce_list=[Polyring_FpT_coerce(self), Fp_FpT_coerce(self), ZZ_FpT_coerce(self)])
 
     def __iter__(self):
@@ -85,6 +85,7 @@ class FpT(FractionField_1poly_field):
              (t^2 + 2*t + 2)/(t + 2)]
         """
         return FpT_iter(self, bound, start)
+
 
 cdef class FpTElement(FieldElement):
     """
@@ -404,7 +405,8 @@ cdef class FpTElement(FieldElement):
         """
         # They are normalized.
         cdef int j = sage_cmp_nmod_poly_t(self._numer, (<FpTElement>other)._numer)
-        if j: return rich_to_bool(op, j)
+        if j:
+            return rich_to_bool(op, j)
         j = sage_cmp_nmod_poly_t(self._denom, (<FpTElement>other)._denom)
         return rich_to_bool(op, j)
 
@@ -483,7 +485,7 @@ cdef class FpTElement(FieldElement):
         cdef FpTElement other = <FpTElement>_other
         cdef FpTElement x = self._new_c()
         nmod_poly_mul(x._numer, self._numer, other._denom)
-        nmod_poly_mul(x._denom, self._denom, other._numer) # use x._denom as a temp
+        nmod_poly_mul(x._denom, self._denom, other._numer)  # use x._denom as a temp
         nmod_poly_add(x._numer, x._numer, x._denom)
         nmod_poly_mul(x._denom, self._denom, other._denom)
         normalize(x._numer, x._denom, self.p)
@@ -505,7 +507,7 @@ cdef class FpTElement(FieldElement):
         cdef FpTElement other = <FpTElement>_other
         cdef FpTElement x = self._new_c()
         nmod_poly_mul(x._numer, self._numer, other._denom)
-        nmod_poly_mul(x._denom, self._denom, other._numer) # use x._denom as a temp
+        nmod_poly_mul(x._denom, self._denom, other._numer)  # use x._denom as a temp
         nmod_poly_sub(x._numer, x._numer, x._denom)
         nmod_poly_mul(x._denom, self._denom, other._denom)
         normalize(x._numer, x._denom, self.p)
@@ -888,8 +890,8 @@ cdef class FpT_iter:
             ....:         print(a); break
             2*t/(t + 3)
         """
-        #if degree is None:
-        #    raise NotImplementedError
+        # if degree is None:
+        #     raise NotImplementedError
         self.parent = parent
         self.cur = start
         self.degree = -2 if degree is None else degree
@@ -1221,7 +1223,7 @@ cdef class FpT_Polyring_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Polyring_section`` objects is not currently
-        implemented. See :trac: `23469`. ::
+        implemented. See :trac:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1523,7 +1525,7 @@ cdef class FpT_Fp_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Fp_section`` objects is not currently
-        implemented. See :trac: `23469`. ::
+        implemented. See :trac:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1910,7 +1912,7 @@ cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic):
             break
     if monic and a == 2 and n == nmod_poly_degree(poly):
         nmod_poly_set_coeff_ui(poly, n, 0)
-        nmod_poly_set_coeff_ui(poly, n+1, 1)
+        nmod_poly_set_coeff_ui(poly, n + 1, 1)
 
 
 cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
@@ -1942,15 +1944,15 @@ cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
 
 
 cdef bint nmod_poly_sqrt_check(nmod_poly_t poly):
-     """
-     Quick check to see if poly could possibly be a square.
-     """
-     # We could use Sage's jacobi_int which is for 32 bits integers rather
-     # than FLINT's n_jacobi which is for longs as the FpT class is crafted
-     # for primes 2 < p < 2^16
-     return (nmod_poly_degree(poly) % 2 == 0
-         and n_jacobi(nmod_poly_leading(poly), poly.mod.n) == 1
-         and n_jacobi(nmod_poly_get_coeff_ui(poly, 0), poly.mod.n) != -1)
+    """
+    Quick check to see if poly could possibly be a square.
+    """
+    # We could use Sage's jacobi_int which is for 32 bits integers rather
+    # than FLINT's n_jacobi which is for longs as the FpT class is crafted
+    # for primes 2 < p < 2^16
+    return (nmod_poly_degree(poly) % 2 == 0
+            and n_jacobi(nmod_poly_leading(poly), poly.mod.n) == 1
+            and n_jacobi(nmod_poly_get_coeff_ui(poly, 0), poly.mod.n) != -1)
 
 
 def unpickle_FpT_element(K, numer, denom):
@@ -1979,14 +1981,18 @@ cdef int sage_cmp_nmod_poly_t(nmod_poly_t L, nmod_poly_t R):
 
     # First compare the degrees
     j = nmod_poly_degree(L) - nmod_poly_degree(R)
-    if j<0: return -1
-    elif j>0: return 1
+    if j < 0:
+        return -1
+    elif j > 0:
+        return 1
 
     # Same degree, so compare coefficients, term by term
-    for i in range(nmod_poly_degree(L)+1):
-        j = nmod_poly_get_coeff_ui(L,i) - nmod_poly_get_coeff_ui(R,i)
-        if j<0: return -1
-        elif j>0: return 1
+    for i in range(nmod_poly_degree(L) + 1):
+        j = nmod_poly_get_coeff_ui(L, i) - nmod_poly_get_coeff_ui(R, i)
+        if j < 0:
+            return -1
+        elif j > 0:
+            return 1
 
     # Two polynomials are equal
     return 0

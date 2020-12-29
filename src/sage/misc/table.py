@@ -9,7 +9,6 @@ AUTHORS:
 
 - John H. Palmieri (2012-11)
 """
-from __future__ import absolute_import
 
 from io import StringIO
 

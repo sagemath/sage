@@ -6,7 +6,7 @@ def easy_linear_polynomials(p):
     r"""
     Get linear polynomials implied by given polynomial.
 
-    TESTS::
+    EXAMPLES::
 
         sage: from sage.rings.polynomial.pbori.frontend import *
         sage: from sage.rings.polynomial.pbori.easy_polynomials import easy_linear_polynomials

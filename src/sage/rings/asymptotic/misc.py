@@ -27,7 +27,6 @@ Functions, Classes and Methods
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.sage_object import SageObject

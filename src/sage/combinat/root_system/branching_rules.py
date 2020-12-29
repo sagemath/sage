@@ -7,7 +7,6 @@ Branching Rules
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 import sage.combinat.root_system.weyl_characters
 from sage.combinat.root_system.root_system import RootSystem

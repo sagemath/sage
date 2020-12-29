@@ -290,7 +290,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
     with the weakest topology such that the map `| \cdot | \to |f|` is continuous
     for all `f \in \CC_p[x]`.
 
-    We can represent the Berkovich affine line in two seperate ways:
+    We can represent the Berkovich affine line in two separate ways:
     either using a p-adic field to represent elements or using
     a number field to represent elements while storing an ideal
     of the ring of integers of the number field, which specifies
@@ -418,9 +418,9 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
         """
         if base in ZZ:
             if base.is_prime():
-                base = Qp(base) # change to Qpbar
+                base = Qp(base)  # change to Qpbar
             else:
-                raise ValueError("non-prime pased into Berkovich space")
+                raise ValueError("non-prime passed into Berkovich space")
         if is_AffineSpace(base):
             base = base.base_ring()
         if base in NumberFields():
@@ -487,7 +487,8 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
             sage: latex(B)
             \text{Affine Berkovich line over } \Bold{C}_{3}
         """
-        return r"\text{Affine Berkovich line over } \Bold{C}_{%s}" %(self.prime())
+        return r"\text{Affine Berkovich line over } \Bold{C}_{%s}" % (self.prime())
+
 
 class Berkovich_Cp_Projective(Berkovich_Cp):
     r"""
@@ -496,7 +497,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
     The Berkovich projective line is the one-point compactification
     of the Berkovich affine line.
 
-    We can represent the Berkovich projective line in two seperate ways:
+    We can represent the Berkovich projective line in two separate ways:
     either using a p-adic field to represent elements or using
     a number field to represent elements while storing an ideal
     of the ring of integers of the number field, which specifies
@@ -612,7 +613,7 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
             if base.is_prime():
                 base = ProjectiveSpace(Qp(base), 1)
             else:
-                raise ValueError("non-prime pased into Berkovich space")
+                raise ValueError("non-prime passed into Berkovich space")
         if base in NumberFields() or is_pAdicField(base):
             base = ProjectiveSpace(base, 1)
         if not is_ProjectiveSpace(base):

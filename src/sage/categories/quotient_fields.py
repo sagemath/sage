@@ -7,7 +7,6 @@ Quotient fields
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 from sage.categories.category_singleton import Category_singleton
 from sage.misc.abstract_method import abstract_method

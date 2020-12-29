@@ -195,7 +195,6 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from functools import total_ordering
 from itertools import combinations_with_replacement

@@ -1148,7 +1148,7 @@ _gap_factorization_code = r"""
 # MinimalWord(G,w)
 # given a permutation group G find some expression of minimal length in the
 # generators of G and their inverses of the element w (an inverse is
-# representated by a negative index).
+# represented by a negative index).
 # To speed up  later calls to  the same function  the fields G.base, G.words,
 # G.nbwordslength are kept.
 MinimalWord:=function(G,w)

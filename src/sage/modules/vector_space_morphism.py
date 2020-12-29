@@ -308,7 +308,6 @@ TESTS::
     sage: loads(dumps(f)) == f
     True
 """
-from __future__ import absolute_import
 
 ####################################################################################
 #       Copyright (C) 2011 Rob Beezer <beezer@ups.edu>

@@ -247,16 +247,15 @@ Nested F-strings are also supported::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
@@ -267,6 +266,7 @@ from sage.repl.load import load_wrap
 
 implicit_mul_level = False
 numeric_literal_prefix = '_sage_const_'
+
 
 def implicit_multiplication(level=None):
     r"""
@@ -532,18 +532,19 @@ class QuoteStackFrame(SimpleNamespace):
 
             sage: qsf = sage.repl.preparse.QuoteStackFrame("'"); qsf
             QuoteStackFrame(braces=0, brackets=0, delim="'", f_string=False, fmt_spec=False, nested_fmt_spec=False, parens=0, raw=False)
-
         """
-        self.delim = delim
-        self.raw = raw
-        self.f_string = f_string
         self.braces = braces
-        self.parens = parens
         self.brackets = brackets
+        self.delim = delim
+        self.f_string = f_string
         self.fmt_spec = fmt_spec
         self.nested_fmt_spec = nested_fmt_spec
+        self.parens = parens
+        self.raw = raw
+
 
 ssl_search_chars = re.compile(r'[()\[\]\'"#:{}]')
+
 
 def strip_string_literals(code, state=None):
     r"""
@@ -1481,13 +1482,26 @@ def preparse_calculus(code):
 
         sage: preparse("μ(x) = x^2")
         '__tmp__=var("x"); μ = symbolic_expression(x**Integer(2)).function(x)'
+
+    Check that the parameter list can span multiple lines (:trac:`30928`)::
+
+        sage: preparse('''
+        ....: f(a,
+        ....:   b,
+        ....:   c,
+        ....:   d) = a + b*2 + c*3 + d*4
+        ....: ''')
+        '\n__tmp__=var("a,b,c,d"); f = symbolic_expression(a + b*Integer(2) + c*Integer(3) + d*Integer(4)).function(a,b,c,d)\n'
+
     """
     new_code = []
     last_end = 0
     #                                 f         (  vars  )   =      expr
     for m in re.finditer(r";(\s*)([^\W\d]\w*) *\(([^()]+)\) *= *([^;#=][^;#]*)", code):
         ident, func, vars, expr = m.groups()
-        stripped_vars = [v.strip() for v in vars.split(',')]
+        # Semicolons are removed in order to allow the vars to span multiple lines.
+        # (preparse having converted all \n into ;\n;)
+        stripped_vars = [v.replace(';', '').strip() for v in vars.split(',')]
         # if the variable name starts with numeric_literal_prefix
         # the argument name for the symbolic expression is a numeric literal
         # such as f(2)=5
@@ -1739,6 +1753,12 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
         sage: preparse("Ω.0")
         'Ω.gen(0)'
+
+    Check support for backslash line continuation (:trac:`30928`)::
+
+        sage: preparse("f(x) = x \\\n+ 1")
+        '__tmp__=var("x"); f = symbolic_expression(x + Integer(1)).function(x)'
+
     """
     global quote_state
     if reset:
@@ -1786,6 +1806,9 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
     # Use ^ for exponentiation and ^^ for xor
     # (A side effect is that **** becomes xor as well.)
     L = L.replace('^', '**').replace('****', '^')
+
+    # Combine lines that use backslash continuation
+    L = L.replace('\\\n', '')
 
     # Make it easy to match statement ends
     L = ';%s;' % L.replace('\n', ';\n;')
@@ -1890,29 +1913,20 @@ def preparse_file(contents, globals=None, numeric_literals=True):
             else:
                 contents = "\n".join(assignments) + "\n\n" + contents
 
-    # The list F contains the preparsed lines so far.
-    F = []
-    # A is the input, as a list of lines.
-    A = contents.splitlines()
-    # We are currently parsing the i-th input line.
-    i = 0
-    while i < len(A):
-        L = A[i]
-        do_preparse = True
-        for cmd in ['load', 'attach']:
-            if L.lstrip().startswith(cmd+' '):
-                j = L.find(cmd+' ')
-                s = L[j+len(cmd)+1:].strip()
-                if not s.startswith('('):
-                    F.append(' '*j + load_wrap(s, cmd=='attach'))
-                    do_preparse = False
-                    continue
-        if do_preparse:
-            F.append(preparse(L, reset=(i==0), do_time=True, ignore_prompts=False,
-                              numeric_literals=not numeric_literals))
-        i += 1
+    start = 0
+    lines_out = []
+    preparse_opts = dict(do_time=True, ignore_prompts=False, numeric_literals=not numeric_literals)
+    for m in re.finditer(r'^(\s*)(load|attach) ([^(].*)$', contents, re.MULTILINE):
+        # Preparse contents prior to the load/attach.
+        lines_out += preparse(contents[start:m.start()], **preparse_opts).splitlines()
+        # Wrap the load/attach itself.
+        lines_out.append(m.group(1) + load_wrap(m.group(3), m.group(2)=='attach'))
+        # Further preparsing should start after this load/attach line.
+        start = m.end()
+    # Preparse the remaining contents.
+    lines_out += preparse(contents[start:], **preparse_opts).splitlines()
 
-    return '\n'.join(F)
+    return '\n'.join(lines_out)
 
 
 def implicit_mul(code, level=5):

@@ -20,7 +20,6 @@ Miscellaneous `p`-adic methods
 #
 #                  https://www.gnu.org/licenses/
 ######################################################################
-from __future__ import absolute_import
 
 
 import sage.rings.all as rings

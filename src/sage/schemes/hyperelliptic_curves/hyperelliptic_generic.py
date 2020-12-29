@@ -21,7 +21,6 @@ EXAMPLES::
     sage: D.defining_polynomials()[0].parent()
     Multivariate Polynomial Ring in x1, x2 over Rational Field
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>

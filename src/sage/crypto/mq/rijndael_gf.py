@@ -421,7 +421,6 @@ Since ``expand_key_poly`` is not actually a
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, division
 
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import column_matrix

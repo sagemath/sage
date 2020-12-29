@@ -6,15 +6,7 @@ cd src
 cp "$SAGE_ROOT"/config/config.* .
 
 
-# Build with -O0 if debugging requested
-if [ "$SAGE_DEBUG" = "yes" ]; then
-    CFLAGS="-g -O0 $CFLAGS"
-else
-    CFLAGS="-g -O2 $CFLAGS"
-fi
-
 export CPPFLAGS="$CPPFLAGS -I$SAGE_LOCAL/include"
-export CFLAGS
 
 # Old OS X systems need -DSQLITE_WITHOUT_ZONEMALLOC
 if uname -sr |grep 'Darwin [0-8][.]' >/dev/null; then

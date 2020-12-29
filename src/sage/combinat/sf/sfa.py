@@ -195,7 +195,6 @@ AUTHORS:
 - Darij Grinberg (2013) Sym over rings that are not characteristic 0
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>

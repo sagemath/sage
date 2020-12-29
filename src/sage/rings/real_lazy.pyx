@@ -20,7 +20,8 @@ specified in the forward direction).
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import math, cmath
+import math
+import cmath
 
 cdef add, sub, mul, truediv, pow, neg, inv
 from operator import add, sub, mul, pow, neg, inv, truediv
@@ -555,7 +556,7 @@ cdef class LazyFieldElement(FieldElement):
 
     cpdef _mul_(left, right):
         """
-        Mutliply ``left`` with ``right``.
+        Multiply ``left`` with ``right``.
 
         EXAMPLES::
 

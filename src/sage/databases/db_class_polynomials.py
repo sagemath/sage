@@ -11,7 +11,6 @@ Database of Hilbert Polynomials
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
 from .db_modular_polynomials import _dbz_to_integers
 
 disc_format = "%07d"  #  disc_length = 7

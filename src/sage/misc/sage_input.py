@@ -172,7 +172,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
 
 def sage_input(x, preparse=True, verify=False, allow_locals=False):
     r"""

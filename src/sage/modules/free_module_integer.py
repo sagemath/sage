@@ -16,7 +16,6 @@ TESTS::
     sage: TestSuite(L).run()
 
 """
-from __future__ import absolute_import
 
 ##############################################################################
 #       Copyright (C) 2012 Jan Poeschko <jan@poeschko.com>

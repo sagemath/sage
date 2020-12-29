@@ -198,7 +198,6 @@ Classes and Methods
 # (at your option) any later version.
 # https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.big_oh import O
 from sage.structure.element import MultiplicativeGroupElement

@@ -11,7 +11,6 @@ AUTHORS:
 
 - Martin Albrecht (2012) - initial implementation
 """
-from __future__ import absolute_import
 
 import http.client as httplib
 from urllib.parse import urlencode

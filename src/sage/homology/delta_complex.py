@@ -48,7 +48,6 @@ vertex.
    see the :mod:`Generic Cell Complex <sage.homology.cell_complex>`
    page instead.
 """
-from __future__ import absolute_import
 
 from copy import copy
 from sage.homology.cell_complex import GenericCellComplex

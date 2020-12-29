@@ -30,7 +30,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject

@@ -45,7 +45,6 @@ EXAMPLES::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.all import PolynomialRing, Integer, ZZ
 from sage.rings.integer import is_Integer

@@ -14,7 +14,6 @@ The cdd backend for polyhedral computations
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
 
 from subprocess import Popen, PIPE
 from sage.rings.all import ZZ

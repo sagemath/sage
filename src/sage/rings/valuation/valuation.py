@@ -54,7 +54,6 @@ send more than just zero to infinity::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import op_EQ, op_NE, op_LE, op_LT, op_GE, op_GT

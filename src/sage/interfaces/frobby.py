@@ -21,7 +21,6 @@ AUTHORS:
     The official source for Frobby is <https://www.broune.com/frobby>,
     which also has documentation and papers describing the algorithms used.
 """
-from __future__ import print_function
 
 from subprocess import Popen, PIPE
 from sage.misc.misc_c import prod

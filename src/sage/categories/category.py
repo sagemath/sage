@@ -90,7 +90,6 @@ A parent ``P`` is in a category ``C`` if ``P.category()`` is a subcategory of
         sage: v.category()
         Category of elements of Vector space of dimension 3 over Rational Field
 """
-from __future__ import absolute_import
 
 # ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu> and

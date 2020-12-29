@@ -214,7 +214,6 @@ Left-special and bispecial factors::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from collections import defaultdict
 from itertools import islice, cycle
@@ -548,7 +547,7 @@ class FiniteWord_class(Word_class):
 
         OUTPUT:
 
-        - a list where the `i`-th entry indiciates the multiplicity
+        - a list where the `i`-th entry indicates the multiplicity
           of the `i`-th letter in the alphabet in ``self``
 
         EXAMPLES::
@@ -3798,13 +3797,13 @@ class FiniteWord_class(Word_class):
 
     def subword_complementaries(self, other):
         """
-        Returns the possible complementaries ``other`` minus ``self`` if
+        Return the possible complementaries ``other`` minus ``self`` if
         ``self`` is a subword of ``other`` (empty list otherwise).
         The complementary is made of all the letters that are in ``other`` once
         we removed the letters of ``self``.
         There can be more than one.
 
-        To check wether ``self`` is a subword of ``other` (without knowing its
+        To check whether ``self`` is a subword of ``other` (without knowing its
         complementaries), use ``self.is_subword_of(other)``, and to count the
         number of occurrences of ``self`` in ``other``, use
         ``other.number_of_subword_occurrences(self)``.

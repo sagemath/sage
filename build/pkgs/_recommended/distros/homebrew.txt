@@ -1,5 +1,5 @@
 # To convert Jupyter notebooks to pdf:
-pandoc
+# pandoc -- this is a separate script package
 # To produce animations:
 ffmpeg
 imagemagick

@@ -161,7 +161,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import print_function, absolute_import
 from itertools import islice
 
 from . import free_module_element

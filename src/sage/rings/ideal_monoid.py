@@ -7,7 +7,6 @@ WARNING: This is used by some rings that are not commutative! ::
     sage: type(MS.ideal(MS.one()).parent())
     <class 'sage.rings.ideal_monoid.IdealMonoid_c_with_category'>
 """
-from __future__ import absolute_import
 
 from sage.structure.parent import Parent
 import sage.rings.integer_ring

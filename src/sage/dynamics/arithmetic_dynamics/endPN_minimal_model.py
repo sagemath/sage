@@ -21,7 +21,6 @@ REFERENCES: [BM2012]_, [Mol2015]_
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
 
 from sage.functions.hyperbolic import cosh
 from sage.matrix.constructor import matrix

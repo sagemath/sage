@@ -209,7 +209,7 @@ class MobilePoset(FinitePoset):
 
         # First check path counts between ends and deg3 vertex
         # Then check if more than one max elmt on way to degree 3 vertex.
-        # Then check if the edge going to a max element is down fron the degree 3 vertex
+        # Then check if the edge going to a max element is down from the degree 3 vertex
         # Arbitrarily choose between ones with just 1
 
         ends = max_elmt_graph.vertices(degree=1)

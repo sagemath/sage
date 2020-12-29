@@ -148,7 +148,6 @@ We can also make mutable copies of an immutable simplicial complex
     sage: S == T
     True
 """
-from __future__ import print_function, absolute_import
 from operator import index as PyNumber_Index
 
 # possible future directions for SimplicialComplex:

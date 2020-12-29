@@ -76,7 +76,6 @@ AUTHORS:
 
 - Andrew Mathas and Travis Scrimshaw (2018-05-1): Initial version
 """
-from __future__ import print_function, absolute_import
 
 from .partition import Partition, Partitions
 from .partition_tuple import PartitionTuple, PartitionTuples

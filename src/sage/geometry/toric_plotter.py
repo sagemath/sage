@@ -45,7 +45,6 @@ You may change default plotting options as follows::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from copy import copy
 from math import pi

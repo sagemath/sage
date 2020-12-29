@@ -85,7 +85,7 @@ from sage.functions.other import imag, real, sqrt
 from sage.functions.all import arccosh
 from sage.rings.all import CC, RR, RDF
 from sage.rings.infinity import infinity
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 from sage.matrix.constructor import matrix
 from sage.categories.homset import Hom
 

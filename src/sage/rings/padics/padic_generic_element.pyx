@@ -3564,7 +3564,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
              1 + 4*5^3 + 5^5 + 3*5^6 + 5^7 + 3*5^8 + 3*5^9 + O(5^10)]
 
         When `n` is divisible by the underlying prime `p`, we
-        are losing precision (which is consistant with the fact
+        are losing precision (which is consistent with the fact
         that raising to the pth power increases precision)::
 
             sage: z = x.nth_root(5); z

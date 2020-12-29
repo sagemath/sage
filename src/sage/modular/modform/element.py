@@ -24,7 +24,6 @@ Class hierarchy:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, division
 
 import sage.modular.hecke.element as element
 

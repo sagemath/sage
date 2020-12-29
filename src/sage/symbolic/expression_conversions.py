@@ -14,18 +14,17 @@ overridden by subclasses.
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  https://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
 
 import operator as _operator
 from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
-from sage.libs.pynac.pynac import I
-from sage.functions.log import exp
+from sage.symbolic.constants import I
+from sage.functions.all import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator, add_vararg, mul_vararg
+from sage.rings.number_field.number_field import GaussianField
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 from functools import reduce
-GaussianField = I.pyobject().parent()
 
 
 class FakeExpression(object):
@@ -438,7 +437,7 @@ class InterfaceInit(Converter):
 
             sage: from sage.symbolic.expression_conversions import InterfaceInit
             sage: ii = InterfaceInit(gp)
-            sage: f = 2+I
+            sage: f = 2+SR(I)
             sage: ii.pyobject(f, f.pyobject())
             'I + 2'
 
@@ -450,7 +449,7 @@ class InterfaceInit(Converter):
         """
         if (self.interface.name() in ['pari','gp'] and
             isinstance(obj, NumberFieldElement_quadratic) and
-            obj.parent() == GaussianField):
+            obj.parent() is GaussianField()):
             return repr(obj)
         try:
             return getattr(obj, self.name_init)()
@@ -1240,7 +1239,7 @@ def algebraic(ex, field):
         True
         sage: AA(-golden_ratio)
         -1.618033988749895?
-        sage: QQbar((2*I)^(1/2))
+        sage: QQbar((2*SR(I))^(1/2))
         1 + 1*I
         sage: QQbar(e^(pi*I/3))
         0.50000000000000000? + 0.866025403784439?*I

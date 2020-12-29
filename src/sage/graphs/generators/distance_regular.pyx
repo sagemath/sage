@@ -9,9 +9,15 @@ For a survey on distance-regular graph see [BCN1989]_ or [VDKT2016]_.
 
 EXAMPLES::
 
-   sage: G = graphs.cocliques_HoffmannSingleton()
-   sage: G.is_distance_regular()
-   True
+    sage: G = graphs.cocliques_HoffmannSingleton()
+    sage: G.is_distance_regular()
+    True
+    sage: H = graphs.distance_regular_graph([15, 14, 10, 3, 1, 5, 12, 15])
+    sage: H == G
+    True
+    sage: G = graphs.distance_regular_graph([27, 10, 1, 1, 10, 27])
+    sage: G.is_distance_regular(True)
+    ([27, 10, 1, None], [None, 1, 10, 27])
 
 AUTHORS:
 
@@ -29,6 +35,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.coding import codes_catalog as codes
 from sage.graphs.graph import Graph
 from sage.libs.gap.libgap import libgap
 from sage.modules.free_module import VectorSpace
@@ -307,7 +314,6 @@ def LargeWittGraph():
     This construction is taken from
     http://mathworld.wolfram.com/LargeWittGraph.html
     """
-    from sage.coding import codes_catalog as codes
     import itertools
 
     C = codes.GolayCode(GF(2), extended=True)
@@ -401,8 +407,6 @@ def distance_3_doubly_truncated_Golay_code_graph():
 
     Description and construction of this graph are taken from [BCN1989]_ p. 364.
     """
-    from sage.coding import codes_catalog as codes
-
     G = codes.GolayCode(GF(2),extended=False).punctured([0,1]).cosetGraph()
     v = G.vertices(sort=False)[0]
     it = G.breadth_first_search(v, distance=3, report_distance=True)
@@ -435,7 +439,6 @@ def shortened_00_11_binary_Golay_code_graph():
 
     Description and construction of this graph can be found in [BCN1989]_ p. 365.
     """
-    from sage.coding import codes_catalog as codes
     from sage.coding.linear_code import LinearCode
 
     code = codes.GolayCode(GF(2), False)
@@ -474,7 +477,6 @@ def shortened_000_111_extended_binary_Golay_code_graph():
 
     Description and construction of this graph can be found in [BCN1989]_ p. 365.
     """
-    from sage.coding import codes_catalog as codes
     from sage.coding.linear_code import LinearCode
 
     code = codes.GolayCode(GF(2))
@@ -1257,3 +1259,728 @@ def graph_from_GQ_spread(const int s, const int t):
 
     G = Graph(edges, format="list_of_edges")
     return G
+
+def GeneralisedDodecagonGraph(const int s, const int t):
+    r"""
+    Return the point-graph of a generalised dodecagon of order `(s,t)`.
+
+    INPUT:
+
+    - ``s, t`` -- integers; order of the generalised dodecagon
+
+    EXAMPLES::
+
+        sage: G = graphs.GeneralisedDodecagonGraph(1, 5)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([6, 5, 5, 5, 5, 5, None], [None, 1, 1, 1, 1, 1, 6])
+        sage: H = graphs.GeneralisedDodecagonGraph(5, 1)  # optional - gap_packages internet
+        sage: H.order()  # optional - gap_packages internet
+        23436
+        sage: H.is_distance_regular(True) # not tested (6 min); optional - gap_packages internet
+        ([10, 5, 5, 5, 5, 5, None], [None, 1, 1, 1, 1, 1, 2])
+
+    .. NOTE::
+
+        This function indirectly uses the GAP's AtlasRep package.
+        Thus you may need an internet connection and the optional Sage's
+        package ``gap_packages``.
+
+    REFERENCES:
+
+    See [BCN1989]_ pp. 200-205 for a discussion of distance-regular graphs from
+    generalised polygons.
+
+    TESTS:
+
+    Test all graphs of order `(1, q)`::
+
+        sage: G = graphs.GeneralisedDodecagonGraph(1, 4)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([5, 4, 4, 4, 4, 4, None], [None, 1, 1, 1, 1, 1, 5])
+        sage: G = graphs.GeneralisedDodecagonGraph(1, 3)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([4, 3, 3, 3, 3, 3, None], [None, 1, 1, 1, 1, 1, 4])
+        sage: G = graphs.GeneralisedDodecagonGraph(1, 2)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
+        sage: G = graphs.GeneralisedDodecagonGraph(1, 1)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([2, 1, 1, 1, 1, 1, None], [None, 1, 1, 1, 1, 1, 2])
+
+    Now test all graphs of order `(q, 1)`::
+
+        sage: G = graphs.GeneralisedDodecagonGraph(4, 1)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([8, 4, 4, 4, 4, 4, None], [None, 1, 1, 1, 1, 1, 2])
+        sage: G = graphs.GeneralisedDodecagonGraph(3, 1)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([6, 3, 3, 3, 3, 3, None], [None, 1, 1, 1, 1, 1, 2])
+        sage: G = graphs.GeneralisedDodecagonGraph(2, 1)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([4, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 2])
+    """
+    from sage.arith.misc import is_prime_power
+
+    cdef int q = 0
+    cdef int orderType = 0
+
+    # decide the type of graph
+    if s == 1:  # (1, q)
+        q = t
+    elif t == 1:  # (q, 1)
+        q = s
+        orderType = 1
+    else:
+        raise ValueError(
+            f"Generalised dodecagon of order ({s}, {t}) does not exist")
+
+    if q == 1:  # order (1, 1)
+        from sage.graphs.generators.basic import CycleGraph
+        return CycleGraph(12)
+
+    if not is_prime_power(q):
+        raise ValueError(
+            f"No generalised dodecagon of order ({s}, {t}) is known")
+
+    if orderType == 0:
+        # incidence graph of hexagon (q,q)
+        H = GeneralisedHexagonGraph(q, q)
+        lines = _extract_lines(H)
+
+        edges = []
+        for l in lines:
+            for p in l:
+                sig_check()
+                edges.append((p, l))
+
+        G = Graph(edges, format='list_of_edges')
+        G.name("Generalised dodecagon of order (1, %d)"%q)
+        return G
+
+    else:  # orderType == 1
+        # dual
+        H = GeneralisedDodecagonGraph(t, s)
+        G = _line_graph_generalised_polygon(H)
+        G.name("Generalised dodecagon of order (%s, %d)"%(s, t))
+        return G
+
+def GeneralisedOctagonGraph(const int s, const int t):
+    r"""
+    Return the point-graph of a generalised octagon of order `(s,t)`.
+
+    INPUT:
+
+    - ``s, t`` -- integers; order of the generalised octagon
+
+    EXAMPLES::
+
+         sage: G = graphs.GeneralisedOctagonGraph(1, 4)
+         sage: G.is_distance_regular(True)
+         ([5, 4, 4, 4, None], [None, 1, 1, 1, 5])
+         sage: G = graphs.GeneralisedOctagonGraph(2, 4)  # optional - gap_packages internet
+         sage: G.is_distance_regular(True)  # optional - gap_packages internet
+         ([10, 8, 8, 8, None], [None, 1, 1, 1, 5])
+         sage: G = graphs.GeneralisedOctagonGraph(5, 1)
+         sage: G.is_distance_regular(True)
+         ([10, 5, 5, 5, None], [None, 1, 1, 1, 2])
+
+    .. NOTE::
+
+        This function uses the GAP's AtlasRep package to build the graphs
+        of order `(2, 4)` or `(4, 2)`. For those graphs you need an internet
+        connection and Sage's optional package ``gap_packages``.
+
+    REFERENCES:
+
+    See [BCN1989]_ pp. 200-205 for a discussion of distance-regular graphs from
+    generalised polygons.
+
+    TESTS::
+
+        sage: G = graphs.GeneralisedOctagonGraph(8, 64)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Graph would be too big
+        sage: G = graphs.GeneralisedOctagonGraph(4, 16)
+        Traceback (most recent call last):
+        ...
+        ValueError: generalised octagons of order (q, q^2) are known only for odd powers q of 2
+    """
+    from sage.arith.misc import is_prime_power
+    from sage.libs.gap.libgap import libgap
+    from sage.graphs.strongly_regular_db import strongly_regular_graph
+
+    cdef int q = 0
+    cdef int orderType = 0
+
+    if s == 1:  # (1, q)
+        q = t
+    elif t == 1:  # (q, 1)
+        q = s
+        orderType = 1
+    elif s**2 ==  t:  # (q, q^2)
+        q = s
+        (p, k) = is_prime_power(q, get_data=True)
+
+        if p != 2 or k % 2 != 1:
+            raise ValueError(("generalised octagons of order (q, q^2) "
+                              "are known only for odd powers q of 2"))
+        orderType = 2
+    elif t**2 == s:  # (q^2, q)
+        q = t
+        orderType = 1
+    else:
+        raise ValueError(f"No generalised octagon of order ({s}, {t}) is known")
+
+    if q == 1:  # order (1, 1)
+        from sage.graphs.generators.basic import CycleGraph
+        return CycleGraph(8)
+
+    if not is_prime_power(q):
+        raise ValueError(f"No generalised octagon of order ({s}, {t}) is known")
+
+    if orderType == 0:
+        # incidence graph of generalised quadrangle (q, q)
+
+        H = strongly_regular_graph((q+1) * (q*q + 1), q * (q+1), q - 1, q + 1,
+                                   check=False)
+
+        lines = _extract_lines(H)
+
+        edges = []
+        for l in lines:
+            for p in l:
+                sig_check()
+                edges.append((p, l))
+
+        G = Graph(edges, format='list_of_edges')
+        G.name("Generalised octagon of order (1, %d)"%q)
+        return G
+
+    elif orderType == 1:
+        # dual
+        H = GeneralisedOctagonGraph(t, s)
+        G = _line_graph_generalised_polygon(H)
+        G.name("Generalised octagon of order(%d, %d)"%(s, t))
+        return G
+    else:
+        if q == 2:
+            group = libgap.AtlasGroup("2F4(2)", libgap.NrMovedPoints, 1755)
+            G = Graph(libgap.Orbit(group, [1, 73], libgap.OnSets),
+                      format='list_of_edges')
+            G.name("Generalised octagon of order (2, 4)")
+            return G
+        else:
+            raise NotImplementedError("Graph would be too big")
+
+
+def GeneralisedHexagonGraph(const int s, const int t):
+    r"""
+    Return the point-graph of a generalised hexagon of order `(s,t)`.
+
+    INPUT:
+
+    - ``s, t`` -- integers; order of the generalised hexagon
+
+    EXAMPLES::
+
+        sage: G = graphs.GeneralisedHexagonGraph(5, 5)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([30, 25, 25, None], [None, 1, 1, 6])
+        sage: G = graphs.GeneralisedHexagonGraph(7, 1)
+        sage: G.is_distance_regular(True)
+        ([14, 7, 7, None], [None, 1, 1, 2])
+        sage: graphs.GeneralisedHexagonGraph(1, 1)
+        Cycle graph: Graph on 6 vertices
+
+    .. NOTE::
+
+        This function uses the GAP's AtlasRep package to build GHs
+        of order `(q, q)`, `(q, q^3)` or `(q^3, q)`. For those graphs you need
+        an internet connection and Sage's optional package ``gap_packages``.
+
+    REFERENCES:
+
+    See [BCN1989]_ pp. 200-205 for a discussion of distance-regular graphs from
+    generalised polygons.
+
+    TESTS::
+
+        sage: G = graphs.GeneralisedHexagonGraph(4, 4)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([20, 16, 16, None], [None, 1, 1, 5])
+        sage: G = graphs.GeneralisedHexagonGraph(3, 3)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([12, 9, 9, None], [None, 1, 1, 4])
+        sage: G = graphs.GeneralisedHexagonGraph(2, 2)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([6, 4, 4, None], [None, 1, 1, 3])
+        sage: G = graphs.GeneralisedHexagonGraph(2, 8)  # optional - gap_packages internet
+        sage: G.is_distance_regular(True)  # optional - gap_packages internet
+        ([18, 16, 16, None], [None, 1, 1, 9])
+    """
+    from sage.arith.misc import is_prime_power
+    from sage.libs.gap.libgap import libgap
+    from sage.combinat.designs import design_catalog as designs
+
+    cdef int q = 0
+    cdef int orderType = 0
+
+    if s == 1:  # (1, q)
+        q = t
+    elif t == 1:  # (q, 1)
+        q = s
+        orderType = 1
+    elif s == t:  # (q, q)
+        q = s
+        orderType = 2
+    elif s**3 == t:  # (q, q^3)
+        q = s
+        orderType = 3
+    elif t**3 == s:  # (q^3, q)
+        q = t
+        orderType = 1
+    else:
+        raise ValueError(f"No generalised hexagon of order ({s}, {t}) is known")
+
+    if q == 1:  # order (1, 1)
+        from sage.graphs.generators.basic import CycleGraph
+        return CycleGraph(6)
+
+    if not is_prime_power(q):
+        raise ValueError(f"No generalised hexagon of order ({s}, {t}) is known")
+
+    if orderType == 0:
+        # incidence graph of generalised 3-gon of order (q, q)
+        PG2 = designs.ProjectiveGeometryDesign(2, 1, q)
+
+        edges = []
+        for l in PG2.blocks():
+            for p in l:
+                sig_check()
+                edges.append((p, tuple(l)))
+
+        G = Graph(edges, format='list_of_edges')
+        G.name("Generalised hexagon of order (1, %d)"%q)
+        return G
+
+    elif orderType == 1:
+        # dual graph
+        H = GeneralisedHexagonGraph(t, s)
+        G = _line_graph_generalised_polygon(H)
+        G.name("Generalised hexagon of order(%d, %d)"%(s, t))
+        return G
+
+    elif orderType == 2:
+        # we use the group G2(q)
+        # if q == 2, then G2(2) is isomorphic to U3(3).2
+        if q == 2:
+            group = libgap.AtlasGroup("U3(3).2", libgap.NrMovedPoints, 63)
+            G = Graph(libgap.Orbit(group, [1, 19], libgap.OnSets),
+                      format='list_of_edges')
+            G.name("Generalised hexagon of order (%d, %d)"%(q, q))
+            return G
+
+        elif q == 3:  # we don't have permutation representation; so we build it
+            matrixRep = libgap.AtlasGroup("G2(3)", libgap.Position, 7)
+            e1 = vector(GF(3), [1, 0, 0, 0, 0, 0, 0])
+            orb = libgap.Orbit(matrixRep, e1, libgap.OnLines)
+            group = libgap.Action(matrixRep, orb, libgap.OnLines)
+
+            # now group is our permutation representation
+            G = Graph(libgap.Orbit(group, [1, 52], libgap.OnSets),
+                      format='list_of_edges')
+            G.name("Generalised hexagon of order (%d, %d)"%(q, q))
+            return G
+
+        elif q <= 5:
+            n = 1365 if q == 4 else 3906
+            p = 43 if q == 4 else 185
+            group = libgap.AtlasGroup("G2(%d)"%q, libgap.NrMovedPoints, n)
+
+            G = Graph(libgap.Orbit(group, [1, p], libgap.OnSets),
+                      format='list_of_edges')
+            G.name("Generalised hexagon of order (%d, %d)"%(q, q))
+            return G
+
+        else:
+            raise NotImplementedError("Graph would be too big")
+
+    elif orderType == 3:
+        if q > 3:
+            raise NotImplementedError("Graph would be too big")
+
+        movedPoints = 819 if q==2 else 26572
+        group = libgap.AtlasGroup("3D4(%d)"%q, libgap.NrMovedPoints, movedPoints)
+
+        G = Graph(libgap.Orbit(group, [1, 2], libgap.OnSets),
+                  format='list_of_edges')
+        G.name("Generalised hexagon of order (%d, %d)"%(q, q**3))
+        return G
+
+def _extract_lines(G):
+    r"""
+    Return the set of lines from the point-graph of a generalised polygon.
+
+    In particular, given a graph `G` we return the set of singular lines:
+    Let `(x,y)` be an edge, then `\{x,y\}^\bot^\bot` is a singular line.
+    We define `x^\bot =` neighbours of `x` and `x` for `x` a vertex and
+    `S^\bot =` intersection of `x^\bot` for all `x \in S`.
+
+    INPUT:
+
+    - ``G`` -- a graph
+
+    OUTPUT:
+
+    A list of tuples where each tuple represent a line via the vertices
+    contained in that line.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.distance_regular import _extract_lines
+        sage: G = graphs.GeneralisedHexagonGraph(1, 8)
+        sage: lines = _extract_lines(G)
+        sage: len(lines)
+        657
+        sage: type(lines)
+        <class 'list'>
+        sage: line = lines[0]
+        sage: type(line)
+        <class 'tuple'>
+        sage: line[0] in G  # the elements in the line are vertices
+        True
+
+    REFERENCES:
+
+    See [BCN1989]_ pp. 200-205 for a discussion of distance-regular graphs from
+    generalised polygons. See also [BCN1989]_ pp. 28, 29 for some theory about
+    singular lines.
+    """
+
+    lines = []
+    edges = set(G.edges(labels=False, sort=False))
+
+    while edges:
+        (x, y) = edges.pop()
+
+        #compute line
+        botX = set(G.neighbors(x, closed=True))
+        botY = set(G.neighbors(y, closed=True))
+        bot1 = botX.intersection(botY)
+
+        b = bot1.pop()
+        bot2 = frozenset(G.neighbors(b, closed=True))
+        for v in bot1:
+            sig_check()
+            s = frozenset(G.neighbors(v, closed=True))
+            bot2 = bot2.intersection(s)
+
+        # now bot2 is a line
+        lines.append(tuple(bot2))  # we need tuple or GAP will complain later
+
+        # remove already handled edges
+        for u, v in itertools.product(bot2, repeat=2):
+            sig_check()
+            try:
+                edges.remove((u, v))
+            except KeyError:
+                pass  # ignore this
+    # end while edges
+
+    return lines
+
+def _line_graph_generalised_polygon(H):
+    r"""
+    Return the line-graph of the generalised polygon whose point-graph is `H`.
+
+    In particular, return the line-graph of the incidence structure defined
+    by the singular lines of the graph `H`.
+
+    See also :func:`sage.graphs.generators.distance_regular._extract_lines`.
+
+    INPUT:
+
+    - ``H`` -- a graph
+
+    EXAMPLES::
+
+         sage: from sage.graphs.generators.distance_regular import \
+         ....: _line_graph_generalised_polygon
+         sage: G = graphs.GeneralisedHexagonGraph(1, 8)
+         sage: H = _line_graph_generalised_polygon(G)
+         sage: H.is_distance_regular(True)
+         ([16, 8, 8, None], [None, 1, 1, 2])
+         sage: G = graphs.GeneralisedHexagonGraph(3, 3) # optional - gap_packages internet
+         sage: H = _line_graph_generalised_polygon(G)   # optional - gap_packages internet
+         sage: G.is_isomorphic(H)                       # optional - gap_packages internet
+         True
+
+    REFERENCES:
+
+    See [BCN1989]_ pp. 200-205 for a discussion of distance-regular graphs from
+    generalised polygons. See also [BCN1989]_ pp. 28, 29 for some theory about
+    singular lines.
+    """
+    lines = _extract_lines(H)
+
+    # get a map (point -> all lines incident to point)
+    vToLines = {v: [] for v in H}
+    for l in lines:
+        for p in l:
+            sig_check()
+            vToLines[p].append(l)
+
+    k = len(vToLines[lines[0][0]])
+
+    edges = []
+    for v in vToLines:
+        lines = vToLines[v]
+        for l1, l2 in itertools.combinations(lines, 2):
+            sig_check()
+            edges.append((l1, l2))
+
+    G = Graph(edges, format="list_of_edges")
+    return G
+
+def _intersection_array_from_graph(G):
+    r"""
+    Return the intersection array of the graph `G`.
+    If `G` is not distance-regular, then return ``False``.
+
+    This is a simple wrapper around
+    :meth:`sage.graphs.distances_all_pairs.is_distance_regular` to return a list
+    instead of a pair of lists
+
+    INPUT:
+
+    - G -- a graph
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.distance_regular import \
+        ....: _intersection_array_from_graph
+        sage: _intersection_array_from_graph(graphs.FosterGraph())
+        [3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3]
+        sage: graphs.FosterGraph().is_distance_regular(True)
+        ([3, 2, 2, 2, 2, 1, 1, 1, None], [None, 1, 1, 1, 1, 2, 2, 2, 3])
+        sage: graphs.DartGraph().is_distance_regular()
+        False
+        sage: _intersection_array_from_graph(graphs.DartGraph())
+        False
+
+    TESTS::
+
+        sage: from sage.graphs.generators.distance_regular import \
+        ....: _intersection_array_from_graph
+        sage: _intersection_array_from_graph(Graph())
+        []
+        sage: _intersection_array_from_graph(Graph(3))
+        []
+        sage: _intersection_array_from_graph(graphs.CompleteGraph(7))
+        [6, 1]
+    """
+    t = G.is_distance_regular(True)
+    if t is False:
+        return False
+
+    return t[0][:-1] + t[1][1:]
+
+# dictionary intersection_array (as tuple)  -> construction
+# of spordaic distance-regular graphs
+from sage.graphs.generators.smallgraphs import (FosterGraph, BiggsSmithGraph,
+                                                CoxeterGraph, LivingstoneGraph,
+                                                WellsGraph, GossetGraph,
+                                                HoffmanSingletonGraph,
+                                                SimsGewirtzGraph,
+                                                HigmanSimsGraph)
+from sage.graphs.generators.platonic_solids import DodecahedralGraph
+from sage.graphs.strongly_regular_db import strongly_regular_graph
+_sporadic_graph_database = {
+    (3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3) : FosterGraph,
+    (7, 6, 4, 4, 4, 1, 1, 1, 1, 1, 1, 2, 4, 4, 6, 7) : IvanovIvanovFaradjevGraph,
+    (3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3) : BiggsSmithGraph,
+    (22, 21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21, 22) : lambda : \
+    codes.GolayCode(GF(2), False).punctured([0]).cosetGraph().bipartite_double(),
+    (23, 22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22, 23) : lambda : \
+    codes.GolayCode(GF(2), False).cosetGraph().bipartite_double(),
+    (21, 20, 16, 6, 2, 1, 1, 2, 6, 16, 20, 21) : \
+    shortened_00_11_binary_Golay_code_graph,
+    (21, 20, 16, 9, 2, 1, 1, 2, 3, 16, 20, 21) : \
+    shortened_000_111_extended_binary_Golay_code_graph,
+    (22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22) : lambda : \
+    codes.GolayCode(GF(2), extended=False).shortened([0]).cosetGraph,
+    (3, 2, 1, 1, 1, 1, 1, 1, 2, 3) : DodecahedralGraph,
+    (22, 20, 18, 2, 1, 1, 2, 9, 20, 22) : lambda : \
+    codes.GolayCode(GF(3)).shortened([0]).cosetGraph,
+    (7, 6, 6, 1, 1, 1, 1, 6, 6, 7) : lambda : \
+    HoffmanSingletonGraph().bipartite_double,
+    (10, 9, 8, 2, 1, 1, 2, 8, 9, 10) : lambda : \
+    SimsGewirtzGraph().bipartite_double,
+    (16, 15, 12, 4, 1, 1, 4, 12, 15, 16) : lambda : \
+    strongly_regular_graph(77, 16, 0, check=False).bipartite_double,
+    (22, 21, 16, 6, 1, 1, 6, 16, 21, 22) : lambda : \
+    HigmanSimsGraph().bipartite_double,
+    (3, 2, 2, 1, 1, 1, 1, 2) : CoxeterGraph,
+    (6, 5, 5, 4, 1, 1, 2, 6) : vanLintSchrijverGraph,
+    (7, 6, 4, 4, 1, 1, 1, 6) : DoublyTruncatedWittGraph,
+    (9, 8, 6, 3, 1, 1, 3, 8) : distance_3_doubly_truncated_Golay_code_graph,
+    (10, 8, 8, 2, 1, 1, 4, 5) : J2Graph,
+    (11, 10, 6, 1, 1, 1, 5, 11) : LivingstoneGraph,
+    (5, 4, 1, 1, 1, 1, 4, 5) : WellsGraph,
+    (6, 4, 2, 1, 1, 1, 4, 6) : FosterGraph3S6,
+    (10, 6, 4, 1, 1, 2, 6, 10) :  ConwaySmith_for_3S7,
+    (20, 18, 4, 1, 1, 2, 18, 20) : lambda : \
+    codes.GolayCode(GF(3), extended=False).shortened([0]).cosetGraph,
+    (45, 32, 12, 1, 1, 6, 32, 45) : locally_GQ42_distance_transitive_graph,
+    (117, 80, 24, 1, 1, 12, 80, 117) : graph_3O73,
+    (22, 21, 20, 1, 2, 6): lambda : \
+    codes.GolayCode(GF(2), extended=False).punctured([0]).cosetGraph,
+    (23, 22, 21, 1, 2, 3): lambda : \
+    codes.GolayCode(GF(2), extended=False).cosetGraph,
+    (24, 23, 22, 21, 1, 2, 3, 24): lambda : codes.GolayCode(GF(2)).cosetGraph,
+    (12, 11, 10, 7, 1, 2, 5, 12): LeonardGraph,
+    (15, 14, 10, 3, 1, 5, 12, 15): cocliques_HoffmannSingleton,
+    (27, 10, 1, 1, 10, 27): GossetGraph,
+    (30, 28, 24, 1, 3, 15): LargeWittGraph,
+    (15, 14, 12, 1, 1, 9): TruncatedWittGraph,
+    (24, 22, 20, 1, 2, 12): lambda : codes.GolayCode(GF(3)).cosetGraph,
+    (21, 20, 16, 1, 2, 12): lambda : \
+    codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph
+}
+
+def distance_regular_graph(list arr, existence=False, check=True):
+    r"""
+    Return a distance-regular graph with the intersection array given.
+
+    INPUT:
+
+    - ``arr`` -- list; intersection array of the graph
+
+    - ``existence`` -- boolean (optional); instead of building the graph return:
+
+      - ``True`` - if a graph with the given intersection array exists;
+
+      - ``False`` - if there is no graph with the given intersection array;
+
+      - ``Unknown`` - if Sage doesn't know if such a graph exists.
+
+    - ``check`` -- boolean (optional); if ``True``, then checks that the result
+      of this function has the given intersection array. Default: ``True``
+
+    EXAMPLES::
+
+        sage: graphs.distance_regular_graph([21,20,16,1,2,12], existence=True)
+        True
+        sage: G = graphs.distance_regular_graph([12,11,10,7,1,2,5,12], check=False)
+        sage: G.is_distance_regular(True)
+        ([12, 11, 10, 7, None], [None, 1, 2, 5, 12])
+
+    Not all distance-regular graphs can be built with this function::
+
+        sage: G = graphs.DoubleOddGraph(2)
+        sage: G.is_distance_regular(True)
+        ([3, 2, 2, 1, 1, None], [None, 1, 1, 2, 2, 3])
+        sage: graphs.distance_regular_graph([3, 2, 2, 1, 1, 1, 1, 2, 2, 3])
+        Traceback (most recent call last):
+        ...
+        RuntimeError: No distance-regular graph with intersection array [3, 2, 2, 1, 1, 1, 1, 2, 2, 3] known
+
+    REFERENCES:
+
+    See [BCN1989]_ and [VDKT2016]_.
+
+    TESTS::
+
+        sage: graphs.distance_regular_graph([3, 2, 2, 1, 1, 1, 1, 2, 2, 3],
+        ....: existence=True)
+        Unknown
+        sage: graphs.distance_regular_graph([3, 2, 2, 1, 2, 1, 1, 2, 2, 3],
+        ....: existence=True)
+        False
+
+    """
+    from sage.misc.unknown import Unknown
+    from sage.categories.sets_cat import EmptySetError
+
+    # check if drg module is installed
+    try:
+        import drg
+        from drg import InfeasibleError
+        drgModule = True
+    except ModuleNotFoundError:
+        drgModule = False
+
+    def result(G):
+        if check:
+            array = _intersection_array_from_graph(G)
+            if array != arr:
+                raise RuntimeError(("Sage built the wrong distance-regular "
+                                    f"graph; expected {arr}, result {array}"))
+        return G
+
+    def is_iterable(obj):
+        try:
+            iter(obj)
+            return True
+        except TypeError:
+            return False
+
+    n = len(arr)
+    d = n // 2
+
+    # check that arr makes sense:
+    if drgModule:
+        try:
+            parameters = drg.DRGParameters(arr[:d],arr[d:])
+        except (AssertionError, InfeasibleError, TypeError) as err:
+            if existence: return False
+            raise EmptySetError(("No distance-regular graphs with "
+                                 f"parameters {arr} exists; error: {err}"))
+    else:
+        # basic checks
+        if len(arr) % 2 == 1 or any([i <= 0 for i in arr]) or \
+           any([x != int(x) for x in arr]) or \
+           any([(arr[i] - arr[i + 1]) < 0 for i in range(d - 1)]) or \
+           any([(arr[d + i + 1] - arr[d + i]) < 0 for i in range(d - 1)]):
+            if existence: return False
+            raise EmptySetError(("No distance-regular graphs with "
+                                 f"parameters {arr} exists"))
+
+    # handle diameter < 3
+    if d == 1 and arr[1] == 1:
+        if existence:
+            return True
+        from sage.graphs.generators.basic import CompleteGraph
+        return result(CompleteGraph(arr[0] + 1))
+
+    if d == 2:
+        k = arr[0]
+        mu = arr[3]
+        l = k - arr[1] - 1  # a1 = k - b1 - c1
+        v = (k * (k-l-1)) // mu + k + 1
+
+        if existence:
+            return strongly_regular_graph(v, k, l, mu, existence=True)
+        return result(strongly_regular_graph(v, k, l, mu))
+
+    t = tuple(arr)
+    if t in _sporadic_graph_database:
+        if existence:
+            return True
+        return result(_sporadic_graph_database[t]())
+
+    # now try drg feasibility
+    if drgModule:
+        try:
+            parameters.check_feasible()
+        except (InfeasibleError, TypeError, AssertionError) as err:
+            if existence:
+                return False
+            raise EmptySetError(("No distance-regular graphs with "
+                                 f"parameters {arr} exists; reason: {err}"))
+
+    if existence:
+        return Unknown
+    raise RuntimeError(
+        f"No distance-regular graph with intersection array {arr} known")

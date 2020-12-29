@@ -25,7 +25,7 @@ from weakref import KeyedRef
 from cpython.list cimport PyList_New
 from cpython cimport Py_XINCREF, Py_XDECREF
 
-from libc.stdint cimport int8_t,int16_t,int32_t,int64_t
+from libc.stdint cimport int8_t, int16_t, int32_t, int64_t
 cdef extern from "Python.h":
     ctypedef struct PyDictKeysObject
 
@@ -155,7 +155,7 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
     the dict values. However, the actual deletion is postponed till after the
     iteration over the dictionary has finished. Hence, when the callbacks are
     executed, the values which the callback belongs to has already been
-    overridded by a new value. Therefore, the callback does not delete the
+    overridden by a new value. Therefore, the callback does not delete the
     item::
 
         sage: for k in D:    # indirect doctest

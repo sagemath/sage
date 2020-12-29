@@ -9,17 +9,7 @@ if [ "x$SAGE_DEBUG" = "xyes" ]; then
     # This used to disable omalloc but that is not really supported
     # by upstream
     SINGULAR_CONFIGURE="$SINGULAR_CONFIGURE --enable-debug --disable-optimizationflags"
-
-    CFLAGS="$CFLAGS -O0 -g"
-    CXXFLAGS="$CXXFLAGS -O0 -g"
-else
-    # Singular 4.x (mostly) does not longer set defaults for CFLAGS and CXXFLAGS
-    CFLAGS="-O2 -g $CFLAGS"
-    CXXFLAGS="-O2 -g $CXXFLAGS"
 fi
-
-export CFLAGS CXXFLAGS
-
 
 remove_old_version()
 {

@@ -114,7 +114,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ######################################################################
-from __future__ import print_function, absolute_import
 
 from sage.structure.sage_object import SageObject
 import sage.arith.all as arith
@@ -341,7 +340,7 @@ class GaloisRepresentation(SageObject):
 
     def reducible_primes(self):
         r"""
-        Returns a list of the primes `p` such that the mod-`p`
+        Return a list of the primes `p` such that the mod-`p`
         representation is reducible. For all other primes the
         representation is irreducible.
 
@@ -608,7 +607,7 @@ class GaloisRepresentation(SageObject):
 
     def non_surjective(self, A=1000):
         r"""
-        Returns a list of primes p such that the mod-p representation
+        Return a list of primes p such that the mod-p representation
         *might* not be surjective. If `p` is not in the returned list,
         then the mod-p representation is provably surjective.
 
@@ -711,7 +710,7 @@ class GaloisRepresentation(SageObject):
 
     def image_type(self, p):
         r"""
-        Returns a string describing the image of the
+        Return a string describing the image of the
         mod-p representation.
         The result is provably correct, but only
         indicates what sort of an image we have. If
@@ -1253,7 +1252,7 @@ class GaloisRepresentation(SageObject):
 
     def is_unramified(self,p,ell):
         r"""
-        Returns true if the Galois representation to `GL_2(\ZZ_p)` is unramified at `\ell`, i.e.
+        Return true if the Galois representation to `GL_2(\ZZ_p)` is unramified at `\ell`, i.e.
         if the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/\QQ)` has trivial image in
         `GL_2(\ZZ_p)`.
 
@@ -1289,7 +1288,7 @@ class GaloisRepresentation(SageObject):
 
     def is_unipotent(self,p,ell):
         r"""
-        Returns true if the Galois representation to `GL_2(\ZZ_p)` is unipotent at `\ell\neq p`, i.e.
+        Return true if the Galois representation to `GL_2(\ZZ_p)` is unipotent at `\ell\neq p`, i.e.
         if the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/\QQ)` maps into a Borel subgroup.
 
         For a Galois representation attached to an elliptic curve `E`, this returns True if
@@ -1330,7 +1329,7 @@ class GaloisRepresentation(SageObject):
 
     def is_quasi_unipotent(self,p,ell):
         r"""
-        Returns true if the Galois representation to `GL_2(\ZZ_p)` is quasi-unipotent at `\ell\neq p`, i.e. if there is a finite extension `K/\QQ` such that the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/K)` maps into a Borel subgroup.
+        Return true if the Galois representation to `GL_2(\ZZ_p)` is quasi-unipotent at `\ell\neq p`, i.e. if there is a finite extension `K/\QQ` such that the inertia group at a place above `\ell` in `\text{Gal}(\bar\QQ/K)` maps into a Borel subgroup.
 
         For a Galois representation attached to an elliptic curve `E`, this returns always True.
 
@@ -1361,7 +1360,7 @@ class GaloisRepresentation(SageObject):
 
     def is_ordinary(self,p):
         r"""
-        Returns true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is ordinary, i.e.
+        Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is ordinary, i.e.
         if the image of the decomposition group in `\text{Gal}(\bar\QQ/\QQ)` above he prime `p` maps into
         a Borel subgroup.
 
@@ -1393,7 +1392,7 @@ class GaloisRepresentation(SageObject):
 
     def is_crystalline(self,p):
         r"""
-        Returns true is the `p`-adic Galois representation to `GL_2(\ZZ_p)` is crystalline.
+        Return true is the `p`-adic Galois representation to `GL_2(\ZZ_p)` is crystalline.
 
         For an elliptic curve `E`, this is to ask whether `E` has good reduction at `p`.
 
@@ -1419,7 +1418,7 @@ class GaloisRepresentation(SageObject):
 
     def is_potentially_crystalline(self,p):
         r"""
-        Returns true is the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially crystalline, i.e.
+        Return true is the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially crystalline, i.e.
         if there is a finite extension `K/\QQ_p` such that the `p`-adic representation becomes crystalline.
 
         For an elliptic curve `E`, this is to ask whether `E` has potentially good reduction at `p`.
@@ -1447,7 +1446,7 @@ class GaloisRepresentation(SageObject):
 
     def is_semistable(self,p):
         r"""
-        Returns true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is semistable.
+        Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is semistable.
 
         For an elliptic curve `E`, this is to ask whether `E` has semistable reduction at `p`.
 
@@ -1475,7 +1474,7 @@ class GaloisRepresentation(SageObject):
 
     def is_potentially_semistable(self,p):
         r"""
-        Returns true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially semistable.
+        Return true if the `p`-adic Galois representation to `GL_2(\ZZ_p)` is potentially semistable.
 
         For an elliptic curve `E`, this returns True always
 

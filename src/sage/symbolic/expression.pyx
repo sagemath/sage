@@ -255,7 +255,7 @@ This example is from :trac:`10833`::
 
 Check if :trac:`10849` is fixed::
 
-    sage: t = I.pyobject().parent()(-1/2)
+    sage: t = I.parent()(-1/2)
     sage: t > 0
     False
     sage: t = I*x-1/2; t
@@ -950,12 +950,12 @@ cdef class Expression(CommutativeRingElement):
 
         Check that complex numbers are handled correctly (:trac:`28903`)::
 
-            sage: unicode_art(I)
+            sage: unicode_art(SR(I))
             ⅈ
-            sage: unicode_art(13 - I)
+            sage: unicode_art(SR(13 - I))
             13 - ⅈ
-            sage: unicode_art(1.3 - I)
-            1.3 - 1.0⋅ⅈ
+            sage: unicode_art(SR(1.3 - I))
+            1.3 - ⅈ
             sage: unicode_art(cos(I))
             cosh(1)
 
@@ -1731,7 +1731,7 @@ cdef class Expression(CommutativeRingElement):
             True
             sage: AA(-golden_ratio)
             -1.618033988749895?
-            sage: QQbar((2*I)^(1/2))
+            sage: QQbar(SR(2*I)^(1/2))
             1 + 1*I
             sage: QQbar(e^(pi*I/3))
             0.50000000000000000? + 0.866025403784439?*I
@@ -2564,9 +2564,9 @@ cdef class Expression(CommutativeRingElement):
 
         Note that the complex I is not a constant::
 
-            sage: I._is_registered_constant_()
+            sage: SR(I)._is_registered_constant_()
             False
-            sage: I.is_numeric()
+            sage: SR(I).is_numeric()
             True
         """
         return is_a_constant(self._gobj)
@@ -2588,7 +2588,7 @@ cdef class Expression(CommutativeRingElement):
             True
             sage: log(2).is_constant()
             True
-            sage: I.is_constant()
+            sage: SR(I).is_constant()
             True
             sage: x.is_constant()
             False
@@ -4055,21 +4055,22 @@ cdef class Expression(CommutativeRingElement):
 
         Test complex numeric powers::
 
-            sage: I^0.5
+            sage: symI = SR(I)
+            sage: symI^0.5
             0.707106781186548 + 0.707106781186547*I
-            sage: (I + 1) ^ (0.5 + I)
+            sage: (symI + 1) ^ (0.5 + symI)
             0.400667052375828 + 0.365310866736929*I
-            sage: I^I
+            sage: symI^symI
             I^I
-            sage: I^x
+            sage: symI^x
             I^x
-            sage: I^(1/2)
+            sage: symI^(1/2)
             sqrt(I)
-            sage: I^(2/3)
+            sage: symI^(2/3)
             I^(2/3)
             sage: 2^(1/2)
             sqrt(2)
-            sage: (2*I)^(1/2)
+            sage: (2*symI)^(1/2)
             sqrt(2*I)
 
         Test if we can take powers of elements of `\QQ(i)` (:trac:`8659`)::
@@ -8054,21 +8055,21 @@ cdef class Expression(CommutativeRingElement):
         Using the ``hold`` parameter it is possible to prevent automatic
         evaluation::
 
-            sage: I.imag_part()
+            sage: SR(I).imag_part()
             1
-            sage: I.imag_part(hold=True)
+            sage: SR(I).imag_part(hold=True)
             imag_part(I)
 
         This also works using functional notation::
 
-            sage: imag_part(I,hold=True)
+            sage: imag_part(I, hold=True)
             imag_part(I)
-            sage: imag_part(I)
+            sage: imag_part(SR(I))
             1
 
         To then evaluate again, we use :meth:`unhold`::
 
-            sage: a = I.imag_part(hold=True); a.unhold()
+            sage: a = SR(I).imag_part(hold=True); a.unhold()
             1
 
         TESTS::
@@ -9888,7 +9889,7 @@ cdef class Expression(CommutativeRingElement):
 
             sage: a = RR.random_element()
             sage: b = RR.random_element()
-            sage: f = a + b*I
+            sage: f = SR(a + b*I)
             sage: bool(f.rectform() == a + b*I)
             True
 

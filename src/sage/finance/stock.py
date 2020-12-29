@@ -38,7 +38,6 @@ TESTS::
 Classes and methods
 -------------------
 """
-from __future__ import absolute_import
 
 from sage.structure.all import Sequence
 from datetime import date

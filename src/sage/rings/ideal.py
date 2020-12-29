@@ -25,7 +25,6 @@ a right ideal, and ``R*[a,b,...]*R`` creates a two-sided ideal.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from types import GeneratorType
 

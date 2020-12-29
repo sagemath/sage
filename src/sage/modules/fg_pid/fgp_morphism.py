@@ -19,7 +19,6 @@ AUTHOR:
 #
 #                  http://www.gnu.org/licenses/
 # *************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.morphism import Morphism, is_Morphism
 from .fgp_module import DEBUG

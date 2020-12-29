@@ -1,7 +1,6 @@
 """
 Combinatorics features that are imported by default in the interpreter namespace
 """
-from __future__ import absolute_import
 
 from sage.misc.lazy_import import lazy_import
 
@@ -26,7 +25,6 @@ from sage.combinat.designs.all import *
 
 # Free modules and friends
 from .free_module import CombinatorialFreeModule
-from .combinatorial_algebra import CombinatorialAlgebra
 from .debruijn_sequence import DeBruijnSequences
 
 from .schubert_polynomial import SchubertPolynomialRing

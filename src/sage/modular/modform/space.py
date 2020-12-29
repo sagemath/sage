@@ -52,8 +52,6 @@ An example in characteristic `7`::
 #
 #                  http://www.gnu.org/licenses/
 #########################################################################
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.structure.all import Sequence
 from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,

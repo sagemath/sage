@@ -3,7 +3,7 @@ cd src
 # OpenBLAS does not build on 32bit Haswell. Upstream suggests to pass BINARY=32 to default to NEHALEM kernels
 # See https://github.com/xianyi/OpenBLAS/issues/657
 # Right now this affect all 32bit CPUs.
-if [ `sage-system-python -c "from __future__ import print_function; import platform; print(platform.architecture()[0])"` = "32bit" ]; then
+if [ `sage-bootstrap-python -c "from __future__ import print_function; import platform; print(platform.architecture()[0])"` = "32bit" ]; then
     echo >&2 "Building a 32bit version of OpenBLAS."
     OPENBLAS_CONFIGURE="$OPENBLAS_CONFIGURE BINARY=32"
 fi

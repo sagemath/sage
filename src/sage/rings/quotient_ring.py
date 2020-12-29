@@ -107,7 +107,6 @@ easily::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 import sage.misc.latex as latex
 from . import ring, ideal, quotient_ring_element

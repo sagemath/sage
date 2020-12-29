@@ -142,13 +142,17 @@ Other methods
        sage: I = singular.ideal('[x^4+x, y^4+y]')
        sage: L = singular.closed_points(I)
        sage: # Here you have all the points :
-       sage: print(L)
+       sage: L       # random
        [1]:
-          _[1]=y+1  # 32-bit
-          _[2]=x+1  # 32-bit
-          _[1]=y    # 64-bit
-          _[2]=x    # 64-bit
+          _[1]=y+1
+          _[2]=x+1
        ...
+       sage: l=[L[k].sage() for k in [1..10]]; len(l) # there are 10 points
+       10
+       sage: r=sorted(l[0].ring().gens()); r
+       [y, x]
+       sage: r in [t.gens() for t in l] #  one of them is given by [y,x]
+       True
 
 -  Another way to compute rational points is to use Singular's
    ``NSplaces`` command. Here's the Klein quartic over :math:`GF(8)`

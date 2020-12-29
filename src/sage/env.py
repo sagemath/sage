@@ -28,15 +28,15 @@ environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import
+from typing import List, Optional
 
 import sage
-import glob
 import os
 import socket
 import sys
 import sysconfig
 from . import version
+from pathlib import Path
 
 
 # All variables set by var() appear in this SAGE_ENV dict and also
@@ -158,22 +158,27 @@ var('SAGE_VERSION',        version.version)
 var('SAGE_DATE',           version.date)
 var('SAGE_VERSION_BANNER', version.banner)
 
-# bunch of sage directories and files
-var('SAGE_LOCAL',          os.path.abspath(sys.prefix))
+# virtual environment where sagelib is installed
+var('SAGE_VENV',           os.path.abspath(sys.prefix))
+var('SAGE_LIB',            os.path.dirname(os.path.dirname(sage.__file__)))
+var('SAGE_EXTCODE',        join(SAGE_LIB, 'sage', 'ext_data'))
+
+# prefix hierarchy where non-Python packages are installed
+var('SAGE_LOCAL',          SAGE_VENV)
 var('SAGE_ETC',            join(SAGE_LOCAL, 'etc'))
 var('SAGE_INC',            join(SAGE_LOCAL, 'include'))
 var('SAGE_SHARE',          join(SAGE_LOCAL, 'share'))
 var('SAGE_DOC',            join(SAGE_SHARE, 'doc', 'sage'))
 var('SAGE_SPKG_INST',      join(SAGE_LOCAL, 'var', 'lib', 'sage', 'installed'))
-var('SAGE_LIB',            os.path.dirname(os.path.dirname(sage.__file__)))
-var('SAGE_EXTCODE',        join(SAGE_LIB, 'sage', 'ext_data'))
 
+# source tree of the Sage distribution
 var('SAGE_ROOT')           # no fallback for SAGE_ROOT
 var('SAGE_SRC',            join(SAGE_ROOT, 'src'), SAGE_LIB)
 var('SAGE_DOC_SRC',        join(SAGE_ROOT, 'src', 'doc'), SAGE_DOC)
 var('SAGE_PKGS',           join(SAGE_ROOT, 'build', 'pkgs'))
 var('SAGE_ROOT_GIT',       join(SAGE_ROOT, '.git'))
 
+# ~/.sage
 var('DOT_SAGE',            join(os.environ.get('HOME'), '.sage'))
 var('SAGE_STARTUP_FILE',   join(DOT_SAGE, 'init.sage'))
 
@@ -188,7 +193,6 @@ var('COMBINATORIAL_DESIGN_DATA_DIR', join(SAGE_SHARE, 'combinatorial_designs'))
 var('CREMONA_MINI_DATA_DIR',         join(SAGE_SHARE, 'cremona'))
 var('CREMONA_LARGE_DATA_DIR',        join(SAGE_SHARE, 'cremona'))
 var('JMOL_DIR',                      join(SAGE_SHARE, 'jmol'))
-var('JSMOL_DIR',                     join(SAGE_SHARE, 'jsmol'))
 var('MATHJAX_DIR',                   join(SAGE_SHARE, 'mathjax'))
 var('MTXLIB',                        join(SAGE_SHARE, 'meataxe'))
 var('THREEJS_DIR',                   join(SAGE_SHARE, 'threejs'))
@@ -198,13 +202,14 @@ var('MAXIMA',                        'maxima')
 var('MAXIMA_FAS')
 var('SAGE_NAUTY_BINS_PREFIX',        '')
 var('ARB_LIBRARY',                   'arb')
+var('CBLAS_PC_MODULES',              'cblas:openblas:blas')
 
 # misc
 var('SAGE_BANNER', '')
 var('SAGE_IMPORTALL', 'yes')
 
 
-def _get_shared_lib_filename(libname, *additional_libnames):
+def _get_shared_lib_path(*libnames: str) -> Optional[str]:
     """
     Return the full path to a shared library file installed in
     ``$SAGE_LOCAL/lib`` or the directories associated with the
@@ -222,78 +227,75 @@ def _get_shared_lib_filename(libname, *additional_libnames):
     For distributions like Debian that use a multiarch layout, we also try the
     multiarch lib paths (i.e. ``/usr/lib/<arch>/``).
 
-    This returns ``None`` if the file does not exist.
+    This returns ``None`` if no matching library file could be found.
 
     EXAMPLES::
 
         sage: import sys
         sage: from fnmatch import fnmatch
-        sage: from sage.env import _get_shared_lib_filename
-        sage: lib_filename = _get_shared_lib_filename("Singular",
-        ....:                                         "singular-Singular")
+        sage: from sage.env import _get_shared_lib_path
+        sage: lib_filename = _get_shared_lib_path("Singular", "singular-Singular")
         sage: if sys.platform == 'cygwin':
         ....:     pattern = "*/cygSingular-*.dll"
         ....: elif sys.platform == 'darwin':
-        ....:     pattern = "*/libSingular.dylib"
+        ....:     pattern = "*/libSingular-*.dylib"
         ....: else:
-        ....:     pattern = "*/lib*Singular.so"
-        sage: fnmatch(lib_filename, pattern)
+        ....:     pattern = "*/lib*Singular-*.so"
+        sage: fnmatch(str(lib_filename), pattern)
         True
-        sage: _get_shared_lib_filename("an_absurd_lib") is None
+        sage: _get_shared_lib_path("an_absurd_lib") is None
         True
     """
 
-    for libname in (libname,) + additional_libnames:
+    for libname in libnames:
+        search_directories: List[Path] = []
+        patterns: List[str] = []
         if sys.platform == 'cygwin':
-            # Later down we take the last matching DLL found, so search
-            # SAGE_LOCAL second so that it takes precedence
-            bindirs = [
-                sysconfig.get_config_var('BINDIR'),
-                os.path.join(SAGE_LOCAL, 'bin')
+            # Later down we take the first matching DLL found, so search
+            # SAGE_LOCAL first so that it takes precedence
+            search_directories = [
+                Path(SAGE_LOCAL) / 'bin',
+                Path(sysconfig.get_config_var('BINDIR')),
             ]
-            pats = ['cyg{}.dll'.format(libname), 'cyg{}-*.dll'.format(libname)]
-            filenames = []
-            for bindir in bindirs:
-                for pat in pats:
-                    filenames += glob.glob(os.path.join(bindir, pat))
-
-            # Note: This is not very robust, since if there are multi DLL
+            # Note: The following is not very robust, since if there are multible
             # versions for the same library this just selects one more or less
-            # at arbitrary.  However, practically speaking, on Cygwin, there
+            # at arbitrary. However, practically speaking, on Cygwin, there
             # will only ever be one version
-            if filenames:
-                return filenames[-1]
+            patterns = [f'cyg{libname}.dll', f'cyg{libname}-*.dll']
         else:
             if sys.platform == 'darwin':
                 ext = 'dylib'
             else:
                 ext = 'so'
 
-            libdirs = [
-                os.path.join(SAGE_LOCAL, 'lib'),
-                sysconfig.get_config_var('LIBDIR')
-            ]
-            multilib = sysconfig.get_config_var('MULTILIB')
-            if multilib:
-                libdirs.insert(1, os.path.join(libdirs[0], multilib))
+            search_directories = [Path(SAGE_LOCAL) / 'lib']
+            libdir = sysconfig.get_config_var('LIBDIR')
+            if libdir is not None:
+                libdir = Path(libdir)
+                search_directories.append(libdir)
 
-            for libdir in libdirs:
-                basename = 'lib{}.{}'.format(libname, ext)
-                filename = os.path.join(libdir, basename)
-                if os.path.exists(filename):
-                    return filename
+                multiarchlib = sysconfig.get_config_var('MULTIARCH')
+                if multiarchlib is not None: 
+                    search_directories.append(libdir / multiarchlib),
+
+            patterns = [f'lib{libname}.{ext}']
+
+        for directory in search_directories:
+            for pattern in patterns:
+                path = next(directory.glob(pattern), None)
+                if path is not None:
+                    return str(path.resolve())
 
     # Just return None if no files were found
     return None
 
-
 # locate singular shared object
 # On Debian it's libsingular-Singular so try that as well
-SINGULAR_SO = _get_shared_lib_filename('Singular', 'singular-Singular')
+SINGULAR_SO = _get_shared_lib_path('Singular', 'singular-Singular')
 var('SINGULAR_SO', SINGULAR_SO)
 
 # locate libgap shared object
-GAP_SO= _get_shared_lib_filename('gap','')
+GAP_SO = _get_shared_lib_path('gap')
 var('GAP_SO', GAP_SO)
 
 # post process
@@ -367,6 +369,13 @@ def sage_include_directories(use_sources=False):
             distutils.sysconfig.get_python_inc(),
             numpy.get_include()]
 
+def get_cblas_pc_module_name() -> str:
+    """
+    Return the name of the BLAS libraries to be used.
+    """
+    import pkgconfig
+    cblas_pc_modules = CBLAS_PC_MODULES.split(':')
+    return next((blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib)))
 
 def cython_aliases():
     """
@@ -391,6 +400,8 @@ def cython_aliases():
     for lib in ['fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
                 'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas', 'lapack']:
         var = lib.upper().replace("-", "") + "_"
+        if lib == 'cblas':
+            lib = get_cblas_pc_module_name()
         if lib == 'zlib':
             aliases[var + "CFLAGS"] = ""
             try:
@@ -424,6 +435,8 @@ def cython_aliases():
 
     aliases["LINUX_NOEXECSTACK"] = uname_specific("Linux", ["-Wl,-z,noexecstack"],
                                                   [])
+    aliases["CYGWIN_SQLITE3_LIBS"] = uname_specific("CYGWIN", ["sqlite3"],
+                                                    [])
 
     # LinBox needs special care because it actually requires C++11 with
     # GNU extensions: -std=c++11 does not work, you need -std=gnu++11

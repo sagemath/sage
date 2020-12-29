@@ -8,7 +8,6 @@ Local Density Congruence
 ## by a quadratic form at a prime (possibly subject to additional
 ## congruence conditions).
 ##########################################################################
-from __future__ import print_function
 
 from copy import deepcopy
 

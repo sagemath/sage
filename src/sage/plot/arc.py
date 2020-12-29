@@ -15,7 +15,6 @@ Arcs of circles and ellipses
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.plot.colors import to_mpl_color

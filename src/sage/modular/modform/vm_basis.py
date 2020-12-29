@@ -17,7 +17,6 @@ TESTS::
     sage: ModularSymbols(1, 36, 1).cuspidal_submodule().q_expansion_basis(30) == victor_miller_basis(36, 30, cusp_only=True)
     True
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>

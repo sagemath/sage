@@ -1,7 +1,6 @@
 """
 Gamma and related functions
 """
-from __future__ import print_function, absolute_import
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 from sage.libs.pynac.pynac import (register_symbol, symbol_table)

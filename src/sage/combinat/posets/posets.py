@@ -232,7 +232,7 @@ List of Poset methods
     :meth:`~FinitePoset.coxeter_transformation` | Return the matrix of the Auslander-Reiten translation acting on the Grothendieck group of the derived category of modules.
     :meth:`~FinitePoset.coxeter_smith_form` | Return the Smith form of the Coxeter transformation.
 
-**Miscellanous**
+**Miscellaneous**
 
 .. csv-table::
     :class: contentstable
@@ -4663,16 +4663,16 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         Return the chains of the poset.
 
-        A *chain* of a poset is a set of elements of the poset
-        that are pairwise comparable.
+        A *chain* of a poset is an increasing sequence of
+        distinct elements of the poset.
 
         INPUT:
 
         - ``element_constructor`` -- a function taking an iterable as
-          argument (default: ``list``)
+          argument (optional, default: ``list``)
 
         - ``exclude`` -- elements of the poset to be excluded
-          (default: ``None``)
+          (optional, default: ``None``)
 
         OUTPUT:
 
@@ -4705,14 +4705,11 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         .. SEEALSO:: :meth:`maximal_chains`, :meth:`antichains`
         """
-        vertex_to_element = self._vertex_to_element
-
-        def f(chain):
-            return element_constructor(vertex_to_element(x) for x in chain)
-        if not(exclude is None):
+        if exclude is not None:
             exclude = [self._element_to_vertex(x) for x in exclude]
-        result = self._hasse_diagram.chains(element_class=f,
-                                            exclude=exclude)
+        result = self._hasse_diagram.chains(element_class=element_constructor,
+                                            exclude=exclude,
+                                            conversion=self._elements)
         result.rename("Set of chains of %s" % self)
         return result
 
@@ -8470,6 +8467,32 @@ class FinitePoset(UniqueRepresentation, Parent):
         L = list(self)
         g = libgap.Poset(L, [self.principal_order_filter(x) for x in L])
         return g
+
+    def _macaulay2_init_(self, macaulay2=None):
+        """
+        Conversion to Macaulay2.
+
+        This uses the ``Posets`` package.
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: P._macaulay2_init_()
+            'needsPackage "Posets";poset({0,1,2,3,4},{{0,1},{0,2},{1,4},{2,3},{3,4}})'
+
+            sage: P = Poset({1:[2],2:[]})
+            sage: macaulay2('needsPackage "Posets"')   # optional - macaulay2
+            Posets
+            sage: macaulay2(P)   # optional - macaulay2
+            Relation Matrix: | 1 1 |
+                             | 0 1 |
+        """
+        H = self._hasse_diagram
+        txt = 'needsPackage "Posets";'
+        txt += "poset({%s},{" % ','.join(str(x) for x in H)
+        txt += ",".join("{%s,%s}" % (str(x), str(y))
+                        for x, y in H.cover_relations_iterator())
+        return txt + "})"
 
 
 FinitePoset._dual_class = FinitePoset

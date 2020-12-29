@@ -43,7 +43,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.misc.cachefunc import cached_function, cached_method, cached_in_parent_method
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract

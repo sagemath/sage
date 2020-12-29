@@ -40,7 +40,7 @@ fields:
 
 * ``sets`` (``uint64_t **``) -- ``sets[i]`` points toward the ``limbs``
   blocks encoding set `i`. Note also that ``sets[i][limbs]`` is equal to the
-  cardinality of ``set[i]``, so that ``sets`` has lenth
+  cardinality of ``set[i]``, so that ``sets`` has length
   ``m*(limbs+1)*sizeof(uint64_t)``.
 
 * ``names`` (``int *``) -- associates an integer 'name' to each of the ``n``
@@ -108,14 +108,14 @@ AUTHORS:
 Methods
 -------
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Nathann Cohen <nathann.cohen@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from libc.stdlib cimport qsort
 from libc.stdint cimport uint64_t
@@ -131,7 +131,7 @@ ctypedef struct hypergraph:
 
 cdef inline int bs_get(uint64_t * bitset, int index):
     r"""
-    Returs a bit of a bitset
+    Return a bit of a bitset
     """
     return (bitset[index/64]>>(index%64))&1
 

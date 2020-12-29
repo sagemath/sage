@@ -15,7 +15,6 @@ Cartesian Products
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.sets.set_from_iterator import EnumeratedSetFromIterator
@@ -101,6 +100,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             category = category.Finite() if self.is_finite() else category.Infinite()
         except ValueError: # Unable to determine if it is finite or not
             pass
+
         def iterfunc():
             # we can not use self.__iterate__ directly because
             # that leads to an infinite recursion in __eq__
@@ -205,7 +205,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: len(C)
             Traceback (most recent call last):
             ...
-            TypeError: cardinality does not fit into a Python int.
+            TypeError: cardinality does not fit into a Python int
             sage: C = CartesianProduct_iters(ZZ, [])
             sage: len(C)
             0

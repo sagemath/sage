@@ -1,0 +1,3 @@
+"pkgconfig(libpcre)"
+"pkgconfig(libpcreposix)"
+"pkgconfig(libpcrecpp)"

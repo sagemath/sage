@@ -463,7 +463,6 @@ Test that Maxima gracefully handles this syntax error (:trac:`17667`)::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 import os
 import re

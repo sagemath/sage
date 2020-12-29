@@ -27,7 +27,7 @@ A framework for Groebner basis computations with Boolean polynomials,
 Electronic Proceedings of the MEGA 2007 - Effective Methods in Algebraic Geometry, Strobl, Austria, June 2007.
 http://www.ricam.oeaw.ac.at/mega2007/electronic/electronic.html
 """
-
+from sage.misc.lazy_import import lazy_import
 from .PyPolyBoRi import *
 
 # Get all-inclusive groebner routine
@@ -47,8 +47,9 @@ def plist(a, b):
 # Advertised reimports
 # ... any from below? ...
 
+
 # Deprecated reimports
-from sage.misc.lazy_import import lazy_import
+
 lazy_import('sage.rings.polynomial.pbori.pbori',
             ['BooleConstant',
              'BooleSet',

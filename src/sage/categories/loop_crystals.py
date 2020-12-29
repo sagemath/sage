@@ -11,7 +11,6 @@ Loop Crystals
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, division, absolute_import
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method

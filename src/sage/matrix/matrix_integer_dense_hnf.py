@@ -5,7 +5,6 @@ AUTHORS:
 
 - Clement Pernet and William Stein (2008-02-07): initial version
 """
-from __future__ import print_function
 
 from copy import copy
 

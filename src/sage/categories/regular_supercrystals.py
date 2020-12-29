@@ -13,7 +13,6 @@ Regular Supercrystals
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton

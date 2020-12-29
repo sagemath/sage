@@ -43,7 +43,6 @@ REFERENCES:
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
 ################################################################################
-from __future__ import print_function, absolute_import
 
 from . import graph
 import os
@@ -942,7 +941,6 @@ class GraphDatabase(SQLDatabase):
         This is a helper method for the ``interactive_query`` method and should
         not be called directly.
         """
-        from sagenb.notebook.interact import input_grid
         function_name = '__temporary_interact_function'
         arg = ['%s=%s'%(word, kwds[word]) for word in kwds]
         boxes = ["%s=input_grid(1,2,['=',%s])"%(word, kwds[word]) for word in kwds]

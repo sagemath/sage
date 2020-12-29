@@ -26,8 +26,10 @@ AUTHORS:
 # ****************************************************************************
 from sage.rings.all import ZZ, Integer
 from sage.arith.all import binomial
-from .combinat import CombinatorialClass
 from .integer_vector import IntegerVectors
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+from sage.structure.parent import Parent
+from sage.misc.persist import register_unpickle_override
 
 
 def Combinations(mset, k=None):
@@ -40,7 +42,7 @@ def Combinations(mset, k=None):
     objects of `M`, where every object can appear at most as many
     times as it appears in `M`.
 
-    The combinatorial classes correctly handle the cases where mset has
+    The combinatorial classes correctly handle the cases where ``mset`` has
     duplicate elements.
 
     EXAMPLES::
@@ -176,7 +178,7 @@ def Combinations(mset, k=None):
             return Combinations_msetk(mset, k)
 
 
-class Combinations_mset(CombinatorialClass):
+class Combinations_mset(Parent):
     def __init__(self, mset):
         """
         TESTS::
@@ -186,6 +188,7 @@ class Combinations_mset(CombinatorialClass):
             True
         """
         self.mset = mset
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __contains__(self, x):
         """
@@ -206,6 +209,32 @@ class Combinations_mset(CombinatorialClass):
 
         return all(i in self.mset for i in x) and len(set(x)) == len(x)
 
+    def __eq__(self, other):
+        """
+        Test for equality.
+
+        EXAMPLES::
+
+            sage: c = Combinations([1,2,2,3])
+            sage: c == Combinations((1,2,2,3))
+            True
+            sage: c == Combinations([3,4,4,6])
+            False
+        """
+        return isinstance(other, Combinations_mset) and self.mset == other.mset
+
+    def __ne__(self, other):
+        """
+        Test for unequality.
+
+        EXAMPLES::
+
+            sage: c = Combinations([1,2,2])
+            sage: c != Combinations([1,2,3,3])
+            True
+        """
+        return not(self == other)
+
     def __repr__(self):
         """
         TESTS::
@@ -223,8 +252,7 @@ class Combinations_mset(CombinatorialClass):
             [[], ['a'], ['b'], ['a', 'a'], ['a', 'b'], ['a', 'a', 'b']]
         """
         for k in range(len(self.mset) + 1):
-            for comb in Combinations_msetk(self.mset, k):
-                yield comb
+            yield from Combinations_msetk(self.mset, k)
 
     def cardinality(self):
         """
@@ -250,8 +278,7 @@ class Combinations_set(Combinations_mset):
             [[], [1], [2], [3], [1, 2], [1, 3], [2, 3], [1, 2, 3]]
         """
         for k in range(len(self.mset) + 1):
-            for comb in Combinations_setk(self.mset, k):
-                yield comb
+            yield from Combinations_setk(self.mset, k)
 
     def unrank(self, r):
         """
@@ -288,7 +315,7 @@ class Combinations_set(Combinations_mset):
         return r
 
 
-class Combinations_msetk(CombinatorialClass):
+class Combinations_msetk(Parent):
     def __init__(self, mset, k):
         """
         TESTS::
@@ -299,6 +326,7 @@ class Combinations_msetk(CombinatorialClass):
         """
         self.mset = mset
         self.k = k
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __contains__(self, x):
         """
@@ -321,6 +349,33 @@ class Combinations_msetk(CombinatorialClass):
         except TypeError:
             return False
         return x in Combinations_mset(self.mset) and len(x) == self.k
+
+    def __eq__(self, other):
+        """
+        Test for equality.
+
+        EXAMPLES::
+
+            sage: c = Combinations([1,2,2,3],3)
+            sage: c == Combinations((1,2,2,3), 3)
+            True
+            sage: c == Combinations([1,2,2,3], 2)
+            False
+        """
+        return (isinstance(other, Combinations_msetk) and
+                self.mset == other.mset and self.k == other.k)
+
+    def __ne__(self, other):
+        """
+        Test for unequality.
+
+        EXAMPLES::
+
+            sage: c = Combinations([1,2,2,3],3)
+            sage: c != Combinations((1,2,2,3), 2)
+            True
+        """
+        return not(self == other)
 
     def __repr__(self):
         """
@@ -532,7 +587,7 @@ def from_rank(r, n, k):
     Return the combination of rank ``r`` in the subsets of
     ``range(n)`` of size ``k`` when listed in lexicographic order.
 
-    The algorithm used is based on factoradics and presented in [DGH2020].
+    The algorithm used is based on factoradics and presented in [DGH2020]_.
     It is there compared to the other from the literature.
 
     EXAMPLES::
@@ -666,5 +721,4 @@ class ChooseNK(Combinations_setk):
         Combinations_setk.__init__(self, list(range(state['_n'])), state['_k'])
 
 
-from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.choose_nk", "ChooseNK", ChooseNK)
