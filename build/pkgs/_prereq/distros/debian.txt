@@ -1,7 +1,7 @@
-# This file, build/pkgs/debian.txt, contains names of Debian/Ubuntu packages
+# This file, build/pkgs/_prereq/distros/debian.txt, contains names of Debian/Ubuntu packages
 # needed for installation of Sage from source.
 #
-# In addition, the files build/pkgs/SPKG/debian.txt contain the names
+# In addition, the files build/pkgs/SPKG/distros/debian.txt contain the names
 # of packages that provide the equivalent of SPKG.
 #
 # If distinctions between different distributions need to be made,

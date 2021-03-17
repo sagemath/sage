@@ -1,7 +1,7 @@
-# This file, build/pkgs/opensuse.txt, contains names of OpenSuse packages
+# This file, build/pkgs/_prereq/distros/opensuse.txt, contains names of OpenSuse packages
 # needed for installation of Sage from source.
 #
-# In addition, the files build/pkgs/SPKG/opensuse.txt contain the names
+# In addition, the files build/pkgs/SPKG/distros/opensuse.txt contain the names
 # of packages that provide the equivalent of SPKG.
 #
 # See build/bin/sage-spkg, where this information is processed

@@ -1,4 +1,4 @@
-# This file, build/pkgs/freebsd.txt, contains names of FreeBSD packages
+# This file, build/pkgs/_prereq/distros/freebsd.txt, contains names of FreeBSD packages
 # needed for installation of Sage from source.
 #
 # In addition, the files build/pkgs/SPKG/distros/freebsd.txt contain the

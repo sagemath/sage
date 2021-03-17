@@ -1,7 +1,7 @@
-# This file, build/pkgs/cygwin.txt, contains name Cygwin packages
+# This file, build/pkgs/_prereq/distros/cygwin.txt, contains name Cygwin packages
 # needed for installation of Sage from source.
 #
-# In addition, the files build/pkgs/SPKG/cygwin.txt contain the names
+# In addition, the files build/pkgs/SPKG/distros/cygwin.txt contain the names
 # of packages that provide the equivalent of SPKG.
 #
 # See build/bin/sage-spkg, where this information is processed
