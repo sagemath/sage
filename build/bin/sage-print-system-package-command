@@ -102,6 +102,17 @@ case $system:$command in
         [ -n "$SAGE_ROOT" ] || SAGE_ROOT=.
         echo "${PROMPT}source $SAGE_ROOT/.homebrew-build-env"
         ;;
+    macports*:setup-build-env)
+        $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE echo "${COMMENT}MacPorts does not provide unversioned gcc and gfortran executables by default"
+        $IF_VERBOSE echo "${COMMENT}To make gfortran available (and build with gcc from XCode), use:"
+        $IF_VERBOSE echo "${COMMENT}"
+        print_shell_command "export FC=gfortran-mp-10"
+        $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE echo "${COMMENT}Alternatively, to use gcc and gfortran from Macports, use:"
+        $IF_VERBOSE echo "${COMMENT}"
+        $IF_VERBOSE print_shell_command "${SUDO} port select --set gcc mp-gcc10"
+        ;;
     *:setup-build-env)
         # Nothing needed
         ;;
