@@ -65,6 +65,52 @@ _Semirings = Semirings()
 _Fields = Fields()
 
 
+def _modN_matrix_class(N, nrows, ncols, sparse=False):
+    r"""
+    Returns the default matrix class for use over ``Zmod(N)``.
+
+    EXAMPLES::
+
+        sage: from sage.matrix.matrix_space import _modN_matrix_class
+        sage: _modN_matrix_class(101, 101, 101)
+        <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+        sage: _modN_matrix_class(1001, 1001, 1001)
+        <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+        sage: _modN_matrix_class(97, 97, 97)
+        <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+        sage: _modN_matrix_class(97, 97, 97, sparse=True)
+        <class 'sage.matrix.matrix_modn_sparse.Matrix_modn_sparse'>
+        sage: _modN_matrix_class(2^64, 2, 2)
+        <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+        sage: _modN_matrix_class(2^64, 2, 2, sparse=True)
+        <class 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
+    """
+    # FLINT performs better for small dimensions; the following are approximate crossovers
+    # for square matrices against modn_dense_double
+    # 100 for echelon form
+    # 20 for charpoly
+    # 1000 for inverses
+    # 2 for right_kernel
+    # 250 for multiplication
+    if sparse:
+        if N < matrix_modn_sparse.MAX_MODULUS:
+            return matrix_modn_sparse.Matrix_modn_sparse
+        else:
+            return matrix_generic_sparse.Matrix_generic_sparse
+    else:
+        from . import matrix_modn_dense_double, matrix_modn_dense_float, matrix_modn_dense_flint
+        if N > sys.maxsize:
+            return matrix_generic_dense.Matrix_generic_dense
+        elif N == 2:
+            return matrix_mod2_dense.Matrix_mod2_dense
+        if max(nrows, ncols) <= 100:
+            return matrix_modn_dense_flint.Matrix_modn_dense_flint
+        if N < matrix_modn_dense_float.MAX_MODULUS:
+            return matrix_modn_dense_float.Matrix_modn_dense_float
+        if N < matrix_modn_dense_double.MAX_MODULUS:
+            return matrix_modn_dense_double.Matrix_modn_dense_double
+        return matrix_modn_dense_flint.Matrix_modn_dense_flint
+
 def get_matrix_class(R, nrows, ncols, sparse, implementation):
     r"""
     Return a matrix class according to the input.
@@ -151,7 +197,22 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
         Traceback (most recent call last):
         ...
         ValueError: 'linbox-double' matrices can only deal with order < 94906266
-
+        sage: type(matrix(SR, 2, 2, 0))
+        <type 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+        sage: type(matrix(GF(7), 2, range(4)))
+        <class 'sage.matrix.matrix_modn_dense_flint.Matrix_modn_dense_flint'>
+        sage: type(matrix(GF(7), 101))
+        <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+        sage: type(matrix(GF(16007), 101))
+        <type 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+        sage: type(matrix(CBF, 2, range(4)))
+        <type 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
+        sage: type(matrix(GF(2), 2, range(4)))
+        <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+        sage: type(matrix(GF(64,'z'), 2, range(4)))
+        <type 'sage.matrix.matrix_gf2e_dense.Matrix_gf2e_dense'>
+        sage: type(matrix(GF(125,'z'), 2, range(4)))     # optional: meataxe
+        <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
         sage: type(matrix(SR, 2, 2, 0))                                                 # needs sage.symbolic
         <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
         sage: type(matrix(SR, 2, 2, 0, sparse=True))                                    # needs sage.symbolic
@@ -317,7 +378,10 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             if R is sage.rings.rational_field.QQ:
                 from . import matrix_rational_dense
                 return matrix_rational_dense.Matrix_rational_dense
-            raise ValueError("'flint' matrices are only available over the integers or the rationals")
+            if R.order() < 18446744073709551615:  # TODO: Do we need to check if the system is 64 bit?
+                from . import matrix_modn_dense_flint
+                return matrix_modn_dense_flint.Matrix_modn_dense_flint
+            raise ValueError("'flint' matrices are only available over the integers, the rationals and Z/N with N < 2^64 - 1")
 
         if implementation == 'm4ri':
             if R.is_field() and R.characteristic() == 2 and R.order() <= 65536:
