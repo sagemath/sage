@@ -1,7 +1,6 @@
 """
 Set Species
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -16,7 +15,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from .species import GenericCombinatorialSpecies
 from .generating_series import factorial_stream, _integers_from

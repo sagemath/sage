@@ -36,11 +36,11 @@ REFERENCES:
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
-from sage.rings.integer import Integer
 from sage.categories.modules import Modules
 from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
 from sage.manifolds.differentiable.multivectorfield import (
                                        MultivectorField, MultivectorFieldParal)
+
 
 class MultivectorModule(UniqueRepresentation, Parent):
     r"""
@@ -99,7 +99,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         sage: latex(A)
         A^{2}\left(M\right)
 
-    ``A`` is nothing but the second exterior power of of ``XM``, i.e.
+    ``A`` is nothing but the second exterior power of ``XM``, i.e.
     we have `A^{2}(M) = \Lambda^2(\mathfrak{X}(M))`::
 
         sage: A is XM.exterior_power(2)
@@ -301,8 +301,12 @@ class MultivectorModule(UniqueRepresentation, Parent):
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, (MultivectorField, MultivectorFieldParal)):
             # coercion by domain restriction
             if (self._degree == comp._tensor_type[0]
@@ -313,6 +317,9 @@ class MultivectorModule(UniqueRepresentation, Parent):
             else:
                 raise TypeError("cannot convert the {} ".format(comp) +
                                 "to an element of {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         # standard construction
         resu = self.element_class(self._vmodule, self._degree,
                                   name=name, latex_name=latex_name)
@@ -390,13 +397,13 @@ class MultivectorModule(UniqueRepresentation, Parent):
              manifold M
 
         """
-        zero = self.element_class(self._vmodule, self._degree,
-                                  name='zero', latex_name='0')
         zero = self._element_constructor_(name='zero', latex_name='0')
         for frame in self._domain._frames:
             if self._dest_map.restrict(frame._domain) == frame._dest_map:
                 zero.add_comp(frame)
                 # (since new components are initialized to zero)
+        zero._is_zero = True  # This element is certainly zero
+        zero.set_immutable()
         return zero
 
     #### End of Parent methods
@@ -422,7 +429,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
             description += "on the {}".format(self._domain)
         else:
             description += "along the {} mapped into the {}".format(
-                                      elf._domain, self._ambient_domain)
+                                      self._domain, self._ambient_domain)
         return description
 
     def _latex_(self):
@@ -442,7 +449,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
         if self._latex_name is None:
             return r'\mbox{' + str(self) + r'}'
         else:
-           return self._latex_name
+            return self._latex_name
 
     def base_module(self):
         r"""
@@ -724,8 +731,12 @@ class MultivectorFreeModule(ExtPowerFreeModule):
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, (MultivectorField, MultivectorFieldParal)):
             # coercion by domain restriction
             if (self._degree == comp._tensor_type[0]
@@ -736,6 +747,9 @@ class MultivectorFreeModule(ExtPowerFreeModule):
             else:
                 raise TypeError("cannot convert the {} ".format(comp) +
                                 "to a multivector field in {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         # standard construction
         resu = self.element_class(self._fmodule, self._degree, name=name,
                                   latex_name=latex_name)

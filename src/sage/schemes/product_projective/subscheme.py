@@ -380,8 +380,8 @@ class AlgebraicScheme_subscheme_product_projective(AlgebraicScheme_subscheme_pro
             sage: PP.<x,y,u,v> = ProductProjectiveSpaces(QQ, [1,1])
             sage: G = PP.subscheme([(x^2 + 1/4*y^2)*v - y^2*u])
             sage: D = PP.subscheme([x*v - y*u])
-            sage: G.intersection(D).rational_points()
-            [(1 : 0 , 1 : 0), (1/2 : 1 , 1/2 : 1)]
+            sage: sorted(G.intersection(D).rational_points())
+            [(1/2 : 1 , 1/2 : 1), (1 : 0 , 1 : 0)]
             sage: Q = PP([1/2,1,1/2,1])
             sage: G.intersection_multiplicity(D, Q)
             2

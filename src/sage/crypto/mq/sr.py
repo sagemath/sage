@@ -304,10 +304,6 @@ REFERENCES:
 
 - [MR2002]_
 """
-# python3
-from __future__ import division, print_function, absolute_import
-from six.moves import range
-from six import integer_types
 
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
@@ -317,7 +313,7 @@ from sage.structure.element import is_Matrix
 from sage.matrix.constructor import Matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
 
-from sage.misc.misc import get_verbose
+from sage.misc.verbose import get_verbose
 from sage.misc.flatten import flatten
 
 from sage.modules.vector_modn_dense import Vector_modn_dense
@@ -466,7 +462,7 @@ class SR_generic(MPolynomialSystemGenerator):
         self._reverse_variables = bool(kwargs.get("reverse_variables", True))
 
         with AllowZeroInversionsContext(self):
-            sub_byte_lookup = dict([(e, self.sub_byte(e)) for e in self._base])
+            sub_byte_lookup = dict([(v, self.sub_byte(v)) for v in self._base])
         self._sub_byte_lookup = sub_byte_lookup
 
         if self._gf2:
@@ -1265,6 +1261,7 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: k = sr.base_ring()
             sage: plain = '3243f6a8885a308d313198a2e0370734'
             sage: key = '2b7e151628aed2a6abf7158809cf4f3c'
+            sage: from sage.misc.verbose import set_verbose
             sage: set_verbose(2)
             sage: cipher = sr(plain, key)
             R[01].start   193DE3BEA0F4E22B9AC68D2AE9F84808
@@ -1643,7 +1640,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         """
         gd = self.variable_dict()
-        return tuple([gd[e] for e in self.varstrs(name, nr, rc, e)])
+        return tuple([gd[s] for s in self.varstrs(name, nr, rc, e)])
 
     def variable_dict(self):
         """
@@ -1832,7 +1829,7 @@ class SR_generic(MPolynomialSystemGenerator):
         if reverse_variables:
             names +=  self.varstrs("k", 0, r*c, e)
 
-        #from sage.rings.polynomial.pbori import BooleanPolynomialRing
+        #from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
 
         if self._gf2 and self._polybori:
             return BooleanPolynomialRing(2*n*r*c*e + (n+1)*r*c*e + n*r*e, names, order=self._order)
@@ -2110,7 +2107,7 @@ class SR_generic(MPolynomialSystemGenerator):
             if d is None:
                 data.append( None )
             elif isinstance(d, (tuple, list)):
-                if isinstance(d[0], integer_types):
+                if isinstance(d[0], int):
                     d = [GF(2)(_) for _ in d]
                 if len(d) == r*c*e and (d[0].parent() is R or d[0].parent() == R):
                     data.append( Matrix(R,r*c*e,1,d) )
@@ -2498,13 +2495,12 @@ class SR_gf2n(SR_generic):
         r = self._r
         c = self._c
         e = self._e
-        n = self._n
 
         if l is None:
             l = r*c
 
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+i]**2 - _vars[e*j+(i+1)%e]   for j in range(l)  for i in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+(k+1)%e]   for j in range(l)  for k in range(e)]
 
 class SR_gf2(SR_generic):
     def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -2674,7 +2670,7 @@ class SR_gf2(SR_generic):
             True
         """
         e = self.e
-        V = self.k.vector_space()
+        V = self.k.vector_space(map=False)
 
         if is_Matrix(l):
             l2 = l.transpose().list()
@@ -3225,7 +3221,6 @@ class SR_gf2(SR_generic):
         r = self._r
         c = self._c
         e = self._e
-        n = self._n
 
         if l is None:
             l = r*c
@@ -3233,7 +3228,7 @@ class SR_gf2(SR_generic):
         if self._polybori:
             return []
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+i]**2 - _vars[e*j+i]   for j in range(l)  for i in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+k]   for j in range(l)  for k in range(e)]
 
 class SR_gf2_2(SR_gf2):
     """

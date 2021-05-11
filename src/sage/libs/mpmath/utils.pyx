@@ -3,19 +3,18 @@ Utilities for Sage-mpmath interaction
 
 Also patches some mpmath functions for speed
 """
-from __future__ import print_function, absolute_import
 
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.rings.integer cimport Integer
 from sage.rings.real_mpfr cimport RealNumber
-from sage.rings.complex_number cimport ComplexNumber
+from sage.rings.complex_mpfr cimport ComplexNumber
 from sage.structure.element cimport Element
 
 from sage.libs.mpfr cimport *
 from sage.libs.gmp.all cimport *
 
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.real_mpfr cimport RealField
 
 cpdef int bitcount(n):
@@ -403,7 +402,7 @@ def call(func, *args, **kwargs):
         sage: a.call(a.polylog, 2, 1/2, parent=CC)
         0.582240526465012
         sage: type(_)
-        <type 'sage.rings.complex_number.ComplexNumber'>
+        <type 'sage.rings.complex_mpfr.ComplexNumber'>
         sage: a.call(a.polylog, 2, 1/2, parent=RDF)
         0.5822405264650125
         sage: type(_)

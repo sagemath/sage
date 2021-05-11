@@ -260,6 +260,17 @@ cdef inline int celement_mul(GF2X_c* res, GF2X_c* a, GF2X_c* b, long parent) exc
     """
     GF2X_mul(res[0], a[0], b[0])
 
+cdef inline int celement_truncate(GF2X_c* res, GF2X_c* a, long len, long parent) except -2:
+    """
+    EXAMPLES::
+
+        sage: P.<x> = GF(2)[]
+        sage: p = x^5 + x^3 + x^2 + x + 1
+        sage: p.truncate(2)   # indirect doctest
+        x + 1
+    """
+    GF2X_trunc(res[0], a[0], len)
+
 cdef inline int celement_div(GF2X_c* res, GF2X_c* a, GF2X_c* b, long parent) except -2:
     """
     EXAMPLES::

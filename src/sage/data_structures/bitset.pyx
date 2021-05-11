@@ -30,9 +30,8 @@ linear in ``capacity``.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
-include "bitset.pxi"
+from .bitset_base cimport *
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 
@@ -279,7 +278,7 @@ cdef class FrozenBitset:
         sage: FrozenBitset("110110", capacity=-2)
         Traceback (most recent call last):
         ...
-        OverflowError: can't convert negative value to mp_bitcnt_t
+        OverflowError: can...t convert negative value to mp_bitcnt_t
     """
     def __cinit__(self, iter=None, capacity=None):
         """
@@ -385,7 +384,7 @@ cdef class FrozenBitset:
                 raise ValueError("Bitsets must not be empty")
             if capacity is None:
                 bitset_realloc(self._bitset, len(iter))
-            elif self._bitset.size != len(iter):
+            elif self._bitset.size != <mp_bitcnt_t>len(iter):
                 raise ValueError("bitset capacity does not match passed string")
             bitset_from_str(self._bitset, iter)
         else:  # an iterable
@@ -497,7 +496,7 @@ cdef class FrozenBitset:
             98
         """
         cdef FrozenBitset temp
-        if self._bitset.size >= capacity:
+        if self._bitset.size >= <mp_bitcnt_t>capacity:
             return self
         else:
             temp = self._new(self._bitset.size)
@@ -695,16 +694,14 @@ cdef class FrozenBitset:
         if other is None:
             raise ValueError("other cannot be None")
         cdef FrozenBitset left, right
-        if self._bitset.size == other._bitset.size:
+        if self._bitset.size <= other._bitset.size:
             left = self
-            right = other
-        elif self._bitset.size < other._bitset.size:
-            left = self._larger_capacity_(other._bitset.size)
             right = other
         else:
             left = self
             right = other._larger_capacity_(self._bitset.size)
 
+        # Assumes ``left.size <= right.size``.
         return bitset_issubset(left._bitset, right._bitset)
 
     cpdef bint issuperset(self, FrozenBitset other) except -1:
@@ -730,16 +727,14 @@ cdef class FrozenBitset:
         if other is None:
             raise ValueError("other cannot be None")
         cdef FrozenBitset left, right
-        if self._bitset.size == other._bitset.size:
+        if self._bitset.size >= other._bitset.size:
             left = self
-            right = other
-        elif self._bitset.size < other._bitset.size:
-            left = self._larger_capacity_(other._bitset.size)
             right = other
         else:
-            left = self
-            right = other._larger_capacity_(self._bitset.size)
+            left = self._larger_capacity_(other._bitset.size)
+            right = other
 
+        # Assumes ``left.size >= right.size``.
         return bitset_issuperset(left._bitset, right._bitset)
 
     cpdef bint isdisjoint(self, FrozenBitset other) except -1:
@@ -765,28 +760,17 @@ cdef class FrozenBitset:
         cdef bint retval
         if other is None:
             raise ValueError("other cannot be None")
-        cdef FrozenBitset smaller, larger
-        cdef bitset_t temp
-        if self._bitset.size == other._bitset.size:
-            bitset_init(temp, self._bitset.size)
-            bitset_intersection(temp, self._bitset, other._bitset)
-            retval = bitset_isempty(temp)
-            bitset_free(temp)
-            return retval
-        elif self._bitset.size < other._bitset.size:
-            smaller = self
-            larger = other
-        else:
-            smaller = other
-            larger = self
+        cdef FrozenBitset left, right
 
-        bitset_init(temp, smaller._bitset.size)
-        bitset_copy(temp, smaller._bitset)
-        bitset_realloc(temp, larger._bitset.size)
-        bitset_intersection(temp, temp, larger._bitset)
-        retval = bitset_isempty(temp)
-        bitset_free(temp)
-        return retval
+        if self._bitset.size <= other._bitset.size:
+            left = self
+            right = other
+        else:
+            left = other
+            right = self
+
+        # Assumes ``left.size <= right.size``.
+        return bitset_are_disjoint(left._bitset, right._bitset)
 
     def __contains__(self, unsigned long n):
         """

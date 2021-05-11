@@ -45,7 +45,7 @@ from sage.modules.vector_integer_sparse cimport mpz_vector,  mpz_vector_get_entr
 
 ctypedef enum linbox_specifier:
     METHOD_DEFAULT              # no specification
-    METHOD_BLAS_ELIMINATION     # BlasElimination
+    METHOD_DENSE_ELIMINATION     # DenseElimination
     METHOD_SPARSE_ELIMINATION   # SparseElimination
     METHOD_BLACKBOX             # Blackbox
     METHOD_WIEDEMANN            # Wiedeman
@@ -54,10 +54,10 @@ ctypedef enum linbox_specifier:
 cdef inline linbox_specifier get_method(str algo) except ERROR:
     if algo is None or algo == "default":
         return METHOD_DEFAULT
-    elif algo == "blas_elimination" or \
-         algo == "linbox_blas_elimination" or \
-         algo == "LinBox::BlasElimination":
-        return METHOD_BLAS_ELIMINATION
+    elif algo == "dense_elimination" or \
+         algo == "linbox_dense_elimination" or \
+         algo == "LinBox::DenseElimination":
+        return METHOD_DENSE_ELIMINATION
     elif algo == "sparse_elimination" or \
          algo == "linbox_sparse_elimination" or \
          algo == "LinBox::SparseElimination":

@@ -11,7 +11,7 @@ AUTHORS:
 - Tim Joseph Dumol (2009-09-29): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Tim Dumol <tim@timdumol.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,14 +19,14 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import, print_function
+# ****************************************************************************
 
+import builtins
 import os
 import re
 import shutil
+import sys
 from tempfile import mkdtemp
-from sage.env import SAGE_DOC_SRC
 from sphinx.application import Sphinx
 
 
@@ -68,42 +68,67 @@ def sphinxify(docstring, format='html'):
         sage: assert n == len(sys.path)
     """
     srcdir = mkdtemp()
-    base_name = os.path.join(srcdir, 'docstring')
-    rst_name = base_name + '.rst'
+    outdir = mkdtemp()
+    src_base_name = os.path.join(srcdir, 'docstring')
+    out_base_name = os.path.join(outdir, 'docstring')
+    rst_name = src_base_name + '.rst'
 
     if format == 'html':
         suffix = '.html'
     else:
         suffix = '.txt'
-    output_name = base_name + suffix
+    output_name = out_base_name + suffix
 
     with open(rst_name, 'w') as filed:
         filed.write(docstring)
 
-    # Sphinx constructor: Sphinx(srcdir, confdir, outdir, doctreedir,
-    # buildername, confoverrides, status, warning, freshenv).
-    confdir = os.path.join(SAGE_DOC_SRC, 'en', 'introspect')
+    confdir = os.path.join(srcdir, 'en' , 'introspect')
+    os.makedirs(confdir)
+    with open(os.path.join(confdir, 'conf.py'), 'w') as filed:
+        filed.write(r"""
+from sage.docs.conf import *
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.mathjax', 'sphinx.ext.todo', 'sphinx.ext.extlinks']
 
-    open(os.path.join(srcdir, 'docutils.conf'), 'w').write(r"""
+templates_path = ['templates']
+html_static_path = ['static']
+
+html_use_modindex = False
+html_use_index = False
+html_split_index = False
+html_copy_source = False
+
+todo_include_todos = True""")
+    templatesdir = os.path.join(confdir, 'templates')
+    os.makedirs(templatesdir)
+    with open(os.path.join(templatesdir, 'layout.html'), 'w') as filed:
+        filed.write(r"""<div class="docstring">
+    {% block body %} {% endblock %}
+</div>""")
+    staticdir = os.path.join(confdir, 'static')
+    os.makedirs(staticdir)
+    with open(os.path.join(staticdir, 'empty'), 'w') as filed:
+        pass
+    with open(os.path.join(srcdir, 'docutils.conf'), 'w') as filed:
+        filed.write(r"""
 [parsers]
-smart_quotes = no
-""")
+smart_quotes = no""")
     doctreedir = os.path.join(srcdir, 'doctrees')
     confoverrides = {'html_context': {}, 'master_doc': 'docstring'}
 
-    import sys
     old_sys_path = list(sys.path)  # Sphinx modifies sys.path
-    sphinx_app = Sphinx(srcdir, confdir, srcdir, doctreedir, format,
+    # Sphinx constructor: Sphinx(srcdir, confdir, outdir, doctreedir,
+    # buildername, confoverrides, status, warning, freshenv).
+    sphinx_app = Sphinx(srcdir, confdir, outdir, doctreedir, format,
                         confoverrides, None, None, True)
     sphinx_app.build(None, [rst_name])
     sys.path = old_sys_path
 
     # We need to remove "_" from __builtin__ that the gettext module installs
-    from six.moves import builtins
     builtins.__dict__.pop('_', None)
 
     if os.path.exists(output_name):
-        output = open(output_name, 'r').read()
+        with open(output_name, 'r') as f:
+            output = f.read()
         output = output.replace('<pre>', '<pre class="literal-block">')
 
         # Translate URLs for media from something like
@@ -116,21 +141,22 @@ smart_quotes = no
                         'src="/doc/static/reference/media/\\2"',
                         output)
         # Remove spurious \(, \), \[, \].
-        output = output.replace('\\(', '').replace('\\)', '').replace('\\[', '').replace('\\]', '')
+        output = output.replace(r'\(', '').replace(r'\)', '').replace(r'\[', '').replace(r'\]', '')
     else:
-        print("BUG -- Sphinx error")
+        from warnings import warn
+        warn("Sphinx did not produce any output", Warning)
         if format == 'html':
             output = '<pre class="introspection">%s</pre>' % docstring
         else:
             output = docstring
 
     shutil.rmtree(srcdir, ignore_errors=True)
+    shutil.rmtree(outdir, ignore_errors=True)
 
     return output
 
 
 if __name__ == '__main__':
-    import sys
     if len(sys.argv) == 2:
         print(sphinxify(sys.argv[1]))
     else:

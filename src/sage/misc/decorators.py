@@ -25,11 +25,9 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from functools import (partial, update_wrapper, WRAPPER_ASSIGNMENTS,
                        WRAPPER_UPDATES)
-from six import iteritems
 from copy import copy
 
 from sage.misc.sageinspect import (sage_getsource, sage_getsourcelines,
@@ -102,10 +100,11 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
 
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
-        sage: sage_getfile(I.interreduced_basis)
-        '.../sage/interfaces/singular.py'
+        sage: sage_getfile(I.interreduced_basis)       # known bug
+        '.../sage/rings/polynomial/multi_polynomial_ideal.py'
         sage: sage_getsourcelines(I.interreduced_basis)
-        (['    @singular_gb_standard_options\n',
+        (['    @handle_AA_and_QQbar\n',
+          '    @singular_gb_standard_options\n',
           '    @libsingular_gb_standard_options\n',
           '    def interreduced_basis(self):\n',
           ...
@@ -401,7 +400,7 @@ class suboptions(object):
 
             # Collect all the relevant keywords in kwds
             # and put them in suboptions
-            for key, value in list(iteritems(kwds)):
+            for key, value in list(kwds.items()):
                 if key.startswith(self.name):
                     suboptions[key[len(self.name):]] = value
                     del kwds[key]

@@ -29,7 +29,7 @@ The vertex separation is defined on a digraph, but one can obtain from a graph
 is replaced by two edges `uv` and `vu` in `D`. The vertex separation of `D` is
 equal to the pathwidth of `G`, and the corresponding ordering of the vertices of
 `D`, also called a *layout*, encodes an optimal path-decomposition of `G`.
-This is a result of Kinnersley [Kin92]_ and Bodlaender [Bod98]_.
+This is a result of Kinnersley [Kin1992]_ and Bodlaender [Bod1998]_.
 
 
 **This module contains the following methods**
@@ -129,7 +129,7 @@ MILP formulation for the vertex separation
 
 We describe below a mixed integer linear program (MILP) for determining an
 optimal layout for the vertex separation of `G`, which is an improved version of
-the formulation proposed in [SP10]_. It aims at building a sequence `S_t` of
+the formulation proposed in [SP2010]_. It aims at building a sequence `S_t` of
 sets such that an ordering `v_1, ..., v_n` of the vertices correspond to
 `S_0=\{v_1\}, S_2=\{v_1,v_2\}, ..., S_{n-1}=\{v_1,...,v_n\}`.
 
@@ -179,7 +179,7 @@ Branch and Bound algorithm for the vertex separation
 
 We describe below the principle of a branch and bound algorithm (BAB) for
 determining an optimal ordering for the vertex separation of `G`, as proposed in
-[CMN14]_.
+[CMN2014]_.
 
 **Greedy steps:**
 
@@ -189,7 +189,7 @@ a prefix `P`. Let also `c(L)` be the cost of the ordering `L\in{\cal L}(V)` as
 defined above.
 
 Given a digraph `D=(V,A)`, a set `S\subset V`, and a prefix `P`, it has been
-proved in [CMN14]_ that `\min_{L\in{\cal L}_P(V)} c(L) = \min_{L\in{\cal
+proved in [CMN2014]_ that `\min_{L\in{\cal L}_P(V)} c(L) = \min_{L\in{\cal
 L}_{P+v}(V)} c(L)` holds in two (non exhaustive) cases:
 
 .. MATH::
@@ -233,30 +233,11 @@ permutation `P'` of `P` we have `\min_{L\in{\cal L}_{P'}(V)} c(L)\geq C`.
 
 Thus, given such a prefix `P` there is no need to explore any of the orderings
 starting with one of its permutations. To do so, we store `P` (as a set of
-vertices) to cut branches later. See [CMN14]_ for more details.
+vertices) to cut branches later. See [CMN2014]_ for more details.
 
 Since the number of stored sets can get very large, one can control the maximum
 length and the maximum number of stored prefixes.
 
-
-REFERENCES
-----------
-
-.. [Bod98] *A partial k-arboretum of graphs with bounded treewidth*, Hans
-  L. Bodlaender, Theoretical Computer Science 209(1-2):1-45, 1998.
-
-.. [Kin92] *The vertex separation number of a graph equals its path-width*,
-  Nancy G. Kinnersley, Information Processing Letters 42(6):345-350, 1992.
-
-.. [SP10] *Lightpath Reconfiguration in WDM networks*, Fernando Solano and
-  Michal Pioro, IEEE/OSA Journal of Optical Communication and Networking
-  2(12):1010-1021, 2010.
-
-.. [CMN14] *Experimental Evaluation of a Branch and Bound Algorithm for
-  computing Pathwidth*, David Coudert, Dorian Mazauric, and Nicolas Nisse. In
-  Symposium on Experimental Algorithms (SEA), volume 8504 of LNCS, Copenhagen,
-  Denmark, pages 46-58, June 2014,
-  https://hal.inria.fr/hal-00943549/document
 
 Authors
 -------
@@ -282,15 +263,13 @@ Methods
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from libc.string cimport memset
 from cysignals.memory cimport check_malloc, sig_malloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 from sage.graphs.graph_decompositions.fast_digraph cimport FastDigraph, compute_out_neighborhood_cardinality, popcount32
 from libc.stdint cimport uint8_t, int8_t
-include "sage/data_structures/binary_matrix.pxi"
+from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
 
 
@@ -354,7 +333,7 @@ def lower_bound(G):
 
     cdef FastDigraph FD = FastDigraph(G)
     cdef int * g = FD.graph
-    cdef int n = FD.n
+    cdef unsigned int n = <unsigned int>FD.n
 
     # minimums[i] is means to store the value of c'_{i+1}
     cdef uint8_t* minimums = <uint8_t*> check_malloc(n * sizeof(uint8_t))
@@ -777,7 +756,7 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
         sage: D = digraphs.Path(8)
         sage: print(vertex_separation(D))
         (0, [7, 6, 5, 4, 3, 2, 1, 0])
-        sage: D = DiGraph( random_DAG(30) )
+        sage: D = digraphs.RandomDirectedAcyclicGraph(10, .5)
         sage: vs,L = vertex_separation(D); vs
         0
         sage: K4 = DiGraph( graphs.CompleteGraph(4) )
@@ -789,7 +768,7 @@ def vertex_separation(G, algorithm="BAB", cut_off=None, upper_bound=None, verbos
         sage: D.add_edge(0, 4)
         sage: D.add_edge(0, 8)
         sage: print(vertex_separation(D))
-        (3, [8, 9, 10, 11, 4, 5, 6, 7, 0, 1, 2, 3])
+        (3, [10, 11, 8, 9, 4, 5, 6, 7, 0, 1, 2, 3])
 
     TESTS:
 
@@ -935,9 +914,7 @@ def vertex_separation_exp(G, verbose=False):
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import vertex_separation_exp
         sage: D=digraphs.DeBruijn(2,3)
-        sage: vertex_separation_exp(D)  # py2
-        (2, ['010', '110', '111', '011', '001', '000', '100', '101'])
-        sage: vertex_separation_exp(D)  # py3
+        sage: vertex_separation_exp(D)
         (2, ['000', '001', '100', '010', '101', '011', '110', '111'])
 
     Given a too large graph::
@@ -987,7 +964,7 @@ def vertex_separation_exp(G, verbose=False):
     return k, [g.int_to_vertices[i] for i in order]
 
 ##############################################################################
-# Actual algorithm, breadh-first search and updates of the costs of the sets #
+# Actual algorithm, breadth-first search and updates of the costs of the sets #
 ##############################################################################
 
 cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int cost):
@@ -1256,7 +1233,7 @@ def vertex_separation_MILP(G, integrality=False, solver=None, verbosity=0):
 
     This function uses a mixed integer linear program (MILP) for determining an
     optimal layout for the vertex separation of `G`. This MILP is an improved
-    version of the formulation proposed in [SP10]_. See the :mod:`module's
+    version of the formulation proposed in [SP2010]_. See the :mod:`module's
     documentation <sage.graphs.graph_decompositions.vertex_separation>` for more
     details on this MILP formulation.
 
@@ -1430,7 +1407,7 @@ def vertex_separation_BAB(G,
 
     This method implements the branch and bound algorithm for the vertex
     separation of directed graphs and the pathwidth of undirected graphs
-    proposed in [CMN14]_. The implementation is valid for both Graph and
+    proposed in [CMN2014]_. The implementation is valid for both Graph and
     DiGraph. See the documentation of the
     :mod:`~sage.graphs.graph_decompositions.vertex_separation` module.
 
@@ -1593,7 +1570,7 @@ def vertex_separation_BAB(G,
 
     # ==> Allocate and initialize some data structures
 
-    # We use a binary matrix to store the (di)graph. This way the neighborhoud
+    # We use a binary matrix to store the (di)graph. This way the neighborhood
     # of a vertex is stored in one bitset.
     cdef binary_matrix_t H
     cdef int i

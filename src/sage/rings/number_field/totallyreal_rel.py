@@ -70,20 +70,25 @@ discriminant `\le 17 \times 10^9`.
     [[16240385609L, x^9 - x^8 - 9*x^7 + 4*x^6 + 26*x^5 - 2*x^4 - 25*x^3 - x^2 + 7*x + 1, xF^3 + (-t^2 - 4*t + 1)*xF^2 + (t^2 + 3*t - 5)*xF + 3*t^2 + 11*t - 5]]    # 32-bit
     [[16240385609, x^9 - x^8 - 9*x^7 + 4*x^6 + 26*x^5 - 2*x^4 - 25*x^3 - x^2 + 7*x + 1, xF^3 + (-t^2 - 4*t + 1)*xF^2 + (t^2 + 3*t - 5)*xF + 3*t^2 + 11*t - 5]]     # 64-bit
 
+TESTS:
+
+Check that :trac:`27646` is fixed::
+
+    sage: L = enumerate_totallyreal_fields_all(6,435000) # long time
+
 AUTHORS:
 
 - John Voight (2007-11-03): Initial version.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein and John Voight
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.all import binomial, gcd, divisors
 from sage.rings.integer import Integer
@@ -111,7 +116,6 @@ def integral_elements_in_box(K, C):
     - `K` -- a totally real number field
     - `C` -- a list [[lower, upper], ...] of lower and upper bounds,
       for each embedding
-
 
     EXAMPLES::
 
@@ -149,23 +153,23 @@ def integral_elements_in_box(K, C):
 
     import numpy
     import numpy.linalg
-    L = numpy.array([ [v(b) for b in B] for v in Foo])
+    L = numpy.array([[v(b) for b in B] for v in Foo])
     Linv = numpy.linalg.inv(L)
-    Vi = [[C[0][0]],[C[0][1]]]
-    for i in range(1,d):
-        Vi = sum([ [v + [C[i][0]], v + [C[i][1]]] for v in Vi], [])
-    V = numpy.matrix(Linv)*(numpy.matrix(Vi).transpose())
+    Vi = [[C[0][0]], [C[0][1]]]
+    for i in range(1, d):
+        Vi = sum([[v + [C[i][0]], v + [C[i][1]]] for v in Vi], [])
+    V = numpy.matrix(Linv) * numpy.matrix(Vi).transpose()
     j = 0
     while j < 2**d:
         for i in range(d):
-            if V[i,j] < V[i,j+1]:
-                V[i,j] = math.floor(V[i,j])
-                V[i,j+1] = math.ceil(V[i,j+1])
+            if V[i, j] < V[i, j+1]:
+                V[i, j] = math.floor(V[i, j])
+                V[i, j+1] = math.ceil(V[i, j+1])
             else:
-                V[i,j] = math.ceil(V[i,j])
-                V[i,j+1] = math.floor(V[i,j+1])
+                V[i, j] = math.ceil(V[i, j])
+                V[i, j+1] = math.floor(V[i, j+1])
         j += 2
-    W0 = (Linv*numpy.array([Vi[0]]*d)).transpose()
+    W0 = (Linv*numpy.array([Vi[0]] * d)).transpose()
     W = (Linv*numpy.array([Vi[2**i] for i in range(d)])).transpose()
     for j in range(d):
         for i in range(d):
@@ -282,13 +286,13 @@ class tr_data_rel:
             anm1s = [[i] for i in range(0,m//2+1)]
             for i in range(1,self.d):
                 for j in range(len(anm1s)):
-                    anm1s[j] = [ anm1s[j] + [i] for i in range(m)]
+                    anm1s[j] = [anm1s[j] + [i] for i in range(m)]
                 anm1s = sum(anm1s, [])
             anm1s = [sum([Z_Fbasis[i] * aa[i] for i in range(self.d)]) for aa in anm1s]
             # Minimize trace in class.
             import numpy
             for i in range(len(anm1s)):
-                Q = [ [ v(m*x) for v in self.Foo] + [0] for x in Z_Fbasis] + [[v(anm1s[i]) for v in self.Foo] + [10**6]]
+                Q = [[v(m*x) for v in self.Foo] + [0] for x in Z_Fbasis] + [[v(anm1s[i]) for v in self.Foo] + [10**6]]
                 pari_string = '['+';'.join([','.join(["%s"%ii for ii in row]) for row in zip(*Q)])+']'
                 adj = pari(pari_string).qflll()[self.d]
                 anm1s[i] += sum([m*Z_Fbasis[ii]*int(adj[ii])//int(adj[self.d]) for ii in range(self.d)])
@@ -298,13 +302,14 @@ class tr_data_rel:
             self.k = m-2
 
             bl = math.ceil(1.7719*self.n)
-            br = max([1./m*(am1**2).trace() + \
-                            self.gamma*(1./(m**d)*self.B/self.dF)**(1./(self.n-d)) for am1 in anm1s])
+            br = max([1./m*(am1**2).trace() +
+                      self.gamma*(1./(m**d)*self.B/self.dF)**(1./(self.n-d))
+                      for am1 in anm1s])
             br = math.floor(br)
-            T2s = self.F._positive_integral_elements_with_trace([bl,br])
-            self.trace_elts.append([bl,br,T2s])
+            T2s = self.F._positive_integral_elements_with_trace([bl, br])
+            self.trace_elts.append([bl, br, T2s])
 
-        elif len(a) <= m+1:
+        elif len(a) <= m + 1:
             # First few coefficients have been specified.
             # The value of k is the largest index of the coefficients of a which is
             # currently unknown; e.g., if k == -1, then we can iterate
@@ -323,10 +328,10 @@ class tr_data_rel:
 
             # Bounds come from an application of Lagrange multipliers in degrees 2,3.
             self.b_lower = [-1./m*(v(self.a[m-1]) +
-                              (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
+                                   (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
             self.b_upper = [-1./m*(v(self.a[m-1]) -
-                              (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
-            if k < m-2:
+                                   (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
+            if k < m - 2:
                 bminmax = [lagrange_degree_3(n,v(self.a[m-1]),v(self.a[m-2]),v(self.a[m-3])) for v in self.Foo]
                 self.b_lower = bminmax[0]
                 self.b_upper = bminmax[1]
@@ -419,11 +424,11 @@ class tr_data_rel:
                         print(self.a[i], end="")
                     print("")
 
-                if k == m-2:
+                if k == m - 2:
                     # We only know the value of a[n-1], the trace.
                     bl = max(math.ceil(1.7719*self.n), ((self.a[m-1]**2).trace()*1./m))
                     br = 1./m*(self.a[m-1]**2).trace() + \
-                           self.gamma*(1./(m**d)*self.B/self.dF)**(1./(self.n-d))
+                         self.gamma*(1./(m**d)*self.B/self.dF)**(1./(self.n-d))
                     br = math.floor(br)
 
                     # Check for trivially empty.
@@ -479,9 +484,9 @@ class tr_data_rel:
 
                     # Initialize the second derivative.
                     self.b_lower = [-1./m*(v(self.a[m-1]) +
-                                      (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
+                                           (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
                     self.b_upper = [-1./m*(v(self.a[m-1]) -
-                                      (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
+                                           (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
                     self.beta[k] = [[self.b_lower[i], -self.Foo[i](self.a[m-1])/m, self.b_upper[i]] for i in range(d)]
                     self.gnk[k] = [0, (m-1)*self.a[m-1], m*(m-1)/2]
 
@@ -519,9 +524,9 @@ class tr_data_rel:
 
                     if k == m-3:
                         self.b_lower = [-1./m*(v(self.a[m-1]) +
-                                          (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
+                                               (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
                         self.b_upper = [-1./m*(v(self.a[m-1]) -
-                                          (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
+                                               (m-1.)*math.sqrt(v(self.a[m-1])**2 - 2.*(1+1./(m-1))*v(self.a[m-2]))) for v in self.Foo]
                     elif k == m-4:
                         # New bounds from Lagrange multiplier in degree 3.
                         bminmax = [lagrange_degree_3(m,v(self.a[m-1]),v(self.a[m-2]),v(self.a[m-3])) for v in self.Foo]
@@ -536,10 +541,14 @@ class tr_data_rel:
                     # Compute next g_(m-(k+1)), k times the formal integral of g_(m-k).
                     self.gnk[k] = [self.F.primitive_element()*0] + [self.gnk[k+1][i-1]*(k+1)/i for i in range(1,m-k+1)]
                     gnk = self.gnk[k]
-                    gnks = [ [v(gnk[len(gnk)-1-i]) for i in range(len(gnk))] for v in self.Foo ]
+                    gnks = [[v(gnk[len(gnk)-1-i])
+                             for i in range(len(gnk))]
+                            for v in self.Foo]
                     gnkm1 = self.gnk[k+1]
-                    gnkm1s = [ [v(gnkm1[len(gnkm1)-1-i]) for i in range(len(gnkm1))] for v in self.Foo ]
-                    mk = m-(k+1)
+                    gnkm1s = [[v(gnkm1[len(gnkm1)-1-i])
+                               for i in range(len(gnkm1))]
+                              for v in self.Foo]
+                    mk = m - (k + 1)
 
                     if verbose >= 2:
                         print("  gnk:", self.gnk[k])
@@ -548,21 +557,21 @@ class tr_data_rel:
                     # Compute upper and lower bounds which guarantee one retains
                     # a polynomial with all real roots.
                     betak = self.beta[k]
-                    akmin = [-numpy.polyval(gnks[j], betak[j][mk+1]) - \
-                               abs(numpy.polyval(gnkm1s[j], betak[j][mk+1]))*eps_global for j in range(self.d)]
+                    akmin = [-numpy.polyval(gnks[j], betak[j][mk+1]) -
+                             abs(numpy.polyval(gnkm1s[j], betak[j][mk+1]))*eps_global for j in range(self.d)]
                     for i in range(1,(mk+1)//2+1):
                         # Use the fact that f(z) <= f(x)+|f'(x)|eps if |x-z| < eps
                         # for sufficiently small eps, f(z) = 0, and f''(z) < 0.
                         akmin = [max(akmin[j],
-                                    -numpy.polyval(gnks[j], betak[j][mk+1-2*i]) - \
-                                       abs(numpy.polyval(gnkm1s[j], betak[j][mk+1-2*i])*eps_global)) for j in range(self.d)]
+                                     -numpy.polyval(gnks[j], betak[j][mk+1-2*i]) -
+                                     abs(numpy.polyval(gnkm1s[j], betak[j][mk+1-2*i])*eps_global)) for j in range(self.d)]
 
-                    akmax = [-numpy.polyval(gnks[j], betak[j][mk]) + \
-                               abs(numpy.polyval(gnkm1s[j], betak[j][mk]))*eps_global for j in range(self.d)]
-                    for i in range(1,mk//2+1):
+                    akmax = [-numpy.polyval(gnks[j], betak[j][mk]) +
+                             abs(numpy.polyval(gnkm1s[j], betak[j][mk]))*eps_global for j in range(self.d)]
+                    for i in range(1, mk//2+1):
                         akmax = [min(akmax[j],
-                                    -numpy.polyval(gnks[j], betak[j][mk-2*i]) + \
-                                       abs(numpy.polyval(gnkm1s[j], betak[j][mk-2*i])*eps_global)) for j in range(self.d)]
+                                     -numpy.polyval(gnks[j], betak[j][mk-2*i]) +
+                                     abs(numpy.polyval(gnkm1s[j], betak[j][mk-2*i])*eps_global)) for j in range(self.d)]
 
                     if verbose >= 2:
                         print("  akmin:", akmin)
@@ -580,9 +589,9 @@ class tr_data_rel:
                     self.amaxvals[k] = integral_elements_in_box(self.F, [[akmin[i],akmax[i]] for i in range(d)])
                     if k == 0:
                         a0s = [0, -sum([self.a[i] for i in range(1,m+1)]),
-                                  -sum([self.a[i]*(-1)**i for i in range(1,m+1)]),
-                                  -sum([self.a[i]*2**i for i in range(1,m+1)]),
-                                  -sum([self.a[i]*(-2)**i for i in range(1,m+1)])]
+                               -sum([self.a[i]*(-1)**i for i in range(1,m+1)]),
+                               -sum([self.a[i]*2**i for i in range(1,m+1)]),
+                               -sum([self.a[i]*(-2)**i for i in range(1,m+1)])]
                         for a0 in a0s:
                             try:
                                 self.amaxvals[0].remove(a0)
@@ -620,11 +629,11 @@ class tr_data_rel:
         return
 
 
-#***********************************************************************************************
-# Main routine
-#***********************************************************************************************
+# ****************************************************************************
+#                                 Main routine
+# ****************************************************************************
 
-def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
+def enumerate_totallyreal_fields_rel(F, m, B, a=[], verbose=0,
                                      return_seqs=False,
                                      return_pari_objects=True):
     r"""
@@ -746,7 +755,7 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
             sys.stdout = fsock
         # Else, print to screen
     f_out = [0]*m + [1]
-    T = tr_data_rel(F,m,B,a)
+    T = tr_data_rel(F, m, B, a)
     if verbose == 2:
         T.incr(f_out,verbose)
     else:
@@ -754,7 +763,8 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
 
     Fx = PolynomialRing(F, 'xF')
 
-    nfF = pari(str(F.defining_polynomial()).replace('x', str(F.primitive_element()) ) )
+    nfF = pari(str(F.defining_polynomial()).replace('x',
+                                                    str(F.primitive_element())))
     parit = pari(str(F.primitive_element()))
 
     while f_out[m] != 0:
@@ -770,7 +780,9 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
         nf = pari(f_str)
         if nf.poldegree('t') == 0:
             nf = nf.subst('x', 'x-t')
-        nf = nf.polresultant(nfF, parit)
+        nf = nf.polresultant(nfF, parit)  # either monic or -monic
+        if nf[n] == -1:
+            nf *= -1
         d = nf.poldisc()
         #counts[0] += 1
         if d > 0 and nf.polsturm() == n:
@@ -839,14 +851,14 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
                     ng = Kabs_pari.polredabs()
                     S[(d, ng)] = f
     elif m == 3:
-        if Fx([-1,6,-5,1]).is_irreducible():
-            K = F.extension(Fx([-1,6,-5,1]), 'tK')
+        if Fx([-1, 6, -5, 1]).is_irreducible():
+            K = F.extension(Fx([-1, 6, -5, 1]), 'tK')
             Kabs = K.absolute_field('tKabs')
             Kabs_pari = pari(Kabs.defining_polynomial())
             d = K.absolute_discriminant()
             if abs(d) <= B:
                 ng = Kabs_pari.polredabs()
-                S[(d, ng)] = Fx([-1,6,-5,1])
+                S[(d, ng)] = Fx([-1, 6, -5, 1])
 
     # Convert S to a sorted list of triples [d, fabs, f], taking care
     # not to use the comparison operators on PARI polynomials.
@@ -873,14 +885,15 @@ def enumerate_totallyreal_fields_rel(F, m, B, a = [], verbose=0,
     # Make sure to return elements that belong to Sage
     if return_seqs:
         return [[ZZ(x) for x in counts],
-                [[s[0], [QQ(x) for x in s[1].polrecip().Vec()], s[2].coefficients(sparse=False)]
-                 for s in S]
-               ]
+                [[s[0], [QQ(x) for x in s[1].polrecip().Vec()],
+                  s[2].coefficients(sparse=False)]
+                 for s in S]]
     elif return_pari_objects:
         return S
     else:
         Px = PolynomialRing(QQ, 'x')
         return [[s[0], Px([QQ(_) for _ in s[1].list()]), s[2]] for s in S]
+
 
 def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
                                      return_pari_objects=True):
@@ -929,7 +942,6 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
         sage: enumerate_totallyreal_fields_all(2, 10, return_pari_objects=False)[0][1].parent()
         Univariate Polynomial Ring in x over Rational Field
 
-
     In practice most of these will be found by
     :func:`~sage.rings.number_field.totallyreal.enumerate_totallyreal_fields_prim`,
     which is guaranteed to return all primitive fields but often returns
@@ -943,13 +955,13 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
         sage: enumerate_totallyreal_fields_all(8, 10^6)  # long time (about 2 s)
         []
     """
-
     S = []
-    counts = [0,0,0,0]
-    if len(divisors(n)) > 4:
+    counts = [0, 0, 0, 0]
+    div_n = divisors(n)
+    if len(div_n) > 4:
         raise ValueError("Only implemented for n = p*q with p,q prime")
-    for d in divisors(n):
-        if d > 1 and d < n:
+    for d in div_n:
+        if 1 < d < n:
             Sds = enumerate_totallyreal_fields_prim(d, int(math.floor((1.*B)**(1.*d/n))), verbose=verbose)
             for i in range(len(Sds)):
                 if verbose:
@@ -958,8 +970,8 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
                 F = NumberField(ZZx(Sds[i][1]), 't')
                 T = enumerate_totallyreal_fields_rel(F, n/d, B, verbose=verbose, return_seqs=return_seqs)
                 if return_seqs:
-                    for i in range(4):
-                        counts[i] += T[0][i]
+                    for k in range(4):
+                        counts[k] += T[0][k]
                     S += [[t[0],pari(t[1]).Polrev()] for t in T[1]]
                 else:
                     S += [[t[0],t[1]] for t in T]
@@ -1000,4 +1012,3 @@ def enumerate_totallyreal_fields_all(n, B, verbose=0, return_seqs=False,
         Px = PolynomialRing(QQ, 'x')
         return [[ZZ(s[0]), Px([QQ(_) for _ in s[1].list()])]
                 for s in S]
-

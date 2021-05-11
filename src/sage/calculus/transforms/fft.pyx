@@ -19,14 +19,13 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.memory cimport sig_malloc, sig_free
 
 import sage.plot.all
 import sage.libs.pari.all
 from sage.rings.integer import Integer
-from sage.rings.complex_number import ComplexNumber
+from sage.rings.complex_mpfr import ComplexNumber
 
 def FastFourierTransform(size, base_ring=None):
     """

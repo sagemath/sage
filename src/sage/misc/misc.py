@@ -37,13 +37,8 @@ Check the fix from :trac:`8323`::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
-from six.moves import range
-from six import integer_types
 
 import os
-import stat
-import sys
 import time
 import resource
 import pdb
@@ -51,6 +46,18 @@ import warnings
 import sage.misc.prandom as random
 from .lazy_string import lazy_string
 import sage.server.support
+
+from sage.misc.lazy_import import lazy_import
+
+lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
+            deprecation=29869)
+
+lazy_import("sage.misc.verbose", ["verbose", "set_verbose", "set_verbose_files",
+                                  "get_verbose_files", "unset_verbose_files", "get_verbose"],
+            deprecation=17815)
+
+lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
+            deprecation=29892)
 
 from sage.env import DOT_SAGE, HOSTNAME
 
@@ -61,7 +68,7 @@ LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 #################################################################
 
 
-def sage_makedirs(dirname):
+def sage_makedirs(dirname, mode=0o777):
     """
     Python version of ``mkdir -p``: try to create a directory, and also
     create all intermediate directories as necessary.  Succeed silently
@@ -89,32 +96,12 @@ def sage_makedirs(dirname):
             raise
 
 
-#################################################
-# Now that the variable DOT_SAGE has been set,
-# we make sure that the DOT_SAGE directory
-# has restrictive permissions, since otherwise
-# possibly just anybody can easily see every
-# command you type, since it is in the history,
-# and every worksheet you create, etc.
-# We do the following:
-#   1. If there is no DOT_SAGE, we create it.
-#   2. Check to see if the permissions on DOT_SAGE are
-#      sufficiently restrictive.  If not, we change them.
+# We create the DOT_SAGE directory (if it doesn't exist yet; note in particular
+# that it may already have been created by the bin/sage script) with
+# restrictive permissions, since otherwise possibly just anybody can easily see
+# every command you type.
 
-sage_makedirs(DOT_SAGE)
-
-if hasattr(os, 'chmod'):
-    _mode = os.stat(DOT_SAGE)[stat.ST_MODE]
-    _desired_mode = 0o40700     # drwx------
-    if _mode != _desired_mode:
-        # On Cygwin, if the sage directory is not in a filesystem mounted with
-        # 'acl' support, setting the permissions may fail silently, so only
-        # print the message after we've changed the permissions and confirmed
-        # that the change succeeded
-        os.chmod(DOT_SAGE, _desired_mode)
-        if os.stat(DOT_SAGE)[stat.ST_MODE] == _desired_mode:
-            print("Setting permissions of DOT_SAGE directory so only you "
-                  "can read and write it.")
+sage_makedirs(DOT_SAGE, mode=0o700)
 
 
 def try_read(obj, splitlines=False):
@@ -514,169 +501,6 @@ def walltime(t=0):
     return time.time() - t
 
 
-#################################################################
-# simple verbosity system
-#################################################################
-LEVEL = 0  # default
-
-verbose_files = []
-
-
-def verbose(mesg="", t=0, level=1, caller_name=None):
-    """
-    Print a message if the current verbosity is at least level.
-
-    INPUT:
-
-
-    -  ``mesg`` - str, a message to print
-
-    -  ``t`` - int, optional, if included, will also print
-       cputime(t), - which is the time since time t. Thus t should have
-       been obtained with t=cputime()
-
-    -  ``level`` - int, (default: 1) the verbosity level of
-       what we are printing
-
-    -  ``caller_name`` - string (default: None), the name
-       of the calling function; in most cases Python can deduce this, so
-       it need not be provided.
-
-
-    OUTPUT: possibly prints a message to stdout; also returns
-    cputime()
-
-    EXAMPLES::
-
-        sage: set_verbose(1)
-        sage: t = cputime()
-        sage: t = verbose("This is Sage.", t, level=1, caller_name="william")       # not tested
-        VERBOSE1 (william): This is Sage. (time = 0.0)
-        sage: set_verbose(0)
-    """
-    if level > LEVEL:
-        return cputime()
-
-    frame = sys._getframe(1).f_code
-    file_name = frame.co_filename
-    lineno = frame.co_firstlineno
-    if 'all' in verbose_files or level <= 0:
-        show = True
-    else:
-        show = False
-        for X in verbose_files:
-            if file_name.find(X) != -1:
-                show = True
-                break
-
-    if not show:
-        return cputime()
-
-    if t != 0 and mesg == "":
-        mesg = "Finished."
-
-    # see recipe 14.7 in Python Cookbook
-    if caller_name is None:
-        caller_name = frame.co_name
-        if caller_name == "?: ":
-            caller_name = ""
-    short_file_name = os.path.split(frame.co_filename)[1]
-    if '<' in short_file_name and '>' in short_file_name:
-        s = "verbose %s (%s) %s" % (level, caller_name, mesg)
-    else:
-        s = "verbose %s (%s: %s, %s) %s" % (level, lineno,
-                                            short_file_name, caller_name, mesg)
-    if t != 0:
-        s = s + " (time = %s)" % cputime(t)
-    print(s)
-    sys.stdout.flush()
-    return cputime()
-
-
-def set_verbose(level, files='all'):
-    """
-    Set the global Sage verbosity level.
-
-    INPUT:
-
-    - ``level`` -- an integer between 0 and 2, inclusive.
-
-    - ``files`` (default: 'all'): list of files to make verbose, or
-       'all' to make ALL files verbose (the default).
-
-    OUTPUT: changes the state of the verbosity flag and possibly
-    appends to the list of files that are verbose.
-
-    EXAMPLES::
-
-        sage: set_verbose(2)
-        sage: verbose("This is Sage.", level=1)  # not tested
-        VERBOSE1 (?): This is Sage.
-        sage: verbose("This is Sage.", level=2)  # not tested
-        VERBOSE2 (?): This is Sage.
-        sage: verbose("This is Sage.", level=3)  # not tested
-        [no output]
-        sage: set_verbose(0)
-    """
-    if level is None:
-        level = -1
-    if isinstance(level, str):
-        set_verbose_files([level])
-    global LEVEL
-    LEVEL = level
-    if isinstance(files, str):
-        files = [files]
-    set_verbose_files(files)
-
-
-def set_verbose_files(file_name):
-    """
-
-    """
-    if not isinstance(file_name, list):
-        file_name = [file_name]
-    global verbose_files
-    verbose_files = file_name
-
-
-def get_verbose_files():
-    """
-
-    """
-    return verbose_files
-
-
-def unset_verbose_files(file_name):
-    """
-
-    """
-    if not isinstance(file_name, list):
-        file_name = [file_name]
-    for X in file_name:
-        verbose_files.remove(X)
-
-
-def get_verbose():
-    """
-    Return the global Sage verbosity level.
-
-    INPUT: int level: an integer between 0 and 2, inclusive.
-
-    OUTPUT: changes the state of the verbosity flag.
-
-    EXAMPLES::
-
-        sage: get_verbose()
-        0
-        sage: set_verbose(2)
-        sage: get_verbose()
-        2
-        sage: set_verbose(0)
-    """
-    global LEVEL
-    return LEVEL
-
-
 def union(x, y=None):
     """
     Return the union of x and y, as a list. The resulting list need not
@@ -755,171 +579,43 @@ def _stable_uniq(L):
         seen.add(x)
 
 
-def coeff_repr(c, is_latex=False):
-    if not is_latex:
-        try:
-            return c._coeff_repr()
-        except AttributeError:
-            pass
-    if isinstance(c, integer_types + (float,)):
-        return str(c)
-    if is_latex and hasattr(c, '_latex_'):
-        s = c._latex_()
-    else:
-        s = str(c).replace(' ', '')
-    if s.find("+") != -1 or s.find("-") != -1:
-        if is_latex:
-            return "\\left(%s\\right)" % s
-        else:
-            return "(%s)" % s
-    return s
-
-
-def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
-                 repr_monomial=None, latex_scalar_mult=None):
-    """
-    Compute a string representation of a linear combination of some
-    formal symbols.
+def exactly_one_is_true(iterable):
+    r"""
+    Return whether exactly one element of ``iterable`` evaluates ``True``.
 
     INPUT:
 
-    - ``terms`` -- list of terms, as pairs (support, coefficient)
-    - ``is_latex`` -- whether to produce latex (default: ``False``)
-    - ``scalar_mult`` -- string representing the multiplication (default:``'*'``)
-    - ``latex_scalar_mult`` -- latex string representing the multiplication
-      (default: ``''`` if ``scalar_mult`` is ``'*'``; otherwise ``scalar_mult``)
-    - ``coeffs`` -- for backward compatibility
+    - ``iterable`` -- an iterable object
 
     OUTPUT:
 
-    -  ``str`` - a string
+    A boolean.
+
+    .. NOTE::
+
+        The implementation is suggested by
+        `stackoverflow entry <https://stackoverflow.com/a/16801605/1052778>`_.
 
     EXAMPLES::
 
-        sage: repr_lincomb([('a',1), ('b',-2), ('c',3)])
-        'a - 2*b + 3*c'
-        sage: repr_lincomb([('a',0), ('b',-2), ('c',3)])
-        '-2*b + 3*c'
-        sage: repr_lincomb([('a',0), ('b',2), ('c',3)])
-        '2*b + 3*c'
-        sage: repr_lincomb([('a',1), ('b',0), ('c',3)])
-        'a + 3*c'
-        sage: repr_lincomb([('a',-1), ('b','2+3*x'), ('c',3)])
-        '-a + (2+3*x)*b + 3*c'
-        sage: repr_lincomb([('a', '1+x^2'), ('b', '2+3*x'), ('c', 3)])
-        '(1+x^2)*a + (2+3*x)*b + 3*c'
-        sage: repr_lincomb([('a', '1+x^2'), ('b', '-2+3*x'), ('c', 3)])
-        '(1+x^2)*a + (-2+3*x)*b + 3*c'
-        sage: repr_lincomb([('a', 1), ('b', -2), ('c', -3)])
-        'a - 2*b - 3*c'
-        sage: t = PolynomialRing(RationalField(),'t').gen()
-        sage: repr_lincomb([('a', -t), ('s', t - 2), ('', t^2 + 2)])
-        '-t*a + (t-2)*s + (t^2+2)'
-
-    Examples for ``scalar_mult``::
-
-        sage: repr_lincomb([('a',1), ('b',2), ('c',3)], scalar_mult='*')
-        'a + 2*b + 3*c'
-        sage: repr_lincomb([('a',2), ('b',0), ('c',-3)], scalar_mult='**')
-        '2**a - 3**c'
-        sage: repr_lincomb([('a',-1), ('b',2), ('c',3)], scalar_mult='**')
-        '-a + 2**b + 3**c'
-
-    Examples for ``scalar_mult`` and ``is_latex``::
-
-        sage: repr_lincomb([('a',-1), ('b',2), ('c',3)], is_latex=True)
-        '-a + 2b + 3c'
-        sage: repr_lincomb([('a',-1), ('b',-1), ('c',3)], is_latex=True, scalar_mult='*')
-        '-a - b + 3c'
-        sage: repr_lincomb([('a',-1), ('b',2), ('c',-3)], is_latex=True, scalar_mult='**')
-        '-a + 2**b - 3**c'
-        sage: repr_lincomb([('a',-2), ('b',-1), ('c',-3)], is_latex=True, latex_scalar_mult='*')
-        '-2*a - b - 3*c'
-
-    Examples for ``strip_one``::
-
-        sage: repr_lincomb([ ('a',1), (1,-2), ('3',3) ])
-        'a - 2*1 + 3*3'
-        sage: repr_lincomb([ ('a',-1), (1,1), ('3',3) ])
-        '-a + 1 + 3*3'
-        sage: repr_lincomb([ ('a',1), (1,-2), ('3',3) ], strip_one = True)
-        'a - 2 + 3*3'
-        sage: repr_lincomb([ ('a',-1), (1,1), ('3',3) ], strip_one = True)
-        '-a + 1 + 3*3'
-        sage: repr_lincomb([ ('a',1), (1,-1), ('3',3) ], strip_one = True)
-        'a - 1 + 3*3'
-
-    Examples for ``repr_monomial``::
-
-        sage: repr_lincomb([('a',1), ('b',2), ('c',3)], repr_monomial = lambda s: s+"1")
-        'a1 + 2*b1 + 3*c1'
+        sage: from sage.misc.misc import exactly_one_is_true
+        sage: exactly_one_is_true([])
+        False
+        sage: exactly_one_is_true([True])
+        True
+        sage: exactly_one_is_true([False])
+        False
+        sage: exactly_one_is_true([True, True])
+        False
+        sage: exactly_one_is_true([False, True])
+        True
+        sage: exactly_one_is_true([True, False, True])
+        False
+        sage: exactly_one_is_true([False, True, False])
+        True
     """
-    # Setting scalar_mult: symbol used for scalar multiplication
-    if is_latex:
-        if latex_scalar_mult is not None:
-            scalar_mult = latex_scalar_mult
-        elif scalar_mult == "*":
-            scalar_mult = ""
-
-    if repr_monomial is None:
-        if is_latex:
-
-            def repr_monomial(monomial):
-                return monomial._latex_() if hasattr(monomial, '_latex_') else str(monomial)
-        else:
-            repr_monomial = str
-
-    s = ""
-    first = True
-
-    if scalar_mult is None:
-        scalar_mult = "" if is_latex else "*"
-
-    for (monomial, c) in terms:
-        if c != 0:
-            coeff = coeff_repr(c)
-            negative = False
-            if len(coeff) and coeff[0] == "-":
-                negative = True
-            try:
-                if c < 0:
-                    negative = True
-            except (NotImplementedError, TypeError):
-                # comparisons may not be implemented for some coefficients
-                pass
-            if negative:
-                coeff = coeff_repr(-c, is_latex)
-            else:
-                coeff = coeff_repr(c, is_latex)
-            if coeff == "1":
-                coeff = ""
-            if coeff != "0":
-                if negative:
-                    if first:
-                        sign = "-"  # add trailing space?
-                    else:
-                        sign = " - "
-                else:
-                    if first:
-                        sign = ""
-                    else:
-                        sign = " + "
-                b = repr_monomial(monomial)
-                if len(b):
-                    if coeff != "":
-                        if b == "1" and strip_one:
-                            b = ""
-                        else:
-                            b = scalar_mult + b
-                s += "%s%s%s" % (sign, coeff, b)
-                first = False
-    if first:
-        return "0"
-        # this can happen only if are only terms with coeff_repr(c) == "0"
-    # elif s == "":
-        # return "1"  # is empty string representation invalid?
-    else:
-        return s
+    it = iter(iterable)
+    return any(it) and not any(it)
 
 
 def strunc(s, n=60):
@@ -939,7 +635,7 @@ def strunc(s, n=60):
 
 def newton_method_sizes(N):
     r"""
-    Returns a sequence of integers
+    Return a sequence of integers
     `1 = a_1 \leq a_2 \leq \cdots \leq a_n = N` such that
     `a_j = \lceil a_{j+1} / 2 \rceil` for all `j`.
 
@@ -1218,14 +914,43 @@ def random_sublist(X, s):
 
     EXAMPLES::
 
+        sage: from sage.misc.misc import is_sublist
         sage: S = [1,7,3,4,18]
-        sage: random_sublist(S, 0.5)
+        sage: sublist = random_sublist(S, 0.5); sublist  # random
         [1, 3, 4]
-        sage: random_sublist(S, 0.5)
+        sage: is_sublist(sublist, S)
+        True
+        sage: sublist = random_sublist(S, 0.5); sublist  # random
         [1, 3]
+        sage: is_sublist(sublist, S)
+        True
     """
     return [a for a in X if random.random() <= s]
 
+def is_sublist(X, Y):
+    """
+    Test whether ``X`` is a sublist of ``Y``.
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import is_sublist
+        sage: S = [1, 7, 3, 4, 18]
+        sage: is_sublist([1, 7], S)
+        True
+        sage: is_sublist([1, 3, 4], S)
+        True
+        sage: is_sublist([1, 4, 3], S)
+        False
+        sage: is_sublist(S, S)
+        True
+    """
+    X_i = 0
+    for Y_i, y in enumerate(Y):
+        if X_i == len(X):
+            return True
+        if y == X[X_i]:
+            X_i += 1
+    return X_i == len(X)
 
 def some_tuples(elements, repeat, bound, max_samples=None):
     r"""
@@ -1290,10 +1015,18 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
     TESTS::
 
         sage: from sage.misc.misc import _some_tuples_sampling
-        sage: list(_some_tuples_sampling(range(3), 3, 2, 3))
-        [(0, 1, 0), (1, 1, 1)]
-        sage: list(_some_tuples_sampling(range(20), None, 4, 20))
-        [0, 6, 9, 3]
+        sage: l = list(_some_tuples_sampling(range(3), 3, 2, 3))
+        sage: len(l)
+        2
+        sage: all(len(tup) == 3 for tup in l)
+        True
+        sage: all(el in range(3) for tup in l for el in tup)
+        True
+        sage: l = list(_some_tuples_sampling(range(20), None, 4, 20))
+        sage: len(l)
+        4
+        sage: all(el in range(20) for el in l)
+        True
     """
     from sage.rings.integer import Integer
     N = n if repeat is None else n**repeat
@@ -1312,9 +1045,7 @@ def powerset(X):
 
     INPUT:
 
-
     -  ``X`` - an iterable
-
 
     OUTPUT: iterator of lists
 
@@ -1358,10 +1089,13 @@ def powerset(X):
     """
     yield []
     pairs = []
+    power2 = 1
     for x in X:
-        pairs.append((2**len(pairs), x))
-        for w in range(2**(len(pairs) - 1), 2**(len(pairs))):
+        pairs.append((power2, x))
+        next_power2 = power2 << 1
+        for w in range(power2, next_power2):
             yield [x for m, x in pairs if m & w]
+        power2 = next_power2
 
 
 subsets = powerset
@@ -1436,11 +1170,9 @@ def forall(S, P):
 
     INPUT:
 
-
     -  ``S`` - object (that supports enumeration)
 
     -  ``P`` - function that returns True or False
-
 
     OUTPUT:
 
@@ -1496,7 +1228,7 @@ def word_wrap(s, ncols=85):
     if ncols == 0:
         return s
     for x in s.split('\n'):
-        if len(x) == 0 or x.lstrip()[:5] == 'sage:':
+        if not x or x.lstrip()[:5] == 'sage:':
             t.append(x)
             continue
         while len(x) > ncols:
@@ -1538,7 +1270,7 @@ def pad_zeros(s, size=3):
 
 def embedded():
     """
-    Return True if this copy of Sage is running embedded in the Sage
+    Return ``True`` if this copy of Sage is running embedded in the Sage
     notebook.
 
     EXAMPLES::
@@ -1549,174 +1281,9 @@ def embedded():
     return sage.server.support.EMBEDDED_MODE
 
 
-#############################################
-# Operators
-#############################################
-class AttrCallObject(object):
-    def __init__(self, name, args, kwds):
-        """
-        TESTS::
-
-            sage: f = attrcall('core', 3); f
-            *.core(3)
-            sage: TestSuite(f).run()
-        """
-        self.name = name
-        self.args = args
-        self.kwds = kwds
-
-    def __call__(self, x, *args):
-        """
-        Gets the ``self.name`` method from ``x``, calls it with
-        ``self.args`` and ``args`` as positional parameters and
-        ``self.kwds`` as keyword parameters, and returns the result.
-
-        EXAMPLES::
-
-            sage: core = attrcall('core', 3)
-            sage: core(Partition([4,2]))
-            [4, 2]
-
-            sage: series = attrcall('series', x)
-            sage: series(sin(x), 4)
-            1*x + (-1/6)*x^3 + Order(x^4)
-        """
-        return getattr(x, self.name)(*(self.args + args), **self.kwds)
-
-    def __repr__(self):
-        """
-        Return a string representation of this object.
-
-        The star in the output represents the object passed into ``self``.
-
-        EXAMPLES::
-
-            sage: attrcall('core', 3)
-            *.core(3)
-            sage: attrcall('hooks', flatten=True)
-            *.hooks(flatten=True)
-            sage: attrcall('hooks', 3, flatten=True)
-            *.hooks(3, flatten=True)
-        """
-        s = "*.%s(%s" % (self.name, ", ".join(map(repr, self.args)))
-        if self.kwds:
-            if self.args:
-                s += ", "
-            s += ", ".join("%s=%s" % keyvalue for keyvalue in self.kwds.items())
-        s += ")"
-        return s
-
-    def __eq__(self, other):
-        """
-        Equality testing
-
-        EXAMPLES::
-
-            sage: attrcall('core', 3, flatten = True) == attrcall('core', 3, flatten = True)
-            True
-            sage: attrcall('core', 2) == attrcall('core', 3)
-            False
-            sage: attrcall('core', 2) == 1
-            False
-        """
-        return self.__class__ == other.__class__ and self.__dict__ == other.__dict__
-
-    def __ne__(self, other):
-        """
-        Equality testing
-
-        EXAMPLES::
-
-            sage: attrcall('core', 3, flatten = True) != attrcall('core', 3, flatten = True)
-            False
-            sage: attrcall('core', 2) != attrcall('core', 3)
-            True
-            sage: attrcall('core', 2) != 1
-            True
-        """
-        return not self == other
-
-    def __hash__(self):
-        """
-        Hash value
-
-        This method tries to ensure that, when two ``attrcall``
-        objects are equal, they have the same hash value.
-
-        .. warning:: dicts are not hashable, so we instead hash their
-        items; however the order of those items might differ. The
-        proper fix would be to use a frozen dict for ``kwds``, when
-        frozen dicts will be available in Python.
-
-        EXAMPLES::
-
-            sage: x = attrcall('core', 3, flatten = True, blah = 1)
-            sage: hash(x)       # random # indirect doctest
-            210434060
-            sage: type(hash(x))
-            <type 'int'>
-            sage: y = attrcall('core', 3, blah = 1, flatten = True)
-            sage: hash(y) == hash(x)
-            True
-            sage: y = attrcall('core', 3, flatten = True, blah = 2)
-            sage: hash(y) != hash(x)
-            True
-            sage: hash(attrcall('core', 2)) != hash(attrcall('core', 3))
-            True
-            sage: hash(attrcall('core', 2)) != hash(1)
-            True
-
-        Note: a missing ``__hash__`` method here used to break the
-        unique representation of parents taking ``attrcall`` objects
-        as input; see :trac:`8911`.
-        """
-        return hash((self.args, tuple(sorted(self.kwds.items()))))
-
-
-def attrcall(name, *args, **kwds):
-    """
-    Returns a callable which takes in an object, gets the method named
-    name from that object, and calls it with the specified arguments
-    and keywords.
-
-    INPUT:
-
-     -  ``name`` - a string of the name of the method you
-        want to call
-
-     -  ``args, kwds`` - arguments and keywords to be passed
-        to the method
-
-    EXAMPLES::
-
-        sage: f = attrcall('core', 3); f
-        *.core(3)
-        sage: [f(p) for p in Partitions(5)]
-        [[2], [1, 1], [1, 1], [3, 1, 1], [2], [2], [1, 1]]
-    """
-    return AttrCallObject(name, args, kwds)
-
-
-def call_method(obj, name, *args, **kwds):
-    """
-    Call the method ``name`` on ``obj``.
-
-    This has to exist somewhere in Python!!!
-
-    .. SEEALSO:: :func:`operator.methodcaller` :func:`attrcal`
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import call_method
-        sage: call_method(1, "__add__", 2)
-        3
-    """
-    return getattr(obj, name)(*args, **kwds)
-
-
 def is_in_string(line, pos):
     r"""
-    Returns True if the character at position pos in line occurs
+    Return ``True`` if the character at position ``pos`` in ``line`` occurs
     within a string.
 
     EXAMPLES::
@@ -1872,7 +1439,7 @@ def inject_variable_test(name, value, depth):
     """
     A function for testing deep calls to inject_variable
 
-    TESTS::
+    EXAMPLES::
 
         sage: from sage.misc.misc import inject_variable_test
         sage: inject_variable_test("a0", 314, 0)
@@ -1888,7 +1455,6 @@ def inject_variable_test(name, value, depth):
         doctest:...: RuntimeWarning: redefining global value `a2`
         sage: a2
         271
-
     """
     if depth == 0:
         inject_variable(name, value)

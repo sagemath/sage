@@ -384,7 +384,7 @@ Sage example in ./float.tex, line 1975::
   0.026525823848649222628147293?
   0.02893726238034460650343342?
   sage: dfs = lambda x: -cos(1/x)/x^2
-  sage: not any([dfs(z).contains_zero() for z in zeros])
+  sage: not any(dfs(z).contains_zero() for z in zeros)
   True
 
 Sage example in ./float.tex, line 2022::

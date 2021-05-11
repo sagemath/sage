@@ -34,7 +34,7 @@ We check that the coercion `C \to M` goes through the `X` basis::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -48,6 +48,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.set_partition_ordered import OrderedSetPartitions
 from sage.combinat.shuffle import ShuffleProduct_overlapping, ShuffleProduct
 from sage.rings.integer_ring import ZZ
+
 
 class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
     """
@@ -89,7 +90,6 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             sage: M.options._reset()
         """
         return self._prefix + self.options._dispatch(self, '_repr_', 'objects', osp)
-
 
     def _repr_compositions(self, osp):
         """
@@ -226,7 +226,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
                 return True
             if not self.base_ring().has_coerce_map_from(R.base_ring()):
                 return False
-            if self._basis_name == R._basis_name: # The same basis
+            if self._basis_name == R._basis_name:  # The same basis
                 def coerce_base_ring(self, x):
                     return self._from_dict(x.monomial_coefficients())
                 return coerce_base_ring
@@ -246,7 +246,7 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             sage: M.an_element()
             M[{1}] + 2*M[{1}, {2}]
         """
-        return self([[1]]) + 2*self([[1],[2]])
+        return self([[1]]) + 2 * self([[1], [2]])
 
     def some_elements(self):
         """
@@ -263,7 +263,8 @@ class WQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
         u = self.one()
         o = self([[1]])
         s = self.base_ring().an_element()
-        return [u, o, self([[1,2]]), o + self([[1],[2]]), u + s*o]
+        return [u, o, self([[1, 2]]), o + self([[1], [2]]), u + s * o]
+
 
 class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
     r"""
@@ -544,18 +545,18 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         """
         NAME = 'WordQuasiSymmetricFunctions element'
         module = 'sage.combinat.chas.wqsym'
-        option_class='WordQuasiSymmetricFunctions'
+        option_class = 'WordQuasiSymmetricFunctions'
         objects = dict(default="compositions",
                        description='Specifies how basis elements of WordQuasiSymmetricFunctions should be indexed',
                        values=dict(compositions="Indexing the basis by ordered set partitions",
                                    words="Indexing the basis by packed words"),
-                                   case_sensitive=False)
+                       case_sensitive=False)
         display = dict(default="normal",
                        description='Specifies how basis elements of WordQuasiSymmetricFunctions should be printed',
                        values=dict(normal="Using the normal representation",
                                    tight="Dropping spaces after commas",
                                    compact="Using a severely compacted representation"),
-                                   case_sensitive=False)
+                       case_sensitive=False)
 
     class Monomial(WQSymBasis_abstract):
         r"""
@@ -616,11 +617,14 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             K = self.basis().keys()
             if not x:
                 return self.monomial(y)
-            m = max(max(part) for part in x) # The degree of x
+            m = max(max(part) for part in x)  # The degree of x
             x = [set(part) for part in x]
             yshift = [[val + m for val in part] for part in y]
-            def union(X,Y): return X.union(Y)
-            return self.sum_of_monomials(ShuffleProduct_overlapping(x, yshift, K, union))
+
+            def union(X, Y):
+                return X.union(Y)
+            return self.sum_of_monomials(ShuffleProduct_overlapping(x, yshift,
+                                                                    K, union))
 
         def coproduct_on_basis(self, x):
             r"""
@@ -643,10 +647,11 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             if not len(x):
                 return self.one().tensor(self.one())
             K = self.indices()
-            def standardize(P): # standardize an ordered set partition
+
+            def standardize(P):  # standardize an ordered set partition
                 base = sorted(sum((list(part) for part in P), []))
                 # base is the ground set of P, as a sorted list.
-                d = {val: i+1 for i,val in enumerate(base)}
+                d = {val: i + 1 for i, val in enumerate(base)}
                 # d is the unique order isomorphism from base to
                 # {1, 2, ..., |base|} (encoded as dict).
                 return K([[d[x] for x in part] for part in P])
@@ -712,7 +717,9 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             M = self.realization_of().M()
             mone = -self.base_ring().one()
-            def sgn(P): return mone**len(P)
+
+            def sgn(P):
+                return mone**len(P)
             self.module_morphism(codomain=M, diagonal=sgn).register_as_coercion()
             M.module_morphism(codomain=self, diagonal=sgn).register_as_coercion()
 
@@ -935,7 +942,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _C_to_X(self, P):
             """
@@ -960,7 +967,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             data = []
             while temp:
                 i = min(min(X) for X in temp)
-                for j,A in enumerate(temp):
+                for j, A in enumerate(temp):
                     if i in A:
                         data.append(OSP(temp[j:]))
                         temp = temp[:j]
@@ -1070,7 +1077,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _Q_to_M(self, P):
             """
@@ -1129,8 +1136,10 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             R = self.base_ring()
             one = R.one()
             lenP = len(P)
-            def sign(R): # the coefficient with which another
-                         # ordered set partition will appear
+
+            def sign(R):
+                # the coefficient with which another
+                # ordered set partition will appear
                 if len(R) % 2 == lenP % 2:
                     return one
                 return -one
@@ -1172,10 +1181,9 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             K = self.basis().keys()
             if not x:
                 return self.monomial(y)
-            m = max(max(part) for part in x) # The degree of x
+            m = max(max(part) for part in x)  # The degree of x
             x = [set(part) for part in x]
             yshift = [[val + m for val in part] for part in y]
-            def union(X,Y): return X.union(Y)
             return self.sum_of_monomials(ShuffleProduct(x, yshift, K))
 
         def coproduct_on_basis(self, x):
@@ -1205,10 +1213,11 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             if not len(x):
                 return self.one().tensor(self.one())
             K = self.indices()
-            def standardize(P): # standardize an ordered set partition
+
+            def standardize(P):  # standardize an ordered set partition
                 base = sorted(sum((list(part) for part in P), []))
                 # base is the ground set of P, as a sorted list.
-                d = {val: i+1 for i,val in enumerate(base)}
+                d = {val: i + 1 for i, val in enumerate(base)}
                 # d is the unique order isomorphism from base to
                 # {1, 2, ..., |base|} (encoded as dict).
                 return K([[d[x] for x in part] for part in P])
@@ -1256,6 +1265,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 Q = self.parent()
                 OSPs = Q.basis().keys()
                 from sage.data_structures.blas_dict import linear_combination
+
                 def img(A):
                     # The image of the basis element Q[A], written as a
                     # dictionary (of its coordinates in the Q-basis).
@@ -1303,6 +1313,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 Q = self.parent()
                 OSPs = Q.basis().keys()
                 from sage.data_structures.blas_dict import linear_combination
+
                 def img(A):
                     # The image of the basis element Q[A], written as a
                     # dictionary (of its coordinates in the Q-basis).
@@ -1448,7 +1459,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             u = self.one()
             o = self([[1]])
             s = self.base_ring().an_element()
-            return [u, o, self([[1,2]]), u + s*o]
+            return [u, o, self([[1, 2]]), u + s * o]
 
         def _Phi_to_M(self, P):
             """
@@ -1511,8 +1522,10 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             R = self.base_ring()
             one = R.one()
             lenP = len(P)
-            def sign(R): # the coefficient with which another
-                         # ordered set partition will appear
+
+            def sign(R):
+                # the coefficient with which another
+                # ordered set partition will appear
                 if len(R) % 2 == lenP % 2:
                     return one
                 return -one
@@ -1620,12 +1633,13 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             # x in the order in which they appear in x (reading each
             # part from bottom to top), and where s_i = True if e_i is
             # the smallest element of its part and False otherwise.
-            m = max(max(part) for part in x) # The degree of x
+            m = max(max(part) for part in x)  # The degree of x
             ylist = [(m + j, (k == 0))
                      for part in y
                      for (k, j) in enumerate(sorted(part))]
             # ylist is like xlist, but for y instead of x, and with
             # a shift by m.
+
             def digest(s):
                 # Turn a shuffle of xlist with ylist into the appropriate
                 # ordered set partition.
@@ -1633,15 +1647,15 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 s1 = [p[1] for p in s]
                 N = len(s)
                 bars = [False] * N
-                for i in range(N-1):
+                for i in range(N - 1):
                     s0i = s0[i]
-                    s0i1 = s0[i+1]
+                    s0i1 = s0[i + 1]
                     if s0i <= m and s0i1 <= m:
-                        bars[i+1] = s1[i+1]
+                        bars[i + 1] = s1[i + 1]
                     elif s0i > m and s0i1 > m:
-                        bars[i+1] = s1[i+1]
+                        bars[i + 1] = s1[i + 1]
                     elif s0i > m and s0i1 <= m:
-                        bars[i+1] = True
+                        bars[i + 1] = True
                 blocks = []
                 block = []
                 for i in range(N):
@@ -1710,10 +1724,11 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
             if not len(x):
                 return self.one().tensor(self.one())
             K = self.indices()
-            def standardize(P): # standardize an ordered set partition
+
+            def standardize(P):  # standardize an ordered set partition
                 base = sorted(sum((list(part) for part in P), []))
                 # base is the ground set of P, as a sorted list.
-                d = {val: i+1 for i,val in enumerate(base)}
+                d = {val: i + 1 for i, val in enumerate(base)}
                 # d is the unique order isomorphism from base to
                 # {1, 2, ..., |base|} (encoded as dict).
                 return K([[d[x] for x in part] for part in P])
@@ -1722,7 +1737,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 xi = sorted(x[i])
                 for j in range(1, len(xi)):
                     left = K(list(x[:i]) + [xi[:j]])
-                    right = K([xi[j:]] + list(x[i+1:]))
+                    right = K([xi[j:]] + list(x[i + 1:]))
                     deconcatenates.append((left, right))
             T = self.tensor_square()
             return T.sum_of_monomials((standardize(left), standardize(right))
@@ -1767,6 +1782,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 Phi = self.parent()
                 OSPs = Phi.basis().keys()
                 from sage.data_structures.blas_dict import linear_combination
+
                 def img(A):
                     # The image of the basis element Phi[A], written as a
                     # dictionary (of its coordinates in the Phi-basis).
@@ -1814,6 +1830,7 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 Phi = self.parent()
                 OSPs = Phi.basis().keys()
                 from sage.data_structures.blas_dict import linear_combination
+
                 def img(A):
                     # The image of the basis element Phi[A], written as a
                     # dictionary (of its coordinates in the Phi-basis).
@@ -1857,11 +1874,13 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 Phi = self.parent()
                 OSPs = Phi.basis().keys()
                 return Phi._from_dict({OSPs(A.complement().reversed()): c for (A, c) in self},
-                                    remove_zeros=False)
+                                      remove_zeros=False)
 
     Phi = StronglyFiner
 
+
 WQSymBasis_abstract.options = WordQuasiSymmetricFunctions.options
+
 
 class WQSymBases(Category_realization_of_parent):
     r"""
@@ -1918,16 +1937,19 @@ class WQSymBases(Category_realization_of_parent):
             sage: bases.super_categories()
             [Category of realizations of Word Quasi-symmetric functions over Integer Ring,
              Join of Category of realizations of hopf algebras over Integer Ring
-                 and Category of graded algebras over Integer Ring,
+                 and Category of graded algebras over Integer Ring
+                 and Category of graded coalgebras over Integer Ring,
              Category of graded connected hopf algebras with basis over Integer Ring]
 
             sage: bases = WQSymBases(WQSym, False)
             sage: bases.super_categories()
             [Category of realizations of Word Quasi-symmetric functions over Integer Ring,
              Join of Category of realizations of hopf algebras over Integer Ring
-                 and Category of graded algebras over Integer Ring,
+                 and Category of graded algebras over Integer Ring
+                 and Category of graded coalgebras over Integer Ring,
              Join of Category of filtered connected hopf algebras with basis over Integer Ring
-                 and Category of graded algebras over Integer Ring]
+                 and Category of graded algebras over Integer Ring
+                 and Category of graded coalgebras over Integer Ring]
         """
         R = self.base().base_ring()
         cat = HopfAlgebras(R).Graded().WithBasis()
@@ -1998,7 +2020,7 @@ class WQSymBases(Category_realization_of_parent):
             try:
                 return self.monomial(self._indices(p))
             except TypeError:
-                raise ValueError("cannot convert %s into an element of %s"%(p, self._indices))
+                raise ValueError("cannot convert %s into an element of %s" % (p, self._indices))
 
         def is_field(self, proof=True):
             """
@@ -2571,4 +2593,3 @@ class WQSymBases(Category_realization_of_parent):
             MW = self.parent().realization_of().M()
             return M.sum_of_terms((i.to_composition(), coeff)
                                   for (i, coeff) in MW(self))
-

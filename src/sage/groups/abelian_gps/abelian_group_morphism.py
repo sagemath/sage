@@ -18,7 +18,6 @@ AUTHORS:
 #
 #                    https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.interfaces.gap import gap
 from sage.categories.morphism import Morphism
@@ -143,14 +142,16 @@ class AbelianGroupMorphism(Morphism):
         s2 = "gensH := GeneratorsOfGroup(H)"
         gap.eval(s2)
         for i in range(len(gensG)):             # making the Sage group gens
-           cmd = ("%s := gensG["+str(i+1)+"]") % gensG[i]  # correspond to the Sage group gens
+           # correspond to the Sage group gens
+           cmd = "%s := gensG[%d]" % (gensG[i], i + 1)
            gap.eval(cmd)
         for i in range(len(gensH)):
-           cmd = ("%s := gensH[" + str(i + 1) + "]") % gensH[i]
+           cmd = "%s := gensH[%d]" % (gensH[i], i + 1)
            gap.eval(cmd)
         args = str(self.domaingens) + "," + str(self.codomaingens)
-        gap.eval("phi := GroupHomomorphismByImages(G,H," + args + ")")
-        self.gap_hom_string = "phi := GroupHomomorphismByImages(G,H,"+args+")"
+        cmd = "phi := GroupHomomorphismByImages(G,H,%s)" % args
+        gap.eval(cmd)
+        self.gap_hom_string = cmd
         return self.gap_hom_string
 
     def _repr_type(self):

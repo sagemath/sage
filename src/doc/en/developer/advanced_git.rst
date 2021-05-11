@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-advanced-git:
 
 ============
@@ -86,7 +88,7 @@ not based on the latest (beta) version of SageMath.
 
 .. NOTE::
 
-    Continue working on a feature based on an old branch is perfecly
+    Continue working on a feature based on an old branch is perfectly
     fine and usually there is no need to merge in this latest SageMath
     version.
 
@@ -353,7 +355,9 @@ Now we start by making an identical branch to the first branch::
     [user@localhost]$ git rebase -i HEAD~3
 
 This will open an editor with the last 3 (corresponding to ``HEAD~3``)
-commits and instuctions for how to modify them::
+commits and instuctions for how to modify them:
+
+.. CODE-BLOCK:: text
 
     pick bf817a5 added file A
     pick 7873447 added file B

@@ -10,19 +10,17 @@ TESTS:
 We create some rings and run the test suite for them. We skip the Smith form
 tests because they take a few minutes as of mid 2018, see :trac:`25431`::
 
-    sage: R = ZpLC(2)
+    sage: R1 = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
     See http://trac.sagemath.org/23505 for details.
-    sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: R2 = ZpLF(2)
+    sage: R3 = QpLC(2)
+    sage: R4 = QpLF(2)
 
-    sage: R = ZpLF(2)
-    sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-
-    sage: R = QpLC(2)
-    sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-
-    sage: R = QpLF(2)
-    sage: TestSuite(R).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: TestSuite(R1).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: TestSuite(R2).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: TestSuite(R3).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: TestSuite(R4).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
 """
 
 # ****************************************************************************
@@ -43,7 +41,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import Infinity
-
+from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.lattice_precision import pRational
 
@@ -475,7 +473,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             return ZZ(0)
         return self.precision_absolute() - self.valuation(secure=secure)
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         r"""
         Compare this element with ``other``.
 
@@ -496,10 +494,10 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: z - x
             2^7 + O(2^10)
         """
-        if (self-other).is_zero():
-            return 0
+        if (self - other).is_zero():
+            return rich_to_bool(op, 0)
         else:
-            return QQ(self.lift())._cmp_(QQ(other.lift()))
+            return richcmp(QQ(self.lift()), QQ(other.lift()), op)
 
     def is_equal_to(self, other, prec):
         r"""

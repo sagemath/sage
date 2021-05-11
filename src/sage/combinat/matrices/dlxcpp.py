@@ -15,8 +15,6 @@ Dancing links C++ wrapper
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 # OneExactCover and AllExactCovers are almost exact copies of the
 # functions with the same name in sage/combinat/dlx.py by Tom Boothby.
@@ -79,8 +77,8 @@ def DLXCPP(rows):
         sage: [x for x in DLXCPP(rows)]
         [[3, 0], [3, 1, 2]]
     """
-
-    if len(rows) == 0: return
+    if not rows:
+        return
 
     x = dlx_solver(rows)
 

@@ -17,12 +17,7 @@ from __future__ import print_function
 
 import os
 import sys
-
-# Note that argparse is not part of Python 2.6, so we bundle it
-try:
-    import argparse
-except ImportError:
-    from sage_bootstrap.compat import argparse
+import argparse
 
 from sage_bootstrap.uncompress.action import (
     open_archive, unpack_archive

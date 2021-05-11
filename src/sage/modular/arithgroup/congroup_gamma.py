@@ -1,7 +1,6 @@
 r"""
 Congruence Subgroup `\Gamma(N)`
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -10,7 +9,6 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from .congroup_generic import CongruenceSubgroup
 from sage.misc.all import prod

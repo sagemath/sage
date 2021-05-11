@@ -64,7 +64,7 @@ multiplied by the `(n-1)`-simplex obtained by omitting vertex `v_i`.
 In the implementation here, the vertex set must be finite. To define a
 simplicial complex, specify its *facets*: the maximal subsets (with
 respect to inclusion) of the vertex set belonging to `K`. Each facet
-can be specifed as a list, a tuple, or a set.
+can be specified as a list, a tuple, or a set.
 
 .. NOTE::
 
@@ -148,9 +148,6 @@ We can also make mutable copies of an immutable simplicial complex
     sage: S == T
     True
 """
-from __future__ import print_function, absolute_import
-from six.moves import range
-from six import integer_types
 from operator import index as PyNumber_Index
 
 # possible future directions for SimplicialComplex:
@@ -181,7 +178,6 @@ from sage.graphs.graph import Graph
 from functools import reduce, total_ordering
 from itertools import combinations
 lazy_import('sage.categories.simplicial_complexes', 'SimplicialComplexes')
-from sage.misc.cachefunc import cached_method
 
 
 def lattice_paths(t1, t2, length=None):
@@ -776,7 +772,7 @@ class Simplex(SageObject):
         try:
             return sorted(self) < sorted(other)
         except TypeError:
-            return sorted(map(str,self)) < sorted(map(str, other))
+            return sorted(map(str, self)) < sorted(map(str, other))
 
     def __hash__(self):
         """
@@ -1036,8 +1032,10 @@ class SimplicialComplex(Parent, GenericCellComplex):
             self.__contractible = copy(C.__contractible)
             self.__enlarged = copy(C.__enlarged)
             self._graph = copy(C._graph)
-            self._is_mutable = is_mutable
             self._vertex_to_index = copy(C._vertex_to_index)
+            self._is_immutable = False
+            if not is_mutable or is_immutable:
+                self.set_immutable()
             return
 
         try:
@@ -1126,7 +1124,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         self._graph = None
 
         # Handle mutability keywords
-        self._is_mutable = True
+        self._is_immutable = False
         if not is_mutable or is_immutable:
             self.set_immutable()
 
@@ -1153,7 +1151,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: hash(S) == hash(S2)
             True
         """
-        if self._is_mutable:
+        if not self._is_immutable:
             raise ValueError("This simplicial complex must be immutable. Call set_immutable().")
         return hash(frozenset(self._facets))
 
@@ -1324,7 +1322,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {-1: set(), 0: {(4,)}, 1: {(1, 4)}}
         """
         # Make the subcomplex immutable if it is not
-        if subcomplex is not None and subcomplex._is_mutable:
+        if subcomplex is not None and not subcomplex._is_immutable:
             subcomplex = SimplicialComplex(subcomplex._facets, maximality_check=False,
                                            is_mutable=False)
 
@@ -1486,7 +1484,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S3.g_vector()
             [1, 25, 40]
         """
-        from sage.functions.other import floor
         d = self.dimension()
         h = self.h_vector()
         g = [1]
@@ -2081,7 +2078,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             # subcomplex is not empty, so don't augment the chain complex
             augmented = False
             # Use an immutable copy of the subcomplex
-            if not subcomplex._is_mutable:
+            if subcomplex._is_immutable:
                 subcomplex = SimplicialComplex(subcomplex._facets, maximality_check=False,
                                                is_mutable=False)
         # now construct the range of dimensions in which to compute
@@ -2185,7 +2182,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def _homology_(self, dim=None, base_ring=ZZ, subcomplex=None,
                    cohomology=False, enlarge=True, algorithm='pari',
-                   verbose=False, reduced=True):
+                   verbose=False, reduced=True, generators=False):
         """
         The (reduced) homology of this simplicial complex.
 
@@ -2239,7 +2236,17 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         :type reduced: boolean; optional, default ``True``
 
-        Algorithm: if ``subcomplex`` is ``None``, replace it with a
+        :param generators: If ``True``, return the homology groups and
+        also generators for them.
+
+        :type reduced: boolean; optional, default ``False``
+
+        Algorithm: if ``generators`` is ``True``, directly compute the
+        chain complex, compute its homology along with its generators,
+        and then convert the chain complex generators to chains in the
+        simplicial complex.
+
+        Otherwise: if ``subcomplex`` is ``None``, replace it with a
         facet -- a contractible subcomplex of the original complex.
         Then as long as ``enlarge`` is ``True``, no matter what
         ``subcomplex`` is, replace it with a subcomplex `L` which is
@@ -2266,6 +2273,15 @@ class SimplicialComplex(Parent, GenericCellComplex):
              1: Vector space of dimension 0 over Finite Field of size 2,
              2: Vector space of dimension 1 over Finite Field of size 2}
 
+        We need an immutable complex to compute homology generators::
+
+            sage: sphere.set_immutable()
+            sage: sphere._homology_(generators=True, algorithm='no_chomp')
+            {0: [], 1: [], 2: [(Z, (0, 1, 2) - (0, 1, 3) + (0, 2, 3) - (1, 2, 3))]}
+
+        Note that the answer may be formatted differently if the
+        optional package CHomP is installed.
+
         Another way to get a two-sphere: take a two-point space and take its
         three-fold join with itself::
 
@@ -2284,6 +2300,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: U = SimplicialComplex([[0,1], [1,2], [0,2]])
             sage: T._homology_(subcomplex=U)
             {0: 0, 1: 0, 2: Z}
+
+        Generators::
+
+            sage: simplicial_complexes.Torus().homology(generators=True, algorithm='no_chomp')
+            {0: [],
+             1: [(Z, (1, 2) - (1, 6) + (2, 6)), (Z, (3, 4) - (3, 6) + (4, 6))],
+             2: [(Z,
+               (0, 1, 2) - (0, 1, 5) + (0, 2, 6) - (0, 3, 4) + (0, 3, 5) - (0, 4, 6) - (1, 2, 4) + (1, 3, 4) - (1, 3, 6) + (1, 5, 6) - (2, 3, 5) + (2, 3, 6) + (2, 4, 5) - (4, 5, 6))]}
         """
         from sage.homology.homology_group import HomologyGroup
 
@@ -2297,6 +2321,9 @@ class SimplicialComplex(Parent, GenericCellComplex):
             dims = range(low, high)
         else:
             dims = None
+
+        if generators:
+            enlarge = False
 
         if verbose:
             print("starting calculation of the homology of this")
@@ -2333,7 +2360,23 @@ class SimplicialComplex(Parent, GenericCellComplex):
             print(" Done computing the chain complex. ")
             print("Now computing homology...")
         answer = C.homology(base_ring=base_ring, verbose=verbose,
-                            algorithm=algorithm)
+                            algorithm=algorithm, generators=generators)
+
+        if generators:
+            # Convert chain complex information to simplicial complex
+            # information.
+            for i in answer:
+                H_with_gens = answer[i]
+                if H_with_gens:
+                    chains = self.n_chains(i, base_ring=base_ring)
+                    new_H = []
+                    for (H, gen) in H_with_gens:
+                        v = gen.vector(i)
+                        new_gen = chains.zero()
+                        for (coeff, chain) in zip(v, chains.gens()):
+                            new_gen += coeff * chain
+                        new_H.append((H, new_gen))
+                    answer[i] = new_H
 
         if dim is None:
             dim = range(self.dimension() + 1)
@@ -2517,7 +2560,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: temp = X.faces(SimplicialComplex(()))
             sage: X.add_face([0,1])
         """
-        if not self._is_mutable:
+        if self._is_immutable:
             raise ValueError("This simplicial complex is not mutable")
 
         vertex_to_index = self._translation_to_numeric()
@@ -2635,13 +2678,13 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S
             Simplicial complex with vertex set (1, 2, 3) and facets {(3,), (1, 2)}
         """
-        if not self._is_mutable:
+        if self._is_immutable:
             raise ValueError("This simplicial complex is not mutable")
 
         getindex = self._translation_to_numeric().__getitem__
         simplex = Simplex(sorted(face, key=getindex))
         facets = self.facets()
-        if all([not simplex.is_face(F) for F in facets]):
+        if all(not simplex.is_face(F) for F in facets):
             # face is not in self
             if check:
                 raise ValueError('trying to remove a face which is not in the simplicial complex')
@@ -2797,9 +2840,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # first find a top-dimensional simplex to remove from each surface
         keep_left = self._facets[0]
         keep_right = other._facets[0]
-        # construct the set of vertices:
-        left = set(self.vertices()).difference(set(keep_left))
-        right = set(other.vertices()).difference(set(keep_right))
         # construct the set of facets:
         left = set(self._facets).difference(set([keep_left]))
         right = set(other._facets).difference(set([keep_right]))
@@ -2948,7 +2988,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def generated_subcomplex(self, sub_vertex_set, is_mutable=True):
         """
-        Returns the largest sub-simplicial complex of ``self`` containing
+        Return the largest sub-simplicial complex of ``self`` containing
         exactly ``sub_vertex_set`` as vertices.
 
         :param sub_vertex_set: The sub-vertex set.
@@ -3107,7 +3147,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 return False
 
         facets = set(self.facets())
-        nfacets = len(facets)
         cur_order = []
         # For consistency when using different Python versions, for example, sort 'faces'.
         it = [iter(sorted(facets, key=str))]
@@ -3548,7 +3587,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             ValueError: this simplicial complex is not mutable
         """
 
-        if inplace and not self._is_mutable:
+        if inplace and self._is_immutable:
             raise ValueError("this simplicial complex is not mutable")
 
         if not Simplex(simplex) in self:
@@ -3622,9 +3661,11 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def delta_complex(self, sort_simplices=False):
         r"""
-        Returns ``self`` as a `\Delta`-complex.  The `\Delta`-complex
-        is essentially identical to the simplicial complex: it has
-        same simplices with the same boundaries.
+        Return ``self`` as a `\Delta`-complex.
+
+        The `\Delta`-complex is essentially identical to the
+        simplicial complex: it has same simplices with the same
+        boundaries.
 
         :param sort_simplices: if ``True``, sort the list of simplices in
           each dimension
@@ -3657,7 +3698,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     def is_flag_complex(self):
         """
-        Returns ``True`` if and only if ``self`` is a flag complex.
+        Return ``True`` if and only if ``self`` is a flag complex.
 
         A flag complex is a simplicial complex that is the largest simplicial
         complex on its 1-skeleton. Thus a flag complex is the clique complex
@@ -3703,7 +3744,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # make sure it's a list (it will be a tuple if immutable)
         facets = [f for f in self._facets if f.dimension() < n]
         facets.extend(self.faces()[n])
-        return SimplicialComplex(facets, is_mutable=self._is_mutable)
+        return SimplicialComplex(facets, is_immutable=self._is_immutable)
 
     def _contractible_subcomplex(self, verbose=False):
         """
@@ -3786,7 +3827,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             Z
         """
         # Make the subcomplex immutable if not
-        if subcomplex is not None and subcomplex._is_mutable:
+        if subcomplex is not None and not subcomplex._is_immutable:
             subcomplex = SimplicialComplex(subcomplex._facets,
                                            maximality_check=False,
                                            is_mutable=False)
@@ -3820,7 +3861,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         if verbose:
             print("  now constructing a simplicial complex with %s vertices and %s facets" % (len(self.vertices()), len(new_facets)))
         L = SimplicialComplex(new_facets, maximality_check=False,
-                              is_mutable=self._is_mutable)
+                              is_immutable=self._is_immutable)
         self.__enlarged[subcomplex] = L
         # Use the same sorting on the vertices in L as in the ambient complex.
         L._vertex_to_index = self._vertex_to_index
@@ -4229,7 +4270,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             G = self.automorphism_group().subgroup(gens)
 
         invariant_f = [list(u) for u in self.face_iterator()
-                       if all(sorted([sigma(j) for j in u]) == sorted(list(u))
+                       if all(sorted(sigma(j) for j in u) == sorted(u)
                               for sigma in gens)]
         new_verts = [min(o) for o in G.orbits() if o in invariant_f]
         return SimplicialComplex([[s for s in f if s in new_verts]
@@ -4290,7 +4331,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: s._is_numeric()
             False
         """
-        return all(isinstance(v, integer_types + (Integer,))
+        return all(isinstance(v, (int, Integer))
                    for v in self.vertices())
 
     # @cached_method    when we switch to immutable SimplicialComplex
@@ -4435,7 +4476,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S.is_mutable()
             False
         """
-        self._is_mutable = False
+        self._is_immutable = True
         self._facets = tuple(self._facets)
 
     def is_mutable(self):
@@ -4457,7 +4498,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S3.is_mutable()
             False
         """
-        return self._is_mutable
+        return not self._is_immutable
 
     def is_immutable(self):
         """
@@ -4472,7 +4513,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S.is_immutable()
             True
         """
-        return not self._is_mutable
+        return self._is_immutable
 
     def cone_vertices(self):
         r"""
@@ -4632,7 +4673,6 @@ class SimplicialComplex(Parent, GenericCellComplex):
             False
         """
         from sage.numerical.mip import MixedIntegerLinearProgram
-        Facets = self.facets()
         RFPairs = [(Simplex(r), f, f.dimension() - len(r) + 1)
                    for f in self.facets() for r in Set(f).subsets()]
         n = len(RFPairs)
@@ -4653,7 +4693,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             x = IP.get_values(y)
             return [RFPairs[i] for i in range(n) if x[i] == 1]
 
-    def intersection(self,other):
+    def intersection(self, other):
         r"""
         Calculate the intersection of two simplicial complexes.
 
@@ -4720,9 +4760,10 @@ def facets_for_RP4():
                 facets.append(new)
     return facets
 
+
 def facets_for_K3():
     """
-    Returns the facets for a minimal triangulation of the K3 surface.
+    Return the facets for a minimal triangulation of the K3 surface.
 
     This is a pure simplicial complex of dimension 4 with 16
     vertices and 288 facets. The facets are obtained by constructing a

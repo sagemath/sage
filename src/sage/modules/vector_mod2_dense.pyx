@@ -1,5 +1,10 @@
+# distutils: libraries = M4RI_LIBRARIES GDLIB_LIBRARIES LIBPNG_LIBRARIES
+# distutils: library_dirs = M4RI_LIBDIR GDLIB_LIBDIR LIBPNG_LIBDIR
+# distutils: include_dirs = M4RI_INCDIR GDLIB_INCDIR LIBPNG_INCDIR
+# distutils: extra_compile_args = M4RI_CFLAGS
+
 """
-Vectors with elements in GF(2).
+Vectors with elements in GF(2)
 
 AUTHOR:
 
@@ -24,22 +29,21 @@ TESTS::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Martin Albrecht <M.R.Albrecht@rhul.ac.uk>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.finite_rings.integer_mod cimport IntegerMod_int, IntegerMod_abstract
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
-
+from sage.structure.richcmp cimport rich_to_bool
 cimport sage.modules.free_module_element as free_module_element
 from .free_module_element import vector
 
@@ -128,7 +132,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         self._entries = NULL
-        self._is_mutable = 1
+        self._is_immutable = 0
         if not parent is None:
             self._init(parent.degree(), parent)
 
@@ -184,7 +188,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: (GF(2)**5)(1)
             Traceback (most recent call last):
             ...
-            TypeError: can't initialize vector from nonzero non-list
+            TypeError: can...t initialize vector from nonzero non-list
             sage: (GF(2)**0).zero_vector()
             ()
         """
@@ -212,19 +216,20 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         EXAMPLES::
 
-        sage: VS = VectorSpace(GF(2),10^3)
-        sage: import gc
-        sage: for i in range(10):
-        ....:     v = VS.random_element()
-        ....:     del v
-        ....:     _ = gc.collect()
+            sage: VS = VectorSpace(GF(2),10^3)
+            sage: import gc
+            sage: for i in range(10):
+            ....:     v = VS.random_element()
+            ....:     del v
+            ....:     _ = gc.collect()
         """
         if self._entries:
             mzd_free(self._entries)
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
+
             sage: v = vector(GF(2), [0,0,0,0])
             sage: v == 0
             True
@@ -241,9 +246,11 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: w == w
             True
         """
+        cdef int c
         if left._degree == 0:
-            return 0
-        return mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
+            return rich_to_bool(op, 0)
+        c = mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
+        return rich_to_bool(op, c)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -290,7 +297,8 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: loads(dumps(e)) == e
             True
         """
-        return unpickle_v0, (self._parent, self.list(), self._degree, self._is_mutable)
+        return unpickle_v0, (self._parent, self.list(), self._degree,
+                             self._is_immutable)
 
     cpdef _add_(self, right):
         """
@@ -341,6 +349,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
     cpdef _dot_product_(self, Vector right):
         """
         EXAMPLES::
+
            sage: VS = VectorSpace(GF(2),3)
            sage: v = VS([1,1,1]); w = VS([0,0,0])
            sage: v * w, w * v #indirect doctest
@@ -475,7 +484,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             v[i] = switch[mzd_read_bit(self._entries, 0, i)]
         return v
 
-def unpickle_v0(parent, entries, degree, is_mutable):
+def unpickle_v0(parent, entries, degree, is_immutable):
     """
     EXAMPLES::
 
@@ -496,6 +505,6 @@ def unpickle_v0(parent, entries, degree, is_mutable):
             mzd_write_bit(v._entries, 0, i, xi%2)
         else:
             mzd_write_bit(v._entries, 0, i, entries[i]%2)
-    v._is_mutable = int(is_mutable)
+    v._is_immutable = int(is_immutable)
     return v
 

@@ -36,7 +36,6 @@ add them and multiply them with scalars::
     sage: m-m
     0*x + 0*y + 0*z + 0
 """
-from six.moves import zip
 
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp
@@ -384,9 +383,8 @@ class LinearExpression(ModuleElement):
 
             sage: from sage.geometry.linear_expression import LinearExpressionModule
             sage: L.<x> = LinearExpressionModule(QQ)
-            sage: hash(L([0,1]))
-            3430019387558 # 64-bit
-            -1659481946   # 32-bit
+            sage: hash(L([0,1])) == hash((1,))
+            True
         """
         return hash(self._coeffs) ^ hash(self._const)
 
@@ -654,8 +652,8 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
 
             sage: from sage.geometry.linear_expression import LinearExpressionModule
             sage: L.<x,y,z> = LinearExpressionModule(QQ)
-            sage: L.random_element()
-            -1/2*x - 1/95*y + 1/2*z - 12
+            sage: L.random_element() in L
+            True
         """
         A = self.ambient_module().random_element()
         b = self.base_ring().random_element()

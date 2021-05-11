@@ -10,7 +10,6 @@ Integrable Representations of Affine Lie Algebras
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.category_object import CategoryObject
@@ -161,10 +160,10 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         sage: V = IntegrableRepresentation(Lambda[0]+Lambda[1]+Lambda[2])
         sage: V.print_strings() # long time
         6*Lambdacheck[0]: 4 28 100 320 944 2460 6064 14300 31968 69020 144676 293916
-        4*Lambdacheck[0] + Lambdacheck[2]: 4 22 84 276 800 2124 5288 12470 28116 61056 128304 261972
         3*Lambdacheck[0] + Lambdacheck[1]: 2 16 58 192 588 1568 3952 9520 21644 47456 100906 207536
-        Lambdacheck[0] + Lambdacheck[1] + Lambdacheck[2]: 1 6 26 94 294 832 2184 5388 12634 28390 61488 128976
+        4*Lambdacheck[0] + Lambdacheck[2]: 4 22 84 276 800 2124 5288 12470 28116 61056 128304 261972
         2*Lambdacheck[1] - deltacheck: 2 8 32 120 354 980 2576 6244 14498 32480 69776 145528
+        Lambdacheck[0] + Lambdacheck[1] + Lambdacheck[2]: 1 6 26 94 294 832 2184 5388 12634 28390 61488 128976
         2*Lambdacheck[0] + 2*Lambdacheck[2]: 2 12 48 164 492 1344 3428 8256 18960 41844 89208 184512
         3*Lambdacheck[2] - deltacheck: 4 16 60 208 592 1584 4032 9552 21728 47776 101068 207888
         sage: Lambda = RootSystem(['A',6,2]).weight_lattice(extended=true).fundamental_weights()
@@ -665,7 +664,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         elif self._cartan_type.type() == 'BC':
             #case A^2_{2l}
-            # We have to keep track of the roots we have visted for this case
+            # We have to keep track of the roots we have visited for this case
             ret = set(self._classical_positive_roots)
             for al in self._classical_roots:
                 if al in self._classical_short_roots:

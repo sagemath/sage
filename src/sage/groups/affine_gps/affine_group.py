@@ -13,11 +13,10 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 
-from sage.categories.groups import Groups
 from sage.groups.group import Group
 from sage.matrix.all import MatrixSpace
 from sage.modules.all import FreeModule
@@ -428,10 +427,9 @@ class AffineGroup(UniqueRepresentation, Group):
         """
         v = self.vector_space()(v)
         try:
-            two_norm2inv = self.base_ring()(2) / sum([ vi**2 for vi in v ])
+            two_norm2inv = self.base_ring()(2) / sum([vi**2 for vi in v])
         except ZeroDivisionError:
             raise ValueError('v has norm zero')
-        from sage.matrix.constructor import identity_matrix
         A = self.matrix_space().one() - v.column() * (v.row() * two_norm2inv)
         return self.element_class(self, A, self.vector_space().zero(), check=True, convert=False)
 

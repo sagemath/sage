@@ -28,8 +28,7 @@ in a notebook cell, or the Typeset checkbox in the notebook, will handle ``g``
 appropriately.
 
 Support through the ``tkz-graph`` package is by Alain Matthes, the author of
-``tkz-graph``, whose work can be found at his `Altermundus.com
-<http://altermundus.com/>`_ site.
+``tkz-graph``, whose work can be found at https://www.ctan.org/pkg/tkz-graph.
 
 The range of possible options for customizing the appearance of a graph are
 carefully documented at :meth:`sage.graphs.graph_latex.GraphLatex.set_option`.
@@ -71,7 +70,7 @@ Primary locations for these programs are:
 - TeX: http://ctan.org/
 - dvipng: http://sourceforge.net/projects/dvipng/
 - convert: http://www.imagemagick.org (the ImageMagick suite)
-- tkz-graph: http://altermundus.com/pages/tkz/
+- tkz-graph: https://www.ctan.org/pkg/tkz-graph
 
 Customizing the output is accomplished in several ways.  Suppose ``g`` is a
 graph, then ``g.set_latex_options()`` can be used to efficiently set or modify
@@ -395,7 +394,6 @@ GraphLatex class and functions
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_function
@@ -423,10 +421,10 @@ def check_tkz_graph():
 Visit '...'.
 """)
     latex.check_file("tkz-graph.sty", """This package is required to render graphs in LaTeX.
-Visit 'http://altermundus.com/pages/tkz/'.
+Visit 'https://www.ctan.org/pkg/tkz-graph'.
 """)
     latex.check_file("tkz-berge.sty", """This package is required to render graphs in LaTeX.
-Visit 'http://altermundus.com/pages/tkz/'.
+Visit 'https://www.ctan.org/pkg/tkz-berge'.
 """)
 
 
@@ -469,7 +467,6 @@ def setup_latex_preamble():
         True
     """
     latex.add_package_to_preamble_if_available("tikz")
-    latex.add_to_mathjax_avoid_list("tikz")
     latex.add_package_to_preamble_if_available("tkz-graph")
     latex.add_package_to_preamble_if_available("tkz-berge")
     if have_tkz_graph():
@@ -688,7 +685,7 @@ class GraphLatex(SageObject):
           ``'#2D87A7'``, or a single character from the choices ``'rgbcmykw'``.
           Additionally, a number between 0 and 1 will create a grayscale value.
           These color specifications are consistent throughout the options for
-          a ``tkzpicture``.
+          a ``tikzpicture``.
 
         - ``vertex_colors`` -- a dictionary whose keys are vertices of the graph
           and whose values are colors. These will be used to color the outline
@@ -1071,7 +1068,7 @@ class GraphLatex(SageObject):
         #   shape" to mirror vertex shapes
         # - "line width" works for vertices, should be configurable
         # - allow injection of latex code to style a pre-built style for
-        #   example, \SetUpVertex[style={fill=green}] could overide color
+        #   example, \SetUpVertex[style={fill=green}] could override color
         #   selection in a style like "Art"
         # - "inner sep" is distance from vertex label to edge of vertex this
         #   should be set as small as possible - but bigger than the line width.
@@ -1156,7 +1153,7 @@ class GraphLatex(SageObject):
             #
             elif name in color_dicts:
                 if not isinstance(value, dict):
-                    raise TypeError('%s option must be a dictionary, not %s' (name, value))
+                    raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, c in value.items():
                         try:
@@ -1165,42 +1162,42 @@ class GraphLatex(SageObject):
                             raise ValueError('%s option for %s needs to be a matplotlib color (always as a string), not %s' % (name, key, c))
             elif name in positive_scalar_dicts:
                 if not isinstance(value, dict):
-                    raise TypeError('%s option must be a dictionary, not %s' (name, value))
+                    raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, x in value.items():
                         if not type(x) in [int, Integer, float, RealLiteral] or not x >= 0.0:
                             raise ValueError('%s option for %s needs to be a positive number, not %s' % (name, key, x))
             elif name in boolean_dicts:
                 if not isinstance(value, dict):
-                    raise TypeError('%s option must be a dictionary, not %s' (name, value))
+                    raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, b in value.items():
                         if not isinstance(b, bool):
                             raise ValueError('%s option for %s needs to be True or False, not %s' % (name, key, b))
             elif name == 'vertex_shapes':
                 if not isinstance(value, dict):
-                    raise TypeError('%s option must be a dictionary, not %s' (name, value))
+                    raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, s in value.items():
                         if s not in shape_names:
                             raise ValueError('%s option for %s needs to be a vertex shape, not %s' % (name, key, s))
             elif name == 'vertex_label_placements':
                 if not isinstance(value, dict):
-                    raise TypeError('%s option must be a dictionary, not %s' (name, value))
+                    raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
                         if not(p == 'center') and not(isinstance(p, tuple) and len(p) == 2 and type(p[0]) in number_types and p[0] >= 0 and type(p[1]) in number_types and p[1] >= 0):
                             raise ValueError('%s option for %s needs to be None or a pair of positive numbers, not %s' % (name, key, p))
             elif name == 'edge_label_placements':
                 if not isinstance(value, dict):
-                    raise TypeError('%s option must be a dictionary, not %s' (name, value))
+                    raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
                         if not(type(p) in [float, RealLiteral] and (0 <= p) and (p <= 1)) and not(p in label_places):
                             raise ValueError('%s option for %s needs to be a number between 0.0 and 1.0 or a place (like "above"), not %s' % (name, key, p))
             elif name == 'loop_placements':
                 if not isinstance(value, dict):
-                    raise TypeError('%s option must be a dictionary, not %s' (name, value))
+                    raise TypeError('%s option must be a dictionary, not %s' % (name, value))
                 else:
                     for key, p in value.items():
                         if not((isinstance(p, tuple)) and (len(p) == 2) and (p[0] >= 0) and (p[1] in compass_points)):
@@ -1313,6 +1310,37 @@ class GraphLatex(SageObject):
             \Edge[lw=0.1cm,style={color=cv0v1,},](v0)(v1)
             %
             \end{tikzpicture}
+
+        We check that :trac:`22070` is fixed::
+
+            sage: edges = [(i,(i+1)%3,a) for i,a in enumerate('abc')]
+            sage: G_with_labels = DiGraph(edges)
+            sage: C = [[0,1], [2]]
+            sage: kwds = dict(subgraph_clusters=C,color_by_label=True,prog='dot',format='dot2tex')
+            sage: opts = G_with_labels.latex_options()
+            sage: opts.set_options(edge_labels=True, **kwds) # optional - dot2tex graphviz
+            sage: latex(G_with_labels)                       # optional - dot2tex graphviz
+            \begin{tikzpicture}[>=latex,line join=bevel,]
+            %%
+            \begin{scope}
+              \pgfsetstrokecolor{black}
+              \definecolor{strokecol}{rgb}{...};
+              \pgfsetstrokecolor{strokecol}
+              \definecolor{fillcol}{rgb}{...};
+              \pgfsetfillcolor{fillcol}
+              \filldraw ... cycle;
+            \end{scope}
+            \begin{scope}
+              \pgfsetstrokecolor{black}
+              \definecolor{strokecol}{rgb}{...};
+              \pgfsetstrokecolor{strokecol}
+              \definecolor{fillcol}{rgb}{...};
+              \pgfsetfillcolor{fillcol}
+              \filldraw ... cycle;
+            \end{scope}
+            ...
+            \end{tikzpicture}
+
         """
         format = self.get_option('format')
         if format == "tkz_graph":
@@ -1333,14 +1361,14 @@ class GraphLatex(SageObject):
             sage: print(g.latex_options().dot2tex_picture())  # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-              \node (node_3) at (...bp,...bp) [draw,draw=none] {$\left(0, 1\right)$};
-              \node (node_2) at (...bp,...bp) [draw,draw=none] {$\left(1, 0\right)$};
-              \node (node_1) at (...bp,...bp) [draw,draw=none] {$\left(0, 0\right)$};
-              \node (node_0) at (...bp,...bp) [draw,draw=none] {$\left(1, 1\right)$};
-              \draw [black,->] (node_1) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_3);
-              \draw [black,->] (node_2) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_3);
-              \draw [black,->] (node_2) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_0);
-              \draw [black,->] (node_1) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_0);
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$\left(...\right)$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$\left(...\right)$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$\left(...\right)$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$\left(...\right)$};
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
             %
             \end{tikzpicture}
 
@@ -1352,9 +1380,9 @@ class GraphLatex(SageObject):
             sage: print(G.latex_options().dot2tex_picture()) # optional - dot2tex graphviz
             \begin{tikzpicture}[>=latex,line join=bevel,]
             %%
-            \node (node_1) at (...bp,...bp) [draw,draw=none] {$3333$};
-              \node (node_0) at (...bp,...bp) [draw,draw=none] {$88$};
-              \draw [black,->] (node_1) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_0);
+            \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
+              \node (node_...) at (...bp,...bp) [draw,draw=none] {$...$};
+              \draw [black,->] (node_...) ..controls (...bp,...bp) and (...bp,...bp)  .. (node_...);
               \definecolor{strokecol}{rgb}{0.0,0.0,0.0};
               \pgfsetstrokecolor{strokecol}
               \draw (...bp,...bp) node {$\text{\texttt{my{\char`\_}label}}$};
@@ -1371,7 +1399,6 @@ class GraphLatex(SageObject):
             \draw [red,] (node_0) ... (node_1);
             ...
             \end{tikzpicture}
-
 
         .. NOTE::
 
@@ -1427,7 +1454,7 @@ class GraphLatex(SageObject):
         document.
 
         For more information about tkz-graph you can visit
-        `Altermundus.com <http://altermundus.com/>`_
+        https://www.ctan.org/pkg/tkz-graph.
 
         EXAMPLES:
 
@@ -1631,7 +1658,7 @@ class GraphLatex(SageObject):
         # Which is just a convenience for forming vertex names internal to
         # tkz-graph
         index_of_vertex = {}
-        vertex_list = self._graph.vertices()
+        vertex_list = self._graph.vertices(sort=False)
         for u in self._graph:
             index_of_vertex[u] = vertex_list.index(u)
 
@@ -1769,7 +1796,7 @@ class GraphLatex(SageObject):
                 el_slope = {}
                 el_placement = {}
 
-            for e in self._graph.edges():
+            for e in self._graph.edges(sort=False):
                 edge = (e[0], e[1])
                 reverse = (e[1], e[0])
                 #
@@ -1946,7 +1973,7 @@ class GraphLatex(SageObject):
         s += ['%\n']
 
         # Create each edge or loop
-        for e in self._graph.edges():
+        for e in self._graph.edges(sort=False):
             edge = (e[0], e[1])
             loop = e[0] == e[1]
             if loop:

@@ -1,18 +1,17 @@
 """
 Examples of manifolds
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
 from sage.categories.manifolds import Manifolds
-from sage.rings.all import QQ
+
 
 class Plane(UniqueRepresentation, Parent):
     r"""
@@ -91,4 +90,3 @@ class Plane(UniqueRepresentation, Parent):
     Element = ElementWrapper
 
 Example = Plane
-

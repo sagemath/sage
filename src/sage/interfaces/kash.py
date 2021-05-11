@@ -4,17 +4,14 @@ Interface to KASH
 Sage provides an interface to the KASH computer algebra system,
 which is a *free* (as in beer!) but *closed source* program for
 algebraic number theory that shares much common code with Magma. To
-use KASH, you must install the appropriate optional Sage package by
-typing something like "sage -i kash3-linux-2005.11.22" or "sage -i
-kash3_osx-2005.11.22". For a list of optional packages type "sage
--optional". If you type one of the above commands, the (about 16MB)
-package will be downloaded automatically (you don't have to do
-that).
+use KASH, you must first install it. Visit its web page:
+http://page.math.tu-berlin.de/~kant/kash.html
 
-It is not enough to just have KASH installed on your computer. Note
-that the KASH Sage package is currently only available for Linux
-and OSX. If you need Windows, support contact me
-(wstein@gmail.com).
+.. TODO::
+
+    Update the following sentence.
+
+It is not enough to just have KASH installed on your computer.
 
 The KASH interface offers three pieces of functionality:
 
@@ -47,8 +44,8 @@ doesn't work correctly. (TODO)
 Tutorial
 --------
 
-The examples in this tutorial require that the optional kash
-package be installed.
+The examples in this tutorial require that kash
+be installed.
 
 Basics
 ~~~~~~
@@ -250,9 +247,8 @@ version.
     [ 1, 2, 3, 5, 6, 5 ]
 
 The ``Apply`` command applies a function to each
-element of a list.
+element of a list::
 
-::
     sage: L = kash([1,2,3,4])                    # optional -- kash
     sage: L.Apply('i -> 3*i')                    # optional -- kash
     [ 3, 6, 9, 12 ]
@@ -414,8 +410,7 @@ unlike for the other interfaces.
 """
 
 
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -427,14 +422,14 @@ unlike for the other interfaces.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .expect import Expect, ExpectElement
 from sage.docs.instancedoc import instancedoc
 import os
+
+from sage.misc.sage_eval import sage_eval
 
 
 class Kash(Expect):
@@ -449,11 +444,10 @@ class Kash(Expect):
                  max_workspace_size=None,
                  maxread=None,
                  script_subdirectory=None,
-                 restart_on_ctrlc = True,
+                 restart_on_ctrlc=True,
                  logfile=None,
                  server=None,
                  server_tmpdir=None):
-
         """
         INPUT:
             max_workspace_size -- (default: None)
@@ -462,36 +456,42 @@ class Kash(Expect):
                     <mem>k stands for kilobyte-wise allocation
                     <mem>m stands for megabyte-wise allocation
         """
-
-
         cmd = "kash3 -b -c -d  "
         if max_workspace_size is not None:
             cmd += " -a %s" % int(max_workspace_size)
         Expect.__init__(self,
-                        name = 'kash',
-                        prompt = 'kash% ',
-                        command = cmd,
-                        server = server,
-                        server_tmpdir = server_tmpdir,
-                        script_subdirectory = script_subdirectory,
-                        restart_on_ctrlc = True,
-                        verbose_start = False,
-                        logfile = logfile,
+                        name='kash',
+                        prompt='kash% ',
+                        command=cmd,
+                        server=server,
+                        server_tmpdir=server_tmpdir,
+                        script_subdirectory=script_subdirectory,
+                        restart_on_ctrlc=True,
+                        verbose_start=False,
+                        logfile=logfile,
                         eval_using_file_cutoff=100,
-                        init_code = ['X:=ZX.1;']
+                        init_code=['X:=ZX.1;']
                         )
         # The above init_code programs around a bug reported by Jack Schmidt
 
         self.__seq = 0
 
-    def _next_var_name(self):
-        if self.__seq == 0:
-            self.eval('_s_ := [ ];')
-        self.__seq += 1
-        return '_s_[%s]'%self.__seq
+    def clear(self, var):
+        """
+        Clear the variable named ``var``.
 
-    def _read_in_file_command(self,filename):
-        return 'Read("%s");'%filename
+        Kash variables have a record structure, so if sage1 is a
+        polynomial ring, sage1.1 will be its indeterminate.  This
+        prevents us from easily reusing variables, since sage1.1
+        might still have references even if sage1 does not.
+
+        For now, we don't implement variable clearing to avoid these
+        problems, and instead implement this method with a noop.
+        """
+        pass
+
+    def _read_in_file_command(self, filename):
+        return 'Read("%s");' % filename
 
     def _eval_line_using_file(self, line):
         F = open(self._local_tmpfile(), 'w')
@@ -520,6 +520,7 @@ class Kash(Expect):
         try:
             Expect._start(self)
         except RuntimeError:
+            # TODO: replace this error with something more accurate.
             from sage.misc.package import PackageNotFoundError
             raise PackageNotFoundError("kash")
         # Turn off the annoying timer.
@@ -551,40 +552,48 @@ class Kash(Expect):
         s = Expect.eval(self, x, **kwds)
         i = s.find('\r\n')
         if i != -1:
-            s = s[i+2:]
+            s = s[i + 2:]
         if newlines:
             return s
         else:
-            return s.replace("\\\n","")
+            return s.replace("\\\n", "")
 
-##     def help(self, name=None):
-##         """
-##         Return help on KASH commands.
+#     def help(self, name=None):
+#         """
+#         Return help on KASH commands.
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##             sage: X = kash.help('IntegerRing')   # optional - kash
+#             sage: X = kash.help('IntegerRing')   # optional - kash
 
-##         """
-##         if name is None:
-##           print '\nTo use KASH help enter kash.help(s). '
-##           print 'The syntax of the string s is given below.\n'
-##           print self.eval('?')
-##         elif name[0] == '?':
-##           print self.eval(name)
-##         else:
-##           print self.eval('?%s'%name)
+#         """
+#         if name is None:
+#           print '\nTo use KASH help enter kash.help(s). '
+#           print 'The syntax of the string s is given below.\n'
+#           print self.eval('?')
+#         elif name[0] == '?':
+#           print self.eval(name)
+#         else:
+#           print self.eval('?%s'%name)
 
     def help(self, name=None):
         """
         Return help on KASH commands.
 
-        Returns help on all commands with a given name. If name is None,
-        return the location of the installed Kash HTML documentation.
+        This returns help on all commands with a given name.  If name
+        is ``None``, return the location of the installed Kash HTML
+        documentation.
 
         EXAMPLES::
 
-            sage: X = kash.help('IntegerRing')   # optional -- kash
+            sage: X = kash.help('IntegerRing')   # random; optional -- kash
+            1439: IntegerRing() -> <ord^rat>
+            1440: IntegerRing(<elt-ord^rat> m) -> <res^rat>
+            1441: IntegerRing(<seq()> Q) -> <res^rat>
+            1442: IntegerRing(<fld^rat> K) -> <ord^rat>
+            1443: IntegerRing(<fld^fra> K) -> <ord^num>
+            1444: IntegerRing(<rng> K) -> <rng>
+            1445: IntegerRing(<fld^pad> L) -> <ord^pad>
 
         There is one entry in X for each item found in the documentation
         for this function: If you type ``print(X[0])`` you will
@@ -614,42 +623,40 @@ class Kash(Expect):
             i = C.find('m')
             j = C.find(':')
             try:
-                n = int(C[i+1:j])
+                n = int(C[i + 1:j])
             except ValueError:
                 full = C
             else:
-                full = self.eval('?%s'%n)
-            #sig = C[j+2:]
+                full = self.eval('?%s' % n)
             X.append(full)
         return KashDocumentation(X)
 
     def help_search(self, name):
-        return self._doc(self.eval('?*%s'%name))
+        return self._doc(self.eval('?*%s' % name))
 
     def set(self, var, value):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s:=%s;;'%(var,value)
-        #out = self.eval(cmd)
+        cmd = '%s:=%s;;' % (var, value)
         out = self._eval_line(cmd, allow_use_file=True)
         if out.lower().find('error') != -1:
-            raise TypeError("Error executing code in Kash\nCODE:\n\t%s\nKash ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Kash\nCODE:\n\t%s\nKash ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         """
         Get the value of the variable var.
         """
-        return self.eval('%s;'%var, newlines=False)
+        return self.eval('%s;' % var, newlines=False)
 
-    #def clear(self, var):
+    # def clear(self, var):
     #    """
     #    Clear the variable named var.
     #    """
     #    self.eval('Unbind(%s)'%var)
 
     def _contains(self, v1, v2):
-        return self.eval('%s in %s'%(v1,v2)) == "true"
+        return self.eval('%s in %s' % (v1, v2)) == "TRUE"
 
     def _assign_symbol(self):
         return ":="
@@ -662,6 +669,34 @@ class Kash(Expect):
 
     def _false_symbol(self):
         return "FALSE"
+
+    def function_call(self, function, args=None, kwds=None):
+        """
+        EXAMPLES::
+
+            sage: kash.function_call('ComplexToPolar', [1+I], {'Results' : 1})   # optional -- kash
+            1.41421356237309504880168872421
+        """
+        args, kwds = self._convert_args_kwds(args, kwds)
+        self._check_valid_function_name(function)
+        s = self._function_call_string(function,
+                                       [s.name() for s in args],
+                                       ['%s:=%s' % (key, value.name())
+                                        for key, value in kwds.items()])
+        return self.new(s)
+
+    def _function_call_string(self, function, args, kwds):
+        """
+        Return the string used to make function calls.
+
+        EXAMPLES::
+
+            sage: kash._function_call_string('Expand', ['x', 'y'], ['Prec:=10'])
+            'Expand(x,y,rec(Prec:=10))'
+        """
+        if not kwds:
+            return "%s(%s)" % (function, ",".join(args))
+        return "%s(%s,rec(%s))" % (function, ",".join(args), ",".join(kwds))
 
     def console(self):
         kash_console()
@@ -677,11 +712,89 @@ class KashElement(ExpectElement):
         if not isinstance(other, KashElement):
             other = self.parent()(other)
         other._check_valid()
-        return self.parent()('%s mod %s'%(self._name,other._name))
+        return self.parent()('%s mod %s' % (self._name, other._name))
 
     def __len__(self):
         self._check_valid()
-        return int(self.parent().eval('Length(%s)'%self.name()))
+        return int(self.parent().eval('Length(%s)' % self.name()))
+
+    def __bool__(self):
+        """
+        Return ``True`` if this Kash element is not 0 or FALSE.
+
+        EXAMPLES::
+
+            sage: bool(kash('FALSE'))                   # optional -- kash
+            False
+            sage: bool(kash('TRUE'))                    # optional -- kash
+            True
+
+            sage: bool(kash(0))                         # optional -- kash
+            False
+            sage: bool(kash(1))                         # optional -- kash
+            True
+        """
+
+        # Kash has separate integer and boolean types, and FALSE does not
+        # compare equal to 0 (i.e, FALSE = 0 is FALSE)
+
+        # Python 2.x uses __nonzero__ for type conversion to 'bool', so we
+        # have to test against FALSE, and sage.structure.element.Element's
+        # default implementation of is_zero() is to return 'not self', so
+        # our boolean conversion also has to test against 0.
+
+        P = self.parent()
+        return (P.eval('%s = FALSE' % self.name()) == 'FALSE' and
+                P.eval('%s = 0' % self.name()) == 'FALSE')
+
+    __nonzero__ = __bool__
+
+    def _sage_(self, locals={}, *args):
+        """
+        Convert this object to Sage.
+
+        A translation dictionary `locals` can be provided to map Kash
+        names and objects to Sage objects.
+
+        EXAMPLES::
+
+            sage: kash('1234').sage()                   # optional -- kash
+            1234
+
+            sage: kash('X^2+X').sage({'X': x})          # optional -- kash
+            x^2 + x
+
+            sage: kQ = kash.RationalField()             # optional -- kash
+            sage: kR = kQ.PolynomialAlgebra()           # optional -- kash
+
+            sage: R.<x> = QQ[]                          # optional -- kash
+            sage: ka = (x^2+x).subs({x : kR.1})         # random; optional -- kash
+            sage541.1^2 + sage541.1
+            sage: ka.sage({kR.1: x})                    # optional -- kash
+            x^2 + x
+
+            sage: R.<x,y> = QQ[]                        # optional -- kash
+            sage: ka = (x^2+x).subs({x : kR.1})         # random; optional -- kash
+            sage541.1^2 + sage541.1
+            sage: ka.sage({kR.1: x})                    # optional -- kash
+            x^2 + x
+
+        """
+
+        string = self._sage_repr()
+
+        i = 1
+        parsedict = {}
+        for key, val in locals.items():
+            name = 'sage' + str(i)
+            string = string.replace(str(key), name)
+            parsedict[name] = val
+            i = i + 1
+
+        try:
+            return sage_eval(string, locals=parsedict)
+        except Exception:
+            raise NotImplementedError("Unable to parse output: %s" % string)
 
 
 class KashDocumentation(list):
@@ -694,11 +807,13 @@ class KashDocumentation(list):
 def is_KashElement(x):
     return isinstance(x, KashElement)
 
-############
+######
 
-###########
+######
+
 
 kash = Kash()
+
 
 def reduce_load_Kash():
     return kash

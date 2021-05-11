@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 Block designs
 
 A *block design* is a set together with a family of subsets (repeated subsets
@@ -8,10 +8,9 @@ deemed useful for a particular application. See :wikipedia:`Block_design`.
 
 REFERENCES:
 
-.. [1] Block design from wikipedia,
-  :wikipedia:`Block_design`
+- Block design from wikipedia: :wikipedia:`Block_design`
 
-.. [2] What is a block design?,
+- What is a block design?,
   http://designtheory.org/library/extrep/extrep-1.1-html/node4.html (in 'The
   External Representation of Block Designs' by Peter J. Cameron, Peter
   Dobcsanyi, John P. Morgan, Leonard H. Soicher)
@@ -51,11 +50,8 @@ Functions and methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
-
 from sage.modules.free_module import VectorSpace
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -65,9 +61,7 @@ from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
 from sage.matrix.matrix_space import MatrixSpace
-
-
-import six
+from sage.libs.gap.libgap import libgap
 
 
 BlockDesign = IncidenceStructure
@@ -275,17 +269,16 @@ def ProjectiveGeometryDesign(n, d, F, algorithm=None, point_coordinates=True, ch
             blocks.append(b)
         B = BlockDesign(len(points), blocks, name="ProjectiveGeometryDesign", check=check)
         if point_coordinates:
-            B.relabel({i:p[0] for p,i in six.iteritems(points)})
+            B.relabel({i:p[0] for p,i in points.items()})
 
     elif algorithm == "gap":   # Requires GAP's Design
-        from sage.interfaces.gap import gap
-        gap.load_package("design")
-        gap.eval("D := PGPointFlatBlockDesign( %s, %s, %d )"%(n,F.order(),d))
-        v = eval(gap.eval("D.v"))
-        gblcks = eval(gap.eval("D.blocks"))
+        libgap.load_package("design")
+        D = libgap.PGPointFlatBlockDesign(n, F.order(), d)
+        v = D['v'].sage()
+        gblcks = D['blocks'].sage()
         gB = []
         for b in gblcks:
-            gB.append([x-1 for x in b])
+            gB.append([x - 1 for x in b])
         B = BlockDesign(v, gB, name="ProjectiveGeometryDesign", check=check)
 
     if check:
@@ -353,10 +346,10 @@ def DesarguesianProjectivePlaneDesign(n, point_coordinates=True, check=True):
     affine_plane   = lambda x,y: relabel[x] + n * relabel[y]
 
     # - the affine line is the set of points [x:1:0] (i.e. the third coordinate is
-    #   zero but not the second one) and gets relabeld from n^2 to n^2 + n - 1
+    #   zero but not the second one) and gets relabeled from n^2 to n^2 + n - 1
     line_infinity  = lambda x: n2 + relabel[x]
 
-    # - the point is [1:0:0] and gets relabeld n^2 + n
+    # - the point is [1:0:0] and gets relabeled n^2 + n
     point_infinity = n2 + n
 
     blcks = []
@@ -747,7 +740,7 @@ def projective_plane(n, check=True, existence=False):
         sage: designs.projective_plane(12, existence=True)
         Unknown
     """
-    from sage.rings.sum_of_squares import is_sum_of_two_squares_pyx
+    from sage.combinat.designs.bibd import BruckRyserChowla_check
 
     if n <= 1:
         if existence:
@@ -761,7 +754,7 @@ def projective_plane(n, check=True, existence=False):
                "projective planes of order 10\" (1989), Canad. J. Math.")
         raise EmptySetError("No projective plane of order 10 exists by %s"%ref)
 
-    if (n%4) in [1,2] and not is_sum_of_two_squares_pyx(n):
+    if BruckRyserChowla_check(n*n+n+1, n+1, 1) is False:
         if existence:
             return False
         raise EmptySetError("By the Bruck-Ryser theorem, no projective"
@@ -874,8 +867,9 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
     B = BlockDesign(len(points), blocks, name="AffineGeometryDesign", check=check)
 
     if point_coordinates:
-        rd = {i:p[0][1:] for p,i in six.iteritems(points)}
-        for v in rd.values(): v.set_immutable()
+        rd = {i: p[0][1:] for p, i in points.items()}
+        for v in rd.values():
+            v.set_immutable()
         B.relabel(rd)
 
     if check:
@@ -883,6 +877,7 @@ def AffineGeometryDesign(n, d, F, point_coordinates=True, check=True):
             raise RuntimeError("error in AffineGeometryDesign "
                     "construction. Please e-mail sage-devel@googlegroups.com")
     return B
+
 
 def CremonaRichmondConfiguration():
     r"""
@@ -912,6 +907,7 @@ def CremonaRichmondConfiguration():
     H.relabel()
     return H
 
+
 def WittDesign(n):
     """
     INPUT:
@@ -938,20 +934,16 @@ def WittDesign(n):
         sage: print(BD)                      # optional - gap_packages (design package)
         Incidence structure with 9 points and 12 blocks
     """
-    from sage.interfaces.gap import gap
-    gap.load_package("design")
-    gap.eval("B:=WittDesign(%s)"%n)
-    v = eval(gap.eval("B.v"))
-    gblcks = eval(gap.eval("B.blocks"))
-    gB = []
-    for b in gblcks:
-       gB.append([x-1 for x in b])
+    libgap.load_package("design")
+    B = libgap.WittDesign(n)
+    v = B['v'].sage()
+    gB = [[x - 1 for x in b] for b in B['blocks'].sage()]
     return BlockDesign(v, gB, name="WittDesign", check=True)
 
 
 def HadamardDesign(n):
     """
-    As described in Section 1, p. 10, in [CvL]. The input n must have the
+    As described in Section 1, p. 10, in [CvL]_. The input n must have the
     property that there is a Hadamard matrix of order `n+1` (and that a
     construction of that Hadamard matrix has been implemented...).
 

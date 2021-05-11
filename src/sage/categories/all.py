@@ -1,16 +1,15 @@
-from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
 from .category import Category
 
-from .category_types import(
-                        Elements,
-                        ChainComplexes,
-)
+from .category_types import Elements
 
-from sage.categories.simplicial_complexes import SimplicialComplexes
+from .chain_complexes import ChainComplexes
 
-from .tensor     import tensor
+from .simplicial_complexes import SimplicialComplexes
+
+from .tensor import tensor
+from .signed_tensor import tensor_signed
 from .cartesian_product import cartesian_product
 
 from .functor  import (ForgetfulFunctor,
@@ -137,3 +136,6 @@ from .classical_crystals import ClassicalCrystals
 
 # polyhedra
 lazy_import('sage.categories.polyhedra', 'PolyhedralSets')
+
+# lie conformal algebras
+lazy_import('sage.categories.lie_conformal_algebras', 'LieConformalAlgebras')

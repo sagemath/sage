@@ -8,7 +8,7 @@ AUTHORS:
 Development supported by NSF award No. 0702939.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Ethan Van Andel <evlutte@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -20,9 +20,8 @@ Development supported by NSF award No. 0702939.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import numpy as np
 cimport numpy as np
@@ -90,14 +89,14 @@ cdef class PSpline:
         """
         if type(pts[0]) == type((0,0)):
             self.pts = np.array(
-                [np.complex(i[0], i[1]) for i in pts], dtype=np.complex128)
+                [complex(i[0], i[1]) for i in pts], dtype=np.complex128)
         else:
             self.pts = np.array(pts, dtype=np.complex128)
         self.N = len(pts)
 
     def value(self, double t):
         """
-        Returns the derivative (speed and direction of the curve) of a
+        Return the derivative (speed and direction of the curve) of a
         given point from the parameter ``t``.
 
         INPUT:
@@ -130,7 +129,7 @@ cdef class PSpline:
 
     def derivative(self, double t):
         """
-        Returns the derivative (speed and direction of the curve) of a
+        Return the derivative (speed and direction of the curve) of a
         given point from the parameter ``t``.
 
         INPUT:
@@ -222,7 +221,7 @@ cdef class CCSpline:
         """
         if type(pts[0]) == type((0,0)):
             pts = np.array(
-                [np.complex(pt[0], pt[1]) for pt in pts], dtype=np.complex128)
+                [complex(pt[0], pt[1]) for pt in pts], dtype=np.complex128)
         cdef int N, i, k
         N = len(pts)
         yvec = np.zeros(N, dtype=np.complex128)
@@ -250,7 +249,7 @@ cdef class CCSpline:
 
     def value(self, double t):
         """
-        Returns the location of a given point from the parameter ``t``.
+        Return the location of a given point from the parameter ``t``.
 
         INPUT:
 
@@ -282,7 +281,7 @@ cdef class CCSpline:
 
     def derivative(self, double t):
         """
-        Returns the derivative (speed and direction of the curve) of a
+        Return the derivative (speed and direction of the curve) of a
         given point from the parameter ``t``.
 
         INPUT:
@@ -295,9 +294,7 @@ cdef class CCSpline:
         A complex number representing the derivative at the point on the
         figure corresponding to the input ``t``.
 
-        EXAMPLES:
-
-        ::
+        EXAMPLES::
 
             sage: pts = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
             sage: cs = complex_cubic_spline(pts)

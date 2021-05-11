@@ -3,7 +3,7 @@ T-test using R
 
 TESTS::
 
-    sage: import rpy2
+    sage: import rpy2                                        # optional - rpy2
 """
 
 #*****************************************************************************
@@ -39,7 +39,7 @@ def ttest(x,y,conf_level = 0.95, **kw):
 
    Example::
 
-      sage: a, b = ttest([1,2,3,4,5],[1,2,3,3.5,5.121]); a # abs tol 1e-12
+      sage: a, b = ttest([1,2,3,4,5],[1,2,3,3.5,5.121]); a # abs tol 1e-12  # optional - rpy2
       0.9410263720274274
    """
    if len(x) != len(y):

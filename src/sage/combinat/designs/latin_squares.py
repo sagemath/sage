@@ -122,9 +122,6 @@ REFERENCES:
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import
-from six import iteritems
-from six.moves import zip
 
 from sage.rings.integer import Integer
 from sage.categories.sets_cat import EmptySetError
@@ -134,7 +131,7 @@ from sage.env import COMBINATORIAL_DESIGN_DATA_DIR
 
 def are_mutually_orthogonal_latin_squares(l, verbose=False):
     r"""
-    Check wether the list of matrices in ``l`` form mutually orthogonal latin
+    Check whether the list of matrices in ``l`` form mutually orthogonal latin
     squares.
 
     INPUT:
@@ -221,7 +218,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
     - ``n`` (integer) -- size of the latin square.
 
     - ``partitions`` (boolean) -- a Latin Square can be seen as 3 partitions of
-      the `n^2` cells of the array into `n` sets of size `n`, respectively :
+      the `n^2` cells of the array into `n` sets of size `n`, respectively:
 
       * The partition of rows
       * The partition of columns
@@ -449,7 +446,7 @@ def latin_square_product(M, N, *others):
          for jj in range(n)}
 
     L = lambda i_j: i_j[0] * n + i_j[1]
-    D = {(L(c[0]), L(c[1])): L(v) for c, v in iteritems(D)}
+    D = {(L(c[0]), L(c[1])): L(v) for c, v in D.items()}
     P = Matrix(D)
 
     if others:

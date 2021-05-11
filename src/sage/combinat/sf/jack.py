@@ -18,7 +18,6 @@ REFERENCES:
    The Clarendon Press, Oxford University Press, New York, 1995, With contributions
    by A. Zelevinsky, Oxford Science Publications.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
@@ -694,11 +693,11 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         return SetMorphism(End(self, category), self._normalize)
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         r"""
         The product of two Jack symmetric functions is done by multiplying the
         elements in the `P` basis and then expressing the elements
-        the basis ``self``.
+        in the basis ``self``.
 
         INPUT:
 
@@ -707,7 +706,7 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         OUTPUT:
 
-        - returns the product of ``left`` and ``right`` expanded in the basis ``self``
+        the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -722,9 +721,9 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: JQ([2])^2
             JackQ[2, 2] + (2/(t+1))*JackQ[3, 1] + ((t+1)/(t^2+5/6*t+1/6))*JackQ[4]
         """
-        return self( self._P(left)*self._P(right) )
+        return self(self._P(left) * self._P(right))
 
-    def jack_family( self ):
+    def jack_family(self):
         r"""
         Returns the family of Jack bases associated to the basis ``self``
 
@@ -941,7 +940,7 @@ class JackPolynomials_p(JackPolynomials_generic):
         f = lambda part2: self._self_to_m_cache[sum(part)][part].get(part2, 0)
         return f
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         r"""
         The product of two Jack symmetric functions is done by multiplying the
         elements in the monomial basis and then expressing the elements
@@ -954,7 +953,7 @@ class JackPolynomials_p(JackPolynomials_generic):
 
         OUTPUT:
 
-        - returns the product of ``left`` and ``right`` expanded in the basis ``self``
+        the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -970,10 +969,9 @@ class JackPolynomials_p(JackPolynomials_generic):
             sage: m(_)
             45*m[1, 1, 1, 1, 1, 1] + 51/2*m[2, 1, 1, 1, 1] + 29/2*m[2, 2, 1, 1] + 33/4*m[2, 2, 2] + 9*m[3, 1, 1, 1] + 5*m[3, 2, 1] + 2*m[3, 3] + 2*m[4, 1, 1] + m[4, 2]
         """
-        return self( self._m(left)*self._m(right) )
+        return self(self._m(left) * self._m(right))
 
-
-    def scalar_jack_basis(self, part1, part2 = None):
+    def scalar_jack_basis(self, part1, part2=None):
         r"""
         Returns the scalar product of `P(part1)` and `P(part2)`.
 
@@ -1142,7 +1140,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
         self._self_to_h_cache = qp_to_h_cache
         self._h_to_self_cache = h_to_qp_cache
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         r"""
         The product of two Jack symmetric functions is done by multiplying the
         elements in the monomial basis and then expressing the elements
@@ -1155,7 +1153,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
 
         OUTPUT:
 
-        - returns the product of ``left`` and ``right`` expanded in the basis ``self``
+        the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -1172,7 +1170,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
             sage: h(_)
             h[2, 2, 1, 1] - 6/5*h[3, 2, 1] + 9/25*h[3, 3]
         """
-        return self( self._h(left)*self._h(right) )
+        return self(self._h(left) * self._h(right))
 
     def _h_cache(self, n):
         r"""
@@ -1342,11 +1340,11 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
         self   .register_coercion(SetMorphism(Hom(self._P, self, category), self.sum_of_terms))
         self._P.register_coercion(SetMorphism(Hom(self, self._P, category), self._P.sum_of_terms))
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         r"""
         The product of two zonal symmetric functions is done by multiplying the
         elements in the monomial basis and then expressing the elements
-        the basis ``self``.
+        in the basis ``self``.
 
         INPUT:
 
@@ -1355,7 +1353,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
 
         OUTPUT:
 
-        - returns the product of ``left`` and ``right`` expanded in the basis ``self``
+        the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES ::
 
@@ -1370,8 +1368,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
             sage: Z([2])*JP([2])
             64/45*Z[2, 2] + 16/21*Z[3, 1] + Z[4]
         """
-        return self( self._P(left)*self._P(right) )
-
+        return self(self._P(left) * self._P(right))
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         def scalar_zonal(self, x):

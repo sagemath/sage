@@ -1,0 +1,6 @@
+#! /usr/bin/env bash
+echo Error: The Perl prerequisites of the package polymake are not installed.
+echo Please install CPAN packages $(cat distros/cpan.txt)
+echo manually, either using the system packages recommended by ./configure
+echo or directly from CPAN.
+exit 1

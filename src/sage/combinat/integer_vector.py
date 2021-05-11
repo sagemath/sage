@@ -27,12 +27,10 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import, division
-from six.moves import range
-from six import add_metaclass
 
 from sage.combinat.integer_lists import IntegerListsLex
 from itertools import product
+import numbers
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -448,8 +446,7 @@ class IntegerVector(ClonableArray):
             raise ValueError("all entries must be non-negative")
 
 
-@add_metaclass(ClasscallMetaclass)
-class IntegerVectors(Parent):
+class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
     """
     The class of (non-negative) integer vectors.
 
@@ -507,8 +504,8 @@ class IntegerVectors(Parent):
         [5, 0, 0]
         sage: IV53.last()
         [0, 0, 5]
-        sage: IV53.random_element()
-        [4, 0, 1]
+        sage: IV53.random_element().parent() is IV53
+        True
 
     Further examples::
 
@@ -571,7 +568,7 @@ class IntegerVectors(Parent):
         [[4], [3, 1], [2, 2], [1, 3], [0, 4]]
 
     .. SEEALSO::
-    
+
         :class: `sage.combinat.integer_lists.invlex.IntegerListsLex`.
     """
     @staticmethod
@@ -592,6 +589,13 @@ class IntegerVectors(Parent):
             Traceback (most recent call last):
             ...
             ValueError: k and length both specified
+
+        :trac:`29524`::
+
+            sage: IntegerVectors(3, 3/1)
+            Traceback (most recent call last):
+            ...
+            TypeError: 'k' must be an integer or a tuple, got Rational
         """
         if 'length' in kwargs:
             if k is not None:
@@ -607,12 +611,12 @@ class IntegerVectors(Parent):
         if n is None:
             return IntegerVectors_k(k)
 
-        try:
+        if isinstance(k, numbers.Integral):
+            return IntegerVectors_nk(n, k)
+        elif isinstance(k, (tuple, list)):
             return IntegerVectors_nnondescents(n, tuple(k))
-        except TypeError:
-            pass
-
-        return IntegerVectors_nk(n, k)
+        else:
+            raise TypeError("'k' must be an integer or a tuple, got {}".format(type(k).__name__))
 
     def __init__(self, category=None):
         """

@@ -5,8 +5,6 @@ The purpose of this Cython module is to hold special coercion methods,
 which are inserted by their respective categories.
 """
 
-from __future__ import absolute_import, division, print_function
-
 from sage.structure.element cimport Element
 cimport cython
 

@@ -1,8 +1,0 @@
-cd src
-
-sdh_configure --enable-shared=yes --enable-static=false \
-              --with-gmp=$SAGE_LOCAL --with-ntl=$SAGE_LOCAL \
-              --with-cddlib=$SAGE_LOCAL --with-4ti2=$SAGE_LOCAL \
-              --with-lidia=$SAGE_LOCAL
-sdh_make
-sdh_make_install

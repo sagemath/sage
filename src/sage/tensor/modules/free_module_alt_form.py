@@ -28,7 +28,6 @@ REFERENCES:
 - Chap. 15 of S. Lang : *Algebra* [Lan2002]_
 
 """
-from __future__ import absolute_import
 #******************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
@@ -208,10 +207,10 @@ class FreeModuleAltForm(FreeModuleTensor):
     The exterior product is nilpotent on linear forms::
 
         sage: s = b.wedge(b) ; s
-        Alternating form b/\b of degree 2 on the Rank-3 free module M over the
+        Alternating form zero of degree 2 on the Rank-3 free module M over the
          Integer Ring
         sage: s.display(e)
-        b/\b = 0
+        zero = 0
 
     """
     def __init__(self, fmodule, degree, name=None, latex_name=None):
@@ -350,6 +349,106 @@ class FreeModuleAltForm(FreeModuleTensor):
         """
         return self._tensor_rank
 
+    def _display_expansion(self, basis=None, format_spec=None):
+        r"""
+        Return the pure expansion of ``self`` w.r.t. a given module basis.
+
+        The expansion is actually performed onto exterior products of elements
+        of the cobasis (dual basis) associated with ``basis`` (see examples
+        below). The output is either text-formatted (console mode) or
+        LaTeX-formatted (notebook mode).
+
+        INPUT:
+
+        - ``basis`` -- (default: ``None``) basis of the free module with
+          respect to which the alternating form is expanded; if none is
+          provided, the module's default basis is assumed
+        - ``format_spec`` -- (default: ``None``) format specification passed
+          to ``self._fmodule._output_formatter`` to format the output
+
+        TESTS:
+
+        Expansion display of an alternating form of degree 1 (linear form) on a
+        rank-3 free module::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: e.dual_basis()
+            Dual basis (e^0,e^1,e^2) on the Rank-3 free module M over the Integer Ring
+            sage: a = M.linear_form('a', latex_name=r'\alpha')
+            sage: a[:] = [1,-3,4]
+            sage: a._display_expansion(e)
+            e^0 - 3 e^1 + 4 e^2
+            sage: a._display_expansion() # a shortcut since e is M's default basis
+            e^0 - 3 e^1 + 4 e^2
+            sage: latex(a._display_expansion())  # display in the notebook
+            e^{0} -3 e^{1} + 4 e^{2}
+
+        """
+        from sage.misc.latex import latex
+        from sage.tensor.modules.format_utilities import (is_atomic,
+                                                          FormattedExpansion)
+        basis, format_spec = self._preparse_display(basis=basis,
+                                                    format_spec=format_spec)
+        cobasis = basis.dual_basis()
+        comp = self.comp(basis)
+        terms_txt = []
+        terms_latex = []
+        for ind in comp.non_redundant_index_generator():
+            ind_arg = ind + (format_spec,)
+            coef = comp[ind_arg]
+            # Check whether the coefficient is zero, preferably via
+            # the fast method is_trivial_zero():
+            if hasattr(coef, 'is_trivial_zero'):
+                zero_coef = coef.is_trivial_zero()
+            else:
+                zero_coef = coef == 0
+            if not zero_coef:
+                bases_txt = []
+                bases_latex = []
+                for k in range(self._tensor_rank):
+                    bases_txt.append(cobasis[ind[k]]._name)
+                    bases_latex.append(latex(cobasis[ind[k]]))
+                basis_term_txt = "/\\".join(bases_txt)
+                basis_term_latex = r"\wedge ".join(bases_latex)
+                coef_txt = repr(coef)
+                if coef_txt == "1":
+                    terms_txt.append(basis_term_txt)
+                    terms_latex.append(basis_term_latex)
+                elif coef_txt == "-1":
+                    terms_txt.append("-" + basis_term_txt)
+                    terms_latex.append("-" + basis_term_latex)
+                else:
+                    coef_latex = latex(coef)
+                    if is_atomic(coef_txt):
+                        terms_txt.append(coef_txt + " " + basis_term_txt)
+                    else:
+                        terms_txt.append("(" + coef_txt + ") " +
+                                         basis_term_txt)
+                    if is_atomic(coef_latex):
+                        terms_latex.append(coef_latex + basis_term_latex)
+                    else:
+                        terms_latex.append(r"\left(" + coef_latex + \
+                                           r"\right)" + basis_term_latex)
+        if not terms_txt:
+            expansion_txt = "0"
+        else:
+            expansion_txt = terms_txt[0]
+            for term in terms_txt[1:]:
+                if term[0] == "-":
+                    expansion_txt += " - " + term[1:]
+                else:
+                    expansion_txt += " + " + term
+        if not terms_latex:
+            expansion_latex = "0"
+        else:
+            expansion_latex = terms_latex[0]
+            for term in terms_latex[1:]:
+                if term[0] == "-":
+                    expansion_latex += term
+                else:
+                    expansion_latex += "+" + term
+        return FormattedExpansion(expansion_txt, expansion_latex)
 
     def display(self, basis=None, format_spec=None):
         r"""
@@ -464,80 +563,19 @@ class FreeModuleAltForm(FreeModuleTensor):
 
         """
         from sage.misc.latex import latex
-        from sage.tensor.modules.format_utilities import is_atomic, \
-                                                         FormattedExpansion
-        if basis is None:
-            basis = self._fmodule._def_basis
-        cobasis = basis.dual_basis()
-        comp = self.comp(basis)
-        terms_txt = []
-        terms_latex = []
-        for ind in comp.non_redundant_index_generator():
-            ind_arg = ind + (format_spec,)
-            coef = comp[ind_arg]
-            # Check whether the coefficient is zero, preferably via
-            # the fast method is_trivial_zero():
-            if hasattr(coef, 'is_trivial_zero'):
-                zero_coef = coef.is_trivial_zero()
-            else:
-                zero_coef = coef == 0
-            if not zero_coef:
-                bases_txt = []
-                bases_latex = []
-                for k in range(self._tensor_rank):
-                    bases_txt.append(cobasis[ind[k]]._name)
-                    bases_latex.append(latex(cobasis[ind[k]]))
-                basis_term_txt = "/\\".join(bases_txt)
-                basis_term_latex = r"\wedge ".join(bases_latex)
-                coef_txt = repr(coef)
-                if coef_txt == "1":
-                    terms_txt.append(basis_term_txt)
-                    terms_latex.append(basis_term_latex)
-                elif coef_txt == "-1":
-                    terms_txt.append("-" + basis_term_txt)
-                    terms_latex.append("-" + basis_term_latex)
-                else:
-                    coef_latex = latex(coef)
-                    if is_atomic(coef_txt):
-                        terms_txt.append(coef_txt + " " + basis_term_txt)
-                    else:
-                        terms_txt.append("(" + coef_txt + ") " +
-                                         basis_term_txt)
-                    if is_atomic(coef_latex):
-                        terms_latex.append(coef_latex + basis_term_latex)
-                    else:
-                        terms_latex.append(r"\left(" + coef_latex + \
-                                           r"\right)" + basis_term_latex)
-        if not terms_txt:
-            expansion_txt = "0"
-        else:
-            expansion_txt = terms_txt[0]
-            for term in terms_txt[1:]:
-                if term[0] == "-":
-                    expansion_txt += " - " + term[1:]
-                else:
-                    expansion_txt += " + " + term
-        if not terms_latex:
-            expansion_latex = "0"
-        else:
-            expansion_latex = terms_latex[0]
-            for term in terms_latex[1:]:
-                if term[0] == "-":
-                    expansion_latex += term
-                else:
-                    expansion_latex += "+" + term
+        from sage.tensor.modules.format_utilities import FormattedExpansion
+        exp = self._display_expansion(basis=basis, format_spec=format_spec)
         if self._name is None:
-            resu_txt = expansion_txt
+            resu_txt = repr(exp)
         else:
-            resu_txt = self._name + " = " + expansion_txt
+            resu_txt = self._name + " = " + repr(exp)
         if self._latex_name is None:
-            resu_latex = expansion_latex
+            resu_latex = latex(exp)
         else:
-            resu_latex = latex(self) + " = " + expansion_latex
+            resu_latex = latex(self) + " = " + latex(exp)
         return FormattedExpansion(resu_txt, resu_latex)
 
     disp = display
-
 
     def wedge(self, other):
         r"""
@@ -610,14 +648,22 @@ class FreeModuleAltForm(FreeModuleTensor):
             raise TypeError("the second argument for the exterior product " +
                             "must be an alternating form")
         if other._tensor_rank == 0:
-            return other*self
+            return other * self
         if self._tensor_rank == 0:
-            return self*other
+            return self * other
         fmodule = self._fmodule
+        rank_r = self._tensor_rank + other._tensor_rank
+        # Facilitate computations involving zero:
+        if rank_r > fmodule._rank:
+            return fmodule.dual_exterior_power(rank_r).zero()
+        if self._is_zero or other._is_zero:
+            return fmodule.dual_exterior_power(rank_r).zero()
+        if self is other and (self._tensor_rank % 2) == 1:
+            return fmodule.dual_exterior_power(rank_r).zero()
+        # Generic case:
         basis = self.common_basis(other)
         if basis is None:
             raise ValueError("no common basis for the exterior product")
-        rank_r = self._tensor_rank + other._tensor_rank
         cmp_s = self._components[basis]
         cmp_o = other._components[basis]
         cmp_r = CompFullyAntiSym(fmodule._ring, basis, rank_r,

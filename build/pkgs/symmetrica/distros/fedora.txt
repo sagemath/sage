@@ -1,0 +1,2 @@
+# fedora 31:
+symmetrica-devel

@@ -1,0 +1,1 @@
+cp -r src/src/cunningham_tables $SAGE_SHARE/cunningham_tables

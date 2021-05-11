@@ -21,10 +21,11 @@ AUTHORS:
     The official source for Frobby is <https://www.broune.com/frobby>,
     which also has documentation and papers describing the algorithms used.
 """
-from __future__ import print_function
 
 from subprocess import Popen, PIPE
 from sage.misc.misc_c import prod
+
+from sage.cpython.string import bytes_to_str, str_to_bytes
 
 
 class Frobby:
@@ -78,7 +79,13 @@ class Frobby:
             print("Frobby input:\n", input)
 
         process = Popen(command, stdin = PIPE, stdout = PIPE, stderr = PIPE)
-        output, err = process.communicate(input = input)
+        if input:
+            frinput = str_to_bytes(input)
+        else:
+            frinput = None
+        output, err = process.communicate(input = frinput)
+        output = bytes_to_str(output)
+        err = bytes_to_str(err)
 
         if verbose:
             print("Frobby output:\n", output)
@@ -316,12 +323,12 @@ class Frobby:
             Ideal (x*y^2*z^3, x^4*y^5*z^6) of Multivariate Polynomial Ring in x, y, z over Rational Field]
 
         """
-        lines=string.split('\n')
-        if lines[-1]=='':
+        lines = string.split('\n')
+        if lines[-1] == '':
             lines.pop(-1)
-        matrices=[]
-        while len(lines)>0:
-            if lines[0].split()[1]=='ring':
+        matrices = []
+        while lines:
+            if lines[0].split()[1] == 'ring':
                 lines.pop(0)
                 lines.pop(0)
                 matrices.append('1 '+str(ring.ngens())+'\n'+'0 '*ring.ngens()+'\n')

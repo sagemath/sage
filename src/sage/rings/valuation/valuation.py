@@ -54,7 +54,6 @@ send more than just zero to infinity::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.morphism import Morphism
 from sage.structure.richcmp import op_EQ, op_NE, op_LE, op_LT, op_GE, op_GT
@@ -271,10 +270,11 @@ class DiscretePseudoValuation(Morphism):
         EXAMPLES::
 
             sage: QQ.valuation(2)._test_valuation_inheritance()
-
         """
         tester = self._tester(**options)
-        tester.assertTrue(isinstance(self, InfiniteDiscretePseudoValuation) != isinstance(self, DiscreteValuation))
+        tester.assertNotEqual(isinstance(self, InfiniteDiscretePseudoValuation),
+                              isinstance(self, DiscreteValuation))
+
 
 class InfiniteDiscretePseudoValuation(DiscretePseudoValuation):
     r"""
@@ -418,7 +418,7 @@ class DiscreteValuation(DiscretePseudoValuation):
           (with respect to the partial order on valuations defined by comparing
           them pointwise.)
 
-        - ``require_maximal_degree`` -- a boolean (deault: ``False``); whether
+        - ``require_maximal_degree`` -- a boolean (default: ``False``); whether
           to require the last key polynomial of the returned valuation to have
           maximal degree. This is most relevant when using this algorithm to
           compute approximate factorizations of ``G``, when set to ``True``,
@@ -662,12 +662,12 @@ class DiscreteValuation(DiscretePseudoValuation):
         if R.base_ring() is not self.domain():
             raise ValueError("G must be defined over the domain of this valuation")
 
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
         verbose("Approximants of %r on %r towards %r"%(self, self.domain(), G), level=3)
 
         from sage.rings.valuation.gauss_valuation import GaussValuation
 
-        if not all([self(c) >= 0 for c in G.coefficients()]):
+        if not all(self(c) >= 0 for c in G.coefficients()):
             raise ValueError("G must be integral")
 
         if require_maximal_degree:
@@ -989,7 +989,7 @@ class DiscreteValuation(DiscretePseudoValuation):
             raise ValueError("G must be defined over the domain of this valuation")
         if not G.is_monic():
             raise ValueError("G must be monic")
-        if not all([self(c)>=0 for c in G.coefficients()]):
+        if not all(self(c) >= 0 for c in G.coefficients()):
             raise ValueError("G must be integral")
 
         # W contains approximate factors of G

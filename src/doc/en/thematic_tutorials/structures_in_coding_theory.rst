@@ -1,12 +1,11 @@
 .. -*- coding: utf-8 -*-
-
 .. _structures_in_coding_theory:
 
 ===============================================
 How to write your own classes for coding theory
 ===============================================
 
-.. MODULEAUTHOR:: David Lucas
+.. MODULEAUTHOR:: David Lucas (2016) for initial version. Marketa Slukova (2019) for this version.
 
 This tutorial, designed for advanced users who want to build their own classes,
 will explain step by step what you need to do to write code which integrates
@@ -18,18 +17,69 @@ During this tutorial, we will cover the following parts:
 - how to write a new **decoder**
 - how to write a new **channel**
 
-Through all this tutorial, we will follow the same example, namely the
-implementation of repetition code. At the end of each part, we will summarize
-every important step of the implementation. If one just wants
-a quick access to the implementation of one of the objects cited above, one can
-jump directly to the end of related part,
+This tutorial focuses on the example of implementation of the repetition code.
+At the end of each part, we will summarize every important step of the
+implementation. If one just wants a quick access to the implementation of one of
+the objects cited above, one can jump directly to the end of related part,
 which presents a summary of what to do.
 
 .. contents:: Table of contents
    :depth: 2
 
-I. The repetition code
-======================
+I. Abstract classes
+===================
+
+There is a number of abstract classes representing different types of codes in
+the coding module of Sage. Depending on the type of code you want to implement,
+you should inherit from different abstract classes.
+
+The most generic class is :class:`sage.coding.abstract_code:AbstractCode`. This
+class makes no assumptions about linearity, metric, finiteness or the number of
+alphabets. The abstract notion of "code" that is implicitly used for this class
+is any enumerable subset of a cartesian product
+`A_1 \times A_2 \times \ldots \times A_n` for some sets `A_i`.
+
+If, for example, you want to create a non-linear code family, this is the class
+you should inherit from.
+
+We give a small example of creating a non-linear code family. Take the code
+consisting of the following `l` words:
+
+`\{00 \ldots 00, 10 \ldots 00, 11 \ldots 00, \ldots , 11 \ldots 10, 11 \ldots 11 \}`.
+
+Here is how we can implement it::
+
+    sage: from sage.coding.abstract_code import AbstractCode
+    sage: class ExampleCodeFamily(AbstractCode):
+    ....:     def __init__(self, length):
+    ....:         super(ExampleCodeFamily, self).__init__(length)
+    ....:     def __iter__(self):
+    ....:         for i in range(self.length() + 1):
+    ....:             yield vector([1 for j in range(i)] + [0 for k in range(i, self.length())])
+    ....:     def __contains__(self, word):
+    ....:         return word in list(self)
+    ....:     def _repr_(self):
+    ....:         return "Dummy code of length {}".format(self.length())
+
+    sage: C = ExampleCodeFamily(4) # check that this works.
+    sage: C.list()
+    [(0, 0, 0, 0), (1, 0, 0, 0), (1, 1, 0, 0), (1, 1, 1, 0), (1, 1, 1, 1)]
+
+Focusing on linear codes, the most generic representative is the class
+:class:`sage.coding.linear_code_no_metric:AbstractLinearCodeNoMetric` which
+contains all the methods that all linear codes share regardless of what their
+metric is. If you want to implement a linear code over some metric which has
+not been implemented in Sage yet, this is the class you should be inheriting
+from.
+
+We have two metric specific abstract linear code classes,
+:class:`sage.coding.linear_code:AbstractLinearCode` for Hamming metric and
+:class:`sage.coding.linear_rank_metric:AbstractLinearRankMetricCode` for rank
+metric. If you wish to implement a linear code class over one of these metrics,
+you should inherit from the given abstract class.
+
+II. The repetition code
+=======================
 
 We want to implement in Sage the well-known repetition code.
 Its definition follows:
@@ -52,11 +102,15 @@ It can correct up to :math:`\left\lceil \frac{n-1}{2} \right\rceil` errors.
 Through all this tutorial, we will illustrate the implementation of the
 :math:`(n, 1)`-repetition code over :math:`\GF{2}`.
 
-II. Write a new code class
-==========================
+III. Write a new code class
+===========================
 
-The first thing to do to write a new code class is to identify
-the following elements:
+The first thing to do to write a new code class is to identify which abstract
+class to inherit from. Since the repetition code is linear and we take it over
+the Hamming metric, this means that we will inherit from
+:class:`sage.coding.linear_code.AbstractLinearCode`.
+
+Now we have to identify the initializing parameters of this class, which are:
 
 - the length of the code,
 - the base field of the code,
@@ -69,9 +123,9 @@ and one decoder.
 
 Now we isolated the parameters of the code, we can write the
 constructor of our class.
-Every linear code class must inherit from
+As we said, every linear code class over the Hamming metric must inherit from
 :class:`sage.coding.linear_code.AbstractLinearCode`.
-This class provide a lot of useful methods and, as we illustrate thereafter,
+This class provides a lot of useful methods and, as we illustrate thereafter,
 a default constructor which sets the *length*, the *base field*,
 the *default encoder* and the *default decoder* as class parameters.
 We also need to create the dictionary of known encoders and decoders
@@ -113,30 +167,30 @@ We also write a method to check equality::
 
 After these examples, you probably noticed that we use two methods,
 namely ``length()`` and ``dimension()`` without defining them.
-That is because their implementation is provided in
-:class:`sage.coding.linear_code.AbstractLinearCode`.
-The abstract class provides a default implementation of the
-following getter methods:
+That is because their implementation is provided in parent classes of
+:class:`sage.coding.linear_code.AbstractLinearCode`, which are
+:class:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric` and
+:class:`sage.coding.abstract_code.AbstractCode`
 
-- :meth:`sage.coding.linear_code.AbstractLinearCode.dimension`
-- :meth:`sage.coding.linear_code.AbstractLinearCode.length`,
-- :meth:`sage.coding.linear_code.AbstractLinearCode.base_field` and
-- :meth:`sage.coding.linear_code.AbstractLinearCode.ambient_space`.
+They provide a default implementation of the following getter methods:
 
-It also provides an implementation of ``__ne__`` which returns the inverse
-of ``__eq__`` and several other very useful methods, like ``__contains__``.
-Note that a lot of these other methods rely on the computation of a generator
-matrix. It is thus highly recommended to set an encoder which
-knows how to compute such a matrix as default encoder.
-As default encoder will be used by all these methods which expect a
-generator matrix, if one provides a default encoder which does not have a
-``generator_matrix`` method, a lot of generic methods will fail.
+- :meth:`sage.coding.abstract_code.AbstractCode.length`,
+- :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.dimension`,
+- :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.base_field` and
+- :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.ambient_space`.
+
+They also provide several other useful methods, such as ``__contains__``. Note
+that a lot of these other methods rely on the computation of a generator matrix.
+It is thus highly recommended to set an encoder which knows how to compute such
+a matrix as default encoder. As default encoder will be used by all these
+methods which expect a generator matrix, if one provides a default encoder which
+does not have a ``generator_matrix`` method, a lot of generic methods will fail.
 
 As our code family is really simple, we do not need anything else,
 and the code provided above is enough to describe properly a repetition code.
 
-Summary of the implementation for linear codes
-----------------------------------------------
+Summary of the implementation for linear codes over the Hamming metric
+----------------------------------------------------------------------
 
 1. Inherit from :class:`sage.coding.linear_code.AbstractLinearCode`.
 2. Add ``_registered_encoders =  {}`` and ``_registered_decoders = {}``
@@ -157,8 +211,8 @@ We now know how to write a new code class.
 Let us see how to write a new encoder and a new decoder.
 
 
-III. Write a new encoder class
-==============================
+IV. Write a new encoder class
+=============================
 
 Let us continue our example. We ask the same question as before:
 what do we need to describe the encoder?
@@ -280,8 +334,8 @@ Summary of the implementation for encoders
 8. Add the encoder to ``CodeClass._registered_encoders``.
 
 
-IV. Write a new decoder class
-==============================
+V. Write a new decoder class
+============================
 
 Let us continue by writing a decoder. As before, we need to know what is
 required to describe a decoder. We need of course the associated code of
@@ -358,9 +412,9 @@ to override ``decode_to_code``::
 
     One notices that if default ``decode_to_code`` calls default
     ``decode_to_message`` and default ``decode_to_message`` calls default
-    ``decode_to_code``, if none is overriden and one is called,
+    ``decode_to_code``, if none is overridden and one is called,
     it will end up stuck in an infinite loop. We added a trigger guard
-    against this, so if none is overriden and one is called,
+    against this, so if none is overridden and one is called,
     an exception will be raised.
 
 Only one method is missing: one to provide to the user the number of
@@ -412,8 +466,8 @@ Summary of the implementation for decoders
    ``decoding_radius``.
 7. Add the encoder to ``CodeClass._registered_decoders``.
 
-V. Write a new channel class
-============================
+VI. Write a new channel class
+=============================
 
 Alongside all these new structures directly related to codes, we also propose
 a whole new and shiny structure to experiment on codes, and more specifically
@@ -429,7 +483,7 @@ We will implement a very naive channel which works only for words over
 :math:`\GF{2}` and flips as many bits as requested by the user.
 
 As channels are not directly related to code families, but more to
-vectors and words, we have a specific file, ``channel_constructions.py``
+vectors and words, we have a specific file, ``channel.py``
 to store them.
 
 So we will just add our new class in this file.
@@ -447,7 +501,7 @@ Plus, in our case, as this channel only works for vectors
 over :math:`\GF{2}`, the input and output spaces are the same.
 Let us write the constructor of our new channel class::
 
-    sage: from sage.coding.channel_constructions import Channel
+    sage: from sage.coding.channel import Channel
     sage: class BinaryStaticErrorRateChannel(Channel):
     ....:     def __init__(self, space, number_errors):
     ....:         if space.base_ring() is not GF(2):
@@ -457,7 +511,7 @@ Let us write the constructor of our new channel class::
     ....:         super(BinaryStaticErrorRateChannel, self).__init__(space, space)
     ....:         self._number_errors = number_errors
 
-Remember to inherit from :class:`sage.coding.channel_constructions.Channel`!
+Remember to inherit from :class:`sage.coding.channel.Channel`!
 
 We also want to override representation methods ``_repr_`` and ``_latex_``::
 
@@ -503,8 +557,10 @@ That is it, we now have our new channel class ready to use!
 Summary of the implementation for channels
 ------------------------------------------
 
-1. Inherit from :class:`sage.coding.channel_constructions.Channel`.
-2. Add this line in the class' constructor::
+1. Inherit from :class:`sage.coding.channel.Channel`.
+2. Add this line in the class' constructor:
+
+   .. CODE-BLOCK:: python
 
       super(ClassName, self).__init__(input_space, output_space)
 
@@ -515,8 +571,8 @@ Summary of the implementation for channels
 5. Override ``transmit_unsafe``.
 
 
-VI. Sort our new elements
-=========================
+VII. Sort our new elements
+==========================
 
 As there is many code families and channels in the coding theory library,
 we do not wish to store all our classes directly in Sage's global namespace.
@@ -528,34 +584,44 @@ We propose several catalog files to store our constructions, namely:
 - ``decoders_catalog.py`` and
 - ``channels_catalog.py``.
 
-Everytime one creates a new object, it should be added in the dedicated
+Every time one creates a new object, it should be added in the dedicated
 catalog file instead of coding theory folder's ``all.py``.
 
 Here it means the following:
 
-- add the following in ``codes_catalog.py``::
+- add the following in ``codes_catalog.py``:
+
+   .. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import BinaryRepetitionCode
 
-- add the following in ``encoders_catalog.py``::
+- add the following in ``encoders_catalog.py``:
+
+   .. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import BinaryRepetitionCodeGeneratorMatrixEncoder
 
-- add the following in ``decoders_catalog.py``::
+- add the following in ``decoders_catalog.py``:
+
+   .. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import BinaryRepetitionCodeMajorityVoteDecoder
 
-- add the following in ``channels_catalog.py``::
+- add the following in ``channels_catalog.py``:
 
-    from sage.coding.channel_constructions import BinaryStaticErrorRateChannel
+   .. CODE-BLOCK:: python
 
-VII. Complete code of this tutorial
-===================================
+    from sage.coding.channel import BinaryStaticErrorRateChannel
+
+VIII. Complete code of this tutorial
+====================================
 
 If you need some base code to start from, feel free to copy-paste and
 derive from the one that follows.
 
-``repetition_code.py`` (with two encoders)::
+``repetition_code.py`` (with two encoders):
+
+.. CODE-BLOCK:: python
 
     from sage.coding.linear_code import AbstractLinearCode
     from sage.coding.encoder import Encoder
@@ -671,7 +737,9 @@ derive from the one that follows.
     BinaryRepetitionCode._registered_decoders["MajorityVoteDecoder"] = BinaryRepetitionCodeMajorityVoteDecoder
     BinaryRepetitionCodeMajorityVoteDecoder._decoder_type = {"hard-decision", "unique"}
 
-``channel_constructions.py`` (continued)::
+``channel.py`` (continued):
+
+.. CODE-BLOCK:: python
 
     class BinaryStaticErrorRateChannel(Channel):
 
@@ -703,20 +771,26 @@ derive from the one that follows.
                 w[i] += F.one()
             return w
 
-``codes_catalog.py`` (continued)::
+``codes_catalog.py`` (continued):
 
-    :class:`sage.coding.repetition_code.BinaryRepetitionCode <sage.coding.repetition_code.BinaryRepetitionCode>`
-    #the line above creates a link to the class in the html documentation of coding theory library
+.. CODE-BLOCK:: python
+
     from sage.coding.repetition_code import BinaryRepetitionCode
 
-``encoders_catalog.py`` (continued)::
+``encoders_catalog.py`` (continued):
+
+.. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import (BinaryRepetitionCodeGeneratorMatrixEncoder, BinaryRepetitionCodeStraightforwardEncoder)
 
-``decoders_catalog.py`` (continued)::
+``decoders_catalog.py`` (continued):
+
+.. CODE-BLOCK:: python
 
     from sage.coding.repetition_code import BinaryRepetitionCodeMajorityVoteDecoder
 
-``channels_catalog.py`` (continued)::
+``channels_catalog.py`` (continued):
 
-    from sage.coding.channel_constructions import (ErrorErasureChannel, StaticErrorRateChannel, BinaryStaticErrorRateChannel)
+.. CODE-BLOCK:: python
+
+    from sage.coding.channel import (ErrorErasureChannel, StaticErrorRateChannel, BinaryStaticErrorRateChannel)

@@ -1,5 +1,5 @@
 """
-Direct low-level access to SINGULAR's Groebner basis engine via libSINGULAR.
+Direct low-level access to SINGULAR's Groebner basis engine via libSINGULAR
 
 AUTHOR:
 
@@ -146,13 +146,16 @@ cdef ideal *sage_ideal_to_singular_ideal(I) except NULL:
             raise TypeError("All generators must be of type MPolynomial_libsingular.")
     return i
 
-def kbase_libsingular(I):
+def kbase_libsingular(I, degree=None):
     """
     SINGULAR's ``kbase()`` algorithm.
 
     INPUT:
 
     - ``I`` -- a groebner basis of an ideal
+
+    - ``degree`` -- integer (default: ``None``); if not ``None``, return
+      only the monomials of the given degree
 
     OUTPUT:
 
@@ -162,12 +165,19 @@ def kbase_libsingular(I):
     the ring ordering. If the input is not a standard basis, the leading terms
     of the input are used and the result may have no meaning.
 
+    With two arguments: computes the part of a vector space basis of the
+    respective quotient with degree of the monomials equal to the second
+    argument. Here, the quotient does not need to be finite dimensional.
+
     EXAMPLES::
 
         sage: R.<x,y> = PolynomialRing(QQ, order='lex')
         sage: I = R.ideal(x^2-2*y^2, x*y-3)
-        sage: I.normal_basis()
+        sage: I.normal_basis()  # indirect doctest
         [y^3, y^2, y, 1]
+        sage: J = R.ideal(x^2-2*y^2)
+        sage: [J.normal_basis(d) for d in (0..4)]  # indirect doctest
+        [[1], [y, x], [y^2, x*y], [y^3, x*y^2], [y^4, x*y^3]]
     """
 
     global singular_options
@@ -179,8 +189,10 @@ def kbase_libsingular(I):
     cdef ideal *result
     singular_options = singular_options | Sy_bit(OPT_REDSB)
 
+    degree = -1 if degree is None else int(degree)
+
     sig_on()
-    result = scKBase(-1, i, q)
+    result = scKBase(degree, i, q)
     sig_off()
 
     id_Delete(&i, r)

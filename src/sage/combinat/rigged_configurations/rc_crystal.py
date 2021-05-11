@@ -453,8 +453,3 @@ class CrystalOfNonSimplyLacedRC(CrystalOfRiggedConfigurations):
         return self.element_class(self, partition_list=partitions, rigging_list=riggings)
 
     Element = RCHWNonSimplyLacedElement
-
-# deprecations from trac:18555
-from sage.misc.superseded import deprecated_function_alias
-CrystalOfRiggedConfigurations.global_options = deprecated_function_alias(18555, CrystalOfRiggedConfigurations.options)
-

@@ -7,7 +7,6 @@ AUTHORS:
 
 - Tom Boothby (2007-02-15).  Initial version free for any use (public domain).
 """
-from __future__ import print_function
 
 from cysignals.memory cimport sig_malloc, sig_free
 

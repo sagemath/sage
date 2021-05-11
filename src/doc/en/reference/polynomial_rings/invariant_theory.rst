@@ -6,4 +6,5 @@ Classical Invariant Theory
    :maxdepth: 2
 
    sage/rings/invariants/invariant_theory
+   sage/rings/invariants/reconstruction
 

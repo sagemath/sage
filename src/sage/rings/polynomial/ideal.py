@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Ideals in Univariate Polynomial Rings.
+Ideals in Univariate Polynomial Rings
 
 AUTHORS:
 

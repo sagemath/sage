@@ -20,8 +20,6 @@ Kirillov-Reshetikhin Crystals
 # Acknowledgment: most of the design and implementation of this
 # library is heavily inspired from MuPAD-Combinat.
 # ***************************************************************************
-from __future__ import division, print_function
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -48,7 +46,6 @@ from sage.combinat.crystals.tensor_product import CrystalOfTableaux
 from sage.combinat.tableau import Tableau
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.integer_vector import IntegerVectors
-
 
 def KirillovReshetikhinCrystalFromLSPaths(cartan_type, r, s=1):
     r"""
@@ -3542,20 +3539,20 @@ class KR_type_E7(KirillovReshetikhinGenericCrystal):
         EXAMPLES::
 
             sage: K = crystals.KirillovReshetikhin(['E',7,1], 7, 2)
-            sage: K._highest_weight_to_A7_elements
-            {[[(7,), (7,)]]: [[1, 1], [8, 8]],
-             [[(7,), (-2, 3)]]: [[1, 1], [2, 8], [3], [4], [5], [8]],
-             [[(7,), (-2, 6)]]: [[1, 1], [2, 8]],
-             [[(7,), (-2, 1)]]: [[1, 1], [2, 8], [3], [4], [5], [6]],
-             [[(-6, 5), (-2, 6)]]: [[1], [2], [3], [8]],
-             [[(-2, 3), (-2, 1)]]: [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 8]],
-             [[(-1, 2), (-2, 1)]]: [],
-             [[(-2, 3), (-2, 3)]]: [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [8, 8]],
-             [[(-2, 3), (-2, 6)]]: [[1, 1], [2, 2], [3], [4], [5], [8]],
-             [[(-1, -2, 4), (-2, 1)]]: [[1], [2], [3], [4]],
-             [[(-2, 6), (-2, 6)]]: [[1, 1], [2, 2]],
-             [[(-2, 6), (-2, 1)]]: [[1, 1], [2, 2], [3], [4], [5], [6]],
-             [[(-2, 1), (-2, 1)]]: [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]}
+            sage: sorted(K._highest_weight_to_A7_elements.items(), key=str)
+            [([[(-1, -2, 4), (-2, 1)]], [[1], [2], [3], [4]]),
+             ([[(-1, 2), (-2, 1)]], []),
+             ([[(-2, 1), (-2, 1)]], [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]),
+             ([[(-2, 3), (-2, 1)]], [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 8]]),
+             ([[(-2, 3), (-2, 3)]], [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [8, 8]]),
+             ([[(-2, 3), (-2, 6)]], [[1, 1], [2, 2], [3], [4], [5], [8]]),
+             ([[(-2, 6), (-2, 1)]], [[1, 1], [2, 2], [3], [4], [5], [6]]),
+             ([[(-2, 6), (-2, 6)]], [[1, 1], [2, 2]]),
+             ([[(-6, 5), (-2, 6)]], [[1], [2], [3], [8]]),
+             ([[(7,), (-2, 1)]], [[1, 1], [2, 8], [3], [4], [5], [6]]),
+             ([[(7,), (-2, 3)]], [[1, 1], [2, 8], [3], [4], [5], [8]]),
+             ([[(7,), (-2, 6)]], [[1, 1], [2, 8]]),
+             ([[(7,), (7,)]], [[1, 1], [8, 8]])]
         """
         d = {}
         A7 = self.A7_decomposition()
@@ -3589,19 +3586,7 @@ class KR_type_E7(KirillovReshetikhinGenericCrystal):
               From: Kirillov-Reshetikhin crystal of type ['E', 7, 1] with (r,s)=(7,2)
               To:   The crystal of tableaux of type ['A', 7] and shape(s)
                 [[2, 2, 2, 2, 2, 2], [2, 2, 1, 1, 1, 1], [2, 2], [1, 1, 1, 1], []]
-              Defn: [[(7,), (-2, 3)]] |--> [[1, 1], [2, 8], [3], [4], [5], [8]]
-                    [[(-2, 3), (-2, 1)]] |--> [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 8]]
-                    [[(-1, 2), (-2, 1)]] |--> []
-                    [[(-2, 3), (-2, 6)]] |--> [[1, 1], [2, 2], [3], [4], [5], [8]]
-                    [[(-2, 6), (-2, 6)]] |--> [[1, 1], [2, 2]]
-                    [[(7,), (7,)]] |--> [[1, 1], [8, 8]]
-                    [[(-2, 3), (-2, 3)]] |--> [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [8, 8]]
-                    [[(7,), (-2, 1)]] |--> [[1, 1], [2, 8], [3], [4], [5], [6]]
-                    [[(-2, 6), (-2, 1)]] |--> [[1, 1], [2, 2], [3], [4], [5], [6]]
-                    [[(-2, 1), (-2, 1)]] |--> [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]]
-                    [[(-6, 5), (-2, 6)]] |--> [[1], [2], [3], [8]]
-                    [[(-1, -2, 4), (-2, 1)]] |--> [[1], [2], [3], [4]]
-                    [[(7,), (-2, 6)]] |--> [[1, 1], [2, 8]]
+              Defn: ...
         """
         d = self._highest_weight_to_A7_elements
         return self.crystal_morphism(d, automorphism={1:6,3:5,4:4,5:3,6:2,7:1},
@@ -3621,19 +3606,7 @@ class KR_type_E7(KirillovReshetikhinGenericCrystal):
               From: The crystal of tableaux of type ['A', 7] and shape(s)
                 [[2, 2, 2, 2, 2, 2], [2, 2, 1, 1, 1, 1], [2, 2], [1, 1, 1, 1], []]
               To:   Kirillov-Reshetikhin crystal of type ['E', 7, 1] with (r,s)=(7,2)
-              Defn: [[1, 1], [2, 8]] |--> [[(7,), (-2, 6)]]
-                    [[1, 1], [2, 2]] |--> [[(-2, 6), (-2, 6)]]
-                    [[1, 1], [2, 2], [3], [4], [5], [8]] |--> [[(-2, 3), (-2, 6)]]
-                    [[1], [2], [3], [4]] |--> [[(-1, -2, 4), (-2, 1)]]
-                    [[1, 1], [8, 8]] |--> [[(7,), (7,)]]
-                    [[1, 1], [2, 8], [3], [4], [5], [8]] |--> [[(7,), (-2, 3)]]
-                    [[1, 1], [2, 2], [3], [4], [5], [6]] |--> [[(-2, 6), (-2, 1)]]
-                    [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 8]] |--> [[(-2, 3), (-2, 1)]]
-                    [] |--> [[(-1, 2), (-2, 1)]]
-                    [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [8, 8]] |--> [[(-2, 3), (-2, 3)]]
-                    [[1], [2], [3], [8]] |--> [[(-6, 5), (-2, 6)]]
-                    [[1, 1], [2, 8], [3], [4], [5], [6]] |--> [[(7,), (-2, 1)]]
-                    [[1, 1], [2, 2], [3, 3], [4, 4], [5, 5], [6, 6]] |--> [[(-2, 1), (-2, 1)]]
+              Defn: ...
         """
         A7 = self.A7_decomposition()
         d = self._highest_weight_to_A7_elements
@@ -3794,15 +3767,13 @@ class PMDiagram(CombinatorialObject):
             sage: print(pm._repr_diagram())
         """
         t = []
-        ish = self.inner_shape() + [0]*self.n
-        msh = self.intermediate_shape() + [0]*self.n
-        osh = self.outer_shape() + [0]*self.n
+        ish = self.inner_shape() + [0] * self.n
+        msh = self.intermediate_shape() + [0] * self.n
+        osh = self.outer_shape() + [0] * self.n
         for i in range(self.n):
             t.append(['.']*ish[i]+['+']*(msh[i]-ish[i])+['-']*(osh[i]-msh[i]))
-        t = [i for i in t if i!= []]
-        if not t:
-            return ''
-        return Tableau(t)._repr_diagram()
+        t = [i for i in t if i]
+        return Tableau(t)._repr_diagram() if t else ''
 
     def pp(self):
         """

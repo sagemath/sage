@@ -177,7 +177,6 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from builtins import zip
 
@@ -231,16 +230,16 @@ def WordPaths(alphabet, steps=None):
       - ``None``: In this case, the type of steps are guessed from the
         length of alphabet.
 
-      - 'square_grid' or 'square' : (default when size of alphabet is 4)
+      - 'square_grid' or 'square': (default when size of alphabet is 4)
         The order is : East, North, West, South.
 
       - 'triangle_grid' or 'triangle':
 
-      - 'hexagonal_grid' or 'hexagon' :(default when size of alphabet is 6)
+      - 'hexagonal_grid' or 'hexagon': (default when size of alphabet is 6)
 
-      - 'cube_grid' or 'cube' :
+      - 'cube_grid' or 'cube':
 
-      - 'north_east', 'ne' or 'NE' : (the default when size of alphabet is 2)
+      - 'north_east', 'ne' or 'NE': (the default when size of alphabet is 2)
 
       - 'dyck':
 
@@ -250,7 +249,7 @@ def WordPaths(alphabet, steps=None):
 
     EXAMPLES:
 
-    The steps can be given explicitely::
+    The steps can be given explicitly::
 
         sage: WordPaths('abc', steps=[(1,2), (-1,4), (0,-3)])
         Word Paths over 3 steps
@@ -600,11 +599,11 @@ of alphabet (=%s) or half the size of alphabet."%(len(steps),alphabet.cardinalit
             sage: WordPaths('abcd',steps='square_grid').vector_space()
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
             sage: WordPaths('abcdef',steps='hexagonal_grid').vector_space()
-            Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3
+            Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
             sage: WordPaths('abcdef',steps='cube_grid').vector_space()
             Ambient free module of rank 3 over the principal ideal domain Integer Ring
             sage: WordPaths('abcdef',steps='triangle_grid').vector_space()
-            Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3
+            Vector space of dimension 2 over Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?
 
         """
         return self._vector_space
@@ -1389,21 +1388,22 @@ class FiniteWordPath_all(SageObject):
             TypeError: The dimension of the vector space (=2) must be 3 or 4
         """
         dimension = self.parent().vector_space().dimension()
-        if not dimension in (3, 4):
-            msg = "The dimension of the vector space (=%s) must be 3 or 4"%dimension
+        if dimension not in (3, 4):
+            msg = "The dimension of the vector space (=%s) must be 3 or 4" % dimension
             raise TypeError(msg)
         if letters is None:
             letters = self.parent().alphabet()
         if color is None:
             from sage.plot.all import hue
             A = self.parent().alphabet()
-            color = dict( (a, hue(A.rank(a)/float(A.cardinality()))) for a in A )
+            color = {a: hue(A.rank(a)/float(A.cardinality())) for a in A}
         it = self.projected_point_iterator(v, ring=ring)
         if kind == 'right':
-            start = next(it)
+            next(it)
         elif kind != 'left':
-            raise ValueError('unknown value for kind (=%s)'%kind)
-        tout = [point([c], color=color[a], size=size) for a, c in zip(self, it) if a in letters]
+            raise ValueError('unknown value for kind (=%s)' % kind)
+        tout = [point([c], color=color[a], size=size)
+                for a, c in zip(self, it) if a in letters]
         return sum(tout)
 
     def projected_path(self, v=None, ring=None):
@@ -2066,12 +2066,15 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
             raise TypeError("the path must be closed to compute its area")
         return abs(self._area_vh())
 
-    def _area_vh(path, x=0, y=0):
+    def _area_vh(self, x=0, y=0):
         r"""
-        Returns the area of path, with starting point (x,y) using VH algorithm.
+        Return the area of ``self``, with starting point (x,y).
+
+        This is using VH algorithm.
 
         INPUT:
-            x, y -- starting point
+
+        - x, y -- starting point (optional, default (0, 0))
 
         EXAMPLES::
 
@@ -2084,12 +2087,13 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
             -3
 
         REFERENCES:
+
         Annie Lacasse Memoire.
         """
         area = 0
-        a,b,A,B = path.parent().alphabet()
+        a, b, A, B = self.parent().alphabet()
 
-        for move in path:
+        for move in self:
             if move == b:
                 area -= x
                 y += 1
@@ -2138,8 +2142,8 @@ class FiniteWordPath_square_grid(FiniteWordPath_2d):
 
         REFERENCES:
 
-        - Provençal, X., Combinatoires des mots, geometrie discrete et
-          pavages, These de doctorat en Mathematiques, Montreal, UQAM,
+        - Provençal, X., *Combinatoires des mots, géometrie discrète et
+          pavages*, Thèse de doctorat en Mathématiques, Montréal, UQAM,
           septembre 2008, 115 pages.
         """
         return super(FiniteWordPath_square_grid,self).is_simple()
@@ -2229,6 +2233,7 @@ class FiniteWordPath_triangle_grid(FiniteWordPath_2d):
             8.66025403784439
         """
         return max(RR(y) for (_,y) in self.points())
+
 
 #TODO: faire une verification du mot pour etre sur hexagonal grid
 class FiniteWordPath_hexagonal_grid(FiniteWordPath_triangle_grid):

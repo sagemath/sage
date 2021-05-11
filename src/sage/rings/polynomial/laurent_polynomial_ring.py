@@ -29,7 +29,7 @@ AUTHORS:
 - David Roe (2008-2-23): created
 - David Loeffler (2009-07-10): cleaned up docstrings
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed@math.harvard.edu>,
 #                          William Stein <wstein@gmail.com>,
 #                          Mike Hansen <mhansen@gmail.com>
@@ -39,11 +39,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
-from six import iteritems, iterkeys
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element import parent
 from sage.structure.parent import Parent
@@ -52,6 +49,8 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.latex import latex
 from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial_mpair, LaurentPolynomial_univariate
 from sage.rings.ring import CommutativeRing
+
+import sage.rings.polynomial.laurent_polynomial_ideal as lp_ideal
 
 def is_LaurentPolynomialRing(R):
     """
@@ -307,10 +306,10 @@ def _split_dict_(D, indices, group_by=None):
     def extract(T, indices):
         return tuple(get(T, i) for i in indices)
 
-    remaining = sorted(set(range(len(next(iterkeys(D)))))
+    remaining = sorted(set(range(len(next(iter(D)))))
                        - set(indices) - set(group_by))
     result = {}
-    for K, V in iteritems(D):
+    for K, V in D.items():
         if not all(r == 0 for r in extract(K, remaining)):
             raise SplitDictError('split not possible')
         G = extract(K, group_by)
@@ -364,7 +363,7 @@ def _split_laurent_polynomial_dict_(P, M, d):
     def value(d, R):
         assert d
         if len(d) == 1:
-            k, v = next(iteritems(d))
+            k, v = next(iter(d.items()))
             if all(i == 0 for i in k):
                 return R(v)
         return R(M(d))
@@ -376,10 +375,10 @@ def _split_laurent_polynomial_dict_(P, M, d):
             indices[g] = None
     D = _split_dict_(d, indices, group_by)
     try:
-        return {k: value(v, P.base_ring()) for k, v in iteritems(D)}
+        return {k: value(v, P.base_ring()) for k, v in D.items()}
     except (ValueError, TypeError):
         pass
-    return sum(P({k: 1}) * value(v, P) for k, v in iteritems(D)).dict()
+    return sum(P({k: 1}) * value(v, P) for k, v in D.items()).dict()
 
 
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
@@ -393,7 +392,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         sage: R.<x1,x2> = LaurentPolynomialRing(QQ)
         sage: R.category()
-        Category of commutative rings
+        Join of Category of unique factorization domains and Category of commutative algebras over (number fields and quotient fields and metric spaces) and Category of infinite sets
         sage: TestSuite(R).run()
 
     """
@@ -408,8 +407,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         self._n = R.ngens()
         self._R = R
         names = R.variable_names()
-        CommutativeRing.__init__(self, R.base_ring(), names=names)
-        self._populate_coercion_lists_(init_no_parent=True)
+        self._one_element = self.element_class(self, R.one())
+        CommutativeRing.__init__(self, R.base_ring(), names=names,
+                                 category=R.category())
 
     def ngens(self):
         """
@@ -590,16 +590,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: L.<x,y> = LaurentPolynomialRing(QQ)
             sage: L.coerce_map_from(QQ)
-            Composite map:
+            Generic morphism:
               From: Rational Field
               To:   Multivariate Laurent Polynomial Ring in x, y over Rational Field
-              Defn:   Polynomial base injection morphism:
-                      From: Rational Field
-                      To:   Multivariate Polynomial Ring in x, y over Rational Field
-                    then
-                      Call morphism:
-                      From: Multivariate Polynomial Ring in x, y over Rational Field
-                      To:   Multivariate Laurent Polynomial Ring in x, y over Rational Field
 
         Let us check that coercion between Laurent Polynomials over
         different base rings works (:trac:`15345`)::
@@ -609,21 +602,14 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: R.gen() + 3*T.gen()
             4*x
         """
-        if R is self._R or (isinstance(R, LaurentPolynomialRing_generic)
-            and self._R.has_coerce_map_from(R._R)):
-            from sage.structure.coerce_maps import CallableConvertMap
-            return CallableConvertMap(R, self, self._element_constructor_,
-                                      parent_as_first_arg=False)
-        elif isinstance(R, LaurentPolynomialRing_generic) and \
-             R.variable_names() == self.variable_names() and \
-             self.base_ring().has_coerce_map_from(R.base_ring()):
-            return True
-
-        f = self._R.coerce_map_from(R)
+        if R is self._R:
+            return self._generic_coerce_map(R)
+        f = self._coerce_map_via([self._R], R)
         if f is not None:
-            from sage.categories.homset import Hom
-            from sage.categories.morphism import CallMorphism
-            return CallMorphism(Hom(self._R, self)) * f
+            return f
+        if (isinstance(R, LaurentPolynomialRing_generic)
+            and self._R.has_coerce_map_from(R._R)):
+            return self._generic_coerce_map(R)
 
     def __eq__(self, right):
         """
@@ -691,8 +677,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: latex(LaurentPolynomialRing(QQ,2,'x'))
             \Bold{Q}[x_{0}^{\pm 1}, x_{1}^{\pm 1}]
         """
-        vars = ', '.join([a + r'^{\pm 1}' for a in self.latex_variable_names()])
-        return "%s[%s]"%(latex(self.base_ring()), vars)
+        vars = ', '.join(a + r'^{\pm 1}' for a in self.latex_variable_names())
+        return "%s[%s]" % (latex(self.base_ring()), vars)
 
     def _ideal_class_(self, n=0):
         """
@@ -703,29 +689,44 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ...
             NotImplementedError
         """
-        # One may eventually want ideals in these guys.
+        # One may eventually want ideal classes in these guys.
         raise NotImplementedError
 
-    def ideal(self):
+    def ideal(self, *args, **kwds):
         """
         EXAMPLES::
 
-            sage: LaurentPolynomialRing(QQ,2,'x').ideal()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        raise NotImplementedError
+            sage: LaurentPolynomialRing(QQ,2,'x').ideal([1])
+            Ideal (1) of Multivariate Laurent Polynomial Ring in x0, x1 over Rational Field
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+        TESTS:
+ 
+        check that :trac:`26421` is fixed:
+
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: P.<x> = PolynomialRing(R)
+            sage: p = x-t
+            sage: p.content_ideal()    # indirect doctest
+            Ideal (-t, 1) of Univariate Laurent Polynomial Ring in t over Integer Ring
+        """
+        return lp_ideal.LaurentPolynomialIdeal(self, *args, **kwds)
+
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         EXAMPLES::
 
-            sage: L.<x,y> = LaurentPolynomialRing(QQ)
-            sage: L._is_valid_homomorphism_(QQ, (1/2, 3/2))
+            sage: T.<t> = ZZ[]
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: L.<x,y> = LaurentPolynomialRing(K)
+            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))
+            True
+            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2))) # no coercion
+            False
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))
             True
         """
-        if not codomain.has_coerce_map_from(self.base_ring()):
+        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             # we need that elements of the base ring
             # canonically coerce into codomain.
             return False
@@ -835,12 +836,22 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: R = LaurentPolynomialRing(QQ,2,'x')
             sage: R.change_ring(ZZ)
             Multivariate Laurent Polynomial Ring in x0, x1 over Integer Ring
+
+        Check that the distinction between a univariate ring and a multivariate ring with one
+        generator is preserved::
+
+            sage: P.<x> = LaurentPolynomialRing(QQ, 1)
+            sage: P
+            Multivariate Laurent Polynomial Ring in x over Rational Field
+            sage: K.<i> = CyclotomicField(4)
+            sage: P.change_ring(K)
+            Multivariate Laurent Polynomial Ring in x over Cyclotomic Field of order 4 and degree 2
         """
         if base_ring is None:
             base_ring = self.base_ring()
         if names is None:
             names = self.variable_names()
-        if self._n == 1:
+        if isinstance(self, LaurentPolynomialRing_univariate):
             return LaurentPolynomialRing(base_ring, names[0], sparse = sparse)
 
         if order is None:
@@ -948,8 +959,22 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: D.<d, e> = LaurentPolynomialRing(B)
             sage: B(D(b))
             b
+
+        TESTS:
+
+        Check that conversion back from fraction field does work (:trac:`26425`)::
+
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: F = FractionField(R)
+            sage: R(F(25/(5*t**2)))
+            5*t^-2
+            sage: R(F(1/(1+t**2)))
+            Traceback (most recent call last):
+            ...
+            TypeError: fraction must have unit denominator
         """
         from sage.symbolic.expression import Expression
+        from sage.rings.fraction_field_element import FractionFieldElement
         if isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
 
@@ -957,17 +982,26 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             P = x.parent()
             if set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
-                    d = {(k,): v for k, v in iteritems(x.dict())}
+                    d = {(k,): v for k, v in x.dict().items()}
                 else:
                     d = x.dict()
                 x = _split_laurent_polynomial_dict_(self, P, d)
-                x = {k[0]: v for k, v in iteritems(x)}
-            elif self.base_ring().has_coerce_map_from(P):
-                x = {0: self.base_ring()(x)}
+                x = {k[0]: v for k, v in x.items()}
+            elif P is self.base_ring():
+                x = {0: x}
             elif x.is_constant() and self.has_coerce_map_from(x.parent().base_ring()):
                 return self(x.constant_coefficient())
             elif len(self.variable_names()) == len(P.variable_names()):
                 x = x.dict()
+
+        elif isinstance(x, FractionFieldElement):
+            # since the field of fraction of self is defined corresponding to the polynomial ring of self
+            # the conversion of its elements back must be treated separately (:trac:`26425`).
+            P = x.parent()
+            d = self(x.denominator())
+            if not d.is_unit():
+                raise TypeError("fraction must have unit denominator")
+            return self(x.numerator()) * d.inverse_of_unit()
 
         return self.element_class(self, x)
 
@@ -1150,19 +1184,19 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
 
         elif isinstance(x, (LaurentPolynomial_univariate, LaurentPolynomial_mpair)):
             if self.variable_names() == P.variable_names():
-                # No special processing needed here;    
+                # No special processing needed here;
                 #   handled by LaurentPolynomial_mpair.__init__
                 pass
             elif set(self.variable_names()) & set(P.variable_names()):
                 if isinstance(x, LaurentPolynomial_univariate):
-                    d = {(k,): v for k, v in iteritems(x.dict())}
+                    d = {(k,): v for k, v in x.dict().items()}
                 else:
                     d = x.dict()
                 x = _split_laurent_polynomial_dict_(self, P, d)
-            elif self.base_ring().has_coerce_map_from(P):
+            elif P is self.base_ring():
                 from sage.rings.polynomial.polydict import ETuple
                 mz = ETuple({}, int(self.ngens()))
-                return self.element_class(self, {mz: self.base_ring()(x)}, mz)
+                return self.element_class(self, {mz: x}, mz)
             elif x.is_constant() and self.has_coerce_map_from(P.base_ring()):
                 return self(x.constant_coefficient())
             elif len(self.variable_names()) == len(P.variable_names()):

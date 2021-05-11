@@ -1,0 +1,39 @@
+diff --git a/ginac/mul.cpp b/ginac/mul.cpp
+index 1a29c01..c800cbf 100644
+--- a/ginac/mul.cpp
++++ b/ginac/mul.cpp
+@@ -1325,18 +1325,22 @@ ex mul::expand(unsigned options) const
+ 				const auto& add2end   = add2.seq.end();
+ 				epvector distrseq;
+ 				auto s = add1.seq.size()+add2.seq.size();
+-                                if (s > 400) {
+-//                                // the condition is probably too simple
+-                                        try {
+-                                        // can it be converted/expanded via Singular?
+-                                        last_expanded = poly_mul_expand(last_expanded,
+-                                                                        elem.rest);
+-                                                continue;
+-                                        }
+-                                        catch (std::runtime_error) {
+-                                                std::cerr << "can't happen while calling poly_mul_expand\n";
+-                                        }
+-                                }
++//                          // the poly_mul_expand function is buggy and
++//                          // therefore cannot be used (see sage :trac:`31478`),
++//                          // so we comment out this section of code until the
++//                          // function has been fixed
++//                                if (s > 400) {
++////                                // the condition is probably too simple
++//                                        try {
++//                                        // can it be converted/expanded via Singular?
++//                                        last_expanded = poly_mul_expand(last_expanded,
++//                                                                        elem.rest);
++//                                                continue;
++//                                        }
++//                                        catch (std::runtime_error) {
++//                                                std::cerr << "can't happen while calling poly_mul_expand\n";
++//                                        }
++//                                }
+ 
+ 				distrseq.reserve(s);
+ 				// Multiply add2 with the overall coefficient of add1 and append it to distrseq:

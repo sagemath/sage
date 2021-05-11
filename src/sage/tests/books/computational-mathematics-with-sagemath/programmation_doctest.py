@@ -24,7 +24,7 @@ Sage example in ./programmation.tex, line 137::
 Sage example in ./programmation.tex, line 201::
 
   sage: import keyword; sorted(keyword.kwlist)
-  [...'and', 'as', 'assert', 'break', 'class', 'continue', 'def', 'del'...]
+  [...'and', 'as', 'assert', ..., 'class', 'continue', 'def', 'del'...]
 
 Sage example in ./programmation.tex, line 338::
 

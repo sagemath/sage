@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# First test for user-installable package systems, then system package systems
+if conda --version > /dev/null 2>&1; then
+    if [ -z "$CONDA_DEFAULT_ENV" ]; then
+        printf >&2 "(ignoring conda because no environment is active) "
+    else
+        echo conda
+        exit
+    fi
+fi
+if brew --version > /dev/null 2>&1; then
+    echo homebrew
+elif emerge --version > /dev/null 2>&1; then
+    echo gentoo
+elif apt-get --version > /dev/null 2>&1; then
+    echo debian
+elif yum --version > /dev/null 2>&1; then
+    echo fedora
+elif pacman --version > /dev/null 2>&1; then
+    echo arch
+elif slackpkg --version > /dev/null 2>&1; then
+    echo slackware
+elif zypper --version > /dev/null 2>&1; then
+    echo opensuse
+elif apk --version > /dev/null 2>&1; then
+    echo alpine
+elif xbps-install --version > /dev/null 2>&1; then
+    echo void
+elif pkg -v > /dev/null 2>&1; then
+    echo freebsd
+else
+    case `uname -s` in
+        CYGWIN*)
+            echo cygwin
+            ;;
+        *)
+            echo unknown
+            ;;
+    esac
+fi

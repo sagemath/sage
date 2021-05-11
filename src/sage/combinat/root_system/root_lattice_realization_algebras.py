@@ -1,18 +1,17 @@
 r"""
 Group algebras of root lattice realizations
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #                          Anne Schilling <anne at math.ucdavis.edu>
 #                          Mark Shimozono <mshimo at vt.edu>
 #                          Daniel Bump
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-
-import functools, operator
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+import functools
+import operator
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
@@ -20,8 +19,6 @@ from sage.categories.algebra_functor import AlgebrasCategory
 lazy_import('sage.rings.integer_ring', 'ZZ')
 from sage.modules.free_module_element import vector
 from sage.combinat.root_system.hecke_algebra_representation import HeckeAlgebraRepresentation
-
-import six
 
 
 class Algebras(AlgebrasCategory):
@@ -119,7 +116,8 @@ class Algebras(AlgebrasCategory):
             .. TODO:: make this work for Laurent polynomials too
             """
             L = self.basis().keys()
-            return self.sum_of_terms((L.from_vector(vector(t)), c) for (t,c) in six.iteritems(p.dict()))
+            return self.sum_of_terms((L.from_vector(vector(t)), c)
+                                     for (t,c) in p.dict().items())
 
         @cached_method
         def divided_difference_on_basis(self, weight, i):
@@ -204,7 +202,7 @@ class Algebras(AlgebrasCategory):
                 raise ValueError("the weight does not have an integral scalar product with the coroot")
             alphai = P.simple_root(i)
             if n >= 0:
-                return  self.sum_of_monomials(weight-j*alphai for j in range(0,n+1))
+                return  self.sum_of_monomials(weight-j*alphai for j in range(n + 1))
             else:
                 return -self.sum_of_monomials(weight-j*alphai for j in range(n+1,0))
 
@@ -830,7 +828,7 @@ class Algebras(AlgebrasCategory):
             a0 = ct.a()[special_node]
             A0 = self.classical()
             T = A0.demazure_lusztig_operators(q1, q2, convention=convention)
-            # TODO: use the formula expressing the inverse of T as a demazure lusztig operator? Or go through the affine action of T_0 for the dual
+            # TODO: use the formula expressing the inverse of T as a Demazure Lusztig operator? Or go through the affine action of T_0 for the dual
             L0 = A0.basis().keys()
             # The dominant short root of the classical system
             if ct.type() == 'BC':
@@ -981,7 +979,7 @@ class Algebras(AlgebrasCategory):
             """
             if i == 0: # should use the special node
                 if convention != "dominant":
-                    raise NotImplementedError("The twisted Demazure-Lustig operator T_0 is only implemented in the dominant convention")
+                    raise NotImplementedError("The twisted Demazure-Lusztig operator T_0 is only implemented in the dominant convention")
                 return self.T0_check_on_basis(q1, q2, convention=convention)(weight)
             else:
                 L = self.classical()
@@ -1084,7 +1082,7 @@ class Algebras(AlgebrasCategory):
 
                 Investigate why `T_0^\vee` currently does not satisfy
                 the quadratic relation in type `BC`. This should
-                hopefuly be fixed when `T_0^\vee` will have a more
+                hopefully be fixed when `T_0^\vee` will have a more
                 uniform implementation::
 
                     sage: cartan_type = CartanType(["BC",1,2])

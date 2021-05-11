@@ -52,7 +52,7 @@ cpdef gen_to_sage(Gen z, locals=None):
       number (type ``t_REAL``). The precision will be equivalent.
 
     - a :class:`~sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic`
-      or a :class:`~sage.rings.complex_number.ComplexNumber` if ``z`` is a complex
+      or a :class:`~sage.rings.complex_mpfr.ComplexNumber` if ``z`` is a complex
       number (type ``t_COMPLEX``). The former is used when the real and imaginary parts are
       integers or rationals and the latter when they are floating point numbers. In that
       case The precision will be the maximal precision of the real and imaginary parts.
@@ -128,19 +128,33 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: a = gen_to_sage(z); a
         i + 3
         sage: a.parent()
-        Number Field in i with defining polynomial x^2 + 1
+        Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         sage: z = pari('(3+I)/2'); z
         3/2 + 1/2*I
         sage: a = gen_to_sage(z); a
         1/2*i + 3/2
         sage: a.parent()
-        Number Field in i with defining polynomial x^2 + 1
+        Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         sage: z = pari('1.0 + 2.0*I'); z
         1.00000000000000 + 2.00000000000000*I
         sage: a = gen_to_sage(z); a
         1.00000000000000000 + 2.00000000000000000*I
+        sage: a.parent()
+        Complex Field with 64 bits of precision
+
+        sage: z = pari('1 + 1.0*I'); z
+        1 + 1.00000000000000*I
+        sage: a = gen_to_sage(z); a
+        1.00000000000000000 + 1.00000000000000000*I
+        sage: a.parent()
+        Complex Field with 64 bits of precision
+
+        sage: z = pari('1.0 + 1*I'); z
+        1.00000000000000 + I
+        sage: a = gen_to_sage(z); a
+        1.00000000000000000 + 1.00000000000000000*I
         sage: a.parent()
         Complex Field with 64 bits of precision
 
@@ -182,7 +196,7 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: [parent(b) for b in a1]
         [Integer Ring,
          Real Field with 64 bits of precision,
-         Number Field in i with defining polynomial x^2 + 1]
+         Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
         sage: [parent(b) for b in a2]
         [Complex Field with 64 bits of precision, <... 'list'>]
 
@@ -233,7 +247,7 @@ cpdef gen_to_sage(Gen z, locals=None):
     cdef GEN g = z.g
     cdef long t = typ(g)
     cdef long tx, ty
-    cdef Gen real, imag
+    cdef Gen real, imag, prec, xprec, yprec
     cdef Py_ssize_t i, j, nr, nc
 
     if t == t_INT:
@@ -241,8 +255,12 @@ cpdef gen_to_sage(Gen z, locals=None):
     elif t == t_FRAC:
         return Rational(z)
     elif t == t_REAL:
-        prec = prec_words_to_bits(z.precision())
-        return RealField(prec)(z)
+        prec = z.bitprecision()
+        if typ(prec.g) == t_INFINITY:
+            sage_prec = 53
+        else:
+            sage_prec = prec
+        return RealField(sage_prec)(z)
     elif t == t_COMPLEX:
         real = z.real()
         imag = z.imag()
@@ -251,17 +269,20 @@ cpdef gen_to_sage(Gen z, locals=None):
         if tx in [t_INTMOD, t_PADIC] or ty in [t_INTMOD, t_PADIC]:
             raise NotImplementedError("No conversion to python available for t_COMPLEX with t_INTMOD or t_PADIC components")
         if tx == t_REAL or ty == t_REAL:
-            xprec = real.precision()  # will be 0 if exact
-            yprec = imag.precision()  # will be 0 if exact
-            if xprec == 0:
-                prec = prec_words_to_bits(yprec)
-            elif yprec == 0:
-                prec = prec_words_to_bits(xprec)
+            xprec = real.bitprecision()  # will be infinite if exact
+            yprec = imag.bitprecision()  # will be infinite if exact
+            if typ(xprec.g) == t_INFINITY:
+                if typ(yprec.g) == t_INFINITY:
+                    sage_prec = 53
+                else:
+                    sage_prec = yprec
+            elif typ(yprec.g) == t_INFINITY:
+                sage_prec = xprec
             else:
-                prec = max(prec_words_to_bits(xprec), prec_words_to_bits(yprec))
+                sage_prec = max(xprec, yprec)
 
-            R = RealField(prec)
-            C = ComplexField(prec)
+            R = RealField(sage_prec)
+            C = ComplexField(sage_prec)
             return C(R(real), R(imag))
         else:
             K = QuadraticField(-1, 'i')

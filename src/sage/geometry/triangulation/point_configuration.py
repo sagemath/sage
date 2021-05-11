@@ -150,7 +150,7 @@ AUTHORS:
 
     - Marshall Hampton: improved documentation and doctest coverage
 
-    - Volker Braun: rewrite using Parent/Element and catgories. Added
+    - Volker Braun: rewrite using Parent/Element and categories. Added
       a Point class. More doctests. Less zombies.
 
     - Volker Braun: Cythonized parts of it, added a C++ implementation
@@ -179,7 +179,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
@@ -375,8 +374,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         - ``engine`` -- either 'auto' (default), 'internal', or
           'topcom'. The latter two instruct this package to always use
           its own triangulation algorithms or TOPCOM's algorithms,
-          respectively. By default ('auto'), TOPCOM is used if it is
-          available and internal routines otherwise.
+          respectively. By default ('auto'), internal routines are used.
 
         EXAMPLES::
 
@@ -393,10 +391,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         if engine not in ['auto', 'topcom', 'internal']:
             raise ValueError('Unknown value for "engine": '+str(engine))
 
-        have_TOPCOM = PointConfiguration._have_TOPCOM()
-        PointConfiguration._use_TOPCOM = \
-            (engine == 'topcom') or (engine == 'auto' and have_TOPCOM)
-
+        PointConfiguration._use_TOPCOM = (engine == 'topcom')
 
     def star_center(self):
         r"""
@@ -627,7 +622,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         proc.expect(r'Evaluating Commandline Options \.\.\.')
         proc.expect(r'\.\.\. done\.')
         proc.setecho(0)
-        assert proc.readline().strip() == ''
+        assert proc.readline().strip() == b''
 
         if verbose:
             print("#### TOPCOM input ####")
@@ -645,6 +640,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         while True:
             try:
                 line = proc.readline().strip()
+                if not isinstance(line, str):
+                    line = line.decode()
             except pexpect.TIMEOUT:
                 if verbose:
                     print('# Still running ' + str(executable))
@@ -1399,9 +1396,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         EXAMPLES::
 
-            sage: p = PointConfiguration([(0,0),(+1,0),(-1,0),(0,+1),(0,-1)])
-            sage: list( p.circuits_support() )
-            [(0, 3, 4), (0, 1, 2), (1, 2, 3, 4)]
+            sage: p = PointConfiguration([(0,0), (+1,0), (-1,0), (0,+1), (0,-1)])
+            sage: sorted(p.circuits_support())
+            [(0, 1, 2), (0, 3, 4), (1, 2, 3, 4)]
         """
         n = len(self)
         U = [self[i].reduced_projective() for i in range(n)]
@@ -1470,8 +1467,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([(0,0),(+1,0),(-1,0),(0,+1),(0,-1)])
-            sage: p.circuits()
-            (((0,), (1, 2), (3, 4)), ((0,), (3, 4), (1, 2)), ((1, 2), (0,), (3, 4)))
+            sage: sorted(p.circuits())
+            [((0,), (1, 2), (3, 4)), ((0,), (3, 4), (1, 2)), ((1, 2), (0,), (3, 4))]
 
 
         TESTS::
@@ -1525,8 +1522,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([(1,0,0),(0,1,0),(0,0,1),(-2,0,-1),(-2,-1,0),(-3,-1,-1),(1,1,1),(-1,0,0),(0,0,0)])
-            sage: p.positive_circuits(8)
-            ((0, 7), (0, 1, 4), (0, 2, 3), (0, 5, 6), (0, 1, 2, 5), (0, 3, 4, 6))
+            sage: sorted(p.positive_circuits(8))
+            [(0, 1, 2, 5), (0, 1, 4), (0, 2, 3), (0, 3, 4, 6), (0, 5, 6), (0, 7)]
             sage: p.positive_circuits(0,5,6)
             ((8,),)
         """
@@ -1846,7 +1843,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
 
         A tuple of points that span a simplex of dimension
         :meth:`dim`. If ``large==True``, the simplex is constructed by
-        sucessively picking the farthest point. This will ensure that
+        successively picking the farthest point. This will ensure that
         the simplex is not unnecessarily small, but will in general
         not return a maximal simplex.
         If a ``point_order`` is specified, the simplex is greedily
@@ -1871,7 +1868,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             (P(-1, -1), P(1, 1), P(0, 1))
             sage: pc.contained_simplex(point_order = [pc[1],pc[3],pc[4],pc[2],pc[0]])
             (P(0, 1), P(1, 1), P(-1, -1)) 
-            sage: # lower-dimensional example:
+
+        Lower-dimensional example::
+
             sage: pc.contained_simplex(point_order = [pc[0],pc[3],pc[4]])
             (P(0, 0), P(1, 1))
             
@@ -1971,7 +1970,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             (<1,2,3>, <1,2,4>)
             sage: p0.pushing_triangulation(point_order=[0,1,2,3,4])
             (<0,1,3>, <0,1,4>, <0,2,3>, <0,2,4>)
-            sage: # the same triangulation with renumbered points 0->4, 1->0, etc.:
+
+        The same triangulation with renumbered points 0->4, 1->0, etc::
+
             sage: p1 = PointConfiguration([(+1,0),(-1,0),(0,+1),(0,-1),(0,0)])
             sage: p1.pushing_triangulation(point_order=[4,0,1,2,3])
             (<0,2,4>, <0,3,4>, <1,2,4>, <1,3,4>)

@@ -42,12 +42,13 @@ Next, test the pinfo magic for Cython code::
     Init docstring: ...ee help(type(...)) for...signature...
     File:           .../sage/tests/stl_vector.pyx
     Type:           type
+    ...
 
 Next, test the ``pinfo`` magic for ``R`` interface code, see :trac:`26906`::
 
-    sage: from sage.repl.interpreter import get_test_shell
-    sage: shell = get_test_shell()
-    sage: shell.run_cell(u'%pinfo r.lm')
+    sage: from sage.repl.interpreter import get_test_shell   # optional - rpy2
+    sage: shell = get_test_shell()                           # optional - rpy2
+    sage: shell.run_cell(u'%pinfo r.lm')                     # optional - rpy2
     Signature:       r.lm(...*args, **kwds)
     ...
     String form:     lm
@@ -67,6 +68,7 @@ calls when you ask for the double-questionmark help, like `foo??` ::
     sage: shell.run_cell(u'from sage.repl.ipython_tests import dummy')
     sage: shell.run_cell(u'%pinfo2 dummy')
     Signature: dummy(argument, optional=None)
+    ...
     Source:
     def dummy(argument, optional=None):
         """
@@ -116,12 +118,13 @@ Next, test the pinfo2 magic for Cython code::
     ...
     File:   .../sage/tests/stl_vector.pyx
     Type:   type
+    ...
 
 Next, test the ``pinfo2`` magic for ``R`` interface code, see :trac:`26906`::
 
-    sage: from sage.repl.interpreter import get_test_shell
-    sage: shell = get_test_shell()
-    sage: shell.run_cell(u'%pinfo2 r.lm')
+    sage: from sage.repl.interpreter import get_test_shell   # optional - rpy2
+    sage: shell = get_test_shell()                           # optional - rpy2
+    sage: shell.run_cell(u'%pinfo2 r.lm')                    # optional - rpy2
     Signature:       r.lm(...*args, **kwds)
     ...
     String form:     lm
@@ -154,6 +157,6 @@ def dummy(argument, optional=None):
 
         sage: from sage.repl.ipython_tests import dummy
         sage: dummy(1)
-        'Source code would be here' 
+        'Source code would be here'
     """
     return 'Source code would be here'

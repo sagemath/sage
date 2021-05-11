@@ -67,8 +67,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
-
 from .infinity import infinity
 
 from sage.rings.integer_ring import ZZ
@@ -138,6 +136,14 @@ cdef class LaurentSeries(AlgebraElement):
                 f = parent._power_series_ring((<LaurentSeries>f).__u)
         elif isinstance(f, LaurentPolynomial_univariate):
             f = f(parent.gen())
+        elif isinstance(f, dict):
+            ## Sanitize input to make sure all exponents are nonnegative,
+            ## adjusting n to match.
+            n1 = min(f.keys())
+            if n1 < 0:
+               f = {e-n1: c for e,c in f.items()}
+               n += n1
+            f = parent._power_series_ring(f)
         elif not isinstance(f, PowerSeries):
             f = parent._power_series_ring(f)
         ## now this is a power series, over a different ring ...
@@ -149,7 +155,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         # self is that t^n * u:
         if not f:
-            if n == infinity:
+            if n is infinity:
                 self.__n = 0
                 self.__u = parent._power_series_ring.zero()
             else:
@@ -157,7 +163,7 @@ cdef class LaurentSeries(AlgebraElement):
                 self.__u = f
         else:
             val = f.valuation()
-            if val == infinity:
+            if val is infinity:
                 self.__n = 0
                 self.__u = f
             elif val == 0:
@@ -274,8 +280,30 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return bool(self.__u)
 
-    def _im_gens_(self, codomain, im_gens):
-        return codomain(self(im_gens[0]))
+    def _im_gens_(self, codomain, im_gens, base_map=None):
+        """
+        Return the image of this series under the map that sends the generators of
+        the parent to im_gens.
+
+        EXAMPLES::
+
+            sage: Zx.<x> = ZZ[]
+            sage: K.<i> = NumberField(x^2 + 1)
+            sage: R.<t> = LaurentSeriesRing(K)
+            sage: z = t^-1 + i*t
+            sage: z._im_gens_(R, [t^2])
+            t^-2 + i*t^2
+
+        The argument base_map is not yet supported, because it isn't over power series::
+
+            sage: cc = K.hom([i])
+            sage: z._im_gens_(R, [t^2], base_map=cc)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        x = im_gens[0]
+        return codomain(self.__u._im_gens_(codomain, im_gens, base_map=base_map) * x**self.__n)
 
     cdef __normalize(self):
         r"""
@@ -300,7 +328,7 @@ cdef class LaurentSeries(AlgebraElement):
             '2 + 2/3*t^3'
         """
         if self.is_zero():
-            if self.prec() == infinity:
+            if self.prec() is infinity:
                 return "0"
             else:
                 return "O(%s^%s)"%(self._parent.variable_name(),self.prec())
@@ -343,6 +371,66 @@ cdef class LaurentSeries(AlgebraElement):
             s += " + %s"%bigoh
         return s[1:]
 
+    def verschiebung(self, n):
+        r"""
+        Return the ``n``-th Verschiebung of ``self``.
+
+        If `f = \sum a_m x^m` then this function returns `\sum a_m x^{mn}`.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentSeriesRing(QQ)
+            sage: f = -1/x + 1 + 2*x^2 + 5*x^5
+            sage: f.V(2)
+            -x^-2 + 1 + 2*x^4 + 5*x^10
+            sage: f.V(-1)
+            5*x^-5 + 2*x^-2 + 1 - x
+            sage: h = f.add_bigoh(7)
+            sage: h.V(2)
+            -x^-2 + 1 + 2*x^4 + 5*x^10 + O(x^14)
+            sage: h.V(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: For finite precision only positive arguments allowed
+
+        TESTS::
+
+            sage: R.<x> = LaurentSeriesRing(QQ)
+            sage: f = x
+            sage: f.V(3)
+            x^3
+            sage: f.V(-3)
+            x^-3
+            sage: g = 2*x^(-1) + 3 + 5*x
+            sage: g.V(-1)
+            5*x^-1 + 3 + 2*x
+        """
+        if n == 0:
+            raise ValueError('n must be non zero')
+
+        if n < 0:
+            if not self.prec() is infinity:
+                raise ValueError('For finite precision only positive arguments allowed')
+
+            exponents = [e * n for e in self.exponents()]
+            u = min(exponents)
+            exponents = [e - u for e in exponents]
+            coefficients = self.coefficients()
+            zero = self.base_ring().zero()
+            w = [zero] * (max(exponents) + 1)
+            for i in range(len(exponents)):
+                e = exponents[i]
+                c = coefficients[i]
+                w[e] = c
+            l = LaurentSeries(self._parent, w, u)
+        else:
+            __u = self.__u.V(n)
+            __n = <long>self.__n * n
+            l = LaurentSeries(self._parent, __u, __n)
+        return l
+
+    V = verschiebung
+
     def _latex_(self):
         r"""
         EXAMPLES::
@@ -363,7 +451,7 @@ cdef class LaurentSeries(AlgebraElement):
             \left(a + b\right)x
         """
         if self.is_zero():
-            if self.prec() == infinity:
+            if self.prec() is infinity:
                 return "0"
             else:
                 return "0 + \\cdots"
@@ -720,6 +808,14 @@ cdef class LaurentSeries(AlgebraElement):
 
     def add_bigoh(self, prec):
         """
+        Return the truncated series at chosen precision ``prec``.
+
+        See also :meth:`O`.
+
+        INPUT:
+
+        - ``prec`` -- the precision of the series as an integer
+
         EXAMPLES::
 
             sage: R.<t> = LaurentSeriesRing(QQ)
@@ -727,11 +823,22 @@ cdef class LaurentSeries(AlgebraElement):
             t^2 + t^3 + O(t^10)
             sage: f.add_bigoh(5)
             t^2 + t^3 + O(t^5)
+
+        TESTS:
+
+        Check that :trac:`28239` is fixed::
+
+            sage: (t^(-2)).add_bigoh(-1)
+            t^-2 + O(t^-1)
+            sage: (t^(-2)).add_bigoh(-2)
+            O(t^-2)
+            sage: (t^(-2)).add_bigoh(-3)
+            O(t^-3)
         """
-        if prec == infinity or prec >= self.prec():
+        if prec is infinity or prec >= self.prec():
             return self
         P = self._parent
-        if not self:
+        if not self or prec < self.__n:
             return type(self)(P, P._power_series_ring(0, prec=0), prec)
         u = self.__u.add_bigoh(prec - self.__n)
         return type(self)(P, u, self.__n)
@@ -745,6 +852,8 @@ cdef class LaurentSeries(AlgebraElement):
         resulting Laurent series will have precision equal to the minimum of
         the precision of ``self`` and ``prec``. The term `O(q^\text{prec})` is the
         zero series with precision ``prec``.
+
+        See also :meth:`add_bigoh`.
 
         EXAMPLES::
 
@@ -971,8 +1080,8 @@ cdef class LaurentSeries(AlgebraElement):
             raise ZeroDivisionError
         try:
             return type(self)(self._parent,
-                             self.__u / right.__u,
-                             self.__n - right.__n)
+                              self.__u / right.__u,
+                              self.__n - right.__n)
         except TypeError as msg:
             # todo: this could also make something in the formal fraction field.
             raise ArithmeticError("division not defined")
@@ -1266,7 +1375,137 @@ cdef class LaurentSeries(AlgebraElement):
             return self.prec() - self.valuation()
 
     def __copy__(self):
-        return type(self)(self._parent, self.__u.copy(), self.__n)
+        return type(self)(self._parent, self.__u.__copy__(), self.__n)
+
+    def reverse(self, precision=None):
+        """
+        Return the reverse of f, i.e., the series g such that g(f(x)) = x.
+        Given an optional argument ``precision``, return the reverse with given
+        precision (note that the reverse can have precision at most
+        ``f.prec()``).  If ``f`` has infinite precision, and the argument
+        ``precision`` is not given, then the precision of the reverse defaults
+        to the default precision of ``f.parent()``.
+
+        Note that this is only possible if the valuation of self is exactly
+        1.
+
+        The implementation depends on the underlying power series element
+        implementing a reverse method.
+
+        EXAMPLES::
+
+            sage: R.<x> = Frac(QQ[['x']])
+            sage: f = 2*x + 3*x^2 - x^4 + O(x^5)
+            sage: g = f.reverse()
+            sage: g
+            1/2*x - 3/8*x^2 + 9/16*x^3 - 131/128*x^4 + O(x^5)
+            sage: f(g)
+            x + O(x^5)
+            sage: g(f)
+            x + O(x^5)
+
+            sage: A.<t> = LaurentSeriesRing(ZZ)
+            sage: a = t - t^2 - 2*t^4 + t^5 + O(t^6)
+            sage: b = a.reverse(); b
+            t + t^2 + 2*t^3 + 7*t^4 + 25*t^5 + O(t^6)
+            sage: a(b)
+            t + O(t^6)
+            sage: b(a)
+            t + O(t^6)
+
+            sage: B.<b,c> = ZZ[ ]
+            sage: A.<t> = LaurentSeriesRing(B)
+            sage: f = t + b*t^2 + c*t^3 + O(t^4)
+            sage: g = f.reverse(); g
+            t - b*t^2 + (2*b^2 - c)*t^3 + O(t^4)
+            sage: f(g)
+            t + O(t^4)
+            sage: g(f)
+            t + O(t^4)
+
+            sage: A.<t> = PowerSeriesRing(ZZ)
+            sage: B.<s> = LaurentSeriesRing(A)
+            sage: f = (1 - 3*t + 4*t^3 + O(t^4))*s + (2 + t + t^2 + O(t^3))*s^2 + O(s^3)
+            sage: set_verbose(1)
+            sage: g = f.reverse(); g
+            verbose 1 (<module>) passing to pari failed; trying Lagrange inversion
+            (1 + 3*t + 9*t^2 + 23*t^3 + O(t^4))*s + (-2 - 19*t - 118*t^2 + O(t^3))*s^2 + O(s^3)
+            sage: set_verbose(0)
+            sage: f(g) == g(f) == s
+            True
+
+        If the leading coefficient is not a unit, we pass to its fraction
+        field if possible::
+
+            sage: A.<t> = LaurentSeriesRing(ZZ)
+            sage: a = 2*t - 4*t^2 + t^4 - t^5 + O(t^6)
+            sage: a.reverse()
+            1/2*t + 1/2*t^2 + t^3 + 79/32*t^4 + 437/64*t^5 + O(t^6)
+
+            sage: B.<b> = PolynomialRing(ZZ)
+            sage: A.<t> = LaurentSeriesRing(B)
+            sage: f = 2*b*t + b*t^2 + 3*b^2*t^3 + O(t^4)
+            sage: g = f.reverse(); g
+            1/(2*b)*t - 1/(8*b^2)*t^2 + ((-3*b + 1)/(16*b^3))*t^3 + O(t^4)
+            sage: f(g)
+            t + O(t^4)
+            sage: g(f)
+            t + O(t^4)
+
+        We can handle some base rings of positive characteristic::
+
+            sage: A8.<t> = LaurentSeriesRing(Zmod(8))
+            sage: a = t - 15*t^2 - 2*t^4 + t^5 + O(t^6)
+            sage: b = a.reverse(); b
+            t + 7*t^2 + 2*t^3 + 5*t^4 + t^5 + O(t^6)
+            sage: a(b)
+            t + O(t^6)
+            sage: b(a)
+            t + O(t^6)
+
+        The optional argument ``precision`` sets the precision of the output::
+
+            sage: R.<x> = LaurentSeriesRing(QQ)
+            sage: f = 2*x + 3*x^2 - 7*x^3 + x^4 + O(x^5)
+            sage: g = f.reverse(precision=3); g
+            1/2*x - 3/8*x^2 + O(x^3)
+            sage: f(g)
+            x + O(x^3)
+            sage: g(f)
+            x + O(x^3)
+
+        If the input series has infinite precision, the precision of the
+        output is automatically set to the default precision of the parent
+        ring::
+
+            sage: R.<x> = LaurentSeriesRing(QQ, default_prec=20)
+            sage: (x - x^2).reverse() # get some Catalan numbers
+            x + x^2 + 2*x^3 + 5*x^4 + 14*x^5 + 42*x^6 + 132*x^7 + 429*x^8 + 1430*x^9 + 4862*x^10 + 16796*x^11 + 58786*x^12 + 208012*x^13 + 742900*x^14 + 2674440*x^15 + 9694845*x^16 + 35357670*x^17 + 129644790*x^18 + 477638700*x^19 + O(x^20)
+            sage: (x - x^2).reverse(precision=3)
+            x + x^2 + O(x^3)
+
+        TESTS::
+
+            sage: R.<x> = LaurentSeriesRing(QQ)
+            sage: f = 1 + 2*x + 3*x^2 - x^4 + O(x^5)
+            sage: f.reverse()
+            Traceback (most recent call last):
+            ...
+            ValueError: Series must have valuation one for reversion.
+        """
+        val = self.valuation()
+        if val != 1:
+            raise ValueError("Series must have valuation one for reversion.")
+        u = self.valuation_zero_part()
+        u = u.parent().gen(0) * u
+
+        rev = u.reverse(precision=precision)
+
+        if rev.parent() == u.parent():
+            return self._parent(rev)
+        else:
+            P = self._parent.change_ring(rev.parent().base_ring())
+            return P(rev)
 
     def derivative(self, *args):
         """
@@ -1337,12 +1576,23 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f = 2*t/x + (3*t^2 + 6*t)*x + O(x^2)
             sage: f._derivative(t)
             2*x^-1 + (6*t + 6)*x + O(x^2)
+
+        TESTS::
+
+            sage: y = var('y')
+            sage: f.derivative(y)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot differentiate with respect to y
         """
-        if var is not None and var is not self._parent.gen():
-            # call _derivative() recursively on coefficients
-            u = [coeff._derivative(var) for coeff in self.__u.list()]
-            u = self._parent._power_series_ring(u, self.__u.prec())
-            return type(self)(self._parent, u, self.__n)
+        if var is not None and var != self._parent.gen():
+            try:
+                # call _derivative() recursively on coefficients
+                u = [coeff._derivative(var) for coeff in self.__u.list()]
+                u = self._parent._power_series_ring(u, self.__u.prec())
+                return type(self)(self._parent, u, self.__n)
+            except AttributeError:
+                raise ValueError("cannot differentiate with respect to {}".format(var))
 
         # compute formal derivative with respect to generator
         if self.is_zero():
@@ -1421,7 +1671,7 @@ cdef class LaurentSeries(AlgebraElement):
         - ``n`` -- integer
 
         - ``prec`` -- integer (optional) - precision of the result. Though, if
-          this series has finite precision, then the result can not have larger
+          this series has finite precision, then the result cannot have larger
           precision.
 
         EXAMPLES::
@@ -1441,7 +1691,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         if prec is None:
             prec = self.prec()
-            if prec == infinity:
+            if prec is infinity:
                 prec = self.parent().default_prec()
         else:
             prec = min(self.prec(), prec)
@@ -1458,6 +1708,11 @@ cdef class LaurentSeries(AlgebraElement):
 
     def power_series(self):
         """
+        Convert this Laurent series to a power series.
+
+        An error is raised if the Laurent series has a term (or an error
+        term `O(x^k)`) whose exponent is negative.
+
         EXAMPLES::
 
             sage: R.<t> = LaurentSeriesRing(ZZ)
@@ -1480,16 +1735,31 @@ cdef class LaurentSeries(AlgebraElement):
 
             sage: L.<t> = LaurentSeriesRing(GF(2))
             sage: R.<x,y> = PolynomialRing(L)
-            sage: O = L._power_series_ring
-            sage: S.<x,y> = PolynomialRing(O)
+            sage: S.<x,y> = PolynomialRing(L._power_series_ring)
             sage: t**(-1)*x*y in S
             False
+
+        There used to be an issue with non-canonical representations of zero,
+        see :trac:`31383`::
+
+            sage: S.<x> = PowerSeriesRing(QQ)
+            sage: L = Frac(S)
+            sage: s = L(O(x^2))
+            sage: (s*x^(-1)).power_series()
+            O(x^1)
+            sage: (s*x^(-2)).power_series()
+            O(x^0)
+            sage: (s*x^(-3)).power_series()
+            Traceback (most recent call last):
+            ...
+            TypeError: self is not a power series
         """
         if self.__n < 0:
-            raise TypeError("self is not a power series")
-        u = self.__u
-        t = u.parent().gen()
-        return t**(self.__n) * u
+            if self.__u.is_zero() and self.__u.prec() >= - self.__n:
+                return self.__u >> (- self.__n)
+            else:
+                raise TypeError("self is not a power series")
+        return self.__u << self.__n
 
     def inverse(self):
         """

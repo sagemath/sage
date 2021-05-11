@@ -30,6 +30,8 @@ AUTHORS:
 from sage.structure.parent import Parent
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.highest_weight_crystals import HighestWeightCrystals
+from sage.categories.crystals import Crystals
+from sage.categories.supercrystals import SuperCrystals
 from sage.categories.homset import Hom
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
@@ -39,7 +41,8 @@ from sage.combinat.root_system.cartan_type import CartanType
 from sage.combinat.crystals.letters import CrystalOfLetters
 from sage.combinat.crystals.tensor_product import CrystalOfWords
 from sage.combinat.crystals.tensor_product_element import (CrystalOfTableauxElement,
-        InfinityCrystalOfTableauxElement, InfinityCrystalOfTableauxElementTypeD)
+        InfinityCrystalOfTableauxElement, InfinityCrystalOfTableauxElementTypeD,
+        InfinityQueerCrystalOfTableauxElement)
 
 
 class InfinityCrystalOfTableaux(CrystalOfWords):
@@ -201,6 +204,8 @@ class InfinityCrystalOfTableaux(CrystalOfWords):
         cartan_type = CartanType(cartan_type)
         if cartan_type.type() == 'D':
             return InfinityCrystalOfTableauxTypeD(cartan_type)
+        if cartan_type.type() == 'Q':
+            return DualInfinityQueerCrystalOfTableaux(cartan_type)
         return super(InfinityCrystalOfTableaux, cls).__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
@@ -626,5 +631,98 @@ class InfinityCrystalOfTableauxTypeD(InfinityCrystalOfTableaux):
         r"""
         Elements in `\mathcal{B}(\infty)` crystal of tableaux for type `D_n`.
         """
+        pass
+
+#########################################################
+## Queer superalgebra
+
+class DualInfinityQueerCrystalOfTableaux(CrystalOfWords):
+    @staticmethod
+    def __classcall_private__(cls, cartan_type):
+        """
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: B = crystals.infinity.Tableaux(['A',4])
+            sage: B2 = crystals.infinity.Tableaux(CartanType(['A',4]))
+            sage: B is B2
+            True
+        """
+        cartan_type = CartanType(cartan_type)
+        return super(DualInfinityQueerCrystalOfTableaux, cls).__classcall__(cls, cartan_type)
+
+    def __init__(self, cartan_type):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: B = crystals.infinity.Tableaux(['A',2])
+            sage: TestSuite(B).run() # long time
+        """
+        Parent.__init__(self, category=(SuperCrystals(), InfiniteEnumeratedSets()))
+        self._cartan_type = cartan_type
+        self.letters = CrystalOfLetters(cartan_type)
+        self.module_generators = (self.module_generator(),)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: B = crystals.infinity.Tableaux(['A',4]); B
+            The infinity crystal of tableaux of type ['A', 4]
+        """
+        return "The dual infinity crystal of tableaux of type %s" % self._cartan_type
+
+    @cached_method
+    def module_generator(self):
+        r"""
+        Return the module generator (or highest weight element) of ``self``.
+
+        The module generator is the unique semistandard hook tableau of shape
+        `(n, n-1, \ldots,2, 1)` with weight `0`.
+
+        EXAMPLES::
+
+            sage: B = crystals.infinity.Tableaux(["Q",5])
+            sage: B.module_generator()
+            [[5, 5, 5, 5, 5], [4, 4, 4, 4], [3, 3, 3], [2, 2], [1]]
+        """
+        n = self._cartan_type.rank() + 1
+        row_lens = list(reversed(range(1, n+1)))
+        module_generator = flatten([[val]*val for val in row_lens])
+        return self.element_class(self, [self.letters(x) for x in module_generator], row_lens)
+
+    @cached_method
+    def index_set(self):
+        r"""
+        Return the index set of ``self``.
+
+        EXAMPLES::
+
+            sage: B = crystals.infinity.Tableaux(["Q",3])
+            sage: B.index_set()
+            (1, 2, -1)
+        """
+        n = self._cartan_type.rank()
+        return tuple(range(1, n+1)) + (-1,)
+
+    def _element_constructor_(self, *args, **options):
+        """
+        Construct an element of ``self`` from the input data.
+
+        EXAMPLES::
+
+            sage: B = crystals.infinity.Tableaux(["Q",4])
+            sage: t = B([[4,4,4,4,2,1],[3,3,3],[2,2],[1]])
+            sage: t
+            [[4, 4, 4, 4, 2, 1], [3, 3, 3], [2, 2], [1]]
+        """
+        return self.element_class(self, *args, **options)
+
+    class Element(InfinityQueerCrystalOfTableauxElement):
         pass
 

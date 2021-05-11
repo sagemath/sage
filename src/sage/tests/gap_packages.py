@@ -6,6 +6,7 @@ TESTS::
     sage: from sage.tests.gap_packages import all_installed_packages, test_packages
     sage: pkgs = all_installed_packages(ignore_dot_gap=True)
     sage: test_packages(pkgs, only_failures=True)    # optional - gap_packages
+    ...
       Status   Package   GAP Output
     +--------+---------+------------+
 
@@ -17,7 +18,6 @@ TESTS::
 """
 
 import os
-import os.path
 
 from sage.libs.gap.libgap import libgap
 
@@ -113,7 +113,7 @@ def test_packages(packages, only_failures=False):
     return table(rows, header_row=True)
 
 
-def all_installed_packages(ignore_dot_gap=False):
+def all_installed_packages(ignore_dot_gap=False, gap=None):
     """
     Return list of all installed packages.
 
@@ -122,6 +122,9 @@ def all_installed_packages(ignore_dot_gap=False):
     - ``ignore_dot_gap`` -- Boolean (default: ``False``). Whether to
       ignore the `.gap/` directory (usually in the user home
       directory) when searching for packages.
+
+    - ``gap`` -- The GAP interface to use (default: ``libgap``); can
+      be either ``libgap`` or a pexpect ``Gap`` instance.
 
     OUTPUT:
 
@@ -132,9 +135,19 @@ def all_installed_packages(ignore_dot_gap=False):
         sage: from sage.tests.gap_packages import all_installed_packages
         sage: all_installed_packages()
         (...'GAPDoc'...)
+        sage: all_installed_packages(ignore_dot_gap=True) == all_installed_packages(gap=gap, ignore_dot_gap=True)
+        True
     """
+    if gap is None:
+        gap = libgap
+
+    if gap == libgap:
+        paths = [str(p) for p in gap.eval('GAPInfo.RootPaths')]
+    else:
+        paths = [str(p) for p in gap('GAPInfo.RootPaths')]
+
     packages = []
-    for path in libgap.eval('GAPInfo.RootPaths').sage():
+    for path in paths:
         if ignore_dot_gap and path.endswith('/.gap/'):
             continue
         pkg_dir = os.path.join(path, 'pkg')

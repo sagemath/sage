@@ -1,0 +1,84 @@
+###########################################
+## Giac
+###########################################
+
+
+#############################################################
+#    Environment Variables
+#############################################################
+# If CFLAGS and CXXFLAGS are unset, giac looks to set -g -O2,
+#   but if they are not empty, the -g -O2 is not added
+CFLAGS="-g -O2 $CFLAGS"
+CXXFLAGS="-g -O2 $CXXFLAGS"
+CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
+
+if [ `uname -m` = "ppc64" ]; then
+    CPPFLAGS="-Dx86_64 $CPPFLAGS"
+fi
+
+# Using pari in a C++17 file with "using namespace std doesn't
+# work due to a conflict between std::rank and pari's rank
+CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-std=c++17//g")
+
+export CFLAGS CXXFLAGS CPPFLAGS
+
+cd src
+
+#############################################################
+#   configure
+#############################################################
+#
+#    We use the option --disable-gui to be sure that the built won't stop because the gui tries
+#    to be built with a bad version of fltk.
+#
+#    If you want to built the gui (xcas), you need fltk from the 1.3 branch. (Not 1.1 nor 2. )
+#    and GL headers.
+#
+
+
+echo "Configuring giac..."
+
+
+#    --disable-ao     (avoid libao deps)
+#   On OS X (10.12) the built in intl is broken
+DISABLENLS=""
+if [ "$UNAME" = "Darwin" ]; then
+    echo "OS X Building without Native Language Support"
+    DISABLENLS="--disable-nls"
+fi
+if [ "$UNAME" = "CYGWIN" ]; then
+    export ac_cv_lib_nauty_main=no
+    export ac_cv_header_nauty_naututil_h=no
+fi
+
+sdh_configure --disable-gui --disable-ao "$DISABLENLS" --enable-png=no --disable-samplerate --disable-static --disable-micropy
+
+#############################################################
+#   Build
+#############################################################
+
+sdh_make
+
+#############################################################
+#   Clean old install
+#############################################################
+echo "Cleaning giac..."
+rm -f ${SAGE_LOCAL}/lib/libgiac*
+rm -f ${SAGE_LOCAL}/bin/icas
+rm -f ${SAGE_LOCAL}/bin/xcas
+rm -f ${SAGE_LOCAL}/bin/cas_help
+rm -f ${SAGE_LOCAL}/bin/pgiac
+rm -f ${SAGE_LOCAL}/bin/en_cas_help
+rm -f ${SAGE_LOCAL}/bin/es_cas_help
+rm -f ${SAGE_LOCAL}/bin/fr_cas_help
+rm -f ${SAGE_LOCAL}/bin/giac
+rm -f ${SAGE_LOCAL}/bin/xcasnew
+rm -rf ${SAGE_LOCAL}/share/giac
+rm -rf ${SAGE_LOCAL}/share/doc/giac
+rm -rf ${SAGE_LOCAL}/include/giac
+
+#############################################################
+#   Install
+#############################################################
+
+sdh_make_install

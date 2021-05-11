@@ -3,7 +3,7 @@ An interface to read data files
 """
 
 ###############################################################################
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #       Copyright (C) 2010 Paul Zimmermann
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or later. The full text of the GPL is available at:

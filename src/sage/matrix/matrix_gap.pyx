@@ -11,8 +11,6 @@ Wrappers on GAP matrices
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
-
 from sage.libs.gap.libgap import libgap
 from . import matrix_space
 from sage.structure.element cimport Matrix
@@ -65,9 +63,9 @@ cdef class Matrix_gap(Matrix_dense):
 
         sage: for ring in [ZZ, QQ, UniversalCyclotomicField(), GF(2), GF(3)]:
         ....:     M = MatrixSpace(ring, 2, implementation='gap')
-        ....:     TestSuite(M).run()
+        ....:     TestSuite(M).run(skip=['_test_construction'])
         ....:     M = MatrixSpace(ring, 2, 3, implementation='gap')
-        ....:     TestSuite(M).run()
+        ....:     TestSuite(M).run(skip=['_test_construction'])
     """
     def __init__(self, parent, entries=None, copy=None, bint coerce=True):
         r"""

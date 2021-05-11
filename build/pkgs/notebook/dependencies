@@ -1,4 +1,4 @@
-$(PYTHON) | pip ipython jupyter_client ipykernel nbconvert nbformat jinja2 tornado terminado send2trash ipaddress prometheus_client
+$(PYTHON) | $(PYTHON_TOOLCHAIN) ipython jupyter_client ipykernel nbconvert nbformat jinja2 tornado terminado send2trash prometheus_client argon2_cffi
 
 ----------
 All lines of this file are ignored except the first.

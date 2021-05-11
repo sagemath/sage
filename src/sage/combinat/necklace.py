@@ -3,11 +3,11 @@ Necklaces
 
 The algorithm used in this file comes from
 
-- Sawada, Joe.  "A fast algorithm to generate necklaces with fixed content", Source
-  Theoretical Computer Science archive Volume 301 , Issue 1-3 (May
-  2003)
+- Sawada, Joe. *A fast algorithm to generate necklaces with fixed content*,
+  Theoretical Computer Science archive Volume 301, Issue 1-3 (May 2003)
+  :doi:`10.1016/S0304-3975(03)00049-5`
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -19,9 +19,8 @@ The algorithm used in this file comes from
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.composition import Composition
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -113,7 +112,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
         """
         Return the content (or evaluation) of the necklaces.
 
-        TESTS::
+        EXAMPLES::
 
             sage: N = Necklaces([2,2,2])
             sage: N.content()
@@ -121,7 +120,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
         """
         return self._content
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         TESTS::
 
@@ -130,7 +129,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
         """
         return "Necklaces with evaluation %s" % self._content
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is the smallest word of all its cyclic shifts
         and the content vector of ``x`` is equal to ``content``.
@@ -155,11 +154,11 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
             True
         """
         xl = list(x)
-        e = [0]*len(self._content)
+        e = [0] * len(self._content)
         if len(xl) != sum(self._content):
             return False
 
-        #Check to make sure xl is a list of integers
+        # Check to make sure xl is a list of integers
         for i in xl:
             if not isinstance(i, (int, Integer)):
                 return False
@@ -167,14 +166,14 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
                 return False
             if i > len(self._content):
                 return False
-            e[i-1] += 1
+            e[i - 1] += 1
 
-        #Check to make sure the evaluation is the same
+        # Check to make sure the evaluation is the same
         if e != self._content:
             return False
 
-        #Check to make sure that x is lexicographically less
-        #than all of its cyclic shifts
+        # Check to make sure that x is lexicographically less
+        # than all of its cyclic shifts
         cyclic_shift = xl[:]
         for i in range(len(xl) - 1):
             cyclic_shift = cyclic_shift[1:] + cyclic_shift[:1]
@@ -183,7 +182,7 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
 
         return True
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r"""
         Return the number of integer necklaces with the evaluation ``content``.
 
@@ -263,15 +262,15 @@ class Necklaces_evaluation(UniqueRepresentation, Parent):
         if not self._content:
             return
         k = 0
-        while not self._content[k]: # == 0
-            k = k+1
+        while not self._content[k]:  # == 0
+            k += 1
         for z in _sfc(self._content[k:]):
-            yield [x+1+k for x in z]
+            yield [x + 1 + k for x in z]
 
 
-##############################
-#Fast Fixed Content Algorithm#
-##############################
+################################
+# Fast Fixed Content Algorithm #
+################################
 def _ffc(content, equality=False):
     """
     EXAMPLES::
@@ -286,7 +285,7 @@ def _ffc(content, equality=False):
         [[0, 0, 1, 1, 0, 1], [0, 0, 1, 0, 1, 1], [0, 0, 0, 1, 1, 1]]
     """
     e = list(content)
-    a = [len(e)-1]*sum(e)
+    a = [len(e) - 1] * sum(e)
     r = [0] * sum(e)
     a[0] = 0
     e[0] -= 1
@@ -295,7 +294,7 @@ def _ffc(content, equality=False):
     rng_k = list(range(k))
     rng_k.reverse()
     dll = DoublyLinkedList(rng_k)
-    if not e[0]: # == 0
+    if not e[0]:  # == 0
         dll.hide(0)
 
     for x in _fast_fixed_content(a, e, 2, 1, k, r, 2, dll, equality=equality):
@@ -325,44 +324,45 @@ def _fast_fixed_content(a, content, t, p, k, r, s, dll, equality=False):
         [[0, 0, 1, 1, 0, 1], [0, 0, 1, 0, 1, 1], [0, 0, 0, 1, 1, 1]]
     """
     n = len(a)
-    if content[k-1] == n - t + 1:
-        if content[k-1] == r[t-p-1]:
+    if content[k - 1] == n - t + 1:
+        if content[k - 1] == r[t - p - 1]:
             if equality:
                 if n == p:
                     yield a
             else:
-                if not n % p: # == 0
+                if not n % p:  # == 0
                     yield a
-        elif content[k-1] > r[t-p-1]:
+        elif content[k - 1] > r[t - p - 1]:
             yield a
-    elif content[0] != n-t+1:
+    elif content[0] != n - t + 1:
         j = dll.head()
         sp = s
-        while j != 'end' and j >= a[t-p-1]:
-            #print s, j
-            r[s-1] = t-s
-            a[t-1] = j
+        while j != 'end' and j >= a[t - p - 1]:
+            r[s - 1] = t - s
+            a[t - 1] = j
             content[j] -= 1
 
-            if not content[j]: # == 0
+            if not content[j]:  # == 0
                 dll.hide(j)
 
-            if j != k-1:
-                sp = t+1
+            if j != k - 1:
+                sp = t + 1
 
-            if j == a[t-p-1]:
-                for x in _fast_fixed_content(a[:], content, t+1, p+0, k, r, sp, dll, equality=equality):
+            if j == a[t - p - 1]:
+                for x in _fast_fixed_content(a[:], content, t + 1, p,
+                                             k, r, sp, dll, equality=equality):
                     yield x
             else:
-                for x in _fast_fixed_content(a[:], content, t+1, t+0, k, r, sp, dll, equality=equality):
+                for x in _fast_fixed_content(a[:], content, t + 1, t,
+                                             k, r, sp, dll, equality=equality):
                     yield x
 
-            if not content[j]: # == 0
+            if not content[j]:  # == 0
                 dll.unhide(j)
 
             content[j] += 1
             j = dll.next(j)
-        a[t-1] = k-1
+        a[t - 1] = k - 1
     return
 
 
@@ -383,7 +383,7 @@ def _lfc(content, equality=False):
         [[0, 0, 1, 1, 0, 1], [0, 0, 1, 0, 1, 1], [0, 0, 0, 1, 1, 1]]
     """
     content = list(content)
-    a = [0]*sum(content)
+    a = [0] * sum(content)
     content[0] -= 1
     k = len(content)
 
@@ -391,7 +391,7 @@ def _lfc(content, equality=False):
     rng_k.reverse()
     dll = DoublyLinkedList(rng_k)
 
-    if not content[0]: # == 0
+    if not content[0]:  # == 0
         dll.hide(0)
 
     for z in _list_fixed_content(a, content, 2, 1, k, dll, equality=equality):
@@ -424,34 +424,36 @@ def _list_fixed_content(a, content, t, p, k, dll, equality=False):
             if n == p:
                 yield a
         else:
-            if not n % p: # == 0
+            if not n % p:  # == 0
                 yield a
     else:
         j = dll.head()
-        while j != 'end' and j >= a[t-p-1]:
-            a[t-1] = j
+        while j != 'end' and j >= a[t - p - 1]:
+            a[t - 1] = j
             content[j] -= 1
 
-            if not content[j]: # == 0
+            if not content[j]:  # == 0
                 dll.hide(j)
 
-            if j == a[t-p-1]:
-                for z in _list_fixed_content(a[:], content[:], t+1, p+0, k, dll, equality=equality):
+            if j == a[t - p - 1]:
+                for z in _list_fixed_content(a[:], content[:], t + 1, p,
+                                             k, dll, equality=equality):
                     yield z
             else:
-                for z in _list_fixed_content(a[:], content[:], t+1, t+0, k, dll, equality=equality):
+                for z in _list_fixed_content(a[:], content[:], t + 1, t,
+                                             k, dll, equality=equality):
                     yield z
 
-            if not content[j]: # == 0
+            if not content[j]:  # == 0
                 dll.unhide(j)
 
             content[j] += 1
             j = dll.next(j)
 
 
-################################
-#Simple Fixed Content Algorithm#
-################################
+##################################
+# Simple Fixed Content Algorithm #
+##################################
 def _sfc(content, equality=False):
     """
     This wrapper function calls :meth:`sage.combinat.necklace._simple_fixed_content`.
@@ -510,26 +512,28 @@ def _simple_fixed_content(a, content, t, p, k, equality=False):
             if n == p:
                 yield a
         else:
-            if not n % p: # == 0
+            if not n % p:  # == 0
                 yield a
     else:
-        r = list(range(a[t-p-1], k))
+        r = list(range(a[t - p - 1], k))
         for j in r:
             if content[j] > 0:
-                a[t-1] = j
+                a[t - 1] = j
                 content[j] -= 1
-                if j == a[t-p-1]:
-                    for z in _simple_fixed_content(a[:], content, t+1, p+0, k, equality=equality):
+                if j == a[t - p - 1]:
+                    for z in _simple_fixed_content(a[:], content, t + 1, p,
+                                                   k, equality=equality):
                         yield z
                 else:
-                    for z in _simple_fixed_content(a[:], content, t+1, t+0, k, equality=equality):
+                    for z in _simple_fixed_content(a[:], content, t + 1, t,
+                                                   k, equality=equality):
                         yield z
                 content[j] += 1
 
 
 def _lyn(w):
     """
-    Returns the length of the longest prefix of ``w`` that is a Lyndon word.
+    Return the length of the longest prefix of ``w`` that is a Lyndon word.
 
     EXAMPLES::
 
@@ -542,14 +546,14 @@ def _lyn(w):
         1
     """
     p = 1
-    k = max(w)+1
+    k = max(w) + 1
     for i in range(1, len(w)):
         b = w[i]
         a = w[:i]
-        if b < a[i-p] or b > k-1:
+        if b < a[i - p] or b > k - 1:
             return p
-        elif b == a[i-p]:
+        elif b == a[i - p]:
             pass
         else:
-            p = i+1
+            p = i + 1
     return p

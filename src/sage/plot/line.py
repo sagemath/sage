@@ -105,6 +105,7 @@ class Line(GraphicPrimitive_xydata):
             sage: L = line([(1,1), (1,2), (2,2), (2,1)], linestyle=":")
             sage: L.plot3d()
             Traceback (most recent call last):
+            ...
             NotImplementedError: Invalid 3d line style: ':'
         """
         if options is None:
@@ -497,13 +498,11 @@ def line2d(points, **options):
 
         sage: line(enumerate(range(2)), marker='o', legend_label='circle')
         Graphics object consisting of 1 graphics primitive
-
     """
     from sage.plot.all import Graphics
     from sage.plot.plot import xydata_from_point_list
-    from sage.rings.all import CC, CDF
     points = list(points) # make sure points is a python list
-    if len(points) == 0:
+    if not points:
         return Graphics()
     xdata, ydata = xydata_from_point_list(points)
     g = Graphics()

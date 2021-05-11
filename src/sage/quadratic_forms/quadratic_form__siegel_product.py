@@ -16,7 +16,8 @@ from sage.arith.all import kronecker_symbol, bernoulli, prime_divisors, fundamen
 from sage.functions.all import sqrt
 from sage.quadratic_forms.special_values import QuadraticBernoulliNumber
 
-from sage.misc.misc import verbose
+
+from sage.misc.verbose import verbose
 
 
 

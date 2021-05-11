@@ -28,7 +28,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #              http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -40,7 +39,6 @@ from .combinat import CombinatorialElement
 from sage.categories.cartesian_product import cartesian_product
 
 from .integer_lists import IntegerListsLex
-from six.moves import builtins
 from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
 
@@ -706,8 +704,6 @@ class Composition(CombinatorialElement):
             ....:                 for I in Compositions(n) )
             sage: all( test_meet(n) for n in range(1, 5) )
             True
-            sage: all( test_meet(n) for n in range(5, 9) )  # long time
-            True
 
         TESTS::
 
@@ -1192,7 +1188,7 @@ class Composition(CombinatorialElement):
             sum_outer += k - overlap
             inner.append(sum_outer + overlap)
 
-        if self != []:
+        if self:
             outer.append(self[-1] + sum_outer + overlap)
         else:
             return SkewPartition([[],[]])
@@ -1200,7 +1196,6 @@ class Composition(CombinatorialElement):
         return SkewPartition(
             [ [x for x in reversed(outer) if x != 0],
               [x for x in reversed(inner) if x != 0] ])
-
 
     def shuffle_product(self, other, overlap=False):
         r"""
@@ -1252,23 +1247,26 @@ class Composition(CombinatorialElement):
         composition more than once since a composition can be a shuffle of two
         compositions in several ways. For example::
 
-            sage: S = Composition([1]).shuffle_product([1]); S
+            sage: w1 = Composition([1])
+            sage: S = w1.shuffle_product(w1); S
             Shuffle product of [1] and [1]
             sage: S.list()
             [[1, 1], [1, 1]]
-            sage: O = Composition([1]).shuffle_product([1], overlap=True); O
+            sage: O = w1.shuffle_product(w1, overlap=True); O
             Overlapping shuffle product of [1] and [1]
             sage: O.list()
             [[1, 1], [1, 1], [2]]
 
         TESTS::
 
-            sage: Composition([]).shuffle_product([]).list()
+            sage: empty = Composition([])
+            sage: empty.shuffle_product(empty).list()
             [[]]
         """
         if overlap:
             from sage.combinat.shuffle import ShuffleProduct_overlapping
-            return ShuffleProduct_overlapping(self, other, Compositions())
+            return ShuffleProduct_overlapping(self, other,
+                                              Compositions())
         else:
             from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
             return ShuffleProduct_w1w2(self, other)
@@ -1668,7 +1666,7 @@ class Compositions(UniqueRepresentation, Parent):
         """
         if isinstance(x, Composition):
             return True
-        elif isinstance(x, builtins.list):
+        elif isinstance(x, list):
             for i in x:
                 if (not isinstance(i, (int, Integer))) and i not in ZZ:
                     return False

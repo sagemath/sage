@@ -1,7 +1,7 @@
 r"""
 Macdonald Polynomials
 
-Notation used in the definitions follows mainly [Macdonald1995]_.
+Notation used in the definitions follows mainly [Mac1995]_.
 
 The integral forms of the bases `H` and `Ht` do not appear in
 Macdonald's book.  They correspond to the two bases
@@ -14,9 +14,7 @@ the graded Frobenius image of the Garsia-Haiman modules [GH1993]_.
 
 REFERENCES:
 
-.. [Macdonald1995] \I. G. Macdonald, Symmetric functions and Hall polynomials, second ed.,
-   The Clarendon Press, Oxford University Press, New York, 1995, With contributions
-   by A. Zelevinsky, Oxford Science Publications.
+- [Mac1995]_
 
 .. [GH1993] \A. Garsia, M. Haiman, A graded representation module for Macdonald's
    polynomials, Proc. Nat. Acad. U.S.A. no. 90, 3607--3610.
@@ -27,13 +25,12 @@ REFERENCES:
 
 .. [LLM1998] \L. Lapointe, A. Lascoux, J. Morse, Determinantal Expressions for
    Macdonald Polynomials, IRMN no. 18 (1998).
-   :arXiv:`math/9808050`.
+   :arxiv:`math/9808050`.
 
 .. [BH2013] \F. Bergeron, M. Haiman, Tableaux Formulas for Macdonald Polynomials,
    Special edition in honor of Christophe Reutenauer 60 birthday, International
    Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -124,8 +121,8 @@ class Macdonald(UniqueRepresentation):
         self.q = Sym.base_ring()(q)
         self.t = Sym.base_ring()(t)
         self._name_suffix = ""
-        if str(q) !='q':
-            self._name_suffix += " with q=%s"%q
+        if str(q) != 'q':
+            self._name_suffix += " with q=%s" % q
             if str(t) !='t':
                 self._name_suffix += " and "
         if str(t) !='t':
@@ -483,7 +480,7 @@ class Macdonald(UniqueRepresentation):
             sage: Ht = Sym.macdonald().Ht()
             sage: s = Sym.schur()
             sage: Ht(s([2,1]))
-            ((-q)/(-q*t^2+t^3+q^2-q*t))*McdHt[1, 1, 1] + ((q^2+q*t+t^2)/(-q^2*t^2+q^3+t^3-q*t))*McdHt[2, 1] + (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
+            (q/(q*t^2-t^3-q^2+q*t))*McdHt[1, 1, 1] + ((-q^2-q*t-t^2)/(q^2*t^2-q^3-t^3+q*t))*McdHt[2, 1] + (t/(-q^3+q^2*t+q*t-t^2))*McdHt[3]
             sage: Ht(s([2]))
             ((-q)/(-q+t))*McdHt[1, 1] + (t/(-q+t))*McdHt[2]
         """
@@ -552,7 +549,7 @@ def c1(part, q, t):
     and ``P(part)``.
 
     This coefficient is `c_\lambda` in equation (8.1') p. 352 of
-    Macdonald's book [Macdonald1995]_.
+    Macdonald's book [Mac1995]_.
 
     INPUT:
 
@@ -572,10 +569,11 @@ def c1(part, q, t):
         sage: c1(Partition([1,1]),q,t)
         q^2*t - q*t - q + 1
     """
-    res = q.parent().one()
-    for i in range(part.size()):
-        res *= 1-q**(sum(part.arm_lengths(),[])[i]+1)*t**(sum(part.leg_lengths(),[])[i])
-    return res
+    R = q.parent()
+    arms = part.arm_lengths(flat=True)
+    legs = part.leg_lengths(flat=True)
+    return R.prod(1 - q**(a + 1) * t**l for a, l in zip(arms, legs))
+
 
 def c2(part, q, t):
     r"""
@@ -583,7 +581,7 @@ def c2(part, q, t):
     and Q(part).
 
     This coefficient is `c_\lambda` in equation (8.1) p. 352 of
-    Macdonald's book [Macdonald1995]_.
+    Macdonald's book [Mac1995]_.
 
     INPUT:
 
@@ -603,10 +601,11 @@ def c2(part, q, t):
         sage: c2(Partition([2,1]),q,t)
         -q*t^4 + 2*q*t^3 - q*t^2 + t^2 - 2*t + 1
     """
-    res = q.parent().one()
-    for i in range(part.size()):
-        res *= 1-q**(sum(part.arm_lengths(),[])[i])*t**(sum(part.leg_lengths(),[])[i]+1)
-    return res
+    R = q.parent()
+    arms = part.arm_lengths(flat=True)
+    legs = part.leg_lengths(flat=True)
+    return R.prod(1 - q**a * t**(l + 1) for a, l in zip(arms, legs))
+
 
 @cached_function
 def cmunu1(mu, nu):
@@ -615,7 +614,7 @@ def cmunu1(mu, nu):
 
     INPUT:
 
-    - ``mu``, ``nu`` -- partitions with ``nu`` preceeds ``mu``
+    - ``mu``, ``nu`` -- partitions with ``nu`` precedes ``mu``
 
     OUTPUT:
 
@@ -862,7 +861,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
         """
         return c2(part, self.q, self.t)
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         r"""
         Multiply an element of the Macdonald symmetric function
         basis ``self`` and another symmetric function
@@ -878,7 +877,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         OUTPUT:
 
-        - returns the product of ``left`` and ``right`` expanded in the basis ``self``
+        the product of ``left`` and ``right`` expanded in the basis ``self``
 
         EXAMPLES::
 
@@ -890,20 +889,20 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             sage: Ht = Mac.Ht()
             sage: J([1])^2 #indirect doctest
             ((q-1)/(q*t-1))*McdJ[1, 1] + ((t-1)/(q*t-1))*McdJ[2]
-            sage: J._multiply( J[1], J[2] )
+            sage: J.product( J[1], J[2] )
             ((-q^2+1)/(-q^2*t+1))*McdJ[2, 1] + ((-t+1)/(-q^2*t+1))*McdJ[3]
-            sage: H._multiply( H[1], H[2] )
+            sage: H.product( H[1], H[2] )
             ((q^2-1)/(q^2*t-1))*McdH[2, 1] + ((-t+1)/(-q^2*t+1))*McdH[3]
-            sage: P._multiply( P[1], P[2] )
+            sage: P.product( P[1], P[2] )
             ((-q^3*t^2+q*t^2+q^2-1)/(-q^3*t^2+q^2*t+q*t-1))*McdP[2, 1] + McdP[3]
-            sage: Q._multiply(Q[1],Q[2])
+            sage: Q.product(Q[1],Q[2])
             McdQ[2, 1] + ((q^2*t-q^2+q*t-q+t-1)/(q^2*t-1))*McdQ[3]
-            sage: Ht._multiply(Ht[1],Ht[2])
-            ((-q^2+1)/(-q^2+t))*McdHt[2, 1] + ((-t+1)/(q^2-t))*McdHt[3]
+            sage: Ht.product(Ht[1],Ht[2])
+            ((q^2-1)/(q^2-t))*McdHt[2, 1] + ((t-1)/(-q^2+t))*McdHt[3]
         """
-        return self( self._s(left)*self._s(right) )
+        return self(self._s(left) * self._s(right))
 
-    def macdonald_family( self ):
+    def macdonald_family(self):
         r"""
         Returns the family of Macdonald bases associated to the basis ``self``
 
@@ -1015,7 +1014,7 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
         r"""
         Returns the scalar product of `P(part1)` and `P(part2)`
         This scalar product formula is given in equation (4.11) p.323
-        and (6.19) p.339 of Macdonald's book [Macdonald1995]_.
+        and (6.19) p.339 of Macdonald's book [Mac1995]_.
 
         INPUT:
 
@@ -1723,7 +1722,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
         self._self_to_s_cache = _S_to_s_cache
         self._s_to_self_cache = _s_to_S_cache
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         r"""
         The multiplication of the modified Schur functions behaves the same
         as the multiplication of the Schur functions.
@@ -1735,7 +1734,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
 
         OUTPUT:
 
-        - returns the product of ``left`` and ``right``
+        the product of ``left`` and ``right``
 
         EXAMPLES::
 
@@ -1746,7 +1745,7 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
         """
         s_left = self._s._from_element(left)
         s_right = self._s._from_element(right)
-        product = s_left*s_right
+        product = s_left * s_right
         return self._from_element(product)
 
     def _to_s(self, part):

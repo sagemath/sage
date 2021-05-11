@@ -196,6 +196,7 @@ Ok, let's run the tests::
     running ._test_cardinality() . . . pass
     running ._test_category() . . . pass
     running ._test_characteristic() . . . pass
+    running ._test_construction() . . . pass
     running ._test_distributivity() . . . pass
     running ._test_elements() . . .
       Running the test suite of self.an_element()
@@ -609,7 +610,9 @@ will be a *parent with realizations*. See :func:`Sets().WithRealizations
 <sage.categories.with_realizations.WithRealizations>` for more information
 about the expected user interface and the rationale.
 
-Here is a brief template highlighting the overall structure::
+Here is a brief template highlighting the overall structure:
+
+.. CODE-BLOCK:: python
 
     class MyAlgebra(Parent, UniqueRepresentation):
         def __init__(self, R, ...):
@@ -688,7 +691,9 @@ particular, this construction says that they are:
     reason.
 
     The current recommended solution is to have an additional class ``Basis``
-    that factors out the common concrete features of the different bases::
+    that factors out the common concrete features of the different bases:
+
+    .. CODE-BLOCK:: python
 
         ...
 

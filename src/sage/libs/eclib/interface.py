@@ -359,7 +359,7 @@ class mwrank_EllipticCurve(SageObject):
             sage: EllipticCurve([0, prod(prime_range(100))]).mwrank_curve().two_descent()
             Traceback (most recent call last):
             ...
-            RuntimeError: Aborted
+            RuntimeError: A 2-descent did not complete successfully.
 
         Calling this method twice does not cause a segmentation fault
         (see :trac:`10665`)::

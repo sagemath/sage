@@ -48,16 +48,13 @@ and library interfaces to Maxima.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
-from six import string_types
 
 import os
 import re
 import sys
 import subprocess
 
-from sage.env import DOT_SAGE
+from sage.env import DOT_SAGE, MAXIMA
 COMMANDS_CACHE = '%s/maxima_commandlist_cache.sobj' % DOT_SAGE
 
 from sage.cpython.string import bytes_to_str
@@ -168,7 +165,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             -- Function: gcd (<p_1>, <p_2>, <x_1>, ...)
             ...
         """
-        cmd = 'maxima --very-quiet -r "%s(%s);" '%(command, s)
+        cmd = '{} --very-quiet --batch-string="{}({});" '.format(MAXIMA, command, s)
         if sage.server.support.EMBEDDED_MODE:
             cmd += '< /dev/null'
 
@@ -178,10 +175,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         if redirect:
             res = bytes_to_str(subprocess.check_output(cmd, shell=True,
                                                        env=env))
-            # We get 4 lines of commented verbosity
-            # every time Maxima starts, so we need to get rid of them
-            for _ in range(4):
-                res = res[res.find('\n')+1:]
+            # We get a few lines of commented verbosity every time Maxima starts
+            while res.startswith(';;;'):
+                newline = res.find('\n')
+                if newline == -1:
+                    break
+                res = res[newline + 1:]
+            # The input is echoed, so we need to get rid of it
+            res = res[res.find('\n')+1:]
 
             return AsciiArtString(res)
         else:
@@ -290,8 +291,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         # in Maxima 5.19.1, apropos returns all commands that contain
         # the given string, instead of all commands that start with
         # the given string
-        cmd_list = self._eval_line('apropos("%s")'%s, error_check=False).replace('\\ - ','-')
-        cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?']
+        #
+        # Maxima 5.44 changed DEFMFUN so that it creates both $NAME
+        # and $NAME-IMPL (although the documentation suggests it would
+        # create NAME-IMPL, without the leading $).  This causes
+        # name-impl to show up in $APROPOS.  We remove it.
+        # https://sourceforge.net/p/maxima/bugs/3643/
+        cmd_list = self._eval_line('apropos("%s")'%s, error_check=False).replace('\\ - ','-').replace('\\-','-')
+        cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?' and not x.endswith('-impl')]
         return [x for x in cmd_list if x.find(s) == 0]
 
     def _commands(self, verbose=True):
@@ -646,11 +653,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         name = self._next_var_name()
         if isinstance(defn, MaximaAbstractElement):
             defn = defn.str()
-        elif not isinstance(defn, string_types):
+        elif not isinstance(defn, str):
             defn = str(defn)
         if isinstance(args, MaximaAbstractElement):
             args = args.str()
-        elif not isinstance(args, string_types):
+        elif not isinstance(args, str):
             args = str(args)
         cmd = '%s(%s) := %s' % (name, args, defn)
         self._eval_line(cmd)
@@ -856,7 +863,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
             y=-%e^-1*(5*%e^x-3*%e*x-3*%e)
         """
-        if not isinstance(vars, string_types):
+        if not isinstance(vars, str):
             str_vars = '%s, %s'%(vars[1], vars[0])
         else:
             str_vars = vars
@@ -969,12 +976,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: u = maxima.unit_quadratic_integer(101); u
             a + 10
             sage: u.parent()
-            Number Field in a with defining polynomial x^2 - 101
+            Number Field in a with defining polynomial x^2 - 101 with a = 10.04987562112089?
             sage: u = maxima.unit_quadratic_integer(13)
             sage: u
             5*a + 18
             sage: u.parent()
-            Number Field in a with defining polynomial x^2 - 13
+            Number Field in a with defining polynomial x^2 - 13 with a = 3.605551275463990?
         """
         from sage.rings.all import Integer
         from sage.rings.number_field.number_field import QuadraticField
@@ -1119,7 +1126,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         return self.display2d(onscreen=False)
 
-    def bool(self):
+    def __bool__(self):
         """
         Convert ``self`` into a boolean.
 
@@ -1129,13 +1136,22 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         EXAMPLES::
 
-            sage: maxima(0).bool()
+            sage: bool(maxima(0))
             False
-            sage: maxima(1).bool()
+            sage: bool(maxima(1))
+            True
+            sage: bool(maxima('false'))
+            False
+            sage: bool(maxima('true'))
             True
         """
         P = self._check_valid()
-        return P.eval('is(%s = 0);'%self.name()) == P._false_symbol() # but be careful, since for relations things like is(equal(a,b)) are what Maxima needs
+        return (P.eval('is({0} = 0 or {0} = false);'.format(self.name()))
+                != P._true_symbol())
+        # but be careful, since for relations things like is(equal(a,b)) are
+        # what Maxima needs
+
+    __nonzero__ = __bool__
 
     def _richcmp_(self, other, op):
         """
@@ -1226,12 +1242,19 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             [  1   y y^2]
             [  1 1/2 1/4]
 
+        TESTS:
+
         Check if :trac:`7661` is fixed::
 
             sage: var('delta')
             delta
             sage: (2*delta).simplify()
             2*delta
+
+        Check conversion of Booleans (:trac:`28705`)::
+
+            sage: maxima('true')._sage_(), maxima('false')._sage_()
+            (True, False)
         """
         import sage.calculus.calculus as calculus
         return calculus.symbolic_expression_from_maxima_string(self.name(),
@@ -1503,7 +1526,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         EXAMPLES::
 
             sage: maxima('exp(-sqrt(x))').nintegral('x',0,1)
-            (0.5284822353142306, 0.41633141378838...e-10, 231, 0)
+            (0.5284822353142306, 4.1633141378838...e-11, 231, 0)
 
         Note that GP also does numerical integration, and can do so to very
         high precision very quickly::
@@ -2193,7 +2216,7 @@ def maxima_version():
         sage: maxima_version()  # random
         '5.41.0'
     """
-    with os.popen('maxima --version') as p:
+    with os.popen('{} --version'.format(MAXIMA)) as p:
         return p.read().split()[-1]
 
 
@@ -2211,4 +2234,4 @@ def maxima_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%maxima magics instead.')
-    os.system('maxima')
+    os.system('{}'.format(MAXIMA))

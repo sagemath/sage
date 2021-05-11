@@ -37,7 +37,6 @@ or immediately during assignment like this::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.structure.sage_object import SageObject
 
@@ -892,7 +891,7 @@ class ToricVarietyFactory(SageObject):
         r"""
         Construct the toric variety defined by a face fan over a
         3-dimensional cube, but not the unit cube in the
-        N-lattice. See [FultonP65]_.
+        N-lattice. See p. 65 of [Ful1993]_.
 
         Its Chow group is `A_2(X)=\ZZ^5`, which distinguishes
         it from the face fan of the unit cube.
@@ -929,13 +928,6 @@ class ToricVarietyFactory(SageObject):
             in 3-d lattice N
             sage: Cube_sublattice.gens()
             (z0, z1, z2, z3, z4, z5, z6, z7)
-
-        REFERENCES:
-
-        ..  [FultonP65]
-            Page 65, 3rd exercise (Section 3.4) of Wiliam Fulton,
-            "Introduction to Toric Varieties", Princeton University
-            Press
         """
         return self._make_CPRFanoToricVariety('Cube_sublattice', names, base_ring)
 
@@ -997,7 +989,7 @@ class ToricVarietyFactory(SageObject):
         The fans of this sequence of toric varieties all equal the
         face fan of a unit cube topologically, but the
         ``(1,1,1)``-vertex is moved to ``(1,1,2k+1)``. This example
-        was studied in [FS]_.
+        was studied in [FS1994]_.
 
         INPUT:
 
@@ -1035,12 +1027,6 @@ class ToricVarietyFactory(SageObject):
             in 3-d lattice N
             sage: X_2.gens()
             (z0, z1, z2, z3, z4, z5, z6, z7)
-
-        REFERENCES:
-
-        ..  [FS]
-            William Fulton, Bernd Sturmfels, *Intersection Theory on
-            Toric Varieties*, :arxiv:`alg-geom/9403002`
         """
         # We are going to eventually switch off consistency checks, so we need
         # to be sure that the input is acceptable.
@@ -1061,7 +1047,7 @@ class ToricVarietyFactory(SageObject):
     def BCdlOG(self, names='v1 v2 c1 c2 v4 v5 b e1 e2 e3 f g v6', base_ring=QQ):
         r"""
         Construct the 5-dimensional toric variety studied in
-        [BCdlOG]_, [HLY2002]_
+        [BCdlOG2000]_, [HLY2002]_
 
         INPUT:
 
@@ -1100,16 +1086,6 @@ class ToricVarietyFactory(SageObject):
             in 5-d lattice N
             sage: X.gens()
             (v1, v2, c1, c2, v4, v5, b, e1, e2, e3, f, g, v6)
-
-        REFERENCES:
-
-        ..  [BCdlOG]
-            Volker Braun, Philip Candelas, Xendia de la Ossa,
-            Antonella Grassi, *Toric Calabi-Yau Fourfolds, Duality
-            Between N=1 Theories and Divisors that Contribute to the
-            Superpotential*, :arxiv:`hep-th/0001208`
-
-        - [HLY2002]_
         """
         return self._make_CPRFanoToricVariety('BCdlOG', names, base_ring)
 
@@ -1501,7 +1477,7 @@ class ToricVarietyFactory(SageObject):
             sage: T3.gens()
             (z0, z1, z2)
             sage: sorted(T3.change_ring(GF(3)).point_set().list())
-            [[1 : 1 : 1], [1 : 1 : 2], [1 : 2 : 1], [1 : 2 : 2], 
+            [[1 : 1 : 1], [1 : 1 : 2], [1 : 2 : 1], [1 : 2 : 2],
              [2 : 1 : 1], [2 : 1 : 2], [2 : 2 : 1], [2 : 2 : 2]]
         """
         try:

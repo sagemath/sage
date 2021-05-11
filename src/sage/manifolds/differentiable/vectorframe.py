@@ -34,18 +34,29 @@ REFERENCES:
 
 EXAMPLES:
 
-Defining a vector frame on a 3-dimensional manifold::
+Introducing a chart on a manifold automatically endows it with a vector frame:
+the coordinate frame associated to the chart::
 
     sage: M = Manifold(3, 'M')
     sage: X.<x,y,z> = M.chart()
-    sage: e = M.vector_frame('e') ; e
+    sage: M.frames()
+    [Coordinate frame (M, (d/dx,d/dy,d/dz))]
+    sage: M.frames()[0] is X.frame()
+    True
+
+A new vector frame can be defined from a family of 3 linearly independent
+vector fields::
+
+    sage: e1 = M.vector_field(1, x, y)
+    sage: e2 = M.vector_field(z, -2, x*y)
+    sage: e3 = M.vector_field(1, 1, 0)
+    sage: e = M.vector_frame('e', (e1, e2, e3)); e
     Vector frame (M, (e_0,e_1,e_2))
     sage: latex(e)
     \left(M, \left(e_{0},e_{1},e_{2}\right)\right)
 
-The first frame defined on a manifold is its default frame; in the present
-case it is the coordinate frame defined when introducing the chart
-``X``::
+The first frame defined on a manifold is its *default frame*; in the present
+case it is the coordinate frame associated to the chart ``X``::
 
     sage: M.default_frame()
     Coordinate frame (M, (d/dx,d/dy,d/dz))
@@ -70,6 +81,13 @@ Each element of a vector frame can be accessed by its index::
 
     sage: e[0]
     Vector field e_0 on the 3-dimensional differentiable manifold M
+    sage: e[0].display(X.frame())
+    e_0 = d/dx + x d/dy + y d/dz
+    sage: X.frame()[1]
+    Vector field d/dy on the 3-dimensional differentiable manifold M
+    sage: X.frame()[1].display(e)
+    d/dy = x/(x^2 - x + z + 2) e_0 - 1/(x^2 - x + z + 2) e_1
+     - (x - z)/(x^2 - x + z + 2) e_2
 
 The slice operator ``:`` can be used to access to more than one element::
 
@@ -80,6 +98,18 @@ The slice operator ``:`` can be used to access to more than one element::
     (Vector field e_0 on the 3-dimensional differentiable manifold M,
      Vector field e_1 on the 3-dimensional differentiable manifold M,
      Vector field e_2 on the 3-dimensional differentiable manifold M)
+
+Vector frames can be constructed from scratch, without any connection to
+previously defined frames or vector fields (the connection can be performed
+later via the method
+:meth:`~sage.manifolds.differentiable.manifold.DifferentiableManifold.set_change_of_frame`)::
+
+    sage: f = M.vector_frame('f'); f
+    Vector frame (M, (f_0,f_1,f_2))
+    sage: M.frames()
+    [Coordinate frame (M, (d/dx,d/dy,d/dz)),
+     Vector frame (M, (e_0,e_1,e_2)),
+     Vector frame (M, (f_0,f_1,f_2))]
 
 The index range depends on the starting index defined on the manifold::
 
@@ -152,14 +182,12 @@ sphere `S^2`::
 
 The orthonormal frame constructed from the coordinate frame::
 
-    sage: change_frame = M.automorphism_field()
-    sage: change_frame[:] = [[1,0], [0, 1/sin(th)]]
-    sage: e = b.new_frame(change_frame, 'e') ; e
+    sage: e = M.vector_frame('e', (b[1], b[2]/sin(th))); e
     Vector frame (S^2, (e_1,e_2))
-    sage: e[1][:]
-    [1, 0]
-    sage: e[2][:]
-    [0, 1/sin(th)]
+    sage: e[1].display()
+    e_1 = d/dth
+    sage: e[2].display()
+    e_2 = 1/sin(th) d/dph
 
 The change-of-frame automorphisms and their matrices::
 
@@ -178,7 +206,7 @@ The change-of-frame automorphisms and their matrices::
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2013-2018 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2013, 2014 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
@@ -186,13 +214,14 @@ The change-of-frame automorphisms and their matrices::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.tensor.modules.free_module_basis import (FreeModuleBasis,
                                                    FreeModuleCoBasis)
 from sage.tensor.modules.finite_rank_free_module import FiniteRankFreeModule
 from sage.misc.cachefunc import cached_method
+
 
 class CoFrame(FreeModuleCoBasis):
     r"""
@@ -450,7 +479,7 @@ class VectorFrame(FreeModuleBasis):
     immersion and `\Phi` being a curve in `M` (`U` is then an open interval
     of `\RR`).
 
-    For each instanciation of a vector frame, a coframe is automatically
+    For each instantiation of a vector frame, a coframe is automatically
     created, as an instance of the class :class:`CoFrame`. It is returned by
     the method :meth:`coframe`.
 
@@ -666,6 +695,11 @@ class VectorFrame(FreeModuleBasis):
 
         """
         from sage.manifolds.differentiable.manifold import DifferentiableManifold
+        # Some sanity check:
+        if not isinstance(vector_field_module, FiniteRankFreeModule):
+            raise ValueError("the {} has already been constructed as a "
+                             "non-free module and therefore cannot have "
+                             "a basis".format(vector_field_module))
         self._domain = vector_field_module._domain
         self._ambient_domain = vector_field_module._ambient_domain
         self._dest_map = vector_field_module._dest_map
@@ -705,7 +739,7 @@ class VectorFrame(FreeModuleBasis):
                     xsd = sd._vector_field_modules[dest_map]
                     if not isinstance(xsd, FiniteRankFreeModule):
                         for t in xsd._tensor_modules.values():
-                            t(0).add_comp(self)
+                            t.zero()._add_comp_unsafe(self)
                             # (since new components are initialized to zero)
         if dest_map is self._domain.identity_map():
             # The frame is added to the list of the domain's covering frames:
@@ -1101,10 +1135,6 @@ class VectorFrame(FreeModuleBasis):
                     for sframe2 in self._superframes:
                         sframe2._subframes.add(res)
                     return self._restrictions[subdomain]
-            for dom, rst in self._restrictions.items():
-                if subdomain.is_subset(dom):
-                    self._restrictions[subdomain] = rst.restrict(subdomain)
-                    return self._restrictions[subdomain]
             # Secondly one tries to get the restriction from one previously
             # defined on a larger domain:
             for sframe in self._superframes:
@@ -1146,8 +1176,10 @@ class VectorFrame(FreeModuleBasis):
                 new_vectors.append(vrest)
             res._vec = tuple(new_vectors)
             # Update of superframes and subframes:
-            res._superframes.update(self._superframes)
-            for sframe in self._superframes:
+            for sframe in self._subframes:
+                if subdomain.is_subset(sframe.domain()):
+                    res._superframes.update(sframe._superframes)
+            for sframe in res._superframes:
                 sframe._subframes.add(res)
                 sframe._restrictions[subdomain] = res # includes sframe = self
             for dom, rst in self._restrictions.items():
@@ -1435,7 +1467,8 @@ class VectorFrame(FreeModuleBasis):
         ts_frame_bases[self] = basis
         # Update of the change of bases in the tangent space:
         for frame_pair, automorph in self._domain._frame_changes.items():
-            frame1 = frame_pair[0]; frame2 = frame_pair[1]
+            frame1 = frame_pair[0]
+            frame2 = frame_pair[1]
             if frame1 is self:
                 fr2 = None
                 for frame in ts_frame_bases:
@@ -1545,7 +1578,6 @@ class VectorFrame(FreeModuleBasis):
             self._name = "({}, {})".format(self._domain._name, self._name)
             self._latex_name = r"\left({}, {}\right)".format(
                                     self._domain._latex_name, self._latex_name)
-
 
 #******************************************************************************
 
@@ -1717,6 +1749,15 @@ class CoordFrame(VectorFrame):
         from sage.manifolds.differentiable.chart import DiffChart
         if not isinstance(chart, DiffChart):
             raise TypeError("the first argument must be a chart")
+        dom = chart.domain()
+        # Some sanity check:
+        vmodule = dom._vector_field_modules.get(dom.identity_map())
+        if vmodule and not isinstance(vmodule, FiniteRankFreeModule):
+            raise ValueError("the {} has already been constructed as a "
+                             "non-free module, which implies that the {} is "
+                             "not parallelizable and hence cannot be the "
+                             "domain of a coordinate chart".format(vmodule,
+                             dom))
         self._chart = chart
         coords = chart[:] # list of all coordinates
         symbol = tuple("d/d" + str(x) for x in coords)
@@ -1725,13 +1766,13 @@ class CoordFrame(VectorFrame):
         symbol_dual = tuple("d" + str(x) for x in coords)
         latex_symbol_dual = tuple(r"\mathrm{d}" + latex(x) for x in coords)
         VectorFrame.__init__(self,
-                             chart._domain.vector_field_module(force_free=True),
+                             dom.vector_field_module(force_free=True),
                              symbol=symbol, latex_symbol=latex_symbol,
                              symbol_dual=symbol_dual,
                              latex_symbol_dual=latex_symbol_dual)
         # In the above:
         # - force_free=True ensures that a free module is constructed in case
-        #   it is the first call to the vector field module on chart._domain
+        #   it is the first call to the vector field module on chart.domain()
 
 
     ###### Methods that must be redefined by derived classes of ######

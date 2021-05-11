@@ -34,8 +34,7 @@ Using Sage
 ----------
 
 To use Sage, install it on your computer, and use either the command
-line or start the Sage notebook by typing ``notebook()`` at the
-command line.
+line or use the notebook by starting Sage as ``sage -n``.
 
 We show Sage sessions as follows::
 

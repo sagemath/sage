@@ -2,7 +2,7 @@
 Quiver Paths
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012    Jim Stark <jstarx@gmail.com>
 #                2013/14 Simon King <simon.king@uni-jena.de>
 #
@@ -15,10 +15,8 @@ Quiver Paths
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport cython
 from cysignals.signals cimport sig_check, sig_on, sig_off
@@ -26,8 +24,7 @@ from cysignals.signals cimport sig_check, sig_on, sig_off
 from sage.data_structures.bounded_integer_sequences cimport *
 from cpython.slice cimport PySlice_GetIndicesEx
 from sage.structure.richcmp cimport rich_to_bool
-
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 cdef class QuiverPath(MonoidElement):
     r"""
@@ -137,7 +134,7 @@ cdef class QuiverPath(MonoidElement):
         - ``start``, integer, the label of the initial vertex.
         - ``end``, integer, the label of the terminal vertex.
         - ``path``, list of integers, providing the list of arrows
-          occuring in the path, labelled according to the position in
+          occurring in the path, labelled according to the position in
           the list of all arrows (resp. the list of outgoing arrows at
           each vertex).
 
@@ -221,7 +218,8 @@ cdef class QuiverPath(MonoidElement):
         if not self._path.length:
             return 'e_{0}'.format(self._start)
         L = self._parent._labels
-        return '*'.join([L[biseq_getitem(self._path, i)] for i in range(self._path.length)])
+        return '*'.join(L[biseq_getitem(self._path, i)]
+                        for i in range(self._path.length))
 
     def __len__(self):
         """
@@ -468,7 +466,7 @@ cdef class QuiverPath(MonoidElement):
         # return an iterator for _path as a list
         cdef mp_size_t i
         cdef tuple E = self._parent._sorted_edges
-        for i in range(0,self._path.length):
+        for i in range(self._path.length):
             yield E[biseq_getitem(self._path, i)]
 
     cpdef _mul_(self, other):
@@ -608,7 +606,7 @@ cdef class QuiverPath(MonoidElement):
         sig_on()
         i = biseq_startswith_tail(P._path, self._path, 0)
         sig_off()
-        if i==-1:
+        if i == <size_t>-1:
             return (None, None, None)
         return (self[:i], self[i:], P[self._path.length-i:])
 
@@ -617,9 +615,9 @@ cdef class QuiverPath(MonoidElement):
         Return a pair ``(a,b)`` of paths s.t. ``self==a*subpath*b``,
         or ``(None, None)`` if ``subpath`` is not a subpath of this path.
 
-        NOTE:
+        .. NOTE::
 
-        ``a`` is chosen of minimal length.
+            ``a`` is chosen of minimal length.
 
         EXAMPLES::
 

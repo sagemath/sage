@@ -1,10 +1,9 @@
-diff --git a/Lib/distutils/unixccompiler.py b/Lib/distutils/unixccompiler.py
-index 3f321c2..cc295a3 100644
---- a/Lib/distutils/unixccompiler.py
-+++ b/Lib/distutils/unixccompiler.py
-@@ -236,7 +236,7 @@ class UnixCCompiler(CCompiler):
-         elif sys.platform[:7] == "irix646" or sys.platform[:6] == "osf1V5":
-             return ["-rpath", dir]
+diff -ru a/Lib/distutils/unixccompiler.py b/Lib/distutils/unixccompiler.py
+--- a/Lib/distutils/unixccompiler.py	2018-06-27 05:07:35.000000000 +0200
++++ b/Lib/distutils/unixccompiler.py	2018-06-28 09:32:52.719006731 +0200
+@@ -234,7 +234,7 @@
+                 return ["-Wl,+s", "-L" + dir]
+             return ["+s", "-L" + dir]
          else:
 -            if self._is_gcc(compiler):
 +            if sys.platform[:5] == "linux" or self._is_gcc(compiler):

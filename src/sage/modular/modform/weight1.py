@@ -13,7 +13,7 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_function
 from sage.rings.all import PowerSeriesRing, ZZ
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 from sage.structure.sequence import Sequence
 from sage.modular.arithgroup.all import Gamma0, GammaH
 from sage.modular.arithgroup.arithgroup_generic import ArithmeticSubgroup
@@ -130,16 +130,17 @@ def hecke_stable_subspace(chi, aux_prime=ZZ(2)):
 
     # Auxiliary prime for Hecke stability method
     l = aux_prime
-    while l.divides(N): l = l.next_prime()
-    verbose("Auxilliary prime: %s" % l, level=1)
+    while l.divides(N):
+        l = l.next_prime()
+    verbose("Auxiliary prime: %s" % l, level=1)
 
     # Compute working precision
     R = l*Gamma0(N).sturm_bound(l + 2)
 
-    t=verbose("Computing modular ratio space", level=1)
+    t = verbose("Computing modular ratio space", level=1)
     mrs = modular_ratio_space(chi)
 
-    t=verbose("Computing modular ratios to precision %s" % R, level=1)
+    t = verbose("Computing modular ratios to precision %s" % R, level=1)
     qexps = [modular_ratio_to_prec(chi, f, R) for f in mrs]
     verbose("Done", t=t, level=1)
 

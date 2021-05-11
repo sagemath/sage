@@ -1,5 +1,5 @@
 """
-Solving quadratic equations.
+Solving quadratic equations
 
 Interface to the PARI/GP quadratic forms code of Denis Simon.
 

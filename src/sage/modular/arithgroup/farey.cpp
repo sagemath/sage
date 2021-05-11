@@ -863,7 +863,7 @@ FareySymbol::LLT_algorithm(const SL2Z& M, vector<int>& p, SL2Z& beta) const {
         p.push_back((int)k + 1);
       } else {
         //Based on Lemma 4 of the article by Kurth/Long,
-        //this case can not occure.
+        //this case can not happen.
         throw string("Mathematical complications in ") +
               __FUNCTION__;
 	return;
@@ -891,7 +891,7 @@ bool FareySymbol::is_element(const SL2Z& M) const {
 
   // Case (3) of the article
   if( beta == SL2Z::S or beta == SL2Z::U ) {
-    // If 0 and infty are adjacent vertices, they only can occure
+    // If 0 and infty are adjacent vertices, they only can appear
     // at the beginning or the end.
     if( x[0] == 0 and pairing[0] == EVEN ) return true;
     if( x.back() == 0 and pairing.back() == EVEN ) return true;

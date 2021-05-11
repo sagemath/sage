@@ -8,9 +8,9 @@ is known to be modular.  The space is two-dimensional and contains a
 subspace on which complex conjugation acts as multiplication by `+1`
 and one on which it acts by `-1`.
 
-There are two implementations of modular symbols, one within ``Sage``
-and the other in Cremona's ``eclib`` library. One can choose here
-which one is used.
+There are three implementations of modular symbols, two within 
+``Sage`` and one in Cremona's ``eclib`` library.
+One can choose here which one is used.
 
 Associated to `E` there is a canonical generator in each space. They are maps
 `[.]^+` and `[.]^{-}`, both `\QQ \to\QQ`. They are normalized such that
@@ -56,16 +56,11 @@ For more details on modular symbols consult the following
 
 REFERENCES:
 
-.. [MaTaTe] B. Mazur, J. Tate, and J. Teitelbaum,
-   On `p`-adic analogues of the conjectures of Birch and
-   Swinnerton-Dyer, Inventiones mathematicae 84, (1986), 1-48.
+- [MTT1986]_
 
-.. [Crem97] John Cremona, Algorithms for modular elliptic curves,
-   Cambridge University Press, 1997.
+- [Cre1997]_
 
-.. [StWu] William Stein and Christian Wuthrich, Algorithms for the
-   Arithmetic of Elliptic Curves using Iwasawa Theory, Mathematics
-   of Computation 82 (2013), 1757-1792.
+- [SW2013]_
 
 AUTHORS:
 
@@ -91,7 +86,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.modular.modsym.all import ModularSymbols
@@ -103,7 +97,7 @@ from sage.rings.integer import Integer
 from sage.modular.cusps import Cusps
 from sage.rings.integer_ring import   ZZ
 from sage.rings.rational_field import QQ
-from sage.misc.all import verbose
+from sage.misc.verbose import verbose
 
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
@@ -159,8 +153,8 @@ class ModularSymbol(SageObject):
     `\QQ\to \QQ` obtained by sending `r` to the normalized
     symmetrized (or anti-symmetrized) integral `\infty` to `r`.
 
-    This is as defined in [MaTaTe]_, but normalized to depend on the curve
-    and not only its isogeny class as in [StWu]_.
+    This is as defined in [MTT1986]_, but normalized to depend on the curve
+    and not only its isogeny class as in [SW2013]_.
 
     See the documentation of ``E.modular_symbol()`` in elliptic curves
     over the rational numbers for help.
@@ -223,30 +217,32 @@ class ModularSymbol(SageObject):
         return "Modular symbol with sign %s over %s attached to %s"%(
             self._sign, self._base_ring, self._E)
 
-
 class ModularSymbolECLIB(ModularSymbol):
-    def __init__(self, E, sign):
-        r"""
-        Modular symbols attached to `E` using ``eclib``.
+    def __init__(self, E, sign, nap=1000):
+        r"""Modular symbols attached to `E` using ``eclib``.
 
         Note that the normalization used within ``eclib`` differs from the
         normalization chosen here by a factor of 2 in the case of elliptic
         curves with negative discriminant (with one real component) since
         the convention there is to write the above integral as
-        $[r]^{+}x+[r]^{-}yi$, where the lattice is $\left<2x,x+yi\right>$,
-        so that $\Omega^{+}=2x$ and $\Omega^{-}=2yi$.  We
+        `[r]^{+}x+[r]^{-}yi`, where the lattice is `\left<2x,x+yi\right>`,
+        so that `\Omega^{+}=2x` and `\Omega^{-}=2yi`.  We
         allow for this below.
 
         INPUT:
 
         - ``E`` - an elliptic curve
+
         - ``sign`` - an integer, -1 or 1
+
+        - ``nap`` - (int, default 1000): the number of ap of E to use
+          in determining the normalisation of the modular symbols.
 
         EXAMPLES::
 
             sage: import sage.schemes.elliptic_curves.ell_modular_symbols
-            sage: E=EllipticCurve('11a1')
-            sage: M=sage.schemes.elliptic_curves.ell_modular_symbols.ModularSymbolECLIB(E,+1)
+            sage: E = EllipticCurve('11a1')
+            sage: M = sage.schemes.elliptic_curves.ell_modular_symbols.ModularSymbolECLIB(E,+1)
             sage: M
             Modular symbol with sign 1 over Rational Field attached to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
             sage: M(0)
@@ -285,7 +281,6 @@ class ModularSymbolECLIB(ModularSymbol):
             sage: [Mminus(1/i) for i in [1..11]]
             [0, 0, 1/2, 1/2, 0, 0, -1/2, -1/2, 0, 0, 0]
 
-
         The scaling factor relative to eclib's normalization is 1/2 for curves of negative discriminant::
 
             sage: [E.discriminant() for E in cremona_curves([14])]
@@ -302,6 +297,21 @@ class ModularSymbolECLIB(ModularSymbol):
             7/10
             sage: m(0)
             1/5
+
+        If ``nap`` is too small, the normalization in eclib may be incorrect.  See :trac:`31317`::
+
+            sage: from sage.schemes.elliptic_curves.ell_modular_symbols import ModularSymbolECLIB
+            sage: E = EllipticCurve('1590g1')
+            sage: m = ModularSymbolECLIB(E, sign=+1, nap=300)
+            sage: [m(a/5) for a in [1..4]]
+            [1001/153, -1001/153, -1001/153, 1001/153]
+
+        Those values are incorrect.  The correct values are::
+
+            sage: m = ModularSymbolECLIB(E, sign=+1, nap=400)
+            sage: [m(a/5) for a in [1..4]]
+            [13/2, -13/2, -13/2, 13/2]
+
         """
         from sage.libs.eclib.newforms import ECModularSymbol
 
@@ -310,10 +320,10 @@ class ModularSymbolECLIB(ModularSymbol):
         self._sign = ZZ(sign)
         self._E = E
         self._scaling = 1 if E.discriminant()>0 else ZZ(1)/2
-        self._use_eclib = True
+        self._implementation="eclib"
         self._base_ring = QQ
         # The ECModularSymbol class must be initialized with sign=0 to compute minus symbols
-        self._modsym = ECModularSymbol(E, int(sign==1))
+        self._modsym = ECModularSymbol(E, int(sign==1), nap)
         self.cache = {True: {}, False: {}}
 
     def _call_with_caching(self, r, base_at_infinity=True):
@@ -422,7 +432,7 @@ class ModularSymbolSage(ModularSymbol):
             raise TypeError('sign must -1 or 1')
         self._sign = ZZ(sign)
         self._E = E
-        self._use_eclib = False
+        self._implementation="sage"
         self._normalize = normalize
         self._modsym = E.modular_symbol_space(sign=self._sign)
         self._base_ring = self._modsym.base_ring()

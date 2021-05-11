@@ -1,16 +1,17 @@
 r"""
 Distributive Magmas and Additive Magmas
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.cartesian_product import CartesianProductsCategory
+
 
 class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
     """
@@ -72,13 +73,13 @@ class DistributiveMagmasAndAdditiveMagmas(CategoryWithAxiom):
             See the documentation for :class:`TestSuite` for more information.
             """
             tester = self._tester(**options)
-            S = tester.some_elements()
+            tester.some_elements()
             from sage.misc.misc import some_tuples
-            for x,y,z in some_tuples(tester.some_elements(), 3, tester._max_runs):
+            for x, y, z in some_tuples(tester.some_elements(), 3, tester._max_runs):
                 # left distributivity
-                tester.assertTrue(x * (y + z) == (x * y) + (x * z))
+                tester.assertEqual(x * (y + z), (x * y) + (x * z))
                 # right distributivity
-                tester.assertTrue((x + y) * z == (x * z) + (y * z))
+                tester.assertEqual((x + y) * z, (x * z) + (y * z))
 
     class CartesianProducts(CartesianProductsCategory):
         def extra_super_categories(self):

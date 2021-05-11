@@ -54,7 +54,6 @@ AUTHOR:
 
 # Keep OLD division semantics for Python 2 compatibility, such that
 # lazy imports support old and true division.
-from __future__ import absolute_import
 
 cimport cython
 from cpython.object cimport PyObject_RichCompare
@@ -64,12 +63,12 @@ cdef extern from *:
     int likely(int) nogil  # Defined by Cython
 
 import os
-from six.moves import cPickle as pickle
+import pickle
 import inspect
 from . import sageinspect
 
 from .lazy_import_cache import get_cache_file
-
+from sage.features import FeatureNotPresentError
 
 cdef inline obj(x):
     if type(x) is LazyImport:
@@ -128,9 +127,8 @@ cpdef test_fake_startup():
         sage: from sage.misc.lazy_import import lazy_import
         sage: lazy_import('sage.rings.all', 'ZZ', 'my_ZZ')
         sage: my_ZZ(123)
-        Traceback (most recent call last):
-        ...
-        RuntimeError: resolving lazy import ZZ during startup
+        Resolving lazy import ZZ during startup
+        123
         sage: sage.misc.lazy_import.finish_startup()
     """
     global startup_guard
@@ -160,8 +158,10 @@ cdef class LazyImport(object):
     cdef _namespace
     cdef bint _at_startup
     cdef _deprecation
+    cdef _feature
 
-    def __init__(self, module, name, as_name=None, at_startup=False, namespace=None, deprecation=None):
+    def __init__(self, module, name, as_name=None, at_startup=False, namespace=None,
+                 deprecation=None, feature=None):
         """
         EXAMPLES::
 
@@ -179,6 +179,7 @@ cdef class LazyImport(object):
         self._namespace = namespace
         self._at_startup = at_startup
         self._deprecation = deprecation
+        self._feature = feature
 
     cdef inline get_object(self):
         """
@@ -215,10 +216,15 @@ cdef class LazyImport(object):
             return self._object
 
         if startup_guard and not self._at_startup:
-            raise RuntimeError(f"resolving lazy import {self._name} during startup")
+            print(f"Resolving lazy import {self._name} during startup")
         elif self._at_startup and not startup_guard:
-            print('Option ``at_startup=True`` for lazy import {0} not needed anymore'.format(self._name))
-        self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
+            print(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
+        try:
+            self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
+        except ImportError as e:
+            if self._feature:
+                raise FeatureNotPresentError(self._feature, reason=f'Importing {self._name} failed: {e}')
+            raise
         name = self._as_name
         if self._deprecation is not None:
             from sage.misc.superseded import deprecation
@@ -365,7 +371,11 @@ cdef class LazyImport(object):
             sage: repr(lazy_ZZ)
             'Integer Ring'
         """
-        return repr(self.get_object())
+        try:
+            obj = self.get_object()
+            return repr(obj)
+        except FeatureNotPresentError as e:
+            return "Failed lazy import:\n" + str(e)
 
     def __str__(self):
         """
@@ -381,9 +391,8 @@ cdef class LazyImport(object):
         """
         TESTS::
 
-            sage: import six
             sage: lazy_import('sage.all', 'ZZ'); lazy_ZZ = ZZ
-            sage: six.text_type(lazy_ZZ)
+            sage: str(lazy_ZZ)
             u'Integer Ring'
         """
         return unicode(self.get_object())
@@ -642,19 +651,6 @@ cdef class LazyImport(object):
         """
         return obj(left) @ obj(right)
 
-    def __div__(left, right):
-        """
-        TESTS::
-
-            sage: sage.all.foo = 10
-            sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: foo / 2
-            5
-        """
-        return obj(left) / obj(right)
-
     def __floordiv__(left, right):
         """
         TESTS::
@@ -850,19 +846,6 @@ cdef class LazyImport(object):
         """
         return int(self.get_object())
 
-    def __long__(self):
-        """
-        TESTS::
-
-            sage: sage.all.foo = 10
-            sage: lazy_import('sage.all', 'foo')
-            sage: type(foo)
-            <type 'sage.misc.lazy_import.LazyImport'>
-            sage: long(foo)
-            10L
-        """
-        return long(self.get_object())
-
     def __float__(self):
         """
         TESTS::
@@ -981,7 +964,7 @@ cdef class LazyImport(object):
 
 
 def lazy_import(module, names, as_=None, *,
-    at_startup=False, namespace=None, deprecation=None):
+    at_startup=False, namespace=None, deprecation=None, feature=None):
     """
     Create a lazy import object and inject it into the caller's global
     namespace. For the purposes of introspection and calling, this is
@@ -1009,6 +992,9 @@ def lazy_import(module, names, as_=None, *,
       will be issued when the object is actually imported;
       ``deprecation`` should be either a trac number (integer) or a
       pair ``(trac_number, message)``
+
+    - ``feature`` -- a python module (optional), if it cannot be imported
+      an appropriate error is raised
 
     .. SEEALSO:: :mod:`sage.misc.lazy_import`, :class:`LazyImport`
 
@@ -1072,6 +1058,22 @@ def lazy_import(module, names, as_=None, *,
         doctest:...: DeprecationWarning: This is an example.
         See http://trac.sagemath.org/14275 for details.
         5-adic Field with capped relative precision 20
+
+    An example of an import relying on a feature::
+
+        sage: from sage.features import PythonModule
+        sage: lazy_import('ppl', 'equation', feature=PythonModule('ppl', spkg='pplpy'))
+        sage: equation
+        <built-in function equation>
+        sage: lazy_import('PyNormaliz', 'NmzListConeProperties', feature=PythonModule('PyNormaliz', spkg='pynormaliz'))  # optional - pynormaliz
+        sage: NmzListConeProperties  # optional - pynormaliz
+        <built-in function NmzListConeProperties>
+        sage: lazy_import('foo', 'not_there', feature=PythonModule('foo', spkg='non-existing-package'))
+        sage: not_there
+        Failed lazy import:
+        foo is not available.
+        Importing not_there failed: No module named 'foo'...
+        No equivalent system packages for ... are known to Sage...
     """
     if as_ is None:
         as_ = names
@@ -1089,7 +1091,7 @@ def lazy_import(module, names, as_=None, *,
         names[ix:ix+1] = all
         as_[ix:ix+1] = all
     for name, alias in zip(names, as_):
-        namespace[alias] = LazyImport(module, name, alias, at_startup, namespace, deprecation)
+        namespace[alias] = LazyImport(module, name, alias, at_startup, namespace, deprecation, feature)
 
 
 star_imports = None

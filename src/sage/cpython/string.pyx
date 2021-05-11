@@ -23,8 +23,6 @@ Check that this can be used outside of Sage (see :trac:`25549`)::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 import sys
 
 

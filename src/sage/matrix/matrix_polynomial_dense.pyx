@@ -16,6 +16,11 @@ AUTHORS:
 - Vincent Neiger (2018-09-29): added functions for computing and for verifying
   minimal approximant bases
 
+- Vincent Neiger (2020-04-01): added functions for computing and for verifying
+  minimal kernel bases
+
+- Vincent Neiger (2021-03-11): added matrix-wise basic functions for univariate
+  polynomials (shifts, reverse, truncate, get coefficient of specified degree)
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
@@ -30,7 +35,6 @@ from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense
 from sage.matrix.matrix2 cimport Matrix
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.misc.superseded import deprecated_function_alias
 
 
 cdef class Matrix_polynomial_dense(Matrix_generic_dense):
@@ -221,6 +225,484 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             return Matrix( ZZ, [[ self[i,j].degree() + shifts[i]
                 if self[i,j] != 0 else zero_degree
                 for j in range(self.ncols()) ] for i in range(self.nrows())] )
+
+    def constant_matrix(self):
+        r"""
+        Return the constant coefficient of this matrix seen as a polynomial
+        with matrix coefficients; this is also this matrix evaluated at zero.
+
+        OUTPUT: a matrix over the base field.
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+            sage: M = Matrix([
+            ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
+            ....:    [      6*x^2+3*x+1,       1,           2,         0],
+            ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
+            ....:     ])
+            sage: M.constant_matrix()
+            [1 5 4 0]
+            [1 1 2 0]
+            [4 1 5 6]
+        """
+        from sage.matrix.constructor import Matrix
+        return Matrix([[self[i,j].constant_coefficient()
+            for j in range(self.ncols())] for i in range(self.nrows())])
+
+    def is_constant(self):
+        r"""
+        Return ``True`` if and only if this polynomial matrix is constant,
+        that is, all its entries are constant.
+
+        OUTPUT: a boolean.
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+            sage: M = Matrix([
+            ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
+            ....:    [      6*x^2+3*x+1,       1,           2,         0],
+            ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
+            ....:     ])
+            sage: M.is_constant()
+            False
+            sage: M = Matrix(pR,[[1,5,2],[3,1,5]]); M.is_constant()
+            True
+            sage: M = Matrix.zero(pR,3,5); M.is_constant()
+            True
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.polynomial.polynomial_element.Polynomial.is_constant` .
+        """
+        return all([self[i,j].is_constant()
+            for j in range(self.ncols()) for i in range(self.nrows())])
+
+    def coefficient_matrix(self,d,row_wise=True):
+        r"""
+        Return the constant matrix which is obtained from this matrix by taking
+        the coefficient of its entries with degree specified by `d`.
+
+        - if `d` is an integer, this selects the coefficient of `d` for all
+          entries;
+        - if `d` is a list $(d_1,\ldots,d_m)$ and ``row_wise`` is ``True``,
+          this selects the coefficient of degree $d_i$ for all entries of the
+          $i$th row for each $i$;
+        - if `d` is a list $(d_1,\ldots,d_n)$ and ``row_wise`` is ``False``,
+          this selects the coefficient of degree $d_i$ for all entries of the
+          $j$th column for each $j$.
+
+        INPUT:
+
+        - ``d`` -- a list of integers, or an integer,
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
+          (resp. ``False``) then `d` should be a list of length equal to the
+          row (resp. column) dimension of this matrix.
+
+        OUTPUT: a matrix over the base field.
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+            sage: M = Matrix([
+            ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
+            ....:    [      6*x^2+3*x+1,       1,           2,         0],
+            ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
+            ....:     ])
+            sage: M.coefficient_matrix(2)
+            [5 0 0 0]
+            [6 0 0 0]
+            [4 0 2 1]
+            sage: M.coefficient_matrix(0) == M.constant_matrix()
+            True
+
+        Row-wise and column-wise coefficient extraction are available::
+
+            sage: M.coefficient_matrix([3,2,1])
+            [1 0 0 0]
+            [6 0 0 0]
+            [6 5 5 5]
+
+            sage: M.coefficient_matrix([2,0,1,3], row_wise=False)
+            [5 5 6 0]
+            [6 1 0 0]
+            [4 1 5 0]
+
+        Negative degrees give zero coefficients::
+
+            sage: M.coefficient_matrix([-1,0,1,3], row_wise=False)
+            [0 5 6 0]
+            [0 1 0 0]
+            [0 1 5 0]
+
+        Length of list of degrees is checked::
+
+            sage: M.coefficient_matrix([2,1,1,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: length of input degree list should be the row
+            dimension of the input matrix
+
+            sage: M.coefficient_matrix([3,2,1], row_wise=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: length of input degree list should be the column
+            dimension of the input matrix
+        """
+        m = self.nrows()
+        n = self.ncols()
+
+        # if d is an integer, make it a uniform list
+        if not isinstance(d,list):
+            d = [d]*m if row_wise else [d]*n
+
+        # raise an error if d does not have the right length
+        if row_wise and len(d) != m:
+            raise ValueError("length of input degree list should be the " \
+                                      + "row dimension of the input matrix")
+        elif (not row_wise) and len(d) != n:
+            raise ValueError("length of input degree list should be the " \
+                                      + "column dimension of the input matrix")
+
+        from sage.matrix.constructor import Matrix
+        return Matrix(self.base_ring().base_ring(), m, n,
+                [[self[i,j][d[i]] if row_wise else self[i,j][d[j]]
+            for j in range(n)] for i in range(m)])
+
+    def truncate(self, d, row_wise=True):
+        r"""
+        Return the matrix which is obtained from this matrix after truncating
+        all its entries according to precisions specified by `d`.
+
+        - if `d` is an integer, the truncation is at precision `d` for all
+          entries;
+        - if `d` is a list $(d_1,\ldots,d_m)$ and ``row_wise`` is ``True``, all
+          entries of the $i$th row are truncated at precision $d_i$ for each
+          $i$;
+        - if `d` is a list $(d_1,\ldots,d_n)$ and ``row_wise`` is ``False``,
+          all entries of the $j$th column are truncated at precision $d_j$ for
+          each $j$.
+
+        Here the convention for univariate polynomials is to take zero
+        for the truncation for a negative `d`.
+
+        INPUT:
+
+        - ``d`` -- a list of integers, or an integer,
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
+          (resp. ``False``) then `d` should be a list of length equal to the
+          row (resp. column) dimension of this matrix.
+
+        OUTPUT: a polynomial matrix.
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+            sage: M = Matrix([
+            ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
+            ....:    [      6*x^2+3*x+1,       1,           2,         0],
+            ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
+            ....:     ])
+            sage: M.truncate(2)
+            [5*x + 1       5 6*x + 4       0]
+            [3*x + 1       1       2       0]
+            [6*x + 4 5*x + 1 5*x + 5 5*x + 6]
+            sage: M.truncate(1) == M.constant_matrix()
+            True
+
+        Row-wise and column-wise truncation are available::
+
+            sage: M.truncate([3,2,1])
+            [5*x^2 + 5*x + 1               5         6*x + 4               0]
+            [        3*x + 1               1               2               0]
+            [              4               1               5               6]
+
+            sage: M.truncate([2,1,1,2], row_wise=False)
+            [5*x + 1       5       4       0]
+            [3*x + 1       1       2       0]
+            [6*x + 4       1       5 5*x + 6]
+
+        Length of list of truncation orders is checked::
+
+            sage: M.truncate([2,1,1,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: length of input precision list should be the row
+            dimension of the input matrix
+
+            sage: M.truncate([3,2,1], row_wise=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: length of input precision list should be the column
+            dimension of the input matrix
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.polynomial.polynomial_element.Polynomial.truncate` .
+        """
+        m = self.nrows()
+        n = self.ncols()
+        from sage.matrix.constructor import Matrix
+
+        # if d is an integer, make it a uniform list
+        if not isinstance(d,list):
+            d = [d]*m if row_wise else [d]*n
+
+        # raise an error if d does not have the right length
+        if row_wise and len(d) != m:
+            raise ValueError("length of input precision list should be the " \
+                                      + "row dimension of the input matrix")
+        elif (not row_wise) and len(d) != n:
+            raise ValueError("length of input precision list should be the " \
+                                      + "column dimension of the input matrix")
+
+        return Matrix(self.base_ring(), m, n, [[self[i,j].truncate(d[i])
+            if row_wise else self[i,j].truncate(d[j])
+            for j in range(n)] for i in range(m)])
+
+    def shift(self, d, row_wise=True):
+        r"""
+        Return the matrix which is obtained from this matrix after shifting
+        all its entries as specified by `d`.
+
+        - if `d` is an integer, the shift is by `d` for all entries;
+        - if `d` is a list $(d_1,\ldots,d_m)$ and ``row_wise`` is ``True``, all
+          entries of the $i$th row are shifted by $d_i$ for each $i$;
+        - if `d` is a list $(d_1,\ldots,d_n)$ and ``row_wise`` is ``False``,
+          all entries of the $j$th column are shifted by $d_j$ for each $j$.
+
+        Shifting by `d` means multiplying by the variable to the power `d`; if
+        `d` is negative then terms of negative degree after shifting are
+        discarded.
+
+        INPUT:
+
+        - ``d`` -- a list of integers, or an integer,
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
+          (resp. ``False``) then `d` should be a list of length equal to the
+          row (resp. column) dimension of this matrix.
+
+        OUTPUT: a polynomial matrix.
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+            sage: M = Matrix([
+            ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
+            ....:    [      6*x^2+3*x+1,       1,           2,         0],
+            ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
+            ....:     ])
+            sage: M.shift(-2)
+            [  x + 5       0       0       0]
+            [      6       0       0       0]
+            [2*x + 4       0       2       1]
+
+        Row-wise and column-wise shifting are available::
+
+            sage: M.shift([-1,2,-2])
+            [      x^2 + 5*x + 5                   0                   6                   0]
+            [6*x^4 + 3*x^3 + x^2                 x^2               2*x^2                   0]
+            [            2*x + 4                   0                   2                   1]
+
+            sage: M.shift([-1,1,0,0], row_wise=False)
+            [  x^2 + 5*x + 5             5*x         6*x + 4               0]
+            [        6*x + 3               x               2               0]
+            [2*x^2 + 4*x + 6       5*x^2 + x 2*x^2 + 5*x + 5   x^2 + 5*x + 6]
+
+            sage: M.shift([-d for d in M.row_degrees()]) == M.leading_matrix()
+            True
+
+        Length of input shift degree list is checked::
+
+            sage: M.shift([1,3,1,4])
+            Traceback (most recent call last):
+            ...
+            ValueError: length of input shift list should be the row
+            dimension of the input matrix
+
+            sage: M.shift([5,2,-1], row_wise=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: length of input shift list should be the column
+            dimension of the input matrix
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.polynomial.polynomial_element.Polynomial.shift` .
+        """
+        m = self.nrows()
+        n = self.ncols()
+        from sage.matrix.constructor import Matrix
+
+        # if d is an integer, make it a uniform list
+        if not isinstance(d,list):
+            d = [d]*m if row_wise else [d]*n
+
+        # raise an error if d does not have the right length
+        if row_wise and len(d) != m:
+            raise ValueError("length of input shift list should be the " \
+                                      + "row dimension of the input matrix")
+        elif (not row_wise) and len(d) != n:
+            raise ValueError("length of input shift list should be the " \
+                                      + "column dimension of the input matrix")
+
+        return Matrix(self.base_ring(), m, n, [[self[i,j].shift(d[i])
+            if row_wise else self[i,j].shift(d[j])
+            for j in range(n)] for i in range(m)])
+
+    def reverse(self, degree=None, row_wise=True, entry_wise=False):
+        r"""
+        Return the matrix which is obtained from this matrix after reversing
+        all its entries with respect to the degree as specified by ``degree``.
+
+        Reversing a polynomial with respect to an integer `d` follows the
+        convention for univariate polynomials, in particular it uses truncation
+        or zero-padding as necessary if `d` differs from the degree of this
+        polynomial.
+
+        If ``entry_wise`` is ``True``: the input ``degree`` and ``row_wise``
+        are ignored, and all entries of the matrix are reversed with respect to
+        their respective degrees.
+
+        If ``entry_wise`` is ``False`` (the default):
+
+        - if ``degree`` is an integer, all entries are reversed with respect to
+          it;
+        - if ``degree`` is not provided, then all entries are reversed with
+          respect to the degree of the whole matrix;
+        - if ``degree`` is a list $(d_1,\ldots,d_m)$ and ``row_wise`` is
+          ``True``, all entries of the $i$th row are reversed with respect to
+          $d_i$ for each $i$;
+        - if ``degree`` is a list $(d_1,\ldots,d_n)$ and ``row_wise`` is
+          ``False``, all entries of the $j$th column are reversed with respect
+          to $d_j$ for each $j$.
+
+        INPUT:
+
+        - ``degree`` -- (optional, default: ``None``) a list of nonnegative
+          integers, or a nonnegative integer,
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
+          (resp. ``False``) then ``degree`` should be a list of length equal to
+          the row (resp. column) dimension of this matrix.
+
+        - ``entry_wise`` -- (optional, default: ``False``) boolean, if ``True``
+          then the input ``degree`` and ``row_wise`` are ignored.
+
+        OUTPUT: a polynomial matrix.
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+
+            sage: M = Matrix([
+            ....:    [  x^3+5*x^2+5*x+1,       5,       6*x+4,         0],
+            ....:    [      6*x^2+3*x+1,       1,           2,         0],
+            ....:    [2*x^3+4*x^2+6*x+4, 5*x + 1, 2*x^2+5*x+5, x^2+5*x+6]
+            ....:     ])
+            sage: M.reverse()
+            [  x^3 + 5*x^2 + 5*x + 1                   5*x^3           4*x^3 +
+            6*x^2                       0]
+            [      x^3 + 3*x^2 + 6*x                     x^3
+            2*x^3                       0]
+            [4*x^3 + 6*x^2 + 4*x + 2             x^3 + 5*x^2     5*x^3 + 5*x^2
+            + 2*x       6*x^3 + 5*x^2 + x]
+
+            sage: M.reverse(1)
+            [  x + 5     5*x 4*x + 6       0]
+            [  x + 3       x     2*x       0]
+            [4*x + 6   x + 5 5*x + 5 6*x + 5]
+
+            sage: M.reverse(0) == M.constant_matrix()
+            True
+
+        Entry-wise reversing with respect to each entry's degree::
+
+            sage: M.reverse(entry_wise=True)
+            [  x^3 + 5*x^2 + 5*x + 1                       5
+            4*x + 6                       0]
+            [          x^2 + 3*x + 6                       1
+            2                       0]
+            [4*x^3 + 6*x^2 + 4*x + 2                   x + 5         5*x^2 +
+            5*x + 2         6*x^2 + 5*x + 1]
+
+        Row-wise and column-wise degree reversing are available::
+
+            sage: M.reverse([2,3,1])
+            [    x^2 + 5*x + 5             5*x^2       4*x^2 + 6*x
+            0]
+            [x^3 + 3*x^2 + 6*x               x^3             2*x^3
+            0]
+            [          4*x + 6             x + 5           5*x + 5
+            6*x + 5]
+
+            sage: M.reverse(M.column_degrees(),row_wise=False)
+            [  x^3 + 5*x^2 + 5*x + 1                     5*x             4*x^2
+            + 6*x                       0]
+            [      x^3 + 3*x^2 + 6*x                       x
+            2*x^2                       0]
+            [4*x^3 + 6*x^2 + 4*x + 2                   x + 5         5*x^2 +
+            5*x + 2         6*x^2 + 5*x + 1]
+
+        Wrong length or negativity of input degree raise errors:
+
+            sage: M.reverse([1,3,1,4])
+            Traceback (most recent call last):
+            ...
+            ValueError: length of input degree list should be the row
+            dimension of the input matrix
+
+            sage: M.reverse([5,2,1], row_wise=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: length of input degree list should be the column
+            dimension of the input matrix
+
+            sage: M.reverse([2,3,-1])
+            Traceback (most recent call last):
+            ...
+            OverflowError: can't convert negative value to unsigned long
+
+        .. SEEALSO::
+
+            :meth:`sage.rings.polynomial.polynomial_element.Polynomial.reverse` .
+        """
+        m = self.nrows()
+        n = self.ncols()
+        from sage.matrix.constructor import Matrix
+
+        # if entry_wise, just return the matrix with all entries reversed
+        if entry_wise:
+            return Matrix(self.base_ring(), m, n, [[self[i,j].reverse()
+                for j in range(n)] for i in range(m)])
+
+        # if degree is None, make it the matrix degree
+        if degree==None:
+            degree = self.degree()
+        # if degree is an integer, make it a uniform list
+        if not isinstance(degree,list):
+            degree = [degree]*m if row_wise else [degree]*n
+
+        # raise an error if degree does not have the right length
+        if row_wise and len(degree) != m:
+            raise ValueError("length of input degree list should be the " \
+                                      + "row dimension of the input matrix")
+        elif (not row_wise) and len(degree) != n:
+            raise ValueError("length of input degree list should be the " \
+                                      + "column dimension of the input matrix")
+
+        return Matrix(self.base_ring(), m, n, [[self[i,j].reverse(degree[i])
+            if row_wise else self[i,j].reverse(degree[j])
+            for j in range(n)] for i in range(m)])
 
     def row_degrees(self, shifts=None):
         r"""
@@ -1395,8 +1877,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             return self.T.reduced_form(transformation, shifts, row_wise=True).T
         return self.weak_popov_form(transformation, shifts)
 
-    row_reduced_form = deprecated_function_alias(23619, reduced_form)
-
     def hermite_form(self, include_zero_rows=True, transformation=False):
         """
         Return the Hermite form of this matrix.
@@ -1583,8 +2063,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         n = pmat.ncols()
 
         # set default shifts / check shifts dimension
-        if shifts == None:
-            shifts = [0]*m if row_wise else [0]*n
+        if shifts is None:
+            shifts = [0] * m if row_wise else [0] * n
         elif row_wise and len(shifts) != m:
             raise ValueError('shifts length should be the row dimension of' \
                                                       + ' the input matrix')
@@ -1615,12 +2095,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         if not self.is_square():
             return False
         # check nonsingular and shifts-(ordered weak) Popov form
-        if normal_form:
-            if not self.is_popov(shifts, row_wise, False, False):
-                return False
-        else:
-            if not self.is_weak_popov(shifts, row_wise, True, False):
-                return False
+        if normal_form and (not self.is_popov(shifts, row_wise, False, False)):
+            return False
+        if (not normal_form) and (not self.is_weak_popov(shifts, row_wise, True, False)):
+            return False
 
         # check that self is a basis of the set of approximants
         if row_wise:
@@ -1628,12 +2106,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # and compute certificate matrix ``cert_mat`` which is
             # the constant term of (self * pmat) * x^(-order)
             residual = self * pmat
-            for i in range(m):
-                for j in range(n):
-                    if residual[i,j].truncate(order[j]) != 0:
-                        return False
-                    residual[i,j] = residual[i,j].shift(-order[j])
-            cert_mat = residual(0)
+            if not residual.truncate(order,row_wise=False).is_zero():
+                return False
+            cert_mat = residual.coefficient_matrix(order,row_wise=False)
 
             # check that self generates the set of approximants
             # 1/ determinant of self should be a monomial c*x^d,
@@ -1645,7 +2120,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # 2/ the m x (m+n) constant matrix [self(0) | cert_mat] should have
             # full rank, that is, rank m
             from sage.matrix.constructor import block_matrix
-            if block_matrix([[self(0), cert_mat]]).rank() < m:
+            if block_matrix([[self.constant_matrix(), cert_mat]]).rank() < m:
                 return False
 
         else:
@@ -1653,12 +2128,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # and compute certificate matrix ``cert_mat`` which is
             # the constant term of x^(-order) * (pmat * self)
             residual = pmat * self
-            for i in range(m):
-                for j in range(n):
-                    if residual[i,j].truncate(order[i]) != 0:
-                        return False
-                    residual[i,j] = residual[i,j].shift(-order[i])
-            cert_mat = residual(0)
+            if not residual.truncate(order).is_zero():
+                return False
+            cert_mat = residual.coefficient_matrix(order)
 
             # check that self generates the set of approximants
             # 1/ determinant of self should be a monomial c*x^d,
@@ -1670,11 +2142,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # 2/ the (m+n) x n constant matrix [self(0).T | cert_mat.T].T
             # should have full rank, that is, rank n
             from sage.matrix.constructor import block_matrix
-            if block_matrix([[self(0)], [cert_mat]]).rank() < n:
+            if block_matrix([[self.constant_matrix()], [cert_mat]]).rank() < n:
                 return False
 
         return True
-
 
     def minimal_approximant_basis(self,
             order,
@@ -1717,7 +2188,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
           ``None`` is interpreted as ``shifts=[0,...,0]``.
 
         - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
-          then the output basis considered row-wise and operates on the left
+          then the output basis is considered row-wise and operates on the left
           of ``self``; otherwise it is column-wise and operates on the right
           of ``self``.
 
@@ -1796,8 +2267,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         n = self.ncols()
 
         # set default shifts / check shifts dimension
-        if shifts == None:
-            shifts = [0]*m if row_wise else [0]*n
+        if shifts is None:
+            shifts = [0] * m if row_wise else [0] * n
         elif row_wise and len(shifts) != m:
             raise ValueError('shifts length should be the row dimension')
         elif (not row_wise) and len(shifts) != n:
@@ -1995,3 +2466,252 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             else:
                 rest_order[j] -= 1
         return appbas, rdeg
+
+    def is_minimal_kernel_basis(self,
+            pmat,
+            shifts=None,
+            row_wise=True,
+            normal_form=False):
+        r"""
+        Return ``True`` if and only if this matrix is a left kernel basis in
+        ``shifts``-ordered weak Popov form for the polynomial matrix ``pmat``.
+
+        If ``normal_form`` is ``True``, then the kernel basis must furthermore
+        be in ``shifts``-Popov form. An error is raised if the input dimensions
+        are not sound.
+
+        INPUT:
+
+        - ``pmat`` -- a polynomial matrix.
+
+        - ``shifts`` -- (optional, default: ``None``) list of integers;
+          ``None`` is interpreted as ``shifts=[0,...,0]``.
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
+          then the basis is considered row-wise and operates on the left of
+          ``pmat``; otherwise it is column-wise and operates on the right of
+          ``pmat``.
+
+        - ``normal_form`` -- (optional, default: ``False``) boolean, if
+          ``True`` then checks for a basis in ``shifts``-Popov form.
+
+        OUTPUT: a boolean.
+
+        ALGORITHM:
+
+        Verification that the matrix has full rank and is in shifted weak
+        Popov form is done via :meth:`is_weak_popov`; verification that the
+        matrix is a left kernel basis is done by checking that the rank is
+        correct, that the product is indeed zero, and that the matrix is
+        saturated, i.e. it has unimodular column bases (see Lemma 6.10 of
+        https://arxiv.org/pdf/1807.01272.pdf for details).
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(97)[]
+            sage: pmat = Matrix(pR, [[1],[x],[x**2]])
+
+            sage: kerbas = Matrix(pR, [[x,-1,0],[0,x,-1]])
+            sage: kerbas.is_minimal_kernel_basis(pmat)
+            True
+
+        A matrix in Popov form which has the right rank, all rows in the
+        kernel, but does not generate the kernel::
+
+            sage: kerbas = Matrix(pR, [[x**2,0,-1],[0,x,-1]])
+            sage: kerbas.is_minimal_kernel_basis(pmat)
+            False
+
+        Shifts and right kernel bases are supported (with ``row_wise``), and one can test whether the kernel basis is normalized in shifted-Popov form (with ``normal_form``)::
+
+            sage: kerbas = Matrix(pR, [[-x,-x**2],[1,0],[0,1]])
+            sage: kerbas.is_minimal_kernel_basis(pmat.transpose(),row_wise=False,normal_form=True,shifts=[0,1,2])
+            True
+        """
+        m = pmat.nrows()
+        n = pmat.ncols()
+
+        # set default shifts / check shifts dimension
+        if shifts is None:
+            shifts = [0] * m if row_wise else [0] * n
+        elif row_wise and len(shifts) != m:
+            raise ValueError('shifts length should be the row dimension of' \
+                                                      + ' the input matrix')
+        elif (not row_wise) and len(shifts) != n:
+            raise ValueError('shifts length should be the column dimension' \
+                                                   + ' of the input matrix')
+
+        # raise an error if self does not have the right dimension
+        if row_wise and self.ncols() != m:
+            raise ValueError("column dimension should be the row dimension" \
+                                                    + " of the input matrix")
+        elif (not row_wise) and self.nrows() != n:
+            raise ValueError("row dimension should be the column dimension" \
+                                                    + " of the input matrix")
+
+        # check full rank and shifts-(ordered weak) Popov form
+        if normal_form and (not self.is_popov(shifts, row_wise, False, False)):
+            return False
+        if (not normal_form) and (not self.is_weak_popov(shifts, row_wise, True, False)):
+            return False
+
+        # check that self consists of kernel vectors
+        if row_wise and self * pmat != 0:
+            return False
+        if (not row_wise) and pmat * self != 0:
+            return False
+
+        # check self.rank() is right (the above weak Popov test ensures self
+        # has full row rank if row wise, and full column rank if column wise)
+        rk = pmat.rank()
+        if row_wise and self.nrows()!=m-rk:
+            return False
+        if (not row_wise) and self.ncols()!=n-rk:
+            return False
+
+        # final check: self is row saturated (assuming row wise),
+        # since self has full rank this is equivalent to the fact that its
+        # columns generate the identity matrix of size m; in particular the
+        # column Popov and column Hermite forms of self are the identity
+        if row_wise:
+            hnf = self.transpose().hermite_form(include_zero_rows=False)
+            # TODO replace by popov_form (likely more efficient) once it is written
+        else:
+            hnf = self.hermite_form(include_zero_rows=False)
+            # TODO replace by popov_form (likely more efficient) once it is written
+        if hnf != 1:
+            return False
+
+        return True
+
+    def minimal_kernel_basis(self,
+            shifts=None,
+            row_wise=True,
+            normal_form=False):
+        r"""
+        Return a left kernel basis in ``shifts``-ordered weak Popov form for
+        this polynomial matrix.
+
+        Assuming we work row-wise, if `F` is an `m \times n` polynomial matrix,
+        then a left kernel basis for `F` is a polynomial matrix whose rows form
+        a basis of the left kernel of `F`, which is the module of polynomial
+        vectors `p` of size `m` such that `p F` is zero.
+
+        If ``normal_form`` is ``True``, then the output basis `P` is
+        furthermore in ``shifts``-Popov form. By default, `P` is considered
+        row-wise, that is, its rows are left kernel vectors for ``self``; if
+        ``row_wise`` is ``False`` then its columns are right kernel vectors for
+        ``self``.
+
+        An error is raised if the input dimensions are not sound: if working
+        row-wise (resp. column-wise), the length of ``shifts`` must be the
+        number of rows (resp. columns) of ``self``.
+
+        INPUT:
+
+        - ``shifts`` -- (optional, default: ``None``) list of integers;
+          ``None`` is interpreted as ``shifts=[0,...,0]``.
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True``
+          then the output basis considered row-wise and operates on the left
+          of ``self``; otherwise it is column-wise and operates on the right
+          of ``self``.
+
+        - ``normal_form`` -- (optional, default: ``False``) boolean, if
+          ``True`` then the output basis is in ``shifts``-Popov form.
+
+        OUTPUT: a polynomial matrix.
+
+        ALGORITHM: uses minimal approximant basis computation at a
+        sufficiently large order so that the approximant basis contains
+        a kernel basis as a submatrix.
+
+        EXAMPLES::
+
+            sage: pR.<x> = GF(7)[]
+            sage: pmat = Matrix([[(x+1)*(x+3)],[(x+1)*(x+3)+1]])
+            sage: pmat.minimal_kernel_basis()
+            [6*x^2 + 3*x + 3   x^2 + 4*x + 3]
+
+            sage: pmat = Matrix([[(x+1)*(x+3)],[(x+1)*(x+4)]])
+            sage: pmat.minimal_kernel_basis()
+            [6*x + 3   x + 3]
+
+            sage: pmat.minimal_kernel_basis(row_wise=False)
+            []
+
+            sage: pmat = Matrix(pR, [[1,x,x**2]])
+            sage: pmat.minimal_kernel_basis(row_wise=False,normal_form=True)
+            [x 0]
+            [6 x]
+            [0 6]
+
+            sage: pmat.minimal_kernel_basis(row_wise=False,normal_form=True,shifts=[0,1,2])
+            [  6*x 6*x^2]
+            [    1     0]
+            [    0     1]
+        """
+        m = self.nrows()
+        n = self.ncols()
+        d = self.degree()
+
+        # set default shifts / check shifts dimension
+        if shifts is None:
+            shifts = [0] * m if row_wise else [0] * n
+        elif row_wise and len(shifts) != m:
+            raise ValueError('shifts length should be the row dimension')
+        elif (not row_wise) and len(shifts) != n:
+            raise ValueError('shifts length should be the column dimension')
+
+        # compute kernel basis
+        if row_wise:
+            if d is -1: # matrix is zero
+                from sage.matrix.constructor import Matrix
+                return Matrix.identity(self.base_ring(), m, m)
+
+            if m <= n and self.constant_matrix().rank() == m:
+                # early exit: kernel is empty
+                from sage.matrix.constructor import Matrix
+                return Matrix(self.base_ring(), 0, m)
+
+            # degree bounds on the kernel basis
+            degree_bound = min(m,n)*d+max(shifts)
+            degree_bounds = [degree_bound - shifts[i] for i in range(m)]
+
+            # orders for approximation
+            orders = self.column_degrees(degree_bounds)
+            for i in range(n): orders[i] = orders[i]+1
+
+            # compute approximant basis and retrieve kernel rows
+            P = self.minimal_approximant_basis(orders,shifts,True,normal_form)
+            row_indices = []
+            for i in range(m):
+                if P[i,i].degree() + shifts[i] <= degree_bound:
+                    row_indices.append(i)
+            return P[row_indices,:]
+
+        else:
+            if d is -1: # matrix is zero
+                from sage.matrix.constructor import Matrix
+                return Matrix.identity(self.base_ring(), n, n)
+
+            if n <= m and self.constant_matrix().rank() == n:
+                # early exit: kernel is empty
+                from sage.matrix.constructor import Matrix
+                return Matrix(self.base_ring(), n, 0)
+
+            # degree bounds on the kernel basis
+            degree_bound = min(m,n)*d+max(shifts)
+            degree_bounds = [degree_bound - shifts[i] for i in range(n)]
+
+            # orders for approximation
+            orders = self.row_degrees(degree_bounds)
+            for i in range(m): orders[i] = orders[i]+1
+
+            # compute approximant basis and retrieve kernel columns
+            P = self.minimal_approximant_basis(orders,shifts,False,normal_form)
+            column_indices = []
+            for j in range(n):
+                if P[j,j].degree() + shifts[j] <= degree_bound:
+                    column_indices.append(j)
+            return P[:,column_indices]

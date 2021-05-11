@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+echo Error: libxml2 is not installed.
+echo Please install it, for example using the system packages recommended by ./configure
+exit 1

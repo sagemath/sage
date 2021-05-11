@@ -21,6 +21,7 @@ AUTHORS:
 
 - Eric Gourgoulhon (2015): initial version
 - Travis Scrimshaw (2016): review tweaks
+- Michael Jung (2019): improve treatment of the identity element
 
 REFERENCES:
 
@@ -207,12 +208,18 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
             a = (x^2 + 1) d/dx*dx + (y^2 + 1) d/dy*dy
 
         """
-        if comp == 1:
+        if hasattr(comp, 'is_trivial_zero'):
+            if (comp - 1).is_trivial_zero():
+                return self.one()
+        elif comp == 1:
             return self.one()
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         # standard construction
         resu = self.element_class(self._vmodule, name=name,
                                   latex_name=latex_name)
-        if comp != []:
+        if comp:
             resu.set_comp(frame)[:] = comp
         return resu
 
@@ -300,7 +307,17 @@ class AutomorphismFieldGroup(UniqueRepresentation, Parent):
             [0 1]
 
         """
-        return self.element_class(self._vmodule, is_identity=True)
+        # Specific initializations for the field of identity maps:
+        resu = self._element_constructor_(name='Id', latex_name=r'\mathrm{Id}')
+        resu._inverse = resu
+        for dom in resu._domain._subsets:
+            if dom.is_manifestly_parallelizable():
+                fmodule = dom.vector_field_module()
+                resu._restrictions[dom] = fmodule.identity_map(name='Id',
+                                                     latex_name=r'\mathrm{Id}')
+        resu._is_identity = True
+        resu.set_immutable()
+        return resu
 
     #### End of monoid methods ####
 

@@ -27,13 +27,10 @@ EXAMPLES::
     5 (t^2 + 4*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
     6 (t^2 + 4*t + 1)/(-t^3 + 3*t^2 - 3*t + 1)
 """
-from __future__ import print_function
 
 import os
 
 from subprocess import Popen, PIPE
-
-import six
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import ZZ
@@ -51,7 +48,7 @@ class PALPreader(SageObject):
 
     INPUT:
 
-    - ``dim`` -- integer. The dimension of the poylhedra
+    - ``dim`` -- integer. The dimension of the polyhedra
 
     - ``data_basename`` -- string or ``None`` (default). The directory
       and database base filename (PALP usually uses ``'zzdb'``) name
@@ -133,19 +130,11 @@ class PALPreader(SageObject):
             sage: from sage.geometry.polyhedron.palp_database import PALPreader
             sage: polygons = PALPreader(2)
             sage: polygons._palp_Popen()
-            <subprocess.Popen object at 0x...>
+            <...Popen...>
         """
 
-        if six.PY2:
-            encoding_kwargs = {}
-        else:
-            encoding_kwargs = {
-                'encoding': 'utf-8',
-                'errors': 'surrogateescape'
-            }
-
         return Popen(["class.x", "-b2a", "-di", self._data_basename],
-                     stdout=PIPE, **encoding_kwargs)
+                     stdout=PIPE, encoding='utf-8', errors='surrogateescape')
 
     def _read_vertices(self, stdout, rows, cols):
         r"""
@@ -165,9 +154,9 @@ class PALPreader(SageObject):
             sage: polygons._read_vertices(palp.stdout, 2, 3)
             [[1, 0], [0, 1], [-1, -1]]
         """
-        m = [[] for col in range(0, cols)]
-        for row in range(0, rows):
-            for col,x in enumerate(stdout.readline().split()):
+        m = [[] for col in range(cols)]
+        for row in range(rows):
+            for col, x in enumerate(stdout.readline().split()):
                 m[col].append(ZZ(x))
         return m
 
@@ -190,7 +179,7 @@ class PALPreader(SageObject):
             [[1, 0, -1], [0, 1, -1]]
         """
         m = []
-        for row in range(0, rows):
+        for row in range(rows):
             m.append([ZZ(x) for x in stdout.readline().split()])
         return m
 
@@ -240,7 +229,7 @@ class PALPreader(SageObject):
                         raise ValueError('PALP output dimension mismatch.')
                     yield vertices
                 else:
-                    for row in range(0, dim):
+                    for row in range(dim):
                         palp_out.readline()
                 i += 1
                 if stop is not None and i >= stop:
@@ -403,8 +392,6 @@ class PALPreader(SageObject):
                 raise IndexError('Index out of range.')
 
 
-
-#########################################################################
 class Reflexive4dHodge(PALPreader):
     """
     Read the PALP database for Hodge numbers of 4d polytopes.
@@ -468,17 +455,10 @@ class Reflexive4dHodge(PALPreader):
             sage: from sage.geometry.polyhedron.palp_database import Reflexive4dHodge
             sage: polygons = Reflexive4dHodge(1, 101)   # optional - polytopes_db_4d
             sage: polygons._palp_Popen()                # optional - polytopes_db_4d
-            <subprocess.Popen object at 0x...>
+            <...Popen...>
         """
-        if six.PY2:
-            encoding_kwargs = {}
-        else:
-            encoding_kwargs = {
-                'encoding': 'utf-8',
-                'errors': 'surrogateescape'
-            }
 
         return Popen(['class-4d.x', '-He',
                       'H{}:{}L100000000'.format(self._h21, self._h11),
                       '-di', self._data_basename], stdout=PIPE,
-                      **encoding_kwargs)
+                     encoding='utf-8', errors='surrogateescape')

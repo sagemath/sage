@@ -261,7 +261,7 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
                 return self.__class__(self.parent(), self.value * scalar)
             return self.__class__(self.parent(), scalar * self.value)
 
-        def __div__(self, x, self_on_left=False):
+        def __truediv__(self, x, self_on_left=False):
             """
             Division by coefficients.
 

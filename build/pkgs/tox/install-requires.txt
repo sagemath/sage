@@ -1,0 +1,2 @@
+# Matches version checked in spkg-configure.m4
+tox >=2.5.0

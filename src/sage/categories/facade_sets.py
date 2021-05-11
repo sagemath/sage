@@ -187,7 +187,7 @@ class FacadeSets(CategoryWithAxiom):
             ``self`` is a facade for.
 
             .. warning:: this default implementation is currently
-            overriden by :meth:`Parent.__contains__`.
+            overridden by :meth:`Parent.__contains__`.
 
             EXAMPLES::
 

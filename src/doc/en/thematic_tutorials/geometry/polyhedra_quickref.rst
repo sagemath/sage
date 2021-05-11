@@ -53,6 +53,11 @@ List of Polyhedron methods
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.is_simple` |  checks whether the degree of all vertices is equal to the dimension of the polytope
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.is_simplex` | test whether a polytope is a simplex
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.is_simplicial` |  checks whether all faces of the polyhedron are simplices
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.is_lawrence_polytope` |  tests whether self is a Lawrence polytope
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.is_self_dual` |  tests whether the polytope is self-dual
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.is_pyramid` | test whether the polytope is a pyramid over one of its facets
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.is_bipyramid` | test whether the polytope is combinatorially equivalent to a bipyramid over some polytope
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.is_prism` | test whether the polytope is combinatorially equivalent to a prism of some polytope
 
 **Enumerative properties**
 
@@ -65,7 +70,10 @@ List of Polyhedron methods
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.dim` |  the dimension of the polytope
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.dimension` |  alias of dim
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.f_vector` |  the `f`-vector (number of faces of each dimension)
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.flag_f_vector` |  the flag-`f`-vector (number of chains of faces)
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.neighborliness` | highest cardinality for which all `k`-subsets of the vertices are faces of the polyhedron
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.simpliciality` | highest cardinality for which all `k`-faces are simplices
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.simplicity` | highest cardinality for which the polar is `k`-simplicial
 
 **Implementation properties**
 
@@ -92,8 +100,7 @@ List of Polyhedron methods
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.intersection` | intersection of two polyhedra
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.join` | join of two polyhedra
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.convex_hull` | convex hull of the union of two polyhedra
-    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.affine_hull` | constructs an affinely equivalent full dimensional polyhedra
-    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.faces` | the list of faces
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.affine_hull_projection` | constructs an affinely equivalent full-dimensional polyhedron
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.barycentric_subdivision` | constructs a geometric realization of the barycentric subdivision
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.dilation` |  scalar dilation
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.face_truncation` | truncates a specific face
@@ -107,6 +114,9 @@ List of Polyhedron methods
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.bipyramid` | bipyramid over a polyhedron (increases both the dimension of the polyhedron and the dimension of the ambient)
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.translation` | translates by a given vector
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.truncation` | truncates all vertices simultaneously
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.lawrence_extension` | returns the Lawrence extension of self on a given point
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.lawrence_polytope` | returns the Lawrence polytope of self
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.wedge` | returns the wedge over a face of self
 
 **Combinatorics**
 
@@ -115,13 +125,16 @@ List of Polyhedron methods
     :widths: 30, 70
     :delim: |
 
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.combinatorial_polyhedron` | the combinatorial polyhedron
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.face_lattice` | the face lattice
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.hasse_diagram` | the hasse diagram
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.combinatorial_automorphism_group` | the automorphism group of the underlying combinatorial polytope
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.graph`, :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.vertex_graph` | underlying graph
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.vertex_digraph` | digraph (orientation of edges determined by a linear form)
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.vertex_facet_graph` | bipartite digraph given vertex-facet adjacency
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.adjacency_matrix` | adjacency matrix
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.incidence_matrix` | incidence matrix
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.slack_matrix` | slack matrix
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.facet_adjacency_matrix` | adjacency matrix of the facets
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.vertex_adjacency_matrix` | adjacency matrix of the vertices
 
@@ -132,7 +145,10 @@ List of Polyhedron methods
     :widths: 30, 70
     :delim: |
 
-    :meth:`~sage.geometry.polyhedron.base_ZZ.Polyhedron_ZZ.ehrhart_polynomial` | the Ehrhart polynomial (only for :class:`Polyhedron over ZZ <sage.geometry.polyhedron.base_ZZ.Polyhedron_ZZ>`)
+    :meth:`~sage.geometry.polyhedron.base_ZZ.Polyhedron_ZZ.ehrhart_polynomial` | the Ehrhart polynomial for :class:`Polyhedron over ZZ <sage.geometry.polyhedron.base_ZZ.Polyhedron_ZZ>`
+    :meth:`~sage.geometry.polyhedron.base_QQ.Polyhedron_QQ.ehrhart_polynomial` | the Ehrhart polynomial for :class:`Polyhedron over QQ <sage.geometry.polyhedron.base_QQ.Polyhedron_QQ>`
+    :meth:`~sage.geometry.polyhedron.base_QQ.Polyhedron_QQ.ehrhart_quasipolynomial` | the Ehrhart quasipolynomial for :class:`Polyhedron over QQ <sage.geometry.polyhedron.base_QQ.Polyhedron_QQ>`
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.h_star_vector` | the `h^*`-vector for polytopes with integral vertices
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.integral_points` | list of integral points
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.integral_points_count` | number of integral points
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.get_integral_point` | get the i-th integral point without computing all interior lattice points
@@ -147,9 +163,15 @@ List of Polyhedron methods
     :widths: 30, 70
     :delim: |
 
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.boundary_complex` | returns the boundary complex of simplicial compact polyhedron
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.center` | returns the average of the vertices of the polyhedron
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.centroid` | returns the center of the mass
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.representative_point` | returns the sum of the center and the rays
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.a_maximal_chain` | returns a maximal chain of faces
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.face_fan` | returns the fan spanned by the faces of the polyhedron
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.face_generator` | a generator over the faces
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.faces` | the list of faces
+    :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.facets` | the list of facets
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.normal_fan` | returns the fan spanned by the normals of the supporting hyperplanes of the polyhedron
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.gale_transform` | returns the (affine) Gale transform of the vertices of the polyhedron
     :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.hyperplane_arrangement` | returns the hyperplane arrangement given by the defining facets of the polyhedron

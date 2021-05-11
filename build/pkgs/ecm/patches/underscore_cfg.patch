@@ -1,0 +1,533 @@
+diff --git a/configure b/configure
+index fec7ddc..6fbec64 100755
+--- a/configure
++++ b/configure
+@@ -693,7 +693,6 @@ am__nodep
+ AMDEPBACKSLASH
+ AMDEP_FALSE
+ AMDEP_TRUE
+-am__quote
+ am__include
+ DEPDIR
+ OBJEXT
+@@ -760,7 +759,6 @@ infodir
+ docdir
+ oldincludedir
+ includedir
+-runstatedir
+ localstatedir
+ sharedstatedir
+ sysconfdir
+@@ -779,7 +777,8 @@ PACKAGE_VERSION
+ PACKAGE_TARNAME
+ PACKAGE_NAME
+ PATH_SEPARATOR
+-SHELL'
++SHELL
++am__quote'
+ ac_subst_files=''
+ ac_user_opts='
+ enable_option_checking
+@@ -864,7 +863,6 @@ datadir='${datarootdir}'
+ sysconfdir='${prefix}/etc'
+ sharedstatedir='${prefix}/com'
+ localstatedir='${prefix}/var'
+-runstatedir='${localstatedir}/run'
+ includedir='${prefix}/include'
+ oldincludedir='/usr/include'
+ docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
+@@ -1117,15 +1115,6 @@ do
+   | -silent | --silent | --silen | --sile | --sil)
+     silent=yes ;;
+ 
+-  -runstatedir | --runstatedir | --runstatedi | --runstated \
+-  | --runstate | --runstat | --runsta | --runst | --runs \
+-  | --run | --ru | --r)
+-    ac_prev=runstatedir ;;
+-  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
+-  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
+-  | --run=* | --ru=* | --r=*)
+-    runstatedir=$ac_optarg ;;
+-
+   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
+     ac_prev=sbindir ;;
+   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
+@@ -1263,7 +1252,7 @@ fi
+ for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
+ 		datadir sysconfdir sharedstatedir localstatedir includedir \
+ 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
+-		libdir localedir mandir runstatedir
++		libdir localedir mandir
+ do
+   eval ac_val=\$$ac_var
+   # Remove trailing slashes.
+@@ -1416,7 +1405,6 @@ Fine tuning of the installation directories:
+   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
+   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
+   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+-  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
+   --libdir=DIR            object code libraries [EPREFIX/lib]
+   --includedir=DIR        C header files [PREFIX/include]
+   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
+@@ -2497,7 +2485,7 @@ gmp_tmpconfigm4i=cnfm4i.tmp
+ gmp_tmpconfigm4p=cnfm4p.tmp
+ rm -f $gmp_tmpconfigm4 $gmp_tmpconfigm4i $gmp_tmpconfigm4p
+ 
+-am__api_version='1.15'
++am__api_version='1.16'
+ 
+ ac_aux_dir=
+ for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
+@@ -3042,8 +3030,8 @@ MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
+ 
+ # For better backward compatibility.  To be removed once Automake 1.9.x
+ # dies out for good.  For more background, see:
+-# <http://lists.gnu.org/archive/html/automake/2012-07/msg00001.html>
+-# <http://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
++# <https://lists.gnu.org/archive/html/automake/2012-07/msg00001.html>
++# <https://lists.gnu.org/archive/html/automake/2012-07/msg00014.html>
+ mkdir_p='$(MKDIR_P)'
+ 
+ # We need awk for the "check" target (and possibly the TAP driver).  The
+@@ -3094,7 +3082,7 @@ END
+ Aborting the configuration process, to ensure you take notice of the issue.
+ 
+ You can download and install GNU coreutils to get an 'rm' implementation
+-that behaves properly: <http://www.gnu.org/software/coreutils/>.
++that behaves properly: <https://www.gnu.org/software/coreutils/>.
+ 
+ If you want to complete the configuration process using your problematic
+ 'rm' anyway, export the environment variable ACCEPT_INFERIOR_RM_PROGRAM
+@@ -4439,45 +4427,45 @@ DEPDIR="${am__leading_dot}deps"
+ 
+ ac_config_commands="$ac_config_commands depfiles"
+ 
+-
+-am_make=${MAKE-make}
+-cat > confinc << 'END'
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${MAKE-make} supports the include directive" >&5
++$as_echo_n "checking whether ${MAKE-make} supports the include directive... " >&6; }
++cat > confinc.mk << 'END'
+ am__doit:
+-	@echo this is the am__doit target
++	@echo this is the am__doit target >confinc.out
+ .PHONY: am__doit
+ END
+-# If we don't find an include directive, just comment out the code.
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for style of include used by $am_make" >&5
+-$as_echo_n "checking for style of include used by $am_make... " >&6; }
+ am__include="#"
+ am__quote=
+-_am_result=none
+-# First try GNU make style include.
+-echo "include confinc" > confmf
+-# Ignore all kinds of additional output from 'make'.
+-case `$am_make -s -f confmf 2> /dev/null` in #(
+-*the\ am__doit\ target*)
+-  am__include=include
+-  am__quote=
+-  _am_result=GNU
+-  ;;
+-esac
+-# Now try BSD make style include.
+-if test "$am__include" = "#"; then
+-   echo '.include "confinc"' > confmf
+-   case `$am_make -s -f confmf 2> /dev/null` in #(
+-   *the\ am__doit\ target*)
+-     am__include=.include
+-     am__quote="\""
+-     _am_result=BSD
++# BSD make does it like this.
++echo '.include "confinc.mk" # ignored' > confmf.BSD
++# Other make implementations (GNU, Solaris 10, AIX) do it like this.
++echo 'include confinc.mk # ignored' > confmf.GNU
++_am_result=no
++for s in GNU BSD; do
++  { echo "$as_me:$LINENO: ${MAKE-make} -f confmf.$s && cat confinc.out" >&5
++   (${MAKE-make} -f confmf.$s && cat confinc.out) >&5 2>&5
++   ac_status=$?
++   echo "$as_me:$LINENO: \$? = $ac_status" >&5
++   (exit $ac_status); }
++  case $?:`cat confinc.out 2>/dev/null` in #(
++  '0:this is the am__doit target') :
++    case $s in #(
++  BSD) :
++    am__include='.include' am__quote='"' ;; #(
++  *) :
++    am__include='include' am__quote='' ;;
++esac ;; #(
++  *) :
+      ;;
+-   esac
+-fi
+-
+-
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $_am_result" >&5
+-$as_echo "$_am_result" >&6; }
+-rm -f confinc confmf
++esac
++  if test "$am__include" != "#"; then
++    _am_result="yes ($s style)"
++    break
++  fi
++done
++rm -f confinc.* confmf.*
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ${_am_result}" >&5
++$as_echo "${_am_result}" >&6; }
+ 
+ # Check whether --enable-dependency-tracking was given.
+ if test "${enable_dependency_tracking+set}" = set; then :
+@@ -5875,7 +5863,7 @@ linux* | k*bsd*-gnu | kopensolaris*-gnu | gnu*)
+   lt_cv_deplibs_check_method=pass_all
+   ;;
+ 
+-netbsd* | netbsdelf*-gnu)
++netbsd*)
+   if echo __ELF__ | $CC -E - | $GREP __ELF__ > /dev/null; then
+     lt_cv_deplibs_check_method='match_pattern /lib[^/]+(\.so\.[0-9]+\.[0-9]+|_pic\.a)$'
+   else
+@@ -7990,16 +7978,11 @@ $as_echo "$lt_cv_ld_force_load" >&6; }
+       _lt_dar_allow_undefined='$wl-undefined ${wl}suppress' ;;
+     darwin1.*)
+       _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
+-    darwin*) # darwin 5.x on
+-      # if running on 10.5 or later, the deployment target defaults
+-      # to the OS version, if on x86, and 10.4, the deployment
+-      # target defaults to 10.4. Don't you love it?
+-      case ${MACOSX_DEPLOYMENT_TARGET-10.0},$host in
+-	10.0,*86*-darwin8*|10.0,*-darwin[91]*)
+-	  _lt_dar_allow_undefined='$wl-undefined ${wl}dynamic_lookup' ;;
+-	10.[012][,.]*)
++    darwin*)
++      case ${MACOSX_DEPLOYMENT_TARGET},$host in
++	10.[012],*|,*powerpc*)
+ 	  _lt_dar_allow_undefined='$wl-flat_namespace $wl-undefined ${wl}suppress' ;;
+-	10.*)
++	*)
+ 	  _lt_dar_allow_undefined='$wl-undefined ${wl}dynamic_lookup' ;;
+       esac
+     ;;
+@@ -9567,9 +9550,6 @@ $as_echo_n "checking whether the $compiler linker ($LD) supports shared librarie
+   openbsd* | bitrig*)
+     with_gnu_ld=no
+     ;;
+-  linux* | k*bsd*-gnu | gnu*)
+-    link_all_deplibs=no
+-    ;;
+   esac
+ 
+   ld_shlibs=yes
+@@ -9824,7 +9804,7 @@ _LT_EOF
+       fi
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | $GREP __ELF__ >/dev/null; then
+ 	archive_cmds='$LD -Bshareable $libobjs $deplibs $linker_flags -o $lib'
+ 	wlarc=
+@@ -10494,7 +10474,6 @@ $as_echo "$lt_cv_irix_exported_symbol" >&6; }
+ 	if test yes = "$lt_cv_irix_exported_symbol"; then
+           archive_expsym_cmds='$CC -shared $pic_flag $libobjs $deplibs $compiler_flags $wl-soname $wl$soname `test -n "$verstring" && func_echo_all "$wl-set_version $wl$verstring"` $wl-update_registry $wl$output_objdir/so_locations $wl-exports_file $wl$export_symbols -o $lib'
+ 	fi
+-	link_all_deplibs=no
+       else
+ 	archive_cmds='$CC -shared $libobjs $deplibs $compiler_flags -soname $soname `test -n "$verstring" && func_echo_all "-set_version $verstring"` -update_registry $output_objdir/so_locations -o $lib'
+ 	archive_expsym_cmds='$CC -shared $libobjs $deplibs $compiler_flags -soname $soname `test -n "$verstring" && func_echo_all "-set_version $verstring"` -update_registry $output_objdir/so_locations -exports_file $export_symbols -o $lib'
+@@ -10516,7 +10495,7 @@ $as_echo "$lt_cv_irix_exported_symbol" >&6; }
+       esac
+       ;;
+ 
+-    netbsd* | netbsdelf*-gnu)
++    netbsd*)
+       if echo __ELF__ | $CC -E - | $GREP __ELF__ >/dev/null; then
+ 	archive_cmds='$LD -Bshareable -o $lib $libobjs $deplibs $linker_flags'  # a.out
+       else
+@@ -11631,18 +11610,6 @@ fi
+   dynamic_linker='GNU/Linux ld.so'
+   ;;
+ 
+-netbsdelf*-gnu)
+-  version_type=linux
+-  need_lib_prefix=no
+-  need_version=no
+-  library_names_spec='${libname}${release}${shared_ext}$versuffix ${libname}${release}${shared_ext}$major ${libname}${shared_ext}'
+-  soname_spec='${libname}${release}${shared_ext}$major'
+-  shlibpath_var=LD_LIBRARY_PATH
+-  shlibpath_overrides_runpath=no
+-  hardcode_into_libs=yes
+-  dynamic_linker='NetBSD ld.elf_so'
+-  ;;
+-
+ netbsd*)
+   version_type=sunos
+   need_lib_prefix=no
+@@ -12689,18 +12656,18 @@ else
+ /* end confdefs.h.  */
+ 
+   /* For now, do not test the preprocessor; as of 2007 there are too many
+-         implementations with broken preprocessors.  Perhaps this can
+-         be revisited in 2012.  In the meantime, code should not expect
+-         #if to work with literals wider than 32 bits.  */
++	 implementations with broken preprocessors.  Perhaps this can
++	 be revisited in 2012.  In the meantime, code should not expect
++	 #if to work with literals wider than 32 bits.  */
+       /* Test literals.  */
+       long long int ll = 9223372036854775807ll;
+       long long int nll = -9223372036854775807LL;
+       unsigned long long int ull = 18446744073709551615ULL;
+       /* Test constant expressions.   */
+       typedef int a[((-9223372036854775807LL < 0 && 0 < 9223372036854775807ll)
+-                     ? 1 : -1)];
++		     ? 1 : -1)];
+       typedef int b[(18446744073709551615ULL <= (unsigned long long int) -1
+-                     ? 1 : -1)];
++		     ? 1 : -1)];
+       int i = 63;
+ int
+ main ()
+@@ -12709,9 +12676,9 @@ main ()
+       long long int llmax = 9223372036854775807ll;
+       unsigned long long int ullmax = 18446744073709551615ull;
+       return ((ll << 63) | (ll >> 63) | (ll < i) | (ll > i)
+-              | (llmax / ll) | (llmax % ll)
+-              | (ull << 63) | (ull >> 63) | (ull << i) | (ull >> i)
+-              | (ullmax / ull) | (ullmax % ull));
++	      | (llmax / ll) | (llmax % ll)
++	      | (ull << 63) | (ull >> 63) | (ull << i) | (ull >> i)
++	      | (ullmax / ull) | (ullmax % ull));
+   ;
+   return 0;
+ }
+@@ -12743,33 +12710,33 @@ if ${ac_cv_type_long_long_int+:} false; then :
+ else
+   ac_cv_type_long_long_int=yes
+       if test "x${ac_cv_prog_cc_c99-no}" = xno; then
+-        ac_cv_type_long_long_int=$ac_cv_type_unsigned_long_long_int
+-        if test $ac_cv_type_long_long_int = yes; then
+-                                        if test "$cross_compiling" = yes; then :
++	ac_cv_type_long_long_int=$ac_cv_type_unsigned_long_long_int
++	if test $ac_cv_type_long_long_int = yes; then
++	  	  	  	  if test "$cross_compiling" = yes; then :
+   :
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ #include <limits.h>
+-                 #ifndef LLONG_MAX
+-                 # define HALF \
+-                          (1LL << (sizeof (long long int) * CHAR_BIT - 2))
+-                 # define LLONG_MAX (HALF - 1 + HALF)
+-                 #endif
++		 #ifndef LLONG_MAX
++		 # define HALF \
++			  (1LL << (sizeof (long long int) * CHAR_BIT - 2))
++		 # define LLONG_MAX (HALF - 1 + HALF)
++		 #endif
+ int
+ main ()
+ {
+ long long int n = 1;
+-                 int i;
+-                 for (i = 0; ; i++)
+-                   {
+-                     long long int m = n << i;
+-                     if (m >> i != n)
+-                       return 1;
+-                     if (LLONG_MAX / 2 < m)
+-                       break;
+-                   }
+-                 return 0;
++		 int i;
++		 for (i = 0; ; i++)
++		   {
++		     long long int m = n << i;
++		     if (m >> i != n)
++		       return 1;
++		     if (LLONG_MAX / 2 < m)
++		       break;
++		   }
++		 return 0;
+   ;
+   return 0;
+ }
+@@ -12783,7 +12750,7 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
+   conftest.$ac_objext conftest.beam conftest.$ac_ext
+ fi
+ 
+-        fi
++	fi
+       fi
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_type_long_long_int" >&5
+@@ -13265,8 +13232,10 @@ else
+   cat >conftes1.c <<EOF
+ #ifdef __cplusplus
+ extern "C" { void underscore_test(); }
++#else
++extern void underscore_test();
+ #endif
+-main () { underscore_test(); }
++int main () { underscore_test(); return 1;}
+ EOF
+ for tmp_underscore in "" "_"; do
+   cat >conftes2.s <<EOF
+@@ -13283,6 +13252,7 @@ EOF
+     ;;
+   esac
+   gmp_compile="$CC $CFLAGS $CPPFLAGS -c conftes1.c >&5 && $CCAS $CCASFLAGS -c conftes2.s >&5 && $CC $CFLAGS $LDFLAGS conftes1.$OBJEXT conftes2.$OBJEXT >&5"
++cat conftes2.s >>/tmp/confte
+   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$gmp_compile\""; } >&5
+   (eval $gmp_compile) 2>&5
+   ac_status=$?
+@@ -16584,7 +16554,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
+ #
+ # INIT-COMMANDS
+ #
+-AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
++AMDEP_TRUE="$AMDEP_TRUE" MAKE="${MAKE-make}"
+ 
+ 
+ # The HP-UX ksh and POSIX shell print the target directory to stdout
+@@ -17494,29 +17464,35 @@ $as_echo "$as_me: executing $ac_file commands" >&6;}
+   # Older Autoconf quotes --file arguments for eval, but not when files
+   # are listed without --file.  Let's play safe and only enable the eval
+   # if we detect the quoting.
+-  case $CONFIG_FILES in
+-  *\'*) eval set x "$CONFIG_FILES" ;;
+-  *)   set x $CONFIG_FILES ;;
+-  esac
++  # TODO: see whether this extra hack can be removed once we start
++  # requiring Autoconf 2.70 or later.
++  case $CONFIG_FILES in #(
++  *\'*) :
++    eval set x "$CONFIG_FILES" ;; #(
++  *) :
++    set x $CONFIG_FILES ;; #(
++  *) :
++     ;;
++esac
+   shift
+-  for mf
++  # Used to flag and report bootstrapping failures.
++  am_rc=0
++  for am_mf
+   do
+     # Strip MF so we end up with the name of the file.
+-    mf=`echo "$mf" | sed -e 's/:.*$//'`
+-    # Check whether this is an Automake generated Makefile or not.
+-    # We used to match only the files named 'Makefile.in', but
+-    # some people rename them; so instead we look at the file content.
+-    # Grep'ing the first line is not enough: some people post-process
+-    # each Makefile.in and add a new line on top of each file to say so.
+-    # Grep'ing the whole file is not good either: AIX grep has a line
++    am_mf=`$as_echo "$am_mf" | sed -e 's/:.*$//'`
++    # Check whether this is an Automake generated Makefile which includes
++    # dependency-tracking related rules and includes.
++    # Grep'ing the whole file directly is not great: AIX grep has a line
+     # limit of 2048, but all sed's we know have understand at least 4000.
+-    if sed -n 's,^#.*generated by automake.*,X,p' "$mf" | grep X >/dev/null 2>&1; then
+-      dirpart=`$as_dirname -- "$mf" ||
+-$as_expr X"$mf" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
+-	 X"$mf" : 'X\(//\)[^/]' \| \
+-	 X"$mf" : 'X\(//\)$' \| \
+-	 X"$mf" : 'X\(/\)' \| . 2>/dev/null ||
+-$as_echo X"$mf" |
++    sed -n 's,^am--depfiles:.*,X,p' "$am_mf" | grep X >/dev/null 2>&1 \
++      || continue
++    am_dirpart=`$as_dirname -- "$am_mf" ||
++$as_expr X"$am_mf" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
++	 X"$am_mf" : 'X\(//\)[^/]' \| \
++	 X"$am_mf" : 'X\(//\)$' \| \
++	 X"$am_mf" : 'X\(/\)' \| . 2>/dev/null ||
++$as_echo X"$am_mf" |
+     sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
+ 	    s//\1/
+ 	    q
+@@ -17534,53 +17510,50 @@ $as_echo X"$mf" |
+ 	    q
+ 	  }
+ 	  s/.*/./; q'`
+-    else
+-      continue
+-    fi
+-    # Extract the definition of DEPDIR, am__include, and am__quote
+-    # from the Makefile without running 'make'.
+-    DEPDIR=`sed -n 's/^DEPDIR = //p' < "$mf"`
+-    test -z "$DEPDIR" && continue
+-    am__include=`sed -n 's/^am__include = //p' < "$mf"`
+-    test -z "$am__include" && continue
+-    am__quote=`sed -n 's/^am__quote = //p' < "$mf"`
+-    # Find all dependency output files, they are included files with
+-    # $(DEPDIR) in their names.  We invoke sed twice because it is the
+-    # simplest approach to changing $(DEPDIR) to its actual value in the
+-    # expansion.
+-    for file in `sed -n "
+-      s/^$am__include $am__quote\(.*(DEPDIR).*\)$am__quote"'$/\1/p' <"$mf" | \
+-	 sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g'`; do
+-      # Make sure the directory exists.
+-      test -f "$dirpart/$file" && continue
+-      fdir=`$as_dirname -- "$file" ||
+-$as_expr X"$file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
+-	 X"$file" : 'X\(//\)[^/]' \| \
+-	 X"$file" : 'X\(//\)$' \| \
+-	 X"$file" : 'X\(/\)' \| . 2>/dev/null ||
+-$as_echo X"$file" |
+-    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{
+-	    s//\1/
+-	    q
+-	  }
+-	  /^X\(\/\/\)[^/].*/{
++    am_filepart=`$as_basename -- "$am_mf" ||
++$as_expr X/"$am_mf" : '.*/\([^/][^/]*\)/*$' \| \
++	 X"$am_mf" : 'X\(//\)$' \| \
++	 X"$am_mf" : 'X\(/\)' \| . 2>/dev/null ||
++$as_echo X/"$am_mf" |
++    sed '/^.*\/\([^/][^/]*\)\/*$/{
+ 	    s//\1/
+ 	    q
+ 	  }
+-	  /^X\(\/\/\)$/{
++	  /^X\/\(\/\/\)$/{
+ 	    s//\1/
+ 	    q
+ 	  }
+-	  /^X\(\/\).*/{
++	  /^X\/\(\/\).*/{
+ 	    s//\1/
+ 	    q
+ 	  }
+ 	  s/.*/./; q'`
+-      as_dir=$dirpart/$fdir; as_fn_mkdir_p
+-      # echo "creating $dirpart/$file"
+-      echo '# dummy' > "$dirpart/$file"
+-    done
++    { echo "$as_me:$LINENO: cd "$am_dirpart" \
++      && sed -e '/# am--include-marker/d' "$am_filepart" \
++        | $MAKE -f - am--depfiles" >&5
++   (cd "$am_dirpart" \
++      && sed -e '/# am--include-marker/d' "$am_filepart" \
++        | $MAKE -f - am--depfiles) >&5 2>&5
++   ac_status=$?
++   echo "$as_me:$LINENO: \$? = $ac_status" >&5
++   (exit $ac_status); } || am_rc=$?
+   done
++  if test $am_rc -ne 0; then
++    { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
++$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
++as_fn_error $? "Something went wrong bootstrapping makefile fragments
++    for automatic dependency tracking.  If GNU make was not used, consider
++    re-running the configure script with MAKE=\"gmake\" (or whatever is
++    necessary).  You can also try re-running configure with the
++    '--disable-dependency-tracking' option to at least be able to build
++    the package (albeit without support for automatic dependency tracking).
++See \`config.log' for more details" "$LINENO" 5; }
++  fi
++  { am_dirpart=; unset am_dirpart;}
++  { am_filepart=; unset am_filepart;}
++  { am_mf=; unset am_mf;}
++  { am_rc=; unset am_rc;}
++  rm -f conftest-deps.mk
+ }
+  ;;
+     "libtool":C)

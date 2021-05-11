@@ -23,8 +23,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from six import iteritems
 
 from sage.matrix.constructor import Matrix
 from sage.rings.all import ZZ, QQ, GF
@@ -127,7 +125,7 @@ def setprint_s(X, toplevel=False):
         return '{' + ', '.join(sorted(setprint_s(x) for x in X)) + '}'
     elif isinstance(X, dict):
         return '{' + ', '.join(sorted(setprint_s(key) + ': ' + setprint_s(val)
-                                      for key, val in iteritems(X))) + '}'
+                                      for key, val in X.items())) + '}'
     elif isinstance(X, str):
         if toplevel:
             return X
@@ -300,13 +298,13 @@ def make_regular_matroid_from_matroid(matroid):
         for f in C.difference([e]):
             A[dB[f], dNB[e]] = 1
     # Change some entries from -1 to 1
-    entries = BipartiteGraph(A.transpose()).edges(labels=False)
-    while len(entries) > 0:
+    entries = list(BipartiteGraph(A.transpose()).edges(labels=False, sort=False))
+    while entries:
         L = [G.shortest_path(u, v) for u, v in entries]
         mindex, minval = min(enumerate(L), key=lambda x: len(x[1]))
 
         # if minval = 0, there is an edge not spanned by the current subgraph. Its entry is free to be scaled any way.
-        if len(minval) > 0:
+        if len(minval) > 0:  # DUBIOUS !!
             # Check the subdeterminant
             S = frozenset(L[mindex])
             rows = []
@@ -360,6 +358,7 @@ def get_nonisomorphic_matroids(MSet):
             OutSet.append(M)
     return OutSet
 
+
 def spanning_forest(M):
     r"""
     Return a list of edges of a spanning forest of the bipartite
@@ -385,23 +384,24 @@ def spanning_forest(M):
     # Given a matrix, produce a spanning tree
     G = Graph()
     m = M.ncols()
-    for (x,y) in M.dict():
-        G.add_edge(x+m,y)
+    for (x, y) in M.dict():
+        G.add_edge(x + m, y)
     T = []
     # find spanning tree in each component
     for component in G.connected_components():
         spanning_tree = kruskal(G.subgraph(component))
-        for (x,y,z) in spanning_tree:
+        for (x, y, z) in spanning_tree:
             if x < m:
                 t = x
                 x = y
                 y = t
-            T.append((x-m,y))
+            T.append((x - m, y))
     return T
+
 
 def spanning_stars(M):
     r"""
-    Returns the edges of a connected subgraph that is a union of
+    Return the edges of a connected subgraph that is a union of
     all edges incident some subset of vertices.
 
     INPUT:
@@ -423,20 +423,20 @@ def spanning_stars(M):
 
     G = Graph()
     m = M.ncols()
-    for (x,y) in M.dict():
-        G.add_edge(x+m,y)
+    for x, y in M.dict():
+        G.add_edge(x + m, y)
 
-    delta = (M.nrows()+m)**0.5
+    delta = (M.nrows() + m)**0.5
     # remove low degree vertices
     H = []
     # candidate vertices
     V_0 = set([])
     d = 0
-    while G.order()>0:
-        (x,d) = min(G.degree_iterator(labels=True),key=itemgetter(1))
+    while G.order():
+        x, d = min(G.degree_iterator(labels=True), key=itemgetter(1))
         if d < delta:
             V_0.add(x)
-            H.extend(G.edges_incident(x,False))
+            H.extend(G.edges_incident(x, False))
             G.delete_vertex(x)
         else:
             break
@@ -446,9 +446,9 @@ def spanning_stars(M):
     G2 = G.copy()
     # set of picked vertices
     V_1 = set([])
-    while G2.order()>0:
+    while G2.order():
         # choose vertex with maximum degree in G2
-        (x,d) = max(G2.degree_iterator(labels=True),key=itemgetter(1))
+        x, d = max(G2.degree_iterator(labels=True), key=itemgetter(1))
         V_1.add(x)
         G2.delete_vertices(G2.neighbors(x))
         G2.delete_vertex(x)
@@ -457,18 +457,18 @@ def spanning_stars(M):
     G2 = Graph()
     for v in V_1:
         for u in G.neighbors(v):
-            G2.add_edge(u,v)
+            G2.add_edge(u, v)
 
     V = V_0 | V_1
     # compute a spanning tree
     T = spanning_forest(M)
-    for (x,y) in T:
-        if not x in V and not y in V:
+    for x, y in T:
+        if x not in V and y not in V:
             V.add(v)
 
     for v in V:
-        if G.has_vertex(v): # some vertices are not in G
-            H.extend(G.edges_incident(v,False))
+        if G.has_vertex(v):  # some vertices are not in G
+            H.extend(G.edges_incident(v, False))
 
     # T contain all edges in some spanning tree
     T = []
@@ -477,10 +477,11 @@ def spanning_stars(M):
             t = x
             x = y
             y = t
-        T.append((x-m,y))
+        T.append((x - m, y))
     return T
 
 # Partial fields and lifting
+
 
 def lift_cross_ratios(A, lift_map=None):
     r"""
@@ -537,10 +538,14 @@ def lift_cross_ratios(A, lift_map=None):
         [6 1 0 0 1]
         [0 6 3 6 0]
         sage: Z = lift_cross_ratios(A, to_sixth_root_of_unity)
-        sage: Z
+        sage: Z # py2
         [ 1  0  1  1  1]
         [ 1  1  0  0  z]
         [ 0  1 -z -1  0]
+        sage: Z # py3
+        [ 1  0  1  1  1]
+        [ 1  1  0  0  z]
+        [ 0 -1  z  1  0]
         sage: M = LinearMatroid(reduced_matrix = A)
         sage: sorted(M.cross_ratios())
         [3, 5]
@@ -551,7 +556,7 @@ def lift_cross_ratios(A, lift_map=None):
         True
 
     """
-    for s, t in iteritems(lift_map):
+    for s, t in lift_map.items():
         source_ring = s.parent()
         target_ring = t.parent()
         break
@@ -560,7 +565,7 @@ def lift_cross_ratios(A, lift_map=None):
     plus_one2 = target_ring(1)
     minus_one2 = target_ring(-1)
 
-    G = Graph([((r,0),(c,1),(r,c)) for r,c in A.nonzero_positions()])
+    G = Graph([((r, 0), (c, 1), (r, c)) for r, c in A.nonzero_positions()])
     # write the entries of (a scaled version of) A as products of cross ratios of A
     T = set()
     for C in G.connected_components():
@@ -568,7 +573,7 @@ def lift_cross_ratios(A, lift_map=None):
     # - fix a tree of the support graph G to units (= empty dict, product of 0 terms)
     F = {entry[2]: dict() for entry in T}
     W = set(G.edge_iterator()) - set(T)
-    H = G.subgraph(edges = T)
+    H = G.subgraph(edges=T)
     while W:
         # - find an edge in W to process, closing a circuit in H which is induced in G
         edge = W.pop()
@@ -588,11 +593,11 @@ def lift_cross_ratios(A, lift_map=None):
         entries = []
         for i in range(len(path) - 1):
             v = path[i]
-            w = path[i+1]
+            w = path[i + 1]
             if v[1] == 0:
-                entries.append((v[0],w[0]))
+                entries.append((v[0], w[0]))
             else:
-                entries.append((w[0],v[0]))
+                entries.append((w[0], v[0]))
         # - compute the cross ratio `cr` of this whirl
         cr = source_ring(A[entry])
         div = True
@@ -611,24 +616,24 @@ def lift_cross_ratios(A, lift_map=None):
             cr = -cr
             if cr != plus_one1:
                 monomial[cr] = 1
-            if  minus_one1 in monomial:
+            if minus_one1 in monomial:
                 monomial[minus_one1] = monomial[minus_one1] + 1
             else:
                 monomial[minus_one1] = 1
 
         if cr != plus_one1 and cr not in lift_map:
-            raise ValueError("Input matrix has a cross ratio "+str(cr)+", which is not in the lift_map")
+            raise ValueError("Input matrix has a cross ratio " + str(cr) + ", which is not in the lift_map")
         # - write the entry as a product of cross ratios of A
         div = True
         for entry2 in entries:
             if div:
-                for cr, degree in iteritems(F[entry2]):
+                for cr, degree in F[entry2].items():
                     if cr in monomial:
-                        monomial[cr] = monomial[cr]+ degree
+                        monomial[cr] = monomial[cr] + degree
                     else:
                         monomial[cr] = degree
             else:
-                for cr, degree in iteritems(F[entry2]):
+                for cr, degree in F[entry2].items():
                     if cr in monomial:
                         monomial[cr] = monomial[cr] - degree
                     else:
@@ -640,9 +645,9 @@ def lift_cross_ratios(A, lift_map=None):
 
     # compute each entry of Z as the product of lifted cross ratios
     Z = Matrix(target_ring, A.nrows(), A.ncols())
-    for entry, monomial in iteritems(F):
+    for entry, monomial in F.items():
         Z[entry] = plus_one2
-        for cr,degree in iteritems(monomial):
+        for cr, degree in monomial.items():
             if cr == minus_one1:
                 Z[entry] = Z[entry] * (minus_one2**degree)
             else:
@@ -708,20 +713,22 @@ def lift_map(target):
     if target == "sru":
         R = GF(7)
         z = ZZ['z'].gen()
-        S = NumberField(z*z-z+1, 'z')
+        S = NumberField(z * z - z + 1, 'z')
         z = S(z)
         return {R.one(): S.one(), R(3): z, R(3)**(-1): z**5}
 
     if target == "dyadic":
         R = GF(11)
-        return {R(1):QQ(1), R(-1):QQ(-1), R(2):QQ(2), R(6): QQ((1, 2))}
+        return {R(1): QQ(1), R(-1): QQ(-1), R(2): QQ(2), R(6): QQ((1, 2))}
 
     if target == "gm":
         R = GF(19)
         t = QQ['t'].gen()
-        G = NumberField(t*t-t-1, 't')
-        return { R(1): G(1), R(5): G(t), R(1)/R(5): G(1)/G(t), R(-5): G(-t),
-            R(-5)**(-1): G(-t)**(-1), R(5)**2: G(t)**2, R(5)**(-2): G(t)**(-2) }
+        G = NumberField(t * t - t - 1, 't')
+        return {R(1): G(1), R(5): G(t),
+                R(1) / R(5): G(1) / G(t), R(-5): G(-t),
+                R(-5)**(-1): G(-t)**(-1), R(5)**2: G(t)**2,
+                R(5)**(-2): G(t)**(-2)}
 
     raise NotImplementedError(target)
 
@@ -747,14 +754,13 @@ def split_vertex(G, u, v=None, edges=None):
 
         sage: from sage.matroids.utilities import split_vertex
         sage: G = graphs.BullGraph()
-        sage: split_vertex(G, u = 1, v = 'a', edges = [(1, 3)])
+        sage: split_vertex(G, u=1, v=55, edges=[(1, 3)])
         Traceback (most recent call last):
         ...
         ValueError: the edges are not all incident with u
-        sage: split_vertex(G, u = 1, v = 'a', edges = [(1, 3, None)])
-        sage: G.edges()
-        [(0, 1, None), (0, 2, None), (1, 2, None), (2, 4, None), (3, 'a', None)]
-
+        sage: split_vertex(G, u=1, v=55, edges=[(1, 3, None)])
+        sage: list(G.edges(sort=True))
+        [(0, 1, None), (0, 2, None), (1, 2, None), (2, 4, None), (3, 55, None)]
     """
     if v is None:
         v = G.add_vertex()

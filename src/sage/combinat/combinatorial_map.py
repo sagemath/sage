@@ -191,7 +191,6 @@ def combinatorial_map_wrapper(f=None, order=None, name=None):
 
         sage: def major_index(p):
         ....:     return p.major_index()
-        ....:
         sage: major_index
         <function major_index at ...>
         sage: combinatorial_map(major_index)
@@ -219,7 +218,7 @@ class CombinatorialMap(object):
     """
     def __init__(self, f, order=None, name=None):
         """
-        Constructor for combinatorial maps
+        Constructor for combinatorial maps.
 
         EXAMPLES::
 
@@ -227,7 +226,6 @@ class CombinatorialMap(object):
             sage: def f(x):
             ....:     "doc of f"
             ....:     return x
-            ....:
             sage: x = combinatorial_map(f); x
             Combinatorial map: f
             sage: x.__doc__
@@ -257,8 +255,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation)
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: p = Permutation([1,3,2,4])
             sage: p.left_tableau.__repr__()
             'Combinatorial map: Robinson-Schensted insertion tableau'
@@ -272,8 +271,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation)
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: p = Permutation([1,3,2,4])
             sage: cm = p.left_tableau; cm
             Combinatorial map: Robinson-Schensted insertion tableau
@@ -293,8 +293,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation)
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: p = Permutation([1,3,2,4])
             sage: p.left_tableau #indirect doctest
             Combinatorial map: Robinson-Schensted insertion tableau
@@ -309,8 +310,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation)
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: p = Permutation([1,3,2,4])
             sage: cm = type(p).left_tableau; cm
             Combinatorial map: Robinson-Schensted insertion tableau
@@ -335,8 +337,9 @@ class CombinatorialMap(object):
         EXAMPLES::
 
             sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-            sage: import imp
-            sage: _ = imp.reload(sage.combinat.permutation)
+            sage: from imp import reload        # py2
+            sage: from importlib import reload  # py3
+            sage: _ = reload(sage.combinat.permutation)
             sage: from sage.combinat.permutation import Permutation
             sage: pi = Permutation([1,3,2])
             sage: f = pi.reverse
@@ -400,8 +403,9 @@ def combinatorial_maps_in_class(cls):
     EXAMPLES::
 
         sage: sage.combinat.combinatorial_map.combinatorial_map = sage.combinat.combinatorial_map.combinatorial_map_wrapper
-        sage: import imp
-        sage: _ = imp.reload(sage.combinat.permutation)
+        sage: from imp import reload        # py2
+        sage: from importlib import reload  # py3
+        sage: _ = reload(sage.combinat.permutation)
         sage: from sage.combinat.combinatorial_map import combinatorial_maps_in_class
         sage: p = Permutation([1,3,2,4])
         sage: cmaps = combinatorial_maps_in_class(p)

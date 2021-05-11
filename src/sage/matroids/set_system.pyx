@@ -16,19 +16,18 @@ AUTHORS:
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, check_reallocarray, sig_free
-include 'sage/data_structures/bitset.pxi'
+from sage.data_structures.bitset_base cimport *
 
 # SetSystem
 
@@ -293,7 +292,7 @@ cdef class SetSystem:
         bitset_init(self._subsets[self._len], self._bitset_size)
         bitset_clear(self._subsets[self._len])
         for x in X:
-            bitset_add(self._subsets[self._len], self._idx[x])
+            bitset_add(self._subsets[self._len], <mp_bitcnt_t> self._idx[x])
         self._len += 1
 
     cdef inline _subset(self, long k):
@@ -480,7 +479,7 @@ cdef class SetSystem:
         EP.append(ep)
         return EP, hash(tuple(eh))
 
-    cdef _distinguish(self, v):
+    cdef _distinguish(self, Py_ssize_t v):
         """
         Helper method for partition methods below.
         """
@@ -668,7 +667,7 @@ cdef class SetSystem:
             sage: S._isomorphism(S)
             {}
         """
-        cdef long l, p
+        cdef long l, p, v
         if SP is None or OP is None:
             SP, SEP, sh = self._equitable_partition()
             OP, OEP, oh = other._equitable_partition()
@@ -738,6 +737,7 @@ cdef class SetSystem:
             sage: any(M.is_field_isomorphism(N, p) for p in Permutations(range(6)))
             False
         """
+        cdef long v
         if SP is None or OP is None:
             SP, SEP, sh = self._equitable_partition()
             OP, OEP, oh = other._equitable_partition()

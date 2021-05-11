@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Conductor and reduction types for genus 2 curves
 
@@ -31,7 +32,6 @@ and for people to modify the C source code however they want.
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object import SageObject
 from sage.rings.all import ZZ, QQ, PolynomialRing
@@ -53,7 +53,7 @@ class ReductionData(SageObject):
 
     The first line contains information about the stable reduction
     after field extension. Here are the meanings of the symbols of
-    stable reduction :
+    stable reduction:
 
     (I) The stable reduction is smooth (i.e. the curve has potentially
     good reduction).
@@ -139,8 +139,8 @@ class ReductionData(SageObject):
        `\QQ_p`. The fact is that the minimal discriminant
        may change after unramified extension. One can show however that,
        at worst, the change will stabilize after a quadratic unramified
-       extension (Q. Liu : "Modeles entiers de courbes hyperelliptiques
-       sur un corps de valuation discrete", Trans. AMS 348 (1996),
+       extension (Q. Liu : "Modèles entiers de courbes hyperelliptiques
+       sur un corps de valuation discrète", Trans. AMS 348 (1996),
        4577-4610, Section 7.2, Proposition 4).
     """
     def __init__(self, pari_result, P, Q, minimal_equation, minimal_disc,

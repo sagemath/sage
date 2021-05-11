@@ -1,0 +1,19 @@
+if [ -z "$SAGE_LOCAL" ]; then
+    echo >&2 "SAGE_LOCAL undefined ... exiting"
+    echo >&2 "Maybe run 'sage --sh'?"
+    exit 1
+fi
+
+widgets_ver=`cat package-version.txt`
+
+if [ $? -ne 0 ]; then
+    echo "Error determining which jupyter-widgets version to install ... exiting"
+    exit 1
+fi
+
+jupyter labextension install "@jupyter-widgets/jupyterlab-manager@$widgets_ver"
+
+if [ $? -ne 0 ]; then
+    echo "Error installing jupyter-widgets extension into jupyterlab ... exiting"
+    exit 1
+fi

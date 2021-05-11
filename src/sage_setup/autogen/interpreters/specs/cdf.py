@@ -161,9 +161,6 @@ class CDFInterpreter(StackInterpreter):
             import sage.rings.complex_double
             cdef object CDF = sage.rings.complex_double.CDF
 
-            cdef extern from "solaris_fixes.h":
-                pass
-
             cdef extern from "complex.h":
                 cdef double creal(double_complex)
                 cdef double cimag(double_complex)

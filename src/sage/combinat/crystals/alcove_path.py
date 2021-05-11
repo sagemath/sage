@@ -21,7 +21,6 @@ Nicolas Thiery.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -383,7 +382,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
 
         One can compute all vertices of the crystal by finding all the
         admissible subsets of the `\lambda`-chain  (see method
-        is_admissible, for definition).  We use the breath first
+        is_admissible, for definition).  We use the breadth first
         search algorithm.
 
         .. WARNING::
@@ -445,7 +444,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
                         l.append((temp,x[1]+[j]))
             if lst2 == []:
                 break
-            else :
+            else:
                 lst = lst2
 
         return [ [] ] + [i[1] for i in l]
@@ -512,7 +511,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
             sage: C = crystals.AlcovePaths(['A',2],[1,1]); C
             Highest weight crystal of alcove paths of type ['A', 2] and weight Lambda[1] + Lambda[2]
-            sage: roots = sorted(list(C._R._root_lattice.positive_roots())); roots
+            sage: roots = sorted(C._R._root_lattice.positive_roots()); roots
             [alpha[1], alpha[1] + alpha[2], alpha[2]]
             sage: r1 = C._R(roots[0],0); r1
             (alpha[1], 0)
@@ -898,15 +897,13 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         J = list(self.value)
         positions, gi = self._gi(i)
 
-        m=max(gi)
-        m_index = len(gi)-1-list(reversed(gi)).index(m) # last max in gi
+        m = max(gi)
+        m_index = len(gi)-1-list(reversed(gi)).index(m)  # last max in gi
 
-
-        if finite_cartan_type and i==0 :
+        if finite_cartan_type and i == 0:
             M = Integer(m)/2 + Integer(1)/2
         else:
             M = Integer(m)/2 - Integer(1)/2
-
 
         KR_test = finite_cartan_type and i==0 and m_index < len(gi) - 1
         KR_test = KR_test and M >= 1
@@ -1023,17 +1020,15 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
         J = list(self.value)
         positions, gi = self._gi(i)
 
-        m=max(gi)
+        m = max(gi)
         m_index=gi.index(m)
 
-
-        if finite_cartan_type and i==0 :
+        if finite_cartan_type and i == 0:
 
             # python doesn't handle fractions natively
             M = Integer(m)/2 + Integer(1)/2
         else:
             M = Integer(m)/2 - Integer(1)/2
-
 
         # boolean determining when to move a folding in KR case
         KR_test = finite_cartan_type and i == 0

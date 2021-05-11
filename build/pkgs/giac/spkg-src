@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -x
 #
 # Script to prepare a GIAC spkg for Sage.  This script is only for the
 # package maintainer, not for building GIAC during a Sage install.
@@ -13,14 +13,15 @@ fi
 # Exit on failure
 set -e
 
-VERSION="1.5.0"
-VERSIONREV="37"
+VERSION="1.6.0"
+VERSIONREV="47"
+PATCHSUFFIX="p2"
 
 # The upstream tarball name is: giac"$SOURCEORIG".tar.gz
 SOURCEORIG=_"$VERSION"-"$VERSIONREV"
 
 # The name of the output file without tar.gz or tar.bz2 extension
-OUTPUTFILEBASENAME="$SAGE_DISTFILES"/giac-"$VERSION"."$VERSIONREV"
+OUTPUTFILEBASENAME="$SAGE_DISTFILES"/giac-"$VERSION"."$VERSIONREV""$PATCHSUFFIX"
 
 # Testing if the output file already exist in one of gz or bz2 format:
 if [ -f "$OUTPUTFILEBASENAME".tar.gz -o -f "$OUTPUTFILEBASENAME".tar.bz2 ] ; then
@@ -28,8 +29,9 @@ if [ -f "$OUTPUTFILEBASENAME".tar.gz -o -f "$OUTPUTFILEBASENAME".tar.bz2 ] ; the
     exit 1
 fi
 
-# Build a temporary working dir. (subdir of SAGE_DISTFILES)
-TARGET=$(mktemp -d -p"$SAGE_DISTFILES")
+# Build a temporary working dir. (preferably, a subdir of SAGE_DISTFILES)
+TARGET=$(mktemp -d -p"$SAGE_DISTFILES" 2>/dev/null || mktemp -d)
+echo "Working in $TARGET"
 ORIGDIR=`pwd`
 cd "$TARGET"
 
@@ -43,6 +45,9 @@ tar -xzf giac"$SOURCEORIG".tar.gz
 
 # rename top sourcedir
 mv giac-"$VERSION" src
+
+# remove unnecessary files
+rm -rf src/doc/pari/*.html
 
 # removing french html doc, but keep keywords, and working makefiles.
 # NB: the french html doc is huge and not GPL.
@@ -63,16 +68,27 @@ touch html_mtt
 touch html_vall
 #
 
-
 # building giac source tarball for the spkg
-cd ../../../
-tar -cj src -f "$OUTPUTFILEBASENAME".tar.bz2
+cd ../../
 
+# get rid of micropython
+rm -rf micropython*
+sed -i.bak 's/micropython-[^ ]*//' Makefile.am configure.ac
 
+for a in "$SAGE_ROOT"/build/pkgs/giac/patches/autotools/*.patch; do
+    patch -p1 < $a
+done
+autoreconf -fi
+
+cd ..
+tar -cjf "$OUTPUTFILEBASENAME".tar.bz2 src
 
 # cleaning extracted dir.
 cd ..
-rm -rf "$TARGET"
+### rm -rf "$TARGET"
 
 # going back to starting dir
 cd "$ORIGDIR"
+#$SAGE_ROOT/sage -package update giac "$VERSION"."$VERSIONREV""$PATCHSUFFIX"
+echo "$VERSION"."$VERSIONREV""$PATCHSUFFIX" > build/pkgs/giac/package-version.txt
+$SAGE_ROOT/sage -package fix-checksum giac

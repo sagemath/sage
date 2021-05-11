@@ -27,8 +27,9 @@ Functions, Classes and Methods
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
-from six.moves import range
+
+from sage.misc.cachefunc import cached_method
+from sage.structure.sage_object import SageObject
 
 
 def repr_short_to_parent(s):
@@ -57,6 +58,8 @@ def repr_short_to_parent(s):
         Symbolic Ring
         sage: repr_short_to_parent('NN')
         Non negative integer semiring
+        sage: repr_short_to_parent('UU')
+        Group of Roots of Unity
 
     TESTS::
 
@@ -64,14 +67,30 @@ def repr_short_to_parent(s):
         Traceback (most recent call last):
         ...
         ValueError: Cannot create a parent out of 'abcdef'.
-        > *previous* NameError: name 'abcdef' is not defined
+        > *previous* ValueError: unknown specification abcdef
+        > *and* NameError: name 'abcdef' is not defined
     """
+    from sage.groups.misc_gps.argument_groups import ArgumentGroup
     from sage.misc.sage_eval import sage_eval
-    try:
-        P = sage_eval(s)
-    except Exception as e:
+
+    def extract(s):
+        try:
+            return ArgumentGroup(specification=s)
+        except Exception as e:
+            e_ag = e
+            e_ag.__traceback__ = None
+
+        try:
+            return sage_eval(s)
+        except Exception as e:
+            e_se = e
+            e_se.__traceback__ = None
+
         raise combine_exceptions(
-            ValueError("Cannot create a parent out of '%s'." % (s,)), e)
+            ValueError("Cannot create a parent out of '%s'." % (s,)),
+            e_ag, e_se)
+
+    P = extract(s)
 
     from sage.misc.lazy_import import LazyImport
     if type(P) is LazyImport:
@@ -105,6 +124,10 @@ def parent_to_repr_short(P):
         'QQ'
         sage: parent_to_repr_short(SR)
         'SR'
+        sage: parent_to_repr_short(RR)
+        'RR'
+        sage: parent_to_repr_short(CC)
+        'CC'
         sage: parent_to_repr_short(ZZ['x'])
         'ZZ[x]'
         sage: parent_to_repr_short(QQ['d, k'])
@@ -118,6 +141,7 @@ def parent_to_repr_short(P):
         sage: parent_to_repr_short(Zmod(3)['g'])
         'Univariate Polynomial Ring in g over Ring of integers modulo 3'
     """
+    from sage.rings.all import RR, CC, RIF, CIF, RBF, CBF
     from sage.rings.integer_ring import ZZ
     from sage.rings.rational_field import QQ
     from sage.symbolic.ring import SR
@@ -125,12 +149,18 @@ def parent_to_repr_short(P):
     from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
     from sage.rings.power_series_ring import is_PowerSeriesRing
     def abbreviate(P):
-        if P is ZZ:
-            return 'ZZ'
-        elif P is QQ:
-            return 'QQ'
-        elif P is SR:
-            return 'SR'
+        try:
+            return P._repr_short_()
+        except AttributeError:
+            pass
+        abbreviations = {ZZ: 'ZZ', QQ: 'QQ', SR: 'SR',
+                         RR: 'RR', CC: 'CC',
+                         RIF: 'RIF', CIF: 'CIF',
+                         RBF: 'RBF', CBF: 'CBF'}
+        try:
+            return abbreviations[P]
+        except KeyError:
+            pass
         raise ValueError('Cannot abbreviate %s.' % (P,))
 
     poly = is_PolynomialRing(P) or is_MPolynomialRing(P)
@@ -304,12 +334,17 @@ def repr_op(left, op, right=None, latex=False):
 
         sage: print(repr_op(r'\frac{1}{2}', '^', 'c', latex=True))
         \left(\frac{1}{2}\right)^c
+
+    ::
+
+        sage: repr_op('Arg', '_', 'Symbolic Ring')
+        'Arg_(Symbolic Ring)'
     """
     left = str(left)
     right = str(right) if right is not None else ''
 
     def add_parentheses(s, op):
-        if op == '^':
+        if op in ('^', '_'):
             signals = ('^', '/', '*', '-', '+', ' ')
         else:
             return s
@@ -401,7 +436,7 @@ def substitute_raise_exception(element, e):
                 (element, element.parent())), e)
 
 
-def merge_overlapping(A, B, key=None):
+def bidirectional_merge_overlapping(A, B, key=None):
     r"""
     Merge the two overlapping tuples/lists.
 
@@ -424,62 +459,62 @@ def merge_overlapping(A, B, key=None):
 
         Suppose we can decompose the list `A=ac` and `B=cb` with
         lists `a`, `b`, `c`, where `c` is nonempty. Then
-        :func:`merge_overlapping` returns the pair `(acb, acb)`.
+        :func:`bidirectional_merge_overlapping` returns the pair `(acb, acb)`.
 
         Suppose a ``key``-function is specified and `A=ac_A` and
         `B=c_Bb`, where the list of keys of the elements of `c_A`
         equals the list of keys of the elements of `c_B`. Then
-        :func:`merge_overlapping` returns the pair `(ac_Ab, ac_Bb)`.
+        :func:`bidirectional_merge_overlapping` returns the pair `(ac_Ab, ac_Bb)`.
 
         After unsuccessfully merging `A=ac` and `B=cb`,
         a merge of `A=ca` and `B=bc` is tried.
 
     TESTS::
 
-        sage: from sage.rings.asymptotic.misc import merge_overlapping
+        sage: from sage.rings.asymptotic.misc import bidirectional_merge_overlapping
         sage: def f(L, s):
         ....:     return list((ell, s) for ell in L)
         sage: key = lambda k: k[0]
-        sage: merge_overlapping(f([0..3], 'a'), f([5..7], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([0..3], 'a'), f([5..7], 'b'), key)
         Traceback (most recent call last):
         ...
         ValueError: Input does not have an overlap.
-        sage: merge_overlapping(f([0..2], 'a'), f([4..7], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([0..2], 'a'), f([4..7], 'b'), key)
         Traceback (most recent call last):
         ...
         ValueError: Input does not have an overlap.
-        sage: merge_overlapping(f([4..7], 'a'), f([0..2], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([4..7], 'a'), f([0..2], 'b'), key)
         Traceback (most recent call last):
         ...
         ValueError: Input does not have an overlap.
-        sage: merge_overlapping(f([0..3], 'a'), f([3..4], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([0..3], 'a'), f([3..4], 'b'), key)
         ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a'), (4, 'b')],
          [(0, 'a'), (1, 'a'), (2, 'a'), (3, 'b'), (4, 'b')])
-        sage: merge_overlapping(f([3..4], 'a'), f([0..3], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([3..4], 'a'), f([0..3], 'b'), key)
         ([(0, 'b'), (1, 'b'), (2, 'b'), (3, 'a'), (4, 'a')],
          [(0, 'b'), (1, 'b'), (2, 'b'), (3, 'b'), (4, 'a')])
-        sage: merge_overlapping(f([0..1], 'a'), f([0..4], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([0..1], 'a'), f([0..4], 'b'), key)
         ([(0, 'a'), (1, 'a'), (2, 'b'), (3, 'b'), (4, 'b')],
          [(0, 'b'), (1, 'b'), (2, 'b'), (3, 'b'), (4, 'b')])
-        sage: merge_overlapping(f([0..3], 'a'), f([0..1], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([0..3], 'a'), f([0..1], 'b'), key)
         ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a')],
          [(0, 'b'), (1, 'b'), (2, 'a'), (3, 'a')])
-        sage: merge_overlapping(f([0..3], 'a'), f([1..3], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([0..3], 'a'), f([1..3], 'b'), key)
         ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a')],
          [(0, 'a'), (1, 'b'), (2, 'b'), (3, 'b')])
-        sage: merge_overlapping(f([1..3], 'a'), f([0..3], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([1..3], 'a'), f([0..3], 'b'), key)
         ([(0, 'b'), (1, 'a'), (2, 'a'), (3, 'a')],
          [(0, 'b'), (1, 'b'), (2, 'b'), (3, 'b')])
-        sage: merge_overlapping(f([0..6], 'a'), f([3..4], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([0..6], 'a'), f([3..4], 'b'), key)
         ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a'), (4, 'a'), (5, 'a'), (6, 'a')],
          [(0, 'a'), (1, 'a'), (2, 'a'), (3, 'b'), (4, 'b'), (5, 'a'), (6, 'a')])
-        sage: merge_overlapping(f([0..3], 'a'), f([1..2], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([0..3], 'a'), f([1..2], 'b'), key)
         ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a')],
          [(0, 'a'), (1, 'b'), (2, 'b'), (3, 'a')])
-        sage: merge_overlapping(f([1..2], 'a'), f([0..3], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([1..2], 'a'), f([0..3], 'b'), key)
         ([(0, 'b'), (1, 'a'), (2, 'a'), (3, 'b')],
          [(0, 'b'), (1, 'b'), (2, 'b'), (3, 'b')])
-        sage: merge_overlapping(f([1..3], 'a'), f([1..3], 'b'), key)
+        sage: bidirectional_merge_overlapping(f([1..3], 'a'), f([1..3], 'b'), key)
         ([(1, 'a'), (2, 'a'), (3, 'a')],
          [(1, 'b'), (2, 'b'), (3, 'b')])
     """
@@ -534,6 +569,142 @@ def merge_overlapping(A, B, key=None):
     raise ValueError('Input does not have an overlap.')
 
 
+def bidirectional_merge_sorted(A, B, key=None):
+    r"""
+    Merge the two tuples/lists, keeping the orders provided by them.
+
+    INPUT:
+
+    - ``A`` -- a list or tuple (type has to coincide with type of ``B``).
+
+    - ``B`` -- a list or tuple (type has to coincide with type of ``A``).
+
+    - ``key`` -- (default: ``None``) a function. If ``None``, then the
+      identity is used.  This ``key``-function applied on an element
+      of the list/tuple is used for comparison. Thus elements with the
+      same key are considered as equal.
+
+    .. NOTE::
+
+        The two tuples/list need to overlap, i.e. need at least
+        one key in common.
+
+    OUTPUT:
+
+    A pair of lists containing all elements totally ordered. (The first
+    component uses ``A`` as a merge base, the second component ``B``.)
+
+    If merging fails, then a
+    :python:`RuntimeError<library/exceptions.html#exceptions.RuntimeError>`
+    is raised.
+
+    TESTS::
+
+        sage: from sage.rings.asymptotic.misc import bidirectional_merge_sorted
+        sage: def f(L, s):
+        ....:     return list((ell, s) for ell in L)
+        sage: key = lambda k: k[0]
+        sage: bidirectional_merge_sorted(f([0..3], 'a'), f([5..7], 'b'), key)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: no common elements
+        sage: bidirectional_merge_sorted(f([0..2], 'a'), f([4..7], 'b'), key)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: no common elements
+        sage: bidirectional_merge_sorted(f([4..7], 'a'), f([0..2], 'b'), key)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: no common elements
+        sage: bidirectional_merge_sorted(f([0..3], 'a'), f([3..4], 'b'), key)
+        ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a'), (4, 'b')],
+         [(0, 'a'), (1, 'a'), (2, 'a'), (3, 'b'), (4, 'b')])
+        sage: bidirectional_merge_sorted(f([3..4], 'a'), f([0..3], 'b'), key)
+        ([(0, 'b'), (1, 'b'), (2, 'b'), (3, 'a'), (4, 'a')],
+         [(0, 'b'), (1, 'b'), (2, 'b'), (3, 'b'), (4, 'a')])
+        sage: bidirectional_merge_sorted(f([0..1], 'a'), f([0..4], 'b'), key)
+        ([(0, 'a'), (1, 'a'), (2, 'b'), (3, 'b'), (4, 'b')],
+         [(0, 'b'), (1, 'b'), (2, 'b'), (3, 'b'), (4, 'b')])
+        sage: bidirectional_merge_sorted(f([0..3], 'a'), f([0..1], 'b'), key)
+        ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a')],
+         [(0, 'b'), (1, 'b'), (2, 'a'), (3, 'a')])
+        sage: bidirectional_merge_sorted(f([0..3], 'a'), f([1..3], 'b'), key)
+        ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a')],
+         [(0, 'a'), (1, 'b'), (2, 'b'), (3, 'b')])
+        sage: bidirectional_merge_sorted(f([1..3], 'a'), f([0..3], 'b'), key)
+        ([(0, 'b'), (1, 'a'), (2, 'a'), (3, 'a')],
+         [(0, 'b'), (1, 'b'), (2, 'b'), (3, 'b')])
+        sage: bidirectional_merge_sorted(f([0..6], 'a'), f([3..4], 'b'), key)
+        ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a'), (4, 'a'), (5, 'a'), (6, 'a')],
+         [(0, 'a'), (1, 'a'), (2, 'a'), (3, 'b'), (4, 'b'), (5, 'a'), (6, 'a')])
+        sage: bidirectional_merge_sorted(f([0..3], 'a'), f([1..2], 'b'), key)
+        ([(0, 'a'), (1, 'a'), (2, 'a'), (3, 'a')],
+         [(0, 'a'), (1, 'b'), (2, 'b'), (3, 'a')])
+        sage: bidirectional_merge_sorted(f([1..2], 'a'), f([0..3], 'b'), key)
+        ([(0, 'b'), (1, 'a'), (2, 'a'), (3, 'b')],
+         [(0, 'b'), (1, 'b'), (2, 'b'), (3, 'b')])
+        sage: bidirectional_merge_sorted(f([1..3], 'a'), f([1..3], 'b'), key)
+        ([(1, 'a'), (2, 'a'), (3, 'a')],
+         [(1, 'b'), (2, 'b'), (3, 'b')])
+
+    ::
+
+        sage: bidirectional_merge_sorted(f([1, 2, 3], 'a'), f([1, 3], 'b'), key)
+        ([(1, 'a'), (2, 'a'), (3, 'a')],
+         [(1, 'b'), (2, 'a'), (3, 'b')])
+        sage: bidirectional_merge_sorted(f([1, 4, 5, 6], 'a'), f([1, 2, 3, 4, 6], 'b'), key)
+        ([(1, 'a'), (2, 'b'), (3, 'b'), (4, 'a'), (5, 'a'), (6, 'a')],
+         [(1, 'b'), (2, 'b'), (3, 'b'), (4, 'b'), (5, 'a'), (6, 'b')])
+        sage: bidirectional_merge_sorted(f([1, 2, 3, 4], 'a'), f([1, 3, 5], 'b'), key)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: sorting not unique
+        sage: bidirectional_merge_sorted(f([1, 2], 'a'), f([2, 1], 'b'), key)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: sorting in lists not compatible
+        sage: bidirectional_merge_sorted(f([1, 2, 4], 'a'), f([1, 3, 4], 'b'), key)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: sorting not unique
+    """
+    if key is None:
+        Akeys = A
+        Bkeys = B
+    else:
+        Akeys = tuple(key(a) for a in A)
+        Bkeys = tuple(key(b) for b in B)
+
+    matches = tuple((i, j)
+                    for i, a in enumerate(Akeys)
+                    for j, b in enumerate(Bkeys)
+                    if a == b)
+    if not matches:
+        raise RuntimeError('no common elements')
+
+    resultA = []
+    resultB = []
+    last = (0, 0)
+    end = (len(A), len(B))
+    for current in matches + (end,):
+        if not all(a <= b for a, b in zip(last, current)):
+            raise RuntimeError('sorting in lists not compatible')
+        if last[0] == current[0]:
+            resultA.extend(B[last[1]:current[1]])
+            resultB.extend(B[last[1]:current[1]])
+        elif last[1] == current[1]:
+            resultA.extend(A[last[0]:current[0]])
+            resultB.extend(A[last[0]:current[0]])
+        else:
+            raise RuntimeError('sorting not unique')
+        if current != end:
+            resultA.append(A[current[0]])
+            resultB.append(B[current[1]])
+            last = (current[0]+1, current[1]+1)
+
+    return (resultA, resultB)
+
+
 def log_string(element, base=None):
     r"""
     Return a representation of the log of the given element to the
@@ -561,48 +732,111 @@ def log_string(element, base=None):
     return 'log(%s%s)' % (element, basestr)
 
 
+def strip_symbolic(expression):
+    r"""
+    Return, if possible, the underlying (numeric) object of
+    the symbolic expression.
+
+    If ``expression`` is not symbolic, then ``expression`` is returned.
+
+    INPUT:
+
+    - ``expression`` -- an object
+
+    OUTPUT:
+
+    An object.
+
+    EXAMPLES::
+
+        sage: from sage.rings.asymptotic.misc import strip_symbolic
+        sage: strip_symbolic(SR(2)); _.parent()
+        2
+        Integer Ring
+        sage: strip_symbolic(SR(2/3)); _.parent()
+        2/3
+        Rational Field
+        sage: strip_symbolic(SR('x')); _.parent()
+        x
+        Symbolic Ring
+        sage: strip_symbolic(pi); _.parent()
+        pi
+        Symbolic Ring
+    """
+    from sage.structure.element import parent, Element
+    from sage.symbolic.ring import SymbolicRing
+
+    P = parent(expression)
+    if isinstance(P, SymbolicRing):
+        try:
+            stripped = expression.pyobject()
+            if isinstance(stripped, Element):
+                return stripped
+        except TypeError:
+            pass
+    return expression
+
+
 class NotImplementedOZero(NotImplementedError):
     r"""
     A special :python:`NotImplementedError<library/exceptions.html#exceptions.NotImplementedError>`
     which is raised when the result is O(0) which means 0
     for sufficiently large values of the variable.
     """
-    def __init__(self, data=None, var=None):
+    def __init__(self, asymptotic_ring=None, var=None, exact_part=0):
         r"""
         INPUT:
 
-        - ``data`` -- (default: ``None``) an :class:`AsymptoticRing` or a string.
+        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing` or ``None``.
 
         - ``var`` -- (default: ``None``) a string.
 
-        TESTS::
+        Either ``asymptotic_ring`` or ``var`` has to be specified.
+
+        - ``exact_part`` -- (default: ``0``) asymptotic expansion
+
+        EXAMPLES::
 
             sage: A = AsymptoticRing('n^ZZ', ZZ)
             sage: from sage.rings.asymptotic.misc import NotImplementedOZero
+
             sage: raise NotImplementedOZero(A)
             Traceback (most recent call last):
             ...
-            NotImplementedOZero: The error term in the result is O(0)
-            which means 0 for sufficiently large n.
-            sage: raise NotImplementedOZero('something')
-            Traceback (most recent call last):
-            ...
-            NotImplementedOZero: something
+            NotImplementedOZero: got O(0)
+            The error term O(0) means 0 for sufficiently large n.
+
             sage: raise NotImplementedOZero(var='m')
             Traceback (most recent call last):
             ...
-            NotImplementedOZero: The error term in the result is O(0)
-            which means 0 for sufficiently large m.
+            NotImplementedOZero: got O(0)
+            The error term O(0) means 0 for sufficiently large m.
+
+        TESTS::
+
+            sage: raise NotImplementedOZero(A, var='m')
+            Traceback (most recent call last):
+            ...
+            ValueError: specify either 'asymptotic_ring' or 'var'
+            sage: raise NotImplementedOZero()
+            Traceback (most recent call last):
+            ...
+            ValueError: specify either 'asymptotic_ring' or 'var'
         """
-        from .asymptotic_ring import AsymptoticRing
-        if isinstance(data, AsymptoticRing) or var is not None:
-            if var is None:
-                var = ', '.join(str(g) for g in data.gens())
-            message = ('The error term in the result is O(0) '
-                       'which means 0 for sufficiently '
-                       'large {}.'.format(var))
-        else:
-            message = data
+        if (asymptotic_ring is None) == (var is None):
+            raise ValueError("specify either 'asymptotic_ring' or 'var'")
+
+        if var is None:
+            var = ', '.join(str(g) for g in asymptotic_ring.gens())
+        message = ('got {}\n'.format(('{} + '.format(exact_part) if exact_part else '')
+                                     + 'O(0)') +
+                   'The error term O(0) '
+                   'means 0 for sufficiently large {}.'.format(var))
+
+        if asymptotic_ring is not None and isinstance(exact_part, int) and exact_part == 0:
+            exact_part = asymptotic_ring.zero()
+        self.exact_part = exact_part
+
         super(NotImplementedOZero, self).__init__(message)
 
 
@@ -737,3 +971,182 @@ def transform_category(category,
                              (category, A))
 
     return result
+
+
+class Locals(dict):
+    r"""
+    A frozen dictionary-like class for storing locals
+    of an :class:`~sage.rings.asymptotic.asymptotic_ring.AsymptoticRing`.
+
+    EXAMPLES::
+
+        sage: from sage.rings.asymptotic.misc import Locals
+        sage: locals = Locals({'a': 42})
+        sage: locals['a']
+        42
+
+    The object contains default values (see :meth:`default_locals`)
+    for some keys::
+
+        sage: locals['log']
+        <function log at 0x...>
+    """
+    def __getitem__(self, key):
+        r"""
+        Return an item.
+
+        TESTS::
+
+            sage: from sage.rings.asymptotic.misc import Locals
+            sage: locals = Locals()
+            sage: locals
+            {}
+            sage: locals['log']  # indirect doctest
+            <function log at 0x...>
+        """
+        try:
+            return super(Locals, self).__getitem__(key)
+        except KeyError as ke:
+            try:
+                return self.default_locals()[key]
+            except KeyError:
+                raise ke
+
+    def __setitem__(self, key, value):
+        r"""
+        Set an item.
+
+        This raises an error as the object is immutable.
+
+        TESTS::
+
+            sage: from sage.rings.asymptotic.misc import Locals
+            sage: locals = Locals()
+            sage: locals['a'] = 4  # indirect doctest
+            Traceback (most recent call last):
+            ...
+            TypeError: locals dictionary is frozen,
+            therefore does not support item assignment
+        """
+        raise TypeError('locals dictionary is frozen, therefore does not support item assignment')
+
+    @cached_method
+    def _data_(self):
+        r"""
+        Return stored data as tuple sorted by their keys.
+
+        TESTS::
+
+            sage: from sage.rings.asymptotic.misc import Locals
+            sage: locals = Locals({'a': 2, 'b': 1})
+            sage: locals._data_()
+            (('a', 2), ('b', 1))
+        """
+        return tuple(sorted(self.items(), key=lambda k_v: k_v[0]))
+
+    def __hash__(self):
+        r"""
+        Return a hash value.
+
+        TESTS::
+
+            sage: from sage.rings.asymptotic.misc import Locals
+            sage: locals = Locals({'a': 2, 'b': 1})
+            sage: hash(locals)  # random
+            -42
+        """
+        return hash(self._data_())
+
+    @cached_method
+    def default_locals(self):
+        r"""
+        Return the default locals used in
+        the :class:`~sage.rings.asymptotic.asymptotic_ring.AsymptoticRing`.
+
+        OUTPUT:
+
+        A dictionary.
+
+        EXAMPLES::
+
+            sage: from sage.rings.asymptotic.misc import Locals
+            sage: locals = Locals({'a': 2, 'b': 1})
+            sage: locals
+            {'a': 2, 'b': 1}
+            sage: locals.default_locals()
+            {'log': <function log at 0x...>}
+            sage: locals['log']
+            <function log at 0x...>
+        """
+        from sage.functions.log import log
+        return {
+            'log': log}
+
+
+class WithLocals(SageObject):
+    r"""
+    A class extensions for handling local values; see also
+    :class:`Locals`.
+
+    This is used in the
+    :class:`~sage.rings.asymptotic.asymptotic_ring.AsymptoticRing`.
+
+    EXAMPLES::
+
+        sage: A.<n> = AsymptoticRing('n^ZZ', QQ, locals={'a': 42})
+        sage: A.locals()
+        {'a': 42}
+    """
+    @staticmethod
+    def _convert_locals_(locals):
+        r"""
+        This helper method return data converted to :class:`Locals`.
+
+        TESTS::
+
+            sage: A.<n> = AsymptoticRing('n^ZZ', QQ)
+            sage: locals = A._convert_locals_({'a': 42}); locals
+            {'a': 42}
+            sage: type(locals)
+            <class 'sage.rings.asymptotic.misc.Locals'>
+        """
+        if locals is None:
+            return Locals()
+        else:
+            return Locals(locals)
+
+    def locals(self, locals=None):
+        r"""
+        Return the actual :class:`Locals` object to be used.
+
+        INPUT:
+
+        - ``locals`` -- an object
+
+          If ``locals`` is not ``None``, then a :class:`Locals` object
+          is created and returned.
+          If ``locals`` is ``None``, then a stored :class:`Locals` object,
+          if any, is returned. Otherwise, an empty (i.e. no values except
+          the default values)
+          :class:`Locals` object is created and returned.
+
+        OUTPUT:
+
+        A :class:`Locals` object.
+
+        TESTS::
+
+            sage: A.<n> = AsymptoticRing('n^ZZ', QQ, locals={'a': 42})
+            sage: A.locals()
+            {'a': 42}
+            sage: A.locals({'a': 41})
+            {'a': 41}
+            sage: A.locals({'b': -3})
+            {'b': -3}
+        """
+        if locals is None:
+            try:
+                locals = self._locals_
+            except AttributeError:
+                pass
+        return self._convert_locals_(locals)

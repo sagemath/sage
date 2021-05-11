@@ -11,8 +11,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-# python3
-from __future__ import division
 
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -97,7 +95,7 @@ class HallAlgebra(CombinatorialFreeModule):
         I_\mu \cdot I_\lambda = \sum_\nu P^{\nu}_{\mu, \lambda}(q) I_\nu,
 
     where `P^{\nu}_{\mu, \lambda}` is a Hall polynomial (see
-    :meth:`~sage.combinat.hall_polynomial.hall_polynomial`). The
+    :func:`~sage.combinat.hall_polynomial.hall_polynomial`). The
     unity of this algebra is `I_{\emptyset}`.
 
     The (classical) Hall algebra is also known as the Hall-Steinitz
@@ -118,7 +116,7 @@ class HallAlgebra(CombinatorialFreeModule):
     `n(\lambda) = \sum_i (i - 1) \lambda_i`.
 
     See section 2.3 in [Sch2006]_, and sections II.2 and III.3
-    in [Macdonald1995]_ (where our `I_{\lambda}` is called `u_{\lambda}`).
+    in [Mac1995]_ (where our `I_{\lambda}` is called `u_{\lambda}`).
 
     EXAMPLES::
 

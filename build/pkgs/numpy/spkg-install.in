@@ -1,0 +1,31 @@
+cd src
+
+set -e
+
+if [ `uname` = "Darwin" ]; then
+    unset ATLAS
+    unset BLAS
+    unset LAPACK
+else
+    export {ATLAS,PTATLAS,OPENBLAS,MKL,MKLROOT}=None
+    export LDFLAGS="${LDFLAGS} -shared"
+fi
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    # Trac #30643
+    export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
+fi
+
+python3 ../lapack_conf.py
+
+# Make sure that the fortran objects are compiled with -fPIC
+export FFLAGS="$FFLAGS -fPIC"
+export FCFLAGS="$FCFLAGS -fPIC"
+
+export NUMPY_FCONFIG="config_fc --noopt --noarch"
+
+################################################
+
+sdh_setup_bdist_wheel ${NUMPY_FCONFIG}
+
+sdh_store_and_pip_install_wheel .

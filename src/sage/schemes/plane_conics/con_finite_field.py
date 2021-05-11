@@ -6,8 +6,7 @@ AUTHORS:
 - Marco Streng (2010-07-20)
 
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -19,16 +18,18 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.all import PolynomialRing
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_finite_field
 from .con_field import ProjectiveConic_field
 
+
 class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_finite_field):
     r"""
     Create a projective plane conic curve over a finite field.
+
     See ``Conic`` for full documentation.
 
     EXAMPLES::
@@ -38,22 +39,23 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
         sage: Conic(X^2 + Y^2 - a*Z^2)
         Projective Conic Curve over Finite Field in a of size 3^2 defined by X^2 + Y^2 + (-a)*Z^2
 
-    TESTS::
+    ::
 
-        sage: K.<a> = FiniteField(4, 'a')
-        sage: Conic([a, 1, -1])._test_pickling()
+        sage: P.<X, Y, Z> = FiniteField(5)[]
+        sage: Conic(X^2 + Y^2 - 2*Z^2)
+        Projective Conic Curve over Finite Field of size 5 defined by X^2 + Y^2 - 2*Z^2
     """
     def __init__(self, A, f):
         r"""
         See ``Conic`` for full documentation.
 
-        EXAMPLES ::
+        TESTS::
 
-            sage: Conic([GF(3)(1), 1, 1])
-            Projective Conic Curve over Finite Field of size 3 defined by x^2 + y^2 + z^2
+            sage: conic = Conic([GF(7)(1), 1, -1]); conic
+            Projective Conic Curve over Finite Field of size 7 defined by x^2 + y^2 - z^2
+            sage: conic._test_pickling()
         """
         ProjectiveConic_field.__init__(self, A, f)
-
 
     def count_points(self, n):
         r"""
@@ -70,11 +72,10 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
         """
         F = self.base_ring()
         q = F.cardinality()
-        return [q**i+1 for i in range(1, n+1)]
+        return [q**i + 1 for i in range(1, n + 1)]
 
-
-    def has_rational_point(self, point = False, read_cache = True, \
-                           algorithm = 'default'):
+    def has_rational_point(self, point=False, read_cache=True,
+                           algorithm='default'):
         r"""
         Always returns ``True`` because self has a point defined over
         its finite base field `B`.
@@ -120,9 +121,9 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
             sage: m = [[F(b) for b in a] for a in l for F in [GF(2), GF(4, 'a'), GF(5), GF(9, 'a'), bigF, bigF2]]
             sage: m += [[F.random_element() for i in range(6)] for j in range(20) for F in [GF(5), bigF]]
             sage: c = [Conic(a) for a in m if a != [0,0,0,0,0,0]]
-            sage: assert all([C.has_rational_point() for C in c])
+            sage: assert all(C.has_rational_point() for C in c)
             sage: r = randrange(0, 5)
-            sage: assert all([C.defining_polynomial()(Sequence(C.has_rational_point(point = True)[1])) == 0 for C in c[r::5]])  # long time (1.4s on sage.math, 2013)
+            sage: assert all(C.defining_polynomial()(Sequence(C.has_rational_point(point = True)[1])) == 0 for C in c[r::5])  # long time (1.4s on sage.math, 2013)
         """
         if not point:
             return True
@@ -130,15 +131,12 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
             if self._rational_point is not None:
                 return True, self._rational_point
         B = self.base_ring()
-        s, pt = self.has_singular_point(point = True)
+        s, pt = self.has_singular_point(point=True)
         if s:
             return True, pt
         while True:
             x = B.random_element()
-            Y = PolynomialRing(B,'Y').gen()
-            r = self.defining_polynomial()([x,Y,1]).roots()
-            if len(r) > 0:
-                return True, self.point([x,r[0][0],B(1)])
-
-
-
+            Y = PolynomialRing(B, 'Y').gen()
+            r = self.defining_polynomial()([x, Y, 1]).roots()
+            if r:
+                return True, self.point([x, r[0][0], B(1)])

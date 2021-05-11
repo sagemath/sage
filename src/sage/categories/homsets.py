@@ -2,22 +2,19 @@
 r"""
 Homset categories
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
-from sage.misc.cachefunc import cached_method, cached_function
-from sage.misc.lazy_attribute import lazy_attribute
+from sage.misc.cachefunc import cached_method
 from sage.categories.category import Category, JoinCategory
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.covariant_functorial_construction import FunctorialConstructionCategory
 
-import sage.categories.category_with_axiom
 
 class HomsetsCategory(FunctorialConstructionCategory):
 

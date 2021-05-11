@@ -36,9 +36,9 @@ def RandomGNP(n, p, bint directed=False, bint loops=False):
 
     REFERENCES:
 
-    .. [1] \P. Erdos and A. Renyi. On Random Graphs, Publ.  Math. 6, 290 (1959).
+    - [ER1959]_
 
-    .. [2] \E. N. Gilbert. Random Graphs, Ann. Math.  Stat., 30, 1141 (1959).
+    - [Gil1959]_
 
     EXAMPLES::
 

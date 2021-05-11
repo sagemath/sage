@@ -9,8 +9,6 @@ Root system data for type A
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.rings.all import ZZ
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations

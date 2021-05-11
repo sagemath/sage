@@ -6,8 +6,6 @@ Routines for computing special values of L-functions
 - :func:`quadratic_L_function__exact` -- Exact values of the Dirichlet L-functions of quadratic characters at critical values
 - :func:`quadratic_L_function__numerical` -- Numerical values of the Dirichlet L-functions of quadratic characters in the domain of convergence
 """
-# python3
-from __future__ import division, print_function
 
 from sage.combinat.combinat import bernoulli_polynomial
 from sage.misc.functional import denominator
@@ -18,8 +16,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import is_RealField
-from sage.symbolic.constants import pi
-from sage.symbolic.all import I
+from sage.symbolic.constants import pi, I
 
 # ---------------- The Gamma Function  ------------------
 

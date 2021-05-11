@@ -1,4 +1,4 @@
-$(PYTHON) setuptools
+$(PYTHON) zlib freetype | $(PYTHON_TOOLCHAIN) pkgconf
 
 ----------
 All lines of this file are ignored except the first.

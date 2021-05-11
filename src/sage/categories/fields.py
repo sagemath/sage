@@ -20,7 +20,6 @@ from sage.categories.category_singleton import Category_contains_method_by_paren
 from sage.categories.euclidean_domains import EuclideanDomains
 from sage.categories.division_rings import DivisionRings
 
-import sage.rings.ring
 from sage.structure.element import coerce_binop
 
 class Fields(CategoryWithAxiom):
@@ -119,6 +118,7 @@ class Fields(CategoryWithAxiom):
             0
 
         """
+        import sage.rings.ring
         try:
             return self._contains_helper(x) or sage.rings.ring._is_Field(x)
         except Exception:
@@ -141,8 +141,8 @@ class Fields(CategoryWithAxiom):
             sage: P.<x> = QQ[]
             sage: Q = P.quotient(x^2+2)
             sage: Q.category()
-            Category of commutative no zero divisors quotients
-            of algebras over Rational Field
+            Category of commutative no zero divisors quotients of algebras
+             over (number fields and quotient fields and metric spaces)
             sage: F = Fields()
             sage: F._contains_helper(Q)
             False
@@ -304,13 +304,7 @@ class Fields(CategoryWithAxiom):
             ALGORITHM:
 
             This uses the extended Euclidean algorithm; see for example
-            [Cohen1996]_, Algorithm 3.2.2.
-
-            REFERENCES:
-
-            .. [Cohen1996] \H. Cohen, A Course in Computational Algebraic
-               Number Theory.  Graduate Texts in Mathematics 138.
-               Springer-Verlag, 1996.
+            [Coh1993]_, Algorithm 3.2.2.
 
             EXAMPLES::
 
@@ -518,6 +512,37 @@ class Fields(CategoryWithAxiom):
             from sage.modules.all import FreeModule
             return FreeModule(self, n)
 
+        def vector_space(self, *args, **kwds):
+            r"""
+            Gives an isomorphism of this field with a vector space over a subfield.
+
+            This method is an alias for ``free_module``, which may have more documentation.
+
+            INPUT:
+
+            - ``base`` -- a subfield or morphism into this field (defaults to the base field)
+
+            - ``basis`` -- a basis of the field as a vector space
+              over the subfield; if not given, one is chosen automatically
+
+            - ``map`` -- whether to return maps from and to the vector space
+
+            OUTPUT:
+
+            - ``V`` -- a vector space over ``base``
+            - ``from_V`` -- an isomorphism from ``V`` to this field
+            - ``to_V`` -- the inverse isomorphism from this field to ``V``
+
+            EXAMPLES::
+
+                sage: K.<a> = Qq(125)
+                sage: V, fr, to = K.vector_space()
+                sage: v = V([1,2,3])
+                sage: fr(v, 7)
+                (3*a^2 + 2*a + 1) + O(5^7)
+            """
+            return self.free_module(*args, **kwds)
+
     class ElementMethods:
         def euclidean_degree(self):
             r"""
@@ -534,7 +559,7 @@ class Fields(CategoryWithAxiom):
             """
             if self.is_zero():
                 raise ValueError("euclidean degree not defined for the zero element")
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.zero()
 
         def quo_rem(self, other):
@@ -600,7 +625,7 @@ class Fields(CategoryWithAxiom):
                 sage: gcd(15.0,12.0)
                 3.00000000000000
 
-            But for others floating point numbers, the gcd is just `0.0` or `1.0`::
+            But for other floating point numbers, the gcd is just `0.0` or `1.0`::
 
                 sage: gcd(3.2, 2.18)
                 1.00000000000000

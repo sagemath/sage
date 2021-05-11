@@ -29,15 +29,14 @@ Inductive valuations are originally discussed in [Mac1936I]_ and [Mac1936II]_.
 An introduction is also given in Chapter 4 of [Rüt2014]_.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2018 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .valuation import DiscreteValuation, InfiniteDiscretePseudoValuation
 from .developing_valuation import DevelopingValuation
@@ -530,8 +529,10 @@ class InductiveValuation(DevelopingValuation):
 
         """
         tester = self._tester(**options)
-        tester.assertTrue(isinstance(self, InfiniteInductiveValuation) != isinstance(self, FiniteInductiveValuation))
-        tester.assertTrue(isinstance(self, FinalInductiveValuation) != isinstance(self, NonFinalInductiveValuation))
+        tester.assertNotEqual(isinstance(self, InfiniteInductiveValuation),
+                              isinstance(self, FiniteInductiveValuation))
+        tester.assertNotEqual(isinstance(self, FinalInductiveValuation),
+                              isinstance(self, NonFinalInductiveValuation))
 
 
 class FiniteInductiveValuation(InductiveValuation, DiscreteValuation):
@@ -674,7 +675,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         INPUT:
 
-        - ``G`` -- a sqaurefree monic non-constant integral polynomial ``G``
+        - ``G`` -- a squarefree monic non-constant integral polynomial ``G``
           which is not an :meth:`equivalence unit <InductiveValuation.is_equivalence_unit>`
 
         - ``principal_part_bound`` -- an integer or ``None`` (default:
@@ -721,28 +722,28 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         some linear key polynomials in the above example::
 
             sage: v0 = GaussValuation(R, v)
-            sage: V1 = v0.mac_lane_step(f); V1
-            [[ Gauss valuation induced by 2-adic valuation, v(x) = 3/5 ],
-             [ Gauss valuation induced by 2-adic valuation, v(x) = 2/5 ],
-             [ Gauss valuation induced by 2-adic valuation, v(x) = 3 ],
-             [ Gauss valuation induced by 2-adic valuation, v(x) = 11/9 ]]
+            sage: V1 = sorted(v0.mac_lane_step(f)); V1
+            [[ Gauss valuation induced by 2-adic valuation, v(x) = 2/5 ],
+             [ Gauss valuation induced by 2-adic valuation, v(x) = 3/5 ],
+             [ Gauss valuation induced by 2-adic valuation, v(x) = 11/9 ],
+             [ Gauss valuation induced by 2-adic valuation, v(x) = 3 ]]
 
         The computation of MacLane approximants would now perform a MacLane
         step on each of these branches, note however, that a direct call to
         this method might produce some unexpected results::
 
-            sage: V1[0].mac_lane_step(f)
+            sage: V1[1].mac_lane_step(f)
             [[ Gauss valuation induced by 2-adic valuation, v(x) = 3/5, v(x^5 + 8) = 5 ],
              [ Gauss valuation induced by 2-adic valuation, v(x) = 3/5, v(x^10 + 8*x^5 + 64) = 7 ],
              [ Gauss valuation induced by 2-adic valuation, v(x) = 3 ],
              [ Gauss valuation induced by 2-adic valuation, v(x) = 11/9 ]]
 
-        Note how this detected the two augmentations of ``V1[0]`` but also two
+        Note how this detected the two augmentations of ``V1[1]`` but also two
         other valuations that we had seen in the previous step and that are
-        greater than ``V1[0]``. To ignore such trivial augmentations, we can
+        greater than ``V1[1]``. To ignore such trivial augmentations, we can
         set ``allow_equivalent_key``::
 
-            sage: V1[0].mac_lane_step(f, allow_equivalent_key=False)
+            sage: V1[1].mac_lane_step(f, allow_equivalent_key=False)
             [[ Gauss valuation induced by 2-adic valuation, v(x) = 3/5, v(x^5 + 8) = 5 ],
              [ Gauss valuation induced by 2-adic valuation, v(x) = 3/5, v(x^10 + 8*x^5 + 64) = 7 ]]
 
@@ -776,7 +777,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             raise ValueError("G must not be constant")
 
         from itertools import islice
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
         verbose("Augmenting %s towards %s" % (self, G), level=10)
 
         if not G.is_monic():
@@ -1284,7 +1285,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         valuation, phi_divides, F = self._equivalence_reduction(f, coefficients=coefficients, valuations=valuations, degree_bound=degree_bound)
         F = F.factor()
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
         verbose("%s factors as %s = %s in reduction"%(f, F.prod(), F), level=20)
 
         unit = self.domain().one()
@@ -1380,7 +1381,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         degree = self.effective_degree(f)
         if degree == 0:
-            raise ValueError("equivalence units can not have a minimal representative")
+            raise ValueError("equivalence units cannot have a minimal representative")
 
         e = list(self.coefficients(f))[degree]
         h = self.equivalence_reciprocal(e).map_coefficients(lambda c:_lift_to_maximal_precision(c))
@@ -1528,7 +1529,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
                 g = self._eliminate_denominators(f)
             except ValueError:
                 continue
-            tester.assertTrue(g.parent() is self.domain())
+            tester.assertIs(g.parent(), self.domain())
             tester.assertTrue(w.is_equivalent(f, g))
 
     def _test_lift_to_key(self, **options):
@@ -1594,7 +1595,8 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         tester = self._tester(**options)
         S = tester.some_elements(self.domain().some_elements())
         for f in S:
-            if f.is_constant(): continue
+            if f.is_constant():
+                continue
             is_equivalence_irreducible = self.is_equivalence_irreducible(f)
             F = self.equivalence_decomposition(f)
             tester.assertEqual(is_equivalence_irreducible, len(F)==0 or (len(F)==1 and F[0][1]==1))
@@ -1608,7 +1610,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
 class FinalInductiveValuation(InductiveValuation):
     r"""
-    Abstract base class for an inductive valuation which can not be augmented further.
+    Abstract base class for an inductive valuation which cannot be augmented further.
 
     TESTS::
 
@@ -1618,7 +1620,6 @@ class FinalInductiveValuation(InductiveValuation):
         sage: from sage.rings.valuation.inductive_valuation import FinalInductiveValuation
         sage: isinstance(w, FinalInductiveValuation)
         True
-
     """
 
 

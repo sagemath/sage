@@ -27,8 +27,8 @@ REFERENCES:
 .. SEEALSO::
 
     There are also tables of link and knot invariants at
-    http://www.indiana.edu/~knotinfo/
-    and http://www.indiana.edu/~linkinfo/.
+    https://www.indiana.edu/~knotinfo/
+    and https://www.indiana.edu/~linkinfo/.
 
 AUTHORS:
 
@@ -46,10 +46,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
-
-import six
-from six.moves import range
 
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
@@ -313,6 +309,15 @@ class Link(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: invalid input: data must be either a list or a braid
+
+        Verify that :trac:`29692` is fixed::
+
+            sage: B = BraidGroup(5)
+            sage: L = Link(B([3,4,3,-4]))
+            sage: L
+            Link with 1 component represented by 4 crossings
+            sage: L.braid()
+            s0*s1*s0*s1^-1
         """
         if isinstance(data, list):
             if len(data) != 2 or not all(isinstance(i, list) for i in data[0]):
@@ -341,20 +346,7 @@ class Link(SageObject):
             from sage.groups.braid import Braid, BraidGroup
             if isinstance(data, Braid):
                 # Remove all unused strands
-                support = sorted(set(abs(x) for x in data.Tietze()))
-                i = 0
-                cur = 1
-                while i < len(support):
-                    if support[i] == cur:
-                        cur += 1
-                        i += 1
-                    elif support[i] == cur + 1:
-                        support.insert(i, cur+1)
-                        cur += 2
-                        i += 2
-                    else:
-                        cur = support[i]
-                        i += 1
+                support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
                 d = {}
                 for i,s in enumerate(support):
                     d[s] = i+1
@@ -362,7 +354,7 @@ class Link(SageObject):
                 if not support:
                     B = BraidGroup(2)
                 else:
-                    B = BraidGroup(len(support)+1)
+                    B = BraidGroup(len(support))
                 self._braid = B([d[x] for x in data.Tietze()])
                 self._oriented_gauss_code = None
                 self._pd_code = None
@@ -430,14 +422,14 @@ class Link(SageObject):
         elif presentation == 'gauss_code':
             res = []
             for comp in self.gauss_code():
-                if not any(i<0 for i in comp):
+                if not any(i < 0 for i in comp):
                     res.append(comp)
                 else:
                     rescom = []
                     par = []
                     for i in comp:
                         par.append(i)
-                        if i<0:
+                        if i < 0:
                             rescom.append(copy(par))
                             par = [i]
                     rescom[0] = par + rescom[0]
@@ -595,6 +587,12 @@ class Link(SageObject):
         Return a braid representation of ``self``.
 
         OUTPUT: an element in the braid group
+
+        .. WARNING::
+
+            For the unknot with no crossings, this returns the identity
+            of the braid group with 2 strands because this disregards
+            strands with no crossings.
 
         EXAMPLES::
 
@@ -802,7 +800,7 @@ class Link(SageObject):
             tails[C[2]] = C
             a = C[2]
             D = C
-            while not a in heads:
+            while a not in heads:
                 next_crossing = [x for x in pd_code if a in x and x != D]
                 if not next_crossing:
                     heads[a] = D
@@ -826,7 +824,7 @@ class Link(SageObject):
                 if a in x:
                     D = x
                     break
-            while not a in heads:
+            while a not in heads:
                 tails[a] = D
                 for x in pd_code:
                     if a in x and x != D:
@@ -1028,12 +1026,14 @@ class Link(SageObject):
             G = Graph()
             for j, cr in enumerate(crossings):
                 n = nmax + j
-                if not v[j]: # For negative crossings, we go from undercrossings to the left
+                if not v[j]:
+                    # For negative crossings, we go from undercrossings to the left
                     G.add_edge((cr[3], cr[0], n), cr[0])
                     G.add_edge((cr[3], cr[0], n), cr[3])
                     G.add_edge((cr[1], cr[2], n), cr[2])
                     G.add_edge((cr[1], cr[2], n), cr[1])
-                else: # positive crossings, from undercrossing to the right
+                else:
+                    # positive crossings, from undercrossing to the right
                     G.add_edge((cr[0], cr[1], n), cr[0])
                     G.add_edge((cr[0], cr[1], n), cr[1])
                     G.add_edge((cr[2], cr[3], n), cr[2])
@@ -1044,10 +1044,10 @@ class Link(SageObject):
             jmin = writhe + iindex - len(sm)
             jmax = writhe + iindex + len(sm)
             smoothings.append((tuple(v), sm, iindex, jmin, jmax))
-        states = [] # we got all the smoothings, now find all the states
+        states = []  # we got all the smoothings, now find all the states
         for sm in smoothings:
             for k in range(len(sm[1])+1):
-                for circpos in combinations(sorted(sm[1]), k): # Add each state
+                for circpos in combinations(sorted(sm[1]), k):  # Add each state
                     circneg = sm[1].difference(circpos)
                     j = writhe + sm[2] + len(circpos) - len(circneg)
                     states.append((sm[0], tuple(sorted(circneg)), tuple(circpos), sm[2], j))
@@ -1089,7 +1089,7 @@ class Link(SageObject):
         ncross = len(crossings)
         states = [(_0, set(_1), set(_2), _3, _4)
                   for (_0, _1, _2, _3, _4) in self._enhanced_states()]
-        bases = {} # arrange them by (i,j)
+        bases = {}  # arrange them by (i,j)
         for st in states:
             i, j = st[3], st[4]
             if j == height:
@@ -1109,7 +1109,7 @@ class Link(SageObject):
                         difs = [index for index,value in enumerate(V1[0]) if value != V20[index]]
                         if len(difs) == 1 and not (V2[2].intersection(V1[1]) or V2[1].intersection(V1[2])):
                             m[ii,jj] = (-1)**sum(V2[0][x] for x in range(difs[0]+1, ncross))
-                            #Here we have the matrix constructed, now we have to put it in the dictionary of complexes
+                            # Here we have the matrix constructed, now we have to put it in the dictionary of complexes
             else:
                 m = matrix(ring, len(bases[(i,j)]), 0)
             complexes[i] = m.transpose()
@@ -1161,7 +1161,42 @@ class Link(SageObject):
             sage: K = Link(b)
             sage: K.khovanov_homology(degree = 2)
             {2: {2: 0}, 4: {2: Z}, 6: {2: Z}}
+
+        TESTS:
+
+        Check that :trac:`31001` is fixed::
+
+            sage: L = Link([])
+            sage: L.khovanov_homology()
+            {-1: {0: Z}, 1: {0: Z}}
+            sage: L.khovanov_homology(height=-1)
+            {-1: {0: Z}}
+            sage: L.khovanov_homology(height=0)
+            {}
+            sage: L.khovanov_homology(QQ, height=1)
+            {1: {0: Vector space of dimension 1 over Rational Field}}
+            sage: L.khovanov_homology(GF(2), degree=0)
+            {-1: {0: Vector space of dimension 1 over Finite Field of size 2},
+             1: {0: Vector space of dimension 1 over Finite Field of size 2}}
+            sage: L.khovanov_homology(degree=1)
+            {}
+            sage: L.khovanov_homology(degree=0, height=1)
+            {1: {0: Z}}
+            sage: L.khovanov_homology(degree=1, height=1)
+            {}
         """
+        if not self.pd_code():  # special case for the unknot with no crossings
+            from sage.homology.homology_group import HomologyGroup
+            homs = {-1: {0: HomologyGroup(1, ring, [0])},
+                    1: {0: HomologyGroup(1, ring, [0])}}
+            if height is not None:
+                if height not in homs:
+                    return {}
+                homs = {height: homs[height]}
+            if degree is not None:
+                homs = {ht: {degree: homs[ht][degree]} for ht in homs if degree in homs[ht]}
+            return homs
+
         if height is not None:
             heights = [height]
         else:
@@ -1340,7 +1375,7 @@ class Link(SageObject):
             else:
                 crossing_dic = {}
 
-            pd = list(six.itervalues(crossing_dic))
+            pd = list(crossing_dic.values())
             self._pd_code = pd
             return self._pd_code
 
@@ -1577,39 +1612,25 @@ class Link(SageObject):
         """
         x = self._braid_word_components_vector()
         h = self._homology_generators()
-        hl = len(h)
-        A = matrix(ZZ, hl, hl)
         indices = [i for i, hi in enumerate(h) if hi]
-        for i in indices:
+        N = len(indices)
+        A = matrix(ZZ, N, N, 0)
+        for ni, i in enumerate(indices):
             hi = h[i]
-            for j in range(i, hl):
-                if i == j:
-                    A[i, j] = -(x[i] + x[hi]).sign()
-                elif hi > h[j]:
-                    A[i, j] = 0
-                    A[j, i] = 0
-                elif hi < j:
-                    A[i, j] = 0
-                    A[j, i] = 0
-                elif hi == j:
+            A[ni, ni] = -(x[i] + x[hi]).sign()
+            for nj in range(ni + 1, N):
+                j = indices[nj]
+                if hi > h[j] or hi < j:
+                    continue
+                if hi == j:
                     if x[j] > 0:
-                        A[i, j] = 0
-                        A[j, i] = 1
+                        A[nj, ni] = 1
                     else:
-                        A[i, j] = -1
-                        A[j, i] = 0
-                elif abs(abs(x[i]) - abs(x[j])) > 1:
-                    A[i, j] = 0
+                        A[ni, nj] = -1
                 elif abs(x[i]) - abs(x[j]) == 1:
-                    A[i, j] = 0
-                    A[j, i] = -1
+                    A[nj, ni] = -1
                 elif abs(x[j]) - abs(x[i]) == 1:
-                    A[i, j] = 1
-                    A[j, i] = 0
-                else:  # for debugging
-                    A[i, j] = 2
-                    A[j, i] = 2
-        A = A.matrix_from_rows_and_columns(indices, indices)
+                    A[ni, nj] = 1
         A.set_immutable()
         return A
 
@@ -1767,9 +1788,9 @@ class Link(SageObject):
              (1 - \omega) V + (1 - \omega^{-1}) V^{t},
 
         where `V` is the :meth:`Seifert matrix <seifert_matrix>`,
-        as explained on page 122 of [Livi1993]_.
+        as explained on page 122 of [Liv1993]_.
 
-        According to [Conway2018]_, this is also known as the
+        According to [Con2018]_, this is also known as the
         Levine-Tristram signature, the equivariant signature or the
         Tristram-Levine signature.
 
@@ -1782,15 +1803,6 @@ class Link(SageObject):
             sage: omega = QQbar.zeta(3)
             sage: K.omega_signature(omega)
             -2
-
-        REFERENCES:
-
-        .. [Livi1993] Charles Livingston, *Knot Theory*, Carus Mathematical
-           Monographs, number 24.
-
-        .. [Conway2018] Anthony Conway, *Notes On The Levine-Tristram
-           Signature Function*, July 2018
-           http://www.unige.ch/math/folks/conway/Notes/LevineTristramSurvey.pdf
         """
         from sage.rings.qqbar import QQbar
         omega = QQbar(omega)
@@ -1867,6 +1879,7 @@ class Link(SageObject):
         t = R.gen()
         seifert_matrix = self.seifert_matrix()
         f = (seifert_matrix - t * seifert_matrix.transpose()).determinant()
+        # could we use a charpoly here ? or faster determinant ?
         if f != 0:
             exp = f.exponents()
             return t ** ((-max(exp) - min(exp)) // 2) * f
@@ -1914,6 +1927,17 @@ class Link(SageObject):
         We look at the Gauss code if the sign is alternating, ``True``
         is returned else the knot is not alternating ``False`` is returned.
 
+        .. WARNING::
+
+            This does not check if a knot admits an alternating diagram
+            or not. Thus, this term is used differently than in some of
+            the literature, such as in Hoste-Thistlethwaite table.
+
+        .. NOTE::
+
+            Links with more than one component are considered to not
+            be alternating (knots) even when such a diagram exists.
+
         EXAMPLES::
 
             sage: B = BraidGroup(4)
@@ -1932,10 +1956,32 @@ class Link(SageObject):
             sage: L = Link(B([-1,2,-1,2]))
             sage: L.is_alternating()
             True
+
+        We give the `5_2` knot with an alternating diagram and a
+        non-alternating diagram::
+
+            sage: K5_2 = Link([[1, 4, 2, 5], [3, 8, 4, 9], [5, 10, 6, 1],
+            ....:              [7, 2, 8, 3], [9, 6, 10, 7]])
+            sage: K5_2.is_alternating()
+            True
+
+            sage: K5_2b = Link(K5_2.braid())
+            sage: K5_2b.is_alternating()
+            False
+
+        TESTS:
+
+        Check that :trac:`31001` is fixed::
+
+            sage: L = Knot([])
+            sage: L.is_alternating()
+            True
         """
         if not self.is_knot():
             return False
         x = self.gauss_code()
+        if not x:
+            return True
         s = [Integer(i).sign() for i in x[0]]
         return (s == [(-1) ** (i + 1) for i in range(len(x[0]))]
                 or s == [(-1) ** i for i in range(len(x[0]))])
@@ -2014,7 +2060,7 @@ class Link(SageObject):
         result = []
         # detect looped segments. They must be their own seifert circles
         for a in available_segments:
-            if any(C.count(a)>1 for C in self.pd_code()):
+            if any(C.count(a) > 1 for C in self.pd_code()):
                 result.append([a])
         # remove the looped segments from the available
         for a in result:
@@ -2027,7 +2073,7 @@ class Link(SageObject):
             else:
                 C = heads[a]
                 par = []
-                while not a in par:
+                while a not in par:
                     par.append(a)
                     posnext = C[(C.index(a) + 1) % 4]
                     if tails[posnext] == C and not [posnext] in result:
@@ -2115,7 +2161,7 @@ class Link(SageObject):
         while available_edges:
             edge = available_edges.pop()
             region = []
-            while not edge in region:
+            while edge not in region:
                 region.append(edge)
                 if edge > 0:
                     cros = heads[edge]
@@ -2284,7 +2330,7 @@ class Link(SageObject):
         If ``skein_normalization`` if ``False``, this returns an element
         in the symbolic ring as the Jones polynomial of the link might
         have fractional powers when the link is not a knot. Otherwise the
-        result is a Laurant polynomial in ``variab``.
+        result is a Laurent polynomial in ``variab``.
 
         EXAMPLES:
 
@@ -2377,6 +2423,8 @@ class Link(SageObject):
             1
             sage: b.jones_polynomial()
             -sqrt(t) - 1/sqrt(t)
+            sage: L.jones_polynomial()
+            1
             sage: L.jones_polynomial(algorithm='statesum')
             1
 
@@ -2390,12 +2438,17 @@ class Link(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: bad value of algorithm
+
+        Check that :trac:`31001` is fixed::
+
+            sage: L.jones_polynomial()
+            1
         """
         if algorithm == 'statesum':
             poly = self._bracket()
             t = poly.parent().gens()[0]
             writhe = self.writhe()
-            jones = (poly * (-t)**(-3 * writhe))
+            jones = poly * (-t)**(-3 * writhe)
             # Switch to the variable A to have the result agree with the output
             # of the jonesrep algorithm
             A = LaurentPolynomialRing(ZZ, 'A').gen()
@@ -2412,7 +2465,14 @@ class Link(SageObject):
                 # We force the result to be in the symbolic ring because of the expand
                 return jones(SR(variab)**(ZZ(1)/ZZ(4))).expand()
         elif algorithm == 'jonesrep':
-            return self.braid().jones_polynomial(variab, skein_normalization)
+            braid = self.braid()
+            # Special case for the trivial knot with no crossings
+            if not braid.Tietze():
+                if skein_normalization:
+                    return LaurentPolynomialRing(ZZ, 'A').one()
+                else:
+                    return SR.one()
+            return braid.jones_polynomial(variab, skein_normalization)
 
         raise ValueError("bad value of algorithm")
 
@@ -2612,6 +2672,12 @@ class Link(SageObject):
             sage: L2.homfly_polynomial('a', 'z', 'az')
             a*z^-1 - a^-1*z^-1
 
+        Check that :trac:`30346` is fixed::
+
+            sage: L = Link([])
+            sage: L.homfly_polynomial()
+            1
+
         REFERENCES:
 
         - :wikipedia:`HOMFLY_polynomial`
@@ -2631,6 +2697,8 @@ class Link(SageObject):
             return fact
         s = '{}'.format(self.number_of_components())
         ogc = self.oriented_gauss_code()
+        if not ogc[0]:
+            return L.one()
         for comp in ogc[0]:
             s += ' {}'.format(len(comp))
             for cr in comp:
@@ -2655,7 +2723,159 @@ class Link(SageObject):
         else:
             raise ValueError('normalization must be either `lm` or `az`')
 
-    def plot(self, gap=0.1, component_gap=0.5, solver=None, **kwargs):
+    def _coloring_matrix(self, n):
+        r"""
+        Return the coloring matrix of ``self``.
+
+        The coloring matrix is a matrix over a prime field
+        whose right kernel gives the colorings of the diagram.
+
+        INPUT:
+
+        - ``n`` -- the number of colors to consider
+
+        If ``n`` is not a prime number, it is replaced by the smallest
+        prime number that is larger than ``n``.
+
+        OUTPUT:
+
+        a matrix over the smallest prime field with cardinality
+        larger than or equal to ``n``.
+
+        EXAMPLES::
+
+            sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
+            sage: K._coloring_matrix(3)
+            [2 2 2]
+            [2 2 2]
+            [2 2 2]
+            sage: K8 = Knot([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
+            sage: K8._coloring_matrix(4)
+            [2 0 4 4]
+            [4 4 2 0]
+            [0 4 4 2]
+            [4 2 0 4]
+
+        REFERENCES:
+
+        - :wikipedia:`Fox_n-coloring`
+        """
+        from sage.arith.misc import next_prime
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField
+        p = next_prime(n - 1)
+        F = FiniteField(p)
+        arcs = self.arcs(presentation='pd')
+        di = len(arcs)
+        M = matrix(F, di, di)
+        crossings = self.pd_code()
+        for i in range(di):
+            crossing = crossings[i]
+            for j in range(di):
+                arc = arcs[j]
+                if crossing[1] in arc:
+                    M[i, j] += 2
+                if crossing[0] in arc:
+                    M[i, j] -= 1
+                if crossing[2] in arc:
+                    M[i, j] -= 1
+        return M
+
+    def is_colorable(self, n):
+        r"""
+        Return whether the link is ``n``-colorable.
+
+        A link is ``n``-colorable if its arcs can be painted with
+        ``n`` colours, labeled from ``0`` to ``n - 1``, in such a way
+        that at any crossing, the average of the indices of the
+        undercrossings equals twice the index of the overcrossing.
+
+        INPUT:
+
+        - ``n`` -- the number of colors to consider
+
+        If ``n`` is not a prime number, it is replaced by the smallest
+        prime number that is larger than ``n``.
+
+        EXAMPLES:
+
+        We show that the trefoil knot is 3-colorable::
+
+            sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
+            sage: K.is_colorable(3)
+            True
+
+        But the figure eight knot is not::
+
+            sage: K8 = Link([[[1, -2, 4, -3, 2, -1, 3, -4]], [1, 1, -1, -1]])
+            sage: K8.is_colorable(3)
+            False
+
+        REFERENCES:
+
+        - :wikipedia:`Fox_n-coloring`
+
+        - Chapter 3 of [Liv1993]_
+
+        .. SEEALSO:: :meth:`colorings`
+        """
+        return self._coloring_matrix(n).nullity() > 1
+
+    def colorings(self, n):
+        r"""
+        Return the ``n``-colorings of ``self``.
+
+        INPUT:
+
+        - ``n`` -- the number of colors to consider
+
+        If ``n`` is not a prime number, it is replaced by the smallest
+        prime number that is larger than ``n``.
+
+        OUTPUT:
+
+        a list with the colorings. Each coloring is represented as
+        a dictionary that maps a tuple of the edges forming each arc
+        (as in the PD code) to the index of the corresponding color.
+
+        EXAMPLES::
+
+            sage: K = Link([[[1, -2, 3, -1, 2, -3]], [1, 1, 1]])
+            sage: K.colorings(3)
+            [{(1, 2): 0, (3, 4): 1, (5, 6): 2},
+             {(1, 2): 0, (3, 4): 2, (5, 6): 1},
+             {(1, 2): 1, (3, 4): 0, (5, 6): 2},
+             {(1, 2): 1, (3, 4): 2, (5, 6): 0},
+             {(1, 2): 2, (3, 4): 0, (5, 6): 1},
+             {(1, 2): 2, (3, 4): 1, (5, 6): 0}]
+            sage: K.pd_code()
+            [[4, 1, 5, 2], [2, 5, 3, 6], [6, 3, 1, 4]]
+            sage: K.arcs('pd')
+            [[1, 2], [3, 4], [5, 6]]
+
+        REFERENCES:
+
+        - :wikipedia:`Fox_n-coloring`
+
+        - Chapter 3 of [Liv1993]_
+
+        .. SEEALSO:: :meth:`is_colorable`
+        """
+        from sage.arith.misc import next_prime
+        p = next_prime(n-1)
+        M = self._coloring_matrix(n)
+        K = M.right_kernel()
+        res = set([])
+        arcs = self.arcs('pd')
+        for coloring in K:
+            colors = sorted(set(coloring))
+            if len(colors) == p:
+                colors = {b: a for a, b in enumerate(colors)}
+                res.add(tuple(colors[c] for c in coloring))
+        return [{tuple(arc): col for arc, col in zip(arcs, c)}
+                for c in sorted(res)]
+
+    def plot(self, gap=0.1, component_gap=0.5, solver=None,
+             color='blue', **kwargs):
         r"""
         Plot ``self``.
 
@@ -2669,6 +2889,9 @@ class Link(SageObject):
 
         - ``solver`` -- the linear solver to use, see
           :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+
+        - ``color`` -- (default: 'blue') a color or a coloring (as returned
+          by :meth:`colorings`.
 
         The usual keywords for plots can be used here too.
 
@@ -2795,6 +3018,23 @@ class Link(SageObject):
             L = Link([[[-1,2,-3,1,-2,3], [4,-5,6,-4,5,-6]], [1,1,1,1,1,1]])
             sphinx_plot(L.plot())
 
+        If a coloring is passed, the different arcs are plotted with
+        the corresponding colors::
+
+            sage: B = BraidGroup(4)
+            sage: b = B([1,2,3,1,2,-1,-3,2,3])
+            sage: L = Link(b)
+            sage: L.plot(color=L.colorings(3)[0])
+            Graphics object consisting of ... graphics primitives
+
+        .. PLOT::
+            :width: 300 px
+
+            B = BraidGroup(4)
+            b = B([1, 2, 3, 1, 2, -1, -3, 2, 3])
+            L = Link(b)
+            sphinx_plot(L.plot(color=L.colorings(3)[0]))
+
         TESTS:
 
         Check that :trac:`20315` is fixed::
@@ -2802,13 +3042,23 @@ class Link(SageObject):
             sage: L = Link([[2,1,4,5], [5,6,7,3], [6,4,1,9], [9,2,3,7]])
             sage: L.plot(solver='GLPK')
             Graphics object consisting of ... graphics primitives
-            sage: L.plot(solver='Coin')    # optional - cbc
+            sage: L.plot(solver='Coin')    # optional - sage_numerical_backends_coin
             Graphics object consisting of ... graphics primitives
             sage: L.plot(solver='CPLEX')   # optional - CPLEX
             Graphics object consisting of ... graphics primitives
             sage: L.plot(solver='Gurobi')  # optional - Gurobi
             Graphics object consisting of ... graphics primitives
         """
+        if type(color) is not dict:
+            coloring = {int(i): color for i in set(flatten(self.pd_code()))}
+        else:
+            from sage.plot.colors import rainbow
+            ncolors = len(set(color.values()))
+            arcs = self.arcs()
+            if len(color) != len(arcs):
+                raise ValueError("Number of entries in the color vector must match the number of arcs")
+            rainb = rainbow(ncolors)
+            coloring = {int(i): rainb[color[tuple(j)]] for j in arcs for i in j}
         comp = self._isolated_components()
         # Handle isolated components individually
         if len(comp) > 1:
@@ -2827,11 +3077,9 @@ class Link(SageObject):
                     P.xdata = [p + xtra for p in P.xdata]
             return P1 + P2
 
-        if not 'color' in kwargs:
-            kwargs['color'] = 'blue'
-        if not 'axes' in kwargs:
+        if 'axes' not in kwargs:
             kwargs['axes'] = False
-        if not 'aspect_ratio' in kwargs:
+        if 'aspect_ratio' not in kwargs:
             kwargs['aspect_ratio'] = 1
 
         from sage.plot.line import line
@@ -2840,7 +3088,7 @@ class Link(SageObject):
 
         # Special case for the unknot
         if not self.pd_code():
-            return circle((0,0), ZZ(1)/ZZ(2), **kwargs)
+            return circle((0,0), ZZ(1)/ZZ(2), color=color, **kwargs)
 
         # The idea is the same followed in spherogram, but using MLP instead of
         # network flows.
@@ -2890,7 +3138,7 @@ class Link(SageObject):
                     rev = segments[-e][1:]
                     rev.reverse()
                     sig = sign(s[edges.index(-e)])
-                    nregion+=[[a, -sig] for a in rev]
+                    nregion += [[a, -sig] for a in rev]
                     nregion.append([segments[-e][0], 1])
             nregions.append(nregion)
         N = max(segments) + 1
@@ -2990,6 +3238,7 @@ class Link(SageObject):
                     i += 1
             c = cross_keys[i]
             e = c[j]
+            kwargs['color'] = coloring[e]
             used_edges.append(e)
             direction = (crossings[c][2] - c.index(e)) % 4
             orien = self.orientation()[self.pd_code().index(list(c))]
@@ -3017,8 +3266,8 @@ class Link(SageObject):
                     y1 = y0
                 elif direction == 3:
                     x1 = x0
-                    y1 = y0 -l
-                im.append(([[x0,y0],[x1,y1]], l, direction))
+                    y1 = y0 - l
+                im.append(([[x0, y0], [x1, y1]], l, direction))
                 direction = (direction + turn) % 4
                 x0 = x1
                 y0 = y1
@@ -3065,7 +3314,7 @@ class Link(SageObject):
                         elif b[1] > a[1]:
                             e = [b[0], b[1] - 1]
                         elif b[1] < a[1]:
-                            e = [b[0] , b[1] + 1]
+                            e = [b[0], b[1] + 1]
                         l += line((p, e), **kwargs)
                         p = e
                     if im[c+1][1] == 1 and c < len(im) - 2:

@@ -93,6 +93,12 @@ cdef class GroebnerStrategy(SageObject):
             ...
             NotImplementedError: Only coefficient fields are implemented so far.
 
+        Check that :trac:`27508` is fixed::
+
+            sage: R2.<x,y> = PolynomialRing(QQ, 2, order="lex")
+            sage: I2 = R2.ideal(["x^2 - x", "y^2 - y"])
+            sage: R2("x^2 + y").mod(I2), R2("x + y^2").mod(I2)
+            (x + y, x + y)
         """
         if not isinstance(L, MPolynomialIdeal):
             raise TypeError("First parameter must be a multivariate polynomial ideal.")
@@ -127,6 +133,7 @@ cdef class GroebnerStrategy(SageObject):
         self._strat.sl = -1
         #- init local data struct
         initS(i, NULL, self._strat)
+        self._strat.noTailReduction = False
 
         cdef int j
         cdef bint base_ring_is_field = R.base_ring().is_field()

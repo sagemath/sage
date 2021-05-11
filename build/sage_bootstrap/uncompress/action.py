@@ -71,10 +71,11 @@ def unpack_archive(archive, dirname=None):
             # error if a virus scanner or other background process is
             # inspecting the newly extracted files
             rename = lambda: os.rename(top_level, dirname)
-            retry(rename, OSError)
+            retry(rename, OSError, tries=len(archive.names))
 
-            # Apply strict umask to the top-level directory in case it wasn't
+            # Apply typical umask to the top-level directory in case it wasn't
             # already; see https://trac.sagemath.org/ticket/24567
-            os.chmod(dirname, os.stat(dirname).st_mode & ~0o077)
+            # and later https://trac.sagemath.org/ticket/28596
+            os.chmod(dirname, os.stat(dirname).st_mode & ~0o022)
     finally:
         os.chdir(prev_cwd)

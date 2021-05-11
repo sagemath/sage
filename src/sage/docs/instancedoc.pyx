@@ -74,12 +74,11 @@ docstring::
     ....:     "Metaclass doc"
     ....:     def _instancedoc_(self):
     ....:         return "Docstring for {}".format(self)
-    sage: from six import with_metaclass
-    sage: class T(with_metaclass(Meta, object)):
+    sage: class T(metaclass=Meta):
     ....:     pass
     sage: print(T.__doc__)
     Docstring for <class '__main__.T'>
-    sage: class U(with_metaclass(Meta, object)):
+    sage: class U(metaclass=Meta):
     ....:     "Special doc for U"
     sage: print(U.__doc__)
     Special doc for U

@@ -17,7 +17,7 @@ Definition
 Three independent vertices of a graph form an *asteroidal triple* if every two
 of them are connected by a path avoiding the neighborhood of the third one. A
 graph is *asteroidal triple-free* (*AT-free*, for short) if it contains no
-asteroidal triple [LB62]_.
+asteroidal triple [LB1962]_.
 
 Use ``graph_classes.AT_free.description()`` to get some known properties of
 AT-free graphs, or visit `this page
@@ -27,8 +27,8 @@ AT-free graphs, or visit `this page
 Algorithm
 ---------
 
-This module implements the  *Straightforward algorithm* recalled in [Koh04]_ and
-due to [LB62]_ for testing if a graph is AT-free or not. This algorithm has time
+This module implements the  *Straightforward algorithm* recalled in [Koh2004]_ and
+due to [LB1962]_ for testing if a graph is AT-free or not. This algorithm has time
 complexity in `O(n^3)` and space complexity in `O(n^2)`.
 
 This algorithm uses the *connected structure* of the graph, stored into a
@@ -44,18 +44,6 @@ these values are positive. Indeed, if `M[u][v]==M[u][w]`, `v` and `w` are in the
 same connected component of `G\setminus(\{u\}\cup N(u))`, and so there is a path
 between `v` and `w` avoiding the neighborhood of `u`. The algorithm iterates
 over all triples.
-
-
-References
-----------
-
-.. [Koh04] \E. Kohler. *Recognizing graphs without asteroidal triples*. Journal of
-      Discrete Algorithms 2(4):439-452, Dec. 2004
-      :doi:`10.1016/j.jda.2004.04.005`
-
-.. [LB62] \C. G. Lekkerkerker, J. Ch. Boland. *Representation of a finite graph
-      by a set of intervals on the real line*. Fundamenta Mathematicae,
-      51:45-64, 1962.
 
 
 Functions
@@ -75,8 +63,7 @@ Functions
 from libc.stdint cimport uint32_t
 from cysignals.signals cimport sig_on, sig_off
 
-include "sage/data_structures/bitset.pxi"
-
+from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph
 from sage.ext.memory_allocator cimport MemoryAllocator
 
@@ -141,7 +128,7 @@ def is_asteroidal_triple_free(G, certificate=False):
     if not isinstance(G, Graph):
         raise ValueError("The first parameter must be a Graph.")
 
-    cdef int n = G.order()
+    cdef uint32_t n = <uint32_t>G.order()
     cdef int i
 
     # ==> Trivial cases
@@ -192,7 +179,7 @@ def is_asteroidal_triple_free(G, certificate=False):
     return False if ret else True
 
 
-cdef list is_asteroidal_triple_free_C(int n,
+cdef list is_asteroidal_triple_free_C(uint32_t n,
                                       short_digraph sd,
                                       uint32_t** connected_structure,
                                       uint32_t*  waiting_list,

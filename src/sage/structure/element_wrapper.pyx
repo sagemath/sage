@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Element Wrapper
 
@@ -216,6 +217,23 @@ cdef class ElementWrapper(Element):
         from sage.typeset.ascii_art import ascii_art
         return ascii_art(self.value)
 
+    def _unicode_art_(self):
+        """
+        Return a unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.structure.element_wrapper import DummyParent
+            sage: ElementWrapper(DummyParent("A parent"), 1)._ascii_art_()
+            1
+            sage: x = var('x')
+            sage: ElementWrapper(DummyParent("A parent"), x^2 + x)._unicode_art_()
+             2
+            x  + x
+        """
+        from sage.typeset.unicode_art import unicode_art
+        return unicode_art(self.value)
+
     def __hash__(self):
         """
         Return the same hash as for the wrapped element.
@@ -408,7 +426,7 @@ cdef class ElementWrapper(Element):
 
 class DummyParent(UniqueRepresentation, Parent):
     """
-    A class for creating dummy parents for testing ElementWrapper
+    A class for creating dummy parents for testing :class:`ElementWrapper`
     """
     def __init__(self, name):
         """
@@ -416,14 +434,12 @@ class DummyParent(UniqueRepresentation, Parent):
 
             sage: from sage.structure.element_wrapper import DummyParent
             sage: parent = DummyParent("A Parent")
-            sage: TestSuite(parent).run(skip = ["_test_an_element",\
-                                                "_test_category",\
-                                                "_test_elements",\
-                                                "_test_elements_eq_reflexive",\
-                                                "_test_elements_eq_symmetric",\
-                                                "_test_elements_eq_transitive",\
-                                                "_test_elements_neq",\
-                                                "_test_some_elements"])
+            sage: skipped = ["_test_an_element", "_test_category",
+            ....:            "_test_elements", "_test_elements_eq_reflexive",
+            ....:            "_test_elements_eq_symmetric",
+            ....:            "_test_elements_eq_transitive",
+            ....:            "_test_elements_neq", "_test_some_elements"]
+            sage: TestSuite(parent).run(skip=skipped)
         """
         self.name = name
 
@@ -436,6 +452,7 @@ class DummyParent(UniqueRepresentation, Parent):
             A Parent
         """
         return self.name
+
 
 class ElementWrapperTester(ElementWrapper):
     """

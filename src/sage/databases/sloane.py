@@ -86,10 +86,9 @@ import bz2
 import os
 import re
 
-# import compatible with py2 and py3
-from six.moves.urllib.request import urlretrieve
+from urllib.request import urlretrieve
 
-from sage.misc.all import verbose
+from sage.misc.verbose import verbose
 from sage.env import SAGE_SHARE
 from sage.rings.integer_ring import ZZ
 
@@ -118,7 +117,7 @@ class SloaneEncyclopediaClass:
 
     def __iter__(self):
         """
-        Returns an iterator through the encyclopedia. Elements are of the
+        Return an iterator through the encyclopedia. Elements are of the
         form [number, sequence].
         """
         for i in self.__data__:

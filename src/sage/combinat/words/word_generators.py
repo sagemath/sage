@@ -8,7 +8,7 @@ AUTHORS:
 - Sebastien Labbe (2008-12-17): merged into sage
 - Arnaud Bergeron (2008-12-17): merged into sage
 - Amy Glen (2008-12-17): merged into sage
-- Sebastien Labbe (2009-12-19): Added S-adic words (:trac:`7543`)
+- Sébastien Labbé (2009-12-19): Added S-adic words (:trac:`7543`)
 
 USE:
 
@@ -41,7 +41,7 @@ EXAMPLES::
     sage: t = words.ThueMorseWord(); t
     word: 0110100110010110100101100110100110010110...
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>,
 #                          Sebastien Labbe <slabqc@gmail.com>,
 #                          Arnaud Bergeron <abergeron@gmail.com>,
@@ -51,11 +51,8 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from itertools import cycle, count
 from random import randint
@@ -292,8 +289,12 @@ class LowerChristoffelWord(FiniteWord_list):
                 break
             u = v
         w1, w2 = self[:index+1], self[index+1:]
-        return Factorization([LowerChristoffelWord(w1.count(1),w1.count(0)),
-                LowerChristoffelWord(w2.count(1),w2.count(0))])
+        w10 = w1.number_of_letter_occurrences(0)
+        w11 = w1.number_of_letter_occurrences(1)
+        w20 = w2.number_of_letter_occurrences(0)
+        w21 = w2.number_of_letter_occurrences(1)
+        return Factorization([LowerChristoffelWord(w11,w10),
+                              LowerChristoffelWord(w21,w20)])
 
     def __reduce__(self):
         r"""
@@ -420,13 +421,13 @@ class WordGenerator(object):
         W = InfiniteWords(alphabet)
         alphabet = W.alphabet()
         m = alphabet.cardinality()
-        if base < 2 or m < 2 :
-            raise ValueError("base (=%s) and len(alphabet) (=%s) must be at least 2"%(base, m))
+        if base < 2 or m < 2:
+            raise ValueError("base (=%s) and len(alphabet) (=%s) must be at least 2" % (base, m))
         from functools import partial
         f = partial(self._ThueMorseWord_nth_digit, alphabet=alphabet, base=base)
         return W(f, datatype='callable')
 
-    def _ThueMorseWord_nth_digit(self, n, alphabet=(0,1), base=2):
+    def _ThueMorseWord_nth_digit(self, n, alphabet=(0, 1), base=2):
         r"""
         Returns the `n`-th letter of the (Generalized) Thue-Morse word.
 
@@ -477,10 +478,10 @@ class WordGenerator(object):
                 if n == 0:
                     return alphabet[tn & 1]
                 n &= n - 1
-        elif base < 2 or m < 2 :
-            raise ValueError("base (=%s) and len(alphabet) (=%s) must be at least 2"%(base, m))
+        elif base < 2 or m < 2:
+            raise ValueError("base (=%s) and len(alphabet) (=%s) must be at least 2" % (base, m))
         else:
-            return alphabet[ZZ(sum(ZZ(n).digits(base = base))).mod(m)]
+            return alphabet[ZZ(sum(ZZ(n).digits(base=base))).mod(m)]
 
     def FibonacciWord(self, alphabet=(0, 1), construction_method="recursive"):
         r"""
@@ -738,7 +739,7 @@ class WordGenerator(object):
 
         INPUT:
 
-        -  ``slope`` - the slope of the word. It can be one of the following :
+        -  ``slope`` - the slope of the word. It can be one of the following:
 
            -  real number in `]0, 1[`
 
@@ -1064,7 +1065,7 @@ class WordGenerator(object):
         -  ``a`` - positive integer (default: 1), the first letter occurring
            in the returned Kolakoski word.
         -  ``b`` - positive integer (default: 2), the second and last letter
-           occuring in the returned Kolakoski word.
+           occurring in the returned Kolakoski word.
 
         OUTPUT:
 
@@ -1091,7 +1092,7 @@ class WordGenerator(object):
             w.pop(0)
         w.pop(0)
         # Letters swap function
-        bar = lambda x : a if x == b else b
+        bar = lambda x: a if x == b else b
         current_letter = bar(w[-1])
         # Now we are ready to go in the recursive part
         while True:
@@ -1773,11 +1774,11 @@ class WordGenerator(object):
             sage: from sage.misc.prandom import randint
             sage: def it():
             ....:   while True: yield randint(0,1)
-            sage: words.s_adic(it(), repeat('a'), [tm,fib])
+            sage: words.s_adic(it(), repeat('a'), [tm,fib])  # random
             word: abbaabababbaababbaabbaababbaabababbaabba...
-            sage: words.s_adic(it(), repeat('a'), [tm,fib])
+            sage: words.s_adic(it(), repeat('a'), [tm,fib])  # random
             word: abbaababbaabbaababbaababbaabbaababbaabba...
-            sage: words.s_adic(it(), repeat('a'), [tm,fib])
+            sage: words.s_adic(it(), repeat('a'), [tm,fib])  # random
             word: abaaababaabaabaaababaabaaababaaababaabaa...
 
         An example where the sequences cycle on two morphisms and two
@@ -1892,7 +1893,7 @@ class WordGenerator(object):
         elif hasattr(morphisms, '__call__'):
             seq = (morphisms(i) for i in sequence)
         else:
-            raise TypeError("morphisms (=%s) must be None, callable or provide a __getitem__ method."%morphisms)
+            raise TypeError("morphisms (=%s) must be None, callable or provide a __getitem__ method." % morphisms)
 
         from sage.combinat.words.word import FiniteWord_class
         if isinstance(sequence,(tuple,list,str,FiniteWord_class)) \
@@ -1901,12 +1902,12 @@ class WordGenerator(object):
             return prod(seq)(letters)
 
         from itertools import tee
-        seq_it,seq= tee(seq)
+        seq_it, seq = tee(seq)
         m = next(seq_it)
         W = m.codomain()
 
         kwds = {}
-        kwds['data'] = self._s_adic_iterator(seq,letters)
+        kwds['data'] = self._s_adic_iterator(seq, letters)
         kwds['datatype'] = 'iter'
         kwds['caching'] = True
         #kwds['check'] = False

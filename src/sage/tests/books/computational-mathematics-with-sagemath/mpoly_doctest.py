@@ -405,7 +405,7 @@ Sage example in ./mpoly.tex, line 1882::
 Sage example in ./mpoly.tex, line 1911::
 
   sage: R.<x,y> = QQ[]; J = ideal([ x^7-(100*x-1)^2, y-x^7+1 ])
-  sage: J.variety(RealField(51))
+  sage: J.variety(RealField(51))  # random
   [{y: 396340.890166545, x: -14.1660266425312}]
 
 Sage example in ./mpoly.tex, line 1923::

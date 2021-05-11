@@ -20,13 +20,19 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.geometry.polyhedron.backend_ppl import Polyhedron_QQ_ppl
-from sage.geometry.polyhedron.parent import Polyhedra_QQ_ppl
+from sage.geometry.polyhedron.backend_normaliz import Polyhedron_QQ_normaliz
+from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
+from sage.geometry.polyhedron.backend_field import Polyhedron_field
+from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
+from sage.geometry.polyhedron.parent import Polyhedra, Polyhedra_base, Polyhedra_QQ_ppl, Polyhedra_QQ_normaliz, Polyhedra_QQ_cdd, Polyhedra_polymake, Polyhedra_field
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
-from sage.rings.all import QQ
+from sage.rings.all import QQ, ZZ
+
+ancestors_of_associahedron = set([Polyhedron_QQ_ppl, Polyhedron_QQ_normaliz, Polyhedron_QQ_cdd, Polyhedron_field, Polyhedron_polymake])
 
 
-def Associahedron(cartan_type):
+def Associahedron(cartan_type, backend='ppl'):
     r"""
     Construct an associahedron.
 
@@ -41,6 +47,14 @@ def Associahedron(cartan_type):
     A polytopal realization of the associahedron can be found in [CFZ2002]_. The
     implementation is based on [CFZ2002]_, Theorem 1.5, Remark 1.6, and Corollary
     1.9.
+
+    INPUT:
+
+    - ``cartan_type`` -- a cartan type according to
+      :class:`sage.combinat.root_system.cartan_type.CartanTypeFactory`
+
+    - ``backend`` -- string (``'ppl'``); the backend to use;
+      see :meth:`sage.geometry.polyhedron.constructor.Polyhedron`
 
     EXAMPLES::
 
@@ -100,15 +114,22 @@ def Associahedron(cartan_type):
         (1, 42, 84, 56, 14, 1)
         sage: polytopes.associahedron(['B',4]).f_vector()
         (1, 70, 140, 90, 20, 1)
+
+        sage: p1 = polytopes.associahedron(['A',4], backend='normaliz')   # optional - pynormaliz
+        sage: TestSuite(p1).run(skip='_test_pickling')                    # optional - pynormaliz
+        sage: p2 = polytopes.associahedron(['A',4], backend='cdd')
+        sage: TestSuite(p2).run()
+        sage: p3 = polytopes.associahedron(['A',4], backend='field')
+        sage: TestSuite(p3).run()
     """
     cartan_type = CartanType(cartan_type)
-    parent = Associahedra(QQ, cartan_type.rank(), 'ppl')
+    parent = Associahedra(QQ, cartan_type.rank(), backend)
     return parent(cartan_type)
 
 
-class Associahedron_class(Polyhedron_QQ_ppl):
+class Associahedron_class_base(object):
     r"""
-    The Python class of an associahedron
+    The base class of the Python class of an associahedron
 
     You should use the :func:`Associahedron` convenience function to
     construct associahedra from the Cartan type.
@@ -119,6 +140,82 @@ class Associahedron_class(Polyhedron_QQ_ppl):
         Generalized associahedron of type ['A', 2] with 5 vertices
         sage: TestSuite(Asso).run()
     """
+    def __new__(typ, parent=None, Vrep=None, Hrep=None, cartan_type=None, **kwds):
+        r"""
+        Return instance of :class:`Assciahedron_class_base`, if ``cartan_type`` is provided
+        or object is being unpickled.
+
+        In other cases, this call is a result of a polyhedral construction with an associahedron.
+        Thus we return the corresponding instance of
+        :class:`sage.geometry.polyhedron.base.Polyhedron_base` (not an associahedron).
+
+        TESTS:
+
+        Check that faces of associahedra work::
+
+            sage: A = polytopes.associahedron(['A',3], backend='ppl'); A
+            Generalized associahedron of type ['A', 3] with 14 vertices
+            sage: face = A.faces(2)[3]
+            sage: P = face.as_polyhedron(); P
+            A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
+            sage: P.backend()
+            'ppl'
+            sage: A = polytopes.associahedron(['A',3], backend='field'); A
+            Generalized associahedron of type ['A', 3] with 14 vertices
+            sage: A.faces(2)[3].as_polyhedron().backend()
+            'field'
+
+        Check other polytopal constructions::
+
+            sage: A = polytopes.associahedron(['A',4], backend='ppl')
+            sage: A + A
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 42 vertices
+            sage: A - A
+            A 0-dimensional polyhedron in QQ^4 defined as the convex hull of 1 vertex
+            sage: A.intersection(A)
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 42 vertices
+            sage: A.translation(A.center())
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 42 vertices
+            sage: A.dilation(2)
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 42 vertices
+            sage: A.dilation(2.0)
+            A 4-dimensional polyhedron in RDF^4 defined as the convex hull of 42 vertices
+            sage: A.convex_hull(A)
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 42 vertices
+            sage: A.polar()
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 14 vertices
+        """
+        if cartan_type or (parent is None and Vrep is None and Hrep is None):
+            # Called from element constructor in ``Associahedron_base``.
+            # Alternatively called from ``loads`` in ``loads(dumps(...))``.
+            return super(Associahedron_class_base, typ).__new__(typ, parent, Vrep, Hrep, **kwds)
+        else:
+            # Not called from element constructor in ``Associahedron_base``.
+            # Return a polyhedron with proper backend (not an associahedron).
+            # Thus e.g. a face of an Associahedron can be initialized as a polyhedron.
+            mro = typ.mro()
+            for typ1 in mro:
+                if typ1 in ancestors_of_associahedron:
+                    return typ1(parent, Vrep, Hrep, **kwds)
+            raise ValueError("could not determine a parent class")
+
+    def __init__(self, parent, Vrep, Hrep, cartan_type=None, **kwds):
+        r"""
+        Initialize an associahedron.
+
+        If ``'cartan_type'`` is ``None``, :meth:`Associahedron_class_base.__new__`
+        returns a (general) polyhedron instead.
+
+        TESTS::
+
+            sage: A = polytopes.associahedron(['A',3], backend='ppl'); A
+            Generalized associahedron of type ['A', 3] with 14 vertices
+        """
+        if cartan_type:
+            self._cartan_type = cartan_type
+            super(Associahedron_class_base, self).__init__(parent, Vrep, Hrep, **kwds)
+        else:
+            raise ValueError("associahedron must be initialized with cartan type")
 
     def _repr_(self):
         r"""
@@ -163,10 +260,62 @@ class Associahedron_class(Polyhedron_QQ_ppl):
         return tuple(root_space.from_vector(vector(V))
                      for V in self.vertex_generator())
 
+class Associahedron_class_ppl(Associahedron_class_base, Polyhedron_QQ_ppl):
+    pass
 
-class Associahedra(Polyhedra_QQ_ppl):
+class Associahedron_class_normaliz(Associahedron_class_base, Polyhedron_QQ_normaliz):
+    pass
+
+class Associahedron_class_cdd(Associahedron_class_base, Polyhedron_QQ_cdd):
+    pass
+
+class Associahedron_class_polymake(Associahedron_class_base, Polyhedron_polymake):
+    pass
+
+class Associahedron_class_field(Associahedron_class_base, Polyhedron_field):
+    pass
+
+
+def Associahedra(base_ring, ambient_dim, backend='ppl'):
+    r"""
+    Construct a parent class of Associahedra according to ``backend``.
+
+    TESTS::
+
+        sage: from sage.combinat.root_system.associahedron import Associahedra
+        sage: Associahedra(QQ, 4, 'ppl').parent()
+        <class 'sage.combinat.root_system.associahedron.Associahedra_ppl_with_category'>
+        sage: Associahedra(QQ, 4, 'normaliz').parent() # optional - pynormaliz
+        <class 'sage.combinat.root_system.associahedron.Associahedra_normaliz_with_category'>
+        sage: Associahedra(QQ, 4, 'polymake').parent() # optional - polymake
+        <class 'sage.combinat.root_system.associahedron.Associahedra_polymake_with_category'>
+        sage: Associahedra(QQ, 4, 'field').parent()
+        <class 'sage.combinat.root_system.associahedron.Associahedra_field_with_category'>
+        sage: Associahedra(QQ, 4, 'cdd').parent()
+        <class 'sage.combinat.root_system.associahedron.Associahedra_cdd_with_category'>
+
+    .. SEEALSO::
+
+        :class:`Associahedra_base`.
     """
-    Parent of Associahedra of specified dimension
+    if not base_ring is QQ:
+        raise NotImplementedError("base ring must be QQ")
+    if backend == 'ppl':
+        return Associahedra_ppl(base_ring, ambient_dim, backend)
+    elif backend == 'normaliz':
+        return Associahedra_normaliz(base_ring, ambient_dim, backend)
+    elif backend == 'cdd':
+        return Associahedra_cdd(QQ, ambient_dim, backend)
+    elif backend == 'polymake':
+        return Associahedra_polymake(base_ring.fraction_field(), ambient_dim, backend)
+    elif backend == 'field':
+        return Associahedra_field(base_ring, ambient_dim, backend)
+    else:
+        raise ValueError("unknown backend")
+
+class Associahedra_base(object):
+    """
+    Base class of parent of Associahedra of specified dimension
 
     EXAMPLES::
 
@@ -174,7 +323,7 @@ class Associahedra(Polyhedra_QQ_ppl):
         sage: parent = Associahedra(QQ,2,'ppl');  parent
         Polyhedra in QQ^2
         sage: type(parent)
-        <class 'sage.combinat.root_system.associahedron.Associahedra_with_category'>
+        <class 'sage.combinat.root_system.associahedron.Associahedra_ppl_with_category'>
         sage: parent(['A',2])
         Generalized associahedron of type ['A', 2] with 5 vertices
 
@@ -187,8 +336,6 @@ class Associahedra(Polyhedra_QQ_ppl):
         ...
         ValueError: V-representation data requires a list of length ambient_dim
     """
-    Element = Associahedron_class
-
     def _element_constructor_(self, cartan_type, **kwds):
         """
         The element constructor.
@@ -226,6 +373,86 @@ class Associahedra(Polyhedra_QQ_ppl):
             c = rhocheck.coefficient(orbit[0].leading_support())
             for beta in orbit:
                 inequalities.append([c] + [beta.coefficient(i) for i in I])
-        associahedron = super(Associahedra, self)._element_constructor_(None, [inequalities, []])
-        associahedron._cartan_type = cartan_type
+        associahedron = super(Associahedra_base, self)._element_constructor_(None, [inequalities, []], cartan_type=cartan_type)
         return associahedron
+
+    def _coerce_map_from_(self, X):
+        r"""
+        Return whether there is a coercion from ``X``
+
+        INPUT:
+
+        - ``X`` -- anything.
+
+        OUTPUT:
+
+        Boolean.
+
+        EXAMPLES::
+
+            sage: from sage.geometry.polyhedron.parent import Polyhedra
+            sage: from sage.combinat.root_system.associahedron import Associahedra
+            sage: Associahedra(QQ,3).has_coerce_map_from( Polyhedra(QQ,3) )   # indirect doctest
+            False
+            sage: Polyhedra(QQ,3).has_coerce_map_from( Associahedra(QQ,3) )
+            True
+
+        TESTS::
+
+            sage: A = polytopes.associahedron(['A',4], backend='ppl'); type(A.parent())
+            <class 'sage.combinat.root_system.associahedron.Associahedra_ppl_with_category'>
+            sage: B = polytopes.simplex().change_ring(QQ); type(B.parent())
+            <class 'sage.geometry.polyhedron.parent.Polyhedra_QQ_ppl_with_category'>
+            sage: A + B
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 70 vertices
+            sage: A - B
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 24 vertices
+            sage: A.intersection(B)
+            A 3-dimensional polyhedron in QQ^4 defined as the convex hull of 4 vertices
+            sage: A.convex_hull(B)
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 42 vertices
+        """
+        if not isinstance(X, Associahedra_base):
+            return False
+        return super(Associahedra_base, self)._coerce_map_from_(X)
+
+    def _pushout_(self, other):
+        r"""
+        The pushout of Polyhedra over ZZ and Associahedra over QQ is Polyhedra over QQ.
+
+        TESTS::
+
+            sage: A = polytopes.associahedron(['A',4], backend='ppl'); type(A.parent())
+            <class 'sage.combinat.root_system.associahedron.Associahedra_ppl_with_category'>
+            sage: B = polytopes.simplex(); type(B.parent())
+            <class 'sage.geometry.polyhedron.parent.Polyhedra_ZZ_ppl_with_category'>
+            sage: A + B
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 70 vertices
+            sage: A - B
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 24 vertices
+            sage: A.intersection(B)
+            A 3-dimensional polyhedron in QQ^4 defined as the convex hull of 4 vertices
+            sage: A.convex_hull(B)
+            A 4-dimensional polyhedron in QQ^4 defined as the convex hull of 42 vertices
+        """
+        if isinstance(other, Polyhedra_base) and other.base_ring() == ZZ:
+            return Polyhedra(QQ, self.ambient_dim(), self.backend())
+
+        # Call the overwritten pushout in case it exists.
+        if hasattr(super(Associahedra_base, self), '_pushout_'):
+            return super(Associahedra_base, self)._pushout_(other)
+
+class Associahedra_ppl(Associahedra_base, Polyhedra_QQ_ppl):
+    Element = Associahedron_class_ppl
+
+class Associahedra_normaliz(Associahedra_base, Polyhedra_QQ_normaliz):
+    Element = Associahedron_class_normaliz
+
+class Associahedra_cdd(Associahedra_base, Polyhedra_QQ_cdd):
+    Element = Associahedron_class_cdd
+
+class Associahedra_polymake(Associahedra_base, Polyhedra_polymake):
+    Element = Associahedron_class_polymake
+
+class Associahedra_field(Associahedra_base, Polyhedra_field):
+    Element = Associahedron_class_field

@@ -6,7 +6,6 @@ AUTHORS:
 - Johan S. R. Nielsen, original implementation (see [Nie]_ for details)
 - David Lucas, ported the original implementation in Sage
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>

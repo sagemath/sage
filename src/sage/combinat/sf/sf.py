@@ -1,7 +1,6 @@
 """
 Symmetric functions, with their multiple realizations
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2009-2012 Jason Bandlow <jbandlow@gmail.com>
@@ -72,8 +71,11 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         sage: Sym.category()
         Join of Category of hopf algebras over Rational Field
             and Category of graded algebras over Rational Field
+            and Category of commutative algebras over Rational Field
             and Category of monoids with realizations
+            and Category of graded coalgebras over Rational Field
             and Category of coalgebras over Rational Field with realizations
+            and Category of cocommutative coalgebras over Rational Field
 
     Notice that ``Sym`` is an *abstract* algebra.  This reflects the fact that
     there are multiple natural bases.  To work with specific
@@ -791,7 +793,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         .. [FD06] Francois Descouens, Making research on symmetric functions using MuPAD-Combinat.
                  In Andres Iglesias and Nobuki Takayama, editors, 2nd International Congress on Mathematical Software (ICMS'06),
                  volume 4151 of LNCS, pages 407-418, Castro Urdiales, Spain, September 2006. Springer-Verlag.
-                 :arXiv:`0806.1873`
+                 :arxiv:`0806.1873`
 
         .. [HT04] Florent Hivert and Nicolas M. Thiery,
                  MuPAD-Combinat, an open-source package for research in algebraic combinatorics.
@@ -861,7 +863,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
         assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
         self._base = R # Won't be needed when CategoryObject won't override anymore base_ring
-        Parent.__init__(self, category = GradedHopfAlgebras(R).WithRealizations())
+        cat = GradedHopfAlgebras(R).Commutative().Cocommutative()
+        Parent.__init__(self, category=cat.WithRealizations())
 
     def a_realization(self):
         r"""
@@ -1485,7 +1488,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         from sage.combinat.sf.new_kschur import KBoundedSubspace
         return KBoundedSubspace(self, k, t=t)
 
-    def kschur(self, k, t ='t'):
+    def kschur(self, k, t='t'):
         r"""
         Returns the `k`-Schur functions.
 
@@ -1505,9 +1508,9 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         """
         return self.kBoundedSubspace(k, t=t).kschur()
 
-    def ksplit(self, k, t ='t'):
+    def ksplit(self, k, t='t'):
         r"""
-        Returns the `k`-split basis of the `k`-bounded subspace.
+        Return the `k`-split basis of the `k`-bounded subspace.
 
         EXAMPLES::
 

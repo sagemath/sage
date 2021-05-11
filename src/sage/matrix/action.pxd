@@ -15,3 +15,11 @@ cdef class MatrixVectorAction(MatrixMulAction):
 cdef class VectorMatrixAction(MatrixMulAction):
     pass
 
+cdef class MatrixPolymapAction(MatrixMulAction):
+    pass
+
+cdef class PolymapMatrixAction(MatrixMulAction):
+    pass
+
+cdef class MatrixSchemePointAction(MatrixMulAction):
+    pass

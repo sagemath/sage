@@ -2,18 +2,17 @@
 r"""
 Check for graphviz
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Sebastien Labbe <slabqc@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from . import Feature, Executable, FeatureTestResult
+
 
 class dot(Executable):
     r"""
@@ -35,7 +34,8 @@ class dot(Executable):
             True
         """
         Executable.__init__(self, "dot", executable="dot",
-                url="https://www.graphviz.org/")
+                            spkg="graphviz",
+                            url="https://www.graphviz.org/")
 
 
 class neato(Executable):
@@ -58,7 +58,8 @@ class neato(Executable):
             True
         """
         Executable.__init__(self, "neato", executable="neato",
-                url="https://www.graphviz.org/")
+                            spkg="graphviz",
+                            url="https://www.graphviz.org/")
 
 
 class twopi(Executable):
@@ -81,7 +82,8 @@ class twopi(Executable):
             True
         """
         Executable.__init__(self, "twopi", executable="twopi",
-                url="https://www.graphviz.org/")
+                            spkg="graphviz",
+                            url="https://www.graphviz.org/")
 
 
 class Graphviz(Feature):
@@ -104,7 +106,8 @@ class Graphviz(Feature):
             True
         """
         Feature.__init__(self, "Graphviz",
-                url="https://www.graphviz.org/")
+                         spkg="graphviz",
+                         url="https://www.graphviz.org/")
 
     def _is_present(self):
         r"""

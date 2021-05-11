@@ -12,15 +12,15 @@ case using relative extensions.
 Algorithm
 ---------
 
-We use Hunter's algorithm ([Cohen2000]_, Section 9.3) with modifications
-due to Takeuchi [Takeuchi1999]_ and the author [Voight2008]_.
+We use Hunter's algorithm ([Coh2000]_, Section 9.3) with modifications
+due to Takeuchi [Tak1999]_ and the author [Voi2008]_.
 
 We enumerate polynomials `f(x) = x^n + a_{n-1} x^{n-1} + \dots + a_0`.
 Hunter's theorem gives bounds on `a_{n-1}` and `a_{n-2}`; then given
 `a_{n-1}` and `a_{n-2}`, one can recursively compute bounds on `a_{n-3},
 \dots, a_0`, using the fact that the polynomial is totally real by
 looking at the zeros of successive derivatives and applying
-Rolle's theorem. See [Takeuchi1999]_ for more details.
+Rolle's theorem. See [Tak1999]_ for more details.
 
 Examples
 --------
@@ -65,22 +65,7 @@ Next, we compute all totally real quintic fields of discriminant `\le 10^5`::
 
 We see that there are 9 such fields (up to isomorphism!).
 
-References
-----------
-
-.. [Cohen2000] Henri Cohen, Advanced topics in computational number
-   theory, Graduate Texts in Mathematics, vol. 193,
-   Springer-Verlag, New York, 2000.
-
-.. [Martinet1980] Jacques Martinet, Petits discriminants des corps de nombres, Journ. Arithm. 1980,
-   Cambridge Univ. Press, 1982, 151--193.
-
-.. [Takeuchi1999] Kisao Takeuchi, Totally real algebraic number fields of
-   degree 9 with small discriminant, Saitama Math. J.
-   17 (1999), 63--85 (2000).
-
-.. [Voight2008] John Voight, Enumeration of totally real number fields of bounded root
-   discriminant, Lect. Notes in Comp. Sci. 5011 (2008).
+See also [Mar1980]_.
 
 Authors
 -------
@@ -105,8 +90,6 @@ Authors
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import, print_function
 
 from cysignals.memory cimport check_calloc, sig_free
 
@@ -156,7 +139,7 @@ cpdef double odlyzko_bound_totallyreal(int n):
     - John Voight (2007-09-03)
 
     NOTES:
-    The values are calculated by Martinet [Martinet1980]_.
+    The values are calculated by Martinet [Mar1980]_.
     """
 
     if n <= 10:

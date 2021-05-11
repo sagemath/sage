@@ -8,7 +8,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.data_structures.bitset cimport bitset_s, bitset_t
+from sage.data_structures.bitset_base cimport *
 
 from libc.string cimport memcpy
 from libc.stdlib cimport rand

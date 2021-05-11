@@ -53,13 +53,6 @@ AUTHORS:
 - Anna Haensch (2018-03): Added function ``quadratic_defect()``
 
 """
-from __future__ import print_function, absolute_import
-
-import six
-if six.PY2:
-    _long_type = long
-else:
-    _long_type = int
 
 from .rational import Rational
 from .integer import Integer
@@ -78,7 +71,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
     EXAMPLES::
 
-        sage: a = long(901824309821093821093812093810928309183091832091)
+        sage: a = 901824309821093821093812093810928309183091832091
         sage: b = QQ(a); b
         901824309821093821093812093810928309183091832091
         sage: QQ(b)
@@ -369,10 +362,11 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         ::
 
-            sage: QQ.coerce_map_from(long) # indirect doctest py2
-            Native morphism:
-              From: Set of Python objects of class 'long'
-              To:   Rational Field
+            sage: L = Localization(ZZ, (3,5))
+            sage: 1/45 in L  # indirect doctest
+            True
+            sage: 1/43 in L  # indirect doctest
+            False
         """
         global ZZ
         from . import rational
@@ -381,14 +375,18 @@ class RationalField(Singleton, number_field_base.NumberField):
             ZZ = integer_ring.ZZ
         if S is ZZ:
             return rational.Z_to_Q()
-        elif S is _long_type:
-            return rational.long_to_Q()
         elif S is int:
-            return rational.int_to_Q()
+            return rational.long_to_Q()
         elif ZZ.has_coerce_map_from(S):
             return rational.Z_to_Q() * ZZ._internal_coerce_map_from(S)
+        from sage.rings.localization import Localization
+        if isinstance(S, Localization):
+            if S.fraction_field() is self:
+                from sage.structure.coerce_maps import CallableConvertMap
+                return CallableConvertMap(S, self, lambda x: x._value, parent_as_first_arg=False)
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Check to see if the map into ``codomain`` determined by ``im_gens`` is
         a valid homomorphism.
@@ -624,7 +622,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             ...
             ValueError: no embeddings of the rational field into K.
         """
-        if K.characteristic() != 0:
+        if K.characteristic():
             raise ValueError("no embeddings of the rational field into K.")
         return [self.hom(K)]
 
@@ -715,8 +713,8 @@ class RationalField(Singleton, number_field_base.NumberField):
               To:   Complex Field with 20 bits of precision
               Defn: 1 |--> 1.0000
         """
-        from . import complex_field
-        CC = complex_field.ComplexField(prec)
+        from . import complex_mpfr
+        CC = complex_mpfr.ComplexField(prec)
         return self.hom([CC(1)])
 
     def residue_field(self, p, check=True):
@@ -742,6 +740,180 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         from sage.rings.finite_rings.residue_field import ResidueField
         return ResidueField(ZZ.ideal(p), check=check)
+
+    def hilbert_symbol_negative_at_S(self, S, b, check=True):
+        r"""
+        Returns an integer that has a negative Hilbert symbol with respect
+        to a given rational number and a given set of primes (or places).
+
+        The function is algorithm 3.4.1 in [Kir2016]_. It finds an integer `a`
+        that has negative Hilbert symbol with respect to a given rational number
+        exactly at a given set of primes (or places).
+
+        INPUT:
+
+        - ``S`` -- a list of rational primes, the infinite place as real
+          embedding of `\QQ` or as -1
+        - ``b`` -- a non-zero rational number which is a non-square locally
+          at every prime in ``S``.
+        - ``check`` -- ``bool`` (default:``True``) perform additional checks on
+          input and confirm the output.
+
+        OUTPUT:
+
+        - An integer `a` that has negative Hilbert symbol `(a,b)_p` for
+          every place `p` in `S` and no other place.
+
+        EXAMPLES::
+
+            sage: QQ.hilbert_symbol_negative_at_S([-1,5,3,2,7,11,13,23], -10/7)
+            -9867
+            sage: QQ.hilbert_symbol_negative_at_S([3, 5, QQ.places()[0], 11], -15)
+            -33
+            sage: QQ.hilbert_symbol_negative_at_S([3, 5], 2)
+            15
+
+        TESTS::
+
+            sage: QQ.hilbert_symbol_negative_at_S(5/2, -2)
+            Traceback (most recent call last):
+            ...
+            TypeError: first argument must be a list or integer
+
+        ::
+
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: second argument must be nonzero
+
+        ::
+
+            sage: QQ.hilbert_symbol_negative_at_S([-1, 3, 5], 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: list should be of even cardinality
+
+        ::
+
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: all entries in list must be prime or -1 for
+            infinite place
+
+        ::
+
+            sage: QQ.hilbert_symbol_negative_at_S([5, 7], 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: second argument must be a nonsquare with
+            respect to every finite prime in the list
+
+        ::
+
+            sage: QQ.hilbert_symbol_negative_at_S([1, 3], sqrt(2))
+            Traceback (most recent call last):
+            ...
+            TypeError: second argument must be a rational number
+
+        ::
+
+            sage: QQ.hilbert_symbol_negative_at_S([-1, 3], 2)
+            Traceback (most recent call last):
+            ...
+            ValueError: if the infinite place is in the list, the second
+            argument must be negative
+
+        AUTHORS:
+
+        - Simon Brandhorst, Juanita Duque, Anna Haensch, Manami Roy, Sandi Rudzinski (10-24-2017)
+
+        """
+        from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+        from sage.rings.padics.factory import Qp
+        from sage.modules.free_module import VectorSpace
+        from sage.matrix.constructor import matrix
+        from sage.sets.primes import Primes
+        from sage.arith.misc import hilbert_symbol, is_prime
+
+        # input checks
+        if not type(S) is list:
+            raise TypeError("first argument must be a list or integer")
+        # -1 is used for the infinite place
+        infty = -1
+        for i in range(len(S)):
+            if S[i] == self.places()[0]:
+                S[i] = -1
+        if not b in self:
+            raise TypeError("second argument must be a rational number")
+        b = self(b)
+        if b == 0:
+            raise ValueError("second argument must be nonzero")
+        if len(S) % 2:
+            raise ValueError("list should be of even cardinality")
+        for p in S:
+            if p != infty:
+                if check and not is_prime(p):
+                    raise ValueError("all entries in list must be prime"
+                                    " or -1 for infinite place")
+                R = Qp(p)
+                if R(b).is_square():
+                    raise ValueError("second argument must be a nonsquare with"
+                                     " respect to every finite prime in the list")
+            elif b > 0:
+                raise ValueError("if the infinite place is in the list, "
+                                 "the second argument must be negative")
+        # L is the list of primes that we need to consider, b must have
+        # nonzero valuation for each prime in L, this is the set S'
+        # in Kirschmer's algorithm
+        L = []
+        L = [p[0] for p in b.factor() if p[0] not in S]
+        # We must also consider 2 to be in L
+        if 2 not in L and 2 not in S:
+            L.append(2)
+        # This adds the infinite place to L
+        if b < 0 and infty not in S:
+            L.append(infty)
+
+        P = S + L
+        # This constructs the vector v in the algorithm. This is the vector
+        # that we are searching for. It represents the case when the Hilbert
+        # symbol is negative for all primes in S and positive
+        # at all primes in S'
+        V = VectorSpace(GF(2), len(P))
+        v = V([1]*len(S) + [0]*len(L))
+
+        # Compute the map phi of Hilbert symbols at all the primes
+        # in S and S'
+        # For technical reasons, a Hilbert symbol of -1 is
+        # respresented as 1 and a Hilbert symbol of 1
+        # is represented as 0
+        def phi(x):
+            v = [(1-hilbert_symbol(x, b, p))//2 for p in P]
+            return V(v)
+
+
+        M = matrix(GF(2), [phi(p) for p in P+[-1]])
+        # We search through all the primes
+        for q in Primes():
+            # Only look at this prime if it is not in our list
+            if q in P:
+                continue
+
+            # The algorithm terminates when the vector v is in the
+            # subspace of V generated by the image of the phi map
+            # on the set of generators
+            w = phi(q)
+            W = M.stack(matrix(w))
+            if v in W.row_space():
+                break
+        Pq = P + [-1] + [q]
+        l = W.solve_left(v)
+        a = self.prod([Pq[i]**ZZ(l[i]) for i in range(l.degree())])
+        if check:
+            assert phi(a) == v, "oops"
+        return  a
 
     def gens(self):
         r"""
@@ -926,6 +1098,24 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         from sage.rings.infinity import Infinity
         return Infinity
+
+    def polynomial(self):
+        r"""Return a defining polynomial of `\QQ`, as for other number fields.
+
+        This is is also aliased to :meth:`self.defining_polynomial()`
+        and :meth:`self.absolute_polynomial()`.
+
+        EXAMPLES::
+
+            sage: QQ.polynomial()
+            x
+
+        """
+        from sage.rings.polynomial.polynomial_ring import polygen
+        return polygen(self)
+
+    defining_polynomial = polynomial
+    absolute_polynomial = polynomial
 
     def _an_element_(self):
         r"""
@@ -1253,7 +1443,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         return 'RationalField()'
 
-    def _macaulay2_init_(self):
+    def _macaulay2_init_(self, macaulay2=None):
         r"""
         Return the macaulay2 representation of `\QQ`.
 

@@ -78,10 +78,10 @@ The following example shows all these steps::
     0: ...
     ...
     Optimal solution found.
-    sage: print('Objective Value: {}'.format(round(opt,3)))
+    sage: print('Objective Value: {}'.format(N(opt,3)))
     Objective Value: 1.0
-    sage: [round(x, 3) for x in sorted(p.get_values(x).values())]
-    [0.0, 1.0]
+    sage: [N(x, 3) for x in sorted(p.get_values(x).values())]
+    [3.0e-8, 1.0]
     sage: p.show()
     Maximization:
       x_0 - x_1
@@ -139,6 +139,15 @@ The default CVXOPT backend computes with the Real Double Field, for example::
     sage: 0.5 + 3/2*x[1]
     0.5 + 1.5*x_0
 
+For representing an SDP with exact data, there is another backend::
+
+    sage: from sage.numerical.backends.matrix_sdp_backend import MatrixSDPBackend
+    sage: p = SemidefiniteProgram(solver=MatrixSDPBackend, base_ring=QQ)
+    sage: p.base_ring()
+    Rational Field
+    sage: x = p.new_variable()
+    sage: 1/2 + 3/2 * x[1]
+    1/2 + 3/2*x_0
 
 
 Linear Variables and Expressions
@@ -217,7 +226,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element
@@ -278,12 +286,12 @@ cdef class SemidefiniteProgram(SageObject):
          sage: b3 = matrix([[3, 3.], [3., 3.]])
          sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
          sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
-         sage: round(p.solve(), 2)
+         sage: N(p.solve(), 2)
          -3.0
     """
 
     def __init__(self, solver=None, maximization=True,
-                 names=tuple()):
+                 names=tuple(), **kwds):
         r"""
         Constructor for the ``SemidefiniteProgram`` class.
 
@@ -308,6 +316,8 @@ cdef class SemidefiniteProgram(SageObject):
           the SDP variables. Used to enable the ``sdp.<x> =
           SemidefiniteProgram()`` syntax.
 
+        - other keyword arguments are passed to the solver.
+
         .. SEEALSO::
 
         - :meth:`default_sdp_solver` -- Returns/Sets the default SDP solver.
@@ -319,7 +329,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         self._first_variable_names = list(names)
         from sage.numerical.backends.generic_sdp_backend import get_solver
-        self._backend = get_solver(solver=solver)
+        self._backend = get_solver(solver=solver, **kwds)
         if not maximization:
             self._backend.set_sense(-1)
 
@@ -716,12 +726,12 @@ cdef class SemidefiniteProgram(SageObject):
             sage: b3 = matrix([[3, 3.], [3., 3.]])
             sage: p.add_constraint(a1*x[3] + a2*x[5] <= a3)
             sage: p.add_constraint(b1*x[3] + b2*x[5] <= b3)
-            sage: round(p.solve(),3)
+            sage: N(p.solve(),3)
             -3.0
 
         To return  the optimal value of ``x[3]``::
 
-            sage: round(p.get_values(x[3]),3)
+            sage: N(p.get_values(x[3]),3)
             -1.0
 
         To get a dictionary identical to ``x`` containing optimal
@@ -791,7 +801,7 @@ cdef class SemidefiniteProgram(SageObject):
             sage: a2 = matrix([[1,1],[1,1]])
             sage: a3 = matrix([[1,-1],[-1,1]])
             sage: p.add_constraint(a1*x[1]+a2*x[2] <= a3)
-            sage: round(p.solve(),5)
+            sage: N(p.solve(),digits=3)
             16.2
             sage: p.set_objective(None)
             sage: _ = p.solve()
@@ -850,7 +860,7 @@ cdef class SemidefiniteProgram(SageObject):
             sage: a2 = matrix([[1,1],[1,1]])
             sage: a3 = matrix([[1,-1],[-1,1]])
             sage: p.add_constraint(a1*x[1]+a2*x[2] <= a3)
-            sage: round(p.solve(),5)
+            sage: N(p.solve(),digits=3)
             16.2
 
         One can also define double-bounds or equality using the symbol
@@ -863,7 +873,7 @@ cdef class SemidefiniteProgram(SageObject):
             sage: a2 = matrix([[1,1],[1,1]])
             sage: a3 = matrix([[1,-1],[-1,1]])
             sage: p.add_constraint(a3 >= a1*x[1] + a2*x[2])
-            sage: round(p.solve(),5)
+            sage: N(p.solve(),digits=3)
             16.2
 
         TESTS:
@@ -943,12 +953,12 @@ cdef class SemidefiniteProgram(SageObject):
             sage: b3 = matrix([[3, 3.], [3., 3.]])
             sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
             sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
-            sage: round(p.solve(),4)
-            -11.0
+            sage: N(p.solve(),4)
+            -11.
             sage: x = p.get_values(x)
-            sage: round(x[0],4)
+            sage: N(x[0],4)
             -8.0
-            sage: round(x[1],4)
+            sage: N(x[1],4)
             3.0
         """
         self._backend.solve()
@@ -1085,12 +1095,12 @@ cdef class SemidefiniteProgram(SageObject):
             sage: b3 = matrix([[3, 3.], [3., 3.]])
             sage: p.add_constraint(a1*x[0] + a2*x[1] <= a3)
             sage: p.add_constraint(b1*x[0] + b2*x[1] <= b3)
-            sage: round(p.solve(),4)
+            sage: N(p.solve(),4)
                  pcost       dcost       gap    pres   dres   k/t
              0:  1...
             ...
             Optimal solution found.
-            -11.0
+            -11.
         """
         if value is None:
             return self._backend.solver_parameter(name)
@@ -1127,15 +1137,15 @@ cdef class SemidefiniteProgram(SageObject):
         """
         d = {}
         for v in L:
-            for id, coeff  in v.iteritems():
+            for id, coeff in v.iteritems():
                 d[id] = coeff + d.get(id, 0)
         return self.linear_functions_parent()(d)
 
     def get_backend(self):
         r"""
-        Returns the backend instance used.
+        Return the backend instance used.
 
-        This might be useful when acces to additional functions provided by
+        This might be useful when access to additional functions provided by
         the backend is needed.
 
         EXAMPLES:
@@ -1167,14 +1177,14 @@ class SDPSolverException(RuntimeError):
 
         sage: from sage.numerical.sdp import SDPSolverException
         sage: SDPSolverException("Error")
-        SDPSolverException('Error',)
+        SDPSolverException('Error'...)
 
     TESTS:
 
     No solution::
 
-        sage: p=SemidefiniteProgram(solver="cvxopt")
-        sage: x=p.new_variable()
+        sage: p = SemidefiniteProgram(solver="cvxopt")
+        sage: x = p.new_variable()
         sage: p.set_objective(x[0])
         sage: a = matrix([[1,2],[2,4]])
         sage: b = matrix([[1,9],[9,4]])

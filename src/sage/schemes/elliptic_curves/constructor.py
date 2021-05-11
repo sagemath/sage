@@ -7,7 +7,6 @@ AUTHORS:
 
 - John Cremona (2008-01): EllipticCurve(j) fixed for all cases
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -23,7 +22,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import string_types, integer_types
 
 import sage.rings.all as rings
 
@@ -275,7 +273,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
 
-        sage: E = EllipticCurve([i,i]); E
+        sage: E = EllipticCurve([SR(i),i]); E
         Elliptic Curve defined by y^2 = x^3 + I*x + I over Symbolic Ring
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
@@ -329,7 +327,7 @@ class EllipticCurveFactory(UniqueFactory):
         EXAMPLES::
 
             sage: EllipticCurve.create_key_and_extra_args(j=8000)
-            ((Rational Field, (0, -1, 0, -3, -1)), {})
+            ((Rational Field, (0, 1, 0, -3, 1)), {})
 
         When constructing a curve over `\\QQ` from a Cremona or LMFDB
         label, the invariants from the database are returned as
@@ -415,7 +413,7 @@ class EllipticCurveFactory(UniqueFactory):
                 # x is a cubic, y a rational point
                 x = EllipticCurve_from_cubic(x, y, morphism=False).ainvs()
 
-        if isinstance(x, string_types):
+        if isinstance(x, str):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
             x, data = CremonaDatabase().coefficients_and_data(x)
@@ -433,7 +431,7 @@ class EllipticCurveFactory(UniqueFactory):
 
         if R is None:
             R = Sequence(x).universe()
-            if R in (rings.ZZ,) + integer_types:
+            if R in (rings.ZZ, int):
                 R = rings.QQ
 
         return (R, tuple(R(a) for a in x)), kwds
@@ -599,8 +597,13 @@ def EllipticCurve_from_j(j, minimal_twist=True):
 
     - ``j`` -- an element of some field.
 
-    - ``minimal_twist`` (boolean, default True) -- If True and ``j`` is in `\QQ`, the curve returned is a
-      minimal twist, i.e. has minimal conductor.  If `j` is not in `\QQ` this parameter is ignored.
+    - ``minimal_twist`` (boolean, default True) -- If True and ``j``
+      is in `\QQ`, the curve returned is a minimal twist, i.e. has
+      minimal conductor; when there is more than one curve with
+      minimal conductor, the curve returned is the one whose label
+      comes first if the curves are in the CremonaDatabase, otherwise
+      the one whose minimal a-invarinats are first lexicographically.
+      If `j` is not in `\QQ` this parameter is ignored.
 
     OUTPUT:
 
@@ -723,7 +726,15 @@ def coefficients_from_j(j, minimal_twist=True):
         tw = [-1,2,-2,3,-3,6,-6]
         E1 = EllipticCurve([0,0,0,a4,a6])
         Elist = [E1] + [E1.quadratic_twist(t) for t in tw]
-        Elist.sort(key=lambda E: E.conductor())
+        min_cond = min(E.conductor() for E in Elist)
+        Elist = [E for E in Elist if E.conductor() == min_cond]
+        if len(Elist) > 1:
+            from sage.databases.cremona import CremonaDatabase, parse_cremona_label
+            if min_cond <= CremonaDatabase().largest_conductor():
+                sorter = lambda E: parse_cremona_label(E.label(), numerical_class_code=True)
+            else:
+                sorter = lambda E: E.ainvs()
+            Elist.sort(key=sorter)
         return Sequence(Elist[0].ainvs())
 
     # defaults for all other fields:
@@ -1015,8 +1026,8 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: cubic = 2*x^3+3*y^3+5*z^3
         sage: EllipticCurve_from_cubic(cubic,[1,1,-1])
         Scheme morphism:
-          From: Projective Plane Curve over Number Field in a with defining polynomial x^2 + 3 defined by 2*x^3 + 3*y^3 + 5*z^3
-          To:   Elliptic Curve defined by y^2 + 1754460/2053*x*y + 5226454388736000/8653002877*y = x^3 + (-652253285700/4214809)*x^2 over Number Field in a with defining polynomial x^2 + 3
+          From: Projective Plane Curve over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I defined by 2*x^3 + 3*y^3 + 5*z^3
+          To:   Elliptic Curve defined by y^2 + 1754460/2053*x*y + 5226454388736000/8653002877*y = x^3 + (-652253285700/4214809)*x^2 over Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
           Defn: Defined on coordinates by sending (x : y : z) to
                 (-16424/127575*x^2 - 231989/680400*x*y - 14371/64800*y^2 - 26689/81648*x*z - 10265/27216*y*z - 2053/163296*z^2 : 24496/315*x^2 + 119243/840*x*y + 4837/80*y^2 + 67259/504*x*z + 25507/168*y*z + 5135/1008*z^2 : 8653002877/2099914709760000*x^2 + 8653002877/699971569920000*x*y + 8653002877/933295426560000*y^2 + 8653002877/419982941952000*x*z + 8653002877/279988627968000*y*z + 8653002877/335986353561600*z^2)
 
@@ -1087,7 +1098,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         dx, dy, dz = [L.coefficient(v) for v in R.gens()]
 
         # find an invertible matrix M such that (0,1,0)M=P and
-        # ML'=(0,0,1)' where L=[dx,dy,dx].  Then the linea transform
+        # ML'=(0,0,1)' where L=[dx,dy,dx].  Then the linear transform
         # by M takes P to [0,1,0] and L to Z=0:
 
         if P[0]:

@@ -24,7 +24,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
 
-from __future__ import division
 
 from sage.categories.crystals import Crystals
 from sage.categories.finite_crystals import FiniteCrystals

@@ -1,3 +1,7 @@
+# distutils: language = c++
+# distutils: libraries = bliss
+# sage_setup: distribution = sage-bliss
+
 r"""
 Interface with bliss: graph (iso/auto)morphism
 
@@ -16,7 +20,7 @@ AUTHORS:
     - Jernej Azarija
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jernej Azarija
 #       Copyright (C) 2015 Nathann Cohen <nathann.cohen@gail.com>
 #       Copyright (C) 2018 Christian Stump <christian.stump@gmail.com>
@@ -26,9 +30,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-import numpy
-from operator import itemgetter
+# ****************************************************************************
 
 from libc.limits cimport LONG_MAX
 
@@ -61,13 +63,28 @@ cdef extern from "bliss/graph.hh" namespace "bliss":
                     const unsigned int*), void*)
         unsigned int get_hash()
 
+
+cdef int encoding_numbits(int n):
+    r"""
+    Return the number of bits needed to encode the ``n`` numbers from ``1`` to ``n``. In
+    other words, the last bit set in ``n``.
+    """
+    if n <= 0:
+        return 0
+    cdef int i = 0
+    while n:
+        n >>= 1
+        i += 1
+    return i
+
+
 cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
     r"""
     Function called each time a new generator of the automorphism group is
     found.
 
     This function is used to append the new generators to a Python list. Its
-    main job is to translate a permutation into dijoint cycles.
+    main job is to translate a permutation into disjoint cycles.
 
     INPUT:
 
@@ -79,33 +96,30 @@ cdef void add_gen(void *user_param, unsigned int n, const unsigned int *aut):
 
     - ``aut`` -- ``int *``; an automorphism of the graph
     """
+    cdef int N
     cdef int tmp    = 0
-    cdef int marker = 0
     cdef int cur    = 0
     cdef list perm  = []
     cdef bint* done = <bint*> check_calloc(n, sizeof(bint))
     cdef int i
-    for i in range(n):
-        done[i] = False
 
-    gens, int_to_vertex = <object>user_param
+    gens, int_to_vertex, N = <object>user_param
 
-    while True:
-        while cur < n and done[cur]:
-            cur += 1
-        if cur == n:
-            break
+    while cur < N:
+        if not done[cur]:
+            tmp = cur
+            cycle = [int_to_vertex[cur]]
+            done[cur] = True
 
-        marker = tmp = cur
-        cycle = [int_to_vertex[cur]]
-        done[cur] = True
+            while aut[tmp] != cur:
+                tmp = aut[tmp]
+                done[tmp] = True
+                cycle.append(int_to_vertex[tmp])
 
-        while aut[tmp] != marker:
-            tmp = aut[tmp]
-            done[tmp] = True
-            cycle.append(int_to_vertex[tmp])
+            perm.append(tuple(cycle))
 
-        perm.append(tuple(cycle))
+        cur += 1
+
     gens.append(perm)
 
     sig_free(done)
@@ -124,6 +138,20 @@ cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels,
     For edge labelled graphs, the bliss graph is constructed using `Vnr *
     \log(Lnr)` many vertices as described in Sec. 14 of the `nauty reference
     manual <http://pallini.di.uniroma1.it/Guide.html>`_.
+
+    More precisely, let `V` the vertices of the original graph. We
+    construct the new graph on the vertex set
+    `V \times \{0, \ldots, log(Lnr)\}`. The integers in the second factor of
+    `V \times \{0, \ldots, \log(Lnr)` encode the coloring of the edges. Then
+
+    - for each vertex `v` in `G` and each `i` in `0`, ..., `log(Lnr)-1`, we
+      add an edge from `(v, i)` to `(v, i+1)`
+
+    - for each edge `e` from `u` to `v` with label `lab` in `G` we add edges
+      from `(u, i)` to `(v, i)` for each `i` so that the `i`-th bit of `lab+1`
+      is set (recall that the labels range from `0` to `Lnr-1` and hence the
+      binary encoding of `1` to `Lnr` is so that at least one bit is set and
+      their binary encoding has length at most `log(Lnr)`)
 
     .. WARNING::
 
@@ -144,56 +172,54 @@ cdef Graph *bliss_graph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels,
 
     - ``labels`` -- ``list``; the list of edge labels
 
-    - ``partition`` -- a partition of the vertex set
+    - ``partition`` -- an ordered partition of the vertex set
     """
-    cdef Py_ssize_t i, j
-    cdef int logLnr = 0
-    cdef str binrep
+    cdef Graph * g
+    cdef int i, j, x, y, lab, Pnr, Enr, logLnr = 1
 
-    cdef Graph *g
-    cdef int x,y, lab
-
-    if Lnr == 1:
+    if Lnr <= 1:
         g = new Graph(Vnr)
-        if not g:
-            raise MemoryError("allocation failed")
     else:
-        logLnr = len(numpy.binary_repr(Lnr))
+        logLnr = encoding_numbits(Lnr)
         g = new Graph(Vnr * logLnr)
-        if not g:
-            raise MemoryError("allocation failed")
-        for j in range(1, logLnr):
-            for i in range((j - 1) * Vnr, j * Vnr):
-                g.add_edge(i, i + Vnr)
+    if not g:
+        raise MemoryError("allocation failed")
 
-    cdef int Enr = len(Vout)
+    Enr = len(Vout)
 
-    for i in range(Enr):
-        x = Vout[i]
-        y = Vin[i]
-        if Lnr == 1:
-            lab = 0
-        else:
-            lab = labels[i]
+    if Lnr <= 1:
+        for i in range(Enr):
+            g.add_edge(Vout[i], Vin[i])
 
-        if lab:
-            lab += 1
-            for j in range(logLnr - 1, -1, -1):
-                if lab & (1 << j):
+    else:
+        # arrows going up in layers
+        for i in range(Vnr * (logLnr - 1)):
+            g.add_edge(i, i + Vnr)
+
+        # arrows inside layers shadowing the original graph
+        for i in range(Enr):
+            x = Vout[i]
+            y = Vin[i]
+            lab = labels[i] + 1
+            j = 0
+            while lab:
+                if lab & 1:
                     g.add_edge(j * Vnr + x, j * Vnr + y)
-        else:
-            g.add_edge(x, y)
+                j += 1
+                lab >>= 1
 
-    if not bool(partition):
-        partition = [list(range(Vnr))]
-    cdef int Pnr = len(partition)
-    for i in range(Pnr):
-        for v in partition[i]:
-            if Lnr == 1:
-                g.change_color(v, i)
-            else:
+    # vertex partition gives colors
+    if partition:
+        Pnr = len(partition)
+        for i in range(Pnr):
+            for v in partition[i]:
                 for j in range(logLnr):
                     g.change_color(j * Vnr + v, j * Pnr + i)
+    else:
+        for j in range(logLnr):
+            for v in range(Vnr):
+                g.change_color(j * Vnr + v, j)
+
     return g
 
 cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, labels, partition):
@@ -225,54 +251,51 @@ cdef Digraph *bliss_digraph_from_labelled_edges(int Vnr, int Lnr, Vout, Vin, lab
 
     - ``partition`` -- a partition of the vertex set
     """
-    cdef Py_ssize_t i, j
-    cdef int logLnr = 0
-    cdef str binrep
-
     cdef Digraph *g
-    cdef int x, y, lab
+    cdef int i, j, x, y, lab, Pnr, Enr, logLnr = 1
 
-    if Lnr == 1:
+    if Lnr <= 1:
         g = new Digraph(Vnr)
-        if not g:
-            raise MemoryError("allocation failed")
     else:
-        logLnr = len(numpy.binary_repr(Lnr))
+        logLnr = encoding_numbits(Lnr)
         g = new Digraph(Vnr * logLnr)
-        if not g:
-            raise MemoryError("allocation failed")
-        for j in range(1, logLnr):
-            for i in range((j - 1) * Vnr, j * Vnr):
-                g.add_edge(i, i + Vnr)
+    if not g:
+        raise MemoryError("allocation failed")
 
-    cdef int Enr = len(Vout)
+    Enr = len(Vout)
 
-    for i in range(Enr):
-        x = Vout[i]
-        y = Vin[i]
-        if Lnr == 1:
-            lab = 0
-        else:
-            lab = labels[i]
+    if Lnr <= 1:
+        for i in range(Enr):
+            g.add_edge(Vout[i], Vin[i])
+    else:
+        # arrows going up in layers
+        for i in range(Vnr * (logLnr - 1)):
+            g.add_edge(i, i + Vnr)
 
-        if lab:
-            lab += 1
-            for j in range(logLnr - 1, -1, -1):
-                if lab & (1 << j):
+        # arrows inside layers shadowing the original graph
+        for i in range(Enr):
+            x = Vout[i]
+            y = Vin[i]
+            lab = labels[i] + 1
+            j = 0
+            while lab:
+                if lab & 1:
                     g.add_edge(j * Vnr + x, j * Vnr + y)
-        else:
-            g.add_edge(x, y)
+                j += 1
+                lab >>= 1
 
-    if not bool(partition):
-        partition = [list(range(Vnr))]
-    cdef Pnr = len(partition)
-    for i in range(Pnr):
-        for v in partition[i]:
-            if Lnr == 1:
-                g.change_color(v, i)
-            else:
+    # vertex partition gives color
+    if partition:
+        Pnr = len(partition)
+        for i in range(Pnr):
+            for v in partition[i]:
                 for j in range(logLnr):
                     g.change_color(j * Vnr + v, j * Pnr + i)
+    else:
+        for j in range(logLnr):
+            for v in range(Vnr):
+                g.change_color(j * Vnr + v, j)
+
     return g
 
 #####################################################
@@ -334,19 +357,15 @@ cdef canonical_form_from_edge_list(int Vnr, list Vout, list Vin, int Lnr=1, list
         f = aut[y]
         if Lnr == 1:
             if not bool(labels):
-                lab = None
+                lab = 0
             else:
                 lab = labels[0]
-            if directed:
-                new_edges.append((e, f, lab))
-            else:
-                new_edges.append((e, f, lab) if e > f else (f, e, lab))
         else:
             lab = labels[i]
-            if directed:
-                new_edges.append((e, f, lab))
-            else:
-                new_edges.append((e, f, lab) if e > f else (f, e, lab))
+        if directed:
+            new_edges.append((e, f, lab))
+        else:
+            new_edges.append((e, f, lab) if e > f else (f, e, lab))
 
     if certificate:
         relabel = {v: <long>aut[v] for v in range(Vnr)}
@@ -379,8 +398,10 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     - ``return_graph`` -- boolean (default: ``False``); whether to return the
       canonical graph of ``G`` or its set of edges
 
-    - ``edge_labels`` -- boolean (default: ``True``); whether to consider edge
-      labels
+    - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider
+      edge labels. The edge labels are assumed to be hashable and sortable. If
+      this is not the case (ie a ``TypeError`` is raised), the algorithm will
+      consider the string representations of the labels instead of the labels.
 
     - ``certificate`` -- boolean (default: ``False``); when set to ``True``,
       returns the labeling of G into a canonical graph
@@ -429,11 +450,44 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: g_ = canonical_form(g, return_graph=True, certificate=True)   # optional - bliss
         sage: 0 in g_[0]                                                    # optional - bliss
         True
+
+    Check that parameter ``use_edge_labels`` can be used (:trac:`27571`)::
+
+        sage: g = Graph({1: {2: 'a'}})
+        sage: canonical_form(g, use_edge_labels=True)                       # optional - bliss
+        [(1, 0, 'a')]
+        sage: canonical_form(g, use_edge_labels=False)                      # optional - bliss
+        [(1, 0, None)]
+
+    Check that :trac:`28531` is fixed::
+
+        sage: from itertools import product, permutations
+        sage: edges_list = [[(0,1), (1,2)],
+        ....:               [(0,1),(1,2),(2,3)],
+        ....:               [(0,1),(1,2),(2,3),(3,0)]]
+        sage: for edges in edges_list:                                      # optional - bliss
+        ....:     for labels in product([0,1], repeat=len(edges)):
+        ....:         g = Graph([(u,v,l) for ((u,v),l) in zip(edges, labels)])
+        ....:         gcan = canonical_form(g, use_edge_labels=True)
+        ....:         for p in permutations(range(g.num_verts())):
+        ....:             h = Graph([(p[u], p[v], lab) for u,v,lab in g.edges()])
+        ....:             hcan = canonical_form(h, use_edge_labels=True)
+        ....:             if gcan != hcan: print(edges, labels, p)
+
+    Check that it works with non hashable non sortable edge labels (relying
+    on string representations of the labels)::
+
+        sage: g1 = Graph([(0, 1, matrix(ZZ, 2)), (0, 2, RDF.pi()), (1, 2, 'a')])
+        sage: g2 = Graph([(1, 2, matrix(ZZ, 2)), (2, 0, RDF.pi()), (0, 1, 'a')])
+        sage: g1can = canonical_form(g1, use_edge_labels=True)               # optional - bliss
+        sage: g2can = canonical_form(g2, use_edge_labels=True)               # optional - bliss
+        sage: g1can == g2can                                                 # optional - bliss
+        True
     """
     # We need this to convert the numbers from <unsigned int> to <long>.
     # This assertion should be true simply for memory reasons.
     cdef unsigned long Vnr = G.order()
-    assert Vnr <= <unsigned long>LONG_MAX
+    assert Vnr <= <unsigned long> LONG_MAX
 
     cdef bint directed = G.is_directed()
 
@@ -442,36 +496,57 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     cdef list Vin    = []
     cdef list labels = []
 
-    cdef list int2vert = list(G)
-    cdef dict vert2int = {v: i for i, v in enumerate(int2vert)}
-    cdef list edge_labels = []
-    cdef dict edge_labels_rev = {}
-    cdef int Lnr = 0
+    cdef list int2vert
+    cdef dict vert2int
+    cdef dict lab_to_index
+    cdef list edge_labels = [] if use_edge_labels else [None]
+    cdef int Lnr = 1
 
-    if bool(partition):
+    if partition:
+        from itertools import chain
+        int2vert = list(chain(*partition))
+    else:
+        int2vert = list(G)
+    vert2int = {v: i for i, v in enumerate(int2vert)}
+    if partition:
         partition = [[vert2int[i] for i in part] for part in partition]
 
-    for x,y,lab in G.edge_iterator(labels=True):
-        if use_edge_labels is False:
-            lab = None
+    # Create 3 lists to represent edges
+    # - Vout[i] : source of the ith edge
+    # - Vin[i] : destination of the ith edge
+    # - labels[i] : label of the ith edge if use_edge_labels is True
+    # On the way, assign a unique integer to each distinct label
+    if use_edge_labels:
         try:
-            labInd = edge_labels_rev[lab]
-        except KeyError:
-            labInd = Lnr
-            Lnr += 1
-            edge_labels_rev[lab] = labInd
-            edge_labels.append(lab)
+            edge_labels = sorted(set(G.edge_labels()))
+        except TypeError:
+            # NOTE: use edge labels might not be hashable or sortable...
+            # rely loosely on string representation
+            edge_labels = sorted(set(map(str, G.edge_labels())))
+            lab_to_index = {lab: i for i,lab in enumerate(edge_labels)}
+            for x,y,lab in G.edge_iterator(labels=True):
+                Vout.append(vert2int[x])
+                Vin.append(vert2int[y])
+                labels.append(lab_to_index[str(lab)])
 
-        Vout.append(vert2int[x])
-        Vin.append(vert2int[y])
-        labels.append(labInd)
+        else:
+            lab_to_index = {lab:i for i,lab in enumerate(edge_labels)}
+            for x,y,lab in G.edge_iterator(labels=True):
+                Vout.append(vert2int[x])
+                Vin.append(vert2int[y])
+                labels.append(lab_to_index[lab])
 
-    lab_relabels = [lab for _,lab in sorted(edge_labels_rev.iteritems(), key=itemgetter(0))]
-    labels = [lab_relabels[i] for i in labels]
+        Lnr = len(lab_to_index)
+
+    else:
+        for x,y in G.edge_iterator(labels=False):
+            Vout.append(vert2int[x])
+            Vin.append(vert2int[y])
+
     new_edges, relabel = canonical_form_from_edge_list(Vnr, Vout, Vin, Lnr, labels, partition, directed, certificate=True)
 
     new_edges = [(x, y, edge_labels[lab]) for x, y, lab in new_edges]
-    relabel = {int2vert[i]: j for i, j in relabel.iteritems() }
+    relabel = {int2vert[i]: j for i, j in relabel.items()}
 
     if return_graph:
         if directed:
@@ -484,6 +559,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         H.add_vertices(range(G.order()))
         return (H, relabel) if certificate else H
 
+    # Warning: this may break badly in Python 3 if the graph is not simple
     return (sorted(new_edges), relabel) if certificate else sorted(new_edges)
 
 #####################################################
@@ -528,14 +604,8 @@ cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, label
     if not int2vert:
         int2vert = list(range(Vnr))
 
-    # the following is needed because the internal graph has size Vnr*logLnr for
-    # labelled graphs
-    if Lnr != 1:
-        logLnr = len(numpy.binary_repr(Lnr))
-        int2vert.extend([None] * (Vnr * (logLnr - 1)))
-
     cdef list gens = []
-    cdef tuple data = (gens, int2vert)
+    cdef tuple data = (gens, int2vert, Vnr)
 
     if directed:
         d = bliss_digraph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
@@ -567,7 +637,7 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
       of ``G`` into color classes. Defaults to ``None``, which is equivalent to
       a partition of size 1.
 
-    - ``edge_labels`` -- boolean (default: ``False``); whether to consider edge
+    - ``use_edge_labels`` -- boolean (default: ``True``); whether to consider edge
       labels
 
     EXAMPLES::
@@ -695,37 +765,41 @@ cpdef automorphism_group(G, partition=None, use_edge_labels=True):
     cdef list Vin    = []
     cdef list labels = []
 
-    cdef list int2vert = list(G)
-    cdef dict vert2int = {v: i for i, v in enumerate(int2vert)}
+    cdef list int2vert
+    cdef dict vert2int
     cdef list edge_labels = []
-    cdef dict edge_labels_rev = {}
-    cdef int Lnr = 0
+    cdef int Lnr = 0 if use_edge_labels else 1
 
-    if bool(partition):
-        partition = [[ vert2int[i] for i in part] for part in partition]
+    if partition:
+        from itertools import chain
+        int2vert = list(chain(*partition))
+    else:
+        int2vert = list(G)
+    vert2int = {v: i for i, v in enumerate(int2vert)}
+    if partition:
+        partition = [[vert2int[i] for i in part] for part in partition]
 
+    # Create 3 lists to represent edges
+    # - Vout[i] : source of the ith edge
+    # - Vin[i] : destination of the ith edge
+    # - labels[i] : label of the ith edge if use_edge_labels is True
+    # On the way, assign a unique integer to each distinct label
     for x,y,lab in G.edge_iterator(labels=True):
-        if use_edge_labels is False:
-            lab = None
-        try:
-            labInd = edge_labels_rev[lab]
-        except KeyError:
-            labInd = Lnr
-            Lnr += 1
-            edge_labels_rev[lab] = labInd
-            edge_labels.append(lab)
-
         Vout.append(vert2int[x])
         Vin.append(vert2int[y])
-        labels.append(labInd)
-
-    lab_relabels = [lab for _,lab in sorted(edge_labels_rev.iteritems(), key=itemgetter(0))]
-    labels = [lab_relabels[i] for i in labels]
+        if use_edge_labels:
+            try:
+                labInd = edge_labels.index(lab)
+            except ValueError:
+                labInd = Lnr
+                Lnr += 1
+                edge_labels.append(lab)
+            labels.append(labInd)
 
     gens = automorphism_group_gens_from_edge_list(Vnr, Vout, Vin, Lnr, labels, int2vert, partition, directed)
 
     from sage.groups.perm_gps.permgroup import PermutationGroup
-    return PermutationGroup(gens, domain=list(G))
+    return PermutationGroup(gens, domain=int2vert[:G.order()])
 
 
 #####################################################

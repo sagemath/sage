@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-walkthrough:
 
 ========================
@@ -16,8 +18,8 @@ of commonly used git commands that you can print out and leave on your
 desk.  We have some :ref:`recommended references and tutorials
 <section-git-tutorials>` as well.
 
-You can alternatively fork and create a pull request at
-`github <http://github.com/sagemath/sage>`_ which will automatically fetch
+You can alternatively fork and create a merge request at
+`GitLab <https://gitlab.com/sagemath/sage>`_ which will automatically fetch
 your code and open a ticket on our trac server.
 
 
@@ -70,7 +72,7 @@ local installation of Sage, or (to start without Sage) download it
 from github which is a public read-only mirror (=faster) of our
 internal git repository::
 
-    [user@localhost ~]$ git clone git://github.com/sagemath/sage.git
+    [user@localhost ~]$ git clone https://github.com/sagemath/sage.git
     Cloning into 'sage'...
     [...]
     Checking connectivity... done.
@@ -275,7 +277,7 @@ and build the documentation (see :ref:`chapter-sage_manuals`).
     additional changes to files. To minimize the impact of switching between branches,
     install ccache using the command ::
 
-        ./sage -i ccache
+        [user@localhost sage]$ ./sage -i ccache
 
     Recythonization will still occur when rebuilding, but the recompilation stage
     first checks whether previously compiled files are cached for reuse before
@@ -324,7 +326,9 @@ snapshot with the ``git commit`` command::
 
 This will open an editor for you to write your commit message. The
 commit message should generally have a one-line description, followed
-by an empty line, followed by further explanatory text::
+by an empty line, followed by further explanatory text:
+
+.. CODE-BLOCK:: text
 
     Added the last twin prime
 

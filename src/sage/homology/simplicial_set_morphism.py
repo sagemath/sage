@@ -29,7 +29,6 @@ This module implements morphisms and homsets of simplicial sets.
 #                  http://www.gnu.org/licenses/
 #
 #*****************************************************************************
-from six.moves import range
 
 import itertools
 
@@ -197,7 +196,6 @@ class SimplicialSetHomset(Homset):
             ...
             ValueError: codomain is not pointed, so specify a target for the constant map
         """
-        domain = self.domain()
         codomain = self.codomain()
         if point is None:
             if codomain.is_pointed():
@@ -229,7 +227,6 @@ class SimplicialSetHomset(Homset):
             sage: Hom(K,L)(d) == Hom(K,L).an_element()
             True
         """
-        domain = self.domain()
         codomain = self.codomain()
         if codomain.is_pointed():
             target = codomain.base_point()
@@ -456,7 +453,7 @@ class SimplicialSetMorphism(Morphism):
             if identity:
                 if codomain is None:
                     codomain = domain
-                elif not domain is codomain:
+                elif domain is not codomain:
                     raise TypeError("identity map is only defined for endomorphism sets")
                 self._is_identity = True
                 Morphism.__init__(self, Hom(domain, codomain, SimplicialSets()))
@@ -473,10 +470,10 @@ class SimplicialSetMorphism(Morphism):
             if identity:
                 self._is_identity = True
                 check = False
-                if not domain is codomain:
+                if domain is not codomain:
                     raise TypeError("identity map is only defined for endomorphism sets")
                 data = {}
-                for i in range(domain.dimension()+1):
+                for i in range(domain.dimension() + 1):
                     for s in domain.n_cells(i):
                         data[s] = s
             if constant is not None:
@@ -1165,10 +1162,9 @@ class SimplicialSetMorphism(Morphism):
             sage: g.coproduct(g).is_bijective()
             False
         """
-        domain = self.domain().coproduct(*[g.domain() for g in others])
         codomain = self.codomain().coproduct(*[g.codomain() for g in others])
         factors = []
-        for (i,f) in enumerate([self] + list(others)):
+        for i, f in enumerate([self] + list(others)):
             factors.append(codomain.inclusion_map(i) * f)
         return codomain.universal_property(*factors)
 

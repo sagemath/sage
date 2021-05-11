@@ -16,14 +16,14 @@ EXAMPLES::
       Defn: Defined by sending (x : y , u : v) to
             (x^2*u : y^2*v , x*v^2 : y*u^2).
 """
-#*****************************************************************************
-# Copyright (C) 2014 Ben Hutz <bn4941@gmail.com>
+# ****************************************************************************
+#     Copyright (C) 2014 Ben Hutz <bn4941@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 # as published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
-#*****************************************************************************
+#     https://www.gnu.org/licenses/
+# ****************************************************************************
 from copy import copy
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
@@ -157,11 +157,11 @@ class DynamicalSystem_product_projective(DynamicalSystem,
             return(self)
         else:
             Q = self(P)
-            if normalize == True:
+            if normalize:
                 Q.normalize_coordinates()
             for i in range(2,n+1):
                 Q = self(Q)
-                if normalize == True:
+                if normalize:
                     Q.normalize_coordinates()
             return(Q)
 
@@ -171,9 +171,10 @@ class DynamicalSystem_product_projective(DynamicalSystem,
 
         Let `F` be this dynamical system. If `N` is an integer return `[P,F(P),\ldots,F^N(P)]`.
 
-        If `N` is a list or tuple `N = [m, k]` return `[F^m(P),\ldots,F^k(P)]`.
-        Automatically normalize the points if ``normalize == True``. Perform the checks on point initialize if
-        ``check==True``.
+        If `N` is a list or tuple `N = [m, k]` return
+        `[F^m(P),\ldots,F^k(P)]`.  Automatically normalize the points
+        if ``normalize`` is ``True``. Perform the checks on point
+        initialize if ``check`` is ``True``.
 
         INPUT:
 
@@ -224,16 +225,16 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         check = kwds.pop("check", True)
         normalize = kwds.pop("normalize", False)
 
-        if normalize == True:
+        if normalize:
             Q.normalize_coordinates()
         for i in range(1, N[0]+1):
             Q = self(Q, check)
-            if normalize == True:
+            if normalize:
                 Q.normalize_coordinates()
         orb = [Q]
         for i in range(N[0]+1, N[1]+1):
             Q = self(Q, check)
-            if normalize == True:
+            if normalize:
                 Q.normalize_coordinates()
             orb.append(Q)
         return(orb)
@@ -269,7 +270,6 @@ class DynamicalSystem_product_projective(DynamicalSystem,
         D = int(n)
         if D < 0:
             raise TypeError("iterate number must be a nonnegative integer")
-        N = sum([E.ambient_space()[i].dimension_relative() + 1 for i in range(E.ambient_space().num_components())])
         F = list(self._polys)
         Coord_ring = E.coordinate_ring()
         if isinstance(Coord_ring, QuotientRing_generic):
@@ -284,3 +284,54 @@ class DynamicalSystem_product_projective(DynamicalSystem,
                 F = [poly(*F) for poly in F] #'square'
             D >>= 1
         return DynamicalSystem_projective(PHI, domain=self.domain())
+
+
+class DynamicalSystem_product_projective_field(DynamicalSystem_product_projective):
+
+    pass
+
+class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_projective_field):
+
+    def cyclegraph(self):
+        r"""
+        Return the digraph of all orbits of this morphism mod `p`.
+
+        OUTPUT: a digraph
+
+        EXAMPLES::
+
+            sage: P.<a,b,c,d> = ProductProjectiveSpaces(GF(3), [1,1])
+            sage: f = DynamicalSystem_projective([a^2,b^2,c^2,d^2], domain=P)
+            sage: f.cyclegraph()
+            Looped digraph on 16 vertices
+
+        ::
+
+            sage: P.<a,b,c,d> = ProductProjectiveSpaces(GF(5), [1,1])
+            sage: f = DynamicalSystem_projective([a^2,b^2,c,d], domain=P)
+            sage: f.cyclegraph()
+            Looped digraph on 36 vertices
+
+        ::
+
+            sage: P.<a,b,c,d,e> = ProductProjectiveSpaces(GF(2), [1,2])
+            sage: f = DynamicalSystem_projective([a^2,b^2,c,d,e], domain=P)
+            sage: f.cyclegraph()
+            Looped digraph on 21 vertices
+
+        .. TODO:: Dynamical systems for subschemes of product projective spaces needs work.
+                  Thus this is not implemented for subschemes.
+        """
+        V = []
+        E = []
+        from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
+        if is_ProductProjectiveSpaces(self.domain()) == True:
+            for P in self.domain():
+                V.append(str(P))
+                Q = self(P)
+                E.append([str(Q)])
+        else:
+            raise NotImplementedError("Cyclegraph for product projective spaces not implemented for subschemes")
+        from sage.graphs.digraph import DiGraph
+        g = DiGraph(dict(zip(V, E)), loops=True)
+        return g

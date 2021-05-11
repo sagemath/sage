@@ -183,7 +183,7 @@ Sage example in ./polynomes.tex, line 997::
   (54.00) * (x - 1.414) * (x + 0.3333)^2 * (x + 1.414)
   Finite Field of size 5:
   (4) * (x + 2)^2 * (x^2 + 3)
-  Number Field in sqrt2 with defining polynomial x^2 - 2:
+  Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?:
   (54) * (x - sqrt2) * (x + sqrt2) * (x + 1/3)^2
 
 Sage example in ./polynomes.tex, line 1100::

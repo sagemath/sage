@@ -29,7 +29,6 @@ EXAMPLES::
     q - 6*q^2 + 9*q^3 + 4*q^4 + 6*q^5 + O(q^6)
     ]
 """
-from __future__ import absolute_import
 
 #########################################################################
 #       Copyright (C) 2004--2006 William Stein <wstein@gmail.com>
@@ -38,9 +37,9 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #########################################################################
-from six.moves          import range
 from sage.rings.all     import QQ, Integer
-from sage.misc.all      import verbose, cached_method
+from sage.misc.all      import cached_method
+from sage.misc.verbose  import verbose
 from sage.matrix.all    import Matrix, identity_matrix
 
 from .submodule import ModularFormsSubmodule
@@ -85,6 +84,7 @@ class CuspidalSubmodule(ModularFormsSubmodule):
             sage: S == loads(dumps(S))
             True
         """
+        from sage.misc.verbose import verbose
         verbose('creating cuspidal submodule of %s'%ambient_space)
         d = ambient_space._dim_cuspidal()
         V = ambient_space.module()

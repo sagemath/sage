@@ -1,4 +1,5 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Rankers
 """
 #*****************************************************************************
@@ -6,20 +7,14 @@ Rankers
 #                          Nicolas M. Thiery <nthiery at users.sf.net>
 #  Ported from MuPAD-Combinat (combinat::rankers)
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
-#    This code is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#    General Public License for more details.
-#
-#  The full text of the GPL is available at:
-#
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from six.moves import range
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from collections import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from sage.misc.cachefunc import cached_function
 from sage.misc.callable_dict import CallableDict
 from sage.structure.parent import Parent
@@ -189,14 +184,14 @@ def unrank(L, i):
 
     The purpose of this utility is to give a uniform idiom to recover
     the `i`-th element of an object ``L``, whether ``L`` is a list,
-    tuple (or more generally a :class:`collections.Sequence`), an
+    tuple (or more generally a :class:`collections.abc.Sequence`), an
     enumerated set, some old parent of Sage still implementing
     unranking in the method ``__getitem__``, or an iterable (see
-    :class:`collections.Iterable`). See :trac:`15919`.
+    :class:`collections.abc.Iterable`). See :trac:`15919`.
 
     EXAMPLES:
 
-    Lists, tuples, and other :class:`sequences <collections.Sequence>`::
+    Lists, tuples, and other :class:`sequences <collections.abc.Sequence>`::
 
         sage: from sage.combinat.ranker import unrank
         sage: unrank(['a','b','c'], 2)

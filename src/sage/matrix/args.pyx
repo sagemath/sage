@@ -14,19 +14,20 @@ Helpers for creating matrices
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, generator_stop
-
 cimport cython
 from cpython.sequence cimport PySequence_Fast
 from cysignals.signals cimport sig_check
 from cypari2.gen cimport Gen
 from cypari2.types cimport typ, t_MAT, t_VEC, t_COL, t_VECSMALL, t_LIST, t_STR, t_CLOSURE
 
-from .matrix_space import MatrixSpace
-from sage.rings.all import ZZ, RDF, CDF
+MatrixSpace = None
+
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_double import RDF
+from sage.rings.complex_double import CDF
 from sage.structure.coerce cimport (coercion_model,
         is_numpy_type, py_scalar_parent)
-from sage.structure.element cimport Element, RingElement
+from sage.structure.element cimport Element, RingElement, Vector
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
 from sage.categories import monoids
@@ -236,6 +237,12 @@ cdef class MatrixArgs:
         [0 1 1]
         [1 0 1]
         [1 1 0]
+
+        sage: ma = MatrixArgs([vector([0,1], sparse=True), vector([0,0], sparse=True)], sparse=True)
+        sage: ma.finalized(); ma.matrix()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 sparse matrices over Integer Ring; typ=SEQ_SPARSE; entries=[SparseEntry(0, 1, 1)]>
+        [0 1]
+        [0 0]
 
     Test invalid input::
 
@@ -925,6 +932,9 @@ cdef class MatrixArgs:
             self.sparse = (self.typ & MA_FLAG_SPARSE) != 0
 
         if self.space is None:
+            global MatrixSpace
+            if MatrixSpace is None:
+                from .matrix_space import MatrixSpace
             self.space = MatrixSpace(self.base, self.nrows, self.ncols,
                     sparse=self.sparse, **self.kwds)
 
@@ -981,7 +991,7 @@ cdef class MatrixArgs:
         """
         cdef list seqsparse = []
         cdef list values = []
-        cdef long maxrow = -1, maxcol = -1  # Maximum occuring value for indices
+        cdef long maxrow = -1, maxcol = -1  # Maximum occurring value for indices
         cdef long i, j
         for (i0, j0), x in self.entries.items():
             sig_check()
@@ -1096,6 +1106,21 @@ cdef class MatrixArgs:
             return 0
         elif self.ncols != -1 and self.base is not None:
             # Everything known => OK
+            return 0
+
+        # When sparse and given a list of sparse vectors, convert to a sparse sequence
+        cdef long i, j
+        if isinstance(e[0], Vector) and all(vec.is_sparse() for vec in e):
+            if self.base is None:
+                self.base = coercion_model.common_parent(*[(<Vector>vec)._parent._base
+                                                           for vec in e])
+            self.entries = []
+            for i, row in enumerate(e):
+                for j, val in (<Vector?>row).iteritems():
+                    self.entries.append(make_SparseEntry(i, j, val))
+
+            self.set_ncols(max((<Vector>vec)._parent.ambient_module().rank() for vec in e))
+            self.typ = MA_ENTRIES_SEQ_SPARSE
             return 0
 
         # Process everything and convert to SEQ_FLAT
@@ -1272,7 +1297,7 @@ cdef class MatrixArgs:
         if not self.entries:
             return MA_ENTRIES_SEQ_FLAT
         x = self.entries[0]
-        if isinstance(x, (list, tuple)):
+        if isinstance(x, (list, tuple, Vector)):
             return MA_ENTRIES_SEQ_SEQ
         if type(x) is SparseEntry:
             return MA_ENTRIES_SEQ_SPARSE

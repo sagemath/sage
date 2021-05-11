@@ -45,7 +45,7 @@ works is that numpy arrays will be automatically converted to
 fortran arrays, and Python scalars converted to fortran scalars. So
 to call fib we do the following.
 
-::
+.. CODE-BLOCK:: python
 
     import numpy
     m=numpy.array([0]*10,dtype=float)
@@ -57,7 +57,7 @@ Note that fortran is a function that can be called on any string.
 So if you have a fortran program in a file my
 prog.f. Then you could do the following
 
-::
+.. CODE-BLOCK:: python
 
     f=open('my_prog.f','r')
     s=f.read()
@@ -118,14 +118,14 @@ libraries that are linked in. You can just directly set this list.
 So that fortran.libraries=['lapack','blas']is equivalent to the
 following.
 
-::
+.. CODE-BLOCK:: python
 
     fortran.add_library('lapack')
     fortran.add_library('blas')
 
 Now
 
-::
+.. CODE-BLOCK:: fortran
 
     %fortran
     !f90
@@ -141,7 +141,7 @@ earlier, if the first line of the code is !f90, then it will be
 treated as fortran 90 code and does not need to be in fixed format.
 To use the above try
 
-::
+.. CODE-BLOCK:: python
 
     a=numpy.random.randn(10,10)
     b=numpy.array(range(10),dtype=float)
@@ -153,7 +153,7 @@ This will solve the linear system ax=b and store the result in b.
 If your library is not in Sage's local/lib or in your path you can
 add it to the search path using
 
-::
+.. CODE-BLOCK:: python
 
     fortran.add_library_path('path').
 
@@ -165,7 +165,7 @@ way the resulting Python function behaves a bit bitter. For example
 consider the following modification of our original fibonacci
 code.
 
-::
+.. CODE-BLOCK:: fortran
 
     C FILE: FIB3.F
           SUBROUTINE FIB(A,N)
@@ -193,7 +193,7 @@ Note the comments with the intent statements. This tells f2py that
 :math:`n` is an input parameter and :math:`a` is the output.
 This is called as
 
-::
+.. CODE-BLOCK:: python
 
     a=fib(10)
 
@@ -213,7 +213,7 @@ arguments are intent(in) by default.
 
 Consider now the following
 
-::
+.. CODE-BLOCK:: fortran
 
     %fortran
             Subroutine Rescale(a,b,n)
@@ -268,7 +268,7 @@ passed to the fortran function. We will see a way to get around
 this copying later. First let us point one way of writing the
 rescale function.
 
-::
+.. CODE-BLOCK:: fortran
 
     %fortran
 
@@ -286,7 +286,7 @@ rescale function.
 
 Note that to call this you would use
 
-::
+.. CODE-BLOCK:: python
 
     b=rescale(a,2.0).
 
@@ -296,7 +296,7 @@ mention that f2py automatically generates some documentation for
 the Python version of the function so you can check what you need
 to pass to it and what it will return. To use this try
 
-::
+.. CODE-BLOCK:: ipycon
 
     rescale?
 
@@ -307,7 +307,7 @@ array. This still may not be what you want. The original
 the original :math:`a` that you passed in use intent(inout). This
 essentially lets your fortran code work with the data inplace.
 
-::
+.. CODE-BLOCK:: fortran
 
     %fortran
 
@@ -328,7 +328,7 @@ you should make sure that your numpy arrays are stored in fortran's
 format. You can ensure this by using the order='FORTRAN' keyword
 when creating the arrays, as follows.
 
-::
+.. CODE-BLOCK:: python
 
     a=numpy.array([[1,2],[3,4]],dtype=float,order='FORTRAN')
     rescale(a,2.0)
@@ -336,7 +336,7 @@ when creating the arrays, as follows.
 After this executes, a will have the rescaled version of itself.
 There is one final version which combines the previous two.
 
-::
+.. CODE-BLOCK:: fortran
 
     %fortran
 
@@ -352,7 +352,7 @@ There is one final version which combines the previous two.
             end do
             end
 
-The (in,out,overwite) intent says that if :math:`a` is in FORTRAN
+The (in,out,overwrite) intent says that if :math:`a` is in FORTRAN
 ordering we work in place, however if its not we copy it and return
 the contents afterwards. This is sort of the best of both worlds.
 Note that if you are repeatedly passing large numpy arrays to
@@ -365,6 +365,6 @@ to the f2py webpage http://cens.ioc.ee/projects/f2py2e/. The
 command line f2py tool which is referred to in the f2py
 documentation can be called from the Sage shell using
 
-::
+.. CODE-BLOCK:: ipycon
 
     !f2py

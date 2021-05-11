@@ -205,7 +205,7 @@ new file mode 100644
 index 0000000..ffba639
 --- /dev/null
 +++ b/psutil/_pscygwin.py
-@@ -0,0 +1,908 @@
+@@ -0,0 +1,891 @@
 +"""Cygwin platform implementation."""
 +
 +# TODO: Large chunks of this module are copy/pasted from the Linux module;
@@ -252,23 +252,6 @@ index 0000000..ffba639
 +# =====================================================================
 +# --- constants
 +# =====================================================================
-+
-+_cygwin_version_re = re.compile(r'(?P<major>\d+)\.(?P<minor>\d+)\.'
-+                                '(?P<micro>\d+)\((?P<api_major>\d+)\.'
-+                                '(?P<api_minor>\d+)/(?P<shared_data>\d+)/'
-+                                '(?P<mount_registry>\d+)\)')
-+_cygwin_version = _cygwin_version_re.match(os.uname()[2]).groupdict()
-+
-+CYGWIN_VERSION = (int(_cygwin_version['major']),
-+                  int(_cygwin_version['minor']),
-+                  int(_cygwin_version['micro']))
-+
-+CYGWIN_VERSION_API = (int(_cygwin_version['api_major']),
-+                      int(_cygwin_version['api_minor']))
-+
-+CYGWIN_VERSION_SHARED_DATA = int(_cygwin_version['shared_data'])
-+
-+CYGWIN_VERSION_MOUNT_REGISTRY = int(_cygwin_version['mount_registry'])
 +
 +
 +if enum is None:
@@ -1284,7 +1267,7 @@ new file mode 100644
 index 0000000..e2f9e94
 --- /dev/null
 +++ b/psutil/_psutil_cygwin.c
-@@ -0,0 +1,2025 @@
+@@ -0,0 +1,2035 @@
 +#define WIN32_LEAN_AND_MEAN
 +
 +#include <windows.h>
@@ -1921,8 +1904,18 @@ index 0000000..e2f9e94
 +        return NULL;
 +
 +    num_handles = process->HandleCount;
-+    for (i = 0; i < process->NumberOfThreads; i++)
++    for (i = 0; i < process->NumberOfThreads; i++) {
++        // The updated headers in mingw-w64 appear to be using an older version
++        // of this API in which the ContextSwitches member is still called
++        // Reserved3
++#if __MINGW64_VERSION_MAJOR < 7
++        // Using the copy of this struct definition included in psutil
 +        ctx_switches += process->Threads[i].ContextSwitches;
++#else
++        // Using the definition from mingw-w64-w32api-headers
++        ctx_switches += process->Threads[i].Reserved3;
++#endif
++    }
 +    user_time = (double)process->UserTime.HighPart * 429.4967296 + \
 +                (double)process->UserTime.LowPart * 1e-7;
 +    kernel_time = (double)process->KernelTime.HighPart * 429.4967296 + \
@@ -3482,20 +3475,30 @@ index 1bbbf2a..0d50f5b 100644
  } KTHREAD_STATE, *PKTHREAD_STATE;
  
  
-+#ifndef __CYGWIN__
++#ifndef __MINGW64_VERSION_MAJOR
  typedef enum _KWAIT_REASON {
      Executive = 0,
      FreePage = 1,
-@@ -168,6 +169,8 @@ typedef struct _CLIENT_ID {
+@@ -168,7 +169,10 @@ typedef struct _CLIENT_ID {
      HANDLE UniqueThread;
  } CLIENT_ID, *PCLIENT_ID;
  
 +#endif
-+
  
++
++#if !defined(__MINGW64_VERSION_MAJOR) || __MINGW64_VERSION_MAJOR < 7
  typedef struct _SYSTEM_THREAD_INFORMATION {
      LARGE_INTEGER KernelTime;
-@@ -287,6 +290,7 @@ typedef NTSTATUS (NTAPI *_NtSetInformationProcess)(
+     LARGE_INTEGER UserTime;
+@@ -182,6 +186,7 @@ typedef struct _SYSTEM_THREAD_INFORMATION {
+     ULONG ThreadState;
+     KWAIT_REASON WaitReason;
+ } SYSTEM_THREAD_INFORMATION, *PSYSTEM_THREAD_INFORMATION;
++#endif
+ 
+ 
+ typedef struct _TEB *PTEB;
+@@ -287,6 +292,7 @@ typedef NTSTATUS (NTAPI *_NtSetInformationProcess)(
  );
  
  
@@ -3503,7 +3506,7 @@ index 1bbbf2a..0d50f5b 100644
  typedef enum _PROCESSINFOCLASS2 {
      _ProcessBasicInformation,
      ProcessQuotaLimits,
-@@ -338,4 +342,6 @@ typedef enum _PROCESSINFOCLASS2 {
+@@ -338,4 +344,6 @@ typedef enum _PROCESSINFOCLASS2 {
  #define ProcessImageFileName _ProcessImageFileName
  #define ProcessBreakOnTermination _ProcessBreakOnTermination
  

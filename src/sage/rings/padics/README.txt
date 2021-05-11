@@ -8,11 +8,11 @@
 #*****************************************************************************
 
 This document has the following goals:
-  -- to explain the file structure and class heirarchy for p-adics in Sage
+  -- to explain the file structure and class hierarchy for p-adics in Sage
   -- to serve as a location to collect priorities for action items on p-adics
   -- to serve as a collection point for tips about altering and adding to these files.
 
-The parent heirarchy uses multiple inheritance.  The numbers before each class name give the superclasses immediately above that class.
+The parent hierarchy uses multiple inheritance.  The numbers before each class name give the superclasses immediately above that class.
 
 LocalGeneric                                          [1] (local_generic.py)
 1  CappedAbsoluteGeneric                              [2] (capped_absolute_generic.py)
@@ -75,7 +75,7 @@ h, F        pAdicRelativeExtensionRingLazy            [m] (padic_extension_leave
 h, I        pAdicRelativeExtensionFieldLazy           [n] (padic_extension_leaves.py, does not yet exist)
 
 
-The element heirarchy is simpler (it's a tree), because Cython does not allow multiple inheritance.
+The element hierarchy is simpler (it's a tree), because Cython does not allow multiple inheritance.
 Hopefully it will eventually include power series rings.
 
 LocalGenericElement (local_generic_element.pyx)                                   :
@@ -84,7 +84,7 @@ LocalGenericElement (local_generic_element.pyx)                                 
       pAdicCappedRelativeElement (padic_capped_relative_element.pyx)              :
       pAdicCappedAbsoluteElement (padic_capped_absolute_element.pyx)              :
       pAdicFixedModElement (padic_fixed_mod_element.pyx)                          :
-      pAdicLazyElement (padic_lazy_element.py, currently not suppored)            :
+      pAdicLazyElement (padic_lazy_element.py, currently not supported)            :
     pAdicExtElement (padic_ext_element.pyx)                                       :
       pAdicZZpXElement (padic_ZZ_pX_element.pyx)                                  : unramified and eisenstein extensions of Qp and Zp, using ntl ZZ_pX
         pAdicZZpXCRElement (padic_ZZ_pX_CR_element.pyx)                           :

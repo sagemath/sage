@@ -22,11 +22,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 from sage.structure.element import Element
-
-from sage.rings.all import ZZ, QQ
 
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
@@ -62,13 +59,6 @@ class Polyhedron_polymake(Polyhedron_base):
         ....:                lines=[], backend='polymake')
         sage: TestSuite(p).run(skip='_test_pickling')                      # optional - polymake
 
-    Two ways to get the full space::
-
-        sage: Polyhedron(eqns=[[0, 0, 0]], backend='polymake')             # optional - polymake
-        A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 2 lines
-        sage: Polyhedron(ieqs=[[0, 0, 0]], backend='polymake')             # optional - polymake
-        A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 2 lines
-
     A lower-dimensional affine cone; we test that there are no mysterious
     inequalities coming in from the homogenization::
 
@@ -81,6 +71,11 @@ class Polyhedron_polymake(Polyhedron_base):
 
     The empty polyhedron::
 
+        sage: Polyhedron(eqns=[[1, 0, 0]], backend='polymake')             # optional - polymake
+        The empty polyhedron in QQ^2
+
+    It can also be obtained differently::
+
         sage: P=Polyhedron(ieqs=[[-2, 1, 1], [-3, -1, -1], [-4, 1, -2]],   # optional - polymake
         ....:              backend='polymake')
         sage: P                                                            # optional - polymake
@@ -89,6 +84,14 @@ class Polyhedron_polymake(Polyhedron_base):
         ()
         sage: P.Hrepresentation()                                          # optional - polymake
         (An equation -1 == 0,)
+
+    The full polyhedron::
+
+        sage: Polyhedron(eqns=[[0, 0, 0]], backend='polymake')             # optional - polymake
+        A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 2 lines
+        sage: Polyhedron(ieqs=[[0, 0, 0]], backend='polymake')             # optional - polymake
+        A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex and 2 lines
+
 
     Quadratic fields work::
 
@@ -216,7 +219,7 @@ class Polyhedron_polymake(Polyhedron_base):
             ....:                backend='polymake')
             sage: TestSuite(p).run(skip="_test_pickling")            # optional - polymake
         """
-        if polymake_polytope:
+        if polymake_polytope is not None:
             if Hrep is not None or Vrep is not None:
                 raise ValueError("only one of Vrep, Hrep, or polymake_polytope can be different from None")
             Element.__init__(self, parent=parent)
@@ -307,10 +310,14 @@ class Polyhedron_polymake(Polyhedron_base):
         # https://forum.polymake.org/viewtopic.php?f=8&t=547
         # Filter them out.
         ieqs = [ v for v in ieqs if not all(self._is_zero(x) for x in v) ]
+        # We do a similar filtering for equations.
+        # Since Polymake 3.2, we can not give all zero vectors in equations
+        eqns = [ v for v in eqns if not all(self._is_zero(x) for x in v) ]
         if not ieqs:
             # Put in one trivial (all-zero) inequality.  This is so that
             # the ambient dimension is set correctly.
-            ieqs.append([0] + [0]*self.ambient_dim())
+            # Since Polymake 3.2, the constant should not be zero.
+            ieqs.append([1] + [0]*self.ambient_dim())
         polymake_field = polymake(self.base_ring().fraction_field())
         p = polymake.new_object("Polytope<{}>".format(polymake_field),
                                 EQUATIONS=eqns,

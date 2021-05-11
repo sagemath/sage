@@ -28,8 +28,7 @@ from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 
 
-INNER_HTML_TEMPLATE = \
-"""
+INNER_HTML_TEMPLATE = """
 <html>
 <head>
   <style>
@@ -38,7 +37,7 @@ INNER_HTML_TEMPLATE = \
       padding: 0;
       overflow: hidden;
     }}
-    body, html {{      
+    body, html {{
       height: 100%;
       width: 100%;
     }}
@@ -47,6 +46,7 @@ INNER_HTML_TEMPLATE = \
 </head>
 <body>
   <script type="text/javascript">
+    delete Jmol._tracker; // Prevent JSmol from phoning home.
     var script = {script};
     var Info = {{
       width: '{width}',
@@ -66,9 +66,8 @@ INNER_HTML_TEMPLATE = \
 """
 
 
-IFRAME_TEMPLATE = \
-"""
-<iframe srcdoc="{escaped_inner_html}" 
+IFRAME_TEMPLATE = """
+<iframe srcdoc="{escaped_inner_html}"
         width="{width}"
         height="{height}"
         style="border: 0;">
@@ -76,8 +75,7 @@ IFRAME_TEMPLATE = \
 """
 
 
-OUTER_HTML_TEMPLATE = \
-"""
+OUTER_HTML_TEMPLATE = """
 <html>
 <head>
   <title>JSmol 3D Scene</title>
@@ -100,8 +98,8 @@ class JSMolHtml(SageObject):
           instance. The 3-d scene to show.
 
         - ``path_to_jsmol`` -- string (optional, default is
-          ``'/nbextensions/jsmol'``). The path (relative or absolute)
-          where ``JSmol.min.js`` is served on the web server. 
+          ``'/nbextensions/jupyter_jsmol/jsmol'``). The path (relative or absolute)
+          where ``JSmol.min.js`` is served on the web server.
 
         - ``width`` -- integer or string (optional, default:
           ``'100%'``). The width of the JSmol applet using CSS
@@ -123,7 +121,7 @@ class JSMolHtml(SageObject):
         self._jmol = jmol
         self._zip = zipfile.ZipFile(io.BytesIO(self._jmol.scene_zip.get()))
         if path_to_jsmol is None:
-            self._path = os.path.join('/', 'nbextensions', 'jsmol')
+            self._path = os.path.join('/', 'nbextensions', 'jupyter_jsmol', 'jsmol')
         else:
             self._path = path_to_jsmol
         self._width = width
@@ -175,7 +173,7 @@ class JSMolHtml(SageObject):
         Since the many shortcomings of Javascript include multi-line
         strings, this actually returns Javascript code to reassemble
         the script from a list of strings.
-        
+
         OUTPUT:
 
         String. Javascript code that evaluates to :meth:`script` as
@@ -198,13 +196,13 @@ class JSMolHtml(SageObject):
             script += [r"  '{0}',".format(line)]
         script += [r"].join('\n');"]
         return '\n'.join(script)
-        
+
     def _repr_(self):
         """
         Return as string representation
 
         OUTPUT:
-        
+
         String.
 
         EXAMPLES::
@@ -241,15 +239,15 @@ class JSMolHtml(SageObject):
             height=self._height,
             path_to_jsmol=self._path,
         )
-        
+
     def iframe(self):
         """
         Return HTML iframe
 
         OUTPUT:
-        
+
         String.
-        
+
         EXAMPLES::
 
             sage: from sage.repl.display.jsmol_iframe import JSMolHtml

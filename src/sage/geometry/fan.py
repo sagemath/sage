@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Rational polyhedral fans
 
@@ -225,15 +226,16 @@ inclusion!)
 #       Copyright (C) 2010 Andrey Novoseltsev <novoselt@gmail.com>
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
-#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
-import collections
-import warnings
-import copy
+from collections.abc import Callable, Container
+from copy import copy
+from warnings import warn
 
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.combinat.combination import Combinations
@@ -532,7 +534,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
                   "if rays are given, they must include all rays of the fan!")
             rays = new_rays
         else:
-            rays = tuple(ray_set)
+            rays = tuple(sorted(ray_set))
         if check:
             # Maybe we should compute all faces of all cones and save them for
             # later if we are doing this check?
@@ -693,6 +695,9 @@ def FaceFan(polytope, lattice=None):
 def NormalFan(polytope, lattice=None):
     r"""
     Construct the normal fan of the given rational ``polytope``.
+
+    This returns the inner normal fan. For the outer normal fan, use
+    ``NormalFan(-P)``.
 
     INPUT:
 
@@ -1062,9 +1067,7 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
 
 
 @richcmp_method
-class RationalPolyhedralFan(IntegralRayCollection,
-                            collections.Callable,
-                            collections.Container):
+class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
     r"""
     Create a rational polyhedral fan.
 
@@ -1148,7 +1151,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
 
             sage: fan = Fan([Cone([(1,0), (1,1)]), Cone([(-1,-1)])])
             sage: sage_input(fan)
-            Fan(cones=[[0, 1], [2]], rays=[(1, 0), (1, 1), (-1, -1)])
+            Fan(cones=[[1, 2], [0]], rays=[(-1, -1), (1, 0), (1, 1)])
        """
         cones = [[ZZ(_) for _ in c.ambient_ray_indices()] for c in self.generating_cones()]
         rays = [sib(tuple(r)) for r in self.rays()]
@@ -1342,13 +1345,13 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: cone2 = Cone([(-1,0)])
             sage: fan = Fan([cone1, cone2])
             sage: fan.rays()
+            N(-1, 0),
             N( 0, 1),
-            N( 1, 0),
-            N(-1, 0)
+            N( 1, 0)
             in 2-d lattice N
             sage: for cone in fan: print(cone.ambient_ray_indices())
-            (0, 1)
-            (2,)
+            (1, 2)
+            (0,)
             sage: L = fan.cone_lattice() # indirect doctest
             sage: L
             Finite poset containing 6 elements with distinguished linear extension
@@ -1489,9 +1492,9 @@ class RationalPolyhedralFan(IntegralRayCollection,
             return False
         except ValueError:  # cone is a cone, but wrong
             if not cone.lattice().is_submodule(self.lattice()):
-                warnings.warn("you have checked if a fan contains a cone "
-                              "from another lattice, this is always False!",
-                              stacklevel=3)
+                warn("you have checked if a fan contains a cone "
+                     "from another lattice, this is always False!",
+                     stacklevel=3)
             return False
 
     def support_contains(self, *args):
@@ -1553,9 +1556,9 @@ class RationalPolyhedralFan(IntegralRayCollection,
             point = _ambient_space_point(self, point)
         except TypeError as ex:
             if str(ex).endswith("have incompatible lattices!"):
-                warnings.warn("you have checked if a fan contains a point "
-                              "from an incompatible lattice, this is False!",
-                              stacklevel=3)
+                warn("you have checked if a fan contains a point "
+                     "from an incompatible lattice, this is False!",
+                     stacklevel=3)
             return False
         if self.is_complete():
             return True
@@ -1737,7 +1740,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
         # convenient for internal purposes.
         if "_ray_to_cones_tuple" not in self.__dict__:
             ray_to_cones = []
-            for ray in self.rays():
+            for _ in self.rays():
                 ray_to_cones.append([])
             for k, cone in enumerate(self):
                 for j in cone.ambient_ray_indices():
@@ -1875,8 +1878,8 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: cone2 = Cone([(1,0), (0,1)])
             sage: f = Fan([cone1, cone2])
             sage: f.rays()
-            N(0,  1),
             N(0, -1),
+            N(0,  1),
             N(1,  0)
             in 2-d lattice N
             sage: f.cone_containing(0)  # ray index
@@ -2001,13 +2004,13 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: cone2 = Cone([(-1,0)])
             sage: fan = Fan([cone1, cone2])
             sage: fan.rays()
+            N(-1, 0),
             N( 0, 1),
-            N( 1, 0),
-            N(-1, 0)
+            N( 1, 0)
             in 2-d lattice N
             sage: for cone in fan: print(cone.ambient_ray_indices())
-            (0, 1)
-            (2,)
+            (1, 2)
+            (0,)
             sage: L = fan.cone_lattice()
             sage: L
             Finite poset containing 6 elements with distinguished linear extension
@@ -2031,7 +2034,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             ....:     print([f.ambient_ray_indices() for f in l])
             [()]
             [(0,), (1,), (2,)]
-            [(0, 1)]
+            [(1, 2)]
 
         If the fan is complete, its cone lattice is atomic and coatomic and
         can (and will!) be computed in a much more efficient way, but the
@@ -2082,7 +2085,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             Finite poset containing 6 elements with distinguished linear extension
             sage: fan._test_pickling()
         """
-        state = copy.copy(self.__dict__)
+        state = copy(self.__dict__)
         # TODO: do we want to keep the cone lattice in the pickle?
         # Currently there is an unpickling loop if do.
         # See Cone.__getstate__ for a similar problem and discussion.
@@ -2119,9 +2122,9 @@ class RationalPolyhedralFan(IntegralRayCollection,
             sage: fan(codim=2)
             (0-d cone of Rational polyhedral fan in 2-d lattice N,)
             sage: for cone in fan.cones(1): cone.ray(0)
+            N(-1, 0)
             N(0, 1)
             N(1, 0)
-            N(-1, 0)
             sage: fan.cones(2)
             (2-d cone of Rational polyhedral fan in 2-d lattice N,)
 
@@ -3084,8 +3087,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
 
         REFERENCES:
 
-        .. [Baty91] \V. V. Batyrev, *On the classification of smooth projective
-                    toric varieties*, Tohoku Math. J. **43** (1991), 569-585
+        - [Bat1991]_
 
         EXAMPLES::
 
@@ -3349,7 +3351,7 @@ class RationalPolyhedralFan(IntegralRayCollection,
             0
 
         where the leftmost non-zero entry is in degree `0` and the
-        rightmost entry in degree `d`. See [Klyachko]_, eq. (3.2). This
+        rightmost entry in degree `d`. See [Kly1990]_, eq. (3.2). This
         complex computes the homology of `|\Sigma|\subset N_\RR` with
         arbitrary support,
 

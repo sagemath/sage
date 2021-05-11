@@ -3,22 +3,23 @@
 Capture output for testing purposes
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sys
 import contextlib
 import logging
-log = logging.getLogger()
 
 from sage_bootstrap.compat import StringIO
+
+log = logging.getLogger()
 
 
 class LogCaptureHandler(logging.Handler):
@@ -26,7 +27,7 @@ class LogCaptureHandler(logging.Handler):
     def __init__(self, log_capture):
         self.records = log_capture.records
         logging.Handler.__init__(self)
-    
+
     def emit(self, record):
         self.records.append(record)
 
@@ -46,7 +47,7 @@ class CapturedLog(object):
     def __exit__(self, type, value, traceback):
         log.level = self.old_level
         log.handlers = self.old_handlers
-        
+
     def messages(self):
         return tuple((rec.levelname, rec.getMessage()) for rec in self.records)
 

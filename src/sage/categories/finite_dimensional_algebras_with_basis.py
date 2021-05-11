@@ -32,7 +32,6 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.algebras import Algebras
 from sage.categories.associative_algebras import AssociativeAlgebras
 from sage.categories.tensor import TensorProductsCategory
-from sage.matrix.constructor import Matrix
 
 class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     r"""
@@ -484,7 +483,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 An example of a finite multiplicative monoid: the integers modulo 12
                 sage: A = Z12.algebra(QQ)
                 sage: idempotents = A.orthogonal_idempotents_central_mod_radical()
-                sage: sorted(idempotents, key=str)
+                sage: sorted(idempotents, key=str) # py2
                 [-1/2*B[8] + 1/2*B[4],
                  -B[0] + 1/2*B[8] + 1/2*B[4],
                  -B[0] + 1/2*B[9] + 1/2*B[3],
@@ -494,6 +493,16 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  1/4*B[1] - 1/2*B[4] - 1/4*B[5] + 1/4*B[7] + 1/2*B[8] - 1/4*B[11],
                  B[0],
                  B[0] + 1/4*B[1] - 1/2*B[3] - 1/2*B[4] + 1/4*B[5] + 1/4*B[7] - 1/2*B[8] - 1/2*B[9] + 1/4*B[11]]
+                sage: sorted(idempotents, key=str) # py3
+                [-B[0] + 1/2*B[4] + 1/2*B[8],
+                 1/2*B[4] - 1/2*B[8],
+                 1/2*B[9] + 1/2*B[3] - B[0],
+                 1/2*B[9] - 1/2*B[3],
+                 1/4*B[1] + 1/4*B[11] - 1/4*B[5] - 1/4*B[7],
+                 1/4*B[1] - 1/2*B[9] + 1/4*B[5] - 1/4*B[7] + 1/2*B[3] - 1/4*B[11],
+                 1/4*B[1] - 1/2*B[9] - 1/2*B[3] + 1/4*B[11] + 1/4*B[5] + 1/4*B[7] + B[0] - 1/2*B[4] - 1/2*B[8],
+                 1/4*B[1] - 1/4*B[5] + 1/4*B[7] - 1/4*B[11] - 1/2*B[4] + 1/2*B[8],
+                 B[0]]
                 sage: sum(idempotents) == 1
                 True
                 sage: all(e*e == e for e in idempotents)
@@ -691,6 +700,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [0 0 0 1 0 1 1 0]
                 [0 0 0 0 0 0 0 1]
             """
+            from sage.matrix.constructor import Matrix
             from sage.rings.integer_ring import ZZ
             A_quo = self.semisimple_quotient()
             idempotents_quo = A_quo.central_orthogonal_idempotents()
@@ -953,7 +963,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             Here are some more counterexamples:
 
             1. Some orthogonal elements summing to `1` but not being
-            idempotent::
+               idempotent::
 
                 sage: class PQAlgebra(CombinatorialFreeModule):
                 ....:     def __init__(self, F, p):
@@ -977,7 +987,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A.is_identity_decomposition_into_orthogonal_idempotents((a, b))
                 False
 
-            For comparison::
+               For comparison::
 
                 sage: A = PQAlgebra(QQ, x**2 - x); y = A.x()
                 sage: a, b = y, 1-y

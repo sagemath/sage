@@ -173,7 +173,7 @@ r"""
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
-    sage: V = F.vector_space(); V
+    sage: V = F.vector_space(map=False); V
     Vector space of dimension 6 over Finite Field of size 7
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::

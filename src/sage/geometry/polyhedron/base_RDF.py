@@ -1,7 +1,6 @@
 """
-Base class for polyhedra over ``RDF``.
+Base class for polyhedra over ``RDF``
 """
-from __future__ import absolute_import
 
 from sage.rings.all import RDF
 from .base import Polyhedron_base

@@ -16,11 +16,8 @@ if [ $? -ne 0 ]; then
 fi
 
 export SAGE_SHARE="$SAGE_LOCAL/share"
-export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
+export SAGE_PKGCONFIG="$SAGE_LOCAL/lib/pkgconfig"
 export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
-export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
-. "$SAGE_SRC"/bin/sage-version.sh
-export SAGE_VERSION
 
 if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
     SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH
@@ -29,6 +26,11 @@ fi
 export PATH="$SAGE_ROOT/build/bin:$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
 
 export PYTHONPATH="$SAGE_LOCAL"
+
+sage_num_threads_array=$(sage-build-num-threads 2>/dev/null || echo 1 2 1)
+sage_num_threads_array="${sage_num_threads_array% *}" # strip third item
+export SAGE_NUM_THREADS="${sage_num_threads_array% *}" # keep first item
+export SAGE_NUM_THREADS_PARALLEL="${sage_num_threads_array#* }" # keep second item
 
 ###############################################################################
 # Skip the rest if nothing to do (i.e., to [re]build).
@@ -55,7 +57,41 @@ fi
 # Dump environment for debugging purposes:
 echo "*** ALL ENVIRONMENT VARIABLES BEFORE BUILD: ***"
 env | sort
+printf '\E[m'
 echo "***********************************************"
+
+# look_for_errors: search log files for error messages and print a summary.
+# arguments:
+# - $1: glob pattern for log files to search
+# - $2: N for "tail -N"
+# - $3: regular expression to search for
+# - $4: type of object ("package" or "documentation")
+look_for_errors() {
+    # Sort in chronological order by log file.
+    for f in `ls -tr $1 2>/dev/null`; do
+        # Look for recent error message in log file.
+        # Note that "tail -n 20 ..." doesn't work on Solaris.
+        if tail -$2 $f 2>/dev/null | grep "$3" &>/dev/null; then
+            base_f=`basename $f .log`
+            # stat(1) is not portable between Linux and macOS, so we extract it from ls -lf
+            timestamp=`ls -l $f | awk -F' ' '{print $6, $7, $8}'` 2> /dev/null
+            cat >&2 <<EOF
+
+* $4:         $base_f
+  last build time: $timestamp
+  log file:        $f
+EOF
+            if [ $4 = "package" ]; then
+                build_dir="${SAGE_BUILD_DIR:-$SAGE_LOCAL/var/tmp/sage/build}/$base_f"
+                if [ -d "$build_dir" ]; then
+                    cat >&2 <<EOF
+  build directory: $build_dir
+EOF
+                fi
+            fi
+        fi
+    done
+}
 
 ###############################################################################
 # NOW do the actual build:
@@ -70,41 +106,33 @@ The following package(s) may have failed to build (not necessarily
 during this run of 'make $@'):
 EOF
 
-    for f in "$SAGE_LOGS"/*.log; do
-        # Look for recent error message in log file.
-        # Note that "tail -n 20 ..." doesn't work on Solaris.
-        if tail -20 "$f" 2>/dev/null | grep "^Error" &>/dev/null; then
-            base_f=`basename $f .log`
-            cat >&2 <<EOF
+    look_for_errors "$SAGE_LOGS/*.log" 20 "^Error" package >&2
+    look_for_errors "$SAGE_LOGS/../doc*.log" 100 "^Error" documentation >&2
 
-* package: $base_f
-  log file: $f
-  build directory: ${SAGE_BUILD_DIR:-$SAGE_LOCAL/var/tmp/sage/build}/$base_f
-EOF
-        fi
-    done
-
-    for f in "$SAGE_LOGS"/../doc*.log; do
-        # Look for recent error message in log file.
-        # Note that "tail -n 20 ..." doesn't work on Solaris.
-        if tail -100 "$f" 2>/dev/null | grep "^Error" &>/dev/null; then
-            base_f=`basename $f .log`
-            cat >&2 <<EOF
-
-* documentation: $base_f
-  log file: $f
-EOF
-        fi
-    done
     cat >&2 <<EOF
 
-The build directory may contain configuration files and other potentially
-helpful information. WARNING: if you now run 'make' again, the build
-directory will, by default, be deleted. Set the environment variable
-SAGE_KEEP_BUILT_SPKGS to 'yes' to prevent this.
+It is safe to delete any log files and build directories, but they
+contain information that is helpful for debugging build problems.
+WARNING: If you now run 'make' again, the build directory of the
+same version of the package will, by default, be deleted. Set the
+environment variable SAGE_KEEP_BUILT_SPKGS=yes to prevent this.
 
 EOF
     exit 1
+
+elif [ "$SAGE_CHECK" = "warn" ]; then
+    echo "SAGE_CHECK=warn, so scanning the log files. This may take a few seconds."
+    warnings=`look_for_errors "$SAGE_LOGS/*.log" 20 "^Warning: Error testing" package`
+    if [ -n "$warnings" ]; then
+        cat >&2 <<EOF
+***************************************************************
+Warning: the following package(s) may have failed their test suites
+(not necessarily during this run of 'make $@'):
+EOF
+
+        echo $warnings >&2
+    fi
+
 fi
 
 # Build succeeded.

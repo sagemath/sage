@@ -5,11 +5,11 @@
  SHOBJ_LDFLAGS=
  SHOBJ_XLDFLAGS=
 -SHOBJ_LIBS=
-+SHOBJ_LIBS='-ltinfo'
++SHOBJ_LIBS='$(TERMCAP_LIB)'
  
  SHLIB_XLDFLAGS=
 -SHLIB_LIBS=
-+SHLIB_LIBS='-ltinfo'
++SHLIB_LIBS='$(TERMCAP_LIB)'
  
  SHLIB_DOT='.'
  SHLIB_LIBPREF='lib'
@@ -18,7 +18,7 @@
  	esac
  
 -	SHLIB_LIBS='-lncurses'	# see if -lcurses works on MacOS X 10.1 
-+	SHLIB_LIBS='-ltinfo -lncurses'	# see if -lcurses works on MacOS X 10.1 
++	SHLIB_LIBS='$(TERMCAP_LIB)'
  	;;
  
  openbsd*|netbsd*|mirbsd*)

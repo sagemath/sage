@@ -4,8 +4,11 @@ HTML Fragments
 This module defines a HTML fragment class, which holds a piece of
 HTML. This is primarily used in browser-based notebooks, though it
 might be useful for creating static pages as well.
+
+This module defines :class:`MathJax`, an object of which performs the task of
+producing an HTML representation of any object. The produced HTML is
+renderable in a browser-based notebook with the help of MathJax.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
@@ -16,7 +19,6 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-import warnings
 from sage.misc.latex import latex
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
@@ -50,7 +52,7 @@ class HtmlFragment(str, SageObject):
             sage: from sage.repl.rich_output import get_display_manager
             sage: dm = get_display_manager()
             sage: h = sage.misc.html.HtmlFragment('<b>old</b>')
-            sage: h._rich_repr_(dm)    # the doctest backend does not support html
+            sage: h._rich_repr_(dm)  # the doctest backend does not support html
             OutputPlainText container
         """
         OutputHtml = display_manager.types.OutputHtml
@@ -63,7 +65,7 @@ class HtmlFragment(str, SageObject):
 def math_parse(s):
     r"""
     Replace TeX-``$`` with Mathjax equations.
-    
+
     Turn the HTML-ish string s that can have \$\$ and \$'s in it into
     pure HTML.  See below for a precise definition of what this means.
 
@@ -141,7 +143,7 @@ def math_parse(s):
 
         # Now find the matching $ sign and form the html string.
 
-        if len(disp) > 0:
+        if disp:
             j = s[i+2:].find('$$')
             if j == -1:
                 j = len(s)
@@ -158,12 +160,230 @@ def math_parse(s):
                 j += i + 2
             txt = s[i+1:j]
 
-        t += s[:i] + '<script type="math/tex%s">%s</script>'%(disp,
+        t += s[:i] + '<script type="math/tex%s">%s</script>' % (disp,
                       ' '.join(txt.splitlines()))
         s = s[j+1:]
-        if len(disp) > 0:
+        if disp:
             s = s[1:]
     return HtmlFragment(t)
+
+
+class MathJaxExpr:
+    """
+    An arbitrary MathJax expression that can be nicely concatenated.
+
+    EXAMPLES::
+
+        sage: from sage.misc.html import MathJaxExpr
+        sage: MathJaxExpr("a^{2}") + MathJaxExpr("x^{-1}")
+        a^{2}x^{-1}
+    """
+    def __init__(self, y):
+        """
+        Initialize a MathJax expression.
+
+        INPUT:
+
+        - ``y`` - a string
+
+        Note that no error checking is done on the type of ``y``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.html import MathJaxExpr
+            sage: jax = MathJaxExpr(3); jax  # indirect doctest
+            3
+            sage: TestSuite(jax).run(skip ="_test_pickling")
+        """
+        self.__y = y
+
+    def __repr__(self):
+        """
+        Print representation.
+
+        EXAMPLES::
+
+            sage: from sage.misc.html import MathJaxExpr
+            sage: jax = MathJaxExpr('3')
+            sage: jax.__repr__()
+            '3'
+        """
+        return str(self.__y)
+
+    def __add__(self, y):
+        """
+        'Add' MathJaxExpr ``self`` to ``y``.  This concatenates them
+        (assuming that they're strings).
+
+        EXAMPLES::
+
+            sage: from sage.misc.html import MathJaxExpr
+            sage: j3 = MathJaxExpr('3')
+            sage: jx = MathJaxExpr('x')
+            sage: j3 + jx
+            3x
+        """
+        return MathJaxExpr(self.__y + y)
+
+    def __radd__(self, y):
+        """
+        'Add' MathJaxExpr ``y`` to ``self``.  This concatenates them
+        (assuming that they're strings).
+
+        EXAMPLES::
+
+            sage: from sage.misc.html import MathJaxExpr
+            sage: j3 = MathJaxExpr('3')
+            sage: jx = MathJaxExpr('x')
+            sage: j3.__radd__(jx)
+            x3
+        """
+        return MathJaxExpr(y + self.__y)
+
+
+class MathJax:
+    r"""
+    Render LaTeX input using MathJax.  This returns a :class:`MathJaxExpr`.
+
+    EXAMPLES::
+
+        sage: from sage.misc.html import MathJax
+        sage: MathJax()(3)
+        <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
+        sage: MathJax()(ZZ)
+        <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}</script></html>
+    """
+
+    def __call__(self, x, combine_all=False):
+        r"""
+        Render LaTeX input using MathJax.  This returns a :class:`MathJaxExpr`.
+
+        INPUT:
+
+        - ``x`` - a Sage object
+
+        - ``combine_all`` - boolean (Default: ``False``): If ``combine_all`` is
+          ``True`` and the input is a tuple, then it does not return a tuple
+          and instead returns a string with all the elements separated by
+          a single space.
+
+        OUTPUT:
+
+        A :class:`MathJaxExpr`
+
+        EXAMPLES::
+
+            sage: from sage.misc.html import MathJax
+            sage: MathJax()(3)
+            <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
+            sage: str(MathJax().eval(ZZ['x'], mode='display')) == str(MathJax()(ZZ['x']))
+            True
+        """
+        return self.eval(x, combine_all=combine_all)
+
+    def eval(self, x, globals=None, locals=None, mode='display', combine_all=False):
+        r"""
+        Render LaTeX input using MathJax.  This returns a :class:`MathJaxExpr`.
+
+        INPUT:
+
+        - ``x`` - a Sage object
+
+        -  ``globals`` - a globals dictionary
+
+        -  ``locals`` - extra local variables used when
+           evaluating Sage code in ``x``.
+
+        - ``mode`` - string (optional, default ``'display'``):
+           ``'display'`` for displaymath, ``'inline'`` for inline
+           math, or ``'plain'`` for just the LaTeX code without the
+           surrounding html and script tags.
+
+        - ``combine_all`` - boolean (Default: ``False``): If ``combine_all`` is
+          ``True`` and the input is a tuple, then it does not return a tuple
+          and instead returns a string with all the elements separated by
+          a single space.
+
+        OUTPUT:
+
+        A :class:`MathJaxExpr`
+
+        EXAMPLES::
+
+            sage: from sage.misc.html import MathJax
+            sage: MathJax().eval(3, mode='display')
+            <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
+            sage: MathJax().eval(3, mode='inline')
+            <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
+            sage: MathJax().eval(type(3), mode='inline')  # py2
+            <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<type|\phantom{\verb!x!}\verb|'sage.rings.integer.Integer'>|</script></html>
+            sage: MathJax().eval(type(3), mode='inline')  # py3
+            <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<class|\phantom{\verb!x!}\verb|'sage.rings.integer.Integer'>|</script></html>
+        """
+        # Get a regular LaTeX representation of x
+        x = latex(x, combine_all=combine_all)
+
+        # The following block, hopefully, can be removed in some future MathJax.
+        prefix = r"\text{\texttt{"
+        parts = x.split(prefix)
+        for i, part in enumerate(parts):
+            if i == 0:
+                continue    # Nothing to do with the head part
+            n = 1
+            for closing, c in enumerate(part):
+                if c == "{" and part[closing - 1] != "\\":
+                    n += 1
+                if c == "}" and part[closing - 1] != "\\":
+                    n -= 1
+                if n == -1:
+                    break
+            # part should end in "}}", so omit the last two characters
+            # from y
+            y = part[:closing-1]
+            for delimiter in r"""|"'`#%&,.:;?!@_~^+-/\=<>()[]{}0123456789E""":
+                if delimiter not in y:
+                    break
+            if delimiter == "E":
+                # y is too complicated
+                delimiter = "|"
+                y = "(complicated string)"
+            wrapper = r"\verb" + delimiter + "%s" + delimiter
+            spacer = r"\phantom{\verb!%s!}"
+            y = y.replace("{ }", " ").replace("{-}", "-")
+            for c in r"#$%&\^_{}~":
+                char_wrapper = r"{\char`\%s}" % c
+                y = y.replace(char_wrapper, c)
+            subparts = []
+            nspaces = 0
+            for subpart in y.split(" "):
+                if subpart == "":
+                    nspaces += 1
+                    continue
+                if nspaces > 0:
+                    subparts.append(spacer % ("x" * nspaces))
+                nspaces = 1
+                subparts.append(wrapper % subpart)
+            # There is a bug with omitting empty lines in arrays
+            if not y:
+                subparts.append(spacer % "x")
+            subparts.append(part[closing + 1:])
+            parts[i] = "".join(subparts)
+        from sage.misc.latex_macros import sage_configurable_latex_macros
+        from sage.misc.latex import _Latex_prefs
+        latex_string = ''.join(
+            sage_configurable_latex_macros +
+            [_Latex_prefs._option['macros']] +
+            parts
+        )
+        if mode == 'display':
+            html = '<html><script type="math/tex; mode=display">{0}</script></html>'
+        elif mode == 'inline':
+            html = '<html><script type="math/tex">{0}</script></html>'
+        elif mode == 'plain':
+            return latex_string
+        else:
+            raise ValueError("mode must be either 'display', 'inline', or 'plain'")
+        return MathJaxExpr(html.format(latex_string))
 
 
 class HTMLFragmentFactory(SageObject):
@@ -177,59 +397,60 @@ class HTMLFragmentFactory(SageObject):
         String.
 
         EXAMPLES::
-        
+
             sage: html
             Create HTML output (see html? for details)
         """
         return 'Create HTML output (see html? for details)'
-    
-    def __call__(self, obj):
+
+    def __call__(self, obj, concatenate=True):
         r"""
         Construct a HTML fragment
-     
+
         INPUT:
-     
+
         - ``obj`` -- anything. An object for which you want a HTML
           representation.
-     
+
+        - ``concatenate`` -- if ``True``, combine HTML representations of
+          elements of the container ``obj``
+
         OUTPUT:
-     
+
         A :class:`HtmlFragment` instance.
-     
+
         EXAMPLES::
-     
+
             sage: h = html('<hr>');  pretty_print(h)
             <hr>
             sage: type(h)
             <class 'sage.misc.html.HtmlFragment'>
 
-            sage: pretty_print(html(1/2))
-            <script type="math/tex">\frac{1}{2}</script>
+            sage: html(1/2)
+            <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{2}</script></html>
 
-            sage: pretty_print(html('<a href="http://sagemath.org">sagemath</a>'))
+            sage: html('<a href="http://sagemath.org">sagemath</a>')
             <a href="http://sagemath.org">sagemath</a>
         """
-        # Prefer dedicated _html_() method
+        if isinstance(obj, str):
+            return HtmlFragment(math_parse(obj))
+
+        # prefer dedicated _html_() method
         try:
             result = obj._html_()
+            return HtmlFragment(result)
         except AttributeError:
             pass
+
+        # otherwise convert latex to html
+        if concatenate:
+            if isinstance(obj, (tuple, list)):
+                obj = tuple(obj)
+            result = MathJax().eval(obj, mode='display', combine_all=True)
         else:
-            if not isinstance(result, HtmlFragment):
-                warnings.warn('_html_() did not return a HtmlFragment')
-                return HtmlFragment(result)
-            else:
-                return result
-        # Otherwise: convert latex to html
-        try:
-            result = obj._latex_()
-        except AttributeError:
-            pass
-        else:
-            return math_parse('${0}$'.format(obj._latex_()))
-        # If all else fails
-        return math_parse(str(obj))
-         
+            result = MathJax().eval(obj, mode='display', combine_all=False)
+        return HtmlFragment(result)
+
     def eval(self, s, locals=None):
         r"""
         Evaluate embedded <sage> tags
@@ -242,9 +463,9 @@ class HTMLFragmentFactory(SageObject):
           evaluating ``s``. Default: the current global variables.
 
         OUTPUT:
-     
+
         A :class:`HtmlFragment` instance.
-     
+
         EXAMPLES::
 
             sage: a = 123
@@ -259,7 +480,7 @@ class HTMLFragmentFactory(SageObject):
         s = str(s)
         s = math_parse(s)
         t = ''
-        while len(s) > 0:
+        while s:
             i = s.find('<sage>')
             if i == -1:
                  t += s
@@ -289,7 +510,7 @@ class HTMLFragmentFactory(SageObject):
           Defaults to 800.
 
         OUTPUT:
-     
+
         A :class:`HtmlFragment` instance.
 
         EXAMPLES::
@@ -309,7 +530,7 @@ class HTMLFragmentFactory(SageObject):
             sage: pretty_print(html.iframe('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA'
             ....: 'AUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBA'
             ....: 'AO9TXL0Y4OHwAAAABJRU5ErkJggg=="'))
-            <iframe height="400" width="800" 
+            <iframe height="400" width="800"
             src="http://data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==""></iframe>
         """
         if url.startswith('/'):
@@ -322,3 +543,32 @@ class HTMLFragmentFactory(SageObject):
 
 html = HTMLFragmentFactory()
 html.__doc__ = HTMLFragmentFactory.__call__.__doc__
+
+
+def pretty_print_default(enable=True):
+    r"""
+    Enable or disable default pretty printing.
+
+    Pretty printing means rendering things in HTML and by MathJax so that a
+    browser-based frontend can render real math.
+
+    This function is pretty useless without the notebook, it should not
+    be in the global namespace.
+
+    INPUT:
+
+    -  ``enable`` -- bool (optional, default ``True``).  If ``True``, turn on
+       pretty printing; if ``False``, turn it off.
+
+    EXAMPLES::
+
+        sage: pretty_print_default(True)
+        sage: 'foo'  # the doctest backend does not support html
+        'foo'
+        sage: pretty_print_default(False)
+        sage: 'foo'
+        'foo'
+    """
+    from sage.repl.rich_output import get_display_manager
+    dm = get_display_manager()
+    dm.preferences.text = 'latex' if enable else None

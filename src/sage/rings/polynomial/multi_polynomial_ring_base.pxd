@@ -2,7 +2,6 @@ cimport sage.rings.ring
 from sage.structure.parent cimport Parent
 
 cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
-    cdef readonly _no_generic_basering_coercion
     cdef object __ngens
     cdef object __term_order
     cdef public object _has_singular

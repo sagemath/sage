@@ -44,7 +44,7 @@ class CurveArrow(GraphicPrimitive):
             vertices += curve
             codes += (len(curve))*[len(curve)+1]
         self.codes = codes
-        self.vertices = np.array(vertices, np.float)
+        self.vertices = np.array(vertices, float)
         GraphicPrimitive.__init__(self, options)
 
     def get_minmax_data(self):
@@ -118,14 +118,16 @@ class CurveArrow(GraphicPrimitive):
 
     def _render_on_subplot(self, subplot):
         """
-        Render this arrow in a subplot.  This is the key function that
-        defines how this arrow graphics primitive is rendered in
-        matplotlib's library.
+        Render this arrow in a subplot.
 
-        EXAMPLES::
+        This is the key function that defines how this arrow graphics
+        primitive is rendered in matplotlib's library.
+
+        EXAMPLES:
 
         This function implicitly ends up rendering this arrow on a matplotlib
-        subplot:
+        subplot::
+
             sage: arrow(path=[[(0,1), (2,-1), (4,5)]])
             Graphics object consisting of 1 graphics primitive
         """

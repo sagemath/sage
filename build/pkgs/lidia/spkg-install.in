@@ -1,0 +1,17 @@
+cd src/
+
+if [ -n "$SAGE_GMP_PREFIX" ]; then
+   GMP_CONFIGURE="--with-extra-includes=$SAGE_GMP_PREFIX/include --with-extra-libs=$SAGE_GMP_PREFIX/lib"
+fi
+
+sdh_configure --with-arithmetic=gmp \
+              $GMP_CONFIGURE \
+              --enable-shared=yes --enable-static=no
+sdh_make
+sdh_make_install
+
+# LiDIA 2.2.0 installs its headers into lidia/ but expects them in LiDIA!?!
+# So we make a symbolic link, just in case.
+# (On the Mac, nothing is done because of its case-preserving, case-insensitive file system.)
+( cd "$SAGE_DESTDIR_LOCAL/include" && if [ ! -r LiDIA ] ; then ln -s lidia LiDIA; fi  || true )
+

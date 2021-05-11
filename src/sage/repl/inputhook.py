@@ -12,10 +12,9 @@ prompt. We use it to reload attached files if they have changed.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###########################################################################
 
-import os
 import select
 import errno
 
@@ -33,7 +32,7 @@ def sage_inputhook(context):
     while True:
         sage.repl.attach.reload_attached_files_if_modified()
         try:
-            r, w, e = select.select([f], [], [], TIMEOUT)
+            r, _, _ = select.select([f], [], [], TIMEOUT)
             if f in r:
                 return  # IPython signalled us to stop
         except select.error as e:

@@ -16,10 +16,10 @@ le shell Sage affiche un message de ce genre :
 
 ::
 
-    ----------------------------------------------------------------------
-    | SAGE Version 3.1.1, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
 
     sage:
@@ -31,7 +31,7 @@ Pour quitter Sage, tapez Ctrl-D ou tapez ``quit`` ou ``exit``.
 ::
 
     sage: quit
-    Exiting SAGE (CPU time 0m0.00s, Wall time 0m0.89s)
+    Exiting Sage (CPU time 0m0.00s, Wall time 0m0.89s)
 
 L'indication *wall time* donne le temps écoulé à votre montre (ou
 l'horloge suspendue au mur) pendant l'exécution. C'est une donnée
@@ -50,7 +50,7 @@ Votre session Sage
 Une session est la suite des entrées et sorties qui interviennent entre
 le moment où vous démarrez Sage et celui où vous le quittez. Sage
 enregistre un journal de toutes les entrées via IPython. Si vous
-utilisez le shell interactif (par opposition à l'interface *notebook*),
+utilisez le shell interactif (par opposition à l'interface *jupyter*),
 vous pouvez taper ``%history`` (ou ``%hist``) à n'importe
 quel moment pour obtenir la
 liste de toutes les lignes de commandes entrées depuis le début de la
@@ -64,9 +64,9 @@ du clavier). Les variables GLOBALES suivantes existent toujours (ne les
 
 ::
 
-      _ : dernière entrée (shell et notebook)
-      __ : avant-dernière entrée (shell uniquement)
-      _oh : liste de toutes les entrées précédentes (shell uniquement)
+      _ : dernière entrée
+      __ : avant-dernière entrée
+      _oh : liste de toutes les entrées précédentes
 
 Voici un exemple :
 
@@ -78,7 +78,7 @@ Voici un exemple :
      _1 = 2^2 * 5^2
     sage: kronecker_symbol(3,5)
      _2 = -1
-    sage: %hist   #Fonctionne depuis le shell mais pas depuis le notebook.
+    sage: %hist   #Fonctionne depuis le shell mais pas depuis le bloc-note.
     1: factor(100)
     2: kronecker_symbol(3,5)
     3: %hist
@@ -181,10 +181,10 @@ session future (en rechargeant le fichier journal).
 ::
 
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 3.0.2, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
     Activating auto-logging. Current session state plus future input saved.
@@ -198,12 +198,12 @@ session future (en rechargeant le fichier journal).
     sage: x,y = QQ['x,y'].gens()
     sage: G = E.gens()
     sage:
-    Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
+    Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 3.0.2, Release Date: 2008-05-24                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
     Loading log file <setup> one line at a time...
@@ -273,7 +273,7 @@ calculs, le *wall time* peut être nettement plus important que le temps
 processeur.
 
 Chronométrons maintenant le calcul de la même puissance avec le type
-Integer de Sage, qui est implémenté (en Cython) en utilisant la
+``Integer`` de Sage, qui est implémenté (en Cython) en utilisant la
 bibliothèque GMP :
 
 .. skip
@@ -316,7 +316,7 @@ commande ``cputime``, comme dans l'exemple suivant :
 
     sage: cputime?
     ...
-        Return the time in CPU second since SAGE started, or with optional
+        Return the time in CPU second since Sage started, or with optional
         argument t, return the time since time t.
         INPUT:
             t -- (optional) float, time in CPU seconds
@@ -383,7 +383,7 @@ Trucs et astuces IPython
 Comme signalé plus haut, Sage utilise l'interpréteur de commandes IPython, et
 met donc à votre disposition toutes les commandes et fonctionnalités de
 celui-ci. Vous voudrez peut-être consulter la `documentation complète de IPython
-<http://ipython.scipy.org/moin/Documentation>`_. Voici en attendant quelques
+<https://ipython.readthedocs.io/en/stable/>`_. Voici en attendant quelques
 astuces utiles -- qui reposent sur ce que IPython appelle des « commandes
 magiques » :
 
@@ -450,9 +450,9 @@ Pour plus d'information, entrez la commande ``%quickref`` pour un résumé des
 possibilités de IPython. Au moment où cette documentation est écrite
 (avril 2011), Sage emploie IPython 0.9.1. La `documentation des commandes
 magiques
-<http://ipython.org/ipython-doc/dev/interactive/tutorial.html#magic-functions>`_
+<https://ipython.org/ipython-doc/dev/interactive/tutorial.html#magic-functions>`_
 est disponible en ligne, et divers aspects un peu plus avancés de leur
-fonctionnement sont décrits `ici  <http://ipython.org/ipython-doc/stable/interactive/reference.html#magic-command-system>`_.
+fonctionnement sont décrits `ici  <https://ipython.org/ipython-doc/stable/interactive/reference.html#magic-command-system>`_.
 
 Erreurs et exceptions
 =====================
@@ -813,8 +813,8 @@ contient les 100000 premiers :math:`a_n`.
     sage: v = E.anlist(100000)              # instantané !
 
 (En Python, les sauvegardes et rechargements s'effectuent à l'aide du
-module ``cPickle``. En particulier, on peut sauver un objet Sage ``x``
-par la commande ``cPickle.dumps(x, 2)``.  Attention au ``2`` !)
+module ``pickle``. En particulier, on peut sauver un objet Sage ``x``
+par la commande ``pickle.dumps(x, 2)``.  Attention au ``2`` !)
 
 Sage n'est pas capable de sauvegarder les objets créés dans d'autres systèmes
 de calcul formel comme GAP, Singular, Maxima etc. : au rechargement, ils
@@ -962,109 +962,4 @@ la variable ``b`` n'a pas été écrasée.
     19
     sage: a
     389
-
-
-
-.. _section-notebook:
-
-L'ancienne interface *notebook*
-===============================
-
-Cette section concerne l'ancien bloc-note de Sage (“sagenb”).
-
-SageMath est en cours de transition vers l'utilisation par défaut du
-`bloc-note Jupyter
-<http://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
-qui a une structure différente. Pour les utilisateurs,
-la différence majeure est le fait que les feuilles de calcul sont
-sauvegardées dans le système de fichiers local comme n'importe quel autre
-fichier, alors que pour l'ancien bloc-note de Sage le principal accès aux
-feuilles de calcul passait par le serveur comme expliqué ci-dessous.
-
-Ancien bloc-note SageNB
------------------------
-
-Pour démarrer le *notebook* Sage, tapez
-
-.. skip
-
-::
-
-    sage: notebook()
-
-sur la ligne de commande Sage. Cela démarre le serveur du *notebook* et
-ouvre votre navigateur web par défaut sur la page correspondante. Les
-fichiers d'état du serveur sont placés dans ``$HOME/.sage/sage\_notebook.sagenb``.
-
-La variante
-
-.. skip
-
-::
-
-    sage: notebook("repertoire")
-
-lance un nouveau serveur *notebook* en utilisant les fichiers du
-``repertoire.sagenb`` donné à la place de ``$HOME/.sage/sage_notebook``. Cela peut
-être utile si vous voulez gérer une collection de feuilles de travail
-attachées à un projet spécifique, ou encore lancer plusieurs instances
-du serveur en même temps.
-
-Au démarrage, le *notebook* commence par créer les fichiers suivants
-dans ``$HOME/.sage/sage_notebook.sagenb`` :
-
-::
-
-    conf.pickle
-    openid.pickle
-    twistedconf.tac
-    sagenb.pid
-    users.pickle
-    home/admin/ (sous-répertoire de l'utilisateur principal)
-    home/guest/
-    home/pub/
-
-Une fois ces fichiers créés, le *notebook* démarre un serveur web.
-
-Un « *notebook* » est une collection de comptes utilisateur, qui peuvent
-chacun posséder un nombre quelconque de feuilles de travail. Quand vous
-créez une nouvelle feuille de travail, les données correspondantes sont
-stockées dans un répertoire de la forme
-``home/utilisateur/numéro``. Dans chacun de ces répertoires se trouve un
-fichier texte brut ``worksheet.html`` qui contient tout ce qu'il faut
-pour reconstituer la feuille de travail s'il lui arrive quelque
-chose, si Sage rencontre un problème, ou quoi que ce soit de ce genre.
-
-Dans Sage, vous pouvez taper ``notebook?`` pour beaucoup plus
-d'informations sur comment démarrer un serveur.
-
-Le schéma suivant présente l'architecture du *Notebook* Sage :
-
-::
-
-    ----------------------
-    |                    |
-    |                    |
-    |   firefox/safari   |
-    |                    |
-    |     programme      |
-    |     javascript     |
-    |                    |
-    |                    |
-    ----------------------
-          |      ^
-          | AJAX |
-          V      |
-    ----------------------
-    |                    |
-    |     serveur        |                processus SAGE 1
-    |       web          | ------------>  processus SAGE 2  (processus Python)
-    |       sage         |   pexpect      processus SAGE 3
-    |                    |                    .
-    |                    |                    .
-    ----------------------                    .
-
-Dans le *notebook*, pour consulter l'aide d'une commande Sage ``cmd``,
-tapez ``cmd?`` dans le champ d'entrée des commandes puis tapez ``<tab>``
-(et non ``<maj-entrée>``).
 

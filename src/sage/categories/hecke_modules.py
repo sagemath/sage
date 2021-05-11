@@ -1,7 +1,6 @@
 r"""
 Hecke modules
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
@@ -14,6 +13,7 @@ from __future__ import absolute_import
 from sage.categories.category_types import Category_module
 from sage.categories.homsets import HomsetsCategory
 from sage.categories.modules_with_basis import ModulesWithBasis
+
 
 class HeckeModules(Category_module):
     r"""
@@ -71,7 +71,7 @@ class HeckeModules(Category_module):
         """
         from .commutative_rings import CommutativeRings
         if R not in CommutativeRings():
-            raise TypeError("R (=%s) must be a commutative ring"%R)
+            raise TypeError("R (=%s) must be a commutative ring" % R)
         Category_module.__init__(self, R)
 
     def super_categories(self):
@@ -156,16 +156,10 @@ class HeckeModules(Category_module):
         TESTS::
 
             sage: TestSuite(HeckeModules(ZZ).Homsets()).run()
+
+            sage: HeckeModules(QQ).Homsets().base_ring()
+            Rational Field
         """
-
-        def base_ring(self):
-            """
-            EXAMPLES::
-
-                sage: HeckeModules(QQ).Homsets().base_ring()
-                Rational Field
-            """
-            return self.base_category().base_ring()
 
         def extra_super_categories(self):
             """
@@ -180,7 +174,7 @@ class HeckeModules(Category_module):
                 [Category of vector spaces over Rational Field, Category of homsets]
             """
             from sage.categories.modules import Modules
-            return [Modules(self.base_ring())]
+            return [Modules(self.base_category().base_ring())]
 
         class ParentMethods:
             pass

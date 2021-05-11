@@ -53,7 +53,7 @@ AUTHORS:
 - David Loeffler (2008-9)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #                     2008-9 David Loeffler <d.loeffler.01@cantab.net>
 #
@@ -63,7 +63,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.structure.parent_base import ParentWithBase
 from sage.structure.element import Element
@@ -72,16 +71,17 @@ from sage.modular.dirichlet import DirichletGroup, trivial_character
 from sage.rings.all import ZZ, QQ, IntegerModRing, Qp, Infinity
 from sage.arith.all import divisors
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
-from sage.misc.misc import verbose
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecated_function_alias
 from sage.rings.padics.precision_error import PrecisionError
 import weakref
+
 
 _wscache = {}
 def WeightSpace_constructor(p, base_ring=None):
     r"""
-    Construct the p-adic weight space for the given prime p.  A `p`-adic weight
+    Construct the p-adic weight space for the given prime p.
+
+    A `p`-adic weight
     is a continuous character `\ZZ_p^\times \to \CC_p^\times`.
     These are the `\CC_p`-points of a rigid space over `\QQ_p`,
     which is isomorphic to a disjoint union of copies (indexed by
@@ -112,10 +112,13 @@ def WeightSpace_constructor(p, base_ring=None):
     _wscache[(p, base_ring)] = weakref.ref(m)
     return m
 
+
 class WeightSpace_class(ParentWithBase):
     r"""
     The space of `p`-adic weight-characters `\mathcal{W} = {\rm
-    Hom}(\ZZ_p^\times, \CC_p^\times)`. This isomorphic to a
+    Hom}(\ZZ_p^\times, \CC_p^\times)`.
+
+    This is isomorphic to a
     disjoint union of `(p-1)` open discs of radius 1 (or 2 such discs if `p =
     2`), with the parameter on the open disc corresponding to the image of `1 +
     p` (or 5 if `p = 2`)
@@ -145,7 +148,7 @@ class WeightSpace_class(ParentWithBase):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -293,8 +296,8 @@ class WeightCharacter(Element):
     """
 
     # This should probably derive from Morphism or even from
-        # AbelianGroupMorphism; but Sage doesn't know about the abelian group
-        # Z_p^*, so Hom(Z_p^*, C_p^*) is a bit beyond it!
+    # AbelianGroupMorphism; but Sage does not know about the abelian group
+    # Z_p^*, so Hom(Z_p^*, C_p^*) is a bit beyond it!
 
     def __init__(self, parent):
         r"""
@@ -337,10 +340,7 @@ class WeightCharacter(Element):
             sage: pAdicWeightSpace(17)(1 + 17 + O(17^20), 4, False).is_even()
             True
         """
-        if self(-1) == -1:
-            return False
-        else:
-            return True
+        return self(-1) != -1
 
     def pAdicEisensteinSeries(self, ring, prec=20):
         r"""
@@ -370,7 +370,7 @@ class WeightCharacter(Element):
 
         EXAMPLES::
 
-            sage: W=pAdicWeightSpace(11); W(2).values_on_gens()
+            sage: W = pAdicWeightSpace(11); W(2).values_on_gens()
             (1 + 2*11 + 11^2 + O(11^20), 2)
             sage: W(2, DirichletGroup(11, QQ).0).values_on_gens()
             (1 + 2*11 + 11^2 + O(11^20), 7)
@@ -453,7 +453,7 @@ class WeightCharacter(Element):
         if self.is_trivial():
             return ZZ(0)
         else:
-            return 1/self.Lvalue()
+            return 1 / self.Lvalue()
 
 
 class AlgebraicWeight(WeightCharacter):
@@ -539,7 +539,8 @@ class AlgebraicWeight(WeightCharacter):
             xint = x.lift()
         else:
             xint = x
-        if (xint % self._p == 0): return 0
+        if (xint % self._p == 0):
+            return 0
         return self._chi(xint) * x**self._k
 
     def k(self):
@@ -573,9 +574,8 @@ class AlgebraicWeight(WeightCharacter):
         TESTS::
 
             sage: w = pAdicWeightSpace(23)(12, DirichletGroup(23, QQ).0)
-            sage: hash(w)
-            2363715643371367891  # 64-bit
-            -1456525869          # 32-bit
+            sage: hash(w) == hash((12, 23, (-1,)))
+            True
         """
         if self._chi.is_trivial():
             return hash(self._k)
@@ -584,7 +584,7 @@ class AlgebraicWeight(WeightCharacter):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -602,11 +602,12 @@ class AlgebraicWeight(WeightCharacter):
 
     def teichmuller_type(self):
         r"""
-        Return the Teichmuller type of this weight-character `\kappa`, which is
-        the unique `t \in \ZZ/(p-1)\ZZ` such that `\kappa(\mu) =
-        \mu^t` for \mu a `(p-1)`-st root of 1.
+        Return the Teichmuller type of this weight-character `\kappa`.
 
-        For `p = 2` this doesn't make sense, but we still want the Teichmuller
+        This is the unique `t \in \ZZ/(p-1)\ZZ` such that `\kappa(\mu)
+        = \mu^t` for `\mu` a `(p-1)`-st root of 1.
+
+        For `p = 2` this does not make sense, but we still want the Teichmuller
         type to correspond to the index of the component of weight space in
         which `\kappa` lies, so we return 1 if `\kappa` is odd and 0 otherwise.
 
@@ -622,12 +623,13 @@ class AlgebraicWeight(WeightCharacter):
         # Special case p == 2
         if self._p == 2:
             if self.is_even():
-                return IntegerModRing(2)(0)
+                return IntegerModRing(2).zero()
             else:
-                return IntegerModRing(2)(1)
+                return IntegerModRing(2).one()
         m = IntegerModRing(self._p).multiplicative_generator()
         x = [y for y in IntegerModRing(self._chi.modulus()) if y == m and y**(self._p - 1) == 1]
-        if len(x) != 1: raise ArithmeticError
+        if len(x) != 1:
+            raise ArithmeticError
         x = x[0]
         f = IntegerModRing(self._p)(self._chi(x)).log(m)
         return IntegerModRing(self._p - 1)(self._k + f)
@@ -635,7 +637,9 @@ class AlgebraicWeight(WeightCharacter):
     def Lvalue(self):
         r"""
         Return the value of the p-adic L-function of `\QQ` evaluated at
-        this weight-character. If the character is `x \mapsto x^k \chi(x)`
+        this weight-character.
+
+        If the character is `x \mapsto x^k \chi(x)`
         where `k > 0` and `\chi` has conductor a power of `p`, this is an
         element of the number field generated by the values of `\chi`, equal to
         the value of the complex L-function `L(1-k, \chi)`. If `\chi` is
@@ -644,9 +648,12 @@ class AlgebraicWeight(WeightCharacter):
         At present this is not implemented in any other cases, except the
         trivial character (for which the value is `\infty`).
 
-        TODO: Implement this more generally using the Amice transform machinery
-        in sage/schemes/elliptic_curves/padic_lseries.py, which should clearly
-        be factored out into a separate class.
+        .. TODO::
+
+            Implement this more generally using the Amice transform
+            machinery in
+            sage/schemes/elliptic_curves/padic_lseries.py, which
+            should clearly be factored out into a separate class.
 
         EXAMPLES::
 
@@ -658,19 +665,22 @@ class AlgebraicWeight(WeightCharacter):
             1 + 2*7 + 7^2 + 3*7^3 + 3*7^5 + 4*7^6 + 2*7^7 + 5*7^8 + 2*7^9 + 3*7^10 + 6*7^11 + 2*7^12 + 3*7^13 + 5*7^14 + 6*7^15 + 5*7^16 + 3*7^17 + 6*7^18 + O(7^19)
         """
         if self._k > 0:
-            return -self._chi.bernoulli(self._k)/self._k
+            return -self._chi.bernoulli(self._k) / self._k
         if self.is_trivial():
             return Infinity
         else:
             raise NotImplementedError("Don't know how to compute value of this L-function")
+
 
 class ArbitraryWeight(WeightCharacter):
 
     def __init__(self, parent, w, t):
         r"""
         Create the element of p-adic weight space in the given component
-        mapping 1 + p to w. Here w must be an element of a p-adic field, with
-        finite precision.
+        mapping 1 + p to w.
+
+        Here w must be an element of a p-adic field, with finite
+        precision.
 
         EXAMPLES::
 
@@ -686,7 +696,8 @@ class ArbitraryWeight(WeightCharacter):
         self.w = w
 
     def _repr_(self):
-        r"""String representation of this character.
+        r"""
+        String representation of this character.
 
         EXAMPLES::
 
@@ -711,6 +722,7 @@ class ArbitraryWeight(WeightCharacter):
             sage: kappa(2 + 2*23 + 11*23^2 + O(23^3))
             16 + 7*23 + O(23^3)
         """
+        from sage.misc.verbose import verbose
 
         if not isinstance(x, pAdicGenericElement):
             x = Qp(self._p)(x)
@@ -730,11 +742,13 @@ class ArbitraryWeight(WeightCharacter):
 
     def teichmuller_type(self):
         r"""
-        Return the Teichmuller type of this weight-character `\kappa`, which is
+        Return the Teichmuller type of this weight-character `\kappa`.
+
+        This is
         the unique `t \in \ZZ/(p-1)\ZZ` such that `\kappa(\mu) =
         \mu^t` for \mu a `(p-1)`-st root of 1.
 
-        For `p = 2` this doesn't make sense, but we still want the Teichmuller
+        For `p = 2` this does not make sense, but we still want the Teichmuller
         type to correspond to the index of the component of weight space in
         which `\kappa` lies, so we return 1 if `\kappa` is odd and 0 otherwise.
 
@@ -746,4 +760,3 @@ class ArbitraryWeight(WeightCharacter):
             1
         """
         return self.t
-

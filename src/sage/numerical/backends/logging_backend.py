@@ -17,7 +17,6 @@ See :class:`LoggingBackendFactory` for more information.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
 
 from sage.numerical.backends.generic_backend import GenericBackend
 

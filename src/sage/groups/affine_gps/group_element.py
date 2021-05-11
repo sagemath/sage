@@ -1,4 +1,5 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Elements of Affine Groups
 
 The class in this module is used to represent the elements of
@@ -271,6 +272,56 @@ class AffineGroupElement(MultiplicativeGroupElement):
         """
         return r'\vec{x}\mapsto '+self.A()._latex_()+r'\vec{x} + '+self.b().column()._latex_()
 
+    def _ascii_art_(self):
+        r"""
+        Return an ascii art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: G2 = AffineGroup(2, QQ)
+            sage: g2 = G2([[1, 1], [0, 1]], [3,4])
+            sage: ascii_art(g2)
+            x |-> [1 1] x + [3]
+                  [0 1]     [4]
+
+            sage: G3 = AffineGroup(3, QQ)
+            sage: g3 = G3([[1,1,-1], [0,1,2], [0,10,2]], [3,4,5/2])
+            sage: ascii_art(g3)
+                  [ 1  1 -1]     [  3]
+            x |-> [ 0  1  2] x + [  4]
+                  [ 0 10  2]     [5/2]
+        """
+        from sage.typeset.ascii_art import ascii_art
+        deg = self.parent().degree()
+        A = ascii_art(self._A, baseline=deg//2)
+        b = ascii_art(self._b.column(), baseline=deg//2)
+        return ascii_art("x |-> ") + A + ascii_art(" x + ") + b
+
+    def _unicode_art_(self):
+        r"""
+        Return a unicode art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: G2 = AffineGroup(2, QQ)
+            sage: g2 = G2([[1, 1], [0, 1]], [3,4])
+            sage: unicode_art(g2)
+            x ↦ ⎛1 1⎞ x + ⎛3⎞
+                ⎝0 1⎠     ⎝4⎠
+
+            sage: G3 = AffineGroup(3, QQ)
+            sage: g3 = G3([[1,1,-1], [0,1,2], [0,10,2]], [3,4,5/2])
+            sage: unicode_art(g3)
+                ⎛ 1  1 -1⎞     ⎛  3⎞
+            x ↦ ⎜ 0  1  2⎟ x + ⎜  4⎟
+                ⎝ 0 10  2⎠     ⎝5/2⎠
+        """
+        from sage.typeset.unicode_art import unicode_art
+        deg = self.parent().degree()
+        A = unicode_art(self._A, baseline=deg//2)
+        b = unicode_art(self._b.column(), baseline=deg//2)
+        return unicode_art("x ↦ ") + A + unicode_art(" x + ") + b
+
     def _mul_(self, other):
         """
         Return the composition of ``self`` and ``other``.
@@ -307,8 +358,8 @@ class AffineGroupElement(MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``v`` -- a multivariate polynomial, a vector, or anything
-          that can be converted into a vector.
+        - ``v`` -- a polynomial, a multivariate polynomial, a polyhedron, a
+          vector, or anything that can be converted into a vector.
 
         OUTPUT:
 
@@ -345,18 +396,41 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: R.<z> = QQ[]
             sage: h(z+1)
             3*z + 2
+
+        The action on a polyhedron is defined (see :trac:`30327`)::
+
+            sage: F = AffineGroup(3, QQ)
+            sage: M = matrix(3, [-1, -2, 0, 0, 0, 1, -2, 1, -1])
+            sage: v = vector(QQ,(1,2,3))
+            sage: f = F(M, v)
+            sage: cube = polytopes.cube()
+            sage: f(cube)
+            A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 8 vertices
+
         """
-        from sage.rings.polynomial.polynomial_element import is_Polynomial
-        from sage.rings.polynomial.multi_polynomial import is_MPolynomial
         parent = self.parent()
+
+        # start with the most probable case, i.e., v is in the vector space
+        if v in parent.vector_space():
+            return self._A*v + self._b
+
+        from sage.rings.polynomial.polynomial_element import is_Polynomial
         if is_Polynomial(v) and parent.degree() == 1:
             ring = v.parent()
             return ring([self._A[0,0], self._b[0]])
+
+        from sage.rings.polynomial.multi_polynomial import is_MPolynomial
         if is_MPolynomial(v) and parent.degree() == v.parent().ngens():
             ring = v.parent()
             from sage.modules.all import vector
             image_coords = self._A * vector(ring, ring.gens()) + self._b
             return v(*image_coords)
+
+        from sage.geometry.polyhedron.base import is_Polyhedron
+        if is_Polyhedron(v):
+            return self._A*v + self._b
+
+        # otherwise, coerce v into the vector space
         v = parent.vector_space()(v)
         return self._A*v + self._b
 

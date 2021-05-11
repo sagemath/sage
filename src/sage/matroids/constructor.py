@@ -88,7 +88,7 @@ Functions
 =========
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Michael Welsh <michael@welsh.co.nz>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
@@ -97,18 +97,16 @@ Functions
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import
-
-from six import itervalues
 
 from itertools import combinations
 from sage.matrix.constructor import Matrix
 from sage.graphs.all import Graph
 from sage.structure.element import is_Matrix
 from sage.rings.all import ZZ, QQ
+from sage.categories.all import Fields, Rings
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
@@ -324,7 +322,9 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M = Matroid('abcd', circuits=['ab', 'acd'])
             sage: M.is_valid()
             True
-            sage: [sorted(C) for C in M.circuits()]
+            sage: [sorted(C) for C in M.circuits()] # py2
+            [['a']]
+            sage: [sorted(C) for C in M.circuits()] # py3 random
             [['a']]
 
 
@@ -604,7 +604,15 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: N = Matroid(M, regular=True)
             sage: N
             Regular matroid of rank 3 on 6 elements with 16 bases
-            sage: Matrix(N)
+            sage: M == N
+            False
+            sage: M.is_isomorphic(N)
+            True
+            sage: Matrix(N) # py2
+            [1 0 0 1 1 0]
+            [0 1 0 1 1 1]
+            [0 0 1 0 1 1]
+            sage: Matrix(N) # py3 random
             [1 0 0 1 1 0]
             [0 1 0 1 1 1]
             [0 0 1 0 1 1]
@@ -684,11 +692,11 @@ def Matroid(groundset=None, data=None, **kwds):
     base_ring = None
     if 'field' in kwds:
         base_ring = kwds.pop('field')
-        if check and not base_ring.is_field():
+        if check and base_ring not in Fields:
             raise TypeError("{} is not a field".format(base_ring))
     elif 'ring' in kwds:
         base_ring = kwds.pop('ring')
-        if check and not base_ring.is_ring():
+        if check and base_ring not in Rings:
             raise TypeError("{} is not a ring".format(base_ring))
 
     # "key" is the kind of data we got
@@ -787,10 +795,10 @@ def Matroid(groundset=None, data=None, **kwds):
                 # 3. Use numbers
                 groundset = list(range(m))
         if want_regular:
-        # Construct the incidence matrix
-        # NOTE: we are not using Sage's built-in method because
-        # 1) we would need to fix the loops anyway
-        # 2) Sage will sort the columns, making it impossible to keep labels!
+            # Construct the incidence matrix
+            # NOTE: we are not using Sage's built-in method because
+            # 1) we would need to fix the loops anyway
+            # 2) Sage will sort the columns, making it impossible to keep labels!
             V = G.vertices()
             n = G.num_verts()
             A = Matrix(ZZ, n, m, 0)
@@ -906,7 +914,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
         if groundset is None:
             groundset = set()
-            for X in itervalues(CC):
+            for X in CC.values():
                 for Y in X:
                     groundset.update(Y)
 

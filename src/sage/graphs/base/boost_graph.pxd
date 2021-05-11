@@ -1,4 +1,5 @@
 # distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 
 #*****************************************************************************
 #       Copyright (C) 2015 Michele Borassi michele.borassi@imtlucca.it
@@ -9,6 +10,7 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from libcpp.vector cimport vector
+from libcpp.pair cimport pair
 
 cdef extern from "boost/graph/adjacency_list.hpp" namespace "boost":
     cdef cppclass vecS:
@@ -59,6 +61,7 @@ cdef extern from "boost_interface.cpp":
         v_index num_verts()
         void add_edge(v_index u, v_index v)
         void add_edge(v_index u, v_index v, double w)
+        vector[pair[int, pair[int, double]]] edge_list()
         e_index num_edges()
         result_ec edge_connectivity()
         double clustering_coeff(v_index v)
@@ -71,6 +74,7 @@ cdef extern from "boost_interface.cpp":
         result_distances dijkstra_shortest_paths(v_index s)
         result_distances bellman_ford_shortest_paths(v_index s)
         vector[vector[double]] johnson_shortest_paths()
+        vector[vector[double]] floyd_warshall_shortest_paths()
 
 ctypedef property[edge_weight_t, double] EdgeWeight
 

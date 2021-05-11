@@ -1,0 +1,5 @@
+symengine $(PYTHON) | cmake cython $(PYTHON_TOOLCHAIN) $(and $(filter-out no,$(SAGE_CHECK_symengine_py)), nose)
+
+----------
+All lines of this file are ignored except the first.
+It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

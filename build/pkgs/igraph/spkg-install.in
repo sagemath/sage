@@ -1,0 +1,5 @@
+export CFLAGS="$CFLAGS -Wno-strict-prototypes -Wno-implicit-function-declaration"
+cd src
+sdh_configure --with-external-blas --with-external-lapack --with-external-glpk
+sdh_make
+sdh_make_install -j1

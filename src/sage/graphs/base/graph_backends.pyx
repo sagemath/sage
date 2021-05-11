@@ -58,7 +58,6 @@ Classes and methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from .c_graph cimport CGraphBackend, CGraph
 
@@ -802,73 +801,3 @@ def unpickle_graph_backend(directed, vertices, edges, kwds):
     G = constructor(data=edges, **kwds)
     G.add_vertices(vertices)
     return G._backend
-
-class NetworkXGraphDeprecated(SageObject):
-    """
-    Class for unpickling old networkx.XGraph formats
-
-    TESTS::
-
-        sage: from sage.graphs.base.graph_backends import NetworkXGraphDeprecated as NXGD
-        sage: X = NXGD()
-        doctest:...
-
-    """
-
-    def __init__(self):
-        """
-        Issue deprecation warnings for the old networkx XGraph formats
-
-        EXAMPLES::
-
-            sage: from sage.graphs.base.graph_backends import NetworkXGraphDeprecated
-            sage: NetworkXGraphDeprecated()
-            <sage.graphs.base.graph_backends.NetworkXGraphDeprecated object at ...>
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(10900, "Your graph object is saved in an old format since networkx "+
-                    "was updated to 1.0.1. You can re-save your graph by typing "+
-                    "graph.save(filename) to make this warning go away.")
-
-    def mutate(self):
-        """
-        Change the old networkx XGraph format into the new one.
-
-        OUTPUT:
-
-        - The networkx.Graph or networkx.MultiGraph corresponding to the
-          unpickled data.
-
-        EXAMPLES::
-
-            sage: from sage.graphs.base.graph_backends import NetworkXGraphDeprecated as NXGD
-            sage: X = NXGD()
-            sage: X.adj = {1:{2:7}, 2:{1:7}, 3:{2:[4,5,6,7]}, 2:{3:[4,5,6,7]}}
-            sage: X.multiedges = True
-            sage: G = X.mutate()
-            sage: G.edges()
-            MultiEdgeDataView([(1, 2), (2, 3)])
-            sage: G.edges(data=True)
-            MultiEdgeDataView([(1, 2, {'weight': 7}), (2, 3, {4: {}, 5: {}, 6: {}, 7: {}})])
-
-        """
-        import networkx
-        new_adj = {}
-
-        for node1, edges in self.adj.iteritems():
-            new_adj[node1] = {}
-            for node2, weights in edges.iteritems():
-                new_adj[node1][node2] = {}
-                if weights is not None:
-                    try:
-                        for weight in weights:
-                            new_adj[node1][node2][weight] = {}
-                    except TypeError:
-                        new_adj[node1][node2]['weight'] = weights
-
-        if self.multiedges:
-            G = networkx.MultiGraph(new_adj)
-        else:
-            G = networkx.Graph(new_adj)
-
-        return G

@@ -1,0 +1,44 @@
+From 713c096527291b24a8bee47895859f202b6eaa92 Mon Sep 17 00:00:00 2001
+From: Isuru Fernando <isuruf@gmail.com>
+Date: Sat, 20 Mar 2021 13:33:17 -0500
+Subject: [PATCH] Check for flint-arb
+
+---
+ cmake/FindARB.cmake       | 2 +-
+ cmake/LibFindMacros.cmake | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/cmake/FindARB.cmake b/cmake/FindARB.cmake
+index 770da3133..281c5beae 100644
+--- a/cmake/FindARB.cmake
++++ b/cmake/FindARB.cmake
+@@ -1,7 +1,7 @@
+ include(LibFindMacros)
+ 
+ libfind_include(arb.h arb)
+-libfind_library(arb arb)
++libfind_library(arb arb flint-arb)
+ 
+ set(ARB_LIBRARIES ${ARB_LIBRARY})
+ set(ARB_INCLUDE_DIRS ${ARB_INCLUDE_DIR})
+diff --git a/cmake/LibFindMacros.cmake b/cmake/LibFindMacros.cmake
+index 68fcaa426..06aa3f5ba 100644
+--- a/cmake/LibFindMacros.cmake
++++ b/cmake/LibFindMacros.cmake
+@@ -28,7 +28,7 @@ function (libfind_library libname pkg)
+ 
+     find_library(${LIBNAME}_LIBRARY
+         NAMES
+-            ${libname}
++            ${libname} ${ARGN}
+     )
+ 
+     if (NOT TARGET ${libname})
+@@ -42,6 +42,6 @@ function (libfind_include HEADER pkg)
+ 
+     find_path(${PKG}_INCLUDE_DIR
+         NAMES
+-            ${HEADER}
++            ${HEADER} ${ARGN}
+     )
+ endfunction()

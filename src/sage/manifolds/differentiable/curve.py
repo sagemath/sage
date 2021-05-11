@@ -86,7 +86,7 @@ class DifferentiableCurve(DiffMap):
     Instead of declaring the parameter `t`  as a symbolic variable by means
     of ``var('t')``, it is equivalent to get it as the canonical coordinate
     of the real number line (see
-    :class:`~sage.manifolds.differentiable.real_line.RealLine`)::
+    :class:`~sage.manifolds.differentiable.examples.real_line.RealLine`)::
 
         sage: R.<t> = RealLine()
         sage: c = M.curve({X: [sin(t), sin(2*t)/2]}, (t, 0, 2*pi), name='c') ; c
@@ -111,9 +111,8 @@ class DifferentiableCurve(DiffMap):
 
         sage: c.parent()
         Set of Morphisms from Real interval (0, 2*pi) to 2-dimensional
-         differentiable manifold M in Join of Category of subobjects of sets
-         and Category of smooth manifolds over Real Field with 53 bits of
-         precision
+         differentiable manifold M in Category of smooth manifolds over Real
+         Field with 53 bits of precision
         sage: I = R.open_interval(0, 2*pi)
         sage: c.parent() is Hom(I, M)
         True
@@ -245,6 +244,108 @@ class DifferentiableCurve(DiffMap):
         R --> R
            t |--> cos(t)^2
 
+    .. RUBRIC:: Curvature and torsion of a curve in a Riemannian manifold
+
+    Let us consider a helix `C` in the Euclidean space `\mathbb{E}^3`
+    parametrized by its arc length `s`::
+
+        sage: E.<x,y,z> = EuclideanSpace()
+        sage: R.<s> = RealLine()
+        sage: C = E.curve((2*cos(s/3), 2*sin(s/3), sqrt(5)*s/3), (s, 0, 6*pi),
+        ....:             name='C')
+
+    Its tangent vector field is::
+
+        sage: T = C.tangent_vector_field()
+        sage: T.display()
+        C' = -2/3*sin(1/3*s) e_x + 2/3*cos(1/3*s) e_y + 1/3*sqrt(5) e_z
+
+    Since `C` is parametrized by its arc length `s`, `T` is a unit vector (with
+    respect to the Euclidean metric of `\mathbb{E}^3`)::
+
+        sage: norm(T)
+        Scalar field |C'| on the Real interval (0, 6*pi)
+        sage: norm(T).display()
+        |C'|: (0, 6*pi) --> R
+           s |--> 1
+
+    Vector fields along `C` are defined by the method
+    :meth:`~sage.manifolds.differentiable.manifold.DifferentiableManifold.vector_field`
+    of the domain of `C` with the keyword argument ``dest_map`` set to `C`. For
+    instance the derivative vector `T'=\mathrm{d}T/\mathrm{d}s` is::
+
+        sage: I = C.domain(); I
+        Real interval (0, 6*pi)
+        sage: Tp = I.vector_field([diff(T[i], s) for i in E.irange()], dest_map=C,
+        ....:                     name="T'")
+        sage: Tp.display()
+        T' = -2/9*cos(1/3*s) e_x - 2/9*sin(1/3*s) e_y
+
+    The norm of `T'` is the curvature of the helix::
+
+        sage: kappa = norm(Tp)
+        sage: kappa
+        Scalar field |T'| on the Real interval (0, 6*pi)
+        sage: kappa.expr()
+        2/9
+
+    The unit normal vector along `C` is::
+
+        sage: N = Tp / kappa
+        sage: N.display()
+        -cos(1/3*s) e_x - sin(1/3*s) e_y
+
+    while the binormal vector along `C` is `B = T \times N`::
+
+        sage: B = T.cross_product(N)
+        sage: B
+        Vector field along the Real interval (0, 6*pi) with values on the
+         Euclidean space E^3
+        sage: B.display()
+        1/3*sqrt(5)*sin(1/3*s) e_x - 1/3*sqrt(5)*cos(1/3*s) e_y + 2/3 e_z
+
+    The three vector fields `(T, N, B)` form the **Frenet-Serret frame** along
+    `C`::
+
+        sage: FS = I.vector_frame(('T', 'N', 'B'), (T, N, B),
+        ....:                     symbol_dual=('t', 'n', 'b'))
+        sage: FS
+        Vector frame ((0, 6*pi), (T,N,B)) with values on the Euclidean space E^3
+
+    The Frenet-Serret frame is orthonormal::
+
+        sage: matrix([[u.dot(v).expr() for v in FS] for u in FS])
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+
+    The derivative vectors `N'` and `B'`::
+
+        sage: Np = I.vector_field([diff(N[i], s) for i in E.irange()],
+        ....:                     dest_map=C, name="N'")
+        sage: Np.display()
+        N' = 1/3*sin(1/3*s) e_x - 1/3*cos(1/3*s) e_y
+        sage: Bp = I.vector_field([diff(B[i], s) for i in E.irange()],
+        ....:                     dest_map=C, name="B'")
+        sage: Bp.display()
+        B' = 1/9*sqrt(5)*cos(1/3*s) e_x + 1/9*sqrt(5)*sin(1/3*s) e_y
+
+    The Frenet-Serret formulas::
+
+        sage: for v in (Tp, Np, Bp):
+        ....:     v.display(FS)
+        ....:
+        T' = 2/9 N
+        N' = -2/9 T + 1/9*sqrt(5) B
+        B' = -1/9*sqrt(5) N
+
+    The torsion of `C` is obtained as the third component of `N'` in the
+    Frenet-Serret frame::
+
+        sage: tau = Np[FS, 3]
+        sage: tau
+        1/9*sqrt(5)
+
     """
     def __init__(self, parent, coord_expression=None, name=None,
                  latex_name=None, is_isomorphism=False, is_identity=False):
@@ -268,17 +369,13 @@ class DifferentiableCurve(DiffMap):
             sage: TestSuite(c).run()
 
         """
-        domain = parent.domain()
-        codomain = parent.codomain()
         if coord_expression is None:
             coord_functions = None
         else:
             if not isinstance(coord_expression, dict):
                 raise TypeError("{} is not a dictionary".format(
                                                              coord_expression))
-            param_chart = domain.canonical_chart()
-            codom_atlas = codomain.atlas()
-            n = codomain.manifold().dim()
+            param_chart = parent.domain().canonical_chart()
             coord_functions = {}
             for chart, expr in coord_expression.items():
                 if isinstance(chart, tuple):
@@ -327,9 +424,8 @@ class DifferentiableCurve(DiffMap):
             sage: c.__reduce__()
             (<class 'sage.manifolds.differentiable.manifold_homset.DifferentiableCurveSet_with_category.element_class'>,
              (Set of Morphisms from Real interval (0, 2*pi) to 2-dimensional
-              differentiable manifold M in Join of Category of subobjects of
-              sets and Category of smooth manifolds over Real Field with 53
-              bits of precision,
+              differentiable manifold M in Category of smooth manifolds over
+              Real Field with 53 bits of precision,
               None,
               None,
               None,
@@ -367,9 +463,17 @@ class DifferentiableCurve(DiffMap):
             sage: U = M.open_subset('U', coord_def={c_xy: (y!=0, x<0)}) # the complement of the segment y=0 and x>0
             sage: c_cart = c_xy.restrict(U) # Cartesian coordinates on U
             sage: c_spher.<r,ph> = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi') # spherical coordinates on U
-            sage: # Links between spherical coordinates and Cartesian ones:
+
+        Links between spherical coordinates and Cartesian ones::
+
             sage: ch_cart_spher = c_cart.transition_map(c_spher, [sqrt(x*x+y*y), atan2(y,x)])
             sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
+            Check of the inverse coordinate transformation:
+              x == x  *passed*
+              y == y  *passed*
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+            NB: a failed report can reflect a mere lack of simplification.
             sage: R.<t> = RealLine()
             sage: c = U.curve({c_spher: (1,t)}, (t, 0, 2*pi), name='c')
             sage: c.coord_expr(c_spher)
@@ -382,7 +486,7 @@ class DifferentiableCurve(DiffMap):
             sage: c.coord_expr()
             (cos(t), sin(t))
 
-        Cartesian expression of a cardiod::
+        Cartesian expression of a cardioid::
 
             sage: c = U.curve({c_spher: (2*(1+cos(t)), t)}, (t, 0, 2*pi), name='c')
             sage: c.coord_expr(c_cart)
@@ -900,11 +1004,9 @@ class DifferentiableCurve(DiffMap):
             True
 
         """
-
         from sage.plot.graphics import Graphics
         from sage.plot.line import line
         from sage.manifolds.utilities import set_axes_labels
-
 
         #
         # The plot

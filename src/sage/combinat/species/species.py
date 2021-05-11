@@ -36,8 +36,7 @@ This means that, among the trees on `4` nodes, one has a
 single internal node, three have two internal nodes, and one has
 three internal nodes.
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -49,8 +48,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .generating_series import OrdinaryGeneratingSeriesRing, ExponentialGeneratingSeriesRing, CycleIndexSeriesRing
 from sage.rings.all import QQ
 from sage.structure.sage_object import SageObject
@@ -58,6 +57,7 @@ from sage.misc.cachefunc import cached_method
 from sage.combinat.species.misc import accept_size
 from sage.combinat.species.structure import StructuresWrapper, IsotypesWrapper
 from functools import reduce
+
 
 class GenericCombinatorialSpecies(SageObject):
     def __init__(self, min=None, max=None, weight=None):
@@ -78,7 +78,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __hash__(self):
         """
-        Returns a hash of the unique info tuple.
+        Return a hash of the unique info tuple.
 
         EXAMPLES::
 
@@ -87,10 +87,9 @@ class GenericCombinatorialSpecies(SageObject):
         """
         return hash(self._unique_info())
 
-
     def _unique_info(self):
         """
-        Returns a tuple which should uniquely identify the species.
+        Return a tuple which should uniquely identify the species.
 
         EXAMPLES::
 
@@ -176,7 +175,7 @@ class GenericCombinatorialSpecies(SageObject):
             False
         """
         return not (self == other)
-    
+
     def __getstate__(self):
         r"""
         This is used during the pickling process and returns a dictionary
@@ -204,7 +203,7 @@ class GenericCombinatorialSpecies(SageObject):
     def __setstate__(self, state):
         """
         This is used during unpickling to recreate this object from the
-        data provided by the __getstate__ method.
+        data provided by the ``__getstate__`` method.
 
         TESTS::
 
@@ -220,7 +219,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def weighted(self, weight):
         """
-        Returns a version of this species with the specified weight.
+        Return a version of this species with the specified weight.
 
         EXAMPLES::
 
@@ -236,7 +235,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __repr__(self):
         """
-        Returns a string representation of this species.
+        Return a string representation of this species.
 
         EXAMPLES::
 
@@ -260,7 +259,7 @@ class GenericCombinatorialSpecies(SageObject):
         else:
             name = "Combinatorial species"
 
-        options  = []
+        options = []
 
         if self._min is not None:
             options.append('min=%s' % self._min)
@@ -276,7 +275,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __add__(self, g):
         """
-        Returns the sum of self and g.
+        Return the sum of ``self`` and ``g``.
 
         EXAMPLES::
 
@@ -295,7 +294,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __mul__(self, g):
         """
-        Returns the product of self and g.
+        Return the product of ``self`` and ``g``.
 
         EXAMPLES::
 
@@ -327,7 +326,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def functorial_composition(self, g):
         """
-        Returns the functorial composition of self with g.
+        Return the functorial composition of ``self`` with ``g``.
 
         EXAMPLES::
 
@@ -344,10 +343,17 @@ class GenericCombinatorialSpecies(SageObject):
             raise TypeError("g must be a combinatorial species")
         return FunctorialCompositionSpecies(self, g)
 
-
     @accept_size
     def restricted(self, min=None, max=None):
         """
+        Return the restriction of the species.
+
+        INPUT:
+
+        - ``min`` -- optional integer
+
+        - ``max`` -- optional integer
+
         EXAMPLES::
 
             sage: S = species.SetSpecies().restricted(min=3); S
@@ -388,7 +394,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _check(self, n=5):
         """
-        Returns True if the number of structures and isomorphism types
+        Return ``True`` if the number of structures and isomorphism types
         generated is the same as the number found from the generating
         series.
 
@@ -409,7 +415,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def __pow__(self, n):
         r"""
-        Returns this species to the power `n`.
+        Return this species to the power `n`.
 
         This uses a binary exponentiation algorithm to perform the
         powering.
@@ -466,9 +472,9 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _get_series(self, series_ring_class, prefix, base_ring=None):
         """
-        Returns the generating / isotype generating / cycle index series
+        Return the generating / isotype generating / cycle index series
         ring. The purpose of this method is to restrict the result of
-        _series_helper to self._min and self._max.
+        _series_helper to ``self._min`` and ``self._max``.
 
         EXAMPLES::
 
@@ -478,10 +484,10 @@ class GenericCombinatorialSpecies(SageObject):
         """
         series = self._series_helper(series_ring_class, prefix, base_ring=base_ring)
 
-        #We need to restrict the series based on the min
-        #and max of this species.  Note that if min and max
-        #are both None (as in the default case), then the restrict
-        #method will just return series.
+        # We need to restrict the series based on the min
+        # and max of this species.  Note that if min and max
+        # are both None (as in the default case), then the restrict
+        # method will just return series.
         return series.restricted(min=self._min, max=self._max)
 
     def _series_helper(self, series_ring_class, prefix, base_ring=None):
@@ -492,7 +498,6 @@ class GenericCombinatorialSpecies(SageObject):
         method on the subclass to call to get the series object, etc.)
 
         INPUT:
-
 
         -  ``series_ring_class`` - A class for the series
            ring such as ExponentialGeneratingSeriesRing, etc.
@@ -505,7 +510,6 @@ class GenericCombinatorialSpecies(SageObject):
         -  ``base_ring`` - The ring in which the coefficients
            of the generating series live. If it is not specified, then it is
            determined by the weight of the species.
-
 
         EXAMPLES::
 
@@ -521,14 +525,14 @@ class GenericCombinatorialSpecies(SageObject):
             sage: itgs.coefficients(3)
             [1.0, 1.0, 1.0]
         """
-        prefix = "_"+prefix
+        prefix = "_" + prefix
 
-        #Get the base ring
+        # Get the base ring
         if base_ring is None:
             base_ring = self.weight_ring()
         else:
-            #The specified base ring must have maps from both
-            #the rational numbers and the weight ring
+            # The specified base ring must have maps from both
+            # the rational numbers and the weight ring
             if not base_ring.has_coerce_map_from(QQ):
                 raise ValueError("specified base ring does not contain the rationals")
             if not base_ring.has_coerce_map_from(self.weight_ring()):
@@ -536,22 +540,22 @@ class GenericCombinatorialSpecies(SageObject):
 
         series_ring = series_ring_class(base_ring)
 
-        #Try to return things like self._gs(base_ring)
-        #This is used when the subclass wants to just
-        #handle creating the generating series itself;
-        #for example, returning the exponential of a
-        #generating series.
+        # Try to return things like self._gs(base_ring)
+        # This is used when the subclass wants to just
+        # handle creating the generating series itself;
+        # for example, returning the exponential of a
+        # generating series.
         try:
             return getattr(self, prefix)(series_ring, base_ring)
         except AttributeError:
             pass
 
-        #Try to return things like self._gs_iterator(base_ring).
-        #This is used when the subclass just provides an iterator
-        #for the coefficients of the generating series.  Optionally,
-        #the subclass can specify the order of the series.
+        # Try to return things like self._gs_iterator(base_ring).
+        # This is used when the subclass just provides an iterator
+        # for the coefficients of the generating series.  Optionally,
+        # the subclass can specify the order of the series.
         try:
-            iterator = getattr(self, prefix+"_iterator")(base_ring)
+            iterator = getattr(self, prefix + "_iterator")(base_ring)
             try:
                 return series_ring(iterator, order=self._order())
             except AttributeError:
@@ -559,35 +563,35 @@ class GenericCombinatorialSpecies(SageObject):
         except AttributeError:
             pass
 
-        #Try to use things like self._gs_term(base_ring).
-        #This is used when the generating series is just a single
-        #term.
+        # Try to use things like self._gs_term(base_ring).
+        # This is used when the generating series is just a single
+        # term.
         try:
-            return series_ring.term( getattr(self, prefix+"_term")(base_ring),
-                                     self._order())
+            return series_ring.term(getattr(self, prefix + "_term")(base_ring),
+                                    self._order())
         except AttributeError:
             pass
 
-        #Try to use things like self._gs_list(base_ring).
-        #This is used when the coefficients of the generating series
-        #can be given by a finite list with the last coefficient repeating.
-        #The generating series with all ones coefficients is generated this
-        #way.
+        # Try to use things like self._gs_list(base_ring).
+        # This is used when the coefficients of the generating series
+        # can be given by a finite list with the last coefficient repeating.
+        # The generating series with all ones coefficients is generated this
+        # way.
         try:
-            return series_ring(getattr(self, prefix+"_list")(base_ring))
+            return series_ring(getattr(self, prefix + "_list")(base_ring))
         except AttributeError:
             pass
 
         raise NotImplementedError
 
-
     @cached_method
     def generating_series(self, base_ring=None):
         r"""
-        Returns the generating series for this species. This is an
-        exponential generating series so the nth coefficient of the series
-        corresponds to the number of labeled structures with n labels
-        divided by n!.
+        Return the generating series for this species.
+
+        This is an exponential generating series so the `n`-th
+        coefficient of the series corresponds to the number of labeled
+        structures with `n` labels divided by `n!`.
 
         EXAMPLES::
 
@@ -607,9 +611,10 @@ class GenericCombinatorialSpecies(SageObject):
     @cached_method
     def isotype_generating_series(self, base_ring=None):
         r"""
-        Returns the isotype generating series for this species. The nth
-        coefficient of this series corresponds to the number of isomorphism
-        types for the structures on n labels.
+        Return the isotype generating series for this species.
+
+        The `n`-th coefficient of this series corresponds to the number
+        of isomorphism types for the structures on `n` labels.
 
         EXAMPLES::
 
@@ -626,11 +631,12 @@ class GenericCombinatorialSpecies(SageObject):
         """
         return self._get_series(OrdinaryGeneratingSeriesRing, "itgs", base_ring)
 
-
     @cached_method
     def cycle_index_series(self, base_ring=None):
         r"""
-        Returns the cycle index series for this species.
+        Return the cycle index series for this species.
+
+        The cycle index series is a sequence of symmetric functions.
 
         EXAMPLES::
 
@@ -641,10 +647,9 @@ class GenericCombinatorialSpecies(SageObject):
         """
         return self._get_series(CycleIndexSeriesRing, "cis", base_ring)
 
-
     def is_weighted(self):
         """
-        Returns True if this species has a nontrivial weighting associated
+        Return ``True`` if this species has a nontrivial weighting associated
         with it.
 
         EXAMPLES::
@@ -657,7 +662,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def weight_ring(self):
         """
-        Returns the ring in which the weights of this species occur.
+        Return the ring in which the weights of this species occur.
 
         By default, this is just the field of rational numbers.
 
@@ -673,8 +678,8 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _common_parent(self, parents):
         """
-        Returns a parent that all of the parents in the given list of
-        parents
+        Return a parent that contains all the parents
+        in the given list of parents.
 
         EXAMPLES::
 
@@ -682,7 +687,7 @@ class GenericCombinatorialSpecies(SageObject):
             sage: C._common_parent([QQ, ZZ['t']])
             Univariate Polynomial Ring in t over Rational Field
         """
-        assert len(parents) > 0
+        assert parents
         from sage.structure.element import get_coercion_model
         cm = get_coercion_model()
 
@@ -725,7 +730,7 @@ class GenericCombinatorialSpecies(SageObject):
 
     def _add_to_digraph(self, d):
         """
-        Add this species as a vertex to the digraph d along with any
+        Add this species as a vertex to the digraph ``d`` along with any
         'children' of this species. For example, sum species would add
         itself as a vertex and an edge between itself and each of its
         summands.
@@ -752,7 +757,6 @@ class GenericCombinatorialSpecies(SageObject):
                 continue
             d.add_edge(self, child)
             child._add_to_digraph(d)
-
 
     def algebraic_equation_system(self):
         """

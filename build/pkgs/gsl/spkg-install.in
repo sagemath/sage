@@ -1,0 +1,5 @@
+cd src
+
+sdh_configure LIBS="`pkg-config --libs-only-l cblas` -lm"
+sdh_make
+sdh_make_install

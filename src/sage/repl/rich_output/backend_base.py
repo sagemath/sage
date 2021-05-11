@@ -47,8 +47,9 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
+import builtins
+from io import StringIO
 from sage.structure.sage_object import SageObject
 
 
@@ -265,7 +266,6 @@ class BackendBase(SageObject):
             sage: backend._apply_pretty_printer(SagePrettyPrinter, 1/2)
             '1/2'
         """
-        from six import StringIO
         stream = StringIO()
         printer = pretty_printer_class(
             stream, self.max_width(), self.newline())
@@ -368,7 +368,7 @@ class BackendBase(SageObject):
             sage: backend.ascii_art_formatter([1,2,3], concatenate=True).ascii_art.get_str()
             '1 2 3'
         """
-        from sage.typeset.ascii_art import ascii_art, empty_ascii_art
+        from sage.typeset.ascii_art import ascii_art
         if kwds.get('concatenate', False):
             result = ascii_art(*obj, sep=' ')
         else:
@@ -417,7 +417,7 @@ class BackendBase(SageObject):
             sage: backend.unicode_art_formatter([1,2,3], concatenate=True).unicode_art.get_str()
             '1 2 3'
         """
-        from sage.typeset.unicode_art import unicode_art, empty_unicode_art
+        from sage.typeset.unicode_art import unicode_art
         if kwds.get('concatenate', False):
             result = unicode_art(*obj, sep=' ')
         else:
@@ -427,7 +427,7 @@ class BackendBase(SageObject):
 
     def latex_formatter(self, obj, **kwds):
         r"""
-        Hook to override how Latex is being formatted.
+        Hook to override how latex is being formatted.
 
         INPUT:
 
@@ -443,8 +443,7 @@ class BackendBase(SageObject):
 
         OUTPUT:
 
-        Instance of
-        :class:`~sage.repl.rich_output.output_basic.OutputLatex`
+        Instance of :class:`~sage.repl.rich_output.output_browser.OutputHtml`
         containing the latex string representation of the object.
 
         EXAMPLES::
@@ -453,37 +452,30 @@ class BackendBase(SageObject):
             sage: backend = BackendBase()
             sage: out = backend.latex_formatter(1/2)
             sage: out
-            OutputLatex container
-            sage: out.latex
-            buffer containing 45 bytes
-            sage: out.latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2}'
-            sage: out.mathjax()
+            OutputHtml container
+            sage: out.html
+            buffer containing 105 bytes
+            sage: out.html.get_str()
             '<html><script type="math/tex; mode=display">\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2}</script></html>'
 
             sage: out = backend.latex_formatter([1/2, x, 3/4, ZZ], concatenate=False)
-            sage: out.latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\frac{1}{2}, x, \\frac{3}{4}, \\Bold{Z}\\right]'
+            sage: out.html.get_str()
+            '<html><script type="math/tex; mode=display">\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\frac{1}{2}, x, \\frac{3}{4}, \\Bold{Z}\\right]</script></html>'
             sage: out = backend.latex_formatter([1/2, x, 3/4, ZZ], concatenate=True)
-            sage: out.latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2} x \\frac{3}{4} \\Bold{Z}'
+            sage: out.html.get_str()
+            '<html><script type="math/tex; mode=display">\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\frac{1}{2} x \\frac{3}{4} \\Bold{Z}</script></html>'
 
         TESTS::
 
-            sage: backend.latex_formatter([], concatenate=False).latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\right]'
-            sage: backend.latex_formatter([], concatenate=True).latex.get_str()
-            '\\newcommand{\\Bold}[1]{\\mathbf{#1}}'
+            sage: backend.latex_formatter([], concatenate=False).html.get_str()
+            '<html><script type="math/tex; mode=display">\\newcommand{\\Bold}[1]{\\mathbf{#1}}\\left[\\right]</script></html>'
+            sage: backend.latex_formatter([], concatenate=True).html.get_str()
+            '<html><script type="math/tex; mode=display">\\newcommand{\\Bold}[1]{\\mathbf{#1}}</script></html>'
         """
         concatenate = kwds.get('concatenate', False)
-        from sage.misc.latex import MathJax
-        if concatenate:
-            obj = tuple(obj)    # MathJax treats tuples special
-            mathjax = MathJax().eval(obj, mode='plain', combine_all=True)
-        else:
-            mathjax = MathJax().eval(obj, mode='plain', combine_all=False)
-        from sage.repl.rich_output.output_basic import OutputLatex
-        return OutputLatex(str(mathjax))
+        from sage.misc.html import html
+        from sage.repl.rich_output.output_browser import OutputHtml
+        return OutputHtml(html(obj, concatenate=concatenate))
 
     def set_underscore_variable(self, obj):
         """
@@ -510,7 +502,6 @@ class BackendBase(SageObject):
             sage: _     # indirect doctest
             'foo'
         """
-        from six.moves import builtins
         builtins._ = obj
 
     def displayhook(self, plain_text, rich_output):

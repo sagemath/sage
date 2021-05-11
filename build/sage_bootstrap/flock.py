@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env sage-bootstrap-python
 # vim: set filetype=python:
 """
 This script runs the given command under a file lock (similar to the flock
@@ -14,13 +14,7 @@ import fcntl
 import os
 import pipes
 import sys
-
-# Note that argparse is not part of Python 2.6, so we bundle it
-try:
-    import argparse
-except ImportError:
-    from sage_bootstrap.compat import argparse
-
+import argparse
 
 class FileType(argparse.FileType):
     """

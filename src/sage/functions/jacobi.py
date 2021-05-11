@@ -125,7 +125,7 @@ equations:
 
 REFERENCES:
 
-- :wikipedia:`Jacobi's_elliptic_functions`
+- :wikipedia:`Jacobi%27s_elliptic_functions`
 
 - [KS2002]_
 
@@ -175,6 +175,11 @@ class Jacobi(BuiltinFunction):
             sage: from sage.functions.jacobi import Jacobi
             sage: Jacobi('sn')
             jacobi_sn
+
+        TESTS::
+
+            sage: N(jacobi("sn", I, 1/2))   # abs tol 1e-12
+            -8.59454886300046e-73 + 1.34737147138542*I
         """
         if kind not in ['nd', 'ns', 'nc', 'dn', 'ds', 'dc', 'sn', 'sd',
                         'sc', 'cn', 'cd', 'cs']:
@@ -1135,7 +1140,7 @@ jacobi_am = JacobiAmplitude()
 
 def inverse_jacobi_f(kind, x, m):
     r"""
-    Internal function for numerical evaluation of a continous complex branch
+    Internal function for numerical evaluation of a continuous complex branch
     of each inverse Jacobi function, as described in [Tee1997]_. Only accepts
     real arguments.
 

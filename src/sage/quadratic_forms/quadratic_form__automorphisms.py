@@ -110,8 +110,11 @@ def short_vector_list_up_to_length(self, len_bound, up_to_sign_flag=False):
     - ``up_to_sign_flag`` -- (default: ``False``) if set to True, then
       only one of the vectors of the pair `[v, -v]` is listed.
 
-    OUTPUT: a list of lists of vectors such that entry ``[i]`` contains
-    all vectors of length `i`.
+    OUTPUT:
+
+    A list of lists of vectors such that entry `[i]` contains all
+    vectors of length `i`.
+
 
     EXAMPLES::
 

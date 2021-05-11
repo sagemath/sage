@@ -669,14 +669,18 @@ faithful representation of the sandpile group on `\CC^n`.
 Approximation to the zero set (setting ``x_0 = 1``)::
 
     sage: S.solve()
-    [[-0.707107 + 0.707107*I, 0.707107 - 0.707107*I],
-    [-0.707107 - 0.707107*I, 0.707107 + 0.707107*I],
-    [-I, -I],
-    [I, I],
-    [0.707107 + 0.707107*I, -0.707107 - 0.707107*I],
-    [0.707107 - 0.707107*I, -0.707107 + 0.707107*I],
-    [1, 1],
-    [-1, -1]]
+    [[-0.707107000000000 + 0.707107000000000*I,
+      0.707107000000000 - 0.707107000000000*I],
+     [-0.707107000000000 - 0.707107000000000*I,
+      0.707107000000000 + 0.707107000000000*I],
+     [-I, -I],
+     [I, I],
+     [0.707107000000000 + 0.707107000000000*I,
+      -0.707107000000000 - 0.707107000000000*I],
+     [0.707107000000000 - 0.707107000000000*I,
+      -0.707107000000000 + 0.707107000000000*I],
+     [1, 1],
+     [-1, -1]]
     sage: len(_) == S.group_order()
     True
 
@@ -798,9 +802,9 @@ Initialization
 
 There are three main classes for sandpile structures in Sage: ``Sandpile``,
 ``SandpileConfig``, and ``SandpileDivisor``.  Initialization for ``Sandpile``
-has the form
+has the form ::
 
-.. code-block:: python
+.. skip
 
     sage: S = Sandpile(graph, sink)
 
@@ -2347,7 +2351,18 @@ EXAMPLES::
 
     sage: S = Sandpile({0: {}, 1: {2: 2}, 2: {0: 4, 1: 1}}, 0)
     sage: S.solve()
-    [[-0.707107 + 0.707107*I, 0.707107 - 0.707107*I], [-0.707107 - 0.707107*I, 0.707107 + 0.707107*I], [-I, -I], [I, I], [0.707107 + 0.707107*I, -0.707107 - 0.707107*I], [0.707107 - 0.707107*I, -0.707107 + 0.707107*I], [1, 1], [-1, -1]]
+    [[-0.707107000000000 + 0.707107000000000*I,
+      0.707107000000000 - 0.707107000000000*I],
+     [-0.707107000000000 - 0.707107000000000*I,
+      0.707107000000000 + 0.707107000000000*I],
+     [-I, -I],
+     [I, I],
+     [0.707107000000000 + 0.707107000000000*I,
+      -0.707107000000000 - 0.707107000000000*I],
+     [0.707107000000000 - 0.707107000000000*I,
+      -0.707107000000000 + 0.707107000000000*I],
+     [1, 1],
+     [-1, -1]]
     sage: len(_)
     8
     sage: S.group_order()
@@ -3995,6 +4010,7 @@ OUTPUT:
 SandpileDivisor
 
 EXAMPLES::
+
     sage: S = sandpiles.Cycle(3)
     sage: D = SandpileDivisor(S, [1,2,3])
     sage: D.dualize()
@@ -4911,6 +4927,8 @@ Other
     EXAMPLES::
 
         sage: S = random_DAG(5, 0.3)
+        doctest:...: DeprecationWarning: method random_DAG is deprecated. Please use digraphs.RandomDirectedAcyclicGraph instead.
+        See https://trac.sagemath.org/30479 for details.
 
 ---
 

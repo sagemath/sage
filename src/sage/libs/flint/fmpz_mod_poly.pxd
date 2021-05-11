@@ -1,8 +1,10 @@
 # distutils: libraries = flint
+# distutils: depends = flint/fmpz_mod_poly.h
 
 from sage.libs.flint.types cimport fmpz_mod_poly_t, fmpz_t, slong
 
-cdef extern from "flint/fmpz_mod_poly.h":
+# flint/fmpz_mod_poly.h
+cdef extern from "flint_wrap.h":
     void fmpz_mod_poly_init(fmpz_mod_poly_t poly, const fmpz_t p)
     void fmpz_mod_poly_clear(fmpz_mod_poly_t poly)
 

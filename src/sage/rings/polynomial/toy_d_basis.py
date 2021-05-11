@@ -1,17 +1,17 @@
 r"""
-Educational version of the `d`-Groebner Basis Algorithm over PIDs.
+Educational version of the `d`-Groebner basis algorithm over PIDs
 
 No attempt was made to optimize this algorithm as the emphasis of this
 implementation is a clean and easy presentation.
 
 .. NOTE::
 
-    The notion of 'term' and 'monomial' in [BW93]_ is swapped from the
+    The notion of 'term' and 'monomial' in [BW1993]_ is swapped from the
     notion of those words in Sage (or the other way around, however you
     prefer it). In Sage a term is a monomial multiplied by a
-    coefficient, while in [BW93]_ a monomial is a term multiplied by a
+    coefficient, while in [BW1993]_ a monomial is a term multiplied by a
     coefficient. Also, what is called LM (the leading monomial) in
-    Sage is called HT (the head term) in [BW93]_.
+    Sage is called HT (the head term) in [BW1993]_.
 
 EXAMPLES::
 
@@ -196,7 +196,7 @@ def LC(f):
 
 def d_basis(F, strat=True):
     r"""
-    Return the `d`-basis for the Ideal ``F`` as defined in [BW93]_.
+    Return the `d`-basis for the Ideal ``F`` as defined in [BW1993]_.
 
     INPUT:
 
@@ -304,7 +304,7 @@ def select(P):
 def update(G, B, h):
     """
     Update ``G`` using the list of critical pairs ``B`` and the
-    polynomial ``h`` as presented in [BW93]_, page 230. For this,
+    polynomial ``h`` as presented in [BW1993]_, page 230. For this,
     Buchberger's first and second criterion are tested.
 
     This function uses the Gebauer-Moeller Installation.

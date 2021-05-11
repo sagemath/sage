@@ -18,16 +18,15 @@ EXAMPLES::
     True
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009,2011 R. Andrew Ohana <andrew.ohana@gmail.com>
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cypari2.paridecl cimport *
 from cysignals.signals cimport *
@@ -275,7 +274,7 @@ cdef class PrimePi(BuiltinFunction):
     cdef uint32_t _cached_count(self, uint32_t p):
         r"""
         For p < 65536, returns the value stored in ``self.__smallPi[p]``. For
-        p <= ``self.__maxSieve``, uses a binary seach on ``self.__primes`` to
+        p <= ``self.__maxSieve``, uses a binary search on ``self.__primes`` to
         compute pi(p).
         """
         # inspired by Yann Laigle-Chapuy's suggestion

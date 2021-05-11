@@ -2,7 +2,7 @@
 Local Normal Form
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein and Jonathan Hanke
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,8 +14,8 @@ Local Normal Form
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import copy
 from sage.rings.infinity import Infinity
@@ -60,21 +60,21 @@ def find_entry_with_minimal_scale_at_prime(self, p):
     min_val = Infinity
     ij_index = None
     val_2 = valuation(2, p)
-    for d in range(n):           ## d = difference j-i
-        for e in range(n - d):    ## e is the length of the diagonal with value d.
+    for d in range(n):           # d = difference j-i
+        for e in range(n - d):    # e is the length of the diagonal with value d.
 
-            ## Compute the valuation of the entry
+            # Compute the valuation of the entry
             if d == 0:
-                tmp_val = valuation(self[e, e+d], p)
+                tmp_val = valuation(self[e, e + d], p)
             else:
-                tmp_val = valuation(self[e, e+d], p) - val_2
+                tmp_val = valuation(self[e, e + d], p) - val_2
 
-            ## Check if it's any smaller than what we have
+            # Check if it's any smaller than what we have
             if tmp_val < min_val:
-                ij_index = (e,e+d)
+                ij_index = (e, e + d)
                 min_val = tmp_val
 
-    ## Return the result
+    # Return the result
     return ij_index
 
 
@@ -120,135 +120,96 @@ def local_normal_form(self, p):
         [ 1 0 ]
         [ * 6 ]
     """
-    ## Sanity Checks
+    # Sanity Checks
     if (self.base_ring() != IntegerRing()):
         raise NotImplementedError("Oops!  This currently only works for quadratic forms defined over IntegerRing(). =(")
     if not ((p>=2) and is_prime(p)):
         raise TypeError("Oops!  p is not a positive prime number. =(")
 
-    ## Some useful local variables
-    Q = copy.deepcopy(self)
-    Q.__init__(self.base_ring(), self.dim(), self.coefficients())
+    # Some useful local variables
+    Q = self.parent()(self.base_ring(), self.dim(), self.coefficients())
 
-    ## Prepare the final form to return
+    # Prepare the final form to return
     Q_Jordan = copy.deepcopy(self)
     Q_Jordan.__init__(self.base_ring(), 0)
-
 
     while Q.dim() > 0:
         n = Q.dim()
 
-        ## Step 1: Find the minimally p-divisible matrix entry, preferring diagonals
-        ## -------------------------------------------------------------------------
+        # Step 1: Find the minimally p-divisible matrix entry, preferring diagonals
+        # -------------------------------------------------------------------------
         (min_i, min_j) = Q.find_entry_with_minimal_scale_at_prime(p)
         if min_i == min_j:
             min_val = valuation(2 * Q[min_i, min_j], p)
         else:
             min_val = valuation(Q[min_i, min_j], p)
 
-        ## Error if we still haven't seen non-zero coefficients!
+        # Error if we still haven't seen non-zero coefficients!
         if (min_val == Infinity):
             raise RuntimeError("Oops!  The original matrix is degenerate. =(")
 
-
-        ## Step 2: Arrange for the upper leftmost entry to have minimal valuation
-        ## ----------------------------------------------------------------------
+        # Step 2: Arrange for the upper leftmost entry to have minimal valuation
+        # ----------------------------------------------------------------------
         if (min_i == min_j):
             block_size = 1
             Q.swap_variables(0, min_i, in_place = True)
         else:
-            ## Work in the upper-left 2x2 block, and replace it by its 2-adic equivalent form
+            # Work in the upper-left 2x2 block, and replace it by its 2-adic equivalent form
             Q.swap_variables(0, min_i, in_place = True)
             Q.swap_variables(1, min_j, in_place = True)
 
-            ## 1x1 => make upper left the smallest
+            # 1x1 => make upper left the smallest
             if (p != 2):
                 block_size = 1;
                 Q.add_symmetric(1, 0, 1, in_place = True)
-            ## 2x2 => replace it with the appropriate 2x2 matrix
+            # 2x2 => replace it with the appropriate 2x2 matrix
             else:
                 block_size = 2
 
-        ## DIAGNOSTIC
-        #print("\n Finished Step 2 \n")
-        #print("\n Q is: \n" + str(Q)  + "\n")
-        #print("  p is: " + str(p))
-        #print("  min_val is: " + str( min_val))
-        #print("  block_size is: " + str(block_size))
-        #print("\n Starting Step 3 \n")
+        # Step 3: Clear out the remaining entries
+        #  ---------------------------------------
+        min_scale = p ** min_val                             # This is the minimal valuation of the Hessian matrix entries.
 
-        ## Step 3: Clear out the remaining entries
-        ##  ---------------------------------------
-        min_scale = p ** min_val                             ## This is the minimal valuation of the Hessian matrix entries.
-
-        ##DIAGNOSTIC
-        #print("Starting Step 3:")
-        #print("----------------")
-        #print("  min_scale is: " + str(min_scale))
-
-        ## Perform cancellation over Z by ensuring divisibility
+        # Perform cancellation over Z by ensuring divisibility
         if (block_size == 1):
             a = 2 * Q[0,0]
             for j in range(block_size, n):
                 b = Q[0, j]
                 g = GCD(a, b)
 
-                ## DIAGNOSTIC
-                #print "Cancelling from a 1x1 block:"
-                #print "----------------------------"
-                #print "  Cancelling entry with index (" + str(upper_left) + ", " + str(j) + ")"
-                #print "  entry = " + str(b)
-                #print "  gcd = " + str(g)
-                #print "  a = " + str(a)
-                #print "  b = " + str(b)
-                #print "  a/g = " + str(a/g) + "   (used for stretching)"
-                #print "  -b/g = " + str(-b/g) + "   (used for cancelling)"
-
-                ## Sanity Check:  a/g is a p-unit
+                # Sanity Check:  a/g is a p-unit
                 if valuation (g, p) != valuation(a, p):
                     raise RuntimeError("Oops!  We have a problem with our rescaling not preserving p-integrality!")
 
-                Q.multiply_variable(ZZ(a/g), j, in_place = True)   ## Ensures that the new b entry is divisible by a
-                Q.add_symmetric(ZZ(-b/g), j, 0, in_place = True)  ## Performs the cancellation
+                Q.multiply_variable(ZZ(a/g), j, in_place = True)   # Ensures that the new b entry is divisible by a
+                Q.add_symmetric(ZZ(-b/g), j, 0, in_place = True)  # Performs the cancellation
 
 
         elif (block_size == 2):
             a1 = 2 * Q[0,0]
             a2 = Q[0, 1]
-            b1 = Q[1, 0]      ## This is the same as a2
+            b1 = Q[1, 0]      # This is the same as a2
             b2 = 2 * Q[1, 1]
 
             big_det = (a1*b2 - a2*b1)
             small_det = big_det / (min_scale * min_scale)
 
-            ## Cancels out the rows/columns of the 2x2 block
+            # Cancels out the rows/columns of the 2x2 block
             for j in range(block_size, n):
                 a = Q[0, j]
                 b = Q[1, j]
 
-                ## Ensures an integral result (scale jth row/column by big_det)
+                # Ensures an integral result (scale jth row/column by big_det)
                 Q.multiply_variable(big_det, j, in_place = True)
 
-                ## Performs the cancellation (by producing -big_det * jth row/column)
+                # Performs the cancellation (by producing -big_det * jth row/column)
                 Q.add_symmetric(ZZ(-(a*b2 - b*a2)), j, 0, in_place = True)
                 Q.add_symmetric(ZZ(-(-a*b1 + b*a1)), j, 1, in_place = True)
 
-                ## Now remove the extra factor (non p-unit factor) in big_det we introduced above
+                # Now remove the extra factor (non p-unit factor) in big_det we introduced above
                 Q.divide_variable(ZZ(min_scale * min_scale), j, in_place = True)
 
-            ## DIAGNOSTIC
-            #print "Cancelling out a 2x2 block:"
-            #print "---------------------------"
-            #print "  a1 = " + str(a1)
-            #print "  a2 = " + str(a2)
-            #print "  b1 = " + str(b1)
-            #print "  b2 = " + str(b2)
-            #print "  big_det = " + str(big_det)
-            #print "  min_scale = " + str(min_scale)
-            #print "  small_det = " + str(small_det)
-            #print "  Q = \n", Q
-
-            ## Uses Cassels's proof to replace the remaining 2 x 2 block
+            # Uses Cassels's proof to replace the remaining 2 x 2 block
             if (((1 + small_det) % 8) == 0):
                 Q[0, 0] = 0
                 Q[1, 1] = 0
@@ -260,8 +221,7 @@ def local_normal_form(self, p):
             else:
                 raise RuntimeError("Error in LocalNormal: Impossible behavior for a 2x2 block! \n")
 
-
-        ## Check that the cancellation worked, extract the upper-left block, and trim Q to handle the next block.
+        # Check that the cancellation worked, extract the upper-left block, and trim Q to handle the next block.
         for i in range(block_size):
             for j in range(block_size, n):
                 if Q[i,j] != 0:
@@ -333,28 +293,28 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
         [ 2 2 ]
         [ * 2 ])]
     """
-    ## Try to use the cached result
+    # Try to use the cached result
     try:
         if safe_flag:
             return copy.deepcopy(self.__jordan_blocks_by_scale_and_unimodular_dict[p])
         else:
             return self.__jordan_blocks_by_scale_and_unimodular_dict[p]
     except Exception:
-        ## Initialize the global dictionary if it doesn't exist
+        # Initialize the global dictionary if it doesn't exist
         if not hasattr(self, '__jordan_blocks_by_scale_and_unimodular_dict'):
             self.__jordan_blocks_by_scale_and_unimodular_dict = {}
 
 
-    ## Deal with zero dim'l forms
+    # Deal with zero dim'l forms
     if self.dim() == 0:
         return []
 
 
-    ## Find the Local Normal form of Q at p
+    # Find the Local Normal form of Q at p
     Q1 = self.local_normal_form(p)
 
 
-    ## Parse this into Jordan Blocks
+    # Parse this into Jordan Blocks
     n = Q1.dim()
     tmp_Jordan_list = []
     i = 0
@@ -366,38 +326,36 @@ def jordan_blocks_by_scale_and_unimodular(self, p, safe_flag=True):
 
     while (i < n):
 
-        ## Determine the size of the current block
+        # Determine the size of the current block
         if (i == n-1) or (Q1[i,i+1] == 0):
             block_size = 1
         else:
             block_size = 2
 
-        ## Determine the valuation of the current block
+        # Determine the valuation of the current block
         if block_size == 1:
             block_scale = valuation(Q1[i,i], p)
         else:
             block_scale = valuation(Q1[i,i+1], p) - 1
 
-        ## Process the previous block if the valuation increased
+        # Process the previous block if the valuation increased
         if block_scale > start_scale:
             tmp_Jordan_list += [(start_scale, Q1.extract_variables(range(start_ind, i)).scale_by_factor(ZZ(1) / (QQ(p)**(start_scale))))]
             start_ind = i
             start_scale = block_scale
 
-        ## Increment the index
+        # Increment the index
         i += block_size
 
-    ## Add the last block
+    # Add the last block
     tmp_Jordan_list += [(start_scale, Q1.extract_variables(range(start_ind, n)).scale_by_factor(ZZ(1) / QQ(p)**(start_scale)))]
 
 
-    ## Cache the result
+    # Cache the result
     self.__jordan_blocks_by_scale_and_unimodular_dict[p] = tmp_Jordan_list
 
-    ## Return the result
+    # Return the result
     return tmp_Jordan_list
-
-
 
 
 def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
@@ -440,28 +398,27 @@ def jordan_blocks_in_unimodular_list_by_scale_power(self, p):
         [ * 10 ], Quadratic form in 1 variables over Integer Ring with coefficients:
         [ 2 ]]
     """
-    ## Sanity Check
+    # Sanity Check
     if self.base_ring() != ZZ:
         raise TypeError("Oops!  This method only makes sense for integer-valued quadratic forms (i.e. defined over ZZ).")
 
-    ## Deal with zero dim'l forms
+    # Deal with zero dim'l forms
     if self.dim() == 0:
         return []
 
-    ## Find the Jordan Decomposition
+    # Find the Jordan Decomposition
     list_of_jordan_pairs = self.jordan_blocks_by_scale_and_unimodular(p)
-    scale_list =  [P[0] for P in list_of_jordan_pairs]
+    scale_list = [P[0] for P in list_of_jordan_pairs]
     s_max = max(scale_list)
     if min(scale_list) < 0:
-        raise TypeError("Oops!  The given quadratic form has a Jordan component with a negative scale exponent!\n" \
+        raise TypeError("Oops!  The given quadratic form has a Jordan component with a negative scale exponent!\n"
         + "This routine requires an integer-matrix quadratic form for the output indexing to work properly!")
 
-    ## Make the new list of unimodular Jordan components
-    zero_form = copy.deepcopy(self)
-    zero_form.__init__(ZZ, 0)
-    list_by_scale = [zero_form  for _ in range(s_max+1)]
-    for P in  list_of_jordan_pairs:
+    # Make the new list of unimodular Jordan components
+    zero_form = self.parent()(ZZ, 0)
+    list_by_scale = [zero_form for _ in range(s_max + 1)]
+    for P in list_of_jordan_pairs:
         list_by_scale[P[0]] = P[1]
 
-    ## Return the new list
+    # Return the new list
     return list_by_scale

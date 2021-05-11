@@ -9,13 +9,6 @@ cdef extern from "primecount.hpp" namespace "primecount":
 
     cppstring pi(const cppstring& x)
 
-    int64_t pi_deleglise_rivat(int64_t x)
-    int64_t pi_legendre(int64_t x)
-    int64_t pi_lehmer(int64_t x)
-    int64_t pi_lmo(int64_t x)
-    int64_t pi_meissel(int64_t x)
-    int64_t pi_primesieve(int64_t x)
-
     int64_t nth_prime(int64_t n)
 
     int64_t phi(int64_t x, int64_t a)

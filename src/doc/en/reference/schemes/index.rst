@@ -2,9 +2,9 @@ Schemes
 =======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   sage/schemes/readme
+   sage/schemes/overview
 
    sage/schemes/generic/scheme
    sage/schemes/generic/spec
@@ -24,7 +24,7 @@ Affine Schemes
 --------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/affine/affine_space
    sage/schemes/affine/affine_morphism
@@ -37,7 +37,7 @@ Projective Schemes
 ------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/projective/projective_space
    sage/schemes/projective/projective_morphism
@@ -50,7 +50,7 @@ Products of Projective Spaces
 -----------------------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/product_projective/space
    sage/schemes/product_projective/homset
@@ -62,7 +62,7 @@ Products of Projective Spaces
 Toric Varieties
 ---------------
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    sage/schemes/toric/variety
    sage/schemes/toric/fano_variety
@@ -82,5 +82,23 @@ Toric Varieties
 
    sage/schemes/toric/sheaf/constructor
    sage/schemes/toric/sheaf/klyachko
+
+Cyclic Covers
+---------------
+.. toctree::
+   :maxdepth: 1
+
+   sage/schemes/cyclic_covers/cycliccover_finite_field
+   sage/schemes/cyclic_covers/cycliccover_generic
+   sage/schemes/cyclic_covers/charpoly_frobenius
+   sage/schemes/cyclic_covers/constructor
+
+Berkovich Analytic Space
+------------------------
+.. toctree::
+   :maxdepth: 1
+
+   sage/schemes/berkovich/berkovich_cp_element
+   sage/schemes/berkovich/berkovich_space
 
 .. include:: ../footer.txt

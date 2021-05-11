@@ -43,9 +43,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-
-from six.moves import range
 
 from sage.misc.cachefunc import cached_function, cached_method, cached_in_parent_method
 from sage.combinat.root_system.cartan_type import CartanType, CartanType_abstract
@@ -407,11 +404,27 @@ class RealReflectionGroup(ComplexReflectionGroup):
 
             sage: W = ReflectionGroup(['A',3], ['B',3])                 # optional - gap3
             sage: W.cartan_type()                                       # optional - gap3
-            A3xB3 relabelled by {1: 3, 2: 2, 3: 1}                      
+            A3xB3 relabelled by {1: 3, 2: 2, 3: 1}
+
+        TESTS:
+
+        Check that dihedral types are handled properly::
+
+            sage: W = ReflectionGroup(['I',3]); W                       # optional - gap3
+            Irreducible real reflection group of rank 2 and type A2
+
+            sage: W = ReflectionGroup(['I',4]); W                       # optional - gap3
+            Irreducible real reflection group of rank 2 and type C2
+
+            sage: W = ReflectionGroup(['I',5]); W                       # optional - gap3
+            Irreducible real reflection group of rank 2 and type I2(5)
         """
         if len(self._type) == 1:
             ct = self._type[0]
-            C = CartanType([ct['series'], ct['rank']])
+            if ct['series'] == "I":
+                C = CartanType([ct['series'], ct['bond']])
+            else:
+                C = CartanType([ct['series'], ct['rank']])
             CG = C.coxeter_diagram()
             G = self.coxeter_diagram()
             return C.relabel(CG.is_isomorphic(G, edge_labels=True, certificate=True)[1])

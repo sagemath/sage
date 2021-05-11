@@ -1,9 +1,13 @@
 r"""
-Base class for Encoders
+Encoders
 
 Representation of a bijection between a message space and a code.
-"""
 
+AUTHORS:
+
+- David Lucas (2015): initial version
+
+"""
 #*****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
 #
@@ -23,7 +27,8 @@ class Encoder(SageObject):
     r"""
     Abstract top-class for :class:`Encoder` objects.
 
-    Every encoder class should inherit from this abstract class.
+    Every encoder class for linear codes (of any metric) should inherit from
+    this abstract class.
 
     To implement an encoder, you need to:
 
@@ -114,8 +119,8 @@ class Encoder(SageObject):
 
         This is a default implementation which assumes that the message
         space of the encoder is `F^{k}`, where `F` is
-        :meth:`sage.coding.linear_code.AbstractLinearCode.base_field`
-        and `k` is :meth:`sage.coding.linear_code.AbstractLinearCode.dimension`.
+        :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.base_field`
+        and `k` is :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.dimension`.
         If this is not the case, this method should be overwritten by the subclass.
 
         .. NOTE::

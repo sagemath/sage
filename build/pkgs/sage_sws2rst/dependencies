@@ -1,0 +1,1 @@
+$(PYTHON) beautifulsoup4 ../pkgs/sage_sws2rst/src/sage_sws2rst/*.py | $(PYTHON_TOOLCHAIN) $(and $(filter-out no,$(SAGE_CHECK_sage_sws2rst)), tox)

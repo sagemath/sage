@@ -36,7 +36,6 @@ AUTHORS:
 - Simon King (2011): Use Cython. Speedup of ``fix_to_pos``, cleaning documentation.
 
 """
-from __future__ import print_function
 
 from sage.misc.sageinspect import sage_getargspec
 

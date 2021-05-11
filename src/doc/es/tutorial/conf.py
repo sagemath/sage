@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # Sage documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 21 20:15:55 2008.
 #
@@ -11,15 +9,19 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
-import os
-from sage.env import SAGE_DOC_SRC
-sys.path.append(SAGE_DOC_SRC)
-from common.conf import *
+from sage.docs.conf import release
+from sage.docs.conf import *
+
+# Add any paths that contain custom static files (such as style sheets),
+# relative to this directory to html_static_path. They are copied after the
+# builtin static files, so a file named "default.css" will overwrite the
+# builtin "default.css". html_common_static_path imported from sage.docs.conf
+# contains common paths.
+html_static_path = [] + html_common_static_path
 
 # General information about the project.
-project = u"Sage Tutorial"
-name = u'tutorial-es'
+project = "Sage Tutorial"
+name = 'tutorial-es'
 language = "es"
 
 # The name for this set of Sphinx documents.  If None, it defaults to
@@ -32,6 +34,6 @@ htmlhelp_basename = 'SageTutorial'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'SageTutorial.tex', u'Sage Tutorial',
-   u'The Sage Development Team', 'manual'),
+  ('index', 'SageTutorial.tex', 'Sage Tutorial',
+   'The Sage Development Team', 'manual'),
 ]

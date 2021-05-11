@@ -1,5 +1,9 @@
-from __future__ import absolute_import
-
+# distutils: libraries = gmp NTL_LIBRARIES
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
@@ -361,12 +365,11 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
             return (op == Py_EQ)
         if op != Py_NE:
             return NotImplemented
-        # return cmp(self.polynomial(), other.polynomial())
         return False
 
     cdef fmpz_poly_t* get_modulus(self, unsigned long k):
         """
-        Returns the defining polynomial reduced modulo `p^k`.
+        Return the defining polynomial reduced modulo `p^k`.
 
         The same warnings apply as for
         :meth:`sage.rings.padics.pow_computer.PowComputer_class.pow_mpz_t_tmp`.

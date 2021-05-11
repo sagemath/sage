@@ -392,9 +392,9 @@ class DiffScalarField(ScalarField):
     field::
 
         sage: s = f + 1 ; s
-        Scalar field on the 2-dimensional differentiable manifold M
+        Scalar field f+1 on the 2-dimensional differentiable manifold M
         sage: s.display()
-        M --> R
+        f+1: M --> R
         on U: (x, y) |--> (x^2 + y^2 + 2)/(x^2 + y^2 + 1)
         on V: (u, v) |--> (2*u^2 + 2*v^2 + 1)/(u^2 + v^2 + 1)
         sage: (f+1)-1 == f
@@ -415,10 +415,12 @@ class DiffScalarField(ScalarField):
         sage: s.display()
         M --> R
         on U: (x, y) |--> (x^3 + x*y^2 + x + 1)/(x^2 + y^2 + 1)
+        on W: (u, v) |--> (u^4 + v^4 + u^3 + (2*u^2 + u)*v^2 + u)/(u^4 + v^4 + (2*u^2 + 1)*v^2 + u^2)
         sage: s = f + u; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
         M --> R
+        on W: (x, y) |--> (x^3 + (x + 1)*y^2 + x^2 + x)/(x^4 + y^4 + (2*x^2 + 1)*y^2 + x^2)
         on V: (u, v) |--> (u^3 + (u + 1)*v^2 + u^2 + u)/(u^2 + v^2 + 1)
 
     The addition of two scalar fields with different domains is possible if
@@ -430,13 +432,13 @@ class DiffScalarField(ScalarField):
         sage: g.domain()
         Open subset U of the 2-dimensional differentiable manifold M
         sage: s = f + g ; s
-        Scalar field on the Open subset U of the 2-dimensional differentiable
-         manifold M
+        Scalar field f+g on the Open subset U of the 2-dimensional
+         differentiable manifold M
         sage: s.domain()
         Open subset U of the 2-dimensional differentiable manifold M
         sage: s.display()
-        U --> R
-        (x, y) |--> (x*y^3 + (x^3 + x)*y + 1)/(x^2 + y^2 + 1)
+        f+g: U --> R
+           (x, y) |--> (x*y^3 + (x^3 + x)*y + 1)/(x^2 + y^2 + 1)
         on W: (u, v) |--> (u^6 + 3*u^4*v^2 + 3*u^2*v^4 + v^6 + u*v^3
          + (u^3 + u)*v)/(u^6 + v^6 + (3*u^2 + 1)*v^4 + u^4 + (3*u^4 + 2*u^2)*v^2)
 
@@ -487,10 +489,12 @@ class DiffScalarField(ScalarField):
         sage: s.display()
         M --> R
         on U: (x, y) |--> x/(x^2 + y^2 + 1)
+        on W: (u, v) |--> u/(u^2 + v^2 + 1)
         sage: s = u*f; s
         Scalar field on the 2-dimensional differentiable manifold M
         sage: s.display()
         M --> R
+        on W: (x, y) |--> x/(x^4 + y^4 + (2*x^2 + 1)*y^2 + x^2)
         on V: (u, v) |--> (u^2 + v^2)*u/(u^2 + v^2 + 1)
 
     Some tests::
@@ -521,7 +525,7 @@ class DiffScalarField(ScalarField):
            (x, y) |--> x*y*H(x, y)
         on W: (u, v) |--> u*v*H(u/(u^2 + v^2), v/(u^2 + v^2))/(u^4 + 2*u^2*v^2 + v^4)
 
-    Thanks to the coercion `C^k(M)\rightarrow C^k(U)` mentionned
+    Thanks to the coercion `C^k(M)\rightarrow C^k(U)` mentioned
     above, it is possible to multiply a scalar field defined on `M` by a
     scalar field defined on `U`, the result being a scalar field defined on
     `U`::
@@ -530,11 +534,11 @@ class DiffScalarField(ScalarField):
         (2-dimensional differentiable manifold M,
          Open subset U of the 2-dimensional differentiable manifold M)
         sage: s = f*g ; s
-        Scalar field on the Open subset U of the 2-dimensional differentiable
-         manifold M
+        Scalar field f*g on the Open subset U of the 2-dimensional
+         differentiable manifold M
         sage: s.display()
-        U --> R
-        (x, y) |--> x*y/(x^2 + y^2 + 1)
+        f*g: U --> R
+           (x, y) |--> x*y/(x^2 + y^2 + 1)
         on W: (u, v) |--> u*v/(u^4 + v^4 + (2*u^2 + 1)*v^2 + u^2)
         sage: s == f.restrict(U)*g
         True
@@ -555,11 +559,11 @@ class DiffScalarField(ScalarField):
            (x, y) |--> x*y/H(x, y)
         on W: (u, v) |--> u*v/((u^4 + 2*u^2*v^2 + v^4)*H(u/(u^2 + v^2), v/(u^2 + v^2)))
         sage: s = f/g ; s
-        Scalar field on the Open subset U of the 2-dimensional differentiable
-         manifold M
+        Scalar field f/g on the Open subset U of the 2-dimensional
+         differentiable manifold M
         sage: s.display()
-        U --> R
-        (x, y) |--> 1/(x*y^3 + (x^3 + x)*y)
+        f/g: U --> R
+           (x, y) |--> 1/(x*y^3 + (x^3 + x)*y)
         on W: (u, v) |--> (u^6 + 3*u^4*v^2 + 3*u^2*v^4 + v^6)/(u*v^3 + (u^3 + u)*v)
         sage: s == f.restrict(U)/g
         True
@@ -631,6 +635,7 @@ class DiffScalarField(ScalarField):
         ScalarField.__init__(self, parent, coord_expression=coord_expression,
                              chart=chart, name=name, latex_name=latex_name)
         self._tensor_type = (0,0)
+        self._tensor_rank = 0
 
     ####### Required methods for an algebra element (beside arithmetic) #######
 
@@ -734,6 +739,12 @@ class DiffScalarField(ScalarField):
             sage: f.differential() is df
             True
 
+        Instead of invoking the method :meth:`differential`, one may apply the
+        function ``diff`` to the scalar field::
+
+            sage: diff(f) is f.differential()
+            True
+
         Since the exterior derivative of a scalar field (considered a 0-form)
         is nothing but its differential, ``exterior_derivative()`` is an
         alias of ``differential()``::
@@ -744,15 +755,6 @@ class DiffScalarField(ScalarField):
             df = -z^3*sin(x) dx + z^2*e^y dy + (3*z^2*cos(x) + 2*z*e^y) dz
             sage: latex(df)
             \mathrm{d}f
-
-        One may also use the function
-        :func:`~sage.manifolds.utilities.exterior_derivative`
-        or its alias :func:`~sage.manifolds.utilities.xder` instead
-        of the method ``exterior_derivative()``::
-
-            sage: from sage.manifolds.utilities import xder
-            sage: xder(f) is f.exterior_derivative()
-            True
 
         Differential computed on a chart that is not the default one::
 
@@ -765,7 +767,7 @@ class DiffScalarField(ScalarField):
              Coordinate frame (M, (d/du,d/dv,d/dw))}
             sage: dg.comp(c_uvw.frame())[:, c_uvw]
             [v^2*w^3, 2*u*v*w^3, 3*u*v^2*w^2]
-            sage: dg.display(c_uvw.frame(), c_uvw)
+            sage: dg.display(c_uvw)
             dg = v^2*w^3 du + 2*u*v*w^3 dv + 3*u*v^2*w^2 dw
 
         The exterior derivative is nilpotent::
@@ -803,7 +805,10 @@ class DiffScalarField(ScalarField):
                         diff_func[i, chart] = func.diff(i)
         return self._differential
 
-    exterior_derivative = differential
+    exterior_derivative = differential  # a scalar field being a 0-form
+    derivative = differential  # allows one to use functional notation,
+                               # e.g. diff(f) for f.differential()
+
 
     def lie_derivative(self, vector):
         r"""
@@ -1021,12 +1026,12 @@ class DiffScalarField(ScalarField):
             sage: a = M.diff_form(2, name='a')
             sage: a[0,1] = x*y
             sage: s = f.wedge(a); s
-            2-form on the 2-dimensional differentiable manifold M
+            2-form f*a on the 2-dimensional differentiable manifold M
             sage: s.display()
-            (x*y^3 + x^2*y) dx/\dy
+            f*a = (x*y^3 + x^2*y) dx/\dy
 
         """
-        return self*other
+        return self * other
 
     def degree(self):
         r"""
@@ -1053,7 +1058,7 @@ class DiffScalarField(ScalarField):
             0
 
         """
-        return 0
+        return self._tensor_rank
 
     def gradient(self, metric=None):
         r"""
@@ -1113,7 +1118,7 @@ class DiffScalarField(ScalarField):
 
         Note that ``(e_r, e_phi)`` is the orthonormal vector frame associated
         with polar coordinates (see
-        :meth:`~sage.manifolds.differentiable.euclidean.EuclideanPlane.polar_frame`);
+        :meth:`~sage.manifolds.differentiable.examples.euclidean.EuclideanPlane.polar_frame`);
         the gradient expressed in the coordinate frame is::
 
             sage: f.gradient().display(M.polar_coordinates().frame())

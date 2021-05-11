@@ -22,7 +22,6 @@ rings but rather quotients of them (see module
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 from sage.structure.category_object import normalize_names
 import sage.rings.ring as ring
@@ -948,7 +947,7 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
     if not R is None:
         return R
 
-    from sage.rings.polynomial.pbori import BooleanPolynomialRing
+    from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
     R = BooleanPolynomialRing(n, names, order)
 
     _save_in_cache(key, R)

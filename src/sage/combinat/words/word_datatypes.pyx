@@ -11,7 +11,6 @@ Datatypes for finite words
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cpython.object cimport Py_EQ, Py_NE
 from itertools import islice
@@ -274,7 +273,7 @@ cdef class WordDatatype_list(WordDatatype):
 
     __add__ = __mul__
 
-    def count(self, a):
+    def number_of_letter_occurrences(self, a):
         r"""
         Returns the number of occurrences of the letter ``a`` in the word
         ``self``.
@@ -290,12 +289,16 @@ cdef class WordDatatype_list(WordDatatype):
         EXAMPLES::
 
             sage: w = Word([0,1,1,0,1])
-            sage: w.count(0)
+            sage: w.number_of_letter_occurrences(0)
             2
-            sage: w.count(1)
+            sage: w.number_of_letter_occurrences(1)
             3
-            sage: w.count(2)
+            sage: w.number_of_letter_occurrences(2)
             0
+
+        .. SEEALSO::
+
+            :meth:`sage.combinat.words.finite_word.FiniteWord_class.number_of_factor_occurrences`
 
         """
         return self._data.count(a)
@@ -608,7 +611,7 @@ cdef class WordDatatype_str(WordDatatype):
 
     __add__ = __mul__
 
-    def count(self, letter):
+    def number_of_letter_occurrences(self, letter):
         r"""
         Count the number of occurrences of ``letter``.
 
@@ -623,15 +626,27 @@ cdef class WordDatatype_str(WordDatatype):
         EXAMPLES::
 
             sage: w = Word("abbabaabababa")
-            sage: w.count('a')
+            sage: w.number_of_letter_occurrences('a')
             7
-            sage: w.count('b')
+            sage: w.number_of_letter_occurrences('b')
             6
-            sage: w.count('c')
+            sage: w.number_of_letter_occurrences('c')
             0
 
+        ::
+
+            sage: w.number_of_letter_occurrences('abb')
+            0
+
+        .. SEEALSO::
+
+            :meth:`sage.combinat.words.finite_word.FiniteWord_class.number_of_factor_occurrences`
+
         """
-        return self._data.count(letter)
+        if len(letter) == 1:
+            return self._data.count(letter)
+        else:
+            return 0
 
     def split(self, sep=None, maxsplit=None):
         r"""

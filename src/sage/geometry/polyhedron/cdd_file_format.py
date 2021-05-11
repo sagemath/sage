@@ -10,8 +10,6 @@ Generate cdd ``.ext`` / ``.ine`` file format
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .misc import _set_to_None_if_empty, _common_length_of, _to_space_separated_string
 
@@ -62,6 +60,12 @@ def cdd_Vrepresentation(cdd_type, vertices, rays, lines, file_output=None):
         vertices = [[0]*ambient_dim]
         num += 1
 
+    if cdd_type == 'real':
+        from sage.rings.all import RDF
+        base_ring = RDF
+    else:
+        base_ring = None
+
     s = 'V-representation\n'
     if lines is not None:
         n = len(lines)
@@ -71,13 +75,13 @@ def cdd_Vrepresentation(cdd_type, vertices, rays, lines, file_output=None):
     s += ' ' + repr(num) + ' ' + repr(ambient_dim+1) + ' ' + cdd_type + '\n'
     if lines is not None:
         for l in lines:
-            s += ' 0 ' + _to_space_separated_string(l) + '\n'
+            s += ' 0 ' + _to_space_separated_string(l, base_ring) + '\n'
     if rays is not None:
         for r in rays:
-            s += ' 0 ' + _to_space_separated_string(r) + '\n'
+            s += ' 0 ' + _to_space_separated_string(r, base_ring) + '\n'
     if vertices is not None:
         for v in vertices:
-            s += ' 1 ' + _to_space_separated_string(v) + '\n'
+            s += ' 1 ' + _to_space_separated_string(v, base_ring) + '\n'
     s += 'end\n'
 
     if file_output is not None:
@@ -116,6 +120,12 @@ def cdd_Hrepresentation(cdd_type, ieqs, eqns, file_output=None):
     num, ambient_dim = _common_length_of(ieqs, eqns)
     ambient_dim -= 1
 
+    if cdd_type == 'real':
+        from sage.rings.all import RDF
+        base_ring = RDF
+    else:
+        base_ring = None
+
     s = 'H-representation\n'
     if eqns is not None:
         assert len(eqns)>0
@@ -126,10 +136,10 @@ def cdd_Hrepresentation(cdd_type, ieqs, eqns, file_output=None):
     s += ' ' + repr(num) + ' ' + repr(ambient_dim+1) + ' ' + cdd_type + '\n'
     if eqns is not None:
         for e in eqns:
-            s += ' ' + _to_space_separated_string(e) + '\n'
+            s += ' ' + _to_space_separated_string(e, base_ring) + '\n'
     if ieqs is not None:
         for i in ieqs:
-            s += ' ' + _to_space_separated_string(i) + '\n'
+            s += ' ' + _to_space_separated_string(i, base_ring) + '\n'
     s += 'end\n'
 
     if file_output is not None:

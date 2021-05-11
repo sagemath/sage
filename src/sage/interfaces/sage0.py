@@ -4,7 +4,6 @@ Interface to Sage
 This is an expect interface to *another* copy of the Sage
 interpreter.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -15,10 +14,9 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems, string_types
-from six.moves import cPickle
 
 import os
+import pickle
 import re
 import textwrap
 
@@ -148,7 +146,7 @@ class Sage(ExtraTabCompletion, Expect):
 
         if init_code is None:
             init_code = []
-        elif isinstance(init_code, string_types):
+        elif isinstance(init_code, str):
             init_code = init_code.splitlines()
         else:
             try:
@@ -175,11 +173,11 @@ class Sage(ExtraTabCompletion, Expect):
             ])
             prompt = re.compile(b'sage: ')
 
-        init_code.append('from six.moves import cPickle')
+        init_code.append('import pickle')
         init_code.append(textwrap.dedent("""
             def _sage0_load_local(filename):
                 with open(filename, 'rb') as f:
-                    return cPickle.load(f)
+                    return pickle.load(f)
         """))
         init_code.append(textwrap.dedent("""
             def _sage0_load_remote(filename):
@@ -254,12 +252,12 @@ class Sage(ExtraTabCompletion, Expect):
             else:
                 return self(x.sage())
 
-        if isinstance(x, string_types):
+        if isinstance(x, str):
             return SageElement(self, x)
 
         if self.is_local():
             with open(self._local_tmpfile(), 'wb') as fobj:
-                fobj.write(cPickle.dumps(x, 2))
+                fobj.write(pickle.dumps(x, 2))
             code = '_sage0_load_local({!r})'.format(self._local_tmpfile())
             return SageElement(self, code)
         else:
@@ -387,7 +385,7 @@ class Sage(ExtraTabCompletion, Expect):
             sage: sage0.console() #not tested
             ----------------------------------------------------------------------
             | SageMath version ..., Release Date: ...                            |
-            | Type notebook() for the GUI, and license() for information.        |
+            | Using Python ....   Type "help()" for help.                        |
             ----------------------------------------------------------------------
             ...
         """
@@ -538,7 +536,7 @@ class SageFunction(FunctionElement):
         # get cleared from the interpreter before we complete the function
         # call.
         args = [P(x) for x in args]
-        kwds = [(k, P(v)) for k, v in iteritems(kwds)]
+        kwds = [(k, P(v)) for k, v in kwds.items()]
 
         arg_str = ','.join(x.name() for x in args)
         kwd_str = ','.join('%s=%s' % (k, v.name()) for k, v in kwds)
@@ -602,7 +600,7 @@ def sage0_console():
         sage: sage0_console() #not tested
         ----------------------------------------------------------------------
         | SageMath version ..., Release Date: ...                            |
-        | Type notebook() for the GUI, and license() for information.        |
+        | Using Python ....   Type "help()" for help.                        |
         ----------------------------------------------------------------------
         ...
     """

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A parser for symbolic equations and expressions
 
@@ -19,7 +20,6 @@ AUTHOR:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from libc.string cimport strchr
 from cpython.bytes cimport PyBytes_FromStringAndSize
@@ -95,22 +95,21 @@ def token_to_str(int token):
         return chr(token)
 
 
-cdef inline bint is_alphanumeric(char c):
-    return 'a' <= c <= 'z' or 'A' <= c <= 'Z' or '0' <= c <= '9' or c == '_'
+cdef inline bint is_alphanumeric(c):
+    return c.isalnum() or c == '_'
 
-cdef inline bint is_whitespace(char c):
-    return (c != 0) & (strchr(" \t\n\r", c) != NULL)
+cdef inline bint is_whitespace(c):
+    return c.isspace()
 
 
 cdef class Tokenizer:
-    cdef char *s
-    cdef string_obj
+    cdef str s
     cdef int token
     cdef int pos
     cdef int last_pos
 
     def __init__(self, s):
-        """
+        r"""
         This class takes a string and turns it into a list of tokens for use
         by the parser.
 
@@ -153,6 +152,11 @@ cdef class Tokenizer:
             sage: Tokenizer("a a1 _a_24").test()
             ['NAME(a)', 'NAME(a1)', 'NAME(_a_24)']
 
+        There is special handling for matrices::
+
+            sage: Tokenizer("matrix(a)").test()
+            ['MATRIX', '(', 'NAME(a)', ')']
+
         Anything else is an error::
 
             sage: Tokenizer("&@~").test()
@@ -164,12 +168,17 @@ cdef class Tokenizer:
             [')', ')', '(', 'FLOAT(5e5)', 'NAME(e5)']
             sage: Tokenizer("?$%").test()
             ['ERROR', 'ERROR', 'ERROR']
+
+        TESTS:
+
+        Check support for unicode characters (:trac:`29280`)::
+
+            sage: Tokenizer("λ+α_β0 Γ^ω").test()
+            ['NAME(λ)', '+', 'NAME(α_β0)', 'NAME(Γ)', '^', 'NAME(ω)']
         """
-        s = str_to_bytes(s)
         self.pos = 0
         self.last_pos = 0
         self.s = s
-        self.string_obj = s # so it doesn't get deallocated before self
 
     def test(self):
         """
@@ -229,55 +238,58 @@ cdef class Tokenizer:
 
     cdef int find(self) except -1:
         """
-        This function actually does all the work, and extensively is tested above.
+        This function actually does all the work, and is extensively tested
+        above.
         """
         cdef bint seen_exp, seen_decimal
         cdef int type
-        cdef char* s = self.s
+        cdef str s = self.s
         cdef int pos = self.pos
+        cdef int s_len = len(s)
 
         # skip whitespace
-        if is_whitespace(s[pos]):
-            while is_whitespace(s[pos]):
+        if pos < s_len and is_whitespace(s[pos]):
+            while pos < s_len and is_whitespace(s[pos]):
                 pos += 1
             self.pos = pos
 
         # end of string
-        if s[pos] == 0:
+        if pos == s_len:
             return EOS
 
-        # dipthongs
-        if s[pos+1] == '=':
-            if s[pos] == '<':
-                self.pos += 2
-                return LESS_EQ
-            elif s[pos] == '>':
-                self.pos += 2
-                return GREATER_EQ
-            elif s[pos] == '!':
-                self.pos += 2
-                return NOT_EQ
-            elif s[pos] == '=':
-                self.pos += 2
-                return '='
+        # diphthongs
+        if pos+1 < s_len:
+            if s[pos+1] == '=':
+                if s[pos] == '<':
+                    self.pos += 2
+                    return LESS_EQ
+                elif s[pos] == '>':
+                    self.pos += 2
+                    return GREATER_EQ
+                elif s[pos] == '!':
+                    self.pos += 2
+                    return NOT_EQ
+                elif s[pos] == '=':
+                    self.pos += 2
+                    return '='
 
-        elif s[pos] == '*' and s[pos+1] == '*':
-            self.pos += 2
-            return '^'
+            elif s[pos] == '*' and s[pos+1] == '*':
+                self.pos += 2
+                return '^'
 
         # simple tokens
-        if strchr("+-*/^()=<>,[]{}!", s[pos]):
-            type = s[pos]
+        if s[pos] in "+-*/^()=><,[]{}!":
+            type = ord(s[pos])
             self.pos += 1
             return type
 
         # numeric literals
-        if '0' <= s[pos] <= '9' or s[pos] == '.':
+        if s[pos].isdigit() or s[pos] == '.':
             type = INT
             seen_exp = False
             seen_decimal = False
-            while True:
-                if '0' <= s[pos] <= '9':
+            while pos < s_len:
+                if s[pos].isdigit():
                     pass
                 elif s[pos] == '.':
                     if seen_decimal or seen_exp:
@@ -298,16 +310,17 @@ cdef class Tokenizer:
                         self.pos = pos
                         return type
                 else:
-                    self.pos = pos
-                    return type
+                    break
                 pos += 1
+            self.pos = pos
+            return type
 
         # name literals
         if is_alphanumeric(s[pos]):
-            while is_alphanumeric(s[pos]):
+            while pos < s_len and is_alphanumeric(s[pos]):
                 pos += 1
             # matrices
-            if s[self.pos:pos] == b'matrix':
+            if s[self.pos:pos] == 'matrix':
                 self.pos = pos
                 return MATRIX
             self.pos = pos
@@ -334,7 +347,7 @@ cdef class Tokenizer:
             sage: token_to_str(t.next())
             'EOS'
         """
-        while is_whitespace(self.s[self.pos]):
+        while self.pos < len(self.s) and is_whitespace(self.s[self.pos]):
             self.pos += 1
         self.last_pos = self.pos
         self.token = self.find()
@@ -429,9 +442,7 @@ cdef class Tokenizer:
             sage: t.last_token_string()
             '1e5'
         """
-        s = PyBytes_FromStringAndSize(&self.s[self.last_pos],
-                                      self.pos - self.last_pos)
-        return bytes_to_str(s)
+        return self.s[self.last_pos:self.pos]
 
 
 cdef class Parser:
@@ -1030,6 +1041,18 @@ cdef class LookupNameMaker:
         """
         self.names = names
         self.fallback = fallback
+
+    def set_names(self, new_names):
+        """
+        TESTS::
+
+            sage: from sage.misc.parser import LookupNameMaker
+            sage: maker = LookupNameMaker({}, str)
+            sage: maker.set_names({'a': x})
+            sage: maker('a') is x
+            True
+        """
+        self.names = new_names
 
     def __call__(self, name):
         """

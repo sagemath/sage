@@ -11,9 +11,7 @@ Next we illustrate how to load programs written in a separate file
 into Sage. Create a file called ``example.sage`` with the following
 content:
 
-.. skip
-
-::
+.. CODE-BLOCK:: python
 
     print("Hello World")
     print(2^3)
@@ -57,7 +55,7 @@ and replacing e.g., ``R.2`` by ``R.gen(2)``. The converted version of
 and is called ``example.sage.py``. This file contains the following
 code:
 
-::
+.. CODE-BLOCK:: python
 
     print("Hello World")
     print(Integer(2)**Integer(3))
@@ -66,7 +64,7 @@ Integer literals are wrapped and the ``^`` is replaced by a ``**``.
 (In Python ``^`` means "exclusive or" and ``**`` means
 "exponentiation".)
 
-This preparsing is implemented in ``sage/misc/interpreter.py``.)
+(This preparsing is implemented in ``sage/misc/interpreter.py``.)
 
 You can paste multi-line indented code into Sage as long as there
 are newlines to make new blocks (this is not necessary in files).
@@ -108,7 +106,7 @@ NO Sage preparsing is applied to spyx files, e.g., ``1/3`` will result in
 ``foo`` is a function in the Sage library, to use it from a spyx file
 import ``sage.all`` and use ``sage.all.foo``.
 
-::
+.. CODE-BLOCK:: python
 
     import sage.all
     def foo(n):
@@ -123,7 +121,7 @@ in the same directory with contents:
 
 The pure C code: ``test.c``
 
-::
+.. CODE-BLOCK:: c
 
     int add_one(int n) {
       return n + 1;
@@ -131,7 +129,7 @@ The pure C code: ``test.c``
 
 The Cython code: ``test.spyx``:
 
-::
+.. CODE-BLOCK:: cython
 
     cdef extern from "test.c":
         int add_one(int n)
@@ -163,7 +161,7 @@ Standalone Python/Sage Scripts
 The following standalone Sage script factors integers, polynomials,
 etc:
 
-::
+.. CODE-BLOCK:: python
 
     #!/usr/bin/env sage
 
@@ -180,9 +178,9 @@ etc:
 In order to use this script, your ``SAGE_ROOT`` must be in your PATH.
 If the above script is called ``factor``, here is an example usage:
 
-::
+.. CODE-BLOCK:: shell-session
 
-    bash $ ./factor 2006
+    $ ./factor 2006
     2 * 17 * 59
 
 Data Types
@@ -302,7 +300,7 @@ will work just fine.
     sage: v = [1,2,3]
     sage: v[2]
     3
-    sage: n = 2      # SAGE Integer
+    sage: n = 2      # Sage Integer
     sage: v[n]       # Perfectly OK!
     3
     sage: v[int(n)]  # Also OK.
@@ -569,7 +567,7 @@ Loops, Functions, Control Statements, and Comparisons
 We have seen a few examples already of some common uses of ``for``
 loops. In Python, a ``for`` loop has an indented structure, such as
 
-::
+.. CODE-BLOCK:: pycon
 
     >>> for i in range(5):
     ...     print(i)
@@ -808,11 +806,9 @@ visualization.
 
 On a system shell, type
 
-.. skip
+.. CODE-BLOCK:: shell-session
 
-::
-
-    hotshot2calltree -o cachegrind.out.42 pythongrind.prof
+    $ hotshot2calltree -o cachegrind.out.42 pythongrind.prof
 
 The output file ``cachegrind.out.42`` can now be examined with
 ``kcachegrind``. Please note that the naming convention

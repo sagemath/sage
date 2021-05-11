@@ -235,7 +235,7 @@ from 0 to 2. There is a useful command :meth:`numpy.r_` that is best explained b
 ::
 
     sage: from numpy import r_
-    sage: j=numpy.complex(0,1)
+    sage: j=complex(0,1)
     sage: RealNumber=float
     sage: Integer=int
     sage: n=r_[0.0:5.0]
@@ -280,7 +280,7 @@ an equally spaced grid with `\Delta x = \Delta y = .25` for
 ::
 
     sage: import numpy
-    sage: j=numpy.complex(0,1)
+    sage: j=complex(0,1)
     sage: def f(x,y):
     ....:     return x**2+y**2
     sage: from numpy import meshgrid

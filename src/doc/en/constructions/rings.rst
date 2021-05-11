@@ -99,7 +99,7 @@ given.
 
 To compute the characteristic and residue class field of the ring
 ``Zp`` of integers of ``Qp``, use the syntax illustrated by the
-folowing examples.
+following examples.
 
 ::
 

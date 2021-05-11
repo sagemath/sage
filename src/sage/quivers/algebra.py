@@ -1,9 +1,8 @@
 """
 Path Algebras
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Jim Stark <jstarx@gmail.com>
 #                2013 Simon King <simon.king@uni-jena.de>
 #                2014 Simon King <simon.king@uni-jena.de>
@@ -17,13 +16,13 @@ from __future__ import absolute_import
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import six
 from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
 from .algebra_elements import PathAlgebraElement
+
 
 class PathAlgebra(CombinatorialFreeModule):
     r"""
@@ -50,9 +49,9 @@ class PathAlgebra(CombinatorialFreeModule):
 
     - the path algebra `kP` with the given monomial order
 
-    NOTE:
+    .. NOTE::
 
-    Monomial orders that are not degree orders are not supported.
+        Monomial orders that are not degree orders are not supported.
 
     EXAMPLES::
 
@@ -133,10 +132,11 @@ class PathAlgebra(CombinatorialFreeModule):
     #                                                                         #
     ###########################################################################
 
-    def __init__(self, k, P, order = "negdegrevlex"):
+    def __init__(self, k, P, order="negdegrevlex"):
         """
-        Creates a :class:`PathAlgebra` object.  Type ``PathAlgebra?`` for
-        more information.
+        Create a :class:`PathAlgebra` object.
+
+        Type ``PathAlgebra?`` for more information.
 
         INPUT:
 
@@ -166,10 +166,10 @@ class PathAlgebra(CombinatorialFreeModule):
         self._semigroup = P
         self._ordstr = order
         super(PathAlgebra, self).__init__(k, self._semigroup,
-                                             prefix='',
-                                             #element_class=self.Element,
-                                             category=GradedAlgebrasWithBasis(k),
-                                             bracket=False)
+                                          prefix='',
+                                          # element_class=self.Element,
+                                          category=GradedAlgebrasWithBasis(k),
+                                          bracket=False)
         self._assign_names(self._semigroup.variable_names())
 
     def order_string(self):
@@ -223,8 +223,8 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A.arrows()
             (a, b, c)
         """
-        return tuple(self._from_dict( {index: self.base_ring().one()},
-                                      remove_zeros=False )
+        return tuple(self._from_dict({index: self.base_ring().one()},
+                                     remove_zeros=False)
                      for index in self._semigroup.arrows())
 
     @cached_method
@@ -240,8 +240,8 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A.idempotents()
             (e_1, e_2, e_3, e_4)
         """
-        return tuple(self._from_dict( {index: self.base_ring().one()},
-                                      remove_zeros=False )
+        return tuple(self._from_dict({index: self.base_ring().one()},
+                                     remove_zeros=False)
                      for index in self._semigroup.idempotents())
 
     @cached_method
@@ -264,8 +264,8 @@ class PathAlgebra(CombinatorialFreeModule):
             sage: A.gen(5)
             b
         """
-        return self._from_dict( {self._semigroup.gen(i): self.base_ring().one()},
-                                remove_zeros = False )
+        return self._from_dict({self._semigroup.gen(i): self.base_ring().one()},
+                               remove_zeros=False)
 
     def ngens(self):
         """
@@ -318,11 +318,11 @@ class PathAlgebra(CombinatorialFreeModule):
 
         # If it's a scalar, return a multiple of one:
         if x in self.base_ring():
-            return self.one()*x
+            return self.one() * x
 
         # If it's a tuple or a list, try and create a QuiverPath from it and
         # then return the associated basis element
-        if isinstance(x, (tuple, list, six.string_types)):
+        if isinstance(x, (tuple, list, str)):
             return self.element_class(self, {self._semigroup(x): self.base_ring().one()})
 
         if isinstance(x, dict):
@@ -445,7 +445,7 @@ class PathAlgebra(CombinatorialFreeModule):
         # gives the component in the module, and mid gives the length of the
         # left factor in a two-sided module.
         arrows = self.variable_names()
-        return '*'.join( [arrows[n] for n in data] )
+        return '*'.join(arrows[n] for n in data)
 
     def _latex_monomial(self, data):
         """
@@ -465,7 +465,7 @@ class PathAlgebra(CombinatorialFreeModule):
 
         """
         arrows = self.variable_names()
-        return '\\cdot '.join( [arrows[n] for n in data] )
+        return '\\cdot '.join(arrows[n] for n in data)
 
     @cached_method
     def one(self):
@@ -482,8 +482,8 @@ class PathAlgebra(CombinatorialFreeModule):
             e_1 + e_2 + e_3
         """
         one = self.base_ring().one()
-        D = dict((index,one) for index in self._semigroup.idempotents())
-        return self._from_dict( D )
+        D = {index: one for index in self._semigroup.idempotents()}
+        return self._from_dict(D)
 
     ###########################################################################
     #                                                                         #
@@ -563,19 +563,19 @@ class PathAlgebra(CombinatorialFreeModule):
 
     def sum(self, iter_of_elements):
         """
-        Returns the sum of all elements in ``iter_of_elements``
+        Return the sum of all elements in ``iter_of_elements``
 
         INPUT:
 
         - ``iter_of_elements``: iterator of elements of ``self``
 
-        NOTE:
+        .. NOTE::
 
-        It overrides a method inherited from
-        :class:`~sage.combinat.free_module.CombinatorialFreeModule`, which
-        relies on a private attribute of elements---an implementation
-        detail that is simply not available for
-        :class:`~sage.quivers.algebra_elements.PathAlgebraElement`.
+            It overrides a method inherited from
+            :class:`~sage.combinat.free_module.CombinatorialFreeModule`,
+            which relies on a private attribute of elements---an
+            implementation detail that is simply not available for
+            :class:`~sage.quivers.algebra_elements.PathAlgebraElement`.
 
         EXAMPLES::
 

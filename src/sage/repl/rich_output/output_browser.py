@@ -3,9 +3,13 @@ r"""
 Rich Output for the Browser
 """
 
+import re
+
 from sage.repl.rich_output.output_basic import OutputBase
 from sage.repl.rich_output.buffer import OutputBuffer
 
+latex_re = re.compile(r'<html><script type="math/tex; mode=(?P<mode>[^"]+)">(?P<latex>.*)</script></html>',
+                     flags=re.DOTALL)
 
 class OutputHtml(OutputBase):
 
@@ -30,6 +34,18 @@ class OutputHtml(OutputBase):
             OutputHtml container
         """
         self.html = OutputBuffer(html)
+
+        # if the html is a simple wrapper of latex for mathjax rendering, then
+        # the latex string is saved for possible latex output such as Jupyter's
+        # pdf export of a notebook
+        m = latex_re.match(html)
+        if m:
+            if m.group('mode') == 'display':
+                self.latex = OutputBuffer('$$' + m.group('latex') + '$$')
+            else:
+                self.latex = OutputBuffer('$' + m.group('latex') + '$')
+        else:
+            self.latex = None
 
     @classmethod
     def example(cls):

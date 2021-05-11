@@ -339,7 +339,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             """
             one = self.one()
             s = self.simple_reflections()
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
 
             def mult_order(x):
                 ct = ZZ.one()
@@ -691,7 +691,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
 
                 sage: W.from_reduced_word([1, 2, 3]).reduced_word()
                 [1, 2, 3]
-                              
+
                 sage: W = WeylGroup("A3", prefix='s')
                 sage: AS = W.domain()
                 sage: r1 = AS.roots()[4]
@@ -702,7 +702,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 (0, 0, 1, -1)
                 sage: W.from_reduced_word([r1, r2], word_type='all')
                 s3*s2
-                
+
                 sage: W = WeylGroup("G2", prefix='s')
                 sage: W.from_reduced_word(W.domain().positive_roots(), word_type='all')
                 s1*s2
@@ -1077,8 +1077,8 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 (0, 0, 1, -1)
                 sage: w.apply_reflections([r1, r2], word_type='all')
                 s1
-                
-                
+
+
                 sage: W = ReflectionGroup((1,1,3))          # optional - gap3
                 sage: W.one().apply_reflections([1], word_type='distinguished')   # optional - gap3
                 (1,4)(2,3)(5,6)
@@ -1227,7 +1227,6 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
             """
             return self.reflection_length() == 1
 
-
     class Irreducible(CategoryWithAxiom):
         class ParentMethods:
             def irreducible_components(self):
@@ -1242,4 +1241,3 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                     [4-colored permutations of size 3]
                 """
                 return [self]
-

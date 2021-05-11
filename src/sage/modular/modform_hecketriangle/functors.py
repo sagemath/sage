@@ -6,16 +6,15 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.all import ZZ, QQ, infinity
 
@@ -733,7 +732,7 @@ class BaseFacade(Parent, UniqueRepresentation):
     ring element. Hence we use the ``BaseFacade`` to
     distinguish the two cases.
 
-    Since the ``BaseFacade`` of a ring embedds into that ring,
+    Since the ``BaseFacade`` of a ring embeds into that ring,
     a common base (resp. a coercion) between the two (or even a
     more general ring) can be found, namely the ring
     (not the ``BaseFacade`` of it).

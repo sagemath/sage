@@ -1,7 +1,6 @@
 r"""
 Graph editor
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #      Copyright (C) 2009   Radoslav Kirov
 #

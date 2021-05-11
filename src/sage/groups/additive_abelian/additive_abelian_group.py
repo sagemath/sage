@@ -108,13 +108,15 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
         True
     """
     invs = [ZZ(x) for x in invs]
-    if not all( [x >= 0 for x in invs] ): raise ValueError("Invariants must be nonnegative")
+    if not all(x >= 0 for x in invs):
+        raise ValueError("Invariants must be nonnegative")
     A, B = cover_and_relations_from_invariants(invs)
     if remember_generators:
         G = AdditiveAbelianGroup_fixed_gens(A, B, A.gens())
     else:
         G = AdditiveAbelianGroup_class(A, B)
     return G
+
 
 def cover_and_relations_from_invariants(invs):
     r"""
@@ -134,7 +136,6 @@ def cover_and_relations_from_invariants(invs):
         [0 2 0]
         [0 0 3])
     """
-    from six.moves import range
     n = len(invs)
     A = ZZ**n
     B = A.span([A.gen(i) * invs[i] for i in range(n)])
@@ -164,7 +165,6 @@ class AdditiveAbelianGroupElement(FGP_Element):
             sage: v._hermite_lift()
             (1, 0)
         """
-        from six.moves import range
         y = self.lift()
         H = self.parent().W().basis_matrix()
         pivot_rows = H.pivot_rows()
@@ -464,7 +464,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
             TypeError: Additive Abelian group must be finite
         """
         # GAP does not support infinite permutation groups
-        if not self.is_finite(): 
+        if not self.is_finite():
             raise TypeError('Additive Abelian group must be finite')
         from sage.groups.perm_gps.permgroup import PermutationGroup
         s = 'Image(IsomorphismPermGroup(AbelianGroup(%s)))'%(list(self.invariants()),)

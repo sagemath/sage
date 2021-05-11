@@ -86,7 +86,6 @@ REFERENCES:
 
 - [CGW2013]_
 """
-from six.moves import range
 
 from sage.functions.log import log
 from sage.functions.other import sqrt, floor, ceil
@@ -460,10 +459,10 @@ class UniformNoiseLWE(LWE):
 
             sage: from sage.crypto.lwe import UniformNoiseLWE
             sage: UniformNoiseLWE(89)
-            LWE(89, 154262477, UniformSampler(0, 351), 'noise', 131)
+            LWE(89, 64311834871, UniformSampler(0, 6577), 'noise', 131)
 
             sage: UniformNoiseLWE(89, instance='encrypt')
-            LWE(131, 154262477, UniformSampler(0, 497), 'noise', 181)
+            LWE(131, 64311834871, UniformSampler(0, 11109), 'noise', 181)
         """
 
         if n<89:
@@ -472,14 +471,16 @@ class UniformNoiseLWE(LWE):
         n2 = n
         C  = 4/sqrt(2*pi)
         kk = floor((n2-2*log(n2, 2)**2)/5)
-        n1 = floor((3*n2-5*kk)/2)
+        n1 = (3*n2-5*kk) // 2
         ke = floor((n1-2*log(n1, 2)**2)/5)
-        l  = floor((3*n1-5*ke)/2)-n2
-        sk = ceil((C*(n1+n2))**(3/2))
-        se = ceil((C*(n1+n2+l))**(3/2))
-        q = next_prime(max(ceil((4*sk)**((n1+n2)/n1)), ceil((4*se)**((n1+n2+l)/(n2+l))), ceil(4*(n1+n2)*se*sk+4*se+1)))
+        l  = (3*n1-5*ke) // 2 - n2
+        sk = ceil((C*(n1+n2))**(ZZ(3)/2))
+        se = ceil((C*(n1+n2+l))**(ZZ(3)/2))
+        q = next_prime(max(ceil((4*sk)**(ZZ(n1+n2)/n1)),
+                           ceil((4*se)**(ZZ(n1+n2+l)/(n2+l))),
+                           ceil(4*(n1+n2)*se*sk+4*se+1)))
 
-        if kk<=0:
+        if kk <= 0:
             raise TypeError("Parameter too small")
 
         if instance == 'key':

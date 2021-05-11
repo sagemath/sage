@@ -15,8 +15,6 @@ TESTS::
 
     sage: import sage.tests.benchmark
 """
-from __future__ import print_function
-from six.moves import range
 
 from sage.all import * # QQ, alarm, ModularSymbols, gp, pari, cputime, EllipticCurve
 
@@ -1761,8 +1759,9 @@ class FiniteExtFieldMult(Benchmark):
         v = magma('[e*f : i in [1..%s]]'%self.__times)
         return magma.cputime(t)
 
+
 class FiniteExtFieldAdd(Benchmark):
-    def __init__(self,field,times):
+    def __init__(self, field, times):
         self.__times = times
         self.field = field
         self.e = field.gen()**(field.cardinality()/3)
@@ -1826,7 +1825,8 @@ class FiniteExtFieldAdd(Benchmark):
 
 
 """
-TODO:
+.. TODO::
+
    * multiply reals
    * modular degree
    * anlist

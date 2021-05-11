@@ -20,7 +20,6 @@ AUTHOR:
 
 - William Stein (2008)
 """
-from __future__ import absolute_import
 
 from sage.rings.all import RDF, CDF, Integer
 from sage.modules.all import vector
@@ -207,7 +206,7 @@ def fractional_gaussian_noise_simulation(double H, double sigma2, N, n=1):
 
 def fractional_brownian_motion_simulation(double H, double sigma2, N, n=1):
     """
-    Returns the partial sums of a fractional Gaussian noise simulation
+    Return the partial sums of a fractional Gaussian noise simulation
     with the same input parameters.
 
     INPUT:

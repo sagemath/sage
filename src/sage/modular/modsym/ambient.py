@@ -54,7 +54,6 @@ factor `x`.
     sage: M0.T(2).matrix().fcp('x')
     (x - 9)^2 * (x^2 - 2*x - 2)^2
 """
-from __future__ import absolute_import
 
 ################################################################################
 #       Sage: Open Source Mathematical Software
@@ -70,12 +69,11 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ################################################################################
-from six.moves import range
 # Sage packages
 import sage.misc.latex as latex
-import sage.misc.misc as misc
+from sage.misc.verbose import verbose
 
 import sage.matrix.matrix_space as matrix_space
 from sage.modular.arithgroup.arithgroup_element import M2Z
@@ -85,7 +83,7 @@ import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
 import sage.modular.hecke.all as hecke
 from sage.rings.all import Integer, QQ, ZZ, Ring
-from sage.arith.all import is_prime, gcd, divisors, number_of_divisors, crt
+from sage.arith.all import is_prime, divisors, number_of_divisors, crt
 import sage.rings.polynomial.multi_polynomial_element
 import sage.structure.formal_sum as formal_sum
 import sage.categories.all as cat
@@ -197,7 +195,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def new_submodule(self, p=None):
         r"""
-        Returns the new or `p`-new submodule of this modular symbols ambient space.
+        Return the new or `p`-new submodule of this modular symbols ambient space.
 
         INPUT:
 
@@ -512,7 +510,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def _action_on_modular_symbols(self, g):
         r"""
-        Returns the matrix of the action of a 2x2 matrix on this space.
+        Return the matrix of the action of a 2x2 matrix on this space.
 
         INPUT:
 
@@ -677,7 +675,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
                 if (self.weight()-2-i == 0):
                     p2 = R(one)
                 poly = (p1**i) * (p2**(self.weight()-2-i))
-                for s in range(0,self.weight()-1): ## k-2+1 = k-1
+                for s in range(0,self.weight()-1):  # k-2+1 = k-1
                     a += poly[s] * self.manin_symbol((s,z,w), check=False)
         else:
             for k in range(1,len(c)):
@@ -829,10 +827,9 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             deg = term.degree(X)
             a = self._modular_symbol_0_to_alpha(alpha, deg)
             b = self._modular_symbol_0_to_alpha(beta, deg)
-            s += f.monomial_coefficient(term) * (b-a)
+            s += f.monomial_coefficient(term) * (b - a)
 
         return s
-
 
     def _compute_dual_hecke_matrix(self, n):
         r"""
@@ -844,7 +841,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
         OUTPUT:
 
-        (matrix) The matrix of the dual od `T(n)`.
+        (matrix) The matrix of the dual of `T(n)`.
 
         EXAMPLES::
 
@@ -977,12 +974,12 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
         if isinstance(rows, list):
             rows = tuple(rows)
         try:
-            return self._hecke_matrices[(p,rows)]
+            return self._hecke_matrices[(p, rows)]
         except AttributeError:
             self._hecke_matrices = {}
         except KeyError:
             pass
-        tm = misc.verbose("Computing Hecke operator T_%s"%p)
+        tm = verbose("Computing Hecke operator T_%s" % p)
 
         if is_prime(p):
             H = heilbronn.HeilbronnCremona(p)
@@ -990,12 +987,12 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             H = heilbronn.HeilbronnMerel(p)
 
         B = self.manin_basis()
-        if not rows is None:
+        if rows is not None:
             B = [B[i] for i in rows]
         mod2term = self._mod2term
         R = self.manin_gens_to_basis()
         K = self.base_ring()
-        W = R.new_matrix(nrows=len(B), ncols = R.nrows())
+        W = R.new_matrix(nrows=len(B), ncols=R.nrows())
         syms = self.manin_symbols()
         j = 0
         for i in B:
@@ -1007,15 +1004,15 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
                         # W[j,f] = W[j,f] + s*K(x)
                         W.add_to_entry(j, f, s * K(x))
             j += 1
-        tm = misc.verbose("start matrix multiply",tm)
+        tm = verbose("start matrix multiply",tm)
         if hasattr(W, '_matrix_times_matrix_dense'):
             Tp = W._matrix_times_matrix_dense(R)
-            misc.verbose("done matrix multiply and computing Hecke operator",tm)
+            verbose("done matrix multiply and computing Hecke operator",tm)
         else:
             Tp = W * R
-            tm = misc.verbose("done matrix multiply",tm)
+            tm = verbose("done matrix multiply",tm)
             Tp = Tp.dense_matrix()
-            misc.verbose("done making Hecke operator matrix dense",tm)
+            verbose("done making Hecke operator matrix dense",tm)
         self._hecke_matrices[(p,rows)] = Tp
         return Tp
 
@@ -1153,7 +1150,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def _matrix_of_operator_on_modular_symbols(self, codomain, R):
         r"""
-        Returns the matrix of a modular symbols operator.
+        Return the matrix of a modular symbols operator.
 
         .. note::
 
@@ -1288,7 +1285,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
         chi = self.character()
         if chi is not None:
             dec = [u for u in chi.decomposition() if chi.modulus().divides(d)]
-            if not all([(u**2).is_trivial() for u in dec]):
+            if not all((u**2).is_trivial() for u in dec):
                 raise ValueError("Atkin-Lehner W_d only defined when d-primary part of character is trivial or quadratic")
 
         if self.sign() != 0:
@@ -1414,7 +1411,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
                 S._is_simple = True
             if self.base_ring().characteristic() == 0:
                 d = self._cuspidal_submodule_dimension_formula()
-                if not d is None:
+                if d is not None:
                     assert d == S.dimension(), "According to dimension formulas the cuspidal subspace of \"%s\" has dimension %s; however, computing it using modular symbols we obtained %s, so there is a bug (please report!)."%(self, d, S.dimension())
             self.__cuspidal_submodule = S
         return self.__cuspidal_submodule
@@ -1526,7 +1523,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def rank(self):
         """
-        Returns the rank of this modular symbols ambient space.
+        Return the rank of this modular symbols ambient space.
 
         OUTPUT:
 
@@ -1648,7 +1645,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def factorization(self):
         r"""
-        Returns a list of pairs `(S,e)` where `S` is spaces
+        Return a list of pairs `(S,e)` where `S` is spaces
         of modular symbols and self is isomorphic to the direct sum of the
         `S^e` as a module over the *anemic* Hecke algebra adjoin
         the star involution. The cuspidal `S` are all simple, but
@@ -1778,7 +1775,8 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
         # Now actually run through the divisor levels, taking only the ones with that are
         # a multiple of the conductor.
         for d in reversed(divisors(self.level())):
-            if d%cond != 0: continue
+            if d % cond:
+                continue
             n = number_of_divisors(self.level() // d)
             M = self.modular_symbols_of_level(d)
             N = M.new_submodule().cuspidal_submodule().decomposition()
@@ -1811,7 +1809,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def is_cuspidal(self):
         r"""
-        Returns True if this space is cuspidal, else False.
+        Return True if this space is cuspidal, else False.
 
         EXAMPLES::
 
@@ -1834,7 +1832,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def is_eisenstein(self):
         r"""
-        Returns True if this space is Eisenstein, else False.
+        Return True if this space is Eisenstein, else False.
 
         EXAMPLES::
 
@@ -1932,7 +1930,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def modular_symbols_of_sign(self, sign):
         r"""
-        Returns a space of modular symbols with the same defining
+        Return a space of modular symbols with the same defining
         properties (weight, level, etc.) as this space except with given
         sign.
 
@@ -1964,7 +1962,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
 
     def modular_symbols_of_weight(self, k):
         r"""
-        Returns a space of modular symbols with the same defining
+        Return a space of modular symbols with the same defining
         properties (weight, sign, etc.) as this space except with weight
         `k`.
 
@@ -2182,21 +2180,15 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
             sage: M = ModularSymbols(37,2,0,K)
             sage: M.twisted_winding_element(0,eps)
             2*(1,23) - 2*(1,32) + 2*(1,34)
-
         """
-
         if not dirichlet.is_DirichletCharacter(eps):
             raise TypeError("eps must be a Dirichlet character.")
-        if (i < 0) or (i > self.weight()-2):
+        if (i < 0) or (i > self.weight() - 2):
             raise ValueError("i must be between 0 and k-2.")
 
         m = eps.modulus()
-        s = self(0)
-
-        for a in ([ x for x in range(1,m) if gcd(x, m) == 1 ]):
-            s += eps(a) * self.modular_symbol([i, Cusp(0), Cusp(a/m)])
-
-        return s
+        return self.sum(eps(a) * self.modular_symbol([i, Cusp(0), Cusp(a / m)])
+                        for a in m.coprime_integers(m))
 
     ######################################################################
     # Z-module of integral modular symbols.
@@ -2396,27 +2388,31 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, hecke.AmbientHeckeModule):
                     # i is bad.
                     bad = True
                     continue
-            if bad: continue
+            if bad:
+                continue
             # It turns out that i is not bad.
             nz = i
             break
 
         if nz is not None:
             R = self.hecke_images(nz, v)
-            return [(R*m, D[i].dual_eigenvector(names=names[i], lift=False, nz=nz)) for i, m in enumerate(B)]
-        else:
-            # No single i works, so we do something less uniform.
-            ans = []
-            cache = {}
-            for i in range(len(D)):
-                nz = D[i]._eigen_nonzero()
-                if nz in cache:
-                     R = cache[nz]
-                else:
-                     R = self.hecke_images(nz, v)
-                     cache[nz] = R
-                ans.append((R*B[i], D[i].dual_eigenvector(names=names[i], lift=False, nz=nz)))
-            return ans
+            return [(R * m, D[i].dual_eigenvector(names=names[i],
+                                                  lift=False, nz=nz))
+                    for i, m in enumerate(B)]
+
+        # No single i works, so we do something less uniform.
+        ans = []
+        cache = {}
+        for i in range(len(D)):
+            nz = D[i]._eigen_nonzero()
+            if nz in cache:
+                R = cache[nz]
+            else:
+                R = self.hecke_images(nz, v)
+                cache[nz] = R
+            ans.append((R * B[i], D[i].dual_eigenvector(names=names[i],
+                                                        lift=False, nz=nz)))
+        return ans
 
 
 class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
@@ -2487,7 +2483,7 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
         N = int(N)
         k = int(k)
         sign = int(sign)
-        if not sign in [-1,0,1]:
+        if sign not in [-1, 0, 1]:
             raise TypeError("sign must be an int in [-1,0,1]")
 
         ModularSymbolsAmbient.__init__(self, weight=k, group=arithgroup.Gamma0(N),
@@ -2509,8 +2505,9 @@ class ModularSymbolsAmbient_wtk_g0(ModularSymbolsAmbient):
         """
         if self.base_ring().characteristic() == 0:
             k, sign = self.weight(), self.sign()
-            if sign != 0: return None
-            if k%2 == 1:
+            if sign != 0:
+                return None
+            if k % 2:
                 return 0
             elif k > 2:
                 return 2*self.group().dimension_cusp_forms(k) + self.group().ncusps()
@@ -2784,7 +2781,8 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
             32
         """
         if self.base_ring().characteristic() == 0:
-            if self.sign() != 0: return None
+            if self.sign() != 0:
+                return None
             return 2*self.group().dimension_cusp_forms(2) + self.group().ncusps() - 1
         else:
             raise NotImplementedError
@@ -2846,17 +2844,17 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
         if isinstance(rows, list):
             rows = tuple(rows)
         try:
-            return self._hecke_matrices[(p,rows)]
+            return self._hecke_matrices[(p, rows)]
         except AttributeError:
             self._hecke_matrices = {}
         except KeyError:
             pass
-        tm = misc.verbose("Computing Hecke operator T_%s"%p)
+        tm = verbose("Computing Hecke operator T_%s" % p)
 
         H = heilbronn.HeilbronnCremona(p)
-        ##H = heilbronn.HeilbronnMerel(p)
+        # H = heilbronn.HeilbronnMerel(p)
         B = self.manin_basis()
-        if not rows is None:
+        if rows is not None:
             B = [B[i] for i in rows]
 
         N = self.level()
@@ -2865,7 +2863,7 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
         R = self.manin_gens_to_basis()
         W = R.new_matrix(nrows=len(B), ncols = R.nrows())  # the 0 with given number of rows and cols.
         j = 0
-        tm = misc.verbose("Matrix non-reduced", tm)
+        tm = verbose("Matrix non-reduced", tm)
         for i in B:
             # The following step is where most of the time is spent.
             c,d = P1[i]
@@ -2888,17 +2886,17 @@ class ModularSymbolsAmbient_wt2_g0(ModularSymbolsAmbient_wtk_g0):
                     if s != 0:
                         W[j,f] = W[j,f] + s*m
             j += 1
-        tm = misc.verbose("done making non-reduced matrix",tm)
-        misc.verbose("start matrix-matrix (%s x %s) times (%s x %s) multiply to get Tp"%(W.nrows(), W.ncols(),
+        tm = verbose("done making non-reduced matrix",tm)
+        verbose("start matrix-matrix (%s x %s) times (%s x %s) multiply to get Tp"%(W.nrows(), W.ncols(),
                                                                                          R.nrows(), R.ncols()))
         if hasattr(W, '_matrix_times_matrix_dense'):
             Tp = W._matrix_times_matrix_dense(R)
-            misc.verbose("done matrix multiply and computing Hecke operator",tm)
+            verbose("done matrix multiply and computing Hecke operator",tm)
         else:
             Tp = W * R
-            tm = misc.verbose("done multiplying",tm)
+            tm = verbose("done multiplying",tm)
             Tp = Tp.dense_matrix()
-            misc.verbose("done making Hecke operator dense", tm)
+            verbose("done making Hecke operator dense", tm)
         if rows is None:
             self._hecke_matrices[(p,rows)] = Tp
         return Tp
@@ -3053,7 +3051,6 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
                 custom_init=custom_init,
                 category=category)
 
-
     def _dimension_formula(self):
         r"""
         Return the dimension of this space using the formula.
@@ -3069,9 +3066,10 @@ class ModularSymbolsAmbient_wtk_g1(ModularSymbolsAmbient):
         if self.base_ring().characteristic() != 0:
             raise NotImplementedError
         level, weight, sign = self.level(), self.weight(), self.sign()
-        if sign != 0: return None
+        if sign != 0:
+            return None
         d = 2*self.group().dimension_cusp_forms(weight) + self.group().ncusps()
-        if level == 1 and weight%2 == 1:
+        if level == 1 and weight % 2:
             return 0
         if weight == 2:
             return d - 1
@@ -3667,7 +3665,7 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
 
     def modular_symbols_of_level(self, N):
         r"""
-        Returns a space of modular symbols with the same parameters as
+        Return a space of modular symbols with the same parameters as
         this space except with level `N`.
 
         INPUT:
@@ -3698,7 +3696,7 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
 
     def modular_symbols_of_sign(self, sign):
         r"""
-        Returns a space of modular symbols with the same defining
+        Return a space of modular symbols with the same defining
         properties (weight, level, etc.) as this space except with given
         sign.
 
@@ -3729,7 +3727,7 @@ class ModularSymbolsAmbient_wtk_eps(ModularSymbolsAmbient):
 
     def modular_symbols_of_weight(self, k):
         r"""
-        Returns a space of modular symbols with the same defining
+        Return a space of modular symbols with the same defining
         properties (weight, sign, etc.) as this space except with weight
         `k`.
 

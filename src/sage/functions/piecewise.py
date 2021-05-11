@@ -15,9 +15,9 @@ EXAMPLES::
     1/8
     sage: plot(f)    # not tested
 
-TODO:
+.. TODO::
 
-- Implement max/min location and values,
+    Implement max/min location and values,
 
 AUTHORS:
 
@@ -67,18 +67,14 @@ TESTS::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, division, print_function
 
 from sage.symbolic.function import BuiltinFunction
-from sage.sets.real_set import RealSet, InternalRealInterval
+from sage.sets.real_set import RealSet
 from sage.symbolic.ring import SR
-from sage.rings.rational_field import QQ
 from sage.rings.infinity import minus_infinity, infinity
-
-from six import get_function_code
 
 
 class PiecewiseFunction(BuiltinFunction):
@@ -150,7 +146,7 @@ class PiecewiseFunction(BuiltinFunction):
             if isinstance(function, FunctionType):
                 if var is None:
                     var = SR.var('x')
-                if get_function_code(function).co_argcount == 0:
+                if function.__code__.co_argcount == 0:
                     function = function()
                 else:
                     function = function(var)
@@ -265,7 +261,6 @@ class PiecewiseFunction(BuiltinFunction):
                 result = result or is_piecewise(op)
             return result
         return is_piecewise(ex)
-
 
     @staticmethod
     def simplify(ex):
@@ -793,7 +788,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.integral(definite=True)
                 2
                 sage: f.integral()
-                piecewise(x|-->-1/2*((sgn(x) - 1)*e^(2*x) - 2*e^x*sgn(x) + sgn(x) + 1)*e^(-x) - 1 on (-oo, +oo); x)
+                piecewise(x|-->-integrate(e^(-abs(x)), x, x, +Infinity) on (-oo, +oo); x)
 
             ::
 
@@ -951,13 +946,10 @@ class PiecewiseFunction(BuiltinFunction):
             g = other
             if len(f.end_points())*len(g.end_points()) == 0:
                 raise ValueError('one of the piecewise functions is nowhere defined')
-            M = min(min(f.end_points()),min(g.end_points()))
-            N = max(max(f.end_points()),max(g.end_points()))
             tt = SR.var('tt')
             uu = SR.var('uu')
-            conv = 0
-            fd,f0 = parameters[0]
-            gd,g0 = next(other.items())
+            fd, f0 = parameters[0]
+            gd, g0 = next(other.items())
             if len(f)==1 and len(g)==1:
                 f = f.unextend_zero()
                 g = g.unextend_zero()
@@ -1356,5 +1348,30 @@ class PiecewiseFunction(BuiltinFunction):
                                   self.fourier_series_sine_coefficient(n, L)*sin(n*pi*x/L))
                                  for n in srange(1, N+1)])
             return SR(result).expand()
+
+        def _sympy_(self, parameters, variable):
+            """
+            Convert this piecewise expression to its SymPy equivalent.
+
+            EXAMPLES::
+
+                sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
+                sage: f = ex._sympy_(); f
+                Piecewise((pi, (x > 0) & (x < 1)), (x, (x >= 1) & (x <= 2)))
+                sage: f.diff()
+                Piecewise((0, (x > 0) & (x < 1)), (1, (x >= 1) & (x <= 2)))
+
+                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
+                sage: g = ex._sympy_(); g
+                Piecewise((1/x, (x > -100) & (x < -2)), (cos(x), x > 1))
+                sage: g.diff()
+                Piecewise((-1/x**2, (x > -100) & (x < -2)), (-sin(x), x > 1))
+            """
+            from sympy import Piecewise as pw
+            args = [(func._sympy_(),
+                     domain._sympy_condition_(variable))
+                    for domain, func in parameters]
+            return pw(*args)
+
 
 piecewise = PiecewiseFunction()

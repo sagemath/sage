@@ -19,18 +19,18 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.categories.morphism import Morphism
 from .constructor import EllipticCurve
 from sage.categories.homset import Hom
-from sage.structure.richcmp import (richcmp, richcmp_not_equal,
-                                    op_NE, op_EQ, op_LT)
+from sage.structure.richcmp import (richcmp_method, richcmp, richcmp_not_equal,
+                                    op_NE)
 
 
-class baseWI:
+@richcmp_method
+class baseWI(object):
     r"""
     This class implements the basic arithmetic of isomorphisms between
     Weierstrass models of elliptic curves.
@@ -84,44 +84,6 @@ class baseWI:
         self.s = s
         self.t = t
 
-    def __eq__(self, other):
-        """
-        Test for equality.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import baseWI
-            sage: baseWI(1,2,3,4) == baseWI(1,2,3,4)
-            True
-        """
-        return self.__richcmp__(other, op_EQ)
-
-    def __ne__(self, other):
-        """
-        Test for unequality.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import baseWI
-            sage: baseWI(1,2,3,4) != baseWI(1,2,3,4)
-            False
-        """
-        return self.__richcmp__(other, op_NE)
-
-    def __lt__(self, other):
-        """
-        Test for inequality.
-
-        EXAMPLES::
-
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import baseWI
-            sage: baseWI(1,2,3,4) < baseWI(1,2,3,5)
-            True
-            sage: baseWI(1,2,3,4) > baseWI(1,2,3,4)
-            False
-        """
-        return self.__richcmp__(other, op_LT)
-
     def __richcmp__(self, other, op):
         """
         Standard comparison function.
@@ -130,20 +92,22 @@ class baseWI:
 
         .. NOTE::
 
-           In a list of automorphisms, there is no guarantee that the
-           identity will be first!
+            In a list of automorphisms, there is no guarantee that the
+            identity will be first!
 
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import baseWI
             sage: baseWI(1,2,3,4) == baseWI(1,2,3,4)
             True
+            sage: baseWI(1,2,3,4) != baseWI(1,2,3,4)
+            False
             sage: baseWI(1,2,3,4) < baseWI(1,2,3,5)
             True
             sage: baseWI(1,2,3,4) > baseWI(1,2,3,4)
             False
 
-        It will never return equality if other is of another type::
+        It will never return equality if ``other`` is of another type::
 
             sage: baseWI() == 1
             False
@@ -222,7 +186,7 @@ class baseWI:
 
     def is_identity(self):
         r"""
-        Return True if this is the identity isomorphism.
+        Return ``True`` if this is the identity isomorphism.
 
         EXAMPLES::
 
@@ -295,19 +259,19 @@ def isomorphisms(E, F, JustOne=False):
 
     - ``E``, ``F`` (EllipticCurve) -- Two elliptic curves.
 
-    - ``JustOne`` (bool) If True, returns one isomorphism, or None if
-      the curves are not isomorphic.  If False, returns a (possibly
+    - ``JustOne`` (bool) If ``True``, returns one isomorphism, or ``None`` if
+      the curves are not isomorphic.  If ``False``, returns a (possibly
       empty) list of isomorphisms.
 
     OUTPUT:
 
-    Either None, or a 4-tuple `(u,r,s,t)` representing an isomorphism,
+    Either ``None``, or a 4-tuple `(u,r,s,t)` representing an isomorphism,
     or a list of these.
 
     .. note::
 
-       This function is not intended for users, who should use the
-       interface provided by ``ell_generic``.
+        This function is not intended for users, who should use the
+        interface provided by ``ell_generic``.
 
     EXAMPLES::
 
@@ -586,12 +550,12 @@ class WeierstrassIsomorphism(baseWI, Morphism):
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
-            sage: E=EllipticCurve('37a1')
-            sage: w=WeierstrassIsomorphism(E,(2,3,4,5))
-            sage: P=E(0,-1)
+            sage: E = EllipticCurve('37a1')
+            sage: w = WeierstrassIsomorphism(E,(2,3,4,5))
+            sage: P = E(0,-1)
             sage: w(P)
             (-3/4 : 3/4 : 1)
-            sage: w(P).curve()==E.change_weierstrass_model((2,3,4,5))
+            sage: w(P).curve() == E.change_weierstrass_model((2,3,4,5))
             True
         """
         if P[2] == 0:

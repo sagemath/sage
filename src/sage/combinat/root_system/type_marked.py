@@ -7,7 +7,6 @@ Root system data for Cartan types with marked nodes
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.combinat.root_system import cartan_type
 from sage.combinat.root_system import ambient_space
@@ -326,7 +325,7 @@ class CartanType(cartan_type.CartanType_decorator):
 
     def dynkin_diagram(self):
         """
-        Returns the Dynkin diagram for this Cartan type.
+        Return the Dynkin diagram for this Cartan type.
 
         EXAMPLES::
 

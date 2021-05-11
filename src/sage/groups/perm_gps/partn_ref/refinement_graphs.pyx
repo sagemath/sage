@@ -21,13 +21,11 @@ REFERENCE:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function
-
 from .data_structures cimport *
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 from sage.rings.integer cimport Integer
 from sage.graphs.base.sparse_graph cimport SparseGraph
-from sage.graphs.base.dense_graph cimport DenseGraph
+from sage.graphs.base.dense_graph cimport DenseGraph, copy_dense_graph
 from .double_coset cimport double_coset
 
 
@@ -118,7 +116,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             G = <CGraph> G_in
             if n == -1:
                 n = G.num_verts
-            elif n != G.num_verts:
+            elif n != <int>G.num_verts:
                 return False
             if not loops:
                 for i from 0 <= i < n:
@@ -464,7 +462,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     # prepare output
     list_of_gens = []
     for i from 0 <= i < output.num_gens:
-        list_of_gens.append([output.generators[j+i*G.num_verts] for j from 0 <= j < G.num_verts])
+        list_of_gens.append([output.generators[j+i*G.num_verts] for j from 0 <= j < <int>G.num_verts])
     return_tuple = [list_of_gens]
     if dict_rep:
         ddd = {}
@@ -486,7 +484,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         return_tuple.append(G_C)
     if certificate:
         dd = {}
-        for i from 0 <= i < G.num_verts:
+        for i from 0 <= i < <int>G.num_verts:
             dd[frm[i]] = output.relabeling[i]
         return_tuple.append(dd)
     if base:
@@ -534,7 +532,7 @@ cdef int refine_by_degree(PartitionStack *PS, void *S, int *cells_to_refine_by, 
     cdef int *degrees = GS.scratch # length 3n+1
     cdef bint necessary_to_split_cell
     cdef int against_index
-    if G.num_verts != PS.degree and PS.depth == 0:
+    if <int>G.num_verts != PS.degree and PS.depth == 0:
         # should be less verts, then, so place the "nonverts" in separate cell at the end
         current_cell = 0
         while current_cell < PS.degree:
@@ -652,14 +650,14 @@ cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degr
     - ``gamma_1``, ``gamma_2`` -- list permutations (inverse)
     - ``S1``, ``S2`` -- graph struct objects
     """
-    cdef int i, j, m
+    cdef size_t i, j
     cdef GraphStruct GS1 = <GraphStruct> S1
     cdef GraphStruct GS2 = <GraphStruct> S2
     cdef CGraph G1 = GS1.G
     cdef CGraph G2 = GS2.G
     if G1.active_vertices.size != G2.active_vertices.size or \
        not bitset_cmp(G1.active_vertices, G2.active_vertices):
-        for i from 0 <= i < degree:
+        for i from 0 <= i < <size_t>degree:
             if G1.has_vertex(gamma_1[i]) != G2.has_vertex(gamma_2[i]):
                 return G1.has_vertex(gamma_1[i]) - G2.has_vertex(gamma_2[i])
     for i from 0 <= i < G1.num_verts:
@@ -1129,17 +1127,6 @@ cdef int gen_children_dg_edge(void *S, aut_gp_and_can_lab *group, iterator *it):
     if edge_iterator is not NULL:
         start_canonical_generator(group.group, NULL, n, edge_iterator)
     return (edge_iterator is NULL)
-
-cdef void copy_dense_graph(DenseGraph dest, DenseGraph src):
-    r"""
-    caution! active_vertices must be same size!
-    """
-    memcpy(dest.edges,       src.edges,       src.active_vertices.size * src.num_longs * sizeof(unsigned long))
-    memcpy(dest.in_degrees,  src.in_degrees,  src.active_vertices.size * sizeof(int))
-    memcpy(dest.out_degrees, src.out_degrees, src.active_vertices.size * sizeof(int))
-    bitset_copy(dest.active_vertices, src.active_vertices)
-    dest.num_verts = src.num_verts
-    dest.num_arcs  = src.num_arcs
 
 cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, bint *mem_err):
     r"""

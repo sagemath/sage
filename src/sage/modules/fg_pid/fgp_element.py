@@ -346,14 +346,12 @@ class FGP_Element(ModuleElement):
             sage: W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
             sage: Q = V/W
             sage: x = Q.0 + 3*Q.1
-            sage: hash(x)
-            3713081631933328131 # 64-bit
-            1298787075          # 32-bit
+            sage: hash(x) == hash((1,3))
+            True
 
             sage: A = AdditiveAbelianGroup([3])
-            sage: hash(A.an_element())
-            3430019387558 # 64-bit
-            -1659481946   # 32-bit
+            sage: hash(A.an_element()) == hash((1,))
+            True
         """
         return hash(self.vector())
 

@@ -13,7 +13,6 @@ Pynac interface
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import, division, print_function
 
 from cpython cimport *
 from libc cimport math
@@ -288,7 +287,12 @@ cdef subs_args_to_PyTuple(const GExMap& map, unsigned options, const GExVector& 
         ....:         print("len(args): %s, types: %s"%(len(args), str(list(map(type, args)))))
         ....:         return args[-1]
         sage: tfunc = TFunc()
-        sage: tfunc(x).subs(x=1)
+        sage: tfunc(x).subs(x=1)   # py3
+        len(args): 3, types: [<class 'sage.symbolic.substitution_map.SubstitutionMap'>,
+          <class 'int'>,
+          <class 'sage.symbolic.expression.Expression'>]
+        x
+        sage: tfunc(x).subs(x=1)   # py2
         len(args): 3, types: [<type 'sage.symbolic.substitution_map.SubstitutionMap'>,
           <type 'int'>,        # 64-bit
           <type 'long'>,       # 32-bit
@@ -1102,8 +1106,6 @@ cdef bint py_is_integer(x):
 
         sage: py_is_integer(1r)
         True
-        sage: py_is_integer(long(1))
-        True
         sage: py_is_integer(3^57)
         True
         sage: py_is_integer(SR(5))
@@ -1172,9 +1174,9 @@ def py_is_crational_for_doctest(x):
         True
         sage: py_is_crational_for_doctest(1.5)
         False
-        sage: py_is_crational_for_doctest(I.pyobject())
+        sage: py_is_crational_for_doctest(I)
         True
-        sage: py_is_crational_for_doctest(I.pyobject()+1/2)
+        sage: py_is_crational_for_doctest(I+1/2)
         True
     """
     return py_is_crational(x)
@@ -1308,13 +1310,11 @@ def py_is_cinteger_for_doctest(x):
         sage: from sage.libs.pynac.pynac import py_is_cinteger_for_doctest
         sage: py_is_cinteger_for_doctest(1)
         True
-        sage: py_is_cinteger_for_doctest(long(-3))
+        sage: py_is_cinteger_for_doctest(I)
         True
-        sage: py_is_cinteger_for_doctest(I.pyobject())
+        sage: py_is_cinteger_for_doctest(I - 3)
         True
-        sage: py_is_cinteger_for_doctest(I.pyobject() - 3)
-        True
-        sage: py_is_cinteger_for_doctest(I.pyobject() + 1/2)
+        sage: py_is_cinteger_for_doctest(I + 1/2)
         False
     """
     return py_is_cinteger(x)
@@ -1337,7 +1337,7 @@ cdef py_float(n, PyObject* kwds):
         sage: py_float(1/2, {'parent':CC})
         0.500000000000000
         sage: type(py_float(1/2, {'parent':CC}))
-        <type 'sage.rings.complex_number.ComplexNumber'>
+        <type 'sage.rings.complex_mpfr.ComplexNumber'>
     """
     if kwds is not NULL:
         p = (<object>kwds)['parent']
@@ -1706,11 +1706,7 @@ cdef py_log(x):
         3.141592653589793j
         sage: py_log(int(1))
         0.0
-        sage: py_log(long(1))
-        0.0
         sage: py_log(int(0))
-        -inf
-        sage: py_log(long(0))
         -inf
         sage: py_log(complex(0))
         -inf
@@ -2196,7 +2192,7 @@ cdef GConstant py_get_constant(const char* name):
     """
     from sage.symbolic.constants import constants_name_table
     cdef PynacConstant pc
-    c = constants_name_table.get(name, None)
+    c = constants_name_table.get(char_to_str(name), None)
     if c is None:
         raise RuntimeError
     else:
@@ -2354,20 +2350,21 @@ def init_pynac_I():
 
     EXAMPLES::
 
-        sage: I
+        sage: from sage.libs.pynac.pynac import I as symbolic_I
+        sage: symbolic_I
         I
-        sage: I^2
+        sage: symbolic_I^2
         -1
 
     Note that conversions to real fields will give TypeErrors::
 
-        sage: float(I)
+        sage: float(symbolic_I)
         Traceback (most recent call last):
         ...
         TypeError: unable to simplify to float approximation
-        sage: gp(I)
+        sage: gp(symbolic_I)
         I
-        sage: RR(I)
+        sage: RR(symbolic_I)
         Traceback (most recent call last):
         ...
         TypeError: unable to convert '1.00000000000000*I' to a real number
@@ -2376,53 +2373,53 @@ def init_pynac_I():
 
         sage: C = ComplexField(200); C
         Complex Field with 200 bits of precision
-        sage: C(I)
+        sage: C(symbolic_I)
         1.0000000000000000000000000000000000000000000000000000000000*I
-        sage: I._complex_mpfr_field_(ComplexField(53))
+        sage: symbolic_I._complex_mpfr_field_(ComplexField(53))
         1.00000000000000*I
 
-        sage: I._complex_double_(CDF)
+        sage: symbolic_I._complex_double_(CDF)
         1.0*I
-        sage: CDF(I)
+        sage: CDF(symbolic_I)
         1.0*I
 
-        sage: z = I + I; z
+        sage: z = symbolic_I + symbolic_I; z
         2*I
         sage: C(z)
         2.0000000000000000000000000000000000000000000000000000000000*I
-        sage: 1e8*I
+        sage: 1e8*symbolic_I
         1.00000000000000e8*I
 
-        sage: complex(I)
+        sage: complex(symbolic_I)
         1j
 
-        sage: QQbar(I)
+        sage: QQbar(symbolic_I)
         I
 
-        sage: abs(I)
+        sage: abs(symbolic_I)
         1
 
-        sage: I.minpoly()
+        sage: symbolic_I.minpoly()
         x^2 + 1
-        sage: maxima(2*I)
+        sage: maxima(2*symbolic_I)
         2*%i
 
     TESTS:
 
-        sage: repr(I)
+        sage: repr(symbolic_I)
         'I'
-        sage: latex(I)
+        sage: latex(symbolic_I)
         i
 
         sage: sage.libs.pynac.pynac.init_pynac_I()
         sage: type(sage.libs.pynac.pynac.I)
         <type 'sage.symbolic.expression.Expression'>
         sage: type(sage.libs.pynac.pynac.I.pyobject())
-        <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic'>
+        <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
 
     Check that :trac:`10064` is fixed::
 
-        sage: y = I*I*x / x # so y is the expression -1
+        sage: y = symbolic_I*symbolic_I*x / x # so y is the expression -1
         sage: y.is_positive()
         False
         sage: z = -x / x
@@ -2432,9 +2429,8 @@ def init_pynac_I():
         True
     """
     global pynac_I, I
-    from sage.rings.number_field.number_field import QuadraticField
-    K = QuadraticField(-1, 'I', embedding=CC.gen(), latex_name='i')
-    pynac_I = K.gen()
+    from sage.rings.number_field.number_field import GaussianField
+    pynac_I = GaussianField().gen()
     ginac_pyinit_I(pynac_I)
     I = new_Expression_from_GEx(ring.SR, g_I)
 

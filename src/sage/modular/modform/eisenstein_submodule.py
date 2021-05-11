@@ -2,11 +2,9 @@
 """
 The Eisenstein Subspace
 """
-from __future__ import absolute_import
-from six.moves import range
 
 from sage.structure.all import Sequence
-from sage.misc.all import verbose, cached_method
+from sage.misc.all import cached_method
 import sage.rings.all as rings
 from sage.categories.all import Objects
 from sage.matrix.all import Matrix
@@ -34,6 +32,7 @@ class EisensteinSubmodule(submodule.ModularFormsSubmodule):
             sage: E == loads(dumps(E))
             True
         """
+        from sage.misc.verbose import verbose
         verbose('creating eisenstein submodule of %s'%ambient_space)
         d = ambient_space._dim_eisenstein()
         V = ambient_space.module()

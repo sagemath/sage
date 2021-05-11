@@ -16,10 +16,7 @@ AUTHORS:
 
 REFERENCE:
 
-.. [NisOst2003] Sampo Niskanen and Patric R. J. Ostergard,
-  "Cliquer User's  Guide, Version 1.0,"
-  Communications Laboratory, Helsinki University of Technology,
-  Espoo, Finland, Tech. Rep. T48, 2003.
+[NO2003]_
 
 Methods
 -------
@@ -42,6 +39,7 @@ cdef extern from "sage/graphs/cliquer/cl.c":
      cdef int sage_clique_max(graph_t *g, int ** list_of_vertices)
      cdef int sage_all_clique_max(graph_t *g, int ** list_of_vertices)
      cdef int sage_clique_number(graph_t *g)
+     cdef int sage_find_all_clique(graph_t *g,int ** list_of_vertices, int min_size, int max_size)
 
 
 def max_clique(graph):
@@ -108,7 +106,7 @@ def all_max_clique(graph):
 
     ALGORITHM:
 
-    This function is based on Cliquer [NisOst2003]_.
+    This function is based on Cliquer [NO2003]_.
 
     EXAMPLES::
 
@@ -163,6 +161,127 @@ def all_max_clique(graph):
     graph_free(g)
 
     return sorted(b)
+
+
+def all_cliques(graph, min_size=0, max_size=0):
+    r"""
+    Iterator over the cliques in ``graph``.
+
+    A clique is an induced complete subgraph. This method is an iterator over
+    all the cliques with size in between ``min_size`` and ``max_size``. By
+    default, this method returns only maximum cliques. Each yielded clique is
+    represented by a list of vertices.
+
+    .. NOTE::
+
+        Currently only implemented for undirected graphs. Use
+        :meth:`~sage.graphs.digraph.DiGraph.to_undirected` to convert a digraph
+        to an undirected graph.
+
+    INPUT:
+
+    - ``min_size`` -- integer (default: 0); minimum size of reported cliques.
+      When set to 0 (default), this method searches for maximum cliques. In such
+      case, parameter ``max_size`` must also be set to 0.
+
+    - ``max_size`` -- integer (default: 0); maximum size of reported cliques.
+      When set to 0 (default), the maximum size of the cliques is unbounded.
+      When ``min_size`` is set to 0, this parameter must be set to 0.
+
+    ALGORITHM:
+
+    This function is based on Cliquer [NO2003]_.
+
+    EXAMPLES::
+
+        sage: G = graphs.CompleteGraph(5)
+        sage: list(sage.graphs.cliquer.all_cliques(G))
+        [[0, 1, 2, 3, 4]]
+        sage: list(sage.graphs.cliquer.all_cliques(G, 2, 3))
+        [[3, 4],
+         [2, 3],
+         [2, 3, 4],
+         [2, 4],
+         [1, 2],
+         [1, 2, 3],
+         [1, 2, 4],
+         [1, 3],
+         [1, 3, 4],
+         [1, 4],
+         [0, 1],
+         [0, 1, 2],
+         [0, 1, 3],
+         [0, 1, 4],
+         [0, 2],
+         [0, 2, 3],
+         [0, 2, 4],
+         [0, 3],
+         [0, 3, 4],
+         [0, 4]]
+        sage: G.delete_edge([1,3])
+        sage: list(sage.graphs.cliquer.all_cliques(G))
+        [[0, 2, 3, 4], [0, 1, 2, 4]]
+
+    TESTS::
+
+        sage: G = graphs.CompleteGraph(3)
+        sage: list(sage.graphs.cliquer.all_cliques(G, 2, 3))
+        [[1, 2], [0, 1], [0, 1, 2], [0, 2]]
+
+        sage: G = graphs.EmptyGraph()
+        sage: list(sage.graphs.cliquer.all_cliques(G, 2, 3))
+        []
+
+        sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
+        sage: list(sage.graphs.cliquer.all_cliques(G, 2, 2))
+        [[0, 1]]
+
+        sage: list(sage.graphs.cliquer.all_cliques(G, 0, 2))
+        Traceback (most recent call last):
+        ...
+        ValueError: max_size > 0 is incompatible with min_size == 0
+
+    .. TODO::
+
+        Use the re-entrant functionality of Cliquer [NO2003]_ to avoid storing
+        all cliques.
+    """
+    if not min_size and max_size > 0:
+        raise ValueError("max_size > 0 is incompatible with min_size == 0")
+    if not graph:
+        return
+
+    cdef int i
+    cdef list int_to_vertex = list(graph)
+    cdef dict vertex_to_int = {v: i for i, v in enumerate(int_to_vertex)}
+
+    cdef graph_t* g = graph_new(graph.order())
+    for u,v in graph.edge_iterator(labels=None):
+        GRAPH_ADD_EDGE(g, vertex_to_int[u], vertex_to_int[v])
+
+    cdef int* list_of_vertices
+    cdef int size = 0
+    cdef list c
+    try:
+        try:
+            sig_on()
+            size = sage_find_all_clique(g, &list_of_vertices, min_size, max_size)
+            sig_off()
+        finally:
+            graph_free(g)
+        c = []
+        for i in range(size):
+            if list_of_vertices[i] != -1:
+                c.append(int_to_vertex[list_of_vertices[i]])
+            else:
+                yield c
+                c = []
+    finally:
+        if list_of_vertices:
+            # We free ``list_of_vertices``,
+            # but only if previous computations weren't interrupted before
+            # allocating memory for ``list_of_vertices``.
+            sig_free(list_of_vertices)
 
 
 #computes the clique number of a graph

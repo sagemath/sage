@@ -8,9 +8,8 @@ Root system data for dual Cartan types
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
-from sage.misc.misc import attrcall
+from sage.misc.call import attrcall
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.combinat.root_system import cartan_type
@@ -43,7 +42,7 @@ class CartanType(cartan_type.CartanType_decorator, cartan_type.CartanType_crysta
         ['F', 4] relabelled by {1: 4, 2: 3, 3: 2, 4: 1}
 
     So to exercise this class we consider some non simply laced affine
-    Cartan types and also create explicitely `F_4^*` as a dual cartan
+    Cartan types and also create explicitly `F_4^*` as a dual cartan
     type::
 
         sage: from sage.combinat.root_system.type_dual import CartanType as CartanTypeDual
@@ -596,14 +595,13 @@ class CartanType_affine(CartanType, cartan_type.CartanType_affine):
            sage: CartanType(['F', 4, 1]).dual()._repr_(compact = True)
            'F4~*'
         """
-        dual_str = self.options.dual_str
         if self.options.notation == "Kac":
             if self._type.type() == 'B':
                 if compact:
                     return 'A%s^2'%(self.classical().rank()*2-1)
                 return "['A', %s, 2]"%(self.classical().rank()*2-1)
             elif self._type.type() == 'BC':
-                dual_str = '+'  # UNUSED ?
+                pass
             elif self._type.type() == 'C':
                 if compact:
                     return 'D%s^2'%(self.rank())

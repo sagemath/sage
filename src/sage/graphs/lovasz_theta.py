@@ -8,9 +8,7 @@ AUTHORS:
 
 REFERENCE:
 
-.. [Lovasz1979] László Lovász,
-  "On the Shannon capacity of a graph",
-  IEEE Trans. Inf. Th. 25(1979), 1-7.
+[Lov1979]_
 
 Functions
 ---------
@@ -71,9 +69,8 @@ def lovasz_theta(graph):
 
     g = graph.relabel(inplace=False, perm=range(1, n + 1)).networkx_graph()
     tf_name = tmp_filename()
-    tf = open(tf_name, 'wb')
-    tf.write(str(n) + '\n' + str(g.number_of_edges()) + '\n')
-    write_edgelist(g, tf, data=False)
-    tf.close()
+    with open(tf_name, 'wb') as tf:
+        tf.write("{}\n{}\n".format(n, g.number_of_edges()).encode())
+        write_edgelist(g, tf, data=False)
     lines = subprocess.check_output(['theta', tf_name])
     return float(lines.split()[-1])

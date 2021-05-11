@@ -36,7 +36,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from libc.string cimport memcpy
 from cpython.dict cimport *
@@ -60,14 +59,14 @@ cdef class PolyDict:
         """
         INPUT:
 
-        - ``pdict`` -- dict or list, which represents a multi-variable polynomial with
-          the distribute representation (a copy is not made)
+        - ``pdict`` -- dict or list, which represents a multi-variable
+          polynomial with the distribute representation (a copy is not made)
 
         - ``zero`` --  (optional) zero in the base ring
 
         - ``force_int_exponents`` -- bool (optional) arithmetic with int
           exponents is much faster than some of the alternatives, so this is
-          True by default.
+          ``True`` by default
 
         - ``force_etuples`` -- bool (optional) enforce that the exponent tuples
           are instances of ETuple class
@@ -88,23 +87,25 @@ cdef class PolyDict:
             sage: PolyDict({(0,0):RIF(-1,1)}, remove_zero=True)
             PolyDict with representation {(0, 0): 0.?}
         """
+        cdef dict v
+
         if not isinstance(pdict, dict):
             if isinstance(pdict, list):
                 v = {}
-                for w in pdict:
+                L = <list> pdict
+                for w in L:
                     if w[0] != 0:
                         v[ETuple(w[1])] = w[0]
                 remove_zero = False
                 pdict = v
             else:
-                raise TypeError("pdict must be a list.")
+                raise TypeError("pdict must be a list")
 
         if isinstance(pdict, dict) and force_etuples is True:
-            pdict2 = []
-            for k, v in pdict.iteritems():
-                pdict2.append((ETuple(k), v))
-
-            pdict = dict(pdict2)
+            v = pdict
+            pdict = {}
+            for k, val in v.iteritems():
+                pdict[ETuple(k)] = val
 
         if force_int_exponents:
             new_pdict = {}
@@ -121,7 +122,7 @@ cdef class PolyDict:
                 for k in list(pdict):
                     if pdict[k] == zero:
                         del pdict[k]
-        self.__repn = pdict
+        self.__repn = <dict> pdict
         self.__zero = zero
 
     def __hash__(self):
@@ -494,6 +495,26 @@ cdef class PolyDict:
         # exponent sums is at most 1.
         return len(set(map(sum, self.__repn))) <= 1
 
+    def is_constant(self):
+        """
+        Return ``True`` if ``self`` is a constant and ``False`` otherwise.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import PolyDict
+            sage: f = PolyDict({(2,3):2, (1,2):3, (2,1):4})
+            sage: f.is_constant()
+            False
+            sage: g = PolyDict({(0,0):2})
+            sage: g.is_constant()
+            True
+            sage: h = PolyDict({})
+            sage: h.is_constant()
+            True
+        """
+        cdef int ell = len(self.__repn)
+        return ell == 0 or (ell == 1 and sum(sum(k) for k in self.__repn) == 0)
+
     def homogenize(PolyDict self, var):
         R = self.__repn
         H = {}
@@ -540,6 +561,13 @@ cdef class PolyDict:
             sage: R3.<xi, x> = R2[]
             sage: print(latex(xi*x))
             \xi x
+
+        TESTS:
+
+        Check that :trac:`29604` is fixed::
+
+            sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])
+            'x'
         """
         n = len(vars)
         poly = ""
@@ -550,13 +578,18 @@ cdef class PolyDict:
 
         E = sorted(self.__repn, **sort_kwargs)
 
+        if not E:
+            return "0"
         try:
-            pos_one = self.__zero.parent()(1)
+            ring = self.__repn[E[0]].parent()
+            pos_one = ring.one()
             neg_one = -pos_one
         except AttributeError:
-            # probably self.__zero is not a ring element
+            # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
+
+        is_characteristic_2 = bool(pos_one == neg_one)
 
         for e in E:
             c = self.__repn[e]
@@ -569,7 +602,7 @@ cdef class PolyDict:
                 # Next determine coefficient of multinomial
                 if len(multi) == 0:
                     multi = latex(c)
-                elif c == neg_one:
+                elif c == neg_one and not is_characteristic_2:
                     # handle -1 specially because it's a pain
                     if len(poly) > 0:
                         sign_switch = True
@@ -633,6 +666,18 @@ cdef class PolyDict:
             sage: f = PolyDict({(2,3):RIF(1/2,3/2), (1,2):RIF(-1,1)})
             sage: f.poly_repr(['x', 'y'])
             '1.?*x^2*y^3 + 0.?*x*y^2'
+
+        TESTS:
+
+        Check that :trac:`29604` is fixed::
+
+            sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])
+            'x'
+            sage: P.<x,y> = LaurentPolynomialRing(GF(2), 2)
+            sage: P.gens()
+            (x, y)
+            sage: -x - y
+            x + y
         """
         n = len(vars)
         poly = ""
@@ -642,11 +687,14 @@ cdef class PolyDict:
 
         E = sorted(self.__repn, **sort_kwargs)
 
+        if not E:
+            return "0"
         try:
-            pos_one = self.__zero.parent()(1)
+            ring = self.__repn[E[0]].parent()
+            pos_one = ring.one()
             neg_one = -pos_one
         except AttributeError:
-            # probably self.__zero is not a ring element
+            # probably self.__repn[E[0]] is not a ring element
             pos_one = 1
             neg_one = -1
 
@@ -992,25 +1040,6 @@ cdef class PolyDict:
             return r
         else:
             return None
-
-cdef class ETupleIter:
-    cdef int _i
-    cdef int _length
-    cdef object _data
-
-    def __init__(self, data, length):
-        self._data = data
-        self._length = length
-        self._i = -1
-
-    def __next__(self):
-        self._i = self._i + 1
-
-        if self._i == self._length:
-            self._i = -1
-            raise StopIteration
-
-        return self._data.get(self._i, 0)
 
 cdef inline bint dual_etuple_iter(ETuple self, ETuple other, size_t *ind1, size_t *ind2, size_t *index, int *exp1, int *exp2):
     """
@@ -1391,22 +1420,54 @@ cdef class ETuple:
     def __iter__(ETuple self):
         """
         x.__iter__() <==> iter(x)
+
+        TESTS::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: e = ETuple((4,0,0,2,0))
+            sage: list(e)
+            [4, 0, 0, 2, 0]
+
+        Check that :trac:`28178` is fixed::
+
+            sage: it = iter(e)
+            sage: iter(it) is it
+            True
         """
-        cdef size_t ind
-        # this is not particularly fast, but I doubt many people care
-        # if you do, feel free to tweak!
-        d = dict([(self._data[2*ind], self._data[2*ind+1]) for ind from 0<=ind<self._nonzero])
-        return ETupleIter(d, self._length)
+        cdef size_t i
+        cdef size_t ind = 0
+
+        for i in range(self._length):
+            if ind >= self._nonzero:
+                yield 0
+            elif self._data[2*ind] == i:
+                yield self._data[2*ind + 1]
+                ind += 1
+            else:
+                yield 0
 
     def __str__(ETuple self):
         return repr(self)
 
     def __repr__(ETuple self):
-        res = [0,]*self._length
-        cdef size_t ind = 0
-        for ind from 0 <= ind < self._nonzero:
-            res[self._data[2*ind]] = self._data[2*ind+1]
-        return str(tuple(res))
+        r"""
+        TESTS::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: ETuple((0,))
+            (0,)
+            sage: ETuple((1,))
+            (1,)
+            sage: ETuple((0,1,2))
+            (0, 1, 2)
+        """
+        if self._length == 1:
+            if self._nonzero:
+                return '(%d,)' % self._data[1]
+            else:
+                return '(0,)'
+        else:
+            return '(' + ', '.join(map(str, self)) + ')'
 
     def __reduce__(ETuple self):
         """
@@ -1661,6 +1722,45 @@ cdef class ETuple:
 
         return result
 
+    cpdef ETuple eadd_scaled(ETuple self, ETuple other, int scalar):
+        """
+        Vector addition of ``self`` with ``scalar * other``.
+
+        EXAMPLES::
+
+            sage: from sage.rings.polynomial.polydict import ETuple
+            sage: e = ETuple([1,0,2])
+            sage: f = ETuple([0,1,1])
+            sage: e.eadd_scaled(f, 3)
+            (1, 3, 5)
+        """
+        if self._length != other._length:
+            raise ArithmeticError
+
+        cdef size_t ind1 = 0
+        cdef size_t ind2 = 0
+        cdef size_t index
+        cdef int exp1
+        cdef int exp2
+        cdef int s  # sum
+        cdef size_t alloc_len = self._nonzero + other._nonzero  # we simply guesstimate the length -- there might be double the correct amount allocated -- who cares?
+        if alloc_len > self._length:
+            alloc_len = self._length
+        cdef ETuple result = <ETuple>self._new()
+        result._nonzero = 0  # we don't know the correct length quite yet
+        result._data = <int*>sig_malloc(sizeof(int)*alloc_len*2)
+        while dual_etuple_iter(self, other, &ind1, &ind2, &index, &exp1, &exp2):
+            exp2 *= scalar
+            s = exp1 + exp2
+            # Check for overflow and underflow
+            if (exp2 > 0 and s < exp1) or (exp2 < 0 and s > exp1):
+                raise OverflowError("exponent overflow (%s)" % (int(exp1)+int(exp2)))
+            if s != 0:
+                result._data[2*result._nonzero] = index
+                result._data[2*result._nonzero+1] = s
+                result._nonzero += 1
+        return result
+
     cpdef ETuple esub(ETuple self, ETuple other):
         """
         Vector subtraction of ``self`` with ``other``.
@@ -1692,7 +1792,7 @@ cdef class ETuple:
             # Check for overflow and underflow
             d = exp1 - exp2
             if (exp2 > 0 and d > exp1) or (exp2 < 0 and d < exp1):
-                raise OverflowError("Exponent overflow (%s)." % (int(exp1)-int(exp2)))
+                raise OverflowError("Exponent overflow (%s)" % (int(exp1)-int(exp2)))
             if d != 0:
                 result._data[2*result._nonzero] = index
                 result._data[2*result._nonzero+1] = d

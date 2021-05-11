@@ -1,5 +1,5 @@
 """
-Routines for Conway and pseudo-Conway polynomials.
+Routines for Conway and pseudo-Conway polynomials
 
 AUTHORS:
 
@@ -9,9 +9,6 @@ AUTHORS:
 
 - Peter Bruin
 """
-from __future__ import absolute_import
-import six
-from six.moves import range
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
@@ -195,17 +192,10 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         ALGORITHM:
 
-        Uses an algorithm described in [HL99]_, modified to find
+        Uses an algorithm described in [HL1999]_, modified to find
         pseudo-Conway polynomials rather than Conway polynomials.  The
         major difference is that we stop as soon as we find a
         primitive polynomial.
-
-        REFERENCE:
-
-        .. [HL99] \L. Heath and N. Loehr (1999).  New algorithms for
-           generating Conway polynomials over finite fields.
-           Proceedings of the tenth annual ACM-SIAM symposium on
-           discrete algorithms, pp. 429-437.
 
         EXAMPLES::
 
@@ -245,7 +235,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         # Construct a compatible element having order the lcm of orders
         q, x = xi.popitem()
         v = p**(n//q) - 1
-        for q, xitem in six.iteritems(xi):
+        for q, xitem in xi.items():
             w = p**(n//q) - 1
             g, alpha, beta = v.xgcd(w)
             x = x**beta * xitem**alpha
@@ -416,7 +406,7 @@ def _frobenius_shift(K, generators, check_only=False):
     from .integer_mod import mod
     for m in n.divisors():
         compatible[m] = {}
-    for q, x in six.iteritems(generators):
+    for q, x in generators.items():
         for m in (n//q).divisors():
             compatible[m][q] = x**((p**(n//q)-1)//(p**m-1))
     if check_only:
@@ -425,7 +415,7 @@ def _frobenius_shift(K, generators, check_only=False):
                 q, x = compatible[m].popitem()
             except KeyError:
                 break
-            for qq, xx in six.iteritems(compatible[m]):
+            for qq, xx in compatible[m].items():
                 assert x == xx
         return
     crt = {}

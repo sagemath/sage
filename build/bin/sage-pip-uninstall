@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# This command ensures that any previous installations of the same package
+# are uninstalled.
+
+# Only argument must be "." and will be ignored.
+if [ $# -gt 1 ]; then
+    echo >&2 "$0 requires . as only argument"
+    exit 1
+fi
+if [ "$1" != "." ]; then
+    echo >&2 "$0 requires . as final argument"
+    exit 1
+fi
+
+# Note: "sage-pip-uninstall" is meant to be run after $(PYTHON) has
+# been installed (either as an spkg or as a venv over a system python3).
+# It is then guaranteed by sage-env that PATH is set in a way that "python3"
+# refers to the correct python3.
+PYTHON=python3
+
+# The PIP variable is only used to determine the name of the lock file.
+PIP=pip3
+
+# For PEP 517 packages, do not try to uninstall
+if [ ! -f setup.py ]; then
+    exit 0
+fi
+
+# Find out the name of the package that we are installing
+name="$($PYTHON setup.py --name)"
+
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: could not determine package name"
+    exit 1
+fi
+
+if [ $(echo "$name" | wc -l) -gt 1 ]; then
+    name="$(echo "$name" | tail -1)"
+    echo >&2 "Warning: This package has a badly-behaved setup.py which outputs"
+    echo >&2 "more than the package name for 'setup.py --name'; using the last"
+    echo >&2 "line as the package name: $name"
+fi
+
+# We should avoid running pip while uninstalling a package because that
+# is prone to race conditions. Therefore, we use a lockfile while
+# running pip. This is implemented in the Python script sage-flock
+LOCK="$SAGE_LOCAL/var/lock/$PIP.lock"
+
+# Keep uninstalling as long as it succeeds
+while true; do
+    out=$(sage-flock -x $LOCK $PYTHON -m pip uninstall --disable-pip-version-check -y "$name" 2>&1)
+    if [ $? -ne 0 ]; then
+        # Uninstall failed
+        echo >&2 "$out"
+        exit 1
+    fi
+
+    # Uninstall succeeded, which may mean that the package was not
+    # installed to begin with.
+    if [[ "$out" != *"not installed" ]]; then
+        break
+    fi
+done

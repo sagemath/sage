@@ -1,0 +1,762 @@
+Patch to support installing correctly on Cygwin.
+
+This includes:
+
+* Installing DLLs under bin/ with a cyg- prefix instead of lib-
+* Creating and installing import libs (.dll.a files) in lib/
+
+For the time being versioning of import libs is not used, but it is
+for DLLs.
+
+This unfortunately requires a patch bomb since all of SuiteSparse's
+libraries have their own Makefiles even though they are near copies
+of each other with minor differences.
+
+See https://trac.sagemath.org/ticket/28829
+diff -ruN a/AMD/Lib/Makefile b/AMD/Lib/Makefile
+--- a/AMD/Lib/Makefile	2019-12-02 16:05:04.856283600 +0100
++++ b/AMD/Lib/Makefile	2019-12-02 18:12:09.753790100 +0100
+@@ -2,7 +2,7 @@
+ # AMD Lib/Makefile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libamd
++LIBRARY = amd
+ VERSION = 2.4.6
+ SO_VERSION = 2
+ 
+@@ -81,19 +81,22 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install AMD
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/amd.h $(INSTALL_INCLUDE)
+ 	$(CP) ../Doc/AMD_UserGuide.pdf $(INSTALL_DOC)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/AMD_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/amd.h
+ 	chmod 644 $(INSTALL_DOC)/AMD_UserGuide.pdf
+ 	chmod 644 $(INSTALL_DOC)/AMD_README.txt
+diff -ruN a/BTF/Lib/Makefile b/BTF/Lib/Makefile
+--- a/BTF/Lib/Makefile	2019-12-02 16:04:51.542288600 +0100
++++ b/BTF/Lib/Makefile	2019-12-02 18:12:16.908303300 +0100
+@@ -2,7 +2,7 @@
+ # BTF Lib/Makefile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libbtf
++LIBRARY = btf
+ VERSION = 1.2.6
+ SO_VERSION = 1
+ 
+@@ -66,18 +66,21 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install BTF
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/btf.h $(INSTALL_INCLUDE)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/BTF_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/btf.h
+ 	chmod 644 $(INSTALL_DOC)/BTF_README.txt
+ 
+diff -ruN a/CAMD/Lib/Makefile b/CAMD/Lib/Makefile
+--- a/CAMD/Lib/Makefile	2019-12-02 16:04:50.051276500 +0100
++++ b/CAMD/Lib/Makefile	2019-12-02 18:12:07.722810200 +0100
+@@ -2,7 +2,7 @@
+ # CAMD Lib/Makefile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libcamd
++LIBRARY = camd
+ VERSION = 2.4.6
+ SO_VERSION = 2
+ 
+@@ -62,19 +62,22 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install CAMD
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/camd.h $(INSTALL_INCLUDE)
+ 	$(CP) ../Doc/CAMD_UserGuide.pdf $(INSTALL_DOC)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/CAMD_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/camd.h
+ 	chmod 644 $(INSTALL_DOC)/CAMD_UserGuide.pdf
+ 	chmod 644 $(INSTALL_DOC)/CAMD_README.txt
+diff -ruN a/CCOLAMD/Lib/Makefile b/CCOLAMD/Lib/Makefile
+--- a/CCOLAMD/Lib/Makefile	2019-12-02 16:04:49.279277800 +0100
++++ b/CCOLAMD/Lib/Makefile	2019-12-02 18:12:22.610632700 +0100
+@@ -2,7 +2,7 @@
+ # CCOLAMD Lib/Makefile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libccolamd
++LIBRARY = ccolamd
+ VERSION = 2.9.6
+ SO_VERSION = 2
+ 
+@@ -49,18 +49,21 @@
+ 	- $(RM) -r $(PURGE)
+ 
+ # install CCOLAMD
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/ccolamd.h $(INSTALL_INCLUDE)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/CCOLAMD_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/ccolamd.h
+ 	chmod 644 $(INSTALL_DOC)/CCOLAMD_README.txt
+ 
+diff -ruN a/CHOLMOD/Lib/Makefile b/CHOLMOD/Lib/Makefile
+--- a/CHOLMOD/Lib/Makefile	2019-12-02 16:04:51.453293800 +0100
++++ b/CHOLMOD/Lib/Makefile	2019-12-02 18:12:16.627302900 +0100
+@@ -2,7 +2,7 @@
+ # CHOLMOD/Lib/Makefile: for compiling the CHOLMOD library
+ #===============================================================================
+ 
+-LIBRARY = libcholmod
++LIBRARY = cholmod
+ VERSION = 3.0.13
+ SO_VERSION = 3
+ 
+@@ -535,20 +535,23 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install CHOLMOD
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/cholmod*.h $(INSTALL_INCLUDE)
+ 	$(RM) $(INSTALL_INCLUDE)/cholmod_internal.h
+-	$(CP) ../Doc/CHOLMOD_UserGuide.pdf $(INSTALL_DOC)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/CHOLMOD_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++	$(CP) ../Doc/CHOLMOD_UserGuide.pdf $(INSTALL_DOC)
+ 	chmod 644 $(INSTALL_INCLUDE)/cholmod*.h
+ 	chmod 644 $(INSTALL_DOC)/CHOLMOD_UserGuide.pdf
+ 	chmod 644 $(INSTALL_DOC)/CHOLMOD_README.txt
+diff -ruN a/COLAMD/Lib/Makefile b/COLAMD/Lib/Makefile
+--- a/COLAMD/Lib/Makefile	2019-12-02 16:04:58.545276600 +0100
++++ b/COLAMD/Lib/Makefile	2019-12-02 18:12:17.545302000 +0100
+@@ -2,7 +2,7 @@
+ # COLAMD Lib/Makefile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libcolamd
++LIBRARY = colamd
+ VERSION = 2.9.6
+ SO_VERSION = 2
+ 
+@@ -49,18 +49,21 @@
+ 	- $(RM) -r $(PURGE)
+ 
+ # install COLAMD
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/colamd.h $(INSTALL_INCLUDE)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/COLAMD_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/colamd.h
+ 	chmod 644 $(INSTALL_DOC)/COLAMD_README.txt
+ 
+diff -ruN a/CSparse/Lib/Makefile b/CSparse/Lib/Makefile
+--- a/CSparse/Lib/Makefile	2019-12-02 16:04:58.059294300 +0100
++++ b/CSparse/Lib/Makefile	2019-12-02 18:12:09.158797700 +0100
+@@ -14,7 +14,7 @@
+ # install' in this Makefile only installs a static compiled library in
+ # CSparse/Lib.  It does not install it for system-wide usage.
+ 
+-LIBRARY = libcsparse
++LIBRARY = csparse
+ CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O
+ 
+ I = -I../Include
+diff -ruN a/CXSparse/Lib/Makefile b/CXSparse/Lib/Makefile
+--- a/CXSparse/Lib/Makefile	2019-12-02 16:04:49.462296500 +0100
++++ b/CXSparse/Lib/Makefile	2019-12-02 18:12:23.167631600 +0100
+@@ -2,7 +2,7 @@
+ # CXSparse Lib/Makefile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libcxsparse
++LIBRARY = cxsparse
+ VERSION = 3.2.0
+ SO_VERSION = 3
+ 
+@@ -113,18 +113,21 @@
+ 	- $(RM) -r $(PURGE)
+ 
+ # install CXSparse
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(CS)
++$(INSTALL_SO): $(CS)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/cs.h $(INSTALL_INCLUDE)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/CXSPARSE_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/cs.h
+ 	chmod 644 $(INSTALL_DOC)/CXSPARSE_README.txt
+ 
+diff -ruN a/CXSparse_newfiles/Lib/Makefile b/CXSparse_newfiles/Lib/Makefile
+--- a/CXSparse_newfiles/Lib/Makefile	2019-12-02 16:05:04.505277300 +0100
++++ b/CXSparse_newfiles/Lib/Makefile	2019-12-02 18:12:08.029790200 +0100
+@@ -2,7 +2,7 @@
+ # CXSparse Lib/Makefile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libcxsparse
++LIBRARY = cxsparse
+ VERSION = 3.2.0
+ SO_VERSION = 3
+ 
+@@ -113,18 +113,21 @@
+ 	- $(RM) -r $(PURGE)
+ 
+ # install CXSparse
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(CS)
++$(INSTALL_SO): $(CS)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/cs.h $(INSTALL_INCLUDE)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/CXSPARSE_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/cs.h
+ 	chmod 644 $(INSTALL_DOC)/CXSPARSE_README.txt
+ 
+diff -ruN a/GPUQREngine/Lib/Makefile b/GPUQREngine/Lib/Makefile
+--- a/GPUQREngine/Lib/Makefile	2019-12-02 16:04:50.027276700 +0100
++++ b/GPUQREngine/Lib/Makefile	2019-12-02 18:12:07.617802700 +0100
+@@ -2,7 +2,7 @@
+ # GPUQREngine/Lib/Makefile: for compiling the GPUQREngine library
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libGPUQREngine
++LIBRARY = GPUQREngine
+ VERSION = 1.0.5
+ SO_VERSION = 1
+ 
+@@ -129,17 +129,20 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install GPUQREngine.  Note that the include files are not installed.
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJS)
++$(INSTALL_SO): $(OBJS)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CXX) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
+-	$(CP) ../README.txt $(INSTALL_DOC)/GPUQRENGINE_README.txt
+ 	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
++	$(CP) ../README.txt $(INSTALL_DOC)/GPUQRENGINE_README.txt
+ 	chmod 644 $(INSTALL_DOC)/GPUQRENGINE_README.txt
+ 
+ # uninstall GPUQREngine
+diff -ruN a/KLU/Lib/Makefile b/KLU/Lib/Makefile
+--- a/KLU/Lib/Makefile	2019-12-02 16:04:51.621283700 +0100
++++ b/KLU/Lib/Makefile	2019-12-02 18:12:09.148789600 +0100
+@@ -2,7 +2,7 @@
+ # KLU Lib/Makefile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libklu
++LIBRARY = klu
+ VERSION = 1.3.8
+ SO_VERSION = 1
+ 
+@@ -263,19 +263,22 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install KLU
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/klu.h $(INSTALL_INCLUDE)
+ 	$(CP) ../Doc/KLU_UserGuide.pdf $(INSTALL_DOC)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/KLU_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/klu.h
+ 	chmod 644 $(INSTALL_DOC)/KLU_UserGuide.pdf
+ 	chmod 644 $(INSTALL_DOC)/KLU_README.txt
+diff -ruN a/LDL/Lib/Makefile b/LDL/Lib/Makefile
+--- a/LDL/Lib/Makefile	2019-12-02 16:04:51.803294200 +0100
++++ b/LDL/Lib/Makefile	2019-12-02 18:12:17.500303700 +0100
+@@ -2,7 +2,7 @@
+ # LDL Lib/Makefile 
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libldl
++LIBRARY = ldl
+ VERSION = 2.2.6
+ SO_VERSION = 2
+ 
+@@ -46,19 +46,22 @@
+ 	- $(RM) -r $(CLEAN)
+ 
+ # install LDL
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/ldl.h $(INSTALL_INCLUDE)
+ 	$(CP) ../Doc/ldl_userguide.pdf $(INSTALL_DOC)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/LDL_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/ldl.h
+ 	chmod 644 $(INSTALL_DOC)/ldl_userguide.pdf
+ 	chmod 644 $(INSTALL_DOC)/LDL_README.txt
+diff -ruN a/RBio/Lib/Makefile b/RBio/Lib/Makefile
+--- a/RBio/Lib/Makefile	2019-12-02 16:05:04.771295500 +0100
++++ b/RBio/Lib/Makefile	2019-12-02 18:12:09.016789800 +0100
+@@ -2,7 +2,7 @@
+ # RBio/Lib/Makefile: for compiling the RBio library
+ #===============================================================================
+ 
+-LIBRARY = librbio
++LIBRARY = rbio
+ VERSION = 2.2.6
+ SO_VERSION = 2
+ 
+@@ -60,18 +60,21 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install RBio
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/RBio.h $(INSTALL_INCLUDE)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/RBIO_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/RBio.h
+ 	chmod 644 $(INSTALL_DOC)/RBIO_README.txt
+ 
+diff -ruN a/SPQR/Lib/Makefile b/SPQR/Lib/Makefile
+--- a/SPQR/Lib/Makefile	2019-12-02 16:04:50.190277100 +0100
++++ b/SPQR/Lib/Makefile	2019-12-02 18:12:07.955789500 +0100
+@@ -2,7 +2,7 @@
+ # SuiteSparseQR/Lib/Makefile
+ #===============================================================================
+ 
+-LIBRARY = libspqr
++LIBRARY = spqr
+ VERSION = 2.0.9
+ SO_VERSION = 2
+ 
+@@ -242,22 +242,25 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install SPQR
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CXX) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/SuiteSparseQR.hpp $(INSTALL_INCLUDE)
+ 	$(CP) ../Include/SuiteSparseQR_C.h $(INSTALL_INCLUDE)
+ 	$(CP) ../Include/SuiteSparseQR_definitions.h $(INSTALL_INCLUDE)
+ 	$(CP) ../Include/spqr.hpp $(INSTALL_INCLUDE)
+ 	$(CP) ../Doc/spqr_user_guide.pdf $(INSTALL_DOC)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/SPQR_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/SuiteSparseQR.hpp
+ 	chmod 644 $(INSTALL_INCLUDE)/SuiteSparseQR_C.h
+ 	chmod 644 $(INSTALL_INCLUDE)/SuiteSparseQR_definitions.h
+diff -ruN a/SuiteSparse_config/Makefile b/SuiteSparse_config/Makefile
+--- a/SuiteSparse_config/Makefile	2019-12-02 16:05:03.939278100 +0100
++++ b/SuiteSparse_config/Makefile	2019-12-02 18:12:16.275303600 +0100
+@@ -6,7 +6,7 @@
+ export SUITESPARSE
+ 
+ # version of SuiteSparse_config is also version of SuiteSparse meta-package
+-LIBRARY = libsuitesparseconfig
++LIBRARY = suitesparseconfig
+ VERSION = 5.5.0
+ SO_VERSION = 5
+ 
+@@ -44,19 +44,23 @@
+ 	- $(RM) -r $(CLEAN)
+ 
+ # install SuiteSparse_config
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++# Likely redundant with the above but not on Cygwin
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
+-	$(CP) SuiteSparse_config.h $(INSTALL_INCLUDE)
+-	$(CP) README.txt $(INSTALL_DOC)/SUITESPARSECONFIG_README.txt
+ 	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 755 $(INSTALL_LIB)/$(SO_PLAIN)
++endif
++	$(CP) SuiteSparse_config.h $(INSTALL_INCLUDE)
++	$(CP) README.txt $(INSTALL_DOC)/SUITESPARSECONFIG_README.txt
+ 	chmod 644 $(INSTALL_INCLUDE)/SuiteSparse_config.h
+ 	chmod 644 $(INSTALL_DOC)/SUITESPARSECONFIG_README.txt
+ 
+diff -ruN a/SuiteSparse_config/SuiteSparse_config.mk b/SuiteSparse_config/SuiteSparse_config.mk
+--- a/SuiteSparse_config/SuiteSparse_config.mk	2019-12-02 16:05:03.944279100 +0100
++++ b/SuiteSparse_config/SuiteSparse_config.mk	2019-12-02 18:12:16.277302200 +0100
+@@ -153,6 +153,11 @@
+     # It places its shared *.so libraries in SuiteSparse/lib.
+     # Linux also requires the -lrt library (see below)
+     LDLIBS ?= -lm
++    # Note: Because suitesparse doesn't really do install staging properly
++    # (it just outputs final build artifacts directly to their install paths)
++    # we must add that path to our linker flags in order to link properly
++    # against built libraries; it might be better to fix the whole build
++    # system though).
+     LDFLAGS += -L$(INSTALL_LIB)
+ 
+     # NOTE: Use of the Intel MKL BLAS is strongly recommended.  The OpenBLAS can
+@@ -340,16 +346,15 @@
+     #---------------------------------------------------------------------------
+ 
+     # To disable these auto configurations, use 'make UNAME=custom'
+-
+     ifndef UNAME
+-        ifeq ($(OS),Windows_NT)
+-            # Cygwin Make on Windows has an $(OS) variable, but not uname.
+-            # Note that this option is untested.
+-            UNAME = Windows
+-        else
+-            # Linux and Darwin (Mac OSX) have been tested.
+-            UNAME := $(shell uname)
+-        endif
++        # Linux and Darwin (Mac OSX) have been tested.
++        UNAME := $(shell uname)
++    endif
++
++    # On Cygwin we'll typically have UNAME=CYGWIN<something> but just normalize
++    # to "CYGWIN"
++    ifeq ($(findstring CYGWIN,$(UNAME)),CYGWIN)
++        UNAME := Cygwin
+     endif
+ 
+     #---------------------------------------------------------------------------
+@@ -446,21 +451,23 @@
+ 
+ SO_OPTS = $(LDFLAGS)
+ 
+-ifeq ($(UNAME),Windows)
+-    # Cygwin Make on Windows (untested)
+-    AR_TARGET = $(LIBRARY).lib
+-    SO_PLAIN  = $(LIBRARY).dll
+-    SO_MAIN   = $(LIBRARY).$(SO_VERSION).dll
+-    SO_TARGET = $(LIBRARY).$(VERSION).dll
+-    SO_INSTALL_NAME = echo
++ifeq ($(UNAME),Cygwin)
++    # Cygwin Make on Windows
++    AR_TARGET = lib$(LIBRARY).a
++    SO_TARGET = cyg$(LIBRARY)-$(SO_VERSION).dll
++    IMPLIB = lib$(LIBRARY).dll.a
++    SO_OPTS += -shared -Wl,--no-undefined -Wl,--out-implib -Wl,$(INSTALL_LIB)/$(IMPLIB)
++    INSTALL_DLL := $(DESTDIR)$(INSTALL)/bin
++    INSTALL_SO = $(INSTALL_DLL)/$(SO_TARGET)
+ else
+     # Mac or Linux/Unix
+-    AR_TARGET = $(LIBRARY).a
++    AR_TARGET = lib$(LIBRARY).a
++    INSTALL_SO = $(INSTALL_LIB)/$(SO_TARGET)
+     ifeq ($(UNAME),Darwin)
+         # Mac
+-        SO_PLAIN  = $(LIBRARY).dylib
+-        SO_MAIN   = $(LIBRARY).$(SO_VERSION).dylib
+-        SO_TARGET = $(LIBRARY).$(VERSION).dylib
++        SO_PLAIN  = lib$(LIBRARY).dylib
++        SO_MAIN   = lib$(LIBRARY).$(SO_VERSION).dylib
++        SO_TARGET = lib$(LIBRARY).$(VERSION).dylib
+         SO_OPTS  += -dynamiclib -compatibility_version $(SO_VERSION) \
+                     -current_version $(VERSION) \
+                     -shared -undefined dynamic_lookup
+@@ -469,9 +476,9 @@
+         SO_INSTALL_NAME = install_name_tool -id
+     else
+         # Linux and other variants of Unix
+-        SO_PLAIN  = $(LIBRARY).so
+-        SO_MAIN   = $(LIBRARY).so.$(SO_VERSION)
+-        SO_TARGET = $(LIBRARY).so.$(VERSION)
++        SO_PLAIN  = lib$(LIBRARY).so
++        SO_MAIN   = lib$(LIBRARY).so.$(SO_VERSION)
++        SO_TARGET = lib$(LIBRARY).so.$(VERSION)
+         SO_OPTS  += -shared -Wl,-soname -Wl,$(SO_MAIN) -Wl,--no-undefined
+         # Linux/Unix *.so files can be moved without modification:
+         SO_INSTALL_NAME = echo
+diff -ruN a/SuiteSparse_config/xerbla/Makefile b/SuiteSparse_config/xerbla/Makefile
+--- a/SuiteSparse_config/xerbla/Makefile	2019-12-02 16:05:03.949290500 +0100
++++ b/SuiteSparse_config/xerbla/Makefile	2019-12-02 18:12:16.284303200 +0100
+@@ -16,9 +16,9 @@
+ all: library
+ 
+ ifeq ($(USE_FORTRAN),0)
+-    LIBRARY = libcerbla
++    LIBRARY = cerbla
+ else
+-    LIBRARY = libxerbla
++    LIBRARY = xerbla
+ endif
+ 
+ include ../SuiteSparse_config.mk
+@@ -44,19 +44,22 @@
+ 	- $(RM) xerbla.o
+ 
+ # install libcerbla / libxerbla
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(DEPENDS)
++$(INSTALL_SO): $(DEPENDS)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(COMPILE)
+ 	$(CC) $(SO_OPTS) xerbla.o -o $@
+ 	- $(RM) xerbla.o
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
+-	$(CP) xerbla.h $(INSTALL_INCLUDE)
+ 	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
++	$(CP) xerbla.h $(INSTALL_INCLUDE)
+ 	chmod 644 $(INSTALL_INCLUDE)/xerbla.h
+ 
+ # uninstall libcerbla / libxerbla
+diff -ruN a/SuiteSparse_GPURuntime/Lib/Makefile b/SuiteSparse_GPURuntime/Lib/Makefile
+--- a/SuiteSparse_GPURuntime/Lib/Makefile	2019-12-02 16:04:57.931276800 +0100
++++ b/SuiteSparse_GPURuntime/Lib/Makefile	2019-12-02 18:12:08.912790400 +0100
+@@ -2,7 +2,7 @@
+ # SuiteSparse_GPURuntime/Lib/Makfile
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libSuiteSparse_GPURuntime
++LIBRARY = SuiteSparse_GPURuntime
+ VERSION = 1.0.5
+ SO_VERSION = 1
+ 
+@@ -70,17 +70,20 @@
+ #-------------------------------------------------------------------------------
+ 
+ # install SuiteSparse_GPURuntime (just the library, not the include files)
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJS)
++$(INSTALL_SO): $(OBJS)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CXX) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
+-	$(CP) ../README.txt $(INSTALL_DOC)/GPURUNTIME_README.txt
+ 	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
++	$(CP) ../README.txt $(INSTALL_DOC)/GPURUNTIME_README.txt
+ 	chmod 644 $(INSTALL_DOC)/GPURUNTIME_README.txt
+ 
+ # uninstall SuiteSparse_GPURuntime
+diff -ruN a/UMFPACK/Lib/Makefile b/UMFPACK/Lib/Makefile
+--- a/UMFPACK/Lib/Makefile	2019-12-02 16:05:03.957276500 +0100
++++ b/UMFPACK/Lib/Makefile	2019-12-02 18:12:17.206308800 +0100
+@@ -2,7 +2,7 @@
+ # UMFPACK Makefile for compiling on Unix systems
+ #-------------------------------------------------------------------------------
+ 
+-LIBRARY = libumfpack
++LIBRARY = umfpack
+ VERSION = 5.7.9
+ SO_VERSION = 5
+ 
+@@ -288,20 +288,23 @@
+ 
+ #-------------------------------------------------------------------------------
+ # install UMFPACK
+-install: $(AR_TARGET) $(INSTALL_LIB)/$(SO_TARGET)
++install: $(AR_TARGET) $(INSTALL_SO)
+ 
+-$(INSTALL_LIB)/$(SO_TARGET): $(OBJ)
++$(INSTALL_SO): $(OBJ)
+ 	@mkdir -p $(INSTALL_LIB)
++	@mkdir -p $(dir $(INSTALL_SO))
+ 	@mkdir -p $(INSTALL_INCLUDE)
+ 	@mkdir -p $(INSTALL_DOC)
+ 	$(CC) $(SO_OPTS) $^ -o $@ $(LDLIBS)
++ifneq ($(UNAME),Cygwin)
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_PLAIN) )
+ 	( cd $(INSTALL_LIB) ; ln -sf $(SO_TARGET) $(SO_MAIN) )
++	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
++endif
+ 	$(CP) ../Include/umfpack*.h $(INSTALL_INCLUDE)
+ 	$(CP) ../Doc/UMFPACK_UserGuide.pdf $(INSTALL_DOC)
+ 	$(CP) ../Doc/UMFPACK_QuickStart.pdf $(INSTALL_DOC)
+ 	$(CP) ../README.txt $(INSTALL_DOC)/UMFPACK_README.txt
+-	chmod 755 $(INSTALL_LIB)/$(SO_TARGET)
+ 	chmod 644 $(INSTALL_INCLUDE)/umfpack*.h
+ 	chmod 644 $(INSTALL_DOC)/UMFPACK_UserGuide.pdf
+ 	chmod 644 $(INSTALL_DOC)/UMFPACK_QuickStart.pdf

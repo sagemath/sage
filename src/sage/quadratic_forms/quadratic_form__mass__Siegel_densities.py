@@ -9,8 +9,6 @@ Local Masses and Siegel Densities
 ##
 ##  Copyright by Jonathan Hanke 2007 <jonhanke@gmail.com>
 ########################################################################
-# python3
-from __future__ import division, print_function
 
 import copy
 

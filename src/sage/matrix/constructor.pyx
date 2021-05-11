@@ -1,6 +1,6 @@
 # cython: binding=True
 """
-General matrix Constructor
+General matrix Constructor and display options
 """
 
 #*****************************************************************************
@@ -14,9 +14,8 @@ General matrix Constructor
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 from .args cimport MatrixArgs
+from sage.structure.global_options import GlobalOptions
 
 
 def matrix(*args, **kwds):
@@ -81,6 +80,10 @@ def matrix(*args, **kwds):
     - ``space`` -- matrix space which will be the parent of the output
       matrix. This determines ``ring``, ``nrows``, ``ncols`` and
       ``sparse``.
+
+    - ``immutable`` -- (boolean) make the matrix immutable. By default,
+      the output matrix is mutable.
+
 
     OUTPUT:
 
@@ -228,6 +231,14 @@ def matrix(*args, **kwds):
         [x6 x7 x8]
         sage: det(A)
         -x2*x4*x6 + x1*x5*x6 + x2*x3*x7 - x0*x5*x7 - x1*x3*x8 + x0*x4*x8
+
+    ::
+
+        sage: M = Matrix([[1,2,3],[4,5,6],[7,8,9]], immutable=True)
+        sage: M[0] = [9,9,9]
+        Traceback (most recent call last):
+        ...
+        ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
 
     TESTS:
 
@@ -446,7 +457,7 @@ def matrix(*args, **kwds):
     Check conversion from numpy::
 
         sage: import numpy
-        sage: n = numpy.array([[numpy.complex(0,1),numpy.complex(0,2)],[3,4]],complex)
+        sage: n = numpy.array([[complex(0,1),complex(0,2)],[3,4]],complex)
         sage: m = matrix(n); m; m.parent()
         [1.0*I 2.0*I]
         [  3.0   4.0]
@@ -563,6 +574,13 @@ def matrix(*args, **kwds):
         sage: matrix(ZZ, [[0] for i in range(10^5)]).is_zero()
         True
 
+    Check :trac:`24459`::
+
+        sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
+        Traceback (most recent call last):
+        ...
+        RuntimeError...
+
     Test a simple ``_matrix_`` method. Note that we are ignoring
     ``base`` which is inefficient but allowed::
 
@@ -598,7 +616,6 @@ def matrix(*args, **kwds):
 
     Some calls using an iterator::
 
-        sage: from six.moves import range
         sage: matrix(QQ, 3, 6, range(18), sparse=true)
         [ 0  1  2  3  4  5]
         [ 6  7  8  9 10 11]
@@ -622,9 +639,41 @@ def matrix(*args, **kwds):
     - Jeroen Demeyer (2018-02-20): completely rewritten using
       :class:`MatrixArgs`, see :trac:`24742`
     """
-    return MatrixArgs(*args, **kwds).matrix()
-
+    immutable = kwds.pop('immutable', False)
+    M = MatrixArgs(*args, **kwds).matrix()
+    if immutable:
+        M.set_immutable()
+    return M
 
 Matrix = matrix
 
 from .special import *
+
+@matrix_method
+class options(GlobalOptions):
+    r"""
+    Global options for matrices.
+
+    @OPTIONS@
+
+    EXAMPLES::
+
+        sage: matrix.options.max_cols = 6
+        sage: matrix.options.max_rows = 3
+        sage: matrix(ZZ, 3, 6)
+        [0 0 0 0 0 0]
+        [0 0 0 0 0 0]
+        [0 0 0 0 0 0]
+        sage: matrix(ZZ, 3, 7)
+        3 x 7 dense matrix over Integer Ring...
+        sage: matrix(ZZ, 4, 6)
+        4 x 6 dense matrix over Integer Ring...
+        sage: matrix.options._reset()
+    """
+    NAME = 'Matrix'
+    max_cols = dict(default=49,
+                    description='maximum number of columns to display',
+                    checker=lambda val: val >= 0)
+    max_rows = dict(default=19,
+                    description='maximum number of rows to display',
+                    checker=lambda val: val >= 0)

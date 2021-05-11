@@ -1,16 +1,19 @@
 r"""
-Affine Weyl Groups
+Affine Weyl groups
 """
-#*****************************************************************************
+# *****************************************************************************
 #  Copyright (C) 2009    Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.weyl_groups import WeylGroups
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
+
+
 
 class AffineWeylGroups(Category_singleton):
     """
@@ -74,70 +77,78 @@ class AffineWeylGroups(Category_singleton):
         @cached_method
         def special_node(self):
             """
-            Returns the distinguished special node of the underlying
-            Dynkin diagram
+            Return the distinguished special node of the underlying
+            Dynkin diagram.
 
             EXAMPLES::
 
-                sage: W=WeylGroup(['A',3,1])
+                sage: W = WeylGroup(['A',3,1])
                 sage: W.special_node()
                 0
-
             """
             return self.cartan_type().special_node()
 
         def affine_grassmannian_elements_of_given_length(self, k):
             """
-            Returns the affine Grassmannian elements of length `k`, as a list.
+            Return the affine Grassmannian elements of length `k`.
+
+            This is returned as a finite enumerated set.
 
             EXAMPLES::
 
-                sage: W=WeylGroup(['A',3,1])
+                sage: W = WeylGroup(['A',3,1])
                 sage: [x.reduced_word() for x in W.affine_grassmannian_elements_of_given_length(3)]
                 [[2, 1, 0], [3, 1, 0], [2, 3, 0]]
 
             .. SEEALSO::
 
                 :meth:`AffineWeylGroups.ElementMethods.is_affine_grassmannian`
-
-            .. TODO:: should return an enumerated set, with iterator, ...
             """
-            if not k:
-                return [self.one()]
-            w = []
-            s = self.simple_reflections()
-            for x in self.affine_grassmannian_elements_of_given_length(k-1):
-                for i in x.descents(side="left", positive = True):
-                    y = s[i]*x
-                    if y not in w and y.is_affine_grassmannian():
-                        w.append(y)
-            return w
+            from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
+
+            def select_length(pair):
+                u, length = pair
+                if length == k:
+                    return u
+
+            def succ(pair):
+                u, length = pair
+                for i in u.descents(positive=True, side="left"):
+                    u1 = u.apply_simple_reflection(i, "left")
+                    if (length < k and i == u1.first_descent(side="left") and
+                            u1.is_affine_grassmannian()):
+                        yield (u1, length + 1)
+                return
+            return RecursivelyEnumeratedSet_forest(((self.one(), 0),), succ, algorithm='breadth',
+                                                   category=FiniteEnumeratedSets(),
+                                                   post_process=select_length)
 
     class ElementMethods:
         def is_affine_grassmannian(self):
             """
-            Tests whether ``self`` is affine Grassmannian
+            Test whether ``self`` is affine Grassmannian.
 
             An element of an affine Weyl group is *affine Grassmannian*
             if any of the following equivalent properties holds:
 
-             - all reduced words for self end with 0.
-             - self is the identity, or 0 is its single right descent.
-             - self is a minimal coset representative for W / cl W.
+            - all reduced words for ``self`` end with 0.
+            - ``self`` is the identity, or 0 is its single right descent.
+            - ``self`` is a minimal coset representative for W / cl W.
 
             EXAMPLES::
 
-                sage: W=WeylGroup(['A',3,1])
-                sage: w=W.from_reduced_word([2,1,0])
+                sage: W = WeylGroup(['A',3,1])
+                sage: w = W.from_reduced_word([2,1,0])
                 sage: w.is_affine_grassmannian()
                 True
-                sage: w=W.from_reduced_word([2,0])
+                sage: w = W.from_reduced_word([2,0])
                 sage: w.is_affine_grassmannian()
                 False
                 sage: W.one().is_affine_grassmannian()
                 True
             """
-            return self.descents() in [[], [self.parent().special_node()]]
+            D = self.descents()
+            return (not D) or D == [self.parent().special_node()]
 
         def affine_grassmannian_to_core(self):
             r"""
@@ -154,7 +165,7 @@ class AffineWeylGroups(Category_singleton):
 
             - a `(k+1)`-core
 
-            See also :meth:`affine_grassmannian_to_partition`.
+            .. SEEALSO:: :meth:`affine_grassmannian_to_partition`
 
             EXAMPLES::
 
@@ -171,23 +182,25 @@ class AffineWeylGroups(Category_singleton):
                 sage: w.affine_grassmannian_to_core()
                 Traceback (most recent call last):
                 ...
-                ValueError: Error! this only works on type 'A' affine Grassmannian elements
+                ValueError: this only works on type 'A' affine Grassmannian elements
             """
             from sage.combinat.partition import Partition
             from sage.combinat.core import Core
             if not self.is_affine_grassmannian() or not self.parent().cartan_type().letter == 'A':
-                raise ValueError("Error! this only works on type 'A' affine Grassmannian elements")
+                raise ValueError("this only works on type 'A' affine Grassmannian elements")
             out = Partition([])
             rword = self.reduced_word()
             kp1 = self.parent().n
             for i in range(len(rword)):
-                for c in (x for x in out.outside_corners() if (x[1]-x[0])%kp1 == rword[-i-1] ):
-                    out = out.add_cell(c[0],c[1])
-            return Core(out._list,kp1)
+                for c in out.outside_corners():
+                    if (c[1] - c[0]) % kp1 == rword[-i - 1]:
+                        out = out.add_cell(c[0], c[1])
+            return Core(out._list, kp1)
 
         def affine_grassmannian_to_partition(self):
             r"""
-            Bijection between affine Grassmannian elements of type `A_k^{(1)}` and `k`-bounded partitions.
+            Bijection between affine Grassmannian elements of type `A_k^{(1)}`
+            and `k`-bounded partitions.
 
             INPUT:
 
@@ -197,7 +210,7 @@ class AffineWeylGroups(Category_singleton):
 
             - `k`-bounded partition
 
-            See also :meth:`affine_grassmannian_to_core`.
+            .. SEEALSO:: :meth:`affine_grassmannian_to_core`
 
             EXAMPLES::
 
@@ -210,4 +223,3 @@ class AffineWeylGroups(Category_singleton):
                 True
             """
             return self.affine_grassmannian_to_core().to_bounded_partition()
-

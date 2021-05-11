@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Normal form games with N players.
 
@@ -612,9 +613,10 @@ REFERENCES:
 
 - [SLB2008]_
 
-AUTHOR:
+AUTHORS:
 
 - James Campbell and Vince Knight (06-2014): Original version
+
 - Tobenna P. Igwe: Constant-sum game solvers
 
 """
@@ -628,9 +630,8 @@ AUTHOR:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
-from collections import MutableMapping
+from collections.abc import MutableMapping
 from itertools import product
 from .parser import Parser
 from sage.misc.latex import latex
@@ -642,6 +643,7 @@ from sage.matrix.constructor import vector
 from sage.misc.temporary_file import tmp_filename
 from sage.numerical.mip import MixedIntegerLinearProgram
 from sage.misc.package import PackageNotFoundError
+from sage.cpython.string import bytes_to_str
 
 try:
     from gambit import Game
@@ -1538,7 +1540,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: cg = NormalFormGame([A])
             sage: cg.obtain_nash(algorithm='lp')
             [[(0.5, 0.5), (0.5, 0.5)]]
-            sage: cg.obtain_nash(algorithm='lp', solver='Coin') # optional - cbc
+            sage: cg.obtain_nash(algorithm='lp', solver='Coin') # optional - sage_numerical_backends_coin
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(1/2, 1/2), (1/2, 1/2)]]
@@ -1549,8 +1551,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = cg.obtain_nash(algorithm='lp', solver='glpk')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin') # optional - cbc
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - cbc
+            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin') # optional - sage_numerical_backends_coin
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - sage_numerical_backends_coin
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(2/3, 1/3), (2/3, 1/3)]]
@@ -1563,8 +1565,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = cg.obtain_nash(algorithm='lp', solver='glpk')
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne]
             [[[0.333333, 0.333333, 0.333333], [0.333333, 0.333333, 0.333333]]]
-            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin') # optional - cbc
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - cbc
+            sage: ne = cg.obtain_nash(algorithm='lp', solver='Coin') # optional - sage_numerical_backends_coin
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - sage_numerical_backends_coin
             [[[0.333333, 0.333333, 0.333333], [0.333333, 0.333333, 0.333333]]]
             sage: cg.obtain_nash(algorithm='lp', solver='PPL')
             [[(1/3, 1/3, 1/3), (1/3, 1/3, 1/3)]]
@@ -1763,11 +1765,12 @@ class NormalFormGame(SageObject, MutableMapping):
             process = Popen(['lrsnash', g1_name, g2_name],
                     stdout=PIPE,
                     stderr=PIPE)
-        except OSError:
-            from sage.misc.package import PackageNotFoundError
-            raise PackageNotFoundError("lrslib")
+        except OSError as e:
+            from sage.features.lrs import Lrs
+            from sage.features import FeatureNotPresentError
+            raise FeatureNotPresentError(Lrs(), reason=f'Calling lrsnash failed with {e}')
 
-        lrs_output = [row for row in process.stdout]
+        lrs_output = [bytes_to_str(row) for row in process.stdout]
         process.terminate()
 
         nasheq = Parser(lrs_output).format_lrs()
@@ -1840,7 +1843,7 @@ class NormalFormGame(SageObject, MutableMapping):
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: g._solve_LP('gambit') # optional - gambit
             [[(0.5, 0.5), (0.5, 0.5)]]
-            sage: g._solve_LP('Coin') # optional - cbc
+            sage: g._solve_LP('Coin') # optional - sage_numerical_backends_coin
             [[(0.5, 0.5), (0.5, 0.5)]]
             sage: g._solve_LP('PPL')
             [[(1/2, 1/2), (1/2, 1/2)]]
@@ -1852,8 +1855,8 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: ne = g._solve_LP('gambit') # optional - gambit
             sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - gambit
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
-            sage: ne = g._solve_LP('Coin') # optional - cbc
-            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - cbc
+            sage: ne = g._solve_LP('Coin') # optional - sage_numerical_backends_coin
+            sage: [[[round(el, 6) for el in v] for v in eq] for eq in ne] # optional - sage_numerical_backends_coin
             [[[0.666667, 0.333333], [0.666667, 0.333333]]]
             sage: g._solve_LP('PPL')
             [[(2/3, 1/3), (2/3, 1/3)]]
@@ -2071,7 +2074,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def _solve_indifference(self, support1, support2, M):
         r"""
-        For support1, retrns the strategy with support: support2 that makes the
+        For support1, returns the strategy with support: support2 that makes the
         column player indifferent for the utilities given by M.
 
         This is done by building the corresponding linear system.

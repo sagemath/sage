@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+echo Error: graphviz is not installed as a system package.
+echo Please install the system package recommended by ./configure
+exit 1

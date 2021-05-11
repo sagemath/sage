@@ -26,6 +26,7 @@ from sage.sets.family import Family
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.sets.non_negative_integers import NonNegativeIntegers
 
+
 class AskeyWilsonAlgebra(CombinatorialFreeModule):
     r"""
     The (universal) Askey-Wilson algebra.
@@ -88,7 +89,7 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
     INPUT:
 
     - ``R`` -- a commutative ring
-    - ``q`` -- (optional) the parameter `q`; must be invertable in ``R``
+    - ``q`` -- (optional) the parameter `q`; must be invertible in ``R``
 
     If ``q`` is not specified, then ``R`` is taken to be the base
     ring of a Laurent polynomial ring with variable `q`. Otherwise
@@ -270,14 +271,13 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
             sage: AW._repr_term((0,1,0,3,7,2))
             'B*a^3*b^7*g^2'
         """
-        ret = ''
-        def exp(l,e):
+        def exp(l, e):
             if e == 0:
                 return ''
             if e == 1:
                 return '*' + l
             return '*' + l + '^{}'.format(e)
-        ret = ''.join(exp(l,e) for l,e in zip(['A','B','C','a','b','g'], t))
+        ret = ''.join(exp(l, e) for l, e in zip(['A','B','C','a','b','g'], t))
         if not ret:
             return '1'
         if ret[0] == '*':
@@ -300,15 +300,14 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         """
         if sum(t) == 0:
             return '1'
-        ret = ''
-        def exp(l,e):
+        def exp(l, e):
             if e == 0:
                 return ''
             if e == 1:
                 return l
             return l + '^{{{}}}'.format(e)
-        var_names = ['A','B','C','\\alpha','\\beta','\\gamma']
-        return ''.join(exp(l,e) for l,e in zip(var_names, t))
+        var_names = ['A', 'B', 'C', '\\alpha', '\\beta', '\\gamma']
+        return ''.join(exp(l, e) for l, e in zip(var_names, t))
 
     def _repr_(self):
         r"""
@@ -758,7 +757,9 @@ class AskeyWilsonAlgebra(CombinatorialFreeModule):
         mu = la + inv
         nu = (self._q**2 + self._q**-2) * mu + mu**2
         nuI = M(nu)
-        category = Algebras(Rings().Commutative())
+        # After #29374 is fixed, the category can become
+        # Algebras(Rings().Commutative()) as it was before #29399.
+        category = Rings()
         return AlgebraMorphism(self, [q*A + q**-1*Ai, q*B + q**-1*Bi, q*C + q**-1*Ci,
                                       nuI, nuI, nuI],
                                codomain=M, category=category)

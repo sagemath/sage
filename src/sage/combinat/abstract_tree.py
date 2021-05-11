@@ -62,8 +62,6 @@ incoherent with the data structure.
 - Florent Hivert (2010-2011): initial revision
 - Frédéric Chapoton (2011): contributed some methods
 """
-# python3
-from __future__ import division, absolute_import
 
 from sage.structure.list_clone import ClonableArray
 from sage.rings.integer import Integer
@@ -822,7 +820,21 @@ class AbstractTree(object):
                    o
             sage: [T.node_number_at_depth(i) for i in range(6)]
             [1, 3, 4, 2, 1, 0]
+
+        TESTS:
+
+        Check that the empty tree has no nodes (:trac:`29134`)::
+
+            sage: T = BinaryTree()
+            sage: T
+            .
+            sage: T.is_empty()
+            True
+            sage: [T.node_number_at_depth(i) for i in range(3)]
+            [0, 0, 0]
         """
+        if self.is_empty():
+            return Integer(0)
         if depth == 0:
             return Integer(1)
         return sum(son.node_number_at_depth(depth - 1) for son in self)
@@ -1394,7 +1406,7 @@ class AbstractTree(object):
             raise ValueError("the width of the tree is too large")
         if self.node_number() == 1:
             return "0"
-        return "".join(["%x" % len(self)] + [u.to_hexacode() for u in self])
+        return ("%x" % len(self)) + "".join(u.to_hexacode() for u in self)
 
     def tree_factorial(self):
         r"""
@@ -1451,10 +1463,9 @@ class AbstractTree(object):
             \end{tikzpicture}}
         """
         ###############################################################################
-        # # use to load tikz in the preamble (one for *view* and one for *notebook*)
+        # load tikz in the preamble for *view*
         from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available("tikz")
-        latex.add_to_mathjax_avoid_list("tikz")
         ###############################################################################
         # latex environnement : TikZ
         begin_env = "\\begin{tikzpicture}[auto]\n"
@@ -1911,7 +1922,7 @@ class AbstractClonableTree(AbstractTree):
             sage: with x.clone() as x:
             ....:     x[0] = OrderedTree([[]])
             Traceback (most recent call last):
-            ....:
+            ...
             IndexError: list assignment index out of range
 
             sage: x = OrderedTree([]); x = OrderedTree([x,x]); x = OrderedTree([x,x]); x = OrderedTree([x,x])

@@ -1,3 +1,13 @@
+# distutils: sources = sage/rings/bernmm/bern_modp.cpp sage/rings/bernmm/bern_modp_util.cpp sage/rings/bernmm/bern_rat.cpp
+# distutils: libraries = NTL_LIBRARIES pthread gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: depends = sage/rings/bernmm/bern_modp.h sage/rings/bernmm/bern_modp_util.h sage/rings/bernmm/bern_rat.h
+# distutils: language = c++
+# distutils: define_macros = USE_THREADS=1 THREAD_STACK_SIZE=4096
+
 r"""
 Cython wrapper for bernmm library
 

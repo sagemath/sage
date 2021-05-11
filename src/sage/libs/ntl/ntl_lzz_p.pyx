@@ -1,7 +1,14 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 """
 ntl_lzz_p.pyx
 
-Wraps NTL's zz_p type for SAGE
+Wraps NTL's zz_p type for Sage
 
 NOTE: This file is essentially useless. While we provide
 this wrapper for consistency, this should never be used in
@@ -12,20 +19,19 @@ gains you get from working with longs will be TOTALLY
 destroyed by the overhead of having a wrapper.
 
 AUTHORS:
-   - Craig Citro
+
+- Craig Citro
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import absolute_import, division
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -164,7 +170,8 @@ cdef class ntl_zz_p(object):
         """
         For pickling.
 
-        TESTS:
+        TESTS::
+
             sage: f = ntl.zz_p(16,244)
             sage: loads(dumps(f)) == f
             True
@@ -251,9 +258,6 @@ cdef class ntl_zz_p(object):
         zz_p_div(q.x, self.x, (<ntl_zz_p>other).x)
         sig_off()
         return q
-
-    def __div__(self, other):
-        return self / other
 
     def __pow__(ntl_zz_p self, long n, ignored):
         """
@@ -422,11 +426,13 @@ cdef class ntl_zz_p(object):
         self.c.restore_c()
         zz_p_clear(self.x)
 
+
 def make_zz_p(val, context):
     """
     For unpickling.
 
-    TESTS:
+    TESTS::
+
         sage: f = ntl.zz_p(1, 12)
         sage: loads(dumps(f)) == f
         True

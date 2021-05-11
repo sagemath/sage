@@ -13,7 +13,6 @@ r"""
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import division
 
 from sage.misc.cachefunc import cached_function
 from sage.misc.all import prod
@@ -83,11 +82,19 @@ def q_int(n, q=None):
 
 
 def q_factorial(n, q=None):
-    """
-    Returns the `q`-analogue of the factorial `n!`.
+    r"""
+    Return the `q`-analogue of the factorial `n!`.
 
-    If `q` is unspecified, then it defaults to using the generator `q` for
-    a univariate polynomial ring over the integers.
+    This is the product
+
+    .. MATH::
+
+        [1]_q [2]_q \cdots [n]_q
+        = 1 \cdot (1+q) \cdot (1+q+q^2) \cdots (1+q+q^2+\cdots+q^{n-1}) .
+
+    If `q` is unspecified, then this function defaults to
+    using the generator `q` for a univariate polynomial
+    ring over the integers.
 
     EXAMPLES::
 
@@ -104,12 +111,19 @@ def q_factorial(n, q=None):
         sage: q_factorial(-2)
         Traceback (most recent call last):
         ...
-        ValueError: Argument (-2) must be a nonnegative integer.
+        ValueError: argument (-2) must be a nonnegative integer
+
+    TESTS::
+
+        sage: q_factorial(0).parent()
+        Univariate Polynomial Ring in q over Integer Ring
     """
-    if n in ZZ and n >= 0:
-        return prod(q_int(i, q) for i in range(1, n + 1))
-    else:
-        raise ValueError("Argument (%s) must be a nonnegative integer." % n)
+    if n in ZZ:
+        if n == 0:
+            return q_int(1, q)
+        elif n >= 1:
+            return prod(q_int(i, q) for i in range(1, n + 1))
+    raise ValueError("argument (%s) must be a nonnegative integer" % n)
 
 
 def q_binomial(n, k, q=None, algorithm='auto'):
@@ -296,7 +310,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
 
     AUTHORS:
 
-    - Frederic Chapoton, David Joyner and William Stein
+    - Frédéric Chapoton, David Joyner and William Stein
     """
     # sanity checks
     n = ZZ(n)
@@ -356,8 +370,8 @@ def q_binomial(n, k, q=None, algorithm='auto'):
                 return q_binomial(n, k)(q)
     if algorithm == 'cyclotomic':
         from sage.rings.polynomial.cyclotomic import cyclotomic_value
-        return prod(cyclotomic_value(d,q)
-                    for d in range(2,n+1)
+        return prod(cyclotomic_value(d, q)
+                    for d in range(2, n + 1)
                     if (n//d) != (k//d) + ((n-k)//d))
     else:
         raise ValueError("unknown algorithm {!r}".format(algorithm))
@@ -433,6 +447,7 @@ def q_multinomial(seq, q=None, binomial_algorithm='auto'):
         binomials.append(q_binomial(partial_sum, elem, q=q, algorithm=binomial_algorithm))
     return prod(binomials)
 
+
 gaussian_multinomial = q_multinomial
 
 
@@ -461,23 +476,27 @@ def q_catalan_number(n, q=None):
         sage: q_catalan_number(-2)
         Traceback (most recent call last):
         ...
-        ValueError: Argument (-2) must be a nonnegative integer.
+        ValueError: argument (-2) must be a nonnegative integer
 
     TESTS::
 
         sage: q_catalan_number(3).parent()
         Univariate Polynomial Ring in q over Integer Ring
+        sage: q_catalan_number(0).parent()
+        Univariate Polynomial Ring in q over Integer Ring
     """
-    if n in ZZ and n >= 0:
-        return (prod(q_int(j, q) for j in range(n + 2, 2 * n + 1)) //
-                prod(q_int(j, q) for j in range(2, n + 1)))
-    else:
-        raise ValueError("Argument (%s) must be a nonnegative integer." % n)
+    if n in ZZ:
+        if n in {0, 1}:
+            return q_int(1, q)
+        elif n >= 2:
+            return (prod(q_int(j, q) for j in range(n + 2, 2 * n + 1)) //
+                    prod(q_int(j, q) for j in range(2, n + 1)))
+    raise ValueError("argument (%s) must be a nonnegative integer" % n)
 
 
 def qt_catalan_number(n):
     """
-    Returns the `q,t`-Catalan number of index `n`.
+    Return the `q,t`-Catalan number of index `n`.
 
     EXAMPLES::
 
@@ -500,7 +519,7 @@ def qt_catalan_number(n):
         ValueError: Argument (-2) must be a nonnegative integer.
     """
     if n in ZZ and n >= 0:
-        ZZqt = ZZ['q','t']
+        ZZqt = ZZ['q', 't']
         d = {}
         for dw in DyckWords(n):
             tup = (dw.area(), dw.bounce())
@@ -577,7 +596,7 @@ def q_pochhammer(n, a, q=None):
     R = parent(q)
     one = R(1)
     if n < 0:
-        return R.prod(one / (one - a/q**-k) for k in range(1,-n+1))
+        return R.prod(one / (one - a/q**-k) for k in range(1, -n+1))
     return R.prod((one - a*q**k) for k in range(n))
 
 
@@ -883,6 +902,7 @@ def q_stirling_number1(n, k, q=None):
     return (q_stirling_number1(n - 1, k - 1, q=q) +
             q_int(n - 1, q=q) * q_stirling_number1(n - 1, k, q=q))
 
+
 @cached_function
 def q_stirling_number2(n, k, q=None):
     r"""
@@ -932,7 +952,6 @@ def q_stirling_number2(n, k, q=None):
     REFERENCES:
 
     - [Mil1978]_
-
     """
     if q is None:
         q = ZZ['q'].gen()

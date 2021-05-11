@@ -1,5 +1,5 @@
 """
-Abstract ANF to CNF Converter.
+Abstract ANF to CNF Converter
 
 All ANF to CNF converters must inherit from this class.
 

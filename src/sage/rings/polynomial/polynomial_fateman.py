@@ -5,17 +5,18 @@
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ################################################################################
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 
-# Faster than SAGE's
+# Faster than Sage's
 from math import log as pylog
 from math import ceil as pyceil
 
-def _mul_fateman_to_int2(f_list,g_list):
+
+def _mul_fateman_to_int2(f_list, g_list):
     """
     Convert a polynomial to an integer by evaluating it
     INPUT: p, a list of integers
@@ -24,7 +25,8 @@ def _mul_fateman_to_int2(f_list,g_list):
     max_coeff_f = max([abs(i) for i in f_list])
     max_coeff_g = max([abs(i) for i in g_list])
     b = (1+min(len(f_list),len(g_list)))*max_coeff_f*max_coeff_g
-    return int(pyceil(pylog(b,2)))
+    return int(pyceil(pylog(b, 2)))
+
 
 def _mul_fateman_to_poly(number,padding):
     """

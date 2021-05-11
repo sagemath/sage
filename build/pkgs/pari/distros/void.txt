@@ -1,0 +1,6 @@
+pari
+pari-devel
+pari-elldata
+pari-galdata
+pari-galpol
+pari-seadata

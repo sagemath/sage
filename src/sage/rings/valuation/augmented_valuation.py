@@ -143,15 +143,15 @@ Augmentations are described originally in [Mac1936I]_ and [Mac1936II]_. An
 overview can also be found in Chapter 4 of [Rüt2014]_.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from itertools import islice
 
 from .inductive_valuation import _lift_to_maximal_precision
 from .inductive_valuation import FinalInductiveValuation, NonFinalInductiveValuation, FiniteInductiveValuation, InfiniteInductiveValuation, InductiveValuation
@@ -250,13 +250,15 @@ class AugmentedValuationFactory(UniqueFactory):
         else:
             return parent.__make_element_class__(InfiniteAugmentedValuation)(parent, base_valuation, phi, mu)
 
+        
 AugmentedValuation = AugmentedValuationFactory("sage.rings.valuation.augmented_valuation.AugmentedValuation")
+
 
 class AugmentedValuation_base(InductiveValuation):
     r"""
     An augmented valuation is a discrete valuation on a polynomial ring. It
     extends another discrete valuation `v` by setting the valuation of a
-    polynomial `f` to the minumum of `v(f_i)i\mu` when writing `f=\sum_i
+    polynomial `f` to the minimum of `v(f_i)i\mu` when writing `f=\sum_i
     f_i\phi^i`.
 
     INPUT:
@@ -1083,6 +1085,18 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
             sage: w.lift(w.residue_ring().gen())
             (1 + O(2^10))*x
 
+        TESTS:
+
+        Verify that :trac:`30305` has been resolved::
+
+            sage: R.<T> = QQ[]
+            sage: K.<zeta> = NumberField(T^2 + T + 1)
+            sage: R.<x> = K[]
+            sage: v0 = GaussValuation(R, valuations.TrivialValuation(K))
+            sage: v = v0.augmentation(x^2 + x + 2, 1)
+            sage: v.lift(v.reduce(x)) == x
+            True
+
         """
         F = self.residue_ring().coerce(F)
 
@@ -1096,10 +1110,14 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
         if self.psi().degree() > 1:
             from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
             from sage.rings.function_field.element import FunctionFieldElement_polymod
+            from sage.rings.number_field.number_field_element import NumberFieldElement_relative
+            from sage.all import PolynomialRing
             if isinstance(F, PolynomialQuotientRingElement):
                 G = F.lift()
             elif isinstance(F, FunctionFieldElement_polymod):
                 G = F.element()
+            elif isinstance(F, NumberFieldElement_relative):
+                G = PolynomialRing(F.base_ring(), 'x')(list(F))
             else:
                 G = F.polynomial()
             assert(G(self._residue_field_generator()) == F)
@@ -1271,7 +1289,6 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         if coefficients is None:
             coefficients = self.coefficients(f)
             if degree_bound is not None:
-                from itertools import islice
                 coefficients = islice(coefficients, 0, tau*degree_bound + 1, 1)
         coefficients = list(coefficients)
 
@@ -1582,7 +1599,7 @@ class NonFinalAugmentedValuation(AugmentedValuation_base, NonFinalInductiveValua
         ret = self._pow(self._Q_reciprocal(1), e, error=v*e, effective_degree=0)
 
         assert self.is_equivalence_unit(ret)
-        # esentially this checks that the reduction of Q'*phi^tau is the
+        # essentially this checks that the reduction of Q'*phi^tau is the
         # generator of the residue field
         assert self._base_valuation.reduce(self._Q(e)*ret)(self._residue_field_generator()).is_one()
 
@@ -1784,7 +1801,6 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
 
         if effective_degree is not None:
             if (QQ(f.degree()) / self.phi().degree()).ceil() > effective_degree:
-                from itertools import islice
                 f = self.domain().change_ring(self.domain())(list(islice(self.coefficients(f), 0, int(effective_degree) + 1, 1)))(self.phi())
 
         if f.degree() < self.phi().degree():
@@ -1816,7 +1832,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
             # speed up the surrounding calls drastically.
             for i in range(f.degree(), -1, -1):
                 j = i // self.phi().degree()
-                from itertools import islice
+
                 coefficients = list(islice(f.list(), int(j * self.phi().degree()),
                                            int(i) + 1))
                 g = self.domain()(coefficients)
@@ -1932,14 +1948,13 @@ class FinalFiniteAugmentedValuation(FiniteAugmentedValuation, FinalAugmentedValu
 class NonFinalFiniteAugmentedValuation(FiniteAugmentedValuation, NonFinalAugmentedValuation):
     r"""
     An augmented valuation which is discrete, i.e., which assigns a finite
-    valuation to its last key polynomial, and which can be augmented furter.
+    valuation to its last key polynomial, and which can be augmented further.
 
     EXAMPLES::
 
         sage: R.<x> = QQ[]
         sage: v = GaussValuation(R, QQ.valuation(2))
         sage: w = v.augmentation(x, 1)
-
     """
     def __init__(self, parent, v, phi, mu):
         r"""

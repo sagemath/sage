@@ -21,9 +21,8 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import integer_types
 
-from sage.misc.misc import repr_lincomb
+from sage.misc.repr import repr_lincomb
 from sage.structure.element import RingElement, AlgebraElement
 from sage.structure.parent_gens import localvars
 from sage.structure.richcmp import richcmp
@@ -31,9 +30,6 @@ from sage.rings.integer import Integer
 from sage.modules.free_module_element import FreeModuleElement
 from sage.monoids.free_monoid_element import FreeMonoidElement
 from sage.algebras.free_algebra_element import FreeAlgebraElement
-
-
-import six
 
 
 def is_FreeAlgebraQuotientElement(x):
@@ -79,7 +75,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         if isinstance(x, FreeAlgebraQuotientElement) and x.parent() == Q:
             self.__vector = Q.module()(x.vector())
             return
-        if isinstance(x, (Integer,) + integer_types):
+        if isinstance(x, (Integer, int)):
             self.__vector = Q.module().gen(0) * x
             return
         elif isinstance(x, FreeModuleElement) and x.parent() is Q.module():
@@ -93,7 +89,7 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         F = A.monoid()
         B = A.monomial_basis()
 
-        if isinstance(x, (Integer,) +  integer_types):
+        if isinstance(x, (Integer, int)):
             self.__vector = x*M.gen(0)
         elif isinstance(x, RingElement) and not isinstance(x, AlgebraElement) and x in R:
             self.__vector = x * M.gen(0)
@@ -111,11 +107,11 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             # Need to do more work here to include monomials not
             # represented in the monomial basis.
             self.__vector = M(0)
-            for m, c in six.iteritems(x._FreeAlgebraElement__monomial_coefficients):
+            for m, c in x._FreeAlgebraElement__monomial_coefficients.items():
                 self.__vector += c*M.gen(B.index(m))
         elif isinstance(x, dict):
             self.__vector = M(0)
-            for m, c in six.iteritems(x):
+            for m, c in x.items():
                 self.__vector += c*M.gen(B.index(m))
         elif isinstance(x, AlgebraElement) and x.parent().ambient_algebra() is A:
             self.__vector = x.ambient_algebra_element().vector()

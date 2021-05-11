@@ -254,8 +254,10 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         sage: h = CM(a+x); h.display()
         M --> R
         on U: (x, y) |--> a + x
+        on W: (u, v) |--> (a*u^2 + a*v^2 + u)/(u^2 + v^2)
         sage: h = CM(a+u); h.display()
         M --> R
+        on W: (x, y) |--> (a*x^2 + a*y^2 + x)/(x^2 + y^2)
         on V: (u, v) |--> a + u
 
     If the symbolic expression involves coordinates of different charts,
@@ -442,34 +444,39 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: U = M.open_subset('U', coord_def={X: x>0})
             sage: CU = U.scalar_field_algebra()
             sage: fU = CU(f); fU
-            Scalar field on the Open subset U of the
-             2-dimensional topological manifold M
+            Scalar field f on the Open subset U of the 2-dimensional topological
+             manifold M
             sage: fU.display()
-            U --> R
-            (x, y) |--> y^2 + x
+            f: U --> R
+               (x, y) |--> y^2 + x
 
         """
+        try:
+            if coord_expression.is_trivial_zero():
+                return self.zero()
+            elif (coord_expression - 1).is_trivial_zero():
+                return self.one()
+        except AttributeError:
+            if coord_expression == 0:
+                return self.zero()
+            if coord_expression == 1:
+                return self.one()
         if isinstance(coord_expression, ScalarField):
             if self._domain.is_subset(coord_expression._domain):
                 # restriction of the scalar field to self._domain:
-                sexpress = {}
-                for chart, funct in coord_expression._express.items():
-                    for schart in self._domain.atlas():
-                        if schart in chart._subcharts:
-                            sexpress[schart] = funct.expr()
+                return coord_expression.restrict(self._domain)
+        else:
+            # Anything going wrong here should produce a readable error:
+            try:
+                # generic constructor:
                 resu = self.element_class(self,
-                                          coord_expression=sexpress, name=name,
-                                          latex_name=latex_name)
-            else:
+                                          coord_expression=coord_expression,
+                                          name=name, latex_name=latex_name,
+                                          chart=chart)
+            except TypeError:
                 raise TypeError("cannot convert " +
                                 "{} to a scalar ".format(coord_expression) +
                                 "field on {}".format(self._domain))
-        else:
-            # generic constructor:
-            resu = self.element_class(self,
-                                      coord_expression=coord_expression,
-                                      name=name, latex_name=latex_name,
-                                      chart=chart)
         return resu
 
     def _an_element_(self):
@@ -501,6 +508,8 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: CM = M.scalar_field_algebra()
             sage: CM._coerce_map_from_(SR)
             True
+            sage: CM._coerce_map_from_(X.function_ring())
+            True
             sage: U = M.open_subset('U', coord_def={X: x>0})
             sage: CU = U.scalar_field_algebra()
             sage: CM._coerce_map_from_(CU)
@@ -509,6 +518,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             True
 
         """
+        from .chart_func import ChartFunctionRing
         if other is SR:
             return True  # coercion from the base ring (multiplication by the
                          # algebra unit, i.e. self.one())
@@ -516,6 +526,8 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
                          # the coercion map
         elif isinstance(other, ScalarFieldAlgebra):
             return self._domain.is_subset(other._domain)
+        elif isinstance(other, ChartFunctionRing):
+            return self._domain.is_subset(other._chart._domain)
         else:
             return False
 
@@ -584,6 +596,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
                                   coord_expression=coord_express,
                                   name='zero', latex_name='0')
         zero._is_zero = True
+        zero.set_immutable()
         return zero
 
     @cached_method
@@ -613,6 +626,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
         """
         coord_express = {chart: chart.one_function()
                          for chart in self._domain.atlas()}
-        return self.element_class(self,
-                                  coord_expression=coord_express,
-                                  name='1', latex_name='1')
+        one = self.element_class(self, coord_expression=coord_express,
+                                 name='1', latex_name='1')
+        one.set_immutable()
+        return one

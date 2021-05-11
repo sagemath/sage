@@ -1,0 +1,1 @@
+$(PYTHON) ../pkgs/sage_conf/src/sage_conf.py ../pkgs/sage_conf/src/setup.cfg ../pkgs/sage_conf/src/bin/sage-env-config | $(PYTHON_TOOLCHAIN)

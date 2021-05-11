@@ -83,6 +83,12 @@ AUTHORS:
 - Amanda Francis, Caitlin Lienkaemper, Kate Collins, Rajat Mittal (2019-03-10):
   methods for computing effective resistance
 
+- Amanda Francis, Caitlin Lienkaemper, Kate Collins, Rajat Mittal (2019-03-19):
+  most_common_neighbors and common_neighbors_matrix added.
+
+- Jean-Florent Raymond (2019-04): is_redundant, is_dominating,
+   private_neighbors
+
 Graph Format
 ------------
 
@@ -404,14 +410,10 @@ Methods
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
-import six
-from six.moves import range
+import itertools
 
 from copy import copy
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.superseded import deprecation
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 import sage.graphs.generic_graph_pyx as generic_graph_pyx
@@ -419,7 +421,12 @@ from sage.graphs.generic_graph import GenericGraph
 from sage.graphs.digraph import DiGraph
 from sage.graphs.independent_sets import IndependentSets
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
+from sage.graphs.views import EdgesView
 
+from sage.misc.lazy_import import lazy_import
+from sage.features import PythonModule
+lazy_import('sage.graphs.mcqd', ['mcqd'],
+            feature=PythonModule('sage.graphs.mcqd', spkg='mcqd'))
 
 class Graph(GenericGraph):
     r"""
@@ -882,18 +889,23 @@ class Graph(GenericGraph):
         ...
         ValueError: the adjacency matrix of a Seidel graph must have 0s on the main diagonal
 
-    From a a list of vertices and a list of edges::
+    From a list of vertices and a list of edges::
 
         sage: G = Graph([[1,2,3], [(1,2)]]); G
         Graph on 3 vertices
         sage: G.edges()
         [(1, 2, None)]
+
+    Check that :trac:`27505` is fixed::
+
+        sage: Graph(Graph().networkx_graph(), weighted=None, format='NX')
+        Graph on 0 vertices
     """
     _directed = False
 
     def __init__(self, data=None, pos=None, loops=None, format=None,
-                 weighted=None, implementation='c_graph',
-                 data_structure="sparse", vertex_labels=True, name=None,
+                 weighted=None, data_structure="sparse",
+                 vertex_labels=True, name=None,
                  multiedges=None, convert_empty_dict_labels_to_None=None,
                  sparse=True, immutable=False):
         """
@@ -994,6 +1006,16 @@ class Graph(GenericGraph):
             Traceback (most recent call last):
             ...
             ValueError: each column of a non-oriented incidence matrix must sum to 2, but column 0 does not
+
+        Vertex labels are retained in the graph (:trac:`14708`)::
+
+            sage: g = Graph()
+            sage: g.add_vertex(0)
+            sage: g.set_vertex(0, 'foo')
+            sage: g.get_vertices()
+            {0: 'foo'}
+            sage: Graph(g).get_vertices()
+            {0: 'foo'}
         """
         GenericGraph.__init__(self)
 
@@ -1005,12 +1027,6 @@ class Graph(GenericGraph):
                                  "'data_structure'. Please do not define both.")
             data_structure = "dense"
 
-        # Choice of the backend
-
-        if implementation != 'c_graph':
-            deprecation(18375,"The 'implementation' keyword is deprecated, "
-                        "and the graphs has been stored as a 'c_graph'")
-
         if multiedges or weighted:
             if data_structure == "dense":
                 raise RuntimeError("Multiedge and weighted c_graphs must be sparse.")
@@ -1018,7 +1034,7 @@ class Graph(GenericGraph):
             data_structure = 'static_sparse'
 
         # If the data structure is static_sparse, we first build a graph
-        # using the sparse data structure, then reencode the resulting graph
+        # using the sparse data structure, then re-encode the resulting graph
         # as a static sparse graph.
         from sage.graphs.base.sparse_graph import SparseGraphBackend
         from sage.graphs.base.dense_graph import DenseGraphBackend
@@ -1062,9 +1078,10 @@ class Graph(GenericGraph):
         if (format is None            and
             isinstance(data, list)    and
             len(data) == 2            and
-            isinstance(data[0], list) and # a list of two lists, the second of
-            isinstance(data[1], list) and # which contains iterables (the edges)
-            (not data[1] or callable(getattr(data[1][0], "__iter__", None)))):
+            isinstance(data[0], list) and    # a list of two lists, the second of
+            ((isinstance(data[1], list) and  # which contains iterables (the edges)
+              (not data[1] or callable(getattr(data[1][0], "__iter__", None)))) or
+             (isinstance(data[1], EdgesView)))):
             format = "vertices_and_edges"
 
         if format is None and isinstance(data, dict):
@@ -1072,7 +1089,7 @@ class Graph(GenericGraph):
                 format = 'dict_of_dicts'
             else:
                 val = next(iter(data.values()))
-                if isinstance(val, list):
+                if isinstance(val, (list, EdgesView)):
                     format = 'dict_of_lists'
                 elif isinstance(val, dict):
                     format = 'dict_of_dicts'
@@ -1100,8 +1117,8 @@ class Graph(GenericGraph):
             format = 'int'
             data = 0
 
-        # Input is a list of edges
-        if format is None and isinstance(data, list):
+        # Input is a list of edges or an EdgesView
+        if format is None and isinstance(data, (list, EdgesView)):
             format = "list_of_edges"
             if weighted is None:
                 weighted = False
@@ -1112,21 +1129,25 @@ class Graph(GenericGraph):
         if format == 'weighted_adjacency_matrix':
             if weighted is False:
                 raise ValueError("Format was weighted_adjacency_matrix but weighted was False.")
-            if weighted   is None: weighted   = True
-            if multiedges is None: multiedges = False
+            if weighted is None:
+                weighted = True
+            if multiedges is None:
+                multiedges = False
             format = 'adjacency_matrix'
 
         # At this point, 'format' has been set. We build the graph
 
         if format == 'graph6':
-            if weighted   is None: weighted   = False
+            if weighted is None:
+                weighted = False
             self.allow_loops(loops if loops else False, check=False)
             self.allow_multiple_edges(multiedges if multiedges else False, check=False)
             from .graph_input import from_graph6
             from_graph6(self, data)
 
         elif format == 'sparse6':
-            if weighted   is None: weighted   = False
+            if weighted is None:
+                weighted = False
             self.allow_loops(False if loops is False else True, check=False)
             self.allow_multiple_edges(False if multiedges is False else True, check=False)
             from .graph_input import from_sparse6
@@ -1149,22 +1170,26 @@ class Graph(GenericGraph):
             from .graph_input import from_seidel_adjacency_matrix
             from_seidel_adjacency_matrix(self, data)
         elif format == 'Graph':
-            if loops is None:      loops      = data.allows_loops()
-            if multiedges is None: multiedges = data.allows_multiple_edges()
-            if weighted is None:   weighted   = data.weighted()
+            if loops is None:
+                loops = data.allows_loops()
+            if multiedges is None:
+                multiedges = data.allows_multiple_edges()
+            if weighted is None:
+                weighted = data.weighted()
             self.allow_loops(loops, check=False)
             self.allow_multiple_edges(multiedges, check=False)
             if data.get_pos() is not None:
                 pos = data.get_pos()
             self.name(data.name())
-            self.add_vertices(data.vertex_iterator())
-            self.add_edges(data.edge_iterator(), loops=loops)
+            self.set_vertices(data.get_vertices())
+            data._backend.subgraph_given_vertices(self._backend, data)
         elif format == 'NX':
             if convert_empty_dict_labels_to_None is not False:
                 r = lambda x: None if x=={} else x
             else:
                 r = lambda x: x
             if weighted is None:
+                import networkx
                 if isinstance(data, networkx.Graph):
                     weighted = False
                     if multiedges is None:
@@ -1197,13 +1222,14 @@ class Graph(GenericGraph):
         elif format == 'rule':
             f = data[1]
             verts = data[0]
-            if loops is None: loops = any(f(v,v) for v in verts)
-            if weighted is None: weighted = False
+            if loops is None:
+                loops = any(f(v,v) for v in verts)
+            if weighted is None:
+                weighted = False
             self.allow_loops(loops, check=False)
             self.allow_multiple_edges(True if multiedges else False, check=False)
-            from itertools import combinations
             self.add_vertices(verts)
-            self.add_edges(e for e in combinations(verts,2) if f(*e))
+            self.add_edges(e for e in itertools.combinations(verts,2) if f(*e))
             if loops:
                 self.add_edges((v,v) for v in verts if f(v,v))
 
@@ -1231,28 +1257,15 @@ class Graph(GenericGraph):
                 self.add_vertices(range(data))
 
         elif format == 'list_of_edges':
-            self.allow_multiple_edges(False if multiedges is False else True, check=False)
-            self.allow_loops(False if loops is False else True, check=False)
+            self.allow_multiple_edges(True if multiedges else False,
+                                      check=False)
+            self.allow_loops(True if loops else False, check=False)
             self.add_edges(data)
-            if multiedges is not True and self.has_multiple_edges():
-                deprecation(15706, "You created a graph with multiple edges "
-                            "from a list. Please set 'multiedges' to 'True' "
-                            "when you do so, as in the future the default "
-                            "behaviour will be to ignore those edges")
-            elif multiedges is None:
-                self.allow_multiple_edges(False, check=False)
-
-            if loops is not True and self.has_loops():
-                deprecation(15706, "You created a graph with loops from a list. "+
-                            "Please set 'loops' to 'True' when you do so, as in "+
-                            "the future the default behaviour will be to ignore "+
-                            "those edges")
-            elif loops is None:
-                self.allow_loops(False, check=False)
         else:
             raise ValueError("Unknown input format '{}'".format(format))
 
-        if weighted   is None: weighted   = False
+        if weighted is None:
+            weighted = False
         self._weighted = getattr(self, '_weighted', weighted)
 
         self._pos = copy(pos)
@@ -1359,6 +1372,32 @@ class Graph(GenericGraph):
             sage: H = Graph(_)
             sage: H.order(), H.size()
             (1, 2)
+
+        Sparse6 encoding of canonical graph is unique (:trac:`31026`)::
+
+            sage: G = Graph([(0,1),(1,2),(2,3),(3,0),(0,2)])
+            sage: H = Graph([(0,1),(1,2),(2,3),(3,0),(1,3)])
+            sage: G == H
+            False
+            sage: G.is_isomorphic(H)
+            True
+            sage: G.sparse6_string() == H.sparse6_string()
+            False
+            sage: G_ = G.canonical_label()
+            sage: H_ = H.canonical_label()
+            sage: G_ == H_
+            True
+            sage: G_.sparse6_string() == H_.sparse6_string()
+            True
+
+        The method can handle vertices with different types (:trac:`31026`)::
+
+            sage: G = Graph([(1, 'a')])
+            sage: H = Graph(G.sparse6_string())
+            sage: G.is_isomorphic(H)
+            True
+            sage: set(G) == set(H)
+            False
         """
         n = self.order()
         if not n:
@@ -1368,7 +1407,11 @@ class Graph(GenericGraph):
         if n == 1:
             s = '0' * self.size()
         else:
-            v_to_int = {v:i for i,v in enumerate(self)}
+            try:
+                V = sorted(self)
+            except TypeError:
+                V = self
+            v_to_int = {v:i for i,v in enumerate(V)}
             edges = [sorted((v_to_int[u], v_to_int[v])) for u,v in self.edge_iterator(labels=False)]
             edges.sort(key=lambda e: (e[1], e[0])) # reverse lexicographic order
 
@@ -1419,105 +1462,6 @@ class Graph(GenericGraph):
             False
         """
         return False
-
-
-    @doc_index("Connectivity, orientations, trees")
-    def spanning_trees(self):
-        """
-        Returns a list of all spanning trees.
-
-        If the graph is disconnected, returns the empty list.
-
-        Uses the Read-Tarjan backtracking algorithm [RT75]_.
-
-        EXAMPLES::
-
-            sage: G = Graph([(1,2),(1,2),(1,3),(1,3),(2,3),(1,4)], multiedges=True)
-            sage: len(G.spanning_trees())
-            8
-            sage: G.spanning_trees_count()
-            8
-            sage: G = Graph([(1,2),(2,3),(3,1),(3,4),(4,5),(4,5),(4,6)], multiedges=True)
-            sage: len(G.spanning_trees())
-            6
-            sage: G.spanning_trees_count()
-            6
-
-        .. SEEALSO::
-
-            - :meth:`~sage.graphs.generic_graph.GenericGraph.spanning_trees_count`
-              -- counts the number of spanning trees.
-
-            - :meth:`~sage.graphs.graph.Graph.random_spanning_tree`
-              -- returns a random spanning tree.
-
-        TESTS:
-
-        Works with looped graphs::
-
-            sage: g = Graph({i:[i,(i+1)%6] for i in range(6)})
-            sage: g.spanning_trees()
-            [Graph on 6 vertices,
-             Graph on 6 vertices,
-             Graph on 6 vertices,
-             Graph on 6 vertices,
-             Graph on 6 vertices,
-             Graph on 6 vertices]
-
-        REFERENCES:
-
-        .. [RT75] Read, R. C. and Tarjan, R. E.
-          Bounds on Backtrack Algorithms for Listing Cycles, Paths, and Spanning Trees
-          Networks, Volume 5 (1975), numer 3, pages 237-252.
-        """
-
-        def _recursive_spanning_trees(G, forest):
-            """
-            Returns all the spanning trees of G containing forest
-            """
-            if not G.is_connected():
-                return []
-
-            if G.size() == forest.size():
-                return [forest.copy()]
-            else:
-                # Pick an edge e from G-forest
-                for e in G.edge_iterator(labels=False):
-                    if not forest.has_edge(e):
-                        break
-
-                # 1) Recursive call with e removed from G
-                G.delete_edge(e)
-                trees = _recursive_spanning_trees(G, forest)
-                G.add_edge(e)
-
-                # 2) Recursive call with e include in forest
-                #
-                # e=xy links the CC (connected component) of forest containing x
-                # with the CC containing y. Any other edge which does that
-                # cannot be added to forest anymore, and B is the list of them
-                c1 = forest.connected_component_containing_vertex(e[0])
-                c2 = forest.connected_component_containing_vertex(e[1])
-                G.delete_edge(e)
-                B = G.edge_boundary(c1, c2, sort=False)
-                G.add_edge(e)
-
-                # Actual call
-                forest.add_edge(e)
-                G.delete_edges(B)
-                trees.extend(_recursive_spanning_trees(G, forest))
-                G.add_edges(B)
-                forest.delete_edge(e)
-
-                return trees
-
-        if self.is_connected() and self.order():
-            forest = Graph()
-            forest.add_vertices(self.vertex_iterator())
-            forest.add_edges(self.bridges())
-            return _recursive_spanning_trees(Graph(self, immutable=False, loops=False), forest)
-        else:
-            return []
 
     ### Properties
     @doc_index("Graph properties")
@@ -1694,7 +1638,7 @@ class Graph(GenericGraph):
             sage: g.is_forest(certificate=True)
             (True, None)
             sage: (2*g + graphs.PetersenGraph() + g).is_forest(certificate=True)
-            (False, [62, 63, 68, 66, 61])
+            (False, [68, 66, 69, 67, 65])
         """
         connected_components = self.connected_components()
         number_of_connected_components = len(connected_components)
@@ -1763,6 +1707,9 @@ class Graph(GenericGraph):
         # Special cases
         if self.order() < 4:
             return True
+
+        if self.size() > 3 * (self.order() - 1) / 2:
+            return False
 
         # Every cactus graph is outerplanar
         if not self.is_circular_planar():
@@ -2271,7 +2218,7 @@ class Graph(GenericGraph):
 
         Even-hole-free graphs always contain a bisimplicial vertex, which
         ensures that their chromatic number is at most twice their clique number
-        [ABCHRS08]_.
+        [ACHRS2008]_.
 
         INPUT:
 
@@ -2330,13 +2277,6 @@ class Graph(GenericGraph):
             ....:       isinstance(Graph(x).is_even_hole_free(certificate=True), Graph))
             sage: all( t(graphs.RandomBipartite(10, 10, .5)) for i in range(100) )
             True
-
-        REFERENCE:
-
-        .. [ABCHRS08] \L. Addario-Berry, M. Chudnovsky, F. Havet, B. Reed, P. Seymour
-          Bisimplicial vertices in even-hole-free graphs
-          Journal of Combinatorial Theory, Series B
-          vol 98, n.6 pp 1119-1164, 2008
         """
         girth = self.girth()
 
@@ -2376,7 +2316,7 @@ class Graph(GenericGraph):
         (resp. odd) if its length is even (resp. odd).
 
         It is interesting to notice that while it is polynomial to check whether
-        a graph has an odd hole or an odd antihole [CRST06]_, it is not known
+        a graph has an odd hole or an odd antihole [CCLSV2005]_, it is not known
         whether testing for one of these two cases independently is polynomial
         too.
 
@@ -2411,13 +2351,6 @@ class Graph(GenericGraph):
             sage: g = graphs.RandomIntervalGraph(20)
             sage: g.is_odd_hole_free()
             True
-
-        REFERENCES:
-
-        .. [CRST06] \M. Chudnovsky, G. Cornuejols, X. Liu, P. Seymour, K. Vuskovic
-          Recognizing berge graphs
-          Combinatorica vol 25, n 2, pages 143--186
-          2005
         """
         girth = self.odd_girth()
 
@@ -2447,14 +2380,14 @@ class Graph(GenericGraph):
         return True
 
     @doc_index("Graph properties")
-    def is_triangle_free(self, algorithm='bitset'):
+    def is_triangle_free(self, algorithm='dense_graph', certificate=False):
         r"""
-        Returns whether ``self`` is triangle-free
+        Check whether ``self`` is triangle-free
 
         INPUT:
 
-        - ``algorithm`` -- (default: ``'bitset'``) specifies the algorithm to
-          use among:
+        - ``algorithm`` -- (default: ``'dense_graph'``) specifies the algorithm
+          to use among:
 
           - ``'matrix'`` -- tests if the trace of the adjacency matrix is
             positive.
@@ -2463,6 +2396,13 @@ class Graph(GenericGraph):
             bitset operations to test if the input graph contains a
             triangle. This method is generally faster than standard matrix
             multiplication.
+
+          - ``'dense_graph'`` -- use the implementation of
+            :mod:`sage.graphs.base.static_dense_graph`
+
+        - ``certificate`` -- boolean (default: ``False``); whether to return a
+          triangle if one is found. This parameter is ignored when ``algorithm``
+          is ``'matrix'``.
 
         EXAMPLES:
 
@@ -2479,6 +2419,8 @@ class Graph(GenericGraph):
             True
             sage: G.is_triangle_free(algorithm='bitset')
             True
+            sage: G.is_triangle_free(algorithm='dense_graph')
+            True
 
         a tripartite graph, though, contains many triangles::
 
@@ -2487,6 +2429,16 @@ class Graph(GenericGraph):
             False
             sage: G.is_triangle_free(algorithm='bitset')
             False
+            sage: G.is_triangle_free(algorithm='dense_graph')
+            False
+
+        Asking for a certificate::
+
+            sage: K4 = graphs.CompleteGraph(4)
+            sage: K4.is_triangle_free(algorithm='dense_graph', certificate=True)
+            (False, [0, 1, 2])
+            sage: K4.is_triangle_free(algorithm='bitset', certificate=True)
+            (False, [0, 1, 2])
 
         TESTS:
 
@@ -2496,7 +2448,8 @@ class Graph(GenericGraph):
             ....:     G = graphs.RandomBarabasiAlbert(50,2)
             ....:     bm = G.is_triangle_free(algorithm='matrix')
             ....:     bb = G.is_triangle_free(algorithm='bitset')
-            ....:     if bm != bb:
+            ....:     bd = G.is_triangle_free(algorithm='dense_graph')
+            ....:     if bm != bb or bm != bd:
             ....:        print("That's not good!")
 
         Asking for an unknown algorithm::
@@ -2511,34 +2464,39 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().is_triangle_free()
             True
         """
-        if not self.order():
-            return True
+        if algorithm == 'dense_graph':
+            from sage.graphs.base.static_dense_graph import is_triangle_free
+            return is_triangle_free(self, certificate=certificate)
 
         if algorithm == 'bitset':
+            if self.order() < 3:
+                return (True, []) if certificate else True
             from sage.data_structures.bitset import Bitset
             N = self.order()
             vertex_to_int = {}
             B = {}
-            for i,u in enumerate(self):
+            for i, u in enumerate(self):
                 vertex_to_int[u] = i
                 B[u] = Bitset(capacity=N)
             # map adjacency to bitsets
-            for u,v in self.edge_iterator(labels=None):
-                B[u].add(vertex_to_int[v])
-                B[v].add(vertex_to_int[u])
-            # map lengths 2 paths to bitsets
-            BB = Bitset(capacity=N)
-            for u in self:
-                BB.clear()
-                for v in self:
-                    if B[u] & B[v]:
-                        BB.add(vertex_to_int[v])
-                # search for triangles
-                if B[u] & BB:
+            for u, v in self.edge_iterator(labels=None):
+                if u != v:
+                    B[u].add(vertex_to_int[v])
+                    B[v].add(vertex_to_int[u])
+            # Search for a triangle
+            for u, v in self.edge_iterator(labels=None):
+                BB = B[u] & B[v]
+                if BB:
+                    if certificate:
+                        for w in self.neighbor_iterator(u):
+                            if vertex_to_int[w] in BB:
+                                return False, [u, v, w]
                     return False
-            return True
+            return (True, []) if certificate else True
 
-        elif algorithm=='matrix':
+        elif algorithm == 'matrix':
+            if self.order() < 3:
+                return True
             return (self.adjacency_matrix()**3).trace() == 0
 
         else:
@@ -2554,7 +2512,7 @@ class Graph(GenericGraph):
         induce a complete graph, and those of `I` are an independent set.
 
         There is a simple test to check whether a graph is a split graph (see,
-        for instance, the book "Graph Classes, a survey" [GraphClasses]_ page
+        for instance, the book "Graph Classes, a survey" [BLS1999]_ page
         203) :
 
         Given the degree sequence `d_1 \geq ... \geq d_n` of `G`, a graph is a
@@ -2586,20 +2544,13 @@ class Graph(GenericGraph):
             sage: g.is_split()
             True
 
-        Another caracterisation of split graph states that a graph is a split
+        Another characterisation of split graph states that a graph is a split
         graph if and only if does not contain the 4-cycle, 5-cycle or `2K_2` as
         an induced subgraph. Hence for the above graph we have::
 
             sage: forbidden_subgraphs = [graphs.CycleGraph(4), graphs.CycleGraph(5), 2 * graphs.CompleteGraph(2)]
             sage: sum(g.subgraph_search_count(H,induced=True) for H in forbidden_subgraphs)
             0
-
-        REFERENCES:
-
-        .. [GraphClasses] \A. Brandstadt, VB Le and JP Spinrad
-          Graph classes: a survey
-          SIAM Monographs on Discrete Mathematics and Applications},
-          1999
         """
         self._scream_if_not_simple()
         # our degree sequence is numbered from 0 to n-1, so to avoid
@@ -2618,305 +2569,6 @@ class Graph(GenericGraph):
         return left == right
 
     @doc_index("Algorithmically hard stuff")
-    def treewidth(self, k=None, certificate=False, algorithm=None):
-        r"""
-        Computes the tree-width of `G` (and provides a decomposition)
-
-        INPUT:
-
-        - ``k`` -- integer (default: ``None``); indicates the width to be
-          considered. When ``k`` is an integer, the method checks that the graph
-          has treewidth `\leq k`. If ``k`` is ``None`` (default), the method
-          computes the optimal tree-width.
-
-        - ``certificate`` -- boolean (default: ``False``); whether to return the
-          tree-decomposition itself.
-
-        - ``algorithm`` -- whether to use ``"sage"`` or ``"tdlib"`` (requires
-          the installation of the 'tdlib' package). The default behaviour is to
-          use 'tdlib' if it is available, and Sage's own algorithm when it is
-          not.
-
-        OUTPUT:
-
-            ``g.treewidth()`` returns the treewidth of ``g``. When ``k`` is
-             specified, it returns ``False`` when no tree-decomposition of width
-             `\leq k` exists or ``True`` otherwise. When ``certificate=True``,
-             the tree-decomposition is also returned.
-
-        ALGORITHM:
-
-            This function virtually explores the graph of all pairs
-            ``(vertex_cut,cc)``, where ``vertex_cut`` is a vertex cut of the
-            graph of cardinality `\leq k+1`, and ``connected_component`` is a
-            connected component of the graph induced by ``G-vertex_cut``.
-
-            We deduce that the pair ``(vertex_cut,cc)`` is feasible with
-            tree-width `k` if ``cc`` is empty, or if a vertex ``v`` from
-            ``vertex_cut`` can be replaced with a vertex from ``cc``, such that
-            the pair ``(vertex_cut+v,cc-v)`` is feasible.
-
-        .. NOTE::
-
-            The implementation would be much faster if ``cc``, the argument of the
-            recursive function, was a bitset. It would also be very nice to not copy
-            the graph in order to compute connected components, for this is really a
-            waste of time.
-
-        .. SEEALSO::
-
-            :meth:`~sage.graphs.graph_decompositions.vertex_separation.path_decomposition`
-            computes the pathwidth of a graph. See also the
-            :mod:`~sage.graphs.graph_decompositions.vertex_separation` module.
-
-        EXAMPLES:
-
-        The PetersenGraph has treewidth 4::
-
-            sage: graphs.PetersenGraph().treewidth()
-            4
-            sage: graphs.PetersenGraph().treewidth(certificate=True)
-            Tree decomposition: Graph on 6 vertices
-
-        The treewidth of a 2d grid is its smallest side::
-
-            sage: graphs.Grid2dGraph(2,5).treewidth()
-            2
-            sage: graphs.Grid2dGraph(3,5).treewidth()
-            3
-
-        TESTS::
-
-            sage: g = graphs.PathGraph(3)
-            sage: g.treewidth()
-            1
-            sage: g = 2*graphs.PathGraph(3)
-            sage: g.treewidth()
-            1
-            sage: g.treewidth(certificate=True)
-            Tree decomposition: Graph on 4 vertices
-            sage: g.treewidth(2)
-            True
-            sage: g.treewidth(1)
-            True
-            sage: Graph(1).treewidth()
-            0
-            sage: Graph(0).treewidth()
-            -1
-            sage: graphs.PetersenGraph().treewidth(k=2)
-            False
-            sage: graphs.PetersenGraph().treewidth(k=6)
-            True
-            sage: graphs.PetersenGraph().treewidth(certificate=True).is_tree()
-            True
-            sage: graphs.PetersenGraph().treewidth(k=3,certificate=True)
-            False
-            sage: graphs.PetersenGraph().treewidth(k=4,certificate=True)
-            Tree decomposition: Graph on 6 vertices
-
-        All edges do appear (:trac:`17893`)::
-
-            sage: from itertools import combinations
-            sage: g = graphs.PathGraph(10)
-            sage: td = g.treewidth(certificate=True)
-            sage: for bag in td:
-            ....:    g.delete_edges(list(combinations(bag,2)))
-            sage: g.size()
-            0
-
-        :trac:`19358`::
-
-            sage: g = Graph()
-            sage: for i in range(3):
-            ....:     for j in range(2):
-            ....:         g.add_path([i,(i,j),(i+1)%3])
-            sage: g.treewidth()
-            2
-
-        The decomposition is a tree (:trac:`23546`)::
-
-            sage: g = Graph({0:[1,2], 3:[4,5]})
-            sage: t = g.treewidth(certificate=True)
-            sage: t.is_tree()
-            True
-            sage: vertices = set()
-            sage: for s in t.vertices():
-            ....:     vertices = vertices.union(s)
-            sage: vertices == set(g.vertices())
-            True
-
-        Trivially true::
-
-            sage: graphs.PetersenGraph().treewidth(k=35)
-            True
-            sage: graphs.PetersenGraph().treewidth(k=35,certificate=True)
-            Tree decomposition: Graph on 1 vertex
-
-        Bad input:
-
-            sage: graphs.PetersenGraph().treewidth(k=-3)
-            Traceback (most recent call last):
-            ...
-            ValueError: k(=-3) must be a nonnegative integer
-        """
-        g = self
-
-        # Check Input
-        if algorithm is None or algorithm == 'tdlib':
-            try:
-                import sage.graphs.graph_decompositions.tdlib as tdlib
-                tdlib_found = True
-            except ImportError:
-                tdlib_found = False
-
-        elif algorithm != "sage":
-            raise ValueError("'algorithm' must be equal to 'tdlib', 'sage', or None")
-
-        if algorithm is None and tdlib_found:
-            algorithm = 'tdlib'
-        else:
-            algorithm = 'sage'
-
-        if k is not None and k < 0:
-            raise ValueError("k(={}) must be a nonnegative integer".format(k))
-
-        # Stupid cases
-        if not g.order():
-            if certificate: return Graph()
-            elif k is None: return -1
-            else:           return True
-
-        if k is not None and k >= g.order() - 1:
-            if certificate:
-                from sage.sets.set import Set
-                return Graph({Set(g): []}, name="Tree decomposition")
-            return True
-
-        # TDLIB
-        if algorithm == 'tdlib':
-            if not tdlib_found:
-                from sage.misc.package import PackageNotFoundError
-                raise PackageNotFoundError("tdlib")
-
-            T = tdlib.treedecomposition_exact(g, -1 if k is None else k)
-            width = tdlib.get_width(T)
-
-            if certificate:
-                return T if (k is None or width <= k) else False
-            elif k is None:
-                return width
-            else:
-                return width <= k
-
-        # Disconnected cases
-        if not g.is_connected():
-            if not certificate:
-                if k is None:
-                    return max(cc.treewidth() for cc in g.connected_components_subgraphs())
-                else:
-                    return all(cc.treewidth(k) for cc in g.connected_components_subgraphs())
-            else:
-                T = [cc.treewidth(certificate=True) for cc in g.connected_components_subgraphs()]
-                tree = Graph([sum([list(t) for t in T], []),
-                              sum([t.edges(labels=False, sort=False) for t in T], [])],
-                             format='vertices_and_edges', name="Tree decomposition")
-                v = next(T[0].vertex_iterator())
-                for t in T[1:]:
-                    tree.add_edge(next(t.vertex_iterator()),v)
-                return tree
-
-        # Forcing k to be defined
-        if k is None:
-            for i in range(max(0, g.clique_number() - 1, min(g.degree())), g.order()+1):
-                ans = g.treewidth(k=i, certificate=certificate)
-                if ans:
-                    return ans if certificate else i
-
-        # This is the recursion described in the method's documentation. All
-        # computations are cached, and depends on the pair ``cut,
-        # connected_component`` only.
-        #
-        # It returns either a boolean or the corresponding tree-decomposition,
-        # as a list of edges between vertex cuts (as it is done for the complete
-        # tree-decomposition at the end of the main function.
-        from sage.misc.cachefunc import cached_function
-        @cached_function
-        def rec(cut, cc):
-            # Easy cases
-            if len(cut) > k:
-                return False
-            if len(cc) + len(cut) <= k + 1:
-                return [(cut, cut.union(cc))] if certificate else True
-
-            # We explore all possible extensions of the cut
-            for v in cc:
-
-                # New cuts and connected components, with v respectively added
-                # and removed
-                cutv = cut.union([v])
-                ccv = cc.difference([v])
-
-                # The values returned by the recursive calls.
-                sons = []
-
-                # Removing v may have disconnected cc. We iterate on its
-                # connected components
-                for cci in g.subgraph(ccv).connected_components(sort=False):
-
-                    # The recursive subcalls. We remove on-the-fly the vertices
-                    # from the cut which play no role in separating the
-                    # connected component from the rest of the graph.
-                    reduced_cut = frozenset([x for x in cutv if any(xx in cci for xx in g.neighbor_iterator(x))])
-                    son = rec(reduced_cut, frozenset(cci))
-                    if not son:
-                        break
-
-                    if certificate:
-                        sons.extend(son)
-                        sons.append((cut, cutv))
-                        sons.append((cutv, reduced_cut))
-
-                # Weird Python syntax which is useful once in a lifetime : if break
-                # was never called in the loop above, we return "sons".
-                else:
-                    return sons if certificate else True
-
-            return False
-
-        # Main call to rec function, i.e. rec({v}, V-{v})
-        V = list(g)
-        v = frozenset([V.pop()])
-        TD = rec(v, frozenset(V))
-
-        if TD is False:
-            return False
-
-        if not certificate:
-            return True
-
-        # Building the Tree-Decomposition graph. Its vertices are cuts of the
-        # decomposition, and there is an edge from a cut C1 to a cut C2 if C2 is an
-        # immediate subcall of C1
-        from sage.sets.set import Set
-        G = Graph(name="Tree decomposition")
-        G.add_edges(((Set(x), Set(y)) for x,y in TD), loops=False)
-
-        # The Tree-Decomposition contains a lot of useless nodes.
-        #
-        # We merge all edges between two sets S,S' where S is a subset of S'
-        changed = True
-        while changed:
-            changed = False
-            for v in G.vertices(sort=False):
-                for u in G.neighbor_iterator(v):
-                    if u.issuperset(v):
-                        G.merge_vertices([u, v]) # the new vertex is named 'u'
-                        changed = True
-                        break
-
-        return G
-
-    @doc_index("Algorithmically hard stuff")
     def is_perfect(self, certificate=False):
         r"""
         Tests whether the graph is perfect.
@@ -2924,8 +2576,8 @@ class Graph(GenericGraph):
         A graph `G` is said to be perfect if `\chi(H)=\omega(H)` hold for any
         induced subgraph `H\subseteq_i G` (and so for `G` itself, too), where
         `\chi(H)` represents the chromatic number of `H`, and `\omega(H)` its
-        clique number. The Strong Perfect Graph Theorem [SPGT]_ gives another
-        characterization of perfect graphs:
+        clique number. The Strong Perfect Graph Theorem [CRST2006]_ gives
+        another characterization of perfect graphs:
 
         A graph is perfect if and only if it contains no odd hole (cycle on an
         odd number `k` of vertices, `k>3`) nor any odd antihole (complement of a
@@ -2997,14 +2649,6 @@ class Graph(GenericGraph):
             sage: g.is_perfect()
             False
 
-        REFERENCES:
-
-        .. [SPGT] \M. Chudnovsky, N. Robertson, P. Seymour, R. Thomas.
-          The strong perfect graph theorem
-          Annals of Mathematics
-          vol 164, number 1, pages 51--230
-          2006
-
         TESTS::
 
             sage: Graph(':Ab').is_perfect()
@@ -3041,73 +2685,6 @@ class Graph(GenericGraph):
 
         return self_complement.is_odd_hole_free(certificate=certificate)
 
-    @doc_index("Graph properties")
-    def odd_girth(self):
-        r"""
-        Returns the odd girth of self.
-
-        The odd girth of a graph is defined as the smallest cycle of odd length.
-
-        OUTPUT:
-
-        The odd girth of ``self``.
-
-        EXAMPLES:
-
-        The McGee graph has girth 7 and therefore its odd girth is 7 as well::
-
-            sage: G = graphs.McGeeGraph()
-            sage: G.odd_girth()
-            7
-
-        Any complete graph on more than 2 vertices contains a triangle and has
-        thus odd girth 3::
-
-            sage: G = graphs.CompleteGraph(10)
-            sage: G.odd_girth()
-            3
-
-        Every bipartite graph has no odd cycles and consequently odd girth of
-        infinity::
-
-            sage: G = graphs.CompleteBipartiteGraph(100,100)
-            sage: G.odd_girth()
-            +Infinity
-
-        .. SEEALSO::
-
-            * :meth:`~sage.graphs.generic_graph.GenericGraph.girth` -- computes
-              the girth of a graph.
-
-        REFERENCES:
-
-        The property relating the odd girth to the coefficients of the
-        characteristic polynomial is an old result from algebraic graph theory
-        see
-
-        .. [Har62] Harary, F (1962). The determinant of the adjacency matrix of
-          a graph, SIAM Review 4, 202-210
-
-        .. [Biggs93] Biggs, N. L. Algebraic Graph Theory, 2nd ed. Cambridge,
-          England: Cambridge University Press, pp. 45, 1993.
-
-        TESTS::
-
-            sage: graphs.CycleGraph(5).odd_girth()
-            5
-            sage: graphs.CycleGraph(11).odd_girth()
-            11
-        """
-        ch = ((self.am()).charpoly()).coefficients(sparse=False)
-        n = self.order()
-
-        for i in range(n-1, -1, -2):
-            if ch[i]:
-                return n-i
-
-        from sage.rings.infinity import Infinity
-
-        return Infinity
 
     @doc_index("Graph properties")
     def is_edge_transitive(self):
@@ -3143,7 +2720,7 @@ class Graph(GenericGraph):
             sage: P.is_edge_transitive()
             False
         """
-        from sage.interfaces.gap import gap
+        from sage.libs.gap.libgap import libgap
 
         if not self.size():
             return True
@@ -3152,7 +2729,7 @@ class Graph(GenericGraph):
         e = next(self.edge_iterator(labels=False))
         e = [A._domain_to_gap[e[0]], A._domain_to_gap[e[1]]]
 
-        return gap("OrbitLength("+str(A._gap_())+",Set(" + str(e) + "),OnSets);") == self.size()
+        return libgap(A).OrbitLength(e, libgap.OnSets) == self.size()
 
     @doc_index("Graph properties")
     def is_arc_transitive(self):
@@ -3183,7 +2760,7 @@ class Graph(GenericGraph):
             sage: G.is_arc_transitive()
             False
         """
-        from sage.interfaces.gap import gap
+        from sage.libs.gap.libgap import libgap
 
         if not self.size():
             return True
@@ -3192,7 +2769,7 @@ class Graph(GenericGraph):
         e = next(self.edge_iterator(labels=False))
         e = [A._domain_to_gap[e[0]], A._domain_to_gap[e[1]]]
 
-        return gap("OrbitLength("+str(A._gap_())+",Set(" + str(e) + "),OnTuples);") == 2*self.size()
+        return libgap(A).OrbitLength(e,libgap.OnTuples) == 2*self.size()
 
     @doc_index("Graph properties")
     def is_half_transitive(self):
@@ -3274,6 +2851,60 @@ class Graph(GenericGraph):
                 self.is_edge_transitive() and not
                 self.is_vertex_transitive())
 
+    @doc_index("Graph properties")
+    def is_path(self):
+        r"""
+        Check whether ``self`` is a path.
+
+        A connected graph of order `n \geq 2` is a path if it is a tree
+        (see :meth:`is_tree`) with `n-2` vertices of degree 2 and two of
+        degree 1. By convention, a graph of order 1 without loops is a path,
+        but the empty graph is not a path.
+
+        EXAMPLES:
+
+            sage: G = graphs.PathGraph(5)
+            sage: G.is_path()
+            True
+            sage: H = graphs.CycleGraph(5)
+            sage: H.is_path()
+            False
+            sage: D = graphs.PathGraph(5).disjoint_union(graphs.CycleGraph(5))
+            sage: D.is_path()
+            False
+            sage: E = graphs.EmptyGraph()
+            sage: E.is_path()
+            False
+            sage: O = Graph([[1], []])
+            sage: O.is_path()
+            True
+            sage: O.allow_loops(True)
+            sage: O.add_edge(1, 1)
+            sage: O.is_path()
+            False
+        """
+        order = self.order()
+        if order != self.size() + 1:
+            return False
+
+        if order <= 1:
+            return order == 1
+
+        deg_one_counter = 0
+        seen_counter = 0
+        for v in self.depth_first_search(next(self.vertex_iterator())):
+            seen_counter += 1
+            deg = self._backend.degree(v, False)
+            if deg == 1:
+                deg_one_counter += 1
+                if deg_one_counter > 2:
+                    return False
+
+            elif deg != 2:
+                return False
+        return deg_one_counter == 2 and seen_counter == order
+
+
     @doc_index("Connectivity, orientations, trees")
     def degree_constrained_subgraph(self, bounds, solver=None, verbose=0):
         r"""
@@ -3310,7 +2941,7 @@ class Graph(GenericGraph):
 
         OUTPUT:
 
-        - When a solution exists, this method outputs the degree-constained
+        - When a solution exists, this method outputs the degree-constrained
           subgraph as a Graph object.
 
         - When no solution exists, returns ``False``.
@@ -3488,7 +3119,7 @@ class Graph(GenericGraph):
 
         Given a Graph `G`, it is polynomial to compute an orientation `D` of the
         edges of `G` such that the maximum out-degree in `D` is minimized. This
-        problem, though, is NP-complete in the weighted case [AMOZ06]_.
+        problem, though, is NP-complete in the weighted case [AMOZ2006]_.
 
         INPUT:
 
@@ -3521,14 +3152,6 @@ class Graph(GenericGraph):
             sage: o = g.minimum_outdegree_orientation()
             sage: max(o.out_degree()) == ceil((4*3)/(3+4))
             True
-
-        REFERENCES:
-
-        .. [AMOZ06] Asahiro, Y. and Miyano, E. and Ono, H. and Zenmyo, K.
-          Graph orientation algorithms to minimize the maximum outdegree
-          Proceedings of the 12th Computing: The Australasian Theory Symposium
-          Volume 51, page 20
-          Australian Computer Society, Inc. 2006
         """
         self._scream_if_not_simple()
         if self.is_directed():
@@ -3751,7 +3374,7 @@ class Graph(GenericGraph):
         return D
 
     @doc_index("Connectivity, orientations, trees")
-    def orientations(self, implementation='c_graph', data_structure=None, sparse=None):
+    def orientations(self, data_structure=None, sparse=None):
         r"""
         Return an iterator over orientations of ``self``.
 
@@ -3848,25 +3471,22 @@ class Graph(GenericGraph):
                         pos=self._pos,
                         multiedges=self.allows_multiple_edges(),
                         loops=self.allows_loops(),
-                        implementation=implementation,
                         data_structure=data_structure)
             if hasattr(self, '_embedding'):
                 D._embedding = copy(self._embedding)
             yield D
             return
 
-        from itertools import product
         E = [[(u,v,label), (v,u,label)] if u != v else [(u,v,label)]
              for u,v,label in self.edge_iterator()]
         verts = self.vertices()
-        for edges in product(*E):
+        for edges in itertools.product(*E):
             D = DiGraph(data=[verts, edges],
                         format='vertices_and_edges',
                         name=name,
                         pos=self._pos,
                         multiedges=self.allows_multiple_edges(),
                         loops=self.allows_loops(),
-                        implementation=implementation,
                         data_structure=data_structure)
             if hasattr(self, '_embedding'):
                 D._embedding = copy(self._embedding)
@@ -3924,7 +3544,7 @@ class Graph(GenericGraph):
         left = set()
         right = set()
 
-        for u,s in six.iteritems(color):
+        for u,s in color.items():
             if s:
                 left.add(u)
             else:
@@ -3932,7 +3552,7 @@ class Graph(GenericGraph):
 
         return left, right
 
-    @doc_index("Algorithmically hard stuff")
+    @doc_index("Coloring")
     def chromatic_index(self, solver=None, verbose=0):
         r"""
         Return the chromatic index of the graph.
@@ -4003,8 +3623,7 @@ class Graph(GenericGraph):
         from sage.graphs.graph_coloring import edge_coloring
         return edge_coloring(self, value_only=True, solver=solver, verbose=verbose)
 
-
-    @doc_index("Algorithmically hard stuff")
+    @doc_index("Coloring")
     def chromatic_number(self, algorithm="DLX", solver=None, verbose=0):
         r"""
         Return the minimal number of colors needed to color the vertices of the
@@ -4119,7 +3738,7 @@ class Graph(GenericGraph):
         else:
             raise ValueError("The 'algorithm' keyword must be set to either 'DLX', 'MILP' or 'CP'.")
 
-    @doc_index("Algorithmically hard stuff")
+    @doc_index("Coloring")
     def coloring(self, algorithm="DLX", hex_colors=False, solver=None, verbose=0):
         r"""
         Return the first (optimal) proper vertex-coloring found.
@@ -4197,13 +3816,13 @@ class Graph(GenericGraph):
         else:
             raise ValueError("The 'algorithm' keyword must be set to either 'DLX' or 'MILP'.")
 
-    @doc_index("Algorithmically hard stuff")
+    @doc_index("Coloring")
     def chromatic_symmetric_function(self, R=None):
         r"""
         Return the chromatic symmetric function of ``self``.
 
         Let `G` be a graph. The chromatic symmetric function `X_G` was described
-        in [Stanley95]_, specifically Theorem 2.5 states that
+        in [Sta1995]_, specifically Theorem 2.5 states that
 
         .. MATH::
 
@@ -4252,12 +3871,6 @@ class Graph(GenericGraph):
             sage: XG3 = G3.chromatic_symmetric_function()
             sage: XG == XG1 + XG2 - XG3
             True
-
-        REFERENCES:
-
-        .. [Stanley95] \R. P. Stanley, *A symmetric function generalization
-           of the chromatic polynomial of a graph*, Adv. Math., ***111***
-           no.1 (1995), 166-194.
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.partition import _Partitions
@@ -4271,14 +3884,14 @@ class Graph(GenericGraph):
             ret += (-1)**len(F) * p[la]
         return ret
 
-    @doc_index("Algorithmically hard stuff")
+    @doc_index("Coloring")
     def chromatic_quasisymmetric_function(self, t=None, R=None):
         r"""
         Return the chromatic quasisymmetric function of ``self``.
 
         Let `G` be a graph whose vertex set is totally ordered. The chromatic
-        quasisymmetric function `X_G(t)` was first described in [SW12]_. We use
-        the equivalent definition given in [BC15]_:
+        quasisymmetric function `X_G(t)` was first described in [SW2012]_. We
+        use the equivalent definition given in [BC2018]_:
 
         .. MATH::
 
@@ -4342,19 +3955,6 @@ class Graph(GenericGraph):
              + 6*M[2, 1, 1] + M[3, 1]
             sage: p(XG.to_symmetric_function())
             p[1, 1, 1, 1] - 3*p[2, 1, 1] + 3*p[3, 1] - p[4]
-
-        REFERENCES:
-
-        .. [SW12] John Shareshian and Michelle Wachs.
-           *Chromatic quasisymmetric functions and Hessenberg varieties*.
-           Configuration Spaces. CRM Series. Scuola Normale Superiore.
-           (2012) pp. 433-460.
-           http://www.math.miami.edu/~wachs/papers/chrom.pdf
-
-        .. [BC15] Patrick Brosnan and Timothy Y. Chow.
-           *Unit interval orders and the dot action on the cohomology
-           of regular semisimple Hessenberg varieties*.
-           (2015) :arxiv:`1511.00773v1`.
         """
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions
         from sage.combinat.set_partition_ordered import OrderedSetPartitions
@@ -4430,6 +4030,16 @@ class Graph(GenericGraph):
         For more information on LP solvers and which default solver is used, see
         the method :meth:`sage.numerical.mip.MixedIntegerLinearProgram.solve` of
         the class :class:`sage.numerical.mip.MixedIntegerLinearProgram`.
+
+        OUTPUT:
+
+        - When ``value_only=False`` (default), this method returns the list of
+          edges of a maximum matching of `G`.
+
+        - When ``value_only=True``, this method returns the sum of the
+          weights (default: ``1``) of the edges of a maximum matching of `G`.
+          The type of the output may vary according to the type of the edge
+          labels and the algorithm used.
 
         ALGORITHM:
 
@@ -4559,7 +4169,6 @@ class Graph(GenericGraph):
         else:
             raise ValueError('algorithm must be set to either "Edmonds" or "LP"')
 
-
     @doc_index("Algorithmically hard stuff")
     def has_homomorphism_to(self, H, core=False, solver=None, verbose=0):
         r"""
@@ -4668,136 +4277,61 @@ class Graph(GenericGraph):
         except MIPSolverException:
             return False
 
-    @doc_index("Leftovers")
-    def fractional_chromatic_index(self, solver="PPL", verbose_constraints=False, verbose=0):
+    @doc_index("Clique-related methods")
+    def fractional_clique_number(self, solver='PPL', verbose=0,
+                                 check_components=True, check_bipartite=True):
         r"""
-        Return the fractional chromatic index of the graph.
+        Return the fractional clique number of the graph.
 
-        The fractional chromatic index is a relaxed version of edge-coloring. An
-        edge coloring of a graph being actually a covering of its edges into the
-        smallest possible number of matchings, the fractional chromatic index of
-        a graph `G` is the smallest real value `\chi_f(G)` such that there
-        exists a list of matchings `M_1, ..., M_k` of `G` and coefficients
-        `\alpha_1, ..., \alpha_k` with the property that each edge is covered by
-        the matchings in the following relaxed way
-
-        .. MATH::
-
-            \forall e \in E(G), \sum_{e \in M_i} \alpha_i \geq 1
-
-        For more information, see the :wikipedia:`Fractional_coloring`.
+        A fractional clique is a nonnegative weight function on the vertices of
+        a graph such that the sum of the weights over any independent set is at
+        most 1. The fractional clique number is the largest total weight of a
+        fractional clique, which is equal to the fractional chromatic number by
+        LP-duality.
 
         ALGORITHM:
 
-        The fractional chromatic index is computed through Linear Programming
-        through its dual. The LP solved by sage is actually:
-
-        .. MATH::
-
-            \mbox{Maximize : }&\sum_{e\in E(G)} r_{e}\\
-            \mbox{Such that : }&\\
-            &\forall M\text{ matching }\subseteq G, \sum_{e\in M}r_{v}\leq 1\\
+        The fractional clique number is computed via the Linear Program for
+        fractional chromatic number, see :meth:`fractional_chromatic_number
+        <sage.graphs.graph_coloring.fractional_chromatic_number>`
 
         INPUT:
 
         - ``solver`` -- (default: ``"PPL"``); specify a Linear Program (LP)
           solver to be used. If set to ``None``, the default one is used. For
           more information on LP solvers and which default solver is used, see
-          the method
-          :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>`
-          of the class
-          :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
+          the method :meth:`solve
+          <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+          :class:`MixedIntegerLinearProgram
+          <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
           .. NOTE::
 
               The default solver used here is ``"PPL"`` which provides exact
               results, i.e. a rational number, although this may be slower that
-              using other solvers. Be aware that this method may loop endlessly
-              when using some non exact solvers as reported in :trac:`23658` and
-              :trac:`23798`.
-
-        - ``verbose_constraints`` -- boolean (default: ``False``); whether to
-          display which constraints are being generated.
+              using other solvers.
 
         - ``verbose`` -- integer (default: `0`); sets the level of verbosity of
-          the LP solver.
+          the LP solver
+
+        - ``check_components`` -- boolean (default: ``True``); whether the
+          method is called on each biconnected component of `G`
+
+        - ``check_bipartite`` -- boolean (default: ``True``); whether the graph
+          is checked for bipartiteness. If the graph is bipartite then we can
+          avoid creating and solving the LP.
 
         EXAMPLES:
 
-        The fractional chromatic index of a `C_5` is `5/2`::
+        The fractional clique number of a `C_7` is `7/3`::
 
-            sage: g = graphs.CycleGraph(5)
-            sage: g.fractional_chromatic_index()
-            5/2
-
-        TESTS:
-
-        Issue reported in :trac:`23658` and :trac:`23798` with non exact
-        solvers::
-
-            sage: g = graphs.PetersenGraph()
-            sage: g.fractional_chromatic_index(solver='GLPK')  # known bug (#23798)
-            3.0
-            sage: g.fractional_chromatic_index(solver='PPL')
-            3
+            sage: g = graphs.CycleGraph(7)
+            sage: g.fractional_clique_number()
+            7/3
         """
-        self._scream_if_not_simple()
-
-        if not self.order():
-            return 0
-        if not self.size():
-            return 1
-
-        from sage.numerical.mip import MixedIntegerLinearProgram
-
-        #
-        # Initialize LP for maximum weigth matching
-        M = MixedIntegerLinearProgram(solver=solver, constraint_generation=True)
-
-        # One variable per edge
-        b = M.new_variable(binary=True, nonnegative=True)
-
-        # We want to select at most one incident edge per vertex (matching)
-        for u in self:
-            M.add_constraint(M.sum(b[frozenset(e)] for e in self.edges_incident(u, labels=0)), max=1)
-
-        #
-        # Initialize LP for fractional chromatic number
-        p = MixedIntegerLinearProgram(solver=solver, constraint_generation=True)
-
-        # One variable per edge
-        r = p.new_variable(nonnegative=True)
-
-        # We want to maximize the sum of weights on the edges
-        p.set_objective(p.sum(r[frozenset(e)] for e in self.edge_iterator(labels=False)))
-
-        # Each edge being by itself a matching, its weight can not be more than
-        # 1
-        for e in self.edge_iterator(labels=False):
-            p.add_constraint(r[frozenset(e)], max=1)
-
-        obj = p.solve(log=verbose)
-
-        while True:
-
-            # Update the weights of edges for the matching problem
-            M.set_objective(M.sum(p.get_values(r[frozenset(e)]) * b[frozenset(e)] for e in self.edge_iterator(labels=0)))
-
-            # If the maximum matching has weight at most 1, we are done !
-            if M.solve(log=verbose) <= 1:
-                break
-
-            # Otherwise, we add a new constraint
-            matching = [e for e in self.edge_iterator(labels=0) if M.get_values(b[frozenset(e)]) == 1]
-            p.add_constraint(p.sum(r[frozenset(e)] for e in matching), max=1)
-            if verbose_constraints:
-                print("Adding a constraint on matching : {}".format(matching))
-
-            # And solve again
-            obj = p.solve(log=verbose)
-
-        # Accomplished !
-        return obj
+        return self.fractional_chromatic_number(solver=solver, verbose=verbose,
+                                                check_components=check_components,
+                                                check_bipartite=check_bipartite)
 
     @doc_index("Leftovers")
     def maximum_average_degree(self, value_only=True, solver=None, verbose=0):
@@ -4894,7 +4428,7 @@ class Graph(GenericGraph):
         # should be safe :-)
         m = 1/(10 *Integer(g.order()))
         d_val = p.get_values(d)
-        g_mad = g.subgraph(v for v,l in six.iteritems(d_val) if l > m)
+        g_mad = g.subgraph(v for v,l in d_val.items() if l > m)
 
         if value_only:
             return g_mad.average_degree()
@@ -4914,7 +4448,7 @@ class Graph(GenericGraph):
 
         It generalizes, for example, graph coloring and graph list coloring.
 
-        (See [AhaBerZiv07]_ for more information.)
+        (See [ABZ2007]_ for more information.)
 
         INPUT:
 
@@ -4966,14 +4500,6 @@ class Graph(GenericGraph):
             True
             True
             True
-
-        REFERENCE:
-
-        .. [AhaBerZiv07] \R. Aharoni and E. Berger and R. Ziv
-          Independent systems of representatives in weighted graphs
-          Combinatorica vol 27, num 3, p253--267
-          2007
-
         """
         from sage.numerical.mip import MixedIntegerLinearProgram
         p = MixedIntegerLinearProgram(solver=solver)
@@ -5277,11 +4803,632 @@ class Graph(GenericGraph):
         else:
             return self.degree(v)/n_minus_one
 
+    ### Distances
+
+    @doc_index("Distances")
+    def eccentricity(self, v=None, by_weight=False, algorithm=None,
+                     weight_function=None, check_weight=True, dist_dict=None,
+                     with_labels=False):
+        """
+        Return the eccentricity of vertex (or vertices) ``v``.
+
+        The eccentricity of a vertex is the maximum distance to any other
+        vertex.
+
+        For more information and examples on how to use input variables, see
+        :meth:`~GenericGraph.shortest_path_all_pairs`,
+        :meth:`~GenericGraph.shortest_path_lengths` and
+        :meth:`~GenericGraph.shortest_paths`
+
+        INPUT:
+
+        - ``v`` - either a single vertex or a list of vertices. If it is not
+          specified, then it is taken to be all vertices.
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); one of the following
+          algorithms:
+
+          - ``'BFS'`` - the computation is done through a BFS centered on each
+            vertex successively. Works only if ``by_weight==False``.
+
+          - ``'DHV'`` - the computation is done using the algorithm proposed in
+            [Dragan2018]_. Works only if ``self`` has non-negative edge weights
+            and ``v is None`` or ``v`` should contain all vertices of ``self``.
+            For more information see method
+            :func:`sage.graphs.distances_all_pairs.eccentricity` and
+            :func:`sage.graphs.base.boost_graph.eccentricity_DHV`.
+
+          - ``'Floyd-Warshall-Cython'`` - a Cython implementation of the
+            Floyd-Warshall algorithm. Works only if ``by_weight==False`` and
+            ``v is None`` or ``v`` should contain all vertices of ``self``.
+
+          - ``'Floyd-Warshall-Python'`` - a Python implementation of the
+            Floyd-Warshall algorithm. Works also with weighted graphs, even with
+            negative weights (but no negative cycle is allowed). However, ``v``
+            must be ``None`` or ``v`` should contain all vertices of ``self``.
+
+          - ``'Dijkstra_NetworkX'`` - the Dijkstra algorithm, implemented in
+            NetworkX. It works with weighted graphs, but no negative weight is
+            allowed.
+
+          - ``'Dijkstra_Boost'`` - the Dijkstra algorithm, implemented in Boost
+            (works only with positive weights).
+
+          - ``'Johnson_Boost'`` - the Johnson algorithm, implemented in
+            Boost (works also with negative weights, if there is no negative
+            cycle). Works only if ``v is None`` or ``v`` should contain all
+            vertices of ``self``.
+
+          - ``'From_Dictionary'`` - uses the (already computed) distances, that
+            are provided by input variable ``dist_dict``.
+
+          - ``None`` (default): Sage chooses the best algorithm:
+            ``'From_Dictionary'`` if ``dist_dict`` is not None, ``'BFS'`` for
+            unweighted graphs, ``'Dijkstra_Boost'`` if all weights are
+            positive, ``'Johnson_Boost'`` otherwise.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+          weight, if ``l`` is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        - ``dist_dict`` -- a dictionary (default: ``None``); a dict of dicts of
+          distances (used only if ``algorithm=='From_Dictionary'``)
+
+        - ``with_labels`` -- boolean (default: ``False``); whether to return a
+          list or a dictionary keyed by vertices.
+
+        EXAMPLES::
+
+            sage: G = graphs.KrackhardtKiteGraph()
+            sage: G.eccentricity()
+            [4, 4, 4, 4, 4, 3, 3, 2, 3, 4]
+            sage: G.vertices()
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            sage: G.eccentricity(7)
+            2
+            sage: G.eccentricity([7,8,9])
+            [2, 3, 4]
+            sage: G.eccentricity([7,8,9], with_labels=True) == {8: 3, 9: 4, 7: 2}
+            True
+            sage: G = Graph( { 0 : [], 1 : [], 2 : [1] } )
+            sage: G.eccentricity()
+            [+Infinity, +Infinity, +Infinity]
+            sage: G = Graph({0:[]})
+            sage: G.eccentricity(with_labels=True)
+            {0: 0}
+            sage: G = Graph({0:[], 1:[]})
+            sage: G.eccentricity(with_labels=True)
+            {0: +Infinity, 1: +Infinity}
+            sage: G = Graph([(0,1,1), (1,2,1), (0,2,3)])
+            sage: G.eccentricity(algorithm = 'BFS')
+            [1, 1, 1]
+            sage: G.eccentricity(algorithm = 'Floyd-Warshall-Cython')
+            [1, 1, 1]
+            sage: G.eccentricity(by_weight = True, algorithm = 'Dijkstra_NetworkX')
+            [2, 1, 2]
+            sage: G.eccentricity(by_weight = True, algorithm = 'Dijkstra_Boost')
+            [2, 1, 2]
+            sage: G.eccentricity(by_weight = True, algorithm = 'Johnson_Boost')
+            [2, 1, 2]
+            sage: G.eccentricity(by_weight = True, algorithm = 'Floyd-Warshall-Python')
+            [2, 1, 2]
+            sage: G.eccentricity(dist_dict = G.shortest_path_all_pairs(by_weight = True)[0])
+            [2, 1, 2]
+            sage: G.eccentricity(by_weight = False, algorithm = 'DHV')
+            [1, 1, 1]
+            sage: G.eccentricity(by_weight = True, algorithm = 'DHV')
+            [2.0, 1.0, 2.0]
+
+        TESTS:
+
+        A non-implemented algorithm::
+
+            sage: G.eccentricity(algorithm = 'boh')
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm "boh"
+
+        An algorithm that does not work with edge weights::
+
+            sage: G.eccentricity(by_weight = True, algorithm = 'BFS')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'BFS' does not work with weights
+            sage: G.eccentricity(by_weight = True, algorithm = 'Floyd-Warshall-Cython')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Floyd-Warshall-Cython' does not work with weights
+
+        An algorithm that computes the all-pair-shortest-paths when not all
+        vertices are needed::
+
+            sage: G.eccentricity(0, algorithm = 'Floyd-Warshall-Cython')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Floyd-Warshall-Cython' works only if all eccentricities are needed
+            sage: G.eccentricity(0, algorithm = 'Floyd-Warshall-Python')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Floyd-Warshall-Python' works only if all eccentricities are needed
+            sage: G.eccentricity(0, algorithm = 'Johnson_Boost')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Johnson_Boost' works only if all eccentricities are needed
+            sage: G.eccentricity(0, algorithm = 'DHV')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'DHV' works only if all eccentricities are needed
+        """
+        if weight_function is not None:
+            by_weight = True
+        elif by_weight:
+            def weight_function(e):
+                return 1 if e[2] is None else e[2]
+
+        if algorithm is None:
+            if dist_dict is not None:
+                algorithm = 'From_Dictionary'
+            elif not by_weight:
+                algorithm = 'BFS'
+            else:
+                for e in self.edge_iterator():
+                    try:
+                        if float(weight_function(e)) < 0:
+                            algorithm = 'Johnson_Boost'
+                            break
+                    except (ValueError, TypeError):
+                        raise ValueError("the weight function cannot find the"
+                                         " weight of " + str(e))
+            if algorithm is None:
+                algorithm = 'Dijkstra_Boost'
+
+        if v is not None and not isinstance(v, list):
+            v = [v]
+
+        if v is None or all(u in v for u in self):
+            if v is None:
+                v = list(self)
+            # If we want to use BFS, we use the Cython routine
+            if algorithm == 'BFS':
+                if by_weight:
+                    raise ValueError("algorithm 'BFS' does not work with weights")
+                from sage.graphs.distances_all_pairs import eccentricity
+                algo = 'bounds'
+                if with_labels:
+                    return dict(zip(v, eccentricity(self, algorithm=algo, vertex_list=v)))
+                else:
+                    return eccentricity(self, algorithm=algo,vertex_list=v)
+
+            if algorithm == 'DHV':
+                if by_weight:
+                    from sage.graphs.base.boost_graph import eccentricity_DHV
+                    if with_labels:
+                        return dict(zip(v, eccentricity_DHV(self, vertex_list=v,
+                                                            weight_function=weight_function,
+                                                            check_weight=check_weight)))
+                    else:
+                        return eccentricity_DHV(self, vertex_list=v,
+                                                weight_function=weight_function,
+                                                check_weight=check_weight)
+                else:
+                    from sage.graphs.distances_all_pairs import eccentricity
+                    if with_labels:
+                        return dict(zip(v, eccentricity(self, algorithm=algorithm,
+                                                        vertex_list=v)))
+                    else:
+                        return eccentricity(self, algorithm=algorithm, vertex_list=v)
+
+            if algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
+                dist_dict = self.shortest_path_all_pairs(by_weight, algorithm,
+                                                         weight_function,
+                                                         check_weight)[0]
+                algorithm = 'From_Dictionary'
+
+        elif algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost','DHV']:
+            raise ValueError("algorithm '" + algorithm + "' works only if all" +
+                             " eccentricities are needed")
+
+        ecc = {}
+
+        from sage.rings.infinity import Infinity
+
+        for u in v:
+            if algorithm == 'From_Dictionary':
+                length = dist_dict[u]
+            else:
+                # If algorithm is wrong, the error is raised by the
+                # shortest_path_lengths function
+                length = self.shortest_path_lengths(u, by_weight=by_weight,
+                                                    algorithm=algorithm,
+                                                    weight_function=weight_function,
+                                                    check_weight=check_weight)
+
+            if len(length) != self.num_verts():
+                ecc[u] = Infinity
+            else:
+                ecc[u] = max(length.values())
+
+        if with_labels:
+            return ecc
+        else:
+            if len(ecc) == 1:
+                # return single value
+                v, = ecc.values()
+                return v
+            return [ecc[u] for u in v]
+
+    @doc_index("Distances")
+    def radius(self, by_weight=False, algorithm='DHV', weight_function=None,
+               check_weight=True):
+        r"""
+        Return the radius of the graph.
+
+        The radius is defined to be the minimum eccentricity of any vertex,
+        where the eccentricity is the maximum distance to any other
+        vertex. For more information and examples on how to use input variables,
+        see :meth:`~GenericGraph.shortest_paths` and
+        :meth:`~Graph.eccentricity`
+
+        INPUT:
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``'DHV'``).
+
+          - ``'DHV'`` - Radius computation is done using the algorithm proposed
+            in [Dragan2018]_. Works for graph with non-negative edge weights.
+            For more information see method
+            :func:`sage.graphs.distances_all_pairs.radius_DHV` and
+            :func:`sage.graphs.base.boost_graph.radius_DHV`.
+
+          - see method :meth:`eccentricity` for the list of remaining algorithms
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+          weight, if ``l`` is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        EXAMPLES:
+
+        The more symmetric a graph is, the smaller (diameter - radius) is::
+
+            sage: G = graphs.BarbellGraph(9, 3)
+            sage: G.radius()
+            3
+            sage: G.diameter()
+            6
+
+        ::
+
+            sage: G = graphs.OctahedralGraph()
+            sage: G.radius()
+            2
+            sage: G.diameter()
+            2
+
+        TESTS::
+
+            sage: g = Graph()
+            sage: g.radius()
+            Traceback (most recent call last):
+            ...
+            ValueError: radius is not defined for the empty graph
+        """
+        if not self.order():
+            raise ValueError("radius is not defined for the empty graph")
+
+        if weight_function is not None:
+            by_weight = True
+
+        if by_weight and not weight_function:
+            def weight_function(e):
+                return 1 if e[2] is None else e[2]
+
+        if not algorithm:
+            algorithm = 'DHV'
+
+        if algorithm == 'DHV':
+            if by_weight:
+                from sage.graphs.base.boost_graph import radius_DHV
+                return radius_DHV(self, weight_function=weight_function,
+                                  check_weight=check_weight)
+            else:
+                from sage.graphs.distances_all_pairs import radius_DHV
+                return radius_DHV(self)
+
+        return min(self.eccentricity(v=None,by_weight=by_weight,
+                                     weight_function=weight_function,
+                                     check_weight=check_weight,
+                                     algorithm=algorithm))
+
+    @doc_index("Distances")
+    def diameter(self, by_weight=False, algorithm=None, weight_function=None,
+                 check_weight=True):
+        r"""
+        Return the diameter of the graph.
+
+        The diameter is defined to be the maximum distance between two vertices.
+        It is infinite if the graph is not connected.
+
+        For more information and examples on how to use input variables, see
+        :meth:`~GenericGraph.shortest_paths` and
+        :meth:`~Graph.eccentricity`
+
+        INPUT:
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); one of the following
+          algorithms:
+
+          - ``'BFS'``: the computation is done through a BFS centered on each
+            vertex successively. Works only if ``by_weight==False``.
+
+          - ``'Floyd-Warshall-Cython'``: a Cython implementation of the
+            Floyd-Warshall algorithm. Works only if ``by_weight==False`` and ``v
+            is None``.
+
+          - ``'Floyd-Warshall-Python'``: a Python implementation of the
+            Floyd-Warshall algorithm. Works also with weighted graphs, even with
+            negative weights (but no negative cycle is allowed). However, ``v``
+            must be ``None``.
+
+          - ``'Dijkstra_NetworkX'``: the Dijkstra algorithm, implemented in
+            NetworkX. It works with weighted graphs, but no negative weight is
+            allowed.
+
+          - ``'DHV'`` - diameter computation is done using the algorithm
+            proposed in [Dragan2018]_. Works only for non-negative edge weights.
+            For more information see method
+            :func:`sage.graphs.distances_all_pairs.diameter_DHV` and
+            :func:`sage.graphs.base.boost_graph.diameter_DHV`.
+
+          - ``'standard'``, ``'2sweep'``, ``'multi-sweep'``, ``'iFUB'``:
+            these algorithms are implemented in
+            :func:`sage.graphs.distances_all_pairs.diameter`
+            They work only if ``by_weight==False``. See the function
+            documentation for more information.
+
+          - ``'Dijkstra_Boost'``: the Dijkstra algorithm, implemented in Boost
+            (works only with positive weights).
+
+          - ``'Johnson_Boost'``: the Johnson algorithm, implemented in
+            Boost (works also with negative weights, if there is no negative
+            cycle).
+
+          - ``None`` (default): Sage chooses the best algorithm: ``'iFUB'`` for
+            unweighted graphs, ``'Dijkstra_Boost'`` if all weights are positive,
+            ``'Johnson_Boost'`` otherwise.
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+          weight, if ``l`` is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        EXAMPLES:
+
+        The more symmetric a graph is, the smaller (diameter - radius) is::
+
+            sage: G = graphs.BarbellGraph(9, 3)
+            sage: G.radius()
+            3
+            sage: G.diameter()
+            6
+
+        ::
+
+            sage: G = graphs.OctahedralGraph()
+            sage: G.radius()
+            2
+            sage: G.diameter()
+            2
+
+        TESTS::
+
+            sage: g = Graph()
+            sage: g.diameter()
+            Traceback (most recent call last):
+            ...
+            ValueError: diameter is not defined for the empty graph
+            sage: g = Graph([(1, 2, {'weight': 1})])
+            sage: g.diameter(algorithm='iFUB', weight_function=lambda e: e[2]['weight'])
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'iFUB' does not work on weighted graphs
+        """
+        if not self.order():
+            raise ValueError("diameter is not defined for the empty graph")
+
+        if weight_function is not None:
+            by_weight = True
+
+        if by_weight and not weight_function:
+            def weight_function(e):
+                return 1 if e[2] is None else e[2]
+
+        if algorithm is None:
+            if by_weight:
+                algorithm = 'iFUB'
+            else:
+                algorithm = 'DHV'
+        elif algorithm == 'BFS':
+            algorithm = 'standard'
+
+        if algorithm == 'DHV':
+            if by_weight:
+                from sage.graphs.base.boost_graph import diameter_DHV
+                return diameter_DHV(self, weight_function=weight_function,
+                                    check_weight=check_weight)
+            else:
+                from sage.graphs.distances_all_pairs import diameter
+                return diameter(self, algorithm=algorithm)
+
+        if algorithm in ['standard', '2sweep', 'multi-sweep', 'iFUB']:
+            if by_weight:
+                raise ValueError("algorithm '" + algorithm + "' does not work" +
+                                 " on weighted graphs")
+            from sage.graphs.distances_all_pairs import diameter
+            return diameter(self, algorithm=algorithm)
+
+        return max(self.eccentricity(v=list(self), by_weight=by_weight,
+                                     weight_function=weight_function,
+                                     check_weight=check_weight,
+                                     algorithm=algorithm))
+
+    @doc_index("Distances")
+    def center(self, by_weight=False, algorithm=None, weight_function=None,
+               check_weight=True):
+        r"""
+        Return the set of vertices in the center of the graph.
+
+        The center is the set of vertices whose eccentricity is equal to the
+        radius of the graph, i.e., achieving the minimum eccentricity.
+
+        For more information and examples on how to use input variables,
+        see :meth:`~GenericGraph.shortest_paths` and
+        :meth:`~Graph.eccentricity`
+
+        INPUT:
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); see method
+          :meth:`eccentricity` for the list of available algorithms
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+          weight, if ``l`` is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        EXAMPLES:
+
+        Is Central African Republic in the center of Africa in graph theoretic
+        sense? Yes::
+
+            sage: A = graphs.AfricaMap(continental=True)
+            sage: sorted(A.center())
+            ['Cameroon', 'Central Africa']
+
+        Some other graphs. Center can be the whole graph::
+
+            sage: G = graphs.DiamondGraph()
+            sage: G.center()
+            [1, 2]
+            sage: P = graphs.PetersenGraph()
+            sage: P.subgraph(P.center()) == P
+            True
+            sage: S = graphs.StarGraph(19)
+            sage: S.center()
+            [0]
+
+        TESTS::
+
+            sage: G = Graph()
+            sage: G.center()
+            []
+            sage: G.add_vertex()
+            0
+            sage: G.center()
+            [0]
+        """
+        ecc = self.eccentricity(v=list(self), by_weight=by_weight,
+                                weight_function=weight_function,
+                                algorithm=algorithm,
+                                check_weight=check_weight,
+                                with_labels=True)
+        try:
+            r = min(ecc.values())
+        except Exception:
+            return []
+        return [v for v in self if ecc[v] == r]
+
+    @doc_index("Distances")
+    def periphery(self, by_weight=False, algorithm=None, weight_function=None,
+                  check_weight=True):
+        r"""
+        Return the set of vertices in the periphery of the graph.
+
+        The periphery is the set of vertices whose eccentricity is equal to the
+        diameter of the graph, i.e., achieving the maximum eccentricity.
+
+        For more information and examples on how to use input variables,
+        see :meth:`~GenericGraph.shortest_paths` and
+        :meth:`~Graph.eccentricity`
+
+        INPUT:
+
+        - ``by_weight`` -- boolean (default: ``False``); if ``True``, edge
+          weights are taken into account; if False, all edges have weight 1
+
+        - ``algorithm`` -- string (default: ``None``); see method
+          :meth:`eccentricity` for the list of available algorithms
+
+        - ``weight_function`` -- function (default: ``None``); a function that
+          takes as input an edge ``(u, v, l)`` and outputs its weight. If not
+          ``None``, ``by_weight`` is automatically set to ``True``. If ``None``
+          and ``by_weight`` is ``True``, we use the edge label ``l`` as a
+          weight, if ``l`` is not ``None``, else ``1`` as a weight.
+
+        - ``check_weight`` -- boolean (default: ``True``); if ``True``, we check
+          that the ``weight_function`` outputs a number for each edge
+
+        EXAMPLES::
+
+            sage: G = graphs.DiamondGraph()
+            sage: G.periphery()
+            [0, 3]
+            sage: P = graphs.PetersenGraph()
+            sage: P.subgraph(P.periphery()) == P
+            True
+            sage: S = graphs.StarGraph(19)
+            sage: S.periphery()
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+            sage: G = Graph()
+            sage: G.periphery()
+            []
+            sage: G.add_vertex()
+            0
+            sage: G.periphery()
+            [0]
+        """
+        ecc = self.eccentricity(v=list(self), by_weight=by_weight,
+                                weight_function=weight_function,
+                                algorithm=algorithm,
+                                check_weight=check_weight,
+                                with_labels=True)
+        try:
+            d = max(ecc.values())
+        except Exception:
+            return []
+        return [v for v in self if ecc[v] == d]
+
     ### Constructors
 
     @doc_index("Basic methods")
-    def to_directed(self, implementation='c_graph', data_structure=None,
-                    sparse=None):
+    def to_directed(self, data_structure=None, sparse=None):
         """
         Return a directed version of the graph.
 
@@ -5323,6 +5470,16 @@ class Graph(GenericGraph):
             sage: G2.add_vertex(5)
             sage: gp2 = G2.graphplot()
             sage: gp1 = G1.graphplot()
+
+        Vertex labels will be retained (:trac:`14708`)::
+
+            sage: G = Graph({0: [1, 2], 1: [0]})
+            sage: G.set_vertex(0, 'foo')
+            sage: D = G.to_directed()
+            sage: G.get_vertices()
+            {0: 'foo', 1: None, 2: None}
+            sage: D.get_vertices()
+            {0: 'foo', 1: None, 2: None}
         """
         if sparse is not None:
             if data_structure is not None:
@@ -5344,11 +5501,11 @@ class Graph(GenericGraph):
                     pos            = self.get_pos(),
                     multiedges     = self.allows_multiple_edges(),
                     loops          = self.allows_loops(),
-                    implementation = implementation,
                     data_structure = (data_structure if data_structure!="static_sparse"
                                       else "sparse")) # we need a mutable copy
 
         D.add_vertices(self.vertex_iterator())
+        D.set_vertices(self.get_vertices())
         for u,v,l in self.edge_iterator():
             D.add_edge(u,v,l)
             D.add_edge(v,u,l)
@@ -5509,10 +5666,9 @@ class Graph(GenericGraph):
             sage: G == H
             True
         """
-        from itertools import product
         G = self if inplace else copy(self)
         boundary = self.edge_boundary(s)
-        G.add_edges(product(s, set(self).difference(s)))
+        G.add_edges(itertools.product(s, set(self).difference(s)))
         G.delete_edges(boundary)
         if not inplace:
             return G
@@ -5849,7 +6005,7 @@ class Graph(GenericGraph):
 
         - ``algorithm`` -- can be set to ``"native"`` (default) to use Sage's
           own implementation, or to ``"NetworkX"`` to use NetworkX'
-          implementation of the Bron and Kerbosch Algorithm [BroKer1973]_.
+          implementation of the Bron and Kerbosch Algorithm [BK1973]_.
 
 
         .. NOTE::
@@ -5863,21 +6019,14 @@ class Graph(GenericGraph):
             Sage's implementation of the enumeration of *maximal* independent
             sets is not much faster than NetworkX' (expect a 2x speedup), which
             is surprising as it is written in Cython. This being said, the
-            algorithm from NetworkX appears to be sligthly different from this
+            algorithm from NetworkX appears to be slightly different from this
             one, and that would be a good thing to explore if one wants to
             improve the implementation.
 
         ALGORITHM:
 
         This function is based on NetworkX's implementation of the Bron and
-        Kerbosch Algorithm [BroKer1973]_.
-
-        REFERENCE:
-
-        .. [BroKer1973] Coen Bron and Joep Kerbosch. (1973). Algorithm 457:
-          Finding All Cliques of an Undirected Graph. Commun. ACM. v
-          16. n 9.  pages 575-577. ACM Press. [Online] Available:
-          http://www.ram.org/computing/rambin/rambin.html
+        Kerbosch Algorithm [BK1973]_.
 
         EXAMPLES::
 
@@ -5910,7 +6059,7 @@ class Graph(GenericGraph):
             return list(IndependentSets(self, maximal=True, complement=True))
         elif algorithm == "NetworkX":
             import networkx
-            return list(networkx.find_cliques(self.networkx_graph(copy=False)))
+            return list(networkx.find_cliques(self.networkx_graph()))
         else:
             raise ValueError("Algorithm must be equal to 'native' or to 'NetworkX'.")
 
@@ -5924,7 +6073,7 @@ class Graph(GenericGraph):
         - ``algorithm`` -- the algorithm to be used :
 
           - If ``algorithm = "Cliquer"`` (default), wraps the C program
-            Cliquer [NisOst2003]_.
+            Cliquer [NO2003]_.
 
           - If ``algorithm = "MILP"``, the problem is solved through a Mixed
             Integer Linear Program.
@@ -5956,7 +6105,7 @@ class Graph(GenericGraph):
 
         ALGORITHM:
 
-        This function is based on Cliquer [NisOst2003]_.
+        This function is based on Cliquer [NO2003]_.
 
         EXAMPLES:
 
@@ -5991,11 +6140,6 @@ class Graph(GenericGraph):
         elif algorithm == "MILP":
             return self.complement().independent_set(algorithm=algorithm, solver=solver, verbosity=verbose)
         elif algorithm == "mcqd":
-            try:
-                from sage.graphs.mcqd import mcqd
-            except ImportError:
-                from sage.misc.package import PackageNotFoundError
-                raise PackageNotFoundError("mcqd")
             return mcqd(self)
         else:
             raise NotImplementedError("Only 'MILP', 'Cliquer' and 'mcqd' are supported.")
@@ -6017,10 +6161,10 @@ class Graph(GenericGraph):
         - ``algorithm`` -- the algorithm to be used :
 
           - If ``algorithm = "Cliquer"``, wraps the C program Cliquer
-            [NisOst2003]_.
+            [NO2003]_.
 
           - If ``algorithm = "networkx"``, uses the NetworkX's implementation of
-            the Bron and Kerbosch Algorithm [BroKer1973]_.
+            the Bron and Kerbosch Algorithm [BK1973]_.
 
           - If ``algorithm = "MILP"``, the problem is solved through a Mixed
             Integer Linear Program.
@@ -6028,7 +6172,7 @@ class Graph(GenericGraph):
             (see :class:`~sage.numerical.mip.MixedIntegerLinearProgram`)
 
           - If ``algorithm = "mcqd"``, uses the MCQD solver
-            (`<http://www.sicmm.org/~konc/maxclique/>`_). Note that the MCQD
+            (`<http://insilab.org/maxclique/>`_). Note that the MCQD
             package must be installed.
 
         - ``cliques`` -- an optional list of cliques that can be input if
@@ -6047,7 +6191,7 @@ class Graph(GenericGraph):
 
         ALGORITHM:
 
-        This function is based on Cliquer [NisOst2003]_ and [BroKer1973]_.
+        This function is based on Cliquer [NO2003]_ and [BK1973]_.
 
         EXAMPLES::
 
@@ -6090,15 +6234,10 @@ class Graph(GenericGraph):
             return clique_number(self)
         elif algorithm == "networkx":
             import networkx
-            return networkx.graph_clique_number(self.networkx_graph(copy=False), cliques)
+            return networkx.graph_clique_number(self.networkx_graph(), cliques)
         elif algorithm == "MILP":
             return len(self.complement().independent_set(algorithm=algorithm, solver=solver, verbosity=verbose))
         elif algorithm == "mcqd":
-            try:
-                from sage.graphs.mcqd import mcqd
-            except ImportError:
-                from sage.misc.package import PackageNotFoundError
-                raise PackageNotFoundError("mcqd")
             return len(mcqd(self))
         else:
             raise NotImplementedError("Only 'networkx' 'MILP' 'Cliquer' and 'mcqd' are supported.")
@@ -6144,7 +6283,7 @@ class Graph(GenericGraph):
             {0: 2, 1: 2, 2: 1, 3: 1}
         """
         import networkx
-        return networkx.number_of_cliques(self.networkx_graph(copy=False), vertices, cliques)
+        return networkx.number_of_cliques(self.networkx_graph(), vertices, cliques)
 
     @doc_index("Clique-related methods")
     def cliques_get_max_clique_graph(self):
@@ -6174,7 +6313,7 @@ class Graph(GenericGraph):
             sage: (G.cliques_get_max_clique_graph()).show(figsize=[2,2])
         """
         import networkx
-        return Graph(networkx.make_max_clique_graph(self.networkx_graph(copy=False), create_using=networkx.MultiGraph()))
+        return Graph(networkx.make_max_clique_graph(self.networkx_graph(), create_using=networkx.MultiGraph()))
 
     @doc_index("Clique-related methods")
     def cliques_get_clique_bipartite(self, **kwds):
@@ -6202,7 +6341,7 @@ class Graph(GenericGraph):
         """
         from .bipartite_graph import BipartiteGraph
         import networkx
-        return BipartiteGraph(networkx.make_clique_bipartite(self.networkx_graph(copy=False), **kwds))
+        return BipartiteGraph(networkx.make_clique_bipartite(self.networkx_graph(), **kwds))
 
     @doc_index("Algorithmically hard stuff")
     def independent_set(self, algorithm="Cliquer", value_only=False, reduction_rules=True, solver=None, verbosity=0):
@@ -6225,7 +6364,7 @@ class Graph(GenericGraph):
         - ``algorithm`` -- the algorithm to be used
 
           * If ``algorithm = "Cliquer"`` (default), the problem is solved
-            using Cliquer [NisOst2003]_.
+            using Cliquer [NO2003]_.
 
             (see the :mod:`Cliquer modules <sage.graphs.cliquer>`)
 
@@ -6724,7 +6863,7 @@ class Graph(GenericGraph):
         # Traverse() : Function that use G-T (non-tree edges) to find cycles
         #              and chains by traversing in DFS tree.
         def traverse(start, pointer):
-            # Make the firt end of non-tree edge visited
+            # Make the first end of non-tree edge visited
             traversed.add(start)
             chain = [start]
 
@@ -6773,10 +6912,10 @@ class Graph(GenericGraph):
 
          - ``algorithm`` -- either ``cliquer`` or ``networkx``
 
-           - ``cliquer`` -- This wraps the C program Cliquer [NisOst2003]_.
+           - ``cliquer`` -- This wraps the C program Cliquer [NO2003]_.
 
            - ``networkx`` -- This function is based on NetworkX's implementation
-             of the Bron and Kerbosch Algorithm [BroKer1973]_.
+             of the Bron and Kerbosch Algorithm [BK1973]_.
 
         - ``vertices`` -- the vertices to inspect (default is entire graph).
           Ignored unless ``algorithm=='networkx'``.
@@ -6815,7 +6954,7 @@ class Graph(GenericGraph):
             return value
         elif algorithm == "networkx":
             import networkx
-            return networkx.node_clique_number(self.networkx_graph(copy=False), vertices, cliques)
+            return networkx.node_clique_number(self.networkx_graph(), vertices, cliques)
         else:
             raise NotImplementedError("Only 'networkx' and 'cliquer' are supported.")
 
@@ -6861,12 +7000,14 @@ class Graph(GenericGraph):
             sage: d = F.cliques_containing_vertex()
             sage: all(F.degree(u) == len(cliques) for u,cliques in d.items())
             True
-            sage: F.cliques_containing_vertex(vertices=[(0, 1)])
-            {(0, 1): [[(0, 1), (0, 0)], [(0, 1), (0, 2)], [(0, 1), (1, 1)]]}
-
+            sage: d = F.cliques_containing_vertex(vertices=[(0, 1)])
+            sage: list(d)
+            [(0, 1)]
+            sage: sorted(sorted(x for x in L) for L in d[(0, 1)])
+            [[(0, 0), (0, 1)], [(0, 1), (0, 2)], [(0, 1), (1, 1)]]
         """
         import networkx
-        return networkx.cliques_containing_node(self.networkx_graph(copy=False), vertices, cliques)
+        return networkx.cliques_containing_node(self.networkx_graph(), vertices, cliques)
 
     @doc_index("Clique-related methods")
     def clique_complex(self):
@@ -6977,7 +7118,7 @@ class Graph(GenericGraph):
         IMPLEMENTATION:
 
         This implementation is based on the NetworkX implementation of the
-        algorithm described in [BZ]_.
+        algorithm described in [BZ2003]_.
 
         INPUT:
 
@@ -7002,24 +7143,13 @@ class Graph(GenericGraph):
            * Graph cores is also a notion related to graph homomorphisms. For
              this second meaning, see :meth:`Graph.has_homomorphism_to`.
 
-        REFERENCES:
-
-        .. [PSW1996] Boris Pittel, Joel Spencer and Nicholas Wormald. Sudden
-          Emergence of a Giant k-Core in a Random
-          Graph. (1996). J. Combinatorial Theory. Ser B 67. pages
-          111-151. [Online] Available:
-          http://cs.nyu.edu/cs/faculty/spencer/papers/k-core.pdf
-
-        .. [BZ] Vladimir Batagelj and Matjaz Zaversnik. An `O(m)`
-          Algorithm for Cores Decomposition of
-          Networks. :arxiv:`cs/0310049v1`.
-
         EXAMPLES::
 
             sage: (graphs.FruchtGraph()).cores()
             [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
             sage: (graphs.FruchtGraph()).cores(with_labels=True)
             {0: 3, 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 3, 7: 3, 8: 3, 9: 3, 10: 3, 11: 3}
+            sage: set_random_seed(0)
             sage: a = random_matrix(ZZ, 20, x=2, sparse=True, density=.1)
             sage: b = Graph(20)
             sage: b.add_edges(a.nonzero_positions(), loops=False)
@@ -7082,21 +7212,58 @@ class Graph(GenericGraph):
         if with_labels:
             return core
         else:
-            return list(six.itervalues(core))
+            return list(core.values())
 
     @doc_index("Leftovers")
-    def modular_decomposition(self):
+    def modular_decomposition(self, algorithm='habib', style='tuple'):
         r"""
         Return the modular decomposition of the current graph.
 
+        A module of an undirected graph is a subset of vertices such that every
+        vertex outside the module is either connected to all members of the
+        module or to none of them. Every graph that has a nontrivial module can
+        be partitioned into modules, and the increasingly fine partitions into
+        modules form a tree. The ``modular_decomposition`` function returns
+        that tree.
+
+        INPUT:
+
+        - ``algorithm`` -- string (default: ``'habib'``); specifies the
+          algorithm to use among:
+
+          - ``'tedder'`` -- linear time algorithm of [TCHP2008]_
+
+          - ``'habib'`` -- `O(n^3)` algorithm of [HM1979]_. This algorithm is
+            much simpler and so possibly less prone to errors.
+
+        - ``style`` -- string (default: ``'tuple'``); specifies the output
+          format:
+
+          - ``'tuple'`` -- as nested tuples.
+
+          - ``'tree'`` -- as :class:`~sage.combinat.rooted_tree.LabelledRootedTree`.
+
+        OUTPUT:
+
+        A pair of two values (recursively encoding the decomposition) :
+
+        * The type of the current module :
+
+          * ``"PARALLEL"``
+          * ``"PRIME"``
+          * ``"SERIES"``
+
+        * The list of submodules (as list of pairs ``(type, list)``,
+          recursively...) or the vertex's name if the module is a singleton.
+
         Crash course on modular decomposition:
 
-        A module `M` of a graph `G` is a proper subset of its vertices such that
-        for all `u \in V(G)-M, v,w\in M` the relation `u \sim v \Leftrightarrow
-        u \sim w` holds, where `\sim` denotes the adjacency relation in
-        `G`. Equivalently, `M \subset V(G)` is a module if all its vertices have
-        the same adjacency relations with each vertex outside of the module
-        (vertex by vertex).
+        A module `M` of a graph `G` is a proper subset of its vertices such
+        that for all `u \in V(G)-M, v,w\in M` the relation `u \sim v
+        \Leftrightarrow u \sim w` holds, where `\sim` denotes the adjacency
+        relation in `G`. Equivalently, `M \subset V(G)` is a module if all its
+        vertices have the same adjacency relations with each vertex outside of
+        the module (vertex by vertex).
 
         Hence, for a set like a module, it is very easy to encode the
         information of the adjacencies between the vertices inside and outside
@@ -7128,20 +7295,7 @@ class Graph(GenericGraph):
 
         You may also be interested in the survey from Michel Habib and
         Christophe Paul entitled "A survey on Algorithmic aspects of modular
-        decomposition" [HabPau10]_.
-
-        OUTPUT:
-
-        A pair of two values (recursively encoding the decomposition) :
-
-        * The type of the current module :
-
-          * ``"PARALLEL"``
-          * ``"PRIME"``
-          * ``"SERIES"``
-
-        * The list of submodules (as list of pairs ``(type, list)``,
-          recursively...) or the vertex's name if the module is a singleton.
+        decomposition" [HP2010]_.
 
         EXAMPLES:
 
@@ -7153,66 +7307,137 @@ class Graph(GenericGraph):
         The Petersen Graph too::
 
             sage: graphs.PetersenGraph().modular_decomposition()
-            (PRIME, [1, 4, 5, 0, 3, 7, 2, 8, 9, 6])
+            (PRIME, [1, 4, 5, 0, 2, 6, 3, 7, 8, 9])
 
         This a clique on 5 vertices with 2 pendant edges, though, has a more
-        interesting decomposition ::
+        interesting decomposition::
 
             sage: g = graphs.CompleteGraph(5)
             sage: g.add_edge(0,5)
             sage: g.add_edge(0,6)
-            sage: g.modular_decomposition()
+            sage: g.modular_decomposition(algorithm='habib')
+            (SERIES, [(PARALLEL, [(SERIES, [1, 2, 3, 4]), 5, 6]), 0])
+
+        We get an equivalent tree when we use the algorithm of [TCHP2008]_::
+
+            sage: g.modular_decomposition(algorithm='tedder')
             (SERIES, [(PARALLEL, [(SERIES, [4, 3, 2, 1]), 5, 6]), 0])
+
+        We can choose output to be a
+        :class:`~sage.combinat.rooted_tree.LabelledRootedTree`::
+
+            sage: g.modular_decomposition(style='tree')
+            SERIES[0[], PARALLEL[5[], 6[], SERIES[1[], 2[], 3[], 4[]]]]
+            sage: ascii_art(g.modular_decomposition(style='tree'))
+              __SERIES
+             /      /
+            0   ___PARALLEL
+               / /     /
+              5 6   __SERIES
+                   / / / /
+                  1 2 3 4
 
         ALGORITHM:
 
-        This function uses python implementation of algorithm published by Marc
-        Tedder, Derek Corneil, Michel Habib and Christophe Paul
-        [TedCorHabPaul08]_.
+        When ``algorithm='tedder'`` this function uses python implementation of
+        algorithm published by Marc Tedder, Derek Corneil, Michel Habib and
+        Christophe Paul [TCHP2008]_. When ``algorithm='habib'`` this function
+        uses the algorithm of M. Habib and M. Maurer [HM1979]_.
 
         .. SEEALSO::
 
             - :meth:`is_prime` -- Tests whether a graph is prime.
 
-        REFERENCE:
-
-        .. [HabPau10] Michel Habib and Christophe Paul
-          A survey of the algorithmic aspects of modular decomposition
-          Computer Science Review
-          vol 4, number 1, pages 41--59, 2010
-          http://www.lirmm.fr/~paul/md-survey.pdf
-
-        .. [TedCorHabPaul08] Marc Tedder, Derek Corneil, Michel Habib and
-          Christophe Paul
-          :arxiv:`0710.3901`
+            - :class:`~sage.combinat.rooted_tree.LabelledRootedTree`.
 
         TESTS:
 
         Empty graph::
 
-            sage: graphs.EmptyGraph().modular_decomposition()
+            sage: graphs.EmptyGraph().modular_decomposition(algorithm='habib')
             ()
+            sage: graphs.EmptyGraph().modular_decomposition(algorithm='tedder')
+            ()
+            sage: graphs.EmptyGraph().modular_decomposition(algorithm='habib', style='tree')
+            None[]
+            sage: graphs.EmptyGraph().modular_decomposition(algorithm='tedder', style='tree')
+            None[]
+
+        Singleton Vertex::
+
+            sage: Graph(1).modular_decomposition(algorithm='habib')
+            (PRIME, [0])
+            sage: Graph(1).modular_decomposition(algorithm='tedder')
+            (PRIME, [0])
+            sage: Graph(1).modular_decomposition(algorithm='habib', style='tree')
+            PRIME[0[]]
+            sage: Graph(1).modular_decomposition(algorithm='tedder', style='tree')
+            PRIME[0[]]
 
         Vertices may be arbitrary --- check that :trac:`24898` is fixed::
 
-            sage: Graph({(1,2):[(2,3)],(2,3):[(1,2)]}).modular_decomposition()
-            (SERIES, [(2, 3), (1, 2)])
+            sage: md = Graph({(1,2):[(2,3)],(2,3):[(1,2)]}).modular_decomposition()
+            sage: md[0]
+            SERIES
+            sage: sorted(md[1])
+            [(1, 2), (2, 3)]
+
+        Unknown algorithm::
+
+            sage: graphs.PathGraph(2).modular_decomposition(algorithm='abc')
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm must be 'habib' or 'tedder'
+
+        Unknown style::
+
+            sage: graphs.PathGraph(2).modular_decomposition(style='xyz')
+            Traceback (most recent call last):
+            ...
+            ValueError: style must be 'tuple' or 'tree'
         """
+        from sage.graphs.graph_decompositions.modular_decomposition import (modular_decomposition,
+                                                                            NodeType,
+                                                                            habib_maurer_algorithm,
+                                                                            create_prime_node,
+                                                                            create_normal_node)
+
         self._scream_if_not_simple()
 
         if not self.order():
-            return tuple()
+            D = None
+        elif self.order() == 1:
+            D = create_prime_node()
+            D.children.append(create_normal_node(self.vertices()[0]))
+        else:
+            if algorithm == 'habib':
+                D = habib_maurer_algorithm(self)
+            elif algorithm == 'tedder':
+                D = modular_decomposition(self)
+            else:
+                raise ValueError("algorithm must be 'habib' or 'tedder'")
 
-        from sage.graphs.modular_decomposition import modular_decomposition, NodeType
-
-        if self.order() == 1:
-            return (NodeType.PRIME, self.vertices())
-
-        D = modular_decomposition(self)
-
-        relabel = lambda x: (x.node_type, [relabel(_) for _ in x.children]) if x.node_type != NodeType.NORMAL else x.children[0]
-
-        return relabel(D)
+        if style == 'tuple':
+            if D is None:
+                return tuple()
+            def relabel(x):
+                if x.node_type == NodeType.NORMAL:
+                    return x.children[0]
+                else:
+                    return x.node_type, [relabel(y) for y in x.children]
+            return relabel(D)
+        elif style == 'tree':
+            from sage.combinat.rooted_tree import LabelledRootedTree
+            if D is None:
+                return LabelledRootedTree([])
+            def to_tree(x):
+                if x.node_type == NodeType.NORMAL:
+                    return LabelledRootedTree([], label=x.children[0])
+                else:
+                    return LabelledRootedTree([to_tree(y) for y in x.children], label=x.node_type)
+            return to_tree(D)
+        else:
+            raise ValueError("style must be 'tuple' or 'tree'")
 
     @doc_index("Graph properties")
     def is_polyhedral(self):
@@ -7451,9 +7676,20 @@ class Graph(GenericGraph):
         return self.planar_dual().is_circumscribable(solver=solver, verbose=verbose)
 
     @doc_index("Graph properties")
-    def is_prime(self):
+    def is_prime(self, algorithm='habib'):
         r"""
         Test whether the current graph is prime.
+
+        INPUT:
+
+        - ``algorithm`` -- (default: ``'tedder'``) specifies the algorithm to
+          use among:
+
+          - ``'tedder'`` -- Use the linear algorithm of [TCHP2008]_.
+
+          - ``'habib'`` -- Use the $O(n^3)$ algorithm of [HM1979]_. This is
+            probably slower, but is much simpler and so possibly less error
+            prone.
 
         A graph is prime if all its modules are trivial (i.e. empty, all of the
         graph or singletons) -- see :meth:`modular_decomposition`.
@@ -7477,12 +7713,12 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().is_prime()
             True
         """
-        from sage.graphs.modular_decomposition import NodeType
+        from sage.graphs.graph_decompositions.modular_decomposition import NodeType
 
         if self.order() <= 1:
             return True
 
-        D = self.modular_decomposition()
+        D = self.modular_decomposition(algorithm=algorithm)
 
         return D[0] == NodeType.PRIME and len(D[1]) == self.order()
 
@@ -7588,7 +7824,7 @@ class Graph(GenericGraph):
         is the same in `G` as in `T`. See the :wikipedia:`Gomory–Hu_tree`. Note
         that, in general, a graph admits more than one Gomory-Hu tree.
 
-        See also 15.4 (Gomory-Hu trees) from [SchrijverCombOpt]_.
+        See also 15.4 (Gomory-Hu trees) from [Sch2003]_.
 
         INPUT:
 
@@ -7775,7 +8011,7 @@ class Graph(GenericGraph):
         ALGORITHM:
 
             This is computed here using a determinant, as explained in Section
-            3.1 of [Marcolli2009]_.
+            3.1 of [Mar2009a]_.
 
             As an intermediate step, one computes a cycle basis `\mathcal C` of
             `G` and a rectangular `|\mathcal C| \times |E(G)|` matrix with
@@ -7822,19 +8058,14 @@ class Graph(GenericGraph):
 
         REFERENCES:
 
-        .. [Marcolli2009] Matilde Marcolli, Feynman Motives, Chapter 3,
-           Feynman integrals and algebraic varieties,
-           http://www.its.caltech.edu/~matilde/LectureN3.pdf
-
-        .. [Brown2011] Francis Brown, Multiple zeta values and periods: From
-           moduli spaces to Feynman integrals, in Contemporary Mathematics vol
-           539
+        [Bro2011]_
         """
         from sage.matrix.constructor import matrix
         from sage.rings.integer_ring import ZZ
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-        edges = self.edges()
+        # The order of the vertices in each tuple matters, so use a list
+        edges = list(self.edges(sort=False))
         cycles = self.cycle_basis(output='edge')
 
         edge2int = {e: j for j, e in enumerate(edges)}
@@ -7953,7 +8184,7 @@ class Graph(GenericGraph):
         This is computed here as the (reversed) characteristic polynomial of a
         square matrix of size twice the number of edges, related to the
         adjacency matrix of the line graph, see for example Proposition 9 in
-        [ScottStorm]_ and Def. 4.1 in [Terras]_.
+        [SS2008]_ and Def. 4.1 in [Ter2011]_.
 
         The graph is first replaced by its 2-core, as this does not change the
         Ihara zeta function.
@@ -7979,21 +8210,12 @@ class Graph(GenericGraph):
 
         REFERENCES:
 
-        .. [HST] Matthew D. Horton, H. M. Stark, and Audrey A. Terras,
-           What are zeta functions of graphs and what are they good for?
-           in Quantum graphs and their applications, 173-189,
-           Contemp. Math., Vol. 415
-
-        .. [Terras] Audrey Terras, Zeta functions of graphs: a stroll through
-           the garden, Cambridge Studies in Advanced Mathematics, Vol. 128
-
-        .. [ScottStorm] Geoffrey Scott and Christopher Storm, The coefficients
-           of the Ihara zeta function, Involve (http://msp.org/involve/2008/1-2/involve-v1-n2-p08-p.pdf)
+        [HST2001]_
         """
         from sage.matrix.constructor import matrix
 
         H = self.subgraph(vertices=self.cores(k=2)[1])
-        E = H.edges()
+        E = list(H.edges(sort=False))
         m = len(E)
         # compute (Hashimoto) edge matrix T
         T = matrix(ZZ, 2 * m, 2 * m, 0)
@@ -8088,7 +8310,6 @@ class Graph(GenericGraph):
     def has_perfect_matching(self, algorithm="Edmonds", solver=None, verbose=0):
         r"""
         Return whether this graph has a perfect matching.
-
         INPUT:
 
         - ``algorithm`` -- string (default: ``"Edmonds"``)
@@ -8206,9 +8427,9 @@ class Graph(GenericGraph):
 
         EXAMPLES:
 
-        Effective resitances in a straight linear 2-tree on 6 vertices ::
+        Effective resistances in a straight linear 2-tree on 6 vertices ::
 
-            sage: G=Graph([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
+            sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
             sage: G.effective_resistance(0,1)
             34/55
             sage: G.effective_resistance(0,3)
@@ -8259,7 +8480,7 @@ class Graph(GenericGraph):
         if i not in self:
             raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(i)))
         elif j not in self:
-            raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(j)))    
+            raise ValueError("vertex ({0}) is not a vertex of the graph".format(repr(j)))
 
         if i == j :
             return 0
@@ -8304,7 +8525,7 @@ class Graph(GenericGraph):
 
         EXAMPLES:
 
-        The effective resitance matrix  for a straight linear 2-tree counting
+        The effective resistance matrix  for a straight linear 2-tree counting
         only non-adjacent vertex pairs ::
 
             sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
@@ -8367,7 +8588,7 @@ class Graph(GenericGraph):
             multiedges. Perhaps this method can be updated to handle them, but
             in the meantime if you want to use it please disallow multiedges
             using allow_multiple_edges().
-            
+
             sage: graphs.CompleteGraph(4).effective_resistance_matrix(nonedgesonly=False)
             [  0 1/2 1/2 1/2]
             [1/2   0 1/2 1/2]
@@ -8433,7 +8654,7 @@ class Graph(GenericGraph):
 
         EXAMPLES:
 
-        Pairs of non-adjacent nodes with least effective resitance in a
+        Pairs of non-adjacent nodes with least effective resistance in a
         straight linear 2-tree on 6 vertices::
 
             sage: G = Graph([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
@@ -8441,12 +8662,12 @@ class Graph(GenericGraph):
             [(1, 4)]
 
         Pairs of (adjacent or non-adjacent) nodes with least effective
-        resitance in a straight linear 2-tree on 6 vertices ::
+        resistance in a straight linear 2-tree on 6 vertices ::
 
             sage: G.least_effective_resistance(nonedgesonly = False)
             [(2, 3)]
 
-        Pairs of non-adjacent nodes with least effective resitance in a fan on
+        Pairs of non-adjacent nodes with least effective resistance in a fan on
         6 vertices counting only non-adjacent vertex pairs ::
 
             sage: H = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(2,3),(3,4),(4,5)])
@@ -8492,19 +8713,577 @@ class Graph(GenericGraph):
             edges = self.complement().edges(labels=False)
         else:
             edges = [(verts[i], verts[j]) for i in range(n) for j in range(i + 1, n)]
-            
+
         rmin = min(S[(verttoidx[e[0]], verttoidx[e[1]])] for e in edges)
         return [e for e in edges if S[(verttoidx[e[0]], verttoidx[e[1]])] == rmin]
-        
+
+    @doc_index("Leftovers")
+    def common_neighbors_matrix(self, vertices=None, nonedgesonly=True):
+        r"""
+        Return a matrix of numbers of common neighbors between each pairs.
+
+        The `(i , j)` entry of the matrix gives the number of common
+        neighbors between vertices `i` and `j`.
+
+        This method is only valid for simple (no loops, no multiple edges)
+        graphs.
+
+        INPUT:
+
+        - ``nonedgesonly``-- boolean (default: ``True``); if ``True``, assigns
+          `0` value to adjacent vertices.
+
+        - ``vertices`` -- list (default: ``None``); the ordering of the
+          vertices defining how they should appear in the matrix. By default,
+          the ordering given by :meth:`GenericGraph.vertices` is used.
+
+        OUTPUT: matrix
+
+        EXAMPLES:
+
+        The common neighbors matrix  for a straight linear 2-tree counting
+        only non-adjacent vertex pairs ::
+
+            sage: G1 = Graph()
+            sage: G1.add_edges([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
+            sage: G1.common_neighbors_matrix(nonedgesonly = True)
+            [0 0 0 2 1 0]
+            [0 0 0 0 2 1]
+            [0 0 0 0 0 2]
+            [2 0 0 0 0 0]
+            [1 2 0 0 0 0]
+            [0 1 2 0 0 0]
+
+        We now show the common neighbors matrix which includes adjacent
+        vertices ::
+
+            sage: G1.common_neighbors_matrix(nonedgesonly = False)
+            [0 1 1 2 1 0]
+            [1 0 2 1 2 1]
+            [1 2 0 2 1 2]
+            [2 1 2 0 2 1]
+            [1 2 1 2 0 1]
+            [0 1 2 1 1 0]
+
+        The common neighbors matrix  for a fan on 6 vertices counting only
+        non-adjacent vertex pairs ::
+
+            sage: H = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(2,3),(3,4),(4,5)])
+            sage: H.common_neighbors_matrix()
+            [0 0 0 0 0 0 0]
+            [0 0 0 2 1 1 1]
+            [0 0 0 0 2 1 1]
+            [0 2 0 0 0 2 1]
+            [0 1 2 0 0 0 1]
+            [0 1 1 2 0 0 1]
+            [0 1 1 1 1 1 0]
+
+        It is an error to input anything other than a simple graph::
+
+            sage: G = Graph([(0,0)],loops=True)
+            sage: G.common_neighbors_matrix()
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with loops.
+            Perhaps this method can be updated to handle them, but in the
+            meantime if you want to use it please disallow loops using
+            allow_loops().
+
+        .. SEEALSO::
+
+            * :meth:`most_common_neighbors` --
+              returns node pairs with most shared neighbors
+
+        TESTS::
+
+            sage: G = graphs.CompleteGraph(4)
+            sage: M = G.common_neighbors_matrix()
+            sage: M.is_zero()
+            True
+            sage: Graph(1).common_neighbors_matrix()
+            [0]
+            sage: Graph().common_neighbors_matrix()
+            []
+            sage: G = Graph([(0,1),(1,2),(2,3),(3,0),(0,2)])
+            sage: G.common_neighbors_matrix()
+            [0 0 0 0]
+            [0 0 0 2]
+            [0 0 0 0]
+            [0 2 0 0]
+        """
+        self._scream_if_not_simple()
+        if vertices is None:
+            vertices = self.vertices()
+        A = self.adjacency_matrix(vertices=vertices)
+        M = A**2
+        for v in range(self.order()):
+            M[v, v] = 0
+            if nonedgesonly:
+                for w in range(v + 1, self.order()):
+                    if A[v, w]:
+                        M[v, w] = M[w, v] = 0
+        return M
+
+    @doc_index("Leftovers")
+    def most_common_neighbors(self, nonedgesonly=True):
+        r"""
+        Return vertex pairs with maximal number of common neighbors.
+
+        This method is only valid for simple (no loops, no multiple edges)
+        graphs with order `\geq 2`
+
+        INPUT:
+
+        - ``nonedgesonly``-- boolean (default: ``True``); if ``True``, assigns
+          `0` value to adjacent vertices.
+
+        OUTPUT: list of tuples of edge pairs
+
+        EXAMPLES:
+
+        The maximum common neighbor (non-adjacent) pairs for a straight
+        linear 2-tree ::
+
+            sage: G1 = Graph([(0,1),(0,2),(1,2),(1,3),(3,5),(2,4),(2,3),(3,4),(4,5)])
+            sage: G1.most_common_neighbors()
+            [(0, 3), (1, 4), (2, 5)]
+
+        If we include non-adjacent pairs ::
+
+            sage: G1.most_common_neighbors(nonedgesonly = False)
+            [(0, 3), (1, 2), (1, 4), (2, 3), (2, 5), (3, 4)]
+
+        The common neighbors matrix  for a fan on 6 vertices counting only
+        non-adjacent vertex pairs ::
+
+            sage: H = Graph([(0,1),(0,2),(0,3),(0,4),(0,5),(0,6),(1,2),(2,3),(3,4),(4,5)])
+            sage: H.most_common_neighbors()
+            [(1, 3), (2, 4), (3, 5)]
+
+        .. SEEALSO::
+
+            * :meth:`common_neighbors_matrix` --
+              a similar method giving a matrix of number of common neighbors
+
+        TESTS::
+
+            sage: G=graphs.CompleteGraph(4)
+            sage: G.most_common_neighbors()
+            []
+            sage: G.most_common_neighbors(nonedgesonly=False)
+            [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
+            sage: Graph(1).most_common_neighbors()
+            Traceback (most recent call last):
+            ...
+            ValueError: this method is defined for graphs with at least 2 vertices
+            sage: Graph().most_common_neighbors()
+            Traceback (most recent call last):
+            ...
+            ValueError: this method is defined for graphs with at least 2 vertices
+            sage: G = Graph([(0,1),(1,2),(2,3),(3,0),(0,2)])
+            sage: G.most_common_neighbors()
+            [(1, 3)]
+            sage: G.most_common_neighbors(nonedgesonly=False)
+            [(0, 2), (1, 3)]
+        """
+        self._scream_if_not_simple()
+        if self.num_verts() < 2:
+            raise ValueError('this method is defined for graphs with at least 2 vertices')
+        verts = list(self)
+        M = self.common_neighbors_matrix(vertices=verts, nonedgesonly=nonedgesonly)
+        output = []
+        coefficients = M.coefficients()
+        if coefficients:
+            maximum = max(coefficients)
+            for v in range(self.num_verts()):
+                for w in range(v + 1, self.num_verts()):
+                    if M[v, w] == maximum:
+                        output.append((verts[v], verts[w]))
+        return output
+
+    @doc_index("Leftovers")
+    def arboricity(self, certificate=False):
+        r"""
+        Return the arboricity of the graph and an optional certificate.
+
+        The arboricity is the minimum number of forests that covers the
+        graph.
+
+        See :wikipedia:`Arboricity`
+
+        INPUT:
+
+        - ``certificate`` -- boolean (default: ``False``); whether to return
+          a certificate.
+
+        OUTPUT:
+
+        When ``certificate = True``, then the function returns `(a, F)`
+        where `a` is the arboricity and `F` is a list of `a` disjoint forests
+        that partitions the edge set of `g`. The forests are represented as
+        subgraphs of the original graph.
+
+        If ``certificate = False``, the function returns just a integer
+        indicating the arboricity.
+
+        ALGORITHM:
+
+        Represent the graph as a graphical matroid, then apply matroid
+        :meth:`sage.matroid.partition` algorithm from the matroids module.
+
+        EXAMPLES::
+
+            sage: G = graphs.PetersenGraph()
+            sage: a,F = G.arboricity(True)
+            sage: a
+            2
+            sage: all([f.is_forest() for f in F])
+            True
+            sage: len(set.union(*[set(f.edges()) for f in F])) == G.size()
+            True
+
+        TESTS::
+
+            sage: g = Graph()
+            sage: g.arboricity(True)
+            (0, [])
+        """
+        from sage.matroids.constructor import Matroid
+        P = Matroid(self).partition()
+        if certificate:
+          return (len(P), [self.subgraph(edges=forest) for forest in P])
+        else:
+          return len(P)
+
+    @doc_index("Graph properties")
+    def is_antipodal(self):
+        r"""
+        Check whether this graph is antipodal.
+
+        A graph `G` of diameter `d` is said to be antipodal if its distance-`d`
+        graph is a disjoint union of cliques.
+
+        EXAMPLES::
+
+            sage: G = graphs.JohnsonGraph(10, 5)
+            sage: G.is_antipodal()
+            True
+            sage: H = G.folded_graph()
+            sage: H.is_antipodal()
+            False
+
+        REFERENCES:
+
+        See [BCN1989]_ p. 438 or [Sam2012]_ for this definition of antipodal
+        graphs.
+
+        TESTS::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_antipodal()
+            False
+            sage: G = graphs.HammingGraph(7, 2)
+            sage: G.is_antipodal()
+            True
+            sage: G = Graph([(0,1), (2, 3)])
+            sage: G.is_antipodal()
+            False
+            sage: G = Graph(4)
+            sage: G.is_antipodal()
+            True
+            sage: graphs.CompleteGraph(5).is_antipodal()
+            True
+            sage: G = Graph()
+            sage: G.is_antipodal()
+            Traceback (most recent call last):
+            ...
+            ValueError: diameter is not defined for the empty graph
+            sage: G = Graph(1)
+            sage: G.is_antipodal()
+            True
+        """
+        G = self.antipodal_graph()
+
+        vertexSet = set(G)
+        while vertexSet:
+            v = vertexSet.pop()
+
+            # all neighbours of v should be in the same clique as v
+            clique = set(G.neighbor_iterator(v, closed=True))
+            for u in clique:
+                if set(G.neighbor_iterator(u, closed=True)) != clique:
+                    return False
+
+            vertexSet.difference_update(clique)
+
+        return True
+
+    @doc_index("Leftovers")
+    def folded_graph(self, check=False):
+        r"""
+        Return the antipodal fold of this graph.
+
+        Given an antipodal graph `G` let `G_d` be its distance-`d` graph.
+        Then the folded graph of `G` has a vertex for each maximal clique
+        of `G_d` and two cliques are adjacent if there is an edge in `G`
+        connecting the two.
+
+        .. SEEALSO::
+
+            :meth:`sage.graphs.graph.is_antipodal`
+
+        INPUT:
+
+        - ``check`` -- boolean (default: ``False``); whether to check if the
+          graph is antipodal. If ``check`` is ``True`` and the graph is not
+          antipodal, then return ``False``.
+
+        OUTPUT:
+
+        This function returns a new graph and ``self`` is not touched.
+
+        .. NOTE::
+
+            The input is expected to be an antipodal graph.
+            You can check that a graph is antipodal using
+            :meth:`sage.graphs.graph.is_antipodal`.
+
+        EXAMPLES::
+
+            sage: G = graphs.JohnsonGraph(10, 5)
+            sage: H = G.folded_graph(); H
+            Folded Johnson graph with parameters 10,5: Graph on 126 vertices
+            sage: Gd = G.distance_graph(G.diameter())
+            sage: all(i == 1 for i in Gd.degree())
+            True
+            sage: H.is_distance_regular(True)
+            ([25, 16, None], [None, 1, 4])
+
+        This method doesn't check if the graph is antipodal::
+
+            sage: G = graphs.PetersenGraph()
+            sage: G.is_antipodal()
+            False
+            sage: G.folded_graph()  # some garbage
+            Folded Petersen graph: Graph on 2 vertices
+            sage: G.folded_graph(check=True)
+            False
+
+        REFERENCES:
+
+        See [BCN1989]_ p. 438 or [Sam2012]_ for this definition of folded graph.
+
+        TESTS::
+
+            sage: G = Graph(5)
+            sage: G.folded_graph()
+            Folded Graph: Graph on 1 vertex
+            sage: G = graphs.CompleteGraph(5)
+            sage: G.folded_graph()
+            Folded Complete graph: Graph on 1 vertex
+            sage: G = Graph()
+            sage: G.folded_graph()
+            Traceback (most recent call last):
+            ...
+            ValueError: diameter is not defined for the empty graph
+            sage: G = Graph(1)
+            sage: G.folded_graph()
+            Folded Graph: Graph on 1 vertex
+        """
+        G = self.antipodal_graph()
+
+        vertices = set(G)
+        newVertices = []
+        while vertices:
+            v = vertices.pop()
+            clique = frozenset(G.neighbor_iterator(v, closed=True))
+
+            if check:
+                for u in clique:
+                    if frozenset(G.neighbor_iterator(u, closed=True)) != clique:
+                        return False
+
+            newVertices.append(clique)
+            vertices.difference_update(clique)
+
+        # now newVertices is a map {0, ..., numCliques-1} -> antipodal classes
+        numCliques = len(newVertices)
+        edges = []
+        for i, j in itertools.combinations(range(numCliques), 2):
+            if any(self.has_edge(u, v) for u, v in
+                   itertools.product(newVertices[i], newVertices[j])):
+                edges.append((i, j))
+
+        H = Graph([range(numCliques), edges], format='vertices_and_edges')
+        name = self.name() if self.name() != "" else "Graph"
+        H.name(f"Folded {name}")
+        return H
+
+    @doc_index("Leftovers")
+    def antipodal_graph(self):
+        r"""
+        Return the antipodal graph of ``self``.
+
+        The antipodal graph of a graph `G` has the same vertex set of `G` and
+        two vertices are adjacent if their distance in `G` is equal to the
+        diameter of `G`.
+
+        OUTPUT:
+
+        A new graph. ``self`` is not touched.
+
+        EXAMPLES::
+
+            sage: G = graphs.JohnsonGraph(10, 5)
+            sage: G.antipodal_graph()
+            Antipodal graph of Johnson graph with parameters 10,5: Graph on 252 vertices
+            sage: G = graphs.HammingGraph(8, 2)
+            sage: G.antipodal_graph()
+            Antipodal graph of Hamming Graph with parameters 8,2: Graph on 256 vertices
+
+        The antipodal graph of a disconnected graph is its complement::
+
+            sage: G = Graph(5)
+            sage: H = G.antipodal_graph()
+            sage: H.is_isomorphic(G.complement())
+            True
+
+        TESTS::
+
+            sage: G = Graph([(0, 1), (2, 3)])
+            sage: H = G.antipodal_graph()
+            sage: H.is_isomorphic(Graph([(0, 2), (0, 3), (1, 2), (1, 3)]))
+            True
+            sage: G = Graph()
+            sage: G.antipodal_graph()
+            Traceback (most recent call last):
+            ...
+            ValueError: diameter is not defined for the empty graph
+            sage: G = Graph(1)
+            sage: G.antipodal_graph()
+            Antipodal graph of Graph: Looped graph on 1 vertex
+        """
+        H = self.distance_graph(self.diameter())
+
+        name = self.name() if self.name() != "" else "Graph"
+        H.name(f"Antipodal graph of {name}")
+        return H
+
+    @doc_index("Basic methods")
+    def bipartite_double(self, extended=False):
+        r"""
+        Return the (extended) bipartite double of this graph.
+
+        The bipartite double of a graph `G` has vertex set
+        `\{ (v,0), (v,1) : v \in G\}` and for any edge `(u, v)` in `G`
+        it has edges `((u,0),(v,1))` and `((u,1),(v,0))`.
+        Note that this is the tensor product of `G` with `K_2`.
+
+        The extended bipartite double of `G` is the bipartite double of
+        `G` after added all edges `((v,0),(v,1))` for all vertices `v`.
+
+        INPUT:
+
+        - ``extended`` -- boolean (default: ``False``); Whether to return the
+          extended bipartite double, or only the bipartite double (default)
+
+        OUTPUT:
+
+        A graph; ``self`` is left untouched.
+
+        EXAMPLES::
+
+            sage: G = graphs.PetersenGraph()
+            sage: H = G.bipartite_double()
+            sage: G == graphs.PetersenGraph()  # G is left invariant
+            True
+            sage: H.order() == 2 * G.order()
+            True
+            sage: H.size() == 2 * G.size()
+            True
+            sage: H.is_bipartite()
+            True
+            sage: H.bipartite_sets() == (set([(v, 0) for v in G]),
+            ....: set([(v, 1) for v in G]))
+            True
+            sage: H.is_isomorphic(G.tensor_product(graphs.CompleteGraph(2)))
+            True
+
+        Behaviour with disconnected graphs::
+
+            sage: G1 = graphs.PetersenGraph()
+            sage: G2 = graphs.HoffmanGraph()
+            sage: G = G1.disjoint_union(G2)
+            sage: H = G.bipartite_double()
+            sage: H1 = G1.bipartite_double()
+            sage: H2 = G2.bipartite_double()
+            sage: H.is_isomorphic(H1.disjoint_union(H2))
+            True
+
+        .. SEEALSO::
+
+            :wikipedia:`Bipartite_double_cover`,
+            `WolframAlpha Bipartite Double
+            <https://mathworld.wolfram.com/BipartiteDoubleGraph.html>`_,
+            [VDKT2016]_ p. 20 for the extended bipartite double.
+
+        TESTS::
+
+            sage: G = graphs.PetersenGraph()
+            sage: H = G.bipartite_double(True)
+            sage: G == graphs.PetersenGraph()  # G is left invariant
+            True
+            sage: H.order() == 2 * G.order()
+            True
+            sage: H.size() == 2 * G.size() + G.order()
+            True
+            sage: H.is_bipartite()
+            True
+            sage: H.bipartite_sets() == (set([(v, 0) for v in G]),
+            ....: set([(v, 1) for v in G]))
+            True
+            sage: H.is_isomorphic(G.tensor_product(graphs.CompleteGraph(2)))
+            False
+
+        Test edge cases::
+
+            sage: G = Graph()
+            sage: H = G.bipartite_double()
+            sage: H.size() + H.order()
+            0
+            sage: H = G.bipartite_double(True)
+            sage: H.size() + H.order()
+            0
+            sage: G = Graph(1)
+            sage: H = G.bipartite_double()
+            sage: H.size() == 0 and H.order() == 2
+            True
+            sage: H = G.bipartite_double(True)
+            sage: H.is_isomorphic(Graph([(0, 1)]))
+            True
+        """
+        G = self.tensor_product(Graph([(0, 1)]))
+
+        if extended:
+            G.add_edges(((v, 0), (v, 1)) for v in self)
+
+        prefix = "Extended " if extended else ""
+        G.name("%sBipartite Double of %s"%(prefix, self.name()))
+        return G
+
     # Aliases to functions defined in other modules
     from sage.graphs.weakly_chordal import is_long_hole_free, is_long_antihole_free, is_weakly_chordal
     from sage.graphs.asteroidal_triples import is_asteroidal_triple_free
     from sage.graphs.chrompoly import chromatic_polynomial
     from sage.graphs.graph_decompositions.rankwidth import rank_decomposition
+    from sage.graphs.graph_decompositions.tree_decomposition import treewidth
     from sage.graphs.graph_decompositions.vertex_separation import pathwidth
+    from sage.graphs.graph_decompositions.clique_separators import atoms_and_clique_separators
     from sage.graphs.matchpoly import matching_polynomial
     from sage.graphs.cliquer import all_max_clique as cliques_maximum
+    from sage.graphs.cliquer import all_cliques
     from sage.graphs.spanning_tree import random_spanning_tree
+    from sage.graphs.spanning_tree import spanning_trees
     from sage.graphs.graph_decompositions.graph_products import is_cartesian_product
     from sage.graphs.distances_all_pairs import is_distance_regular
     from sage.graphs.base.static_dense_graph import is_strongly_regular
@@ -8514,32 +9293,62 @@ class Graph(GenericGraph):
     from sage.graphs.partial_cube import is_partial_cube
     from sage.graphs.orientations import strong_orientations_iterator, random_orientation
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
-
+    from sage.graphs.connectivity import is_triconnected
+    from sage.graphs.comparability import is_comparability
+    from sage.graphs.comparability import is_permutation
+    from sage.graphs.domination import is_dominating
+    from sage.graphs.domination import is_redundant
+    from sage.graphs.domination import private_neighbors
+    from sage.graphs.domination import minimal_dominating_sets
+    from sage.graphs.traversals import (lex_M, maximum_cardinality_search,
+                                        maximum_cardinality_search_M)
+    from sage.graphs.isoperimetric_inequalities import cheeger_constant, edge_isoperimetric_number, vertex_isoperimetric_number
+    from sage.graphs.graph_coloring import fractional_chromatic_number
+    from sage.graphs.graph_coloring import fractional_chromatic_index
 
 _additional_categories = {
     "is_long_hole_free"         : "Graph properties",
     "is_long_antihole_free"     : "Graph properties",
     "is_weakly_chordal"         : "Graph properties",
     "is_asteroidal_triple_free" : "Graph properties",
-    "chromatic_polynomial"      : "Algorithmically hard stuff",
+    "chromatic_polynomial"      : "Coloring",
     "rank_decomposition"        : "Algorithmically hard stuff",
+    "treewidth"                 : "Algorithmically hard stuff",
     "pathwidth"                 : "Algorithmically hard stuff",
     "matching_polynomial"       : "Algorithmically hard stuff",
     "all_max_clique"            : "Clique-related methods",
     "cliques_maximum"           : "Clique-related methods",
+    "all_cliques"               : "Clique-related methods",
+    "atoms_and_clique_separators" : "Clique-related methods",
     "random_spanning_tree"      : "Connectivity, orientations, trees",
+    "spanning_trees"            : "Connectivity, orientations, trees",
     "is_cartesian_product"      : "Graph properties",
     "is_distance_regular"       : "Graph properties",
     "is_strongly_regular"       : "Graph properties",
     "is_line_graph"             : "Graph properties",
     "is_partial_cube"           : "Graph properties",
+    "is_comparability"          : "Graph properties",
+    "is_permutation"            : "Graph properties",
     "tutte_polynomial"          : "Algorithmically hard stuff",
     "lovasz_theta"              : "Leftovers",
     "strong_orientations_iterator" : "Connectivity, orientations, trees",
     "random_orientation"        : "Connectivity, orientations, trees",
     "bridges"                   : "Connectivity, orientations, trees",
     "cleave"                    : "Connectivity, orientations, trees",
-    "spqr_tree"                 : "Connectivity, orientations, trees"
+    "spqr_tree"                 : "Connectivity, orientations, trees",
+    "is_triconnected"           : "Connectivity, orientations, trees",
+    "is_dominating"             : "Domination",
+    "is_redundant"              : "Domination",
+    "private_neighbors"         : "Domination",
+    "minimal_dominating_sets"   : "Domination",
+    "lex_M"                     : "Traversals",
+    "maximum_cardinality_search" : "Traversals",
+    "maximum_cardinality_search_M" : "Traversals",
+    "cheeger_constant"          : "Expansion properties",
+    "edge_isoperimetric_number" : "Expansion properties",
+    "vertex_isoperimetric_number" : "Expansion properties",
+    "fractional_chromatic_number" : "Coloring",
+    "fractional_chromatic_index" : "Coloring"
     }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}",gen_thematic_rest_table_index(Graph,_additional_categories))

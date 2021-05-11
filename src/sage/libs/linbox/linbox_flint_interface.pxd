@@ -1,5 +1,6 @@
 # distutils: libraries = LINBOX_LIBRARIES
 # distutils: library_dirs = LINBOX_LIBDIR
+# distutils: extra_link_args = LINBOX_LIBEXTRA
 
 from sage.libs.flint.types cimport fmpz_t, fmpz_mat_t, fmpz_poly_t
 
@@ -13,7 +14,7 @@ cdef void linbox_fmpz_mat_charpoly(fmpz_poly_t cp, fmpz_mat_t A)
 cdef void linbox_fmpz_mat_minpoly(fmpz_poly_t mp, fmpz_mat_t A)
 
 # return the rank of A
-cdef unsigned long linbox_fmpz_mat_rank(fmpz_mat_t A)
+cdef size_t linbox_fmpz_mat_rank(fmpz_mat_t A)
 
 # set det to the determinant of A
 cdef void linbox_fmpz_mat_det(fmpz_t det, fmpz_mat_t A)

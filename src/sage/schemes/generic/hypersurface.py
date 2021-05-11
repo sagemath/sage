@@ -7,7 +7,6 @@ AUTHORS:
 - David Kohel <kohel@maths.usyd.edu.au> (2005-12-08)
 - Alex Ghitza <aghitza@alum.mit.edu> (2009-04-17)
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005 William Stein <wstein@gmail.com>

@@ -57,16 +57,15 @@ AUTHORS:
 - David Kohel (2008-06): First created (based on free_module.py)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Kohel <kohel@iml.univ-mrs.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import weakref
 
@@ -123,7 +122,7 @@ def FreeQuadraticModule(
         sage: M3 is M2
         True
 
-    TESTS::
+    TESTS:
 
     Check for :trac:`10577`::
 
@@ -141,7 +140,7 @@ def FreeQuadraticModule(
     # In order to use coercion into the inner_product_ring we need to pass
     # this ring into the vector classes.
     if inner_product_ring is not None:
-        raise NotImplementedError("An inner_product_ring can not currently be defined.")
+        raise NotImplementedError("An inner_product_ring cannot currently be defined.")
 
     # We intentionally create a new matrix instead of using the given
     # inner_product_matrix. This ensures that the matrix has the correct
@@ -264,10 +263,6 @@ class FreeQuadraticModule_generic(free_module.FreeModule_generic):
         sage: C3 = FreeQuadraticModule(CC,3,matrix.identity(3))
         sage: Z3 = FreeQuadraticModule(ZZ,3,matrix.identity(3))
         sage: Q3 < C3
-        doctest:warning
-        ...
-        DeprecationWarning: The default order on free modules has changed. The old ordering is in sage.modules.free_module.EchelonMatrixKey
-        See http://trac.sagemath.org/23978 for details.
         False
         sage: C3 < Q3
         False
@@ -636,14 +631,14 @@ class FreeQuadraticModule_generic_pid(
             sage: W = M.span_of_basis([M([1,2,3])])
 
         Next we create two free `\ZZ`-modules, neither of which is a
-        submodule of `W`:
+        submodule of `W`::
 
             sage: W.span_of_basis([M([2,4,0])])
             Free module of degree 3 and rank 1 over Integer Ring
             User basis matrix:
             [2 4 0]
 
-        The following module isn't even in the ambient space::
+        The following module is not even in the ambient space::
 
             sage: Q = QQ
             sage: W.span_of_basis([ Q('1/5')*M([1,2,0]), Q('1/7')*M([1,1,0]) ])
@@ -652,8 +647,7 @@ class FreeQuadraticModule_generic_pid(
             [1/5 2/5   0]
             [1/7 1/7   0]
 
-        Of course the input basis vectors must be linearly
-        independent::
+        Of course the input basis vectors must be linearly independent::
 
             sage: W.span_of_basis([ [1,2,0], [2,4,0] ])
             Traceback (most recent call last):
@@ -1210,10 +1204,6 @@ class FreeQuadraticModule_submodule_with_basis_pid(
         sage: V == M
         False
         sage: M < V
-        doctest:warning
-        ...
-        DeprecationWarning: The default order on free modules has changed. The old ordering is in sage.modules.free_module.EchelonMatrixKey
-        See http://trac.sagemath.org/23978 for details.
         True
         sage: V < M
         False

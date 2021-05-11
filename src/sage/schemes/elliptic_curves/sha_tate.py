@@ -90,7 +90,7 @@ from sage.rings.all import (
     ZZ)
 from sage.functions.log import log
 from math import sqrt
-from sage.misc.all import verbose
+from sage.misc.verbose import verbose
 import sage.arith.all as arith
 from sage.rings.padics.factory import Qp
 from sage.modules.free_module_element import vector
@@ -459,19 +459,7 @@ class Sha(SageObject):
         Returns the conjectural order of `Sha(E/\QQ)`,
         according to the `p`-adic analogue of the Birch
         and Swinnerton-Dyer conjecture as formulated
-        in [MTT]_ and [BP]_.
-
-        REFERENCES:
-
-        .. [MTT] \B. Mazur, J. Tate, and J. Teitelbaum, On `p`-adic
-           analogues of the conjectures of Birch and Swinnerton-Dyer,
-           Inventiones mathematicae 84, (1986), 1-48.
-
-        .. [BP] Dominique Bernardi and Bernadette Perrin-Riou,
-           Variante `p`-adique de la conjecture de Birch et
-           Swinnerton-Dyer (le cas supersingulier),
-           C. R. Acad. Sci. Paris, Sér I. Math., 317 (1993), no. 3,
-           227-232.
+        in [MTT1986]_ and [BP1993]_.
 
         INPUT:
 
@@ -725,7 +713,7 @@ class Sha(SageObject):
         Return the order of the `p`-primary part of the Tate-Shafarevich
         group.
 
-        This uses the result of Skinner and Urban [SU]_ on the
+        This uses the result of Skinner and Urban [SU2014]_ on the
         main conjecture in Iwasawa theory. In particular the elliptic
         curve must have good ordinary reduction at `p`, the residual
         Galois representation must be surjective. Furthermore there must
@@ -756,12 +744,6 @@ class Sha(SageObject):
             ...
             ValueError: The order is not provably known using Skinner-Urban.
             Try running p_primary_bound to get a bound.
-
-        REFERENCES:
-
-        .. [SU] Christopher Skinner and Eric Urban,
-           The Iwasawa main conjectures for GL2.
-           Invent. Math. 195 (2014), no. 1, 1-277.
         """
         E = self.E
         # does not work if p = 2
@@ -823,8 +805,8 @@ class Sha(SageObject):
 
         ALGORITHM:
 
-        The algorithm is described in [SW]_. The results for the
-        reducible case can be found in [Wu]_. The main ingredient is
+        The algorithm is described in [SW2013]_. The results for the
+        reducible case can be found in [Wu2004]_. The main ingredient is
         Kato's result on the main conjecture in Iwasawa theory.
 
         EXAMPLES::
@@ -872,17 +854,6 @@ class Sha(SageObject):
             sage: E = EllipticCurve("5040bi1")
             sage: E.sha().p_primary_bound(5)    # long time
             0
-
-        REFERENCES:
-
-        .. [SW] William Stein and Christian Wuthrich, Algorithms
-           for the Arithmetic of Elliptic Curves using Iwasawa Theory
-           Mathematics of Computation 82 (2013), 1757-1792.
-
-        .. [Wu] Christian Wuthrich, On the integrality of modular
-           symbols and Kato's Euler system for elliptic curves.
-           Doc. Math. 19 (2014), 381-402.
-
         """
         p = Integer(p)
         if p == 2:
@@ -1052,7 +1023,7 @@ class Sha(SageObject):
                     hZ = regulator/2
                 else:
                     hZ = F.regulator(use_database=True)/2
-                I = RIF(alpha) * RIF(LE1-err_E, LE1+err_E) * RIF(LF1-err_F, LF1+err_F) / hZ
+                I = RIF(alpha) * RIF(LE1-err_E, LE1+err_E) * RIF(LF1-err_F, LF1+err_F) / RIF(hZ)
 
             else:          # E has odd rank
 
@@ -1066,7 +1037,7 @@ class Sha(SageObject):
                 err_E = max(err_E, MIN_ERR)
                 # I = alpha * LE1 * LF1 / hZ
 
-                I = RIF(alpha) * RIF(LE1-err_E, LE1+err_E) * RIF(LF1-err_F, LF1+err_F) / hZ
+                I = RIF(alpha) * RIF(LE1-err_E, LE1+err_E) * RIF(LF1-err_F, LF1+err_F) / RIF(hZ)
 
             verbose('interval = %s' % I)
             t, n = I.is_int()
@@ -1082,11 +1053,10 @@ class Sha(SageObject):
         # We include 2 since Kolyvagin (in Gross) says nothing there
         if n == 0:
             return 0, 0  # no bound
-        F = factor(n)
         B = [2]
         for p, e in factor(n):
             if p > 2:
-                if e % 2 != 0:
+                if e % 2:
                     raise RuntimeError("Problem in bound_kolyvagin; square of index is not a perfect square!  D=%s, I=%s, n=%s, e=%s." % (D, I, n, e))
                 B.append(p)
             else:
@@ -1094,13 +1064,13 @@ class Sha(SageObject):
         if not ignore_nonsurj_hypothesis:
             for p in E.galois_representation().non_surjective():
                 B.append(p)
-        B = sorted(set([int(x) for x in B]))
+        B = sorted(set(int(x) for x in B))
         return B, n
 
     def bound_kato(self):
         r"""
-        Returns a list of primes `p` such that the theorems of Kato's [Ka]_
-        and others (e.g., as explained in a thesis of Grigor Grigorov [Gri]_)
+        Returns a list of primes `p` such that the theorems of Kato's [Kat2004]_
+        and others (e.g., as explained in a thesis of Grigor Grigorov [Gri2005]_)
         imply that if `p` divides  the order of `Sha(E/\QQ)` then `p` is in
         the list.
 
@@ -1131,7 +1101,7 @@ class Sha(SageObject):
             [2]
 
         For the following curve one really has that 25 divides the
-        order of `Sha` (by [GJPST]_)::
+        order of `Sha` (by [GJPST2009]_)::
 
             sage: E = EllipticCurve([1, -1, 0, -332311, -73733731])   # 1058D1
             sage: E.sha().bound_kato()                 # long time (about 1 second)
@@ -1150,22 +1120,6 @@ class Sha(SageObject):
             sage: E = EllipticCurve([0, 0, 1, -1, 0])       # 37A  (rank 1)
             sage: E.sha().bound_kato()
             False
-
-        REFERENCES:
-
-        .. [Ka] Kayuza Kato, `p`-adic Hodge theory and values of zeta
-           functions of modular forms, Cohomologies `p`-adiques et
-           applications arithmétiques III, Astérisque vol 295, SMF,
-           Paris, 2004.
-
-        .. [Gri] \G. Grigorov, Kato's Euler System and the Main Conjecture,
-           Harvard Ph.D. Thesis (2005).
-
-        .. [GJPST] \G. Grigorov, A. Jorza, S. Patrikis, W. A. Stein,
-           and C. Tarniţǎ, Computational verification of the Birch and
-           Swinnerton-Dyer conjecture for individual elliptic curves,
-           Math. Comp. 78 (2009), 2397-2425.
-
         """
         E = self.Emin
         if E.has_cm():

@@ -180,15 +180,11 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
-from six import iteritems, integer_types
 
 from sage.structure.sage_object import SageObject
 from sage.structure.element import Element
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
-from sage.rings.integer import Integer
-from sage.misc.all import prod
 from sage.misc.cachefunc import cached_method
 
 
@@ -296,6 +292,7 @@ class Factorization(SageObject):
             (Ambient free module of rank 2 over the principal ideal domain Integer Ring)^5 *
             (Ambient free module of rank 3 over the principal ideal domain Integer Ring)^2
         """
+        from sage.rings.integer import Integer
         x = [(p, Integer(e)) for (p, e) in x]
 
         try:
@@ -824,7 +821,7 @@ class Factorization(SageObject):
             mul += '\n'
         x = self.__x[0][0]
         try:
-            atomic = (isinstance(x, integer_types) or
+            atomic = (isinstance(x, int) or
                       self.universe()._repr_option('element_is_atomic'))
         except AttributeError:
             atomic = False
@@ -871,7 +868,7 @@ class Factorization(SageObject):
         if len(self) == 0:
             return self.__unit._latex_()
         try:
-            atomic = (isinstance(self.__x[0][0], integer_types) or
+            atomic = (isinstance(self.__x[0][0], int) or
                       self.universe()._repr_option('element_is_atomic'))
         except AttributeError:
             atomic = False
@@ -1084,7 +1081,7 @@ class Factorization(SageObject):
             s = {}
             for a in set(d1).union(set(d2)):
                 s[a] = d1.get(a,0) + d2.get(a,0)
-            return Factorization(list(iteritems(s)), unit=self.unit()*other.unit())
+            return Factorization(list(s.items()), unit=self.unit()*other.unit())
         else:
             return Factorization(list(self) + list(other), unit=self.unit()*other.unit())
 
@@ -1114,6 +1111,7 @@ class Factorization(SageObject):
             sage: F**2
             x^3 * y^2 * x^4 * y^2 * x
         """
+        from sage.rings.integer import Integer
         if not isinstance(n, Integer):
             try:
                 n = Integer(n)
@@ -1175,8 +1173,6 @@ class Factorization(SageObject):
             return self / Factorization([(other, 1)])
         return self * other**-1
 
-    __div__ = __truediv__
-
     def value(self):
         """
         Return the product of the factors in the factorization, multiplied out.
@@ -1194,6 +1190,7 @@ class Factorization(SageObject):
             sage: F.value()
             x^3*y^2*x
         """
+        from sage.misc.misc_c import prod
         return prod([p**e for p, e in self.__x], self.__unit)
 
     # Two aliases for ``value(self)``.
@@ -1238,7 +1235,7 @@ class Factorization(SageObject):
             s = {}
             for a in set(d1).intersection(set(d2)):
                 s[a] = min(d1[a],d2[a])
-            return Factorization(list(iteritems(s)))
+            return Factorization(list(s.items()))
         else:
             raise NotImplementedError("gcd is not implemented for non-commutative factorizations")
 
@@ -1280,7 +1277,7 @@ class Factorization(SageObject):
             s = {}
             for a in set(d1).union(set(d2)):
                 s[a] = max(d1.get(a,0),d2.get(a,0))
-            return Factorization(list(iteritems(s)))
+            return Factorization(list(s.items()))
         else:
             raise NotImplementedError("lcm is not implemented for non-commutative factorizations")
 
@@ -1349,4 +1346,5 @@ class Factorization(SageObject):
         """
         if not all(e > 0 for p, e in self.__x):
             raise ValueError("All exponents in the factorization must be positive.")
+        from sage.misc.misc_c import prod
         return prod([p for p, e in self.__x])

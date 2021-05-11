@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Compile Fortran code within Sage,
 # see src/sage/misc/inline_fortran.py

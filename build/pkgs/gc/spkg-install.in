@@ -1,0 +1,14 @@
+cd src
+
+GC_CONFIGURE="--enable-large-config"
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    # See https://trac.sagemath.org/ticket/22694
+    GC_CONFIGURE="$GC_CONFIGURE --enable-threads=posix --enable-handle-fork --enable-shared --disable-static"
+    # Force use of mmap on Cygwin https://trac.sagemath.org/ticket/23973
+    export CFLAGS="$CFLAGS -DUSE_MMAP -DUSE_MUNMAP"
+fi
+
+sdh_configure $GC_CONFIGURE
+sdh_make
+sdh_make_install

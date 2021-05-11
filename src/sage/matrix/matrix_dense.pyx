@@ -7,13 +7,11 @@ TESTS::
     sage: m = matrix(R,2,[0,a,b,b^2])
     sage: TestSuite(m).run()
 """
-from __future__ import absolute_import
-from __future__ import print_function
 
 cimport sage.matrix.matrix as matrix
 
 from sage.structure.element cimport Element, RingElement
-from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
+from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 import sage.matrix.matrix_space
 import sage.structure.sequence
 
@@ -36,7 +34,7 @@ cdef class Matrix_dense(matrix.Matrix):
         return A
 
     cdef set_unsafe_int(self, Py_ssize_t i, Py_ssize_t j, int value):
-        self[i][j] = value
+        self.set_unsafe(i, j, value)
 
     def _pickle(self):
         version = -1
@@ -72,14 +70,29 @@ cdef class Matrix_dense(matrix.Matrix):
             True
             sage: m <= o
             False
+
+        TESTS:
+
+        Check :trac:`27629`::
+
+            sage: var('x')
+            x
+            sage: assume(x, 'real')
+            sage: M = matrix([[0, -x], [x, 0]])
+            sage: M.transpose() == M
+            False
         """
+        other = <Matrix_dense>right
         cdef Py_ssize_t i, j
-        for i from 0 <= i < self._nrows:
-            for j from 0 <= j < self._ncols:
-                lij = self[i, j]
-                rij = right[i, j]
-                if lij != rij:
-                    return richcmp_not_equal(lij, rij, op)
+        # Parents are equal, so dimensions of self and other are equal
+        for i in range(self._nrows):
+            for j in range(self._ncols):
+                lij = self.get_unsafe(i, j)
+                rij = other.get_unsafe(i, j)
+                r = richcmp_item(lij, rij, op)
+                if r is not NotImplemented:
+                    return bool(r)
+        # Matrices are equal
         return rich_to_bool(op, 0)
 
     def transpose(self):
@@ -263,9 +276,7 @@ cdef class Matrix_dense(matrix.Matrix):
             [    0     1]
             [  2*x 3*x^2]
         """
-        # We would just use apply_map, except that Cython doesn't
-        # allow lambda functions
-
+        # We could just use apply_map
         if self._nrows==0 or self._ncols==0:
             return self.__copy__()
         v = [z.derivative(var) for z in self.list()]
@@ -309,10 +320,10 @@ cdef class Matrix_dense(matrix.Matrix):
             ...
             ArithmeticError: number of columns of left must equal number of rows of right
         """
-        cdef Py_ssize_t i, j
+        cdef Py_ssize_t i, j, k
         if left._ncols != right._nrows:
             raise ArithmeticError("number of columns of left must equal number of rows of right")
-        cdef RingElement zero = left.base_ring().zero()
+        zero = left.base_ring().zero()
         cdef matrix.Matrix res = left.new_matrix(nrows=left._nrows, ncols=right._ncols)
         for i in range(left._nrows):
             for j in range(right._ncols):

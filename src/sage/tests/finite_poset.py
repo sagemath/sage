@@ -8,7 +8,7 @@ be ranked.
 """
 
 from sage.misc.prandom import randint
-from sage.misc.misc import attrcall
+from sage.misc.call import attrcall
 from functools import reduce
 
 implications = {
@@ -156,7 +156,7 @@ def test_finite_lattice(L):
 
     from sage.misc.prandom import randint
     from sage.misc.flatten import flatten
-    from sage.misc.misc import attrcall
+    from sage.misc.call import attrcall
 
     from sage.misc.sageinspect import sage_getargspec
 
@@ -204,7 +204,8 @@ def test_finite_lattice(L):
     # Return value must be a pair with correct result as first element.
     for p_ in all_props:
         # Dirty fix first
-        if p_[:9] == 'doubling_' or p_[:5] == 'uniq_': continue
+        if p_[:9] == 'doubling_' or p_[:5] == 'uniq_':
+            continue
         p = "is_"+p_
         if 'certificate' in sage_getargspec(getattr(L, p)).args:
             res = attrcall(p, certificate=True)(L)
@@ -248,7 +249,7 @@ def test_finite_lattice(L):
 
     if not P['complemented']:
         a = L.is_complemented(certificate=True)[1]
-        if L.complements(a) != []:
+        if L.complements(a):
             raise ValueError("compl. error 1")
     if not P['sectionally_complemented']:
         a, b = L.is_sectionally_complemented(certificate=True)[1]
@@ -262,7 +263,7 @@ def test_finite_lattice(L):
         L_ = L.sublattice(L.interval(a, L.top()))
         if L_.is_complemented():
             raise ValueError("cosec. compl. error 1")
-        if len(L_.complements(b)) > 0:
+        if L_.complements(b):
             raise ValueError("cosec. compl. error 2")
     if not P['relatively_complemented']:
         a, b, c = L.is_relatively_complemented(certificate=True)[1]
@@ -335,7 +336,8 @@ def test_finite_lattice(L):
 
     if not P['subdirectly_reducible']:
         x, y = L.is_subdirectly_reducible(certificate=True)[1]
-        a = L.random_element(); b = L.random_element()
+        a = L.random_element()
+        b = L.random_element()
         c = L.congruence([[a, b]])
         if len(c) != L.cardinality():
             for c_ in c:
@@ -433,9 +435,11 @@ def test_finite_lattice(L):
     # Misc misc
     e = L.neutral_elements()
     e = e[randint(0, len(e)-1)]
-    a = L.random_element(); b = L.random_element()
+    a = L.random_element()
+    b = L.random_element()
     if not L.sublattice([e, a, b]).is_distributive():
         raise ValueError("error in neutral_elements")
+
 
 def test_finite_poset(P):
     """
@@ -460,7 +464,7 @@ def test_finite_poset(P):
     from sage.combinat.subset import Subsets
     from sage.misc.prandom import shuffle
 
-    from sage.misc.misc import attrcall
+    from sage.misc.call import attrcall
 
     e = P.random_element()
     P_one_less = P.subposet([x for x in P if x != e])

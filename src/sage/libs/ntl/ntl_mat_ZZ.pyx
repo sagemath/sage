@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -366,7 +373,7 @@ cdef class ntl_mat_ZZ(object):
             TypeError: cannot take determinant of non-square matrix.
             sage: ntl.mat_ZZ(4,4,[next_prime(2**i) for i in range(16)]).determinant()
             -10248
-            sage: ntl.mat_ZZ(4,4,[ ZZ.random_element() for _ in range(16) ]).determinant()
+            sage: ntl.mat_ZZ(4,4,[ ZZ.random_element() for _ in range(16) ]).determinant()  # random
             678
         """
         if self.__nrows != self.__ncols:
@@ -1242,9 +1249,10 @@ cdef class ntl_mat_ZZ(object):
         cdef ZZ_c *det2
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_LLL_U(&det2, &self.x, &U.x, int(a), int(b), int(verbose)))
+
             return rank, make_ZZ_sig_off(det2), U
         else:
             sig_on()
@@ -1327,7 +1335,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_LLL_FP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1351,7 +1359,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_LLL_QP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1376,7 +1384,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_LLL_XD_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1431,7 +1439,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_G_LLL_FP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1449,7 +1457,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_G_LLL_QP_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1468,7 +1476,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_G_LLL_XD_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()
@@ -1487,7 +1495,7 @@ cdef class ntl_mat_ZZ(object):
         """
         cdef ntl_mat_ZZ U
         if return_U:
-            U = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
+            U = ntl_mat_ZZ(self.__nrows, self.__nrows)
             sig_on()
             rank = int(mat_ZZ_G_LLL_RR_U(self.x, U.x, float(delta), 0, 0, int(verbose)))
             sig_off()

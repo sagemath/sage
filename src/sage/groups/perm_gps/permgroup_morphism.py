@@ -249,7 +249,7 @@ class PermutationGroupMorphism_im_gens(PermutationGroupMorphism):
 
         - David Joyner (2006-02)
         """
-        if not all([isinstance(X, PermutationGroup_generic) for X in [G, H]]):
+        if not all(isinstance(X, PermutationGroup_generic) for X in [G, H]):
             raise TypeError("Sorry, the groups must be permutation groups.")
         PermutationGroupMorphism.__init__(self, G, H)
         self._images = [H(img) for img in gens]

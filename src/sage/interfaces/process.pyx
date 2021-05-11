@@ -1,5 +1,5 @@
 """
-Utilities for subprocess management.
+Utilities for subprocess management
 """
 
 #*****************************************************************************
@@ -11,7 +11,6 @@ Utilities for subprocess management.
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import errno
 import signal
@@ -128,7 +127,7 @@ cdef class ContainChildren(object):
             ....:     _ = sys.stdout.write("X ")
             ....:     with ContainChildren():
             ....:         _ = sys.stdout.write("Y ")
-            ....:     sleep(0.5)  # Give the child process time
+            ....:     sleep(float(0.5))  # Give the child process time
             ....:     print("Z")
             ....: finally:
             ....:     pass

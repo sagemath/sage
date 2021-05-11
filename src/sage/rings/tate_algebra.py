@@ -19,7 +19,7 @@ for which the quantity
 goes to infinity when the multi-index `(i_1,\dots,i_n)` goes to infinity.
 
 These series converge on the closed disc defined by the inequalities
-`\val(x_i) \geq -v_i` for all `i \in \{1,\dots,n\}`. The `v_i`'s are
+`\operatorname{val}(x_i) \geq -v_i` for all `i \in \{1,\dots,n\}`. The `v_i`'s are
 then the logarithms of the radii of convergence of the series in the
 above Tate algebra; the will be called the log radii of convergence.
 
@@ -127,7 +127,7 @@ AUTHORS:
 #    it under the terms of the GNU General Public License as published by
 #    the Free Software Foundation, either version 2 of the License, or
 #    (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
 from sage.structure.factory import UniqueFactory
@@ -163,7 +163,7 @@ class TateAlgebraFactory(UniqueFactory):
 
     .. MATH::
 
-        `\text{val}(a_{i_1,\dots,i_n}) - (i_1 v_1 + \cdots + i_n v_n)`
+        \operatorname{val}(a_{i_1,\dots,i_n}) - (i_1 v_1 + \cdots + i_n v_n)
 
     tends to infinity as `i_1,\dots,i_n` go towards infinity.
 
@@ -243,7 +243,7 @@ class TateAlgebraFactory(UniqueFactory):
     """
     def create_key(self, base, prec=None, log_radii=ZZ(0), names=None, order='degrevlex'):
         """
-        Create a key from the input paramaters.
+        Create a key from the input parameters.
 
         INPUT:
 

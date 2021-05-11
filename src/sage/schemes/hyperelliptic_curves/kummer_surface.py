@@ -26,18 +26,35 @@ from sage.categories.all import Schemes
 #     + (2*c0*c6 + c3^2 + 4*a4)*x^2 + (2*c0*c3 + 4*a2)*x + c0^2 + 4*a0
 
 class KummerSurface(AlgebraicScheme_subscheme_projective):
-    def __init__(self,J):
+    def __init__(self, J):
         """
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: f = x^5 + x + 1
+            sage: X = HyperellipticCurve(f)
+            sage: J = Jacobian(X)
+            sage: K = KummerSurface(J); K
+            Closed subscheme of Projective Space of dimension 3 over Rational Field defined by:
+            X0^4 - 4*X0*X1^3 + 4*X0^2*X1*X2 - 4*X0*X1^2*X2 + 2*X0^2*X2^2 + X2^4 - 4*X0^3*X3 - 2*X0^2*X1*X3 - 2*X1*X2^2*X3 + X1^2*X3^2 - 4*X0*X2*X3^2
         """
         R = J.base_ring()
-        PP = ProjectiveSpace(3,R,["X0","X1","X2","X3"])
+        PP = ProjectiveSpace(3, R, ["X0", "X1", "X2", "X3"])
         X0, X1, X2, X3 = PP.gens()
         C = J.curve()
         f, h = C.hyperelliptic_polynomials()
-        a12 = f[0]; a10 = f[1]; a8 = f[2];
-        a6 = f[3]; a4 = f[4]; a2 = f[5]; a0 = f[6]
+        a12 = f[0]
+        a10 = f[1]
+        a8 = f[2]
+        a6 = f[3]
+        a4 = f[4]
+        a2 = f[5]
+        a0 = f[6]
         if h != 0:
-            c6 = h[0]; c4 = h[1]; c2 = h[2]; c0 = h[3]
+            c6 = h[0]
+            c4 = h[1]
+            c2 = h[2]
+            c0 = h[3]
             a12, a10, a8, a6, a4, a2, a0 = \
                  (4*a12 + c6**2,
                   4*a10 + 2*c4*c6,
@@ -73,11 +90,8 @@ class KummerSurface(AlgebraicScheme_subscheme_projective):
           -4*a0*X2**3*X3
         AlgebraicScheme_subscheme_projective.__init__(self, PP, F)
         X, Y, Z = C.ambient_space().gens()
-        if a0 ==0:
+        if a0 == 0:
             a0 = a2
-        phi = Hom(C,self)([0,Z**2,X*Z,a0*X**2],Schemes())
+        phi = Hom(C, self)([X.parent().zero(), Z**2, X*Z, a0*X**2], Schemes())
         C._kummer_morphism = phi
         J._kummer_surface = self
-
-
-

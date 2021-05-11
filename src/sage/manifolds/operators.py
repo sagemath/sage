@@ -4,7 +4,7 @@ Operators for vector calculus
 This module defines the following operators for scalar, vector and tensor
 fields on any pseudo-Riemannian manifold (see
 :mod:`~sage.manifolds.differentiable.pseudo_riemannian`), and in particular
-on Euclidean spaces (see :mod:`~sage.manifolds.differentiable.euclidean`) :
+on Euclidean spaces (see :mod:`~sage.manifolds.differentiable.examples.euclidean`):
 
 - :func:`grad`: gradient of a scalar field
 - :func:`div`: divergence of a vector field, and more generally of a tensor
@@ -24,8 +24,8 @@ module :mod:`~sage.misc.functional`.
 
 .. SEEALSO::
 
-    Examples 1 and 2 in :mod:`~sage.manifolds.differentiable.euclidean` for
-    examples involving these operators in the Euclidean plane and in the
+    Examples 1 and 2 in :mod:`~sage.manifolds.differentiable.examples.euclidean`
+    for examples involving these operators in the Euclidean plane and in the
     Euclidean 3-space.
 
 AUTHORS:

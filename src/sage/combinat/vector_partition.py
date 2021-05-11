@@ -19,7 +19,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -83,19 +82,20 @@ def IntegerVectorsIterator(vect, min = None):
         sage: list(IntegerVectorsIterator([1, 1], min = [1, 0]))
         [[1, 0], [1, 1]]
     """
-    if len(vect) == 0:
+    if not vect:
         yield []
     else:
         if min is None:
-            min = [0]*len(vect)
+            min = [0] * len(vect)
         if vect < min:
             return
         else:
-            for vec in IntegerVectorsIterator(vect[1:], min =min[1:]):
-                yield [min[0]]+vec
-            for j in range(min[0]+1,vect[0]+1):
+            for vec in IntegerVectorsIterator(vect[1:], min=min[1:]):
+                yield [min[0]] + vec
+            for j in range(min[0] + 1, vect[0] + 1):
                 for vec in IntegerVectorsIterator(vect[1:]):
-                    yield [j]+vec
+                    yield [j] + vec
+
 
 class VectorPartition(CombinatorialElement):
     r"""

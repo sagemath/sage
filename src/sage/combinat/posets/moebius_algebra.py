@@ -2,7 +2,7 @@
 r"""
 Möbius Algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,8 +14,8 @@ Möbius Algebras
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
@@ -53,6 +53,7 @@ class BasisAbstract(CombinatorialFreeModule, BindableClass):
         """
         L = self.realization_of()._lattice
         return self.monomial(L(x))
+
 
 class MoebiusAlgebra(Parent, UniqueRepresentation):
     r"""
@@ -268,7 +269,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
                                              prefix=prefix,
                                              category=MoebiusAlgebraBases(M))
 
-            ## Change of basis:
+            # Change of basis:
             E = M.E()
             self.module_morphism(self._to_natural_basis,
                                  codomain=E, category=self.category(),
@@ -281,7 +282,6 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
                               triangular='lower', unitriangular=True,
                               key=M._lattice._element_to_vertex
                               ).register_as_coercion()
-
 
         @cached_method
         def _to_natural_basis(self, x):
@@ -299,7 +299,8 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             M = self.realization_of()
             N = M.natural()
             moebius = M._lattice.moebius_function
-            return N.sum_of_terms((y, moebius(x,y)) for y in M._lattice.order_filter([x]))
+            return N.sum_of_terms((y, moebius(x, y))
+                                  for y in M._lattice.order_filter([x]))
 
         def product_on_basis(self, x, y):
             """
@@ -421,8 +422,8 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             Quantum Moebius algebra of Finite lattice containing 16 elements
              with q=q over Univariate Laurent Polynomial Ring in q over Integer Ring
         """
-        return "Quantum Moebius algebra of {} with q={} over {}".format(
-                            self._lattice, self._q, self.base_ring())
+        txt = "Quantum Moebius algebra of {} with q={} over {}"
+        return txt.format(self._lattice, self._q, self.base_ring())
 
     def a_realization(self):
         r"""
@@ -504,8 +505,8 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             moebius = L.moebius_function
             rank = L.rank_function()
             R = L.rank()
-            j = L.join(x,y)
-            return self.sum_of_terms(( z, moebius(a,z) * q**(R - rank(a)) )
+            j = L.join(x, y)
+            return self.sum_of_terms((z, moebius(a, z) * q**(R - rank(a)))
                                      for z in L.order_filter([j])
                                      for a in L.closed_interval(j, z))
 
@@ -526,7 +527,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             moebius = L.moebius_function
             rank = L.rank_function()
             R = L.rank()
-            return self.sum_of_terms((x, moebius(y,x) * q**(rank(y) - R))
+            return self.sum_of_terms((x, moebius(y, x) * q**(rank(y) - R))
                                      for x in L for y in L.order_ideal([x]))
 
     natural = E
@@ -562,7 +563,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
                                              prefix=prefix,
                                              category=MoebiusAlgebraBases(M))
 
-            ## Change of basis:
+            # Change of basis:
             E = M.E()
             phi = self.module_morphism(self._to_natural_basis,
                                        codomain=E, category=self.category(),
@@ -588,13 +589,11 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             M = self.realization_of()
             N = M.natural()
             q = M._q
-            R = M.base_ring()
             L = M._lattice
-            poly = lambda x,y: L.subposet(L.closed_interval(x, y)).characteristic_polynomial()
-            # This is a workaround until #17554 is fixed...
-            subs = lambda p,q: R.sum( c * q**e for e,c in enumerate(p.list()) )
-            # ...at which point, we can do poly(x,y)(q=q)
-            return N.sum_of_terms((y, subs(poly(x,y), q))
+
+            def poly(x, y):
+                return L.subposet(L.closed_interval(x, y)).characteristic_polynomial()
+            return N.sum_of_terms((y, poly(x, y)(q=q))
                                   for y in L.order_filter([x]))
 
     characteristic_basis = C
@@ -643,7 +642,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
                                              prefix=prefix,
                                              category=MoebiusAlgebraBases(M))
 
-            ## Change of basis:
+            # Change of basis:
             E = M.E()
             phi = self.module_morphism(self._to_natural_basis,
                                        codomain=E, category=self.category(),
@@ -670,15 +669,13 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             L = M._lattice
             E = M.E()
             q = M._q
-            R = M.base_ring()
             rank = L.rank_function()
-            # This is a workaround until #17554 is fixed...
-            subs = lambda p,q: R.sum( c * q**e for e,c in enumerate(p.list()) )
             return E.sum_of_terms((y, q**(rank(y) - rank(x)) *
-                                      subs(L.kazhdan_lusztig_polynomial(x, y), q**-2))
+                                   L.kazhdan_lusztig_polynomial(x, y)(q=q**-2))
                                   for y in L.order_filter([x]))
 
     kazhdan_lusztig = KL
+
 
 class MoebiusAlgebraBases(Category_realization_of_parent):
     r"""
@@ -776,4 +773,3 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
 
     class ElementMethods:
         pass
-

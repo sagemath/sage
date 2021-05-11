@@ -1,16 +1,17 @@
-diff -Naur ecl-16.1.2.orig/src/c/file.d ecl-16.1.2/src/c/file.d
---- ecl-16.1.2.orig/src/c/file.d	2016-05-11 13:10:51.867673867 +1200
-+++ ecl-16.1.2/src/c/file.d	2016-05-11 14:44:48.121907307 +1200
-@@ -3354,8 +3354,10 @@
-         ecl_disable_interrupts();
-         do {
-                 out = fwrite(c, sizeof(char), n, IO_STREAM_FILE(strm));
--        } while (out < n && restartable_io_error(strm, "fwrite"));
--        ecl_enable_interrupts();
-+        /* Ignore write errors to stderr to avoid an infinite loop */
-+        } while (out < n && (IO_STREAM_FILE(strm) != stderr) && restartable_io_error(strm, "fwrite"));
-+
-+       ecl_enable_interrupts();
-         return out;
+diff --git a/src/c/file.d b/src/c/file.d
+index 2d15d50f8..199f24c4f 100755
+--- a/src/c/file.d
++++ b/src/c/file.d
+@@ -3536,7 +3536,8 @@ output_stream_write_byte8(cl_object strm, unsigned char *c, cl_index n)
+   ecl_disable_interrupts();
+   do {
+     out = fwrite(c, sizeof(char), n, IO_STREAM_FILE(strm));
+-  } while (out < n && restartable_io_error(strm, "fwrite"));
++  /* Ignore write errors to stderr to avoid an infinite loop */
++  } while (out < n && (IO_STREAM_FILE(strm) != stderr) && restartable_io_error(strm, "fwrite"));
+   ecl_enable_interrupts();
+   return out;
  }
- 
+-- 
+2.20.1
+

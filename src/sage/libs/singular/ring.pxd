@@ -21,16 +21,16 @@ from sage.libs.singular.decl cimport ring
 #
 # cdef class myclass_new():
 #     cdef ring* myring;
-#     cdef __cinit__():
+#     def __cinit__():
 #         self.myring = singular_ring_new(...)
-#     cdef __dealloc__():
+#     def __dealloc__():
 #         singular_ring_delete(self.myring)
 #
 # cdef class myclass_reference():
 #     cdef ring* refring;
-#     cdef __cinit__(ring* some_ring):
+#     def __cinit__(ring* some_ring):
 #         self.refring = singular_ring_reference(some_ring)
-#     cdef __dealloc__():
+#     def __dealloc__():
 #         singular_ring_delete(self.refring)
 #
 # You must not refer to Python/Cython classes in the Cython
@@ -38,9 +38,9 @@ from sage.libs.singular.decl cimport ring
 #
 # cdef class myclass_invalid():
 #     cdef Parent parent;
-#     cdef __cinit__(Parent p):
+#     def __cinit__(Parent p):
 #         self.parent = p
-#     cdef __dealloc__():
+#     def __dealloc__():
 #         do_something_with(self.parent.ring)   # segfault
 
 

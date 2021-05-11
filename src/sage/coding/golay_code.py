@@ -10,8 +10,7 @@ REFERENCES:
 
 - [HP2003]_ pp. 31-33 for a definition of Golay codes.
 
-.. [WS] \F. J. MacWilliams, N. J. A. Sloane, *The Theory of Error-Correcting
-        Codes*, North-Holland, Amsterdam, 1977
+- [MS2011]_
 
 - :wikipedia:`Golay_code`
 """
@@ -31,8 +30,6 @@ from sage.matrix.constructor import matrix
 from sage.rings.finite_rings.finite_field_constructor import GF
 from .linear_code import (AbstractLinearCode,
                           LinearCodeGeneratorMatrixEncoder)
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.integer_ring import ZZ
 
 class GolayCode(AbstractLinearCode):
     r"""
@@ -163,7 +160,7 @@ class GolayCode(AbstractLinearCode):
 
         If ``self`` is an extended Golay code, ``self`` is returned.
         Otherwise, it returns the output of
-        :meth:`sage.coding.linear_code.AbstractLinearCode.dual_code`
+        :meth:`sage.coding.linear_code_no_metric.AbstractLinearCodeNoMetric.dual_code`
 
         EXAMPLES::
 

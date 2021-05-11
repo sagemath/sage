@@ -11,7 +11,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from sage.misc.lazy_import import lazy_import
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
@@ -21,7 +20,7 @@ native_python_containers   = set([tuple, list, set, frozenset, range])
 
 class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConstructionFunctor):
     """
-    A singleton class for the Cartesian product functor.
+    The Cartesian product functor.
 
     EXAMPLES::
 
@@ -41,7 +40,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
         [['a', 1], ['a', 2], ['b', 1], ['b', 2], ['c', 1], ['c', 2]]
 
     If those sets are endowed with more structure, say they are
-    monoids (hence in the category `Monoids()`), then the result is
+    monoids (hence in the category ``Monoids()``), then the result is
     automatically endowed with its natural monoid structure::
 
         sage: M = Monoids().example()
@@ -110,7 +109,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
     _functor_category = "CartesianProducts"
     symbol = " (+) "
 
-    def __init__(self):
+    def __init__(self, category=None):
         r"""
         Constructor. See :class:`CartesianProductFunctor` for details.
 
@@ -121,8 +120,13 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             The cartesian_product functorial construction
         """
         CovariantFunctorialConstruction.__init__(self)
+        self._forced_category = category
         from sage.categories.sets_cat import Sets
-        MultivariateConstructionFunctor.__init__(self, Sets(), Sets())
+        if self._forced_category is not None:
+            codomain = self._forced_category
+        else:
+            codomain = Sets()
+        MultivariateConstructionFunctor.__init__(self, Sets(), codomain)
 
     def __call__(self, args, **kwds):
         r"""
@@ -165,8 +169,7 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
 
         Check that Python3 ``range`` is handled correctly::
 
-            sage: from six.moves import range as py3range
-            sage: C = cartesian_product([py3range(2), py3range(2)])
+            sage: C = cartesian_product([range(2), range(2)])
             sage: list(C)
             [(0, 0), (0, 1), (1, 0), (1, 1)]
             sage: C.category()
@@ -177,12 +180,41 @@ class CartesianProductFunctor(CovariantFunctorialConstruction, MultivariateConst
             S = Sets()
             args = [S(a, enumerated_set=True) for a in args]
         elif not args:
-            from sage.categories.sets_cat import Sets
+            if self._forced_category is None:
+                from sage.categories.sets_cat import Sets
+                cat = Sets().CartesianProducts()
+            else:
+                cat = self._forced_category
             from sage.sets.cartesian_product import CartesianProduct
-            return CartesianProduct((), Sets().CartesianProducts())
+            return CartesianProduct((), cat)
+        elif self._forced_category is not None:
+            return super(CartesianProductFunctor, self).__call__(args, category=self._forced_category, **kwds)
 
         return super(CartesianProductFunctor, self).__call__(args, **kwds)
 
+    def __eq__(self, other):
+        r"""
+        Comparison ignores the ``category`` parameter.
+
+        TESTS::
+
+            sage: from sage.categories.cartesian_product import CartesianProductFunctor
+            sage: cartesian_product([ZZ, ZZ]).construction()[0] == CartesianProductFunctor()
+            True
+        """
+        return isinstance(other, CartesianProductFunctor)
+
+    def __ne__(self, other):
+        r"""
+        Comparison ignores the ``category`` parameter.
+
+        TESTS::
+
+            sage: from sage.categories.cartesian_product import CartesianProductFunctor
+            sage: cartesian_product([ZZ, ZZ]).construction()[0] != CartesianProductFunctor()
+            False
+        """
+        return not (self == other)
 
 class CartesianProductsCategory(CovariantConstructionCategory):
     r"""

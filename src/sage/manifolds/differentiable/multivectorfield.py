@@ -28,14 +28,14 @@ REFERENCES:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.tensor.modules.alternating_contr_tensor import AlternatingContrTensor
 from sage.manifolds.differentiable.tensorfield import TensorField
@@ -119,13 +119,21 @@ class MultivectorField(TensorField):
         sage: a.display(eV)
         a = (-1/4*u^3 + 1/4*u*v^2 - 1/4*v^3 + 1/4*(u^2 - 8)*v - 2*u) d/du/\d/dv
 
+
+    It is also possible to set the components while defining the 2-vector field
+    definition, via a dictionary whose keys are the vector frames::
+
+        sage: a1 = M.multivector_field(2, {eU: [[0, x*y^2 + 2*x],
+        ....:                                   [-x*y^2 - 2*x, 0]]}, name='a')
+        sage: a1.add_comp_by_continuation(eV, W, c_uv)
+        sage: a1 == a
+        True
+
     The exterior product of two vector fields is a 2-vector field::
 
-        sage: a = M.vector_field(name='a')
-        sage: a[eU,:] = [-y, x]
+        sage: a = M.vector_field({eU: [-y, x]}, name='a')
         sage: a.add_comp_by_continuation(eV, W, c_uv)
-        sage: b = M.vector_field(name='b')
-        sage: b[eU,:] = [1+x*y, x^2]
+        sage: b = M.vector_field({eU: [1+x*y, x^2]}, name='b')
         sage: b.add_comp_by_continuation(eV, W, c_uv)
         sage: s = a.wedge(b) ; s
         2-vector field a/\b on the 2-dimensional differentiable manifold M
@@ -139,11 +147,11 @@ class MultivectorField(TensorField):
 
         sage: f = M.scalar_field({c_xy: (x+y)^2, c_uv: u^2}, name='f')
         sage: s = f*s ; s
-        2-vector field on the 2-dimensional differentiable manifold M
+        2-vector field f*(a/\b) on the 2-dimensional differentiable manifold M
         sage: s.display(eU)
-        (-2*x^2*y^3 - x^3 - (4*x^3 + x)*y^2 - 2*(x^4 + x^2)*y) d/dx/\d/dy
+        f*(a/\b) = (-2*x^2*y^3 - x^3 - (4*x^3 + x)*y^2 - 2*(x^4 + x^2)*y) d/dx/\d/dy
         sage: s.display(eV)
-        (1/2*u^5 - 1/2*u^3*v^2 - 1/2*u^2*v^3 + u^3 + 1/2*(u^4 + 2*u^2)*v)
+        f*(a/\b) = (1/2*u^5 - 1/2*u^3*v^2 - 1/2*u^2*v^3 + u^3 + 1/2*(u^4 + 2*u^2)*v)
           d/du/\d/dv
 
     """
@@ -154,7 +162,7 @@ class MultivectorField(TensorField):
         TESTS:
 
         Construction via ``parent.element_class``, and not via a direct call
-        to ``MultivectorField`, to fit with the category framework::
+        to ``MultivectorField``, to fit with the category framework::
 
             sage: M = Manifold(2, 'M')
             sage: U = M.open_subset('U') ; V = M.open_subset('V')
@@ -287,11 +295,9 @@ class MultivectorField(TensorField):
             sage: uv_to_xy = xy_to_uv.inverse()
             sage: W = U.intersection(V) # The complement of the two poles
             sage: e_xy = c_xy.frame() ; e_uv = c_uv.frame()
-            sage: a = M.vector_field(name='a')
-            sage: a[e_xy,:] = y, x
+            sage: a = M.vector_field({e_xy: [y, x]}, name='a')
             sage: a.add_comp_by_continuation(e_uv, W, c_uv)
-            sage: b = M.vector_field(name='b')
-            sage: b[e_xy,:] = x^2 + y^2, y
+            sage: b = M.vector_field({e_xy: [x^2 + y^2, y]}, name='b')
             sage: b.add_comp_by_continuation(e_uv, W, c_uv)
             sage: c = a.wedge(b); c
             2-vector field a/\b on the 2-dimensional differentiable
@@ -319,6 +325,7 @@ class MultivectorField(TensorField):
             # call of the AlternatingContrTensor version:
             return AlternatingContrTensor.wedge(self_r, other_r)
         # otherwise, the result is created here:
+        resu_name = None
         if self._name is not None and other._name is not None:
             sname = self._name
             oname = other._name
@@ -327,6 +334,7 @@ class MultivectorField(TensorField):
             if not is_atomic(oname):
                 oname = '(' + oname + ')'
             resu_name = sname + '/\\' + oname
+        resu_latex_name = None
         if self._latex_name is not None and other._latex_name is not None:
             slname = self._latex_name
             olname = other._latex_name
@@ -406,8 +414,7 @@ class MultivectorField(TensorField):
             sage: uv_to_xy = xy_to_uv.inverse()
             sage: W = U.intersection(V) # The complement of the two poles
             sage: e_xy = c_xy.frame() ; e_uv = c_uv.frame()
-            sage: a = M.vector_field(name='a')
-            sage: a[e_xy,:] = -y, x
+            sage: a = M.vector_field({e_xy: [-y, x]}, name='a')
             sage: a.add_comp_by_continuation(e_uv, W, c_uv)
             sage: b = M.diff_form(2, name='b')
             sage: b[e_xy,1,2] = 4/(x^2+y^2+1)^2   # the standard area 2-form
@@ -590,11 +597,9 @@ class MultivectorField(TensorField):
             sage: uv_to_xy = xy_to_uv.inverse()
             sage: W = U.intersection(V) # The complement of the two poles
             sage: e_xy = c_xy.frame() ; e_uv = c_uv.frame()
-            sage: a = M.vector_field(name='a')
-            sage: a[e_xy,:] = y, x
+            sage: a = M.vector_field({e_xy: [y, x]}, name='a')
             sage: a.add_comp_by_continuation(e_uv, W, c_uv)
-            sage: b = M.vector_field(name='b')
-            sage: b[e_xy,:] = x*y, x-y
+            sage: b = M.vector_field({e_xy: [x*y, x-y]}, name='b')
             sage: b.add_comp_by_continuation(e_uv, W, c_uv)
             sage: s = a.bracket(b); s
             Vector field [a,b] on the 2-dimensional differentiable manifold S^2
@@ -724,7 +729,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
         sage: M = Manifold(4, 'M')
         sage: c_txyz.<t,x,y,z> = M.chart()
-        sage: a = M.multivector_field(2, 'a') ; a
+        sage: a = M.multivector_field(2, name='a') ; a
         2-vector field a on the 4-dimensional differentiable manifold M
         sage: a.parent()
         Free module A^2(M) of 2-vector fields on the 4-dimensional
@@ -785,7 +790,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
     An example of 3-vector field in `\RR^3` with Cartesian coordinates::
 
-        sage: M = Manifold(3, 'R3', r'\RR^3', start_index=1)
+        sage: M = Manifold(3, 'R3', latex_name=r'\RR^3', start_index=1)
         sage: c_cart.<x,y,z> = M.chart()
         sage: a = M.multivector_field(3, name='a')
         sage: a[1,2,3] = x^2+y^2+z^2  # the only independent component
@@ -803,6 +808,14 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         ....:                [r*sin(th)*cos(ph), r*sin(th)*sin(ph), r*cos(th)])
         sage: cart_to_spher = spher_to_cart.set_inverse(sqrt(x^2+y^2+z^2),
         ....:                              atan2(sqrt(x^2+y^2),z), atan2(y, x))
+        Check of the inverse coordinate transformation:
+          r == r  *passed*
+          th == arctan2(r*sin(th), r*cos(th))  **failed**
+          ph == arctan2(r*sin(ph)*sin(th), r*cos(ph)*sin(th))  **failed**
+          x == x  *passed*
+          y == y  *passed*
+          z == z  *passed*
+        NB: a failed report can reflect a mere lack of simplification.
         sage: a.comp(c_spher.frame()) # computation of components w.r.t. spherical frame
         Fully antisymmetric 3-indices components w.r.t. Coordinate frame
          (R3, (d/dr,d/dth,d/dph))
@@ -813,13 +826,18 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         sage: a.display(c_spher.frame(), c_spher)
         a = 1/sin(th) d/dr/\d/dth/\d/dph
 
+    As a shortcut of the above command, on can pass just the chart ``c_spher``
+    to ``display``, the vector frame being then assumed to be the coordinate
+    frame associated with the chart::
+
+        sage: a.display(c_spher)
+        a = 1/sin(th) d/dr/\d/dth/\d/dph
+
     The exterior product of two multivector fields is performed via the method
     :meth:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor.wedge`::
 
-        sage: a = M.vector_field(name='A')
-        sage: a[:] = (x*y, -z*x, y)
-        sage: b = M.vector_field(name='B')
-        sage: b[:] = (y, z+y, x^2-z^2)
+        sage: a = M.vector_field([x*y, -z*x, y], name='A')
+        sage: b = M.vector_field([y, z+y, x^2-z^2], name='B')
         sage: ab = a.wedge(b) ; ab
         2-vector field A/\B on the 3-dimensional differentiable manifold R3
         sage: ab.display()
@@ -978,10 +996,8 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: a[0,1] = x*y
             sage: a.display()
             a = x*y d/dx/\d/dy
-            sage: b = M.one_form(name='b')
-            sage: b[:] = [1+x, 2-y]
-            sage: c = M.one_form(name='c')
-            sage: c[:] = [-y, x]
+            sage: b = M.one_form([1+x, 2-y], name='b')
+            sage: c = M.one_form([-y, x], name='c')
             sage: s = a.__call__(b,c); s
             Scalar field a(b,c) on the 2-dimensional differentiable manifold M
             sage: s.display()
@@ -1015,8 +1031,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
             sage: M = Manifold(3, 'M', start_index=1)
             sage: X.<x,y,z> = M.chart()
-            sage: a = M.vector_field(name='a')
-            sage: a[:] = [2, 1+x, y*z]
+            sage: a = M.vector_field([2, 1+x, y*z], name='a')
             sage: b = M.multivector_field(2, name='b')
             sage: b[1,2], b[1,3], b[2,3] = y^2, z+x, z^2
             sage: a.display()
@@ -1034,7 +1049,21 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s[1,2,3] == a[1]*b[2,3] + a[2]*b[3,1] + a[3]*b[1,2]
             True
 
+        Exterior product with a scalar field::
+
+            sage: f = M.scalar_field(x, name='f')
+            sage: s = b.wedge(f); s
+            2-vector field f*b on the 3-dimensional differentiable manifold M
+            sage: s.display()
+            f*b = x*y^2 d/dx/\d/dy + (x^2 + x*z) d/dx/\d/dz + x*z^2 d/dy/\d/dz
+            sage: s == f*b
+            True
+            sage: s == f.wedge(b)
+            True
+
         """
+        if other._tensor_rank == 0:  # wedge product with a scalar field
+            return self * other
         if self._domain.is_subset(other._domain):
             if not self._ambient_domain.is_subset(other._ambient_domain):
                 raise ValueError("incompatible ambient domains for exterior " +
@@ -1096,10 +1125,8 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
             sage: M = Manifold(4, 'M')
             sage: X.<t,x,y,z> = M.chart()
-            sage: a = M.vector_field(name='a')
-            sage: a[:] = [x, 1+t^2, x*z, y-3]
-            sage: b = M.one_form(name='b')
-            sage: b[:] = [-z^2, 2, x, x-y]
+            sage: a = M.vector_field([x, 1+t^2, x*z, y-3], name='a')
+            sage: b = M.one_form([-z^2, 2, x, x-y], name='b')
             sage: s = a.interior_product(b); s
             Scalar field i_a b on the 4-dimensional differentiable manifold M
             sage: s.display()
@@ -1230,10 +1257,8 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
             sage: M = Manifold(3, 'M')
             sage: X.<x,y,z> = M.chart()
-            sage: a = M.vector_field(name='a')
-            sage: a[:] = x*y+z, x+y-z, z-2*x+y
-            sage: b = M.vector_field(name='b')
-            sage: b[:] = y+2*z-x, x^2-y+z, z-x
+            sage: a = M.vector_field([x*y+z, x+y-z, z-2*x+y], name='a')
+            sage: b = M.vector_field([y+2*z-x, x^2-y+z, z-x], name='b')
 
         and form their Schouten-Nijenhuis bracket::
 

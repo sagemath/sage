@@ -6,7 +6,6 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -14,7 +13,7 @@ from __future__ import absolute_import
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.rings.all import ZZ, QQ, infinity, PolynomialRing, FractionField
@@ -185,7 +184,7 @@ def rational_type(f, n=ZZ(3), base_ring=ZZ):
     if (dhom(denom).is_constant()):
         analytic_type = analytic_type.reduce_to(["quasi", "holo"])
         # Determine whether f is cuspidal in the sense that finf divides it...
-        # Bug in singular: finf_pol.dividess(1.0) fails over RR
+        # Bug in singular: finf_pol.divides(1.0) fails over RR
         if (not dhom(num).is_constant() and finf_pol.divides(num)):
             if (n != infinity or x.divides(num)):
                 analytic_type = analytic_type.reduce_to(["quasi", "cusp"])

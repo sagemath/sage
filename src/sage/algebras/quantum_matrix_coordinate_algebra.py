@@ -13,9 +13,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -274,7 +273,6 @@ class QuantumMatrixCoordinateAlgebra_abstract(CombinatorialFreeModule):
             return self.monomial(a * b)
         G = self._indices.monoid_generators()
         one = self.base_ring().one()
-        ret = self.zero()
         q = self._q
         qi = q ** -1
         monomial = b
@@ -709,12 +707,8 @@ class QuantumGL(QuantumMatrixCoordinateAlgebra_abstract):
 
     REFERENCES:
 
-    .. [DD91] \R. Dipper and S. Donkin. *Quantum* `GL_n`.
-       Proc. London Math. Soc. (3) **63** (1991), no. 1, pp. 165-211.
-
-    .. [Karimipour93] Vahid Karimipour.
-       *Representations of the coordinate ring of* `GL_q(n)`.
-       (1993). :arxiv:`hep-th/9306058`.
+    - [DD1991]_
+    - [Kar1993]_
     """
     @staticmethod
     def __classcall_private__(cls, n, q=None, bar=None, R=None):

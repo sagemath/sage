@@ -15,18 +15,14 @@ AUTHORS:
 - Florent Hivert (2010-2011): initial implementation.
 - Adrien Boussicault (2015): Hook statistics.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-# python3
-from __future__ import division, absolute_import
-from six import add_metaclass
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.list_clone import ClonableArray
 from sage.combinat.abstract_tree import (AbstractClonableTree,
                                          AbstractLabelledClonableTree)
@@ -45,8 +41,8 @@ from sage.sets.family import Family
 from sage.misc.cachefunc import cached_method
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class BinaryTree(AbstractClonableTree, ClonableArray):
+class BinaryTree(AbstractClonableTree, ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     """
     Binary trees.
 
@@ -1409,7 +1405,7 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
             right.append(label)
             return right
 
-    def tamari_sorting_tuple(self):
+    def tamari_sorting_tuple(self, reverse=False):
         r"""
         Return the Tamari sorting tuple of ``self`` and the
         size of ``self``.
@@ -1420,6 +1416,12 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         descendants of the right child of the `i`-th node
         of ``self``. Here, the nodes of ``self`` are numbered
         from left to right.
+
+        INPUT:
+
+        - ``reverse`` -- boolean (default ``False``) if ``True``,
+          return instead the result for the left-right symmetric of the
+          binary tree
 
         OUTPUT:
 
@@ -1441,15 +1443,23 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
              ((1, 0, 0), 3),
              ((0, 0, 0), 3)]
 
+            sage: t = BinaryTrees(10).random_element()
+            sage: u = t.left_right_symmetry()
+            sage: t.tamari_sorting_tuple(True) == u.tamari_sorting_tuple()
+            True
+
         REFERENCES:
 
         - [HT1972]_
         """
         if not self:
             return tuple(), 0
-        t1, t2 = self
-        u1, n1 = t1.tamari_sorting_tuple()
-        u2, n2 = t2.tamari_sorting_tuple()
+        if not reverse:
+            t1, t2 = self
+        else:
+            t2, t1 = self
+        u1, n1 = t1.tamari_sorting_tuple(reverse=reverse)
+        u2, n2 = t2.tamari_sorting_tuple(reverse=reverse)
         return (u1 + (n2,) + u2, n1 + 1 + n2)
 
     @combinatorial_map(name="To 312 avoiding permutation")
@@ -1822,9 +1832,10 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         """
         if not self:
             return BinaryTree()
-        tree = [self[1].left_right_symmetry(), self[0].left_right_symmetry()]
         if self not in LabelledBinaryTrees():
-            return BinaryTree(tree)
+            a = self.tamari_sorting_tuple(reverse=True)[0]
+            return from_tamari_sorting_tuple(a)
+        tree = [self[1].left_right_symmetry(), self[0].left_right_symmetry()]
         return LabelledBinaryTree(tree, label=self.label())
 
     @combinatorial_map(order=2, name="Left border symmetry")
@@ -2002,15 +2013,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         if self.is_empty():
             yield self
             return
-        # TODO:: PYTHON 3
-        # yield from self[0].in_order_traversal_iter()
-        for left_subtree in self[0].in_order_traversal_iter():
-            yield left_subtree
+        yield from self[0].in_order_traversal_iter()
         yield self
-        # TODO:: PYTHON 3
-        # yield from self[1].in_order_traversal_iter()
-        for right_subtree in self[1].in_order_traversal_iter():
-            yield right_subtree
+        yield from self[1].in_order_traversal_iter()
 
     def in_order_traversal(self, node_action=None, leaf_action=None):
         r"""
@@ -2659,10 +2664,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         composing it. A left (resp. right) branch is maximal if it is not
         included in a strictly longer left (resp. right) branch.
 
+        OUTPUT:
 
-        OUTPUT :
-
-        A list of two integers.
+        A list of two integers
 
         EXAMPLES::
 
@@ -3170,7 +3174,6 @@ class BinaryTree(AbstractClonableTree, ClonableArray):
         else:
             return B([self[0], self[1].over(bt)])
 
-    __div__ = over
     __truediv__ = over
 
     @combinatorial_map(name="Under operation on Binary Trees")
@@ -4040,7 +4043,7 @@ def from_tamari_sorting_tuple(key):
 
     - ``key`` -- a tuple of integers
 
-    EXEMPLES::
+    EXAMPLES::
 
         sage: from sage.combinat.binary_tree import from_tamari_sorting_tuple
         sage: t = BinaryTrees(60).random_element()
@@ -4260,7 +4263,8 @@ class BinaryTrees_size(BinaryTrees):
             True
         """
         from sage.combinat.dyck_word import CompleteDyckWords_size
-        return CompleteDyckWords_size(self._size).random_element().to_binary_tree()
+        dw = CompleteDyckWords_size(self._size).random_element()
+        return dw.to_binary_tree_tamari()
 
     def __iter__(self):
         """
@@ -4280,7 +4284,7 @@ class BinaryTrees_size(BinaryTrees):
         if self._size == 0:
             yield self._element_constructor_()
         else:
-            for i in range(0, self._size):
+            for i in range(self._size):
                 for lft in self.__class__(i):
                     for rgt in self.__class__(self._size - 1 - i):
                         yield self._element_constructor_([lft, rgt])
@@ -4386,6 +4390,7 @@ class FullBinaryTrees_all(DisjointUnionEnumeratedSets, BinaryTrees):
 # Enumerated set of full binary trees of a given size
 #################################################################
 
+
 def _full_construction(n):
     """
     Helper function for the disjoint union construction.
@@ -4404,7 +4409,8 @@ def _full_construction(n):
     """
     if n == 0:
         return FullBinaryTrees_size(0)
-    return FullBinaryTrees_size(2*n-1)
+    return FullBinaryTrees_size(2 * n - 1)
+
 
 class FullBinaryTrees_size(BinaryTrees):
     """
@@ -4483,7 +4489,7 @@ class FullBinaryTrees_size(BinaryTrees):
         if self._size == 0:
             return Integer(1)
         from sage.combinat.combinat import catalan_number
-        return catalan_number((self._size-1) // 2)
+        return catalan_number((self._size - 1) // 2)
 
     def random_element(self):
         r"""
@@ -4512,7 +4518,8 @@ class FullBinaryTrees_size(BinaryTrees):
         from sage.combinat.dyck_word import CompleteDyckWords_size
         if self._size == 0:
             return BinaryTree(None)
-        return CompleteDyckWords_size((self._size-1) // 2).random_element().to_binary_tree().to_full()
+        dw = CompleteDyckWords_size((self._size - 1) // 2).random_element()
+        return dw.to_binary_tree_tamari().to_full()
 
     def __iter__(self):
         """
@@ -4538,10 +4545,10 @@ class FullBinaryTrees_size(BinaryTrees):
         if self._size == 1:
             yield self._element_constructor_("[.,.]")
         else:
-            k = (self._size - 1) // 2 # number of internal nodes
+            k = (self._size - 1) // 2  # number of internal nodes
             for i in range(k):
-                for lft in FullBinaryTrees_size(2*i+1):
-                    for rgt in FullBinaryTrees_size(2*(k-1-i)+1):
+                for lft in FullBinaryTrees_size(2 * i + 1):
+                    for rgt in FullBinaryTrees_size(2 * (k - 1 - i) + 1):
                         yield self._element_constructor_([lft, rgt])
 
     def _element_constructor_(self, *args, **keywords):

@@ -285,11 +285,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function, absolute_import
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 from sage.interfaces.interface import AsciiArtString
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.env import DOT_SAGE, SAGE_LOCAL
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc

@@ -1,5 +1,5 @@
 """
-Abstract base class for generators of polynomial systems.
+Abstract base class for generators of polynomial systems
 
 AUTHOR:
     Martin Albrecht <malb@informatik.uni-bremen.de>

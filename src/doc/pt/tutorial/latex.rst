@@ -86,7 +86,7 @@ classe ``MathJax``. A função ``eval`` dessa classe converte um objeto
 do Sage em sua representação LaTeX e adiciona HTML que por sua vez
 evoca a classe "matemática" do CSS, a qual então emprega o MathJax. ::
 
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: js = MathJax()
     sage: var('z')
     z
@@ -133,9 +133,9 @@ O comando interno ``pretty_print()`` ilustra a conversão de objetos do
 Sage para HTML que emprega o MathJax no Notebook. ::
 
     sage: pretty_print(x^12)
-    <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}x^{12}</script></html>
+    x^12
     sage: pretty_print(integrate(sin(x), x))
-    <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}-\cos\left(x\right)</script></html>
+    -cos(x)
 
 O Notebook tem outros dois recursos para empregar o TeX. O primeiro é
 o botão "Typeset" bem acima da primeira célula da folha de trabalho, à
@@ -204,7 +204,7 @@ obtido redefinindo a macro ``\Bold{}`` que faz parte do Sage. ::
 
     sage: latex(QQ)
     \Bold{Q}
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: js = MathJax()
     sage: js(QQ)
     <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}</script></html>
@@ -228,7 +228,7 @@ trechos de códigos TeX no Notebook. ::
     (x, y)
     sage: latex(x+y)
     x + y
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: js = MathJax()
     sage: js(x+y)
     <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y</script></html>
@@ -328,17 +328,17 @@ que for definido pelo comando ``latex.engine()``). Essa lista é
 gerenciada pelos comandos ``latex.add_to_mathjax_avoid_list`` e
 ``latex.mathjax_avoid_list``. ::
 
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
+    sage: latex.mathjax_avoid_list()                # not tested
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
 
 Suponha que uma expressão em LaTeX é produzida no Notebook com o
@@ -397,11 +397,8 @@ processador, etc. estão configurados corretamente).
     <BLANKLINE>
     To use, try to view this object -- it won't work.  Now try
     'latex.add_to_preamble("\\usepackage[matrix,arrow,curve,cmtip]{xy}")',
-    and try viewing again -- it should work in the command line but not
-    from the notebook.  In the notebook, run
-    'latex.add_to_mathjax_avoid_list("xymatrix")' and try again -- you
-    should get a picture (a part of the diagram arising from a filtered
-    chain complex).
+    and try viewing again. You should get a picture (a part of the diagram arising
+    from a filtered chain complex).
 
 .. _sec-tkz-graph:
 
@@ -446,8 +443,8 @@ pelo LaTeX no Notebook. ::
     sage: latex.extra_preamble() # random - depends on system's TeX installation
     '\\usepackage{tikz}\n\\usepackage{tkz-graph}\n\\usepackage{tkz-berge}\n'
     sage: latex.engine('pdflatex')
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['tikz', 'tikzpicture']
 
 Agora, um comando como ``view(graphs.CompleteGraph(4))`` deve produzir
@@ -465,7 +462,7 @@ Uma Instalação Completa do TeX
 Vários dos recursos avançados de integração do TeX com o Sage requerem
 uma instalação do TeX em seu sistema. Várias versões do Linux possuem
 pacotes do TeX baseados no TeX-live, para o OSX existe o TeXshop e
-para o windows existe o MikTex. O utilitário ``convert`` é parte do 
+para o windows existe o MikTex. O utilitário ``convert`` é parte do
 `ImageMagick <http://www.imagemagick.org/>`_ (que deve ser um pacote
 na sua versão do Linux ou ser fácil de instalar), e os três programas
 ``dvipng``, ``ps2pdf``, e ``dvips`` podem estar incluídos na sua
@@ -474,9 +471,10 @@ respectivamente, http://sourceforge.net/projects/dvipng/ e como parte
 do `Ghostscript <http://www.ghostscript.com/>`_.
 
 A criação de grafos combinatoriais requer uma versão recente da
-biblioteca PGF, e os arquivos ``tkz-graph.sty``, ``tkz-arith.sty`` e
-talvez ``tkz-berge.sty``, que estão disponíveis em `Altermundus site
-<http://altermundus.com/pages/tkz/graph/>`_.
+biblioteca PGF, e o arquivo ``tkz-graph.sty``, que está disponível em
+https://www.ctan.org/pkg/tkz-graph, os arquivos  ``tkz-arith.sty`` e
+talvez ``tkz-berge.sty``, que estão disponíveis em
+https://www.ctan.org/pkg/tkz-berge.
 
 Programas Externos
 ==================
@@ -492,21 +490,3 @@ ser executados automaticamente. Como um exemplo, um exame matemático
 pode manter uma correspondência entre questões e respostas usando o
 sagetex para fazer cálculos com o Sage. Veja :ref:`sec-sagetex` para
 mais informações.
-
-O tex2sws começa com um documento LaTeX, mas define ambientes
-adicionais para inserir código em Sage. Quando processado com as
-ferramentas adequadas, o resultado é uma folha de trabalho do Sage,
-com conteúdo apropriadamente formatado para o MathJax e com código em
-Sage incorporado como células de entrada. Então um livro texto ou
-artigo pode ser criado em LaTeX, ter blocos de código em Sage
-incluídos, e o documento todo pode ser transformado em uma folha de
-trabalho do Sage onde o texto matemático é bem formatado e os blocos
-de código em Sage podem ser facilmente executados. Atualmente em
-desenvolvimento, veja `tex2sws @ BitBucket
-<http://bitbucket.org/rbeezer/tex2sws/>`_ para mais informações.
-
-O sws2tex reverte o processo partindo de uma folha de trabalho do Sage
-e convertendo o conteúdo para LaTeX para ser posteriormente processado
-com as ferramentas disponíveis para documentos em LaTeX. Atualmente em
-desenvolvimento, veja `sws2tex @ BitBucket
-<http://bitbucket.org/whuss/sws2tex/>`_ para mais informações.

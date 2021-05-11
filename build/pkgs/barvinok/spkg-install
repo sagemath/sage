@@ -1,9 +1,0 @@
-cd src
-
-sdh_configure --with-gmp-prefix=${SAGE_LOCAL} \
-              --with-ntl-prefix=${SAGE_LOCAL} \
-              --with-isl=system               \
-              --with-polylib=system           \
-              --enable-shared-barvinok
-sdh_make
-sdh_make_install

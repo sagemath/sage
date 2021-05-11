@@ -30,12 +30,12 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from copy import copy
 
 from .combinat import catalan_number
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.sets_with_grading import SetsWithGrading
 from sage.categories.monoids import Monoids
 from sage.rings.all import NN
 from sage.rings.integer import Integer
@@ -292,6 +292,8 @@ class NonDecreasingParkingFunction(Element):
         """
         return len(self._list)
 
+    grade = __len__  # for the category SetsWithGrading
+
     def _repr_(self):
         """
         Return the string representation of ``self``.
@@ -371,11 +373,12 @@ class NonDecreasingParkingFunctions_all(UniqueRepresentation, Parent):
         """
         TESTS::
 
-            sage: PF= NonDecreasingParkingFunctions()
+            sage: PF = NonDecreasingParkingFunctions()
             sage: PF == loads(dumps(PF))
             True
         """
-        Parent.__init__(self, category=InfiniteEnumeratedSets())
+        cat = InfiniteEnumeratedSets() & SetsWithGrading()
+        Parent.__init__(self, category=cat)
 
     def __repr__(self):
         """
@@ -418,6 +421,18 @@ class NonDecreasingParkingFunctions_all(UniqueRepresentation, Parent):
         for n in NN:
             for pf in NonDecreasingParkingFunctions_n(n):
                 yield pf
+
+    def graded_component(self, n):
+        """
+        Return the graded component.
+
+        EXAMPLES::
+
+            sage: P = NonDecreasingParkingFunctions()
+            sage: P.graded_component(4) == NonDecreasingParkingFunctions(4)
+            True
+        """
+        return NonDecreasingParkingFunctions_n(n)
 
 
 class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):

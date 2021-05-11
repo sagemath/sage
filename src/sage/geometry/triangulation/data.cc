@@ -386,7 +386,7 @@ void goodcircuit::do_flip(const simplices & s, const flip & f)
   std::set<vertices,vertices_order> tri;
   copy(v.begin(), v.end(), inserter(tri,tri.begin()) );
 
-  // remove all suported simplices
+  // remove all supported simplices
   std::set<vertices,vertices_order> to_remove;
 
   for (std::set<vertices,vertices_order>::const_iterator i=use_link.begin();

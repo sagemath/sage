@@ -23,7 +23,6 @@ We can change our assignment of values by modifying the dictionary::
     sage: booleval.eval_formula(t, d)
     False
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2006 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>

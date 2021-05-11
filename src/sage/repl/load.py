@@ -1,33 +1,34 @@
 """
 Load Python, Sage, Cython, Fortran and Magma files in Sage
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import os
 import base64
 
 from sage.cpython.string import str_to_bytes, bytes_to_str, FS_ENCODING
 
+
 def is_loadable_filename(filename):
     """
-    Returns whether a file can be loaded into Sage.  This checks only
-    whether its name ends in one of the supported extensions ``.py``,
-    ``.pyx``, ``.sage``, ``.spyx``, ``.f``, ``.f90`` and ``.m``.
-    Note: :func:`load` assumes the latter signifies a Magma file.
+    Return whether a file can be loaded into Sage.
+
+    This checks only whether its name ends in one of the supported
+    extensions ``.py``, ``.pyx``, ``.sage``, ``.spyx``, ``.f``,
+    ``.f90`` and ``.m``.
+
+    .. NOTE:: :func:`load` assumes that `.m` signifies a Magma file.
 
     INPUT:
 
-    - ``filename`` - a string
+    - ``filename`` -- a string
 
     OUTPUT:
 
@@ -72,7 +73,7 @@ def load_cython(name):
 
 def load(filename, globals, attach=False):
     r"""
-    Executes a file in the scope given by ``globals``.  If the name
+    Execute a file in the scope given by ``globals``. If the name
     starts with ``http://``, it is treated as a URL and downloaded.
 
     .. NOTE::
@@ -100,7 +101,6 @@ def load(filename, globals, attach=False):
 
     section, as the condition on ``__name__`` will hold true (code run from the
     command prompt is considered to be running in the ``__main__`` module.)
-
 
     EXAMPLES:
 
@@ -138,7 +138,7 @@ def load(filename, globals, attach=False):
         sage: z
         -7
 
-    If the file isn't a Cython, Python, or a Sage file, a ValueError
+    If the file is not a Cython, Python, or Sage file, a ``ValueError``
     is raised::
 
         sage: sage.repl.load.load(tmp_filename(ext=".foo"), globals())
@@ -154,7 +154,7 @@ def load(filename, globals, attach=False):
 
     We can load files using secure http (https)::
 
-        sage: sage.repl.load.load('https://github.com/jasongrout/minimum_rank/raw/minimum_rank_1_0_0/minrank.py', globals())  # optional - internet
+        sage: sage.repl.load.load('https://raw.githubusercontent.com/sagemath/sage-patchbot/3.0.0/sage_patchbot/util.py', globals())  # optional - internet
 
     We attach a file::
 
@@ -166,12 +166,12 @@ def load(filename, globals, attach=False):
         sage: t in attached_files()
         True
 
-    You can't attach remote URLs (yet)::
+    You cannot attach remote URLs (yet)::
 
         sage: sage.repl.load.load('http://www.sagemath.org/files/loadtest.py', globals(), attach=True)  # optional - internet
         Traceback (most recent call last):
         ...
-        NotImplementedError: you can't attach a URL
+        NotImplementedError: you cannot attach a URL
 
     The default search path for loading and attaching files is the
     current working directory, i.e., ``'.'``.  But you can modify the
@@ -230,7 +230,7 @@ def load(filename, globals, attach=False):
             # But see https://en.wikipedia.org/wiki/HTTP_ETag for how
             # we will do this.
             # http://www.diveintopython.net/http_web_services/etags.html
-            raise NotImplementedError("you can't attach a URL")
+            raise NotImplementedError("you cannot attach a URL")
         from sage.misc.remote_file import get_remote_file
         filename = get_remote_file(filename, verbose=False)
 
@@ -283,15 +283,15 @@ def load(filename, globals, attach=False):
         # mathematica too, and we should really analyze the file
         # further.
         s = globals['magma'].load(fpath)
-        i = s.find('\n'); s = s[i+1:]
-        print(s)
+        i = s.find('\n')
+        print(s[i + 1:])
     else:
         raise ValueError('unknown file extension %r for load or attach (supported extensions: .py, .pyx, .sage, .spyx, .f, .f90, .m)' % ext)
 
 
 def load_wrap(filename, attach=False):
     """
-    Encodes a load or attach command as valid Python code.
+    Encode a load or attach command as valid Python code.
 
     INPUT:
 
@@ -315,10 +315,8 @@ def load_wrap(filename, attach=False):
         sage: m == b'foo.sage'
         True
     """
-
-    # Note: On Python 3 b64encode only accepts bytes, and returns bytes (yet
-    # b64decode does accept str, but always returns bytes)
+    # Note: In Python 3, b64encode only accepts bytes, and returns bytes.
     b64 = base64.b64encode(str_to_bytes(filename, FS_ENCODING,
                                         "surrogateescape"))
-    return 'sage.repl.load.load(sage.repl.load.base64.b64decode("{}"),globals(),{})'.format(
-            bytes_to_str(b64, 'ascii'), attach)
+    txt = 'sage.repl.load.load(sage.repl.load.base64.b64decode("{}"),globals(),{})'
+    return txt.format(bytes_to_str(b64, 'ascii'), attach)

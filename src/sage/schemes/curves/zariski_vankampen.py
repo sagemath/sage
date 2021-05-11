@@ -32,18 +32,15 @@ EXAMPLES::
     sage: fundamental_group(f) # optional - sirocco
     Finitely presented group < x0 |  >
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Miguel Marco <mmarco@unizar.es>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import division, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.groups.braid import BraidGroup
 from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -54,7 +51,7 @@ from sage.parallel.decorate import parallel
 from sage.misc.flatten import flatten
 from sage.groups.free_group import FreeGroup
 from sage.misc.misc_c import prod
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
@@ -67,7 +64,7 @@ def braid_from_piecewise(strands):
     INPUT:
 
     - ``strands`` -- a list of lists of tuples ``(t, c)``, where ``t``
-      is a number bewteen 0 and 1, and ``c`` is a complex number
+      is a number between 0 and 1, and ``c`` is a complex number
 
     OUTPUT:
 
@@ -93,19 +90,21 @@ def braid_from_piecewise(strands):
                 yaux = val[indices[j]][1]
                 aaux = val[indices[j] - 1][0]
                 baux = val[indices[j]][0]
-                interpola = xaux + (yaux - xaux)*(i - aaux)/(baux - aaux)
+                interpola = xaux + (yaux - xaux) * (i - aaux) / (baux - aaux)
                 totalpoints[j].append([interpola.real(), interpola.imag()])
             else:
-                totalpoints[j].append([val[indices[j]][1].real(), val[indices[j]][1].imag()])
+                totalpoints[j].append([val[indices[j]][1].real(),
+                                       val[indices[j]][1].imag()])
                 indices[j] = indices[j] + 1
-        i = min(val[indices[k]][0] for k,val in enumerate(L))
+        i = min(val[indices[k]][0] for k, val in enumerate(L))
 
     for j, val in enumerate(L):
-         totalpoints[j].append([val[-1][1].real(), val[-1][1].imag()])
+        totalpoints[j].append([val[-1][1].real(), val[-1][1].imag()])
 
     braid = []
     G = SymmetricGroup(len(totalpoints))
-    def sgn(x, y): # Opposite sign of cmp
+
+    def sgn(x, y):
         if x < y:
             return 1
         if x > y:
@@ -113,7 +112,7 @@ def braid_from_piecewise(strands):
         return 0
     for i in range(len(totalpoints[0]) - 1):
         l1 = [totalpoints[j][i] for j in range(len(L))]
-        l2 = [totalpoints[j][i+1] for j in range(len(L))]
+        l2 = [totalpoints[j][i + 1] for j in range(len(L))]
         M = [[l1[s], l2[s]] for s in range(len(l1))]
         M.sort()
         l1 = [a[0] for a in M]
@@ -130,18 +129,21 @@ def braid_from_piecewise(strands):
             P = G(Permutation([]))
             while cruces:
                 # we select the crosses in the same t
-                crucesl = [c for c in cruces if c[0]==cruces[0][0]]
-                crossesl = [(P(c[2]+1) - P(c[1]+1),c[1],c[2],c[3]) for c in crucesl]
+                crucesl = [c for c in cruces if c[0] == cruces[0][0]]
+                crossesl = [(P(c[2] + 1) - P(c[1] + 1), c[1], c[2], c[3])
+                            for c in crucesl]
                 cruces = cruces[len(crucesl):]
                 while crossesl:
                     crossesl.sort()
                     c = crossesl.pop(0)
                     braid.append(c[3]*min(map(P, [c[1] + 1, c[2] + 1])))
-                    P = G(Permutation([(c[1] + 1, c[2] + 1)]))*P
-                    crossesl = [(P(c[2]+1) - P(c[1]+1),c[1],c[2],c[3]) for c in crossesl]
+                    P = G(Permutation([(c[1] + 1, c[2] + 1)])) * P
+                    crossesl = [(P(cr[2]+1) - P(cr[1]+1), cr[1], cr[2], cr[3])
+                                for cr in crossesl]
 
     B = BraidGroup(len(L))
     return B(braid)
+
 
 def discrim(f):
     r"""
@@ -171,8 +173,9 @@ def discrim(f):
     """
     x, y = f.variables()
     F = f.base_ring()
-    disc = F[x](f.discriminant(y).resultant(f, y)).roots(QQbar, multiplicities=False)
-    return disc
+    poly = F[x](f.discriminant(y).resultant(f, y)).radical()
+    return poly.roots(QQbar, multiplicities=False)
+
 
 def segments(points):
     """
@@ -216,16 +219,19 @@ def segments(points):
     from scipy.spatial import Voronoi
     discpoints = array([(CC(a).real(), CC(a).imag()) for a in points])
     added_points = 3 * abs(discpoints).max() + 1.0
-    configuration = vstack([discpoints, array([[added_points, 0], [-added_points, 0],
-                                               [0, added_points], [0, -added_points]])])
+    configuration = vstack([discpoints, array([[added_points, 0],
+                                               [-added_points, 0],
+                                               [0, added_points],
+                                               [0, -added_points]])])
     V = Voronoi(configuration)
     res = []
     for rv in V.ridge_vertices:
-        if not -1 in rv:
+        if -1 not in rv:
             p1 = CC(list(V.vertices[rv[0]]))
             p2 = CC(list(V.vertices[rv[1]]))
             res.append((p1, p2))
     return res
+
 
 def followstrand(f, x0, x1, y0a, prec=53):
     r"""
@@ -267,12 +273,12 @@ def followstrand(f, x0, x1, y0a, prec=53):
     CC = ComplexField(prec)
     G = f.change_ring(QQbar).change_ring(CIF)
     (x, y) = G.variables()
-    g = G.subs({x: (1-x)*CIF(x0) + x*CIF(x1)})
+    g = G.subs({x: (1 - x) * CIF(x0) + x * CIF(x1)})
     coefs = []
     deg = g.total_degree()
     for d in range(deg + 1):
         for i in range(d + 1):
-            c = CIF(g.coefficient({x: d-i, y: i}))
+            c = CIF(g.coefficient({x: d - i, y: i}))
             cr = c.real()
             ci = c.imag()
             coefs += list(cr.endpoints())
@@ -287,7 +293,7 @@ def followstrand(f, x0, x1, y0a, prec=53):
             points = contpath_mp(deg, coefs, yr, yi, prec)
         return points
     except Exception:
-        return followstrand(f, x0, x1, y0a, 2*prec)
+        return followstrand(f, x0, x1, y0a, 2 * prec)
 
 
 @parallel
@@ -315,12 +321,29 @@ def braid_in_segment(f, x0, x1):
         sage: x1 = CC(1, 0.5)
         sage: braid_in_segment(f, x0, x1) # optional - sirocco
         s1
+
+    TESTS:
+
+    Check that :trac:`26503` is fixed::
+
+        sage: wp = QQ['t']([1, 1, 1]).roots(QQbar)[0][0]
+        sage: Kw.<wp> = NumberField(wp.minpoly(), embedding=wp)
+        sage: R.<x, y> = Kw[]
+        sage: z = -wp - 1
+        sage: f = y*(y + z)*x*(x - 1)*(x - y)*(x + z*y - 1)*(x + z*y + wp)
+        sage: from sage.schemes.curves import zariski_vankampen as zvk
+        sage: g = f.subs({x: x + 2*y})
+        sage: p1 = QQbar(sqrt(-1/3))
+        sage: p2 = QQbar(1/2+sqrt(-1/3)/2)
+        sage: B = zvk.braid_in_segment(g,CC(p1),CC(p2)) # optional - sirocco
+        sage: B.left_normal_form()  # optional - sirocco
+        (1, s5)
     """
     CC = ComplexField(64)
     (x, y) = f.variables()
     I = QQbar.gen()
-    X0 = QQ(x0.real()) + I*QQ(x0.imag())
-    X1 = QQ(x1.real()) + I*QQ(x1.imag())
+    X0 = QQ(x0.real()) + I * QQ(x0.imag())
+    X1 = QQ(x1.real()) + I * QQ(x1.imag())
     F0 = QQbar[y](f(X0, y))
     y0s = F0.roots(multiplicities=False)
     strands = [followstrand(f, x0, x1, CC(a)) for a in y0s]
@@ -335,9 +358,9 @@ def braid_in_segment(f, x0, x1):
         if y0 in used:
             raise ValueError("different roots are too close")
         used.append(y0)
-        initialstrands.append([(0, CC(y0)), (1, y0ap)])
+        initialstrands.append([(0, y0), (1, y0ap)])
     initialbraid = braid_from_piecewise(initialstrands)
-    F1 = QQbar[y](f(X1,y))
+    F1 = QQbar[y](f(X1, y))
     y1s = F1.roots(multiplicities=False)
     finalstrands = []
     y1aps = [c[-1][1] for c in complexstrands]
@@ -348,9 +371,10 @@ def braid_in_segment(f, x0, x1):
         if y1 in used:
             raise ValueError("different roots are too close")
         used.append(y1)
-        finalstrands.append([(0, y1ap), (1, CC(y1))])
+        finalstrands.append([(0, y1ap), (1, y1)])
     finallbraid = braid_from_piecewise(finalstrands)
     return initialbraid * centralbraid * finallbraid
+
 
 def fundamental_group(f, simplified=True, projective=False):
     r"""
@@ -415,7 +439,7 @@ def fundamental_group(f, simplified=True, projective=False):
     """
     (x, y) = f.variables()
     F = f.base_ring()
-    g = f.factor().radical().prod()
+    g = f.radical()
     d = g.degree(y)
     while not g.coefficient(y**d) in F or (projective and g.total_degree() > d):
         g = g.subs({x: x + y})
@@ -437,12 +461,11 @@ def fundamental_group(f, simplified=True, projective=False):
         for k in range(d):
             el1 = Faux([k + 1]) * b.inverse()
             el2 = k + 1
-            w1 = F([sign(a)*d*i + a for a in el1.Tietze()])
-            w2 = F([d*j + el2])
-            rels.append(w1/w2)
+            w1 = F([sign(a) * d * i + a for a in el1.Tietze()])
+            w2 = F([d * j + el2])
+            rels.append(w1 / w2)
     G = F / rels
     if simplified:
         return G.simplified()
     else:
         return G
-

@@ -206,3 +206,27 @@ class LorentzianStructure(Singleton):
 
         """
         return cat
+
+class DegenerateStructure(Singleton):
+    """
+    The structure of a degenerate manifold.
+    """
+    chart = RealDiffChart
+    name = "degenerate_metric"
+    scalar_field_algebra = DiffScalarFieldAlgebra
+    homset =  DifferentiableManifoldHomset
+
+    def subcategory(self, cat):
+        """
+        Return the subcategory of ``cat`` corresponding to the structure
+        of ``self``.
+
+        EXAMPLES::
+
+            sage: from sage.manifolds.structure import DegenerateStructure
+            sage: from sage.categories.manifolds import Manifolds
+            sage: DegenerateStructure().subcategory(Manifolds(RR))
+            Category of manifolds over Real Field with 53 bits of precision
+
+        """
+        return cat

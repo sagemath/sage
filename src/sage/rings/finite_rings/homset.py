@@ -50,7 +50,7 @@ class FiniteFieldHomset(RingHomset_generic):
 #             category = FiniteFields()
 #         RingHomset_generic.__init__(self, R, S, category)
 
-    def __call__(self, im_gens, check=True):
+    def __call__(self, im_gens, base_map=None, check=True):
         """
         Construct the homomorphism defined by ``im_gens``.
 
@@ -87,12 +87,14 @@ class FiniteFieldHomset(RingHomset_generic):
             True
         """
         if isinstance(im_gens, FiniteFieldHomomorphism_generic):
+            if base_map is not None:
+                raise ValueError("Cannot specify base map when providing morphism")
             return self._coerce_impl(im_gens)
         try:
             if self.domain().degree() == 1:
                 from sage.rings.finite_rings.hom_prime_finite_field import FiniteFieldHomomorphism_prime
-                return FiniteFieldHomomorphism_prime(self, im_gens, check=check)
-            return FiniteFieldHomomorphism_generic(self, im_gens, check=check)
+                return FiniteFieldHomomorphism_prime(self, im_gens, base_map=base_map, check=check)
+            return FiniteFieldHomomorphism_generic(self, im_gens, base_map=base_map, check=check)
         except (NotImplementedError, ValueError):
             try:
                 return self._coerce_impl(im_gens)

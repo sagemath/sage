@@ -479,7 +479,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
             if truncation_type == 'auto':
                 truncation_type = 0
             # remove trailing zeroes or Infinitys
-            while len(profile) > 0 and profile[-1] == truncation_type:
+            while profile and profile[-1] == truncation_type:
                 profile = profile[:-1]
             new_profile = tuple(profile)
         elif isfunction(profile):
@@ -494,7 +494,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
                 truncation_type = Infinity
             new_profile = [max(0, profile(i)) for i in range(1, precision)]
             # remove trailing zeroes or Infinitys:
-            while len(new_profile) > 0 and new_profile[-1] == truncation_type:
+            while new_profile and new_profile[-1] == truncation_type:
                 del new_profile[-1]
             new_profile = tuple(new_profile)
         if is_valid_profile(new_profile, truncation_type, p):
@@ -519,7 +519,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
                 if truncation_type == 'auto':
                     truncation_type = 0
                 # remove trailing terms
-                while len(e) > 0 and e[-1] == truncation_type:
+                while e and e[-1] == truncation_type:
                     e = e[:-1]
                 e = tuple(e)
             elif isfunction(e):
@@ -535,7 +535,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
                     truncation_type = Infinity
                 e = [max(0, e(i)) for i in range(1, e_precision)]
                 # remove trailing terms
-                while len(e) > 0 and e[-1] == truncation_type:
+                while e and e[-1] == truncation_type:
                     del e[-1]
                 e = tuple(e)
             if isinstance(k, (list, tuple)):
@@ -551,10 +551,10 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
             # Remove trailing ones from k if truncation_type is 'zero',
             # remove trailing twos if truncation_type is 'Infinity'.
             if truncation_type == 0:
-                while len(k) > 0 and k[-1] == 1:
+                while k and k[-1] == 1:
                     k = k[:-1]
             else:
-                while len(k) > 0 and k[-1] == 2:
+                while k and k[-1] == 2:
                     k = k[:-1]
             new_profile = (e, k)
         if is_valid_profile(new_profile, truncation_type, p, generic=True):

@@ -39,8 +39,8 @@ orders such as equation orders::
     True
 
 Sage provides an extensive functionality for computations in maximal orders of
-global function fields. For example, you can decompose a prime ideal of a
-rational function field in an extension::
+function fields. For example, you can decompose a prime ideal of a rational
+function field in an extension::
 
     sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
     sage: o = K.maximal_order()
@@ -53,7 +53,7 @@ rational function field in an extension::
     sage: O.decomposition(p)
     [(Ideal (x + 1, y + 1) of Maximal order
      of Function field in y defined by y^3 + x^6 + x^4 + x^2, 1, 1),
-     (Ideal (x + 1, y^2 + y + 1) of Maximal order
+     (Ideal (x + 1, (1/(x^3 + x^2 + x))*y^2 + y + 1) of Maximal order
      of Function field in y defined by y^3 + x^6 + x^4 + x^2, 2, 1)]
 
     sage: p1,relative_degree,ramification_index = O.decomposition(p)[1]
@@ -65,6 +65,22 @@ rational function field in an extension::
     sage: ramification_index
     1
 
+When the base constant field is the algebraic field `\QQbar`, the only prime ideals
+of the maximal order of the rational function field are linear polynomials. ::
+
+    sage: K.<x> = FunctionField(QQbar)
+    sage: R.<y> = K[]
+    sage: L.<y> = K.extension(y^2 - (x^3-x^2))
+    sage: p = K.maximal_order().ideal(x)
+    sage: L.maximal_order().decomposition(p)
+    [(Ideal (1/x*y - I) of Maximal order of Function field in y defined by y^2 - x^3 + x^2,
+      1,
+      1),
+     (Ideal (1/x*y + I) of Maximal order of Function field in y defined by y^2 - x^3 + x^2,
+      1,
+      1)]
+
+
 AUTHORS:
 
 - William Stein (2010): initial version
@@ -75,8 +91,9 @@ AUTHORS:
 
 - Kwankyu Lee (2017-04-30): added maximal orders of global function fields
 
+- Brent Baccala (2019-12-20): support orders in characteristic zero
+
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -85,13 +102,19 @@ from __future__ import absolute_import
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 
 from sage.modules.free_module_element import vector
 from sage.arith.all import lcm, gcd
+
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.algebras.all import FiniteDimensionalAlgebra
+
+from sage.rings.qqbar import QQbar
+from sage.rings.number_field.number_field_base import NumberField
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
@@ -108,10 +131,12 @@ from .ideal import (
     FunctionFieldIdeal,
     FunctionFieldIdeal_module,
     FunctionFieldIdeal_rational,
+    FunctionFieldIdeal_polymod,
     FunctionFieldIdeal_global,
     FunctionFieldIdealInfinite_module,
     FunctionFieldIdealInfinite_rational,
-    FunctionFieldIdealInfinite_global)
+    FunctionFieldIdealInfinite_polymod)
+
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
     """
@@ -143,7 +168,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         self._ideal_class = ideal_class # element class for parent ideal monoid
         self._field = field
 
-    def is_field(self):
+    def is_field(self, proof=True):
         """
         Return ``False`` since orders are never fields.
 
@@ -209,6 +234,7 @@ class FunctionFieldOrder_base(CachedRepresentation, Parent):
         """
         return IdealMonoid(self)
 
+
 class FunctionFieldOrder(FunctionFieldOrder_base):
     """
     Base class for orders in function fields.
@@ -223,6 +249,7 @@ class FunctionFieldOrder(FunctionFieldOrder_base):
             Maximal order of Rational function field in y over Rational Field
         """
         return "Order in {}".format(self._field)
+
 
 class FunctionFieldOrder_basis(FunctionFieldOrder):
     """
@@ -309,7 +336,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
     def _element_constructor_(self, f):
         """
-        Constuct an element of this order from ``f``.
+        Construct an element of this order from ``f``.
 
         INPUT:
 
@@ -330,7 +357,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
 
         V, fr_V, to_V = F.vector_space()
         f_vector = to_V(f)
-        if not f_vector in self._module:
+        if f_vector not in self._module:
             raise TypeError("{} is not an element of {}".format(f_vector, self))
 
         return f
@@ -364,7 +391,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
             sage: O = L.equation_order(); O
             Order in Function field in y defined by y^2 + 6*x^3 + 6
             sage: I = O.ideal_with_gens_over_base([1, y]);  I
-            Ideal (1, y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
+            Ideal (1) of Order in Function field in y defined by y^2 + 6*x^3 + 6
             sage: I.module()
             Free module of degree 2 and rank 2 over Maximal order of Rational function field in x over Finite Field of size 7
             Echelon basis matrix:
@@ -421,7 +448,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
             sage: S.ideal(1/y)
             Ideal (1, (6/(x^3 + 1))*y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
             sage: I2 = S.ideal(x^2-4); I2
-            Ideal (x^2 + 3, (x^2 + 3)*y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
+            Ideal (x^2 + 3) of Order in Function field in y defined by y^2 + 6*x^3 + 6
             sage: I2 == S.ideal(I)
             True
         """
@@ -504,6 +531,7 @@ class FunctionFieldOrder_basis(FunctionFieldOrder):
         """
         return self._module.coordinate_vector(self._to_module(e), check=False)
 
+
 class FunctionFieldOrderInfinite(FunctionFieldOrder_base):
     """
     Base class for infinite orders in function fields.
@@ -516,6 +544,7 @@ class FunctionFieldOrderInfinite(FunctionFieldOrder_base):
             Maximal infinite order of Rational function field in y over Rational Field
         """
         return "Infinite order in {}".format(self.function_field())
+
 
 class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
     """
@@ -666,7 +695,7 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
             sage: O = L.equation_order(); O
             Order in Function field in y defined by y^2 + 6*x^3 + 6
             sage: I = O.ideal_with_gens_over_base([1, y]);  I
-            Ideal (1, y) of Order in Function field in y defined by y^2 + 6*x^3 + 6
+            Ideal (1) of Order in Function field in y defined by y^2 + 6*x^3 + 6
             sage: I.module()
             Free module of degree 2 and rank 2 over Maximal order of Rational function field in x over Finite Field of size 7
             Echelon basis matrix:
@@ -781,6 +810,7 @@ class FunctionFieldOrderInfinite_basis(FunctionFieldOrderInfinite):
         """
         return self._module
 
+
 class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
     """
     Base class of maximal orders of function fields.
@@ -795,6 +825,7 @@ class FunctionFieldMaximalOrder(UniqueRepresentation, FunctionFieldOrder):
             'Maximal order of Rational function field in y over Rational Field'
         """
         return "Maximal order of %s"%(self.function_field(),)
+
 
 class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
     """
@@ -878,6 +909,9 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         """
         Return a field isomorphic to the residue field at the prime ideal.
 
+        The residue field is by definition `k[x]/q` where `q` is the irreducible
+        polynomial generating the prime ideal and `k` is the constant base field.
+
         INPUT:
 
         - ``ideal`` -- prime ideal of the order
@@ -888,33 +922,104 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         - a field isomorphic to the residue field
 
-        - an isomorphism from the finite field to the residue field
+        - a morphism from the field to `k[x]` via the residue field
 
-        - the inverse isomorphism
-
-        The residue field is by definition `k[x]/q` where `q` is the irreducible
-        polynomial generating the prime ideal and `k` is the constant base field.
+        - a morphism from `k[x]` to the field via the residue field
 
         EXAMPLES::
 
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
-            sage: I = O.ideal(x^2+x+1)
+            sage: I = O.ideal(x^2 + x + 1)
             sage: R, fr_R, to_R = O._residue_field(I)
             sage: R
             Finite Field in z2 of size 2^2
             sage: [to_R(fr_R(e)) == e for e in R]
             [True, True, True, True]
-            sage: to_R(x*(x+1)) == to_R(x) * to_R(x+1)
+            sage: [to_R(fr_R(e)).parent() is R for e in R]
+            [True, True, True, True]
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
+            True
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
+
+            sage: F.<x> = FunctionField(GF(2))
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
+            Finite Field of size 2
+            sage: [to_R(fr_R(e)) == e for e in R]
+            [True, True]
+            sage: [to_R(fr_R(e)).parent() is R for e in R]
+            [True, True]
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
+            True
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
+
+            sage: F.<x> = FunctionField(QQ)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x^2 + x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
+            Number Field in a with defining polynomial x^2 + x + 1
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
+            True
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
+            True
+
+            sage: F.<x> = FunctionField(QQ)
+            sage: O = F.maximal_order()
+            sage: I = O.ideal(x + 1)
+            sage: R, fr_R, to_R = O._residue_field(I)
+            sage: R
+            Rational Field
+            sage: e1, e2 = fr_R(R.random_element()), fr_R(R.random_element())
+            sage: to_R(e1 * e2) == to_R(e1) * to_R(e2)
+            True
+            sage: to_R(e1 + e2) == to_R(e1) + to_R(e2)
+            True
+            sage: to_R(e1).parent() is R
+            True
+            sage: to_R(e2).parent() is R
             True
         """
         F = self.function_field()
-
-        if not F.is_global():
-            raise NotImplementedError
+        K = F.constant_base_field()
 
         q = ideal.gen().element().numerator()
-        R, _from_R, _to_R = self._residue_field_global(q, name=name)
+
+        if F.is_global():
+            R, _from_R, _to_R = self._residue_field_global(q, name=name)
+        elif isinstance(K, NumberField) or K is QQbar:
+            if name is None:
+                name = 'a'
+            if q.degree() == 1:
+                R = K
+                _from_R = lambda e: e
+                _to_R = lambda e: R(e % q)
+            else:
+                R = K.extension(q, names=name)
+                _from_R = lambda e: self._ring(list(R(e)))
+                _to_R = lambda e: (e % q)(R.gen(0))
+        else:
+            raise NotImplementedError
 
         def from_R(e):
             return F(_from_R(e))
@@ -996,7 +1101,7 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
         beta = S([sigma(c) for c in q.list()]).roots()[0][0]
 
         # V is a vector space over the prime subfield of k of degree r*s
-        V = K.vector_space()
+        V = K.vector_space(map=False)
 
         w = K.one()
         beta_pow = []
@@ -1112,22 +1217,13 @@ class FunctionFieldMaximalOrder_rational(FunctionFieldMaximalOrder):
 
         return self.ideal_monoid().element_class(self, gen)
 
-class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
+
+class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
     """
-    Maximal orders of global function fields.
-
-    INPUT:
-
-    - ``field`` -- function field to which this maximal order belongs
-
-    EXAMPLES::
-
-        sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
-        sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
-        sage: L.maximal_order()
-        Maximal order of Function field in y defined by y^4 + x*y + 4*x + 1
+    Maximal orders of extensions of function fields.
     """
-    def __init__(self, field):
+
+    def __init__(self, field, ideal_class=FunctionFieldIdeal_polymod):
         """
         Initialize.
 
@@ -1138,10 +1234,10 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             sage: O = L.maximal_order()
             sage: TestSuite(O).run()
         """
-        FunctionFieldMaximalOrder.__init__(self, field, ideal_class=FunctionFieldIdeal_global)
+        FunctionFieldMaximalOrder.__init__(self, field, ideal_class)
 
-        from .function_field import FunctionField_global_integral
-        if isinstance(field, FunctionField_global_integral):
+        from .function_field import FunctionField_integral
+        if isinstance(field, FunctionField_integral):
             basis = field._maximal_order_basis()
         else:
             model, from_model, to_model = field.monic_integral_model('z')
@@ -1182,37 +1278,38 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
         self._mul_vecs = mul_vecs
 
         # We prepare for using Kummer's theorem to decompose primes. Note
-        # that Kummer's theorem applies to the most of places. Here we find
+        # that Kummer's theorem applies to most places. Here we find
         # places for which the theorem does not apply.
 
         # this element is integral over k[x] and a generator of the field.
-        for gen in basis[1:]:
+        for gen in basis:
             phi = gen.minimal_polynomial()
             if phi.degree() == n:
                 break
 
-        if phi.degree() == n:
-            gen_vec = self._coordinate_vector(gen)
-            g = gen_vec.parent().gen(0) # x
-            gen_vec_pow = [g]
-            for i in range(n):
-                g = mul_vecs(g, gen_vec)
-                gen_vec_pow.append(g)
+        assert phi.degree() == n
 
-            # find places where {1,gen,...,gen^(n-1)} is not integral basis
-            W = V.span_of_basis([to(gen ** i) for i in range(phi.degree())])
+        gen_vec = self._coordinate_vector(gen)
+        g = gen_vec.parent().gen(0) # x
+        gen_vec_pow = [g]
+        for i in range(n):
+            g = mul_vecs(g, gen_vec)
+            gen_vec_pow.append(g)
 
-            supp = []
-            for g in basis:
-                for c in W.coordinate_vector(to(g), check=False):
-                    if not c.is_zero():
-                        supp += [f for f,_ in c.denominator().factor()]
-            supp = set(supp)
+        # find places where {1,gen,...,gen^(n-1)} is not integral basis
+        W = V.span_of_basis([to(gen ** i) for i in range(phi.degree())])
 
-            self._kummer_gen = gen
-            self._kummer_gen_vec_pow = gen_vec_pow
-            self._kummer_polynomial = phi
-            self._kummer_places = supp
+        supp = []
+        for g in basis:
+            for c in W.coordinate_vector(to(g), check=False):
+                if not c.is_zero():
+                    supp += [f for f,_ in c.denominator().factor()]
+        supp = set(supp)
+
+        self._kummer_gen = gen
+        self._kummer_gen_vec_pow = gen_vec_pow
+        self._kummer_polynomial = phi
+        self._kummer_places = supp
 
     def _element_constructor_(self, f):
         """
@@ -1313,7 +1410,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             sage: v2
             (0, 1)
             sage: O._ideal_from_vectors([v1,v2])
-            Ideal (x^3 + 1, y) of Maximal order of Function field in y
+            Ideal (y) of Maximal order of Function field in y
             defined by y^2 + 6*x^3 + 6
         """
         d = lcm([v.denominator() for v in vecs])
@@ -1405,10 +1502,22 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             sage: L.<y> = K.extension(y^2 - x^3 - 1)
             sage: S = L.maximal_order()
             sage: S.ideal(1/y)
-            Ideal (1, (1/(x^3 + 1))*y) of Maximal order of Function field
+            Ideal ((1/(x^3 + 1))*y) of Maximal order of Function field
             in y defined by y^2 + 6*x^3 + 6
             sage: I2 = S.ideal(x^2-4); I2
             Ideal (x^2 + 3) of Maximal order of Function field in y defined by y^2 + 6*x^3 + 6
+            sage: I2 == S.ideal(I)
+            True
+
+            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+            sage: O = K.maximal_order()
+            sage: I = O.ideal(x^2-4)
+            sage: L.<y> = K.extension(y^2 - x^3 - 1)
+            sage: S = L.maximal_order()
+            sage: S.ideal(1/y)
+            Ideal ((1/(x^3 + 1))*y) of Maximal order of Function field in y defined by y^2 - x^3 - 1
+            sage: I2 = S.ideal(x^2-4); I2
+            Ideal (x^2 - 4) of Maximal order of Function field in y defined by y^2 - x^3 - 1
             sage: I2 == S.ideal(I)
             True
         """
@@ -1434,6 +1543,12 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             sage: O = L.equation_order()
             sage: O.polynomial()
             y^4 + x*y + 4*x + 1
+
+            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
+            sage: O = L.equation_order()
+            sage: O.polynomial()
+            y^4 + x*y + 4*x + 1
         """
         return self._field.polynomial()
 
@@ -1449,6 +1564,13 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             sage: O = L.equation_order()
             sage: O.basis()
             (1, y, y^2, y^3)
+
+            sage: K.<x> = FunctionField(QQ)
+            sage: R.<t> = PolynomialRing(K)
+            sage: F.<y> = K.extension(t^4 + x^12*t^2 + x^18*t + x^21 + x^18)
+            sage: O = F.maximal_order()
+            sage: O.basis()
+            (1, 1/x^4*y, 1/x^9*y^2, 1/x^13*y^3)
         """
         return self._basis
 
@@ -1525,6 +1647,13 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             (0, 1, 0, 0)
             sage: O.coordinate_vector(x*y)
             (0, x, 0, 0)
+
+            sage: K.<x> = FunctionField(QQ); R.<y> = K[]
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
+            sage: O = L.equation_order()
+            sage: f = (x + y)^3
+            sage: O.coordinate_vector(f)
+            (x^3, 3*x^2, 3*x, 1)
         """
         return self._module.coordinate_vector(self._to_module(e))
 
@@ -1561,7 +1690,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
             sage: O = L.maximal_order()
             sage: O.different()
-            Ideal (x^4 + 4*x^3 + 3*x^2 + 6*x + 4, y + 2*x^3 + x^2 + 6*x + 1)
+            Ideal (y^3 + 2*x)
             of Maximal order of Function field in y defined by y^4 + x*y + 4*x + 1
         """
         return ~self.codifferent()
@@ -1610,6 +1739,160 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             rows.append(row)
         T = matrix(rows)
         return T
+
+    @cached_method
+    def decomposition(self, ideal):
+        """
+        Return the decomposition of the prime ideal.
+
+        INPUT:
+
+        - ``ideal`` -- prime ideal of the base maximal order
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(2)); R.<t> = K[]
+            sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
+            sage: o = K.maximal_order()
+            sage: O = F.maximal_order()
+            sage: p = o.ideal(x+1)
+            sage: O.decomposition(p)
+            [(Ideal (x + 1, y + 1) of Maximal order
+             of Function field in y defined by y^3 + x^6 + x^4 + x^2, 1, 1),
+             (Ideal (x + 1, (1/(x^3 + x^2 + x))*y^2 + y + 1) of Maximal order
+             of Function field in y defined by y^3 + x^6 + x^4 + x^2, 2, 1)]
+
+        ALGORITHM:
+
+        In principle, we're trying to compute a primary decomposition
+        of the extension of ``ideal`` in ``self`` (an order, and therefore
+        a ring). However, while we have primary decomposition methods
+        for polynomial rings, we lack any such method for an order.
+        Therefore, we construct ``self`` mod ``ideal`` as a
+        finite-dimensional algebra, a construct for which we do
+        support primary decomposition.
+
+        See https://trac.sagemath.org/attachment/ticket/28094/decomposition.pdf
+
+        .. TODO::
+
+            Use Kummer's theorem to shortcut this code if possible, like as
+            done in :meth:`FunctionFieldMaximalOrder_global.decomposition()`
+
+        """
+        F = self.function_field()
+        n = F.degree()
+
+        # Base rational function field
+        K = self.function_field().base_field()
+
+        # Univariate polynomial ring isomorphic to the maximal order of K
+        o = PolynomialRing(K.constant_field(), K.gen())
+
+        # Prime ideal in o defined by the generator of ideal in the maximal
+        # order of K
+        p = o(ideal.gen().numerator())
+
+        # Residue field k = o mod p
+        k = o.quo(p)
+
+        # Given an element of the function field expressed as a K-vector times
+        # the basis of this order, construct the n n-by-n matrices that show
+        # how to multiply by each of the basis elements.
+        matrices = [matrix(o, [self.coordinate_vector(b1*b2) for b1 in self.basis()])
+                            for b2 in self.basis()]
+
+        # Let O denote the maximal order self. When reduced modulo p,
+        # matrices_reduced give the multiplication matrices used to form the
+        # algebra O mod pO.
+        matrices_reduced = list(map(lambda M: M.mod(p), matrices))
+        A = FiniteDimensionalAlgebra(k, matrices_reduced)
+
+        # Each prime ideal of the algebra A corresponds to a prime ideal of O,
+        # and since the algebra is an Artinian ring, all of its prime ideals
+        # are maximal [stacks 00JA]. Thus, we find all of our factors by
+        # iterating over the algebra's maximal ideals.
+        factors = []
+        for q in A.maximal_ideals():
+            if q == A.zero_ideal():
+                # The zero ideal is the unique maximal ideal, which means that
+                # A is a field, and the ideal itself is a prime ideal.
+                P = self.ideal(p)
+
+                P.is_prime.set_cache(True)
+                P._prime_below = ideal
+                P._relative_degree = n
+                P._ramification_index = 1
+                P._beta = [1] + [0]*(n-1)
+            else:
+                Q = q.basis_matrix().apply_map(lambda e: e.lift())
+                P = self.ideal(p, *Q*vector(self.basis()))
+
+                # Now we compute an element beta in O but not in pO such that
+                # beta*P in pO.
+
+                # Since beta is in k[x]-module O, we keep beta as a vector
+                # in k[x] with respect to the basis of O. As long as at least
+                # one element in this vector is not divisible by p, beta will
+                # not be in pO. To ensure that beta*P is in pO, multiplying
+                # beta by each of P's generators must produce a vector whose
+                # elements are multiples of p. We can ensure that all this
+                # occurs by constructing a matrix in k, and finding a non-zero
+                # vector in the kernel of the matrix.
+
+                m =[]
+                for g in q.basis_matrix():
+                    m.extend(matrix([g * mr for mr in matrices_reduced]).columns())
+                beta  = [c.lift() for c in matrix(m).right_kernel().basis()[0]]
+
+                r = q
+                index = 1
+                while True:
+                    rq = r*q
+                    if rq == r:
+                        break
+                    r = rq
+                    index = index + 1
+
+                P.is_prime.set_cache(True)
+                P._prime_below = ideal
+                P._relative_degree = n - q.basis_matrix().nrows()
+                P._ramification_index = index
+                P._beta = beta
+
+            factors.append((P, P._relative_degree, P._ramification_index))
+
+        return factors
+
+
+class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
+    """
+    Maximal orders of global function fields.
+
+    INPUT:
+
+    - ``field`` -- function field to which this maximal order belongs
+
+    EXAMPLES::
+
+        sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
+        sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
+        sage: L.maximal_order()
+        Maximal order of Function field in y defined by y^4 + x*y + 4*x + 1
+    """
+
+    def __init__(self, field):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: K.<x> = FunctionField(GF(7)); R.<y> = K[]
+            sage: L.<y> = K.extension(y^4 + x*y + 4*x + 1)
+            sage: O = L.maximal_order()
+            sage: TestSuite(O).run()
+        """
+        FunctionFieldMaximalOrder_polymod.__init__(self, field, ideal_class=FunctionFieldIdeal_global)
 
     @cached_method
     def p_radical(self, prime):
@@ -1692,7 +1975,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
             sage: O.decomposition(p)
             [(Ideal (x + 1, y + 1) of Maximal order
              of Function field in y defined by y^3 + x^6 + x^4 + x^2, 1, 1),
-             (Ideal (x + 1, y^2 + y + 1) of Maximal order
+             (Ideal (x + 1, (1/(x^3 + x^2 + x))*y^2 + y + 1) of Maximal order
              of Function field in y defined by y^3 + x^6 + x^4 + x^2, 2, 1)]
         """
         F = self.function_field()
@@ -1747,7 +2030,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
                 m =[]
                 for i in range(n):
                     m.append(sum(qgenb[j] * mtable[i][j] for j in range(n)))
-                beta  = [fr(c) for c in matrix(m).left_kernel().basis()[0]]
+                beta  = [fr(coeff) for coeff in matrix(m).left_kernel().basis()[0]]
 
                 prime.is_prime.set_cache(True)
                 prime._prime_below = ideal
@@ -1926,6 +2209,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder):
 
         return decomposition
 
+
 class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionFieldOrderInfinite):
     """
     Base class of maximal infinite orders of function fields.
@@ -1943,6 +2227,7 @@ class FunctionFieldMaximalOrderInfinite(FunctionFieldMaximalOrder, FunctionField
             Maximal infinite order of Function field in y defined by y^3 + x^6 + x^4 + x^2
         """
         return "Maximal infinite order of %s"%(self.function_field(),)
+
 
 class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfinite):
     """
@@ -2095,9 +2380,10 @@ class FunctionFieldMaximalOrderInfinite_rational(FunctionFieldMaximalOrderInfini
 
         return self.ideal_monoid().element_class(self, gen)
 
-class FunctionFieldMaximalOrderInfinite_global(FunctionFieldMaximalOrderInfinite):
+
+class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinite):
     """
-    Maximal infinite orders of global function fields.
+    Maximal infinite orders of function fields.
 
     INPUT:
 
@@ -2126,7 +2412,7 @@ class FunctionFieldMaximalOrderInfinite_global(FunctionFieldMaximalOrderInfinite
             sage: O = F.maximal_order_infinite()
             sage: TestSuite(O).run()
         """
-        FunctionFieldOrderInfinite.__init__(self, field, ideal_class=FunctionFieldIdealInfinite_global)
+        FunctionFieldOrderInfinite.__init__(self, field, ideal_class=FunctionFieldIdealInfinite_polymod)
 
         M, from_M, to_M = field._inversion_isomorphism()
         basis = [from_M(g) for g in M.maximal_order().basis()]
@@ -2164,7 +2450,7 @@ class FunctionFieldMaximalOrderInfinite_global(FunctionFieldMaximalOrderInfinite
         try:
             f = F(f)
         except TypeError:
-            raise TypeError("unable to convert to an elemen of {}".format(F))
+            raise TypeError("unable to convert to an element of {}".format(F))
 
         O = F.base_field().maximal_order_infinite()
         coordinates = self.coordinate_vector(f)
@@ -2185,6 +2471,8 @@ class FunctionFieldMaximalOrderInfinite_global(FunctionFieldMaximalOrderInfinite
             sage: Oinf = L.maximal_order_infinite()
             sage: Oinf.basis()
             (1, 1/x^2*y, (1/(x^4 + x^3 + x^2))*y^2)
+
+        ::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
@@ -2249,8 +2537,10 @@ class FunctionFieldMaximalOrderInfinite_global(FunctionFieldMaximalOrderInfinite
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = F.maximal_order_infinite()
             sage: I = Oinf.ideal(x,y); I
-            Ideal (x^2) of Maximal infinite order of Function field
+            Ideal (y) of Maximal infinite order of Function field
             in y defined by y^3 + x^6 + x^4 + x^2
+
+        ::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
@@ -2279,7 +2569,7 @@ class FunctionFieldMaximalOrderInfinite_global(FunctionFieldMaximalOrderInfinite
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = F.maximal_order_infinite()
             sage: Oinf.ideal_with_gens_over_base((x^2, y, (1/(x^2 + x + 1))*y^2))
-            Ideal (x^2) of Maximal infinite order of Function field in y
+            Ideal (y) of Maximal infinite order of Function field in y
             defined by y^3 + x^6 + x^4 + x^2
         """
         F = self.function_field()
@@ -2367,16 +2657,38 @@ class FunctionFieldMaximalOrderInfinite_global(FunctionFieldMaximalOrderInfinite
             sage: F.<y> = K.extension(t^3 - x^2*(x^2 + x + 1)^2)
             sage: Oinf = F.maximal_order_infinite()
             sage: Oinf.decomposition()
-            [(Ideal (1/x,1/x^2*y + 1) of Maximal infinite order
+            [(Ideal ((1/(x^4 + x^3 + x^2))*y^2 + 1) of Maximal infinite order
              of Function field in y defined by y^3 + x^6 + x^4 + x^2, 1, 1),
-             (Ideal (1/x,1/x^4*y^2 + 1/x^2*y + 1) of Maximal infinite order
+             (Ideal ((1/(x^4 + x^3 + x^2))*y^2 + 1/x^2*y + 1) of Maximal infinite order
              of Function field in y defined by y^3 + x^6 + x^4 + x^2, 2, 1)]
+
+        ::
 
             sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
             sage: Oinf = L.maximal_order_infinite()
             sage: Oinf.decomposition()
-            [(Ideal (1/x,1/x*y) of Maximal infinite order of Function field in y
+            [(Ideal (1/x*y) of Maximal infinite order of Function field in y
+            defined by y^2 + y + (x^2 + 1)/x, 1, 2)]
+
+        ::
+
+            sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
+            sage: Oinf = F.maximal_order_infinite()
+            sage: Oinf.decomposition()
+            [(Ideal (1/x^2*y - 1) of Maximal infinite order
+             of Function field in y defined by y^3 - x^6 - 2*x^5 - 3*x^4 - 2*x^3 - x^2, 1, 1),
+             (Ideal ((1/(x^4 + x^3 + x^2))*y^2 + 1/x^2*y + 1) of Maximal infinite order
+             of Function field in y defined by y^3 - x^6 - 2*x^5 - 3*x^4 - 2*x^3 - x^2, 2, 1)]
+
+        ::
+
+            sage: K.<x> = FunctionField(QQ); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: Oinf = L.maximal_order_infinite()
+            sage: Oinf.decomposition()
+            [(Ideal (1/x*y) of Maximal infinite order of Function field in y
             defined by y^2 + y + (x^2 + 1)/x, 1, 2)]
         """
         F = self.function_field()
@@ -2389,7 +2701,7 @@ class FunctionFieldMaximalOrderInfinite_global(FunctionFieldMaximalOrderInfinite
 
         dec = []
         for iprime, deg, exp in iO.decomposition(ip):
-            prime = FunctionFieldIdealInfinite_global(self, iprime)
+            prime = self.ideal_monoid().element_class(self, iprime)
             dec.append((prime, deg, exp))
         return dec
 

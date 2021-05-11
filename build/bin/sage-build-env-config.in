@@ -1,0 +1,110 @@
+# -*- shell-script -*-
+
+###########################################################################
+#
+#  Set some environment variables for building Sage (the distribution).
+#
+#  NOTES:
+#  - You must *source* this script instead of executing.
+#  - Use "return" instead of "exit" to signal a failure.  Since this
+#    file is sourced, an "exit" here will actually exit src/bin/sage,
+#    which is probably not intended.
+#  - All environment variables set here should be *exported*, otherwise
+#    they won't be available in child programs.
+#
+#  If you want to set all environment variables for your shell like
+#  they are during the build of Sage packages, type
+#
+#             sage --buildsh
+#
+##########################################################################
+
+# The configured CXX without special flags added that enable C++11 support
+export SAGE_CXX_WITHOUT_STD="@SAGE_CXX_WITHOUT_STD@"
+
+# Export SAGE_FAT_BINARY if this was enabled during configure.
+export SAGE_FAT_BINARY="@SAGE_FAT_BINARY@"
+
+# Export SAGE_DEBUG if this was enabled during configure,
+# but be respectful of the current settings.
+if [ "x$SAGE_DEBUG" = "x" ]; then
+    export SAGE_DEBUG="@SAGE_DEBUG@"
+fi
+
+# The configured compilation flags.
+export CONFIGURED_CFLAGS="@CFLAGS@"
+export CONFIGURED_CXXFLAGS="@CXXFLAGS@"
+export CONFIGURED_FCFLAGS="@FCFLAGS@"
+export CONFIGURED_F77FLAGS="@F77FLAGS@"
+export CFLAGS_MARCH="@CFLAGS_MARCH@"
+
+# This is usually blank if the system GMP is used, or $SAGE_LOCAL otherwise
+export SAGE_GMP_PREFIX="@SAGE_GMP_PREFIX@"
+export SAGE_GMP_INCLUDE="@SAGE_GMP_INCLUDE@"
+if [ -n "$SAGE_GMP_PREFIX" ]; then
+    # Many packages that depend on GMP accept a --with-gmp=<prefix> flag to
+    # their ./configure scripts.  When using the system's GMP this is not
+    # generally necessary, but when using the GMP package installed in
+    # SAGE_LOCAL it is useful to pass it.  We define this variable to
+    # pass to these packages' ./configure scripts.  When using the system
+    # GMP its value is just blank (for many of these packages passing
+    # --with-gmp without an argument is actually a bug)
+    export SAGE_CONFIGURE_GMP="--with-gmp=$SAGE_GMP_PREFIX"
+fi
+
+# The MPFR case is very close to the GMP case above
+# This is usually blank if the system MPFR is used, or $SAGE_LOCAL otherwise
+export SAGE_MPFR_PREFIX="@SAGE_MPFR_PREFIX@"
+if [ -n "$SAGE_MPFR_PREFIX" ]; then
+    # Some packages that depend on MPFR accept a --with-mpfr=<prefix> flag to
+    # their ./configure scripts. Thus we deal with this just as with GMP above.
+    export SAGE_CONFIGURE_MPFR="--with-mpfr=$SAGE_MPFR_PREFIX"
+fi
+
+# The MPC case is very close to the MPFR case above
+# This is usually blank if the system MPC is used, or $SAGE_LOCAL otherwise
+export SAGE_MPC_PREFIX="@SAGE_MPC_PREFIX@"
+if [ -n "$SAGE_MPC_PREFIX" ]; then
+    # Some packages that depend on MPC accept a --with-mpc=<prefix> flag to
+    # their ./configure scripts. Thus we deal with this just as with GMP above.
+    export SAGE_CONFIGURE_MPC="--with-mpc=$SAGE_MPC_PREFIX"
+fi
+
+# Location of system crti.o, in case we build our own gcc
+export SAGE_CRTI_DIR="@SAGE_CRTI_DIR@"
+
+# This is usually blank if the system NTL is used, or $SAGE_LOCAL otherwise
+export SAGE_NTL_PREFIX="@SAGE_NTL_PREFIX@"
+if [ -n "$SAGE_NTL_PREFIX" ]; then
+    # Many packages that depend on NTL accept a --with-ntl=<prefix> flag to
+    # their ./configure scripts.  When using the system's NTL this is not
+    # generally necessary, but when using the NTL package installed in
+    # SAGE_LOCAL it is useful to pass it.
+    export SAGE_CONFIGURE_NTL="--with-ntl=$SAGE_NTL_PREFIX"
+fi
+
+# The FLINT case is very close to the MPFR case above
+# This is usually blank if the system FLINT is used, or $SAGE_LOCAL otherwise
+export SAGE_FLINT_PREFIX="@SAGE_FLINT_PREFIX@"
+if [ -n "$SAGE_FLINT_PREFIX" ]; then
+    # Some packages that depend on FLINT accept a --with-flint=<prefix> flag to
+    # their ./configure scripts. Thus we deal with this just as with GMP above.
+    export SAGE_CONFIGURE_FLINT="--with-flint=$SAGE_FLINT_PREFIX"
+fi
+
+# This is usually blank if the system PARI is used, or $SAGE_LOCAL otherwise
+export SAGE_PARI_PREFIX="@SAGE_PARI_PREFIX@"
+if [ -n "$SAGE_PARI_PREFIX" ]; then
+    # Some packages that depend on PARI accept a --with-pari=<prefix> flag to
+    # their ./configure scripts. Thus we deal with this just as with GMP above.
+    export SAGE_CONFIGURE_PARI="--with-pari=$SAGE_PARI_PREFIX"
+fi
+export SAGE_PARI_CFG="@SAGE_PARI_CFG@"
+
+export SAGE_GLPK_PREFIX="@SAGE_GLPK_PREFIX@"
+export SAGE_FREETYPE_PREFIX="@SAGE_FREETYPE_PREFIX@"
+export SAGE_SUITESPARSE_PREFIX="@SAGE_SUITESPARSE_PREFIX@"
+
+export SAGE_CONFIGURE_FFLAS_FFPACK="@SAGE_CONFIGURE_FFLAS_FFPACK@"
+
+export SAGE_EDITABLE="@SAGE_EDITABLE@"

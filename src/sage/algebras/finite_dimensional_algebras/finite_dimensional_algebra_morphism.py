@@ -2,22 +2,21 @@
 Morphisms Between Finite Algebras
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Johan Bosman <johan.g.bosman@gmail.com>
 #  Copyright (C) 2011, 2013 Peter Bruin <peter.bruin@math.uzh.ch>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
-from sage.categories.homset import Hom
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.homset import RingHomset_generic
-from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
+
 
 class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
     """

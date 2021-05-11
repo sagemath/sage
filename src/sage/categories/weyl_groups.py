@@ -12,8 +12,6 @@ from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.rings.infinity import infinity
-from sage.rings.rational_field import QQ
 
 
 class WeylGroups(Category_singleton):
@@ -147,6 +145,7 @@ class WeylGroups(Category_singleton):
             # Do not remove this line which makes sure the pieri factor
             # code is properly inserted inside the Cartan Types
             import sage.combinat.root_system.pieri_factors
+            assert sage.combinat.root_system.pieri_factors
             ct = self.cartan_type()
             if hasattr(ct, "PieriFactors"):
                 return ct.PieriFactors(self, *args, **keywords)
@@ -278,7 +277,7 @@ class WeylGroups(Category_singleton):
             return self in self.parent().pieri_factors()
 
 
-        def left_pieri_factorizations(self, max_length = infinity):
+        def left_pieri_factorizations(self, max_length=None):
             r"""
             Returns all factorizations of ``self`` as `uv`, where `u`
             is a Pieri factor and `v` is an element of the Weyl group.
@@ -334,6 +333,9 @@ class WeylGroups(Category_singleton):
                 sage: W.from_reduced_word([0,2,1,0]).left_pieri_factorizations().cardinality()
                 6
             """
+            if max_length is None:
+                from sage.rings.infinity import infinity
+                max_length = infinity
             pieri_factors = self.parent().pieri_factors()
             def predicate(u):
                 return u in pieri_factors and u.length() <= max_length
@@ -341,7 +343,7 @@ class WeylGroups(Category_singleton):
             return self.binary_factorizations(predicate)
 
         @cached_in_parent_method
-        def stanley_symmetric_function_as_polynomial(self, max_length = infinity):
+        def stanley_symmetric_function_as_polynomial(self, max_length=None):
             r"""
             Returns a multivariate generating function for the number
             of factorizations of a Weyl group element into Pieri
@@ -403,8 +405,12 @@ class WeylGroups(Category_singleton):
             by taking right factors, and in particular Grassmanian
             elements.
             """
+            if max_length is None:
+                from sage.rings.infinity import infinity
+                max_length = infinity
             W = self.parent()
             pieri_factors = W.pieri_factors()
+            from sage.rings.rational_field import QQ
             R = QQ[','.join('x%s'%l for l in range(1,pieri_factors.max_length()+1))]
             x = R.gens()
             if self.is_one():
@@ -482,6 +488,7 @@ class WeylGroups(Category_singleton):
             - [Pon2010]_
             """
             import sage.combinat.sf
+            from sage.rings.rational_field import QQ
             m = sage.combinat.sf.sf.SymmetricFunctions(QQ).monomial()
             return m.from_polynomial_exp(self.stanley_symmetric_function_as_polynomial())
 
@@ -632,6 +639,7 @@ class WeylGroups(Category_singleton):
             inv = self.inversions(side=side, inversion_type='roots')
             from sage.geometry.hyperplane_arrangement.arrangement import HyperplaneArrangements
             I = self.parent().cartan_type().index_set()
+            from sage.rings.rational_field import QQ
             H = HyperplaneArrangements(QQ, tuple(['a{}'.format(i) for i in I]))
             gens = H.gens()
             if not inv:

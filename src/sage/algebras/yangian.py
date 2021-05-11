@@ -390,7 +390,7 @@ class Yangian(CombinatorialFreeModule):
         category = HopfAlgebrasWithBasis(base_ring).Filtered()
         if filtration == 'natural':
             category = category.Connected()
-        self._index_set = tuple(range(1,n+1))
+        self._index_set = tuple(range(1, n + 1))
         # The keys for the basis are tuples (l, i, j)
         indices = GeneratorIndexingSet(self._index_set)
         # We note that the generators are non-commutative, but we always sort
@@ -478,6 +478,7 @@ class Yangian(CombinatorialFreeModule):
             return '1'
 
         prefix = self.prefix()
+
         def term(r, i, j, exp):
             s = prefix + '^{{({})}}_{{{},{}}}'.format(r, i, j)
             if exp == 1:
@@ -783,6 +784,7 @@ class Yangian(CombinatorialFreeModule):
             return self.base_ring().one()
         return self.base_ring().zero()
 
+
 class YangianLevel(Yangian):
     r"""
     The Yangian `Y_{\ell}(\mathfrak{gl_n})` of level `\ell`.
@@ -811,7 +813,7 @@ class YangianLevel(Yangian):
         self._level = level
         self._n = n
         self._filtration = filtration
-        category = HopfAlgebrasWithBasis(base_ring)#.Filtered() # TODO - once implemented
+        category = HopfAlgebrasWithBasis(base_ring).Filtered()
         self._index_set = tuple(range(1,n+1))
         # The keys for the basis are tuples (l, i, j)
         indices = GeneratorIndexingSet(self._index_set, level)
@@ -1039,7 +1041,7 @@ class YangianLevel(Yangian):
                 for x in range(2, b[0]+1) if a[0]+b[0]-x <= self._level)
 
 #####################################################################
-## Graded algebras
+# Graded algebras
 
 
 class GradedYangianBase(AssociatedGradedAlgebra):
@@ -1079,12 +1081,14 @@ class GradedYangianBase(AssociatedGradedAlgebra):
             return '1'
 
         prefix = "\\overline{{{}}}".format(self._A.prefix())
+
         def term(r, i, j, exp):
             s = prefix + '^{{({})}}_{{{},{}}}'.format(r,i,j)
             if exp == 1:
                 return s
             return '\\left({}\\right)^{{{}}}'.format(s, exp)
         return ' '.join(term(r, i, j, exp) for (r,i,j), exp in m._sorted_items())
+
 
 class GradedYangianNatural(GradedYangianBase):
     r"""
@@ -1124,7 +1128,8 @@ class GradedYangianNatural(GradedYangianBase):
             sage: x == grY.gen(2, 1, 1) * grY.gen(12, 2, 1)
             True
         """
-        return self.monomial(x*y)
+        return self.monomial(x * y)
+
 
 class GradedYangianLoop(GradedYangianBase):
     r"""
@@ -1147,7 +1152,7 @@ class GradedYangianLoop(GradedYangianBase):
         EXAMPLES::
 
             sage: grY = Yangian(QQ, 4).graded_algebra()
-            sage: TestSuite(grY).run()
+            sage: TestSuite(grY).run()  # long time
         """
         if Y._filtration != 'loop':
             raise ValueError("the Yangian must have the loop filtration")

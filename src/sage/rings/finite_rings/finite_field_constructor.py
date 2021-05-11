@@ -151,7 +151,7 @@ AUTHORS:
 - Martin Albrecht: Givaro and ntl.GF2E implementations
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -163,9 +163,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.category_object import normalize_names
 
@@ -175,6 +174,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 # the import below is just a redirection
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
+assert is_FiniteField  # just to silent pyflakes
 
 # We don't late import this because this means trouble with the Givaro library
 # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
@@ -182,6 +182,7 @@ from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from .finite_field_givaro import FiniteField_givaro
 
 from sage.structure.factory import UniqueFactory
+
 
 class FiniteFieldFactory(UniqueFactory):
     """
@@ -517,7 +518,7 @@ class FiniteFieldFactory(UniqueFactory):
         if proof is None:
             proof = arithmetic()
         for key, val in kwds.items():
-            if key not in ['structure', 'implementation', 'prec', 'embedding']:
+            if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names']:
                 raise TypeError("create_key_and_extra_args() got an unexpected keyword argument '%s'"%key)
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
                 raise NotImplementedError("ring extension with prescribed %s is not implemented"%key)
@@ -537,8 +538,6 @@ class FiniteFieldFactory(UniqueFactory):
             elif order.is_prime_power():
                 if names is not None:
                     name = names
-                if name is not None:
-                    name = normalize_names(1, name)
 
                 p, n = order.factor()[0]
                 if name is None:
@@ -554,6 +553,7 @@ class FiniteFieldFactory(UniqueFactory):
                     # and a pseudo-Conway polynomial if it's not.
                     modulus = Fpbar._get_polynomial(n)
                     check_irreducible = False
+                name = normalize_names(1, name)
 
                 if impl is None:
                     if order < zech_log_bound:

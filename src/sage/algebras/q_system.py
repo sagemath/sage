@@ -286,26 +286,17 @@ class QSystem(CombinatorialFreeModule):
             sage: unicode_art(Q.an_element())
             1 + 2*Q₁⁽¹⁾ + (Q₁⁽¹⁾)²(Q₁⁽²⁾)²(Q₁⁽³⁾)³ + 3*Q₁⁽²⁾
         """
-        from sage.typeset.unicode_art import UnicodeArt
+        from sage.typeset.unicode_art import UnicodeArt, unicode_subscript, unicode_superscript
         if t == self.one_basis():
             return UnicodeArt(["1"])
-
-        subs = {'0': u'₀', '1': u'₁', '2': u'₂', '3': u'₃', '4': u'₄',
-                '5': u'₅', '6': u'₆', '7': u'₇', '8': u'₈', '9': u'₉'}
-        sups = {'0': u'⁰', '1': u'¹', '2': u'²', '3': u'³', '4': u'⁴',
-                '5': u'⁵', '6': u'⁶', '7': u'⁷', '8': u'⁸', '9': u'⁹'}
-        def to_super(x):
-            return u''.join(sups[i] for i in str(x))
-        def to_sub(x):
-            return u''.join(subs[i] for i in str(x))
 
         ret = UnicodeArt("")
         for k, exp in t._sorted_items():
             a,m = k
-            var = UnicodeArt([u"Q" + to_sub(m) + u'⁽' + to_super(a) + u'⁾'], baseline=0)
+            var = UnicodeArt([u"Q" + unicode_subscript(m) + u'⁽' + unicode_superscript(a) + u'⁾'], baseline=0)
             if exp > 1:
                 var = (UnicodeArt([u'('], baseline=0) + var
-                       + UnicodeArt([u')' + to_super(exp)], baseline=0))
+                       + UnicodeArt([u')' + unicode_superscript(exp)], baseline=0))
             ret += var
         return ret
 

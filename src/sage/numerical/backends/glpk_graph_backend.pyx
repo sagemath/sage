@@ -68,8 +68,6 @@ Classes and methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cysignals.memory cimport check_allocarray, sig_free
 
 from sage.cpython.string cimport str_to_bytes, char_to_str
@@ -1131,7 +1129,7 @@ cdef class GLPKGraphBackend(object):
         .. NOTE::
 
            This method raises ``MIPSolverException`` exceptions when
-           the solution can not be computed for any reason (none
+           the solution cannot be computed for any reason (none
            exists, or the LP solver was not able to find it, etc...)
 
         EXAMPLES::
@@ -1252,7 +1250,7 @@ cdef class GLPKGraphBackend(object):
             * If the source and sink are identical, a ``ValueError`` is raised.
 
             * This method raises ``MIPSolverException`` exceptions when the
-              solution can not be computed for any reason (none exists, or the
+              solution cannot be computed for any reason (none exists, or the
               LP solver was not able to find it, etc...)
 
         EXAMPLES::
