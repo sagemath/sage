@@ -59,7 +59,8 @@ of Pascals's triangle::
 There is a `2`-recursive sequence describing the numbers above as well::
 
     sage: U = Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
-    ....:          left=vector([0, 1]), right=vector([1, 0])).transposed()
+    ....:          left=vector([0, 1]), right=vector([1, 0]),
+    ....:          allow_degenerated_sequence=True).transposed()
     sage: all(U[n] == u(n) for n in srange(30))
     True
 
@@ -267,8 +268,8 @@ class kRegularSequence(RecognizableSeries):
         EXAMPLES::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: S = Seq2((Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])),
-            ....:          vector([0, 1]), vector([1, 0])).transposed(); S
+            sage: S = Seq2((Matrix([[3, 0], [6, 1]]), Matrix([[0, 1], [-6, 5]])),
+            ....:          vector([1, 0]), vector([0, 1])); S
             2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
 
         We can access the coefficients of a sequence by
@@ -303,8 +304,8 @@ class kRegularSequence(RecognizableSeries):
         TESTS::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: s = Seq2((Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])),
-            ....:           vector([0, 1]), vector([1, 0])).transposed()
+            sage: s = Seq2((Matrix([[3, 0], [6, 1]]), Matrix([[0, 1], [-6, 5]])),
+            ....:           vector([1, 0]), vector([0, 1]))
             sage: repr(s)  # indirect doctest
             '2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...'
         """
@@ -387,7 +388,8 @@ class kRegularSequence(RecognizableSeries):
     @cached_method
     def is_degenerated(self):
         r"""
-        Return whether this `k`-regular sequence satisfies
+        Return whether this `k`-regular sequence is degenerated,
+        i.e., whether this `k`-regular sequence does not satisfiy
         `\mu[0] \mathit{right} = \mathit{right}`.
 
         EXAMPLES::
@@ -417,6 +419,31 @@ class kRegularSequence(RecognizableSeries):
         from sage.rings.integer_ring import ZZ
         return (self.mu[ZZ(0)] * self.right) != self.right
 
+    def _error_if_degenerated_(self):
+        r"""
+        Raise an error if this `k`-regular sequence is degenerated,
+        i.e., if this `k`-regular sequence does not satisfiy
+        `\mu[0] \mathit{right} = \mathit{right}`.
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
+            ....:      left=vector([0, 1]), right=vector([1, 0]))  # indirect doctest
+            Traceback (most recent call last):
+            ...
+            DegeneratedSequenceError: degenerated sequence: mu[0]*right != right.
+            Using such a sequence might lead to wrong results.
+            You can use 'allow_degenerated_sequence=True' followed
+            by a call of method .regenerated() for correcting this.
+        """
+        if self.is_degenerated():
+            raise DegeneratedSequenceError(
+                "degenerated sequence: mu[0]*right != right. "
+                "Using such a sequence might lead to wrong results. "
+                "You can use 'allow_degenerated_sequence=True' followed by "
+                "a call of method .regenerated() "
+                "for correcting this.")
 
     @cached_method
     def regenerated(self, minimize=True):
@@ -510,6 +537,78 @@ class kRegularSequence(RecognizableSeries):
         else:
             return result
 
+    def transposed(self, allow_degenerated_sequence=False):
+        r"""
+        Return the transposed sequence.
+
+        INPUT:
+
+        - ``allow_degenerated_sequence`` -- (default: ``False``) a boolean. If set, then
+          there will be no check if the transposed sequence is a degenerated sequence
+          (see :meth:`is_degenerated`).
+          Otherwise the transposed sequence is checked and a :class:`DegeneratedSequenceError`
+          is raised if such a sequence is detected.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        Each of the matrices in :meth:`mu <mu>` is transposed. Additionally
+        the vectors :meth:`left <left>` and :meth:`right <right>` are switched.
+
+        EXAMPLES::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: U = Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
+            ....:          left=vector([0, 1]), right=vector([1, 0]),
+            ....:          allow_degenerated_sequence=True)
+            sage: U.is_degenerated()
+            True
+            sage: Ut = U.transposed()
+            sage: Ut.is_degenerated()
+            False
+
+            sage: Ut.transposed()
+            Traceback (most recent call last):
+            ...
+            DegeneratedSequenceError: degenerated sequence: mu[0]*right != right.
+            Using such a sequence might lead to wrong results.
+            You can use 'allow_degenerated_sequence=True' followed
+            by a call of method .regenerated() for correcting this.
+            sage: Utt = Ut.transposed(allow_degenerated_sequence=True)
+            sage: Utt.is_degenerated()
+            True
+
+        .. SEEALSO::
+
+            :meth:`RecognizableSeries.tranposed <sage.combinat.recognizable_series.RecognizableSeries.tranposed>`
+        """
+        element = super().transposed()
+        if not allow_degenerated_sequence:
+            element._error_if_degenerated_()
+        return element
+
+    def _minimized_right_(self):
+        r"""
+        Return a recognizable series equivalent to this series, but
+        with a right minimized linear representation.
+
+        OUTPUT:
+
+        A :class:`kRegularSequence`
+
+        .. SEEALSO::
+
+            :meth:`RecognizableSeries._minimized_right_ <sage.combinat.recognizable_series.RecognizableSeries._minimized_right>`
+
+        TESTS::
+
+            sage: Seq2 = kRegularSequenceSpace(2, ZZ)
+            sage: Seq2((Matrix([[3, 0], [2, 1]]), Matrix([[2, 1], [0, 3]])),
+            ....:          left=vector([1, 0]), right=vector([0, 1])).minimized()  # indirect doctest
+            2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
+        """
+        return self.transposed(allow_degenerated_sequence=True)._minimized_left_().transposed(allow_degenerated_sequence=True)
 
     def subsequence(self, a, b, minimize=True):
         r"""
@@ -1166,12 +1265,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         """
         allow_degenerated_sequence = kwds.pop('allow_degenerated_sequence', False)
         element = super(kRegularSequenceSpace, self)._element_constructor_(*args, **kwds)
-        if not allow_degenerated_sequence and element.is_degenerated():
-            raise DegeneratedSequenceError("degenerated sequence: mu[0]*right != right. "
-                           "Using such a sequence might lead to wrong results. "
-                           "You can use 'allow_degenerated_sequence=True' followed by "
-                           "a call of method .regenerated() "
-                           "for correcting this.")
+        if not allow_degenerated_sequence:
+            element._error_if_degenerated_()
         return element
 
 
