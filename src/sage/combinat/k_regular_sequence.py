@@ -941,6 +941,8 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             [1 0]  [ 0  1]
             [0 1], [-1  2], (1, 0), (0, 1)
             )
+
+            sage: from importlib import reload
             sage: logging.shutdown(); _ = reload(logging)
 
         Variant 2::
@@ -1049,7 +1051,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         from sage.modules.free_module_element import vector
 
         k = self.k
-        domain = self.coefficients()
+        domain = self.coefficient_ring()
         if sequence is None:
             mu = [[] for _ in srange(k)]
             seq = lambda m: tuple()
