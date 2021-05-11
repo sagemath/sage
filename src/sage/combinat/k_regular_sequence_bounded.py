@@ -470,8 +470,8 @@ def k_regular_sequence_is_bounded(S):
 
     Number of Odd Entries in Pascal's Triangle::
 
-        sage: U = Seq2([Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])],
-        ....:          left=vector([0, 1]), right=vector([1, 0]), transpose=True)
+        sage: U = Seq2([Matrix([[3, 0], [6, 1]]), Matrix([[0, 1], [-6, 5]])],
+        ....:          left=vector([1, 0]), right=vector([0, 1]))
         sage: k_regular_sequence_is_bounded(U)
         False
 
@@ -522,9 +522,9 @@ def k_regular_sequence_is_bounded(S):
 
     ::
 
-        sage: S = Seq2((Matrix([[1,0], [1,0]]), Matrix([[0,1],[1,0]])),
-        ....:          left = vector([1,1]), right = vector([1,0]))
-        No handlers could be found for logger "sage.combinat.k_regular_sequence"
+        sage: S = Seq2((Matrix([[1, 0], [1, 0]]), Matrix([[0, 1],[1, 0]])),
+        ....:          left = vector([1, 1]), right = vector([1, 0]),
+        ....:          allow_degenerated_sequence=True)
         sage: k_regular_sequence_is_bounded(S)
         True
     """
