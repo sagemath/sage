@@ -883,7 +883,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         try:
             return W(n.digits(self.k))
         except OverflowError:
-            raise ValueError('value {} of index is negative'.format(n))
+            raise ValueError('value {} of index is negative'.format(n)) from None
 
     def guess(self, f, n_max=100, max_dimension=10, sequence=None):
         r"""
