@@ -4,21 +4,24 @@
 /logs
 /upstream
 
-#############################
-# Autotools generated files #
-#############################
+# Autotools generated files
 /aclocal.m4
 /autom4te.cache/
 /config/
 /config.log
 /config.status
 /configure
+/conftest*
 
 /m4/sage_spkg_configures.m4
 
-###################
-# Temporary Files #
-###################
+# no longer generated, but may still be in user worktrees
+/src/lib/pkgconfig
+
+/environment.yml
+/environment-optional.yml
+/src/environment.yml
+/src/environment-optional.yml
 
 # Various editors
 *~
@@ -37,6 +40,9 @@
 # PyCharm
 .idea
 .iml
+
+# VSCode
+.vscode/*
 
 # XCode
 xcuserdata/
@@ -70,26 +76,81 @@ $RECYCLE.BIN/
 # SublimeText
 *.sublime-workspace
 
-#################
-# SageMathCloud #
-#################
+# SageMathCloud
 *.sage-chat
 *.sage-history
 *.syncdoc*
 
-###########
-# Jupyter #
-###########
+# Jupyter
 .ipynb_checkpoints
 Untitled*.ipynb
 
-#############################
-# GitLab CI generated files #
-#############################
+# GitLab CI generated files
 gitlab-build-docker.log
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Generated Cython files
+*.so
+src/sage/**/*.c
+src/sage/**/*.cpp
+src/sage/modular/arithgroup/farey_symbol.h
+!src/sage/cpython/debugimpl.c
+!src/sage/graphs/base/boost_interface.cpp
+!src/sage/graphs/cliquer/cl.c
+!src/sage/graphs/graph_decompositions/sage_tdlib.cpp
+!src/sage/libs/eclib/wrap.cpp
+!src/sage/misc/inherit_comparison_impl.c
+!src/sage/modular/arithgroup/farey.cpp
+!src/sage/modular/arithgroup/sl2z.cpp
+!src/sage/rings/bernmm/bern_modp.cpp
+!src/sage/rings/bernmm/bern_modp_util.cpp
+!src/sage/rings/bernmm/bern_rat.cpp
+!src/sage/rings/bernmm/bernmm-test.cpp
+!src/sage/rings/padics/transcendantal.c
+!src/sage/rings/polynomial/weil/power_sums.c
+!src/sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.cpp
+!src/sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.cpp
+!src/sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_zn_poly.cpp
+!src/sage/stats/distributions/dgs_bern.c
+!src/sage/stats/distributions/dgs_gauss_dp.c
+!src/sage/stats/distributions/dgs_gauss_mp.c
+/src/cython_debug
+
+# Temporary build files
+build/temp.*/
+build/bin/sage-build-env-config
+
+/build/pkgs/*/src/build
+/build/pkgs/*/src/dist
+/build/pkgs/*/src/MANIFEST
+/build/pkgs/*/src/*.egg-info
+/build/pkgs/*/src/.tox
+
+# Distribution / packaging
+src/*.egg-info/
 /src/.cython_version
 /src/build
 /src/Makefile
 /src/bin/sage-env-config
+/src/bin/sage-src-env-config
 
+# Virtual environments
+src/.env
+src/.venv
+src/env/
+src/venv/
+src/ENV/
+src/env.bak/
+src/venv.bak/
+
+# mypy
+**/.mypy_cache/
+
+# tox generated files
+/.tox
+/prefix
+worktree*

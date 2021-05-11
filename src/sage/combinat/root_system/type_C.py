@@ -9,8 +9,6 @@ Root system data for type C
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from . import ambient_space
 
@@ -221,7 +219,7 @@ class CartanType(CartanType_standard_finite, CartanType_simple, CartanType_cryst
             O---O=<=O
             1   2   3
             C3
-            sage: e = c.edges(); e.sort(); e
+            sage: c.edges(sort=True)
             [(1, 2, 1), (2, 1, 1), (2, 3, 1), (3, 2, 2)]
 
              sage: b = CartanType(['C',1]).dynkin_diagram()

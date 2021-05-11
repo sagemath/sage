@@ -74,7 +74,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.element cimport MultiplicativeGroupElement, Element, MonoidElement, Matrix
 from sage.structure.parent cimport Parent
@@ -388,7 +387,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
             sage: W = CoxeterGroup(['B',3])
             sage: W.base_ring()
-            Number Field in a with defining polynomial x^2 - 2
+            Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
             sage: g = W.an_element()
             sage: ~g
             [-1  1  0]

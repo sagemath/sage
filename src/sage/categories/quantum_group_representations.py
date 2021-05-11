@@ -16,7 +16,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method

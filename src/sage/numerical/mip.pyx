@@ -232,7 +232,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from copy import copy
 from sage.structure.parent cimport Parent
@@ -251,36 +250,46 @@ cdef class MixedIntegerLinearProgram(SageObject):
     constraints on these variables, and an objective function which is to be
     maximised or minimised under these constraints.
 
-    See the :wikipedia:`Linear_programming` for further information on linear
+    See the thematic tutorial on `Linear Programming (Mixed Integer)
+    <../../../../thematic_tutorials/linear_programming.html>`_
+    or :wikipedia:`Linear_programming` for further information on linear
     programming, and the :mod:`MILP module <sage.numerical.mip>` for its use in
     Sage.
 
     INPUT:
 
-    - ``solver`` -- selects a solver:
+    - ``solver`` -- selects a solver; see `Solvers (backends)
+      <../../../../thematic_tutorials/linear_programming.html#solvers-backends>`_
+      for more information and installation instructions for optional
+      solvers.
 
-      - GLPK (``solver="GLPK"``). See the `GLPK
-        <http://www.gnu.org/software/glpk/>`_ web site.
+      - ``solver="GLPK"``: The `GNU Linear Programming Kit
+        <http://www.gnu.org/software/glpk/>`_.
 
-      - COIN Branch and Cut (``solver="Coin"``). See the `COIN-OR
-        <http://www.coin-or.org>`_ web site.
+      - ``solver="GLPK/exact"``: GLPK's implementation of an exact rational simplex
+        method.
 
-      - CPLEX (``solver="CPLEX"``). See the `CPLEX
-        <http://www.ilog.com/products/cplex/>`_ web site.
+      - ``solver="Coin"``: The `COIN-OR CBC (COIN Branch and Cut) solver
+        <http://www.coin-or.org>`_.
 
-      - Gurobi (``solver="Gurobi"``). See the `Gurobi <http://www.gurobi.com/>`_
-          web site.
+      - ``solver="CPLEX"``, provided by the proprietary `IBM ILOG CPLEX
+        Optimization Studio <https://www.ibm.com/products/ilog-cplex-optimization-studio/>`_.
 
-      - CVXOPT (``solver="CVXOPT"``). See the `CVXOPT <http://www.cvxopt.org/>`_
-          web site.
+      - ``solver="Gurobi"``: The proprietary `Gurobi solver <http://www.gurobi.com/>`_.
 
-      - PPL (``solver="PPL"``). See the `PPL <http://bugseng.com/products/ppl>`_
-          web site.
+      - ``solver="CVXOPT"``: See the `CVXOPT <http://www.cvxopt.org/>`_ web site.
+
+      - ``solver="PPL"``: An exact rational solver (for small scale instances)
+        provided by the `Parma Polyhedra Library (PPL) <http://bugseng.com/products/ppl>`_.
+
+      - ``solver="InteractiveLP"``: A didactical
+        implementation of the revised simplex method in Sage.  It works over
+        any exact ordered field, the default is ``QQ``.
 
       - If ``solver=None`` (default), the default solver is used (see
-        :func:`default_mip_solver`)
+        :func:`default_mip_solver`).
 
-      - ``solver`` can also be a callable,
+      - ``solver`` can also be a callable (such as a class),
         see :func:`sage.numerical.backends.generic_backend.get_solver` for
         examples.
 
@@ -348,36 +357,17 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         INPUT:
 
-        - ``solver`` -- the following solvers should be available through this class:
+        - ``solver`` -- one of the following:
 
-          - GLPK (``solver="GLPK"``). See the `GLPK
-            <http://www.gnu.org/software/glpk/>`_ web site.
+          - a string indicating one of the available solvers
+            (see :class:`MixedIntegerLinearProgram`);
 
-          - GLPK's implementation of an exact rational simplex
-            method (``solver="GLPK/exact"``).
-
-          - COIN Branch and Cut (``solver="Coin"``). See the `COIN-OR
-            <http://www.coin-or.org>`_ web site.
-
-          - CPLEX (``solver="CPLEX"``). See the `CPLEX
-            <http://www.ilog.com/products/cplex/>`_ web site.  An interface to
-            CPLEX is not yet implemented.
-
-          - Gurobi (``solver="Gurobi"``). See the `Gurobi
-            <http://www.gurobi.com/>`_ web site.
-
-          - CVXOPT (``solver="CVXOPT"``). See the `CVXOPT <http://www.cvxopt.org/>`_
-              web site.
-
-          - PPL (``solver="PPL"``). See the `PPL
-            <http://bugseng.com/products/ppl>`_ web site.
-
-          - If ``solver=None`` (default), the default solver is used, see
+          - ``None`` (default), the default solver is used, see
             :func:`default_mip_solver`.
 
-          - ``solver`` can also be a callable,
-            see :func:`sage.numerical.backends.generic_backend.get_solver` for
-            examples.
+          - or a callable (such as a class), see
+            :func:`sage.numerical.backends.generic_backend.get_solver`
+            for examples.
 
         - ``maximization``
 
@@ -679,7 +669,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: d = polytopes.dodecahedron()
             sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())
             sage: p.base_ring()
-            Number Field in sqrt5 with defining polynomial x^2 - 5
+            Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
         """
         return self._backend.base_ring()
 
@@ -1657,7 +1647,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p.solve()     # rel tol 1e-15
             6.666666666666666
 
-        The two constraints can alse be combined into a single
+        The two constraints can also be combined into a single
         vector-valued constraint::
 
             sage: p = MixedIntegerLinearProgram(maximization=True, solver='GLPK')
@@ -2537,7 +2527,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: b.solver_parameter("simplex_or_intopt", "simplex_only")
             sage: b.solver_parameter("verbosity_simplex", "GLP_MSG_ALL")
             sage: ans = p.solve()
-            GLPK Simplex Optimizer, v...
+            GLPK Simplex Optimizer...
             2 rows, 2 columns, 4 non-zeros
             *     0: obj =   7.000000000e+00 inf =   0.000e+00 (2)
             *     2: obj =   9.400000000e+00 inf =   0.000e+00 (0)
@@ -2783,6 +2773,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             raise ValueError('Form of interactive_lp_problem must be either None or \'standard\'')
 
+
 class MIPSolverException(RuntimeError):
     r"""
     Exception raised when the solver fails.
@@ -2792,7 +2783,7 @@ class MIPSolverException(RuntimeError):
         sage: from sage.numerical.mip import MIPSolverException
         sage: e = MIPSolverException("Error")
         sage: e
-        MIPSolverException('Error',)
+        MIPSolverException('Error'...)
         sage: print(e)
         Error
 

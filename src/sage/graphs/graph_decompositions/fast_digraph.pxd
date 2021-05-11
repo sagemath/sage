@@ -9,5 +9,6 @@ cdef class FastDigraph:
 cdef int compute_out_neighborhood_cardinality(FastDigraph, int)
 
 cdef int popcount32(int)
+cdef int slow_popcount32(int)
 
 

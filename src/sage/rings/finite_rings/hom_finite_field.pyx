@@ -100,7 +100,6 @@ AUTHOR:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.integer cimport Integer
 
@@ -185,8 +184,17 @@ cdef class SectionFiniteFieldHomomorphism_generic(Section):
 cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
     """
     A class implementing embeddings between finite fields.
+
+    TESTS::
+
+        sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
+        sage: k.<t> = GF(3^7)
+        sage: K.<T> = GF(3^21)
+        sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
+        sage: TestSuite(f).run()
+
     """
-    def __init__(self, parent, im_gens=None, check=True, section_class=None):
+    def __init__(self, parent, im_gens=None, base_map=None, check=True, section_class=None):
         """
         TESTS::
 
@@ -228,12 +236,44 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
         if im_gens is None:
             im_gens = domain.modulus().any_root(codomain)
             check=False
-        RingHomomorphism_im_gens.__init__(self, parent, im_gens, check)
+        RingHomomorphism_im_gens.__init__(self, parent, im_gens, base_map=base_map, check=check)
         if section_class is None:
             self._section_class = SectionFiniteFieldHomomorphism_generic
         else:
             self._section_class = section_class
 
+    def __copy__(self):
+        """
+        Return a copy of this map.
+
+        TESTS::
+
+            sage: from sage.rings.finite_rings.hom_finite_field import FiniteFieldHomomorphism_generic
+            sage: k.<t> = GF(3^7)
+            sage: K.<T> = GF(3^21)
+            sage: f = FiniteFieldHomomorphism_generic(Hom(k, K))
+            sage: g = copy(f)
+            sage: g.section()(g(t)) == f.section()(f(t))
+            True
+
+        ::
+
+            sage: F = GF(2)
+            sage: E = GF(4)
+            sage: phi = E.coerce_map_from(F); phi
+            Ring morphism:
+              From: Finite Field of size 2
+              To:   Finite Field in z2 of size 2^2
+              Defn: 1 |--> 1
+            sage: phi.section()
+            Section of Ring morphism:
+              From: Finite Field of size 2
+              To:   Finite Field in z2 of size 2^2
+              Defn: 1 |--> 1
+        """
+        cdef FiniteFieldHomomorphism_generic out = super(FiniteFieldHomomorphism_generic, self).__copy__()
+        out._section_class = self._section_class
+        return out
 
     def _latex_(self):
         r"""
@@ -249,7 +289,6 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             '\\Bold{F}_{3^{7}} \\hookrightarrow \\Bold{F}_{3^{21}}'
         """
         return self.domain()._latex_() + " \\hookrightarrow " + self.codomain()._latex_()
-
 
     cpdef Element _call_(self, x):
         """
@@ -269,7 +308,11 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
             sage: f(a*b) == f(a) * f(b)
             True
         """
-        return x.polynomial()(self.im_gens()[0])
+        f = x.polynomial()
+        bm = self.base_map()
+        if bm is not None:
+            f = f.map_coefficients(bm)
+        return f(self.im_gens()[0])
 
 
     def is_injective(self):
@@ -339,15 +382,109 @@ cdef class FiniteFieldHomomorphism_generic(RingHomomorphism_im_gens):
               To:   Finite Field in T of size 3^21
               Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
         """
+        if self.base_map() is not None:
+            raise NotImplementedError
         return self._section_class(self)
 
+    def _inverse_image_element(self, b):
+        """
+        Return the unique ``a`` such that ``self(a) = b`` if one such exists.
+
+        This method is simply a shorthand for calling the map returned by
+        ``self.section()`` on ``b``.
+
+        EXAMPLES::
+
+            sage: k.<t> = GF(3^7)
+            sage: K.<T>, f = k.extension(3, map=True)
+            sage: b = f(t^2); b
+            2*T^20 + 2*T^19 + T^18 + T^15 + 2*T^14 + 2*T^13 + 2*T^12 + T^8 + 2*T^6 + T^5 + 2*T^4 + T^3 + 2*T^2 + T
+            sage: f.inverse_image(b)
+            t^2
+            sage: f.inverse_image(T)
+            Traceback (most recent call last):
+            ...
+            ValueError: T is not in the image of Ring morphism:
+            From: Finite Field in t of size 3^7
+            To:   Finite Field in T of size 3^21
+            Defn: t |--> T^20 + 2*T^18 + T^16 + 2*T^13 + T^9 + 2*T^8 + T^7 + T^6 + T^5 + T^3 + 2*T^2 + T
+        """
+        return self.section()(b)
+
     def __hash__(self):
+        r"""
+        Return a hash of this morphism
+
+        TESTS::
+
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: embed = Frob.fixed_field()[1]
+            sage: hash(embed)  # random
+            -2441354824160407762 
+        """
         return Morphism.__hash__(self)
+
+    cdef dict _extra_slots(self):
+        r"""
+        Helper function for copying and pickling
+
+        TESTS::
+
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: embed = Frob.fixed_field()[1]
+            sage: embed.__reduce__()  # indirect doctest
+            (<built-in function unpickle_map>,
+             (<class 'sage.rings.finite_rings.hom_prime_finite_field.FiniteFieldHomomorphism_prime'>,
+              Set of field embeddings from Finite Field of size 5 to Finite Field in t of size 5^3,
+              {},
+              {'__im_gens': [1],
+               '_base_map': None,
+               '_codomain': Finite Field in t of size 5^3,
+               '_domain': Finite Field of size 5,
+               '_is_coercion': False,
+               '_lift': None,
+               '_repr_type_str': None,
+               '_section_class': <class 'sage.rings.finite_rings.hom_prime_finite_field.SectionFiniteFieldHomomorphism_prime'>}))
+        """
+        cdef dict slots
+        slots = RingHomomorphism_im_gens._extra_slots(self)
+        slots['_section_class'] = self._section_class
+        return slots
+
+    cdef _update_slots(self, dict slots):
+        r"""
+        Helper function for copying and pickling
+
+        TESTS::
+
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: embed = Frob.fixed_field()[1]
+            sage: f = loads(dumps(embed))
+            sage: f == embed
+            True
+            sage: f.section()
+            Section of Ring morphism:
+              From: Finite Field of size 5
+              To:   Finite Field in t of size 5^3
+              Defn: 1 |--> 1
+        """
+        RingHomomorphism_im_gens._update_slots(self, slots)
+        self._section_class = slots['_section_class']
 
 
 cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
     """
     A class implementing Frobenius endomorphisms on finite fields.
+
+    TESTS::
+
+        sage: k.<a> = GF(7^11)
+        sage: Frob = k.frobenius_endomorphism(5)
+        sage: TestSuite(Frob).run()
+
     """
     def __init__(self, domain, n=1):
         """
@@ -392,11 +529,10 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         except TypeError:
             raise TypeError("n (=%s) is not an integer" % n)
 
-        if domain.is_finite():
-            self._degree = domain.degree()
-            self._power = n % self._degree
-            self._degree_fixed = domain.degree().gcd(self._power)
-            self._order = self._degree / self._degree_fixed
+        self._degree = domain.degree()
+        self._power = n % self._degree
+        self._degree_fixed = domain.degree().gcd(self._power)
+        self._order = self._degree / self._degree_fixed
         self._q = domain.characteristic() ** self._power
         RingHomomorphism.__init__(self, Hom(domain, domain))
 
@@ -548,6 +684,19 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         """
         return self.__class__(self.domain(), self.power()*n)
 
+    @cached_method
+    def inverse(self):
+        """
+        Return the inverse of this Frobenius endomorphism.
+
+        EXAMPLES::
+
+            sage: k.<a> = GF(7^11)
+            sage: f = k.frobenius_endomorphism(5)
+            sage: (f.inverse() * f).is_identity()
+            True
+        """
+        return self.__class__(self.domain(), -self.power())
 
     def _composition(self, right):
         """
@@ -665,8 +814,67 @@ cdef class FrobeniusEndomorphism_finite_field(FrobeniusEndomorphism_generic):
         return self.power() == 0
 
     def __hash__(self):
+        r"""
+        Return a hash of this morphism
+
+        EXAMPLES::
+
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism()
+            sage: hash(Frob)  # random
+            383183030479672104
+        """
         return Morphism.__hash__(self)
 
+    cdef dict _extra_slots(self):
+        r"""
+        Helper function for copying and pickling
+
+        TESTS::
+
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism(2)
+            sage: Frob.__reduce__()  # indirect doctest
+            (<built-in function unpickle_map>,
+             (<class 'sage.rings.finite_rings.hom_finite_field_givaro.FrobeniusEndomorphism_givaro'>,
+              Automorphism group of Finite Field in t of size 5^3,
+              {},
+              {'_codomain': Finite Field in t of size 5^3,
+               '_domain': Finite Field in t of size 5^3,
+               '_is_coercion': False,
+               '_lift': None,
+               '_power': 2,
+               '_repr_type_str': None}))
+        """
+        cdef dict slots
+        slots = FrobeniusEndomorphism_generic._extra_slots(self)
+        slots['_power'] = self._power
+        return slots
+
+    cdef _update_slots(self, dict slots):
+        r"""
+        Helper function for copying and pickling
+
+        TESTS::
+
+            sage: k.<t> = GF(5^3)
+            sage: Frob = k.frobenius_endomorphism(2)
+            sage: Frob
+            Frobenius endomorphism t |--> t^(5^2) on Finite Field in t of size 5^3
+
+            sage: phi = copy(Frob)
+            sage: phi
+            Frobenius endomorphism t |--> t^(5^2) on Finite Field in t of size 5^3
+            sage: Frob == phi 
+            True
+        """
+        FrobeniusEndomorphism_generic._update_slots(self, slots)
+        self._power = slots['_power']
+        domain = self.domain()
+        self._degree = domain.degree()
+        self._degree_fixed = domain.degree().gcd(self._power)
+        self._order = self._degree / self._degree_fixed
+        self._q = domain.characteristic() ** self._power
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.finite_field_morphism', 'FiniteFieldHomomorphism_generic', FiniteFieldHomomorphism_generic)

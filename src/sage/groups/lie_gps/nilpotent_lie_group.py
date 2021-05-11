@@ -24,7 +24,7 @@ from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.manifolds.structure import(DifferentialStructure,
                                      RealDifferentialStructure)
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import repr_lincomb
+from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
 from sage.rings.real_mpfr import RealField_class
 from sage.structure.element import MultiplicativeGroupElement

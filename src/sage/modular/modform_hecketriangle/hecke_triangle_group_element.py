@@ -15,7 +15,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod
@@ -135,7 +134,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             [ -1   0]
             [lam  -1]
             sage: el.matrix().parent()
-            Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^4 - 5*x^2 + 5
+            Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^4 - 5*x^2 + 5 with lam = 1.902113032590308?
 
             sage: M = matrix([[-1, lam], [0, 1]])
             sage: G(M)
@@ -2084,11 +2083,11 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U[0]
             (lam, -1)
             sage: U[0].parent()
-            Ambient free module of rank 2 over the principal ideal domain Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Ambient free module of rank 2 over the principal ideal domain Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
             sage: U[1][0]
             1
             sage: U[1][0].parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[key]
 
@@ -2103,7 +2102,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U.a()
             lam
             sage: U.a().parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[0][0]
 
@@ -2118,7 +2117,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             sage: U.b()
             -1
             sage: U.b().parent()
-            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1
+            Maximal Order in Number Field in lam with defining polynomial x^3 - x^2 - 2*x + 1 with lam = 1.801937735804839?
         """
         return self._matrix[0][1]
 
@@ -2758,7 +2757,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             5.40301236071... + 0.926018962976...*I
             6
 
-            sage: z = - 2.3 + 3.1*i
+            sage: z = ComplexField(1000)(- 2.3 + 3.1*i)
             sage: B = G.I()
             sage: for A in [G.S(), G.T(), G.U(), G.U()^(G.n()//2), G.U()^(-3)]:
             ....:     print("A={}: ".format(A.string_repr("conj")))
@@ -2780,7 +2779,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             5.99730551444... + 0.000847636355069...*I
             6
 
-            sage: z = - 2.3 + 3.1*i
+            sage: z = ComplexField(5000)(- 2.3 + 3.1*i)
             sage: B = G.U()
             sage: for A in [G.S(), G.T(), G.U(), G.U()^(G.n()//2), G.U()^(-3)]:    # long time
             ....:     print("A={}: ".format(A.string_repr("conj")))
@@ -3106,10 +3105,15 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(5)
-            sage: G.S().acton(1 + i/2)
+            sage: G.S().acton(SR(1 + i/2))
             2/5*I - 4/5
-            sage: G.S().acton(1 + i/2).parent()
+            sage: G.S().acton(SR(1 + i/2)).parent()
             Symbolic Ring
+            sage: G.S().acton(QQbar(1 + i/2))
+            2/5*I - 4/5
+            sage: G.S().acton(QQbar(1 + i/2)).parent()
+            Algebraic Field
+
             sage: G.S().acton(i + exp(-2))
             -1/(e^(-2) + I)
             sage: G.S().acton(i + exp(-2)).parent()
@@ -3292,7 +3296,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             try:
                 tau = f.numerator().parent().gen()
             except (ValueError, TypeError, AttributeError):
-                raise ValueError("f={} is not a rational function or a polynomial in one variable, so tau has to be specified explicitely!".format(f))
+                raise ValueError("f={} is not a rational function or a polynomial in one variable, so tau has to be specified explicitly!".format(f))
 
         if (tau in HyperbolicPlane()):
             tau = tau.to_model('UHP').coordinates()

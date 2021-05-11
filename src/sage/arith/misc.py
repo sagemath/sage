@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 Miscellaneous arithmetic functions
 """
 
@@ -13,17 +13,15 @@ Miscellaneous arithmetic functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, print_function
-from six.moves import range
-
 import math
-import collections
+from collections.abc import Iterable
 
 from sage.misc.misc import powerset
 from sage.misc.misc_c import prod
 
 from sage.libs.pari.all import pari
-import sage.libs.flint.arith as flint_arith
+from sage.libs.flint.arith import (bernoulli_number as flint_bernoulli,
+                                   dedekind_sum as flint_dedekind_sum)
 
 from sage.structure.element import parent
 from sage.structure.coerce import py_scalar_to_element
@@ -33,19 +31,20 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer, GCD_list
 from sage.rings.rational import Rational
 from sage.rings.real_mpfr import RealNumber
-from sage.rings.complex_number import ComplexNumber
+from sage.rings.complex_mpfr import ComplexNumber
 
-import sage.rings.fast_arith as fast_arith
-prime_range = fast_arith.prime_range
+from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 
 
 ##################################################################
 # Elementary Arithmetic
 ##################################################################
 
-def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None, use_digits=None, height_bound=None, proof=False):
+
+def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
+           use_digits=None, height_bound=None, proof=False):
     """
-    Returns an irreducible polynomial of degree at most `degree` which
+    Return an irreducible polynomial of degree at most `degree` which
     is approximately satisfied by the number `z`.
 
     You can specify the number of known bits or digits of `z` with
@@ -242,7 +241,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None, use_dig
         #we're supposed to find an irreducible polynomial, so we cannot
         #return a constant one. If the first LLL basis vector gives
         #a constant polynomial, use the next one.
-        if all(c==0 for c in coeffs[1:]):
+        if all(c == 0 for c in coeffs[1:]):
             coeffs = LLL[1][:n]
 
         if height_bound:
@@ -277,6 +276,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None, use_dig
 
 algebraic_dependency = algdep
 
+
 def bernoulli(n, algorithm='default', num_threads=1):
     r"""
     Return the n-th Bernoulli number, as a rational number.
@@ -286,9 +286,9 @@ def bernoulli(n, algorithm='default', num_threads=1):
     - ``n`` - an integer
     - ``algorithm``:
 
-      - ``'default'`` -- use 'flint' for n <= 300000, and 'bernmm'
-        otherwise (this is just a heuristic, and not guaranteed to be
-        optimal on all hardware)
+      - ``'default'`` -- use 'flint' for n <= 20000, then 'arb' for n <= 300000
+        and 'bernmm' for larger values (this is just a heuristic, and not guaranteed
+        to be optimal on all hardware)
       - ``'arb'`` -- use the arb library
       - ``'flint'`` -- use the FLINT library
       - ``'pari'`` -- use the PARI C library
@@ -345,7 +345,6 @@ def bernoulli(n, algorithm='default', num_threads=1):
         sage: bernoulli(mpz(12))
         -691/2730
 
-
     AUTHOR:
 
     - David Joyner and William Stein
@@ -353,13 +352,21 @@ def bernoulli(n, algorithm='default', num_threads=1):
     n = ZZ(n)
 
     if algorithm == 'default':
-        algorithm = 'flint' if n <= 300000 else 'bernmm'
+        if n <= 20000:
+            algorithm = 'flint'
+        elif n <= 300000:
+            algorithm = 'arb'
+        else:
+            algorithm = 'bernmm'
 
     if algorithm == 'arb':
         import sage.libs.arb.arith as arb_arith
         return arb_arith.bernoulli(n)
     elif algorithm == 'flint':
-        return flint_arith.bernoulli_number(n)
+        if n >= 100000:
+            from warnings import warn
+            warn("flint is known to not be accurate for large Bernoulli numbers")
+        return flint_bernoulli(n)
     elif algorithm == 'pari':
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
@@ -462,6 +469,7 @@ def factorial(n, algorithm='gmp'):
     else:
         raise ValueError('unknown algorithm')
 
+
 def is_prime(n):
     r"""
     Return ``True`` if `n` is a prime number, and ``False`` otherwise.
@@ -510,6 +518,7 @@ def is_prime(n):
     except (AttributeError, NotImplementedError):
         return ZZ(n).is_prime()
 
+
 def is_pseudoprime(n):
     r"""
     Test whether ``n`` is a pseudo-prime
@@ -542,6 +551,7 @@ def is_pseudoprime(n):
         False
     """
     return ZZ(n).is_pseudoprime()
+
 
 def is_prime_power(n, get_data=False):
     r"""
@@ -608,6 +618,7 @@ def is_prime_power(n, get_data=False):
         True
     """
     return ZZ(n).is_prime_power(get_data=get_data)
+
 
 def is_pseudoprime_power(n, get_data=False):
     r"""
@@ -734,6 +745,7 @@ def valuation(m, *args, **kwds):
     except AttributeError:
         return ZZ(m).valuation(*args, **kwds)
 
+
 def prime_powers(start, stop=None):
     r"""
     List of all positive primes powers between ``start`` and
@@ -854,6 +866,7 @@ def prime_powers(start, stop=None):
     output.sort()
     return output
 
+
 def primes_first_n(n, leave_pari=False):
     r"""
     Return the first `n` primes.
@@ -881,11 +894,13 @@ def primes_first_n(n, leave_pari=False):
         return []
     return prime_range(nth_prime(n) + 1)
 
-#
+
 # This is from
-#    http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/366178
+#    https://github.com/ActiveState/code
+#    https://github.com/ActiveState/code/tree/master/recipes/Python/366178_fast_prime_number_list
 # It's impressively fast given that it's in Pure Python.
-#
+
+
 def eratosthenes(n):
     r"""
     Return a list of the primes `\leq n`.
@@ -899,7 +914,6 @@ def eratosthenes(n):
     OUTPUT:
 
     - a list of primes less than or equal to n.
-
 
     EXAMPLES::
 
@@ -945,9 +959,10 @@ def eratosthenes(n):
 
     return [ZZ(2)] + [ZZ(x) for x in s if x and x <= n]
 
+
 def primes(start, stop=None, proof=None):
     r"""
-    Returns an iterator over all primes between start and stop-1,
+    Return an iterator over all primes between start and stop-1,
     inclusive. This is much slower than ``prime_range``, but
     potentially uses less memory.  As with :func:`next_prime`, the optional
     argument proof controls whether the numbers returned are
@@ -1033,6 +1048,7 @@ def primes(start, stop=None, proof=None):
         else:
             return
 
+
 def next_prime_power(n):
     """
     Return the smallest prime power greater than ``n``.
@@ -1091,9 +1107,10 @@ def next_prime_power(n):
     """
     return ZZ(n).next_prime_power()
 
+
 def next_probable_prime(n):
     """
-    Returns the next probable prime after self, as determined by PARI.
+    Return the next probable prime after self, as determined by PARI.
 
     INPUT:
 
@@ -1122,6 +1139,7 @@ def next_probable_prime(n):
         23
     """
     return ZZ(n).next_probable_prime()
+
 
 def next_prime(n, proof=None):
     """
@@ -1172,6 +1190,7 @@ def next_prime(n, proof=None):
     """
     return ZZ(n).next_prime(proof)
 
+
 def previous_prime(n):
     """
     The largest prime < n. The result is provably correct. If n <= 1,
@@ -1218,11 +1237,12 @@ def previous_prime(n):
         raise ValueError("no previous prime")
     if n <= 3:
         return ZZ(n)
-    if n%2 == 0:
+    if n % 2 == 0:
         n -= 1
     while not is_prime(n):
         n -= 2
     return ZZ(n)
+
 
 def previous_prime_power(n):
     r"""
@@ -1294,11 +1314,15 @@ def previous_prime_power(n):
     """
     return ZZ(n).previous_prime_power()
 
+
 def random_prime(n, proof=None, lbound=2):
-    """
-    Returns a random prime p between `lbound` and n (i.e. `lbound <= p <= n`).
-    The returned prime is chosen uniformly at random from the set of prime
-    numbers less than or equal to n.
+    r"""
+    Return a random prime `p` between ``lbound`` and `n`.
+
+    The returned prime `p` satisfies ``lbound`` `\leq p \leq n`.
+
+    The returned prime `p` is chosen uniformly at random from the set
+    of prime numbers less than or equal to `n`.
 
     INPUT:
 
@@ -1309,8 +1333,7 @@ def random_prime(n, proof=None, lbound=2):
        does not provide a proof of primality. If None, uses the global default
        (see :mod:`sage.structure.proof.proof`)
 
-    - ``lbound`` - an integer >= 2
-      lower bound for the chosen primes
+    - ``lbound`` - an integer >= 2, lower bound for the chosen primes
 
     EXAMPLES::
 
@@ -1352,7 +1375,7 @@ def random_prime(n, proof=None, lbound=2):
 
     - Jonathan Bober (2007-03-17)
     """
-    # since we don't want current_randstate to get
+    # since we do not want current_randstate to get
     # pulled when you say "from sage.arith.misc import *".
     from sage.structure.proof.proof import get_flag
     proof = get_flag(proof, "arithmetic")
@@ -1393,6 +1416,7 @@ def random_prime(n, proof=None, lbound=2):
         p = randint(lbound, n)
         if prime_test(p):
             return p
+
 
 def divisors(n):
     """
@@ -1483,6 +1507,7 @@ def divisors(n):
 
     return m()
 
+
 class Sigma:
     """
     Return the sum of the k-th powers of the divisors of n.
@@ -1550,6 +1575,7 @@ class Sigma:
 
         EXAMPLES::
 
+            sage: from sage.arith.misc import Sigma
             sage: Sigma().__repr__()
             'Function that adds up (k-th powers of) the divisors of n'
         """
@@ -1561,6 +1587,7 @@ class Sigma:
 
         EXAMPLES::
 
+            sage: from sage.arith.misc import Sigma
             sage: q = Sigma()
             sage: q(10)
             18
@@ -1605,6 +1632,7 @@ class Sigma:
 
         EXAMPLES::
 
+            sage: from sage.arith.misc import Sigma
             sage: p = Sigma().plot()
             sage: p.ymax()
             124.0
@@ -1616,21 +1644,22 @@ class Sigma:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7,0.7,0.7), **kwds)
         return P
 
+
 sigma = Sigma()
+
 
 def gcd(a, b=None, **kwargs):
     r"""
-    The greatest common divisor of a and b, or if a is a list and b is
-    omitted the greatest common divisor of all elements of a.
+    Return the greatest common divisor of ``a`` and ``b``.
+
+    If ``a`` is a list and ``b`` is omitted, return instead the
+    greatest common divisor of all elements of ``a``.
 
     INPUT:
 
+    - ``a,b`` -- two elements of a ring with gcd or
 
-    -  ``a,b`` - two elements of a ring with gcd or
-
-    -  ``a`` - a list or tuple of elements of a ring with
-       gcd
-
+    - ``a`` -- a list or tuple of elements of a ring with gcd
 
     Additional keyword arguments are passed to the respectively called
     methods.
@@ -1709,7 +1738,7 @@ def gcd(a, b=None, **kwargs):
         sage: parent(gcd(SR(2), SR(4)))
         Symbolic Ring
 
-    Verify that objects without gcd methods but which can't be
+    Verify that objects without gcd methods but which cannot be
     coerced to ZZ or QQ raise an error::
 
         sage: F.<a,b> = FreeMonoid(2)
@@ -1753,6 +1782,7 @@ def gcd(a, b=None, **kwargs):
 
 
 GCD = gcd
+
 
 def __GCD_sequence(v, **kwargs):
     """
@@ -1801,6 +1831,7 @@ def __GCD_sequence(v, **kwargs):
         g = vi.gcd(g, **kwargs)
     return g
 
+
 def xlcm(m, n):
     r"""
     Extended lcm function: given two positive integers `m,n`, returns
@@ -1833,12 +1864,13 @@ def xlcm(m, n):
     g = gcd(m, n//g) # divisible by those primes which divide n to a
                      # higher power than m
 
-    while not g==1:
+    while g != 1:
         m //= g
         g = gcd(m, g)
 
     n = l//m
     return (l, m, n)
+
 
 def xgcd(a, b):
     r"""
@@ -1941,7 +1973,7 @@ XGCD = xgcd
 
 ## def XGCD_python(a, b):
 ##     """
-##     Returns triple (g,p,q) such that g = p*a+b*q = GCD(a,b).
+##     Return triple (g,p,q) such that g = p*a+b*q = GCD(a,b).
 ##     This function should behave exactly the same as XGCD,
 ##     but is implemented in pure python.
 ##     """
@@ -1976,6 +2008,8 @@ def xkcd(n=""):
     This function is similar to the xgcd function, but behaves
     in a completely different way.
 
+    See https://xkcd.com/json.html for more details.
+
     INPUT:
 
     - ``n`` -- an integer (optional)
@@ -1992,11 +2026,15 @@ def xkcd(n=""):
     from sage.misc.html import html
 
     # import compatible with py2 and py3
-    from six.moves.urllib.request import urlopen
-    from six.moves.urllib.error import HTTPError, URLError
+    from urllib.request import urlopen
+    from urllib.error import HTTPError, URLError
 
     data = None
-    url = "http://dynamic.xkcd.com/api-0/jsonp/comic/{}".format(n)
+    if not n:
+        # default to last comic
+        url = "http://xkcd.com/info.0.json"
+    else:
+        url = "https://xkcd.com/{}/info.0.json".format(n)
 
     try:
         with contextlib.closing(urlopen(url)) as f:
@@ -2059,6 +2097,7 @@ def inverse_mod(a, m):
 # for gcd and inverse_mod
 #######################################################
 
+
 def get_gcd(order):
     """
     Return the fastest gcd function for integers of size no larger than
@@ -2074,11 +2113,12 @@ def get_gcd(order):
         <function gcd at ...>
     """
     if order <= 46340:   # todo: don't hard code
-        return fast_arith.arith_int().gcd_int
+        return arith_int().gcd_int
     elif order <= 2147483647:   # todo: don't hard code
-        return fast_arith.arith_llong().gcd_longlong
+        return arith_llong().gcd_longlong
     else:
         return gcd
+
 
 def get_inverse_mod(order):
     """
@@ -2095,9 +2135,9 @@ def get_inverse_mod(order):
         <function inverse_mod at ...>
     """
     if order <= 46340:   # todo: don't hard code
-        return fast_arith.arith_int().inverse_mod_int
+        return arith_int().inverse_mod_int
     elif order <= 2147483647:   # todo: don't hard code
-        return fast_arith.arith_llong().inverse_mod_longlong
+        return arith_llong().inverse_mod_longlong
     else:
         return inverse_mod
 
@@ -2111,9 +2151,10 @@ def get_inverse_mod(order):
 #         raise "inverse_mod(a=%s,m=%s), error since GCD=%s"%(a,m,g)
 #     return s
 
-def power_mod(a,n,m):
+
+def power_mod(a, n, m):
     """
-    The n-th power of a modulo the integer m.
+    Return the ``n``-th power of ``a`` modulo the integer ``m``.
 
     EXAMPLES::
 
@@ -2145,14 +2186,14 @@ def power_mod(a,n,m):
         sage: power_mod(mpz(2),mpz(390),mpz(391))
         mpz(285)
     """
-    if m==0:
+    if m == 0:
         raise ZeroDivisionError("modulus must be nonzero.")
-    if m==1:
+    if m == 1:
         return 0
     if n < 0:
-        ainv = inverse_mod(a,m)
+        ainv = inverse_mod(a, m)
         return power_mod(ainv, -n, m)
-    if n==0:
+    if n == 0:
         if a == 0:
             raise ArithmeticError("0^0 is undefined.")
         return 1
@@ -2269,6 +2310,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
     else:
         raise ValueError("unknown algorithm %r" % algorithm)
 
+
 def mqrr_rational_reconstruction(u, m, T):
     r"""
     Maximal Quotient Rational Reconstruction.
@@ -2376,9 +2418,10 @@ def trial_division(n, bound=None):
     else:
         return ZZ(n).trial_division(bound)
 
+
 def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
     """
-    Returns the factorization of ``n``.  The result depends on the
+    Return the factorization of ``n``.  The result depends on the
     type of ``n``.
 
     If ``n`` is an integer, returns the factorization as an object
@@ -2414,8 +2457,8 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
 
        - ``'pari'`` - (default) use the PARI c library
 
-       - ``'kash'`` - use KASH computer algebra system (requires the
-         optional kash package be installed)
+       - ``'kash'`` - use KASH computer algebra system (requires that
+         kash be installed)
 
        - ``'magma'`` - use Magma (requires magma be installed)
 
@@ -2431,7 +2474,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
     implementations of algorithms for doing certain integer
     factorization problems. These implementations are not used by the
     generic factor command, which currently just calls PARI (note that
-    PARI also implements sieve and ecm algorithms, but they aren't as
+    PARI also implements sieve and ecm algorithms, but they are not as
     optimized). Thus you might consider using them instead for certain
     numbers.
 
@@ -2561,7 +2604,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
     try:
         return m(proof=proof, **kwds)
     except TypeError:
-        # Maybe the factor() method doesn't have a proof option
+        # Maybe the factor() method does not have a proof option
         return m(**kwds)
 
 
@@ -2603,6 +2646,7 @@ def radical(n, *args, **kwds):
             m = e.radical
 
     return m(*args, **kwds)
+
 
 def prime_divisors(n):
     """
@@ -2656,7 +2700,9 @@ def prime_divisors(n):
         pass
     return [p for p, _ in factor(n)]
 
+
 prime_factors = prime_divisors
+
 
 def odd_part(n):
     r"""
@@ -2685,16 +2731,18 @@ def odd_part(n):
         n = ZZ(n)
     return n.odd_part()
 
-def prime_to_m_part(n,m):
+
+def prime_to_m_part(n, m):
     """
-    Returns the prime-to-m part of n, i.e., the largest divisor of n
-    that is coprime to m.
+    Return the prime-to-``m`` part of ``n``.
+
+    This is the largest divisor of ``n`` that is coprime to ``m``.
 
     INPUT:
 
-    -  ``n`` - Integer (nonzero)
+    - ``n`` -- Integer (nonzero)
 
-    -  ``m`` - Integer
+    - ``m`` -- Integer
 
     OUTPUT: Integer
 
@@ -2725,28 +2773,27 @@ def prime_to_m_part(n,m):
     """
     return ZZ(n).prime_to_m_part(m)
 
+
 def is_square(n, root=False):
     """
-    Returns whether or not n is square, and if n is a square also
-    returns the square root. If n is not square, also returns None.
+    Return whether or not ``n`` is square.
+
+    If ``n`` is a square also return the square root.
+    If ``n`` is not square, also return ``None``.
 
     INPUT:
 
+    - ``n`` -- an integer
 
-    -  ``n`` - an integer
-
-    -  ``root`` - whether or not to also return a square
-       root (default: False)
-
+    - ``root`` -- whether or not to also return a square
+      root (default: ``False``)
 
     OUTPUT:
 
+    - ``bool`` -- whether or not a square
 
-    -  ``bool`` - whether or not a square
-
-    -  ``object`` - (optional) an actual square if found,
-       and None otherwise.
-
+    - ``object`` -- (optional) an actual square if found,
+      and ``None`` otherwise.
 
     EXAMPLES::
 
@@ -2803,6 +2850,7 @@ def is_square(n, root=False):
             else:
                 return False, None
     return m()
+
 
 def is_squarefree(n):
     """
@@ -2946,10 +2994,11 @@ class Euler_Phi:
     """
     def __repr__(self):
         """
-        Returns a string describing this class.
+        Return a string describing this class.
 
         EXAMPLES::
 
+            sage: from sage.arith.misc import Euler_Phi
             sage: Euler_Phi().__repr__()
             'Number of positive integers <=n but relatively prime to n'
         """
@@ -2961,6 +3010,7 @@ class Euler_Phi:
 
         EXAMPLES::
 
+            sage: from sage.arith.misc import Euler_Phi
             sage: Euler_Phi()(10)
             4
             sage: Euler_Phi()(720)
@@ -2995,6 +3045,7 @@ class Euler_Phi:
 
         EXAMPLES::
 
+            sage: from sage.arith.misc import Euler_Phi
             sage: p = Euler_Phi().plot()
             sage: p.ymax()
             46.0
@@ -3006,11 +3057,13 @@ class Euler_Phi:
             P += list_plot(v, plotjoined=True, rgbcolor=(0.7,0.7,0.7), **kwds)
         return P
 
+
 euler_phi = Euler_Phi()
 
-def crt(a,b,m=None,n=None):
+
+def crt(a, b, m=None, n=None):
     r"""
-    Returns a solution to a Chinese Remainder Theorem problem.
+    Return a solution to a Chinese Remainder Theorem problem.
 
     INPUT:
 
@@ -3129,7 +3182,7 @@ def crt(a,b,m=None,n=None):
         f = (b-a).quo_rem
     except (TypeError, AttributeError):
         # Maybe there is no coercion between a and b.
-        # Maybe (b-a) don't have a quo_rem attribute
+        # Maybe (b-a) does not have a quo_rem attribute
         a = py_scalar_to_element(a)
         b = py_scalar_to_element(b)
         f = (b-a).quo_rem
@@ -3145,6 +3198,7 @@ def crt(a,b,m=None,n=None):
 
 
 CRT = crt
+
 
 def CRT_list(v, moduli):
     r""" Given a list ``v`` of elements and a list of corresponding
@@ -3226,11 +3280,12 @@ def CRT_list(v, moduli):
     for i in range(1, len(v)):
         x = CRT(x,v[i],m,moduli[i])
         m = lcm(m,moduli[i])
-    return x%m
+    return x % m
+
 
 def CRT_basis(moduli):
     r"""
-    Returns a CRT basis for the given moduli.
+    Return a CRT basis for the given moduli.
 
     INPUT:
 
@@ -3271,6 +3326,7 @@ def CRT_basis(moduli):
     M = prod(moduli)
     return [((xgcd(m,M//m)[2])*(M//m))%M for m in moduli]
 
+
 def CRT_vectors(X, moduli):
     r"""
     Vector form of the Chinese Remainder Theorem: given a list of integer
@@ -3305,6 +3361,7 @@ def CRT_vectors(X, moduli):
     a = CRT_basis(moduli)
     modulus = prod(moduli)
     return [sum(a[i]*X[i][j] for i in range(n)) % modulus for j in range(len(X[0]))]
+
 
 def binomial(x, m, **kwds):
     r"""
@@ -3549,6 +3606,7 @@ def binomial(x, m, **kwds):
         return P(0)
     return P(prod(x - i for i in range(m))) / m.factorial()
 
+
 def multinomial(*ks):
     r"""
     Return the multinomial coefficient
@@ -3560,7 +3618,7 @@ def multinomial(*ks):
 
     OUTPUT:
 
-    Returns the integer:
+    Return the integer:
 
     .. MATH::
 
@@ -3598,7 +3656,7 @@ def multinomial(*ks):
 
     - Gabriel Ebner
     """
-    if isinstance(ks[0], collections.Iterable):
+    if isinstance(ks[0], Iterable):
         if len(ks) > 1:
             raise ValueError("multinomial takes only one iterable argument")
         ks = ks[0]
@@ -3608,6 +3666,7 @@ def multinomial(*ks):
         s += k
         c *= binomial(s, k)
     return c
+
 
 def binomial_coefficients(n):
     r"""
@@ -3654,6 +3713,7 @@ def binomial_coefficients(n):
         a = (a * (n-k+1))//k
         d[k, n-k] = d[n-k, k] = a
     return d
+
 
 def multinomial_coefficients(m, n):
     r"""
@@ -3867,7 +3927,8 @@ def legendre_symbol(x,p):
         raise ValueError("p must be odd")
     return x.kronecker(p)
 
-def jacobi_symbol(a,b):
+
+def jacobi_symbol(a, b):
     r"""
     The Jacobi symbol of integers a and b, where b is odd.
 
@@ -3914,11 +3975,11 @@ def jacobi_symbol(a,b):
         sage: jacobi_symbol(mpz(10),mpz(777))
         -1
     """
+    if b % 2 == 0:
+        raise ValueError("second input must be odd, %s is not odd" % b)
 
-    if b%2==0:
-        raise ValueError("second input must be odd, %s is not odd"%b)
+    return kronecker_symbol(a, b)
 
-    return kronecker_symbol(a,b)
 
 def primitive_root(n, check=True):
     """
@@ -4036,6 +4097,7 @@ def primitive_root(n, check=True):
             return ZZ(pari(n).znprimroot())
     raise ValueError("no primitive root")
 
+
 def nth_prime(n):
     """
 
@@ -4116,7 +4178,7 @@ def quadratic_residues(n):
 
 class Moebius:
     r"""
-    Returns the value of the Möbius function of abs(n), where n is an
+    Return the value of the Möbius function of abs(n), where n is an
     integer.
 
     DEFINITION: `\mu(n)` is 0 if `n` is not square
@@ -4177,6 +4239,7 @@ class Moebius:
         """
         EXAMPLES::
 
+            sage: from sage.arith.misc import Moebius
             sage: Moebius().__call__(7)
             -1
         """
@@ -4200,10 +4263,11 @@ class Moebius:
 
     def __repr__(self):
         """
-        Returns a description of this function.
+        Return a description of this function.
 
         EXAMPLES::
 
+            sage: from sage.arith.misc import Moebius
             sage: q = Moebius()
             sage: q.__repr__()
             'The Moebius function'
@@ -4233,6 +4297,7 @@ class Moebius:
 
         EXAMPLES::
 
+            sage: from sage.arith.misc import Moebius
             sage: p = Moebius().plot()
             sage: p.ymax()
             1.0
@@ -4375,6 +4440,7 @@ def continuant(v, n=None):
         a, b = b, a + b*v[k]
     return b
 
+
 def number_of_divisors(n):
     """
     Return the number of divisors of the integer n.
@@ -4412,7 +4478,7 @@ def number_of_divisors(n):
 
 def hilbert_symbol(a, b, p, algorithm="pari"):
     """
-    Returns 1 if `ax^2 + by^2` `p`-adically represents
+    Return 1 if `ax^2 + by^2` `p`-adically represents
     a nonzero square, otherwise returns `-1`. If either a or b
     is 0, returns 0.
 
@@ -4480,7 +4546,7 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
     if algorithm == "pari":
         if p == -1:
             p = 0
-        return ZZ(pari(a).hilbert(b,p))
+        return ZZ(pari(a).hilbert(b, p))
 
     elif algorithm == 'direct':
         if a == 0 or b == 0:
@@ -4491,13 +4557,15 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
 
         if p != -1:
             p_sqr = p**2
-            while a%p_sqr == 0: a //= p_sqr
-            while b%p_sqr == 0: b //= p_sqr
+            while a % p_sqr == 0:
+                a //= p_sqr
+            while b % p_sqr == 0:
+                b //= p_sqr
 
-        if p != 2 and True in ( kronecker(x,p) == 1 for x in (a,b,a+b) ):
+        if p != 2 and True in (kronecker(x, p) == 1 for x in (a, b, a + b)):
             return one
-        if a%p == 0:
-            if b%p == 0:
+        if a % p == 0:
+            if b % p == 0:
                 return hilbert_symbol(p,-(b//p),p)*hilbert_symbol(a//p,b,p)
             elif p == 2 and (b%4) == 3:
                 if kronecker(a+b,p) == -1:
@@ -4521,7 +4589,6 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
         return ans_pari
     else:
         raise ValueError("Algorithm %s not defined"%algorithm)
-
 
 def hilbert_conductor(a, b):
     r"""
@@ -4649,7 +4716,7 @@ def hilbert_conductor_inverse(d):
             dd = mo * d
         q = 1
         while hilbert_conductor(-q, dd) != d:
-            q+=1;
+            q += 1
         if dd%q == 0:
             dd /= q
         return (Z(-q), Z(dd))
@@ -4669,7 +4736,7 @@ def hilbert_conductor_inverse(d):
 
 def falling_factorial(x, a):
     r"""
-    Returns the falling factorial `(x)_a`.
+    Return the falling factorial `(x)_a`.
 
     The notation in the literature is a mess: often `(x)_a`,
     but there are many other notations: GKP: Concrete Mathematics uses
@@ -4681,15 +4748,15 @@ def falling_factorial(x, a):
 
     INPUT:
 
-    -  ``x`` - element of a ring
+    -  ``x`` -- element of a ring
 
-    -  ``a`` - a non-negative integer or
+    -  ``a`` -- a non-negative integer or
 
-    OR
-
-    -  ``x and a`` - any numbers
+    -  ``x and a`` -- any numbers
 
     OUTPUT: the falling factorial
+
+    .. SEEALSO:: :func:`rising_factorial`
 
     EXAMPLES::
 
@@ -4712,8 +4779,6 @@ def falling_factorial(x, a):
         sage: falling_factorial(I, 4)
         -10
 
-    ::
-
         sage: M = MatrixSpace(ZZ, 4, 4)
         sage: A = M([1,0,1,0,1,0,1,0,1,0,10,10,1,0,1,1])
         sage: falling_factorial(A, 2) # A(A - I)
@@ -4721,8 +4786,6 @@ def falling_factorial(x, a):
         [  1   0  10  10]
         [ 20   0 101 100]
         [  2   0  11  10]
-
-    ::
 
         sage: x = ZZ['x'].0
         sage: falling_factorial(x, 4)
@@ -4767,11 +4830,12 @@ def falling_factorial(x, a):
          a.is_integer())) and a >= 0:
         return prod(((x - i) for i in range(a)), z=x.parent().one())
     from sage.functions.all import gamma
-    return gamma(x+1) / gamma(x-a+1)
+    return gamma(x + 1) / gamma(x - a + 1)
+
 
 def rising_factorial(x, a):
     r"""
-    Returns the rising factorial `(x)^a`.
+    Return the rising factorial `(x)^a`.
 
     The notation in the literature is a mess: often `(x)^a`,
     but there are many other notations: GKP: Concrete Mathematics uses
@@ -4786,46 +4850,34 @@ def rising_factorial(x, a):
 
     INPUT:
 
+    -  ``x`` -- element of a ring
 
-    -  ``x`` - element of a ring
+    -  ``a`` -- a non-negative integer or
 
-    -  ``a`` - a non-negative integer or
-
-    -  ``x and a`` - any numbers
-
+    -  ``x and a`` -- any numbers
 
     OUTPUT: the rising factorial
+
+    .. SEEALSO:: :func:`falling_factorial`
 
     EXAMPLES::
 
         sage: rising_factorial(10,3)
         1320
 
-    ::
-
         sage: rising_factorial(10,RR('3.0'))
         1320.00000000000
 
-    ::
-
         sage: rising_factorial(10,RR('3.3'))
         2826.38895824964
-
-    ::
 
         sage: a = rising_factorial(1+I, I); a
         gamma(2*I + 1)/gamma(I + 1)
         sage: CC(a)
         0.266816390637832 + 0.122783354006372*I
 
-    ::
-
         sage: a = rising_factorial(I, 4); a
         -10
-
-    See falling_factorial(I, 4).
-
-    ::
 
         sage: x = polygen(ZZ)
         sage: rising_factorial(x, 4)
@@ -4872,7 +4924,7 @@ def rising_factorial(x, a):
          a.is_integer())) and a >= 0:
         return prod(((x + i) for i in range(a)), z=x.parent().one())
     from sage.functions.all import gamma
-    return gamma(x+a) / gamma(x)
+    return gamma(x + a) / gamma(x)
 
 
 def integer_ceil(x):
@@ -5074,6 +5126,7 @@ def two_squares(n):
     else:
         return (b,a)
 
+
 def three_squares(n):
     """
     Write the integer `n` as a sum of three integer squares if possible;
@@ -5190,7 +5243,7 @@ def three_squares(n):
                 break
             x -= 2
     else:  # 7 mod 8
-        raise ValueError("%s is not a sum of 3 squares"%n)
+        raise ValueError("%s is not a sum of 3 squares" % n)
 
     if x < 0:
         # We found no good x, brute force instead.
@@ -5217,6 +5270,7 @@ def three_squares(n):
         return (a*m, x*m, b*m)
     else:
         return (x*m, a*m, b*m)
+
 
 def four_squares(n):
     """
@@ -5291,7 +5345,8 @@ def four_squares(n):
     # Correct sorting is guaranteed by construction
     return (a*m, b*m, c*m, x*m)
 
-def sum_of_k_squares(k,n):
+
+def sum_of_k_squares(k, n):
     """
     Write the integer `n` as a sum of `k` integer squares if possible;
     otherwise raise a ``ValueError``.
@@ -5391,6 +5446,7 @@ def sum_of_k_squares(k,n):
     t = list(four_squares(n)) + t
     return tuple(t)
 
+
 def subfactorial(n):
     r"""
     Subfactorial or rencontres numbers, or derangements: number of
@@ -5432,20 +5488,18 @@ def subfactorial(n):
     """
     return factorial(n)*sum(((-1)**k)/factorial(k) for k in range(n+1))
 
+
 def is_power_of_two(n):
     r"""
-    This function returns True if and only if ``n`` is a power of
-    2
+    Return whether ``n`` is a power of 2.
 
     INPUT:
 
-    -  ``n`` - integer
+    -  ``n`` -- integer
 
     OUTPUT:
 
-    -  ``True`` - if n is a power of 2
-
-    -  ``False`` - if not
+    boolean
 
     EXAMPLES::
 
@@ -5475,9 +5529,10 @@ def is_power_of_two(n):
     """
     return ZZ(n).popcount() == 1
 
+
 def differences(lis, n=1):
     """
-    Returns the `n` successive differences of the elements in
+    Return the `n` successive differences of the elements in
     `lis`.
 
     EXAMPLES::
@@ -5544,7 +5599,7 @@ def _key_complex_for_display(a):
     ai = a.imag()
     if not ai:
         return (0, ar)
-    epsilon = 1e-10
+    epsilon = ar.parent()(1e-10)
     if ar.abs() < epsilon:
         ar_truncated = 0
     elif ar.prec() < 34:
@@ -5631,9 +5686,10 @@ def fundamental_discriminant(D):
     """
     D = ZZ(D)
     D = D.squarefree_part()
-    if D%4 == 1:
+    if D % 4 == 1:
         return D
-    return 4*D
+    return 4 * D
+
 
 def squarefree_divisors(x):
     """
@@ -5791,7 +5847,7 @@ def dedekind_sum(p, q, algorithm='default'):
     - :wikipedia:`Dedekind\_sum`
     """
     if algorithm == 'default' or algorithm == 'flint':
-        return flint_arith.dedekind_sum(p, q)
+        return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':
         import sage.interfaces.gp

@@ -32,7 +32,6 @@ EXAMPLES::
     [ 3  3  0 -3]
     [-3  6  3 -3]
 """
-from __future__ import absolute_import
 
 ###########################################################################
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>               #
@@ -50,7 +49,9 @@ from .finite_subgroup import TorsionPoint
 
 class Morphism_abstract(sage.modules.matrix_morphism.MatrixMorphism_abstract):
     """
-    A morphism between modular abelian varieties. EXAMPLES::
+    A morphism between modular abelian varieties.
+
+    EXAMPLES::
 
         sage: t = J0(11).hecke_operator(2)
         sage: from sage.modular.abvar.morphism import Morphism

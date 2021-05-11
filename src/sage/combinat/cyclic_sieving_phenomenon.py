@@ -24,7 +24,6 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 from sage.rings.all import ZZ
 from sage.arith.all import lcm
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

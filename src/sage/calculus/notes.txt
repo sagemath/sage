@@ -35,7 +35,7 @@ limit((5**x+3**x)**(1/x), x, infty)
 algorithm, as described here:
 http://sympy.googlecode.com/svn/trunk/doc/gruntz.pdf). The only thing
 that occurs to me how to fix maxima is to match the expression and
-return 5 immediatelly, or implement the whole algorithm from scratch,
+return 5 immediately, or implement the whole algorithm from scratch,
 but then you will just write the same code as we did for SymPy.
 
 Integration is quite easy - just match the expression and return a

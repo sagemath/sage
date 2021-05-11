@@ -1,7 +1,5 @@
 # NOT ready to be used -- possibly should be deleted.
 
-from __future__ import absolute_import
-
 from .power_series_ring_element cimport PowerSeries
 from sage.structure.element cimport Element, ModuleElement, RingElement
 from .infinity import infinity, is_Infinite

@@ -1,8 +1,7 @@
 r"""
 Trigonometric Functions
 """
-from sage.symbolic.function import BuiltinFunction, GinacFunction
-from sage.symbolic.expression import is_Expression
+from sage.symbolic.function import GinacFunction
 import math
 
 

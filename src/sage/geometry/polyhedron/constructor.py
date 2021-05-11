@@ -75,7 +75,7 @@ representation is equivalent to a 0-dimensional face of the
 polytope. This is why one generally does not distinguish vertices and
 0-dimensional faces. But for non-bounded polyhedra we have to allow
 for a more general notion of "vertex" in order to make sense of the
-Minkowsi sum presentation::
+Minkowski sum presentation::
 
     sage: half_plane = Polyhedron(ieqs=[(0,1,0)])
     sage: half_plane.Hrepresentation()
@@ -99,18 +99,22 @@ but only one generating line::
     (An inequality (1, 0) x + 1 >= 0, An inequality (-1, 0) x + 1 >= 0)
     sage: strip.lines()
     (A line in the direction (0, 1),)
-    sage: strip.faces(1)
-    (<0,1>, <0,2>)
+    sage: [f.ambient_V_indices() for f in strip.faces(1)]
+    [(0, 2), (0, 1)]
     sage: for face in strip.faces(1):
-    ....:      print("{} = {}".format(face, face.as_polyhedron().Vrepresentation()))
-    <0,1> = (A line in the direction (0, 1), A vertex at (-1, 0))
-    <0,2> = (A line in the direction (0, 1), A vertex at (1, 0))
+    ....:      print(face.ambient_V_indices())
+    (0, 2)
+    (0, 1)
+    sage: for face in strip.faces(1):
+    ....:      print("{} = {}".format(face.ambient_V_indices(), face.as_polyhedron().Vrepresentation()))
+    (0, 2) = (A line in the direction (0, 1), A vertex at (1, 0))
+    (0, 1) = (A line in the direction (0, 1), A vertex at (-1, 0))
 
 EXAMPLES::
 
     sage: trunc_quadr = Polyhedron(vertices=[[1,0],[0,1]], rays=[[1,0],[0,1]])
     sage: trunc_quadr
-    A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices and 2 rays
+    A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 2 rays
     sage: v = next(trunc_quadr.vertex_generator())  # the first vertex in the internal enumeration
     sage: v
     A vertex at (0, 1)
@@ -127,9 +131,9 @@ EXAMPLES::
     sage: type(v)
     <class 'sage.geometry.polyhedron.representation.Vertex'>
     sage: type( v() )
-    <type 'sage.modules.vector_integer_dense.Vector_integer_dense'>
+    <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
     sage: v.polyhedron()
-    A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 2 vertices and 2 rays
+    A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 2 rays
     sage: r = next(trunc_quadr.ray_generator())
     sage: r
     A ray in the direction (0, 1)
@@ -186,7 +190,7 @@ symbolic ring. This is currently not supported as SR is not exact::
     sage: Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)])
     Traceback (most recent call last):
     ...
-    ValueError: the only allowed inexact ring is 'RDF' with backend 'cdd'
+    ValueError: no default backend for computations with Symbolic Ring
 
     sage: SR.is_exact()
     False
@@ -197,18 +201,17 @@ triangle, that would be::
 
     sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3)**(1/2))
     sage: Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])
-    A 2-dimensional polyhedron in (Number Field in sqrt3 with defining
-    polynomial x^2 - 3)^2 defined as the convex hull of 3 vertices
+    A 2-dimensional polyhedron in (Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)^2 defined as the convex hull of 3 vertices
 
 .. WARNING::
 
     Be careful when you construct polyhedra with floating point numbers. The only
-    available backend for such computation is `cdd` which uses machine floating
+    available backend for such computation is ``cdd`` which uses machine floating
     point numbers which have have limited precision. If the input consists of
-    floating point numbers and the `base_ring` is not specified, the base ring is
-    set to be the `RealField` with the precision given by the minimal bit precision
+    floating point numbers and the ``base_ring`` is not specified, the base ring is
+    set to be the ``RealField`` with the precision given by the minimal bit precision
     of the input. Then, if the obtained minimum is 53 bits of precision, the
-    constructor converts automatically the base ring to `RDF`. Otherwise,
+    constructor converts automatically the base ring to ``RDF``. Otherwise,
     it returns an error::
 
         sage: Polyhedron(vertices = [[1.12345678901234, 2.12345678901234]])
@@ -221,7 +224,7 @@ triangle, that would be::
         ValueError: the only allowed inexact ring is 'RDF' with backend 'cdd'
 
     The strongly suggested method to input floating point numbers is to specify the
-    `base_ring` to be `RDF`::
+    ``base_ring`` to be ``RDF``::
 
         sage: Polyhedron(vertices = [[1.123456789012345, 2.123456789012345]], base_ring=RDF)
         A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
@@ -288,7 +291,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function, absolute_import
 
 from sage.rings.all import ZZ, RDF, RR
 
@@ -310,7 +312,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
 
     INPUT:
 
-    - ``vertices`` -- list of point. Each point can be specified as
+    - ``vertices`` -- list of points. Each point can be specified as
       any iterable container of ``base_ring`` elements. If ``rays`` or
       ``lines`` are specified but no ``vertices``, the origin is
       taken to be the single vertex.
@@ -438,8 +440,8 @@ def Polyhedron(vertices=None, rays=None, lines=None,
 
         sage: R0.<r0> = QQ[]
         sage: R1.<r1> = NumberField(r0^2-5, embedding=AA(5)**(1/2))
-        sage: grat = (1+r1)/2
-        sage: v = [[0, 1, grat], [0, 1, -grat], [0, -1, grat], [0, -1, -grat]]
+        sage: gold = (1+r1)/2
+        sage: v = [[0, 1, gold], [0, 1, -gold], [0, -1, gold], [0, -1, -gold]]
         sage: pp = Permutation((1, 2, 3))
         sage: icosah = Polyhedron([(pp^2).action(w) for w in v]
         ....:             + [pp.action(w) for w in v] + v, base_ring=R1)
@@ -488,6 +490,25 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: Polyhedron(vertices=[[f]])
         A 0-dimensional polyhedron in QQ^1 defined as the convex hull of 1 vertex
 
+    Check that non-compact polyhedra given by V-representation have base ring ``QQ``,
+    not ``ZZ`` (see :trac:`27840`)::
+
+        sage: Q = Polyhedron(vertices=[(1, 2, 3), (1, 3, 2), (2, 1, 3),
+        ....:                          (2, 3, 1), (3, 1, 2), (3, 2, 1)],
+        ....:                rays=[[1, 1, 1]], lines=[[1, 2, 3]], backend='ppl')
+        sage: Q.base_ring()
+        Rational Field
+
+    Check that enforcing base ring `ZZ` for this example gives an error::
+
+        sage: Q = Polyhedron(vertices=[(1, 2, 3), (1, 3, 2), (2, 1, 3),
+        ....:                          (2, 3, 1), (3, 1, 2), (3, 2, 1)],
+        ....:                rays=[[1, 1, 1]], lines=[[1, 2, 3]], backend='ppl',
+        ....:                base_ring=ZZ)
+        Traceback (most recent call last):
+        ...
+        TypeError: no conversion of this rational to integer
+
     Check that input with too many bits of precision returns an error (see
     :trac:`22552`)::
 
@@ -501,16 +522,43 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: Polyhedron(vertices =[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(40))
         Traceback (most recent call last):
         ...
-        ValueError: no appropriate backend for computations with Real Field with 40 bits of precision
+        ValueError: no default backend for computations with Real Field with 40 bits of precision
         sage: Polyhedron(vertices =[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(53))
         Traceback (most recent call last):
         ...
-        ValueError: no appropriate backend for computations with Real Field with 53 bits of precision
+        ValueError: no default backend for computations with Real Field with 53 bits of precision
+
+    Check that :trac:`17339` is fixed::
+
+        sage: Polyhedron(ambient_dim=0, ieqs=[], eqns=[[1]], base_ring=QQ)
+        The empty polyhedron in QQ^0
+        sage: P = Polyhedron(ambient_dim=0, ieqs=[], eqns=[], base_ring=QQ); P
+        A 0-dimensional polyhedron in QQ^0 defined as the convex hull of 1 vertex
+        sage: P.Vrepresentation()
+        (A vertex at (),)
+        sage: Polyhedron(ambient_dim=2, ieqs=[], eqns=[], base_ring=QQ)
+        A 2-dimensional polyhedron in QQ^2 defined as the convex hull
+         of 1 vertex and 2 lines
+        sage: Polyhedron(ambient_dim=2, ieqs=[], eqns=[], base_ring=QQ, backend='field')
+        A 2-dimensional polyhedron in QQ^2 defined as the convex hull
+         of 1 vertex and 2 lines
+        sage: Polyhedron(ambient_dim=0, ieqs=[], eqns=[[1]], base_ring=QQ, backend="cdd")
+        The empty polyhedron in QQ^0
+        sage: Polyhedron(ambient_dim=0, ieqs=[], eqns=[[1]], base_ring=QQ, backend="ppl")
+        The empty polyhedron in QQ^0
+        sage: Polyhedron(ambient_dim=0, ieqs=[], eqns=[[1]], base_ring=QQ, backend="field")
+        The empty polyhedron in QQ^0
+
+        sage: Polyhedron(ambient_dim=2, vertices=[], rays=[], lines=[], base_ring=QQ)
+        The empty polyhedron in QQ^2
 
     .. SEEALSO::
 
         :mod:`Library of polytopes <sage.geometry.polyhedron.library>`
     """
+    got_Vrep = not ((vertices is None) and (rays is None) and (lines is None))
+    got_Hrep = not ((ieqs is None) and (eqns is None))
+
     # Clean up the arguments
     vertices = _make_listlist(vertices)
     rays = _make_listlist(rays)
@@ -518,15 +566,24 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     ieqs = _make_listlist(ieqs)
     eqns = _make_listlist(eqns)
 
-    got_Vrep = (len(vertices + rays + lines) > 0)
-    got_Hrep = (len(ieqs + eqns) > 0)
-
     if got_Vrep and got_Hrep:
         raise ValueError('cannot specify both H- and V-representation.')
     elif got_Vrep:
         deduced_ambient_dim = _common_length_of(vertices, rays, lines)[1]
+        if deduced_ambient_dim is None:
+            if ambient_dim is not None:
+                deduced_ambient_dim = ambient_dim
+            else:
+                deduced_ambient_dim = 0
     elif got_Hrep:
-        deduced_ambient_dim = _common_length_of(ieqs, eqns)[1] - 1
+        deduced_ambient_dim = _common_length_of(ieqs, eqns)[1]
+        if deduced_ambient_dim is None:
+            if ambient_dim is not None:
+                deduced_ambient_dim = ambient_dim
+            else:
+                deduced_ambient_dim = 0
+        else:
+            deduced_ambient_dim -= 1
     else:
         if ambient_dim is None:
             deduced_ambient_dim = 0
@@ -567,14 +624,18 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         else:
             base_ring = P
 
-        if not got_Vrep and base_ring not in Fields():
-            base_ring = base_ring.fraction_field()
-            convert = True
+        if base_ring not in Fields():
+            got_compact_Vrep = got_Vrep and not rays and not lines
+            got_cone_Vrep = got_Vrep and all(all(x == 0 for x in v) for v in vertices)
+            if not got_compact_Vrep and not got_cone_Vrep:
+                base_ring = base_ring.fraction_field()
+                convert = True
 
         if base_ring not in Rings():
             raise ValueError('invalid base ring')
 
-        if not base_ring.is_exact():
+        from sage.symbolic.ring import SR
+        if base_ring is not SR and not base_ring.is_exact():
             # TODO: remove this hack?
             if base_ring is RR:
                 base_ring = RDF
@@ -583,7 +644,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
                 raise ValueError("the only allowed inexact ring is 'RDF' with backend 'cdd'")
 
     # Add the origin if necessary
-    if got_Vrep and len(vertices) == 0:
+    if got_Vrep and len(vertices) == 0 and len(rays + lines) > 0:
         vertices = [[0] * ambient_dim]
 
     # Specific backends can override the base_ring

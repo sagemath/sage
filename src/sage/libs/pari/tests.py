@@ -20,8 +20,8 @@ The following example caused Sage to crash before
 
     sage: R.<theta> = QQ[]
     sage: K.<a> = NumberField(theta^2 + 1)
-    sage: K.galois_group(type='pari')
-    Galois group PARI group [2, -1, 1, "S2"] of degree 2 of the Number Field in a with defining polynomial theta^2 + 1
+    sage: K.absolute_polynomial().galois_group(pari_group=True)
+    PARI group [2, -1, 1, "S2"] of degree 2
 
 Before :trac:`15654`, this used to take a very long time.
 Now it takes much less than a second::
@@ -542,10 +542,14 @@ Basic functions::
     0
     sage: pari(-1/2).sign()
     -1
-    sage: pari(I).sign()
+    sage: pari(SR(I)).sign()
     Traceback (most recent call last):
     ...
     PariError: incorrect type in gsigne (t_COMPLEX)
+    sage: pari(I).sign()
+    Traceback (most recent call last):
+    ...
+    PariError: incorrect type in gsigne (t_POLMOD)
 
     sage: y = pari('y')
     sage: x = pari('9') + y - y
@@ -1197,7 +1201,7 @@ Elliptic curves::
     [0, 1/2, 0, -3/4, 0, 2, -3/2, 0, -9/16, 40, -116, 117/4, 256000/117, Vecsmall([1]), [Vecsmall([64, 1])], [0, 0, 0, 0, 0, 0, 0, 0]]
     sage: pari([0,0.5,0,-0.75,0]).ellinit()
     [0, 0.500000000000000, 0, -0.750000000000000, 0, 2.00000000000000, -1.50000000000000, 0, -0.562500000000000, 40.0000000000000, -116.000000000000, 29.2500000000000, 2188.03418803419, Vecsmall([0]), [Vecsmall([64, 1])], [0, 0, 0, 0]]
-    sage: pari([0,I,0,1,0]).ellinit()
+    sage: pari([0,SR(I),0,1,0]).ellinit()
     [0, I, 0, 1, 0, 4*I, 2, 0, -1, -64, 352*I, -80, 16384/5, Vecsmall([0]), [Vecsmall([64, 0])], [0, 0, 0, 0]]
     sage: x = SR.symbol('x')
     sage: pari([0,x,0,2*x,1]).ellinit()
@@ -1336,9 +1340,9 @@ Elliptic curves::
     sage: e = pari([0,1,1,-2,0]).ellinit()
     sage: e.ellordinate(0)
     [0, -1]
-    sage: e.ellordinate(I)
+    sage: e.ellordinate(SR(I))
     [0.582203589721741 - 1.38606082464177*I, -1.58220358972174 + 1.38606082464177*I]
-    sage: e.ellordinate(I, precision=128)[0].sage()
+    sage: e.ellordinate(SR(I), precision=128)[0].sage()
     0.58220358972174117723338947874993600727 - 1.3860608246417697185311834209833653345*I
     sage: e.ellordinate(1+3*5^1+O(5^3))
     [4*5 + 5^2 + O(5^3), 4 + 3*5^2 + O(5^3)]
@@ -1361,9 +1365,9 @@ Elliptic curves::
     [0]
     sage: e.ellmul(p, 2)
     [1/4, -7/8]
-    sage: q = e.ellmul(p, 1+I); q
+    sage: q = e.ellmul(p, SR(1+I)); q
     [-2*I, 1 + I]
-    sage: e.ellmul(q, 1-I)
+    sage: e.ellmul(q, SR(1-I))
     [1/4, -7/8]
     sage: for D in [-7, -8, -11, -12, -16, -19, -27, -28]:  # long time (1s)
     ....:     hcpol = hilbert_class_polynomial(D)
@@ -1416,15 +1420,15 @@ Elliptic curves::
     sage: e.ellztopoint(0)
     [0]
 
-    sage: pari(I).ellj()
+    sage: pari(SR(I)).ellj()
     1728.00000000000
-    sage: pari(3*I).ellj()
+    sage: pari(SR(3*I)).ellj()
     153553679.396729
     sage: pari('quadgen(-3)').ellj()
     0.E-54
     sage: pari('quadgen(-7)').ellj(precision=256).sage()
     -3375.000000000000000000000000000000000000000000000000000000000000000000000000
-    sage: pari(-I).ellj()
+    sage: pari(SR(-I)).ellj()
     Traceback (most recent call last):
     ...
     PariError: domain error in modular function: Im(argument) <= 0

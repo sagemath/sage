@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Wrapper script for building GCC used for both the gcc and gfortran SPKGs
 # Usage:
@@ -18,6 +18,11 @@ GCC_CONFIGURE="$@ $GCC_CONFIGURE"
 
 # On OSX:
 if [ "$UNAME" = "Darwin" ]; then
+    # /usr/include is the latest victim in Apple's quest to get rid of standard locations
+    SDK_PATH=$(xcrun --show-sdk-path)
+    GCC_CONFIGURE="--with-sysroot=$SDK_PATH $GCC_CONFIGURE" 
+    echo "Building with XCode SDK at $SDK_PATH."
+
     # isl/cloog libraries are almost certainly from Homebrew and won't work
     GCC_CONFIGURE="--without-isl --without-cloog $GCC_CONFIGURE"
 
@@ -53,14 +58,17 @@ if [ -n "$LD" -a "$LD" != "ld" ]; then
     CONFIGURE_LD="--with-ld=$LD"
 fi
 
+# Use SAGE_CXX_WITHOUT_STD instead of CXX.
+# This fixes #29162 (gfortran 9.2.0 compile error on debian-jessie with gcc 4.9.2)
 ../src/configure \
     --prefix="$SAGE_LOCAL" \
     --with-local-prefix="$SAGE_LOCAL" \
-    --with-gmp="$SAGE_LOCAL" --with-mpfr="$SAGE_LOCAL" --with-mpc="$SAGE_LOCAL" \
+    $SAGE_CONFIGURE_GMP $SAGE_CONFIGURE_MPFR $SAGE_CONFIGURE_MPC \
     --with-system-zlib \
+    --without-isl \
     --disable-multilib \
     --disable-nls \
     --disable-libitm \
-    $GCC_CONFIGURE "$CONFIGURE_AS" "$CONFIGURE_LD"
+    $GCC_CONFIGURE "$CONFIGURE_AS" "$CONFIGURE_LD" CXX="$SAGE_CXX_WITHOUT_STD"
 
 sdh_make BOOT_LDFLAGS="-Wl,-rpath,$SAGE_LOCAL/lib"

@@ -1,4 +1,4 @@
-$(PYTHON) widgetsnbextension | pip
+$(PYTHON) widgetsnbextension | $(PYTHON_TOOLCHAIN) ipykernel ipython traitlets
 
 ----------
 All lines of this file are ignored except the first.

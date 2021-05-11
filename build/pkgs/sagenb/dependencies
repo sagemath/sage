@@ -1,5 +1,0 @@
-$(PYTHON) | $(SAGERUNTIME) pip babel flask flask_autoindex flask_babel flask_oldsessions flask_openid mathjax twisted sphinx
-
-----------
-All lines of this file are ignored except the first.
-It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.

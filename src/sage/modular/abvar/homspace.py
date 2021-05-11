@@ -175,7 +175,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 from copy import copy
 
@@ -776,7 +775,7 @@ class EndomorphismSubring(Homspace, Ring):
         TESTS:
 
         The following tests against a problem on 32 bit machines that
-        occured while working on :trac:`9944`::
+        occurred while working on :trac:`9944`::
 
             sage: sage.modular.abvar.homspace.EndomorphismSubring(J1(12345))
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473

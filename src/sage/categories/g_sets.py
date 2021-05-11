@@ -1,7 +1,6 @@
 r"""
 G-Sets
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2008 David Kohel <kohel@maths.usyd.edu> and
 #                     William Stein <wstein@math.ucsd.edu>

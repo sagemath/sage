@@ -1,0 +1,54 @@
+Inspired by, but not identical to the following patch from debian:
+https://sources.debian.org/patches/suitesparse/1:5.6.0+dfsg-2/buildflags.patch/
+
+This prepends $(DESTDIR) directly to all of $(INSTALL_LIB), $(INSTALL_INCLUDE),
+and $(INSTALL_DOC), as these variables only affect where built files are copied
+to, and do not affect the contents of the files.
+
+However, we also remove some additional LDFLAGS added by this Makefile (for
+ -L$SAGE_LOCAL and -Wl,-rpath=$SAGE_LOCAL/lib) since we already add those
+in the standard SPKG built environment.
+Note that -L$(INSTALL_LIB) cannot be removed from LDFLAGS unless the package 
+is broken into components. It is necessary as the components are progressively
+installed in INSTALL_LIB one after the other.
+Because we don't install directly in the final location, install_name also becomes
+wrong on OS X which means the libraries cannot be loaded. So we have to provide
+a correct install_name as well.
+
+For https://trac.sagemath.org/ticket/28832
+diff --git a/SuiteSparse_config/SuiteSparse_config.mk b/SuiteSparse_config/SuiteSparse_config.mk
+index 0a09188..fd1c0b0 100644
+--- a/SuiteSparse_config/SuiteSparse_config.mk
++++ b/SuiteSparse_config/SuiteSparse_config.mk
+@@ -55,9 +55,9 @@ SUITESPARSE_VERSION = 5.6.0
+     # which puts the libraries in /yada/mylibs, include files in /yoda/myinc,
+     # and documentation in /solo/mydox.
+     INSTALL ?= $(SUITESPARSE)
+-    INSTALL_LIB ?= $(INSTALL)/lib
+-    INSTALL_INCLUDE ?= $(INSTALL)/include
+-    INSTALL_DOC ?= $(INSTALL)/share/doc/suitesparse-$(SUITESPARSE_VERSION)
++    INSTALL_LIB ?= $(DESTDIR)$(INSTALL)/lib
++    INSTALL_INCLUDE ?= $(DESTDIR)$(INSTALL)/include
++    INSTALL_DOC ?= $(DESTDIR)$(INSTALL)/share/doc/suitesparse-$(SUITESPARSE_VERSION)
+ 
+     #---------------------------------------------------------------------------
+     # parallel make
+@@ -358,7 +358,7 @@ SUITESPARSE_VERSION = 5.6.0
+ 
+     ifeq ($(UNAME),Linux)
+         # add the realtime library, librt, and SuiteSparse/lib
+-        LDLIBS += -lrt -Wl,-rpath=$(INSTALL_LIB)
++        LDLIBS += -lrt
+     endif
+ 
+     #---------------------------------------------------------------------------
+@@ -463,7 +463,8 @@ else
+         SO_TARGET = $(LIBRARY).$(VERSION).dylib
+         SO_OPTS  += -dynamiclib -compatibility_version $(SO_VERSION) \
+                     -current_version $(VERSION) \
+-                    -shared -undefined dynamic_lookup
++                    -shared -undefined dynamic_lookup \
++                    -install_name $(INSTALL)/lib/$(SO_MAIN)
+         # When a Mac *.dylib file is moved, this command is required
+         # to change its internal name to match its location in the filesystem:
+         SO_INSTALL_NAME = install_name_tool -id

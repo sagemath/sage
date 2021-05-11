@@ -5,18 +5,18 @@ AUTHORS:
 
 - Dinakar Muthiah (2014-06-03): initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Dinakar Muthiah <muthiah at ualberta.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+
 
 class BraidMoveCalculator(object):
     """
@@ -51,11 +51,12 @@ class BraidMoveCalculator(object):
              (2, 3, 2, 3, 1, 2, 3, 2, 1))
         """
         i = input_word[0]
+
         def partial_braid_word(length, swap=False, i=i, k=k):
             if swap:
-                i,k = k,i
-            running_braid_word = [i,k]*(length//2)
-            if length % 2 == 1:
+                i, k = k, i
+            running_braid_word = [i, k] * (length // 2)
+            if length % 2:
                 running_braid_word.append(i)
             return tuple(running_braid_word)
 
@@ -80,6 +81,7 @@ class BraidMoveCalculator(object):
         """
         Return a list of reduced words starting with ``input_word``
         and ending with a reduced word whose first letter  is ``k``.
+
         There still remains an issue with 0 indices.
 
         EXAMPLES::
@@ -103,7 +105,7 @@ class BraidMoveCalculator(object):
             ((1, 3, 2, 3, 2, 1, 2, 3, 2),)
         """
         i = input_word[0]
-        if i == 0 or k == 0: # Is this for affine types? - Travis
+        if i == 0 or k == 0:  # Is this for affine types? - Travis
             raise NotImplementedError
         entry = self.coxeter_matrix[i, k]
         return self._apply_put_in_front_recur_step(k, input_word, entry)
@@ -133,7 +135,6 @@ class BraidMoveCalculator(object):
         first_word_list = self.put_in_front(k, start_word)
         first_last_word = first_word_list[-1]
         return (first_word_list[:-1] +
-                tuple([ (k,) + word for word in
-                         self.chain_of_reduced_words(first_last_word[1:],
-                                                     end_word[1:]) ]))
-
+                tuple([(k,) + word for word in
+                       self.chain_of_reduced_words(first_last_word[1:],
+                                                   end_word[1:])]))

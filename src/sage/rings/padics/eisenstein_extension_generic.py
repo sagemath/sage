@@ -7,9 +7,8 @@ AUTHORS:
 
 - David Roe
 """
-from __future__ import absolute_import
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 David Roe <roed.math@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
@@ -17,14 +16,12 @@ from __future__ import absolute_import
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .padic_extension_generic import pAdicExtensionGeneric
-from .misc import precprint
 from sage.rings.infinity import infinity
-from sage.misc.latex import latex
-from sage.rings.integer import Integer
+
 
 class EisensteinExtensionGeneric(pAdicExtensionGeneric):
     def __init__(self, poly, prec, print_mode, names, element_class):

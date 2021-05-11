@@ -1,7 +1,6 @@
 """
 Weight lattices and weight spaces
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #

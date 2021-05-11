@@ -1,0 +1,69 @@
+See https://github.com/cython/cython/issues/2752
+
+commit 28251032f86c266065e4976080230481b1a1bb29
+Author: Robert Bradshaw <robertwb@google.com>
+Date:   Mon Dec 10 11:54:20 2018 +0100
+
+    Non-int conversion to Py_hash_t.
+
+    Still requires the more conservative __index__ here rather than a possibly
+    truncating __int__ because this is used in a context where floating point
+    values should probably be treated specially.
+
+    This fixes Github issue #2752.
+
+diff --git a/Cython/Utility/ModuleSetupCode.c b/Cython/Utility/ModuleSetupCode.c
+index 1f2e4bf..f2f62f9 100644
+--- a/Cython/Utility/ModuleSetupCode.c
++++ b/Cython/Utility/ModuleSetupCode.c
+@@ -651,10 +651,10 @@ static CYTHON_INLINE void * PyThread_tss_get(Py_tss_t *key) {
+ #if PY_VERSION_HEX < 0x030200A4
+   typedef long Py_hash_t;
+   #define __Pyx_PyInt_FromHash_t PyInt_FromLong
+-  #define __Pyx_PyInt_AsHash_t   PyInt_AsLong
++  #define __Pyx_PyInt_AsHash_t   __Pyx_PyIndex_AsHash_t
+ #else
+   #define __Pyx_PyInt_FromHash_t PyInt_FromSsize_t
+-  #define __Pyx_PyInt_AsHash_t   PyInt_AsSsize_t
++  #define __Pyx_PyInt_AsHash_t   __Pyx_PyIndex_AsSsize_t
+ #endif
+ 
+ #if PY_MAJOR_VERSION >= 3
+diff --git a/Cython/Utility/TypeConversion.c b/Cython/Utility/TypeConversion.c
+index 796c8be..5938d2d 100644
+--- a/Cython/Utility/TypeConversion.c
++++ b/Cython/Utility/TypeConversion.c
+@@ -102,6 +102,7 @@ static CYTHON_INLINE PyObject* __Pyx_PyNumber_IntOrLong(PyObject* x);
+ 
+ static CYTHON_INLINE Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject*);
+ static CYTHON_INLINE PyObject * __Pyx_PyInt_FromSize_t(size_t);
++static CYTHON_INLINE Py_hash_t __Pyx_PyIndex_AsHash_t(PyObject*);
+ 
+ #if CYTHON_ASSUME_SAFE_MACROS
+ #define __pyx_PyFloat_AsDouble(x) (PyFloat_CheckExact(x) ? PyFloat_AS_DOUBLE(x) : PyFloat_AsDouble(x))
+@@ -420,6 +421,25 @@ static CYTHON_INLINE Py_ssize_t __Pyx_PyIndex_AsSsize_t(PyObject* b) {
+ }
+ 
+ 
++static CYTHON_INLINE Py_hash_t __Pyx_PyIndex_AsHash_t(PyObject* o) {
++  if (sizeof(Py_hash_t) == sizeof(Py_ssize_t)) {
++    return __Pyx_PyIndex_AsSsize_t(o);
++#if PY_MAJOR_VERSION < 3
++  } else if (likely(PyInt_CheckExact(o))) {
++    return PyInt_AS_LONG(o);
++#endif
++  } else {
++    Py_ssize_t ival;
++    PyObject *x;
++    x = PyNumber_Index(o);
++    if (!x) return -1;
++    ival = PyInt_AsLong(x);
++    Py_DECREF(x);
++    return ival;
++  }
++}
++
++
+ static CYTHON_INLINE PyObject * __Pyx_PyBool_FromLong(long b) {
+   return b ? __Pyx_NewRef(Py_True) : __Pyx_NewRef(Py_False);
+ }

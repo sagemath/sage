@@ -335,7 +335,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
-            fullfiled the behaviour of the function is not specified.
+            fulfilled the behaviour of the function is not specified.
 
         ALGORITHM:
 
@@ -401,7 +401,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
-            fullfiled the behaviour of the function is not specified.
+            fulfilled the behaviour of the function is not specified.
 
         ALGORITHM:
 

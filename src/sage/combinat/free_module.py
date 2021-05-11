@@ -10,8 +10,6 @@ Free modules
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -26,14 +24,12 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.morphism import SetMorphism
-from sage.categories.all import Category, Sets, ModulesWithBasis
+from sage.categories.all import Category, Sets, ModulesWithBasis, GradedAlgebrasWithBasis
 from sage.categories.tensor import tensor
 import sage.data_structures.blas_dict as blas
-from sage.typeset.ascii_art import AsciiArt
-from sage.typeset.unicode_art import UnicodeArt
+from sage.typeset.ascii_art import AsciiArt, ascii_art
+from sage.typeset.unicode_art import UnicodeArt, unicode_art
 from sage.misc.superseded import deprecation
-
-import six
 
 
 class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
@@ -258,6 +254,13 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         False
         sage: XQ == XQ
         True
+
+    We check that ticket :trac:`28681` is fixed::
+
+        sage: F = CombinatorialFreeModule(ZZ, ZZ); F.rename("F")
+        sage: FF = tensor((F,F))
+        sage: cartesian_product((FF,FF))
+        F # F (+) F # F
     """
 
     @staticmethod
@@ -331,7 +334,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         EXAMPLES::
 
             sage: A = Algebras(QQ).WithBasis().example(); A
-            An example of an algebra with basis: 
+            An example of an algebra with basis:
             the free algebra on the generators ('a', 'b', 'c') over Rational Field
 
             sage: A.element_class.mro()
@@ -348,7 +351,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             'sage.combinat.free_module'
         """
         return self.__make_element_class__(self.Element,
-                                           name="%s.element_class"%self.__class__.__name__,
+                                           name="%s.element_class" % self.__class__.__name__,
                                            module=self.__class__.__module__,
                                            inherit=True)
 
@@ -387,7 +390,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
 
         Regression test for :trac:`10127`: ``self._indices`` needs to be
         set early enough, in case the initialization of the categories
-        use ``self.basis().keys()``. This occured on several occasions
+        use ``self.basis().keys()``. This occurred on several occasions
         in non trivial constructions. In the following example,
         :class:`AlgebrasWithBasis` constructs ``Homset(self,self)`` to
         extend by bilinearity method ``product_on_basis``, which in
@@ -480,7 +483,6 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: unicode_art(R.one())  # indirect doctest
             1
         """
-        from sage.typeset.unicode_art import UnicodeArt
         try:
             if m == self.one_basis():
                 return UnicodeArt(["1"])
@@ -578,7 +580,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: QS3.monomial(P([2,3,1]))   # indirect doctest
             [2, 3, 1]
 
-        or:
+        or::
+
             sage: B = QS3.basis()
             sage: B[P([2,3,1])]
             [2, 3, 1]
@@ -666,7 +669,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             if x == 0:
                 return self.zero()
             else:
-                raise TypeError("do not know how to make x (= %s) an element of %s"%(x, self))
+                raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
         #x is an element of the basis enumerated set;
         # This is a very ugly way of testing this
         elif ((hasattr(self._indices, 'element_class') and
@@ -682,7 +685,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                     return self._coerce_end(x)
                 except TypeError:
                     pass
-            raise TypeError("do not know how to make x (= %s) an element of self (=%s)"%(x,self))
+            raise TypeError("do not know how to make x (= %s) an element of self (=%s)" % (x, self))
 
     def _convert_map_from_(self, S):
         """
@@ -951,7 +954,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         """
         return self._rank_basis(x)
 
-    def from_vector(self, vector):
+    def from_vector(self, vector, order=None):
         """
         Build an element of ``self`` from a (sparse) vector.
 
@@ -966,8 +969,9 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: a == b
             True
         """
-        cc = self.get_order()
-        return self._from_dict({cc[index]: coeff for (index,coeff) in six.iteritems(vector)})
+        if order is None:
+            order = self.get_order()
+        return self._from_dict({order[index]: coeff for (index,coeff) in vector.items()})
 
     def sum(self, iter_of_elements):
         """
@@ -996,7 +1000,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         Return the linear combination `\lambda_1 v_1 + \cdots +
         \lambda_k v_k` (resp.  the linear combination `v_1 \lambda_1 +
         \cdots + v_k \lambda_k`) where ``iter_of_elements_coeff`` iterates
-        through the sequence `((\lambda_1, v_1), ..., (\lambda_k, v_k))`.
+        through the sequence `((v_1, \lambda_1), ..., (v_k, \lambda_k))`.
 
         INPUT:
 
@@ -1179,9 +1183,9 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {key: R(coeff) for key, coeff in six.iteritems(d)}
+            d = {key: R(coeff) for key, coeff in d.items()}
         if remove_zeros:
-            d = {key: coeff for key, coeff in six.iteritems(d) if coeff}
+            d = {key: coeff for key, coeff in d.items() if coeff}
         return self.element_class(self, d)
 
 
@@ -1293,7 +1297,6 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 options['category'] = options['category'].FiniteDimensional()
             return super(CombinatorialFreeModule.Tensor, cls).__classcall__(cls, modules, **options)
 
-
         def __init__(self, modules, **options):
             """
             TESTS::
@@ -1301,13 +1304,13 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: F = CombinatorialFreeModule(ZZ, [1,2]); F
                 F
             """
-            from sage.categories.tensor import tensor
             self._sets = modules
             indices = CartesianProduct_iters(*[module.basis().keys()
                                                for module in modules]).map(tuple)
             CombinatorialFreeModule.__init__(self, modules[0].base_ring(), indices, **options)
             # the following is not the best option, but it's better than nothing.
-            self._print_options['tensor_symbol'] = options.get('tensor_symbol', tensor.symbol)
+            if 'tensor_symbol' in options:
+                self._print_options['tensor_symbol'] = options['tensor_symbol']
 
         def _repr_(self):
             r"""
@@ -1323,13 +1326,13 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: T = tensor([F, G])
                 sage: T # indirect doctest
                 F # G
-                sage: T.print_options(tensor_symbol= ' @ ')  # note the spaces
+                sage: T.print_options(tensor_symbol=' @ ')  # note the spaces
                 sage: T # indirect doctest
                 F @ G
 
             To avoid a side\--effect on another doctest, we revert the change::
 
-                sage: T.print_options(tensor_symbol= ' # ')
+                sage: T.print_options(tensor_symbol=' # ')
             """
             from sage.categories.tensor import tensor
             if hasattr(self, "_print_options"):
@@ -1338,7 +1341,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                     symb = tensor.symbol
             else:
                 symb = tensor.symbol
-            return symb.join(["%s"%module for module in self._sets])
+            return symb.join("%s" % module for module in self._sets)
             # TODO: make this overridable by setting _name
 
         def _ascii_art_(self, term):
@@ -1347,11 +1350,16 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
                 sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                 sage: Partitions.options(diagram_str="#", convention="french")
-                sage: ascii_art(tensor((R[1,2], R[3,1,2])))
+                sage: s = ascii_art(tensor((R[1,2], R[3,1,2]))); s
                 R   # R
                  #     ###
                  ##      #
                          ##
+
+            Check that the breakpoints are correct (:trac:`29202`)::
+
+                sage: s._breakpoints
+                [6]
             """
             if hasattr(self, "_print_options"):
                 symb = self._print_options['tensor_symbol']
@@ -1359,13 +1367,9 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                     symb = tensor.symbol
             else:
                 symb = tensor.symbol
-            it = iter(zip(self._sets, term))
-            module, t = next(it)
-            rpr = module._ascii_art_term(t)
-            for (module,t) in it:
-                rpr += AsciiArt([symb], [len(symb)])
-                rpr += module._ascii_art_term(t)
-            return rpr
+            return ascii_art(*(module._ascii_art_term(t)
+                               for module, t in zip(self._sets, term)),
+                             sep=AsciiArt([symb], breakpoints=[len(symb)]))
 
         _ascii_art_term = _ascii_art_
 
@@ -1375,26 +1379,27 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
 
                 sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                 sage: Partitions.options(diagram_str="#", convention="french")
-                sage: unicode_art(tensor((R[1,2], R[3,1,2])))
-                R    # R
+                sage: s = unicode_art(tensor((R[1,2], R[3,1,2]))); s
+                R    ⨂ R
                  ┌┐     ┌┬┬┐
                  ├┼┐    └┴┼┤
                  └┴┘      ├┼┐
                           └┴┘
+
+            Check that the breakpoints are correct (:trac:`29202`)::
+
+                sage: s._breakpoints
+                [7]
             """
             if hasattr(self, "_print_options"):
                 symb = self._print_options['tensor_symbol']
                 if symb is None:
-                    symb = tensor.symbol
+                    symb = tensor.unicode_symbol
             else:
-                symb = tensor.symbol
-            it = iter(zip(self._sets, term))
-            module, t = next(it)
-            rpr = module._unicode_art_term(t)
-            for (module, t) in it:
-                rpr += UnicodeArt([symb], [len(symb)])
-                rpr += module._unicode_art_term(t)
-            return rpr
+                symb = tensor.unicode_symbol
+            return unicode_art(*(module._unicode_art_term(t)
+                                 for module, t in zip(self._sets, term)),
+                               sep=UnicodeArt([symb], breakpoints=[len(symb)]))
 
         _unicode_art_term = _unicode_art_
 
@@ -1415,7 +1420,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             """
             from sage.misc.latex import latex
             symb = " \\otimes "
-            return symb.join(["%s"%latex(module) for module in self._sets])
+            return symb.join("%s" % latex(module) for module in self._sets)
 
         def _repr_term(self, term):
             """
@@ -1489,10 +1494,11 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             # a list l such that l[i] is True if modules[i] is readily a tensor product
             is_tensor = [isinstance(module, CombinatorialFreeModule_Tensor) for module in modules]
             # the tensor_constructor, on basis elements
-            result = self.monomial * CartesianProductWithFlattening(is_tensor) #.
+            result = self.monomial * CartesianProductWithFlattening(is_tensor)
             # TODO: make this into an element of Hom( A x B, C ) when those will exist
-            for i in range(0, len(modules)):
-                result = modules[i]._module_morphism(result, position = i, codomain = self)
+            for i in range(len(modules)):
+                result = modules[i]._module_morphism(result, position=i,
+                                                     codomain=self)
             return result
 
         def _tensor_of_elements(self, elements):
@@ -1571,11 +1577,12 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: T(tensor((p,p)))
                 4*B[2] # B[2] + 4*B[2] # B[4] + 4*B[4] # B[2] + 4*B[4] # B[4]
             """
-            if R in ModulesWithBasis(self.base_ring()).TensorProducts() \
-                    and isinstance(R, CombinatorialFreeModule_Tensor) \
-                    and len(R._sets) == len(self._sets) \
-                    and all(self._sets[i].has_coerce_map_from(M)
-                            for i,M in enumerate(R._sets)):
+            if ((R in ModulesWithBasis(self.base_ring()).TensorProducts()
+                 or R in GradedAlgebrasWithBasis(self.base_ring()).SignedTensorProducts())
+                and isinstance(R, CombinatorialFreeModule_Tensor)
+                and len(R._sets) == len(self._sets)
+                and all(self._sets[i].has_coerce_map_from(M)
+                        for i,M in enumerate(R._sets))):
                 modules = R._sets
                 vector_map = [self._sets[i]._internal_coerce_map_from(M)
                               for i,M in enumerate(modules)]
@@ -1585,6 +1592,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                                          codomain=self)
 
             return super(CombinatorialFreeModule_Tensor, self)._coerce_map_from_(R)
+
 
 class CartesianProductWithFlattening(object):
     """
@@ -1713,7 +1721,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             F (+) F
         """
         from sage.categories.cartesian_product import cartesian_product
-        return cartesian_product.symbol.join(["%s"%module for module in self._sets])
+        return cartesian_product.symbol.join("%s" % module
+                                             for module in self._sets)
         # TODO: make this overridable by setting _name
 
     @cached_method
@@ -1746,7 +1755,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
         """
         assert i in self._sets_keys()
         return self._sets[i]._module_morphism(lambda t: self.monomial((i, t)),
-                                              codomain = self)
+                                              codomain=self)
 
     summand_embedding = cartesian_embedding
 
@@ -1777,7 +1786,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
         """
         assert i in self._sets_keys()
         module = self._sets[i]
-        return self._module_morphism(lambda j_t: module.monomial(j_t[1]) if i == j_t[0] else module.zero(), codomain = module)
+        return self._module_morphism(lambda j_t: module.monomial(j_t[1]) if i == j_t[0] else module.zero(), codomain=module)
 
     summand_projection = cartesian_projection
 
@@ -1787,8 +1796,8 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
         INPUT:
 
-        - ``elements`` -- a tuple with one element of each Cartesian
-          factor of ``self``
+        - ``elements`` -- an iterable (e.g. tuple, list) with one element of
+          each Cartesian factor of ``self``
 
         EXAMPLES::
 
@@ -1802,8 +1811,32 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             sage: S._cartesian_product_of_elements([f, g]).parent() == S
             True
 
+        TESTS:
+
+        The ``elements`` can be a generator as in :trac:`31453`::
+
+            sage: from sage.categories.magmatic_algebras import (
+            ....:     MagmaticAlgebras
+            ....: )
+            sage: class TrivialCFM(CombinatorialFreeModule):
+            ....:     def __init__(self):
+            ....:         c = MagmaticAlgebras(QQ).WithBasis().Unital()
+            ....:         super().__init__(QQ,[1],category=c)
+            ....:
+            ....:     def one(self):
+            ....:         return self.monomial(0)
+            ....:
+            sage: c1 = TrivialCFM()
+            sage: c1.one()
+            B[0]
+            sage: CP = cartesian_product([c1,c1])
+            sage: CP.one()
+            B[(0, 0)] + B[(1, 0)]
+
         """
-        return self.sum(self.summand_embedding(i)(elements[i]) for i in self._sets_keys())
+        return self.sum( self.summand_embedding(i)(element_i)
+                         for (i, element_i) in zip(self._sets_keys(),
+                                                   elements) )
 
     def cartesian_factors(self):
         """
@@ -1822,5 +1855,6 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
 
     class Element(CombinatorialFreeModule.Element): # TODO: get rid of this inheritance
         pass
+
 
 CombinatorialFreeModule.CartesianProduct = CombinatorialFreeModule_CartesianProduct

@@ -16,11 +16,11 @@ The basic command syntax is as follows::
     ...
     ======================================================================
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .constructor import random_matrix, Matrix
-from sage.rings.all import ZZ, QQ, GF
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.misc import cputime
 from cysignals.alarm import AlarmInterrupt, alarm, cancel_alarm
 

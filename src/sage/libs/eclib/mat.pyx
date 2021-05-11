@@ -1,7 +1,6 @@
 """
 Cremona matrices
 """
-from __future__ import print_function
 
 from ..eclib cimport scalar, addscalar
 
@@ -132,7 +131,8 @@ cdef class Matrix:
 ##         """
 ##         Return the rank of this matrix.
 
-##         EXAMPLES:
+##         EXAMPLES::
+##
 ##             sage: M = CremonaModularSymbols(389)
 ##             sage: t = M.hecke_matrix(2)
 ##             sage: t.rank()

@@ -172,10 +172,9 @@ class CCInterpreter(StackInterpreter):
 
         self.pxd_header = ri(0,
             """
-            from sage.rings.real_mpfr cimport RealField_class, RealNumber
+            from sage.rings.real_mpfr cimport RealNumber
             from sage.libs.mpfr cimport *
-            from sage.rings.complex_field import ComplexField
-            from sage.rings.complex_number cimport ComplexNumber
+            from sage.rings.complex_mpfr cimport ComplexNumber
             from sage.libs.mpc cimport *
             """)
 

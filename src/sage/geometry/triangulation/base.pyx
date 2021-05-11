@@ -1,3 +1,7 @@
+# distutils: sources = sage/geometry/triangulation/functions.cc sage/geometry/triangulation/data.cc sage/geometry/triangulation/triangulations.cc
+# distutils: depends = sage/geometry/triangulation/functions.h sage/geometry/triangulation/data.h sage/geometry/triangulation/triangulations.h
+# distutils: language = c++
+
 r"""
 Base classes for triangulations
 
@@ -16,7 +20,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import absolute_import
 
 from sage.misc.fast_methods cimport hash_by_id
 from sage.structure.sage_object cimport SageObject
@@ -426,15 +429,15 @@ cdef class PointConfiguration_base(Parent):
             configuration are assumed to be connected, not necessarily
             fine, not necessarily regular.
         """
-        n = len(projective_points)
-        if n==0:
+        if not projective_points:
             self._ambient_dim = 0
             self._dim = -1
             self._pts = tuple()
             return
 
         # We now are sure that projective_points is not empty
-        self._ambient_dim = len(projective_points[0])-1
+        n = len(projective_points)
+        self._ambient_dim = len(projective_points[0]) - 1
         assert all(len(p) == self._ambient_dim+1 for p in projective_points), \
             'The given point coordinates must all have the same length.'
         assert len(set(projective_points)) == len(projective_points), \
@@ -731,7 +734,6 @@ cdef class PointConfiguration_base(Parent):
         """
         return self._pts[i]
 
-
     def __len__(self):
         """
         Return the number of points.
@@ -1004,7 +1006,6 @@ cdef class ConnectedTriangulationsIterator(SageObject):
         """
         return self
 
-
     def __next__(self):
         r"""
         The iterator interface: Next iteration.
@@ -1018,6 +1019,6 @@ cdef class ConnectedTriangulationsIterator(SageObject):
             (9, 10)
         """
         t = next_triangulation(self._tp)
-        if len(t) == 0:
+        if not t:
             raise StopIteration
         return t

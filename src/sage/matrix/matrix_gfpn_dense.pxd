@@ -15,6 +15,7 @@ from sage.libs.meataxe cimport *
 
 cdef class FieldConverter_class:
     cdef field  # A function converting an int to a field element
+    cdef FEL zero_FEL  # the FEL representation of zero
     cpdef fel_to_field(self, FEL x)
     cpdef FEL field_to_fel(self, x) except 255
 

@@ -2,7 +2,6 @@
 """
 Dependency usage tracking for citations
 """
-from __future__ import absolute_import
 
 from sage.misc.all import tmp_filename
 from sage.env import SAGE_LOCAL
@@ -41,7 +40,7 @@ systems['NTL'] = ['sage.libs.ntl',
 systems['FLINT'] = ['_flint']
 systems['GMP'] = ['sage.rings.integer.Integer']
 systems['MPFR'] = ['sage.rings.real_mpfr',
-                   'sage.rings.complex_number']
+                   'sage.rings.complex_mpfr']
 systems['MPFI'] = ['sage.rings.real_mpfi',
                    'sage.rings.complex_interval']
 systems['M4RI'] = ['sage.matrix.matrix_mod2_dense']
@@ -81,15 +80,6 @@ def get_systems(cmd):
         sage: I = R.ideal(x^2+y^2, z^2+y)
         sage: get_systems('I.primary_decomposition()')
         ['Singular']
-
-    Here we get a spurious ``MPFR`` because some coercions need to be
-    initialized. The second time it is gone::
-
-        sage: a = var('a')
-        sage: get_systems('((a+1)^2).expand()')
-        ['MPFR', 'ginac']
-        sage: get_systems('((a+1)^2).expand()')
-        ['ginac']
     """
     import cProfile, pstats, re
 

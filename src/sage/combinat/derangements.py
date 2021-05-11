@@ -22,13 +22,12 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.misc.all import prod
-from sage.misc.prandom import random, randint
+from sage.misc.prandom import random, randrange
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.all import ZZ, QQ
 from sage.rings.integer import Integer
@@ -151,7 +150,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     def __init__(self, x):
         """
-        Initalize ``self``.
+        Initialize ``self``.
 
         EXAMPLES::
 
@@ -435,8 +434,9 @@ class Derangements(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: D = Derangements(4)
-            sage: D._rand_der()
-            [2, 3, 4, 1]
+            sage: d = D._rand_der()
+            sage: d in D
+            True
         """
         n = len(self._set)
         A = list(range(1, n + 1))
@@ -445,7 +445,7 @@ class Derangements(UniqueRepresentation, Parent):
         while u >= 2:
             if not(mark[i - 1]):
                 while True:
-                    j = randint(1, i - 1)
+                    j = randrange(1, i)
                     if not(mark[j - 1]):
                         A[i - 1], A[j - 1] = A[j - 1], A[i - 1]
                         break
@@ -495,12 +495,19 @@ class Derangements(UniqueRepresentation, Parent):
             sage: D = Derangements([1,1,2,2,2])
             sage: D.random_element()
             []
+
+        TESTS:
+
+        Check that index error discovered in :trac:`29974` is fixed::
+
+            sage: D = Derangements([1,1,2,2])
+            sage: _ = [D.random_element() for _ in range(20)]
         """
         if self.__multi:
             L = list(self)
             if len(L) == 0:
                 return self.element_class(self, [])
-            i = randint(0, len(L))
+            i = randrange(len(L))
             return L[i]
         temp = self._rand_der()
         return self.element_class(self, [self._set[ii - 1] for ii in temp])

@@ -5,7 +5,7 @@ The class :class:`FiniteRankFreeModule` implements free modules of finite rank
 over a commutative ring.
 
 A *free module of finite rank* over a commutative ring `R` is a module `M` over
-`R` that admits a *finite basis*, i.e. a finite familly of linearly independent
+`R` that admits a *finite basis*, i.e. a finite family of linearly independent
 generators. Since `R` is commutative, it has the invariant basis number
 property, so that the rank of the free module `M` is defined uniquely, as the
 cardinality of any basis of `M`.
@@ -40,6 +40,7 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Travis Scrimshaw (2016): category set to Modules(ring).FiniteDimensional()
   (:trac:`20770`)
+- Michael Jung (2019): improve treatment of the zero element
 
 REFERENCES:
 
@@ -527,9 +528,8 @@ The components on the basis are returned by the square bracket operator for
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
+from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.modules import Modules
@@ -543,7 +543,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
     Free module of finite rank over a commutative ring.
 
     A *free module of finite rank* over a commutative ring `R` is a module `M`
-    over `R` that admits a *finite basis*, i.e. a finite familly of linearly
+    over `R` that admits a *finite basis*, i.e. a finite family of linearly
     independent generators. Since `R` is commutative, it has the invariant
     basis number property, so that the rank of the free module `M` is defined
     uniquely, as the cardinality of any basis of `M`.
@@ -749,6 +749,33 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
     Element = FiniteRankFreeModuleElement
 
+    @staticmethod
+    def __classcall_private__(cls, ring, rank, name=None, latex_name=None, start_index=0,
+                              output_formatter=None, category=None):
+        r"""
+        Normalize init arguments for ``UniqueRepresentation``
+
+        TESTS::
+
+            sage: FiniteRankFreeModule(QQ, 3) is FiniteRankFreeModule(QQ, 3, name=None)
+            True
+            sage: FiniteRankFreeModule(QQ, 3, name='M') is FiniteRankFreeModule(QQ, 3, name='M', latex_name='M')
+            True
+            sage: FiniteRankFreeModule(QQ, 3) is FiniteRankFreeModule(QQ, 3, start_index=0)
+            True
+            sage: FiniteRankFreeModule(QQ, 3) is FiniteRankFreeModule(QQ, 3, output_formatter=None)
+            True
+            sage: FiniteRankFreeModule(QQ, 3) is FiniteRankFreeModule(QQ, 3, category=Modules(QQ).FiniteDimensional())
+            True
+        """
+        if ring not in Rings().Commutative():
+            raise TypeError("the module base ring must be commutative")
+        category = Modules(ring).FiniteDimensional().or_subcategory(category)
+        if latex_name is None:
+            latex_name = name
+        return super(FiniteRankFreeModule, cls).__classcall__(
+            cls, ring, rank, name, latex_name, start_index, output_formatter, category)
+
     def __init__(self, ring, rank, name=None, latex_name=None, start_index=0,
                  output_formatter=None, category=None):
         r"""
@@ -764,6 +791,8 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: TestSuite(M).run()
 
         """
+        # This duplicates the normalization done in __classcall_private__,
+        # but it is needed for various subclasses.
         if ring not in Rings().Commutative():
             raise TypeError("the module base ring must be commutative")
         category = Modules(ring).FiniteDimensional().or_subcategory(category)
@@ -771,6 +800,8 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         self._ring = ring # same as self._base
         self._rank = rank
         self._name = name
+        # This duplicates the normalization done in __classcall_private__,
+        # but it is needed for various subclasses.
         if latex_name is None:
             self._latex_name = self._name
         else:
@@ -780,22 +811,20 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         # Dictionary of the tensor modules built on self
         #   (keys = (k,l) --the tensor type)
         # This dictionary is to be extended on need by the method tensor_module
-        self._tensor_modules = {(1,0): self} # self is considered as the set
-                                             # of tensors of type (1,0)
+        self._tensor_modules = {}
         # Dictionaries of exterior powers of self and of its dual
         #   (keys = p --the power degree)
         # These dictionaries are to be extended on need by the methods
         # exterior_power and dual_exterior_power
-        self._exterior_powers = {1: self}
+        self._exterior_powers = {}
         self._dual_exterior_powers = {}
+        # Set of all modules (tensor powers, exterior powers)
+        # that depend on self's bases:
+        self._all_modules = set([self])
         # List of known bases on the free module:
         self._known_bases = []
         self._def_basis = None # default basis
         self._basis_changes = {} # Dictionary of the changes of bases
-        # Zero element:
-        if not hasattr(self, '_zero_element'):
-            self._zero_element = self._element_constructor_(name='zero',
-                                                            latex_name='0')
         # Identity automorphism:
         self._identity_map = None # to be set by self.identity_map()
         # General linear group:
@@ -827,7 +856,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
 
         """
         if isinstance(comp, (int, Integer)) and comp == 0:
-            return self._zero_element
+            return self.zero()
         resu = self.element_class(self, name=name, latex_name=latex_name)
         if comp:
             resu.set_comp(basis)[:] = comp
@@ -956,10 +985,16 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         for more documentation.
 
         """
-        from sage.tensor.modules.tensor_free_module import TensorFreeModule
-        if (k,l) not in self._tensor_modules:
-            self._tensor_modules[(k,l)] = TensorFreeModule(self, (k,l))
-        return self._tensor_modules[(k,l)]
+        try:
+            return self._tensor_modules[(k,l)]
+        except KeyError:
+            if (k, l) == (1, 0):
+                T = self
+            else:
+                from sage.tensor.modules.tensor_free_module import TensorFreeModule
+                T = TensorFreeModule(self, (k,l))
+            self._tensor_modules[(k,l)] = T
+            return T
 
     def exterior_power(self, p):
         r"""
@@ -1022,12 +1057,18 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         for more documentation.
 
         """
-        from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
-        if p == 0:
-            return self._ring
-        if p not in self._exterior_powers:
-            self._exterior_powers[p] = ExtPowerFreeModule(self, p)
-        return self._exterior_powers[p]
+        try:
+            return self._exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            elif p == 1:
+                L = self
+            else:
+                from sage.tensor.modules.ext_pow_free_module import ExtPowerFreeModule
+                L = ExtPowerFreeModule(self, p)
+            self._exterior_powers[p] = L
+            return L
 
     def dual_exterior_power(self, p):
         r"""
@@ -1086,14 +1127,17 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         See
         :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerDualFreeModule`
         for more documentation.
-
         """
-        from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
-        if p == 0:
-            return self._ring
-        if p not in self._dual_exterior_powers:
-            self._dual_exterior_powers[p] = ExtPowerDualFreeModule(self, p)
-        return self._dual_exterior_powers[p]
+        try:
+            return self._dual_exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            else:
+                from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
+                L = ExtPowerDualFreeModule(self, p)
+            self._dual_exterior_powers[p] = L
+            return L
 
     def general_linear_group(self):
         r"""
@@ -1190,7 +1234,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
           or a list/tuple of strings, representing the individual LaTeX symbols
           of the elements of the basis; if ``None``, ``symbol`` is used in
           place of ``latex_symbol``
-        - ``from_family`` -- (default: ``None``) tuple of `n` linearly
+        - ``from_family`` -- (default: ``None``) tuple or list of `n` linearly
           independent elements of the free module ``self`` (`n` being the
           rank of ``self``)
         - ``indices`` -- (default: ``None``; used only if ``symbol`` is a
@@ -1224,7 +1268,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: latex(e)
             \left(e_{0},e_{1},e_{2}\right)
 
-        The LaTeX symbol can be set explicitely::
+        The LaTeX symbol can be set explicitly::
 
             sage: eps = M.basis('eps', latex_symbol=r'\epsilon') ; eps
             Basis (eps_0,eps_1,eps_2) on the Rank-3 free module M
@@ -1270,8 +1314,8 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: e[1]
             Element e_1 of the Rank-3 free module M over the Integer Ring
 
-        Construction of a basis from a family of linearly independent module
-        elements::
+        Construction of a basis from a spanning family of linearly independent
+        module elements::
 
             sage: f1 = -e[2]
             sage: f2 = 4*e[1] + 3*e[3]
@@ -1304,6 +1348,15 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: all( f[i] == a(e[i]) for i in M.irange() )
             True
 
+        Providing a family of module elements that are not linearly independent
+        raise an error::
+
+            sage: g = M.basis('g', from_family=(f1, f2, f1+f2))
+            Traceback (most recent call last):
+            ...
+            ValueError: the provided module elements are not linearly
+             independent
+
         For more documentation on bases see
         :class:`~sage.tensor.modules.free_module_basis.FreeModuleBasis`.
 
@@ -1317,26 +1370,11 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
                                symbol_dual=symbol_dual,
                                latex_symbol_dual=latex_symbol_dual)
         if from_family:
-            n = self._rank
-            if len(from_family) != n:
-                raise ValueError("the size of the family is not {}".format(n))
-            for ff in from_family:
-                if ff not in self:
-                    raise TypeError("{} is not an element of {}".format(ff,
-                                                                        self))
-            # The automorphisms relating the family to previously defined
-            # bases are registered:
-            ff0 = from_family[0]
-            for basis in ff0._components:
-                try:
-                    comp = [ff.components(basis) for ff in from_family]
-                except ValueError:
-                    continue
-                mat = [[comp_ff[[i]] for comp_ff in comp]
-                                                        for i in self.irange()]
-                aut = self.automorphism()
-                aut.set_comp(basis)[:] = mat
-                self.set_change_of_basis(basis, resu, aut)
+            try:
+                resu._init_from_family(from_family)
+            except ZeroDivisionError:
+                raise ValueError("the provided module elements are not "
+                                 "linearly independent")
         return resu
 
     def tensor(self, tensor_type, name=None, latex_name=None, sym=None,
@@ -1645,6 +1683,13 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         for more documentation.
 
         """
+        if degree == 0:
+            try:
+                return self._ring.element_class(self._ring, name=name,
+                                                latex_name=latex_name)
+            except (KeyError, AttributeError):
+                raise NotImplementedError('{} apparently '.format(self._ring) +
+                                          'does not provide generic elements')
         return self.dual_exterior_power(degree).element_class(self, degree,
                                               name=name, latex_name=latex_name)
 
@@ -1948,6 +1993,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         """
         return self._rank
 
+    @cached_method
     def zero(self):
         r"""
         Return the zero element of ``self``.
@@ -1988,7 +2034,13 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
              [[0, 0, 0], [0, 0, 0], [0, 0, 0]]]
 
         """
-        return self._zero_element
+        resu = self._element_constructor_(name='zero', latex_name='0')
+        for basis in self._known_bases:
+            resu._add_comp_unsafe(basis)
+            # (since new components are initialized to zero)
+        resu._is_zero = True # This element is certainly zero
+        resu.set_immutable()
+        return resu
 
     def dual(self):
         r"""
@@ -2220,7 +2272,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
              Basis (f_1,f_2,f_3) on the Rank-3 free module M_3 over the Integer Ring]
 
         """
-        return self._known_bases
+        return list(self._known_bases)
 
     def change_of_basis(self, basis1, basis2):
         r"""
@@ -2510,6 +2562,106 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
         homset = Hom(self, codomain)
         return homset(matrix_rep, bases=bases, name=name,
                       latex_name=latex_name)
+
+    def isomorphism_with_fixed_basis(self, basis, codomain=None):
+        r"""
+        Construct the canonical isomorphism from the free module ``self``
+        to a free module in which ``basis`` of ``self`` is mapped to the
+        distinguished basis of ``codomain``.
+
+        INPUT:
+
+        - ``basis`` -- the basis of ``self`` which should be mapped to the
+          distinguished basis on ``codomain``
+        - ``codomain`` -- (default: ``None``) the codomain of the
+          isomorphism represented by a free module within the category
+          :class:`~sage.categories.modules_with_basis.ModulesWithBasis` with
+          the same rank and base ring as ``self``; if ``None`` a free module
+          represented by
+          :class:`~sage.combinat.free_module.CombinatorialFreeModule` is
+          constructed
+
+        OUTPUT:
+
+        - a module morphism represented by
+          :class:`~sage.modules.with_basis.morphism.ModuleMorphismFromFunction`
+
+        EXAMPLES::
+
+            sage: V = FiniteRankFreeModule(QQ, 3, start_index=1); V
+            3-dimensional vector space over the Rational Field
+            sage: basis = e = V.basis("e"); basis
+            Basis (e_1,e_2,e_3) on the 3-dimensional vector space over the
+             Rational Field
+            sage: phi_e = V.isomorphism_with_fixed_basis(basis); phi_e
+            Generic morphism:
+              From: 3-dimensional vector space over the Rational Field
+              To:   Free module generated by {1, 2, 3} over Rational Field
+            sage: phi_e.codomain().category()
+            Category of finite dimensional vector spaces with basis over
+             Rational Field
+            sage: phi_e(e[1] + 2 * e[2])
+            e[1] + 2*e[2]
+
+            sage: abc = V.basis(['a', 'b', 'c'], symbol_dual=['d', 'e', 'f']); abc
+            Basis (a,b,c) on the 3-dimensional vector space over the Rational Field
+            sage: phi_abc = V.isomorphism_with_fixed_basis(abc); phi_abc
+            Generic morphism:
+            From: 3-dimensional vector space over the Rational Field
+            To:   Free module generated by {1, 2, 3} over Rational Field
+            sage: phi_abc(abc[1] + 2 * abc[2])
+            B[1] + 2*B[2]
+
+        Providing a codomain::
+
+            sage: W = CombinatorialFreeModule(QQ, ['a', 'b', 'c'])
+            sage: phi_eW = V.isomorphism_with_fixed_basis(basis, codomain=W); phi_eW
+            Generic morphism:
+            From: 3-dimensional vector space over the Rational Field
+            To:   Free module generated by {'a', 'b', 'c'} over Rational Field
+            sage: phi_eW(e[1] + 2 * e[2])
+            B['a'] + 2*B['b']
+
+        TESTS::
+
+            sage: V = FiniteRankFreeModule(QQ, 3); V
+            3-dimensional vector space over the Rational Field
+            sage: e = V.basis("e")
+            sage: V.isomorphism_with_fixed_basis(e, codomain=QQ^42)
+            Traceback (most recent call last):
+            ...
+            ValueError: domain and codomain must have the same rank
+            sage: V.isomorphism_with_fixed_basis(e, codomain=RR^3)
+            Traceback (most recent call last):
+            ...
+            ValueError: domain and codomain must have the same base ring
+        """
+        base_ring = self.base_ring()
+        if codomain is None:
+            from sage.combinat.free_module import CombinatorialFreeModule
+            if isinstance(basis._symbol, str):
+                prefix = basis._symbol
+            else:
+                prefix = None
+            codomain = CombinatorialFreeModule(base_ring, list(self.irange()),
+                                               prefix=prefix)
+        else:
+            if codomain.rank() != self.rank():
+                raise ValueError("domain and codomain must have the same rank")
+            if codomain.base_ring() != base_ring:
+                raise ValueError("domain and codomain must have the same "
+                                 "base ring")
+
+        codomain_basis = list(codomain.basis())
+
+        def _isomorphism(x):
+            r"""
+            Concrete isomorphism from ``self`` to ``codomain``.
+            """
+            return codomain.sum(x[basis, i] * codomain_basis[i - self._sindex]
+                                for i in self.irange())
+
+        return self.module_morphism(function=_isomorphism, codomain=codomain)
 
     def endomorphism(self, matrix_rep, basis=None, name=None, latex_name=None):
         r"""

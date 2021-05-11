@@ -94,7 +94,7 @@ class SageSpawn(spawn):
             sage: s  # indirect doctest
             stupid process with PID ... running .../true
             sage: while s.isalive():  # Wait until the process finishes
-            ....:     sleep(0.1)
+            ....:     sleep(float(0.1))
             sage: s  # indirect doctest
             stupid process finished running .../true
         """
@@ -149,7 +149,8 @@ class SageSpawn(spawn):
             u'hello world\r\n'
         """
         ret = self.expect(*args, **kwds)
-        self.buffer = self.before + self.after + self.buffer
+        self._before = self.buffer_type()
+        self._before.write(self.before + self.after + self.buffer)
         return ret
 
     def expect_upto(self, *args, **kwds):
@@ -167,7 +168,8 @@ class SageSpawn(spawn):
             u'world\r\n'
         """
         ret = self.expect(*args, **kwds)
-        self.buffer = self.after + self.buffer
+        self._before = self.buffer_type()
+        self._before.write(self.after + self.buffer)
         return ret
 
 
@@ -186,7 +188,7 @@ class SagePtyProcess(PtyProcess):
             sage: s = SageSpawn("sleep 1000")
             sage: s.close()
             sage: while s.isalive():  # long time (5 seconds)
-            ....:     sleep(0.1)
+            ....:     sleep(float(0.1))
         """
         if not self.closed:
             if self.quit_string is not None:
@@ -226,12 +228,12 @@ class SagePtyProcess(PtyProcess):
         Check that the process eventually dies after calling
         ``terminate_async``::
 
-            sage: s.ptyproc.terminate_async(interval=0.2)
+            sage: s.ptyproc.terminate_async(interval=float(0.2))
             sage: while True:
             ....:     try:
             ....:         os.kill(s.pid, 0)
             ....:     except OSError:
-            ....:         sleep(0.1)
+            ....:         sleep(float(0.1))
             ....:     else:
             ....:         break  # process got killed
         """

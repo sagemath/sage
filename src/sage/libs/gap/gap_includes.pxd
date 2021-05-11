@@ -9,15 +9,20 @@
 #                   http://www.gnu.org/licenses/
 ###############################################################################
 
+from libc.stdint cimport uintptr_t, uint8_t, uint16_t, uint32_t, uint64_t
 
-cdef extern from "<gap/system.h>":
+cdef extern from "gap/system.h" nogil:
     ctypedef char Char
     ctypedef int Int
-    ctypedef unsigned int UInt
+    ctypedef uintptr_t UInt
+    ctypedef uint8_t  UInt1
+    ctypedef uint16_t UInt2
+    ctypedef uint32_t UInt4
+    ctypedef uint64_t UInt8
     ctypedef void* Obj
 
 
-cdef extern from "<gap/ariths.h>":
+cdef extern from "gap/ariths.h" nogil:
     Obj SUM(Obj, Obj)
     Obj DIFF(Obj, Obj)
     Obj PROD(Obj, Obj)
@@ -28,12 +33,12 @@ cdef extern from "<gap/ariths.h>":
     bint LT(Obj opL, Obj opR)
 
 
-cdef extern from "<gap/bool.h>":
+cdef extern from "gap/bool.h" nogil:
     cdef Obj GAP_True "True"
     cdef Obj GAP_False "False"
 
 
-cdef extern from "<gap/calls.h>":
+cdef extern from "gap/calls.h" nogil:
     bint IS_FUNC(Obj)
     Obj CALL_0ARGS(Obj f)              # 0 arguments
     Obj CALL_1ARGS(Obj f, Obj a1)      # 1 argument
@@ -45,49 +50,47 @@ cdef extern from "<gap/calls.h>":
     Obj CALL_XARGS(Obj f, Obj args)   # more than 6 arguments
 
 
-cdef extern from "<gap/gasman.h>":
+cdef extern from "gap/gasman.h" nogil:
     Obj NewBag "NewBag"(UInt type, UInt size)
     void MarkBag(Obj bag)
     UInt CollectBags(UInt size, UInt full)
 
 
-cdef extern from "<gap/gasman_intern.h>":
+cdef extern from "gap/gasman_intern.h" nogil:
     void CallbackForAllBags(void (*func)(Obj))
 
 
-cdef extern from "<gap/gvars.h>":
+cdef extern from "gap/gvars.h" nogil:
     UInt GVarName "GVarName"(char* name)
     void AssGVar "AssGVar"(UInt gvar, Obj val)
 
 
-cdef extern from "<gap/integer.h>":
+cdef extern from "gap/integer.h" nogil:
     Int IS_INT(Obj)
 
 
-cdef extern from "<gap/intobj.h>":
+cdef extern from "gap/intobj.h" nogil:
     bint IS_INTOBJ(Obj obj)
     Obj INTOBJ_INT(Int)
     Int INT_INTOBJ(Obj)
 
 
-cdef extern from "<gap/io.h>":
+cdef extern from "gap/io.h" nogil:
     UInt OpenOutputStream(Obj stream)
     UInt CloseOutput()
 
 
-cdef extern from "<gap/libgap-api.h>":
-    ctypedef void (*CallbackFunc)()
-    void GAP_Initialize(int argc, char ** argv, char ** env,
-        CallbackFunc, CallbackFunc)
-    Obj GAP_EvalString(const char *) except *
-    Obj GAP_EvalStringNoExcept "GAP_EvalString"(const char *)
-    Obj GAP_ValueGlobalVariable(const char *)
-
-
-cdef extern from "<gap/libgap-api.h>" nogil:
+cdef extern from "gap/libgap-api.h" nogil:
     """
     #define sig_GAP_Enter()  {int t = GAP_Enter(); if (!t) sig_error();}
     """
+    ctypedef void (*GAP_CallbackFunc)()
+    void GAP_Initialize(int argc, char ** argv,
+            GAP_CallbackFunc markBagsCallback, GAP_CallbackFunc errorCallback,
+            int handleSignals)
+    Obj GAP_EvalString(const char *) except *
+    Obj GAP_EvalStringNoExcept "GAP_EvalString"(const char *)
+    Obj GAP_ValueGlobalVariable(const char *)
     cdef void GAP_EnterStack()
     cdef void GAP_LeaveStack()
     cdef int GAP_Enter() except 0
@@ -96,7 +99,7 @@ cdef extern from "<gap/libgap-api.h>" nogil:
     cdef int GAP_Error_Setjmp() except 0
 
 
-cdef extern from "<gap/lists.h>":
+cdef extern from "gap/lists.h" nogil:
     bint IS_LIST(Obj lst)
     int LEN_LIST(Obj lst)
     Obj ELM_LIST(Obj lst, int pos)
@@ -104,15 +107,15 @@ cdef extern from "<gap/lists.h>":
     void ASS_LIST(Obj lst, int pos, Obj elt)
 
 
-cdef extern from "<gap/listfunc.h>":
+cdef extern from "gap/listfunc.h" nogil:
     void AddList(Obj list, Obj obj)
 
 
-cdef extern from "<gap/macfloat.h>":
+cdef extern from "gap/macfloat.h" nogil:
     double VAL_MACFLOAT(Obj obj)
 
 
-cdef extern from "<gap/objects.h>":
+cdef extern from "gap/objects.h" nogil:
     bint IS_MUTABLE_OBJ(Obj obj)
     Obj SHALLOW_COPY_OBJ(Obj obj)
     Obj CopyObj(Obj obj, int mut)
@@ -121,28 +124,45 @@ cdef extern from "<gap/objects.h>":
     UInt TNUM_OBJ(Obj obj)
     char* TNAM_OBJ(Obj obj)
 
-    cdef int T_INTPOS
-    cdef int T_INTNEG
-    cdef int T_RAT
-    cdef int T_CYC
-    cdef int T_FFE
-    cdef int T_PERM2
-    cdef int T_PERM4
-    cdef int T_BOOL
-    cdef int T_CHAR
-    cdef int T_FUNCTION
-    cdef int T_MACFLOAT
-    cdef int T_PLIST
-    cdef int T_PLIST_CYC
-    cdef int T_BLIST
-    cdef int T_STRING
-    cdef int T_COMOBJ
-    cdef int T_POSOBJ
-    cdef int T_DATOBJ
-    cdef int T_WPOBJ
+    cdef enum TNUM:
+        T_INT
+        T_INTPOS
+        T_INTNEG
+        T_RAT
+        T_CYC
+        T_FFE
+        T_MACFLOAT
+        T_PERM2
+        T_PERM4
+        T_TRANS2
+        T_TRANS4
+        T_PPERM2
+        T_PPERM4
+        T_BOOL
+        T_CHAR
+        T_FUNCTION
+        T_PLIST
+        T_PLIST_CYC
+        T_BLIST
+        T_STRING
+        T_COMOBJ
+        T_POSOBJ
+        T_DATOBJ
+        T_WPOBJ
 
 
-cdef extern from "<gap/precord.h>":
+cdef extern from "gap/permutat.h" nogil:
+    UInt DEG_PERM2(Obj)
+    UInt DEG_PERM4(Obj)
+    Obj NEW_PERM2(UInt)
+    Obj NEW_PERM4(UInt)
+    UInt2* ADDR_PERM2(Obj)
+    UInt4* ADDR_PERM4(Obj)
+    const UInt2* CONST_ADDR_PERM2(Obj)
+    const UInt4* CONST_ADDR_PERM4(Obj)
+
+
+cdef extern from "gap/precord.h" nogil:
     Obj NEW_PREC(int len)
     int LEN_PREC(Obj rec)
     int GET_RNAM_PREC(Obj rec, int i)
@@ -150,14 +170,14 @@ cdef extern from "<gap/precord.h>":
     void AssPRec(Obj rec, UInt rnam, Obj val)
 
 
-cdef extern from "<gap/records.h>":
+cdef extern from "gap/records.h" nogil:
     char* NAME_RNAM(UInt rnam)
     bint IS_REC(Obj obj)
     Obj ELM_REC(Obj rec, UInt rnam)
     UInt RNamName(Char* name)
 
 
-cdef extern from "<gap/stringobj.h>":
+cdef extern from "gap/stringobj.h" nogil:
     char* CSTR_STRING(Obj list)
     bint IS_STRING(Obj obj)
     bint IsStringConv(Obj obj)

@@ -12,7 +12,7 @@ AUTHORS:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2015, 2017 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
@@ -22,10 +22,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import division
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from operator import pow as _pow
 from sage.symbolic.expression import Expression
@@ -60,7 +58,7 @@ class SimplifySqrtReal(ExpressionTreeWalker):
         sage: a.simplify_full()
         sqrt(x^2 - 2*x + 1)
 
-    and the more agressive method :meth:`~sage.symbolic.expression.Expression.canonicalize_radical()`
+    and the more aggressive method :meth:`~sage.symbolic.expression.Expression.canonicalize_radical()`
     yields a wrong result, given that `x<1`::
 
         sage: a.canonicalize_radical()  # wrong output!
@@ -167,7 +165,8 @@ class SimplifySqrtReal(ExpressionTreeWalker):
             minus_one_half = -one_half
             if (power == one_half) or (power == minus_one_half):
                 # This is a square root or the inverse of a square root
-                w0 = SR.wild(0); w1 = SR.wild(1)
+                w0 = SR.wild(0)
+                w1 = SR.wild(1)
                 sqrt_pattern = w0**one_half
                 inv_sqrt_pattern = w0**minus_one_half
                 sqrt_ratio_pattern1 = w0**one_half * w1**minus_one_half
@@ -776,7 +775,7 @@ def simplify_chain_real_sympy(expr):
 
         sage: s = (sqrt(x^2-2*x+1))._sympy_()
         sage: simplify_chain_real_sympy(s)
-        -x + 1
+        1 - x
 
     Other simplifications::
 

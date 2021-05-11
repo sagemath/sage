@@ -1,0 +1,1 @@
+$(PYTHON) sphinx ../pkgs/sage_docbuild/src/sage_docbuild/*.py ../pkgs/sage_docbuild/src/sage_docbuild/ext/*.py | $(PYTHON_TOOLCHAIN) sagelib

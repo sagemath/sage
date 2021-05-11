@@ -75,7 +75,6 @@ need to spend time and memory four times.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp
@@ -564,8 +563,8 @@ cdef class PointCollection(SageObject):
                     for i, coordinate in enumerate(point):
                         widths[i] = max(widths[i], len(coordinate))
                 format += ",".join("{{:>{}}}".format(width) for width in widths)
-                r = ",\n".join([format.format(head, *point)
-                                for head, point in zip(heads, r)])
+                r = ",\n".join(format.format(head, *point)
+                               for head, point in zip(heads, r))
         elif _output_format == "tuple":
             r = tuple(self)
         elif _output_format == "matrix":
@@ -913,7 +912,7 @@ cdef class PointCollection(SageObject):
         EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
-            sage: from six import StringIO
+            sage: from io import StringIO
             sage: f = StringIO()
             sage: o.vertices().write_for_palp(f)
             sage: print(f.getvalue())
@@ -976,7 +975,7 @@ def read_palp_point_collection(f, lattice=None, permutation=False):
         2 3 transposed
         1 2 3
         4 5 6
-        sage: from six import StringIO
+        sage: from io import StringIO
         sage: f = StringIO(data)
         sage: from sage.geometry.point_collection \
         ....:     import read_palp_point_collection

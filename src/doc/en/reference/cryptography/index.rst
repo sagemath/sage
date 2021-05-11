@@ -13,6 +13,8 @@ Cryptography
 
    sage/crypto/block_cipher/sdes
    sage/crypto/block_cipher/miniaes
+   sage/crypto/block_cipher/des
+   sage/crypto/block_cipher/present
 
    sage/crypto/public_key/blum_goldwasser
 

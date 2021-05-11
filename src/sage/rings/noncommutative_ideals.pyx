@@ -56,7 +56,6 @@ TESTS::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from sage.structure.element cimport MonoidElement
 from sage.structure.parent cimport Parent
@@ -375,7 +374,7 @@ class Ideal_nc(Ideal_generic):
             sage: IR*IR
             Traceback (most recent call last):
             ...
-            NotImplementedError: Can not multiply non-commutative ideals.
+            NotImplementedError: Cannot multiply non-commutative ideals.
 
         """
         if not isinstance(other, Ideal_nc):
@@ -391,4 +390,4 @@ class Ideal_nc(Ideal_generic):
                 if other.side() == 'left':
                     return other
                 return other.ring().ideal(other.gens(), side='twosided')
-        raise NotImplementedError("Can not multiply non-commutative ideals.")
+        raise NotImplementedError("Cannot multiply non-commutative ideals.")

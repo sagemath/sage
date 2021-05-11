@@ -1,0 +1,3 @@
+# Reconfigure Polymake's rules.
+# This modifies ~/.polymake/customize.pl
+echo "exit;" | polymake --reconfigure - || sdh_die "Error calling 'polymake --reconfigure'"

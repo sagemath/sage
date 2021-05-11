@@ -39,9 +39,6 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
-from six.moves import range
 
 from sage.modules.module import Module
 from sage.structure.parent import Parent
@@ -69,7 +66,7 @@ class OverconvergentDistributions_factory(UniqueFactory):
     - ``p`` -- prime number or None
     - ``prec_cap`` -- positive integer or None
     - ``base`` -- ring or None
-    - ``character`` -- a dirichlet character or None
+    - ``character`` -- a Dirichlet character or None
     - ``adjuster`` -- None or callable that turns 2 x 2 matrices into a 4-tuple
     - ``act_on_left`` -- bool (default: False)
     - ``dettwist`` -- integer or None (interpreted as 0)

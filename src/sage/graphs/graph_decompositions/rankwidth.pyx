@@ -1,16 +1,17 @@
 # cython: binding=True
+# distutils: libraries = rw
 r"""
 Rank Decompositions of graphs
 
-This modules wraps a C code from Philipp Klaus Krause computing a an optimal
-rank-decomposition [RWKlause]_.
+This module wraps C code from Philipp Klaus Krause computing an optimal
+rank-decomposition.
 
 **Definitions :**
 
 Given a graph `G` and a subset `S\subseteq V(G)` of vertices, the *rank-width*
 of `S` in `G`, denoted `rw_G(S)`, is equal to the rank in `GF(2)` of the `|S|
 \times (|V|-|S|)` matrix of the adjacencies between the vertices of `S` and
-`V\backslash S`. By definition, `rw_G(S)` is qual to `rw_G(\overline S)` where
+`V\backslash S`. By definition, `rw_G(S)` is equal to `rw_G(\overline S)` where
 `\overline S` is the complement of `S` in `V(G)`.
 
 A *rank-decomposition* of `G` is a tree whose `n` leaves are the elements of
@@ -28,15 +29,15 @@ achieving the minimal *rank-width*.
 
 **RW -- The original source code :**
 
-RW [RWKlause]_ is a program that calculates rank-width and
+RW is a program that calculates rank-width and
 rank-decompositions. It is based on ideas from :
 
-    * "Computing rank-width exactly" by Sang-il Oum [Oum]_
+    * "Computing rank-width exactly" by Sang-il Oum [Oum2009]_
     * "Sopra una formula numerica" by Ernesto Pascal
     * "Generation of a Vector from the Lexicographical Index" by B.P. Buckles
-      and M. Lybanon [BL]_
+      and M. Lybanon [BL1977]_
     * "Fast additions on masked integers" by Michael D. Adams and David S. Wise
-      [AW]_
+      [AW2006]_
 
 **OUTPUT:**
 
@@ -86,33 +87,8 @@ EXAMPLES::
 
 AUTHORS:
 
-- Philipp Klaus Krause : Implementation of the C algorithm [RWKlause]_
+- Philipp Klaus Krause : Implementation of the C algorithm
 - Nathann Cohen : Interface with Sage and documentation
-
-REFERENCES:
-
-  .. [RWKlause] Philipp Klaus Krause -- rw v0.2
-    http://pholia.tdi.informatik.uni-frankfurt.de/~philipp/software/rw.shtml
-
-  .. [Oum] Sang-il Oum
-    Computing rank-width exactly
-    Information Processing Letters, 2008
-    vol. 109, n. 13, p. 745--748
-    Elsevier
-    http://mathsci.kaist.ac.kr/~sangil/pdf/2008exp.pdf
-
-  .. [BL] Buckles, B.P. and Lybanon, M.
-    Algorithm 515: generation of a vector from the lexicographical index
-    ACM Transactions on Mathematical Software (TOMS), 1977
-    vol. 3, n. 2, pages 180--182
-    ACM
-
-  .. [AW] Adams, M.D. and Wise, D.S.
-    Fast additions on masked integers
-    ACM SIGPLAN Notices, 2006
-    vol. 41, n.5, pages 39--45
-    ACM
-    http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.86.1801&rep=rep1&type=pdf
 
 Methods
 -------
@@ -127,8 +103,6 @@ Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import print_function
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport *

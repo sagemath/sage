@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# distutils: libraries = gmp zn_poly
+# distutils: extra_compile_args = -D_XPG6
 """
 `p`-adic distributions spaces
 
@@ -13,10 +15,7 @@ EXAMPLES::
 
 REFERENCES:
 
-.. [PS] Overconvergent modular symbols and p-adic L-functions
-   Robert Pollack, Glenn Stevens
-   Annales Scientifiques de l'Ecole Normale Superieure, serie 4, 44 fascicule 1 (2011), 1--42.
-
+- [PS2011]_
 """
 
 #*****************************************************************************
@@ -27,7 +26,6 @@ REFERENCES:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.structure.sage_object cimport SageObject
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
@@ -50,7 +48,8 @@ from sage.rings.padics.padic_capped_relative_element cimport pAdicCappedRelative
 from sage.rings.padics.padic_fixed_mod_element cimport pAdicFixedModElement
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
-from sage.misc.misc import verbose, cputime
+from sage.misc.misc import cputime
+from sage.misc.verbose import verbose
 from sage.rings.infinity import Infinity
 
 from sage.libs.flint.nmod_poly cimport (nmod_poly_init2_preinv,
@@ -110,7 +109,7 @@ def get_dist_classes(p, prec_cap, base, symk, implementation):
 
 cdef class Dist(ModuleElement):
     r"""
-        The main `p`-adic distribution class, implemented as per the paper [PS]__.
+        The main `p`-adic distribution class, implemented as per the paper [PS2011]__.
     """
     def moment(self, n):
         r"""
@@ -800,7 +799,7 @@ cdef class Dist_vector(Dist):
                 moments = parent.approx_module(1)([moments])
             # TODO: This is not quite right if the input is an inexact zero.
             if ordp != 0 and parent.prime() == 0:
-                raise ValueError("can not specify a valuation shift for an exact ring")
+                raise ValueError("cannot specify a valuation shift for an exact ring")
 
         self._moments = moments
         self.ordp = ordp
@@ -1095,7 +1094,7 @@ cdef class Dist_vector(Dist):
             (1 + O(7^5), 2 + O(7^2), 3 + O(7))
         """
         if not self.parent().is_symk() and self._moments != 0:  # non-classical
-            if len(self._moments) == 0:
+            if not self._moments:
                 return self
             V = self._moments.parent()
             R = V.base_ring()
@@ -1148,7 +1147,7 @@ cdef class Dist_vector(Dist):
         r"""
         Solve the difference equation. `self = v | \Delta`, where `\Delta = [1, 1; 0, 1] - 1`.
 
-        See Theorem 4.5 and Lemma 4.4 of [PS]_.
+        See Theorem 4.5 and Lemma 4.4 of [PS2011]_.
 
         OUTPUT:
 

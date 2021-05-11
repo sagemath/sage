@@ -105,7 +105,6 @@ method for :class:`SteenrodAlgebra_generic
 <sage.algebras.steenrod.steenrod_algebra.SteenrodAlgebra_generic>` in
 :file:`steenrod_algebra.py`.
 """
-from __future__ import absolute_import, division
 
 #*****************************************************************************
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
@@ -586,7 +585,7 @@ def milnor_basis(n, p=2, **kwds):
     if not generic:
         for mono in WeightedIntegerVectors(n, xi_degrees(n, reverse=False)):
             exponents = list(mono)
-            while len(exponents) > 0 and exponents[-1] == 0:
+            while exponents and exponents[-1] == 0:
                 exponents.pop(-1)
             # check profile:
             okay = True
@@ -613,9 +612,9 @@ def milnor_basis(n, p=2, **kwds):
                 P_result = []
             for mono in WeightedIntegerVectors(dim, xi_degrees(dim, p=p, reverse=False)):
                 p_mono = list(mono)
-                while len(p_mono) > 0 and p_mono[-1] == 0:
+                while p_mono and p_mono[-1] == 0:
                     p_mono.pop(-1)
-                if len(p_mono) > 0:
+                if p_mono:
                     P_result.append(p_mono)
             # now find the Q part of the basis element.
             # dimensions here are back to normal.
@@ -1117,7 +1116,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
         sage: steenrod_basis_error_check(40,3) # long time
         sage: steenrod_basis_error_check(80,5) # long time
     """
-    import sage.misc.misc as misc
+    from sage.misc.verbose import verbose
     generic = kwds.get('generic', False if p==2 else True )
 
     if not generic:
@@ -1131,7 +1130,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     for i in range(dim):
         if i % 5 == 0:
-            misc.verbose("up to dimension %s"%i)
+            verbose("up to dimension %s"%i)
         milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,generic=generic))
         for B in bases:
             if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,generic=generic)):
@@ -1140,7 +1139,7 @@ def steenrod_basis_error_check(dim, p, **kwds):
             if mat.nrows() != 0 and not mat.is_invertible():
                 print("%s invertibility problem in dim %s at p=%s" % (B, i, p))
 
-    misc.verbose("done checking, no profiles")
+    verbose("done checking, no profiles")
 
     bases = ('pst_rlex', 'pst_llex', 'pst_deg', 'pst_revz')
     if not generic:
@@ -1150,11 +1149,11 @@ def steenrod_basis_error_check(dim, p, **kwds):
 
     for i in range(dim):
         if i % 5 == 0:
-            misc.verbose("up to dimension %s"%i)
+            verbose("up to dimension %s"%i)
         for pro in profiles:
             milnor_dim = len(steenrod_algebra_basis.f(i,'milnor',p=p,profile=pro,generic=generic))
             for B in bases:
                 if milnor_dim != len(steenrod_algebra_basis.f(i,B,p,profile=pro,generic=generic)):
                     print("problem with milnor/%s in dimension %s with profile %s" % (B, i, pro))
 
-    misc.verbose("done checking with profiles")
+    verbose("done checking with profiles")

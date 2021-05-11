@@ -1,5 +1,9 @@
+# distutils: language = c
+# distutils: libraries = fes
+# sage_setup: distribution = sage-fes
+
 """
-Binding for the FES library.
+Binding for the FES library
 
 Finding solutions of systems of boolean equations by exhaustive
 search, via the fes library. This is usually (much) faster than
@@ -35,7 +39,7 @@ Random Degree-2 System::
     sage: len(sols)                                                              # optional - FES
     1
 
-Cylic benchmark::
+Cyclic benchmark::
 
     sage: from sage.rings.ideal import Cyclic                 # optional - FES
     sage: from sage.libs.fes import exhaustive_search         # optional - FES
@@ -62,8 +66,6 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
-
 from libc.stdint cimport uint64_t
 from cysignals.memory cimport sig_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -82,7 +84,7 @@ from sage.structure.parent cimport Parent
 from sage.structure.sequence import Sequence
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
 from sage.rings.polynomial.term_order import TermOrder
-from sage.rings.polynomial.pbori import BooleanPolynomial, BooleanPolynomialRing
+from sage.rings.polynomial.pbori.pbori import BooleanPolynomial, BooleanPolynomialRing
 from sage.arith.all import binomial
 from sage.combinat.subset import Subsets
 

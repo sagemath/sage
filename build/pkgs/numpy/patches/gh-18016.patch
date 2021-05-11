@@ -1,0 +1,22 @@
+From a91f53119c53d99a3f832dc41e96ccd712d705a3 Mon Sep 17 00:00:00 2001
+From: FX Coudert <fxcoudert@gmail.com>
+Date: Thu, 3 Dec 2020 16:44:16 +0100
+Subject: [PATCH] Update gnu.py
+
+---
+ numpy/distutils/fcompiler/gnu.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/numpy/distutils/fcompiler/gnu.py b/numpy/distutils/fcompiler/gnu.py
+index 0d9d769c2a8..68d1501eee6 100644
+--- a/numpy/distutils/fcompiler/gnu.py
++++ b/numpy/distutils/fcompiler/gnu.py
+@@ -126,7 +126,7 @@ def get_flags_linker_so(self):
+                     target = '10.9'
+                     s = f'Env. variable MACOSX_DEPLOYMENT_TARGET set to {target}'
+                     warnings.warn(s, stacklevel=2)
+-                os.environ['MACOSX_DEPLOYMENT_TARGET'] = target
++                os.environ['MACOSX_DEPLOYMENT_TARGET'] = str(target)
+             opt.extend(['-undefined', 'dynamic_lookup', '-bundle'])
+         else:
+             opt.append("-shared")

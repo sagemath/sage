@@ -8,6 +8,7 @@
 #include <sstream>
 #include <gmp.h>
 
+#include <NTL/ZZ_limbs.h>
 
 //////// ZZ //////////
 
@@ -24,16 +25,9 @@ static CYTHON_INLINE int ZZ_to_int(const ZZ* x)
            Joel B. Mohler moved the ZZX_getitem_as_mpz code out to this function (2007-03-13) */
 static void ZZ_to_mpz(mpz_t output, const struct ZZ* x)
 {
-    unsigned char stack_bytes[4096];
-    unsigned long size = NumBytes(*x);
-    int use_heap = (size > sizeof(stack_bytes));
-    unsigned char* bytes = use_heap ? (unsigned char*) malloc(size) : stack_bytes;
-    BytesFromZZ(bytes, *x, size);
-    mpz_import(output, size, -1, 1, 0, 0, bytes);
+    mpz_import(output, x->size(), -1, sizeof(mp_limb_t), 0, 0, ZZ_limbs_get(*x));
     if (sign(*x) < 0)
         mpz_neg(output, output);
-    if (use_heap)
-        free(bytes);
 }
 
 /* Copies the mpz_t into the ZZ

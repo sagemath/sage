@@ -149,6 +149,15 @@ cdef int mpq_vector_get_entry(mpq_t ans, mpq_vector* v, Py_ssize_t n) except -1:
     mpq_set(ans, v.entries[m])
     return 0
 
+cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n):
+    """
+    Return if the ``n``-th entry of the sparse vector ``v`` is zero.
+
+    This is meant for internal use only. If ``n`` is not valid, then
+    this might lead to a segfault.
+    """
+    return binary_search0(v.positions, v.num_nonzero, n) == -1
+
 cdef object mpq_vector_to_list(mpq_vector* v):
     """
     Returns a Python list of 2-tuples (i,x), where x=v[i] runs

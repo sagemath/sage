@@ -148,14 +148,14 @@ following C code.
 
 Put it in a file called linked_list_sparse.c and compile it using
 
-::
+.. CODE-BLOCK:: shell-session
 
-    gcc -c linked_list_sparse.c
-    gcc -shared -o linked_list_sparse.so linked_list_sparse.o
+    $ gcc -c linked_list_sparse.c
+    $ gcc -shared -o linked_list_sparse.so linked_list_sparse.o
 
 Next consider the following python helper code.
 
-::
+.. CODE-BLOCK:: python
 
     from ctypes import *
 
@@ -178,7 +178,7 @@ Next consider the following python helper code.
     get_value.restype=c_double
     free_matrix=sparse_library.free_matrix
 
-Lets discuss the above code. The original C code stored a sparse
+Let's discuss the above code. The original C code stored a sparse
 matrix as a linked list. The python code uses the ctypes Structure
 class to create structures mirroring the structs in the C code. To
 create python object representing a C struct, simply create class that
@@ -190,7 +190,7 @@ the field contents as above. Also note the POINTER operator which
 creates a pointer out of any ctypes type. We are able to directly call
 our library as follows.
 
-::
+.. CODE-BLOCK:: python
 
     m=double_sparse_pointer()
     m=initialize_matrix(c_int(10),c_int(10))
@@ -205,7 +205,7 @@ attribute. So, in the above, m.contents.nrows would let you access the
 nrows field.  In fact you can manually walk along the linked list as
 follows.
 
-::
+.. CODE-BLOCK:: python
 
     m=double_sparse_pointer()
     m=initialize_matrix(c_int(10),c_int(10))

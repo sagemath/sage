@@ -1,18 +1,14 @@
 """
 Interface to Bill Hart's Quadratic Sieve
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 import subprocess as sp
 
-import six
-
 import sage.rings.integer
 
 from sage.cpython.string import bytes_to_str
-from sage.misc.all import tmp_dir
+from sage.misc.temporary_file import tmp_dir
 
 
 def qsieve(n, block=True, time=False, verbose=False):
@@ -83,15 +79,10 @@ def qsieve_block(n, time, verbose=False):
     if time:
         cmd = ['time'] + cmd
 
-    if six.PY2:
-        enc_kwds = {}
-    else:
-        enc_kwds = {'encoding': 'latin1'}
-
     env = os.environ.copy()
     env['TMPDIR'] = tmp_dir('qsieve')
     p = sp.Popen(cmd, env=env, stdout=sp.PIPE, stderr=sp.STDOUT,
-                 stdin=sp.PIPE, **enc_kwds)
+                 stdin=sp.PIPE, encoding='latin1')
     out, err = p.communicate(str(n))
     z = data_to_list(out, n, time=time)
     if verbose:

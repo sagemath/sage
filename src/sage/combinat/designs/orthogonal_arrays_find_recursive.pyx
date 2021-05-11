@@ -44,13 +44,11 @@ REFERENCES:
 Functions
 ---------
 """
-from __future__ import print_function, absolute_import
 
 from sage.misc.cachefunc import cached_function
 from .orthogonal_arrays import orthogonal_array
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.all import prime_powers
-import sage.combinat.designs.database
 
 @cached_function
 def find_recursive_construction(k, n):
@@ -797,7 +795,8 @@ cpdef find_brouwer_separable_design(int k,int n):
 
 # Associates to n the list of k,x with x>1 such that there exists an
 # OA(k,n+x)-OA(k,x). Useful in find_brouwer_separable_design
-cdef dict _QDM = sage.combinat.designs.database.QDM
+from sage.combinat.designs.database import QDM as __QDM
+cdef dict _QDM = __QDM
 cdef dict ioa_indexed_by_n_minus_x = {}
 for x in _QDM.itervalues():
     for (n,_,_,u),(k,_) in x.items():

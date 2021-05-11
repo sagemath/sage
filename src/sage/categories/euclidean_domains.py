@@ -9,20 +9,20 @@ AUTHORS:
   their tests
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2013 Julian Rueth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
 from sage.structure.element import coerce_binop
 from sage.structure.sequence import Sequence
+
 
 class EuclideanDomains(Category_singleton):
     """
@@ -148,7 +148,7 @@ class EuclideanDomains(Category_singleton):
 
             min_degree = self.one().euclidean_degree()
 
-            from sage.rings.all import NN
+            from sage.rings.semirings.non_negative_integer_semiring import NN
             for a in S:
                 tester.assertIn(a.euclidean_degree(), NN)
                 tester.assertGreaterEqual(a.euclidean_degree(), min_degree)

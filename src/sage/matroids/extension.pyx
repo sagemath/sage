@@ -18,7 +18,7 @@ AUTHORS:
 Methods
 =======
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
 #       Copyright (C) 2013 Stefan van Zwam <stefanvanzwam@gmail.com>
 #
@@ -26,13 +26,13 @@ Methods
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-include 'sage/data_structures/bitset.pxi'
+from sage.data_structures.bitset_base cimport *
 from .basis_matroid cimport BasisMatroid
 from sage.arith.all import binomial
+
 
 cdef class CutNode:
     """
@@ -42,11 +42,11 @@ cdef class CutNode:
     A linear subclass is a set of hyperplanes `mc` with the property that
     certain sets of hyperplanes must either be fully contained in `mc` or
     intersect `mc` in at most 1 element. The way we generate them is by a
-    depth-first seach. This class represents a node in the search tree.
+    depth-first search. This class represents a node in the search tree.
 
     It contains the set of hyperplanes selected so far, as well as a
     collection of hyperplanes whose insertion has been explored elsewhere in
-    the seach tree.
+    the search tree.
 
     The class has methods for selecting a hyperplane to insert, for inserting
     hyperplanes and closing the set to become a linear subclass again, and for

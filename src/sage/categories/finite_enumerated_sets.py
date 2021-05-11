@@ -1,15 +1,12 @@
 r"""
 Finite Enumerated Sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-from __future__ import print_function
-
-import itertools
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -20,6 +17,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.cpython.getattr import raw_getattr
 lazy_import("sage.rings.integer", "Integer")
+
 
 class FiniteEnumeratedSets(CategoryWithAxiom):
     """
@@ -290,14 +288,14 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                     sage: C = Example()
                     sage: list(C)
                     hello!
-                    hello!
+                    ...
                     [1, 2, 3]
                     sage: list(C)
                     hello!
-                    hello!
+                    ...
                     [1, 2, 3]
 
-                Note that ``hello!`` actually gets printed twice in
+                Note that ``hello!`` actually gets printed more than once in
                 the calls to ``list(C)``. That's because of the
                 implicit calls to :meth:`__len__`, which also relies
                 on :meth:`__iter__`. Let's call :meth:`list`::
@@ -480,10 +478,13 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             EXAMPLES::
 
                 sage: C = FiniteEnumeratedSets().example()
-                sage: C.random_element()
-                1
-                sage: C._random_element_from_unrank()
-                2
+                sage: n = C.random_element()
+                sage: n in C
+                True
+
+                sage: n = C._random_element_from_unrank()
+                sage: n in C
+                True
 
             TODO: implement _test_random which checks uniformness
             """
@@ -567,8 +568,6 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
                 ...
                 AssertionError: 4 != 3
             """
-            # isinstance with LazyImported classes is not robust
-            from sage.rings.integer import Integer
             tester = self._tester(**options)
             if self.cardinality != self._cardinality_from_iterator:
                 card = self.cardinality()

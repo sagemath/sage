@@ -168,15 +168,14 @@ REFERENCES:
 - [3] Knuth, Donald (2000). *Dancing links*. :arxiv:`cs/0011047`.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Sebastien Labbe <slabqc@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import division
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.plot.all import Graphics
@@ -592,4 +591,3 @@ class QuantuminoSolver(SageObject):
             ??? hundreds of millions ???
         """
         return self.tiling_solver().number_of_solutions()
-

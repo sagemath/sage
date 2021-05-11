@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
+r"""
 Poor Man's map
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #                     2016 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -10,8 +10,8 @@ Poor Man's map
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import sage.structure.sage_object
 
 class PoorManMap(sage.structure.sage_object.SageObject):
@@ -69,7 +69,7 @@ class PoorManMap(sage.structure.sage_object.SageObject):
             sage: TestSuite(f*g).run()
 
         """
-        from collections import Iterable
+        from collections.abc import Iterable
         if not isinstance(function, Iterable):
             function = (function,)
         self._functions = tuple(function)

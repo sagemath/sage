@@ -73,12 +73,8 @@ Nous nous limiterons ici à quelques remarques.
    Singular, Maxima, NTL, GMP, etc., vous n'avez pas besoin de les
    installer séparément, ils sont fournis dans la distribution Sage. En
    revanche, pour utiliser certaines des fonctionnalités de Sage, par
-   exemple Macaulay ou KASH, il vous faudra d'abord installer le paquet
-   optionnel correspondant, ou du moins avoir le logiciel correspondant
-   installé sur votre ordinateur. Macaulay et KASH sont disponibles pour
-   SAGE sous forme de modules optionnels (pour une liste de tous les
-   paquets optionnels disponibles, tapez ``sage -optional`` ou visitez
-   la page *Download* (Téléchargement) du site web de Sage).
+   exemple Macaulay ou KASH, il vous faudra d'abord avoir le logiciel correspondant
+   installé sur votre ordinateur.
 
 #. La version binaire pré-compilée de Sage (disponible sur le site web)
    est souvent plus facile et plus rapide à installer que la
@@ -108,9 +104,8 @@ Les différentes manières d'utiliser Sage
 
 Il y a plusieurs façons d'utiliser Sage.
 
--  **Interface graphique (« notebook ») :** voir la section sur le
-   *Notebook* du manuel de référence, et :ref:`section-notebook`
-   ci-dessous ;
+-  **Interface graphique (« notebook ») :** démarrer `sage -n jupyter`; lire 
+   `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_ ;
 
 -  **Ligne de commande :** voir :ref:`chapter-interactive_shell` ;
 

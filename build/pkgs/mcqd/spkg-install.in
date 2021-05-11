@@ -1,0 +1,34 @@
+cd src
+grep -v "std..cout.*current max" mcqd.h > mcqd2.h
+mv mcqd2.h mcqd.h
+
+case "$UNAME" in
+"CYGWIN")
+    SO_NAME="cygmcqd.dll"
+    IMPLIB_NAME="libmcqd.dll.a"
+    MCQD_LDFLAGS="-Wl,--out-implib,$IMPLIB_NAME"
+    ;;
+"Darwin")
+    SO_NAME="libmcqd.dylib"
+    ;;
+*)
+    SO_NAME="libmcqd.so"
+    ;;
+esac
+
+$CXX -fPIC -O3 -c mcqd.cpp -o mcqd.o
+$CXX -shared mcqd.o -o "$SO_NAME" $MCQD_LDFLAGS
+
+if [ "$UNAME" = "CYGWIN" ]; then
+    sdh_install "$SO_NAME" "$SAGE_LOCAL/bin/"
+    sdh_install "$IMPLIB_NAME" "$SAGE_LOCAL/lib/"
+else
+    sdh_install "$SO_NAME" "$SAGE_LOCAL/lib/"
+fi
+
+if [ "$UNAME" = "Darwin" ]; then
+    install_name_tool -id ${SAGE_LOCAL}/lib/$SO_NAME \
+        "$SAGE_DESTDIR_LOCAL/lib/$SO_NAME"
+fi
+
+sdh_install mcqd.h "$SAGE_LOCAL/include/"

@@ -3,26 +3,23 @@
 Package Updater
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import re
 import os
 
 import logging
 log = logging.getLogger()
 
-from sage_bootstrap.env import SAGE_ROOT
 from sage_bootstrap.package import Package
 from sage_bootstrap.download import Download
-
 
 
 class ChecksumUpdater(object):
@@ -39,18 +36,21 @@ class ChecksumUpdater(object):
 
     def fix_checksum(self):
         checksums_ini = os.path.join(self.package.path, 'checksums.ini')
+        s = self.checksums_ini()
         with open(checksums_ini, 'w') as f:
-            f.write(self.checksums_ini())
+            f.write(s)
 
     def checksums_ini(self):
         tarball = self.package.tarball
         result = [
             'tarball=' + self.package.tarball_pattern,
             'sha1=' + tarball._compute_sha1(),
-            'md5=' + tarball._compute_md5(), 
-            'cksum=' + tarball._compute_cksum(),
-            ''   # newline at end
+            'md5=' + tarball._compute_md5(),
+            'cksum=' + tarball._compute_cksum()
         ]
+        if self.package.tarball_upstream_url_pattern:
+            result.append('upstream_url=' + self.package.tarball_upstream_url_pattern)
+        result.append('')   # newline at end
         return '\n'.join(result)
 
     
@@ -66,8 +66,12 @@ class PackageUpdater(ChecksumUpdater):
         with open(package_version_txt, 'w') as f:
             f.write(new_version.strip() + '\n')
         
-    def download_upstream(self, download_url):
+    def download_upstream(self, download_url=None):
         tarball = self.package.tarball
+        if download_url is None:
+            download_url = self.package.tarball_upstream_url
+        if download_url is None:
+            raise ValueError("package has no default upstream_url pattern, download_url needed")
         print('Downloading tarball to {0}'.format(tarball.upstream_fqn))
         Download(download_url, tarball.upstream_fqn).run()
 

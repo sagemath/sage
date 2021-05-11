@@ -171,7 +171,7 @@ def lift_ramified(g, p, u, n):
 
         sage: from sage.modular.local_comp.liftings import lift_ramified
         sage: lift_ramified([2,2,3,2], 3, 1, 1)
-        [5, 8, 3, 5]
+        [-1, -1, 3, 2]
         sage: lift_ramified([8,2,12,2], 3, 2, 23)
         [323, 110, -133584, -45493]
         sage: type(lift_ramified([8,2,12,2], 3, 2, 23)[0])

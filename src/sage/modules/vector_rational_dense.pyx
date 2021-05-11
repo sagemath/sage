@@ -1,5 +1,5 @@
 """
-Vectors with rational entries.
+Vectors with rational entries
 
 AUTHOR:
 
@@ -54,13 +54,11 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
-
+from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 
@@ -137,7 +135,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
     def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
-        self._is_mutable = 1
+        self._is_immutable = 0
         if parent is None:
             self._degree = 0
             return
@@ -165,7 +163,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
                 mpq_clear(self._entries[i])
             sig_free(self._entries)
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
 
@@ -187,13 +185,13 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
         """
         cdef Py_ssize_t i
         cdef int c
-        for i from 0 <= i < left.degree():
+        for i in range(left.degree()):
             c = mpq_cmp(left._entries[i], (<Vector_rational_dense>right)._entries[i])
             if c < 0:
-                return -1
+                return rich_to_bool(op, -1)
             elif c > 0:
-                return 1
-        return 0
+                return rich_to_bool(op, 1)
+        return rich_to_bool(op, 0)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -254,7 +252,8 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
                                   xrange(self._degree)]
 
     def __reduce__(self):
-        return (unpickle_v1, (self._parent, self.list(), self._degree, self._is_mutable))
+        return (unpickle_v1, (self._parent, self.list(), self._degree,
+                              not self._is_immutable))
 
     cpdef _add_(self, right):
         cdef Vector_rational_dense z, r
@@ -384,5 +383,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Rational(entries[i])
         mpq_set(v._entries[i], z.value)
-    v._is_mutable = is_mutable
+    v._is_immutable = not is_mutable
     return v

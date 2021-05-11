@@ -1,5 +1,5 @@
 """
-Miscellaneous module-related functions.
+Miscellaneous module-related functions
 
 AUTHORS:
 

@@ -25,7 +25,6 @@ a right ideal, and ``R*[a,b,...]*R`` creates a two-sided ideal.
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from types import GeneratorType
 
@@ -33,7 +32,6 @@ import sage.misc.latex as latex
 import sage.rings.ring
 from sage.structure.element import MonoidElement
 from sage.structure.richcmp import rich_to_bool, richcmp
-from sage.interfaces.singular import singular as singular_default
 import sage.rings.infinity
 from sage.structure.sequence import Sequence
 
@@ -260,7 +258,8 @@ class Ideal_generic(MonoidElement):
             gens = [ring(x) for x in gens]
 
         gens = tuple(gens)
-        if len(gens)==0: gens=(ring.zero(),)
+        if len(gens) == 0:
+            gens = (ring.zero(),)
         self.__gens = gens
         MonoidElement.__init__(self, ring.ideal_monoid())
 
@@ -537,13 +536,13 @@ class Ideal_generic(MonoidElement):
             sage: latex(3*ZZ) # indirect doctest
             \left(3\right)\Bold{Z}
         """
-        return '\\left(%s\\right)%s'%(", ".join([latex.latex(g) for g in \
-                                                 self.gens()]),
-                                      latex.latex(self.ring()))
+        return '\\left(%s\\right)%s' % (", ".join(latex.latex(g)
+                                                  for g in self.gens()),
+                                        latex.latex(self.ring()))
 
     def ring(self):
         """
-        Returns the ring containing this ideal.
+        Return the ring containing this ideal.
 
         EXAMPLES::
 
@@ -716,7 +715,7 @@ class Ideal_generic(MonoidElement):
         a prime ideal `P` is specified).
 
         Recall that an ideal `I` is primary if and only if `I` has a
-        unique associated prime (see page 52 in [AtiMac]_).  If this
+        unique associated prime (see page 52 in [AM1969]_).  If this
         prime is `P`, then `I` is said to be `P`-primary.
 
         INPUT:
@@ -754,12 +753,6 @@ class Ideal_generic(MonoidElement):
         .. NOTE::
 
             This uses the list of associated primes.
-
-        REFERENCES:
-
-        .. [AtiMac] Atiyah and Macdonald, "Introduction to commutative
-           algebra", Addison-Wesley, 1969.
-
         """
         try:
             ass = self.associated_primes()
@@ -1139,6 +1132,72 @@ class Ideal_generic(MonoidElement):
             NotImplementedError
         """
         raise NotImplementedError
+
+    def _macaulay2_init_(self, macaulay2=None):
+        """
+        Return Macaulay2 ideal corresponding to this ideal.
+
+        EXAMPLES:
+
+        Ideals in multivariate polynomial rings::
+
+            sage: R.<x,y,z,w> = PolynomialRing(ZZ, 4)
+            sage: I = R.ideal([x*y-z^2, y^2-w^2]); I
+            Ideal (x*y - z^2, y^2 - w^2) of Multivariate Polynomial Ring in x, y, z, w over Integer Ring
+            sage: macaulay2(I)                              # optional - macaulay2
+                          2   2    2
+            ideal (x*y - z , y  - w )
+
+        Ideals in univariate polynomial rings::
+
+            sage: R.<x> = PolynomialRing(ZZ)
+            sage: I = R.ideal([4 + 3*x + x^2, 1 + x^2]); I
+            Ideal (x^2 + 3*x + 4, x^2 + 1) of Univariate Polynomial Ring in x over Integer Ring
+            sage: macaulay2(I)                              # optional - macaulay2
+                    2            2
+            ideal (x  + 3x + 4, x  + 1)
+
+        Field ideals generated from the polynomial ring over
+        two variables in the finite field of size 2::
+
+            sage: P.<x,y> = PolynomialRing(GF(2), 2)
+            sage: I = sage.rings.ideal.FieldIdeal(P); I
+            Ideal (x^2 + x, y^2 + y) of Multivariate Polynomial Ring in x, y over
+            Finite Field of size 2
+            sage: macaulay2(I)                              # optional - macaulay2
+                    2       2
+            ideal (x  + x, y  + y)
+
+        Ideals in PIDs::
+
+            sage: macaulay2(ideal(5))                       # optional - macaulay2
+            ideal 5
+            sage: macaulay2(ideal(QQ(5)))                   # optional - macaulay2
+            ideal 1
+
+        TESTS:
+
+        Check that a cached base ring is used (:trac:`28074`)::
+
+            sage: R.<x,y> = QQ[]
+            sage: R1 = macaulay2(R)                        # optional - macaulay2
+            sage: _ = macaulay2('ZZ[x,y]')                 # optional - macaulay2
+            sage: R2 = macaulay2(R.ideal(y^2 - x)).ring()  # optional - macaulay2
+            sage: R1._operator('===', R2)                  # optional - macaulay2
+            true
+
+        """
+        if macaulay2 is None:
+            from sage.interfaces.macaulay2 import macaulay2 as m2_default
+            macaulay2 = m2_default
+
+        R = self.ring()
+        macaulay2.use(R._macaulay2_(macaulay2))
+        gens = [repr(x) for x in self.gens()]
+        if len(gens) == 0:
+            gens = ['0']
+        return macaulay2.ideal(gens)
+
 
 class Ideal_principal(Ideal_generic):
     """
@@ -1594,7 +1653,7 @@ class Ideal_fractional(Ideal_generic):
 # constructors for standard (benchmark) ideals, written uppercase as
 # these are constructors
 
-def Cyclic(R, n=None, homog=False, singular=singular_default):
+def Cyclic(R, n=None, homog=False, singular=None):
     """
     Ideal of cyclic ``n``-roots from 1-st ``n`` variables of ``R`` if ``R`` is
     coercible to :class:`Singular <sage.interfaces.singular.Singular>`.
@@ -1646,7 +1705,11 @@ def Cyclic(R, n=None, homog=False, singular=singular_default):
     else:
         n = R.ngens()
 
-    singular.lib("poly")
+    if singular is None:
+        from sage.interfaces.singular import singular as singular_default
+        singular = singular_default
+
+    singular.lib("polylib")
     R2 = R.change_ring(RationalField())
     R2._singular_().set_ring()
 
@@ -1656,7 +1719,7 @@ def Cyclic(R, n=None, homog=False, singular=singular_default):
         I = singular.cyclic(n).homog(R2.gen(n-1))
     return R2.ideal(I).change_ring(R)
 
-def Katsura(R, n=None, homog=False, singular=singular_default):
+def Katsura(R, n=None, homog=False, singular=None):
     """
     ``n``-th katsura ideal of ``R`` if ``R`` is coercible to
     :class:`Singular <sage.interfaces.singular.Singular>`.
@@ -1693,7 +1756,11 @@ def Katsura(R, n=None, homog=False, singular=singular_default):
             raise ArithmeticError("n must be <= R.ngens().")
     else:
         n = R.ngens()
-    singular.lib("poly")
+
+    if singular is None:
+        from sage.interfaces.singular import singular as singular_default
+        singular = singular_default
+    singular.lib("polylib")
     R2 = R.change_ring(RationalField())
     R2._singular_().set_ring()
 

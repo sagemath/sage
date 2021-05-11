@@ -2,25 +2,30 @@
 r"""
 Check for LattE
 """
-
-import os
-import subprocess
-
 from . import Executable, Feature, FeatureTestResult
+
+LATTE_URL = "https://www.math.ucdavis.edu/~latte/software.php"
+
 
 class Latte_count(Executable):
     r"""
     Feature for the executable ``count`` from the LattE suite.
     """
     def __init__(self):
-        Executable.__init__(self, "count", executable="count", spkg="latte_int", url="https://www.math.ucdavis.edu/~latte/software.php")
+        Executable.__init__(self, "count", executable="count",
+                            spkg="latte_int",
+                            url=LATTE_URL)
+
 
 class Latte_integrate(Executable):
     r"""
     Feature for the executable ``integrate`` from the LattE suite.
     """
     def __init__(self):
-        Executable.__init__(self, "integrate", executable="integrate", spkg="latte_int", url="https://www.math.ucdavis.edu/~latte/software.php")
+        Executable.__init__(self, "integrate", executable="integrate",
+                            spkg="latte_int",
+                            url=LATTE_URL)
+
 
 class Latte(Feature):
     r"""

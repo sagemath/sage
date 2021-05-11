@@ -159,7 +159,7 @@ def swap(p, i, m=1):
     return tuple(q)
 
 
-def GeneralizedTamariLattice(a, b, m=1):
+def GeneralizedTamariLattice(a, b, m=1, check=True):
     r"""
     Return the `(a,b)`-Tamari lattice of parameter `m`.
 
@@ -223,7 +223,7 @@ def GeneralizedTamariLattice(a, b, m=1):
         return [swap(p, i, m) for i in range(len(p) - 1)
                 if not p[i] and p[i + 1]]
     return LatticePoset({p: covers(p)
-                         for p in paths_in_triangle(a, b, a, b)})
+                         for p in paths_in_triangle(a, b, a, b)}, check=check)
 
 
 def TamariLattice(n, m=1):
@@ -262,7 +262,7 @@ def TamariLattice(n, m=1):
 
     - [BMFPR]_
     """
-    return GeneralizedTamariLattice(m * n + 1, n, m)
+    return GeneralizedTamariLattice(m * n + 1, n, m, check=False)
 
 
 # a variation : the Dexter meet-semilattices
@@ -381,4 +381,5 @@ def DexterSemilattice(n):
                 if not p[i] and p[i + 1]]
         return [cov for L in data for cov in L]
     return MeetSemilattice({p: covers_dexter(p)
-                            for p in paths_in_triangle(a, b, a, b)})
+                            for p in paths_in_triangle(a, b, a, b)},
+                           check=False)

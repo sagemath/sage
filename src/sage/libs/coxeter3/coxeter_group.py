@@ -8,7 +8,6 @@ Coxeter Groups implemented with Coxeter3
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
 from sage.libs.coxeter3.coxeter import get_CoxGroup, CoxGroupElement
 from sage.misc.cachefunc import cached_method
@@ -18,6 +17,8 @@ from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.richcmp import richcmp
 from sage.categories.all import CoxeterGroups
 from sage.structure.parent import Parent
+
+from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -32,6 +33,8 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             sage: from sage.libs.coxeter3.coxeter_group import CoxeterGroup # optional - coxeter3
             sage: CoxeterGroup(['B',2])                                     # optional - coxeter3
             Coxeter group of type ['B', 2] implemented by Coxeter3
+            sage: CoxeterGroup(CartanType(['B', 3]).relabel({1: 3, 2: 2, 3: 1})) # optional - coxeter3
+            Coxeter group of type ['B', 3] relabelled by {1: 3, 2: 2, 3: 1} implemented by Coxeter3
 
         """
         from sage.combinat.all import CartanType
@@ -213,13 +216,15 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')    # optional - coxeter3
-            sage: W.coxeter_matrix()                                       # optional - coxeter3
+            sage: m = W.coxeter_matrix(); m                                # optional - coxeter3
             [1 3 2]
             [3 1 3]
             [2 3 1]
+            sage: m.index_set() == W.index_set()                           # optional - coxeter3
+            True
 
         """
-        return self._coxgroup.coxeter_matrix()
+        return CoxeterMatrix(self._coxgroup.coxeter_matrix(), self.index_set())
 
     def root_system(self):
         """
@@ -250,19 +255,21 @@ class CoxeterGroup(UniqueRepresentation, Parent):
         return self.element_class(self, [])
 
     def m(self, i, j):
-        """
-        Return the entry in the Coxeter matrix between the generator
-        with label ``i`` and the generator with label ``j``.
+        r"""
+        This is deprecated, use ``self.coxeter_matrix()[i,j]`` instead.
 
-        EXAMPLES::
+        TESTS::
 
-            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')   # optional - coxeter3
-            sage: W.m(1,1)                                                # optional - coxeter3
+            sage: W = CoxeterGroup(['A', 3], implementation='coxeter3') # optional - coxeter3
+            sage: W.m(1, 1)                                             # optional - coxeter3
+            doctest:warning...:
+            DeprecationWarning: the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.
+            See https://trac.sagemath.org/30237 for details.
             1
-            sage: W.m(1,0)                                                # optional - coxeter3
-            2
         """
-        return self.coxeter_matrix()[i-1,j-1]
+        from sage.misc.superseded import deprecation
+        deprecation(30237, "the .m(i, j) method has been deprecated; use .coxeter_matrix()[i,j] instead.")
+        return self.coxeter_matrix()[i,j]
 
     def kazhdan_lusztig_polynomial(self, u, v, constant_term_one=True):
         r"""
@@ -673,7 +680,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                     exponent = self.action(exponent)
 
                     monomial = 1
-                    for s, c in iteritems(exponent.monomial_coefficients()):
+                    for s, c in exponent.monomial_coefficients().items():
                         monomial *= Q_gens[basis_to_order[s]]**int(c)
 
                     result += monomial

@@ -24,6 +24,7 @@ Morphisms
    :maxdepth: 1
 
    sage/rings/number_field/morphism
+   sage/rings/number_field/homset
    sage/rings/number_field/number_field_morphisms
    sage/rings/number_field/maps
    sage/rings/number_field/structure

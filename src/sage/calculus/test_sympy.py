@@ -109,7 +109,7 @@ And here are some actual tests of sympy::
 
     sage: e = (1/cos(x)^3)._sympy_(); e
     cos(x)**(-3)
-    sage: f = e.series(x, 0, 10); f
+    sage: f = e.series(x, 0, int(10)); f
     1 + 3*x**2/2 + 11*x**4/8 + 241*x**6/240 + 8651*x**8/13440 + O(x**10)
 
 And the pretty-printer.  Since unicode characters are not working on

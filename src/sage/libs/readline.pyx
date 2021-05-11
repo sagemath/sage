@@ -1,3 +1,4 @@
+# distutils: libraries = readline
 """
 Readline
 
@@ -49,7 +50,7 @@ Finally, clear the current line for the remaining doctests::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
+
 from sage.cpython.string cimport str_to_bytes, bytes_to_str
 
 

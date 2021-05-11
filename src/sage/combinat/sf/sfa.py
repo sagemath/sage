@@ -195,7 +195,6 @@ AUTHORS:
 - Darij Grinberg (2013) Sym over rings that are not characteristic 0
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Anne Schilling <anne at math.ucdavis.edu>
@@ -213,7 +212,7 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import Integer, PolynomialRing, QQ, ZZ
+from sage.rings.all import Integer, PolynomialRing, QQ, ZZ, infinity
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.rings.polynomial.multi_polynomial import is_MPolynomial
 from sage.combinat.partition import _Partitions, Partitions, Partitions_n, Partition
@@ -300,8 +299,6 @@ def is_SymmetricFunction(x):
 
 from sage.categories.realizations import Category_realization_of_parent
 
-import six
-
 
 class SymmetricFunctionsBases(Category_realization_of_parent):
     r"""
@@ -352,7 +349,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             [Category of realizations of Symmetric Functions over Rational Field,
              Category of commutative hopf algebras with basis over Rational Field,
              Join of Category of realizations of hopf algebras over Rational Field
-                 and Category of graded algebras over Rational Field]
+                 and Category of graded algebras over Rational Field
+                 and Category of graded coalgebras over Rational Field]
         """
         # FIXME: The last one should also be commutative, but this triggers a
         #   KeyError when doing the C3 algorithm!!!
@@ -406,7 +404,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
         def is_commutative(self):
             """
-            Returns whether this symmetric function algebra is commutative.
+            Return whether this symmetric function algebra is commutative.
 
             INPUT:
 
@@ -542,7 +540,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
         @cached_method
         def one_basis(self):
             r"""
-            Returns the empty partition, as per ``AlgebrasWithBasis.ParentMethods.one_basis``
+            Return the empty partition, as per ``AlgebrasWithBasis.ParentMethods.one_basis``
 
             INPUT:
 
@@ -663,7 +661,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 put on a more robust and systematic footing.
             """
             from sage.combinat.sf.sf import SymmetricFunctions
-            from sage.misc.misc import attrcall
+            from sage.misc.call import attrcall
             try:
                 return attrcall(self._basis)(SymmetricFunctions(R))
             except AttributeError:   # or except (AttributeError, ValueError):
@@ -781,8 +779,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             Let `\lambda` be a partition. The *Gessel-Reutenauer
             symmetric function* `\mathbf{GR}_\lambda` corresponding to
             `\lambda` is the symmetric function denoted `L_\lambda` in
-            [GR1993]_ and in Exercise 7.89 of [STA]_. It can be defined
-            in several ways:
+            [GR1993]_ and in Exercise 7.89 of [STA]_ and denoted
+            `\mathbf{GR}_\lambda` in Definition 6.6.34 of [GriRei18]_.
+            It can be defined in several ways:
 
             - It is the sum of the monomials `\mathbf{x}_w` over all
               words `w` over the alphabet
@@ -799,15 +798,15 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
             - It is the sum of the fundamental quasisymmetric
               functions `F_{\operatorname{Des} \sigma}` over all
-              permutations `\sigma` which have cycle type `\lambda`. See
+              permutations `\sigma` that have cycle type `\lambda`. See
               :class:`sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Fundamental`
               for the definition of fundamental quasisymmetric functions,
               and :meth:`~sage.combinat.permutation.Permutation.cycle_type`
               for that of cycle type. For a permutation `\sigma`, we use
               `\operatorname{Des} \sigma` to denote the descent composition
               (:meth:`~sage.combinat.permutation.Permutation.descents_composition`)
-              of `\sigma`. Again, this definition makes the symmetry
-              of `\mathbf{GR}_\lambda` far from obvious.
+              of `\sigma`. Again, this definition does not make the
+              symmetry of `\mathbf{GR}_\lambda` obvious.
 
             - For every positive integer `n`, we have
 
@@ -833,7 +832,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
               `\mathbf{GR}_\lambda` obvious.
 
             The equivalences of these three definitions are proven in
-            [GR1993]_ Sections 2-3.
+            [GR1993]_ Sections 2-3. (See also [GriRei18]_ Subsection
+            6.6.2 for the equivalence of the first two definitions and
+            further formulas.)
 
             INPUT:
 
@@ -853,6 +854,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                and Descent Set*.
                Journal of Combinatorial Theory, Series A, 64 (1993),
                pp. 189--215.
+
+            .. [GriRei18]_
 
             EXAMPLES:
 
@@ -966,8 +969,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 m = lam.to_exp_dict() # == {i: m_i | i occurs in lam}
                 p = self.realization_of().power()
                 h = self.realization_of().complete()
-                from sage.arith.all import Moebius, squarefree_divisors
-                mu = Moebius()
+                from sage.arith.all import moebius, squarefree_divisors
+                mu = moebius
                 def component(i, g): # == h_g[L_i]
                     L_i = p.sum_of_terms([(_Partitions([d] * (i//d)), R(mu(d)))
                                           for d in squarefree_divisors(i)],
@@ -1487,7 +1490,7 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
 
         def degree_zero_coefficient(self):
             r"""
-            Returns the degree zero coefficient of ``self``.
+            Return the degree zero coefficient of ``self``.
 
             EXAMPLES::
 
@@ -1633,7 +1636,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         """
         BR = self.base_ring()
         z_elt = {}
-        for m, c in six.iteritems(x._monomial_coefficients):
+        for m, c in x._monomial_coefficients.items():
             coeff = function(m)
             z_elt[m] = BR( c*coeff )
         return self._from_dict(z_elt)
@@ -1718,7 +1721,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         if orthogonal:
             # could check which of x and y has less terms
             # for mx, cx in x:
-            for mx, cx in six.iteritems(x._monomial_coefficients):
+            for mx, cx in x._monomial_coefficients.items():
                 if mx not in y._monomial_coefficients:
                     continue
                 else:
@@ -1728,8 +1731,8 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
                 res += cx*cy*f(mx, mx)
             return res
         else:
-            for mx, cx in six.iteritems(x._monomial_coefficients):
-                for my, cy in six.iteritems(y._monomial_coefficients):
+            for mx, cx in x._monomial_coefficients.items():
+                for my, cy in y._monomial_coefficients.items():
                     res += cx*cy*f(mx,my)
             return res
 
@@ -1813,13 +1816,13 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         BR = self.base_ring()
         zero = BR.zero()
         z_elt = {}
-        for part, c in six.iteritems(element.monomial_coefficients()):
+        for part, c in element.monomial_coefficients().items():
             if sum(part) not in cache_dict:
                 cache_function(sum(part))
             # Make sure it is a partition (for #13605), this is
             #   needed for the old kschur functions - TCS
             part = _Partitions(part)
-            for part2, c2 in six.iteritems(cache_dict[sum(part)][part]):
+            for part2, c2 in cache_dict[sum(part)][part].items():
                 if hasattr(c2,'subs'): # c3 may be in the base ring
                     c3 = c*BR(c2.subs(**subs_dict))
                 else:
@@ -2269,7 +2272,8 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
              ([2, 1], [([1, 1, 1], 2), ([2, 1], 1)]),
              ([3], [([1, 1, 1], 1), ([2, 1], 1), ([3], 1)])]
         """
-        BR = self.base_ring(); one = BR.one()
+        BR = self.base_ring()
+        one = BR.one()
         p = self.realization_of().p()
 
         # Create a function which converts x and y to the power-sum basis and applies
@@ -2455,7 +2459,7 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
 
     def _dual_basis_default(self):
         """
-        Returns the default value for ``self.dual_basis()``
+        Return the default value for ``self.dual_basis()``
 
         .. SEEALSO:: :meth:`dual_basis`
 
@@ -3093,8 +3097,8 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         p = parent.realization_of().power()
         cache = {}
         ip_pnu_g = parent._inner_plethysm_pnu_g
-        return parent.sum( c*ip_pnu_g(p(x), cache, nu)
-                           for (nu, c) in six.iteritems(p(self).monomial_coefficients()) )
+        return parent.sum(c*ip_pnu_g(p(x), cache, nu)
+                          for (nu, c) in p(self).monomial_coefficients().items())
 
 
     def omega(self):
@@ -3419,7 +3423,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             True
 
         Let us check (on examples) Proposition 5.2 of Gelfand, Krob, Lascoux, Leclerc,
-        Retakh, Thibon, "Noncommutative symmetric functions", :arXiv:`hep-th/9407124`, for
+        Retakh, Thibon, "Noncommutative symmetric functions", :arxiv:`hep-th/9407124`, for
         `r = 2`::
 
             sage: e = SymmetricFunctions(FiniteField(29)).e()
@@ -3440,7 +3444,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             True
 
         Some examples from Briand, Orellana, Rosas, "The stability of the Kronecker
-        products of Schur functions." :arXiv:`0907.4652`::
+        products of Schur functions." :arxiv:`0907.4652`::
 
             sage: s = SymmetricFunctions(ZZ).s()
             sage: s[2,2].itensor(s[2,2])
@@ -3502,7 +3506,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s(1).itensor(s(1))
             s[]
 
-        Theorem 2.1 in Bessenrodt, van Willigenburg, :arXiv:`1105.3170v2`::
+        Theorem 2.1 in Bessenrodt, van Willigenburg, :arxiv:`1105.3170v2`::
 
             sage: s = SymmetricFunctions(ZZ).s()
             sage: all( all( max( r[0] for r in s(p).itensor(s(q)).monomial_coefficients().keys() )
@@ -3838,11 +3842,11 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         This notion of left-padded Kronecker product can be lifted to the
         non-commutative symmetric functions
-        (:meth:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmeticFunctions.Bases.ElementMethods.left_padded_kronecker_product`).
+        (:meth:`~sage.combinat.ncsf_qsym.ncsf.NonCommutativeSymmetricFunctions.Bases.ElementMethods.left_padded_kronecker_product`).
 
         .. WARNING::
 
-            Don't mistake this product for the reduced Kronecker product
+            Do not mistake this product for the reduced Kronecker product
             (:meth:`reduced_kronecker_product`), which uses the Schur
             functions instead of the complete homogeneous functions in
             its definition.
@@ -4360,7 +4364,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
     def scalar_qt(self, x, q = None, t = None):
         r"""
-        Returns the `q,t`-deformed standard Hall-Littlewood scalar product of
+        Return the `q,t`-deformed standard Hall-Littlewood scalar product of
         ``self`` and ``x``.
 
         INPUT:
@@ -4442,7 +4446,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
     def scalar_jack(self, x, t=None):
         r"""
-        Return the Jack-scalar product beween ``self`` and ``x``.
+        Return the Jack-scalar product between ``self`` and ``x``.
 
         This scalar product is defined so that the power sum elements
         `p_{\mu}` are orthogonal and `\langle p_{\mu}, p_{\mu} \rangle =
@@ -5438,13 +5442,402 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         return self.parent()(p.sum(self.eval_at_permutation_roots(rho) \
             *p(rho)/rho.centralizer_size() for rho in Partitions(n)))
 
+    def principal_specialization(self, n=infinity, q=None):
+        r"""
+        Return the principal specialization of a symmetric function.
+
+        The *principal specialization* of order `n` at `q`
+        is the ring homomorphism `ps_{n,q}` from the ring of
+        symmetric functions to another commutative ring `R`
+        given by `x_i \mapsto q^{i-1}` for `i \in \{1,\dots,n\}`
+        and `x_i \mapsto 0` for `i > n`.
+        Here, `q` is a given element of `R`, and we assume that
+        the variables of our symmetric functions are
+        `x_1, x_2, x_3, \ldots`.
+        (To be more precise, `ps_{n,q}` is a `K`-algebra
+        homomorphism, where `K` is the base ring.)
+        See Section 7.8 of [EnumComb2]_.
+
+        The *stable principal specialization* at `q` is the ring
+        homomorphism `ps_q` from the ring of symmetric functions
+        to another commutative ring `R` given by
+        `x_i \mapsto q^{i-1}` for all `i`.
+        This is well-defined only if the resulting infinite sums
+        converge; thus, in particular, setting `q = 1` in the
+        stable principal specialization is an invalid operation.
+
+        INPUT:
+
+        - ``n`` (default: ``infinity``) -- a nonnegative integer or
+          ``infinity``, specifying whether to compute the principal
+          specialization of order ``n`` or the stable principal
+          specialization.
+
+        - ``q`` (default: ``None``) -- the value to use for `q`; the
+          default is to create a ring of polynomials in ``q``
+          (or a field of rational functions in ``q``) over the
+          given coefficient ring.
+
+        EXAMPLES::
+
+            sage: m = SymmetricFunctions(QQ).m()
+            sage: x = m[1,1]
+            sage: x.principal_specialization(3)
+            q^3 + q^2 + q
+
+        By default we return a rational function in ``q``.  Sometimes
+        it is better to obtain an element of the symbolic ring::
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: (h[3]+h[2]).principal_specialization(q=var("q"))
+            1/((q^2 - 1)*(q - 1)) - 1/((q^3 - 1)*(q^2 - 1)*(q - 1))
+
+        In case ``q`` is in the base ring, it must be passed explicitly::
+
+            sage: R = QQ['q,t']
+            sage: Ht = SymmetricFunctions(R).macdonald().Ht()
+            sage: Ht[2].principal_specialization()
+            Traceback (most recent call last):
+            ...
+            ValueError: the variable q is in the base ring, pass it explicitly
+
+            sage: Ht[2].principal_specialization(q=R("q"))
+            (q^2 + 1)/(q^3 - q^2 - q + 1)
+
+        Note that the principal specialization can be obtained as a plethysm::
+
+            sage: R = QQ['q'].fraction_field()
+            sage: s = SymmetricFunctions(R).s()
+            sage: one = s.one()
+            sage: q = R("q")
+            sage: f = s[3,2,2]
+            sage: f.principal_specialization(q=q) == f(one/(1-q)).coefficient([])
+            True
+            sage: f.principal_specialization(n=4, q=q) == f(one*(1-q^4)/(1-q)).coefficient([])
+            True
+
+        TESTS::
+
+            sage: m = SymmetricFunctions(QQ).m()
+            sage: m.zero().principal_specialization(3)
+            0
+
+            sage: x = 5*m[1,1,1] + 3*m[2,1] + 1
+            sage: x.principal_specialization(3)
+            3*q^5 + 6*q^4 + 5*q^3 + 6*q^2 + 3*q + 1
+
+        Check that the principal specializations in different bases
+        are all the same.  When specific implementations for further
+        bases are added, this test should be adapted::
+
+            sage: S = SymmetricFunctions(QQ)
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: m = S.m(); x = m[2,1]
+            sage: len(set([b(x).principal_specialization(n=3) for b in B]))
+            1
+            sage: len(set([b(x).principal_specialization() for b in B]))
+            1
+            sage: len(set([b(x).principal_specialization(n=4, q=1) for b in B]))
+            1
+            sage: len(set([b(x).principal_specialization(n=4, q=2) for b in B]))
+            1
+
+        Check that the stable principal specialization at `q = 1`
+        raises a ``ValueError``:
+
+            sage: def test_error(x):
+            ....:     message = "the stable principal specialization of %s at q=1 should raise a ValueError"
+            ....:     try:
+            ....:         x.principal_specialization(q=1)
+            ....:     except ValueError as e:
+            ....:         return(e)
+            ....:     except StandardError as e:
+            ....:         raise ValueError((message + ", but raised '%s' instead") % (x, e))
+            ....:     raise ValueError((message + ", but didn't") % x)
+
+            sage: set([str(test_error(b(x))) for b in B])
+            {'the stable principal specialization at q=1 is not defined'}
+
+        Check that specifying `q` which is a removable singularity works::
+
+            sage: S = SymmetricFunctions(QQ)
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: m = S.m(); x = m[2,2,1]
+            sage: set([b(x).principal_specialization(n=4, q=QQbar.zeta(3)) for b in B])
+            {-3}
+
+            sage: S = SymmetricFunctions(GF(3))
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: m = S.m(); x = m[3,2,1]
+            sage: set([b(x).principal_specialization(n=4, q=GF(3)(2)) for b in B])
+            {1}
+
+            sage: S = SymmetricFunctions(Zmod(4))
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: m = S.m(); x = m[3,2,1]
+            sage: set([b(x).principal_specialization(n=4, q=Zmod(4)(2)) for b in B])
+            {0}
+            sage: y = m[3,1]
+            sage: set([b(y).principal_specialization(n=4, q=Zmod(4)(2)) for b in B])
+            {2}
+            sage: B = [S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: z = m[1,1]
+            sage: set([b(z).principal_specialization(n=4) for b in B])
+            {q^5 + q^4 + 2*q^3 + q^2 + q}
+
+        Check that parents are correct over `\mathbb{F}_3`::
+
+            sage: S = SymmetricFunctions(GF(3))
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: lams = [Partition([]), Partition([1]), Partition([2,1])]
+            sage: set(b[lam].principal_specialization(n=2, q=GF(3)(0)).parent() for b in B for lam in lams)
+            {Finite Field of size 3}
+            sage: set(b[lam].principal_specialization(n=2, q=GF(3)(1)).parent() for b in B for lam in lams)
+            {Finite Field of size 3}
+            sage: set(b[lam].principal_specialization(n=2, q=GF(3)(2)).parent() for b in B for lam in lams)
+            {Finite Field of size 3}
+            sage: set(b[lam].principal_specialization(n=2).parent() for b in B for lam in lams)
+            {Univariate Polynomial Ring in q over Finite Field of size 3}
+            sage: set(b[lam].principal_specialization().parent() for b in B for lam in lams)
+            {Fraction Field of Univariate Polynomial Ring in q over Finite Field of size 3,
+             Univariate Polynomial Ring in q over Finite Field of size 3}
+
+            sage: a = S.e()[2,1].principal_specialization(n=2, q=GF(3)(2)); a
+            0
+            sage: a = S.e()[1,1,1].principal_specialization(n=2); a
+            q^3 + 1
+
+            sage: set(b.one().principal_specialization(n=2, q=GF(3)(2)) for b in B)
+            {1}
+            sage: set(b.one().principal_specialization(n=2, q=GF(3)(1)) for b in B)
+            {1}
+            sage: set(b.one().principal_specialization(n=2) for b in B)
+            {1}
+            sage: set(b.one().principal_specialization() for b in B)
+            {1}
+
+        Check that parents are correct over the integer ring::
+
+            sage: S = SymmetricFunctions(ZZ)
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: lams = [Partition([]), Partition([1]), Partition([2,1])]
+            sage: set(b[lam].principal_specialization(n=2, q=0).parent() for b in B for lam in lams)
+            {Integer Ring}
+            sage: set(b[lam].principal_specialization(n=2, q=1).parent() for b in B for lam in lams)
+            {Integer Ring}
+            sage: set(b[lam].principal_specialization(n=2, q=2).parent() for b in B for lam in lams)
+            {Integer Ring}
+            sage: set(b[lam].principal_specialization(n=2).parent() for b in B for lam in lams)
+            {Univariate Polynomial Ring in q over Integer Ring}
+            sage: sorted(set(b[lam].principal_specialization().parent() for b in B for lam in lams), key=str)
+            [Fraction Field of Univariate Polynomial Ring in q over Integer Ring,
+             Univariate Polynomial Ring in q over Integer Ring,
+             Univariate Polynomial Ring in q over Rational Field]
+
+        Check that parents are correct over a polynomial ring::
+
+            sage: P = PolynomialRing(ZZ, "q")
+            sage: q = P.gen()
+            sage: S = SymmetricFunctions(P)
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: lams = [Partition([]), Partition([1]), Partition([2,1])]
+            sage: set(b[lam].principal_specialization(n=2, q=P(0)).parent() for b in B for lam in lams)
+            {Univariate Polynomial Ring in q over Integer Ring}
+            sage: set(b[lam].principal_specialization(n=2, q=P(1)).parent() for b in B for lam in lams)
+            {Univariate Polynomial Ring in q over Integer Ring}
+            sage: set(b[lam].principal_specialization(n=2, q=P(2)).parent() for b in B for lam in lams)
+            {Univariate Polynomial Ring in q over Integer Ring}
+            sage: set(b[lam].principal_specialization(n=2, q=q).parent() for b in B for lam in lams)
+            {Univariate Polynomial Ring in q over Integer Ring}
+            sage: sorted(set(b[lam].principal_specialization(q=q).parent() for b in B for lam in lams), key=str)
+            [Fraction Field of Univariate Polynomial Ring in q over Integer Ring,
+             Univariate Polynomial Ring in q over Integer Ring,
+             Univariate Polynomial Ring in q over Rational Field]
+
+            sage: a = S.e()[2,1].principal_specialization(n=2, q=2); a
+            6
+            sage: a = S.e()[2,1].principal_specialization(n=2, q=q); a
+            q^2 + q
+
+            sage: set(b.one().principal_specialization(n=2, q=P(2)) for b in B)
+            {1}
+            sage: set(b.one().principal_specialization(n=2, q=P(1)) for b in B)
+            {1}
+            sage: set(b.one().principal_specialization(n=2, q=q) for b in B)
+            {1}
+            sage: set(b.one().principal_specialization(q=q) for b in B)
+            {1}
+
+        """
+        # heuristically, it seems fastest to fall back to the
+        # elementary basis - using the powersum basis would
+        # introduce singularities, because it is not a Z-basis
+        e = self.parent().realization_of().elementary()
+        return e(self).principal_specialization(n, q=q)
+
+    def exponential_specialization(self, t=None, q=1):
+        r"""
+        Return the exponential specialization of a
+        symmetric function (when `q = 1`), or the
+        `q`-exponential specialization (when `q \neq 1`).
+
+        The *exponential specialization* `ex` at `t` is a
+        `K`-algebra homomorphism from the `K`-algebra of
+        symmetric functions to another `K`-algebra `R`.
+        It is defined whenever the base ring `K` is a
+        `\QQ`-algebra and `t` is an element of `R`.
+        The easiest way to define it is by specifying its
+        values on the powersum symmetric functions to be
+        `p_1 = t` and `p_n = 0` for `n > 1`.
+        Equivalently, on the homogeneous functions it is
+        given by `ex(h_n) = t^n / n!`; see Proposition 7.8.4 of
+        [EnumComb2]_.
+
+        By analogy, the `q`-exponential specialization is a
+        `K`-algebra homomorphism from the `K`-algebra of
+        symmetric functions to another `K`-algebra `R` that
+        depends on two elements `t` and `q` of `R` for which
+        the elements `1 - q^i` for all positive integers `i`
+        are invertible.
+        It can be defined by specifying its values on the
+        complete homogeneous symmetric functions to be
+
+        .. MATH::
+
+            ex_q(h_n) = t^n / [n]_q!,
+
+        where `[n]_q!` is the `q`-factorial.  Equivalently, for
+        `q \neq 1` and a homogeneous symmetric function `f` of
+        degree `n`, we have
+
+        .. MATH::
+
+            ex_q(f) = (1-q)^n t^n ps_q(f),
+
+        where `ps_q(f)` is the stable principal specialization of `f`
+        (see :meth:`principal_specialization`).
+        (See (7.29) in [EnumComb2]_.)
+
+        The limit of `ex_q` as `q \to 1` is `ex`.
+
+        INPUT:
+
+        - ``t`` (default: ``None``) -- the value to use for `t`;
+          the default is to create a ring of polynomials in ``t``.
+
+        - ``q`` (default: `1`) -- the value to use for `q`.  If
+          ``q`` is ``None``, then a ring (or fraction field) of
+          polynomials in ``q`` is created.
+
+        EXAMPLES::
+
+            sage: m = SymmetricFunctions(QQ).m()
+            sage: (m[2,1]+m[1,1]).exponential_specialization()
+            1/2*t^2
+            sage: (m[2,1]+m[1,1]).exponential_specialization(q=1)
+            1/2*t^2
+            sage: m[1,1].exponential_specialization(q=None)
+            (q/(q + 1))*t^2
+            sage: Qq = PolynomialRing(QQ, "q"); q = Qq.gen()
+            sage: m[1,1].exponential_specialization(q=q)
+            (q/(q + 1))*t^2
+            sage: Qt = PolynomialRing(QQ, "t"); t = Qt.gen()
+            sage: m[1,1].exponential_specialization(t=t)
+            1/2*t^2
+            sage: Qqt = PolynomialRing(QQ, ["q", "t"]); q, t = Qqt.gens()
+            sage: m[1,1].exponential_specialization(q=q, t=t)
+            q*t^2/(q + 1)
+
+            sage: x = m[3]+m[2,1]+m[1,1,1]
+            sage: d = x.homogeneous_degree()
+            sage: var("q t")
+            (q, t)
+            sage: factor((x.principal_specialization()*(1-q)^d*t^d))
+            t^3/((q^2 + q + 1)*(q + 1))
+            sage: factor(x.exponential_specialization(q=q, t=t))
+            t^3/((q^2 + q + 1)*(q + 1))
+
+        TESTS::
+
+            sage: m = SymmetricFunctions(QQ).m()
+            sage: m.zero().exponential_specialization()
+            0
+
+        Check that the exponential specializations in different bases
+        are all the same.  When specific implementations for further
+        bases are added, this test should be adapted::
+
+            sage: S = SymmetricFunctions(QQ)
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: m = S.m(); x = m[3]+m[2,1]+m[1,1,1]
+            sage: len(set([b(x).exponential_specialization(q=None, t=None) for b in B]))
+            1
+            sage: len(set([b(x).exponential_specialization(q=1) for b in B]))
+            1
+            sage: len(set([b(x).exponential_specialization(q=2) for b in B]))
+            1
+            sage: len(set([b(x).exponential_specialization(t=2) for b in B]))
+            1
+
+        Check that parents are correct over `\mathbb{F}_3`::
+
+            sage: S = SymmetricFunctions(GF(3))
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: lams = [Partition([]), Partition([1]), Partition([2,1])]
+            sage: sorted(set(b[lam].exponential_specialization(q=None).parent() for b in B for lam in lams), key=str)
+            [Univariate Polynomial Ring in t over Fraction Field
+              of Univariate Polynomial Ring in q over Finite Field of size 3,
+             Univariate Polynomial Ring in t over Univariate Polynomial Ring
+              in q over Finite Field of size 3]
+            sage: P2 = PolynomialRing(GF(3), ["q", "t"])
+            sage: q2, t2 = P2.gens()
+            sage: sorted(set(b[lam].exponential_specialization(q=q2, t=t2).parent() for b in B for lam in lams), key=str)
+            [Fraction Field of Multivariate Polynomial Ring in q, t over Finite Field of size 3,
+             Multivariate Polynomial Ring in q, t over Finite Field of size 3]
+
+        Check that parents are correct over `\QQ` for `q = 1`::
+
+            sage: S = SymmetricFunctions(QQ)
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: lams = [Partition([]), Partition([1]), Partition([2,1])]
+            sage: set(b[lam].exponential_specialization(q=1).parent() for b in B for lam in lams)
+            {Univariate Polynomial Ring in t over Rational Field}
+            sage: set(b[lam].exponential_specialization(q=1, t=1).parent() for b in B for lam in lams)
+            {Rational Field}
+            sage: P2 = PolynomialRing(QQ, ["q", "t"])
+            sage: q2, t2 = P2.gens()
+            sage: set(b[lam].exponential_specialization(q=1, t=t2).parent() for b in B for lam in lams)
+            {Multivariate Polynomial Ring in q, t over Rational Field}
+
+        Check that parents are correct over a polynomial ring::
+
+            sage: P = PolynomialRing(QQ, "q")
+            sage: q = P.gen()
+            sage: S = SymmetricFunctions(P)
+            sage: B = [S.p(), S.m(), S.e(), S.h(), S.s(), S.f()]
+            sage: lams = [Partition([]), Partition([1]), Partition([2,1])]
+            sage: sorted(set(b[lam].exponential_specialization(q=q).parent() for b in B for lam in lams), key=str)
+            [Univariate Polynomial Ring in t over
+              Fraction Field of Univariate Polynomial Ring in q over Rational Field,
+             Univariate Polynomial Ring in t over Univariate Polynomial Ring
+              in q over Rational Field]
+            sage: sorted(set(b[lam].exponential_specialization(q=q, t=1).parent() for b in B for lam in lams), key=str)
+            [Fraction Field of Univariate Polynomial Ring in q over Rational Field,
+             Univariate Polynomial Ring in q over Rational Field]
+        """
+        # heuristically, it seems fastest to fall back to the
+        # elementary basis - using the powersum basis would
+        # introduce singularities, because it is not a Z-basis
+        e = self.parent().realization_of().elementary()
+        return e(self).exponential_specialization(t=t, q=q)
+
 SymmetricFunctionAlgebra_generic.Element = SymmetricFunctionAlgebra_generic_Element
 
 
 ###################
 def _lmax(x):
     r"""
-    Returns the max of ``x`` where ``x`` is a list.
+    Return the max of ``x`` where ``x`` is a list.
 
     If ``x`` is the empty list, ``_lmax`` returns 0.
 
@@ -5458,9 +5851,10 @@ def _lmax(x):
     """
     return max(x) if x else 0
 
+
 def _nonnegative_coefficients(x):
     r"""
-    Returns ``True`` if ``x`` has nonnegative coefficients.
+    Return ``True`` if ``x`` has nonnegative coefficients.
 
     EXAMPLES::
 
@@ -5479,4 +5873,3 @@ def _nonnegative_coefficients(x):
         return all(c >= 0 for c in x.coefficients(sparse=False))
     else:
         return x >= 0
-

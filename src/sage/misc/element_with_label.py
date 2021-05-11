@@ -14,6 +14,7 @@ with vertex labels.
 
 from sage.misc.latex import latex
 
+
 class ElementWithLabel(object):
     """
     Auxiliary class for showing/viewing :class:`Poset`s with
@@ -146,8 +147,8 @@ class ElementWithLabel(object):
             sage: b == 1
             False
         """
-        if not (isinstance(self, ElementWithLabel)
-                and isinstance(other, ElementWithLabel)):
+        if not (isinstance(self, ElementWithLabel) and
+                isinstance(other, ElementWithLabel)):
             return False
         return self.element == other.element and self.label == other.label
 
@@ -168,4 +169,3 @@ class ElementWithLabel(object):
             False
         """
         return not(self == other)
-

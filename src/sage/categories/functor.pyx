@@ -13,7 +13,7 @@ AUTHORS:
   re-implementation of the default call method,
   making functors applicable to morphisms (not only to objects)
 
-- Simon King (2010-12): Pickling of functors without loosing domain and codomain
+- Simon King (2010-12): Pickling of functors without losing domain and codomain
 
 """
 
@@ -32,7 +32,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from . import category
 
@@ -501,7 +500,7 @@ class ForgetfulFunctor_generic(Functor):
 
             sage: F1 = ForgetfulFunctor(FiniteFields(),Fields())
 
-        This is to test against a bug occuring in a previous version
+        This is to test against a bug occurring in a previous version
         (see :trac:`8800`)::
 
             sage: F1 == QQ #indirect doctest

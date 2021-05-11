@@ -8,7 +8,7 @@ is independent of ramification is in Polynomial_shared.pxi.
 
 .. NOTE::
 
-    There are no doctests in this file since the functions here can not be
+    There are no doctests in this file since the functions here cannot be
     called directly from Python. Testing of this function is necessarily
     indirect and mostly done through arithmetic black-box tests that are part
     of the test suites of the `p`-adic parents.
@@ -18,7 +18,7 @@ AUTHORS:
 - David Roe, Julian Rüth (2017-06-11): initial version
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 David Roe <roed.math@gmail.com>
 #                     2017 Julian Rüth <julian.rueth@fsfe.org>
 #
@@ -26,8 +26,8 @@ AUTHORS:
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.integer cimport Integer
 from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *

@@ -67,11 +67,11 @@ For general help, enter ``Sandpile.help()``, ``SandpileConfig.help()``, and
 A weighted directed graph given as a Python dictionary::
 
     sage: from sage.sandpiles import *
-    sage: g = {0: {},                    \
-               1: {0: 1, 2: 1, 3: 1},    \
-               2: {1: 1, 3: 1, 4: 1},    \
-               3: {1: 1, 2: 1, 4: 1},    \
-               4: {2: 1, 3: 1}}
+    sage: g = {0: {},
+    ....:      1: {0: 1, 2: 1, 3: 1},
+    ....:      2: {1: 1, 3: 1, 4: 1},
+    ....:      3: {1: 1, 2: 1, 4: 1},
+    ....:      4: {2: 1, 3: 1}}
 
 The associated sandpile with 0 chosen as the sink::
 
@@ -250,7 +250,6 @@ Distribution of avalanche sizes::
     ....:     m = m.add_random()
     ....:     m, f = m.stabilize(True)
     ....:     a.append(sum(f.values()))
-    ....:
     sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
     sage: p.axes_labels(['log(N)','log(D(N))'])
     sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))
@@ -307,14 +306,14 @@ Working with sandpile divisors::
     (2, 1, 0, 0, 0, -1)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 David Perkinson <davidp@reed.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, division
-from six.moves import zip, range
+# ****************************************************************************
+
+from sage.misc.superseded import deprecation
 
 from collections import Counter
 from copy import deepcopy
@@ -334,17 +333,19 @@ from sage.functions.log import exp
 from sage.functions.other import binomial
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.graphs.all import DiGraph, Graph
+from sage.graphs.digraph_generators import digraphs
 from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.homology.simplicial_complex import SimplicialComplex
 from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix, identity_matrix
-from sage.misc.all import prod, det, tmp_filename, random, randint, exists, denominator
+from sage.misc.all import prod, det, tmp_filename, exists, denominator
 from sage.arith.srange import xsrange
 from sage.modules.free_module_element import vector
 from sage.plot.colors import rainbow
 from sage.arith.all import falling_factorial, lcm
 from sage.rings.all import Integer, PolynomialRing, QQ, ZZ
-from sage.symbolic.all import I, pi, SR
+from sage.symbolic.constants import I, pi
+from sage.symbolic.ring import SR
 
 # TODO: remove the following line once 4ti2 functions are removed
 path_to_zsolve = os.path.join(SAGE_LOCAL, 'bin', 'zsolve')
@@ -530,8 +531,8 @@ class Sandpile(DiGraph):
 
         ::
 
-            sage: g = {'a': {'a':2, 'b':1, 'c':3}, 'b': {'a':1, 'd':1},\
-                       'c': {'a':1,'d': 1}, 'd': {'b':1, 'c':1}}
+            sage: g = {'a': {'a':2, 'b':1, 'c':3}, 'b': {'a':1, 'd':1},
+            ....:      'c': {'a':1,'d': 1}, 'd': {'b':1, 'c':1}}
             sage: G = Sandpile(g,'d')
 
         Here is a square with unweighted edges.  In this example, the graph is
@@ -1081,8 +1082,8 @@ class Sandpile(DiGraph):
 
         EXAMPLES::
 
-            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1}, \
-                       3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
+            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},
+            ....:      3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
             sage: S = Sandpile(g,0)
             sage: S._set_burning_config()
         """
@@ -1122,8 +1123,8 @@ class Sandpile(DiGraph):
 
         EXAMPLES::
 
-            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1}, \
-                       3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
+            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},
+            ....:      3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
             sage: S = Sandpile(g,0)
             sage: S.burning_config()
             {1: 2, 2: 0, 3: 1, 4: 1, 5: 0}
@@ -1174,8 +1175,8 @@ class Sandpile(DiGraph):
 
         EXAMPLES::
 
-            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},\
-            3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
+            sage: g = {0:{},1:{0:1,3:1,4:1},2:{0:1,3:1,5:1},
+            ....:      3:{2:1,5:1},4:{1:1,3:1},5:{2:1,3:1}}
             sage: S = Sandpile(g,0)
             sage: S.burning_config()
             {1: 2, 2: 0, 3: 1, 4: 1, 5: 0}
@@ -1674,7 +1675,7 @@ class Sandpile(DiGraph):
         """
         Compute the avalanche polynomial.  See ``self.avalanche_polynomial`` for details.
 
-        Examples::
+        EXAMPLES::
 
             sage: s = sandpiles.Complete(4)
             sage: s._set_avalanche_polynomial()
@@ -2737,7 +2738,18 @@ class Sandpile(DiGraph):
 
             sage: S = Sandpile({0: {}, 1: {2: 2}, 2: {0: 4, 1: 1}}, 0)
             sage: S.solve()
-            [[-0.707107 + 0.707107*I, 0.707107 - 0.707107*I], [-0.707107 - 0.707107*I, 0.707107 + 0.707107*I], [-I, -I], [I, I], [0.707107 + 0.707107*I, -0.707107 - 0.707107*I], [0.707107 - 0.707107*I, -0.707107 + 0.707107*I], [1, 1], [-1, -1]]
+            [[-0.707107000000000 + 0.707107000000000*I,
+              0.707107000000000 - 0.707107000000000*I],
+             [-0.707107000000000 - 0.707107000000000*I,
+              0.707107000000000 + 0.707107000000000*I],
+             [-I, -I],
+             [I, I],
+             [0.707107000000000 + 0.707107000000000*I,
+              -0.707107000000000 - 0.707107000000000*I],
+             [0.707107000000000 - 0.707107000000000*I,
+              -0.707107000000000 + 0.707107000000000*I],
+             [1, 1],
+             [-1, -1]]
             sage: len(_)
             8
             sage: S.group_order()
@@ -2754,7 +2766,7 @@ class Sandpile(DiGraph):
 
         L = singular.subst(self._ideal,
                 singular.var(singular.nvars(self._ring)), 1)
-        R = singular.ring(0, vars_, 'lp')
+        _ = singular.ring(0, vars_, 'lp')
         K = singular.fetch(self._ring, L)
         K = singular.groebner(K)
         singular.LIB('solve.lib')
@@ -3757,7 +3769,6 @@ class SandpileConfig(dict):
             ....:     m = m.add_random()
             ....:     m, f = m.stabilize(True)
             ....:     a.append(sum(f.values()))
-            ....:
             sage: p = list_plot([[log(i+1),log(a.count(i))] for i in [0..max(a)] if a.count(i)])
             sage: p.axes_labels(['log(N)','log(D(N))'])
             sage: t = text("Distribution of avalanche sizes", (2,2), rgbcolor=(1,0,0))
@@ -5126,41 +5137,39 @@ class SandpileDivisor(dict):
         lin_sys_zinhom= lin_sys + '.zinhom'
         lin_sys_log = lin_sys + '.log'
 
-        mat_file = open(lin_sys_mat,'w')
-        mat_file.write(str(n)+' ')
-        mat_file.write(str(n)+'\n')
-        for r in L:
-            mat_file.write(''.join(map(str,r)))
-            mat_file.write('\n')
-        mat_file.close()
+        with open(lin_sys_mat, 'w') as mat_file:
+            mat_file.write(str(n)+' ')
+            mat_file.write(str(n)+'\n')
+            for r in L:
+                mat_file.write(''.join(map(str,r)))
+                mat_file.write('\n')
         # relations file
-        rel_file = open(lin_sys_rel,'w')
-        rel_file.write('1 ')
-        rel_file.write(str(n)+'\n')
-        rel_file.write(''.join(['>']*n))
-        rel_file.write('\n')
-        rel_file.close()
+        with open(lin_sys_rel, 'w') as rel_file:
+            rel_file.write('1 ')
+            rel_file.write(str(n)+'\n')
+            rel_file.write('>'*n)
+            rel_file.write('\n')
         # right-hand side file
-        rhs_file = open(lin_sys_rhs,'w')
-        rhs_file.write('1 ')
-        rhs_file.write(str(n)+'\n')
-        rhs_file.write(''.join([str(-i) for i in self.values()]))
-        rhs_file.write('\n')
-        rhs_file.close()
+        with open(lin_sys_rhs, 'w') as rhs_file:
+            rhs_file.write('1 ')
+            rhs_file.write(str(n)+'\n')
+            rhs_file.write(''.join(str(-i) for i in self.values()))
+            rhs_file.write('\n')
         # sign file
-        sign_file = open(lin_sys_sign,'w')
-        sign_file.write('1 ')
-        sign_file.write(str(n)+'\n')
-        """
-        Conjecture: taking only 1s just below is OK, i.e., looking for solutions
-        with nonnegative entries.  The Laplacian has kernel of dimension 1,
-        generated by a nonnegative vector.  I would like to say that translating
-        by this vector, we transform any solution into a nonnegative solution.
-        What if the vector in the kernel does not have full support though?
-        """
-        sign_file.write(''.join(['2']*n))  # so maybe a 1 could go here
-        sign_file.write('\n')
-        sign_file.close()
+        with open(lin_sys_sign, 'w') as sign_file:
+            sign_file.write('1 ')
+            sign_file.write(str(n)+'\n')
+            """
+            Conjecture: taking only 1s just below is OK, i.e.,
+            looking for solutions with nonnegative entries.  The
+            Laplacian has kernel of dimension 1, generated by a
+            nonnegative vector.  I would like to say that translating
+            by this vector, we transform any solution into a
+            nonnegative solution.  What if the vector in the kernel
+            does not have full support though?
+            """
+            sign_file.write('2'*n)  # so maybe a 1 could go here
+            sign_file.write('\n')
         # compute
         try:
             os.system(path_to_zsolve+' -q ' + lin_sys + ' > ' + lin_sys_log)
@@ -6298,7 +6307,10 @@ def random_DAG(num_verts, p=0.5, weight_max=1):
 
     EXAMPLES::
 
+        sage: from sage.sandpiles.sandpile import random_DAG
         sage: d = DiGraph(random_DAG(5, .5)); d
+        doctest:...: DeprecationWarning: method random_DAG is deprecated. Please use digraphs.RandomDirectedAcyclicGraph instead.
+        See https://trac.sagemath.org/30479 for details.
         Digraph on 5 vertices
 
     TESTS:
@@ -6306,34 +6318,26 @@ def random_DAG(num_verts, p=0.5, weight_max=1):
     Check that we can construct a random DAG with the
     default arguments (:trac:`12181`)::
 
+        sage: from sage.sandpiles.sandpile import random_DAG
         sage: g = random_DAG(5);DiGraph(g)
         Digraph on 5 vertices
 
     Check that bad inputs are rejected::
 
+        sage: from sage.sandpiles.sandpile import random_DAG
         sage: g = random_DAG(5,1.1)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter p must satisfy 0 < p <= 1.
+        ValueError: the probability p must be in [0..1]
         sage: g = random_DAG(5,0.1,-1)
         Traceback (most recent call last):
         ...
-        ValueError: The parameter weight_max must be positive.
+        ValueError: parameter weight_max must be a positive integer
     """
-    if not(0 < p and p <= 1):
-        raise ValueError("The parameter p must satisfy 0 < p <= 1.")
-    weight_max=ZZ(weight_max)
-    if not(0 < weight_max):
-        raise ValueError("The parameter weight_max must be positive.")
-    g = {0:{}}
-    for i in range(1,num_verts):
-        out_edges = {}
-        while out_edges == {}:
-            for j in range(i):
-                if p > random():
-                    out_edges[j] = randint(1,weight_max)
-        g[i] = out_edges
-    return g
+    deprecation(30479, "method random_DAG is deprecated. Please use "
+                       "digraphs.RandomDirectedAcyclicGraph instead.")
+    D = digraphs.RandomDirectedAcyclicGraph(num_verts, p, weight_max=weight_max)
+    return D.to_dictionary(edge_labels=True)
 
 
 def glue_graphs(g, h, glue_g, glue_h):

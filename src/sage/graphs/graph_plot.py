@@ -11,7 +11,7 @@ All graphs have an associated Sage graphics object, which you can display::
     sage: P.show() # long time
 
 .. PLOT::
-    
+
     sphinx_plot(graphs.WheelGraph(15))
 
 If you create a graph in Sage using the ``Graph`` command, then plot that graph,
@@ -24,7 +24,7 @@ positioning vs. the Petersen graph constructed by this database::
     sage: petersen_spring.show() # long time
 
 .. PLOT::
-    
+
     petersen_spring = Graph(':I`ES@obGkqegW~')
     sphinx_plot(petersen_spring)
 
@@ -34,7 +34,7 @@ positioning vs. the Petersen graph constructed by this database::
     sage: petersen_database.show() # long time
 
 .. PLOT::
-    
+
     petersen_database = graphs.PetersenGraph()
     sphinx_plot(petersen_database)
 
@@ -109,17 +109,31 @@ previously::
 """
 
 layout_options =   {
-                    'layout': 'A layout algorithm -- one of : "acyclic", "circular" (plots the graph with vertices evenly distributed on a circle), "ranked", "graphviz", "planar", "spring" (traditional spring layout, using the graph\'s current positions as initial positions), or "tree" (the tree will be plotted in levels, depending on minimum distance for the root).',
-                    'iterations': 'The number of times to execute the spring layout algorithm.',
-                    'heights': 'A dictionary mapping heights to the list of vertices at this height.',
-                    'spring': 'Use spring layout to finalize the current layout.',
-                    'tree_root': 'A vertex designation for drawing trees. A vertex of the tree to be used as the root for the ``layout=\'tree\'`` option. If no root is specified, then one is chosen close to the center of the tree. Ignored unless ``layout=\'tree\'``',
-                    'tree_orientation': 'The direction of tree branches -- \'up\', \'down\', \'left\' or \'right\'.',
-                    'save_pos': 'Whether or not to save the computed position for the graph.',
-                    'dim': 'The dimension of the layout -- 2 or 3.',
-                    'prog': 'Which graphviz layout program to use -- one of "circo", "dot", "fdp", "neato", or "twopi".',
-                    'by_component': 'Whether to do the spring layout by connected component -- a boolean.',
-                    }
+    'layout': 'A layout algorithm -- one of : "acyclic", "circular" (plots the '
+        'graph with vertices evenly distributed on a circle), "ranked", '
+        '"graphviz", "planar", "spring" (traditional spring layout, using the '
+        'graph\'s current positions as initial positions), or "tree" (the tree '
+        'will be plotted in levels, depending on minimum distance for the root).',
+    'iterations': 'The number of times to execute the spring layout algorithm.',
+    'heights': 'A dictionary mapping heights to the list of vertices at this height.',
+    'spring': 'Use spring layout to finalize the current layout.',
+    'tree_root': 'A vertex designation for drawing trees. A vertex of the tree '
+        'to be used as the root for the ``layout=\'tree\'`` option. If no root '
+        'is specified, then one is chosen close to the center of the tree. '
+        'Ignored unless ``layout=\'tree\'``.',
+    'forest_roots': 'An iterable specifying which vertices to use as roots for '
+        'the ``layout=\'forest\'`` option. If no root is specified for a tree, '
+        'then one is chosen close to the center of the tree. '
+        'Ignored unless ``layout=\'forest\'``.',
+    'tree_orientation': 'The direction of tree branches -- \'up\', \'down\', '
+        '\'left\' or \'right\'.',
+    'save_pos': 'Whether or not to save the computed position for the graph.',
+    'dim': 'The dimension of the layout -- 2 or 3.',
+    'prog': 'Which graphviz layout program to use -- one of "circo", "dot", '
+        '"fdp", "neato", or "twopi".',
+    'by_component': 'Whether to do the spring layout by connected component '
+        '-- a boolean.',
+    }
 
 graphplot_options = layout_options.copy()
 
@@ -157,15 +171,14 @@ graphplot_options.update(
                     'graph_border': 'Whether or not to draw a frame around the graph.',
                     'edge_labels_background' : 'The color of the background of the edge labels'})
 
-from six import iteritems
 
 _PLOT_OPTIONS_TABLE = ""
-for key, value in iteritems(graphplot_options):
+for key, value in graphplot_options.items():
     _PLOT_OPTIONS_TABLE += "    ``"+str(key)+"`` | "+str(value)+"\n"
 __doc__ = __doc__.format(PLOT_OPTIONS_TABLE=_PLOT_OPTIONS_TABLE)
 
 
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2009   Emily Kirkman
 #                    2009   Robert L. Miller <rlmillster@gmail.com>
 #
@@ -178,12 +191,11 @@ __doc__ = __doc__.format(PLOT_OPTIONS_TABLE=_PLOT_OPTIONS_TABLE)
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.sage_object import SageObject
 from sage.plot.all import Graphics, scatter_plot, bezier_path, line, arrow, text, circle
 from math import sqrt, cos, sin, atan, pi
-from six import text_type as str
 
 DEFAULT_SHOW_OPTIONS = {
     "figsize"             : [4,4]
@@ -248,7 +260,7 @@ class GraphPlot(SageObject):
 
         """
         # Setting the default values if needed
-        for k, value in iteritems(DEFAULT_PLOT_OPTIONS):
+        for k, value in DEFAULT_PLOT_OPTIONS.items():
             if k not in options:
                 options[k] = value
         self._plot_components = {}
@@ -307,7 +319,7 @@ class GraphPlot(SageObject):
             Graphics object consisting of 14 graphics primitives
 
         .. PLOT::
-            
+
             g = Graph({0:[1,2], 2:[3], 4:[0,1]})
             g.graphplot(save_pos=True, layout='circular') # indirect doctest
             T = list(graphs.trees(7))
@@ -339,7 +351,7 @@ class GraphPlot(SageObject):
         self._pos = self._graph.layout(**self._options)
         # make sure the positions are floats (trac #10124)
         self._pos = {k: (float(v[0]), float(v[1]))
-                         for k, v in iteritems(self._pos)}
+                         for k, v in self._pos.items()}
 
     def set_vertices(self, **vertex_options):
         """
@@ -368,7 +380,7 @@ class GraphPlot(SageObject):
                 g = Graph({}, loops=True, multiedges=True, sparse=True)
                 g.add_edges([(0,0,'a'),(0,0,'b'),(0,1,'c'),(0,1,'d'),(0,1,'e'),(0,1,'f'),
                              (0,1,'f'),(2,1,'g'),(2,2,'h')])
-                GP = g.graphplot(vertex_size=100, edge_labels=True, color_by_label=True, 
+                GP = g.graphplot(vertex_size=100, edge_labels=True, color_by_label=True,
                                  edge_style='dashed')
                 GP.set_vertices(talk=True)
                 sphinx_plot(GP)
@@ -385,8 +397,6 @@ class GraphPlot(SageObject):
                 sphinx_plot(GP)
 
         """
-        from sage.misc.superseded import deprecation
-
         # Handle base vertex options
         voptions = {}
 
@@ -406,10 +416,6 @@ class GraphPlot(SageObject):
             vertex_color = '#fec7b8'
         else:
             vertex_color = self._options['vertex_color']
-
-        if ('vertex_colors' in self._options and
-            not isinstance(self._options['vertex_colors'], dict)):
-            deprecation(21048, "Use of vertex_colors=<string> is deprecated, use vertex_color=<string> and/or vertex_colors=<dict>.")
 
         if 'vertex_colors' not in self._options or self._options['vertex_colors'] is None:
             if self._options['partition'] is not None:
@@ -598,7 +604,8 @@ class GraphPlot(SageObject):
         """
         for arg in edge_options:
             self._options[arg] = edge_options[arg]
-        if 'edge_colors' in edge_options: self._options['color_by_label'] = False
+        if 'edge_colors' in edge_options:
+            self._options['color_by_label'] = False
         if self._options['edge_labels_background'] == "transparent":
             self._options['edge_labels_background'] = "None"
 
@@ -669,10 +676,10 @@ class GraphPlot(SageObject):
 
             # Add unspecified edges (default color black set in DEFAULT_PLOT_OPTIONS)
             for edge in self._graph.edge_iterator():
-                if (edge[0], edge[1], edge[2]) not in edges_drawn and \
-                    ( self._graph.is_directed() or
-                      (edge[1], edge[0], edge[2]) not in edges_drawn
-                    ):
+                if ((edge[0], edge[1], edge[2]) not in edges_drawn and
+                    (self._graph.is_directed() or
+                     (edge[1], edge[0], edge[2]) not in edges_drawn
+                    )):
                     if v_to_int[edge[0]] < v_to_int[edge[1]]:
                         key = (edge[0], edge[1])
                         head = 1
@@ -893,7 +900,7 @@ class GraphPlot(SageObject):
 
         """
         # Setting the default values if needed
-        for k, value in iteritems(DEFAULT_SHOW_OPTIONS):
+        for k, value in DEFAULT_SHOW_OPTIONS.items():
             if k not in kwds:
                 kwds[k] = value
 
@@ -945,12 +952,12 @@ class GraphPlot(SageObject):
                 x = float(cos(pi/2 + ((2*pi)/5)*i))
                 y = float(sin(pi/2 + ((2*pi)/5)*i))
                 pos_dict[i] = [x,y]
-            
+
             for i in range(5,10):
                 x = float(0.5*cos(pi/2 + ((2*pi)/5)*i))
                 y = float(0.5*sin(pi/2 + ((2*pi)/5)*i))
                 pos_dict[i] = [x,y]
-            
+
             pl = P.graphplot(pos=pos_dict, vertex_colors=d)
             sphinx_plot(pl)
 

@@ -1,8 +1,8 @@
-from __future__ import absolute_import
 from .graphics import Graphics
-from .plot import plot, graphics_array, list_plot, parametric_plot, polar_plot
-from .plot import plot_loglog, plot_semilogx, plot_semilogy
-from .plot import list_plot_loglog, list_plot_semilogx, list_plot_semilogy
+from .plot import (plot, graphics_array, multi_graphics, list_plot,
+                   parametric_plot, polar_plot, plot_loglog, plot_semilogx,
+                   plot_semilogy, list_plot_loglog, list_plot_semilogx,
+                   list_plot_semilogy)
 from .line import line, line2d
 from .arrow import arrow, arrow2d
 from .bar_chart import bar_chart

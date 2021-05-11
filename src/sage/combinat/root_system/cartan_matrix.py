@@ -25,8 +25,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
-from six import add_metaclass
 
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
@@ -43,8 +41,8 @@ from sage.sets.family import Family
 from sage.graphs.digraph import DiGraph
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class CartanMatrix(Matrix_integer_sparse, CartanType_abstract):
+class CartanMatrix(Matrix_integer_sparse, CartanType_abstract,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A (generalized) Cartan matrix.
 

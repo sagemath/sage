@@ -2,7 +2,6 @@
 r"""
 Abstract base class for Sage objects
 """
-from __future__ import absolute_import, print_function
 
 from sage.misc.persist import (_base_dumps, _base_save,
                                register_unpickle_override, make_None)
@@ -28,6 +27,10 @@ register_unpickle_override('sage.structure.generators', 'make_list_gens',
 
 
 __all__ = ['SageObject']
+
+
+# The _interface_init_ for these interfaces takes the interface as argument
+_interface_init_with_interface = set(['magma', 'macaulay2'])
 
 
 cdef class SageObject:
@@ -315,10 +318,19 @@ cdef class SageObject:
             1
             sage: type(_)
             <class 'sage.typeset.unicode_art.UnicodeArt'>
+
+        Check that breakpoints and baseline are preserved (:trac:`29202`)::
+
+            sage: F = FreeAbelianMonoid(index_set=ZZ)
+            sage: f = prod(F.gen(i) for i in range(5))
+            sage: s, t = ascii_art(f), unicode_art(f)
+            sage: s._breakpoints == t._breakpoints and s._baseline == t._baseline
+            True
         """
         from sage.typeset.unicode_art import UnicodeArt
-        lines = [unicode(z) for z in self._ascii_art_()]
-        return UnicodeArt(lines)
+        s = self._ascii_art_()
+        lines = [unicode(z) for z in s]
+        return UnicodeArt(lines, s._breakpoints, s._baseline)
 
     def __hash__(self):
         r"""
@@ -468,7 +480,7 @@ cdef class SageObject:
     #############################################################################
 
     def category(self):
-        from sage.categories.all import Objects
+        from sage.categories.objects import Objects
         return Objects()
 
     def _test_category(self, **options):
@@ -580,6 +592,14 @@ cdef class SageObject:
             ...
             AssertionError: Not implemented method: bla
 
+        Check that only errors triggered by ``AbstractMethod`` are caught
+        (:trac:`29694`)::
+
+            sage: class NotAbstract(SageObject):
+            ....:     @lazy_attribute
+            ....:     def bla(self):
+            ....:         raise NotImplementedError("not implemented")
+            sage: NotAbstract()._test_not_implemented_methods()
         """
         tester = self._tester(**options)
         try:
@@ -589,9 +609,9 @@ cdef class SageObject:
             for name in dir(self):
                 try:
                     getattr(self, name)
-                except NotImplementedError:
-                    # It would be best to make sure that this NotImplementedError was triggered by AbstractMethod
-                    tester.fail("Not implemented method: %s"%name)
+                except NotImplementedError as e:
+                    if 'abstract method' in str(e):
+                        tester.fail("Not implemented method: %s" % name)
                 except Exception:
                     pass
         finally:
@@ -638,7 +658,7 @@ cdef class SageObject:
         """
         Return coercion of self to an object of the interface I.
 
-        The result of coercion is cached, unless self is not a C
+        The result of coercion is cached, unless self is a C
         extension class or ``self._interface_is_cached_()`` returns
         False.
         """
@@ -660,7 +680,10 @@ cdef class SageObject:
         nm = I.name()
         init_func = getattr(self, '_%s_init_' % nm, None)
         if init_func is not None:
-            s = init_func()
+            if nm in _interface_init_with_interface:
+                s = init_func(I)
+            else:
+                s = init_func()
         else:
             try:
                 s = self._interface_init_(I)
@@ -696,6 +719,17 @@ cdef class SageObject:
         import sage.interfaces.gap
         I = sage.interfaces.gap.gap
         return self._interface_init_(I)
+
+    def _libgap_(self):
+        from sage.libs.gap.libgap import libgap
+        return libgap.eval(self._libgap_init_())
+
+    def _libgap_init_(self):
+        """
+        For consistency's sake we provide a ``_libgap_init_`` but in most cases
+        we can use the same as ``_gap_init_`` here.
+        """
+        return self._gap_init_()
 
     def _gp_(self, G=None):
         if G is None:
@@ -820,10 +854,11 @@ cdef class SageObject:
             G = sage.interfaces.macaulay2.macaulay2
         return self._interface_(G)
 
-    def _macaulay2_init_(self):
-        import sage.interfaces.macaulay2
-        I = sage.interfaces.macaulay2.macaulay2
-        return self._interface_init_(I)
+    def _macaulay2_init_(self, macaulay2=None):
+        if macaulay2 is None:
+            import sage.interfaces.macaulay2
+            macaulay2 = sage.interfaces.macaulay2.macaulay2
+        return self._interface_init_(macaulay2)
 
     def _maple_(self, G=None):
         if G is None:
@@ -880,8 +915,8 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: a = 2/3
-            sage: a._r_init_()
+            sage: a = 2/3                                    # optional - rpy2
+            sage: a._r_init_()                               # optional - rpy2
             '2/3'
         """
         import sage.interfaces.r

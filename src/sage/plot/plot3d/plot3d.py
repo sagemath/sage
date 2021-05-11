@@ -141,10 +141,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 import inspect
-
-from six import iteritems
 
 from .tri_plot import TrianglePlot
 from .index_face_set import IndexFaceSet
@@ -906,6 +903,14 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         var('x y')
         sphinx_plot(plot3d(sin(x-y)*y*cos(x),(x,-3,3),(y,-3,3), mesh=True))
 
+    The same with thicker mesh lines (not supported in all viewers)::
+
+        sage: var('x,y')
+        (x, y)
+        sage: plot3d(sin(x-y)*y*cos(x),(x,-3,3),(y,-3,3), mesh=True,
+        ....:        thickness=2, viewer='threejs')
+        Graphics3d Object
+
     Two wobby translucent planes::
 
         sage: x,y = var('x,y')
@@ -1035,6 +1040,13 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: range variables should be distinct, but there are duplicates
+
+    Verify that :trac:`7423` is fixed::
+
+        sage: f(x,y)=ln(x)
+        sage: P=plot3d(f,(x,0,1),(y,0,1))
+        sage: P
+        Graphics3d Object
     """
     if transformation is not None:
         params=None
@@ -1176,7 +1188,7 @@ def plot3d_adaptive(f, x_range, y_range, color="automatic",
                 span = (len(texture)-1) / (max_z - min_z)    # max to avoid dividing by 0
             parts = P.partition(lambda x, y, z: int((z-min_z)*span))
         all = []
-        for k, G in iteritems(parts):
+        for k, G in parts.items():
             G.set_texture(texture[k], opacity=opacity)
             all.append(G)
         P = Graphics3dGroup(all)

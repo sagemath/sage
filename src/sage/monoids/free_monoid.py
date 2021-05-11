@@ -14,17 +14,15 @@ generators. You can print the generators as arbitrary strings using
 the optional ``names`` argument to the
 ``FreeMonoid`` function.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
-from six import integer_types
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.structure.category_object import normalize_names
@@ -35,13 +33,12 @@ from .monoid import Monoid_class
 from sage.combinat.words.finite_word import FiniteWord_class
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.decorators import rename_keyword
 from sage.rings.all import ZZ
 
 
 def is_FreeMonoid(x):
     """
-    Return True if `x` is a free monoid.
+    Return ``True`` if `x` is a free monoid.
 
     EXAMPLES::
 
@@ -80,7 +77,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
     - ``index_set`` -- an indexing set for the generators; if an
       integer `n`, than this becomes `\{0, 1, \ldots, n-1\}`
 
-    -  ``names`` -- names of generators
+    - ``names`` -- names of generators
 
     - ``commutative`` -- (default: ``False``) whether the free
       monoid is commutative or not
@@ -150,7 +147,8 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             from sage.monoids.free_abelian_monoid import FreeAbelianMonoid
             return FreeAbelianMonoid(index_set, names, **kwds)
 
-        if isinstance(index_set, str): # Swap args (this works if names is None as well)
+        # Swap args (this works if names is None as well)
+        if isinstance(index_set, str):
             names, index_set = index_set, names
 
         if index_set is None and names is not None:
@@ -181,7 +179,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
         - ``n`` -- number of generators
 
-        -  ``names`` -- names of generators
+        - ``names`` -- names of generators
 
         TESTS::
 
@@ -190,16 +188,15 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             sage: F.<x,y> = FreeMonoid()
             sage: TestSuite(F).run()
         """
-        if not isinstance(n, integer_types + (Integer,)):
-            raise TypeError("n (=%s) must be an integer."%n)
+        if not isinstance(n, (int, Integer)):
+            raise TypeError("n (=%s) must be an integer" % n)
         if n < 0:
-            raise ValueError("n (=%s) must be nonnegative."%n)
+            raise ValueError("n (=%s) must be nonnegative" % n)
         self.__ngens = int(n)
-        #self._assign_names(names)
-        Monoid_class.__init__(self,names)
+        Monoid_class.__init__(self, names)
 
     def _repr_(self):
-        return "Free monoid on %s generators %s"%(self.__ngens,self.gens())
+        return "Free monoid on %s generators %s" % (self.__ngens, self.gens())
 
     def _element_constructor_(self, x, check=True):
         """
@@ -220,7 +217,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             sage: F(0)
             Traceback (most recent call last):
             ...
-            TypeError: Argument x (= 0) is of the wrong type.
+            TypeError: argument x (= 0) is of the wrong type
 
         An example with a list::
 
@@ -235,13 +232,18 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             a^2*b^2*c*a*b*a*c
             sage: F(Word([]))
             1
+
+        TESTS::
+
+            sage: F(F(w), check=False)
+            a^2*b^2*c*a*b*a*c
         """
-        ## There should really some careful type checking here...
+        # There should really be some careful type checking here...
         if isinstance(x, FreeMonoidElement) and x.parent() is self:
             return x
         if isinstance(x, FreeMonoidElement) and x.parent() == self:
-            return self.element_class(self,x._element_list,check)
-        if isinstance(x, integer_types + (Integer,)) and x == 1:
+            return self.element_class(self, x._element_list, check)
+        if isinstance(x, (int, Integer)) and x == 1:
             return self.element_class(self, x, check)
         if isinstance(x, FiniteWord_class):
             d = self.gens_dict()
@@ -249,18 +251,18 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         if isinstance(x, list):
             return self.element_class(self, x, check)
 
-        raise TypeError("Argument x (= %s) is of the wrong type."%x)
+        raise TypeError("argument x (= %s) is of the wrong type" % x)
 
     def __contains__(self, x):
         return isinstance(x, FreeMonoidElement) and x.parent() == self
 
-    def gen(self,i=0):
+    def gen(self, i=0):
         """
         The `i`-th generator of the monoid.
 
         INPUT:
 
-        -  ``i`` - integer (default: 0)
+        - ``i`` -- integer (default: 0)
 
         EXAMPLES::
 
@@ -272,12 +274,13 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             sage: F.gen(5)
             Traceback (most recent call last):
             ...
-            IndexError: Argument i (= 5) must be between 0 and 2.
+            IndexError: argument i (= 5) must be between 0 and 2
         """
         n = self.__ngens
         if i < 0 or not i < n:
-            raise IndexError("Argument i (= %s) must be between 0 and %s."%(i, n-1))
-        return self.element_class(self,[(Integer(i),Integer(1))])
+            msg = "argument i (= %s) must be between 0 and %s"
+            raise IndexError(msg % (i, n - 1))
+        return self.element_class(self, [(Integer(i), Integer(1))])
 
     def ngens(self):
         """
@@ -293,17 +296,21 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
 
     def cardinality(self):
         r"""
-        Return the cardinality of ``self``, which is `\infty`.
+        Return the cardinality of ``self``.
+
+        This is `\infty` if there is at least one generator.
 
         EXAMPLES::
 
             sage: F = FreeMonoid(2005, 'a')
             sage: F.cardinality()
             +Infinity
+
+            sage: F = FreeMonoid(0, [])
+            sage: F.cardinality()
+            1
         """
         if self.__ngens == 0:
-            from sage.rings.all import ZZ
-            return ZZ.one()
+            return Integer(1)
         from sage.rings.infinity import infinity
         return infinity
-

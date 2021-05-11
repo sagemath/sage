@@ -1,4 +1,4 @@
-$(PYTHON) markupsafe docutils | setuptools pip
+$(PYTHON) markupsafe docutils | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

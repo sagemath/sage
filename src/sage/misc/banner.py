@@ -3,19 +3,18 @@ r"""
 SageMath version and banner info
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import sys
 
-from sage.env import (SAGE_VERSION, SAGE_DATE, SAGE_VERSION_BANNER,
-                      SAGE_SRC, SAGE_BANNER)
+from sage.env import (SAGE_VERSION, SAGE_VERSION_BANNER, SAGE_BANNER)
+
 
 def version():
     """
@@ -231,7 +230,7 @@ def require_version(major, minor=0, tiny=0, prerelease=False,
         return True
     else:
         if print_message:
-            print("This code requires at least version {} of SageMath to run correctly.".
-                   format(major + 0.1 * minor + 0.01 * tiny))
+            txt = "This code requires at least version {} of SageMath to run correctly."
+            print(txt.format(major + 0.1 * minor + 0.01 * tiny))
             print("You are running version {}.".format(SAGE_VERSION))
         return False

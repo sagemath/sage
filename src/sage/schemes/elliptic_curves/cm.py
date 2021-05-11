@@ -495,11 +495,14 @@ def discriminants_with_bounded_class_number(hmax, B=None, proof=None):
 
     # This lower bound gets used in an inner loop below.
     from math import log
+
     def lb(f):
         """Lower bound on euler_phi."""
         # 1.79 > e^gamma = 1.7810724...
-        if f <= 1: return 0  # don't do log(log(1)) = log(0)
-        return f/(1.79*log(log(f)) + 3.0/log(log(f)))
+        if f <= 1:
+            return 0  # don't do log(log(1)) = log(0)
+        llf = log(log(f))
+        return f/(1.79*llf + 3.0/llf)
 
     for D in range(-B, -2):
         D = Integer(D)

@@ -16,7 +16,6 @@ Interface to the Gnuplot interpreter
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 import os
 import time
@@ -179,11 +178,11 @@ class Gnuplot(SageObject):
         else:
             self(cmd)
 
-
     def interact(self, cmd):
         from sage.misc.all import SAGE_TMP
         file = os.path.join(SAGE_TMP, 'gnuplot')
-        open(file, 'w').write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')
+        with open(file, 'w') as f:
+            f.write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')
         os.system('sage-native-execute gnuplot -persist %s'%file)
 
     def console(self):

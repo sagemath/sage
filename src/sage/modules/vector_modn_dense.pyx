@@ -1,5 +1,5 @@
 """
-Vectors with integer mod n entries, with n small.
+Vectors with integer mod n entries, with n small
 
 EXAMPLES::
 
@@ -79,24 +79,41 @@ TESTS::
     sage: isinstance(hash(w), int)
     True
 
+Test that :trac:`28042` is fixed::
+
+    sage: p = 193379
+    sage: K = GF(p)
+    sage: a = K(1)
+    sage: b = K(191495)
+    sage: c = K(109320)
+    sage: d = K(167667)
+    sage: e = 103937
+    sage: a*c+b*d-e
+    102041
+    sage: vector([a,b]) * vector([c,d]) - e
+    102041
+    sage: type(vector([a,b]) * vector([c,d])) # py3
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+    sage: type(vector([a,b]) * vector([c,d])) # py2
+    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+
 AUTHOR:
 
 - William Stein (2007)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
-
+from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.stdint cimport INTEGER_MOD_INT64_LIMIT
 
 MAX_MODULUS = INTEGER_MOD_INT64_LIMIT
@@ -147,7 +164,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
 
     def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
-        self._is_mutable = 1
+        self._is_immutable = 0
         if not parent is None:
             self._init(parent.degree(), parent, parent.base_ring().order())
 
@@ -178,7 +195,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __dealloc__(self):
         sig_free(self._entries)
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
 
@@ -195,14 +212,14 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         """
         cdef Py_ssize_t i
         cdef mod_int l, r
-        for i from 0 <= i < left.degree():
+        for i in range(left.degree()):
             l = left._entries[i]
             r = (<Vector_modn_dense>right)._entries[i]
             if l < r:
-                return -1
+                return rich_to_bool(op, -1)
             elif l > r:
-                return 1
-        return 0
+                return rich_to_bool(op, 1)
+        return rich_to_bool(op, 0)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -257,7 +274,8 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
 
 
     def __reduce__(self):
-        return unpickle_v1, (self._parent, self.list(), self._degree, self._p, self._is_mutable)
+        return unpickle_v1, (self._parent, self.list(), self._degree,
+                             self._p, not self._is_immutable)
 
     cpdef _add_(self, right):
         cdef Vector_modn_dense z, r
@@ -279,17 +297,25 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         return z
 
     cpdef _dot_product_(self, Vector right):
-        cdef Py_ssize_t i
+        cdef size_t i
         cdef IntegerMod_int n
+        cdef IntegerMod_int64 m
         cdef Vector_modn_dense r = right
-        n =  IntegerMod_int.__new__(IntegerMod_int)
-        IntegerMod_abstract.__init__(n, self.base_ring())
-        n.ivalue = 0
 
-        for i from 0 <= i < self._degree:
-            n.ivalue = (n.ivalue + self._entries[i] * r._entries[i]) % self._p
-
-        return n
+        if use_32bit_type(self._p):
+            n =  IntegerMod_int.__new__(IntegerMod_int)
+            IntegerMod_abstract.__init__(n, self.base_ring())
+            n.ivalue = 0
+            for i in range(self._degree):
+                n.ivalue = (n.ivalue + self._entries[i] * r._entries[i]) % self._p
+            return n
+        else:
+            m = IntegerMod_int64.__new__(IntegerMod_int64)
+            IntegerMod_abstract.__init__(m, self.base_ring())
+            m.ivalue = 0
+            for i in range(self._degree):
+                m.ivalue = (m.ivalue + self._entries[i] * r._entries[i]) % self._p
+            return m
 
     cpdef _pairwise_product_(self, Vector right):
         """
@@ -349,5 +375,5 @@ def unpickle_v1(parent, entries, degree, p, is_mutable):
     v._init(degree, parent, p)
     for i from 0 <= i < degree:
         v._entries[i] = entries[i]
-    v._is_mutable = is_mutable
+    v._is_immutable = not is_mutable
     return v

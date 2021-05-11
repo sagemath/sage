@@ -1,14 +1,29 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 
 import optparse
 import os
 import sys
 
 # Note: the DOT_SAGE and SAGE_STARTUP_FILE environment variables have already been set by sage-env
-DOT_SAGE = os.environ['DOT_SAGE']
+DOT_SAGE = os.environ.get('DOT_SAGE', os.path.join(os.environ.get('HOME'),'.sage'))
+SAGE_ROOT = os.environ.get('SAGE_ROOT')
 
 # Override to not pick up user configuration, see Trac #20270
 os.environ['SAGE_STARTUP_FILE'] = os.path.join(DOT_SAGE, 'init-doctests.sage')
+
+
+def _get_optional_defaults():
+    """Return the default value for the --optional flag."""
+    optional = ['sage', 'dochtml', 'optional']
+
+    # This should be good-enough to determine if we are in a sage source
+    # repository working tree
+    if (SAGE_ROOT and os.path.isdir(SAGE_ROOT) and
+            os.path.exists(os.path.join(SAGE_ROOT, '.git')) and
+            os.path.isfile(os.path.join(SAGE_ROOT, 'sage'))):
+        optional.append('build')
+
+    return ','.join(optional)
 
 
 if __name__ == "__main__":
@@ -28,14 +43,8 @@ if __name__ == "__main__":
         callback=optional_argument, callback_args=(int, 0), nargs=0,
         metavar="N", help="tests in parallel using N threads with 0 interpreted as max(2, min(8, cpu_count()))")
     parser.add_option("-T", "--timeout", type=int, default=-1, help="timeout (in seconds) for doctesting one file, 0 for no timeout")
-    parser.add_option("-m", "--memlimit", type=int, default=3300,
-                      help='maximum virtual memory to allow each test '
-                           'process, in megabytes; no limit if zero or less, '
-                           'but tests tagged "high mem" are skipped if no limit '
-                           'is set (default: 3300 MB)')
     parser.add_option("-a", "--all", action="store_true", default=False, help="test all files in the Sage library")
     parser.add_option("--logfile", metavar="FILE", help="log all output to FILE")
-    parser.add_option("--sagenb", action="store_true", default=False, help="test all files from the Sage notebook sources")
 
     parser.add_option("-l", "--long", action="store_true", default=False, help="include lines with the phrase 'long time'")
     parser.add_option("-s", "--short", dest="target_walltime", default=None, action="callback",
@@ -47,16 +56,19 @@ if __name__ == "__main__":
     # By default, include all tests marked 'dochtml' -- see
     # https://trac.sagemath.org/ticket/25345 and
     # https://trac.sagemath.org/ticket/26110:
-    parser.add_option("--optional", metavar="PKGS", default="sage,dochtml,optional",
+    parser.add_option("--optional", metavar="PKGS", default=_get_optional_defaults(),
         help='only run tests including one of the "# optional" tags listed in PKGS; '
              'if "sage" is listed, will also run the standard doctests; '
              'if "dochtml" is listed, will also run the tests relying on the HTML documentation; '
              'if "optional" is listed, will also run tests for installed optional (new-style) packages; '
              'if "external" is listed, will also run tests for available external software; '
+             'if "build" is listed, will also run tests specific to Sage\'s build/packaging system; '
              'if set to "all", then all tests will be run')
     parser.add_option("--randorder", type=int, metavar="SEED", help="randomize order of tests")
+    parser.add_option("--random-seed", dest="random_seed", type=int, metavar="SEED", help="random seed for fuzzing doctests")
     parser.add_option("--global-iterations", "--global_iterations", type=int, default=0, help="repeat the whole testing process this many times")
     parser.add_option("--file-iterations", "--file_iterations", type=int, default=0, help="repeat each file this many times, stopping on the first failure")
+    parser.add_option("--environment", type=str, default="sage.repl.ipython_kernel.all_jupyter", help="name of a module that provides the global environment for tests")
 
     parser.add_option("-i", "--initial", action="store_true", default=False, help="only show the first failure in each file")
     parser.add_option("--exitfirst", action="store_true", default=False, help="end the test run immediately after the first failure or unexpected exception")
@@ -112,50 +124,19 @@ if __name__ == "__main__":
 
     parser.set_usage("sage -t [options] filenames")
 
-
     options, args = parser.parse_args()
 
-    if len(args) == 0 and not (options.all or options.sagenb or options.new):
+    if not args and not (options.all or options.new):
         parser.print_help()
         sys.exit(2)
 
-    # Ensure that all doctests can be run with virtual memory limited to 3300
-    # MiB (or a user-provided value). We must set this limit before starting
-    # Sage. Note that this is a per-process limit, so we do not need to worry
-    # about running multiple doctest processes in parallel. It is in
-    # particular doctests in src/sage/schemes/elliptic_curves/heegner.py
-    # which need this much memory.
-    memlimit = options.memlimit << 20
-
-    # Python's resource module only supports limits up to sys.maxsize,
-    # even if the OS does support higher limits.
-    if memlimit > 0 and memlimit <= sys.maxsize:
-        import resource
-        lim, hard = resource.getrlimit(resource.RLIMIT_AS)
-        if lim == resource.RLIM_INFINITY or lim > memlimit:
-            try:
-                resource.setrlimit(resource.RLIMIT_AS, (memlimit, hard))
-            except ValueError:
-                options.memlimit = -1
-                if sys.platform != 'cygwin':
-                    # RLIMIT_AS is not currently supported on Cygwin so
-                    # this will probably fail there:
-                    # https://trac.sagemath.org/ticket/23979
-                    raise
-            else:
-                if resource.RLIMIT_AS == getattr(resource, 'RLIMIT_RSS', None):
-                    # On some platforms (e.g. OSX) RLIMIT_AS is just an alias
-                    # for RLIMIT_RSS (see
-                    # https://trac.sagemath.org/ticket/24190)
-                    # In this case we still call setrlimit, but then disable
-                    # high mem tests since we don't want such tests to actually
-                    # cause us to run out of physical memory, leading to system
-                    # instability (as opposed to virtual memory allocs failing)
-                    options.memlimit = -1
-
     # Limit the number of threads to 2 to save system resources.
-    # See Trac #23713 and #23892
-    os.environ["OMP_NUM_THREADS"] = "2"
+    # See Trac #23713, #23892, #30351
+    if sys.platform == 'darwin':  
+        os.environ["OMP_NUM_THREADS"] = "1"
+    else:
+        os.environ["OMP_NUM_THREADS"] = "2"
+
     os.environ["SAGE_NUM_THREADS"] = "2"
 
     from sage.doctest.control import DocTestController

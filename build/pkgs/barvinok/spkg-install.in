@@ -1,0 +1,16 @@
+cd src
+
+if [ -n "$SAGE_GMP_PREFIX" ]; then
+   GMP_CONFIGURE="--with-gmp-prefix=$SAGE_GMP_PREFIX"
+fi
+if [ -n "$SAGE_NTL_PREFIX" ]; then
+   NTL_CONFIGURE="--with-ntl-prefix=$SAGE_NTL_PREFIX"
+fi
+
+sdh_configure $GMP_CONFIGURE \
+              $NTL_CONFIGURE \
+              --with-isl=system               \
+              --with-polylib=system           \
+              --enable-shared-barvinok
+sdh_make
+sdh_make_install

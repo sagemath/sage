@@ -40,7 +40,6 @@ AUTHORS:
     -- William Stein (first version)
     -- William Stein (2007-06-20): significant improvements.
 """
-from __future__ import absolute_import
 
 ##########################################################################
 #
@@ -48,7 +47,7 @@ from __future__ import absolute_import
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
 
@@ -57,6 +56,7 @@ import random
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement, gc_disabled
 from sage.structure.element import RingElement, parent
 from sage.docs.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
 
 
 class Lisp(Expect):
@@ -387,7 +387,7 @@ class Lisp(Expect):
 # Inherit from RingElement to make __pow__ work
 @instancedoc
 class LispElement(RingElement, ExpectElement):
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         EXAMPLES::
 
@@ -411,13 +411,13 @@ class LispElement(RingElement, ExpectElement):
             other = P(other)
 
         if P.eval('(= %s %s)'%(self.name(), other.name())) == P._true_symbol():
-            return 0
+            return rich_to_bool(op, 0)
         elif P.eval('(< %s %s)'%(self.name(), other.name())) == P._true_symbol():
-            return -1
+            return rich_to_bool(op, -1)
         else:
-            return 1
+            return rich_to_bool(op, 1)
 
-    def bool(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -427,8 +427,14 @@ class LispElement(RingElement, ExpectElement):
             False
             sage: bool(lisp(2))
             True
+            sage: bool(lisp('T'))
+            True
+            sage: bool(lisp('NIL'))
+            False
         """
-        return self != 0
+        return self != 0 and repr(self) != 'NIL'
+
+    __nonzero__ = __bool__
 
     def _add_(self, right):
         """

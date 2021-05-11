@@ -1,0 +1,2 @@
+# gentoo uses 3.2.1
+sphinx >=3, <3.3

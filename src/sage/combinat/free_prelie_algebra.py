@@ -15,7 +15,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.categories.lie_algebras import LieAlgebras
@@ -32,12 +31,12 @@ from sage.combinat.rooted_tree import (RootedTrees, RootedTree,
                                        LabelledRootedTrees,
                                        LabelledRootedTree)
 
-from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
 from sage.sets.family import Family
 from sage.structure.coerce_exceptions import CoercionException
+from sage.rings.infinity import Infinity
 
 
 class FreePreLieAlgebra(CombinatorialFreeModule):
@@ -177,7 +176,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             True
         """
         if names is not None:
-            if ',' in names:
+            if isinstance(names, str) and ',' in names:
                 names = [u for u in names if u != ',']
             names = Alphabet(names)
 
@@ -243,16 +242,32 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
 
             sage: algebras.FreePreLie(QQ, '@')  # indirect doctest
             Free PreLie algebra on one generator ['@'] over Rational Field
+
+            sage: algebras.FreePreLie(QQ, ZZ)  # indirect doctest
+            Free PreLie algebra on generators indexed by Integer Ring
+            over Rational Field
+
+            sage: enum = EnumeratedSets().Infinite().example()
+            sage: algebras.FreePreLie(QQ, enum)  # indirect doctest
+            Free PreLie algebra on generators indexed by An example of an
+            infinite enumerated set: the non negative integers
+            over Rational Field
         """
         n = self.algebra_generators().cardinality()
-        if n == 1:
+        finite = bool(n < Infinity)
+        if not finite:
+            gen = "generators indexed by"
+        elif n == 1:
             gen = "one generator"
         else:
             gen = "{} generators".format(n)
         s = "Free PreLie algebra on {} {} over {}"
-        try:
-            return s.format(gen, self._alphabet.list(), self.base_ring())
-        except NotImplementedError:
+        if finite:
+            try:
+                return s.format(gen, self._alphabet.list(), self.base_ring())
+            except NotImplementedError:
+                return s.format(gen, self._alphabet, self.base_ring())
+        else:
             return s.format(gen, self._alphabet, self.base_ring())
 
     def gen(self, i):
@@ -715,7 +730,7 @@ class PreLieFunctor(ConstructionFunctor):
 
         def action(x):
             return codom._from_dict({a: f(b)
-                                     for a, b in iteritems(x.monomial_coefficients())})
+                                     for a, b in x.monomial_coefficients().items()})
         return dom.module_morphism(function=action, codomain=codom)
 
     def __eq__(self, other):

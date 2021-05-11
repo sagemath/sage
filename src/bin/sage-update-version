@@ -36,6 +36,8 @@ SAGE_VERSION=`echo "$1" | sed 's/^sage-//'`
 SAGE_RELEASE_DATE=`date -u +'%Y-%m-%d'`
 SAGE_VERSION_BANNER="SageMath version $SAGE_VERSION, Release Date: $SAGE_RELEASE_DATE"
 
+echo $SAGE_VERSION | tee "$SAGE_SRC/VERSION.txt" > "$SAGE_ROOT/build/pkgs/sagelib/package-version.txt"
+
 # Update Sage version file for Python in SAGE_SRC/sage
 cat <<EOF > "$SAGE_SRC/sage/version.py"
 # Sage version information for Python scripts
@@ -58,15 +60,23 @@ EOF
 echo "$SAGE_VERSION_BANNER" > "$SAGE_ROOT/VERSION.txt"
 
 # Regenerate auto-generated files tarball
-"$SAGE_ROOT/bootstrap" -i -s
+"$SAGE_ROOT/bootstrap" -s
+
+# Create json file for Zenodo
+export SAGE_VERSION
+export SAGE_RELEASE_DATE
+envsubst <"$SAGE_ROOT/.zenodo.json.in" >"$SAGE_ROOT/.zenodo.json"
 
 # Commit auto-generated changes
 git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_ROOT/VERSION.txt" \
+    "$SAGE_ROOT/.zenodo.json" \
     "$SAGE_SRC/sage/version.py" \
+    "$SAGE_SRC/VERSION.txt" \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \
     "$SAGE_ROOT/build/pkgs/configure/package-version.txt" \
+    "$SAGE_ROOT/build/pkgs/sagelib/package-version.txt" \
     || die "Error committing to the repository."
 
 git tag -a "$SAGE_VERSION" -m "$SAGE_VERSION_BANNER" \

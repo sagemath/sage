@@ -50,6 +50,7 @@ class TestSuite(object):
         running ._test_associativity() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -298,7 +299,7 @@ class TestSuite(object):
                 except catch_exception as e:
                     failed.append(method_name)
                     if isinstance(e, TestSuiteFailure):
-                        # The failure occured in a nested testsuite
+                        # The failure occurred in a nested testsuite
                         # which has already reported the details of
                         # that failure
                         if not tester._verbose:
@@ -547,10 +548,10 @@ class InstanceTester(unittest.TestCase):
         You can use ``max_samples`` to sample at random, instead of in order::
 
             sage: tester = InstanceTester(ZZ, elements = srange(8), max_samples = 4)
-            sage: list(tester.some_elements())
-            [0, 3, 7, 1]
-            sage: list(tester.some_elements(repeat=2))
-            [(1, 4), (3, 1), (4, 5), (5, 0)]
+            sage: all(t in srange(8) for t in tester.some_elements())
+            True
+            sage: all(s in srange(8) and t in srange(8) for s,t in tester.some_elements(repeat=2))
+            True
 
         Test for :trac:`15919`, :trac:`16244`::
 

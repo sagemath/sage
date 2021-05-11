@@ -34,7 +34,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
 from sage.rings.integer_ring import ZZ
 import os
@@ -241,27 +240,27 @@ class FourTi2(object):
         EXAMPLES::
 
             sage: from sage.interfaces.four_ti_2 import four_ti_2
-            sage: pr = four_ti_2._process_input( \
-            ....:     {'project': "test_file", \
-            ....:      'self': None, \
+            sage: pr = four_ti_2._process_input(
+            ....:     {'project': "test_file",
+            ....:      'self': None,
             ....:      'tst': [[1,2,3],[3,4,5]]})
             sage: four_ti_2.read_matrix("test_file.tst")
             [1 2 3]
             [3 4 5]
         """
-        kwds.pop('self', None)
-
         # Get the project
-        project = kwds.pop('project', None)
+        project = kwds.get('project', None)
         if project is None:
             project = self.temp_project()
 
-        for ext, value in iteritems(kwds):
+        for ext, value in kwds.items():
             if value is None:
+                continue
+            if ext == "project" or ext == "self":
                 continue
 
             if (isinstance(value, list) and
-                not (len(value) and isinstance(value[0], list))):
+                not (value and isinstance(value[0], list))):
                 self.write_single_row(value, project + "." + ext)
             else:
                 self.write_matrix(value, project + "." + ext)

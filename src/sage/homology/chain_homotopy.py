@@ -31,7 +31,6 @@ Such a chain homotopy provides a strong relation between the chain
 complexes `C` and `D`; for example, their homology groups are
 isomorphic.
 """
-from __future__ import absolute_import
 
 ########################################################################
 #       Copyright (C) 2015 John H. Palmieri <palmieri@math.washington.edu>

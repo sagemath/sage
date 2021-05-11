@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 
 from .matroid cimport Matroid
 
@@ -7,8 +6,8 @@ cdef class MatroidUnion(Matroid):
     r"""
     Matroid Union.
 
-    The matroid union of a set of matroids `\{(E_1,I_1),\ldots,(E_n,I_n)\}` is 
-    a matroid `(E,I)` where `E= \bigcup_{i=1}^n E_i` and 
+    The matroid union of a set of matroids `\{(E_1,I_1),\ldots,(E_n,I_n)\}` is
+    a matroid `(E,I)` where `E= \bigcup_{i=1}^n E_i` and
 
         `I= \{\bigcup_{i=1}^n J_i | J_i \in I_i \}`.
 
@@ -232,7 +231,7 @@ cdef class PartitionMatroid(Matroid):
     Partition Matroid.
 
     Given a set of disjoint sets `S=\{S_1,\ldots,S_n\}`, the partition matroid
-    on `S` is `(E,I)` where `E=\bigcup_{i=1}^n S_i` and 
+    on `S` is `(E,I)` where `E=\bigcup_{i=1}^n S_i` and
 
         `I= \{X| |X\cap S_i|\leq 1,X\subset E \}`.
 
@@ -316,7 +315,7 @@ cdef class PartitionMatroid(Matroid):
             sage: M._rank([1,2])
             1
         """
-        return len(set(map(self.p.get,X)))
+        return len(set(map(self.p.get, X)))
 
     def _repr_(self):
         """
@@ -328,5 +327,4 @@ cdef class PartitionMatroid(Matroid):
             sage: PartitionMatroid([[1,2,3],[4,5,6]])
             Partition Matroid of rank 2 on 6 elements
         """
-        S = "Partition "+Matroid._repr_(self)
-        return S
+        return "Partition " + Matroid._repr_(self)

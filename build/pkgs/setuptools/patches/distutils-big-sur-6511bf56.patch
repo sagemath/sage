@@ -1,0 +1,29 @@
+Adapted from:
+
+From 6511bf56b9043ea3ce8b0c329a6dc8e77e69bce4 Mon Sep 17 00:00:00 2001
+From: FX Coudert <fxcoudert@gmail.com>
+Date: Sun, 29 Nov 2020 16:26:44 +0100
+Subject: [PATCH] setup.py: fix for MACOSX_DEPLOYMENT_TARGET=11
+
+---
+ Lib/distutils/spawn.py                |  4 ++--
+ Lib/distutils/tests/test_build_ext.py | 10 +++++++---
+ Lib/test/test_posix.py                |  2 +-
+ setup.py                              |  2 +-
+ 4 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/Lib/distutils/spawn.py b/Lib/distutils/spawn.py
+index 0d1bd0391e6f1..f50edd2da9710 100644
+--- a/setuptools/_distutils/spawn.py
++++ b/setuptools/_distutils/spawn.py
+@@ -54,8 +54,8 @@ def spawn(cmd, search_path=1, verbose=0, dry_run=0):
+         global _cfg_target, _cfg_target_split
+         if _cfg_target is None:
+             from distutils import sysconfig
+-            _cfg_target = sysconfig.get_config_var(
+-                                  'MACOSX_DEPLOYMENT_TARGET') or ''
++            _cfg_target = str(sysconfig.get_config_var(
++                                  'MACOSX_DEPLOYMENT_TARGET') or '')
+             if _cfg_target:
+                 _cfg_target_split = [int(x) for x in _cfg_target.split('.')]
+         if _cfg_target:

@@ -63,6 +63,7 @@ Infrastructure and Low-Level Functions
    :maxdepth: 2
 
    sage/plot/graphics
+   sage/plot/multigraphics
    sage/plot/primitive
    sage/plot/misc
 

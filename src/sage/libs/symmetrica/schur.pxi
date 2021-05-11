@@ -57,10 +57,10 @@ def outerproduct_schur_symmetrica(parta, partb):
     """
     you enter two PARTITION objects, and the result is
     a SCHUR object, which is the expansion of the product
-    of the two schurfunctions, labbeled by
+    of the two schurfunctions, labeled by
     the two PARTITION objects parta and partb.
     Of course this can also be interpreted as the decomposition of the
-    outer tensor product of two irreducibe representations of the
+    outer tensor product of two irreducible representations of the
     symmetric group.
 
     EXAMPLES::
@@ -117,6 +117,7 @@ def newtrans_symmetrica(perm):
     """
     computes the decomposition of a schubertpolynomial labeled by
     the permutation perm, as a sum of Schurfunction.
+
     FIXME!
     """
     cdef OP cperm = callocobject(), cresult = callocobject()
@@ -181,7 +182,7 @@ def compute_schur_with_alphabet_symmetrica(part, length, alphabet='x'):
 
 def compute_homsym_with_alphabet_symmetrica(n, length, alphabet='x'):
     """
-    computes the expansion of a homogenous(=complete) symmetric
+    computes the expansion of a homogeneous(=complete) symmetric
     function labeled by a INTEGER number as a POLYNOM erg.
     The object number may also be a  PARTITION or a HOM_SYM object.
     The INTEGER laenge specifies the length of the alphabet.

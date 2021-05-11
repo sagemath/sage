@@ -8,7 +8,7 @@ varieties, corresponding to crepant subdivisions of face fans of reflexive
 The interface is provided via :func:`CPRFanoToricVariety`.
 
 A careful exposition of different flavours of Fano varieties can be found in
-the paper by Benjamin Nill [Nill2005]_. The main goal of this module is to
+the paper by Benjamin Nill [Nil2005]_. The main goal of this module is to
 support work with **Gorenstein weak Fano toric varieties**. Such a variety
 corresponds to a **coherent crepant refinement of the normal fan of a
 reflexive polytope** `\Delta`, where crepant means that primitive generators
@@ -18,7 +18,7 @@ upper convex piecewise linear function whose domains of linearity are
 precisely the maximal cones of the subdivision. These varieties are important
 for string theory in physics, as they serve as ambient spaces for mirror pairs
 of Calabi-Yau manifolds via constructions due to Victor V. Batyrev
-[Batyrev1994]_ and Lev A. Borisov [Borisov1993]_.
+[Bat1994]_ and Lev A. Borisov [Bor1993]_.
 
 From the combinatorial point of view "crepant" requirement is much more simple
 and natural to work with than "coherent." For this reason, the code in this
@@ -28,30 +28,10 @@ whether they are coherent or not. We refer to corresponding toric varieties as
 
 REFERENCES:
 
-..  [Batyrev1994]
-    Victor V. Batyrev,
-    "Dual polyhedra and mirror symmetry for Calabi-Yau hypersurfaces in toric
-    varieties",
-    J. Algebraic Geom. 3 (1994), no. 3, 493-535.
-    :arxiv:`alg-geom/9310003v1`
-
-..  [Borisov1993]
-    Lev A. Borisov,
-    "Towards the mirror symmetry for Calabi-Yau complete intersections in
-    Gorenstein Fano toric varieties", 1993.
-    :arxiv:`alg-geom/9310001v1`
-
-..  [CD2007]
-    Adrian Clingher and Charles F. Doran,
-    "Modular invariants for lattice polarized K3 surfaces",
-    Michigan Math. J. 55 (2007), no. 2, 355-393.
-    :arxiv:`math/0602146v1` [math.AG]
-
-..  [Nill2005]
-    Benjamin Nill,
-    "Gorenstein toric Fano varieties",
-    Manuscripta Math. 116 (2005), no. 2, 183-210.
-    :arxiv:`math/0405448v1` [math.AG]
+- [Bat1994]_
+- [Bor1993]_
+- [CD2007]_
+- [Nil2005]_
 
 AUTHORS:
 
@@ -152,8 +132,6 @@ implementing them on your own as a patch for inclusion!
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 import re
 
@@ -470,7 +448,7 @@ def CPRFanoToricVariety(Delta=None,
         N(-1,  0)
         in 2-d lattice N
         sage: [cone.ambient_ray_indices() for cone in FTV.fan()]
-        [(0, 1), (1, 2), (3, 4), (2, 4), (0, 3)]
+        [(0, 1), (1, 2), (2, 4), (3, 4), (0, 3)]
 
     If charts are wrong, it should be detected::
 
@@ -1602,9 +1580,9 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
     def cohomology_class(self):
         r"""
         Return the class of ``self`` in the ambient space cohomology ring.
-        
+
         OUTPUT:
-        
+
         - a :class:`cohomology class
           <sage.schemes.generic.toric_variety.CohomologyClass>`.
 
@@ -1631,7 +1609,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
         return prod(sum(H.gen(X._point_to_ray[point])
                     for point in part if point in X._coordinate_points)
                for part in self.nef_partition().parts(all_points=True))
-    
+
     def nef_partition(self):
         r"""
         Return the nef-partition associated to ``self``.

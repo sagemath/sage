@@ -1,16 +1,16 @@
 r"""
-FiniteGroups
+Finite groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.algebra_functor import AlgebrasCategory
-from sage.categories.cartesian_product import CartesianProductsCategory
+
 
 class FiniteGroups(CategoryWithAxiom):
     r"""

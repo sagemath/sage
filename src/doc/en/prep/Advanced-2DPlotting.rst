@@ -188,7 +188,7 @@ Notice the automatic graded shading of the fill color.
     Graphics object consisting of 4 graphics primitives
 
 Problem: Create a plot for the following problem. Find the area that is
-inside the circle :math:`r=2`, but outside the cardiod
+inside the circle :math:`r=2`, but outside the cardioid
 :math:`2+2\cos(\theta)`.
 
 Interactive Demonstration

@@ -22,7 +22,7 @@ cannot.
 
 The toric morphisms are perhaps the most mysterious at the
 beginning. Let us quickly review their definition (See Definition
-3.3.3 of [CLS]_). Let `\Sigma_1` be a fan in `N_{1,\RR}` and `\Sigma_2` be a
+3.3.3 of [CLS2011]_). Let `\Sigma_1` be a fan in `N_{1,\RR}` and `\Sigma_2` be a
 fan in `N_{2,\RR}`. A morphism `\phi: X_{\Sigma_1} \to X_{\Sigma_2}`
 of the associated toric varieties is toric if `\phi` maps the maximal
 torus `T_{N_1} \subseteq X_{\Sigma_1}` into `T_{N_2} \subseteq
@@ -135,7 +135,7 @@ using homogeneous polynomials. Consider the blowup `O_{\mathbb{P}^1}(2)
 
 If we denote the homogeneous coordinates of `O_{\mathbb{P}^1}(2)` by
 `x`, `t`, `y` corresponding to the rays `(1,2)`, `(1,1)`, and `(1,0)`
-then the blow-up map is [BB]_:
+then the blow-up map is [BB2013]_:
 
 .. MATH::
 
@@ -269,17 +269,17 @@ It is possible to study fibers of the last two morphisms or their composition::
       From: 3-d affine toric variety
       To:   2-d toric variety covered by 3 affine patches
       Defn: Defined on coordinates by sending [z0 : z1 : z2] to
-            [z0^2*z1*z2^3 : z1*z2 : 1]
+            [1 : z1*z2 : z0^2*z1*z2^3]
     sage: phi_d.codomain().fan().rays()
-    N( 1,  0, 0),
+    N(-1, -1, 0),
     N( 0,  1, 0),
-    N(-1, -1, 0)
+    N( 1,  0, 0)
     in Sublattice <N(1, 0, 0), N(0, 1, 0)>
     sage: for c in phi_d.codomain().fan():
     ....:     c.ambient_ray_indices()
-    (1, 2)
-    (0, 2)
     (0, 1)
+    (0, 2)
+    (1, 2)
 
 We see that codomain fan of this morphism is a projective plane, which can be
 verified by ::
@@ -321,13 +321,13 @@ corresponding to the cones of the domain fan::
     ....:       c.ambient_ray_indices(), fc, fc.fan().nrays(),
     ....:       m, fm.image_cone(c).ambient_ray_indices()))
     () |-> 1-d affine toric variety (0 rays, multiplicity 2) over ()
-    (0,) |-> 1-d affine toric variety (0 rays, multiplicity 1) over (0,)
-    (1,) |-> 2-d affine toric variety (2 rays, multiplicity 1) over (0, 1)
-    (2,) |-> 2-d affine toric variety (2 rays, multiplicity 1) over (0, 1)
-    (0, 1) |-> 1-d affine toric variety (1 rays, multiplicity 1) over (0, 1)
-    (1, 2) |-> 1-d affine toric variety (1 rays, multiplicity 1) over (0, 1)
-    (0, 2) |-> 1-d affine toric variety (1 rays, multiplicity 1) over (0, 1)
-    (0, 1, 2) |-> 0-d affine toric variety (0 rays, multiplicity 1) over (0, 1)
+    (0,) |-> 1-d affine toric variety (0 rays, multiplicity 1) over (2,)
+    (1,) |-> 2-d affine toric variety (2 rays, multiplicity 1) over (1, 2)
+    (2,) |-> 2-d affine toric variety (2 rays, multiplicity 1) over (1, 2)
+    (0, 1) |-> 1-d affine toric variety (1 rays, multiplicity 1) over (1, 2)
+    (1, 2) |-> 1-d affine toric variety (1 rays, multiplicity 1) over (1, 2)
+    (0, 2) |-> 1-d affine toric variety (1 rays, multiplicity 1) over (1, 2)
+    (0, 1, 2) |-> 0-d affine toric variety (0 rays, multiplicity 1) over (1, 2)
 
 Now we see that over one of the coordinate lines of the projective plane we also
 have one-dimensional tori (but only one in each fiber), while over one of the
@@ -340,19 +340,12 @@ fan::
     ....:       fm.index(c), c.ambient_ray_indices(),
     ....:       len(fm.primitive_preimage_cones(c))))
     2 connected components over (), each with 1 irreducible components.
-    1 connected components over (0,), each with 1 irreducible components.
+    None connected components over (0,), each with 0 irreducible components.
     None connected components over (1,), each with 0 irreducible components.
-    None connected components over (2,), each with 0 irreducible components.
-    None connected components over (1, 2), each with 0 irreducible components.
+    1 connected components over (2,), each with 1 irreducible components.
+    None connected components over (0, 1), each with 0 irreducible components.
     None connected components over (0, 2), each with 0 irreducible components.
-    1 connected components over (0, 1), each with 2 irreducible components.
-
-REFERENCES:
-
-.. [BB]
-    Gavin Brown, Jaroslaw Buczynski:
-    *Maps of toric varieties in Cox coordinates*,
-    :arxiv:`1004.4924`
+    1 connected components over (1, 2), each with 2 irreducible components.
 """
 
 #*****************************************************************************
@@ -366,8 +359,6 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six import iteritems
 
 # For now, the scheme morphism base class cannot derive from Morphism
 # since this would clash with elliptic curves. So we derive only on
@@ -661,7 +652,7 @@ class SchemeMorphism_orbit_closure_toric_variety(SchemeMorphism, Morphism):
         orbit = self.parent().domain()
         codomain_fan = self.parent().codomain().fan()
         reverse_ray_dict = dict()
-        for n1, n2 in iteritems(self._ray_map):
+        for n1, n2 in self._ray_map.items():
             ray_index = codomain_fan.rays().index(n1)
             if n2.is_zero():
                 assert ray_index in self._defining_cone.ambient_ray_indices()
@@ -1054,7 +1045,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
               From: 2-d affine toric variety
               To:   2-d toric variety covered by 3 affine patches
               Defn: Defined on coordinates by sending [z0 : z1] to
-                    [z0*z1 : z1 : 1]
+                    [1 : z1 : z0*z1]
 
         Coordinate plane inclusion (injective)::
 
@@ -1063,7 +1054,7 @@ class SchemeMorphism_fan_toric_variety(SchemeMorphism, Morphism):
               From: 2-d toric variety covered by 3 affine patches
               To:   3-d CPR-Fano toric variety covered by 4 affine patches
               Defn: Defined on coordinates by sending [z0 : z1 : z2] to
-                    [z0 : z1 : z2 : z2]
+                    [z2 : z1 : z0 : z0]
         """
         phi_i, phi_b, phi_s = self.fan_morphism().factor()
         from sage.schemes.toric.all import ToricVariety
@@ -1701,7 +1692,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
           From: 2-d toric variety covered by 4 affine patches
           To:   4-d toric variety covered by 23 affine patches
           Defn: Defined on coordinates by sending [z0 : z1 : z2 : z3] to
-                [1 : 1 : 1 : 1 : z1 : 0 : 1 : z0 : 1 : 1 : 1 : z2 : z3 : 1 : 1]
+                [1 : 1 : 1 : 1 : z3 : 0 : 1 : z2 : 1 : 1 : 1 : z1 : z0 : 1 : 1]
         sage: type(fiber_component.embedding_morphism())
         <class 'sage.schemes.toric.morphism.SchemeMorphism_fan_fiber_component_toric_variety'>
     """
@@ -1784,7 +1775,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
               From: 2-d toric variety covered by 4 affine patches
               To:   4-d toric variety covered by 23 affine patches
               Defn: Defined on coordinates by sending [z0 : z1 : z2 : z3] to
-                    [1 : 1 : 1 : 1 : z1 : 0 : 1 : z0 : 1 : 1 : 1 : z2 : z3 : 1 : 1]
+                    [1 : 1 : 1 : 1 : z3 : 0 : 1 : z2 : 1 : 1 : 1 : z1 : z0 : 1 : 1]
 
             sage: primitive_cone = Cone([(-1, 2, -1, 0)])
             sage: f = fibration.fiber_component(primitive_cone).embedding_morphism()
@@ -1958,9 +1949,9 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             sage: f = fc.embedding_morphism()
             sage: for r in fc.fan().rays():
             ....:     print("{} {}".format(r, f._image_ray_multiplicity(r)))
+            N(-1, 2) (11, 1)
             N(0, 1) (5, 1)
             N(1, -3) (9, 2)
-            N(-1, 2) (11, 1)
             sage: f._ray_index_map
             {N(-3, 4): 10, N(-1, 2): 11, N(0, 1): 5, N(1, 0): 4, N(2, -6): 9}
         """
@@ -1971,7 +1962,7 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             pass
         multiplicity = None
         image_ray_index = None
-        for ray, index in iteritems(self._ray_index_map):
+        for ray, index in self._ray_index_map.items():
             d = gcd(ray)
             if d * fiber_ray != ray:
                 continue
@@ -2006,10 +1997,10 @@ class SchemeMorphism_fan_fiber_component_toric_variety(SchemeMorphism):
             V(z0) + V(z1) + 3*V(z2) + 4*V(z3)
             sage: fc = f.fiber_component(Cone([(1,1,0)]))
             sage: fc.embedding_morphism().pullback_divisor(D)
-            3*V(z0) + 2*V(z2)
+            2*V(z0) + 3*V(z1)
             sage: fc = f.fiber_component(Cone([(1,0,0)]))
             sage: fc.embedding_morphism().pullback_divisor(D)
-            -3*V(z0) - 3*V(z1) - V(z2)
+            -V(z0) - 3*V(z1) - 3*V(z2)
         """
         from sage.schemes.toric.divisor import is_ToricDivisor
         if not (is_ToricDivisor(divisor) and divisor.is_QQ_Cartier()):

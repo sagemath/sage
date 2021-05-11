@@ -1,0 +1,3 @@
+cd src
+
+nosetests symengine/tests -v

@@ -6,7 +6,7 @@ Shuffle product of words
     The module :mod:`sage.combinat.shuffle` contains a more general
     implementation of shuffle product.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
 #
@@ -19,16 +19,18 @@ Shuffle product of words
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.combinat.words.word import Word_class, Word
-from sage.combinat.combinat import CombinatorialClass
 from sage.arith.all import binomial
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.composition import Compositions_n, Compositions, Composition
-from sage.misc.lazy_import import lazy_import
+from sage.combinat.composition import Composition
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
-class ShuffleProduct_w1w2(CombinatorialClass):
+
+class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
     def __init__(self, w1, w2):
         r"""
         The shuffle product of the two words ``w1`` and ``w2``.
@@ -57,21 +59,24 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
             sage: W = Words([1,2,3,4])
             sage: s = ShuffleProduct_w1w2(W([1,2]),W([3,4]))
-            sage: sorted(list(s))
-            [word: 1234, word: 1324, word: 1342, word: 3124, word: 3142, word: 3412]
+            sage: sorted(s)
+            [word: 1234, word: 1324, word: 1342, word: 3124,
+             word: 3142, word: 3412]
             sage: s == loads(dumps(s))
             True
+            sage: TestSuite(s).run()
 
             sage: s = ShuffleProduct_w1w2(W([1,4,3]),W([2]))
-            sage: sorted(list(s))
+            sage: sorted(s)
             [word: 1243, word: 1423, word: 1432, word: 2143]
 
             sage: s = ShuffleProduct_w1w2(W([1,4,3]),W([]))
-            sage: sorted(list(s))
+            sage: sorted(s)
             [word: 143]
         """
         self._w1 = w1
         self._w2 = w2
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __repr__(self):
         """
@@ -82,7 +87,7 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: repr(ShuffleProduct_w1w2(W("ab"),W("cd")))
             'Shuffle product of word: ab and word: cd'
         """
-        return "Shuffle product of %s and %s"% (repr(self._w1), repr(self._w2))
+        return "Shuffle product of %s and %s" % (repr(self._w1), repr(self._w2))
 
     def __contains__(self, x):
         """
@@ -121,7 +126,8 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             except IndexError:
                 return False
             if w1 and w2 and letter == w1[0] == w2[0]:
-                return Word(wx) in self._w1[1:].shuffle(self._w2) or Word(wx) in self._w1.shuffle(self._w2[1:])
+                return (Word(wx) in self._w1[1:].shuffle(self._w2) or
+                        Word(wx) in self._w1.shuffle(self._w2[1:]))
             if w1 and letter == w1[0]:
                 w1.pop(0)
             elif w2 and letter == w2[0]:
@@ -154,7 +160,8 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: S.cardinality()
             6
         """
-        return binomial(self._w1.length()+self._w2.length(), self._w1.length())
+        return binomial(self._w1.length() + self._w2.length(),
+                        self._w1.length())
 
     def _proc(self, vect):
         """
@@ -229,12 +236,14 @@ class ShuffleProduct_w1w2(CombinatorialClass):
             sage: w, u = map(Words("abcd"), ["ab", "cd"])
             sage: S = ShuffleProduct_w1w2(w,u)
             sage: S.list() #indirect test
-            [word: abcd, word: acbd, word: acdb, word: cabd, word: cadb, word: cdab]
+            [word: abcd, word: acbd, word: acdb, word: cabd,
+             word: cadb, word: cdab]
         """
         n1 = len(self._w1)
         n2 = len(self._w2)
-        for iv in IntegerVectors(n1, n1+n2, max_part=1):
+        for iv in IntegerVectors(n1, n1 + n2, max_part=1):
             yield self._proc(iv)
+
 
 class ShuffleProduct_shifted(ShuffleProduct_w1w2):
     def __init__(self, w1, w2):
@@ -269,7 +278,4 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
             sage: ShuffleProduct_shifted(w,u).__repr__()
             'Shuffle product of word: 01 and word: 45'
         """
-        return "Shuffle product of %s and %s"% (repr(self._w1), repr(self._w2))
-
-lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping_r', deprecation=15597)
-lazy_import('sage.combinat.shuffle', 'ShuffleProduct_overlapping', deprecation=15597)
+        return "Shuffle product of %s and %s" % (repr(self._w1), repr(self._w2))

@@ -56,9 +56,10 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
+from sage.libs.gap.libgap import libgap
 from sage.libs.gap.element cimport GapElement
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
@@ -116,10 +117,21 @@ class ParentLibGAP(SageObject):
 
             sage: G = FreeGroup(3)
             sage: TestSuite(G).run()
+
+        We check that :trac:`19270` is fixed::
+
+            sage: G = GL(2,5)
+            sage: g = G( matrix([[1,0],[0,4]]))
+            sage: H = G.subgroup([g])
+            sage: g in H
+            True
         """
         assert isinstance(libgap_parent, GapElement)
         self._libgap = libgap_parent
         self._ambient = ambient
+        if ambient is not None:
+            phi = self.hom(lambda x: ambient(x.gap()), codomain=ambient)  # the .gap() avoids an infinite recursion
+            ambient.register_coercion(phi)
 
     def ambient(self):
         """
@@ -178,7 +190,7 @@ class ParentLibGAP(SageObject):
             sage: F.<a,b> = FreeGroup()
             sage: F.Hom(F)
             Set of Morphisms from Free Group on generators {a, b}
-             to Free Group on generators {a, b} in Category of groups
+             to Free Group on generators {a, b} in Category of infinite groups
         """
         from sage.groups.libgap_morphism import GroupHomset_libgap
         return GroupHomset_libgap(self, G, category=category, check=check)
@@ -226,6 +238,11 @@ class ParentLibGAP(SageObject):
             sage: G.gens()
             (a^2*b,)
 
+        We check that coercions between the subgroup and its ambient group work::
+
+            sage: F.0 * G.0
+            a^3*b
+
         Checking that :trac:`19270` is fixed::
 
             sage: gens = [w.matrix() for w in WeylGroup(['B', 3])]
@@ -236,6 +253,14 @@ class ParentLibGAP(SageObject):
             sage: G.subgroup(subgroup_gens)
             Subgroup with 8 generators of Matrix group over Rational Field with 48 generators
 
+        TESTS:
+
+        Check that :trac:`19010` is fixed::
+
+            sage: G = WeylGroup(['B',3])
+            sage: H = G.subgroup([G[14], G[17]])
+            sage: all(g*h in G and h*g in G for g in G for h in H)
+            True
         """
         generators = [ g if isinstance(g, GapElement) else self(g).gap()
                        for g in generators ]
@@ -245,7 +270,7 @@ class ParentLibGAP(SageObject):
 
     def gap(self):
         """
-        Returns the gap representation of self
+        Return the gap representation of self.
 
         OUTPUT:
 
@@ -283,26 +308,6 @@ class ParentLibGAP(SageObject):
 
     _libgap_ = _gap_ = gap
 
-    @cached_method
-    def _gap_gens(self):
-        """
-        Return the generators as a LibGAP object
-
-        OUTPUT:
-
-        A :class:`~sage.libs.gap.element.GapElement`
-
-        EXAMPLES::
-
-            sage: G = FreeGroup(2)
-            sage: G._gap_gens()
-            [ x0, x1 ]
-            sage: type(_)
-            <type 'sage.libs.gap.element.GapElement_List'>
-        """
-        return self._libgap.GeneratorsOfGroup()
-
-    @cached_method
     def ngens(self):
         """
         Return the number of generators of self.
@@ -322,11 +327,11 @@ class ParentLibGAP(SageObject):
             sage: type(G.ngens())
             <type 'sage.rings.integer.Integer'>
         """
-        return self._gap_gens().Length().sage()
+        return Integer(len(self.gens()))
 
     def _repr_(self):
         """
-        Return a string representation
+        Return a string representation.
 
         OUTPUT:
 
@@ -340,6 +345,33 @@ class ParentLibGAP(SageObject):
             '<free group on the generators [ a, b ]>'
         """
         return self._libgap._repr_()
+
+    @cached_method
+    def gens(self):
+        """
+        Return the generators of the group.
+
+        EXAMPLES::
+
+            sage: G = FreeGroup(2)
+            sage: G.gens()
+            (x0, x1)
+            sage: H = FreeGroup('a, b, c')
+            sage: H.gens()
+            (a, b, c)
+
+        :meth:`generators` is an alias for :meth:`gens` ::
+
+            sage: G = FreeGroup('a, b')
+            sage: G.generators()
+            (a, b)
+            sage: H = FreeGroup(3, 'x')
+            sage: H.generators()
+            (x0, x1, x2)
+        """
+        return tuple(self.element_class(self, g) for g in self._libgap.GeneratorsOfGroup())
+
+    generators = gens
 
     def gen(self, i):
         """
@@ -369,40 +401,12 @@ class ParentLibGAP(SageObject):
         """
         if not (0 <= i < self.ngens()):
             raise ValueError('i must be in range(ngens)')
-        gap = self._gap_gens()[i]
-        return self.element_class(self, gap)
-
-    @cached_method
-    def gens(self):
-        """
-        Returns the generators of the group.
-
-        EXAMPLES::
-
-            sage: G = FreeGroup(2)
-            sage: G.gens()
-            (x0, x1)
-            sage: H = FreeGroup('a, b, c')
-            sage: H.gens()
-            (a, b, c)
-
-        :meth:`generators` is an alias for :meth:`gens` ::
-
-            sage: G = FreeGroup('a, b')
-            sage: G.generators()
-            (a, b)
-            sage: H = FreeGroup(3, 'x')
-            sage: H.generators()
-            (x0, x1, x2)
-        """
-        return tuple( self.gen(i) for i in range(self.ngens()) )
-
-    generators = gens
+        return self.gens()[i]
 
     @cached_method
     def one(self):
         """
-        Returns the identity element of self
+        Return the identity element of self.
 
         EXAMPLES::
 
@@ -418,7 +422,7 @@ class ParentLibGAP(SageObject):
 
     def _an_element_(self):
         """
-        Returns an element of self.
+        Return an element of self.
 
         EXAMPLES::
 
@@ -432,6 +436,7 @@ class ParentLibGAP(SageObject):
             return prod(gens)
         else:
             return self.one()
+
 
 cdef class ElementLibGAP(MultiplicativeGroupElement):
     """
@@ -483,7 +488,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
 
     cpdef GapElement gap(self):
         """
-        Returns a LibGAP representation of the element
+        Return a LibGAP representation of the element.
 
         OUTPUT:
 
@@ -500,10 +505,36 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             a*b*a^-1*b^-1
             sage: type(xg)
             <type 'sage.libs.gap.element.GapElement'>
+
+        TESTS::
+
+            sage: libgap(FreeGroup('a, b').an_element())
+            a*b
+            sage: type(libgap(FreeGroup('a, b').an_element()))
+            <type 'sage.libs.gap.element.GapElement'>
         """
         return self._libgap
 
-    _gap_ = gap
+    _libgap_ = _gap_ = gap
+
+    def _test_libgap_conversion(self, **options):
+        r"""
+        TESTS::
+
+            sage: FreeGroup(2).an_element()._test_libgap_conversion()
+        """
+        tester = self._tester(**options)
+        tester.assertTrue(libgap(self) is self.gap())
+
+    def _test_libgap_reconstruction(self, **options):
+        r"""
+        TESTS::
+
+            sage: FreeGroup(2).an_element()._test_libgap_reconstruction()
+        """
+        tester = self._tester(**options)
+        P = self.parent()
+        tester.assertEqual(self, P.element_class(P, libgap(self)))
 
     def is_one(self):
         """
@@ -595,8 +626,9 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             sage: y*x == y._mul_(x)
             True
         """
-        P = left.parent()
-        return P.element_class(P, left.gap() * right.gap())
+        P = (<ElementLibGAP> left)._parent
+        return P.element_class(P, (<ElementLibGAP> left)._libgap * \
+                                  (<ElementLibGAP> right)._libgap)
 
     cpdef _richcmp_(left, right, int op):
         """
@@ -636,8 +668,9 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             sage: x/y == y.__truediv__(x)
             False
         """
-        P = left.parent()
-        return P.element_class(P, left.gap() / right.gap())
+        P = (<ElementLibGAP> left)._parent
+        return P.element_class(P, (<ElementLibGAP> left)._libgap / \
+                                  (<ElementLibGAP> right)._libgap)
 
     def __pow__(self, n, dummy):
         """
@@ -657,8 +690,8 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         """
         if n not in IntegerRing():
             raise TypeError("exponent must be an integer")
-        P = self.parent()
-        return P.element_class(P, self.gap() ** n)
+        P = (<ElementLibGAP> self)._parent
+        return P.element_class(P, (<ElementLibGAP> self)._libgap ** n)
 
     def __invert__(self):
         """
@@ -678,8 +711,87 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             sage: x.inverse()
             b*a*b^-1*a^-1
         """
-        P = self.parent()
-        return P.element_class(P, self.gap().Inverse())
+        P = (<ElementLibGAP> self)._parent
+        return P.element_class(P, (<ElementLibGAP> self)._libgap.Inverse())
 
     inverse = __invert__
 
+    def order(self):
+        r"""
+        Return the multiplicative order.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: G = GroupLibGAP(libgap.GL(2, 3))
+            sage: a,b = G.gens()
+            sage: print(a.order())
+            2
+            sage: print(a.multiplicative_order())
+            2
+
+            sage: z = Mod(0, 3)
+            sage: o = Mod(1, 3)
+            sage: G(libgap([[o,o],[z,o]])).order()
+            3
+        """
+        return self._libgap.Order().sage()
+
+    multiplicative_order = order
+
+    def is_conjugate(self, other):
+        r"""
+        Return whether the elements ``self`` and ``other`` are conjugate.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: G = GroupLibGAP(libgap.GL(2, 3))
+            sage: a,b = G.gens()
+            sage: a.is_conjugate(b)
+            False
+            sage: a.is_conjugate((a*b^2) * a * ~(a*b^2))
+            True
+        """
+        return libgap.IsConjugate(self.parent(), self, other).sage()
+
+    def normalizer(self):
+        r"""
+        Return the normalizer of the cyclic group generated by this element.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: G = GroupLibGAP(libgap.GL(3,3))
+            sage: a,b = G.gens()
+            sage: H = a.normalizer()
+            sage: H
+            <group of 3x3 matrices over GF(3)>
+            sage: H.cardinality()
+            96
+            sage: all(g*a == a*g for g in H)
+            True
+        """
+        from sage.groups.libgap_group import GroupLibGAP
+        P = self.parent()
+        return GroupLibGAP(libgap.Normalizer(P, self), ambient=P)
+
+    def nth_roots(self, n):
+        r"""
+        Return the set of ``n``-th roots of this group element.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: G = GroupLibGAP(libgap.GL(3,3))
+            sage: a,b = G.gens()
+            sage: g = a*b**2*a*~b
+            sage: r = g.nth_roots(4)
+            sage: r
+            [[ [ Z(3), Z(3), Z(3)^0 ], [ Z(3)^0, Z(3)^0, 0*Z(3) ], [ 0*Z(3), Z(3), 0*Z(3) ] ],
+             [ [ Z(3)^0, Z(3)^0, Z(3) ], [ Z(3), Z(3), 0*Z(3) ], [ 0*Z(3), Z(3)^0, 0*Z(3) ] ]]
+            sage: r[0]**4 == r[1]**4 == g
+            True
+        """
+        P = self.parent()
+        return [P.element_class(P, g) for g in libgap.NthRootsInGroup(P.gap(), self._libgap, n)]

@@ -28,14 +28,17 @@ http://www.risc.uni-linz.ac.at/people/hemmecke/AldorCombinat/combinatse9.html.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
+
+import builtins
 
 from .stream import Stream, Stream_class
 from .series_order import  bounded_decrement, increment, inf, unk
 from sage.rings.all import Integer
 from sage.misc.all import prod
 from functools import partial
-from sage.misc.misc import repr_lincomb, is_iterator
+from sage.misc.misc import is_iterator
+from sage.misc.repr import repr_lincomb
+from sage.misc.cachefunc import cached_method
 
 from sage.algebras.algebra import Algebra
 import sage.structure.parent_base
@@ -44,7 +47,7 @@ from sage.structure.element import Element, parent, AlgebraElement
 
 
 class LazyPowerSeriesRing(Algebra):
-    def __init__(self, R, element_class=None, names=None):
+    def __init__(self, R, names=None, element_class=None):
         """
         TESTS::
 
@@ -59,6 +62,16 @@ class LazyPowerSeriesRing(Algebra):
             Failure in ...
             The following tests failed: _test_additive_associativity, _test_associativity, _test_distributivity, _test_elements, _test_one, _test_prod, _test_zero
 
+        ::
+
+            sage: LazyPowerSeriesRing(QQ, 'z').gen()
+            z
+            sage: LazyPowerSeriesRing(QQ, ['z']).gen()
+            z
+            sage: LazyPowerSeriesRing(QQ, ['x', 'z'])
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only univariate lazy power series rings are supported
         """
         #Make sure R is a ring with unit element
         if R not in Rings():
@@ -67,12 +80,18 @@ class LazyPowerSeriesRing(Algebra):
         #Take care of the names
         if names is None:
             names = 'x'
-        else:
+        elif isinstance(names, (list, tuple)):
+            if len(names) != 1:
+                raise NotImplementedError(
+                    'only univariate lazy power series rings are supported')
             names = names[0]
+        else:
+            names = str(names)
 
         self._element_class = element_class if element_class is not None else LazyPowerSeries
         self._order = None
         self._name = names
+        self._zero_base_ring = R.zero()
         sage.structure.parent_base.ParentWithBase.__init__(self, R, category=Rings())
 
     def ngens(self):
@@ -241,6 +260,7 @@ class LazyPowerSeriesRing(Algebra):
 
         raise TypeError("do not know how to coerce %s into self" % x)
 
+    @cached_method
     def zero(self):
         """
         Return the zero power series.
@@ -251,7 +271,7 @@ class LazyPowerSeriesRing(Algebra):
             sage: L.zero()
             0
         """
-        return self(self.base_ring().zero())
+        return self.term(self._zero_base_ring, 0)
 
     def identity_element(self):
         """
@@ -519,7 +539,6 @@ class LazyPowerSeries(AlgebraElement):
             self.order = inf
         self.aorder_changed = aorder_changed
         self.is_initialized = is_initialized
-        self._zero = A.base_ring().zero()
         self._name = name
 
     def compute_aorder(*args, **kwargs):
@@ -930,7 +949,7 @@ class LazyPowerSeries(AlgebraElement):
         # The following line must not be written n < self.get_aorder()
         # because comparison of Integer and OnfinityOrder is not implemented.
         if self.get_aorder() > n:
-            return self._zero
+            return self.parent()._zero_base_ring
 
         assert self.is_initialized
 
@@ -1195,6 +1214,97 @@ class LazyPowerSeries(AlgebraElement):
         if not isinstance(n, (int, Integer)) or n < 0:
             raise ValueError("n must be a nonnegative integer")
         return prod([self]*n, self.parent().identity_element())
+
+    def __invert__(self):
+        """
+        Return 1 over this power series, i.e. invert this power series.
+
+        EXAMPLES::
+
+            sage: L = LazyPowerSeriesRing(QQ)
+            sage: x = L.gen()
+
+        Geometric series::
+
+            sage: a = ~(1-x); a.compute_coefficients(10); a
+            1 + x + x^2 + x^3 + x^4 + x^5 + x^6 + x^7 + x^8 + x^9 + x^10 + O(x^11)
+
+        (Shifted) Fibonacci numbers::
+
+            sage: b = ~(1-x-x^2); b.compute_coefficients(10); b
+            1 + x + 2*x^2 + 3*x^3 + 5*x^4 + 8*x^5
+            + 13*x^6 + 21*x^7 + 34*x^8 + 55*x^9 + 89*x^10 + O(x^11)
+
+        Series whose constant coefficient is `0` cannot be inverted::
+
+            sage: ~x
+            Traceback (most recent call last):
+            ....
+            ZeroDivisionError: cannot invert x because constant coefficient is 0
+        """
+        if self.get_aorder() > 0:
+            raise ZeroDivisionError(
+                'cannot invert {} because '
+                'constant coefficient is 0'.format(self))
+        return self._new(self._invert_gen, lambda a: 0, self)
+
+    invert = __invert__
+
+    def _invert_gen(self, ao):
+        r"""
+        Return an iterator for the coefficients of 1 over this power series.
+
+        TESTS::
+
+            sage: L = LazyPowerSeriesRing(QQ)
+            sage: f = L([1, -1, 0])
+            sage: g = f._invert_gen(0)
+            sage: [next(g) for i in range(10)]
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        """
+        from itertools import count
+
+        assert ao == 0
+
+        ic0 = ~self.coefficient(0)
+        yield ic0
+        if self.order == 0:
+            return
+
+        one = self.parent()(1)
+        base = one - ic0 * self
+        base.coefficient(0)
+        ao_base = base.get_aorder()
+        assert ao_base >= 1
+
+        current = one + base
+        k = 1
+        for n in count(1):
+            while ao_base*k < n:
+                current = one + base * current
+                k += 1
+                current.coefficient(n)  # make sure new current is initialized
+            ao_base = base.get_aorder()  # update this so that while above is faster
+            yield current.coefficient(n) * ic0
+
+    def _div_(self, other):
+        """
+        Divide this power series by ``other``.
+
+        EXAMPLES::
+
+            sage: L = LazyPowerSeriesRing(QQ)
+            sage: x = L.gen()
+
+        Fibonacci numbers::
+
+            sage: b = x / (1-x-x^2); b.compute_coefficients(10); b
+            x + x^2 + 2*x^3 + 3*x^4 + 5*x^5 + 8*x^6
+            + 13*x^7 + 21*x^8 + 34*x^9 + 55*x^10 + O(x^11)
+        """
+        return self * ~other
+
+    div = _div_
 
     def __call__(self, y):
         """
@@ -1489,7 +1599,7 @@ class LazyPowerSeries(AlgebraElement):
             [0, 0, 1/2, 0, 0]
         """
         for n in range(ao):
-            yield self._zero
+            yield self.parent().zero()
         n = ao
         while True:
             #Check to see if the stream is finite
@@ -1517,10 +1627,10 @@ class LazyPowerSeries(AlgebraElement):
         assert ao != unk
 
         if ao == inf:
-            yield self._zero
+            yield self.parent()._zero_base_ring
         else:
             for _ in range(ao-1):
-                yield self._zero
+                yield self.parent()._zero_base_ring
 
             n = max(1, ao)
             while True:
@@ -1635,7 +1745,6 @@ class LazyPowerSeries(AlgebraElement):
             sage: a.restricted(min=2, max=6).coefficients(10)
             [0, 0, 1, 1, 1, 1, 0, 0, 0, 0]
         """
-        from six.moves import builtins
 
         if ((min is None and max is None) or
             (max is None and self.get_aorder() >= min)):

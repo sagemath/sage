@@ -40,8 +40,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from libc.string cimport memcpy
 from cpython.mem cimport *
 from cpython.object cimport PyObject_RichCompare
@@ -51,6 +49,7 @@ from sage.structure.element import is_Matrix
 from sage.misc.misc import cputime
 from sage.rings.integer cimport Integer
 from copy import copy
+from sage.data_structures.bitset_base cimport *
 
 WORD_SIZE = sizeof(codeword) << 3
 
@@ -86,7 +85,6 @@ cdef int *hamming_weights():
         ham_wts[i] = ham_wts[i & 255] + ham_wts[(i>>8) & 255]
     return ham_wts
 
-include 'sage/data_structures/bitset.pxi'
 def weight_dist(M):
     """
     Computes the weight distribution of the row space of M.
@@ -736,6 +734,17 @@ cdef class BinaryCode:
 
     """
     def __cinit__(self, arg1, arg2=None):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: import sage.coding.binary_code
+            sage: from sage.coding.binary_code import *
+            sage: M = Matrix(GF(2), [[1,1,1,1]])
+            sage: B = BinaryCode(M)
+            sage: TestSuite(B).run()
+        """
         cdef int nrows, i, j, size
         cdef int nwords, other_nwords, parity, combination
         cdef codeword word, glue_word
@@ -1259,6 +1268,16 @@ cdef class OrbitPartition:
 
     """
     def __cinit__(self, int nrows, int ncols):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: import sage.coding.binary_code
+            sage: from sage.coding.binary_code import *
+            sage: O = OrbitPartition(4, 8)
+            sage: TestSuite(O).run(skip='_test_pickling')
+        """
         cdef int col
         cdef int nwords, word
         nwords = (1 << nrows)
@@ -1558,6 +1577,16 @@ cdef class PartitionStack:
     group computation.
     """
     def __cinit__(self, arg1, arg2=None):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: import sage.coding.binary_code
+            sage: from sage.coding.binary_code import *
+            sage: P = PartitionStack(2, 6)
+            sage: TestSuite(P).run(skip='_test_pickling')
+        """
         cdef int k, nwords, ncols, sizeof_int
         cdef PartitionStack other = None
         cdef int *wd_ents
@@ -3047,6 +3076,16 @@ cdef class PartitionStack:
 cdef class BinaryCodeClassifier:
 
     def __cinit__(self):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: import sage.coding.binary_code
+            sage: from sage.coding.binary_code import *
+            sage: BC = BinaryCodeClassifier()
+            sage: TestSuite(BC).run(skip='_test_pickling')
+        """
         self.radix = sizeof(codeword) << 3
         self.ham_wts = hamming_weights()
         self.L = 100 # memory limit for Phi and Omega- multiply by 8KB
@@ -3987,7 +4026,7 @@ cdef class BinaryCodeClassifier:
             j += 1
 
         log_2_radix = 0
-        while ((<codeword>1) << log_2_radix) < self.radix:
+        while ((<codeword>1) << log_2_radix) < <codeword>self.radix:
             log_2_radix += 1
         # now we assume (<codeword>1 << log_2_radix) == self.radix
         if k < log_2_radix:
@@ -4050,7 +4089,8 @@ cdef class BinaryCodeClassifier:
                         temp_basis[j] = permute_word_by_wp(can_lab_inv, temp_basis[j])
                     from sage.matrix.constructor import matrix
                     from sage.rings.all import ZZ
-                    from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroupElement
+                    from sage.groups.perm_gps.permgroup import PermutationGroup
+                    from sage.groups.perm_gps.constructor import PermutationGroupElement
                     from sage.interfaces.gap import gap
                     rs = []
                     for i from 0 <= i < B.nrows:

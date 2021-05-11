@@ -11,7 +11,7 @@ Authors:
 - Anne Schilling and Mike Zabrocki (2011): initial version
 - Travis Scrimshaw (2012): Added latex output for Core class
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Anne Schilling <anne at math.ucdavis.edu>
 #                          Mike Zabrocki  <zabrocki at mathstat.yorku.ca>
 #
@@ -24,16 +24,16 @@ Authors:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.combinat.partition import Partitions, Partition
 from sage.combinat.combinat import CombinatorialElement
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.functions.other import floor
 from sage.combinat.combinatorial_map import combinatorial_map
+
 
 class Core(CombinatorialElement):
     r"""
@@ -52,7 +52,7 @@ class Core(CombinatorialElement):
     @staticmethod
     def __classcall_private__(cls, part, k):
         r"""
-        Implements the shortcut ``Core(part, k)`` to ``Cores(k,l)(part)``
+        Implement the shortcut ``Core(part, k)`` to ``Cores(k,l)(part)``
         where `l` is the length of the core.
 
         TESTS::
@@ -73,7 +73,7 @@ class Core(CombinatorialElement):
             return part
         part = Partition(part)
         if not part.is_core(k):
-            raise ValueError("%s is not a %s-core"%(part, k))
+            raise ValueError("%s is not a %s-core" % (part, k))
         l = sum(part.k_boundary(k).row_lengths())
         return Cores(k, l)(part)
 
@@ -99,11 +99,13 @@ class Core(CombinatorialElement):
         k = parent.k
         part = Partition(core)
         if not part.is_core(k):
-            raise ValueError("%s is not a %s-core"%(part, k))
+            raise ValueError("%s is not a %s-core" % (part, k))
         CombinatorialElement.__init__(self, parent, core)
 
     def __eq__(self, other):
         """
+        Test for equality.
+
         EXAMPLES::
 
             sage: c = Core([4,2,1,1],5)
@@ -117,14 +119,33 @@ class Core(CombinatorialElement):
             False
         """
         if isinstance(other, Core):
-            return self._list == other._list and self.parent().k == other.parent().k
-        else:
-            return False
+            return (self._list == other._list and
+                    self.parent().k == other.parent().k)
+        return False
+
+    def __ne__(self, other):
+        """
+        Test for un-equality.
+
+        EXAMPLES::
+
+            sage: c = Core([4,2,1,1],5)
+            sage: d = Core([4,2,1,1],5)
+            sage: e = Core([4,2,1,1],6)
+            sage: c != [4,2,1,1]
+            True
+            sage: c != d
+            False
+            sage: c != e
+            True
+        """
+        return not (self == other)
 
     def __hash__(self):
         """
-        Computes the hash of ``self`` by computing the hash of the
+        Compute the hash of ``self`` by computing the hash of the
         underlying list and of the additional parameter.
+
         The hash is cached and stored in ``self._hash``.
 
         EXAMPLES::
@@ -169,7 +190,7 @@ class Core(CombinatorialElement):
 
     def k(self):
         r"""
-        Returns `k` of the `k`-core ``self``.
+        Return `k` of the `k`-core ``self``.
 
         EXAMPLES::
 
@@ -182,7 +203,7 @@ class Core(CombinatorialElement):
     @combinatorial_map(name="to partition")
     def to_partition(self):
         r"""
-        Turns the core ``self`` into the partition identical to ``self``.
+        Turn the core ``self`` into the partition identical to ``self``.
 
         EXAMPLES::
 
@@ -197,7 +218,7 @@ class Core(CombinatorialElement):
         r"""
         Bijection between `k`-cores and `(k-1)`-bounded partitions.
 
-        Maps the `k`-core ``self`` to the corresponding `(k-1)`-bounded partition.
+        This maps the `k`-core ``self`` to the corresponding `(k-1)`-bounded partition.
         This bijection is achieved by deleting all cells in ``self`` of hook length
         greater than `k`.
 
@@ -212,7 +233,7 @@ class Core(CombinatorialElement):
 
     def size(self):
         r"""
-        Returns the size of ``self`` as a partition.
+        Return the size of ``self`` as a partition.
 
         EXAMPLES::
 
@@ -225,7 +246,7 @@ class Core(CombinatorialElement):
 
     def length(self):
         r"""
-        Returns the length of ``self``.
+        Return the length of ``self``.
 
         The length of a `k`-core is the size of the corresponding `(k-1)`-bounded partition
         which agrees with the length of the corresponding Grassmannian element,
@@ -269,11 +290,12 @@ class Core(CombinatorialElement):
             [0 1 0]
             [0 0 1]
         """
-        return self.to_bounded_partition().from_kbounded_to_grassmannian(self.k()-1)
+        bp = self.to_bounded_partition()
+        return bp.from_kbounded_to_grassmannian(self.k() - 1)
 
     def affine_symmetric_group_simple_action(self, i):
         r"""
-        Returns the action of the simple transposition `s_i` of the affine symmetric group on ``self``.
+        Return the action of the simple transposition `s_i` of the affine symmetric group on ``self``.
 
         This gives the action of the affine symmetric group of type `A_k^{(1)}` on the `k`-core
         ``self``. If ``self`` has outside (resp. inside) corners of content `i` modulo `k`, then
@@ -303,11 +325,13 @@ class Core(CombinatorialElement):
         """
         mu = self.to_partition()
         corners = mu.outside_corners()
-        corners = [ p for p in corners if mu.content(p[0],p[1])%self.k()==i ]
-        if corners == []:
+        corners = [p for p in corners
+                   if mu.content(p[0], p[1]) % self.k() == i]
+        if not corners:
             corners = mu.corners()
-            corners = [ p for p in corners if mu.content(p[0],p[1])%self.k()==i ]
-            if corners == []:
+            corners = [p for p in corners
+                       if mu.content(p[0], p[1]) % self.k() == i]
+            if not corners:
                 return self
             for p in corners:
                 mu = mu.remove_cell(p[0])
@@ -316,13 +340,13 @@ class Core(CombinatorialElement):
                 mu = mu.add_cell(p[0])
         return Core(mu, self.k())
 
-    def affine_symmetric_group_action(self, w, transposition = False):
+    def affine_symmetric_group_action(self, w, transposition=False):
         r"""
-        Returns the (left) action of the affine symmetric group on ``self``.
+        Return the (left) action of the affine symmetric group on ``self``.
 
         INPUT:
 
-        - ``w`` is a tupe of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
+        - ``w`` is a tuple of integers `[w_1,\ldots,w_m]` with `0\le w_j<k`.
           If transposition is set to be True, then `w = [w_0,w_1]` is
           interpreted as a transposition `t_{w_0, w_1}`
           (see :meth:`_transposition_to_reduced_word`).
@@ -383,13 +407,15 @@ class Core(CombinatorialElement):
             [1, 2, 0, 1, 2, 0, 2, 1, 0, 2, 1]
         """
         k = self.k()
-        if (t[0]-t[1])%k == 0:
+        if (t[0] - t[1]) % k == 0:
             raise ValueError("t_0 and t_1 cannot be equal mod k")
         if t[0] > t[1]:
-            return self._transposition_to_reduced_word([t[1],t[0]])
+            return self._transposition_to_reduced_word([t[1], t[0]])
         else:
-            return [i%k for i in range(t[0],t[1]-floor((t[1]-t[0])/k))] + [(t[1]-floor((t[1]-t[0])/k)-2-i)%(k) for i in
-                                                                           range(t[1]-floor((t[1]-t[0])/k)-t[0]-1)]
+            resu = [i % k for i in range(t[0], t[1] - (t[1] - t[0]) // k)]
+            resu += [(t[1] - (t[1] - t[0]) // k - 2 - i) % k
+                     for i in range(t[1] - (t[1] - t[0]) // k - t[0] - 1)]
+            return resu
 
     def weak_le(self, other):
         r"""
@@ -401,7 +427,7 @@ class Core(CombinatorialElement):
 
         OUTPUT: a boolean
 
-        Returns whether ``self`` <= ``other`` in weak order.
+        This returns whether ``self`` <= ``other`` in weak order.
 
         EXAMPLES::
 
@@ -433,7 +459,7 @@ class Core(CombinatorialElement):
 
     def weak_covers(self):
         r"""
-        Returns a list of all elements that cover ``self`` in weak order.
+        Return a list of all elements that cover ``self`` in weak order.
 
         EXAMPLES::
 
@@ -447,8 +473,8 @@ class Core(CombinatorialElement):
         """
         w = self.to_grassmannian()
         S = w.upper_covers(side='left')
-        S = [x for x in S if x.is_affine_grassmannian()]
-        return [ x.affine_grassmannian_to_core() for x in set(S) ]
+        S = (x for x in S if x.is_affine_grassmannian())
+        return [x.affine_grassmannian_to_core() for x in set(S)]
 
     def strong_le(self, other):
         r"""
@@ -460,7 +486,7 @@ class Core(CombinatorialElement):
 
         OUTPUT: a boolean
 
-        Returns whether ``self`` <= ``other`` in Bruhat (or strong) order.
+        This returns whether ``self`` <= ``other`` in Bruhat (or strong) order.
 
         EXAMPLES::
 
@@ -478,7 +504,7 @@ class Core(CombinatorialElement):
             ValueError: The two cores do not have the same k
         """
         if type(self) is type(other):
-            if self.k()!=other.k():
+            if self.k() != other.k():
                 raise ValueError("The two cores do not have the same k")
         else:
             other = Core(other, self.k())
@@ -494,8 +520,8 @@ class Core(CombinatorialElement):
 
         OUTPUT: a boolean
 
-        Returns ``True`` if the Ferrers diagram of ``self`` contains the
-        Ferrers diagram of other.
+        This returns ``True`` if the Ferrers diagram of ``self`` contains the
+        Ferrers diagram of ``other``.
 
         EXAMPLES::
 
@@ -512,7 +538,7 @@ class Core(CombinatorialElement):
 
     def strong_covers(self):
         r"""
-        Returns a list of all elements that cover ``self`` in strong order.
+        Return a list of all elements that cover ``self`` in strong order.
 
         EXAMPLES::
 
@@ -523,12 +549,12 @@ class Core(CombinatorialElement):
             sage: c.strong_covers()
             [[5, 3, 1], [4, 2, 1, 1]]
         """
-        S = Cores(self.k(), length=self.length()+1)
-        return [ ga for ga in S if ga.contains(self) ]
+        S = Cores(self.k(), length=self.length() + 1)
+        return [ga for ga in S if ga.contains(self)]
 
     def strong_down_list(self):
         r"""
-        Returns a list of all elements that are covered by ``self`` in strong order.
+        Return a list of all elements that are covered by ``self`` in strong order.
 
         EXAMPLES::
 
@@ -539,11 +565,13 @@ class Core(CombinatorialElement):
             sage: c.strong_down_list()
             [[4, 2], [3, 1, 1]]
         """
-        if self==[]:
+        if not self:
             return []
-        return [ga for ga in Cores(self.k(), length=self.length()-1) if self.contains(ga)]
+        return [ga for ga in Cores(self.k(), length=self.length() - 1)
+                if self.contains(ga)]
 
-def Cores(k, length = None, **kwargs):
+
+def Cores(k, length=None, **kwargs):
     r"""
     A `k`-core is a partition from which no rim hook of size `k` can be removed.
     Alternatively, a `k`-core is an integer partition such that the Ferrers
@@ -585,11 +613,12 @@ def Cores(k, length = None, **kwargs):
         [4, 1, 1]
     """
     if length is None and 'size' in kwargs:
-        return Cores_size(k,kwargs['size'])
+        return Cores_size(k, kwargs['size'])
     elif length is not None:
-        return Cores_length(k,length)
+        return Cores_length(k, length)
     else:
         raise ValueError("You need to either specify the length or size of the cores considered!")
+
 
 class Cores_length(UniqueRepresentation, Parent):
     r"""
@@ -606,7 +635,7 @@ class Cores_length(UniqueRepresentation, Parent):
         """
         self.k = k
         self.n = n
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -615,11 +644,11 @@ class Cores_length(UniqueRepresentation, Parent):
             sage: repr(Cores(4, 3))  #indirect doctest
             '4-Cores of length 3'
         """
-        return "%s-Cores of length %s"%(self.k,self.n)
+        return "%s-Cores of length %s" % (self.k, self.n)
 
     def list(self):
         r"""
-        Returns the list of all `k`-cores of length `n`.
+        Return the list of all `k`-cores of length `n`.
 
         EXAMPLES::
 
@@ -627,7 +656,8 @@ class Cores_length(UniqueRepresentation, Parent):
             sage: C.list()
             [[4, 2], [3, 1, 1], [2, 2, 1, 1]]
         """
-        return [la.to_core(self.k-1) for la in Partitions(self.n, max_part=self.k-1)]
+        return [la.to_core(self.k - 1)
+                for la in Partitions(self.n, max_part=self.k - 1)]
 
     def from_partition(self, part):
         r"""
@@ -670,7 +700,7 @@ class Cores_size(UniqueRepresentation, Parent):
         """
         self.k = k
         self.n = n
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -679,11 +709,11 @@ class Cores_size(UniqueRepresentation, Parent):
             sage: repr(Cores(4, size = 3))  #indirect doctest
             '4-Cores of size 3'
         """
-        return "%s-Cores of size %s"%(self.k,self.n)
+        return "%s-Cores of size %s" % (self.k, self.n)
 
     def list(self):
         r"""
-        Returns the list of all `k`-cores of size `n`.
+        Return the list of all `k`-cores of size `n`.
 
         EXAMPLES::
 
@@ -691,11 +721,12 @@ class Cores_size(UniqueRepresentation, Parent):
             sage: C.list()
             [[3, 1], [2, 1, 1]]
         """
-        return [ Core(x, self.k) for x in Partitions(self.n) if x.is_core(self.k) ]
+        return [Core(x, self.k) for x in Partitions(self.n)
+                if x.is_core(self.k)]
 
     def from_partition(self, part):
         r"""
-        Converts the partition ``part`` into a core (as the identity map).
+        Convert the partition ``part`` into a core (as the identity map).
 
         This is the inverse method to :meth:`to_partition`.
 

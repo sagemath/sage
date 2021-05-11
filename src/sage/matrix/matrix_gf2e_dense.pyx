@@ -1,5 +1,10 @@
+# -*- coding: utf-8 -*-
+# distutils: libraries = m4rie M4RI_LIBRARIES m
+# distutils: library_dirs = M4RI_LIBDIR
+# distutils: include_dirs = M4RI_INCDIR
+# distutils: extra_compile_args = M4RI_CFLAGS
 """
-Dense matrices over `\GF{2^e}` for `2 <= e <= 10` using the M4RIE library.
+Dense matrices over `\GF{2^e}` for `2 \leq e \leq 16` using the M4RIE library
 
 The M4RIE library offers two matrix representations:
 
@@ -79,17 +84,18 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
 cimport sage.matrix.matrix_dense as matrix_dense
 from sage.structure.element cimport Matrix, Vector
 from sage.structure.element cimport ModuleElement, Element, RingElement
+from sage.structure.richcmp cimport rich_to_bool
+from sage.rings.finite_rings.element_base cimport Cache_base
 
-from sage.rings.all import FiniteField as GF
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.misc.randstate cimport randstate, current_randstate
 
 from sage.matrix.matrix_mod2_dense cimport Matrix_mod2_dense
@@ -128,9 +134,6 @@ cdef class M4RIE_finite_field:
 
 cdef m4ri_word poly_to_word(f):
     return f.integer_representation()
-
-cdef object word_to_poly(w, F):
-    return F.fetch_int(w)
 
 
 cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
@@ -183,6 +186,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         # cache elements
         self._zero = self._base_ring(0)
+        self._zero_word = poly_to_word(self._zero)
         self._one = self._base_ring(1)
 
     def __dealloc__(self):
@@ -201,7 +205,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
     def __init__(self, parent, entries=None, copy=None, bint coerce=True):
         r"""
-        Create new matrix over `GF(2^e)` for 2<=e<=10.
+        Create new matrix over `GF(2^e)` for `2 \leq e \leq 16`.
 
         INPUT:
 
@@ -288,7 +292,22 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             [    a^2 + a     a^2 + 1 a^2 + a + 1       a + 1]
         """
         cdef int r = mzed_read_elem(self._entries, i, j)
-        return word_to_poly(r, self._base_ring)
+        cdef Cache_base cache = <Cache_base> self._base_ring._cache
+        return cache.fetch_int(r)
+
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+        r"""
+        Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(2^4)
+            sage: A = Matrix(K, 2, 2, a)
+            sage: A.zero_pattern_matrix()  # indirect doctest
+            [0 1]
+            [1 0]
+        """
+        return mzed_read_elem(self._entries, i, j) == self._zero_word
 
     cpdef _add_(self, right):
         """
@@ -661,7 +680,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef int _cmp_(self, right) except -2:
+    cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
 
@@ -675,8 +694,9 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             False
         """
         if self._nrows == 0 or self._ncols == 0:
-            return 0
-        return mzed_cmp(self._entries, (<Matrix_gf2e_dense>right)._entries)
+            return rich_to_bool(op, 0)
+        return rich_to_bool(op, mzed_cmp(self._entries,
+                                         (<Matrix_gf2e_dense>right)._entries))
 
     def __copy__(self):
         """
@@ -705,6 +725,24 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             mzed_copy(A._entries, <const_mzed_t *>self._entries)
 
         return A
+
+    def __bool__(self):
+        """
+        Return if ``self`` is a zero matrix or not.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(2^4)
+            sage: A = Matrix(K, 2, 2, a)
+            sage: bool(A)
+            True
+            sage: zero = MatrixSpace(K, 3, 3).zero()
+            sage: bool(zero)
+            False
+        """
+        if self._nrows and self._ncols:
+            return not mzed_is_zero(self._entries)
+        return False
 
     def _list(self):
         """
@@ -949,7 +987,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         i = 0
         while i < self._nrows:
             for j from i <= j < nc:
-                if self.get_unsafe(i,j):
+                if not self.get_is_zero_unsafe(i,j):
                     pivots.append(j)
                     i += 1
                     break
@@ -980,8 +1018,13 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef Matrix_gf2e_dense A
         A = Matrix_gf2e_dense.__new__(Matrix_gf2e_dense, self._parent, 0, 0, 0)
 
-        if self._nrows and self._nrows == self._ncols:
+        if self.rank() != self._nrows:
+            raise ZeroDivisionError("Matrix does not have full rank.")
+
+        if self._nrows:
+            sig_on()
             mzed_invert_newton_john(A._entries, self._entries)
+            sig_off()
 
         return A
 

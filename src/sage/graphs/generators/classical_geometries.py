@@ -13,10 +13,8 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #           Copyright (C) 2015 Sagemath project
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
-#                         http://www.gnu.org/licenses/
+#                         https://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import absolute_import, division
-from six.moves import range
 
 from sage.graphs.graph import Graph
 from sage.arith.all import is_prime_power
@@ -78,7 +76,7 @@ def SymplecticPolarGraph(d, q, algorithm=None):
         ...
         ValueError: unknown algorithm!
     """
-    if d < 1 or d%2 != 0:
+    if d < 1 or d % 2:
         raise ValueError("d must be even and greater than 2")
 
     if algorithm == "gap":     # faster for larger (q>3)  fields
@@ -173,13 +171,13 @@ def AffineOrthogonalPolarGraph(d,q,sign="+"):
         sage: g.is_vertex_transitive()
         True
     """
-    if sign in ["+","-"]:
+    if sign in ["+", "-"]:
         s = 1 if sign == "+" else -1
-        if d%2 == 1:
-            raise ValueError("d must be even when sign!=None")
+        if d % 2:
+            raise ValueError("d must be even when sign is not None")
     else:
-        if d%2 == 0:
-            raise ValueError("d must be odd when sign==None")
+        if d % 2 == 0:
+            raise ValueError("d must be odd when sign is None")
         s = 0
 
     from sage.modules.free_module import VectorSpace
@@ -392,15 +390,15 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign="+", perp=None):
     * `m` odd: if ``perp`` is not ``None``, then we assume that `q=5` and
       return the graph of the points `x` satisfying `F(x)=\pm 1` if ``sign="+"``,
       respectively `F(x) \in \{2,3\}` if ``sign="-"``, with adjacency
-      given by orthogonality w.r.t. `F` (cf. Sect 7.D of [BvL84]_).
+      given by orthogonality w.r.t. `F` (cf. Sect 7.D of [BL1984]_).
       Otherwise return the graph
       of nongenerate hyperplanes of type ``sign``, adjacent whenever the intersection
-      is degenerate (cf. Sect. 7.C of [BvL84]_).
+      is degenerate (cf. Sect. 7.C of [BL1984]_).
       Note that for `q=2` one will get a complete graph.
 
-    For more information, see Sect. 9.9 of [BH12]_ and [BvL84]_. Note that the `page of
-    Andries Brouwer's website <https://www.win.tue.nl/~aeb/graphs/srghub.html>`_
-    uses different notation.
+    For more information, see Sect. 9.9 of [BH2012]_ and [BL1984]_. Note that
+    the `page of Andries Brouwer's website
+    <https://www.win.tue.nl/~aeb/graphs/srghub.html>`_ uses different notation.
 
     INPUT:
 
@@ -658,7 +656,7 @@ def NonisotropicUnitaryPolarGraph(m, q):
     Hermitean form, points of the `(m-1)`-dimensional projective space over `F_q`,
     with points adjacent whenever they lie on a tangent (to the set of isotropic points)
     line.
-    For more information, see Sect. 9.9 of [BH12]_ and series C14 in [Hu75]_.
+    For more information, see Sect. 9.9 of [BH2012]_ and series C14 in [Hub1975]_.
 
     INPUT:
 
@@ -681,13 +679,6 @@ def NonisotropicUnitaryPolarGraph(m, q):
         Traceback (most recent call last):
         ...
         ValueError: q must be a prime power
-
-    REFERENCE:
-
-    .. [Hu75] \X. L. Hubaut.
-      Strongly regular graphs.
-      Disc. Math. 13(1975), pp 357--381.
-      :doi:`10.1016/0012-365X(75)90057-6`
     """
     p, k = is_prime_power(q,get_data=True)
     if k==0:
@@ -697,7 +688,7 @@ def NonisotropicUnitaryPolarGraph(m, q):
     F=libgap.GF(q**2)  # F_{q^2}
     W=libgap.FullRowSpace(F, m)  # F_{q^2}^m
     B=libgap.Elements(libgap.Basis(W))      # the standard basis of W
-    if m % 2 != 0:
+    if m % 2:
         point = B[(m-1)/2]
     else:
         if p==2:
@@ -727,7 +718,7 @@ def UnitaryDualPolarGraph(m, q):
     Returns the Dual Unitary Polar Graph `U(m,q)`.
 
     For more information on Unitary Dual Polar graphs, see [BCN1989]_ and
-    Sect. 2.3.1 of [Co81]_.
+    Sect. 2.3.1 of [Coh1981]_.
 
     INPUT:
 
@@ -735,7 +726,8 @@ def UnitaryDualPolarGraph(m, q):
 
     EXAMPLES:
 
-    The point graph of a generalized quadrangle (see [GQwiki]_, [PT09]_) of order (8,4)::
+    The point graph of a generalized quadrangle (see
+    :wikipedia:`Generalized_quadrangle`, [PT2009]_) of order (8,4)::
 
         sage: G = graphs.UnitaryDualPolarGraph(5,2); G   # long time
         Unitary Dual Polar Graph DU(5, 2); GQ(8, 4): Graph on 297 vertices
@@ -765,7 +757,7 @@ def UnitaryDualPolarGraph(m, q):
     """
     from sage.libs.gap.libgap import libgap
     G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
-            intersection_size=(q**(2*(m//2-1))-1)/(q**2-1))
+                     intersection_size=int((q**(2*(m//2-1))-1)/(q**2-1)))
     G.relabel()
     G.name("Unitary Dual Polar Graph DU" + str((m, q)))
     if m==4:
@@ -780,7 +772,7 @@ def SymplecticDualPolarGraph(m, q):
     Returns the Symplectic Dual Polar Graph `DSp(m,q)`.
 
     For more information on Symplectic Dual Polar graphs, see [BCN1989]_ and
-    Sect. 2.3.1 of [Co81]_.
+    Sect. 2.3.1 of [Coh1981]_.
 
     INPUT:
 
@@ -803,17 +795,10 @@ def SymplecticDualPolarGraph(m, q):
         Traceback (most recent call last):
         ...
         GAPError: Error, <subfield> must be a prime or a finite field
-
-    REFERENCE:
-
-    .. [Co81] \A. M. Cohen,
-      `A synopsis of known distance-regular graphs with large diameters
-      <http://persistent-identifier.org/?identifier=urn:nbn:nl:ui:18-6775>`_,
-      Stichting Mathematisch Centrum, 1981.
     """
     from sage.libs.gap.libgap import libgap
     G = _polar_graph(m, q, libgap.SymplecticGroup(m, q),
-             intersection_size=(q**(m/2-1)-1)/(q-1))
+                     intersection_size=int((q**(m/2-1)-1)/(q-1)))
 
     G.relabel()
     G.name("Symplectic Dual Polar Graph DSp" + str((m, q)))
@@ -835,7 +820,7 @@ def TaylorTwographDescendantSRG(q, clique_partition=None):
     Seidel switching class of `T`, for which we need `(q^2+1)/2` cliques.
     The cliques are the `q^2` lines on `v_0` of the projective plane containing the unital
     for `U_3(q)`, and intersecting the unital (i.e. the vertices of the graph and the point
-    we remove) in `q+1` points. This is all taken from §7E of [BvL84]_.
+    we remove) in `q+1` points. This is all taken from §7E of [BL1984]_.
 
     INPUT:
 
@@ -878,7 +863,6 @@ def TaylorTwographDescendantSRG(q, clique_partition=None):
        raise ValueError('q must be an odd prime power')
     from sage.schemes.projective.projective_space import ProjectiveSpace
     from sage.rings.finite_rings.integer_mod import mod
-    from six.moves.builtins import sum
     Fq = FiniteField(q**2, 'a')
     PG = map(tuple,ProjectiveSpace(2, Fq))
 
@@ -909,7 +893,7 @@ def TaylorTwographSRG(q):
     `(v,k,\lambda,\mu)=(q^3+1, q(q^2+1)/2, (q^2+3)(q-1)/4, (q^2+1)(q+1)/4)`
     in the Seidel switching class of
     :func:`Taylor two-graph <sage.combinat.designs.twographs.taylor_twograph>`.
-    Details are in §7E of [BvL84]_.
+    Details are in §7E of [BL1984]_.
 
     INPUT:
 
@@ -937,8 +921,9 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
     r"""
     Return the collinearity graph of the generalized quadrangle `AS(q)`, or of its dual
 
-    Let `q` be an odd prime power.  `AS(q)` is a generalized quadrangle [GQwiki]_ of
-    order `(q-1,q+1)`, see 3.1.5 in [PT09]_. Its points are elements
+    Let `q` be an odd prime power.  `AS(q)` is a generalized quadrangle
+    (:wikipedia:`Generalized_quadrangle`) of
+    order `(q-1,q+1)`, see 3.1.5 in [PT2009]_. Its points are elements
     of `F_q^3`, and lines are sets of size `q` of the form
 
     * `\{ (\sigma, a, b) \mid \sigma\in F_q \}`
@@ -964,15 +949,6 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
         AS(5)*; GQ(6, 4): Graph on 175 vertices
         sage: g.is_strongly_regular(parameters=True)
         (175, 30, 5, 5)
-
-    REFERENCE:
-
-    .. [GQwiki] :wikipedia:`Generalized_quadrangle`
-
-    .. [PT09] \S. Payne, J. A. Thas.
-      Finite generalized quadrangles.
-      European Mathematical Society,
-      2nd edition, 2009.
     """
     from sage.combinat.designs.incidence_structures import IncidenceStructure
     p, k = is_prime_power(q,get_data=True)
@@ -998,8 +974,10 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
     r"""
     Return the collinearity graph of the generalized quadrangle `T_2^*(q)`, or of its dual
 
-    Let `q=2^k` and `\Theta=PG(3,q)`.  `T_2^*(q)` is a generalized quadrangle [GQwiki]_
-    of order `(q-1,q+1)`, see 3.1.3 in [PT09]_. Fix a plane `\Pi \subset \Theta` and a
+    Let `q=2^k` and `\Theta=PG(3,q)`.  `T_2^*(q)` is a generalized quadrangle
+    (:wikipedia:`Generalized_quadrangle`)
+    of order `(q-1,q+1)`, see 3.1.3 in [PT2009]_. Fix a plane `\Pi \subset
+    \Theta` and a
     `hyperoval <http://en.wikipedia.org/wiki/Oval_(projective_plane)#Even_q>`__
     `O \subset \Pi`. The points of `T_2^*(q):=T_2^*(O)` are the points of `\Theta`
     outside `\Pi`, and the lines are the lines of `\Theta` outside `\Pi`
@@ -1075,7 +1053,7 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
         F = field
 
     Theta = PG(3, 1, F, point_coordinates=1)
-    Pi = set(filter(lambda x: x[0]==F.zero(), Theta.ground_set()))
+    Pi = set(x for x in Theta.ground_set() if x[0] == F.zero())
     if hyperoval is None:
         O = set(x for x in Pi
                 if (x[1] + x[2] * x[3] == 0) or
@@ -1108,7 +1086,7 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     r"""
     Return the Haemers graph obtained from `T_2^*(q)^*`
 
-    Let `q` be a power of 2. In Sect. 8.A of [BvL84]_ one finds a construction
+    Let `q` be a power of 2. In Sect. 8.A of [BL1984]_ one finds a construction
     of a strongly regular graph with parameters `(q^2(q+2),q^2+q-1,q-2,q)` from
     the graph of `T_2^*(q)^*`, constructed by
     :func:`~sage.graphs.graph_generators.GraphGenerators.T2starGeneralizedQuadrangleGraph`,
@@ -1116,9 +1094,9 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
     of the points (i.e. partitioning into size two parts) of ``hyperoval`` defining
     `T_2^*(q)^*`.
 
-    While [BvL84]_ gives the construction in geometric terms, it can be formulated,
-    and is implemented, in graph-theoretic ones, of re-adjusting the edges.
-    Namely, `G=T_2^*(q)^*` has a partition
+    While [BL1984]_ gives the construction in geometric terms, it can be
+    formulated, and is implemented, in graph-theoretic ones, of re-adjusting the
+    edges. Namely, `G=T_2^*(q)^*` has a partition
     into `q+2` independent sets `I_k` of size `q^2` each. Each vertex in `I_j` is
     adjacent to `q` vertices from `I_k`. Each `I_k` is paired to some `I_{k'}`,
     according to ``hyperoval_matching``. One adds edges `(s,t)` for `s,t \in I_k` whenever
@@ -1228,10 +1206,10 @@ def CossidentePenttilaGraph(q):
     Cossidente-Penttila `((q^3+1)(q+1)/2,(q^2+1)(q-1)/2,(q-3)/2,(q-1)^2/2)`-strongly regular graph
 
     For each odd prime power `q`, one can partition the points of the `O_6^-(q)`-generalized
-    quadrange `GQ(q,q^2)` into two parts, so that on any of them the induced subgraph of
-    the point graph of the GQ has parameters as above [CP05]_.
+    quadrangle `GQ(q,q^2)` into two parts, so that on any of them the induced subgraph of
+    the point graph of the GQ has parameters as above [CP2005]_.
 
-    Directly following the construction in [CP05]_ is not efficient,
+    Directly following the construction in [CP2005]_ is not efficient,
     as one then needs to construct the dual `GQ(q^2,q)`. Thus we
     describe here a more efficient approach that we came up with, following a suggestion by
     T.Penttila. Namely, this partition is invariant
@@ -1277,12 +1255,6 @@ def CossidentePenttilaGraph(q):
         Traceback (most recent call last):
         ...
         ValueError: q(=2) must be an odd prime power
-
-    REFERENCES:
-
-    .. [CP05] \A.Cossidente and T.Penttila
-       Hemisystems on the Hermitian surface
-       Journal of London Math. Soc. 72(2005), 731--741
     """
     p, k = is_prime_power(q,get_data=True)
     if k==0 or p==2:
@@ -1339,9 +1311,10 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     `C` contains `q(q-1)^2/2` words without 0 entries. The subgraph of the strongly
     regular graph of `C` induced on the latter words is also strongly regular,
-    assuming `q>4`. This is a construction due to A.E.Brouwer [AB16]_, and leads
-    to graphs with parameters also given by a construction in [HHL09]_. According
-    to [AB16]_, these two constructions are likely to produce isomorphic graphs.
+    assuming `q>4`. This is a construction due to A.E.Brouwer [Bro2016]_, and
+    leads to graphs with parameters also given by a construction in [HHL2009]_.
+    According to [Bro2016]_, these two constructions are likely to produce
+    isomorphic graphs.
 
     INPUT:
 
@@ -1400,17 +1373,6 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
         Traceback (most recent call last):
         ...
         RuntimeError: incorrect hyperoval
-
-    REFERENCES:
-
-    .. [HHL09] \T. Huang, L. Huang, M.I. Lin
-       On a class of strongly regular designs and quasi-semisymmetric designs.
-       In: Recent Developments in Algebra and Related Areas, ALM vol. 8, pp. 129--153.
-       International Press, Somerville (2009)
-
-    .. [AB16] \A.E. Brouwer
-       Personal communication, 2016
-
     """
     from sage.combinat.designs.block_design import ProjectiveGeometryDesign as PG
     from sage.matrix.constructor import matrix
@@ -1431,7 +1393,6 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
         hyperoval = [x for x in Pi
                      if (x[0] + x[1] * x[2] == 0) or
                         (x[0] == 1 and x[1] == x[2] == 0)]
-        O = set(hyperoval)
     else:
         for v in hyperoval:
             v.set_immutable()
@@ -1442,7 +1403,7 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
                 raise RuntimeError("incorrect hyperoval size")
             for L in Theta.blocks():
                 if set(L).issubset(Pi):
-                    if not len(O.intersection(L)) in [0,2]:
+                    if len(O.intersection(L)) not in [0, 2]:
                         raise RuntimeError("incorrect hyperoval")
     M = matrix(hyperoval)
     F_0 = F.zero()
@@ -1450,7 +1411,145 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     for x in C:
         x.set_immutable()
-    G = Graph([C, lambda x,y: not F.zero() in x+y])
+    G = Graph([C, lambda x,y: F.zero() not in x+y])
     G.name('Nowhere0WordsTwoWeightCodeGraph('+str(q)+')')
     G.relabel()
+    return G
+
+
+def OrthogonalDualPolarGraph(e, d, q):
+    r"""
+    Return dual polar graph on $GO^e(n,q)$ of diameter `d`.
+    The value of `n` is determined by `d` and `e`.
+
+    The graph is distance-regular with classical parameters
+    `(d, q, 0, q^e)`.
+
+    INPUT:
+
+    - ``e`` -- integer; type of the orthogonal polar space to consider;
+      must be `-1, 0` or  `1`.
+
+    - ``d`` -- integer; diameter of the graph
+
+    - ``q`` -- integer; prime power; order of the finite field over which to
+      build the polar space
+
+    EXAMPLES::
+
+        sage: G = graphs.OrthogonalDualPolarGraph(1,3,2)
+        sage: G.is_distance_regular(True)
+        ([7, 6, 4, None], [None, 1, 3, 7])
+        sage: G = graphs.OrthogonalDualPolarGraph(0,3,3)
+        sage: G.is_distance_regular(True)
+        ([39, 36, 27, None], [None, 1, 4, 13])
+        sage: G.order()
+        1120
+
+    REFERENCES:
+
+    See [BCN1989]_ pp. 274-279 or [VDKT2016]_ p. 22.
+
+    TESTS::
+
+        sage: G = graphs.OrthogonalDualPolarGraph(0,3,2)
+        sage: G.is_distance_regular(True)
+        ([14, 12, 8, None], [None, 1, 3, 7])
+        sage: G = graphs.OrthogonalDualPolarGraph(-1,3,2)
+        sage: G.is_distance_regular(True)
+        ([28, 24, 16, None], [None, 1, 3, 7])
+        sage: G = graphs.OrthogonalDualPolarGraph(1,3,4)
+        sage: G.is_distance_regular(True)
+        ([21, 20, 16, None], [None, 1, 5, 21])
+        sage: G = graphs.OrthogonalDualPolarGraph(1,4,2)
+        sage: G.is_distance_regular(True)
+        ([15, 14, 12, 8, None], [None, 1, 3, 7, 15])
+    """
+    from sage.libs.gap.libgap import libgap
+    from sage.matrix.constructor import Matrix
+    from sage.modules.free_module import VectorSpace
+    from sage.rings.finite_rings.finite_field_constructor import GF
+    import itertools
+
+    def hashable(v):
+        v.set_immutable()
+        return v
+
+    if e not in {0, 1, -1}:
+        raise ValueError("e must by 0, +1 or -1")
+
+    m = 2*d + 1 - e
+
+    group = libgap.GeneralOrthogonalGroup(e, m, q)
+    M = Matrix(libgap.InvariantQuadraticForm(group)["matrix"])
+    # Q(x) = xMx is our quadratic form
+
+    # we need to find a totally isotropic subspace of dimension d
+    K = M.kernel()
+    isotropicBasis = list(K.basis())
+
+    # extend K to a maximal isotropic subspace
+    if K.dimension() < d:
+        V = VectorSpace(GF(q), m)
+
+        # get all projective points not in K
+        candidates = set(map(hashable, [P.basis()[0] for P in V.subspaces(1)]))
+        hashableK = map(hashable, [P.basis()[0] for P in K.subspaces(1)])
+        candidates = candidates.difference(hashableK)
+
+        nonZeroScalars = [x for x in GF(q) if not x.is_zero()]
+        while K.dimension() < d:
+            found = False
+            while not found:
+                v = candidates.pop()
+                if v*M*v == 0:
+                    # found another isotropic point
+                    # check if we can add it to K
+                    found  = True
+                    for w in isotropicBasis:
+                        if w*M*v + v*M*w != 0:
+                            found  = False
+                            break
+            # here we found a valid point
+            isotropicBasis.append(v)
+
+            # remove new points of K
+            newVectors = map(hashable,
+                             [k + l*v for k in K for l in nonZeroScalars])
+            candidates.difference(newVectors)
+            K = V.span(isotropicBasis)
+
+        # here K is a totally isotropic subspace of dimension d
+        isotropicBasis = list(K.basis())
+
+    W = libgap.FullRowSpace(libgap.GF(q), m)
+    isoS = libgap.Subspace(W, isotropicBasis)  # gap version of K
+
+    allIsoPoints = libgap.Orbit(group, isotropicBasis[0], libgap.OnLines)
+    permutation = libgap.Action(group, allIsoPoints, libgap.OnLines)
+    # this is the permutation group generated by GO^e(n,q) acting on
+    # projective isotropic points
+
+    # convert isoS into a list of ints representing the projective points
+    isoSPoints = [libgap.Elements(libgap.Basis(x))[0]
+                  for x in libgap.Elements(isoS.Subspaces(1))]
+    isoSPointsInt = libgap.Set([libgap.Position(allIsoPoints, x)
+                                for x in isoSPoints])
+
+    # all isotropic subspaces of dimension d
+    allIsoSubspaces = libgap.Orbit(permutation, isoSPointsInt, libgap.OnSets)
+
+    # number of projective points in a (d-1)-subspace
+    intersection_size = (q**(d-1) - 1) // (q-1)
+
+    edges = []
+    n = len(allIsoSubspaces)
+    for i, j in itertools.combinations(range(n), 2):
+        if libgap.Size(libgap.Intersection(allIsoSubspaces[i],
+                                           allIsoSubspaces[j])) \
+                                           == intersection_size:
+                edges.append((i, j))
+
+    G = Graph(edges, format="list_of_edges")
+    G.name("Dual Polar Graph on Orthogonal group (%d, %d, %d)"%(e, m, q))
     return G

@@ -15,18 +15,21 @@ REFERENCES:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.tensor.modules.free_module_element import FiniteRankFreeModuleElement
+from sage.tensor.modules.free_module_alt_form import FreeModuleAltForm
+from .scalarfield import DiffScalarField
 from sage.misc.decorators import options
+
 
 class TangentVector(FiniteRankFreeModuleElement):
     r"""
@@ -43,10 +46,10 @@ class TangentVector(FiniteRankFreeModuleElement):
 
     EXAMPLES:
 
-    Tangent vector on a 2-dimensional manifold::
+    A tangent vector `v` on a 2-dimensional manifold::
 
         sage: M = Manifold(2, 'M')
-        sage: c_xy.<x,y> = M.chart()
+        sage: X.<x,y> = M.chart()
         sage: p = M.point((2,3), name='p')
         sage: Tp = M.tangent_space(p)
         sage: v = Tp((-2,1), name='v') ; v
@@ -57,6 +60,41 @@ class TangentVector(FiniteRankFreeModuleElement):
         sage: v.parent()
         Tangent space at Point p on the 2-dimensional differentiable manifold M
         sage: v in Tp
+        True
+
+    By definition, a tangent vector at `p\in M` is a *derivation at* `p` on
+    the space `C^\infty(M)` of smooth scalar fields on `M`. Indeed  let us
+    consider a generic scalar field `f`::
+
+        sage: f = M.scalar_field(function('F')(x,y), name='f')
+        sage: f.display()
+        f: M --> R
+           (x, y) |--> F(x, y)
+
+    The tangent vector `v` maps `f` to the real number
+    `v^i \left. \frac{\partial F}{\partial x^i} \right|_p`::
+
+        sage: v(f)
+        -2*D[0](F)(2, 3) + D[1](F)(2, 3)
+        sage: vdf(x, y) = v[0]*diff(f.expr(), x) + v[1]*diff(f.expr(), y)
+        sage: X(p)
+        (2, 3)
+        sage: bool( v(f) == vdf(*X(p)) )
+        True
+
+    and if `g` is a second scalar field on `M`::
+
+        sage: g = M.scalar_field(function('G')(x,y), name='g')
+
+    then the product `f g` is also a scalar field on `M`::
+
+        sage: (f*g).display()
+        f*g: M --> R
+           (x, y) |--> F(x, y)*G(x, y)
+
+    and we have the derivation law `v(f g) = v(f) g(p) + f(p) v(g)`::
+
+        sage: bool( v(f*g) == v(f)*g(p) + f(p)*v(g) )
         True
 
     .. SEEALSO::
@@ -104,7 +142,7 @@ class TangentVector(FiniteRankFreeModuleElement):
             'Tangent vector v at Point p on the 2-dimensional differentiable manifold M'
 
         """
-        from sage.manifolds.differentiable.euclidean import EuclideanSpace
+        from sage.manifolds.differentiable.examples.euclidean import EuclideanSpace
         if isinstance(self._point.parent(), EuclideanSpace):
             desc = "Vector"
         else:
@@ -430,7 +468,7 @@ class TangentVector(FiniteRankFreeModuleElement):
         if ambient_coords is None:
             ambient_coords = chart[:]  # all chart coordinates are used
         n_pc = len(ambient_coords)
-        if n_pc != 2 and n_pc !=3:
+        if n_pc != 2 and n_pc != 3:
             raise ValueError("the number of coordinates involved in the " +
                              "plot must be either 2 or 3, not {}".format(n_pc))
         # indices coordinates involved in the plot:
@@ -483,3 +521,81 @@ class TangentVector(FiniteRankFreeModuleElement):
                                    color=label_color)
         return resu
 
+    def __call__(self, f):
+        r"""
+        Action on a scalar field (as a derivation) or on a linear form.
+
+        INPUT:
+
+        - ``f`` -- either a scalar field on the manifold of which ``self`` is
+          defined or a linear form in the same tangent space as ``self``
+
+        OUTPUT:
+
+        - scalar (element of the manifold base field)
+
+        EXAMPLES:
+
+        Let us consider a tangent vector on a 2-dimensional manifold::
+
+            sage: M = Manifold(2, 'M', start_index=1)
+            sage: X.<x,y> = M.chart()
+            sage: p = M((2, 3), name='p')
+            sage: Tp = M.tangent_space(p)
+            sage: v = Tp((-1, 2))
+            sage: v.display()
+            -d/dx + 2 d/dy
+
+        The action of `v` on a scalar field `f`::
+
+            sage: f = M.scalar_field(x*y^2, name='f')
+            sage: v(f)
+            15
+
+        Check of the formula `v(f) = v^i \frac{\partial f}{\partial x^i}|_p`::
+
+            sage: vdf(x, y) = v[1]*diff(f.expr(), x) + v[2]*diff(f.expr(), y)
+            sage: vdf
+            (x, y) |--> 4*x*y - y^2
+            sage: X(p)
+            (2, 3)
+            sage: bool( v(f) == vdf(*X(p)) )
+            True
+
+        Case of a generic scalar field::
+
+            sage: f = M.scalar_field(function('F')(x,y), name='f')
+            sage: v(f)
+            -D[0](F)(2, 3) + 2*D[1](F)(2, 3)
+
+        Action of a tangent vector on a linear form on the same tangent space::
+
+            sage: omega = Tp.linear_form()
+            sage: omega[:] = 4, 1
+            sage: omega.display()
+            4 dx + dy
+            sage: v(omega)
+            -2
+
+        Checks of he formula `v(\omega) = v^i \omega_i`::
+
+            sage: bool( v(omega) == v[1]*omega[1] + v[2]*omega[2] )
+            True
+
+        Another check::
+
+            sage: bool( v(omega) == omega(v) )
+            True
+
+        """
+        if isinstance(f, FreeModuleAltForm):
+            # Case of self acting on a linear form
+            if f.tensor_type() != (0, 1):
+                raise TypeError("the argument of __call__ must be a linear form, "
+                                "not {}".format(f))
+            return f(self)
+        if not isinstance(f, DiffScalarField):
+            raise TypeError("the argument of __call__ must be either a linear "
+                            "form or a scalar field, not {}".format(f))
+        # Case of self acting on a scalar field
+        return f.differential().at(self._point)(self)

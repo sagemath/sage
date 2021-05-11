@@ -195,8 +195,7 @@ REFERENCES:
 
 - [WP-Struve]_
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Benjamin Jones <benjaminfjones@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -208,30 +207,21 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.functions.other import sqrt
 from sage.functions.log import exp
 from sage.functions.hyperbolic import sinh, cosh
+from sage.functions.trig import sin, cos
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.misc.latex import latex
-from sage.rings.all import RR, Integer
-from sage.structure.element import parent, get_coercion_model
+from sage.rings.all import Integer, ZZ, QQ
+from sage.structure.element import get_coercion_model
 from sage.symbolic.constants import pi
 from sage.symbolic.ring import SR
 from sage.symbolic.function import BuiltinFunction
 from sage.symbolic.expression import Expression
-
-# remove after deprecation period
-from sage.calculus.calculus import maxima
-from sage.functions.trig import sin, cos
-from sage.functions.other import real, imag, sqrt
-from sage.misc.sage_eval import sage_eval
-from sage.rings.real_mpfr import RealField
-from sage.plot.plot import plot
-from sage.rings.all import ZZ, QQ
 
 
 class Function_Bessel_J(BuiltinFunction):
@@ -1202,11 +1192,6 @@ def Bessel(*args, **kwds):
             _type = 'J'
     if not (_type in ['I', 'J', 'K', 'Y']):
         raise ValueError("type must be one of I, J, K, Y")
-    # record the numerical evaluation system
-    if 'algorithm' in kwds:
-        _system = kwds['algorithm']
-    else:
-        _system = 'mpmath'
 
     # return the function
     _f = bessel_type_dict[_type]
@@ -2039,6 +2024,16 @@ def spherical_bessel_f(F, n, z):
         mpf('0.22924385795503024')
         sage: spherical_bessel_f('hankel1', 3, 4)
         mpc(real='0.22924385795503024', imag='-0.21864196590306359')
+
+    TESTS:
+
+    Check that :trac:`28474` is fixed::
+
+        sage: from sage.functions.bessel import spherical_bessel_f
+        sage: spherical_bessel_f('besselj', 3, -4)
+        mpc(real='-0.22924385795503024', imag='0.0')
+        sage: spherical_bessel_f('bessely', 3, -4)
+        mpc(real='-0.21864196590306359', imag='0.0')
     """
     from mpmath import mp
     ctx = mp
@@ -2050,11 +2045,12 @@ def spherical_bessel_f(F, n, z):
         Fz = getattr(ctx, F)(n + 0.5, z)
         hpi = 0.5 * ctx.pi()
         ctx.prec += 10
-        hpioz = hpi / z
+        sqrthpi = ctx.sqrt(hpi)
+        sqrtz = ctx.sqrt(z)
         ctx.prec += 10
-        sqrthpioz = ctx.sqrt(hpioz)
+        quotient = sqrthpi / sqrtz
         ctx.prec += 10
-        return sqrthpioz * Fz
+        return quotient * Fz
     finally:
         ctx.prec = prec
 

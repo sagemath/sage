@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -12,7 +19,6 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import division, print_function, absolute_import
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -357,9 +363,6 @@ cdef class ntl_ZZX(object):
             raise ArithmeticError("self (=%s) is not divisible by other (=%s)"%(self, other))
         result = make_ZZX_sig_off(q)
         return result
-
-    def __div__(self, other):
-        return self / other
 
     def __mod__(ntl_ZZX self, ntl_ZZX other):
         """

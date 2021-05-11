@@ -10,7 +10,6 @@ AUTHOR:
 Functions and Methods
 ----------------------
 """
-from six.moves import range
 
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
@@ -80,14 +79,14 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
     the function need not be defined at the endpoints::
 
         sage: find_root(x^2*log(x,2)-1,0, 2)  # abs tol 1e-6
-        1.41421356237   
-        
+        1.41421356237
+
     The following is an example, again from :trac:`4942` where Brent's method
-    fails. Currently no other method is implemented, but at least we 
+    fails. Currently no other method is implemented, but at least we
     acknowledge the fact that the algorithm fails::
 
-        sage: find_root(1/(x-1)+1,0, 2) 
-        0.0 
+        sage: find_root(1/(x-1)+1,0, 2)
+        0.0
         sage: find_root(1/(x-1)+1,0.00001, 2)
         Traceback (most recent call last):
         ...
@@ -111,7 +110,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         a, b = b, a
     left = f(a)
     right = f(b)
-   
+
     if left > 0 and right > 0:
         # Refine further -- try to find a point where this
         # function is negative in the interval
@@ -139,15 +138,15 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
             raise RuntimeError("f appears to have no zero on the interval")
         a = s
 
-    # Fixing :trac:`4942` - if the answer on any of the endpoints is NaN, 
+    # Fixing :trac:`4942` - if the answer on any of the endpoints is NaN,
     # we restrict to looking between minimum and maximum values in the segment
-    # Note - this could be used in all cases, but it requires some more 
+    # Note - this could be used in all cases, but it requires some more
     # computation
 
     if (left != left) or (right != right):
         minval, s_1 = find_local_minimum(f, a, b)
         maxval, s_2 = find_local_maximum(f, a, b)
-        if ((minval > 0) or (maxval < 0) or 
+        if ((minval > 0) or (maxval < 0) or
            (minval != minval) or (maxval != maxval)):
             raise RuntimeError("f appears to have no zero on the interval")
         a = min(s_1, s_2)
@@ -261,9 +260,9 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
     actually test)::
 
         sage: plot(f, (x,-2.5, -1)).ymin()
-        -2.1827...
+        -2.182...
         sage: plot(f, (x,-2.5, 2)).ymin()
-        -2.1827...
+        -2.182...
 
     ALGORITHM:
 
@@ -344,7 +343,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         sage: minimize(f, [.1,.3,.4]) # abs tol 1e-6
         (1.0, 1.0, 1.0)
 
-    Try the newton-conjugate gradient method; the gradient and hessian are 
+    Try the newton-conjugate gradient method; the gradient and hessian are
     computed automatically::
 
         sage: minimize(f, [.1, .3, .4], algorithm="ncg") # abs tol 1e-6
@@ -385,7 +384,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
     """
     from sage.symbolic.expression import Expression
     from sage.ext.fast_eval import fast_callable
-    import scipy
+    import numpy
     from scipy import optimize
     if isinstance(func, Expression):
         var_list=func.variables()
@@ -394,7 +393,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         f=lambda p: fast_f(*p)
         gradient_list=func.gradient()
         fast_gradient_functions=[fast_callable(gradient_list[i], vars=var_names, domain=float)  for i in range(len(gradient_list))]
-        gradient=lambda p: scipy.array([ a(*p) for a in fast_gradient_functions])
+        gradient=lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
     else:
         f=func
 
@@ -417,7 +416,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
                 hess=func.hessian()
                 hess_fast= [ [fast_callable(a, vars=var_names, domain=float) for a in row] for row in hess]
                 hessian=lambda p: [[a(*p) for a in row] for row in hess_fast]
-                hessian_p=lambda p,v: scipy.dot(scipy.array(hessian(p)),v)
+                hessian_p=lambda p,v: scipy.dot(numpy.array(hessian(p)),v)
                 min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient, \
                       fhess=hessian, fhess_p=hessian_p, disp=verbose, **args)
     return vector(RDF, min)
@@ -504,7 +503,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         (805.985..., 1005.985...)
     """
     from sage.symbolic.expression import Expression
-    import scipy
+    import numpy
     from scipy import optimize
     function_type = type(lambda x,y: x+y)
 
@@ -515,13 +514,13 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         f = lambda p: fast_f(*p)
         gradient_list = func.gradient()
         fast_gradient_functions = [gi._fast_float_(*var_names) for gi in gradient_list]
-        gradient = lambda p: scipy.array([ a(*p) for a in fast_gradient_functions])
+        gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
         if isinstance(cons, Expression):
             fast_cons = cons._fast_float_(*var_names)
-            cons = lambda p: scipy.array([fast_cons(*p)])
+            cons = lambda p: numpy.array([fast_cons(*p)])
         elif isinstance(cons, list) and isinstance(cons[0], Expression):
             fast_cons = [ci._fast_float_(*var_names) for ci in cons]
-            cons = lambda p: scipy.array([a(*p) for a in fast_cons])
+            cons = lambda p: numpy.array([a(*p) for a in fast_cons])
     else:
         f = func
 
@@ -688,9 +687,10 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     EXAMPLES:
 
-    First we create some data points of a sine function with some random
+    First we create some data points of a sine function with some "random"
     perturbations::
 
+        sage: set_random_seed(0)
         sage: data = [(i, 1.2 * sin(0.5*i-0.2) + 0.1 * normalvariate(0, 1)) for i in xsrange(0, 4*pi, 0.2)]
         sage: var('a, b, c, x')
         (a, b, c, x)

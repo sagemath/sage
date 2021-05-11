@@ -79,7 +79,7 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
         sage: wrapperdescr_call(Integer.__mul__, 1, 2, 3)
         Traceback (most recent call last):
         ...
-        TypeError: expected 1 arguments, got 2
+        TypeError: expected 1 arg..., got 2
         sage: wrapperdescr_call(Integer.__mul__, 6, other=9)
         Traceback (most recent call last):
         ...

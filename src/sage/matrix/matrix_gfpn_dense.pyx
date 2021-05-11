@@ -1,3 +1,6 @@
+# distutils: libraries = mtx
+# sage_setup: distribution = sage-meataxe
+
 r"""
 Dense Matrices over `\mathbb F_q`, with `q<255`.
 
@@ -26,10 +29,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import, division
 
 from cysignals.memory cimport check_realloc, check_malloc, sig_free
 from cpython.bytes cimport PyBytes_AsString, PyBytes_FromStringAndSize
+from sage.cpython.string cimport str_to_bytes
 from cysignals.signals cimport sig_on, sig_off, sig_check
 cimport cython
 
@@ -52,6 +55,7 @@ from sage.misc.randstate import current_randstate
 from sage.misc.randstate cimport randstate
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.structure.element cimport Element, ModuleElement, RingElement, Matrix
+from sage.structure.richcmp import rich_to_bool
 from .args cimport MatrixArgs_init
 
 from libc.string cimport memset, memcpy
@@ -117,6 +121,7 @@ cdef class FieldConverter_class:
             <sage.matrix.matrix_gfpn_dense.FieldConverter_class object at ...>
         """
         self.field = field._cache.fetch_int
+        self.zero_FEL = self.field_to_fel(field.zero())
 
     cpdef fel_to_field(self, FEL x):
         """
@@ -374,7 +379,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         - ``coerce`` -- ignored
 
-        - ``mutable`` -- if False, the resulting matrix can not be
+        - ``mutable`` -- if False, the resulting matrix cannot be
           changed, and it can be used as key in a Python dictionary
 
         EXAMPLES::
@@ -460,10 +465,10 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: Matrix_gfpn_dense.from_filename('')                          # optional: meataxe
             Traceback (most recent call last):
             ...
-            ValueError: can not construct meataxe matrix from empty filename
+            ValueError: cannot construct meataxe matrix from empty filename
         """
         if not filename:
-            raise ValueError("can not construct meataxe matrix from empty filename")
+            raise ValueError("cannot construct meataxe matrix from empty filename")
 
         if type(filename) is not bytes:
             filename = str_to_bytes(filename, FS_ENCODING,
@@ -573,6 +578,21 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         # and that you assert that the matrix is not empty!
         # This method is here for speed!
         return FfToInt(FfExtract(MatGetPtr(self.Data,i), j))
+
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+        r"""
+        Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
+
+        EXAMPLES::
+
+            sage: F.<z> = GF(9)
+            sage: M = MatrixSpace(F,2,5)(sorted(list(F))+[0])
+            sage: M.zero_pattern_matrix()  # indirect doctest
+            [1 0 0 0 0]
+            [0 0 0 0 1]
+        """
+        FfSetField(self.Data.Field)
+        return FfExtract(MatGetPtr(self.Data,i), j) == self._converter.zero_FEL
 
     cpdef Matrix_gfpn_dense get_slice(self, Py_ssize_t i, Py_ssize_t j):
         """
@@ -799,11 +819,11 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
 ##################
 ## comparison
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare two :class:`Matrix_gfpn_dense` matrices.
 
-        Of course, '<' and '>' doesn't make much sense for matrices.
+        Of course, '<' and '>' do not make much sense for matrices.
 
         EXAMPLES::
 
@@ -824,26 +844,26 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         cdef Matrix_gfpn_dense self = left
         cdef Matrix_gfpn_dense N = right
         if self is None or N is None:
-            return -1
+            return rich_to_bool(op, -1)
         if self.Data == NULL:
             if N.Data == NULL:
-                return 0
+                return rich_to_bool(op, 0)
             else:
-                return 1
+                return rich_to_bool(op, 1)
         elif N.Data == NULL:
-            return -1
+            return rich_to_bool(op, -1)
         if self.Data.Field != N.Data.Field:
             if self.Data.Field > N.Data.Field:
-                return 1
-            return -1
+                return rich_to_bool(op, 1)
+            return rich_to_bool(op, -1)
         if self.Data.Noc != N.Data.Noc:
             if self.Data.Noc > N.Data.Noc:
-                return 1
-            return -1
+                return rich_to_bool(op, 1)
+            return rich_to_bool(op, -1)
         if self.Data.Nor != N.Data.Nor:
             if self.Data.Nor > N.Data.Nor:
-                return 1
-            return -1
+                return rich_to_bool(op, 1)
+            return rich_to_bool(op, -1)
 
         cdef char* d1 = <char*>self.Data.Data
         cdef char* d2 = <char*>N.Data.Data
@@ -854,9 +874,9 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         s2 = PyBytes_FromStringAndSize(d2, total_size)
         if s1 != s2:
             if s1 > s2:
-                return 1
-            return -1
-        return 0
+                return rich_to_bool(op, 1)
+            return rich_to_bool(op, -1)
+        return rich_to_bool(op, 0)
 
     cpdef list _rowlist_(self, i, j=-1):
         """
@@ -1389,7 +1409,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sig_off()
         return new_mtx(mat, self)
 
-    def __div__(Matrix_gfpn_dense self, p):
+    def __truediv__(Matrix_gfpn_dense self, p):
         """
         Divide a matrix by a scalar.
 
@@ -1791,7 +1811,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
 from sage.misc.superseded import deprecation
 
-def mtx_unpickle(f, int nr, int nc, bytes Data, bint m):
+def mtx_unpickle(f, int nr, int nc, data, bint m):
     r"""
     Helper function for unpickling.
 
@@ -1905,6 +1925,12 @@ def mtx_unpickle(f, int nr, int nc, bytes Data, bint m):
         sage: mtx_unpickle(MatrixSpace(GF(19),0,5), 0, 5, b'', True) # optional: meataxe
         []
     """
+    # The expected input type is bytes. However, Python-2 legacy pickles do
+    # not distinguish between str and bytes. If such pickle is unpickled
+    # in Python-3, Sage will receive a str in `latin1` encoding. Therefore,
+    # in the following line, we use a helper function that would return bytes,
+    # regardless whether the input is bytes or str.
+    cdef bytes Data = str_to_bytes(data, encoding='latin1')
     if isinstance(f, (int, long)):
         # This is for old pickles created with the group cohomology spkg
         MS = MatrixSpace(GF(f, 'z'), nr, nc, implementation=Matrix_gfpn_dense)

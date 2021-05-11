@@ -445,8 +445,8 @@ class MapRelativeToAbsoluteNumberField(NumberFieldIsomorphism):
           To:   Number Field in b with defining polynomial x^2 + a0 over its base field
           Defn: a |--> b
         sage: type(fr), type(to)
-        (<class 'sage.rings.number_field.morphism.RelativeNumberFieldHomomorphism_from_abs'>,
-         <class 'sage.rings.number_field.morphism.NumberFieldHomomorphism_im_gens'>)
+        (<class 'sage.rings.number_field.homset.RelativeNumberFieldHomset_with_category.element_class'>,
+         <class 'sage.rings.number_field.homset.NumberFieldHomset_with_category.element_class'>)
 
         sage: M.<c> = L.absolute_field(); M
         Number Field in c with defining polynomial x^6 + 4*x^2 + 200
@@ -553,8 +553,8 @@ class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
               From: Vector space of dimension 4 over Rational Field
               To:   Number Field in a with defining polynomial x^2 + 3 over its base field
         """
-        self.__from_V = from_V
-        self.__from_K = from_K
+        self._from_V = from_V
+        self._from_K = from_K
         NumberFieldIsomorphism.__init__(self, Hom(V, L))
 
     def _call_(self, x):
@@ -568,7 +568,7 @@ class MapVectorSpaceToRelativeNumberField(NumberFieldIsomorphism):
             sage: fr(to(a)), fr(to(b)) # indirect doctest
             (a, b)
         """
-        return self.__from_K(self.__from_V(x))
+        return self._from_K(self._from_V(x))
 
 class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
     r"""
@@ -614,8 +614,8 @@ class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
               From: Number Field in a with defining polynomial x^2 + 3 over its base field
               To:   Vector space of dimension 4 over Rational Field
         """
-        self.__to_K = to_K
-        self.__to_V = to_V
+        self._to_K = to_K
+        self._to_V = to_V
         NumberFieldIsomorphism.__init__(self, Hom(L, V))
 
     def _call_(self, x):
@@ -629,4 +629,4 @@ class MapRelativeNumberFieldToVectorSpace(NumberFieldIsomorphism):
             sage: to(fr(V([1,3,0,1/17]))) # indirect doctest
             (1, 3, 0, 1/17)
         """
-        return self.__to_V(self.__to_K(x))
+        return self._to_V(self._to_K(x))

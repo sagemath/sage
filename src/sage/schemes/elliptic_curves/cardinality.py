@@ -23,7 +23,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function
 
 from .constructor import EllipticCurve, EllipticCurve_from_j
 from sage.schemes.curves.projective_curve import Hasse_bounds
@@ -138,9 +137,11 @@ def _cardinality_with_j_invariant_1728(self):
                 n = (d+1)//2
                 t = 2**n
                 n = n%4
-                if n==0 or n==1: t=-t
-                E=EllipticCurve(k,[0,0,1,1,1])
-                if self.is_isomorphic(E): t=-t
+                if n == 0 or n == 1:
+                    t = -t
+                E = EllipticCurve(k, [0, 0, 1, 1, 1])
+                if self.is_isomorphic(E):
+                    t = -t
         else:
             # The 7 classes are represented by E1=[0,0,1,0,0],
             # E2=[0,0,1,0,b], E3=[0,0,1,b,0], E4=[0,0,a,0,0],
@@ -157,7 +158,8 @@ def _cardinality_with_j_invariant_1728(self):
             if discube:
                 a = k.gen()
                 b = a
-                while b.trace()==0: b*=a
+                while b.trace() == 0:
+                    b *= a
                 if self.is_isomorphic(EllipticCurve(k,[0,0,1,b,0])):
                     t = 0
                 else:
@@ -184,15 +186,18 @@ def _cardinality_with_j_invariant_1728(self):
                 t = 0
             else:
                 u = delta.sqrt()
-                if not u.is_square(): u=-u
+                if not u.is_square():
+                    u = -u
                 tr = ((self.a3()**2+self.a6())/u).trace()
                 if tr==0:
                     t = 0
                 else:
                     d2 = (d+1)//2
                     t = 3**d2
-                    if d2%2==1: t = -t
-                    if tr==-1:  t = -t
+                    if d2%2 == 1:
+                        t = -t
+                    if tr == -1:
+                        t = -t
         else:
             # The 6 classes are represented by: [0,0,0,1,0],
             # [0,0,0,1,i*a]; [0,0,0,g,0], [0,0,0,g^3,0];
@@ -227,9 +232,12 @@ def _cardinality_with_j_invariant_1728(self):
         else:
             t  = (-p)**(d//2)
             w = (self.c4()/k(48))**((q-1)//4)
-            if   w==1:    t =  2*t
-            elif w==-1:   t = -2*t
-            else: t = 0
+            if w == 1:
+                t = 2*t
+            elif w == -1:
+                t = -2*t
+            else:
+                t = 0
 
     # p=1 (mod 4).  First find Frobenius pi=a+b*i for [0,0,0,-1,0] over GF(p):
     # N(pi)=p and N(pi-1)=0 (mod 8).
@@ -313,9 +321,12 @@ def _cardinality_with_j_invariant_0(self):
         else:
             t  = (-p)**(d//2)
             w = (self.c6()/k(-864))**((q-1)//6)
-            if   w==1:    t =  2*t
-            elif w==-1:   t = -2*t
-            elif w**3==1: t = -t
+            if w == 1:
+                t =  2*t
+            elif w == -1:
+                t = -2*t
+            elif w**3 == 1:
+                t = -t
 
     # p=1 (mod 6).  First find Frobenius pi=a+b*w for [0,0,0,0,1] over GF(p):
     # N(pi)=p and N(pi-1)=0 (mod 12).
@@ -324,7 +335,8 @@ def _cardinality_with_j_invariant_0(self):
         R = ZZ.extension(x**2-x+1,'zeta6')
         zeta6 = R.gen(1)
         pi = R.fraction_field().factor(p)[0][0].gens_reduced()[0]
-        while (pi-1).norm()%12 !=0:  pi*=zeta6
+        while (pi - 1).norm() % 12:
+            pi *= zeta6
         a,b = pi.list()
         z = k(-b)/k(a)  # a *specific* 6th root of unity in k
 
@@ -338,12 +350,18 @@ def _cardinality_with_j_invariant_0(self):
         # Compute appropriate sextic twist:
         w = (self.c6()/k(-864))**((q-1)//6)
 
-        if   w==1:       t = 2*a+b  # = Trace(pi)
-        elif w==-1:      t = -2*a-b # = Trace(-pi)
-        elif w==z:       t = a-b    # = Trace(pi*zeta6)
-        elif w==z**2:    t = -a-2*b # = Trace(pi*zeta6**2)
-        elif w==z**4:    t = b-a    # = Trace(pi*zeta6**4)
-        elif w==z**5:    t = a+2*b  # = Trace(pi*zeta6**5)
+        if w == 1:
+            t = 2*a+b  # = Trace(pi)
+        elif w == -1:
+            t = -2*a-b # = Trace(-pi)
+        elif w == z:
+            t = a-b    # = Trace(pi*zeta6)
+        elif w == z**2:
+            t = -a-2*b # = Trace(pi*zeta6**2)
+        elif w == z**4:
+            t = b-a    # = Trace(pi*zeta6**4)
+        elif w == z**5:
+            t = a+2*b  # = Trace(pi*zeta6**5)
 
     return Integer(q + 1 - t)
 
@@ -449,9 +467,11 @@ def cardinality_bsgs(self, verbose=False):
             kmax = ((B-a)/M).floor()
             if kmin==kmax:
                 self._order = q1-a-kmin*M
-                if verbose: print("no random points were needed")
+                if verbose:
+                    print("no random points were needed")
                 return self._order
-        if verbose: print("(2,3,5)-torsion subgroup gives M=", M)
+        if verbose:
+            print("(2,3,5)-torsion subgroup gives M=", M)
 
     # N1, N2 are divisors of the orders of E1, E2 separately,
     # which are used to speed up the computation of the orders of
@@ -463,7 +483,8 @@ def cardinality_bsgs(self, verbose=False):
         # Hasse bounds and the fact that we know that the group
         # order is a multiple of N1:
         n = order_from_bounds(E1.random_point(),bounds,N1,operation='+')
-        if verbose: print("New point on E has order ", n)
+        if verbose:
+            print("New point on E has order ", n)
         # update N1 and M
         N1 = N1.lcm(n)
         g,u,v = M.xgcd(n) # g==u*M+v*n
@@ -472,19 +493,22 @@ def cardinality_bsgs(self, verbose=False):
             a = (a*v*n+q1*u*M)//g
             M *= (n//g) # = lcm(M,n)
             a = a%M
-            if verbose: print("(a,M)=", (a, M))
+            if verbose:
+                print("(a,M)=", (a, M))
             kmin = ((-B-a)/M).ceil()
             kmax = ((B-a)/M).floor()
             if kmin==kmax:
                 self._order = q1-a-kmin*M
                 return self._order
-            if verbose: print("number of possibilities is now ",kmax-kmin+1)
+            if verbose:
+                print("number of possibilities is now ",kmax-kmin+1)
 
         # Get a random point on E2 and find its order, using the
         # Hasse bounds and the fact that we know that the group
         # order is a multiple of N2:
         n = order_from_bounds(E2.random_point(),bounds,N2,operation='+')
-        if verbose:  print("New point on E' has order ", n)
+        if verbose:
+            print("New point on E' has order ", n)
         # update N2 and M
         N2 = N2.lcm(n)
         g,u,v = M.xgcd(n) # g==u*M+v*n
@@ -493,13 +517,15 @@ def cardinality_bsgs(self, verbose=False):
             a = (a*v*n-q1*u*M)//g
             M *= (n//g) # = lcm(M,n)
             a = a%M
-            if verbose: print("(a,M)=", (a, M))
+            if verbose:
+                print("(a,M)=", (a, M))
             kmin = ((-B-a)/M).ceil()
             kmax = ((B-a)/M).floor()
             if kmin==kmax:
                 self._order = q1-a-kmin*M
                 return self._order
-            if verbose: print("number of possibilities is now ",kmax-kmin+1)
+            if verbose:
+                print("number of possibilities is now ", kmax - kmin + 1)
 
 
 def _cardinality_subfield(self, jpol):

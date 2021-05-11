@@ -16,7 +16,7 @@ that use Sage).
     sage: K.<alpha> = NumberField(x^6 + 40*x^3 + 1372)
     sage: G = K.galois_group()
     sage: G
-    Galois group of Number Field in alpha with defining polynomial x^6 + 40*x^3 + 1372
+    Galois group 6T2 ([3]2) with order 6 of x^6 + 40*x^3 + 1372
 
 Internally G is represented as a group of permutations, but we can also apply
 any element of G to any element of the field:
@@ -40,19 +40,18 @@ Some more advanced number-theoretical tools are available via G:
 
     sage: P = K.primes_above(2)[0]
     sage: G.inertia_group(P)
-    Subgroup [(), (1,4,6)(2,5,3), (1,6,4)(2,3,5)] of Galois group of Number Field in alpha with defining polynomial x^6 + 40*x^3 + 1372
+    Subgroup [(), (1,4,6)(2,5,3), (1,6,4)(2,3,5)] of Galois group 6T2 ([3]2) with order 6 of x^6 + 40*x^3 + 1372
     sage: sorted([G.artin_symbol(Q) for Q in K.primes_above(5)])  # random order, see Trac #18308
     [(1,3)(2,6)(4,5), (1,2)(3,4)(5,6), (1,5)(2,4)(3,6)]
 
 If the number field is not Galois over `\QQ`, then the ``galois_group``
-command will construct its Galois closure and return the Galois group of that;
-you need to give it a variable name for the generator of the Galois closure:
+command will construct its Galois closure and return the Galois group of that:
 
 ::
 
     sage: K.<a> = NumberField(x^3 - 2)
     sage: G = K.galois_group(names='b'); G
-    Galois group of Galois closure in b of Number Field in a with defining polynomial x^3 - 2
+    Galois group 3T2 (S3) with order 6 of x^3 - 2
     sage: G.order()
     6
 
@@ -62,18 +61,14 @@ Some more Galois groups
 
 We compute two more Galois groups of degree :math:`5` extensions, and see that
 one has Galois group :math:`S_5`, so is not solvable by radicals. For these
-purposes we only want to know the structure of the Galois group as an abstract
+purposes we only need to know the structure of the Galois group as an abstract
 group, rather than as an explicit group of automorphisms of the splitting
-field; this is much quicker to calculate. PARI has a type for representing
-"abstract Galois groups", and Sage can use this.::
+field::
 
-    sage: NumberField(x^5 - 2, 'a').galois_group(type="pari")
-    Galois group PARI group [20, -1, 3, "F(5) = 5:4"] of
-    degree 5 of the Number Field in a with defining
-    polynomial x^5 - 2
-    sage: NumberField(x^5 - x + 2, 'a').galois_group(type="pari")
-    Galois group PARI group [120, -1, 5, "S5"] of degree 5 of
-    the Number Field in a with defining polynomial x^5 - x + 2
+    sage: NumberField(x^5 - 2, 'a').galois_group()
+    Galois group 5T3 (5:4) with order 20 of x^5 - 2
+    sage: NumberField(x^5 - x + 2, 'a').galois_group()
+    Galois group 5T5 (S5) with order 120 of x^5 - x + 2
 
 
 Magma's Galois group command
@@ -306,8 +301,7 @@ ideal classes containing :math:`(5,\sqrt{-30})` and
     sage: K.<a> = QuadraticField(-30)
     sage: C = K.class_group()
     sage: C
-    Class group of order 4 with structure C2 x C2 of Number Field
-    in a with defining polynomial x^2 + 30
+    Class group of order 4 with structure C2 x C2 of Number Field in a with defining polynomial x^2 + 30 with a = 5.477225575051661?*I
     sage: category(C)
     Category of finite enumerated commutative groups
     sage: C.gens()

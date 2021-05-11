@@ -10,7 +10,7 @@ AUTHORS:
 - Ben Hutz (2013) refactoring
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #       Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
 #
@@ -19,17 +19,22 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.arith.misc import binomial
+
 from sage.categories.fields import Fields
 from sage.categories.homset import Hom
+
 from sage.matrix.constructor import matrix
+
 from sage.rings.all import ZZ
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
+
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+from sage.schemes.projective.projective_morphism import SchemeMorphism_polynomial_projective_subscheme_field
 
 
 class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
@@ -66,7 +71,6 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
           x^2 - y*z
     """
-
     def point(self, v, check=True):
         """
         Create a point on this projective subscheme.
@@ -287,7 +291,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         Return the best affine patch of the ambient projective space.
 
         The "best" affine patch is where you end up dividing by the
-        homogeneous coordinate with the largest absolutue
+        homogeneous coordinate with the largest absolute
         value. Division by small numbers is numerically unstable.
 
         INPUT:
@@ -450,7 +454,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
     def orbit(self, f, N):
         r"""
-        Returns the orbit of this scheme by ``f``.
+        Return the orbit of this scheme by ``f``.
 
         If `N` is an integer it returns `[self,f(self),\ldots,f^N(self)]`.
         If `N` is a list or tuple `N=[m,k]` it returns `[f^m(self),\ldots,f^k(self)`].
@@ -521,7 +525,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         if N[0] < 0 or N[1] < 0:
             raise TypeError("orbit bounds must be non-negative")
         if N[0] > N[1]:
-            return([])
+            return []
 
         Q = self
         for i in range(1, N[0]+1):
@@ -531,7 +535,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         for i in range(N[0]+1, N[1]+1):
             Q = f(Q)
             Orb.append(Q)
-        return(Orb)
+        return Orb
 
     def nth_iterate(self, f, n):
         r"""
@@ -781,7 +785,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             v = G[i].variables()
             if all(Rvars[j] not in v for j in range(n)):
                 newL.append(psi(G[i]))
-        return(codom.subscheme(newL))
+        return codom.subscheme(newL)
 
     def preimage(self, f, k=1, check=True):
         r"""
@@ -800,9 +804,9 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         OUTPUT:
 
-        - a subscheme in the domain of ``f``.
+        a subscheme in the domain of ``f``
 
-        Examples::
+        EXAMPLES::
 
             sage: PS.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: H = End(PS)
@@ -894,7 +898,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
                 raise TypeError("subscheme must be in ambient space of codomain")
             k = ZZ(k)
             if k <= 0:
-                raise ValueError("k (=%s) must be a positive integer"%(k))
+                raise ValueError("k (=%s) must be a positive integer" % (k))
             if k > 1 and not f.is_endomorphism():
                 raise TypeError("map must be an endomorphism")
         R = codom.coordinate_ring()
@@ -903,7 +907,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         else:
             F = f
         dict = {R.gen(i): F[i] for i in range(codom.dimension_relative()+1)}
-        return(dom.subscheme([t.subs(dict) for t in self.defining_polynomials()]))
+        return dom.subscheme([t.subs(dict) for t in self.defining_polynomials()])
 
     def dual(self):
         r"""
@@ -1014,156 +1018,6 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         J_sat = S.ideal(J_sat_gens)
         L = J_sat.elimination_ideal(z[0: n + 1] + (z[-1],))
         return Pd.subscheme(L.change_ring(Rd))
-
-    def Chow_form(self):
-        r"""
-        Returns the Chow form associated to this subscheme.
-
-        For a `k`-dimensional subvariety of `\mathbb{P}^N` of degree `D`.
-        The `(N-k-1)`-dimensional projective linear subspaces of `\mathbb{P}^N`
-        meeting `X` form a hypersurface in the Grassmannian `G(N-k-1,N)`.
-        The homogeneous form of degree `D` defining this hypersurface in Plucker
-        coordinates is called the Chow form of `X`.
-
-        The base ring needs to be a number field, finite field, or `\QQbar`.
-
-        ALGORITHM:
-
-        For a `k`-dimension subscheme `X` consider the `k+1` linear forms
-        `l_i = u_{i0}x_0 + \cdots + u_{in}x_n`. Let `J` be the ideal in the
-        polynomial ring `K[x_i,u_{ij}]` defined by the equations of `X` and the `l_i`.
-        Let `J'` be the saturation of `J` with respect to the irrelevant ideal of
-        the ambient projective space of `X`. The elimination ideal `I = J' \cap K[u_{ij}]`
-        is a principal ideal, let `R` be its generator. The Chow form is obtained by
-        writing `R` as a polynomial in Plucker coordinates (i.e. bracket polynomials).
-        [DalbecSturmfels]_.
-
-        OUTPUT: a homogeneous polynomial.
-
-        REFERENCES:
-
-        .. [DalbecSturmfels] J. Dalbec and B. Sturmfels. Invariant methods in discrete and computational geometry,
-           chapter Introduction to Chow forms, pages 37-58. Springer Netherlands, 1994.
-
-        EXAMPLES::
-
-            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(17), 3)
-            sage: X = P.subscheme([x3+x1,x2-x0,x2-x3])
-            sage: X.Chow_form()
-            t0 - t1 + t2 + t3
-
-        ::
-
-            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(QQ,3)
-            sage: X = P.subscheme([x3^2 -101*x1^2 - 3*x2*x0])
-            sage: X.Chow_form()
-            t0^2 - 101*t2^2 - 3*t1*t3
-
-        ::
-
-            sage: P.<x0,x1,x2,x3>=ProjectiveSpace(QQ,3)
-            sage: X = P.subscheme([x0*x2-x1^2, x0*x3-x1*x2, x1*x3-x2^2])
-            sage: Ch = X.Chow_form(); Ch
-            t2^3 + 2*t2^2*t3 + t2*t3^2 - 3*t1*t2*t4 - t1*t3*t4 + t0*t4^2 + t1^2*t5
-            sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y
-            Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
-              x2^2*x3 - x1*x3^2,
-              -x2^3 + x0*x3^2,
-              -x2^2*x3 + x1*x3^2,
-              x1*x2*x3 - x0*x3^2,
-              3*x1*x2^2 - 3*x0*x2*x3,
-              -2*x1^2*x3 + 2*x0*x2*x3,
-              -3*x1^2*x2 + 3*x0*x1*x3,
-              x1^3 - x0^2*x3,
-              x2^3 - x1*x2*x3,
-              -3*x1*x2^2 + 2*x1^2*x3 + x0*x2*x3,
-              2*x0*x2^2 - 2*x0*x1*x3,
-              3*x1^2*x2 - 2*x0*x2^2 - x0*x1*x3,
-              -x0*x1*x2 + x0^2*x3,
-              -x0*x1^2 + x0^2*x2,
-              -x1^3 + x0*x1*x2,
-              x0*x1^2 - x0^2*x2
-            sage: I = Y.defining_ideal()
-            sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]
-            Ideal (x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2) of Multivariate
-            Polynomial Ring in x0, x1, x2, x3 over Rational Field
-        """
-        I = self.defining_ideal()
-        P = self.ambient_space()
-        R = P.coordinate_ring()
-        N = P.dimension()+1
-        d = self.dimension()
-        # create the ring for the generic linear hyperplanes
-        # u0x0 + u1x1 + ...
-        SS = PolynomialRing(R.base_ring(), 'u', N*(d+1), order='lex')
-        vars = SS.variable_names() + R.variable_names()
-        S = PolynomialRing(R.base_ring(), vars, order='lex')
-        n = S.ngens()
-        newcoords = [S.gen(n-N+t) for t in range(N)]
-        # map the generators of the subscheme into the ring with the hyperplane variables
-        phi = R.hom(newcoords,S)
-        phi(self.defining_polynomials()[0])
-        # create the dim(X)+1 linear hyperplanes
-        l = []
-        for i in range(d+1):
-            t = 0
-            for j in range(N):
-                t += S.gen(N*i + j)*newcoords[j]
-            l.append(t)
-        # intersect the hyperplanes with X
-        J = phi(I) + S.ideal(l)
-        # saturate the ideal with respect to the irrelevant ideal
-        J2 = J.saturation(S.ideal([phi(u) for u in R.gens()]))[0]
-        # eliminate the original variables to be left with the hyperplane coefficients 'u'
-        E = J2.elimination_ideal(newcoords)
-        # create the plucker coordinates
-        D = binomial(N,N-d-1) #number of plucker coordinates
-        tvars = [str('t') + str(i) for i in range(D)] #plucker coordinates
-        T = PolynomialRing(R.base_ring(), tvars+list(S.variable_names()), order='lex')
-        L = []
-        coeffs = [T.gen(i) for i in range(0+len(tvars), N*(d+1)+len(tvars))]
-        M = matrix(T,d+1,N,coeffs)
-        i = 0
-        for c in M.minors(d+1):
-            L.append(T.gen(i)-c)
-            i += 1
-        # create the ideal that we can use for eliminating to get a polynomial
-        # in the plucker coordinates (brackets)
-        br = T.ideal(L)
-        # create a mapping into a polynomial ring over the plucker coordinates
-        # and the hyperplane coefficients
-        psi = S.hom(coeffs + [0 for _ in range(N)], T)
-        E2 = T.ideal([psi(u) for u in E.gens()] + br)
-        # eliminate the hyperplane coefficients
-        CH = E2.elimination_ideal(coeffs)
-        # CH should be a principal ideal, but because of the relations among
-        # the plucker coordinates, the elimination will probably have several generators
-
-        # get the relations among the plucker coordinates
-        rel = br.elimination_ideal(coeffs)
-        # reduce CH with respect to the relations
-        reduced = []
-        for f in CH.gens():
-            reduced.append(f.reduce(rel))
-        # find the principal generator
-
-        # polynomial ring in just the plucker coordinates
-        T2 = PolynomialRing(R.base_ring(), tvars)
-        alp = T.hom(tvars + (N*(d+1) +N)*[0], T2)
-        # get the degrees of the reduced generators of CH
-        degs = [u.degree() for u in reduced]
-        mind = max(degs)
-        # need the smallest degree form that did not reduce to 0
-        for d in degs:
-            if d < mind and d > 0:
-                mind = d
-        ind = degs.index(mind)
-        CF = reduced[ind] #this should be the Chow form of X
-        # check that it is correct (i.e., it is a principal generator for CH + the relations)
-        rel2 = rel + [CF]
-        assert all(f in rel2 for f in CH.gens()), "did not find a principal generator"
-        return alp(CF)
 
     def degree(self):
         r"""
@@ -1388,3 +1242,189 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
         v = self.ambient_space().veronese_embedding(d, CS, order)
         # return this map restricted to self and its image
         return Hom(self, v(self))(v.defining_polynomials())
+
+
+class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_projective):
+    """
+    Algebraic subschemes of projective spaces defined over fields.
+    """
+    def _morphism(self, *args, **kwds):
+        r"""
+        Construct a morphism determined by action on points of ``self``.
+
+        For internal use only.
+
+        INPUT:
+
+        - same as for
+          :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`.
+
+        OUTPUT:
+
+        - :class:`~sage.schemes.projective.projective_morphism.SchemeMorphism_polynomial_projective_space`.
+
+        TESTS::
+
+            sage: P1.<x,y> = ProjectiveSpace(1,QQ)
+            sage: P2 = ProjectiveSpace(2,QQ)
+            sage: H12 = P1.Hom(P2)
+            sage: H12([x^2,x*y, y^2])    # indirect doctest
+            Scheme morphism:
+              From: Projective Space of dimension 1 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                (x^2 : x*y : y^2)
+            sage: P1._morphism(H12, [x^2,x*y, y^2])
+            Scheme morphism:
+              From: Projective Space of dimension 1 over Rational Field
+              To:   Projective Space of dimension 2 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                (x^2 : x*y : y^2)
+        """
+        return SchemeMorphism_polynomial_projective_subscheme_field(*args, **kwds)
+
+    def Chow_form(self):
+        r"""
+        Return the Chow form associated to this subscheme.
+
+        For a `k`-dimensional subvariety of `\mathbb{P}^N` of degree `D`.
+        The `(N-k-1)`-dimensional projective linear subspaces of `\mathbb{P}^N`
+        meeting `X` form a hypersurface in the Grassmannian `G(N-k-1,N)`.
+        The homogeneous form of degree `D` defining this hypersurface in Plucker
+        coordinates is called the Chow form of `X`.
+
+        The base ring needs to be a number field, finite field, or `\QQbar`.
+
+        ALGORITHM:
+
+        For a `k`-dimension subscheme `X` consider the `k+1` linear forms
+        `l_i = u_{i0}x_0 + \cdots + u_{in}x_n`. Let `J` be the ideal in the
+        polynomial ring `K[x_i,u_{ij}]` defined by the equations of `X` and the `l_i`.
+        Let `J'` be the saturation of `J` with respect to the irrelevant ideal of
+        the ambient projective space of `X`. The elimination ideal `I = J' \cap K[u_{ij}]`
+        is a principal ideal, let `R` be its generator. The Chow form is obtained by
+        writing `R` as a polynomial in Plucker coordinates (i.e. bracket polynomials).
+        [DS1994]_.
+
+        OUTPUT: a homogeneous polynomial.
+
+        EXAMPLES::
+
+            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(GF(17), 3)
+            sage: X = P.subscheme([x3+x1,x2-x0,x2-x3])
+            sage: X.Chow_form()
+            t0 - t1 + t2 + t3
+
+        ::
+
+            sage: P.<x0,x1,x2,x3> = ProjectiveSpace(QQ,3)
+            sage: X = P.subscheme([x3^2 -101*x1^2 - 3*x2*x0])
+            sage: X.Chow_form()
+            t0^2 - 101*t2^2 - 3*t1*t3
+
+        ::
+
+            sage: P.<x0,x1,x2,x3>=ProjectiveSpace(QQ,3)
+            sage: X = P.subscheme([x0*x2-x1^2, x0*x3-x1*x2, x1*x3-x2^2])
+            sage: Ch = X.Chow_form(); Ch
+            t2^3 + 2*t2^2*t3 + t2*t3^2 - 3*t1*t2*t4 - t1*t3*t4 + t0*t4^2 + t1^2*t5
+            sage: Y = P.subscheme_from_Chow_form(Ch, 1); Y
+            Closed subscheme of Projective Space of dimension 3 over Rational Field
+            defined by:
+              x2^2*x3 - x1*x3^2,
+              -x2^3 + x0*x3^2,
+              -x2^2*x3 + x1*x3^2,
+              x1*x2*x3 - x0*x3^2,
+              3*x1*x2^2 - 3*x0*x2*x3,
+              -2*x1^2*x3 + 2*x0*x2*x3,
+              -3*x1^2*x2 + 3*x0*x1*x3,
+              x1^3 - x0^2*x3,
+              x2^3 - x1*x2*x3,
+              -3*x1*x2^2 + 2*x1^2*x3 + x0*x2*x3,
+              2*x0*x2^2 - 2*x0*x1*x3,
+              3*x1^2*x2 - 2*x0*x2^2 - x0*x1*x3,
+              -x0*x1*x2 + x0^2*x3,
+              -x0*x1^2 + x0^2*x2,
+              -x1^3 + x0*x1*x2,
+              x0*x1^2 - x0^2*x2
+            sage: I = Y.defining_ideal()
+            sage: I.saturation(I.ring().ideal(list(I.ring().gens())))[0]
+            Ideal (x2^2 - x1*x3, x1*x2 - x0*x3, x1^2 - x0*x2) of Multivariate
+            Polynomial Ring in x0, x1, x2, x3 over Rational Field
+        """
+        I = self.defining_ideal()
+        P = self.ambient_space()
+        R = P.coordinate_ring()
+        N = P.dimension()+1
+        d = self.dimension()
+        # create the ring for the generic linear hyperplanes
+        # u0x0 + u1x1 + ...
+        SS = PolynomialRing(R.base_ring(), 'u', N*(d+1), order='lex')
+        vars = SS.variable_names() + R.variable_names()
+        S = PolynomialRing(R.base_ring(), vars, order='lex')
+        n = S.ngens()
+        newcoords = [S.gen(n-N+t) for t in range(N)]
+        # map the generators of the subscheme into the ring with the hyperplane variables
+        phi = R.hom(newcoords,S)
+        phi(self.defining_polynomials()[0])
+        # create the dim(X)+1 linear hyperplanes
+        l = []
+        for i in range(d+1):
+            t = 0
+            for j in range(N):
+                t += S.gen(N*i + j)*newcoords[j]
+            l.append(t)
+        # intersect the hyperplanes with X
+        J = phi(I) + S.ideal(l)
+        # saturate the ideal with respect to the irrelevant ideal
+        J2 = J.saturation(S.ideal([phi(u) for u in R.gens()]))[0]
+        # eliminate the original variables to be left with the hyperplane coefficients 'u'
+        E = J2.elimination_ideal(newcoords)
+        # create the plucker coordinates
+        D = binomial(N,N-d-1) #number of plucker coordinates
+        tvars = [str('t') + str(i) for i in range(D)] #plucker coordinates
+        T = PolynomialRing(R.base_ring(), tvars+list(S.variable_names()), order='lex')
+        L = []
+        coeffs = [T.gen(i) for i in range(0+len(tvars), N*(d+1)+len(tvars))]
+        M = matrix(T,d+1,N,coeffs)
+        i = 0
+        for c in M.minors(d+1):
+            L.append(T.gen(i)-c)
+            i += 1
+        # create the ideal that we can use for eliminating to get a polynomial
+        # in the plucker coordinates (brackets)
+        br = T.ideal(L)
+        # create a mapping into a polynomial ring over the plucker coordinates
+        # and the hyperplane coefficients
+        psi = S.hom(coeffs + [0 for _ in range(N)], T)
+        E2 = T.ideal([psi(u) for u in E.gens()] + br)
+        # eliminate the hyperplane coefficients
+        CH = E2.elimination_ideal(coeffs)
+        # CH should be a principal ideal, but because of the relations among
+        # the plucker coordinates, the elimination will probably have several generators
+
+        # get the relations among the plucker coordinates
+        rel = br.elimination_ideal(coeffs)
+        # reduce CH with respect to the relations
+        reduced = []
+        for f in CH.gens():
+            reduced.append(f.reduce(rel))
+        # find the principal generator
+
+        # polynomial ring in just the plucker coordinates
+        T2 = PolynomialRing(R.base_ring(), tvars)
+        alp = T.hom(tvars + (N*(d+1) +N)*[0], T2)
+        # get the degrees of the reduced generators of CH
+        degs = [u.degree() for u in reduced]
+        mind = max(degs)
+        # need the smallest degree form that did not reduce to 0
+        for d in degs:
+            if d < mind and d > 0:
+                mind = d
+        ind = degs.index(mind)
+        CF = reduced[ind] #this should be the Chow form of X
+        # check that it is correct (i.e., it is a principal generator for CH + the relations)
+        rel2 = rel + [CF]
+        assert all(f in rel2 for f in CH.gens()), "did not find a principal generator"
+        return alp(CF)
+

@@ -9,7 +9,6 @@ Root system data for type A infinity
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
 
 from .cartan_type import CartanType_standard, CartanType_simple
 from sage.rings.integer_ring import ZZ
@@ -234,7 +233,9 @@ class CartanType(CartanType_standard, CartanType_simple):
 
         EXAMPLES::
 
-            sage: CartanType(['A', 5]).index_set()
-            (1, 2, 3, 4, 5)
+            sage: CartanType(['A', NN]).index_set()
+            Non negative integer semiring
+            sage: CartanType(['A', ZZ]).index_set()
+            Integer Ring
         """
         return self.n

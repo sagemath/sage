@@ -52,21 +52,21 @@ You can also import the desired functions::
     sage: CyclicPresentation(4)
     Finitely presented group < a | a^4 >
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Davis Shurbert <davis.sprout@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.rings.all      import Integer
+from sage.rings.all import Integer
 from sage.groups.free_group import FreeGroup
 from sage.groups.finitely_presented import FinitelyPresentedGroup
 from sage.libs.gap.libgap import libgap
 from sage.matrix.constructor import diagonal_matrix
 from sage.modules.fg_pid.fgp_module import FGP_Module
 from sage.rings.integer_ring import ZZ
-from sage.sets.set import Set
+
 
 def CyclicPresentation(n):
     r"""
@@ -523,7 +523,7 @@ def BinaryDihedralPresentation(n):
     Build a binary dihedral group of order `4n` as a finitely presented group.
 
     The binary dihedral group `BD_n` has the following presentation
-    (note that there is a typo in [Sun]_):
+    (note that there is a typo in [Sun2010]_):
 
     .. MATH::
 

@@ -94,16 +94,17 @@ EXAMPLES::
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 #*****************************************************************************
 
 import sage.categories.homset
 from sage.homology.chain_complex_morphism import ChainComplexMorphism
 
+
 def is_ChainComplexHomspace(x):
     """
-    Returns ``True`` if and only if ``x`` is a morphism of chain complexes.
+    Return ``True`` if and only if ``x`` is a morphism of chain complexes.
 
     EXAMPLES::
 
@@ -115,7 +116,8 @@ def is_ChainComplexHomspace(x):
         True
 
     """
-    return isinstance(x,ChainComplexHomspace)
+    return isinstance(x, ChainComplexHomspace)
+
 
 class ChainComplexHomspace(sage.categories.homset.Homset):
     """

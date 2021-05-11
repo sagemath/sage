@@ -1,7 +1,6 @@
 """
 Stream Cryptosystems
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
@@ -12,7 +11,6 @@ from __future__ import absolute_import
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from .cryptosystem import SymmetricKeyCryptosystem
 from .stream_cipher import LFSRCipher, ShrinkingGeneratorCipher
@@ -136,9 +134,10 @@ class ShrinkingGeneratorCryptosystem(SymmetricKeyCryptosystem):
         OUTPUT: The shrinking generator cipher with key stream generator e1
         and decimating cipher e2.
         """
-        if not isinstance(key, (list,tuple)) and len(key) == 2:
+        if not isinstance(key, (list, tuple)) and len(key) == 2:
             raise TypeError("Argument key (= %s) must be a list of tuple of length 2" % key)
-        e1 = key[0]; e2 = key[1]
+        e1 = key[0]
+        e2 = key[1]
         if not isinstance(e1, LFSRCipher) or not isinstance(e2, LFSRCipher):
             raise TypeError("The key (= (%s,%s)) must be a tuple of two LFSR ciphers." % key)
         return ShrinkingGeneratorCipher(self, e1, e2)

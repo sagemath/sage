@@ -1,3 +1,5 @@
+# distutils: extra_compile_args = -D_XPG6
+
 """
 Heilbronn matrix computation
 """
@@ -15,12 +17,11 @@ Heilbronn matrix computation
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.memory cimport check_allocarray, sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off, sig_check
 
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 from sage.arith.misc import is_prime
 
 from sage.libs.gmp.mpz cimport *

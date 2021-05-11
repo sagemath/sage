@@ -897,7 +897,7 @@ def E_integral(mu, q=None, t=None, pi=None):
 
     - J. Haglund, M. Haiman, N. Loehr.
       *A combinatorial formula for non-symmetric Macdonald polynomials*.
-      :arXiv:`math/0601693v3`.
+      :arxiv:`math/0601693v3`.
 
     EXAMPLES::
 

@@ -1,0 +1,6 @@
+cd src
+if [ "$SAGE_FAT_BINARY" = "yes" ]; then
+   # https://argon2-cffi.readthedocs.io/en/stable/installation.html
+   export ARGON2_CFFI_USE_SSE2=0
+fi
+sdh_pip_install .

@@ -12,7 +12,7 @@ REFERENCES:
    as symmetric functions*, :arxiv:`1510.00438`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Mike Zabrocki <zabrocki@mathstat.yorku.ca
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -24,19 +24,16 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.combinat.sf.sfa import SymmetricFunctionAlgebra_generic as SFA_generic
 from sage.misc.cachefunc import cached_method
 from sage.categories.homset import Hom
 from sage.categories.morphism import SetMorphism
-from sage.combinat.partition import Partition
 from sage.arith.all import divisors, moebius
 from sage.functions.other import binomial
 from sage.rings.integer import Integer
-
-import six
 
 
 class generic_character(SFA_generic):
@@ -231,7 +228,6 @@ class induced_trivial_character_basis(generic_character):
 
         self.module_morphism(self._self_to_power_on_basis,
                              codomain=Sym.powersum()).register_as_coercion()
-        from sage.categories.morphism import SetMorphism
         self.register_coercion(SetMorphism(Hom(self._other, self),
                                            self._other_to_self))
 
@@ -305,8 +301,8 @@ class induced_trivial_character_basis(generic_character):
             3*p[1, 1] + p[1, 1, 1] - 3*p[3, 1] - 2*p[3, 1, 1] + p[3, 3, 1]
 
         """
-        return self._p.prod( self._b_bar_power_k_r(Integer(k),Integer(r))
-                             for (k,r) in six.iteritems(gamma.to_exp_dict()) )
+        return self._p.prod(self._b_bar_power_k_r(Integer(k), Integer(r))
+                            for k, r in gamma.to_exp_dict().items())
 
     def _self_to_power_on_basis(self, lam):
         r"""
@@ -458,7 +454,6 @@ class irreducible_character_basis(generic_character):
 
         self.module_morphism(self._self_to_power_on_basis,
                              codomain=Sym.powersum()).register_as_coercion()
-        from sage.categories.morphism import SetMorphism
         self.register_coercion(SetMorphism(Hom(self._other, self),
                                            self._other_to_self))
 
@@ -534,8 +529,8 @@ class irreducible_character_basis(generic_character):
             p[] - p[1, 1] - p[3] + p[3, 1]
 
         """
-        return self._p.prod( self._b_power_k_r(Integer(k),Integer(r))
-                             for (k,r) in six.iteritems(gamma.to_exp_dict()) )
+        return self._p.prod(self._b_power_k_r(Integer(k), Integer(r))
+                            for k, r in gamma.to_exp_dict().items())
 
     def _self_to_power_on_basis(self, lam):
         r"""

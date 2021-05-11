@@ -42,16 +42,12 @@ We compute a suborder, which has index a power of 17 in the maximal order::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
-
-import six
 
 from sage.misc.cachefunc import cached_method
 from sage.rings.ring import IntegralDomain
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
 from sage.structure.element import is_Element
-
 from .number_field_element import OrderElement_absolute, OrderElement_relative
 
 from .number_field_element_quadratic import OrderElement_quadratic
@@ -181,7 +177,8 @@ class Order(IntegralDomain):
         """
         self._K = K
         self._is_maximal = is_maximal
-        IntegralDomain.__init__(self, ZZ, names = K.variable_names(), normalize = False)
+        IntegralDomain.__init__(self, ZZ, names=K.variable_names(),
+                                normalize=False)
         self._populate_coercion_lists_(embedding=self.number_field())
 
     def fractional_ideal(self, *args, **kwds):
@@ -250,7 +247,7 @@ class Order(IntegralDomain):
             sage: Ok.has_coerce_map_from(ZZ)
             True
         """
-        return R is ZZ or R in six.integer_types
+        return R is ZZ or R is int
 
     def __mul__(self, right):
         """
@@ -321,7 +318,7 @@ class Order(IntegralDomain):
             self._is_maximal = (self.absolute_discriminant() == self._K.absolute_discriminant())
         return self._is_maximal
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         r"""
         Return ``False`` (because an order is never a field).
 
@@ -394,9 +391,9 @@ class Order(IntegralDomain):
 
             sage: K.<a> = QuadraticField(5)
             sage: O2 = K.order(2*a); O2
-            Order in Number Field in a with defining polynomial x^2 - 5
+            Order in Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
             sage: O2.integral_closure()
-            Maximal Order in Number Field in a with defining polynomial x^2 - 5
+            Maximal Order in Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?
             sage: OK = K.maximal_order()
             sage: OK is OK.integral_closure()
             True
@@ -526,7 +523,7 @@ class Order(IntegralDomain):
         r"""
         Return the free `\ZZ`-module contained in the vector space
         associated to the ambient number field, that corresponds
-        to this ideal.
+        to this order.
 
         EXAMPLES::
 
@@ -645,17 +642,16 @@ class Order(IntegralDomain):
             ArithmeticError: There are no 3rd roots of unity in self.
         """
         roots_in_field = self.number_field().zeta(n, True)
-        roots_in_self = [ self(x) for x in roots_in_field if x in self ]
-        if len(roots_in_self) == 0:
+        roots_in_self = [self(x) for x in roots_in_field if x in self]
+        if not roots_in_self:
             if all:
                 return []
             else:
-                raise ArithmeticError("There are no %s roots of unity in self."%n.ordinal_str())
+                raise ArithmeticError("There are no %s roots of unity in self." % n.ordinal_str())
         if all:
             return roots_in_self
         else:
             return roots_in_self[0]
-
 
     def number_field(self):
         """
@@ -1012,7 +1008,7 @@ class Order(IntegralDomain):
 
     def absolute_degree(self):
         r"""
-        Returns the absolute degree of this order, ie the degree of this order over `\ZZ`.
+        Return the absolute degree of this order, ie the degree of this order over `\ZZ`.
 
         EXAMPLES::
 
@@ -1091,7 +1087,7 @@ class Order(IntegralDomain):
         EXAMPLES::
 
             sage: G = GaussianIntegers(); G
-            Gaussian Integers in Number Field in I with defining polynomial x^2 + 1
+            Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
             sage: G.some_elements()
             [1, I, 2*I, -1, 0, -I, 2, 4*I, -2, -2*I, -4]
 
@@ -1124,7 +1120,7 @@ class Order(IntegralDomain):
 
 ##     def absolute_polynomial(self):
 ##         """
-##         Returns the absolute polynomial of this order, which is just the absolute polynomial of the number field.
+##         Return the absolute polynomial of this order, which is just the absolute polynomial of the number field.
 
 ##         EXAMPLES::
 
@@ -1140,7 +1136,7 @@ class Order(IntegralDomain):
 
 ##     def polynomial(self):
 ##         """
-##         Returns the polynomial defining the number field that contains self.
+##         Return the polynomial defining the number field that contains self.
 ##         """
 ##         return self.number_field().polynomial()
 
@@ -1157,6 +1153,7 @@ class Order(IntegralDomain):
 ##             ([1 0 1], 1)
 ##         """
 ##         return self.number_field().polynomial_ntl()
+
 
 class AbsoluteOrder(Order):
 
@@ -1234,8 +1231,6 @@ class AbsoluteOrder(Order):
             3*a^2 + 2*a + 1
 
         """
-        if is_Element(x) and x.parent() is self:
-            return x
         if isinstance(x, (tuple, list)):
             x = sum(xi*gi for xi,gi in zip(x,self.gens()))
         if not is_Element(x) or x.parent() is not self._K:
@@ -1300,7 +1295,7 @@ class AbsoluteOrder(Order):
             sage: K.<i> = QuadraticField(-1)
             sage: O3 = K.order(3*i); O5 = K.order(5*i)
             sage: R = O3 & O5; R
-            Order in Number Field in i with defining polynomial x^2 + 1
+            Order in Number Field in i with defining polynomial x^2 + 1 with i = 1*I
             sage: R.basis()
             [1, 15*i]
             sage: O3.intersection(O5).basis()
@@ -1336,8 +1331,8 @@ class AbsoluteOrder(Order):
             'Order([(_sage_[...]![1, 0, 0]),(_sage_[...]![0, 1, 0]),(_sage_[...]![0, 0, 1])])'
         """
         K = self.number_field()
-        v = [K(a)._magma_init_(magma) for a in self.basis()]
-        return 'Order([%s])'%(','.join(v))
+        v = (K(a)._magma_init_(magma) for a in self.basis())
+        return 'Order([{}])'.format(','.join(v))
 
     def discriminant(self):
         """
@@ -1369,7 +1364,6 @@ class AbsoluteOrder(Order):
 
     absolute_discriminant = discriminant
 
-
     def change_names(self, names):
         """
         Return a new order isomorphic to this one in the number field with
@@ -1393,8 +1387,10 @@ class AbsoluteOrder(Order):
 
     def index_in(self, other):
         """
-        Return the index of self in other.  This is a lattice index,
-        so it is a rational number if self isn't contained in other.
+        Return the index of self in other.
+
+        This is a lattice index,
+        so it is a rational number if self is not contained in other.
 
         INPUT:
 
@@ -1437,7 +1433,7 @@ class AbsoluteOrder(Order):
 
     def module(self):
         """
-        Returns the underlying free module corresponding to this
+        Return the underlying free module corresponding to this
         order, embedded in the vector space corresponding to the
         ambient number field.
 
@@ -1496,7 +1492,7 @@ class AbsoluteOrder(Order):
             Gaussian Integers in Cyclotomic Field of order 4 and degree 2
             sage: K = QuadraticField(-3)
             sage: K.ring_of_integers()
-            Eisenstein Integers in Number Field in a with defining polynomial x^2 + 3
+            Eisenstein Integers in Number Field in a with defining polynomial x^2 + 3 with a = 1.732050807568878?*I
         """
         if self._is_maximal:
             s = "Maximal Order"
@@ -1560,6 +1556,7 @@ class AbsoluteOrder(Order):
             True
         """
         return self
+
 
 class RelativeOrder(Order):
     """
@@ -1641,7 +1638,6 @@ class RelativeOrder(Order):
             sage: O._repr_()
             'Relative Order in Number Field in a with defining polynomial x^2 + x + 1 over its base field'
         """
-        #", ".join([str(b) for b in self.basis()]),
         return "%sRelative Order in %r" % ("Maximal " if self._is_maximal else "", self._K)
 
     def absolute_order(self, names='z'):
@@ -1782,8 +1778,9 @@ class RelativeOrder(Order):
         elif isinstance(left, RelativeOrder) and isinstance(right, RelativeOrder):
             if left._K != right._K:
                 raise TypeError("Number fields don't match.")
-            return RelativeOrder(left._K, left._absolute_order & right._absolute_order,
-                                  check=False)
+            return RelativeOrder(left._K,
+                                 left._absolute_order & right._absolute_order,
+                                 check=False)
         else:
             raise NotImplementedError
 
@@ -1810,7 +1807,7 @@ class RelativeOrder(Order):
 
     def is_suborder(self, other):
         """
-        Returns true if self is a subset of the order other.
+        Return True if self is a subset of the order other.
 
         EXAMPLES::
 
@@ -1833,8 +1830,10 @@ class RelativeOrder(Order):
 
     def index_in(self, other):
         """
-        Return the index of self in other.  This is a lattice index,
-        so it is a rational number if self isn't contained in other.
+        Return the index of self in other.
+
+        This is a lattice index,
+        so it is a rational number if self is not contained in other.
 
         INPUT:
 
@@ -1859,10 +1858,9 @@ class RelativeOrder(Order):
         return self.absolute_order().index_in(other.absolute_order())
 
 
-
 def each_is_integral(v):
     """
-    Return True if each element of the list ``v`` of elements of a number
+    Return whether every element of the list ``v`` of elements of a number
     field is integral.
 
     EXAMPLES::
@@ -1874,10 +1872,8 @@ def each_is_integral(v):
         sage: each_is_integral([sqrt5, (1+sqrt5)/3])
         False
     """
-    for x in v:
-        if not x.is_integral():
-            return False
-    return True
+    return all(x.is_integral() for x in v)
+
 
 def absolute_order_from_ring_generators(gens, check_is_integral=True,
                                         check_rank=True, is_maximal=None,
@@ -1941,15 +1937,17 @@ def absolute_order_from_ring_generators(gens, check_is_integral=True,
     n = [x.absolute_minpoly().degree() for x in gens]
     module_gens = monomials(gens, n)
     return absolute_order_from_module_generators(module_gens,
-               check_integral=False, check_is_ring=False,
-               check_rank=check_rank, is_maximal=is_maximal,
-               allow_subfield = allow_subfield)
+                                                 check_integral=False,
+                                                 check_is_ring=False,
+                                                 check_rank=check_rank,
+                                                 is_maximal=is_maximal,
+                                                 allow_subfield=allow_subfield)
 
 
 def absolute_order_from_module_generators(gens,
               check_integral=True, check_rank=True,
               check_is_ring=True, is_maximal=None,
-              allow_subfield = False):
+              allow_subfield=False):
     """
     INPUT:
 
@@ -1967,7 +1965,7 @@ def absolute_order_from_module_generators(gens,
 
     EXAMPLES:
 
-    We have to explicitly import the function, since it isn't meant
+    We have to explicitly import the function, since it is not meant
     for regular usage::
 
         sage: from sage.rings.number_field.order import absolute_order_from_module_generators
@@ -2012,8 +2010,8 @@ def absolute_order_from_module_generators(gens,
         sage: R.basis()
         [1]
 
-    If the order contains a non-integral element, even if we don't check
-    that, we'll find that the rank is wrong or that the order isn't closed
+    If the order contains a non-integral element, even if we do not check
+    that, we will find that the rank is wrong or that the order is not closed
     under multiplication::
 
         sage: absolute_order_from_module_generators([1/2, i],  check_integral=False)
@@ -2036,9 +2034,9 @@ def absolute_order_from_module_generators(gens,
 
         sage: F.<alpha> = NumberField(x**4+3)
         sage: F.order([alpha**2], allow_subfield=True)
-        Order in Number Field in alpha with defining polynomial x^4 + 3
+        Order in Number Field in beta with defining polynomial x^2 + 2*x + 13 with beta = 2*alpha^2 - 1
     """
-    if len(gens) == 0:
+    if not gens:
         raise ValueError("gens must span an order over ZZ")
     gens = Sequence(gens)
     if check_integral and not each_is_integral(gens):
@@ -2061,35 +2059,34 @@ def absolute_order_from_module_generators(gens,
             # Then we move everything into that field, where
             # W does define an order.
             while True:
-                z = V.random_element()
-                alpha = from_V(z)
+                alpha = from_V(W.random_element())
                 if alpha.minpoly().degree() == W.rank():
                     break
-            # Now alpha generates a subfield there W is an order
+            # Now alpha generates a subfield where W is an order
             # (with the right rank).
-            # We move each element of W to this subfield.
-            c = alpha.coordinates_in_terms_of_powers()
+            # We move each generator of W to this subfield.
+            K, _ = K.subfield(alpha, 'beta')
+            gens = [K(x) for x in gens]
+            V, from_V, to_V = K.vector_space()
+            mod_gens = [to_V(x) for x in gens]
+            ambient = ZZ**V.dimension()
+            W = ambient.span(mod_gens)
 
     elif check_rank:
         if W.rank() != K.degree():
             raise ValueError("the rank of the span of gens is wrong")
 
     if check_is_ring:
-        # Is there a faster way?
-        alg = [to_V(x) for x in monomials(gens, [f.absolute_minpoly().degree() for f in gens])]
-        if ambient.span(alg) != W:
+        if any(to_V(x * y) not in W for x in gens for y in gens):
             raise ValueError("the module span of the gens is not closed under multiplication.")
 
     return AbsoluteOrder(K, W, check=False, is_maximal=is_maximal)  # we have already checked everything
 
 
-
-
-
 def relative_order_from_ring_generators(gens,
                                         check_is_integral=True,
                                         check_rank=True,
-                                        is_maximal = None,
+                                        is_maximal=None,
                                         allow_subfield=False):
     """
     INPUT:
@@ -2104,7 +2101,7 @@ def relative_order_from_ring_generators(gens,
 
     EXAMPLES:
 
-    We have to explicitly import this function, since it isn't meant
+    We have to explicitly import this function, since it is not meant
     for regular usage::
 
         sage: from sage.rings.number_field.order import relative_order_from_ring_generators
@@ -2134,23 +2131,26 @@ def relative_order_from_ring_generators(gens,
     n = [a.absolute_minpoly().degree() for a in gens]
     absolute_order_module_gens = monomials(module_gens, n)
 
-    abs_order =  absolute_order_from_module_generators(absolute_order_module_gens,
-                                                       check_integral=False, check_is_ring=False,
-                                                       check_rank=check_rank)
+    abs_order = absolute_order_from_module_generators(absolute_order_module_gens,
+                                                      check_integral=False,
+                                                      check_is_ring=False,
+                                                      check_rank=check_rank)
 
     return RelativeOrder(K, abs_order, check=False, is_maximal=is_maximal)
 
 
-def GaussianIntegers(names="I"):
+def GaussianIntegers(names="I", latex_name="i"):
     r"""
-    Return the ring of Gaussian integers, that is all complex numbers
+    Return the ring of Gaussian integers.
+
+    This is the ring of all complex numbers
     of the form `a + b I` with `a` and `b` integers and `I = \sqrt{-1}`.
 
     EXAMPLES::
 
         sage: ZZI.<I> = GaussianIntegers()
         sage: ZZI
-        Gaussian Integers in Number Field in I with defining polynomial x^2 + 1
+        Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         sage: factor(3 + I)
         (-I) * (I + 1) * (2*I + 1)
         sage: CC(I)
@@ -2161,14 +2161,16 @@ def GaussianIntegers(names="I"):
         [1, I]
     """
     from sage.rings.all import CDF, NumberField
-    f = ZZ['x']([1,0,1])
-    nf = NumberField(f, names, embedding=CDF(0, 1))
+    f = ZZ['x']([1, 0, 1])
+    nf = NumberField(f, names, embedding=CDF(0, 1), latex_name=latex_name)
     return nf.ring_of_integers()
 
 
 def EisensteinIntegers(names="omega"):
     r"""
-    Return the ring of Eisenstein integers, that is all complex numbers
+    Return the ring of Eisenstein integers.
+
+    This is the ring of all complex numbers
     of the form `a + b \omega` with `a` and `b` integers and
     `omega = (-1 + \sqrt{-3})/2`.
 
@@ -2176,7 +2178,7 @@ def EisensteinIntegers(names="omega"):
 
         sage: R.<omega> = EisensteinIntegers()
         sage: R
-        Eisenstein Integers in Number Field in omega with defining polynomial x^2 + x + 1
+        Eisenstein Integers in Number Field in omega with defining polynomial x^2 + x + 1 with omega = -0.50000000000000000? + 0.866025403784439?*I
         sage: factor(3 + omega)
         (omega) * (-3*omega - 2)
         sage: CC(omega)
@@ -2187,6 +2189,6 @@ def EisensteinIntegers(names="omega"):
         [1, omega]
     """
     from sage.rings.all import CDF, NumberField
-    f = ZZ['x']([1,1,1])
+    f = ZZ['x']([1, 1, 1])
     nf = NumberField(f, names, embedding=CDF(-0.5, 0.8660254037844386))
     return nf.ring_of_integers()

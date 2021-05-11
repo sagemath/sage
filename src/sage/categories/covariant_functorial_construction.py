@@ -100,9 +100,8 @@ class CovariantFunctorialConstruction(UniqueRepresentation, SageObject):
        functor, and also (when relevant) of the method on parents and
        elements used for calling the construction.
 
-
     TODO: What syntax do we want for `F_{Cat}`? For example, for the
-    tensor product construction, which one of the followings do we want (see
+    tensor product construction, which one do we want among (see
     chat on IRC, on 07/12/2009):
 
      - ``tensor(Cat)``
@@ -327,7 +326,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
 
         This implements a hack allowing e.g. ``category.Subquotients``
         to recover the default ``Subquotients`` method defined in
-        ``Category``, even if it has been overriden by a
+        ``Category``, even if it has been overridden by a
         ``Subquotients`` class.
 
         EXAMPLES::
@@ -545,7 +544,8 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
         algebras and tensor products of coalgebras::
 
             sage: Bialgebras(QQ).TensorProducts().super_categories()
-            [Category of tensor products of algebras over Rational Field, Category of tensor products of coalgebras over Rational Field]
+            [Category of tensor products of algebras over Rational Field,
+             Category of tensor products of coalgebras over Rational Field]
 
         Here is how :meth:`default_super_categories` was called internally::
 
@@ -604,13 +604,13 @@ class CovariantConstructionCategory(FunctorialConstructionCategory):
             ``F``, a join category is returned. Therefore, in such
             cases, this method is not available::
 
-                sage: Coalgebras(QQ).Graded().is_construction_defined_by_base()
+                sage: Bialgebras(QQ).Graded().is_construction_defined_by_base()
                 Traceback (most recent call last):
                 ...
                 AttributeError: 'JoinCategory_with_category' object has no attribute 'is_construction_defined_by_base'
         """
         base = self.base_category()
-        f = self._functor_category;
+        f = self._functor_category
         return not any(hasattr(C, f) for C in base.super_categories())
 
     def additional_structure(self):

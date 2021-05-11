@@ -61,7 +61,7 @@ is called ``sage`` (via ``./sage`` on the command line).
 
 The first time you run Sage, you will see a message like
 
-::
+.. CODE-BLOCK:: text
 
    Rewriting paths for your new installation directory
    ===================================================
@@ -75,9 +75,11 @@ expect Sage to function.
 
 Once you are able to launch Sage you might want to create a shortcut
 so that ``sage`` just works from the command line. To do so simply use
-the ``ln`` program from the command line::
+the ``ln`` program from the command line:
 
-    sudo ln -s /path/to/SageMath/sage /usr/local/bin/sage
+.. CODE-BLOCK:: shell-session
+
+    $ sudo ln -s /path/to/SageMath/sage /usr/local/bin/sage
 
 where ``/path/to/SageMath/sage`` is the actual path to your SageMath
 installation.
@@ -85,24 +87,27 @@ installation.
 macOS
 -----
 
-On macOS there are three possible binaries for each version. They can
-be recognized by their suffixes:
+On macOS there are two possible binaries for each version. They can be
+recognized by their suffixes, but their actual contents are identical.
 
 - ``tar.bz2``: a binary tarball
 - ``dmg``: a compressed image of the binary
-- ``app.dmg``: a compressed image of a full macOS application (with
-  shortcuts)
 
-This section explains how to install from ``dmg`` or ``app.dmg``. For
-the installation of the binary tarball ``tar.bz2`` just follow the steps
+This section explains how to install from ``dmg``. For the
+installation of the binary tarball ``tar.bz2`` just follow the steps
 of the Linux installation.
 
-After downloading the file, double click on the dmg file to mount it which will
-take some time.  Then drag the folder ``SageMath`` that just appeared to
-``/Applications/``. If you did download the app, an icon should have appeared
-on your desktop. Simply use it. In both situations you might want to have
-shortcuts so that ``sage`` in the console simply works out of the box.  For
-that purpose, follows the steps at the end of the section "Linux".
+After downloading the file, double click on the dmg file to mount it,
+which will take some time.  Then drag the folder ``SageMath`` that
+just appeared to ``/Applications/``.  You might want to have shortcuts
+so that ``sage`` in the console simply works out of the box.  For that
+purpose, follows the steps at the end of the section "Linux".
+
+Alternative macOS binaries are available `here
+<https://github.com/3-manifolds/Sage_macOS/releases/>`_.  These
+have been signed and notarized, eliminating various errors caused by
+Apple's gatekeeper antimalware protections.
+
 
 Microsoft Windows (Cygwin)
 --------------------------

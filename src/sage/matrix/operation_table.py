@@ -14,9 +14,7 @@ This module implements general operation tables, which are very matrix-like.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
-import six
 from sage.structure.sage_object import SageObject
 
 class OperationTable(SageObject):
@@ -303,7 +301,7 @@ class OperationTable(SageObject):
         sage: from sage.matrix.operation_table import OperationTable
         sage: H=CyclicPermutationGroup(4)
         sage: H.list()
-        [(), (1,3)(2,4), (1,4,3,2), (1,2,3,4)]
+        [(), (1,2,3,4), (1,3)(2,4), (1,4,3,2)]
         sage: elts = ['()', '(1,3)(2,4)']
         sage: OperationTable(H, operator.mul, elements=elts)
         *  a b
@@ -315,7 +313,7 @@ class OperationTable(SageObject):
     group ``H``, using a simple ``for`` loop::
 
         sage: L = H.list()    #list of elements of the group H
-        sage: elts = [L[i] for i in {0, 1}]
+        sage: elts = [L[i] for i in {0, 2}]
         sage: elts
         [(), (1,3)(2,4)]
         sage: OperationTable(H, operator.mul, elements=elts)
@@ -324,19 +322,19 @@ class OperationTable(SageObject):
         a| a b
         b| b a
 
-    Here are a couple of improper uses ::
+    Here are a couple of improper uses::
 
         sage: elts.append(5)
         sage: OperationTable(H, operator.mul, elements=elts)
         Traceback (most recent call last):
         ...
         TypeError: unable to coerce 5 into Cyclic group of order 4 as a permutation group
-        sage: elts[2]='(1,3,2,4)'
+        sage: elts[2] = '(1,3,2,4)'
         sage: OperationTable(H, operator.mul, elements=elts)
         Traceback (most recent call last):
         ...
         TypeError: unable to coerce (1,3,2,4) into Cyclic group of order 4 as a permutation group
-        sage: elts[2]='(1,2,3,4)'
+        sage: elts[2] = '(1,2,3,4)'
         sage: OperationTable(H, operator.mul, elements=elts)
         Traceback (most recent call last):
         ...
@@ -354,6 +352,27 @@ class OperationTable(SageObject):
         Traceback (most recent call last):
         ...
         TypeError: elements () and () of Cyclic group of order 4 as a permutation group are incompatible with operation: <built-in function xor>
+
+    We construct the multiplication table for a finite finitely presented
+    group, where there is no normalization done when computing the hash::
+
+        sage: GU.<s,t> = FreeGroup()
+        sage: gr0 = GU / (s^(-2)*t*s*t, t^(-2)*s*t*s, s*t*s*t)
+        sage: gr0.multiplication_table()
+        *  a b c d e f g h i j k l
+         +------------------------
+        a| a b c d e f g h i j k l
+        b| b e f g a i j k c d l h
+        c| c g a h l k b d j i f e
+        d| d k h a i g f c e l b j
+        e| e a i j b c d l f g h k
+        f| f j b k h l e g d c i a
+        g| g l k b c j i f a h e d
+        h| h f d c j b k a l e g i
+        i| i d e l k h a j g f c b
+        j| j h l e f d c i b k a g
+        k| k i g f d e l b h a j c
+        l| l c j i g a h e k b d f
 
     .. TODO::
 
@@ -446,8 +465,19 @@ class OperationTable(SageObject):
 
                 try:
                     r = get_row(result)
-                except (KeyError,ValueError):
-                    raise ValueError('%s%s%s=%s, and so the set is not closed' % (g, self._ascii_symbol, h, result))
+                except (KeyError, ValueError):
+                    failed = True
+                    # There might be an issue with the hashing, fall back to
+                    #   getting the index (which simply uses ==).
+                    if get_row != self._elts.index:
+                        failed = False
+                        get_row = self._elts.index
+                        try:
+                            r = get_row(result)
+                        except (KeyError, ValueError):
+                            failed = True
+                    if failed:
+                        raise ValueError('%s%s%s=%s, and so the set is not closed' % (g, self._ascii_symbol, h, result))
 
                 row.append(r)
             self._table.append(row)
@@ -542,12 +572,12 @@ class OperationTable(SageObject):
             if len(names) != self._n:
                 raise ValueError('list of element names must be the same size as the set, %s != %s'%(len(names), self._n))
             width = 0
-            for str in names:
-                if not isinstance(str, six.string_types):
-                    raise ValueError('list of element names must only contain strings, not %s'%str)
-                if len(str) > width:
-                    width = len(str)
-                name_list.append(str)
+            for name in names:
+                if not isinstance(name, str):
+                    raise ValueError('list of element names must only contain strings, not %s' % name)
+                if len(name) > width:
+                    width = len(name)
+                name_list.append(name)
         else:
             raise ValueError("element names must be a list, or one of the keywords: 'letters', 'digits', 'elements'")
         name_dict = {}
@@ -717,9 +747,9 @@ class OperationTable(SageObject):
             ...
             ValueError: ASCII symbol should be a single character, not 5
         """
-        if not isinstance(ascii, six.string_types) or not len(ascii)==1:
+        if not isinstance(ascii, str) or not len(ascii)==1:
             raise ValueError('ASCII symbol should be a single character, not %s' % ascii)
-        if not isinstance(latex, six.string_types):
+        if not isinstance(latex, str):
             raise ValueError('LaTeX symbol must be a string, not %s' % latex)
         self._ascii_symbol = ascii
         self._latex_symbol = latex
@@ -940,7 +970,7 @@ class OperationTable(SageObject):
             d| d e a b c
             e| e a b c d
 
-        The table should adjust its column width to accomodate the width of the
+        The table should adjust its column width to accommodate the width of the
         strings used to represent elements.  ::
 
             sage: from sage.matrix.operation_table import OperationTable

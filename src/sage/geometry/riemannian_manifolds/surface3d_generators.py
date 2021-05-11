@@ -114,7 +114,7 @@ class SurfaceGenerators():
 
         - ``name`` -- string. Name of the surface.
 
-        For more information, see :wikipedia:`Dini's_surface`.
+        For more information, see :wikipedia:`Dini%27s_surface`.
 
         EXAMPLES::
 

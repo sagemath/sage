@@ -17,7 +17,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.rngs import Rngs
 from sage.structure.element import Element
 from functools import reduce
-from sage.misc.cachefunc import cached_method
+
 
 class Rings(CategoryWithAxiom):
     """
@@ -65,19 +65,20 @@ class Rings(CategoryWithAxiom):
             """
             Return whether or not this morphism is injective.
 
-            EXAMPLES:
+            EXAMPLES::
 
-            This often raises a ``NotImplementedError`` as many homomorphisms do
-            not implement this method::
-
-                sage: R.<x> = QQ[]
-                sage: f = R.hom([x + 1]); f
-                Ring endomorphism of Univariate Polynomial Ring in x over Rational Field
-                  Defn: x |--> x + 1
-                sage: f.is_injective()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
+                sage: R.<x,y> = QQ[]
+                sage: R.hom([x, y^2], R).is_injective()
+                True
+                sage: R.hom([x, x^2], R).is_injective()
+                False
+                sage: S.<u,v> = R.quotient(x^3*y)
+                sage: R.hom([v, u], S).is_injective()
+                False
+                sage: S.hom([-u, v], S).is_injective()
+                True
+                sage: S.cover().is_injective()
+                False
 
             If the domain is a field, the homomorphism is injective::
 
@@ -148,6 +149,13 @@ class Rings(CategoryWithAxiom):
                 # homomorphism must send the 1 element to the 1 element
                 return True
 
+            try:
+                ker = self.kernel()
+            except (NotImplementedError, AttributeError):
+                pass
+            else:
+                return ker.is_zero()
+
             if self.domain().characteristic() == 0:
                 if self.codomain().characteristic() != 0:
                     return False
@@ -170,8 +178,11 @@ class Rings(CategoryWithAxiom):
                     if K is self.codomain():
                         return True
 
-            if self.domain().cardinality() > self.codomain().cardinality():
-                return False
+            try:
+                if self.domain().cardinality() > self.codomain().cardinality():
+                    return False
+            except AttributeError:
+                pass
 
             raise NotImplementedError
 
@@ -194,6 +205,57 @@ class Rings(CategoryWithAxiom):
 
             """
             return bool(self.codomain().one())
+
+        def extend_to_fraction_field(self):
+            r"""
+            Return the extension of this morphism to fraction fields of
+            the domain and the codomain.
+
+            EXAMPLES::
+
+                sage: S.<x> = QQ[]
+                sage: f = S.hom([x+1]); f
+                Ring endomorphism of Univariate Polynomial Ring in x over Rational Field
+                    Defn: x |--> x + 1
+
+                sage: g = f.extend_to_fraction_field(); g
+                Ring endomorphism of Fraction Field of Univariate Polynomial Ring in x over Rational Field
+                    Defn: x |--> x + 1
+                sage: g(x)
+                x + 1
+                sage: g(1/x)
+                1/(x + 1)
+
+            If this morphism is not injective, it does not extend to the fraction
+            field and an error is raised::
+
+                sage: f = GF(5).coerce_map_from(ZZ)
+                sage: f.extend_to_fraction_field()
+                Traceback (most recent call last):
+                ...
+                ValueError: the morphism is not injective
+
+            TESTS::
+
+                sage: A.<x> = RR[]
+                sage: phi = A.hom([x+1])
+                sage: phi.extend_to_fraction_field()
+                Ring endomorphism of Fraction Field of Univariate Polynomial Ring in x over Real Field with 53 bits of precision
+                  Defn: x |--> x + 1.00000000000000
+            """
+            from sage.rings.morphism import RingHomomorphism_from_fraction_field
+            if self.domain().is_field() and self.codomain().is_field():
+                return self
+            try:
+                if not self.is_injective():
+                    raise ValueError("the morphism is not injective")
+            except (NotImplementedError, TypeError):   # we trust the user
+                pass
+            domain = self.domain().fraction_field()
+            codomain = self.codomain().fraction_field()
+            parent = domain.Hom(codomain)   # category = category=self.category_for() ???
+            return RingHomomorphism_from_fraction_field(parent, self)
+
 
     class SubcategoryMethods:
 
@@ -266,7 +328,6 @@ class Rings(CategoryWithAxiom):
 
                 sage: Parent(QQ,category=Rings()).is_ring()
                 True
-
             """
             return True
 
@@ -349,7 +410,7 @@ class Rings(CategoryWithAxiom):
                 <class 'sage.rings.homset.RingHomset_generic_with_category'>
 
                 sage: Hom(CyclotomicField(3), QQ, category = Rings()).__class__
-                <class 'sage.rings.number_field.morphism.CyclotomicFieldHomset_with_category'>
+                <class 'sage.rings.number_field.homset.CyclotomicFieldHomset_with_category'>
 
                 sage: TestSuite(Hom(QQ, QQ, category = Rings())).run() # indirect doctest
 
@@ -699,7 +760,7 @@ class Rings(CategoryWithAxiom):
         ##
         # Quotient rings
         # Again, this is defined in sage.rings.ring.pyx
-        def quotient(self, I, names=None):
+        def quotient(self, I, names=None, **kwds):
             """
             Quotient of a ring by a two-sided ideal.
 
@@ -708,6 +769,8 @@ class Rings(CategoryWithAxiom):
             - ``I``: A twosided ideal of this ring.
             - ``names``: a list of strings to be used as names
               for the variables in the quotient ring.
+            - further named arguments that may be passed to the
+              quotient ring constructor.
 
             EXAMPLES:
 
@@ -725,7 +788,6 @@ class Rings(CategoryWithAxiom):
                 ....:  def reduce(self, x):
                 ....:      R = self.ring()
                 ....:      return add([c*R(m) for m,c in x if len(m) < self._power], R(0))
-                ....:
                 sage: I = PowerIdeal(F,3)
                 sage: Q = Rings().parent_class.quotient(F, I); Q
                 Quotient of Free Algebra on 3 generators (x, y, z) over Rational Field by the ideal (x^3, x^2*y, x^2*z, x*y*x, x*y^2, x*y*z, x*z*x, x*z*y, x*z^2, y*x^2, y*x*y, y*x*z, y^2*x, y^3, y^2*z, y*z*x, y*z*y, y*z^2, z*x^2, z*x*y, z*x*z, z*y*x, z*y^2, z*y*z, z^2*x, z^2*y, z^3)
@@ -741,9 +803,9 @@ class Rings(CategoryWithAxiom):
                 0
             """
             from sage.rings.quotient_ring import QuotientRing
-            return QuotientRing(self, I, names=names)
+            return QuotientRing(self, I, names=names, **kwds)
 
-        def quo(self, I, names=None):
+        def quo(self, I, names=None, **kwds):
             """
             Quotient of a ring by a two-sided ideal.
 
@@ -783,9 +845,9 @@ class Rings(CategoryWithAxiom):
                 )
 
             """
-            return self.quotient(I,names=names)
+            return self.quotient(I,names=names,**kwds)
 
-        def quotient_ring(self, I, names=None):
+        def quotient_ring(self, I, names=None, **kwds):
             """
             Quotient of a ring by a two-sided ideal.
 
@@ -823,7 +885,7 @@ class Rings(CategoryWithAxiom):
                 )
 
             """
-            return self.quotient(I,names=names)
+            return self.quotient(I,names=names, **kwds)
 
         def __truediv__(self, I):
             """
@@ -874,12 +936,17 @@ class Rings(CategoryWithAxiom):
                 sage: GF(17)['a']['b']
                 Univariate Polynomial Ring in b over Univariate Polynomial Ring in a over Finite Field of size 17
 
-            We can create skew polynomial rings::
+            We can create Ore polynomial rings::
 
                 sage: k.<t> = GF(5^3)
                 sage: Frob = k.frobenius_endomorphism()
-                sage: k['x',Frob]
-                Skew Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
+                sage: k['x', Frob]
+                Ore Polynomial Ring in x over Finite Field in t of size 5^3 twisted by t |--> t^5
+
+                sage: R.<t> = QQ[]
+                sage: der = R.derivation()
+                sage: R['d', der]
+                Ore Polynomial Ring in d over Univariate Polynomial Ring in t over Rational Field twisted by d/dt
 
             We can also create power series rings by using double brackets::
 
@@ -907,22 +974,22 @@ class Rings(CategoryWithAxiom):
             Note that the same syntax can be used to create number fields::
 
                 sage: QQ[I]
-                Number Field in I with defining polynomial x^2 + 1
+                Number Field in I with defining polynomial x^2 + 1 with I = 1*I
                 sage: QQ[I].coerce_embedding()
                 Generic morphism:
-                 From: Number Field in I with defining polynomial x^2 + 1
-                 To:   Complex Lazy Field
-                 Defn: I -> 1*I
+                  From: Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+                  To:   Complex Lazy Field
+                  Defn: I -> 1*I
 
             ::
 
                 sage: QQ[sqrt(2)]
-                Number Field in sqrt2 with defining polynomial x^2 - 2
+                Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
                 sage: QQ[sqrt(2)].coerce_embedding()
                 Generic morphism:
-                 From: Number Field in sqrt2 with defining polynomial x^2 - 2
-                 To:   Real Lazy Field
-                 Defn: sqrt2 -> 1.414213562373095?
+                  From: Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
+                  To:   Real Lazy Field
+                  Defn: sqrt2 -> 1.414213562373095?
 
             ::
 
@@ -932,18 +999,18 @@ class Rings(CategoryWithAxiom):
             and orders in number fields::
 
                 sage: ZZ[I]
-                Order in Number Field in I with defining polynomial x^2 + 1
+                Order in Number Field in I0 with defining polynomial x^2 + 1 with I0 = 1*I
                 sage: ZZ[sqrt(5)]
-                Order in Number Field in sqrt5 with defining polynomial x^2 - 5
+                Order in Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
                 sage: ZZ[sqrt(2)+sqrt(3)]
-                Order in Number Field in a with defining polynomial x^4 - 10*x^2 + 1
+                Order in Number Field in a with defining polynomial x^4 - 10*x^2 + 1 with a = 3.146264369941973?
 
             Embeddings are found for simple extensions (when that makes sense)::
 
                 sage: QQi.<i> = QuadraticField(-1, 'i')
                 sage: QQ[i].coerce_embedding()
                 Generic morphism:
-                  From: Number Field in i with defining polynomial x^2 + 1
+                  From: Number Field in i with defining polynomial x^2 + 1 with i = 1*I
                   To:   Complex Lazy Field
                   Defn: i -> 1*I
 
@@ -987,8 +1054,6 @@ class Rings(CategoryWithAxiom):
 
             Embeddings::
 
-                sage: QQ[I](I.pyobject())
-                I
                 sage: a = 10^100; expr = (2*a + sqrt(2))/(2*a^2-1)
                 sage: QQ[expr].coerce_embedding() is None
                 False
@@ -997,7 +1062,7 @@ class Rings(CategoryWithAxiom):
                 sage: expr = sqrt(2) + I*(cos(pi/4, hold=True) - sqrt(2)/2)
                 sage: QQ[expr].coerce_embedding()
                 Generic morphism:
-                  From: Number Field in a with defining polynomial x^2 - 2
+                  From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
                   To:   Real Lazy Field
                   Defn: a -> 1.414213562373095?
             """
@@ -1014,7 +1079,7 @@ class Rings(CategoryWithAxiom):
             # 1. If arg is a list, try to return a power series ring.
 
             if isinstance(arg, list):
-                if arg == []:
+                if not arg:
                     raise TypeError("power series rings must have at least one variable")
                 elif len(arg) == 1:
                     # R[["a,b"]], R[[(a,b)]]...
@@ -1028,9 +1093,10 @@ class Rings(CategoryWithAxiom):
 
             if isinstance(arg, tuple):
                 from sage.categories.morphism import Morphism
-                if len(arg) == 2 and isinstance(arg[1], Morphism):
-                   from sage.rings.polynomial.skew_polynomial_ring_constructor import SkewPolynomialRing
-                   return SkewPolynomialRing(self, arg[1], names=arg[0])
+                from sage.rings.derivation import RingDerivation
+                if len(arg) == 2 and isinstance(arg[1], (Morphism, RingDerivation)):
+                    from sage.rings.polynomial.ore_polynomial_ring import OrePolynomialRing
+                    return OrePolynomialRing(self, arg[1], names=arg[0])
 
             # 2. Otherwise, if all specified elements are algebraic, try to
             #    return an algebraic extension
@@ -1046,7 +1112,7 @@ class Rings(CategoryWithAxiom):
                 # how to pass in names?
                 names = tuple(_gen_names(elts))
                 if len(elts) == 1:
-                    from sage.rings.all import CIF, CLF, RIF, RLF
+                    from sage.rings.all import CIF, CLF, RLF
                     elt = elts[0]
                     try:
                         iv = CIF(elt)
@@ -1085,6 +1151,73 @@ class Rings(CategoryWithAxiom):
 
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             return PolynomialRing(self, elts)
+
+        def free_module(self, base=None, basis=None, map=True):
+            """
+            Return a free module `V` over the specified subring together with maps to and from `V`.
+
+            The default implementation only supports the case that the base ring is the ring itself.
+
+            INPUT:
+
+            - ``base`` -- a subring `R` so that this ring is isomorphic
+              to a finite-rank free `R`-module `V`
+
+            - ``basis`` -- (optional) a basis for this ring over the base
+
+            - ``map`` -- boolean (default ``True``), whether to return
+              `R`-linear maps to and from `V`
+
+            OUTPUT:
+
+            - A finite-rank free `R`-module `V`
+
+            - An `R`-module isomorphism from `V` to this ring
+              (only included if ``map`` is ``True``)
+
+            - An `R`-module isomorphism from this ring to `V`
+              (only included if ``map`` is ``True``)
+
+            EXAMPLES::
+
+                sage: R.<x> = QQ[[]]
+                sage: V, from_V, to_V = R.free_module(R)
+                sage: v = to_V(1+x); v
+                (1 + x)
+                sage: from_V(v)
+                1 + x
+                sage: W, from_W, to_W = R.free_module(R, basis=(1-x))
+                sage: W is V
+                True
+                sage: w = to_W(1+x); w
+                (1 - x^2)
+                sage: from_W(w)
+                1 + x + O(x^20)
+            """
+            if base is None:
+                base = self.base_ring()
+            if base is self:
+                V = self**1
+                if not map:
+                    return V
+                if basis is not None:
+                    if isinstance(basis, (list, tuple)):
+                        if len(basis) != 1:
+                            raise ValueError("Basis must have length 1")
+                        basis = basis[0]
+                    basis = self(basis)
+                    if not basis.is_unit():
+                        raise ValueError("Basis element must be a unit")
+                from sage.modules.free_module_morphism import BaseIsomorphism1D_from_FM, BaseIsomorphism1D_to_FM
+                Hfrom = V.Hom(self)
+                Hto = self.Hom(V)
+                from_V = Hfrom.__make_element_class__(BaseIsomorphism1D_from_FM)(Hfrom, basis=basis)
+                to_V = Hto.__make_element_class__(BaseIsomorphism1D_to_FM)(Hto, basis=basis)
+                return V, from_V, to_V
+            else:
+                if not self.has_coerce_map_from(base):
+                    raise ValueError("base must be a subring of this ring")
+                raise NotImplementedError
 
     class ElementMethods:
         def is_unit(self):

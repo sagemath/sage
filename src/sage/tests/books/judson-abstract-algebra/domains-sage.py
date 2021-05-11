@@ -86,7 +86,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: K.<y>=QuadraticField(-7); K
-    Number Field in y with defining polynomial x^2 + 7
+    Number Field in y with defining polynomial x^2 + 7 with y = 2.645751311064591?*I
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -96,7 +96,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: K.<x> = ZZ[sqrt(-3)]; K
-    Order in Number Field in a with defining polynomial x^2 + 3
+    Order in Number Field in a with defining polynomial x^2 + 3 with a = 0.?e-18 + 1.732050807568878?*I
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

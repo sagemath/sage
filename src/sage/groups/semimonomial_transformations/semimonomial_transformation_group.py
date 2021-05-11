@@ -3,7 +3,7 @@ Semimonomial transformation group
 
 The semimonomial transformation group of degree `n` over a ring `R` is
 the semidirect product of the monomial transformation group of degree `n`
-(also known as the complete monomial group over the group of units 
+(also known as the complete monomial group over the group of units
 `R^{\times}` of `R`) and the group of ring automorphisms.
 
 The multiplication of two elements `(\phi, \pi, \alpha)(\psi, \sigma, \beta)`
@@ -12,7 +12,7 @@ with
     - `\phi, \psi \in  {R^{\times}}^n`
 
     - `\pi, \sigma \in S_n` (with the multiplication `\pi\sigma`
-      done from left to right (like in GAP) -- 
+      done from left to right (like in GAP) --
       that is, `(\pi\sigma)(i) = \sigma(\pi(i))` for all `i`.)
 
     - `\alpha, \beta \in Aut(R)`
@@ -51,6 +51,7 @@ TESTS::
     sage: TestSuite(S).run()
     sage: TestSuite(S.an_element()).run()
 """
+from sage.rings.integer import Integer
 
 from sage.groups.group import FiniteGroup
 from sage.structure.unique_representation import UniqueRepresentation
@@ -65,32 +66,32 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
     The semimonomial transformation group of degree `n` over a ring `R` is
     the semidirect product of the monomial transformation group of degree `n`
-    (also known as the complete monomial group over the group of units 
+    (also known as the complete monomial group over the group of units
     `R^{\times}` of `R`) and the group of ring automorphisms.
-    
+
     The multiplication of two elements `(\phi, \pi, \alpha)(\psi, \sigma, \beta)`
     with
-    
+
         - `\phi, \psi \in  {R^{\times}}^n`
-    
+
         - `\pi, \sigma \in S_n` (with the multiplication `\pi\sigma`
-          done from left to right (like in GAP) -- 
+          done from left to right (like in GAP) --
           that is, `(\pi\sigma)(i) = \sigma(\pi(i))` for all `i`.)
-    
+
         - `\alpha, \beta \in Aut(R)`
-    
+
     is defined by
-    
+
     .. MATH::
 
         (\phi, \pi, \alpha)(\psi, \sigma, \beta) =
         (\phi \cdot \psi^{\pi, \alpha}, \pi\sigma, \alpha \circ \beta)
-    
+
     where
     `\psi^{\pi, \alpha} = (\alpha(\psi_{\pi(1)-1}), \ldots, \alpha(\psi_{\pi(n)-1}))`
     and the multiplication of vectors is defined elementwisely. (The indexing
     of vectors is `0`-based here, so `\psi = (\psi_0, \psi_1, \ldots, \psi_{n-1})`.)
-    
+
     .. TODO::
 
         Up to now, this group is only implemented for finite fields because of
@@ -173,9 +174,9 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         R = self.base_ring()
         if arg1 == 0:
             if v is None:
-                v = [R.one()]*self.degree()
+                v = [R.one()] * self.degree()
             if perm is None:
-                perm = Permutation(range(1, self.degree()+1))
+                perm = Permutation(range(1, self.degree() + 1))
             if autom is None:
                 autom = R.hom(R.gens())
 
@@ -183,29 +184,29 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
                 try:
                     v = [R(x) for x in v]
                 except TypeError:
-                    raise TypeError('the vector attribute %s '%v +
+                    raise TypeError('the vector attribute %s ' % v +
                                     'should be iterable')
                 if len(v) != self.degree():
-                    raise ValueError('the length of the vector is %s,'%len(v) +
-                                     ' should be %s'%self.degree())
+                    raise ValueError('the length of the vector is %s,' % len(v) +
+                                     ' should be %s' % self.degree())
                 if not all(x.parent() is R and x.is_unit() for x in v):
                     raise ValueError('there is at least one element in the ' +
-                                     'list %s not lying in %s '%(v, R) +
+                                     'list %s not lying in %s ' % (v, R) +
                                      'or which is not invertible')
                 try:
                     perm = Permutation(perm)
                 except TypeError:
-                    raise TypeError('the permutation attribute %s '%perm +
+                    raise TypeError('the permutation attribute %s ' % perm +
                                     'could not be converted to a permutation')
                 if len(perm) != self.degree():
-                    raise ValueError('the permutation length is %s,' %len(perm)
-                                     + ' should be %s' %self.degree())
+                    txt = 'the permutation length is {}, should be {}'
+                    raise ValueError(txt.format(len(perm), self.degree()))
 
                 try:
                     if autom.parent() != End(R):
                         autom = End(R)(autom)
                 except TypeError:
-                    raise TypeError('%s of type %s' %(autom, type(autom)) +
+                    raise TypeError('%s of type %s' % (autom, type(autom)) +
                                     ' is not coerceable to an automorphism')
             return self.Element(self, v, perm, autom)
         else:
@@ -225,7 +226,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
     def base_ring(self):
         r"""
-        Returns the underlying ring of ``self``.
+        Return the underlying ring of ``self``.
 
         EXAMPLES::
 
@@ -235,9 +236,9 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         """
         return self._R
 
-    def degree(self):
+    def degree(self) -> Integer:
         r"""
-        Returns the degree of ``self``.
+        Return the degree of ``self``.
 
         EXAMPLES::
 
@@ -249,7 +250,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
     def _an_element_(self):
         r"""
-        Returns an element of ``self``.
+        Return an element of ``self``.
 
         EXAMPLES::
 
@@ -258,7 +259,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
             ((a, 1, 1); (1,3,2), Ring endomorphism of Finite Field in a of size 2^2 Defn: a |--> a + 1)
         """
         R = self.base_ring()
-        v = [R.primitive_element()] + [R.one()]*(self.degree() - 1)
+        v = [R.primitive_element()] + [R.one()] * (self.degree() - 1)
         p = Permutation([self.degree()] + [i for i in range(1, self.degree())])
 
         if not R.is_prime_field():
@@ -267,7 +268,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
             f = R.Hom(R).identity()
         return self(0, v, p, f)
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         r"""
         EXAMPLES::
 
@@ -279,7 +280,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
             False
         """
         try:
-            item = self(item, check=True)
+            self(item, check=True)
         except TypeError:
             return False
         return True
@@ -300,16 +301,16 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         R = self.base_ring()
-        l = [self(v=([R.primitive_element()] + [R.one()]*(self.degree() - 1)))]
+        l = [self(v=([R.primitive_element()] + [R.one()] * (self.degree() - 1)))]
         for g in SymmetricGroup(self.degree()).gens():
             l.append(self(perm=Permutation(g)))
         if R.is_field() and not R.is_prime_field():
             l.append(self(autom=R.hom([R.primitive_element()**R.characteristic()])))
         return l
 
-    def order(self):
+    def order(self) -> Integer:
         r"""
-        Returns the number of elements of ``self``.
+        Return the number of elements of ``self``.
 
         EXAMPLES::
 
@@ -322,7 +323,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         n = self.degree()
         R = self.base_ring()
         if R.is_field():
-            multgroup_size = len(R)-1
+            multgroup_size = len(R) - 1
             autgroup_size = R.degree()
         else:
             multgroup_size = R.unit_group_order()
@@ -333,7 +334,9 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         r"""
         If ``self`` is the semimonomial group of degree `n` over `R`, then
         there is the natural action on `R^n` and on matrices `R^{m \times n}`
-        for arbitrary integers `m` from the left. See also:
+        for arbitrary integers `m` from the left.
+
+        See also:
         :class:`~sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialActionVec` and
         :class:`~sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialActionMat`
 
@@ -365,9 +368,9 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
         return None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
-        Returns a string describing ``self``.
+        Return a string describing ``self``.
 
         EXAMPLES::
 
@@ -375,10 +378,10 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
             sage: SemimonomialTransformationGroup(F, 3) # indirect doctest
             Semimonomial transformation group over Finite Field in a of size 2^2 of degree 3
         """
-        return ('Semimonomial transformation group over %s'%self.base_ring() +
-                ' of degree %s'%self.degree())
+        return ('Semimonomial transformation group over %s' % self.base_ring() +
+                ' of degree %s' % self.degree())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Method for describing ``self`` in LaTeX.
 
@@ -446,8 +449,7 @@ class SemimonomialActionVec(Action):
         """
         b = b.apply_map(a.get_autom())
         b = self.codomain()(a.get_perm().action(b))
-        b = b.pairwise_product(self.codomain()(a.get_v_inverse()))
-        return b
+        return b.pairwise_product(self.codomain()(a.get_v_inverse()))
 
 
 class SemimonomialActionMat(Action):
@@ -499,4 +501,4 @@ class SemimonomialActionMat(Action):
             [    0     0     1]
             [a + 1     0     0]
         """
-        return self.codomain()([a*x for x in b.rows()])
+        return self.codomain()([a * x for x in b.rows()])

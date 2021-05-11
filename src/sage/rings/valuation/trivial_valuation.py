@@ -22,7 +22,6 @@ EXAMPLES::
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from .valuation import DiscretePseudoValuation, DiscreteValuation, InfiniteDiscretePseudoValuation
 from .valuation_space import DiscretePseudoValuationSpace
@@ -124,7 +123,7 @@ class TrivialDiscretePseudoValuation_base(DiscretePseudoValuation):
 
     def is_negative_pseudo_valuation(self):
         r"""
-        Return whether this valuatios attains the value `-\infty`.
+        Return whether this valuation attains the value `-\infty`.
 
         EXAMPLES::
 

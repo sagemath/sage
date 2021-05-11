@@ -63,15 +63,14 @@ REFERENCES:
 
 Some details are also online at:  http://www.permutationpuzzles.org/hexad/
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 David Joyner <wdjoyner@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL),
 #  version 2 or later (at your choice)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.infinity import infinity
 from sage.matrix.matrix_space import MatrixSpace

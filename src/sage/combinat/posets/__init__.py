@@ -12,7 +12,9 @@ Poset-related classes:
 - :ref:`sage.combinat.posets.lattices`
 
 - :ref:`sage.combinat.posets.linear_extensions`
-
+- :ref:`sage.combinat.posets.d_complete`
+- :ref:`sage.combinat.posets.forest`
+- :ref:`sage.combinat.posets.mobile`
 - :ref:`sage.combinat.posets.incidence_algebras`
 
 - :ref:`sage.combinat.posets.cartesian_product`
@@ -29,5 +31,5 @@ If you are looking for Poset-related :mod:`categories
 :class:`~sage.categories.finite_posets.FinitePosets`,
 :class:`~sage.categories.lattice_posets.LatticePosets` and
 :class:`~sage.categories.finite_lattice_posets.FiniteLatticePosets`.
+"""
 
-  """

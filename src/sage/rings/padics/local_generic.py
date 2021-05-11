@@ -7,7 +7,6 @@ AUTHORS:
 
 - David Roe
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2007-2013 David Roe <roed.math@gmail.com>
@@ -815,7 +814,7 @@ class LocalGeneric(CommutativeRing):
 
     def e(self):
         """
-        Return the degree of this extension.
+        Return the ramification index of this extension.
 
         Raise an error if the base ring/field is itself an extension.
 
@@ -836,7 +835,7 @@ class LocalGeneric(CommutativeRing):
 
     def ramification_index(self):
         """
-        Return the degree of this extension.
+        Return the ramification index of this extension.
 
         Raise an error if the base ring/field is itself an extension.
 
@@ -1554,6 +1553,10 @@ class LocalGeneric(CommutativeRing):
             True
             sage: A.change_ring(QQ).det() == A.det()
             True
+            sage: matrix(Qp(37),[0]).determinant()
+            0
+            sage: matrix(Qp(37),[O(37)]).determinant()
+            O(37)
         """
         n = M.nrows()
     
@@ -1569,18 +1572,22 @@ class LocalGeneric(CommutativeRing):
         shift = sum(shift_rows) + sum(shift_cols)
         det = R(1)
 
-        sign = 1;
-        valdet = 0; val = -Infinity
+        sign = 1
+        valdet = 0
+        val = -Infinity
         for piv in range(n):
-            curval = Infinity
+            pivi = pivj = piv
+            curval = S[pivi, pivj].valuation()
             for i in range(piv,n):
                 for j in range(piv,n):
                     v = S[i,j].valuation()
                     if v < curval:
                         pivi = i; pivj = j
                         curval = v
-                        if v == val: break
-                else: continue
+                        if v == val:
+                            break
+                else:
+                    continue
                 break
             val = curval
             if S[pivi,pivj] == 0:

@@ -1,5 +1,5 @@
 """
-Fast Lattice Polygons using PPL.
+Fast Lattice Polygons using PPL
 
 See :mod:`ppl_lattice_polytope` for the implementation of
 arbitrary-dimensional lattice polytopes. This module is about the

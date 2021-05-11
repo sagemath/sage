@@ -13,9 +13,9 @@ Background jobs
 Yes, a Sage job can be run in the background on a
 UNIX system. The canonical thing to do is type
 
-::
+.. CODE-BLOCK:: shell-session
 
-    nohup sage < command_file  > output_file &
+    $ nohup sage < command_file  > output_file &
 
 The advantage of nohup is that Sage will continue running after you
 log out.
@@ -33,7 +33,7 @@ Referencing Sage
 To reference Sage, please add the following to your
 bibliography:
 
-::
+.. CODE-BLOCK:: latex
 
     \bibitem[Sage]{sage}
     Stein, William, \emph{Sage: {O}pen {S}ource {M}athematical {S}oftware
@@ -41,7 +41,7 @@ bibliography:
 
 Here is the bibtex entry:
 
-::
+.. CODE-BLOCK:: bibtex
 
     @manual{sage,
         Key = {Sage},
@@ -64,7 +64,7 @@ function).
 
 For PARI, you may use
 
-::
+.. CODE-BLOCK:: bibtex
 
     @manual{PARI2,
           organization = "{The PARI~Group}",
@@ -76,7 +76,7 @@ For PARI, you may use
 
 or
 
-::
+.. CODE-BLOCK:: latex
 
     \bibitem{PARI2} PARI/GP, version {\tt 2.1.5}, Bordeaux, 2004,
     \url{http://pari.math.u-bordeaux.fr/}.
@@ -88,14 +88,14 @@ or
 
 For GAP, you may use
 
-::
+.. CODE-BLOCK:: text
 
     [GAP04] The GAP Group, GAP -- Groups, Algorithms, and Programming,
     Version 4.4; 2005. (http://www.gap-system.org)
 
 or
 
-::
+.. CODE-BLOCK:: bibtex
 
     @manual{GAP4,
         key          = "GAP",
@@ -106,7 +106,9 @@ or
         note         = "{\tt http://www.gap-system.org}",
         keywords     = "groups; *; gap; manual"}
 
-::
+or
+
+.. CODE-BLOCK:: latex
 
     \bibitem[GAP]{GAP4}
       The GAP~Group, \emph{GAP -- Groups, Algorithms, and Programming, Version 4.4}; 2005,
@@ -117,7 +119,7 @@ or
 
 For Singular, you may use
 
-::
+.. CODE-BLOCK:: text
 
     [GPS05] G.-M. Greuel, G. Pfister, and H. Sch\"onemann.
     {\sc Singular} 3.0. A Computer Algebra System for Polynomial
@@ -126,7 +128,7 @@ For Singular, you may use
 
 or
 
-::
+.. CODE-BLOCK:: bibtex
 
     @TechReport{GPS05,
       author =       {G.-M. Greuel and G. Pfister and H. Sch\"onemann},
@@ -140,7 +142,7 @@ or
 
 or
 
-::
+.. CODE-BLOCK:: latex
 
     \bibitem[GPS05]{GPS05}
     G.-M.~Greuel, G.~Pfister, and H.~Sch\"onemann.
@@ -231,9 +233,9 @@ added to make it easier to hunt it down. Just type
 ``sage -grep <string>`` to find all occurrences of ``<string>`` in the
 Sage source code. For example,
 
-::
+.. CODE-BLOCK:: shell-session
 
-    was@form:~/s/local/bin$ sage -grep berlekamp_massey
+    $ sage -grep berlekamp_massey
     matrix/all.py:from berlekamp_massey import berlekamp_massey
     matrix/berlekamp_massey.py:def berlekamp_massey(a):
     matrix/matrix.py:import berlekamp_massey
@@ -245,13 +247,15 @@ of Sage commands. Type ``help()`` for Python commands.
 
 For example
 
-::
+.. CODE-BLOCK:: python
 
     help(Matrix)
 
 returns
 
-::
+.. skip
+
+.. CODE-BLOCK:: text
 
     Help on function Matrix in module sage.matrix.constructor:
 
@@ -299,7 +303,7 @@ directory of Sage) with the following content:
 
 .. skip
 
-::
+.. CODE-BLOCK:: python
 
     print("Hello World")
     print(2^3)
@@ -421,12 +425,12 @@ in Sage).
 
 Here's an example using Sage's interface (located in
 sage/interfaces/octave.py) with ``octave``
-(http://www.octave.org/doc/index.html).
+(https://www.gnu.org/software/octave/doc/latest).
 
 ::
 
     sage: octave("atanh(1.1)")   ## optional - octave
-    (1.52226,-1.5708)
+    (1.52226,1.5708)
 
 Here's an example using Sage's interface to ``pari``'s special
 functions.

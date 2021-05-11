@@ -23,7 +23,7 @@ By default, Sage solves SAT instances as an Integer Linear Program (see
 format is easily interfaced using the :class:`sage.sat.solvers.dimacs.DIMACS`
 blueprint. Sage ships with pre-written interfaces for *RSat* [RS]_ and *Glucose*
 [GL]_. Furthermore, Sage provides an interface to the *CryptoMiniSat* [CMS]_ SAT
-solver which can be used interchangably with DIMACS-based solvers. For this last
+solver which can be used interchangeably with DIMACS-based solvers. For this last
 solver, the optional CryptoMiniSat package must be installed, this can be
 accomplished by typing the following in the shell::
 

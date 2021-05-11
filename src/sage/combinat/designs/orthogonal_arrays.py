@@ -45,17 +45,12 @@ This module defines the following functions:
 
 REFERENCES:
 
-- [CD1996]_
+-- [CD1996]_
 
 Functions
 ---------
 
 """
-from __future__ import print_function, absolute_import
-
-from builtins import zip
-from six import itervalues, iteritems
-from six.moves import range
 
 from sage.categories.sets_cat import EmptySetError
 from sage.misc.unknown import Unknown
@@ -917,7 +912,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
         return [[i,j,(i+j)%n] for i in range(n) for j in range(n)]
 
     # projective spaces are equivalent to OA(n+1,n,2)
-    elif (projective_plane(n, existence=True) or
+    elif (projective_plane(n, existence=True) is True or
            (k == n+1 and projective_plane(n, existence=True) is False)):
         _OA_cache_set(n+1,n,projective_plane(n, existence=True))
         if k == n+1:
@@ -983,7 +978,7 @@ def orthogonal_array(k,n,t=2,resolvable=False, check=True,existence=False,explai
                 break
 
     # From Difference Matrices
-    elif may_be_available and difference_matrix(n,k-1,existence=True):
+    elif may_be_available and difference_matrix(n,k-1,existence=True) is True:
         _OA_cache_set(k,n,True)
         if existence:
             return True
@@ -1050,7 +1045,7 @@ def largest_available_k(n,t=2):
         from sage.rings.infinity import Infinity
         return Infinity
     elif t == 2:
-        if projective_plane(n,existence=True):
+        if projective_plane(n,existence=True) is True:
             return n+1
         else:
             k=1
@@ -1337,15 +1332,15 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
                              "intersect in a projective plane.").format(number_of_holes))
 
     # Holes of size 1 from OA(k+1,n)
-    elif max_hole==1 and orthogonal_array(k+1,n,existence=True):
+    elif max_hole==1 and orthogonal_array(k+1,n,existence=True) is True:
         if existence:
             return True
         OA = orthogonal_array(k+1,n)
         independent_set = [B[:-1] for B in OA if B[-1] == 0][:number_of_holes]
         OA = [B[:-1] for B in OA]
 
-    elif max_hole==1 and orthogonal_array(k,n,existence=True):
-        OA = orthogonal_array(k, n)
+    elif max_hole==1 and orthogonal_array(k,n,existence=True) is True:
+        OA = orthogonal_array(k,n)
         try:
             independent_set = OA_find_disjoint_blocks(OA,k,n,number_of_holes)
         except ValueError:
@@ -1356,14 +1351,14 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
             return True
         independent_set = OA_find_disjoint_blocks(OA,k,n,number_of_holes)
 
-    elif max_hole==1 and not orthogonal_array(k,n,existence=True):
+    elif max_hole==1 and not orthogonal_array(k,n,existence=True) is True:
         return orthogonal_array(k,n,existence=existence)
 
     # From a quasi-difference matrix
     elif (number_of_holes == 1 and
           any(uu == sum_of_holes and mu <= 1 and lmbda == 1 and k <= kk + 1
-              for (nn,lmbda,mu,uu),(kk,_) in iteritems(QDM.get((n,1),{})))):
-        for (nn,lmbda,mu,uu),(kk,f) in iteritems(QDM[n,1]):
+              for (nn,lmbda,mu,uu),(kk,_) in QDM.get((n,1),{}).items())):
+        for (nn,lmbda,mu,uu),(kk,f) in QDM[n,1].items():
             if uu == sum_of_holes and mu <= 1 and lmbda == 1 and k <= kk + 1:
                 break
         G,M = f()
@@ -1683,7 +1678,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
                 Hij = set([(Y[i] - Y[j]) * v for v in H])
                 for s in range(2 * G_card):
                     g_to_col_indices[B[i][s] - B[j][s]].append(s)
-                for s1, s2 in itervalues(g_to_col_indices):
+                for s1, s2 in g_to_col_indices.values():
                     v1 = A[i][s1][1] - A[j][s1][1]
                     v2 = A[i][s2][1] - A[j][s2][1]
 
@@ -1781,8 +1776,8 @@ def OA_from_quasi_difference_matrix(M,G,add_col=True,fill_hole=True):
 
     # A cache for addition in G
     G_sum = [[0] * Gn for _ in range(Gn)]
-    for x, i in iteritems(G_to_int):
-        for xx, ii in iteritems(G_to_int):
+    for x, i in G_to_int.items():
+        for xx, ii in G_to_int.items():
             G_sum[i][ii] = G_to_int[x + xx]
 
     # Convert M to integers

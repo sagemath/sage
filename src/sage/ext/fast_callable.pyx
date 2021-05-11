@@ -244,7 +244,7 @@ AUTHOR:
     ``COND ? T : F`` expression or the Python ``T if COND else F``.
     This lets you define piecewise functions using :func:`fast_callable`. ::
 
-        sage: v4 = etb.choice(v3 >= etb.constant(0), v1, v2)
+        sage: v4 = etb.choice(v3 >= etb.constant(0), v1, v2)  # not tested
 
     The arguments are ``(COND, T, F)`` (the same order as in C), so the
     above means that if ``v3`` evaluates to a nonnegative number,
@@ -299,12 +299,11 @@ AUTHOR:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 import operator
 from copy import copy
 from sage.rings.real_mpfr cimport RealField_class, RealNumber
-from sage.rings.complex_field import ComplexField_class
+from sage.rings.complex_mpfr import ComplexField_class
 from sage.rings.all import RDF, CDF
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -312,10 +311,9 @@ from sage.structure.element cimport parent
 
 
 def fast_callable(x, domain=None, vars=None,
-                  _autocompute_vars_for_backward_compatibility_with_deprecated_fast_float_functionality=False,
                   expect_one_var=False):
     r"""
-    Given an expression x, compiles it into a form that can be quickly
+    Given an expression x, compile it into a form that can be quickly
     evaluated, given values for the variables in x.
 
     Currently, x can be an expression object, an element of SR, or a
@@ -374,11 +372,12 @@ def fast_callable(x, domain=None, vars=None,
         sage: fp(3.14159)
         -552.4182988917153
         sage: K.<x,y,z> = QQ[]
-        sage: p = K.random_element(degree=3, terms=5); p
-        x*y^2 + 1/3*y^2 - x*z - y*z
+        sage: p = x*y^2 + 1/3*y^2 - x*z - y*z
         sage: fp = fast_callable(p, domain=RDF)
-        sage: fp.op_list()
+        sage: fp.op_list() # py2
         [('load_const', 0.0), ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', ('load_const', 1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'mul', 'add', ('load_const', 0.3333333333333333), ('load_arg', 1), ('ipow', 2), 'mul', 'add', ('load_const', -1.0), ('load_arg', 1), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', 'return']
+        sage: fp.op_list() # py3
+        [('load_const', 0.0), ('load_const', 1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'mul', 'add', ('load_const', 0.3333333333333333), ('load_arg', 1), ('ipow', 2), 'mul', 'add', ('load_const', -1.0), ('load_arg', 0), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', ('load_const', -1.0), ('load_arg', 1), ('ipow', 1), ('load_arg', 2), ('ipow', 1), 'mul', 'mul', 'add', 'return']
         sage: fp(e, pi, sqrt(2))   # abs tol 3e-14
         21.831120464939584
         sage: symbolic_result = p(e, pi, sqrt(2)); symbolic_result
@@ -423,39 +422,6 @@ def fast_callable(x, domain=None, vars=None,
         Traceback (most recent call last):
             ...
         TypeError: unable to simplify to float approximation
-
-    Check :trac:`24805`--if a fast_callable expression involves division
-    on a Python object, it will always prefer Python 3 semantics (e.g.
-    ``x / y`` will try ``x.__truediv__`` instead of ``x.__div__``, as if
-    ``from __future__ import division`` is in effect).  However, for
-    classes that implement ``__div__`` but not ``__truediv__`` it will still
-    fall back on ``__div__`` for backwards-compatibility, but reliance on
-    this functionality is deprecated::
-
-        sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-        sage: etb = ExpressionTreeBuilder('x')
-        sage: x = etb.var('x')
-        sage: class One(object):
-        ....:     def __div__(self, other):
-        ....:         if not isinstance(other, Integer):
-        ....:             return NotImplemented
-        ....:         return 1 / other
-        sage: expr = One() / x
-        sage: f = fast_callable(expr, vars=[x])
-        sage: f(2)  # py2
-        doctest:warning...:
-        DeprecationWarning: use of __truediv__ should be preferred over __div__
-        See https://trac.sagemath.org/24805 for details.
-        1/2
-        sage: class ModernOne(One):
-        ....:     def __truediv__(self, other):
-        ....:         if not isinstance(other, Integer):
-        ....:             return NotImplemented
-        ....:         return 1 / other
-        sage: expr = ModernOne() / x
-        sage: f = fast_callable(expr, vars=[x])
-        sage: f(2)
-        1/2
     """
     cdef Expression et
     if isinstance(x, Expression):
@@ -481,11 +447,7 @@ def fast_callable(x, domain=None, vars=None,
                     if len(vars) == 0:
                         vars = ['EXTRA_VAR0']
                 else:
-                    if _autocompute_vars_for_backward_compatibility_with_deprecated_fast_float_functionality:
-                        from sage.misc.superseded import deprecation
-                        deprecation(5413, "Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)")
-                    else:
-                        raise ValueError("List of variables must be specified for symbolic expressions")
+                    raise ValueError("List of variables must be specified for symbolic expressions")
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
             from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
             if is_PolynomialRing(x.parent()) or is_MPolynomialRing(x.parent()):
@@ -538,7 +500,7 @@ def fast_callable(x, domain=None, vars=None,
 
 def function_name(fn):
     r"""
-    Given a function, returns a string giving a name for the function.
+    Given a function, return a string giving a name for the function.
 
     For functions we recognize, we use our standard opcode name for the
     function (so operator.add becomes 'add', and sage.all.sin becomes 'sin').
@@ -700,7 +662,7 @@ cdef class ExpressionTreeBuilder:
 
     def var(self, v):
         r"""
-        Turn the argument into an ExpressionVariable.  Looks it up in
+        Turn the argument into an ExpressionVariable.  Look it up in
         the list of variables.  (Variables are matched by name.)
 
         EXAMPLES::
@@ -752,6 +714,7 @@ cdef class ExpressionTreeBuilder:
     def call(self, fn, *args):
         r"""
         Construct a call node, given a function and a list of arguments.
+
         The arguments will be converted to Expressions using
         ExpressionTreeBuilder.__call__.
 
@@ -818,7 +781,7 @@ cdef op_inv = operator.inv
 
 cdef class Expression:
     r"""
-    Represents an expression for fast_callable.
+    Represent an expression for fast_callable.
 
     Supports the standard Python arithmetic operators; if arithmetic
     is attempted between an Expression and a non-Expression, the
@@ -863,7 +826,7 @@ cdef class Expression:
 
     def _get_etb(self):
         r"""
-        Returns the ExpressionTreeBuilder used to build a given expression.
+        Return the ExpressionTreeBuilder used to build a given expression.
 
         EXAMPLES::
 
@@ -963,28 +926,6 @@ cdef class Expression:
             div(1, v_0)
         """
         return _expression_binop_helper(s, o, op_truediv)
-
-    def __div__(s, o):
-        r"""
-        Compute a quotient of two Expressions.
-
-        EXAMPLES::
-
-            sage: from sage.ext.fast_callable import ExpressionTreeBuilder
-            sage: etb = ExpressionTreeBuilder(vars=(x,))
-            sage: x = etb(x)
-            sage: x/x
-            div(v_0, v_0)
-            sage: x/1
-            div(v_0, 1)
-            sage: 1/x
-            div(1, v_0)
-            sage: x.__div__(1)  # py2
-            div(v_0, 1)
-            sage: x.__rdiv__(1)  # py2
-            div(1, v_0)
-        """
-        return _expression_binop_helper(s, o, op_div)
 
     def __floordiv__(s, o):
         r"""
@@ -1543,7 +1484,7 @@ cdef class ExpressionChoice(Expression):
 
 cpdef _expression_binop_helper(s, o, op):
    r"""
-   Makes an Expression for (s op o).  Either s or o (or both) must already
+   Make an Expression for (s op o).  Either s or o (or both) must already
    be an expression.
 
    EXAMPLES::
@@ -1623,7 +1564,7 @@ class IntegerPowerFunction(object):
 
     def __init__(self, n):
         r"""
-        Initializes an IntegerPowerFunction.
+        Initialize an IntegerPowerFunction.
 
         EXAMPLES::
 
@@ -2187,7 +2128,7 @@ cdef class InstructionStream:
 
     def get_metadata(self):
         r"""
-        Returns the interpreter metadata being used by the current
+        Return the interpreter metadata being used by the current
         InstructionStream.
 
         The code generator sometimes uses this to decide which code
@@ -2206,7 +2147,7 @@ cdef class InstructionStream:
 
     def current_op_list(self):
         r"""
-        Returns the list of instructions that have been added to this
+        Return the list of instructions that have been added to this
         InstructionStream so far.
 
         It's OK to call this, then add more instructions.
@@ -2306,9 +2247,10 @@ cdef class InterpreterMetadata(object):
         self.by_opcode = by_opcode
         self.ipow_range = ipow_range
 
+
 class CompilerInstrSpec(object):
     r"""
-    Describes a single instruction to the fast_callable code generator.
+    Describe a single instruction to the fast_callable code generator.
 
     An instruction has a number of stack inputs, a number of stack
     outputs, and a parameter list describing extra arguments that

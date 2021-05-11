@@ -107,7 +107,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 # Otherwise just index by the basis of ``self`` as a fallback
                 return CombinatorialFreeModule(self.base_ring(), self.basis())
 
-        def from_vector(self, v):
+        def from_vector(self, v, order=None):
             """
             Return the element of ``self`` corresponding to the
             vector ``v`` in ``self.module()``.
@@ -194,7 +194,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return P.sum(cl * cr * term(ml, mr)
                          for ml, cl in self for mr, cr in y)
 
-        def to_vector(self):
+        def to_vector(self, order=None):
             """
             Return the vector in ``g.module()`` corresponding to the
             element ``self`` of ``g`` (where ``g`` is the parent of

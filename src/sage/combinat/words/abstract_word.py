@@ -30,10 +30,6 @@ EXAMPLES::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six.moves import range
-
-from builtins import zip
 
 from sage.structure.sage_object import SageObject
 from sage.combinat.words.word_options import word_options
@@ -239,22 +235,22 @@ class Word_class(SageObject):
             sage: len(Word(lambda n:n))
             Traceback (most recent call last):
             ...
-            TypeError: Python len method can not return a non integer value (=+Infinity): use length method instead.
+            TypeError: Python len method cannot return a non integer value (=+Infinity): use length method instead.
             sage: len(Word(iter('a'*200)))
             Traceback (most recent call last):
             ...
-            TypeError: Python len method can not return a non integer value (=None): use length method instead.
+            TypeError: Python len method cannot return a non integer value (=None): use length method instead.
 
         For words of unknown length::
 
             sage: len(Word(iter('a'*200), length='unknown'))
             Traceback (most recent call last):
             ...
-            TypeError: Python len method can not return a non integer value (=None): use length method instead.
+            TypeError: Python len method cannot return a non integer value (=None): use length method instead.
         """
         L = self.length()
         if L is None or L is Infinity:
-            msg = "Python len method can not return a non integer value (=%s): "%L
+            msg = "Python len method cannot return a non integer value (=%s): "%L
             msg += "use length method instead."
             raise TypeError(msg)
         return int(L)
@@ -1550,6 +1546,75 @@ class Word_class(SageObject):
         from sage.combinat.words.word import Word
         return Word(it, alphabet=alphabet, length=length, datatype='iter')
 
+    def first_occurrence(self, other, start=0):
+        r"""
+        Return the position of the first occurrence of ``other`` in ``self``.
+
+        If ``other`` is not a factor of ``self``, it returns ``None``
+        or loops forever when ``self`` is an infinite word.
+
+        INPUT:
+
+        - ``other`` -- a finite word
+        - ``start`` -- integer (default:``0``), where the search starts
+
+        OUTPUT:
+
+        integer or ``None``
+
+        EXAMPLES::
+
+            sage: w = Word('01234567890123456789')
+            sage: w.first_occurrence(Word('3456'))
+            3
+            sage: w.first_occurrence(Word('3456'), start=7)
+            13
+
+        When the factor is not present, ``None`` is returned::
+
+            sage: w.first_occurrence(Word('3456'), start=17) is None
+            True
+            sage: w.first_occurrence(Word('3333')) is None
+            True
+
+        Also works for searching a finite word in an infinite word::
+
+            sage: w = Word('0123456789')^oo
+            sage: w.first_occurrence(Word('3456'))
+            3
+            sage: w.first_occurrence(Word('3456'), start=1000)
+            1003
+
+        But it will loop for ever if the factor is not found::
+
+            sage: w.first_occurrence(Word('3333')) # not tested -- infinite loop
+
+        The empty word occurs in a word::
+
+            sage: Word('123').first_occurrence(Word(''), 0)
+            0
+            sage: Word('').first_occurrence(Word(''), 0)
+            0
+        """
+        lf = other.length()
+        lm = self.length()
+        if lf == 0:
+            return start
+        elif lm == 0:
+            return None
+        occ = other.last_position_dict()
+        suff = other.good_suffix_table()
+        s = start
+        while s <= lm - lf:
+            for j in range(lf-1, -1, -1):
+                a = self[s+j]
+                if other[j] != a:
+                    s += max(suff[j + 1], j - occ.get(a,-1))
+                    break
+            else:
+                return s
+        return None
+
     def factor_occurrences_iterator(self, fact):
         r"""
         Returns an iterator over all occurrences (including overlapping ones)
@@ -1574,15 +1639,22 @@ class Word_class(SageObject):
             12
             sage: next(it)
             24
+
+        ::
+
+            sage: u = Word('121')
+            sage: w = Word('121213211213')
+            sage: list(w.factor_occurrences_iterator(u))
+            [0, 2, 8]
         """
         if fact.is_empty():
             raise NotImplementedError("The factor must be non empty")
         if not fact.is_finite():
             raise ValueError("The factor must be finite")
-        p = fact._pos_in(self, 0)
+        p = self.first_occurrence(fact, start=0)
         while p is not None:
             yield p
-            p = fact._pos_in(self, p+1)
+            p = self.first_occurrence(fact, start=p+1)
 
     def return_words_iterator(self, fact):
         r"""

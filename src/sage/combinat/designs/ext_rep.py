@@ -39,13 +39,11 @@ import re
 import os.path
 import gzip
 import bz2
-from sage.misc.all import tmp_filename
-import sys
 
-# import compatible with py2 and py3
-import six
-from six.moves.urllib.request import urlopen
-from six import string_types, PY2
+from urllib.request import urlopen
+
+from sage.misc.all import tmp_filename
+
 
 XML_NAMESPACE   = 'http://designtheory.org/xml-namespace'
 DTRS_PROTOCOL   = '2.0'
@@ -663,7 +661,7 @@ class XTree(object):
         """
 
 
-        if isinstance(node, string_types):
+        if isinstance(node, str):
             node = (node, {}, [])
         name, attributes, children = node
         self.xt_node = node
@@ -871,7 +869,7 @@ class XTreeProcessor(object):
         elif name == 'designs':
             pass # self.outf.write(' <%s>\n' % name)
         if self.in_item:
-            for k, v in six.iteritems(attrs):
+            for k, v in attrs.items():
                 attrs[k] = _encode_attribute(v)
             new_node = (name, attrs, [])
             self.node_stack.append(new_node)
@@ -991,10 +989,8 @@ class XTreeProcessor(object):
         p.StartElementHandler = self._start_element
         p.EndElementHandler = self._end_element
         p.CharacterDataHandler = self._char_data
-        if PY2:
-            p.returns_unicode = 0
 
-        if isinstance(xml_source, string_types+(bytes,)):
+        if isinstance(xml_source, (str, bytes)):
             p.Parse(xml_source)
         else:
             p.ParseFile(xml_source)

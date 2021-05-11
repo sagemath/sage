@@ -5,7 +5,6 @@ Finite fields that are implemented using Zech logs and the
 cardinality must be less than `2^{16}`. By default, Conway polynomials are
 used as minimal polynomial.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2010-2012 David Roe
@@ -265,7 +264,7 @@ class FiniteField_givaro(FiniteField):
         'little endian'::
 
             sage: k = GF(2**8, 'a')
-            sage: e = k.vector_space().gen(1); e
+            sage: e = k.vector_space(map=False).gen(1); e
             (0, 1, 0, 0, 0, 0, 0, 0)
             sage: k(e)
             a

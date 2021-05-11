@@ -1,8 +1,8 @@
 """
 Miscellaneous functions (Cython)
 
-This file contains support for products, running totals and balanced
-sums.
+This file contains support for products, running totals, balanced
+sums, and also a function to flush output from external library calls.
 
 AUTHORS:
 
@@ -22,7 +22,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import
 
 import sys
 
@@ -30,6 +29,7 @@ from cpython.sequence cimport *
 from cpython.list cimport *
 from cpython.tuple cimport *
 from cpython.number cimport *
+from libc.stdio cimport fflush
 
 cdef extern from *:
     bint PyGen_Check(x)
@@ -592,6 +592,8 @@ cpdef list normalize_index(object key, int size):
         index_tuple = key
     elif type(key) is list:
         index_tuple = PyList_AsTuple(key)
+    elif type(key) is range:
+        index_tuple = tuple(key)
     else:
         raise TypeError("index must be an integer or slice or a tuple/list of integers and slices")
 
@@ -726,3 +728,29 @@ cdef class sized_iter:
         self.index += 1
         self.check()
         return x
+
+
+def cyflush():
+    """
+    Flush any output left over from external library calls.
+
+    Starting with Python 3, some output from external libraries (like
+    FLINT) is not flushed, and so if a doctest produces such output,
+    the output may not appear until a later doctest. See
+    :trac:`28649`.
+
+    Use this function after a doctest which produces potentially
+    unflushed output to force it to be flushed.
+
+    EXAMPLES::
+
+        sage: R.<t> = QQ[]
+        sage: t^(sys.maxsize//2)
+        Traceback (most recent call last):
+        ...
+        RuntimeError: FLINT exception
+        sage: from sage.misc.misc_c import cyflush
+        sage: cyflush()
+        ...
+    """
+    fflush(NULL)

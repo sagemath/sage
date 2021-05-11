@@ -1,9 +1,9 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 r"""
 Script to list the Sage packages
 
 This is script can be called with one argument which might be either
-"all", "standard", "optional", "experimental" or "pip". It is mostly a
+"all", "standard", "optional", or "experimental". It is mostly a
 script interface to sage_setup.packages.list_packages.
 """
 
@@ -16,17 +16,17 @@ if "SAGE_ROOT" not in os.environ:
     raise RuntimeError("The environment variable SAGE_ROOT must be set.")
 SAGE_ROOT = os.environ["SAGE_ROOT"]
 
-from sage.misc.package import list_packages, pkgname_split
+from sage.misc.package import list_packages
 
 # Input parsing #
 #################
 
 parser = argparse.ArgumentParser(description="List Sage's packages")
 parser.add_argument('category', choices=['all', 'standard', 'optional',
-                                         'experimental', 'pip', 'installed'],
+                                         'experimental', 'installed'],
                     metavar="category",
                     help="The type of packages. Can be 'all', 'standard', "
-                    "'optional', 'experimental' or 'pip'.")
+                    "'optional', or 'experimental'.")
 parser.add_argument('--installed-only', dest='installed_only',
                     default=False, action='store_true',
                     help='only display installed packages')
@@ -83,7 +83,7 @@ else:
 if args['category'] == 'all':
     L = list(list_packages(local=True, ignore_URLError=True).values())
 elif args['category'] == 'optional':
-    L = list(list_packages('optional', 'pip', local=args['local'], ignore_URLError=True).values())
+    L = list(list_packages('optional', local=args['local'], ignore_URLError=True).values())
 else:
     L = list(list_packages(args['category'], local=args['local'], ignore_URLError=True).values())
 
@@ -95,7 +95,7 @@ if args['installed_only']:
 elif args['not_installed_only']:
     L = [pkg for pkg in L if not pkg['installed']]
 
-L.sort(key = lambda pkg: pkg['name'])
+L.sort(key=lambda pkg: pkg['name'])
 
 # print (while getting rid of None in versions)
 for pkg in L:

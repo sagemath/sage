@@ -146,12 +146,13 @@ the examples in ``r.kruskal_test?`` in the notebook.
 
 ::
 
-    sage: x=r([2.9, 3.0, 2.5, 2.6, 3.2]) # normal subjects
-    sage: y=r([3.8, 2.7, 4.0, 2.4])      # with obstructive airway disease
-    sage: z=r([2.8, 3.4, 3.7, 2.2, 2.0]) # with asbestosis
-    sage: a = r([x,y,z]) # make a long R vector of all the data
-    sage: b = r.factor(5*[1]+4*[2]+5*[3]) # create something for R to tell which subjects are which
-    sage: a; b # show them
+    sage: x=r([2.9, 3.0, 2.5, 2.6, 3.2])  # normal subjects                       # optional - rpy2
+    sage: y=r([3.8, 2.7, 4.0, 2.4])       # with obstructive airway disease       # optional - rpy2
+    sage: z=r([2.8, 3.4, 3.7, 2.2, 2.0])  # with asbestosis                       # optional - rpy2
+    sage: a = r([x,y,z])                  # make a long R vector of all the data  # optional - rpy2
+    sage: b = r.factor(5*[1]+4*[2]+5*[3]) # create something for R to tell        # optional - rpy2
+    ....:                                 #   which subjects are which
+    sage: a; b                            # show them                             # optional - rpy2
      [1] 2.9 3.0 2.5 2.6 3.2 3.8 2.7 4.0 2.4 2.8 3.4 3.7 2.2 2.0
      [1] 1 1 1 1 1 2 2 2 2 3 3 3 3 3
     Levels: 1 2 3
@@ -160,7 +161,7 @@ the examples in ``r.kruskal_test?`` in the notebook.
 
 ::
 
-    sage: r.kruskal_test(a,b) # do the KW test!
+    sage: r.kruskal_test(a,b)             # do the KW test!                       # optional - rpy2
         Kruskal-Wallis rank sum test
 
     data:  sage17 and sage33
@@ -178,7 +179,7 @@ Notice that R also uses the ``#`` symbol to indicate comments.
 
 ::
 
-    sage: %r
+    sage: %r                                                                      # optional - rpy2
     ....: x = c(18,23,25,35,65,54,34,56,72,19,23,42,18,39,37) # ages of individuals
     ....: y = c(202,186,187,180,156,169,174,172,153,199,193,174,198,183,178) # maximum heart rate of each one
     ....: png() # turn on plotting

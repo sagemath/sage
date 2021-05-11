@@ -138,8 +138,11 @@ class Text(GraphicPrimitive):
         if options is None:
             options = dict(self.options())
         options_3d = {}
+        for s in ['fontfamily', 'fontsize', 'fontstyle', 'fontweight']:
+            if s in options:
+                options_3d[s] = options.pop(s)
         # TODO: figure out how to implement rather than ignore
-        for s in ['axis_coords', 'clip', 'fontsize', 'horizontal_alignment',
+        for s in ['axis_coords', 'clip', 'horizontal_alignment',
                   'rotation', 'vertical_alignment']:
             if s in options:
                 del options[s]

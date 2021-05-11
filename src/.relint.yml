@@ -1,0 +1,58 @@
+# From https://github.com/sagemath/sage-patchbot/blob/master/sage_patchbot/plugins.py
+# (simple pattern-exclusion plugins)
+# The patterns have been edited slightly because relint tests the regexp to the whole file,
+# whereas the patchbots tests them line by line.
+
+- name: 'python3: Python3 incompatible code'
+  hint: |
+    # ifilter, imap, izip           # __metaclass__
+    Hint: # update raise statements       # except Exception, var
+    Hint: # cmp                           # apply
+    Hint: # <>                            # sagenb
+    Hint: # next                          # six is no longer allowed
+  pattern: '(import.*ifilter|import.*imap|import.*izip|^\s*raise\s*[A-Za-z]*Error\s*,|[\s,\(]cmp\s*=|[^_a-z]cmp\(|<>|\.next\(\)|__metaclass__|except\s*[A-Za-z]\s*,|[^_a-z]apply\(|sagenb|import six|from six import)'
+  filePattern: .*[.](py|pyx|rst)
+
+- name: 'foreign_latex: foreign commands in LaTeX'
+  hint: |
+    use equivalent LaTeX commands instead of plain TeX commands such as \over, \choose, etc.
+  pattern: '(\\choose|\\over[^l]|\\atop|\\above|\\overwithdelims|\\atopwithdelims|\\abovewithdelims)'
+
+- name: 'doctest_continuation: old-style doctest continuation (...)'
+  hint: |
+    the correct syntax is ....:
+  pattern: '^\s*\.\.\.[         ][      ]*\S'
+
+- name: 'blocks: wrong syntax for blocks (INPUT, OUTPUT, EXAMPLES, NOTE, etc.)'
+  hint: |
+    # the correct syntax is .. SEEALSO::
+    Hint: # TESTS and EXAMPLES should be plural, NOTE singular
+    Hint: # no :: after INPUT, OUTPUT, REFERENCE blocks
+    Hint: # no " :" at the end of lines
+    Hint: # no "Returns" at the start of lines
+  pattern: '(\.\.SEE|SEE ALSO|SEEALSO:($|[^:])|^\s*TEST:|^\s*EXAMPLE:|^\s*NOTES:|^\s*[A-Z]*PUT::|^\s*REFERENCES?::|\s:$)'
+
+- name: 'trac_links: bad trac link'
+  hint: |
+    the correct syntax for trac roles is :trac:`NUMBER`, note the initial colon
+  pattern: '[^:]trac:`[0-9]'
+
+- name: 'trailing_whitespace: trailing whitespace'
+  pattern: '[ 	]$'
+
+- name: 'triple_colon: triple colon (::: or : ::)'
+  pattern: ':[ 	]*::'
+
+# From various typo tickets
+
+# https://trac.sagemath.org/ticket/30472
+- name: 'capitalization_sage: all-caps "SAGE" detected'
+  hint: |
+    Use "Sage" or "SageMath" instead
+  pattern: '\bSAGE\b'
+
+# https://trac.sagemath.org/ticket/30585
+- name: 'typo "homogenous" detected'
+  hint: |
+    in mathematics it should be "homogeneous"
+  pattern: 'homogenous'

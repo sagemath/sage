@@ -1,12 +1,11 @@
 """
 Searching a sorted list
 
-This is like the bisect library module, but also returns whether
+This is like the ``bisect`` library module, but also returns whether
 or not the element is in the list, which saves having to do an
-extra comparison.   Also, the function names make more sense.
+extra comparison. Also, the function names make more sense.
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #  Sage: System for Algebra and Geometry Computation (c) William Stein, 2004
 #
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
@@ -20,23 +19,39 @@ extra comparison.   Also, the function names make more sense.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import bisect
 
-def search(object v, object x):
+
+cpdef search(object v, object x):
     """
     Return (True,i) where i is such that v[i] == x if there is such an i,
-    or (False,j) otherwise, where j is the position that a should be inserted
+    or (False,j) otherwise, where j is the position where x should be inserted
     so that v remains sorted.
 
     INPUT:
-        v -- a list, which is assumed sorted
-        x -- Python object
+
+    - v -- a list, which is assumed sorted
+
+    - x -- Python object
+
     OUTPUT:
-        bool, int
+
+    bool, int
+
+    This is implemented using the built-in ``bisect`` module.
+
+    EXAMPLES::
+
+        sage: from sage.misc.search import search
+        sage: search([1,4,6,7,8], 6)
+        (True, 2)
+        sage: search([1,4,6,7,8], 5)
+        (False, 2)
+        sage: search(['a','c','d','h','z'], 'e')
+        (False, 3)
     """
     # This is implemented using the built-in bisect module.  I tried to
     # implement this directly (using binary search) in Pyrex, but it
@@ -52,4 +67,3 @@ def search(object v, object x):
     if v[i] != x:
         return False, i
     return True, i
-

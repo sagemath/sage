@@ -111,7 +111,6 @@ on the Jacobian of this reduction and the order of the Jacobian is
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.misc.all import latex
 
@@ -321,12 +320,12 @@ def cantor_composition(D1,D2,f,h,genus):
     if a1 == a2 and b1 == b2:
         # Duplication law:
         d, h1, h3 = a1.xgcd(2*b1 + h)
-        a = (a1 // d)**2;
+        a = (a1 // d)**2
         b = (b1 + h3*((f-h*b1-b1**2) // d)) % (a)
     else:
         d0, _, h2 = a1.xgcd(a2)
         if d0 == 1:
-            a = a1*a2;
+            a = a1 * a2
             b = (b2 + h2*a2*(b1-b2)) % (a)
         else:
             e0 = b1+b2+h

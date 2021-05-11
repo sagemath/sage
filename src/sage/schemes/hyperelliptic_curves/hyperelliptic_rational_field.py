@@ -1,18 +1,21 @@
 """
 Hyperelliptic curves over the rationals
 """
-from __future__ import absolute_import
-
 #*****************************************************************************
 #  Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from . import hyperelliptic_generic
 from sage.rings.padics.all import is_pAdicField, is_pAdicRing, pAdicField
 
-class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve_generic):
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
+
+from . import hyperelliptic_generic
+
+
+class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve_generic,
+                                        ProjectivePlaneCurve_field):
 
     def matrix_of_frobenius(self, p, prec=20):
 

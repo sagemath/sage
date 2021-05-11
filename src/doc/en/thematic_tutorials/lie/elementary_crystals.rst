@@ -171,7 +171,7 @@ For `i` an element of the index set of type `X`, the crystal `B_i` of type
 
     B_i = \{ b_i(m) : m \in \ZZ \},
 
-where the crystal stucture is given by `\mathrm{wt}\bigl(b_i(m)\bigr) =
+where the crystal structure is given by `\mathrm{wt}\bigl(b_i(m)\bigr) =
 m\alpha_i` and
 
 .. MATH::
@@ -200,8 +200,8 @@ example::
 
     sage: B = crystals.elementary.Elementary("A2",1)
     sage: S = B.subcrystal(max_depth=4, generators=[B(0)])
-    sage: [s for s in S]
-    [0, 1, -1, 2, -2, 3, -3, -4, 4]
+    sage: sorted(s for s in S)
+    [-4, -3, -2, -1, 0, 1, 2, 3, 4]
     sage: G = B.digraph(subset=S)
     sage: view(G, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
 

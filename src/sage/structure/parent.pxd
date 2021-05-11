@@ -23,8 +23,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     cdef inline bint get_flag(self, int flag):
         return self.flags & flag
 
-    cpdef bint _is_coercion_cached(self, domain)
-    cpdef bint _is_conversion_cached(self, domain)
     cpdef register_coercion(self, mor)
     cpdef register_action(self, action)
     cpdef register_conversion(self, mor)

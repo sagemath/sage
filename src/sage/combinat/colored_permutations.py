@@ -7,7 +7,6 @@ Colored Permutations
     generalized to `G \wr S_n`
 """
 import itertools
-from six.moves import range
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.parent import Parent
@@ -47,9 +46,8 @@ class ColoredPermutation(MultiplicativeGroupElement):
 
             sage: C = ColoredPermutations(4, 3)
             sage: s1,s2,t = C.gens()
-            sage: hash(s1), hash(s2), hash(t)
-            (2666658751600856334, 3639282354432100950, 3639281107336048003) # 64-bit
-            (-1973744370, 88459862, -1467077245)                            # 32-bit
+            sage: for gen in s1,s2,t:
+            ....:     assert hash(gen) ^^ hash(gen._colors) == hash(gen._perm)
         """
         return hash(self._perm) ^ hash(self._colors)
 
@@ -1082,8 +1080,7 @@ class SignedPermutations(ColoredPermutations):
     This is a finite Coxeter group of type `B_n`::
 
         sage: S.canonical_representation()
-        Finite Coxeter group over Number Field in a with
-        defining polynomial x^2 - 2 with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095? with Coxeter matrix:
         [1 3 2 2]
         [3 1 3 2]
         [2 3 1 4]
@@ -1190,9 +1187,14 @@ class SignedPermutations(ColoredPermutations):
             True
             sage: x == S([1, -3, -2])
             True
+
+            sage: S = SignedPermutations(0)
+            sage: S([]) == list(S)[0]
+            True
+
         """
         if isinstance(x, list):
-            if isinstance(x[0], tuple):
+            if x and isinstance(x[0], tuple):
                 c = []
                 p = []
                 for k in x:

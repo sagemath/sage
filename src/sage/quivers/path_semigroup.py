@@ -1,9 +1,9 @@
-## -*- encoding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 """
 Path Semigroups
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012 Jim Stark <jstarx@gmail.com>
 #                2013 Simon King <simon.king@uni-jena.de>
 #
@@ -16,10 +16,8 @@ Path Semigroups
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
-from six import integer_types, string_types
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -36,6 +34,7 @@ from .representation import QuiverRep
 
 #########################
 # Some auxiliary function to create generating functions to count paths.
+
 
 class PathSemigroup(UniqueRepresentation, Parent):
     r"""
@@ -68,7 +67,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         Category of finite enumerated semigroups
 
     In the test suite, we skip the associativity test, as in this example the
-    paths used for testing can't be concatenated::
+    paths used for testing cannot be concatenated::
 
         sage: TestSuite(S).run(skip=['_test_associativity'])
 
@@ -155,8 +154,8 @@ class PathSemigroup(UniqueRepresentation, Parent):
             semigroup!
         """
         #########
-        ## Verify that the graph labels are acceptable for this implementation ##
-        # Check that edges are labelled with nonempty strings and don't begin
+        # Verify that the graph labels are acceptable for this implementation
+        # Check that edges are labelled with nonempty strings and do not begin
         # with 'e_' or contain '*'
         labels = Q.edge_labels()
         if len(set(labels)) != len(labels):
@@ -172,17 +171,17 @@ class PathSemigroup(UniqueRepresentation, Parent):
         # Check validity of input: vertices have to be labelled 1,2,3,... and
         # edge labels must be unique
         for v in Q:
-            if not isinstance(v, integer_types + (Integer,)):
+            if not isinstance(v, (Integer, int)):
                 raise ValueError("vertices of the digraph must be labelled by integers")
 
-        ## Determine the category which this (partial) semigroup belongs to
+        # Determine the category which this (partial) semigroup belongs to
         if Q.is_directed_acyclic():
             cat = FiniteEnumeratedSets()
         else:
             cat = InfiniteEnumeratedSets()
-        self._sorted_edges = tuple(sorted(Q.edges(), key=lambda x:x[2]))
+        self._sorted_edges = tuple(sorted(Q.edges(), key=lambda x: x[2]))
         self._labels = tuple([x[2] for x in self._sorted_edges])
-        self._label_index = {s[2]: i for i,s in enumerate(self._sorted_edges)}
+        self._label_index = {s[2]: i for i, s in enumerate(self._sorted_edges)}
         self._nb_arrows = max(len(self._sorted_edges), 1)
         names = ['e_{0}'.format(v) for v in Q.vertex_iterator()]
         names += list(self._labels)
@@ -332,23 +331,23 @@ class PathSemigroup(UniqueRepresentation, Parent):
             if data.parent() is self:
                 return data
             start = data.initial_vertex()
-            end   = data.terminal_vertex()
-            edge_index = {e:i for i,e in enumerate(E)}
+            end = data.terminal_vertex()
+            edge_index = {e: i for i, e in enumerate(E)}
             path = [edge_index.get(e) for e in data]
         elif not data:
             raise ValueError("No data given to define this path")
         elif data == 1:
             start = end = next(self._quiver.vertex_iterator())
             path = []
-        elif isinstance(data, string_types): # one edge
+        elif isinstance(data, str):  # one edge
             i = L.get(data, None)
             if i is None:
                 raise ValueError("data={!r} is not the label of an edge".format(data))
-            start,end,_ = E[i]
+            start, end, _ = E[i]
             path = [i]
-        elif not isinstance(data, (tuple,list)):
+        elif not isinstance(data, (tuple, list)):
             raise TypeError("data={} is not valid. A path must be initialized from either a tuple or a list".format(data))
-        elif isinstance(data[0], string_types):  # a list of labels
+        elif isinstance(data[0], str):  # a list of labels
             start = L.get(data[0])
             if start is None:
                 raise ValueError("data[0]={!r} is not the label of an edge".format(data[0]))
@@ -368,7 +367,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
                 raise ValueError("each edge must be a triple, got {}".format(x))
             start = data[0][0]
             end = data[-1][1]
-            edge_index = {e:i for i,e in enumerate(E)}
+            edge_index = {e: i for i, e in enumerate(E)}
             path = [edge_index.get(e) for e in data]
 
         if check:
@@ -382,14 +381,14 @@ class PathSemigroup(UniqueRepresentation, Parent):
                     raise ValueError("Start and endpoint of a path of length 0 must coincide")
             else:
                 if any(x is None for x in path):
-                    i = next((i for i,x in enumerate(path) if x is None))
+                    i = next((i for i, x in enumerate(path) if x is None))
                     raise ValueError("{} is not an edge".format(data[i]))
-                for n in range(1,len(path)):
-                    e0 = E[path[n-1]][1]
+                for n in range(1, len(path)):
+                    e0 = E[path[n - 1]][1]
                     e1 = E[path[n]][0]
                     if e0 != e1:
                         raise ValueError("Edge {} ends at {}, but edge {} starts at {}".format(
-                            E[path[n-1]][2], e0, E[path[n]][2], e1))
+                            E[path[n - 1]][2], e0, E[path[n]][2], e1))
                 if E[path[0]][0] != start:
                     raise ValueError("First edge should start at vertex {}".format(start))
                 if E[path[-1]][1] != end:
@@ -423,7 +422,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             sage: P.idempotents()
             (e_1, e_2, e_3)
         """
-        return tuple(self.element_class(self, v,v, [])
+        return tuple(self.element_class(self, v, v, [])
                      for v in self._quiver.vertex_iterator())
 
     def ngens(self):
@@ -665,11 +664,11 @@ class PathSemigroup(UniqueRepresentation, Parent):
         if v not in self._quiver:
             raise ValueError("the starting point {} is not a vertex of the underlying quiver".format(v))
         if not d:
-            yield self.element_class(self,v,v,[])
+            yield self.element_class(self, v, v, [])
         else:
-            for w in self.iter_paths_by_length_and_startpoint(d-1, v):
+            for w in self.iter_paths_by_length_and_startpoint(d - 1, v):
                 for a in self._quiver._backend.iterator_out_edges([w.terminal_vertex()], True):
-                    yield self(list(w)+[a],check=False)
+                    yield self(list(w) + [a], check=False)
 
     def iter_paths_by_length_and_endpoint(self, d, v):
         """
@@ -699,11 +698,11 @@ class PathSemigroup(UniqueRepresentation, Parent):
         if v not in self._quiver:
             raise ValueError("the starting point {} is not a vertex of the underlying quiver".format(v))
         if not d:
-            yield self.element_class(self,v,v, [])
+            yield self.element_class(self, v, v, [])
         else:
-            for w in self.iter_paths_by_length_and_endpoint(d-1, v):
-                for a in self._quiver._backend.iterator_in_edges([w.initial_vertex()],True):
-                    yield self([a]+list(w), check=False)
+            for w in self.iter_paths_by_length_and_endpoint(d - 1, v):
+                for a in self._quiver._backend.iterator_in_edges([w.initial_vertex()], True):
+                    yield self([a] + list(w), check=False)
 
     def quiver(self):
         """
@@ -741,7 +740,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         return self._quiver.reverse().path_semigroup()
 
-    def algebra(self, k, order = "negdegrevlex"):
+    def algebra(self, k, order="negdegrevlex"):
         """
         Return the path algebra of the underlying quiver.
 
@@ -753,9 +752,9 @@ class PathSemigroup(UniqueRepresentation, Parent):
           "degrevlex", "negdeglex" or "deglex", defining the monomial order to
           be used.
 
-        NOTE:
+        .. NOTE::
 
-        Monomial orders that are not degree orders are not supported.
+            Monomial orders that are not degree orders are not supported.
 
         EXAMPLES::
 
@@ -997,12 +996,11 @@ class PathSemigroup(UniqueRepresentation, Parent):
             10
             sage: len([p for p in S.iter_paths_by_length_and_startpoint(10,1) if p.terminal_vertex()==2])
             341
-
         """
         P = ZZ['t']
         t = P.gen()
         M = self._quiver.adjacency_matrix()
-        out = ~(1-M*t)
+        out = ~(1 - M * t)
         out.set_immutable()
         return out
 
@@ -1134,13 +1132,13 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         # Handle the trivial case
         if start == end:
-            return [self.element_class(self,start, end, [])]
+            return [self.element_class(self, start, end, [])]
 
         # This function will recursively convert a path given in terms of
         # vertices to a list of QuiverPaths.
         def _v_to_e(path):
             if len(path) == 1:
-                return [self.element_class(self,path[0], path[0], [])]
+                return [self.element_class(self, path[0], path[0], [])]
             paths = []
             l = Q.edge_label(path[0], path[1])
             if isinstance(l, str):
@@ -1159,4 +1157,3 @@ class PathSemigroup(UniqueRepresentation, Parent):
 
         # The result is all paths from start to end
         return result
-

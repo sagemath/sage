@@ -1,0 +1,39 @@
+From f8d1e73d58ee135957dfd165a43f3baba54626cb Mon Sep 17 00:00:00 2001
+From: Timo Kaufmann <timokau@zoho.com>
+Date: Mon, 27 Aug 2018 18:27:32 +0200
+Subject: [PATCH 2/2] Remove help2man
+
+Requires autotools. Wel'll have to live without the manpages.
+---
+ Configure | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/Configure b/Configure
+index d6dddad..c6d0b5c 100755
+--- a/Configure
++++ b/Configure
+@@ -65,12 +65,6 @@ export CC
+ ##echo "**ERROR**: Could not find uname"; exit;
+ ##fi
+ 
+-HELP2MAN=`which \help2man` && echo "HELP2MAN = $HELP2MAN" >> $FILE
+-if [ -z "$HELP2MAN" ];
+-then
+-echo "**ERROR**: Could not find help2man"; exit;
+-fi
+-
+ ## Sage material (spkg-install)
+ #######################################################################
+ # Fix FPU precision
+@@ -304,7 +298,7 @@ echo "	\$(TOUCH) datafiles/param_data" >> $FILE
+ echo "	\$(SH) armd.sh" >> $FILE
+ echo "	\$(SED) -i -e '/logfile =/d' datafiles/*.txt" >> $FILE
+ echo "sympow.1: sympow" >> $FILE
+-echo "	\$(HELP2MAN) \$(H2MFLAGS) -s 1 -n \"SYMPOW program\" -I sympow.h2m -o \$@ ./\$<" >> $FILE
++echo "	touch sympow.1" >> $FILE
+ echo "clean:" >> $FILE
+ ##echo "	\$(RM) -f \$(OBJSf) sympow \$(TILDES) \$(TARS)" >> $FILE
+ echo "	\$(RM) -f \$(OBJS) sympow sympow.1 \$(TILDES)" >> $FILE
+-- 
+2.16.4
+

@@ -1,0 +1,10 @@
+global-include *.c *.cc *.cpp *.h *.hh *.hpp *.inc *.py *.pyx *.pxd *.pxi *.rst *.txt *.tex
+
+include MANIFEST.in
+
+prune .tox
+
+graft   sage/libs/gap/test
+prune sage/ext/interpreters   # In particular, __init__.py must not be present in the distribution; or sage_setup.autogen.interpreters.rebuild will not generate the code
+
+prune sage_docbuild     # Shipped by sage_docbuild

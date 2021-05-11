@@ -1,7 +1,6 @@
 r"""
 Complete Discrete Valuation Rings (CDVR) and Fields (CDVF)
 """
-from __future__ import absolute_import
 #**************************************************************************
 #  Copyright (C) 2013 Xavier Caruso <xavier.caruso@normalesup.org>
 #
@@ -78,16 +77,53 @@ class CompleteDiscreteValuationRings(Category_singleton):
                 sage: x.denominator().parent()
                 7-adic Ring with capped relative precision 20
 
-            An error is raised when the input is indistinguishable from 0::
+            When the denominator is indistinguishable from 0 and the
+            precision on the input is `O(p^n)`, the return value is `1`
+            if `n` is nonnegative and `p^(-n)` otherwise::
 
                 sage: x = K(0,5); x
                 O(7^5)
                 sage: x.denominator()
-                Traceback (most recent call last):
-                ...
-                ValueError: Cannot determine the denominator of an element indistinguishable from 0
+                1 + O(7^20)
+
+                sage: x = K(0,-5); x
+                O(7^-5)
+                sage: x.denominator()
+                7^5 + O(7^25)
             """
             return self.parent()(1)
+
+        def numerator(self):
+            """
+            Return the numerator of this element, normalized in such a
+            way that `x = x.numerator() / x.denominator()` always holds
+            true.
+
+            EXAMPLES::
+
+                sage: K = Qp(7, 5)
+                sage: x = K(1/21)
+                sage: x.numerator()
+                5 + 4*7 + 4*7^2 + 4*7^3 + 4*7^4 + O(7^5)
+
+                sage: x == x.numerator() / x.denominator()
+                True
+
+            Note that the numerator lives in the ring of integers::
+
+                sage: x.numerator().parent()
+                7-adic Ring with capped relative precision 5
+
+            TESTS::
+
+                sage: x = K(0,-5); x
+                O(7^-5)
+                sage: x.numerator()
+                O(7^0)
+                sage: x.denominator()
+                7^5 + O(7^10)
+            """
+            return self
 
         @abstract_method
         def lift_to_precision(self, absprec=None):
@@ -191,20 +227,56 @@ class CompleteDiscreteValuationFields(Category_singleton):
                 sage: x.denominator().parent()
                 7-adic Ring with capped relative precision 20
 
-            An error is raised when the input is indistinguishable from 0::
+            When the denominator is indistinguishable from 0 and the
+            precision on the input is `O(p^n)`, the return value is `1`
+            if `n` is nonnegative and `p^(-n)` otherwise::
 
                 sage: x = K(0,5); x
                 O(7^5)
                 sage: x.denominator()
-                Traceback (most recent call last):
-                ...
-                ValueError: Cannot determine the denominator of an element indistinguishable from 0
+                1 + O(7^20)
+
+                sage: x = K(0,-5); x
+                O(7^-5)
+                sage: x.denominator()
+                7^5 + O(7^25)
             """
-            if self == 0:
-                raise ValueError("Cannot determine the denominator of an element indistinguishable from 0")
             val = self.valuation()
             R = self.parent().integer_ring()
             if val >= 0:
                 return R(1)
             else:
                 return R(1) << (-val)
+
+        def numerator(self):
+            """
+            Return the numerator of this element, normalized in such a
+            way that `x = x.numerator() / x.denominator()` always holds
+            true.
+
+            EXAMPLES::
+
+                sage: K = Qp(7, 5)
+                sage: x = K(1/21)
+                sage: x.numerator()
+                5 + 4*7 + 4*7^2 + 4*7^3 + 4*7^4 + O(7^5)
+
+                sage: x == x.numerator() / x.denominator()
+                True
+
+            Note that the numerator lives in the ring of integers::
+
+                sage: x.numerator().parent()
+                7-adic Ring with capped relative precision 5
+
+            TESTS::
+
+                sage: x = K(0,-5); x
+                O(7^-5)
+                sage: x.numerator()
+                O(7^0)
+                sage: x.denominator()
+                7^5 + O(7^10)
+            """
+            R = self.parent().integer_ring()
+            return R(self * self.denominator())

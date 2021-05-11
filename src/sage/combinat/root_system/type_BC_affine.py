@@ -9,8 +9,6 @@ Root system data for type BC affine
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .cartan_type import CartanType_standard_affine
 from sage.rings.integer_ring import ZZ

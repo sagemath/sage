@@ -22,8 +22,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -41,6 +39,40 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
     """
     An element in a complex reflection group.
     """
+    def __hash__(self):
+        r"""
+        Return a hash for this reflection group element.
+
+        This hash stores both the element as a reduced word and the parent group.
+
+        EXAMPLES::
+
+            sage: W = ReflectionGroup(['A',5])                      # optional - gap3
+            sage: W_hash = set(hash(w) for w in W)                  # optional - gap3
+            sage: len(W_hash) == W.cardinality()                    # optional - gap3
+            True
+
+        TESTS:
+
+        Check that types B and C are hashed differently, see :trac:`29726`::
+
+            sage: WB = ReflectionGroup(['B',5])                     # optional - gap3
+            sage: WC = ReflectionGroup(['C',5])                     # optional - gap3
+
+            sage: WB_hash = set(hash(w) for w in WB)                # optional - gap3
+            sage: WC_hash = set(hash(w) for w in WC)                # optional - gap3
+
+            sage: len(WB_hash) == WB.cardinality()                  # optional - gap3
+            True
+
+            sage: len(WC_hash) == WC.cardinality()                  # optional - gap3
+            True
+
+            sage: WB_hash.intersection(WC_hash)                     # optional - gap3
+            set()
+        """
+        return hash(self._parent) | hash(tuple(self._reduced_word))
+
     def reduced_word(self):
         r"""
         Return a word in the simple reflections to obtain ``self``.
@@ -425,7 +457,8 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             (1,2,6)(3,4,5) True
             (1,5)(2,4)(3,6) True
         """
-        return PermutationGroupElement(self)
+        W = self._parent
+        return PermutationGroupElement(self, W)
 
     #@cached_in_parent_method
     def fix_space(self):
@@ -467,8 +500,8 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             Basis matrix:
             [ 1 -1]
 
-            sage: W = ReflectionGroup(23)                           # optional - gap3
-            sage: W.an_element().fix_space()                        # optional - gap3
+            sage: W = ReflectionGroup(23)                 # optional - gap3
+            sage: W.gen(0).fix_space()                    # optional - gap3
             Vector space of degree 3 and dimension 2 over Universal Cyclotomic Field
             Basis matrix:
             [0 1 0]
@@ -1111,11 +1144,11 @@ def _gap_factorization(w, gens):
     fac = gap3('MinimalWord(W,%s)'%str(w)).sage()
     return [i-1 for i in fac]
 
-_gap_factorization_code = """
+_gap_factorization_code = r"""
 # MinimalWord(G,w)
 # given a permutation group G find some expression of minimal length in the
 # generators of G and their inverses of the element w (an inverse is
-# representated by a negative index).
+# represented by a negative index).
 # To speed up  later calls to  the same function  the fields G.base, G.words,
 # G.nbwordslength are kept.
 MinimalWord:=function(G,w)
@@ -1177,4 +1210,3 @@ def _gap_return(S, coerce_obj='self'):
     S = S.replace(' ','').replace('\n','')
     S = S.replace(',(','\',check=False),%s(\'('%coerce_obj).replace('[','[%s(\''%coerce_obj).replace(']','\',check=False)]')
     return S
-

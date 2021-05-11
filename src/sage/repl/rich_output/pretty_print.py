@@ -9,7 +9,7 @@ is falling back on the plain text.
 EXAMPLES::
 
     sage: pretty_print(1, 2, 3)
-    <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}1 2 3</script></html>
+    1 2 3
 
 Printing a graphics object just prints a string, whereas
 :func:`pretty_print` does not print anything and just shows the
@@ -20,20 +20,14 @@ graphics instead::
     sage: pretty_print(plot(sin))
 """
 
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
-import types
-import collections
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.sage_object import SageObject
 from sage.repl.rich_output import get_display_manager
 
@@ -53,7 +47,7 @@ class SequencePrettyPrinter(SageObject):
         EXAMPLES::
 
             sage: pretty_print(1, 2, 3)   # indirect doctest
-            <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}1 2 3</script></html>
+            1 2 3
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
             sage: SequencePrettyPrinter(1, 2, 3).pretty_print()
             1 2 3
@@ -67,7 +61,7 @@ class SequencePrettyPrinter(SageObject):
         Return whether the pretty print items are homogeneous
 
         INPUT:
-        
+
         - ``common_type`` -- a type.
 
         OUTPUT:
@@ -85,7 +79,7 @@ class SequencePrettyPrinter(SageObject):
             False
         """
         return all(isinstance(arg, common_type) for arg in self.args)
-        
+
     def _concatenate_graphs(self):
         """
         Plot multiple graphs into a single plot
@@ -99,9 +93,9 @@ class SequencePrettyPrinter(SageObject):
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
             sage: plt = SequencePrettyPrinter(*list(graphs(3)))._concatenate_graphs()
             sage: type(plt)
-            <class 'sage.plot.graphics.GraphicsArray'>
+            <class 'sage.plot.multigraphics.GraphicsArray'>
             sage: plt
-            Graphics Array of size 2 x 4
+            Graphics Array of size 1 x 4
         """
         import sage.graphs.graph_list as graphs_list
         return graphs_list.to_graphics_array(self.args, **self.kwds)
@@ -119,13 +113,13 @@ class SequencePrettyPrinter(SageObject):
             sage: from sage.repl.rich_output.pretty_print import SequencePrettyPrinter
             sage: ga = SequencePrettyPrinter(*[Graphics()]*5)._concatenate_graphics()
             sage: type(ga)
-            <class 'sage.plot.graphics.GraphicsArray'>
+            <class 'sage.plot.multigraphics.GraphicsArray'>
             sage: ga.nrows(), ga.ncols()
             (2, 4)
         """
         from sage.plot.plot import graphics_array
         return graphics_array(self.args, ncols=4, **self.kwds)
-    
+
     def pretty_print(self):
         """
         Actually do the pretty print.
@@ -164,10 +158,10 @@ class SequencePrettyPrinter(SageObject):
 def pretty_print(*args, **kwds):
     r"""
     Pretty print the arguments in an intelligent way.
-    
+
     For a single positional argument, this function chooses the
     highest-quality output supported by the user interface.
-    
+
     For certain homogeneous multiple positional arguments a suitable
     combined graphical output is generated. In particular, graphs and
     plots are treated special.
@@ -200,21 +194,21 @@ def pretty_print(*args, **kwds):
     EXAMPLES::
 
         sage: pretty_print(ZZ)
-        <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}</script></html>
+        Integer Ring
 
         sage: pretty_print("Integers = ", ZZ) # trac 11775
-        <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\verb|Integers|\phantom{\verb!x!}\verb|=| \Bold{Z}</script></html>
+        'Integers = ' Integer Ring
 
     To typeset LaTeX code as-is, use :class:`LatexExpr`::
 
         sage: pretty_print(LatexExpr(r"\frac{x^2 + 1}{x - 2}"))
-        <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\frac{x^2 + 1}{x - 2}</script></html>
+        \frac{x^2 + 1}{x - 2}
 
     TESTS::
 
         sage: plt = plot(sin)
         sage: pretty_print(plt)             # graphics output
-        sage: pretty_print(ZZ, 123, plt)    # optional - latex 
+        sage: pretty_print(ZZ, 123, plt)    # optional - latex
         <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z} 123 %% Creator: Matplotlib, PGF backend...</script></html>
         sage: pretty_print(plt, plt)        # graphics output
     """
@@ -231,7 +225,7 @@ def pretty_print(*args, **kwds):
             SequencePrettyPrinter(*args, **kwds).pretty_print()
     finally:
         dm.preferences.text = old_preferences_text
-    
+
 
 def show(*args, **kwds):
     r"""
@@ -247,7 +241,7 @@ def show(*args, **kwds):
     EXAMPLES::
 
         sage: show(1)
-        <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}1</script></html>
+        1
     """
     from sage.graphs.generic_graph import GenericGraph
     if len(args) == 1 and isinstance(args[0], GenericGraph):

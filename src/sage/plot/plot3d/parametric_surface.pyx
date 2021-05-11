@@ -68,7 +68,7 @@ Another colored example::
 
         S = ParametricSurface(f=lambda xy: (xy[0],xy[1],0), domain=(range(10),range(10)))
 """
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -80,8 +80,8 @@ Another colored example::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_check
@@ -101,7 +101,7 @@ include "point_c.pxi"
 cdef inline bint smash_edge(point_c* vs, face_c* f, int a, int b):
     if point_c_eq(vs[f.vertices[a]], vs[f.vertices[b]]):
         f.vertices[b] = f.vertices[a]
-        f.n = 3
+        f.n -= 1
         return 1
     else:
         return 0
@@ -298,9 +298,38 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: s = P.json_repr(P.default_render_params())
             sage: print(s[0][:100])
             {"vertices":[{"x":-2,"y":-2,"z":0},{"x":-2,"y":-1.89744,"z":0.399737},{"x":-1.89744,"y":-1.89744,"z"
+
+        One test for :trac:`22688`::
+
+            sage: P = spherical_plot3d(sqrt(x-pi/2),(x,0,pi),(y,0,2*pi))
+            sage: s = P.json_repr(P.default_render_params())
+            sage: 'nan' in s or 'NaN' in s
+            False
         """
         self.triangulate(render_params)
         return IndexFaceSet.json_repr(self, render_params)
+
+    def threejs_repr(self, render_params):
+        r"""
+        Return a represention of the surface suitable for plotting with three.js.
+
+        EXAMPLES::
+
+            sage: _ = var('x,y')
+            sage: P = plot3d(x^2-y^2, (x, -2, 2), (y, -2, 2))
+            sage: P.threejs_repr(P.default_render_params())
+            [('surface',
+              {'color': '#6666ff',
+               'faces': [[0, 1, 2, 3],
+                ...
+               'opacity': 1.0,
+               'vertices': [{'x': -2.0, 'y': -2.0, 'z': 0.0},
+                ...
+                {'x': 2.0, 'y': 2.0, 'z': 0.0}]})]
+
+        """
+        self.triangulate(render_params)
+        return IndexFaceSet.threejs_repr(self, render_params)
 
     def is_enclosed(self):
         """
@@ -418,7 +447,7 @@ cdef class ParametricSurface(IndexFaceSet):
         urange, vrange = self.get_grid(ds)
         urange = [float(u) for u in urange]
         vrange = [float(v) for v in vrange]
-        if self.render_grid == (urange, vrange) and self.fcount != 0:
+        if self.render_grid == (urange, vrange) and self.fcount:
             # Already triangulated at on this grid.
             return
 
@@ -442,7 +471,6 @@ cdef class ParametricSurface(IndexFaceSet):
         #   3 - 2
 
         cdef face_c *face
-        cdef face_c *last_face
 
         for i in range(n):
             for j in range(m):
@@ -475,22 +503,37 @@ cdef class ParametricSurface(IndexFaceSet):
 
                 # This is the newly-seen vertex, identify if it's a triangle
                 face.vertices[2] = (i+1)*(m+1)+j+1
-                smash_edge(self.vs, face, 1, 2) or smash_edge(self.vs, face, 3, 2)
+                smash_edge(self.vs, face, 1, 2)
+                smash_edge(self.vs, face, 3, 2)
 
         # Now we see if it wraps around or is otherwise enclosed
         self.enclosed = True
 
         cdef face_c *first
         cdef face_c *last
+        cdef point_c first_v0
+        cdef point_c first_v1
+        cdef point_c first_v3
+        cdef point_c last_v1
+        cdef point_c last_v2
+        cdef point_c last_v3
         for j in range(m):
             sig_check()
             first = &self._faces[j]
-            last  = &self._faces[(n-1)*m+j]
-            if point_c_eq(self.vs[first.vertices[0]], self.vs[last.vertices[3]]):
+            first_v0 = self.vs[first.vertices[0]]
+            first_v1 = self.vs[first.vertices[1]]
+            if not (point_c_isfinite(first_v0) and point_c_isfinite(first_v1)):
+                continue
+            last = &self._faces[(n-1)*m+j]
+            last_v3 = self.vs[last.vertices[3]]
+            last_v2 = self.vs[last.vertices[2]]
+            if not (point_c_isfinite(last_v3) and point_c_isfinite(last_v2)):
+                continue
+            if point_c_eq(first_v0, last_v3):
                 last.vertices[3] = first.vertices[0]
             elif first.vertices[0] != first.vertices[1] or last.vertices[3] != last.vertices[2]:
                 self.enclosed = False
-            if point_c_eq(self.vs[first.vertices[1]], self.vs[last.vertices[2]]):
+            if point_c_eq(first_v1, last_v2):
                 last.vertices[2] = first.vertices[1]
             elif first.vertices[0] != first.vertices[1] or last.vertices[3] != last.vertices[2]:
                 self.enclosed = False
@@ -498,17 +541,26 @@ cdef class ParametricSurface(IndexFaceSet):
         for i in range(n):
             sig_check()
             first = &self._faces[i*m]
-            last  = &self._faces[i*m + m-1]
-            if point_c_eq(self.vs[first.vertices[0]], self.vs[last.vertices[1]]):
+            first_v0 = self.vs[first.vertices[0]]
+            first_v3 = self.vs[first.vertices[3]]
+            if not (point_c_isfinite(first_v0) and point_c_isfinite(first_v3)):
+                continue
+            last = &self._faces[i*m + m-1]
+            last_v1 = self.vs[last.vertices[1]]
+            last_v2 = self.vs[last.vertices[2]]
+            if not (point_c_isfinite(last_v1) and point_c_isfinite(last_v2)):
+                continue
+            if point_c_eq(first_v0, last_v1):
                 last.vertices[1] = first.vertices[0]
             elif first.vertices[0] != first.vertices[3] or last.vertices[1] != last.vertices[2]:
                 self.enclosed = False
-            if point_c_eq(self.vs[first.vertices[3]], self.vs[last.vertices[2]]):
+            if point_c_eq(first_v3, last_v2):
                 last.vertices[2] = first.vertices[3]
             elif first.vertices[0] != first.vertices[3] or last.vertices[1] != last.vertices[2]:
                 self.enclosed = False
 
         # make sure we deleted the correct point from the triangles
+        # so that the correct vertices are the first 3 ones
         for ix in range(n * m):
             sig_check()
             face = &self._faces[ix]
@@ -693,7 +745,7 @@ cdef class ParametricSurface(IndexFaceSet):
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
         Needed to support PLOT in doctrings, see :trac:`17498`
-        
+
         EXAMPLES::
 
             sage: S = parametric_plot3d( (sin, cos, lambda u: u/10), (0, 20))
@@ -724,7 +776,7 @@ class MoebiusStrip(ParametricSurface):
 
         sage: from sage.plot.plot3d.parametric_surface import MoebiusStrip
         sage: M = MoebiusStrip(3,3)
-        sage: M.show() 
+        sage: M.show()
     """
 
     def __init__(self, r, width, twists=1, **kwds):
@@ -803,4 +855,3 @@ cdef double* to_double_array(py_list) except NULL:
         c_list[i] = a
         i += 1
     return c_list
-

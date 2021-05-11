@@ -7,7 +7,6 @@ AUTHORS:
 - Jordi Quer
 - David Loeffler
 """
-from __future__ import absolute_import
 
 ################################################################################
 #
@@ -20,7 +19,6 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #
 ################################################################################
-from six.moves import range
 
 from sage.arith.all import euler_phi, lcm, gcd, divisors, get_inverse_mod, get_gcd, factor, xgcd
 from sage.modular.modsym.p1list import lift_to_sl2z
@@ -470,17 +468,14 @@ class GammaH_class(CongruenceSubgroup):
             ]
             sage: GammaH(7, [2]).generators(algorithm="todd-coxeter")
             [
-            [1 1]  [-90  29]  [ 15   4]  [-10  -3]  [ 1 -1]  [1 0]  [1 1]  [-3 -1]
-            [0 1], [301 -97], [-49 -13], [  7   2], [ 0  1], [7 1], [0 1], [ 7  2],
+            [1 1]  [-13   4]  [ 15   4]  [-3 -1]  [ 1 -1]  [1 0]  [1 1]  [-3 -1]
+            [0 1], [ 42 -13], [-49 -13], [ 7  2], [ 0  1], [7 1], [0 1], [ 7  2],
             <BLANKLINE>
-            [-13   4]  [-5 -1]  [-5 -2]  [-10   3]  [ 1  0]  [ 9 -1]  [-20   7]
-            [ 42 -13], [21  4], [28 11], [ 63 -19], [-7  1], [28 -3], [-63  22],
+            [-13   4]  [-5 -1]  [-5 -2]  [-10   3]  [ 1  0]  [ 2 -1]  [1 0]
+            [ 42 -13], [21  4], [28 11], [ 63 -19], [-7  1], [ 7 -3], [7 1],
             <BLANKLINE>
-            [1 0]  [-3 -1]  [ 15  -4]  [ 2 -1]  [ 22  -7]  [-5  1]  [  8  -3]
-            [7 1], [ 7  2], [ 49 -13], [ 7 -3], [ 63 -20], [14 -3], [-21   8],
-            <BLANKLINE>
-            [11  5]  [-13  -4]
-            [35 16], [-42 -13]
+            [-3 -1]  [ 15  -4]  [ 2 -1]  [-5  1]  [  8  -3]  [11  5]  [-13  -4]
+            [ 7  2], [ 49 -13], [ 7 -3], [14 -3], [-21   8], [35 16], [-42 -13]
             ]
         """
         if algorithm=="farey":
@@ -494,16 +489,17 @@ class GammaH_class(CongruenceSubgroup):
         else:
             raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
-    def _coset_reduction_data_first_coord(G):
+    def _coset_reduction_data_first_coord(self):
         """
         Compute data used for determining the canonical coset
-        representative of an element of SL_2(Z) modulo G. This
-        function specifically returns data needed for the first part
-        of the reduction step (the first coordinate).
+        representative of an element of SL_2(Z) modulo ``self``.
+
+        This function specifically returns data needed for the first
+        part of the reduction step (the first coordinate).
 
         INPUT:
 
-        G -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N).
+        ``self`` -- a congruence subgroup Gamma_0(N), Gamma_1(N), or Gamma_H(N)
 
         OUTPUT:
 
@@ -516,12 +512,12 @@ class GammaH_class(CongruenceSubgroup):
         EXAMPLES::
 
             sage: G = Gamma0(12)
-            sage: sage.modular.arithgroup.congroup_gammaH.GammaH_class._coset_reduction_data_first_coord(G)
+            sage: G._coset_reduction_data_first_coord()
             [(0, 12, 0), (1, 1, 1), (2, 2, 1), (3, 3, 1), (4, 4, 1), (1, 1, 5), (6, 6, 1),
             (1, 1, 7), (4, 4, 5), (3, 3, 7), (2, 2, 5), (1, 1, 11)]
         """
-        H = [ int(x) for x in G._list_of_elements_in_H() ]
-        N = int(G.level())
+        H = [int(x) for x in self._list_of_elements_in_H()]
+        N = int(self.level())
 
         # Get some useful fast functions for inverse and gcd
         inverse_mod = get_inverse_mod(N)   # optimal inverse function
@@ -572,16 +568,17 @@ class GammaH_class(CongruenceSubgroup):
 
         return reduct_data
 
-    def _coset_reduction_data_second_coord(G):
+    def _coset_reduction_data_second_coord(self):
         """
         Compute data used for determining the canonical coset
-        representative of an element of SL_2(Z) modulo G. This
-        function specifically returns data needed for the second part
-        of the reduction step (the second coordinate).
+        representative of an element of SL_2(Z) modulo ``self``.
+
+        This function specifically returns data needed for the second
+        part of the reduction step (the second coordinate).
 
         INPUT:
 
-        self
+        ``self``
 
         OUTPUT:
 
@@ -618,19 +615,20 @@ class GammaH_class(CongruenceSubgroup):
             sage: K == divisors(1200)
             True
         """
-        H = G._list_of_elements_in_H()
-        N = G.level()
+        H = self._list_of_elements_in_H()
+        N = self.level()
         v = { 1: [1] , N: H }
-        for d in [x for x in divisors(N) if x > 1 and x < N ]:
-            N_over_d = N // d
-            v[d] = [x for x in H if x % N_over_d == 1]
+        for d in divisors(N):
+            if 1 < d < N:
+                N_over_d = N // d
+                v[d] = [x for x in H if x % N_over_d == 1]
         return v
 
     @cached_method
     def _coset_reduction_data(self):
         """
         Compute data used for determining the canonical coset
-        representative of an element of SL_2(Z) modulo G.
+        representative of an element of SL_2(Z) modulo ``self``.
 
         EXAMPLES::
 
@@ -640,8 +638,7 @@ class GammaH_class(CongruenceSubgroup):
             ([(0, 13, 0), (1, 1, 1), (2, 1, 1), (3, 1, 1), (4, 1, 1), (5, 1, 1), (6, 1, 1), (6, 1, 12), (5, 1, 12), (4, 1, 12), (3, 1, 12), (2, 1, 12), (1, 1, 12)], {1: [1], 13: [1, 12]})
         """
         return (self._coset_reduction_data_first_coord(),
-                                       self._coset_reduction_data_second_coord())
-
+                self._coset_reduction_data_second_coord())
 
     def _reduce_coset(self, uu, vv):
         r"""
@@ -967,14 +964,14 @@ class GammaH_class(CongruenceSubgroup):
 
             sage: GammaH(108, [1,-1]).gamma0_coset_reps()
             [
-            [1 0]  [-43 -45]  [ 31  33]  [-49 -54]  [ 25  28]  [-19 -22]
-            [0 1], [108 113], [108 115], [108 119], [108 121], [108 125],
+            [1 0]  [-43  -2]  [ 31   2]  [-49  -5]  [ 25   3]  [-19  -3]
+            [0 1], [108   5], [108   7], [108  11], [108  13], [108  17],
             <BLANKLINE>
-            [-17 -20]  [ 47  57]  [ 13  16]  [ 41  52]  [  7   9]  [-37 -49]
-            [108 127], [108 131], [108 133], [108 137], [108 139], [108 143],
+            [-17  -3]  [ 47  10]  [ 13   3]  [ 41  11]  [  7   2]  [-37 -12]
+            [108  19], [108  23], [108  25], [108  29], [108  31], [108  35],
             <BLANKLINE>
-            [-35 -47]  [ 29  40]  [ -5  -7]  [ 23  33]  [-11 -16]  [ 53  79]
-            [108 145], [108 149], [108 151], [108 155], [108 157], [108 161]
+            [-35 -12]  [ 29  11]  [ -5  -2]  [ 23  10]  [-11  -5]  [ 53  26]
+            [108  37], [108  41], [108  43], [108  47], [108  49], [108  53]
             ]
         """
         from .all import SL2Z
@@ -989,8 +986,8 @@ class GammaH_class(CongruenceSubgroup):
 
             sage: list(Gamma1(3).coset_reps())
             [
-            [1 0]  [-1 -2]  [ 0 -1]  [-2  1]  [1 0]  [-3 -2]  [ 0 -1]  [-2 -3]
-            [0 1], [ 3  5], [ 1  0], [ 5 -3], [1 1], [ 8  5], [ 1  2], [ 5  7]
+            [1 0]  [-1  0]  [ 0 -1]  [ 0  1]  [1 0]  [-1  0]  [ 0 -1]  [ 0  1]
+            [0 1], [ 0 -1], [ 1  0], [-1  0], [1 1], [-1 -1], [ 1  2], [-1 -2]
             ]
             sage: len(list(Gamma1(31).coset_reps())) == 31**2 - 1
             True

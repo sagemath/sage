@@ -1,4 +1,5 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Colors
 
 This module defines a :class:`Color` object and helper functions (see,
@@ -20,26 +21,23 @@ comprises the "official" W3C CSS3_ / SVG_ colors.
 For a list of color maps in Sage, evaluate::
 
     sage: sorted(colormaps)
-    [u'Accent', u'Accent_r', u'Blues', u'Blues_r', u'BrBG', u'BrBG_r', ...]
+    [u'Accent', u'Blues', u'BrBG', ...]
 
 These are imported from matplotlib's cm_ module.
 
 .. _cm: http://matplotlib.sourceforge.net/api/cm_api.html
 """
 
-from __future__ import division
-
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import six
 import math
-import collections
+from collections.abc import MutableMapping
 from colorsys import hsv_to_rgb, hls_to_rgb, rgb_to_hsv, rgb_to_hls
 
 
@@ -338,7 +336,7 @@ def rgbcolor(c, space='rgb'):
     if isinstance(c, Color):
         return c.rgb()
 
-    if isinstance(c, six.string_types):
+    if isinstance(c, str):
         if len(c) > 0 and c[0] == '#':
             # Assume an HTML-like color, e.g., #00ffff or #ab0.
             return html_to_float(c)
@@ -802,7 +800,7 @@ class Color(object):
             RGB color (0.29166666666666663, 0.286437908496732, 0.07794117647058824)
             sage: vector((papayawhip / 2).rgb()) == vector((papayawhip * 0.5).rgb())
             True
-            sage: yellow.__div__(1/4)
+            sage: yellow.__truediv__(1/4)
             RGB color (0.0, 0.0, 0.0)
 
         TESTS::
@@ -823,34 +821,15 @@ class Color(object):
         """
         return self * (1 / float(right))
 
-    def __div__(self, right):
-        """
-        Return a color whose RGB coordinates are this color's
-        coordinates divided by a scalar.
-
-        INPUT:
-
-        - ``right`` -- a float-convertible, non-zero number
-
-        OUTPUT:
-
-        - a **new** instance of :class:`Color`
-
-        EXAMPLES::
-
-            sage: from sage.plot.colors import yellow
-            sage: yellow.__div__(4)
-            RGB color (0.25, 0.25, 0.0)
-        """
-        return self / right
-
     def __int__(self):
         """
         Return the integer representation of this colour.
 
         OUTPUT:
 
-        - an integer with encoding `256^2 r + 256 g + b`
+        - the integer `256^2 r_int + 256 g_int + b_int`, where `r_int`, `g_int`, and `b_int`
+          are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0] 
+          to the integer range 0, 1, ..., 255.
 
         EXAMPLES::
 
@@ -1283,7 +1262,9 @@ def float_to_integer(r, g, b):
 
     OUTPUT:
 
-    - an integer with encoding `256^2 r + 256 g + b`
+    - the integer `256^2 r_int + 256 g_int + b_int`, where `r_int`, `g_int`, and `b_int`
+      are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0] 
+      to the integer range 0, 1, ..., 255.
 
     EXAMPLES::
 
@@ -1370,7 +1351,7 @@ def get_cmap(cmap):
     and color names.  For a list of map names, evaluate::
 
         sage: sorted(colormaps)
-        [u'Accent', u'Accent_r', u'Blues', u'Blues_r', ...]
+        [u'Accent', u'Blues', ...]
 
     See :func:`rgbcolor` for valid list/tuple element formats.
 
@@ -1415,7 +1396,7 @@ def get_cmap(cmap):
     if isinstance(cmap, Colormap):
         return cmap
 
-    elif isinstance(cmap, six.string_types):
+    elif isinstance(cmap, str):
         if not cmap in cm.datad:
             raise RuntimeError("Color map %s not known (type import matplotlib.cm; matplotlib.cm.datad.keys() for valid names)" % cmap)
         return cm.__dict__[cmap]
@@ -1458,13 +1439,13 @@ def check_color_data(cfcm):
         raise ValueError('color data must be (color function, colormap)')
 
 
-class Colormaps(collections.MutableMapping):
+class Colormaps(MutableMapping):
     """
     A dict-like collection of lazily-loaded matplotlib color maps.
     For a list of map names, evaluate::
 
         sage: sorted(colormaps)
-        [u'Accent', u'Accent_r', u'Blues', u'Blues_r', ...]
+        [u'Accent', u'Blues', ...]
     """
     def __init__(self):
         """
@@ -1491,7 +1472,7 @@ class Colormaps(collections.MutableMapping):
             sage: len(maps.maps)
             0
             sage: maps.load_maps()
-            sage: len(maps.maps)>130
+            sage: len(maps.maps)>60
             True
         """
         global cm
@@ -1535,7 +1516,7 @@ class Colormaps(collections.MutableMapping):
 
             sage: from sage.plot.colors import Colormaps
             sage: maps = Colormaps()
-            sage: len(maps)>130
+            sage: len(maps)>60
             True
         """
         self.load_maps()

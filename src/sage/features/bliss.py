@@ -2,7 +2,6 @@
 r"""
 Checks for bliss
 """
-
 from . import CythonFeature, PythonModule
 
 
@@ -24,8 +23,8 @@ sig_off()
 
 class BlissLibrary(CythonFeature):
     r"""
-    A :class:`Feature` which describes whether the Bliss library is present and
-    functional.
+    A :class:`Feature` which describes whether the Bliss library is
+    present and functional.
 
     EXAMPLES::
 
@@ -41,7 +40,9 @@ class BlissLibrary(CythonFeature):
             sage: BlissLibrary()
             Feature('Bliss')
         """
-        CythonFeature.__init__(self, "Bliss", test_code=TEST_CODE, spkg="bliss", url="http://www.tcs.hut.fi/Software/bliss/")
+        CythonFeature.__init__(self, "Bliss", test_code=TEST_CODE,
+                               spkg="bliss",
+                               url="http://www.tcs.hut.fi/Software/bliss/")
 
 
 class Bliss(PythonModule):
@@ -62,4 +63,5 @@ class Bliss(PythonModule):
             sage: Bliss()
             Feature('sage.graphs.bliss')
         """
-        PythonModule.__init__(self, "sage.graphs.bliss", spkg="bliss", url="http://www.tcs.hut.fi/Software/bliss/")
+        PythonModule.__init__(self, "sage.graphs.bliss", spkg="bliss",
+                              url="http://www.tcs.hut.fi/Software/bliss/")

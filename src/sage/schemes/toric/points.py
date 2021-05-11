@@ -24,16 +24,15 @@ EXAMPLES::
     [[0 : 0 : 1], [1 : 0 : 0], [0 : 1 : 0], [0 : 1 : 1], [0 : 1 : 2]]
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 from copy import copy
@@ -767,7 +766,7 @@ class NaiveSubschemePointEnumerator(object):
 
         INPUT:
 
-        - ``polynomials`` -- list/tuple/iterabel of polynomials. The
+        - ``polynomials`` -- list/tuple/iterable of polynomials. The
           defining polynomials.
 
         - ``ambient`` -- enumerator for ambient space points.

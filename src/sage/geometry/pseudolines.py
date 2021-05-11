@@ -160,11 +160,11 @@ Methods
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function
 
 from copy import deepcopy
+
 
 class PseudolineArrangement:
 
@@ -303,7 +303,7 @@ class PseudolineArrangement:
 
     def transpositions(self):
         r"""
-        Returns the arrangement as `\binom n 2` transpositions.
+        Return the arrangement as `\binom n 2` transpositions.
 
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
@@ -353,14 +353,14 @@ class PseudolineArrangement:
 
             crossings -= 1
 
-        if max(map(len,perm)) != 0:
+        if max(map(len, perm)) != 0:
             raise ValueError("There has been an error while computing the transpositions.")
 
         return t
 
     def permutations(self):
         r"""
-        Returns the arrangements as `n` permutations of size `n-1`.
+        Return the arrangements as `n` permutations of size `n-1`.
 
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
@@ -377,7 +377,7 @@ class PseudolineArrangement:
 
     def felsner_matrix(self):
         r"""
-        Returns a Felsner matrix describing the arrangement.
+        Return a Felsner matrix describing the arrangement.
 
         See the :mod:`pseudolines module <sage.geometry.pseudolines>`'s
         documentation for more information on this encoding.
@@ -478,7 +478,7 @@ class PseudolineArrangement:
             sage: p
             Arrangement of pseudolines of size 4
         """
-        return "Arrangement of pseudolines of size "+str(self._n)
+        return "Arrangement of pseudolines of size " + str(self._n)
 
     def __eq__(self, other):
         r"""
@@ -495,3 +495,19 @@ class PseudolineArrangement:
             True
         """
         return (self._n == other._n) and (self._permutations == other._permutations)
+
+    def __ne__(self, other):
+        """
+        Test for non-equality.
+
+        TESTS::
+
+            sage: from sage.geometry.pseudolines import PseudolineArrangement
+            sage: permutations = [[3, 2, 1], [3, 2, 0], [3, 1, 0], [2, 1, 0]]
+            sage: p1 = PseudolineArrangement(permutations)
+            sage: transpositions = [(3, 2), (3, 1), (0, 3), (2, 1), (0, 2), (0, 1)]
+            sage: p2 = PseudolineArrangement(transpositions)
+            sage: p1 != p2
+            False
+        """
+        return not(self == other)

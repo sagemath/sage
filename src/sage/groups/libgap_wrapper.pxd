@@ -1,4 +1,4 @@
-from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement
+from sage.structure.element cimport MultiplicativeGroupElement
 from sage.libs.gap.element cimport GapElement
 
 

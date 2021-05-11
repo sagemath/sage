@@ -1,19 +1,19 @@
 """
-Differential Geometry of Parametrized Surfaces.
+Differential Geometry of Parametrized Surfaces
 
 AUTHORS:
-        - Mikhail Malakhaltsev (2010-09-25): initial version
-        - Joris Vankerschaver  (2010-10-25): implementation, doctests
+
+- Mikhail Malakhaltsev (2010-09-25): initial version
+- Joris Vankerschaver  (2010-10-25): implementation, doctests
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010  Mikhail Malakhaltsev <mikarm@gmail.com>
 #       Copyright (C) 2010  Joris Vankerschaver <joris.vankerschaver@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from itertools import product
 
@@ -25,7 +25,7 @@ from sage.functions.other import sqrt
 from sage.misc.cachefunc import cached_method
 from sage.symbolic.ring import SR
 from sage.symbolic.constants import pi
-from sage.symbolic.assumptions import assume
+
 
 def _simplify_full_rad(f):
     """
@@ -252,7 +252,7 @@ class ParametrizedSurface3D(SageObject):
         sage: K(u1,u2) = ellipsoid.gauss_curvature()
         sage: # Make array of K values
         sage: K_array = [K(uu[0],uu[1]) for uu in u_array]
-        sage: # Find minimum and max of the gauss curvature
+        sage: # Find minimum and max of the Gauss curvature
         sage: K_max = max(K_array)
         sage: K_min = min(K_array)
         sage: # Make the array of color coefficients
@@ -653,7 +653,6 @@ class ParametrizedSurface3D(SageObject):
         """
         coefficients = {}
         for index in product((1, 2), repeat=2):
-            sorted_index = sorted(index)
             coefficients[index] = \
                 self._compute_first_fundamental_form_coefficient(index)
         return coefficients
@@ -1431,9 +1430,9 @@ class ParametrizedSurface3D(SageObject):
            sage: torus = ParametrizedSurface3D([(R+r*cos(v))*cos(u),(R+r*cos(v))*sin(u),r*sin(v)],[u,v],'torus')
            sage: torus.principal_directions()
            [(-cos(v)/(r*cos(v) + R), [(1, 0)], 1), (-1/r, [(0, 1)], 1)]
-           
+
         ::
-        
+
             sage: u, v = var('u, v', domain='real')
             sage: V = vector([u*cos(u+v), u*sin(u+v), u+v])
             sage: helicoid = ParametrizedSurface3D(V, (u, v))
@@ -1590,10 +1589,6 @@ class ParametrizedSurface3D(SageObject):
            sage: [round4(p) for p in ext_points]
            [[1.000, 0.0000, 0.0000], [-0.2049, 0.6921, 0.6921], [-0.9160, -0.2836, -0.2836], [0.5803, -0.5759, -0.5759], [0.6782, 0.5196, 0.5196], [-0.8582, 0.3629, 0.3629]]
         """
-
-        u1 = self.variables[1]
-        u2 = self.variables[2]
-
         solver = self._create_geodesic_ode_system()
 
         t_interval, n = tinterval[0:2], tinterval[2]
@@ -1710,10 +1705,6 @@ class ParametrizedSurface3D(SageObject):
            [[1.000, 1.000], [0.9876, 1.025], [0.9499, 1.102], [0.8853, 1.238], [0.7920, 1.448], [0.6687, 1.762]]
 
         """
-
-        u1 = self.variables[1]
-        u2 = self.variables[2]
-
         solver = self._create_pt_ode_system(tuple(curve), t)
 
         t_interval, n = tinterval[0:2], tinterval[2]

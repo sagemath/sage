@@ -372,8 +372,8 @@ def _sporadic_Q_data(j):
     and ``coeffs`` is a list of coefficients of a polynomial defining
     the kernel of an l-isogeny from E.  In all but one case this
     polynomial is monic with integer coefficients.  In one case
-    ($\ell=37$, $j=-162677523113838677$) the constant coefficient has
-    denominator $37$.
+    (`\ell=37`, `j=-162677523113838677`) the constant coefficient has
+    denominator 37.
 
     Whenever we have a curve of j-invariant ``j``, we can compute the
     corresponding l-isogeny by just scaling ``coeffs`` by the right
@@ -873,8 +873,8 @@ def isogenies_5_1728(E, minimal_models=True):
         sage: K.<i> = QuadraticField(-1)
         sage: E = EllipticCurve(K,[0,0,0,1,0])
         sage: isogenies_5_1728(E)
-        [Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in i with defining polynomial x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + x over Number Field in i with defining polynomial x^2 + 1,
-        Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in i with defining polynomial x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + x over Number Field in i with defining polynomial x^2 + 1]
+        [Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I to Elliptic Curve defined by y^2 = x^3 + x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
+         Isogeny of degree 5 from Elliptic Curve defined by y^2 = x^3 + x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I to Elliptic Curve defined by y^2 = x^3 + x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
         sage: _[0].rational_maps()
         (((4/25*i + 3/25)*x^5 + (4/5*i - 2/5)*x^3 - x)/(x^4 + (-4/5*i + 2/5)*x^2 + (-4/25*i - 3/25)),
          ((11/125*i + 2/125)*x^6*y + (-23/125*i + 64/125)*x^4*y + (141/125*i + 162/125)*x^2*y + (3/25*i - 4/25)*y)/(x^6 + (-6/5*i + 3/5)*x^4 + (-12/25*i - 9/25)*x^2 + (2/125*i - 11/125)))
@@ -968,8 +968,8 @@ def isogenies_7_0(E, minimal_models=True):
         sage: K.<r> = QuadraticField(-3)
         sage: E = EllipticCurve(K, [0,1])
         sage: isogenies_7_0(E)
-        [Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in r with defining polynomial x^2 + 3 to Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in r with defining polynomial x^2 + 3,
-        Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in r with defining polynomial x^2 + 3 to Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in r with defining polynomial x^2 + 3]
+        [Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I to Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I,
+         Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I to Elliptic Curve defined by y^2 = x^3 + 1 over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I]
 
         sage: E = EllipticCurve(GF(13^2,'a'),[0,-3])
         sage: isogenies_7_0(E)
@@ -987,8 +987,8 @@ def isogenies_7_0(E, minimal_models=True):
         sage: from sage.schemes.elliptic_curves.isogeny_small_degree import isogenies_7_0
         sage: E = EllipticCurve('27a1').change_ring(QuadraticField(-3,'r'))
         sage: isogenies_7_0(E)
-        [Isogeny of degree 7 from Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r with defining polynomial x^2 + 3 to Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r with defining polynomial x^2 + 3,
-        Isogeny of degree 7 from Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r with defining polynomial x^2 + 3 to Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r with defining polynomial x^2 + 3]
+        [Isogeny of degree 7 from Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I to Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I,
+         Isogeny of degree 7 from Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I to Elliptic Curve defined by y^2 + y = x^3 + (-7) over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I]
 
         sage: K.<a> = NumberField(x^6 + 1512*x^3 - 21168)
         sage: E = EllipticCurve(K, [0,1])
@@ -1167,10 +1167,10 @@ def isogenies_13_0(E, minimal_models=True):
 
         sage: K.<r> = QuadraticField(-3)
         sage: E = EllipticCurve(K, [0, r]); E
-        Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3
+        Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I
         sage: isogenies_13_0(E)
-        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3 to Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3,
-        Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3 to Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3]
+        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I to Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I to Elliptic Curve defined by y^2 = x^3 + r over Number Field in r with defining polynomial x^2 + 3 with r = 1.732050807568878?*I]
         sage: isogenies_13_0(E)[0].rational_maps()
         (((7/338*r + 23/338)*x^13 + (-164/13*r - 420/13)*x^10 + (720/13*r + 3168/13)*x^7 + (3840/13*r - 576/13)*x^4 + (4608/13*r + 2304/13)*x)/(x^12 + (4*r + 36)*x^9 + (1080/13*r + 3816/13)*x^6 + (2112/13*r - 5184/13)*x^3 + (-17280/169*r - 1152/169)), ((18/2197*r + 35/2197)*x^18*y + (23142/2197*r + 35478/2197)*x^15*y + (-1127520/2197*r - 1559664/2197)*x^12*y + (-87744/2197*r + 5992704/2197)*x^9*y + (-6625152/2197*r - 9085824/2197)*x^6*y + (-28919808/2197*r - 2239488/2197)*x^3*y + (-1990656/2197*r - 3870720/2197)*y)/(x^18 + (6*r + 54)*x^15 + (3024/13*r + 11808/13)*x^12 + (31296/13*r + 51840/13)*x^9 + (487296/169*r - 2070144/169)*x^6 + (-940032/169*r + 248832/169)*x^3 + (1990656/2197*r + 3870720/2197)))
 
@@ -1296,8 +1296,8 @@ def isogenies_13_1728(E, minimal_models=True):
         sage: E = EllipticCurve([0,0,0,i,0]); E.ainvs()
         (0, 0, 0, i, 0)
         sage: isogenies_13_1728(E)
-        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + i*x over Number Field in i with defining polynomial x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + i*x over Number Field in i with defining polynomial x^2 + 1,
-        Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + i*x over Number Field in i with defining polynomial x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + i*x over Number Field in i with defining polynomial x^2 + 1]
+        [Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + i*x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I to Elliptic Curve defined by y^2 = x^3 + i*x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
+         Isogeny of degree 13 from Elliptic Curve defined by y^2 = x^3 + i*x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I to Elliptic Curve defined by y^2 = x^3 + i*x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
 
     ::
 
@@ -1646,19 +1646,19 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
         sage: a = K.gen()
         sage: E = EllipticCurve_from_j(-484650135/16777216*a + 4549855725/16777216)
         sage: isogenies_prime_degree_genus_plus_0(E, 23)
-        [Isogeny of degree 23 from Elliptic Curve defined by y^2 = x^3 + (-14460494784192904095/140737488355328*a+270742665778826768325/140737488355328)*x + (37035998788154488846811217135/590295810358705651712*a-1447451882571839266752561148725/590295810358705651712) over Number Field in a with defining polynomial x^2 + 295 to Elliptic Curve defined by y^2 = x^3 + (-5130542435555445498495/140737488355328*a+173233955029127361005925/140737488355328)*x + (-1104699335561165691575396879260545/590295810358705651712*a+3169785826904210171629535101419675/590295810358705651712) over Number Field in a with defining polynomial x^2 + 295]
+        [Isogeny of degree 23 from Elliptic Curve defined by y^2 = x^3 + (-14460494784192904095/140737488355328*a+270742665778826768325/140737488355328)*x + (37035998788154488846811217135/590295810358705651712*a-1447451882571839266752561148725/590295810358705651712) over Number Field in a with defining polynomial x^2 + 295 with a = 17.17556403731767?*I to Elliptic Curve defined by y^2 = x^3 + (-5130542435555445498495/140737488355328*a+173233955029127361005925/140737488355328)*x + (-1104699335561165691575396879260545/590295810358705651712*a+3169785826904210171629535101419675/590295810358705651712) over Number Field in a with defining polynomial x^2 + 295 with a = 17.17556403731767?*I]
 
         sage: K = QuadraticField(-199,'a')
         sage: a = K.gen()
         sage: E = EllipticCurve_from_j(94743000*a + 269989875)
         sage: isogenies_prime_degree_genus_plus_0(E, 29)
-        [Isogeny of degree 29 from Elliptic Curve defined by y^2 = x^3 + (-153477413215038000*a+5140130723072965125)*x + (297036215130547008455526000*a+2854277047164317800973582250) over Number Field in a with defining polynomial x^2 + 199 to Elliptic Curve defined by y^2 = x^3 + (251336161378040805000*a-3071093219933084341875)*x + (-8411064283162168580187643221000*a+34804337770798389546017184785250) over Number Field in a with defining polynomial x^2 + 199]
+        [Isogeny of degree 29 from Elliptic Curve defined by y^2 = x^3 + (-153477413215038000*a+5140130723072965125)*x + (297036215130547008455526000*a+2854277047164317800973582250) over Number Field in a with defining polynomial x^2 + 199 with a = 14.106735979665884?*I to Elliptic Curve defined by y^2 = x^3 + (251336161378040805000*a-3071093219933084341875)*x + (-8411064283162168580187643221000*a+34804337770798389546017184785250) over Number Field in a with defining polynomial x^2 + 199 with a = 14.106735979665884?*I]
 
         sage: K = QuadraticField(253,'a')
         sage: a = K.gen()
         sage: E = EllipticCurve_from_j(208438034112000*a - 3315409892960000)
         sage: isogenies_prime_degree_genus_plus_0(E, 31)
-        [Isogeny of degree 31 from Elliptic Curve defined by y^2 = x^3 + (4146345122185433034677956608000*a-65951656549965037259634800640000)*x + (-18329111516954473474583425393698245080252416000*a+291542366110383928366510368064204147260129280000) over Number Field in a with defining polynomial x^2 - 253 to Elliptic Curve defined by y^2 = x^3 + (200339763852548615776123686912000*a-3186599019027216904280948275200000)*x + (7443671791411479629112717260182286294850207744000*a-118398847898864757209685951728838895495168655360000) over Number Field in a with defining polynomial x^2 - 253]
+        [Isogeny of degree 31 from Elliptic Curve defined by y^2 = x^3 + (4146345122185433034677956608000*a-65951656549965037259634800640000)*x + (-18329111516954473474583425393698245080252416000*a+291542366110383928366510368064204147260129280000) over Number Field in a with defining polynomial x^2 - 253 with a = 15.905973720586867? to Elliptic Curve defined by y^2 = x^3 + (200339763852548615776123686912000*a-3186599019027216904280948275200000)*x + (7443671791411479629112717260182286294850207744000*a-118398847898864757209685951728838895495168655360000) over Number Field in a with defining polynomial x^2 - 253 with a = 15.905973720586867?]
 
         sage: E = EllipticCurve_from_j(GF(5)(1))
         sage: isogenies_prime_degree_genus_plus_0(E, 41)
@@ -1668,13 +1668,13 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
         sage: a = K.gen()
         sage: E = EllipticCurve_from_j(184068066743177379840*a - 411588709724712960000)
         sage: isogenies_prime_degree_genus_plus_0(E, 47) # long time (4.3s)
-        [Isogeny of degree 47 from Elliptic Curve defined by y^2 = x^3 + (454562028554080355857852049849975895490560*a-1016431595837124114668689286176511361024000)*x + (-249456798429896080881440540950393713303830363999480904280965120*a+557802358738710443451273320227578156598454035482869042774016000) over Number Field in a with defining polynomial x^2 - 5 to Elliptic Curve defined by y^2 = x^3 + (39533118442361013730577638493616965245992960*a-88398740199669828340617478832005245173760000)*x + (214030321479466610282320528611562368963830105830555363061803253760*a-478586348074220699687616322532666163722004497458452316582576128000) over Number Field in a with defining polynomial x^2 - 5]
+        [Isogeny of degree 47 from Elliptic Curve defined by y^2 = x^3 + (454562028554080355857852049849975895490560*a-1016431595837124114668689286176511361024000)*x + (-249456798429896080881440540950393713303830363999480904280965120*a+557802358738710443451273320227578156598454035482869042774016000) over Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790? to Elliptic Curve defined by y^2 = x^3 + (39533118442361013730577638493616965245992960*a-88398740199669828340617478832005245173760000)*x + (214030321479466610282320528611562368963830105830555363061803253760*a-478586348074220699687616322532666163722004497458452316582576128000) over Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790?]
 
         sage: K = QuadraticField(-66827,'a')
         sage: a = K.gen()
         sage: E = EllipticCurve_from_j(-98669236224000*a + 4401720074240000)
         sage: isogenies_prime_degree_genus_plus_0(E, 59)   # long time (25s, 2012)
-        [Isogeny of degree 59 from Elliptic Curve defined by y^2 = x^3 + (2605886146782144762297974784000*a+1893681048912773634944634716160000)*x + (-116918454256410782232296183198067568744071168000*a+17012043538294664027185882358514011304812871680000) over Number Field in a with defining polynomial x^2 + 66827 to Elliptic Curve defined by y^2 = x^3 + (-19387084027159786821400775098368000*a-4882059104868154225052787156713472000)*x + (-25659862010101415428713331477227179429538847260672000*a-2596038148441293485938798119003462972840818381946880000) over Number Field in a with defining polynomial x^2 + 66827]
+        [Isogeny of degree 59 from Elliptic Curve defined by y^2 = x^3 + (2605886146782144762297974784000*a+1893681048912773634944634716160000)*x + (-116918454256410782232296183198067568744071168000*a+17012043538294664027185882358514011304812871680000) over Number Field in a with defining polynomial x^2 + 66827 with a = 258.5091874576221?*I to Elliptic Curve defined by y^2 = x^3 + (-19387084027159786821400775098368000*a-4882059104868154225052787156713472000)*x + (-25659862010101415428713331477227179429538847260672000*a-2596038148441293485938798119003462972840818381946880000) over Number Field in a with defining polynomial x^2 + 66827 with a = 258.5091874576221?*I]
 
         sage: E = EllipticCurve_from_j(GF(13)(5))
         sage: isogenies_prime_degree_genus_plus_0(E, 71) # long time
@@ -1726,7 +1726,7 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
             S += [[u0,v0] for v0 in (X**2-f(u0)).roots(multiplicities=False)]
         else:
             S += [[u0,(2*j-a(u0))/b(u0)]]
-    if len(S) == 0:
+    if not S:
         return []
     S.sort()
 
@@ -1869,8 +1869,8 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
         sage: i = QuadraticField(-1,'i').gen()
         sage: E = EllipticCurve([-1-2*i,0])
         sage: isogenies_prime_degree_genus_plus_0_j1728(E,17)
-        [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + (-2*i-1)*x over Number Field in i with defining polynomial x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + (-82*i-641)*x over Number Field in i with defining polynomial x^2 + 1,
-        Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + (-2*i-1)*x over Number Field in i with defining polynomial x^2 + 1 to Elliptic Curve defined by y^2 = x^3 + (-562*i+319)*x over Number Field in i with defining polynomial x^2 + 1]
+        [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + (-2*i-1)*x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I to Elliptic Curve defined by y^2 = x^3 + (-82*i-641)*x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I,
+         Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + (-2*i-1)*x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I to Elliptic Curve defined by y^2 = x^3 + (-562*i+319)*x over Number Field in i with defining polynomial x^2 + 1 with i = 1*I]
         sage: Emin = E.global_minimal_model()
         sage: [(p,len(isogenies_prime_degree_genus_plus_0_j1728(Emin,p))) for p in [17, 29, 41]]
         [(17, 2), (29, 2), (41, 2)]
@@ -2009,7 +2009,7 @@ def is_kernel_polynomial(E, m, f):
         sage: E = EllipticCurve(F,[0,0,0,-1,0])
         sage: f13 = E.division_polynomial(13)
         sage: factors = [f for f,e in f13.factor()]
-        sage: all([f.degree()==6 for f in factors])
+        sage: all(f.degree() == 6 for f in factors)
         True
         sage: [is_kernel_polynomial(E,13,f) for f in factors]
         [True,
@@ -2058,7 +2058,7 @@ def is_kernel_polynomial(E, m, f):
         return True
 
     # For each a in a set of generators of (Z/mZ)^* we check that the
-    # multiplcation-by-a map permutes the roots of f.  It would be
+    # multiplication-by-a map permutes the roots of f.  It would be
     # enough to take a generating (Z/mZ)^*/{1,-1} but that is not
     # implemented.  If m is prime (or more generally, has a primitive
     # root) then only one a will be needed.
@@ -2211,7 +2211,7 @@ def isogenies_prime_degree_general(E, l, minimal_models=True):
 
     # Exit now if all factors have been used already:
 
-    if all(factors == [] for factors in factors_by_degree.values()):
+    if all(not factors for factors in factors_by_degree.values()):
         return [E.isogeny(k) for k in ker]
 
     # In general we look for products of factors of the same degree d

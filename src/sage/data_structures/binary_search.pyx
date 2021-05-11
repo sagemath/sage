@@ -3,7 +3,8 @@
 cdef Py_ssize_t binary_search(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x, Py_ssize_t* ins):
     """
     Find the position of the integer x in the array v, which has length n.
-    Returns -1 if x is not in the array v, and in this case ins is
+
+    Return -1 if x is not in the array v, and in this case ins is
     set equal to the position where x should be inserted in order to
     obtain an ordered array.
     """
@@ -36,10 +37,12 @@ cdef Py_ssize_t binary_search(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x, Py_ssiz
     ins[0] = j+1
     return -1
 
+
 cdef Py_ssize_t binary_search0(Py_ssize_t* v, Py_ssize_t n, Py_ssize_t x):
     """
     Find the position of the int x in the array v, which has length n.
-    Returns -1 if x is not in the array v.
+
+    Return -1 if x is not in the array v.
     """
     if n == 0:
         return -1

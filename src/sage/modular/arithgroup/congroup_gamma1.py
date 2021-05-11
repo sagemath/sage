@@ -2,7 +2,6 @@
 r"""
 Congruence Subgroup `\Gamma_1(N)`
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
@@ -215,11 +214,11 @@ class Gamma1_class(GammaH_class):
             ]
             sage: Gamma1(3).generators(algorithm="todd-coxeter")
             [
-            [1 1]  [-20   9]  [ 4  1]  [-5 -2]  [ 1 -1]  [1 0]  [1 1]  [-5  2]
-            [0 1], [ 51 -23], [-9 -2], [ 3  1], [ 0  1], [3 1], [0 1], [12 -5],
+            [1 1]  [-2  1]  [1 1]  [ 1 -1]  [1 0]  [1 1]  [-5  2]  [ 1  0]
+            [0 1], [-3  1], [0 1], [ 0  1], [3 1], [0 1], [12 -5], [-3  1],
             <BLANKLINE>
-            [ 1  0]  [ 4 -1]  [ -5   3]  [ 1 -1]  [ 7 -3]  [ 4 -1]  [ -5   3]
-            [-3  1], [ 9 -2], [-12   7], [ 3 -2], [12 -5], [ 9 -2], [-12   7]
+            [ 1 -1]  [ 1 -1]  [ 4 -1]  [ -5   3]
+            [ 3 -2], [ 3 -2], [ 9 -2], [-12   7]
             ]
         """
         if algorithm=="farey":

@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -12,7 +19,6 @@
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
@@ -52,7 +58,9 @@ cdef class ntl_GF2EX(object):
         if modulus is None:
             raise ValueError("You must specify a modulus when creating a GF2E.")
 
-        ccreadstr(self.x, str(x))
+        str_x = str(x)  # can cause modulus to change  trac #25790
+        self.c.restore_c()
+        ccreadstr(self.x, str_x)
 
     def __cinit__(self, modulus=None, x=[]):
         #################### WARNING ###################

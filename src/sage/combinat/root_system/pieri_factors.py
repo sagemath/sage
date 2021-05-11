@@ -1,7 +1,7 @@
 r"""
 Pieri Factors
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009-2010 Steven Pon <spon at math.ucdavis.edu>
 #                          Anne Schilling < anne at math.ucdavis.edu>
 #                          Nicolas M. Thiery <nthiery at users.sf.net>
@@ -9,7 +9,6 @@ Pieri Factors
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from six.moves import range
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.constant_function import ConstantFunction
@@ -27,6 +26,7 @@ from sage.combinat.root_system.root_system import RootSystem
 from sage.combinat.root_system.dynkin_diagram import DynkinDiagram
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.graphs.digraph import DiGraph
+
 
 class PieriFactors(UniqueRepresentation, Parent):
     r"""
@@ -68,25 +68,29 @@ class PieriFactors(UniqueRepresentation, Parent):
 
     REFERENCES:
 
-        .. [FoSta1994] \S. Fomin, R. Stanley. Schubert polynomials and the nilCoxeter algebra. Advances in Math., 1994.
-        .. [BH1994] \S. Billey, M. Haiman.  Schubert polynomials for the classical groups. J. Amer. Math. Soc., 1994.
-        .. [TKLam1996] \T.K. Lam.  B and D analogues of stable Schubert polynomials and related insertion algorithms. PhD Thesis, MIT, 1996.
-        .. [Lam2008] \T. Lam. Schubert polynomials for the affine Grassmannian.  J. Amer. Math. Soc., 2008.
-        .. [LSS2009] \T. Lam, A. Schilling, M. Shimozono. Schubert polynomials for the affine Grassmannian of the symplectic group. Mathematische Zeitschrift 264(4) (2010) 765-811 (arXiv:0710.2720 [math.CO])
-        .. [Pon2010] \S. Pon. Types B and D affine Stanley symmetric functions, unpublished PhD Thesis, UC Davis, 2010.
+    - [FoSta1994]_
+    - [BH1994]_
+    - [Lam1996]_
+    - [Lam2008]_
+    - [LSS2009]_
+    - [Pon2010]_
     """
 
     def _repr_(self):
         r"""
+        String representation.
+
         EXAMPLES::
 
             sage: WeylGroup(["A", 2, 1]).pieri_factors() # indirect doctest
             Pieri factors for Weyl Group of type ['A', 2, 1] (as a matrix group acting on the root space)
         """
-        return "Pieri factors for %s"%self.W
+        return "Pieri factors for %s" % self.W
 
     def __contains__(self, w):
         r"""
+        Test for containment.
+
         EXAMPLES::
 
             sage: W = WeylGroup(['C',3,1])
@@ -133,7 +137,7 @@ class PieriFactors(UniqueRepresentation, Parent):
     @cached_method
     def elements(self):
         r"""
-        Returns the elements of ``self``
+        Return the elements of ``self``.
 
         Those are constructed as the elements below the maximal
         elements of ``self`` in Bruhat order.
@@ -143,8 +147,8 @@ class PieriFactors(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: PF = WeylGroup(['A',3]).pieri_factors()
-            sage: [w.reduced_word() for w in PF.elements()]
-            [[3, 2, 1], [2, 1], [3, 1], [3, 2], [2], [1], [3], []]
+            sage: sorted(w.reduced_word() for w in PF.elements())
+            [[], [1], [2], [2, 1], [3], [3, 1], [3, 2], [3, 2, 1]]
 
         .. SEEALSO:: :meth:`maximal_elements`
 
@@ -159,7 +163,7 @@ class PieriFactors(UniqueRepresentation, Parent):
 
     def __iter__(self):
         r"""
-        Returns an iterator over the elements of ``self``
+        Return an iterator over the elements of ``self``.
 
         EXAMPLES::
 
@@ -172,7 +176,7 @@ class PieriFactors(UniqueRepresentation, Parent):
 
     def generating_series(self, weight = None):
         r"""
-        Returns a length generating series for the elements of ``self``
+        Return a length generating series for the elements of ``self``.
 
         EXAMPLES::
 
@@ -192,7 +196,7 @@ class PieriFactors(UniqueRepresentation, Parent):
     @cached_method
     def default_weight(self):
         r"""
-        Returns the function `i\mapsto z^i`, where `z` is the
+        Return the function `i\mapsto z^i`, where `z` is the
         generator of ``QQ['z']``.
 
         EXAMPLES::
@@ -217,13 +221,12 @@ class PieriFactors(UniqueRepresentation, Parent):
         z = R.gen()
         return lambda i: z**i
 
-
     def _test_maximal_elements(self, **options):
         r"""
         Check that the conjectural type-free definition of Pieri
         factors matches with the proven type-specific definition.
 
-        See also :class:`TestSuite`.
+        .. SEEALSO:: :class:`TestSuite`.
 
         EXAMPLES::
 
@@ -242,7 +245,8 @@ class PieriFactors(UniqueRepresentation, Parent):
             sage: WeylGroup(['B',5,1]).pieri_factors()._test_maximal_elements()
         """
         tester = self._tester(**options)
-        tester.assertTrue(set(self.maximal_elements()) == set(self.maximal_elements_combinatorial()))
+        tester.assertEqual(set(self.maximal_elements()),
+                           set(self.maximal_elements_combinatorial()))
 
     @cached_method
     def max_length(self):
@@ -337,7 +341,7 @@ class PieriFactors_affine_type(PieriFactors):
         Return the maximal elements of ``self`` with respect to Bruhat order.
 
         The current implementation is via a conjectural type-free
-        formula. Use maximal_elements_combinatorial() for proven
+        formula. Use :meth:`maximal_elements_combinatorial` for proven
         type-specific implementations. To compare type-free and
         type-specific (combinatorial) implementations, use method
         :meth:`_test_maximal_elements`.
@@ -382,7 +386,7 @@ class PieriFactors_type_A(PieriFactors_finite_type):
     The set of Pieri factors for finite type A.
 
     This is the set of elements of the Weyl group that have a reduced
-    word that is strictly decreasing.  May also be viewed as the
+    word that is strictly decreasing. This may also be viewed as the
     restriction of affine type A Pieri factors to finite Weyl group
     elements.
     """
@@ -402,13 +406,13 @@ class PieriFactors_type_A(PieriFactors_finite_type):
             <class 'sage.combinat.root_system.pieri_factors.PieriFactors_type_A_with_category'>
             sage: TestSuite(PF).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self.W = W
 
     def maximal_elements_combinatorial(self):
         r"""
-        Returns the maximal Pieri factors, using the type A
-        combinatorial description
+        Return the maximal Pieri factors, using the type A
+        combinatorial description.
 
         EXAMPLES::
 
@@ -417,7 +421,7 @@ class PieriFactors_type_A(PieriFactors_finite_type):
             sage: PF.maximal_elements_combinatorial()[0].reduced_word()
             [4, 3, 2, 1]
         """
-        return [self.W.from_reduced_word(range(self.W.cartan_type().n,0,-1))]
+        return [self.W.from_reduced_word(range(self.W.cartan_type().n, 0, -1))]
 
     def stanley_symm_poly_weight(self,w):
         r"""
@@ -433,10 +437,11 @@ class PieriFactors_type_A(PieriFactors_finite_type):
 
 class PieriFactors_type_B(PieriFactors_finite_type):
     r"""
-    The type B finite Pieri factors are realized as the set of elements that have
-    a reduced word that is a subword of 12...(n-1)n(n-1)...21.  They are the restriction
-    of the type C affine Pieri factors to the set of finite Weyl group elements under
-    the usual embedding.
+    The type B finite Pieri factors are realized as the set of
+    elements that have a reduced word that is a subword of
+    `12...(n-1)n(n-1)...21`. They are the restriction of the type C
+    affine Pieri factors to the set of finite Weyl group elements
+    under the usual embedding.
     """
 
     def __init__(self, W):
@@ -453,13 +458,13 @@ class PieriFactors_type_B(PieriFactors_finite_type):
             <class 'sage.combinat.root_system.pieri_factors.PieriFactors_type_B_with_category'>
             sage: TestSuite(PF).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self.W = W
 
     def maximal_elements_combinatorial(self):
         r"""
-        Returns the maximal Pieri factors, using the type B
-        combinatorial description
+        Return the maximal Pieri factors, using the type B
+        combinatorial description.
 
         EXAMPLES::
 
@@ -471,10 +476,11 @@ class PieriFactors_type_B(PieriFactors_finite_type):
         li = list(range(1, N)) + list(range(N, 0, -1))
         return [self.W.from_reduced_word(li)]
 
-    def stanley_symm_poly_weight(self,w):
+    def stanley_symm_poly_weight(self, w):
         r"""
-        Weight used in computing Stanley symmetric polynomials of type
-        `B`.  The weight for finite type B is the number of components
+        Weight used in computing Stanley symmetric polynomials of type `B`.
+
+        The weight for finite type B is the number of components
         of the support of an element minus the number of occurrences
         of `n` in a reduced word.
 
@@ -501,7 +507,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
     Those are used for constructing (affine) Stanley symmetric functions.
 
     The Pieri factors are in bijection with the proper subsets of the
-    index_set. The bijection is given by the support. Namely, let `f`
+    ``index_set``. The bijection is given by the support. Namely, let `f`
     be a Pieri factor, and `red` a reduced word for `f`.  No simple
     reflection appears twice in red, and the support `S` of `red`
     (that is the `i` such that `s_i` appears in `red`) does not depend
@@ -509,7 +515,8 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
     """
 
     @staticmethod
-    def __classcall__(cls, W, min_length = 0, max_length = infinity, min_support = frozenset([]), max_support = None):
+    def __classcall__(cls, W, min_length=0, max_length=infinity,
+                      min_support=frozenset([]), max_support=None):
         r"""
         TESTS::
 
@@ -538,16 +545,16 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
     def __init__(self, W, min_length, max_length, min_support, max_support):
         r"""
-        EXAMPLES::
-
-            sage: PF = WeylGroup(["A", 3, 1]).pieri_factors(); PF
-            Pieri factors for Weyl Group of type ['A', 3, 1] (as a matrix group acting on the root space)
-
         INPUT:
 
          - ``W`` -- a Weyl group of affine type `A`
          - ``min_length``, ``max_length`` -- non negative integers
          - ``min_support``, ``max_support`` -- subsets of the index set of `W`
+
+        EXAMPLES::
+
+            sage: PF = WeylGroup(["A", 3, 1]).pieri_factors(); PF
+            Pieri factors for Weyl Group of type ['A', 3, 1] (as a matrix group acting on the root space)
 
         TESTS::
 
@@ -572,14 +579,15 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             sage: PF.generating_series()
             6*z^5 + 15*z^4 + 20*z^3 + 15*z^2
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self.W = W
 
         self._min_support = frozenset(min_support)
         self._max_support = frozenset(max_support)
 
         if not self._min_support.issubset(self._max_support):
-            raise ValueError("the min support must be a subset of the max support")
+            raise ValueError("the min support must be a subset "
+                             "of the max support")
 
         self._extra_support = self._max_support.difference(self._min_support)
 
@@ -588,10 +596,13 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
     def subset(self, length):
         r"""
+        Return the subset of the elements of ``self`` of length ``length``.
+
         INPUT:
+
          - ``length`` -- a non-negative integer
 
-        Returns the subset of the elements of ``self`` of length ``length``
+        EXAMPLES::
 
             sage: PF = WeylGroup(["A", 3, 1]).pieri_factors(); PF
             Pieri factors for Weyl Group of type ['A', 3, 1] (as a matrix group acting on the root space)
@@ -607,15 +618,15 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             15
         """
         return self.__class__(self.W,
-                              min_support = self._min_support,
-                              max_support = self._max_support,
-                              min_length = length,
-                              max_length = length)
+                              min_support=self._min_support,
+                              max_support=self._max_support,
+                              min_length=length,
+                              max_length=length)
 
     def maximal_elements_combinatorial(self):
         r"""
-        Returns the maximal Pieri factors, using the affine type A
-        combinatorial description
+        Return the maximal Pieri factors, using the affine type A
+        combinatorial description.
 
         EXAMPLES::
 
@@ -631,22 +642,24 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         Same as :meth:`PieriFactors._test_maximal_elements`, but skips
         the tests if ``self`` is not the full set of Pieri factors.
 
+        EXAMPLES::
+
             sage: W = WeylGroup(['A',4,1])
             sage: W.pieri_factors()._test_maximal_elements(verbose = True)
             sage: W.pieri_factors(min_length = 1)._test_maximal_elements(verbose = True)
-            Strict subset of the pieri factors; skipping test
+            Strict subset of the Pieri factors; skipping test
 
         """
         tester = self._tester(**options)
         index_set = self.W.index_set()
         if self._min_length > 0 or self._max_length < len(self.W.index_set())-1 or self._max_support != frozenset(index_set):
-            tester.info("\n  Strict subset of the pieri factors; skipping test")
+            tester.info("\n  Strict subset of the Pieri factors; skipping test")
             return
         return super(PieriFactors_type_A_affine, self)._test_maximal_elements(**options)
 
     def __contains__(self, w):
         r"""
-        Returns whether w is in self.
+        Return whether ``w`` is in ``self``.
 
         EXAMPLES::
 
@@ -680,7 +693,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         red = w.reduced_word()
         support = set(red)
 
-        if len(support) < len(red): # There should be no repetitions
+        if len(support) < len(red):  # There should be no repetitions
             return False
 
         if not(self._min_length <= len(support) and
@@ -691,7 +704,7 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
         [rank, unrank] = sage.combinat.ranker.from_list(red)
         for i in red:
-            j = (i+1) % (n+1)
+            j = (i + 1) % (n + 1)
             if j in support:
                 if rank(i) < rank(j):
                     return False
@@ -731,6 +744,8 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
 
     def cardinality(self):
         r"""
+        Return the cardinality of ``self``.
+
         EXAMPLES::
 
             sage: WeylGroup(["A", 3, 1]).pieri_factors().cardinality()
@@ -741,10 +756,9 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         else:
             return self.generating_series(weight = ConstantFunction(1))
 
-
-    def generating_series(self, weight = None):
+    def generating_series(self, weight=None):
         r"""
-        Returns a length generating series for the elements of ``self``
+        Return a length generating series for the elements of ``self``.
 
         EXAMPLES::
 
@@ -754,17 +768,16 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             sage: W.pieri_factors().generating_series()
             4*z^3 + 6*z^2 + 4*z + 1
         """
-
         if weight is None:
             weight = self.default_weight()
         l_min = len(self._min_support)
         l_max = len(self._max_support)
-        return sum(binomial(l_max-l_min, l-l_min) * weight(l)
-                   for l in range(self._min_length, self._max_length+1))
+        return sum(binomial(l_max - l_min, l - l_min) * weight(l)
+                   for l in range(self._min_length, self._max_length + 1))
 
     def __iter__(self):
         r"""
-        Returns an iterator over the elements of ``self``
+        Return an iterator over the elements of ``self``.
 
         EXAMPLES::
 
@@ -781,14 +794,15 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
             [[0], [1], [2], [3], [4], [1, 0]]
         """
         from sage.combinat.subset import Subsets
-        for l in range(self._min_length, self._max_length+1):
+        for l in range(self._min_length, self._max_length + 1):
             for extra in Subsets(self._extra_support,
                                  l - len(self._min_support)):
                 yield self[self._min_support.union(extra)]
 
     def stanley_symm_poly_weight(self, w):
         r"""
-        Weight used in computing (affine) Stanley symmetric polynomials for affine type A.
+        Weight used in computing (affine) Stanley symmetric polynomials
+        for affine type A.
 
         EXAMPLES::
 
@@ -801,11 +815,12 @@ class PieriFactors_type_A_affine(PieriFactors_affine_type):
         """
         return 0
 
+
 class PieriFactors_type_C_affine(PieriFactors_affine_type):
     r"""
     The type C affine Pieri factors are realized as the order ideal (in Bruhat
     order) generated by cyclic rotations of the element with unique reduced word
-    123...(n-1)n(n-1)...3210.
+    `123...(n-1)n(n-1)...3210`.
 
     EXAMPLES::
 
@@ -825,14 +840,14 @@ class PieriFactors_type_C_affine(PieriFactors_affine_type):
             <class 'sage.combinat.root_system.pieri_factors.PieriFactors_type_C_affine_with_category'>
             sage: TestSuite(PF).run()  # long time (4s on sage.math, 2011)
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self.W = W
 
     @cached_method
     def maximal_elements_combinatorial(self):
         r"""
-        Returns the maximal Pieri factors, using the affine type C
-        combinatorial description
+        Return the maximal Pieri factors, using the affine type C
+        combinatorial description.
 
         EXAMPLES::
 
@@ -841,19 +856,21 @@ class PieriFactors_type_C_affine(PieriFactors_affine_type):
             [[0, 1, 2, 3, 2, 1], [1, 0, 1, 2, 3, 2], [2, 1, 0, 1, 2, 3], [3, 2, 1, 0, 1, 2], [2, 3, 2, 1, 0, 1], [1, 2, 3, 2, 1, 0]]
         """
         n = self.W.n
-        rho = self.W.from_reduced_word(range(1,n-1))*self.W.from_reduced_word(range(n-1,-1,-1))
+        rho = self.W.from_reduced_word(range(1, n-1))*self.W.from_reduced_word(range(n-1,-1,-1))
         rotations = []
-        for i in range(0,2*(n-1)):
-            rho = rho.apply_simple_reflections(rho.descents()).apply_simple_reflections(rho.descents(),side='left')
+        for i in range(2 * (n - 1)):
+            rho = rho.apply_simple_reflections(rho.descents()).apply_simple_reflections(rho.descents(), side='left')
             rotations.append(rho)
         return rotations
 
-    def stanley_symm_poly_weight(self,w):
+    def stanley_symm_poly_weight(self, w):
         r"""
-        Returns the weight of a Pieri factor to be used in the definition of Stanley
-        symmetric functions.  For type C, this weight is the number of connected
-        components of the support (the indices appearing in a reduced word) of
-        an element.
+        Return the weight of a Pieri factor to be used in the definition of
+        Stanley symmetric functions.
+
+        For type C, this weight is the number of connected components
+        of the support (the indices appearing in a reduced word) of an
+        element.
 
         EXAMPLES::
 
@@ -879,10 +896,11 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
     The type B affine Pieri factors are realized as the order ideal (in Bruhat
     order) generated by the following elements:
 
-    - cyclic rotations of the element with reduced word 234...(n-1)n(n-1)...3210,
-      except for 123...n...320 and 023...n...321.
-    - 123...(n-1)n(n-1)...321
-    - 023...(n-1)n(n-1)...320
+    - cyclic rotations of the element with reduced word
+      `234...(n-1)n(n-1)...3210`,
+      except for `123...n...320` and `023...n...321`.
+    - `123...(n-1)n(n-1)...321`
+    - `023...(n-1)n(n-1)...320`
 
     EXAMPLES::
 
@@ -909,14 +927,14 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
             <class 'sage.combinat.root_system.pieri_factors.PieriFactors_type_B_affine_with_category'>
             sage: TestSuite(PF).run()
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self.W = W
 
     @cached_method
     def maximal_elements_combinatorial(self):
         r"""
-        Returns the maximal Pieri factors, using the affine type B
-        combinatorial description
+        Return the maximal Pieri factors, using the affine type B
+        combinatorial description.
 
         EXAMPLES::
 
@@ -927,27 +945,31 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
         n = self.W.n
         rho = self.W.from_reduced_word(range(2,n-1))*self.W.from_reduced_word(range(n-1,-1,-1))
         rotations = []
-        for i in range(0,2*(n-2)):
-            rho = rho.apply_simple_reflections(rho.descents()).apply_simple_reflections(rho.descents(),side='left')
+        for i in range(2 * (n - 2)):
+            rho = rho.apply_simple_reflections(rho.descents()).apply_simple_reflections(rho.descents(), side='left')
             rotations.append(rho)
         rotations.append(self.W.from_reduced_word(range(1,n-1))*self.W.from_reduced_word(range(n-1,0,-1)))
         rotations.append(self.W.from_reduced_word([0])*self.W.from_reduced_word(range(2,n-1))*self.W.from_reduced_word(range(n-1,1,-1))*self.W.from_reduced_word([0]))
         return rotations
 
-    def stanley_symm_poly_weight(self,w):
+    def stanley_symm_poly_weight(self, w):
         r"""
-        Returns the weight of a Pieri factor to be used in the definition of Stanley
-        symmetric functions.  For type B, this weight involves the number of components
-        of the complement of the support of an element, where we consider 0 and 1 to
-        be one node -- if 1 is in the support, then we pretend 0 in the support, and vice
-        versa.  We also consider 0 and 1 to be one node for the purpose of counting
-        components of the complement (as if the Dynkin diagram were that of type C).
-        Let n be the rank of the affine Weyl group in question (if type ['B',k,1] then
-        we have n = k+1).  Let chi(v.length() < n-1) be the indicator function that is 1
-        if the length of v is smaller than n-1, and 0 if the length of v is greater than or
-        equal to n-1.  If we say c'(v) = the number of components of the complement of
-        the support of v, then the type B weight is given by
-        weight = c'(v) - chi(v.length() < n-1).
+        Return the weight of a Pieri factor to be used in the definition of
+        Stanley symmetric functions.
+
+        For type B, this weight involves the number of components of
+        the complement of the support of an element, where we consider
+        0 and 1 to be one node -- if 1 is in the support, then we
+        pretend 0 in the support, and vice versa.  We also consider 0
+        and 1 to be one node for the purpose of counting components of
+        the complement (as if the Dynkin diagram were that of type C).
+        Let n be the rank of the affine Weyl group in question (if
+        type ``['B',k,1]`` then we have n = k+1).  Let ``chi(v.length() < n-1)``
+        be the indicator function that is 1 if the length of v is
+        smaller than n-1, and 0 if the length of v is greater than or
+        equal to n-1.  If we call ``c'(v)`` the number of components of
+        the complement of the support of v, then the type B weight is
+        given by ``weight = c'(v) - chi(v.length() < n-1)``.
 
         EXAMPLES::
 
@@ -971,22 +993,24 @@ class PieriFactors_type_B_affine(PieriFactors_affine_type):
         ct = w.parent().cartan_type()
         support = set(w.reduced_word())
         if 1 in support or 0 in support:
-            support_complement = set(ct.index_set()).difference(support).difference(set([0,1]))
+            support_complement = set(ct.index_set()).difference(support).difference(set([0, 1]))
         else:
             support_complement = set(ct.index_set()).difference(support).difference(set([0]))
         return DiGraph(DynkinDiagram(ct)).subgraph(support_complement, algorithm="delete").connected_components_number() - 1
+
 
 class PieriFactors_type_D_affine(PieriFactors_affine_type):
     r"""
     The type D affine Pieri factors are realized as the order ideal
     (in Bruhat order) generated by the following elements:
 
-     * cyclic rotations of the element with reduced word 234...(n-2)n(n-1)(n-2)...3210
+     * cyclic rotations of the element with reduced word
+       `234...(n-2)n(n-1)(n-2)...3210`
        such that 1 and 0 are always adjacent and (n-1) and n are always adjacent.
-     * 123...(n-2)n(n-1)(n-2)...321
-     * 023...(n-2)n(n-1)(n-2)...320
-     * n(n-2)...2102...(n-2)n
-     * (n-1)(n-2)...2102...(n-2)(n-1)
+     * `123...(n-2)n(n-1)(n-2)...321`
+     * `023...(n-2)n(n-1)(n-2)...320`
+     * `n(n-2)...2102...(n-2)n`
+     * `(n-1)(n-2)...2102...(n-2)(n-1)`
 
     EXAMPLES::
 
@@ -1016,14 +1040,14 @@ class PieriFactors_type_D_affine(PieriFactors_affine_type):
             <class 'sage.combinat.root_system.pieri_factors.PieriFactors_type_D_affine_with_category'>
             sage: TestSuite(PF).run()  # long time
         """
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
         self.W = W
 
     @cached_method
     def maximal_elements_combinatorial(self):
         r"""
-        Returns the maximal Pieri factors, using the affine type D
-        combinatorial description
+        Return the maximal Pieri factors, using the affine type D
+        combinatorial description.
 
         EXAMPLES::
 
@@ -1032,11 +1056,10 @@ class PieriFactors_type_D_affine(PieriFactors_affine_type):
             sage: set(PF.maximal_elements_combinatorial()) == set(PF.maximal_elements())
             True
         """
-
         n = self.W.n
         rho = self.W.from_reduced_word(range(2,n))*self.W.from_reduced_word(range(n-3,-1,-1))
         rotations = []
-        for i in range(0,2*(n-3)):
+        for i in range(2 * (n - 3)):
             rho = rho.apply_simple_reflections(rho.descents()).apply_simple_reflections(rho.descents(),side='left')
             rotations.append(rho)
 
@@ -1048,24 +1071,27 @@ class PieriFactors_type_D_affine(PieriFactors_affine_type):
 
     def stanley_symm_poly_weight(self, w):
         r"""
-        INPUT:
-         - ``w`` -- a pieri factor for this type
+        Return the weight of `w`, to be used in the definition of
+        Stanley symmetric functions.
 
-        Returns the weight of `w`, to be used in the definition of
-        Stanley symmetric functions.  For type D, this weight involves
+        INPUT:
+
+        - ``w`` -- a Pieri factor for this type
+
+        For type `D`, this weight involves
         the number of components of the complement of the support of
-        an element, where we consider 0 and 1 to be one node -- if 1
-        is in the support, then we pretend 0 in the support, and vice
-        versa.  Similarly with `n-1` and `n`.  We also consider 0 and
-        1, n-1 and n to be one node for the purpose of counting
+        an element, where we consider `0` and `1` to be one node -- if `1`
+        is in the support, then we pretend `0` in the support, and vice
+        versa.  Similarly with `n-1` and `n`.  We also consider `0` and
+        `1`, `n-1` and `n` to be one node for the purpose of counting
         components of the complement (as if the Dynkin diagram were
-        that of type C).
+        that of type `C`).
 
         Type D Stanley symmetric polynomial weights are still
         conjectural.  The given weight comes from conditions on
         elements of the affine Fomin-Stanley subalgebra, but work is
         needed to show this weight is correct for affine Stanley
-        symmetric functions -- see [LSS2009, Pon2010] for details.
+        symmetric functions -- see [LSS2009, Pon2010]_ for details.
 
         EXAMPLES::
 
@@ -1085,16 +1111,16 @@ class PieriFactors_type_D_affine(PieriFactors_affine_type):
             sage: PF.stanley_symm_poly_weight(W.from_reduced_word([2,4,6]))
             2
         """
-
         ct = w.parent().cartan_type()
         support = set(w.reduced_word())
         n = w.parent().n
         if 1 in support or 0 in support:
             support = support.union(set([1])).difference(set([0]))
-        if n in support or n-1 in support:
-            support = support.union(set([n-2])).difference(set([n-1]))
-        support_complement = set(range(1,n-1)).difference(support)
-        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement).connected_components_number()-1
+        if n in support or n - 1 in support:
+            support = support.union(set([n - 2])).difference(set([n - 1]))
+        support_complement = set(range(1, n - 1)).difference(support)
+        return DiGraph(DynkinDiagram(ct)).subgraph(support_complement).connected_components_number() - 1
+
 
 # Inserts those classes in CartanTypes
 from sage.combinat.root_system import type_A_affine, type_B_affine, type_C_affine, type_D_affine, type_A, type_B

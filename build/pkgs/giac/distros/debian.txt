@@ -1,0 +1,2 @@
+libgiac-dev
+xcas

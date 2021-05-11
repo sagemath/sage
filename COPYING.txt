@@ -121,7 +121,6 @@ sage_scripts                GPLv2+
 sagenb                      GPLv3
 sagetex                     GPLv2+ (CC BY-SA 3.0 for included documentation)
 scipy                       Modified BSD
-scons                       MIT License
 setuptools                  Python License
 singular                    GPLv2 or GPLv3 (see below)
 six                         MIT License
@@ -131,7 +130,6 @@ symmetrica                  MIT-like License (see below)
 sympow                      Modified BSD
 sympy                       Modified BSD
 tachyon                     Modified BSD
-termcap                     GPLv2+
 threejs                     MIT License
 tornado                     Apache License
 zlib                        Custom (Modified BSD)

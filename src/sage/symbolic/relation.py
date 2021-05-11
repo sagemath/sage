@@ -279,20 +279,20 @@ LaTeX output::
 When working with the symbolic complex number `I`, notice that comparisons do not
 automatically simplify even in trivial situations::
 
-    sage: I^2 == -1
+    sage: SR(I)^2 == -1
     -1 == -1
-    sage: I^2 < 0
+    sage: SR(I)^2 < 0
     -1 < 0
-    sage: (I+1)^4 > 0
+    sage: (SR(I)+1)^4 > 0
     -4 > 0
 
 Nevertheless, if you force the comparison, you get the right answer (:trac:`7160`)::
 
-    sage: bool(I^2 == -1)
+    sage: bool(SR(I)^2 == -1)
     True
-    sage: bool(I^2 < 0)
+    sage: bool(SR(I)^2 < 0)
     True
-    sage: bool((I+1)^4 > 0)
+    sage: bool((SR(I)+1)^4 > 0)
     False
 
 More Examples
@@ -357,8 +357,6 @@ AUTHORS:
 - William Stein (2007-07-16): added arithmetic with symbolic equations
 
 """
-from __future__ import print_function
-from six.moves import range
 
 import operator
 
@@ -478,10 +476,10 @@ def test_relation_maxima(relation):
         sage: test_relation_maxima(f1 - f2 == 0)
         True
         sage: forget()
-        
+
     In case an equation is to be solved for non-integers, ''assume()''
     is used::
-    
+
         sage: k = var('k')
         sage: assume(k,'noninteger')
         sage: solve([k^3==1],k)
@@ -825,7 +823,7 @@ def solve(f, *args, **kwds):
     https://sourceforge.net/p/maxima/bugs/3276/::
 
         sage: solve(Q*sqrt(Q^2 + 2) - 1, Q, to_poly_solve=True)
-        [Q == -sqrt(-sqrt(2) - 1)]
+        [Q == -sqrt(-sqrt(2) - 1), Q == sqrt(sqrt(2) + 1)*(sqrt(2) - 1)]
 
     An effort is made to only return solutions that satisfy
     the current assumptions::
@@ -891,7 +889,7 @@ def solve(f, *args, **kwds):
         sage: _ = var('t')
         sage: r = solve([x^2 - y^2/exp(x), y-1], x, y, algorithm='sympy')
         sage: (r[0][x], r[0][y])
-        (2*lambert_w(1/2), 1)
+        (2*lambert_w(-1/2), 1)
         sage: solve(-2*x**3 + 4*x**2 - 2*x + 6 > 0, x, algorithm='sympy')
         [x < 1/3*(1/2)^(1/3)*(9*sqrt(77) + 79)^(1/3) + 2/3*(1/2)^(2/3)/(9*sqrt(77) + 79)^(1/3) + 2/3]
         sage: solve(sqrt(2*x^2 - 7) - (3 - x),x,algorithm='sympy')
@@ -908,13 +906,14 @@ def solve(f, *args, **kwds):
         (-z + 1, -z^2 + z - 1)
         sage: solve(abs(x + 3) - 2*abs(x - 3),x,algorithm='sympy',domain='real')
         [x == 1, x == 9]
-        
+
 
     We cannot translate all results from SymPy but we can at least
     print them::
 
         sage: solve(sinh(x) - 2*cosh(x),x,algorithm='sympy')
-        ConditionSet(x, Eq((-exp(2*x) - 3)*exp(-x)/2, 0), Reals)
+        [ImageSet(Lambda(_n, I*(2*_n*pi + pi/2) + log(sqrt(3))), Integers),
+         ImageSet(Lambda(_n, I*(2*_n*pi - pi/2) + log(sqrt(3))), Integers)]
         sage: solve(2*sin(x) - 2*sin(2*x), x,algorithm='sympy')
         [ImageSet(Lambda(_n, 2*_n*pi), Integers),
          ImageSet(Lambda(_n, 2*_n*pi + pi), Integers),
@@ -1145,6 +1144,7 @@ def solve(f, *args, **kwds):
     else:
         return sol_list
 
+
 def _solve_expression(f, x, explicit_solutions, multiplicities,
                      to_poly_solve, solution_dict, algorithm, domain):
     """
@@ -1152,7 +1152,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
 
     .. NOTE::
 
-        This is an auxillery function only meant to be called
+        This is an auxiliary function only meant to be called
         from :func:`solve`.
 
     TESTS:
@@ -1241,11 +1241,11 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                 return sympy_set_to_list(ret, sympy_vars)
             else:
                 try:
-                    return(solve_ineq(f)) # trying solve_ineq_univar
+                    return solve_ineq(f)  # trying solve_ineq_univar
                 except Exception:
                     pass
                 try:
-                    return(solve_ineq([f])) # trying solve_ineq_fourier
+                    return solve_ineq([f])  # trying solve_ineq_fourier
                 except Exception:
                     raise NotImplementedError("solving only implemented for equalities and few special inequalities, see solve_ineq")
         ex = f
@@ -1747,7 +1747,7 @@ def solve_ineq(ineq, vars=None):
     - ``ineq`` - one inequality or a list of inequalities
 
       Case1: If ``ineq`` is one equality, then it should be rational
-      expression in one varible. This input is passed to
+      expression in one variable. This input is passed to
       sage.symbolic.relation.solve_ineq_univar function.
 
       Case2: If ``ineq`` is a list involving one or more
@@ -1808,7 +1808,6 @@ def solve_ineq(ineq, vars=None):
 
     - Robert Marik (01-2010)
     """
-    if isinstance(ineq,list):
-        return(solve_ineq_fourier(ineq, vars))
-    else:
-        return(solve_ineq_univar(ineq))
+    if isinstance(ineq, list):
+        return solve_ineq_fourier(ineq, vars)
+    return solve_ineq_univar(ineq)

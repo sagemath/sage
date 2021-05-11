@@ -1,18 +1,21 @@
 r"""
 Integral domains
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_attribute import lazy_class_attribute
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.category_singleton import Category_contains_method_by_parent_class
 from sage.categories.domains import Domains
+lazy_import('sage.categories.fields', 'Fields')
+
 
 class IntegralDomains(CategoryWithAxiom):
     """
@@ -120,7 +123,7 @@ class IntegralDomains(CategoryWithAxiom):
             tester = self._tester(**options)
             try:
                 fraction_field = self.fraction_field()
-            except Exception:
+            except AttributeError:
                 # some integral domains do not implement fraction_field() yet
                 if self in Fields():
                     raise
@@ -128,7 +131,7 @@ class IntegralDomains(CategoryWithAxiom):
 
             for x in tester.some_elements():
                 # check that we can coerce into the fraction field
-                y = fraction_field.coerce(x)
+                fraction_field.coerce(x)
                 # and convert back from it
                 z = self(x)
                 tester.assertEqual(x, z)

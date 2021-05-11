@@ -7,16 +7,15 @@ AUTHORS:
 
 - Karl-Dieter Crisman (2009-09): adding documentation and doctests
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #       Copyright (C) 2009 Karl-Dieter Crisman <kcrisman@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import math
 
@@ -24,19 +23,20 @@ from sage.plot.all import line
 from sage.modules.free_module_element import vector
 from sage.rings.all import RDF
 
+
 class SpikeFunction:
     """
     Base class for spike functions.
 
     INPUT:
 
-        -  ``v`` - list of pairs (x, height)
+    -  ``v`` - list of pairs (x, height)
 
-        -  ``eps`` - parameter that determines approximation to a true spike
+    -  ``eps`` - parameter that determines approximation to a true spike
 
     OUTPUT:
 
-        a function with spikes at each point ``x`` in ``v`` with the given height.
+    a function with spikes at each point ``x`` in ``v`` with the given height.
 
     EXAMPLES::
 
@@ -62,7 +62,7 @@ class SpikeFunction:
     """
     def __init__(self, v, eps=0.0000001):
         """
-        Initializes base class SpikeFunction.
+        Initialize base class SpikeFunction.
 
         EXAMPLES::
 
@@ -73,8 +73,8 @@ class SpikeFunction:
             sage: S.eps
             0.00100000000000000
         """
-        if len(v) == 0:
-           v = [(0,0)]
+        if not v:
+            v = [(0, 0)]
         v = sorted([(float(x[0]), float(x[1])) for x in v])
         notify = False
 
@@ -101,13 +101,14 @@ class SpikeFunction:
             sage: spike_function([(-3,4),(-1,1),(2,3)],0.001)
             A spike function with spikes at [-3.0, -1.0, 2.0]
         """
-        return "A spike function with spikes at %s"%self.support
+        return "A spike function with spikes at %s" % self.support
 
     def _eval(self, x):
         """
-        Evaluates spike function.  Note that when one calls
-        the function within the tolerance, the return value
-        is the full height at that point.
+        Evaluate spike function.
+
+        Note that when one calls the function within the tolerance,
+        the return value is the full height at that point.
 
         EXAMPLES::
 
@@ -158,10 +159,10 @@ class SpikeFunction:
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: P = S.plot_fft_abs(8)
             sage: p = P[0]; p.ydata  # abs tol 1e-8
-            [5.0, 5.0, 3.367958691924177, 3.367958691924177, 4.123105625617661, 4.123105625617661, 4.759921664218055, 4.759921664218055]
+            [5.0, 5.0, 3.367958691924177, 3.367958691924177, 4.123105625617661,
+             4.123105625617661, 4.759921664218055, 4.759921664218055]
         """
-        w = self.vector(samples = samples, xmin=xmin, xmax=xmax)
-        xmin, xmax = self._ranges(xmin, xmax)
+        w = self.vector(samples=samples, xmin=xmin, xmax=xmax)
         z = w.fft()
         k = vector(RDF, [abs(z[i]) for i in range(len(z)//2)])
         return k.plot(xmin=0, xmax=1, **kwds)
@@ -177,36 +178,38 @@ class SpikeFunction:
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: P = S.plot_fft_arg(8)
             sage: p = P[0]; p.ydata  # abs tol 1e-8
-            [0.0, 0.0, -0.211524990023434, -0.211524990023434, 0.244978663126864, 0.244978663126864, -0.149106180027477, -0.149106180027477]
+            [0.0, 0.0, -0.211524990023434, -0.211524990023434,
+             0.244978663126864, 0.244978663126864, -0.149106180027477,
+             -0.149106180027477]
         """
-        w = self.vector(samples = samples, xmin=xmin, xmax=xmax)
-        xmin, xmax = self._ranges(xmin, xmax)
+        w = self.vector(samples=samples, xmin=xmin, xmax=xmax)
         z = w.fft()
         k = vector(RDF, [(z[i]).arg() for i in range(len(z)//2)])
         return k.plot(xmin=0, xmax=1, **kwds)
 
     def vector(self, samples=2**16, xmin=None, xmax=None):
         """
-        Creates a sampling vector of the spike function in question.
+        Create a sampling vector of the spike function in question.
 
         EXAMPLES::
 
             sage: S = spike_function([(-3,4),(-1,1),(2,3)],0.001); S
             A spike function with spikes at [-3.0, -1.0, 2.0]
             sage: S.vector(16)
-            (4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+            (4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+             0.0, 0.0, 0.0)
         """
-        v = vector(RDF, samples) # creates vector of zeros of length 2^16
+        v = vector(RDF, samples)  # creates vector of zeros of length 2^16
         xmin, xmax = self._ranges(xmin, xmax)
-        delta = (xmax - xmin)/samples
-        w = int(math.ceil(self.eps/delta))
+        delta = (xmax - xmin) / samples
+        w = int(math.ceil(self.eps / delta))
         for i in range(len(self.support)):
             x = self.support[i]
             if x > xmax:
                 break
             h = self.height[i]
-            j = int((x - xmin)/delta)
-            for k in range(j, min(samples, j+w)):
+            j = int((x - xmin) / delta)
+            for k in range(j, min(samples, j + w)):
                 v[k] = h
         return v
 
@@ -222,11 +225,11 @@ class SpikeFunction:
         """
         width = (self.support[-1] + self.support[0])/float(2)
         if xmin is None:
-           xmin = self.support[0] - width/float(5)
+            xmin = self.support[0] - width/float(5)
         if xmax is None:
-           xmax = self.support[-1] + width/float(5)
+            xmax = self.support[-1] + width/float(5)
         if xmax <= xmin:
-           xmax = xmin + 1
+            xmax = xmin + 1
         return xmin, xmax
 
     def plot(self, xmin=None, xmax=None, **kwds):
@@ -246,16 +249,16 @@ class SpikeFunction:
         eps = self.eps
         while x < xmax:
             y, i = self._eval(x)
-            v.append( (x, y) )
+            v.append((x, y))
             if i != -1:
                 x0 = self.support[i] + eps
-                v.extend([(x0,y), (x0,0)])
+                v.extend([(x0, y), (x0, 0)])
                 if i+1 < len(self.support):
-                    x = self.support[i+1] - eps
-                    v.append( (x, 0) )
+                    x = self.support[i + 1] - eps
+                    v.append((x, 0))
                 else:
                     x = xmax
-                    v.append( (xmax, 0) )
+                    v.append((xmax, 0))
             else:
                 new_x = None
                 for j in range(len(self.support)):
@@ -264,12 +267,12 @@ class SpikeFunction:
                         break
                 if new_x is None:
                     new_x = xmax
-                v.append( (new_x, 0) )
+                v.append((new_x, 0))
                 x = new_x
         L = line(v, **kwds)
-        L.xmin(xmin-1); L.xmax(xmax)
+        L.xmin(xmin-1)
+        L.xmax(xmax)
         return L
-
 
 
 spike_function = SpikeFunction

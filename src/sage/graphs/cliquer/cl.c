@@ -101,6 +101,39 @@ int sage_all_clique_max(graph_t *g,int **list){
   return (1+size)*sage_clique_count;
 }
 
+int sage_find_all_clique(graph_t *g,int **list, int min_size, int max_size){
+  sage_reset_global_variables();
+  quiet++;
+  maximal = FALSE;
+  int i, j, l;
+
+  clique_options *opts = sage_init_clique_opt();
+  clique_unweighted_find_all(g, min_size, max_size, maximal, opts);
+  free(opts);
+
+  int size = 0;
+  // All the cliques in the output set will be delimited with -1 value.
+  // The size of the output with delimiters has to be computed now.
+  for (i = 0; i < sage_clique_count; i++) {
+    size += set_size(sage_clique_list[i]) + 1;
+  }
+  *list = malloc(sizeof(int) * size);
+  l = 0;
+
+  for (j = 0; j < sage_clique_count; j++) {
+    for (i = 0; i < SET_MAX_SIZE(sage_clique_list[j]); i++) {
+      if (SET_CONTAINS(sage_clique_list[j],i)) {
+        *((*list) + l) = i;
+        l++;
+      }
+    }
+    set_free(sage_clique_list[j]);
+    *((*list) +l ) = -1;
+    l++;
+  }
+  return size;
+}
+
 int sage_clique_number(graph_t *g){
   sage_reset_global_variables();
   maximal=TRUE;

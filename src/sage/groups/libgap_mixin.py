@@ -11,24 +11,61 @@ from. This ensures that it properly overrides any default methods that
 just raise ``NotImplementedError``.
 """
 
-from sage.libs.all import libgap
+from sage.libs.gap.libgap import libgap
+from sage.libs.gap.element import GapElement
+from sage.structure.element import parent
 from sage.misc.cachefunc import cached_method
 from sage.groups.class_function import ClassFunction_libgap
-from sage.misc.superseded import deprecated_function_alias
-
+from sage.groups.libgap_wrapper import ElementLibGAP
 
 class GroupMixinLibGAP(object):
+    def __contains__(self, elt):
+        r"""
+        TESTS::
 
-    @cached_method
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: G = GroupLibGAP(libgap.SL(2,3))
+            sage: libgap([[1,0],[0,1]]) in G
+            False
+            sage: o = Mod(1, 3)
+            sage: z = Mod(0, 3)
+            sage: libgap([[o,z],[z,o]]) in G
+            True
+
+            sage: G.an_element() in GroupLibGAP(libgap.GL(2,3))
+            True
+            sage: G.an_element() in GroupLibGAP(libgap.GL(2,5))
+            False
+        """
+        if parent(elt) is self:
+            return True
+        elif isinstance(elt, GapElement):
+            return elt in self.gap()
+        elif isinstance(elt, ElementLibGAP):
+            return elt.gap() in self.gap()
+        else:
+            try:
+                elt2 = self(elt)
+            except Exception:
+                return False
+            return elt == elt2
+
     def is_abelian(self):
         r"""
-        Test whether the group is Abelian.
+        Return whether the group is Abelian.
 
         OUTPUT:
 
-        Boolean. ``True`` if this group is an Abelian group.
+        Boolean. ``True`` if this group is an Abelian group and ``False``
+        otherwise.
 
         EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: GroupLibGAP(libgap.CyclicGroup(12)).is_abelian()
+            True
+            sage: GroupLibGAP(libgap.SymmetricGroup(12)).is_abelian()
+            False
 
             sage: SL(1, 17).is_abelian()
             True
@@ -37,7 +74,110 @@ class GroupMixinLibGAP(object):
         """
         return self.gap().IsAbelian().sage()
 
-    @cached_method
+    def is_nilpotent(self):
+        r"""
+        Return whether this group is nilpotent.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: GroupLibGAP(libgap.AlternatingGroup(3)).is_nilpotent()
+            True
+            sage: GroupLibGAP(libgap.SymmetricGroup(3)).is_nilpotent()
+            False
+        """
+        return self.gap().IsNilpotentGroup().sage()
+
+    def is_solvable(self):
+        r"""
+        Return whether this group is solvable.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: GroupLibGAP(libgap.SymmetricGroup(4)).is_solvable()
+            True
+            sage: GroupLibGAP(libgap.SymmetricGroup(5)).is_solvable()
+            False
+        """
+        return self.gap().IsSolvableGroup().sage()
+
+    def is_supersolvable(self):
+        r"""
+        Return whether this group is supersolvable.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: GroupLibGAP(libgap.SymmetricGroup(3)).is_supersolvable()
+            True
+            sage: GroupLibGAP(libgap.SymmetricGroup(4)).is_supersolvable()
+            False
+        """
+        return self.gap().IsSupersolvableGroup().sage()
+
+    def is_polycyclic(self):
+        r"""
+        Return whether this group is polycyclic.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: GroupLibGAP(libgap.AlternatingGroup(4)).is_polycyclic()
+            True
+            sage: GroupLibGAP(libgap.AlternatingGroup(5)).is_solvable()
+            False
+        """
+        return self.gap().IsPolycyclicGroup().sage()
+
+    def is_perfect(self):
+        r"""
+        Return whether this group is perfect.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: GroupLibGAP(libgap.SymmetricGroup(5)).is_perfect()
+            False
+            sage: GroupLibGAP(libgap.AlternatingGroup(5)).is_perfect()
+            True
+
+            sage: SL(3,3).is_perfect()
+            True
+        """
+        return self.gap().IsPerfectGroup().sage()
+
+    def is_p_group(self):
+        r"""
+        Return whether this group is a p-group.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: GroupLibGAP(libgap.CyclicGroup(9)).is_p_group()
+            True
+            sage: GroupLibGAP(libgap.CyclicGroup(10)).is_p_group()
+            False
+        """
+        return self.gap().IsPGroup().sage()
+
+    def is_simple(self):
+        r"""
+        Return whether this group is simple.
+
+        EXAMPLES::
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: GroupLibGAP(libgap.SL(2,3)).is_simple()
+            False
+            sage: GroupLibGAP(libgap.SL(3,3)).is_simple()
+            True
+
+            sage: SL(3,3).is_simple()
+            True
+        """
+        return self.gap().IsSimpleGroup().sage()
+
     def is_finite(self):
         """
         Test whether the matrix group is finite.
@@ -99,8 +239,6 @@ class GroupMixinLibGAP(object):
             +Infinity
         """
         return self.gap().Size().sage()
-        from sage.rings.infinity import Infinity
-        return Infinity
 
     order = cardinality
 
@@ -139,8 +277,6 @@ class GroupMixinLibGAP(object):
         G = self.gap()
         reps = [ cc.Representative() for cc in G.ConjugacyClasses() ]
         return tuple(self(g) for g in reps)
-
-    conjugacy_class_representatives = deprecated_function_alias(22783, conjugacy_classes_representatives)
 
     def conjugacy_classes(self):
         r"""
@@ -338,7 +474,7 @@ class GroupMixinLibGAP(object):
 
     def character(self, values):
         r"""
-        Returns a group character from ``values``, where ``values`` is
+        Return a group character from ``values``, where ``values`` is
         a list of the values of the character evaluated on the conjugacy
         classes.
 
@@ -368,7 +504,7 @@ class GroupMixinLibGAP(object):
 
     def trivial_character(self):
         r"""
-        Returns the trivial character of this group.
+        Return the trivial character of this group.
 
         OUTPUT: a group character
 
@@ -391,7 +527,7 @@ class GroupMixinLibGAP(object):
 
     def character_table(self):
         r"""
-        Returns the matrix of values of the irreducible characters of this
+        Return the matrix of values of the irreducible characters of this
         group `G` at its conjugacy classes.
 
         The columns represent the conjugacy classes of
@@ -479,6 +615,11 @@ class GroupMixinLibGAP(object):
             sage: next(iter(G))
             [1 0]
             [0 1]
+
+            sage: from sage.groups.libgap_group import GroupLibGAP
+            sage: G = GroupLibGAP(libgap.AlternatingGroup(5))
+            sage: sum(1 for g in G)
+            60
         """
         if self.list.cache is not None:
             for g in self.list():
@@ -486,7 +627,7 @@ class GroupMixinLibGAP(object):
             return
         iterator = self.gap().Iterator()
         while not iterator.IsDoneIterator().sage():
-            yield self(iterator.NextIterator(), check=False)
+            yield self.element_class(self, iterator.NextIterator())
 
     def __len__(self):
         """
@@ -507,9 +648,10 @@ class GroupMixinLibGAP(object):
             ...
             NotImplementedError: group must be finite
         """
-        if not self.is_finite():
-            raise NotImplementedError('group must be finite')
-        return int(self.cardinality())
+        size = self.gap().Size()
+        if size.IsInfinity():
+            raise NotImplementedError("group must be finite")
+        return int(size)
 
     @cached_method
     def list(self):
@@ -533,9 +675,10 @@ class GroupMixinLibGAP(object):
             24
             sage: v[:5]
             (
-            [0 1]  [0 1]  [0 1]  [0 2]  [0 2]
-            [2 0], [2 1], [2 2], [1 0], [1 1]
+            [1 0]  [2 0]  [0 1]  [0 2]  [1 2]
+            [0 1], [0 2], [2 0], [1 0], [2 2]
             )
+
             sage: all(g in G for g in G.list())
             True
 
@@ -547,12 +690,12 @@ class GroupMixinLibGAP(object):
             sage: MG = MatrixGroup([M1, M2, M3])
             sage: MG.list()
             (
-            [-1  0]  [-1  0]  [ 1  0]  [1 0]
-            [ 0 -1], [ 0  1], [ 0 -1], [0 1]
+            [1 0]  [ 1  0]  [-1  0]  [-1  0]
+            [0 1], [ 0 -1], [ 0  1], [ 0 -1]
             )
             sage: MG.list()[1]
-            [-1  0]
-            [ 0  1]
+            [ 1  0]
+            [ 0 -1]
             sage: MG.list()[1].parent()
             Matrix group over Integer Ring with 3 generators (
             [-1  0]  [ 1  0]  [-1  0]
@@ -582,8 +725,7 @@ class GroupMixinLibGAP(object):
         """
         if not self.is_finite():
             raise NotImplementedError('group must be finite')
-        elements = self.gap().Elements()
-        return tuple(self(x, check=False) for x in elements)
+        return tuple(self.element_class(self, g) for g in self.gap().AsList())
 
     def is_isomorphic(self, H):
         """
@@ -613,12 +755,4 @@ class GroupMixinLibGAP(object):
             sage: F==G, G==H, F==H
             (False, False, False)
         """
-        iso = self.gap().IsomorphismGroups(H.gap())
-        if iso.is_bool():   # fail means not isomorphic
-            try:
-                iso.sage()
-                assert False
-            except ValueError:
-                pass
-            return False
-        return True
+        return self.gap().IsomorphismGroups(H.gap()) != libgap.fail

@@ -1,13 +1,13 @@
 r"""
 Hopf algebras with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #  Copyright (C) 2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.tensor import TensorProductsCategory
@@ -15,6 +15,7 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
+
 
 class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
@@ -76,6 +77,7 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
         running ._test_characteristic() . . . pass
+        running ._test_construction() . . . pass
         running ._test_distributivity() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
@@ -259,13 +261,13 @@ class HopfAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 # antipode is an anti-homomorphism
                 for y in tester.some_elements():
-                    tester.assertTrue(S(x) * S(y) == S(y * x))
+                    tester.assertEqual(S(x) * S(y), S(y * x))
 
                 # mu * (S # I) * delta == counit * unit
-                tester.assertTrue(SI(x) == self.counit(x) * self.one())
+                tester.assertEqual(SI(x), self.counit(x) * self.one())
 
                 # mu * (I # S) * delta == counit * unit
-                tester.assertTrue(IS(x) == self.counit(x) * self.one())
+                tester.assertEqual(IS(x), self.counit(x) * self.one())
 
     class ElementMethods:
         pass

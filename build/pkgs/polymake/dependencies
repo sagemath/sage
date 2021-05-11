@@ -1,4 +1,4 @@
-$(INST)/$(SAGE_MP_LIBRARY) bliss cddlib lrslib perl_term_readline_gnu
+$(MP_LIBRARY) bliss cddlib lrslib normaliz perl_term_readline_gnu ppl perl_cpan_polymake_prereq libxml2 | ninja_build
 
 ----------
 All lines of this file are ignored except the first.

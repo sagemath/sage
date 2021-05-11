@@ -1,0 +1,5 @@
+cd src
+
+sdh_setup_bdist_wheel --use-pkg-config
+
+sdh_store_and_pip_install_wheel .

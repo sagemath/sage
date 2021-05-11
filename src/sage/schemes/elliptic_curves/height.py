@@ -2,30 +2,14 @@ r"""
 Canonical heights for elliptic curves over number fields
 
 Also, rigorous lower bounds for the canonical height of non-torsion
-points, implementing the algorithms in [CS]_ (over `\QQ`) and [TT]_,
-which also refer to [CPS]_.
+points, implementing the algorithms in [CS2006]_ (over `\QQ`) and [Tho2010]_,
+which also refer to [CPS2006]_.
 
 AUTHORS:
 
 - Robert Bradshaw (2010): initial version
 
 - John Cremona (2014): added many docstrings and doctests
-
-REFERENCES:
-
-.. [CS] \J.E.Cremona, and S. Siksek, Computing a Lower Bound for the
-   Canonical Height on Elliptic Curves over `\QQ`, ANTS VII
-   Proceedings: F.Hess, S.Pauli and M.Pohst (eds.), ANTS VII, Lecture
-   Notes in Computer Science 4076 (2006), pages 275-286.
-
-.. [TT] \T. Thongjunthug, Computing a lower bound for the canonical
-   height on elliptic curves over number fields, Math. Comp. 79
-   (2010), pages 2431-2449.
-
-.. [CPS] \J.E. Cremona, M. Prickett and S. Siksek, Height Difference
-   Bounds For Elliptic Curves over Number Fields, Journal of Number
-   Theory 116(1) (2006), pages 42-68.
-
 """
 ##############################################################################
 #       Copyright (C) 2010 Robert Bradshaw <robertwb@math.washington.edu>
@@ -40,11 +24,8 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function
-from six.moves import zip
-
 import numpy
 import math
 import bisect
@@ -588,7 +569,7 @@ def min_on_disk(f, tol, max_iter=10000):
     OUTPUT:
 
     A 2-tuple `(s,t)`, where `t=f(s)` and `s` is a CIF element
-    contained in the disk `|z|\le1`, at which `f` takes its minumum
+    contained in the disk `|z|\le1`, at which `f` takes its minimum
     value.
 
     EXAMPLES::
@@ -615,7 +596,7 @@ def min_on_disk(f, tol, max_iter=10000):
     fs = f(s)
     L = [(-fs.lower(), fs.relative_diameter(), s, False)]
 
-    # min_max holds the minumum over L of fs.upper().
+    # min_max holds the minimum over L of fs.upper().
 
     min_max = fs.upper()
 
@@ -647,7 +628,7 @@ def min_on_disk(f, tol, max_iter=10000):
                     L = L[unneeded:]
 
             if fs.lower() < min_max: # we may beat the record, cannot yet tell: insert this region
-                                     # into the list at the appropriate palce to maintain sorting
+                                     # into the list at the appropriate place to maintain sorting
                 bisect.insort(L, (-fs.lower(), fs.relative_diameter(), s, s_in_disk))
 
     # If we get here, then even after max_iter iterations the tolerance has not been reached.
@@ -796,7 +777,7 @@ class EllipticCurveCanonicalHeight:
             sage: K.<i>=QuadraticField(-1)
             sage: E = EllipticCurve([0,i,0,i,i])
             sage: EllipticCurveCanonicalHeight(E)
-            EllipticCurveCanonicalHeight object associated to Elliptic Curve defined by y^2 = x^3 + i*x^2 + i*x + i over Number Field in i with defining polynomial x^2 + 1
+            EllipticCurveCanonicalHeight object associated to Elliptic Curve defined by y^2 = x^3 + i*x^2 + i*x + i over Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         TESTS:
 
@@ -891,7 +872,7 @@ class EllipticCurveCanonicalHeight:
             sage: E = EllipticCurve(K, [0,0,0,1,-27])
             sage: H = E.height_function()
             sage: H.base_field()
-            Number Field in i with defining polynomial x^2 + 1
+            Number Field in i with defining polynomial x^2 + 1 with i = 1*I
             sage: H((1,5*i))
             1.22257115164148
         """
@@ -908,13 +889,13 @@ class EllipticCurveCanonicalHeight:
 
         OUTPUT:
 
-        The constant `\alpha_v`.  In the notation of [CPS]_ (2006) and
-        [TT]_ (section 3.2), `\alpha_v^3=\epsilon_v`.  The result is
+        The constant `\alpha_v`.  In the notation of [CPS2006]_ and
+        [Tho2010]_ (section 3.2), `\alpha_v^3=\epsilon_v`.  The result is
         cached since it only depends on the curve.
 
         EXAMPLES:
 
-        Example 1 from [CPS]_ (2006)::
+        Example 1 from [CPS2006]_::
 
             sage: K.<i>=QuadraticField(-1)
             sage: E = EllipticCurve([0,0,0,1+5*i,3+i])
@@ -923,7 +904,7 @@ class EllipticCurveCanonicalHeight:
             sage: alpha
             1.12272013439355
 
-        Compare with `\log(\epsilon_v)=0.344562...` in [CPS]_::
+        Compare with `\log(\epsilon_v)=0.344562...` in [CPS2006]_::
 
             sage: 3*alpha.log()
             0.347263296676126
@@ -957,7 +938,8 @@ class EllipticCurveCanonicalHeight:
                 dgn = [fast_callable(g.derivative(n)/factorial(n), CDF) for n in range(g.degree()+1)]
                 def max_f_g(s):
                     (a,b),(c,d) = s.real().endpoints(), s.imag().endpoints()
-                    dx = a-b; dy = c-d
+                    dx = a - b
+                    dy = c - d
                     eta = RDF(dx*dx + dy*dy).sqrt()
                     z = CDF(s.center())
                     err_f = sum(eta ** n * abs(df(z)) for n, df in enumerate(dfn) if n)
@@ -966,7 +948,7 @@ class EllipticCurveCanonicalHeight:
                 return max_f_g
             _, min_fg = min_on_disk(pair_max(f, g), tol)
             _, min_FG = min_on_disk(pair_max(F, G), tol)
-            return min(min_fg, min_FG) ** (-1/QQ(3))
+            return min(min_fg, min_FG) ** QQ((-1, 3))
 
     @cached_method
     def e_p(self, p):
@@ -1033,7 +1015,7 @@ class EllipticCurveCanonicalHeight:
 
         OUTPUT:
 
-        The value `D_E(n)` as defined in [TT]_, section 4.
+        The value `D_E(n)` as defined in [Tho2010]_, section 4.
 
         EXAMPLES::
 
@@ -1059,7 +1041,7 @@ class EllipticCurveCanonicalHeight:
 
         OUTPUT:
 
-        The norm of the ideal `M_E` as defined in [TT]_, section 3.1.
+        The norm of the ideal `M_E` as defined in [Tho2010]_, section 3.1.
         This is `1` if `E` is a global minimal model, and in general
         measures the non-minimality of `E`.
 
@@ -1098,17 +1080,17 @@ class EllipticCurveCanonicalHeight:
 
         OUTPUT:
 
-        The real value `B_n(\mu)` as defined in [TT]_, section 5.
+        The real value `B_n(\mu)` as defined in [Tho2010]_, section 5.
 
         EXAMPLES:
 
-        Example 10.2 from [TT]_::
+        Example 10.2 from [Tho2010]_::
 
             sage: K.<i>=QuadraticField(-1)
             sage: E = EllipticCurve([0,1-i,i,-i,0])
             sage: H = E.height_function()
 
-        In [TT]_ the value is given as 0.772::
+        In [Tho2010]_ the value is given as 0.772::
 
             sage: RealField(12)( H.B(5, 0.01) )
             0.777
@@ -1203,7 +1185,7 @@ class EllipticCurveCanonicalHeight:
 
         OUTPUT:
 
-        The union of intervals `S^{(v)}(\xi_1,\xi_2)` defined in [TT]_
+        The union of intervals `S^{(v)}(\xi_1,\xi_2)` defined in [Tho2010]_
         section 6.1.
 
         EXAMPLES:
@@ -1226,7 +1208,7 @@ class EllipticCurveCanonicalHeight:
             ([0.0781194447253472, 0.0823423732016403] U [0.917657626798360, 0.921880555274653])
         """
         L = self.E.period_lattice(v)
-        w1, w2 = L.basis()
+        w1, w2 = L.basis(prec = v.codomain().prec())
         beta = L.elliptic_exponential(w1/2)[0]
         if xi2 < beta:
             return UnionOfIntervals([])
@@ -1251,7 +1233,7 @@ class EllipticCurveCanonicalHeight:
 
         OUTPUT:
 
-        The union of intervals `S_n^{(v)}(\xi_1,\xi_2)` defined in [TT]_
+        The union of intervals `S_n^{(v)}(\xi_1,\xi_2)` defined in [Tho2010]_
         (Lemma 6.1).
 
         EXAMPLES:
@@ -1299,7 +1281,7 @@ class EllipticCurveCanonicalHeight:
         empty or not.  When ``Bk`` is the list of `b=B_n(\mu)` for
         `n=1,2,3,\dots` for some `\mu>0` this means that all
         non-torsion points on `E` with everywhere good reduction have
-        canonical height strictly greater than `\mu`, by [TT]_,
+        canonical height strictly greater than `\mu`, by [Tho2010]_,
         Proposition 6.2.
 
         EXAMPLES:
@@ -1399,7 +1381,7 @@ class EllipticCurveCanonicalHeight:
             sage: H.wp_c(K.places()[0])
             2.66213425640096
         """
-        # Note that we normalise w1, w2 differently from [TT]_!
+        # Note that we normalise w1, w2 differently from [Tho2010]_!
         w2, w1 = self.E.period_lattice(v).normalised_basis()
         return max(abs(v(self.E.c4()/240)) ** 0.5,
                    abs(v(self.E.c6()/6048)) ** (1.0/3)) * abs(w1)**2
@@ -1451,7 +1433,7 @@ class EllipticCurveCanonicalHeight:
             sage: err(CIF(z))
             2.71750621458744e-31
 
-        The same, but in the domain ``CDF`` instad of ``CIF``::
+        The same, but in the domain ``CDF`` instead of ``CIF``::
 
             sage: fk, err = E.height_function().fk_intervals(N=10, domain=CDF)
             sage: fk(z)
@@ -1668,11 +1650,11 @@ class EllipticCurveCanonicalHeight:
 
         True or False, according as the intersection of the unions of
         intervals `T_n^{(v)}(-b,b)` for `b` in the list ``Bk`` (see
-        [TT]_, section 7) is empty or not.  When ``Bk`` is the list of
+        [Tho2010]_, section 7) is empty or not.  When ``Bk`` is the list of
         `b=\sqrt{B_n(\mu)}` for `n=1,2,3,\dots` for some `\mu>0` this
         means that all non-torsion points on `E` with everywhere good
         reduction have canonical height strictly greater than `\mu`,
-        by [TT]_, Proposition 7.8.
+        by [Tho2010]_, Proposition 7.8.
 
         EXAMPLES::
 
@@ -1704,7 +1686,7 @@ class EllipticCurveCanonicalHeight:
         from sage.schemes.elliptic_curves.period_lattice_region import PeriodicRegion
 
         b2 = v(self.E.b2())
-        # Note that we normalise w1, w2 differently from [TT]_!
+        # Note that we normalise w1, w2 differently from [Tho2010]_!
         w2, w1 = self.E.period_lattice(v).normalised_basis()
         tau = w2/w1
         bounds = [RDF((B.sqrt() + abs(b2)/12) * abs(w1) ** 2) for B in Bk]
@@ -1727,7 +1709,7 @@ class EllipticCurveCanonicalHeight:
                     break
         else:
             z = CIF(intersection.innermost_point())
-            if all(wp((k+1)*z) < B for k, B in enumerate(bounds)):
+            if all(wp((k+1)*z).upper() < B for k, B in enumerate(bounds)):
                 return False
 
         # Now try to prove a positive result.
@@ -1737,6 +1719,7 @@ class EllipticCurveCanonicalHeight:
         for B, n in sorted(zip(bounds, ZZ.range(1, k+1))):
 
             T = PeriodicRegion(CDF(1), CDF(tau), vals < B, full=not use_half).expand().refine()
+            B = RIF(B)
             leaning_right = tau.real() / tau.imag() >= 0
             def check_line(z):
                 wpz = wp(z)
@@ -1833,7 +1816,7 @@ class EllipticCurveCanonicalHeight:
             []
         """
         # Compute the list of values `B_n(\mu)` for n in 1..N.  If any
-        # of these is 1 we can return True right away (see [TT]_,
+        # of these is 1 we can return True right away (see [Tho2010]_,
         # Proposition 5.1).
         Bk = []
         for n in ZZ.range(1, N + 1):
@@ -1848,13 +1831,22 @@ class EllipticCurveCanonicalHeight:
         # a chance to prove the lower bound.  We try each in turn,
         # stopping if one gives a True result.
 
+        from sage.rings.number_field.number_field import refine_embedding
         for v in self.K.places():
-            if v(self.K.gen()) in RR:
-                if self.real_intersection_is_empty(Bk, v):
-                    return True
-            else:
-                if self.complex_intersection_is_empty(Bk, v):
-                    return True
+            ok = False
+            while not ok:
+                try:
+                    if v(self.K.gen()) in RR:
+                        if self.real_intersection_is_empty(Bk, v):
+                            return True
+                    else:
+                        if self.complex_intersection_is_empty(Bk, v):
+                            return True
+                    ok = True
+                except ArithmeticError:
+                    v = refine_embedding(v)
+                    if verbose:
+                        print("Refining embedding, codomain now {}".format(v.codomain()))
         return False # Couldn't prove it...
 
     def min_gr(self, tol, n_max, verbose=False):
@@ -1881,14 +1873,14 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES:
 
-        Example 1 from [CS]_ (where a lower bound of 1.9865 was
+        Example 1 from [CS2006]_ (where a lower bound of 1.9865 was
         given)::
 
             sage: E = EllipticCurve([1, 0, 1, 421152067, 105484554028056]) # 60490d1
             sage: E.height_function().min_gr(.0001, 5)
             1.98684388146518
 
-        Example 10.1 from [TT]_ (where a lower bound of 0.18 was
+        Example 10.1 from [Tho2010]_ (where a lower bound of 0.18 was
         given)::
 
             sage: K.<i> = QuadraticField(-1)
@@ -1897,7 +1889,7 @@ class EllipticCurveCanonicalHeight:
             sage: H.min_gr(0.1,4) # long time (8.1s)
             0.1621049443313762
 
-        Example 10.2 from [TT]_::
+        Example 10.2 from [Tho2010]_::
 
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0,1-i,i,-i,0])
@@ -1914,7 +1906,7 @@ class EllipticCurveCanonicalHeight:
             sage: P.height()
             0.0230242154471211
 
-        Example 10.3 from [TT]_ (where the same bound of 0.25 is
+        Example 10.3 from [Tho2010]_ (where the same bound of 0.25 is
         given)::
 
             sage: K.<a> = NumberField(x^3-2)
@@ -2002,14 +1994,14 @@ class EllipticCurveCanonicalHeight:
 
         EXAMPLES:
 
-        Example 1 from [CS]_ (where the same lower bound of 0.1126 was
+        Example 1 from [CS2006]_ (where the same lower bound of 0.1126 was
         given)::
 
             sage: E = EllipticCurve([1, 0, 1, 421152067, 105484554028056]) # 60490d1
             sage: E.height_function().min(.0001, 5)
             0.0011263287309893311
 
-        Example 10.1 from [TT]_ (where a lower bound of 0.18 was
+        Example 10.1 from [Tho2010]_ (where a lower bound of 0.18 was
         given)::
 
             sage: K.<i> = QuadraticField(-1)
@@ -2018,7 +2010,7 @@ class EllipticCurveCanonicalHeight:
             sage: H.min(0.1,4) # long time (8.1s)
             0.1621049443313762
 
-        Example 10.2 from [TT]_::
+        Example 10.2 from [Tho2010]_::
 
             sage: K.<i> = QuadraticField(-1)
             sage: E = EllipticCurve([0,1-i,i,-i,0])
@@ -2033,7 +2025,7 @@ class EllipticCurveCanonicalHeight:
             sage: P.height()
             0.0230242154471211
 
-        Example 10.3 from [TT]_ (where the same bound of 0.0625 is
+        Example 10.3 from [Tho2010]_ (where the same bound of 0.0625 is
         given)::
 
             sage: K.<a> = NumberField(x^3-2)

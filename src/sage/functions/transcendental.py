@@ -18,10 +18,10 @@ Number-Theoretic Functions
 # ****************************************************************************
 
 import sys
-import sage.rings.complex_field as complex_field
+import sage.rings.complex_mpfr as complex_field
 
 from sage.rings.all import (ComplexField, ZZ, RR, RDF)
-from sage.rings.complex_number import is_ComplexNumber
+from sage.rings.complex_mpfr import is_ComplexNumber
 from sage.rings.real_mpfr import (RealField, is_RealNumber)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
@@ -124,6 +124,15 @@ class Function_zeta(GinacFunction):
             (zeta(pi)) + (zetaderiv(1, pi))*(-pi + x) + Order((pi - x)^2)
             sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)
             zeta(2*I*pi)
+
+        Check that :trac:`20102` is fixed::
+
+            sage: (zeta(x)^2).series(x==1, 1)
+            1*(x - 1)^(-2) + (2*euler_gamma)*(x - 1)^(-1)
+            + (euler_gamma^2 - 2*stieltjes(1)) + Order(x - 1)
+            sage: (zeta(x)^4).residue(x==1)
+            4/3*euler_gamma*(3*euler_gamma^2 - 2*stieltjes(1))
+            - 28/3*euler_gamma*stieltjes(1) + 2*stieltjes(2)
 
         Check that the right infinities are returned (:trac:`19439`)::
 
@@ -336,6 +345,12 @@ class Function_zetaderiv(GinacFunction):
             sage: a = loads(dumps(zetaderiv(2,x)))
             sage: a.operator() == zetaderiv
             True
+
+            sage: b = RBF(3/2, 1e-10)
+            sage: zetaderiv(1, b, hold=True)
+            zetaderiv(1, [1.500000000 +/- 1.01e-10])
+            sage: zetaderiv(b, 1)
+            zetaderiv([1.500000000 +/- 1.01e-10], 1)
         """
         GinacFunction.__init__(self, "zetaderiv", nargs=2)
 
@@ -350,6 +365,15 @@ class Function_zetaderiv(GinacFunction):
         """
         from mpmath import zeta
         return mpmath_utils.call(zeta, x, 1, n, parent=parent)
+
+    def _method_arguments(self, k, x, **args):
+        r"""
+        TESTS::
+
+            sage: zetaderiv(1, RBF(3/2, 0.0001))
+            [-3.93 +/- ...e-3]
+        """
+        return [x, k]
 
 zetaderiv = Function_zetaderiv()
 

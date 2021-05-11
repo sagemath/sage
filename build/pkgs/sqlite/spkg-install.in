@@ -1,0 +1,19 @@
+rm -f "$SAGE_LOCAL/bin/sqlite3"
+
+cd src
+
+# Use newer version of config.guess and config.sub (see Trac #19711)
+cp "$SAGE_ROOT"/config/config.* .
+
+
+export CPPFLAGS="$CPPFLAGS -I$SAGE_LOCAL/include"
+
+# Old OS X systems need -DSQLITE_WITHOUT_ZONEMALLOC
+if uname -sr |grep 'Darwin [0-8][.]' >/dev/null; then
+    export CPPFLAGS="$CPPFLAGS -DSQLITE_WITHOUT_ZONEMALLOC"
+fi
+
+
+sdh_configure
+sdh_make
+sdh_make_install

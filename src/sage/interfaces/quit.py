@@ -1,7 +1,6 @@
 """
 Quitting interfaces
 """
-from __future__ import print_function
 
 ################################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>

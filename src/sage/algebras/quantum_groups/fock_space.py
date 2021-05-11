@@ -7,15 +7,15 @@ AUTHORS:
 - Travis Scrimshaw (2013-05-03): Initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.bindable_class import BindableClass
@@ -635,7 +635,7 @@ class FockSpace(Parent, UniqueRepresentation):
             h = a.height()
             l = AsciiArt(['|']*h)
             r = AsciiArt([' '*i + '\\' for i in range(h//2)], baseline=0)
-            if h % 2 != 0:
+            if h % 2:
                 r *= AsciiArt([' '*(h//2) + '>'], baseline=0)
             r *= AsciiArt([' '*i + '/' for i in reversed(range(h//2))], baseline=0)
             ret = l + a + r
@@ -668,7 +668,7 @@ class FockSpace(Parent, UniqueRepresentation):
             h = a.height()
             l = UnicodeArt([u'│']*h, baseline=0)
             r = UnicodeArt([u" "*i + u'╲' for i in range(h//2)], baseline=0)
-            if h % 2 != 0:
+            if h % 2:
                 r *= UnicodeArt([u" "*(h//2) + u'〉'], baseline=0)
             r *= UnicodeArt([u" "*i + u'╱' for i in reversed(range(h//2))], baseline=0)
             ret = l + a + r
@@ -1146,7 +1146,7 @@ class FockSpace(Parent, UniqueRepresentation):
             while any(c[1]*k + c[0] >= b for c in corners):
                 power = 0
                 i = -b + r # This will be converted to a mod n number
-                for x in range(0, b // k + 1):
+                for x in range(b // k + 1):
                     if (b-x*k, x) in cells:
                         power += 1
                         cur = cur.f(i)
@@ -1616,7 +1616,7 @@ class FockSpaceTruncated(FockSpace):
 
     We have three bases:
 
-    - The natural basis indexed by trucated `n`-regular partitions:
+    - The natural basis indexed by truncated `n`-regular partitions:
       :class:`~sage.algebras.quantum_groups.fock_space.FockSpaceTruncated.F`.
     - The approximation basis that comes from LLT(-type) algorithms:
       :class:`~sage.algebras.quantum_groups.fock_space.FockSpaceTruncated.A`.
@@ -1774,7 +1774,7 @@ class FockSpaceTruncated(FockSpace):
 
         class Element(FockSpace.natural.Element):
             r"""
-            An element in the trucated Fock space.
+            An element in the truncated Fock space.
             """
             def _f(self, i):
                 r"""
@@ -1907,7 +1907,7 @@ class FockSpaceTruncated(FockSpace):
             while any(c[1]*k + c[0] >= b for c in corners): # While there is some cell left to count
                 power = 0
                 i = -b + r # This will be converted to a mod n number
-                for x in range(0, b // k + 1):
+                for x in range(b // k + 1):
                     if (b-x*k, x) in cells:
                         power += 1
                         cur = cur.f(i)
@@ -2213,4 +2213,3 @@ class FockSpaceTruncated(FockSpace):
 
     lower_global_crystal = G
     canonical = G
-

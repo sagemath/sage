@@ -25,25 +25,25 @@ generally, all sage expression as an ASCII art object::
     sage: shell = get_test_shell()
     sage: shell.run_cell('%display ascii_art')
     sage: shell.run_cell('integral(x^2/pi^x, x)')
-       -x / 2    2                      \ 
-    -pi  *\x *log (pi) + 2*x*log(pi) + 2/ 
+       -x / 2    2                      \
+    -pi  *\x *log (pi) + 2*x*log(pi) + 2/
     --------------------------------------
-                     3                   
-                   log (pi)               
+                     3
+                   log (pi)
     sage: shell.run_cell("i = var('i')")
     sage: shell.run_cell('sum(i*x^i, i, 0, 10)')
         10      9      8      7      6      5      4      3      2
     10*x   + 9*x  + 8*x  + 7*x  + 6*x  + 5*x  + 4*x  + 3*x  + 2*x  + x
     sage: shell.run_cell('StandardTableaux(4).list()')
     [
-    [                                                                  1  4
-    [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2
-    [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,
+    [                                                                  1  4    1  3
+    [                 1  3  4    1  2  4    1  2  3    1  3    1  2    2       2
+    [   1  2  3  4,   2      ,   3      ,   4      ,   2  4,   3  4,   3   ,   4   ,
     <BLANKLINE>
-                       1 ]
-       1  3    1  2    2 ]
-       2       3       3 ]
-       4   ,   4   ,   4 ]
+               1 ]
+       1  2    2 ]
+       3       3 ]
+       4   ,   4 ]
     sage: shell.run_cell('%display default')
     sage: shell.quit()
 
@@ -51,23 +51,30 @@ This other facility uses a simple
 :class:`~sage.typeset.ascii_art.AsciiArt` object (see and
 :meth:`sage.structure.sage_object.SageObject._ascii_art_`).  """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+from io import StringIO
 
 from IPython.core.formatters import DisplayFormatter, PlainTextFormatter
 from IPython.utils.py3compat import unicode_to_str
+from IPython.core.display import DisplayObject
+
+from ipywidgets.widgets.interaction import interactive
 
 from sage.repl.display.pretty_print import SagePrettyPrinter
 
+IPYTHON_NATIVE_TYPES = (DisplayObject, interactive)
 
-PLAIN_TEXT = u'text/plain'
-TEXT_HTML = u'text/html'
+PLAIN_TEXT = 'text/plain'
+TEXT_LATEX = 'text/latex'
+TEXT_HTML = 'text/html'
 
 
 class SageDisplayFormatter(DisplayFormatter):
@@ -96,37 +103,6 @@ class SageDisplayFormatter(DisplayFormatter):
         self.dm = get_display_manager()
         from sage.repl.rich_output.backend_ipython import BackendIPython
         self.dm.check_backend_class(BackendIPython)
-
-    def default_mime(self):
-        r"""
-        Return the default mime output(s)
-
-        If these are the only output mime types from the Sage rich output machinery, then
-        :meth:`format` will try to fall back to IPythons internal formatting.
-
-        OUTPUT:
-
-        List of mime type strings. Usually just text/plain, though possibly more depending on
-        display manager preferences.
-
-        EXAMPLES::
-
-            sage: from sage.repl.interpreter import get_test_shell
-            sage: from sage.repl.rich_output.backend_ipython import BackendIPython
-            sage: backend = BackendIPython()
-            sage: shell = get_test_shell()
-            sage: backend.install(shell=shell)
-            sage: shell.run_cell('get_ipython().display_formatter.default_mime()')
-            [u'text/plain']
-            sage: shell.run_cell('%display latex')   # indirect doctest
-            sage: shell.run_cell('get_ipython().display_formatter.default_mime()')
-            \newcommand{\Bold}[1]{\mathbf{#1}}\left[\verb|text/plain|, \verb|text/html|\right]
-            sage: shell.run_cell('%display default')
-            sage: shell.quit()
-        """
-        if self.dm.preferences.text == 'latex':
-            return [PLAIN_TEXT, TEXT_HTML]
-        return [PLAIN_TEXT]
 
     def format(self, obj, include=None, exclude=None):
         r"""
@@ -173,8 +149,8 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('ipython_image')
             <IPython.core.display.Image object>
             sage: shell.run_cell('get_ipython().display_formatter.format(ipython_image)')
-            ({u'image/png': ...'\x89PNG...',
-              u'text/plain': u'<IPython.core.display.Image object>'},
+            ({'image/png': ...,
+              'text/plain': '<IPython.core.display.Image object>'},
             {})
 
         Test that IPython images still work even in latex output mode::
@@ -182,7 +158,7 @@ class SageDisplayFormatter(DisplayFormatter):
             sage: shell.run_cell('%display latex')   # indirect doctest
             sage: shell.run_cell('set(get_ipython().display_formatter.format(ipython_image)[0].keys())'
             ....:                ' == set(["text/plain", "image/png"])')
-            \newcommand{\Bold}[1]{\mathbf{#1}}\mathrm{True}
+            True
             sage: shell.run_cell('%display default')
             sage: shell.quit()
 
@@ -196,21 +172,22 @@ class SageDisplayFormatter(DisplayFormatter):
             __repr__ called
             I am repper
         """
-        # First, use Sage rich output if there is any
         sage_format, sage_metadata = self.dm.displayhook(obj)
         assert PLAIN_TEXT in sage_format, 'plain text is always present'
-        if not set(sage_format.keys()).issubset(self.default_mime()):
+        # use Sage rich output for any except those native to IPython, but only
+        # if it is not plain and dull
+        if (not isinstance(obj, IPYTHON_NATIVE_TYPES) and
+            not set(sage_format.keys()).issubset([PLAIN_TEXT])):
             return sage_format, sage_metadata
-        # Second, try IPython widgets (obj._ipython_display_ and type registry)
         if self.ipython_display_formatter(obj):
+            # object handled itself, don't proceed
             return {}, {}
-        # Finally, try IPython rich representation (obj._repr_foo_ methods and ipython hardcoded types)
+        # try IPython display formatter
         if exclude is not None:
-            exclude = list(exclude) + self.default_mime()
+            exclude = list(exclude) + [PLAIN_TEXT]
         else:
-            exclude = self.default_mime()
-        ipy_format, ipy_metadata = super(SageDisplayFormatter, self).format(
-            obj, include=include, exclude=exclude)
+            exclude = [PLAIN_TEXT]
+        ipy_format, ipy_metadata = super().format(obj, include=include, exclude=exclude)
         if not ipy_format:
             return sage_format, sage_metadata
         ipy_format[PLAIN_TEXT] = sage_format[PLAIN_TEXT]
@@ -251,7 +228,7 @@ class SagePlainTextFormatter(PlainTextFormatter):
         super(SagePlainTextFormatter, self).__init__(*args, **kwds)
 
     def __call__(self, obj):
-        """
+        r"""
         Compute the pretty representation of the object.
 
         Adapted from ``IPython.core.formatters.PlainTextPrettyPrint``.
@@ -282,11 +259,9 @@ class SagePlainTextFormatter(PlainTextFormatter):
         if DOCTEST_MODE:
             # Just to show that this is never executed in any other doctests in the Sage library
             print('---- calling ipython formatter ----')
-        from six import StringIO
         stream = StringIO()
         printer = SagePrettyPrinter(
             stream, self.max_width, unicode_to_str(self.newline))
         printer.pretty(obj)
         printer.flush()
         return stream.getvalue()
-

@@ -24,13 +24,10 @@ This file contains the following elements:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 
 from operator import mul
 from sage.matrix.constructor import matrix
 from sage.functions.other import binomial
-from sage.calculus.var import var
-from sage.misc.functional import symbolic_sum
 from sage.coding.linear_code import AbstractLinearCode, LinearCodeSyndromeDecoder
 from sage.coding.encoder import Encoder
 from sage.combinat.subset import Subsets
@@ -40,8 +37,6 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.interfaces.gap import gfq_gap_to_sage
-from sage.interfaces.all import gap
 from sage.misc.cachefunc import cached_method
 from functools import reduce
 
@@ -653,7 +648,6 @@ class ReedMullerVectorEncoder(Encoder):
         order = C.order()
         num_of_var = C.number_of_variables()
         q = base_field.cardinality()
-        dimension = C.dimension()
         points = base_field**num_of_var
         matrix_list = []
         max_individual_degree = min(order, (q - 1))

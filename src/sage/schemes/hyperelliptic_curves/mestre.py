@@ -124,8 +124,8 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     ALGORITHM:
 
-    This is Mestre's algorithm [M1991]_. Our implementation is based on the
-    formulae on page 957 of [LY2001]_, cross-referenced with [W1999]_ to
+    This is Mestre's algorithm [Mes1991]_. Our implementation is based on the
+    formulae on page 957 of [LY2001]_, cross-referenced with [Wam1999b]_ to
     correct typos.
 
     First construct Mestre's conic using the :func:`Mestre_conic` function.
@@ -139,17 +139,6 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
     where `c_{ijk}` are defined as rational functions in the invariants
     (see the source code for detailed formulae for `c_{ijk}`).
     The output is the hyperelliptic curve `y^2 = f`.
-
-    REFERENCES:
-
-    .. [LY2001] \K. Lauter and T. Yang, "Computing genus 2 curves from
-       invariants on the Hilbert moduli space", Journal of Number Theory 131
-       (2011), pages 936 - 958
-    .. [M1991] \J.-F. Mestre, "Construction de courbes de genre 2 a partir de
-       leurs modules", in Effective methods in algebraic geometry
-       (Castiglioncello, 1990), volume 94 of Progr. Math., pages 313 - 334
-    .. [W1999] \P. van Wamelen, Pari-GP code, section "thecubic"
-       https://www.math.lsu.edu/~wamelen/Genus2/FindCurve/igusa2curve.gp
     """
     from sage.structure.sequence import Sequence
     i = Sequence(i)
@@ -263,7 +252,7 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
     ALGORITHM:
 
     The formulas are taken from pages 956 - 957 of [LY2001]_ and based on pages
-    321 and 332 of [M1991]_.
+    321 and 332 of [Mes1991]_.
 
     See the code or [LY2001]_ for the detailed formulae defining x, y, z and L.
 

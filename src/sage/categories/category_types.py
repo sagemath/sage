@@ -4,7 +4,6 @@ Specific category classes
 This is placed in a separate file from categories.py to avoid circular imports
 (as morphisms must be very low in the hierarchy with the new coercion model).
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu> and
@@ -21,6 +20,8 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.categories.objects', 'Objects')
 lazy_import('sage.misc.latex', 'latex')
 
+lazy_import('sage.categories.chain_complexes', 'ChainComplexes',
+            deprecation=29917)
 
 ####################################################################
 #   Different types of categories
@@ -614,38 +615,3 @@ class Category_ideal(Category_in_ambient):
         if v in self:
             return v
         return self.ring().ideal(v)
-
-# TODO: make this into a better category
-#############################################################
-# ChainComplex
-#############################################################
-class ChainComplexes(Category_module):
-    """
-    The category of all chain complexes over a base ring.
-
-    EXAMPLES::
-
-        sage: ChainComplexes(RationalField())
-        Category of chain complexes over Rational Field
-
-        sage: ChainComplexes(Integers(9))
-        Category of chain complexes over Ring of integers modulo 9
-
-     TESTS::
-
-        sage: TestSuite(ChainComplexes(RationalField())).run()
-    """
-
-    def super_categories(self):
-        """
-        EXAMPLES::
-
-            sage: ChainComplexes(Integers(9)).super_categories()
-            [Category of modules over Ring of integers modulo 9]
-        """
-        from sage.categories.all import Fields, Modules, VectorSpaces
-        base_ring = self.base_ring()
-        if base_ring in Fields():
-            return [VectorSpaces(base_ring)]
-        return [Modules(base_ring)]
-

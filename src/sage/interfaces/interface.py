@@ -35,16 +35,15 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six import iteritems, integer_types, string_types
 
 import operator
 
 from sage.structure.sage_object import SageObject
 from sage.structure.parent_base import ParentWithBase
 from sage.structure.element import Element, parent
+from sage.structure.richcmp import rich_to_bool
 
 import sage.misc.sage_eval
 from sage.misc.fast_methods import WithEqualityById
@@ -268,6 +267,14 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: a = gp(2); gp(a) is a
             True
 
+        TESTS:
+
+        Check conversion of Booleans (:trac:`28705`)::
+
+            sage: giac(True)
+            true
+            sage: maxima(True)
+            true
         """
         cls = self._object_class()
 
@@ -284,16 +291,23 @@ class Interface(WithEqualityById, ParentWithBase):
             except (NotImplementedError, TypeError):
                 pass
 
-        if isinstance(x, string_types):
+        if isinstance(x, str):
             return cls(self, x, name=name)
         try:
-            return self._coerce_from_special_method(x)
+            # Special methods do not and should not have an option to
+            # set the name directly, as the identifier assigned by the
+            # interface should stay consistent. An identifier with a
+            # user-assigned name might change its value, so we return a
+            # new element.
+            result = self._coerce_from_special_method(x)
+            return result if name is None else result.name(new_name=name)
         except TypeError:
             raise
         except AttributeError:
             pass
         try:
-            return self._coerce_impl(x, use_special=False)
+            result = self._coerce_impl(x, use_special=False)
+            return result if name is None else result.name(new_name=name)
         except TypeError as msg:
             try:
                 return cls(self, str(x), name=name)
@@ -318,7 +332,9 @@ class Interface(WithEqualityById, ParentWithBase):
             return self(x._interface_init_())
 
     def _coerce_impl(self, x, use_special=True):
-        if isinstance(x, integer_types):
+        if isinstance(x, bool):
+            return self(self._true_symbol() if x else self._false_symbol())
+        elif isinstance(x, int):
             import sage.rings.all
             return self(sage.rings.all.Integer(x))
         elif isinstance(x, float):
@@ -538,7 +554,7 @@ class Interface(WithEqualityById, ParentWithBase):
         for i, arg in enumerate(args):
             if not isinstance(arg, InterfaceElement) or arg.parent() is not self:
                 args[i] = self(arg)
-        for key, value in iteritems(kwds):
+        for key, value in kwds.items():
             if not isinstance(value, InterfaceElement) or value.parent() is not self:
                 kwds[key] = self(value)
 
@@ -572,9 +588,9 @@ class Interface(WithEqualityById, ParentWithBase):
         EXAMPLES::
 
             sage: maxima.quad_qags(x, x, 0, 1, epsrel=1e-4)
-            [0.5,0.55511151231257...e-14,21,0]
+            [0.5,5.5511151231257...e-15,21,0]
             sage: maxima.function_call('quad_qags', [x, x, 0, 1], {'epsrel':'1e-4'})
-            [0.5,0.55511151231257...e-14,21,0]
+            [0.5,5.5511151231257...e-15,21,0]
         """
         args, kwds = self._convert_args_kwds(args, kwds)
         self._check_valid_function_name(function)
@@ -689,7 +705,8 @@ class InterfaceElement(Element):
     def __init__(self, parent, value, is_name=False, name=None):
         Element.__init__(self, parent)
         self._create = value
-        if parent is None: return     # means "invalid element"
+        if parent is None:
+            return     # means "invalid element"
         # idea: Joe Wetherell -- try to find out if the output
         # is too long and if so get it using file, otherwise
         # don't.
@@ -781,9 +798,9 @@ class InterfaceElement(Element):
             "abc"
             sage: loads(dumps(pari([1,2,3])))
             [1, 2, 3]
-            sage: loads(dumps(r('"abc"')))
+            sage: loads(dumps(r('"abc"')))                                        # optional - rpy2
             [1] "abc"
-            sage: loads(dumps(r([1,2,3])))
+            sage: loads(dumps(r([1,2,3])))                                        # optional - rpy2
             [1] 1 2 3
             sage: loads(dumps(maxima([1,2,3])))
             [1,2,3]
@@ -834,10 +851,11 @@ class InterfaceElement(Element):
         by the doctests because the original identifier was reused. This test makes sure
         that does not happen again:
 
-            sage: a = r("'abc'")
-            sage: b = dumps(a)
-            sage: r.set(a.name(), 0) # make identifier reuse doesn't accidentally lead to success
-            sage: loads(b)
+            sage: a = r("'abc'")                                                  # optional - rpy2
+            sage: b = dumps(a)                                                    # optional - rpy2
+            sage: r.set(a.name(), 0) # make sure that identifier reuse            # optional - rpy2
+            ....:                    # does not accidentally lead to success
+            sage: loads(b)                                                        # optional - rpy2
             [1] "abc"
 
         """
@@ -875,7 +893,7 @@ class InterfaceElement(Element):
         """
         return hash('%s' % self)
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         Comparison of interface elements.
 
@@ -916,26 +934,21 @@ class InterfaceElement(Element):
         try:
             if P.eval("%s %s %s"%(self.name(), P._equality_symbol(),
                                      other.name())) == P._true_symbol():
-                return 0
+                return rich_to_bool(op, 0)
         except RuntimeError:
             pass
         try:
             if P.eval("%s %s %s"%(self.name(), P._lessthan_symbol(), other.name())) == P._true_symbol():
-                return -1
+                return rich_to_bool(op, -1)
         except RuntimeError:
             pass
         try:
             if P.eval("%s %s %s"%(self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
-                return 1
+                return rich_to_bool(op, 1)
         except Exception:
             pass
 
-        # everything is supposed to be comparable in Python, so we define
-        # the comparison thus when no comparison is available in interfaced system.
-        if hash(self) < hash(other):
-            return -1
-        else:
-            return 1
+        return NotImplemented
 
     def is_string(self):
         """
@@ -1013,17 +1026,22 @@ class InterfaceElement(Element):
         string = repr(self).replace('\n',' ').replace('\r', '')
         # Translate the external program's function notation to Sage's
         lfd = self.parent()._left_func_delim()
-        if '(' != lfd:  string = string.replace(lfd, '(')
+        if '(' != lfd:
+            string = string.replace(lfd, '(')
         rfd = self.parent()._right_func_delim()
-        if ')' != rfd:  string = string.replace(rfd, ')')
+        if ')' != rfd:
+            string = string.replace(rfd, ')')
         # Translate the external program's list formatting to Sage's
         lld = self.parent()._left_list_delim()
-        if '[' != lld:      string = string.replace(lld, '[')
+        if '[' != lld:
+            string = string.replace(lld, '[')
         rld = self.parent()._right_list_delim()
-        if ']' != rld:      string = string.replace(rld, ']')
+        if ']' != rld:
+            string = string.replace(rld, ']')
         # Translate the external program's exponent formatting
         expl = self.parent()._exponent_symbol()
-        if 'e' != expl: string = string.replace(expl, 'e')
+        if 'e' != expl:
+            string = string.replace(expl, 'e')
         return string
 
     def _sage_(self):
@@ -1087,7 +1105,7 @@ class InterfaceElement(Element):
         To implement a custom string representation, override the method
         ``_repr_``, but do not override this double underscore method.
 
-        EXAMPLE:
+        EXAMPLES:
 
         Here is one example showing that the string representation will
         be cached when requested::
@@ -1118,7 +1136,7 @@ class InterfaceElement(Element):
         except ValueError as msg:
             return '(invalid {} object -- {})'.format(self.parent() or type(self), msg)
         cr = getattr(self, '_cached_repr', None)
-        if isinstance(cr, string_types):
+        if isinstance(cr, str):
             s = cr
         else:
             s = self._repr_()
@@ -1263,13 +1281,7 @@ class InterfaceElement(Element):
 
     def bool(self):
         """
-        Return whether this element is equal to ``True``.
-
-        NOTE:
-
-        This method needs to be overridden if the subprocess would
-        not return a string representation of a boolean value unless
-        an explicit print command is used.
+        Convert this element to a boolean.
 
         EXAMPLES::
 
@@ -1279,33 +1291,39 @@ class InterfaceElement(Element):
             True
 
         """
-        P = self._check_valid()
-        t = P._true_symbol()
-        cmd = '%s %s %s'%(self._name, P._equality_symbol(), t)
-        return P.eval(cmd) == t
+        return bool(self)
 
     def __bool__(self):
         """
+        Return whether this element is not ``False``.
+
+        .. NOTE::
+
+            This method needs to be overridden if the subprocess would
+            not return a string representation of a boolean value unless
+            an explicit print command is used.
+
         EXAMPLES::
 
             sage: bool(maxima(0))
             False
             sage: bool(maxima(1))
             True
+
+        TESTS:
+
+        By default this returns ``True`` for elements that are considered to be
+        not ``False`` by the interface (:trac:`28705`)::
+
+            sage: bool(giac('"a"'))
+            True
         """
-        return self.bool()
+        P = self._check_valid()
+        cmd = '%s %s %s' % (self._name, P._equality_symbol(),
+                            P._false_symbol())
+        return P.eval(cmd) != P._true_symbol()
 
     __nonzero__ = __bool__
-
-    def __long__(self):
-        """
-        EXAMPLES::
-
-            sage: m = maxima('1')
-            sage: long(m)
-            1L
-        """
-        return long(repr(self))
 
     def __float__(self):
         """
@@ -1359,13 +1377,13 @@ class InterfaceElement(Element):
 
         EXAMPLES::
 
-            sage: x = r([1,2,3]); x
+            sage: x = r([1,2,3]); x                                               # optional - rpy2
             [1] 1 2 3
-            sage: x.name()
+            sage: x.name()                                                        # optional - rpy2
             'sage...'
-            sage: x = r([1,2,3]).name('x'); x
+            sage: x = r([1,2,3]).name('x'); x                                     # optional - rpy2
             [1] 1 2 3
-            sage: x.name()
+            sage: x.name()                                                        # optional - rpy2
             'x'
 
         ::
@@ -1377,7 +1395,7 @@ class InterfaceElement(Element):
             's5'
         """
         if new_name is not None:
-            if not isinstance(new_name, string_types):
+            if not isinstance(new_name, str):
                 raise TypeError("new_name must be a string")
             p = self.parent()
             p.set(new_name, self._name)

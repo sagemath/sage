@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
-# This command is specifically for pip-installing from a local
-# source directory, as opposed to from a package index via package
-# name.  That is, it is for pip-installing Sage spkgs from their
-# extracted upstream sources.
-#
-# This ensures that any previous installations of the same package
-# are uninstalled first.
+# This command is specifically for pip-installing a previously
+# built wheel.
 
 # Default arguments for all packages installed with `pip install`
 # --ignore-installed : Force pip to re-install package even if it thinks it's
@@ -17,79 +12,28 @@
 #                      This also disables pip's version self-check.
 # --isolated         : Don't read configuration files such as
 #                      ~/.pydistutils.cfg
-# --no-build-isolation:Build the package in the usual Python environment
-#                      (containing the dependencies) instead of an
-#                      "isolated" environment
-pip_install_flags="--ignore-installed --verbose --no-deps --no-index --isolated --no-build-isolation"
+pip_install_flags="--ignore-installed --verbose --no-deps --no-index --isolated"
 
-# Consume any additional pip install arguments except the last one
-while [ $# -gt 1 ]; do
-    pip_install_flags="$pip_install_flags $1"
-    shift
-done
+# Note: "sage-pip-install" is meant to be run after $(PYTHON) has
+# been installed (either as an spkg or as a venv over a system python3).
+# It is then guaranteed by sage-env that PATH is set in a way that "python3"
+# refers to the correct python3.
+#
+# All SPKGs that use this script must therefore declare $(PYTHON) as a
+# dependency.
+PYTHON=python3
 
-# Last argument must be "." and will be ignored
-if [ "$1" != "." ]; then
-    echo >&2 "$0 requires . as final argument"
-    exit 1
-fi
+# The PIP variable is only used to determine the name of the lock file.
+PIP=pip3
 
-
-# Note: We need to take care to specify the full path to Sage's Python here
-# to emphasize that this command hould use it, and not the system Python;
-# see https://trac.sagemath.org/ticket/18438
-if [ "$SAGE_PYTHON3" = yes ]; then
-    PYTHON="$SAGE_LOCAL/bin/python3"
-    PIP=pip3
-else
-    PYTHON="$SAGE_LOCAL/bin/python2"
-    PIP=pip2
-fi
-
-
-# Find out the name of the package that we are installing
-name="$($PYTHON setup.py --name)"
-
-if [ $? -ne 0 ]; then
-    echo >&2 "Error: could not determine package name"
-    exit 1
-fi
-
-if [ $(echo "$name" | wc -l) -gt 1 ]; then
-    name="$(echo "$name" | tail -1)"
-    echo >&2 "Warning: This package has a badly-behaved setup.py which outputs"
-    echo >&2 "more than the package name for 'setup.py --name'; using the last"
-    echo >&2 "line as the package name: $name"
-fi
-
-
-# We should avoid running pip2/3 while uninstalling a package because that
+# We should avoid running pip while installing a package because that
 # is prone to race conditions. Therefore, we use a lockfile while
 # running pip. This is implemented in the Python script sage-flock
 LOCK="$SAGE_LOCAL/var/lock/$PIP.lock"
 
-# Keep uninstalling as long as it succeeds
-while true; do
-    out=$(sage-flock -x $LOCK $PYTHON -m pip uninstall --disable-pip-version-check -y "$name" 2>&1)
-    if [ $? -ne 0 ]; then
-        # Uninstall failed
-        echo >&2 "$out"
-        exit 1
-    fi
-
-    # Uninstall succeeded, which may mean that the package was not
-    # installed to begin with.
-    if [[ "$out" != *"not installed" ]]; then
-        break
-    fi
-done
-
-
 # Finally actually do the installation (the "SHARED" tells pip2/3-lock
 # to apply a shared lock)
-echo "Installing package $name using $PIP"
-
-sage-flock -s $LOCK $PYTHON -m pip install $pip_install_flags .
+sage-flock -s $LOCK $PYTHON -m pip install $pip_install_flags "$@"
 if [ $? -ne 0 ]; then
     echo >&2 "Error: installing with $PIP failed"
     exit 3

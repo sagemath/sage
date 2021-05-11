@@ -130,7 +130,7 @@ void interval_products_wrapper(vector<mat_ZZ_p>& output,
          output.clear();
          mat_ZZ_p temp;
          temp.SetDims(r, r);
-         for (int i = 0; i < target.size()/2; i++)
+         for (size_t i = 0; i < target.size()/2; i++)
          {
             for (int x = 0; x < r; x++)
             for (int y = 0; y < r; y++)
@@ -161,7 +161,6 @@ void interval_products_wrapper(vector<mat_ZZ_p>& output,
       zz_p::init(to_long(modulus));
 
       // Convert input data to single-precision format
-      int dim = M0.NumRows();
       mat_zz_p M0_sp = to_mat_zz_p(to_mat_ZZ(M0));
       mat_zz_p M1_sp = to_mat_zz_p(to_mat_ZZ(M1));
 
@@ -173,12 +172,30 @@ void interval_products_wrapper(vector<mat_ZZ_p>& output,
 
       // convert output back to ZZ_p format
       output.resize(output_sp.size());
-      for (int i = 0; i < output_sp.size(); i++)
+      for (size_t i = 0; i < output_sp.size(); i++)
          output[i] = to_mat_ZZ_p(to_mat_ZZ(output_sp[i]));
 
       // restore old single-precision modulus
       context.restore();
    }
+}
+
+void hypellfrob_interval_products_wrapper(mat_ZZ_p& output,
+                               const mat_ZZ_p& M0, const mat_ZZ_p& M1,
+                               const vector<ZZ>& target,
+                               int force_ntl = 0)
+{
+   vector<mat_ZZ_p> mat_vector;
+   interval_products_wrapper(mat_vector, M0, M1, target, force_ntl);
+   int r = M0.NumRows();
+   output.SetDims(r, r * mat_vector.size());
+
+   for (size_t i = 0; i < mat_vector.size(); i++)
+      for (int x = 0; x < r; x++)
+         for (int y = 0; y < r; y++)
+         {
+            output[y][x + i*r] = mat_vector[i][y][x];
+         }
 }
 
 
@@ -556,7 +573,7 @@ int matrix(mat_ZZ& output, const ZZ& p, int N, const ZZX& Q, int force_ntl)
       }
 
       // Divide out each MH[k] by DH[k].
-      for (int k = 0; k < MH.size(); k++)
+      for (size_t k = 0; k < MH.size(); k++)
       {
          ZZ_p Dinv = 1 / DH[k][0][0];
 

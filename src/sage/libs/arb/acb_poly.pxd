@@ -1,9 +1,11 @@
-# distutils: libraries = gmp flint arb
+# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: depends = acb_poly.h
 
 from sage.libs.arb.types cimport *
-from sage.libs.flint.types cimport fmpz_poly_t, fmpq_poly_t
+from sage.libs.flint.types cimport fmpz_t, fmpz_poly_t, fmpq_poly_t
 
-cdef extern from "acb_poly.h":
+# acb_poly.h
+cdef extern from "arb_wrap.h":
     void acb_poly_init(acb_poly_t poly)
     void acb_poly_clear(acb_poly_t poly)
     void acb_poly_fit_length(acb_poly_t poly, long len)
@@ -191,6 +193,8 @@ cdef extern from "acb_poly.h":
     void acb_poly_cosh_series(acb_poly_t c, const acb_poly_t h, long n, long prec)
     void _acb_poly_sinc_series(acb_ptr s, acb_srcptr h, long hlen, long n, long prec)
     void acb_poly_sinc_series(acb_poly_t s, const acb_poly_t h, long n, long prec)
+    void _acb_poly_lambertw_series(acb_ptr res, acb_srcptr z, long zlen, const fmpz_t k, int flags, long len, long prec)
+    void acb_poly_lambertw_series(acb_poly_t res, const acb_poly_t z, const fmpz_t k, int flags, long len, long prec)
     void _acb_poly_gamma_series(acb_ptr res, acb_srcptr h, long hlen, long n, long prec)
     void acb_poly_gamma_series(acb_poly_t res, const acb_poly_t h, long n, long prec)
     void _acb_poly_rgamma_series(acb_ptr res, acb_srcptr h, long hlen, long n, long prec)
@@ -209,10 +213,10 @@ cdef extern from "acb_poly.h":
     # void _acb_poly_zeta_em_bound(arb_ptr vec, const acb_t s, const acb_t a, unsigned long N, unsigned long M, long d, long wp)
     void _acb_poly_zeta_em_tail_naive(acb_ptr z, const acb_t s, const acb_t Na, acb_srcptr Nasx, long M, long len, long prec)
     void _acb_poly_zeta_em_tail_bsplit(acb_ptr z, const acb_t s, const acb_t Na, acb_srcptr Nasx, long M, long len, long prec)
-    void _acb_poly_zeta_em_sum(acb_ptr z, const acb_t s, const acb_t a, int deflate, unsigned long N, unsigned long M, long d, long prec)
-    void _acb_poly_zeta_cpx_series(acb_ptr z, const acb_t s, const acb_t a, int deflate, long d, long prec)
-    void _acb_poly_zeta_series(acb_ptr res, acb_srcptr h, long hlen, const acb_t a, int deflate, long len, long prec)
-    void acb_poly_zeta_series(acb_poly_t res, const acb_poly_t f, const acb_t a, int deflate, long n, long prec)
+    void _acb_poly_zeta_em_sum(acb_ptr z, const acb_t s, const acb_t a, bint deflate, unsigned long N, unsigned long M, long d, long prec)
+    void _acb_poly_zeta_cpx_series(acb_ptr z, const acb_t s, const acb_t a, bint deflate, long d, long prec)
+    void _acb_poly_zeta_series(acb_ptr res, acb_srcptr h, long hlen, const acb_t a, bint deflate, long len, long prec)
+    void acb_poly_zeta_series(acb_poly_t res, const acb_poly_t f, const acb_t a, bint deflate, long n, long prec)
     void _acb_poly_polylog_cpx_small(acb_ptr w, const acb_t s, const acb_t z, long len, long prec)
     void _acb_poly_polylog_cpx_zeta(acb_ptr w, const acb_t s, const acb_t z, long len, long prec)
     void _acb_poly_polylog_cpx(acb_ptr w, const acb_t s, const acb_t z, long len, long prec)

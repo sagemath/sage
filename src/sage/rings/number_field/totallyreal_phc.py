@@ -77,14 +77,8 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
     NOTES:
 
-    See Cohen [Cohen2000]_ for the general idea and unpublished work of the
+    See Cohen [Coh2000]_ for the general idea and unpublished work of the
     author for more detail.
-
-    REFERENCES:
-
-    .. [Cohen2000] Henri Cohen, Advanced topics in computational number theory,
-       Graduate Texts in Mathematics, vol. 193, Springer-Verlag, New York,
-       2000.
 
     AUTHORS:
 

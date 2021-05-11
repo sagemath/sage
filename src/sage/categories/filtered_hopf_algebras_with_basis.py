@@ -14,8 +14,6 @@ from sage.categories.filtered_modules import FilteredModulesCategory
 from sage.categories.with_realizations import WithRealizationsCategory
 from sage.misc.cachefunc import cached_method
 
-import six
-
 
 class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
     """
@@ -36,7 +34,8 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
         Category of filtered hopf algebras with basis over Integer Ring
         sage: C.super_categories()
         [Category of hopf algebras with basis over Integer Ring,
-         Category of filtered algebras with basis over Integer Ring]
+         Category of filtered algebras with basis over Integer Ring,
+         Category of filtered coalgebras with basis over Integer Ring]
 
         sage: C is HopfAlgebras(ZZ).WithBasis().Filtered()
         True
@@ -55,7 +54,8 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
 
                 sage: HopfAlgebrasWithBasis(QQ).Filtered().WithRealizations().super_categories()
                 [Join of Category of hopf algebras over Rational Field
-                     and Category of filtered algebras over Rational Field]
+                     and Category of filtered algebras over Rational Field
+                     and Category of filtered coalgebras over Rational Field]
 
             TESTS::
 
@@ -130,7 +130,7 @@ class FilteredHopfAlgebrasWithBasis(FilteredModulesCategory):
                 """
                 return self.linear_combination(
                     (self.antipode_on_basis(mon), coeff)
-                    for mon, coeff in six.iteritems(elem.monomial_coefficients(copy=False))
+                    for mon, coeff in elem.monomial_coefficients(copy=False).items()
                 )
 
         class ElementMethods:

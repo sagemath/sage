@@ -23,7 +23,7 @@ number fields, such as calculations with matrices of cyclotomics.
 
 REFERENCES:
 
-.. [Bre97] \T. Breuer "Integral bases for subfields of cyclotomic fields" AAECC 8, 279--289 (1997).
+- [Bre1997]
 
 EXAMPLES::
 
@@ -160,7 +160,9 @@ AUTHORS:
 - Vincent Delecroix (2015): complete rewriting using libgap (see :trac:`18152`)
 
 - Sebastian Oehms (2018): deleting the method is_finite since it returned the wrong result (see :trac:`25686`)
+- Sebastian Oehms (2019): add :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
 """
+
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.richcmp import rich_to_bool
@@ -203,6 +205,46 @@ def late_import():
     from sage.interfaces import (gap, gap3)
 
 
+def UCF_sqrt_int(N, UCF):
+    r"""
+    Return the square root of the integer ``N``.
+
+    EXAMPLES::
+
+        sage: from sage.rings.universal_cyclotomic_field import UCF_sqrt_int
+        sage: UCF = UniversalCyclotomicField()
+        sage: UCF_sqrt_int(0, UCF)
+        0
+        sage: UCF_sqrt_int(1, UCF)
+        1
+        sage: UCF_sqrt_int(-1, UCF)
+        E(4)
+        sage: UCF_sqrt_int(2, UCF)
+        E(8) - E(8)^3
+        sage: UCF_sqrt_int(-2, UCF)
+        E(8) + E(8)^3
+
+    TESTS::
+
+        sage: from sage.rings.universal_cyclotomic_field import UCF_sqrt_int
+        sage: all(UCF_sqrt_int(ZZ(n), UCF)**2 == n for n in range(-10, 10))
+        True
+    """
+    if not N:
+        return UCF.zero()
+
+    res = UCF.one() if N > 0 else UCF.zeta(4)
+    for p, e in N.factor():
+        if p == 2:
+            res *= (UCF.zeta(8) + UCF.zeta(8, 7))**e
+        else:
+            res *= UCF.sum(UCF.zeta(p, n**2) for n in range(p))**e
+        if p % 4 == 3:
+            res *= (UCF.zeta(4))**e
+
+    return res
+
+
 class UCFtoQQbar(Morphism):
     r"""
     Conversion to ``QQbar``.
@@ -214,7 +256,7 @@ class UCFtoQQbar(Morphism):
         -0.500000000000000? + 0.866025403784439?*I
 
         sage: CC(UCF.gen(7,2) + UCF.gen(7,6))
-        0.400968867902419 + 0.193096429713794*I
+        0.400968867902419 + 0.193096429713793*I
 
         sage: complex(E(7)+E(7,2))
         (0.40096886790241915+1.7567593946498534j)
@@ -489,8 +531,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: SR(1+E(4))
             I + 1
         """
-        from sage.symbolic.constants import pi
-        from sage.symbolic.all import i as I
+        from sage.symbolic.constants import pi, I
         k = ZZ(self._obj.Conductor())
         coeffs = self._obj.CoeffsCyc(k).sage()
         s = R.zero()
@@ -572,9 +613,8 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: UCF = UniversalCyclotomicField()
             sage: hash(UCF.zero())  # indirect doctest
             0
-            sage: hash(UCF.gen(3,2))
-            313156239               # 32-bit
-            1524600308199219855     # 64-bit
+            sage: hash(UCF.gen(3,2)) == hash((3,0,0,1))
+            True
 
         TESTS:
 
@@ -937,19 +977,152 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
     inverse = __invert__
 
-    def sqrt(self):
+    def _pow_(self, other):
+        r"""
+        TESTS::
+
+            sage: UCF = UniversalCyclotomicField()
+            sage: UCF(3/2) ** (1/2)
+            -1/2*E(24) + 1/2*E(24)^11 + 1/2*E(24)^17 - 1/2*E(24)^19
+
+            sage: (1/2 + UCF.zeta(4)) ** (1/2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: no powering implemented beyond square root of rationals
+
+            sage: UCF(3/2) ** UCF.zeta(3)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: no powering implemented for non-rational exponents
         """
-        Return a square root of ``self`` as an algebraic number.
+        if other._obj.IsRat():
+            other = other._obj.sage()
+            num = other.numerator()
+            den = other.denominator()
+            if den.is_one():
+                return self ** num
+            if den == 2 and self._obj.IsRat():
+                return self.sqrt() ** num
+            else:
+                raise NotImplementedError("no powering implemented beyond square root of rationals")
+
+        raise NotImplementedError("no powering implemented for non-rational exponents")
+
+    def is_square(self):
+        r"""
+        EXAMPLES::
+
+            sage: UCF = UniversalCyclotomicField()
+            sage: UCF(5/2).is_square()
+            True
+
+            sage: UCF.zeta(7,3).is_square()
+            True
+
+            sage: (2 + UCF.zeta(3)).is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not fully implemented for elements of Universal Cyclotomic Field
+        """
+        if self._obj.IsRat():
+            return True
+
+        k = self._obj.Conductor()
+        coeffs = self._obj.CoeffsCyc(k).sage()
+        if sum(bool(x) for x in coeffs) == 1:
+            return True
+
+        raise NotImplementedError("is_square() not fully implemented for elements of Universal Cyclotomic Field")
+
+    def sqrt(self, extend=True, all=False):
+        """
+        Return a square root of ``self``.
+
+        With default options, the output is an element of the universal
+        cyclotomic field when this element is expressed via a single root
+        of unity (including rational numbers). Otherwise, return an algebraic
+        number.
+
+        INPUT:
+
+        -  ``extend`` -- bool (default: ``True``); if ``True``, might return a
+           square root in the algebraic closure of the rationals. If false,
+           return a square root in the universal cyclotomic field or raises
+           an error.
+
+        -  ``all`` -- bool (default: ``False``); if ``True``, return a
+           list of all square roots.
 
         EXAMPLES::
 
-            sage: f = E(33)
-            sage: f.sqrt()
-            0.9954719225730846? + 0.0950560433041827?*I
-            sage: f.sqrt()**2 == f
-            True
+            sage: UCF = UniversalCyclotomicField()
+            sage: UCF(3).sqrt()
+            E(12)^7 - E(12)^11
+            sage: (UCF(3).sqrt())**2
+            3
+
+            sage: r = UCF(-1400 / 143).sqrt()
+            sage: r**2
+            -1400/143
+
+            sage: E(33).sqrt()
+            -E(33)^17
+            sage: E(33).sqrt() ** 2
+            E(33)
+
+            sage: (3 * E(5)).sqrt()
+            -E(60)^11 + E(60)^31
+            sage: (3 * E(5)).sqrt() ** 2
+            3*E(5)
+
+        Setting ``all=True`` you obtain the two square roots in a list::
+
+            sage: UCF(3).sqrt(all=True)
+            [E(12)^7 - E(12)^11, -E(12)^7 + E(12)^11]
+            sage: (1 + UCF.zeta(5)).sqrt(all=True)
+            [1.209762576525833? + 0.3930756888787117?*I,
+             -1.209762576525833? - 0.3930756888787117?*I]
+
+        In the following situation, Sage is not (yet) able to compute a
+        square root within the universal cyclotomic field::
+
+            sage: (E(5) + E(5, 2)).sqrt()
+            0.7476743906106103? + 1.029085513635746?*I
+            sage: (E(5) + E(5, 2)).sqrt(extend=False)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: sqrt() not fully implemented for elements of Universal Cyclotomic Field
         """
-        return QQbar(self).sqrt()
+        if all:
+            s = self.sqrt(all=False)
+            return [s, -s]
+
+        UCF = self.parent()
+
+        # rational case
+        if self._obj.IsRat():
+            D = self._obj.sage()
+
+            if self._obj.IsInt():
+                return UCF_sqrt_int(D, UCF)
+            else:
+                return UCF_sqrt_int(D.numerator(), UCF) / \
+                       UCF_sqrt_int(D.denominator(), UCF)
+
+        # root of unity
+        k = self._obj.Conductor()
+        coeffs = self._obj.CoeffsCyc(k).sage()
+        if sum(bool(x) for x in coeffs) == 1:
+            for i, x in enumerate(coeffs):
+                if x:
+                    break
+            return UCF(x).sqrt() * UCF.zeta(2 * k, i)
+
+        # no method to construct square roots yet...
+        if extend:
+            return QQbar(self).sqrt()
+        else:
+            raise NotImplementedError("sqrt() not fully implemented for elements of Universal Cyclotomic Field")
 
     def conjugate(self):
         r"""
@@ -1307,6 +1480,33 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
             of type <type 'sage.libs.gap.element.GapElement_List'> not valid
             to initialize an element of the universal cyclotomic field
 
+        Some conversions from symbolic functions are possible::
+
+            sage: UCF = UniversalCyclotomicField()
+            sage: [UCF(sin(pi/k, hold=True)) for k in range(1,10)]
+            [0,
+             1,
+             -1/2*E(12)^7 + 1/2*E(12)^11,
+             1/2*E(8) - 1/2*E(8)^3,
+             -1/2*E(20)^13 + 1/2*E(20)^17,
+             1/2,
+             -1/2*E(28)^19 + 1/2*E(28)^23,
+             1/2*E(16)^3 - 1/2*E(16)^5,
+             -1/2*E(36)^25 + 1/2*E(36)^29]
+            sage: [UCF(cos(pi/k, hold=True)) for k in range(1,10)]
+            [-1,
+             0,
+             1/2,
+             1/2*E(8) - 1/2*E(8)^3,
+             -1/2*E(5)^2 - 1/2*E(5)^3,
+             -1/2*E(12)^7 + 1/2*E(12)^11,
+             -1/2*E(7)^3 - 1/2*E(7)^4,
+             1/2*E(16) - 1/2*E(16)^7,
+             -1/2*E(9)^4 - 1/2*E(9)^5]
+
+             sage: UCF(1 + sqrt(-3/5))
+             4/5*E(15) + 4/5*E(15)^2 + 4/5*E(15)^4 + 6/5*E(15)^7 + 4/5*E(15)^8 + 6/5*E(15)^11 + 6/5*E(15)^13 + 6/5*E(15)^14
+
         .. TODO::
 
             Implement conversion from QQbar (and as a consequence from the
@@ -1342,8 +1542,11 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
             elt = CyclotomicField(n)(elt)
             return sum(c * self.gen(n, i)
                        for i, c in enumerate(elt._coefficients()))
-        else:
-            raise TypeError("{} of type {} not valid to initialize an element of the universal cyclotomic field".format(elt, type(elt)))
+
+        if hasattr(elt, '_algebraic_'):
+            return elt._algebraic_(self)
+
+        raise TypeError("{} of type {} not valid to initialize an element of the universal cyclotomic field".format(elt, type(elt)))
 
     def _coerce_map_from_(self, other):
         r"""
@@ -1368,6 +1571,118 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
         from sage.rings.number_field.number_field import NumberField_cyclotomic
         if isinstance(other, NumberField_cyclotomic):
             return True
+
+    def _factor_univariate_polynomial(self, f):
+        """
+        Factor the univariate polynomial ``f``.
+
+        INPUT:
+
+        - ``f`` -- a univariate polynomial defined over self
+
+        OUTPUT:
+
+        - A factorization of ``f`` over self into a unit and monic irreducible
+          factors
+
+        .. NOTE::
+
+            This is a helper method for
+            :meth:`sage.rings.polynomial.polynomial_element.Polynomial.factor`.
+
+        EXAMPLES::
+
+            sage: UCF = UniversalCyclotomicField()
+            sage: x = polygen(UCF)
+            sage: p = x^2 +x +1
+            sage: p.factor()             # indirect doctest
+            (x - E(3)) * (x - E(3)^2)
+            sage: p.roots()              # indirect doctest
+            [(E(3), 1), (E(3)^2, 1)]
+
+            sage: (p^2).factor()
+            (x - E(3))^2 * (x - E(3)^2)^2
+
+            sage: cyclotomic_polynomial(12).change_ring(UCF).factor()
+            (x + E(12)^7) * (x - E(12)^11) * (x + E(12)^11) * (x - E(12)^7)
+
+            sage: p = (UCF.zeta(5) + 1) * (x^2 - 2)^2 * (x^2 - 3) * (x - 5)**2 * (x^2 - x + 1)
+            sage: p.factor()
+            (-E(5)^2 - E(5)^3 - E(5)^4) * (x + E(12)^7 - E(12)^11) * (x + E(3)^2) * (x + E(3)) * (x - E(12)^7 + E(12)^11) * (x - 5)^2 * (x - E(8) + E(8)^3)^2 * (x + E(8) - E(8)^3)^2
+            sage: p.factor().value() == p
+            True
+
+            sage: (x^3 - 8).factor()
+            (x - 2) * (x - 2*E(3)) * (x - 2*E(3)^2)
+
+        In most situations, the factorization will fail with a ``NotImplementedError``::
+
+            sage: (x^3 - 2).factor()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: no known factorization for this polynomial
+
+        TESTS::
+
+            sage: UCF = UniversalCyclotomicField()
+            sage: x = polygen(UCF)
+
+            sage: p = (x - 2/7) * (x - 3/5)
+            sage: sorted(p.roots(multiplicities=False))
+            [2/7, 3/5]
+
+            sage: p = UCF.zeta(3) * x - 1 + UCF.zeta(5,2)
+            sage: r = p.roots()
+            sage: r
+            [(-2*E(15) - E(15)^4 - E(15)^7 - E(15)^13, 1)]
+            sage: p(r[0][0])
+            0
+        """
+        from sage.structure.factorization import Factorization
+
+        UCF = self
+        x = f.parent().gen()
+
+        # make the polynomial monic
+        unit = f.leading_coefficient()
+        f /= unit
+
+        # trivial degree one case
+        if f.degree() == 1:
+            return Factorization([(f, 1)], unit)
+
+        # From now on, we restrict to polynomial with rational cofficients. The
+        # factorization is provided only in the case it is a product of
+        # cyclotomic polynomials and quadratic polynomials. In this situation
+        # the roots belong to UCF and the polynomial factorizes as a product of
+        # degree one factors.
+        if any(ZZ(cf._obj.Conductor()) != 1 for cf in f):
+            raise NotImplementedError('no known factorization for this polynomial')
+        f = f.change_ring(QQ)
+
+        factors = []
+        for p, e in f.factor():
+            if p.degree() == 1:
+                factors.append((x + p[0], e))
+
+            elif p.degree() == 2:
+                c = p[0]
+                b = p[1]
+                a = p[2]
+                D = UCF(b**2 - 4 * a * c).sqrt()
+                r1 = (-b - D) / (2 * a)
+                r2 = (-b + D) / (2 * a)
+                factors.append((x - r1, e))
+                factors.append((x - r2, e))
+
+            else:
+                m = p.is_cyclotomic(certificate=True)
+                if not m:
+                    raise NotImplementedError('no known factorization for this polynomial')
+                for i in m.coprime_integers(m):
+                    factors.append((x - UCF.zeta(m, i), e))
+
+        return Factorization(factors, unit)
 
     def degree(self):
         r"""

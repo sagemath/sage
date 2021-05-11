@@ -1,3 +1,9 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 """
 `p`-Adic ``ZZ_pX Element``
 
@@ -19,7 +25,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.ext.stdsage cimport PY_NEW
 from cpython.list cimport *
@@ -301,7 +306,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
                     else:
                         ans[j].append(zero)
             for j from 0 <= j < prec:
-                while len(ans[j]) > 0:
+                while ans[j]:
                     if ans[j][-1] == 0:
                         ans[j].pop()
                     else:
@@ -332,19 +337,19 @@ cdef class pAdicZZpXElement(pAdicExtElement):
                     break
                 self.prime_pow.eis_shift(&shifter, &shifter, self.prime_pow.e, self.prime_pow.capdiv(prec - i))
             zerotest = 0
-        while len(ans) > 0:
+        while ans:
             if ans[-1] == zerotest:
                 ans.pop()
             else:
                 break
-        while len(ans) > 0:
+        while ans:
             if ans[0] == zerotest:
                 ans.pop(0)
             else:
                 break
         return ans
 
-    def norm(self, base = None):
+    def norm(self, base=None):
         """
         Return the absolute or relative norm of this element.
 
@@ -586,11 +591,14 @@ def _test_preprocess_list(R, L):
         sage: _test_preprocess_list(ZqCA(25,names='a',implementation="NTL"), [1/5,mod(2,625),ntl_ZZ_p(3,25)])
         ([1, 10, 15], -1, NTL modulus 125)
         sage: _test_preprocess_list(ZqCA(25,names='a',implementation="NTL"), [1/5,mod(2,625),Zp(5)(5,3)])
-        ([1, 10, 1], -1, NTL modulus 625)
+        ([1, 10, 25], -1, NTL modulus 625)
         sage: _test_preprocess_list(ZqCA(25,names='a',implementation="NTL"), [1/5,mod(2,625),Zp(5)(5,3),0])
-        ([1, 10, 1, 0], -1, NTL modulus 625)
+        ([1, 10, 25, 0], -1, NTL modulus 625)
         sage: _test_preprocess_list(ZqCA(25,names='a',implementation="NTL"), [1/5,mod(2,625),Zp(5)(5,3),mod(0,3125)])
-        ([1, 10, 1, 0], -1, NTL modulus 625)
+        ([1, 10, 25, 0], -1, NTL modulus 625)
+        sage: T.<a> = Qp(5).extension(x^2-5)
+        sage: _test_preprocess_list(T, [5^-1 + O(5)])
+        ([1], -1, NTL modulus 25)
     """
     return preprocess_list(R(0), L)
 
@@ -635,7 +643,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
             elif isinstance(L[i], Integer) or isinstance(L[i], Rational) or isinstance(L[i], (int, long)):
                 L[i] = ntl_ZZ_p(L[i]*pshift_m, ctx)
             elif isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime):
-                L[i] = ntl_ZZ_p((L[i] << min_val).lift(), ctx)
+                L[i] = ntl_ZZ_p((L[i] >> min_val).lift(), ctx)
             elif is_IntegerMod(L[i]):
                 L[i] = ntl_ZZ_p(L[i].lift()*pshift_m, ctx)
             elif (L[i].modulus_context() is not ctx) or min_val != zero:
@@ -653,7 +661,7 @@ cdef preprocess_list(pAdicZZpXElement elt, L):
             elif isinstance(L[i], Integer) or isinstance(L[i], Rational) or isinstance(L[i], (int, long)):
                 L[i] = ntl_ZZ_p(L[i]//pshift_m, ctx)
             elif isinstance(L[i], pAdicGenericElement) and L[i]._is_base_elt(elt.prime_pow.prime):
-                L[i] = ntl_ZZ_p((L[i] << min_val).lift(), ctx)
+                L[i] = ntl_ZZ_p((L[i] >> min_val).lift(), ctx)
             elif is_IntegerMod(L[i]):
                 L[i] = ntl_ZZ_p(L[i].lift()//pshift_m, ctx)
             elif (L[i].modulus_context() is not ctx) or min_val != zero:

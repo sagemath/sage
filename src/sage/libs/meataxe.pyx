@@ -1,3 +1,6 @@
+# distutils: libraries = mtx
+# sage_setup: distribution = sage-meataxe
+
 #*****************************************************************************
 #       Copyright (C) 2017 Simon King <simon.king@uni-jena.de>
 #
@@ -68,7 +71,6 @@ cdef Matrix_t *rawMatrix(int Field, list entries) except NULL:
 
 from sage.cpython.string cimport str_to_bytes, char_to_str
 import os
-from sage.env import DOT_SAGE
 
 cdef void sage_meataxe_error_handler(const MtxErrorRecord_t *err):
     sig_block()
@@ -82,7 +84,8 @@ cdef inline meataxe_init():
     ## Assign to a variable that enables MeatAxe to find
     ## its multiplication tables.
     global MtxLibDir
-    mtxdir = str_to_bytes(os.path.join(DOT_SAGE, 'meataxe'))
+    from sage import env
+    mtxdir = str_to_bytes(env.MTXLIB)
     if len(mtxdir) >= 1024:
         raise RuntimeError(f"the path for the meataxe library {mtxdir!r} is too long, it needs to be of length < 1024")
     MtxLibDir[:len(mtxdir)] = mtxdir

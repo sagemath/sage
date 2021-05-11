@@ -4,6 +4,7 @@ Support for (lib)GAP workspace files
 
 #*****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
+#                     2019 Vincent Delecroix <vincent.delecroix@u-bordeaux.fr>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,6 +15,7 @@ Support for (lib)GAP workspace files
 
 import os
 import time
+import hashlib
 from sage.env import DOT_SAGE, SAGE_LOCAL
 
 
@@ -32,9 +34,6 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
     - ``dir`` -- the directory where the workspaces should be stored.
       By default, this is ``DOT_SAGE/gap``
 
-    If needed, this creates ``dir``. It also removes any obsolete
-    workspaces from ``dir``.
-
     EXAMPLES::
 
         sage: from sage.interfaces.gap_workspace import gap_workspace_file
@@ -47,11 +46,20 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
         sage: D = gap_workspace_file()
         sage: D.startswith(os.path.join(DOT_SAGE, "gap", "gap-workspace-"))
         True
+
+    Check that the name generated is independent of the session::
+
+        sage: from subprocess import Popen, PIPE
+        sage: import sys
+        sage: cmd = 'import sage.all, sage.interfaces.gap_workspace; print(sage.interfaces.gap_workspace.gap_workspace_file())'
+        sage: name1 = Popen([sys.executable, '-c', cmd], stdout=PIPE).communicate()[0]
+        sage: name2 = Popen([sys.executable, '-c', cmd], stdout=PIPE).communicate()[0]
+        sage: assert name1 == name2
     """
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    h = hex(abs(hash(SAGE_LOCAL)))
+    h = hashlib.sha1(SAGE_LOCAL.encode('utf-8')).hexdigest()
     return os.path.join(dir, '%s-%s-%s' % (system, name, h))
 
 

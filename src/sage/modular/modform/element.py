@@ -24,8 +24,6 @@ Class hierarchy:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import absolute_import, division
-from six.moves import range
 
 import sage.modular.hecke.element as element
 
@@ -34,8 +32,7 @@ from sage.arith.srange import xsrange
 from sage.matrix.constructor import matrix
 from sage.misc.all import prod
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import verbose
-from sage.misc.superseded import deprecated_function_alias
+from sage.misc.verbose import verbose
 from sage.modular.dirichlet import DirichletGroup
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modsym.p1list import lift_to_sl2z
@@ -63,22 +60,27 @@ def is_ModularFormElement(x):
     return isinstance(x, ModularFormElement)
 
 
-def delta_lseries(prec=53,
-                 max_imaginary_part=0,
-                 max_asymp_coeffs=40):
+def delta_lseries(prec=53, max_imaginary_part=0,
+                  max_asymp_coeffs=40, algorithm=None):
     r"""
-    Return the L-series of the modular form Delta.
+    Return the L-series of the modular form `\Delta`.
 
-    This actually returns an interface to Tim Dokchitser's program
-    for computing with the L-series of the modular form `\Delta`.
+    If algorithm is "gp", this returns an interface to Tim
+    Dokchitser's program for computing with the L-series of the
+    modular form `\Delta`.
+
+    If algorithm is "pari", this returns instead an interface to Pari's
+    own general implementation of L-functions.
 
     INPUT:
 
-    - ``prec`` - integer (bits precision)
+    - ``prec`` -- integer (bits precision)
 
-    - ``max_imaginary_part`` - real number
+    - ``max_imaginary_part`` -- real number
 
-    - ``max_asymp_coeffs`` - integer
+    - ``max_asymp_coeffs`` -- integer
+
+    - ``algorithm`` -- optional string: 'gp' (default), 'pari'
 
     OUTPUT:
 
@@ -89,21 +91,31 @@ def delta_lseries(prec=53,
         sage: L = delta_lseries()
         sage: L(1)
         0.0374412812685155
+
+        sage: L = delta_lseries(algorithm='pari')
+        sage: L(1)
+        0.0374412812685155
     """
-    from sage.lfunctions.all import Dokchitser
-    # key = (prec, max_imaginary_part, max_asymp_coeffs)
-    L = Dokchitser(conductor = 1,
-                   gammaV = [0, 1],
-                   weight = 12,
-                   eps = 1,
-                   prec = prec)
-    s = 'tau(n) = (5*sigma(n,3)+7*sigma(n,5))*n/12-35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5));'
-    L.init_coeffs('tau(k)',pari_precode = s,
-                  max_imaginary_part=max_imaginary_part,
-                  max_asymp_coeffs=max_asymp_coeffs)
-    L.set_coeff_growth('2*n^(11/2)')
-    L.rename('L-series associated to the modular form Delta')
-    return L
+    if algorithm is None:
+        algorithm = 'pari'
+
+    if algorithm == 'gp':
+        from sage.lfunctions.all import Dokchitser
+        L = Dokchitser(conductor=1, gammaV=[0, 1], weight=12, eps=1,
+                       prec=prec)
+        s = 'tau(n) = (5*sigma(n,3)+7*sigma(n,5))*n/12-35*sum(k=1,n-1,(6*k-4*(n-k))*sigma(k,3)*sigma(n-k,5));'
+        L.init_coeffs('tau(k)', pari_precode=s,
+                      max_imaginary_part=max_imaginary_part,
+                      max_asymp_coeffs=max_asymp_coeffs)
+        L.set_coeff_growth('2*n^(11/2)')
+        L.rename('L-series associated to the modular form Delta')
+        return L
+    elif algorithm == 'pari':
+        from sage.lfunctions.pari import LFunction, lfun_delta
+        return LFunction(lfun_delta(), prec=prec)
+
+    raise ValueError('algorithm must be "gp" or "pari"')
+
 
 
 class ModularForm_abstract(ModuleElement):
@@ -271,10 +283,10 @@ class ModularForm_abstract(ModuleElement):
             sage: f._compute([])
             []
         """
-        if not isinstance(X, list) or len(X) == 0:
+        if not isinstance(X, list) or not X:
             return []
         bound = max(X)
-        q_exp = self.q_expansion(bound+1)
+        q_exp = self.q_expansion(bound + 1)
         return [q_exp[i] for i in X]
 
     def coefficients(self, X):
@@ -315,7 +327,7 @@ class ModularForm_abstract(ModuleElement):
             self.__coefficients = {}
         if isinstance(X, Integer):
             X = list(range(1, X + 1))
-        Y = [n for n in X   if  not (n in self.__coefficients.keys())]
+        Y = [n for n in X  if n not in self.__coefficients]
         v = self._compute(Y)
         for i in range(len(v)):
             self.__coefficients[Y[i]] = v[i]
@@ -719,8 +731,7 @@ class ModularForm_abstract(ModuleElement):
 
     def lseries(self, embedding=0, prec=53,
                          max_imaginary_part=0,
-                         max_asymp_coeffs=40,
-                         conjugate=None):
+                         max_asymp_coeffs=40):
         r"""
         Return the L-series of the weight k cusp form
         `f` on `\Gamma_0(N)`.
@@ -740,8 +751,6 @@ class ModularForm_abstract(ModuleElement):
         - ``max_imaginary_part`` - real number. Default: 0.
 
         - ``max_asymp_coeffs`` - integer. Default: 40.
-
-        - ``conjugate`` -- deprecated synonym for ``embedding``.
 
         For more information on the significance of the last three arguments,
         see :mod:`~sage.lfunctions.dokchitser`.
@@ -786,13 +795,6 @@ class ModularForm_abstract(ModuleElement):
             sage: L = f.lseries(embedding=1)
             sage: L(1)
             0.921328017272472
-
-        For backward-compatibility, ``conjugate`` is accepted as a synonym for ``embedding``::
-
-            sage: f.lseries(conjugate=1)
-            doctest:...: DeprecationWarning: The argument 'conjugate' for 'lseries' is deprecated -- use the synonym 'embedding'
-            See http://trac.sagemath.org/19668 for details.
-            L-series associated to the cusp form q + a1*q^2 - a1*q^3 + (-a1 + 2)*q^5 + O(q^6), a1=1.41421356237310
 
         An example with a non-real coefficient field (`\QQ(\zeta_3)`
         in this case)::
@@ -866,10 +868,6 @@ class ModularForm_abstract(ModuleElement):
 
         # compute the requested embedding
         C = ComplexField(prec)
-        if conjugate is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(19668, "The argument 'conjugate' for 'lseries' is deprecated -- use the synonym 'embedding'")
-            embedding=conjugate
         K = self.base_ring()
         if isinstance(embedding, RingHomomorphism):
             # Target of embedding might have precision less than desired, so
@@ -920,8 +918,6 @@ class ModularForm_abstract(ModuleElement):
             L.rename('L-series associated to the cusp form %s, %s=%s' \
                 % (self, K.variable_name(), emb(K.gen())))
         return L
-
-    cuspform_lseries = deprecated_function_alias(16917, lseries)
 
     def symsquare_lseries(self, chi=None, embedding=0, prec=53):
         r"""
@@ -1965,7 +1961,7 @@ class Newform(ModularForm_abstract):
 
             sage: K.<i> = CyclotomicField(4)
             sage: f = Newforms(DirichletGroup(30, QQ).1, 2, K)[0]
-            sage: f.atkin_lehner_eigenvalue(embedding=K.embeddings(QQbar)[0])
+            sage: f.atkin_lehner_eigenvalue(embedding=K.embeddings(QQbar)[1])
             -0.8944271909999159? - 0.4472135954999580?*I
 
         Check that :trac:`24086` is fixed::
@@ -2341,9 +2337,6 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         newqexp = self.qexp(m) * other.qexp(m)
 
         return newparent.base_extend(newqexp.base_ring())(newqexp)
-
-    modform_lseries = deprecated_function_alias(16917,
-            ModularForm_abstract.lseries)
 
     def atkin_lehner_eigenvalue(self, d=None, embedding=None):
         """

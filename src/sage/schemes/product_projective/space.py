@@ -40,7 +40,6 @@ We can also construct the product by specifying the dimensions and the base ring
 #*****************************************************************************
 
 
-import six
 from sage.misc.cachefunc import cached_method
 from sage.misc.all import prod
 from sage.rings.all import (PolynomialRing, QQ, Integer, CommutativeRing)
@@ -148,7 +147,7 @@ def ProductProjectiveSpaces(n, R=None, names='x'):
             raise ValueError("must be a commutative ring")
         from sage.structure.category_object import normalize_names
         n_vars = sum(d+1 for d in n)
-        if isinstance(names, six.string_types):
+        if isinstance(names, str):
             names = normalize_names(n_vars, names)
         else:
             name_list = list(names)
@@ -255,7 +254,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         """
         return ''.join([
         'Product of projective spaces ',
-        ' x '.join(['P^{0}'.format(d) for d in self._dims]),
+        ' x '.join('P^{0}'.format(d) for d in self._dims),
         ' over ',
         str(self.base_ring())])
 
@@ -280,7 +279,8 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         else:
             v = list(v)
         splitv = self._factors(v)
-        return '(%s)'%(" , ".join((" : ".join([str(t) for t in P])) for P in splitv))
+        return '(%s)' % (" , ".join((" : ".join(str(t) for t in P))
+                                    for P in splitv))
 
     def _latex_(self):
         r"""
@@ -292,7 +292,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
             {\mathbf P}_{\Bold{Z}}^1 \times {\mathbf P}_{\Bold{Z}}^2 \times {\mathbf
             P}_{\Bold{Z}}^3
         """
-        return '%s'%" \\times ".join([PS._latex_() for PS in self])
+        return '%s' % " \\times ".join(PS._latex_() for PS in self)
 
     def _latex_generic_point(self, v = None):
         """
@@ -310,7 +310,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         else:
             v = list(v)
         splitv = self._factors(v)
-        return '\\left(%s\\right)'%(" , ".join((" : ".join([t._latex_() for t in P])) for P in splitv))
+        return '\\left(%s\\right)' % (" , ".join((" : ".join(t._latex_() for t in P)) for P in splitv))
 
     def __getitem__(self, i):
         r"""
@@ -627,7 +627,7 @@ class ProductProjectiveSpaces_ring(AmbientSpace):
         OUTPUT:
 
         A tuple of integers, one for each projective space component. A
-        ``ValueError`` is raised if the polynomial is not multihomogenous.
+        ``ValueError`` is raised if the polynomial is not multihomogeneous.
 
         EXAMPLES::
 
@@ -1141,7 +1141,7 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
         Bound check is strict for the rational field. Requires the base field of this space to be a number field.
         Uses the
         Doyle-Krumm algorithm 4 (algorithm 5 for imaginary quadratic) for
-        computing algebraic numbers up to a given height [Doyle-Krumm]_.
+        computing algebraic numbers up to a given height [DK2013]_.
 
         The algorithm requires floating point arithmetic, so the user is
         allowed to specify the precision for such calculations.
@@ -1205,7 +1205,7 @@ class ProductProjectiveSpaces_field(ProductProjectiveSpaces_ring):
         m = self.num_components()
         iters = [ self[i].points_of_bounded_height(bound=B, tolerance=tol, precision=prec) for i in range(m) ]
         dim = [self[i].dimension_relative() + 1 for i in range(m)]
-        
+
         dim_prefix = [0, dim[0]] # prefixes dim list
         for i in range(1, len(dim)):
             dim_prefix.append(dim_prefix[i] + dim[i])
@@ -1255,17 +1255,13 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
 
             sage: P = ProductProjectiveSpaces([2, 1], GF(3))
             sage: [x for x in P]
-            [(0 : 0 : 1 , 0 : 1), (1 : 0 : 1 , 0 : 1), (2 : 0 : 1 , 0 : 1), (0 : 1 : 1 , 0 : 1), (1 : 1 : 1 , 0 : 1),
-            (2 : 1 : 1 , 0 : 1), (0 : 2 : 1 , 0 : 1), (1 : 2 : 1 , 0 : 1), (2 : 2 : 1 , 0 : 1), (0 : 1 : 0 , 0 : 1),
-            (1 : 1 : 0 , 0 : 1), (2 : 1 : 0 , 0 : 1), (1 : 0 : 0 , 0 : 1), (0 : 0 : 1 , 1 : 1), (1 : 0 : 1 , 1 : 1),
-            (2 : 0 : 1 , 1 : 1), (0 : 1 : 1 , 1 : 1), (1 : 1 : 1 , 1 : 1), (2 : 1 : 1 , 1 : 1), (0 : 2 : 1 , 1 : 1),
-            (1 : 2 : 1 , 1 : 1), (2 : 2 : 1 , 1 : 1), (0 : 1 : 0 , 1 : 1), (1 : 1 : 0 , 1 : 1), (2 : 1 : 0 , 1 : 1),
-            (1 : 0 : 0 , 1 : 1), (0 : 0 : 1 , 2 : 1), (1 : 0 : 1 , 2 : 1), (2 : 0 : 1 , 2 : 1), (0 : 1 : 1 , 2 : 1),
-            (1 : 1 : 1 , 2 : 1), (2 : 1 : 1 , 2 : 1), (0 : 2 : 1 , 2 : 1), (1 : 2 : 1 , 2 : 1), (2 : 2 : 1 , 2 : 1),
-            (0 : 1 : 0 , 2 : 1), (1 : 1 : 0 , 2 : 1), (2 : 1 : 0 , 2 : 1), (1 : 0 : 0 , 2 : 1), (0 : 0 : 1 , 1 : 0),
-            (1 : 0 : 1 , 1 : 0), (2 : 0 : 1 , 1 : 0), (0 : 1 : 1 , 1 : 0), (1 : 1 : 1 , 1 : 0), (2 : 1 : 1 , 1 : 0),
-            (0 : 2 : 1 , 1 : 0), (1 : 2 : 1 , 1 : 0), (2 : 2 : 1 , 1 : 0), (0 : 1 : 0 , 1 : 0), (1 : 1 : 0 , 1 : 0),
-            (2 : 1 : 0 , 1 : 0), (1 : 0 : 0 , 1 : 0)]
+            [(0 : 0 : 1 , 0 : 1),
+            (0 : 1 : 1 , 0 : 1),
+            (0 : 2 : 1 , 0 : 1),
+            ...
+            (1 : 1 : 0 , 1 : 0),
+            (2 : 1 : 0 , 1 : 0),
+            (1 : 0 : 0 , 1 : 0)]
         """
         iters = [iter(T) for T in self._components]
         L=[]

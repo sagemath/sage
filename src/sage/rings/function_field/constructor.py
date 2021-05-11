@@ -24,7 +24,6 @@ AUTHORS:
   ``UniqueFactory``
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -101,10 +100,13 @@ class FunctionFieldFactory(UniqueFactory):
         """
         if key[0].is_finite():
             from .function_field import RationalFunctionField_global
-            return RationalFunctionField_global(key[0],names=key[1])
+            return RationalFunctionField_global(key[0], names=key[1])
+        elif key[0].characteristic() == 0:
+            from .function_field import RationalFunctionField_char_zero
+            return RationalFunctionField_char_zero(key[0], names=key[1])
         else:
             from .function_field import RationalFunctionField
-            return RationalFunctionField(key[0],names=key[1])
+            return RationalFunctionField(key[0], names=key[1])
 
 FunctionField=FunctionFieldFactory("sage.rings.function_field.constructor.FunctionField")
 
@@ -131,8 +133,8 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         sage: y2 = y*1
         sage: y2 is y
         False
-        sage: L.<w>=K.extension(x-y^2)
-        sage: M.<w>=K.extension(x-y2^2)
+        sage: L.<w>=K.extension(x - y^2)
+        sage: M.<w>=K.extension(x - y2^2)
         sage: L is M
         True
     """
@@ -144,8 +146,8 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: R.<y>=K[]
-            sage: L.<w> = K.extension(x-y^2) # indirect doctest
+            sage: R.<y> = K[]
+            sage: L.<w> = K.extension(x - y^2) # indirect doctest
 
         TESTS:
 
@@ -153,11 +155,11 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2-x)
+            sage: L.<y> = K.extension(y^2 - x)
             sage: R.<z> = L[]
-            sage: M.<z> = L.extension(z-1)
+            sage: M.<z> = L.extension(z - 1)
             sage: R.<z> = K[]
-            sage: N.<z> = K.extension(z-1)
+            sage: N.<z> = K.extension(z - 1)
             sage: M is N
             False
 
@@ -176,10 +178,10 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         EXAMPLES::
 
             sage: K.<x> = FunctionField(QQ)
-            sage: R.<y>=K[]
-            sage: L.<w> = K.extension(x-y^2) # indirect doctest
+            sage: R.<y> = K[]
+            sage: L.<w> = K.extension(x - y^2) # indirect doctest
             sage: y2 = y*1
-            sage: M.<w> = K.extension(x-y2^2) # indirect doctest
+            sage: M.<w> = K.extension(x - y2^2) # indirect doctest
             sage: L is M
             True
         """
@@ -187,16 +189,21 @@ class FunctionFieldExtensionFactory(UniqueFactory):
         f = key[0]
         names = key[1]
         base_field = f.base_ring()
-        if function_field.is_RationalFunctionField(base_field):
+        if isinstance(base_field, function_field.RationalFunctionField):
             k = base_field.constant_field()
             if k.is_finite(): # then we are in positive characteristic
                 # irreducible and separable
-                if f.is_irreducible() and not all([e % k.characteristic() == 0 for e in f.exponents()]):
+                if f.is_irreducible() and not all(e % k.characteristic() == 0 for e in f.exponents()):
                     # monic and integral
                     if f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
                         return function_field.FunctionField_global_integral(f, names)
                     else:
                         return function_field.FunctionField_global(f, names)
+            elif k.characteristic() == 0:
+                if f.is_irreducible() and f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
+                    return function_field.FunctionField_char_zero_integral(f, names)
+                else:
+                    return function_field.FunctionField_char_zero(f, names)
         return function_field.FunctionField_polymod(f, names)
 
 FunctionFieldExtension=FunctionFieldExtensionFactory(

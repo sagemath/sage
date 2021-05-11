@@ -4,23 +4,16 @@ The set of prime numbers
 AUTHORS:
 
  - William Stein (2005): original version
- - Florent Hivert (2009-11): adapted to the category framework. The following
-   methods were removed:
-
-    - cardinality, __len__, __iter__: provided by EnumeratedSets
-    - __cmp__(self, other): __eq__ is provided by UniqueRepresentation
-      and seems to do as good a job (all test pass)
+ - Florent Hivert (2009-11): adapted to the category framework.
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #                     2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.all import ZZ
 from .set import Set_generic
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets

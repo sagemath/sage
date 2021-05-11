@@ -5,7 +5,6 @@ Split Local Covering
 ## Routines that look for a split local covering for a given quadratic ##
 ## form in 4 variables.                                                ##
 #########################################################################
-from __future__ import print_function
 
 from copy import deepcopy
 
@@ -95,7 +94,6 @@ def cholesky_decomposition(self, bit_prec = 53):
     Q = MS(R(0.5)) * MS(self.matrix())               ## Initialize the real symmetric matrix A with the matrix for Q(x) = x^t * A * x
 
     ## DIAGNOSTIC
-    #print "After 1:  Q is \n" + str(Q)
 
     ## 2. Loop on i
     for i in range(n):
@@ -356,15 +354,13 @@ def complementary_subform_to_vector(self, v):
         raise TypeError("Oops, v cannot be the zero vector! =(")
 
     ## Make the change of basis matrix
-    new_basis = extend_to_primitive(matrix(ZZ,n,1,v))
+    new_basis = extend_to_primitive(matrix(ZZ, n, 1, v))
 
     ## Change Q (to Q1) to have v as its nz-th basis vector
     Q1 = Q(new_basis)
 
     ## Pick out the value Q(v) of the vector
     d = Q1[0, 0]
-
-    #print Q1
 
     ## For each row/column, perform elementary operations to cancel them out.
     for i in range(1,n):
@@ -374,14 +370,8 @@ def complementary_subform_to_vector(self, v):
         if Q1[i,0] % d != 0:
             Q1 = Q1.multiply_variable(d / GCD(d, Q1[i, 0]//2), i)
 
-        #print "After scaling at i =", i
-        #print Q1
-
         ## Now perform the (symmetric) elementary operations to cancel out the (i,0) entries/
         Q1 = Q1.add_symmetric(-(Q1[i,0]/2) / (GCD(d, Q1[i,0]//2)), i, 0)
-
-        #print "After cancelling at i =", i
-        #print Q1
 
     ## Check that we're done!
     done_flag = True
@@ -435,7 +425,7 @@ def split_local_cover(self):
     if hasattr(self, "__split_local_cover"):
         if is_QuadraticForm(self.__split_local_cover):  ## Here the computation has been done.
             return self.__split_local_cover
-        elif isinstance(self.__split_local_cover, Integer):    ## Here it indexes the values already tried!
+        elif self.__split_local_cover in ZZ:    ## Here it indexes the values already tried!
             current_length = self.__split_local_cover + 1
             Length_Max = current_length + 5
     else:
@@ -451,10 +441,7 @@ def split_local_cover(self):
 
         ## 2. Check if any of the primitive ones produce a split local cover
         for v in current_vectors:
-            #print "current length = ", current_length
-            #print "v = ", v
             Q = QuadraticForm__constructor(ZZ, 1, [current_length]) + self.complementary_subform_to_vector(v)
-            #print Q
             if Q.local_representation_conditions() == self.local_representation_conditions():
                 self.__split_local_cover = Q
                 return Q

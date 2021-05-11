@@ -6,7 +6,7 @@ It should be made clear that the actual random data from the PRNG is consistent
 between Python versions, but the difference lies in higher-level methods such
 as `random.randint`.
 
-See https://trac.sagemath.org/ticket/24508
+See :trac:`24508`
 """
 
 # The following code was copied from
@@ -27,7 +27,6 @@ See https://trac.sagemath.org/ticket/24508
 #
 # Copyright (c) 1991-1995 Stichting Mathematisch Centrum.  All rights reserved.
 
-from __future__ import division
 
 from warnings import warn as _warn
 from types import MethodType as _MethodType, BuiltinMethodType as _BuiltinMethodType
@@ -270,9 +269,10 @@ class Random(_random.Random):
             x[i], x[j] = x[j], x[i]
 
     def sample(self, population, k):
-        """Chooses k unique random elements from a population sequence.
+        """
+        Choose k unique random elements from a population sequence.
 
-        Returns a new list containing elements from the population while
+        Return a new list containing elements from the population while
         leaving the original population unchanged.  The resulting list is
         in selection order so that all sub-slices will also be valid random
         samples.  This allows raffle winners (the sample) to be partitioned

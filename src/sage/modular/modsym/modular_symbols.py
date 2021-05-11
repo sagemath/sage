@@ -16,7 +16,7 @@ TESTS::
 """
 
 #*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005, 2009 William Stein <wstein@gmail.com>
 #
@@ -31,7 +31,6 @@ TESTS::
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six.moves import range
 import sage.modular.cusps as cusps
 from sage.modular.modsym.apply import apply_to_monomial
 from sage.modular.modsym.manin_symbol import ManinSymbol
@@ -364,8 +363,9 @@ class ModularSymbol(SageObject):
 
     def manin_symbol_rep(self):
         """
-        Returns a representation of self as a formal sum of Manin symbols.
-        (The result is not cached.)
+        Return a representation of ``self`` as a formal sum of Manin symbols.
+
+        The result is not cached.
 
         EXAMPLES::
 

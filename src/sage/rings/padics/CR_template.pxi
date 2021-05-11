@@ -1,5 +1,5 @@
 """
-Capped relative template for complete discrete valuation rings and their fraction fields.
+Capped relative template for complete discrete valuation rings and their fraction fields
 
 In order to use this template you need to write a linkage file and gluing file.
 For an example see mpz_linkage.pxi (linkage file) and padic_capped_relative_element.pyx (gluing file).
@@ -526,7 +526,7 @@ cdef class CRElement(pAdicTemplateElement):
         When ``right`` is divisible by `p` then one can get more
         precision than expected.
 
-        Lemma 2.1 [SP]_:
+        Lemma 2.1 [Pau2006]_:
 
         Let `\alpha` be in `\mathcal{O}_K`.  Let
 
@@ -611,7 +611,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         REFERENCES:
 
-        .. [SP] *Constructing Class Fields over Local Fields*. Sebastian Pauli.
+        - [Pau2006]_
 
         INPUT:
 
@@ -1281,9 +1281,53 @@ cdef class CRElement(pAdicTemplateElement):
         else:
             cteichmuller(self.unit, self.unit, self.relprec, self.prime_pow)
 
+    def _polynomial_list(self, pad=False):
+        """
+        Return the coefficient list for a polynomial over the base ring
+        yielding this element.
+
+        INPUT:
+
+        - ``pad`` -- whether to pad the result with zeros of the appropriate precision
+
+        EXAMPLES::
+
+            sage: R.<x> = ZZ[]
+            sage: K.<a> = Qq(25)
+            sage: W.<w> = K.extension(x^3-5)
+            sage: (1 + w + O(w^11))._polynomial_list()
+            [1 + O(5^4), 1 + O(5^4)]
+            sage: (1 + w + O(w^11))._polynomial_list(pad=True)
+            [1 + O(5^4), 1 + O(5^4), O(5^3)]
+            sage: W(0)._polynomial_list()
+            []
+            sage: W(0)._polynomial_list(pad=True)
+            [0, 0, 0]
+            sage: W(O(w^7))._polynomial_list()
+            []
+            sage: W(O(w^7))._polynomial_list(pad=True)
+            [O(5^3), O(5^2), O(5^2)]
+        """
+        R = self.base_ring()
+        if exactzero(self.ordp):
+            L = []
+        else:
+            L = ccoefficients(self.unit, self.ordp, self.relprec, self.prime_pow)
+        if pad:
+            n = self.parent().relative_degree()
+            L.extend([R.zero()] * (n - len(L)))
+        if exactzero(self.ordp):
+            return L
+        e = self.parent().relative_e()
+        prec = self.precision_absolute()
+        if e == 1:
+            return [R(c, prec) for c in L]
+        else:
+            return [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
+
     def polynomial(self, var='x'):
         """
-        Returns a polynomial over the base ring that yields this element
+        Return a polynomial over the base ring that yields this element
         when evaluated at the generator of the parent.
 
         INPUT:
@@ -1302,17 +1346,7 @@ cdef class CRElement(pAdicTemplateElement):
         """
         R = self.base_ring()
         S = R[var]
-        if exactzero(self.ordp):
-            return S([])
-        else:
-            prec = self.precision_absolute()
-            e = self.parent().relative_e()
-            L = ccoefficients(self.unit, self.ordp, self.relprec, self.prime_pow)
-            if e == 1:
-                L = [R(c, prec) for c in L]
-            else:
-                L = [R(c, (prec - i - 1) // e + 1) for i, c in enumerate(L)]
-            return S(L)
+        return self.base_ring()[var](self._polynomial_list())
 
     def precision_absolute(self):
         """
@@ -1484,9 +1518,12 @@ cdef class CRElement(pAdicTemplateElement):
             sage: hash(R(17)) #indirect doctest
             17
 
-            sage: hash(R(-1))
-            1977822444 # 32-bit
-            95367431640624 # 64-bit
+            sage: hash(R(-1))     # py3
+            1977844648            # 32-bit
+            95367431640624        # 64-bit
+            sage: hash(R(-1))     # py2
+            1977822444            # 32-bit
+            95367431640624        # 64-bit
         """
         if exactzero(self.ordp):
             return 0

@@ -16,7 +16,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.categories.algebras import Algebras
 from sage.categories.lie_algebras import LieAlgebras
@@ -556,7 +555,6 @@ class QuantumOnsagerAlgebra(CombinatorialFreeModule):
             if e > 1:
                 ret = ret + '^{{{}}}'.format(e)
             return ret
-        from sage.misc.latex import latex
         return ' '.join(to_str(x) for x in m._sorted_items())
 
     def lie_algebra(self):

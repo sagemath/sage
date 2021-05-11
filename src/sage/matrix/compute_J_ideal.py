@@ -114,11 +114,8 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-# http://www.gnu.org/licenses/
+# https://www.gnu.org/licenses/
 # *****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
-from six import iteritems, iterkeys
 
 from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
@@ -483,7 +480,7 @@ class ComputeMinimalPolynomials(SageObject):
         """
         import heapq
 
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
 
 
         if not all((g(self._B) % p**t).is_zero()
@@ -735,7 +732,7 @@ class ComputeMinimalPolynomials(SageObject):
             verbose 1 (...: compute_J_ideal.py, current_nu)
             Generators with (p^t)-generating property:
             verbose 1 (...: compute_J_ideal.py, current_nu)
-            [x^3 + 7*x^2 + 6*x, x^3 + 3*x^2 + 2*x]
+            ...
             verbose 1 (...: compute_J_ideal.py, current_nu)
             [x^3 + 3*x^2 + 2*x]
             verbose 1 (...: compute_J_ideal.py, p_minimal_polynomials)
@@ -753,7 +750,7 @@ class ComputeMinimalPolynomials(SageObject):
 
         [HR2016]_, Algorithm 5.
         """
-        from sage.misc.misc import verbose
+        from sage.misc.verbose import verbose
         from sage.rings.infinity import Infinity
 
         deg_mu = self.mu_B.degree()
@@ -805,8 +802,7 @@ class ComputeMinimalPolynomials(SageObject):
 
         if s_max < t:
             result = {r: polynomial
-                      for r, polynomial in iteritems(p_min_polys)
-                      if r < s_max}
+                      for r, polynomial in p_min_polys.items() if r < s_max}
             next_t_candidates = list(r for r in p_min_polys if r >= s_max)
             if next_t_candidates:
                 next_t = min(next_t_candidates)
@@ -865,8 +861,8 @@ class ComputeMinimalPolynomials(SageObject):
                 cofactor = b // p**t
                 p_polynomials = self.p_minimal_polynomials(p, t)
                 generators += [cofactor*p**(t-s)*nu
-                               for s, nu in iteritems(p_polynomials)]
-                if not p_polynomials or max(iterkeys(p_polynomials)) < t:
+                               for s, nu in p_polynomials.items()]
+                if not p_polynomials or max(p_polynomials) < t:
                     mu_B_coefficients.append(cofactor)
 
             assert all((g(self._B) % b).is_zero() for g in generators), \
@@ -940,6 +936,6 @@ class ComputeMinimalPolynomials(SageObject):
             (x^3 + x^2 - 12*x - 20, [1, 1/4*x^2 + 3/4*x + 1/2])
         """
         return (self.mu_B, [self._DX(1)] +
-                [nu/p**s
+                [nu / p**s
                  for p in self.prime_candidates()
-                 for s, nu in iteritems(self.p_minimal_polynomials(p))])
+                 for s, nu in self.p_minimal_polynomials(p).items()])

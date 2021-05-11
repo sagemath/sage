@@ -77,7 +77,6 @@ There is also a method ``reinitialize`` to reinitialize the algorithm::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from cpython.object cimport PyObject_RichCompare
 from libcpp.vector cimport vector
@@ -92,6 +91,7 @@ cdef extern from "dancing_links_c.h":
         int search_is_started()
         int search()
 
+from sage.misc.cachefunc import cached_method
 
 cdef class dancing_linksWrapper:
     r"""
@@ -891,6 +891,247 @@ cdef class dancing_linksWrapper:
 
         indices = [i for (i,row) in enumerate(self._rows) if column in row]
         return sum(val for (args_kwds, val) in nb_sol(indices))
+
+    @cached_method
+    def to_sat_solver(self, solver=None):
+        r"""
+        Return the SAT solver solving an equivalent problem.
+
+        Note that row index `i` in the dancing links solver corresponds to
+        the boolean variable index `ì+1` for the SAT solver to avoid
+        the variable index `0`.
+
+        See also :mod:`sage.sat.solvers.satsolver`.
+
+        INPUT:
+
+        - ``solver`` -- string or ``None`` (default: ``None``),
+          possible values include ``'picosat'``, ``'cryptominisat'``,
+          ``'LP'``, ``'glucose'``, ``'glucose-syrup'``.
+
+        OUTPUT:
+
+        SAT solver instance
+
+        EXAMPLES::
+
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
+            sage: rows = [[0,1,2], [0,2], [1], [3]]
+            sage: x = dlx_solver(rows)
+            sage: s = x.to_sat_solver()
+
+        Using some optional SAT solvers::
+
+            sage: x.to_sat_solver('cryptominisat')          # optional - cryptominisat
+            CryptoMiniSat solver: 4 variables, 7 clauses.
+
+        """
+        from sage.sat.solvers.satsolver import SAT
+        s = SAT(solver)
+
+        # Note that row number i is associated to SAT variable i+1 to
+        # avoid a variable zero
+        columns = [[] for _ in range(self.ncols())]
+        for i,row in enumerate(self.rows(), start=1):
+            for a in row:
+                columns[a].append(i)
+
+        # At least one 1 in each column
+        for clause in columns:
+            s.add_clause(clause)
+
+        # At most one 1 in each column
+        import itertools
+        for clause in columns:
+            for p,q in itertools.combinations(clause, 2):
+                sub_clause = [-p,-q]
+                s.add_clause(sub_clause)
+
+        return s
+
+    def one_solution_using_sat_solver(self, solver=None):
+        r"""
+        Return a solution found using a SAT solver.
+
+        INPUT:
+
+        - ``solver`` -- string or ``None`` (default: ``None``),
+          possible values include ``'picosat'``, ``'cryptominisat'``,
+          ``'LP'``, ``'glucose'``, ``'glucose-syrup'``.
+
+        OUTPUT:
+
+        list of rows or ``None`` if no solution is found
+
+        .. NOTE::
+
+            When comparing the time taken by method `one_solution`,
+            have in mind that `one_solution_using_sat_solver` first
+            creates the SAT solver instance from the dancing links
+            solver. This copy of data may take many seconds depending on
+            the size of the problem.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
+            sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
+            sage: d = dlx_solver(rows)
+            sage: solutions = [[0,1], [2,3], [4,5]]
+            sage: d.one_solution_using_sat_solver() in solutions
+            True
+
+        Using optional solvers::
+
+            sage: s = d.one_solution_using_sat_solver('glucose') # optional - glucose
+            sage: s in solutions                                 # optional - glucose
+            True
+
+        When no solution is found::
+
+            sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
+            sage: d = dlx_solver(rows)
+            sage: d.one_solution_using_sat_solver() is None
+            True
+
+        """
+        sat_solver = self.to_sat_solver(solver)
+        solution = sat_solver()
+        if not solution:
+            return None
+        return [key for (key,val) in enumerate(solution, start=-1) if val]
+
+    @cached_method
+    def to_milp(self, solver=None):
+        r"""
+        Return the mixed integer linear program (MILP) representing an
+        equivalent problem.
+
+        See also :mod:`sage.numerical.mip.MixedIntegerLinearProgram`.
+
+        INPUT:
+
+        - ``solver`` -- string or ``None`` (default: ``None``), possible
+          values include ``'GLPK'``, ``'GLPK/exact'``, ``'Coin'``,
+          ``'CPLEX'``, ``'Gurobi'``, ``'CVXOPT'``, ``'PPL'``,
+          ``'InteractiveLP'``.
+
+        OUTPUT:
+
+        - MixedIntegerLinearProgram instance
+        - MIPVariable of dimension 1
+
+        EXAMPLES::
+
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
+            sage: rows = [[0,1,2], [0,2], [1], [3]]
+            sage: d = dlx_solver(rows)
+            sage: p,x = d.to_milp()
+            sage: p
+            Boolean Program (no objective, 4 variables, 4 constraints)
+            sage: x
+            MIPVariable of dimension 1
+
+        In the reduction, the boolean variable x_i is True if and only if
+        the i-th row is in the solution::
+
+            sage: p.show()
+            Maximization:
+            <BLANKLINE>
+            <BLANKLINE>
+            Constraints:
+              one 1 in 0-th column: 1.0 <= x_0 + x_1 <= 1.0
+              one 1 in 1-th column: 1.0 <= x_0 + x_2 <= 1.0
+              one 1 in 2-th column: 1.0 <= x_0 + x_1 <= 1.0
+              one 1 in 3-th column: 1.0 <= x_3 <= 1.0
+            Variables:
+              x_0 is a boolean variable (min=0.0, max=1.0)
+              x_1 is a boolean variable (min=0.0, max=1.0)
+              x_2 is a boolean variable (min=0.0, max=1.0)
+              x_3 is a boolean variable (min=0.0, max=1.0)
+
+        Using some optional MILP solvers::
+
+            sage: d.to_milp('gurobi')   # optional - gurobi sage_numerical_backends_gurobi
+            (Boolean Program (no objective, 4 variables, 4 constraints),
+             MIPVariable of dimension 1)
+
+        """
+        from sage.numerical.mip import MixedIntegerLinearProgram
+        p = MixedIntegerLinearProgram(solver=solver)
+
+        # x[i] == True iff i-th dlx row is in the solution
+        x = p.new_variable(binary=True, indices=range(self.nrows()))
+
+        # Construction of the columns (transpose of the rows)
+        columns = [[] for _ in range(self.ncols())]
+        for i,row in enumerate(self.rows()):
+            for a in row:
+                columns[a].append(i)
+
+        # Constraints: exactly one 1 in each column
+        for j,column in enumerate(columns):
+            S = p.sum(x[a] for a in column)
+            name = "one 1 in {}-th column".format(j)
+            p.add_constraint(S==1, name=name)
+
+        return p,x
+
+    def one_solution_using_milp_solver(self, solver=None):
+        r"""
+        Return a solution found using a MILP solver.
+
+        INPUT:
+
+        - ``solver`` -- string or ``None`` (default: ``None``), possible
+          values include ``'GLPK'``, ``'GLPK/exact'``, ``'Coin'``,
+          ``'CPLEX'``, ``'Gurobi'``, ``'CVXOPT'``, ``'PPL'``,
+          ``'InteractiveLP'``.
+
+        OUTPUT:
+
+        list of rows or ``None`` if no solution is found
+
+        .. NOTE::
+
+            When comparing the time taken by method `one_solution`, have in
+            mind that `one_solution_using_milp_solver` first creates (and
+            caches) the MILP solver instance from the dancing links solver.
+            This copy of data may take many seconds depending on the size
+            of the problem.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.matrices.dancing_links import dlx_solver
+            sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
+            sage: d = dlx_solver(rows)
+            sage: solutions = [[0,1], [2,3], [4,5]]
+            sage: d.one_solution_using_milp_solver() in solutions
+            True
+
+        Using optional solvers::
+
+            sage: s = d.one_solution_using_milp_solver('gurobi') # optional - gurobi sage_numerical_backends_gurobi
+            sage: s in solutions                                 # optional - gurobi sage_numerical_backends_gurobi
+            True
+
+        When no solution is found::
+
+            sage: rows = [[0,1,2], [2,3,4,5], [0,1,2,3]]
+            sage: d = dlx_solver(rows)
+            sage: d.one_solution_using_milp_solver() is None
+            True
+
+        """
+        from sage.numerical.mip import MIPSolverException
+        p,x = self.to_milp(solver)
+        try:
+            p.solve()
+        except MIPSolverException:
+            return None
+        else:
+            soln = p.get_values(x)
+            support = sorted(key for key in soln if soln[key])
+            return support
 
 def dlx_solver(rows):
     """

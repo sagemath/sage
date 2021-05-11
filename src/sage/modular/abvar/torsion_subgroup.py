@@ -87,8 +87,6 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from __future__ import absolute_import
 
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.modular.abvar.torsion_point import TorsionPoint
@@ -184,12 +182,6 @@ class RationalTorsionSubgroup(FiniteSubgroup):
         OUTPUT:
 
         The order of this torsion subgroup.
-
-        REFERENCE:
-
-        .. [CES2003] Brian Conrad, Bas Edixhoven, William Stein
-           `J_1(p)` Has Connected Fibers
-           Documenta Math.  8 (2003) 331--408
 
         EXAMPLES::
 

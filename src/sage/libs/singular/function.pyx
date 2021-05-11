@@ -74,7 +74,6 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from libc.string cimport memcpy
 from cysignals.signals cimport sig_on, sig_off
@@ -108,7 +107,7 @@ from sage.libs.singular.singular import error_messages
 
 from sage.interfaces.singular import get_docstring
 
-from sage.misc.misc import get_verbose
+from sage.misc.verbose import get_verbose
 
 from sage.structure.sequence import Sequence, Sequence_generic
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, PolynomialSequence_generic
@@ -593,7 +592,7 @@ cdef class Converter(SageObject):
 
             if attributes and a in attributes:
                 for attrib in attributes[a]:
-                    if attrib == "isSB" :
+                    if attrib == "isSB":
                         val = <long>(attributes[a][attrib])
                         atSet(v, omStrDup("isSB"), <void*>val, INT_CMD)
                         setFlag(v, FLAG_STD)
@@ -939,7 +938,7 @@ cdef class Converter(SageObject):
             sage: C = Curve((x-y)*(y-z)*(z-x))
             sage: I = C.defining_ideal()
             sage: import sage.libs.singular.function_factory
-            sage: freerank = sage.libs.singular.function_factory.ff.poly__lib.freerank
+            sage: freerank = sage.libs.singular.function_factory.ff.polylib__lib.freerank
             sage: freerank(I, true)
             [-1, [x^2*y - x*y^2 - x^2*z + y^2*z + x*z^2 - y*z^2]]
 
@@ -1258,7 +1257,7 @@ cdef class SingularFunction(SageObject):
             Traceback (most recent call last):
             ...
             RuntimeError: error in Singular function call 'size':
-            Wrong number of arguments (got 2 arguments, arity code is 300)
+            Wrong number of arguments (got 2 arguments, arity code is 302)
             sage: size('foobar', ring=P)
             6
 
@@ -1309,7 +1308,12 @@ cdef class SingularFunction(SageObject):
             ...
             RuntimeError: error in Singular function call 'triangL':
             The input is no groebner basis.
-            leaving triang.lib::triangL
+            leaving triang.lib::triangL (0)
+
+        Flush any stray output -- see :trac:`28622`::
+
+            sage: sys.stdout.flush()
+            ...
 
             sage: G= Ideal(I.groebner_basis())
             sage: triangL(G,attributes={G:{'isSB':1}})
@@ -1550,7 +1554,7 @@ cdef class SingularLibraryFunction(SingularFunction):
     """
     def __init__(self, name):
         """
-        Construct a new Singular kernel function.
+        Construct a new Singular library function.
 
         EXAMPLES::
 
@@ -1667,17 +1671,17 @@ def singular_function(name):
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 0 arguments, arity code is 303)
+        Wrong number of arguments (got 0 arguments, arity code is 305)
         sage: factorize(f, 1, 2)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 3 arguments, arity code is 303)
+        Wrong number of arguments (got 3 arguments, arity code is 305)
         sage: factorize(f, 1, 2, 3)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 4 arguments, arity code is 303)
+        Wrong number of arguments (got 4 arguments, arity code is 305)
 
     The Singular function ``list`` can be called with any number of
     arguments::
@@ -1729,8 +1733,8 @@ def singular_function(name):
         sage: matrix = Matrix(P,2,2)
         sage: matrix.randomize(terms=1)
         sage: det = singular_function("det")
-        sage: det(matrix)
-        -3/5*x*y*z
+        sage: det(matrix) == matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0]
+        True
         sage: coeffs = singular_function("coeffs")
         sage: coeffs(x*y+y+1,y)
         [    1]

@@ -1,0 +1,18 @@
+export LDFLAGS="$LDFLAGS -lz -lbz2"
+#export CPPFLAGS="-DHAVE_CLOCK_GETTIME=0"
+
+# See discussion on #12220
+#
+#-> Mac and Linux behave differently according to the presence of librt, and a
+#   good way around if to make the computer believe that it does not exist
+#   locally, or more precisely that it does not contain the clock_gettime
+#   function. Cbc uses an alternative method to do the job, and it looks like
+#   all this is required when Cbc solves LP with several threads.
+#
+cd src
+sed -i -e "s/clock\_gettime ()/Grrrrrrrrrrrr\ ()/g" Cbc/configure || \
+    sdh_die "Failed to patch clock_gettime issue in Cbc/configure"
+sdh_configure --enable-cbc-parallel --enable-parallel \
+              --enable-gnu-packages --enable-static
+sdh_make
+sdh_make_install -j1

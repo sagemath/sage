@@ -11,23 +11,21 @@ SageObject
 
 TESTS:
 
-This came up in some subtle bug once.
-::
+This came up in some subtle bug once::
 
     sage: gp(2) + gap(3)
     5
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import, print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 cimport sage.structure.sage_object as sage_object
 import operator
@@ -45,7 +43,7 @@ cdef inline check_old_coerce(Parent p):
 
 cdef class Parent(parent.Parent):
     """
-    Parents are the SAGE/mathematical analogues of container objects
+    Parents are the Sage / mathematical analogues of container objects
     in computer science.
 
     TESTS::
@@ -69,65 +67,16 @@ cdef class Parent(parent.Parent):
     def __cinit__(self):
         self._has_coerce_map_from = MonoDict()
 
-    def __init__(self, coerce_from=None, actions=None, embeddings=None, *, category=None):
+    def __init__(self, *, category=None):
         self.init_coerce(False)
-        if coerce_from is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(24614, "the 'coerce_from' keyword is deprecated")
-            self._coerce_from_list = list(coerce_from)
         self._coerce_from_hash = MonoDict()
-        if actions is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(24614, "the 'actions' keyword is deprecated")
-            self._action_list = list(actions)
-
-        cdef parent.Parent other
-        if embeddings is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(24614, "the 'embeddings' keyword is deprecated")
-            for mor in embeddings:
-                other = mor.domain()
-                print("embedding", self, " --> ", other)
-                print(mor)
-                other.init_coerce() # TODO remove when we can
-                other._coerce_from_list.append(mor)
-
         self._set_element_constructor()
-
         if category is not None:
             self._init_category_(category)
 
-    #################################################################################
+    ##########################################################
     # New Coercion support functionality
-    #################################################################################
-
-    def coerce_map_from_c(self, S):
-        """
-        TESTS::
-
-            sage: A = J0(33)
-            sage: A.coerce_map_from_c(QuadraticField(3))
-            doctest:...: DeprecationWarning: coerce_map_from_c is deprecated
-            See https://trac.sagemath.org/25236 for details.
-
-        Check to make sure that we handle coerce maps from Python
-        native types correctly::
-
-            sage: QQ['q,t'].coerce_map_from(int)
-            Composite map:
-              From: Set of Python objects of class 'int'
-              To:   Multivariate Polynomial Ring in q, t over Rational Field
-              Defn:   Native morphism:
-                      From: Set of Python objects of class 'int'
-                      To:   Rational Field
-                    then
-                      Polynomial base injection morphism:
-                      From: Rational Field
-                      To:   Multivariate Polynomial Ring in q, t over Rational Field
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(25236, "coerce_map_from_c is deprecated")
-        return self.__coerce_map_from_c(S)
+    ##########################################################
 
     cdef __coerce_map_from_c(self, S):
         """
@@ -221,9 +170,9 @@ cdef class Parent(parent.Parent):
         else:
             return None
 
-    #################################################################################
+    ##############################################
     # Coercion support functionality
-    #################################################################################
+    ##############################################
 
     def _coerce_(self, x):            # Call this from Python (do not override!)
         if self._element_constructor is not None:
@@ -302,29 +251,13 @@ cdef class Parent(parent.Parent):
         self._has_coerce_map_from.set(S, ans)
         return ans
 
-    def has_coerce_map_from_c(self, S):
-        """
-        Return ``True`` if there is a natural map from ``S`` to ``self``.
-
-        Otherwise, return ``False``.
-
-        TESTS::
-
-            sage: A = J0(33)
-            sage: A.has_coerce_map_from_c(QuadraticField(3))
-            doctest:...: DeprecationWarning: has_coerce_map_from_c is deprecated
-            See https://trac.sagemath.org/25236 for details.
-            False
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(25236, "has_coerce_map_from_c is deprecated")
-        return self.__has_coerce_map_from_c(S)
-
     def _an_element_impl(self):     # override this in Python
         """
-        Return an element of self. Want it in sufficient generality
-        that poorly-written functions won't work when they're not
-        supposed to. This is cached so doesn't have to be super fast.
+        Return an element of ``self``.
+
+        Want it in sufficient generality
+        that poorly-written functions will not work when they are not
+        supposed to. This is cached so does not have to be super fast.
         """
         check_old_coerce(self)
         try:
@@ -346,10 +279,9 @@ cdef class Parent(parent.Parent):
 
         raise NotImplementedError(f"_an_element_ is not implemented for {self}")
 
-    ############################################################################
+    ###############################################################
     # Coercion Compatibility Layer
-    ############################################################################
-
+    ###############################################################
     cpdef _coerce_map_from_(self, S):
         if self._element_constructor is None:
             return self.__coerce_map_from_c(S)
@@ -370,10 +302,9 @@ cdef class Parent(parent.Parent):
 
         EXAMPLES::
 
-           sage: R.<x,y>=QQ[]
+           sage: R.<x,y> = QQ[]
            sage: R._generic_convert_map(QQ).category_for()
            Category of sets with partial maps
-
         """
         if self._element_constructor is None:
             if hasattr(self, '_element_constructor_'):

@@ -35,7 +35,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
      - ``facade``  -- a boolean
 
     This models the enumerated set obtained by concatenating together
-    the specified ordered sets. The later are supposed to be pairwise
+    the specified ordered sets. The latter are supposed to be pairwise
     disjoint; otherwise, a multiset is created.
 
     The argument ``family`` can be a list, a tuple, a dictionary, or a
@@ -284,8 +284,11 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
         self._family = family
         self._facade  = facade
         if facade:
+            # Note that family is not copied when it is a finite enumerated
+            # set, thus, any subclass must ensure that it does not mutate this
+            # input.
             if family in FiniteEnumeratedSets():
-                self._facade_for = tuple(family)
+                self._facade_for = family
             else:
                 # This allows the test suite to pass its tests by essentially
                 #   stating that this is a facade for any parent. Technically
@@ -576,7 +579,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
                 raise ValueError("cannot coerce `%s` in the parent `%s`"%(el[1], P))
 
         # Check first to see if the parent of el is in the family
-        if (isinstance(el, Element) and isinstance(self._facade_for, tuple)
+        if (isinstance(el, Element) and self._facade_for is not True
             and el.parent() in self._facade_for):
             return el
 

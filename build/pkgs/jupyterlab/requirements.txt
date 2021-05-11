@@ -1,0 +1,1 @@
+jupyterlab ~= 2.2.5

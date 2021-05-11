@@ -1,7 +1,7 @@
 r"""
-Educational Versions of Groebner Basis Algorithms: Triangular Factorization.
+Educational versions of Groebner basis algorithms: triangular factorization
 
-In this file is the implementation of two algorithms in [Laz92]_.
+In this file is the implementation of two algorithms in [Laz1992]_.
 
 The main algorithm is ``Triangular``; a secondary algorithm, necessary for the
 first, is ``ElimPolMin``. As per Lazard's formulation, the implementation works
@@ -27,14 +27,9 @@ AUTHORS:
 - John Perry (2009-02-24): initial version, but some words of
   documentation were stolen shamelessly from Martin Albrecht's
   ``toy_buchberger.py``.
-
-REFERENCES:
-
-.. [Laz92] Daniel Lazard, *Solving Zero-dimensional Algebraic Systems*,
-  in Journal of Symbolic Computation (1992) vol\. 13, pp\. 117-131
-
 """
-from six.moves import range
+
+
 
 def is_triangular(B):
   """
@@ -43,7 +38,7 @@ def is_triangular(B):
   ordering of the base ring ``R`` is ``R.gens()[i]``.
 
   The algorithm is based on the definition of a triangular basis,
-  given by Lazard in 1992 in [Laz92]_.
+  given by Lazard in 1992 in [Laz1992]_.
 
   INPUT:
 
@@ -127,8 +122,9 @@ def coefficient_matrix(polys):
     imons = polys[i].monomials()
     icoeffs = polys[i].coefficients()
     for j in range(len(imons)):
-      M[i,mons.index(imons[j])] = icoeffs[j]
+      M[i, mons.index(imons[j])] = icoeffs[j]
   return M
+
 
 def is_linearly_dependent(polys):
   """
@@ -171,17 +167,18 @@ def is_linearly_dependent(polys):
       False
 
   """
-  if len(polys) == 0:
+  if not polys:
     return False
-  R = polys[0].base_ring()
   M = coefficient_matrix(polys).echelon_form()
   return any(M.row(each).is_zero() for each in range(M.nrows()))
+
 
 def linear_representation(p, polys):
   """
   Assuming that ``p`` is a linear combination of ``polys``,
-  determines coefficients that describe the linear combination.
-  This probably doesn't work for any inputs except ``p``, a polynomial,
+  determine coefficients that describe the linear combination.
+
+  This probably does not work for any inputs except ``p``, a polynomial,
   and ``polys``, a sequence of polynomials.
   If ``p`` is not in fact a linear combination of ``polys``,
   the function raises an exception.
@@ -221,7 +218,8 @@ def linear_representation(p, polys):
   j = M.ncols() - 1
   n = M.nrows() - 1
   offset = M.ncols() - M.nrows()
-  return [M[n,offset+each] / (-M[n,j]) for each in range(len(polys))]
+  return [M[n, offset + each] / (-M[n, j]) for each in range(len(polys))]
+
 
 def triangular_factorization(B, n=-1):
   """
@@ -229,7 +227,7 @@ def triangular_factorization(B, n=-1):
 
   This will not work properly if ``B`` is not a Groebner basis!
 
-  The algorithm used is that described in a 1992 paper by Daniel Lazard [Laz92]_.
+  The algorithm used is that described in a 1992 paper by Daniel Lazard [Laz1992]_.
   It is not necessary for the term ordering to be lexicographic.
 
   INPUT:
@@ -243,6 +241,7 @@ def triangular_factorization(B, n=-1):
 
   EXAMPLES::
 
+      sage: from sage.misc.verbose import set_verbose
       sage: set_verbose(0)
       sage: from sage.rings.polynomial.toy_variety import triangular_factorization
       sage: R.<x,y,z> = PolynomialRing(GF(32003))
@@ -256,10 +255,8 @@ def triangular_factorization(B, n=-1):
        [x^2 - 4*x + 4, y, z - 1],
        [x^5 - 3*x^4 + 3*x^3 - x^2, y - 1, z - 1]]
   """
-  import sage.rings.polynomial.polynomial_ring_constructor as prc
-  import copy
   # type checking in a probably vain attempt to avoid stupid errors
-  if isinstance(B, (tuple,list)):
+  if isinstance(B, (tuple, list)):
     G = B
   else:
     try:
@@ -267,27 +264,27 @@ def triangular_factorization(B, n=-1):
     except Exception:
       raise TypeError("triangular_factorization wants as input an ideal, or a list of polynomials\n")
   # easy cases
-  if len(G)==0:
-    return list()
+  if not G:
+    return []
   if is_triangular(G):
     return [G]
   # this is what we get paid for...
   # first, find the univariate polynomial in the ideal
   # corresponding to the smallest variable under consideration
-  p = elim_pol(G,n)
+  p = elim_pol(G, n)
   R = p.parent()
   family = []
   # recursively build the family,
   # looping through the factors of p
-  for (q,a) in p.factor():
+  for q, a in p.factor():
     # Construct an analog to I in (R.quotient(R.ideal(q)))[x_0,x_1,...x_{n-1}]
-    I = R.ideal([each.reduce([q]) for each in G])
-    if len(I.gens()) == 1:
+    ideal_I = R.ideal([each.reduce([q]) for each in G])
+    if len(ideal_I.gens()) == 1:
       # save some effort
-      H = [I.gens()[0]]
+      H = [ideal_I.gens()[0]]
     else:
-      H = I.groebner_basis()
-    T = triangular_factorization(list(H),n-1)
+      H = ideal_I.groebner_basis()
+    T = triangular_factorization(list(H), n - 1)
     # now add the current factor q of p to the factorization
     for each in T:
       each.append(q)
@@ -295,9 +292,10 @@ def triangular_factorization(B, n=-1):
       family.append(each)
   return family
 
+
 def elim_pol(B, n=-1):
   """
-  Finds the unique monic polynomial of lowest degree and lowest variable
+  Find the unique monic polynomial of lowest degree and lowest variable
   in the ideal described by ``B``.
 
   For the purposes of the triangularization algorithm, it is necessary to
@@ -308,7 +306,7 @@ def elim_pol(B, n=-1):
   ``B`` should describe the Groebner basis of a zero-dimensional ideal.
   However, it is not necessary for the Groebner basis to be lexicographic.
 
-  The algorithm is taken from a 1993 paper by Lazard [Laz92]_.
+  The algorithm is taken from a 1993 paper by Lazard [Laz1992]_.
 
   INPUT:
 
@@ -317,6 +315,7 @@ def elim_pol(B, n=-1):
 
   EXAMPLES::
 
+      sage: from sage.misc.verbose import set_verbose
       sage: set_verbose(0)
       sage: from sage.rings.polynomial.toy_variety import elim_pol
       sage: R.<x,y,z> = PolynomialRing(GF(32003))
@@ -328,7 +327,7 @@ def elim_pol(B, n=-1):
       z^2 - z
   """
   # type checking in a probably vain attempt to avoid stupid errors
-  if isinstance(B, (list,tuple)):
+  if isinstance(B, (list, tuple)):
     G = B
   else:
     try:
@@ -346,12 +345,12 @@ def elim_pol(B, n=-1):
   # until finally the normal form is a linear combination
   # of the previous normal forms
   while not is_linearly_dependent(lnf + [nfm]):
-    lnf.insert(0,nfm)
+    lnf.insert(0, nfm)
     listmonom.append(monom)
     monom = x * monom
     nfm = monom.reduce(G)
   result = monom
   coeffs = linear_representation(nfm, lnf)
   for each in range(len(coeffs)):
-    result = result - coeffs[each] * lnf[each]
+    result -= coeffs[each] * lnf[each]
   return result

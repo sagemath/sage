@@ -1,0 +1,3 @@
+libec-dev
+# provides the mwrank executable:
+eclib-tools

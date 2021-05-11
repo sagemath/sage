@@ -52,26 +52,19 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
-
-from sage.rings.integer cimport Integer
+from sage.structure.richcmp cimport rich_to_bool
+from sage.rings.integer cimport Integer, _Integer_from_mpz
 
 cimport sage.modules.free_module_element as free_module_element
 
 from .free_module_element import vector
 
 from sage.libs.gmp.mpz cimport *
-
-
-cdef inline _Integer_from_mpz(mpz_t e):
-    cdef Integer z = Integer.__new__(Integer)
-    mpz_set(z.value, e)
-    return z
 
 cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
     cdef bint is_dense_c(self):
@@ -113,7 +106,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
 
     def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
-        self._is_mutable = 1
+        self._is_immutable = 0
         if parent is None:
             self._degree = 0
             return
@@ -139,7 +132,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
                 mpz_clear(self._entries[i])
             sig_free(self._entries)
 
-    cpdef int _cmp_(left, right) except -2:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
 
@@ -160,13 +153,13 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         """
         cdef Py_ssize_t i
         cdef int c
-        for i from 0 <= i < left.degree():
+        for i in range(left.degree()):
             c = mpz_cmp(left._entries[i], (<Vector_integer_dense>right)._entries[i])
             if c < 0:
-                return -1
+                return rich_to_bool(op, -1)
             elif c > 0:
-                return 1
-        return 0
+                return rich_to_bool(op, 1)
+        return rich_to_bool(op, 0)
 
     cdef get_unsafe(self, Py_ssize_t i):
         """
@@ -221,7 +214,8 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
                                   xrange(self._degree)]
 
     def __reduce__(self):
-        return (unpickle_v1, (self._parent, self.list(), self._degree, self._is_mutable))
+        return (unpickle_v1, (self._parent, self.list(), self._degree,
+                              not self._is_immutable))
 
     cpdef _add_(self, right):
         cdef Vector_integer_dense z, r
@@ -364,5 +358,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Integer(entries[i])
         mpz_set(v._entries[i], z.value)
-    v._is_mutable = is_mutable
+    v._is_immutable = not is_mutable
     return v

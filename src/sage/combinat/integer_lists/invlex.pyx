@@ -28,8 +28,6 @@ limitations and lack of robustness w.r.t. input.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import print_function, absolute_import
-
 import builtins
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
@@ -1107,7 +1105,7 @@ class IntegerListsLexIter(builtins.object):
       ``_current_list``: the range for each part.
 
     Furthermore, we assume that there is no obvious contradiction
-    in the contraints:
+    in the constraints:
 
     - ``self.backend.min_length <= self.backend.max_length``;
     - ``self.backend.min_slope <= self.backend.max_slope``
@@ -1421,7 +1419,7 @@ class IntegerListsLexIter(builtins.object):
             sage: I._m_interval(1,2)
             (0, 2)
 
-        The second part is not bounded above, hence we can not
+        The second part is not bounded above, hence we cannot
         iterate lexicographically through all the elements::
 
             sage: IntegerListsLex(ceiling=[2,infinity,3], max_length=3).first()

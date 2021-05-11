@@ -9,7 +9,6 @@ Let `C` be a linear code of length `n` over `\GF{q}`. The extended code of `C` i
 
 See [HP2003]_ (pp 15-16) for details.
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2016 David Lucas <david.lucas@inria.fr>
@@ -21,9 +20,8 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from .linear_code import (AbstractLinearCode,\
-        LinearCodeGeneratorMatrixEncoder,\
-        LinearCodeSyndromeDecoder,\
+from .linear_code import (AbstractLinearCode,
+        LinearCodeSyndromeDecoder,
         LinearCodeNearestNeighborDecoder)
 from .encoder import Encoder
 from .decoder import Decoder

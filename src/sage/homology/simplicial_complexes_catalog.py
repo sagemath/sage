@@ -26,6 +26,7 @@ All of these examples are accessible by typing
 - :meth:`~sage.homology.examples.ChessboardComplex`
 - :meth:`~sage.homology.examples.ComplexProjectivePlane`
 - :meth:`~sage.homology.examples.DunceHat`
+- :meth:`~sage.homology.examples.FareyMap`
 - :meth:`~sage.homology.examples.K3Surface`
 - :meth:`~sage.homology.examples.KleinBottle`
 - :meth:`~sage.homology.examples.MatchingComplex`
@@ -64,7 +65,8 @@ EXAMPLES::
 """
 
 from sage.homology.examples import (Sphere, Simplex, Torus, ProjectivePlane,
-        RealProjectivePlane, KleinBottle, SurfaceOfGenus, MooreSpace,
+        RealProjectivePlane, KleinBottle, FareyMap, SurfaceOfGenus,
+        MooreSpace,
         ComplexProjectivePlane, PseudoQuaternionicProjectivePlane,
         PoincareHomologyThreeSphere, RealProjectiveSpace, K3Surface,
         BarnetteSphere, BrucknerGrunbaumSphere, NotIConnectedGraphs,

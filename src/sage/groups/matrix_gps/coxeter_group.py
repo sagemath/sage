@@ -18,7 +18,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
-from six.moves import range
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.coxeter_groups import CoxeterGroups
@@ -186,8 +185,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         [2 2 3 2 1]
         sage: W = CoxeterGroup(['H',3], implementation="reflection")
         sage: W
-        Finite Coxeter group over Number Field in a with defining polynomial
-        x^2 - 5 with Coxeter matrix:
+        Finite Coxeter group over Number Field in a with defining polynomial x^2 - 5 with a = 2.236067977499790? with Coxeter matrix:
         [1 3 2]
         [3 1 5]
         [2 5 1]
@@ -328,8 +326,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
         EXAMPLES::
 
             sage: CoxeterGroup([[1,3,2],[3,1,4],[2,4,1]])
-            Finite Coxeter group over Number Field in a with
-            defining polynomial x^2 - 2 with Coxeter matrix:
+            Finite Coxeter group over Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095? with Coxeter matrix:
             [1 3 2]
             [3 1 4]
             [2 4 1]

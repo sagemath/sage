@@ -7,19 +7,18 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #     Copyright (C) 2015 Simon King <simon.king@uni-jena.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import division, print_function
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 include "algebra_elements.pxi"
+
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import repr_lincomb
+from sage.misc.repr import repr_lincomb
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 
 
@@ -27,11 +26,12 @@ cdef class PathAlgebraElement(RingElement):
     """
     Elements of a :class:`~sage.quivers.algebra.PathAlgebra`.
 
-    NOTE:
+    .. NOTE::
 
-    Upon creation of a path algebra, one can choose among several monomial
-    orders, which are all positive or negative degree orders. Monomial orders
-    that are not degree orders are not supported.
+        Upon creation of a path algebra, one can choose among several
+        monomial orders, which are all positive or negative degree
+        orders. Monomial orders that are not degree orders are not
+        supported.
 
     EXAMPLES:
 
@@ -148,9 +148,9 @@ cdef class PathAlgebraElement(RingElement):
           :class:`~sage.quivers.paths.QuiverPath`, the value giving its
           coefficient.
 
-        NOTE:
+        .. NOTE::
 
-        Monomial orders that are not degree orders are not supported.
+            Monomial orders that are not degree orders are not supported.
 
         EXAMPLES::
 
@@ -245,12 +245,12 @@ cdef class PathAlgebraElement(RingElement):
             while T!=NULL:
                 sig_check()
                 if T.mon.path.length:
-                    L.append(([offset+biseq_getitem(T.mon.path,i) for i in range(T.mon.path.length)],
+                    L.append(([offset + biseq_getitem(T.mon.path, i) for i in range(<size_t>T.mon.path.length)],
                               <object>(T.coef)))
                 else:
                     L.append(([vertices.index(H.start)], <object>(T.coef)))
                 T = T.nxt
-            if len(L) != H.poly.nterms:
+            if <size_t>len(L) != H.poly.nterms:
                 print("Term count of polynomial is wrong, got", len(L),
                       "expected", H.poly.nterms)
             L_total.extend(L)
@@ -261,10 +261,10 @@ cdef class PathAlgebraElement(RingElement):
         """
         String representation.
 
-        NOTE:
+        .. NOTE::
 
-        The terms are first sorted by initial and terminal vertices, and only
-        then by the given monomial order.
+            The terms are first sorted by initial and terminal
+            vertices, and only then by the given monomial order.
 
         EXAMPLES::
 
@@ -463,7 +463,7 @@ cdef class PathAlgebraElement(RingElement):
 
     cpdef list coefficients(self):
         """
-        Returns the list of coefficients.
+        Return the list of coefficients.
 
         .. NOTE::
 
@@ -498,7 +498,7 @@ cdef class PathAlgebraElement(RingElement):
 
     cpdef list monomials(self):
         """
-        Returns the list of monomials appearing in this element.
+        Return the list of monomials appearing in this element.
 
         .. NOTE::
 
@@ -561,7 +561,7 @@ cdef class PathAlgebraElement(RingElement):
 
     cpdef list terms(self):
         """
-        Returns the list of terms.
+        Return the list of terms.
 
         .. NOTE::
 
@@ -616,7 +616,7 @@ cdef class PathAlgebraElement(RingElement):
 
     cpdef list support(self):
         """
-        Returns the list of monomials, as elements of the underlying partial semigroup.
+        Return the list of monomials, as elements of the underlying partial semigroup.
 
         .. NOTE::
 
@@ -966,12 +966,12 @@ cdef class PathAlgebraElement(RingElement):
         """
         Helper for comparison of path algebra elements.
 
-        NOTE:
+        .. NOTE::
 
-        First, the comparison is by initial vertices of monomials. Then, the
-        terminal vertices are compared. Last, the given monomial order is
-        applied for monomials that have the same initial and terminal
-        vertices.
+            First, the comparison is by initial vertices of
+            monomials. Then, the terminal vertices are compared. Last,
+            the given monomial order is applied for monomials that
+            have the same initial and terminal vertices.
 
         EXAMPLES::
 
@@ -1300,9 +1300,6 @@ cdef class PathAlgebraElement(RingElement):
                 sample = sample._parent._semigroup.algebra(x.parent())(0)
             return sample._new_(homog_poly_scale((<PathAlgebraElement>self).data, x))
         raise TypeError("Don't know how to divide {} by {}".format(x, self))
-
-    def __div__(self, x):
-        return self / x
 
 ## Multiplication in the algebra
 

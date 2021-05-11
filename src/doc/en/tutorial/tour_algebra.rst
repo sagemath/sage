@@ -16,7 +16,7 @@ functions are defined to be ``var(...)``. As an example:
     sage: diff(sin(u), u)
     cos(u)
 
-If you get a ``NameError``, check to see if you mispelled something,
+If you get a ``NameError``, check to see if you misspelled something,
 or forgot to define a variable with ``var(...)``.
 
 
@@ -187,7 +187,7 @@ You can compute Laplace transforms also; the Laplace transform of
 Here is a more involved example. The displacement from equilibrium
 (respectively) for a coupled spring attached to a wall on the left
 
-::
+.. CODE-BLOCK:: text
 
     |------\/\/\/\/\---|mass1|----\/\/\/\/\/----|mass2|
              spring1               spring2
@@ -424,3 +424,10 @@ the following example:
     'bessel_y(v,w)'
     sage: maxima.eval("diff(f,w)")
     '(bessel_y(v-1,w)-bessel_y(v+1,w))/2'
+
+
+Vector calculus
+---------------
+
+See the
+`Vector Calculus Tutorial <http://doc.sagemath.org/html/en/thematic_tutorials/vector_calculus.html>`__.

@@ -33,7 +33,7 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
     r"""
     Return the Aurifeuillian factors `F_n^\pm(m^2n)`.
 
-    This is based off Theorem 3 of [Brent93]_.
+    This is based off Theorem 3 of [Bre1993]_.
 
     INPUT:
 
@@ -74,13 +74,6 @@ cpdef aurifeuillian(n, m, F=None, bint check=True):
 
         There is no need to set `F`. It's only for increasing speed
         of :meth:`factor_aurifeuillian()`.
-
-    REFERENCES:
-
-    .. [Brent93] Richard P. Brent.
-       *On computing factors of cyclotomic polynomials*.
-       Mathematics of Computation. **61** (1993). No. 203. pp 131-149.
-       :arXiv:`1004.5466v1`. http://www.jstor.org/stable/2152941
     """
     from sage.arith.all import euler_phi
     from sage.rings.real_mpfi import RealIntervalField
@@ -158,12 +151,12 @@ cpdef factor_aurifeuillian(n, check=True):
         ....:         s = -1 if n % 4 == 1 else 1
         ....:         y = (m^2*n)^n + s
         ....:         F = fa(y)
-        ....:         assert(len(F) > 0 and prod(F) == y)
+        ....:         assert(F and prod(F) == y)
 
     REFERENCES:
 
     - http://mathworld.wolfram.com/AurifeuilleanFactorization.html
-    - [Brent93]_ Theorem 3
+    - [Bre1993]_ Theorem 3
     """
     if n in [-2, -1, 0, 1, 2]:
         return [n]
@@ -227,15 +220,15 @@ def factor_cunningham(m, proof=None):
     EXAMPLES::
 
         sage: from sage.rings.factorint import factor_cunningham
-        sage: factor_cunningham(2^257-1) # optional - cunningham
+        sage: factor_cunningham(2^257-1) # optional - cunningham_tables
         535006138814359 * 1155685395246619182673033 * 374550598501810936581776630096313181393
-        sage: factor_cunningham((3^101+1)*(2^60).next_prime(),proof=False) # optional - cunningham
+        sage: factor_cunningham((3^101+1)*(2^60).next_prime(),proof=False) # optional - cunningham_tables
         2^2 * 379963 * 1152921504606847009 * 1017291527198723292208309354658785077827527
 
     """
     from sage.databases import cunningham_tables
     cunningham_prime_factors = cunningham_tables.cunningham_prime_factors()
-    if m.nbits() < 100 or len(cunningham_prime_factors) == 0:
+    if m.nbits() < 100 or not cunningham_prime_factors:
         return m.factor(proof=proof)
     n = Integer(m)
     L = []

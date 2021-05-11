@@ -1,7 +1,6 @@
 """
 Witt symmetric functions
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -107,7 +106,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
     REFERENCES:
 
     .. [HazWitt1] Michiel Hazewinkel. *Witt vectors. Part 1*.
-       :arXiv:`0804.3888v1`
+       :arxiv:`0804.3888v1`
 
     .. [DoranIV1996] William F. Doran IV.
        *A Proof of Reutenauer's `-q_{(n)}` Conjecture*.
@@ -116,7 +115,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
 
     .. [BorWi2004] James Borger, Ben Wieland.
        *Plethystic algebra*.
-       :arXiv:`math/0407227v1`
+       :arxiv:`math/0407227v1`
 
     .. [GriRei18]_
 

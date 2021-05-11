@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 #*****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -22,7 +29,6 @@
 #    2006-01: initial version (based on code by William Stein)
 #
 ##############################################################################
-from __future__ import absolute_import
 
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr
@@ -211,7 +217,7 @@ cdef class ntl_mat_GF2E(object):
         if not isinstance(other, ntl_mat_GF2E):
             other = ntl_mat_GF2E(other, self.c)
         if not self.c is (<ntl_mat_GF2E>other).c:
-            raise ValueError("You can not perform arithmetic with matrices over different fields.")
+            raise ValueError("You cannot perform arithmetic with matrices over different fields.")
         sig_on()
         mat_GF2E_mul(r.x, self.x, (<ntl_mat_GF2E>other).x)
         sig_off()
@@ -237,7 +243,7 @@ cdef class ntl_mat_GF2E(object):
         if not isinstance(other, ntl_mat_GF2E):
             other = ntl_mat_GF2E(other, self.c)
         if not self.c is (<ntl_mat_GF2E>other).c:
-            raise ValueError("You can not perform arithmetic with matrices over different fields.")
+            raise ValueError("You cannot perform arithmetic with matrices over different fields.")
         sig_on()
         mat_GF2E_sub(r.x, self.x, (<ntl_mat_GF2E>other).x)
         sig_off()
@@ -262,7 +268,7 @@ cdef class ntl_mat_GF2E(object):
         if not isinstance(other, ntl_mat_GF2E):
             other = ntl_mat_GF2E(other, self.c)
         if not self.c is (<ntl_mat_GF2E>other).c:
-            raise ValueError("You can not perform arithmetic with matrices over different fields.")
+            raise ValueError("You cannot perform arithmetic with matrices over different fields.")
         sig_on()
         mat_GF2E_add(r.x, self.x, (<ntl_mat_GF2E>other).x)
         sig_off()
@@ -383,7 +389,7 @@ cdef class ntl_mat_GF2E(object):
             raise IndexError("array index out of range")
 
         if not (<ntl_GF2E>x).c is self.c:
-            raise ValueError("You can not assign elements from different fields.")
+            raise ValueError("You cannot assign elements from different fields.")
 
         self.c.restore_c()
 
@@ -474,8 +480,13 @@ cdef class ntl_mat_GF2E(object):
             sage: ctx = ntl.GF2EContext([1,1,0,1,1,0,0,0,1])
             sage: m = ntl.mat_GF2E(ctx, 2,2,[ntl.GF2E_random(ctx) for x in range(2*2)])
             sage: ntl.GF2XHexOutput(0)
-            sage: m.list()
+            sage: l = m.list(); l  # random
             [[1 1 0 0 1 0 1 1], [1 1 1 0 1 1 1], [0 1 1 1 1 0 0 1], [0 1 0 1 1 1]]
+            sage: len(l) == 4
+            True
+            sage: all(a.modulus_context() is ctx for a in l)
+            True
+
         """
         return [self[i,j] for i in range(self.NumRows()) for j in range(self.x.NumCols())]
 
@@ -669,7 +680,7 @@ cdef class ntl_mat_GF2E(object):
             sage: ntl.GF2XHexOutput(1)
             sage: A = ntl.mat_GF2E(ctx, 100,100)
             sage: A.randomize()
-            sage: len([e for e in A.list() if e!=0])
+            sage: len([e for e in A.list() if e!=0])  # rel tol 1e-1
             9346
 
             sage: A = ntl.mat_GF2E(ctx, 100,100)
@@ -679,8 +690,8 @@ cdef class ntl_mat_GF2E(object):
 
             sage: A = ntl.mat_GF2E(ctx, 100,100)
             sage: A.randomize(nonzero=True, density=0.1)
-            sage: len([e for e in A.list() if e!=0])
-            994
+            sage: len([e for e in A.list() if e!=0])  # rel tol 2e-1
+            1000
 
         """
         cdef long i,j

@@ -13,6 +13,7 @@ The group `\mathrm{GL}(M)` is implemented via the class
 AUTHORS:
 
 - Eric Gourgoulhon (2015): initial version
+- Michael Jung (2019): improve treatment of the identity element
 
 REFERENCES:
 
@@ -28,6 +29,7 @@ REFERENCES:
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
 
+from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.groups import Groups
@@ -283,7 +285,6 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
                             fmodule))
         Parent.__init__(self, category=Groups())
         self._fmodule = fmodule
-        self._one = None # to be set by self.one()
 
     #### Parent methods ####
 
@@ -429,19 +430,21 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
 
         """
         resu = self.element_class(self._fmodule)
-        if self._fmodule._def_basis is not None:
-            comp = resu.set_comp()
-            for i in self._fmodule.irange():
-                if i%2 == 0:
-                    comp[[i,i]] = self._fmodule._ring.one()
-                else:
-                    comp[[i,i]] = -(self._fmodule._ring.one())
+        # Make sure that the base module has a default basis
+        self._fmodule.an_element()
+        comp = resu.set_comp()
+        for i in self._fmodule.irange():
+            if i%2 == 0:
+                comp[[i,i]] = self._fmodule._ring.one()
+            else:
+                comp[[i,i]] = -(self._fmodule._ring.one())
         return resu
 
     #### End of parent methods ####
 
     #### Monoid methods ####
 
+    @cached_method
     def one(self):
         r"""
         Return the group identity element of ``self``.
@@ -504,12 +507,17 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
             [0 1]
 
         """
-        if self._one is None:
-            self._one = self.element_class(self._fmodule, is_identity=True)
-            # Initialization of the components (Kronecker delta) in some basis:
-            if self._fmodule.bases():
-                self._one.components(self._fmodule.bases()[0])
-        return self._one
+        resu = self._element_constructor_(name='Id', latex_name=r'\mathrm{Id}')
+        # Initialization of the components (Kronecker delta) in some basis:
+        from .comp import KroneckerDelta
+        fmodule = self._fmodule
+        for basis in fmodule.bases():
+            resu._components[basis] = KroneckerDelta(fmodule._ring, basis,
+                                    start_index=fmodule._sindex,
+                                    output_formatter=fmodule._output_formatter)
+        resu._is_identity = True
+        resu.set_immutable()
+        return resu
 
     #### End of monoid methods ####
 

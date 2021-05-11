@@ -2,20 +2,18 @@
 """
 Root lattice realizations
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #                          2012 Nicolas Borie  <nicolas.borie at univ-mlv.fr>
 #
 #       (with contributions of many others)
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.abstract_method import abstract_method, AbstractMethod
-from sage.misc.misc import attrcall
+from sage.misc.call import attrcall
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import LazyImport
@@ -328,8 +326,8 @@ class RootLatticeRealizations(Category_over_base_ring):
             # Check the embeddings from the root lattice and the root space over the same base ring
             root_lattice = self.root_system.root_lattice()
             root_space   = self.root_system.root_space  (R)
-            tester.assertTrue(self.coerce_map_from(root_lattice) is not None)
-            tester.assertTrue(self.coerce_map_from(root_space  ) is not None)
+            tester.assertIsNot(self.coerce_map_from(root_lattice), None)
+            tester.assertIsNot(self.coerce_map_from(root_space), None)
             for i in self.index_set():
                 # This embedding maps simple roots to simple roots
                 tester.assertEqual(self(root_lattice.simple_root(i)), alpha[i])
@@ -777,8 +775,8 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: [PR.unrank(i) for i in range(5)]
                 [alpha[1],
                  alpha[2],
-                 2*alpha[1] + alpha[2],
                  alpha[1] + alpha[2],
+                 2*alpha[1] + alpha[2],
                  alpha[0] + alpha[1] + alpha[2]]
 
                 sage: Q = RootSystem(['D',3,2]).root_lattice()
@@ -1098,7 +1096,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             REFERENCES:
 
             .. [Reiner97] Victor Reiner. *Non-crossing partitions for
-               classical reflection groups*. Discrete Mathematics 177 (1997) 
+               classical reflection groups*. Discrete Mathematics 177 (1997)
             .. [Arm06] Drew Armstrong. *Generalized Noncrossing Partitions and
                Combinatorics of Coxeter Groups*. :arxiv:`math/0611106`
             """
@@ -1284,7 +1282,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             .. todo:: add a non simply laced example
 
-            Finaly, here is an affine example::
+            Finally, here is an affine example::
 
                 sage: RootSystem(["A",2,1]).weight_space().alphacheck()
                 Finite family {0: alphacheck[0], 1: alphacheck[1], 2: alphacheck[2]}
@@ -1431,7 +1429,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # We first scale the inverse of the Cartan matrix to be
             # with integer coefficients; then the linear combination
             # of the simple roots is guaranteed to live in this space,
-            # and then we rely on division by d to fail gracefuly.
+            # and then we rely on division by d to fail gracefully.
             M = self.cartan_type().cartan_matrix()
             d = M.det()
             if not d:
@@ -2182,7 +2180,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # result is zero. This is close to be the case for the
             # original matrix and for the current rational
             # approximation. We tidy up the work by replacing the
-            # first colum by the opposite of the sum of the others.
+            # first column by the opposite of the sum of the others.
             if self.dimension()>1: # not needed in the trivial cases
                 m.set_column(0, -sum(m[:,1:].columns()))
             m.set_immutable()
@@ -2621,7 +2619,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def plot_alcoves(self, alcoves=True, alcove_labels=False, wireframe=False, **options):
             r"""
-            Plot the alcoves and optionaly their labels.
+            Plot the alcoves and optionally their labels.
 
             INPUT:
 
@@ -2847,7 +2845,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             plot_options = self.plot_parse_options(**options)
             return plot_options.bounding_box.plot(color="gray", alpha=0.5, wireframe=False)
 
-        def plot_alcove_walk(self, word, start=None, foldings=None, color ="orange", **options):
+        def plot_alcove_walk(self, word, start=None, foldings=None, color="orange", **options):
             r"""
             Plot an alcove walk.
 
@@ -2882,10 +2880,10 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             And another with some foldings::
 
-                sage: L.plot_alcoves(bounding_box=3) +\
-                ....: L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],
+                sage: pic = L.plot_alcoves(bounding_box=3)   # long time
+                sage: pic += L.plot_alcove_walk([0,1,2,0,2,0,1,2,0,1],    # long time (3s)
                 ....:                      foldings = [False, False, True, False, False, False, True, False, True, False],
-                ....:                      color="green")            # long time (3s)
+                ....:                      color="green"); pic
                 Graphics object consisting of 155 graphics primitives
 
             TESTS::
@@ -3131,8 +3129,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: L = RootSystem(['A',2]).ambient_space()
                 sage: C = crystals.Tableaux(['A',2], shape=[2,1])
-                sage: L.plot_crystal(C)
-                Graphics object consisting of 16 graphics primitives
+                sage: L.plot_crystal(C, plot_labels='multiplicities')
+                Graphics object consisting of 15 graphics primitives
                 sage: C = crystals.Tableaux(['A',2], shape=[8,4])
                 sage: p = L.plot_crystal(C, plot_labels='circles')
                 sage: p.show(figsize=15)
@@ -3143,6 +3141,15 @@ class RootLatticeRealizations(Category_over_base_ring):
                 sage: C = crystals.Tableaux(['B',3], shape=[2,1])
                 sage: L.plot_crystal(C, plot_labels='circles', edge_labels=True) # long time
                 Graphics3d Object
+
+            TESTS:
+
+            Check that :trac:`29548` is fixed::
+
+                sage: LS = crystals.LSPaths(['A',2], [1,1])
+                sage: L = RootSystem(['A',2]).ambient_space()
+                sage: L.plot_crystal(LS)
+                Graphics object consisting of 16 graphics primitives
             """
             from sage.plot.arrow import arrow
             from sage.plot.circle import circle
@@ -3189,13 +3196,13 @@ class RootLatticeRealizations(Category_over_base_ring):
                         G += plot_options.text(elt, positions[wt], rgbcolor=label_color)
 
             for h,t,i in g.edges():
-                G += arrow(positions[h.weight()], positions[t.weight()],
+                G += arrow(positions[self(h.weight())], positions[self(t.weight())],
                            zorder=1, rgbcolor=plot_options.color(i),
                            arrowsize=plot_options._arrowsize)
                 if edge_labels:
-                    mid = (positions[h.weight()] + positions[t.weight()]) / QQ(2)
+                    mid = (positions[self(h.weight())] + positions[self(t.weight())]) / QQ(2)
                     if plot_options.dimension >= 2:
-                        diff = (positions[h.weight()] - positions[t.weight()]).normalized()
+                        diff = (positions[self(h.weight())] - positions[self(t.weight())]).normalized()
                         if plot_options.dimension >= 3:
                             from copy import copy
                             diff2 = copy(diff)

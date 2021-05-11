@@ -4,7 +4,6 @@ Root systems
 
 See :ref:`sage.combinat.root_system` for an overview.
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,
 #                               Justin Walker <justin at mac.com>

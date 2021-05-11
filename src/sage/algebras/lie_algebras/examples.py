@@ -3,12 +3,13 @@ Examples of Lie Algebras
 
 There are the following examples of Lie algebras:
 
-- A rather comprehensive family of 3-dimensional Lie
-  algebras
+- A rather comprehensive family of 3-dimensional Lie algebras
 - The Lie algebra of affine transformations of the line
 - All abelian Lie algebras on free modules
 - The Lie algebra of upper triangular matrices
 - The Lie algebra of strictly upper triangular matrices
+- The symplectic derivation Lie algebra
+- The rank two Heisenberg Virasoro algebra
 
 See also
 :class:`sage.algebras.lie_algebras.virasoro.LieAlgebraRegularVectorFields`
@@ -20,19 +21,34 @@ AUTHORS:
 
 - Travis Scrimshaw (07-15-2013): Initial implementation
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.algebras.lie_algebras.virasoro import VirasoroAlgebra
+from sage.algebras.lie_algebras.rank_two_heisenberg_virasoro import RankTwoHeisenbergVirasoro
+from sage.algebras.lie_algebras.symplectic_derivation import SymplecticDerivationLieAlgebra as SymplecticDerivation
 from sage.algebras.lie_algebras.onsager import OnsagerAlgebra
 from sage.algebras.lie_algebras.affine_lie_algebra import AffineLieAlgebra as Affine
+from sage.algebras.lie_algebras.classical_lie_algebra import gl
+from sage.algebras.lie_algebras.classical_lie_algebra import ClassicalMatrixLieAlgebra as ClassicalMatrix
+
+
+# the next 6 lines are here to silent pyflakes and lgtm warnings
+assert VirasoroAlgebra
+assert RankTwoHeisenbergVirasoro
+assert OnsagerAlgebra
+assert SymplecticDerivation
+assert Affine
+assert gl
+assert ClassicalMatrix
+
 
 def three_dimensional(R, a, b, c, d, names=['X', 'Y', 'Z']):
     r"""
@@ -392,8 +408,6 @@ def strictly_upper_triangular_matrices(R, n):
 #####################################################################
 ## Classical Lie algebras
 
-from sage.algebras.lie_algebras.classical_lie_algebra import gl
-from sage.algebras.lie_algebras.classical_lie_algebra import ClassicalMatrixLieAlgebra as ClassicalMatrix
 
 def sl(R, n, representation='bracket'):
     r"""
@@ -444,6 +458,56 @@ def sl(R, n, representation='bracket'):
     if representation == 'matrix':
         from sage.algebras.lie_algebras.classical_lie_algebra import sl as sl_matrix
         return sl_matrix(R, n)
+    raise ValueError("invalid representation")
+
+
+def su(R, n, representation='matrix'):
+    r"""
+    The Lie algebra `\mathfrak{su}_n`.
+
+    The Lie algebra `\mathfrak{su}_n` is the compact real form of the
+    type `A_{n-1}` Lie algebra and is finite-dimensional. As a matrix
+    Lie algebra, it is given by the set of all `n \times n` skew-Hermitian
+    matrices with trace 0.
+
+    INPUT:
+
+    - ``R`` -- the base ring
+    - ``n`` -- the size of the matrix
+    - ``representation`` -- (default: ``'matrix'``) can be one of
+      the following:
+
+      * ``'bracket'`` - use brackets and the Chevalley basis
+      * ``'matrix'`` - use matrices
+
+    EXAMPLES:
+
+    We construct `\mathfrak{su}_2`, where the default is as a
+    matrix Lie algebra::
+
+        sage: su2 = lie_algebras.su(QQ, 2)
+        sage: E,H,F = su2.basis()
+        sage: E.bracket(F) == 2*H
+        True
+        sage: H.bracket(E) == 2*F
+        True
+        sage: H.bracket(F) == -2*E
+        True
+
+    Since `\mathfrak{su}_n` is the same as the type `A_{n-1}` Lie algebra,
+    the bracket is the same as :func:`sl`::
+
+        sage: su2 = lie_algebras.su(QQ, 2, representation='bracket')
+        sage: su2 is lie_algebras.sl(QQ, 2, representation='bracket')
+        True
+    """
+    if representation == 'bracket':
+        from sage.algebras.lie_algebras.classical_lie_algebra import LieAlgebraChevalleyBasis
+        return LieAlgebraChevalleyBasis(R, ['A', n-1])
+    if representation == 'matrix':
+        from sage.algebras.lie_algebras.classical_lie_algebra import MatrixCompactRealForm
+        from sage.combinat.root_system.cartan_type import CartanType
+        return MatrixCompactRealForm(R, CartanType(['A', n-1]))
     raise ValueError("invalid representation")
 
 def so(R, n, representation='bracket'):
@@ -518,6 +582,7 @@ def so(R, n, representation='bracket'):
         return so_matrix(R, n)
     raise ValueError("invalid representation")
 
+
 def sp(R, n, representation='bracket'):
     r"""
     The Lie algebra `\mathfrak{sp}_n`.
@@ -587,7 +652,7 @@ def sp(R, n, representation='bracket'):
         [0 0 0 0]
         [0 0 0 0]
     """
-    if n % 2 != 0:
+    if n % 2:
         raise ValueError("n must be even")
     if representation == 'bracket':
         from sage.algebras.lie_algebras.classical_lie_algebra import LieAlgebraChevalleyBasis
@@ -596,4 +661,3 @@ def sp(R, n, representation='bracket'):
         from sage.algebras.lie_algebras.classical_lie_algebra import sp as sp_matrix
         return sp_matrix(R, n)
     raise ValueError("invalid representation")
-

@@ -1,4 +1,4 @@
-ncurses readline $(MP_LIBRARY)
+ncurses readline zlib $(MP_LIBRARY)
 
 ----------
 All lines of this file are ignored except the first.

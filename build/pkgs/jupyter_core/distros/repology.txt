@@ -1,0 +1,2 @@
+jupyter-core
+python:jupyter-core

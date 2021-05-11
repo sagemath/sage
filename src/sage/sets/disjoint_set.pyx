@@ -6,7 +6,7 @@ The main entry point is :func:`DisjointSet` which chooses the appropriate
 type to return. For more on the data structure, see :func:`DisjointSet`.
 
 This module defines a class for mutable partitioning of a set, which
-can not be used as a key of a dictionary, vertex of a graph etc. For
+cannot be used as a key of a dictionary, vertex of a graph etc. For
 immutable partitioning see :class:`SetPartition`.
 
 AUTHORS:
@@ -48,15 +48,15 @@ Disjoint set of hashables objects::
     'a'
 """
 
-#*****************************************************************************
-#       Copyright (C) 2009 Sebastien Labbe <slabqc at gmail.com>
+# ****************************************************************************
+#       Copyright (C) 2009 Sébastien Labbé <slabqc at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.structure.sage_object cimport SageObject
@@ -662,7 +662,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
     def __reduce__(self):
         r"""
-        Return a tuple of three elements :
+        Return a tuple of three elements:
 
         - The function :func:`DisjointSet`
         - Arguments for the function :func:`DisjointSet`

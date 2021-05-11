@@ -1,8 +1,10 @@
 # distutils: libraries = flint
+# distutils: depends = flint/qadic.h
 
 from sage.libs.flint.types cimport *
 
-cdef extern from "flint/qadic.h":
+# flint/qadic.h
+cdef extern from "flint_wrap.h":
     long qadic_val(const qadic_t op)
     long qadic_prec(const qadic_t op)
 

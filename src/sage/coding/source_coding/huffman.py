@@ -1,5 +1,5 @@
 r"""
-Huffman Encoding
+Huffman encoding
 
 This module implements functionalities relating to Huffman encoding and
 decoding.
@@ -7,7 +7,6 @@ decoding.
 AUTHOR:
 
 - Nathann Cohen (2010-05): initial version.
-
 
 Classes and functions
 =====================
@@ -28,11 +27,8 @@ Classes and functions
 #
 # https://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import print_function
 
 from collections import defaultdict
-
-import six
 
 from sage.structure.sage_object import SageObject
 
@@ -133,7 +129,7 @@ class Huffman(SageObject):
 
     In either case, the alphabet must consist of at least two symbols.
 
-    Examples::
+    EXAMPLES::
 
         sage: from sage.coding.source_coding.huffman import Huffman, frequency_table
         sage: h1 = Huffman("There once was a french fry")
@@ -252,7 +248,7 @@ class Huffman(SageObject):
         # index of each alphabetic symbol
         self._index = None
 
-        if isinstance(source, six.string_types):
+        if isinstance(source, str):
             self._build_code(frequency_table(source))
         elif isinstance(source, dict):
             self._build_code(source)
@@ -548,7 +544,7 @@ class Huffman(SageObject):
             sage: from sage.coding.source_coding.huffman import Huffman
             sage: H = Huffman("Sage")
             sage: T = H.tree()
-            sage: T.edges(labels=None)
+            sage: T.edges(labels=None)  # indirect doctest
             [('0', 'S: 00'), ('0', 'a: 01'), ('1', 'e: 10'), ('1', 'g: 11'), ('root', '0'), ('root', '1')]
         """
         if parent == "":

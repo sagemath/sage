@@ -1,0 +1,2 @@
+cd src/
+${MAKE:-make} test || sdh_die "Failures checking polymake"

@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 
 """
 Given the output of doctest and a file, adjust the doctests so they won't fail.
@@ -16,7 +16,8 @@ AUTHORS::
 
 """
 
-import os, sys, difflib
+import os
+import sys
 import subprocess
 from optparse import OptionParser
 from sage.misc.temporary_file import tmp_dir
@@ -28,7 +29,7 @@ parser.add_option('-l','--long',dest='long', action="store_true", default=False)
 
 options, args = parser.parse_args()
 
-if not (len(args) in [1,2]) :
+if len(args) not in [1, 2]:
     print(usage)
     sys.exit(1)
 
@@ -61,15 +62,31 @@ for block in doctests:
     comma = block.find(', in ')            # we try to extract the line number which gives the test failure
     if line == -1 or comma==-1: continue   # but if something goes wrong we give up
     line_num=eval(block[line+5:comma])
+
+    # Take care of multiline examples.
+    if 'Expected' in block:
+        i1 = block.index('Failed example')
+        i2 = block.index('Expected')
+        example_len = block[i1:i2].count('\n') - 1
+        line_num += example_len - 1
+
     if 'Expected nothing' in block:
         exp = block.find('Expected nothing')
         block='\n'+block[exp+17:]  # so that split('\nGot:\n') does not fail below
     elif 'Expected:' in block:
         exp = block.find('Expected:\n')
         block=block[exp+10:]
+    elif 'Exception raised' in block:
+        exp = block.find('Exception raised')
+        block='\nGot:\n'+block[exp+17:]
     else:
         continue
-    if block[-21:]=='Got:\n    <BLANKLINE>\n':
+    # Error testing.
+    if 'Traceback (most recent call last):' in block:
+        expected, got = block.split('\nGot:\n')
+        got = got.splitlines()
+        got = ['    Traceback (most recent call last):', '    ...', got[-1]]
+    elif block[-21:]=='Got:\n    <BLANKLINE>\n':
         expected=block[:-22]
         got=['']
     else:

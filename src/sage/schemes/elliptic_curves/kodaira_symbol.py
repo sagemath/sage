@@ -44,7 +44,7 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Roe       <roed@math.harvard.edu>
 #                          William Stein   <wstein@gmail.com>
 #
@@ -57,8 +57,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -97,6 +97,11 @@ class KodairaSymbol_class(SageObject):
             I_n
             sage: KodairaSymbol_class('In')
             In
+
+        Check that :trac:`31147` is fixed::
+
+            sage: latex(KodairaSymbol_class(-14))
+            I_{10}^{*}
         """
         if not isinstance(symbol, str):
             n = Integer(symbol)
@@ -124,8 +129,8 @@ class KodairaSymbol_class(SageObject):
                 nu = n - 4
                 self._n = nu
                 self._roman = 1
-                self._str = 'I' + nu.str()
-                self._latex = 'I_{' + nu.str() + '}'
+                self._str = 'I%s' % nu
+                self._latex = 'I_{%s}' % nu
             elif n == -1:
                 self._roman = 1
                 self._n = 0
@@ -147,12 +152,12 @@ class KodairaSymbol_class(SageObject):
                 nu = -n - 4
                 self._roman = 1
                 self._n = nu
-                self._str = 'I' + nu.str() +'*'
-                self._latex = 'I_' + nu.str() + '^{*}'
+                self._str = 'I%s*' % nu
+                self._latex = 'I_{%s}^{*}' % nu
             self._starred = (n < 0)
             self._pari = n
             return
-        elif len(symbol) == 0:
+        elif not symbol:
             raise TypeError("symbol must be a nonempty string")
         if symbol[0] == "I":
             symbol = symbol[1:]
@@ -277,7 +282,7 @@ class KodairaSymbol_class(SageObject):
             IV*]
         """
         if isinstance(other, KodairaSymbol_class):
-            if (self._n == "generic" and not other._n is None) or (other._n == "generic" and not self._n is None):
+            if (self._n == "generic" and other._n is not None) or (other._n == "generic" and self._n is not None):
                 return richcmp(self._starred, other._starred, op)
             return richcmp(self._str, other._str, op)
         else:
@@ -330,7 +335,7 @@ def KodairaSymbol(symbol):
     """
     if symbol in _ks_cache:
         ks = _ks_cache[symbol]()
-        if not ks is None:
+        if ks is not None:
             return ks
     ks = KodairaSymbol_class(symbol)
     _ks_cache[symbol] = weakref.ref(ks)

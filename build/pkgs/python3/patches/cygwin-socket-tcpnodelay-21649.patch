@@ -1,0 +1,36 @@
+From bf2b131976694d5f4fe182c4a48d2d90edf5f303 Mon Sep 17 00:00:00 2001
+From: Zackery Spytz <zspytz@gmail.com>
+Date: Mon, 27 Jul 2020 19:22:14 -0600
+Subject: [PATCH] bpo-41374: Include netinet/tcp.h on Cygwin
+
+On Cygwin, constants like TCP_NODELAY are no longer provided by
+sys/socket.h.
+---
+ .../next/Library/2020-07-27-19-21-05.bpo-41374.cd-kFL.rst     | 2 ++
+ Modules/socketmodule.h                                        | 4 +---
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+ create mode 100644 Misc/NEWS.d/next/Library/2020-07-27-19-21-05.bpo-41374.cd-kFL.rst
+
+diff --git a/Misc/NEWS.d/next/Library/2020-07-27-19-21-05.bpo-41374.cd-kFL.rst b/Misc/NEWS.d/next/Library/2020-07-27-19-21-05.bpo-41374.cd-kFL.rst
+new file mode 100644
+index 0000000000000..a5b2e042a3fae
+--- /dev/null
++++ b/Misc/NEWS.d/next/Library/2020-07-27-19-21-05.bpo-41374.cd-kFL.rst
+@@ -0,0 +1,2 @@
++Ensure that ``socket.TCP_*`` constants are exposed on Cygwin 3.1.6 and
++greater.
+diff --git a/Modules/socketmodule.h b/Modules/socketmodule.h
+index ba2c9f5c31c3b..f565b8e1396ff 100644
+--- a/Modules/socketmodule.h
++++ b/Modules/socketmodule.h
+@@ -8,9 +8,7 @@
+ #   include <sys/socket.h>
+ # endif
+ # include <netinet/in.h>
+-# if !defined(__CYGWIN__)
+-#  include <netinet/tcp.h>
+-# endif
++# include <netinet/tcp.h>
+ 
+ #else /* MS_WINDOWS */
+ # include <winsock2.h>

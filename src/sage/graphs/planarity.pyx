@@ -1,5 +1,6 @@
+# distutils: libraries = planarity
 """
-Wrapper for Boyer's (C) planarity algorithm.
+Wrapper for Boyer's (C) planarity algorithm
 """
 
 cdef extern from "planarity/graph.h":
@@ -170,7 +171,7 @@ def is_planar(g, kuratowski=False, set_pos=False, set_embedding=False, circular=
                     emb_dict[to[i]] = linked_list
                 g._embedding = emb_dict
             if set_pos:
-                g.set_planar_positions()
+                g.layout(layout='planar', save_pos=True)
         else:
             if set_embedding:
                 # Take counter-clockwise embedding if circular planar test

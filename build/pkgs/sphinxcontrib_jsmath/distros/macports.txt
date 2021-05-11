@@ -1,0 +1,1 @@
+py37-sphinxcontrib-jsmath

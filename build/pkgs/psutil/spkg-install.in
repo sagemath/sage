@@ -1,0 +1,7 @@
+if [ "$UNAME" = "Darwin" ] && [ $MACOSX_VERSION -ge 16 ]; then
+    echo "OS X 10.$[$MACOSX_VERSION-4] Building with clang."
+    CC=clang
+    export CFLAGS="$CFLAGS_NON_NATIVE"
+fi
+
+cd src && sdh_pip_install .

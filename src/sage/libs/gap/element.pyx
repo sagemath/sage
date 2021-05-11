@@ -16,12 +16,11 @@ elements. For general information about GAP, you should read the
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.signals cimport sig_on, sig_off
 
 from .gap_includes cimport *
+from .libgap import libgap
 from .util cimport *
 from .util import GAPError
 from sage.cpython.string cimport str_to_bytes, char_to_str
@@ -39,7 +38,7 @@ decode_type_number = {
     T_INTPOS: 'T_INTPOS (positive integer)',
     T_INTNEG: 'T_INTNEG (negative integer)',
     T_RAT: 'T_RAT (rational number)',
-    T_CYC: 'T_CYC (universal cylotomic)',
+    T_CYC: 'T_CYC (universal cyclotomic)',
     T_FFE: 'T_FFE (finite field element)',
     T_PERM2: 'T_PERM2',
     T_PERM4: 'T_PERM4',
@@ -73,7 +72,6 @@ cdef Obj make_gap_list(sage_list) except NULL:
 
     The list of the elements in ``a`` as a Gap ``Obj``.
     """
-    from sage.libs.gap.libgap import libgap
     cdef GapElement l = libgap.eval('[]')
     cdef GapElement elem
     for x in sage_list:
@@ -104,7 +102,6 @@ cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
 
     The list of the elements in ``sage_list`` as a Gap ``Obj``.
     """
-    from sage.libs.gap.libgap import libgap
     cdef GapElement l = libgap.eval('[]')
     cdef GapElement elem
     cdef GapElement one
@@ -123,8 +120,15 @@ cdef Obj make_gap_matrix(sage_list, gap_ring) except NULL:
     return l.value
 
 
-cdef char *crepr(Obj obj):
-    cdef Obj s, stream, output_text_string, view_obj
+cdef char *capture_stdout(Obj func, Obj obj):
+    """
+    Call a single-argument GAP function ``func`` with the argument ``obj``
+    and return the stdout from that function call.
+
+    This can be used to capture the output of GAP functions that are used to
+    print objects such as ``Print()`` and ``ViewObj()``.
+    """
+    cdef Obj s, stream, output_text_string
     cdef UInt res
     # The only way to get a string representation of an object that is truly
     # consistent with how it would be represented at the GAP REPL is to call
@@ -145,12 +149,37 @@ cdef char *crepr(Obj obj):
             raise GAPError("failed to open output capture stream for "
                            "representing GAP object")
 
-        viewobj = GAP_ValueGlobalVariable("ViewObj")
-        CALL_1ARGS(viewobj, obj)
+        CALL_1ARGS(func, obj)
         CloseOutput()
         return CSTR_STRING(s)
     finally:
         GAP_Leave()
+
+
+cdef char *gap_element_repr(Obj obj):
+    """
+    Implement ``repr()`` of ``GapElement``s using the ``ViewObj()`` function,
+    which is by default closest to what you get when displaying an object in
+    GAP on the command-line (i.e. when evaluating an expression that returns
+    that object.
+    """
+
+    cdef Obj func = GAP_ValueGlobalVariable("ViewObj")
+    return capture_stdout(func, obj)
+
+
+cdef char *gap_element_str(Obj obj):
+    """
+    Implement ``str()`` of ``GapElement``s using the ``Print()`` function.
+
+    This mirrors somewhat how Python uses ``str()`` on an object when passing
+    it to the ``print()`` function.  This is also how the GAP pexpect interface
+    has traditionally repr'd objects; for the libgap interface we take a
+    slightly different approach more closely mirroring Python's str/repr
+    difference (though this does not map perfectly onto GAP).
+    """
+    cdef Obj func = GAP_ValueGlobalVariable("Print")
+    return capture_stdout(func, obj)
 
 
 cdef Obj make_gap_record(sage_dict) except NULL:
@@ -170,7 +199,6 @@ cdef Obj make_gap_record(sage_dict) except NULL:
         sage: libgap({'a': 1, 'b':123})   # indirect doctest
         rec( a := 1, b := 123 )
     """
-    from sage.libs.gap.libgap import libgap
     data = [ (str(key), libgap(value)) for key, value in sage_dict.iteritems() ]
 
     cdef Obj rec
@@ -360,11 +388,22 @@ cdef GapElement make_GapElement(parent, Obj obj):
         sage: libgap(None)
         Traceback (most recent call last):
         ...
-        AttributeError: 'NoneType' object has no attribute '_gap_init_'
+        AttributeError: 'NoneType' object has no attribute '_libgap_init_'
     """
     cdef GapElement r = GapElement.__new__(GapElement)
     r._initialize(parent, obj)
     return r
+
+
+cpdef _from_sage(elem):
+    """
+    Currently just used for unpickling; equivalent to calling ``libgap(elem)``
+    to convert a Sage object to a `GapElement` where possible.
+    """
+    if isinstance(elem, str):
+        return libgap.eval(elem)
+
+    return libgap(elem)
 
 
 cdef class GapElement(RingElement):
@@ -559,6 +598,41 @@ cdef class GapElement(RingElement):
         """
         return self.deepcopy(0)
 
+    def __reduce__(self):
+        """
+        Attempt to pickle GAP elements from libgap.
+
+        This is inspired in part by
+        ``sage.interfaces.interface.Interface._reduce``, though for a fallback
+        we use ``str(self)`` instead of ``repr(self)``, since the former is
+        equivalent in the libgap interface to the latter in the pexpect
+        interface.
+
+        TESTS:
+
+        This workaround was motivated in particular by this example from the
+        permutation groups implementation::
+
+            sage: CC = libgap.eval('ConjugacyClass(SymmetricGroup([ 1 .. 5 ]), (1,2)(3,4))')
+            sage: CC.sage()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot construct equivalent Sage object
+            sage: libgap.eval(str(CC))
+            (1,2)(3,4)^G
+            sage: loads(dumps(CC))
+            (1,2)(3,4)^G
+        """
+
+        if self.is_string():
+            elem = repr(self.sage())
+        try:
+            elem = self.sage()
+        except NotImplementedError:
+            elem = str(self)
+
+        return (_from_sage, (elem,))
+
     def __contains__(self, other):
         r"""
         TESTS::
@@ -578,7 +652,6 @@ cdef class GapElement(RingElement):
             ...
             GAPError: Error, no method found! Error, no 1st choice method found for `in' on 2 arguments
         """
-        from sage.libs.gap.libgap import libgap
         GAP_IN = libgap.eval(r'\in')
         return GAP_IN(other, self).sage()
 
@@ -596,7 +669,7 @@ cdef class GapElement(RingElement):
 
             sage: x = libgap(1)
             sage: x._type_number()
-            (0L, 'T_INT (integer)')
+            (0, 'T_INT (integer)')
         """
         n = TNUM_OBJ(self.value)
         global decode_type_number
@@ -667,6 +740,29 @@ cdef class GapElement(RingElement):
             raise AttributeError(f"'{name}' does not define a GAP function")
         return proxy
 
+    def __str__(self):
+        r"""
+        Return a string representation of ``self`` for printing.
+
+        EXAMPLES::
+
+            sage: libgap(0)
+            0
+            sage: print(libgap.eval(''))
+            None
+            sage: print(libgap('a'))
+            a
+            sage: print(libgap.eval('SymmetricGroup(3)'))
+            SymmetricGroup( [ 1 .. 3 ] )
+            sage: libgap(0).__str__()
+            '0'
+        """
+        if  self.value == NULL:
+            return 'NULL'
+
+        s = char_to_str(gap_element_str(self.value))
+        return s.strip()
+
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
@@ -676,15 +772,17 @@ cdef class GapElement(RingElement):
             sage: libgap(0)
             0
             sage: libgap.eval('')
-            sage: libgap(0)
-            0
+            sage: libgap('a')
+            "a"
+            sage: libgap.eval('SymmetricGroup(3)')
+            Sym( [ 1 .. 3 ] )
             sage: libgap(0)._repr_()
             '0'
         """
         if  self.value == NULL:
             return 'NULL'
 
-        s = char_to_str(crepr(self.value))
+        s = char_to_str(gap_element_repr(self.value))
         return s.strip()
 
     cpdef _set_compare_by_id(self):
@@ -1232,7 +1330,7 @@ cdef class GapElement(RingElement):
             sage: type(_)
             <... 'str'>
 
-            sage: x = libgap.eval('Indeterminate(Integers, "x")')
+            sage: x = libgap.Integers.Indeterminate("x")
 
             sage: p = x^2 - 2*x + 3
             sage: p.sage()
@@ -1251,10 +1349,19 @@ cdef class GapElement(RingElement):
             (3*x^2 + x)/(x^2 - 2)
             sage: p.sage().parent()
             Fraction Field of Univariate Polynomial Ring in x over Integer Ring
+
+        TESTS:
+
+        Check :trac:`30496`::
+
+            sage: x = libgap.Integers.Indeterminate("x")
+
+            sage: p = x^2 - 2*x
+            sage: p.sage()
+            x^2 - 2*x
         """
         if self.value is NULL:
             return None
-        libgap = self.parent()
 
         if self.IsInfinity():
             from sage.rings.infinity import Infinity
@@ -1276,7 +1383,8 @@ cdef class GapElement(RingElement):
             if self.IsUnivariatePolynomial():
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 R = PolynomialRing(base_ring, var)
-                return R(num)
+                x = R.gen()
+                return x**val * R(num)
 
             elif self.IsLaurentPolynomial():
                 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
@@ -1289,6 +1397,11 @@ cdef class GapElement(RingElement):
                 R = PolynomialRing(base_ring, var)
                 x = R.gen()
                 return x**val * R(num) / R(den)
+
+        elif self.IsList():
+            # May be a list-like collection of some other type of GapElements
+            # that we can convert
+            return [item.sage() for item in self.AsList()]
 
         raise NotImplementedError('cannot construct equivalent Sage object')
 
@@ -3121,11 +3234,11 @@ cdef class GapElement_Record(GapElement):
 
             sage: rec = libgap.eval('rec(a:=123, b:=456, Sym3:=SymmetricGroup(3))')
             sage: rec.sage()
-            {'Sym3': NotImplementedError('cannot construct equivalent Sage object',),
+            {'Sym3': NotImplementedError('cannot construct equivalent Sage object'...),
              'a': 123,
              'b': 456}
         """
-        result = dict()
+        result = {}
         for key, val in self:
             try:
                 val = val.sage()

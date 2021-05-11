@@ -73,11 +73,8 @@ computador. Aqui faremos apenas alguns comentários.
    Singular, Maxima, NTL, GMP, e uma série de outros programas, você
    não precisa instalá-los separadamente pois eles estão incluídos no
    Sage. Todavia, para usar alguns recursos, por exemplo, o Macaulay
-   ou o KASH, você precisa instalar pacotes de software adicionais ou
-   ter os programas necessários já instalados no seu computador. O
-   Macaulay e o KASH estão disponíveis como pacotes adicionais do Sage
-   (para uma lista de pacotes adicionais, digite ``sage -optional``,
-   ou visite a seção "Download" na página do Sage na internet).
+   ou o KASH, você precisa
+   ter os programas necessários já instalados no seu computador.
 
 #. A versão pré-compilada do Sage (disponível na página do Sage na
    internet) pode ser mais fácil e rápida para instalar do que a
@@ -103,8 +100,8 @@ Formas de usar o Sage
 Você pode usar o Sage de diversas formas.
 
 
--  **Interface gráfica Notebook:** veja a seção sobre o Notebook em
-   :ref:`section-notebook`,
+-  **Interface gráfica Notebook:** inicie `sage -n jupyter`; leia
+   `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
 
 -  **Linha de comando interativa:** veja
    :ref:`chapter-interactive_shell`,

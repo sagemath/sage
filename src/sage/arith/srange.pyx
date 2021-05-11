@@ -1,3 +1,4 @@
+# cython: language_level=2
 """
 Ranges and the ``[1,2,..,n]`` notation
 
@@ -7,7 +8,7 @@ AUTHORS:
   up.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -16,9 +17,8 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
-from __future__ import division, print_function
 
 from libc.math cimport ceil
 from cysignals.signals cimport sig_check
@@ -157,7 +157,7 @@ def xsrange(start, end=None, step=1, universe=None, *, coerce=True, bint include
         return
 
     cur = start
-    # yield in chuncks of 1024
+    # yield in chunks of 1024
     cdef long k
     while icount > 1024:
         for k in range(1024):

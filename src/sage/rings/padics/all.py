@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from .generic_nodes import is_pAdicField, is_pAdicRing
 from .factory import Zp, Zq, Zp as pAdicRing, ZpCR, ZpCA, ZpFM, ZpFP, ZpLC, ZpLF, ZqCR, ZqCA, ZqFM, ZqFP #, ZpL, ZqL
 from .factory import Qp, Qq, Qp as pAdicField, QpCR, QpFP, QpLC, QpLF, QqCR, QqFP #, QpL, QqL

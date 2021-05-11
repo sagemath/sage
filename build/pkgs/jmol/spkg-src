@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname ${0})"
+
+# fetch and unpack upstream source
+rm -f download
+wget https://sourceforge.net/projects/jmol/files/latest/download
+rm -rf jmol-*
+unzip download
+
+# guess package version
+JMOL_VERSION="$(echo jmol-* | sed 's/.*-//g')"
+echo ${JMOL_VERSION}
+JMOL_VERSION_SHORT=${JMOL_VERSION:0:5}
+
+# avoid build-dependency in unzip and remove unused stuff
+pushd jmol-${JMOL_VERSION}
+unzip jsmol.zip
+rm jsmol.zip
+pushd jsmol
+rm -rf data flot images inchi jcse jsme
+popd
+popd
+
+# install tarball, fix version and checksums in sage source
+tar cjf ../../../upstream/jmol-${JMOL_VERSION}.tar.bz2 jmol-${JMOL_VERSION}
+echo "${JMOL_VERSION}" > package-version.txt
+../../../sage --package fix-checksum jmol
+
+# cleanup
+rm -rf jmol-${JMOL_VERSION}
+rm download
+

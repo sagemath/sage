@@ -14,7 +14,6 @@ Frédéric Chapoton (2017)
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
-from six import iteritems
 
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -30,7 +29,6 @@ from sage.categories.functor import Functor
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
-from sage.misc.lazy_import import lazy_import
 from sage.structure.coerce_exceptions import CoercionException
 
 
@@ -167,7 +165,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
             self._alphabet = names
         # Here one would need LabelledBinaryTrees(names)
         # so that one can restrict the labels to some fixed set
-        
+
         cat = HopfAlgebras(R).WithBasis().Graded().Connected()
         CombinatorialFreeModule.__init__(self, R, Trees,
                                          latex_prefix="",
@@ -253,7 +251,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         """
         Trees = self.basis().keys()
         return Family(self._alphabet, lambda a: self.monomial(Trees([], a)))
- 
+
     def change_ring(self, R):
         """
         Return the free dendriform algebra in the same variables over `R`.
@@ -825,7 +823,8 @@ class DendriformFunctor(ConstructionFunctor):
 
         def action(x):
             return codom._from_dict({a: f(b)
-                                     for a, b in iteritems(x.monomial_coefficients())})
+                                     for a, b in
+                                     x.monomial_coefficients().items()})
         return dom.module_morphism(function=action, codomain=codom)
 
     def __eq__(self, other):

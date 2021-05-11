@@ -20,7 +20,6 @@ Miscellaneous `p`-adic methods
 #
 #                  https://www.gnu.org/licenses/
 ######################################################################
-from __future__ import absolute_import
 
 
 import sage.rings.all as rings
@@ -92,10 +91,11 @@ def _normalize_padic_lseries(self, p, normalize, implementation, precision):
             raise ValueError("Must specify precision when using 'pollackstevens'")
         if normalize is not None:
             raise ValueError("The 'normalize' parameter is not used for Pollack-Stevens' overconvergent modular symbols")
+    elif implementation == "num":
+        if normalize is not None:
+            raise ValueError("The 'normalize' parameter is not used for numerical modular symbols")
     else:
-        raise ValueError("Implementation should be one of  'sage', 'eclib' or 'pollackstevens'")
-    #if precision is not None and implementation != 'pollackstevens':
-    #    raise ValueError("Must *not* specify precision unless using 'pollackstevens'")
+        raise ValueError("Implementation should be one of  'sage', 'eclib', 'num' or 'pollackstevens'")
     return (p, normalize, implementation, precision)
 
 @cached_method(key=_normalize_padic_lseries)
@@ -115,8 +115,9 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
        are normalized. See modular_symbol for
        more details.
 
-    -  ``implementation`` -- 'eclib' (default), 'sage', 'pollackstevens';
+    -  ``implementation`` -- 'eclib' (default), 'sage', 'num' or 'pollackstevens';
        Whether to use John Cremona's eclib, the Sage implementation,
+       numerical modular symbols
        or Pollack-Stevens' implementation of overconvergent
        modular symbols.
 
@@ -175,6 +176,14 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
         sage: L = e.padic_lseries(3, implementation = 'sage')
         sage: L.series(5,prec=10)
         2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 3^6 + O(3^7) + (1 + 3 + 2*3^2 + 3^3 + O(3^4))*T + (1 + 2*3 + O(3^4))*T^2 + (3 + 2*3^2 + O(3^3))*T^3 + (2*3 + 3^2 + O(3^3))*T^4 + (2 + 2*3 + 2*3^2 + O(3^3))*T^5 + (1 + 3^2 + O(3^3))*T^6 + (2 + 3^2 + O(3^3))*T^7 + (2 + 2*3 + 2*3^2 + O(3^3))*T^8 + (2 + O(3^2))*T^9 + O(T^10)
+        
+    Also the numerical modular symbols can be used.
+    This may allow for much larger conductor in some instances::   
+    
+        sage: E = EllipticCurve([101,103])
+        sage: L = E.padic_lseries(5, implementation="num")
+        sage: L.series(2)
+        O(5^4) + (3 + O(5))*T + (1 + O(5))*T^2 + (3 + O(5))*T^3 + O(5)*T^4 + O(T^5)
 
     Finally, we can use the overconvergent method of Pollack-Stevens.::
 
@@ -197,7 +206,7 @@ def padic_lseries(self, p, normalize = None, implementation = 'eclib', precision
     p, normalize, implementation, precision = self._normalize_padic_lseries(p,\
                              normalize, implementation, precision)
 
-    if implementation in ['sage', 'eclib']:
+    if implementation in ['sage', 'eclib', 'num']:
         if self.ap(p) % p != 0:
             Lp = plseries.pAdicLseriesOrdinary(self, p,
                                   normalize = normalize, implementation = implementation)
@@ -701,9 +710,9 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
         sage: h = E.padic_height(7,10)
         sage: P = E.gen(0)
         sage: h(P)
-        2*7 + 7^2 + 5*7^3 + 6*7^4 + 2*7^5 + 3*7^6 + 7^7 + O(7^9)
+        2*7 + 7^2 + 5*7^3 + 6*7^4 + 2*7^5 + 3*7^6 + 7^7 + 4*7^9 + 5*7^10 + O(7^11)
         sage: h(P+P)
-        7 + 5*7^2 + 6*7^3 + 5*7^4 + 4*7^5 + 6*7^6 + 5*7^7 + O(7^9)
+        7 + 5*7^2 + 6*7^3 + 5*7^4 + 4*7^5 + 6*7^6 + 5*7^7 + 2*7^9 + 7^10 + O(7^11)
     """
     if check_hypotheses:
         if not p.is_prime():
@@ -1113,9 +1122,9 @@ def padic_sigma(self, p, N=20, E2=None, check=False, check_hypotheses=True):
     sigma = theta * theta.parent().gen()
 
     # Convert the answer to power series over p-adics; drop the precision
-    # of the $t^k$ coefficient to $p^(N-k+1)$.
+    # of the t^k coefficient to p^(N-k+1).
     # [Note: there are actually more digits available, but it's a bit
-    # tricky to figure out exactly how many, and we only need $p^(N-k+1)$
+    # tricky to figure out exactly how many, and we only need p^(N-k+1)
     # for p-adic height purposes anyway]
     K = rings.pAdicField(p, N + 1)
 
@@ -1302,7 +1311,7 @@ def padic_sigma_truncated(self, p, N=20, lamb=0, E2=None, check_hypotheses=True)
     sigma = theta * theta.parent().gen()
 
     # Convert the answer to power series over p-adics; drop the precision
-    # of the $t^j$ coefficient to $p^{N - 2 + (3 - j)(lamb + 1)})$.
+    # of the t^j coefficient to p^{N - 2 + (3 - j)(lamb + 1)}).
     K = rings.pAdicField(p, N - 2 + 3*(lamb+1))
 
     sigma = sigma.padded_list(trunc+1)

@@ -1,0 +1,18 @@
+###########################################
+## PARI
+###########################################
+
+export CFLAGS=$CFLAGS_O3
+
+cd src
+
+$MAKE test-all
+
+if [ $? -ne 0 ]; then
+    echo "Error: PARI failed the self-tests when running '$MAKE test-all'"
+    exit 1
+fi
+
+if [ -d ../parigit ]; then
+    echo "WARNING: You should delete the parigit directory before submitting this spkg."
+fi

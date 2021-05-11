@@ -1,0 +1,47 @@
+name: Lint
+
+on: [push, pull_request]
+
+jobs:
+  lint-pycodestyle:
+    name: Code style check with pycodestyle
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install pycodestyle
+      run: pip install tox pycodestyle
+    - name: Lint using pycodestyle
+      run: tox -e pycodestyle-minimal
+  lint-relint:
+    name: Code style check with relint
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install relint
+      run: pip install tox relint
+    - name: Lint using relint
+      run: tox -e relint src/
+  lint-pyright:
+    name: Static type check with pyright
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up node to install pyright
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+    - name: Install pyright
+      run: npm install -g pyright
+    - name: Lint using pyright
+      run: pyright

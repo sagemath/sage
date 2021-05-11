@@ -7,11 +7,8 @@ for use in doc-strings.
 {INDEX_OF_FUNCTIONS}
 
 """
-from __future__ import print_function
 
 import inspect
-
-from six import PY2
 
 from sage.misc.sageinspect import _extract_embedded_position
 
@@ -175,7 +172,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
             link = ":meth:`~{module}.{cls}.{func}`".format(
                 module=e.im_class.__module__, cls=e.im_class.__name__,
                 func=fname(e))
-        elif not PY2 and inspect.isfunction(e) and inspect.isclass(obj):
+        elif inspect.isfunction(e) and inspect.isclass(obj):
             link = ":meth:`~{module}.{cls}.{func}`".format(
                 module=obj.__module__, cls=obj.__name__, func=fname(e))
         elif inspect.isfunction(e):
@@ -193,7 +190,7 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
         # Descriptions of the method/function
         if doc:
             desc = doc.split('\n\n')[0]                             # first paragraph
-            desc = " ".join([x.strip() for x in desc.splitlines()]) # concatenate lines
+            desc = " ".join(x.strip() for x in desc.splitlines())   # concatenate lines
             desc = desc.strip()                                     # remove leading spaces
         else:
             desc = "NO DOCSTRING"

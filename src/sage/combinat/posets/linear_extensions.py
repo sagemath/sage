@@ -6,11 +6,13 @@ This module defines two classes:
 
 - :class:`LinearExtensionOfPoset`
 - :class:`LinearExtensionsOfPoset`
+- :class:`LinearExtensionsOfPosetWithHooks`
+- :class:`LinearExtensionsOfForest`
 
 Classes and methods
 -------------------
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Anne Schilling <anne at math.ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -22,11 +24,8 @@ Classes and methods
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#****************************************************************************
-from __future__ import print_function
-from six.moves import range
-from six import add_metaclass
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 from sage.rings.rational_field import QQ
 from sage.structure.unique_representation import UniqueRepresentation
@@ -36,10 +35,12 @@ from sage.graphs.digraph import DiGraph
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.graphs.dot2tex_utils import have_dot2tex
 from sage.structure.list_clone import ClonableArray
+from sage.functions.other import factorial
+from sage.matrix.constructor import matrix
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class LinearExtensionOfPoset(ClonableArray):
+class LinearExtensionOfPoset(ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A linear extension of a finite poset `P` of size `n` is a total
     ordering `\pi := \pi_0 \pi_1 \ldots \pi_{n-1}` of its elements
@@ -141,11 +142,11 @@ class LinearExtensionOfPoset(ClonableArray):
         """
         P = self.parent().poset()
         if not P.is_linear_extension(self):
-            raise ValueError("%s is not a linear extension of %s"%(self, P))
+            raise ValueError("%s is not a linear extension of %s" % (self, P))
 
     def poset(self):
         r"""
-        Returns the underlying original poset.
+        Return the underlying original poset.
 
         EXAMPLES::
 
@@ -158,7 +159,7 @@ class LinearExtensionOfPoset(ClonableArray):
 
     def _latex_(self):
         r"""
-        Returns the latex string for ``self``.
+        Return the latex string for ``self``.
 
         EXAMPLES::
 
@@ -167,7 +168,7 @@ class LinearExtensionOfPoset(ClonableArray):
             sage: p._latex_()
             '\\mathtt{(1, 2, 3, 4)}'
         """
-        return "\\mathtt{"+str(tuple(self))+"}"
+        return "\\mathtt{" + str(tuple(self)) + "}"
 
     def to_poset(self):
         r"""
@@ -214,7 +215,7 @@ class LinearExtensionOfPoset(ClonableArray):
         P = self.parent().poset()
         old = [P.unwrap(x) for x in self]
         new = [P.unwrap(x) for x in P]
-        relabelling = dict(zip(old,new))
+        relabelling = dict(zip(old, new))
         return P.relabel(relabelling).with_linear_extension(new)
 
     def is_greedy(self):
@@ -244,16 +245,16 @@ class LinearExtensionOfPoset(ClonableArray):
             True
         """
         P = self.poset()
-        for i in range(len(self)-1):
-            if not P.covers(self[i], self[i+1]):
+        for i in range(len(self) - 1):
+            if not P.covers(self[i], self[i + 1]):
                 for u in P.upper_covers(self[i]):
-                    if all(l in self[:i+1] for l in P.lower_covers(u)):
+                    if all(l in self[:i + 1] for l in P.lower_covers(u)):
                         return False
         return True
 
     def tau(self, i):
         r"""
-        Returns the operator `\tau_i` on linear extensions ``self`` of a poset.
+        Return the operator `\tau_i` on linear extensions ``self`` of a poset.
 
         INPUT:
 
@@ -299,26 +300,28 @@ class LinearExtensionOfPoset(ClonableArray):
             True
         """
         P = self.poset()
-        a = self[i-1]
-        b = self[i  ]
-        if P.lt(a,b) or P.lt(b,a):
+        a = self[i - 1]
+        b = self[i]
+        if P.lt(a, b) or P.lt(b, a):
             return self
         with self.clone() as q:
-                q[i-1] = b
-                q[i  ] = a
+            q[i - 1] = b
+            q[i] = a
         return q
 
     def promotion(self, i=1):
         r"""
-        Computes the (generalized) promotion on the linear extension of a poset.
+        Compute the (generalized) promotion on the linear extension of a poset.
 
         INPUT:
 
-        - `i` -- an integer between `1` and `n-1`, where `n` is the cardinality of the poset (default: `1`)
+        - ``i`` -- (default: `1`) an integer between `1` and `n-1`,
+          where `n` is the cardinality of the poset
 
-        The `i`-th generalized promotion operator `\partial_i` on a linear extension
-        `\pi` is defined as `\pi \tau_i \tau_{i+1} \cdots \tau_{n-1}`, where `n` is the
-        size of the linear extension (or size of the underlying poset).
+        The `i`-th generalized promotion operator `\partial_i` on a linear
+        extension `\pi` is defined as `\pi \tau_i \tau_{i+1} \cdots \tau_{n-1}`,
+        where `n` is the size of the linear extension (or size of the
+        underlying poset).
 
         For more details see [Stan2009]_.
 
@@ -335,13 +338,13 @@ class LinearExtensionOfPoset(ClonableArray):
             sage: p.to_poset().is_isomorphic(q.to_poset())
             True
         """
-        for j in range(i,len(self)):
+        for j in range(i, len(self)):
             self = self.tau(j)
         return self
 
     def evacuation(self):
         r"""
-        Computes evacuation on the linear extension of a poset.
+        Compute evacuation on the linear extension of a poset.
 
         Evacuation on a linear extension `\pi` of length `n` is defined as
         `\pi (\tau_1 \cdots \tau_{n-1}) (\tau_1 \cdots \tau_{n-2}) \cdots (\tau_1)`.
@@ -358,8 +361,8 @@ class LinearExtensionOfPoset(ClonableArray):
             sage: p.evacuation().evacuation() == p
             True
         """
-        for i in reversed(range(1,len(self)+1)):
-            for j in range(1,i):
+        for i in reversed(range(1, len(self) + 1)):
+            for j in range(1, i):
                 self = self.tau(j)
         return self
 
@@ -399,8 +402,8 @@ class LinearExtensionOfPoset(ClonableArray):
         """
         P = self.poset()
         n = 0
-        for i in range(len(self)-1):
-            if not P.covers(self[i], self[i+1]):
+        for i in range(len(self) - 1):
+            if not P.covers(self[i], self[i + 1]):
                 n += 1
         return n
 
@@ -417,7 +420,6 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
     .. SEEALSO::
 
         - :meth:`sage.combinat.posets.posets.FinitePoset.linear_extensions`
-        - :class:`sage.graphs.linearextensions.LinearExtensions`
 
     EXAMPLES::
 
@@ -481,7 +483,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         self._is_facade = facade
         if facade:
             facade = (list,)
-        Parent.__init__(self, category = FiniteEnumeratedSets(), facade=facade)
+        Parent.__init__(self, category=FiniteEnumeratedSets(), facade=facade)
 
     def _repr_(self):
         """
@@ -491,11 +493,11 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             sage: P.linear_extensions()
             The set of all linear extensions of Finite poset containing 3 elements
         """
-        return "The set of all linear extensions of %s"%(self._poset)
+        return "The set of all linear extensions of %s" % (self._poset)
 
     def poset(self):
         r"""
-        Returns the underlying original poset.
+        Return the underlying original poset.
 
         EXAMPLES::
 
@@ -592,7 +594,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
                 ct += Jup[j]
             Jup[m] = ct
         return ct
-    
+
     def __iter__(self):
         r"""
         Iterates through the linear extensions of the underlying poset.
@@ -643,9 +645,9 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         return (isinstance(obj, (list, tuple)) and
                 self.poset().is_linear_extension(obj))
 
-    def markov_chain_digraph(self, action = 'promotion', labeling = 'identity'):
+    def markov_chain_digraph(self, action='promotion', labeling='identity'):
         r"""
-        Returns the digraph of the action of generalized promotion or tau on ``self``
+        Return the digraph of the action of generalized promotion or tau on ``self``
 
         INPUT:
 
@@ -721,7 +723,7 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             Looped multi-digraph on 5 vertices
         """
         L = sorted(self)
-        d = dict([x,dict([y,[]] for y in L)] for x in L)
+        d = {x: {y: [] for y in L} for x in L}
         if action == 'promotion':
             R = list(range(self.poset().cardinality()))
         else:
@@ -729,22 +731,23 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         if labeling == 'source':
             for x in L:
                 for i in R:
-                    child = getattr(x, action)(i+1)
-                    d[x][child]+=[self.poset().unwrap(x[i])]
+                    child = getattr(x, action)(i + 1)
+                    d[x][child] += [self.poset().unwrap(x[i])]
         else:
             for x in L:
                 for i in R:
-                    child = getattr(x, action)(i+1)
-                    d[x][child]+=[i+1]
+                    child = getattr(x, action)(i + 1)
+                    d[x][child] += [i + 1]
         G = DiGraph(d, format="dict_of_dicts")
         if have_dot2tex():
-            G.set_latex_options(format="dot2tex", edge_labels = True, color_by_label = {1:"blue", 2:"red", 3:"green", 4:"yellow"})
-            #G.set_latex_options(format="dot2tex", edge_labels = True, color_by_label = {1:"green", 2:"blue", 3:"brown", 4:"red"})
+            G.set_latex_options(format="dot2tex", edge_labels=True,
+                                color_by_label={1: "blue", 2: "red",
+                                                3: "green", 4: "yellow"})
         return G
 
-    def markov_chain_transition_matrix(self, action = 'promotion', labeling = 'identity'):
+    def markov_chain_transition_matrix(self, action='promotion', labeling='identity'):
         r"""
-        Returns the transition matrix of the Markov chain for the action of generalized promotion or tau on ``self``
+        Return the transition matrix of the Markov chain for the action of generalized promotion or tau on ``self``
 
         INPUT:
 
@@ -798,21 +801,21 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
         R = PolynomialRing(QQ, 'x', n)
         x = [R.gen(i) for i in range(n)]
         l = self.cardinality()
-        M = dict([(i,j),0] for i in range(l) for j in range(l))
+        M = {(i, j): 0 for i in range(l) for j in range(l)}
         if labeling == 'source':
             for i in range(l):
-                perm = [ self.poset().unwrap(k) for k in L[i] ]
-                for j in range(n-1):
-                    p = getattr(L[i], action)(j+1)
-                    M[(L.index(p),i)] += x[perm[j]-1]
+                perm = [self.poset().unwrap(k) for k in L[i]]
+                for j in range(n - 1):
+                    p = getattr(L[i], action)(j + 1)
+                    M[(L.index(p), i)] += x[perm[j] - 1]
         else:
             for i in range(l):
-                for j in range(n-1):
-                    p = getattr(L[i], action)(j+1)
-                    M[(L.index(p),i)] += x[j]
+                for j in range(n - 1):
+                    p = getattr(L[i], action)(j + 1)
+                    M[(L.index(p), i)] += x[j]
         for i in range(l):
-            M[(i,i)] += -sum(M[(j,i)] for j in range(l))
-        return matrix(l,l,lambda x,y : M[(x,y)])
+            M[(i, i)] += -sum(M[(j, i)] for j in range(l))
+        return matrix(l, l, lambda x, y: M[(x, y)])
 
     def _element_constructor_(self, lst, check=True):
         r"""
@@ -845,3 +848,130 @@ class LinearExtensionsOfPoset(UniqueRepresentation, Parent):
             return self.element_class(self, lst, check)
 
     Element = LinearExtensionOfPoset
+
+
+class LinearExtensionsOfPosetWithHooks(LinearExtensionsOfPoset):
+    r"""
+    Linear extensions such that the poset has well-defined
+    hook lengths (i.e., d-complete).
+    """
+    def cardinality(self):
+        r"""
+        Count the number of linear extensions using a hook-length formula.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.poset_examples import Posets
+            sage: P = Posets.YoungDiagramPoset(Partition([3,2]), dual=True)
+            sage: P.linear_extensions().cardinality()
+            5
+        """
+        num_elmts = self._poset.cardinality()
+
+        if num_elmts == 0:
+            return 1
+
+        hook_product = self._poset.hook_product()
+        return factorial(num_elmts) // hook_product
+
+
+class LinearExtensionsOfForest(LinearExtensionsOfPoset):
+    r"""
+    Linear extensions such that the poset is a forest.
+    """
+    def cardinality(self):
+        r"""
+        Use Atkinson's algorithm to compute the number of linear extensions.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.forest import ForestPoset
+            sage: from sage.combinat.posets.poset_examples import Posets
+            sage: P = Poset({0: [2], 1: [2], 2: [3, 4], 3: [], 4: []})
+            sage: P.linear_extensions().cardinality()
+            4
+
+            sage: Q = Poset({0: [1], 1: [2, 3], 2: [], 3: [], 4: [5, 6], 5: [], 6: []})
+            sage: Q.linear_extensions().cardinality()
+            140
+        """
+        return sum(self.atkinson(self._elements[0]))
+
+
+class LinearExtensionsOfMobile(LinearExtensionsOfPoset):
+    r"""
+    Linear extensions for a mobile poset.
+    """
+    def cardinality(self):
+        r"""
+        Return the number of linear extensions by using the determinant
+        formula for counting linear extensions of mobiles.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.posets.mobile import MobilePoset
+            sage: M = MobilePoset(DiGraph([[0,1,2,3,4,5,6,7,8], [(1,0),(3,0),(2,1),(2,3),(4,
+            ....: 3), (5,4),(5,6),(7,4),(7,8)]]))
+            sage: M.linear_extensions().cardinality()
+            1098
+
+            sage: M1 = posets.RibbonPoset(6, [1,3])
+            sage: M1.linear_extensions().cardinality()
+            61
+
+            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]), {1:
+            ....: [posets.YoungDiagramPoset([3, 2], dual=True)], 3: [posets.DoubleTailedDiamond(6)]},
+            ....: anchor=(4, 2, posets.ChainPoset(6)))
+            sage: P.linear_extensions().cardinality()
+            361628701868606400
+        """
+        import sage.combinat.posets.d_complete as dc
+        # Find folds
+        if self._poset._anchor:
+            anchor_index = self._poset._ribbon.index(self._poset._anchor[0])
+        else:
+            anchor_index = len(self._poset._ribbon)
+
+        folds_up = []
+        folds_down = []
+
+        for ind, r in enumerate(self._poset._ribbon[:-1]):
+            if ind < anchor_index and self._poset.is_greater_than(r, self._poset._ribbon[ind + 1]):
+                folds_up.append((self._poset._ribbon[ind + 1], r))
+            elif ind >= anchor_index and self._poset.is_less_than(r, self._poset._ribbon[ind + 1]):
+                folds_down.append((r, self._poset._ribbon[ind + 1]))
+
+        if not folds_up and not folds_down:
+            return dc.DCompletePoset(self._poset).linear_extensions().cardinality()
+
+        # Get ordered connected components
+        cr = self._poset.cover_relations()
+        foldless_cr = [tuple(c) for c in cr if tuple(c) not in folds_up and tuple(c) not in folds_down]
+
+        elmts = list(self._poset._elements)
+        poset_components = DiGraph([elmts, foldless_cr])
+        ordered_poset_components = [poset_components.connected_component_containing_vertex(f[1], sort=False)
+                                    for f in folds_up]
+        ordered_poset_components.extend(poset_components.connected_component_containing_vertex(f[0], sort=False)
+                                        for f in folds_down)
+        ordered_poset_components.append(poset_components.connected_component_containing_vertex(
+            folds_down[-1][1] if folds_down else folds_up[-1][0], sort=False))
+
+        # Return determinant
+
+        # Consoludate the folds lists
+        folds = folds_up
+        folds.extend(folds_down)
+
+        mat = []
+        for i in range(len(folds) + 1):
+            mat_poset = dc.DCompletePoset(self._poset.subposet(ordered_poset_components[i]))
+            row = [0] * (i - 1 if i - 1 > 0 else 0) + [1] * (1 if i >= 1 else 0)
+            row.append(1 / mat_poset.hook_product())
+            for j, f in enumerate(folds[i:]):
+                next_poset = self._poset.subposet(ordered_poset_components[j + i + 1])
+                mat_poset = dc.DCompletePoset(next_poset.slant_sum(mat_poset, f[0], f[1]))
+                row.append(1 / mat_poset.hook_product())
+
+            mat.append(row)
+        return matrix(QQ, mat).determinant() * factorial(self._poset.cardinality())

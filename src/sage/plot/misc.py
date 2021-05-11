@@ -78,6 +78,13 @@ def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
         ...
         ValueError: Some variable ranges specify variables while others do not
 
+    Beware typos: a comma which should be a period, for instance::
+
+        sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(x, 1, 2), (y, 0,1, 0.2)], plot_points=[4,9,10])
+        Traceback (most recent call last):
+        ...
+        ValueError: At least one variable range has more than 3 entries: each should either have 2 or 3 entries, with one of the forms (xmin, xmax) or (x, xmin, xmax)
+
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(y,1,-1),(x,-1,1)], plot_points=5)
         (<sage.ext...>, [(1.0, -1.0, 0.5), (-1.0, 1.0, 0.5)])
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(x,1,-1),(x,-1,1)], plot_points=5)
@@ -93,6 +100,8 @@ def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
         sage: sage.plot.misc.setup_for_eval_on_grid(x+y, [(y,1,-1),(x,-1,1)], return_vars=True)
         (<sage.ext...>, [(1.0, -1.0, 2.0), (-1.0, 1.0, 2.0)], [y, x])
     """
+    if max(map(len, ranges)) > 3:
+        raise ValueError("At least one variable range has more than 3 entries: each should either have 2 or 3 entries, with one of the forms (xmin, xmax) or (x, xmin, xmax)")
     if max(map(len, ranges)) != min(map(len, ranges)):
         raise ValueError("Some variable ranges specify variables while others do not")
 

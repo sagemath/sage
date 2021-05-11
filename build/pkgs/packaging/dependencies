@@ -1,4 +1,4 @@
-$(PYTHON) | pip pyparsing six
+$(PYTHON) | $(PYTHON_TOOLCHAIN) pyparsing six
 
 ----------
 All lines of this file are ignored except the first.

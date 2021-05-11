@@ -1,20 +1,20 @@
 """
 The PPL (Parma Polyhedra Library) backend for polyhedral computations
 """
-from __future__ import absolute_import
 
-from sage.rings.all import ZZ, QQ
+from sage.rings.all import ZZ
 from sage.rings.integer import Integer
 from sage.arith.functions import LCM_list
 from sage.misc.functional import denominator
-from ppl import (
-    C_Polyhedron, Constraint_System, Generator_System,
-    Linear_Expression,
-    line, ray, point
-)
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
 from .base_ZZ import Polyhedron_ZZ
+
+from sage.misc.lazy_import import lazy_import
+from sage.features import PythonModule
+lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
+                    'Linear_Expression', 'line', 'ray', 'point'],
+                    feature=PythonModule("ppl", spkg="pplpy"))
 
 
 #########################################################################

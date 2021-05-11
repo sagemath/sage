@@ -172,10 +172,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import print_function, absolute_import
-
-from six import itervalues, iteritems, integer_types, string_types
-
 
 def sage_input(x, preparse=True, verify=False, allow_locals=False):
     r"""
@@ -395,24 +391,6 @@ class SageInputBuilder:
             sage: sage_input(-11r, preparse=None, verify=True)
             # Verified
             -int(11)
-            sage: sage_input(long(-5), verify=True)  # py2
-            # Verified
-            -long(5)
-            sage: sage_input(long(-7), preparse=False, verify=True)
-            # Verified
-            -7L
-            sage: sage_input(long(11), preparse=None, verify=True)  # py2
-            # Verified
-            long(11)
-            sage: sage_input(long(2^70), verify=True)
-            # Verified
-            1180591620717411303424r
-            sage: sage_input(-long(2^80), preparse=False, verify=True)
-            # Verified
-            -1208925819614629174706176
-            sage: sage_input(long(2^75), preparse=None, verify=True)  # py2
-            # Verified
-            long(37778931862957161709568)
             sage: sage_input(float(-infinity), preparse=True, verify=True)
             # Verified
             -float(infinity)
@@ -481,8 +459,7 @@ class SageInputBuilder:
         if isinstance(x, bool):
             return SIE_literal_stringrep(self, str(x))
 
-        if (isinstance(x, int) or
-                (isinstance(x, integer_types) and not isinstance(int(x), int))):
+        if isinstance(x, int):
             # For longs that don't fit in an int, we just use the int
             # code; it will get extended to long automatically.
             if self._preparse is True:
@@ -493,27 +470,10 @@ class SageInputBuilder:
             elif self._preparse is False:
                 return self.int(x)
             else:
-                tyname = 'int' if isinstance(x, int) else 'long'
                 if x < 0:
-                    return -self.name(tyname)(self.int(-x))
+                    return -self.name('int')(self.int(-x))
                 else:
-                    return self.name(tyname)(self.int(x))
-
-        if isinstance(x, integer_types):
-            # This must be a long that does fit in an int, so we need either
-            # long(x) or an 'L' suffix.
-            # With the current preparser, 1Lr does not work.
-            # 1rL does work; but that's just ugly, so I don't use it.
-            if self._preparse is False:
-                if x < 0:
-                    return -SIE_literal_stringrep(self, str(-x) + 'L')
-                else:
-                    return SIE_literal_stringrep(self, str(x) + 'L')
-            else:
-                if x < 0:
-                    return -self.name('long')(self.int(-x))
-                else:
-                    return self.name('long')(self.int(x))
+                    return self.name('int')(self.int(x))
 
         if isinstance(x, float):
             # floats could often have prettier output,
@@ -536,7 +496,7 @@ class SageInputBuilder:
                 return self.name('float')(self.int(ZZ(rrx)))
             return self.name('float')(RR(x))
 
-        if isinstance(x, string_types):
+        if isinstance(x, str):
             return SIE_literal_stringrep(self, repr(x))
 
         if isinstance(x, tuple):
@@ -597,10 +557,6 @@ class SageInputBuilder:
             sage: sib = SageInputBuilder()
             sage: sib.result(sib.int(-3^50))
             -717897987691852588770249
-
-            sage: sib = SageInputBuilder()
-            sage: sib.result(sib.int(long(2^65)))
-            36893488147419103232
 
             sage: sib = SageInputBuilder()
             sage: sib.result(sib.int(-42r))
@@ -1215,7 +1171,9 @@ class SageInputBuilder:
             return SageInputAnswer(sif._commands, sif.format(e, 0))
 
 # Python's precedence levels.  Hand-transcribed from section 5.14 of
-# the Python reference manual.
+# the Python 2 reference manual.  In the Python 3 reference manual
+# this is section 6.16.
+# See https://docs.python.org/3/reference/expressions.html
 _prec_lambda = 2
 _prec_or = 4
 _prec_and = 6
@@ -1538,8 +1496,6 @@ class SageInputExpression(object):
         """
         return self._sie_binop('/', other)
 
-    __div__ = __truediv__
-
     def __add__(self, other):
         r"""
         Compute an expression tree for ``self + other``.
@@ -1601,6 +1557,20 @@ class SageInputExpression(object):
             {unop:- {atomic:3}}
         """
         return self._sie_unop('-')
+
+    def __pos__(self):
+        r"""
+        Compute an expression tree for ``+self``.
+
+        EXAMPLES::
+
+            sage: from sage.misc.sage_input import SageInputBuilder
+            sage: sib = SageInputBuilder()
+            sage: sie = sib(3)
+            sage: +sie
+            {unop:+ {atomic:3}}
+        """
+        return self._sie_unop('+')
 
     def __invert__(self):
         r"""
@@ -1896,7 +1866,7 @@ class SIE_call(SageInputExpression):
         func = repr(self._sie_func)
         args = [repr(arg) for arg in self._sie_args]
         kwargs = sorted(k + '=' + repr(v)
-                        for k, v in iteritems(self._sie_kwargs))
+                        for k, v in self._sie_kwargs.items())
         all_args = ', '.join(args + kwargs)
         return "{call: %s(%s)}" % (func, all_args)
 
@@ -1915,7 +1885,7 @@ class SIE_call(SageInputExpression):
         """
         refs = self._sie_args[:]
         refs.append(self._sie_func)
-        refs.extend(itervalues(self._sie_kwargs))
+        refs.extend(self._sie_kwargs.values())
         return refs
 
     def _sie_format(self, sif):
@@ -1937,7 +1907,7 @@ class SIE_call(SageInputExpression):
         func = sif.format(self._sie_func, _prec_attribute)
         args = [sif.format(arg, 0) for arg in self._sie_args]
         kwargs = sorted(k + '=' + sif.format(v, 0)
-                        for k, v in iteritems(self._sie_kwargs))
+                        for k, v in self._sie_kwargs.items())
         all_args = ', '.join(args + kwargs)
         return ('%s(%s)' % (func, all_args), _prec_funcall)
 
@@ -2593,6 +2563,16 @@ class SIE_unary(SageInputExpression):
             --x
             sage: sib.result(x-(-y))
             x - -y
+            sage: sib.result((+x)+y)
+            +x + y
+            sage: sib.result(x+(+y))
+            x + +y
+            sage: sib.result(+(x+y))
+            +(x + y)
+            sage: sib.result(+(+x))
+            ++x
+            sage: sib.result(x+(+y))
+            x + +y
 
         We assume that -(x*y) is always equal to (-x)*y.  Using this
         assumption, we print -(x*y) as -x*y, which parses as (-x)*y.::
@@ -2603,6 +2583,12 @@ class SIE_unary(SageInputExpression):
             -x*y
             sage: sib.result(x*(-y))
             x*-y
+
+        We do not do that for unary +, assuming that the user really
+        means to express something by using unary +::
+
+            sage: sib.result(+(x*y))
+            +(x*y)
         """
         op = self._sie_op
         fop = op
@@ -2612,6 +2598,8 @@ class SIE_unary(SageInputExpression):
             # (-a)*b.
             prec = _prec_muldiv
             rprec = _prec_negate
+        elif op == '+':
+            prec = _prec_negate
         elif op == '~':
             prec = _prec_bitnot
         else:
@@ -3603,5 +3591,5 @@ class SageInputAnswer(tuple):
 
         locals = self[2]
         locals_text = ''.join('  %s: %r\n' % (k, v)
-                              for k, v in iteritems(locals))
+                              for k, v in locals.items())
         return 'LOCALS:\n' + locals_text + self[0] + self[1]

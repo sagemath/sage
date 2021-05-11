@@ -30,7 +30,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from sage.rings.real_double import RDF
 
@@ -89,7 +88,8 @@ cdef class Vector_real_double_dense(Vector_double_dense):
             sage: loads(dumps(a)) == a
             True
         """
-        return (unpickle_v1, (self._parent, self.list(), self._degree, self._is_mutable))
+        return (unpickle_v1, (self._parent, self.list(), self._degree,
+                              not self._is_immutable))
 
 
 # For backwards compatibility, we must keep the function unpickle_v0
@@ -114,11 +114,11 @@ def unpickle_v1(parent, entries, degree, is_mutable=None):
     EXAMPLES::
 
         sage: v = vector(RDF, [1,2,3])
-        sage: w = sage.modules.vector_real_double_dense.unpickle_v1(v.parent(), list(v), v.degree(), v.is_mutable())
+        sage: w = sage.modules.vector_real_double_dense.unpickle_v1(v.parent(), list(v), v.degree(), v.is_immutable())
         sage: v == w
         True
     """
     cdef Vector_real_double_dense v = Vector_real_double_dense(parent, entries)
     if is_mutable is not None:
-        v._is_mutable = is_mutable
+        v._is_immutable = not is_mutable
     return v

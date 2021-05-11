@@ -1,17 +1,17 @@
 r"""
 Bialgebras with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #  Copyright (C) 2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
-from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.tensor import tensor
+
 
 class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     r"""
@@ -82,7 +82,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES:
 
             We construct some maps: the identity, the antipode and
-            projection onto the homogeneous componente of degree 2::
+            projection onto the homogeneous component of degree 2::
 
                 sage: Id = lambda x: x
                 sage: Antipode = lambda x: x.antipode()
@@ -375,18 +375,18 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             # We apply the maps T_i and products concurrently with coproducts, as this
             # seems to be faster than applying a composition of maps, e.g., (H.nfold_product) * tensor(T) * (H.nfold_coproduct).
 
-            out = tensor((H.one(),self))
-            HH = tensor((H,H))
+            out = tensor((H.one(), self))
+            HH = tensor((H, H))
 
             for mor in T[:-1]:
-                #ALGORITHM:
-                #`split_convolve` moves terms of the form x # y to x*Ti(y1) # y2 in Sweedler notation.
+                # ALGORITHM:
+                # `split_convolve` moves terms of the form x # y to x*Ti(y1) # y2 in Sweedler notation.
                 def split_convolve(x_y):
                     x, y = x_y
-                    return (((xy1,y2),c*d)
-                        for ((y1,y2),d) in H.term(y).coproduct()
-                        for (xy1,c) in H.term(x)*mor(H.term(y1)))
+                    return (((xy1, y2), c * d)
+                            for ((y1, y2), d) in H.term(y).coproduct()
+                            for (xy1, c) in H.term(x) * mor(H.term(y1)))
                 out = HH.module_morphism(on_basis=lambda t: HH.sum_of_terms(split_convolve(t)), codomain=HH)(out)
 
-            #Apply final map `T_n` to last term, `y`, and multiply.
-            return HH.module_morphism(on_basis=lambda xy: H.term(xy[0])*T[-1](H.term(xy[1])), codomain=H)(out)
+            # Apply final map `T_n` to last term, `y`, and multiply.
+            return HH.module_morphism(on_basis=lambda xy: H.term(xy[0]) * T[-1](H.term(xy[1])), codomain=H)(out)

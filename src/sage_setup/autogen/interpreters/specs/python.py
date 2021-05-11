@@ -229,25 +229,12 @@ class PythonInterpreter(StackInterpreter):
                        self.mc_code]
         self.c_header = ri(0,
             """
-            #include "sage/ext/interpreters/wrapper_py.h"
             #define CHECK(x) (x != NULL)
             """)
 
         self.pyx_header = ri(0,
             """\
-            from cpython.number cimport PyNumber_Divide, PyNumber_TrueDivide
-            from sage.misc.superseded import deprecation
-            cdef public object py_divide_helper(object left, object right):
-                try:
-                    return PyNumber_TrueDivide(left, right)
-                except TypeError:
-                    IF PY_MAJOR_VERSION < 3:
-                        res = PyNumber_Divide(left, right)
-                        deprecation(24805, "use of __truediv__ should be "
-                                           "preferred over __div__")
-                        return res
-                    ELSE:
-                        raise
+            from cpython.number cimport PyNumber_TrueDivide
             """)
 
         pg = params_gen(A=self.mc_args, C=self.mc_constants, D=self.mc_code,
@@ -282,7 +269,7 @@ class PythonInterpreter(StackInterpreter):
             ('add', 'PyNumber_Add'),
             ('sub', 'PyNumber_Subtract'),
             ('mul', 'PyNumber_Multiply'),
-            ('div', 'py_divide_helper'),
+            ('div', 'PyNumber_TrueDivide'),
             ('floordiv', 'PyNumber_FloorDivide')
         ]
 

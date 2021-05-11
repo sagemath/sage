@@ -12,8 +12,6 @@ Base class for old-style parent objects with a base ring
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 cimport sage.structure.parent as parent
 
 from .coerce_exceptions import CoercionException

@@ -96,8 +96,7 @@ REFERENCE:
 from cysignals.memory cimport sig_calloc
 
 from .data_structures cimport *
-include "sage/data_structures/bitset.pxi"
-
+from sage.data_structures.bitset_base cimport *
 
 # Functions
 

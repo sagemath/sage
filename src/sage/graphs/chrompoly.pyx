@@ -96,10 +96,18 @@ def chromatic_polynomial(G, return_tree_basis=False):
 
         sage: graphs.EmptyGraph().chromatic_polynomial()
         1
+
+    Check that :trac:`27966` is solved::
+
+        sage: Graph([[1, 1]], multiedges=True, loops=True).chromatic_polynomial()
+        0
     """
     if not G:
         R = ZZ['x']
         return R.one()
+    if G.has_loops():
+        R = ZZ['x']
+        return R.zero()
     if not G.is_connected():
         return prod([chromatic_polynomial(g) for g in G.connected_components_subgraphs()])
     R = ZZ['x']

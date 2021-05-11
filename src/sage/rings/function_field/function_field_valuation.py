@@ -141,14 +141,14 @@ fields can be found in Section 4.6 of [Rüt2014]_. Most of this was originally
 developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2018 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.structure.factory import UniqueFactory
 from sage.rings.all import QQ
 from sage.misc.cachefunc import cached_method
@@ -244,7 +244,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             return self.create_key_and_extra_args_from_valuation(domain, base_valuation)
         from sage.rings.ideal import is_Ideal
         if is_Ideal(prime):
-            raise NotImplementedError("a place can not be given by an ideal yet")
+            raise NotImplementedError("a place cannot be given by an ideal yet")
 
         raise NotImplementedError("argument must be a place or a pseudo-valuation on a supported subring but %r does not satisfy this for the domain %r" % (prime, domain))
 
@@ -276,7 +276,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             # generator is a polynomial
             generator = domain._ring(generator)
             if not generator.is_monic():
-                raise ValueError("place must be defined by a monic polynomiala but %r is not monic" % (generator,))
+                raise ValueError("place must be defined by a monic polynomial but %r is not monic" % (generator,))
             if not generator.is_irreducible():
                 raise ValueError("place must be defined by an irreducible polynomial but %r factors over %r" % (generator, domain._ring))
             # we construct the corresponding valuation on the polynomial ring
@@ -428,7 +428,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             return parent.__make_element_class__(FunctionFieldExtensionMappedValuation)(parent, valuation, to_valuation_domain, from_valuation_domain)
 
         if domain is valuation.domain():
-            # we can not just return valuation in this case
+            # we cannot just return valuation in this case
             # as this would break uniqueness and pickling
             raise ValueError("valuation must not be a valuation on domain yet but %r is a valuation on %r" % (valuation, domain))
 
@@ -577,7 +577,7 @@ class DiscreteFunctionFieldValuation_base(DiscreteValuation):
                     return reduce(add, A, [])
                 elif L.constant_base_field() is not K.constant_base_field() and K.constant_base_field().is_subring(L):
                     # subclasses should override this method and handle this case, so we never get here
-                    raise NotImplementedError("Can not compute the extensions of %r from %r to %r since the base ring changes." % (self, self.domain(), L))
+                    raise NotImplementedError("Cannot compute the extensions of %r from %r to %r since the base ring changes." % (self, self.domain(), L))
         raise NotImplementedError("extension of %r from %r to %r not implemented" % (self, K, L))
 
 
@@ -775,7 +775,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
         if self(f) > 0:
             return self.residue_field().zero()
         if self(f) < 0:
-            raise ValueError("can not reduce element of negative valuation")
+            raise ValueError("cannot reduce element of negative valuation")
 
         base = self._base_valuation
 
@@ -831,11 +831,11 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             return [self]
 
         from sage.categories.function_fields import FunctionFields
-        if L in FunctionFields() \
-            and K.is_subring(L) \
-            and L.base() is L \
-            and L.constant_base_field() is not K.constant_base_field() \
-            and K.constant_base_field().is_subring(L.constant_base_field()):
+        if (L in FunctionFields()
+            and K.is_subring(L)
+            and L.base() is L
+            and L.constant_base_field() is not K.constant_base_field()
+            and K.constant_base_field().is_subring(L.constant_base_field())):
             # The above condition checks whether L is an extension of K that
             # comes from an extension of the field of constants
             # Condition "L.base() is L" is important so we do not call this
@@ -966,7 +966,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             sage: f = (x + 1024)/(x - 1024)
 
         Here we report a small size, as the numerator and the denominator
-        independently can not be simplified much::
+        independently cannot be simplified much::
 
             sage: v._relative_size(f)
             1

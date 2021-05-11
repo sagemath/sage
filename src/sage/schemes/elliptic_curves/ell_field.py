@@ -11,18 +11,18 @@ This module defines the class ``EllipticCurve_field``, based on
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
-from . import ell_generic
 import sage.rings.all as rings
-from sage.rings.complex_field import is_ComplexField
+from sage.rings.complex_mpfr import is_ComplexField
 from sage.rings.real_mpfr import is_RealField
-from .constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
+from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
+from .constructor import EllipticCurve
 from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kernel
+from . import ell_generic
 
-class EllipticCurve_field(ell_generic.EllipticCurve_generic):
+class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
 
     base_field = ell_generic.EllipticCurve_generic.base_ring
 
@@ -136,13 +136,13 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: E.change_ring(k2).is_isomorphic(Et.change_ring(k2))
             True
         """
-        K=self.base_ring()
-        char=K.characteristic()
+        K = self.base_ring()
+        char = K.characteristic()
 
         if D is None:
             if K.is_finite():
                 x = rings.polygen(K)
-                if char==2:
+                if char == 2:
                     # We find D such that x^2+x+D is irreducible. If the
                     # degree is odd we can take D=1; otherwise it suffices to
                     # consider odd powers of a generator.
@@ -150,14 +150,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                     if K.degree()%2==0:
                         D = K.gen()
                         a = D**2
-                        while len((x**2+x+D).roots())>0:
+                        while (x**2 + x + D).roots():
                             D *= a
                 else:
                     # We could take a multiplicative generator but
                     # that might be expensive to compute; otherwise
                     # half the elements will do
                     D = K.random_element()
-                    while len((x**2-D).roots())>0:
+                    while (x**2 - D).roots():
                         D = K.random_element()
             else:
                 raise ValueError("twisting parameter D must be specified over infinite fields.")
@@ -440,7 +440,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                 um = c6E/c6F
                 x=rings.polygen(K)
                 ulist=(x**3-um).roots(multiplicities=False)
-                if len(ulist)==0:
+                if  not ulist:
                     D = zero
                 else:
                     D = ulist[0]
@@ -448,7 +448,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                 um=c4E/c4F
                 x=rings.polygen(K)
                 ulist=(x**2-um).roots(multiplicities=False)
-                if len(ulist)==0:
+                if not ulist:
                     D = zero
                 else:
                     D = ulist[0]
@@ -645,7 +645,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: G.<a> = F.extension(x^3+5)
             sage: E = EllipticCurve(j=1728*b).change_ring(G)
             sage: EF = E.descend_to(F); EF
-            [Elliptic Curve defined by y^2 = x^3 + (27*b-621)*x + (-1296*b+2484) over Number Field in b with defining polynomial x^2 - 23]
+            [Elliptic Curve defined by y^2 = x^3 + (27*b-621)*x + (-1296*b+2484) over Number Field in b with defining polynomial x^2 - 23 with b = 4.795831523312720?]
             sage: all(Ei.change_ring(G).is_isomorphic(E) for Ei in EF)
             True
 
@@ -655,8 +655,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             sage: K.<b> = NumberField(x^2 - 7, embedding=a^2)
             sage: E = EllipticCurve([a^6,0])
             sage: EK = E.descend_to(K); EK
-            [Elliptic Curve defined by y^2 = x^3 + b*x over Number Field in b with defining polynomial x^2 - 7,
-            Elliptic Curve defined by y^2 = x^3 + 7*b*x over Number Field in b with defining polynomial x^2 - 7]
+            [Elliptic Curve defined by y^2 = x^3 + b*x over Number Field in b with defining polynomial x^2 - 7 with b = a^2,
+             Elliptic Curve defined by y^2 = x^3 + 7*b*x over Number Field in b with defining polynomial x^2 - 7 with b = a^2]
             sage: all(Ei.change_ring(L).is_isomorphic(E) for Ei in EK)
             True
 
@@ -705,7 +705,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
                 return []
         elif f is None:
             embeddings = K.embeddings(L)
-            if len(embeddings) == 0:
+            if not embeddings:
                 raise TypeError("Input must be a subfield of the base field of the curve.")
             for g in embeddings:
                 try:
@@ -1252,3 +1252,217 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic):
             E = self.short_weierstrass_model()
             f=(x**3+E.a4()*x+E.a6())**((p-1)//2)
             return f.coefficients(sparse=False)[p-1]
+
+    def isogeny_ell_graph(self, l, directed=True, label_by_j=False):
+        """
+        Return a graph representing the ``l``-degree ``K``-isogenies between
+        ``K``-isomorphism classes of elliptic curves for ``K =
+        self.base_field()``.
+
+        INPUT:
+
+        - ``l`` -- prime degree of isogenies
+
+        - ``directed`` -- boolean (default: ``True``); whether to return a
+          directed or undirected graph.  In the undirected case, the in-degrees
+          and out-degrees of the vertices must be balanced and therefore the
+          number of out-edges from the vertices corresponding to j-invariants 0
+          and 1728 (if they are part of the graph) are reduced to match the
+          number of in-edges.
+
+        - ``label_by_j`` -- boolean (default: ``False``); whether to label
+          graph vertices by the j-invariant corresponding to the isomorphism
+          class of curves.  If the j-invariant is not unique in the isogeny
+          class, append ``*`` to it to indicate a twist.  Otherwise, if
+          ``False`` label vertices by the equation of a representative curve.
+
+        OUTPUT:
+
+        A ``Graph`` or ``Digraph``
+
+        EXAMPLES:
+
+        Ordinary curve over finite extension field of degree 2::
+
+            sage: E = EllipticCurve(GF(59^2, "i", x^2 + 1), j=5)
+            sage: G = E.isogeny_ell_graph(5, directed=False, label_by_j=True)
+            sage: G
+            Graph on 20 vertices
+            sage: G.vertices()
+            ['1',
+             '12',
+             ...
+             'i + 55']
+            sage: G.edges()
+            [('1', '28*i + 11', None),
+             ('1', '31*i + 11', None),
+             ...
+             ('8', 'i + 1', None)]
+
+        Supersingular curve over prime field::
+
+            sage: E = EllipticCurve(GF(419), j=1728)
+            sage: G3 = E.isogeny_ell_graph(3, directed=False, label_by_j=True)
+            sage: G3
+            Graph on 27 vertices
+            sage: G3.vertices()
+            ['0',
+             '0*',
+             ...
+             '98*']
+            sage: G3.edges()
+            [('0', '0*', None),
+             ('0', '13', None),
+             ...
+             ('48*', '98*', None)]
+             sage: G5 = E.isogeny_ell_graph(5, directed=False, label_by_j=True)
+             sage: G5
+             Graph on 9 vertices
+             sage: G5.vertices()
+             ['13', '13*', '407', '407*', '52', '62', '62*', '98', '98*']
+             sage: G5.edges()
+             [('13', '52', None),
+              ('13', '98', None),
+              ...
+              ('62*', '98*', None)]
+
+        Supersingular curve over finite extension field of degree 2::
+
+            sage: K = GF(431^2, "i", x^2 + 1)
+            sage: E = EllipticCurve(K, j=0)
+            sage: E.is_supersingular()
+            True
+            sage: G = E.isogeny_ell_graph(2, directed=True, label_by_j=True)
+            sage: G
+            Looped multi-digraph on 37 vertices
+            sage: G.vertices()
+            ['0',
+             '102',
+             ...
+             '87*i + 190']
+            sage: G.edges()
+            [('0', '125', None),
+             ('0', '125', None),
+             ...
+             '81*i + 65', None)]
+            sage: H = E.isogeny_ell_graph(2, directed=False, label_by_j=True)
+            sage: H
+            Looped multi-graph on 37 vertices
+            sage: H.vertices()
+            ['0',
+             '102',
+             ...
+             '87*i + 190']
+            sage: H.edges()
+            [('0', '125', None),
+             ('102', '125', None),
+             ...
+             ('81*i + 65', '87*i + 190', None)]
+
+        Curve over a quadratic number field::
+
+            sage: K.<e> = NumberField(x^2 - 2)
+            sage: E = EllipticCurve(K, [1,0,1,4, -6])
+            sage: G2 = E.isogeny_ell_graph(2, directed=False)
+            sage: G2.vertices()
+            ['y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
+             'y^2 + x*y + y = x^3 + (-36)*x + (-70)',
+             'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)',
+             'y^2 + x*y + y = x^3 + 4*x + (-6)']
+            sage: G2.edges()
+            [('y^2 + x*y + y = x^3 + (-130*e-356)*x + (-2000*e-2038)',
+             'y^2 + x*y + y = x^3 + (-36)*x + (-70)', None),
+             ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
+             'y^2 + x*y + y = x^3 + (130*e-356)*x + (2000*e-2038)', None),
+             ('y^2 + x*y + y = x^3 + (-36)*x + (-70)',
+             'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
+            sage: G3 = E.isogeny_ell_graph(3, directed=False)
+            sage: G3.vertices()
+            ['y^2 + x*y + y = x^3 + (-1)*x',
+             'y^2 + x*y + y = x^3 + (-171)*x + (-874)',
+             'y^2 + x*y + y = x^3 + 4*x + (-6)']
+            sage: G3.edges()
+            [('y^2 + x*y + y = x^3 + (-1)*x',
+             'y^2 + x*y + y = x^3 + 4*x + (-6)', None),
+             ('y^2 + x*y + y = x^3 + (-171)*x + (-874)',
+             'y^2 + x*y + y = x^3 + 4*x + (-6)', None)]
+
+        TESTS::
+
+            sage: E = EllipticCurve(GF(11), j=0)
+            sage: G0 = E.isogeny_ell_graph(2, directed=False)
+            sage: G0.is_directed()
+            False
+            sage: G1 = E.isogeny_ell_graph(2, directed=True)
+            sage: G1.is_directed()
+            True
+            sage: G2 = E.isogeny_ell_graph(2, label_by_j=False)
+            sage: G2.vertices()
+            ['y^2 = x^3 + 1',
+             'y^2 = x^3 + 2',
+             'y^2 = x^3 + 5*x',
+             'y^2 = x^3 + 7*x']
+            sage: G3 = E.isogeny_ell_graph(2, label_by_j=True)
+            sage: G3.vertices()
+            ['0', '0*', '1', '1*']
+
+        """
+
+        from warnings import warn
+        from sage.graphs.graph import DiGraph, Graph
+        from sage.matrix.all import Matrix
+
+        # warn users if things are getting big
+        if l == 2:
+            curve_max = 1000
+        if l == 3:
+            curve_max = 700
+        elif l < 20:
+            curve_max = 200
+        else:
+            curve_max = 50
+
+        Es = [self]  # list of curves in graph
+        A = []  # adjacency matrix
+        labels = []  # list of vertex labels
+        for (i, E) in enumerate(Es):
+            if 0 < curve_max and curve_max < len(Es):
+                warn('Isogeny graph contains more than '
+                        + str(curve_max) + ' curves.')
+                curve_max = 0
+
+            r = [0] * len(Es)  # adjacency matrix row
+            for C in [I.codomain() for I in E.isogenies_prime_degree(l)]:
+                j = next((k for (k, F) in enumerate(Es) if C.is_isomorphic(F)),
+                        -1)  # index of curve isomorphic to codomain of isogeny
+                if j >= 0:
+                    r[j] += 1
+                else:
+                    Es.append(C)
+                    r.append(1)
+
+            # If the graph is undirected, non-symmetric values in the adjacency
+            # matrix will result in Sage outputting different graphs depending
+            # on the vertex ordering.  Therefore, scale down the non-loop
+            # out-edges of vertices corresponding to j-invariants 0 and 1728 so
+            # that the same isogeny graphs output are isomorphic as graphs
+            # regardless of the starting vertex.
+            if not directed and E.j_invariant() in [0, 1728]:
+                m = len(E.automorphisms()) / 2  # multiplicity of out-edges
+                r = [v if k == i else v / m for (k, v) in enumerate(r)]
+
+            A.append(r)
+            if label_by_j:
+                s = str(E.j_invariant())
+                while s in labels:
+                    s += "*"
+                labels.append(s)
+            else:
+                labels.append(E._equation_string())
+
+        A = Matrix([r + [0] * (len(A) - len(r)) for r in A])
+        G = (DiGraph if directed else Graph)(A, format="adjacency_matrix",
+                data_structure="static_sparse")
+        # inplace relabelling is necessary for static_sparse graphs
+        GL = G.relabel(labels, inplace=False)
+        return GL

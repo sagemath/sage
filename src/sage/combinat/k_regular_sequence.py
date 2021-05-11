@@ -27,10 +27,11 @@ Examples
 Binary sum of digits
 --------------------
 
-::
+The binary sum of digits `S(n)` of a nonnegative integer `n` satisfies
+`S(2n) = S(n)` and `S(2n+1) = S(n) + 1`. We model this by the following::
 
     sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-    sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[0, -1], [1, 2]])),
+    sage: S = Seq2((Matrix([[1, 0], [0, 1]]), Matrix([[1, 0], [1, 1]])),
     ....:          left=vector([0, 1]), right=vector([1, 0]))
     sage: S
     2-regular sequence 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, ...
@@ -40,7 +41,8 @@ Binary sum of digits
 Number of odd entries in Pascal's triangle
 ------------------------------------------
 
-::
+Let us consider the number of odd entries in the first `n` rows
+of Pascals's triangle::
 
     sage: @cached_function
     ....: def u(n):
@@ -50,8 +52,10 @@ Number of odd entries in Pascal's triangle
     sage: tuple(u(n) for n in srange(10))
     (0, 1, 3, 5, 9, 11, 15, 19, 27, 29)
 
-    sage: U = Seq2((Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])),
-    ....:          left=vector([0, 1]), right=vector([1, 0]), transpose=True)
+There is a `2`-recursive sequence describing the numbers above as well::
+
+    sage: U = Seq2((Matrix([[3, 2], [0, 1]]), Matrix([[2, 0], [1, 3]])),
+    ....:          left=vector([0, 1]), right=vector([1, 0])).transposed()
     sage: all(U[n] == u(n) for n in srange(30))
     True
 
@@ -65,15 +69,11 @@ Various
     :mod:`sage.rings.cfinite_sequence`,
     :mod:`sage.combinat.binary_recurrence_sequences`.
 
-REFERENCES:
-
-.. [AS2003] Jean-Paul Allouche, Jeffrey Shallit,
-   *Automatic Sequences: Theory, Applications, Generalizations*,
-   Cambridge University Press, 2003.
 
 AUTHORS:
 
-- Daniel Krenn (2016)
+- Daniel Krenn (2016, 2021)
+
 
 ACKNOWLEDGEMENT:
 
@@ -93,12 +93,10 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
 from .recognizable_series import RecognizableSeries
 from .recognizable_series import RecognizableSeriesSpace
 from sage.misc.cachefunc import cached_function, cached_method
-from six import iteritems
 
 
 def pad_right(T, length, zero=0):
@@ -210,21 +208,19 @@ def split_interlace(n, k, p):
 
 
 class kRegularSequence(RecognizableSeries):
-
     def __init__(self, parent, mu, left=None, right=None):
         r"""
         A `k`-regular sequence.
 
         INPUT:
 
-        - ``parent`` -- an instance of :class:`kRegularSequenceSpace`.
+        - ``parent`` -- an instance of :class:`kRegularSequenceSpace`
 
         - ``mu`` -- a family of square matrices, all of which have the
           same dimension. The indices of this family are `0,...,k-1`.
           ``mu`` may be a list or tuple of cardinality `k`
-          as well. See
-          :meth:`~sage.combinat.recognizable_series.RecognizableSeries.mu`
-          for more details.
+          as well. See also
+          :meth:`~sage.combinat.recognizable_series.RecognizableSeries.mu`.
 
         - ``left`` -- (default: ``None``) a vector.
           When evaluating the sequence, this vector is multiplied
@@ -233,29 +229,28 @@ class kRegularSequence(RecognizableSeries):
 
         - ``right`` -- (default: ``None``) a vector.
           When evaluating the sequence, this vector is multiplied
-          from the left to the matrix product. If ``None``, then this
+          from the right to the matrix product. If ``None``, then this
           multiplication is skipped.
-
-        When created via the parent :class:`kRegularSequenceSpace`, then
-        the following option is available.
-
-        - ``transpose`` -- (default: ``False``) a boolean. If set, then
-            each of the matrices in
-            :meth:`mu <sage.combinat.recognizable_series.RecognizableSeries.mu>`
-            is transposed. Additionally the vectors
-            :meth`left <sage.combinat.recognizable_series.RecognizableSeries.left>`
-            and
-            :meth:`right <sage.combinat.recognizable_series.RecognizableSeries.right>`
-            are switched.
-            (This is done by calling :meth:`~sage.combinat.recognizable_series.RecognizableSeries.transposed`.)
 
         EXAMPLES::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
-            sage: Seq2((Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])),
-            ....:      vector([0, 1]), vector([1, 0]),
-            ....:      transpose=True)
+            sage: S = Seq2((Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])),
+            ....:          vector([0, 1]), vector([1, 0])).transposed(); S
             2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...
+
+        We can access the coefficients of a sequence by
+        ::
+
+            sage: S[5]
+            11
+
+        or iterating over the first, say `10`, by
+        ::
+
+            sage: from itertools import islice
+            sage: list(islice(S, 10))
+            [0, 1, 3, 5, 9, 11, 15, 19, 27, 29]
 
         .. SEEALSO::
 
@@ -265,20 +260,19 @@ class kRegularSequence(RecognizableSeries):
         super(kRegularSequence, self).__init__(
             parent=parent, mu=mu, left=left, right=right)
 
-
     def _repr_(self):
         r"""
         Return a representation string of this `k`-regular sequence.
 
         OUTPUT:
 
-        A string.
+        A string
 
         TESTS::
 
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: s = Seq2((Matrix([[3, 6], [0, 1]]), Matrix([[0, -6], [1, 5]])),
-            ....:           vector([0, 1]), vector([1, 0]), transpose=True)
+            ....:           vector([0, 1]), vector([1, 0])).transposed()
             sage: repr(s)  # indirect doctest
             '2-regular sequence 0, 1, 3, 5, 9, 11, 15, 19, 27, 29, ...'
         """
@@ -289,19 +283,18 @@ class kRegularSequence(RecognizableSeries):
             opening_delimiter='', closing_delimiter='',
             preview=10)
 
-
     @cached_method
     def __getitem__(self, n, **kwds):
         r"""
-        Return the `n`th entry of this sequence.
+        Return the `n`-th entry of this sequence.
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer.
+        - ``n`` -- a nonnegative integer
 
         OUTPUT:
 
-        An element of the universe of the sequence.
+        An element of the universe of the sequence
 
         EXAMPLES::
 
@@ -316,7 +309,7 @@ class kRegularSequence(RecognizableSeries):
             sage: S[-1]
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned char
+            ValueError: value -1 of index is negative
 
         ::
 
@@ -334,10 +327,9 @@ class kRegularSequence(RecognizableSeries):
         """
         return self.coefficient_of_word(self.parent()._n_to_index_(n), **kwds)
 
-
     def __iter__(self):
         r"""
-        Return an iterator.
+        Return an iterator over the coefficients of this sequence.
 
         EXAMPLES::
 
@@ -491,7 +483,7 @@ class kRegularSequence(RecognizableSeries):
 
         if a == 0:
             return sum(c_j * self[b_j] * self.parent().one_hadamard()
-                       for b_j, c_j in iteritems(b))
+                       for b_j, c_j in b.items())
         elif a == 1 and len(b) == 1 and zero in b:
             return b[zero] * self
         elif a < 0:
@@ -539,7 +531,7 @@ class kRegularSequence(RecognizableSeries):
                  for r in A),
             sum(c_j * vector(
                     pad_right(pad(tuple(self.left), b_j), ndim, zero=zero))
-                for b_j, c_j in iteritems(b)),
+                for b_j, c_j in b.items()),
             vector(sum((tuple(self.__getitem__(c, multiply_left=False))
                         if c >= 0 else dim*(zero,)
                         for c in kernel), tuple())))
@@ -722,7 +714,7 @@ def _pickle_kRegularSequenceSpace(k, coefficients, category):
         sage: Seq2 = kRegularSequenceSpace(2, ZZ)
         sage: from sage.combinat.k_regular_sequence import _pickle_kRegularSequenceSpace
         sage: _pickle_kRegularSequenceSpace(
-        ....:     Seq2.k, Seq2.coefficients(), Seq2.category())
+        ....:     Seq2.k, Seq2.coefficient_ring(), Seq2.category())
         Space of 2-regular sequences over Integer Ring
     """
     return kRegularSequenceSpace(k, coefficients, category=category)
@@ -734,13 +726,12 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
     INPUT:
 
-    - ``k`` -- an integer at least `2` specifying the base.
+    - ``k`` -- an integer at least `2` specifying the base
 
-    - ``coefficients`` -- a (semi-)ring. If not specified (``None``),
-      then the integer ring is used.
+    - ``coefficient_ring`` -- a (semi-)ring.
 
     - ``category`` -- (default: ``None``) the category of this
-      space.
+      space
 
     EXAMPLES::
 
@@ -754,12 +745,10 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         :doc:`k-regular sequence <k_regular_sequence>`,
         :class:`kRegularSequence`.
     """
-
     Element = kRegularSequence
 
-
     @classmethod
-    def __normalize__(cls, k, coefficients=None, **kwds):
+    def __normalize__(cls, k, coefficient_ring, **kwds):
         r"""
         Normalizes the input in order to ensure a unique
         representation.
@@ -771,20 +760,13 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: Seq2 = kRegularSequenceSpace(2, ZZ)
             sage: Seq2.category()
             Category of modules over Integer Ring
-
-        ::
-
-            sage: Seq2 is kRegularSequenceSpace(2)
-            True
+            sage: Seq2.alphabet()
+            {0, 1}
         """
         from sage.arith.srange import srange
-        from sage.rings.integer_ring import ZZ
-        if coefficients is None:
-            coefficients = ZZ
         nargs = super(kRegularSequenceSpace, cls).__normalize__(
-            coefficients, alphabet=srange(k), **kwds)
+            coefficient_ring, alphabet=srange(k), **kwds)
         return (k,) + nargs
-
 
     def __init__(self, k, *args, **kwds):
         r"""
@@ -792,7 +774,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         INPUT:
 
-        - ``k`` -- an integer at least `2` specifying the base.
+        - ``k`` -- an integer at least `2` specifying the base
 
         Other input arguments are passed on to
         :meth:`~sage.combinat.recognizable_series.RecognizableSeriesSpace.__init__`.
@@ -815,6 +797,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             running ._test_an_element() . . . pass
             running ._test_cardinality() . . . pass
             running ._test_category() . . . pass
+            running ._test_construction() . . . pass
             running ._test_elements() . . .
               Running the test suite of self.an_element()
               running ._test_category() . . . pass
@@ -843,7 +826,6 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         self.k = k
         super(kRegularSequenceSpace, self).__init__(*args, **kwds)
 
-
     def __reduce__(self):
         r"""
         Pickling support.
@@ -855,8 +837,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             Space of 2-regular sequences over Integer Ring
         """
         return _pickle_kRegularSequenceSpace, \
-            (self.k, self.coefficients(), self.category())
-
+            (self.k, self.coefficient_ring(), self.category())
 
     def _repr_(self):
         r"""
@@ -864,7 +845,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         OUTPUT:
 
-        A string.
+        A string
 
         TESTS::
 
@@ -873,7 +854,6 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         """
         return 'Space of {}-regular sequences over {}'.format(self.k, self.base())
 
-
     def _n_to_index_(self, n):
         r"""
         Convert `n` to an index usable by the underlying
@@ -881,11 +861,11 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         INPUT:
 
-        - ``n`` -- a nonnegative integer.
+        - ``n`` -- a nonnegative integer
 
         OUTPUT:
 
-        A word.
+        A word
 
         TESTS::
 
@@ -895,13 +875,15 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
             sage: Seq2._n_to_index_(-1)
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned char
+            ValueError: value -1 of index is negative
         """
         from sage.rings.integer_ring import ZZ
         n = ZZ(n)
         W = self.indices()
-        return W(n.digits(self.k))
-
+        try:
+            return W(n.digits(self.k))
+        except OverflowError:
+            raise ValueError('value {} of index is negative'.format(n))
 
     def guess(self, f, n_max=100, max_dimension=10, sequence=None):
         r"""

@@ -12,14 +12,14 @@ EXAMPLES::
       Defn: Defined by sending (x : y , u : v) to
             (x^2*u : y^2*v , x*v^2 : y*u^2).
 """
-#*****************************************************************************
+# ****************************************************************************
 # Copyright (C) 2014 Ben Hutz <bn4941@gmail.com>
 #
 # Distributed under the terms of the GNU General Public License (GPL)
 # as published by the Free Software Foundation; either version 2 of
 # the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
-#*****************************************************************************
+# https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
@@ -144,7 +144,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             sage: F[2]
             z^2*u
         """
-        return(self._polys[i])
+        return self._polys[i]
 
     def _repr_defn(self):
         r"""
@@ -234,7 +234,7 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
         A = self.codomain()
         Q = list(P)
         newP = [f(Q) for f in self.defining_polynomials()]
-        return(A.point(newP, check))
+        return A.point(newP, check)
 
     def __eq__(self, right):
         """
@@ -418,65 +418,6 @@ class ProductProjectiveSpaces_morphism_ring(SchemeMorphism_polynomial):
             raise TypeError("must be an endomorphism")
         from sage.dynamics.arithmetic_dynamics.product_projective_ds import DynamicalSystem_product_projective
         return DynamicalSystem_product_projective(list(self), self.domain())
-
-    def nth_iterate(self, P, n, normalize=False):
-        """
-        Return the nth iterate of the point.
-
-        EXAMPLES::
-
-            sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], QQ)
-            sage: H = End(Z)
-            sage: f = H([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y])
-            sage: P = Z([1, 1, 1, 1, 1])
-            sage: f.nth_iterate(P, 3)
-            doctest:warning
-            ...
-            (1/1872 : 1 , 1 : 1 : 0)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.green_function instead")
-        return self.as_dynamical_system().nth_iterate(P, n, normalize)
-
-    def orbit(self, P, N, **kwds):
-        """
-        Return the orbit of this point.
-
-        EXAMPLES::
-
-            sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1, 2], QQ)
-            sage: H = End(Z)
-            sage: f = H([a^3, b^3 + a*b^2, x^2, y^2 - z^2, z*y])
-            sage: P = Z([1, 1, 1, 1, 1])
-            sage: f.orbit(P, 3)
-            doctest:warning
-            ...
-            [(1 : 1 , 1 : 1 : 1), (1/2 : 1 , 1 : 0 : 1), (1/12 : 1 , -1 : 1 : 0), (1/1872 : 1 , 1 : 1 : 0)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.green_function instead")
-        return self.as_dynamical_system().orbit(P, N, **kwds)
-
-    def nth_iterate_map(self, n):
-        """
-        Return the nth iterate of this map.
-
-        EXAMPLES::
-
-            sage: Z.<a,b,x,y,z> = ProductProjectiveSpaces([1 , 2], QQ)
-            sage: H = End(Z)
-            sage: f = H([a^3, b^3, x^2, y^2, z^2])
-            sage: f.nth_iterate_map(3)
-            doctest:warning
-            ...
-            Dynamical System of Product of projective spaces P^1 x P^2 over
-            Rational Field
-              Defn: Defined by sending (a : b , x : y : z) to
-                    (a^27 : b^27 , x^8 : y^8 : z^8).
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.green_function instead")
-        return self.as_dynamical_system().nth_iterate_map(n)
 
     def global_height(self, prec=None):
         r"""
