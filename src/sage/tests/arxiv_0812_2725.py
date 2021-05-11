@@ -33,9 +33,8 @@ points since they cannot create any sort of crossing. ::
 # the Free Software Foundation, either version 2 of the License, or (at
 # your option) any later version.
 #
-# See http://www.gnu.org/licenses/.
+# See https://www.gnu.org/licenses/.
 #*****************************************************************************
-from six.moves import range
 from sage.combinat.set_partition import SetPartitions as SetPartitions
 
 
@@ -205,7 +204,7 @@ def setp_to_edges(p):
         sage: sorted(setp_to_edges(Set(map(Set, [[1,5],[2,4,9],[3],[6,12],[7,10,11],[8]]))))
         [[1, 5], [2, 4], [4, 9], [6, 12], [7, 10], [10, 11]]
     """
-    q = [sorted(list(b)) for b in p]
+    q = [sorted(b) for b in p]
     ans = []
     for b in q:
         for n in range(len(b) - 1):

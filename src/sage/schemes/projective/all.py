@@ -1,11 +1,10 @@
 """nodoctest
 all.py -- export of projective schemes to Sage
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #
-#   Sage: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #

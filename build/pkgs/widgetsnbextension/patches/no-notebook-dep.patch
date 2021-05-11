@@ -1,0 +1,24 @@
+commit 55bc3c93bf4310d4f4d9d02f2e51d1d65b7f6533 (HEAD -> 7.6.3-sage)
+Author: Sylvain Corlay <scorlay@bloomberg.net>
+Date:   Mon Oct 21 01:33:23 2019 +0200
+
+    Drop notebook dependency from widgetsnbextension
+
+diff --git a/widgetsnbextension/setup.py b/widgetsnbextension/setup.py
+index 866d82eb..88746f95 100644
+--- a/setup.py
++++ b/setup.py
+@@ -219,13 +219,5 @@ if 'setuptools' in sys.modules:
+     from setuptools.command.develop import develop
+     setup_args['cmdclass']['develop'] = js_prerelease(develop, strict=True)
+
+-setuptools_args = {}
+-install_requires = setuptools_args['install_requires'] = [
+-    'notebook>=4.4.1',
+-]
+-
+-if 'setuptools' in sys.modules:
+-    setup_args.update(setuptools_args)
+-
+ if __name__ == '__main__':
+     setup(**setup_args)

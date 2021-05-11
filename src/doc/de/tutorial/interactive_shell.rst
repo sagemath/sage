@@ -14,10 +14,10 @@ vornehmen. Nach dem Start von Sage sehen Sie etwa folgendes:
 
 ::
 
-    ----------------------------------------------------------------------
-    | SAGE Version 4.5.2, Release Date: 2010-08-05                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
 
     sage:
@@ -30,7 +30,7 @@ Um Sage zu beenden drücken Sie Strg-D oder geben Sie
 ::
 
     sage: quit
-    Exiting SAGE (CPU time 0m0.00s, Wall time 0m0.89s)
+    Exiting Sage (CPU time 0m0.00s, Wall time 0m0.89s)
 
 Unter "wall time" finden Sie die vergangene Echtzeit (der Uhr an Ihrer
 Wand). Diese ist nötig, da die CPU Zeit Unterprozesse wie GAP oder
@@ -174,10 +174,10 @@ in einer zukünftigen Sitzung (indem Sie einfach die Log-Datei laden).
 ::
 
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 4.5.2, Release Date: 2010-08-05                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
     sage: logstart setup
     Activating auto-logging. Current session state plus future input saved.
@@ -191,12 +191,12 @@ in einer zukünftigen Sitzung (indem Sie einfach die Log-Datei laden).
     sage: x,y = QQ['x,y'].gens()
     sage: G = E.gens()
     sage:
-    Exiting SAGE (CPU time 0m0.61s, Wall time 0m50.39s).
+    Exiting Sage (CPU time 0m0.61s, Wall time 0m50.39s).
     was@form:~$ sage
-    ----------------------------------------------------------------------
-    | SAGE Version 4.5.2, Release Date: 2010-08-05                       |
-    | Type notebook() for the GUI, and license() for information.        |
-    ----------------------------------------------------------------------
+    ┌────────────────────────────────────────────────────────────────────┐
+    │ SageMath version 9.0, Release Date: 2020-01-01                     │
+    │ Using Python 3.7.3. Type "help()" for help.                        │
+    └────────────────────────────────────────────────────────────────────┘
 
     sage: load("setup")
     Loading log file <setup> one line at a time...
@@ -308,7 +308,7 @@ unten verwenden:
 
     sage: cputime?
     ...
-        Return the time in CPU second since SAGE started, or with optional
+        Return the time in CPU second since Sage started, or with optional
         argument t, return the time since time t.
         INPUT:
             t -- (optional) float, time in CPU seconds
@@ -868,115 +868,3 @@ Variable ``b`` wurde nicht überschrieben.
     sage: a
     389
 
-
-
-.. _section-notebook:
-
-Die Notebook Umgebung
-=====================
-
-Folgendes beschreibt das alte Sage Browser Notebook, auch "sagenb" genannt.
-
-SageMath wird demnächst die `Jupyter notebook
-<http://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_
-als Hauptnotebookoption verwenden.  Der wichtigste
-Unterschied hier liegt darin, dass die einzelnen Worksheet-Dateien
-nicht auf einem Server wohnen, sondern werden wie in üblichen
-Anwendungen gespeichert.
-
-
-Altes SageNB Notebook
-----------------------
-
-Das Sage Browser Notebook wird mit
-
-.. skip
-
-::
-
-    sage: notebook()
-
-in der Sage Kommandozeile gestartet. Der Befehl startet das Sage
-Notebook und ebenso Ihren Standardbrowser. Die Serverstatus-Dateien
-liegen unter ``$HOME/.sage/sage\_notebook.sagenb``.
-
-Die andere Optionen enthalten z.B.
-
-.. skip
-
-::
-
-    sage: notebook("Verzeichnis")
-
-was einen neuen Notebook Server mit den Dateien aus dem angegebenen Verzeichnis
-``Verzeichnis.sagenb``
-startet (anstelle des Standardverzeichnises ``$HOME/.sage/sage_notebook.sagenb``).
-Das kann hilfreich sein, wenn Sie einige Worksheets für ein Projekt oder
-verschiedene gleichzeitig laufende Notebook Server von einander trennen wollen.
-
-Wenn Sie das Notebook starten, werden zuerst die folgenden Dateien erzeugt
-in ``$HOME/.sage/sage_notebook.sagenb``:
-
-::
-
-    conf.pickle
-    openid.pickle
-    twistedconf.tac
-    sagenb.pid
-    users.pickle
-    home/admin/ (Das Verzeichnis für den Hauptbenutzer)
-    home/guest/ (Ein Verzeichnis für Gäste)
-    home/pub/ (Ein Verzeichnis für veröffentlichte Worksheets)
-
-Nach dem Anlegen dieser Dateien, startet das notebook als Webserver.
-
-Ein "Notebook" ist eine Sammlung von Benutzerkonten, von dem jedes
-verschiedene Worksheets enthalten kann. Wenn Sie ein neues Worksheet
-erstellen, werden alle zugehörigen Daten unter
-``home/benutzer/nummer`` gespeichert. In jedem solchen
-Verzeichnis ist eine Klartextdatei namens ``worksheet.html`` - sollte
-mit Ihren Worksheets oder Sage irgendetwas Unvorhergesehenes
-passieren, enthält diese Datei alles was Sie benötigen um Ihre
-Worksheets wiederherzustellen.  Das Verzeichnis enthält:
-
-::
-
-    cells/
-    worksheet.html
-    data/
-    worksheet_conf.pickle
-
-Innerhalb von Sage können Sie mit ``notebook?`` mehr Informationen zum Start eines
-Notebook-Servers erhalten.
-
-Das folgende Diagramm veranschaulicht die Architektur eines Sage Notebooks.
-
-::
-
-    ----------------------
-    |                    |
-    |                    |
-    |   firefox/safari   |
-    |                    |
-    |     javascript     |
-    |      programm      |
-    |                    |
-    |                    |
-    ----------------------
-          |      ^
-          | AJAX |
-          V      |
-    ----------------------
-    |                    |
-    |       sage         |                SAGE Prozess 1
-    |       web          | ------------>  SAGE Prozess 2    (Python Prozesse)
-    |      server        |   pexpect      SAGE Prozess 3
-    |                    |                    .
-    |                    |                    .
-    ----------------------                    .
-
-Um Hilfe zu einem Sage-Befehl ``befehl`` im Notebook-Browser zu bekommen
-geben Sie ``befehl?`` ein und drücken Sie ``<tab>`` (nicht ``<shift-enter>``).
-
-Für Informationen zu Tastenbefehlen des Notebook-Browsers klicken Sie auf
-den ``Help`` Link.

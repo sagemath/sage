@@ -1,46 +1,43 @@
 r"""
 Subschemes of affine space
+
 AUTHORS:
 
-- David Kohel (2005): initial version.
-- William Stein (2005): initial version.
+- David Kohel, William Stein (2005): initial version
+
 - Ben Hutz (2013): affine subschemes
+
 """
 
-#*****************************************************************************
-# Copyright (C) 2005 William Stein <wstein@gmail.com>
-# Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
+# ****************************************************************************
+#        Copyright (C) 2005 William Stein <wstein@gmail.com>
+#        Copyright (C) 2013 Ben Hutz <bn4941@gmail.com>
 #
-# Distributed under the terms of the GNU General Public License (GPL)
-# as published by the Free Software Foundation; either version 2 of
-# the License, or (at your option) any later version.
-# http://www.gnu.org/licenses/
-#*****************************************************************************
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.fields import Fields
 from sage.interfaces.all import singular
+from sage.modules.all import vector
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
+
+from .affine_morphism import SchemeMorphism_polynomial_affine_subscheme_field
 
 
 class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
     r"""
-    Construct an algebraic subscheme of affine space.
-
-    .. WARNING::
-
-        You should not create objects of this class directly. The
-        preferred method to construct such subschemes is to use
-        :meth:`~sage.schemes.affine.affine_space.AffineSpace_generic.subscheme`
-        method of :class:`affine space
-        <sage.schemes.affine.affine_space.AffineSpace_generic>`.
+    An algebraic subscheme of affine space.
 
     INPUT:
 
-    - ``A`` -- ambient :class:`affine space
-      <sage.schemes.affine.affine_space.AffineSpace_generic>`
+    - ``A`` -- ambient affine space
 
-    - ``polynomials`` -- single polynomial, ideal or iterable of
-      defining polynomials.
+    - ``polynomials`` -- single polynomial, ideal or iterable of defining
+      polynomials
 
     EXAMPLES::
 
@@ -98,8 +95,6 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         """
         Return the dimension of the affine algebraic subscheme.
 
-        OUTPUT: Integer.
-
         EXAMPLES::
 
             sage: A.<x,y> = AffineSpace(2, QQ)
@@ -135,11 +130,12 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
 
     def projective_embedding(self, i=None, PP=None):
         """
-        Returns a morphism from this affine scheme into an ambient
-        projective space of the same dimension.
+        Return a morphism from this affine scheme into an ambient projective
+        space of the same dimension.
 
-        The codomain of this morphism is the projective closure of this affine scheme in ``PP``,
-        if given, or otherwise in a new projective space that is constructed.
+        The codomain of this morphism is the projective closure of this affine
+        scheme in ``PP``, if given, or otherwise in a new projective space that
+        is constructed.
 
         INPUT:
 
@@ -231,7 +227,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             #assume that if you've passed in a new ambient projective space
             #you want to override the existing embedding
             if PP is None or phi.codomain().ambient_space() == PP:
-                return(phi)
+                return phi
         except AttributeError:
             self.__projective_embedding = {}
         except KeyError:
@@ -268,11 +264,9 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
           i-th coordinate, numbered from 0.
 
         -  ``PP`` -- (default: None) ambient projective space, i.e., ambient space
-           of codomain of morphism; this is constructed if it is not given.
+           of codomain of morphism; this is constructed if it is not given
 
-        OUTPUT:
-
-        - a projective subscheme.
+        OUTPUT: a projective subscheme
 
         EXAMPLES::
 
@@ -485,11 +479,19 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             sage: Q2 = A([0,0,0,-a,0])
             sage: X.multiplicity(Q2)
             7
+
+        Check that :trac:`27479` is fixed::
+
+            sage: A1.<x> = AffineSpace(QQ, 1)
+            sage: X = A1.subscheme([x^1789 + x])
+            sage: Q = X([0])
+            sage: X.multiplicity(Q)
+            1
         """
         if not self.base_ring() in Fields():
             raise TypeError("subscheme must be defined over a field")
 
-        # Check whether P is a point on this subscheme
+        # check whether P is a point on this subscheme
         try:
             P = self(P)
         except TypeError:
@@ -503,3 +505,93 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
         R = AA.coordinate_ring().change_ring(order='negdegrevlex')
         I = R.ideal([f(chng_coords) for f in self.defining_polynomials()])
         return singular.mult(singular.std(I)).sage()
+
+
+class AlgebraicScheme_subscheme_affine_field(AlgebraicScheme_subscheme_affine):
+    """
+    Algebraic subschemes of projective spaces defined over fields.
+    """
+    def _morphism(self, *args, **kwds):
+        r"""
+        Construct a morphism determined by action on points of ``self``.
+
+        TESTS::
+
+            sage: A2.<x,y> = AffineSpace(QQ, 2)
+            sage: X = A2.subscheme(x - y)
+            sage: H = X.Hom(A2)
+            sage: H([x, x/y])
+            Scheme morphism:
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+              x - y
+              To:   Affine Space of dimension 2 over Rational Field
+              Defn: Defined on coordinates by sending (x, y) to
+                    (x, x/y)
+            sage: P2 = ProjectiveSpace(QQ, 2)
+            sage: H = X.Hom(P2)
+            sage: H([x*y, x, y])
+            Scheme morphism:
+              From: Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+              x - y
+              To:   Projective Space of dimension 2 over Rational Field
+              Defn: Defined on coordinates by sending (x, y) to
+                    (x*y : x : y)
+        """
+        return SchemeMorphism_polynomial_affine_subscheme_field(*args, **kwds)
+
+    def tangent_space(self, p):
+        """
+        Return the tangent space at the point ``p``.
+
+        The points of the tangent space are the tangent vectors at ``p``.
+
+        INPUT:
+
+        - ``p`` -- a rational point
+
+        EXAMPLES::
+
+            sage: A3.<x,y,z> = AffineSpace(3, QQ)
+            sage: X = A3.subscheme(z-x*y)
+            sage: X.tangent_space(A3.origin())
+            Closed subscheme of Affine Space of dimension 3 over Rational Field
+            defined by:
+              z
+            sage: X.tangent_space(X(1,1,1))
+            Closed subscheme of Affine Space of dimension 3 over Rational Field
+            defined by:
+              -x - y + z
+
+        Tangent space at a point may have higher dimension than the dimension
+        of the point. ::
+
+            sage: C = Curve([x + y + z, x^2 - y^2*z^2 + z^3])
+            sage: C.singular_points()
+            [(0, 0, 0)]
+            sage: p = C(0,0,0)
+            sage: C.tangent_space(p)
+            Closed subscheme of Affine Space of dimension 3 over Rational Field
+            defined by:
+              x + y + z
+            sage: _.dimension()
+            2
+            sage: q = C(1,0,-1)
+            sage: C.tangent_space(q)
+            Closed subscheme of Affine Space of dimension 3 over Rational Field
+            defined by:
+              x + y + z,
+              2*x + 3*z
+            sage: _.dimension()
+            1
+
+        """
+        A = self.ambient_space()
+        R = A.coordinate_ring()
+        gens = R.gens()
+
+        J = self.Jacobian_matrix()
+        Jp = J.apply_map( lambda f: f.subs(dict(zip(gens, p))) )
+        I = [f for f in Jp * vector(gens) if f]
+
+        return A.subscheme(R.ideal(I))
+

@@ -11,7 +11,7 @@ AUTHORS:
 
 - Florent Hivert (2009/02/06): doc improvements + new methods
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #                     2014 Vincent Delecroix <20100.delecroix@gmail.com>,
 #
@@ -24,12 +24,9 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-import six
-from six.moves import range
 import sage.misc.prandom as rnd
 import itertools
 
@@ -88,8 +85,8 @@ def Subsets(s, k=None, submultiset=False):
         {}
         sage: S.last()
         {1, 2, 3}
-        sage: S.random_element()  # random
-        {2}
+        sage: S.random_element() in S
+        True
         sage: S.list()
         [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
 
@@ -144,7 +141,7 @@ def Subsets(s, k=None, submultiset=False):
          {},
          {{2}, {1, 2, 3}, {}, {3}, {1, 2}},
          {{1, 2, 3}, {}, {1}}, {{2}, {2, 3}, {}, {1, 2}}}
-        sage: S3.unrank(14123091480) # py3
+        sage: S3.unrank(14123091480) # py3  #random
         {{{2}, {1, 2, 3}, {1, 2}, {3}, {}},
          {{1, 2, 3}, {2}, {1}, {1, 3}},
          {{}, {2}, {2, 3}, {1, 2}},
@@ -157,7 +154,7 @@ def Subsets(s, k=None, submultiset=False):
         278826214642518400
         sage: T.unrank(1441231049) # py2
         {{{3}, {1, 2}, {}, {2, 3}, {1}, {1, 3}, ..., {{2, 3}, {}}, {{}}}
-        sage: T.unrank(1441231049) # py3
+        sage: T.unrank(1441231049) # py3 # random
         {{{1, 2, 3}, {2}, {2, 3}}, {{3}, {1, 3}, ..., {3}, {1}, {}, {1, 3}}}
     """
     if k is not None:
@@ -205,7 +202,7 @@ class Subsets_s(Parent):
          {{1, 2}, {}, {0, 2}, {1}, {0, 1, 2}, {2}},
          {{1, 2}, {0}}, {{1, 2}, {0, 1}, {0, 1, 2}, {1}},
          {{0, 2}, {1}}}
-        sage: S.unrank(3149254230) # py3
+        sage: S.unrank(3149254230) # py3 #random
         {{{1}, {0, 2}}, {{0, 1, 2}, {0, 1}, {1}, {1, 2}},
          {{2}, {1, 2}, {0, 1, 2}, {0, 2}, {1}, {}},
          {{1, 2}, {0}},
@@ -359,7 +356,22 @@ class Subsets_s(Parent):
         """
         return Integer(1) << self._s.cardinality()
 
-    __len__ = cardinality
+    def __len__(self):
+        r"""
+        Equivalent to ``self.cardinality()``.
+
+        TESTS::
+
+            ``__len__`` should return a Python int; in Python 3.7+ this happens
+            automatically, but not on Python 3.6.
+
+            sage: S = Subsets(Set([1,2,3]))
+            sage: len(S)
+            8
+            sage: type(len(S)) is int
+            True
+        """
+        return int(self.cardinality())
 
     def first(self):
         """
@@ -542,6 +554,23 @@ class Subsets_s(Parent):
             {2, 4}
         """
         return self.unrank(self.cardinality() // 2)
+
+    def lattice(self):
+        r"""
+        Return the lattice of subsets ordered by containment.
+
+        EXAMPLES::
+
+            sage: X = Subsets([7,8,9])
+            sage: X.lattice()
+            Finite lattice containing 8 elements
+            sage: Y = Subsets(0)
+            sage: Y.lattice()
+            Finite lattice containing 1 elements
+
+        """
+        S = self.underlying_set()
+        return S.subsets_lattice()
 
 class Subsets_sk(Subsets_s):
     r"""
@@ -764,8 +793,10 @@ class Subsets_sk(Subsets_s):
 
         EXAMPLES::
 
-            sage: Subsets(3, 2).random_element()
-            {1, 2}
+            sage: s = Subsets(3, 2).random_element()
+            sage: s in Subsets(3, 2)
+            True
+
             sage: Subsets(3,4).random_element()
             Traceback (most recent call last):
             ...
@@ -850,6 +881,7 @@ class Subsets_sk(Subsets_s):
         """
         return self.unrank(self.cardinality() // 2)
 
+
 def dict_to_list(d):
     r"""
     Return a list whose elements are the elements of i of d repeated with
@@ -862,27 +894,37 @@ def dict_to_list(d):
         ['a', 'b', 'b', 'b']
     """
     l = []
-    for i,j in six.iteritems(d):
-        l.extend([i]*j)
+    for i, j in d.items():
+        l.extend([i] * j)
     return l
+
 
 def list_to_dict(l):
     r"""
-    Return a dictionary whose keys are the elements of l and values are the
-    multiplicity they appear in l.
+    Return a dictionary of multiplicities and the list of its keys.
+
+    INPUT:
+
+    a list ``l`` with possibly repeated elements
+
+    The keys are the elements of ``l`` (in the same order in which they appear)
+    and values are the multiplicities of each element in ``l``.
 
     EXAMPLES::
 
         sage: from sage.combinat.subset import list_to_dict
         sage: list_to_dict(['a', 'b', 'b', 'b'])
-        {'a': 1, 'b': 3}
+        ({'a': 1, 'b': 3}, ['a', 'b'])
     """
     d = {}
+    keys = []
     for elt in l:
         if elt not in d:
             d[elt] = 0
+            keys.append(elt)
         d[elt] += 1
-    return d
+    return d, keys
+
 
 class SubMultiset_s(Parent):
     """
@@ -917,7 +959,7 @@ class SubMultiset_s(Parent):
 
     def __init__(self, s):
         """
-        Constructs the combinatorial class of the sub multisets of s.
+        Construct the combinatorial class of the sub multisets of s.
 
         EXAMPLES::
 
@@ -925,12 +967,23 @@ class SubMultiset_s(Parent):
             sage: Subsets([1,2,3,3], submultiset=True).cardinality()
             12
             sage: TestSuite(S).run()
+
+        TESTS::
+
+            sage: from sage.combinat.subset import SubMultiset_s
+            sage: T = SubMultiset_s({'a':2,'b':1,'c':2})
+            sage: T.cardinality()
+            18
         """
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
-        self._d = s
-        if not isinstance(s, dict):
-            self._d = list_to_dict(s)
+        if isinstance(s, dict):
+            self._d = s
+            self._l = dict_to_list(s)
+            self._keys = list(self._d)
+        else:
+            self._l = s
+            self._d, self._keys = list_to_dict(s)
 
     def _repr_(self):
         """
@@ -939,7 +992,7 @@ class SubMultiset_s(Parent):
             sage: S = Subsets([1, 2, 2, 3], submultiset=True); S #indirect doctest
             SubMultiset of [1, 2, 2, 3]
         """
-        return "SubMultiset of {}".format(dict_to_list(self._d))
+        return "SubMultiset of {}".format(self._l)
 
     def __eq__(self, other):
         r"""
@@ -997,7 +1050,7 @@ class SubMultiset_s(Parent):
 
     def cardinality(self):
         r"""
-        Return the cardinality of self
+        Return the cardinality of ``self``.
 
         EXAMPLES::
 
@@ -1020,27 +1073,28 @@ class SubMultiset_s(Parent):
             24
         """
         from sage.all import prod
-        return Integer(prod(k+1 for k in self._d.values()))
+        return Integer(prod(k + 1 for k in self._d.values()))
 
     def random_element(self):
         r"""
-        Return a random element of self with uniform law
+        Return a random element of ``self`` with uniform law.
 
         EXAMPLES::
 
             sage: S = Subsets([1,1,2,3], submultiset=True)
-            sage: S.random_element()
-            [2]
+            sage: s = S.random_element()
+            sage: s in S
+            True
         """
         l = []
-        for i in self._d:
-            l.extend([i]*rnd.randint(0,self._d[i]))
+        for i, di in self._d.items():
+            l.extend([i] * rnd.randint(0, di))
         return l
 
-    def generating_serie(self,variable='x'):
+    def generating_serie(self, variable='x'):
         r"""
-        Return the serie (here a polynom) associated to the counting of the
-        element of self weighted by the number of element they contain.
+        Return the polynomial associated to the counting of the
+        elements of ``self`` weighted by the number of element they contain.
 
         EXAMPLES::
 
@@ -1057,15 +1111,16 @@ class SubMultiset_s(Parent):
             sage: sum(S.generating_serie())
             72
         """
-        from sage.all import prod
         R = ZZ[variable]
-        return prod(R([1]*(n+1)) for n in self._d.values())
+        return R.prod(R([1] * (n + 1)) for n in self._d.values())
 
     def __iter__(self):
         """
-        Iterates through the subsets of ``self``.  Note that each subset is
-        represented by a list of its elements rather than a set since we can
-        have multiplicities (no multiset data structure yet in sage).
+        Iterate through the subsets of ``self``.
+
+        Note that each subset is represented by a list of its elements
+        rather than a set since we can have multiplicities (no
+        multiset data structure yet in sage).
 
         EXAMPLES::
 
@@ -1083,10 +1138,9 @@ class SubMultiset_s(Parent):
              [1, 2, 3],
              [2, 2, 3],
              [1, 2, 2, 3]]
-
         """
-        for k in range(sum(self._d.values())+1):
-            for s in SubMultiset_sk(self._d, k):
+        for k in range(len(self._l) + 1):
+            for s in SubMultiset_sk(self._l, k):
                 yield s
 
     def __call__(self, el):
@@ -1154,7 +1208,6 @@ class SubMultiset_sk(SubMultiset_s):
             sage: TestSuite(S).run()
         """
         SubMultiset_s.__init__(self, s)
-        self._l = dict_to_list(self._d)
         self._k = k
 
     def __eq__(self, other):
@@ -1170,10 +1223,10 @@ class SubMultiset_sk(SubMultiset_s):
             return False
         return self._d == other._d and self._k == other._k
 
-    def generating_serie(self,variable='x'):
+    def generating_serie(self, variable='x'):
         r"""
-        Return the serie (this case a polynom) associated to the counting of the
-        element of self weighted by the number of element they contains
+        Return the polynomial associated to the counting of the
+        elements of ``self`` weighted by the number of elements they contains
 
         EXAMPLES::
 
@@ -1196,7 +1249,7 @@ class SubMultiset_sk(SubMultiset_s):
 
     def cardinality(self):
         r"""
-        Return the cardinality of self
+        Return the cardinality of ``self``.
 
         EXAMPLES::
 
@@ -1252,17 +1305,22 @@ class SubMultiset_sk(SubMultiset_s):
 
         EXAMPLES::
 
-            sage: Subsets(7,3).random_element()
-            {1, 4, 7}
-            sage: Subsets(7,5).random_element()
-            {1, 3, 4, 5, 7}
+            sage: s = Subsets(7,3).random_element()
+            sage: s in Subsets(7,3)
+            True
+
+            sage: s = Subsets(7,5).random_element()
+            sage: s in Subsets(7,5)
+            True
         """
         return rnd.sample(self._l, self._k)
 
     def __iter__(self):
         """
-        Iterates through the subsets of size ``self._k`` of the multiset
-        ``self._s``. Note that each subset is represented by a list of the
+        Iterate through the subsets of size ``self._k`` of the multiset
+        ``self._s``.
+
+        Note that each subset is represented by a list of the
         elements rather than a set since we can have multiplicities (no
         multiset data structure yet in sage).
 
@@ -1271,11 +1329,19 @@ class SubMultiset_sk(SubMultiset_s):
             sage: S = Subsets([1,2,2,3],2, submultiset=True)
             sage: S.list()
             [[1, 2], [1, 3], [2, 2], [2, 3]]
+
+        Check that :trac:`28588` is fixed::
+
+            sage: Subsets([3,2,2], submultiset=True).list()
+            [[], [3], [2], [3, 2], [2, 2], [3, 2, 2]]
+
         """
         from sage.combinat.integer_vector import IntegerVectors
-        elts = list(self._d)
-        for iv in IntegerVectors(self._k, len(self._d), outer=list(self._d.values())):
+        elts = self._keys
+        for iv in IntegerVectors(self._k, len(self._d),
+                                 outer=[self._d[k] for k in elts]):
             yield sum([[elts[i]] * iv[i] for i in range(len(iv))], [])
+
 
 class SubsetsSorted(Subsets_s):
     """

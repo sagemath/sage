@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 #from symmetrica import *
 
 from .symmetrica import start, end
@@ -45,7 +44,6 @@ from .symmetrica import compute_elmsym_with_alphabet_symmetrica as compute_elmsy
 from .symmetrica import compute_monomial_with_alphabet_symmetrica as compute_monomial_with_alphabet
 from .symmetrica import compute_powsym_with_alphabet_symmetrica as compute_powsym_with_alphabet
 from .symmetrica import compute_schur_with_alphabet_det_symmetrica as compute_schur_with_alphabet_det
-from .symmetrica import part_part_skewschur_symmetrica as part_part_skewschur
 
 from .symmetrica import t_SCHUR_MONOMIAL_symmetrica as t_SCHUR_MONOMIAL
 from .symmetrica import t_SCHUR_HOMSYM_symmetrica as t_SCHUR_HOMSYM

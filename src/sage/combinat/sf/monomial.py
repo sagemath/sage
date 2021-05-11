@@ -1,8 +1,7 @@
 """
 Monomial symmetric functions
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2010 Anne Schilling <anne at math.ucdavis.edu> (addition)
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
@@ -16,13 +15,16 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from . import classical
 import sage.libs.symmetrica.all as symmetrica
 from sage.rings.integer import Integer
-from sage.combinat.partition import Partition
+from sage.rings.infinity import infinity
+from sage.combinat.partition import Partition, _Partitions
+from sage.functions.other import factorial, binomial
+from sage.arith.misc import multinomial
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, Sym):
@@ -46,7 +48,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
 
     def _dual_basis_default(self):
         """
-        Returns the default dual basis to ``self`` when no scalar product is specified
+        Return the default dual basis to ``self`` when no scalar product is specified
 
         This method returns the dual basis of the monomial basis with
         respect to the standard scalar product, which is the
@@ -72,7 +74,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         """
         return self.realization_of().h()
 
-    def _multiply(self, left, right):
+    def product(self, left, right):
         """
         Return the product of ``left`` and ``right``.
 
@@ -104,35 +106,36 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             sage: a^2
             x^2*m[] + 2*x*m[2, 1] + 4*m[2, 2, 1, 1] + 6*m[2, 2, 2] + 2*m[3, 2, 1] + 2*m[3, 3] + 2*m[4, 1, 1] + m[4, 2]
         """
-        #Use symmetrica to do the multiplication
-        #A = left.parent()
+        # Use symmetrica to do the multiplication
+        # A = left.parent()
 
-        #Hack due to symmetrica crashing when both of the
-        #partitions are the empty partition
-        #if  R is ZZ or R is QQ:
-        #    return symmetrica.mult_monomial_monomial(left, right)
+        # Hack due to symmetrica crashing when both of the
+        # partitions are the empty partition
+        # if  R is ZZ or R is QQ:
+        #     return symmetrica.mult_monomial_monomial(left, right)
 
         z_elt = {}
-        for (left_m, left_c) in six.iteritems(left._monomial_coefficients):
-            for (right_m, right_c) in six.iteritems(right._monomial_coefficients):
+        for left_m, left_c in left._monomial_coefficients.items():
+            for right_m, right_c in right._monomial_coefficients.items():
 
-                #Hack due to symmetrica crashing when both of the
-                #partitions are the empty partition
-                if left_m == [] and right_m == []:
-                    z_elt[ left_m ] = left_c*right_c
+                # Hack due to symmetrica crashing when both of the
+                # partitions are the empty partition
+                if not left_m and not right_m:
+                    z_elt[left_m] = left_c * right_c
                     continue
 
-                d = symmetrica.mult_monomial_monomial({left_m:Integer(1)}, {right_m:Integer(1)}).monomial_coefficients()
+                d = symmetrica.mult_monomial_monomial({left_m: Integer(1)},
+                                                      {right_m: Integer(1)}).monomial_coefficients()
                 for m in d:
                     if m in z_elt:
-                        z_elt[ m ] = z_elt[m] + left_c * right_c * d[m]
+                        z_elt[m] += left_c * right_c * d[m]
                     else:
-                        z_elt[ m ] = left_c * right_c * d[m]
-        return z_elt
+                        z_elt[m] = left_c * right_c * d[m]
+        return self._from_dict(z_elt)
 
     def from_polynomial(self, f, check=True):
         """
-        Returns the symmetric function in the monomial basis corresponding to the polynomial ``f``.
+        Return the symmetric function in the monomial basis corresponding to the polynomial ``f``.
 
         INPUT:
 
@@ -158,7 +161,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             sage: f = x[0]**2+x[1]**2+x[2]**2
             sage: m.from_polynomial(f)
             m[2]
-            sage: f=x[0]^2+x[1]
+            sage: f = x[0]^2+x[1]
             sage: m.from_polynomial(f)
             Traceback (most recent call last):
             ...
@@ -171,11 +174,12 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             m[1, 1] + 2*m[2, 1] + 3*m[3]
         """
         assert self.base_ring() == f.base_ring()
-        out = self.sum_of_terms((Partition(e), c)
-                                for (e,c) in six.iteritems(f.dict())
-                                if tuple(sorted(e)) == tuple(reversed(e)))
-        if check and out.expand(f.parent().ngens(),f.parent().variable_names()) != f:
+        if check and not f.is_symmetric():
             raise ValueError("%s is not a symmetric polynomial"%f)
+        out = self._from_dict({_Partitions.element_class(_Partitions, list(e)): c
+                               for (e,c) in f.dict().items()
+                               if all(e[i+1] <= e[i] for i in range(len(e)-1))},
+                              remove_zeros=False)
         return out
 
     def from_polynomial_exp(self, p):
@@ -225,7 +229,7 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
         """
         assert self.base_ring() == p.parent().base_ring()
         return self.sum_of_terms((Partition(exp=monomial), coeff)
-                                 for (monomial, coeff) in six.iteritems(p.dict()))
+                                 for monomial, coeff in p.dict().items())
 
     def antipode_by_coercion(self, element):
         r"""
@@ -299,13 +303,192 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
                 sage: (3*m([])).expand(0)
                 3
             """
-            condition = lambda part: len(part) > n
+
+            def condition(part):
+                return len(part) > n
             return self._expand(condition, n, alphabet)
+
+        def principal_specialization(self, n=infinity, q=None):
+            r"""
+            Return the principal specialization of a symmetric function.
+
+            The *principal specialization* of order `n` at `q`
+            is the ring homomorphism `ps_{n,q}` from the ring of
+            symmetric functions to another commutative ring `R`
+            given by `x_i \mapsto q^{i-1}` for `i \in \{1,\dots,n\}`
+            and `x_i \mapsto 0` for `i > n`.
+            Here, `q` is a given element of `R`, and we assume that
+            the variables of our symmetric functions are
+            `x_1, x_2, x_3, \ldots`.
+            (To be more precise, `ps_{n,q}` is a `K`-algebra
+            homomorphism, where `K` is the base ring.)
+            See Section 7.8 of [EnumComb2]_.
+
+            The *stable principal specialization* at `q` is the ring
+            homomorphism `ps_q` from the ring of symmetric functions
+            to another commutative ring `R` given by
+            `x_i \mapsto q^{i-1}` for all `i`.
+            This is well-defined only if the resulting infinite sums
+            converge; thus, in particular, setting `q = 1` in the
+            stable principal specialization is an invalid operation.
+
+            INPUT:
+
+            - ``n`` (default: ``infinity``) -- a nonnegative integer or
+              ``infinity``, specifying whether to compute the principal
+              specialization of order ``n`` or the stable principal
+              specialization.
+
+            - ``q`` (default: ``None``) -- the value to use for `q`; the
+              default is to create a ring of polynomials in ``q``
+              (or a field of rational functions in ``q``) over the
+              given coefficient ring.
+
+            For ``q=1`` and finite ``n`` we use the formula from
+            Proposition 7.8.3 of [EnumComb2]_:
+
+            .. MATH::
+
+                ps_{n,1}(m_\lambda) = \binom{n}{\ell(\lambda)}
+                                      \binom{\ell(\lambda)}{m_1(\lambda), m_2(\lambda),\dots},
+
+            where `\ell(\lambda)` denotes the length of `\lambda`.
+
+            In all other cases, we convert to complete homogeneous
+            symmetric functions.
+
+            EXAMPLES::
+
+                sage: m = SymmetricFunctions(QQ).m()
+                sage: x = m[3,1]
+                sage: x.principal_specialization(3)
+                q^7 + q^6 + q^5 + q^3 + q^2 + q
+
+                sage: x = 5*m[2] + 3*m[1] + 1
+                sage: x.principal_specialization(3, q=var("q"))
+                -10*(q^3 - 1)*q/(q - 1) + 5*(q^3 - 1)^2/(q - 1)^2 + 3*(q^3 - 1)/(q - 1) + 1
+
+            TESTS::
+
+                sage: m.zero().principal_specialization(3)
+                0
+
+            """
+            if q == 1:
+                if n == infinity:
+                    raise ValueError("the stable principal specialization at q=1 is not defined")
+                f = lambda partition: binomial(n, len(partition))*multinomial(partition.to_exp())
+                return self.parent()._apply_module_morphism(self, f, q.parent())
+
+            # heuristically, it seems fastest to fall back to the
+            # elementary basis - using the powersum basis would
+            # introduce singularities, because it is not a Z-basis
+            return self.parent().realization_of().elementary()(self).principal_specialization(n=n, q=q)
+
+        def exponential_specialization(self, t=None, q=1):
+            r"""
+            Return the exponential specialization of a
+            symmetric function (when `q = 1`), or the
+            `q`-exponential specialization (when `q \neq 1`).
+
+            The *exponential specialization* `ex` at `t` is a
+            `K`-algebra homomorphism from the `K`-algebra of
+            symmetric functions to another `K`-algebra `R`.
+            It is defined whenever the base ring `K` is a
+            `\QQ`-algebra and `t` is an element of `R`.
+            The easiest way to define it is by specifying its
+            values on the powersum symmetric functions to be
+            `p_1 = t` and `p_n = 0` for `n > 1`.
+            Equivalently, on the homogeneous functions it is
+            given by `ex(h_n) = t^n / n!`; see Proposition 7.8.4 of
+            [EnumComb2]_.
+
+            By analogy, the `q`-exponential specialization is a
+            `K`-algebra homomorphism from the `K`-algebra of
+            symmetric functions to another `K`-algebra `R` that
+            depends on two elements `t` and `q` of `R` for which
+            the elements `1 - q^i` for all positive integers `i`
+            are invertible.
+            It can be defined by specifying its values on the
+            complete homogeneous symmetric functions to be
+
+            .. MATH::
+
+                ex_q(h_n) = t^n / [n]_q!,
+
+            where `[n]_q!` is the `q`-factorial.  Equivalently, for
+            `q \neq 1` and a homogeneous symmetric function `f` of
+            degree `n`, we have
+
+            .. MATH::
+
+                ex_q(f) = (1-q)^n t^n ps_q(f),
+
+            where `ps_q(f)` is the stable principal specialization of `f`
+            (see :meth:`principal_specialization`).
+            (See (7.29) in [EnumComb2]_.)
+
+            The limit of `ex_q` as `q \to 1` is `ex`.
+
+            INPUT:
+
+            - ``t`` (default: ``None``) -- the value to use for `t`;
+              the default is to create a ring of polynomials in ``t``.
+
+            - ``q`` (default: `1`) -- the value to use for `q`.  If
+              ``q`` is ``None``, then a ring (or fraction field) of
+              polynomials in ``q`` is created.
+
+            EXAMPLES::
+
+                sage: m = SymmetricFunctions(QQ).m()
+                sage: (m[3]+m[2,1]+m[1,1,1]).exponential_specialization()
+                1/6*t^3
+
+                sage: x = 5*m[1,1,1] + 3*m[2,1] + 1
+                sage: x.exponential_specialization()
+                5/6*t^3 + 1
+
+            We also support the `q`-exponential_specialization::
+
+                sage: factor(m[3].exponential_specialization(q=var("q"), t=var("t")))
+                (q - 1)^2*t^3/(q^2 + q + 1)
+
+            TESTS::
+
+                sage: m.zero().exponential_specialization()
+                0
+
+            """
+            def get_variable(ring, name):
+                try:
+                    ring(name)
+                except TypeError:
+                    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+                    return PolynomialRing(ring, name).gen()
+                else:
+                    raise ValueError("the variable %s is in the base ring, pass it explicitly" % name)
+
+            if q == 1:
+                if t is None:
+                    t = get_variable(self.base_ring(), 't')
+                def f(partition):
+                    n = 0
+                    for part in partition:
+                        if part != 1:
+                            return 0
+                        n += 1
+                    return t**n/factorial(n)
+
+                return self.parent()._apply_module_morphism(self, f, t.parent())
+
+            # heuristically, it seems fastest to fall back to the
+            # elementary basis - using the powersum basis would
+            # introduce singularities, because it is not a Z-basis
+            return self.parent().realization_of().elementary()(self).exponential_specialization(t=t, q=q)
 
 # Backward compatibility for unpickling
 from sage.misc.persist import register_unpickle_override
 
-import six
 
-
-register_unpickle_override('sage.combinat.sf.monomial', 'SymmetricFunctionAlgebraElement_monomial',  SymmetricFunctionAlgebra_monomial.Element)
+register_unpickle_override('sage.combinat.sf.monomial', 'SymmetricFunctionAlgebraElement_monomial', SymmetricFunctionAlgebra_monomial.Element)

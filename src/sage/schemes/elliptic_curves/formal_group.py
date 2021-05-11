@@ -112,7 +112,7 @@ class EllipticCurveFormalGroup(SageObject):
 
 
         to precision `O(t^{prec})` of Proposition IV.1.1 of
-        [SilBook]_. This is the formal expansion of
+        [Sil2009]_. This is the formal expansion of
         `w = -1/y` about the formal parameter `t = -x/y` at `\infty`.
 
         The result is cached, and a cached version is returned if
@@ -252,7 +252,7 @@ class EllipticCurveFormalGroup(SageObject):
                 x(t) = t^{-2} - a_1 t^{-1} - a_2 - a_3 t - \cdots
 
 
-        to precision `O(t^{prec})` of page 113 of [SilBook]_.
+        to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
         .. warning::
 
@@ -290,7 +290,7 @@ class EllipticCurveFormalGroup(SageObject):
                 y(t) = - t^{-3} + a_1 t^{-2} + a_2 t + a_3 + \cdots
 
 
-        to precision `O(t^{prec})` of page 113 of [SilBook]_.
+        to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
@@ -342,7 +342,7 @@ class EllipticCurveFormalGroup(SageObject):
                 f(t) = 1 + a_1 t + ({a_1}^2 + a_2) t^2 + \cdots
 
 
-        to precision `O(t^{prec})` of page 113 of [SilBook]_.
+        to precision `O(t^{prec})` of page 113 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
@@ -427,7 +427,7 @@ class EllipticCurveFormalGroup(SageObject):
                 i(t) = - t + a_1 t^2 + \cdots
 
 
-        to precision `O(t^{prec})` of page 114 of [SilBook]_.
+        to precision `O(t^{prec})` of page 114 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if
         possible.
@@ -484,7 +484,7 @@ class EllipticCurveFormalGroup(SageObject):
            F(t_1, t_2) = t_1 + t_2 - a_1 t_1 t_2 - \cdots
 
 
-        to precision `O(t1,t2)^{prec}` of page 115 of [SilBook]_.
+        to precision `O(t1,t2)^{prec}` of page 115 of [Sil2009]_.
 
         The result is cached, and a cached version is returned if possible.
 
@@ -600,7 +600,7 @@ class EllipticCurveFormalGroup(SageObject):
                                 [n](t) = n t + \cdots
 
 
-        to precision `O(t^{prec})` of Proposition 2.3 of [SilBook]_.
+        to precision `O(t^{prec})` of Proposition 2.3 of [Sil2009]_.
 
         .. warning::
 
@@ -744,7 +744,8 @@ class EllipticCurveFormalGroup(SageObject):
 
         k = self.curve().base_ring()
         fl = self.log(prec)
-        R = rings.PolynomialRing(k,'c'); c = R.gen()
+        R = rings.PolynomialRing(k, 'c')
+        c = R.gen()
         F = fl.reverse()
 
         S = rings.LaurentSeriesRing(R,'z')

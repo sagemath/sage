@@ -13,7 +13,7 @@ This being said, it is technically possible to add/remove edges. The data
 structure does not mind at all.
 
 It is all based on the binary matrix data structure described in
-``misc/binary_matrix.pxi``, which is almost a copy of the bitset data
+``data_structures/binary_matrix.pxd``, which is almost a copy of the bitset data
 structure. The only difference is that it differentiates the rows (the vertices)
 instead of storing the whole data in a long bitset, and we can use that.
 
@@ -40,13 +40,14 @@ Index
     :delim: |
 
     :meth:`is_strongly_regular` | Check whether the graph is strongly regular
+    :meth:`is_triangle_free` | Check whether `G` is triangle free
     :meth:`triangles_count` | Return the number of triangles containing `v`, for every `v`
     :meth:`connected_subgraph_iterator` | Iterator over the induced connected subgraphs of order at most `k`
 
 Functions
 ---------
 """
-include "sage/data_structures/binary_matrix.pxi"
+from sage.data_structures.binary_matrix cimport *
 from cysignals.signals cimport sig_on, sig_off, sig_check
 
 
@@ -190,14 +191,15 @@ def is_strongly_regular(g, parameters=False):
 
     If the input graph has loops or multiedges an exception is raised::
 
-        sage: Graph([(1,1),(2,2)]).is_strongly_regular()
+        sage: Graph([(1,1),(2,2)],loops=True).is_strongly_regular()
         Traceback (most recent call last):
         ...
         ValueError: This method is not known to work on graphs with
         loops. Perhaps this method can be updated to handle them, but in the
         meantime if you want to use it please disallow loops using
         allow_loops().
-        sage: Graph([(1,2),(1,2)]).is_strongly_regular()
+
+        sage: Graph([(1,2),(1,2)],multiedges=True).is_strongly_regular()
         Traceback (most recent call last):
         ...
         ValueError: This method is not known to work on graphs with
@@ -262,6 +264,66 @@ def is_strongly_regular(g, parameters=False):
         return (n, k, llambda, mu)
     else:
         return True
+
+def is_triangle_free(G, certificate=False):
+    r"""
+    Check whether `G` is triangle free.
+
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``certificate`` -- boolean (default: ``False``); whether to return a
+      triangle if one is found
+
+    EXAMPLES::
+
+        sage: from sage.graphs.base.static_dense_graph import is_triangle_free
+        sage: is_triangle_free(graphs.PetersenGraph())
+        True
+        sage: K4 = graphs.CompleteGraph(4)
+        sage: is_triangle_free(K4)
+        False
+        sage: b, certif = is_triangle_free(K4, certificate=True)
+        sage: K4.subgraph(certif).is_clique()
+        True
+
+    TESTS::
+
+        sage: from sage.graphs.base.static_dense_graph import is_triangle_free
+        sage: is_triangle_free(Graph())
+        True
+        sage: is_triangle_free(Graph(), certificate=True)
+        (True, [])
+    """
+    G._scream_if_not_simple()
+    cdef int n = G.order()
+    if n < 3:
+        return (True, []) if certificate else True
+
+    cdef binary_matrix_t g
+    cdef list int_to_vertex = list(G)
+    dense_graph_init(g, G, translation=int_to_vertex)
+
+    cdef mp_size_t i, j, k
+    for i in range(n):
+        j = bitset_next(g.rows[i], i + 1)
+        while j != -1:
+            if bitset_are_disjoint(g.rows[i], g.rows[j]):
+                j = bitset_next(g.rows[i], j + 1)
+            else:
+                if certificate:
+                    # Search for a common neighbor
+                    k = bitset_first(g.rows[i])
+                    while bitset_not_in(g.rows[j], k):
+                        k = bitset_next(g.rows[j], k + 1)
+                    certif = [int_to_vertex[i], int_to_vertex[j], int_to_vertex[k]]
+
+                binary_matrix_free(g)
+                return (False, certif) if certificate else False
+
+    binary_matrix_free(g)
+    return (True, []) if certificate else True
 
 def triangles_count(G):
     r"""

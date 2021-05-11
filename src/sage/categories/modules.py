@@ -1,23 +1,24 @@
 r"""
 Modules
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.morphism import SetMorphism
 from sage.categories.homsets import HomsetsCategory
-from .category import Category, JoinCategory
-from .category_types import Category_module, Category_over_base_ring
+from sage.categories.homset import Hom
+from .category import Category
+from .category_types import Category_module
 from sage.categories.tensor import TensorProductsCategory, tensor
 from .dual import DualObjectsCategory
 from sage.categories.cartesian_product import CartesianProductsCategory
@@ -25,6 +26,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.bimodules import Bimodules
 from sage.categories.fields import Fields
 _Fields = Fields()
+
 
 class Modules(Category_module):
     r"""
@@ -364,8 +366,7 @@ class Modules(Category_module):
                 Category of filtered modules over Integer Ring
 
                 sage: Coalgebras(QQ).Filtered()
-                Join of Category of filtered modules over Rational Field
-                 and Category of coalgebras over Rational Field
+                Category of filtered coalgebras over Rational Field
 
                 sage: AlgebrasWithBasis(QQ).Filtered()
                 Category of filtered algebras with basis over Rational Field
@@ -401,7 +402,7 @@ class Modules(Category_module):
                 Category of graded modules over Integer Ring
 
                 sage: Coalgebras(QQ).Graded()
-                Join of Category of graded modules over Rational Field and Category of coalgebras over Rational Field
+                Category of graded coalgebras over Rational Field
 
                 sage: AlgebrasWithBasis(QQ).Graded()
                 Category of graded algebras with basis over Rational Field
@@ -521,6 +522,38 @@ class Modules(Category_module):
                            at_startup=True)
 
     class ParentMethods:
+
+        def linear_combination(self, iter_of_elements_coeff, factor_on_left=True):
+            r"""
+            Return the linear combination `\lambda_1 v_1 + \cdots +
+            \lambda_k v_k` (resp.  the linear combination `v_1 \lambda_1 +
+            \cdots + v_k \lambda_k`) where ``iter_of_elements_coeff`` iterates
+            through the sequence `((\lambda_1, v_1), ..., (\lambda_k, v_k))`.
+
+            INPUT:
+
+            - ``iter_of_elements_coeff`` -- iterator of pairs
+              ``(element, coeff)`` with ``element`` in ``self`` and
+              ``coeff`` in ``self.base_ring()``
+
+            - ``factor_on_left`` -- (optional) if ``True``, the coefficients
+              are multiplied from the left; if ``False``, the coefficients
+              are multiplied from the right
+
+            EXAMPLES::
+
+                sage: m = matrix([[0,1],[1,1]])
+                sage: J.<a,b,c> = JordanAlgebra(m)
+                sage: J.linear_combination(((a+b, 1), (-2*b + c, -1)))
+                1 + (3, -1)
+            """
+            if factor_on_left:
+                return self.sum(coeff * element
+                                for element, coeff in iter_of_elements_coeff)
+            else:
+                return self.sum(element * coeff
+                                for element, coeff in iter_of_elements_coeff)
+
         @cached_method
         def tensor_square(self):
             """
@@ -537,6 +570,41 @@ class Modules(Category_module):
                  group of order 6 as a permutation group over Rational Field
             """
             return tensor([self, self])
+
+        def module_morphism(self, *, function, category=None, codomain, **keywords):
+            r"""
+            Construct a module morphism from ``self`` to ``codomain``.
+
+            Let ``self`` be a module `X` over a ring `R`.
+            This constructs a morphism `f: X \to Y`.
+
+            INPUT:
+
+            - ``self`` -- a parent `X` in ``Modules(R)``.
+
+            - ``function`` -- a function `f` from `X` to `Y`
+
+            - ``codomain`` -- the codomain `Y` of the morphism (default:
+              ``f.codomain()`` if it's defined; otherwise it must be specified)
+
+            - ``category`` -- a category or ``None`` (default: ``None``)
+
+            EXAMPLES::
+
+                sage: V = FiniteRankFreeModule(QQ, 2)
+                sage: e = V.basis('e'); e
+                Basis (e_0,e_1) on the 2-dimensional vector space over the Rational Field
+                sage: neg = V.module_morphism(function=operator.neg, codomain=V); neg
+                Generic endomorphism of 2-dimensional vector space over the Rational Field
+                sage: neg(e[0])
+                Element -e_0 of the 2-dimensional vector space over the Rational Field
+
+            """
+            # Make sure that we only create a module morphism, even if
+            # domain and codomain have more structure
+            if category is None:
+                category = Modules(self.base_ring())
+            return SetMorphism(Hom(self, codomain, category), function)
 
     class ElementMethods:
         pass
@@ -676,9 +744,10 @@ class Modules(Category_module):
             return [self.base_category()]
 
         class ParentMethods:
-            def base_ring(self):
+
+            def __init_extra__(self):
                 """
-                Return the base ring of this Cartesian product.
+                Initialise the base ring of this Cartesian product.
 
                 EXAMPLES::
 
@@ -689,8 +758,54 @@ class Modules(Category_module):
                     Free module generated by {2, 3, 4} over Integer Ring
                     sage: C.base_ring()
                     Integer Ring
+
+                Check that :trac:`29225` is fixed::
+
+                    sage: M = cartesian_product((ZZ^2, ZZ^3)); M
+                    The Cartesian product of (Ambient free module of rank 2 over the principal ideal domain Integer Ring, Ambient free module of rank 3 over the principal ideal domain Integer Ring)
+                    sage: M.category()
+                    Category of Cartesian products of modules with basis over (euclidean domains and infinite enumerated sets and metric spaces)
+                    sage: M.base_ring()
+                    Integer Ring
+
+                    sage: A = cartesian_product((QQ^2, QQ['x'])); A
+                    The Cartesian product of (Vector space of dimension 2 over Rational Field, Univariate Polynomial Ring in x over Rational Field)
+                    sage: A.category()
+                    Category of Cartesian products of vector spaces over (number fields and quotient fields and metric spaces)
+                    sage: A.base_ring()
+                    Rational Field
+
+                This currently only works if all factors have the same
+                base ring::
+
+                    sage: B = cartesian_product((ZZ['x'], QQ^3)); B
+                    The Cartesian product of (Univariate Polynomial Ring in x over Integer Ring, Vector space of dimension 3 over Rational Field)
+                    sage: B.category()
+                    Category of Cartesian products of commutative additive groups
+                    sage: B.base_ring()
                 """
-                return self._sets[0].base_ring()
+                factors = self._sets
+                if factors:
+                    R = factors[0].base_ring()
+                    if all(A.base_ring() is R for A in factors):
+                        self._base = R
+
+        class ElementMethods:
+
+            def _lmul_(self, x):
+                """
+                Return the product of `x` with ``self``.
+
+                EXAMPLES::
+
+                    sage: A = FreeModule(ZZ, 2)
+                    sage: B = cartesian_product([A, A]); B
+                    The Cartesian product of (Ambient free module of rank 2 over the principal ideal domain Integer Ring, Ambient free module of rank 2 over the principal ideal domain Integer Ring)
+                    sage: 5*B(([1, 2], [3, 4]))
+                    ((5, 10), (15, 20))
+                """
+                return self.parent()._cartesian_product_of_elements(
+                    x*y for y in self.cartesian_factors())
 
     class TensorProducts(TensorProductsCategory):
         """

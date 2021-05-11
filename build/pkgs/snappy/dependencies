@@ -1,0 +1,10 @@
+$(PYTHON) decorator ipython cypari | $(PYTHON_TOOLCHAIN) sagelib
+
+----------
+All lines of this file are ignored except the first.
+
+The dependency cypari above is actually cypari2.
+
+An installed sagelib is needed when snappy is installed from source (instead of a wheel)
+because snappy's setup.py tests its presence to adjust dependencies.
+https://trac.sagemath.org/ticket/31180

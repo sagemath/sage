@@ -85,13 +85,9 @@ AUTHORS:
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
-from __future__ import absolute_import
-from six import iteritems
 
 # standard Python libraries
 import re
-import six
 
 # Sage library
 from .ring import SR
@@ -502,8 +498,8 @@ def evalunitdict():
         sage: sage.symbolic.units.evalunitdict()
     """
     from sage.misc.all import sage_eval
-    for key, value in six.iteritems(unitdict):
-        unitdict[key] = dict([(a,sage_eval(repr(b))) for a, b in six.iteritems(value)])
+    for key, value in unitdict.items():
+        unitdict[key] = dict([(a,sage_eval(repr(b))) for a, b in value.items()])
 
     # FEATURE IDEA: create a function that would allow users to add
     # new entries to the table without having to know anything about
@@ -512,13 +508,13 @@ def evalunitdict():
     #
     # Format the table for easier use.
     #
-    for k, v in six.iteritems(unitdict):
+    for k, v in unitdict.items():
         for a in v: unit_to_type[a] = k
 
     for w in unitdict:
         for j in unitdict[w]:
             if isinstance(unitdict[w][j], tuple): unitdict[w][j] = unitdict[w][j][0]
-        value_to_unit[w] = {b: a for a, b in iteritems(unitdict[w])}
+        value_to_unit[w] = {b: a for a, b in unitdict[w].items()}
 
 
 ###############################################################################
@@ -1124,7 +1120,7 @@ class Units(ExtraTabCompletion):
             True
         """
         return not (self == other)
-    
+
     def _tab_completion(self):
         """
         Return tab completions.

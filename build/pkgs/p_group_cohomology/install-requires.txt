@@ -1,0 +1,1 @@
+p_group_cohomology >=3.3

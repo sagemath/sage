@@ -1,0 +1,17 @@
+#################################
+# Set up environment variables: #
+#################################
+
+# It shouldn't be necessary to add Sage's include directory here,
+# since we configure with '--with-gmp=...'.
+# Also, '-I...' should normally be added to (just) CPPFLAGS.
+CFLAGS="$CFLAGS -fPIC -I\"$SAGE_LOCAL/include\""
+CXXFLAGS="$CXXFLAGS -fPIC -I\"$SAGE_LOCAL/include\""
+
+export CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+
+
+cd src/
+
+echo "Building and running Givaro's test suite..."
+$MAKE check

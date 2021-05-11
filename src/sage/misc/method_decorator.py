@@ -5,8 +5,8 @@ AUTHOR:
 
 - Martin Albrecht (2009-05): inspired by a conversation with and code by Mike Hansen
 """
-
 from sage.structure.sage_object import SageObject
+
 
 class MethodDecorator(SageObject):
     def __init__(self, f):
@@ -18,7 +18,6 @@ class MethodDecorator(SageObject):
             ....:     @MethodDecorator
             ....:     def bar(self, x):
             ....:         return x**2
-            ....:
             sage: J = Foo()
             sage: J.bar
             <sage.misc.method_decorator.MethodDecorator object at ...>
@@ -34,7 +33,7 @@ class MethodDecorator(SageObject):
 
     def _sage_src_(self):
         """
-        Returns the source code for the wrapped function.
+        Return the source code for the wrapped function.
 
         EXAMPLES:
 
@@ -81,4 +80,3 @@ class MethodDecorator(SageObject):
         """
         self._instance = inst
         return self
-

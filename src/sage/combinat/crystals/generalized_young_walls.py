@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Crystals of Generalized Young Walls
 
@@ -29,7 +30,6 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
 
 import re
 from copy import deepcopy
@@ -68,14 +68,14 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: TestSuite(mg).run()
         """
         i = len(data)-1
-        while i >= 0 and len(data[i]) == 0:
+        while i >= 0 and not data[i]:
             data.pop()
             i -= 1
         self.rows = len(data)
-        if data == []:
+        if not data:
             self.cols = 0
         else:
-            self.cols = max([len(r) for r in data])
+            self.cols = max(len(r) for r in data)
         self.data = data
         CombinatorialElement.__init__(self, parent, data)
 
@@ -88,6 +88,102 @@ class GeneralizedYoungWall(CombinatorialElement):
             [[0], [1, 0, 3, 2], [2, 1], [3, 2, 1, 0, 3, 2], [0], [], [2]]
         """
         return repr(self.data)
+
+    def _repr_diagram(self):
+        r"""
+        Return a string representation of the diagram of ``self``.
+
+        EXAMPLES::
+
+            sage: y = crystals.infinity.GeneralizedYoungWalls(2)([[0,2,1],[1,0,2,1,0],[],[0],[1,0,2],[],[],[1]])
+            sage: print(y._repr_diagram())
+                    1|
+                     |
+                     |
+                2|0|1|
+                    0|
+                     |
+            0|1|2|0|1|
+                1|2|0|
+        """
+        if not self.data:
+            return '0'
+        ret = ""
+        for row in reversed(self.data):
+            wall = ''
+            for elem in reversed(row):
+                wall += str(elem)
+                wall += '|'
+            if row == []:
+                wall += '|'
+            ret += wall.rjust(2*self.cols+1) + "\n"
+        return ret
+
+    def _ascii_art_(self):
+        r"""
+        Return an ascii art representation of ``self``.
+
+        EXAMPLES::
+
+            sage: y = crystals.infinity.GeneralizedYoungWalls(2)([[0,2,1],[1,0,2,1,0],[],[0],[1,0,2],[],[],[1]])
+            sage: ascii_art(y)
+                    1|
+                     |
+                     |
+                2|0|1|
+                    0|
+                     |
+            0|1|2|0|1|
+                1|2|0|
+        """
+        from sage.typeset.ascii_art import AsciiArt
+        return AsciiArt(self._repr_diagram().splitlines())
+
+    def _unicode_art_(self):
+        """
+        Return a unicode art representation of ``self``.
+
+        TESTS::
+
+            sage: y = crystals.infinity.GeneralizedYoungWalls(2)([[0,2,1],[1,0,2,1,0],[],[0],[1,0,2],[],[],[1]])
+            sage: unicode_art(y)
+                            ┌───┐
+                            │ 1 │
+                            └───┘
+                                │
+                                ┤
+                                │
+                    ┌───┬───┬───┐
+                    │ 1 │ 0 │ 2 │
+                    └───┴───┼───┤
+                            │ 0 │
+                            └───┘
+                                │
+            ┌───┬───┬───┬───┬───┐
+            │ 1 │ 0 │ 2 │ 1 │ 0 │
+            └───┴───┼───┼───┼───┤
+                    │ 0 │ 2 │ 1 │
+                    └───┴───┴───┘
+        """
+        from sage.typeset.unicode_art import UnicodeArt
+        if not self.data:
+            return UnicodeArt(["0"])
+
+        from sage.combinat.output import ascii_art_table
+        import unicodedata
+        v = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
+        vl = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND LEFT')
+        table = [[None]*(self.cols-len(row)) + row for row in reversed(self)]
+        ret = []
+        for i,row in enumerate(ascii_art_table(table, use_unicode=True).splitlines()):
+            if row[-1] == " ":
+                if i % 2 == 0:
+                    ret.append(row[:-1] + vl)
+                else:
+                    ret.append(row[:-1] + v)
+            else:
+                ret.append(row)
+        return UnicodeArt(ret)
 
     def __eq__(self, other):
         r"""
@@ -214,7 +310,7 @@ class GeneralizedYoungWall(CombinatorialElement):
 
     def pp(self):
         r"""
-        Return an ASCII drawing of ``self``.
+        Pretty print ``self``.
 
         EXAMPLES::
 
@@ -229,16 +325,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             0|1|2|0|1|
                 1|2|0|
         """
-        for row in reversed(self.data):
-            wall = ''
-            for elem in reversed(row):
-                wall += str(elem)
-                wall += '|'
-            if row == []:
-                wall += '|'
-            print(wall.rjust(2*self.cols+1))
-        if self.data == []:
-            print('0')
+        print(self._repr_diagram())
 
     def content(self):
         r"""
@@ -335,14 +422,14 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: y.sum_of_weighted_row_lengths()
             15
         """
-        n = self.parent().cartan_type().rank()-1
-        m = lambda i : len([r for r in self.data if r!=[] if r[0]==(i-1)%(n+1)])
+        n = self.parent().cartan_type().rank() - 1
+        m = lambda i: len([1 for r in self.data if r and r[0] == (i-1)%(n+1)])
         for r in self.data:
-            if r != [] and r[0] == n:
+            if r and r[0] == n:
                 raise ValueError('Statistic only valid for generalized Young walls in Y_0')
-        return sum((i+1)*m(i) for i in range(1,n+1))
+        return sum((i + 1) * m(i) for i in range(1, n + 1))
 
-    def e(self,i):
+    def e(self, i):
         r"""
         Return the application of the Kashiwara raising operator
         `e_i` on ``self``.
@@ -450,7 +537,7 @@ class GeneralizedYoungWall(CombinatorialElement):
 
     def weight(self, root_lattice=False):
         r"""
-        Returns the weight of ``self``.
+        Return the weight of ``self``.
 
         INPUT:
 

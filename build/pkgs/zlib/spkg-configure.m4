@@ -1,8 +1,13 @@
 SAGE_SPKG_CONFIGURE([zlib], [
-    dnl inflateValidate is needed for libpng at least; checking this ensures
-    dnl we have the minimum required zlib version
-    AC_CHECK_LIB([z], [inflateValidate], [
-        AX_CHECK_ZLIB([], [zlib_cv_libz=no])
-    ])
-    AS_IF([test "x$zlib_cv_libz" != "xyes"], [sage_spkg_install_zlib=yes])
+    AC_CHECK_LIB([z], [inflateEnd], [zlib_cv_libz=yes], [zlib_cv_libz=no])
+    AC_CHECK_HEADER([zlib.h], [zlib_cv_zlib_h=yes], [zlib_cv_zlib_h=no])
+    if test "$zlib_cv_libz" = "yes" && test "$zlib_cv_zlib_h" = "yes"; then
+        PKG_CHECK_MODULES([LIBPNG], [libpng >= 1.2], [], [
+            dnl inflateValidate is needed for Sage's libpng, newer than 1.2; this ensures
+            dnl we have the minimum required for building zlib version
+            AC_CHECK_LIB([z], [inflateValidate], [], [sage_spkg_install_zlib=yes])
+        ])
+    else
+        sage_spkg_install_zlib=yes
+    fi
 ])

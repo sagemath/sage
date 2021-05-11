@@ -1,18 +1,19 @@
 r"""
 Commutative rings
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.cartesian_product import CartesianProductsCategory
+
 
 class CommutativeRings(CategoryWithAxiom):
     """
@@ -70,20 +71,145 @@ class CommutativeRings(CategoryWithAxiom):
             tester.assertTrue(z.divides(z))
             tester.assertTrue(o.divides(o))
             tester.assertTrue(o.divides(z))
-            tester.assertTrue(z.divides(o) is self.is_zero())
+            tester.assertIs(z.divides(o), self.is_zero())
 
             if not self.is_exact():
                 return
 
             # 3. divisibility of some elements
-            S = tester.some_elements()
-            for a,b in tester.some_elements(repeat=2):
+            for a, b in tester.some_elements(repeat=2):
                 try:
-                    test = a.divides(a*b)
+                    test = a.divides(a * b)
                 except NotImplementedError:
                     pass
                 else:
                     tester.assertTrue(test)
+
+        def over(self, base=None, gen=None, gens=None, name=None, names=None):
+            r"""
+            Return this ring, considered as an extension of ``base``.
+
+            INPUT:
+
+            - ``base`` -- a commutative ring or a morphism or ``None``
+              (default: ``None``); the base of this extension or its defining
+              morphism
+
+            - ``gen`` -- a generator of this extension (over its base) or ``None``
+              (default: ``None``);
+
+            - ``gens`` -- a list of generators of this extension (over its base)
+              or ``None`` (default: ``None``);
+
+            - ``name`` -- a variable name or ``None`` (default: ``None``)
+
+            - ``names`` -- a list or a tuple of variable names or ``None``
+              (default: ``None``)
+
+            EXAMPLES:
+
+            We construct an extension of finite fields::
+
+                sage: F = GF(5^2)
+                sage: k = GF(5^4)
+                sage: z4 = k.gen()
+
+                sage: K = k.over(F)
+                sage: K
+                Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+
+            If not explicitly given, the default generator of the top ring
+            (here k) is used and the same name is kept::
+
+                sage: K.gen()
+                z4
+                sage: K(z4)
+                z4
+
+            However, it is possible to specify another generator and/or
+            another name. For example::
+
+                sage: Ka = k.over(F, name='a')
+                sage: Ka
+                Field in a with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+                sage: Ka.gen()
+                a
+                sage: Ka(z4)
+                a
+
+                sage: Kb = k.over(F, gen=-z4+1, name='b')
+                sage: Kb
+                Field in b with defining polynomial x^2 + z2*x + 4 over its base
+                sage: Kb.gen()
+                b
+                sage: Kb(-z4+1)
+                b
+
+            Note that the shortcut ``K.<a>`` is also available::
+
+                sage: KKa.<a> = k.over(F)
+                sage: KKa is Ka
+                True
+
+            Building an extension on top of another extension is allowed::
+
+                sage: L = GF(5^12).over(K)
+                sage: L
+                Field in z12 with defining polynomial x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base
+                sage: L.base_ring()
+                Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base
+
+            The successive bases of an extension are accessible via the
+            method :meth:`sage.rings.ring_extension.RingExtension_generic.bases`::
+
+                sage: L.bases()
+                [Field in z12 with defining polynomial x^3 + (1 + (4*z2 + 2)*z4)*x^2 + (2 + 2*z4)*x - z4 over its base,
+                 Field in z4 with defining polynomial x^2 + (4*z2 + 3)*x + z2 over its base,
+                 Finite Field in z2 of size 5^2]
+
+            When ``base`` is omitted, the canonical base of the ring is used::
+
+                sage: S.<x> = QQ[]
+                sage: E = S.over()
+                sage: E
+                Univariate Polynomial Ring in x over Rational Field over its base
+                sage: E.base_ring()
+                Rational Field
+
+            Here is an example where ``base`` is a defining morphism::
+
+                sage: k.<a> = QQ.extension(x^2 - 2)
+                sage: l.<b> = QQ.extension(x^4 - 2)
+                sage: f = k.hom([b^2])
+                sage: L = l.over(f)
+                sage: L
+                Field in b with defining polynomial x^2 - a over its base
+                sage: L.base_ring()
+                Number Field in a with defining polynomial x^2 - 2
+
+            Similarly, one can create a tower of extensions::
+
+                sage: K = k.over()
+                sage: L = l.over(Hom(K,l)(f))
+                sage: L
+                Field in b with defining polynomial x^2 - a over its base
+                sage: L.base_ring()
+                Field in a with defining polynomial x^2 - 2 over its base
+                sage: L.bases()
+                [Field in b with defining polynomial x^2 - a over its base,
+                 Field in a with defining polynomial x^2 - 2 over its base,
+                 Rational Field]
+            """
+            from sage.rings.ring_extension import RingExtension
+            if name is not None:
+                if names is not None:
+                    raise ValueError("keyword argument 'name' cannot be combined with 'names'")
+                names = (name,)
+            if gen is not None:
+                if gens is not None:
+                    raise ValueError("keyword argument 'gen' cannot be combined with 'gens'")
+                gens = (gen,)
+            return RingExtension(self, base, gens, names)
 
     class ElementMethods:
         pass

@@ -13,7 +13,7 @@ program.
 ::
 
     sage: L = delta_lseries(); L
-    L-series associated to the modular form Delta
+    L-series of conductor 1 and weight 12
     sage: L(1)
     0.0374412812685155
 

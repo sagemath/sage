@@ -1,0 +1,115 @@
+###########################################
+## GAP
+###########################################
+
+cd src
+
+export CFLAGS=$CFLAGS_NON_NATIVE
+export CXXFLAGS=$CXXFLAGS_NON_NATIVE
+
+GAP_BUILD_ROOT="$(pwd)"
+GAP_ROOT="$SAGE_LOCAL/share/gap"
+DESTDIR_GAP_ROOT="$SAGE_DESTDIR$GAP_ROOT"
+
+# Enable debug info if requested.
+# Note that -g3 allows you to use preprocessor macros in gdb which are widely used
+if [ "$SAGE_DEBUG" = yes ] ; then
+    export CFLAGS="-O0 -g3 -DDEBUG_MASTERPOINTERS -DDEBUG_GLOBAL_BAGS -DDEBUG_FUNCTIONS_BAGS $CFLAGS"
+fi
+
+sdh_configure $SAGE_CONFIGURE_GMP
+sdh_make -j1
+
+# GAP's "make install" is work in progress; we use bits and pieces of it
+# but we install many things manually.
+sdh_make install-headers install-libgap
+
+# Install config.h, which is not currently handled by `make install-headers`
+sdh_install gen/config.h "$SAGE_LOCAL/include/gap"
+
+# Now install the gap executable as "gap-bin"; it will be called normally
+# through our wrapper script that sets the appropriate GAP_ROOT
+SAGE_BIN="$SAGE_LOCAL/bin"
+mkdir -p "$SAGE_DESTDIR$SAGE_BIN" || sdh_die "Failed to create the directory $SAGE_BIN"
+
+./libtool --mode=install install gap "$SAGE_DESTDIR$SAGE_BIN/gap-bin" || \
+    sdh_die "Failed to install gap-bin to $SAGE_BIN"
+
+./libtool --mode=install install gac "$SAGE_DESTDIR$SAGE_BIN/gac" || \
+    sdh_die "Failed to install gac to $SAGE_BIN"
+
+# Now copy additional files GAP needs to run (and a few optional bits) into
+# GAP_ROOT; we don't need everything from the source tree
+sdh_install bin doc gen grp lib src tst sysinfo.gap "$GAP_ROOT"
+
+# GAP's copy of libtool is also used by the toolchain for build GAP packages
+# (i.e. by gac)
+sdh_install libtool "$GAP_ROOT"
+
+# Install only the minimal packages GAP needs to run
+sdh_install pkg/GAPDoc-* pkg/primgrp-* pkg/SmallGrp-* pkg/transgrp "$GAP_ROOT"/pkg
+
+# Install additional packages that are not strictly required, but that are
+# typically "expected" to be loaded: These are the default packages that are
+# autoloaded at GAP startup (via the PackagesToLoad UserPreference) with an
+# out-of-the-box GAP installation; see
+# https://trac.sagemath.org/ticket/22626#comment:393 for discussion on this
+#
+# Also include atlasrep which is a dependency of tomlib
+sdh_install \
+    pkg/atlasrep \
+    pkg/autpgrp-* \
+    pkg/alnuth-* \
+    pkg/crisp-* \
+    pkg/ctbllib \
+    pkg/FactInt-* \
+    pkg/fga \
+    pkg/irredsol-* \
+    pkg/laguna-* \
+    pkg/PackageManager-* \
+    pkg/polenta-* \
+    pkg/polycyclic-* \
+    pkg/resclasses-* \
+    pkg/sophus-* \
+    pkg/tomlib-* \
+    "$GAP_ROOT"/pkg
+
+# Install the GAP startup script; ensure it is executable
+sdh_install -T ../gap "$SAGE_BIN/gap"
+chmod +x "$SAGE_DESTDIR$SAGE_BIN/gap"
+
+# Create symlinks under $GAP_ROOT for these executables, as they are expected
+# (especially when building kernel packages) to exist
+ln -sf "$SAGE_BIN/gap-bin" "$DESTDIR_GAP_ROOT/gap"
+ln -sf "$SAGE_BIN/gac" "$DESTDIR_GAP_ROOT/gac"
+
+# Fix the $GAP_ROOT/bin/<arch>/src symlink to be relative (otherwise it links
+# to the actual path of the sources GAP was compiled from)
+for srclink in "$DESTDIR_GAP_ROOT"/bin/*/src; do
+    rm -f "$srclink"
+    ln -s "../../src" "$srclink"
+done
+
+# Additional fixups for some files after they have been copied into their
+# destination directory.  gac and sysinfo.gap are generated files that contain
+# in them hard-coded references to the GAP build directory, which will soon
+# be going away.  This breaks the build toolchain for some compiled GAP
+# packages.  We need to replace these paths with the final GAP_ROOT path.  The
+# below will work so long as neither of these paths contain '|', and if they do
+# then god help you.  https://trac.sagemath.org/ticket/27218
+sed -i -e "s|$GAP_BUILD_ROOT|$GAP_ROOT|g" \
+    "$SAGE_DESTDIR$SAGE_BIN/gac" "$DESTDIR_GAP_ROOT/sysinfo.gap" \
+    "$DESTDIR_GAP_ROOT/bin/gap.sh" "$DESTDIR_GAP_ROOT/doc/make_doc" || \
+    sdh_die "Failed to fix up hard-coded paths in GAP build tools."
+
+# TODO: This seems unnecessary--we are already installing all of doc/ to
+# GAP_ROOT, which is necessary for some functionality in GAP to work.  Do
+# we need this?  Maybe doc/gap could just be a symlink to gap/doc??
+if [[ "$SAGE_SPKG_INSTALL_DOCS" = yes ]]; then
+    # The (pre-built) HTML documentation is currently (GAP 4.6.3)
+    # included, so we don't have to /build/ it here.
+    # echo "Now building GAP's documentation..."
+    # <COMMAND TO BUILD THE [HTML] DOCUMENTATION>
+    echo "Now copying GAP's (HTML) documentation..."
+    sdh_install doc/ref doc/tut "$SAGE_SHARE/doc/gap/"
+fi

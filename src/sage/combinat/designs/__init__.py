@@ -27,6 +27,7 @@ design catalog:
 - :ref:`sage.combinat.designs.steiner_quadruple_systems`
 - :ref:`sage.combinat.designs.twographs`
 - :ref:`sage.combinat.designs.database`
+- :ref:`sage.combinat.designs.gen_quadrangles_with_spread`
 
 **Technical things**
 

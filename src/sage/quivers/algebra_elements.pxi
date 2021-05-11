@@ -1,5 +1,5 @@
 """
-Boilerplate functions for a cython implementation of elements of path algebras.
+Boilerplate functions for a cython implementation of elements of path algebras
 
 AUTHORS:
 
@@ -7,22 +7,22 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #     Copyright (C) 2015 Simon King <simon.king@uni-jena.de>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_malloc, check_allocarray, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
-include "sage/data_structures/bitset.pxi"
-
 from cpython.ref cimport *
 from cython.operator cimport predecrement as predec, postincrement as postinc
+
+from sage.data_structures.bitset_base cimport *
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.libs.gmp.mpn cimport mpn_cmp
 from libc.stdlib cimport free

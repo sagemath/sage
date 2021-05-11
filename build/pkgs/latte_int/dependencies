@@ -1,4 +1,4 @@
-$(MP_LIBRARY) ntl 4ti2 cddlib lrslib lidia
+$(MP_LIBRARY) ntl 4ti2 cddlib lidia $(findstring lrslib,$(OPTIONAL_INSTALLED_PACKAGES))
 
 ----------
 All lines of this file are ignored except the first.

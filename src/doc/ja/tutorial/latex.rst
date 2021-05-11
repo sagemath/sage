@@ -60,7 +60,7 @@ SageはLaTeXを多種多様な形で利用している．
 
 ::
 
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj = MathJax()
     sage: var('z')
     z
@@ -166,7 +166,7 @@ LaTeXで使われるバックスラッシュには，Pythonの文字列内でエ
 
     sage: latex(QQ)
     \Bold{Q}
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(QQ)
     <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}</script></html>
@@ -176,7 +176,7 @@ LaTeXで使われるバックスラッシュには，Pythonの文字列内でエ
     sage: latex.blackboard_bold(False)
 
 新しいマクロやパッケージなどを追加して，TeXの高い拡張性を利用することができる．
-まず，ノートブックでMathJaxが短いTeXコードを解釈する際に使われる，自分用のマクロを追加してみよう． 
+まず，ノートブックでMathJaxが短いTeXコードを解釈する際に使われる，自分用のマクロを追加してみよう．
 
 
 ::
@@ -190,7 +190,7 @@ LaTeXで使われるバックスラッシュには，Pythonの文字列内でエ
     (x, y)
     sage: latex(x+y)
     x + y
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(x+y)
     <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y</script></html>
@@ -280,17 +280,17 @@ LaTeX処理のカスタマイズ
 
 ::
 
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
+    sage: latex.mathjax_avoid_list()                # not tested
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
 
 
@@ -331,11 +331,8 @@ LaTeX表式とLaTeXエンジンの生成するdvi形式にdvipngが扱えないs
     <BLANKLINE>
     To use, try to view this object -- it won't work.  Now try
     'latex.add_to_preamble("\\usepackage[matrix,arrow,curve,cmtip]{xy}")',
-    and try viewing again -- it should work in the command line but not
-    from the notebook.  In the notebook, run
-    'latex.add_to_mathjax_avoid_list("xymatrix")' and try again -- you
-    should get a picture (a part of the diagram arising from a filtered
-    chain complex).
+    and try viewing again. You should get a picture (a part of the diagram arising
+    from a filtered chain complex).
 
 
 .. _sec-tkz-graph:
@@ -368,8 +365,8 @@ LaTeX表式とLaTeXエンジンの生成するdvi形式にdvipngが扱えないs
     sage: latex.extra_preamble() # random - システムで運用されているTeXに依存
     '\\usepackage{tikz}\n\\usepackage{tkz-graph}\n\\usepackage{tkz-berge}\n'
     sage: latex.engine('pdflatex')
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['tikz', 'tikzpicture']
 
 ここまで設定してから ``view(graphs.CompleteGraph(4))`` のようなコマンドを実行すると， ``tkz-graph``  で表現されたグラフが  ``pdflatex`` で処理されてノートブックに挿入される．
@@ -384,13 +381,13 @@ TeXシステムの完全な運用
 ================================
 
 TeXをSageに統合して運用する際，高度な機能の多くはシステムに独立してインストールされたTeXがないと利用できない．
-Linux系システムではTeXliveを基にした基本TeXパッケージを採用しているディストリビューションが多く，OSXではTeXshop，WindowsではMikTeXなどが使われている． 
+Linux系システムではTeXliveを基にした基本TeXパッケージを採用しているディストリビューションが多く，OSXではTeXshop，WindowsではMikTeXなどが使われている．
 ``convert`` ユーティリティは `ImageMagick <http://www.imagemagick.org/>`_ パッケージ(簡単にダウンロード可能)に含まれているし， ``dvipng``, ``ps2pdf`` と ``dvips`` の三つのプログラムはTeXパッケージに同梱されているはずだ．
 また ``dvipng`` は http://sourceforge.net/projects/dvipng/ から， ``ps2pdf`` は `Ghostscript <http://www.ghostscript.com/>`_ の一部として入手することもできる．
 
 
-連結グラフの作画には，PGFライブラリの新しいバージョンに加えて ``tkz-graph.sty`` と ``tkz-arith.sty`` が必要で，さらに ``tkz-berge.sty`` も必要になるかもしれない．
-tkz関係のファイルは全て `Altermundus site <http://altermundus.com/pages/tkz/graph/>`_ から入手することができる．
+連結グラフの作画には，PGFライブラリの新しいバージョンに加えて ``tkz-graph.sty`` を https://www.ctan.org/pkg/tkz-graph から入手する必要があり，
+さらに ``tkz-arith.sty``　とおそらく ``tkz-berge.sty`` も https://www.ctan.org/pkg/tkz-berge から入手する必要がある.
 
 
 
@@ -402,14 +399,3 @@ TeXとSageのさらなる統合運用に役立つプログラムが三つある�
 LaTeX文書のコンパイル処理過程で，Sageの演算やLaTeXによるフォーマット支援などの全ての機能も自動的に実行されるのである．
 sagetexを使えば，例えば数学試験作成において，問題の計算そのものをSageに実行させて対応する解答を正確に維持管理することなどが可能になる．
 詳細は :ref:`sec-sagetex` 節を参照してほしい．
-
-
-tex2swsはLaTeX文書にSageコードを組込むための環境を定義している．
-これをしかるべきツールで処理すると，MathJaxで適切に表示される本文と入力セル経由で動作するSageコードが組込まれたSageワークシートが出来上がる．
-tex2sws環境を使えばLaTeXで教科書や記事をSageコードのブロックを含んだ形で執筆することができるが，これを変換すると数式混じりの本文は美しく整形され，かつSageコード部分が機能するSageワークシートになるわけである．
-現在も開発進行中で，詳細は  `tex2sws @ BitBucket <http://bitbucket.org/rbeezer/tex2sws/>`_  を見てほしい．
-
-
-これとは逆に，sws2texはSageワークシートをLaTeX形式に変換してLaTeX関連ツールによる処理を可能にする．
-現在も開発中で，詳細は `sws2tex @ BitBucket <http://bitbucket.org/whuss/sws2tex/>`_ を見てほしい．
-

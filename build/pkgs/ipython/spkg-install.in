@@ -1,0 +1,7 @@
+# Old installations of ipython can leave a symlink which can interfere
+# with proper installation.
+rm -f "$SAGE_LOCAL"/bin/ipython
+
+cd src
+
+sdh_pip_install .

@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-python23
+#!/usr/bin/env sage-python
 # -*- coding: utf-8 -*-
 
 import os
@@ -13,72 +13,12 @@ logger = logging.getLogger()
 from sage.misc.banner import banner
 
 
-class NotebookSageNB(object):
-
-    def print_banner(self):
-        banner()
-        print('Please wait while the old SageNB Notebook server starts...')
-
-    @classmethod
-    def print_help(cls):
-        cls([], help=True)
-
-    def cmdline2argspec(self, cmdline_args):
-        """
-        Convert command line arguments to Python argspec
-
-        AKA the crappy copy of argparse. Only here for the legacy
-        notebook, do not use.
-
-        INPUT:
-
-        - ``cmdline_args`` -- list of string.
-
-        OUTPUT:
-
-        A python argspec: A pair consisting of a tuple and a dict.
-        """
-        args = []
-        kwds = dict()
-        for x in cmdline_args:
-            logger.info('Parsing %s', x)
-            if '=' in x:
-                key, value = x.split('=', 2)
-                logger.debug('keyword argument %s = %s', key, value)
-                try:
-                    value = ast.literal_eval(value)
-                except Exception:
-                    logger.debug('cannot evaluate, treat as string')
-                kwds[key] = value
-            else:
-                logger.debug('positional argument %s', x)
-                try:
-                    value = ast.literal_eval(x)
-                except Exception:
-                    value = x
-                    logger.debug('cannot evaluate, treat as string')
-                args.append(value)
-        return tuple(args), kwds
-
-    def __init__(self, argv, help=False):
-        self.print_banner()
-        self.args, self.kwds = self.cmdline2argspec(argv)
-        logger.info('notebook positional arguments = %s', self.args)
-        logger.info('notebook keyword arguments = %s', self.kwds)
-        from sagenb.notebook.notebook_object import notebook
-        if help:
-            from sage.misc.sageinspect import sage_getdoc
-            print(sage_getdoc(notebook))
-        else:
-            notebook(*self.args, **self.kwds)
-
-
 class NotebookJupyter(object):
 
     PREREQUISITE_ERROR = textwrap.dedent("""
     The Jupyter notebook requires ssl, even if you do not use
     https. Install the openssl development packages in your system and
-    then rebuild Python (sage -f python2).
+    then rebuild Python (sage -f python3).
     """)
 
     def print_banner(self):
@@ -114,7 +54,10 @@ class NotebookJupyterlab(object):
         except ImportError:
             print("Jupyterlab is not installed (at least not in this Sage installation).")
             print("You can install it by running")
-            print("  sage --pip install jupyterlab")
+            print("  sage -i jupyterlab_widgets")
+            print("which includes support for interacts and the ability to download and")
+            print("install other Jupyterlab extensions. For a minimal installation, run")
+            print("  sage -i jupyterlab")
             raise SystemExit(1)
         self.print_banner()
         main(argv)
@@ -182,8 +125,7 @@ EXAMPLES:
 
 
 notebook_launcher = {
-    'default': SageNBExport,   # change this to change the default
-    'sagenb': NotebookSageNB,
+    'default': NotebookJupyter,   # change this to change the default
     'ipython': NotebookJupyter,
     'jupyter': NotebookJupyter,
     'jupyterlab': NotebookJupyterlab,
@@ -239,7 +181,7 @@ def trac_23428_browser_workaround():
 if __name__ == '__main__':
     parser = make_parser()
     args, unknown = parser.parse_known_args(sys.argv[1:])
-    if len(unknown) > 0 and unknown[0] == '--':
+    if unknown and unknown[0] == '--':
         unknown = unknown[1:]
     trac_23428_browser_workaround()
     if args.log is not None:
@@ -248,6 +190,15 @@ if __name__ == '__main__':
         logger.setLevel(level=level)
     logger.info('Main parser got arguments %s', args)
     logger.info('Passing on to notebook implementation: %s', unknown)
+
+    if args.notebook == "sagenb":
+        logger.critical('cannot use the legacy notebook SageNB with Python 3')
+        print('The legacy notebook does not work under Python 3; '
+              'use the Jupyter notebook.')
+        print('See https://wiki.sagemath.org/Python3-Switch')
+        print('Use \"sage --notebook=export\" to export SageNB notebooks '
+              'to Jupyter')
+        sys.exit(1)
 
     try:
         launcher = notebook_launcher[args.notebook]
@@ -265,5 +216,3 @@ if __name__ == '__main__':
         sys.exit(0)
 
     launcher(unknown)
-
-

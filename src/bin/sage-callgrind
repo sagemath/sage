@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 if [ ! -d "$DOT_SAGE/valgrind" ]; then
     mkdir "$DOT_SAGE/valgrind"
@@ -13,4 +13,4 @@ if [ "$SAGE_CALLGRIND_FLAGS" ]; then
     echo "Using default flags: $CALLGRIND_FLAGS"
 fi
 
-valgrind --tool=callgrind $CALLGRIND_FLAGS python "$SAGE_LOCAL/bin/sage-ipython" "$@" -i
+valgrind --tool=callgrind $CALLGRIND_FLAGS sage-ipython "$@" -i

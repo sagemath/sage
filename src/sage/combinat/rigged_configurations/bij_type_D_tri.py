@@ -1,5 +1,5 @@
 r"""
-Bijection classes for type `D_4^{(3)}`.
+Bijection classes for type `D_4^{(3)}`
 
 Part of the (internal) classes which runs the bijection between rigged
 configurations and KR tableaux of type `D_4^{(3)}`.

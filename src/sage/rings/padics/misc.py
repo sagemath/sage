@@ -25,12 +25,11 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
 
-from six.moves.builtins import min as python_min
-from six.moves.builtins import max as python_max
-from six.moves.builtins import range, zip
 from sage.rings.infinity import infinity
+
+python_min = min
+python_max = max
 
 def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
     r"""
@@ -138,7 +137,7 @@ def gauss_sum(a, p, f, prec=20, factored=False, algorithm='pari', parent=None):
             a = (a*p) % (q-1)
     s = sum(a.digits(base=p))
     if factored:
-        return(s, out)
+        return s, out
     X = PolynomialRing(R, name='X').gen()
     pi = R.ext(X**(p - 1) + p, names='pi').gen()
     out *= pi**s

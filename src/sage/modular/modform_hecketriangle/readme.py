@@ -19,7 +19,7 @@ Hecke triangle groups and elements:
 
   The group elements correspond to matrices over ZZ[lambda], namely the
   corresponding order in the number field defined by the minimal polynomial
-  of lambda (which embedds into ``AlgebraicReal`` accordingly).
+  of lambda (which embeds into ``AlgebraicReal`` accordingly).
 
   An exact symbolic expression of the corresponding transfinite diameter ``d``
   (which is used as a formal parameter for Fourier expansion of modular forms)
@@ -61,7 +61,7 @@ Hecke triangle groups and elements:
       sage: G.U().parent()
       Hecke triangle group for n = 6
       sage: G.U().matrix().parent()
-      Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^2 - 3
+      Full MatrixSpace of 2 by 2 dense matrices over Maximal Order in Number Field in lam with defining polynomial x^2 - 3 with lam = 1.732050807568878?
 
 
 - **Decomposition into product of generators:**
@@ -528,8 +528,8 @@ Hecke triangle groups and elements:
       [-4, -2, 0]
       sage: G.class_number(68)
       4
-      sage: G.class_representatives(68)
-      [S*T^(-2)*S*T^(-1)*S*T, -S*T^(-1)*S*T^2*S*T, S*T^(-5)*S*T^(-1)*S, T*S*T^5]
+      sage: sorted(G.class_representatives(68))
+      [S*T^(-5)*S*T^(-1)*S, S*T^(-2)*S*T^(-1)*S*T, T*S*T^5, -S*T^(-1)*S*T^2*S*T]
       sage: R = G.reduced_elements(68)
       sage: all(v.is_reduced() for v in R)  # long time
       True
@@ -546,7 +546,7 @@ Hecke triangle groups and elements:
       [-4, -lam - 2, lam - 3, 0]
       sage: G.class_number(9*G.lam() + 5)
       2
-      sage: G.class_representatives(9*G.lam() + 5)
+      sage: sorted(G.class_representatives(9*G.lam() + 5))
       [S*T^(-2)*S*T^(-1)*S, T*S*T^2]
       sage: R = G.reduced_elements(9*G.lam() + 5)
       sage: all(v.is_reduced() for v in R)  # long time
@@ -602,7 +602,7 @@ Modular forms ring and spaces for Hecke triangle groups:
   - Specifying the form as a rational function in the basic generators (see below)
   - For weakly holomorphic modular forms it is possible to exactly determine the
     form by specifying (sufficiently many) initial coefficients of its Fourier expansion.
-  - There is even hope (no garantuee) to determine a (exact) form from
+  - There is even hope (no guarantee) to determine a (exact) form from
     the initial numerical coefficients (see below).
   - By specifying the coefficients with respect to a basis of the space
     (if the corresponding space supports coordinate vectors)
@@ -633,15 +633,18 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: MF = ModularForms(k=12, ep=1)
       sage: (x,y,z,d) = MF.pol_ring().gens()
 
-      Using existing functions:
+  Using existing functions::
+
       sage: CF.Delta()
       q + 17/(56*d)*q^2 + 88887/(2458624*d^2)*q^3 + 941331/(481890304*d^3)*q^4 + O(q^5)
 
-      Using rational function in the basic generators:
+  Using rational function in the basic generators::
+
       sage: MF(x^3)
       1 + 720*q + 179280*q^2 + 16954560*q^3 + 396974160*q^4 + O(q^5)
 
-      Using Fourier expansions:
+  Using Fourier expansions::
+
       sage: qexp = CF.Delta().q_expansion(prec=2)
       sage: qexp
       q + O(q^2)
@@ -650,11 +653,13 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: MF(qexp)
       q - 24*q^2 + 252*q^3 - 1472*q^4 + O(q^5)
 
-      Using coordinate vectors:
+  Using coordinate vectors::
+
       sage: MF([0,1]) == MF.f_inf()
       True
 
-      Using arithmetic expressions:
+  Using arithmetic expressions::
+
       sage: d = CF.get_d()
       sage: CF.f_rho()^7 / (d*CF.f_rho()^7 - d*CF.f_i()^2) == CF.j_inv()
       True
@@ -741,7 +746,8 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: ModularFormsRing(n=5).Delta() == ModularFormsRing(n=5).f_inf()*ModularFormsRing(n=5).f_rho()^4
       True
 
-      The basic generators in some arithmetic cases:
+  The basic generators in some arithmetic cases::
+
       sage: ModularForms(n=3, k=6).E6()
       1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 + O(q^5)
       sage: ModularForms(n=4, k=6).E6()
@@ -749,7 +755,8 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: ModularForms(n=infinity, k=4).E4()
       1 + 16*q + 112*q^2 + 448*q^3 + 1136*q^4 + O(q^5)
 
-      General Eisenstein series in some arithmetic cases:
+  General Eisenstein series in some arithmetic cases::
+
       sage: ModularFormsRing(n=4).EisensteinSeries(k=8)
       (-25*f_rho^4 - 9*f_i^2)/(-34)
       sage: ModularForms(n=3, k=12).EisensteinSeries()
@@ -799,7 +806,8 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: QuasiModularForms(n=4, k=2, ep=-1).E2()
       1 - 8*q - 40*q^2 - 32*q^3 - 104*q^4 + O(q^5)
 
-      A quasi weak form can be constructed by using its initial Laurent expansion:
+  A quasi weak form can be constructed by using its initial Laurent expansion::
+
       sage: QF = QuasiWeakModularForms(n=8, k=10/3, ep=-1)
       sage: qexp = (QF.quasi_part_gens(min_exp=-1)[4]).q_expansion(prec=5)
       sage: qexp
@@ -811,7 +819,8 @@ Modular forms ring and spaces for Hecke triangle groups:
       sage: QF(qexp).reduced_parent()
       QuasiWeakModularForms(n=8, k=10/3, ep=-1) over Integer Ring
 
-      Derivatives of (quasi weak) modular forms are again quasi (weak) modular forms:
+  Derivatives of (quasi weak) modular forms are again quasi (weak) modular forms::
+
       sage: CF.f_inf().derivative() == CF.f_inf()*CF.E2()
       True
 

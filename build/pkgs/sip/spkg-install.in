@@ -1,0 +1,22 @@
+cd src
+
+python3 configure.py
+if [ $? -ne 0 ]
+then
+    echo "Configuration of sip failed"
+    exit 1
+fi
+
+${MAKE}
+if [ $? -ne 0 ]
+then
+    echo "Build of sip failed"
+exit 1
+fi
+
+${MAKE} install
+if [ $? -ne 0 ]
+then
+    echo "Installation of sip failed"
+    exit 1
+fi

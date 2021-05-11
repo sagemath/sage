@@ -30,9 +30,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import division
-from six.moves import range, zip
-from six import itervalues, add_metaclass
 
 import copy
 from sage.misc.classcall_metaclass import ClasscallMetaclass
@@ -79,8 +76,8 @@ def _inplace_height_function_gyration(hf):
                     hf[i,j] -= 2
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class AlternatingSignMatrix(Element):
+class AlternatingSignMatrix(Element,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     An alternating sign matrix.
 
@@ -566,7 +563,7 @@ class AlternatingSignMatrix(Element):
         the matrix, first those for which the sum of the row and column indices
         is even, then for those for which it is odd, and increment or decrement
         the squares by 2 wherever possible such that the resulting matrix is
-        still a height function. Gyration was first defined in [Wieland00]_ as
+        still a height function. Gyration was first defined in [Wie2000]_ as
         an action on fully-packed loops.
 
         EXAMPLES::
@@ -752,7 +749,7 @@ class AlternatingSignMatrix(Element):
 
         for k in range(len(output)):
             output[k] = M.from_height_function(output[k]/2)
-        return(output)
+        return output
 
     def ASM_compatible_smaller(self):
         r"""
@@ -809,7 +806,7 @@ class AlternatingSignMatrix(Element):
                 output.append(d)
         for k in range(len(output)):
             output[k] = M.from_height_function((output[k]-matrix.ones(n,n))/2)
-        return(output)
+        return output
 
     @combinatorial_map(name='to Dyck word')
     def to_dyck_word(self, algorithm):
@@ -1495,7 +1492,7 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
         """
         mts, rels = MonotoneTriangles(self._n)._lattice_initializer()
         bij = {t: self.from_monotone_triangle(t) for t in mts}
-        return (itervalues(bij), [(bij[a], bij[b]) for (a, b) in rels])
+        return (bij.values(), [(bij[a], bij[b]) for (a, b) in rels])
 
     def cover_relations(self):
         r"""
@@ -1564,7 +1561,8 @@ class AlternatingSignMatrices(UniqueRepresentation, Parent):
             Finite lattice containing 7 elements
 
         """
-        return LatticePoset(self._lattice_initializer(), cover_relations=True)
+        return LatticePoset(self._lattice_initializer(), cover_relations=True,
+                            check=False)
 
     @cached_method
     def gyration_orbits(self):
@@ -1763,7 +1761,8 @@ class MonotoneTriangles(GelfandTsetlinPatternsTopRow):
             sage: P
             Finite lattice containing 7 elements
         """
-        return LatticePoset(self._lattice_initializer(), cover_relations=True)
+        return LatticePoset(self._lattice_initializer(), cover_relations=True,
+                            check=False)
 
 
 def _is_a_cover(mt0, mt1):
@@ -1798,8 +1797,7 @@ register_unpickle_override('sage.combinat.alternating_sign_matrix', 'Alternating
 register_unpickle_override('sage.combinat.alternating_sign_matrix', 'MonotoneTriangles_n', MonotoneTriangles)
 
 
-@add_metaclass(ClasscallMetaclass)
-class ContreTableaux(Parent):
+class ContreTableaux(Parent, metaclass=ClasscallMetaclass):
     """
     Factory class for the combinatorial class of contre tableaux of size `n`.
 
@@ -1960,8 +1958,7 @@ def _previous_column_iterator(column, height, max_value):
     return _next_column_iterator(new_column, height)
 
 
-@add_metaclass(ClasscallMetaclass)
-class TruncatedStaircases(Parent):
+class TruncatedStaircases(Parent, metaclass=ClasscallMetaclass):
     """
     Factory class for the combinatorial class of truncated staircases
     of size ``n`` with last column ``last_column``.

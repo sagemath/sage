@@ -159,20 +159,14 @@ Added 16-02-2008 (wdj): optional calls to scipy and replace all
 # ****************************************************************************
 
 from sage.rings.integer import Integer
-from sage.rings.real_mpfr import RealField
-from sage.rings.complex_field import ComplexField
+from sage.rings.complex_mpfr import ComplexField
 from sage.misc.latex import latex
-from sage.rings.all import ZZ, RR, RDF, CDF
-from .gamma import log_gamma
-from .other import real, imag
+from sage.rings.all import ZZ
 from sage.symbolic.constants import pi
 from sage.symbolic.function import BuiltinFunction
-from sage.symbolic.expression import Expression
-from sage.calculus.calculus import maxima
-from sage.structure.element import parent
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.functions.all import sqrt, sin, cot, exp
-from sage.symbolic.all import I
+from sage.symbolic.constants import I
 
 
 class SphericalHarmonic(BuiltinFunction):
@@ -234,6 +228,18 @@ class SphericalHarmonic(BuiltinFunction):
             sage: ex = spherical_harmonic(3,2,1,2*pi/3)
             sage: QQbar(ex * sqrt(pi)/cos(1)/sin(1)^2).minpoly()
             x^4 + 105/32*x^2 + 11025/1024
+
+        Check whether :trac:`25034` yields correct results compared to Maxima::
+
+            sage: spherical_harmonic(1,1,pi/3,pi/6).n() # abs tol 1e-14
+            0.259120612103502 + 0.149603355150537*I
+            sage: maxima.spherical_harmonic(1,1,pi/3,pi/6).n() # abs tol 1e-14
+            0.259120612103502 + 0.149603355150537*I
+            sage: spherical_harmonic(1,-1,pi/3,pi/6).n() # abs tol 1e-14
+            -0.259120612103502 + 0.149603355150537*I
+            sage: maxima.spherical_harmonic(1,-1,pi/3,pi/6).n() # abs tol 1e-14
+            -0.259120612103502 + 0.149603355150537*I
+
         """
         if n in ZZ and m in ZZ and n > -1:
             if abs(m) > n:
@@ -304,55 +310,69 @@ spherical_harmonic = SphericalHarmonic()
 
 ####### elliptic functions and integrals
 
-def elliptic_j(z):
-   r"""
-   Returns the elliptic modular `j`-function evaluated at `z`.
+def elliptic_j(z, prec=53):
+    r"""
+    Returns the elliptic modular `j`-function evaluated at `z`.
 
-   INPUT:
+    INPUT:
 
-   - ``z`` (complex) -- a complex number with positive imaginary part.
+    - ``z`` (complex) -- a complex number with positive imaginary part.
 
-   OUTPUT:
+    - ``prec`` (default: 53) -- precision in bits for the complex field.
 
-   (complex) The value of `j(z)`.
+    OUTPUT:
 
-   ALGORITHM:
+    (complex) The value of `j(z)`.
 
-   Calls the ``pari`` function ``ellj()``.
+    ALGORITHM:
 
-   AUTHOR:
+    Calls the ``pari`` function ``ellj()``.
 
-   John Cremona
+    AUTHOR:
 
-   EXAMPLES::
+    John Cremona
 
-       sage: elliptic_j(CC(i))
-       1728.00000000000
-       sage: elliptic_j(sqrt(-2.0))
-       8000.00000000000
-       sage: z = ComplexField(100)(1,sqrt(11))/2
-       sage: elliptic_j(z)
-       -32768.000...
-       sage: elliptic_j(z).real().round()
-       -32768
+    EXAMPLES::
+
+        sage: elliptic_j(CC(i))
+        1728.00000000000
+        sage: elliptic_j(sqrt(-2.0))
+        8000.00000000000
+        sage: z = ComplexField(100)(1,sqrt(11))/2
+        sage: elliptic_j(z)
+        -32768.000...
+        sage: elliptic_j(z).real().round()
+        -32768
 
     ::
 
-       sage: tau = (1 + sqrt(-163))/2
-       sage: (-elliptic_j(tau.n(100)).real().round())^(1/3)
-       640320
+        sage: tau = (1 + sqrt(-163))/2
+        sage: (-elliptic_j(tau.n(100)).real().round())^(1/3)
+        640320
 
-   """
-   CC = z.parent()
-   from sage.rings.complex_field import is_ComplexField
-   if not is_ComplexField(CC):
-      CC = ComplexField()
-      try:
-         z = CC(z)
-      except ValueError:
-         raise ValueError("elliptic_j only defined for complex arguments.")
-   from sage.libs.all import pari
-   return CC(pari(z).ellj())
+    This example shows the need for higher precision than the default one of
+    the `ComplexField`, see :trac:`28355`::
+
+        sage: -elliptic_j(tau) # rel tol 1e-2
+        2.62537412640767e17 - 732.558854258998*I
+        sage: -elliptic_j(tau,75) # rel tol 1e-2
+        2.625374126407680000000e17 - 0.0001309913593909879441262*I
+        sage: -elliptic_j(tau,100) # rel tol 1e-2
+        2.6253741264076799999999999999e17 - 1.3012822400356887122945119790e-12*I
+        sage: (-elliptic_j(tau, 100).real().round())^(1/3)
+        640320
+    """
+
+    CC = z.parent()
+    from sage.rings.complex_mpfr import is_ComplexField
+    if not is_ComplexField(CC):
+        CC = ComplexField(prec)
+        try:
+            z = CC(z)
+        except ValueError:
+            raise ValueError("elliptic_j only defined for complex arguments.")
+    from sage.libs.all import pari
+    return CC(pari(z).ellj())
 
 #### elliptic integrals
 
@@ -551,7 +571,7 @@ class EllipticEC(BuiltinFunction):
             sage: elliptic_ec(I).n()
             1.63241178144043 - 0.369219492375499*I
         """
-        R = parent or parent(z)
+        R = parent or parent(x)
         from mpmath import ellipe
         return mpmath_utils.call(ellipe, x, parent=R)
 
@@ -623,7 +643,7 @@ class EllipticEU(BuiltinFunction):
             sage: elliptic_eu(1,1).n(200)
             0.7615941559557648881194582...
         """
-        R = parent or parent(z)
+        R = parent or parent(u)
         return mpmath_utils.call(elliptic_eu_f, u, m, parent=R)
 
     def _derivative_(self, u, m, diff_param):

@@ -17,13 +17,11 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import absolute_import
-from six.moves import range
-from six import integer_types
 
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.all import Integer, QQ, ZZ
-from sage.misc.all import prod, verbose
+from sage.misc.all import prod
+from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
 from .constructor                 import ModularForms
@@ -113,7 +111,8 @@ def _span_of_forms_in_weight(forms, weight, prec, stop_dim=None, use_random=Fals
 
         for c in range(N):
             w = V(prod(shortforms[i]**wts[c][i] for i in range(n)).padded_list(prec))
-            if w in W: continue
+            if w in W:
+                continue
             W = V.span(list(W.gens()) + [w])
             if stop_dim and W.rank() == stop_dim:
                 if R != ZZ or W.index_in_saturation() == 1:
@@ -218,7 +217,7 @@ class ModularFormsRing(SageObject):
             ...
             ValueError: Base ring (=Univariate Polynomial Ring in x over Integer Ring) should be QQ, ZZ or a finite prime field
         """
-        if isinstance(group, integer_types + (Integer,)):
+        if isinstance(group, (int, Integer)):
             group = Gamma0(group)
         elif not is_CongruenceSubgroup(group):
             raise ValueError("Group (=%s) should be a congruence subgroup" % group)
@@ -543,7 +542,8 @@ class ModularFormsRing(SageObject):
             G.append((k, f, F))
 
         k = start_weight
-        if increment == 2 and (k % 2) == 1: k += 1
+        if increment == 2 and (k % 2) == 1:
+            k += 1
 
         while k <= maxweight:
 
@@ -551,12 +551,12 @@ class ModularFormsRing(SageObject):
                 k += increment
                 continue
 
-            verbose('Looking at k = %s'%k)
+            verbose('Looking at k = %s' % k)
             M = self.modular_forms_of_weight(k)
 
             # 1. Multiply together all forms in G that give an element
             #    of M.
-            if G != []:
+            if G:
                 F = _span_of_forms_in_weight(G, k, M.sturm_bound(), None, False)
             else:
                 F = (self.base_ring() ** M.sturm_bound()).zero_submodule()
@@ -576,7 +576,8 @@ class ModularFormsRing(SageObject):
             #    try adding basis elements of M into G.
 
             verbose("Known generators span a subspace of dimension %s of space of dimension %s" % (F.dimension(), M.dimension()))
-            if self.base_ring() == ZZ: verbose("saturation index is %s" % F.index_in_saturation())
+            if self.base_ring() == ZZ:
+                verbose("saturation index is %s" % F.index_in_saturation())
 
             t = verbose("Computing more modular forms at weight %s" % k)
             kprec = M.sturm_bound()
@@ -652,7 +653,8 @@ class ModularFormsRing(SageObject):
             [1 + O(q^5), q + O(q^5), q^2 + O(q^5), q^3 + O(q^5), q^4 + O(q^5), O(q^5), O(q^5), O(q^5), O(q^5), O(q^5)]
         """
         d = self.modular_forms_of_weight(weight).dimension()
-        if d == 0: return []
+        if d == 0:
+            return []
 
         if prec is None:
             prec=self.modular_forms_of_weight(weight).sturm_bound()
@@ -788,7 +790,8 @@ class ModularFormsRing(SageObject):
             True
         """
         d = self.modular_forms_of_weight(weight).cuspidal_submodule().dimension()
-        if d == 0: return []
+        if d == 0:
+            return []
 
         minprec = self.modular_forms_of_weight(weight).sturm_bound()
         if prec is None:

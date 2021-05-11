@@ -53,7 +53,6 @@ binaries and from sources.
    conda
    source
    launching
-   standard_packages
    troubles
 
 This work is licensed under a `Creative Commons Attribution-Share Alike

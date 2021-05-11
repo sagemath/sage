@@ -154,7 +154,6 @@ old pickles to work).
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 import pickletools
 import re
@@ -165,8 +164,6 @@ import zlib as comp
 import bz2 as comp_other
 
 from pickletools import genops
-
-from six import iteritems
 
 import sage.all
 from sage.misc.sage_input import SageInputBuilder, SageInputExpression
@@ -248,7 +245,8 @@ def explain_pickle(pickle=None, file=None, compress=True, **kwargs):
     if pickle is not None:
         p = pickle
     elif file is not None:
-        p = open(file).read()
+        with open(file) as f:
+            p = f.read()
     else:
         raise ValueError("Either pickle or file must be specified")
 
@@ -1209,7 +1207,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from six.moves.copyreg import *
+            sage: from copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
             sage: test_pickle(EmptyNewstyleClass())  # py2
@@ -1236,7 +1234,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from six.moves.copyreg import *
+            sage: from copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 31415)
             sage: test_pickle(EmptyNewstyleClass())  # py2
@@ -1263,7 +1261,7 @@ class PickleExplainer(object):
         r"""
         TESTS::
 
-            sage: from six.moves.copyreg import *
+            sage: from copyreg import *
             sage: from sage.misc.explain_pickle import *
             sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 27182818)
             sage: test_pickle(EmptyNewstyleClass())  # py2
@@ -2465,12 +2463,12 @@ def unpickle_build(obj, state):
     if state is not None:
         assert(isinstance(state, dict))
         d = obj.__dict__
-        for k, v in iteritems(state):
+        for k, v in state.items():
             d[k] = v
 
     if slots is not None:
         assert(isinstance(slots, dict))
-        for k, v in iteritems(slots):
+        for k, v in slots.items():
             setattr(obj, k, v)
 
 
@@ -2517,13 +2515,13 @@ def unpickle_extension(code):
 
     EXAMPLES::
 
-        sage: from six.moves.copyreg import *
+        sage: from copyreg import *
         sage: add_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
         sage: unpickle_extension(42)
         <class 'sage.misc.explain_pickle.EmptyNewstyleClass'>
         sage: remove_extension('sage.misc.explain_pickle', 'EmptyNewstyleClass', 42)
     """
-    from six.moves.copyreg import _inverted_registry, _extension_cache
+    from copyreg import _inverted_registry, _extension_cache
     # copied from .get_extension() in pickle.py
     nil = []
     obj = _extension_cache.get(code, nil)
@@ -2834,7 +2832,8 @@ class TestAppendList(list):
             ...
             TypeError: append() takes 1 positional argument but 2 were given
 
-        We can still append by directly using the list method:
+        We can still append by directly using the list method::
+
             sage: list.append(v, 7)
             sage: v
             [7]
@@ -2858,7 +2857,8 @@ class TestAppendList(list):
             ...
             TypeError: extend() takes 1 positional argument but 2 were given
 
-        We can still extend by directly using the list method:
+        We can still extend by directly using the list method::
+
             sage: list.extend(v, (3,1,4,1,5,9))
             sage: v
             [3, 1, 4, 1, 5, 9]

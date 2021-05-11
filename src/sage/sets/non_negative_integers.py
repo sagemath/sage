@@ -95,7 +95,6 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
         """
         EXAMPLES::
 
-            sage: NN = NonNegativeIntegers()
             sage: 1 in NN
             True
             sage: -1 in NN
@@ -104,11 +103,19 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             False
             sage: None in NN
             False
+            sage: QQbar(sqrt(2)) in NN
+            False
+            sage: RIF(1,2) in NN
+            False
+            sage: QQbar(2) in NN
+            True
+            sage: RIF(2) in NN
+            True
         """
         try:
             i = Integer(elt)
             return  i >= Integer(0) and i == elt
-        except TypeError:
+        except (TypeError, ValueError):
             return False
 
     def _element_constructor_(self, i):

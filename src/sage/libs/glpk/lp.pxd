@@ -90,3 +90,5 @@ cdef extern from "glpk.h":
     double glp_ios_mip_gap(glp_tree *T)
     int glp_ios_best_node(glp_tree *tree)
     double glp_ios_node_bound(glp_tree *T, int p)
+
+    int glp_bf_exists(glp_prob *lp)

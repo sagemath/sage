@@ -24,7 +24,6 @@ import os
 
 from sage.misc.persist import load
 from sage.env import SAGE_SHARE
-from sage.misc.all import verbose
 
 def zeta_zeros():
     r"""
@@ -54,6 +53,7 @@ def zeta_zeros():
         sage: len(zz)            # optional - database_odlyzko_zeta
         2001052
     """
+    from sage.misc.verbose import verbose
     sobj = os.path.join(SAGE_SHARE, 'odlyzko', 'zeros.sobj')
     verbose("Loading Odlyzko database from " + sobj)
     return load(sobj)

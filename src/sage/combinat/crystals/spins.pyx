@@ -41,7 +41,6 @@ representing the elements of the spin crystal by sequences of signs
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-from __future__ import print_function
 
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from cysignals.memory cimport sig_malloc, sig_free

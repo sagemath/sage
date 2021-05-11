@@ -1,0 +1,95 @@
+#!/bin/sh
+#
+#  sage-spkg-info SPKG
+#  Format information about a Sage package
+#
+#  Assumes SAGE_ROOT is set
+PKG_BASE=$1
+PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
+for ext in rst txt; do
+    SPKG_FILE="$PKG_SCRIPTS/SPKG.$ext"
+    if [ -f "$SPKG_FILE" ]; then
+        cat "$SPKG_FILE"
+        break
+    fi
+done
+if [ -r "$PKG_SCRIPTS/type" ] ; then
+    echo
+    echo "Type"
+    echo "----"
+    echo
+    cat "$PKG_SCRIPTS/type"
+    echo
+fi
+echo
+echo "Version Information"
+echo "-------------------"
+echo
+for a in package-version.txt requirements.txt install-requires.txt; do
+    if [ -f "$PKG_SCRIPTS"/"$a" ]; then
+        echo "$a::"
+        echo
+        sed 's/^/    /' "$PKG_SCRIPTS/$a"
+        echo
+    fi
+done
+echo
+echo "Equivalent System Packages"
+echo "--------------------------"
+echo
+PKG_DISTROS="$PKG_SCRIPTS"/distros
+systems=""
+have_repology=no
+for system_package_file in "$PKG_DISTROS"/*.txt; do
+    system=$(basename "$system_package_file" .txt)
+    if [ -f "$system_package_file" ]; then
+        case "$system" in
+            repology)
+                have_repology=yes
+                ;;
+            *)
+                systems="$systems $system"
+                ;;
+        esac
+    fi
+done
+if [ $have_repology = yes ]; then
+    systems="$systems repology"
+fi
+for system in $systems; do
+        system_packages="$(echo $(sed 's/#.*//;' $system_package_file))"
+        case $system in
+            debian)
+                # Generic
+                echo "Debian/Ubuntu:"
+                ;;
+            fedora)
+                # Generic
+                echo "Fedora/Redhat/CentOS:"
+                ;;
+            repology)
+                ;;
+            *)
+                echo "$system:"
+                ;;
+        esac
+        sage-print-system-package-command $system --prompt='    $ ' --sudo install $system_packages
+done
+if [ -z "$system" ]; then
+    echo "(none known)"
+else
+    echo
+    if [ -f "$PKG_SCRIPTS"/spkg-configure.m4 ]; then
+        echo "If the system package is installed, ./configure will check whether it can be used."
+    else
+        echo "However, these system packages will not be used for building Sage"
+        if [ -f "$PKG_SCRIPTS"/install-requires.txt ]; then
+            echo "because using Python site-packages is not supported by the Sage distribution;"
+            echo "see https://trac.sagemath.org/ticket/29023"
+        else
+            echo "because spkg-configure.m4 has not been written for this package;"
+            echo "see https://trac.sagemath.org/ticket/27330"
+        fi
+    fi
+fi
+echo

@@ -7,7 +7,6 @@ Examples of a finite dimensional Lie algebra with basis
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
@@ -282,7 +281,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
         """
         return self._M
 
-    def from_vector(self, v):
+    def from_vector(self, v, order=None):
         """
         Return the element of ``self`` corresponding to the
         vector ``v`` in ``self.module()``.
@@ -318,7 +317,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                 [(0, 2), (2, -1)]
             """
             zero = self.parent().base_ring().zero()
-            for i, c in iteritems(self.value):
+            for i, c in self.value.items():
                 if c != zero:
                     yield (i, c)
 
@@ -368,9 +367,9 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             """
             UEA = self.parent().universal_enveloping_algebra()
             gens = UEA.gens()
-            return UEA.sum(c * gens[i] for i, c in iteritems(self.value))
+            return UEA.sum(c * gens[i] for i, c in self.value.items())
 
-        def to_vector(self):
+        def to_vector(self, order=None):
             """
             Return ``self`` as a vector in
             ``self.parent().module()``.

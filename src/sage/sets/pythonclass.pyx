@@ -13,7 +13,6 @@ Set of all objects of a given Python class
 #*****************************************************************************
 
 from cpython.object cimport Py_EQ, Py_NE
-from cpython.version cimport PY_MAJOR_VERSION
 from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.sets_cat import Sets
 

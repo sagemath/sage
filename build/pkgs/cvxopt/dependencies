@@ -1,4 +1,4 @@
-$(PYTHON) numpy $(BLAS) gsl glpk | pkgconfig pip matplotlib
+$(PYTHON) numpy $(BLAS) gsl glpk suitesparse | $(PYTHON_TOOLCHAIN) pkgconfig nose matplotlib
 
 matplotlib is needed to test cvxopt (i.e., if SAGE_CHECK=yes). See #12742.
 

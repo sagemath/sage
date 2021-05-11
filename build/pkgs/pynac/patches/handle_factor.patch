@@ -1,0 +1,43 @@
+diff --git a/ginac/expairseq.cpp b/ginac/expairseq.cpp
+index dd87d18..556b713 100644
+--- a/ginac/expairseq.cpp
++++ b/ginac/expairseq.cpp
+@@ -1032,7 +1032,12 @@ void expairseq::make_flat(const epvector &v, bool do_index_renaming)
+ 
+ 		if (ex_to<basic>(elem.rest).tinfo()==this->tinfo() &&
+ 		    this->can_make_flat(elem)) {
+-			ex newrest = mf.handle_factor(elem.rest, elem.coeff);
++		        ex newrest;
++		        if (is_exactly_a<numeric>(elem.coeff) and elem.coeff.is_zero()) {
++		            newrest = default_overall_coeff();
++		        } else {
++		            newrest = elem.rest;
++		        }
+ 			const expairseq &subseqref = ex_to<expairseq>(newrest);
+ 			combine_overall_coeff(subseqref.overall_coeff,
+ 			                      ex_to<numeric>(elem.coeff));
+@@ -1043,15 +1048,15 @@ void expairseq::make_flat(const epvector &v, bool do_index_renaming)
+ 			if (elem.is_canonical_numeric())
+ 				combine_overall_coeff(ex_to<numeric>(mf.handle_factor(elem.rest, _ex1)));
+ 			else {
+-				const ex& rest = elem.rest;
+-				const ex& newrest = mf.handle_factor(rest, elem.coeff);
+-                                if (newrest.is_zero())
+-                                        combine_overall_coeff(*_num0_p);
+-				else if (are_ex_trivially_equal(newrest, rest))
+-					seq.push_back(elem);
+-				else
+-					seq.emplace_back(newrest, elem.coeff);
+-			}
++			        if ((is_exactly_a<numeric>(elem.coeff) and elem.coeff.is_zero())
++			                or (is_exactly_a<numeric>(elem.rest)
++			                    and (ex_to<numeric>(elem.rest).is_equal(default_overall_coeff())))) {
++			            combine_overall_coeff(default_overall_coeff());
++			        }
++			        else {
++			                seq.push_back(elem);
++			        }
++			    }
+ 		}
+ 	}
+ }

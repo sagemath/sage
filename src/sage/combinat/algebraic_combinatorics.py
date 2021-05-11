@@ -36,6 +36,7 @@ Groups and Algebras
 - :class:`~sage.algebras.affine_nil_temperley_lieb.AffineNilTemperleyLiebTypeA`
 - :ref:`sage.combinat.descent_algebra`
 - :ref:`sage.combinat.diagram_algebras`
+- :ref:`sage.combinat.blob_algebra`
 
 Combinatorial Representation Theory
 -----------------------------------

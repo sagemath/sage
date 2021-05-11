@@ -1,4 +1,4 @@
-$(PYTHON) jupyter_core | pip pyzmq dateutil
+$(PYTHON) jupyter_core | $(PYTHON_TOOLCHAIN) pyzmq dateutil
 
 ----------
 All lines of this file are ignored except the first.

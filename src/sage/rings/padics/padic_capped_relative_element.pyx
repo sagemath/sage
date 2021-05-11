@@ -375,7 +375,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
         NOTE::
 
             The function does not check that its argument ``self`` is
-            1 in the residue field. If this assumption is not fullfiled
+            1 in the residue field. If this assumption is not fulfilled
             the behaviour of the function is not specified.
 
         ALGORITHM:
@@ -450,7 +450,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
-            fullfiled the behaviour of the function is not specified.
+            fulfilled the behaviour of the function is not specified.
 
         ALGORITHM:
 
@@ -517,7 +517,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
-            fullfiled the behaviour of the function is not specified.
+            fulfilled the behaviour of the function is not specified.
 
         ALGORITHM:
 

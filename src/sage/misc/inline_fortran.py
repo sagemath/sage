@@ -1,16 +1,12 @@
 """
 Fortran compiler
 """
-from __future__ import absolute_import
 
+import importlib
 import os
 import shutil
 import subprocess
 import sys
-
-import six
-
-from six import iteritems
 
 from sage.misc.temporary_file import tmp_dir
 
@@ -50,36 +46,19 @@ def _import_module_from_path(name, path=None):
     return _import_module_from_path_impl(name, path)
 
 
-if six.PY2:
-    import imp
+def _import_module_from_path_impl(name, path):
+    """Implement ``_import_module_from_path for Python 3.4+."""
 
-    def _import_module_from_path_impl(name, path):
-        """Implement ``_import_module_from_path for Python 2."""
-
-        # Note: Raises an ImportError if not found
-        fileobj, pathname, description = imp.find_module(name, path)
-        try:
-            # Executes the module in fileobj using the appropriate loader and
-            # returns the module
-            return imp.load_module(name, fileobj, pathname, description)
-        finally:
-            fileobj.close()
-else:
-    import importlib
-
-    def _import_module_from_path_impl(name, path):
-        """Implement ``_import_module_from_path for Python 3.4+."""
-
-        # This is remarkably tricky to do right, considering that the new
-        # importlib is supposed to make direct interaction with the import
-        # system easier.  I blame the ModuleSpec stuff...
-        finder = importlib.machinery.PathFinder()
-        spec = finder.find_spec(name, path=path)
-        if spec is None:
-            raise ImportError('No module named {}'.format(name))
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-        return mod
+    # This is remarkably tricky to do right, considering that the new
+    # importlib is supposed to make direct interaction with the import
+    # system easier.  I blame the ModuleSpec stuff...
+    finder = importlib.machinery.PathFinder()
+    spec = finder.find_spec(name, path=path)
+    if spec is None:
+        raise ImportError('No module named {}'.format(name))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 
 class InlineFortran:
@@ -146,7 +125,7 @@ class InlineFortran:
             Traceback (most recent call last):
             ...
             RuntimeError: failed to compile Fortran code:...
-            sage: os.getcwd() == os.path.normpath(DOT_SAGE)
+            sage: os.getcwd() == os.path.realpath(DOT_SAGE)
             True
         """
         if globals is None:
@@ -221,7 +200,7 @@ class InlineFortran:
                     # This can fail for example over NFS
                     pass
 
-        for k, x in iteritems(mod.__dict__):
+        for k, x in mod.__dict__.items():
             if k[0] != '_':
                 globals[k] = x
 

@@ -44,12 +44,10 @@ Sage example in ./sol/graphtheory.tex, line 59::
   sage: g = graphs.PetersenGraph()
   sage: def optimal_order(g):
   ....:    order = []
-  ....:    for color_class in g.coloring():
+  ....:    for color_class in sorted(g.coloring()):
   ....:        for v in color_class:
   ....:            order.append(v)
   ....:    return order
   sage: optimal_order(g)
-  [1, 3, 5, 9, 0, 2, 6, 4, 7, 8]
-
+  [0, 2, 6, 1, 3, 5, 9, 4, 7, 8]
 """
-

@@ -1,7 +1,7 @@
 """
 Database of Modular Polynomials
 """
-#######################################################################
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2016 Vincent Delecroix <vincent.delecroix@labri.fr>
@@ -9,10 +9,12 @@ Database of Modular Polynomials
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+import bz2
+import os
+from sage.cpython.string import bytes_to_str
 
-from __future__ import print_function, absolute_import
 
 def _dbz_to_string(name):
     r"""
@@ -30,19 +32,16 @@ def _dbz_to_string(name):
         sage: _dbz_to_string('PolHeeg/Cls/0000001-0005000/pol.0000003.dbz') # optional - database_kohel
         '0\n1\n'
     """
-    import bz2, os
     from sage.env import SAGE_SHARE
     dblocation = os.path.join(SAGE_SHARE, 'kohel')
     filename = os.path.join(dblocation, name)
-
     try:
-        f = open(filename)
+        with open(filename, 'rb') as f:
+            data = bz2.decompress(f.read())
     except IOError:
-        raise LookupError("filename {} does not exist".format(filename))
+        raise ValueError('file not found in the Kohel database')
+    return bytes_to_str(data)
 
-    data = bz2.decompress(f.read())
-
-    return data
 
 def _dbz_to_integer_list(name):
     r"""
@@ -121,7 +120,7 @@ class ModularPolynomialDatabase:
         else:
             poly = "polynomial"
 
-        return "%s modular %s database"%(head,poly)
+        return "%s modular %s database" % (head, poly)
 
     def __getitem__(self, level):
         """
@@ -140,43 +139,44 @@ class ModularPolynomialDatabase:
             sage: DBMP[50]                                     # optional - database_kohel
             Traceback (most recent call last):
             ...
-            LookupError: filename .../kohel/PolMod/Cls/pol.050.dbz does not exist
+            ValueError: file not found in the Kohel database
         """
         from sage.rings.integer import Integer
         from sage.rings.integer_ring import IntegerRing
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
-        if self.model in ("Atk","Eta"):
+        if self.model in ("Atk", "Eta"):
             level = Integer(level)
             if not level.is_prime():
-                raise TypeError("Argument level (= %s) must be prime."%level)
-        elif self.model in ("AtkCrr","EtaCrr"):
+                raise TypeError("Argument level (= %s) must be prime." % level)
+        elif self.model in ("AtkCrr", "EtaCrr"):
             N = Integer(level[0])
-            if not N in (2,3,5,7,13):
-                raise TypeError("Argument level (= %s) must be prime."%N)
+            if N not in (2, 3, 5, 7, 13):
+                raise TypeError("Argument level (= %s) must be prime." % N)
         modpol = self._dbpath(level)
         coeff_list = _dbz_to_integer_list(modpol)
         if self.model == "Cls":
-            P = PolynomialRing(IntegerRing(),2,"j")
+            P = PolynomialRing(IntegerRing(), 2, "j")
         else:
-            P = PolynomialRing(IntegerRing(),2,"x,j")
+            P = PolynomialRing(IntegerRing(), 2, "x,j")
         poly = {}
         if self.model == "Cls":
             if level == 1:
-                return P({(1,0):1,(0,1):-1})
+                return P({(1, 0): 1, (0, 1): -1})
             for cff in coeff_list:
                 i = cff[0]
                 j = cff[1]
-                poly[(i,j)] = Integer(cff[2])
+                poly[(i, j)] = Integer(cff[2])
                 if i != j:
-                    poly[(j,i)] = Integer(cff[2])
+                    poly[(j, i)] = Integer(cff[2])
         else:
             for cff in coeff_list:
-                poly[(cff[0],cff[1])] = Integer(cff[2])
+                poly[(cff[0], cff[1])] = Integer(cff[2])
         return P(poly)
 
+
 class ModularCorrespondenceDatabase(ModularPolynomialDatabase):
-    def _dbpath(self,level):
+    def _dbpath(self, level):
         r"""
         TESTS::
 
@@ -184,8 +184,9 @@ class ModularCorrespondenceDatabase(ModularPolynomialDatabase):
             sage: DB._dbpath((2,4))
             'PolMod/EtaCrr/crr.02.004.dbz'
         """
-        (Nlevel,crrlevel) = level
-        return "PolMod/%s/crr.%02d.%03d.dbz"%(self.model, Nlevel, crrlevel)
+        (Nlevel, crrlevel) = level
+        return "PolMod/%s/crr.%02d.%03d.dbz" % (self.model, Nlevel, crrlevel)
+
 
 class ClassicalModularPolynomialDatabase(ModularPolynomialDatabase):
     """
@@ -193,6 +194,7 @@ class ClassicalModularPolynomialDatabase(ModularPolynomialDatabase):
     Phi_N(X,Y) relating the j-functions j(q) and j(q^N).
     """
     model = "Cls"
+
 
 class DedekindEtaModularPolynomialDatabase(ModularPolynomialDatabase):
     """
@@ -219,6 +221,7 @@ class AtkinModularPolynomialDatabase(ModularPolynomialDatabase):
     with pole of minimal order at infinity.
     """
     model = "Atk"
+
 
 class AtkinModularCorrespondenceDatabase(ModularCorrespondenceDatabase):
     model = "AtkCrr"

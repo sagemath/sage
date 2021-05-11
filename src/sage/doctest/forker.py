@@ -33,7 +33,6 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 import os
 import sys
@@ -49,8 +48,9 @@ import doctest
 import traceback
 import tempfile
 from dis import findlinestarts
+from queue import Empty
 import gc
-import six
+import IPython.lib.pretty
 
 import sage.misc.randstate as randstate
 from .util import Timer, RecordingDict, count_noun
@@ -62,34 +62,59 @@ from sage.repl.user_globals import set_globals
 from sage.cpython.atexit import restore_atexit
 from sage.cpython.string import bytes_to_str, str_to_bytes
 
+# With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork' in
+# multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
+# trac #27754.
+if os.uname().sysname == 'Darwin':
+    multiprocessing.set_start_method('fork', force=True)
 
-# All doctests run as if the following future imports are present
-import __future__
-MANDATORY_COMPILE_FLAGS = __future__.print_function.compiler_flag
+# These lists are used on Python 3+ only for backwards compatibility with
+# Python 2 in traceback parsing
+# These exceptions in Python 2 have been rolled into OSError on Python 3;
+# see https://docs.python.org/3/library/exceptions.html#OSError
+_OSError_ALIASES = [
+    'IOError', 'EnvironmentError', 'socket.error', 'select.error',
+    'mmap.error'
+]
+# This list is sort of the opposite case: these are new built-in exceptions
+# in Python 3 that are subclasses of OSError; see
+# https://docs.python.org/3/library/exceptions.html#os-exceptions
+import builtins
+_OSError_SUBCLASSES = [
+    exc.__name__ for exc in vars(builtins).values()
+    if isinstance(exc, type) and issubclass(exc, OSError) and
+       exc is not OSError
+]
+
+def _sorted_dict_pprinter_factory(start, end):
+    """
+    Modified version of :func:`IPython.lib.pretty._dict_pprinter_factory`
+    that sorts the keys of dictionaries for printing.
+
+    EXAMPLES::
+
+        sage: {2: 0, 1: 0} # indirect doctest
+        {1: 0, 2: 0}
+    """
+    def inner(obj, p, cycle):
+        if cycle:
+            return p.text('{...}')
+        step = len(start)
+        p.begin_group(step, start)
+        keys = obj.keys()
+        keys = IPython.lib.pretty._sorted_for_pprint(keys)
+        for idx, key in p._enumerate(keys):
+            if idx:
+                p.text(',')
+                p.breakable()
+            p.pretty(key)
+            p.text(': ')
+            p.pretty(obj[key])
+        p.end_group(step, end)
+    return inner
 
 
-if not six.PY2:
-    # These lists are used on Python 3+ only for backwards compatibility with
-    # Python 2 in traceback parsing
-    # These exceptions in Python 2 have been rolled into OSError on Python 3;
-    # see https://docs.python.org/3/library/exceptions.html#OSError
-    _OSError_ALIASES = [
-        'IOError', 'EnvironmentError', 'socket.error', 'select.error',
-        'mmap.error'
-    ]
-    # This list is sort of the opposite case: these are new built-in exceptions
-    # in Python 3 that are subclasses of OSError; see
-    # https://docs.python.org/3/library/exceptions.html#os-exceptions
-    import builtins
-    _OSError_SUBCLASSES = [
-        exc.__name__ for exc in vars(builtins).values()
-        if isinstance(exc, type) and issubclass(exc, OSError) and
-           exc is not OSError
-    ]
-
-
-
-def init_sage():
+def init_sage(controller=None):
     """
     Import the Sage library.
 
@@ -169,8 +194,25 @@ def init_sage():
     from sage.cpython._py2_random import Random
     sage.misc.randstate.DEFAULT_PYTHON_RANDOM = Random
 
-    import sage.repl.ipython_kernel.all_jupyter
-    sage.interfaces.quit.invalidate_all()
+    # IPython's pretty printer sorts the repr of dicts by their keys by default
+    # (or their keys' str() if they are not otherwise orderable).  However, it
+    # disables this for CPython 3.6+ opting to instead display dicts' "natural"
+    # insertion order, which is preserved in those versions).
+    # However, this order is random in some instances.
+    # Also modifications of code may affect the order.
+    # So here we fore sorted dict printing.
+    IPython.lib.pretty.for_type(dict, _sorted_dict_pprinter_factory('{', '}'))
+
+    if controller is None:
+        import sage.repl.ipython_kernel.all_jupyter
+    else:
+        controller.load_environment()
+
+    try:
+        from sage.interfaces.quit import invalidate_all
+        invalidate_all()
+    except ModuleNotFoundError:
+        pass
 
     # Disable cysignals debug messages in doctests: this is needed to
     # make doctests pass when cysignals was built with debugging enabled
@@ -183,21 +225,12 @@ def init_sage():
     from sage.repl.rich_output.backend_doctest import BackendDoctest
     dm.switch_backend(BackendDoctest())
 
-    # IPython's pretty printer sorts the repr of dicts by their keys by default
-    # (or their keys' str() if they are not otherwise orderable).  However, it
-    # disables this for CPython 3.6+ opting to instead display dicts' "natural"
-    # insertion order, which is preserved in those versions).  This makes for
-    # inconsistent results with Python 2 tests that return dicts, so here we
-    # force the Python 2 style dict printing
-    import IPython.lib.pretty
-    IPython.lib.pretty.DICT_IS_ORDERED = False
-
     # Switch on extra debugging
     from sage.structure.debug_options import debug
     debug.refine_category_hash_check = True
 
     # We import readline before forking, otherwise Pdb doesn't work
-    # os OS X: http://trac.sagemath.org/14289
+    # on OS X: http://trac.sagemath.org/14289
     import readline
 
     try:
@@ -545,16 +578,26 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         Check that :trac:`26038` is fixed::
 
-            sage: a = 1
+            sage: a = 1 # py2
             ....: b = 2
             Traceback (most recent call last):
             ...
             SyntaxError: doctest is not a single statement
-            sage: a = 1
+            sage: a = 1 # py3
+            ....: b = 2
+            Traceback (most recent call last):
+            ...
+            SyntaxError: multiple statements found while compiling a single statement
+            sage: a = 1 # py2
             ....: @syntax error
             Traceback (most recent call last):
             ...
             SyntaxError: invalid syntax
+            sage: a = 1 # py3
+            ....: @syntax error
+            Traceback (most recent call last):
+            ...
+            SyntaxError: multiple statements found while compiling a single statement
         """
         # Ensure that injecting globals works as expected in doctests
         set_globals(test.globs)
@@ -602,7 +645,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             # If 'SKIP' is set, then skip this example.
             if self.optionflags & doctest.SKIP:
                 continue
-            
+
             # Record that we started this example.
             tries += 1
 
@@ -688,7 +731,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
                     self.debugger.set_continue() # ==== Example Finished ====
             got = self._fakeout.getvalue()
 
-            if not isinstance(got, six.text_type):
+            if not isinstance(got, str):
                 # On Python 3 got should already be unicode text, but on Python
                 # 2 it is not.  For comparison's sake we want the unicode text
                 # decoded from UTF-8. If there was some error such that the
@@ -711,7 +754,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             else:
                 exc_msg = traceback.format_exception_only(*exception[:2])[-1]
 
-                if six.PY3 and example.exc_msg is not None:
+                if example.exc_msg is not None:
                     # On Python 3 the exception repr often includes the
                     # exception's full module name (for non-builtin
                     # exceptions), whereas on Python 2 does not, so we
@@ -793,7 +836,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         self.total_performed_tests += tries
         return TestResults(failures, tries)
 
-    def run(self, test, compileflags=None, out=None, clear_globs=True):
+    def run(self, test, compileflags=0, out=None, clear_globs=True):
         """
         Runs the examples in a given doctest.
 
@@ -805,11 +848,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         - ``test`` -- an instance of :class:`doctest.DocTest`
 
-        - ``compileflags`` -- the set of compiler flags used to
-          execute examples (passed in to the :func:`compile`).  If
-          None, they are filled in from the result of
-          :func:`doctest._extract_future_flags` applied to
-          ``test.globs``.
+        - ``compileflags`` -- int (default: 0) the set of compiler flags used to
+          execute examples (passed in to the :func:`compile`).
 
         - ``out`` -- a function for writing the output (defaults to
           :func:`sys.stdout.write`).
@@ -839,13 +879,10 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             TestResults(failed=0, attempted=4)
         """
         self.setters = {}
-        randstate.set_random_seed(0)
+        randstate.set_random_seed(self.options.random_seed)
         warnings.showwarning = showwarning_with_traceback
         self.running_doctest_digest = hashlib.md5()
         self.test = test
-        if compileflags is None:
-            compileflags = doctest._extract_future_flags(test.globs)
-        compileflags |= MANDATORY_COMPILE_FLAGS
         # We use this slightly modified version of Pdb because it
         # interacts better with the doctesting framework (like allowing
         # doctests for sys.settrace()). Since we already have output
@@ -1049,7 +1086,8 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             False
             sage: doctests, extras = FDS.create_doctests(globs)
             sage: ex0 = doctests[0].examples[0]
-            sage: compiler = lambda ex: compile(ex.source, '<doctest sage.doctest.forker[0]>', 'single', 32768, 1)
+            sage: flags = 32768 if sys.version_info.minor < 8 else 524288
+            sage: compiler = lambda ex: compile(ex.source, '<doctest sage.doctest.forker[0]>', 'single', flags, 1)
             sage: DTR.compile_and_execute(ex0, compiler, globs)
             1764
             sage: globs['doctest_var']
@@ -1062,7 +1100,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         Now we can execute some more doctests to see the dependencies. ::
 
             sage: ex1 = doctests[0].examples[1]
-            sage: compiler = lambda ex:compile(ex.source, '<doctest sage.doctest.forker[1]>', 'single', 32768, 1)
+            sage: compiler = lambda ex:compile(ex.source, '<doctest sage.doctest.forker[1]>', 'single', flags, 1)
             sage: DTR.compile_and_execute(ex1, compiler, globs)
             sage: sorted(list(globs.set))
             ['R', 'a']
@@ -1074,7 +1112,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
         ::
 
             sage: ex2 = doctests[0].examples[2]
-            sage: compiler = lambda ex:compile(ex.source, '<doctest sage.doctest.forker[2]>', 'single', 32768, 1)
+            sage: compiler = lambda ex:compile(ex.source, '<doctest sage.doctest.forker[2]>', 'single', flags, 1)
             sage: DTR.compile_and_execute(ex2, compiler, globs)
             a + 42
             sage: list(globs.set)
@@ -1617,7 +1655,7 @@ class DocTestDispatcher(SageObject):
             <sage.doctest.forker.DocTestDispatcher object at ...>
         """
         self.controller = controller
-        init_sage()
+        init_sage(controller)
 
     def serial_dispatch(self):
         """
@@ -1963,7 +2001,9 @@ class DocTestDispatcher(SageObject):
             # Hack to ensure multiprocessing leaves these processes
             # alone (in particular, it doesn't wait for them when we
             # exit).
-            multiprocessing.current_process()._children = set()
+            p = multiprocessing.process
+            assert hasattr(p, '_children')
+            p._children = set()
 
     def dispatch(self):
         """
@@ -2004,7 +2044,7 @@ class DocTestWorker(multiprocessing.Process):
     """
     The DocTestWorker process runs one :class:`DocTestTask` for a given
     source. It returns messages about doctest failures (or all tests if
-    verbose doctesting) though a pipe and returns results through a
+    verbose doctesting) through a pipe and returns results through a
     ``multiprocessing.Queue`` instance (both these are created in the
     :meth:`start` method).
 
@@ -2078,7 +2118,7 @@ class DocTestWorker(multiprocessing.Process):
         # Temporary file for stdout/stderr of the child process.
         # Normally, this isn't used in the master process except to
         # debug timeouts/crashes.
-        self.outtmpfile = tempfile.TemporaryFile()
+        self.outtmpfile = tempfile.NamedTemporaryFile(delete=False)
 
         # Create string for the master process to store the messages
         # (usually these are the doctest failures) of the child.
@@ -2139,22 +2179,6 @@ class DocTestWorker(multiprocessing.Process):
             task(self.options, self.outtmpfile, msgpipe, self.result_queue)
         finally:
             msgpipe.close()
-            # Note: This closes the tempfile in the child process, but in the
-            # parent process self.outtmpfile will not be closed yet, and can
-            # still be accessed in save_result_output
-            if hasattr(self.outtmpfile, 'delete'):
-                # On some platforms (notably Cygwin) tempfile.TemporaryFile is
-                # actually replaced by tempfile.NamedTemporaryFile with
-                # delete=True for this file
-                # This means that we end up with two NamedTemporaryFile
-                # instances--one on the parent process and one on the worker
-                # process.  Since NamedTemporaryFile automatically unlinks the
-                # file when it is closed, this can lead to an unhandled
-                # exception in the parent process if the child process closes
-                # this file first.  See https://trac.sagemath.org/ticket/25107#comment:14
-                # for more details.
-                self.outtmpfile.delete = False
-
             self.outtmpfile.close()
 
     def start(self):
@@ -2260,7 +2284,6 @@ class DocTestWorker(multiprocessing.Process):
             This method is called from the parent process, not from the
             subprocess.
         """
-        from six.moves.queue import Empty
         try:
             self.result = self.result_queue.get(block=False)
         except Empty:
@@ -2269,11 +2292,21 @@ class DocTestWorker(multiprocessing.Process):
 
         self.outtmpfile.seek(0)
         self.output = bytes_to_str(self.outtmpfile.read())
+        self.outtmpfile.close()
+        try:
+            # Now it is safe to delete the outtmpfile; we manage this manually
+            # so that the file does not get deleted via TemporaryFile.__del__
+            # in the worker process
+            os.unlink(self.outtmpfile.name)
+        except OSError as exc:
+            if exc.errno != errno.ENOENT:
+                raise
+
         del self.outtmpfile
 
     def kill(self):
         """
-        Kill this worker.  Returns ``True`` if the signal(s) are sent
+        Kill this worker.  Return ``True`` if the signal(s) are sent
         successfully or ``False`` if the worker process no longer exists.
 
         This method is only called if there is something wrong with the
@@ -2315,7 +2348,7 @@ class DocTestWorker(multiprocessing.Process):
             True
             sage: W.killed
             True
-            sage: time.sleep(0.2)  # Worker doesn't die
+            sage: time.sleep(float(0.2))  # Worker doesn't die
             sage: W.kill()         # Worker dies now
             True
             sage: time.sleep(1)
@@ -2378,19 +2411,17 @@ class DocTestTask(object):
         ['cputime', 'err', 'failures', 'optionals', 'tests', 'walltime', 'walltime_skips']
     """
 
-    if six.PY2:
-        extra_globals = {}
-    else:
-        extra_globals = {'long': int}
+    extra_globals = {}
     """
     Extra objects to place in the global namespace in which tests are run.
     Normally this should be empty but there are special cases where it may
     be useful.
 
-    In particular, on Python 3 add ``long`` as an alias for ``int`` so that
-    tests that use the ``long`` built-in (of which there are many) still pass.
-    We do this so that the test suite can run on Python 3 while Python 2 is
-    still the default.
+    For example, in Sage versions 9.1 and earlier, on Python 3 add
+    ``long`` as an alias for ``int`` so that tests that use the
+    ``long`` built-in (of which there are many) still pass.  We did
+    this so that the test suite could run on Python 3 while Python 2
+    was still the default.
     """
 
     def __init__(self, source):
@@ -2503,12 +2534,10 @@ class DocTestTask(object):
         """
         Actually run the doctests with the right set of globals
         """
-        if self.source.basename.startswith("sagenb."):
-            import sage.all_notebook as sage_all
-        else:
-            # Import Jupyter globals to doctest the Jupyter
-            # implementation of widgets and interacts
-            import sage.repl.ipython_kernel.all_jupyter as sage_all
+        # Import Jupyter globals to doctest the Jupyter
+        # implementation of widgets and interacts
+        from importlib import import_module
+        sage_all = import_module(options.environment)
         dict_all = sage_all.__dict__
         # Remove '__package__' item from the globals since it is not
         # always in the globals in an actual Sage session.

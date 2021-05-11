@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Knots
 
@@ -17,9 +18,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from six import add_metaclass
-
 from sage.knots.link import Link
+from sage.knots.knot_table import small_knots_table
+from sage.knots.gauss_code import (recover_orientations, dowker_to_gauss,
+                                   rectangular_diagram)
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -28,8 +30,7 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.categories.monoids import Monoids
 
 # We need Link to be first in the MRO in order to use its equality, hash, etc.
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class Knot(Link, Element):
+class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A knot.
 
@@ -119,7 +120,8 @@ class Knot(Link, Element):
         Link.__init__(self, data)
         if check:
             if self.number_of_components() != 1:
-                raise ValueError("the input has more than 1 connected component")
+                raise ValueError("the input has more than 1 connected "
+                                 "component")
 
     def _repr_(self):
         """
@@ -131,12 +133,117 @@ class Knot(Link, Element):
             sage: K = Knot(B([1, 2, 1, 2]))
             sage: K
             Knot represented by 4 crossings
-            sage: K = Knot([[1, 7, 2, 6], [7, 3, 8, 2], [3, 11, 4, 10], [11, 5, 12, 4], [14, 5, 1, 6], [13, 9, 14, 8], [12, 9, 13, 10]])
+            sage: K = Knot([[1, 7, 2, 6], [7, 3, 8, 2], [3, 11, 4, 10],
+            ....:           [11, 5, 12, 4], [14, 5, 1, 6], [13, 9, 14, 8],
+            ....:           [12, 9, 13, 10]])
             sage: K
             Knot represented by 7 crossings
         """
         pd_len = len(self.pd_code())
         return 'Knot represented by {} crossings'.format(pd_len)
+
+    def _unicode_art_(self):
+        """
+        Return unicode art for the knot.
+
+        INPUT:
+
+        - a knot
+
+        OUTPUT:
+
+        - unicode art for the knot
+
+        EXAMPLES::
+
+            sage: W = Knots()
+            sage: K = W.from_dowker_code([-4,-6,-2])
+            sage: unicode_art(K)
+             ╭─╮
+            ╭──│╮
+            │╰╮││
+            │ ╰─╯
+            ╰──╯
+
+            sage: G = [-1, 2, -3, 4, 6, -7, 8, 1, -2, 3, -4, -5, 7, -8, 5, -6]
+            sage: K = Knots().from_gauss_code(G)
+            sage: unicode_art(K)
+               ╭─────╮
+               │╭─────╮
+              ╭─│╮   ││
+             ╭─╯││   ││
+             │╰─╯│   ││
+             │   ╰──╮││
+             │     ╭│╯│
+             │    ╭│╯ │
+            ╭─────│╯  │
+            │╰────╯   │
+            ╰─────────╯
+
+        TESTS::
+
+            sage: W = Knots()
+            sage: unicode_art(W.one())
+            ╭╮
+            ╰╯
+        """
+        style = 2  # among 0, 1, 2 (how to display crossings, see below)
+        gauss = self.gauss_code()
+        if not gauss:
+            gauss = []
+        else:
+            gauss = gauss[0]
+
+        graphe, (hori, vert) = rectangular_diagram(gauss)
+        maxx, maxy = 0, 0
+        for a, b in graphe:
+            maxx = max(a, maxx)
+            maxy = max(b, maxy)
+        M = [[" " for a in range(maxy + 1)] for b in range(maxx + 1)]
+        for a, b in graphe:
+            (x, y), (xx, yy) = graphe.neighbors((a, b))
+            if x != a:
+                x, y, xx, yy = xx, yy, x, y
+            if y < b:
+                if xx < a:
+                    M[a][b] = u"╯"
+                else:
+                    M[a][b] = u"╮"
+            else:
+                if xx < a:
+                    M[a][b] = u"╰"
+                else:
+                    M[a][b] = u"╭"
+
+        for ab, cd in graphe.edge_iterator(labels=False):
+            a, b = ab
+            c, d = cd
+            if a == c:
+                b, d = sorted((b, d))
+                for i in range(b + 1, d):
+                    M[a][i] = u"─"
+            else:
+                a, c = sorted((a, c))
+                for i in range(a + 1, c):
+                    M[i][b] = u"│"
+
+        if style == 0:
+            H = u"┿"
+            V = u"╂"
+        elif style == 1:
+            H = u"━"
+            V = u"┃"
+        elif style == 2:
+            H = u"─"
+            V = u"│"
+
+        for x, y in hori:
+            M[x][y] = H
+        for x, y in vert:
+            M[x][y] = V
+
+        from sage.typeset.unicode_art import UnicodeArt
+        return UnicodeArt([''.join(ligne) for ligne in M])
 
     def dt_code(self):
         """
@@ -167,7 +274,8 @@ class Knot(Link, Element):
             sage: K = Knot(B([1, 2, 1, 2]))
             sage: K.dt_code()
             [4, -6, 8, -2]
-            sage: K = Knot([[[1, -2, 3, -4, 5, -1, 2, -3, 4, -5]], [1, 1, 1, 1, 1]])
+            sage: K = Knot([[[1, -2, 3, -4, 5, -1, 2, -3, 4, -5]],
+            ....:          [1, 1, 1, 1, 1]])
             sage: K.dt_code()
             [6, 8, 10, 2, 4]
         """
@@ -201,9 +309,8 @@ class Knot(Link, Element):
                 else:
                     type1 = -1
             else:
-                type1 = -1 * type1
-                if ((abs(b[crossing]) == string and b[crossing] * type1 > 0)
-                    or (abs(b[crossing]) != string and b[crossing] * type1 < 0)):
+                type1 = -type1
+                if (abs(b[crossing]) == string) ^ (b[crossing] * type1 < 0):
                     if next_label % 2:
                         label[2 * crossing] = label[2 * crossing] * -1
             if abs(b[crossing]) == string:
@@ -316,11 +423,12 @@ class Knot(Link, Element):
             return other
         if not ogc2[0]:
             return self
-        # how much we have to "displace" the numbering of the crossings of other
+        # how much we have to "displace" the numbering of the
+        # crossings of other
         m1 = max(abs(i) for i in ogc1[0][0])
         m2 = min(abs(i) for i in ogc2[0][0])
         n = m1 - m2 + 1
-        # construct the oriented gauss code of the result
+        # construct the oriented Gauss code of the result
         ogc2_0_0 = [a + int(sign(a)) * n for a in ogc2[0][0]]
         nogc = [[ogc1[0][0] + ogc2_0_0], ogc1[1] + ogc2[1]]
         return type(self)(nogc)
@@ -376,5 +484,147 @@ class Knots(Singleton, Parent):
         """
         return self.element_class([[1, 5, 2, 4], [5, 3, 6, 2], [3, 1, 4, 6]])
 
-    Element = Knot
+    def from_gauss_code(self, gauss):
+        """
+        Build a knot from a signed Gauss code.
 
+        This makes some arbitrary choice of orientation.
+
+        INPUT:
+
+        - a signed Gauss code
+
+        OUTPUT:
+
+        - a knot
+
+        EXAMPLES::
+
+            sage: W = Knots()
+            sage: K1 = W.from_gauss_code([2, -1, 3, -2, 1, -3])
+            sage: K1.alexander_polynomial()
+            t^-1 - 1 + t
+        """
+        orientations = recover_orientations(gauss)[3]
+        return Knot([[gauss], orientations])
+
+    def from_dowker_code(self, code):
+        """
+        Build a knot from a Dowker-Thistlethwaite code.
+
+        The Dowker-Thistlethwaite code of a knot diagram is defined as follows.
+
+        Start following the knot diagram at some regular point. Label the
+        crossings by a number (starting from number 1) in the order in
+        which they are met. At the end, every crossing gets numbered
+        twice, once by an even number and once by an odd number. When
+        meeting an over-crossing with even number, use instead the
+        negative of this even number as label.
+
+        Then the set of crossings gives a set of pairs (odd,
+        even). Sort this set according to the odd component, and then
+        keep only the even components in the same order. This is the
+        Dowker-Thistlethwaite code.
+
+        INPUT:
+
+        a list of signed even numbers, the Dowker-Thistlethwaite code of a knot
+
+        OUTPUT:
+
+        a knot
+
+        EXAMPLES::
+
+            sage: W = Knots()
+            sage: K1 = W.from_dowker_code([8,10,2,12,4,6])
+            sage: K1.dowker_notation()
+            [(5, 2), (9, 4), (11, 6), (1, 8), (3, 10), (7, 12)]
+
+            sage: W.from_dowker_code([6,10,14,12,16,2,18,4,8])
+            Knot represented by 9 crossings
+
+            sage: W.from_dowker_code([4,8,10,-14,2,-16,-18,-6,-12])
+            Knot represented by 9 crossings
+
+            sage: K3 = W.from_dowker_code([6,-12,2,8,-4,-10]); K3
+            Knot represented by 6 crossings
+            sage: K3.dowker_notation()
+            [(5, 2), (4, 9), (1, 6), (7, 8), (10, 11), (12, 3)]
+
+        .. SEEALSO:: :meth:`~sage.knots.knot.Knot.dowker_notation`
+
+        REFERENCES:
+
+        - :wikipedia:`Dowker_notation`
+
+        - http://katlas.org/wiki/DT_(Dowker-Thistlethwaite)_Codes
+        """
+        gauss = dowker_to_gauss(code)
+        orientations = recover_orientations(gauss)[3]
+        return Knot([[gauss], orientations])
+
+    def from_table(self, n, k):
+        """
+        Return a knot from its index in the Rolfsen table.
+
+        INPUT:
+
+        - ``n`` -- the crossing number
+        - ``k`` -- a positive integer
+
+        OUTPUT:
+
+        the knot `K_{n,k}` in the Rolfsen table
+
+        EXAMPLES::
+
+            sage: K1 = Knots().from_table(6,3); K1
+            Knot represented by 6 crossings
+            sage: K1.alexander_polynomial()
+            t^-2 - 3*t^-1 + 5 - 3*t + t^2
+
+            sage: K2 = Knots().from_table(8,4); K2
+            Knot represented by 9 crossings
+            sage: K2.determinant()
+            19
+            sage: K2.signature()
+            2
+
+            sage: K3 = Knots().from_table(10,56); K3
+            Knot represented by 11 crossings
+            sage: K3.jones_polynomial()
+            t^10 - 3*t^9 + 6*t^8 - 9*t^7 + 10*t^6 - 11*t^5 + 10*t^4 - 7*t^3
+            + 5*t^2 - 2*t + 1
+
+            sage: K4 = Knots().from_table(10,100)
+            sage: K4.genus()
+            4
+
+        TESTS::
+
+            sage: Knots().from_table(6,6)
+            Traceback (most recent call last):
+            ...
+            ValueError: not found in the knot table
+
+            sage: Knots().from_table(12,6)
+            Traceback (most recent call last):
+            ...
+            ValueError: more than 10 crossings, not in the knot table
+
+        REFERENCES:
+
+        - KnotAtlas, http://katlas.math.toronto.edu/wiki/The_Rolfsen_Knot_Table
+        """
+        if n > 10:
+            raise ValueError('more than 10 crossings, not in the knot table')
+        from sage.groups.braid import BraidGroup
+        if (n, k) in small_knots_table:
+            m, word = small_knots_table[(n, k)]
+            G = BraidGroup(m)
+            return Knot(G(word))
+        else:
+            raise ValueError('not found in the knot table')
+
+    Element = Knot

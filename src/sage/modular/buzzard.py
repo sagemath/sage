@@ -1,5 +1,5 @@
 """
-Conjectural Slopes of Hecke Polynomial
+Conjectural slopes of Hecke polynomials
 
 Interface to Kevin Buzzard's PARI program for computing conjectural
 slopes of characteristic polynomials of Hecke operators.

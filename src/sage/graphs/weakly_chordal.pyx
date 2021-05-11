@@ -20,15 +20,6 @@ Author:
 - Nathann Cohen (some doc and optimization)
 - David Coudert (remove recursion)
 
-REFERENCES:
-
-.. [NikolopoulosPalios07] Nikolopoulos, S.D. and Palios, L.
-  Detecting holes and antiholes in graphs
-  Algorithmica, 2007
-  Vol. 47, number 2, pages 119--138
-  http://www.cs.uoi.gr/~stavros/C-Papers/C-2004-SODA.pdf
-
-
 
 Methods
 -------
@@ -41,7 +32,7 @@ Methods
 #                  http://www.gnu.org/licenses/
 ##############################################################################
 
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
@@ -168,7 +159,7 @@ def is_long_hole_free(g, certificate=False):
     This is done through a depth-first-search. For efficiency, the auxiliary
     graph is constructed on-the-fly and never stored in memory.
 
-    The run time of this algorithm is `O(m^2)` [NikolopoulosPalios07]_ ( where
+    The run time of this algorithm is `O(m^2)` [NP2007]_ ( where
     `m` is the number of edges of the graph ) .
 
     EXAMPLES:
@@ -401,8 +392,8 @@ def is_long_antihole_free(g, certificate=False):
     This is done through a depth-first-search. For efficiency, the auxiliary
     graph is constructed on-the-fly and never stored in memory.
 
-    The run time of this algorithm is `O(m^2)` [NikolopoulosPalios07]_ ( where
-    `m` is the number of edges of the graph ) .
+    The run time of this algorithm is `O(m^2)` [NP2007]_ (where
+    `m` is the number of edges of the graph).
 
     EXAMPLES:
 

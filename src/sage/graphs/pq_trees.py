@@ -91,12 +91,7 @@ This module is used for the recognition of Interval Graphs (see
    our sets satisfying our constraints, or to prove that no such ordering
    exists. This is the whole purpose of this module, and is explained with more
    details in many places, for example in the following document from Hajiaghayi
-   [Haj]_.
-
-REFERENCES:
-
-.. [Haj] \M. Hajiaghayi
-   http://www-math.mit.edu/~hajiagha/pp11.ps
+   [Haj2000]_.
 
 Authors:
 
@@ -113,7 +108,6 @@ Methods and functions
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL) #
 #                         http://www.gnu.org/licenses/                         #
 ################################################################################
-from __future__ import print_function
 
 # Constants, to make the code more readable
 
@@ -870,7 +864,7 @@ class Q(PQ):
         # From now on, there are at most two pq-trees which are partially filled
         # If there is one which is not aligned to the right, all the others are empty
 
-        # First trivial case, no checking neded
+        # First trivial case, no checking needed
         elif n_FULL == self.number_of_children():
             return FULL, True
 

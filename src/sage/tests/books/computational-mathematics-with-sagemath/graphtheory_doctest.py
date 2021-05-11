@@ -40,10 +40,10 @@ Sage example in ./graphtheory.tex, line 128::
   sage: g.delete_edges([(1,5), (2,5)])
   sage: g.order(), g.size()
   (6, 3)
-  sage: g.vertices()
+  sage: sorted(g.vertices(sort=False), key=str)
   [1, 2, 5, 9, 'Edinburgh', 'Madrid']
-  sage: g.edges()
-  [(1, 9, None), (2, 9, None), ('Edinburgh', 'Madrid', None)]
+  sage: sorted(g.edges(sort=False, labels=False), key=str)
+  [('Edinburgh', 'Madrid'), (1, 9), (2, 9)]
 
 Sage example in ./graphtheory.tex, line 159::
 
@@ -280,8 +280,8 @@ Sage example in ./graphtheory.tex, line 1736::
 Sage example in ./graphtheory.tex, line 1746::
 
   sage: P = Permutations(range(g.order()))
-  sage: n_colors, coloration = min(
-  ....:    greedy_coloring(g, P.random_element()) for i in range(50))
+  sage: n_colors, coloration = min([greedy_coloring(g, P.random_element())
+  ....:     for i in range(50)], key=lambda c: c[0])
   sage: n_colors
   4
 
@@ -329,9 +329,9 @@ Sage example in ./graphtheory.tex, line 1989::
   ....:  while H_remain:
   ....:      v = H_remain.pop(0) # look for the next vertex of H
   ....:      # and its potential images in G
-  ....:      candidates = [u for u in G_remain if
-  ....:             all([H.has_edge(h,v) == G.has_edge(f_h,u)
-  ....:                     for h, f_h in f.items()])]
+  ....:      candidates = [u for u in G_remain
+  ....:                    if all(H.has_edge(h,v) == G.has_edge(f_h,u)
+  ....:                           for h, f_h in f.items())]
   ....:      # if no candidate is found, we abort immediately
   ....:      if not candidates:
   ....:          raise ValueError("No copy of H has been found in G")
@@ -380,8 +380,9 @@ Sage example in ./graphtheory.tex, line 2139::
 Sage example in ./graphtheory.tex, line 2182::
 
   sage: M = Graph(G.matching())
-  sage: for i in tasks:
-  ....:   print("t{} assigned to {}".format(i,M.neighbors('t'+str(i))[0]))
+  sage: txt = "t{} assigned to {}"
+  sage: for i in tasks:                                        # random
+  ....:     print(txt.format(i, M.neighbors('t' + str(i))[0])) # random
   t0 assigned to w2
   t1 assigned to w3
   t2 assigned to w5

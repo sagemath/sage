@@ -1,24 +1,24 @@
 r"""
 Groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.monoids import Monoids
 from sage.categories.cartesian_product import CartesianProductsCategory, cartesian_product
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.topological_spaces import TopologicalSpacesCategory
+
 
 class Groups(CategoryWithAxiom):
     """
@@ -78,7 +78,7 @@ class Groups(CategoryWithAxiom):
             sage: F.<x,y,z> = Groups().free(); F
             Free Group on generators {x, y, z}
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         if index_set in ZZ or (index_set is None and names is not None):
             from sage.groups.free_group import FreeGroup
             if names is None:
@@ -186,7 +186,7 @@ class Groups(CategoryWithAxiom):
 
         def cayley_table(self, names='letters', elements=None):
             r"""
-            Returns the "multiplication" table of this multiplicative group,
+            Return the "multiplication" table of this multiplicative group,
             which is also known as the "Cayley table".
 
             .. note:: The order of the elements in the row and column
@@ -269,12 +269,12 @@ class Groups(CategoryWithAxiom):
                 sage: M.cayley_table()
                 *  a b c d e f
                  +------------
-                a| c e a f b d
-                b| d f b e a c
-                c| a b c d e f
-                d| b a d c f e
-                e| f d e b c a
-                f| e c f a d b
+                a| a b c d e f
+                b| b a d c f e
+                c| c e a f b d
+                d| d f b e a c
+                e| e c f a d b
+                f| f d e b c a
                 <BLANKLINE>
 
             ::
@@ -610,7 +610,6 @@ class Groups(CategoryWithAxiom):
                 # Infinitely generated
                 # This does not return a good output, but it is "correct"
                 # TODO: Figure out a better way to do things
-                from sage.categories.cartesian_product import cartesian_product
                 gens_prod = cartesian_product([Family(G.group_generators(),
                                                       lambda g: (i, g))
                                                for i,G in enumerate(F)])

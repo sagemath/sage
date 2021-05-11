@@ -1,5 +1,5 @@
 """
-Testing modular symbols spaces.
+Testing modular symbols spaces
 
 TESTS::
 
@@ -8,8 +8,8 @@ TESTS::
     [(1, 1), (1, 2), (2, 2), (3, 2), (6, 2), (20, 2)]
 """
 
-#*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+# ****************************************************************************
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -22,10 +22,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
-from six.moves import range
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import random
 
@@ -33,6 +31,7 @@ from . import modsym
 import sage.modular.dirichlet as dirichlet
 import sage.modular.arithgroup.all as arithgroup
 from sage.misc.misc import cputime
+
 
 class Test:
     """
@@ -363,7 +362,8 @@ class Test:
             level = 18, weight = 4, sign = -1
             Modular Symbols space of dimension 0 and level 18, weight 4, character [1, -1], sign -1, over Rational Field
         """
-        tests = [a for a in Test.__dict__.keys() if a[:5] == "test_" and a != "test_random"]
+        tests = [a for a in Test.__dict__
+                 if a[:5] == "test_" and a != "test_random"]
         name = random.choice(tests)
         print("Doing random test %s" % name)
         Test.__dict__[name](self)

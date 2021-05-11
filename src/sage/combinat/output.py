@@ -1,7 +1,9 @@
-"""
+# -*- coding: utf-8 -*-
+r"""
 Output functions
 
-These are the output functions for latexing partitions and tableaux.
+These are the output functions for latexing and ascii/unicode art versions of
+partitions and tableaux.
 
 AUTHORS:
 
@@ -9,11 +11,9 @@ AUTHORS:
 - Andrew Mathas (2013-02-14): Added support for displaying conventions and
   lines, and tableaux of skew partition, composition, and
   skew/composition/partition/tableaux tuple shape.
+- Travis Scrimshaw (2020-08): Added support for ascii/unicode art
 """
 
-from __future__ import absolute_import, print_function
-
-from six.moves import range
 
 from string import Template
 from sage.combinat.tableau import Tableaux
@@ -238,6 +238,7 @@ def tex_from_array_tuple(a_tuple, with_lines=True):
         &\lr{6}&\lr{7}\\
         \end{array}$}
         }
+        sage: Tableaux.options._reset()
     """
     lr=lr_macro.substitute(bar='|' if with_lines else '')
     if Tableaux.options.convention == "English":
@@ -253,7 +254,7 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     This function creates latex code for a "skew composition" ``array``.
     That is, for a two dimensional array in which each row can begin with
     an arbitrary number ``None``'s and the remaining entries could, in
-    principe, be anything but probably should be strings or integers of similar
+    principle, be anything but probably should be strings or integers of similar
     width. A row consisting completely of ``None``'s is allowed.
 
     INPUT:
@@ -275,6 +276,13 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
         &\\
         \lr{5}&\lr{6}&\lr{7}&\lr{8}\\
         \end{array}$}
+
+    TESTS::
+
+        sage: sage.combinat.output.tex_from_skew_array([(1,2,3), (2,3,4)])
+        '\\raisebox{-.6ex}{$\\begin{array}[b]{*{3}c}\\\\\n\\lr{1}&\\lr{2}&\\lr{3}\\\\\n\\lr{2}&\\lr{3}&\\lr{4}\\\\\n\\end{array}$}'
+        sage: sage.combinat.output.tex_from_skew_array([((1,2,),)])
+        '\\raisebox{-.6ex}{$\\begin{array}[b]{*{1}c}\\\\\n\\lr{(1, 2)}\\\\\n\\end{array}$}'
     """
     # first identify where the None's appear in ``array`` and define a
     # function end_line which puts in the required \cline's.
@@ -299,7 +307,201 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     tex=r'\raisebox{-.6ex}{$\begin{array}[%s]{*{%s}c}'%(align,max(map(len,array)))
     tex+=end_line(0)+'\n'
     for r in range(len(array)):
-        tex+='&'.join('' if c is None else r'\lr{%s}'%c for c in array[r])
+        tex+='&'.join('' if c is None else r'\lr{%s}'%(c,) for c in array[r])
         tex+=end_line(r+1)+'\n'
     return tex+r'\end{array}$}'
+
+
+def ascii_art_table(data, use_unicode=False, convention="English"):
+    r"""
+    Return an ascii art table of ``data``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.output import ascii_art_table
+
+        sage: data = [[None, None, 1], [2, 2], [3,4,5], [None, None, 10], [], [6]]
+        sage: print(ascii_art_table(data))
+                +----+
+                | 1  |
+        +---+---+----+
+        | 2 | 2 |
+        +---+---+----+
+        | 3 | 4 | 5  |
+        +---+---+----+
+                | 10 |
+                +----+
+        <BLANKLINE>
+        +---+
+        | 6 |
+        +---+
+        sage: print(ascii_art_table(data, use_unicode=True))
+                ┌────┐
+                │ 1  │
+        ┌───┬───┼────┘
+        │ 2 │ 2 │
+        ├───┼───┼────┐
+        │ 3 │ 4 │ 5  │
+        └───┴───┼────┤
+                │ 10 │
+                └────┘
+        <BLANKLINE>
+        ┌───┐
+        │ 6 │
+        └───┘
+
+        sage: data = [[1, None, 2], [None, 2]]
+        sage: print(ascii_art_table(data))
+        +---+   +---+
+        | 1 |   | 2 |
+        +---+---+---+
+            | 2 |
+            +---+
+        sage: print(ascii_art_table(data, use_unicode=True))
+        ┌───┐   ┌───┐
+        │ 1 │   │ 2 │
+        └───┼───┼───┘
+            │ 2 │
+            └───┘
+    """
+    if use_unicode:
+        import unicodedata
+        v  = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL')
+        h  = unicodedata.lookup('BOX DRAWINGS LIGHT HORIZONTAL')
+        dl = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND LEFT')
+        dr = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND RIGHT')
+        ul = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND LEFT')
+        ur = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND RIGHT')
+        vr = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND RIGHT')
+        vl = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND LEFT')
+        uh = unicodedata.lookup('BOX DRAWINGS LIGHT UP AND HORIZONTAL')
+        dh = unicodedata.lookup('BOX DRAWINGS LIGHT DOWN AND HORIZONTAL')
+        vh = unicodedata.lookup('BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL')
+        from sage.typeset.unicode_art import unicode_art as art
+    else:
+        v = '|'
+        h = '-'
+        dl = dr = ul = ur = vr = vl = uh = dh = vh = '+'
+        from sage.typeset.ascii_art import ascii_art as art
+
+    if not data:
+        return dr + dl + '\n' + ur + ul
+
+    # Convert the input into a rectangular array with the top and bottom row
+    #   being all None's for ease later on.
+    ncols = max(len(row) for row in data)
+    str_tab = [[None]*ncols] + [[art(val) if val is not None else None for val in row] + [None]*(ncols-len(row))
+                                for row in data]
+    str_tab.append([None]*ncols)
+    # Get the widths of the columns
+    col_widths = [1]*len(str_tab[0])
+    if use_unicode:
+        # Special handling of overline not adding to printed length
+        def get_len(e):
+            if e is None:
+                return 0
+            return len(e) - list(str(e)).count(u"\u0304")
+    else:
+        def get_len(e):
+            if e is None:
+                return 0
+            return len(e)
+    for row in str_tab:
+        for i,e in enumerate(row):
+            col_widths[i] = max(col_widths[i], get_len(e))
+
+    matr = []  # just the list of lines
+    for nrow,row in enumerate(str_tab):
+        if nrow == 0: # skip the first row
+            continue
+
+        l1 = ""
+        l2 = ""
+        for i,(e,w) in enumerate(zip(row, col_widths)):
+            prev_row = str_tab[nrow-1]
+            if i == 0:
+                if e is None:
+                    if prev_row[i] is None:
+                        l1 += " "*(3+w)
+                    else:
+                        l1 += ur + h*(2+w)
+                    l2 += " "*(3+w)
+                else:
+                    if prev_row[i] is None:
+                        l1 += dr + h*(2+w)
+                    else:
+                        l1 += vr + h*(2+w)
+                    l2 += "{} {:^{width}} ".format(v, e, width=w)
+            else:
+                if e is None:
+                    if row[i-1] is None:
+                        if prev_row[i-1] is None:
+                            if prev_row[i] is None:
+                                l1 += " "*(3+w)
+                            else:
+                                l1 += ur + h*(2+w)
+                        else:
+                            if prev_row[i] is None:
+                                l1 += ul + " "*(2+w)
+                            else:
+                                l1 += uh + h*(2+w)
+                        l2 += " "*(3+w)
+                    else:
+                        if prev_row[i-1] is None:
+                            if prev_row[i] is None:
+                                l1 += dl + " "*(2+w)
+                            else:
+                                l1 += vh + h*(2+w)
+                        else:
+                            if prev_row[i] is None:
+                                l1 += vl + " "*(2+w)
+                            else:
+                                l1 += vh + h*(2+w)
+                        l2 += v + " "*(2+w)
+                else:
+                    if row[i-1] is None:
+                        if prev_row[i-1] is None:
+                            if prev_row[i] is None:
+                                l1 += dr + h*(2+w)
+                            else:
+                                l1 += vr + h*(2+w)
+                        else:
+                            l1 += vh + h*(2+w)
+                    else:
+                        if prev_row[i-1] is None and prev_row[i] is None:
+                                l1 += dh + h*(2+w)
+                        else:
+                            l1 += vh + h*(2+w)
+                    l2 += "{} {:^{width}} ".format(v, e, width=w)
+
+        if row[-1] is None:
+            if prev_row[-1] is None:
+                l1 += " "
+            else:
+                l1 += ul
+            l2 += " "
+        else:
+            if prev_row[-1] is None:
+                l1 += dl
+            else:
+                l1 += vl
+            l2 += v
+
+        matr.append(l1)
+        matr.append(l2)
+
+    matr.pop()  # Remove the last row (which is blank)
+
+    if convention == "English":
+        return "\n".join(matr)
+    else:
+        output = "\n".join(reversed(matr))
+        if use_unicode:
+            tr = {
+                ord(dl): ul, ord(dr): ur,
+                ord(ul): dl, ord(ur): dr,
+                ord(dh): uh, ord(uh): dh}
+            return output.translate(tr)
+        else:
+            return output
 

@@ -1,0 +1,2 @@
+singular
+libsingular4-dev

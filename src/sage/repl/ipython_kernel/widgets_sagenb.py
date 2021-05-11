@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Functions to construct widgets, based on the old SageNB interface.
 
@@ -17,15 +18,15 @@ EXAMPLES::
     HTMLText(value=u'Hello World!')
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from ipywidgets.widgets import (IntSlider, IntRangeSlider, FloatSlider,
         FloatRangeSlider, SelectionSlider,
@@ -35,13 +36,12 @@ from .widgets import (TransformText, TransformTextarea,
         TransformFloatSlider, TransformFloatRangeSlider,
         EvalText, EvalTextarea, SageColorPicker, Grid)
 from ipywidgets.widgets.interaction import _get_min_max_value
-from collections import Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from numbers import Integral, Rational, Real
 
 from sage.structure.all import parent
 from sage.arith.srange import srange
 from sage.plot.colors import Color
-from sage.misc.six import u
 from sage.symbolic.ring import SR
 from sage.rings.all import RR
 
@@ -145,7 +145,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
     if default is not None:
         kwds["value"] = str(default)
     if label is not None:
-        kwds["description"] = u(label)
+        kwds["description"] = label
     w = cls(**kwds)
     w.layout.max_width = str(width+1) + "em"
     return w
@@ -237,7 +237,7 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
     """
     kwds = {"readout": display_value}
     if label:
-        kwds["description"] = u(label)
+        kwds["description"] = label
 
     # If vmin is iterable, return a SelectionSlider
     if isinstance(vmin, Iterable):
@@ -415,7 +415,7 @@ def checkbox(default=True, label=None):
     """
     kwds = {"value": bool(default)}
     if label is not None:
-        kwds["description"] = u(label)
+        kwds["description"] = label
     return Checkbox(**kwds)
 
 
@@ -491,7 +491,7 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
     if default is not None:
         kwds["value"] = default
     if label is not None:
-        kwds["description"] = u(label)
+        kwds["description"] = label
     return cls(**kwds)
 
 
@@ -536,7 +536,7 @@ def input_grid(nrows, ncols, default=None, label=None, to_value=None, width=4):
     """
     kwds = {"transform": to_value}
     if label is not None:
-        kwds["description"] = u(label)
+        kwds["description"] = label
 
     # Parse default
     if not isinstance(default, list):
@@ -582,5 +582,5 @@ def color_selector(default=(0, 0, 1), label=None, widget=None, hide_box=False):
     kwds = {"value": Color(default).html_color(),
             "concise": hide_box}
     if label is not None:
-        kwds["description"] = u(label)
+        kwds["description"] = label
     return SageColorPicker(**kwds)

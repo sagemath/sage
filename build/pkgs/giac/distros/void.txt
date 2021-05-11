@@ -1,0 +1,2 @@
+giac-devel
+libgiac

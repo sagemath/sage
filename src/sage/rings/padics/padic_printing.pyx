@@ -1,3 +1,9 @@
+# distutils: libraries = NTL_LIBRARIES ntl m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 """
 p-Adic Printing
 
@@ -21,7 +27,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cpython.list cimport *
 from sage.libs.gmp.mpz cimport *
@@ -1017,7 +1022,7 @@ cdef class pAdicPrinter_class(SageObject):
                 elif self.max_unram_terms == 1:
                     L = ["[..., %s]"%(a[-1]) if len(a) > 1 else str(a) for a in L]
                 else:
-                    L = ["[%s,..., "%(a[0]) + ", ".join([str(b) for b in a[1-self.max_unram_terms:]]) + "]" if len(a) > 2 else str(a) for a in L]
+                    L = ["[%s,..., " % (a[0]) + ", ".join(str(b) for b in a[1-self.max_unram_terms:]) + "]" if len(a) > 2 else str(a) for a in L]
             if n > 0:
                 if self.base or self._ring().absolute_f() == 1:
                     L += ['0']*n

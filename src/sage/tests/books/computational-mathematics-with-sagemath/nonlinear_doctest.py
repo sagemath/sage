@@ -413,7 +413,7 @@ Sage example in ./nonlinear.tex, line 1697::
   sage: def quadraticgen(f, r, s):
   ....:     t = (r + s) / 2
   ....:     yield t
-  ....:     points = deque([(r,f(r)), (s,f(s)), (t,f(t))], maxlen=3)
+  ....:     points = deque([(r,f(r)), (s,f(s)), (t,f(t))], maxlen=int(3))
   ....:     while True:
   ....:         pol = basering.lagrange_polynomial(points)
   ....:         roots = pol.roots(ring=CC, multiplicities=False)
@@ -446,7 +446,7 @@ Sage example in ./nonlinear.tex, line 2031::
 
   sage: def steffensen(sequence):
   ....:     assert isinstance(sequence, GeneratorType)
-  ....:     values = deque(maxlen=3)
+  ....:     values = deque(maxlen=int(3))
   ....:     for i in range(3):
   ....:         values.append(next(sequence))
   ....:         yield values[i]

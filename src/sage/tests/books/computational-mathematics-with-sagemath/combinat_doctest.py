@@ -408,7 +408,7 @@ Sage example in ./combinat.tex, line 1466::
 Sage example in ./combinat.tex, line 1475::
 
   sage: show(C.unrank(20))
-  <html>...</html>
+  Finite poset containing 8 elements
 
 Sage example in ./combinat.tex, line 1496::
 

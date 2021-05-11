@@ -6,7 +6,7 @@ where functions that depend on the ramification of the defining polynomial are p
 
 .. NOTE::
 
-    There are no doctests in this file since the functions here can not be
+    There are no doctests in this file since the functions here cannot be
     called directly from Python. Testing of this function is necessarily
     indirect and mostly done through arithmetic black-box tests that are part
     of the test suites of the `p`-adic parents.
@@ -572,4 +572,4 @@ cdef inline int cconv_mpq_t_out(mpq_t out, celement x, long valshift, long prec,
         c = QQ(prime_pow.powhelper_cconv_out.__coeffs[0])
         mpq_set(out, c.value)
     else:
-        raise ValueError("cannot convert to ratioal")
+        raise ValueError("cannot convert to rational")

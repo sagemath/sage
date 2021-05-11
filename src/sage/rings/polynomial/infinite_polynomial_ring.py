@@ -1,5 +1,5 @@
-"""
-Infinite Polynomial Rings.
+r"""
+Infinite Polynomial Rings
 
 By Infinite Polynomial Rings, we mean polynomial rings in a countably
 infinite number of variables. The implementation consists of a wrapper
@@ -10,8 +10,8 @@ AUTHORS:
 - Simon King <simon.king@nuigalway.ie>
 - Mike Hansen <mhansen@gmail.com>
 
-An Infinite Polynomial Ring has finitely many generators `x_\\ast,
-y_\\ast,...` and infinitely many variables of the form `x_0, x_1, x_2,
+An Infinite Polynomial Ring has finitely many generators `x_\ast,
+y_\ast,...` and infinitely many variables of the form `x_0, x_1, x_2,
 ..., y_0, y_1, y_2,...,...`.  We refer to the natural number `n` as
 the *index* of the variable `x_n`.
 
@@ -218,6 +218,26 @@ all constituents coerce.
     sage: x[2]/2+(5/3)*a[3]*x[4] + 1
     5/3*a_3*x_4 + 1/2*x_2 + 1
 
+Check that :trac:`22514` is fixed::
+
+    sage: R.<x> = InfinitePolynomialRing(ZZ)
+    sage: a = R(3)
+    sage: a.is_constant()
+    True
+    sage: a.constant_coefficient()
+    3
+    sage: a.degree()
+    0
+    sage: b = R("2")
+    sage: b.parent() is R
+    True
+    sage: S.<y> = ZZ[]
+    sage: Q.<z> = InfinitePolynomialRing(S)
+    sage: a = Q(1+y)
+    sage: a.is_constant()
+    True
+    sage: a.constant_coefficient()
+    y + 1
 """
 # ****************************************************************************
 #       Copyright (C) 2009 Simon King <simon.king@nuigalway.ie> and
@@ -234,10 +254,9 @@ all constituents coerce.
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
-import six
 from sage.rings.ring import CommutativeRing
+from sage.categories.rings import Rings
 from sage.structure.all import SageObject, parent
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
@@ -463,7 +482,7 @@ class InfiniteGenDict:
             <class 'sage.rings.polynomial.infinite_polynomial_element.InfinitePolynomial_dense'>
         """
 
-        if not isinstance(k, six.string_types):
+        if not isinstance(k, str):
             raise KeyError("String expected")
         L = k.split('_')
         try:
@@ -600,10 +619,10 @@ class GenDictWithBasering:
 ##  The sparse implementation
 
 class InfinitePolynomialRing_sparse(CommutativeRing):
-    """
+    r"""
     Sparse implementation of Infinite Polynomial Rings.
 
-    An Infinite Polynomial Ring with generators `x_\\ast, y_\\ast,
+    An Infinite Polynomial Ring with generators `x_\ast, y_\ast,
     ...` over a field `F` is a free commutative `F`-algebra generated
     by `x_0, x_1, x_2, ..., y_0, y_1, y_2, ..., ...` and is equipped
     with a permutation action on the generators, namely `x_n^P =
@@ -683,30 +702,21 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         if not names:
             names = ['x']
         for n in names:
-            if not (isinstance(n, six.string_types) and n.isalnum() and (not n[0].isdigit())):
+            if not (isinstance(n, str) and n.isalnum() and (not n[0].isdigit())):
                 raise ValueError("generator names must be alpha-numeric strings not starting with a  digit, but %s isn't"%n)
-        if len(names)!=len(set(names)):
+        if len(names) != len(set(names)):
             raise ValueError("generator names must be pairwise different")
         self._names = tuple(names)
-        if not isinstance(order, six.string_types):
+        if not isinstance(order, str):
             raise TypeError("The monomial order must be given as a string")
-        try:
-            if not (hasattr(R,'is_ring') and R.is_ring() and hasattr(R,'is_commutative') and R.is_commutative()):
-                raise TypeError
-        except Exception:
-            raise TypeError("The given 'base ring' (= %s) must be a commutative ring"%(R))
+        if not R in Rings().Commutative():
+            raise TypeError("The given 'base ring' (= %s) must be a commutative ring" % R)
 
         # now, the input is accepted
         if hasattr(R,'_underlying_ring'):
             self._underlying_ring = R._underlying_ring
         else:
             self._underlying_ring = R.base_ring()
-
-        # some basic data
-        self._order = order
-        self._name_dict = dict([(names[i], i) for i in range(len(names))])
-        from sage.categories.commutative_algebras import CommutativeAlgebras
-        CommutativeRing.__init__(self, R, category=CommutativeAlgebras(R))
 
         # some tools to analyse polynomial string representations.
         self._identify_variable = lambda x, y: (-self._names.index(x), int(y))
@@ -725,6 +735,13 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             VarList = [X + '_0' for X in names]
         VarList.sort(key=self.varname_key, reverse=True)
         self._minP = PolynomialRing(R, len(VarList), VarList)
+
+        # some basic data
+        self._order = order
+        self._name_dict = dict([(names[i], i) for i in range(len(names))])
+        from sage.categories.commutative_algebras import CommutativeAlgebras
+        CommutativeRing.__init__(self, R, category=CommutativeAlgebras(R))
+
         self._populate_coercion_lists_()
 
     def __repr__(self):
@@ -750,8 +767,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             \Bold{Q}[x_{\ast}, y_{\ast}]
         """
         from sage.misc.latex import latex
-        vars = ', '.join([latex(X) for X in self.gens()])
-        return "%s[%s]"%(latex(self.base_ring()), vars)
+        vars = ', '.join(latex(X) for X in self.gens())
+        return "%s[%s]" % (latex(self.base_ring()), vars)
 
     @cached_method
     def _an_element_(self):
@@ -801,14 +818,14 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         return [InfinitePolynomialFunctor(self._names, self._order, 'sparse'), self._base]
 
     def _coerce_map_from_(self, S):
-        """
+        r"""
         Coerce things into ``self``.
 
         NOTE:
 
         Any coercion will preserve variable names.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Here, we check to see that elements of a *finitely* generated
         polynomial ring with appropriate variable names coerce
@@ -857,7 +874,8 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             2
             sage: a.parent()
             Infinite polynomial ring in x over Rational Field
-            sage: R=PolynomialRing(ZZ,['x_3'])
+
+            sage: R = PolynomialRing(ZZ, ['x_3'])
             sage: b = X(R.gen()); b
             x_3
             sage: b.parent()
@@ -865,18 +883,27 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             sage: X('(x_1^2+2/3*x_4)*(x_2+x_5)')
             2/3*x_5*x_4 + x_5*x_1^2 + 2/3*x_4*x_2 + x_2*x_1^2
 
+            sage: Y = InfinitePolynomialRing(ZZ)
+            sage: Y('1/3')
+            Traceback (most recent call last):
+            ...
+            ValueError: Can't convert 1/3 into an element of Infinite polynomial ring in x over Integer Ring
         """
-        # if x is in self, there's nothing left to do
-        if parent(x) is self:
-            return x
         from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
         # In many cases, the easiest solution is to "simply" evaluate
         # the string representation.
         from sage.misc.sage_eval import sage_eval
-        if isinstance(x, six.string_types):
+        if isinstance(x, str):
             try:
-                return sage_eval(x, self.gens_dict())
+                x = sage_eval(x, self.gens_dict())
             except Exception:
+                raise ValueError("Can't convert %s into an element of %s" % (x, self))
+            P = parent(x)
+            if P is self:
+                return x
+            elif self._base.has_coerce_map_from(P):
+                return InfinitePolynomial(self, self._base(x))
+            else:
                 raise ValueError("Can't convert %s into an element of %s" % (x, self))
 
         if isinstance(parent(x), InfinitePolynomialRing_sparse):
@@ -1119,7 +1146,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             False
         """
         return False
- 
+
     def varname_key(self, x):
         """
         Key for comparison of variable names.

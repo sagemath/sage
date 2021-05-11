@@ -1,7 +1,6 @@
 """
 Composition species
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #
@@ -41,7 +40,7 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
-            sage: L.structures(['a','b','c']).random_element()
+            sage: L.structures(['a','b','c'])[0]
             F-structure: {{'a', 'b', 'c'}}; G-structures: (('a', 'b', 'c'),)
         """
         f, gs = self._list

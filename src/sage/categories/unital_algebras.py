@@ -1,22 +1,24 @@
 r"""
 Unital algebras
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
+from sage.categories.category import Category
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+from sage.categories.magmas import Magmas
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.categories.rings import Rings
-from sage.categories.magmas import Magmas
 from sage.categories.magmatic_algebras import MagmaticAlgebras
+
 
 class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
     """
@@ -77,21 +79,42 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
                 sage: coercion_model = sage.structure.element.get_coercion_model()
                 sage: coercion_model.discover_coercion(QQ, A)
-                (Generic morphism:
-                  From: Rational Field
-                  To:   An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field, None)
+                ((map internal to coercion system -- copy before use)
+                 Generic morphism:
+                   From: Rational Field
+                   To:   An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field,
+                 None)
                 sage: A(1)          # indirect doctest
                 B[word: ]
 
+            TESTS:
+
+            Ensure that :trac:`28328` is fixed and that non-associative
+            algebras are supported::
+
+                sage: class Foo(CombinatorialFreeModule):
+                ....:     def one(self):
+                ....:         return self.monomial(0)
+                sage: from sage.categories.magmatic_algebras \
+                ....:   import MagmaticAlgebras
+                sage: C = MagmaticAlgebras(QQ).WithBasis().Unital()
+                sage: F = Foo(QQ,(1,),category=C)
+                sage: F(0)
+                0
+                sage: F(3)
+                3*B[0]
+
+                sage: class Bar(Parent):
+                ....:     _no_generic_basering_coercion = True
+                sage: Bar(category=Algebras(QQ))
+                doctest:warning...:
+                DeprecationWarning: the attribute _no_generic_basering_coercion is deprecated, implement _coerce_map_from_base_ring() instead
+                See http://trac.sagemath.org/19225 for details.
+                <__main__.Bar_with_category object at 0x...>
             """
-            # If self has an attribute _no_generic_basering_coercion
-            # set to True, then this declaration is skipped.
-            # This trick, introduced in #11900, is used in
-            # sage.matrix.matrix_space.py and
-            # sage.rings.polynomial.polynomial_ring.
-            # It will hopefully be refactored into something more
-            # conceptual later on.
             if getattr(self, '_no_generic_basering_coercion', False):
+                from sage.misc.superseded import deprecation
+                deprecation(19225, "the attribute _no_generic_basering_coercion is deprecated, implement _coerce_map_from_base_ring() instead")
                 return
 
             base_ring = self.base_ring()
@@ -102,11 +125,90 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 # We will not use any generic stuff, since a (presumably) better conversion
                 # has already been registered.
                 return
+            if base_ring is None:
+                # It may happen that self.base_ring() is not initialised at this point.
+                return
 
-            # This could be a morphism of Algebras(self.base_ring()); however, e.g., QQ is not in Algebras(QQ)
-            H = Hom(base_ring, self, Rings()) # TODO: non associative ring!
+            mor = self._coerce_map_from_base_ring()
+            if mor is not None:
+                mor._make_weak_references()
+                try:
+                    self.register_coercion(mor)
+                except AssertionError:
+                    pass
 
-            # We need to register a coercion from the base ring to self.
+        def _coerce_map_from_(self, other):
+            """
+            Return a coercion map from ``other`` to ``self``, or ``None``.
+
+            TESTS:
+
+            Check that :trac:`19225` is solved::
+
+                sage: A = cartesian_product((QQ['z'],)); A
+                The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                sage: A.coerce_map_from(ZZ)
+                Composite map:
+                  From: Integer Ring
+                  To:   The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                  Defn:   Natural morphism:
+                          From: Integer Ring
+                          To:   Rational Field
+                        then
+                          Generic morphism:
+                          From: Rational Field
+                          To:   The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                sage: A(1)
+                (1,)
+            """
+            if other is self.base_ring():
+                return self._coerce_map_from_base_ring()
+            else:
+                return self._coerce_map_via([self.base_ring()], other)
+
+        def _coerce_map_from_base_ring(self):
+            """
+            Return a suitable coercion map from the base ring of ``self``.
+
+            TESTS::
+
+                sage: A = cartesian_product((QQ['z'],)); A
+                The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+                sage: A.base_ring()
+                Rational Field
+                sage: A._coerce_map_from_base_ring()
+                Generic morphism:
+                From: Rational Field
+                To:   The Cartesian product of (Univariate Polynomial Ring in z over Rational Field,)
+
+            Check that :trac:`29312` is fixed::
+
+                sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
+                sage: F._coerce_map_from_base_ring()
+                Generic morphism:
+                  From: Rational Field
+                  To:   Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
+            """
+            base_ring = self.base_ring()
+
+            # Pick a homset for the morphism to live in...
+            if self in Rings():
+                # The algebra is associative, and thus a ring. The
+                # base ring is also a ring. Everything is OK.
+                H = Hom(base_ring, self, Rings())
+            else:
+                # If the algebra isn't associative, we would like to
+                # use the category of unital magmatic algebras (which
+                # are not necessarily associative) instead. But,
+                # unfortunately, certain important rings like QQ
+                # aren't in that category. As a result, we have to use
+                # something weaker.
+                cat = Magmas().Unital()
+                cat = Category.join([cat, CommutativeAdditiveGroups()])
+                cat = cat.Distributive()
+                H = Hom(base_ring, self, cat)
+
+            # We need to construct a coercion from the base ring to self.
             #
             # There is a generic method from_base_ring(), that just does
             # multiplication with the multiplicative unit. However, the
@@ -118,7 +220,8 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             # If there is a specialised from_base_ring(), then it should
             # be used unconditionally.
             generic_from_base_ring = self.category().parent_class.from_base_ring
-            if type(self).from_base_ring != generic_from_base_ring:
+            from_base_ring = self.from_base_ring   # bound method
+            if from_base_ring.__func__ != generic_from_base_ring:
                 # Custom from_base_ring()
                 use_from_base_ring = True
             if isinstance(generic_from_base_ring, lazy_attribute):
@@ -138,7 +241,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
 
             mor = None
             if use_from_base_ring:
-                mor = SetMorphism(function=self.from_base_ring, parent=H)
+                mor = SetMorphism(function=from_base_ring, parent=H)
             else:
                 # We have the multiplicative unit, so implement the
                 # coercion from the base ring as multiplying with that.
@@ -154,11 +257,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                         mor = SetMorphism(function=one._lmul_, parent=H)
                 except (NotImplementedError, AttributeError, TypeError):
                     pass
-            if mor is not None:
-                try:
-                    self.register_coercion(mor)
-                except AssertionError:
-                    pass
+            return mor
 
     class WithBasis(CategoryWithAxiom_over_base_ring):
 

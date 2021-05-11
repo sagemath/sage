@@ -1,4 +1,6 @@
 # distutils: libraries = flint
+# distutils: depends = flint/fmpq_poly.h
+
 #*****************************************************************************
 #          Copyright (C) 2010 Sebastian Pancratz <sfp@pancratz.org>
 #
@@ -13,7 +15,8 @@ from sage.libs.gmp.types cimport mpz_t, mpq_t
 from sage.libs.flint.types cimport *
 from sage.libs.flint.fmpz_vec cimport _fmpz_vec_max_limbs
 
-cdef extern from "flint/fmpq_poly.h":
+# flint/fmpq_poly.h
+cdef extern from "flint_wrap.h":
     # Memory management
     void fmpq_poly_init(fmpq_poly_t)
 

@@ -1,3 +1,4 @@
+# distutils: extra_compile_args = -D_XPG6
 """
 Flint imports
 
@@ -16,7 +17,6 @@ We verify that :trac:`6919` is correctly fixed::
     sage: a == b
     True
 """
-from __future__ import absolute_import
 
 # cimport all .pxd files to make sure they compile
 cimport sage.libs.flint.arith

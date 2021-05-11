@@ -10,23 +10,20 @@ AUTHORS:
 - Jeroen Demeyer (2013-03-17): add :class:`atomic_write`,
   see :trac:`14292`.
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun@stp.dias.ie>
 #       Copyright (C) 2012 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import io
 import os
 import tempfile
 import atexit
-import six
 
 
 def delete_tmpfiles():
@@ -153,59 +150,6 @@ def tmp_filename(name="tmp_", ext=""):
     return name
 
 
-def graphics_filename(ext='.png'):
-    """
-    Deprecated SageNB graphics filename
-
-    You should just use :meth:`tmp_filename`.
-
-    When run from the Sage notebook, return the next available canonical
-    filename for a plot/graphics file in the current working directory.
-    Otherwise, return a temporary file inside ``SAGE_TMP``.
-
-    INPUT:
-
-    - ``ext`` -- (default: ``".png"``) A file extension (including the dot)
-      for the filename.
-
-    OUTPUT:
-
-    The path of the temporary file created. In the notebook, this is
-    a filename without path in the current directory. Otherwise, this
-    an absolute path.
-
-    EXAMPLES::
-
-        sage: from sage.misc.temporary_file import graphics_filename
-        sage: print(graphics_filename())  # random, typical filename for sagenb
-        sage0.png
-
-    TESTS:
-
-    When doctesting, this returns instead a random temporary file.
-    We check that it's a file inside ``SAGE_TMP`` and that the extension
-    is correct::
-
-        sage: fn = graphics_filename(ext=".jpeg")
-        sage: fn.startswith(str(SAGE_TMP))
-        True
-        sage: fn.endswith('.jpeg')
-        True
-    """
-    import sage.plot.plot
-    if sage.plot.plot.EMBEDDED_MODE:
-        # Don't use this unsafe function except in the notebook, #15515
-        i = 0
-        while os.path.exists('sage%d%s'%(i,ext)):
-            i += 1
-        filename = 'sage%d%s'%(i,ext)
-        return filename
-    else:
-        from sage.misc.superseded import deprecation
-        deprecation(17234,'use tmp_filename instead')
-        return tmp_filename(ext=ext)
-
-
 #################################################################
 # write to a temporary file and move it in place
 #################################################################
@@ -220,7 +164,7 @@ class atomic_write(object):
 
     This is to be used in a ``with`` statement, where a temporary file
     is created when entering the ``with`` and is moved in place of the
-    target file when exiting the ``with`` (if no exceptions occured).
+    target file when exiting the ``with`` (if no exceptions occurred).
 
     INPUT:
 
@@ -397,7 +341,7 @@ class atomic_write(object):
         # 'binary' mode is the default on Python 2, whereas 'text' mode is the
         # default on Python 3--this reflects consistent handling of the default
         # str type on the two platforms
-        self.binary = six.PY2 if binary is None else binary
+        self.binary = False if binary is None else binary
         self.kwargs = kwargs
 
     def __enter__(self):

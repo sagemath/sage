@@ -1,2 +1,1 @@
-from __future__ import absolute_import
 from .finite_dimensional_algebra import FiniteDimensionalAlgebra

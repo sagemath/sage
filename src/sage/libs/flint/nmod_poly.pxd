@@ -1,9 +1,11 @@
 # distutils: libraries = flint
+# distutils: depends = flint/nmod_poly.h
 
 from sage.libs.gmp.types cimport *
 from sage.libs.flint.types cimport *
 
-cdef extern from "flint/nmod_poly.h":
+# flint/nmod_poly.h
+cdef extern from "flint_wrap.h":
     # Memory management
     cdef void nmod_poly_init(nmod_poly_t poly, mp_limb_t n)
     cdef void nmod_poly_init_preinv(nmod_poly_t poly, mp_limb_t n, mp_limb_t ninv)

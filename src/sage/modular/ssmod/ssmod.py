@@ -66,19 +66,18 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
-import math
-
 import sage.modular.hecke.all as hecke
-import sage.rings.all as rings
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.arith.all import kronecker, next_prime
 from sage.matrix.matrix_space import MatrixSpace
 from sage.modular.arithgroup.all import Gamma0
 from sage.libs.pari.all import pari
-from sage.misc.misc import verbose
 from sage.structure.richcmp import richcmp_method, richcmp
 
-ZZy = rings.PolynomialRing(rings.ZZ, 'y')
+ZZy = PolynomialRing(ZZ, 'y')
 
 
 def Phi2_quad(J3, ssJ1, ssJ2):
@@ -232,7 +231,7 @@ def dimension_supersingular_module(prime, level=1):
 
     - Iftikhar Burhanuddin - burhanud@usc.edu
     """
-    if not(rings.Integer(prime).is_prime()):
+    if not(Integer(prime).is_prime()):
         raise ValueError("%s is not a prime" % prime)
 
     if level == 1:
@@ -282,16 +281,16 @@ def supersingular_D(prime):
 
     - Iftikhar Burhanuddin - burhanud@usc.edu
     """
-    if not(rings.Integer(prime).is_prime()):
+    if not Integer(prime).is_prime():
         raise ValueError("%s is not a prime" % prime)
 
     # Making picking D more intelligent
     D = -1
     while True:
-        Dmod4 = rings.Mod(D, 4)
-        if Dmod4 in (0, 1) and (kronecker(D, prime) != 1):
+        Dmod4 = D % 4
+        if Dmod4 in (0, 1) and kronecker(D, prime) != 1:
             return D
-        D = D - 1
+        D -= 1
 
 
 def supersingular_j(FF):
@@ -333,9 +332,9 @@ def supersingular_j(FF):
     if not(FF.is_field()) or not(FF.is_finite()):
         raise ValueError("%s is not a finite field" % FF)
     prime = FF.characteristic()
-    if not(rings.Integer(prime).is_prime()):
+    if not(Integer(prime).is_prime()):
         raise ValueError("%s is not a prime" % prime)
-    if not(rings.Integer(FF.cardinality())) == rings.Integer(prime**2):
+    if not(Integer(FF.cardinality())) == Integer(prime**2):
         raise ValueError("%s is not a quadratic extension" % FF)
     if kronecker(-1, prime) != 1:
         j_invss = 1728                 # (2^2 * 3)^3
@@ -392,7 +391,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         ...
         NotImplementedError: supersingular modules of level > 1 not yet implemented
     """
-    def __init__(self, prime=2, level=1, base_ring=rings.IntegerRing()):
+    def __init__(self, prime=2, level=1, base_ring=ZZ):
         r"""
         Create a supersingular module.
 
@@ -408,7 +407,6 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         if level != 1:
             raise NotImplementedError("supersingular modules of level > 1 not yet implemented")
         self.__prime = prime
-        from sage.rings.all import FiniteField
         self.__finite_field = FiniteField(prime**2, 'a')
         self.__level = level
         self.__hecke_matrices = {}
@@ -491,7 +489,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0),
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1))
         """
-        return rings.ZZ**self.dimension()
+        return ZZ**self.dimension()
 
     def dimension(self):
         r"""
@@ -683,7 +681,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         # using dictionary for fast j-invariant look-up
         ss_points_dic = {jinv: pos}
 
-        T2_matrix = MatrixSpace(rings.Integers(), dim, sparse=True)(0)
+        T2_matrix = MatrixSpace(ZZ, dim, sparse=True)(0)
 
         while pos < len(ss_points):
             if pos == 0:
@@ -737,6 +735,8 @@ class SupersingularModule(hecke.HeckeModule_free_module):
         (There are 4 elliptic curves of conductor 37, but only 2 isogeny
         classes.)
         """
+        from sage.misc.verbose import verbose
+
         # NOTE: The heuristic runtime is *very* roughly `p^2/(2\cdot 10^6)`.
         # ellmax -- (default: 2) use Hecke operators T_ell with ell <= ellmax
         if p is None:
@@ -746,16 +746,16 @@ class SupersingularModule(hecke.HeckeModule_free_module):
             p = next_prime(p)
 
         ell = 2
-        t = self.hecke_matrix(ell).change_ring(rings.GF(p))
+        t = self.hecke_matrix(ell).change_ring(FiniteField(p))
 
         # TODO: temporarily try using sparse=False
         # turn this off when sparse rank is optimized.
         t = t.dense_matrix()
 
-        B = 2 * math.sqrt(ell)
+        B = ZZ(4 * ell).isqrt()
         bnd = 0
-        lower = -int(math.floor(B))
-        upper = int(math.floor(B)) + 1
+        lower = -B
+        upper = B + 1
         for a in range(lower, upper):
             tm = verbose("computing T_%s - %s" % (ell, a))
             if a == lower:
@@ -766,7 +766,7 @@ class SupersingularModule(hecke.HeckeModule_free_module):
                 t[i, i] += c
             tm = verbose("computing kernel", tm)
             # dim = t.kernel().dimension()
-            dim = t.nrows() - t.rank()
+            dim = t.nullity()
             bnd += dim
             verbose('got dimension = %s; new bound = %s' % (dim, bnd), tm)
         return bnd

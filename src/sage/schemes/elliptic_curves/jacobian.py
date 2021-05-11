@@ -40,7 +40,7 @@ relevant functionality::
 
 REFERENCES:
 
-..  [WpJacobianVariety] :wikipedia:`Jacobian_variety`
+- :wikipedia:`Jacobian_variety`
 """
 
 ##############################################################################

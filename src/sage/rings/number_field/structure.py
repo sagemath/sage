@@ -14,15 +14,15 @@ Both produce the same extension of `\QQ`. However, they should not be
 identical because `M` carries additional information::
 
     sage: L.structure()
-    (Identity endomorphism of Number Field in a with defining polynomial x^2 - 2,
-     Identity endomorphism of Number Field in a with defining polynomial x^2 - 2)
+    (Identity endomorphism of Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?,
+     Identity endomorphism of Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?)
     sage: M.structure()
     (Isomorphism given by variable name change map:
-      From: Number Field in a with defining polynomial x^2 - 2
-      To:   Number Field in a with defining polynomial x^2 - 2,
+       From: Number Field in a with defining polynomial x^2 - 2
+       To:   Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?,
      Isomorphism given by variable name change map:
-      From: Number Field in a with defining polynomial x^2 - 2
-      To:   Number Field in a with defining polynomial x^2 - 2)
+       From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+       To:   Number Field in a with defining polynomial x^2 - 2)
 
 This used to cause trouble with caching and made (absolute) number fields not
 unique when they should have been. The underlying technical problem is that the
@@ -42,7 +42,6 @@ structure morphisms::
     True
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2014 Julian Rueth <julian.rueth@fsfe.org>
 #
@@ -270,13 +269,13 @@ class RelativeFromAbsolute(NumberFieldStructure):
             sage: M.<b,a_> = K.relativize(-a)
             sage: M.structure() # indirect doctest
             (Relative number field morphism:
-             From: Number Field in b with defining polynomial x + a_ over its base field
-             To:   Number Field in a with defining polynomial x^2 - 2
-             Defn: -a_ |--> a
-                   a_ |--> -a, Ring morphism:
-             From: Number Field in a with defining polynomial x^2 - 2
-             To:   Number Field in b with defining polynomial x + a_ over its base field
-             Defn: a |--> -a_)
+               From: Number Field in b with defining polynomial x + a_ over its base field
+               To:   Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+               Defn: -a_ |--> a
+                     a_ |--> -a, Ring morphism:
+               From: Number Field in a with defining polynomial x^2 - 2 with a = 1.414213562373095?
+               To:   Number Field in b with defining polynomial x + a_ over its base field
+               Defn: a |--> -a_)
 
         """
         # other     field
@@ -293,9 +292,9 @@ class RelativeFromAbsolute(NumberFieldStructure):
         assert other_to_field(gen) == field(field.base_field().gen())
 
         # to go from right to left, we first define a map from Q(gen) to other
-        base_hom = field.base_field().hom([gen], other)
+        base_map = field.base_field().hom([gen], other)
         # and extend it to a map from field
-        field_to_other = field.Hom(other)([other.gen()], base_hom=base_hom, check=True)
+        field_to_other = field.Hom(other)([other.gen()], base_map=base_map, check=True)
 
         return field_to_other, other_to_field
 
@@ -372,12 +371,12 @@ class RelativeFromRelative(NumberFieldStructure):
         gf = g*f
         base = other.base_field()
         base_to_field = base.Hom(field)([h(gf(other.gen(1)))])
-        other_to_field = other.Hom(field)([h(gf(other.gen()))], base_hom=base_to_field)
+        other_to_field = other.Hom(field)([h(gf(other.gen()))], base_map=base_to_field)
 
         # And its inverse, essentially the same construction:
         f_g_ = f_*g_
         base = field.base_field()
         base_to_other = base.Hom(other)([f_g_(h_(field.gen(1)))])
-        field_to_other = field.Hom(other)([f_g_(h_(field.gen()))], base_hom=base_to_other)
+        field_to_other = field.Hom(other)([f_g_(h_(field.gen()))], base_map=base_to_other)
 
         return field_to_other, other_to_field

@@ -1,7 +1,7 @@
 r"""
 Schubert Polynomials
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,28 +13,28 @@ Schubert Polynomials
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.combinatorial_algebra import CombinatorialAlgebra
 from sage.categories.all import GradedAlgebrasWithBasis
 from sage.rings.all import Integer, PolynomialRing, ZZ
 from sage.rings.polynomial.multi_polynomial import is_MPolynomial
 from sage.combinat.permutation import Permutations, Permutation
 import sage.libs.symmetrica.all as symmetrica
+from sage.misc.cachefunc import cached_method
 
 
 def SchubertPolynomialRing(R):
     """
-    Returns the Schubert polynomial ring over ``R`` on the X basis
-    (i.e., the basis of the Schubert polynomials).
+    Return the Schubert polynomial ring over ``R`` on the X basis.
+
+    This is the basis made of the Schubert polynomials.
 
     EXAMPLES::
 
         sage: X = SchubertPolynomialRing(ZZ); X
         Schubert polynomial ring with X basis over Integer Ring
+        sage: TestSuite(X).run()
         sage: X(1)
         X[1]
         sage: X([1,2,3])*X([2,1,3])
@@ -49,26 +49,6 @@ def SchubertPolynomialRing(R):
     """
     return SchubertPolynomialRing_xbasis(R)
 
-def is_SchubertPolynomial(x):
-    """
-    Returns ``True`` if ``x`` is a Schubert polynomial, and
-    ``False`` otherwise.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.schubert_polynomial import is_SchubertPolynomial
-        sage: X = SchubertPolynomialRing(ZZ)
-        sage: a = 1
-        sage: is_SchubertPolynomial(a)
-        False
-        sage: b = X(1)
-        sage: is_SchubertPolynomial(b)
-        True
-        sage: c = X([2,1,3])
-        sage: is_SchubertPolynomial(c)
-        True
-    """
-    return isinstance(x, SchubertPolynomial_class)
 
 class SchubertPolynomial_class(CombinatorialFreeModule.Element):
     def expand(self):
@@ -110,12 +90,12 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
 
     def divided_difference(self, i, algorithm="sage"):
         r"""
-        Return the ``i``-th divided difference operator, applied to
-        ``self``.
+        Return the ``i``-th divided difference operator, applied to ``self``.
+
         Here, ``i`` can be either a permutation or a positive integer.
 
         INPUT:
-        
+
         - ``i`` -- permutation or positive integer
 
         - ``algorithm`` -- (default: ``'sage'``) either ``'sage'``
@@ -126,7 +106,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
 
         The result of applying the ``i``-th divided difference
         operator to ``self``.
-        
+
         If `i` is a positive integer, then the `i`-th divided
         difference operator `\delta_i` is the linear operator sending
         each polynomial `f = f(x_1, x_2, \ldots, x_n)` (in
@@ -215,7 +195,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             ...
             ValueError: cannot apply \delta_{0} to a (= X[3, 2, 4, 1])
         """
-        if not self: # if self is 0
+        if not self:  # if self is 0
             return self
         Perms = Permutations()
         if i in ZZ:
@@ -237,13 +217,13 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
                     n = len(pi)
                     if n <= i:
                         continue
-                    if pi[i-1] < pi[i]:
+                    if pi[i - 1] < pi[i]:
                         continue
-                    pi[i-1], pi[i] = pi[i], pi[i-1]
+                    pi[i - 1], pi[i] = pi[i], pi[i - 1]
                     pi = Perms(pi).remove_extra_fixed_points()
                     res_dict[pi] = coeff
                 return self.parent()._from_dict(res_dict)
-            else: # if algorithm == "symmetrica":
+            else:  # if algorithm == "symmetrica":
                 return symmetrica.divdiff_schubert(i, self)
         elif i in Perms:
             if algorithm == "sage":
@@ -258,23 +238,23 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
                         if n <= j:
                             next_pi = True
                             break
-                        if pi[j-1] < pi[j]:
+                        if pi[j - 1] < pi[j]:
                             next_pi = True
                             break
-                        pi[j-1], pi[j] = pi[j], pi[j-1]
+                        pi[j - 1], pi[j] = pi[j], pi[j - 1]
                     if next_pi:
                         continue
                     pi = Perms(pi).remove_extra_fixed_points()
                     res_dict[pi] = coeff
                 return self.parent()._from_dict(res_dict)
-            else: # if algorithm == "symmetrica":
+            else:  # if algorithm == "symmetrica":
                 return symmetrica.divdiff_perm_schubert(i, self)
         else:
             raise TypeError("i must either be an integer or permutation")
 
     def scalar_product(self, x):
         """
-        Returns the standard scalar product of ``self`` and ``x``.
+        Return the standard scalar product of ``self`` and ``x``.
 
         EXAMPLES::
 
@@ -294,14 +274,14 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             sage: c.expand(4)
             x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3 + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3 + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
         """
-        if is_SchubertPolynomial(x):
+        if isinstance(x, SchubertPolynomial_class):
             return symmetrica.scalarproduct_schubert(self, x)
         else:
             raise TypeError("x must be a Schubert polynomial")
 
     def multiply_variable(self, i):
         """
-        Returns the Schubert polynomial obtained by multiplying ``self``
+        Return the Schubert polynomial obtained by multiplying ``self``
         by the variable `x_i`.
 
         EXAMPLES::
@@ -322,9 +302,8 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
         else:
             raise TypeError("i must be an integer")
 
-# FIXME: inherit from CombinatorialFreeModule once the
-# coercion from ground ring is implemented in the category
-class SchubertPolynomialRing_xbasis(CombinatorialAlgebra):
+
+class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
 
     Element = SchubertPolynomial_class
 
@@ -338,13 +317,26 @@ class SchubertPolynomialRing_xbasis(CombinatorialAlgebra):
         """
         self._name = "Schubert polynomial ring with X basis"
         self._repr_option_bracket = False
-        self._one = Permutations()([1])
-        CombinatorialAlgebra.__init__(self, R, cc = Permutations(), category = GradedAlgebrasWithBasis(R))
-        self.print_options(prefix='X')
+        CombinatorialFreeModule.__init__(self, R, Permutations(),
+                                         category=GradedAlgebrasWithBasis(R),
+                                         prefix='X')
+
+    @cached_method
+    def one_basis(self):
+        """
+        Return the index of the unit of this algebra.
+
+        EXAMPLES::
+
+            sage: X = SchubertPolynomialRing(QQ)
+            sage: X.one()  # indirect doctest
+            X[1]
+        """
+        return self._indices([1])
 
     def _element_constructor_(self, x):
         """
-        Coerce x into self.
+        Coerce x into ``self``.
 
         EXAMPLES::
 
@@ -369,29 +361,40 @@ class SchubertPolynomialRing_xbasis(CombinatorialAlgebra):
             ValueError: The input [1, 2, 1] is not a valid permutation
         """
         if isinstance(x, list):
-            #checking the input to avoid symmetrica crashing Sage, see trac 12924
-            if not x in Permutations():
-                raise ValueError("The input %s is not a valid permutation"%(x))
+            # checking the input to avoid symmetrica crashing Sage, see trac 12924
+            if x not in Permutations():
+                raise ValueError("The input %s is not a valid permutation" % x)
             perm = Permutation(x).remove_extra_fixed_points()
-            return self._from_dict({ perm: self.base_ring().one() })
+            return self._from_dict({perm: self.base_ring().one()})
         elif isinstance(x, Permutation):
-            if not list(x) in Permutations():
-                raise ValueError("The input %s is not a valid permutation"%(x))
             perm = x.remove_extra_fixed_points()
-            return self._from_dict({ perm: self.base_ring().one() })
+            return self._from_dict({perm: self.base_ring().one()})
         elif is_MPolynomial(x):
             return symmetrica.t_POLYNOM_SCHUBERT(x)
         else:
             raise TypeError
 
-    def _multiply_basis(self, left, right):
+    def some_elements(self):
+        """
+        Return some elements.
+
+        EXAMPLES::
+
+            sage: X = SchubertPolynomialRing(QQ)
+            sage: X.some_elements()
+            [X[1], X[1] + 2*X[2, 1], -X[3, 2, 1] + X[4, 2, 1, 3]]
+        """
+        return [self.one(), self([1]) + 2 * self([2, 1]),
+                self([4, 2, 1, 3]) - self([3, 2, 1])]
+
+    def product_on_basis(self, left, right):
         """
         EXAMPLES::
 
             sage: p1 = Permutation([3,2,1])
             sage: p2 = Permutation([2,1,3])
             sage: X = SchubertPolynomialRing(QQ)
-            sage: X._multiply_basis(p1,p2)
-            {[4, 2, 1, 3]: 1}
+            sage: X.product_on_basis(p1,p2)
+            X[4, 2, 1, 3]
         """
-        return symmetrica.mult_schubert_schubert(left, right).monomial_coefficients()
+        return symmetrica.mult_schubert_schubert(left, right)

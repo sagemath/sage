@@ -164,7 +164,7 @@ TESTS::
     sage: M(9) = x                                          # optional - scilab
     Traceback (most recent call last):
     ...
-    SyntaxError: can't assign to function call (..., line 1)
+    SyntaxError: can...t assign to function call (..., line 1)
 
 AUTHORS:
 
@@ -186,8 +186,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##############################################################################
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 

@@ -17,7 +17,7 @@ REFERENCES:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
@@ -26,8 +26,8 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.homset import Hom
 from sage.categories.morphism import Morphism
@@ -253,9 +253,8 @@ class ContinuousMap(Morphism):
          topological manifold R^2 to the 2-dimensional topological manifold R^2
         sage: Phi.parent()
         Set of Morphisms from Open subset D of the 2-dimensional topological
-         manifold R^2 to 2-dimensional topological manifold R^2 in Join of
-         Category of subobjects of sets and Category of manifolds over Real
-         Field with 53 bits of precision
+         manifold R^2 to 2-dimensional topological manifold R^2 in Category of
+         manifolds over Real Field with 53 bits of precision
         sage: Phi.parent() is Hom(D, R2)
         True
         sage: Phi.display()
@@ -631,7 +630,9 @@ class ContinuousMap(Morphism):
 
             sage: M = Manifold(2, 'R^2', latex_name=r'\RR^2', structure='topological') # Euclidean plane
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates
-            sage: # A pi/3 rotation around the origin defined in Cartesian coordinates:
+
+        A pi/3 rotation around the origin defined in Cartesian coordinates::
+
             sage: rot = M.continuous_map(M, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                        name='R')
             sage: p = M.point((1,2), name='p')
@@ -902,9 +903,9 @@ class ContinuousMap(Morphism):
         self._restrictions_graph = {(self._domain, self._codomain): self}
         # dict. of known extensions of self on bigger domains,
         # including self, with pairs of domain codomain as keys.
-        # Its elements can be seen as incomming edges on a graph.
+        # Its elements can be seen as incoming edges on a graph.
         self._extensions_graph = {(self._domain, self._codomain): self}
-        # dict. of known restrictions of self on samller domains,
+        # dict. of known restrictions of self on smaller domains,
         # including self, with pairs of domain codomain as keys.
         # Its elements can be seen as outgoing edges on a graph.
 
@@ -959,6 +960,20 @@ class ContinuousMap(Morphism):
 
         EXAMPLES:
 
+        A simple reparamentrization::
+
+            sage: R.<t> = RealLine()
+            sage: I = R.open_interval(0, 2*pi)
+            sage: J = R.open_interval(2*pi, 6*pi)
+            sage: h = J.continuous_map(I, ((t-2*pi)/2,), name='h')
+            sage: h.display()
+            h: (2*pi, 6*pi) --> (0, 2*pi)
+               t |--> t = -pi + 1/2*t
+            sage: latex(h.display())
+            \begin{array}{llcl} h:& \left(2 \, \pi, 6 \, \pi\right) &
+             \longrightarrow & \left(0, 2 \, \pi\right) \\ & t & \longmapsto &
+             t = -\pi + \frac{1}{2} \, t \end{array}
+
         Standard embedding of the sphere `S^2` in `\RR^3`::
 
             sage: M = Manifold(2, 'S^2', structure='topological') # the 2-dimensional sphere S^2
@@ -980,7 +995,7 @@ class ContinuousMap(Morphism):
             Phi: S^2 --> R^3
             on V: (u, v) |--> (X, Y, Z) = (2*u/(u^2 + v^2 + 1), 2*v/(u^2 + v^2 + 1), -(u^2 + v^2 - 1)/(u^2 + v^2 + 1))
 
-        The LaTeX output::
+        The LaTeX output of that embedding is::
 
             sage: latex(Phi.display(c_xy, c_cart))
             \begin{array}{llcl} \Phi:& S^2 & \longrightarrow & \RR^3
@@ -1055,45 +1070,39 @@ class ContinuousMap(Morphism):
             r"""
             Helper function for :meth:`display`.
             """
-            from sage.misc.latex import latex
             try:
+                # get coordinate expression
                 coord_func = self.coord_functions(chart1, chart2)
                 expression = coord_func.expr()
-                coords1 = chart1[:]
-                if len(coords1) == 1:
-                    coords1 = coords1[0]
-                coords2 = chart2[:]
-                if len(coords2) == 1:
-                    coords2 = coords2[0]
-                if chart1._domain == self._domain:
-                    result._txt += "   "
-                    result._latex += " & "
-                else:
-                    result._txt += "on " + chart1._domain._name + ": "
-                    result._latex += r"\mbox{on}\ " + latex(chart1._domain) + \
-                                    r": & "
-                result._txt += repr(coords1) + " |--> "
-                result._latex += latex(coords1) + r"& \longmapsto & "
-                if chart2 == chart1:
-                    if len(expression) == 1:
-                        result._txt += repr(expression[0]) + "\n"
-                        result._latex += latex(coord_func[0]) + r"\\"
-                    else:
-                        result._txt += repr(expression) + "\n"
-                        result._latex += latex(coord_func) + r"\\"
-                else:
-                    if len(expression) == 1:
-                        result._txt += repr(coords2[0]) + " = " + \
-                                      repr(expression[0]) + "\n"
-                        result._latex += latex(coords2[0]) + " = " + \
-                                        latex(coord_func[0]) + r"\\"
-                    else:
-                        result._txt += repr(coords2) + " = " + \
-                                      repr(expression) + "\n"
-                        result._latex += latex(coords2) + " = " + \
-                                        latex(coord_func) + r"\\"
             except (TypeError, ValueError):
-                pass
+                return
+            # if that succeeds, proceed:
+            coords1 = chart1[:]
+            if len(coords1) == 1:
+                coords1 = coords1[0]
+            coords2 = chart2[:]
+            if len(coords2) == 1:
+                coords2 = coords2[0]
+            if len(expression) == 1:
+                expression = expression[0]
+                coord_func = coord_func[0]
+            if chart1._domain == self._domain:
+                result._txt += "   "
+                result._latex += " & "
+            else:
+                result._txt += "on " + chart1._domain._name + ": "
+                result._latex += r"\mbox{on}\ " + latex(chart1._domain) + \
+                                r": & "
+            result._txt += repr(coords1) + " |--> "
+            result._latex += latex(coords1) + r"& \longmapsto & "
+            if chart2 == chart1:
+                result._txt += repr(expression) + "\n"
+                result._latex += latex(coord_func) + r"\\"
+            else:
+                result._txt += repr(coords2) + " = " + \
+                              repr(expression) + "\n"
+                result._latex += latex(coords2) + " = " + \
+                                latex(coord_func) + r"\\"
 
         result = FormattedExpansion()
         if self._name is None:
@@ -1236,8 +1245,10 @@ class ContinuousMap(Morphism):
              - 8*U + V**3 + 4*V**2 - 8*V)/(4*(U - V))) on the Chart (M, (U, V))
 
         """
-        dom1 = self._domain; dom2 = self._codomain
-        def_chart1 = dom1._def_chart; def_chart2 = dom2._def_chart
+        dom1 = self._domain
+        dom2 = self._codomain
+        def_chart1 = dom1._def_chart
+        def_chart2 = dom2._def_chart
         if chart1 is None:
             chart1 = def_chart1
         if chart2 is None:
@@ -1258,7 +1269,8 @@ class ContinuousMap(Morphism):
                                          chart1.multifunction(*coord_functions)
                 return self._coord_expression[(chart1, chart2)]
             # Some change of coordinates must be performed
-            change_start = [] ; change_arrival = []
+            change_start = []
+            change_arrival = []
             for (ochart1, ochart2) in self._coord_expression:
                 if chart1 == ochart1:
                     change_arrival.append(ochart2)
@@ -1407,12 +1419,13 @@ class ContinuousMap(Morphism):
             sage: c_cart.<x,y> = M.chart() # Declaration of Cartesian coordinates
             sage: ch_spher_cart = c_spher.transition_map(c_cart,
             ....:                 [r*cos(ph), r*sin(ph)]) # relation to spherical coordinates
-            sage: ch_spher_cart.set_inverse(sqrt(x^2+y^2), atan2(y,x), verbose=True)
+            sage: ch_spher_cart.set_inverse(sqrt(x^2+y^2), atan2(y,x))
             Check of the inverse coordinate transformation:
-               r == r
-               ph == arctan2(r*sin(ph), r*cos(ph))
-               x == x
-               y == y
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+              x == x  *passed*
+              y == y  *passed*
+            NB: a failed report can reflect a mere lack of simplification.
             sage: rot.expr(c_cart, c_cart)
             (-1/2*sqrt(3)*y + 1/2*x, 1/2*sqrt(3)*x + 1/2*y)
 
@@ -1449,15 +1462,18 @@ class ContinuousMap(Morphism):
             sage: U = M.open_subset('U', coord_def={c_xy: (y!=0, x<0)}) # the complement of the segment y=0 and x>0
             sage: c_cart = c_xy.restrict(U) # Cartesian coordinates on U
             sage: c_spher.<r,ph> = U.chart(r'r:(0,+oo) ph:(0,2*pi):\phi') # spherical coordinates on U
-            sage: # Links between spherical coordinates and Cartesian ones:
+
+        Links between spherical coordinates and Cartesian ones::
+
             sage: ch_cart_spher = c_cart.transition_map(c_spher,
             ....:                                       [sqrt(x*x+y*y), atan2(y,x)])
-            sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph), verbose=True)
+            sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
             Check of the inverse coordinate transformation:
-               x == x
-               y == y
-               r == r
-               ph == arctan2(r*sin(ph), r*cos(ph))
+              x == x  *passed*
+              y == y  *passed*
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+            NB: a failed report can reflect a mere lack of simplification.
             sage: rot = U.continuous_map(U, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                        name='R')
             sage: rot.display(c_cart, c_cart)
@@ -1506,6 +1522,12 @@ class ContinuousMap(Morphism):
             sage: ch_cart_spher = c_cart.transition_map(c_spher,
             ....:                                       [sqrt(x*x+y*y), atan2(y,x)])
             sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
+            Check of the inverse coordinate transformation:
+              x == x  *passed*
+              y == y  *passed*
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+            NB: a failed report can reflect a mere lack of simplification.
             sage: rot = U.continuous_map(U, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                        name='R')
             sage: rot2 = copy(rot)
@@ -1579,12 +1601,13 @@ class ContinuousMap(Morphism):
         Cartesian ones::
 
             sage: ch_cart_spher = c_cart.transition_map(c_spher, [sqrt(x*x+y*y), atan2(y,x)])
-            sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph), verbose=True)
+            sage: ch_cart_spher.set_inverse(r*cos(ph), r*sin(ph))
             Check of the inverse coordinate transformation:
-               x == x
-               y == y
-               r == r
-               ph == arctan2(r*sin(ph), r*cos(ph))
+              x == x  *passed*
+              y == y  *passed*
+              r == r  *passed*
+              ph == arctan2(r*sin(ph), r*cos(ph))  **failed**
+            NB: a failed report can reflect a mere lack of simplification.
             sage: rot = U.continuous_map(U, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                        name='R')
             sage: rot.display(c_cart, c_cart)
@@ -1710,11 +1733,9 @@ class ContinuousMap(Morphism):
              from the Open subset U of the 2-dimensional topological manifold R^2
              to the 2-dimensional topological manifold R^2
             sage: Phi.restrict(U).parent()
-            Set of Morphisms
-             from Open subset U of the 2-dimensional topological manifold R^2
-             to 2-dimensional topological manifold R^2
-             in Join of Category of subobjects of sets
-                and Category of manifolds over Real Field with 53 bits of precision
+            Set of Morphisms from Open subset U of the 2-dimensional topological
+             manifold R^2 to 2-dimensional topological manifold R^2 in Category
+             of manifolds over Real Field with 53 bits of precision
             sage: Phi.domain()
             Open subset D of the 2-dimensional topological manifold R^2
             sage: Phi.restrict(U).domain()
@@ -1863,7 +1884,9 @@ class ContinuousMap(Morphism):
 
             sage: M = Manifold(2, 'R^2', latex_name=r'\RR^2', structure='topological')
             sage: c_cart.<x,y> = M.chart()
-            sage: # A pi/3 rotation around the origin:
+
+        A pi/3 rotation around the origin::
+
             sage: rot = M.homeomorphism(M, ((x - sqrt(3)*y)/2, (sqrt(3)*x + y)/2),
             ....:                       name='R')
             sage: rot.inverse()

@@ -1,7 +1,6 @@
 r"""
 Ambient lattices and ambient spaces
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2008-2009 Daniel Bump
 #       Copyright (C) 2008-2013 Nicolas M. Thiery <nthiery at users.sf.net>
@@ -14,8 +13,6 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from .weight_lattice_realizations import WeightLatticeRealizations
 from sage.rings.all import ZZ, QQ
 from sage.categories.homset import End
-
-import six
 
 
 class AmbientSpace(CombinatorialFreeModule):
@@ -104,10 +101,9 @@ class AmbientSpace(CombinatorialFreeModule):
             self._v0 = self([0,0,0,0,0, 0,1, 1])
             self._v1 = self([0,0,0,0,0,-2,1,-1])
 
-
     def _test_norm_of_simple_roots(self, **options):
         """
-        Tests that the norm of the roots is, up to an overal constant factor,
+        Test that the norm of the roots is, up to an overall constant factor,
         given by the symmetrizer of the Cartan matrix.
 
         .. SEEALSO:: :class:`TestSuite`
@@ -385,7 +381,7 @@ class AmbientSpaceElement(CombinatorialFreeModule.Element):
         lambdacheck_mc = lambdacheck._monomial_coefficients
 
         result = self.parent().base_ring().zero()
-        for t,c in six.iteritems(lambdacheck_mc):
+        for t,c in lambdacheck_mc.items():
             if t not in self_mc:
                 continue
             result += c*self_mc[t]

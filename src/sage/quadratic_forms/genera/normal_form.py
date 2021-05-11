@@ -77,15 +77,15 @@ AUTHORS:
 - Simon Brandhorst (2018-01): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Simon Branhdorst <sbrandhorst@web.de>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.all import Zp, ZZ, GF
 from sage.matrix.constructor import Matrix
@@ -124,6 +124,7 @@ def collect_small_blocks(G):
         block = copy(D.subdivision(i, i))
         blocks.append(block)
     return blocks
+
 
 def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     r"""
@@ -253,10 +254,10 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
 
     # continue with the non-degenerate part
     G = nondeg * G * nondeg.T * p**d
-    if precision == None:
+    if precision is None:
         # in Zp(2) we have to calculate at least mod 8 for things to make sense.
         precision = G.det().valuation(p) + 4
-    R = Zp(p, prec = precision, type = 'fixed-mod')
+    R = Zp(p, prec=precision, type='fixed-mod')
     G = G.change_ring(R)
     G.set_immutable() # is not changed during computation
     D = copy(G)    # is transformed into jordan form
@@ -291,7 +292,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
 
 def _find_min_p(G, cnt, lower_bound=0):
     r"""
-    Find smallest valuation below and right from ``cnt`` prefering the diagonal.
+    Find smallest valuation below and right from ``cnt`` preferring the diagonal.
 
     INPUT:
 
@@ -348,6 +349,7 @@ def _find_min_p(G, cnt, lower_bound=0):
                 min_j = j
                 minval = v
     return minval, min_i, min_j
+
 
 def _get_small_block_indices(G):
     r"""
@@ -591,7 +593,7 @@ def _jordan_odd_adic(G):
     # transformation matrix
     B = Matrix.identity(R, n)
 
-    # indices of the diagonal entrys which are already used
+    # indices of the diagonal entries which are already used
     cnt = 0
     minval = 0
     while cnt < n:
@@ -625,9 +627,10 @@ def _jordan_odd_adic(G):
             # the smallest valuation is now on the diagonal
     return D, B
 
+
 def _jordan_2_adic(G):
     r"""
-    Transform a symmetric matrix over the `2`-adic integers into jordan form.
+    Transform a symmetric matrix over the `2`-adic integers into Jordan form.
 
     Note that if the precision is too low, this method fails.
     The method is only tested for input over `\ZZ_2` of ``'type=fixed-mod'``.
@@ -675,7 +678,7 @@ def _jordan_2_adic(G):
     # transformation matrix
     B = Matrix.identity(R, n)
 
-    # indices of the diagonal entrys which are already used
+    # indices of the diagonal entries which are already used
     cnt = 0
     minval = None
     while cnt < n:
@@ -932,7 +935,7 @@ def _normalize_2x2(G):
         # Find a point of norm 2
         # solve: 2 == D[1,1]*x^2 + 2*D[1,0]*x + D[0,0]
         pol = (D[1,1]*x**2 + 2*D[1,0]*x + D[0,0]-2) // 2
-        # somehow else pari can get a hickup see `trac`:#24065
+        # somehow else pari can get a hickup see trac #24065
         pol = pol // pol.leading_coefficient()
         sol = pol.roots()[0][0]
         B[0, 1] = sol
@@ -945,7 +948,7 @@ def _normalize_2x2(G):
         if D[1, 1] != 2:
             v = vector([x, -2*x + 1])
             pol = (v*D*v - 2) // 2
-            # somehow else pari can get a hickup `trac`:#24065
+            # somehow else pari can get a hickup see trac #24065
             pol = pol // pol.leading_coefficient()
             sol = pol.roots()[0][0]
             B[1, :] = sol * B[0,:] + (-2*sol + 1)*B[1, :]
@@ -959,7 +962,7 @@ def _normalize_2x2(G):
         # Find a point representing 0
         # solve: 0 == D[1,1]*x^2 + 2*D[1,0]*x + D[0,0]
         pol = (D[1,1]*x**2 + 2*D[1,0]*x + D[0,0])//2
-        # somehow else pari can get a hickup, see  `trac`:#24065
+        # somehow else pari can get a hickup, see trac #24065
         pol = pol // pol.leading_coefficient()
         sol = pol.roots()[0][0]
         B[0,:] += sol*B[1, :]
@@ -974,6 +977,7 @@ def _normalize_2x2(G):
         assert D == Matrix(G.parent(), 2, 2, [0, 1, 1, 0]), "D2 \n %r" %D
     return B
 
+
 def _normalize_odd_2x2(G):
     r"""
     Normalize this `2` by `2` block.
@@ -986,7 +990,7 @@ def _normalize_odd_2x2(G):
     OUTPUT:
 
     - A transformation matrix ``B`` such that
-      ``B * G * B.T`` is the identiy matrix
+      ``B * G * B.T`` is the identity matrix
 
     EXAMPLES::
 
@@ -1121,7 +1125,7 @@ def _relations(G,n):
     OUTPUT:
 
     - square matrix ``B`` such that ``B * G * B.T`` is the right side of the
-      relation which consits of blocks of types `U`, `V`, `W` again
+      relation which consists of blocks of types `U`, `V`, `W` again
 
     EXAMPLES::
 
@@ -1375,7 +1379,7 @@ def _two_adic_normal_forms(G, partial=False):
     INPUT:
 
     - ``G`` -- block diagonal matrix with blocks of type `U`, `V`, `W`
-    - ``partial`` -- bool (defaul: ``False``)
+    - ``partial`` -- bool (default: ``False``)
 
     OUTPUT:
 
@@ -1474,12 +1478,17 @@ def _two_adic_normal_forms(G, partial=False):
         # We want type a or W = []
         # modify D[w,w] to go from type b to type a
         x = [len(V)] + [ZZ(mod(w.unit_part(),8)) for w in D[W,W].diagonal()]
-        x.sort()
-      # a = [[0,1], [2,3], [2,5], [0,7], [0,1,1], [1,2,3], [0,7,7], [0,1,7]]
-        b = [[0,5], [2,7], [1,2], [0,3], [0,1,5], [1,2,7], [0,3,7], [0,1,3]]
+        if len(x)==3 and x[1]>x[2]:
+            x[1],x[2] = x[2], x[1]
+        # the first entry of x is either
+        # 0 if there is no type V component or
+        # 2 if there is a single type V component
+      # a = [[0,1], [2,3], [2,5], [0,7], [0,1,1], [2,1,3], [0,7,7], [0,1,7]]
+        b = [[0,5], [2,7], [2,1], [0,3], [0,1,5], [2,1,7], [0,3,7], [0,1,3]]
         if x in b:
             w = W[-1]
-            if x == [3,7]:
+            if x == [0,3,7]:
+                # relation 10 should be applied to 3 to stay in homogeneous normal form
                 w = W[0]
             if len(UVm) > 0:
                 R = UVm[-2:] + [w]

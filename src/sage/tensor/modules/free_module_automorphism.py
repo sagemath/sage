@@ -16,25 +16,25 @@ Automorphisms of a free module of finite rank are implemented via the class
 AUTHORS:
 
 - Eric Gourgoulhon (2015): initial version
+- Michael Jung (2019): improve treatment of the identity element
 
 REFERENCES:
 
 - Chaps. 15, 24 of R. Godement: *Algebra* [God1968]_
 
 """
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
-from __future__ import absolute_import
-from six import itervalues
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.structure.element import MultiplicativeGroupElement
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
+
 
 class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
     r"""
@@ -243,7 +243,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         [1 3], [-1  0], [0 3]
         )
 
-    To get the result as an endomorphism, one has to explicitely convert it via
+    To get the result as an endomorphism, one has to explicitly convert it via
     the parent of endomorphisms, `\mathrm{End}(M)`::
 
         sage: s = End(M)(a+b) ; s
@@ -256,7 +256,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         True
 
     """
-    def __init__(self, fmodule, name=None, latex_name=None, is_identity=False):
+    def __init__(self, fmodule, name=None, latex_name=None):
         r"""
         TESTS::
 
@@ -287,21 +287,13 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: TestSuite(b).run()
 
         """
-        if is_identity:
-            if name is None:
-                name = 'Id'
-            if latex_name is None:
-                if name == 'Id':
-                    latex_name = r'\mathrm{Id}'
-                else:
-                    latex_name = name
         FreeModuleTensor.__init__(self, fmodule, (1,1), name=name,
                                   latex_name=latex_name,
                                   parent=fmodule.general_linear_group())
         # MultiplicativeGroupElement attributes:
         # - none
         # Local attributes:
-        self._is_identity = is_identity
+        self._is_identity = False # a priori
         self._inverse = None    # inverse automorphism not set yet
         self._matrices = {}
 
@@ -378,148 +370,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             self._inverse = None
         # and delete the matrices:
         self._matrices.clear()
-
-    def _new_comp(self, basis):
-        r"""
-        Create some (uninitialized) components of ``self`` in a given basis.
-
-        INPUT:
-
-        - ``basis`` -- basis of the free module on which ``self`` is defined
-
-        OUTPUT:
-
-        - an instance of :class:`~sage.tensor.modules.comp.Components` or,
-          if ``self`` is the identity, of the subclass
-          :class:`~sage.tensor.modules.comp.KroneckerDelta`
-
-        EXAMPLES::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
-            sage: e = M.basis('e')
-            sage: a = M.automorphism()
-            sage: a._new_comp(e)
-            2-indices components w.r.t. Basis (e_0,e_1,e_2) on the Rank-3 free
-             module M over the Integer Ring
-            sage: id = M.identity_map()
-            sage: id._new_comp(e)
-            Kronecker delta of size 3x3
-            sage: type(id._new_comp(e))
-            <class 'sage.tensor.modules.comp.KroneckerDelta'>
-
-        """
-        from .comp import KroneckerDelta
-        if self._is_identity:
-            fmodule = self._fmodule
-            return KroneckerDelta(fmodule._ring, basis,
-                                  start_index=fmodule._sindex,
-                                  output_formatter=fmodule._output_formatter)
-        return FreeModuleTensor._new_comp(self, basis)
-
-
-    def components(self, basis=None, from_basis=None):
-        r"""
-        Return the components of ``self`` w.r.t to a given module basis.
-
-        If the components are not known already, they are computed by the
-        tensor change-of-basis formula from components in another basis.
-
-        INPUT:
-
-        - ``basis`` -- (default: ``None``) basis in which the components are
-          required; if none is provided, the components are assumed to refer
-          to the module's default basis
-        - ``from_basis`` -- (default: ``None``) basis from which the
-          required components are computed, via the tensor change-of-basis
-          formula, if they are not known already in the basis ``basis``;
-          if none, a basis from which both the components and a change-of-basis
-          to ``basis`` are known is selected.
-
-        OUTPUT:
-
-        - components in the basis ``basis``, as an instance of the
-          class :class:`~sage.tensor.modules.comp.Components`,
-          or, for the identity automorphism, of the subclass
-          :class:`~sage.tensor.modules.comp.KroneckerDelta`
-
-        EXAMPLES:
-
-        Components of an automorphism on a rank-3 free `\ZZ`-module::
-
-            sage: M = FiniteRankFreeModule(ZZ, 3, name='M', start_index=1)
-            sage: e = M.basis('e')
-            sage: a = M.automorphism([[-1,0,0],[0,1,2],[0,1,3]], name='a')
-            sage: a.components(e)
-            2-indices components w.r.t. Basis (e_1,e_2,e_3) on the Rank-3 free
-             module M over the Integer Ring
-            sage: a.components(e)[:]
-            [-1  0  0]
-            [ 0  1  2]
-            [ 0  1  3]
-
-        Since e is the module's default basis, it can be omitted::
-
-            sage: a.components() is a.components(e)
-            True
-
-        A shortcut is ``a.comp()``::
-
-            sage: a.comp() is a.components()
-            True
-            sage: a.comp(e) is a.components()
-            True
-
-        Components in another basis::
-
-            sage: f1 = -e[2]
-            sage: f2 = 4*e[1] + 3*e[3]
-            sage: f3 = 7*e[1] + 5*e[3]
-            sage: f = M.basis('f', from_family=(f1,f2,f3))
-            sage: a.components(f)
-            2-indices components w.r.t. Basis (f_1,f_2,f_3) on the Rank-3 free
-             module M over the Integer Ring
-            sage: a.components(f)[:]
-            [  1  -6 -10]
-            [ -7  83 140]
-            [  4 -48 -81]
-
-        Some check of the above matrix::
-
-            sage: a(f[1]).display(f)
-            a(f_1) = f_1 - 7 f_2 + 4 f_3
-            sage: a(f[2]).display(f)
-            a(f_2) = -6 f_1 + 83 f_2 - 48 f_3
-            sage: a(f[3]).display(f)
-            a(f_3) = -10 f_1 + 140 f_2 - 81 f_3
-
-        Components of the identity map::
-
-            sage: id = M.identity_map()
-            sage: id.components(e)
-            Kronecker delta of size 3x3
-            sage: id.components(e)[:]
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
-            sage: id.components(f)
-            Kronecker delta of size 3x3
-            sage: id.components(f)[:]
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
-
-        """
-        if self._is_identity:
-            if basis is None:
-                basis = self._fmodule._def_basis
-            if basis not in self._components:
-                self._components[basis] = self._new_comp(basis)
-            return self._components[basis]
-        else:
-            return FreeModuleTensor.components(self, basis=basis,
-                                               from_basis=from_basis)
-
-    comp = components
 
     def set_comp(self, basis=None):
         r"""
@@ -621,10 +471,9 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: id.set_comp(e)
             Traceback (most recent call last):
             ...
-            TypeError: the components of the identity map cannot be changed
+            ValueError: the components of the identity map cannot be changed
 
-        Indeed, the components are automatically set by a call to
-        :meth:`comp`::
+        Indeed, the components are set automatically::
 
             sage: id.comp(e)
             Kronecker delta of size 3x3
@@ -633,14 +482,12 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
         """
         if self._is_identity:
-            raise TypeError("the components of the identity map cannot be " +
-                            "changed")
-        else:
-            return FreeModuleTensor.set_comp(self, basis=basis)
+            raise ValueError("the components of the identity map cannot be "
+                             "changed")
+        return FreeModuleTensor._set_comp_unsafe(self, basis=basis)
 
     def add_comp(self, basis=None):
         r"""
-
         Return the components of ``self`` w.r.t. a given module basis for
         assignment, keeping the components w.r.t. other bases.
 
@@ -656,7 +503,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         .. WARNING::
 
             If the automorphism has already components in other bases, it
-            is the user's responsability to make sure that the components
+            is the user's responsibility to make sure that the components
             to be added are consistent with them.
 
         OUTPUT:
@@ -696,10 +543,9 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
             sage: id.add_comp(e)
             Traceback (most recent call last):
             ...
-            TypeError: the components of the identity map cannot be changed
+            ValueError: the components of the identity map cannot be changed
 
-        Indeed, the components are automatically set by a call to
-        :meth:`comp`::
+        Indeed, the components are set automatically::
 
             sage: id.comp(e)
             Kronecker delta of size 3x3
@@ -708,10 +554,9 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
         """
         if self._is_identity:
-            raise TypeError("the components of the identity map cannot be " +
-                            "changed")
-        else:
-            return FreeModuleTensor.add_comp(self, basis=basis)
+            raise ValueError("the components of the identity map cannot be "
+                             "changed")
+        return FreeModuleTensor._add_comp_unsafe(self, basis=basis)
 
     def __call__(self, *arg):
         r"""
@@ -883,7 +728,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
             sage: ~a is a.inverse()
             True
-            sage: a^(-1) is a.inverse()
+            sage: (a)^(-1) is a.inverse()
             True
 
         The inverse of the identity map is of course itself::
@@ -894,23 +739,41 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
         and we have::
 
-            sage: a*a^(-1) == id
+            sage: a*(a)^(-1) == id
             True
-            sage: a^(-1)*a == id
+            sage: (a)^(-1)*a == id
             True
+
+        If the name could cause some confusion, a bracket is added around the
+        element before taking the inverse::
+
+            sage: c = M.automorphism(name='a^(-1)*b')
+            sage: c[e,:] = [[1,0,0],[0,-1,1],[0,2,-1]]
+            sage: c.inverse()
+            Automorphism (a^(-1)*b)^(-1) of the Rank-3 free module M over the
+             Integer Ring
+
         """
         from .comp import Components
         if self._is_identity:
             return self
         if self._inverse is None:
+            from sage.tensor.modules.format_utilities import is_atomic
             if self._name is None:
                 inv_name = None
             else:
-                inv_name = self._name  + '^(-1)'
+                if is_atomic(self._name, ['*']):
+                    inv_name = self._name + '^(-1)'
+                else:
+                    inv_name = '(' + self._name + ')^(-1)'
             if self._latex_name is None:
                 inv_latex_name = None
             else:
-                inv_latex_name = self._latex_name + r'^{-1}'
+                if is_atomic(self._latex_name, ['\\circ', '\\otimes']):
+                    inv_latex_name = self._latex_name + r'^{-1}'
+                else:
+                    inv_latex_name = r'\left(' + self._latex_name + \
+                                     r'\right)^{-1}'
             fmodule = self._fmodule
             si = fmodule._sindex
             nsi = fmodule._rank + si
@@ -945,7 +808,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         OUTPUT:
 
         - the automorphism resulting from the composition of ``other`` and
-        ``self.``
+          ``self``.
 
         EXAMPLES::
 
@@ -1224,7 +1087,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         self.matrix() # forces the update of the matrix in the module's default
                       # basis, to make sure that the dictionary self._matrices
                       # is not empty
-        return next(itervalues(self._matrices)).det() # pick a random value in the
+        return next(iter(self._matrices.values())).det() # pick a random value in the
                                                 # dictionary self._matrices
                                                 # and compute the determinant
 
@@ -1257,6 +1120,6 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
         self.matrix() # forces the update of the matrix in the module's default
                       # basis, to make sure that the dictionary self._matrices
                       # is not empty
-        return next(itervalues(self._matrices)).trace() # pick a random value in the
+        return next(iter(self._matrices.values())).trace() # pick a random value in the
                                                   # dictionary self._matrices
                                                   # and compute the trace

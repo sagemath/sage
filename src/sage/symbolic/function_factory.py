@@ -9,8 +9,6 @@ Factory for symbolic functions
 #  version 2 or any later version.  The full text of the GPL is available at:
 #                  https://www.gnu.org/licenses/
 ###############################################################################
-from __future__ import print_function
-from six import string_types
 
 from sage.symbolic.function import (SymbolicFunction, sfunctions_funcs,
                                     unpickle_wrapper)
@@ -338,7 +336,7 @@ def function(s, *args, **kwds):
         sage: E
         E
     """
-    if not isinstance(s, string_types):
+    if not isinstance(s, str):
         raise TypeError("expect string as first argument")
 
     # create the function

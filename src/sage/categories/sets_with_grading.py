@@ -1,20 +1,19 @@
 r"""
 Sets With a Grading
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010-2012 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
 from .category_types import Category
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
-from sage.sets.non_negative_integers import NonNegativeIntegers
+
 
 class SetsWithGrading(Category):
     r"""
@@ -60,7 +59,7 @@ class SetsWithGrading(Category):
         sage: N = SetsWithGrading().example(); N
         Non negative integers
         sage: N.category()
-        Category of facade sets with grading
+        Category of facade infinite sets with grading
         sage: N.grading_set()
         Non negative integers
 
@@ -69,12 +68,11 @@ class SetsWithGrading(Category):
         sage: N.grading(4)
         4
 
-    The graded component `S_i` is the set of all integer partitions of
-    `i`::
+    The graded component `N_i` is the set with one element `i`::
 
-        sage: N.graded_component(grade = 5)
+        sage: N.graded_component(grade=5)
         {5}
-        sage: N.graded_component(grade = 42)
+        sage: N.graded_component(grade=42)
         {42}
 
     Here are some information about this category::
@@ -129,9 +127,9 @@ class SetsWithGrading(Category):
             for grade in self.grading_set().some_elements():
                 G = self.graded_component(grade)
                 if self in EnumeratedSets():
-                    tester.assertTrue(G in EnumeratedSets())
+                    tester.assertIn(G, EnumeratedSets())
                 else:
-                    tester.assertTrue(G in Sets())
+                    tester.assertIn(G, Sets())
                 for elt in G.some_elements():
                     tester.assertEqual(self.grading(elt), grade)
 
@@ -145,6 +143,7 @@ class SetsWithGrading(Category):
                 sage: SetsWithGrading().example().grading_set()
                 Non negative integers
             """
+            from sage.sets.non_negative_integers import NonNegativeIntegers
             return NonNegativeIntegers()
 
         # TODO:

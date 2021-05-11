@@ -251,7 +251,6 @@ copy of the integers::
 #                  http://www.gnu.org/licenses/
 #
 #*****************************************************************************
-from six.moves import range
 
 import copy
 
@@ -259,7 +258,6 @@ from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
-from sage.misc.latex import latex
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1550,7 +1548,7 @@ class SimplicialSet_arbitrary(Parent):
             d = sigma.dimension()
             ans.update([sigma.apply_degeneracies(*_)
                         for _ in all_degeneracies(d, n-d)])
-        return sorted(list(ans))
+        return sorted(ans)
 
     def _map_from_empty_set(self):
         """
@@ -3534,7 +3532,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         for dim in range(self.dimension(), 0, -1):
             for sigma in self.n_cells(dim):
                 faces.update([tau.nondegenerate() for tau in self.faces(sigma)])
-        return sorted(list(set(self.nondegenerate_simplices()).difference(faces)))
+        return sorted(set(self.nondegenerate_simplices()).difference(faces))
 
     def f_vector(self):
         """

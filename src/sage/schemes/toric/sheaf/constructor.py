@@ -4,7 +4,6 @@ Construct sheaves on toric varieties
 A toric vector bundle (on a toric variety) is a vector bundle that is
 equivariant with respect to the algebraic torus action.
 """
-from __future__ import absolute_import
 
 
 #*****************************************************************************

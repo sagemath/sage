@@ -570,7 +570,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
               Open subset V of the 2-dimensional topological manifold M]]
 
         """
-        return self._open_covers
+        return list(self._open_covers)
 
     def subsets(self):
         r"""
@@ -1095,6 +1095,15 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: M.union(a) is M
             True
 
+        TESTS:
+
+        Check that :trac:`30401` is fixed::
+
+            sage: d = a.subset('D')
+            sage: e = a.subset('E')
+            sage: d.union(e).is_subset(a)
+            True
+
         """
         if other._manifold != self._manifold:
             raise ValueError("the two subsets do not belong to the same manifold")
@@ -1125,6 +1134,10 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             res._top_subsets.add(other)
             for sd in other._subsets:
                 sd._supersets.add(res)
+            for sp in self._supersets:
+                if sp in other._supersets:
+                    sp._subsets.add(res)
+                    res._supersets.add(sp)
             if res._is_open:
                 for chart in other._atlas:
                     if chart not in res._atlas:

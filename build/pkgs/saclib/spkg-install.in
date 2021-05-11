@@ -1,0 +1,16 @@
+cd src
+
+saclib=$(pwd -P)
+export saclib
+bin/sconf && bin/mkproto && bin/mkmake && bin/mklib all
+if [ $? -ne 0 ]; then
+   echo >&2 "Error building saclib."
+   exit 1
+fi
+
+
+# install saclib to the Sage tree
+cd ..
+rm -rf $SAGE_LOCAL/lib/saclib
+mv src $SAGE_LOCAL/lib/saclib
+

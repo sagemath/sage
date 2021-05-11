@@ -20,7 +20,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function
 
 # To do: implement morphisms of cubical complexes, with methods
 #   - domain

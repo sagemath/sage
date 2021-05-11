@@ -123,10 +123,7 @@ AUTHORS:
 ########################################################################
 
 # just used for handy .load, .save, etc.
-from __future__ import print_function, absolute_import
-from six.moves import range
-from six import integer_types
-
+import sys
 import inspect
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
@@ -136,6 +133,7 @@ from . import partition
 from sage.rings.integer import Integer as Integer_class
 
 Integer = ZZ
+
 
 class SloaneSequence(SageObject):
     r"""
@@ -227,7 +225,7 @@ class SloaneSequence(SageObject):
             ...
             ValueError: input n (=0) must be a positive integer
         """
-        if not isinstance(n, integer_types + (Integer_class,)):
+        if not isinstance(n, (int, Integer_class)):
             raise TypeError("input must be an int or Integer")
         m = ZZ(n)
         if m < self.offset:
@@ -321,7 +319,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
 from sage.combinat import combinat
 from sage.misc.all import prod
-import sage.interfaces.gap as gap
+
 
 # This one should be here!
 class A000001(SloaneSequence):
@@ -384,9 +382,10 @@ class A000001(SloaneSequence):
             GAPError: Error, the library of groups of size 5000 is not available
         """
         if n <= 50:
-            return self._small[n-1]
+            return self._small[n - 1]
         from sage.libs.gap.libgap import libgap
         return Integer(libgap.NumberSmallGroups(n))
+
 
 class A000027(SloaneSequence):
     def __init__(self):
@@ -6752,10 +6751,10 @@ class A002275(SloaneSequence):
 
 
 
-# inhomogenous second order recurrences
+# inhomogeneous second order recurrences
 def recur_gen2b(a0,a1,a2,a3,b):
     r"""
-    inhomogenous second-order linear recurrence generator with fixed
+    inhomogeneous second-order linear recurrence generator with fixed
     coefficients and `b = f(n)`
 
     `a(0) = a0`, `a(1) = a1`,
@@ -9693,9 +9692,9 @@ class Sloane(SageObject):
         try:
             return self.__trait_names
         except AttributeError:
-            import sage.combinat.sloane_functions
-            xs = inspect.getmembers(sage.combinat.sloane_functions, inspect.isclass)
-            self.__trait_names = [ n for (n, c) in xs if n.startswith('A') and issubclass(c, SloaneSequence) ]
+            xs = inspect.getmembers(sys.modules[__name__], inspect.isclass)
+            self.__trait_names = [n for n, c in xs
+                                  if n.startswith('A') and issubclass(c, SloaneSequence)]
             return self.__trait_names
 
     def __getattribute__(self, name):
@@ -9724,8 +9723,7 @@ class Sloane(SageObject):
             return SageObject.__getattribute__(self, name)
         except AttributeError:
             try:
-                import sage.combinat.sloane_functions
-                f = getattr(sage.combinat.sloane_functions, name)
+                f = getattr(sys.modules[__name__], name)
                 seq = f()
                 setattr(self, name, seq)
                 return seq

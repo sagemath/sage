@@ -2,8 +2,6 @@
 Installing shortcut scripts
 """
 
-from __future__ import print_function
-from __future__ import absolute_import
 import os
 
 def install_scripts(directory=None, ignore_existing=False):
@@ -22,10 +20,8 @@ def install_scripts(directory=None, ignore_existing=False):
     - 'R' runs R
     - 'singular' runs Singular
     - 'sqlite3' runs SQLite version 3
-    - 'kash' runs Kash if it is installed (Kash is an optional Sage
-      package)
-    - 'M2' runs Macaulay2 if it is installed (Macaulay2 is an
-      experimental Sage package)
+    - 'kash' runs Kash if it is installed
+    - 'M2' runs Macaulay2 if it is installed
 
     This command:
 
@@ -86,15 +82,15 @@ def install_scripts(directory=None, ignore_existing=False):
         return
 
     if not os.path.exists(directory):
-        print("Error: '{}' does not exist.".format(directory))
+        print(f"Error: '{directory}' does not exist.")
         return
 
     if not os.path.isdir(directory):
-        print("Error: '{}' is not a directory.".format(directory))
+        print(f"Error: '{directory}' is not a directory.")
         return
 
     if not (os.access(directory, os.W_OK) and os.access(directory, os.X_OK)):
-        print("Error: you do not have write permission for '{}'.".format(directory))
+        print(f"Error: you do not have write permission for '{directory}'.")
         return
 
     from sage.misc.sage_ostools import have_program
@@ -107,39 +103,38 @@ def install_scripts(directory=None, ignore_existing=False):
     PATH = os.environ['PATH'].split(os.pathsep)
     PATH = [d for d in PATH if os.path.exists(d)]
     dir_in_path = any(os.path.samefile(directory, d) for d in PATH)
-    PATH = os.pathsep.join([d for d in PATH if not
-                            os.path.samefile(d, SAGE_BIN)])
+    PATH = os.pathsep.join(d for d in PATH
+                           if not os.path.samefile(d, SAGE_BIN))
     for cmd in ['gap', 'gp', 'hg', 'ipython', 'maxima',
-              'mwrank', 'R', 'singular', 'sqlite3', 'M2', 'kash']:
-        print("Checking that Sage has the command '{}' installed".format(cmd))
+                'mwrank', 'R', 'singular', 'sqlite3', 'M2', 'kash']:
+        print(f"Checking that Sage has the command '{cmd}' installed")
         # Check to see if Sage includes cmd.
         cmd_inside_sage = have_program(cmd, path=SAGE_BIN)
-        cmd_outside_sage = have_program(cmd, path=PATH)
         if not cmd_inside_sage:
-            print("The command '{}' is not available as part ".format(cmd)
-                   + "of Sage; not creating script.")
+            print(f"The command '{cmd}' is not available as part of Sage; " +
+                  "not creating script.")
             print()
             continue
+        cmd_outside_sage = have_program(cmd, path=PATH)
         if cmd_outside_sage:
-            print("The command '{}' is installed outside of Sage;".format(cmd), end=' ')
+            print(f"The command '{cmd}' is installed outside of Sage;", end=' ')
             if not ignore_existing:
                 print("not creating script.")
                 print()
                 continue
             print("trying to create script anyway...")
         else:
-            print("Creating script for '{}'...".format(cmd))
+            print(f"Creating script for '{cmd}'...")
         # Install shortcut.
         target = os.path.join(directory, cmd)
         if os.path.exists(target):
-            print("The file '{}' already exists; not adding script.".format(target))
+            print(f"The file '{target}' already exists; not adding script.")
         else:
-            o = open(target,'w')
-            o.write('#!/bin/sh\n')
-            o.write('exec sage --%s "$@"\n'%cmd)
-            o.close()
-            print("Created script '{}'".format(target))
-            os.system('chmod a+rx {}'.format(target))
+            with open(target, 'w') as o:
+                o.write('#!/bin/sh\n')
+                o.write('exec sage --%s "$@"\n' % cmd)
+            print(f"Created script '{target}'")
+            os.system(f'chmod a+rx {target}')
             script_created = True
         print()
 

@@ -1,5 +1,5 @@
 r"""
-The set `\mathbb{P}^1(K)` of cusps of a number field K
+The set `\mathbb{P}^1(K)` of cusps of a number field `K`
 
 AUTHORS:
 
@@ -70,7 +70,6 @@ List representatives for Gamma_0(N) - equivalence classes of cusps::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six import integer_types
 
 from sage.structure.parent import Parent
 from sage.structure.element import Element, is_InfinityElement
@@ -454,7 +453,7 @@ class NFCusp(Element):
             elif is_InfinityElement(a):
                 self.__a = R.one()
                 self.__b = R.zero()
-            elif isinstance(a, integer_types):
+            elif isinstance(a, int):
                 self.__a = R(a)
                 self.__b = R.one()
             elif isinstance(a, (tuple, list)):
@@ -510,7 +509,7 @@ class NFCusp(Element):
                 self.__a = R.zero()
                 self.__b = R.one()
                 return
-            if (b in R or isinstance(b, integer_types)) and (a in R or isinstance(a, integer_types)):
+            if (b in R or isinstance(b, int)) and (a in R or isinstance(a, int)):
                 self.__a = R(a)
                 self.__b = R(b)
             else:
@@ -526,7 +525,7 @@ class NFCusp(Element):
                         self.__b = R.zero()
                         return
                     r = a.__a / (a.__b * b)
-                elif isinstance(a, integer_types):
+                elif isinstance(a, int):
                     r = R(a) / b
                 elif isinstance(a, (tuple, list)):
                     if len(a) != 2:
@@ -1100,7 +1099,7 @@ def number_of_Gamma0_NFCusps(N):
 
     OUTPUT:
 
-    ingeter -- the number of orbits of cusps under Gamma0(N)-action.
+    integer -- the number of orbits of cusps under Gamma0(N)-action.
 
     EXAMPLES::
 

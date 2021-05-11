@@ -1,8 +1,8 @@
 r"""
-Cyclic Code
+Cyclic code
 
 Let `F` be a field. A `[n, k]` code `C` over `F` is called cyclic if every
-cyclic shift of a codeword is also a codeword [R06]_:
+cyclic shift of a codeword is also a codeword [Rot2006]_:
 
     .. MATH::
 
@@ -20,13 +20,6 @@ This polynomial is called the generator polynomial of `C`.
 
 For now, only single-root cyclic codes (i.e. whose length `n` and field order
 `q` are coprimes) are implemented.
-
-
-REFERENCES:
-
-    .. [R06] Ron Roth, Introduction to Coding Theory,
-       Cambridge University Press, 2006
-
 
 TESTS:
 
@@ -826,7 +819,7 @@ class CyclicCode(AbstractLinearCode):
             sage: all(r in CC for r in C.generator_matrix())
             True
         """
-        from .bch import BCHCode
+        from .bch_code import BCHCode
         delta, params = self.bch_bound(arithmetic=True)
         return BCHCode(self.base_field(), self.length(), delta,
                        offset=params[1], jump_size=params[0])

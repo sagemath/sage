@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-sage-trac:
 
 ====================
@@ -5,7 +7,7 @@ The Sage Trac Server
 ====================
 
 All changes to Sage source code have to go through the `Sage Trac
-development server <http://trac.sagemath.org>`_. The purpose
+development server <https://trac.sagemath.org>`_. The purpose
 of the Sage trac server is to
 
 1. Provide a place for discussion on issues and store a permanent
@@ -15,7 +17,7 @@ of the Sage trac server is to
 
 3. Link these two together.
 
-There is also a `wiki <http://trac.sagemath.org/wiki>`_ for more general
+There is also a `wiki <https://trac.sagemath.org/wiki>`_ for more general
 organizational web pages, like Sage development workshops.
 
 Thus if you find a bug in Sage, if you have new code to submit, want
@@ -23,7 +25,7 @@ to review new code already written but not yet included in Sage, or if
 you have corrections for the documentation, you should post on the
 trac server. Items on the server are called *tickets*, and anyone may
 search or browse the tickets. For a list of recent changes, just visit
-the `Sage trac timeline <http://trac.sagemath.org/timeline>`_.
+the `Sage trac timeline <https://trac.sagemath.org/timeline>`_.
 
 .. _section-trac-account:
 
@@ -129,7 +131,7 @@ Linking your Public Key to your Trac Account
 The Sage trac server needs to know one of your public keys. You can
 upload it in the preferences, that is
 
-1. Go to http://trac.sagemath.org
+1. Go to https://trac.sagemath.org
 
 2. Log in with your trac username/password
 
@@ -172,14 +174,14 @@ If you think you have found a bug in Sage, here is the procedure:
 - Search through our Google groups for postings related to your possible bug (it
   may have been fixed/reported already):
 
-  * ``sage-devel``: `<http://groups.google.com/group/sage-devel>`_
-  * ``sage-support``: `<http://groups.google.com/group/sage-support>`_
+  * ``sage-devel``: `<https://groups.google.com/group/sage-devel>`_
+  * ``sage-support``: `<https://groups.google.com/group/sage-support>`_
 
   Similarly, you can search :ref:`chapter-sage-trac` to see if anyone else has
   opened a ticket about your bug.
 
 - If you do not find anything, and you are not sure that you have found a bug,
-  ask about it on `sage-devel <http://groups.google.com/group/sage-devel>`_. A
+  ask about it on `sage-devel <https://groups.google.com/group/sage-devel>`_. A
   bug report should contain:
 
   - An explicit and **reproducible example** illustrating your bug (and/or the
@@ -348,7 +350,9 @@ This second ticket does not fix the problem but adds a warning that will be
 printed whenever anyone uses the relevant code. This, until the problem is
 finally fixed.
 
-To produce the warning message, use code like the following::
+To produce the warning message, use code like the following:
+
+.. CODE-BLOCK:: python
 
     from sage.misc.stopgap import stopgap
     stopgap("This code contains bugs and may be mathematically unreliable.",
@@ -376,8 +380,8 @@ code, uploading them to the Sage trac server, and finally putting your
 new branch on the trac ticket. The following are some other relevant
 issues:
 
-* The Patch buildbot wil automatically test your ticket. See `the
-  patchbot wiki <http://wiki.sagemath.org/buildbot>`_ for more
+* The Patch buildbot will automatically test your ticket. See `the
+  patchbot wiki <https://wiki.sagemath.org/buildbot>`_ for more
   information about its features and limitations. Make sure that you
   look at the log, especially if the patch buildbot did not give you
   the green blob.

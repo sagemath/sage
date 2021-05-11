@@ -3,23 +3,19 @@ Elliptic curves with congruent mod-5 representation
 
 AUTHORS:
 
-- Alice Silverberg and Karl Rubin (original PARI/GP version)
+- Alice Silverberg and Karl Rubin -- original PARI/GP version
 
-- William Stein -- Sage version.
-
+- William Stein -- Sage version
 """
-from __future__ import absolute_import
-
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.rings.all import PolynomialRing, QQ, FractionField
-from sage.arith.all import lcm
+from sage.rings.all import PolynomialRing, QQ
 from .constructor import EllipticCurve
 
 
@@ -100,13 +96,8 @@ def mod5family(a, b):
           4759216128*J**5 + 315623485440*J**6 + 471904911360*J**7 - 2600529297408*J**8 + 8916100448256*J**9)
 
     R = PolynomialRing(QQ, 't')
-    b4 = a * R(alpha)
-    b6 = b * R(beta)
-
-    c2 = b4
-    c3 = b6
-    d = lcm(c2.denominator(), c3.denominator())
-    F = FractionField(R)
-
-    E = EllipticCurve(F, [c2*d**4, c3*d**6])
-    return E
+    c2 = a * R(alpha)
+    c3 = b * R(beta)
+    d = c2.denominator().lcm(c3.denominator())
+    F = R.fraction_field()
+    return EllipticCurve(F, [c2 * d**4, c3 * d**6])

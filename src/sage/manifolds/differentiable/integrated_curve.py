@@ -6,20 +6,21 @@ Given a differentiable manifold `M`, an *integrated curve* in `M`
 is a differentiable curve constructed as a solution to a system of
 second order differential equations.
 
-Integrated curves are implemented by :class:`IntegratedCurve`, which the
-classes :class:`IntegratedAutoparallelCurve` and
+Integrated curves are implemented by the class :class:`IntegratedCurve`, from
+which the classes :class:`IntegratedAutoparallelCurve` and
 :class:`IntegratedGeodesic` inherit.
 
-.. RUBRIC:: Examples: A geodesic in hyperbolic Poincaré half-plane
+.. RUBRIC:: Example: a geodesic in the hyperbolic plane
 
-First declare a chart over the Poincaré half-plane::
+First declare the hyperbolic plane as a 2-dimensional Riemannian manifold ``M``
+and introduce the chart ``X`` corresponding to the Poincaré half-plane model::
 
-    sage: M = Manifold(2, 'M')
+    sage: M = Manifold(2, 'M', structure='Riemannian')
     sage: X.<x,y> = M.chart('x y:(0,+oo)')
 
-Then declare the hyperbolic Poincaré metric::
+Then set the metric to be the hyperbolic one::
 
-    sage: g = M.metric('g')
+    sage: g = M.metric()
     sage: g[0,0], g[1,1] = 1/y^2, 1/y^2
     sage: g.display()
     g = y^(-2) dx*dx + y^(-2) dy*dy
@@ -31,31 +32,31 @@ Pick an initial point and an initial tangent vector::
     sage: v.display()
     v = d/dx + 3/2 d/dy
 
-Declare a geodesic with such initial conditions, denoting ``t`` the
+Declare a geodesic with such initial conditions, denoting by `t` the
 corresponding affine parameter::
 
     sage: t = var('t')
     sage: c = M.integrated_geodesic(g, (t, 0, 10), v, name='c')
 
-Numerically integrate the geodesic::
+Numerically integrate the geodesic (see :meth:`~IntegratedCurve.solve` for
+all possible options, including the choice of the numerical algorithm)::
 
     sage: sol = c.solve()
 
-Plot the geodesic after interpolating the solution ``sol``, since it is
-required to plot::
+Plot the geodesic after interpolating the solution ``sol``::
 
     sage: interp = c.interpolate()
     sage: graph = c.plot_integrated()
-    sage: p_plot = p.plot(size=30, label_offset=0.07, fontsize=20)
+    sage: p_plot = p.plot(size=30, label_offset=-0.07, fontsize=20)
     sage: v_plot = v.plot(label_offset=0.05, fontsize=20)
     sage: graph + p_plot + v_plot
     Graphics object consisting of 5 graphics primitives
 
 .. PLOT::
 
-    M = Manifold(2, 'M')
+    M = Manifold(2, 'M', structure='Riemannian')
     X = M.chart('x y'); x, y = X[:]
-    g = M.metric('g')
+    g = M.metric()
     g[0,0], g[1,1] = 1/y**2, 1/y**2
     p = M((0,1), name='p')
     v = M.tangent_space(p)((1,3/2), name='v')
@@ -64,9 +65,29 @@ required to plot::
     sol = c.solve()
     interp = c.interpolate()
     graph = c.plot_integrated()
-    p_plot = p.plot(size=30, label_offset=0.07, fontsize=20)
+    p_plot = p.plot(size=30, label_offset=-0.07, fontsize=20)
     v_plot = v.plot(label_offset=0.05, fontsize=20)
     sphinx_plot(graph + p_plot + v_plot)
+
+`c` is a differentiable curve in `M` and inherits from the properties of
+:class:`~sage.manifolds.differentiable.curve.DifferentiableCurve`::
+
+    sage: c.domain()
+    Real interval (0, 10)
+    sage: c.codomain()
+    2-dimensional Riemannian manifold M
+    sage: c.display()
+    c: (0, 10) --> M
+
+In particular, its value at `t=1` is::
+
+    sage: c(1)
+    Point on the 2-dimensional Riemannian manifold M
+
+which corresponds to the following `(x, y)` coordinates::
+
+    sage: X(c(1))  # abs tol 1e-12
+    (2.4784140715580136, 1.5141683866138937)
 
 AUTHORS:
 
@@ -76,16 +97,15 @@ AUTHORS:
 
 """
 
-#***********************************************************************
+# **********************************************************************
 #       Copyright (C) 2017 Karim Van Aelst <karim.van-aelst@obspm.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#***********************************************************************
+#                  https://www.gnu.org/licenses/
+# **********************************************************************
 
-from __future__ import print_function
 from sage.symbolic.expression import Expression
 from sage.rings.infinity import Infinity
 from sage.calculus.desolvers import desolve_system_rk4
@@ -210,7 +230,7 @@ class IntegratedCurve(DifferentiableCurve):
         sage: sol = c.solve(step=0.2,
         ....:         parameters_values={B_0:1, m:1, q:1, L:10, T:1},
         ....:         solution_key='carac time 1', verbose=True)
-        Performing numerical integration with method 'rk4_maxima'...
+        Performing numerical integration with method 'odeint'...
         Numerical integration completed.
         <BLANKLINE>
         Checking all points are in the chart domain...
@@ -235,7 +255,7 @@ class IntegratedCurve(DifferentiableCurve):
         sage: p
         Point on the 3-dimensional differentiable manifold M
         sage: p.coordinates()     # abs tol 1e-12
-        (1.3776707219621374, -0.9000776970132945, 1.9)
+        (1.377689074756845, -0.900114533011232, 1.9)
         sage: v2 = c.tangent_vector_eval_at(4.3, verbose=True)
         Evaluating tangent vector components from the interpolation
          associated with the key 'interp 1' by default...
@@ -243,7 +263,7 @@ class IntegratedCurve(DifferentiableCurve):
         Tangent vector at Point on the 3-dimensional differentiable
          manifold M
         sage: v2[:]     # abs tol 1e-12
-        [-0.9303968397216424, -0.3408080563014475, 1.0000000000000004]
+        [-0.9425156073651124, -0.33724314284285434, 1.0]
 
     Plotting a numerical solution (with or without its tangent vector
     field) also requires the solution to be interpolated at least once::
@@ -389,6 +409,16 @@ class IntegratedCurve(DifferentiableCurve):
             Integrated curve c in the 3-dimensional differentiable
              manifold M
             sage: TestSuite(c).run()
+
+        Check that :trac:`28669` is fixed::
+
+            sage: E.<r,phi> = EuclideanSpace(coordinates='polar')
+            sage: p = E((1, 0))  # the initial point
+            sage: v = E.tangent_space(p)((2, 1))  # the initial vector
+            sage: t = var('t')
+            sage: c = E.integrated_geodesic(E.metric(), (t, 0, 10), v); c
+            Integrated geodesic in the Euclidean plane E^2
+
         """
         from sage.symbolic.ring import SR
 
@@ -462,22 +492,10 @@ class IntegratedCurve(DifferentiableCurve):
         if not isinstance(initial_tangent_vector, TangentVector):
             raise TypeError("{} ".format(initial_tangent_vector) +
                             "should be a tangent vector")
-        # in particular, check that its base point sits in the domain
-        # of the chart (if its coordinates are explicitly given):
         initial_pt = initial_tangent_vector.parent().base_point()
         # line above retrieves the initial point as the base point of
         # the tangent space to which the initial tangent vector belongs
         initial_pt_coords = initial_pt.coordinates(chart)
-        i0 = chart.manifold().start_index()
-        for i in range(dim):
-            if not isinstance(initial_pt_coords[i], Expression):
-                coord_value = initial_pt_coords[i]
-                coord_min = chart.coord_bounds(i+i0)[0][0]
-                coord_max = chart.coord_bounds(i+i0)[1][0]
-                if coord_value <= coord_min or coord_value >= coord_max:
-                    raise ValueError("initial point should be in the " +
-                                     "domain of the chart")
-
         # prepare attribute '_parameters':
         announced_variables = set(coords_vels + [curve_parameter])
         parameters = set()
@@ -639,9 +657,8 @@ class IntegratedCurve(DifferentiableCurve):
             sage: c.__reduce__()
             (<class 'sage.manifolds.differentiable.manifold_homset.IntegratedCurveSet_with_category.element_class'>,
              (Set of Morphisms from Real interval (0, 5) to
-              3-dimensional differentiable manifold M in Category of
-              homsets of subobjects of sets and topological spaces which
-              actually are integrated curves,
+              3-dimensional differentiable manifold M in Category of homsets of
+              topological spaces which actually are integrated curves,
               [B_0*Dx2*q*t*e^(-(x1^2 + x2^2)/L^2)/(T*m),
                -B_0*Dx1*q*t*e^(-(x1^2 + x2^2)/L^2)/(T*m),
                0],
@@ -912,33 +929,44 @@ class IntegratedCurve(DifferentiableCurve):
 
         return tuple(coords_sol_expr)
 
-    def solve(self, step=None, method='rk4_maxima', solution_key=None,
-              parameters_values=None, verbose=False):
+    def solve(self, step=None, method='odeint', solution_key=None,
+              parameters_values=None, verbose=False, **control_param):
         r"""
-        Integrate the curve numerically over the domain of integration.
+        Integrate the curve numerically over the domain of definition.
 
         INPUT:
 
         - ``step`` -- (default: ``None``) step of integration; default
           value is a hundredth of the domain of integration if none is
           provided
-        - ``method`` -- (default: ``'rk4_maxima'``) numerical scheme to
-          use for the integration of the curve; algorithms available are:
+        - ``method`` -- (default: ``'odeint'``) numerical scheme to
+          use for the integration of the curve; available algorithms are:
 
+          * ``'odeint'`` - makes use of
+            `scipy.integrate.odeint <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_
+            via Sage solver
+            :func:`~sage.calculus.desolvers.desolve_odeint`; ``odeint`` invokes
+            the LSODA algorithm of the
+            `ODEPACK suite <https://www.netlib.org/odepack/>`_, which
+            automatically selects between implicit Adams method (for non-stiff
+            problems) and a method based on backward differentiation formulas
+            (BDF) (for stiff problems).
           * ``'rk4_maxima'`` - 4th order classical Runge-Kutta, which
             makes use of Maxima's dynamics package via Sage solver
-            ``desolve_system_rk4``
-          * ``'ode_int'`` - makes use of ``odeint`` from ``scipy.integrate``
-            module via Sage solver ``desolve_odeint``
+            :func:`~sage.calculus.desolvers.desolve_system_rk4` (quite slow)
+          * ``'dopri5'`` - Dormand-Prince Runge-Kutta of order (4)5 provided by
+            `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_
+          * ``'dop853'`` - Dormand-Prince Runge-Kutta of order 8(5,3) provided by
+            `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_
 
-        and those provided by ``GSL`` via Sage class
-        :class:`~sage.calculus.ode.ode_solver`:
+          and those provided by ``GSL`` via Sage class
+          :class:`~sage.calculus.ode.ode_solver`:
 
           * ``'rk2'`` - embedded Runge-Kutta (2,3)
           * ``'rk4'`` - 4th order classical Runge-Kutta
           * ``'rkf45'`` - Runge-Kutta-Felhberg (4,5)
           * ``'rkck'`` - embedded Runge-Kutta-Cash-Karp (4,5)
-          * ``'rk8pd'`` - Runge-Kutta prince-dormand (8,9)
+          * ``'rk8pd'`` - Runge-Kutta Prince-Dormand (8,9)
           * ``'rk2imp'`` - implicit 2nd order Runge-Kutta at Gaussian points
           * ``'rk4imp'`` - implicit 4th order Runge-Kutta at Gaussian points
           * ``'gear1'`` - `M=1` implicit Gear
@@ -953,10 +981,12 @@ class IntegratedCurve(DifferentiableCurve):
           curve, to be substituted in the equations before integration
         - ``verbose`` -- (default: ``False``) prints information about
           the computation in progress
+        - ``**control_param`` -- extra control parameters to be passed to the
+          chosen solver; see the example with ``rtol`` and ``atol`` below
 
         OUTPUT:
 
-        - list of the numerical points of the solution computed
+        - list of the numerical points of the computed solution
 
         EXAMPLES:
 
@@ -972,6 +1002,48 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            ....:               verbose=True)
+            Performing numerical integration with method 'odeint'...
+            Resulting list of points will be associated with the key
+             'odeint' by default.
+            Numerical integration completed.
+            <BLANKLINE>
+            Checking all points are in the chart domain...
+            All points are in the chart domain.
+            <BLANKLINE>
+            The resulting list of points was associated with the key
+             'odeint' (if this key already referred to a former
+             numerical solution, such a solution was erased).
+
+        The first 3 points of the solution, in the form ``[t, x1, x2, x3]``::
+
+            sage: sol[:3]  # abs tol 1e-12
+            [[0.0, 0.0, 0.0, 0.0],
+             [0.05, 0.04999999218759271, -2.083327338392213e-05, 0.05],
+             [0.1, 0.09999975001847655, -0.00016666146190783666, 0.1]]
+
+        The default is ``verbose=False``::
+
+            sage: sol_mute = c.solve(parameters_values={B_0:1, m:1, q:1,
+            ....:                                       L:10, T:1})
+            sage: sol_mute == sol
+            True
+
+        Specifying the relative and absolute error tolerance parameters to
+        be used in :func:`~sage.calculus.desolvers.desolve_odeint`::
+
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            ....:               rtol=1e-12, atol=1e-12)
+
+        Using a numerical method different from the default one::
+
+            sage: sol = c.solve(parameters_values={B_0:1, m:1, q:1, L:10, T:1},
+            ....:               method='rk8pd')
+
+
+        TESTS::
+
             sage: sol = c.solve(parameters_values={m:1, q:1, L:10, T:1})
             Traceback (most recent call last):
             ...
@@ -983,24 +1055,6 @@ class IntegratedCurve(DifferentiableCurve):
             ...
             ValueError: no available method of integration referred to
              as 'my method'
-            sage: sol = c.solve(
-            ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1},
-            ....:        verbose=True)
-            Performing numerical integration with method 'rk4_maxima'...
-            Resulting list of points will be associated with the key
-             'rk4_maxima' by default.
-            Numerical integration completed.
-            <BLANKLINE>
-            Checking all points are in the chart domain...
-            All points are in the chart domain.
-            <BLANKLINE>
-            The resulting list of points was associated with the key
-             'rk4_maxima' (if this key already referred to a former
-             numerical solution, such a solution was erased).
-            sage: sol_mute = c.solve(
-            ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
-            sage: sol_mute == sol
-            True
 
         """
         from sage.symbolic.ring import SR
@@ -1164,18 +1218,24 @@ class IntegratedCurve(DifferentiableCurve):
             if len(sol) > 1 and abs(sol[-1][0] - sol[-2][0]) < 0.9 * step:
                 del sol[-1]
 
-        elif method == "ode_int":
-            des = [fast_callable(eq, vars=tuple(
-                list(self._chart[:]) + self._velocities + [
-                    self._curve_parameter]),
-                                 domain=float) for eq in
-                   (self._velocities + eqns_num)]
+        elif method in ["odeint", "ode_int"]:
+            # "ode_int" is here only for backward compatibility
+            des = [fast_callable(eq, vars=tuple(list(self._chart[:])
+                                                + self._velocities
+                                                + [self._curve_parameter]),
+                                 domain=float)
+                   for eq in (self._velocities + eqns_num)]
             ics = initial_pt_coords + initial_tgt_vec_comps
             times = srange(t_min, t_max, step, include_endpoint=True)
             dvars = list(chart[:]) + self._velocities
-
+            # Setting 1.e-10 as default value for the error control
+            # parameters rtol and atol:
+            if 'rtol' not in control_param:
+                control_param['rtol'] = 1.e-10
+            if 'atol' not in control_param:
+                control_param['atol'] = 1.e-10
             sol0 = desolve_odeint(des, ics, times, dvars,
-                                             ivar=self._curve_parameter)
+                                  ivar=self._curve_parameter, **control_param)
 
             # rewrite the solution to prepare for the extraction (which
             # removes information about the velocities), and convert
@@ -1184,18 +1244,20 @@ class IntegratedCurve(DifferentiableCurve):
             import numpy as np
             sol = np.column_stack((times, sol0)) # tolist() done later
 
-        elif method == "ode":
+        elif method in ["dopri5", "dop853"]:
             import numpy as np
-            des = [fast_callable(eq, vars=tuple(list(self._chart[:]) + self._velocities), domain=float)
+            des = [fast_callable(eq, vars=tuple(list(self._chart[:])
+                                                + self._velocities), domain=float)
                    for eq in (self._velocities + eqns_num)]
             ics = initial_pt_coords + initial_tgt_vec_comps
-            times = np.linspace(t_min, t_max, int((t_max-t_min)//step)+1, endpoint=True)
-
+            times = np.linspace(t_min, t_max, int((t_max-t_min)/step) + 1,
+                                endpoint=True)
             # ode accepts a function returning a list, and not a list of functions
-            r = ode(lambda t, y: [de(*y) for de in des]).set_integrator('dopri5')
+            r = ode(lambda t, y: [de(*y) for de in des]).set_integrator(method,
+                                                               **control_param)
             r.set_initial_value(ics, t_min)
-
-            r.set_solout(lambda t, y: chart.valid_coordinates_numerical(*y))
+            r.set_solout(lambda t, y: 0 if chart.valid_coordinates_numerical(*y[0:dim])
+                                      else -1)
 
             nt = len(times)
             sol0 = np.zeros((nt, 2*dim))
@@ -1226,7 +1288,7 @@ class IntegratedCurve(DifferentiableCurve):
                             syst[dim+i] = syst[dim+i].substitute({veloc:y[dim+j]})
                     return syst
                 from sage.calculus.ode import ode_solver
-                T = ode_solver(function=system)
+                T = ode_solver(function=system, **control_param)
 
             T.algorithm = method
             y_0 = initial_pt_coords + initial_tgt_vec_comps
@@ -1299,7 +1361,7 @@ class IntegratedCurve(DifferentiableCurve):
                 sol += [[point[0]] + point[1]]
             # above loop rewrites the solution in the same form than
             # that provided by other methods ('rk4_maxima' and
-            # 'ode_int'), in order to extract the time and corresponding
+            # 'odeint'), in order to extract the time and corresponding
             # coordinate values a few lines below, in the same way for
             # all methods
 
@@ -1339,8 +1401,8 @@ class IntegratedCurve(DifferentiableCurve):
                              "of the chart domain; a curve with a " +
                              "smaller maximal value of the curve " +
                              "parameter, or a smaller initial tangent "+
-                             "vector might be considered. You can also try"+
-                             "'solve_across_charts' in order to not be"+
+                             "vector, might be considered. You can also try "+
+                             "'solve_across_charts' in order not to be "+
                              "confined to a single chart")
         else:
             self._solutions[solution_key] = coords_sol
@@ -1353,16 +1415,17 @@ class IntegratedCurve(DifferentiableCurve):
             return self._solutions[solution_key]
 
     def solve_across_charts(self, charts=None, step=None, solution_key=None,
-                            parameters_values=None, verbose=False):
+                            parameters_values=None, verbose=False,
+                            **control_param):
         r"""
         Integrate the curve numerically over the domain of integration, with
         the ability to switch chart mid-integration.
 
-        The only supported solver is ``scipy.integrate.ode``, because it
-        supports basic event handling, needed to detect when the curve is
-        reaching the frontier of the chart. This is an adaptive step solver.
-        So the ``step`` is not the step of integration but instead the step
-        used to peak at the current chart, and switch if needed.
+        The only supported solver is
+        `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_, because it supports basic event handling, needed to detect when the
+        curve is reaching the frontier of the chart. This is an adaptive step
+        solver. So the ``step`` is not the step of integration but instead the
+        step used to peak at the current chart, and switch if needed.
 
         INPUT:
 
@@ -1381,15 +1444,16 @@ class IntegratedCurve(DifferentiableCurve):
           curve, to be substituted in the equations before integration
         - ``verbose`` -- (default: ``False``) prints information about
           the computation in progress
+        - ``**control_param`` -- extra control parameters to be passed to the
+          solver
 
         OUTPUT:
 
-        - list of the numerical points of the solution computed
+        - list of the numerical points of the computed solution
 
         EXAMPLES:
 
-        This example illustrates the use of the function
-        :meth:`solve_across_charts` to integrate a geodesic of the
+        Let us use :meth:`solve_across_charts` to integrate a geodesic of the
         Euclidean plane (a straight line) in polar coordinates.
 
         In pure polar coordinates `(r, \theta)`, artefacts can appear near
@@ -1664,7 +1728,8 @@ class IntegratedCurve(DifferentiableCurve):
         sol_chart[0, :] = np.array(ics)  # starting with initial condition
 
         # Current equation to integrate, with initial and stop conditions
-        r = ode(lambda t, y: [de(*y) for de in des[chart]]).set_integrator('dopri5')
+        r = ode(lambda t, y: [de(*y) for de in des[chart]]).set_integrator('dopri5',
+                                                               **control_param)
         r.set_initial_value(ics, t_min)
         r.set_solout(lambda t, y: 0 if chart.valid_coordinates_numerical(*y[0:dim]) else -1)
 
@@ -1816,8 +1881,8 @@ class IntegratedCurve(DifferentiableCurve):
             True
         """
         if solution_key is None:
-            if 'rk4_maxima' in self._solutions:
-                solution_key = 'rk4_maxima'
+            if 'odeint' in self._solutions:
+                solution_key = 'odeint'
             else:
                 solution_key = next(iter(self._solutions))
                 # will raise an error if self._solutions is empty
@@ -1873,20 +1938,9 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
-            sage: sol = c.solve(method='rk4_maxima',
+            sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
-            sage: interp = c.interpolate(solution_key='my solution')
-            Traceback (most recent call last):
-            ...
-            ValueError: no existing key 'my solution' referring to any
-             numerical solution
-            sage: interp = c.interpolate(solution_key='sol_T1',
-            ....:                        method='my method')
-            Traceback (most recent call last):
-            ...
-            ValueError: no available method of interpolation referred to
-             as 'my method'
             sage: interp = c.interpolate(method='cubic spline',
             ....:                        solution_key='sol_T1',
             ....:                        interpolation_key='interp_T1',
@@ -1905,10 +1959,24 @@ class IntegratedCurve(DifferentiableCurve):
              to a former interpolation, such an interpolation was
              erased).
 
+        TESTS::
+
+            sage: interp = c.interpolate(solution_key='my solution')
+            Traceback (most recent call last):
+            ...
+            ValueError: no existing key 'my solution' referring to any
+             numerical solution
+            sage: interp = c.interpolate(solution_key='sol_T1',
+            ....:                        method='my method')
+            Traceback (most recent call last):
+            ...
+            ValueError: no available method of interpolation referred to
+             as 'my method'
+
         """
         if solution_key is None:
-            if 'rk4_maxima' in self._solutions:
-                solution_key = 'rk4_maxima'
+            if 'odeint' in self._solutions:
+                solution_key = 'odeint'
             else:
                 solution_key = next(iter(self._solutions)) # will raise
                 # error if self._solutions empty
@@ -1999,17 +2067,12 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
-            sage: sol = c.solve(method='rk4_maxima',
+            sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
             sage: interp = c.interpolate(method='cubic spline',
             ....:                         solution_key='sol_T1',
             ....:                         interpolation_key='interp_T1')
-            sage: c.interpolation(interpolation_key='my interp')
-            Traceback (most recent call last):
-            ...
-            ValueError: no existing key 'my interp' referring to any
-             interpolation
             sage: default_interp = c.interpolation(verbose=True)
             Returning the interpolation associated with the key
              'interp_T1' by default...
@@ -2018,6 +2081,14 @@ class IntegratedCurve(DifferentiableCurve):
             sage: interp_mute = c.interpolation()
             sage: interp_mute == interp
             True
+
+        TESTS::
+
+            sage: c.interpolation(interpolation_key='my interp')
+            Traceback (most recent call last):
+            ...
+            ValueError: no existing key 'my interp' referring to any
+             interpolation
 
         """
 
@@ -2070,7 +2141,7 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
-            sage: sol = c.solve(method='rk4_maxima',
+            sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
             sage: interp = c.interpolate(method='cubic spline',
@@ -2085,7 +2156,7 @@ class IntegratedCurve(DifferentiableCurve):
             Evaluating point coordinates from the interpolation
              associated with the key 'interp_T1' by default...
             sage: p.coordinates()     # abs tol 1e-12
-            (1.060743343394347, -0.2153835404373033, 1.1)
+            (1.060743337877276, -0.21538352256822146, 1.1)
 
         """
 
@@ -2152,18 +2223,12 @@ class IntegratedCurve(DifferentiableCurve):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((1,0,1))
             sage: c = M.integrated_curve(eqns, D, (t,0,5), v, name='c')
-            sage: sol = c.solve(method='rk4_maxima',
+            sage: sol = c.solve(method='odeint',
             ....:        solution_key='sol_T1',
             ....:        parameters_values={B_0:1, m:1, q:1, L:10, T:1})
             sage: interp = c.interpolate(method='cubic spline',
             ....:                         solution_key='sol_T1',
             ....:                         interpolation_key='interp_T1')
-            sage: tg_vec = c.tangent_vector_eval_at(1.22,
-            ....:                         interpolation_key='my interp')
-            Traceback (most recent call last):
-            ...
-            ValueError: no existing key 'my interp' referring to any
-             interpolation
             sage: tg_vec = c.tangent_vector_eval_at(1.22, verbose=True)
             Evaluating tangent vector components from the interpolation
              associated with the key 'interp_T1' by default...
@@ -2171,14 +2236,22 @@ class IntegratedCurve(DifferentiableCurve):
             Tangent vector at Point on the 3-dimensional differentiable
              manifold M
             sage: tg_vec[:]     # abs tol 1e-12
-            [0.7392639473853356, -0.6734182305341726, 1.0000000000000007]
+            [0.7392640422917979, -0.6734182509826023, 1.0]
             sage: tg_vec_mute = c.tangent_vector_eval_at(1.22,
             ....:                         interpolation_key='interp_T1')
             sage: tg_vec_mute == tg_vec
             True
 
-        """
+        TESTS::
 
+            sage: tg_vec = c.tangent_vector_eval_at(1.22,
+            ....:                         interpolation_key='my interp')
+            Traceback (most recent call last):
+            ...
+            ValueError: no existing key 'my interp' referring to any
+             interpolation
+
+        """
         if interpolation_key is None:
             if 'cubic spline' in self._interpolations:
                 interpolation_key = 'cubic spline'
@@ -2273,7 +2346,7 @@ class IntegratedCurve(DifferentiableCurve):
             ....:                 color='blue', color_tangent='red',
             ....:                 verbose=True)
             Plotting from the interpolation associated with the key
-             'cubic spline-interp-rk4_maxima' by default...
+             'cubic spline-interp-odeint' by default...
             A tiny final offset equal to 0.000301507537688442 was
              introduced for the last point in order to safely compute it
              from the interpolation.
@@ -2378,8 +2451,7 @@ class IntegratedCurve(DifferentiableCurve):
                 chart = self._chart
             else:
                 if not isinstance(chart, RealChart):
-                    raise TypeError("{} is not a real " +
-                                    "chart".format(chart))
+                    raise TypeError("{} is not a real chart".format(chart))
                 mapping = self.codomain().identity_map()
         else:
             i0 = mapping.codomain().start_index()
@@ -2612,11 +2684,11 @@ class IntegratedCurve(DifferentiableCurve):
                     transf = {}
                     required_coords = set()
                     for pc in ambient_coords:
-                        j = chart[:].index(pc)
+                        jpc = chart[:].index(pc)
                         AUX = mapping._coord_expression[chart_pair]
                         # 'AUX' used only for the lines of source code
                         # to be shorter
-                        transf[pc] = AUX.expr()[j]
+                        transf[pc] = AUX.expr()[jpc]
                         AUX2 = transf[pc].variables() # idem
                         required_coords=required_coords.union(AUX2)
                     break
@@ -2877,7 +2949,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
     line of latitude.
 
     Now, set an affine connection with respect to such fields that are
-    parallely transported in all directions, that is:
+    parallelly transported in all directions, that is:
     `\nabla \hat{e}_{\theta} = \nabla \hat{e}_{\phi} = 0`.
     This is equivalent to setting all the connection coefficients to
     zero with respect to this frame::
@@ -2949,7 +3021,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
         d(Dph)/dt = -Dph*Dth*cos(th)/sin(th)
         <BLANKLINE>
 
-    Set a dictionnary providing the parameter range and the initial
+    Set a dictionary providing the parameter range and the initial
     conditions for a line of latitude and a line of longitude::
 
         sage: dict_params={'latit':{tmin:0,tmax:3,th0:pi/4,ph0:0.1,v_th0:0,v_ph0:1},
@@ -2964,7 +3036,7 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
          (S^2, (xi, ze))
 
     Ask for the identity map in terms of these charts in order to add
-    this coordinate change to its dictionnary of expressions. This is
+    this coordinate change to its dictionary of expressions. This is
     required to plot the curve with respect to the Mercator chart::
 
         sage: identity = S2.identity_map()
@@ -3221,12 +3293,12 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
         ....:                                             name='c_loxo')
 
     Ask for the expression of the loxodrome in terms of the Mercator
-    chart in order to add it to its dictionnary of expressions.
+    chart in order to add it to its dictionary of expressions.
     It is a particularly long expression, and there is no particular
-    need to diplay it, which is why it may simply be affected to an
+    need to display it, which is why it may simply be affected to an
     arbitrary variable ``expr_mercator``, which will never be used
     again.
-    But adding the expression to the dictionnary is required to plot the
+    But adding the expression to the dictionary is required to plot the
     curve with respect to the Mercator chart::
 
         sage: expr_mercator = c_loxo.expression(chart2=mercator)
@@ -3463,10 +3535,9 @@ class IntegratedAutoparallelCurve(IntegratedCurve):
             sage: c.__reduce__()
             (<class 'sage.manifolds.differentiable.manifold_homset.IntegratedAutoparallelCurveSet_with_category.element_class'>,
              (Set of Morphisms from Real interval (0, 5) to
-              3-dimensional differentiable manifold M in Category of
-              homsets of subobjects of sets and topological spaces which
-              actually are integrated autoparallel curves with respect to
-              a certain affine connection,
+              3-dimensional differentiable manifold M in Category of homsets of
+              topological spaces which actually are integrated autoparallel
+              curves with respect to a certain affine connection,
               Affine connection nabla on the 3-dimensional
               differentiable manifold M,
               t,
@@ -3638,13 +3709,13 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
     `(\theta, \phi)` on `\mathbb{S}^{2}` and the
     corresponding coordinate frame `(e_{\theta}, e_{\phi})`::
 
-        sage: S2 = Manifold(2, 'S^2', start_index=1)
+        sage: S2 = Manifold(2, 'S^2', structure='Riemannian', start_index=1)
         sage: polar.<th,ph>=S2.chart('th ph')
         sage: epolar = polar.frame()
 
-    Set the Euclidean metric tensor `g` induced on `\mathbb{S}^{2}`::
+    Set the standard round metric::
 
-        sage: g = S2.metric('g')
+        sage: g = S2.metric()
         sage: g[1,1], g[2,2] = 1, (sin(th))^2
 
     Set generic initial conditions for the geodesics to compute::
@@ -3661,17 +3732,17 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
         sage: c = S2.integrated_geodesic(g, (t, tmin, tmax), v,
         ....:                            chart=polar, name='c')
         sage: sys = c.system(verbose=True)
-        Geodesic c in the 2-dimensional differentiable manifold S^2
+        Geodesic c in the 2-dimensional Riemannian manifold S^2
          equipped with Riemannian metric g on the 2-dimensional
-         differentiable manifold S^2, and integrated over the Real
+         Riemannian manifold S^2, and integrated over the Real
          interval (tmin, tmax) as a solution to the following geodesic
          equations, written with respect to Chart (S^2, (th, ph)):
         <BLANKLINE>
-        Initial point: Point p on the 2-dimensional differentiable
+        Initial point: Point p on the 2-dimensional Riemannian
         manifold S^2 with coordinates [th0, ph0] with respect to
         Chart (S^2, (th, ph))
         Initial tangent vector: Tangent vector at Point p on the
-        2-dimensional differentiable manifold S^2 with
+        2-dimensional Riemannian manifold S^2 with
         components [v_th0, v_ph0] with respect to Chart (S^2, (th, ph))
         <BLANKLINE>
         d(th)/dt = Dth
@@ -3680,7 +3751,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
         d(Dph)/dt = -2*Dph*Dth*cos(th)/sin(th)
         <BLANKLINE>
 
-    Set a dictionnary providing the parameter range and the initial
+    Set a dictionary providing the parameter range and the initial
     conditions for various geodesics::
 
         sage: dict_params={'equat':{tmin:0,tmax:3,th0:pi/2,ph0:0.1,v_th0:0,v_ph0:1},
@@ -3721,10 +3792,10 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
     .. PLOT::
 
-        S2 = Manifold(2, 'S^2', start_index=1)
+        S2 = Manifold(2, 'S^2', structure='Riemannian', start_index=1)
         polar = S2.chart('th ph'); th, ph = polar[:]
         epolar = polar.frame()
-        g = S2.metric('g')
+        g = S2.metric()
         g[1,1], g[2,2] = 1, (sin(th))**2
         t,tmin,tmax,th0,ph0,v_th0,v_ph0 = var('t tmin tmax th0 ph0 v_th0 v_ph0')
         p = S2.point((th0, ph0), name='p')
@@ -3767,18 +3838,17 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
         TESTS::
 
-            sage: S2 = Manifold(2, 'S^2')
+            sage: S2 = Manifold(2, 'S^2', structure='Riemannian')
             sage: X.<theta,phi> = S2.chart()
-            sage: [t, A] = var('t A')
-            sage: g = S2.metric('g')
+            sage: t, A = var('t A')
+            sage: g = S2.metric()
             sage: g[0,0] = A
-            sage: g[1,0] = 0
             sage: g[1,1] = A*sin(theta)^2
             sage: p = S2.point((pi/2,0), name='p')
             sage: Tp = S2.tangent_space(p)
             sage: v = Tp((1/sqrt(2),1/sqrt(2)))
             sage: c = S2.integrated_geodesic(g, (t,0,pi), v, name='c'); c
-            Integrated geodesic c in the 2-dimensional differentiable
+            Integrated geodesic c in the 2-dimensional Riemannian
              manifold S^2
             sage: TestSuite(c).run()
 
@@ -3801,21 +3871,20 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
         TESTS::
 
-            sage: S2 = Manifold(2, 'S^2')
+            sage: S2 = Manifold(2, 'S^2', structure='Riemannian')
             sage: X.<theta,phi> = S2.chart()
-            sage: [t, A] = var('t A')
-            sage: g = S2.metric('g')
+            sage: t, A = var('t A')
+            sage: g = S2.metric()
             sage: g[0,0] = A
-            sage: g[1,0] = 0
             sage: g[1,1] = A*sin(theta)^2
             sage: p = S2.point((pi/2,0), name='p')
             sage: Tp = S2.tangent_space(p)
             sage: v = Tp((1/sqrt(2),1/sqrt(2)))
             sage: c = S2.integrated_geodesic(g, (t, 0, pi), v) ; c
-            Integrated geodesic in the 2-dimensional differentiable
+            Integrated geodesic in the 2-dimensional Riemannian
              manifold S^2
             sage: c = S2.integrated_geodesic(g, (t,0,pi), v, name='c'); c
-            Integrated geodesic c in the 2-dimensional differentiable
+            Integrated geodesic c in the 2-dimensional Riemannian
              manifold S^2
 
         """
@@ -3832,12 +3901,11 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
         TESTS::
 
-            sage: S2 = Manifold(2, 'S^2')
+            sage: S2 = Manifold(2, 'S^2', structure='Riemannian')
             sage: X.<theta,phi> = S2.chart()
-            sage: [t, A] = var('t A')
-            sage: g = S2.metric('g')
+            sage: t, A = var('t A')
+            sage: g = S2.metric()
             sage: g[0,0] = A
-            sage: g[1,0] = 0
             sage: g[1,1] = A*sin(theta)^2
             sage: p = S2.point((pi/2,0), name='p')
             sage: Tp = S2.tangent_space(p)
@@ -3846,15 +3914,14 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
             sage: c.__reduce__()
             (<...IntegratedGeodesicSet_with_category.element_class'>,
              (Set of Morphisms from Real interval (0, pi) to
-              2-dimensional differentiable manifold S^2 in Category of
-              homsets of subobjects of sets and topological spaces which
-              actually are integrated geodesics with respect to a certain
-              metric,
-              Riemannian metric g on the 2-dimensional differentiable
+              2-dimensional Riemannian manifold S^2 in Category of homsets of
+              topological spaces which actually are integrated geodesics with
+              respect to a certain metric,
+              Riemannian metric g on the 2-dimensional Riemannian
               manifold S^2,
               t,
               Tangent vector at Point p on the 2-dimensional
-               differentiable manifold S^2,
+               Riemannian manifold S^2,
               Chart (S^2, (theta, phi)),
               'c',
               'c',
@@ -3864,7 +3931,7 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
         Test of pickling::
 
             sage: loads(dumps(c))
-            Integrated geodesic c in the 2-dimensional differentiable manifold S^2
+            Integrated geodesic c in the 2-dimensional Riemannian manifold S^2
 
         """
 
@@ -3895,29 +3962,28 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
 
         System defining a geodesic::
 
-            sage: S2 = Manifold(2, 'S^2')
+            sage: S2 = Manifold(2, 'S^2',structure='Riemannian')
             sage: X.<theta,phi> = S2.chart()
-            sage: [t, A] = var('t A')
-            sage: g = S2.metric('g')
+            sage: t, A = var('t A')
+            sage: g = S2.metric()
             sage: g[0,0] = A
-            sage: g[1,0] = 0
             sage: g[1,1] = A*sin(theta)^2
             sage: p = S2.point((pi/2,0), name='p')
             sage: Tp = S2.tangent_space(p)
             sage: v = Tp((1/sqrt(2),1/sqrt(2)))
             sage: c = S2.integrated_geodesic(g, (t, 0, pi), v, name='c')
             sage: sys = c.system(verbose=True)
-            Geodesic c in the 2-dimensional differentiable manifold S^2
+            Geodesic c in the 2-dimensional Riemannian manifold S^2
              equipped with Riemannian metric g on the 2-dimensional
-             differentiable manifold S^2, and integrated over the Real
+             Riemannian manifold S^2, and integrated over the Real
              interval (0, pi) as a solution to the following geodesic
              equations, written with respect to Chart (S^2, (theta, phi)):
             <BLANKLINE>
-            Initial point: Point p on the 2-dimensional differentiable
+            Initial point: Point p on the 2-dimensional Riemannian
              manifold S^2 with coordinates [1/2*pi, 0] with respect to
              Chart (S^2, (theta, phi))
             Initial tangent vector: Tangent vector at Point p on the
-             2-dimensional differentiable manifold S^2 with
+             2-dimensional Riemannian manifold S^2 with
              components [1/2*sqrt(2), 1/2*sqrt(2)] with respect to
              Chart (S^2, (theta, phi))
             <BLANKLINE>
@@ -3985,4 +4051,3 @@ class IntegratedGeodesic(IntegratedAutoparallelCurve):
             print(description)
 
         return [self._equations_rhs, v0, chart]
-

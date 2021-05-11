@@ -46,10 +46,10 @@ in acres, we can construct the following LP problem::
     sage: c = (10, 5)
     sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
     sage: P
-    LP problem (use typeset mode to see details)
+    LP problem (use 'view(...)' or '%display typeset' for details)
 
 It is recommended to copy-paste such examples into your own worksheet, so that
-you can run these commands with typeset mode on and get
+you can run these commands with typeset mode on (``%display typeset``) and get
 
 .. MATH::
 
@@ -72,7 +72,7 @@ The simplex method can be applied only to :class:`problems in standard form
 <InteractiveLPProblemStandardForm>`, which can be created either directly ::
 
     sage: InteractiveLPProblemStandardForm(A, b, c, ["C", "B"])
-    LP problem (use typeset mode to see details)
+    LP problem (use ...)
 
 or from an already constructed problem of "general type"::
 
@@ -95,7 +95,7 @@ by creating the initial dictionary::
 
     sage: D = P.initial_dictionary()
     sage: D
-    LP problem dictionary (use typeset mode to see details)
+    LP problem dictionary (use ...)
 
 Using typeset mode as recommended, you'll see
 
@@ -167,22 +167,17 @@ and use the dual simplex method!
 Classes and functions
 ---------------------
 """
-
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Andrey Novoseltsev <novoselt@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
-from six.moves import range, zip
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import operator
 import re
-
 
 from copy import copy
 
@@ -200,7 +195,6 @@ from sage.misc.all import (LatexExpr,
                            random)
 from sage.misc.html import HtmlFragment
 from sage.misc.misc import get_main_globals
-from sage.misc.superseded import deprecation
 from sage.modules.all import random_vector, vector
 from sage.plot.all import Graphics, arrow, line, point, rainbow, text
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
@@ -810,9 +804,9 @@ class InteractiveLPProblem(SageObject):
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
             sage: print(P._repr_())
-            LP problem (use typeset mode to see details)
+            LP problem (use ...)
         """
-        return "LP problem (use typeset mode to see details)"
+        return "LP problem (use 'view(...)' or '%display typeset' for details)"
 
     def _solution(self, x):
         r"""
@@ -2727,9 +2721,7 @@ class LPAbstractDictionary(SageObject):
             ...
             \end{equation*}
         """
-        return HtmlFragment("\n".join([r"\begin{equation*}",
-                                       latex(self),
-                                       r"\end{equation*}"]))
+        return "\n".join([r"\begin{equation*}", latex(self), r"\end{equation*}"])
 
     def _preupdate_output(self, direction):
         r"""
@@ -2785,12 +2777,12 @@ class LPAbstractDictionary(SageObject):
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: D = P.initial_dictionary()
             sage: print(D._repr_())
-            LP problem dictionary (use typeset mode to see details)
+            LP problem dictionary (use ...)
             sage: D = P.revised_dictionary()
             sage: print(D._repr_())
-            LP problem dictionary (use typeset mode to see details)
+            LP problem dictionary (use ...)
         """
-        return "LP problem dictionary (use typeset mode to see details)"
+        return "LP problem dictionary (use 'view(...)' or '%display typeset' for details)"
 
     @abstract_method
     def add_row(self, nonbasic_coefficients, constant, basic_variable=None):
@@ -3831,7 +3823,7 @@ class LPDictionary(LPAbstractDictionary):
         sage: P = InteractiveLPProblemStandardForm(A, b, c)
         sage: D = P.initial_dictionary()
         sage: D
-        LP problem dictionary (use typeset mode to see details)
+        LP problem dictionary (use ...)
 
     But if you want you can create a dictionary without starting with an LP
     problem, here is construction of the same dictionary as above::
@@ -3965,10 +3957,11 @@ class LPDictionary(LPAbstractDictionary):
             # Highlight the entering variable column
             e = 2 * tuple(N).index(self._entering) + 4
             for i, lin in enumerate(lines):
-                lin = lin.split("&")
+                lin = lin[:-2].split("&")
+                # Trac #30809: The MathJaX version of \color takes an argument
                 if len(lin) > 1:
-                    lin[e] = r"\color{green}" + lin[e]
-                    lines[i] = "&".join(lin)
+                    lin[e] = r"\color{green}{%s}" % (lin[e],)
+                    lines[i] = "&".join(lin) + r"\\"
         if self._leaving is not None:
             # Highlight the leaving variable row
             l = tuple(B).index(self._leaving)
@@ -3976,93 +3969,13 @@ class LPDictionary(LPAbstractDictionary):
                l += 3
             if style() == "Vanderbei":
                 l += 4
-            lin = lines[l].split("&")
+            lin = lines[l][:-2].split("&")
             for i, term in enumerate(lin):
-                lin[i] = r"\color{red}" + term
-            lin = "&".join(lin)
-            lin = lin.replace(r"\color{red}\color{green}", r"\color{blue}")
+                lin[i] = r"\color{red}{%s}" % (term,)
+            lin = "&".join(lin) + r"\\"
+            lin = lin.replace(r"\color{red}{\color{green}{", r"\color{blue}{{")
             lines[l] = lin
         return  "\n".join(lines)
-
-    def ELLUL(self, entering, leaving):
-        r"""
-        Perform the Enter-Leave-LaTeX-Update-LaTeX step sequence on ``self``.
-
-        INPUT:
-
-        - ``entering`` -- the entering variable
-
-        - ``leaving`` -- the leaving variable
-
-        OUTPUT:
-
-        - a string with LaTeX code for ``self`` before and after update
-
-        EXAMPLES::
-
-            sage: A = ([1, 1], [3, 1])
-            sage: b = (1000, 1500)
-            sage: c = (10, 5)
-            sage: P = InteractiveLPProblemStandardForm(A, b, c)
-            sage: D = P.initial_dictionary()
-            sage: D.ELLUL("x1", "x4")
-            doctest:...: DeprecationWarning: ELLUL is deprecated, please use separate enter-leave-update and output commands
-            See http://trac.sagemath.org/19097 for details.
-            \renewcommand{\arraystretch}{1.5} %notruncate
-            \begin{array}{|rcrcrcr|}
-            \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 1000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\color{green}\mspace{-6mu} x_{1} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} x_{2}\\
-            \color{red}x_{4} \mspace{-6mu}&\color{red}\mspace{-6mu} = \mspace{-6mu}&\color{red}\mspace{-6mu} 1500 \mspace{-6mu}&\color{red}\mspace{-6mu} - \mspace{-6mu}&\color{blue}\mspace{-6mu} 3 x_{1} \mspace{-6mu}&\color{red}\mspace{-6mu} - \mspace{-6mu}&\color{red}\mspace{-6mu} x_{2}\\
-            \hline
-            z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 0 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\color{green}\mspace{-6mu} 10 x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 5 x_{2}\\
-            \hline
-            \\
-            \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 500 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{2}{3} x_{2}\\
-            x_{1} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 500 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{2}\\
-            \hline
-            z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 5000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{10}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \frac{5}{3} x_{2}\\
-            \hline
-            \end{array}
-
-        This is how the above output looks when rendered:
-
-        .. MATH::
-
-            \renewcommand{\arraystretch}{1.5}
-            \begin{array}{|rcrcrcr|}
-            \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 1000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\color{green}\mspace{-6mu} x_{1} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} x_{2}\\
-            \color{red}x_{4} \mspace{-6mu}&\color{red}\mspace{-6mu} = \mspace{-6mu}&\color{red}\mspace{-6mu} 1500 \mspace{-6mu}&\color{red}\mspace{-6mu} - \mspace{-6mu}&\color{blue}\mspace{-6mu} 3 x_{1} \mspace{-6mu}&\color{red}\mspace{-6mu} - \mspace{-6mu}&\color{red}\mspace{-6mu} x_{2}\\
-            \hline
-            z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 0 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\color{green}\mspace{-6mu} 10 x_{1} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} 5 x_{2}\\
-            \hline
-            \\
-            \hline
-            x_{3} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 500 \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{2}{3} x_{2}\\
-            x_{1} \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 500 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{1}{3} x_{2}\\
-            \hline
-            z \mspace{-6mu}&\mspace{-6mu} = \mspace{-6mu}&\mspace{-6mu} 5000 \mspace{-6mu}&\mspace{-6mu} - \mspace{-6mu}&\mspace{-6mu} \frac{10}{3} x_{4} \mspace{-6mu}&\mspace{-6mu} + \mspace{-6mu}&\mspace{-6mu} \frac{5}{3} x_{2}\\
-            \hline
-            \end{array}
-
-        The column of the entering variable is green, while the row of the
-        leaving variable is red in the original dictionary state on the top.
-        The new state after the update step is shown on the bottom.
-        """
-        deprecation(19097, "ELLUL is deprecated, please use separate "
-                    "enter-leave-update and output commands")
-        self.enter(entering)
-        self.leave(leaving)
-        result = latex(self).rsplit("\n", 1)[0] # Remove \end{array}
-        # Make an empty line in the array
-        if generate_real_LaTeX:
-            result += "\n" r"\multicolumn{2}{c}{}\\[-3ex]" "\n"
-        else:
-            result += "\n\\\\\n"
-        self.update()
-        result += latex(self).split("\n", 2)[2] # Remove array header
-        return LatexExpr(result)
 
     def add_row(self, nonbasic_coefficients, constant, basic_variable=None):
         r"""
@@ -4397,7 +4310,7 @@ def random_dictionary(m, n, bound=5, special_probability=0.2):
         sage: from sage.numerical.interactive_simplex_method \
         ....:     import random_dictionary
         sage: random_dictionary(3, 4)
-        LP problem dictionary (use typeset mode to see details)
+        LP problem dictionary (use ...)
     """
     A = random_matrix(ZZ, m, n, x=-bound, y=bound).change_ring(QQ)
     if special_probability < random():
@@ -4497,7 +4410,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
         sage: D.basic_variables()
         (x1, x2)
         sage: D
-        LP problem dictionary (use typeset mode to see details)
+        LP problem dictionary (use ...)
 
     The same dictionary can be constructed through the problem::
 
@@ -4617,18 +4530,18 @@ class LPRevisedDictionary(LPAbstractDictionary):
             \begin{array}{l|r|rr||r||r|r|r}
             x_B & c_B &  & \mspace{-16mu} B^{-1} & y & B^{-1} b & B^{-1} A_{x_{1}} & \hbox{Ratio} \\
             \hline
-            \color{red} x_{3} & \color{red} 0 & \color{red} 1 & \color{red} 0 & 0 & \color{red} 1000 & \color{red} 1 & \color{red} 1000 \\
+            \color{red}{ x_{3} } & \color{red}{ 0 } & \color{red}{ 1 } & \color{red}{ 0 } & 0 & \color{red}{ 1000 } & \color{red}{ 1 } & \color{red}{ 1000 } \\
             x_{4} & 0 & 0 & 1 & 0 & 1500 & 3 & 500 \\
             \end{array}\\
             \\
             \begin{array}{r|rr}
-            x_N & \color{green} x_{1} & x_{2} \\
+            x_N & \color{green}{ x_{1} } & x_{2} \\
             \hline
-            c_N^T & \color{green} 10 & 5 \\
+            c_N^T & \color{green}{ 10 } & 5 \\
             \hline
-            y^T A_N & \color{green} 0 & 0 \\
+            y^T A_N & \color{green}{ 0 } & 0 \\
             \hline
-            c_N^T - y^T A_N & \color{green} 10 & 5 \\
+            c_N^T - y^T A_N & \color{green}{ 10 } & 5 \\
             \end{array}
             \end{array}
         """
@@ -4679,7 +4592,8 @@ class LPRevisedDictionary(LPAbstractDictionary):
                 for j, t in enumerate(terms):
                     if j == m + 2:
                         continue
-                    terms[j] = r"\color{red} " + t
+                    # Trac #30809: The MathJaX version of \color takes an argument
+                    terms[j] = r"\color{red}{" + t + "}"
             lines.append(" & ".join(terms) + r" \\")
         lines.append(r"\end{array}")
         top = "\n".join(lines)
@@ -4687,7 +4601,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
         def make_line(header, terms):
             terms = [latex(_) for _ in terms]
             if entering is not None:
-                terms[k] = r"\color{green} " + terms[k]
+                terms[k] = r"\color{green}{" + terms[k] + "}"
             lines.append(" & ".join([header] + terms) + r" \\")
 
         lines = []
@@ -5206,7 +5120,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: D = P.revised_dictionary()
             sage: D.dictionary()
-            LP problem dictionary (use typeset mode to see details)
+            LP problem dictionary (use ...)
         """
         D = LPDictionary(self.B_inverse() * self.A_N(),
                          self.constant_terms(),

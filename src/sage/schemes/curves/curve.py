@@ -1,16 +1,41 @@
 """
-Generic curves
+Base class of curves
+
+This module defines the base class of curves in Sage.
+
+Curves in Sage are reduced subschemes of dimension 1 of an ambient space. The ambient space
+is either an affine space or a projective space.
+
+EXAMPLES::
+
+    sage: A.<x,y,z> = AffineSpace(QQ, 3)
+    sage: C = Curve([x - y, z - 2])
+    sage: C
+    Affine Curve over Rational Field defined by x - y, z - 2
+    sage: C.dimension()
+    1
+
+AUTHORS:
+
+- William Stein (2005)
+
 """
-from __future__ import absolute_import
+#*****************************************************************************
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
+
+from sage.misc.all import latex
 
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.fields import Fields
-from sage.misc.all import latex
 
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
-
 from sage.schemes.generic.divisor_group import DivisorGroup
-
 from sage.schemes.generic.divisor import Divisor_curve
 
 class Curve_generic(AlgebraicScheme_subscheme):
@@ -24,7 +49,6 @@ class Curve_generic(AlgebraicScheme_subscheme):
         sage: loads(C.dumps()) == C
         True
     """
-
     def _repr_(self):
         """
         Return a string representation of this curve.
@@ -41,8 +65,11 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C
             Projective Plane Curve over Rational Field defined by x - y
         """
-        return "%s Curve over %s defined by %s"%(
-            self._repr_type(), self.base_ring(), ', '.join([str(x) for x in self.defining_polynomials()]))
+        if self.defining_ideal().is_zero() and self.ambient_space().dimension() == 1:
+            return "{} Line over {}".format(self._repr_type(), self.base_ring())
+        else:
+            return "{} Curve over {} defined by {}".format(self._repr_type(), self.base_ring(),
+                 ', '.join([str(x) for x in self.defining_polynomials()]))
 
     def _repr_type(self):
         r"""
@@ -96,12 +123,10 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``base_ring`` -- the base ring of the divisor
-          group. Usually, this is `\ZZ` (default) or `\QQ`.
+        - ``base_ring`` -- the base ring of the divisor group. Usually, this is
+          `\ZZ` (default) or `\QQ`.
 
-        OUTPUT:
-
-        The divisor group of the curve.
+        OUTPUT: the divisor group of the curve
 
         EXAMPLES::
 
@@ -123,12 +148,25 @@ class Curve_generic(AlgebraicScheme_subscheme):
             and the terms must be reduced. If you set ``check=False``
             and/or ``reduce=False`` it is your responsibility to pass
             a valid object ``v``.
+
+        EXAMPLES::
+
+            sage: x,y,z = PolynomialRing(QQ, 3, names='x,y,z').gens()
+            sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
+
         """
         return Divisor_curve(v, check=check, reduce=reduce, parent=self.divisor_group(base_ring))
 
     def genus(self):
         """
-        The geometric genus of the curve.
+        Return the geometric genus of the curve.
+
+        EXAMPLES::
+
+            sage: x,y,z = PolynomialRing(QQ, 3, names='x,y,z').gens()
+            sage: C = Curve(y^2*z - x^3 - 17*x*z^2 + y*z^2)
+            sage: C.genus()
+            1
         """
         return self.geometric_genus()
 
@@ -136,10 +174,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
         r"""
         Return the geometric genus of the curve.
 
-        This is by definition the
-        genus of the normalization of the projective closure of the
-        curve over the algebraic closure of the base field; the base
-        field must be a prime field.
+        This is by definition the genus of the normalization of the projective
+        closure of the curve over the algebraic closure of the base field; the
+        base field must be a prime field.
 
         .. NOTE::
 
@@ -176,10 +213,10 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         """
         try:
-            return self.__genus
+            return self._genus
         except AttributeError:
-            self.__genus = self.defining_ideal().genus()
-            return self.__genus
+            self._genus = self.defining_ideal().genus()
+            return self._genus
 
     def union(self, other):
         """
@@ -211,8 +248,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: A.<x,y> = AffineSpace(CC, 2)
             sage: C = Curve([y^4 - 2*x^5 - x^2*y], A)
             sage: C.singular_subscheme()
-            Closed subscheme of Affine Space of dimension 2 over Complex Field with
-            53 bits of precision defined by:
+            Closed subscheme of Affine Space of dimension 2 over Complex Field
+            with 53 bits of precision defined by:
               (-2.00000000000000)*x^5 + y^4 - x^2*y,
               (-10.0000000000000)*x^4 + (-2.00000000000000)*x*y,
               4.00000000000000*y^3 - x^2
@@ -222,8 +259,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: C = Curve([y^8 - x^2*z*w^5, w^2 - 2*y^2 - x*z], P)
             sage: C.singular_subscheme()
-            Closed subscheme of Projective Space of dimension 3 over Rational Field
-            defined by:
+            Closed subscheme of Projective Space of dimension 3 over Rational
+            Field defined by:
               y^8 - x^2*z*w^5,
               -2*y^2 - x*z + w^2,
               -x^3*y*z^4 + 3*x^2*y*z^3*w^2 - 3*x*y*z^2*w^4 + 8*x*y*z*w^5 + y*z*w^6,
@@ -242,12 +279,10 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``F`` -- (default: None) field over which to find the singular points. If not given,
-          the base ring of this curve is used.
+        - ``F`` -- (default: None) field over which to find the singular
+          points; if not given, the base ring of this curve is used
 
-        OUTPUT:
-
-        - a list of points in the ambient space of this curve.
+        OUTPUT: a list of points in the ambient space of this curve
 
         EXAMPLES::
 
@@ -264,13 +299,13 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C = Curve([359/12*x*y^2*z^2 + 2*y*z^4 + 187/12*y^3*z^2 + x*z^4\
             + 67/3*x^2*y*z^2 + 117/4*y^5 + 9*x^5 + 6*x^3*z^2 + 393/4*x*y^4\
             + 145*x^2*y^3 + 115*x^3*y^2 + 49*x^4*y], P)
-            sage: C.singular_points(K)
-            [(b^6 : -b^6 : 1),
+            sage: sorted(C.singular_points(K), key=str)
+            [(-1/2*b^5 - 1/2*b^3 + 1/2*b - 1 : 1 : 0),
+             (-2/3*b^4 + 1/3 : 0 : 1),
              (-b^6 : b^6 : 1),
              (1/2*b^5 + 1/2*b^3 - 1/2*b - 1 : 1 : 0),
-             (-1/2*b^5 - 1/2*b^3 + 1/2*b - 1 : 1 : 0),
              (2/3*b^4 - 1/3 : 0 : 1),
-             (-2/3*b^4 + 1/3 : 0 : 1)]
+             (b^6 : -b^6 : 1)]
         """
         if F is None:
             if not self.base_ring() in Fields():
@@ -279,24 +314,25 @@ class Curve_generic(AlgebraicScheme_subscheme):
         elif not F in Fields():
             raise TypeError("(=%s) must be a field"%F)
         X = self.singular_subscheme()
-        return X.rational_points(F=F)
+        return [self.point(p, check=False) for p in X.rational_points(F=F)]
 
     def is_singular(self, P=None):
         r"""
-        Return whether ``P`` is a singular point of this curve, or if no point is passed,
-        whether this curve is singular or not.
+        Return whether ``P`` is a singular point of this curve, or if no point
+        is passed, whether this curve is singular or not.
 
         This just uses the is_smooth function for algebraic subschemes.
 
         INPUT:
 
-        - ``P`` -- (default: None) a point on this curve.
+        - ``P`` -- (default: None) a point on this curve
 
         OUTPUT:
 
-        - Boolean. If a point ``P`` is provided, and if ``P`` lies on this curve, returns True
-          if ``P`` is a singular point of this curve, and False otherwise. If no point is provided,
-          returns True or False depending on whether this curve is or is not singular, respectively.
+        A boolean. If a point ``P`` is provided, and if ``P`` lies on this
+        curve, returns True if ``P`` is a singular point of this curve, and
+        False otherwise. If no point is provided, returns True or False
+        depending on whether this curve is or is not singular, respectively.
 
         EXAMPLES::
 
@@ -317,17 +353,14 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
     def intersects_at(self, C, P):
         r"""
-        Return whether the point ``P`` is or is not in the intersection of this curve with the curve ``C``.
+        Return whether the point ``P`` is or is not in the intersection of this
+        curve with the curve ``C``.
 
         INPUT:
 
         - ``C`` -- a curve in the same ambient space as this curve.
 
         - ``P`` -- a point in the ambient space of this curve.
-
-        OUTPUT:
-
-        Boolean.
 
         EXAMPLES::
 
@@ -372,19 +405,19 @@ class Curve_generic(AlgebraicScheme_subscheme):
         r"""
         Return the points in the intersection of this curve and the curve ``C``.
 
-        If the intersection of these two curves has dimension greater than zero, and if
-        the base ring of this curve is not a finite field, then an error is returned.
+        If the intersection of these two curves has dimension greater than
+        zero, and if the base ring of this curve is not a finite field, then an
+        error is returned.
 
         INPUT:
 
-        - ``C`` -- a curve in the same ambient space as this curve.
+        - ``C`` -- a curve in the same ambient space as this curve
 
-        - ``F`` -- (default: None). Field over which to compute the intersection points. If not specified,
-          the base ring of this curve is used.
+        - ``F`` -- (default: None); field over which to compute the
+          intersection points; if not specified, the base ring of this curve is
+          used
 
-        OUTPUT:
-
-        - a list of points in the ambient space of this curve.
+        OUTPUT: a list of points in the ambient space of this curve
 
         EXAMPLES::
 
@@ -394,7 +427,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C = Curve([y^2 - w*z, w^3 - y^3], P)
             sage: D = Curve([x*y - w*z, z^3 - y^3], P)
             sage: C.intersection_points(D, F=K)
-            [(-b - 1 : -b - 1 : b : 1), (b : b : -b - 1 : 1), (1 : 0 : 0 : 0), (1 : 1 : 1 : 1)]
+            [(-b - 1 : -b - 1 : b : 1), (b : b : -b - 1 : 1), (1 : 0 : 0 : 0),
+            (1 : 1 : 1 : 1)]
 
         ::
 
@@ -402,7 +436,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C = Curve([y^3 - x^3], A)
             sage: D = Curve([-x*y^3 + y^4 - 2*x^3 + 2*x^2*y], A)
             sage: C.intersection_points(D)
-            [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 3), (5, 5), (5, 6), (6, 6)]
+            [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 3), (5, 5), (5, 6),
+            (6, 6)]
 
         ::
 
@@ -425,7 +460,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
         if X.dimension() == 0 or F in FiniteFields():
             return X.rational_points(F=F)
         else:
-            raise NotImplementedError("the intersection must have dimension zero or (=%s) must be a finite field"%F)
+            raise NotImplementedError("the intersection must have dimension "
+                                      "zero or (={}) must be a finite field".format(F))
 
     def change_ring(self, R):
         r"""
@@ -433,19 +469,16 @@ class Curve_generic(AlgebraicScheme_subscheme):
 
         INPUT:
 
-        - ``R`` -- ring or embedding.
+        - ``R`` -- ring or embedding
 
-        OUTPUT:
-
-        - a new curve which is this curve coerced to ``R``.
+        OUTPUT: a new curve which is this curve coerced to ``R``
 
         EXAMPLES::
 
             sage: P.<x,y,z,w> = ProjectiveSpace(QQ, 3)
             sage: C = Curve([x^2 - y^2, z*y - 4/5*w^2], P)
             sage: C.change_ring(QuadraticField(-1))
-            Projective Curve over Number Field in a with defining polynomial x^2 + 1
-            defined by x^2 - y^2, y*z - 4/5*w^2
+            Projective Curve over Number Field in a with defining polynomial x^2 + 1 with a = 1*I defined by x^2 - y^2, y*z - 4/5*w^2
 
         ::
 
@@ -454,6 +487,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: A.<x,y> = AffineSpace(K, 2)
             sage: C = Curve([K.0*x^2 - x + y^3 - 11], A)
             sage: L = K.embeddings(QQbar)
+            sage: set_verbose(-1)  # suppress warnings for slow computation
             sage: C.change_ring(L[0])
             Affine Plane Curve over Algebraic Field defined by y^3 +
             (-0.8774388331233464? - 0.744861766619745?*I)*x^2 - x - 11
@@ -467,4 +501,4 @@ class Curve_generic(AlgebraicScheme_subscheme):
         """
         new_AS = self.ambient_space().change_ring(R)
         I = [f.change_ring(R) for f in self.defining_polynomials()]
-        return(new_AS.curve(I))
+        return new_AS.curve(I)

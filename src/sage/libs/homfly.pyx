@@ -1,3 +1,4 @@
+# distutils: libraries = homfly gc
 r"""
 Cython wrapper for libhomfly library
 

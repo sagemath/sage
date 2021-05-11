@@ -1,3 +1,4 @@
+# distutils: libraries = m
 r"""
 Fast decomposition of small integers into sums of squares
 
@@ -16,8 +17,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import, print_function
 
 from libc.math cimport sqrt
 from cysignals.signals cimport sig_on, sig_off

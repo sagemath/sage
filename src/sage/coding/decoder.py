@@ -1,11 +1,12 @@
 r"""
-Base class for Decoders
+Decoders
 
 Representation of an error-correction algorithm for a code.
 
 AUTHORS:
 
 - David Joyner (2009-02-01): initial version
+
 - David Lucas (2015-06-29): abstract class version
 
 """
@@ -26,7 +27,8 @@ class Decoder(SageObject):
     r"""
     Abstract top-class for :class:`Decoder` objects.
 
-    Every decoder class should inherit from this abstract class.
+    Every decoder class for linear codes (of any metric) should inherit from
+    this abstract class.
 
     To implement an decoder, you need to:
 
@@ -219,11 +221,9 @@ class Decoder(SageObject):
         """
         return not self == other
 
-
-
     def decode_to_code(self, r):
         r"""
-        Corrects the errors in ``r`` and returns a codeword.
+        Correct the errors in ``r`` and returns a codeword.
 
         This is a default implementation which assumes that the method
         :meth:`decode_to_message` has been implemented, else it returns an exception.
@@ -258,7 +258,7 @@ class Decoder(SageObject):
 
     def connected_encoder(self):
         r"""
-        Returns the connected encoder of ``self``.
+        Return the connected encoder of ``self``.
 
         EXAMPLES::
 
@@ -301,7 +301,7 @@ class Decoder(SageObject):
 
     def code(self):
         r"""
-        Returns the code for this :class:`Decoder`.
+        Return the code for this :class:`Decoder`.
 
         EXAMPLES::
 
@@ -315,7 +315,7 @@ class Decoder(SageObject):
 
     def message_space(self):
         r"""
-        Returns the message space of ``self``'s :meth:`connected_encoder`.
+        Return the message space of ``self``'s :meth:`connected_encoder`.
 
         EXAMPLES::
 
@@ -329,7 +329,7 @@ class Decoder(SageObject):
 
     def input_space(self):
         r"""
-        Returns the input space of ``self``.
+        Return the input space of ``self``.
 
         EXAMPLES::
 
@@ -347,7 +347,7 @@ class Decoder(SageObject):
     @abstract_method(optional = True)
     def decoding_radius(self, **kwargs):
         r"""
-        Returns the maximal number of errors that ``self`` is able to correct.
+        Return the maximal number of errors that ``self`` is able to correct.
 
         This is an abstract method and it should be implemented in subclasses.
 

@@ -2,18 +2,14 @@ r"""
 Affine Permutations
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Tom Denton <sdenton4@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, division
-
-from six.moves import range
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.constant_function import ConstantFunction
@@ -32,9 +28,10 @@ from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.composition import Composition
 from sage.combinat.partition import Partition
 
+
 class AffinePermutation(ClonableArray):
     r"""
-    An affine permutation, representated in the window notation, and
+    An affine permutation, represented in the window notation, and
     considered as a bijection from `\ZZ` to `\ZZ`.
 
     EXAMPLES::
@@ -570,7 +567,7 @@ class AffinePermutationTypeA(AffinePermutation):
                 res = self[m] % (self.k + 1)
                 if res == i:
                     l.append(self[m] + 1)
-                elif res == 0 :
+                elif res == 0:
                     l.append(self[m] - 1)
                 else:
                     l.append(self[m])
@@ -711,11 +708,15 @@ class AffinePermutationTypeA(AffinePermutation):
             y = self.clone().apply_simple_reflection(i,side)
             T = [i]
             j = i
-            for count in range(1,self.k):
-                if (typ[0],side[0]) == ('d','r'):  j=(j+1)%(k+1)
-                if (typ[0],side[0]) == ('i','r'):  j=(j-1)%(k+1)
-                if (typ[0],side[0]) == ('d','l'):  j=(j-1)%(k+1)
-                if (typ[0],side[0]) == ('i','l'):  j=(j+1)%(k+1)
+            for count in range(1, self.k):
+                if (typ[0],side[0]) == ('d', 'r'):
+                    j=(j+1)%(k+1)
+                if (typ[0],side[0]) == ('i', 'r'):
+                    j=(j-1)%(k+1)
+                if (typ[0],side[0]) == ('d', 'l'):
+                    j=(j-1)%(k+1)
+                if (typ[0],side[0]) == ('i', 'l'):
+                    j=(j+1)%(k+1)
                 if y.has_descent(j, side):
                     y=y.apply_simple_reflection(j,side)
                     T.append(j%(k+1))
@@ -855,7 +856,8 @@ class AffinePermutationTypeA(AffinePermutation):
                     b=self(j)
                     #A small rotation is necessary for the reduced word from
                     #the lehmer code to match the element.
-                    if a<b: code[i-1]+=((b-a)//(self.k+1)+1)
+                    if a < b:
+                        code[i-1]+=((b-a)//(self.k+1)+1)
         elif typ[0] == 'i' and side[0] == 'l':
             #Find number of positions to the right of i smaller than i, then
             #cyclically shift the resulting vector.
@@ -1315,8 +1317,8 @@ class AffinePermutationTypeB(AffinePermutationTypeC):
                 raise ValueError("entries must have distinct residues")
             reslist.append(r)
         # Check that we have an even number of 'small' elements right of the zeroth entry.
-        s = sum(-i // self.N+1 for i in [self.value(j) for j in range(1,self.N+1)] if i < 0)
-        if s % 2 != 0:
+        s = sum(-i // self.N+1 for i in (self.value(j) for j in range(1,self.N+1)) if i < 0)
+        if s % 2:
             raise ValueError("type B affine permutations have an even number of "
                              "entries less than 0 to the right of the 0th position")
 
@@ -1479,13 +1481,13 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
             reslist.append(r)
         # Check that we have an even number of 'big' elements left of the kth entry.
         s = sum(i // self.N + 1 - (i % self.N <= self.k)
-                for i in [self.value(j) for j in range(-self.k,self.k+1)] if i > self.k)
-        if s % 2 != 0:
+                for i in (self.value(j) for j in range(-self.k,self.k+1)) if i > self.k)
+        if s % 2:
             raise ValueError("type D affine permutations have an even number of entries"
                              " greater than x.k weakly to the left of the x.k position")
         # Check that we have an even number of 'small' elements right of the zeroth entry.
-        s = sum(-i // self.N+1 for i in [self.value(j) for j in range(1,self.N+1)] if i < 0)
-        if s % 2 != 0:
+        s = sum(-i // self.N+1 for i in (self.value(j) for j in range(1,self.N+1)) if i < 0)
+        if s % 2:
             raise ValueError("type D affine permutations have an even number of entries"
                              " less than 0 to the right of the 0th position")
 
@@ -1541,42 +1543,42 @@ class AffinePermutationTypeD(AffinePermutationTypeC):
             raise ValueError('index not in index set')
         j = self.N - i
         l = []
-        if i != self.k and i != 0:
+        if i and i != self.k:
             for m in range(self.k):
-                res=self[m]%self.N
-                if res==i  :
+                res = self[m] % self.N
+                if res == i:
                     l.append(self[m]+1)
-                elif res==i+1:
+                elif res == i+1:
                     l.append(self[m]-1)
-                elif res==j:
+                elif res == j:
                     l.append(self[m]-1)
-                elif res==j-1:
+                elif res == j-1:
                     l.append(self[m]+1)
                 else:
                     l.append(self[m])
         elif i == 0:
             for m in range(self.k):
-                res=self[m]%self.N
-                if res==1:
+                res = self[m] % self.N
+                if res == 1:
                     l.append(self[m]-3)
-                elif res==self.N-2:
+                elif res == self.N-2:
                     l.append(self[m]+3)
-                elif res==2:
+                elif res == 2:
                     l.append(self[m]-3)
-                elif res==self.N-1:
+                elif res == self.N-1:
                     l.append(self[m]+3)
                 else:
                     l.append(self[m])
         elif i == self.k:
             for m in range(self.k):
-                res=self[m]%self.N
-                if res==self.k:
+                res = self[m] % self.N
+                if res == self.k:
                     l.append(self[m]+2)
-                elif res==self.k+2:
+                elif res == self.k+2:
                     l.append(self[m]-2)
-                elif res==self.k-1:
+                elif res == self.k-1:
                     l.append(self[m]+2)
-                elif res==self.k+1:
+                elif res == self.k+1:
                     l.append(self[m]-2)
                 else:
                     l.append(self[m])
@@ -1647,12 +1649,12 @@ class AffinePermutationTypeG(AffinePermutation):
             raise ValueError("length of list must be 6")
         #Check that we have an even number of 'big' elements left of the 7th entry.
         s = sum(i//6 - (i%6 == 0) for i in self if i > 6)
-        if s % 2 != 0:
+        if s % 2:
             raise ValueError("type G affine permutations have an even number of"
                              " entries greater than 6 to the left of the 7th position")
         #Check that we have an even number of 'small' elements right of the zeroth entry.
         s = sum(-i//6 + 1 for i in self if i <= 0)
-        if s % 2 != 0:
+        if s % 2:
             raise ValueError("type G affine permutations have an even number of"
                              " entries less than 0 to the right of the 0th position")
 
@@ -2333,7 +2335,8 @@ class AffinePermutationGroupTypeA(AffinePermutationGroupGeneric):
                     ll.append(residue)
                     l[pos] = [residue]
                     D[pos] -= 1
-            if side[0]=='l': ll.reverse()
+            if side[0] == 'l':
+                ll.reverse()
             listy.append(ll)
             row += 1
         if side[0] == 'r':

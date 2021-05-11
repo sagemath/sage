@@ -1,0 +1,61 @@
+DEBUG_CONFIGURE_FLAG=''
+if [ "$SAGE_DEBUG" = yes ]; then
+    DEBUG_CONFIGURE_FLAG='--with-debug'
+else
+    DEBUG_CONFIGURE_FLAG='--without-debug'
+fi
+
+cd src
+
+# Ncurses cannot build narrow and wide (unicode, --enable-widec)
+# versions in one go. Need to compile twice. Note that Python's curses
+# module will want the wide version, and readline the narrow version.
+
+###################################################
+mkdir narrow
+cd narrow
+ln -s ../configure .
+
+echo "Configuring ncurses (narrow)..."
+sdh_configure --with-termlib \
+              --with-shared \
+              --without-normal \
+              --without-ada \
+              --disable-rpath-hack \
+              --enable-overwrite \
+              --with-pkg-config-libdir="$SAGE_LOCAL/lib/pkgconfig" \
+              --enable-pc-files \
+              "$DEBUG_CONFIGURE_FLAG"
+
+echo "Building ncurses (narrow)..."
+sdh_make
+
+echo "Installing ncurses (narrow)..."
+sdh_make_install
+
+cd ..  # leave narrow
+
+###################################################
+mkdir wide
+cd wide
+ln -s ../configure .
+
+echo "Configuring ncurses (wide)..."
+sdh_configure --with-termlib \
+              --with-shared \
+              --enable-widec \
+              --without-normal \
+              --without-ada \
+              --disable-rpath-hack \
+              --enable-overwrite \
+              --with-pkg-config-libdir="$SAGE_LOCAL/lib/pkgconfig" \
+              --enable-pc-files \
+              "$DEBUG_CONFIGURE_FLAG"
+
+echo "Building ncurses (wide)..."
+sdh_make
+
+echo "Installing ncurses (wide)..."
+sdh_make_install
+
+cd ..  # leave wide

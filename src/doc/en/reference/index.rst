@@ -1,20 +1,22 @@
 .. _reference-manual:
 
-************************************
-Welcome to the Sage Reference Manual
-************************************
+*********************
+Sage Reference Manual
+*********************
 
-This manual contains documentation for (almost) all of `Sage's
-<http://www.sagemath.org/>`_ features, each illustrated with examples
-that are systematically tested with each release. A thematic index is
-available below.
+Welcome to the Sage reference manual. Here you find documentation for all of
+`Sage <http://www.sagemath.org/>`_'s features, illustrated with lots of examples.
+A thematic index follows.
 
-User Interface
-==============
+This documentation is licensed under the `Creative Commons Attribution-Share Alike 3.0 License`__:math:`.`
 
-* :doc:`Command Line Interface (REPL) <repl/index>`
-* For the Jupyter notebook interface, visit `its documentation <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_.
-* For the legacy notebook interface, which is no longer actively maintained, visit the `source repository <https://github.com/sagemath/sagenb>`_.
+__ http://creativecommons.org/licenses/by-sa/3.0/
+
+User Interfaces
+===============
+
+* :doc:`Command Line Interface <repl/index>`
+* `Jupyter Notebook Interface <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_
 
 Graphics
 ========
@@ -37,10 +39,11 @@ Basic Rings and Fields
 
 * :doc:`Integers and Rational Numbers <rings_standard/index>`
 * :doc:`Real and Complex Numbers <rings_numerical/index>`
+* :doc:`Commutative Polynomials <polynomial_rings/index>`
+* :doc:`Power Series and Laurent Series <power_series/index>`
 * :doc:`Finite Rings and Fields <finite_rings/index>`
-* :doc:`Polynomials <polynomial_rings/index>`
-* :doc:`Formal Power Series <power_series/index>`
-* :doc:`p-Adic Numbers <padics/index>`
+* :doc:`\\(p\\)-adic Numbers <padics/index>`
+* :doc:`Noncommutative Polynomials <noncommutative_polynomial_rings/index>`
 * :doc:`Quaternion Algebras <quat_algebras/index>`
 
 Linear Algebra
@@ -93,7 +96,7 @@ Discrete Mathematics
 Geometry and Topology
 ---------------------
 
-* :doc:`Euclidean Spaces and Vector Calculus <manifolds/euclidean_space>`
+* :doc:`Euclidean Spaces and Vector Calculus <euclidean_spaces/index>`
 * :doc:`Combinatorial and Discrete Geometry <discrete_geometry/index>`
 * :doc:`Cell Complexes and their Homology <homology/index>`
 * :doc:`Manifolds and Differential Geometry <manifolds/index>`
@@ -113,8 +116,8 @@ Number Theory
 
 * :doc:`Diophantine approximation <diophantine_approximation/index>`
 * :doc:`Quadratic Forms <quadratic_forms/index>`
-* :doc:`L-Functions <lfunctions/index>`
-* :doc:`Arithmetic Subgroups of SL_2(Z) <arithgroup/index>`
+* :doc:`\\(L\\)-Functions <lfunctions/index>`
+* :doc:`Arithmetic Subgroups of \\({\\rm SL}_2(\\ZZ)\\) <arithgroup/index>`
 * :doc:`General Hecke Algebras and Hecke Modules <hecke/index>`
 * :doc:`Modular Symbols <modsym/index>`
 * :doc:`Modular Forms <modfrm/index>`
@@ -125,7 +128,8 @@ Number Theory
 Algebraic and Arithmetic Geometry
 ---------------------------------
 * :doc:`Schemes <schemes/index>`
-* :doc:`Plane, Elliptic and Hyperelliptic Curves <curves/index>`
+* :doc:`Plane and Space Curves <curves/index>`
+* :doc:`Elliptic and Hyperelliptic Curves <arithmetic_curves/index>`
 
 Miscellaneous
 -------------
@@ -135,6 +139,9 @@ Miscellaneous
 
 Programming
 ===========
+
+Facilities
+----------
 
 * :doc:`Data Structures <data_structures/index>`
 * :doc:`Utilities <misc/index>`
@@ -146,18 +153,20 @@ Interfaces
 
 * :doc:`Interpreter Interfaces <interfaces/index>`
 * :doc:`C/C++ Library Interfaces <libs/index>`
-* :doc:`Python technicalities <cpython/index>`
+* :doc:`Python Technicalities <cpython/index>`
 
 General Information
 ===================
 
-* :doc:`References <references/index>`
+* :doc:`External Packages (by type) <spkg/index>`
+* :doc:`External Packages (alphabetical) <spkg/index_alph>`
+* :doc:`Bibliographic References <references/index>`
 * :doc:`History and License <history_and_license/index>`
+
+Indices and Tables
+==================
+
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 
-This work is licensed under a `Creative Commons Attribution-Share Alike
-3.0 License`__.
-
-__ http://creativecommons.org/licenses/by-sa/3.0/

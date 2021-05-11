@@ -1,5 +1,5 @@
 r"""
-A catalog of posets and lattices.
+Catalog of posets and lattices
 
 Some common posets can be accessed through the ``posets.<tab>`` object::
 
@@ -26,41 +26,44 @@ The infinite set of all posets can be used to find minimal examples::
     :widths: 30, 70
     :delim: |
 
-    :meth:`~posets.AntichainPoset` | Return an antichain on `n` elements.
-    :meth:`~posets.BooleanLattice` | Return the Boolean lattice on `2^n` elements.
-    :meth:`~posets.ChainPoset` | Return a chain on `n` elements.
-    :meth:`~posets.Crown` | Return the crown poset on `2n` elements.
-    :meth:`~posets.DexterSemilattice` | Return the Dexter semilattice.
-    :meth:`~posets.DiamondPoset` | Return the lattice of rank two on `n` elements.
-    :meth:`~posets.DivisorLattice` | Return the divisor lattice of an integer.
-    :meth:`~posets.IntegerCompositions` | Return the poset of integer compositions of `n`.
-    :meth:`~posets.IntegerPartitions` | Return the poset of integer partitions of ``n``.
-    :meth:`~posets.IntegerPartitionsDominanceOrder` | Return the lattice of integer partitions on the integer `n` ordered by dominance.
-    :meth:`~posets.NoncrossingPartitions` | Return the poset of noncrossing partitions of a finite Coxeter group ``W``.
-    :meth:`~posets.PentagonPoset` | Return the Pentagon poset.
-    :meth:`~posets.PermutationPattern` | Return the Permutation pattern poset.
-    :meth:`~posets.PermutationPatternInterval` | Return an interval in the Permutation pattern poset.
-    :meth:`~posets.PermutationPatternOccurrenceInterval` | Return the occurrence poset for a pair of comparable elements in the Permutation pattern poset.
-    :meth:`~posets.PowerPoset` | Return a power poset.
-    :meth:`~posets.ProductOfChains` | Return a product of chain posets.
-    :meth:`~posets.RandomLattice` | Return a random lattice on `n` elements.
-    :meth:`~posets.RandomPoset` | Return a random poset on `n` elements.
-    :meth:`~posets.RestrictedIntegerPartitions` | Return the poset of integer partitions of `n`, ordered by restricted refinement.
-    :meth:`~posets.SetPartitions` | Return the poset of set partitions of the set `\{1,\dots,n\}`.
-    :meth:`~posets.ShardPoset` | Return the shard intersection order.
-    :meth:`~posets.SSTPoset` | Return the poset on semistandard tableaux of shape `s` and largest entry `f` that is ordered by componentwise comparison.
-    :meth:`~posets.StandardExample` | Return the standard example of a poset with dimension `n`.
-    :meth:`~posets.SymmetricGroupAbsoluteOrderPoset` | The poset of permutations with respect to absolute order.
-    :meth:`~posets.SymmetricGroupBruhatIntervalPoset` | The poset of permutations with respect to Bruhat order.
-    :meth:`~posets.SymmetricGroupBruhatOrderPoset` | The poset of permutations with respect to Bruhat order.
-    :meth:`~posets.SymmetricGroupWeakOrderPoset` | The poset of permutations of `\{ 1, 2, \ldots, n \}` with respect to the weak order.
-    :meth:`~posets.TamariLattice` | Return the Tamari lattice.
-    :meth:`~posets.TetrahedralPoset` | Return the Tetrahedral poset with `n-1` layers based on the input colors.
-    :meth:`~posets.UpDownPoset` | Return the up-down poset on `n` elements.
-    :meth:`~posets.YoungDiagramPoset` | Return the poset of cells in the Young diagram of a partition.
-    :meth:`~posets.YoungsLattice` | Return Young's Lattice up to rank `n`.
-    :meth:`~posets.YoungsLatticePrincipalOrderIdeal` | Return the principal order ideal of the partition `lam` in Young's Lattice.
-    :meth:`~posets.YoungFibonacci` | Return the Young-Fibonacci lattice up to rank `n`.
+    :meth:`~Posets.AntichainPoset` | Return an antichain on `n` elements.
+    :meth:`~Posets.BooleanLattice` | Return the Boolean lattice on `2^n` elements.
+    :meth:`~Posets.ChainPoset` | Return a chain on `n` elements.
+    :meth:`~Posets.Crown` | Return the crown poset on `2n` elements.
+    :meth:`~Posets.DexterSemilattice` | Return the Dexter semilattice.
+    :meth:`~Posets.DiamondPoset` | Return the lattice of rank two on `n` elements.
+    :meth:`~Posets.DivisorLattice` | Return the divisor lattice of an integer.
+    :meth:`~Posets.DoubleTailedDiamond` | Return the double tailed diamond poset on `2n + 2` elements.
+    :meth:`~Posets.IntegerCompositions` | Return the poset of integer compositions of `n`.
+    :meth:`~Posets.IntegerPartitions` | Return the poset of integer partitions of ``n``.
+    :meth:`~Posets.IntegerPartitionsDominanceOrder` | Return the lattice of integer partitions on the integer `n` ordered by dominance.
+    :meth:`~Posets.MobilePoset` | Return the mobile poset formed by the `ribbon` with `hangers` below and an `anchor` above.
+    :meth:`~Posets.NoncrossingPartitions` | Return the poset of noncrossing partitions of a finite Coxeter group ``W``.
+    :meth:`~Posets.PentagonPoset` | Return the Pentagon poset.
+    :meth:`~Posets.PermutationPattern` | Return the Permutation pattern poset.
+    :meth:`~Posets.PermutationPatternInterval` | Return an interval in the Permutation pattern poset.
+    :meth:`~Posets.PermutationPatternOccurrenceInterval` | Return the occurrence poset for a pair of comparable elements in the Permutation pattern poset.
+    :meth:`~Posets.PowerPoset` | Return a power poset.
+    :meth:`~Posets.ProductOfChains` | Return a product of chain posets.
+    :meth:`~Posets.RandomLattice` | Return a random lattice on `n` elements.
+    :meth:`~Posets.RandomPoset` | Return a random poset on `n` elements.
+    :meth:`~Posets.RibbonPoset` | Return a ribbon on `n` elements with descents at `descents`.
+    :meth:`~Posets.RestrictedIntegerPartitions` | Return the poset of integer partitions of `n`, ordered by restricted refinement.
+    :meth:`~Posets.SetPartitions` | Return the poset of set partitions of the set `\{1,\dots,n\}`.
+    :meth:`~Posets.ShardPoset` | Return the shard intersection order.
+    :meth:`~Posets.SSTPoset` | Return the poset on semistandard tableaux of shape `s` and largest entry `f` that is ordered by componentwise comparison.
+    :meth:`~Posets.StandardExample` | Return the standard example of a poset with dimension `n`.
+    :meth:`~Posets.SymmetricGroupAbsoluteOrderPoset` | The poset of permutations with respect to absolute order.
+    :meth:`~Posets.SymmetricGroupBruhatIntervalPoset` | The poset of permutations with respect to Bruhat order.
+    :meth:`~Posets.SymmetricGroupBruhatOrderPoset` | The poset of permutations with respect to Bruhat order.
+    :meth:`~Posets.SymmetricGroupWeakOrderPoset` | The poset of permutations of `\{ 1, 2, \ldots, n \}` with respect to the weak order.
+    :meth:`~Posets.TamariLattice` | Return the Tamari lattice.
+    :meth:`~Posets.TetrahedralPoset` | Return the Tetrahedral poset with `n-1` layers based on the input colors.
+    :meth:`~Posets.UpDownPoset` | Return the up-down poset on `n` elements.
+    :meth:`~Posets.YoungDiagramPoset` | Return the poset of cells in the Young diagram of a partition.
+    :meth:`~Posets.YoungsLattice` | Return Young's Lattice up to rank `n`.
+    :meth:`~Posets.YoungsLatticePrincipalOrderIdeal` | Return the principal order ideal of the partition `lam` in Young's Lattice.
+    :meth:`~Posets.YoungFibonacci` | Return the Young-Fibonacci lattice up to rank `n`.
 
 Constructions
 -------------
@@ -80,13 +83,13 @@ Constructions
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six import add_metaclass, string_types
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 import sage.categories.posets
 from sage.combinat.permutation import Permutations, Permutation, to_standard
 from sage.combinat.posets.posets import Poset, FinitePoset, FinitePosets_n
+from sage.combinat.posets.d_complete import DCompletePoset
+from sage.combinat.posets.mobile import MobilePoset as Mobile
 from sage.combinat.posets.lattices import (LatticePoset, MeetSemilattice,
                                            JoinSemilattice, FiniteLatticePoset)
 from sage.categories.finite_posets import FinitePosets
@@ -95,8 +98,7 @@ from sage.graphs.digraph import DiGraph
 from sage.rings.integer import Integer
 
 
-@add_metaclass(ClasscallMetaclass)
-class Posets(object):
+class Posets(metaclass=ClasscallMetaclass):
     r"""
     A collection of posets and lattices.
 
@@ -666,9 +668,8 @@ class Posets(object):
             return LatticePoset(facade=facade)
         from sage.categories.cartesian_product import cartesian_product
         elements = cartesian_product([range(i) for i in l])
-        compare = lambda a,b : all(x <= y for x, y in zip(a ,b))
+        compare = lambda a, b: all(x <= y for x, y in zip(a, b))
         return LatticePoset([elements, compare], facade=facade)
-
 
     @staticmethod
     def RandomPoset(n, p):
@@ -850,7 +851,7 @@ class Posets(object):
             D.relabel([i-1 for i in Permutations(n).random_element()])
             return LatticePoset(D, cover_relations=True)
 
-        if isinstance(properties, string_types):
+        if isinstance(properties, str):
             properties = set([properties])
         else:
             properties = set(properties)
@@ -934,7 +935,7 @@ class Posets(object):
     @staticmethod
     def SSTPoset(s, f=None):
         """
-        The poset on semistandard tableaux of shape ``s`` and largest
+        The lattice poset on semistandard tableaux of shape ``s`` and largest
         entry ``f`` that is ordered by componentwise comparison of the
         entries.
 
@@ -946,16 +947,18 @@ class Posets(object):
           argument.  If no maximal number is given, it will use
           the number of cells in the shape.
 
-        NOTE: This is a basic implementation and most certainly
-        not the most efficient.
+        .. NOTE::
+
+            This is a basic implementation and most certainly
+            not the most efficient.
 
         EXAMPLES::
 
             sage: posets.SSTPoset([2,1])
-            Finite poset containing 8 elements
+            Finite lattice containing 8 elements
 
             sage: posets.SSTPoset([2,1],4)
-            Finite poset containing 20 elements
+            Finite lattice containing 20 elements
 
             sage: posets.SSTPoset([2,1],2).cover_relations()
             [[[[1, 1], [2]], [[1, 2], [2]]]]
@@ -969,22 +972,12 @@ class Posets(object):
         from sage.combinat.tableau import SemistandardTableaux
 
         def tableaux_is_less_than(a, b):
-            atstring = []
-            btstring = []
-            for i in a:
-                atstring += i
-            for i in b:
-                btstring += i
-            for i in range(len(atstring)):
-                if atstring[i] > btstring[i]:
-                    return False
-            return True
+            return all(ix <= iy for x, y in zip(a, b) for ix, iy in zip(x, y))
+
         if f is None:
-            f=0
-            for i in s:
-                f += i
+            f = sum(i for i in s)
         E = SemistandardTableaux(s, max_entry=f)
-        return Poset((E, tableaux_is_less_than))
+        return LatticePoset((E, tableaux_is_less_than))
 
     @staticmethod
     def StandardExample(n, facade=None):
@@ -1385,31 +1378,50 @@ class Posets(object):
         return Poset((range(n), covers), cover_relations=True)
 
     @staticmethod
-    def YoungDiagramPoset(lam):
+    def YoungDiagramPoset(lam, dual=False):
         """
         Return the poset of cells in the Young diagram of a partition.
 
         INPUT:
 
         - ``lam`` -- a partition
+        - ``dual`` -- (default: ``False``) determines the orientation
+          of the poset; if ``True``, then it is a join semilattice,
+          otherwise it is a meet semilattice
 
         EXAMPLES::
 
-            sage: P = posets.YoungDiagramPoset(Partition([2,2])); P
+            sage: P = posets.YoungDiagramPoset(Partition([2, 2])); P
             Finite meet-semilattice containing 4 elements
 
             sage: sorted(P.cover_relations())
             [[(0, 0), (0, 1)], [(0, 0), (1, 0)], [(0, 1), (1, 1)], [(1, 0), (1, 1)]]
+
+            sage: posets.YoungDiagramPoset([3, 2], dual=True)
+            Finite join-semilattice containing 5 elements
         """
-        def cell_leq(a, b):
-            """
-            Nested function that returns `True` if the cell `a` is
-            to the left or above
-            the cell `b` in the (English) Young diagram.
-            """
-            return ((a[0] == b[0] - 1 and a[1] == b[1]) or
-                    (a[1] == b[1] - 1 and a[0] == b[0]))
-        return MeetSemilattice((lam.cells(), cell_leq), cover_relations=True)
+        from sage.combinat.partition import Partition
+        lam = Partition(lam)
+        if dual:
+            def cell_geq(a, b):
+                """
+                Nested function that returns `True` if the cell `a` is
+                to the right or below
+                the cell `b` in the (English) Young diagram.
+                """
+                return ((a[0] == b[0] + 1 and a[1] == b[1]) or
+                        (a[1] == b[1] + 1 and a[0] == b[0]))
+            return JoinSemilattice((lam.cells(), cell_geq), cover_relations=True)
+        else:
+            def cell_leq(a, b):
+                """
+                Nested function that returns `True` if the cell `a` is
+                to the left or above
+                the cell `b` in the (English) Young diagram.
+                """
+                return ((a[0] == b[0] - 1 and a[1] == b[1]) or
+                        (a[1] == b[1] - 1 and a[0] == b[0]))
+            return MeetSemilattice((lam.cells(), cell_leq), cover_relations=True)
 
     @staticmethod
     def YoungsLattice(n):
@@ -1544,6 +1556,35 @@ class Posets(object):
         return FiniteMeetSemilattice(hasse_diagram=D, category=FinitePosets())
 
     @staticmethod
+    def DoubleTailedDiamond(n):
+        r"""
+        Return a double-tailed diamond of `2n + 2` elements.
+
+        INPUT:
+
+        - ``n`` -- a positive integer
+
+        EXAMPLES::
+
+            sage: P = posets.DoubleTailedDiamond(2); P
+            Finite d-complete poset containing 6 elements
+            sage: P.cover_relations()
+            [[1, 2], [2, 3], [2, 4], [3, 5], [4, 5], [5, 6]]
+        """
+        try:
+            n = Integer(n)
+        except TypeError:
+            raise TypeError("number of elements must be an integer, not {}".format(n))
+        if n <= 0:
+            raise ValueError("number of elements must be nonnegative, not {}".format(n))
+
+        edges = [(i, i+1) for i in range(1, n)]
+        edges.extend([(n, n+1), (n, n+2), (n+1, n+3), (n+2, n+3)])
+        edges.extend([(i, i+1) for i in range(n+3, 2*n+2)])
+        p = DiGraph([list(range(1, 2*n + 3)), edges])
+        return DCompletePoset(p)
+
+    @staticmethod
     def PermutationPattern(n):
         r"""
         Return the poset of permutations under pattern containment
@@ -1632,8 +1673,9 @@ class Posets(object):
         bottom = P(bottom)
         if not top.has_pattern(bottom):
             raise ValueError("{} doesn't contain {} as a pattern".format(top, bottom))
-        elem = [[top]] # Make a list of lists of elements in the interval divided by rank.
-                       # List will be flattened at the end
+        # Make a list of lists of elements in the interval divided by rank.
+        # List will be flattened at the end
+        elem = [[top]]
         level = 0    # Consider the top element to be level 0, and then go down from there.
         rel = []     # List of covering relations to be fed into poset constructor.
         while len(top) - len(bottom) >= level + 1:
@@ -1642,7 +1684,7 @@ class Posets(object):
                 # Run through all permutations on current level
                 #   and find relations for which it is upper cover
                 upper_perm = P(upper)
-                for i in range(len(top)-level):
+                for i in range(len(top) - level):
                     # Try and remove the ith element from the permutation
                     lower = list(upper)
                     j = lower.pop(i)
@@ -1673,7 +1715,7 @@ class Posets(object):
         - ``pos`` -- a list of indices indicating a distinguished copy of
            ``bottom`` inside ``top`` (indexed starting at 0)
 
-        For futher information (and picture illustrating included example),
+        For further information (and picture illustrating included example),
         see [ST2010]_ .
 
         See :wikipedia:`Permutation_pattern`.
@@ -1722,7 +1764,79 @@ class Posets(object):
         elem = [item for sublist in elem for item in sublist]
         return Poset([elem,rel])
 
+    @staticmethod
+    def RibbonPoset(n, descents):
+        r"""
+        Return a ribbon poset on ``n`` vertices with descents at ``descents``.
 
+        INPUT:
+
+        - ``n`` -- the number of vertices
+        - ``descents`` -- an iterable; the indices on the ribbon where `y > x`
+
+        EXAMPLES::
+
+            sage: R = Posets.RibbonPoset(5, [1,2])
+            sage: sorted(R.cover_relations())
+            [[0, 1], [2, 1], [3, 2], [3, 4]]
+        """
+        return Mobile(DiGraph([list(range(n)), [(i+1, i) if i in descents else (i, i+1) for i in range(n-1) ]]))
+
+    @staticmethod
+    def MobilePoset(ribbon, hangers, anchor=None):
+        r"""
+        Return a mobile poset with the ribbon ``ribbon`` and
+        with hanging d-complete posets specified in ``hangers``
+        and a d-complete poset attached above, specified in ``anchor``.
+
+        INPUT:
+
+        - ``ribbon`` -- a finite poset that is a ribbon
+        - ``hangers`` -- a dictionary mapping an element on the ribbon
+          to a list of d-complete posets that it covers
+        - ``anchor`` -- (optional) a ``tuple`` (``ribbon_elmt``,
+          ``anchor_elmt``, ``anchor_poset``), where ``anchor_elmt`` covers
+          ``ribbon_elmt``, and ``anchor_elmt`` is an acyclic element of
+          ``anchor_poset``
+
+        EXAMPLES::
+
+            sage: R = Posets.RibbonPoset(5, [1,2])
+            sage: H = Poset([[5, 6, 7], [(5, 6), (6,7)]])
+            sage: M = Posets.MobilePoset(R, {3: [H]})
+            sage: len(M.cover_relations())
+            7
+
+            sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
+            ....: {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
+            ....: 3: [posets.DoubleTailedDiamond(6)]},
+            ....: anchor=(4, 2, posets.ChainPoset(6)))
+            sage: len(P.cover_relations())
+            33
+        """
+        elements = []
+        cover_relations = []
+
+        cover_relations.extend(ribbon.cover_relations())
+        elements.extend(ribbon._elements)
+
+        if anchor:
+            for cr in anchor[2].cover_relations():
+                cover_relations.append(((anchor[0], cr[0]), (anchor[0], cr[1])))
+            cover_relations.append((anchor[0], (anchor[0], anchor[1])))
+
+            for elmt in anchor[2]._elements:
+                elements.append((anchor[0], elmt))
+
+        for r, hangs in hangers.items():
+            for i, h in enumerate(hangs):
+                for v in h._elements:
+                    elements.append((r,i,v))
+                for cr in h.cover_relations():
+                    cover_relations.append(((r, i, cr[0]), (r, i, cr[1])))
+                cover_relations.append(((r,i,h.top()), r))
+
+        return Mobile(DiGraph([elements, cover_relations]))
 
 
 ## RANDOM LATTICES

@@ -1,7 +1,0 @@
-cd src/
-CFLAGS="-I $SAGE_LOCAL/include -L$SAGE_LOCAL/lib $CFLAGS"
-export CFLAGS
-sdh_configure --with-gmp=$SAGE_LOCAL --with-glpk=$SAGE_LOCAL \
-    --enable-shared=yes --enable-static=no
-sdh_make
-sdh_make_install

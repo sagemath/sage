@@ -1,6 +1,0 @@
-cd src
-
-sdh_configure --with-gmp="$SAGE_LOCAL" --with-mpfr="$SAGE_LOCAL" \
-              --with-mpc="$SAGE_LOCAL" --disable-static --enable-shared
-sdh_make
-sdh_make_install

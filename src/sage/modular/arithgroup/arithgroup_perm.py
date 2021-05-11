@@ -97,17 +97,15 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ################################################################################
-from __future__ import print_function, absolute_import
-from six.moves import range
 
 from .all import SL2Z
 from .arithgroup_generic import ArithmeticSubgroup
 from sage.rings.all import ZZ
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import verbose
 import sage.arith.all as arith
 
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor
 
 Idm = SL2Z([1,0,0,1])    # identity
 
@@ -231,10 +229,10 @@ def word_of_perms(w, p1, p2):
         sage: ap.word_of_perms([(0,1),(1,1)], p1, p2) == p1 * p2
         True
     """
-    if not isinstance(p1,PermutationGroupElement):
-        p1 = PermutationGroupElement(p1)
-    if not isinstance(p2,PermutationGroupElement):
-        p2 = PermutationGroupElement(p2)
+    if not isinstance(p1, PermutationGroupElement):
+        p1 = PermutationConstructor(p1)
+    if not isinstance(p2, PermutationGroupElement):
+        p2 = PermutationConstructor(p2)
 
     G = p1.parent()
     if G != p2.parent(): # find a minimal parent
@@ -379,13 +377,13 @@ def ArithmeticSubgroup_Permutation(
         raise ValueError("Need at least two generators")
 
     if S2 is not None:
-        S2 = PermutationGroupElement(S2,check=check)
+        S2 = PermutationConstructor(S2,check=check)
     if S3 is not None:
-        S3 = PermutationGroupElement(S3,check=check)
+        S3 = PermutationConstructor(S3,check=check)
     if L is not None:
-        L = PermutationGroupElement(L,check=check)
+        L = PermutationConstructor(L,check=check)
     if R is not None:
-        R = PermutationGroupElement(R,check=check)
+        R = PermutationConstructor(R,check=check)
 
     if L is not None:
         if R is not None: # initialize from L,R
@@ -612,7 +610,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             sage: G.S2()
             (1,2)
         """
-        return PermutationGroupElement([i+1 for i in self._S2], check=False)
+        return PermutationConstructor([i+1 for i in self._S2], check=False)
 
     def S3(self):
         r"""
@@ -629,7 +627,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             (1,2,3)
         """
 
-        return PermutationGroupElement([i+1 for i in self._S3], check=False)
+        return PermutationConstructor([i+1 for i in self._S3], check=False)
 
     def L(self):
         r"""
@@ -645,7 +643,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             sage: G.L()
             (1,3)
         """
-        return PermutationGroupElement([i+1 for i in self._L], check=False)
+        return PermutationConstructor([i+1 for i in self._L], check=False)
 
     def R(self):
         r"""
@@ -661,7 +659,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             sage: G.R()
             (2,3)
         """
-        return PermutationGroupElement([i+1 for i in self._R], check=False)
+        return PermutationConstructor([i+1 for i in self._R], check=False)
 
     def perm_group(self):
         r"""
@@ -897,8 +895,10 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             True
         """
         n = self.index()
-        S2_win = [None]*n;  S3_win = [None]*n
-        S2_test = [None]*n; S3_test = [None]*n
+        S2_win = [None] * n
+        S3_win = [None] * n
+        S2_test = [None] * n
+        S3_test = [None] * n
 
         m_win = self._canonical_rooted_labels(0)
         for i in range(n): # conjugation
@@ -962,7 +962,8 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
                 j = x[j]
 
             # if everybody is labelled do not go further
-            if k == n: break
+            if k == n:
+                break
 
             # find another guy with y
             j0 = y[waiting.pop(0)]
@@ -978,12 +979,12 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
     @cached_method
     def _index_to_lr_cusp_width(self):
         r"""
-        Precomputation of cusps data of self for this modular subgroup.
+        Precomputation of cusps data of ``self`` for this modular subgroup.
 
         This is a central precomputation for the ``.__contains__()`` method and
         consists in two lists  of positive integers ``lc`` and ``rc`` of length
         the index of the subgroup. They are defined as follows: the number
-        ``lc[i]`` (resp ``rc[i]``) is the lenth of the cycle of ``L`` (resp.
+        ``lc[i]`` (resp ``rc[i]``) is the length of the cycle of ``L`` (resp.
         ``R``) which contains ``i``.
 
         EXAMPLES::
@@ -1426,6 +1427,7 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             sage: G.to_even_subgroup() == Gamma0(6)
             True
         """
+        from sage.misc.verbose import verbose
         if self.index() == 1: # the group is SL2Z (trivial case)
             return True
 
@@ -2499,8 +2501,8 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         s2old, s3old = self.S2(), self.S3()
         s2cycs = s2old.cycle_tuples() # no singletons can exist
         s3cycs = s3old.cycle_tuples(singletons=True)
-        s2 = PermutationGroupElement([x + tuple(y + n for y in x) for x in s2cycs])
-        s3 = PermutationGroupElement([x + tuple(y + n for y in x) for x in s3cycs])
+        s2 = PermutationConstructor([x + tuple(y + n for y in x) for x in s2cycs])
+        s3 = PermutationConstructor([x + tuple(y + n for y in x) for x in s3cycs])
 
         if random is False:
             return ArithmeticSubgroup_Permutation(S2=s2,S3=s3,check=False)
@@ -2511,7 +2513,7 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         for i in range(1,n+1):
             if randint(0,1):
                 t.append((i,n+i))
-        t = PermutationGroupElement(t)
+        t = PermutationConstructor(t)
         return ArithmeticSubgroup_Permutation(S2=s2,S3=t*s3*t,check=False)
 
     def odd_subgroups(self):
@@ -2584,8 +2586,8 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         s2old, s3old = self.S2(), self.S3()
         s2cycs = s2old.cycle_tuples() # no singletons can exist
         s3cycs = s3old.cycle_tuples(singletons=True)
-        s2 = PermutationGroupElement([x + tuple(y + n for y in x) for x in s2cycs])
-        s3 = PermutationGroupElement([x + tuple(y + n for y in x) for x in s3cycs])
+        s2 = PermutationConstructor([x + tuple(y + n for y in x) for x in s2cycs])
+        s3 = PermutationConstructor([x + tuple(y + n for y in x) for x in s3cycs])
         H = ArithmeticSubgroup_Permutation(S2=s2,S3=s3)
 
         bucket = set([H])
@@ -2593,11 +2595,11 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         # We use a set *and* a list since checking whether an element is in a
         # set is very fast, but on the other hand we want the order the results
         # are returned to be at least somewhat canonical.
-        ts = [PermutationGroupElement(list(range(1,1+2*n)))]
+        ts = [PermutationConstructor(list(range(1,1+2*n)))]
 
         for i in range(1,n+1):
 
-            t = PermutationGroupElement([(i, n+i)],check=False)
+            t = PermutationConstructor([(i, n+i)], check=False)
 
             s3c = t*s3*t
 

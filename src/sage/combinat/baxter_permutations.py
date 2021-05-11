@@ -2,7 +2,6 @@
 """
 Baxter permutations
 """
-from six.moves import range
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -261,7 +260,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
             Baxter permutations
         """
         self.element_class = Permutations().element_class
-        from sage.categories.examples.infinite_enumerated_sets import NonNegativeIntegers
+        from sage.sets.non_negative_integers import NonNegativeIntegers
         from sage.sets.family import Family
         DisjointUnionEnumeratedSets.__init__(self,
                                              Family(NonNegativeIntegers(),

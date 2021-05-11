@@ -66,8 +66,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: G = L.galois_group(); G
-    Galois group of Number Field in b with
-    defining polynomial x^8 + 28*x^4 + 2500
+    Galois group 8T4 ([4]2) with order 8 of x^8 + 28*x^4 + 2500
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -267,15 +266,15 @@ r"""
     sage: sg = P.subgroups()
     sage: [H.gens() for H in sg]
     [[()],
+     [(1,4)(2,3)],
      [(2,3)],
      [(1,4)],
-     [(1,4)(2,3)],
      [(1,2)(3,4)],
      [(1,3)(2,4)],
-     [(2,3), (1,4)],
+     [(2,3), (1,4)(2,3)],
+     [(1,2,4,3), (1,4)(2,3)],
      [(1,2)(3,4), (1,4)(2,3)],
-     [(1,3,4,2), (1,4)(2,3)],
-     [(2,3), (1,2)(3,4), (1,4)]]
+     [(2,3), (1,2,4,3), (1,4)(2,3)]]
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -327,10 +326,11 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: subinfo = L.subfield((79/120)*(c+(1/158)*c^5)); subinfo
-    (Number Field in c0 with defining polynomial x^4 + 8, Ring morphism:
-      From: Number Field in c0 with defining polynomial x^4 + 8
-      To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-      Defn: c0 |--> 1/240*c^5 + 79/120*c)
+    (Number Field in c0 with defining polynomial x^4 + 8 with c0 = 1/240*c^5 + 79/120*c,
+     Ring morphism:
+       From: Number Field in c0 with defining polynomial x^4 + 8 with c0 = 1/240*c^5 + 79/120*c
+       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+       Defn: c0 |--> 1/240*c^5 + 79/120*c)
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -354,7 +354,7 @@ r"""
 
     sage: F, mapping = L.subfield((11/150)*(c^2 - (1/22)*c^6))
     sage: F
-    Number Field in c0 with defining polynomial x^2 - 2
+    Number Field in c0 with defining polynomial x^2 - 2 with c0 = -1/300*c^6 + 11/150*c^2
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -378,7 +378,7 @@ r"""
 
     sage: F, mapping = L.subfield((c^4+14)/-48)
     sage: F
-    Number Field in c0 with defining polynomial x^2 + 1
+    Number Field in c0 with defining polynomial x^2 + 1 with c0 = -1/48*c^4 - 7/24
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

@@ -3,11 +3,12 @@ r"""
 `p`-adic `L`-series attached to overconvergent eigensymbols
 
 An overconvergent eigensymbol gives rise to a `p`-adic `L`-series,
-which is essentially defined as the evaluation of the eigensymbol at the
-path `0 \rightarrow \infty`. The resulting distribution on `\ZZ_p` can be restricted
-to `\ZZ_p^\times`, thus giving the measure attached to the sought `p`-adic `L`-series.
+which is essentially defined as the evaluation of the eigensymbol at
+the path `0 \rightarrow \infty`. The resulting distribution on `\ZZ_p`
+can be restricted to `\ZZ_p^\times`, thus giving the measure attached
+to the sought `p`-adic `L`-series.
 
-All this is carefully explained in [PS]_.
+All this is carefully explained in [PS2011]_.
 
 """
 # ****************************************************************************
@@ -18,7 +19,6 @@ All this is carefully explained in [PS]_.
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function, absolute_import
 
 from sage.rings.padics.all import pAdicField
 from sage.rings.all import ZZ, QQ
@@ -26,7 +26,6 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.arith.all import binomial, kronecker
 from sage.rings.padics.precision_error import PrecisionError
 from sage.structure.sage_object import SageObject
-from sage.misc.superseded import deprecation
 
 
 class pAdicLseries(SageObject):
@@ -36,10 +35,12 @@ class pAdicLseries(SageObject):
     INPUT:
 
     - ``symb`` -- an overconvergent eigensymbol
-    - ``gamma`` -- topological generator of `1 + p\ZZ_p` (default: `1+p` or 5 if `p=2`)
+    - ``gamma`` -- topological generator of `1 + p\ZZ_p`
+      (default: `1+p` or 5 if `p=2`)
     - ``quadratic_twist`` -- conductor of quadratic twist `\chi` (default: 1)
-    - ``precision`` -- if ``None`` (default) is specified, the correct precision bound is
-      computed and the answer is returned modulo that accuracy
+    - ``precision`` -- if ``None`` (default) is specified,
+      the correct precision bound is computed and the answer
+      is returned modulo that accuracy
 
     EXAMPLES::
 
@@ -132,8 +133,7 @@ class pAdicLseries(SageObject):
             O(7^5)
             sage: L[1]                                   # long time
             5 + 5*7 + 2*7^2 + 2*7^3 + O(7^4)
-         """
-
+        """
         if n in self._coefficients:
             return self._coefficients[n]
         else:
@@ -208,7 +208,8 @@ class pAdicLseries(SageObject):
             sage: Phi = phi.p_stabilize_and_lift(2,5)   # long time
             sage: L = pAdicLseries(Phi)                 # long time
             sage: L.symbol()                              # long time
-            Modular symbol of level 42 with values in Space of 2-adic distributions with k=0 action and precision cap 15
+            Modular symbol of level 42 with values in Space of 2-adic
+            distributions with k=0 action and precision cap 15
             sage: L.symbol() is Phi                       # long time
             True
         """
@@ -252,7 +253,8 @@ class pAdicLseries(SageObject):
             sage: E = EllipticCurve('14a2')
             sage: L = E.padic_lseries(3, implementation="pollackstevens", precision=4)  # long time
             sage: L._repr_()                           # long time
-            '3-adic L-series of Modular symbol of level 42 with values in Space of 3-adic distributions with k=0 action and precision cap 8'
+            '3-adic L-series of Modular symbol of level 42 with values in
+            Space of 3-adic distributions with k=0 action and precision cap 8'
         """
         return "%s-adic L-series of %s" % (self.prime(), self.symbol())
 
@@ -344,7 +346,7 @@ class pAdicLseries(SageObject):
         r"""
         Return `\int_{a+pZ_p} (z-{a})^j d\Phi(0-infty)`.
 
-        See formula in section 9.2 of [PS]_
+        See formula in section 9.2 of [PS2011]_
 
         INPUT:
 
@@ -375,7 +377,7 @@ class pAdicLseries(SageObject):
                    symb_twisted.moment(r) for r in range(j + 1)) / ap
 
 
-def log_gamma_binomial(p, gamma, n, M, old=None):
+def log_gamma_binomial(p, gamma, n, M):
     r"""
     Return the list of coefficients in the power series
     expansion (up to precision `M`) of `\binom{\log_p(z)/\log_p(\gamma)}{n}`
@@ -399,22 +401,9 @@ def log_gamma_binomial(p, gamma, n, M, old=None):
         [0, -3/205, 651/84050, -223/42025]
         sage: log_gamma_binomial(5,1+5,3,4)
         [0, 2/205, -223/42025, 95228/25845375]
-
-    TESTS::
-
-        sage: z = polygen(QQ, 'z')
-        sage: log_gamma_binomial(5,1+5,z,2,4)
-        doctest:...: DeprecationWarning: the parameter z is ignored and deprecated
-        See https://trac.sagemath.org/26096 for details.
-        [0, -3/205, 651/84050, -223/42025]
     """
-    if old is not None:
-        deprecation(26096, 'the parameter z is ignored and deprecated')
-        # old deprecated order for the parameters
-        z, n, M = n, M, old
-
     S = PowerSeriesRing(QQ, 'z')
-    L = S([0] + [ZZ(-1) ** j / j for j in range(1, M)])  # log_p(1+z)
+    L = S([0] + [ZZ(-1)**j / j for j in range(1, M)])  # log_p(1+z)
     loggam = L.O(M) / L(gamma - 1)
     # log_{gamma}(1+z)= log_p(1+z)/log_p(gamma)
     return binomial(loggam, n).list()

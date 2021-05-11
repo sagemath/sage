@@ -1,18 +1,20 @@
+# -*- coding: utf-8 -*-
 """
 Tensor Product Functorial Construction
 
 AUTHORS:
 
- - Nicolas M. Thiery (2008-2010): initial revision and refactorization
+- Nicolas M. Thiéry (2008-2010): initial revision and refactorization
 """
-#*****************************************************************************
-#  Copyright (C) 2008-2010 Nicolas M. Thiery <nthiery at users.sf.net>
+# ****************************************************************************
+#  Copyright (C) 2008-2010 Nicolas M. Thiéry <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
+
 
 class TensorProductFunctor(CovariantFunctorialConstruction):
     """
@@ -24,6 +26,8 @@ class TensorProductFunctor(CovariantFunctorialConstruction):
     ``Algebras(QQ)``, it is automatically endowed with its natural
     algebra structure, thanks to the category
     ``Algebras(QQ).TensorProducts()`` of tensor products of algebras.
+    For elements, it constructs the natural tensor product element in the
+    corresponding tensor product of their parents.
 
     The tensor functor is covariant: if ``A`` is a subcategory of ``B``, then
     ``A.TensorProducts()`` is a subcategory of ``B.TensorProducts()`` (see
@@ -46,8 +50,12 @@ class TensorProductFunctor(CovariantFunctorialConstruction):
     _functor_name = "tensor"
     _functor_category = "TensorProducts"
     symbol = " # "
+    unicode_symbol = " ⨂ "
+
 
 tensor = TensorProductFunctor()
+
+
 """
 The tensor product functorial construction
 
@@ -58,6 +66,7 @@ EXAMPLES::
     sage: tensor
     The tensor functorial construction
 """
+
 
 class TensorProductsCategory(CovariantConstructionCategory):
     r"""
@@ -74,7 +83,6 @@ class TensorProductsCategory(CovariantConstructionCategory):
         \mathbf{TensorProducts}(\mathbf{WithBasis}_{\Bold{Q}})
         sage: TestSuite(C).run()
     """
-
     _functor_category = "TensorProducts"
 
     def TensorProducts(self):

@@ -13,7 +13,6 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.cpython.string cimport str_to_bytes
 
@@ -23,7 +22,7 @@ from sage.libs.gmp.mpz cimport mpz_init_set_ui, mpz_init_set
 from sage.libs.singular.decl cimport number, poly, ring, currRing
 from sage.libs.singular.decl cimport rChangeCurrRing, rCopy0, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc, omAlloc0Bin,  sip_sring_bin, rnumber_bin
-from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
+from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport p_Copy, prCopyR
 from sage.libs.singular.decl cimport n_unknown,  n_Zp,  n_Q,   n_R,   n_GF,  n_long_R,  n_algExt,n_transExt,n_long_C,   n_Z,   n_Zn,  n_Znm,  n_Z2m,  n_CF
 from sage.libs.singular.decl cimport n_coeffType, cfInitCharProc
@@ -117,6 +116,17 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         sage: P.<x,y,z> = Zmod(25213521351515232)[]; P
         Multivariate Polynomial Ring in x, y, z over Ring of integers modulo 25213521351515232
+
+    TESTS:
+
+    Check that ``degneglex`` and ``degrevlex`` are the same up to reversal of
+    variables (:trac:`29635`)::
+
+        sage: R = PolynomialRing(QQ, 'x', 4, order='degrevlex')
+        sage: S = PolynomialRing(QQ, tuple(reversed(R.gens())), order='degneglex')
+        sage: L = [v for d in (0..4) for v in IntegerVectors(d, 4)]
+        sage: sorted([R.monomial(*e) for e in L]) == sorted([S.monomial(*e) for e in L])
+        True
     """
     cdef long cexponent
     cdef GFInfo* _param
@@ -130,6 +140,8 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     cdef int nvars
     cdef int characteristic
     cdef int modbase
+    cdef int ringorder_column_pos
+    cdef int ringorder_column_asc
 
     cdef n_coeffType ringtype = n_unknown
     cdef MPolynomialRing_libsingular k
@@ -149,8 +161,18 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     order = TermOrder(term_order, n)
 
     cdef nbaseblcks = len(order.blocks())
-    nblcks = nbaseblcks + order.singular_moreblocks()
+    nblcks = nbaseblcks + order.singular_moreblocks() + 1  # one block for ringorder column
     offset = 0
+
+    if (order._singular_ringorder_column is None or
+        order._singular_ringorder_column < 0 or
+        order._singular_ringorder_column >= 2*nbaseblcks+2):
+        ringorder_column_pos = nbaseblcks
+        ringorder_column_type = ringorder_C
+    else:
+        ringorder_column_pos = order._singular_ringorder_column // 2
+        ringorder_column_type = (ringorder_C if order._singular_ringorder_column % 2 == 0
+                                             else ringorder_c)
 
     _names = <char**>omAlloc0(sizeof(char*)*(len(names)))
     for i from 0 <= i < n:
@@ -173,10 +195,11 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     _block0 = <int *>omAlloc0((nblcks + 2) * sizeof(int))
     _block1 = <int *>omAlloc0((nblcks + 2) * sizeof(int))
 
-
-
     cdef int idx = 0
     for i from 0 <= i < nbaseblcks:
+        if i == ringorder_column_pos:
+            _order[idx] = ringorder_column_type
+            idx += 1
         s = order[i].singular_str()
         if s[0] == 'M': # matrix order
             _order[idx] = ringorder_M
@@ -194,35 +217,33 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
             _wvhdl[idx] = wv
         elif s[0] == '(' and order[i].name() == 'degneglex':  # "(a(1:n),ls(n))"
             _order[idx] = ringorder_a
-            if len(order[i]) == 0:    # may be zero for arbitrary-length orders
+            if not order[i]:    # may be zero for arbitrary-length orders
                 nlen = n
             else:
                 nlen = len(order[i])
 
             _wvhdl[idx] = <int *>omAlloc0(len(order[i])*sizeof(int))
-            for j in range(nlen):  _wvhdl[idx][j] = 1
-            _block0[idx] = offset + 1     # same like subsequent rp block
+            for j in range(nlen):
+                _wvhdl[idx][j] = 1
+            _block0[idx] = offset + 1     # same like subsequent ls block
             _block1[idx] = offset + nlen
 
             idx += 1;                   # we need one more block here
-            _order[idx] = ringorder_rp
+            _order[idx] = ringorder_ls
 
         else: # ordinary orders
             _order[idx] = order_dict.get(s, ringorder_dp)
 
         _block0[idx] = offset + 1
-        if len(order[i]) == 0: # may be zero in some cases
+        if not order[i]: # may be zero in some cases
             _block1[idx] = offset + n
         else:
             _block1[idx] = offset + len(order[i])
         offset = _block1[idx]
         idx += 1
 
-    # TODO: if we construct a free module don't hardcode! This
-    # position determines whether we break ties at monomials first or
-    # whether we break at indices first!
-    _order[nblcks] = ringorder_C
-
+    if ringorder_column_pos >= nbaseblcks:
+        _order[idx] = ringorder_column_type
 
     if isinstance(base_ring, RationalField):
         characteristic = 0
@@ -550,7 +571,7 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
         sage: ring_ptr  # random output
         The ring pointer 0x7f78a646b8d0
         sage: ring_refcount_dict[ring_ptr]
-        4
+        3
 
         sage: strat = GroebnerStrategy(Ideal([P.gen(0) + P.gen(1)]))
         sage: ring_refcount_dict[ring_ptr]

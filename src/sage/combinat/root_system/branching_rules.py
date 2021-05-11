@@ -1,13 +1,12 @@
 """
 Branching Rules
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Daniel Bump <bump at match.stanford.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import sage.combinat.root_system.weyl_characters
 from sage.combinat.root_system.root_system import RootSystem
@@ -451,8 +450,8 @@ def branch_weyl_character(chi, R, S, rule="default"):
          B4(0,0,0,0) + B4(1/2,1/2,1/2,1/2) + B4(1,0,0,0)]
 
         sage: E6 = WeylCharacterRing("E6", style="coroots")
-        sage: A2xA2xA2=WeylCharacterRing("A2xA2xA2",style="coroots")
-        sage: A5xA1=WeylCharacterRing("A5xA1",style="coroots")
+        sage: A2xA2xA2 = WeylCharacterRing("A2xA2xA2",style="coroots")
+        sage: A5xA1 = WeylCharacterRing("A5xA1",style="coroots")
         sage: G2 = WeylCharacterRing("G2", style="coroots")
         sage: A1xA1 = WeylCharacterRing("A1xA1", style="coroots")
         sage: F4 = WeylCharacterRing("F4",style="coroots")
@@ -470,7 +469,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         sage: D6xA1 = WeylCharacterRing("D6xA1",style="coroots")
         sage: E7(1,0,0,0,0,0,0).branch(D6xA1,rule="extended")
          D6xA1(0,0,0,0,1,0,1) + D6xA1(0,1,0,0,0,0,0) + D6xA1(0,0,0,0,0,0,2)
-        sage: A5xA2 =WeylCharacterRing("A5xA2",style="coroots")
+        sage: A5xA2 = WeylCharacterRing("A5xA2",style="coroots")
         sage: E7(1,0,0,0,0,0,0).branch(A5xA2,rule="extended")
         A5xA2(0,0,0,1,0,1,0) + A5xA2(0,1,0,0,0,0,1) + A5xA2(1,0,0,0,1,0,0) + A5xA2(0,0,0,0,0,1,1)
         sage: E8 = WeylCharacterRing("E8",style="coroots")
@@ -1750,7 +1749,7 @@ def branching_rule(Rtype, Stype, rule="default"):
     elif rule == "tensor" or rule == "tensor-debug":
         if not Stype.is_compound():
             raise ValueError("Tensor product requires more than one factor")
-        if len(stypes) is not 2:
+        if len(stypes) != 2:
             raise ValueError("Not implemented")
         if Rtype[0] == 'A':
             nr = Rtype[1]+1

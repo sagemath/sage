@@ -10,13 +10,12 @@ Coxeter Groups
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 # With contributions from Dan Bump, Steve Pon, Qiang Wang, Anne Schilling, Christian Stump, Mark Shimozono
-from six.moves import range
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_import import LazyImport
 from sage.misc.constant_function import ConstantFunction
-from sage.misc.misc import attrcall
+from sage.misc.call import attrcall
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -24,8 +23,6 @@ from sage.categories.generalized_coxeter_groups import GeneralizedCoxeterGroups
 from sage.structure.element import have_same_parent, parent
 from sage.misc.flatten import flatten
 from copy import copy
-
-from sage.rings.integer_ring import ZZ
 
 
 class CoxeterGroups(Category_singleton):
@@ -282,8 +279,8 @@ class CoxeterGroups(Category_singleton):
                 sage: sorted(W.braid_orbit(word))
                 [[0, 1, 2, 1], [0, 2, 1, 2], [2, 0, 1, 2]]
 
-                sage: W.braid_orbit([2,1,1,2,1])
-                [[2, 2, 1, 2, 2], [2, 1, 1, 2, 1], [1, 2, 1, 1, 2], [2, 1, 2, 1, 2]]
+                sage: sorted(W.braid_orbit([2,1,1,2,1]))
+                [[1, 2, 1, 1, 2], [2, 1, 1, 2, 1], [2, 1, 2, 1, 2], [2, 2, 1, 2, 2]]
 
                 sage: W = ReflectionGroup(['A',3], index_set=["AA","BB",5])  # optional - gap3
                 sage: w = W.long_element()                                   # optional - gap3
@@ -320,6 +317,7 @@ class CoxeterGroups(Category_singleton):
             braid_rels = self.braid_relations()
             I = self.index_set()
 
+            from sage.rings.integer_ring import ZZ
             be_careful = any(i not in ZZ for i in I)
 
             if be_careful:
@@ -456,7 +454,7 @@ class CoxeterGroups(Category_singleton):
 
             .. rubric:: Background
 
-            The weak order is returned as a :class:`SearchForest`.
+            The weak order is returned as a :class:`RecursivelyEnumeratedSet_forest`.
             This is achieved by assigning to each element `u1` of the
             ideal a single ancestor `u=u1 s_i`, where `i` is the
             smallest descent of `u`.
@@ -475,7 +473,7 @@ class CoxeterGroups(Category_singleton):
                 sage: [x.length() for x in W]
                 [0, 1, 1, 2, 2, 3]
             """
-            from sage.combinat.backtrack import SearchForest
+            from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
 
             def succ(u):
                 for i in u.descents(positive=True, side=side):
@@ -485,7 +483,7 @@ class CoxeterGroups(Category_singleton):
                 return
             from sage.categories.finite_coxeter_groups import FiniteCoxeterGroups
             default_category = FiniteEnumeratedSets() if self in FiniteCoxeterGroups() else EnumeratedSets()
-            return SearchForest((self.one(),), succ, algorithm='breadth',
+            return RecursivelyEnumeratedSet_forest((self.one(),), succ, algorithm='breadth',
                                 category=default_category.or_subcategory(category))
 
         @cached_method
@@ -608,6 +606,25 @@ class CoxeterGroups(Category_singleton):
             return self.weak_order_ideal(attrcall("is_grassmannian", side=side),
                                          side=order_side)
 
+        def fully_commutative_elements(self):
+            r"""
+            Return the set of fully commutative elements in this Coxeter group.
+
+            .. SEEALSO::
+
+                :class:`~sage.combinat.fully_commutative_elements.FullyCommutativeElements`
+
+            EXAMPLES::
+
+                sage: CoxeterGroup(['A', 3]).fully_commutative_elements()
+                Fully commutative elements of Finite Coxeter group over Integer Ring with Coxeter matrix:
+                [1 3 2]
+                [3 1 3]
+                [2 3 1]
+            """
+            from sage.combinat.fully_commutative_elements import FullyCommutativeElements
+            return FullyCommutativeElements(self)
+
         def _test_reduced_word(self, **options):
             """
             Run sanity checks on :meth:`CoxeterGroups.ElementMethods.reduced_word` and
@@ -720,6 +737,28 @@ class CoxeterGroups(Category_singleton):
             from sage.sets.family import Family
             return Family(self.index_set(), lambda i: self.simple_projection(i, side=side, length_increasing=length_increasing))
 
+        def sign_representation(self, base_ring=None, side="twosided"):
+            r"""
+            Return the sign representation of ``self`` over ``base_ring``.
+
+            INPUT:
+
+            - ``base_ring`` -- (optional) the base ring; the default is `\ZZ`
+            - ``side`` -- ignored
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(["A", 1, 1])
+                sage: W.sign_representation()
+                Sign representation of Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space) over Integer Ring
+                
+            """
+            if base_ring is None:
+                from sage.rings.integer_ring import ZZ
+                base_ring = ZZ
+            from sage.modules.with_basis.representation import SignRepresentationCoxeterGroup
+            return SignRepresentationCoxeterGroup(self, base_ring)
+
         def demazure_product(self, Q):
             r"""
             Return the Demazure product of the list ``Q`` in ``self``.
@@ -779,7 +818,7 @@ class CoxeterGroups(Category_singleton):
             if not x.bruhat_le(y):
                 return ret
             ret.append([y])
-            while ret[-1] != []:
+            while ret[-1]:
                 nextlayer = []
                 for z in ret[-1]:
                     for t in z.bruhat_lower_covers():
@@ -1019,11 +1058,11 @@ class CoxeterGroups(Category_singleton):
                 opi = self.simple_projections(side=side, length_increasing=False)
                 for i in self.index_set():
                     for w in tester.some_elements():
-                        tester.assertTrue(pi[i](w) == w.apply_simple_projection(i, side=side))
-                        tester.assertTrue(pi[i](w) == w.apply_simple_projection(i, side=side, length_increasing=True))
-                        tester.assertTrue(opi[i](w) == w.apply_simple_projection(i, side=side, length_increasing=False))
+                        tester.assertEqual(pi[i](w), w.apply_simple_projection(i, side=side))
+                        tester.assertEqual(pi[i](w), w.apply_simple_projection(i, side=side, length_increasing=True))
+                        tester.assertEqual(opi[i](w), w.apply_simple_projection(i, side=side, length_increasing=False))
                         tester.assertTrue(pi[i](w).has_descent(i, side=side))
-                        tester.assertTrue(not opi[i](w).has_descent(i, side=side))
+                        tester.assertFalse(opi[i](w).has_descent(i, side=side))
                         tester.assertEqual(set([pi[i](w), opi[i](w)]),
                                            set([w, w.apply_simple_reflection(i, side=side)]))
 
@@ -1166,8 +1205,8 @@ class CoxeterGroups(Category_singleton):
 
         def first_descent(self, side='right', index_set=None, positive=False):
             """
-            Returns the first left (resp. right) descent of self, as
-            ane element of ``index_set``, or ``None`` if there is none.
+            Return the first left (resp. right) descent of self, as
+            an element of ``index_set``, or ``None`` if there is none.
 
             See :meth:`.descents` for a description of the options.
 
@@ -1341,13 +1380,7 @@ class CoxeterGroups(Category_singleton):
 
             The algorithm uses the Matsumoto property that any two
             reduced expressions are related by braid relations, see
-            [Theorem 3.3.1(ii), BB2005].
-
-            REFERENCES:
-
-            .. [BB2005] A. Björner, F. Brenti *Combinatorics of Coxeter groups.*
-               Graduate Texts in Mathematics, 231. Springer, New York, 2005,
-               (MR2133266).
+            Theorem 3.3.1(ii) in [BB2005]_.
 
             .. SEEALSO::
 
@@ -1498,21 +1531,21 @@ class CoxeterGroups(Category_singleton):
                     y = tuple(y)
                     # Check that the reduced expressions differ by only
                     #   a single braid move
-                    i = 0
-                    while i < len(x) and x[i] == y[i]:
-                        i += 1
-                    if i == len(x):
+                    j = 0
+                    while j < len(x) and x[j] == y[j]:
+                        j += 1
+                    if j == len(x):
                         continue
-                    a, b = x[i], y[i]
+                    a, b = x[j], y[j]
                     m = P.coxeter_matrix()[a, b]
                     subword = [a, b] * (m // 2)
                     subword2 = [b, a] * (m // 2)
                     if m % 2:
                         subword.append(a)
                         subword2.append(b)
-                    if (x[i:i+m] != tuple(subword)
-                            or y[i:i+m] != tuple(subword2)
-                            or x[i+m:] != y[i+m:]):
+                    if (x[j:j+m] != tuple(subword)
+                            or y[j:j+m] != tuple(subword2)
+                            or x[j+m:] != y[j+m:]):
                         continue
                     edges.append([x, y, m])
             G = Graph(edges, immutable=True, format="list_of_edges")
@@ -1664,10 +1697,10 @@ class CoxeterGroups(Category_singleton):
                 sage: w1 = s[1]*s[2]*s[3]
                 sage: w0.absolute_covers()
                 [
-                [0 0 1 0]  [0 1 0 0]  [0 0 0 1]  [0 1 0 0]  [0 1 0 0]
-                [1 0 0 0]  [1 0 0 0]  [1 0 0 0]  [0 0 1 0]  [0 0 0 1]
-                [0 1 0 0]  [0 0 0 1]  [0 0 1 0]  [1 0 0 0]  [0 0 1 0]
-                [0 0 0 1], [0 0 1 0], [0 1 0 0], [0 0 0 1], [1 0 0 0]
+                [0 0 1 0]  [0 1 0 0]  [0 1 0 0]  [0 0 0 1]  [0 1 0 0]
+                [1 0 0 0]  [1 0 0 0]  [0 0 1 0]  [1 0 0 0]  [0 0 0 1]
+                [0 1 0 0]  [0 0 0 1]  [1 0 0 0]  [0 0 1 0]  [0 0 1 0]
+                [0 0 0 1], [0 0 1 0], [0 0 0 1], [0 1 0 0], [1 0 0 0]
                 ]
             """
             W = self.parent()
@@ -1829,7 +1862,7 @@ class CoxeterGroups(Category_singleton):
                 sage: w0.binary_factorizations().category()
                 Category of finite enumerated sets
             """
-            from sage.combinat.backtrack import SearchForest
+            from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
             W = self.parent()
             if not predicate(W.one()):
                 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
@@ -1842,8 +1875,8 @@ class CoxeterGroups(Category_singleton):
                     u1 = u * s[i]
                     if i == u1.first_descent() and predicate(u1):
                         yield (u1, s[i] * v)
-            return SearchForest(((W.one(), self),), succ,
-                                category=FiniteEnumeratedSets())
+            return RecursivelyEnumeratedSet_forest(((W.one(), self),), succ,
+                                                   category=FiniteEnumeratedSets())
 
         @cached_in_parent_method
         def bruhat_lower_covers(self):

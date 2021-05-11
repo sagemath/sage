@@ -8,8 +8,7 @@ AUTHORS:
 - Nick Alexander (2008-01-08)
 
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Nick Alexander <ncalexander@gmail.com>
 #       Copyright (C) 2009/2010 Marco Streng <marco.streng@gmail.com>
 #
@@ -22,8 +21,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.all import (PolynomialRing, ZZ, QQ)
 
@@ -40,6 +39,7 @@ from .con_number_field import ProjectiveConic_number_field
 from sage.structure.element import is_InfinityElement
 
 from sage.arith.all import lcm, hilbert_symbol
+
 
 class ProjectiveConic_rational_field(ProjectiveConic_number_field):
     r"""
@@ -67,9 +67,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         """
         ProjectiveConic_number_field.__init__(self, A, f)
 
-
-    def has_rational_point(self, point = False, obstruction = False,
-                           algorithm = 'default', read_cache = True):
+    def has_rational_point(self, point=False, obstruction=False,
+                           algorithm='default', read_cache=True):
         r"""
         Returns True if and only if ``self`` has a point defined over `\QQ`.
 
@@ -145,8 +144,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             sage: c = [Conic(QQ, a) for a in l if a != [0,0,0] and a != (0,0,0,0,0,0)]
             sage: d = []
             sage: d = [[C]+[C.has_rational_point(algorithm = algorithm, read_cache = False, obstruction = (algorithm != 'rnfisnorm'), point = (algorithm != 'local')) for algorithm in ['local', 'qfsolve', 'rnfisnorm']] for C in c[::10]] # long time: 7 seconds
-            sage: assert all([e[1][0] == e[2][0] and e[1][0] == e[3][0] for e in d])
-            sage: assert all([e[0].defining_polynomial()(Sequence(e[i][1])) == 0 for e in d for i in [2,3] if e[1][0]])
+            sage: assert all(e[1][0] == e[2][0] and e[1][0] == e[3][0] for e in d)
+            sage: assert all(e[0].defining_polynomial()(Sequence(e[i][1])) == 0 for e in d for i in [2,3] if e[1][0])
         """
         if read_cache:
             if self._rational_point is not None:
@@ -166,13 +165,13 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                 return True
         if self.has_singular_point():
             if point:
-                return self.has_singular_point(point = True)
+                return self.has_singular_point(point=True)
             if obstruction:
                 return True, None
             return True
         if algorithm == 'default' or algorithm == 'qfsolve':
             M = self.symmetric_matrix()
-            M *= lcm([ t.denominator() for t in M.list() ])
+            M *= lcm([t.denominator() for t in M.list()])
             pt = qfsolve(M)
             if pt in ZZ:
                 if self._local_obstruction is None:
@@ -184,11 +183,11 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             if point or obstruction:
                 return True, pt
             return True
-        ret = ProjectiveConic_number_field.has_rational_point( \
-                                           self, point = point, \
-                                           obstruction = obstruction, \
-                                           algorithm = algorithm, \
-                                           read_cache = read_cache)
+        ret = ProjectiveConic_number_field.has_rational_point(
+            self, point=point,
+            obstruction=obstruction,
+            algorithm=algorithm,
+            read_cache=read_cache)
         if point or obstruction:
             from sage.categories.map import Map
             from sage.categories.all import Rings
@@ -196,7 +195,6 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                 # ret[1] is a morphism of Rings
                 ret[1] = -1
         return ret
-
 
     def is_locally_solvable(self, p):
         r"""
@@ -229,8 +227,8 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         abc = [D[j, j] for j in range(3)]
         if abc[2] == 0:
             return True
-        a = -abc[0]/abc[2]
-        b = -abc[1]/abc[2]
+        a = -abc[0] / abc[2]
+        b = -abc[1] / abc[2]
         if is_RealField(p) or is_InfinityElement(p):
             p = -1
         elif isinstance(p, Map) and p.category_for().is_subcategory(Rings()):
@@ -238,16 +236,15 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             if p.domain() is QQ and is_RealField(p.codomain()):
                 p = -1
             else:
-                raise TypeError("p (=%s) needs to be a prime of base field " \
-                                 "B ( =`QQ`) in is_locally_solvable" % p)
+                raise TypeError("p (=%s) needs to be a prime of base field "
+                                "B ( =`QQ`) in is_locally_solvable" % p)
         if hilbert_symbol(a, b, p) == -1:
             if self._local_obstruction is None:
                 self._local_obstruction = p
             return False
         return True
 
-
-    def local_obstructions(self, finite = True, infinite = True, read_cache = True):
+    def local_obstructions(self, finite=True, infinite=True, read_cache=True):
         r"""
         Returns the sequence of finite primes and/or infinite places
         such that self is locally solvable at those primes and places.
@@ -292,18 +289,17 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
                             for f in a.factor():
                                 if f[1] < 0 and not f[0] in candidates:
                                     candidates.append(f[0])
-                    for f in (2*self.determinant()).factor():
+                    for f in (2 * self.determinant()).factor():
                         if f[1] > 0 and not f[0] in candidates:
                             candidates.append(f[0])
                 for b in candidates:
                     if not self.is_locally_solvable(b):
-                       obs1.append(b)
+                        obs1.append(b)
                 self._infinite_obstructions = obs1
         obs = obs1 + obs0
         if finite and infinite:
             assert len(obs) % 2 == 0
         return obs
-
 
     def parametrization(self, point=None, morphism=True):
         r"""
@@ -364,7 +360,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             ...
             ValueError: The conic self (=Projective Conic Curve over Rational Field defined by x^2 + y^2) is not smooth, hence does not have a parametrization.
         """
-        if (not self._parametrization is None) and not point:
+        if (self._parametrization is not None) and not point:
             par = self._parametrization
         else:
             if not self.is_smooth():
@@ -376,18 +372,17 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
             [x, y] = Q.gens()
             gens = self.ambient_space().gens()
             M = self.symmetric_matrix()
-            M *= lcm([ t.denominator() for t in M.list() ])
+            M *= lcm([t.denominator() for t in M.list()])
             par1 = qfparam(M, point)
             B = Matrix([[par1[i][j] for j in range(3)] for i in range(3)])
             # self is in the image of B and does not lie on a line,
             # hence B is invertible
             A = B.inverse()
-            par2 = [sum([A[i,j]*gens[j] for j in range(3)]) for i in [1,0]]
-            par = ([Q(pol(x/y)*y**2) for pol in par1], par2)
+            par2 = [sum([A[i, j] * gens[j] for j in range(3)]) for i in [1, 0]]
+            par = ([Q(pol(x / y) * y**2) for pol in par1], par2)
             if self._parametrization is None:
                 self._parametrization = par
         if not morphism:
             return par
         P1 = ProjectiveSpace(self.base_ring(), 1, 'x,y')
-        return P1.hom(par[0],self), self.Hom(P1)(par[1], check = False)
-
+        return P1.hom(par[0], self), self.Hom(P1)(par[1], check=False)

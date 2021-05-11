@@ -334,7 +334,7 @@ factor the embedding:
 
     SL(2) \times SL(2) \to Sp(4) \to SL(4).
 
-Therfore there are branching rules ``A3 -> C2`` and ``C2 -> A2``, and
+Therefore there are branching rules ``A3 -> C2`` and ``C2 -> A2``, and
 we could accomplish the branching in two steps, thus::
 
     sage: A3 = WeylCharacterRing("A3", style="coroots")
@@ -646,7 +646,9 @@ The `k`-th symmetric and exterior power homomorphisms map
 are not implemented but a special case is. The `k`-th symmetric power
 homomorphism `SL(2) \to GL(k+1)` has its image inside of `SO(2r+1)` if
 `k = 2r` and inside of `Sp(2r)` if `k = 2r-1`. Hence there are
-branching rules::
+branching rules:
+
+.. CODE-BLOCK:: text
 
     ['B',r] => A1
     ['C',r] => A1
@@ -915,12 +917,16 @@ linear functionals ``u1`` and ``u2`` on ``U``. On the other hand
 `Lie(T) = \mathbf{R}^4`. A convenient way to see the restriction is to
 think of it as the adjoint of the map ``[u1,u2] -> [u1,u2,-u2,-u1]``,
 that is, ``[x0,x1,x2,x3] -> [x0-x3,x1-x2]``. Hence we may encode the
-rule::
+rule:
+
+.. CODE-BLOCK:: python
 
     def brule(x):
         return [x[0]-x[3], x[1]-x[2]]
 
-or simply::
+or simply:
+
+.. CODE-BLOCK:: python
 
     brule = lambda x: [x[0]-x[3], x[1]-x[2]]
 

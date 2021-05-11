@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+echo "Cleaning out old python / python3 / python3 venv binaries"
+rm -f "$SAGE_LOCAL"/pyvenv.cfg
+rm -f "$SAGE_LOCAL"/bin/python "$SAGE_LOCAL"/bin/python3 "$SAGE_LOCAL"/bin/python3.*

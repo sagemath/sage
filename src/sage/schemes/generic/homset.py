@@ -35,10 +35,10 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from sage.categories.homset import HomsetWithBase
 from sage.structure.factory import UniqueFactory
+from sage.structure.parent import Set_generic
 
 from sage.rings.all import ZZ
 from sage.rings.ring import CommutativeRing
@@ -271,7 +271,6 @@ class SchemeHomset_generic(HomsetWithBase):
             (4, 5)
         """
         # Homset (base of HomsetWithBase) overrides __call__ @#$
-        from sage.structure.parent import Set_generic
         return Set_generic.__call__(self, *args, **kwds)
 
     def _repr_(self):

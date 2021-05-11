@@ -1,4 +1,4 @@
-$(PYTHON) | setuptools pip
+$(PYTHON) | $(PYTHON_TOOLCHAIN) $(SAGERUNTIME)
 
 ----------
 All lines of this file are ignored except the first.

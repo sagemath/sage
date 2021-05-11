@@ -1,8 +1,7 @@
 """
-Classical symmetric functions.
+Classical symmetric functions
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>
 #                     2012 Mike Zabrocki <mike.zabrocki@gmail.com>
 #
@@ -15,9 +14,8 @@ from __future__ import absolute_import
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.rational_field import RationalField
@@ -30,9 +28,6 @@ from . import llt
 from . import macdonald
 from . import jack
 from . import orthotriang
-
-import six
-
 
 ZZ = IntegerRing()
 QQ = RationalField()
@@ -236,7 +231,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
                 raise TypeError("no coerce map from x's parent's base ring (= %s) to self's base ring (= %s)"%(PBR, self.base_ring()))
 
             z_elt = {}
-            for m, c in six.iteritems(x._monomial_coefficients):
+            for m, c in x._monomial_coefficients.items():
                 n = sum(m)
                 P._m_cache(n)
                 for part in P._self_to_m_cache[n][m]:

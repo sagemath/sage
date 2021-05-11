@@ -1,0 +1,17 @@
+# From https://wiki.sagemath.org/prerequisitesUbuntu
+
+# to generate pdf documentation
+texlive-latex-extra
+# to convert Jupyter notebooks to pdf
+texlive-xetex
+# to generate pdf documentation
+latexmk
+# to convert Jupyter notebooks to pdf
+# pandoc -- this is a separate script package
+# to render text with LaTeX in Matplotlib
+dvipng
+# to run the Jmol 3D viewer from the console and generate images for 3D plots in the documentation
+default-jdk
+# to produce animations
+ffmpeg
+libavdevice-dev

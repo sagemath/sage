@@ -10,7 +10,7 @@ class GapPackage(Feature):
     r"""
     A feature describing the presence of a GAP package.
 
-    EXMAPLES::
+    EXAMPLES::
 
         sage: from sage.features.gap import GapPackage
         sage: GapPackage("grape", spkg="gap_packages")
@@ -24,7 +24,8 @@ class GapPackage(Feature):
             sage: isinstance(GapPackage("grape", spkg="gap_packages"), GapPackage)
             True
         """
-        Feature.__init__(self, "GAP package {package}".format(package=package), **kwds)
+        Feature.__init__(self, "GAP package {package}".format(package=package),
+                         **kwds)
         self.package = package
 
     def _is_present(self):
@@ -44,7 +45,7 @@ class GapPackage(Feature):
         presence = libgap.eval(command)
         if presence:
             return FeatureTestResult(self, True,
-                    reason = "`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
+                    reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
         else:
             return FeatureTestResult(self, False,
-                    reason = "`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))
+                    reason="`{command}` evaluated to `{presence}` in GAP.".format(command=command, presence=presence))

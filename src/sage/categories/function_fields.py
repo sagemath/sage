@@ -35,7 +35,7 @@ class FunctionFields(Category):
     def super_categories(self):
         """
         Returns the Category of which this is a direct sub-Category
-        For a list off all super caategories see all_super_categories
+        For a list off all super categories see all_super_categories
 
         EXAMPLES::
 

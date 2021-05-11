@@ -57,14 +57,13 @@ AUTHOR:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 #############################################################################
-from __future__ import print_function, absolute_import
 
 # Standard python imports
+import builtins
 import os
 import types
 
 # We want the caller's locals, but locals() is emulated in Cython
-from six.moves import builtins
 cdef caller_locals = builtins.locals
 
 # Sage imports

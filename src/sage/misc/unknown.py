@@ -1,55 +1,123 @@
 """
 The Unknown truth value
 
+The ``Unknown`` object is used in Sage in several places as return value
+in addition to ``True`` and ``False``, in order to signal uncertainty
+about or inability to compute the result. ``Unknown`` can be identified
+using ``is``, or by catching :class:`UnknownError` from a boolean operation.
+
+.. WARNING::
+
+    Calling ``bool()`` with ``Unknown`` as argument will throw an
+    ``UnknownError``. This also means that in the following cases,
+    ``and``, ``not``, and ``or`` fail or return a somewhat wrong value::
+
+        sage: not Unknown         # should return Unknown
+        Traceback (most recent call last):
+        ...
+        UnknownError: Unknown does not evaluate in boolean context
+        sage: Unknown and False   # should return False
+        Traceback (most recent call last):
+        ...
+        UnknownError: Unknown does not evaluate in boolean context
+        sage: Unknown or False    # should return Unknown
+        Traceback (most recent call last):
+        ...
+        UnknownError: Unknown does not evaluate in boolean context
+
+EXAMPLES::
+
+    sage: def func(n):
+    ....:     if n > 0:
+    ....:         return True
+    ....:     elif n < 0:
+    ....:         return False
+    ....:     else:
+    ....:         return Unknown
+
+Using direct identification::
+
+    sage: for n in [-3, 0, 12]:
+    ....:    res = func(n)
+    ....:    if res is True:
+    ....:        print("n={} is positive".format(n))
+    ....:    elif res is False:
+    ....:        print("n={} is negative".format(n))
+    ....:    else:
+    ....:        print("n={} is neither positive nor negative".format(n))
+    n=-3 is negative
+    n=0 is neither positive nor negative
+    n=12 is positive
+
+Using ``UnknownError``::
+
+    sage: for n in [-3, 0, 12]:
+    ....:    try:
+    ....:        if func(n):
+    ....:            print("n={} is positive".format(n))
+    ....:        else:
+    ....:            print("n={} is negative".format(n))
+    ....:    except UnknownError:
+    ....:        print("n={} is neither positive nor negative".format(n))
+    n=-3 is negative
+    n=0 is neither positive nor negative
+    n=12 is positive
+
 AUTHORS:
 
 - Florent Hivert (2010): initial version.
+- Ralf Stephan, Vincent Delecroix (2018-2020): redesign
 """
-from __future__ import print_function
+# ****************************************************************************
+#       Copyright (C) 2010 Florent Hivert <florent.hivert at lri.fr>
+#                     2018-2020 Ralf Stefan
+#                     2018-2020 Vincent Delecroix <20100.delecroix@gmail.com>
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.structure.sage_object import SageObject
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import richcmp_method, rich_to_bool
 
+class UnknownError(TypeError):
+    """
+    Raised whenever :class:`Unknown` is used in a boolean operation.
+
+    EXAMPLES::
+
+        sage: not Unknown
+        Traceback (most recent call last):
+        ...
+        UnknownError: Unknown does not evaluate in boolean context
+    """
+    pass
 
 @richcmp_method
-class UnknownClass(UniqueRepresentation, SageObject):
+class UnknownClass(UniqueRepresentation):
     """
+    The Unknown truth value
+
+    The ``Unknown`` object is used in Sage in several places as return value
+    in addition to ``True`` and ``False``, in order to signal uncertainty
+    about or inability to compute the result. ``Unknown`` can be identified
+    using ``is``, or by catching :class:`UnknownError` from a boolean
+    operation.
+
+    .. WARNING::
+
+        Calling ``bool()`` with ``Unknown`` as argument will throw an
+        ``UnknownError``. This also means that applying ``and``, ``not``,
+        and ``or`` to ``Unknown`` might fail.
+
     TESTS::
 
         sage: TestSuite(Unknown).run()
     """
-    def __init__(self):
-        """
-        The ``Unknown`` truth value
-
-        EXAMPLES::
-
-            sage: l = [False, Unknown, True]
-            sage: for a in l: print([a and b for b in l])
-            [False, False, False]
-            [Unknown, Unknown, Unknown]
-            [False, Unknown, True]
-
-            sage: for a in l: print([a or b  for b in l])
-            [False, Unknown, True]
-            [False, Unknown, True]
-            [True, True, True]
-
-        .. WARNING::
-
-            Unless PEP 335 is accepted, in the following cases,
-            ``and``, ``not`` and ``or`` return a somewhat wrong value::
-
-                sage: not Unknown         # should return Unknown
-                True
-                sage: Unknown and False   # should return False
-                Unknown
-                sage: Unknown or False    # should return Unknown
-                False
-        """
-
-    def _repr_(self):
+    def __repr__(self):
         """
         TESTS::
 
@@ -60,27 +128,26 @@ class UnknownClass(UniqueRepresentation, SageObject):
 
     def __bool__(self):
         """
-        When evaluated in a boolean context ``Unknown()`` is evaluated into
-        ``False``.
+        When evaluated in a boolean context ``Unknown`` raises a ``UnknownError``.
 
         EXAMPLES::
 
             sage: bool(Unknown)
-            False
+            Traceback (most recent call last):
+            ...
+            UnknownError: Unknown does not evaluate in boolean context
             sage: not Unknown
-            True
+            Traceback (most recent call last):
+            ...
+            UnknownError: Unknown does not evaluate in boolean context
         """
-        return False
+        raise UnknownError('Unknown does not evaluate in boolean context')
 
     __nonzero__ = __bool__
 
     def __and__(self, other):
         """
-        The ``and`` logical connector.
-
-        .. WARNING::
-
-            This is not used by ``and`` unless PEP 335 is accepted.
+        The ``&`` logical operation.
 
         EXAMPLES::
 
@@ -91,23 +158,19 @@ class UnknownClass(UniqueRepresentation, SageObject):
             sage: Unknown & True
             Unknown
 
-        Compare with::
-
-            sage: Unknown and False    # should return False
-            Unknown
+            sage: Unknown.__or__(3)
+            NotImplemented
         """
         if other is False:
             return False
-        else:
+        elif other is True or other is Unknown:
             return self
+        else:
+            return NotImplemented
 
     def __or__(self, other):
         """
-        The ``or`` logical connector.
-
-        .. WARNING::
-
-            This is not used by ``or`` unless PEP 335 is accepted.
+        The ``|`` logical connector.
 
         EXAMPLES::
 
@@ -118,35 +181,15 @@ class UnknownClass(UniqueRepresentation, SageObject):
             sage: Unknown | True
             True
 
-        Compare with::
-
-            sage: Unknown or False    # should return Unknown
-            False
+            sage: Unknown.__or__(3)
+            NotImplemented
         """
-        if other:
+        if other is True:
             return True
-        else:
+        elif other is False or other is Unknown:
             return self
-
-    def __not__(self):
-        """
-        The ``not`` logical connector.
-
-        .. WARNING::
-
-            This is not used by ``not`` unless PEP 335 is accepted.
-
-        EXAMPLES::
-
-            sage: Unknown.__not__()
-            Unknown
-
-        Compare with::
-
-            sage: not Unknown  # should return Unknown
-            True
-        """
-        return self
+        else:
+            return NotImplemented
 
     def __richcmp__(self, other, op):
         """

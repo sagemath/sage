@@ -2,7 +2,7 @@ r"""
 Fast conversion of Python objects to C long
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Vincent Delecroix <20100.delecroix@gmail.com>
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
@@ -10,10 +10,10 @@ Fast conversion of Python objects to C long
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from libc.limits cimport LONG_MIN
+from libc.limits cimport LONG_MIN, LONG_MAX
 
 from cpython.object cimport Py_SIZE
 from cpython.int cimport PyInt_AS_LONG
@@ -29,7 +29,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
     r"""
     Given a Python object ``x`` cast it quickly to a C long.
 
-    A ``TypeError`` is raised if the input can not be converted to an integer or
+    A ``TypeError`` is raised if the input cannot be converted to an integer or
     an ``OverflowError`` is raised if it does not fit into a C long.
 
     TESTS:
@@ -136,12 +136,11 @@ cdef inline bint integer_check_long(x, long* value, int* err) except -1:
         ....: def long_max():
         ....:     return smallInteger(LONG_MAX)
         ....: ''')
-        sage: import six
-        sage: types = (ZZ, QQ) + six.integer_types
+        sage: types = (ZZ, QQ, int)
         sage: L = [1, 12345, 10^9, 2^30, long_max()//9, long_max()//3, long_max()]
         sage: L += [-x for x in L] + [0, long_min()]
         sage: for v in L:
-        ....:     for t in (Integer,) + six.integer_types:
+        ....:     for t in (Integer, int):
         ....:         assert check_long(t(v)) == v
         sage: check_long(2^100)
         Traceback (most recent call last):
@@ -261,3 +260,32 @@ cdef inline bint integer_check_long_py(x, long* value, int* err):
         # 4 digits or more: guaranteed overflow
         err[0] = ERR_OVERFLOW
     return 1
+
+
+cdef inline bint is_small_python_int(obj):
+    """
+    Test whether Python object is a small Python integer.
+
+    Meaning that it can be converted to a C long. In Python 2,
+    this is equivalent to it being the ``int`` Python type. In Python
+    3, the ``int`` Python type has unlimited precision so we need to
+    check its range.
+
+    EXAMPLES::
+
+        sage: cython('''
+        ....: from sage.arith.long cimport is_small_python_int
+        ....: def is_small_wrapper(x):
+        ....:     return is_small_python_int(x)
+        ....: ''')
+        sage: is_small_wrapper(int(3))
+        True
+        sage: is_small_wrapper(ZZ(3))   # not a Python int
+        False
+        sage: import sys
+        sage: is_small_wrapper(int(sys.maxsize))   # does fit into C long
+        True
+        sage: is_small_wrapper(int(sys.maxsize + 1))   # does not fit into C long
+        False
+    """
+    return (type(obj) is int) and (LONG_MIN <= obj <= LONG_MAX)

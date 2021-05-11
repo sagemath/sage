@@ -253,13 +253,13 @@ We can now define the MILP itself
 
 ::
 
-    sage: p.add_constraint(sum(weight[o] * taken[o] for o in L) <= C)
+    sage: p.add_constraint(p.sum(weight[o] * taken[o] for o in L) <= C)
 
 .. link
 
 ::
 
-    sage: p.set_objective(sum(usefulness[o] * taken[o] for o in L))
+    sage: p.set_objective(p.sum(usefulness[o] * taken[o] for o in L))
 
 .. link
 
@@ -275,7 +275,7 @@ The solution found is (of course) admissible
 
 ::
 
-    sage: sum(weight[o] * taken[o] for o in L) # abs tol 1e-6
+    sage: sum(weight[o] * taken[o] for o in L)  # abs tol 1e-6
     0.6964959796619171
 
 Should we take a flashlight?
@@ -284,7 +284,7 @@ Should we take a flashlight?
 
 ::
 
-    sage: taken["flashlight"]
+    sage: taken["flashlight"] # abs tol 1e-6
     1.0
 
 Wise advice. Based on purely random considerations.
@@ -331,14 +331,14 @@ Let us write the Sage code of this MILP::
 
 ::
 
-    sage: p.set_objective(sum(matching[e] for e in g.edges(labels=False)))
+    sage: p.set_objective(p.sum(matching[e] for e in g.edges(labels=False)))
 
 .. link
 
 ::
 
     sage: for v in g:
-    ....:     p.add_constraint(sum(matching[e]
+    ....:     p.add_constraint(p.sum(matching[e]
     ....:         for e in g.edges_incident(v, labels=False)) <= 1)
 
 .. link
@@ -409,8 +409,8 @@ graph, in which all the edges have a capacity of 1::
     sage: for v in g:
     ....:     if v != s and v != t:
     ....:         p.add_constraint(
-    ....:             sum(f[(v,u)] for u in g.neighbors_out(v))
-    ....:             - sum(f[(u,v)] for u in g.neighbors_in(v)) == 0)
+    ....:             p.sum(f[v,u] for u in g.neighbors_out(v))
+    ....:             - p.sum(f[u,v] for u in g.neighbors_in(v)) == 0)
 
 .. link
 
@@ -423,7 +423,7 @@ graph, in which all the edges have a capacity of 1::
 
 ::
 
-    sage: p.set_objective(sum(f[(s,u)] for u in g.neighbors_out(s)))
+    sage: p.set_objective(p.sum(f[s,u] for u in g.neighbors_out(s)))
 
 .. link
 
@@ -436,24 +436,48 @@ graph, in which all the edges have a capacity of 1::
     :align: center
 
 
-Solvers
--------
+Solvers (backends)
+------------------
 
 Sage solves linear programs by calling specific libraries. The
 following libraries are currently supported:
 
-* `CBC <http://www.coin-or.org/projects/Cbc.xml>`_: A solver from
-  `COIN-OR <http://www.coin-or.org/>`_
+* `CBC <https://github.com/coin-or/Cbc>`_: A solver from
+  `COIN-OR <http://www.coin-or.org/>`_,
+  provided under the Eclipse Public License (EPL), which is an open source
+  license but incompatible with GPL. CBC and the Sage CBC backend can be
+  installed using the shell command::
 
-  Provided under the open source license CPL, but incompatible with
-  GPL. CBC can be installed using the shell command
-  ``sage -i cbc sagelib``.
+    $ sage -i -c sage_numerical_backends_coin
 
 * `CPLEX
-  <http://www-01.ibm.com/software/integration/optimization/cplex/>`_:
-  A solver from `ILOG <http://www.ilog.com/>`_
+  <https://www.ibm.com/products/ilog-cplex-optimization-studio/>`_:
+  Proprietary, but available for free for researchers and students through
+  IBM's Academic Initiative.  Since :trac:`27790`, only versions 12.8 and
+  above are supported.
 
-  Proprietary, but free for researchers and students.
+  Install CPLEX according to the instructions on the
+  website, which includes obtaining a license key.
+
+  Then find the installation directory of your ILOG CPLEX Studio installation, which contains subdirectories ``cplex``, ``doc``, ``opl``, etc.
+  Set the environment variable ``CPLEX_HOME`` to this directory; for example using the following shell command (on macOS)::
+
+    $ export CPLEX_HOME=/Applications/CPLEX_Studio1210
+
+  or (on Linux)::
+
+    $ export CPLEX_HOME=/opt/ibm/ILOG/CPLEX_Studio1210
+
+  Now verify that the CPLEX binary that you will find in the subdirectory
+  ``cplex/bin/ARCH-OS`` starts correctly, for example::
+
+    $ $CPLEX_HOME/cplex/bin/x86-64_osx/cplex
+    Welcome to IBM(R) ILOG(R) CPLEX(R) Interactive Optimizer...
+
+  This environment variable only needs to be set for the following step:
+  Install the Sage CPLEX backend using the shell command::
+
+    $ sage -i -c sage_numerical_backends_cplex
 
 * `CVXOPT <http://cvxopt.org/>`_: an LP solver from Python Software for
   Convex Optimization, uses an interior-point method, always installed in Sage.
@@ -465,77 +489,32 @@ following libraries are currently supported:
 
   Licensed under the GPLv3. This solver is always installed, as the default one, in Sage.
 
-* `GUROBI <http://www.gurobi.com/>`_
+* `Gurobi <https://www.gurobi.com/>`_:
+  Proprietary, but available for free for researchers and students via Gurobi's
+  Academic Program.
 
-  Proprietary, but free for researchers and students.
+  Install Gurobi according to the instructions on the website,
+  which includes obtaining a license key.  The installation should make the
+  interactive Gurobi shell ``gurobi.sh`` available in your ``PATH``.
+  Verify this by typing the shell command ``gurobi.sh``::
+
+    $ gurobi.sh
+    Python 3.7.4 (default, Aug 27 2019, 11:27:39)
+    ...
+    Gurobi Interactive Shell (mac64), Version 9.0.0
+    Copyright (c) 2019, Gurobi Optimization, LLC
+    Type "help()" for help
+    gurobi>
+
+  If this does not work, adjust your ``PATH`` or create symbolic links so
+  that ``gurobi.sh`` is found.
+
+  Now install the Sage Gurobi backend using the shell command::
+
+    $ sage -i -c sage_numerical_backends_gurobi
 
 * `PPL <http://bugseng.com/products/ppl>`_: A solver from bugSeng.
 
   This solver provides exact (arbitrary precision) computation, always installed in Sage.
 
   Licensed under the GPLv3.
-
-Using CPLEX or GUROBI through Sage
-----------------------------------
-
-ILOG's CPLEX and GUROBI being proprietary softwares, you must be in possession
-of several files to use it through Sage. In each case, the **expected** (it may
-change !) filename is joined.
-
-* A valid license file
-    * CPLEX : a ``.ilm`` file
-    * GUROBI : a ``.lic`` file
-
-* A compiled version of the library
-    * CPLEX : ``libcplex.a``
-    * GUROBI : ``libgurobi55.so`` (or more recent)
-
-* The library file
-    * CPLEX : ``cplex.h``
-    * GUROBI : ``gurobi_c.h``
-
-The environment variable defining the licence's path must also be set when
-running Sage. You can append to your ``.bashrc`` file one of the following :
-
-    * For CPLEX ::
-
-        export ILOG_LICENSE_FILE=/path/to/the/license/ilog/ilm/access_1.ilm
-
-    * For GUROBI ::
-
-        export GRB_LICENSE_FILE=/path/to/the/license/gurobi.lic
-
-
-As Sage also needs the files library and header files the easiest way is to
-create symbolic links to these files in the appropriate directories:
-
-* For CPLEX:
-    * ``libcplex.a`` -- in ``SAGE_ROOT/local/lib/``, type::
-
-        ln -s /path/to/lib/libcplex.a .
-
-    * ``cplex.h`` -- in ``SAGE_ROOT/local/include/``, type::
-
-        ln -s /path/to/include/cplex.h .
-
-    *  ``cpxconst.h`` (if it exists) -- in ``SAGE_ROOT/local/include/``, type::
-
-        ln -s /path/to/include/cpxconst.h .
-
-* For GUROBI
-
-    * ``libgurobi56.so`` -- in ``SAGE_ROOT/local/lib/``, type::
-
-        ln -s /path/to/lib/libgurobi56.so libgurobi.so
-
-    * ``gurobi_c.h`` -- in ``SAGE_ROOT/local/include/``, type::
-
-        ln -s /path/to/include/gurobi_c.h .
-
-**It is very important that the names of the symbolic links in Sage's folders**
-** be precisely as indicated. If the names differ, Sage will not notice that**
-**the files are present**
-
-Once this is done, Sage is to be asked to notice the changes by running::
-
-    make

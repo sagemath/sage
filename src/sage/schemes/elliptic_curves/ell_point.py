@@ -108,15 +108,14 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, division, absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import math
 
@@ -262,9 +261,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             v = list(v)
         elif v == 0:
             # some of the code assumes that E(0) has integral entries
-            # irregardless of the base ring...
-            #R = self.base_ring()
-            #v = (R.zero(),R.one(),R.zero())
+            # regardless of the base ring...
+            # R = self.base_ring()
+            # v = (R.zero(),R.one(),R.zero())
             v = (0, 1, 0)
         if check:
             # mostly from SchemeMorphism_point_projective_field
@@ -601,7 +600,6 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         """
         if self.is_zero():
             return plot.text("$\\infty$", (-3, 3), **args)
-
         else:
             return plot.point((self[0], self[1]), **args)
 
@@ -822,10 +820,10 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             [2, 4, 4, 2, 1, 2, 4, 4]
             sage: all(T.is_divisible_by(3) for T in tor)
             True
-            sage: Set([T for T in tor if T.is_divisible_by(2)])
-            {(0 : 1 : 0), (1 : 0 : 1)}
-            sage: Set([2*T for T in tor])
-            {(0 : 1 : 0), (1 : 0 : 1)}
+            sage: sorted(T for T in tor if T.is_divisible_by(2))
+            [(0 : 1 : 0), (1 : 0 : 1)]
+            sage: sorted(Set([2*T for T in tor]))
+            [(0 : 1 : 0), (1 : 0 : 1)]
         """
         # Coerce the input m to an integer
         m = Integer(m)
@@ -978,7 +976,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P._order
             3
 
-        When we sucessfully divide a point known to have infinite
+        When we successfully divide a point known to have infinite
         order, the points returned know that they also have infinite
         order::
 
@@ -991,7 +989,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
            sage: [(Q,Q._order) for Q in pts]
            [((0 : -1 : 1), +Infinity)]
 
-        When we sucessfully divide a point of known finite order `n`,
+        When we successfully divide a point of known finite order `n`,
         the points returned know that they also have finite order `nk`
         for some divisor `k` of `m`::
 
@@ -1162,7 +1160,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         k = 0
         Q = self
         pts = Q.division_points(p)
-        while len(pts) > 0:
+        while pts:
             Q = pts[0]
             k += 1
             pts = Q.division_points(p)
@@ -1196,7 +1194,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             (0 : 1 : 0)
 
         We now give a more interesting case, the NIST-P521 curve. Its
-        order is too big to calculate with SAGE, and takes a long time
+        order is too big to calculate with Sage, and takes a long time
         using other packages, so it is very useful here.
 
         ::
@@ -1478,7 +1476,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         ALGORITHM:
 
-            Double-and-add. See also [Mil04]_.
+            Double-and-add. See also [Mil2004]_.
 
         AUTHORS:
 
@@ -1580,16 +1578,11 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         ALGORITHM:
 
-        Implemented using Proposition 8 in [Mil04]_.  The value 1 is
+        Implemented using Proposition 8 in [Mil2004]_.  The value 1 is
         returned for linearly dependent input points.  This condition
         is caught via a DivisionByZeroError, since the use of a
         discrete logarithm test for linear dependence, is much too slow
         for large `n`.
-
-        REFERENCES:
-
-        .. [Mil04] Victor S. Miller, "The Weil pairing, and its
-           efficient calculation", J. Cryptol., 17(4):235-261, 2004
 
         AUTHOR:
 
@@ -1702,7 +1695,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Qx = 69*a^5 + 96*a^4 + 22*a^3 + 86*a^2 + 6*a + 35
             sage: Qy = 34*a^5 + 24*a^4 + 16*a^3 + 41*a^2 + 4*a + 40
             sage: Q = EK(Qx, Qy);
-            sage: # multiply by cofactor so Q has order n:
+
+        Multiply by cofactor so Q has order n::
+
             sage: h = 551269674; Q = h*Q
             sage: P = EK(P); P.tate_pairing(Q, n, k)
             24*a^5 + 34*a^4 + 3*a^3 + 69*a^2 + 86*a + 45
@@ -1881,7 +1876,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             True
 
         Using the same data, we show that the ate pairing is a power of the
-        Tate pairing (see [HSV]_ end of section 3.1)::
+        Tate pairing (see [HSV2006]_ end of section 3.1)::
 
             sage: c = (k*p^(k-1)).mod(n); T = t - 1
             sage: N = gcd(T^k - 1, p^k - 1)
@@ -1952,16 +1947,11 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         NOTES:
 
-        First defined in the paper of [HSV]_, the ate pairing can be
+        First defined in the paper of [HSV2006]_, the ate pairing can be
         computationally effective in those cases when the trace of the curve
         over the base field is significantly smaller than the expected
         value. This implementation is simply Miller's algorithm followed by a
         naive exponentiation, and makes no claims towards efficiency.
-
-        REFERENCES:
-
-        .. [HSV] Hess, Smart, Vercauteren, "The Eta Pairing Revisited",
-           IEEE Trans. Information Theory, 52(10): 4595-4602, 2006.
 
         AUTHORS:
 
@@ -2227,7 +2217,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         e = embedding
         # It is also trivially true if we have a complex embedding
-        if not e is None:
+        if e is not None:
             if not is_RealField(e.codomain()):
                 return True
 
@@ -2424,8 +2414,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         return E.reduction(p)(P)
 
     def height(self, precision=None, normalised=True, algorithm='pari'):
-        r"""
-        Return the Néron-Tate canonical height of the point.
+        r"""Return the Néron-Tate canonical height of the point.
 
         INPUT:
 
@@ -2452,22 +2441,14 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         There are two normalisations used in the literature, one of
         which is double the other. We use the larger of the two, which
         is the one appropriate for the BSD conjecture. This is
-        consistent with [Cre]_ and double that of [SilBook]_.
+        consistent with [Cre1997]_ and double that of [Sil2009]_.
 
-        See :wikipedia:`Néron-Tate height`
+        See :wikipedia:`Néron-Tate height`.
 
-        REFERENCES:
+        .. NOTE::
 
-        .. [Cre] John Cremona, Algorithms for Modular Elliptic Curves.
-           Cambridge University Press, 1997.
-
-        .. [Sil1988] Joseph H. Silverman, Computing heights on
-           elliptic curves. Mathematics of Computation, Vol. 51,
-           No. 183 (Jul., 1988), pp. 339-358.
-
-        .. [SilBook] Joseph H. Silverman, The Arithmetic of Elliptic
-           Curves. Second edition. Graduate Texts in Mathematics, 106.
-           Springer, 2009.
+           The correct height to use for the regulator in the BSD
+           formula is the non-normalised height.
 
         EXAMPLES::
 
@@ -2658,6 +2639,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P2 = F([2,5])
             sage: P2.height()
             1.06248137652528
+
         """
         if self.has_finite_order():
             return rings.QQ(0)
@@ -2733,7 +2715,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
             sage: K.<a> = QuadraticField(-2)
             sage: E = EllipticCurve(K, [0,-1,1,0,0]); E
-            Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field in a with defining polynomial x^2 + 2
+            Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 over Number Field in a with defining polynomial x^2 + 2 with a = 1.414213562373095?*I
             sage: P = E.lift_x(2+a); P
             (a + 2 : 2*a + 1 : 1)
             sage: P.archimedean_local_height(K.places(prec=170)[0]) / 2
@@ -2777,7 +2759,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve(v)
             sage: P = E([72*a - 509/5,  -682/25*a - 434/25])
             sage: P.archimedean_local_height()
-            -0.2206607955468278492183362746930
+            -0.220660795546828
 
         See :trac:`19276`::
 
@@ -2785,51 +2767,88 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: E = EllipticCurve([1, a - 1, 1, -816765673272*a - 7931030674178, 1478955604013312315*a + 14361086227143654561])
             sage: P = E(5393511/49*a + 52372721/49 , -33896210324/343*a - 329141996591/343 )
             sage: P.height()
-            0.974232017827740
+            0.974232017827741
+
+        See :trac:`29966`::
+
+            sage: K.<a> = NumberField(x^3 - x^2 - 6*x + 2)
+            sage: E = EllipticCurve([1, -a^2 + 2*a + 4, 0, -6056450500590472699700624*a^2 - 11239394326797569935861742*a + 4241549693833829432516231, 1904879037869682826729875958079326124520*a^2 + 3535022146945771697732350459284777382011*a - 1334055169621036218710397707677347972626])
+            sage: P = E([1033399668533*a^2 + 1917754693229*a - 723726883800 , 12536493059202326563*a^2 + 23264879148900575548*a - 8779756111574815918 , 1])
+            sage: P.height()
+            0.297318833424763
+            sage: (2*P).height() / P.height()
+            4.00000000000000
+            sage: P.height(200)
+            0.29731883342476341806143743594519935578696537745294661858984
+            sage: (2*P).height(200) / P.height(200)
+            4.0000000000000000000000000000000000000000000000000000000000
         """
+        from sage.rings.number_field.number_field import refine_embedding
+        from sage.all import RealField, ComplexField, Infinity
+
         E = self.curve()
         K = E.base_ring()
 
         if v is None:
+
+            if prec is None:
+                prec = 53
             if K is rings.QQ:
                 v = K.embeddings(rings.RR)[0]
-                h = self.archimedean_local_height(v, prec)
+                h = self.archimedean_local_height(v, prec+10)
             else:
                 r1, r2 = K.signature()
                 pl = K.places()
-                h = (sum(self.archimedean_local_height(pl[i], prec, weighted=False)
+                h = (sum(self.archimedean_local_height(pl[i], prec+10, weighted=False)
                          for i in range(r1))
-                     + 2 * sum(self.archimedean_local_height(pl[i], prec, weighted=False)
+                     + 2 * sum(self.archimedean_local_height(pl[i], prec+10, weighted=False)
                                for i in range(r1, r1 + r2)))
                 if not weighted:
                     h /= K.degree()
-            return h
+            return RealField(prec)(h)
 
-        from sage.rings.number_field.number_field import refine_embedding
         prec_v = v.codomain().prec()
         if prec is None:
             prec = prec_v
         if K is rings.QQ:
-            vv = K.embeddings(rings.RealField(max(2*prec, prec_v)))[0]
-        else:
-            vv = refine_embedding(v, 2*prec)  # vv.prec() = max(2*prec, prec_v)
+            v = K.embeddings(RealField())[0]
+        v_inf = refine_embedding(v, Infinity)
+        v_is_real = v_inf(K.gen()).imag().is_zero()
 
-        absdisc = vv(E.discriminant()).abs()
-        while absdisc==0:
-            vv = refine_embedding(vv)
-            # print("doubling precision")
-            absdisc = vv(E.discriminant()).abs()
-        temp = 0 if absdisc>=1 else absdisc.log()/3
+        # Find a suitable working precision.  See trac#29666 for an
+        # example where 100 extra bits is not enough when the
+        # discriminant is ~1e-92, but this code uses a working
+        # precision of 333 and gets it right.
 
-        b2, b4, b6, b8 = [vv(b) for b in E.b_invariants()]
-        H = max(vv(4), abs(b2), 2*abs(b4), 2*abs(b6), abs(b8))
+        D = v_inf(E.discriminant())
+
+        if D.abs().real_number(RealField()).round():
+            extra_prec = 100
+        else:  # then |D| is small
+            extra_prec = 10 + (1/D).abs().real_number(RealField()).round().nbits()
+
+        working_prec = prec + extra_prec
+        RC = RealField(working_prec) if v_is_real else ComplexField(working_prec)
+        #print("Using working precision {}, |D| = {}".format(working_prec, RC(D).abs()))
+
+        # NB We risk losing much precision if we compute the embedding
+        # of K into RR or CC to some precision and then apply that to
+        # elements of K.  Instead we map elements of K into AA or Qbar
+        # (with infinite precision) and then trim back to RR or CC.
+
+        x = RC(v_inf(self[0]))
+        b2, b4, b6, b8 = [RC(v_inf(b)) for b in E.b_invariants()]
 
         # The following comes from Silverman Theorem 4.2.  Silverman
         # uses decimal precision d, so his term (5/3)d =
         # (5/3)*(log(2)/log(10))*prec = 0.5017*prec, which we round
         # up.  The rest of the expression was wrongly transcribed in
         # Sage versions <5.6 (see #12509).
-        nterms = int(math.ceil(0.51*prec + 0.5 + 0.75 * (7 + 4*H.log()/3 - temp).log()))
+
+        H = max(RC(4).abs(), b2.abs(), 2*b4.abs(), 2*b6.abs(), b8.abs())
+        absdisc = RC(v_inf(E.discriminant())).abs()
+        adl3 = 0 if absdisc>=1 else absdisc.log()/3
+        nterms = int(math.ceil(0.51*working_prec + 0.5 + 0.75 * (7 + 4*H.log()/3 - adl3).log()))
 
         b2p = b2 - 12
         b4p = b4 - b2 + 6
@@ -2841,7 +2860,6 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         fw = lambda T: T*(4 + T*(b2 + T*(2*b4 + T*b6)))
         fwp = lambda T: T*(4 + T*(b2p + T*(2*b4p + T*b6p)))
 
-        x = vv(self[0])
         if abs(x) >= .5:
             t = 1/x
             beta = True
@@ -2856,7 +2874,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             if beta:
                 w = fw(t)
                 z = fz(t)
-                if abs(w) <= 2 * abs(z):
+                if abs(w) <= 2 * z.abs():
                     mu += four_to_n * z.abs().log()
                     t = w/z
                 else:
@@ -2866,7 +2884,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             else:
                 w = fwp(t)
                 z = fzp(t)
-                if abs(w) <= 2 * abs(z):
+                if abs(w) <= 2 * z.abs():
                     mu += four_to_n * z.abs().log()
                     t = w/z
                 else:
@@ -2874,8 +2892,9 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
                     t = w/(z-w)
                     beta = not beta
             four_to_n >>= 2
-        h = rings.RealField(prec)(lam + mu/4)
-        if weighted and not v.im_gens()[0] in rings.RR:
+
+        h = RealField(prec)(lam + mu/4)
+        if weighted and not v_is_real:
             h *= 2
         return h
 
@@ -3204,7 +3223,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         if emb is None:
             emb = K.embeddings(RealField(precision))
-            if len(emb) > 0:
+            if emb:
                 emb = emb[0]
             else:
                 emb = K.embeddings(ComplexField(precision))[0]

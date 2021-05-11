@@ -13,7 +13,9 @@ List comprehensions
 ===================
 
 *List comprehensions* are a very handy way to construct lists in
-Python. You can use either of the following idioms::
+Python. You can use either of the following idioms:
+
+.. CODE-BLOCK:: python
 
       [ <expr> for <name> in <iterable> ]
       [ <expr> for <name> in <iterable> if <condition> ]
@@ -131,7 +133,7 @@ in memory::
 
             sage: # edit here
 
-    #.  Compute the sum of the gcd's of all co-prime numbers `i, j` for `i<j<10`::
+    #.  Compute the sum of the products of all pairs of co-prime numbers `i, j` for `i<j<10`::
 
             sage: # edit here
 
@@ -234,15 +236,12 @@ not Sage integers.
 
 The behaviour of the functions :func:`map` and :func:`filter` has
 changed between Python 2 and Python 3. In Python 3, they return an
-iterator. If you want to use this new behaviour in Python 2, and keep
-your code compatible with Python3, you can use the compatibility
-library ``six`` as follows::
+iterator. If you want to return a list like in Python 2 you need to explicitly
+wrap them in :func:`list`::
 
-    sage: from six.moves import map
     sage: list(map(lambda z: z.cycle_type(), Permutations(3)))
     [[1, 1, 1], [2, 1], [2, 1], [3], [3], [2, 1]]
 
-    sage: from six.moves import filter
     sage: list(filter(lambda z: z.has_pattern([1,2]), Permutations(3)))
     [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2]]
 

@@ -6,7 +6,6 @@ AUTHORS:
 - Jonas Jermann (2013): initial version
 
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2013-2014 Jonas Jermann <jjermann2@gmail.com>
@@ -17,7 +16,6 @@ from __future__ import absolute_import
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc import six
 from sage.rings.all import ZZ, infinity, LaurentSeries, O
 from sage.functions.all import exp
 from sage.rings.number_field.number_field import QuadraticField
@@ -42,10 +40,8 @@ from .series_constructor import MFSeriesConstructor
 # corresponding operations (e.g. __pow__) even though the category
 # (and class) of the parent is in some cases not
 # CommutativeAlgebras but Modules
-class FormsRingElement(six.with_metaclass(
-        InheritComparisonClasscallMetaclass,
-        CommutativeAlgebraElement, UniqueRepresentation
-    )):
+class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
+                       metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Element of a FormsRing.
     """
@@ -1528,7 +1524,7 @@ class FormsRingElement(six.with_metaclass(
 
         return self.reduced_parent()(self._rat)
 
-    #precision is actually acuracy, maybe add "real precision" meaning number of rel. coef
+    #precision is actually accuracy, maybe add "real precision" meaning number of rel. coef
     @cached_method
     def _q_expansion_cached(self, prec, fix_d, subs_d, d_num_prec, fix_prec = False):
         """

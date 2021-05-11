@@ -16,6 +16,8 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.dual import DualObjectsCategory
 from sage.categories.tensor import TensorProductsCategory
+from sage.categories.filtered_modules import FilteredModulesCategory
+from sage.categories.graded_modules import GradedModulesCategory
 from sage.categories.fields import Fields
 from sage.categories.modules import Modules
 from sage.categories.modules_with_basis import ModulesWithBasis
@@ -86,7 +88,7 @@ class VectorSpaces(Category_module):
         """
         Category_module.__init__(self, K)
 
-    def __call__(self, x):
+    def _call_(self, x):
         """
         Try to coerce ``x`` into an object of this category
 
@@ -94,6 +96,14 @@ class VectorSpaces(Category_module):
 
             sage: VectorSpaces(QQ)(ZZ^3)
             Vector space of dimension 3 over Rational Field
+
+        TESTS:
+
+        Check whether :trac:`30174` is fixed::
+
+            sage: Q3 = FiniteRankFreeModule(QQ, 3)
+            sage: Modules(QQ)(Q3) is Q3
+            True
 
         """
         try:
@@ -145,7 +155,26 @@ class VectorSpaces(Category_module):
         return None
 
     class ParentMethods:
-        pass
+
+        def dimension(self):
+            """
+            Return the dimension of this vector space.
+
+            EXAMPLES::
+
+                sage: M = FreeModule(FiniteField(19), 100)
+                sage: W = M.submodule([M.gen(50)])
+                sage: W.dimension()
+                1
+
+                sage: M = FiniteRankFreeModule(QQ, 3)
+                sage: M.dimension()
+                3
+                sage: M.tensor_module(1,2).dimension()
+                27
+
+            """
+            return self.rank()
 
     class ElementMethods:
         pass
@@ -193,6 +222,48 @@ class VectorSpaces(Category_module):
                 """
                 return [self.base_category()]
 
+        class Graded(GradedModulesCategory):
+            """
+            Category of graded vector spaces with basis.
+            """
+            def example(self, base_ring=None):
+                """
+                Return an example of a graded vector space with basis,
+                as per :meth:`Category.example()
+                <sage.categories.category.Category.example>`.
+
+                EXAMPLES::
+
+                    sage: Modules(QQ).WithBasis().Graded().example()
+                    An example of a graded module with basis:
+                     the free module on partitions over Rational Field
+                """
+                from sage.categories.examples.graded_modules_with_basis import GradedPartitionModule
+                if base_ring is None:
+                    base_ring = self.base_ring()
+                return GradedPartitionModule(base_ring=base_ring)
+
+        class Filtered(FilteredModulesCategory):
+            """
+            Category of filtered vector spaces with basis.
+            """
+            def example(self, base_ring=None):
+                """
+                Return an example of a graded vector space with basis,
+                as per :meth:`Category.example()
+                <sage.categories.category.Category.example>`.
+
+                EXAMPLES::
+
+                    sage: Modules(QQ).WithBasis().Graded().example()
+                    An example of a graded module with basis:
+                     the free module on partitions over Rational Field
+                """
+                from sage.categories.examples.filtered_modules_with_basis import FilteredPartitionModule
+                if base_ring is None:
+                    base_ring = self.base_ring()
+                return FilteredPartitionModule(base_ring=base_ring)
+
     class DualObjects(DualObjectsCategory):
 
         def extra_super_categories(self):
@@ -237,3 +308,14 @@ class VectorSpaces(Category_module):
                 True
             """
             return [self.base_category()]
+
+    class Filtered(FilteredModulesCategory):
+        """
+        Category of filtered vector spaces.
+        """
+
+    class Graded(GradedModulesCategory):
+        """
+        Category of graded vector spaces.
+        """
+

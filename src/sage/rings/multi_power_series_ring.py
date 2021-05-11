@@ -281,6 +281,25 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
     #
     # sparse setting may not be implemented completely
     Element = MPowerSeries
+    @staticmethod
+    def __classcall__(cls, base_ring, num_gens, name_list,
+                 order='negdeglex', default_prec=10, sparse=False):
+        """
+        Preprocessing of arguments: The term order can be given as string
+        or as a :class:`~sage.rings.polynomial.term_order.TermOrder` instance.
+
+        TESTS::
+
+            sage: P1 = PowerSeriesRing(QQ, ['f0','f1','f2','f3'], order = TermOrder('degrevlex'))
+            sage: P2 = PowerSeriesRing(QQ,4,'f', order='degrevlex')
+            sage: P1 is P2   # indirect doctest
+            True
+
+        """
+        order = TermOrder(order,num_gens)
+        return super(MPowerSeriesRing_generic,cls).__classcall__(cls, base_ring, num_gens, name_list,
+                 order, default_prec, sparse)
+
     def __init__(self, base_ring, num_gens, name_list,
                  order='negdeglex', default_prec=10, sparse=False):
         """
@@ -335,7 +354,6 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: TestSuite(P).run()
 
         """
-        order = TermOrder(order,num_gens)
         self._term_order = order
         if not base_ring.is_commutative():
             raise TypeError("Base ring must be a commutative ring.")
@@ -487,9 +505,31 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             Multivariate Power Series Ring in f0, f1, f2, f3 over Rational Field
             sage: c(R) == M
             True
+
+        TESTS::
+
+            sage: M2 = PowerSeriesRing(QQ,4,'f', sparse=True)
+            sage: M == M2
+            False
+            sage: c,R = M2.construction()
+            sage: c(R)==M2
+            True
+            sage: M3 = PowerSeriesRing(QQ,4,'f', order='degrevlex')
+            sage: M3 == M
+            False
+            sage: M3 == M2
+            False
+            sage: c,R = M3.construction()
+            sage: c(R)==M3
+            True
+
         """
         from sage.categories.pushout import CompletionFunctor
-        return (CompletionFunctor(self._names, self.default_prec()),
+        extras = {'order':self.term_order(), 'num_gens':self.ngens()}
+        if self.is_sparse():
+            extras['sparse'] = True
+        return (CompletionFunctor(self._names, self.default_prec(),
+                                  extras=extras),
                 self._poly_ring())
 
     def change_ring(self, R):
@@ -624,7 +664,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
         else:
             return self._coerce_try(f,[self.base_ring()])
 
-    def _is_valid_homomorphism_(self, codomain, im_gens):
+    def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
         """
         Replacement for method of PowerSeriesRing_generic.
 
@@ -668,6 +708,19 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             sage: g = [S.random_element(10)*v for v in S.gens()]
             sage: M._is_valid_homomorphism_(S,g)
             True
+
+        You must either give a base map or there must be a coercion
+        from the base ring to the codomain::
+
+            sage: T.<t> = ZZ[]
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: Q8.<z> = CyclotomicField(8)
+            sage: X.<x> = PowerSeriesRing(Q8)
+            sage: M.<a,b,c> = PowerSeriesRing(K)
+            sage: M._is_valid_homomorphism_(X, [x,x,x+x^2]) # no coercion
+            False
+            sage: M._is_valid_homomorphism_(X, [x,x,x+x^2], base_map=K.hom([z^2]))
+            True
         """
         try:
             im_gens = [codomain(v) for v in im_gens]
@@ -676,17 +729,22 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
 
         if len(im_gens) is not self.ngens():
             raise ValueError("You must specify the image of each generator.")
+        if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
+            return False
         if all(v == 0 for v in im_gens):
             return True
-        if is_MPowerSeriesRing(codomain) or is_PowerSeriesRing(codomain):
+        from .laurent_series_ring import is_LaurentSeriesRing
+        if is_MPowerSeriesRing(codomain) or is_PowerSeriesRing(codomain) or is_LaurentSeriesRing(codomain):
             try:
                 B = all(v.valuation() > 0 or v.is_nilpotent() for v in im_gens)
             except NotImplementedError:
                 B = all(v.valuation() > 0 for v in im_gens)
             return B
-        if isinstance(codomain, CommutativeRing):
+        try:
             return all(v.is_nilpotent() for v in im_gens)
-
+        except NotImplementedError:
+            pass
+        return False
 
     def _coerce_map_from_(self, P):
         """

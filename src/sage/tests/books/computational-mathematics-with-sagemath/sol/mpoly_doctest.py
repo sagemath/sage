@@ -16,9 +16,9 @@ Sage example in ./sol/mpoly.tex, line 27::
   sage: tmp2 = flatten(tmp1); tmp2
   [1, 1, x, x, y, y, z, z]
   sage: monomials = Subsets(tmp2, deg, submultiset=True); monomials
-  SubMultiset of [y, y, 1, 1, z, z, x, x] of size 2
+  SubMultiset of [1, 1, x, x, y, y, z, z] of size 2
   sage: monomials.list()
-  [[y, y], [y, 1], [y, z], [y, x], [1, 1], [1, z], [1, x], [z, z], [z, x], [x, x]]
+  [[1, 1], [1, x], [1, y], [1, z], [x, x], [x, y], [x, z], [y, y], [y, z], [z, z]]
 
 Sage example in ./sol/mpoly.tex, line 98::
 
@@ -66,7 +66,7 @@ Sage example in ./sol/mpoly.tex, line 154::
 Sage example in ./sol/mpoly.tex, line 166::
 
   sage: L.<a> = QQ[sqrt(2-sqrt(3))]; L
-  Number Field in a with defining polynomial x^4 - 4*x^2 + 1
+    Number Field in a with defining polynomial x^4 - 4*x^2 + 1 with a = 0.5176380902050415?
   sage: R.<x,y> = QQ[]
   sage: J1 = (x^2 + y^2 - 1, 16*x^2*y^2 - 1)*R
   sage: sorted(J1.variety(L), key=str)

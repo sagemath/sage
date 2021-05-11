@@ -1,1 +1,0 @@
-cd src/test && sage-python23 runtests.py

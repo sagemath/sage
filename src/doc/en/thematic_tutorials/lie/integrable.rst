@@ -306,7 +306,7 @@ Catalan numbers (:oeis:`A000108`)::
 
     sage: P = RootSystem(['A',12,1]).weight_lattice(extended=true)
     sage: Lambda = P.fundamental_weights()
-    sage: IntegrableRepresentation(2*Lambda[0]).strings(depth=1)
+    sage: IntegrableRepresentation(2*Lambda[0]).strings(depth=1) # long time
     {2*Lambda[0]: [1],
      Lambda[1] + Lambda[12] - delta: [1],
      Lambda[2] + Lambda[11] - 2*delta: [2],
@@ -317,7 +317,7 @@ Catalan numbers (:oeis:`A000108`)::
 
 Catalan triangle numbers (:oeis:`A000245`)::
 
-    sage: IntegrableRepresentation(Lambda[0]+Lambda[2]).strings(depth=1)
+    sage: IntegrableRepresentation(Lambda[0]+Lambda[2]).strings(depth=1) # py2 long time
     {Lambda[0] + Lambda[2]: [1],
      2*Lambda[1] - delta: [12],
      Lambda[3] + Lambda[12] - delta: [3],
@@ -325,20 +325,24 @@ Catalan triangle numbers (:oeis:`A000245`)::
      Lambda[5] + Lambda[10] - 3*delta: [28],
      Lambda[6] + Lambda[9] - 4*delta: [90],
      Lambda[7] + Lambda[8] - 5*delta: [297]}
+    sage: sorted(IntegrableRepresentation(Lambda[0]+Lambda[2]).strings(depth=1).values()) # long time
+    [[1], [3], [9], [12], [28], [90], [297]]
 
 Central binomial coefficients (:oeis:`A001700`, :oeis:`A128015`)::
 
     sage: P = RootSystem(['B',8,1]).weight_lattice(extended=true)
     sage: Lambda = P.fundamental_weights()
-    sage: IntegrableRepresentation(Lambda[0]+Lambda[1]).strings(depth=1)
+    sage: IntegrableRepresentation(Lambda[0]+Lambda[1]).strings(depth=1) # py2 long time
     {Lambda[0] + Lambda[1]: [1],
-    2*Lambda[0]: [1],
-    2*Lambda[1] - delta: [1],
-    Lambda[2] - delta: [3],
-    Lambda[3] - delta: [3],
-    Lambda[4] - 2*delta: [10],
-    Lambda[5] - 2*delta: [10],
-    Lambda[6] - 3*delta: [35],
-    Lambda[7] - 3*delta: [35],
-    2*Lambda[8] - 4*delta: [126]}
+     2*Lambda[0]: [1],
+     2*Lambda[1] - delta: [1],
+     Lambda[2] - delta: [3],
+     Lambda[3] - delta: [3],
+     Lambda[4] - 2*delta: [10],
+     Lambda[5] - 2*delta: [10],
+     Lambda[6] - 3*delta: [35],
+     Lambda[7] - 3*delta: [35],
+     2*Lambda[8] - 4*delta: [126]}
+    sage: sorted(IntegrableRepresentation(Lambda[0]+Lambda[1]).strings(depth=1).values()) # long time
+    [[1], [1], [1], [3], [3], [10], [10], [35], [35], [126]]
 

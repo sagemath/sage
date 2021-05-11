@@ -30,7 +30,6 @@ Check the data's consistency::
 """
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.matrix.constructor import Matrix
-from sage.coding.linear_code import LinearCode
 
 # The following is a list of two-weight codes stored as dictionaries. Each entry
 # sets the base field, the matrix and the source: other parameters are computed

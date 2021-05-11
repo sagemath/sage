@@ -167,8 +167,6 @@ Methods
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import, print_function
-
 from libc.stdint cimport uint8_t
 from libc.string cimport memset
 from cysignals.memory cimport check_allocarray, sig_free
@@ -293,7 +291,7 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
       class
       :class:`MixedIntegerLinearProgram<sage.numerical.mip.MixedIntegerLinearProgram>`.
 
-    - ``verbose`` -- booleant (default: ``False``); whether to display
+    - ``verbose`` -- boolean (default: ``False``); whether to display
       information on the computations.
 
     OUTPUT:
@@ -550,7 +548,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int S, int cost_S,
     cdef int i
     cdef int next_set
 
-    # For each possible extension of the current set witha vertex, check whether
+    # For each possible extension of the current set with a vertex, check whether
     # there exists a cheap path toward {1..n}, and update the cost.
     for i in range(g.n):
         if (current >> i) & 1: # if i in S

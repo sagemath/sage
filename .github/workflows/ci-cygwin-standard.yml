@@ -1,0 +1,1044 @@
+name: CI cygwin-standard
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+    # Allow to run manually
+
+env:
+  MAKE: make -j8
+  SAGE_NUM_THREADS: 3
+  CYGWIN: winsymlinks:native
+  CONFIGURE_ARGS: --enable-experimental-packages --enable-download-from-upstream-url --enable-fat-binary
+  SAGE_LOCAL: /opt/sage-${{ github.sha }}
+
+jobs:
+
+############################################## stage-i ##########################################
+
+  cygwin-stage-i-a:
+    env:
+      STAGE: i-a
+      # builds openblas
+      TARGETS: iml gsl
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --remove-files "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      # upload-artifact@v2 does not support whitespace in file names.
+      # so we tar up the directory ourselves
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-i-b:
+    env:
+      STAGE: i-b
+      TARGETS: cython setuptools_scm kiwisolver dateutil cycler pyparsing nose certifi pkgconfig pplpy
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --remove-files "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      # upload-artifact@v2 does not support whitespace in file names.
+      # so we tar up the directory ourselves
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+############################################## stage-ii ##########################################
+
+  cygwin-stage-ii-a:
+    env:
+      STAGE: ii-a
+      PREVIOUS_STAGES: i-*
+      TARGETS: cvxopt rpy2
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-i-a, cygwin-stage-i-b]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      # upload-artifact@v2 does not support whitespace in file names.
+      # so we tar up the directory ourselves
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-ii-b:
+    env:
+      STAGE: ii-b
+      PREVIOUS_STAGES: i-*
+      TARGETS: singular maxima gap pari gfan palp flintqs ratpoints arb ecm givaro
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-i-a, cygwin-stage-i-b]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-ii-c:
+    env:
+      STAGE: ii-c
+      PREVIOUS_STAGES: i-*
+      TARGETS:  cypari eclib fplll linbox giac
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-i-a, cygwin-stage-i-b]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-ii-d:
+    env:
+      STAGE: ii-d
+      PREVIOUS_STAGES: i-*
+      TARGETS: ipython ipywidgets notebook thebe
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-i-a, cygwin-stage-i-b]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-ii-e:
+    env:
+      STAGE: ii-e
+      PREVIOUS_STAGES: i-*
+      TARGETS: threejs tachyon pillow jmol m4rie sympy lrcalc lcalc symmetrica cliquer libbraiding planarity rw elliptic_curves combinatorial_designs zn_poly sympow
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-i-a, cygwin-stage-i-b]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+############################################## stage-iii ##########################################
+
+  cygwin-stage-iii-a:
+    env:
+      STAGE: iii-a
+      PREVIOUS_STAGES: ii-*
+      TARGETS: sagelib
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-ii-a, cygwin-stage-ii-b, cygwin-stage-ii-c, cygwin-stage-ii-d, cygwin-stage-ii-e]
+
+    runs-on: windows-latest
+
+    continue-on-error: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      # upload-artifact@v2 does not support whitespace in file names.
+      # so we tar up the directory ourselves
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-iii-b:
+    env:
+      STAGE: iii-b
+      PREVIOUS_STAGES: ii-*
+      TARGETS: networkx
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-ii-a, cygwin-stage-ii-b, cygwin-stage-ii-c, cygwin-stage-ii-d, cygwin-stage-ii-e]
+
+    runs-on: windows-latest
+
+    continue-on-error: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+############################################## stage-iv ##########################################
+
+  cygwin-stage-iv:
+    env:
+      STAGE: iv
+      PREVIOUS_STAGES: iii-*
+      TARGETS: build
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-iii-a, cygwin-stage-iii-b]
+
+    runs-on: windows-latest
+
+    continue-on-error: true
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+############################################## stage-v ###########################################
+
+  cygwin-stage-v-a:
+    env:
+      STAGE: v-a
+      PREVIOUS_STAGES: iv
+      TARGETS: ptest-nodoc
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-iv]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-v-b:
+    env:
+      STAGE: v-b
+      PREVIOUS_STAGES: iv
+      TARGETS: 4ti2 pynormaliz topcom lrslib latte_int cryptominisat
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-iv]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-v-c:
+    env:
+      STAGE: v-c
+      PREVIOUS_STAGES: iv
+      TARGETS: sage_numerical_backends_coin
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-iv]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the $SAGE_LOCAL/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-v-d:
+    env:
+      STAGE: v-d
+      PREVIOUS_STAGES: iv
+      TARGETS: qepcad  barvinok isl qhull primecount plantri kenzo libsemigroups mcqd meataxe mpfrcx openssl p_group_cohomology rst2ipynb sirocco tdlib tides
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-iv]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the local/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()
+
+  cygwin-stage-v-e:
+    env:
+      STAGE: v-e
+      PREVIOUS_STAGES: iv
+      TARGETS: doc-html
+      LOCAL_ARTIFACT_NAME: sage-local-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-cygwin-${{ matrix.pkgs }}
+
+    needs: [cygwin-stage-iv]
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pkgs: [standard]
+    steps:
+    - run: |
+        git config --global core.autocrlf false
+        git config --global core.symlinks true
+    - uses: actions/checkout@v1
+    - name: install cygwin and test prerequisites with choco
+      shell: bash {0}
+      run: |
+        choco --version
+        PACKAGES="python38 python38-pip"
+        choco install $PACKAGES --source cygwin
+    - uses: actions/download-artifact@v2
+      with:
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+        path: C:\\tools\\cygwin\\tmp
+    - name: Extract sage-local artifact
+      run: |
+        C:\\tools\\cygwin\\bin\\dash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && .github/workflows/extract-sage-local.sh /tmp/sage-local-*.tar && tar --create --listed-incremental=/tmp/sage-local.snar --file /dev/null "${{ env.SAGE_LOCAL }}"'
+    - name: tox
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cat /proc/cpuinfo'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'python3.8 -m pip install tox'
+        C:\\tools\\cygwin\\bin\\bash -l -x -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && PREFIX="${{ env.SAGE_LOCAL }}" tox -e local-cygwin-choco-${{ matrix.pkgs }} -- $TARGETS'
+    - name: Prepare logs artifact
+      shell: bash
+      run: |
+        mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; for a in "${{ env.SAGE_LOCAL }}"/var/tmp/sage/build/*; do if [ -d "$a" ]; then tar -c --remove-files -f "artifacts/$LOGS_ARTIFACT_NAME/$(basename "$a").tar" "$a"; fi; done; cp -r logs/*  "artifacts/$LOGS_ARTIFACT_NAME"
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: artifacts
+        name: ${{ env.LOGS_ARTIFACT_NAME }}
+      if: always()
+    - name: Print out logs for immediate inspection
+      # The markup in the output is a GitHub Actions logging command
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/development-tools-for-github-actions
+      shell: bash
+      run: |
+        find "artifacts/$LOGS_ARTIFACT_NAME" -type f -name "*.log" -exec sh -c 'if tail -20 "{}" 2>/dev/null | grep "^Error" >/dev/null; then echo :":"error file={}:":" ==== LOG FILE {} CONTAINS AN ERROR ====; cat {} ; fi' \;
+      if: always()
+    - name: Prepare sage-local artifact
+      # We specifically use the cygwin tar so that symlinks are saved/restored correctly on Windows.
+      # We remove the local/lib64 link, which will be recreated by the next stage.
+      run: |
+        C:\\tools\\cygwin\\bin\\bash -l -c 'cd $(cygpath -u "$GITHUB_WORKSPACE") && rm -f "${{ env.SAGE_LOCAL }}"/lib64; tar -cf /tmp/sage-local-${{ env.STAGE }}.tar --listed-incremental=/tmp/sage-local.snar "${{ env.SAGE_LOCAL }}"'
+      if: always()
+    - uses: actions/upload-artifact@v2
+      with:
+        path: C:\\tools\\cygwin\\tmp\\sage-local-${{ env.STAGE }}.tar
+        name: ${{ env.LOCAL_ARTIFACT_NAME }}
+      if: always()

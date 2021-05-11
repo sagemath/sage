@@ -36,7 +36,7 @@ all of the processes run the same code. Each process has a rank,
 that is a number that identifies it. The following pseudocode
 indicates the general format of MPI programs.
 
-::
+.. CODE-BLOCK:: text
 
        ....
 
@@ -52,7 +52,7 @@ Each processes looks for what it's supposed to do (specified by its
 rank) and processes can send data and receive data. Lets give an
 example. Create a script with the following code in a file mpi_1.py
 
-::
+.. CODE-BLOCK:: python
 
     from mpi4py import MPI
     comm = MPI.COMM_WORLD
@@ -62,7 +62,7 @@ example. Create a script with the following code in a file mpi_1.py
 To run it you can do (from the command line in your sage
 directory)
 
-::
+.. CODE-BLOCK:: shell-session
 
     ./local/bin/mpirun -np 5 ./sage -python mpi_1.py
 
@@ -72,7 +72,7 @@ script mpi_1.py. The result should be 5 "hello worlds" plus 5 distinct ranks.
 The two most important mpi operations are sending and receiving.
 Consider the following example which you should put in a script mpi_2.py
 
-::
+.. CODE-BLOCK:: python
 
     from mpi4py import MPI
     import numpy
@@ -101,7 +101,7 @@ hang until its destination executes a corresponding receive. In
 fact the above code will hang if [rank]\*5 is replaced by
 [rank]\*500. It would be better to do
 
-::
+.. CODE-BLOCK:: python
 
     from mpi4py import MPI
     import numpy
@@ -131,7 +131,7 @@ act as a leader. That processes sends data out to the other
 processes and processes the results and decides how further
 computation should proceed. Consider the following code
 
-::
+.. CODE-BLOCK:: python
 
     from mpi4py import MPI
     import numpy
@@ -164,7 +164,7 @@ matrix, each process then squares the elements of the row it gets.
 Then the rows are all gathered up again by the root process who
 collects them into a new matrix.
 
-::
+.. CODE-BLOCK:: python
 
     from mpi4py import MPI
     import numpy
@@ -190,7 +190,7 @@ every process. Consider the following small extension. This is the
 same as before, but now at the end the root process sends everyone
 the string "done", which is printed out.
 
-::
+.. CODE-BLOCK:: python
 
     v=MPI.COMM_WORLD.scatter(sendbuf,root)
     print("I got this array:")

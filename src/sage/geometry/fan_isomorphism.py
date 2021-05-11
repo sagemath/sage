@@ -1,5 +1,5 @@
 """
-Find isomorphisms between fans.
+Find isomorphisms between fans
 """
 
 
@@ -94,10 +94,12 @@ def fan_isomorphism_generator(fan1, fan2):
         ....:             Cone([m1*vector([-1,-14]), m1*vector([-100, -5])])])
         sage: fan2 = Fan([Cone([m2*vector([23, 14]), m2*vector([   3,100])]),
         ....:             Cone([m2*vector([-1,-14]), m2*vector([-100, -5])])])
-        sage: next(fan_isomorphism_generator(fan1, fan2))
+        sage: sorted(fan_isomorphism_generator(fan1, fan2))
+        [
         [18  1 -5]
         [ 4  0 -1]
         [ 5  0 -1]
+        ]
 
         sage: m0 = identity_matrix(ZZ, 2)
         sage: m1 = matrix([(1, 0), (0, -5), (-3, 4)])
@@ -110,29 +112,29 @@ def fan_isomorphism_generator(fan1, fan2):
         ....:             Cone([m1*vector([1,1]), m1*vector([0,1])])])
         sage: fan2 = Fan([Cone([m2*vector([1,0]), m2*vector([1,1])]),
         ....:             Cone([m2*vector([1,1]), m2*vector([0,1])])])
-        sage: tuple(fan_isomorphism_generator(fan0, fan0))
-        (
-        [1 0]  [0 1]
-        [0 1], [1 0]
-        )
-        sage: tuple(fan_isomorphism_generator(fan1, fan1))
-        (
-        [1 0 0]  [ -3 -20  28]
-        [0 1 0]  [ -1  -4   7]
-        [0 0 1], [ -1  -5   8]
-        )
-        sage: tuple(fan_isomorphism_generator(fan1, fan2))
-        (
-        [18  1 -5]  [ 6 -3  7]
-        [ 4  0 -1]  [ 1 -1  2]
-        [ 5  0 -1], [ 2 -1  2]
-        )
-        sage: tuple(fan_isomorphism_generator(fan2, fan1))
-        (
+        sage: sorted(fan_isomorphism_generator(fan0, fan0))
+        [
+        [0 1]  [1 0]
+        [1 0], [0 1]
+        ]
+        sage: sorted(fan_isomorphism_generator(fan1, fan1))
+        [
+        [ -3 -20  28]  [1 0 0]
+        [ -1  -4   7]  [0 1 0]
+        [ -1  -5   8], [0 0 1]
+        ]
+        sage: sorted(fan_isomorphism_generator(fan1, fan2))
+        [
+        [ 6 -3  7]  [18  1 -5]
+        [ 1 -1  2]  [ 4  0 -1]
+        [ 2 -1  2], [ 5  0 -1]
+        ]
+        sage: sorted(fan_isomorphism_generator(fan2, fan1))
+        [
         [ 0 -1  1]  [ 0 -1  1]
         [ 1 -7  2]  [ 2 -2 -5]
         [ 0 -5  4], [ 1  0 -3]
-        )
+        ]
     """
     if not fan_isomorphic_necessary_conditions(fan1, fan2):
         return

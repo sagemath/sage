@@ -1,3 +1,10 @@
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
+
 """
 ntl_lzz_pX.pyx
 
@@ -16,8 +23,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import, division
 
 from cysignals.signals cimport sig_on, sig_off
 
@@ -164,7 +169,8 @@ cdef class ntl_zz_pX(object):
 
     def __reduce__(self):
         """
-        TESTS:
+        TESTS::
+
             sage: f = ntl.zz_pX([10,10^30+1], 20)
             sage: f == loads(dumps(f))
             True
@@ -183,7 +189,7 @@ cdef class ntl_zz_pX(object):
         """
         return str(self.list())
 
-    def __getitem__(self, i):
+    def __getitem__(self, long i):
         """
         Return the ith coefficient of f.
 
@@ -203,12 +209,10 @@ cdef class ntl_zz_pX(object):
         y = ntl_zz_p.__new__(ntl_zz_p)
         y.c = self.c
         self.c.restore_c()
-        if not isinstance(i, long):
-            i = long(i)
         y.x = zz_pX_GetCoeff(self.x, i)
         return y
 
-    def __setitem__(self, i, val):
+    def __setitem__(self, long i, val):
         """
         Set the ith coefficient of self to val. If
         i is out of range, raise an exception.
@@ -223,13 +227,8 @@ cdef class ntl_zz_pX(object):
             ...
             ValueError: index (=-1) is out of range
         """
-        cdef long zero = 0L
-        if not isinstance(i, long):
-            i = long(i)
-        if (i < zero):
+        if (i < 0):
             raise ValueError("index (=%s) is out of range" % i)
-        if not isinstance(val, long):
-            val = long(val)
         self.c.restore_c()
         zz_pX_SetCoeff_long(self.x, i, val)
         return
@@ -357,9 +356,6 @@ cdef class ntl_zz_pX(object):
         if not divisible:
             raise ArithmeticError("self (=%s) is not divisible by other (=%s)" % (self, other))
         return q
-
-    def __div__(self, other):
-        return self / other
 
     def __mod__(ntl_zz_pX self, other):
         """
@@ -900,7 +896,8 @@ def make_zz_pX(L, context):
     """
     For unpickling.
 
-    TESTS:
+    TESTS::
+
         sage: f = ntl.zz_pX(range(16), 12)
         sage: loads(dumps(f)) == f
         True

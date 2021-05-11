@@ -33,14 +33,14 @@ Some examples in the multiplicative group of a finite field:
 
 - Linear relation finder::
 
-    sage: F.<a>=GF(3^6,'a')
+    sage: F.<a> = GF(3^6,'a')
     sage: a.multiplicative_order().factor()
     2^3 * 7 * 13
-    sage: b=a^7
-    sage: c=a^13
+    sage: b = a^7
+    sage: c = a^13
     sage: linear_relation(b,c,'*')
     (13, 7)
-    sage: b^13==c^7
+    sage: b^13 == c^7
     True
 
 - Orders of elements::
@@ -71,10 +71,10 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 - Linear relation finder::
 
-    sage: F.<a>=GF(3^6,'a')
-    sage: E=EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1])
-    sage: P=E(a^5 + a^4 + a^3 + a^2 + a + 2 , 0)
-    sage: Q=E(2*a^3 + 2*a^2 + 2*a , a^3 + 2*a^2 + 1)
+    sage: F.<a> = GF(3^6,'a')
+    sage: E = EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1])
+    sage: P = E(a^5 + a^4 + a^3 + a^2 + a + 2 , 0)
+    sage: Q = E(2*a^3 + 2*a^2 + 2*a , a^3 + 2*a^2 + 1)
     sage: linear_relation(P,Q,'+')
     (1, 2)
     sage: P == 2*Q
@@ -96,19 +96,9 @@ Some examples in the group of points of an elliptic curve over a finite field:
     7
     sage: order_from_bounds(Q, Hasse_bounds(5^5), operation='+')
     7
-
-TESTS:
-
-Check deprecation from :trac:`25785`::
-
-    sage: bsgs
-    doctest:warning...:
-    DeprecationWarning: this is being removed from the global namespace
-    See https://trac.sagemath.org/25785 for details.
-    ...
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>
 #                          John Cremona  <john.cremona@gmail.com>
 #
@@ -116,8 +106,8 @@ Check deprecation from :trac:`25785`::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 
@@ -130,16 +120,13 @@ from sage.arith.srange import xsrange
 # Lists of names (as strings) which the user may use to identify one
 # of the standard operations:
 #
-multiplication_names = ( 'multiplication', 'times', 'product', '*')
-addition_names       = ( 'addition', 'plus', 'sum', '+')
-
-# deprecation(24256)
-from sage.structure.element import generic_power as power
+multiplication_names = ('multiplication', 'times', 'product', '*')
+addition_names = ('addition', 'plus', 'sum', '+')
 
 
 def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
     r"""
-    Returns either `na` or `a^n`, where `n` is any integer and `a` is
+    Return either `na` or `a^n`, where `n` is any integer and `a` is
     a Python object on which a group operation such as addition or
     multiplication is defined.  Uses the standard binary algorithm.
 
@@ -184,12 +171,12 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
     from operator import inv, mul, neg, add
 
     if operation in multiplication_names:
-        identity = a.parent()(1)
-        inverse  = inv
+        identity = a.parent().one()
+        inverse = inv
         op = mul
     elif operation in addition_names:
         identity = a.parent()(0)
-        inverse  = neg
+        inverse = neg
         op = add
     else:
         if identity is None or inverse is None or op is None:
@@ -206,7 +193,7 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         return a
 
     # check for idempotence, and store the result otherwise
-    aa = op(a,a)
+    aa = op(a, a)
     if aa == a:
         return a
 
@@ -214,10 +201,10 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
         return aa
 
     if n == 3:
-        return op(aa,a)
+        return op(aa, a)
 
     if n == 4:
-        return op(aa,aa)
+        return op(aa, aa)
 
     # since we've computed a^2, let's start squaring there
     # so, let's keep the least-significant bit around, just
@@ -229,21 +216,21 @@ def multiple(a, n, operation='*', identity=None, inverse=None, op=None):
     # the second-smallest power needed rather than with 1
     # we've already squared a, so let's start there.
     apow = aa
-    while n&1 == 0:
-        apow = op(apow,apow)
+    while n & 1 == 0:
+        apow = op(apow, apow)
         n = n >> 1
     power = apow
     n = n >> 1
 
     # now multiply that least-significant bit in...
     if m:
-        power = op(power,a)
+        power = op(power, a)
 
     # and this is straight from the book.
     while n != 0:
-        apow = op(apow,apow)
-        if n&1 != 0:
-            power = op(power,apow)
+        apow = op(apow, apow)
+        if n & 1 != 0:
+            power = op(power, apow)
         n = n >> 1
 
     return power
@@ -299,7 +286,7 @@ class multiples:
         3 to the power 3 = 27
         3 to the power 4 = 81
     """
-    def __init__(self,P,n,P0=None,indexed=False, operation='+', op=None):
+    def __init__(self, P, n, P0=None, indexed=False, operation='+', op=None):
         """
         Create a multiples iterator
 
@@ -324,16 +311,18 @@ class multiples:
           of 2 arguments) defining the group binary operation; also
           ``P0`` must be supplied.
         """
-        if n<0:
+        if n < 0:
             raise ValueError('n cannot be negative in multiples')
 
         from operator import mul, add
 
         if operation in multiplication_names:
-            if P0 is None: P0 = P.parent()(1)
+            if P0 is None:
+                P0 = P.parent().one()
             self.op = mul
         elif operation in addition_names:
-            if P0 is None: P0 = P.parent()(0)
+            if P0 is None:
+                P0 = P.parent()(0)
             self.op = add
         else:
             self.op = op
@@ -342,8 +331,8 @@ class multiples:
             if op is None:
                 raise ValueError("op() must both be supplied when operation is neither addition nor multiplication")
 
-        self.P=copy(P)
-        self.Q=copy(P0)
+        self.P = copy(P)
+        self.Q = copy(P0)
         assert self.P is not None and self.Q is not None
         self.i = 0
         self.bound = n
@@ -351,16 +340,16 @@ class multiples:
 
     def __next__(self):
         """
-        Returns the next item in this multiples iterator.
+        Return the next item in this multiples iterator.
         """
         if self.i >= self.bound:
             raise StopIteration
         i = self.i
         val = self.Q
-        self.i +=1
-        self.Q=self.op(self.Q,self.P)
+        self.i += 1
+        self.Q = self.op(self.Q, self.P)
         if self.indexed:
-            return (i,val)
+            return (i, val)
         else:
             return val
 
@@ -449,26 +438,26 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     AUTHOR:
 
-        - John Cremona (2008-03-15)
+    - John Cremona (2008-03-15)
     """
     Z = integer_ring.ZZ
 
     from operator import inv, mul, neg, add
 
     if operation in multiplication_names:
-        identity = a.parent()(1)
-        inverse  = inv
+        identity = a.parent().one()
+        inverse = inv
         op = mul
     elif operation in addition_names:
         identity = a.parent()(0)
-        inverse  = neg
+        inverse = neg
         op = add
     else:
         if identity is None or inverse is None or op is None:
             raise ValueError("identity, inverse and operation must be given")
 
     lb, ub = bounds
-    if lb<0 or ub<lb:
+    if lb < 0 or ub < lb:
         raise ValueError("bsgs() requires 0<=lb<=ub")
 
     if a.is_zero() and not b.is_zero():
@@ -476,39 +465,38 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
 
     ran = 1 + ub - lb   # the length of the interval
 
-    c = op(inverse(b),multiple(a,lb,operation=operation))
+    c = op(inverse(b), multiple(a, lb, operation=operation))
 
     if ran < 30:    # use simple search for small ranges
-        i = lb
         d = c
 #        for i,d in multiples(a,ran,c,indexed=True,operation=operation):
         for i0 in range(ran):
             i = lb + i0
             if identity == d:        # identity == b^(-1)*a^i, so return i
                 return Z(i)
-            d = op(a,d)
+            d = op(a, d)
         raise ValueError("No solution in bsgs()")
 
-    m = ran.isqrt()+1  # we need sqrt(ran) rounded up
-    table = dict()     # will hold pairs (a^(lb+i),lb+i) for i in range(m)
+    m = ran.isqrt() + 1  # we need sqrt(ran) rounded up
+    table = dict()       # will hold pairs (a^(lb+i),lb+i) for i in range(m)
 
-    d=c
+    d = c
     for i0 in xsrange(m):
         i = lb + i0
-        if identity==d:        # identity == b^(-1)*a^i, so return i
+        if identity == d:        # identity == b^(-1)*a^i, so return i
             return Z(i)
         table[d] = i
-        d=op(d,a)
+        d = op(d, a)
 
-    c = op(c,inverse(d))     # this is now a**(-m)
-    d=identity
+    c = op(c, inverse(d))     # this is now a**(-m)
+    d = identity
     for i in xsrange(m):
         j = table.get(d)
         if j is not None:  # then d == b*a**(-i*m) == a**j
-            return Z(i*m + j)
-        d=op(c,d)
+            return Z(i * m + j)
+        d = op(c, d)
 
-    raise ValueError("Log of %s to the base %s does not exist in %s."%(b,a,bounds))
+    raise ValueError("Log of %s to the base %s does not exist in %s." % (b, a, bounds))
 
 
 def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
@@ -592,7 +580,6 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
     - Yann Laigle-Chapuy (2009-09-05)
 
     """
-    from six.moves import range
     from sage.rings.integer import Integer
     from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
     from operator import mul, add, pow
@@ -620,48 +607,49 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
         raise ValueError("for Pollard rho algorithm the order of the group must be prime")
 
     # check if we need to set immutable before hashing
-    mut = hasattr(base,'set_immutable')
+    mut = hasattr(base, 'set_immutable')
 
-    isqrtord=ord.isqrt()
+    isqrtord = ord.isqrt()
 
-    if isqrtord < partition_size: #setup to costly, use bsgs
-        return bsgs(base,a, bounds=(0,ord), operation=operation)
+    if isqrtord < partition_size:  # setup to costly, use bsgs
+        return bsgs(base, a, bounds=(0, ord), operation=operation)
 
-    reset_bound = 8*isqrtord # we take some margin
+    reset_bound = 8 * isqrtord  # we take some margin
 
-    I=IntegerModRing(ord)
+    I = IntegerModRing(ord)
 
-    for s in range(10): # to avoid infinite loops
+    for s in range(10):  # to avoid infinite loops
         # random walk function setup
-        m=[I.random_element() for i in range(partition_size)]
-        n=[I.random_element() for i in range(partition_size)]
-        M=[mult(power(base,Integer(m[i])),power(a,Integer(n[i]))) for i in range(partition_size)]
+        m = [I.random_element() for i in range(partition_size)]
+        n = [I.random_element() for i in range(partition_size)]
+        M = [mult(power(base, Integer(m[i])), power(a, Integer(n[i])))
+             for i in range(partition_size)]
 
         ax = I.random_element()
-        x = power(base,Integer(ax))
+        x = power(base, Integer(ax))
         if mut:
             x.set_immutable()
 
         bx = I(0)
 
-        sigma=[(0,None)]*memory_size
-        H={} # memory
-        i0=0
+        sigma = [(0, None)] * memory_size
+        H = {}  # memory
+        i0 = 0
         nextsigma = 0
         for i in range(reset_bound):
-                    #random walk, we need an efficient hash
-            s=hash_function(x) % partition_size
-            (x,ax,bx) = (mult(M[s],x), ax+m[s], bx+n[s])
+            # random walk, we need an efficient hash
+            s = hash_function(x) % partition_size
+            x, ax, bx = (mult(M[s], x), ax + m[s], bx + n[s])
             if mut:
                 x.set_immutable()
             # look for collisions
             if x in H:
-                ay,by=H[x]
+                ay, by = H[x]
                 if bx == by:
                     break
                 else:
-                    res = sage.rings.integer.Integer((ay-ax)/(bx-by))
-                    if power(base,res) == a:
+                    res = sage.rings.integer.Integer((ay - ax) / (bx - by))
+                    if power(base, res) == a:
                         return res
                     else:
                         break
@@ -669,10 +657,10 @@ def discrete_log_rho(a, base, ord=None, operation='*', hash_function=hash):
             elif i >= nextsigma:
                 if sigma[i0][1] is not None:
                     H.pop(sigma[i0][1])
-                sigma[i0]=(i,x)
-                i0 = (i0+1) % memory_size
-                nextsigma = 3*sigma[i0][0] #3 seems a good choice
-                H[x]=(ax,bx)
+                sigma[i0] = (i, x)
+                i0 = (i0 + 1) % memory_size
+                nextsigma = 3 * sigma[i0][0]  # 3 seems a good choice
+                H[x] = (ax, bx)
 
     raise ValueError("Pollard rho algorithm failed to find a logarithm")
 
@@ -792,9 +780,9 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
 
     An example of big smooth group::
 
-        sage: F.<a>=GF(2^63)
-        sage: g=F.gen()
-        sage: u=g**123456789
+        sage: F.<a> = GF(2^63)
+        sage: g = F.gen()
+        sage: u = g**123456789
         sage: discrete_log(u,g)
         123456789
 
@@ -802,7 +790,6 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
 
     - William Stein and David Joyner (2005-01-05)
     - John Cremona (2008-02-29) rewrite using ``dict()`` and make generic
-
     """
     if ord is None:
         if operation in multiplication_names:
@@ -822,24 +809,30 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
                 raise ValueError("ord must be specified")
     try:
         from sage.rings.infinity import Infinity
-        if ord==+Infinity:
-            return bsgs(base,a,bounds, operation=operation)
-        if ord==1 and a!=base:
+        if ord == +Infinity:
+            return bsgs(base, a, bounds, operation=operation)
+        if ord == 1 and a != base:
             raise ValueError
-        f=ord.factor()
-        l=[0]*len(f)
-        for i,(pi,ri) in enumerate(f):
+        f = ord.factor()
+        l = [0] * len(f)
+        for i, (pi, ri) in enumerate(f):
             for j in range(ri):
                 if operation in multiplication_names:
-                    c=bsgs(base**(ord//pi),(a/base**l[i])**(ord//pi**(j+1)),(0,pi),operation=operation)
-                    l[i] += c*(pi**j)
+                    c = bsgs(base**(ord // pi),
+                             (a / base**l[i])**(ord // pi**(j + 1)),
+                             (0, pi),
+                             operation=operation)
+                    l[i] += c * (pi**j)
                 elif operation in addition_names:
-                    c=bsgs(base*(ord//pi),(a-base*l[i])*(ord//pi**(j+1)),(0,pi),operation=operation)
-                    l[i] += c*(pi**j)
+                    c = bsgs(base * (ord // pi),
+                             (a - base * l[i]) * (ord // pi**(j + 1)),
+                             (0, pi),
+                             operation=operation)
+                    l[i] += c * (pi**j)
         from sage.arith.all import CRT_list
-        return  CRT_list(l,[pi**ri for pi,ri in f])
+        return CRT_list(l, [pi**ri for pi, ri in f])
     except ValueError:
-        raise ValueError("No discrete log of %s found to base %s"%(a,base))
+        raise ValueError("No discrete log of %s found to base %s" % (a, base))
 
 
 def discrete_log_generic(a, base, ord=None, bounds=None, operation='*', identity=None, inverse=None, op=None):
@@ -895,56 +888,58 @@ def discrete_log_lambda(a, base, bounds, operation='*', hash_function=hash):
         -- Yann Laigle-Chapuy (2009-01-25)
 
     """
-    from six.moves import range
     from sage.rings.integer import Integer
     from operator import mul, add, pow
 
     if operation in addition_names:
-        mult=add
-        power=mul
+        mult = add
+        power = mul
     elif operation in multiplication_names:
-        mult=mul
-        power=pow
+        mult = mul
+        power = pow
     else:
         raise ValueError("unknown operation")
 
-    lb,ub = bounds
-    if lb<0 or ub<lb:
+    lb, ub = bounds
+    if lb < 0 or ub < lb:
         raise ValueError("discrete_log_lambda() requires 0<=lb<=ub")
 
     # check for mutability
-    mut = hasattr(base,'set_immutable')
+    mut = hasattr(base, 'set_immutable')
 
-    width = Integer(ub-lb)
-    N = width.isqrt()+1
+    width = Integer(ub - lb)
+    N = width.isqrt() + 1
 
     M = dict()
-    for s in range(10): #to avoid infinite loops
-        #random walk function setup
+    for s in range(10):  # to avoid infinite loops
+        # random walk function setup
         k = 0
-        while (2**k<N):
-            r = sage.misc.prandom.randrange(1,N)
-            M[k] = (r , power(base,r))
+        while 2**k < N:
+            r = sage.misc.prandom.randrange(1, N)
+            M[k] = (r, power(base, r))
             k += 1
-        #first random walk
-        H = power(base,ub)
+        # first random walk
+        H = power(base, ub)
         c = ub
         for i in range(N):
-            if mut: H.set_immutable()
-            r,e = M[hash_function(H)%k]
-            H = mult(H,e)
+            if mut:
+                H.set_immutable()
+            r, e = M[hash_function(H) % k]
+            H = mult(H, e)
             c += r
-        if mut: H.set_immutable()
-        mem=set([H])
-        #second random walk
+        if mut:
+            H.set_immutable()
+        mem = set([H])
+        # second random walk
         H = a
-        d=0
-        while c-d >= lb:
-            if mut: H.set_immutable()
-            if ub > c-d and H in mem:
-                return c-d
-            r,e = M[hash_function(H)%k]
-            H = mult(H,e)
+        d = 0
+        while c - d >= lb:
+            if mut:
+                H.set_immutable()
+            if ub > c - d and H in mem:
+                return c - d
+            r, e = M[hash_function(H) % k]
+            H = mult(H, e)
             d += r
 
     raise ValueError("Pollard Lambda failed to find a log")
@@ -1001,12 +996,9 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
         sage: b^13==c^7
         True
     """
-
-    from operator import mul, add
     Z = integer_ring.ZZ
 
     if operation in multiplication_names:
-        op = mul
         try:
             n = P.multiplicative_order()
             m = Q.multiplicative_order()
@@ -1014,7 +1006,6 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
             n = P.order()
             m = Q.order()
     elif operation in addition_names:
-        op = add
         try:
             n = P.additive_order()
             m = Q.additive_order()
@@ -1027,22 +1018,23 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
         n = P.order()
         m = Q.order()
 
-    g = sage.arith.all.gcd(n,m)
-    if g==1: return (m,Z(0))
-    n1 = n//g
-    m1 = m//g
-    P1 = multiple(P,n1,operation=operation)  # has exact order g
-    Q1 = multiple(Q,m1,operation=operation)  # has exact order g
+    g = n.gcd(m)
+    if g == 1:
+        return (m, Z.zero())
+    n1 = n // g
+    m1 = m // g
+    P1 = multiple(P, n1, operation=operation)  # has exact order g
+    Q1 = multiple(Q, m1, operation=operation)  # has exact order g
 
     # now see if Q1 is a multiple of P1; the only multiples we
     # need check are h*Q1 where h divides g
-    for h in g.divisors(): # positive divisors!
+    for h in g.divisors():  # positive divisors!
         try:
-            Q2 = multiple(Q1,h,operation=operation)
-            return (n1 * bsgs(P1,Q2,(0,g-1),operation=operation),
+            Q2 = multiple(Q1, h, operation=operation)
+            return (n1 * bsgs(P1, Q2, (0, g - 1), operation=operation),
                     m1 * h)
         except ValueError:
-            pass # to next h
+            pass  # to next h
     raise ValueError("No solution found in linear_relation!")
 
 ################################################################
@@ -1116,27 +1108,27 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     Z = integer_ring.ZZ
 
     if operation in multiplication_names:
-        identity = P.parent()(1)
+        identity = P.parent().one()
     elif operation in addition_names:
         identity = P.parent()(0)
     else:
         raise ValueError("unknown group operation")
 
     if P == identity:
-        return Z(1)
+        return Z.one()
 
-    M=Z(m)
+    M = Z(m)
     if check:
-        assert multiple(P,M,operation=operation) == identity
+        assert multiple(P, M, operation=operation) == identity
 
     if factorization:
         F = factorization
     elif plist:
-        F = [(p,M.valuation(p)) for p in plist]
+        F = [(p, M.valuation(p)) for p in plist]
     else:
         F = M.factor()
 
-    if len(F) == 1 and list(F) == [(M,1)]:
+    if len(F) == 1 and list(F) == [(M, 1)]:
         return M
 
     # Efficiency improvement (2009-10-27, implemented by Yann Laigle-Chapuy):
@@ -1153,19 +1145,19 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             # implemented by John Cremona): avoid the last multiplication by p.
             # For example, if M itself is prime the code used to compute M*P
             # twice (unless P=0), now it does it once.
-            p,e = L[0]
+            p, e = L[0]
             e0 = 0
-            while (Q != identity) and (e0<e-1):
-                Q = multiple(Q,p,operation=operation)
+            while (Q != identity) and (e0 < e - 1):
+                Q = multiple(Q, p, operation=operation)
                 e0 += 1
-            if (Q != identity):
+            if Q != identity:
                 e0 += 1
             return p**e0
         else:
             # try to split the list wisely
             sum_left = 0
             for k in range(l):
-                p,e = L[k]
+                p, e = L[k]
                 # multiplying by p**e require roughly 'e log_2(p) / 2' additions
                 v = e * sage.functions.log.log(float(p))
                 if abs(sum_left + v - (S / 2)) > abs(sum_left - (S / 2)):
@@ -1175,20 +1167,19 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
             L2 = L[k:]
             # recursive calls
             o1 = _order_from_multiple_helper(
-                multiple(Q, prod([p**e for p,e in L2]), operation),
+                multiple(Q, prod([p**e for p, e in L2]), operation),
                 L1,
                 sum_left)
-            o2 = _order_from_multiple_helper(
-                multiple(Q, o1                                       , operation),
-                L2,
-                S-sum_left)
-            return o1*o2
+            o2 = _order_from_multiple_helper(multiple(Q, o1, operation),
+                                             L2,
+                                             S - sum_left)
+            return o1 * o2
 
-    return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)) )
+    return _order_from_multiple_helper(P, F, sage.functions.log.log(float(M)))
 
 
 def order_from_bounds(P, bounds, d=None, operation='+',
-                         identity=None, inverse=None, op=None):
+                      identity=None, inverse=None, op=None):
     r"""
     Generic function to find order of a group element, given only
     upper and lower bounds for a multiple of the order (e.g. bounds on
@@ -1246,7 +1237,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
 
     if operation in multiplication_names:
         op = mul
-        identity = P.parent()(1)
+        identity = P.parent().one()
     elif operation in addition_names:
         op = add
         identity = P.parent()(0)
@@ -1255,12 +1246,13 @@ def order_from_bounds(P, bounds, d=None, operation='+',
             raise ValueError("operation and identity must be specified")
 
     Q = P
-    if d is None: d = 1
+    if d is None:
+        d = 1
     if d > 1:
-        Q = multiple(P,d,operation=operation)
+        Q = multiple(P, d, operation=operation)
         lb, ub = bounds
-        bounds = ( sage.arith.all.integer_ceil(lb/d),
-                   sage.arith.all.integer_floor(ub/d) )
+        bounds = (sage.arith.all.integer_ceil(lb / d),
+                  sage.arith.all.integer_floor(ub / d))
 
     # Use generic bsgs to find  n=d*m with lb<=n<=ub and n*P=0
 
@@ -1271,10 +1263,10 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     return order_from_multiple(P, m, operation=operation, check=False)
 
 
-def merge_points(P1,P2, operation='+',
-                         identity=None, inverse=None, op=None, check=True):
+def merge_points(P1, P2, operation='+',
+                 identity=None, inverse=None, op=None, check=True):
     r"""
-    Returns a group element whose order is the lcm of the given elements.
+    Return a group element whose order is the lcm of the given elements.
 
     INPUT:
 
@@ -1330,7 +1322,7 @@ def merge_points(P1,P2, operation='+',
 
     if operation in multiplication_names:
         op = mul
-        identity = g1.parent()(1)
+        identity = g1.parent().one()
     elif operation in addition_names:
         op = add
         identity = g1.parent()(0)
@@ -1339,21 +1331,21 @@ def merge_points(P1,P2, operation='+',
             raise ValueError("operation and identity must be specified")
 
     if check:
-        assert multiple(g1,n1,operation=operation) == identity
-        assert multiple(g2,n2,operation=operation) == identity
+        assert multiple(g1, n1, operation=operation) == identity
+        assert multiple(g2, n2, operation=operation) == identity
 
     # trivial cases
     if n1.divides(n2):
-        return (g2,n2)
+        return (g2, n2)
     if n2.divides(n1):
-        return (g1,n1)
+        return (g1, n1)
 
-    m,k1,k2 = sage.arith.all.xlcm(n1,n2)
-    m1 = n1//k1
-    m2 = n2//k2
-    g1 = multiple(g1,m1,operation=operation)
-    g2 = multiple(g2,m2,operation=operation)
-    return (op(g1,g2), m)
+    m, k1, k2 = sage.arith.all.xlcm(n1, n2)
+    m1 = n1 // k1
+    m2 = n2 // k2
+    g1 = multiple(g1, m1, operation=operation)
+    g2 = multiple(g2, m2, operation=operation)
+    return (op(g1, g2), m)
 
 
 def structure_description(G, latex=False):
@@ -1420,6 +1412,7 @@ def structure_description(G, latex=False):
         'A8'
     """
     import re
+
     def correct_dihedral_degree(match):
         return "%sD%d" % (match.group(1), int(match.group(2)) // 2)
 

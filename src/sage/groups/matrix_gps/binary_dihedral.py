@@ -6,23 +6,23 @@ AUTHORS:
 - Travis Scrimshaw (2016-02): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh at umn.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.latex import latex
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.matrix.matrix_space import MatrixSpace
 from sage.categories.groups import Groups
 from sage.rings.all import ZZ
+
 
 class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):
     r"""
@@ -41,7 +41,7 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
 
     where `\zeta_k = e^{2\pi i / k}` is the primitive `k`-th root of unity.
     Furthermore, `BD_n` admits the following presentation (note that there
-    is a typo in [Sun]_):
+    is a typo in [Sun2010]_):
 
     .. MATH::
 
@@ -53,11 +53,9 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
 
     REFERENCES:
 
-    .. [Dolgachev09] Igor Dolgachev. *McKay Correspondence*. (2009).
-       http://www.math.lsa.umich.edu/~idolga/McKaybook.pdf
+    - [Dol2009]_
 
-    .. [Sun] Yi Sun. *The McKay correspondence*.
-       http://www.math.miami.edu/~armstrong/686sp13/McKay_Yi_Sun.pdf
+    - [Sun2010]_
 
     - :wikipedia:`Dicyclic_group#Binary_dihedral_group`
     """
@@ -133,4 +131,3 @@ class BinaryDihedralGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap
         return ZZ(4 * self._n)
 
     cardinality = order
-

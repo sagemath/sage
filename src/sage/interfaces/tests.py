@@ -31,10 +31,10 @@ Test that write errors to stderr are handled gracefully by GAP
     ....: except IOError:
     ....:     f = open('/dev/null', 'w')
     sage: kwds = dict(shell=True, stdout=f, stderr=f)
-    sage: subprocess.call("echo syntax error | ecl", **kwds)
-    0
-    sage: subprocess.call("echo syntax error | gap", **kwds)
-    0
+    sage: subprocess.call("echo syntax error | ecl", **kwds) in (0, 255)
+    True
+    sage: subprocess.call("echo syntax error | gap", **kwds) in (0, 1)
+    True
     sage: subprocess.call("echo syntax error | gp", **kwds)
     0
     sage: subprocess.call("echo syntax error | ipython", **kwds) in (0, 1, 120)
@@ -43,8 +43,6 @@ Test that write errors to stderr are handled gracefully by GAP
     0
     sage: f.close()
 """
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .all import *
 from sage.misc.misc import cputime, walltime

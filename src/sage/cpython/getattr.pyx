@@ -8,39 +8,17 @@ from .string cimport bytes_to_str
 
 cdef extern from "Python.h":
     r"""
-    /* Coded in C because of substantial differences between Python 2
-     * and Python 3 and class internals need to be accessed. */
+    /* Coded in C because class internals need to be accessed. */
     static PyObject*
     instance_getattr(PyObject* obj, PyObject* name)
     {
-        #if PY_MAJOR_VERSION < 3
-        if PyClass_Check(obj) {
-            PyClassObject* cp = (PyClassObject*)obj;
-            PyObject *value = PyDict_GetItem(cp->cl_dict, name);
-            Py_ssize_t n = PyTuple_GET_SIZE(cp->cl_bases);
-            for (Py_ssize_t i = 0; value == NULL && i < n; i++) {
-                value = instance_getattr(PyTuple_GetItem(cp->cl_bases, i), name);
-            }
-            return value;
-        }
-        #endif
-
         if (PyType_Check(obj)) {
             return _PyType_Lookup((PyTypeObject*)obj, name);
         }
 
-        PyObject* dict;
-        #if PY_MAJOR_VERSION < 3
-        if PyInstance_Check(obj) {
-            dict = ((PyInstanceObject*)obj)->in_dict;
-        }
-        else
-        #endif
-        {
-            PyObject** dptr = _PyObject_GetDictPtr(obj);
-            if (dptr == NULL) return NULL;
-            dict = *dptr;
-        }
+        PyObject** dptr = _PyObject_GetDictPtr(obj);
+        if (dptr == NULL) return NULL;
+        PyObject* dict = *dptr;
         if (dict == NULL) return NULL;
         return PyDict_GetItem(dict, name);
     }
@@ -99,13 +77,13 @@ cdef class AttributeErrorMessage:
         ....: except AttributeError as exc:
         ....:     ElementError = exc
         sage: ElementError
-        AttributeError('sage.rings.integer.Integer' object has no attribute '__bla',)
+        AttributeError('sage.rings.integer.Integer' object has no attribute '__bla'...)
         sage: try:
         ....:     x.__bla
         ....: except AttributeError as exc:
         ....:     ElementError2 = exc
         sage: ElementError
-        AttributeError('sage.symbolic.expression.Expression' object has no attribute '__bla',)
+        AttributeError('sage.symbolic.expression.Expression' object has no attribute '__bla'...)
         sage: ElementError2.args[0] is ElementError.args[0]
         True
         sage: isinstance(ElementError.args[0], sage.cpython.getattr.AttributeErrorMessage)
@@ -319,7 +297,7 @@ cpdef getattr_from_other_class(self, cls, name):
         Traceback (most recent call last):
         ...
         TypeError: descriptor '__weakref__' for 'A' objects doesn't apply
-        to 'sage.rings.integer.Integer' object
+        to ...'sage.rings.integer.Integer' object
 
     When this occurs, an ``AttributeError`` is raised::
 
@@ -411,7 +389,7 @@ cpdef getattr_from_other_class(self, cls, name):
     raise AttributeError(dummy_error_message)
 
 
-def dir_with_other_class(self, cls):
+def dir_with_other_class(self, *cls):
     r"""
     Emulates ``dir(self)``, as if self was also an instance ``cls``,
     right after ``caller_class`` in the method resolution order
@@ -432,6 +410,10 @@ def dir_with_other_class(self, cls):
         sage: from sage.cpython.getattr import dir_with_other_class
         sage: dir_with_other_class(x, B)
         [..., 'a', 'b', 'c', 'd', 'e']
+        sage: class C(object):
+        ....:    f = 6
+        sage: dir_with_other_class(x, B, C)
+        [..., 'a', 'b', 'c', 'd', 'e', 'f']
 
     Check that objects without dicts are well handled::
 
@@ -459,6 +441,7 @@ def dir_with_other_class(self, cls):
     ret.update(dir(self.__class__))
     if hasattr(self, "__dict__"):
         ret.update(list(self.__dict__))
-    if not isinstance(self, cls):
-        ret.update(dir(cls))
+    for c in cls:
+        if not isinstance(self, c):
+            ret.update(dir(c))
     return sorted(ret)

@@ -11,7 +11,9 @@ Graphs
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_singleton import Category_singleton
+from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.simplicial_complexes import SimplicialComplexes
+from sage.categories.sets_cat import Sets
 
 class Graphs(Category_singleton):
     r"""
@@ -105,4 +107,31 @@ class Graphs(Category_singleton):
                 [0, 1, 2, 3, 4, (0, 1), (1, 2), (2, 3), (3, 4), (4, 0)]
             """
             return set(self.edges()).union(self.vertices())
+
+    class Connected(CategoryWithAxiom):
+        """
+        The category of connected graphs.
+
+        EXAMPLES::
+
+            sage: from sage.categories.graphs import Graphs
+            sage: C = Graphs().Connected()
+            sage: TestSuite(C).run()
+        """
+        def extra_super_categories(self):
+            """
+            Return the extra super categories of ``self``.
+
+            A connected graph is also a metric space.
+
+            EXAMPLES::
+
+                sage: from sage.categories.graphs import Graphs
+                sage: Graphs().Connected().super_categories() # indirect doctest
+                [Category of connected topological spaces,
+                 Category of connected simplicial complexes,
+                 Category of graphs,
+                 Category of metric spaces]
+            """
+            return [Sets().Metric()]
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Clifford Algebras
 
@@ -15,9 +16,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import iteritems
 
-from sage.misc.six import with_metaclass
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from copy import copy
@@ -36,6 +35,9 @@ from sage.combinat.subset import SubsetsSorted
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.algebras.weyl_algebra import repr_from_monomials
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.typeset.ascii_art import ascii_art
+from sage.typeset.unicode_art import unicode_art
+import unicodedata
 
 
 class CliffordAlgebraElement(CombinatorialFreeModule.Element):
@@ -120,7 +122,7 @@ class CliffordAlgebraElement(CombinatorialFreeModule.Element):
                 # the dictionary describing the element
                 # ``e[i]`` * (the element described by the dictionary ``cur``)
                 # (where ``e[i]`` is the ``i``-th standard basis vector).
-                for mr,cr in iteritems(cur):
+                for mr,cr in cur.items():
                     # Commute the factor as necessary until we are in order
                     pos = 0
                     for j in mr:
@@ -156,7 +158,7 @@ class CliffordAlgebraElement(CombinatorialFreeModule.Element):
                 cur = next
 
             # Add the distributed terms to the total
-            for index,coeff in iteritems(cur):
+            for index,coeff in cur.items():
                 d[index] = d.get(index, zero) + cl * coeff
                 if d[index] == zero:
                     del d[index]
@@ -730,15 +732,13 @@ class CliffordAlgebra(CombinatorialFreeModule):
         if x in self.free_module():
             R = self.base_ring()
             if x.parent().base_ring() is R:
-                return self.element_class(self, {(i,): c for i,c in iteritems(x)})
-            return self.element_class(self, {(i,): R(c) for i,c in iteritems(x) if R(c) != R.zero()})
+                return self.element_class(self, {(i,): c for i,c in x.items()})
+            return self.element_class(self, {(i,): R(c) for i,c in x.items() if R(c) != R.zero()})
 
-        if isinstance(x, CliffordAlgebraElement):
-            if x.parent() is self:
-                return x
-            if self.has_coerce_map_from(x.parent()):
-                R = self.base_ring()
-                return self.element_class(self, {i: R(c) for i,c in x if R(c) != R.zero()})
+        if (isinstance(x, CliffordAlgebraElement)
+            and self.has_coerce_map_from(x.parent())):
+            R = self.base_ring()
+            return self.element_class(self, {i: R(c) for i,c in x if R(c) != R.zero()})
 
         return super(CliffordAlgebra, self)._element_constructor_(x)
 
@@ -1091,7 +1091,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
 
     def lift_isometry(self, m, names=None):
         r"""
-        Lift an invertible isometry ``m`` of the quadratric form of
+        Lift an invertible isometry ``m`` of the quadratic form of
         ``self`` to a Clifford algebra morphism.
 
         Given an invertible linear map `m : V \to W` (here represented by
@@ -1251,23 +1251,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
                 for m,c in (Bi*Bj - Bj*Bi):
                     d[(a, K.index(m)+k*b)] = c
         m = Matrix(R, d, nrows=k, ncols=k*k, sparse=True)
-        from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in iteritems(x)),
+        from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in x.items()),
                                                   distinct=True)
         return tuple(map( from_vector, m.kernel().basis() ))
-
-        # Dense version
-        # R = self.base_ring()
-        # B = self.basis()
-        # K = list(B.keys())
-        # eqns = [[] for dummy in range(k)]
-        # for a,i in enumerate(K):
-        #     for b,j in enumerate(K):
-        #         v = B[i]*B[j] - B[j]*B[i]
-        #         eqns[a].extend([v[k] for k in K])
-        # m = Matrix(R, eqns)
-        # from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in iteritems(x)),
-        #                                           distinct=True)
-        # return tuple(map( from_vector, m.kernel().basis() ))
 
     # Same as center except for superalgebras
     @cached_method
@@ -1348,23 +1334,9 @@ class CliffordAlgebra(CombinatorialFreeModule):
                 for m,c in supercommutator:
                     d[(a, K.index(m)+k*b)] = c
         m = Matrix(R, d, nrows=k, ncols=k*k, sparse=True)
-        from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in iteritems(x)),
+        from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in x.items()),
                                                   distinct=True)
         return tuple(map( from_vector, m.kernel().basis() ))
-
-        # Dense version
-        # R = self.base_ring()
-        # B = self.basis()
-        # K = list(B.keys())
-        # eqns = [[] for dummy in range(k)]
-        # for a,i in enumerate(K):
-        #     for b,j in enumerate(K):
-        #         v = B[i].supercommutator(B[j])   # or better an if-loop as above
-        #         eqns[a].extend([v[k] for k in K])
-        # m = Matrix(R, eqns)
-        # from_vector = lambda x: self.sum_of_terms(((K[i], c) for i,c in iteritems(x)),
-        #                                           distinct=True)
-        # return tuple(map( from_vector, m.kernel().basis() ))
 
     Element = CliffordAlgebraElement
 
@@ -1403,13 +1375,6 @@ class ExteriorAlgebra(CliffordAlgebra):
 
     This class implements the exterior algebra `\Lambda(R^n)` for
     `n` a nonnegative integer.
-
-    .. WARNING::
-
-        We initialize the exterior algebra as an object of the category
-        of Hopf algebras, but this is not really correct, since it is a
-        Hopf superalgebra with the odd-degree components forming the odd
-        part. So use Hopf-algebraic methods with care!
 
     INPUT:
 
@@ -1472,15 +1437,14 @@ class ExteriorAlgebra(CliffordAlgebra):
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: E.category()
-            Category of finite dimensional super hopf algebras with basis
-             over Rational Field
+            Category of finite dimensional supercommutative supercocommutative
+             super hopf algebras with basis over Rational Field
             sage: TestSuite(E).run()
+
+            sage: TestSuite(ExteriorAlgebra(GF(3), ['a', 'b'])).run()
         """
-        cat = HopfAlgebrasWithBasis(R).Super().FiniteDimensional()
+        cat = HopfAlgebrasWithBasis(R).FiniteDimensional().Supercommutative().Supercocommutative()
         CliffordAlgebra.__init__(self, QuadraticForm(R, len(names)), names, category=cat)
-        # TestSuite will fail if the HopfAlgebra classes will ever have tests for
-        # the coproduct being an algebra morphism -- since this is really a
-        # Hopf superalgebra, not a Hopf algebra.
 
     def _repr_(self):
         r"""
@@ -1502,16 +1466,52 @@ class ExteriorAlgebra(CliffordAlgebra):
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: E._repr_term((0,1,2))
-            'x^y^z'
+            'x*y*z'
+            sage: y*x + x*z
+            -x*y + x*z
         """
         if len(m) == 0:
             return '1'
         term = ''
         for i in m:
             if len(term) != 0:
-                term += '^'
+                term += '*'
             term += self.variable_names()[i]
         return term
+
+    def _ascii_art_term(self, m):
+        r"""
+        Return ascii art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: E.<x,y,z> = ExteriorAlgebra(QQ)
+            sage: E._ascii_art_term((0,1,2))
+            x/\y/\z
+            sage: ascii_art(y*x + 2*x*z)
+            -x/\y + 2*x/\z
+        """
+        if len(m) == 0:
+            return ascii_art('1')
+        wedge = '/\\'
+        return ascii_art(*[self.variable_names()[i] for i in m], sep=wedge)
+
+    def _unicode_art_term(self, m):
+        """
+        Return unicode art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: E.<x,y,z> = ExteriorAlgebra(QQ)
+            sage: E._unicode_art_term((0,1,2))
+            x∧y∧z
+            sage: unicode_art(y*x + x*z)
+            -x∧y + x∧z
+        """
+        if len(m) == 0:
+            return unicode_art('1')
+        wedge = unicodedata.lookup('LOGICAL AND')
+        return unicode_art(*[self.variable_names()[i] for i in m], sep=wedge)
 
     def _latex_term(self, m):
         r"""
@@ -1590,9 +1590,9 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: p.parent()
             The exterior algebra of rank 3 over Rational Field
             sage: L(x*y)
-            -a^b - a^c + b^c
+            -a*b - a*c + b*c
             sage: L(x)*L(y)
-            -a^b - a^c + b^c
+            -a*b - a*c + b*c
             sage: L(x + y)
             a + 2*b + 3*c
             sage: L(x) + L(y)
@@ -1658,7 +1658,7 @@ class ExteriorAlgebra(CliffordAlgebra):
 
             sage: E.<x,y,z> = ExteriorAlgebra(QQ)
             sage: E.volume_form()
-            x^y^z
+            x*y*z
         """
         d = self._quadratic_form.dim()
         return self.element_class(self, {tuple(range(d)): self.base_ring().one()})
@@ -1757,10 +1757,10 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.coproduct_on_basis((0,))
             1 # x + x # 1
             sage: E.coproduct_on_basis((0,1))
-            1 # x^y + x # y + x^y # 1 - y # x
+            1 # x*y + x # y + x*y # 1 - y # x
             sage: E.coproduct_on_basis((0,1,2))
-            1 # x^y^z + x # y^z + x^y # z + x^y^z # 1
-             - x^z # y - y # x^z + y^z # x + z # x^y
+            1 # x*y*z + x # y*z + x*y # z + x*y*z # 1
+             - x*z # y - y # x*z + y*z # x + z # x*y
         """
         from sage.combinat.combinat import unshuffle_iterator
         one = self.base_ring().one()
@@ -1782,7 +1782,7 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.antipode_on_basis((1,))
             -y
             sage: E.antipode_on_basis((1,2))
-            y^z
+            y*z
         """
         return self.term(m, (-self.base_ring().one())**len(m))
 
@@ -1999,19 +1999,19 @@ class ExteriorAlgebra(CliffordAlgebra):
 
                 sage: E.<x,y,z> = ExteriorAlgebra(QQ)
                 sage: x*y
-                x^y
+                x*y
                 sage: y*x
-                -x^y
+                -x*y
                 sage: z*y*x
-                -x^y^z
+                -x*y*z
                 sage: (x*z)*y
-                -x^y^z
+                -x*y*z
                 sage: (3*x + y)^2
                 0
                 sage: (x - 3*y + z/3)^2
                 0
                 sage: (x+y) * (y+z)
-                x^y + x^z + y^z
+                x*y + x*z + y*z
             """
             zero = self.parent().base_ring().zero()
             d = {}
@@ -2110,7 +2110,7 @@ class ExteriorAlgebra(CliffordAlgebra):
                 sage: (x + x*y).interior_product(2*y)
                 -2*x
                 sage: (x*z + x*y*z).interior_product(2*y - x)
-                -2*x^z - y^z - z
+                -2*x*z - y*z - z
                 sage: x.interior_product(E.one())
                 x
                 sage: E.one().interior_product(x)
@@ -2152,21 +2152,21 @@ class ExteriorAlgebra(CliffordAlgebra):
 
                 sage: E.<x,y,z> = ExteriorAlgebra(QQ)
                 sage: x.hodge_dual()
-                y^z
+                y*z
                 sage: (x*z).hodge_dual()
                 -y
                 sage: (x*y*z).hodge_dual()
                 1
                 sage: [a.hodge_dual().hodge_dual() for a in E.basis()]
-                [1, x, y, z, x^y, x^z, y^z, x^y^z]
+                [1, x, y, z, x*y, x*z, y*z, x*y*z]
                 sage: (x + x*y).hodge_dual()
-                y^z + z
+                y*z + z
                 sage: (x*z + x*y*z).hodge_dual()
                 -y + 1
                 sage: E = ExteriorAlgebra(QQ, 'wxyz')
                 sage: [a.hodge_dual().hodge_dual() for a in E.basis()]
-                [1, -w, -x, -y, -z, w^x, w^y, w^z, x^y, x^z, y^z,
-                 -w^x^y, -w^x^z, -w^y^z, -x^y^z, w^x^y^z]
+                [1, -w, -x, -y, -z, w*x, w*y, w*z, x*y, x*z, y*z,
+                 -w*x*y, -w*x*z, -w*y*z, -x*y*z, w*x*y*z]
             """
             volume_form = self.parent().volume_form()
             return volume_form.interior_product(self)
@@ -2215,17 +2215,15 @@ class ExteriorAlgebra(CliffordAlgebra):
                 sage: elt.scalar(z + 2*x)
                 0
                 sage: elt.transpose() * (z + 2*x)
-                -2*x^y + 5*x^z + y^z
+                -2*x*y + 5*x*z + y*z
             """
             return (self.transpose() * other).constant_coefficient()
 
 #####################################################################
 ## Differentials
 
-class ExteriorAlgebraDifferential(with_metaclass(
-        InheritComparisonClasscallMetaclass,
-        ModuleMorphismByLinearity, UniqueRepresentation
-    )):
+class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
+        UniqueRepresentation, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Internal class to store the data of a boundary or coboundary of
     an exterior algebra `\Lambda(L)` defined by the structure
@@ -2264,13 +2262,13 @@ class ExteriorAlgebraDifferential(with_metaclass(
         """
         d = {}
 
-        for k,v in iteritems(dict(s_coeff)):
+        for k, v in dict(s_coeff).items():
             if not v: # Strip terms with 0
                 continue
 
             if isinstance(v, dict):
                 R = E.base_ring()
-                v = E._from_dict({(i,): R(c) for i,c in iteritems(v)})
+                v = E._from_dict({(i,): R(c) for i,c in v.items()})
             else:
                 # Make sure v is in ``E``
                 v = E(v)
@@ -2624,11 +2622,11 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
         sage: E.<x,y,z> = ExteriorAlgebra(QQ)
         sage: d = E.coboundary({(0,1): z, (1,2): x, (2,0): y})
         sage: d(x)
-        y^z
+        y*z
         sage: d(y)
-        -x^z
+        -x*z
         sage: d(x+y-y*z)
-        -x^z + y^z
+        -x*z + y*z
         sage: d(x*y)
         0
         sage: d(E.one())
@@ -2650,11 +2648,11 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
         sage: d(E.zero())
         0
         sage: d(e)
-        -2*e^h
+        -2*e*h
         sage: d(f)
-        2*f^h
+        2*f*h
         sage: d(h)
-        e^f
+        e*f
         sage: d(e*f)
         0
         sage: d(f*h)
@@ -2708,7 +2706,7 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
         self._cos_coeff = {}
         zero = E.zero()
         B = E.basis()
-        for k, v in iteritems(dict(s_coeff)):
+        for k, v in dict(s_coeff).items():
             k = B[k]
             for m,c in v:
                 self._cos_coeff[m] = self._cos_coeff.get(m, zero) + c * k
@@ -2739,11 +2737,11 @@ class ExteriorAlgebraCoboundary(ExteriorAlgebraDifferential):
             sage: d._on_basis(())
             0
             sage: d._on_basis((0,))
-            y^z
+            y*z
             sage: d._on_basis((1,))
-            -x^z
+            -x*z
             sage: d._on_basis((2,))
-            x^y
+            x*y
             sage: d._on_basis((0,1))
             0
             sage: d._on_basis((0,2))

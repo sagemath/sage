@@ -1,4 +1,5 @@
 # cython: binding=True
+# distutils: language = c++
 r"""
 Static Sparse Graphs
 
@@ -87,8 +88,8 @@ Technical details
   Using optional parameter ``vertex_list``, you can specify the order of the
   vertices. Then `i^{\text{th}}` vertex will corresponds to ``vertex_list[i]``.
 
-* Some methods return ``bitset_t`` objets when lists could be expected. There is
-  a very useful ``bitset_list`` function for this kind of problems :-)
+* Some methods return ``bitset_t`` objects when lists could be expected. There
+  is a very useful ``bitset_list`` function for this kind of problems :-)
 
 * When the edges are labelled, most of the space taken by this graph is taken by
   edge labels. If no edge is labelled then this space is not allocated, but if
@@ -122,7 +123,7 @@ Cython functions
     ``edge_label(short_digraph g, int * edge)`` | Return the label associated with a given edge
     ``init_empty_copy(short_digraph dst, short_digraph src)`` | Allocate ``dst`` so that it can contain as many vertices and edges as ``src``.
     ``init_reverse(short_digraph dst, short_digraph src)`` | Initialize ``dst`` to a copy of ``src`` with all edges in the opposite direction.
-    ``free_short_digraph(short_digraph g)`` | Free the ressources used by ``g``
+    ``free_short_digraph(short_digraph g)`` | Free the resources used by ``g``
 
 **Connectivity**
 
@@ -167,7 +168,7 @@ Python functions
 ----------------
 
 These functions are available so that Python modules from Sage can call the
-Cython routines this module implements (as they can not directly call methods
+Cython routines this module implements (as they cannot directly call methods
 with C arguments).
 """
 
@@ -180,9 +181,7 @@ with C arguments).
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
-include "sage/data_structures/bitset.pxi"
 cimport cpython
 from libc.string cimport memset
 from libc.limits cimport INT_MAX
@@ -191,6 +190,7 @@ from libcpp.vector cimport vector
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
+from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.c_graph cimport CGraph
 from .static_sparse_backend cimport StaticSparseCGraph
 from .static_sparse_backend cimport StaticSparseBackend
@@ -208,7 +208,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
     r"""
     Initialize ``short_digraph g`` from a Sage (Di)Graph.
 
-    If ``G`` is a ``Graph`` objet (and not a ``DiGraph``), an edge between two
+    If ``G`` is a ``Graph`` object (and not a ``DiGraph``), an edge between two
     vertices `u` and `v` is replaced by two arcs in both directions.
 
     The optional argument ``vertex_list`` is assumed to be a list of all
@@ -683,7 +683,7 @@ def tarjan_strongly_connected_components(G):
     the lowlink of `v`, that whole subtree is a new SCC.
 
     For more information, see the
-    :wikipedia:`Tarjan's_strongly_connected_components_algorithm`.
+    :wikipedia:`Tarjan%27s_strongly_connected_components_algorithm`.
 
     EXAMPLES::
 
@@ -768,7 +768,8 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     which should be empty at the beginning.
     """
     cdef MemoryAllocator mem = MemoryAllocator()
-    cdef int v, w, i
+    cdef size_t v, w, i
+    cdef size_t s_nscc = <size_t>nscc
     cdef int tmp = nscc + 1
     cdef vector[vector[int]] scc_list = vector[vector[int]](nscc, vector[int]())
     cdef vector[vector[int]] sons = vector[vector[int]](nscc + 1, vector[int]())
@@ -778,15 +779,15 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
     cdef uint32_t degv
     cdef uint32_t *p_tmp
 
-    for v in range(nscc):
+    for v in range(s_nscc):
         scc_list[v] = vector[int]()
         sons[v] = vector[int]()
     sons[nscc] = vector[int]()
 
-    for i in range(g.n):
+    for i in range(<size_t>g.n):
         scc_list[scc[i]].push_back(i)
 
-    for v in range(nscc):
+    for v in range(s_nscc):
         for i in range(scc_list[v].size()):
             p_tmp = g.neighbors[scc_list[v][i]]
             while p_tmp<g.neighbors[scc_list[v][i]+1]:
@@ -806,13 +807,13 @@ cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int
 
     if not m:
         output.edges = NULL
-        for v in range(1, nscc + 1):
+        for v in range(1, s_nscc + 1):
             output.neighbors[v] = NULL
 
     output.edges = <uint32_t *> check_allocarray(m, sizeof(uint32_t))
     output.neighbors[0] = output.edges
 
-    for v in range(1, nscc + 1):
+    for v in range(1, s_nscc + 1):
         degv = sons[v].size()
         output.neighbors[v] = output.neighbors[v-1] + sons[v-1].size()
         for i in range(sons[v].size()):
@@ -892,7 +893,7 @@ cdef strongly_connected_component_containing_vertex(short_digraph g, short_digra
 
 cdef void free_short_digraph(short_digraph g):
     """
-    Free the ressources used by ``g``
+    Free the resources used by ``g``
     """
     sig_free(g.edges)
     sig_free(g.neighbors)
@@ -929,8 +930,8 @@ def triangles_count(G):
     cdef uint32_t * p1
     cdef uint32_t * p2
 
-    for u in range(g.n):
-        for i in range(out_degree(g, u)):
+    for u in range(<uint32_t>g.n):
+        for i in range(<uint32_t>out_degree(g, u)):
             v = g.neighbors[u][i]
             if v <= u:
                 continue
@@ -1093,7 +1094,7 @@ def spectral_radius(G, prec=1e-10):
         sage: G.spectral_radius()
         Traceback (most recent call last):
         ...
-        ValueError: the graph must be aperiodic        
+        ValueError: the graph must be aperiodic
     """
     if not G:
         raise ValueError("empty graph")
@@ -1102,7 +1103,7 @@ def spectral_radius(G, prec=1e-10):
             raise ValueError("G must be strongly connected")
     elif not G.is_connected():
         raise ValueError("G must be connected")
-    
+
     cdef double e_min, e_max
 
     if G.num_verts() == 1:
@@ -1146,8 +1147,8 @@ def spectral_radius(G, prec=1e-10):
     G = G.copy(immutable=True)
     g[0] = (<StaticSparseCGraph> (<StaticSparseBackend> G._backend)._cg).g[0]
 
-    cdef long n = g.n
-    cdef long m = g.m
+    cdef size_t n = <size_t>g.n
+    cdef size_t m = <size_t>g.m
     cdef uint32_t ** neighbors = g.neighbors
 
     # v1 and v2 are two arrays of length n, allocated as one array

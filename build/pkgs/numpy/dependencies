@@ -1,4 +1,4 @@
-$(PYTHON) $(BLAS) gfortran | setuptools pip pkgconfig cython
+$(PYTHON) $(BLAS) gfortran | $(PYTHON_TOOLCHAIN) pkgconfig cython
 
 ----------
 All lines of this file are ignored except the first.

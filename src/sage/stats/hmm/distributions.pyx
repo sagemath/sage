@@ -17,7 +17,6 @@ AUTHOR:
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
 #############################################################################
-from __future__ import absolute_import
 
 from cpython.object cimport PyObject_RichCompare
 
@@ -380,7 +379,7 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)]).__repr__()
             '0.2*N(-10.0,0.5) + 0.6*N(1.0,1.0) + 0.2*N(20.0,0.5)'
         """
-        return ' + '.join(["%s*N(%s,%s)"%x for x in self])
+        return ' + '.join("%s*N(%s,%s)" % x for x in self)
 
     def sample(self, n=None):
         """

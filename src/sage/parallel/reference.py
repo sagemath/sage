@@ -5,7 +5,6 @@ These are reference implementations of basic parallel
 primitives. These are not actually parallel, but work the same way.
 They are good for testing.
 """
-from __future__ import print_function, absolute_import
 
 from sage.misc.prandom import shuffle
 

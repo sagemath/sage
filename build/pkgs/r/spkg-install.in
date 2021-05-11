@@ -1,0 +1,123 @@
+# r uses grep output during its build
+unset GREP_OPTIONS
+
+# Make sure CPPFLAGS and LDFLAGS are set to something (even the empty
+# string) to prevent R from overriding them. Note: LDFLAGS is set by default.
+# The --with-readline configure option only understands yes/no
+# and cannot be used to pass this path.
+CPPFLAGS="$CPPFLAGS"
+
+# #29170: Compilation errors caused by a silently failing configure check
+# "for type of 'hidden' Fortran character lengths"
+# on ubuntu-bionic-minimal, ubuntu-eoan/focal-minimal, debian-buster/bullseye/sid-minimal,
+# linuxmint-19.3-minimal, archlinux-latest-minimal
+CFLAGS="$CFLAGS_NON_NATIVE -fPIC"
+FCFLAGS="$FCFLAGS_NON_NATIVE -fPIC"
+
+export CFLAGS CPPFLAGS FCFLAGS LDFLAGS
+
+if [ "$UNAME" = "Darwin" ]; then
+    # Put fake java on the PATH for OSX
+    export PATH="$(pwd)/bin:$PATH"
+fi
+
+# Note by Karl-Dieter Crisman, April 12th 2010. X support would be nice
+# to have in OSX, but see
+# http://CRAN.R-project.org/bin/macosx/RMacOSX-FAQ.html#X11-window-server-_0028optional_0029
+# for how differently this would have to be handled on different OSX
+# versions, none trivially.  In any case, aqua, which we enable,
+# performs the same function on OSX.
+#
+# Also, see #12172: for now, anyway, we disable X support on OS X.
+#
+# Note by David Kirkby, Feb 16th 2010. /usr/include/X11/Xwindows.h does
+# not exist on Solaris, but R configures OK with X support. Hence I've added
+# a more specific test on Solaris, by testing for a library. That library
+# exists both on Solaris 10 03/2005 (SPARC) and on OpenSolaris.
+if [ "$UNAME" = "Darwin" ]; then
+    XSUPPORT=no
+elif [ -f /usr/include/X11/Xwindows.h ]; then
+    XSUPPORT=yes
+elif [ "$UNAME" = "SunOS" ] && [ -f /usr/X11/lib/libXv.so ] ; then
+    XSUPPORT=yes
+else
+    XSUPPORT=no
+fi
+
+R_CONFIGURE_BLAS="--with-blas=$(pkg-config --libs blas)"
+R_CONFIGURE_LAPACK="--with-lapack=$(pkg-config --libs lapack)"
+echo "R_CONFIGURE_BLAS=$R_CONFIGURE_BLAS"
+echo "R_CONFIGURE_LAPACK=$R_CONFIGURE_LAPACK"
+
+if [ "$UNAME" = "Darwin" ]; then
+    # We don't want to install R as a library framework on OSX
+    R_CONFIGURE="--enable-R-framework=no $R_CONFIGURE"
+    # OS X 10.10 and/or Xcode 6.3 and over broke the R installation. See
+    # http://trac.sagemath.org/ticket/18254.
+    if [ $MACOSX_VERSION -ge 14 ]; then
+        echo "OS X 10.$[$MACOSX_VERSION-4] Configuring R without aqua support."
+        R_CONFIGURE="--with-aqua=no $R_CONFIGURE"
+    fi
+    if [ $MACOSX_VERSION -ge 16 ]; then
+        echo "OS X 10.$[$MACOSX_VERSION-4] Building with clang."
+        CC=clang
+    fi
+fi
+
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    echo "Disabling ICU, OpenMP for a binary build"
+    R_CONFIGURE="--without-ICU --disable-openmp $R_CONFIGURE"
+elif [ "$UNAME" = "SunOS" ]; then
+    # Note by David Kirkby, 16th Feb 2010. Even after adding the iconv library
+    # R would not build properly on Solaris 10, complaining of undefined symbols
+    # uiter_setUTF8 and  ucol_strcollIter
+    # After an email to r-help@r-project.org, Ei-ji Nakama (rim.nakama@gmail.com)
+    # emailed me and said the option --without-ICU might help, which it did. I don't see
+    # this option documented, but for now at least, it does allow R to build.
+
+    echo "Disabling ICU on Solaris, using an undocumented option --without-ICU"
+    echo "since the ICU library is not included on Solaris."
+    R_CONFIGURE="--without-ICU $R_CONFIGURE"
+fi
+
+cd src
+
+if [ "$UNAME" = "Darwin" ]; then
+    # Fixing install_name(s)
+    sed -i -e 's:\"-install_name :\"-install_name ${libdir}/R/lib/:' configure
+    sed -i -e "/SHLIB_EXT/s/\.so/.dylib/" configure
+fi
+
+# Don't override R_HOME_DIR in local/bin/R while building R.
+# See patches/R.sh.patch
+export SAGE_BUILDING_R=yes
+
+R_HOME="$SAGE_LOCAL"/lib/R
+# Set LDFLAGS as it is done in sage-env for $SAGE_LOCAL/lib
+LDFLAGS="-L$R_HOME/lib -Wl,-rpath,$R_HOME/lib $LDFLAGS"
+if [ "$UNAME" = "Linux" ]; then
+    LDFLAGS="-Wl,-rpath-link,$R_HOME/lib $LDFLAGS"
+fi
+export LDFLAGS
+
+config() {
+    sdh_configure --enable-R-shlib --with-recommended-packages \
+                  --with-readline=yes --with-x=$XSUPPORT \
+                  "$R_CONFIGURE_BLAS" "$R_CONFIGURE_LAPACK" \
+                  $R_CONFIGURE
+}
+
+if ! (config); then
+    echo "Configuring R without X11"
+    export XSUPPORT=no
+    config
+fi
+
+# Build R
+sdh_make R
+
+# needed for help system
+sdh_make vignettes
+
+# Install new version
+sdh_make_install

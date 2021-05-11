@@ -338,7 +338,7 @@ already in Sage.
 
     sage: N = QQ[sqrt(2)]
     sage: N
-    Number Field in sqrt2 with defining polynomial x^2 - 2
+    Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?
 
 ::
 

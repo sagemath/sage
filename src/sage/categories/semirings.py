@@ -1,7 +1,6 @@
 r"""
 Semirngs
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #

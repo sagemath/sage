@@ -1,14 +1,12 @@
 r"""
 Enumerating binary self-dual codes
 
-This module implements functions useful for studying binary
-self-dual codes.
-The main function is ``self_dual_binary_codes``,
-which is a case-by-case list of entries, each represented by a
-Python dictionary.
+This module implements functions useful for studying binary self-dual codes.
+The main function is ``self_dual_binary_codes``, which is a case-by-case list
+of entries, each represented by a Python dictionary.
 
-Format of each entry: a Python dictionary with keys "order
-autgp", "spectrum", "code", "Comment", "Type", where
+Format of each entry: a Python dictionary with keys "order autgp", "spectrum",
+"code", "Comment", "Type", where
 
 - "code" - a sd code C of length n, dim n/2, over GF(2)
 
@@ -87,16 +85,16 @@ REFERENCES:
   "A classification of self-orthogonal codes over GF(2)", Discrete
   Math 3 (1972) 209-246.
 """
-from __future__ import print_function
 
-from sage.misc.lazy_import import lazy_import
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.matrix.matrix_space import MatrixSpace
-lazy_import("sage.coding.linear_code", "LinearCode")
+from sage.matrix.all import matrix
 from sage.matrix.constructor import block_diagonal_matrix
 from sage.rings.integer_ring import ZZ
 from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.misc.cachefunc import cached_method
+from sage.misc.cachefunc import cached_function
+
+from sage.coding.linear_code import LinearCode
 
 _F = GF(2)
 
@@ -177,12 +175,42 @@ def _MS2(n):
     return MatrixSpace(_F, n2, n2)
 
 def _I2(n):
-    r"""Internal function"""
+    r"""
+    Internal function
+
+    EXAMPLES::
+
+        sage: from sage.coding.self_dual_codes import _I2
+        sage: _I2(3)
+        [1]
+        sage: _I2(5)
+        [1 0]
+        [0 1]
+        sage: _I2(7)
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+    """
     return _MS2(n).identity_matrix()
 
-@cached_method
+@cached_function
 def _And7():
-    return MS7(_F, [[1, 1, 1, 0, 0, 1, 1],\
+    """
+    Auxiliary matrix And7.
+
+    EXAMPLES::
+
+        sage: from sage.coding.self_dual_codes import _And7
+        sage: _And7()
+        [1 1 1 0 0 1 1]
+        [1 1 1 0 1 0 1]
+        [1 1 1 0 1 1 0]
+        [0 0 0 0 1 1 1]
+        [0 1 1 1 0 0 0]
+        [1 0 1 1 0 0 0]
+        [1 1 0 1 0 0 0]
+    """
+    return matrix(_F, [[1, 1, 1, 0, 0, 1, 1],\
                     [1, 1, 1, 0, 1, 0, 1],\
                     [1, 1, 1, 0, 1, 1, 0],\
                     [0, 0, 0, 0, 1, 1, 1],\
@@ -190,9 +218,25 @@ def _And7():
                     [1, 0, 1, 1, 0, 0, 0],\
                     [1, 1, 0, 1, 0, 0, 0]])
 
-@cached_method
+@cached_function
 def _H8():
-    return MS8(ZZ, [[1, 1, 1, 1, 1, 1, 1, 1],\
+    """
+    Auxiliary matrix H8.
+
+    EXAMPLES::
+
+    sage: from sage.coding.self_dual_codes import _H8
+    sage: _H8()
+    [ 1  1  1  1  1  1  1  1]
+    [ 1 -1  1 -1  1 -1  1 -1]
+    [ 1  1 -1 -1  1  1 -1 -1]
+    [ 1 -1 -1  1  1 -1 -1  1]
+    [ 1  1  1  1 -1 -1 -1 -1]
+    [ 1 -1  1 -1 -1  1 -1  1]
+    [ 1  1 -1 -1 -1 -1  1  1]
+    [ 1 -1 -1  1 -1  1  1 -1]
+    """
+    return matrix(ZZ, [[1, 1, 1, 1, 1, 1, 1, 1],\
                     [1, -1, 1, -1, 1, -1, 1, -1],\
                     [1, 1, -1, -1, 1, 1, -1, -1],\
                     [1, -1, -1, 1, 1, -1, -1, 1],\

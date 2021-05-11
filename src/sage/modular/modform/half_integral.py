@@ -7,7 +7,6 @@ AUTHORS:
 
 - William Stein (2007-08)
 """
-from __future__ import absolute_import
 
 from sage.matrix.all import MatrixSpace
 from sage.modular.dirichlet import DirichletGroup

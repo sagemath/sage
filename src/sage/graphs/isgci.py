@@ -329,8 +329,8 @@ bipartite graphs. Therefore bipartite graphs are perfect !
         sage: Perfect == Berge
         True
 
-Information for developpers
-----------------------------
+Information for developers
+--------------------------
 
 * The database is loaded not *so* large, but it is still preferable to
   only load it on demand. This is achieved through the cached methods
@@ -391,15 +391,15 @@ AUTHORS:
 Methods
 -------
 """
-from __future__ import print_function
-
-from six import itervalues
 
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
 from sage.misc.unknown import Unknown
 from sage.env import GRAPHS_DATA_DIR
-import six
+
+import os
+import zipfile
+from urllib.request import urlopen
 
 #*****************************************************************************
 #      Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
@@ -499,9 +499,8 @@ class GraphClass(SageObject, CachedRepresentation):
             sage: graph_classes.Chordal >= graph_classes.Tree
             True
         """
-
         inclusion_digraph = GraphClasses().inclusion_digraph()
-        if inclusion_digraph.shortest_path(self._gc_id,other._gc_id) != []:
+        if inclusion_digraph.shortest_path(self._gc_id,other._gc_id):
             return True
         else:
             return Unknown
@@ -826,16 +825,11 @@ class GraphClasses(UniqueRepresentation):
 
             sage: graph_classes._download_db() # Not tested -- requires internet
         """
-        # import compatible with py2 and py3
-        from six.moves.urllib.request import urlopen
-
         from sage.misc.misc import SAGE_TMP
-        import os.path
         u = urlopen('http://www.graphclasses.org/data.zip')
         localFile = open(os.path.join(SAGE_TMP, 'isgci.zip'), 'w')
         localFile.write(u.read())
         localFile.close()
-        import os, zipfile
         z = zipfile.ZipFile(os.path.join(SAGE_TMP, 'isgci.zip'))
 
         # Save a systemwide updated copy whenever possible
@@ -871,7 +865,7 @@ class GraphClasses(UniqueRepresentation):
         DB = _XML_to_dict(root)
 
         classes = {c['id']: c for c in DB['GraphClasses']["GraphClass"]}
-        for c in itervalues(classes):
+        for c in classes.values():
             c["problem"] = {pb.pop("name"): pb for pb in c["problem"]}
 
         inclusions = DB['Inclusions']['incl']
@@ -1000,12 +994,12 @@ class GraphClasses(UniqueRepresentation):
         # Maximum width of a field
         MAX_LEN = 40
 
-        # Computing te max of each field with the database
+        # Computing the max of each field with the database
         for key in MAX:
             MAX[key] = len(max((str(x.get(key, "")) for x in classes_list), key=len))
 
         # At most MAX characters per field
-        for key, length in six.iteritems(MAX):
+        for key, length in MAX.items():
             MAX[key] = min(length, MAX_LEN)
 
         # Head of the table
@@ -1070,17 +1064,23 @@ graph_classes.Cactus = GraphClass("Cactus", "gc_108", recognition_function=lambd
 graph_classes.Chordal = GraphClass("Chordal", "gc_32", recognition_function=lambda x: x.is_chordal())
 graph_classes.ClawFree = GraphClass("Claw-free", "gc_62")
 graph_classes.CoGraph = GraphClass("CoGraph", "gc_151", recognition_function=lambda x: x.is_cograph())
-graph_classes.Comparability = GraphClass("Comparability", "gc_72", recognition_function=lambda x: __import__('sage').graphs.comparability.is_comparability)
+graph_classes.Comparability = GraphClass("Comparability", "gc_72", recognition_function=lambda x: x.is_comparability())
+graph_classes.DistanceRegular = GraphClass("Distance Regular", "gc_1148", recognition_function=lambda x: x.is_distance_regular())
 graph_classes.Gallai = GraphClass("Gallai", "gc_73")
 graph_classes.Grid = GraphClass("Grid", "gc_464")
+graph_classes.Hamiltonian = GraphClass("Hamiltonian", "gc_1092", recognition_function=lambda x: x.is_hamiltonian())
 graph_classes.Interval = GraphClass("Interval", "gc_234", recognition_function=lambda x: x.is_interval())
 graph_classes.Line = GraphClass("Line", "gc_249", recognition_function=lambda x: x.is_line_graph())
 graph_classes.Modular = GraphClass("Modular", "gc_50")
 graph_classes.Outerplanar = GraphClass("Outerplanar", "gc_110")
 graph_classes.Perfect = GraphClass("Perfect", "gc_56", recognition_function=lambda x: x.is_perfect())
+graph_classes.Permutation = GraphClass("Permutation", "gc_23", recognition_function=lambda x: x.is_permutation())
 graph_classes.Planar = GraphClass("Planar", "gc_43", recognition_function=lambda x: x.is_planar())
 graph_classes.Polyhedral = GraphClass("Polyhedral", "gc_986", recognition_function=lambda x: x.is_polyhedral())
 graph_classes.Split = GraphClass("Split", "gc_39", recognition_function=lambda x: x.is_split())
+graph_classes.StronglyRegular = GraphClass("Strongly Regular", "gc_1185", recognition_function=lambda x: x.is_strongly_regular())
 graph_classes.Tree = GraphClass("Tree", "gc_342", recognition_function=lambda x: x.is_tree())
+graph_classes.TriangleFree = GraphClass("Triangle Free", "gc_371", recognition_function=lambda x: x.is_triangle_free())
 graph_classes.UnitDisk = GraphClass("UnitDisk", "gc_389")
 graph_classes.UnitInterval = GraphClass("UnitInterval", "gc_299")
+graph_classes.WeaklyChordal = GraphClass("Weakly Chordal", "gc_14", recognition_function=lambda x: x.is_weakly_chordal())

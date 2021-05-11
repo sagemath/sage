@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 r"""
-Platonic solids
+1-skeletons of Platonic solids
 
 The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 
 """
-###########################################################################
+# ****************************************************************************
 #
 #           Copyright (C) 2006 Robert L. Miller <rlmillster@gmail.com>
 #                              and Emily A. Kirkman
@@ -13,7 +13,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 #
 # Distributed  under  the  terms  of  the  GNU  General  Public  License (GPL)
 #                         http://www.gnu.org/licenses/
-###########################################################################
+# ****************************************************************************
 
 # import from Sage library
 from sage.graphs.graph import Graph
@@ -21,34 +21,31 @@ from math import sin, cos, pi
 
 def TetrahedralGraph():
     """
-    Returns a tetrahedral graph (with 4 nodes).
+    Return a tetrahedral graph (with 4 nodes).
 
-    A tetrahedron is a 4-sided triangular pyramid. The tetrahedral
-    graph corresponds to the connectivity of the vertices of the
-    tetrahedron. This graph is equivalent to a wheel graph with 4 nodes
-    and also a complete graph on four nodes. (See examples below).
+    A tetrahedron is a 4-sided triangular pyramid. The tetrahedral graph
+    corresponds to the connectivity of the vertices of the tetrahedron. This
+    graph is equivalent to a wheel graph with 4 nodes and also a complete graph
+    on four nodes. (See examples below).
 
-    PLOTTING: The tetrahedral graph should be viewed in 3 dimensions.
-    We chose to use the default spring-layout algorithm here, so that
-    multiple iterations might yield a different point of reference for
-    the user. We hope to add rotatable, 3-dimensional viewing in the
-    future. In such a case, a string argument will be added to select
-    the flat spring-layout over a future implementation.
+    PLOTTING: The Tetrahedral graph should be viewed in 3 dimensions. We choose
+    to use a planar embedding of the graph. We hope to add rotatable,
+    3-dimensional viewing in the future. In such a case, a argument will be
+    added to select the desired layout.
 
-    EXAMPLES: Construct and show a Tetrahedral graph
+    EXAMPLES:
 
-    ::
+    Construct and show a Tetrahedral graph::
 
         sage: g = graphs.TetrahedralGraph()
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
     The following example requires networkx::
 
         sage: import networkx as NX
 
-    Compare this Tetrahedral, Wheel(4), Complete(4), and the
-    Tetrahedral plotted with the spring-layout algorithm below in a
-    Sage graphics array::
+    Compare this Tetrahedral, Wheel(4), Complete(4), and the Tetrahedral plotted
+    with the spring-layout algorithm below in a Sage graphics array::
 
         sage: tetra_pos = graphs.TetrahedralGraph()
         sage: tetra_spring = Graph(NX.tetrahedral_graph())
@@ -61,45 +58,38 @@ def TetrahedralGraph():
         ....:     for m in range(2):
         ....:         n.append(g[i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)
+        sage: G.show()  # long time
     """
-    import networkx
-    G = networkx.tetrahedral_graph()
-    return Graph(G, name="Tetrahedron", pos =
-                       { 0 : (0, 0),
-                         1 : (0, 1),
-                         2 : (cos(3.5*pi/3), sin(3.5*pi/3)),
-                         3 : (cos(5.5*pi/3), sin(5.5*pi/3))}
-                       )
+    edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
+    pos = {0: (0, 0),
+           1: (0, 1),
+           2: (cos(3.5*pi/3), sin(3.5*pi/3)),
+           3: (cos(5.5*pi/3), sin(5.5*pi/3))}
+    return Graph(edges, name="Tetrahedron", pos=pos)
 
 def HexahedralGraph():
     """
-    Returns a hexahedral graph (with 8 nodes).
+    Return a hexahedral graph (with 8 nodes).
 
-    A regular hexahedron is a 6-sided cube. The hexahedral graph
-    corresponds to the connectivity of the vertices of the hexahedron.
-    This graph is equivalent to a 3-cube.
+    A regular hexahedron is a 6-sided cube. The hexahedral graph corresponds to
+    the connectivity of the vertices of the hexahedron. This graph is
+    equivalent to a 3-cube.
 
-    PLOTTING: The hexahedral graph should be viewed in 3 dimensions. We
-    chose to use the default spring-layout algorithm here, so that
-    multiple iterations might yield a different point of reference for
-    the user. We hope to add rotatable, 3-dimensional viewing in the
-    future. In such a case, a string argument will be added to select
-    the flat spring-layout over a future implementation.
+    PLOTTING: The Hexahedral graph should be viewed in 3 dimensions. We choose
+    to use a planar embedding of the graph. We hope to add rotatable,
+    3-dimensional viewing in the future. In such a case, a argument will be
+    added to select the desired layout.
 
-    EXAMPLES: Construct and show a Hexahedral graph
+    EXAMPLES:
 
-    ::
+    Construct and show a Hexahedral graph::
 
         sage: g = graphs.HexahedralGraph()
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
-    Create several hexahedral graphs in a Sage graphics array. They
-    will be drawn differently due to the use of the spring-layout
-    algorithm.
-
-    ::
+    Create several hexahedral graphs in a Sage graphics array. They will be
+    drawn differently due to the use of the spring-layout algorithm::
 
         sage: g = []
         sage: j = []
@@ -111,50 +101,46 @@ def HexahedralGraph():
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)
+        sage: G.show()  # long time
     """
-    return Graph({0:[1,3,4], 1:[2,5], 2:[3,6], 3:[7], 4:[5,7], 5:[6], 6:[7]},
-                       name="Hexahedron",
-                       pos = {
-                          0 : (0,0),
-                          1 : (1,0),
-                          3 : (0,1),
-                          2 : (1,1),
-                          4 : (.5,.5),
-                          5 : (1.5,.5),
-                          7 : (.5,1.5),
-                          6 : (1.5,1.5)
-                          })
+    adj = {0: [1, 3, 4], 1: [2, 5], 2: [3, 6], 3: [7], 4: [5, 7], 5: [6], 6: [7]}
+    pos = {
+        0: (0, 0),
+        1: (1, 0),
+        3: (0, 1),
+        2: (1, 1),
+        4: (.5, .5),
+        5: (1.5, .5),
+        7: (.5, 1.5),
+        6: (1.5, 1.5)
+        }
+    return Graph(adj, name="Hexahedron", pos=pos)
 
 def OctahedralGraph():
     """
-    Returns an Octahedral graph (with 6 nodes).
+    Return an Octahedral graph (with 6 nodes).
 
-    The regular octahedron is an 8-sided polyhedron with triangular
-    faces. The octahedral graph corresponds to the connectivity of the
-    vertices of the octahedron. It is the line graph of the tetrahedral
-    graph. The octahedral is symmetric, so the spring-layout algorithm
-    will be very effective for display.
+    The regular octahedron is an 8-sided polyhedron with triangular faces. The
+    octahedral graph corresponds to the connectivity of the vertices of the
+    octahedron. It is the line graph of the tetrahedral graph. The octahedral is
+    symmetric, so the spring-layout algorithm will be very effective for
+    display.
 
-    PLOTTING: The Octahedral graph should be viewed in 3 dimensions. We
-    chose to use the default spring-layout algorithm here, so that
-    multiple iterations might yield a different point of reference for
-    the user. We hope to add rotatable, 3-dimensional viewing in the
-    future. In such a case, a string argument will be added to select
-    the flat spring-layout over a future implementation.
+    PLOTTING: The Octahedral graph should be viewed in 3 dimensions. We choose
+    to use a planar embedding of the graph. We hope to add rotatable,
+    3-dimensional viewing in the future. In such a case, a argument will be
+    added to select the desired layout.
 
-    EXAMPLES: Construct and show an Octahedral graph
+    EXAMPLES:
 
-    ::
+    Construct and show an Octahedral graph::
 
         sage: g = graphs.OctahedralGraph()
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
-    Create several octahedral graphs in a Sage graphics array They will
-    be drawn differently due to the use of the spring-layout algorithm
-
-    ::
+    Create several octahedral graphs in a Sage graphics array They will be drawn
+    differently due to the use of the spring-layout algorithm::
 
         sage: g = []
         sage: j = []
@@ -166,54 +152,38 @@ def OctahedralGraph():
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)
+        sage: G.show()  # long time
     """
-    import networkx
-    G = networkx.octahedral_graph()
-
-    pos = {}
-    r1 = 5
-    r2 = 1
-    for i,v in enumerate([0,1,2]):
-        i = i + 0.75
-        pos[v] = (r1*cos(i*2*pi/3),r1*sin(i*2*pi/3))
-
-    for i,v in enumerate([4,3,5]):
-        i = i + .25
-        pos[v] = (r2*cos(i*2*pi/3),r2*sin(i*2*pi/3))
-
-    return Graph(G, name="Octahedron", pos=pos)
+    adj = {0: [1, 2, 3, 4], 1: [2, 3, 5], 2: [4, 5], 3: [4, 5], 4: [5]}
+    G = Graph(adj, format='dict_of_lists', name="Octahedron")
+    G._circle_embedding([0, 1, 2], radius=5, angle=pi/2)
+    G._circle_embedding([4, 3, 5], radius=1, angle=pi/6)
+    return G
 
 def IcosahedralGraph():
     """
-    Returns an Icosahedral graph (with 12 nodes).
+    Return an Icosahedral graph (with 12 nodes).
 
-    The regular icosahedron is a 20-sided triangular polyhedron. The
-    icosahedral graph corresponds to the connectivity of the vertices
-    of the icosahedron. It is dual to the dodecahedral graph. The
-    icosahedron is symmetric, so the spring-layout algorithm will be
-    very effective for display.
+    The regular icosahedron is a 20-sided triangular polyhedron. The icosahedral
+    graph corresponds to the connectivity of the vertices of the icosahedron. It
+    is dual to the dodecahedral graph. The icosahedron is symmetric, so the
+    spring-layout algorithm will be very effective for display.
 
-    PLOTTING: The Icosahedral graph should be viewed in 3 dimensions.
-    We chose to use the default spring-layout algorithm here, so that
-    multiple iterations might yield a different point of reference for
-    the user. We hope to add rotatable, 3-dimensional viewing in the
-    future. In such a case, a string argument will be added to select
-    the flat spring-layout over a future implementation.
+    PLOTTING: The Icosahedral graph should be viewed in 3 dimensions. We choose
+    to use a planar embedding of the graph. We hope to add rotatable,
+    3-dimensional viewing in the future. In such a case, a argument will be
+    added to select the desired layout.
 
-    EXAMPLES: Construct and show an Octahedral graph
+    EXAMPLES:
 
-    ::
+    Construct and show an Octahedral graph::
 
         sage: g = graphs.IcosahedralGraph()
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
-    Create several icosahedral graphs in a Sage graphics array. They
-    will be drawn differently due to the use of the spring-layout
-    algorithm.
-
-    ::
+    Create several icosahedral graphs in a Sage graphics array. They will be
+    drawn differently due to the use of the spring-layout algorithm::
 
         sage: g = []
         sage: j = []
@@ -225,52 +195,38 @@ def IcosahedralGraph():
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)
+        sage: G.show()  # long time
     """
-    import networkx
-    G = networkx.icosahedral_graph()
-
-    pos = {}
-    r1 = 5
-    r2 = 2
-    for i,v in enumerate([2,8,7,11,4,6]):
-        i = i + .5
-        pos[v] = (r1*cos(i*pi/3),r1*sin(i*pi/3))
-
-    for i,v in enumerate([1,9,0,10,5,3]):
-        i = i + .5
-        pos[v] = (r2*cos(i*pi/3),r2*sin(i*pi/3))
-
-    return Graph(G, name="Icosahedron", pos = pos)
+    adj = {0: [1, 5, 7, 8, 11], 1: [2, 5, 6, 8], 2: [3, 6, 8, 9],
+           3: [4, 6, 9, 10], 4: [5, 6, 10, 11], 5: [6, 11],
+           7: [8, 9, 10, 11], 8: [9], 9: [10], 10: [11]}
+    G = Graph(adj, format='dict_of_lists', name="Icosahedron")
+    G._circle_embedding([2, 8, 7, 11, 4, 6], radius=5, angle=pi/6)
+    G._circle_embedding([1, 9, 0, 10, 5, 3], radius=2, angle=pi/6)
+    return G
 
 def DodecahedralGraph():
     """
-    Returns a Dodecahedral graph (with 20 nodes)
+    Return a Dodecahedral graph (with 20 nodes)
 
-    The dodecahedral graph is cubic symmetric, so the spring-layout
-    algorithm will be very effective for display. It is dual to the
-    icosahedral graph.
+    The dodecahedral graph is cubic symmetric, so the spring-layout algorithm
+    will be very effective for display. It is dual to the icosahedral graph.
 
-    PLOTTING: The Dodecahedral graph should be viewed in 3 dimensions.
-    We chose to use the default spring-layout algorithm here, so that
-    multiple iterations might yield a different point of reference for
-    the user. We hope to add rotatable, 3-dimensional viewing in the
-    future. In such a case, a string argument will be added to select
-    the flat spring-layout over a future implementation.
+    PLOTTING: The Dodecahedral graph should be viewed in 3 dimensions. We
+    choose to use a planar embedding of the graph. We hope to add rotatable,
+    3-dimensional viewing in the future. In such a case, a argument will be
+    added to select the desired layout.
 
-    EXAMPLES: Construct and show a Dodecahedral graph
+    EXAMPLES:
 
-    ::
+    Construct and show a Dodecahedral graph::
 
         sage: g = graphs.DodecahedralGraph()
-        sage: g.show() # long time
+        sage: g.show()  # long time
 
-    Create several dodecahedral graphs in a Sage graphics array They
-    will be drawn differently due to the use of the spring-layout
-    algorithm
-
-    ::
+    Create several dodecahedral graphs in a Sage graphics array They will be
+    drawn differently due to the use of the spring-layout algorithm::
 
         sage: g = []
         sage: j = []
@@ -282,33 +238,16 @@ def DodecahedralGraph():
         ....:     for m in range(3):
         ....:         n.append(g[3*i + m].plot(vertex_size=50, vertex_labels=False))
         ....:     j.append(n)
-        sage: G = sage.plot.graphics.GraphicsArray(j)
-        sage: G.show() # long time
+        sage: G = graphics_array(j)
+        sage: G.show()  # long time
     """
-    import networkx
-    G = networkx.dodecahedral_graph()
-
-    pos = {}
-    r1 = 7
-    r2 = 4.7
-    r3 = 3.8
-    r4 = 1.5
-
-    for i,v in enumerate([19,0,1,2,3]):
-        i = i + .25
-        pos[v] = (r1*cos(i*2*pi/5),r1*sin(i*2*pi/5))
-
-    for i,v in enumerate([18,10,8,6,4]):
-        i = i + .25
-        pos[v] = (r2*cos(i*2*pi/5),r2*sin(i*2*pi/5))
-
-    for i,v in enumerate([17,11,9,7,5]):
-        i = i - .25
-        pos[v] = (r3*cos(i*2*pi/5),r3*sin(i*2*pi/5))
-
-    for i,v in enumerate([12,13,14,15,16]):
-        i = i + .75
-        pos[v] = (r4*cos(i*2*pi/5),r4*sin(i*2*pi/5))
-
-    return Graph(G, name="Dodecahedron", pos=pos)
-
+    adj = {0: [1, 10, 19], 1: [2, 8], 2: [3, 6], 3: [4, 19], 4: [5, 17],
+           5: [6, 15], 6: [7], 7: [8, 14], 8: [9], 9: [10, 13], 10: [11],
+           11: [12, 18], 12: [13, 16], 13: [14], 14: [15], 15: [16], 16: [17],
+           17: [18], 18: [19]}
+    G = Graph(adj, format='dict_of_lists', name="Dodecahedron")
+    G._circle_embedding([19, 0, 1, 2, 3], radius=7, angle=pi/10)
+    G._circle_embedding([18, 10, 8, 6, 4], radius=4.7, angle=pi/10)
+    G._circle_embedding([11, 9, 7, 5, 17], radius=3.8, angle=3*pi/10)
+    G._circle_embedding([12, 13, 14, 15, 16], radius=1.5, angle=3*pi/10)
+    return G

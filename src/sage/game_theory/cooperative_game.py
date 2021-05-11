@@ -669,7 +669,7 @@ class CooperativeGame(SageObject):
             sage: long_game.is_efficient({1: 20, 2: 20, 3: 5, 4: 20})
             True
         """
-        pl = tuple(sorted(list(self.player_list)))
+        pl = tuple(sorted(self.player_list))
         return sum(payoff_vector.values()) == self.ch_f[pl]
 
     def nullplayer(self, payoff_vector):

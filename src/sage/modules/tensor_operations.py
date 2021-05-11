@@ -60,7 +60,6 @@ vectors of the vector collection ``VW`` ::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 from collections import defaultdict
 

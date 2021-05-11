@@ -24,25 +24,25 @@ REFERENCES:
 - [Lee2013]_
 
 """
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.modules import Modules
-from sage.rings.integer import Integer
 from sage.tensor.modules.ext_pow_free_module import ExtPowerDualFreeModule
 from sage.manifolds.differentiable.diff_form import DiffForm, DiffFormParal
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.manifolds.differentiable.tensorfield_paral import TensorFieldParal
+
 
 class DiffFormModule(UniqueRepresentation, Parent):
     r"""
@@ -330,8 +330,12 @@ class DiffFormModule(UniqueRepresentation, Parent):
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, (DiffForm, DiffFormParal)):
             # coercion by domain restriction
             if (self._degree == comp._tensor_type[1]
@@ -354,10 +358,13 @@ class DiffFormModule(UniqueRepresentation, Parent):
             else:
                 raise TypeError("cannot convert the {} ".format(tensor) +
                                 "to an element of {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
         # standard construction
         resu = self.element_class(self._vmodule, self._degree, name=name,
                                   latex_name=latex_name)
-        if comp != []:
+        if comp:
             resu.set_comp(frame)[:] = comp
         return resu
 
@@ -437,13 +444,13 @@ class DiffFormModule(UniqueRepresentation, Parent):
             2-form zero on the 3-dimensional differentiable manifold M
 
         """
-        zero = self.element_class(self._vmodule, self._degree, name='zero',
-                                  latex_name='0')
         zero = self._element_constructor_(name='zero', latex_name='0')
         for frame in self._domain._frames:
             if self._dest_map.restrict(frame._domain) == frame._dest_map:
                 zero.add_comp(frame)
                 # (since new components are initialized to zero)
+        zero._is_zero = True  # This element is certainly zero
+        zero.set_immutable()
         return zero
 
     #### End of Parent methods
@@ -545,7 +552,7 @@ class DiffFormModule(UniqueRepresentation, Parent):
         """
         return self._degree
 
-#******************************************************************************
+# *****************************************************************************
 
 class DiffFormFreeModule(ExtPowerDualFreeModule):
     r"""
@@ -790,9 +797,19 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             sage: A(0) is A.zero()
             True
 
+        Check that :trac:`27658` is fixed::
+
+            sage: f = M.scalar_field(x)
+            sage: f in A
+            False
+
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, (DiffForm, DiffFormParal)):
             # coercion by domain restriction
             if (self._degree == comp._tensor_type[1]
@@ -815,9 +832,13 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             else:
                 raise TypeError("cannot convert the {} ".format(tensor) +
                                 "to an element of {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
+        # standard construction
         resu = self.element_class(self._fmodule, self._degree, name=name,
                                   latex_name=latex_name)
-        if comp != []:
+        if comp:
             resu.set_comp(frame)[:] = comp
         return resu
 

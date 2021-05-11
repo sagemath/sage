@@ -5,8 +5,6 @@ AUTHORS:
 
 - Chris Berg, Jeff Ferreira (2012-9): Initial version
 """
-from six.moves import range
-from six import add_metaclass
 
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -23,8 +21,7 @@ from sage.combinat.backtrack import GenericBacktracker
 import copy
 
 
-@add_metaclass(ClasscallMetaclass)
-class CompositionTableau(CombinatorialElement):
+class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
     r"""
     A composition tableau.
 

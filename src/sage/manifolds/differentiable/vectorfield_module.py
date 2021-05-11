@@ -244,6 +244,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         # exterior_power and dual_exterior_power
         self._exterior_powers = {1: self}
         self._dual_exterior_powers = {}
+        self._general_linear_group = None
 
     #### Parent methods
 
@@ -267,8 +268,12 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, VectorField):
             if (self._domain.is_subset(comp._domain)
                    and self._ambient_domain.is_subset(comp._ambient_domain)):
@@ -276,8 +281,12 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             else:
                 raise ValueError("cannot convert the {} ".format(comp) +
                                  "to a vector field in {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
+        # standard construction
         resu = self.element_class(self, name=name, latex_name=latex_name)
-        if comp != []:
+        if comp:
             resu.set_comp(frame)[:] = comp
         return resu
 
@@ -692,9 +701,11 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.automorphismfield_group import \
-                                                         AutomorphismFieldGroup
-        return AutomorphismFieldGroup(self)
+        if self._general_linear_group is None:
+            from sage.manifolds.differentiable.automorphismfield_group import \
+                                                          AutomorphismFieldGroup
+            self._general_linear_group = AutomorphismFieldGroup(self)
+        return self._general_linear_group
 
     def tensor(self, tensor_type, name=None, latex_name=None, sym=None,
                antisym=None, specific_type=None):
@@ -754,8 +765,8 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         """
         from sage.manifolds.differentiable.automorphismfield import \
                                                        AutomorphismField
-        from sage.manifolds.differentiable.metric import \
-                                                  PseudoRiemannianMetric
+        from sage.manifolds.differentiable.metric import (PseudoRiemannianMetric,
+                                                          DegenerateMetric)
         if tensor_type==(1,0):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
@@ -794,6 +805,10 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             if issubclass(specific_type, PseudoRiemannianMetric):
                 return self.metric(name, latex_name=latex_name)
                 # NB: the signature is not treated
+            if issubclass(specific_type, DegenerateMetric):
+                sign = self._domain._dim
+                return self.metric(name, latex_name=latex_name,
+                                   signature=(0, sign-1, 1))
         # Generic case
         return self.tensor_module(*tensor_type).element_class(self,
                         tensor_type, name=name, latex_name=latex_name,
@@ -976,7 +991,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
                                        name=name, latex_name=latex_name)
 
     @cached_method
-    def identity_map(self, name='Id', latex_name=None):
+    def identity_map(self):
         r"""
         Construct the identity map on the vector field module.
 
@@ -984,34 +999,33 @@ class VectorFieldModule(UniqueRepresentation, Parent):
         of tangent-space identity maps along the differentiable manifold
         `U` over which the vector field module is defined.
 
-        INPUT:
-
-        - ``name`` -- (string; default: ``'Id'``) name given to the
-          identity map
-        - ``latex_name`` -- (string; optional) LaTeX symbol to denote
-          the identity map;  if none is provided, the LaTeX symbol is
-          set to ``'\mathrm{Id}'`` if ``name`` is ``'Id'`` and
-          to ``name`` otherwise
-
         OUTPUT:
 
         - instance of
           :class:`~sage.manifolds.differentiable.automorphismfield.AutomorphismField`
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Get the identity map on a vector field module::
 
             sage: M = Manifold(2, 'M')
             sage: XM = M.vector_field_module()
-            sage: XM.identity_map()
+            sage: Id = XM.identity_map(); Id
             Field of tangent-space identity maps on the 2-dimensional
              differentiable manifold M
 
+        If the identity should be renamed, one has to create a copy::
+
+            sage: Id.set_name('1')
+            Traceback (most recent call last):
+            ...
+            ValueError: the name of an immutable element cannot be changed
+            sage: one = Id.copy('1'); one
+            Field of tangent-space automorphisms 1 on the 2-dimensional
+             differentiable manifold M
+
         """
-        resu = self.general_linear_group().one()
-        if latex_name is None:
-            latex_name = name
-        resu.set_name(name=name, latex_name=latex_name)
-        return resu
+        return self.general_linear_group().one()
 
     @cached_method
     def zero(self):
@@ -1026,20 +1040,23 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             sage: XM.zero()
             Vector field zero on the 2-dimensional differentiable
              manifold M
+
         """
-        elt = self.element_class(self, name='zero', latex_name='0')
+        zero = self.element_class(self, name='zero', latex_name='0')
         for frame in self._domain._frames:
             if self._dest_map.restrict(frame._domain) == frame._dest_map:
-                elt.add_comp(frame)
+                zero.add_comp(frame)
                 # (since new components are initialized to zero)
-        return elt
+        zero._is_zero = True  # This element is certainly zero
+        zero.set_immutable()
+        return zero
 
     def metric(self, name, signature=None, latex_name=None):
         r"""
-        Construct a pseudo-Riemannian metric (nondegenerate symmetric bilinear
+        Construct a metric (symmetric bilinear
         form) on the current vector field module.
 
-        A pseudo-Riemannian metric of the vector field module is actually a
+        A metric of the vector field module is actually a
         field of tangent-space non-degenerate symmetric bilinear forms along
         the manifold `U` on which the vector field module is defined.
 
@@ -1075,8 +1092,35 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             for more documentation.
 
         """
+        # signature:
+        ndim = self._ambient_domain.dimension()
+        try:
+            for elt in signature:
+                if (elt<0) or (not isinstance(elt, (int, Integer))):
+                    raise ValueError("{} must be a positive integer".format(elt))
+                if elt > ndim:
+                    raise ValueError("{} must be less than {}".format(elt,ndim))
+                sign = signature[0]+signature[1]+signature[2]
+                if sign!=ndim:
+                    raise ValueError("{} is different from the dimension".format(sign)+
+                                        " of the manifold, who is {}".format(ndim))
+            if signature[2]!=0:
+                from sage.manifolds.differentiable.metric import DegenerateMetric
+                return DegenerateMetric(self, name, signature=signature,
+                                        latex_name=latex_name)
+        except TypeError:
+            pass
+        if signature is None:
+            signature = (ndim,0)
+        if isinstance(signature, (Integer, int)):
+            if (signature+ndim)%2 == 1:
+                if ndim%2 == 0:
+                    raise ValueError("the metric signature must be even")
+                else:
+                    raise ValueError("the metric signature must be odd")
+            signature = (int((ndim+signature)/2), int((ndim-signature)/2))
         from sage.manifolds.differentiable.metric import PseudoRiemannianMetric
-        return PseudoRiemannianMetric(self, name, signature=signature,
+        return PseudoRiemannianMetric(self, name, signature=signature[0]-signature[1],
                                       latex_name=latex_name)
 
 
@@ -1413,13 +1457,6 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
                                 basis._subframes.update(subframe._subframes)
                                 basis._restrictions.update(subframe._restrictions)
 
-        # Initialization of the components of the zero element:
-        zero = self.zero()
-        for frame in self._domain._frames:
-            if frame._dest_map == self._dest_map:
-                zero.add_comp(frame) # since new components are
-                                     # initialized to zero
-
     #### Parent methods
 
     def _element_constructor_(self, comp=[], basis=None, name=None,
@@ -1440,8 +1477,12 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             True
 
         """
-        if isinstance(comp, (int, Integer)) and comp == 0:
-            return self.zero()
+        try:
+            if comp.is_trivial_zero():
+                return self.zero()
+        except AttributeError:
+            if comp == 0:
+                return self.zero()
         if isinstance(comp, VectorField):
             if (self._domain.is_subset(comp._domain)
                    and self._ambient_domain.is_subset(comp._ambient_domain)):
@@ -1449,9 +1490,13 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             else:
                 raise ValueError("cannot convert the {}".format(comp) +
                                  "to a vector field in {}".format(self))
+        if not isinstance(comp, (list, tuple)):
+            raise TypeError("cannot convert the {} ".format(comp) +
+                            "to an element of {}".format(self))
+        # standard construction
         resu = self.element_class(self, name=name, latex_name=latex_name)
-        if comp != []:
-            resu.set_comp(basis)[:] = comp
+        if comp:
+            resu.set_comp(basis=basis)[:] = comp
         return resu
 
     # Rem: _an_element_ is declared in the superclass FiniteRankFreeModule
@@ -1673,11 +1718,17 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.tensorfield_module import \
+        try:
+            return self._tensor_modules[(k,l)]
+        except KeyError:
+            if (k, l) == (1, 0):
+                T = self
+            else:
+                from sage.manifolds.differentiable.tensorfield_module import \
                                                           TensorFieldFreeModule
-        if (k,l) not in self._tensor_modules:
-            self._tensor_modules[(k,l)] = TensorFieldFreeModule(self, (k,l))
-        return self._tensor_modules[(k,l)]
+                T = TensorFieldFreeModule(self, (k,l))
+            self._tensor_modules[(k,l)] = T
+            return T
 
     def exterior_power(self, p):
         r"""
@@ -1727,13 +1778,19 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.multivector_module import \
+        try:
+            return self._exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            elif p == 1:
+                L = self
+            else:
+                from sage.manifolds.differentiable.multivector_module import \
                                                           MultivectorFreeModule
-        if p == 0:
-            return self._ring
-        if p not in self._exterior_powers:
-            self._exterior_powers[p] = MultivectorFreeModule(self, p)
-        return self._exterior_powers[p]
+                L = MultivectorFreeModule(self, p)
+            self._exterior_powers[p] = L
+            return L
 
     def dual_exterior_power(self, p):
         r"""
@@ -1781,13 +1838,17 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more examples and documentation.
 
         """
-        from sage.manifolds.differentiable.diff_form_module import \
+        try:
+            return self._dual_exterior_powers[p]
+        except KeyError:
+            if p == 0:
+                L = self._ring
+            else:
+                from sage.manifolds.differentiable.diff_form_module import \
                                                       DiffFormFreeModule
-        if p == 0:
-            return self._ring
-        if p not in self._dual_exterior_powers:
-            self._dual_exterior_powers[p] = DiffFormFreeModule(self, p)
-        return self._dual_exterior_powers[p]
+                L = DiffFormFreeModule(self, p)
+            self._dual_exterior_powers[p] = L
+            return L
 
     def general_linear_group(self):
         r"""
@@ -1965,8 +2026,8 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         """
         from sage.manifolds.differentiable.automorphismfield import (
                               AutomorphismField, AutomorphismFieldParal)
-        from sage.manifolds.differentiable.metric import \
-                                                  PseudoRiemannianMetric
+        from sage.manifolds.differentiable.metric import (PseudoRiemannianMetric,
+                                                          DegenerateMetric)
         if tensor_type == (1,0):
             return self.element_class(self, name=name,
                                       latex_name=latex_name)
@@ -2005,6 +2066,10 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             if issubclass(specific_type, PseudoRiemannianMetric):
                 return self.metric(name, latex_name=latex_name)
                 # NB: the signature is not treated
+            if issubclass(specific_type, DegenerateMetric):
+                sign = self._domain._dim
+                return self.metric(name, latex_name=latex_name,
+                                   signature=(0, sign-1, 1))
         # Generic case
         return self.tensor_module(*tensor_type).element_class(self,
                         tensor_type, name=name, latex_name=latex_name,
@@ -2189,7 +2254,31 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             for more documentation.
 
         """
-        from sage.manifolds.differentiable.metric import \
-                                                    PseudoRiemannianMetricParal
-        return PseudoRiemannianMetricParal(self, name, signature=signature,
+        ndim = self._ambient_domain.dimension()
+        try:
+            for elt in signature:
+                if (elt<0) or (not isinstance(elt, (int, Integer))):
+                    raise ValueError("{} must be a positive integer".format(elt))
+            sign = signature[0]+signature[1]+signature[2]
+            if sign!=ndim:
+                raise ValueError("{} is different from the dimension".format(sign)+
+                                        " of the manifold, who is {}".format(ndim))
+            if signature[2]!=0:
+                from sage.manifolds.differentiable.metric import DegenerateMetricParal
+                return DegenerateMetricParal(self, name, signature=signature,
+                                             latex_name=latex_name)
+        except TypeError:
+            pass
+        if signature is None:
+            signature = (ndim,0)
+        if isinstance(signature, (Integer, int)):
+            if (signature+ndim)%2 == 1:
+                if ndim%2 == 0:
+                    raise ValueError("the metric signature must be even")
+                else:
+                    raise ValueError("the metric signature must be odd")
+            signature = (int((ndim+signature)/2), int((ndim-signature)/2))
+        from sage.manifolds.differentiable.metric import PseudoRiemannianMetricParal
+        return PseudoRiemannianMetricParal(self, name,
+                                           signature=signature[0]-signature[1],
                                            latex_name=latex_name)

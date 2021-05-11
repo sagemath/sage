@@ -1,3 +1,4 @@
+# distutils: libraries = ratpoints
 r"""
 Hyperelliptic Curve Point Finding, via ratpoints (deprecated)
 
@@ -8,8 +9,6 @@ This module is deprecated, use PARI instead::
     sage: pari("[x^3 + x^2 - 2*x, 1]").hyperellratpoints(4)
     [[-2, 0], [-2, -1], [-1, 1], [-1, -2], [0, 0], [0, -1], [1, 0], [1, -1], [3, 5], [3, -6], [4, 8], [4, -9], [-3/4, 7/8], [-3/4, -15/8]]
 """
-
-from __future__ import print_function
 
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 from cysignals.signals cimport sig_on, sig_off

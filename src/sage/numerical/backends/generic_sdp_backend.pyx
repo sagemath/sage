@@ -26,8 +26,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-
 
 cdef class GenericSDPBackend:
 
@@ -265,7 +263,7 @@ cdef class GenericSDPBackend:
         .. NOTE::
 
             This method raises ``SDPSolverException`` exceptions when
-            the solution can not be computed for any reason (none
+            the solution cannot be computed for any reason (none
             exists, or the LP solver was not able to find it, etc...)
 
         EXAMPLES::
@@ -405,7 +403,7 @@ cdef class GenericSDPBackend:
             sage: from sage.numerical.backends.generic_sdp_backend import get_solver
             sage: p = get_solver(solver = "Nonexistent_LP_solver")   # optional - Nonexistent_LP_solver
             sage: p.problem_name("There once was a french fry") # optional - Nonexistent_LP_solver
-            sage: print(p.get_problem_name())                     # optional - Nonexistent_LP_solver
+            sage: print(p.problem_name())                     # optional - Nonexistent_LP_solver
             There once was a french fry
         """
 
@@ -607,29 +605,30 @@ cdef class GenericSDPBackend:
 
 default_solver = None
 
-def default_sdp_solver(solver = None):
+def default_sdp_solver(solver=None):
     """
-    Returns/Sets the default SDP Solver used by Sage
+    Return/set the default SDP solver used by Sage
 
     INPUT:
 
-    - ``solver`` -- defines the solver to use:
+    - ``solver`` -- one of the following:
 
+        - the string ``"CVXOPT"``, to make the use of the CVXOPT solver
+          (see the `CVXOPT <http://cvxopt.org/>`_ web site) the default;
 
-        - CVXOPT (``solver="CVXOPT"``). See the `CVXOPT
-          <http://cvxopt.org/>`_ web site.
+        - a subclass of
+          :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`,
+          to make it the default; or
 
-        ``solver`` should then be equal to one of ``"CVXOPT"``.
-
-        - If ``solver=None`` (default), the current default solver's name is
-          returned.
+        - ``None`` (default), in which case the current default solver
+          (a string or a class) is returned.
 
     OUTPUT:
 
-    This function returns the current default solver's name if ``solver = None``
-    (default). Otherwise, it sets the default solver to the one given. If this
-    solver does not exist, or is not available, a ``ValueError`` exception is
-    raised.
+    This function returns the current default solver (a string or a
+    class) if ``solver = None`` (default). Otherwise, it sets the
+    default solver to the one given. If this solver does not exist, or
+    is not available, a ``ValueError`` exception is raised.
 
     EXAMPLES::
 
@@ -640,8 +639,14 @@ def default_sdp_solver(solver = None):
         sage: default_sdp_solver("Yeahhhhhhhhhhh")
         Traceback (most recent call last):
         ...
-        ValueError: 'solver' should be set to 'CVXOPT' or None.
+        ValueError: 'solver' should be set to ...
         sage: default_sdp_solver(former_solver)
+        sage: from sage.numerical.backends.generic_sdp_backend import GenericSDPBackend
+        sage: class my_sdp_solver(GenericSDPBackend): pass
+        sage: default_sdp_solver(my_sdp_solver)
+        sage: default_sdp_solver() is my_sdp_solver
+        True
+
     """
     global default_solver
 
@@ -658,8 +663,11 @@ def default_sdp_solver(solver = None):
                 except ValueError:
                     pass
 
-    solver = solver.capitalize()
+    if callable(solver):
+        default_solver = solver
+        return
 
+    solver = solver.capitalize()
 
     if solver == "Cvxopt":
         try:
@@ -669,21 +677,24 @@ def default_sdp_solver(solver = None):
             raise ValueError("CVXOPT is not available. Please refer to the documentation to install it.")
 
     else:
-        raise ValueError("'solver' should be set to 'CVXOPT' or None.")
+        raise ValueError("'solver' should be set to 'CVXOPT', a class, or None.")
 
-cpdef GenericSDPBackend get_solver(solver = None):
+cpdef GenericSDPBackend get_solver(solver=None, base_ring=None):
     """
     Return a solver according to the given preferences.
 
     INPUT:
 
-    - ``solver`` -- 1 solver should be available through this class:
+    - ``solver`` -- one of the following:
 
-        - CVXOPT (``solver="CVXOPT"``). See the `CVXOPT
-          <http://cvxopt.org/>`_ web site.
+        - the string ``"CVXOPT"``, designating the use of the CVXOPT solver
+          (see the `CVXOPT <http://cvxopt.org/>`_ web site);
 
-        ``solver`` should then be equal to one of ``"CVXOPT"`` or ``None``.
-          If ``solver=None`` (default), the default solver is used (see ``default_sdp_solver`` method.
+        - a subclass of
+          :class:`sage.numerical.backends.generic_sdp_backend.GenericSDPBackend`;
+
+        - ``None`` (default), in which case the default solver is used (see
+          :func:`default_sdp_solver`);
 
     .. SEEALSO::
 
@@ -693,17 +704,31 @@ cpdef GenericSDPBackend get_solver(solver = None):
 
         sage: from sage.numerical.backends.generic_sdp_backend import get_solver
         sage: p = get_solver()
+
+    Passing a class::
+
+        sage: from sage.numerical.backends.generic_sdp_backend import GenericSDPBackend
+        sage: class MockSDPBackend(GenericSDPBackend):
+        ....:     def solve(self):
+        ....:         raise RuntimeError("SDP is too slow!")
+        sage: P = SemidefiniteProgram(solver=MockSDPBackend)
+        sage: P.solve()
+        Traceback (most recent call last):
+        ...
+        RuntimeError: SDP is too slow!
+
     """
     if solver is None:
         solver = default_sdp_solver()
 
-    else:
-        solver = solver.capitalize()
+    if callable(solver):
+        return solver(base_ring=base_ring)
 
+    solver = solver.capitalize()
 
     if solver == "Cvxopt":
         from sage.numerical.backends.cvxopt_sdp_backend import CVXOPTSDPBackend
-        return CVXOPTSDPBackend()
+        return CVXOPTSDPBackend(base_ring=base_ring)
 
     else:
-        raise ValueError("'solver' should be set to 'CVXOPT' or None (in which case the default one is used).")
+        raise ValueError("'solver' should be set to 'CVXOPT', a class, or None (in which case the default one is used).")

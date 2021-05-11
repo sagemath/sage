@@ -28,7 +28,7 @@ Differentiation:
 If you type ``view(f.diff(x))`` another window will open up
 displaying the compiled output. In the notebook, you can enter
 
-::
+.. CODE-BLOCK:: ipython
 
     var('x k w')
     f = x^3 * e^(k*x) * sin(w*x)
@@ -38,7 +38,7 @@ displaying the compiled output. In the notebook, you can enter
 into a cell and press ``shift-enter`` for a similar result. You can
 also differentiate and integrate using the commands
 
-::
+.. CODE-BLOCK:: ipython
 
     R = PolynomialRing(QQ,"x")
     x = R.gen()

@@ -19,7 +19,7 @@ Plotting primitives
 #*****************************************************************************
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 
 class GraphicPrimitive(WithEqualityById, SageObject):
     """

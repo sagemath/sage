@@ -294,14 +294,21 @@ def density_plot(f, xrange, yrange, **options):
         sage: density_plot((x*y)^(1/2), (x,0,3), (y,0,500))
         Graphics object consisting of 1 graphics primitive
 
+    Check that :trac:`17684` is fixed, i.e., symbolic values can be plotted::
+
+        sage: def f(x,y):
+        ....:     return SR(x)
+        sage: density_plot(f, (0,1), (0,1))
+        Graphics object consisting of 1 graphics primitive
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
+    from sage.rings.real_double import RDF
     g, ranges = setup_for_eval_on_grid([f], [xrange, yrange], options['plot_points'])
     g = g[0]
     xrange, yrange = [r[:2] for r in ranges]
 
-    xy_data_array = [[g(x,y) for x in xsrange(*ranges[0], include_endpoint=True)]
+    xy_data_array = [[RDF(g(x,y)) for x in xsrange(*ranges[0], include_endpoint=True)]
                             for y in xsrange(*ranges[1], include_endpoint=True)]
 
     g = Graphics()

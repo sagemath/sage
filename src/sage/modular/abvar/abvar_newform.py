@@ -7,25 +7,22 @@ TESTS::
     sage: loads(dumps(A)) == A
     True
 """
-from __future__ import absolute_import
-
-
 ###########################################################################
 #       Copyright (C) 2008 William Stein <wstein@gmail.com>               #
 #  Distributed under the terms of the GNU General Public License (GPL)    #
-#                  http://www.gnu.org/licenses/                           #
+#                  https://www.gnu.org/licenses/                           #
 ###########################################################################
+from sage.misc.lazy_import import lazy_import
 
-from sage.databases.cremona import cremona_letter_code
-
-from sage.rings.all  import QQ, ZZ
+from sage.rings.all import QQ, ZZ
 
 from sage.modular.modform.element import Newform
 from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1, is_GammaH
 
-
 from .abvar import ModularAbelianVariety_modsym_abstract
 from . import homspace
+lazy_import('sage.databases.cremona', 'cremona_letter_code')
+
 
 class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
     """
@@ -61,14 +58,14 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
             variable_name = None
         else:
             variable_name = K.variable_name()
-        self.__named_newforms = { variable_name: self.__f }
+        self.__named_newforms = {variable_name: self.__f}
         if not internal_name:
             self.__named_newforms[None] = self.__f
         ModularAbelianVariety_modsym_abstract.__init__(self, (f.group(),), QQ,
-                  is_simple=True, newform_level = (f.level(), f.group()),
-                  isogeny_number=f.number(), number=0)
+            is_simple=True, newform_level=(f.level(), f.group()),
+            isogeny_number=f.number(), number=0)
 
-    def _modular_symbols(self,sign=0):
+    def _modular_symbols(self, sign=0):
         """
         EXAMPLES::
 
@@ -119,13 +116,14 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
             self.__named_newforms[names] = Newform(self.__f.parent().change_ring(QQ), self.__f.modular_symbols(1), names=names, check=False)
             return self.__named_newforms[names]
 
-    def label(self):
+    def label(self) -> str:
         """
         Return canonical label that defines this newform modular
         abelian variety.
 
         OUTPUT:
-            string
+
+        string
 
         EXAMPLES::
 
@@ -139,15 +137,16 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
         elif is_Gamma1(G):
             group = 'G1'
         elif is_GammaH(G):
-            group = 'GH[' + ','.join([str(z) for z in G._generators_for_H()]) + ']'
-        return '%s%s%s'%(self.level(), cremona_letter_code(self.factor_number()), group)
+            group = 'GH[' + ','.join(str(z) for z in G._generators_for_H()) + ']'
+        return '%s%s%s' % (self.level(), cremona_letter_code(self.factor_number()), group)
 
     def factor_number(self):
         """
         Return factor number.
 
         OUTPUT:
-            int
+
+        int
 
         EXAMPLES::
 
@@ -161,7 +160,7 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
             self.__factor_number = self.__f.number()
             return self.__factor_number
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of this modular abelian variety.
 
@@ -236,10 +235,10 @@ class ModularAbelianVariety_newform(ModularAbelianVariety_modsym_abstract):
 
         while V.dimension() < d:
             W = EndVecZ.submodule([((self.hecke_operator(n).matrix())**i).list()
-                                   for i in range(1,d+1)])
-            V = V+W
+                                   for i in range(1, d + 1)])
+            V = V + W
             n += 1
-            if n > bound: raise ArithmeticError("Error computing endomorphism generators")
+            if n > bound:
+                raise ArithmeticError("Error computing endomorphism generators")
 
         return V.saturation().basis()
-

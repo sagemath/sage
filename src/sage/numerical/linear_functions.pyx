@@ -100,7 +100,6 @@ See :trac:`12091`::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from cpython.object cimport Py_EQ, Py_GE, Py_LE, Py_GT, Py_LT
 
@@ -138,6 +137,7 @@ cpdef is_LinearFunction(x):
         False
     """
     return isinstance(x, LinearFunction)
+
 
 def is_LinearConstraint(x):
     """
@@ -649,7 +649,7 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: LF.gen(23)
             x_23
         """
-        return LinearFunction(self, {i:1})
+        return LinearFunction(self, {i: 1})
 
     def _repr_(self):
         """
@@ -660,11 +660,11 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: MixedIntegerLinearProgram().linear_functions_parent()
             Linear functions over Real Double Field
         """
-        return 'Linear functions over '+str(self.base_ring())
+        return 'Linear functions over ' + str(self.base_ring())
 
     cpdef _element_constructor_(self, x):
         """
-        Construt a :class:`LinearFunction` from ``x``.
+        Construct a :class:`LinearFunction` from ``x``.
 
         EXAMPLES::
 
@@ -689,10 +689,7 @@ cdef class LinearFunctionsParent_class(Parent):
             False
         """
         if is_LinearFunction(x):
-            if x.parent() is self:
-                return x
-            else:
-                return LinearFunction(self, (<LinearFunction>x)._f)
+            return LinearFunction(self, (<LinearFunction>x)._f)
         return LinearFunction(self, x)
 
     cpdef _coerce_map_from_(self, R):
@@ -716,11 +713,8 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: parent._coerce_map_from_(int)
             True
         """
-        if R in [int, float, long, complex]:
-            return True
-        from sage.rings.real_mpfr import mpfr_prec_min
-        from sage.rings.all import RealField
-        if RealField(mpfr_prec_min()).has_coerce_map_from(R):
+        from sage.structure.coerce import parent_is_real_numerical
+        if parent_is_real_numerical(R) or R is complex:
             return True
         return False
 
@@ -939,11 +933,11 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             -1*x_0 + 8*x_3
         """
         P = self.parent()
-        return P(dict([(id,-coeff) for (id, coeff) in self._f.iteritems()]))
+        return P({id: -coeff for id, coeff in self._f.iteritems()})
 
     cpdef _sub_(self, b):
         r"""
-        Defining the - operator (substraction).
+        Defining the - operator (subtraction).
 
         EXAMPLES::
 
@@ -955,8 +949,8 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             -16 + x_0 - 5*x_2 - 10*x_3
         """
         e = dict(self._f)
-        for (id,coeff) in b.dict().iteritems():
-            e[id] = self._f.get(id,0) - coeff
+        for id, coeff in b.dict().iteritems():
+            e[id] = self._f.get(id, 0) - coeff
         P = self.parent()
         return P(e)
 
@@ -1270,11 +1264,11 @@ cdef class LinearConstraintsParent_class(Parent):
             sage: MixedIntegerLinearProgram().linear_constraints_parent()
             Linear constraints over Real Double Field
         """
-        return 'Linear constraints over '+str(self.linear_functions_parent().base_ring())
+        return 'Linear constraints over ' + str(self.linear_functions_parent().base_ring())
 
     cpdef _element_constructor_(self, left, right=None, equality=False):
         """
-        Construt a :class:`LinearConstraint`.
+        Construct a :class:`LinearConstraint`.
 
         INPUT:
 
@@ -1640,10 +1634,10 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
             sage: LC(b[3])
             trivial constraint starting with x_0
         """
-        comparator = ( ' == ' if self.equality else ' <= ' )
+        comparator = (' == ' if self.equality else ' <= ')
         result = comparator.join(map(str, self))
         if self.is_trivial():
-            return 'trivial constraint starting with '+result
+            return 'trivial constraint starting with ' + result
         return result
 
     def __nonzero__(self):

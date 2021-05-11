@@ -72,7 +72,6 @@ AUTHORS:
 #
 #                  http://www.gnu.org/licenses/
 ##########################################################################
-from __future__ import print_function
 
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.plot.all import polygon, line, text

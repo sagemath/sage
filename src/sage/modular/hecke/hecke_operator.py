@@ -1,7 +1,6 @@
 """
 Hecke operators
 """
-from __future__ import absolute_import
 
 #*****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
@@ -17,7 +16,6 @@ from __future__ import absolute_import
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from six import integer_types
 
 
 from sage.structure.element import AlgebraElement
@@ -607,7 +605,7 @@ class HeckeOperator(HeckeAlgebraElement):
             Hecke operator T_10604499373 on Modular Symbols space of dimension 5 for Gamma_0(21) of weight 2 with sign 0 over Rational Field
         """
         HeckeAlgebraElement.__init__(self, parent)
-        if not isinstance(n, integer_types + (Integer,)):
+        if not isinstance(n, (int, Integer)):
             raise TypeError("n must be an int")
         self.__n = int(n)
 

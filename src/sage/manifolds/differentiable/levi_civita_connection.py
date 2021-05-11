@@ -435,7 +435,9 @@ class LeviCivitaConnection(AffineConnection):
             [[[0, 0, 0], [0, -r, 0], [0, 0, -r*sin(th)^2]],
             [[0, 1/r, 0], [1/r, 0, 0], [0, 0, -cos(th)*sin(th)]],
             [[0, 0, 1/r], [0, 0, cos(th)/sin(th)], [1/r, cos(th)/sin(th), 0]]]
-            sage: # The only non-zero Christoffel symbols:
+
+        The only non-zero Christoffel symbols::
+
             sage: gam[1,2,2], gam[1,3,3]
             (-r, -r*sin(th)^2)
             sage: gam[2,1,2], gam[2,3,3]
@@ -455,14 +457,15 @@ class LeviCivitaConnection(AffineConnection):
             [[[0, 0, 0], [0, -1/r, 0], [0, 0, -1/r]],
             [[0, 1/r, 0], [0, 0, 0], [0, 0, -cos(th)/(r*sin(th))]],
             [[0, 0, 1/r], [0, 0, cos(th)/(r*sin(th))], [0, 0, 0]]]
-            sage: # The only non-zero connection coefficients:
+
+        The only non-zero connection coefficients::
+
             sage: gam_e[1,2,2], gam_e[2,1,2]
             (-1/r, 1/r)
             sage: gam_e[1,3,3], gam_e[3,1,3]
             (-1/r, 1/r)
             sage: gam_e[2,3,3], gam_e[3,2,3]
             (-cos(th)/(r*sin(th)), cos(th)/(r*sin(th)))
-
         """
         from sage.manifolds.differentiable.vectorframe import CoordFrame
         if frame is None:

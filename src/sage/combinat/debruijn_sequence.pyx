@@ -64,7 +64,7 @@ AUTHOR:
 #                         http://www.gnu.org/licenses/
 #*******************************************************************************
 
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 def debruijn_sequence(int k, int n):
     """

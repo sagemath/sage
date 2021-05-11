@@ -1,3 +1,5 @@
+# distutils: libraries = ratpoints
+
 r"""
 Descent on elliptic curves over `\QQ` with a 2-isogeny
 """
@@ -11,8 +13,6 @@ Descent on elliptic curves over `\QQ` with a 2-isogeny
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import, print_function
 
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
@@ -899,7 +899,7 @@ cdef int everywhere_locally_soluble(mpz_t a, mpz_t b, mpz_t c, mpz_t d, mpz_t e)
 
     # RR soluble:
     if mpz_sgn(a)!=1:
-        if len(real_roots(f)) == 0:
+        if not real_roots(f):
             return 0
 
     # Q2 soluble:

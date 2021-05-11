@@ -29,8 +29,6 @@ Authors:
 #
 #                  http://www.gnu.org/licenses/
 #****************************************************************************
-from __future__ import print_function, absolute_import
-from six import add_metaclass, iteritems
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -259,8 +257,8 @@ def WeakTableaux(k, shape , weight, representation = "core"):
         raise NotImplementedError("The representation option needs to be 'core', 'bounded', or 'factorized_permutation'")
 
 #Abstract class for the elements of weak tableau
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class WeakTableau_abstract(ClonableList):
+class WeakTableau_abstract(ClonableList,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Abstract class for the various element classes of WeakTableau.
     """
@@ -828,7 +826,7 @@ class WeakTableau_core(WeakTableau_abstract):
         r"""
         Return the bounded representation of the weak `k`-tableau ``self``.
 
-        Each restricted sutableaux of the output is a `k`-bounded partition.
+        Each restricted subtableau of the output is a `k`-bounded partition.
 
         EXAMPLES::
 
@@ -1020,7 +1018,7 @@ class WeakTableau_core(WeakTableau_abstract):
             r = self[0].count(1) - i - 1
             for v in range(1,mu[i]):
                 D = self.dictionary_of_coordinates_at_residues(v+1)
-                new_D = {a: b for (a, b) in iteritems(D)
+                new_D = {a: b for (a, b) in D.items()
                          if all(x not in already_used for x in b)}
                 r = (r - min([self.k+1 - (x-r)%(self.k+1) for x in new_D]))%(self.k+1)
                 standard_cells.append(new_D[r][-1])
@@ -1277,7 +1275,7 @@ class WeakTableaux_core(WeakTableaux_abstract):
             sage: TestSuite(T).run()
         """
         self.k = k
-        self._skew = shape[1]!=[]
+        self._skew = bool(shape[1])
         self._outer_shape = shape[0]
         self._inner_shape = shape[1]
         self._shape = (self._outer_shape, self._inner_shape)
@@ -1743,7 +1741,7 @@ class WeakTableaux_bounded(WeakTableaux_abstract):
             sage: TestSuite(T).run()
         """
         self.k = k
-        self._skew = shape[1]!=[]
+        self._skew = bool(shape[1])
         self._outer_shape = Partition(shape[0])
         self._inner_shape = Partition(shape[1])
         self._shape = (self._outer_shape, self._inner_shape)
@@ -1971,7 +1969,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
             sage: t = WeakTableau([[2,0],[3,2]], 3, representation = 'factorized_permutation')
             Traceback (most recent call last):
             ...
-            ValueError: Error! this only works on type 'A' affine Grassmannian elements
+            ValueError: this only works on type 'A' affine Grassmannian elements
 
             sage: T = WeakTableaux(3, [4,1], [2,1], representation = 'factorized_permutation')
             sage: t = T([[2],[1],[0]])
@@ -2164,7 +2162,7 @@ class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
             sage: TestSuite(T).run() # long time
         """
         self.k = k
-        self._skew = shape[1]!=[]
+        self._skew = bool(shape[1])
         self._outer_shape = Core(shape[0], k+1)
         self._inner_shape = Core(shape[1], k+1)
         self._shape = (self._outer_shape, self._inner_shape)
@@ -2206,8 +2204,7 @@ class WeakTableaux_factorized_permutation(WeakTableaux_abstract):
 
 ######## END weak tableaux BEGIN strong tableaux
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class StrongTableau(ClonableList):
+class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A (standard) strong `k`-tableau is a (saturated) chain in Bruhat order.
 
@@ -2549,7 +2546,7 @@ class StrongTableau(ClonableList):
             sage: all( T._is_valid_standard() for T in StrongTableaux.standard_marked_iterator(4, 6))
             True
 
-        Inner shape is not a a 3-core::
+        Inner shape is not a 3-core::
 
             sage: StrongTableau([[None, None, None], [-1]], 2)
             Traceback (most recent call last):
@@ -2571,10 +2568,10 @@ class StrongTableau(ClonableList):
             True
         """
         Tshapes = intermediate_shapes(self.to_unmarked_standard_list())
-        if not all( Partition(la).is_core(self.k+1) for la in Tshapes):
+        if not all(Partition(la).is_core(self.k + 1) for la in Tshapes):
             return False
-        Tsizes =[Core(lam, self.k+1).length() for lam in Tshapes]
-        return all(Tsizes[i]==Tsizes[i+1]-1 for i in range(len(Tsizes)-1))
+        Tsizes = [Core(lam, self.k + 1).length() for lam in Tshapes]
+        return all(Tsizes[i] == Tsizes[i+1]-1 for i in range(len(Tsizes)-1))
 
     def is_column_strict_with_weight( self, mu ):
         """
@@ -4056,7 +4053,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
             sage: StrongTableaux( 4, [[2,1], [1]] ).shape()
             ([2, 1], [1])
         """
-        if self._inner_shape != []:
+        if self._inner_shape:
             return (self._outer_shape, self._inner_shape)
         return self._outer_shape
 
@@ -4639,9 +4636,3 @@ def intermediate_shapes(t):
     for i in range(len(t.weight())+1):
         shapes += [ t.restrict(i).outer_shape()]
     return shapes
-
-# Deprecations from trac:18555. July 2016
-from sage.misc.superseded import deprecated_function_alias
-
-
-StrongTableaux.global_options = deprecated_function_alias(18555, StrongTableaux.options)

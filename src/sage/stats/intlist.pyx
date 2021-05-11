@@ -12,18 +12,18 @@ slices is also much faster.
 
 AUTHOR:
 
-   - William Stein, 2010-03
+- William Stein, 2010-03
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # Global parameter that sets the maximum number of entries of an IntList to print.
 max_print = 10
@@ -61,10 +61,10 @@ cdef class IntList:
 
         INPUT:
 
-            - values -- int, long, Integer, list of integers, or a TimeSeries
+        - values -- int, long, Integer, list of integers, or a TimeSeries
 
         If the input is a time series or list of floats, then the
-        integer parts of the intries are taken (not the floor).
+        integer parts of the entries are taken (not the floor).
 
         EXAMPLES::
 
@@ -174,8 +174,8 @@ cdef class IntList:
         if len(self) > max_print:
             v0 = self[:max_print//2]
             v1 = self[-max_print//2:]
-            return '[' + ', '.join([str(x) for x in v0]) + ' ... ' + \
-                         ', '.join([str(x) for x in v1]) + ']'
+            return '[' + ', '.join(str(x) for x in v0) + ' ... ' + \
+                         ', '.join(str(x) for x in v1) + ']'
         else:
             return str(self.list())
 
@@ -187,7 +187,7 @@ cdef class IntList:
 
         INPUT:
 
-            - i -- integer or slice
+        - i -- integer or slice
 
         EXAMPLES::
 

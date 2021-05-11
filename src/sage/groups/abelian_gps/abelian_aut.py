@@ -73,18 +73,18 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.categories.groups import Groups
 from sage.groups.abelian_gps.abelian_group_gap import AbelianGroup_gap
 from sage.groups.group import Group
 from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
 from sage.groups.libgap_mixin import GroupMixinLibGAP
-from sage.libs.gap.element import GapElement
 from sage.libs.gap.libgap import libgap
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.all import ZZ
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import CachedRepresentation
+
 
 class AbelianGroupAutomorphism(ElementLibGAP):
     """
@@ -207,7 +207,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
         m.set_immutable()
         return m
 
-class AbelianGroupAutomorphismGroup_gap(UniqueRepresentation,
+class AbelianGroupAutomorphismGroup_gap(CachedRepresentation,
                                         GroupMixinLibGAP,
                                         Group,
                                         ParentLibGAP):
@@ -263,7 +263,7 @@ class AbelianGroupAutomorphismGroup_gap(UniqueRepresentation,
 
           * a libgap element
           * an integer matrix in the covering matrix ring
-          * a class:`sage.modules.fg_pid.fgp_morphism.FGP_Morphism`
+          * a :class:`sage.modules.fg_pid.fgp_morphism.FGP_Morphism`
             defining an automorphism -- the domain of ``x`` must have
             invariants equal to ``self.domain().gens_orders()``
 

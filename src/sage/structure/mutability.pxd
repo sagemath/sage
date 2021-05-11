@@ -4,14 +4,17 @@ Mutability -- Pyrex Implementation
 
 ##########################################################################
 #
-#   SAGE: System for Algebra and Geometry Experimentation
+#   Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2006 William Stein <wstein@ucsd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##########################################################################
 
 cdef class Mutability:
     cdef public bint _is_immutable
-    cdef _require_mutable_cdef(self)
+    cpdef _require_mutable(self)
+    cpdef _require_immutable(self)
+    cpdef bint is_immutable(self)
+    cpdef bint is_mutable(self)

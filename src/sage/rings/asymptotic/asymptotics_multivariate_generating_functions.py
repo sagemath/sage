@@ -12,31 +12,8 @@ positive reals. More specifically, it computes arbitrary terms of the
 asymptotic expansion for `F_{r \alpha}` when the asymptotics are controlled by
 a strictly minimal multiple point of the algebraic variety `H = 0`.
 
-The algorithms and formulas implemented here come from [RaWi2008a]_
-and [RaWi2012]_. For a general reference take a look in the book [PeWi2013].
-
-.. [AiYu1983] \I.A. Aizenberg and A.P. Yuzhakov.
-   *Integral representations and residues in multidimensional complex analysis*.
-   Translations of Mathematical Monographs, **58**. American Mathematical
-   Society, Providence, RI. (1983). x+283 pp. ISBN: 0-8218-4511-X.
-
-.. [Raic2012] Alexander Raichev.
-   *Leinartas's partial fraction decomposition*.
-   :arxiv:`1206.4740`.
-
-.. [RaWi2008a] Alexander Raichev and Mark C. Wilson. *Asymptotics of
-   coefficients of multivariate generating functions: improvements for
-   smooth points*, Electronic Journal of Combinatorics, Vol. 15 (2008).
-   R89 :arxiv:`0803.2914`.
-
-.. [RaWi2012] Alexander Raichev and Mark C. Wilson. *Asymptotics of
-   coefficients of multivariate generating functions: improvements for
-   smooth points*. Online Journal of Analytic Combinatorics.
-   Issue 6, (2011). :arxiv:`1009.5715`.
-
-.. [PeWi2013] Robin Pemantle and Mark C. Wilson.
-   *Analytic Combinatorics in Several Variables*.
-   Cambridge University Press, 2013.
+The algorithms and formulas implemented here come from [RW2008]_
+and [RW2012]_. For a general reference take a look in the book [PW2013]_.
 
 
 Introductory Examples
@@ -82,7 +59,7 @@ A univariate smooth point example::
      ((8,), 105.8425656, [105.8425656], [4.399565380e-11]),
      ((16,), 355.3119534, [355.3119534], [0.0000000000])]
 
-Another smooth point example (Example 5.4 of [RaWi2008a]_)::
+Another smooth point example (Example 5.4 of [RW2008]_)::
 
     sage: R.<x,y> = PolynomialRing(QQ)
     sage: FFPD = FractionWithFactoredDenominatorRing(R)
@@ -125,7 +102,7 @@ Another smooth point example (Example 5.4 of [RaWi2008a]_)::
      ((32, 8), 0.09739671811, [0.09768973377...], [-0.0030084757...]),
      ((64, 16), 0.07744253816, [0.07753639308...], [-0.0012119297...])]
 
-A multiple point example (Example 6.5 of [RaWi2012]_)::
+A multiple point example (Example 6.5 of [RW2012]_)::
 
     sage: R.<x,y> = PolynomialRing(QQ)
     sage: FFPD = FractionWithFactoredDenominatorRing(R, SR)
@@ -218,8 +195,6 @@ Classes and Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 from functools import total_ordering
 from itertools import combinations_with_replacement
@@ -912,7 +887,7 @@ class FractionWithFactoredDenominator(RingElement):
         unique factorization of `q` in `K[X]` into irreducible factors and
         let `V_i` be the algebraic variety `\{x \in L^d \mid q_i(x) = 0\}`
         of `q_i` over the algebraic closure `L` of `K`.
-        By [Raic2012]_, `f` can be written as
+        By [Rai2012]_, `f` can be written as
 
         .. MATH::
 
@@ -926,7 +901,7 @@ class FractionWithFactoredDenominator(RingElement):
         We call `(*)` a *Nullstellensatz decomposition* of `f`.
         Nullstellensatz decompositions are not unique.
 
-        The algorithm used comes from [Raic2012]_.
+        The algorithm used comes from [Rai2012]_.
 
         .. NOTE::
 
@@ -1093,7 +1068,7 @@ class FractionWithFactoredDenominator(RingElement):
         unique factorization of `q` in `K[X]` into irreducible factors and
         let `V_i` be the algebraic variety `\{x \in L^d \mid q_i(x) = 0\}`
         of `q_i` over the algebraic closure `L` of `K`.
-        By [Raic2012]_, `f` can be written as
+        By [Rai2012]_, `f` can be written as
 
         .. MATH::
 
@@ -1108,7 +1083,7 @@ class FractionWithFactoredDenominator(RingElement):
         We call `(*)` an *algebraic dependence decomposition* of `f`.
         Algebraic dependence decompositions are not unique.
 
-        The algorithm used comes from [Raic2012]_.
+        The algorithm used comes from [Rai2012]_.
 
         OUTPUT:
 
@@ -1209,7 +1184,7 @@ class FractionWithFactoredDenominator(RingElement):
         unique factorization of `q` in `K[X]` into irreducible factors and
         let `V_i` be the algebraic variety
         `\{x\in L^d \mid q_i(x) = 0\}` of `q_i` over the algebraic closure
-        `L` of `K`. By [Raic2012]_, `f` can be written as
+        `L` of `K`. By [Rai2012]_, `f` can be written as
 
         .. MATH::
 
@@ -1231,7 +1206,7 @@ class FractionWithFactoredDenominator(RingElement):
         We call `(*)` a *Leinartas decomposition* of `f`.
         Leinartas decompositions are not unique.
 
-        The algorithm used comes from [Raic2012]_.
+        The algorithm used comes from [Rai2012]_.
 
         OUTPUT:
 
@@ -1337,7 +1312,7 @@ class FractionWithFactoredDenominator(RingElement):
         no repeated irreducible factors.
 
         The algorithm used here comes from the proof of Theorem 17.4 of
-        [AiYu1983]_.
+        [AY1983]_.
 
         OUTPUT:
 
@@ -1353,16 +1328,20 @@ class FractionWithFactoredDenominator(RingElement):
             sage: decomp
             (0, []) + (2/3, [(x^2 + x + 1, 1)])
 
+        ::
+
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: FFPD = FractionWithFactoredDenominatorRing(R)
             sage: FFPD(1, [(x, 1), (y, 2)]).cohomology_decomposition()
             (0, [])
 
+        The following example was fixed in :trac:`29465`::
+
             sage: p = 1
             sage: qs = [(x*y - 1, 1), (x**2 + y**2 - 1, 2)]
             sage: f = FFPD(p, qs)
             sage: f.cohomology_decomposition()
-            (0, []) + (4/3*x*y + 4/3, [(x^2 + y^2 - 1, 1)]) +
+            (0, []) + (-4/3*x*y, [(x^2 + y^2 - 1, 1)]) +
             (1/3, [(x*y - 1, 1), (x^2 + y^2 - 1, 1)])
         """
         from sage.calculus.functions import jacobian
@@ -1432,9 +1411,11 @@ class FractionWithFactoredDenominator(RingElement):
                            [SR(qs[j]) for j in range(n) if j != J],
                            [SR(xx) for xx in x])
             det = jac.determinant()
-            psign = permutation_sign(x, X)
-            iteration1.append(Par((-1) ** J * det / (psign * new_df[J][1]),
-                                  new_df))
+            # The parity epsilon from [AY1983, eq. (17.11)] does not
+            # enter this computation, since we do not order the
+            # coordinates x to the front of X in the representation of
+            # this differential form (:trac:`29465`).
+            iteration1.append(Par((-1) ** J * det / new_df[J][1], new_df))
 
         # Now decompose each FFPD of iteration1.
         for r in iteration1:
@@ -1554,7 +1535,7 @@ class FractionWithFactoredDenominator(RingElement):
           with all nonzero coordinates that is critical and nondegenerate
           for ``alpha``.
 
-        The algorithms used here come from [RaWi2008a]_ and [RaWi2012]_.
+        The algorithms used here come from [RW2008]_ and [RW2012]_.
 
         INPUT:
 
@@ -1597,7 +1578,7 @@ class FractionWithFactoredDenominator(RingElement):
             (1, [(x*y + x + y - 1, 2)])
             sage: alpha = [4, 3]
             sage: decomp = F.asymptotic_decomposition(alpha); decomp
-            (0, []) + (-3/2*r*(1/y + 1) - 1/2/y - 1/2, [(x*y + x + y - 1, 1)])
+            (0, []) + (-2*r*(1/x + 1) - 1/2/x - 1/2, [(x*y + x + y - 1, 1)])
             sage: F1 = decomp[1]
             sage: p = {y: 1/3, x: 1/2}
             sage: asy = F1.asymptotics(p, alpha, 2, verbose=True)
@@ -1631,7 +1612,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: alpha = [3, 3, 2]
             sage: decomp = F.asymptotic_decomposition(alpha); decomp
             (0, []) +
-            (-16*r*(3/y - 4/z) - 16/y + 32/z,
+            (16*r*(3/x - 2/z) + 16/x - 16/z,
              [(x + 2*y + z - 4, 1), (2*x + y + z - 4, 1)])
             sage: F1 = decomp[1]
             sage: p = {x: 1, y: 1, z: 1}
@@ -1689,9 +1670,9 @@ class FractionWithFactoredDenominator(RingElement):
         case of a convenient smooth point.
 
         The formulas used for computing the asymptotic expansions are
-        Theorems 3.2 and 3.3 [RaWi2008a]_ with the exponent of `H`
+        Theorems 3.2 and 3.3 [RW2008]_ with the exponent of `H`
         equal to 1. Theorem 3.2 is a specialization of Theorem 3.4
-        of [RaWi2012]_ with `n = 1`.
+        of [RW2012]_ with `n = 1`.
 
         INPUT:
 
@@ -1895,7 +1876,7 @@ class FractionWithFactoredDenominator(RingElement):
             if any(u for u in Uderivs.values()):
                 all_zero = False
             if all_zero:
-                # Then, using a proposition at the end of [RaWi2012], we can
+                # Then, using a proposition at the end of [RW2012], we can
                 # conclude that all higher derivatives of U are zero.
                 for l in range(k + 1, 2 * N + 1):
                     for s in combinations_with_replacement(X, l):
@@ -2068,7 +2049,7 @@ class FractionWithFactoredDenominator(RingElement):
         ``p.values()`` are not symbolic variables.
 
         The formulas used for computing the asymptotic expansion are
-        Theorem 3.4 and Theorem 3.7 of [RaWi2012]_.
+        Theorem 3.4 and Theorem 3.7 of [RW2012]_.
 
         INPUT:
 
@@ -2601,7 +2582,7 @@ class FractionWithFactoredDenominator(RingElement):
         In case ``p`` is not, ``verdict = False`` and ``comment`` is a string
         explaining why ``p`` fails to be a convenient multiple point.
 
-        See [RaWi2012]_ for more details.
+        See [RW2012]_ for more details.
 
         INPUT:
 
@@ -2722,7 +2703,7 @@ class FractionWithFactoredDenominator(RingElement):
         If the variety `V` of `H` has no smooth points, then return the ideal
         in `R` of `V`.
 
-        See [RaWi2012]_ for more details.
+        See [RW2012]_ for more details.
 
         INPUT:
 
@@ -3617,7 +3598,7 @@ class FractionWithFactoredDenominatorSum(list):
             factors.extend([q for (q, e) in f.denominator_factored()])
 
         # Eliminate repeats from factors and sort.
-        factors = sorted(list(set(factors)))
+        factors = sorted(set(factors))
 
         # The irreducible factors of denom lie in factors.
         # Use this fact to build df.
@@ -3725,8 +3706,8 @@ def permutation_sign(s, u):
 
     .. NOTE::
 
-        For internal use by
-        :meth:`FractionWithFactoredDenominator.cohomology_decomposition()`.
+        This function was intended for internal use and is deprecated now
+        (:trac:`29465`).
 
     INPUT:
 
@@ -3745,11 +3726,15 @@ def permutation_sign(s, u):
         sage: u = ['a', 'b', 'c', 'd', 'e']
         sage: s = ['b', 'd']
         sage: permutation_sign(s, u)
+        doctest:...: DeprecationWarning: the function permutation_sign is deprecated
+        See https://trac.sagemath.org/29465 for details.
         -1
         sage: s = ['d', 'b']
         sage: permutation_sign(s, u)
         1
     """
+    from sage.misc.superseded import deprecation
+    deprecation(29465, 'the function permutation_sign is deprecated')
     from sage.combinat.permutation import Permutation
 
     # Convert lists to lists of numbers in {1,..., len(u)}

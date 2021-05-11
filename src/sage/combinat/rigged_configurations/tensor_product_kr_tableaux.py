@@ -328,9 +328,9 @@ class TensorProductOfKirillovReshetikhinTableaux(FullTensorProductOfRegularCryst
 
             sage: KRT = crystals.TensorProductOfKirillovReshetikhinTableaux(['A', 3, 1], [[2,1], [1,1]])
             sage: g = KRT.__iter__()
-            sage: next(g)
+            sage: next(g)         # random
             [[2], [3]] (X) [[1]]
-            sage: next(g)
+            sage: next(g)         # random
             [[2], [4]] (X) [[1]]
         """
         index_set = self._cartan_type.classical().index_set()

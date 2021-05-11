@@ -1,5 +1,116 @@
 r"""
 Classes for symbolic functions
+
+.. _symbolic-function-classes:
+
+To enable their usage as part of symbolic expressions, symbolic function
+classes are derived from one of the subclasses of :class:`Function`:
+
+ * :class:`BuiltinFunction`: the code of these functions is written in Python;
+   many :ref:`special functions<special-functions>` are of this type
+ * :class:`GinacFunction`: the code of these functions is written in C++ and
+   part of the Pynac support library; most elementary functions are of this type
+ * :class:`SymbolicFunction`: symbolic functions defined on the Sage command
+   line are of this type
+
+Sage uses ``BuiltinFunction`` and ``GinacFunction`` for its symbolic builtin
+functions. Users can define any other additional ``SymbolicFunction`` through
+the ``function()`` factory, see :doc:`function_factory`
+
+Several parameters are supported by the superclass' ``__init__()`` method.
+Examples follow below.
+
+ * ``nargs``: the number of arguments
+ * ``name``: the string that is printed on the CLI; the name of the member
+   functions that are attempted for evaluation of Sage element arguments; also
+   the name of the Pynac function that is associated with a ``GinacFunction``
+ * ``alt_name``: the second name of the member functions that are attempted for
+   evaluation of Sage element arguments
+ * ``latex_name``: what is printed when ``latex(f(...))`` is called
+ * ``conversions``: a dict containing the function's name in other CAS
+ * ``evalf_params_first``: if ``False``, when floating-point evaluating the
+   expression do not evaluate function arguments before calling the
+   ``_evalf_()`` member of the function
+ * ``preserved_arg``: if nonzero, the index (starting with ``1``) of the
+   function argument that determines the return type. Note that, e.g,
+   ``atan2()`` uses both arguments to determine return type, through a
+   different mechanism
+
+Function classes can define the following Python member functions:
+
+ * ``_eval_(*args)``: the only mandatory member function, evaluating the
+   argument and returning the result; if ``None`` is returned the expression
+   stays unevaluated
+ * ``_eval_numpy_(*args)``: evaluation of ``f(args)`` with arguments of numpy
+   type
+ * ``_evalf_(*args, **kwds)``: called when the expression is floating-point
+   evaluated; may receive a ``parent`` keyword specifying the expected parent
+   of the result. If not defined an attempt is made to convert the result of
+   ``_eval_()``.
+ * ``_conjugate_(*args)``, ``_real_part_(*args)``, ``_imag_part_(*args)``:
+   return conjugate, real part, imaginary part of the expression ``f(args)``
+ * ``_derivative_(*args, index)``: return derivative with respect to the
+   parameter indexed by ``index`` (starting with 0) of ``f(args)``
+ * ``_tderivative_()``: same as ``_derivative_()`` but don't apply chain rule;
+   only one of the two functions may be defined
+ * ``_power_(*args, expo)``: return ``f(args)^expo``
+ * ``_series_(*args, **kwds)``: return the power series at ``at`` up to
+   ``order`` with respect to ``var`` of ``f(args)``; these three values are
+   received in ``kwds``. If not defined the series is attempted to be computed
+   by differentiation.
+ * ``print(*args)``: return what should be printed on the CLI with ``f(args)``
+ * ``print_latex(*args)``: return what should be output with ``latex(f(args))``
+
+The following examples are intended for Sage developers. Users can define
+functions interactively through the ``function()`` factory, see
+:doc:`function_factory`.
+
+EXAMPLES:
+
+The simplest example is a function returning nothing, it practically behaves
+like a symbol. Setting ``nargs=0`` allows any number of arguments::
+
+    sage: from sage.symbolic.function import BuiltinFunction
+    sage: class Test1(BuiltinFunction):
+    ....:     def __init__(self):
+    ....:         BuiltinFunction.__init__(self, 'test', nargs=0)
+    ....:     def _eval_(self, *args):
+    ....:         pass
+    sage: f = Test1()
+    sage: f()
+    test()
+    sage: f(1,2,3)*f(1,2,3)
+    test(1, 2, 3)^2
+
+In the following the ``sin`` function of ``CBF(0)`` is called because with
+floating point arguments the ``CBF`` element's ``my_sin()`` member function
+is attempted, and after that ``sin()`` which succeeds::
+
+    sage: class Test2(BuiltinFunction):
+    ....:     def __init__(self):
+    ....:         BuiltinFunction.__init__(self, 'my_sin', alt_name='sin',
+    ....:                                  latex_name=r'\SIN', nargs=1)
+    ....:     def _eval_(self, x):
+    ....:         return 5
+    ....:     def _evalf_(self, x, **kwds):
+    ....:         return 3.5
+    sage: f = Test2()
+    sage: f(0)
+    5
+    sage: f(0, hold=True)
+    my_sin(0)
+    sage: f(0, hold=True).n()
+    3.50000000000000
+    sage: f(CBF(0))
+    0
+
+    sage: latex(f(0, hold=True))
+    \SIN\left(0\right)
+    sage: f(1,2)
+    Traceback (most recent call last):
+    ...
+    TypeError: Symbolic function my_sin takes exactly 1 arguments (2 given)
+
 """
 
 #*****************************************************************************
@@ -13,7 +124,6 @@ Classes for symbolic functions
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import division, absolute_import
 
 from sage.libs.pynac.pynac cimport *
 from sage.rings.integer cimport smallInteger
@@ -430,7 +540,7 @@ cdef class Function(SageObject):
         Check that `real_part` and `imag_part` still works after :trac:`21216`::
 
             sage: import numpy
-            sage: a = numpy.array([1+2*I, -2-3*I], dtype=numpy.complex)
+            sage: a = numpy.array([1+2*I, -2-3*I], dtype=complex)
             sage: real_part(a)
             array([ 1., -2.])
             sage: imag_part(a)
@@ -567,21 +677,37 @@ cdef class Function(SageObject):
 
         TESTS::
 
-            sage: sin._is_numerical(5)
-            False
-            sage: sin._is_numerical(5.)
-            True
-            sage: sin._is_numerical(pi)
-            False
-            sage: sin._is_numerical(5r)
-            False
-            sage: sin._is_numerical(5.4r)
-            True
+            sage: [sin._is_numerical(a) for a in [5., 5.4r]]
+            [True, True]
+            sage: [sin._is_numerical(a) for a in [5, pi]]
+            [False, False]
+            sage: [sin._is_numerical(R(1)) for R in [RIF, CIF, RBF, CBF]]
+            [False, False, False, False]
+
+        The following calls used to yield incorrect results because intervals
+        were considered numerical by this method::
+
+            sage: b = RBF(3/2, 1e-10)
+            sage: airy_ai(b)
+            airy_ai([1.500000000 +/- 1.01e-10])
+            sage: gamma(b, 1)
+            gamma([1.500000000 +/- 1.01e-10], 1)
+            sage: hurwitz_zeta(b, b)
+            hurwitz_zeta([1.500000000 +/- 1.01e-10], [1.500000000 +/- 1.01e-10])
+            sage: hurwitz_zeta(1/2, b)
+            hurwitz_zeta(1/2, [1.500000000 +/- 1.01e-10])
+
+            sage: iv = RIF(1, 1.0001)
+            sage: airy_ai(iv)
+            airy_ai(1.0001?)
+            sage: airy_ai(CIF(iv))
+            airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
             return True
         if isinstance(x, Element):
-            return hasattr((<Element>x)._parent, 'precision')
+            parent = (<Element>x)._parent
+            return hasattr(parent, 'precision') and parent._is_numerical()
         return False
 
     def _interface_init_(self, I=None):
@@ -723,12 +849,12 @@ cdef class Function(SageObject):
         This is only called when no such mpmath function exists. It casts its
         arguments to sage reals of the appropriate precision.
 
-        EXAMPLES::
+        EXAMPLES:
 
         At the time of this writing, mpmath had no arcsin, only asin.
         So the following call would actually fall back to the default
         implementation, using sage reals instead of mpmath ones. This
-        might change when aliases for these functions are established.
+        might change when aliases for these functions are established::
 
             sage: import mpmath
             sage: with mpmath.workprec(128): arcsin(mpmath.mpf('0.5'))
@@ -894,6 +1020,31 @@ cdef class BuiltinFunction(Function):
         Function.__init__(self, name, nargs, latex_name, conversions,
                 evalf_params_first, alt_name = alt_name)
 
+    def _method_arguments(self, arg):
+        r"""
+        Rewrite the arguments before calling a specialized implementation.
+
+        Rewrite the list of arguments of this symbolic function in a form
+        suitable for calling dedicated implementations that come as methods of
+        a “main” argument.
+
+        The default implementation of this method handles the case of
+        univariate functions. Multivariate symbolic functions should override
+        it as appropriate.
+
+        EXAMPLES::
+
+            sage: zeta._method_arguments(1)
+            [1]
+            sage: zetaderiv._method_arguments(2, 3)
+            [3, 2]
+            sage: zeta._method_arguments(2, 3)
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
+        """
+        return [arg]
+
     def __call__(self, *args, bint coerce=True, bint hold=False,
             bint dont_call_method_on_arg=False):
         r"""
@@ -960,7 +1111,14 @@ cdef class BuiltinFunction(Function):
                 import mpmath as module
                 custom = self._eval_mpmath_
             elif all(isinstance(arg, float) for arg in args):
-                import math as module
+                # We do not include the factorial here as
+                # factorial(integer-valued float) is deprecated in Python 3.9.
+                # This special case should be removed when
+                # Python always raise an error for factorial(float).
+                # This case will be delegated to the gamma function.
+                # see Trac ticket #30764
+                if self._name != 'factorial':
+                    import math as module
             elif all(isinstance(arg, complex) for arg in args):
                 import cmath as module
 
@@ -972,25 +1130,30 @@ cdef class BuiltinFunction(Function):
                 if callable(func):
                     try:
                         return func(*args)
-                    except (ValueError,TypeError):
+                    except (ValueError, TypeError):
                         pass
 
             if custom is not None:
                 return custom(*args)
 
-        if len(args) == 1 and not hold and not dont_call_method_on_arg:
-            # then try to see whether there exists a method on the object with
-            # the given name
-            arg = py_scalar_to_element(args[0])
-            method = getattr(arg, self._name, None)
-            if method is None and self._alt_name is not None:
-                method = getattr(arg, self._alt_name, None)
+        if not hold and not dont_call_method_on_arg:
+            try:
+                method_args = self._method_arguments(*args)
+            except TypeError:
+                pass
+            else:
+                # then try to see whether there exists a method on the object
+                # with the given name
+                arg = py_scalar_to_element(method_args[0])
+                method = getattr(arg, self._name, None)
+                if method is None and self._alt_name is not None:
+                    method = getattr(arg, self._alt_name, None)
 
-            if callable(method):
-                try:
-                    res = method()
-                except (ValueError, ArithmeticError):
-                    pass
+                if callable(method):
+                    try:
+                        res = method(*method_args[1:])
+                    except (TypeError, ValueError, ArithmeticError):
+                        pass
 
         if res is None:
             res = self._evalf_try_(*args)
@@ -1462,9 +1625,8 @@ PrimitiveFunction = DeprecatedSFunction
 
 def get_sfunction_from_serial(serial):
     """
-    Returns an already created SFunction given the serial.  These are
-    stored in the dictionary
-    `sage.symbolic.function.sfunction_serial_dict`.
+    Return an already created SFunction given the serial. These are stored in
+    the dictionary ``sage.symbolic.function.sfunction_serial_dict``.
 
     EXAMPLES::
 

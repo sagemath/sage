@@ -91,7 +91,7 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         if not isinstance(k, (int, Integer)) or (k < 1):
             raise ValueError("k must be a positive integer")
 
-        if not isinstance(Sym,SymmetricFunctions):
+        if not isinstance(Sym, SymmetricFunctions):
             raise ValueError("Sym must be an algebra of symmetric functions")
 
         self.indices = ConstantFunction(Partitions_all_bounded(k))
@@ -109,23 +109,23 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
         self.t = R(t)
 
         category = GradedHopfAlgebras(R) if t == 1 else GradedCoalgebras(R)
-        Parent.__init__(self, category = category.Subobjects().WithRealizations())
+        Parent.__init__(self, category=category.Subobjects().WithRealizations())
 
         ks = self.kschur()
         # Coercions
         if t == 1:
             s = ks.ambient()
-            kh = self.khomogeneous(); h = kh.ambient()
-            h_to_s   = s._internal_coerce_map_from(h)
+            kh = self.khomogeneous()
+            h = kh.ambient()
+            h_to_s = s._internal_coerce_map_from(h)
             kh_to_ks = ks.retract * h_to_s * kh.lift
             ks.register_coercion(kh_to_ks)
-            s_to_h   = h._internal_coerce_map_from(s)
+            s_to_h = h._internal_coerce_map_from(s)
             ks_to_kh = kh.retract * s_to_h * ks.lift
             kh.register_coercion(ks_to_kh)
         # temporary workaround until handled by trac 125959
             self.one = ConstantFunction(ks.one())
         self.zero = ConstantFunction(ks.zero())
-
 
     def retract(self, sym):
         r"""
@@ -215,14 +215,15 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
             sage: kh3 = SymmetricFunctions(QQ).kBoundedSubspace(3,1).khomogeneous()
             sage: TestSuite(kh3).run()
         """
-        if self.t!=1:
+        if self.t != 1:
             raise ValueError("This basis only exists for t=1")
         return kHomogeneous(self)
 
     def K_kschur(self):
         r"""
-        Returns the `k`-bounded basis called the K-`k`-Schur basis.  See [Morse11]_ and
-        [LamSchillingShimozono10]_.
+        Return the `k`-bounded basis called the K-`k`-Schur basis.
+
+        See [Morse11]_ and [LamSchillingShimozono10]_.
 
         REFERENCES:
 
@@ -245,10 +246,9 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
             ...
             ValueError: This basis only exists for t=1
         """
-        if self.t!=1:
+        if self.t != 1:
             raise ValueError("This basis only exists for t=1")
         return K_kSchur(self)
-
 
     def _repr_(self):
         r"""
@@ -263,9 +263,9 @@ class KBoundedSubspace(UniqueRepresentation, Parent):
             3-bounded Symmetric Functions over Univariate Polynomial Ring in t over Rational Field
         """
         ending = ""
-        if str(self.t)!='t':
-            ending = ' with t=%s'%(self.t)
-        return "%s-bounded %s"%(self.k, self.ambient())+ending
+        if str(self.t) != 't':
+            ending = ' with t=%s' % (self.t)
+        return "%s-bounded %s" % (self.k, self.ambient()) + ending
 
 
 class KBoundedSubspaceBases(Category_realization_of_parent):
@@ -306,8 +306,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             Category of k bounded subspace bases of 3-bounded Symmetric Functions over Univariate Polynomial Ring in t over Rational Field
             sage: KBB.super_categories()
             [Category of realizations of 3-bounded Symmetric Functions over Univariate Polynomial Ring in t over Rational Field,
-             Join of Category of graded modules with basis over Univariate Polynomial Ring in t over Rational Field
-                 and Category of coalgebras with basis over Univariate Polynomial Ring in t over Rational Field
+             Join of Category of graded coalgebras with basis over Univariate Polynomial Ring in t over Rational Field
                  and Category of subobjects of sets]
         """
         R = self.base().base_ring()
@@ -339,22 +338,22 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             """
             R = self.base_ring()
 
-            #Coerce ints to Integers
+            # Coerce ints to Integers
             if isinstance(x, int):
                 x = Integer(x)
             if x in R:
                 if x == 0:
                     return self.zero()
                 else:
-                    raise TypeError("do not know how to make x (= %s) an element of %s"%(x, self))
-            #x is an element of the basis enumerated set;
+                    raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
+            # x is an element of the basis enumerated set;
             elif x in self._indices:
                 return self.monomial(self._indices(x))
-            raise TypeError("do not know how to make x (= %s) an element of self (=%s)"%(x,self))
+            raise TypeError("do not know how to make x (= %s) an element of self (=%s)" % (x, self))
 
-        def _convert_map_from_(self,Q):
+        def _convert_map_from_(self, Q):
             r"""
-            Implements conversion from an arbitrary parent to ``self``.
+            Implement conversion from an arbitrary parent to ``self``.
 
             This is done by first coercing to the appropriate lift basis.
 
@@ -372,7 +371,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
 
         def __getitem__(self, c):
             r"""
-            Implements shorthand for accessing basis elements.
+            Implement shorthand for accessing basis elements.
 
             For a basis `X` indexed by partitions, this method allows for
             `X[[3,2]]` and `X[3,2]` to be equivalent to `X[Partition([3,2])]`.
@@ -424,7 +423,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
                 sage: ks3[3,2]    # indirect doctest
                 ks3[3, 2]
             """
-            return self.prefix()+str(c)
+            return self.prefix() + str(c)
 
         @cached_method
         def one_basis(self):
@@ -478,8 +477,8 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             # todo: Q should be set by getting the degree n index set for
             # `other`.
             Q = Partitions(n)
-            return matrix( [[other(self[row]).coefficient(col) for col in Q]
-                            for row in P] )
+            return matrix([[other(self[row]).coefficient(col) for col in Q]
+                           for row in P])
 
         def an_element(self):
             r"""
@@ -490,7 +489,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
                 sage: SymmetricFunctions(QQ['t']).kschur(3).an_element()
                 2*ks3[] + 2*ks3[1] + 3*ks3[2]
             """
-            return self( Partition(srange(self.k,0,-1)))
+            return self(Partition(srange(self.k, 0, -1)))
 
         # This is sufficient for degree to work
         def degree_on_basis(self, b):
@@ -498,6 +497,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             Return the degree of the basis element indexed by `b`.
 
             INPUT:
+
             - ``b`` -- a partition
 
             EXAMPLES::
@@ -542,12 +542,14 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             lifted = element.lift()
             ambient = self.realization_of().ambient()
             t = self.realization_of().t
-            if t==1:
+            if t == 1:
                 source_basis = ambient.h()
             else:
                 source_basis = ambient.hall_littlewood(t=t).Qp()
-            cpfunc = lambda x,y: tensor([ self(x), self(y) ])
-            return source_basis(lifted).coproduct().apply_multilinear_morphism( cpfunc )
+
+            def cpfunc(x, y):
+                return tensor([self(x), self(y)])
+            return source_basis(lifted).coproduct().apply_multilinear_morphism(cpfunc)
 
         def antipode(self, element):
             r"""
@@ -648,15 +650,15 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
                 ks3[2, 2, 1, 1] + ks3[2, 2, 2] + ks3[3, 1, 1, 1]
             """
             if self.parent().realization_of().t == 1:
-                return self.parent()(self.lift()*other.lift())
-            result = self.lift()*other.lift()
+                return self.parent()(self.lift() * other.lift())
+            result = self.lift() * other.lift()
             try:
                 result = self.parent()(result)
             except ValueError:
                 pass
             return result
 
-        def hl_creation_operator(self, nu, t = None):
+        def hl_creation_operator(self, nu, t=None):
             r"""
             This is the vertex operator that generalizes Jing's operator.
 
@@ -690,11 +692,11 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             """
             if t is None:
                 t = self.parent().realization_of().t
-            return self.parent()(self.lift().hl_creation_operator(nu,t=t))
+            return self.parent()(self.lift().hl_creation_operator(nu, t=t))
 
         def omega(self):
             r"""
-            Returns the `\omega` operator on ``self``.
+            Return the `\omega` operator on ``self``.
 
             At `t=1`, `\omega` maps the `k`-Schur function `s^{(k)}_\lambda` to `s^{(k)}_{\lambda^{(k)}}`, where
             `\lambda^{(k)}` is the `k`-conjugate of the partition `\lambda`.
@@ -728,7 +730,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
 
         def omega_t_inverse(self):
             r"""
-            Returns the map `t\to 1/t` composed with `\omega` on ``self``.
+            Return the map `t\to 1/t` composed with `\omega` on ``self``.
 
             Unlike the map :meth:`omega`, the result of :meth:`omega_t_inverse` lives in
             the `k`-bounded subspace and hence will return an element even for generic
@@ -746,12 +748,14 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
             """
             s = self.parent().realization_of().ambient()
             t = s.base_ring().gen()
-            invert = lambda x: s.base_ring()(x.subs(t=1/t))
+
+            def invert(x):
+                return s.base_ring()(x.subs(t=1 / t))
             return self.parent()(s(self).map_coefficients(invert).omega())
 
         def is_schur_positive(self, *args, **kwargs):
             r"""
-            Returns whether ``self`` is Schur positive.
+            Return whether ``self`` is Schur positive.
 
             EXAMPLES::
 
@@ -773,11 +777,11 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
                 sage: f.is_schur_positive()
                 False
             """
-            return self.lift().is_schur_positive(*args,**kwargs)
+            return self.lift().is_schur_positive(*args, **kwargs)
 
         def expand(self, *args, **kwargs):
             r"""
-            Returns the monomial expansion of ``self`` in `n` variables.
+            Return the monomial expansion of ``self`` in `n` variables.
 
             INPUT:
 
@@ -801,7 +805,7 @@ class KBoundedSubspaceBases(Category_realization_of_parent):
                 sage: f.expand(2)
                 t^2*x0^5 + (t^2 + t)*x0^4*x1 + (t^2 + t + 1)*x0^3*x1^2 + (t^2 + t + 1)*x0^2*x1^3 + (t^2 + t)*x0*x1^4 + t^2*x1^5 - x0 - x1
             """
-            return self.lift().expand(*args,**kwargs)
+            return self.lift().expand(*args, **kwargs)
 
         def scalar(self, x, zee=None):
             r"""
@@ -981,8 +985,8 @@ class kSchur(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
-            prefix='ks%d'%kBoundedRing.k)
+            category=KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
+            prefix='ks%d' % kBoundedRing.k)
 
         self._kBoundedRing = kBoundedRing
 
@@ -1025,12 +1029,12 @@ class kSchur(CombinatorialFreeModule):
             sage: ks = Sym.kschur(4); ks
             4-bounded Symmetric Functions over Univariate Polynomial Ring in t over Rational Field in the 4-Schur basis
         """
-        return self.realization_of()._repr_()+' in the %s-Schur basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-Schur basis' % (self.k)
 
     @cached_method
     def _to_schur_on_basis(self, p):
         r"""
-        Computes the change of basis from `k`-Schur functions to Schur functions.
+        Compute the change of basis from `k`-Schur functions to Schur functions.
 
         When `t=1` this procedure does this computation by first factoring out all
         maximal rectangles, computing all the atoms, and then taking the product
@@ -1059,14 +1063,16 @@ class kSchur(CombinatorialFreeModule):
             s[]
         """
         s = self.realization_of().ambient().schur()
-        if self.t == 1: # in this case factor out maximal rectangles for speed
-            pexp = p.to_exp()+[0]*self.k
+        if self.t == 1:
+            # in this case factor out maximal rectangles for speed
+            pexp = p.to_exp() + [0] * self.k
             katom = p.k_irreducible(self.k).k_atom(self.k)
-            return s.sum_of_monomials(tab.shape() for tab in katom)*prod(s([r+1]*(self.k-r)) for r in range(self.k) for m in range(pexp[r] // (self.k-r)))
+            return s.sum_of_monomials(tab.shape() for tab in katom) * prod(s([r + 1] * (self.k - r)) for r in range(self.k) for m in range(pexp[r] // (self.k - r)))
         katom = p.k_atom(self.k)
-        return s.sum_of_terms((tab.shape(), self.t**tab.charge()) for tab in katom)
+        return s.sum_of_terms((tab.shape(), self.t**tab.charge())
+                              for tab in katom)
 
-    def _multiply_basis( self, left, right ):
+    def _product_on_basis_via_rectangles(self, left, right):
         r"""
         Multiply two `k`-Schur functions at `t=1` indexed by ``left`` and ``right``
 
@@ -1093,39 +1099,39 @@ class kSchur(CombinatorialFreeModule):
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: ks = Sym.kschur(5,1)
-            sage: ks._multiply_basis(Partition([5,4,4,3,3,3]),Partition([4,4,2,2,2,2]))
+            sage: ks._product_on_basis_via_rectangles(Partition([5,4,4,3,3,3]),Partition([4,4,2,2,2,2]))
             ks5[5, 4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2]
-            sage: ks._multiply_basis(Partition([5,4,4,3,3,3,1]),Partition([4,4,2]))
+            sage: ks._product_on_basis_via_rectangles(Partition([5,4,4,3,3,3,1]),Partition([4,4,2]))
             ks5[5, 4, 4, 4, 4, 3, 3, 3, 2, 1] + ks5[5, 4, 4, 4, 4, 3, 3, 3, 3]
 
         TESTS::
 
-            sage: ks._multiply_basis(Partition([]), Partition([]))
+            sage: ks._product_on_basis_via_rectangles(Partition([]), Partition([]))
             ks5[]
         """
         leftir = self._to_schur_on_basis(left.k_irreducible(self.k))
         rightir = self._to_schur_on_basis(right.k_irreducible(self.k))
-        heart = self.retract( leftir*rightir )
+        heart = self.retract(leftir * rightir)
         leftexp = left.to_exp()
         rightexp = right.to_exp()
-        rects = sum(([r+1]*(self.k-r) for r in range(len(leftexp)) for m in range(leftexp[r] // (self.k-r))), [])
-        rects += sum(([r+1]*(self.k-r) for r in range(len(rightexp)) for m in range(rightexp[r] // (self.k-r))), [])
-        return heart.map_support(lambda lam: Partition( sorted(lam+rects, reverse=True) ))
+        rects = sum(([r + 1] * (self.k - r) for r in range(len(leftexp))
+                     for m in range(leftexp[r] // (self.k - r))), [])
+        rects += sum(([r + 1] * (self.k - r) for r in range(len(rightexp))
+                      for m in range(rightexp[r] // (self.k - r))), [])
+        return heart.map_support(lambda lam: Partition(sorted(lam + rects, reverse=True)))
 
-    def product( self, left, right ):
+    def product_on_basis(self, left, right):
         r"""
         Take the product of two `k`-Schur functions.
 
         If `t \neq 1`, then take the product by lifting to the Schur functions and then
         retracting back into the `k`-bounded subspace (if possible).
 
-        If `t=1`, then the product is done using
-        :meth:`~AlgebrasWithBasis.ParentMethods._product_from_combinatorial_algebra_multiply`
-        and this method calls :meth:`_multiply_basis`.
+        If `t=1`, then the product calls :meth:`_product_on_basis_via_rectangles`.
 
         INPUT:
 
-        - ``left``, ``right`` -- elements of the `k`-Schur functions
+        - ``left``, ``right`` -- partitions
 
         OUTPUT:
 
@@ -1162,12 +1168,14 @@ class kSchur(CombinatorialFreeModule):
             sage: ks3.product( ks3([]), kH([]) )
             ks3[]
             sage: ks3 = Sym.kschur(3)
-            sage: ks3.product( ks3([]), ks3([]) )
+            sage: ks3([]) * ks3([])
             ks3[]
         """
-        if self.t==1:
-            return self._product_from_combinatorial_algebra_multiply( left, right )
-        return self.retract(self.lift(left) * self.lift(right))
+        if self.t == 1:
+            return self._product_on_basis_via_rectangles(left, right)
+        left_s = self._to_schur_on_basis(left)
+        right_s = self._to_schur_on_basis(right)
+        return self.retract(left_s * right_s)
 
 
 class kSplit(CombinatorialFreeModule):
@@ -1237,8 +1245,8 @@ class kSplit(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
-            prefix='ksp%d'%kBoundedRing.k)
+            category=KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
+            prefix='ksp%d' % kBoundedRing.k)
 
         self._kBoundedRing = kBoundedRing
 
@@ -1280,7 +1288,7 @@ class kSplit(CombinatorialFreeModule):
             3-bounded Symmetric Functions over Univariate Polynomial Ring in t over
             Rational Field in the 3-split basis
         """
-        return self.realization_of()._repr_()+' in the %s-split basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-split basis' % (self.k)
 
     @cached_method
     def _to_schur_on_basis(self, p):
@@ -1314,14 +1322,14 @@ class kSplit(CombinatorialFreeModule):
             s[2, 1, 1, 1] + s[2, 2, 1] + s[3, 1, 1] + s[3, 2]
         """
         s = self.realization_of().ambient().schur()
-        if self.t == 1: # if t==1, then it is computed with products
+        if self.t == 1:  # if t==1, then it is computed with products
             return s.prod(s(g) for g in Partition(p).k_split(self.k))
         if not p:
             return s(p)
         ksp = Partition(p).k_split(self.k)
         out = s(ksp[-1])
-        for r in range(len(ksp)-1):
-            out = out.hl_creation_operator(ksp[-r-2],t=self.t)
+        for r in range(len(ksp) - 1):
+            out = out.hl_creation_operator(ksp[-r - 2], t=self.t)
         return out
 
 
@@ -1351,8 +1359,8 @@ class kHomogeneous(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
-            prefix='h%d'%kBoundedRing.k)
+            category=KBoundedSubspaceBases(kBoundedRing, kBoundedRing.t),
+            prefix='h%d' % kBoundedRing.k)
 
         self._kBoundedRing = kBoundedRing
 
@@ -1363,7 +1371,7 @@ class kHomogeneous(CombinatorialFreeModule):
 
         self.lift = self._module_morphism(lambda x: h[x],
                 codomain=h, triangular='lower', unitriangular=True,
-                inverse_on_support=lambda p:p if p.get_part(0) <= self.k else None)
+                inverse_on_support=lambda p: p if p.get_part(0) <= self.k else None)
 
         self.ambient = ConstantFunction(h)
 
@@ -1390,12 +1398,14 @@ class kHomogeneous(CombinatorialFreeModule):
             sage: kH._repr_()
             '3-bounded Symmetric Functions over Rational Field with t=1 in the 3-bounded homogeneous basis'
         """
-        return self.realization_of()._repr_()+' in the %s-bounded homogeneous basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the %s-bounded homogeneous basis' % (self.k)
+
 
 class K_kSchur(CombinatorialFreeModule):
     r"""
-    This class implements the basis of the `k`-bounded subspace called the K-`k`-Schur
-    basis.  See [Morse2011]_, [LamSchillingShimozono2010]_.
+    This class implements the basis of the `k`-bounded subspace called the K-`k`-Schur basis.
+
+    See [Morse2011]_, [LamSchillingShimozono2010]_.
 
     REFERENCES:
 
@@ -1426,8 +1436,8 @@ class K_kSchur(CombinatorialFreeModule):
         """
         CombinatorialFreeModule.__init__(self, kBoundedRing.base_ring(),
             kBoundedRing.indices(),
-            category= KBoundedSubspaceBases(kBoundedRing, kBoundedRing.base_ring().one()),
-            prefix='Kks%d'%kBoundedRing.k)
+            category=KBoundedSubspaceBases(kBoundedRing, kBoundedRing.base_ring().one()),
+            prefix='Kks%d' % kBoundedRing.k)
 
         self._kBoundedRing = kBoundedRing
 
@@ -1438,7 +1448,7 @@ class K_kSchur(CombinatorialFreeModule):
 
         self.ambient = ConstantFunction(s)
         kh = self.realization_of().khomogeneous()
-        g_to_kh = self.module_morphism(self._g_to_kh_on_basis,codomain=kh)
+        g_to_kh = self.module_morphism(self._g_to_kh_on_basis, codomain=kh)
         g_to_kh.register_as_coercion()
         kh_to_g = kh.module_morphism(self._kh_to_g_on_basis, codomain=self)
         kh_to_g.register_as_coercion()
@@ -1446,7 +1456,7 @@ class K_kSchur(CombinatorialFreeModule):
         lift = self._module_morphism(self.lift, triangular='lower', unitriangular=True, codomain=h)
         lift.register_as_coercion()
         retract = h._module_morphism(self.retract, codomain=self)
-        #retract = SetMorphism(Hom(h, self, SetsWithPartialMaps()), lift.preimage)
+        # retract = SetMorphism(Hom(h, self, SetsWithPartialMaps()), lift.preimage)
         self.register_conversion(retract)
 
     # The following are meant to be inherited with the category framework, but
@@ -1466,7 +1476,7 @@ class K_kSchur(CombinatorialFreeModule):
             sage: g._repr_()
             '3-bounded Symmetric Functions over Rational Field with t=1 in the K-3-Schur basis'
         """
-        return self.realization_of()._repr_()+' in the K-%s-Schur basis'%(self.k)
+        return self.realization_of()._repr_() + ' in the K-%s-Schur basis' % (self.k)
 
     def _homogeneous_generators_noncommutative_variables_zero_Hecke(self, r):
         r"""
@@ -1493,16 +1503,16 @@ class K_kSchur(CombinatorialFreeModule):
         """
         from sage.combinat.root_system.weyl_group import WeylGroup
         from sage.algebras.iwahori_hecke_algebra import IwahoriHeckeAlgebra
-        W = WeylGroup(['A',self.k,1])
-        H = IwahoriHeckeAlgebra(W, 0, base_ring = self.base_ring()).T()
+        W = WeylGroup(['A', self.k, 1])
+        H = IwahoriHeckeAlgebra(W, 0, base_ring=self.base_ring()).T()
         Hgens = H.algebra_generators()
         S = [w.reduced_word() for w in W.pieri_factors() if w.length() == r]
-        return sum( (prod((Hgens[i] for i in w), 1) for w in S), 0 )
+        return sum((prod((Hgens[i] for i in w), 1) for w in S), 0)
 
     @cached_method
-    def _homogeneous_basis(self,la):
+    def _homogeneous_basis(self, la):
         r"""
-        Returns the homogeneous basis element indexed by ``la``, viewed as an element
+        Return the homogeneous basis element indexed by ``la``, viewed as an element
         inside the affine zero Hecke algebra. This method is only here for caching purposes.
 
         INPUT:
@@ -1523,9 +1533,9 @@ class K_kSchur(CombinatorialFreeModule):
         """
         return prod(self._homogeneous_generators_noncommutative_variables_zero_Hecke(la[i]) for i in range(len(la)))
 
-    def homogeneous_basis_noncommutative_variables_zero_Hecke(self,la):
+    def homogeneous_basis_noncommutative_variables_zero_Hecke(self, la):
         r"""
-        Returns the homogeneous basis element indexed by ``la``, viewed as an element
+        Return the homogeneous basis element indexed by ``la``, viewed as an element
         inside the affine zero Hecke algebra. For the code, see method _homogeneous_basis.
 
         INPUT:
@@ -1549,7 +1559,7 @@ class K_kSchur(CombinatorialFreeModule):
     @cached_method
     def _DualGrothMatrix(self, m):
         r"""
-        Returns the change of basis matrix between the K_kschur basis and the `k`-bounded
+        Return the change of basis matrix between the K_kschur basis and the `k`-bounded
         homogeneous basis.
 
         INPUT:
@@ -1576,25 +1586,24 @@ class K_kSchur(CombinatorialFreeModule):
         """
         new_mat = []
         Sym = SymmetricFunctions(self.base_ring())
-        Q = Sym.kBoundedQuotient(self.k,t=1)
+        Q = Sym.kBoundedQuotient(self.k, t=1)
         mon = Q.km()
         G = Q.AffineGrothendieckPolynomial
-        for i in range(m+1):
-            for x in Partitions(m-i, max_part = self.k):
-                f =  mon(G(x,m))
+        for i in range(m + 1):
+            for x in Partitions(m - i, max_part=self.k):
+                f = mon(G(x, m))
                 vec = []
-                for j in range(m+1):
-                    for y in Partitions(m-j, max_part = self.k):
+                for j in range(m + 1):
+                    for y in Partitions(m - j, max_part=self.k):
                         vec.append(f.coefficient(y))
                 new_mat.append(vec)
         from sage.matrix.constructor import Matrix
         return Matrix(new_mat)
 
-
     @cached_method
-    def _DualGrothendieck(self,la):
+    def _DualGrothendieck(self, la):
         r"""
-        Returns the expansion of the K-`k`-Schur function in the homogeneous basis. This
+        Return the expansion of the K-`k`-Schur function in the homogeneous basis. This
         method is here for caching purposes.
 
         INPUT:
@@ -1619,8 +1628,8 @@ class K_kSchur(CombinatorialFreeModule):
         h = SymmetricFunctions(self.base_ring()).h()
         M = self._DualGrothMatrix(m)
         vec = []
-        for i in range(m+1):
-            for x in Partitions(m-i, max_part=self.k):
+        for i in range(m + 1):
+            for x in Partitions(m - i, max_part=self.k):
                 if x == la:
                     vec.append(1)
                 else:
@@ -1630,16 +1639,17 @@ class K_kSchur(CombinatorialFreeModule):
         sol = M.solve_right(vec)
         new_function = h.zero()
         count = 0
-        for i in range(m+1):
-            for x in Partitions(m-i, max_part=self.k):
-                new_function+= h(x) * sol[count]
+        for i in range(m + 1):
+            for x in Partitions(m - i, max_part=self.k):
+                new_function += h(x) * sol[count]
                 count += 1
         return new_function
 
-    def _g_to_kh_on_basis(self,la):
+    def _g_to_kh_on_basis(self, la):
         r"""
-        Returns the expansion of the K-`k`-Schur function in the homogeneous basis. See
-        method _DualGrothendieck for the code.
+        Return the expansion of the K-`k`-Schur function in the homogeneous basis.
+
+        See method :meth:`_DualGrothendieck` for the code.
 
         INPUT:
 
@@ -1661,13 +1671,13 @@ class K_kSchur(CombinatorialFreeModule):
             ...
             ValueError: Partition should be 3-bounded
         """
-        if la != [] and (la[0] > self.k):
-            raise  ValueError("Partition should be %d-bounded"%self.k)
+        if la and la[0] > self.k:
+            raise ValueError("Partition should be %d-bounded" % self.k)
         return self._DualGrothendieck(Partition(la))
 
-    def K_k_Schur_non_commutative_variables(self,la):
+    def K_k_Schur_non_commutative_variables(self, la):
         r"""
-        Returns the K-`k`-Schur function, as embedded inside the affine zero Hecke algebra.
+        Return the K-`k`-Schur function, as embedded inside the affine zero Hecke algebra.
 
         INPUT:
 
@@ -1692,7 +1702,7 @@ class K_kSchur(CombinatorialFreeModule):
         SF = SymmetricFunctions(self.base_ring())
         h = SF.h()
         S = h(self._g_to_kh_on_basis(la)).support()
-        return sum(h(self._g_to_kh_on_basis(la)).coefficient(x)*self.homogeneous_basis_noncommutative_variables_zero_Hecke(x) for x in S)
+        return sum(h(self._g_to_kh_on_basis(la)).coefficient(x) * self.homogeneous_basis_noncommutative_variables_zero_Hecke(x) for x in S)
 
     def _kh_to_g_on_basis(self, la):
         r"""
@@ -1719,15 +1729,16 @@ class K_kSchur(CombinatorialFreeModule):
             ...
             TypeError: do not know how to make x (= [4, 1]) an element of self (=3-bounded Symmetric Functions over Rational Field with t=1 in the K-3-Schur basis)
         """
-        if la == []:
+        if not la:
             return self([])
         h = self.realization_of().khomogeneous()
         f = h(self(la)) - h(la)
-        return self(la) - sum(self._kh_to_g_on_basis(x)*f.coefficient(x) for x in f.support())
+        return self(la) - sum(self._kh_to_g_on_basis(x) * f.coefficient(x)
+                              for x in f.support())
 
-    def product(self, x,y):
+    def product(self, x, y):
         r"""
-        Returns the product of the two K-`k`-Schur functions.
+        Return the product of the two K-`k`-Schur functions.
 
         INPUT:
 
@@ -1746,11 +1757,11 @@ class K_kSchur(CombinatorialFreeModule):
             Kks3[2, 1]
         """
         kh = self.realization_of().khomogeneous()
-        return self(kh(x)*kh(y))
+        return self(kh(x) * kh(y))
 
     def lift(self, x):
         r"""
-        Returns the lift of a `k`-bounded symmetric function.
+        Return the lift of a `k`-bounded symmetric function.
 
         INPUT:
 
@@ -1778,7 +1789,7 @@ class K_kSchur(CombinatorialFreeModule):
 
     def retract(self, x):
         r"""
-        Returns the retract of a symmetric function.
+        Return the retract of a symmetric function.
 
         INPUT:
 

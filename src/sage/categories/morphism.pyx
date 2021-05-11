@@ -19,7 +19,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cpython.object cimport *
 from sage.misc.constant_function import ConstantFunction
@@ -266,11 +265,11 @@ cdef class Morphism(Map):
         Caveat: the registration of the coercion must be done before any
         other coercion is registered or discovered::
 
-            sage: phi = Hom(X, Y)(y)
+            sage: phi = Hom(X, Z)(z^2)
             sage: phi.register_as_coercion()
             Traceback (most recent call last):
             ...
-            AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring to Univariate Polynomial Ring in y over Integer Ring already registered or discovered
+            AssertionError: coercion from Univariate Polynomial Ring in x over Integer Ring to Univariate Polynomial Ring in z over Integer Ring already registered or discovered
 
         """
         self._codomain.register_coercion(self)
@@ -340,6 +339,13 @@ cdef class Morphism(Map):
             Traceback (most recent call last):
             ...
             NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'> and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
+
+        Check that :trac:`29632` is fixed::
+
+            sage: R.<x,y> = QuadraticField(-1)[]
+            sage: f = R.hom(R.gens(), R)
+            sage: f.is_identity()
+            True
         """
         if self is other:
             return rich_to_bool(op, 0)
@@ -363,7 +369,8 @@ cdef class Morphism(Map):
             # gens by picking an element of the initial domain (e) and
             # multiplying it with the gens of the scalar ring.
             if e is not None and isinstance(e, ModuleElement):
-                gens = [(<ModuleElement>e)._lmul_(x) for x in gens]
+                B = (<ModuleElement>e)._parent._base
+                gens = [(<ModuleElement>e)._lmul_(B.coerce(x)) for x in gens]
             for e in gens:
                 x = self(e)
                 y = other(e)
@@ -398,10 +405,7 @@ cdef class Morphism(Map):
         try:
             return self._is_nonzero()
         except Exception:
-            if PY_MAJOR_VERSION < 3:
-                return super(Morphism, self).__nonzero__()
-            else:
-                return super().__bool__()
+            return super().__bool__()
 
 
 cdef class FormalCoercionMorphism(Morphism):
@@ -439,7 +443,7 @@ cdef class IdentityMorphism(Morphism):
         return x
 
     cpdef Element _call_with_args(self, x, args=(), kwds={}): 
-        if len(args) == 0 and len(kwds) == 0:
+        if not args and not kwds:
             return x
         cdef Parent C = self._codomain
         if C._element_init_pass_parent:
@@ -604,7 +608,7 @@ cdef class SetMorphism(Morphism):
             sage: f._extra_slots_test()
             {'_codomain': Integer Ring,
              '_domain': Integer Ring,
-             '_function': <built-in function __abs__>,
+             '_function': <built-in function ...abs...>,
              '_is_coercion': False,
              '_repr_type_str': None}
         """

@@ -1,5 +1,11 @@
+# distutils: language = c++
+# distutils: libraries = gmp m NTL_LIBRARIES
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 """
-Optimized Cython code needed by quaternion algebras.
+Optimized Cython code needed by quaternion algebras
 
 This is a collection of miscellaneous routines that are in Cython for
 speed purposes and are used by the quaternion algebra code.  For
@@ -9,9 +15,10 @@ from a list of n rational quaternions.
 AUTHORS:
 
 - William Stein
+
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,8 +26,7 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+# ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

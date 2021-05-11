@@ -274,7 +274,7 @@ into `A` in two ways -- via `S`, or via the base ring `R` -- and *the
 answers are different*. It that case the coercion to `R` takes
 precedence. In particular, if `\ZZ` is the ring (or group) of
 integers, then `\ZZ` will coerce to any `RS`, by sending `\ZZ` to `R`.
-In generic code, it is therefore recommented to always explicitly use
+In generic code, it is therefore recommended to always explicitly use
 ``A.monomial(g)`` to convert an element of the group into `A`.
 
 TESTS:
@@ -448,12 +448,12 @@ AUTHORS:
   generalization to a covariant functorial construction for
   monoid algebras, and beyond -- see e.g. :trac:`18700`.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010-2017 Nicolas M. Thiéry <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.pushout import ConstructionFunctor
 from sage.categories.morphism import SetMorphism
@@ -584,7 +584,7 @@ class GroupAlgebraFunctor(ConstructionFunctor):
         r"""
         Create the group algebra with given base ring over ``self.group()``.
 
-        INPUT :
+        INPUT:
 
         - ``base_ring`` -- the base ring of the group algebra
 
@@ -679,7 +679,6 @@ class AlgebrasCategory(CovariantConstructionCategory, Category_over_base_ring):
         return "{} algebras over {}".format(self.base_category()._repr_object_names()[:-1],
                                             self.base_ring())
 
-
     @staticmethod
     def __classcall__(cls, category=None, R=None):
         """
@@ -714,3 +713,33 @@ class AlgebrasCategory(CovariantConstructionCategory, Category_over_base_ring):
             # category should now be the base ring ...
             return cls.category_of(base_category_class(), category)
 
+    class ParentMethods:
+
+        # coalgebra structure
+
+        def coproduct_on_basis(self, g):
+            r"""
+            Return the coproduct of the element ``g`` of the basis.
+
+            Each basis element ``g`` is group-like. This method is
+            used to compute the coproduct of any element.
+
+            EXAMPLES::
+
+                sage: PF = NonDecreasingParkingFunctions(4)
+                sage: A = PF.algebra(ZZ); A
+                Algebra of Non-decreasing parking functions of size 4 over Integer Ring
+                sage: g = PF.an_element(); g
+                [1, 1, 1, 1]
+                sage: A.coproduct_on_basis(g)
+                B[[1, 1, 1, 1]] # B[[1, 1, 1, 1]]
+                sage: a = A.an_element(); a
+                2*B[[1, 1, 1, 1]] + 2*B[[1, 1, 1, 2]] + 3*B[[1, 1, 1, 3]]
+                sage: a.coproduct()
+                2*B[[1, 1, 1, 1]] # B[[1, 1, 1, 1]] +
+                2*B[[1, 1, 1, 2]] # B[[1, 1, 1, 2]] +
+                3*B[[1, 1, 1, 3]] # B[[1, 1, 1, 3]]
+            """
+            from sage.categories.tensor import tensor
+            g = self.term(g)
+            return tensor([g, g])

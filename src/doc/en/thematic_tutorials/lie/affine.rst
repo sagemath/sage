@@ -190,7 +190,7 @@ finite-dimensional; but the corresponding weight spaces for
 
 There are exceptions to this rule of preferring the extended
 weight lattice. In particular, we can construct non-trivial
-irreducible finite-dimensional representions of `\mathfrak{g}'`,
+irreducible finite-dimensional representations of `\mathfrak{g}'`,
 and these cannot be lifted to `\mathfrak{g}` (although they do have
 infinite-dimensional analogs). These certain finite-dimensional
 representations have crystal bases, which include Kirillov-Reshetikhin

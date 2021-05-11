@@ -10,11 +10,10 @@ Fast word datatype using an array of unsigned char
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_on, sig_off
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 cimport cython
 from cpython.object cimport Py_EQ, Py_NE
@@ -238,7 +237,7 @@ cdef class WordDatatype_char(WordDatatype):
         cdef int res = 5381
         cdef size_t i
         if self._hash is None:
-            for i in range(min(1024,self._length)):
+            for i in range(min(<size_t>1024, self._length)):
                 res = ((res << 5) + res) + self._data[i]
             self._hash = res
         return self._hash
@@ -385,7 +384,7 @@ cdef class WordDatatype_char(WordDatatype):
             i = key    # cast key into a size_t
             if i < 0:
                 i += self._length;
-            if i < 0 or i >= self._length:
+            if i < 0 or <size_t>i >= self._length:
                 raise IndexError("word index out of range")
             return self._data[i]
 
@@ -531,7 +530,7 @@ cdef class WordDatatype_char(WordDatatype):
         if not PyNumber_Check(exp):
             raise ValueError("the exponent must be a number or infinity")
         if mod is not None:
-            raise ValueError("a word can not be taken modulo")
+            raise ValueError("a word cannot be taken modulo")
 
         if exp == float('inf'):
             from sage.rings.infinity import Infinity
@@ -539,7 +538,7 @@ cdef class WordDatatype_char(WordDatatype):
             return self._parent.shift()(fcn, datatype='callable')
 
         if exp < 0:
-            raise ValueError("can not take negative power of a word")
+            raise ValueError("cannot take negative power of a word")
 
         cdef WordDatatype_char w = self
         cdef size_t i, rest
@@ -568,7 +567,7 @@ cdef class WordDatatype_char(WordDatatype):
         # now consider non trivial powers
         if w._length > SIZE_T_MAX / (i+1):
             raise OverflowError("the length of the result is too large")
-        cdef size_t new_length = w._length * i + rest
+        cdef Py_ssize_t new_length = w._length * i + rest
         cdef unsigned char * data = <unsigned char *>check_allocarray(new_length, sizeof(unsigned char))
 
         cdef Py_ssize_t j = w._length
@@ -619,7 +618,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: w.has_prefix([0,1,0])
             True
         """
-        cdef size_t i
+        cdef Py_ssize_t i
         cdef WordDatatype_char w
 
         if isinstance(other, WordDatatype_char):
@@ -644,7 +643,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     def is_square(self):
         r"""
-        Returns True if self is a square, and False otherwise.
+        Return True if self is a square, and False otherwise.
 
         EXAMPLES::
 
@@ -677,7 +676,7 @@ cdef class WordDatatype_char(WordDatatype):
             True
         """
         cdef size_t l
-        if self._length % 2 != 0:
+        if self._length % 2:
             return False
         else:
             l = self._length // 2

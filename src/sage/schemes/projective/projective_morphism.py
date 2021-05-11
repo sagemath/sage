@@ -1,33 +1,53 @@
 # -*- coding: utf-8 -*-
 r"""
-Morphisms on projective varieties
+Morphisms on projective schemes
 
-A morphism of schemes determined by rational functions that define
-what the morphism does on points in the ambient projective space.
+This module defines morphisms from projective schemes. A morphism from a
+projective scheme to a projective scheme is defined by homogeneous polynomials
+of the same degree that define what the morphism does on points in the ambient
+projective space. A morphism from a projective scheme to an affine scheme is
+determined by rational function, that is, quotients of homogeneous polynomials
+of the same degree.
 
+EXAMPLES::
+
+    sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
+    sage: A2.<x,y> = AffineSpace(QQ, 2)
+    sage: P2.hom([x0, x1, x1 + x2], P2)
+    Scheme endomorphism of Projective Space of dimension 2 over Rational Field
+      Defn: Defined on coordinates by sending (x0 : x1 : x2) to
+            (x0 : x1 : x1 + x2)
+    sage: P2.hom([x1/x0, (x1 + x2)/x0], A2)
+    Scheme morphism:
+      From: Projective Space of dimension 2 over Rational Field
+      To:   Affine Space of dimension 2 over Rational Field
+      Defn: Defined on coordinates by sending (x0 : x1 : x2) to
+            (x1/x0, (x1 + x2)/x0)
 
 AUTHORS:
 
-- David Kohel, William Stein
+- David Kohel, William Stein: initial version
 
 - William Stein (2006-02-11): fixed bug where P(0,0,0) was allowed as
-  a projective point.
+  a projective point
 
-- Volker Braun (2011-08-08): Renamed classes, more documentation, misc
-  cleanups.
+- Volker Braun (2011-08-08): renamed classes, more documentation, misc
+  cleanups
 
-- Ben Hutz (2013-03) iteration functionality and new directory structure
+- Ben Hutz (2013-03): iteration functionality and new directory structure
   for affine/projective, height functionality
 
-- Brian Stout, Ben Hutz (Nov 2013) - added minimal model functionality
+- Brian Stout, Ben Hutz (2013-11): added minimal model functionality
 
-- Dillon Rose (2014-01):  Speed enhancements
+- Dillon Rose (2014-01): speed enhancements
 
 - Ben Hutz (2015-11): iteration of subschemes
 
+- Kwankyu Lee (2020-02): added indeterminacy_locus() and image()
+
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
@@ -37,17 +57,30 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
+# ****************************************************************************
 
-from sage.calculus.functions import jacobian
+
+import sys
+
+from sage.arith.all import gcd, lcm
+
+from sage.interfaces.all import singular
+
 from sage.misc.all import prod
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+
+from sage.ext.fast_callable import fast_callable
+
+from sage.calculus.functions import jacobian
+
 from sage.rings.all import Integer
-from sage.arith.all import gcd, lcm
-from sage.rings.complex_field import ComplexField_class
+from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
+from sage.rings.complex_mpfr import ComplexField_class
 from sage.rings.complex_interval_field import ComplexIntervalField_class
+from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.order import is_NumberFieldOrder
@@ -57,17 +90,17 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField_class
 from sage.rings.real_mpfi import RealIntervalField_class
-from sage.schemes.generic.morphism import SchemeMorphism_polynomial
-from sage.ext.fast_callable import fast_callable
-from sage.misc.lazy_attribute import lazy_attribute
-import sys
 
+from sage.schemes.generic.morphism import SchemeMorphism_polynomial
+
+from sage.categories.finite_fields import FiniteFields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom, End
-_NumberFields = NumberFields()
 from sage.categories.fields import Fields
+
+_NumberFields = NumberFields()
+_FiniteFields = FiniteFields()
 _Fields = Fields()
-from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 
 
 class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
@@ -162,12 +195,9 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
           y,
           x
     """
-
     def __init__(self, parent, polys, check=True):
         """
-        The Python constructor.
-
-        See :class:`SchemeMorphism_polynomial` for details.
+        Initialize.
 
         EXAMPLES::
 
@@ -204,19 +234,54 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
               Defn: Defined on coordinates by sending (x : y : z) to
                     (y^2 : y^2 : y*z)
         """
-        SchemeMorphism_polynomial.__init__(self, parent, polys, check)
         if check:
-            # morphisms from projective space are always given by
-            # homogeneous polynomials of the same degree
-            try:
-                polys[0].degree()
-            except AttributeError:
+            try:  # polys might be in a quotient ring
                 polys = [f.lift() for f in polys]
-            if not all(f.is_homogeneous() for f in polys):
-                raise  ValueError("polys (=%s) must be homogeneous" % polys)
-            degs = [f.degree() for f in polys]
-            if not all(d == degs[0] for d in degs[1:]):
-                raise ValueError("polys (=%s) must be of the same degree" % polys)
+            except (TypeError, AttributeError):
+                pass
+
+            try:
+                source_ring = parent.domain().ambient_space().coordinate_ring()
+                K = FractionField(source_ring)
+
+                try:
+                    polys = [K(f) for f in polys]
+                except TypeError:
+                    raise TypeError("polys (=%s) must be elements of %s"%(polys, source_ring))
+
+                if parent.codomain().is_projective():
+                    degs = []
+                    l = 1
+                    for f in polys:
+                        num = f.numerator()
+                        den = f.denominator()
+                        if not num.is_homogeneous() or not den.is_homogeneous():
+                            raise ValueError("polys (={}) must be homogeneous".format(polys))
+
+                        if not num.is_zero():
+                            l *= den
+                            degs.append(num.degree() - den.degree())
+
+                    d = degs[0]
+                    if not all(d == deg for deg in degs[1:]):
+                        raise ValueError("polys (={}) must be of the same degree".format(polys))
+
+                    polys = [(l*f).numerator() for f in polys]
+                elif parent.codomain().is_affine():
+                    for f in polys:
+                        num = f.numerator()
+                        den = f.denominator()
+                        if not (num.is_homogeneous() and
+                                den.is_homogeneous() and
+                                num.degree() == den.degree()):
+                            raise ValueError("polys (={}) must be quotients of "
+                                             "homogeneous polynomials of the same degree".format(polys))
+                check = False
+            except (NotImplementedError, TypeError, AttributeError):
+                pass
+
+        SchemeMorphism_polynomial.__init__(self, parent, polys, check)
+
         self._is_prime_finite_field = is_PrimeFiniteField(polys[0].base_ring())
 
     def __call__(self, x, check=True):
@@ -346,7 +411,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = Hom(P,P)
             sage: f = H([x^2+y^2,y^2])
             sage: [g.op_list() for g in f._fastpolys]
-            [[('load_const', 0), ('load_const', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'add', ('load_const', 1), ('load_arg', 0), ('ipow', 2), 'mul', 'add', 'return'], [('load_const', 0), ('load_const', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'add', 'return']]
+            [[('load_const', 0), ('load_const', 1), ('load_arg', ...), ('ipow', 2), 'mul', 'add', ('load_const', 1), ('load_arg', ...), ('ipow', 2), 'mul', 'add', 'return'], [('load_const', 0), ('load_const', 1), ('load_arg', 1), ('ipow', 2), 'mul', 'add', 'return']]
         """
         polys = self._polys
 
@@ -506,6 +571,94 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         return any(self._polys[i] * right._polys[j] != self._polys[j] * right._polys[i]
                    for i in range(n) for j in range(i + 1, n))
 
+    def _matrix_times_polymap_(self, mat, h):
+        """
+        Multiplies the morphism on the left by a matrix ``mat``.
+
+        INPUT:
+
+        - ``mat`` -- a matrix
+
+        OUTPUT: a scheme morphism given by ``self*mat``
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: H = Hom(P,P)
+            sage: f = H([x^2 + y^2, y^2])
+            sage: matrix([[1,2], [0,1]]) * f
+            Scheme endomorphism of Projective Space of dimension 1 over Integer Ring
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + 3*y^2 : y^2)
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<i> = NumberField(x^2+1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = Hom(P,P)
+            sage: f = H([1/3*x^2 + 1/2*y^2, y^2])
+            sage: matrix([[i,0], [0,i]]) * f
+            Scheme endomorphism of Projective Space of dimension 1 over Number Field in i with defining polynomial x^2 + 1
+              Defn: Defined on coordinates by sending (x : y) to
+                    ((1/3*i)*x^2 + (1/2*i)*y^2 : (i)*y^2)
+        """
+        from sage.modules.free_module_element import vector
+        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
+        if not mat.is_square():
+            raise ValueError("matrix must be square")
+        if mat.ncols() != self.codomain().ngens():
+            raise ValueError("matrix size is incompatible")
+        F = mat * vector(list(self))
+        if isinstance(self, DynamicalSystem):
+            return h(list(F)).as_dynamical_system()
+        return h(list(F))
+
+    def _polymap_times_matrix_(self, mat, h):
+        """
+        Multiplies the morphism on the right by a matrix ``mat``.
+
+        INPUT:
+
+        - ``mat`` -- a matrix
+
+        OUTPUT: a scheme morphism given by ``mat*self``
+
+        EXAMPLES::
+
+            sage: P.<x,y> = ProjectiveSpace(ZZ, 1)
+            sage: H = Hom(P, P)
+            sage: f = H([x^2 + y^2, y^2])
+            sage: f * matrix([[1,2], [0,1]])
+            Scheme endomorphism of Projective Space of dimension 1 over Integer Ring
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + 4*x*y + 5*y^2 : y^2)
+
+        ::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<i> = NumberField(x^2+1)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = Hom(P,P)
+            sage: f = H([1/3*x^2 + 1/2*y^2, y^2])
+            sage: f * matrix([[i,0], [0,i]])
+            Scheme endomorphism of Projective Space of dimension 1 over Number Field in i with defining polynomial x^2 + 1
+              Defn: Defined on coordinates by sending (x : y) to
+                    (-1/3*x^2 - 1/2*y^2 : -y^2)
+        """
+        from sage.modules.free_module_element import vector
+        from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
+        if not mat.is_square():
+            raise ValueError("matrix must be square")
+        if mat.nrows() != self.domain().ngens():
+            raise ValueError("matrix size is incompatible")
+        X = mat * vector(self[0].parent().gens())
+        F = vector(self._polys)
+        F = F(list(X))
+        if isinstance(self, DynamicalSystem):
+            return h(list(F)).as_dynamical_system()
+        return h(list(F))
+
     def as_dynamical_system(self):
         """
         Return this endomorphism as a :class:`DynamicalSystem_projective`.
@@ -625,11 +778,33 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
                 new_polys = [R(u*t) for u in self]
         self._polys = tuple(new_polys)
 
-    def normalize_coordinates(self):
+    def normalize_coordinates(self, **kwds):
         """
-        Scales by 1/gcd of the coordinate functions.
+        Ensures that this morphism has integral coefficients, and,
+        if the coordinate ring has a GCD, then it ensures that the
+        coefficients have no common factor.
 
-        Also, scales to clear any denominators from the coefficients. This is done in place.
+        Also, makes the leading coefficients of the first polynomial
+        positive (if positive has meaning in the coordinate ring).
+        This is done in place.
+
+        When ``ideal`` or ``valuation`` is specified,
+        normalization occurs with respect to the absolute value
+        defined by the ``ideal`` or ``valuation``. That is, the
+        coefficients are scaled such that one coefficient has
+        absolute value 1 while the others have absolute value
+        less than or equal to 1. Only supported when the base
+        ring is a number field.
+
+        INPUT:
+
+        keywords:
+
+        - ``ideal`` -- (optional) a prime ideal of the base ring of this
+          morphism.
+
+        - ``valuation`` -- (optional) a valuation of the base ring of this
+          morphism.
 
         OUTPUT:
 
@@ -637,8 +812,8 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = Hom(P,P)
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: H = Hom(P, P)
             sage: f = H([5/4*x^3, 5*x*y^2])
             sage: f.normalize_coordinates(); f
             Scheme endomorphism of Projective Space of dimension 1 over Rational
@@ -648,10 +823,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         ::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(7),2)
-            sage: X = P.subscheme(x^2-y^2)
-            sage: H = Hom(X,X)
-            sage: f = H([x^3+x*y^2, x*y^2, x*z^2])
+            sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: X = P.subscheme(x^2 - y^2)
+            sage: H = Hom(X, X)
+            sage: f = H([x^3 + x*y^2, x*y^2, x*z^2])
             sage: f.normalize_coordinates(); f
             Scheme endomorphism of Closed subscheme of Projective Space of dimension
             2 over Finite Field of size 7 defined by:
@@ -664,105 +839,174 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: R.<a,b> = QQ[]
             sage: P.<x,y,z> = ProjectiveSpace(R, 2)
             sage: H = End(P)
-            sage: f = H([a*(x*z+y^2)*x^2, a*b*(x*z+y^2)*y^2, a*(x*z+y^2)*z^2])
+            sage: f = H([a*(x*z + y^2)*x^2, a*b*(x*z + y^2)*y^2, a*(x*z + y^2)*z^2])
             sage: f.normalize_coordinates(); f
             Scheme endomorphism of Projective Space of dimension 2 over Multivariate
             Polynomial Ring in a, b over Rational Field
               Defn: Defined on coordinates by sending (x : y : z) to
                     (x^2 : b*y^2 : z^2)
 
-        .. NOTE:: gcd raises an error if the base_ring does not support gcds.
+        ::
+
+            sage: K.<w> = QuadraticField(5)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem([w*x^2 + (1/5*w)*y^2, w*y^2])
+            sage: f.normalize_coordinates(); f
+            Dynamical System of Projective Space of dimension 1 over Number Field in
+            w with defining polynomial x^2 - 5 with w = 2.236067977499790?
+              Defn: Defined on coordinates by sending (x : y) to
+                    (5*x^2 + y^2 : 5*y^2)
+
+        ::
+
+            sage: R.<t> = PolynomialRing(ZZ)
+            sage: K.<b> = NumberField(t^3 - 11)
+            sage: a = 7/(b - 1)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: f = DynamicalSystem_projective([a*y^2 - (a*y - x)^2, y^2])
+            sage: f.normalize_coordinates(); f
+            Dynamical System of Projective Space of dimension 1 over Number Field in b with defining polynomial t^3 - 11
+            Defn: Defined on coordinates by sending (x : y) to
+                    (-100*x^2 + (140*b^2 + 140*b + 140)*x*y + (-77*b^2 - 567*b - 1057)*y^2 : 100*y^2)
+
+        We can used ``ideal`` to scale with respect to a norm defined by an ideal::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([2*x^3, 2*x^2*y + 4*x*y^2])
+            sage: f.normalize_coordinates(ideal=2); f
+            Dynamical System of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^3 : x^2*y + 2*x*y^2)
+
+        ::
+
+            sage: R.<w> = QQ[]
+            sage: A.<a> = NumberField(w^2 + 1)
+            sage: P.<x,y,z> = ProjectiveSpace(A, 2)
+            sage: X = P.subscheme(x^2-y^2)
+            sage: H = Hom(X,X)
+            sage: f = H([(a+1)*x^3 + 2*x*y^2, 4*x*y^2, 8*x*z^2])
+            sage: f.normalize_coordinates(ideal=A.prime_above(2)); f
+            Scheme endomorphism of Closed subscheme of Projective Space of dimension 2 over
+            Number Field in a with defining polynomial w^2 + 1 defined by:
+              x^2 - y^2
+              Defn: Defined on coordinates by sending (x : y : z) to
+                    ((-a + 2)*x*y^2 : (-2*a + 2)*x*y^2 : (-4*a + 4)*x*z^2)
+
+        We can pass in a valuation to ``valuation``::
+
+            sage: g = H([(a+1)*x^3 + 2*x*y^2, 4*x*y^2, 8*x*z^2])
+            sage: g.normalize_coordinates(valuation=A.valuation(A.prime_above(2)))
+            sage: g == f
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(Qp(3), 1)
+            sage: f = DynamicalSystem_projective([3*x^2+6*y^2, 9*x*y])
+            sage: f.normalize_coordinates(); f
+            Dynamical System of Projective Space of dimension 1 over 3-adic Field with capped relative precision 20
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + (2 + O(3^20))*y^2 : (3 + O(3^21))*x*y)
         """
-        GCD = gcd(self[0], self[1])
-        index = 2
-        if self[0].lc() > 0 or self[1].lc() > 0:
-            neg = 0
-        else:
-            neg = 1
-        N = self.codomain().ambient_space().dimension_relative() + 1
-        while GCD != 1 and index < N:
-            if self[index].lc() > 0:
-                neg = 0
-            GCD = gcd(GCD, self[index])
-            index += +1
-
-        if GCD != 1:
-            R = self.domain().base_ring()
-            if neg == 1:
-                self.scale_by(R(-1) / GCD)
+        # if ideal or valuation is specified, we scale according the norm defined by the ideal/valuation
+        ideal = kwds.pop('ideal', None)
+        if ideal != None:
+            from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
+            if not (ideal in ZZ or isinstance(ideal, NumberFieldFractionalIdeal)):
+                raise TypeError('ideal must be an ideal of a number field, not %s' %ideal)
+            if isinstance(ideal, NumberFieldFractionalIdeal):
+                if ideal.number_field() != self.base_ring():
+                    raise ValueError('ideal must be an ideal of the base ring of this morphism ' +  \
+                        ', not an ideal of %s' %ideal.number_field())
+                if not ideal.is_prime():
+                    raise ValueError('ideal was %s, not a prime ideal' %ideal)
+                for generator in ideal.gens():
+                    if generator.valuation(ideal) == 1:
+                        uniformizer = generator
+                        break
             else:
-                self.scale_by(R(1) / GCD)
-        else:
-            if neg == 1:
-                self.scale_by(-1)
+                ideal = ZZ(ideal)
+                if self.base_ring() != QQ:
+                    raise ValueError('ideal was an integer, but the base ring of this ' + \
+                        'morphism is %s' %self.base_ring())
+                if not ideal.is_prime():
+                    raise ValueError('ideal must be a prime, not %s' %ideal)
+                uniformizer = ideal
+            valuations = []
+            for poly in self:
+                for coefficient, monomial in poly:
+                    if coefficient != 0:
+                        valuations.append(coefficient.valuation(ideal))
+            min_val = min(valuations)
+            self.scale_by(uniformizer**(-1*min_val))
+            return
+        valuation = kwds.pop('valuation', None)
+        if valuation != None:
+            from sage.rings.padics.padic_valuation import pAdicValuation_base
+            if not isinstance(valuation, pAdicValuation_base):
+                raise TypeError('valuation must be a valuation on a number field, not %s' %valuation)
+            if valuation.domain() != self.base_ring():
+                raise ValueError('the domain of valuation must be the base ring of this morphism ' + \
+                    'not %s' %valuation.domain())
+            uniformizer = valuation.uniformizer()
+            ramification_index = 1/valuation(uniformizer)
+            valuations = []
+            for poly in self:
+                for coefficient, monomial in poly:
+                    if coefficient != 0:
+                        valuations.append(valuation(coefficient) * ramification_index)
+            min_val = min(valuations)
+            self.scale_by(uniformizer**(-1*min_val))
+            return
 
-        #clears any denominators from the coefficients
+        # clear any denominators from the coefficients
+        N = self.codomain().ambient_space().dimension_relative() + 1
         LCM = lcm([self[i].denominator() for i in range(N)])
         self.scale_by(LCM)
 
-        #scales by 1/gcd of the coefficients.
-        GCD = gcd([self[i].content() for i in range(N)])
+        R = self.domain().base_ring()
+
+        # There are cases, such as the example above over GF(7),
+        # where we want to compute GCDs, but NOT in the case
+        # where R is a NumberField of class number > 1.
+        if R in NumberFields:
+            if R.class_number() > 1:
+                return
+
+        # R is a Number Field with class number 1 (i.e., a UFD) then
+        # we can compute GCDs, so we attempt to remove any common factors.
+
+        GCD = gcd(self[0], self[1])
+        index = 2
+
+        while GCD != 1 and index < N:
+            GCD = gcd(GCD, self[index])
+            index += +1
         if GCD != 1:
-            self.scale_by(1 / GCD)
+            self.scale_by(R(1) / GCD)
 
-    def dynatomic_polynomial(self, period):
-        """
-        Return the dynatomic polynomial.
+        # scales by 1/gcd of the coefficients.
+        from sage.rings.padics.generic_nodes import is_pAdicField
+        if R in _NumberFields:
+            O = R.maximal_order()
+        elif is_FiniteField(R):
+            O = R
+        elif isinstance(R, QuotientRing_generic):
+            O = R.ring()
+        elif is_pAdicField(R):
+            O = R.integer_ring()
+        else:
+            O = R
+        GCD = gcd([O(c) for poly in self for c in poly.coefficients()])
 
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2 + y^2, y^2])
-            sage: f.dynatomic_polynomial(2)
-            doctest:warning
-            ...
-            x^2 + x*y + 2*y^2
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.dynatomic_polynomial instead")
-        return self.as_dynamical_system().dynatomic_polynomial(period)
-
-    def nth_iterate_map(self, n, normalize=False):
-        """
-        Return the nth iterate of the map.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2+y^2, y^2])
-            sage: f.nth_iterate_map(2)
-            doctest:warning
-            ...
-            Dynamical System of Projective Space of dimension 1 over Rational
-            Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x^4 + 2*x^2*y^2 + 2*y^4 : y^4)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.nth_iterate_map instead")
-        return self.as_dynamical_system().nth_iterate_map(n, normalize)
-
-    def nth_iterate(self, P, n, **kwds):
-        """
-        Return the nth iterate of the point.
-
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(ZZ,1)
-            sage: H = End(P)
-            sage: f = H([x^2+y^2, 2*y^2])
-            sage: Q = P(1,1)
-            sage: f.nth_iterate(Q,4)
-            doctest:warning
-            ...
-            (32768 : 32768)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.nth_iterate instead")
-        return self.as_dynamical_system().nth_iterate(P, n, **kwds)
+        if GCD != 1:
+            self.scale_by(1/GCD)
+        from sage.rings.padics.padic_base_generic import pAdicGeneric
+        # if R is not padic, we make the first coordinate positive
+        if not isinstance(R, pAdicGeneric):
+            if self[0].lc() < 0:
+                self.scale_by(-1)
 
     def degree(self):
         r"""
@@ -809,43 +1053,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: f.degree()
             2
         """
-        return(self._polys[0].degree())
-
-    def degree_sequence(self, iterates=2):
-        """
-        Return the sequence of degrees of iterates.
-
-        EXAMPLES::
-
-            sage: P2.<X,Y,Z> = ProjectiveSpace(QQ, 2)
-            sage: H = End(P2)
-            sage: f = H([Z^2, X*Y, Y^2])
-            sage: f.degree_sequence(15)
-            doctest:warning
-            ...
-            [2, 3, 5, 8, 11, 17, 24, 31, 45, 56, 68, 91, 93, 184, 275]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.degree_sequence instead")
-        return self.as_dynamical_system().degree_sequence(iterates)
-
-    def dynamical_degree(self, N=3, prec=53):
-        """
-        Return the dynamical degree.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: H = End(P)
-            sage: f = H([x^2 + (x*y), y^2])
-            sage: f.dynamical_degree()
-            doctest:warning
-            ...
-            2.00000000000000
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.dynamical_degree instead")
-        return self.as_dynamical_system().dynamical_degree(N, prec)
+        return self._polys[0].degree()
 
     def dehomogenize(self, n):
         r"""
@@ -936,18 +1144,31 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: H = End(P)
             sage: f = H([x^2 - O(w)*y^2,y^2])
             sage: f.dehomogenize(1)
-            Scheme endomorphism of Affine Space of dimension 1 over Maximal Order in Number Field in w with defining polynomial x^2 - 3
+            Scheme endomorphism of Affine Space of dimension 1 over Maximal Order in Number Field in w with defining polynomial x^2 - 3 with w = 1.732050807568878?
               Defn: Defined on coordinates by sending (x) to
                     (x^2 - w)
+
+        ::
+
+            sage: P1.<x,y> = ProjectiveSpace(QQ,1)
+            sage: P2.<u,v,w> = ProjectiveSpace(QQ,2)
+            sage: H = Hom(P2,P1)
+            sage: f = H([u*w,v^2 + w^2])
+            sage: f.dehomogenize((2,1))
+            Scheme morphism:
+              From: Affine Space of dimension 2 over Rational Field
+              To:   Affine Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (u, v) to
+                  (u/(v^2 + 1))
         """
-        #the dehomogenizations are stored for future use.
+        # the dehomogenizations are stored for future use
         try:
             return self.__dehomogenization[n]
         except AttributeError:
             self.__dehomogenization = {}
         except KeyError:
             pass
-        #it is possible to dehomogenize the domain and codomain at different coordinates
+        # it is possible to dehomogenize the domain and codomain at different coordinates
         if isinstance(n,(tuple,list)):
             ind=tuple(n)
         else:
@@ -965,36 +1186,20 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             phi = R.hom([S.gen(j) for j in range(0, ind[0])] + [1] + [S.gen(j) for j in range(ind[0], N)], FS)
             F = []
             G = phi(self._polys[ind[1]])
-            for i in range(0, N + 1):
+            # ind[1] is relative to codomain
+            M = self.codomain().ambient_space().dimension_relative()
+            for i in range(0, M + 1):
                 if i != ind[1]:
                     F.append(phi(self._polys[i]) / G)
             H = Hom(Aff_domain, self.codomain().affine_patch(ind[1]))
-            #since often you dehomogenize at the same coordinate in domain
-            #and codomain it should be stored appropriately.
+            # since often you dehomogenize at the same coordinate in domain
+            # and codomain it should be stored appropriately.
             if ind == (n,n):
                 self.__dehomogenization[ind]=H(F)
                 return self.__dehomogenization[ind]
             else:
                 self.__dehomogenization[n]=H(F)
                 return self.__dehomogenization[n]
-
-    def orbit(self, P, N, **kwds):
-        """
-        Return the orbit of the point.
-
-        EXAMPLES::
-
-            sage: P.<x,y,z> = ProjectiveSpace(ZZ,2)
-            sage: H = End(P)
-            sage: f = H([x^2+y^2, y^2-z^2, 2*z^2])
-            sage: f.orbit(P(1,2,1), 3)
-            doctest:warning
-            ...
-            [(1 : 2 : 1), (5 : 3 : 2), (34 : 5 : 8), (1181 : -39 : 128)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.orbit instead")
-        return self.as_dynamical_system().orbit(P, N, **kwds)
 
     @cached_method
     def is_morphism(self):
@@ -1058,122 +1263,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             return False
         else:
             return True
-
-    def resultant(self, normalize=False):
-        r"""
-        Computes the resultant of the defining polynomials of this dynamical system.
-
-        If ``normalize`` is ``True``, then first normalize the coordinate
-        functions with :meth:`normalize_coordinates`. Map must be an
-        endomorphism
-
-        INPUT:
-
-        - ``normalize`` -- Boolean (optional - default: ``False``).
-
-        OUTPUT: an element of the base ring of this map.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2+y^2, 6*y^2])
-            sage: f.resultant()
-            doctest:warning
-            ...
-            36
-
-        ::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
-            sage: P1.<u,v> = ProjectiveSpace(QQ,1)
-            sage: H = Hom(P2,P1)
-            sage: f = H([x,y])
-            sage: f.resultant()
-            Traceback (most recent call last):
-            ...
-            ValueError: must be an endomorphism
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.primes_of_bad_reduction instead")
-        if self.is_endomorphism():
-            return self.as_dynamical_system().resultant(normalize)
-        raise ValueError("must be an endomorphism")
-
-    def primes_of_bad_reduction(self, check=True):
-        """
-        Return the primes of bad reduction.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([1/3*x^2+1/2*y^2, y^2])
-            sage: f.primes_of_bad_reduction()
-            doctest:warning
-            ...
-            [2, 3]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.primes_of_bad_reduction instead")
-        return self.as_dynamical_system().primes_of_bad_reduction(check)
-
-    def conjugate(self, M):
-        """
-        Return the conjugate of this map.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(ZZ,1)
-            sage: H = End(P)
-            sage: f = H([x^2+y^2, y^2])
-            sage: f.conjugate(matrix([[1,2], [0,1]]))
-            doctest:warning
-            ...
-            Dynamical System of Projective Space of dimension 1 over Integer Ring
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x^2 + 4*x*y + 3*y^2 : y^2)
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.conjugate instead")
-        return self.as_dynamical_system().conjugate(M)
-
-    def green_function(self, P, v, **kwds):
-        """
-        Return the value of the Green's function at the point.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2+y^2, x*y]);
-            sage: Q = P(5, 1)
-            sage: f.green_function(Q, 0, N=30)
-            doctest:warning
-            ...
-            1.6460930159932946233759277576
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.green_function instead")
-        return self.as_dynamical_system().green_function(P, v, **kwds)
-
-    def canonical_height(self, P, **kwds):
-        """
-        Return the canonical height of the point.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(ZZ,1)
-            sage: H = End(P)
-            sage: f = H([x^2+y^2, 2*x*y]);
-            sage: f.canonical_height(P.point([5,4]), error_bound=0.001)
-            doctest:warning
-            ...
-            2.1970553519503404898926835324
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.canonical_height instead")
-        return self.as_dynamical_system().canonical_height(P, **kwds)
 
     def global_height(self, prec=None):
         r"""
@@ -1240,7 +1329,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             C = f[i].coefficients()
             h = max([c.global_height(prec) for c in C])
             H = max(H, h)
-        return(H)
+        return H
 
     def local_height(self, v, prec=None):
         r"""
@@ -1334,161 +1423,6 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         else:
             return max([K(c).local_height_arch(i, prec=prec) for f in self for c in f.coefficients()])
 
-    def height_difference_bound(self, prec=None):
-        """
-        Return the bound on the difference of the height and canonical height.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2+y^2, x*y])
-            sage: f.height_difference_bound()
-            doctest:warning
-            ...
-            1.38629436111989
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.height_difference_bound instead")
-        return self.as_dynamical_system().height_difference_bound(prec)
-
-    def multiplier(self, P, n, check=True):
-        """
-        Return the multiplier at the point.
-
-        EXAMPLES::
-
-            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
-            sage: H = End(P)
-            sage: f = H([x^2,y^2, 4*z^2]);
-            sage: Q = P.point([4,4,1], False);
-            sage: f.multiplier(Q,1)
-            doctest:warning
-            ...
-            [2 0]
-            [0 2]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.multiplier instead")
-        return self.as_dynamical_system().multiplier(P, n, check)
-
-    def _multipliermod(self, P, n, p, k):
-        """
-        Compute the multiplier mod p.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2-29/16*y^2, y^2])
-            sage: f._multipliermod(P(5,4), 3, 11, 1)
-            doctest:warning
-            ...
-            [3]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds._multipliermod instead")
-        return self.as_dynamical_system()._multipliermod(P, n, p, k)
-
-    def possible_periods(self, **kwds):
-        """
-        Return the possible periods of a rational periodic point.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2-29/16*y^2, y^2])
-            sage: f.possible_periods(ncpus=1)
-            doctest:warning
-            ...
-            [1, 3]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.possible_periods instead")
-        return self.as_dynamical_system().possible_periods(**kwds)
-
-    def _preperiodic_points_to_cyclegraph(self, preper):
-        """
-        Return the directed graph of the given preperidoic points.
-
-        Examples::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2-2*y^2, y^2])
-            sage: preper = [P(-2, 1), P(1, 0), P(0, 1), P(1, 1), P(2, 1), P(-1, 1)]
-            sage: f._preperiodic_points_to_cyclegraph(preper)
-            doctest:warning
-            ...
-            Looped digraph on 6 vertices
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds._preperiodic_points_to_cyclegraph instead")
-        return self.as_dynamical_system()._preperiodic_points_to_cyclegraph(preper)
-
-    def is_PGL_minimal(self, prime_list=None):
-        """
-        Return whether the representation is PGL minimal.
-
-        EXAMPLES::
-
-            sage: PS.<X,Y> = ProjectiveSpace(QQ,1)
-            sage: H = End(PS)
-            sage: f = H([X^2+3*Y^2, X*Y])
-            sage: f.is_PGL_minimal()
-            doctest:warning
-            ...
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.is_PGL_minimal instead")
-        return self.as_dynamical_system().is_PGL_minimal(prime_list)
-
-    def minimal_model(self, return_transformation=False, prime_list=None):
-        """
-        Return the minimal model.
-
-        EXAMPLES::
-
-            sage: PS.<X,Y> = ProjectiveSpace(QQ,1)
-            sage: H = End(PS)
-            sage: f = H([X^2+3*Y^2, X*Y])
-            sage: f.minimal_model(return_transformation=True)
-            doctest:warning
-            ...
-            (
-            Dynamical System of Projective Space of dimension 1 over Rational
-            Field
-              Defn: Defined on coordinates by sending (X : Y) to
-                    (X^2 + 3*Y^2 : X*Y)
-            ,
-            [1 0]
-            [0 1]
-            )
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.minimal_model instead")
-        return self.as_dynamical_system().minimal_model(return_transformation, prime_list)
-
-    def automorphism_group(self, **kwds):
-        """
-        Return the automorphism group.
-
-        EXAMPLES::
-
-            sage: R.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(R)
-            sage: f = H([x^2-y^2, x*y])
-            sage: f.automorphism_group(return_functions=True)
-            doctest:warning
-            ...
-            [x, -x]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.automorphism_group instead")
-        return self.as_dynamical_system().automorphism_group(**kwds)
-
     def wronskian_ideal(self):
         r"""
         Returns the ideal generated by the critical point locus.
@@ -1526,261 +1460,10 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         N = dom.dimension_relative()+1
         R = dom.coordinate_ring()
         J = jacobian(self.defining_polynomials(),dom.gens())
-        return(R.ideal(J.minors(N)))
-
-    def critical_subscheme(self):
-        """
-        Return the critical subscheme.
-
-        Examples::
-
-            sage: set_verbose(None)
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^3-2*x*y^2 + 2*y^3, y^3])
-            sage: f.critical_subscheme()
-            doctest:warning
-            ...
-            Closed subscheme of Projective Space of dimension 1 over Rational Field
-            defined by:
-            9*x^2*y^2 - 6*y^4
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.critical_points instead")
-        return self.as_dynamical_system().critical_subscheme()
-
-    def critical_points(self, R=None):
-        """
-        Return the critical points.
-
-        Examples::
-
-            sage: set_verbose(None)
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^3-2*x*y^2 + 2*y^3, y^3])
-            sage: f.critical_points()
-            doctest:warning
-            ...
-            [(1 : 0)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.critical_subscheme instead")
-        return self.as_dynamical_system().critical_points()
-
-    def is_postcritically_finite(self, err=0.01, embedding=None):
-        """
-        Return whether the map is postcritically finite.
-
-        Examples::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2 - y^2, y^2])
-            sage: f.is_postcritically_finite()
-            doctest:warning
-            ...
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.is_postcritically_finite instead")
-        return self.as_dynamical_system().is_postcritically_finite(err, embedding)
-
-    def critical_point_portrait(self, check=True, embedding=None):
-        """
-        Return the directed graph of critical point portrait.
-
-        EXAMPLES::
-
-            sage: R.<z> = QQ[]
-            sage: K.<v> = NumberField(z^6 + 2*z^5 + 2*z^4 + 2*z^3 + z^2 + 1)
-            sage: PS.<x,y> = ProjectiveSpace(K,1)
-            sage: H = End(PS)
-            sage: f = H([x^2+v*y^2, y^2])
-            sage: f.critical_point_portrait(check=False, embedding=K.embeddings(QQbar)[0]) # long time
-            doctest:warning
-            ...
-            Looped digraph on 6 vertices
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.critical_point_portrait instead")
-        return self.as_dynamical_system().critical_point_portrait(check, embedding)
-
-    def critical_height(self, **kwds):
-        """
-        Return the critical height.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f =H([x^3+7*y^3, 11*y^3])
-            sage: f.critical_height()
-            doctest:warning
-            ...
-            1.1989273321156851418802151128
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.critical_height instead")
-        return self.as_dynamical_system().critical_height(*kwds)
-
-    def periodic_points(self, n, minimal=True, R=None, algorithm='variety', return_scheme=False):
-        """
-        Return the periodic points.
-
-        EXAMPLES::
-
-            sage: set_verbose(None)
-            sage: P.<x,y> = ProjectiveSpace(QQbar,1)
-            sage: H = End(P)
-            sage: f = H([x^2-x*y+y^2, x^2-y^2+x*y])
-            sage: f.periodic_points(1)
-            doctest:warning
-            ...
-            [(-0.500000000000000? - 0.866025403784439?*I : 1), (-0.500000000000000? + 0.866025403784439?*I : 1),
-            (1 : 1)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.periodic_points instead")
-        return self.as_dynamical_system().periodic_points(n, minimal, R, algorithm, return_scheme)
-
-    def multiplier_spectra(self, n, formal=False, embedding=None, type='point'):
-        r"""
-        Computes the formal ``n`` multiplier spectra of this map.
-
-        This is the set of multipliers of the periodic points of formal period
-        ``n`` included with the appropriate multiplicity.
-        User can also specify to compute the ``n`` multiplier spectra instead which includes the
-        multipliers of all periodic points of period ``n``.The map must be defined over
-        projective space of dimension 1 over a number field.
-
-        The parameter ``type`` determines if the multipliers are computed one per cycle
-        (with multiplicity) or one per point (with multiplicity). Note that in the
-        ``cycle`` case, a map with a cycle which collapses into multiple smaller cycles
-        will have more multipliers than one that does not.
-
-        INPUT:
-
-        - ``n`` - a positive integer, the period.
-
-        - ``formal`` - a Boolean. True specifies to find the formal ``n`` multiplier spectra
-            of this map. False specifies to find the ``n`` multiplier spectra
-            of this map. Default: False.
-
-        - ``embedding`` - embedding of the base field into `\QQbar`.
-
-        - ``type`` - string - either ``point`` or ``cycle`` depending on whether you
-            compute one multiplier per point or one per cycle. Default : ``point``.
-
-        OUTPUT:
-
-        - a list of `\QQbar` elements.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([4608*x^10 - 2910096*x^9*y + 325988068*x^8*y^2 + 31825198932*x^7*y^3 - 4139806626613*x^6*y^4\
-            - 44439736715486*x^5*y^5 + 2317935971590902*x^4*y^6 - 15344764859590852*x^3*y^7 + 2561851642765275*x^2*y^8\
-            + 113578270285012470*x*y^9 - 150049940203963800*y^10, 4608*y^10])
-            sage: f.multiplier_spectra(1)
-            doctest:warning
-            ...
-            [0, -7198147681176255644585/256, 848446157556848459363/19683, -3323781962860268721722583135/35184372088832,
-            529278480109921/256, -4290991994944936653/2097152, 1061953534167447403/19683, -3086380435599991/9,
-            82911372672808161930567/8192, -119820502365680843999, 3553497751559301575157261317/8192]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.multiplier_spectra instead")
-        return self.as_dynamical_system().multiplier_spectra(n, formal, embedding)
-
-    def sigma_invariants(self, n, formal=False, embedding=None, type='point'):
-        r"""
-        Computes the values of the elementary symmetric polynomials of the ``n``
-        multiplier spectra of this dynamical system.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: H = End(P)
-            sage: f = H([512*x^5 - 378128*x^4*y + 76594292*x^3*y^2 - 4570550136*x^2*y^3\
-             - 2630045017*x*y^4 + 28193217129*y^5, 512*y^5])
-            sage: f.sigma_invariants(1)
-            doctest:warning
-            ...
-            [19575526074450617/1048576, -9078122048145044298567432325/2147483648,
-            -2622661114909099878224381377917540931367/1099511627776,
-            -2622661107937102104196133701280271632423/549755813888,
-            338523204830161116503153209450763500631714178825448006778305/72057594037927936, 0]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.sigma_invariants instead")
-        return self.as_dynamical_system().sigma_invariants(n, formal, embedding)
-
-    def reduced_form(self, prec=300, return_conjugation=True, error_limit=0.000001):
-        """
-        Return the reduced form of the map.
-
-        EXAMPLES::
-
-            sage: PS.<x,y> = ProjectiveSpace(QQ, 1)
-            sage: H = End(PS)
-            sage: f = H([x^3, 10794303*x^3 + 146526*x^2*y + 663*x*y^2 + y^3])
-            sage: f.reduced_form()
-            doctest:warning
-            ...
-            (
-            Dynamical System of Projective Space of dimension 1 over Rational Field
-              Defn: Defined on coordinates by sending (x : y) to
-                    (x^3 + 3*x*y^2 : y^3) ,
-            <BLANKLINE>
-            [  0  -1]
-            [  1 221]
-            )
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.reduced_form instead")
-        return self.as_dynamical_system().reduced_form(prec=prec,\
-            return_conjugation=return_conjugation, error_limit=error_limit)
+        return R.ideal(J.minors(N))
 
 
 class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial_projective_space):
-
-    def lift_to_rational_periodic(self, points_modp, B=None):
-        """
-        Return the rational lift of the modp periodic points.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2 - y^2, y^2])
-            sage: f.lift_to_rational_periodic([[P(0,1).change_ring(GF(7)), 4]])
-            doctest:warning
-            ...
-            [[(0 : 1), 2]]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.lift_to_rational_periodic instead")
-        return self.as_dynamical_system().lift_to_rational_periodic(points_modp, B)
-
-    def rational_periodic_points(self, **kwds):
-        """
-        Return the list of all rational periodic points.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2-3/4*y^2, y^2])
-            sage: sorted(f.rational_periodic_points(prime_bound=20, lifting_prime=7)) # long time
-            doctest:warning
-            ...
-            [(-1/2 : 1), (1 : 0), (3/2 : 1)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.rational_periodic_points instead")
-        return self.as_dynamical_system().rational_periodic_points(**kwds)
 
     def rational_preimages(self, Q, k=1):
         r"""
@@ -1803,7 +1486,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         - a list of rational points or a subscheme in the domain of this map.
 
-        Examples::
+        EXAMPLES::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
@@ -1873,11 +1556,13 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P.subscheme([x^2 - z^2])
             sage: H = End(X)
-            sage: f= H([x^2-z^2, y^2, z^2-x^2])
+            sage: f = H([x^2-z^2, y^2, z^2-x^2])
             sage: f.rational_preimages(X([0, 1, 0]))
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: subschemes as preimages not implemented
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+            x^2 - z^2,
+            -x^2 + z^2,
+            0,
+            -x^2 + z^2
 
         ::
 
@@ -1908,11 +1593,11 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         """
         k = ZZ(k)
         if k <= 0:
-            raise ValueError("k (=%s) must be a positive integer"%(k))
+            raise ValueError("k (=%s) must be a positive integer" % k)
         #first check if subscheme
         from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
         if isinstance(Q, AlgebraicScheme_subscheme_projective):
-            return(Q.preimage(self, k))
+            return Q.preimage(self, k)
 
         #else assume a point
         BR = self.base_ring()
@@ -1934,7 +1619,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                         I.append(P[i]*self[j] - P[j]*self[i])
                 X = PS.subscheme(I)
                 if X.dimension() > 0:
-                    raise NotImplementedError("subschemes as preimages not implemented")
+                    return X
                 preimages = []
                 for T in X.rational_points():
                     if not all(g(tuple(T)) == 0 for g in self):
@@ -1942,141 +1627,6 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 L2 = L2 + preimages
             L = L2
         return L
-
-    def all_rational_preimages(self, points):
-        """
-        Return the list of all rational preimages.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([16*x^2 - 29*y^2, 16*y^2])
-            sage: sorted(f.all_rational_preimages([P(-1,4)]))
-            doctest:warning
-            ...
-            [(-7/4 : 1), (-5/4 : 1), (-3/4 : 1), (-1/4 : 1), (1/4 : 1), (3/4 : 1),
-            (5/4 : 1), (7/4 : 1)]
-
-        ::
-
-            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
-            sage: H = End(P)
-            sage: f = H([76*x^2 - 180*x*y + 45*y^2 + 14*x*z + 45*y*z - 90*z^2, 67*x^2 - 180*x*y - 157*x*z + 90*y*z, -90*z^2])
-            sage: sorted(f.all_rational_preimages([P(-9,-4,1)]))
-            [(-9 : -4 : 1), (0 : -1 : 1), (0 : 0 : 1), (0 : 1 : 1), (0 : 4 : 1), (1
-            : 0 : 1), (1 : 1 : 1), (1 : 2 : 1), (1 : 3 : 1)]
-
-        A non-periodic example ::
-
-            sage: P.<x,y> = ProjectiveSpace(QQ,1)
-            sage: H = End(P)
-            sage: f = H([x^2 + y^2, 2*x*y])
-            sage: sorted(f.all_rational_preimages([P(17,15)]))
-            [(1/3 : 1), (3/5 : 1), (5/3 : 1), (3 : 1)]
-
-        A number field example.::
-
-            sage: z = QQ['z'].0
-            sage: K.<w> = NumberField(z^3 + (z^2)/4 - (41/16)*z + 23/64);
-            sage: P.<x,y> = ProjectiveSpace(K,1)
-            sage: H = End(P)
-            sage: f = H([16*x^2 - 29*y^2, 16*y^2])
-            sage: f.all_rational_preimages([P(16*w^2 - 29,16)])
-            [(-w^2 + 21/16 : 1),
-             (w : 1),
-             (w + 1/2 : 1),
-             (w^2 + w - 33/16 : 1),
-             (-w^2 - w + 25/16 : 1),
-             (w^2 - 21/16 : 1),
-             (-w^2 - w + 33/16 : 1),
-             (-w : 1),
-             (-w - 1/2 : 1),
-             (-w^2 + 29/16 : 1),
-             (w^2 - 29/16 : 1),
-             (w^2 + w - 25/16 : 1)]
-
-        ::
-
-            sage: K.<w> = QuadraticField(3)
-            sage: P.<u,v> = ProjectiveSpace(K,1)
-            sage: H = End(P)
-            sage: f = H([u^2+v^2, v^2])
-            sage: f.all_rational_preimages(P(4))
-            [(-w : 1), (w : 1)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.all_rational_preimages instead")
-        return self.as_dynamical_system().all_rational_preimages(points)
-
-    def rational_preperiodic_points(self, **kwds):
-        """
-        Return the list of all rational preperiodic points.
-
-        EXAMPLES::
-
-            sage: PS.<x,y> = ProjectiveSpace(1,QQ)
-            sage: H = End(PS)
-            sage: f = H([x^2 -y^2, 3*x*y])
-            sage: sorted(f.rational_preperiodic_points())
-            doctest:warning
-            ...
-            [(-2 : 1), (-1 : 1), (-1/2 : 1), (0 : 1), (1/2 : 1), (1 : 0), (1 : 1),
-            (2 : 1)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.rational_preperiodic_points instead")
-        return self.as_dynamical_system().rational_preperiodic_points(**kwds)
-
-    def rational_preperiodic_graph(self, **kwds):
-        """
-        Return the digraph of rational preperiodic points.
-
-        EXAMPLES::
-
-            sage: PS.<x,y> = ProjectiveSpace(1,QQ)
-            sage: H = End(PS)
-            sage: f = H([7*x^2 - 28*y^2, 24*x*y])
-            sage: f.rational_preperiodic_graph()
-            doctest:warning
-            ...
-            Looped digraph on 12 vertices
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.rational_preperiodic_graph instead")
-        return self.as_dynamical_system().rational_preperiodic_graph(**kwds)
-
-    def connected_rational_component(self, P, n=0):
-        """
-        Return the component of all rational preimage and forward images.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<w> = NumberField(x^3+1/4*x^2-41/16*x+23/64)
-            sage: PS.<x,y> = ProjectiveSpace(1,K)
-            sage: H = End(PS)
-            sage: f = H([x^2 - 29/16*y^2, y^2])
-            sage: P = PS([w,1])
-            sage: f.connected_rational_component(P)
-            doctest:warning
-            ...
-            [(w : 1),
-             (w^2 - 29/16 : 1),
-             (-w^2 - w + 25/16 : 1),
-             (w^2 + w - 25/16 : 1),
-             (-w : 1),
-             (-w^2 + 29/16 : 1),
-             (w + 1/2 : 1),
-             (-w - 1/2 : 1),
-             (-w^2 + 21/16 : 1),
-             (w^2 - 21/16 : 1),
-             (w^2 + w - 33/16 : 1),
-             (-w^2 - w + 33/16 : 1)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.connected_rational_component instead")
-        return self.as_dynamical_system().connected_rational_component(P, n)
 
     def _number_field_from_algebraics(self):
         r"""
@@ -2094,24 +1644,28 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)
             sage: f = H([QQbar(3^(1/3))*x^2 + QQbar(sqrt(-2))*y^2, y^2])
             sage: f._number_field_from_algebraics()
-            Scheme endomorphism of Projective Space of dimension 1 over Number Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
-              Defn: Defined on coordinates by sending (z0 : z1) to
-                    ((-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2 - 772/269*a - 1092/269)*z0^2 + (48/269*a^5 - 27/269*a^4 + 320/269*a^3 - 468/269*a^2 + 1041/269*a + 1092/269)*z1^2 : z1^2)
+            Scheme endomorphism of Projective Space of dimension 1 over Number
+            Field in a with defining polynomial y^6 + 6*y^4 - 6*y^3 + 12*y^2 + 36*y + 17
+            with a = 1.442249570307409? + 1.414213562373095?*I
+              Defn: Defined on coordinates by sending (x : y) to
+                    ((-48/269*a^5 + 27/269*a^4 - 320/269*a^3 + 468/269*a^2 - 772/269*a
+                    - 1092/269)*x^2 + (48/269*a^5 - 27/269*a^4 + 320/269*a^3 - 468/269*a^2
+                    + 1041/269*a + 1092/269)*y^2 : y^2)
 
         ::
 
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<a> = NumberField(x^3-x+1)
             sage: P.<x,y> = ProjectiveSpace(QQbar,1)
             sage: P2.<u,v,w> = ProjectiveSpace(QQbar,2)
             sage: H = Hom(P, P2)
             sage: f = H([x^2 + QQbar(I)*x*y + 3*y^2, y^2, QQbar(sqrt(5))*x*y])
             sage: f._number_field_from_algebraics()
             Scheme morphism:
-              From: Projective Space of dimension 1 over Number Field in a with defining polynomial y^4 + 3*y^2 + 1
-              To:   Projective Space of dimension 2 over Number Field in a with defining polynomial y^4 + 3*y^2 + 1
-              Defn: Defined on coordinates by sending (z0 : z1) to
-                    (z0^2 + (a^3 + 2*a)*z0*z1 + 3*z1^2 : z1^2 : (2*a^2 + 3)*z0*z1)
+              From: Projective Space of dimension 1 over Number Field in a with
+              defining polynomial y^4 + 3*y^2 + 1 with a = 0.?e-113 + 0.618033988749895?*I
+              To:   Projective Space of dimension 2 over Number Field in a with
+              defining polynomial y^4 + 3*y^2 + 1 with a = 0.?e-113 + 0.618033988749895?*I
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + (a^3 + 2*a)*x*y + 3*y^2 : y^2 : (2*a^2 + 3)*x*y)
 
         The following was fixed in :trac:`23808`::
 
@@ -2127,15 +1681,21 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f_alg = f._number_field_from_algebraics()
             sage: f_alg.change_ring(QQbar) # Used to fail
             Scheme endomorphism of Projective Space of dimension 1 over Algebraic Field
-              Defn: Defined on coordinates by sending (z0 : z1) to
-                    ((-0.6823278038280193?)*z0^3 + (-13)*z1^3 : (-14)*z1^3)
-
+              Defn: Defined on coordinates by sending (x : y) to
+                    ((-0.6823278038280193?)*x^3 + (-13)*y^3 : (-14)*y^3)
         """
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
         if not (is_ProjectiveSpace(self.domain()) and is_ProjectiveSpace(self.domain())):
             raise NotImplementedError("not implemented for subschemes")
 
-        K_pre,C,phi = number_field_elements_from_algebraics([c for f in self for c in f.coefficients()])
+        K_pre,C,phi = number_field_elements_from_algebraics([c for f in self \
+            for c in f.coefficients()], minimal=True)
+        # check if the same field
+        if K_pre is QQ:
+            if K_pre is self.base_ring():
+                return self
+        elif self.base_ring() != QQbar and K_pre.is_isomorphic(self.base_ring()):
+            return self
         # Trac 23808: The field K_pre returned above does not have its embedding set to be phi
         # and phi is forgotten, so we redefine K_pre to be a field K with phi as the specified
         # embedding:
@@ -2148,11 +1708,12 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             C = [ psi(c) for c in C ] # The elements of C were in K_pre, move them to K
         from sage.schemes.projective.projective_space import ProjectiveSpace
         N = self.domain().dimension_relative()
-        PS = ProjectiveSpace(K,N,'z')
+        PS = ProjectiveSpace(K,N,self.domain().variable_names())
         if self.is_endomorphism():
             H = End(PS)
         else:
-            PS2 = ProjectiveSpace(K,self.codomain().dimension_relative(),'w')
+            PS2 = ProjectiveSpace(K,self.codomain().dimension_relative(),\
+                self.codomain().variable_names())
             H = Hom(PS,PS2)
         R = PS.coordinate_ring()
         exps = [f.exponents() for f in self]
@@ -2164,107 +1725,24 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
                 G += C[j]*prod([R.gen(i)**e[i] for i in range(N+1)])
                 j += 1
             F.append(G)
-        return(H(F))
+        return H(F)
 
-    def conjugating_set(self, other):
-        """
-        Return the set of PGL element that conjugate this map to ``other``.
-
-        EXAMPLES::
-
-            sage: P.<x,y> = ProjectiveSpace(GF(7),1)
-            sage: H = End(P)
-            sage: D6 = H([y^2, x^2])
-            sage: D6.conjugating_set(D6)
-            doctest:warning
-            ...
-            [
-            [1 0]  [0 1]  [0 2]  [4 0]  [2 0]  [0 4]
-            [0 1], [1 0], [1 0], [0 1], [0 1], [1 0]
-            ]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.conjugating_set instead")
-        return self.as_dynamical_system().conjugating_set(other)
-
-    def is_conjugate(self, other):
-        """
-        Return if this map and ``other`` are conjugate.
-
-        EXAMPLES::
-
-            sage: K.<w> = CyclotomicField(3)
-            sage: P.<x,y> = ProjectiveSpace(K,1)
-            sage: H = End(P)
-            sage: D8 = H([y^2, x^2])
-            sage: D8.is_conjugate(D8)
-            doctest:warning
-            ...
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.is_conjugate instead")
-        return self.as_dynamical_system().is_conjugate(other)
-
-    def is_polynomial(self):
-        """
-        Return if this map is a polynomial.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: K.<w> = QuadraticField(7)
-            sage: P.<x,y> = ProjectiveSpace(K, 1)
-            sage: H = End(P)
-            sage: f = H([x**2 + 2*x*y - 5*y**2, 2*x*y])
-            sage: f.is_polynomial()
-            doctest:warning
-            ...
-            False
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.is_polynomial instead")
-        return self.as_dynamical_system().is_polynomial()
-
-    def normal_form(self, return_conjugation=False):
-        """
-        Return a normal form conjugate to this map.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^2 - 5)
-            sage: P.<x,y> = ProjectiveSpace(K,1)
-            sage: H = End(P)
-            sage: f = H([x^2 + w*x*y, y^2])
-            sage: g,m,psi = f.normal_form(return_conjugation = True);m
-            doctest:warning
-            ...
-            [     1 -1/2*w]
-            [     0      1]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.normal_form instead")
-        return self.as_dynamical_system().normal_form(return_conjugation)
-
-    def indeterminacy_locus(self):
+    def base_indeterminacy_locus(self):
         r"""
-        Return the indeterminacy locus of this map.
+        Return the base indeterminacy locus of this map.
 
-        Only for rational maps on projective space defined over a field.
-        The indeterminacy locus is the set of points in projective space at which all of the defining polynomials of the rational map simultaneously vanish.
+        The base indeterminacy locus is the set of points in projective space
+        at which all of the defining polynomials of the rational map
+        simultaneously vanish.
 
-        OUTPUT:
-
-        - subscheme of the domain of the map.  The empty subscheme is returned as the vanishing
-          of the coordinate functions of the domain.
+        OUTPUT: a subscheme of the domain of the map
 
         EXAMPLES::
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
             sage: H = End(P)
             sage: f = H([x*z-y*z, x^2-y^2, z^2])
-            sage: f.indeterminacy_locus()
+            sage: f.base_indeterminacy_locus()
             Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
                 x*z - y*z,
                 x^2 - y^2,
@@ -2275,7 +1753,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
             sage: H = End(P)
             sage: f = H([x^2, y^2, z^2])
-            sage: f.indeterminacy_locus()
+            sage: f.base_indeterminacy_locus()
             Closed subscheme of Projective Space of dimension 2 over Rational Field
             defined by:
                 x^2,
@@ -2288,7 +1766,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P2.<t,u,v,w> = ProjectiveSpace(RR,3)
             sage: H = Hom(P1,P2)
             sage: h = H([y^3*z^3, x^3*z^3, y^3*z^3, x^2*y^2*z^2])
-            sage: h.indeterminacy_locus()
+            sage: h.base_indeterminacy_locus()
             Closed subscheme of Projective Space of dimension 2 over Real Field with
             53 bits of precision defined by:
               y^3*z^3,
@@ -2301,45 +1779,82 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P.<x,y,z>=ProjectiveSpace(QQ,2)
             sage: H=End(P)
             sage: f=H([x*x^2,x*y^2,x*z^2])
-            sage: f.indeterminacy_locus()
+            sage: f.base_indeterminacy_locus()
             Closed subscheme of Projective Space of dimension 2 over Rational Field
             defined by:
               x^3,
               x*y^2,
               x*z^2
-
-        ::
-
-            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: X = P.subscheme(x-y)
-            sage: H = End(X)
-            sage: f = H([x^2-4*y^2, y^2-z^2, 4*z^2-x^2])
-            sage: Z = f.indeterminacy_locus(); Z
-            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
-              x - y,
-              x^2 - 4*y^2,
-              y^2 - z^2,
-              -x^2 + 4*z^2
-            sage: Z.dimension()
-            -1
         """
         dom = self.domain()
         AS = dom.ambient_space()
         return AS.subscheme(list(dom.defining_polynomials()) + list(self.defining_polynomials()))
 
-    def indeterminacy_points(self, F=None):
+    def indeterminacy_locus(self):
         r"""
-        Return the indeterminacy locus of this map defined over ``F``.
+        Return the indeterminacy locus of this map as a rational map on the domain.
 
-        Only for rational maps on projective space. Returns the set of points in projective space at which all of the defining polynomials of the rational map simultaneously vanish.
+        The indeterminacy locus is the intersection of all the base indeterminacy
+        locuses of maps that define the same rational map as by this map.
+
+        OUTPUT: a subscheme of the domain of the map
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x^2, y^2, z^2])
+            sage: f.indeterminacy_locus()
+            ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
+            See https://trac.sagemath.org/29145 for details.
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              z,
+              y,
+              x
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x*z - y*z, x^2 - y^2, z^2])
+            sage: f.indeterminacy_locus()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              z,
+              x^2 - y^2
+
+        There is related :meth:`base_indeterminacy_locus()` method. This
+        computes the indeterminacy locus only from the defining polynomials of
+        the map::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: H = End(P)
+            sage: f = H([x*z - y*z, x^2 - y^2, z^2])
+            sage: f.base_indeterminacy_locus()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x*z - y*z,
+              x^2 - y^2,
+              z^2
+
+        """
+        from sage.misc.superseded import deprecation
+        deprecation(29145, "The meaning of indeterminacy_locus() has changed. Read the docstring.")
+        P = self.domain()
+        X = P.subscheme(0)  # projective space as a subscheme
+        return (self*X.hom(P.gens(), P)).indeterminacy_locus()
+
+    def indeterminacy_points(self, F=None, base=False):
+        r"""
+        Return the points in the indeterminacy locus of this map.
+
+        If the dimension of the indeterminacy locus is not zero, an error is raised.
 
         INPUT:
 
-        - ``F`` - a field (optional).
+        - ``F`` -- a field; if not given, the base ring of the domain is assumed
 
-        OUTPUT:
+        - ``base`` -- if ``True``, the base indeterminacy locus is used
 
-        - indeterminacy points of the map defined over ``F``, provided the indeterminacy scheme is 0-dimensional.
+        OUTPUT: indeterminacy points of the map defined over ``F``
 
         EXAMPLES::
 
@@ -2347,6 +1862,8 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: H = End(P)
             sage: f = H([x*z-y*z, x^2-y^2, z^2])
             sage: f.indeterminacy_points()
+            ... DeprecationWarning: The meaning of indeterminacy_locus() has changed. Read the docstring.
+            See https://trac.sagemath.org/29145 for details.
             [(-1 : 1 : 0), (1 : 1 : 0)]
 
         ::
@@ -2355,10 +1872,11 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: P2.<t,u,v,w> = ProjectiveSpace(RR,3)
             sage: H = Hom(P1,P2)
             sage: h = H([x+y, y, z+y, y])
-            sage: h.indeterminacy_points()
+            sage: set_verbose(None)
+            sage: h.indeterminacy_points(base=True)
             []
             sage: g = H([y^3*z^3, x^3*z^3, y^3*z^3, x^2*y^2*z^2])
-            sage: g.indeterminacy_points()
+            sage: g.indeterminacy_points(base=True)
             Traceback (most recent call last):
             ...
             ValueError: indeterminacy scheme is not dimension 0
@@ -2375,26 +1893,26 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f.indeterminacy_points(F=K)
             [(-a : 1 : 0), (0 : 0 : 1), (a : 1 : 0)]
             sage: set_verbose(None)
-            sage: f.indeterminacy_points(F=QQbar)
+            sage: f.indeterminacy_points(F=QQbar, base=True)
             [(-1*I : 1 : 0), (0 : 0 : 1), (1*I : 1 : 0)]
 
         ::
 
             sage: set_verbose(None)
-            sage: K.<t>=FunctionField(QQ)
-            sage: P.<x,y,z>=ProjectiveSpace(K,2)
-            sage: H=End(P)
-            sage: f=H([x^2-t^2*y^2,y^2-z^2,x^2-t^2*z^2])
-            sage: f.indeterminacy_points()
+            sage: K.<t> = FunctionField(QQ)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: H = End(P)
+            sage: f = H([x^2 - t^2*y^2, y^2 - z^2, x^2 - t^2*z^2])
+            sage: f.indeterminacy_points(base=True)
             [(-t : -1 : 1), (-t : 1 : 1), (t : -1 : 1), (t : 1 : 1)]
 
         ::
 
             sage: set_verbose(None)
-            sage: P.<x,y,z>=ProjectiveSpace(Qp(3),2)
-            sage: H=End(P)
-            sage: f=H([x^2-7*y^2,y^2-z^2,x^2-7*z^2])
-            sage: f.indeterminacy_points()
+            sage: P.<x,y,z> = ProjectiveSpace(Qp(3), 2)
+            sage: H = End(P)
+            sage: f = H([x^2 - 7*y^2, y^2 - z^2, x^2 - 7*z^2])
+            sage: f.indeterminacy_points(base=True)
             [(2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8 + 3^9 + 2*3^11 + 3^15 +
             2*3^16 + 3^18 + O(3^20) : 1 + O(3^20) : 1 + O(3^20)),
             (2 + 3 + 3^2 + 2*3^3 + 2*3^5 + 2*3^6 + 3^8 + 3^9 + 2*3^11 + 3^15 +
@@ -2417,12 +1935,213 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             if not F.is_field():
                 raise NotImplementedError("indeterminacy points only implemented for fields")
             fcn = self.change_ring(F)
-        indScheme = fcn.indeterminacy_locus()
+        if base:
+            indScheme = fcn.base_indeterminacy_locus()
+        else:
+            indScheme = fcn.indeterminacy_locus()
         if indScheme.dimension() > 0:
             raise ValueError("indeterminacy scheme is not dimension 0")
         # Other error checking is in indeterminacy_locus
         indPoints = indScheme.rational_points()
         return indPoints
+
+    def reduce_base_field(self):
+        """
+        Return this map defined over the field of definition of the coefficients.
+
+        The base field of the map could be strictly larger than
+        the field where all of the coefficients are defined. This function
+        reduces the base field to the minimal possible. This can be done when
+        the base ring is a number field, QQbar, a finite field, or algebraic
+        closure of a finite field.
+
+        OUTPUT: A scheme morphism.
+
+        EXAMPLES::
+
+            sage: K.<t> = GF(3^4)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: P2.<a,b,c> = ProjectiveSpace(K, 2)
+            sage: H = End(P)
+            sage: H2 = Hom(P,P2)
+            sage: H3 = Hom(P2,P)
+            sage: f = H([x^2 + (2*t^3 + 2*t^2 + 1)*y^2, y^2])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Projective Space of dimension 1 over Finite Field in t2 of size 3^2
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + (t2)*y^2 : y^2)
+            sage: f2 = H2([x^2 + 5*y^2,y^2, 2*x*y])
+            sage: f2.reduce_base_field()
+            Scheme morphism:
+              From: Projective Space of dimension 1 over Finite Field of size 3
+              To:   Projective Space of dimension 2 over Finite Field of size 3
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 - y^2 : y^2 : -x*y)
+            sage: f3 = H3([a^2 + t*b^2, c^2])
+            sage: f3.reduce_base_field()
+            Scheme morphism:
+              From: Projective Space of dimension 2 over Finite Field in t of size 3^4
+              To:   Projective Space of dimension 1 over Finite Field in t of size 3^4
+              Defn: Defined on coordinates by sending (a : b : c) to
+                    (a^2 + (t)*b^2 : c^2)
+
+        ::
+
+            sage: K.<v> = CyclotomicField(4)
+            sage: P.<x,y> = ProjectiveSpace(K, 1)
+            sage: H = End(P)
+            sage: f = H([x^2 + 2*y^2, y^2])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + 2*y^2 : y^2)
+
+        ::
+
+            sage: K.<v> = GF(5)
+            sage: L = K.algebraic_closure()
+            sage: P.<x,y> = ProjectiveSpace(L, 1)
+            sage: H = End(P)
+            sage: f = H([(L.gen(2))*x^2 + L.gen(4)*y^2, x*y])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Projective Space of dimension 1 over Finite Field in z4 of size 5^4
+              Defn: Defined on coordinates by sending (x : y) to
+                    ((z4^3 + z4^2 + z4 - 2)*x^2 + (z4)*y^2 : x*y)
+            sage: f=DynamicalSystem_projective([L.gen(3)*x^2 + L.gen(2)*y^2, x*y])
+            sage: f.reduce_base_field()
+            Dynamical System of Projective Space of dimension 1 over Finite Field in z6 of size 5^6
+              Defn: Defined on coordinates by sending (x : y) to
+                    ((-z6^5 + z6^4 - z6^3 - z6^2 - 2*z6 - 2)*x^2 + (z6^5 - 2*z6^4 + z6^2 - z6 + 1)*y^2 : x*y)
+        """
+        K = self.base_ring()
+        if K in NumberFields() or K is QQbar:
+            return self._number_field_from_algebraics()
+        if K in FiniteFields():
+            #find the degree of the extension containing the coefficients
+            c = [v for g in self for v in g.coefficients()]
+            d = lcm([a.minpoly().degree() for a in c])
+            if d == 1:
+                return self.change_ring(GF(K.characteristic()))
+            if d == K.degree():
+                return self
+            # otherwise we are not in the prime subfield so coercion
+            # to it does not work
+            for L,phi in K.subfields():
+                # find the right subfield and its embedding
+                if L.degree() == d:
+                    break
+            # we need to rewrite each of the coefficients in terms of the generator
+            # of L. To do this, we'll set-up an ideal and use elimination
+            R = PolynomialRing(K.prime_subfield(), 2, 'a')
+            a,b = R.gens()
+            from sage.schemes.projective.projective_space import ProjectiveSpace
+            new_domain = ProjectiveSpace(L, self.domain().dimension_relative(),\
+                self.domain().variable_names())
+            new_R = new_domain.coordinate_ring()
+            u = phi(L.gen()) # gen of L in terms of gen of K
+            g = R(str(u).replace(K.variable_name(),R.variable_names()[0])) #converted to R
+            new_f = []
+            for fi in self:
+                mon = fi.monomials()
+                mon_deg = [m.degrees() for m in mon]
+                coef = fi.coefficients()
+                new_c = []
+                for c in coef:
+                    # for each coefficient do the elimination
+                    w = R(str(c).replace(K.variable_name(), R.variable_names()[0]))
+                    I = R.ideal([b-g, w])
+                    v = I.elimination_ideal([a]).gen(0)
+                    # elimination can change scale the result, so correct the leading coefficient
+                    # and convert back to L
+                    if v.subs({b:g}).lc() == w.lc():
+                        new_c.append(L(str(v).replace(R.variable_names()[1], L.variable_name())))
+                    else:
+                        new_c.append(L(str(w.lc()*v).replace(R.variable_names()[1], L.variable_name())))
+                # reconstruct as a poly in the new domain
+                new_f.append(sum(new_c[i]*prod(new_R.gen(j)**mon_deg[i][j]
+                                               for j in range(new_R.ngens()))
+                                 for i in range(len(mon))))
+            # return the correct type of map
+            if self.is_endomorphism():
+                H = Hom(new_domain, new_domain)
+            else:
+                new_codomain = ProjectiveSpace(L, self.codomain().dimension_relative(), self.codomain().variable_names())
+                H = Hom(new_domain, new_codomain)
+            return H(new_f)
+        elif isinstance(K, AlgebraicClosureFiniteField_generic):
+            self.domain().coordinate_ring()
+            #find the degree of the extension containing the coefficients
+            c = [v for g in self for v in g.coefficients()]
+            d = lcm([a.minpoly().degree() for a in c])
+            if d == 1:
+                return self.change_ring(GF(K.characteristic()))
+            #else get the appropriate subfield
+            L, L_to_K = K.subfield(d)
+            from sage.schemes.projective.projective_space import ProjectiveSpace
+            new_domain = ProjectiveSpace(L, self.domain().dimension_relative(),\
+                self.domain().variable_names())
+            new_R = new_domain.coordinate_ring()
+            # we need to rewrite each of the coefficients in terms of the generator
+            # of L. To do this, we'll set-up an ideal and use elimination
+            new_f = []
+            for fi in self:
+                mon = fi.monomials()
+                mon_deg = [m.degrees() for m in mon]
+                coef = fi.coefficients()
+                new_c = []
+                for c in coef:
+                    # for each coefficient move to the correct base field
+                    da = c.minpoly().degree()
+                    for M,M_to_L in L.subfields():
+                        #find the right subfield and it's embedding
+                        if M.degree() == da:
+                            break
+                    c = M((str(c).replace(c.as_finite_field_element()[0].variable_name(),\
+                          M.variable_name())))
+                    new_c.append(M_to_L(c))
+                # reconstruct as a poly in the new domain
+                new_f.append(sum([new_c[i]*prod([new_R.gen(j)**mon_deg[i][j] \
+                                for j in range(new_R.ngens())]) for i in range(len(mon))]))
+            # return the correct type of map
+            if self.is_endomorphism():
+                H = Hom(new_domain, new_domain)
+            else:
+                new_codomain = ProjectiveSpace(L, self.codomain().dimension_relative(), self.codomain().variable_names())
+                H = Hom(new_domain, new_codomain)
+            return H(new_f)
+        raise NotImplementedError("only implemented for number fields and finite fields")
+
+    def image(self):
+        """
+        Return the scheme-theoretic image of the morphism.
+
+        OUTPUT: a subscheme of the ambient space of the codomain
+
+        EXAMPLES::
+
+            sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
+            sage: f = P2.hom([x0^3, x0^2*x1, x0*x1^2], P2)
+            sage: f.image()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x1^2 - x0*x2
+            sage: f = P2.hom([x0 - x1, x0 - x2, x1 - x2], P2)
+            sage: f.image()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x0 - x1 + x2
+
+        ::
+
+            sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
+            sage: A2.<x,y> = AffineSpace(QQ, 2)
+            sage: f = P2.hom([1,x0/x1], A2)
+            sage: f.image()
+            Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+              -x + 1
+        """
+        X = self.domain().subscheme(0)
+        e = X.embedding_morphism()
+        return (self*e).image()
+
 
 class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_polynomial_projective_space_field):
 
@@ -2445,78 +2164,324 @@ class SchemeMorphism_polynomial_projective_space_finite_field(SchemeMorphism_pol
             P = [f(*x) for f in self._fastpolys]
         return P
 
-    def orbit_structure(self, P):
+
+class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polynomial_projective_space_field):
+    """
+    Morphisms from subschemes of projective spaces defined over fields.
+    """
+    @cached_method
+    def representatives(self):
         """
-        Return the tail and period of the point.
+        Return all maps representing the same rational map as by this map.
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(5),2)
-            sage: H = End(P)
-            sage: f = H([x^2 + y^2,y^2, z^2 + y*z])
-            sage: f.orbit_structure(P(2,1,2))
-            doctest:warning
-            ...
-            [0, 6]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.orbit_structure instead")
-        return self.as_dynamical_system().orbit_structure(P)
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: X = P2.subscheme(0)
+            sage: f = X.hom([x^2*y, x^2*z, x*y*z], P2)
+            sage: f.representatives()
+            [Scheme morphism:
+               From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+               0
+               To:   Projective Space of dimension 2 over Rational Field
+               Defn: Defined on coordinates by sending (x : y : z) to
+                     (x*y : x*z : y*z)]
 
-    def cyclegraph(self):
+        ::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: P1.<a,b> = ProjectiveSpace(QQ,1)
+            sage: X = P2.subscheme([x^2 - y^2 - y*z])
+            sage: f = X.hom([x, y], P1)
+            sage: f.representatives()
+            [Scheme morphism:
+               From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+               x^2 - y^2 - y*z
+               To:   Projective Space of dimension 1 over Rational Field
+               Defn: Defined on coordinates by sending (x : y : z) to
+                     (y + z : x),
+            Scheme morphism:
+               From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+               x^2 - y^2 - y*z
+               To:   Projective Space of dimension 1 over Rational Field
+               Defn: Defined on coordinates by sending (x : y : z) to
+                     (x : y)]
+            sage: g = _[0]
+            sage: g.representatives()
+            [Scheme morphism:
+               From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+               x^2 - y^2 - y*z
+               To:   Projective Space of dimension 1 over Rational Field
+               Defn: Defined on coordinates by sending (x : y : z) to
+                     (y + z : x),
+            Scheme morphism:
+               From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+               x^2 - y^2 - y*z
+               To:   Projective Space of dimension 1 over Rational Field
+               Defn: Defined on coordinates by sending (x : y : z) to
+                     (x : y)]
+
+        ::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: X = P2.subscheme([x^2 - y^2 - y*z])
+            sage: A1.<a> = AffineSpace(QQ,1)
+            sage: g = X.hom([y/x], A1)
+            sage: g.representatives()
+            [Scheme morphism:
+               From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+               x^2 - y^2 - y*z
+               To:   Affine Space of dimension 1 over Rational Field
+               Defn: Defined on coordinates by sending (x : y : z) to
+                     (x/(y + z)),
+            Scheme morphism:
+               From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+               x^2 - y^2 - y*z
+               To:   Affine Space of dimension 1 over Rational Field
+               Defn: Defined on coordinates by sending (x : y : z) to
+                     (y/x)]
+            sage: g0, g1 = _
+            sage: emb = A1.projective_embedding(0)
+            sage: emb*g0
+            Scheme morphism:
+              From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x^2 - y^2 - y*z
+              To:   Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y : z) to
+                    (y + z : x)
+            sage: emb*g1
+            Scheme morphism:
+              From: Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x^2 - y^2 - y*z
+              To:   Projective Space of dimension 1 over Rational Field
+              Defn: Defined on coordinates by sending (x : y : z) to
+                    (x : y)
+
+        ALGORITHM:
+
+        The algorithm is from Proposition 1.1 in [Sim2004]_.
         """
-        Return the digraph of the map.
+        X = self.domain()
+        Y = self.codomain()
+
+        if not Y.is_projective():  # Y is affine
+            emb = Y.projective_embedding(0)
+            hom = self.parent()
+            reprs = []
+            for r in (emb*self).representatives():
+                f0 = r[0]
+                reprs.append(hom([f / f0 for f in r[1:]]))
+            return reprs
+
+        if not X.is_irreducible():
+            raise ValueError("domain is not an irreducible scheme")
+
+        if not (X.base_ring() in _NumberFields or
+                X.base_ring() in _FiniteFields):
+            raise NotImplementedError("base ring {} is not supported by Singular".format(X.base_ring()))
+
+        # prepare homogeneous coordinate ring of X in Singular
+        from sage.rings.polynomial.term_order import TermOrder
+        T = TermOrder('degrevlex'); T._singular_ringorder_column = 1  # (c,dp) in Singular
+        S = X.ambient_space().coordinate_ring().change_ring(order=T)
+        R = S.quotient_ring(X.defining_ideal().change_ring(S))
+
+        if R is S:  # true when the defining ideal is zero
+            lift = lambda x: x.numerator()
+        else:  # R is an ordinary quotient ring
+            lift = lambda x: x.lift()
+
+        F = [R(f) for f in self.defining_polynomials()]
+        n = len(F)
+        I = R.ideal(F)
+
+        # find r with nonzero F[r]
+        r = 0
+        while not F[r]:
+            r = r + 1
+
+        # This is a minimal free presentation of the ideal I:
+        #
+        #          phi         F
+        #    R^m ------> R^n -----> I
+        #
+        # where n is the number of defining polynomials and m is the number of
+        # syzygy relations of I.
+
+        # compute the kernel of the transpose of phi in Singular
+        phi = I._singular_().syz()
+        phi_trans = phi.matrix().transpose()
+        kernel = singular.modulo(phi_trans, singular.module())
+
+        M = kernel.sage_matrix(R)  # m * n matrix over R
+        reprs = []
+        for i in range(M.ncols()):
+            reprs.append(X.hom([lift(F[j]*M[r][i] / F[r]) for j in range(n)], Y))
+
+        return reprs
+
+    def indeterminacy_locus(self):
+        """
+        Return the indeterminacy locus of this map.
+
+        The map defines a rational map on the domain. The output is the
+        subscheme of the domain on which the rational map is not defined by any
+        representative of the rational map. See :meth:`representatives()`.
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(GF(13),1)
-            sage: H = End(P)
-            sage: f = H([x^2-y^2, y^2])
-            sage: f.cyclegraph()
-            doctest:warning
-            ...
-            Looped digraph on 14 vertices
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.cyclegraph instead")
-        return self.as_dynamical_system().cyclegraph()
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
+            sage: X = P2.subscheme(0)
+            sage: f = X.hom([x1,x0], P)
+            sage: L = f.indeterminacy_locus()
+            sage: L.rational_points()
+            [(0 : 0 : 1)]
 
-    def possible_periods(self, return_points=False):
+        ::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: P1.<a,b> = ProjectiveSpace(QQ,1)
+            sage: X = P2.subscheme([x^2 - y^2 - y*z])
+            sage: f = X.hom([x,y], P1)
+            sage: f.indeterminacy_locus()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              z,
+              y,
+              x
+
+        ::
+
+            sage: P3.<x,y,z,w> = ProjectiveSpace(QQ, 3)
+            sage: P2.<a,b,c> = ProjectiveSpace(QQ, 2)
+            sage: X = P3.subscheme(x^2 - w*y - x*z)
+            sage: f = X.hom([x*y, y*z, z*x], P2)
+            sage: L = f.indeterminacy_locus()
+            sage: L.dimension()
+            0
+            sage: L.degree()
+            2
+            sage: L.rational_points()
+            [(0 : 0 : 0 : 1), (0 : 1 : 0 : 0)]
+
+        ::
+
+            sage: P3.<x,y,z,w> = ProjectiveSpace(QQ, 3)
+            sage: A2.<a,b> = AffineSpace(QQ, 2)
+            sage: X = P3.subscheme(x^2 - w*y - x*z)
+            sage: f = X.hom([x/z, y/x], A2)
+            sage: L = f.indeterminacy_locus()
+            sage: L.rational_points()
+            [(0 : 0 : 0 : 1), (0 : 1 : 0 : 0)]
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(x - y)
+            sage: H = End(X)
+            sage: f = H([x^2 - 4*y^2, y^2 - z^2, 4*z^2 - x^2])
+            sage: Z = f.indeterminacy_locus(); Z
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              z,
+              y,
+              x
         """
-        Return the possible periods of a periodic point of this map.
+        X = self.domain()
+        Y = self.codomain()
+        Amb = X.ambient_space()
+
+        if not X.is_irreducible():
+            components = X.irreducible_components()
+
+            def self_with_domain(C):
+                return self*C.hom(Amb.gens(), X)
+
+            locus = self_with_domain(components[0]).indeterminacy_locus()
+            for C in components[1:]:
+                locus = locus.union(self_with_domain(C).indeterminacy_locus())
+
+            return locus
+
+        if not Y.is_projective():  # Y is affine
+            emb = Y.projective_embedding(0)
+        else:
+            emb = None
+
+        polys = list(X.defining_polynomials())
+
+        for r in self.representatives():
+            r_proj = r if emb is None else emb*r
+            for p in r_proj:
+                polys.append(p)
+
+        return Amb.subscheme(polys).reduce()
+
+    def is_morphism(self):
+        """
+        Return ``True`` if the map is defined everywhere on the domain.
 
         EXAMPLES::
 
-            sage: P.<x,y> = ProjectiveSpace(GF(23),1)
-            sage: H = End(P)
-            sage: f = H([x^2-2*y^2, y^2])
-            sage: f.possible_periods()
-            doctest:warning
-            ...
-            [1, 5, 11, 22, 110]
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: P1.<a,b> = ProjectiveSpace(QQ,1)
+            sage: X = P2.subscheme([x^2 - y^2 - y*z])
+            sage: f = X.hom([x,y], P1)
+            sage: f.is_morphism()
+            True
         """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.possible_periods instead")
-        return self.as_dynamical_system().possible_periods(return_points)
+        return self.indeterminacy_locus().dimension() < 0
 
-    def automorphism_group(self, **kwds):
+    def image(self):
         """
-        return the automorphism group of this map.
+        Return the scheme-theoretic image of the morphism.
 
         EXAMPLES::
 
-            sage: R.<x,y> = ProjectiveSpace(GF(7^3,'t'),1)
-            sage: H = End(R)
-            sage: f = H([x^2-y^2, x*y])
-            sage: f.automorphism_group()
-            doctest:warning
-            ...
-            [
-            [1 0]  [6 0]
-            [0 1], [0 1]
-            ]
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: P2.<x0,x1,x2> = ProjectiveSpace(QQ, 2)
+            sage: X = P2.subscheme(0)
+            sage: f = X.hom([x1,x0], P)
+            sage: f.image()
+            Closed subscheme of Projective Space of dimension 1 over Rational Field defined by:
+              (no polynomials)
+
+        ::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: X = P2.subscheme([z^3 - x*y^2 + y^3])
+            sage: f = X.hom([x*z, x*y, x^2 + y*z], P2)
+            sage: f.image()
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x^6 + 2*x^3*y^3 + x*y^5 + y^6 - x^3*y^2*z - y^5*z
         """
-        from sage.misc.superseded import deprecation
-        deprecation(23479, "use sage.dynamics.arithmetic_dynamics.projective_ds.automorphism_group instead")
-        return self.as_dynamical_system().automorphism_group(**kwds)
+        X = self.domain()
+        Y = self.codomain()
+
+        if not Y.is_projective():
+            e = Y.projective_embedding(0)
+            return (e*self).image().affine_patch(0, Y.ambient_space())
+
+        k = self.base_ring()
+
+        AX = X.ambient_space()
+        AY = Y.ambient_space()
+
+        S = AX.coordinate_ring()
+        T = AY.coordinate_ring()
+
+        n = S.ngens()
+        m = T.ngens()
+
+        dummy_names = ['d{}__'.format(i) for i in range(m)]
+        D = PolynomialRing(k, names=dummy_names)
+
+        names = list(S.variable_names()) + dummy_names  # this order of variables is important
+        R = PolynomialRing(k, names=names, order='degrevlex({}),degrevlex({})'.format(m,n))
+
+        # compute the ideal of the image by elimination
+        i = R.ideal(list(X.defining_ideal().gens()) + [self._polys[i] - R.gen(n + i) for i in range(m)])
+        j = [g for g in i.groebner_basis() if g in D]
+
+        gens = [g.subs(dict(zip(R.gens()[n:],T.gens()))) for g in j]
+        return AY.subscheme(gens)
 

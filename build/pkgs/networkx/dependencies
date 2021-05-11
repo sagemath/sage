@@ -1,4 +1,4 @@
-$(PYTHON) decorator | pip nose
+$(PYTHON) decorator | $(PYTHON_TOOLCHAIN) scipy $(and $(filter-out no,$(SAGE_CHECK_networkx)), nose pytest)
 
 ----------
 All lines of this file are ignored except the first.

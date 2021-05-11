@@ -219,7 +219,7 @@ Using the standard ``C3`` algorithm fails::
     sage: x.mro_standard
     Traceback (most recent call last):
     ...
-    ValueError: Can not merge the items 3, 3, 2.
+    ValueError: Cannot merge the items 3, 3, 2.
 
 We also get a failure when we relabel `P` according to another linear
 extension. For easy relabelling, we first need to set an appropriate
@@ -239,7 +239,7 @@ Now we play with a specific linear extension of `P`::
     sage: x.mro_standard
     Traceback (most recent call last):
     ...
-    ValueError: Can not merge the items 2, 3, 3.
+    ValueError: Cannot merge the items 2, 3, 3.
 
 On the other hand, both the instrumented ``C3`` algorithm, and the
 controlled ``C3`` algorithm give the desired MRO::
@@ -331,9 +331,9 @@ For a typical category, few bases, if any, need to be added to force
     sage: x.mro == x.mro_standard
     False
     sage: x.all_bases_len()
-    94
+    114
     sage: x.all_bases_controlled_len()
-    101
+    117
 
 The following can be used to search through the Sage named categories
 for any that requires the addition of some bases. The output may
@@ -351,19 +351,18 @@ doctest::
      Category of finite dimensional hopf algebras with basis over Rational Field,
      Category of finite enumerated permutation groups,
      Category of finite weyl groups,
-     Category of group algebras over Rational Field,
      Category of number fields]
 
 AUTHOR:
 
 - Nicolas M. Thiery (2012-09): initial version.
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2012-2013  Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.classcall_metaclass import ClasscallMetaclass, typecall
 from sage.misc.cachefunc import cached_function, cached_method
@@ -658,7 +657,7 @@ def C3_merge(list lists):
                 break
         if not next_item_found:
             # No head is available
-            raise ValueError("Can not merge the items %s."%', '.join([repr(head) for head in heads]))
+            raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
 
 cpdef identity(x):

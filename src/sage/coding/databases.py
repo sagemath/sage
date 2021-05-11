@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 r"""
-Databases and accessors of online databases for coding theory
+Access functions to online databases for coding theory
 """
-from six.moves import range
+
 from sage.interfaces.all import gap
 from sage.features.gap import GapPackage
 
-#Don't put any global imports here since this module is accessible as sage.codes.databases.<tab>
-
+# Don't put any global imports here since this module is accessible as
+# sage.codes.databases.<tab>
 
 def best_linear_code_in_guava(n, k, F):
     r"""
@@ -24,7 +24,6 @@ def best_linear_code_in_guava(n, k, F):
     - ``k`` -- the dimension of the code to look up
 
     - ``F`` -- the base field of the code to look up
-
 
     OUTPUT:
 
@@ -48,8 +47,6 @@ def best_linear_code_in_guava(n, k, F):
     C = gap("BestKnownLinearCode(%s,%s,GF(%s))"%(n,k,q))
     from .linear_code import LinearCode
     return LinearCode(C.GeneratorMat()._matrix_(F))
-
-
 
 def bounds_on_minimum_distance_in_guava(n, k, F):
     r"""
@@ -116,7 +113,6 @@ def bounds_on_minimum_distance_in_guava(n, k, F):
     Ldata = gap.eval("Display(data)")
     return Ldata
 
-
 def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     r"""
     Return the best linear code and its construction as per the web database
@@ -159,7 +155,8 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     - Steven Sivek (2005-11-14)
     - David Joyner (2008-03)
     """
-    from six.moves.urllib.request import urlopen
+    from urllib.request import urlopen
+    from sage.cpython.string import bytes_to_str
     q = F.order()
     if not q in [2, 3, 4, 5, 7, 8, 9]:
         raise ValueError("q (=%s) must be in [2,3,4,5,7,8,9]" % q)
@@ -171,16 +168,15 @@ def best_linear_code_in_codetables_dot_de(n, k, F, verbose=False):
     url = "http://www.codetables.de/" + "BKLC/BKLC.php" + param
     if verbose:
         print("Looking up the bounds at %s" % url)
-    f = urlopen(url)
-    s = f.read()
-    f.close()
+    with urlopen(url) as f:
+        s = f.read()
 
+    s = bytes_to_str(s)
     i = s.find("<PRE>")
     j = s.find("</PRE>")
     if i == -1 or j == -1:
         raise IOError("Error parsing data (missing pre tags).")
-    text = s[i+5:j].strip()
-    return text
+    return s[i+5:j].strip()
 
 
 def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
@@ -280,7 +276,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
     from sage.matrix.constructor import Matrix
 
 
-    
+
     d=int(b)
     if d!=b or d%2==1 or d <= 0:
         raise ValueError("b (%s) must be a positive even integer."%b)
@@ -313,6 +309,7 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
                     for N in self_orthogonal_binary_codes(n, k, d, child, BC, in_test=in_test):
                         if out_test(N): yield N
 
-# Import the following function so that it is available as sage.codes.databases.self_dual_binary_codes
-# sage.codes.databases functions somewhat like a catalog in this respect.
+# Import the following function so that it is available as
+# sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
+# somewhat like a catalog in this respect.
 from sage.coding.self_dual_codes import self_dual_binary_codes

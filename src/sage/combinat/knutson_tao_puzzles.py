@@ -20,11 +20,11 @@ The code was tested afterwards by Liz Beazley and Ed Richmond.
       1,..., n and so in 3-step examples, none of the edge labels with 3 appear
 
     - we should also have a 3-step puzzle pieces constructor, taken from p22 of
-      :arXiv:`math/0610538`
+      :arxiv:`math/0610538`
 
     - implement the bijection from puzzles to tableaux; see for example
-      R. Vakil, A geometric Littlewood-Richardson rule, :arXiv:`math/0302294`
-      or K. Purbhoo, Puzzles, Tableaux and Mosaics, :arXiv:`0705.1184`.
+      R. Vakil, A geometric Littlewood-Richardson rule, :arxiv:`math/0302294`
+      or K. Purbhoo, Puzzles, Tableaux and Mosaics, :arxiv:`0705.1184`.
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Franco Saliola <saliola@gmail.com>,
@@ -56,7 +56,7 @@ class PuzzlePiece(object):
     puzzle pieces, and sets color and plotting options.
     """
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -69,7 +69,7 @@ class PuzzlePiece(object):
             sage: delta == delta1
             False
         """
-        if isinstance(other, type(self)):
+        if isinstance(other, PuzzlePiece):
             return self.border() == other.border()
         else:
             return False
@@ -85,9 +85,9 @@ class PuzzlePiece(object):
         """
         return hash((type(self), self.border()))
 
-    def border(self):
+    def border(self) -> tuple:
         r"""
-        Returns the border of ``self``.
+        Return the border of ``self``.
 
         EXAMPLES::
 
@@ -98,9 +98,9 @@ class PuzzlePiece(object):
         """
         return tuple(self.edge_label(edge) for edge in self.edges())
 
-    def color(self):
+    def color(self) -> str:
         r"""
-        Returns the color of ``self``.
+        Return the color of ``self``.
 
         EXAMPLES::
 
@@ -124,9 +124,9 @@ class PuzzlePiece(object):
             sage: delta.color()
             'yellow'
         """
-        colors = {('0','0','0'): 'red',
-                  ('1','1','1'): 'blue',
-                  ('2','2','2'): 'green'}
+        colors = {('0', '0', '0'): 'red',
+                  ('1', '1', '1'): 'blue',
+                  ('2', '2', '2'): 'green'}
         border = self.border()
         if border in colors:
             color = colors[border]
@@ -140,7 +140,8 @@ class PuzzlePiece(object):
             color = 'white'
         return color
 
-    def _plot_label(self, label, coords, fontcolor=(0.3,0.3,0.3), fontsize=15, rotation=0):
+    def _plot_label(self, label, coords, fontcolor=(0.3, 0.3, 0.3),
+                    fontsize=15, rotation=0):
         r"""
         TESTS::
 
@@ -153,7 +154,8 @@ class PuzzlePiece(object):
         else:
             return Graphics()
 
-    def _plot_piece(self, coords, border_color=(0.5,0.5,0.5), border_thickness=1, style='fill'):
+    def _plot_piece(self, coords, border_color=(0.5, 0.5, 0.5),
+                    border_thickness=1, style='fill'):
         r"""
         TESTS::
 
@@ -174,12 +176,14 @@ class PuzzlePiece(object):
                 edges = self.edges()
             P = Graphics()
             for (i, edge) in enumerate(edges):
-                P += line([coords[i], coords[(i+1)%3]], color=self.edge_color(edge), thickness=border_thickness)
+                P += line([coords[i], coords[(i + 1) % 3]],
+                          color=self.edge_color(edge),
+                          thickness=border_thickness)
             return P
         else:
             return NotImplemented
 
-    def edge_color(self, edge):
+    def edge_color(self, edge) -> str:
         r"""
         Color of the specified edge of ``self`` (to be used when plotting the
         piece).
@@ -207,7 +211,7 @@ class PuzzlePiece(object):
             color = 'white'
         return color
 
-    def edge_label(self, edge):
+    def edge_label(self, edge) -> str:
         r"""
         Return the edge label of ``edge``.
 
@@ -225,6 +229,7 @@ class PuzzlePiece(object):
         return self._edge_labels[edge]
 
     __getitem__ = edge_label
+
 
 class NablaPiece(PuzzlePiece):
     r"""
@@ -252,9 +257,39 @@ class NablaPiece(PuzzlePiece):
         """
         self._edge_labels = dict(north=north, south_east=south_east, south_west=south_west)
 
-    def __repr__(self):
+    def __eq__(self, other) -> bool:
         r"""
-        Prints the labels of the Nabla piece.
+        TESTS::
+
+            sage: from sage.combinat.knutson_tao_puzzles import NablaPiece
+            sage: n = NablaPiece('a','b','c')
+            sage: n1 = NablaPiece('a','b','c')
+            sage: n == n1
+            True
+            sage: n1 = NablaPiece('A','b','c')
+            sage: n == n1
+            False
+        """
+        if isinstance(other, NablaPiece):
+            return (self.border() == other.border() and
+                    self._edge_labels == other._edge_labels)
+        else:
+            return False
+
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.combinat.knutson_tao_puzzles import NablaPiece
+            sage: n = NablaPiece('a','b','c')
+            sage: hash(n) == hash(n)
+            True
+        """
+        return hash((NablaPiece, self.border()))
+
+    def __repr__(self) -> str:
+        r"""
+        Print the labels of the Nabla piece.
 
         EXAMPLES::
 
@@ -266,9 +301,9 @@ class NablaPiece(PuzzlePiece):
                               self['north'],
                               self['south_east'])
 
-    def clockwise_rotation(self):
+    def clockwise_rotation(self) -> 'NablaPiece':
         r"""
-        Rotates the Nabla piece by 120 degree clockwise.
+        Rotate the Nabla piece by 120 degree clockwise.
 
         OUTPUT:
 
@@ -285,9 +320,9 @@ class NablaPiece(PuzzlePiece):
                           south_east=self['north'],
                           south_west=self['south_east'])
 
-    def half_turn_rotation(self):
+    def half_turn_rotation(self) -> 'DeltaPiece':
         r"""
-        Rotates the Nabla piece by 180 degree.
+        Rotate the Nabla piece by 180 degree.
 
         OUTPUT:
 
@@ -304,7 +339,7 @@ class NablaPiece(PuzzlePiece):
                           north_west=self['south_east'],
                           north_east=self['south_west'])
 
-    def edges(self):
+    def edges(self) -> tuple:
         r"""
         Return the tuple of edge names.
 
@@ -316,6 +351,7 @@ class NablaPiece(PuzzlePiece):
             ('north', 'south_east', 'south_west')
         """
         return ('north', 'south_east', 'south_west')
+
 
 class DeltaPiece(PuzzlePiece):
     r"""
@@ -343,9 +379,39 @@ class DeltaPiece(PuzzlePiece):
         """
         self._edge_labels = dict(south=south, north_west=north_west, north_east=north_east)
 
-    def __repr__(self):
+    def __eq__(self, other) -> bool:
         r"""
-        Prints the labels of the Delta piece.
+        TESTS::
+
+            sage: from sage.combinat.knutson_tao_puzzles import DeltaPiece
+            sage: delta = DeltaPiece('a','b','c')
+            sage: delta1 = DeltaPiece('a','b','c')
+            sage: delta == delta1
+            True
+            sage: delta1 = DeltaPiece('A','b','c')
+            sage: delta == delta1
+            False
+        """
+        if isinstance(other, DeltaPiece):
+            return (self.border() == other.border() and
+                    self._edge_labels == other._edge_labels)
+        else:
+            return False
+
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.combinat.knutson_tao_puzzles import DeltaPiece
+            sage: delta = DeltaPiece('a','b','c')
+            sage: hash(delta) == hash(delta)
+            True
+        """
+        return hash((DeltaPiece, self.border()))
+
+    def __repr__(self) -> str:
+        r"""
+        Print the labels of the Delta piece.
 
         EXAMPLES::
 
@@ -357,9 +423,9 @@ class DeltaPiece(PuzzlePiece):
                               self['south'],
                               self['north_east'])
 
-    def clockwise_rotation(self):
+    def clockwise_rotation(self) -> 'DeltaPiece':
         r"""
-        Rotates the Delta piece by 120 degree clockwise.
+        Rotate the Delta piece by 120 degree clockwise.
 
         OUTPUT:
 
@@ -376,9 +442,9 @@ class DeltaPiece(PuzzlePiece):
                           north_west=self['south'],
                           north_east=self['north_west'])
 
-    def half_turn_rotation(self):
+    def half_turn_rotation(self) -> 'NablaPiece':
         r"""
-        Rotates the Delta piece by 180 degree.
+        Rotate the Delta piece by 180 degree.
 
         OUTPUT:
 
@@ -395,7 +461,7 @@ class DeltaPiece(PuzzlePiece):
                           south_east=self['north_west'],
                           south_west=self['north_east'])
 
-    def edges(self):
+    def edges(self) -> tuple:
         r"""
         Return the tuple of edge names.
 
@@ -407,6 +473,7 @@ class DeltaPiece(PuzzlePiece):
             ('south', 'north_west', 'north_east')
         """
         return ('south', 'north_west', 'north_east')
+
 
 class RhombusPiece(PuzzlePiece):
     r"""
@@ -441,6 +508,41 @@ class RhombusPiece(PuzzlePiece):
                                  south_east=south_piece['south_east'],
                                  south_west=south_piece['south_west'])
 
+    def __eq__(self, other) -> bool:
+        r"""
+        TESTS::
+
+            sage: from sage.combinat.knutson_tao_puzzles import DeltaPiece, NablaPiece, RhombusPiece
+            sage: delta = DeltaPiece('1','2','3')
+            sage: nabla = NablaPiece('4','5','6')
+            sage: r = RhombusPiece(delta,nabla)
+            sage: r == r
+            True
+            sage: delta1 = DeltaPiece('A','b','c')
+            sage: r == RhombusPiece(delta1,nabla)
+            False
+        """
+        if isinstance(other, RhombusPiece):
+            return (self.border() == other.border() and
+                    self._north_piece == other._north_piece and
+                    self._south_piece == other._south_piece and
+                    self._edge_labels == other._edge_labels)
+        else:
+            return False
+
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.combinat.knutson_tao_puzzles import DeltaPiece, NablaPiece, RhombusPiece
+            sage: delta = DeltaPiece('1','2','3')
+            sage: nabla = NablaPiece('4','5','6')
+            sage: r = RhombusPiece(delta,nabla)
+            sage: hash(r) == hash(r)
+            True
+        """
+        return hash((RhombusPiece, self.border()))
+
     def __iter__(self):
         r"""
         Return the list of the north and south piece.
@@ -457,7 +559,7 @@ class RhombusPiece(PuzzlePiece):
         yield self._north_piece
         yield self._south_piece
 
-    def north_piece(self):
+    def north_piece(self) -> 'DeltaPiece':
         r"""
         Return the north piece.
 
@@ -472,7 +574,7 @@ class RhombusPiece(PuzzlePiece):
         """
         return self._north_piece
 
-    def south_piece(self):
+    def south_piece(self) -> 'NablaPiece':
         r"""
         Return the south piece.
 
@@ -487,7 +589,7 @@ class RhombusPiece(PuzzlePiece):
         """
         return self._south_piece
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         EXAMPLES::
 
@@ -500,7 +602,7 @@ class RhombusPiece(PuzzlePiece):
         return r"%s/\%s  %s\/%s" % (self['north_west'], self['north_east'],
                                     self['south_west'], self['south_east'])
 
-    def edges(self):
+    def edges(self) -> tuple:
         r"""
         Return the tuple of edge names.
 
@@ -513,6 +615,7 @@ class RhombusPiece(PuzzlePiece):
             ('north_west', 'north_east', 'south_east', 'south_west')
         """
         return ('north_west', 'north_east', 'south_east', 'south_west')
+
 
 class PuzzlePieces(object):
     r"""
@@ -568,11 +671,11 @@ class PuzzlePieces(object):
         self._delta_pieces = set([])
         if forbidden_border_labels is None:
             forbidden_border_labels = []
-        if not isinstance(forbidden_border_labels,list):
+        if not isinstance(forbidden_border_labels, list):
             raise TypeError("Input must be a list")
         self._forbidden_border_labels = forbidden_border_labels
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         TESTS::
 
@@ -600,7 +703,7 @@ class PuzzlePieces(object):
 
     def add_piece(self, piece, rotations=120):
         r"""
-        Adds ``piece`` to the list of pieces.
+        Add ``piece`` to the list of pieces.
 
         INPUT:
 
@@ -656,7 +759,7 @@ class PuzzlePieces(object):
 
     def add_forbidden_label(self, label):
         r"""
-        Adds forbidden border labels.
+        Add forbidden border labels.
 
         INPUT:
 
@@ -677,7 +780,7 @@ class PuzzlePieces(object):
 
     def add_T_piece(self, label1, label2):
         r"""
-        Adds a nabla and delta piece with ``label1`` and ``label2``.
+        Add a nabla and delta piece with ``label1`` and ``label2``.
 
         This method adds a nabla piece with edges ``label2``\ T``label1``|``label2`` / ``label1``.
         and a delta piece with edges ``label1``/ T``label1``|``label2`` \ ``label2``.
@@ -697,7 +800,7 @@ class PuzzlePieces(object):
         self.add_forbidden_label('T%s|%s' % (label1, label2))
         self.add_piece(NablaPiece('T%s|%s' % (label1, label2), label1, label2), rotations=180)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         TESTS::
 
@@ -715,7 +818,7 @@ class PuzzlePieces(object):
 
     def delta_pieces(self):
         r"""
-        Returns the delta pieces as a set.
+        Return the delta pieces as a set.
 
         EXAMPLES::
 
@@ -730,7 +833,7 @@ class PuzzlePieces(object):
 
     def nabla_pieces(self):
         r"""
-        Returns the nabla pieces as a set.
+        Return the nabla pieces as a set.
 
         EXAMPLES::
 
@@ -743,9 +846,9 @@ class PuzzlePieces(object):
         """
         return self._nabla_pieces
 
-    def rhombus_pieces(self):
+    def rhombus_pieces(self) -> set:
         r"""
-        Returns a list of all allowable rhombus pieces.
+        Return a set of all allowable rhombus pieces.
 
         Allowable rhombus pieces are those where the south edge of the delta
         piece equals the north edge of the nabla piece.
@@ -766,9 +869,9 @@ class PuzzlePieces(object):
                     rhombi.add(RhombusPiece(delta, nabla))
         return rhombi
 
-    def boundary_deltas(self):
+    def boundary_deltas(self) -> tuple:
         r"""
-        Returns deltas with south edges not in the forbidden list.
+        Return deltas with south edges not in the forbidden list.
 
         EXAMPLES::
 
@@ -782,15 +885,16 @@ class PuzzlePieces(object):
         return tuple(delta for delta in self.delta_pieces()
                     if delta['south'] not in self._forbidden_border_labels)
 
+
 def H_grassmannian_pieces():
     r"""
-    Defines the puzzle pieces used in computing the cohomology of the Grassmannian.
+    Define the puzzle pieces used in computing the cohomology of the Grassmannian.
 
     REFERENCES:
 
     .. [KTW] Allen Knutson, Terence Tao, Christopher Woodward,
        The honeycomb model of GL(n) tensor products II: Puzzles determine facets of the Littlewood-Richardson cone,
-       :arXiv:`math/0107011`
+       :arxiv:`math/0107011`
 
     EXAMPLES::
 
@@ -801,14 +905,15 @@ def H_grassmannian_pieces():
     """
     forbidden_border_labels = ['10']
     pieces = PuzzlePieces(forbidden_border_labels)
-    pieces.add_piece(NablaPiece('0','0','0'), rotations=60)
-    pieces.add_piece(NablaPiece('1','1','1'), rotations=60)
-    pieces.add_piece(NablaPiece('1','0','10'), rotations=60)
+    pieces.add_piece(NablaPiece('0', '0', '0'), rotations=60)
+    pieces.add_piece(NablaPiece('1', '1', '1'), rotations=60)
+    pieces.add_piece(NablaPiece('1', '0', '10'), rotations=60)
     return pieces
+
 
 def HT_grassmannian_pieces():
     r"""
-    Defines the puzzle pieces used in computing the torus-equivariant cohomology of the Grassmannian.
+    Define the puzzle pieces used in computing the torus-equivariant cohomology of the Grassmannian.
 
     REFERENCES:
 
@@ -826,13 +931,14 @@ def HT_grassmannian_pieces():
     pieces.add_T_piece('0', '1')
     return pieces
 
+
 def K_grassmannian_pieces():
     r"""
-    Defines the puzzle pieces used in computing the K-theory of the Grassmannian.
+    Define the puzzle pieces used in computing the K-theory of the Grassmannian.
 
     REFERENCES:
 
-    .. [Buch00] \A. Buch, A Littlewood-Richardson rule for the K-theory of Grassmannians, :arXiv:`math.AG/0004137`
+    .. [Buch00] \A. Buch, A Littlewood-Richardson rule for the K-theory of Grassmannians, :arxiv:`math.AG/0004137`
 
     EXAMPLES::
 
@@ -843,19 +949,20 @@ def K_grassmannian_pieces():
     """
     pieces = H_grassmannian_pieces()
     pieces.add_forbidden_label('K')
-    pieces.add_piece(NablaPiece('0','K','1'), rotations=120)
-    pieces.add_piece(DeltaPiece('K','K','K'), rotations=0)
+    pieces.add_piece(NablaPiece('0', 'K', '1'), rotations=120)
+    pieces.add_piece(DeltaPiece('K', 'K', 'K'), rotations=0)
     return pieces
+
 
 def H_two_step_pieces():
     r"""
-    Defines the puzzle pieces used in two step flags.
+    Define the puzzle pieces used in two step flags.
 
     This rule is currently only conjecturally true. See [BuchKreschTamvakis03]_.
 
     REFERENCES:
 
-    .. [BuchKreschTamvakis03] \A. Buch, A. Kresch, H. Tamvakis, Gromov-Witten invariants on Grassmannian, :arXiv:`math/0306388`
+    .. [BuchKreschTamvakis03] \A. Buch, A. Kresch, H. Tamvakis, Gromov-Witten invariants on Grassmannian, :arxiv:`math/0306388`
 
     EXAMPLES::
 
@@ -870,22 +977,23 @@ def H_two_step_pieces():
     pieces = PuzzlePieces(forbidden_border_labels)
     for i in ('0', '1', '2'):
         pieces.add_piece(DeltaPiece(i, i, i), rotations=60)
-    for i, j in (('1','0'), ('2','0'), ('2','1')):
-        pieces.add_piece(DeltaPiece(i+j, i, j), rotations=60)
-    pieces.add_piece(DeltaPiece('(21)0','21','0'), rotations=60)
-    pieces.add_piece(DeltaPiece('2(10)','2','10'), rotations=60)
+    for i, j in (('1', '0'), ('2', '0'), ('2', '1')):
+        pieces.add_piece(DeltaPiece(i + j, i, j), rotations=60)
+    pieces.add_piece(DeltaPiece('(21)0', '21', '0'), rotations=60)
+    pieces.add_piece(DeltaPiece('2(10)', '2', '10'), rotations=60)
     return pieces
+
 
 def HT_two_step_pieces():
     r"""
-    Defines the puzzle pieces used in computing the equivariant two step puzzle pieces.
+    Define the puzzle pieces used in computing the equivariant two step puzzle pieces.
 
     For the puzzle pieces, see Figure 26 on page 22 of [CoskunVakil06]_.
 
     REFERENCES:
 
     .. [CoskunVakil06] \I. Coskun, R. Vakil, Geometric positivity in the cohomology of homogeneous spaces
-       and generalized Schubert calculus, :arXiv:`math/0610538`
+       and generalized Schubert calculus, :arxiv:`math/0610538`
 
     EXAMPLES::
 
@@ -899,7 +1007,8 @@ def HT_two_step_pieces():
        2/2(10)\10, 2/20\0, 2/21\1, 2/2\2, 20/0\2, 21/(21)0\0, 21/1\2]
     """
     pieces = H_two_step_pieces()
-    for label1, label2 in (('0','1'), ('0','2'), ('1','2'), ('10','2'), ('0','21'), ('10','21')):
+    for label1, label2 in (('0', '1'), ('0', '2'), ('1', '2'),
+                           ('10', '2'), ('0', '21'), ('10', '21')):
         pieces.add_T_piece(label1, label2)
     return pieces
 
@@ -930,7 +1039,7 @@ def BK_pieces(max_letter):
     REFERENCES:
 
     .. [KnutsonPurbhoo10] \A. Knutson, K. Purbhoo, Product and puzzle formulae
-       for `GL_n` Belkale-Kumar coefficients, :arXiv:`1008.4979`
+       for `GL_n` Belkale-Kumar coefficients, :arxiv:`1008.4979`
 
     EXAMPLES::
 
@@ -941,16 +1050,18 @@ def BK_pieces(max_letter):
 
     """
     forbidden_border_labels = ['%s(%s)' % (i, j)
-                                for i in range(1, max_letter + 1)
-                                for j in range(1, i)]
+                               for i in range(1, max_letter + 1)
+                               for j in range(1, i)]
     pieces = PuzzlePieces(forbidden_border_labels)
     for i in range(1, max_letter + 1):
-        piece = DeltaPiece('%s'%i, '%s'%i, '%s'%i)
+        piece = DeltaPiece('%s' % i, '%s' % i, '%s' % i)
         pieces.add_piece(piece, rotations=60)
         for j in range(1, i):
-            piece = DeltaPiece(north_west='%s'%i, north_east='%s'%j, south='%s(%s)'%(i,j))
+            piece = DeltaPiece(north_west='%s' % i, north_east='%s' % j,
+                               south='%s(%s)' % (i, j))
             pieces.add_piece(piece, rotations=60)
     return pieces
+
 
 class PuzzleFilling(object):
     r"""
@@ -994,9 +1105,9 @@ class PuzzleFilling(object):
         """
         return self._squares[key]
 
-    def kink_coordinates(self):
+    def kink_coordinates(self) -> tuple:
         r"""
-        Provides the coordinates of the kinks.
+        Provide the coordinates of the kinks.
 
         The kink coordinates are the coordinates up to which the puzzle has already
         been built. The kink starts in the north corner and then moves down the diagonals
@@ -1013,9 +1124,9 @@ class PuzzleFilling(object):
         """
         return self._kink_coordinates
 
-    def is_in_south_edge(self):
+    def is_in_south_edge(self) -> bool:
         r"""
-        Checks whether kink coordinates of partial puzzle is in south corner.
+        Check whether kink coordinates of partial puzzle is in south corner.
 
         EXAMPLES::
 
@@ -1040,9 +1151,9 @@ class PuzzleFilling(object):
         """
         (i, j) = self.kink_coordinates()
         if i == 1:
-            return self._nw_labels[j-1]
+            return self._nw_labels[j - 1]
         else:
-            return self._squares[i-1,j]['south_east']
+            return self._squares[i - 1, j]['south_east']
 
     def north_east_label_of_kink(self):
         r"""
@@ -1057,9 +1168,9 @@ class PuzzleFilling(object):
         """
         (i, j) = self.kink_coordinates()
         if j == self._n:
-            return self._ne_labels[i-1]
+            return self._ne_labels[i - 1]
         else:
-            return self._squares[i,j+1]['south_west']
+            return self._squares[i, j + 1]['south_west']
 
     def is_completed(self):
         r"""
@@ -1093,11 +1204,11 @@ class PuzzleFilling(object):
             ('1', '0', '1', '0')
         """
         # TODO: return ''.join(self[i, i]['south'] for i in range(1, self._n + 1))
-        return tuple([self[i,i]['south'] for i in range(1, self._n+1)])
+        return tuple([self[i, i]['south'] for i in range(1, self._n + 1)])
 
     def add_piece(self, piece):
         r"""
-        Adds ``piece`` to partial puzzle.
+        Add ``piece`` to partial puzzle.
 
         EXAMPLES::
 
@@ -1119,7 +1230,7 @@ class PuzzleFilling(object):
 
     def add_pieces(self, pieces):
         r"""
-        Adds ``piece`` to partial puzzle.
+        Add ``piece`` to partial puzzle.
 
         INPUT:
 
@@ -1181,11 +1292,11 @@ class PuzzleFilling(object):
             sage: sorted([p.contribution() for p in puzzles], key=str)
             [1, y1 - y3]
         """
-        R = PolynomialRing(Integers(), 'y', self._n+1)
+        R = PolynomialRing(Integers(), 'y', self._n + 1)
         y = R.gens()
         z = R.one()
         for i in range(1, self._n + 1):
-            for j in range(i+1, self._n + 1):
+            for j in range(i + 1, self._n + 1):
                 if self[i, j].north_piece()['south'].startswith('T'):
                     z *= y[i] - y[j]
                 if self[i, j].north_piece()['south'].startswith('K'):
@@ -1243,7 +1354,7 @@ class PuzzleFilling(object):
 
     def plot(self, labels=True, style="fill"):
         r"""
-        Plots completed puzzle.
+        Plot completed puzzle.
 
         EXAMPLES::
 
@@ -1259,7 +1370,7 @@ class PuzzleFilling(object):
         for ((k, d), piece) in zip(coords, self):
             if isinstance(piece, RhombusPiece):
                 for (i, triangle) in enumerate(piece):
-                    P += triangle._plot_piece([(k, d - 2*i), (k - 1, d - 1), (k + 1, d - 1)], style=style)
+                    P += triangle._plot_piece([(k, d - 2 * i), (k - 1, d - 1), (k + 1, d - 1)], style=style)
                 if labels:
                     P += piece._plot_label(piece['north_west'], (k - 0.5, d - 0.5), rotation=60)
                     P += piece._plot_label(piece['north_east'], (k + 0.5, d - 0.5), rotation=-60)
@@ -1294,46 +1405,47 @@ class PuzzleFilling(object):
             sage: ps = KnutsonTaoPuzzleSolver(K_grassmannian_pieces())
             sage: solns = ps('0101', '0101')
             sage: view(solns[0], viewer='pdf')  # not tested
-
         """
         from collections import defaultdict
-        label_colors = defaultdict(lambda : None)
+        label_colors = defaultdict(lambda: None)
         label_colors.update({'0': 'red', '1': 'blue', '2': 'green'})
-        edge_colors = defaultdict(lambda : None)
-        edge_colors.update({'0': 'red', '1': 'blue', '2': 'green', 'K':'orange'})
+        edge_colors = defaultdict(lambda: None)
+        edge_colors.update({'0': 'red', '1': 'blue',
+                            '2': 'green', 'K': 'orange'})
 
         s = r"""\begin{tikzpicture}[yscale=1.73]"""
         coords = [(k, -d) for d in range(self._n) for k in range(-d, d + 1, 2)]
 
         def tikztriangle_fill(color, k, d, i, *args):
             s = r"""\path[color=%s, fill=%s!10]""" % (color, color)
-            s += r"""(%s, %s) -- (%s, %s)""" % (k, d-2*i, k-1, d-1)
-            s += r"""-- (%s, %s)""" % (k+1, d-1)
-            s += r"""-- (%s, %s)""" % (k, d-2*i)
+            s += r"""(%s, %s) -- (%s, %s)""" % (k, d - 2 * i, k - 1, d - 1)
+            s += r"""-- (%s, %s)""" % (k + 1, d - 1)
+            s += r"""-- (%s, %s)""" % (k, d - 2 * i)
             s += ";\n"
             return s
 
         def tikztriangle_edges(color, k, d, i, label1, label2, label3):
             s = ""
-            if i == 1: return s
+            if i == 1:
+                return s
             tikzcmd = r"""\draw[color=%s, fill=none] (%s, %s) -- (%s, %s);""" + "\n"
             if edge_colors[label1]:
-                s += tikzcmd % (edge_colors[label1], k-1, d-1, k+1, d-1)
+                s += tikzcmd % (edge_colors[label1], k - 1, d - 1, k + 1, d - 1)
             if edge_colors[label2]:
-                s += tikzcmd % (edge_colors[label2], k, d-2*i, k-1, d-1)
+                s += tikzcmd % (edge_colors[label2], k, d - 2 * i, k - 1, d - 1)
             if edge_colors[label3]:
-                s += tikzcmd % (edge_colors[label3], k+1, d-1, k, d-2*i)
+                s += tikzcmd % (edge_colors[label3], k + 1, d - 1, k, d - 2 * i)
             return s
 
         def tikzlabels(color, k, d, i, label1, label2, label3):
-            s = r"""\path[] (%s, %s)""" % (k, d-2*i)
-            s += r"""-- (%s, %s) """ % (k-1, d-1)
+            s = r"""\path[] (%s, %s)""" % (k, d - 2 * i)
+            s += r"""-- (%s, %s) """ % (k - 1, d - 1)
             if label_colors[label2]:
                 s += r"""node[midway, color=%s] {$%s$} """ % (label_colors[label2], label2)
-            s += r"""-- (%s, %s) """ % (k+1, d-1)
+            s += r"""-- (%s, %s) """ % (k + 1, d - 1)
             if label_colors[label1]:
                 s += r"""node[midway, color=%s] {$%s$} """ % (label_colors[label1], label1)
-            s += r"""-- (%s, %s) """ % (k, d-2*i)
+            s += r"""-- (%s, %s) """ % (k, d - 2 * i)
             if label_colors[label3]:
                 s += r"""node[midway, color=%s] {$%s$} """ % (label_colors[label3], label3)
             s += ";\n"
@@ -1355,9 +1467,10 @@ class PuzzleFilling(object):
 
         return s
 
+
 class KnutsonTaoPuzzleSolver(UniqueRepresentation):
     r"""
-    Returns puzzle solver function used to create all puzzles with given boundary conditions.
+    Return puzzle solver function used to create all puzzles with given boundary conditions.
 
     This class implements a generic algorithm to solve Knutson-Tao puzzles.
     An instance of this class will be callable: the arguments are the
@@ -1909,7 +2022,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
 
     solutions = __call__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         EXAMPLES::
 
@@ -1935,7 +2048,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         """
         return self._puzzle_pieces
 
-    def _fill_piece(self, nw_label, ne_label, pieces):
+    def _fill_piece(self, nw_label, ne_label, pieces) -> list:
         r"""
         Fillings of a piece.
 
@@ -1957,8 +2070,8 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         """
         output = []
         for piece in pieces:
-            if ( piece['north_west'] == nw_label
-                    and piece['north_east'] == ne_label ):
+            if (piece['north_west'] == nw_label and
+                    piece['north_east'] == ne_label):
                 output.append(piece)
         return output
 
@@ -2064,11 +2177,11 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
             if i == 1:
                 nw_labels = PP._nw_labels
             else:
-                nw_labels = tuple(PP._squares[i-1, k]['south_east']
-                                  for k in range(i, len(lamda)+1))
+                nw_labels = tuple(PP._squares[i - 1, k]['south_east']
+                                  for k in range(i, len(lamda) + 1))
 
             # grab ne labels
-            ne_label = PP._ne_labels[i-1]
+            ne_label = PP._ne_labels[i - 1]
 
             deltas = self._bottom_deltas
             rhombi = self._rhombus_pieces
@@ -2097,7 +2210,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
         """
         g = [p.plot() for p in puzzles]
         m = len([gg.axes(False) for gg in g])
-        return graphics_array(g, (m+3)/4, 4)
+        return graphics_array(g, (m + 3) / 4, 4)
 
     def structure_constants(self, lamda, mu, nu=None):
         r"""
@@ -2170,7 +2283,7 @@ class KnutsonTaoPuzzleSolver(UniqueRepresentation):
              (('2', '1', '1', '0', '2'), 1)]
         """
         from collections import defaultdict
-        R = PolynomialRing(Integers(), 'y', len(lamda)+1)
+        R = PolynomialRing(Integers(), 'y', len(lamda) + 1)
         z = defaultdict(R.zero)
         for p in self(lamda, mu):
             z[p.south_labels()] += p.contribution()

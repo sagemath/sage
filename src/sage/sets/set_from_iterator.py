@@ -60,8 +60,6 @@ The module also provides decorator for functions and methods::
 #
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
-from __future__ import print_function
-from six.moves import range
 
 from sage.structure.parent import Parent
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -188,9 +186,8 @@ class EnumeratedSetFromIterator(Parent):
 
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
             sage: E = EnumeratedSetFromIterator(xsrange, (1,200))
-            sage: hash(E)
-            4600916458883504074 # 64-bit
-            -2063607862         # 32-bit
+            sage: hash(E) == hash(tuple(range(1, 14)))
+            True
         """
         try:
             return hash(self._cache[:13])
@@ -401,9 +398,12 @@ class EnumeratedSetFromIterator(Parent):
         TESTS::
 
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
-            sage: from six.moves import range
             sage: S = EnumeratedSetFromIterator(range, args=(1,4))
-            sage: S(1)  # indirect doctest
+            sage: S(1)  # py2
+            1
+
+            sage: S(1)  # py3
+            doctest:...: UserWarning: Testing equality of infinite sets which will not end in case of equality
             1
             sage: S(0)  # indirect doctest
             Traceback (most recent call last):
@@ -573,7 +573,6 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
     EXAMPLES::
 
         sage: from sage.sets.set_from_iterator import set_from_function
-        sage: from six.moves import range
         sage: @set_from_function
         ....: def f(n):
         ....:     for i in range(n):
@@ -674,7 +673,7 @@ class EnumeratedSetFromIterator_function_decorator(Decorator):
     def __call__(self, *args, **kwds):
         r"""
         Build a new :class:`EnumeratedSet` by calling ``self.f`` with
-        apropriate argument. If ``f`` is ``None``, then returns a new instance
+        appropriate argument. If ``f`` is ``None``, then returns a new instance
         of :class:`EnumeratedSetFromIterator`.
 
         EXAMPLES::
@@ -751,10 +750,14 @@ class EnumeratedSetFromIterator_method_caller(Decorator):
 
         But not the enumerated set::
 
-            sage: loads(dumps(d.f()))
+            sage: loads(dumps(d.f())) # py2
             Traceback (most recent call last):
             ...
             PicklingError: Can't pickle <... 'function'>: attribute lookup __builtin__.function failed
+            sage: loads(dumps(d.f())) # py3
+            Traceback (most recent call last):
+            ...
+            _pickle.PicklingError: Can't pickle <function DummyExampleForPicklingTest.f at ...>: it's not the same object as sage.sets.set_from_iterator.DummyExampleForPicklingTest.f
         """
         self.inst = inst
         self.f = f

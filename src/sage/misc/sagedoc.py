@@ -24,27 +24,26 @@ see :trac:`12849`::
     ....:     for line in fobj:
     ....:         if "#sage.symbolic.expression.Expression.numerical_approx" in line:
     ....:             print(line)
-    <code class="descname">numerical_approx</code><span class="sig-paren">(</span><em>prec=None</em>, <em>digits=None</em>, <em>algorithm=None</em><span class="sig-paren">)</span>...
+    <code class="sig-name descname">numerical_approx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prec</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">digits</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">algorithm</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span>...
 
 Check that sphinx is not imported at Sage start-up::
 
     sage: "sphinx" in sys.modules
     False
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import print_function
-from __future__ import absolute_import
-from six import string_types, text_type
 
-import os, re, sys
+import os
+import re
+import sys
 import pydoc
 from sage.misc.temporary_file import tmp_dir
 from .viewer import browser
@@ -62,6 +61,19 @@ from sage.env import SAGE_DOC, SAGE_SRC
 # the strings raw: r'\\blah'.
 math_substitutes = [
     (r'\\to', '-->'),
+    (r'\\rightarrow', '-->'),
+    (r'\\leftarrow', '<--'),
+    (r'\\leftrightarrow', '<->'),
+    (r'\\longrightarrow', '--->'),
+    (r'\\longleftarrow', '<---'),
+    (r'\\longleftrightarrow', '<-->'),
+    (r'\\Rightarrow', '==>'),
+    (r'\\Leftarrow', '<=='),
+    (r'\\Leftrightarrow', '<=>'),
+    (r'\\Longrightarrow', '===>'),
+    (r'\\Longleftarrow', '<==='),
+    (r'\\Longleftrightarrow', '<==>'),
+    (r'\\colon', ':'),
     (r'\\left', ''),
     (r'\\right', ''),
     (r'\\bigl', ''),
@@ -79,9 +91,12 @@ math_substitutes = [
     (r'\\times', ' x'),
     (r'\\backslash','\\'),
     (r'\\mapsto', ' |--> '),
+    (r'\\longmapsto', ' |---> '),
     (r'\\lvert', '|'),
     (r'\\rvert', '|'),
     (r'\\mid', '|'),
+    (r' \\circ', ' o'),
+    (r'\\circ', ' o')
 ]
 nonmath_substitutes = [
     ('\\_','_'),
@@ -103,6 +118,7 @@ nonmath_substitutes = [
     ('end{verbatim}',''),
     ('note{','NOTE: '),
 ]
+
 
 def _rmcmd(s, cmd, left='', right=''):
     """
@@ -131,7 +147,7 @@ def _rmcmd(s, cmd, left='', right=''):
         sage: _rmcmd('This is a \\very{silly} example.', 'very', right='!?')
         'This is a silly!? example.'
     """
-    c = '\\%s{'%cmd
+    c = '\\%s{' % cmd
     while True:
         i = s.find(c)
         if i == -1:
@@ -203,8 +219,8 @@ def detex(s, embedded=False):
         '`a, b, c, \\ldots, z`'
         sage: detex(r'`\left(\lvert x\ast y \rvert\right]`')
         '(| x * y |]\n'
-        sage: detex(r'`\left(\leq\le\leftarrow \rightarrow\to`')
-        '(<=<=leftarrow rightarrow-->\n'
+        sage: detex(r'`\left(\leq\le\leftarrow \rightarrow\unknownmacro\to`')
+        '(<=<=<-- -->\\unknownmacro-->\n'
     """
     s = _rmcmd(s, 'url')
     s = _rmcmd(s, 'code')
@@ -232,7 +248,6 @@ def detex(s, embedded=False):
         # test to make sure the next character is not a letter.
         for a,b in math_substitutes:
             s = re.sub(a+'([^a-zA-Z])', b+'\\1', s)
-        s = s.replace('\\','')        # nuke backslashes
     return s
 
 def skip_TESTS_block(docstring):
@@ -243,7 +258,7 @@ def skip_TESTS_block(docstring):
 
     - ``docstring``, a string
 
-    A "TESTS" block is a block starting with "TEST:" or "TESTS:" (or
+    A "TESTS" block is a block starting "TESTS:" (or
     the same with two colons), on a line on its own, and ending either
     with a line indented less than "TESTS", or with a line with the
     same level of indentation -- not more -- matching one of the
@@ -259,6 +274,8 @@ def skip_TESTS_block(docstring):
       anything, followed by a line consisting only of a string of
       hyphens, equal signs, or other characters which are valid
       markers for reST headers: ``- = ` : ' " ~ _ ^ * + # < >``.
+      However, lines only containing double colons `::` do not
+      end "TESTS" blocks.
 
     Return the string obtained from ``docstring`` by removing these
     blocks.
@@ -267,7 +284,7 @@ def skip_TESTS_block(docstring):
 
         sage: from sage.misc.sagedoc import skip_TESTS_block
         sage: start = ' Docstring\n\n'
-        sage: test = ' TEST: \n\n Here is a test::\n     sage: 2+2 \n     5 \n\n'
+        sage: test = ' TESTS: \n\n Here is a test::\n     sage: 2+2 \n     5 \n\n'
         sage: test2 = ' TESTS:: \n\n     sage: 2+2 \n     6 \n\n'
 
     Test lines starting with "REFERENCES:"::
@@ -313,6 +330,12 @@ def skip_TESTS_block(docstring):
         sage: another_fake = '\n    blah\n    ----'
         sage: skip_TESTS_block(start + test + another_fake).rstrip() == start.rstrip()
         True
+
+    Double colons ``::`` are also not considered as headers (:trac:`27896`)::
+
+        sage: colons = ' ::\n\n     sage: 2+2\n     4\n\n'
+        sage: skip_TESTS_block(start + test2 + colons).rstrip() == start.rstrip()
+        True
     """
     # tests_block: match a line starting with whitespace, then
     # "TEST" or "TESTS" followed by ":" or "::", then possibly
@@ -327,7 +350,8 @@ def skip_TESTS_block(docstring):
     end_of_block = re.compile(r'[ ]*(\.\.[ ]+[-_A-Za-z]+|[A-Z]+):')
     # header: match a string of hyphens, or other characters which are
     # valid markers for reST headers: - = ` : ' " ~ _ ^ * + # < >
-    header = re.compile(r'^[ ]*([-=`:\'"~_^*+#><])\1+[ ]*$')
+    # except for double colons ::
+    header = re.compile(r'^[ ]*(?:([-=`\'"~_^*+#><])\1+|:|:::+)[ ]*$')
     s = ''
     skip = False
     previous = ''
@@ -468,7 +492,7 @@ extlinks = {
     'python': ('https://docs.python.org/release/'+pythonversion+'/%s', ''),
     'trac': ('https://trac.sagemath.org/%s', 'trac ticket #'),
     'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article '),
-    'arxiv': ('https://arxiv.org/abs/%s', 'Arxiv '),
+    'arxiv': ('https://arxiv.org/abs/%s', 'arXiv '),
     'oeis': ('https://oeis.org/%s', 'OEIS sequence '),
     'doi': ('https://doi.org/%s', 'doi:'),
     'pari': ('https://pari.math.u-bordeaux.fr/dochtml/help/%s', 'pari:'),
@@ -482,7 +506,7 @@ def process_extlinks(s, embedded=False):
     Sphinx extlinks extension. For example, replace ``:trac:`NUM```
     with ``https://trac.sagemath.org/NUM``, and similarly with
     ``:python:TEXT`` and ``:wikipedia:TEXT``, looking up the url from
-    the dictionary ``extlinks`` in SAGE_DOC_SRC/common/conf.py.
+    the dictionary ``extlinks`` in ``sage.docs.conf``.
     If ``TEXT`` is of the form ``blah <LINK>``, then it uses ``LINK``
     rather than ``TEXT`` to construct the url.
 
@@ -647,8 +671,17 @@ def format(s, embedded=False):
            Return the n x n identity matrix over the given ring.
         ...
 
+    Check that backslashes are preserved in code blocks (:trac:`29140`)::
+
+        sage: format('::\n'
+        ....:        '\n'
+        ....:        r'    sage: print(r"\\\\.")' '\n'
+        ....:        r'    \\\\.')
+        '   sage: print(r"\\\\\\\\.")\n   \\\\\\\\.\n'
+        sage: format(r'inline code ``\\\\.``')
+        'inline code "\\\\\\\\."\n'
     """
-    if not isinstance(s, string_types):
+    if not isinstance(s, str):
         raise TypeError("s must be a string")
 
     # Leading empty lines must be removed, since we search for directives
@@ -677,9 +710,11 @@ def format(s, embedded=False):
         i_0 = 0
         while True:
             i = s[i_0:].find("<<<")
-            if i == -1: break
+            if i == -1:
+                break
             j = s[i_0+i+3:].find('>>>')
-            if j == -1: break
+            if j == -1:
+                break
             obj = s[i_0+i+3 : i_0+i+3+j]
             if obj in docs:
                 t = ''
@@ -730,15 +765,17 @@ def format_src(s):
         sage: format_src('<<<Sq>>>')[5:15]
         'Sq(*nums):'
     """
-    if not isinstance(s, string_types):
+    if not isinstance(s, str):
         raise TypeError("s must be a string")
     docs = set([])
     import sage.all
     while True:
         i = s.find("<<<")
-        if i == -1: break
+        if i == -1:
+            break
         j = s[i+3:].find('>>>')
-        if j == -1: break
+        if j == -1:
+            break
         obj = s[i+3:i+3+j]
         if obj in docs:
             t = ''
@@ -915,7 +952,7 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
     else:
         # Pass through the IPython pager in a mime bundle
         from IPython.core.page import page
-        if not isinstance(text_results, text_type):
+        if not isinstance(text_results, str):
             text_results = text_results.decode('utf-8', 'replace')
 
         page({
@@ -1026,7 +1063,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         sage: print(search_src(" fetch(", "def", interact=False)) # py3
         Traceback (most recent call last):
         ...
-        sre_constants.error: missing ), unterminated subpattern at position 6
+        error: missing ), unterminated subpattern at position 6
 
     To fix this, *escape* the parenthesis with a backslash::
 
@@ -1564,6 +1601,7 @@ with 'sage -docbuild {0} html --mathjax' and try again.""".format(name))
         """
         self._open("constructions")
 
+
 browse_sage_doc = _sage_doc()
 tutorial = browse_sage_doc.tutorial
 reference = browse_sage_doc.reference
@@ -1572,6 +1610,7 @@ developer = browse_sage_doc.developer
 constructions = browse_sage_doc.constructions
 
 python_help = pydoc.help
+
 
 def help(module=None):
     """
@@ -1584,7 +1623,7 @@ def help(module=None):
         sage: help()
         Welcome to Sage ...
     """
-    if not module is None:
+    if module is not None:
         python_help(module)
     else:
         print("""Welcome to Sage {}!

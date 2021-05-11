@@ -14,8 +14,6 @@ functions are for internal use by routines elsewhere in the Sage library.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 from cysignals.memory cimport check_allocarray, sig_free
 
 import random

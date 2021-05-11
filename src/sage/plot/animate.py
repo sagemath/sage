@@ -18,10 +18,10 @@ alternative which works without any extra dependencies.
 
 .. WARNING::
 
-    Note that ImageMagick and FFmpeg are not included with Sage, and
+    Note that ``ImageMagick`` and ``FFmpeg`` are not included with Sage, and
     must be installed by the user.  On unix systems, type ``which
     convert`` at a command prompt to see if ``convert`` (part of the
-    ImageMagick suite) is installed.  If it is, you will be given its
+    ``ImageMagick`` suite) is installed.  If it is, you will be given its
     location.  Similarly, you can check for ``ffmpeg`` with ``which
     ffmpeg``.  See the websites of ImageMagick_ or FFmpeg_ for
     installation instructions.
@@ -45,7 +45,7 @@ Animate as an APNG_::
 
     sage: a.apng()  # long time
 
-An animated :class:`sage.plot.graphics.GraphicsArray` of rotating ellipses::
+An animated :class:`sage.plot.multigraphics.GraphicsArray` of rotating ellipses::
 
     sage: E = animate((graphics_array([[ellipse((0,0),a,b,angle=t,xmin=-3,xmax=3)+circle((0,0),3,color='blue') for a in range(1,3)] for b in range(2,4)]) for t in sxrange(0,pi/4,.15)))
     sage: str(E)    # animations produced from a generator do not have a known length
@@ -96,28 +96,27 @@ AUTHORS:
 - John Palmieri
 - Niles Johnson (2013-12): Expand to animate more graphics objects
 - Martin von Gagern (2014-12): Added APNG support
+- Joshua Campbell (2020): interactive animation via Three.js viewer
 
 REFERENCES:
 
-- `ImageMagick <http://www.imagemagick.org>`_
-- `FFmpeg <http://www.ffmpeg.org>`_
+- `ImageMagick <https://www.imagemagick.org>`_
+- `FFmpeg <https://www.ffmpeg.org>`_
 - `APNG <https://wiki.mozilla.org/APNG_Specification>`_
-- `browsers which support it <http://caniuse.com/#feat=apng>`_
+- `browsers which support it <https://caniuse.com/#feat=apng>`_
 
 """
 
 ############################################################################
 #  Copyright (C) 2007 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ############################################################################
-from __future__ import print_function, absolute_import
 
+import builtins
 import os
 import struct
 import zlib
-
-import six
 
 from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
@@ -265,7 +264,6 @@ class Animation(WithEqualityById, SageObject):
         for kwds in kwds_tuple:
             new_kwds.update(kwds)
 
-        from six.moves import builtins
         for name in ['xmin', 'xmax', 'ymin', 'ymax']:
             values = [v for v in [kwds.get(name, None) for kwds in kwds_tuple] if v is not None]
             if values:
@@ -475,10 +473,10 @@ class Animation(WithEqualityById, SageObject):
 
     def graphics_array(self, ncols=3):
         r"""
-        Return a :class:`sage.plot.graphics.GraphicsArray` with plots of the
+        Return a :class:`sage.plot.multigraphics.GraphicsArray` with plots of the
         frames of this animation, using the given number of columns.
         The frames must be acceptable inputs for
-        :class:`sage.plot.graphics.GraphicsArray`.
+        :class:`sage.plot.multigraphics.GraphicsArray`.
 
 
         EXAMPLES::
@@ -560,7 +558,7 @@ class Animation(WithEqualityById, SageObject):
             sage: td = tmp_dir()
             sage: a.gif()              # not tested
             sage: a.gif(savefile=td + 'my_animation.gif', delay=35, iterations=3)  # optional -- ImageMagick
-            sage: with open(td + 'my_animation.gif', 'rb') as f: print('\x21\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'my_animation.gif', 'rb') as f: print(b'\x21\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.gif(savefile=td + 'my_animation.gif', show_path=True) # optional -- ImageMagick
             Animation saved to .../my_animation.gif.
@@ -577,11 +575,6 @@ class Animation(WithEqualityById, SageObject):
               packages, so please install one of them and try again.
 
               See www.imagemagick.org and www.ffmpeg.org for more information.
-
-        REFERENCES:
-
-        - `ImageMagick <http://www.imagemagick.org>`_
-        - `FFmpeg <http://www.ffmpeg.org>`_
         """
         from sage.misc.sage_ostools import have_program
         have_convert = have_program('convert')
@@ -802,43 +795,43 @@ See www.imagemagick.org and www.ffmpeg.org for more information."""
     def ffmpeg(self, savefile=None, show_path=False, output_format=None,
                ffmpeg_options='', delay=None, iterations=0, pix_fmt='rgb24'):
         r"""
-        Returns a movie showing an animation composed from rendering
-        the frames in self.
+        Return a movie showing an animation composed from rendering
+        the frames in ``self``.
 
-        This method will only work if ffmpeg is installed.  See
-        http://www.ffmpeg.org for information about ffmpeg.
+        This method will only work if ``ffmpeg`` is installed.  See
+        https://www.ffmpeg.org for information about ``ffmpeg``.
 
         INPUT:
 
-        -  ``savefile`` - file that the mpeg gets saved to.
+        - ``savefile`` -- file that the mpeg gets saved to.
 
-        .. warning:
+        .. warning::
 
             This will overwrite ``savefile`` if it already exists.
 
-        - ``show_path`` - boolean (default: False); if True, print the
-          path to the saved file
+        - ``show_path`` -- boolean (default: ``False``); if ``True``,
+          print the path to the saved file
 
-        - ``output_format`` - string (default: None); format and
-          suffix to use for the video.  This may be 'mpg', 'mpeg',
-          'avi', 'gif', or any other format that ffmpeg can handle.
-          If this is None and the user specifies ``savefile`` with a
+        - ``output_format`` - string (default: ``None``); format and
+          suffix to use for the video.  This may be ``'mpg'``, ``'mpeg'``,
+          ``'avi'``, ``'gif'``, or any other format that ``ffmpeg`` can handle.
+          If this is ``None`` and the user specifies ``savefile`` with a
           suffix, say ``savefile='animation.avi'``, try to determine the
-          format ('avi' in this case) from that file name.  If no file
-          is specified or if the suffix cannot be determined, 'mpg' is
+          format (``'avi'`` in this case) from that file name.  If no file
+          is specified or if the suffix cannot be determined, ``'mpg'`` is
           used.
 
-        - ``ffmpeg_options`` - string (default: ''); this string is
+        - ``ffmpeg_options`` - string (default: ``''``); this string is
           passed directly to ffmpeg.
 
-        - ``delay`` - integer (default: None); delay in hundredths of a
+        - ``delay`` - integer (default: ``None``); delay in hundredths of a
           second between frames.  The framerate is 100/delay.
           This is not supported for mpeg files: for mpegs, the frame
           rate is always 25 fps.
 
         - ``iterations`` - integer (default: 0); number of iterations
           of animation. If 0, loop forever.  This is only supported
-          for animated gif output and requires ffmpeg version 0.9 or
+          for animated gif output and requires ``ffmpeg`` version 0.9 or
           later.  For older versions, set ``iterations=None``.
 
         - ``pix_fmt`` - string (default: 'rgb24'); used only for gif
@@ -848,7 +841,7 @@ See www.imagemagick.org and www.ffmpeg.org for more information."""
 
         If ``savefile`` is not specified: in notebook mode, display
         the animation; otherwise, save it to a default file name.  Use
-        :func:`sage.misc.misc.set_verbose` with ``level=1`` to see
+        :func:`sage.misc.verbose.set_verbose` with ``level=1`` to see
         additional output.
 
         EXAMPLES::
@@ -935,12 +928,12 @@ please install it and try again."""
             cmd = 'cd "%s"; sage-native-execute ffmpeg -y -f image2 %s -i %s %s %s' % (pngdir, early_options, pngs, ffmpeg_options, savefile)
             from subprocess import check_call, CalledProcessError, PIPE
             try:
-                if sage.misc.misc.get_verbose() > 0:
+                if sage.misc.verbose.get_verbose() > 0:
                     set_stderr = None
                 else:
                     set_stderr = PIPE
-                sage.misc.misc.verbose("Executing '%s'" % cmd,level=1)
-                sage.misc.misc.verbose("\n---- ffmpeg output below ----\n")
+                sage.misc.verbose.verbose("Executing '%s'" % cmd,level=1)
+                sage.misc.verbose.verbose("\n---- ffmpeg output below ----\n")
                 check_call(cmd, shell=True, stderr=set_stderr)
                 if show_path:
                     print("Animation saved to file %s." % savefile)
@@ -1022,7 +1015,9 @@ please install it and try again."""
           files.
 
         If filename is None, then in notebook mode, display the
-        animation; otherwise, save the animation to a GIF file.  If
+        animation; otherwise, save the animation to a GIF file. If
+        filename ends in '.html', save an :meth:`interactive` version of
+        the animation to an HTML file that uses the Three.js viewer.  If
         filename ends in '.sobj', save to an sobj file.  Otherwise,
         try to determine the format from the filename extension
         ('.mpg', '.gif', '.avi', etc.).  If the format cannot be
@@ -1030,7 +1025,7 @@ please install it and try again."""
 
         For GIF files, either ffmpeg or the ImageMagick suite must be
         installed.  For other movie formats, ffmpeg must be installed.
-        An sobj file can be saved with no extra software installed.
+        sobj and HTML files can be saved with no extra software installed.
 
         EXAMPLES::
 
@@ -1046,6 +1041,9 @@ please install it and try again."""
             sage: a.save(td + 'wave0.sobj')
             sage: a.save(td + 'wave1.sobj', show_path=True)
             Animation saved to file .../wave1.sobj.
+            sage: a.save(td + 'wave0.html', online=True)
+            sage: a.save(td + 'wave1.html', show_path=True, online=True)
+            Animation saved to file .../wave1.html.
 
         TESTS:
 
@@ -1053,26 +1051,30 @@ please install it and try again."""
         GIF image (see :trac:`18176`)::
 
             sage: a.save(td + 'wave.gif')   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
             True
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.save(td + 'wave.gif', delay=35)   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x14\x00' in f.read())  # optional -- ImageMagick
             False
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xf9\x04\x08\x23\x00' in f.read())  # optional -- ImageMagick
             True
             sage: a.save(td + 'wave.gif', iterations=3)   # optional -- ImageMagick
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f: print(b'!\xff\x0bNETSCAPE2.0\x03\x01\x00\x00\x00' in f.read())  # optional -- ImageMagick
             False
-            sage: with open(td + 'wave.gif', 'rb') as f: print('!\xff\x0bNETSCAPE2.0\x03\x01\x03\x00\x00' in f.read())  # optional -- ImageMagick
+            sage: with open(td + 'wave.gif', 'rb') as f:  # optional -- ImageMagick
+            ....:      check1 = b'!\xff\x0bNETSCAPE2.0\x03\x01\x02\x00\x00'
+            ....:      check2 = b'!\xff\x0bNETSCAPE2.0\x03\x01\x03\x00\x00'
+            ....:      data = f.read()
+            ....:      print(check1 in data or check2 in data)
             True
         """
         if filename is None:
             suffix = '.gif'
         else:
             suffix = os.path.splitext(filename)[1]
-            if len(suffix) == 0:
+            if not suffix:
                 suffix = '.gif'
 
         if filename is None or suffix == '.gif':
@@ -1082,8 +1084,69 @@ please install it and try again."""
             SageObject.save(self, filename)
             if show_path:
                 print("Animation saved to file %s." % filename)
+        elif suffix == '.html':
+            self.interactive(**kwds).save(filename)
+            if show_path:
+                print("Animation saved to file %s." % filename)
         else:
             self.ffmpeg(savefile=filename, show_path=show_path, **kwds)
+
+    def interactive(self, **kwds):
+        r"""
+        Create an interactive depiction of the animation.
+
+        INPUT:
+
+        - ``**kwds`` -- any of the viewing options accepted by show() are valid
+          as keyword arguments to this function and they will behave in the same
+          way. Those that are animation-related and recognized by the Three.js
+          viewer are: ``animate``, ``animation_controls``, ``auto_play``,
+          ``delay``, and ``loop``.
+
+        OUTPUT:
+
+        A 3D graphics object which, by default, will use the Three.js viewer.
+
+        EXAMPLES::
+
+            sage: frames = [point3d((sin(x), cos(x), x)) for x in (0, pi/16, .., 2*pi)]
+            sage: animate(frames).interactive(online=True)
+            Graphics3d Object
+
+        Works with frames that are 2D or 3D graphics objects or convertible to
+        2D or 3D graphics objects via a ``plot`` or ``plot3d`` method::
+
+            sage: frames = [dodecahedron(), circle(center=(0, 0), radius=1), x^2]
+            sage: animate(frames).interactive(online=True, delay=100)
+            Graphics3d Object
+
+        .. SEEALSO::
+
+            :ref:`threejs_viewer`
+
+        """
+        from sage.plot.plot3d.base import Graphics3d, KeyframeAnimationGroup
+        # Attempt to convert frames to Graphics3d objects.
+        g3d_frames = []
+        for i, frame in enumerate(self._frames):
+            if not isinstance(frame, Graphics3d):
+                try:
+                    frame = frame.plot3d()
+                except (AttributeError, TypeError):
+                    try:
+                        frame = frame.plot().plot3d()
+                    except (AttributeError, TypeError):
+                        frame = None
+                if not isinstance(frame, Graphics3d):
+                    raise TypeError("Could not convert frame {} to Graphics3d".format(i))
+            g3d_frames.append(frame)
+        # Give preference to this method's keyword arguments over those provided
+        # to animate or the constructor.
+        kwds = dict(self._kwds, **kwds)
+        # Three.js is the only viewer that supports animation at present.
+        if 'viewer' not in kwds:
+            kwds['viewer'] = 'threejs'
+        return KeyframeAnimationGroup(g3d_frames, **kwds)
 
 
 class APngAssembler(object):
@@ -1122,15 +1185,9 @@ class APngAssembler(object):
         ....:             png = os.path.join(pngdir, "{:08d}.png".format(i))
         ....:             apng.add_frame(png, delay=10*i + 10)
         ....:     return outfile
-        ....:
         sage: assembleAPNG()  # long time
         '...png'
-
-    REFERENCES:
-
-    - `APNG <https://wiki.mozilla.org/APNG_Specification>`_
     """
-
     magic = b"\x89PNG\x0d\x0a\x1a\x0a"
     mustmatch = frozenset([b"IHDR", b"PLTE", b"bKGD", b"cHRM", b"gAMA",
                            b"pHYs", b"sBIT", b"tRNS"])
@@ -1531,10 +1588,8 @@ class APngAssembler(object):
             else: # for PNG magic
                 b.append(ord(h[0]))
                 h = h[1:]
-        if six.PY2:
-            return ''.join(map(chr, b))
-        else:
-            return bytes(b)
+
+        return bytes(b)
 
     @classmethod
     def _testData(cls, name, asFile):

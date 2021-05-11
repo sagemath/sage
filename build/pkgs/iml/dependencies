@@ -1,4 +1,4 @@
-$(MP_LIBRARY) gsl $(BLAS) | pkgconf
+$(MP_LIBRARY) $(BLAS) | pkgconf
 
 ----------
 All lines of this file are ignored except the first.

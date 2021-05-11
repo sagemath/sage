@@ -25,9 +25,6 @@ from sage.sat.converters import ANF2CNFConverter
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
 
 
-import six
-
-
 def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
     """
     Solve system of Boolean polynomials ``F`` by solving the
@@ -100,16 +97,16 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         sage: len(l) == 1, f.subs(l[0])         # optional - cryptominisat
         (True, 0)
 
-        sage: l = sorted(solve_sat([a*b],n=2))        # optional - cryptominisat
+        sage: l = solve_sat([a*b],n=2)        # optional - cryptominisat
         sage: len(l) == 2, f.subs(l[0]), f.subs(l[1]) # optional - cryptominisat
         (True, 0, 0)
 
-        sage: sorted(solve_sat([a*b],n=3))         # optional - cryptominisat
-        [{b: 0, a: 0}, {b: 0, a: 1}, {b: 1, a: 0}]
-        sage: sorted(solve_sat([a*b],n=4))         # optional - cryptominisat
-        [{b: 0, a: 0}, {b: 0, a: 1}, {b: 1, a: 0}]
-        sage: sorted(solve_sat([a*b],n=infinity))  # optional - cryptominisat
-        [{b: 0, a: 0}, {b: 0, a: 1}, {b: 1, a: 0}]
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b],n=3))  # optional - cryptominisat
+        [(0, 0), (0, 1), (1, 0)]
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b],n=4))   # optional - cryptominisat
+        [(0, 0), (0, 1), (1, 0)]
+        sage: sorted((d[a], d[b]) for d in solve_sat([a*b],n=infinity))  # optional - cryptominisat
+        [(0, 0), (0, 1), (1, 0)]
 
     In the next example we see how the ``target_variables`` parameter works::
 
@@ -119,11 +116,8 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     First the normal use case::
 
-        sage: sorted(solve_sat(F,n=infinity))                             # optional - cryptominisat
-        [{d: 0, c: 0, b: 0, a: 0},
-         {d: 0, c: 1, b: 1, a: 1},
-         {d: 1, c: 0, b: 1, a: 1},
-         {d: 1, c: 1, b: 0, a: 0}]
+        sage: sorted((D[a], D[b], D[c], D[d]) for D in solve_sat(F,n=infinity))      # optional - cryptominisat
+        [(0, 0, 0, 0), (0, 0, 1, 1), (1, 1, 0, 1), (1, 1, 1, 0)]
 
     Now we are only interested in the solutions of the variables a and b::
 
@@ -141,7 +135,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         sage: variables = map(str, eqs.variables())                                             # optional - cryptominisat, long time
         sage: variables = ",".join(variables)                                                   # optional - cryptominisat, long time
         sage: R = BooleanPolynomialRing(16, variables)                                          # optional - cryptominisat, long time
-        sage: eqs = map(R, eqs)                                                                 # optional - cryptominisat, long time
+        sage: eqs = [R(eq) for eq in eqs]                                                                 # optional - cryptominisat, long time
         sage: sls_aes = solve_sat(eqs, n = infinity)                                            # optional - cryptominisat, long time
         sage: len(sls_aes)                                                                      # optional - cryptominisat, long time
         256
@@ -246,7 +240,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     if not isinstance(solver, SatSolver):
         solver_kwds = {}
-        for k, v in six.iteritems(kwds):
+        for k, v in kwds.items():
             if k.startswith("s_"):
                 solver_kwds[k[2:]] = v
 
@@ -259,7 +253,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     if not isinstance(converter, ANF2CNFConverter):
         converter_kwds = {}
-        for k, v in six.iteritems(kwds):
+        for k, v in kwds.items():
             if k.startswith("c_"):
                 converter_kwds[k[2:]] = v
 
@@ -365,7 +359,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
         from sage.sat.solvers.cryptominisat import CryptoMiniSat as solver
 
     solver_kwds = {}
-    for k, v in six.iteritems(kwds):
+    for k, v in kwds.items():
         if k.startswith("s_"):
             solver_kwds[k[2:]] = v
 
@@ -377,7 +371,7 @@ def learn(F, converter=None, solver=None, max_learnt_length=3, interreduction=Fa
         from sage.sat.converters.polybori import CNFEncoder as converter
 
     converter_kwds = {}
-    for k, v in six.iteritems(kwds):
+    for k, v in kwds.items():
         if k.startswith("c_"):
             converter_kwds[k[2:]] = v
 

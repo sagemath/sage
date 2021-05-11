@@ -1,8 +1,10 @@
-# distutils: libraries = gmp flint arb
+# distutils: libraries = gmp flint ARB_LIBRARY
+# distutils: depends = acb_elliptic.h
 
 from sage.libs.arb.types cimport *
 
-cdef extern from "acb_elliptic.h":
+# acb_elliptic.h
+cdef extern from "arb_wrap.h":
     void acb_elliptic_k(acb_t k, const acb_t m, long prec)
     void acb_elliptic_k_jet(acb_ptr w, const acb_t m, long len, long prec)
     void acb_elliptic_k_series(acb_poly_t res, const acb_poly_t m, long len, long prec)

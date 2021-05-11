@@ -1,13 +1,12 @@
 r"""
 Magmas
 """
-from __future__ import absolute_import
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
@@ -21,6 +20,7 @@ import sage.categories.coercion_methods
 from sage.categories.sets_cat import Sets
 from sage.categories.realizations import RealizationsCategory
 from sage.cpython.getattr import raw_getattr
+
 
 class Magmas(Category_singleton):
     """
@@ -283,7 +283,7 @@ class Magmas(Category_singleton):
             subcategory of both :class:`Magmas` and
             :class:`AdditiveMagmas` and upgrades it to a subcategory
             of :class:`MagmasAndAdditiveMagmas` before applying the
-            axiom. It complains overwise, since the ``Distributive``
+            axiom. It complains otherwise, since the ``Distributive``
             axiom does not make sense for a plain magma.
 
             EXAMPLES::
@@ -366,7 +366,6 @@ class Magmas(Category_singleton):
             """
             from sage.categories.magmatic_algebras import MagmaticAlgebras
             return [MagmaticAlgebras(self.base_ring())]
-
 
         class ParentMethods:
             def is_field(self, proof=True):
@@ -515,13 +514,13 @@ class Magmas(Category_singleton):
                 one = self.one()
                 tester.assertTrue(self.is_parent_of(one))
                 for x in tester.some_elements():
-                    tester.assertTrue(x * one == x)
-                    tester.assertTrue(one * x == x)
+                    tester.assertEqual(x * one, x)
+                    tester.assertEqual(one * x, x)
                 # Check that one is immutable if it looks like we can test this
                 if hasattr(one,"is_immutable"):
-                    tester.assertEqual(one.is_immutable(),True)
+                    tester.assertTrue(one.is_immutable())
                 if hasattr(one,"is_mutable"):
-                    tester.assertEqual(one.is_mutable(),False)
+                    tester.assertFalse(one.is_mutable())
 
             def is_empty(self):
                 r"""
@@ -758,7 +757,7 @@ class Magmas(Category_singleton):
                         sage: PvW0.one()
                         1
                     """
-                    return(self(self.realization_of().a_realization().one()))
+                    return self(self.realization_of().a_realization().one())
 
     class ParentMethods:
 
@@ -1082,7 +1081,8 @@ class Magmas(Category_singleton):
                 sage: C = Magmas().CartesianProducts().example(); C
                 The Cartesian product of (Rational Field, Integer Ring, Integer Ring)
                 sage: C.category()
-                Category of Cartesian products of commutative rings
+                Join of Category of Cartesian products of commutative rings and
+                Category of Cartesian products of metric spaces
                 sage: sorted(C.category().axioms())
                 ['AdditiveAssociative', 'AdditiveCommutative', 'AdditiveInverse',
                  'AdditiveUnital', 'Associative', 'Commutative',
@@ -1116,7 +1116,7 @@ class Magmas(Category_singleton):
                     sage: x*y
                     B[(0, [1, 2, 3])] + B[(1, [3, 1, 2])]
                 """
-                return self._cartesian_product_of_elements([(a*b) for (a,b) in zip(left.cartesian_factors(), right.cartesian_factors())])
+                return self._cartesian_product_of_elements( (a*b) for (a,b) in zip(left.cartesian_factors(), right.cartesian_factors()) )
 
     class Subquotients(SubquotientsCategory):
         r"""

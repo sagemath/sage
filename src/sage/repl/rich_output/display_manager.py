@@ -40,6 +40,9 @@ from sage.structure.sage_object import SageObject
 from sage.repl.rich_output.output_basic import (
     OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
 )
+from sage.repl.rich_output.output_browser import (
+    OutputHtml,
+)
 from sage.repl.rich_output.preferences import DisplayPreferences
 
 
@@ -489,6 +492,7 @@ class DisplayManager(SageObject):
         One of
         :class:`~sage.repl.rich_output.output_basic.OutputPlainText`,
         :class:`~sage.repl.rich_output.output_basic.OutputAsciiArt`,
+        :class:`~sage.repl.rich_output.output_basic.OutputUnicodeArt`,
         or
         :class:`~sage.repl.rich_output.output_basic.OutputLatex`
         containing the preferred textual representation of ``obj``
@@ -516,8 +520,8 @@ class DisplayManager(SageObject):
             OutputUnicodeArt container
 
             sage: dm.preferences.text = 'latex'
-            sage: dm._preferred_text_formatter([1/42])
-            \newcommand{\Bold}[1]{\mathbf{#1}}\verb|OutputLatex|\phantom{\verb!x!}\verb|container|
+            sage: dm._preferred_text_formatter([1/42])  # doctest backend does not support html
+            OutputPlainText container
 
             sage: del dm.preferences.text   # reset to default
         """
@@ -533,10 +537,10 @@ class DisplayManager(SageObject):
             if type(out) is not OutputUnicodeArt:
                 raise OutputTypeException('backend returned wrong output type, require UnicodeArt')
             return out
-        if want == 'latex' and OutputLatex in supported:
+        if want == 'latex' and OutputHtml in supported:
             out = self._backend.latex_formatter(obj, **kwds)
-            if type(out) is not OutputLatex:
-                raise OutputTypeException('backend returned wrong output type, require Latex')
+            if type(out) is not OutputHtml:
+                raise OutputTypeException('backend returned wrong output type, require Html')
             return out
         if plain_text is not None:
             if type(plain_text) is not OutputPlainText:
@@ -583,7 +587,7 @@ class DisplayManager(SageObject):
             return obj._rich_repr_(self, **rich_repr_kwds)
         try:
             return obj._rich_repr_(self)
-        except NotImplementedError as e:
+        except NotImplementedError:
             # don't warn on NotImplementedErrors
             return None
         except Exception as e:
@@ -717,7 +721,7 @@ class DisplayManager(SageObject):
 
     def threejs_scripts(self, online):
         """
-        Return Three.js script tags for the current backend.
+        Return Three.js script tag for the current backend.
 
         INPUT:
 
@@ -725,19 +729,19 @@ class DisplayManager(SageObject):
 
         OUTPUT:
 
-        String containing script tags
+        String containing script tag
 
         .. NOTE::
 
             This base method handles ``online=True`` case only, serving CDN
-            script tags. Location of scripts for offline usage is
+            script tag. Location of script for offline usage is
             backend-specific.
 
         EXAMPLES::
 
             sage: from sage.repl.rich_output import get_display_manager
             sage: get_display_manager().threejs_scripts(online=True)
-            '...<script src="https://cdn.rawgit.com/mrdoob/three.js/...'
+            '...<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@...'
             sage: get_display_manager().threejs_scripts(online=False)
             Traceback (most recent call last):
             ...
@@ -745,11 +749,12 @@ class DisplayManager(SageObject):
             offline threejs graphics
         """
         if online:
-            from sage.misc.package import installed_packages
-            version = installed_packages()['threejs'].split('.')[0]
+            import sage.env
+            import os
+            with open(os.path.join(sage.env.THREEJS_DIR, 'version')) as f:
+                version = f.read().strip()
             return """
-<script src="https://cdn.rawgit.com/mrdoob/three.js/{0}/build/three.min.js"></script>
-<script src="https://cdn.rawgit.com/mrdoob/three.js/{0}/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@{0}/build/three.min.js"></script>
             """.format(version)
         try:
             return self._backend.threejs_offline_scripts()

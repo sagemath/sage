@@ -1,0 +1,2 @@
+#! /usr/bin/env bash
+rm -rf "$SAGE_LOCAL"/include/polymake "$SAGE_LOCAL"/lib/libpolymake* "$SAGE_LOCAL"/lib/polymake "$SAGE_LOCAL"/share/polymake "$SAGE_LOCAL"/bin/polymake*

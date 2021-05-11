@@ -1,3 +1,5 @@
+.. highlight:: shell-session
+
 .. _chapter-manual-git:
 
 ================
@@ -17,7 +19,7 @@ Randall Munroe has provided a `basic overview <http://xkcd.com/1597/>`_.
 We assume that you have a copy of the Sage git repository, for example
 by running::
 
-    [user@localhost ~]$ git clone git://github.com/sagemath/sage.git
+    [user@localhost ~]$ git clone https://gitlab.com/sagemath/dev/tracmirror.git
     [user@localhost ~]$ cd sage
     [user@localhost sage]$ git checkout develop
     [user@localhost sage]$ make
@@ -41,12 +43,12 @@ The Sage trac server also holds a copy of the Sage repository, it is
 served via the ssh and git protocols. To add it as a remote repository
 to your local git repository, use these commands::
 
-    [user@localhost sage]$ git remote add trac git://trac.sagemath.org/sage.git -t master
+    [user@localhost sage]$ git remote add trac git@trac.sagemath.org:sage.git -t master
     [user@localhost sage]$ git remote set-url --push trac git@trac.sagemath.org:sage.git
     [user@localhost sage]$ git remote -v
-    origin      git://github.com/sagemath/sage.git (fetch)
-    origin      git://github.com/sagemath/sage.git (push)
-    trac        git://trac.sagemath.org/sage.git (fetch)
+    origin      https://gitlab.com/sagemath/dev/tracmirror.git (fetch)
+    origin      https://gitlab.com/sagemath/dev/tracmirror.git (push)
+    trac        git@trac.sagemath.org:sage.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 
 Instead of ``trac`` you can use any local name you want, of course. It
@@ -79,8 +81,8 @@ If you want to use ssh only, use these commands::
 
     [user@localhost sage]$ git remote add trac git@trac.sagemath.org:sage.git -t master
     [user@localhost sage]$ git remote -v
-    origin      git://github.com/sagemath/sage.git (fetch)
-    origin      git://github.com/sagemath/sage.git (push)
+    origin      https://gitlab.com/sagemath/dev/tracmirror.git (fetch)
+    origin      https://gitlab.com/sagemath/dev/tracmirror.git (push)
     trac        git@trac.sagemath.org:sage.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 
@@ -243,7 +245,9 @@ Sometimes, a new version of Sage is released while you work on a git branch.
 Let us assume you started ``my_branch`` at commit ``B``. After a while, your
 branch has advanced to commit ``Z``, but you updated ``master`` (see
 :ref:`section-git-pull-master`) and now your git history looks like this (see
-:ref:`section_walkthrough_logs`)::
+:ref:`section_walkthrough_logs`):
+
+.. CODE-BLOCK:: text
 
                      X---Y---Z my_branch
                     /
@@ -254,12 +258,16 @@ How should you deal with such changes? In principle, there are two ways:
 
 * **Rebase:** The first solution is to **replay** commits ``X,Y,Z`` atop of the
   new ``master``. This is called **rebase**, and it rewrites your current
-  branch::
+  branch:
+
+  .. CODE-BLOCK:: text
 
       git checkout my_branch
       git rebase -i master
 
-  In terms of the commit graph, this results in::
+  In terms of the commit graph, this results in:
+
+  .. CODE-BLOCK:: text
 
                              X'--Y'--Z' my_branch
                             /
@@ -270,18 +278,24 @@ How should you deal with such changes? In principle, there are two ways:
   began to write code atop of your commits ``X,Y,Z``. It is safe otherwise.
 
   **Alternatively**, you can rebase ``my_branch`` while updating master at the
-  same time (see :ref:`section-git-pull`)::
+  same time (see :ref:`section-git-pull`):
+
+  .. CODE-BLOCK:: text
 
     git checkout my_branch
     git pull -r master
 
 * **Merging** your branch with ``master`` will create a new commit above the two
-  of them::
+  of them:
+
+  .. CODE-BLOCK:: text
 
       git checkout my_branch
       git merge master
 
-  The result is the following commit graph::
+  The result is the following commit graph:
+
+  .. CODE-BLOCK:: text
 
                      X---Y---Z---W my_branch
                     /           /
@@ -295,7 +309,9 @@ How should you deal with such changes? In principle, there are two ways:
     not be there had you used rebase.
 
   **Alternatively**, you can merge ``my_branch`` while updating master at the
-  same time (see :ref:`section-git-pull`)::
+  same time (see :ref:`section-git-pull`):
+
+  .. CODE-BLOCK:: text
 
     git checkout my_branch
     git pull master

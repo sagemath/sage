@@ -3,14 +3,22 @@
 #  sage-spkg: install a Sage package
 #
 #  This script is typically invoked by giving the command
-#      sage -i <options> <package name>...
+#      sage {-i|-p} <options> <package name>...
+#
+#  sage-spkg itself only accepts one <package name>.
+#
+#      sage-spkg <options> <package name> [<installation tree>]
 #
 #  Options can be:
 #   -s: do not delete temporary build directory
 #   -k: do not uninstall existing installation of this package before
 #       installing; instead simply overwrite existing files.
 #   -c: after installing, run the test suite for the spkg. This should
-#       override the settings of SAGE_CHECK and SAGE_CHECK_PACKAGES.
+#       override the settings of SAGE_CHECK.
+#       Exit with an error if the test suite fails.
+#   -w: after installing, run the test suite for the spkg. This should
+#       override the settings of SAGE_CHECK.
+#       Print a warning if the test suite fails.
 #   -d: only download the package
 #   -y: automatically reply "y" for all prompts regarding
 #       experimental and old-style packages
@@ -20,8 +28,11 @@
 #  A package may assume that the following environment
 #  variables are defined:
 #
-#      SAGE_ROOT      -- root directory of sage install
-#      SAGE_LOCAL     -- $SAGE_ROOT/local
+#      SAGE_ROOT      -- root directory of sage distribution
+#      SAGE_LOCAL     -- prefix where packages are installed (usually $SAGE_ROOT/local)
+#      SAGE_INST_LOCAL-- prefix where to install this package;
+#                        this is set by the optional argument <installation tree>
+#                        and defaults to $SAGE_LOCAL.
 #      SAGE_DISTFILES -- directory that stores upstream tarballs
 #      SAGE_DESTDIR   -- temporary root the package will be installed to
 #      PKG_BASE       -- the base name of the package itself (e.g. 'patch')
@@ -64,21 +75,26 @@
 #*****************************************************************************
 
 # Avoid surprises with character ranges [a-z] in regular expressions
+# See Trac #15791; some locales can produce different results for
+# character ranges; using C.UTF-8 to ensure UTF-8 default encoding in Python
+# introduces extra complications, see #30053, so we don't do it, but
+# assume we are on Python3.x,  for x at least 7.
 export LC_ALL=C
 
 usage()
 {
 cat <<EOF
-Usage: sage -p <options> <package name>
+Usage: sage {-i|-p} <options> <package name>
 
-If <package name> is a URL, download and install it. If it is a file
-name, install it. Otherwise, search Sage's list of packages (see
-'sage --package list') for a matching package, and if a match is
-found, install it.
+Search Sage's list of packages (see 'sage --package list') for a
+matching package, and if a match is found, install it.
 
 Options:
    -s: do not delete the temporary build directory
-   -c: after installing, run the test suite for the package
+   -c: after installing, run the test suite for the package;
+       exit with an error on test suite failures
+   -w: after installing, run the test suite for the package;
+       print a warning on test suite failures
    -d: only download the package
    -y: automatically reply "y" for all prompts regarding
        experimental and old-style packages; warning: there
@@ -86,6 +102,8 @@ Options:
        use at your own risk"
    -n: automatically reply "n" for all prompts regarding
        experimental and old-style packages
+   -o: allow fetching the package from its upstream URL
+       when it is not available from the Sage mirrors (yet)
 EOF
 }
 
@@ -101,8 +119,10 @@ cat >&2 <<MESSAGE
 $1
 ************************************************************************
 Please email sage-devel (http://groups.google.com/group/sage-devel)
-explaining the problem and including the log file
+explaining the problem and including the log files
   $SAGE_LOGS/$PKG_NAME.log
+and
+  $SAGE_ROOT/config.log
 Describe your computer, operating system, etc.
 MESSAGE
 
@@ -112,7 +132,7 @@ If you want to try to fix the problem yourself, *don't* just cd to
 `pwd` and type '$2' or whatever is appropriate.
 Instead, the following commands setup all environment variables
 correctly and load a subshell for you to debug the error:
-  (cd '`pwd`' && '$SAGE_ROOT/sage' --sh)
+  (cd '`pwd`' && '$SAGE_ROOT/sage' --buildsh)
 When you are done debugging, you can type "exit" to leave the subshell.
 MESSAGE
 fi
@@ -126,7 +146,8 @@ lookup_param()
 {
     local param=$1
     local file=$2
-    sed -n "s/^${param} *= *//p" $file
+    # Ignore errors if the file does not exist
+    sed -n "s/^${param} *= *//p" $file 2>/dev/null
 }
 
 write_to_tty()
@@ -157,18 +178,21 @@ fi
 # The following sets environment variables for building packages.
 # Since this is sourced, it returns a non-zero value on errors rather
 # than exiting.  Using dot suggested by W. Cheung.
+. sage-env-config
 . sage-env
-
 
 if [ $? -ne 0 ]; then
     error_msg "Error setting environment variables by sourcing sage-env"
     exit 1
 fi
 
-if [ -z "$SAGE_BUILD_DIR" ]; then
-    export SAGE_BUILD_DIR="$SAGE_LOCAL/var/tmp/sage/build"
-fi
+. sage-build-env-config
+. sage-build-env
 
+if [ $? -ne 0 ]; then
+    error_msg "Error setting environment variables by sourcing sage-build-env"
+    exit 1
+fi
 
 # Remove '.' from PYTHONPATH, to avoid trouble with setuptools / easy_install
 # (cf. #10192, #10176):
@@ -218,10 +242,13 @@ while true; do
         -s)
             export SAGE_KEEP_BUILT_SPKGS=yes;;
         -c|--check)
-            SAGE_CHECK_PACKAGES=x  # nonempty, so not set to default later
             export SAGE_CHECK=yes;;
+        -w|--check-warning-only)
+            export SAGE_CHECK=warn;;
         -k|--keep-existing)
             KEEP_EXISTING=yes;;
+        -o|--allow-upstream)
+            SAGE_DOWNLOAD_FILE_OPTIONS+=" --allow-upstream";;
         -*)
             echo >&2 "Error: unknown option '$1'"
             exit 2;;
@@ -235,37 +262,38 @@ done
 # Figure out the package filename, download it if needed.
 ##################################################################
 # One should be able to install a package using
-# sage -i <package-name> where <package-name> can be any of the
-# following values:
-#
-# 1a. /path/to/<package>-x.y.z.spkg, i.e. the package is found somewhere
-#     in your file system and you're giving an absolute path.
-# 1b. relative/path/to/<package>-x.y.z.spkg, the same with a relative
-#     path.
-# 2a. <package>-x.y.z, i.e. the name of the package plus the package's
-#     version numbers.
-# 2b. <package>-x.y.z.spkg, i.e. the name of the package in addition to
-#     the version numbers and the ".spkg" extension.
-# 3.  <package>, i.e. the name of the package without a version number.
-# 4.  <URL>/<package>-x.y.z.spkg, i.e. the full URL where the package
-#     is hosted.  Any local packages matching <package> are ignored.
-#
-# In cases 2a, 2b and 3 we first look locally inside spkg/* for a
-# matching package.  Otherwise, we try to download it.  In all cases,
-# we reduce to case 1a.
-#
-# See #7544 and #12602.
-#
+# sage -i <package-name>
 
 PKG_SRC="$1"
 # Does PKG_SRC contain a slash?
 if echo "$PKG_SRC" | grep / >/dev/null; then
-    PKG_HAS_PATH=yes
+    echo >&2 "Error: Installing old-style SPKGs is no longer supported"
+    exit 1
 fi
-# PKG_NAME is the last path component without .spkg
-# This already reduces case 2b to case 2a.
-PKG_NAME=`basename "$PKG_SRC" | sed 's/\.spkg$//'`
-PKG_BASE=`echo "$PKG_NAME" | sed 's/-.*//'`
+PKG_NAME="$PKG_SRC"
+PKG_BASE=`echo "$PKG_NAME" | sed 's/-.*//'` # strip version number
+
+case $# in
+    1)
+        SAGE_INST_LOCAL="$SAGE_LOCAL"
+        ;;
+    2)
+        SAGE_INST_LOCAL="$2"
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
+export SAGE_INST_LOCAL
+
+if [ -z "$SAGE_BUILD_DIR" ]; then
+    export SAGE_BUILD_DIR="$SAGE_INST_LOCAL/var/tmp/sage/build"
+fi
+
+export SAGE_SPKG_INST="$SAGE_INST_LOCAL/var/lib/sage/installed"
+export SAGE_SPKG_SCRIPTS="$SAGE_INST_LOCAL/var/lib/sage/scripts"
+export SAGE_SPKG_WHEELS="$SAGE_INST_LOCAL/var/lib/sage/wheels"
 
 # USE_LOCAL_SCRIPTS is a flag that if non-empty will cause
 # this script to try to install the package using local metadata
@@ -273,39 +301,30 @@ PKG_BASE=`echo "$PKG_NAME" | sed 's/-.*//'`
 # the value of this flag is set in the next codeblock
 USE_LOCAL_SCRIPTS=
 
-if [ -f "$PKG_SRC" ]; then
-    # PKG_SRC is a file.  If it is given by a relative path, prepend `pwd`
-    # (reduce case 1b to 1a)
-    if ! echo "$PKG_SRC" | grep '^/' >/dev/null; then
-        PKG_SRC="`pwd`/$PKG_SRC"
-    fi
-elif [ -z "$PKG_HAS_PATH" ]; then
-    # If PKG_SRC is not an existing file and doesn't contain a slash,
-    # we are in case 2a or 3.  If version in 2a matches the version in
-    # build/pkgs or we are in case 3 use the local scripts, otherwise
-    # we try to find a package in upstream
-    PKG_VER="${PKG_NAME#${PKG_BASE}}"
-    PKG_VER="${PKG_VER#-}"
-    PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
-    LOCAL_PKG_VER=`cat $PKG_SCRIPTS/package-version.txt 2>/dev/null`
-    if [ -n "$LOCAL_PKG_VER" ] && [ -z "$PKG_VER" -o "$PKG_VER" = "$LOCAL_PKG_VER" ]; then
-        PKG_VER="$LOCAL_PKG_VER"
-        if [ -z "$PKG_VER" ]; then
-            PKG_NAME="${PKG_BASE}"
-        else
-            PKG_NAME="${PKG_BASE}-${PKG_VER}"
-        fi
-        USE_LOCAL_SCRIPTS=yes
-        PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
-        PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini" | sed "s/VERSION/$PKG_BASE_VER/"`
-        echo "Found local metadata for $PKG_NAME"
+# PKG_SRC should look like "package-VERSION" or just "package".
+# If VERSION matches the version in build/pkgs or there is no version
+# specified, use the local scripts; otherwise we try to find a package
+# in upstream.
+PKG_VER="${PKG_NAME#${PKG_BASE}}"
+PKG_VER="${PKG_VER#-}"
+PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
+LOCAL_PKG_VER=`cat $PKG_SCRIPTS/package-version.txt 2>/dev/null`
+PKG_VER="$LOCAL_PKG_VER"
+if [ -z "$PKG_VER" ]; then
+    PKG_NAME="${PKG_BASE}"
+else
+    PKG_NAME="${PKG_BASE}-${PKG_VER}"
+fi
+USE_LOCAL_SCRIPTS=yes
+PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
+PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini" | sed "s/VERSION/$PKG_BASE_VER/"`
 
-        # Warning for experimental packages
-        if [ x`cat "$PKG_SCRIPTS/type"` = x"experimental" -a $INFO = 0 ]; then
-            if [ $YES != 1 ]; then
-                # We use /dev/tty here because our output may be redirected
-                # to a logfile, or line-buffered.
-                write_to_tty <<EOF
+# Warning for experimental packages
+if [ x`cat "$PKG_SCRIPTS/type"` = x"experimental" -a $INFO = 0 ]; then
+    if [ $YES != 1 ]; then
+        # We use /dev/tty here because our output may be redirected
+        # to a logfile, or line-buffered.
+        write_to_tty <<EOF
 =========================== WARNING ===========================
 You are about to download and install the experimental package
 $PKG_NAME.  This probably won't work at all for you! There
@@ -313,207 +332,41 @@ is no guarantee that it will build correctly, or behave as
 expected. Use at your own risk!
 ===============================================================
 EOF
-                if [ $? -ne 0 ]; then
-                    echo "Terminal not available for prompting.  Use 'sage -i -y $PKG_BASE'"
-                    echo "to install experimental packages in non-interactive mode."
-                    YES=-1
-                fi
-                if [ $YES != -1 ]; then
-                    read -p "Are you sure you want to continue [Y/n]? " answer < /dev/tty > /dev/tty 2>&1
-                else
-                    answer=n
-                fi
-                case "$answer" in
-                    n*|N*) exit 1;;
-                esac
-                # Confirm the user's input.  (This gives important
-                # feedback to the user when output is redirected to a logfile.)
-                echo > /dev/tty "OK, installing $PKG_NAME now..."
-            fi
+        if [ $? -ne 0 ]; then
+            echo "Terminal not available for prompting.  Use 'sage -i -y $PKG_BASE'"
+            echo "to install experimental packages in non-interactive mode."
+            YES=-1
         fi
-
-    else
-        cd "$SAGE_DISTFILES"
-        for spkg in `ls -1t ${PKG_NAME}.spkg ${PKG_NAME}-*.spkg 2>/dev/null`; do
-            if [ -f "$spkg" ]; then
-                # Found a good package
-                echo "Found package $PKG_NAME in $SAGE_DISTFILES/$spkg"
-                PKG_SRC="`pwd`/$spkg"
-                PKG_NAME=`basename "$spkg" | sed 's/\.spkg$//'`
-                break
-            fi
-        done
+        if [ $YES != -1 ]; then
+            read -p "Are you sure you want to continue [Y/n]? " answer < /dev/tty > /dev/tty 2>&1
+        else
+            answer=n
+        fi
+        case "$answer" in
+            n*|N*) exit 1;;
+        esac
+        # Confirm the user's input.  (This gives important
+        # feedback to the user when output is redirected to a logfile.)
+        echo > /dev/tty "OK, installing $PKG_NAME now..."
     fi
 fi
 
 if [ $INFO -ne 0 -a "$USE_LOCAL_SCRIPTS" = yes ]; then
-    cat "$PKG_SCRIPTS/SPKG.txt"
-    if [ -r "$PKG_SCRIPTS/type" ] ; then
-        echo "== Type =="
-        echo
-        cat "$PKG_SCRIPTS/type"
-    fi
-    exit 0
+    exec sage-spkg-info $PKG_BASE
 fi
 
 # If we haven't found the package yet, we must download it
 if [ ! -f "$PKG_SRC" ]; then
     if [ -n "$PKG_NAME_UPSTREAM" ]; then
         # This is the new-style package way of downloading the tarball
-        if ! sage-download-file "$PKG_NAME_UPSTREAM"; then
+        if ! sage-download-file $SAGE_DOWNLOAD_FILE_OPTIONS "$PKG_NAME_UPSTREAM"; then
             error_msg "Error downloading $PKG_NAME_UPSTREAM"
             exit 1
         fi
         PKG_SRC="$SAGE_DISTFILES/$PKG_NAME_UPSTREAM"
     else
-        # Handle all the legacy cruft. This branch can be deleted once
-        # we get rid of old-style spkgs
-        if [ $YES = -1 ]; then
-            # User provided -n option, so don't even try to download the package"
-            echo "Old-style packages disabled by use of '-n' option"
-            exit 1
-        fi
-        if [ $INFO -eq 0 ]; then
-            echo "Attempting to download package $PKG_NAME"
-        else
-            echo "Attempting to get on-line info for package $PKG_NAME"
-        fi
-
-        # Reduce everything to case 4: full URL.
-        if [ -n "$PKG_HAS_PATH" ]; then
-            PKG_URL="$PKG_SRC"
-        else
-            # Handle cases 2a and 3, where the package name is something
-            # like "foo" or "foo-1.2.3".
-            MIRROR=$(sage-download-file --print-fastest-mirror)/spkg
-            if [ $? -ne 0 ]; then
-                error_msg "Error downloading list of packages"
-                exit 1
-            fi
-            for repo in optional experimental huge; do
-                # Download the list of packages.
-                echo ">>> Checking online list of $repo packages."
-                # File inside DOT_SAGE should be writable
-                repolist="${DOT_SAGE}/${repo}.list"
-                sage-download-file --quiet "$MIRROR/$repo/list" $repolist
-                if [ $? -ne 0 ]; then
-                    rm -f $repolist
-                    error_msg "Error downloading $MIRROR/$repo/list"
-                    exit 1
-                fi
-
-                # The contrived sed commands print out either ${PKG_NAME} if
-                # it appears as a complete line or some string starting with
-                # ${PKG_NAME}- whichever occurs first.
-                # Tested with GNU sed, BSD sed (on OS X) and Solaris sed.
-                pkg=`sed -n -f <( echo "/^${PKG_NAME}\$/{p;q;}" && echo "/^${PKG_NAME}-/{p;q;}" ) $repolist`
-                rm -f $repolist
-                if [ -n "$pkg" ]; then
-                    echo ">>> Found $pkg"
-                    PKG_NAME=$pkg
-
-                    # If INFO is set, try downloading only the .txt file
-                    if [ $INFO -eq 1 ]; then
-                        PKG_URL="$MIRROR/$repo/$pkg.txt"
-                        sage-download-file --quiet "$PKG_URL" && exit 0
-                        # If the download failed (for whatever reason),
-                        # fall through and use the .spkg file.
-                    else
-                        if [ $YES != 1 ]; then
-                            # Warn and ask the user if downloading an
-                            # experimental package.
-                            # Add a deprecation note for other packages,
-                            # since old-style packages are deprecated.
-                            if [ $repo = experimental ]; then
-                                write_to_tty <<EOF
-================================ WARNING =================================
-You are about to download and install an unmaintained experimental
-package. This probably won't work at all for you! There is no guarantee
-that it will build correctly, or behave as expected. Use at your own risk!
-
-This package will be removed in future versions of SageMath. If you care
-about this package, you should make a proper new-style package instead.
-For more information about making Sage packages, see
-http://doc.sagemath.org/html/en/developer/packaging.html
-==========================================================================
-EOF
-                                if [ $? -ne 0 ]; then
-                                    echo "Terminal not available for prompting.  Use 'sage -i -y $PKG_BASE'"
-                                    echo "to install experimental packages in non-interactive mode."
-                                    YES=-1
-                                fi
-                                if [ $YES != -1 ]; then
-                                    read -p "Are you sure you want to continue [Y/n]? " answer < /dev/tty > /dev/tty 2>&1
-                                else
-                                    answer=n
-                                fi
-                                case "$answer" in
-                                    n*|N*) exit 1;;
-                                esac
-                            else
-                                # Deprecated since Sage 6.9, Trac #19158
-                                write_to_tty <<EOF
-================================== NOTE ==================================
-You are about to download and install an old-style package. While this
-might still work fine, old-style packages are unmaintained and deprecated.
-
-This package will be removed in future versions of SageMath. If you care
-about this package, you should make a proper new-style package instead.
-For more information about making Sage packages, see
-http://doc.sagemath.org/html/en/developer/packaging.html
-==========================================================================
-EOF
-                                if [ $? = 0 -a $YES != -1 ]; then
-                                   read -t 30 -p "Are you sure (automatically continuing in 30 seconds) [Y/n]? " answer < /dev/tty > /dev/tty 2>&1
-                                elif [ $YES = -1 ]; then
-                                    answer=n
-                                else
-                                    answer=y
-                                fi
-                                case "$answer" in
-                                    n*|N*) exit 1;;
-                                esac
-                            fi
-                            # Confirm the user's input.  (This gives important
-                            # feedback to the user when output is redirected to a logfile.)
-                            echo > /dev/tty "OK, installing $PKG_NAME now..."
-                        fi
-                    fi
-                    PKG_URL="$MIRROR/$repo/$pkg.spkg"
-                    break
-                fi
-            done
-
-            if [ -z "$PKG_URL" ]; then
-                echo >&2 "Error: could not find a package matching $PKG_NAME"
-                echo >&2 "       Try 'sage --package list' to see the available packages"
-                echo >&2 "       $(sage-package apropos $PKG_NAME)"
-                exit 1
-            fi
-        fi
-
-        # Trac #5852: check write permissions
-        mkdir -p "$SAGE_DISTFILES"
-        if [ ! -w "$SAGE_DISTFILES" ]; then
-            error_msg "Error: no write access to packages directory $SAGE_PACKAGES"
-            exit 1
-        fi
-        cd "$SAGE_DISTFILES" || exit $?
-
-        # Download to a temporary file (such that we don't end up with a
-        # corrupted .spkg file).
-        PKG_TMP="${PKG_URL##*/}.tmp"
-        echo ">>> Trying to download $PKG_URL"
-        sage-download-file "$PKG_URL" "$PKG_TMP"
-        if [ $? -ne 0 ]; then
-            # Delete failed download
-            rm -f "$PKG_TMP"
-            error_msg "Error downloading $PKG_URL"
-            exit 1
-        fi
-
-        PKG_SRC="`pwd`/${PKG_URL##*/}"
-        mv -f "$PKG_TMP" "$PKG_SRC"
+        echo >&2 "Error: Installing old-style SPKGs is no longer supported"
+        exit 1
     fi
 fi
 
@@ -573,12 +426,12 @@ if [ ! -w "$SAGE_BUILD_DIR" ]; then
     error_msg "Error: no write access to build directory $SAGE_BUILD_DIR"
     exit 1
 fi
-if [ ! -d "$SAGE_LOCAL" ]; then
+if [ ! -d "$SAGE_INST_LOCAL" ]; then
     # If you just unpack Sage and run "sage -p <pkg>" then local does not yet exist
-    mkdir "$SAGE_LOCAL"
+    mkdir "$SAGE_INST_LOCAL"
 fi
-if [ ! -w "$SAGE_LOCAL" ]; then
-    error_msg "Error: no write access to installation directory $SAGE_LOCAL"
+if [ ! -w "$SAGE_INST_LOCAL" ]; then
+    error_msg "Error: no write access to installation directory $SAGE_INST_LOCAL"
     exit 1
 fi
 
@@ -626,21 +479,8 @@ if [ "$USE_LOCAL_SCRIPTS" = yes ]; then
         exit 1
     fi
 else
-    # Old-style package (deprecated)
-    echo "Extracting package $PKG_SRC"
-    ls -l "$PKG_SRC"
-
-    sage-uncompress-spkg "$PKG_SRC"
-    if [ $? -ne 0 ]; then
-        error_msg "Error: failed to extract $PKG_SRC"
-        exit 1
-    fi
-
-    cd "$PKG_NAME"
-    if [ $? -ne 0 ]; then
-        error_msg "Error: after extracting, the directory '$PKG_NAME' does not exist"
-        exit 1
-    fi
+    echo >&2 "Error: Installing old-style SPKGs is no longer supported."
+    exit 1
 fi
 
 echo "Finished extraction"
@@ -665,7 +505,7 @@ write_script_wrapper() {
 
     trap "echo >&2 Error: Unexpected error writing wrapper script for $script; exit \$_" ERR
 
-    if head -1 "$script" | grep '^#!.*$' >/dev/null; then
+    if head -1 "$script.in" | grep '^#!.*$' >/dev/null; then
         echo >&2 "Error: ${script##*/} should not contain a shebang line; it will be prepended automatically."
         exit 1
     fi
@@ -678,20 +518,23 @@ write_script_wrapper() {
 export SAGE_ROOT="$SAGE_ROOT"
 export SAGE_SRC="$SAGE_SRC"
 export SAGE_PKG_DIR="$script_dir"
+export SAGE_SPKG_SCRIPTS="$SAGE_SPKG_SCRIPTS"
+export SAGE_SPKG_WHEELS="$SAGE_SPKG_WHEELS"
 
 export PKG_NAME="$PKG_NAME"
 export PKG_BASE="$PKG_BASE"
 export PKG_VER="$PKG_VER"
 
-for lib in env dist-helpers; do
-    lib="sage-\$lib"
-    source "\$SAGE_SRC/bin/\$lib"
+for lib in "\$SAGE_ROOT/build/bin/sage-dist-helpers" "\$SAGE_SRC/bin/sage-env-config" "\$SAGE_SRC/bin/sage-env" "\$SAGE_ROOT/build/bin/sage-build-env-config" "\$SAGE_ROOT/build/bin/sage-build-env"; do
+    source "\$lib"
     if [ \$? -ne 0 ]; then
         echo >&2 "Error: failed to source \$lib"
         echo >&2 "Is \$SAGE_ROOT the correct SAGE_ROOT?"
         exit 1
     fi
 done
+
+export SAGE_INST_LOCAL="$SAGE_INST_LOCAL"
 
 sdh_guard
 if [ \$? -ne 0 ]; then
@@ -707,7 +550,7 @@ fi
 
 __EOF__
 
-    cat "$script" >> "$tmpscript"
+    cat "$script.in" >> "$tmpscript"
     mv "$tmpscript" "$script"
     chmod +x "$script"
 
@@ -715,7 +558,7 @@ __EOF__
 }
 
 
-WRAPPED_SCRIPTS="build install check preinst postinst legacy-uninstall prerm postrm"
+WRAPPED_SCRIPTS="build install check preinst postinst prerm postrm"
 INSTALLED_SCRIPTS="prerm postrm"
 
 
@@ -731,21 +574,8 @@ for script in $WRAPPED_SCRIPTS; do
 
     script="spkg-$script"
 
-    if [ -f "$script" ]; then
+    if [ -f "$script.in" ]; then
         if [ "$USE_LOCAL_SCRIPTS" = "yes" ]; then
-            if [ -x "$script" ]; then
-                msg="$script should not be marked executable in the build/pkgs directory"
-                if [ "$UNAME" = "CYGWIN" ]; then
-                    # On Cygwin we can't necessarily rely on file permissions
-                    # being sane, so just issue a warning; on other platforms
-                    # this should be enforced as an error
-                    echo >&2 "WARNING: $msg"
-                else
-                    error_msg "$msg"
-                    exit 1
-                fi
-            fi
-
             write_script_wrapper "$(pwd)/$script" "$script_dir"
         else
             if [ ! -x "$script" ]; then
@@ -763,7 +593,7 @@ done
 if [ ! -f spkg-install ]; then
     echo '#!/usr/bin/env bash' > spkg-install
     if [ -x configure ]; then
-        echo './configure --prefix="$SAGE_LOCAL" && make && $SAGE_SUDO make install' >> spkg-install
+        echo './configure --prefix="$SAGE_INST_LOCAL" && make && $SAGE_SUDO make install' >> spkg-install
     elif [ -f setup.py ]; then
         echo 'python setup.py install' >> spkg-install
     else
@@ -773,25 +603,6 @@ if [ ! -f spkg-install ]; then
     fi
     chmod +x spkg-install
 fi
-
-
-# SAGE_CHECK_PACKAGES: if this contains "!pkg", skip tests for "pkg",
-# so set SAGE_CHECK=no.  If this contains "pkg", run tests, so set
-# SAGE_CHECK=yes.  Check this now and export SAGE_CHECK so that the
-# package's spkg-install script can use this variable.
-#
-# Since Python's self-tests seem to fail on all platforms, we disable
-# its test suite by default.
-if [ -z "$SAGE_CHECK_PACKAGES" ]; then
-    SAGE_CHECK_PACKAGES='!python2,!python3'
-fi
-# Allow spaces, commas, or colons as separator (the documentation suggests commas).
-if echo ",$SAGE_CHECK_PACKAGES," | grep -i "[ ,:]\!$PKG_BASE[ ,:]" > /dev/null ; then
-    export SAGE_CHECK=no
-elif echo ",$SAGE_CHECK_PACKAGES," | grep -i "[ ,:]$PKG_BASE[ ,:]" > /dev/null ; then
-    export SAGE_CHECK=yes
-fi
-
 
 echo "****************************************************"
 echo "Host system:"
@@ -823,6 +634,7 @@ export rsync_proxy=$http_proxy
 ##################################################################
 
 if [ "$UNAME" = "CYGWIN" ]; then
+    # This is a global lock - so we use SAGE_LOCAL, not SAGE_INST_LOCAL.
     if [ ! -d "$SAGE_LOCAL/var/lock" ]; then
         mkdir -p "$SAGE_LOCAL/var/lock"
     fi
@@ -841,14 +653,17 @@ export SAGE_DESTDIR="${SAGE_BUILD_DIR}/${PKG_NAME}/inst"
 
 # The actual prefix where the installation will be staged. This is the
 # directory that you need to work in if you want to change the staged
-# installation tree (before final installation to $SAGE_LOCAL) at the
+# installation tree (before final installation to $SAGE_INST_LOCAL) at the
 # end of spkg-install.
-export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_LOCAL}"
+export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_INST_LOCAL}"
 
 # First uninstall the previous version of this package, if any
 if [ "$KEEP_EXISTING" != "yes" ]; then
     sage-spkg-uninstall "$PKG_BASE"
 fi
+
+# To work around #26996: Create lib and set a symlink so that writes into lib64/ end up in lib/
+(mkdir -p "$SAGE_DESTDIR_LOCAL/lib" && cd "$SAGE_DESTDIR_LOCAL" && ln -sf lib lib64)
 
 # Run the pre-install script, if any
 if [ -f spkg-preinst ]; then
@@ -880,6 +695,9 @@ else
         exit 1
     fi
 fi
+
+# To work around #26996: Remove the symlink set, or we get "cp: cannot overwrite directory"
+rm -f "$SAGE_DESTDIR_LOCAL/lib64"
 
 # All spkgs should eventually support this, but fall back on old behavior in
 # case DESTDIR=$SAGE_DESTDIR installation was not used
@@ -970,15 +788,22 @@ fi
 # spkg-check scripts were written before use of DESTDIR installs, and so
 # fail in many cases.  This might be good to change later.
 
-if [ "$SAGE_CHECK" = "yes" ]; then
+if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
     if [ -f spkg-check ]; then
         echo "Running the test suite for $PKG_NAME..."
         time ./spkg-check
         if [ $? -ne 0 ]; then
-            error_msg "Error testing package $PKG_NAME" "make check"
-            exit 1
+            TEST_SUITE_RESULT="failed"
+            if [ "$SAGE_CHECK" = "warn" ]; then
+                error_msg "Warning: Failures testing package $PKG_NAME (ignored)" "make check"
+            else
+                error_msg "Error testing package $PKG_NAME" "make check"
+                exit 1
+            fi
+        else
+            TEST_SUITE_RESULT="passed"
+            echo "Passed the test suite for $PKG_NAME."
         fi
-        TEST_SUITE_RESULT="passed"
     else
         echo "Package $PKG_NAME has no test suite."
         TEST_SUITE_RESULT="not available"
@@ -1032,10 +857,4 @@ else
 fi
 
 
-# Touch this file to force a sage-location run next time Sage is
-# started.  This is needed to make some of the installed libraries and
-# scripts independent of the SAGE_ROOT path.
-touch "$SAGE_LOCAL/lib/sage-force-relocate.txt"
-
-
-echo "Finished installing $PKG_NAME.spkg"
+echo "Finished installing $PKG_NAME"

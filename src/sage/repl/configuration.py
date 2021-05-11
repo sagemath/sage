@@ -24,7 +24,6 @@ the IPython simple prompt is being used::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 import sys
 import copy
@@ -126,6 +125,21 @@ class SageIpythonConfiguration(object):
             True
         """
         from sage.repl.interpreter import SageTerminalInteractiveShell
+
+        # Use the same config for both InteractiveShell, and its subclass
+        # TerminalInteractiveShell (note: in fact some configs like term_title
+        # only apply to the latter, but we can still use the same config for
+        # both for simplicity's sake; see Trac #28289)
+        InteractiveShell=Config(
+            prompts_class=SagePrompts,
+            ast_node_interactivity='all',
+            colors=self.colors(),
+            simple_prompt=self.simple_prompt(),
+            term_title=self.term_title(),
+            confirm_exit=False,
+            separate_in=''
+        )
+
         cfg = Config(
             TerminalIPythonApp=Config(
                 display_banner=False,
@@ -133,16 +147,13 @@ class SageIpythonConfiguration(object):
                 test_shell=False,
                 shell_class=SageTerminalInteractiveShell,
             ),
-            InteractiveShell=Config(
-                prompts_class=SagePrompts,
-                ast_node_interactivity='all',
-                colors=self.colors(),
-                simple_prompt=self.simple_prompt(),
-                term_title=self.term_title(),
-                confirm_exit=False,
-                separate_in=''
-            ),
+            InteractiveShell=InteractiveShell,
+            TerminalInteractiveShell=InteractiveShell,
             InteractiveShellApp=Config(extensions=[SAGE_EXTENSION]),
+            # TODO: jedi is disabled by default because it causes too many troubles
+            # disabling ticket: https://trac.sagemath.org/ticket/31648
+            # reenabling ticket: https://trac.sagemath.org/ticket/31649
+            IPCompleter=Config(use_jedi=False),
         )
         if self._doctest_mode():
             # Using the file-backed history causes problems in parallel tests

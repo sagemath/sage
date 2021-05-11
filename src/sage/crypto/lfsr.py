@@ -134,17 +134,19 @@ from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 
 def lfsr_sequence(key, fill, n):
     r"""
-    This function creates an LFSR sequence.
+    Create an LFSR sequence.
 
     INPUT:
 
-    - ``key`` -- a list of finite field elements, [c_0,c_1,...,c_k]
+    - ``key`` -- a list of finite field elements, `[c_0, c_1,\dots, c_k]`
 
-    - ``fill`` -- the list of the initial terms of the LFSR sequence, [x_0,x_1,...,x_k]
+    - ``fill`` -- the list of the initial terms of the LFSR sequence, `[x_0,x_1,\dots,x_k]`
 
     - ``n`` -- number of terms of the sequence that the function returns
 
-    OUTPUT: The LFSR sequence defined by `x_{n+1} = c_kx_n+...+c_0x_{n-k}` for `n \leq k`.
+    OUTPUT:
+
+    The LFSR sequence defined by `x_{n+1} = c_kx_n+...+c_0x_{n-k}` for `n \geq k`.
 
     EXAMPLES::
 
@@ -187,8 +189,9 @@ def lfsr_sequence(key, fill, n):
         s0 = copy.copy(s)
         L.append(s[0])
         s = s[1:k]
-        s.append(sum([key[i]*s0[i] for i in range(k)]))
+        s.append(sum([key[i] * s0[i] for i in range(k)]))
     return L
+
 
 def lfsr_autocorrelation(L, p, k):
     """
@@ -213,17 +216,16 @@ def lfsr_autocorrelation(L, p, k):
         4/15
         sage: lfsr_autocorrelation(s,int(15),7)
         4/15
-
     """
     if not isinstance(L, list):
-        raise TypeError("L (=%s) must be a list"%L)
+        raise TypeError("L (=%s) must be a list" % L)
     p = Integer(p)
     _p = int(p)
     k = int(k)
     L0 = L[:_p]     # slices makes a copy
     L0 = L0 + L0[:k]
-    L1 = [int(L0[i])*int(L0[i + k])/p for i in range(_p)]
-    return sum(L1)
+    return sum([int(L0[i]) * int(L0[i + k])/p for i in range(_p)])
+
 
 def lfsr_connection_polynomial(s):
     """
@@ -260,12 +262,17 @@ def lfsr_connection_polynomial(s):
     FF = s[0].base_ring()
     R = PolynomialRing(FF, "x")
     x = R.gen()
-    C = R(1); B = R(1); m = 1; b = FF(1); L = 0; N = 0
+    C = R.one()
+    B = R.one()
+    m = 1
+    b = FF.one()
+    L = 0
+    N = 0
 
     while N < len(s):
         if L > 0:
-            r = min(L+1,C.degree()+1)
-            d = s[N] + sum([(C.list())[i]*s[N-i] for i in range(1,r)])
+            r = min(L+1, C.degree()+1)
+            d = s[N] + sum([(C.list())[i]*s[N-i] for i in range(1, r)])
         if L == 0:
             d = s[N]
         if d == 0:

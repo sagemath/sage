@@ -153,7 +153,6 @@ Check that :trac:`12778` is fixed::
     sage: parent(M)
     Full MatrixSpace of 3 by 4 dense matrices over Symbolic Ring
 """
-from __future__ import absolute_import
 
 from sage.rings.polynomial.all import PolynomialRing
 from sage.structure.element cimport ModuleElement, RingElement, Element
@@ -184,9 +183,18 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             raise ArithmeticError("could not determine eigenvalues exactly using symbolic matrices; try using a different type of matrix via self.change_ring(), if possible")
         return sum([[ev] * int(mult) for ev, mult in zip(*maxima_evals)], [])
 
-    def eigenvectors_left(self):
+    def eigenvectors_left(self, other=None):
         r"""
         Compute the left eigenvectors of a matrix.
+
+        INPUT:
+
+        - ``other`` -- a square matrix `B` (default: ``None``) in a generalized
+          eigenvalue problem; if ``None``, an ordinary eigenvalue problem is
+          solved (currently supported only if the base ring of ``self`` is
+          ``RDF`` or ``CDF``)
+
+        OUTPUT:
 
         For each distinct eigenvalue, returns a list of the form (e,V,n)
         where e is the eigenvalue, V is a list of eigenvectors forming a
@@ -257,7 +265,28 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: am = G.adjacency_matrix().change_ring(SR)
             sage: am.eigenvectors_left()
             [(-1, [(1, 0, -1, 1, 0, -1), (0, 1, -1, 0, 1, -1)], 2), (1, [(1, 0, -1, -1, 0, 1), (0, 1, 1, 0, -1, -1)], 2), (-2, [(1, -1, 1, -1, 1, -1)], 1), (2, [(1, 1, 1, 1, 1, 1)], 1)]
+
+        TESTS::
+
+            sage: A = matrix(SR, [[1, 2], [3, 4]])
+            sage: B = matrix(SR, [[1, 1], [0, 1]])
+            sage: A.eigenvectors_left(B)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: generalized eigenvector decomposition is
+            implemented for RDF and CDF, but not for Symbolic Ring
+
+        Check that :trac:`23332` is fixed::
+
+            sage: matrix([[x, x^2], [1, 0]]).eigenvectors_left()
+            [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*x*(sqrt(5) + 1))], 1),
+             (1/2*x*(sqrt(5) + 1), [(1, 1/2*x*(sqrt(5) - 1))], 1)]
         """
+        if other is not None:
+            raise NotImplementedError('generalized eigenvector decomposition '
+                                      'is implemented for RDF and CDF, but '
+                                      'not for %s' % self.base_ring())
+
         from sage.modules.free_module_element import vector
         from sage.rings.integer_ring import ZZ
 
@@ -268,9 +297,18 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
 
         return result
 
-    def eigenvectors_right(self):
+    def eigenvectors_right(self, other=None):
         r"""
         Compute the right eigenvectors of a matrix.
+
+        INPUT:
+
+        - ``other`` -- a square matrix `B` (default: ``None``) in a generalized
+          eigenvalue problem; if ``None``, an ordinary eigenvalue problem is
+          solved (currently supported only if the base ring of ``self`` is
+          ``RDF`` or ``CDF``)
+
+        OUTPUT:
 
         For each distinct eigenvalue, returns a list of the form (e,V,n)
         where e is the eigenvalue, V is a list of eigenvectors forming a
@@ -292,8 +330,24 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [(-1/2*sqrt(17) + 3/2, [(1, -1/2*sqrt(17) + 3/2)], 1), (1/2*sqrt(17) + 3/2, [(1, 1/2*sqrt(17) + 3/2)], 1)]
             sage: right[0][1] == left[0][1]
             True
+
+        TESTS::
+
+            sage: A = matrix(SR, [[1, 2], [3, 4]])
+            sage: B = matrix(SR, [[1, 1], [0, 1]])
+            sage: A.eigenvectors_right(B)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: generalized eigenvector decomposition is
+            implemented for RDF and CDF, but not for Symbolic Ring
+
+        Check that :trac:`23332` is fixed::
+
+            sage: matrix([[x, x^2], [1, 0]]).eigenvectors_right()
+            [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*(sqrt(5) + 1)/x)], 1),
+             (1/2*x*(sqrt(5) + 1), [(1, 1/2*(sqrt(5) - 1)/x)], 1)]
         """
-        return self.transpose().eigenvectors_left()
+        return self.transpose().eigenvectors_left(other=other)
 
     def exp(self):
         r"""
@@ -773,7 +827,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             [       x^2 + 2       -2*x + 3]
             [      -4*x + 6 x^2 - 6*x + 11]
         """
-        from sage.misc.misc import attrcall
+        from sage.misc.call import attrcall
         return self.apply_map(attrcall('expand'))
 
     def variables(self):
@@ -906,3 +960,24 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
                 new_entries.append(entry)
 
         return self.parent(new_entries)
+
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+        r"""
+        Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
+
+        EXAMPLES::
+
+            sage: M = matrix(SR, [[0,1,0],[0,0,0]])
+            sage: M.zero_pattern_matrix()  # indirect doctest
+            [1 0 1]
+            [1 1 1]
+        """
+        entry = self.get_unsafe(i, j)
+        # See if we can avoid the full proof machinery that the entry is 0
+        if entry.is_trivial_zero():
+            return 1
+        if entry:
+            return 0
+        else:
+            return 1
+

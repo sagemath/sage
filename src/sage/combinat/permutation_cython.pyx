@@ -11,7 +11,7 @@ in a permutation than construct the next object directly
 from the next permutation in a list. The backtracking
 algorithm in sage/graphs/genus.pyx is an example of this.
 
-The lowest level is implemented as a struct with auxilliary
+The lowest level is implemented as a struct with auxiliary
 methods.  This is because Cython does not allow pointers to
 class instances, so a list of these objects is inherently
 slower than a list of structs.  The author prefers ugly code
@@ -32,8 +32,6 @@ speed, we provide a class that wraps our struct.
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import print_function
 
 cimport cython
 

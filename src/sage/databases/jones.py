@@ -50,7 +50,7 @@ List all fields in the database ramified at 101::
 """
 
 #*****************************************************************************
-#       Sage: System for Algebra and Geometry Experimentation
+#       Sage: Open Source Mathematical Software
 #
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -74,9 +74,9 @@ from sage.env import SAGE_SHARE
 
 from sage.misc.persist import load, save
 
-from sage.misc.package import PackageNotFoundError
+from sage.features.databases import DatabaseJones
 
-JONESDATA = os.path.join(SAGE_SHARE, 'jones')
+JONESDATA = os.path.join(SAGE_SHARE, 'jones')  # should match the filename set in DatabaseJones
 
 
 def sortkey(K):
@@ -108,7 +108,8 @@ class JonesDatabase:
         while filename[j].isalpha() or filename[j] in [".", "_"]:
             j -= 1
         S = sorted([eval(z) for z in filename[i:j + 1].split("-")])
-        data = open(path + "/" + filename).read()
+        with open(path + "/" + filename) as f:
+            data = f.read()
         data = data.replace("^", "**")
         x = PolynomialRing(RationalField(), 'x').gen()  # used next line
         v = eval(data)
@@ -225,10 +226,7 @@ class JonesDatabase:
             ValueError: S must be a list of primes
         """
         if self.root is None:
-            if os.path.exists(JONESDATA + "/jones.sobj"):
-                self.root = load(JONESDATA + "/jones.sobj")
-            else:
-                raise PackageNotFoundError("database_jones_numfield")
+            self.root = load(DatabaseJones().absolute_path())
         try:
             S = list(S)
         except TypeError:

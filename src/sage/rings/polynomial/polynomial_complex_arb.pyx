@@ -26,6 +26,7 @@ TESTS:
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.arb.acb cimport *
+from sage.libs.flint.fmpz cimport *
 from sage.rings.integer cimport Integer, smallInteger
 from sage.rings.complex_arb cimport ComplexBall
 from sage.structure.element cimport Element
@@ -585,7 +586,7 @@ cdef class Polynomial_complex_arb(Polynomial):
             sage: (x^2 + 1)._power_trunc(-1, 0)
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned long
+            OverflowError: can...t convert negative value to unsigned long
         """
         cdef Polynomial_complex_arb res = self._new()
         if n < 0:
@@ -677,6 +678,85 @@ cdef class Polynomial_complex_arb(Polynomial):
             n = 0
         sig_on()
         acb_poly_sqrt_series(res.__poly, self.__poly, n, prec(self))
+        sig_off()
+        return res
+
+    def _gamma_series(self, long n):
+        r"""
+        Return the series expansion of the gamma function composed
+        with this polynomial, truncated before degree ``n``.
+
+        EXAMPLES::
+
+            sage: Pol.<x> = CBF[]
+            sage: (1 + x)._gamma_series(3)
+            ([0.98905599532797...])*x^2 + ([-0.57721566490153...])*x + 1.000000000000000
+        """
+        cdef Polynomial_complex_arb res = self._new()
+        if n < 0:
+            n = 0
+        sig_on()
+        acb_poly_gamma_series(res.__poly, self.__poly, n, prec(self))
+        sig_off()
+        return res
+
+    def _lambert_w_series(self, long n, branch=0):
+        r"""
+        Return the series expansion of the specified branch of the Lambert W
+        function composed with this polynomial, truncated before degree ``n``.
+
+        EXAMPLES::
+
+            sage: Pol.<x> = CBF[]
+            sage: (1 + x)._lambert_w_series(3)
+            ([-0.10727032...])*x^2 + ([0.36189625...])*x + [0.56714329...]
+            sage: (CBF(1, 1) + x)._lambert_w_series(2)
+            ([0.26651990...] + [-0.15238505...]*I)*x + [0.65696606...] + [0.32545033...]*I
+            sage: (1 + x)._lambert_w_series(2, branch=3)
+            ([1.00625557...] + [0.05775573...]*I)*x + [-2.85358175...] + [17.1135355...]*I
+            sage: (1 + x)._lambert_w_series(2, branch=-3)
+            ([1.00625557...] + [-0.05775573...]*I)*x + [-2.85358175...] + [-17.1135355...]*I
+            sage: (1 + x)._lambert_w_series(2, branch=2^100)
+            ([1.00000000...] + [1.25551112...]*I)*x + [-71.1525951...] + [7.96488362...]*I
+        """
+        cdef fmpz_t _branch
+        fmpz_init(_branch)
+        fmpz_set_mpz(_branch, (<Integer> Integer(branch)).value)
+        cdef Polynomial_complex_arb res = self._new()
+        if n < 0:
+            n = 0
+        sig_on()
+        acb_poly_lambertw_series(res.__poly, self.__poly, _branch, 0, n, prec(self))
+        sig_off()
+        fmpz_clear(_branch)
+        return res
+
+    def _zeta_series(self, long n, a=1, deflate=False):
+        r"""
+        Return the series expansion of the Hurwitz zeta function composed
+        with this polynomial, truncated before degree ``n``.
+
+        For ``a = 1``, this computes the usual Riemann zeta function.
+
+        If ``deflate`` is True, evaluate ζ(s,a) + 1/(1-s), see the Arb
+        documentation for details.
+
+        EXAMPLES::
+
+            sage: Pol.<x> = CBF[]
+            sage: (CBF(1/2, 1) + x)._zeta_series(2)
+            ([0.55898247...] + [-0.64880821...]*I)*x + [0.14393642...] + [-0.72209974...]*I
+            sage: (1/2 + x^2)._zeta_series(3, a=1/3)
+            ([-2.13199508...])*x^2 + [-0.11808332...]
+            sage: (1 + x)._zeta_series(2, deflate=True)
+            ([0.07281584...])*x + [0.57721566...]
+        """
+        if n < 0:
+            n = 0
+        cdef ComplexBall _a = <ComplexBall> (self._parent._base.coerce(a))
+        cdef Polynomial_complex_arb res = self._new()
+        sig_on()
+        acb_poly_zeta_series(res.__poly, self.__poly, _a.value, deflate, n, prec(self))
         sig_off()
         return res
 

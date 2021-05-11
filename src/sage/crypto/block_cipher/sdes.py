@@ -26,7 +26,6 @@ AUTHORS:
 #
 # http://www.gnu.org/licenses/
 ###########################################################################
-from six.moves import range
 
 from sage.monoids.string_monoid import BinaryStrings
 from sage.structure.sage_object import SageObject

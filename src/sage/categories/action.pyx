@@ -1,5 +1,5 @@
 r"""
-Group, ring, etc. actions on objects.
+Group, ring, etc. actions on objects
 
 The terminology and notation used is suggestive of groups acting on sets,
 but this framework can be used for modules, algebras, etc.
@@ -53,8 +53,6 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
-
 from cpython.tuple cimport PyTuple_GET_ITEM
 
 from .functor cimport Functor
@@ -73,8 +71,8 @@ cdef inline category(x):
     try:
         return x.category()
     except AttributeError:
-        import sage.categories.all
-        return sage.categories.all.Objects()
+        from sage.categories.objects import Objects
+        return Objects()
 
 
 cdef class Action(Functor):
@@ -103,6 +101,27 @@ cdef class Action(Functor):
 
     def _apply_functor(self, x):
         return self(x)
+
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        .. WARNING::
+
+            If you change the signature of the ``__init__`` for a subclass,
+            you must override this method as well.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: P = QQ['x']
+            sage: R = (ZZ['x'])['y']
+            sage: A = R.get_action(P, operator.mul, True)
+            sage: loads(dumps(A)) is not None
+            True
+        """
+        return (type(self), (self.G, self.underlying_set(), self._is_left, self.op))
 
     def __call__(self, *args):
         """
@@ -365,6 +384,23 @@ cdef class InverseAction(Action):
             pass
         raise TypeError(f"no inverse defined for {action!r}")
 
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: V = QQ^3
+            sage: v = V((1, 2, 3))
+            sage: cm = get_coercion_model()
+            sage: a = cm.get_action(V, QQ, operator.mul)
+            sage: loads(dumps(~a)) is not None
+            True
+        """
+        return (type(self), (self._action,))
+
     cpdef _act_(self, g, x):
         if self.S_precomposition is not None:
             x = self.S_precomposition(x)
@@ -431,6 +467,24 @@ cdef class PrecomposedAction(Action):
         else:
             self.G_precomposition = right_precomposition
             self.S_precomposition = left_precomposition
+
+    def __reduce__(self):
+        """
+        Used in pickling.
+
+        TESTS:
+
+        Check that this action can be pickled (:trac:`29031`)::
+
+            sage: E = ModularSymbols(11).2
+            sage: v = E.manin_symbol_rep()
+            sage: c,x = v[0]
+            sage: y = x.modular_symbol_rep()
+            sage: act = coercion_model.get_action(QQ, parent(y), op=operator.mul)
+            sage: loads(dumps(act)) is not None
+            True
+        """
+        return (type(self), (self._action, self.G_precomposition, self.S_precomposition))
 
     cpdef _act_(self, g, x):
         if self.G_precomposition is not None:
@@ -566,10 +620,8 @@ cdef class ActionEndomorphism(Morphism):
         return Morphism.__mul__(left, right)
 
     def __invert__(self):
-            inv_g = ~self._g
-            if parent(inv_g) is parent(self._g):
-                return ActionEndomorphism(self._action, inv_g)
-            else:
-                return (~self._action)(self._g)
-
-
+        inv_g = ~self._g
+        if parent(inv_g) is parent(self._g):
+            return ActionEndomorphism(self._action, inv_g)
+        else:
+            return (~self._action)(self._g)

@@ -1,5 +1,10 @@
+# distutils: libraries = gmp NTL_LIBRARIES zn_poly
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 "Univariate rational functions over prime fields"
-from __future__ import print_function, absolute_import
 
 import sys
 
@@ -19,7 +24,9 @@ from sage.rings.integer cimport Integer
 from sage.rings.polynomial.polynomial_zmod_flint cimport Polynomial_zmod_flint, get_cparent
 import sage.algebras.algebra
 
+from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.finite_rings.integer_mod cimport mod_inverse_int
+
 
 class FpT(FractionField_1poly_field):
     r"""
@@ -53,12 +60,12 @@ class FpT(FractionField_1poly_field):
         assert 2 < p < FpT.INTEGER_LIMIT
         self.p = p
         self.poly_ring = R
-        FractionField_1poly_field.__init__(self, R, element_class = FpTElement)
+        FractionField_1poly_field.__init__(self, R, element_class=FpTElement)
         self._populate_coercion_lists_(coerce_list=[Polyring_FpT_coerce(self), Fp_FpT_coerce(self), ZZ_FpT_coerce(self)])
 
     def __iter__(self):
         """
-        Returns an iterator over this fraction field.
+        Return an iterator over this fraction field.
 
         EXAMPLES::
 
@@ -82,6 +89,7 @@ class FpT(FractionField_1poly_field):
              (t^2 + 2*t + 2)/(t + 2)]
         """
         return FpT_iter(self, bound, start)
+
 
 cdef class FpTElement(FieldElement):
     """
@@ -184,7 +192,7 @@ cdef class FpTElement(FieldElement):
 
     def numer(self):
         """
-        Returns the numerator of this element, as an element of the polynomial ring.
+        Return the numerator of this element, as an element of the polynomial ring.
 
         EXAMPLES::
 
@@ -197,7 +205,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef numerator(self):
         """
-        Returns the numerator of this element, as an element of the polynomial ring.
+        Return the numerator of this element, as an element of the polynomial ring.
 
         EXAMPLES::
 
@@ -215,7 +223,7 @@ cdef class FpTElement(FieldElement):
 
     def denom(self):
         """
-        Returns the denominator of this element, as an element of the polynomial ring.
+        Return the denominator of this element, as an element of the polynomial ring.
 
         EXAMPLES::
 
@@ -228,7 +236,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef denominator(self):
         """
-        Returns the denominator of this element, as an element of the polynomial ring.
+        Return the denominator of this element, as an element of the polynomial ring.
 
         EXAMPLES::
 
@@ -280,7 +288,7 @@ cdef class FpTElement(FieldElement):
 
     def valuation(self, v):
         """
-        Returns the valuation of self at `v`.
+        Return the valuation of self at `v`.
 
         EXAMPLES::
 
@@ -309,7 +317,7 @@ cdef class FpTElement(FieldElement):
 
     def _repr_(self):
         """
-        Returns a string representation of this element.
+        Return a string representation of this element.
 
         EXAMPLES::
 
@@ -339,7 +347,7 @@ cdef class FpTElement(FieldElement):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of this element.
+        Return a latex representation of this element.
 
         EXAMPLES::
 
@@ -354,11 +362,13 @@ cdef class FpTElement(FieldElement):
         else:
             return "\\frac{%s}{%s}" % (self.numer()._latex_(), self.denom()._latex_())
 
-    cpdef int _cmp_(self, other) except -2:
+    cpdef _richcmp_(self, other, int op):
         """
-        Compares this with another element.  The ordering is arbitrary,
-        but it is an ordering, and it is consistent between runs.  It has
-        nothing to do with the algebra structure.
+        Compare this with another element.
+
+        The ordering is arbitrary, but it is an ordering, and it is
+        consistent between runs.  It has nothing to do with the
+        algebra structure.
 
         TESTS::
 
@@ -399,12 +409,14 @@ cdef class FpTElement(FieldElement):
         """
         # They are normalized.
         cdef int j = sage_cmp_nmod_poly_t(self._numer, (<FpTElement>other)._numer)
-        if j: return j
-        return sage_cmp_nmod_poly_t(self._denom, (<FpTElement>other)._denom)
+        if j:
+            return rich_to_bool(op, j)
+        j = sage_cmp_nmod_poly_t(self._denom, (<FpTElement>other)._denom)
+        return rich_to_bool(op, j)
 
     def __hash__(self):
         """
-        Returns a hash value for this element.
+        Return a hash value for this element.
 
         TESTS::
 
@@ -440,7 +452,7 @@ cdef class FpTElement(FieldElement):
 
     def __invert__(self):
         """
-        Returns the multiplicative inverse of this element.
+        Return the multiplicative inverse of this element.
 
         EXAMPLES::
 
@@ -457,7 +469,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef _add_(self, _other):
         """
-        Returns the sum of this fraction field element and another.
+        Return the sum of this fraction field element and another.
 
         EXAMPLES::
 
@@ -477,7 +489,7 @@ cdef class FpTElement(FieldElement):
         cdef FpTElement other = <FpTElement>_other
         cdef FpTElement x = self._new_c()
         nmod_poly_mul(x._numer, self._numer, other._denom)
-        nmod_poly_mul(x._denom, self._denom, other._numer) # use x._denom as a temp
+        nmod_poly_mul(x._denom, self._denom, other._numer)  # use x._denom as a temp
         nmod_poly_add(x._numer, x._numer, x._denom)
         nmod_poly_mul(x._denom, self._denom, other._denom)
         normalize(x._numer, x._denom, self.p)
@@ -485,7 +497,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef _sub_(self, _other):
         """
-        Returns the difference of this fraction field element and another.
+        Return the difference of this fraction field element and another.
 
         EXAMPLES::
 
@@ -499,7 +511,7 @@ cdef class FpTElement(FieldElement):
         cdef FpTElement other = <FpTElement>_other
         cdef FpTElement x = self._new_c()
         nmod_poly_mul(x._numer, self._numer, other._denom)
-        nmod_poly_mul(x._denom, self._denom, other._numer) # use x._denom as a temp
+        nmod_poly_mul(x._denom, self._denom, other._numer)  # use x._denom as a temp
         nmod_poly_sub(x._numer, x._numer, x._denom)
         nmod_poly_mul(x._denom, self._denom, other._denom)
         normalize(x._numer, x._denom, self.p)
@@ -507,7 +519,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef _mul_(self, _other):
         """
-        Returns the product of this fraction field element and another.
+        Return the product of this fraction field element and another.
 
         EXAMPLES::
 
@@ -527,7 +539,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef _div_(self, _other):
         """
-        Returns the quotient of this fraction field element and another.
+        Return the quotient of this fraction field element and another.
 
         EXAMPLES::
 
@@ -729,7 +741,7 @@ cdef class FpTElement(FieldElement):
 
     cpdef bint is_square(self):
         """
-        Returns True if this element is the square of another element of the fraction field.
+        Return True if this element is the square of another element of the fraction field.
 
         EXAMPLES::
 
@@ -745,7 +757,7 @@ cdef class FpTElement(FieldElement):
 
     def sqrt(self, extend=True, all=False):
         """
-        Returns the square root of this element.
+        Return the square root of this element.
 
         INPUT:
 
@@ -782,8 +794,8 @@ cdef class FpTElement(FieldElement):
                 return s
 
     def __pow__(FpTElement self, Py_ssize_t e, dummy):
-        """
-        Returns the ``e``th power of this element.
+        r"""
+        Return the ``e``th power of this element.
 
         EXAMPLES::
 
@@ -828,7 +840,7 @@ cdef class FpTElement(FieldElement):
 
 cdef class FpT_iter:
     """
-    Returns a class that iterates over all elements of an FpT.
+    Return a class that iterates over all elements of an FpT.
 
     EXAMPLES::
 
@@ -882,8 +894,8 @@ cdef class FpT_iter:
             ....:         print(a); break
             2*t/(t + 3)
         """
-        #if degree is None:
-        #    raise NotImplementedError
+        # if degree is None:
+        #     raise NotImplementedError
         self.parent = parent
         self.cur = start
         self.degree = -2 if degree is None else degree
@@ -917,7 +929,7 @@ cdef class FpT_iter:
 
     def __iter__(self):
         """
-        Returns this iterator.
+        Return this iterator.
 
         TESTS::
 
@@ -933,7 +945,7 @@ cdef class FpT_iter:
 
     def __next__(self):
         """
-        Returns the next element to iterate over.
+        Return the next element to iterate over.
 
         This is achieved by iterating over monic denominators, and for each denominator,
         iterating over all numerators relatively prime to the given denominator.
@@ -1175,7 +1187,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
 
     def section(self):
         """
-        Returns the section of this inclusion: the partially defined map from ``GF(p)(t)``
+        Return the section of this inclusion: the partially defined map from ``GF(p)(t)``
         back to ``GF(p)[t]``, defined on elements with unit denominator.
 
         EXAMPLES::
@@ -1215,7 +1227,7 @@ cdef class FpT_Polyring_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Polyring_section`` objects is not currently
-        implemented. See :trac: `23469`. ::
+        implemented. See :trac:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1473,7 +1485,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
 
     def section(self):
         """
-        Returns the section of this inclusion: the partially defined map from ``GF(p)(t)``
+        Return the section of this inclusion: the partially defined map from ``GF(p)(t)``
         back to ``GF(p)``, defined on constant elements.
 
         EXAMPLES::
@@ -1517,7 +1529,7 @@ cdef class FpT_Fp_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Fp_section`` objects is not currently
-        implemented. See :trac: `23469`. ::
+        implemented. See :trac:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1801,7 +1813,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
 
     def section(self):
         """
-        Returns the section of this inclusion: the partially defined map from ``GF(p)(t)``
+        Return the section of this inclusion: the partially defined map from ``GF(p)(t)``
         back to ``ZZ``, defined on constant elements.
 
         EXAMPLES::
@@ -1836,11 +1848,11 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
 
 cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p):
     """
-    Puts numer/denom into a normal form: denominator monic and sharing no common factor with the numerator.
+    Put numer/denom into a normal form: denominator monic and sharing no common factor with the numerator.
 
     The normalized form of 0 is 0/1.
 
-    Returns True if numer and denom were changed.
+    Return True if numer and denom were changed.
     """
     cdef long a
     cdef bint changed
@@ -1878,15 +1890,17 @@ cdef inline bint normalize(nmod_poly_t numer, nmod_poly_t denom, long p):
     finally:
         nmod_poly_clear(g)
 
+
 cdef inline unsigned long nmod_poly_leading(nmod_poly_t poly):
     """
-    Returns the leading coefficient of ``poly``.
+    Return the leading coefficient of ``poly``.
     """
     return nmod_poly_get_coeff_ui(poly, nmod_poly_degree(poly))
 
+
 cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic):
     """
-    Sets poly to the "next" polynomial: this is just counting in base p.
+    Set poly to the "next" polynomial: this is just counting in base p.
 
     If monic is True then will only iterate through monic polynomials.
     """
@@ -1902,11 +1916,12 @@ cdef inline void nmod_poly_inc(nmod_poly_t poly, bint monic):
             break
     if monic and a == 2 and n == nmod_poly_degree(poly):
         nmod_poly_set_coeff_ui(poly, n, 0)
-        nmod_poly_set_coeff_ui(poly, n+1, 1)
+        nmod_poly_set_coeff_ui(poly, n + 1, 1)
+
 
 cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
     """
-    Compares `a` and `b`, returning 0 if they are equal.
+    Compare `a` and `b`, returning 0 if they are equal.
 
     - If the degree of `a` is less than that of `b`, returns -1.
 
@@ -1931,16 +1946,18 @@ cdef inline long nmod_poly_cmp(nmod_poly_t a, nmod_poly_t b):
         d -= 1
     return 0
 
+
 cdef bint nmod_poly_sqrt_check(nmod_poly_t poly):
-     """
-     Quick check to see if poly could possibly be a square.
-     """
-     # We could use Sage's jacobi_int which is for 32 bits integers rather
-     # than FLINT's n_jacobi which is for longs as the FpT class is crafted
-     # for primes 2 < p < 2^16
-     return (nmod_poly_degree(poly) % 2 == 0
-         and n_jacobi(nmod_poly_leading(poly), poly.mod.n) == 1
-         and n_jacobi(nmod_poly_get_coeff_ui(poly, 0), poly.mod.n) != -1)
+    """
+    Quick check to see if poly could possibly be a square.
+    """
+    # We could use Sage's jacobi_int which is for 32 bits integers rather
+    # than FLINT's n_jacobi which is for longs as the FpT class is crafted
+    # for primes 2 < p < 2^16
+    return (nmod_poly_degree(poly) % 2 == 0
+            and n_jacobi(nmod_poly_leading(poly), poly.mod.n) == 1
+            and n_jacobi(nmod_poly_get_coeff_ui(poly, 0), poly.mod.n) != -1)
+
 
 def unpickle_FpT_element(K, numer, denom):
     """
@@ -1968,14 +1985,18 @@ cdef int sage_cmp_nmod_poly_t(nmod_poly_t L, nmod_poly_t R):
 
     # First compare the degrees
     j = nmod_poly_degree(L) - nmod_poly_degree(R)
-    if j<0: return -1
-    elif j>0: return 1
+    if j < 0:
+        return -1
+    elif j > 0:
+        return 1
 
     # Same degree, so compare coefficients, term by term
-    for i in range(nmod_poly_degree(L)+1):
-        j = nmod_poly_get_coeff_ui(L,i) - nmod_poly_get_coeff_ui(R,i)
-        if j<0: return -1
-        elif j>0: return 1
+    for i in range(nmod_poly_degree(L) + 1):
+        j = nmod_poly_get_coeff_ui(L, i) - nmod_poly_get_coeff_ui(R, i)
+        if j < 0:
+            return -1
+        elif j > 0:
+            return 1
 
     # Two polynomials are equal
     return 0

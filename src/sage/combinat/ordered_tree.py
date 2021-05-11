@@ -5,21 +5,16 @@ Ordered Rooted Trees
 AUTHORS:
 
 - Florent Hivert (2010-2011): initial revision
-- Frederic Chapoton (2010): contributed some methods
+- Frédéric Chapoton (2010): contributed some methods
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@univ-rouen.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-#python 3 support
-from __future__ import division, absolute_import, print_function, unicode_literals
-
-from six import add_metaclass
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 
@@ -41,8 +36,8 @@ from sage.sets.family import Family
 from sage.rings.infinity import Infinity
 
 
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class OrderedTree(AbstractClonableTree, ClonableList):
+class OrderedTree(AbstractClonableTree, ClonableList,
+        metaclass=InheritComparisonClasscallMetaclass):
     """
     The class of (ordered rooted) trees.
 
@@ -240,7 +235,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         """
         return OrderedTrees_all()
 
-    def __init__(self, parent=None, children=[], check=True):
+    def __init__(self, parent=None, children=None, check=True):
         """
         TESTS::
 
@@ -251,6 +246,8 @@ class OrderedTree(AbstractClonableTree, ClonableList):
             sage: all(OrderedTree(repr(tr)) == tr for i in range(6) for tr in OrderedTrees(i))
             True
         """
+        if children is None:
+            children = []
         if isinstance(children, str):
             children = eval(children)
         if (children.__class__ is self.__class__ and
@@ -356,7 +353,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
 
         INPUT:
 
-        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the 
+        - ``bijection`` -- (default:``'Boussicault-Socci'``) is the name of the
           bijection to use. Possible values are ``'Boussicault-Socci'``,
           ``'via dyck and Delest-Viennot'``.
 
@@ -386,7 +383,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
 
     def _to_parallelogram_polyomino_Boussicault_Socci(self):
         r"""
-        Return the polyomino parallelogram using the Boussicault-Socci 
+        Return the polyomino parallelogram using the Boussicault-Socci
         bijection.
 
         EXAMPLES::
@@ -422,7 +419,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         for h in range(0, self.depth(), 2):
             for node in self.paths_at_depth(h):
                 h_coordinate[node] = cpt
-                lower_nodes.append( node )
+                lower_nodes.append(node)
                 cpt += 1
 
         cpt = 0
@@ -451,7 +448,7 @@ class OrderedTree(AbstractClonableTree, ClonableList):
         lower_path.append(0)
         lower_path += [1] * (self.node_number() - len(lower_path))
 
-        upper_path =[]
+        upper_path = []
         for i in range(1, len(upper_nodes)):
             upper_path.append(1)
             upper_path += [0] * (H(upper_nodes[i]) - H(upper_nodes[i - 1]))

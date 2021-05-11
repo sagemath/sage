@@ -4,7 +4,7 @@ Hyperbolicity
 **Definition** :
 
     The hyperbolicity `\delta` of a graph `G` has been defined by Gromov
-    [Gromov87]_ as follows (we give here the so-called 4-points condition):
+    [Gro1987]_ as follows (we give here the so-called 4-points condition):
 
       Let `a, b, c, d` be vertices of the graph, let `S_1`, `S_2` and `S_3` be
       defined by
@@ -45,13 +45,13 @@ Hyperbolicity
 
     The time complexity of the naive implementation (i.e. testing all 4-tuples)
     is `O( n^4 )`, and an algorithm with time complexity `O(n^{3.69})` has been
-    proposed in [FIV12]_.  This remains very long for large-scale graphs, and
+    proposed in [FIV2012]_.  This remains very long for large-scale graphs, and
     much harder to implement.
 
     Several improvements over the naive algorithm have been proposed and are
     implemented in the current module.
 
-    - Another upper bound on `hyp(a, b, c, d)` has been proved in [CCL15]_. It
+    - Another upper bound on `hyp(a, b, c, d)` has been proved in [CCL2015]_. It
       is used to design an algorithm with worse case time complexity in
       `O(n^4)` but that behaves much better in practice.
 
@@ -87,7 +87,7 @@ Hyperbolicity
       execution as soon as a multiplicative approximation factor or an additive
       one is proven.
 
-    - The notion of ''far-apart pairs'' has been introduced in [Soto11]_ to
+    - The notion of ''far-apart pairs'' has been introduced in [Sot2011]_ to
       further reduce the number of 4-tuples to consider. We say that the pair
       `(a,b)` is far-apart if for every `w` in `V\setminus\{a,b\}` we have
 
@@ -96,14 +96,14 @@ Hyperbolicity
           dist(w,a)+dist(a,b) > dist(w,b) \text{ and }dist(w,b)+dist(a,b) > dist(w,a)
 
       Determining the set of far-apart pairs can be done in time `O(nm)` using
-      BFS. Now, it is proved in [Soto11]_ that there exists two far-apart pairs
+      BFS. Now, it is proved in [Sot2011]_ that there exists two far-apart pairs
       `(a,b)` and `(c,d)` satisfying `\delta(G) = hyp(a, b, c, d)/2`. For
       instance, the `n\times m`-grid has only two far-apart pairs, and so
       computing its hyperbolicity is immediate once the far-apart pairs are
       found. The 'CCL+FA' or 'CCL+' algorithm improves the 'CCL' algorithm
       since it uses far-apart pairs.
 
-    - This algorithm was further improved in [BCCM15]_: instead of iterating
+    - This algorithm was further improved in [BCCM2015]_: instead of iterating
       twice over all pairs of vertices, in the "inner" loop, we cut several
       pairs by exploiting properties of the underlying graph.
 
@@ -124,27 +124,6 @@ At Python level :
 
     :meth:`~hyperbolicity` | Return the hyperbolicity of the graph or an approximation of this value.
     :meth:`~hyperbolicity_distribution` | Return the hyperbolicity distribution of the graph or a sampling of it.
-
-REFERENCES:
-
-.. [BCCM15] \M. Borassi, D. Coudert, P. Crescenzi, and A. Marino.
-   On Computing the Hyperbolicity of Real-World Graphs.
-   Proceedings of the 23rd European Symposium on Algorithms (ESA 2015)
-
-.. [CCL15] \N. Cohen, D. Coudert, and A. Lancin. On computing the Gromov
-   hyperbolicity. ACM Journal of Experimental Algorithmics, 20(1.6):1-18, 2015.
-   :doi:`10.1145/2780652` or
-   [`<https://hal.inria.fr/hal-01182890>`_].
-
-.. [FIV12] \H. Fournier, A. Ismail, and A. Vigneron. *Computing the Gromov
-   hyperbolicity of a discrete metric space*. :arxiv:`1210.3323`.
-
-.. [Gromov87] \M. Gromov. Hyperbolic groups. Essays in Group Theory, 8:75--263,
-   1987.
-
-.. [Soto11] \M. A. Soto Gomez. 2011. Quelques proprietes topologiques des
-   graphes et applications a internet et aux reseaux. Ph.D. Dissertation. Univ.
-   Paris Diderot (Paris 7).
 
 AUTHORS:
 
@@ -168,7 +147,6 @@ Methods
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
 
 from libc.string cimport memset
 from cysignals.memory cimport check_allocarray, sig_free
@@ -186,7 +164,7 @@ from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from libc.stdint cimport uint16_t, uint32_t, uint64_t
-include "sage/data_structures/bitset.pxi"
+from sage.data_structures.bitset_base cimport *
 
 
 # Defining a pair of vertices as a C struct
@@ -292,7 +270,7 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
 
     This method implements the basic algorithm for computing the hyperbolicity
     of a graph which tests all 4-tuples of vertices not satisfying a cutting
-    rule proposed in [Soto11]_.
+    rule proposed in [Sot2011]_.
 
     INPUT:
 
@@ -324,13 +302,13 @@ cdef tuple hyperbolicity_basic_algorithm(int N,
     for a in range(N - 3):
         for b in range(a + 1, N - 2):
 
-            # We use the cutting rule proposed in [Soto11]_
+            # We use the cutting rule proposed in [Sot2011]_
             if 2 * distances[a][b] <= h_LB:
                 continue
 
             for c in range(b + 1, N - 1):
 
-                # We use the cutting rule proposed in [Soto11]_
+                # We use the cutting rule proposed in [Sot2011]_
                 if 2 * distances[a][c] <= h_LB or 2 * distances[b][c] <= h_LB:
                     continue
 
@@ -404,8 +382,8 @@ cdef inline distances_and_far_apart_pairs(gg,
     - The arrays distances and far_apart_pairs have already been allocated with
       size `n^2`.
     """
-    cdef int n = gg.order()
-    cdef int i
+    cdef uint32_t n = gg.order()
+    cdef uint32_t i
 
     if not distances or not far_apart_pairs:
         raise ValueError("distances or far_apart_pairs is a NULL pointer")
@@ -596,7 +574,7 @@ cdef inline pair** sort_pairs(uint32_t N,
 
 
 ######################################################################
-# Compute the hyperbolicity using the algorithm of [BCCM15]_
+# Compute the hyperbolicity using the algorithm of [BCCM2015]_
 ######################################################################
 
 cdef tuple hyperbolicity_BCCM(int N,
@@ -611,7 +589,7 @@ cdef tuple hyperbolicity_BCCM(int N,
     Return the hyperbolicity of a graph.
 
     This method implements the exact and the approximate algorithms proposed in
-    [BCCM15]_. See the module's documentation for more details.
+    [BCCM2015]_. See the module's documentation for more details.
 
     This method assumes that the graph under consideration is connected.
 
@@ -852,7 +830,7 @@ cdef tuple hyperbolicity_BCCM(int N,
 
 
 ######################################################################
-# Compute the hyperbolicity using the algorithm of [CCL15]_
+# Compute the hyperbolicity using the algorithm of [CCL2015]_
 ######################################################################
 
 cdef tuple hyperbolicity_CCL(int N,
@@ -867,7 +845,7 @@ cdef tuple hyperbolicity_CCL(int N,
     Return the hyperbolicity of a graph.
 
     This method implements the exact and the approximate algorithms proposed in
-    [CCL15]_. See the module's documentation for more details.
+    [CCL2015]_. See the module's documentation for more details.
 
     This method assumes that the graph under consideration is connected.
 
@@ -917,7 +895,8 @@ cdef tuple hyperbolicity_CCL(int N,
     """
     cdef int hh # can get negative value
     cdef int a, b, c, d, h, h_UB
-    cdef int x, y, l1, l2, S1, S2, S3
+    cdef int l1, l2, S1, S2, S3
+    cdef uint32_t x, y
     cdef list certificate = []
     cdef uint32_t nb_p
             # The total number of pairs.
@@ -1076,7 +1055,7 @@ def hyperbolicity(G,
     r"""
     Returns the hyperbolicity of the graph or an approximation of this value.
 
-    The hyperbolicity of a graph has been defined by Gromov [Gromov87]_ as
+    The hyperbolicity of a graph has been defined by Gromov [Gro1987]_ as
     follows: Let `a, b, c, d` be vertices of the graph, let `S_1 = dist(a, b) +
     dist(b, c)`, `S_2 = dist(a, c) + dist(b, d)`, and `S_3 = dist(a, d) +
     dist(b, c)`, and let `M_1` and `M_2` be the two largest values among `S_1`,
@@ -1097,18 +1076,18 @@ def hyperbolicity(G,
           - ``'basic'`` is an exhaustive algorithm considering all possible
             4-tuples and so have time complexity in `O(n^4)`.
 
-          - ``'CCL'`` is an exact algorithm proposed in [CCL15_]. It considers
+          - ``'CCL'`` is an exact algorithm proposed in [CCL2015]_. It considers
             the 4-tuples in an ordering allowing to cut the search space as soon
             as a new lower bound is found (see the module's documentation). This
             algorithm can be turned into a approximation algorithm.
 
           - ``'CCL+FA'`` or ``'CCL+'`` uses the notion of far-apart pairs as
-            proposed in [Soto11]_ to significantly reduce the overall
+            proposed in [Sot2011]_ to significantly reduce the overall
             computation time of the ``'CCL'`` algorithm.
 
-          - ``'BCCM'`` is an exact algorithm proposed in [BCCM15_]. It improves
-            ``'CCL+FA'`` by cutting several 4-tuples (for more information,
-            see the module's documentation).
+          - ``'BCCM'`` is an exact algorithm proposed in [BCCM2015]_. It
+            improves ``'CCL+FA'`` by cutting several 4-tuples (for more
+            information, see the module's documentation).
 
           - ``'dom'`` is an approximation with additive constant four. It
             computes the hyperbolicity of the vertices of a dominating set of
@@ -1173,8 +1152,10 @@ def hyperbolicity(G,
         (1/2, [0, 1, 2, 3], 1/2)
         sage: L,C,U = hyperbolicity(G, algorithm='basic'); L,sorted(C),U
         (1/2, [0, 1, 2, 3], 1/2)
-        sage: L,C,U = hyperbolicity(G, algorithm='dom'); L,sorted(C),U
-        (0, [0, 1, 2, 6], 1)
+        sage: L,C,U = hyperbolicity(G, algorithm='dom'); L,U
+        (0, 1)
+        sage: sorted(C)  # random
+        [0, 1, 2, 6]
 
     Asking for an approximation in a grid graph::
 
@@ -1486,7 +1467,7 @@ cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances):
     """
     Return the distribution of the hyperbolicity of the 4-tuples of the graph.
 
-    The hyperbolicity of a graph has been defined by Gromov [Gromov87]_ as
+    The hyperbolicity of a graph has been defined by Gromov [Gro1987]_ as
     follows: Let `a, b, c, d` be vertices of the graph, let `S_1 = dist(a, b) +
     dist(b, c)`, `S_2 = dist(a, c) + dist(b, d)`, and `S_3 = dist(a, d) +
     dist(b, c)`, and let `M_1` and `M_2` be the two largest values among `S_1`,
@@ -1546,7 +1527,7 @@ cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t
     """
     Return a sampling of the hyperbolicity distribution of the graph.
 
-    The hyperbolicity of a graph has been defined by Gromov [Gromov87]_ as
+    The hyperbolicity of a graph has been defined by Gromov [Gro1987]_ as
     follows: Let `a, b, c, d` be vertices of the graph, let `S_1 = dist(a, b) +
     dist(b, c)`, `S_2 = dist(a, c) + dist(b, d)`, and `S_3 = dist(a, d) +
     dist(b, c)`, and let `M_1` and `M_2` be the two largest values among `S_1`,
@@ -1610,7 +1591,7 @@ def hyperbolicity_distribution(G, algorithm='sampling', sampling_size=10**6):
     r"""
     Return the hyperbolicity distribution of the graph or a sampling of it.
 
-    The hyperbolicity of a graph has been defined by Gromov [Gromov87]_ as
+    The hyperbolicity of a graph has been defined by Gromov [Gro1987]_ as
     follows: Let `a, b, c, d` be vertices of the graph, let `S_1 = dist(a, b) +
     dist(b, c)`, `S_2 = dist(a, c) + dist(b, d)`, and `S_3 = dist(a, d) +
     dist(b, c)`, and let `M_1` and `M_2` be the two largest values among `S_1`,

@@ -1,0 +1,14 @@
+# Using pari in a C++17 file with "using namespace std doesn't
+# work due to a conflict between std::rank and pari's rank
+CXXFLAGS=$(echo "${CXXFLAGS}" | sed "s/-std=c++17//g")
+
+# Export everything. Probably not necessary in most cases.
+export CXXFLAGS
+
+export DEFINES=""
+
+cd src/src   # Now we are in src/src.
+
+# Build everything:
+echo "Now building lcalc, example programs and the shared library..."
+sdh_make

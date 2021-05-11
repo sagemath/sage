@@ -6,10 +6,10 @@ Thematic tutorial document tree
    :maxdepth: 2
 
    algebraic_combinatorics
-   tutorial-notebook-and-help-long
    sandpile
    group_theory
    lie
+   vector_calculus
    linear_programming
    numtheory_rsa
    coding_theory
@@ -24,5 +24,5 @@ Thematic tutorial document tree
    cython_interface
    numerical_sage/index
    explicit_methods_in_number_theory/index
-   sws2rst
    profiling
+   sws2rst

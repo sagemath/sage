@@ -9,16 +9,15 @@ AUTHORS:
 - Nicolas M. Thiéry
 - Aladin Virmaux
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010-2015 Nicolas M. Thiéry
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import operator
 from sage.misc.all import cached_method
@@ -171,7 +170,6 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         ....:     z=x*y
         ....:     z.set_immutable()
         ....:     return z
-        ....:
         sage: Mon = AutomaticSemigroup([M1,M2], mul=prod_m, category=Monoids().Finite().Subobjects())
         sage: Mon.cardinality()
         24
@@ -305,7 +303,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             else:
                 raise ValueError("AutomaticSemigroup requires at least one generator or `one` to determine the ambient space")
         elif ambient not in Sets:
-            raise ValueError("ambient (=%s) should be a set"%ambient)
+            raise ValueError("ambient (=%s) should be a set" % ambient)
 
         # if mul is not operator.mul  and category.is_subcategory(Monoids().Subobjects())  error
 
@@ -342,7 +340,6 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             category = default_category & category
         return super(AutomaticSemigroup, cls).__classcall__(cls, generators, ambient=ambient, one=one, mul=mul, category=category)
 
-
     def __init__(self, generators, ambient, one, mul, category):
         """
         Initializes this semigroup.
@@ -375,8 +372,10 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         # Attributes for the lazy construction of the elements
         self._constructed = False
         self._done = 0
-        self._elements = [self.one()] if one is not None else []
-        self._elements += list(self._generators)
+        if one is not None and self._one not in self._generators:
+            self._elements = [self._one] + list(self._generators)
+        else:
+            self._elements = list(self._generators)
         self._elements_set = set(self._elements)
         self._iter = self.__init__iter()
 
@@ -408,17 +407,17 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         categories = [Groups(), Monoids(), Semigroups()]
         for category in categories:
             if self in category:
-                typ = "A "+category._repr_object_names()[:-1]
+                typ = "A " + category._repr_object_names()[:-1]
         for category in [Groups(), Monoids(), Semigroups()]:
             if self.ambient() in category and self in category.Subobjects():
-                typ = "A sub"+category._repr_object_names()[:-1]
+                typ = "A sub" + category._repr_object_names()[:-1]
                 break
         if self._mul is operator.mul:
-            of = " of (%s)"%self.ambient()
+            of = " of (%s)" % self.ambient()
         else:
             of = ""
 
-        return "%s%s with %s generators"%(typ, of, len(self._generators))
+        return "%s%s with %s generators" % (typ, of, len(self._generators))
 
     def repr_element_method(self, style="ambient"):
         """
@@ -477,7 +476,6 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             ....:     z=x*y
             ....:     z.set_immutable()
             ....:     return z
-            ....:
             sage: Mon = AutomaticSemigroup([M1,M2], mul=prod_m)
             sage: Mon.ambient()
             Full MatrixSpace of 3 by 3 dense matrices over Integer Ring
@@ -515,7 +513,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             if element not in self._elements_set:
                 cache = self._retract.cache
                 del cache[((ambient_element,), ())]
-                raise ValueError("%s not in %s"%(ambient_element, self))
+                raise ValueError("%s not in %s" % (ambient_element, self))
         return element
 
     @cached_method
@@ -605,7 +603,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                     continue
                 self._elements.append(y)
                 self._elements_set.add(y)
-                y._reduced_word = x.reduced_word()+[i]
+                y._reduced_word = x.reduced_word() + [i]
                 yield y
             self._done += 1
         self._constructed = True

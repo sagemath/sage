@@ -1,0 +1,184 @@
+#!/usr/bin/env bash
+
+########################################################################
+# Regenerate auto-generated files, using information in SAGE_ROOT/build/
+#
+# This script is run by SAGE_ROOT/bootstrap as part of the bootstrapping phase
+# (before configure, before creating source distributions).
+#
+# The BOOTSTRAP_QUIET variable is set by the top-level
+# bootstrap script and controls how verbose we are.
+########################################################################
+
+set -e
+
+if [ -z "$SAGE_ROOT" ]; then
+    echo Please run the top-level bootstrap script of the Sage distribution.
+    exit 1
+fi
+
+cd "$SAGE_ROOT"
+
+STRIP_COMMENTS="sed s/#.*//;"
+OUTPUT_DIR="src/doc/en/installation"
+mkdir -p "$OUTPUT_DIR"
+
+shopt -s extglob
+
+for SYSTEM in arch debian fedora cygwin homebrew conda; do
+    SYSTEM_PACKAGES=
+    OPTIONAL_SYSTEM_PACKAGES=
+    SAGELIB_SYSTEM_PACKAGES=
+    SAGELIB_OPTIONAL_SYSTEM_PACKAGES=
+    RECOMMENDED_SYSTEM_PACKAGES=
+    for PKG_BASE in $(./sage --package list --has-file distros/$SYSTEM.txt); do
+                PKG_SCRIPTS=build/pkgs/$PKG_BASE
+                SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/$SYSTEM.txt
+                PKG_TYPE=$(cat $PKG_SCRIPTS/type)
+                PKG_SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE))
+                if [ -n "PKG_SYSTEM_PACKAGES" ]; then
+                    if [ -f $PKG_SCRIPTS/spkg-configure.m4 ]; then
+                       case "$PKG_BASE:$PKG_TYPE" in
+                           *:standard)
+                               SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                               ;;
+                           _recommended:*|pandoc:*)
+                               RECOMMENDED_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                               ;;
+                           *)
+                               OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                               ;;
+                       esac
+                    else
+                        case "$PKG_TYPE" in
+                            standard)
+                                SAGELIB_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                                ;;
+                            *)
+                                SAGELIB_OPTIONAL_SYSTEM_PACKAGES+=" $PKG_SYSTEM_PACKAGES"
+                                ;;
+                        esac
+                    fi
+                fi
+    done
+    if [ "${SYSTEM}" = "conda" ]; then
+        if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+            echo >&2 $0:$LINENO: installing environment.yml, environment-optional.yml, src/environment.yml and src/environment-optional.yml
+        fi
+        echo "name: sage-build" >  environment.yml
+        echo "channels:"        >> environment.yml
+        echo "  - conda-forge"  >> environment.yml
+        echo "  - nodefaults"   >> environment.yml
+        echo "dependencies:"    >> environment.yml
+        for pkg in $SYSTEM_PACKAGES; do
+            echo "  - $pkg" >> environment.yml
+        done
+        sed 's/name: sage-build/name: sage/' environment.yml > src/environment.yml
+        for pkg in $SAGELIB_SYSTEM_PACKAGES; do
+            echo "  - $pkg" >> src/environment.yml
+        done
+        cp environment.yml environment-optional.yml
+            echo "  # optional packages" >> environment-optional.yml
+        for pkg in $OPTIONAL_SYSTEM_PACKAGES; do
+            echo "  - $pkg" >> environment-optional.yml
+            done
+        cp src/environment.yml src/environment-optional.yml
+            echo "  # optional packages" >> src/environment-optional.yml
+        for pkg in $OPTIONAL_SYSTEM_PACKAGES $SAGELIB_OPTIONAL_SYSTEM_PACKAGES; do
+            echo "  - $pkg" >> src/environment-optional.yml
+        done
+    else
+        if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+            echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/$SYSTEM.txt and "$OUTPUT_DIR"/$SYSTEM-optional.txt
+        fi
+        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM.txt
+        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $OPTIONAL_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-optional.txt
+        echo "$(sage-print-system-package-command $SYSTEM --prompt --sudo install $(echo $(echo $RECOMMENDED_SYSTEM_PACKAGES | xargs -n 1 echo | sort)))" > "$OUTPUT_DIR"/$SYSTEM-recommended.txt
+    fi
+done
+
+OUTPUT_DIR="src/doc/en/reference/spkg"
+mkdir -p "$OUTPUT_DIR"
+if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+    echo >&2 $0:$LINENO: installing "$OUTPUT_DIR"/"*.rst"
+fi
+OUTPUT_INDEX="$OUTPUT_DIR"/index.rst
+cat > "$OUTPUT_INDEX" <<EOF
+
+External Packages
+=================
+
+Standard Packages
+-----------------
+
+The Sage distribution includes most programs and libraries on which
+Sage depends.  It installs them automatically if it does not find
+equivalent system packages.
+
+EOF
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst :standard: | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Optional Packages
+-----------------
+
+For additional functionality, you can install some of the following
+optional packages.
+
+EOF
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst :optional: | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Experimental Packages
+---------------------
+
+Some packages that provide additional functionality are marked as
+"experimental".  Developers are needed in order to improve the
+integration of these packages into the Sage distribution.
+
+EOF
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst :experimental: | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Detailed Listing of External Packages
+-------------------------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   index_alph
+
+EOF
+
+OUTPUT_INDEX="$OUTPUT_DIR"/index_alph.rst
+cat >> "$OUTPUT_INDEX" <<EOF
+External Packages (alphabetical order)
+======================================
+
+.. toctree::
+   :maxdepth: 1
+
+EOF
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst | sort); do
+            PKG_SCRIPTS=build/pkgs/$PKG_BASE
+            # Instead of just copying, we may want to call
+            # a version of sage-spkg-info to format extra information.
+
+            (echo ".. _spkg_$PKG_BASE:" && echo && OUTPUT_RST=1 sage-spkg-info $PKG_BASE) > "$OUTPUT_DIR"/$PKG_BASE.rst
+            echo >> "$OUTPUT_INDEX" "   $PKG_BASE"
+done
+
+# #30064: Create the directory first
+OUTPUT_DIR="src/doc/en/reference/repl"
+mkdir -p "$OUTPUT_DIR"
+OUTPUT="$OUTPUT_DIR/options.txt"
+if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
+    echo >&2 $0:$LINENO: installing "$OUTPUT"
+fi
+./sage -advanced > "$OUTPUT"

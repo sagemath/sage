@@ -13,7 +13,6 @@
 #    they won't be available in child programs.
 #  - This script has a version number such that a newer version of
 #    sage-env can be sourced when upgrading.  See below.
-#  - It uses bash features, so it cannot be used with other shells.
 #
 #  If you want to set all environment variables for your shell like
 #  they are during the build of Sage packages, type
@@ -26,7 +25,6 @@
 #           J. H. Palmieri, Leif Leonhardy and others.
 #
 ##########################################################################
-
 
 # Resolve all symbolic links in a filename.  This more or less behaves
 # like "readlink -f" except that it does not convert the filename to an
@@ -44,12 +42,10 @@ resolvelinks() {
     # Move stuff from $in to $out
     while [ -n "$in" ]; do
         # Normalize $in by replacing consecutive slashes by one slash
-        while { in_single_slash=${in//\/\//\/}; [ "$in" != "$in_single_slash" ]; }; do
-            in=$in_single_slash
-        done
+        in=$(echo "${in}" | sed 's://*:/:g')
 
         # If $in starts with a slash, remove it and set $out to the root
-        in_without_slash=${in/#\//}
+        in_without_slash=${in#/}
         if [ "$in" != "$in_without_slash" ]; then
             in=$in_without_slash
             out="/"
@@ -71,7 +67,7 @@ resolvelinks() {
             out="$out$f"
 
             # If the new $in starts with a slash, move it to $out
-            in_without_slash=${in/#\//}
+            in_without_slash=${in#/}
             if [ "$in" != "$in_without_slash" ]; then
                 in=$in_without_slash
                 out="$out/"
@@ -103,13 +99,13 @@ resolvelinks() {
         fi
 
         # In $in, replace $f by $f_resolved (leave $out alone)
-        in=${in/#"$f"/"$f_resolved"}
+        in="${in#${f}}"
+        in="${f_resolved}${in}"
     done
 
     # Return $out
     echo "$out"
 }
-
 
 # New value for SAGE_ROOT: either SAGE_ROOT (if given)
 # or a guessed value based on pwd.
@@ -119,32 +115,18 @@ elif [ -f sage -a -d build ]; then
     NEW_SAGE_ROOT="."
 elif [ -f ../../sage -a -d ../../build ]; then
     NEW_SAGE_ROOT="../.."
-else
-    # No idea what SAGE_ROOT should be...
-    echo >&2 "Error: You must set the SAGE_ROOT environment variable or run this"
-    echo >&2 "script from the SAGE_ROOT or SAGE_ROOT/local/bin/ directory."
-    return 1
 fi
 
-# Make NEW_SAGE_ROOT absolute
-NEW_SAGE_ROOT=`cd "$NEW_SAGE_ROOT" && pwd -P`
+if [ -n "$NEW_SAGE_ROOT" ]; then
+    # Make NEW_SAGE_ROOT absolute
+    NEW_SAGE_ROOT=`cd "$NEW_SAGE_ROOT" && pwd -P`
 
-# Sanity check NEW_SAGE_ROOT
-if [ -f "$NEW_SAGE_ROOT/sage" -a -d "$NEW_SAGE_ROOT/build" ]; then
-    :
-else
-    echo >&2 "Error: SAGE_ROOT is set to a bad value:"
-    echo >&2 "SAGE_ROOT=$SAGE_ROOT"
-    echo >&2 "You must correct it or erase it and run this script from the SAGE_ROOT"
-    echo >&2 "or SAGE_ROOT/local/bin/ directory."
-    return 1
-fi
-
-# Warn if NEW_SAGE_ROOT does not equal the old SAGE_ROOT
-if [ "$SAGE_ROOT" != "$NEW_SAGE_ROOT" -a -n "$SAGE_ROOT" ]; then
-    echo >&2 "Warning: overwriting SAGE_ROOT environment variable:"
-    echo >&2 "Old SAGE_ROOT=$SAGE_ROOT"
-    echo >&2 "New SAGE_ROOT=$NEW_SAGE_ROOT"
+    # Warn if NEW_SAGE_ROOT does not equal the old SAGE_ROOT
+    if [ "$SAGE_ROOT" != "$NEW_SAGE_ROOT" -a -n "$SAGE_ROOT" ]; then
+        echo >&2 "Warning: overwriting SAGE_ROOT environment variable:"
+        echo >&2 "Old SAGE_ROOT=$SAGE_ROOT"
+        echo >&2 "New SAGE_ROOT=$NEW_SAGE_ROOT"
+    fi
 fi
 
 
@@ -173,33 +155,8 @@ if [ "$SAGE_ENV_SOURCED" = "$SAGE_ENV_VERSION" ]; then
 fi
 export SAGE_ENV_SOURCED=$SAGE_ENV_VERSION
 
-export SAGE_ROOT="$NEW_SAGE_ROOT"
-
-
-# sage-env must know where the Sage's script files are.
-# Note that SAGE_SCRIPTS_DIR is only used here, so it does not need to
-# be exported.
-if [ -z "$SAGE_SCRIPTS_DIR" ]; then
-    if [ -n "$SAGE_LOCAL" ] && [ -f "$SAGE_LOCAL/bin/sage-env-config" ]; then
-        SAGE_SCRIPTS_DIR="$SAGE_LOCAL/bin"
-    elif [ -f "$SAGE_ROOT/src/bin/sage-env-config" ]; then
-        SAGE_SCRIPTS_DIR="$SAGE_ROOT/src/bin"
-    else
-        echo >&2 "Error: You must set either the SAGE_LOCAL or SAGE_SCRIPTS_DIR environment variable to run this"
-        return 1
-    fi
-elif [ ! -f "$SAGE_SCRIPTS_DIR/sage-env-config" ]; then
-    echo >&2 "Error: SAGE_SCRIPTS_DIR is set to a bad value:"
-    echo >&2 "SAGE_SCRIPTS_DIR=$SAGE_SCRIPTS_DIR"
-    echo >&2 "You must correct it or erase it and rerun this script"
-    return 1
-fi
-
-# Set environment variables (like SAGE_LOCAL) depending on ./configure
-. "$SAGE_SCRIPTS_DIR/sage-env-config"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error: failed to source $SAGE_SCRIPTS_DIR/sage-env-config"
-    return 1
+if [ -n "$NEW_SAGE_ROOT" ]; then
+    export SAGE_ROOT="$NEW_SAGE_ROOT"
 fi
 
 # The compilers are set in order of priority by
@@ -207,32 +164,36 @@ fi
 # 2) compiler installed by sage
 # 3) compiler set at configuration time 
 if [ -z "$CC" ]; then
-    if [ -x "$SAGE_LOCAL/bin/gcc" ]; then
+    if [ -n "$SAGE_LOCAL" -a -x "$SAGE_LOCAL/bin/gcc" ]; then
         CC=gcc
-    else
+    elif [ -n "$CONFIGURED_CC" ]; then
         CC="$CONFIGURED_CC"
     fi
     export CC
 fi
 if [ -z "$CXX" ]; then
-    if [ -x "$SAGE_LOCAL/bin/g++" ]; then
+    if [  -n "$SAGE_LOCAL" -a -x "$SAGE_LOCAL/bin/g++" ]; then
         CXX=g++
-    else
+    elif [ -n "$CONFIGURED_CXX" ]; then
         CXX="$CONFIGURED_CXX"
     fi
     export CXX
 fi
 if [ -z "$FC" ]; then
-    if [ -x "$SAGE_LOCAL/bin/gfortran" ]; then
+    if [ -n "$SAGE_LOCAL" -a -x "$SAGE_LOCAL/bin/gfortran" ]; then
         FC=gfortran
-    else
+    elif [ -n "$CONFIGURED_FC" ]; then
         FC="$CONFIGURED_FC"
     fi
     export FC
 fi
 if [ "$UNAME" = "Darwin" ]; then
-    OBJC="$CONFIGURED_OBJC"
-    OBJCXX="$CONFIGURED_OBJCXX"
+    if [ -z "$OBJC" ]; then
+        OBJC="$CONFIGURED_OBJC"
+    fi
+    if [ -z "$OBJCXX" ]; then
+        OBJCXX="$CONFIGURED_OBJCXX"
+    fi
     export OBJC OBJCXX
 fi
 
@@ -240,6 +201,16 @@ fi
 export F77="$FC"
 export F90="$FC"   # Needed for SciPy
 export F95="$FC"
+
+# For ARCHFLAGS (#31227) we need to distinguish unset and empty.
+# If the environment defines ARCHFLAGS, even when empty, then take that.
+# Otherwise, use the configured value; but if that is "unset", do not set
+# the variable at all.
+if [ "${ARCHFLAGS-unset}" = "unset" ]; then
+    if [ "${SAGE_ARCHFLAGS-unset}" != "unset" ]; then
+        export ARCHFLAGS="${SAGE_ARCHFLAGS}"
+    fi
+fi
 
 # Call with: contains_spaces X${VAR}X
 # i.e., WITHOUT quotes but some character(s) around the environment variable to test.
@@ -290,26 +261,49 @@ fi
 
 # Setting Sage-related location environment variables,
 # depending on SAGE_ROOT and SAGE_LOCAL which are already defined.
-export SAGE_ETC="$SAGE_LOCAL/etc"
-export SAGE_SHARE="$SAGE_LOCAL/share"
-export SAGE_EXTCODE="$SAGE_SHARE/sage/ext"
-export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
-export SAGE_SPKG_SCRIPTS="$SAGE_LOCAL/var/lib/sage/scripts"
-export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
-export SAGE_SRC="$SAGE_ROOT/src"
-export SAGE_DOC_SRC="$SAGE_SRC/doc"
-export SAGE_DOC="$SAGE_SHARE/doc/sage"
+if [ -n "$SAGE_LOCAL" ]; then
+    export SAGE_ETC="$SAGE_LOCAL/etc"
+    export SAGE_SHARE="$SAGE_LOCAL/share"
+    export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
+fi
+if [ -n "$SAGE_SHARE" ]; then
+    export SAGE_DOC="$SAGE_SHARE/doc/sage"
+fi
+if [ -n "$SAGE_ROOT" ]; then
+    export SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
+    export SAGE_SRC="$SAGE_ROOT/src"
+fi
+if [ -n "$SAGE_SRC" ]; then
+    export SAGE_DOC_SRC="$SAGE_SRC/doc"
+fi
+
+if [ -n "$SAGE_PKG_CONFIG_PATH" ]; then
+    # set up external pkg-config to look into SAGE_LOCAL/lib/pkgconfig/
+    # (Sage's pkgconf spkg takes care of this, if installed)
+    export PKG_CONFIG_PATH="$SAGE_PKG_CONFIG_PATH${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
+fi
 
 if [ -z "${SAGE_ORIG_PATH_SET}" ]; then
     SAGE_ORIG_PATH=$PATH && export SAGE_ORIG_PATH
     SAGE_ORIG_PATH_SET=True && export SAGE_ORIG_PATH_SET
 fi
-export PATH="$SAGE_ROOT/build/bin:$SAGE_SRC/bin:$SAGE_LOCAL/bin:$PATH"
+if [ -n "$SAGE_LOCAL" ]; then
+    export PATH="$SAGE_LOCAL/bin:$PATH"
+fi
+if [ -n "$SAGE_VENV" ]; then
+    export PATH="$SAGE_VENV/bin:$PATH"
+fi
+if [ -n "$SAGE_SRC" ]; then
+    export PATH="$SAGE_SRC/bin:$PATH"
+fi
+if [ -n "$SAGE_ROOT" ]; then
+    export PATH="$SAGE_ROOT/build/bin:$PATH"
+fi
 
 # We offer a toolchain option, so if $SAGE_LOCAL/toolchain/toolchain-env exists source it.
 # Since the user might do something crazy we do not do any checks, but hope for the best.
-if [ -f $SAGE_LOCAL/toolchain/toolchain-env ]; then
-  source $SAGE_LOCAL/toolchain/toolchain-env
+if [ -n "$SAGE_LOCAL" -a -f "$SAGE_LOCAL"/toolchain/toolchain-env ]; then
+  source "$SAGE_LOCAL"/toolchain/toolchain-env
 fi
 
 # setting of the variable UNAME (describing the o.s.)
@@ -321,10 +315,13 @@ export UNAME=`uname | sed 's/CYGWIN.*/CYGWIN/' `
 
 # Mac OS X-specific setup
 if [ "$UNAME" = "Darwin" ]; then
+  export MACOSX_VERSION=`uname -r | awk -F. '{print $1}'`
+  case "$SAGE_MACOSX_DEPLOYMENT_TARGET" in
+  legacy)
+    # legacy behavior of the Sage distribution.
     # set MACOSX_DEPLOYMENT_TARGET -- if set incorrectly, this can
     # cause lots of random "Abort trap" issues on OSX. see trac
     # #7095 for an example.
-    MACOSX_VERSION=`uname -r | awk -F. '{print $1}'`
     if [ $MACOSX_VERSION -ge 14 ]; then
         # various packages have still have issues with
         # two digit OS X versions
@@ -332,8 +329,16 @@ if [ "$UNAME" = "Darwin" ]; then
     else
         MACOSX_DEPLOYMENT_TARGET=10.$[$MACOSX_VERSION-4]
     fi
-    export MACOSX_DEPLOYMENT_TARGET MACOSX_VERSION
-
+    export MACOSX_DEPLOYMENT_TARGET
+    ;;
+  "")
+    # Do nothing
+    ;;
+  *)
+    # A fixed version set at configure time.
+    export MACOSX_DEPLOYMENT_TARGET=$SAGE_MACOSX_DEPLOYMENT_TARGET
+    ;;
+  esac
     # Work around problems on recent OS X crashing with an error message
     # "... may have been in progress in another thread when fork() was called"
     # when objective-C functions are called after fork(). See Trac #25921.
@@ -341,43 +346,36 @@ if [ "$UNAME" = "Darwin" ]; then
     export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 fi
 
-# Compile-time path for libraries.  This is the equivalent of
-# adding the gcc option -L $SAGE_LOCAL/lib.
-[ -z "$LIBRARY_PATH" ] || LIBRARY_PATH="${LIBRARY_PATH}:"
-export LIBRARY_PATH="${LIBRARY_PATH}$SAGE_LOCAL/lib"
-
-# Compile-time path for include files.  This is the equivalent of
-# adding the gcc option -I $SAGE_LOCAL/include.
-[ -z "$CPATH" ] || CPATH="${CPATH}:"
-export CPATH="${CPATH}$SAGE_LOCAL/include"
-
-# Add Debian multi-arch directories if applicable.
-# See http://wiki.debian.org/Multiarch
-MULTI_ARCH=`dpkg-architecture -qDEB_BUILD_MULTIARCH 2>/dev/null`
-if [ -n "$MULTI_ARCH" ]; then
-    LIBRARY_PATH="${LIBRARY_PATH}:/usr/lib/$MULTI_ARCH"
-    CPATH="${CPATH}:/usr/include/$MULTI_ARCH"
+if [ -n "$SAGE_LOCAL" ]; then
+    # Compile-time path for libraries.  This is the equivalent of
+    # adding the gcc option -L $SAGE_LOCAL/lib.
+    [ -z "$LIBRARY_PATH" ] || LIBRARY_PATH=":${LIBRARY_PATH}"
+    export LIBRARY_PATH="$SAGE_LOCAL/lib${LIBRARY_PATH}"
+    # Compile-time path for include files.  This is the equivalent of
+    # adding the gcc option -I $SAGE_LOCAL/include.
+    [ -z "$CPATH" ] || CPATH=":${CPATH}"
+    export CPATH="$SAGE_LOCAL/include${CPATH}"
 fi
 
-# For PARI/GP
-GP_DATA_DIR="$SAGE_LOCAL/share/pari" && export GP_DATA_DIR
-GPHELP="$SAGE_LOCAL/bin/gphelp" && export GPHELP
-GPDOCDIR="$SAGE_LOCAL/share/pari/doc" && export GPDOCDIR
-
-SINGULARPATH="$SAGE_LOCAL/share/singular" && export SINGULARPATH
-SINGULAR_EXECUTABLE="$SAGE_LOCAL/bin/Singular" && export SINGULAR_EXECUTABLE
+if [ -n "$SAGE_LOCAL" ]; then
+    SINGULARPATH="$SAGE_LOCAL/share/singular" && export SINGULARPATH
+    SINGULAR_EXECUTABLE="$SAGE_LOCAL/bin/Singular" && export SINGULAR_EXECUTABLE
+fi
 
 if [ -z "$SAGE_REPO_ANONYMOUS" ]; then
-    SAGE_REPO_ANONYMOUS="git://trac.sagemath.org/sage.git"
+    SAGE_REPO_ANONYMOUS="https://gitlab.com/sagemath/dev/tracmirror.git"
     export SAGE_REPO_ANONYMOUS
 fi
 if [ -z "$SAGE_REPO_AUTHENTICATED" ]; then
         SAGE_REPO_AUTHENTICATED="ssh://git@trac.sagemath.org:2222/sage.git"
         export SAGE_REPO_AUTHENTICATED
 fi
-if [ -z "$SAGE_DISTFILES" ]; then
-    SAGE_DISTFILES="$SAGE_ROOT/upstream"
-    export SAGE_DISTFILES
+
+if [ -n "$SAGE_ROOT" ]; then
+    if [ -z "$SAGE_DISTFILES" ]; then
+        SAGE_DISTFILES="$SAGE_ROOT/upstream"
+        export SAGE_DISTFILES
+    fi
 fi
 
 # Check that $HOME exists
@@ -432,8 +430,13 @@ if [ -n "$PYTHONHOME" ]; then
     unset PYTHONHOME
 fi
 
-LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
-export LDFLAGS
+if [ -n "$SAGE_LOCAL" ]; then
+    LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
+    if [ "$UNAME" = "Linux" ]; then
+        LDFLAGS="-Wl,-rpath-link,$SAGE_LOCAL/lib $LDFLAGS"
+    fi
+    export LDFLAGS
+fi
 
 if [ -z "$IPYTHONDIR" ]; then
     # We hardcode a version number in the directory name. The idea is
@@ -467,10 +470,10 @@ unset R_HOME
 unset R_PROFILE
 # Do not use the global Makevars.site and ~/.R/Makevars when installing R packages
 # Provide empty files to appease some R packages' installation scripts.
-if [ -d "$SAGE_LOCAL/lib/R/share" ] ; then
+if [ -n "$SAGE_LOCAL" -a -d "$SAGE_LOCAL/lib/R/share" ] ; then
    R_MAKEVARS_SITE="$SAGE_LOCAL/lib/R/share/Makevars.site" && export R_MAKEVARS_SITE
    if ! [ -f "$R_MAKEVARS_SITE" ] ; then
-       if ! [ -a "$R_MAKEVARS_SITE" ] ; then
+       if ! [ -e "$R_MAKEVARS_SITE" ] ; then
            echo "## Empty site-wide Makevars file for Sage's R" > "$R_MAKEVARS_SITE"
        else
            >&2 echo "Warning: $R_MAKEVARS_SITE exists and is not a file : trouble ahead..."
@@ -479,7 +482,7 @@ if [ -d "$SAGE_LOCAL/lib/R/share" ] ; then
 fi
 if [ -d "$DOT_SAGE" ] ; then
     if ! [ -d "$DOT_SAGE/R" ] ; then
-        if ! [ -a  "$DOT_SAGE/R" ] ; then
+        if ! [ -e  "$DOT_SAGE/R" ] ; then
             mkdir -p "$DOT_SAGE/R"
         else
             >&2 echo "Warning: $DOT_SAGE/R exists and is not a directory : trouble ahead..."
@@ -487,7 +490,7 @@ if [ -d "$DOT_SAGE" ] ; then
     fi
     R_MAKEVARS_USER="$DOT_SAGE/R/Makevars.user" && export R_MAKEVARS_USER
     if ! [ -f "$R_MAKEVARS_USER" ] ; then
-        if ! [ -a "$R_MAKEVARS_USER" ] ; then
+        if ! [ -e "$R_MAKEVARS_USER" ] ; then
             echo "## Empty user-specific Makevars file for Sage's R" > "$R_MAKEVARS_USER"
         else
             >&2 echo "Warning: $R_MAKEVARS_USER exists and is not a file : trouble ahead..."
@@ -495,10 +498,14 @@ if [ -d "$DOT_SAGE" ] ; then
     fi
 fi
 
-export MAXIMA_PREFIX="$SAGE_LOCAL"
+if [ -n "$SAGE_LOCAL" ]; then
+    export MAXIMA_PREFIX="$SAGE_LOCAL"
+fi
 export MAXIMA_USERDIR="$DOT_SAGE/maxima"
 
-PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
+if [ -n "$SAGE_LOCAL" ]; then
+    PERL5LIB="$SAGE_LOCAL/lib/perl5:$PERL5LIB" && export PERL5LIB
+fi
 
 # Allow SAGE_BROWSER to override BROWSER (Trac #22449)
 if [ -n "$SAGE_BROWSER" ]; then
@@ -513,16 +520,16 @@ fi
 export __sage__=""
 
 # Setup env varariables if ccache is installed
-if [ -d "$SAGE_LOCAL/libexec/ccache" ]; then
+if [ -n "$SAGE_LOCAL" -a -d "$SAGE_LOCAL/libexec/ccache" ]; then
     PATH="$SAGE_LOCAL/libexec/ccache:$PATH"
 fi
-if [ -z "$CCACHE_BASEDIR" ]; then
+if [ -n "$SAGE_ROOT" -a -z "$CCACHE_BASEDIR" ]; then
     export CCACHE_BASEDIR="$SAGE_ROOT"
 fi
 
 # Set AS to assembler used by $CC ("as" by default)
 if [ "$AS" = "" ]; then
-    CC_as=`$CC -print-file-name=as 2>/dev/null`
+    CC_as=`$CC -print-prog-name=as 2>/dev/null`
     if command -v $CC_as >/dev/null 2>/dev/null; then
         AS="$CC_as"
     fi
@@ -534,7 +541,7 @@ export AS
 
 # Set LD to linker used by $CC ("ld" by default)
 if [ "$LD" = "" ]; then
-    CC_ld=`$CC -print-file-name=ld 2>/dev/null`
+    CC_ld=`$CC -print-prog-name=ld 2>/dev/null`
     if command -v $CC_ld >/dev/null 2>/dev/null; then
         LD="$CC_ld"
     fi
@@ -565,11 +572,6 @@ if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
     export CXXFLAGS="$CFLAGS"
 fi
 
-if [ "$UNAME" = "Darwin" ]; then
-    # Trac #21175 - export empty ARCHFLAGS for the benefit of Perl modules
-    ARCHFLAGS="" && export ARCHFLAGS
-fi
-
 if [ "$CP" = "" ]; then
     CP="cp"  && export CP
 fi
@@ -598,7 +600,7 @@ if [ "$TOUCH" = "" ]; then
     TOUCH="touch"  && export TOUCH
 fi
 
-if [ "$UNAME" = "CYGWIN" ]; then
+if [ "$UNAME" = "CYGWIN" -a -n "$SAGE_LOCAL" ]; then
     # Cygwin needs pathnames in PATH to resolve runtime dependencies
     PATH="$SAGE_LOCAL/lib/R/lib:$SAGE_LOCAL/lib:$PATH" && export PATH
     # And "dlopen" needs them in LD_LIBRARY_PATH, just as on Linuces,
@@ -608,18 +610,30 @@ if [ "$UNAME" = "CYGWIN" ]; then
 fi
 
 # See trac 7186 -- this is needed if ecl is moved
-ECLDIR="$SAGE_LOCAL/lib/ecl/" && export ECLDIR
+if [ -n "$SAGE_LOCAL" ]; then
+    ECLDIR="$SAGE_LOCAL/lib/ecl/" && export ECLDIR
+fi
+
 
 # Handle parallel building/testing/...
-# See Trac Ticket #12016
-# First, figure out the right values for SAGE_NUM_THREADS (default
-# number of threads) and SAGE_NUM_THREADS_PARALLEL (default number of
-# threads when parallel execution is asked explicitly).
-sage_num_threads_array=(`sage-num-threads.py 2>/dev/null || echo 1 2 1`)
-SAGE_NUM_THREADS=${sage_num_threads_array[0]}
-SAGE_NUM_THREADS_PARALLEL=${sage_num_threads_array[1]}
-export SAGE_NUM_THREADS
-export SAGE_NUM_THREADS_PARALLEL
+case "$SAGE_NUM_THREADS,$SAGE_NUM_THREADS_PARALLEL" in
+    [1-9][0-9]*,[1-9][0-9]*)
+        # Variables are set to positive values already,
+        # sage-num-threads.py would just recompute them
+        ;;
+    *)
+        # See Trac Ticket #12016
+        # First, figure out the right values for SAGE_NUM_THREADS (default
+        # number of threads) and SAGE_NUM_THREADS_PARALLEL (default number of
+        # threads when parallel execution is asked explicitly).
+        sage_num_threads_array=$(sage-num-threads.py 2>/dev/null || echo 1 2 1)
+        sage_num_threads_array="${sage_num_threads_array% *}" # strip third item
+        SAGE_NUM_THREADS="${sage_num_threads_array% *}" # keep first item
+        SAGE_NUM_THREADS_PARALLEL="${sage_num_threads_array#* }" # keep second item
+        export SAGE_NUM_THREADS
+        export SAGE_NUM_THREADS_PARALLEL
+        ;;
+esac
 
 # Multithreading in OpenBLAS does not seem to play well with Sage's attempts to
 # spawn new processes, see #26118. Apparently, OpenBLAS sets the thread
@@ -678,7 +692,28 @@ if [ -r "$SAGE_RC_FILE" ]; then
     fi
 fi
 
-# If we move the Sage tree then ncurses cannot find terminfo, hence, we
-# tell it where to find it. See Trac Ticket #15091
+if [ -n "$SAGE_LOCAL" ]; then
+    # If we move the Sage tree then ncurses cannot find terminfo, hence, we
+    # tell it where to find it. See Trac Ticket #15091
+    export TERMINFO="$SAGE_LOCAL/share/terminfo"
 
-export TERMINFO="$SAGE_LOCAL/share/terminfo"
+    # If nodejs is installed, activate the nodeenv containing it.
+
+    nodeenv_activate="$SAGE_LOCAL/share/nodejs/activate"
+
+    if [ -f "$nodeenv_activate" ]; then
+        # symlinked into nodeenv for specific version of nodejs installed
+        # The activate script needs to be sourced using its actual path.
+        nodeenv_activate=`resolvelinks "$nodeenv_activate"`
+
+        # Don't let nodeenv wipe out the sage-sh/sage-buildsh prompt.
+        NODE_VIRTUAL_ENV_DISABLE_PROMPT=1 . "$nodeenv_activate"
+
+        if [ $? -ne 0 ]; then
+            echo >&2 "Warning: failed to activate the nodeenv containing nodejs"
+        fi
+    elif [ -L "$nodeenv_activate" ]; then
+        echo >&2 "Warning: the nodeenv activation symlink for nodejs is broken"
+    fi
+
+fi

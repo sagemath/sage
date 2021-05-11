@@ -1,19 +1,14 @@
 #include <stdio.h>
 
+#if PY_MAJOR_VERSION == 3 && PY_MINOR_VERSION >= 9
 
-/* Various feature checks depending on Python version */
-#if PY_MAJOR_VERSION <= 2
-#define HAVE_WEAKREFS(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_WEAKREFS)
-#define HAVE_CLASS(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_CLASS)
-#define HAVE_ITER(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_ITER)
-#define HAVE_RICHCOMPARE(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_RICHCOMPARE)
-#define HAVE_INPLACEOPS(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_INPLACEOPS)
-#define HAVE_SEQUENCE_IN(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_SEQUENCE_IN)
-#define HAVE_GETCHARBUFFER(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_GETCHARBUFFER)
-#define HAVE_NEW_DIVISION(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_CLASS)
-#define HAVE_INDEX(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_INDEX)
-#define HAVE_NEWBUFFER(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_NEWBUFFER)
+static void _type_debug(PyTypeObject* tp)
+{
+    printf("Not implemented for CPython >= 3.9\n");
+}
+
 #else
+
 #define HAVE_WEAKREFS(tp) (1)
 #define HAVE_CLASS(tp) (1)
 #define HAVE_ITER(tp) (1)
@@ -25,8 +20,6 @@
 #define HAVE_INDEX(tp) (1)
 #define HAVE_NEWBUFFER(tp) (1)
 #define HAVE_FINALIZE(tp) (tp->tp_flags & Py_TPFLAGS_HAVE_FINALIZE)
-#endif
-
 
 static void print_object(void* pyobj)
 {
@@ -355,3 +348,5 @@ static void _type_debug(PyTypeObject* tp)
         printf("  tp_version_tag: %lu\n", (unsigned long)tp->tp_version_tag);
     }
 }
+
+#endif

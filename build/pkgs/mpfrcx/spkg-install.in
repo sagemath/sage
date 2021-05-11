@@ -1,0 +1,6 @@
+cd src
+
+sdh_configure $SAGE_CONFIGURE_GMP $SAGE_CONFIGURE_MPFR \
+              $SAGE_CONFIGURE_MPC --disable-static --enable-shared
+sdh_make
+sdh_make_install

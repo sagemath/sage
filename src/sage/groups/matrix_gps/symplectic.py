@@ -29,7 +29,7 @@ AUTHORS:
   (see :trac:`26028`)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 David Joyner and William Stein
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
@@ -37,8 +37,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.latex import latex
 from sage.misc.cachefunc import cached_method
@@ -141,7 +141,7 @@ def Sp(n, R, var='a', invariant_form=None):
         sage: TestSuite(G).run()
     """
     degree, ring = normalize_args_vectorspace(n, R, var=var)
-    if degree % 2 != 0:
+    if degree % 2:
         raise ValueError('the degree must be even')
 
     if invariant_form is not None:

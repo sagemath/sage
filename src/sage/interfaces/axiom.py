@@ -173,21 +173,20 @@ Python floats.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ###########################################################################
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 import re
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from sage.misc.all import verbose
 from sage.env import DOT_SAGE
 from pexpect import EOF
 from sage.misc.multireplace import multiple_replace
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
+from sage.structure.richcmp import rich_to_bool
+
 
 # The Axiom commands ")what thing det" ")show Matrix" and ")display
 # op det" commands, gives a list of all identifiers that begin in
@@ -421,6 +420,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
               4
                                                        Type: PositiveInteger
         """
+        from sage.misc.verbose import verbose
         if not wait_for_prompt:
             return Expect._eval_line(self, line)
         line = line.rstrip().rstrip(';')
@@ -569,7 +569,7 @@ class PanAxiomElement(ExpectElement):
         P = self.parent()
         return P('%s(%s)'%(self.name(), x))
 
-    def _cmp_(self, other):
+    def _richcmp_(self, other, op):
         """
         EXAMPLES::
 
@@ -604,18 +604,13 @@ class PanAxiomElement(ExpectElement):
         """
         P = self.parent()
         if 'true' in P.eval("(%s = %s) :: Boolean"%(self.name(),other.name())):
-            return 0
+            return rich_to_bool(op, 0)
         elif 'true' in P.eval("(%s < %s) :: Boolean"%(self.name(), other.name())):
-            return -1
+            return rich_to_bool(op, -1)
         elif 'true' in P.eval("(%s > %s) :: Boolean"%(self.name(),other.name())):
-            return 1
+            return rich_to_bool(op, 1)
 
-        # everything is supposed to be comparable in Python, so we define
-        # the comparison thus when no comparable in interfaced system.
-        if (hash(self) < hash(other)):
-            return -1
-        else:
-            return 1
+        return NotImplemented
 
     def type(self):
         """

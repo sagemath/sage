@@ -8,14 +8,13 @@ Local Density Congruence
 ## by a quadratic form at a prime (possibly subject to additional
 ## congruence conditions).
 ##########################################################################
-from __future__ import print_function
 
 from copy import deepcopy
 
 from sage.sets.set import Set
 from sage.rings.rational_field import QQ
 from sage.arith.all import valuation
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 
 from sage.quadratic_forms.count_local_2 import count_modp__by_gauss_sum
 

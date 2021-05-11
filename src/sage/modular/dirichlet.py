@@ -56,31 +56,30 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
-from six.moves import range, zip
 
-import sage.categories.all                  as cat
+import sage.categories.all as cat
 from sage.misc.all import prod
-import sage.misc.prandom                    as random
-import sage.modules.free_module             as free_module
-import sage.modules.free_module_element     as free_module_element
-import sage.rings.all                       as rings
+import sage.misc.prandom as random
+from sage.modules.free_module import FreeModule
+import sage.modules.free_module_element as free_module_element
+import sage.rings.all as rings
 import sage.rings.number_field.number_field as number_field
+from sage.libs.pari import pari
 
 from sage.categories.map import Map
 from sage.rings.rational_field import is_RationalField
-from sage.rings.complex_field import is_ComplexField
+from sage.rings.complex_mpfr import is_ComplexField
 from sage.rings.qqbar import is_AlgebraicField
 from sage.rings.ring import is_Ring
 
 from sage.misc.functional import round
-from sage.misc.cachefunc                    import cached_method
-from sage.misc.fast_methods                 import WithEqualityById
-from sage.structure.element                 import MultiplicativeGroupElement
-from sage.structure.gens_py                 import multiplicative_iterator
-from sage.structure.parent                  import Parent
-from sage.structure.sequence                import Sequence
-from sage.structure.factory                 import UniqueFactory
+from sage.misc.cachefunc import cached_method
+from sage.misc.fast_methods import WithEqualityById
+from sage.structure.element import MultiplicativeGroupElement
+from sage.structure.gens_py import multiplicative_iterator
+from sage.structure.parent import Parent
+from sage.structure.sequence import Sequence
+from sage.structure.factory import UniqueFactory
 from sage.structure.richcmp import richcmp
 from sage.arith.all import (binomial, bernoulli, kronecker, factor, gcd,
         lcm, fundamental_discriminant, euler_phi, factorial, valuation)
@@ -103,7 +102,9 @@ def trivial_character(N, base_ring=rings.RationalField()):
     """
     return DirichletGroup(N, base_ring)(1)
 
+
 TrivialCharacter = trivial_character
+
 
 def kronecker_character(d):
     """
@@ -132,7 +133,7 @@ def kronecker_character(d):
 
     D = fundamental_discriminant(d)
     G = DirichletGroup(abs(D), rings.RationalField())
-    return G([kronecker(D,u) for u in G.unit_gens()])
+    return G([kronecker(D, u) for u in G.unit_gens()])
 
 
 def kronecker_character_upside_down(d):
@@ -154,12 +155,12 @@ def kronecker_character_upside_down(d):
         raise ValueError("d must be positive")
 
     G = DirichletGroup(d, rings.RationalField())
-    return G([kronecker(u.lift(),d) for u in G.unit_gens()])
+    return G([kronecker(u.lift(), d) for u in G.unit_gens()])
 
 
 def is_DirichletCharacter(x):
     r"""
-    Return True if x is of type DirichletCharacter.
+    Return ``True`` if ``x`` is of type ``DirichletCharacter``.
 
     EXAMPLES::
 
@@ -294,8 +295,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
         for e in D:
             if e.modulus() % 2 == 0:
                 if e.modulus() % 4 == 0:
-                    val *= e.values_on_gens()[0] # first gen is -1 for 2-power modulus
-            elif (euler_phi(e.parent().modulus()) / e.order()) % 2 != 0:
+                    val *= e.values_on_gens()[0]  # first gen is -1 for 2-power modulus
+            elif (euler_phi(e.parent().modulus()) / e.order()) % 2:
                 val *= -1
         return val
 
@@ -305,8 +306,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         .. warning::
 
-           A table of values of the character is made the first time
-           you call this (unless `m` equals -1)
+            A table of values of the character is made the first time
+            you call this (unless `m` equals -1)
 
         EXAMPLES::
 
@@ -355,7 +356,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: e = DirichletGroup(7, QQ).0
             sage: f = e.change_ring(QuadraticField(3, 'a'))
             sage: f.parent()
-            Group of Dirichlet characters modulo 7 with values in Number Field in a with defining polynomial x^2 - 3
+            Group of Dirichlet characters modulo 7 with values in Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
 
         ::
 
@@ -416,15 +417,14 @@ class DirichletCharacter(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: e = DirichletGroup(16)([-1, 1])
-            sage: hash(e)
-            -1497246046           # 32-bit
-            -3713082714463545694  # 64-bit
+            sage: hash(e) == hash((-1,1))
+            True
         """
         return hash(self.values_on_gens())
 
     def __invert__(self):
         """
-        Return the multiplicative inverse of self.
+        Return the multiplicative inverse of ``self``.
 
         EXAMPLES::
 
@@ -440,9 +440,9 @@ class DirichletCharacter(MultiplicativeGroupElement):
             x = tuple(~z for z in self.values_on_gens())
         return G.element_class(G, x, check=False)
 
-    def _mul_(self,  other):
+    def _mul_(self, other):
         """
-        Return the product of self and other.
+        Return the product of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -490,7 +490,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def __pow__(self, n):
         """
-        Return self raised to the power of n
+        Return ``self`` raised to the power of ``n``.
 
         EXAMPLES::
 
@@ -509,7 +509,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def _repr_short_(self):
         r"""
-        A short string representation of self, often used in string representations of modular forms
+        A short string representation of ``self``, often used in string representations of modular forms.
 
         EXAMPLES::
 
@@ -522,7 +522,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def _repr_(self):
         """
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -542,17 +542,17 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         s = 'Dirichlet character modulo %s of conductor %s' % (self.modulus(), self.conductor())
         r = len(self.values_on_gens())
-        if r != 0:
+        if r:
             s += ' mapping '
         for i in range(r):
-            if i != 0:
+            if i:
                 s += ', '
             s += str(self.parent().unit_gens()[i]) + ' |--> ' + str(self.values_on_gens()[i])
         return s
 
     def _latex_(self):
         r"""
-        LaTeX representation of self.
+        LaTeX representation of ``self``.
 
         EXAMPLES::
 
@@ -582,7 +582,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def base_ring(self):
         """
-        Returns the base ring of this Dirichlet character.
+        Return the base ring of this Dirichlet character.
 
         EXAMPLES::
 
@@ -611,7 +611,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def bernoulli(self, k, algorithm='recurrence', cache=True, **opts):
         r"""
-        Returns the generalized Bernoulli number `B_{k,eps}`.
+        Return the generalized Bernoulli number `B_{k,eps}`.
 
         INPUT:
 
@@ -688,7 +688,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         if N == 1:
             # By definition, the first Bernoulli number of the trivial
             # character is 1/2, in contrast to the value B_1 = -1/2.
-            ber = K.one()/2 if k == 1 else K(bernoulli(k))
+            ber = K.one() / 2 if k == 1 else K(bernoulli(k))
         elif self(-1) != K((-1)**k):
             ber = K.zero()
         elif algorithm == "recurrence":
@@ -701,31 +701,77 @@ class DirichletCharacter(MultiplicativeGroupElement):
             # computing all binomial coefficients can be done much
             # more efficiently.
             v = self.values()
-            S = lambda n: sum(v[r] * r**n for r in range(1, N))
-            ber = K(sum(binomial(k,j) * bernoulli(j, **opts) *
-                        N**(j-1) * S(k-j) for j in range(k+1)))
+
+            def S(n):
+                return sum(v[r] * r**n for r in range(1, N))
+            ber = K(sum(binomial(k, j) * bernoulli(j, **opts) *
+                        N**(j - 1) * S(k - j) for j in range(k + 1)))
         elif algorithm == "definition":
             # This is better since it computes the same thing, but requires
             # no arith in a poly ring over a number field.
-            prec = k+2
+            prec = k + 2
             R = rings.PowerSeriesRing(rings.QQ, 't')
             t = R.gen()
             # g(t) = t/(e^{Nt}-1)
-            g = t/((N*t).exp(prec) - 1)
+            g = t / ((N * t).exp(prec) - 1)
             # h(n) = g(t)*e^{nt}
-            h = [0] + [g * ((n*t).exp(prec)) for n in range(1,N+1)]
-            ber = sum([self(a)*h[a][k] for a in range(1,N+1)]) * factorial(k)
+            h = [0] + [g * ((n * t).exp(prec)) for n in range(1, N + 1)]
+            ber = sum([self(a) * h[a][k] for a in range(1, N + 1)]) * factorial(k)
         else:
-            raise ValueError("algorithm = '%s' unknown"%algorithm)
+            raise ValueError("algorithm = '%s' unknown" % algorithm)
 
         if cache:
             self.__bernoulli[k] = ber
         return ber
 
+    def lfunction(self, prec=53, algorithm='pari'):
+        """
+        Return the L-function of ``self``.
+
+        The result is a wrapper around a PARI L-function or around
+        the ``lcalc`` program.
+
+        INPUT:
+
+        - ``prec`` -- precision (default 53)
+
+        - ``algorithm`` -- 'pari' (default) or 'lcalc'
+
+        EXAMPLES::
+
+            sage: G.<a,b> = DirichletGroup(20)
+            sage: L = a.lfunction(); L
+            PARI L-function associated to Dirichlet character modulo 20
+            of conductor 4 mapping 11 |--> -1, 17 |--> 1
+            sage: L(4)
+            0.988944551741105
+
+        With the algorithm "lcalc"::
+
+            sage: a = a.primitive_character()
+            sage: L = a.lfunction(algorithm='lcalc'); L
+            L-function with complex Dirichlet coefficients
+            sage: L.value(4)  # abs tol 1e-14
+            0.988944551741105 - 5.16608739123418e-18*I
+        """
+        if algorithm is None:
+            algorithm = 'pari'
+
+        if algorithm == 'pari':
+            from sage.lfunctions.pari import lfun_character, LFunction
+            Z = LFunction(lfun_character(self), prec=prec)
+            Z.rename('PARI L-function associated to %s' % self)
+            return Z
+        elif algorithm == 'lcalc':
+            from sage.libs.lcalc.lcalc_Lfunction import Lfunction_from_character
+            return Lfunction_from_character(self)
+
+        raise ValueError('algorithm must be "pari" or "lcalc"')
+
     @cached_method
     def conductor(self):
         """
-        Computes and returns the conductor of this character.
+        Compute and return the conductor of this character.
 
         EXAMPLES::
 
@@ -755,15 +801,246 @@ class DirichletCharacter(MultiplicativeGroupElement):
         # depends only on the factor of p**(r-1) on the right hand side.
         # Since p-1 is coprime to p, this smallest r such that the
         # divisibility holds equals Valuation(Order(x),p)+1.
-        cond = p**(valuation(self.order(),p) + 1)
+        cond = p**(valuation(self.order(), p) + 1)
         if p == 2 and F[0][1] > 2 and self.values_on_gens()[1].multiplicative_order() != 1:
             cond *= 2
         return rings.Integer(cond)
 
     @cached_method
+    def fixed_field_polynomial(self, algorithm="pari"):
+        r"""
+        Given a Dirichlet character, this will return a
+        polynomial generating the abelian extension fixed by the kernel
+        of the corresponding Galois character.
+
+        ALGORITHM: (Sage)
+
+        A formula by Gauss for the products of periods;
+        see Disquisitiones §343. See the source code for more.
+
+        OUTPUT:
+
+        - a polynomial with integer coefficients
+
+        EXAMPLES::
+
+            sage: G = DirichletGroup(37)
+            sage: chi = G.0
+            sage: psi = chi^18
+            sage: psi.fixed_field_polynomial()
+            x^2 + x - 9
+
+            sage: G = DirichletGroup(7)
+            sage: chi = G.0^2
+            sage: chi
+            Dirichlet character modulo 7 of conductor 7 mapping 3 |--> zeta6 - 1
+            sage: chi.fixed_field_polynomial()
+            x^3 + x^2 - 2*x - 1
+
+            sage: G = DirichletGroup(31)
+            sage: chi = G.0
+            sage: chi^6
+            Dirichlet character modulo 31 of conductor 31 mapping 3 |--> zeta30^6
+            sage: psi = chi^6
+            sage: psi.fixed_field_polynomial()
+            x^5 + x^4 - 12*x^3 - 21*x^2 + x + 5
+
+            sage: G = DirichletGroup(7)
+            sage: chi = G.0
+            sage: chi.fixed_field_polynomial()
+            x^6 + x^5 + x^4 + x^3 + x^2 + x + 1
+
+            sage: G = DirichletGroup(1001)
+            sage: chi = G.0
+            sage: psi = chi^3
+            sage: psi.order()
+            2
+            sage: psi.fixed_field_polynomial(algorithm="pari")
+            x^2 + x + 2
+
+        With the Sage implementation::
+
+            sage: G = DirichletGroup(37)
+            sage: chi = G.0
+            sage: psi = chi^18
+            sage: psi.fixed_field_polynomial(algorithm="sage")
+            x^2 + x - 9
+
+            sage: G = DirichletGroup(7)
+            sage: chi = G.0^2
+            sage: chi
+            Dirichlet character modulo 7 of conductor 7 mapping 3 |--> zeta6 - 1
+            sage: chi.fixed_field_polynomial(algorithm="sage")
+            x^3 + x^2 - 2*x - 1
+
+            sage: G = DirichletGroup(31)
+            sage: chi = G.0
+            sage: chi^6
+            Dirichlet character modulo 31 of conductor 31 mapping 3 |--> zeta30^6
+            sage: psi = chi^6
+            sage: psi.fixed_field_polynomial(algorithm="sage")
+            x^5 + x^4 - 12*x^3 - 21*x^2 + x + 5
+
+            sage: G = DirichletGroup(7)
+            sage: chi = G.0
+            sage: chi.fixed_field_polynomial(algorithm="sage")
+            x^6 + x^5 + x^4 + x^3 + x^2 + x + 1
+
+            sage: G = DirichletGroup(1001)
+            sage: chi = G.0
+            sage: psi = chi^3
+            sage: psi.order()
+            2
+            sage: psi.fixed_field_polynomial(algorithm="sage")
+            x^2 + x + 2
+
+        The algorithm must be one of `sage` or `pari`::
+
+            sage: G = DirichletGroup(1001)
+            sage: chi = G.0
+            sage: psi = chi^3
+            sage: psi.order()
+            2
+            sage: psi.fixed_field_polynomial(algorithm="banana")
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: algorithm must be one of 'pari' or 'sage'
+
+        """
+
+        # this algorithm was written by Francis Clarke see ticket #9407
+
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+        from sage.rings.integer_ring import IntegerRing
+        ZZ = IntegerRing()
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.matrix.constructor import matrix
+
+        if algorithm == "sage":
+            n = ZZ(self.conductor())
+            if not n.is_prime():
+                raise NotImplementedError('the conductor %s is supposed to be prime' % n)
+
+            d = self.order()
+
+            # check that there will be such a field of degree d inside QQ(zeta_n)
+            if euler_phi(n) % d != 0:
+                raise ValueError('No field exists because %s does not divide %s=phi(%s)' % (d, euler_phi(n), n))
+            f = euler_phi(n) // d
+
+            S = PolynomialRing(ZZ, 'x')
+
+            if f == 1:
+                from sage.misc.functional import cyclotomic_polynomial
+                return cyclotomic_polynomial(n, S.gen())
+
+            if d == 2:
+                if n.mod(4) == 1:
+                    s = -1
+                else:
+                    s = 1
+                return S([s * (n + s) / 4, 1, 1])
+
+            # Using the notation of van der Waerden, where $\zeta$ is a primitive
+            # $n$-root of unity,
+            # $$
+            # \eta_i = \sum_{j=0}^{f-1}\zeta^{g^{i+dj}},
+            # $$
+            # is represented by eta[i] as the list of exponents.
+            #
+            # gen_index is a dictionary such that gen_index[r] = i if the exponent r
+            # occurs in eta[i].  Thus $\eta^{(r)} = \eta_i$ in van der Waerden's
+            # notation.
+
+            R = IntegerModRing(n)
+            g = R.unit_gens()[0]
+            gen_index = {}
+            eta = []
+            for i in range(d):
+                eta.append([])
+                for j in range(f):
+                    r = g**(i + d * j)
+                    eta[i].append(r)
+                    gen_index[r] = i
+
+            # Using Gauss's formula
+            # $$
+            # \eta^{(r)}\eta^{(s)} = \sum_{j=0}^{f-1}\eta^{(r+sg^{dj})}
+            # $$
+            # (with $r=1$), we construct the matrix representing multiplication by
+            # $\eta_0=\eta^{(1)}$ with respect to the basis consisting of the $\eta_i$.
+            # Its characteristic polynomial generates the field.  The element
+            # $\eta^(0)$=f=-f\sum_{i=0}^{d-1}\eta_i$ is represented by eta_zero.
+
+            V = FreeModule(ZZ, d)
+            eta_zero = V([-f] * d)
+            m = []
+            for j in range(d):
+                v = 0
+                for e in eta[j]:
+                    try:
+                        s = V.gen(gen_index[1 + e])
+                    except KeyError:
+                        s = eta_zero
+                    v += s
+                m.append(v)
+
+            m = matrix(m)
+
+            xx = S.gen()
+            return m.charpoly(xx)
+
+        elif algorithm == "pari":
+            # Use pari
+            G, chi = self._pari_conversion()
+            K = pari.charker(G, chi)
+            H = pari.galoissubcyclo(G, K)
+            P = PolynomialRing(rings.RationalField(), "x")
+            x = P.gen()
+            return H.sage({"x": x})
+
+        else:
+            raise NotImplementedError("algorithm must be one of 'pari' or 'sage'")
+
+    def fixed_field(self):
+        r"""
+        Given a Dirichlet character, this will return the abelian extension
+        fixed by the kernel of the corresponding Galois character.
+
+        OUTPUT:
+
+        - a number field
+
+        EXAMPLES::
+
+            sage: G = DirichletGroup(37)
+            sage: chi = G.0
+            sage: psi = chi^18
+            sage: psi.fixed_field()
+            Number Field in a with defining polynomial x^2 + x - 9
+
+
+            sage: G = DirichletGroup(7)
+            sage: chi = G.0^2
+            sage: chi
+            Dirichlet character modulo 7 of conductor 7 mapping 3 |--> zeta6 - 1
+            sage: chi.fixed_field()
+            Number Field in a with defining polynomial x^3 + x^2 - 2*x - 1
+
+            sage: G = DirichletGroup(31)
+            sage: chi = G.0
+            sage: chi^6
+            Dirichlet character modulo 31 of conductor 31 mapping 3 |--> zeta30^6
+            sage: psi = chi^6
+            sage: psi.fixed_field()
+            Number Field in a with defining polynomial x^5 + x^4 - 12*x^3 - 21*x^2 + x + 5
+        """
+        return number_field.NumberField(self.fixed_field_polynomial(), 'a')
+
+    @cached_method
     def decomposition(self):
         r"""
-        Return the decomposition of self as a product of Dirichlet
+        Return the decomposition of ``self`` as a product of Dirichlet
         characters of prime power modulus, where the prime powers exactly
         divide the modulus of this character.
 
@@ -778,7 +1055,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: d[1].parent()
             Group of Dirichlet characters modulo 5 with values in Cyclotomic Field of order 4 and degree 2
 
-        We can't multiply directly, since coercion of one element into the
+        We cannot multiply directly, since coercion of one element into the
         other parent fails in both cases::
 
             sage: d[0]*d[1] == c
@@ -786,7 +1063,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             ...
             TypeError: unsupported operand parent(s) for *: 'Group of Dirichlet characters modulo 4 with values in Cyclotomic Field of order 4 and degree 2' and 'Group of Dirichlet characters modulo 5 with values in Cyclotomic Field of order 4 and degree 2'
 
-        We can multiply if we're explicit about where we want the
+        We can multiply if we are explicit about where we want the
         multiplication to take place.
 
         ::
@@ -810,14 +1087,14 @@ class DirichletCharacter(MultiplicativeGroupElement):
         if self.modulus() % 8 == 0:   # 2 factors at 2.
             vals[0].append(vals[1][0])
             del vals[1]
-        elif self.modulus() % 4 == 2: # 0 factors at 2.
+        elif self.modulus() % 4 == 2:  # 0 factors at 2.
             vals = [1] + vals
         return [D[i](vals[i]) for i in range(len(D))]
 
     def extend(self, M):
         """
-        Returns the extension of this character to a Dirichlet character
-        modulo the multiple M of the modulus.
+        Return the extension of this character to a Dirichlet character
+        modulo the multiple ``M`` of the modulus.
 
         EXAMPLES::
 
@@ -830,10 +1107,113 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: c.extend(20) == a
             True
         """
-        if M % self.modulus() != 0:
-            raise ArithmeticError("M(=%s) must be a multiple of the modulus(=%s)"%(M,self.modulus()))
+        if M % self.modulus():
+            raise ArithmeticError("M(=%s) must be a multiple of the modulus(=%s)" % (M, self.modulus()))
         H = DirichletGroup(M, self.base_ring())
         return H(self)
+
+    def _pari_conversion(self):
+        r"""
+        Prepare data for the conversion of the character to Pari.
+
+        OUTPUT:
+
+        pair (G, v) where G is `(\ZZ / N \ZZ)^*` where `N` is the modulus
+
+        EXAMPLES::
+
+            sage: chi4 = DirichletGroup(4).gen()
+            sage: chi4._pari_conversion()
+            ([[4, [0]], [2, [2], [3]], [[2]~, Vecsmall([2])],
+            [[4], [[1, matrix(0,2)]], Mat(1), [3], [2], [0]], Mat(1)], [1])
+
+            sage: chi = DirichletGroup(24)([1,-1,-1]); chi
+            Dirichlet character modulo 24 of conductor 24
+            mapping 7 |--> 1, 13 |--> -1, 17 |--> -1
+            sage: chi._pari_conversion()
+            ([[24, [0]], [8, [2, 2, 2], [7, 13, 17]],
+            [[2, 2, 3]~, Vecsmall([3, 3, 1])],
+            [[8, 8, 3], [[1, matrix(0,2)], [1, matrix(0,2)], [2, Mat([2, 1])]],
+            [1, 0, 0; 0, 1, 0; 0, 0, 1], [7, 13, 17], [2, 2, 2], [0, 0, 0]],
+            [1, 0, 0; 0, 1, 0; 0, 0, 1]], [0, 1, 1])
+        """
+        G = pari.znstar(self.modulus(), 1)
+
+        pari_orders = G[1][1]
+        pari_gens = G[1][2]
+        # one should use the following, but this does not work
+        # pari_orders = G.cyc()
+        # pari_gens = G.gen()
+
+        values_on_gens = (self(x) for x in pari_gens)
+
+        # now compute the input for pari (list of exponents)
+        P = self.parent()
+        if is_ComplexField(P.base_ring()):
+            zeta = P.zeta()
+            zeta_argument = zeta.argument()
+            v = [int(x.argument() / zeta_argument) for x in values_on_gens]
+        else:
+            dlog = P._zeta_dlog
+            v = [dlog[x] for x in values_on_gens]
+
+        m = P.zeta_order()
+        v = [(vi * oi) // m for vi, oi in zip(v, pari_orders)]
+        return (G, v)
+
+    def conrey_number(self):
+        r"""
+        Return the Conrey number for this character.
+
+        This is a positive integer coprime to `q` that identifies a
+        Dirichlet character of modulus `q`.
+
+        See https://www.lmfdb.org/knowledge/show/character.dirichlet.conrey
+
+        EXAMPLES::
+
+            sage: chi4 = DirichletGroup(4).gen()
+            sage: chi4.conrey_number()
+            3
+            sage: chi = DirichletGroup(24)([1,-1,-1]); chi
+            Dirichlet character modulo 24 of conductor 24
+            mapping 7 |--> 1, 13 |--> -1, 17 |--> -1
+            sage: chi.conrey_number()
+            5
+
+            sage: chi = DirichletGroup(60)([1,-1,I])
+            sage: chi.conrey_number()
+            17
+
+            sage: chi = DirichletGroup(420)([1,-1,-I,1])
+            sage: chi.conrey_number()
+            113
+
+        TESTS::
+
+            sage: eps1 = DirichletGroup(5)([-1])
+            sage: eps2 = DirichletGroup(5,QQ)([-1])
+            sage: eps1.conrey_number() == eps2.conrey_number()
+            True
+        """
+        G, v = self._pari_conversion()
+        return pari.znconreyexp(G, v).sage()
+
+    def lmfdb_page(self):
+        r"""
+        Open the LMFDB web page of the character in a browser.
+
+        See https://www.lmfdb.org
+
+        EXAMPLES::
+
+            sage: E = DirichletGroup(4).gen()
+            sage: E.lmfdb_page()  # optional -- webbrowser
+        """
+        import webbrowser
+        lmfdb_url = 'https://www.lmfdb.org/Character/Dirichlet/{}/{}'
+        url = lmfdb_url.format(self.modulus(), self.conrey_number())
+        webbrowser.open(url)
 
     def galois_orbit(self, sort=True):
         r"""
@@ -952,7 +1332,6 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: chi.gauss_sum()
             1
 
-
         .. SEEALSO::
 
             - :func:`sage.arith.misc.gauss_sum` for general finite fields
@@ -979,13 +1358,13 @@ class DirichletCharacter(MultiplicativeGroupElement):
         z = L.one()
         for c in chi.values()[1:]:
             z *= zeta
-            g += L(c)*z
+            g += L(c) * z
         return g
 
     def gauss_sum_numerical(self, prec=53, a=1):
         r"""
         Return a Gauss sum associated to this Dirichlet character as an
-        approximate complex number with prec bits of precision.
+        approximate complex number with ``prec`` bits of precision.
 
         INPUT:
 
@@ -1040,10 +1419,12 @@ class DirichletCharacter(MultiplicativeGroupElement):
         G = self.parent()
         K = G.base_ring()
         if is_ComplexField(K):
-            phi = lambda t : t
+
+            def phi(t):
+                return t
             CC = K
         elif is_AlgebraicField(K):
-            from sage.rings.complex_field import ComplexField
+            from sage.rings.complex_mpfr import ComplexField
             CC = ComplexField(prec)
             phi = CC.coerce_map_from(K)
         elif number_field.is_CyclotomicField(K) or is_RationalField(K):
@@ -1056,7 +1437,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         z = CC.one()
         for c in self.values()[1:]:
             z *= zeta
-            g += phi(c)*z
+            g += phi(c) * z
         return g
 
     def jacobi_sum(self, char, check=True):
@@ -1127,7 +1508,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         And sums where exactly one character is nontrivial (see :trac:`6393`)::
 
-            sage: G = DirichletGroup(5); X=G.list(); Y=X[0]; Z=X[1]
+            sage: G = DirichletGroup(5); X = G.list(); Y=X[0]; Z=X[1]
             sage: Y.jacobi_sum(Z)
             -1
             sage: Z.jacobi_sum(Y)
@@ -1164,7 +1545,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
             if self.parent() != char.parent():
                 raise NotImplementedError("Characters must be from the same Dirichlet Group.")
 
-        return sum([self(x) * char(1-x) for x in rings.IntegerModRing(self.modulus())])
+        return sum([self(x) * char(1 - x)
+                    for x in rings.IntegerModRing(self.modulus())])
 
     def kloosterman_sum(self, a=1, b=0):
         r"""
@@ -1195,34 +1577,49 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: e.kloosterman_sum(3,5)
             -2*zeta6 + 1
             sage: G = DirichletGroup(20)
-            sage: e = G([1 for  u in G.unit_gens()])
+            sage: e = G([1 for u in G.unit_gens()])
             sage: e.kloosterman_sum(7,17)
             -2*zeta20^6 + 2*zeta20^4 + 4
 
+        TESTS::
+
+            sage: G = DirichletGroup(20, UniversalCyclotomicField())
+            sage: e = G([1 for u in G.unit_gens()])
+            sage: e.kloosterman_sum(7,17)
+            -2*E(5) - 4*E(5)^2 - 4*E(5)^3 - 2*E(5)^4
+
+            sage: G = DirichletGroup(12, QQbar)
+            sage: e = G.gens()[0]
+            sage: e.kloosterman_sum(5, 4)
+            0.?e-17 - 4.000000000000000?*I
+            sage: e.kloosterman_sum(5,11)
+            0
         """
         G = self.parent()
-        K = G.base_ring()
-        if not (number_field.is_CyclotomicField(K) or is_RationalField(K)):
-            raise NotImplementedError("Kloosterman sums only currently implemented when the base ring is a cyclotomic field or QQ.")
-        g = 0
+        zo = G.zeta_order()
         m = G.modulus()
-        L = rings.CyclotomicField(lcm(m,G.zeta_order()))
+        g = 0
+        L = rings.CyclotomicField(m.lcm(zo))
         zeta = L.gen(0)
+        try:
+            self(1) * zeta**(a + b)
+        except TypeError:
+            raise NotImplementedError('Kloosterman sums not implemented '
+                                      'over this ring')
         n = zeta.multiplicative_order()
-        zeta = zeta ** (n // m)
-        for c in range(1,m):
-            if gcd(c,m)==1:
-                e = rings.Mod(c,m)
-                z = zeta ** int(a*e + b*(e**(-1)))
-                g += self(c)*z
+        zeta = zeta**(n // m)
+        for c in m.coprime_integers(m):
+            e = rings.Mod(c, m)
+            g += self(c) * zeta**int(a * e + b * e**(-1))
         return g
 
-    def kloosterman_sum_numerical(self, prec=53, a=1,b=0):
+    def kloosterman_sum_numerical(self, prec=53, a=1, b=0):
         r"""
         Return the Kloosterman sum associated to this Dirichlet character as
-        an approximate complex number with prec bits of precision. See also
-        :meth:`.kloosterman_sum`, which calculates the sum exactly (which is
-        generally slower).
+        an approximate complex number with ``prec`` bits of precision.
+
+        See also :meth:`.kloosterman_sum`, which calculates the sum
+        exactly (which is generally slower).
 
         INPUT:
 
@@ -1256,12 +1653,10 @@ class DirichletCharacter(MultiplicativeGroupElement):
         g = 0
         m = G.modulus()
         zeta = CC.zeta(m)
-
-        for c in range(1,m):
-            if gcd(c,m)==1:
-                e = rings.Mod(c,m)
-                z = zeta ** int(a*e + b*(e**(-1)))
-                g += phi(self(c))*z
+        for c in m.coprime_integers(m):
+            e = rings.Mod(c, m)
+            z = zeta ** int(a * e + b * (e**(-1)))
+            g += phi(self(c)) * z
         return g
 
     @cached_method
@@ -1305,14 +1700,13 @@ class DirichletCharacter(MultiplicativeGroupElement):
         R = self.base_ring()
         # self(-1) is either +1 or -1
         if not R.is_exact():
-            return abs(self(-1) - R(1)) < 0.5
-        return self(-1) == R(1)
+            return abs(self(-1) - R.one()) < 0.5
+        return self(-1) == R.one()
 
     @cached_method
     def is_odd(self):
         r"""
-        Return ``True`` if and only if
-        `\varepsilon(-1) = -1`.
+        Return ``True`` if and only if `\varepsilon(-1) = -1`.
 
         EXAMPLES::
 
@@ -1377,7 +1771,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
     @cached_method
     def is_trivial(self):
         r"""
-        Returns ``True`` if this is the trivial character,
+        Return ``True`` if this is the trivial character,
         i.e., has order 1.
 
         EXAMPLES::
@@ -1444,7 +1838,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             g = 2
         z = self.base_ring().zeta()
         n = z.multiplicative_order()
-        m = lcm(g,n)
+        m = lcm(g, n)
         if n == m:
             return self
         K = rings.CyclotomicField(m)
@@ -1457,9 +1851,9 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         .. note::
 
-           This function is currently only implemented when the base
-           ring is a number field. It's the identity function in
-           characteristic p.
+            This function is currently only implemented when the base
+            ring is a number field. It is the identity function in
+            characteristic p.
 
         EXAMPLES::
 
@@ -1487,7 +1881,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         A related bug (see :trac:`18086`)::
 
-            sage: K.<a,b>=NumberField([x^2 + 1, x^2 - 3])
+            sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
             sage: chi = DirichletGroup(7, K).0
             sage: chi.minimize_base_ring()
             Dirichlet character modulo 7 of conductor 7 mapping 3 |--> -1/2*b*a + 1/2
@@ -1514,7 +1908,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def modulus(self):
         """
-        The modulus of this character.
+        Return the modulus of this character.
 
         EXAMPLES::
 
@@ -1541,7 +1935,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
     @cached_method
     def multiplicative_order(self):
         """
-        The order of this character.
+        Return the order of this character.
 
         EXAMPLES::
 
@@ -1560,7 +1954,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def primitive_character(self):
         """
-        Returns the primitive character associated to self.
+        Return the primitive character associated to ``self``.
 
         EXAMPLES::
 
@@ -1577,8 +1971,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
     def restrict(self, M):
         """
-        Returns the restriction of this character to a Dirichlet character
-        modulo the divisor M of the modulus, which must also be a multiple
+        Return the restriction of this character to a Dirichlet character
+        modulo the divisor ``M`` of the modulus, which must also be a multiple
         of the conductor of this character.
 
         EXAMPLES::
@@ -1598,10 +1992,10 @@ class DirichletCharacter(MultiplicativeGroupElement):
             ValueError: conductor(=4) must divide M(=50)
         """
         M = int(M)
-        if self.modulus()%M != 0:
-            raise ValueError("M(=%s) must divide the modulus(=%s)"%(M,self.modulus()))
-        if M%self.conductor() != 0:
-            raise ValueError("conductor(=%s) must divide M(=%s)"%(self.conductor(),M))
+        if self.modulus() % M:
+            raise ValueError("M(=%s) must divide the modulus(=%s)" % (M, self.modulus()))
+        if M % self.conductor():
+            raise ValueError("conductor(=%s) must divide M(=%s)" % (self.conductor(), M))
         H = DirichletGroup(M, self.base_ring())
         return H(self)
 
@@ -1722,12 +2116,6 @@ class DirichletCharacter(MultiplicativeGroupElement):
         Return the underlying `\ZZ/n\ZZ`-module
         vector of exponents.
 
-        .. warning::
-
-           Please do not change the entries of the returned vector;
-           this vector is mutable *only* because immutable vectors are
-           not implemented yet.
-
         EXAMPLES::
 
             sage: G.<a,b> = DirichletGroup(20)
@@ -1766,7 +2154,6 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: e = DirichletGroup(16)([-1, 1])
             sage: loads(dumps(e)) == e
             True
-
         """
         # values_on_gens() used an explicit cache __values_on_gens in the past
         # we need to set the cache of values_on_gens() from that if we encounter it in a pickle
@@ -2090,8 +2477,9 @@ class DirichletGroupFactory(UniqueFactory):
 
     def create_object(self, version, key, **extra_args):
         """
-        Create the object from the key (extra arguments are ignored). This is
-        only called if the object was not found in the cache.
+        Create the object from the key (extra arguments are ignored).
+
+        This is only called if the object was not found in the cache.
 
         TESTS::
 
@@ -2103,11 +2491,13 @@ class DirichletGroupFactory(UniqueFactory):
         base_ring, modulus, zeta, zeta_order = key
         return DirichletGroup_class(base_ring, modulus, zeta, zeta_order)
 
+
 DirichletGroup = DirichletGroupFactory("DirichletGroup")
+
 
 def is_DirichletGroup(x):
     """
-    Returns True if x is a Dirichlet group.
+    Return ``True`` if ``x`` is a Dirichlet group.
 
     EXAMPLES::
 
@@ -2195,8 +2585,8 @@ class DirichletGroup_class(WithEqualityById, Parent):
             sage: DirichletGroup(12)._module
             Vector space of dimension 2 over Ring of integers modulo 2
         """
-        return free_module.FreeModule(rings.IntegerModRing(self.zeta_order()),
-                                      len(self.unit_gens()))
+        return FreeModule(rings.IntegerModRing(self.zeta_order()),
+                          len(self.unit_gens()))
 
     @property
     def _zeta_powers(self):
@@ -2216,7 +2606,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         if is_ComplexField(R):
             for i in range(1, zeta_order):
                 a = a * zeta
-                a._set_multiplicative_order(zeta_order/gcd(zeta_order, i))
+                a._set_multiplicative_order(zeta_order / gcd(zeta_order, i))
                 w.append(a)
         else:
             for i in range(1, zeta_order):
@@ -2348,8 +2738,8 @@ class DirichletGroup_class(WithEqualityById, Parent):
             14
 
         """
-        if not (isinstance(R, Map)
-                or R.has_coerce_map_from(self.base_ring())):
+        if not (isinstance(R, Map) or
+                R.has_coerce_map_from(self.base_ring())):
             raise TypeError("no coercion map from %s to %s is defined"
                             % (self.base_ring(), R))
         return self.change_ring(R)
@@ -2434,8 +2824,9 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
     def __len__(self):
         """
-        Return the number of elements of this Dirichlet group. This is the
-        same as self.order().
+        Return the number of elements of this Dirichlet group.
+
+        This is the same as self.order().
 
         EXAMPLES::
 
@@ -2474,7 +2865,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
     @cached_method
     def decomposition(self):
         r"""
-        Returns the Dirichlet groups of prime power modulus corresponding
+        Return the Dirichlet groups of prime power modulus corresponding
         to primes dividing modulus.
 
         (Note that if the modulus is 2 mod 4, there will be a "factor" of
@@ -2494,10 +2885,10 @@ class DirichletGroup_class(WithEqualityById, Parent):
             ]
         """
         R = self.base_ring()
-        return Sequence([DirichletGroup(p**r,R) for p, r \
-                           in factor(self.modulus())],
-                                cr=True,
-                                universe = cat.Objects())
+        return Sequence([DirichletGroup(p**r, R)
+                         for p, r in factor(self.modulus())],
+                        cr=True,
+                        universe=cat.Objects())
 
     def exponent(self):
         """
@@ -2519,7 +2910,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
     @cached_method
     def _automorphisms(self):
         """
-        Compute the automorphisms of self. These are always given by raising to
+        Compute the automorphisms of ``self``. These are always given by raising to
         a power, so the return value is a list of integers.
 
         At present this is only implemented if the base ring has characteristic 0 or a prime.
@@ -2543,7 +2934,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         R = self.base_ring()
         p = R.characteristic()
         if p == 0:
-            Auts = [e for e in range(1,n) if gcd(e,n) == 1]
+            Auts = [e for e in range(1, n) if gcd(e, n) == 1]
         else:
             if not rings.ZZ(p).is_prime():
                 raise NotImplementedError("Automorphisms for finite non-field base rings not implemented")
@@ -2552,27 +2943,27 @@ class DirichletGroup_class(WithEqualityById, Parent):
             #         k = 1, p, p^2, ..., p^(r-1),
             # where p^r = 1 (mod n), so r is the mult order of p modulo n.
             r = rings.IntegerModRing(n)(p).multiplicative_order()
-            Auts = [p**m for m in range(0,r)]
+            Auts = [p**m for m in range(r)]
         return Auts
 
     def galois_orbits(self, v=None, reps_only=False, sort=True, check=True):
         """
-        Return a list of the Galois orbits of Dirichlet characters in self,
-        or in v if v is not None.
+        Return a list of the Galois orbits of Dirichlet characters in ``self``,
+        or in ``v`` if ``v`` is not ``None``.
 
         INPUT:
 
-        -  ``v`` - (optional) list of elements of self
+        -  ``v`` - (optional) list of elements of ``self``
 
-        -  ``reps_only`` - (optional: default False) if True
+        -  ``reps_only`` - (optional: default ``False``) if ``True``
            only returns representatives for the orbits.
 
-        -  ``sort`` - (optional: default True) whether to sort
+        -  ``sort`` - (optional: default ``True``) whether to sort
            the list of orbits and the orbits themselves (slightly faster if
-           False).
+           ``False``).
 
-        -  ``check`` - (optional, default: True) whether or not
-           to explicitly coerce each element of v into self.
+        -  ``check`` - (optional, default: ``True``) whether or not
+           to explicitly coerce each element of ``v`` into ``self``.
 
         The Galois group is the absolute Galois group of the prime subfield
         of Frac(R). If R is not a domain, an error will be raised.
@@ -2621,7 +3012,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
     def gen(self, n=0):
         """
-        Return the n-th generator of self.
+        Return the n-th generator of ``self``.
 
         EXAMPLES::
 
@@ -2644,14 +3035,14 @@ class DirichletGroup_class(WithEqualityById, Parent):
         """
         n = int(n)
         g = self.gens()
-        if n<0 or n>=len(g):
-            raise IndexError("n(=%s) must be between 0 and %s"%(n,len(g)-1))
+        if n < 0 or n >= len(g):
+            raise IndexError("n(=%s) must be between 0 and %s" % (n, len(g) - 1))
         return g[n]
 
     @cached_method
     def gens(self):
         """
-        Returns generators of self.
+        Return generators of ``self``.
 
         EXAMPLES::
 
@@ -2666,14 +3057,14 @@ class DirichletGroup_class(WithEqualityById, Parent):
         orders = self.integers_mod().unit_group().gens_orders()
         for i in range(len(self.unit_gens())):
             z = zero.__copy__()
-            z[i] = ord//gcd(ord, orders[i])
+            z[i] = ord // gcd(ord, orders[i])
             g.append(self.element_class(self, z, check=False))
         return tuple(g)
 
     def integers_mod(self):
         r"""
-        Returns the group of integers `\ZZ/N\ZZ`
-        where `N` is the modulus of self.
+        Return the group of integers `\ZZ/N\ZZ`
+        where `N` is the modulus of ``self``.
 
         EXAMPLES::
 
@@ -2701,7 +3092,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
     def modulus(self):
         """
-        Returns the modulus of self.
+        Return the modulus of ``self``.
 
         EXAMPLES::
 
@@ -2713,7 +3104,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
     def ngens(self):
         """
-        Returns the number of generators of self.
+        Return the number of generators of ``self``.
 
         EXAMPLES::
 
@@ -2726,8 +3117,9 @@ class DirichletGroup_class(WithEqualityById, Parent):
     @cached_method
     def order(self):
         """
-        Return the number of elements of self. This is the same as
-        len(self).
+        Return the number of elements of ``self``.
+
+        This is the same as len(self).
 
         EXAMPLES::
 
@@ -2743,7 +3135,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
     def random_element(self):
         """
-        Return a random element of self.
+        Return a random element of ``self``.
 
         The element is computed by multiplying a random power of each
         generator together, where the power is between 0 and the order of
@@ -2767,9 +3159,9 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
     def unit_gens(self):
         r"""
-        Returns the minimal generators for the units of
+        Return the minimal generators for the units of
         `(\ZZ/N\ZZ)^*`, where `N` is the
-        modulus of self.
+        modulus of ``self``.
 
         EXAMPLES::
 

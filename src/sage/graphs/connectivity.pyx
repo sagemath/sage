@@ -48,15 +48,16 @@ Here is what the module can do:
     :widths: 30, 70
     :delim: |
 
-    :meth:`bridges` | Returns a list of the bridges (or cut edges) of given undirected graph.
+    :meth:`bridges` | Returns an iterator over the bridges (or cut edges) of given undirected graph.
     :meth:`cleave` | Return the connected subgraphs separated by the input vertex cut.
+    :meth:`is_triconnected` | Check whether the graph is triconnected.
     :meth:`spqr_tree` | Return a SPQR-tree representing the triconnected components of the graph.
     :meth:`spqr_tree_to_graph` | Return the graph represented by the SPQR-tree `T`.
 
 Methods
 -------
 """
-from __future__ import absolute_import
+
 from sage.rings.integer cimport Integer
 from cysignals.memory cimport sig_malloc, sig_free
 
@@ -1405,6 +1406,11 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
             if G.blocks_and_cut_vertices()[1]:
                 return 1 if k is None else (k == 1)
 
+            if not G.is_triconnected():
+                return 2 if k is None else (k == 2)
+            elif k == 3:
+                return True
+
         if k == 1:
             # We know that the (di)graph is (strongly) connected
             return True
@@ -1798,6 +1804,13 @@ def strong_articulation_points(G):
         Traceback (most recent call last):
         ...
         TypeError: the input must be a Sage DiGraph
+
+    Ticket :trac:`29958` is fixed::
+
+        sage: D = DiGraph('SA?GA??_??a???@?@OH_?@?I??b??G?AgGGCO??AC????a?????A@????AOCOQ?d??I?')
+        sage: SAP = strong_articulation_points(D)
+        sage: set(SAP) == {1, 2, 4, 17, 18}
+        True
     """
     from sage.graphs.digraph import DiGraph
     if not isinstance(G, DiGraph):
@@ -1816,10 +1829,7 @@ def strong_articulation_points(G):
     SAP = []
     for g in L:
         n = g.order()
-        if n <= 1:
-            continue
-        if n == 2:
-            SAP.extend(g.vertex_iterator())
+        if n <= 2:
             continue
 
         # 1. Choose arbitrarily a vertex r, and test whether r is a strong
@@ -1845,7 +1855,7 @@ def strong_articulation_points(G):
 
 def bridges(G, labels=True):
     r"""
-    Return a list of the bridges (or cut edges).
+    Return an iterator over the bridges (or cut edges).
 
     A bridge is an edge whose deletion disconnects the undirected graph.
     A disconnected graph has no bridge.
@@ -1863,13 +1873,26 @@ def bridges(G, labels=True):
         sage: g.add_edge(1, 10)
         sage: is_connected(g)
         True
-        sage: bridges(g)
+        sage: list(bridges(g))
         [(1, 10, None)]
-        sage: g.bridges()
+        sage: list(g.bridges())
         [(1, 10, None)]
 
+    Every edge of a tree is a bridge::
+
+        sage: g = graphs.RandomTree(100)
+        sage: sum(1 for _ in g.bridges()) == 99
+        True
 
     TESTS:
+
+    Disconnected graphs have no bridges::
+
+        sage: g = 2*graphs.PetersenGraph()
+        sage: next(g.bridges())
+        Traceback (most recent call last):
+        ...
+        StopIteration
 
     Graph with multiple edges and edge labels::
 
@@ -1877,24 +1900,24 @@ def bridges(G, labels=True):
         sage: g.allow_multiple_edges(True)
         sage: g.add_edges(g.edges(sort=False))
         sage: g.add_edge(2, 3, "label")
-        sage: bridges(g, labels=True)
+        sage: list(bridges(g, labels=True))
         [(2, 3, 'label')]
 
     Ticket :trac:`23817` is solved::
 
         sage: G = Graph()
         sage: G.add_edge(0, 1)
-        sage: bridges(G)
+        sage: list(bridges(G))
         [(0, 1, None)]
         sage: G.allow_loops(True)
         sage: G.add_edge(0, 0)
         sage: G.add_edge(1, 1)
-        sage: bridges(G)
+        sage: list(bridges(G))
         [(0, 1, None)]
 
     If ``G`` is not a Sage Graph, an error is raised::
 
-        sage: bridges('I am not a graph')
+        sage: next(bridges('I am not a graph'))
         Traceback (most recent call last):
         ...
         TypeError: the input must be an undirected Sage graph
@@ -1905,7 +1928,7 @@ def bridges(G, labels=True):
 
     # Small graphs and disconnected graphs have no bridge
     if G.order() < 2 or not is_connected(G):
-        return []
+        return
 
     B,C = G.blocks_and_cut_vertices()
 
@@ -1913,7 +1936,6 @@ def bridges(G, labels=True):
     # multiple edges.
     cdef bint multiple_edges = G.allows_multiple_edges()
     cdef set ME = set(G.multiple_edges(labels=False)) if multiple_edges else set()
-    cdef list my_bridges = []
     for b in B:
         if len(b) == 2 and not tuple(b) in ME:
             if labels:
@@ -1921,11 +1943,10 @@ def bridges(G, labels=True):
                     [label] = G.edge_label(b[0], b[1])
                 else:
                     label = G.edge_label(b[0], b[1])
-                my_bridges.append((b[0], b[1], label))
+                yield (b[0], b[1], label)
             else:
-                my_bridges.append(tuple(b))
+                yield tuple(b)
 
-    return my_bridges
 
 # ==============================================================================
 # Methods for finding 3-vertex-connected components and building SPQR-tree
@@ -2255,7 +2276,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
         sage: T = G.spqr_tree(algorithm="cleave")
         sage: Counter(u[0] for u in T)
         Counter({'R': 1})
-        sage: for u,v in G.edges(labels=False, sort=False):
+        sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
         sage: sorted(Counter(u[0] for u in T).items())
@@ -2263,7 +2284,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
         sage: T = G.spqr_tree(algorithm="cleave")
         sage: sorted(Counter(u[0] for u in T).items())
         [('P', 15), ('R', 1), ('S', 15)]
-        sage: for u,v in G.edges(labels=False, sort=False):
+        sage: for u,v in list(G.edges(labels=False, sort=False)):
         ....:     G.add_path([u, G.add_vertex(), G.add_vertex(), v])
         sage: T = G.spqr_tree(algorithm="Hopcroft_Tarjan")
         sage: sorted(Counter(u[0] for u in T).items())
@@ -2799,19 +2820,19 @@ cdef class TriconnectivitySPQR:
         sage: T = tric.get_spqr_tree()
         sage: G.is_isomorphic(spqr_tree_to_graph(T))
         True
-        sage: tric.print_triconnected_components()  # py2
-        Polygon: [(6, 7, None), (5, 6, None), (7, 5, 'newVEdge0')]
-        Bond: [(7, 5, 'newVEdge0'), (5, 7, 'newVEdge1'), (5, 7, None)]
-        Polygon: [(5, 7, 'newVEdge1'), (4, 7, None), (5, 4, 'newVEdge2')]
-        Bond: [(4, 5, None), (5, 4, 'newVEdge2'), (5, 4, 'newVEdge3')]
-        Polygon: [(5, 8, None), (5, 4, 'newVEdge3'), (1, 8, 'newVEdge8'), (1, 4, 'newVEdge9')]
-        Triconnected: [(8, 9, None), (9, 12, None), (9, 11, None), (8, 11, None), (10, 11, None), (9, 10, None), (10, 12, None), (8, 12, 'newVEdge5')]
-        Bond: [(8, 12, 'newVEdge5'), (12, 8, 'newVEdge6'), (8, 12, None)]
-        Polygon: [(1, 12, None), (12, 8, 'newVEdge6'), (1, 8, 'newVEdge7')]
-        Bond: [(1, 8, None), (1, 8, 'newVEdge7'), (1, 8, 'newVEdge8')]
-        Bond: [(1, 4, None), (1, 4, 'newVEdge9'), (1, 4, 'newVEdge10')]
-        Polygon: [(1, 4, 'newVEdge10'), (3, 4, None), (1, 3, 'newVEdge11')]
-        Triconnected: [(2, 3, None), (2, 13, None), (1, 2, None), (1, 3, 'newVEdge11'), (1, 13, None), (3, 13, None)]
+        sage: tric.print_triconnected_components()
+        Triconnected: [(8, 9, None), (9, 12, None), (9, 11, None), (8, 11, None), (10, 11, None), (9, 10, None), (10, 12, None), (8, 12, 'newVEdge0')]
+        Bond: [(8, 12, None), (8, 12, 'newVEdge0'), (8, 12, 'newVEdge1')]
+        Polygon: [(6, 7, None), (5, 6, None), (7, 5, 'newVEdge2')]
+        Bond: [(7, 5, 'newVEdge2'), (5, 7, 'newVEdge3'), (5, 7, None)]
+        Polygon: [(5, 7, 'newVEdge3'), (4, 7, None), (5, 4, 'newVEdge4')]
+        Bond: [(5, 4, 'newVEdge4'), (4, 5, 'newVEdge5'), (4, 5, None)]
+        Polygon: [(4, 5, 'newVEdge5'), (5, 8, None), (1, 4, 'newVEdge9'), (1, 8, 'newVEdge10')]
+        Triconnected: [(1, 2, None), (2, 13, None), (1, 13, None), (3, 13, None), (2, 3, None), (1, 3, 'newVEdge7')]
+        Polygon: [(1, 3, 'newVEdge7'), (3, 4, None), (1, 4, 'newVEdge8')]
+        Bond: [(1, 4, None), (1, 4, 'newVEdge8'), (1, 4, 'newVEdge9')]
+        Bond: [(1, 8, None), (1, 8, 'newVEdge10'), (1, 8, 'newVEdge11')]
+        Polygon: [(8, 12, 'newVEdge1'), (1, 8, 'newVEdge11'), (1, 12, None)]
 
     An example from [Gut2001]_::
 
@@ -3834,8 +3855,9 @@ cdef class TriconnectivitySPQR:
     cdef __assemble_triconnected_components(self):
         """
         Iterate through all the split components built by :meth:`__path_finder`
-        and merges two bonds or two polygons that share an edge for contructing
+        and merges two bonds or two polygons that share an edge for constructing
         the final triconnected components.
+
         Subsequently, convert the edges in triconnected components into original
         vertices and edges. The triconnected components are stored in
         ``self.comp_final_edge_list`` and ``self.comp_type``.
@@ -4015,20 +4037,7 @@ cdef class TriconnectivitySPQR:
             sage: T = tric.get_spqr_tree()
             sage: G.is_isomorphic(spqr_tree_to_graph(T))
             True
-            sage: tric.print_triconnected_components()  # py2
-            Polygon: [(6, 7, None), (5, 6, None), (7, 5, 'newVEdge0')]
-            Bond: [(7, 5, 'newVEdge0'), (5, 7, 'newVEdge1'), (5, 7, None)]
-            Polygon: [(5, 7, 'newVEdge1'), (4, 7, None), (5, 4, 'newVEdge2')]
-            Bond: [(4, 5, None), (5, 4, 'newVEdge2'), (5, 4, 'newVEdge3')]
-            Polygon: [(5, 8, None), (5, 4, 'newVEdge3'), (1, 8, 'newVEdge8'), (1, 4, 'newVEdge9')]
-            Triconnected: [(8, 9, None), (9, 12, None), (9, 11, None), (8, 11, None), (10, 11, None), (9, 10, None), (10, 12, None), (8, 12, 'newVEdge5')]
-            Bond: [(8, 12, 'newVEdge5'), (12, 8, 'newVEdge6'), (8, 12, None)]
-            Polygon: [(1, 12, None), (12, 8, 'newVEdge6'), (1, 8, 'newVEdge7')]
-            Bond: [(1, 8, None), (1, 8, 'newVEdge7'), (1, 8, 'newVEdge8')]
-            Bond: [(1, 4, None), (1, 4, 'newVEdge9'), (1, 4, 'newVEdge10')]
-            Polygon: [(1, 4, 'newVEdge10'), (3, 4, None), (1, 3, 'newVEdge11')]
-            Triconnected: [(2, 3, None), (2, 13, None), (1, 2, None), (1, 3, 'newVEdge11'), (1, 13, None), (3, 13, None)]
-            sage: tric.print_triconnected_components()  # py3
+            sage: tric.print_triconnected_components()
             Triconnected: [(8, 9, None), (9, 12, None), (9, 11, None), (8, 11, None), (10, 11, None), (9, 10, None), (10, 12, None), (8, 12, 'newVEdge0')]
             Bond: [(8, 12, None), (8, 12, 'newVEdge0'), (8, 12, 'newVEdge1')]
             Polygon: [(6, 7, None), (5, 6, None), (7, 5, 'newVEdge2')]
@@ -4060,7 +4069,7 @@ cdef class TriconnectivitySPQR:
             sage: from sage.graphs.connectivity import TriconnectivitySPQR
             sage: G = Graph(2)
             sage: for i in range(3):
-            ....:     G.add_path([0, G.add_vertex(), G.add_vertex(), 1]) 
+            ....:     G.add_path([0, G.add_vertex(), G.add_vertex(), 1])
             sage: tric = TriconnectivitySPQR(G)
             sage: tric.get_triconnected_components()
             [('Polygon', [(4, 5, None), (0, 4, None), (1, 5, None), (1, 0, 'newVEdge1')]),
@@ -4167,3 +4176,73 @@ cdef class TriconnectivitySPQR:
         """
         return self.spqr_tree
 
+
+def is_triconnected(G):
+    r"""
+    Check whether the graph is triconnected.
+
+    A triconnected graph is a connected graph on 3 or more vertices that is not
+    broken into disconnected pieces by deleting any pair of vertices.
+
+    EXAMPLES:
+
+    The Petersen graph is triconnected::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.is_triconnected()
+        True
+
+    But a 2D grid is not::
+
+        sage: G = graphs.Grid2dGraph(3, 3)
+        sage: G.is_triconnected()
+        False
+
+    By convention, a cycle of order 3 is triconnected::
+
+        sage: G = graphs.CycleGraph(3)
+        sage: G.is_triconnected()
+        True
+
+    But cycles of order 4 and more are not::
+
+        sage: [graphs.CycleGraph(i).is_triconnected() for i in range(4, 8)]
+        [False, False, False, False]
+
+    Comparing different methods on random graphs that are not always
+    triconnected::
+
+        sage: G = graphs.RandomBarabasiAlbert(50, 3)
+        sage: G.is_triconnected() == G.vertex_connectivity(k=3)
+        True
+
+    .. SEEALSO::
+
+        - :meth:`~sage.graphs.generic_graph.GenericGraph.is_connected`
+        - :meth:`~Graph.is_biconnected`
+        - :meth:`~sage.graphs.connectivity.spqr_tree`
+        - :wikipedia:`SPQR_tree`
+
+    TESTS::
+
+        sage: [Graph(i).is_triconnected() for i in range(4)]
+        [False, False, False, False]
+        sage: [graphs.CompleteGraph(i).is_triconnected() for i in range(3, 6)]
+        [True, True, True]
+    """
+    if G.order() < 3:
+        return False
+
+    try:
+        T = G.spqr_tree()
+    except ValueError:
+        # The graph is not biconnected
+        return False
+
+    from collections import Counter
+    C = Counter(v[0] for v in T)
+    if 'S' in C:
+        return G.order() == 3
+    # Since the graph has order >= 3, is biconnected and has no 'S' block, it
+    # has at least one 'R' block. A triconnected graph has only one such block.
+    return C['R'] == 1

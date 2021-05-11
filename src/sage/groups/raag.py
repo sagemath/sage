@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Right-Angled Artin Groups
 
@@ -23,8 +24,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import division, absolute_import, print_function
-import six
+
+from sage.libs.gap.element import GapElement
 
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp
@@ -34,6 +35,13 @@ from sage.groups.artin import ArtinGroup, ArtinGroupElement
 from sage.graphs.graph import Graph
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
+
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.categories.fields import Fields
+from sage.categories.algebras_with_basis import AlgebrasWithBasis
+from sage.algebras.clifford_algebra import CliffordAlgebraElement
+from sage.typeset.ascii_art import ascii_art
+from sage.typeset.unicode_art import unicode_art
 
 class RightAngledArtinGroup(ArtinGroup):
     r"""
@@ -159,7 +167,7 @@ class RightAngledArtinGroup(ArtinGroup):
             raise ValueError("the graph must not be empty")
         if names is None:
             names = 'v'
-        if isinstance(names, six.string_types):
+        if isinstance(names, str):
             if ',' in names:
                 names = [x.strip() for x in names.split(',')]
             else:
@@ -293,8 +301,6 @@ class RightAngledArtinGroup(ArtinGroup):
             1
         """
         if isinstance(x, RightAngledArtinGroup.Element):
-            if x.parent() is self:
-                return x
             raise ValueError("there is no coercion from {} into {}".format(x.parent(), self))
         if x == 1:
             return self.one()
@@ -369,6 +375,23 @@ class RightAngledArtinGroup(ArtinGroup):
             pos += len(comm_set)
         return tuple(w)
 
+    def cohomology(self, F=None):
+        """
+        Return the cohomology ring of ``self`` over the field ``F``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: A.cohomology()
+            Cohomology ring of Right-angled Artin group of Cycle graph
+             with coefficients in Rational Field
+        """
+        if F is None:
+            from sage.rings.rational_field import QQ
+            F = QQ
+        return CohomologyRAAG(F, self)
+
     class Element(ArtinGroupElement):
         """
         An element of a right-angled Artin group (RAAG).
@@ -387,15 +410,51 @@ class RightAngledArtinGroup(ArtinGroup):
                 sage: G = RightAngledArtinGroup(Gamma)
                 sage: elt = G.prod(G.gens())
                 sage: TestSuite(elt).run()
+
+                sage: g = G([[0,-3], [2,2], [3,-1], [2,4]])
+                sage: h = G.element_class(G, g.gap())
+                sage: assert g.gap() == h.gap()
+                sage: assert g._data == h._data
+
+                sage: g = G.one()
+                sage: h = G.element_class(G, g.gap())
+                sage: assert g.gap() == h.gap()
+                sage: assert g._data == h._data
             """
-            self._data = lst
-            elt = []
-            for i, p in lst:
-                if p > 0:
-                    elt.extend([i + 1] * p)
-                elif p < 0:
-                    elt.extend([-i - 1] * -p)
-            FinitelyPresentedGroupElement.__init__(self, parent, elt)
+            if isinstance(lst, GapElement):
+                # e.g. direct call from GroupLibGAP
+                FinitelyPresentedGroupElement.__init__(self, parent, lst)
+                data = []
+                j = None
+                mult = 0
+                for i in self.Tietze():
+                    if j is None:
+                        j = i
+                        mult = 1
+                    elif j == i:
+                        mult += 1
+                    else:
+                        if j < 0:
+                            data.append([-j-1, -mult])
+                        else:
+                            data.append([j-1, mult])
+                        j = i
+                        mult = 1
+                if j is not None:
+                    if j < 0:
+                        data.append([-j-1, -mult])
+                    else:
+                        data.append([j-1, mult])
+                self._data = tuple(data)
+            else:
+                self._data = lst
+                elt = []
+                for i, p in lst:
+                    if p > 0:
+                        elt.extend([i + 1] * p)
+                    elif p < 0:
+                        elt.extend([-i - 1] * -p)
+                FinitelyPresentedGroupElement.__init__(self, parent, elt)
 
         def __reduce__(self):
             """
@@ -567,4 +626,282 @@ class RightAngledArtinGroup(ArtinGroup):
                 True
             """
             return richcmp(self._data, other._data, op)
+
+class CohomologyRAAG(CombinatorialFreeModule):
+    r"""
+    The cohomology ring of a right-angled Artin group.
+
+    The cohomology ring of a right-angled Artin group `A`, defined by
+    the graph `G`, with coefficients in a field `F` is isomorphic to
+    the exterior algebra of `F^N`, where `N` is the number of vertices
+    in `G`, modulo the quadratic relations `e_i \wedge e_j = 0` if and
+    only if `(i, j)` is an edge in `G`. This algebra is sometimes also
+    known as the Cartier-Foata algebra.
+
+    REFERENCES:
+
+    - [CQ2019]_
+    """
+    def __init__(self, R, A):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: TestSuite(H).run()
+        """
+        if R not in Fields():
+            raise NotImplementedError("only implemented with coefficients in a field")
+        self._group = A
+        
+        names = tuple(['e' + name[1:] for name in A.variable_names()])
+        from sage.graphs.independent_sets import IndependentSets
+        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+        indices = [tuple(ind_set) for ind_set in IndependentSets(A._graph)]
+        indices = FiniteEnumeratedSet(indices)
+        cat = AlgebrasWithBasis(R.category()).Super().Graded().FiniteDimensional()
+        CombinatorialFreeModule.__init__(self, R, indices, category=cat, prefix='H')
+        self._assign_names(names)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: A.cohomology()
+            Cohomology ring of Right-angled Artin group of Cycle graph
+             with coefficients in Rational Field
+        """
+        return "Cohomology ring of {} with coefficients in {}".format(self._group, self.base_ring())
+
+    def _repr_term(self, m):
+        """
+        Return a string representation of the basis element indexed by
+        ``m``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H._repr_term((0,1,3))
+            'e0*e1*e3'
+            sage: w,x,y,z = H.algebra_generators()
+            sage: y*w + x*z
+            -e0*e2 + e1*e3
+        """
+        if not m:
+            return '1'
+        return '*'.join('e' + str(i) for i in m)
+
+    def _ascii_art_term(self, m):
+        r"""
+        Return ascii art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H._ascii_art_term((0,1,3))
+            e0/\e1/\e3
+            sage: w,x,y,z = H.algebra_generators()
+            sage: ascii_art(y*w + 2*x*z)
+            -e0/\e2 + 2*e1/\e3
+        """
+        if not m:
+            return ascii_art('1')
+        wedge = '/\\'
+        return ascii_art(*['e' + str(i) for i in m], sep=wedge)
+
+    def _unicode_art_term(self, m):
+        """
+        Return unicode art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H._unicode_art_term((0,1,3))
+            e0∧e1∧e3
+            sage: w,x,y,z = H.algebra_generators()
+            sage: unicode_art(y*w + x*z)
+            -e0∧e2 + e1∧e3
+        """
+        if not m:
+            return unicode_art('1')
+        import unicodedata
+        wedge = unicodedata.lookup('LOGICAL AND')
+        return unicode_art(*['e' + str(i) for i in m], sep=wedge)
+
+    def _latex_term(self, m):
+        r"""
+        Return a `\LaTeX` representation of the basis element indexed
+        by ``m``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H._latex_term((0,1,3))
+            'e_{0} \\wedge e_{1} \\wedge e_{3}'
+        """
+        if not m:
+            return '1'
+        from sage.misc.latex import latex
+        return " \\wedge ".join('e_{{{}}}'.format(latex(i)) for i in m)
+
+    def gen(self, i):
+        """
+        Return the ``i``-th standard generator of the algebra ``self``.
+
+        This corresponds to the ``i``-th vertex in the graph
+        (under a fixed ordering of the vertices).
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H.gen(0)
+            e0
+            sage: H.gen(1)
+            e1
+        """
+        return self._from_dict({(i,): self.base_ring().one()}, remove_zeros=False)
+
+    @cached_method
+    def one_basis(self):
+        """
+        Return the basis element indexing `1` of ``self``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H.one_basis()
+            ()
+        """
+        return ()
+
+    @cached_method
+    def algebra_generators(self):
+        """
+        Return the algebra generators of ``self``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H.algebra_generators()
+            Finite family {0: e0, 1: e1, 2: e2, 3: e3}
+        """
+        V = self._group._graph.vertices()
+        d = {x: self.gen(i) for i,x in enumerate(V)}
+        from sage.sets.family import Family
+        return Family(V, lambda x: d[x])
+
+    def gens(self):
+        r"""
+        Return the generators of ``self`` (as an algebra).
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H.gens()
+            (e0, e1, e2, e3)
+        """
+        return tuple(self.algebra_generators())
+
+    def ngens(self):
+        """
+        Return the number of algebra generators of ``self``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: H.ngens()
+            4
+        """
+        return self._group._graph.num_verts()
+
+    def degree_on_basis(self, I):
+        """
+        Return the degree on the basis element ``clique``.
+
+        EXAMPLES::
+
+            sage: C4 = graphs.CycleGraph(4)
+            sage: A = groups.misc.RightAngledArtin(C4)
+            sage: H = A.cohomology()
+            sage: sorted([H.degree_on_basis(I) for I in H.basis().keys()])
+            [0, 1, 1, 1, 1, 2, 2]
+        """
+        return len(I)
+
+    class Element(CliffordAlgebraElement):
+        """
+        An element in the cohomology ring of a right-angled Artin group.
+        """
+        def _mul_(self, other):
+            """
+            Return ``self`` multiplied by ``other``.
+
+            EXAMPLES::
+
+                sage: C4 = graphs.CycleGraph(4)
+                sage: A = groups.misc.RightAngledArtin(C4)
+                sage: H = A.cohomology()
+                sage: b = sum(H.basis())
+                sage: b * b
+                2*e0*e2 + 2*e1*e3 + 2*e0 + 2*e1 + 2*e2 + 2*e3 + 1
+            """
+            zero = self.parent().base_ring().zero()
+            I = self.parent()._indices
+            d = {}
+
+            for ml,cl in self:
+                for mr,cr in other:
+                    # Create the next term
+                    t = list(mr)
+                    for i in reversed(ml):
+                        pos = 0
+                        for j in t:
+                            if i == j:
+                                pos = None
+                                break
+                            if i < j:
+                                break
+                            pos += 1
+                            cr = -cr
+                        if pos is None:
+                            t = None
+                            break
+                        t.insert(pos, i)
+
+                    if t is None: # The next term is 0, move along
+                        continue
+
+                    t = tuple(t)
+                    if t not in I: # not an independent set, so this term is also 0
+                        continue
+                    d[t] = d.get(t, zero) + cl * cr
+                    if d[t] == zero:
+                        del d[t]
+
+            return self.__class__(self.parent(), d)
 

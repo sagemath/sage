@@ -1,4 +1,9 @@
-# distutils: libraries = ecl gmp
+# distutils: extra_compile_args = ECL_CFLAGS
+# distutils: include_dirs = ECL_INCDIR
+# distutils: libraries = ECL_LIBRARIES
+# distutils: library_dirs = ECL_LIBDIR
+# distutils: extra_link_args = ECL_LIBEXTRA
+
 ###############################################################################
 #   Sage: Open Source Mathematical Software
 #       Copyright (C) 2009 Nils Bruin <nbruin@sfu.ca>
@@ -30,7 +35,7 @@ cdef extern from "ecl/ecl.h":
     ctypedef long int cl_fixnum
     ctypedef cl_fixnum cl_narg
     ctypedef void *cl_object
-    ctypedef unsigned int cl_index
+    ctypedef unsigned long int cl_index
 
     ctypedef enum ecl_option:
         ECL_OPT_INCREMENTAL_GC = 0,
@@ -39,7 +44,6 @@ cdef extern from "ecl/ecl.h":
         ECL_OPT_TRAP_SIGINT,
         ECL_OPT_TRAP_SIGILL,
         ECL_OPT_TRAP_SIGBUS,
-        ECL_OPT_TRAP_SIGCHLD,
         ECL_OPT_TRAP_SIGPIPE,
         ECL_OPT_TRAP_INTERRUPT_SIGNAL,
         ECL_OPT_SIGNAL_HANDLING_THREAD,
@@ -53,7 +57,6 @@ cdef extern from "ecl/ecl.h":
         ECL_OPT_LISP_STACK_SAFETY_AREA,
         ECL_OPT_C_STACK_SIZE,
         ECL_OPT_C_STACK_SAFETY_AREA,
-        ECL_OPT_SIGALTSTACK_SIZE,
         ECL_OPT_HEAP_SIZE,
         ECL_OPT_HEAP_SAFETY_AREA,
         ECL_OPT_THREAD_INTERRUPT_SIGNAL,
@@ -127,6 +130,7 @@ cdef extern from "ecl/ecl.h":
     cl_object cl_cddr(cl_object x)
     cl_object cl_rplaca(cl_object x, cl_object v)
     cl_object cl_rplacd(cl_object x, cl_object v)
+    cl_object ecl_list1(cl_object a)
 
     # string parsing and string IO
 
@@ -136,6 +140,7 @@ cdef extern from "ecl/ecl.h":
     cl_object cl_write_to_string(cl_narg narg, cl_object o)
     cl_object ecl_cstring_to_base_string_or_nil(char *s)
     cl_object si_coerce_to_base_string(cl_object x)
+    cl_object si_base_string_p(cl_object x)
 
     # S-expr evaluation and function calls
 
@@ -147,6 +152,10 @@ cdef extern from "ecl/ecl.h":
     int ecl_nvalues "NVALUES"
     cl_object ecl_values "VALUES"(int n)
 
-    #Common Lisp "EQUAL" compatible hash function
+    # Common Lisp "EQUAL" compatible hash function
 
     cl_object cl_sxhash(cl_object key)
+
+    # symbols
+
+    cl_object ecl_make_symbol(const char *name, const char *package)

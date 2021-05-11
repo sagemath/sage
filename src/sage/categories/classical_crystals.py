@@ -41,6 +41,7 @@ class ClassicalCrystals(Category_singleton):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -265,6 +266,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_an_element() . . . pass
                 running ._test_cardinality() . . . pass
                 running ._test_category() . . . pass
+                running ._test_construction() . . . pass
                 running ._test_elements() . . .
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
@@ -293,6 +295,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_an_element() . . . pass
                 running ._test_cardinality() . . . pass
                 running ._test_category() . . . pass
+                running ._test_construction() . . . pass
                 running ._test_elements() . . .
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
@@ -346,6 +349,7 @@ class ClassicalCrystals(Category_singleton):
                 running ._test_an_element() . . . pass
                 running ._test_cardinality() . . . pass
                 running ._test_category() . . . pass
+                running ._test_construction() . . . pass
                 running ._test_elements() . . .
                   Running the test suite of self.an_element()
                   running ._test_category() . . . pass
@@ -391,10 +395,10 @@ class ClassicalCrystals(Category_singleton):
             """
             tester = self._tester(**options)
             S = list(self)
-            SS  = list(Crystals().parent_class.__iter__(self))
-            tester.assertTrue( len(S) == len(SS) )
-            tester.assertTrue( len(S) == len(set(S)))
-            tester.assertTrue( set(S) == set(SS) )
+            SS = list(Crystals().parent_class.__iter__(self))
+            tester.assertEqual(len(S), len(SS))
+            tester.assertEqual(len(S), len(set(S)))
+            tester.assertEqual(set(S), set(SS))
 
         def cardinality(self):
             r"""

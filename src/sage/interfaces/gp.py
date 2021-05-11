@@ -138,14 +138,12 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #
 ##########################################################################
-from __future__ import print_function
-from __future__ import absolute_import
 
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari.all import pari
-import sage.rings.complex_field
+import sage.rings.complex_mpfr
 from sage.docs.instancedoc import instancedoc
 
 
@@ -891,10 +889,10 @@ class GpElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: gp(I).sage()
+            sage: gp(SR(I)).sage()
             i
-            sage: gp(I).sage().parent()
-            Number Field in i with defining polynomial x^2 + 1
+            sage: gp(SR(I)).sage().parent()
+            Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         ::
 
@@ -934,17 +932,6 @@ class GpElement(ExpectElement):
         """
         return repr(self.type()) == 't_STR'
 
-    def __long__(self):
-        """
-        Return Python long.
-
-        EXAMPLES::
-
-            sage: long(gp(10))
-            10L
-        """
-        return long(str(self))
-
     def __float__(self):
         """
         Return Python float.
@@ -956,7 +943,7 @@ class GpElement(ExpectElement):
         """
         return float(pari(str(self)))
 
-    def bool(self):
+    def __bool__(self):
         """
         EXAMPLES::
 
@@ -970,6 +957,8 @@ class GpElement(ExpectElement):
         P = self._check_valid()
         return P.eval('%s != 0'%(self.name())) == '1'
 
+    __nonzero__ = __bool__
+
     def _complex_mpfr_field_(self, CC):
         """
         Return ComplexField element of self.
@@ -980,7 +969,7 @@ class GpElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: z = gp(1+15*I); z
+            sage: z = gp(SR(1+15*I)); z
             1 + 15*I
             sage: z._complex_mpfr_field_(CC)
             1.00000000000000 + 15.0000000000000*I
@@ -1007,7 +996,7 @@ class GpElement(ExpectElement):
         """
         # Retrieving values from another computer algebra system is
         # slow anyway, right?
-        cc_val = self._complex_mpfr_field_(sage.rings.complex_field.ComplexField())
+        cc_val = self._complex_mpfr_field_(sage.rings.complex_mpfr.ComplexField())
         return CDF(cc_val)
 
     def __len__(self):

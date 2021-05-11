@@ -13,7 +13,6 @@ from sage.categories.category_singleton import Category_singleton
 from sage.categories.crystals import (Crystals, CrystalHomset,
                                       CrystalMorphismByGenerators)
 from sage.categories.tensor import TensorProductsCategory
-from sage.graphs.dot2tex_utils import have_dot2tex
 
 class HighestWeightCrystals(Category_singleton):
     """
@@ -41,6 +40,7 @@ class HighestWeightCrystals(Category_singleton):
         running ._test_an_element() . . . pass
         running ._test_cardinality() . . . pass
         running ._test_category() . . . pass
+        running ._test_construction() . . . pass
         running ._test_elements() . . .
           Running the test suite of self.an_element()
           running ._test_category() . . . pass
@@ -331,7 +331,7 @@ class HighestWeightCrystals(Category_singleton):
                  + 36*q^12 + 44*q^13 + 57*q^14 + 70*q^15 + O(x^16)
 
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             WLR = self.weight_lattice_realization()
             I = self.index_set()
             mg = self.highest_weight_vectors()
@@ -520,6 +520,7 @@ class HighestWeightCrystals(Category_singleton):
                 visited = recently_visited
 
             G = DiGraph(d)
+            from sage.graphs.dot2tex_utils import have_dot2tex
             if have_dot2tex():
                 G.set_latex_options(format="dot2tex",
                                     edge_labels=True,
@@ -712,29 +713,123 @@ class HighestWeightCrystals(Category_singleton):
                      [[[3]], [[1, 1], [2, 2]]],
                      [[[-2]], [[1, 1], [2, 2]]])
                 """
-                n = len(self.crystals)
-                it = [ iter(self.crystals[-1].highest_weight_vectors()) ]
-                path = []
-                ret = []
-                while it:
-                    try:
-                        x = next(it[-1])
-                    except StopIteration:
-                        it.pop()
-                        if path:
-                            path.pop(0)
-                        continue
+                return tuple(self.highest_weight_vectors_iterator())
 
-                    b = self.element_class(self, [x] + path)
-                    if not b.is_highest_weight():
-                        continue
-                    path.insert(0, x)
-                    if len(path) == n:
-                        ret.append(b)
-                        path.pop(0)
-                    else:
-                        it.append( iter(self.crystals[-len(path)-1]) )
-                return tuple(ret)
+            def highest_weight_vectors_iterator(self):
+                r"""
+                Iterate over the highest weight vectors of ``self``.
+
+                This works by using a backtracing algorithm since if
+                `b_2 \otimes b_1` is highest weight then `b_1` is
+                highest weight.
+
+                EXAMPLES::
+
+                    sage: C = crystals.Tableaux(['D',4], shape=[2,2])
+                    sage: D = crystals.Tableaux(['D',4], shape=[1])
+                    sage: T = crystals.TensorProduct(D, C)
+                    sage: tuple(T.highest_weight_vectors_iterator())
+                    ([[[1]], [[1, 1], [2, 2]]],
+                     [[[3]], [[1, 1], [2, 2]]],
+                     [[[-2]], [[1, 1], [2, 2]]])
+                    sage: L = filter(lambda x: x.is_highest_weight(), T)
+                    sage: tuple(L) == tuple(T.highest_weight_vectors_iterator())
+                    True
+
+                TESTS:
+
+                We check this works with Kashiwara's convention for
+                tensor products::
+
+                    sage: C = crystals.Tableaux(['B',3], shape=[2,2])
+                    sage: D = crystals.Tableaux(['B',3], shape=[1])
+                    sage: T = crystals.TensorProduct(D, C)
+                    sage: T.options(convention='Kashiwara')
+                    sage: tuple(T.highest_weight_vectors_iterator())
+                    ([[[1, 1], [2, 2]], [[1]]],
+                     [[[1, 1], [2, 2]], [[3]]],
+                     [[[1, 1], [2, 2]], [[-2]]])
+                    sage: T.options._reset()
+                    sage: tuple(T.highest_weight_vectors_iterator())
+                    ([[[1]], [[1, 1], [2, 2]]],
+                     [[[3]], [[1, 1], [2, 2]]],
+                     [[[-2]], [[1, 1], [2, 2]]])
+
+                This currently is not implemented for infinite crystals::
+
+                    sage: P = RootSystem(['A',3,1]).weight_lattice(extended=True)
+                    sage: M = crystals.NakajimaMonomials(P.fundamental_weight(0))
+                    sage: T = tensor([M, M])
+                    sage: list(T.highest_weight_vectors_iterator())
+                    Traceback (most recent call last):
+                    ...
+                    NotImplementedError: not implemented for infinite crystals
+
+                Check that :trac:`30493` is fixed::
+
+                    sage: CW = CartanType("G", 2)
+                    sage: C = crystals.Letters(CW)
+                    sage: C.highest_weight_vectors()
+                    (1,)
+                    sage: T = crystals.TensorProduct(C)
+                    sage: T.highest_weight_vectors()
+                    ([1],)
+                """
+                if len(self.crystals) == 1:
+                    for b in self.crystals[0].highest_weight_vectors():
+                        yield self.element_class(self, [b])
+                    return
+                I = self.index_set()
+                try:
+                    T_elts = [C.list() for C in self.crystals[:-1]]
+                except (TypeError, NotImplementedError, AttributeError):
+                    raise NotImplementedError("not implemented for infinite crystals")
+                from sage.categories.regular_crystals import RegularCrystals
+                if self in RegularCrystals:
+                    def hw_test(b2, i, d):
+                        return d < 0
+                else:
+                    def hw_test(b2, i, d):
+                        return d < 0 and b2.e(i) is not None
+                T_len = [len(elts) for elts in T_elts]
+                m = len(self.crystals) - 1
+                for b in self.crystals[-1].highest_weight_vectors():
+                    T_pos = m - 1  # current tensor position
+                    T_cur = [0]*m  # index of current element for each tensor position
+                    path = [None]*m + [b]
+                    # cache phi for path up to current tensor position
+                    T_phi = [None]*(m-1) + [{i: b.phi(i) for i in I}]
+                    while T_pos < m:
+                        if T_cur[T_pos] == T_len[T_pos]:
+                            T_cur[T_pos] = 0
+                            T_pos += 1
+                            continue
+
+                        b2 = T_elts[T_pos][T_cur[T_pos]]
+                        T_cur[T_pos] += 1
+                        b1_phi = T_phi[T_pos]
+                        b1_phi_minus_b2_epsilon = {}
+                        # break if (b2, b1) is not highest weight
+                        for i in I:
+                            d = b1_phi[i] - b2.epsilon(i)
+                            # In the non-regular case, d may be nan.
+                            # In this case b2.e(i) is None,
+                            # and we may rely on max(0, nan) == 0.
+                            # In the regular case, the next line is simply
+                            #   if d < 0:
+                            if hw_test(b2, i, d):
+                                break
+                            b1_phi_minus_b2_epsilon[i] = d
+                        else:
+                            path[T_pos] = b2
+                            if T_pos:
+                                T_pos -= 1
+                                # In the regular case, the next line is simply
+                                #   T_phi[T_pos] = {i: b2.phi(i) + b1_phi_minus_b2_epsilon[i] for i in I}
+                                T_phi[T_pos] = {i: b2.phi(i) + max(0, b1_phi_minus_b2_epsilon[i])
+                                                for i in I}
+                            else:
+                                yield self.element_class(self, path)
 
 ###############################################################################
 ## Morphisms
@@ -810,7 +905,7 @@ class HighestWeightCrystalMorphism(CrystalMorphismByGenerators):
             sage: psi(b)
             1
             sage: c = psi(b.f_string([1,1,1,2,2,1,2,2])); c
-            Y(1,0)^-4 Y(2,0)^4 Y(2,1)^-4 
+            Y(1,0)^-4 Y(2,0)^4 Y(2,1)^-4
             sage: c == C.highest_weight_vector().f_string([1,1,1,2,2,1,2,2])
             True
 
@@ -881,4 +976,3 @@ class HighestWeightCrystalHomset(CrystalHomset):
         CrystalHomset.__init__(self, X, Y, category)
 
     Element = HighestWeightCrystalMorphism
-

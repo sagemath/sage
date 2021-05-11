@@ -68,8 +68,9 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
             sage: BasesOfQSymOrNCSF(QSym).super_categories()
             [Category of realizations of Quasisymmetric functions over the Rational Field,
              Category of graded hopf algebras with basis over Rational Field,
-             Join of Category of realizations of hopf algebras over Rational Field and
-             Category of graded algebras over Rational Field]
+             Join of Category of realizations of hopf algebras over Rational Field
+              and Category of graded algebras over Rational Field
+              and Category of graded coalgebras over Rational Field]
         """
         R = self.base().base_ring()
         from sage.categories.graded_hopf_algebras_with_basis import GradedHopfAlgebrasWithBasis
@@ -736,7 +737,7 @@ class BasesOfQSymOrNCSF(Category_realization_of_parent):
                 sage: M.counit_on_basis(Composition([]))
                 1
             """
-            if I != []:
+            if I:
                 return self.base_ring().zero()
             else:
                 return self.base_ring().one()
@@ -1380,7 +1381,7 @@ class GradedModulesWithInternalProduct(Category_over_base_ring):
                 True
                 sage: testall(3)  # long time
                 True
-                sage: testall(4)  # long time
+                sage: testall(4)  # not tested, too long
                 True
 
             The internal product on the algebra of non-commutative symmetric

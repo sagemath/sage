@@ -1,18 +1,10 @@
 # -*- coding: utf-8 -*-
 "Birch and Swinnerton-Dyer formulas"
-from __future__ import print_function
 
-#import ell_point
-#import formal_group
-#import ell_torsion
-#from ell_generic import EllipticCurve_generic, is_EllipticCurve
-#from ell_number_field import EllipticCurve_number_field
+from sage.arith.misc import prime_divisors
+from sage.rings.all import ZZ, Infinity, QuadraticField
+from sage.functions.other import ceil
 
-#import sage.groups.all
-import sage.arith.all as arith
-import sage.rings.all as rings
-from sage.rings.all import ZZ, Infinity
-from sage.functions.all import ceil
 
 class BSD_data:
     """
@@ -28,7 +20,6 @@ class BSD_data:
         sage: D.update()
         sage: D.Sha
         Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
-
     """
     def __init__(self):
         self.curve = None
@@ -39,16 +30,16 @@ class BSD_data:
 
         self.rank = None
         self.gens = None
-        self.bounds = {} # p : (low_bd, up_bd) bounds on ord_p(#sha)
-        self.primes = None # BSD(E,p) holds for odd primes p outside this set
-        self.heegner_indexes = {} # D : I_K, K = QQ(\sqrt(D))
-        self.heegner_index_upper_bound = {} # D : M, I_K <= M
+        self.bounds = {}  # p : (low_bd, up_bd) bounds on ord_p(#sha)
+        self.primes = None  # BSD(E,p) holds for odd primes p outside this set
+        self.heegner_indexes = {}  # D : I_K, K = QQ(\sqrt(D))
+        self.heegner_index_upper_bound = {}  # D : M, I_K <= M
         self.N_factorization = None
         self.proof = {}
 
     def update(self):
         """
-        Updates some properties from ``curve``.
+        Update some properties from ``curve``.
 
         EXAMPLES::
 
@@ -56,7 +47,7 @@ class BSD_data:
             sage: D = BSD_data()
             sage: D.Sha is None
             True
-            sage: D.curve=EllipticCurve('11a')
+            sage: D.curve = EllipticCurve('11a')
             sage: D.update()
             sage: D.Sha
             Tate-Shafarevich group for the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
@@ -66,27 +57,28 @@ class BSD_data:
         self.sha_an = self.Sha.an(use_database=True)
         self.N = self.curve.conductor()
 
+
 def simon_two_descent_work(E, two_tor_rk):
     """
-    Prepares the output from Simon two-descent.
+    Prepare the output from Simon two-descent.
 
     INPUT:
 
-        - ``E`` - an elliptic curve
+    - ``E`` -- an elliptic curve
 
-        - ``two_tor_rk`` - its two-torsion rank
+    - ``two_tor_rk`` -- its two-torsion rank
 
     OUTPUT:
 
-        - a lower bound on the rank
+    - a lower bound on the rank
 
-        - an upper bound on the rank
+    - an upper bound on the rank
 
-        - a lower bound on the rank of Sha[2]
+    - a lower bound on the rank of Sha[2]
 
-        - an upper bound on the rank of Sha[2]
+    - an upper bound on the rank of Sha[2]
 
-        - a list of the generators found
+    - a list of the generators found
 
     EXAMPLES::
 
@@ -97,34 +89,34 @@ def simon_two_descent_work(E, two_tor_rk):
         sage: E = EllipticCurve('37a')
         sage: simon_two_descent_work(E, E.two_torsion_rank())
         (1, 1, 0, 0, [(0 : 0 : 1)])
-
     """
     rank_lower_bd, two_sel_rk, gens = E.simon_two_descent()
     rank_upper_bd = two_sel_rk - two_tor_rk
     gens = [P for P in gens if P.additive_order() == Infinity]
     return rank_lower_bd, rank_upper_bd, 0, rank_upper_bd - rank_lower_bd, gens
 
+
 def mwrank_two_descent_work(E, two_tor_rk):
     """
-    Prepares the output from mwrank two-descent.
+    Prepare the output from mwrank two-descent.
 
     INPUT:
 
-        - ``E`` - an elliptic curve
+    - ``E`` -- an elliptic curve
 
-        - ``two_tor_rk`` - its two-torsion rank
+    - ``two_tor_rk`` -- its two-torsion rank
 
     OUTPUT:
 
-        - a lower bound on the rank
+    - a lower bound on the rank
 
-        - an upper bound on the rank
+    - an upper bound on the rank
 
-        - a lower bound on the rank of Sha[2]
+    - a lower bound on the rank of Sha[2]
 
-        - an upper bound on the rank of Sha[2]
+    - an upper bound on the rank of Sha[2]
 
-        - a list of the generators found
+    - a list of the generators found
 
     EXAMPLES::
 
@@ -135,7 +127,6 @@ def mwrank_two_descent_work(E, two_tor_rk):
         sage: E = EllipticCurve('37a')
         sage: mwrank_two_descent_work(E, E.two_torsion_rank())
         (1, 1, 0, 0, [(0 : -1 : 1)])
-
     """
     MWRC = E.mwrank_curve()
     rank_upper_bd = MWRC.rank_bound()
@@ -145,27 +136,28 @@ def mwrank_two_descent_work(E, two_tor_rk):
     sha2_upper_bd = MWRC.selmer_rank() - two_tor_rk - rank_lower_bd
     return rank_lower_bd, rank_upper_bd, sha2_lower_bd, sha2_upper_bd, gens
 
+
 def native_two_isogeny_descent_work(E, two_tor_rk):
     """
-    Prepares the output from two-descent by two-isogeny.
+    Prepare the output from two-descent by two-isogeny.
 
     INPUT:
 
-        - ``E`` - an elliptic curve
+    - ``E`` -- an elliptic curve
 
-        - ``two_tor_rk`` - its two-torsion rank
+    - ``two_tor_rk`` -- its two-torsion rank
 
     OUTPUT:
 
-        - a lower bound on the rank
+    - a lower bound on the rank
 
-        - an upper bound on the rank
+    - an upper bound on the rank
 
-        - a lower bound on the rank of Sha[2]
+    - a lower bound on the rank of Sha[2]
 
-        - an upper bound on the rank of Sha[2]
+    - an upper bound on the rank of Sha[2]
 
-        - a list of the generators found (currently None, since we don't store them)
+    - a list of the generators found (currently None, since we don't store them)
 
     EXAMPLES::
 
@@ -176,59 +168,59 @@ def native_two_isogeny_descent_work(E, two_tor_rk):
         sage: E = EllipticCurve('65a')
         sage: native_two_isogeny_descent_work(E, E.two_torsion_rank())
         (1, 1, 0, 0, None)
-
     """
     from sage.schemes.elliptic_curves.descent_two_isogeny import two_descent_by_two_isogeny
     n1, n2, n1p, n2p = two_descent_by_two_isogeny(E)
     # bring n1 and n1p up to the nearest power of two
-    two = ZZ(2) # otherwise "log" is symbolic >.<
-    e1  = ceil(ZZ(n1).log(two))
+    two = ZZ(2)  # otherwise "log" is symbolic >.<
+    e1 = ceil(ZZ(n1).log(two))
     e1p = ceil(ZZ(n1p).log(two))
-    e2  = ZZ(n2).log(two)
+    e2 = ZZ(n2).log(two)
     e2p = ZZ(n2p).log(two)
     rank_lower_bd = e1 + e1p - 2
     rank_upper_bd = e2 + e2p - 2
     sha_upper_bd = e2 + e2p - e1 - e1p
-    gens = None # right now, we are not keeping track of them
+    gens = None  # right now, we are not keeping track of them
     return rank_lower_bd, rank_upper_bd, 0, sha_upper_bd, gens
+
 
 def heegner_index_work(E):
     """
-    Prepares the input and output for computing the heegner index.
+    Prepare the input and output for computing the heegner index.
 
     INPUT:
 
-        - ``E`` - an elliptic curve
+    - ``E`` -- an elliptic curve
 
     OUTPUT:
 
-        - a Heegner index
+    - a Heegner index
 
-        - the discriminant used
+    - the discriminant used
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.BSD import heegner_index_work
         sage: heegner_index_work(EllipticCurve('14a'))
         (1, -31)
-
     """
     for D in E.heegner_discriminants_list(10):
         I = None
         while I is None:
-            dsl=15
+            dsl = 15
             try:
                 I = E.heegner_index(D, descent_second_limit=dsl)
             except RuntimeError as err:
                 if err.args[0][-33:] == 'Generators not provably computed.':
                     dsl += 1
-                else: raise RuntimeError(err)
+                else:
+                    raise RuntimeError(err)
         J = I.is_int()
-        if J[0] and J[1]>0:
+        if J[0] and J[1] > 0:
             I = J[1]
         else:
-            J = (2*I).is_int()
-            if J[0] and J[1]>0:
+            J = (2 * I).is_int()
+            if J[0] and J[1] > 0:
                 I = J[1]
             else:
                 I = None
@@ -237,72 +229,57 @@ def heegner_index_work(E):
 
 
 def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
-                 return_BSD=False):
+              return_BSD=False):
     r"""
-    Attempts to prove the Birch and Swinnerton-Dyer conjectural
+    Attempt to prove the Birch and Swinnerton-Dyer conjectural
     formula for `E`, returning a list of primes `p` for which this
-    function fails to prove BSD(E,p).  Here, BSD(E,p) is the
+    function fails to prove BSD(E,p).
+
+    Here, BSD(E,p) is the
     statement: "the Birch and Swinnerton-Dyer formula holds up to a
     rational number coprime to `p`."
 
     INPUT:
 
-        - ``E`` - an elliptic curve
+    - ``E`` - an elliptic curve
 
-        - ``verbosity`` - int, how much information about the proof to print.
+    - ``verbosity`` - int, how much information about the proof to print.
 
-            - 0 - print nothing
-            - 1 - print sketch of proof
-            - 2 - print information about remaining primes
+        - 0 - print nothing
+        - 1 - print sketch of proof
+        - 2 - print information about remaining primes
 
-        - ``two_desc`` - string (default ``'mwrank'``), what to use for the
-          two-descent. Options are ``'mwrank', 'simon', 'sage'``
+    - ``two_desc`` - string (default ``'mwrank'``), what to use for the
+      two-descent. Options are ``'mwrank', 'simon', 'sage'``
 
-        - ``proof`` - bool or None (default: None, see
-          proof.elliptic_curve or sage.structure.proof). If False, this
-          function just immediately returns the empty list.
+    - ``proof`` - bool or None (default: None, see
+      proof.elliptic_curve or sage.structure.proof). If False, this
+      function just immediately returns the empty list.
 
-        - ``secs_hi`` - maximum number of seconds to try to compute the
-          Heegner index before switching over to trying to compute the
-          Heegner index bound. (Rank 0 only!)
+    - ``secs_hi`` - maximum number of seconds to try to compute the
+      Heegner index before switching over to trying to compute the
+      Heegner index bound. (Rank 0 only!)
 
-        - ``return_BSD`` - bool (default: False) whether to return an object
-          which contains information to reconstruct a proof
+    - ``return_BSD`` - bool (default: False) whether to return an object
+      which contains information to reconstruct a proof
 
-    NOTE:
+    .. NOTE::
 
-    When printing verbose output, phrases such as "by Mazur" are referring
-    to the following list of papers:
+        When printing verbose output, phrases such as "by Mazur" are referring
+        to the following list of papers:
 
     REFERENCES:
 
-    .. [Cha] \B. Cha. Vanishing of some cohomology goups and bounds for the
-       Shafarevich-Tate groups of elliptic curves. J. Number Theory, 111:154-
-       178, 2005.
-    .. [Jetchev] \D. Jetchev. Global divisibility of Heegner points and
-       Tamagawa numbers. Compos. Math. 144 (2008), no. 4, 811--826.
-    .. [Kato] \K. Kato. p-adic Hodge theory and values of zeta functions of
-       modular forms. Astérisque, (295):ix, 117-290, 2004.
-    .. [Kolyvagin] \V. A. Kolyvagin. On the structure of Shafarevich-Tate
-       groups. Algebraic geometry, 94--121, Lecture Notes in Math., 1479,
-       Springer, Berlin, 1991.
-    .. [LawsonWuthrich] \T. Lawson and C. Wuthrich, Vanishing of some Galois
-       cohomology groups for elliptic curves, :arxiv:`1505.02940`
-    .. [LumStein] \A. Lum, W. Stein. Verification of the Birch and
-       Swinnerton-Dyer Conjecture for Elliptic Curves with Complex
-       Multiplication (unpublished)
-    .. [Mazur] \B. Mazur. Modular curves and the Eisenstein ideal. Inst.
-       Hautes Études Sci. Publ. Math. No. 47 (1977), 33--186 (1978).
-    .. [Rubin] \K. Rubin. The "main conjectures" of Iwasawa theory for
-       imaginary quadratic fields. Invent. Math. 103 (1991), no. 1, 25--68.
-    .. [SteinWuthrich] \W. Stein and C. Wuthrich, Algorithms
-       for the Arithmetic of Elliptic Curves using Iwasawa Theory
-       Mathematics of Computation 82 (2013), 1757-1792.
-    .. [SteinEtAl] \G. Grigorov, A. Jorza, S. Patrikis, W. Stein,
-       C. Tarniţǎ. Computational verification of the Birch and
-       Swinnerton-Dyer conjecture for individual elliptic curves.
-       Math. Comp. 78 (2009), no. 268, 2397--2425.
-
+    - [Cha2005]_
+    - [Jet2008]_
+    - [Kat2004]_
+    - [Kol1991]_
+    - [LW2015]_
+    - [LS]
+    - [Maz1978]_
+    - [Rub1991]_
+    - [SW2013]_
+    - [GJPST2009]_
 
     EXAMPLES::
 
@@ -466,7 +443,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     if BSD.curve.has_cm():
         # ensure that CM is by a maximal order
         non_max_j_invs = [-12288000, 54000, 287496, 16581375]
-        if BSD.curve.j_invariant() in non_max_j_invs: # is this possible for optimal curves?
+        if BSD.curve.j_invariant() in non_max_j_invs:  # is this possible for optimal curves?
             if verbosity > 0:
                 print('CM by non maximal order: switching curves')
             for E in BSD.curve.isogeny_class():
@@ -476,19 +453,20 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     BSD.update()
     galrep = BSD.curve.galois_representation()
 
-    if two_desc=='mwrank':
+    if two_desc == 'mwrank':
         M = mwrank_two_descent_work(BSD.curve, BSD.two_tor_rk)
-    elif two_desc=='simon':
+    elif two_desc == 'simon':
         M = simon_two_descent_work(BSD.curve, BSD.two_tor_rk)
-    elif two_desc=='sage':
+    elif two_desc == 'sage':
         M = native_two_isogeny_descent_work(BSD.curve, BSD.two_tor_rk)
     else:
         raise NotImplementedError()
     rank_lower_bd, rank_upper_bd, sha2_lower_bd, sha2_upper_bd, gens = M
     assert sha2_lower_bd <= sha2_upper_bd
-    if gens is not None: gens = BSD.curve.saturation(gens)[0]
+    if gens is not None:
+        gens = BSD.curve.saturation(gens)[0]
     if rank_lower_bd > rank_upper_bd:
-        raise RuntimeError("Apparent contradiction: %d <= rank <= %d."%(rank_lower_bd, rank_upper_bd))
+        raise RuntimeError("Apparent contradiction: %d <= rank <= %d." % (rank_lower_bd, rank_upper_bd))
     BSD.two_selmer_rank = rank_upper_bd + sha2_lower_bd + BSD.two_tor_rk
     if sha2_upper_bd == sha2_lower_bd:
         BSD.rank = rank_lower_bd
@@ -510,7 +488,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
             return BSD
         return BSD.primes
     if (BSD.sha_an.ord(2) == 0) != (BSD.bounds[2][1] == 0):
-        raise RuntimeError("Apparent contradiction: %d <= rank(sha[2]) <= %d, but ord_2(sha_an) = %d"%(sha2_lower_bd, sha2_upper_bd, BSD.sha_an.ord(2)))
+        raise RuntimeError("Apparent contradiction: %d <= rank(sha[2]) <= %d, but ord_2(sha_an) = %d" % (sha2_lower_bd, sha2_upper_bd, BSD.sha_an.ord(2)))
     if BSD.bounds[2][0] == BSD.sha_an.ord(2) and BSD.sha_an.ord(2) == BSD.bounds[2][1]:
         if verbosity > 0:
             print('p = 2: True by 2-descent')
@@ -519,9 +497,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         BSD.proof[2] = ['2-descent']
     else:
         BSD.primes = [2]
-        BSD.proof[2] = [('2-descent',)+BSD.bounds[2]]
-    if len(gens) > rank_lower_bd or \
-       rank_lower_bd > rank_upper_bd:
+        BSD.proof[2] = [('2-descent',) + BSD.bounds[2]]
+    if len(gens) > rank_lower_bd or rank_lower_bd > rank_upper_bd:
         raise RuntimeError("Something went wrong with 2-descent.")
     if BSD.rank != len(gens):
         gens = BSD.curve.gens(proof=True)
@@ -530,17 +507,18 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     BSD.gens = [BSD.curve.point(x, check=True) for x in gens]
 
     if BSD.rank != BSD.curve.analytic_rank():
-        raise RuntimeError("It seems that the rank conjecture does not hold for this curve (%s)! This may be a counterexample to BSD, but is more likely a bug."%(BSD.curve))
+        raise RuntimeError("It seems that the rank conjecture does not hold for this curve (%s)! This may be a counterexample to BSD, but is more likely a bug." % BSD.curve)
 
     # reduce set of remaining primes to a finite set
     kolyvagin_primes = []
     heegner_index = None
     if BSD.rank == 0:
         for D in BSD.curve.heegner_discriminants_list(10):
-            max_height = max(13,BSD.curve.quadratic_twist(D).CPS_height_bound())
+            max_height = max(13, BSD.curve.quadratic_twist(D).CPS_height_bound())
             heegner_primes = -1
             while heegner_primes == -1:
-                if max_height > 21: break
+                if max_height > 21:
+                    break
                 heegner_primes, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height)
                 max_height += 1
             if isinstance(heegner_primes, list):
@@ -551,25 +529,25 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
             heegner_index = exact
             BSD.heegner_indexes[D] = exact
         else:
-            BSD.heegner_index_upper_bound[D] = max(heegner_primes+[1])
+            BSD.heegner_index_upper_bound[D] = max(heegner_primes + [1])
         if 2 in heegner_primes:
             heegner_primes.remove(2)
-    else: # rank 1
+    else:  # rank 1
         for D in BSD.curve.heegner_discriminants_list(10):
             I = BSD.curve.heegner_index(D)
             J = I.is_int()
-            if J[0] and J[1]>0:
+            if J[0] and J[1] > 0:
                 I = J[1]
             else:
-                J = (2*I).is_int()
-                if J[0] and J[1]>0:
+                J = (2 * I).is_int()
+                if J[0] and J[1] > 0:
                     I = J[1]
                 else:
                     continue
             heegner_index = I
             BSD.heegner_indexes[D] = I
             break
-        heegner_primes = [p for p in arith.prime_divisors(heegner_index) if p!=2]
+        heegner_primes = [p for p in prime_divisors(heegner_index) if p != 2]
 
     assert BSD.sha_an in ZZ and BSD.sha_an > 0
     if BSD.curve.has_cm():
@@ -578,22 +556,24 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                 print('    p >= 5: true by Rubin')
             BSD.primes.append(3)
         else:
-            K = rings.QuadraticField(BSD.curve.cm_discriminant(), 'a')
+            K = QuadraticField(BSD.curve.cm_discriminant(), 'a')
             D_K = K.disc()
             D_E = BSD.curve.discriminant()
-            if len(K.factor(3)) == 1: # 3 does not split in K
+            if len(K.factor(3)) == 1:  # 3 does not split in K
                 BSD.primes.append(3)
-            for p in arith.prime_divisors(D_K):
+            for p in prime_divisors(D_K):
                 if p >= 5:
                     BSD.primes.append(p)
-            for p in arith.prime_divisors(D_E):
-                if p >= 5 and D_K%p and len(K.factor(p)) == 1: # p is inert in K
+            for p in prime_divisors(D_E):
+                if p >= 5 and D_K % p and len(K.factor(p)) == 1:
+                    # p is inert in K
                     BSD.primes.append(p)
             for p in heegner_primes:
-                if p >= 5 and D_E%p != 0 and D_K%p != 0 and len(K.factor(p)) == 1: # p is good for E and inert in K
+                if p >= 5 and D_E % p and D_K % p and len(K.factor(p)) == 1:
+                    # p is good for E and inert in K
                     kolyvagin_primes.append(p)
-            for p in arith.prime_divisors(BSD.sha_an):
-                if p >= 5 and D_K%p != 0 and len(K.factor(p)) == 1:
+            for p in prime_divisors(BSD.sha_an):
+                if p >= 5 and D_K % p and len(K.factor(p)) == 1:
                     if BSD.curve.is_good(p):
                         if verbosity > 2 and p in heegner_primes and heegner_index is None:
                             print('ALERT: Prime p (%d) >= 5 dividing sha_an, good for E, inert in K, in heegner_primes, should not divide the actual Heegner index')
@@ -602,34 +582,37 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                         # the Heegner index in heegner_primes,
                         # for which only an outer bound was computed
                         if p not in heegner_primes:
-                            raise RuntimeError("p = %d divides sha_an, is of good reduction for E, inert in K, and does not divide the Heegner index. This may be a counterexample to BSD, but is more likely a bug. %s"%(p,BSD.curve))
+                            raise RuntimeError("p = %d divides sha_an, is of good reduction for E, inert in K, and does not divide the Heegner index. This may be a counterexample to BSD, but is more likely a bug. %s" % (p, BSD.curve))
             if verbosity > 0:
                 print('True for p not in {%s} by Kolyvagin (via Stein & Lum -- unpublished) and Rubin.' % str(list(set(BSD.primes).union(set(kolyvagin_primes))))[1:-1])
         BSD.proof['finite'] = copy(BSD.primes)
-    else: # no CM
+    else:  # no CM
         # do some tricks to get to a finite set without calling bound_kolyvagin
         BSD.primes += [p for p in galrep.non_surjective() if p != 2]
         for p in heegner_primes:
             if p not in BSD.primes:
                 BSD.primes.append(p)
-        for p in arith.prime_divisors(BSD.sha_an):
+        for p in prime_divisors(BSD.sha_an):
             if p not in BSD.primes and p != 2:
                 BSD.primes.append(p)
         if verbosity > 0:
             s = str(BSD.primes)[1:-1]
             if 2 not in BSD.primes:
-                if len(s) == 0: s = '2'
-                else: s = '2, '+s
+                if not s:
+                    s = '2'
+                else:
+                    s = '2, ' + s
             print('True for p not in {' + s + '} by Kolyvagin.')
         BSD.proof['finite'] = copy(BSD.primes)
         primes_to_remove = []
         for p in BSD.primes:
-            if p == 2: continue
+            if p == 2:
+                continue
             if galrep.is_surjective(p) and not BSD.curve.has_additive_reduction(p):
                 if BSD.curve.has_nonsplit_multiplicative_reduction(p):
                     if BSD.rank > 0:
                         continue
-                if p==3:
+                if p == 3:
                     if (not (BSD.curve.is_ordinary(p) and BSD.curve.is_good(p))) and (not BSD.curve.has_split_multiplicative_reduction(p)):
                         continue
                     if BSD.rank > 0:
@@ -650,24 +633,26 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                         BSD.bounds[p][1] = min(BSD.bounds[p][1], p_bound)
                     else:
                         BSD.bounds[p] = (0, p_bound)
-                    print('Analytic %d-rank is '%p + str(BSD.sha_an.ord(p)) + ', actual %d-rank is at most %d.' % (p, p_bound))
+                    print('Analytic %d-rank is ' % p + str(BSD.sha_an.ord(p)) + ', actual %d-rank is at most %d.' % (p, p_bound))
                     print('    by Stein-Wuthrich.\n')
         for p in primes_to_remove:
             BSD.primes.remove(p)
         kolyvagin_primes = []
         for p in BSD.primes:
-            if p == 2: continue
+            if p == 2:
+                continue
             if galrep.is_surjective(p):
                 kolyvagin_primes.append(p)
         for p in kolyvagin_primes:
             BSD.primes.remove(p)
     # apply other hypotheses which imply Kolyvagin's bound holds
-    D_K = rings.QuadraticField(D, 'a').disc()
+    D_K = QuadraticField(D, 'a').disc()
 
     # Cha's hypothesis
     for p in BSD.primes:
-        if p == 2: continue
-        if D_K%p != 0 and BSD.N%(p**2) != 0 and galrep.is_irreducible(p):
+        if p == 2:
+            continue
+        if D_K % p != 0 and BSD.N % (p**2) != 0 and galrep.is_irreducible(p):
             if verbosity > 0:
                 print('Kolyvagin\'s bound for p = %d applies by Cha.' % p)
             if p in BSD.proof:
@@ -679,7 +664,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     for p in BSD.primes:
         # the lemma about the vanishing of H^1 is false in Stein et al for p=5 and 11
         # here is the correction from Lawson-Wuthrich. Especially Theorem 14 in
-        # [LawsonWuthrich] above.
+        # [LW2015] above.
         if p in kolyvagin_primes or p == 2 or D_K % p == 0:
             continue
         crit_lw = False
@@ -718,41 +703,42 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     # apply Kolyvagin's bound
     primes_to_remove = []
     for p in kolyvagin_primes:
-        if p == 2: continue
+        if p == 2:
+            continue
         if p not in heegner_primes:
             ord_p_bound = 0
-        elif heegner_index is not None: # p must divide heegner_index
-            ord_p_bound = 2*heegner_index.ord(p)
+        elif heegner_index is not None:  # p must divide heegner_index
+            ord_p_bound = 2 * heegner_index.ord(p)
             # Here Jetchev's results apply.
             m_max = max([BSD.curve.tamagawa_number(q).ord(p) for q in BSD.N.prime_divisors()])
             if m_max > 0:
                 if verbosity > 0:
                     print('Jetchev\'s results apply (at p = %d) with m_max =' % p, m_max)
                 if p in BSD.proof:
-                    BSD.proof[p].append(('Jetchev',m_max))
+                    BSD.proof[p].append(('Jetchev', m_max))
                 else:
-                    BSD.proof[p] = [('Jetchev',m_max)]
-            ord_p_bound -= 2*m_max
-        else: # Heegner index is None
+                    BSD.proof[p] = [('Jetchev', m_max)]
+            ord_p_bound -= 2 * m_max
+        else:  # Heegner index is None
             for D in BSD.heegner_index_upper_bound:
                 M = BSD.heegner_index_upper_bound[D]
                 ord_p_bound = 0
-                while p**(ord_p_bound+1) <= M**2:
+                while p**(ord_p_bound + 1) <= M**2:
                     ord_p_bound += 1
                 # now ord_p_bound is one on I_K!!!
-                ord_p_bound *= 2 # by Kolyvagin, now ord_p_bound is one on #Sha
+                ord_p_bound *= 2  # by Kolyvagin, now ord_p_bound is one on #Sha
                 break
         if p in BSD.proof:
-            BSD.proof[p].append(('Kolyvagin',ord_p_bound))
+            BSD.proof[p].append(('Kolyvagin', ord_p_bound))
         else:
-            BSD.proof[p] = [('Kolyvagin',ord_p_bound)]
+            BSD.proof[p] = [('Kolyvagin', ord_p_bound)]
         if BSD.sha_an.ord(p) == 0 and ord_p_bound == 0:
             if verbosity > 0:
                 print('True for p = %d by Kolyvagin bound' % p)
             primes_to_remove.append(p)
         elif BSD.sha_an.ord(p) > ord_p_bound:
-            raise RuntimeError("p = %d: ord_p_bound == %d, but sha_an.ord(p) == %d. This appears to be a counterexample to BSD, but is more likely a bug."%(p,ord_p_bound,BSD.sha_an.ord(p)))
-        else: # BSD.sha_an.ord(p) <= ord_p_bound != 0:
+            raise RuntimeError("p = %d: ord_p_bound == %d, but sha_an.ord(p) == %d. This appears to be a counterexample to BSD, but is more likely a bug." % (p, ord_p_bound, BSD.sha_an.ord(p)))
+        else:  # BSD.sha_an.ord(p) <= ord_p_bound != 0:
             if p in BSD.bounds:
                 low = BSD.bounds[p][0]
                 BSD.bounds[p] = (low, min(BSD.bounds[p][1], ord_p_bound))
@@ -760,7 +746,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                 BSD.bounds[p] = (0, ord_p_bound)
     for p in primes_to_remove:
         kolyvagin_primes.remove(p)
-    BSD.primes = list( set(BSD.primes).union(set(kolyvagin_primes)) )
+    BSD.primes = list(set(BSD.primes).union(set(kolyvagin_primes)))
 
     # Kato's bound
     if BSD.rank == 0 and not BSD.curve.has_cm():
@@ -768,24 +754,25 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         kato_primes = BSD.Sha.bound_kato()
         primes_to_remove = []
         for p in BSD.primes:
-            if p == 2: continue
+            if p == 2:
+                continue
             if p not in kato_primes:
                 if verbosity > 0:
                     print('Kato further implies that #Sha[%d] is trivial.' % p)
                 primes_to_remove.append(p)
                 if p in BSD.proof:
-                    BSD.proof[p].append(('Kato',0))
+                    BSD.proof[p].append(('Kato', 0))
                 else:
-                    BSD.proof[p] = [('Kato',0)]
-            if p not in [2,3] and BSD.N%p != 0:
+                    BSD.proof[p] = [('Kato', 0)]
+            if p not in [2, 3] and BSD.N % p != 0:
                 if galrep.is_surjective(p):
                     bd = L_over_Omega.valuation(p)
                     if verbosity > 1:
                         print('Kato implies that ord_p(#Sha[%d]) <= %d ' % (p, bd))
                     if p in BSD.proof:
-                        BSD.proof[p].append(('Kato',bd))
+                        BSD.proof[p].append(('Kato', bd))
                     else:
-                        BSD.proof[p] = [('Kato',bd)]
+                        BSD.proof[p] = [('Kato', bd)]
                     if p in BSD.bounds:
                         low = BSD.bounds[p][0]
                         BSD.bounds[p][1] = (low, min(BSD.bounds[p][1], bd))
@@ -798,7 +785,8 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
     primes_to_remove = []
     if BSD.N.is_prime():
         for p in BSD.primes:
-            if p == 2: continue
+            if p == 2:
+                continue
             if galrep.is_reducible(p):
                 primes_to_remove.append(p)
                 if verbosity > 0:
@@ -819,11 +807,12 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
         for D in BSD.heegner_index_upper_bound:
             M = BSD.heegner_index_upper_bound[D]
             for p in kolyvagin_primes:
-                if p not in BSD.primes or p == 3: continue
+                if p not in BSD.primes or p == 3:
+                    continue
                 if verbosity > 0:
                     print('    p = %d: Trying harder for Heegner index' % p)
                 obt = 0
-                while p**(BSD.sha_an.ord(p)/2+1) <= M and max_height < 22:
+                while p**(BSD.sha_an.ord(p) / 2 + 1) <= M and max_height < 22:
                     if verbosity > 2:
                         print('    trying max_height =', max_height)
                     old_bound = M
@@ -838,7 +827,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                         if verbosity > 2:
                             print('    heegner index =', M)
                     else:
-                        M = max(M+[1])
+                        M = max(M + [1])
                         if verbosity > 2:
                             print('    bound =', M)
                     if old_bound == M:
@@ -846,14 +835,14 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                         if obt == 2:
                             break
                     max_height += 1
-                BSD.heegner_index_upper_bound[D] = min(M,BSD.heegner_index_upper_bound[D])
+                BSD.heegner_index_upper_bound[D] = min(M, BSD.heegner_index_upper_bound[D])
                 low, upp = BSD.bounds[p]
                 expn = 0
-                while p**(expn+1) <= M:
+                while p**(expn + 1) <= M:
                     expn += 1
-                if 2*expn < upp:
-                    upp = 2*expn
-                    BSD.bounds[p] = (low,upp)
+                if 2 * expn < upp:
+                    upp = 2 * expn
+                    BSD.bounds[p] = (low, upp)
                     if verbosity > 0:
                         print('    got better bound on ord_p =', upp)
                     if low == upp:
@@ -865,9 +854,11 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                             BSD.primes.remove(p)
             break
         for p in kolyvagin_primes:
-            if p not in BSD.primes or p == 3: continue
+            if p not in BSD.primes or p == 3:
+                continue
             for D in BSD.curve.heegner_discriminants_list(4):
-                if D in BSD.heegner_index_upper_bound: continue
+                if D in BSD.heegner_index_upper_bound:
+                    continue
                 print('    discriminant', D)
                 if verbosity > 0:
                     print('p = %d: Trying discriminant = %d for Heegner index' % (p, D))
@@ -877,7 +868,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                     if verbosity > 2:
                         print('    trying max_height =', max_height)
                     old_bound = M
-                    if p**(BSD.sha_an.ord(p)/2+1) > M or max_height >= 22:
+                    if p**(BSD.sha_an.ord(p) / 2 + 1) > M or max_height >= 22:
                         break
                     M, _, exact = BSD.curve.heegner_index_bound(D, max_height=max_height, secs_dc=secs_hi)
                     if M == -1:
@@ -890,7 +881,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                         if verbosity > 2:
                             print('    heegner index =', M)
                     else:
-                        M = max(M+[1])
+                        M = max(M + [1])
                         if verbosity > 2:
                             print('    bound =', M)
                     if old_bound == M:
@@ -901,11 +892,11 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                 BSD.heegner_index_upper_bound[D] = M
                 low, upp = BSD.bounds[p]
                 expn = 0
-                while p**(expn+1) <= M:
+                while p**(expn + 1) <= M:
                     expn += 1
-                if 2*expn < upp:
-                    upp = 2*expn
-                    BSD.bounds[p] = (low,upp)
+                if 2 * expn < upp:
+                    upp = 2 * expn
+                    BSD.bounds[p] = (low, upp)
                     if verbosity > 0:
                         print('    got better bound =', upp)
                     if low == upp:
@@ -919,7 +910,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
 
     # print some extra information
     if verbosity > 1:
-        if len(BSD.primes) > 0:
+        if BSD.primes:
             print('Remaining primes:')
         for p in BSD.primes:
             s = 'p = ' + str(p) + ': '
@@ -931,7 +922,7 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
             s += 'surjective, '
             a_p = BSD.curve.an(p)
             if BSD.curve.is_good(p):
-                if a_p%p != 0:
+                if a_p % p != 0:
                     s += 'good ordinary'
                 else:
                     s += 'good, non-ordinary'
@@ -943,13 +934,13 @@ def prove_BSD(E, verbosity=0, two_desc='mwrank', proof=None, secs_hi=5,
                     s += 'split multiplicative'
                 elif a_p == -1:
                     s += 'non-split multiplicative'
-            if BSD.curve.tamagawa_product()%p==0:
+            if BSD.curve.tamagawa_product() % p == 0:
                 s += ', divides a Tamagawa number'
             if p in BSD.bounds:
-                s += '\n    (%d <= ord_p <= %d)'%BSD.bounds[p]
+                s += '\n    (%d <= ord_p <= %d)' % BSD.bounds[p]
             else:
                 s += '\n    (no bounds found)'
-            s += '\n    ord_p(#Sha_an) = %d'%BSD.sha_an.ord(p)
+            s += '\n    ord_p(#Sha_an) = %d' % BSD.sha_an.ord(p)
             if heegner_index is None:
                 may_divide = True
                 for D in BSD.heegner_index_upper_bound:

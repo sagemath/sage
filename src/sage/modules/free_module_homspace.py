@@ -73,7 +73,6 @@ See :trac:`5886`::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from __future__ import absolute_import
 
 import sage.categories.homset
 from sage.structure.element import is_Matrix

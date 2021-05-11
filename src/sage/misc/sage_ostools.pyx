@@ -1,3 +1,4 @@
+# distutils: libraries = CYGWIN_SQLITE3_LIBS
 """
 Miscellaneous operating system functions
 """
@@ -7,6 +8,7 @@ from cpython.exc cimport PyErr_SetFromErrno
 
 import os
 import contextlib
+
 
 def have_program(program, path=None):
     """
@@ -30,7 +32,8 @@ def have_program(program, path=None):
         True
         sage: have_program('there_is_not_a_program_with_this_name')
         False
-        sage: have_program('sage', os.path.join(SAGE_LOCAL, 'bin'))
+        sage: from sage.env import SAGE_VENV
+        sage: have_program('sage', os.path.join(SAGE_VENV, 'bin'))
         True
         sage: have_program('sage', '/there_is_not_a_path_with_this_name')
         False
@@ -65,7 +68,7 @@ def restore_cwd(chdir=None):
         sage: from sage.misc.misc import SAGE_TMP
         sage: cwd = os.getcwd()
         sage: with restore_cwd(str(SAGE_TMP)):
-        ....:     print(os.getcwd() == SAGE_TMP)
+        ....:     print(os.getcwd() == os.path.realpath(SAGE_TMP))
         True
         sage: cwd == os.getcwd()
         True
@@ -183,12 +186,8 @@ cdef class redirection:
 
     TESTS::
 
-        sage: from six.moves import cStringIO as StringIO
-        sage: redirection(sys.stdout, StringIO())  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: <...> must be a Python file or an integer
-        sage: redirection(sys.stdout, StringIO())  # py3
+        sage: import io
+        sage: redirection(sys.stdout, io.StringIO())
         Traceback (most recent call last):
         ...
         io.UnsupportedOperation: fileno
@@ -306,3 +305,43 @@ cdef class redirection:
             if self.close_dest:
                 self.dest_file.close()
                 self.dest_fd = -1
+
+
+IF PY_PLATFORM == 'cygwin':
+    from libc.stddef cimport wchar_t
+
+    cdef extern from "Windows.h":
+        int SetDllDirectoryW(wchar_t* lpPathName)
+
+    cdef extern from "sqlite3.h":
+        int sqlite3_initialize()
+
+    def fix_for_ticket_30157():
+        """
+        Cygwin-only workaround for an issue caused by the sqlite3 library.  See
+        trac:`30157`.
+
+        The issue here is that when the sqlite3 library is first initialized
+        it modifies Windows' default DLL search path order, which can possibly
+        break the correct search path for subsequent DLL loads.
+
+        This workaround ensures that the sqlite3 library is initialized very
+        early on (this does not add any significant overhead) and then
+        immediately undoes its deleterious effects.  In particular, calling
+        SetDllDirectoryW(NULL) restores the default DLL search path.
+
+        To be clear, there's no reason sqlite3 needs this to function
+        correctly; it's just a poorly-considered hack that attempted to work
+        around a problem that doesn't affect us.
+
+        Returns 0 if it succeeeds or a non-zero value if not.
+        """
+
+        ret = sqlite3_initialize()
+
+        if ret != 0:
+            # Library initialization failed for some reason
+            return ret
+
+        # SetDllDirectory returns 1 if it succeeds.
+        return not SetDllDirectoryW(NULL)

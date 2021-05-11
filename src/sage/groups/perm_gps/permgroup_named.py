@@ -85,11 +85,11 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function
-from six.moves import range
+
+import os
 
 from sage.rings.all      import Integer
-from sage.interfaces.all import gap
+from sage.libs.gap.libgap import libgap
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.arith.all import factor, valuation
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
@@ -1033,11 +1033,10 @@ class JankoGroup(PermutationGroup_unique):
             Category of finite enumerated permutation groups
             sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
         """
-        from sage.interfaces.gap import gap
         if n not in [1,2,3]:
             raise ValueError("n must belong to {1,2,3}.")
         self._n = n
-        gap.load_package("atlasrep")
+        libgap.load_package("atlasrep")
         id = 'AtlasGroup("J%s")' % n
         PermutationGroup_generic.__init__(self, gap_group=id)
 
@@ -1066,7 +1065,7 @@ class SuzukiSporadicGroup(PermutationGroup_unique):
             Category of finite enumerated permutation groups
             sage: TestSuite(G).run(skip=["_test_enumerated_set_contains", "_test_enumerated_set_iter_list"]) # optional - gap_packages internet
         """
-        gap.load_package("atlasrep")
+        libgap.load_package("atlasrep")
         PermutationGroup_generic.__init__(self, gap_group='AtlasGroup("Suz")')
 
     def _repr_(self):
@@ -1202,7 +1201,7 @@ class GeneralDihedralGroup(PermutationGroup_generic):
         True
         sage: G.is_abelian()
         False
-        sage: all([x.order() != 6 for x in G])
+        sage: all(x.order() != 6 for x in G)
         True
 
     If all of the direct factors are `C_2`, then the action turning
@@ -1822,23 +1821,41 @@ class TransitiveGroup(PermutationGroup_unique):
             ...
             ValueError: Index n must be in {1,..,1}
         """
-        d = Integer(d)
-        n = Integer(n)
+        self._d = d = Integer(d)
+        self._n = n = Integer(n)
         if d < 0:
             raise ValueError("Degree d must not be negative")
         max_n = TransitiveGroups(d).cardinality()
         if n > max_n or n <= 0:
             raise ValueError("Index n must be in {1,..,%s}" % max_n)
-        gap_group = 'Group([()])' if d in [0, 1] else 'TransitiveGroup(%s,%s)' % (d, n)
-        try:
+        if d <= 1:
+            PermutationGroup_generic.__init__(self, gens=[()], domain=list(range(1, d+1)))
+        else:
+            gap_group = libgap.TransitiveGroup(d, n)
             PermutationGroup_generic.__init__(self, gap_group=gap_group)
-        except RuntimeError:
-            from sage.misc.misc import verbose
-            verbose("Error: TransitiveGroups requires a standard GAP package. Not having it installed is a packaging error.", level=0)
 
-        self._d = d
-        self._n = n
-        self._domain = list(range(1, d + 1))
+
+    def transitive_number(self):
+        """
+        Return the index of this group in the GAP database, starting at 1
+
+        EXAMPLES::
+
+            sage: TransitiveGroup(8, 44).transitive_number()
+            44
+        """
+        return self._n
+
+    def degree(self):
+        """
+        Return the degree of this permutation group
+
+        EXAMPLES::
+
+            sage: TransitiveGroup(8, 44).degree()
+            8
+        """
+        return self._d
 
     def _repr_(self):
         """
@@ -2088,9 +2105,9 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
             return Integer(1)
         else:
             try:
-                return Integer(gap.NrTransitiveGroups(gap(self._degree)))
+                return Integer(libgap.NrTransitiveGroups(libgap(self._degree)))
             except RuntimeError:
-                from sage.misc.misc import verbose
+                from sage.misc.verbose import verbose
                 verbose("Error: TransitiveGroups should come with GAP.", level=0)
             except TypeError:
                 raise NotImplementedError("Only the transitive groups of degree at most 31 are available in GAP's database")
@@ -2168,21 +2185,17 @@ class PrimitiveGroup(PermutationGroup_unique):
         max_n = PrimitiveGroups(d).cardinality()
         if n > max_n or n <= 0:
             raise ValueError("Index n must be in {1,..,%s}" % max_n)
-        if d in [0,1]:
-            gap_group = gap.Group("[()]")
+
+        if d <= 1:
+            PermutationGroup_generic.__init__(self, gens=[()], domain=list(range(1, d+1)))
             self._pretty_name = "Trivial group"
         else:
-            gap_group = gap.PrimitiveGroup(d, n)
-            self._pretty_name = gap_group.str()
-        try:
+            gap_group = libgap.PrimitiveGroup(d, n)
+            self._pretty_name = str(gap_group)
             PermutationGroup_generic.__init__(self, gap_group=gap_group)
-        except RuntimeError:
-            from sage.misc.misc import verbose
-            verbose("Error: GAP should come with PrimitiveGroups installed.", level=0)
 
         self._d = d
         self._n = n
-        self._domain = list(range(1, d + 1))
 
     def _repr_(self):
         """
@@ -2497,9 +2510,9 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             raise NotImplementedError("Only the primitive groups of degree less than 2500 are available in GAP's database")
         else:
             try:
-                return Integer(gap.NrPrimitiveGroups(gap(self._degree)))
+                return Integer(libgap.NrPrimitiveGroups(self._degree))
             except RuntimeError:
-                from sage.misc.misc import verbose
+                from sage.misc.verbose import verbose
                 verbose("Error: PrimitiveGroups should be in GAP already.", level=0)
 
 
@@ -2712,15 +2725,17 @@ class PSL(PermutationGroup_plg):
         If you try to use this function on a group PSL(2,q) where q is
         not a (smallish) "Hurwitz prime", an error message will be printed.
         """
+        from sage.env import SAGE_EXTCODE
+
         if self.matrix_degree()!=2:
             raise ValueError("Degree must be 2.")
+
         F = self.base_ring()
         q = F.order()
-        from sage.env import SAGE_EXTCODE
-        gapcode = SAGE_EXTCODE + '/gap/joyner/hurwitz_crv_rr_sp.gap'
-        gap.eval('Read("'+gapcode+'")')
-        mults = gap.eval("ram_module_hurwitz("+str(q)+")")
-        return eval(mults)
+        libgap.Read(os.path.join(SAGE_EXTCODE, 'gap', 'joyner',
+                                 'hurwitz_crv_rr_sp.gap'))
+        mults = libgap.eval("ram_module_hurwitz({q})".format(q=q))
+        return mults.sage()
 
     def ramification_module_decomposition_modular_curve(self):
         """
@@ -2756,15 +2771,15 @@ class PSL(PermutationGroup_plg):
         in the list of all conjugacy classes. Similarly, there is some
         randomness to the ordering of the characters.
         """
+        from sage.env import SAGE_EXTCODE
         if self.matrix_degree()!=2:
             raise ValueError("Degree must be 2.")
         F = self.base_ring()
         q = F.order()
-        from sage.env import SAGE_EXTCODE
-        gapcode = SAGE_EXTCODE + '/gap/joyner/modular_crv_rr_sp.gap'
-        gap.eval('Read("'+gapcode+'")')
-        mults = gap.eval("ram_module_X("+str(q)+")")
-        return eval(mults)
+        libgap.Read(os.path.join(SAGE_EXTCODE, 'gap', 'joyner',
+                                 'modular_crv_rr_sp.gap'))
+        mults = libgap.eval("ram_module_X({q})".format(q=q))
+        return mults.sage()
 
 class PSp(PermutationGroup_plg):
     def __init__(self, n, q, name='a'):
@@ -3165,7 +3180,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         if self._p == 1:
             gens.append([tuple(range(self._n, self._m*self._n + 1, self._n))])
         else:
-            from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+            from sage.groups.perm_gps.constructor import PermutationGroupElement
             snm = PermutationGroupElement(gens[-1])
             sn = PermutationGroupElement([tuple(range(self._n, self._m*self._n + 1, self._n))])
             gens.append(sn**(self._m-1) * snm * sn)
@@ -3251,7 +3266,7 @@ class ComplexReflectionGroup(PermutationGroup_unique):
         if self._p == 1:
             return self([tuple(range(self._n, self._m*self._n + 1, self._n))])
 
-        from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
+        from sage.groups.perm_gps.constructor import PermutationGroupElement
         sn = PermutationGroupElement([tuple(range(self._n, self._m*self._n + 1, self._n))])
         if i == self._n + 1:
             return self(sn**self._p)

@@ -1,3 +1,9 @@
+# distutils: libraries = givaro NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
+# distutils: language = c++
 """
 Finite field morphisms using Givaro
 
@@ -151,7 +157,7 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         if not isinstance(codomain, FiniteField_givaro):
             raise TypeError("The codomain is not an instance of FiniteField_givaro")
 
-        FiniteFieldHomomorphism_generic.__init__(self, parent, im_gens, check,
+        FiniteFieldHomomorphism_generic.__init__(self, parent, im_gens, check=check,
                                                  section_class=SectionFiniteFieldHomomorphism_givaro)
 
         cdef Cache_givaro domain_cache = (<FiniteField_givaroElement>(domain.gen()))._cache

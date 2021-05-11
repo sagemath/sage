@@ -1,3 +1,5 @@
+# distutils: libraries = braiding
+# distutils: language = c++
 r"""
 Cython wrapper for the libbraiding library.
 
@@ -12,14 +14,14 @@ first list contains only an integer, representing the power of
 permutation braids.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Miguel Marco  <mmarco@unizar.es>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at youroption) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from cysignals.signals cimport sig_on, sig_off
@@ -300,7 +302,7 @@ def thurston_type(braid):
 
     OUTPUT:
 
-    One of ``'periodic'``, ``'reucible'`` or ``'pseudo-anosov'``.
+    One of ``'periodic'``, ``'reducible'`` or ``'pseudo-anosov'``.
 
     EXAMPLES::
 
@@ -315,7 +317,6 @@ def thurston_type(braid):
         sage: d = B([1,1,1,2,2])
         sage: thurston_type(d)
         'pseudo-anosov'
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()

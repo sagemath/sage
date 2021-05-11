@@ -34,18 +34,18 @@ Theorem 18).
 
 Kuperberg, Greg.  Kasteleyn Cokernels.  Electr. J. Comb. 9(1), 2002.
 
-TODO:
+.. TODO::
 
-The routine over the integers applies over general principal ideal
-domains.
+    The routine over the integers applies over general principal ideal
+    domains.
 
-WARNING:
+.. WARNING::
 
-This code is not a good candidate for conversion to Cython.  The
-majority of the execution time is spent adding multiples of
-columns and rows, which is already fast.  It would be better to
-devise a better algorithm, perhaps modular or based on a fast
-``smith_form`` implementation.
+    This code is not a good candidate for conversion to Cython.  The
+    majority of the execution time is spent adding multiples of
+    columns and rows, which is already fast.  It would be better to
+    devise a better algorithm, perhaps modular or based on a fast
+    ``smith_form`` implementation.
 
 AUTHOR:
 
@@ -59,10 +59,12 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ######################################################################
 
-from sage.rings.all import ZZ, Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import Infinity
+
 
 def _inplace_move_to_positive_pivot(G, row, col, B, pivot):
     r"""
@@ -133,6 +135,7 @@ def _inplace_move_to_positive_pivot(G, row, col, B, pivot):
         B.swap_rows(pivot, pivot+1)
         G.swap_rows(pivot, pivot+1)
         G.swap_columns(pivot, pivot+1)
+
 
 def symplectic_basis_over_field(M):
     r"""
@@ -325,6 +328,7 @@ def symplectic_basis_over_field(M):
     F = C * M * C.transpose()
     return F, C
 
+
 def _smallest_element_position_or_None(E, pivot):
     r"""
     Return a tuple (row, col) such that E[row, col] is the smallest
@@ -359,6 +363,7 @@ def _smallest_element_position_or_None(E, pivot):
                 min = v
                 found = (j, i)
     return found
+
 
 def symplectic_basis_over_ZZ(M):
     r"""

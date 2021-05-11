@@ -1,4 +1,4 @@
-$(PYTHON) | pip mistune jinja2 pygments traitlets jupyter_core nbformat entrypoints bleach pandocfilters testpath defusedxml
+$(PYTHON) | $(PYTHON_TOOLCHAIN) mistune jinja2 pygments traitlets jupyter_core nbformat entrypoints bleach pandocfilters testpath defusedxml
 
 ----------
 All lines of this file are ignored except the first.

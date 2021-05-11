@@ -1,4 +1,4 @@
-gap | $(SAGERUNTIME)
+gap libsemigroups planarity | $(SAGERUNTIME)
 
 ----------
 All lines of this file are ignored except the first.

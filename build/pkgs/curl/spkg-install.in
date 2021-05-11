@@ -1,0 +1,20 @@
+cd src
+
+if [ "$SAGE_FAT_BINARY" = yes ]; then
+    # Let's disable a bunch of stuff which might get linked.
+    # SSL/TLS still depends on the compilation environment.
+    CURL_CONFIGURE="--disable-ldap --disable-ldaps --disable-rtsp --disable-ares --disable-crypto-auth --without-libpsl --without-libmetalink --without-libssh2 --without-librtmp --without-libidn --without-nghttp2 --without-gssapi $CURL_CONFIGURE"
+fi
+
+if [ "$UNAME" = "Darwin" ]; then
+    if [ $MACOSX_VERSION -ge 16 ]; then
+        echo "OS X 10.$[$MACOSX_VERSION-4] Building with clang and --with-darwinssl."
+        CC=clang
+        export CFLAGS="$CFLAGS_NON_NATIVE"
+        CURL_CONFIGURE="--with-darwinssl $CURL_CONFIGURE"
+    fi
+fi
+
+sdh_configure $CURL_CONFIGURE
+sdh_make
+sdh_make_install

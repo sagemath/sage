@@ -62,20 +62,17 @@ AUTHORS:
 - Miguel Marco, John Palmieri (2014-07): initial version
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Miguel Marco <mmarco@unizar.es>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import print_function, absolute_import
-from six import string_types
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from sage.misc.six import with_metaclass
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.unique_representation import UniqueRepresentation, CachedRepresentation
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -100,12 +97,49 @@ from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
+from sage.misc.cachefunc import cached_function
+from sage.misc.superseded import deprecated_function_alias
 
 
-class Differential(with_metaclass(
-        InheritComparisonClasscallMetaclass,
-        UniqueRepresentation, Morphism
-    )):
+def sorting_keys(element):
+    r"""
+    Auxiliary function to sort the elements of a basis of a Cohomology group.
+
+    It is needed to ensure that elements of a cohomology group are represented
+    in a consistent way.
+
+    INPUT:
+
+    - ``element`` - A CohomologyClass
+
+    OUTPUT:
+
+    Its coordinates in the corresponding cohomology_raw quotoent vector space
+
+    EXAMPLES::
+
+        sage: from sage.algebras.commutative_dga import sorting_keys
+        sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
+        sage: B = A.cdg_algebra({e5:e1*e2+e3*e4})
+        sage: B.inject_variables()
+        Defining e1, e2, e3, e4, e5
+        sage: C = B.cohomology(3)
+        sage: [sorting_keys(el) for el in C.basis().keys()]
+        [[1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+        [0, 0, 1, 0, 0],
+        [0, 0, 0, 1, 0],
+        [0, 0, 0, 0, 1]]
+    """
+    x = element._x
+    P = x.parent()
+    CR = P.cohomology_raw(x.degree())
+    V = CR.V()
+    return list(CR(V(x.basis_coefficients())))
+
+
+class Differential(UniqueRepresentation, Morphism,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     Differential of a commutative graded algebra.
 
@@ -116,7 +150,7 @@ class Differential(with_metaclass(
 
     EXAMPLES::
 
-        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,1,2,3))
+        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 2, 3))
         sage: B = A.cdg_algebra({x: x*y, y: -x*y , z: t})
         sage: B
         Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (1, 1, 2, 3) over Rational Field with differential:
@@ -134,19 +168,19 @@ class Differential(with_metaclass(
 
         TESTS::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,1,2,3))
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 2, 3))
             sage: d1 = A.cdg_algebra({x: x*y, y: -x*y, z: t}).differential()
             sage: d2 = A.cdg_algebra({x: x*y, z: t, y: -x*y, t: 0}).differential()
             sage: d1 is d2
             True
         """
         if isinstance(im_gens, (list, tuple)):
-            im_gens = {A.gen(i): x for i,x in enumerate(im_gens)}
+            im_gens = {A.gen(i): x for i, x in enumerate(im_gens)}
 
         R = A.cover_ring()
         I = A.defining_ideal()
         if A.base_ring().characteristic() != 2:
-            squares = R.ideal([R.gen(i)**2 for i,d in enumerate(A._degrees)
+            squares = R.ideal([R.gen(i)**2 for i, d in enumerate(A._degrees)
                                if is_odd(d)], side='twosided')
         else:
             squares = R.ideal(0, side='twosided')
@@ -171,8 +205,9 @@ class Differential(with_metaclass(
         for i in im_gens:
             x = im_gens[i]
             if (not x.is_zero()
-                    and (not x.is_homogeneous() or
-                         total_degree(x.degree()) != total_degree(i.degree())+1)):
+                    and (not x.is_homogeneous()
+                         or total_degree(x.degree())
+                         != total_degree(i.degree()) + 1)):
                 raise ValueError("The given dictionary does not determine a degree 1 map")
 
         im_gens = tuple(im_gens.get(x, A.zero()) for x in A.gens())
@@ -210,7 +245,7 @@ class Differential(with_metaclass(
             ...
             ValueError: The given dictionary does not determine a valid differential
         """
-        self._dic_ = {A.gen(i): x for i,x in enumerate(im_gens)}
+        self._dic_ = {A.gen(i): x for i, x in enumerate(im_gens)}
         Morphism.__init__(self, Hom(A, A, category=Modules(A.base_ring())))
 
         for i in A.gens():
@@ -235,7 +270,7 @@ class Differential(with_metaclass(
 
         Test positive characteristic::
 
-            sage: A.<x,y> = GradedCommutativeAlgebra(GF(17), degrees=(2,3))
+            sage: A.<x,y> = GradedCommutativeAlgebra(GF(17), degrees=(2, 3))
             sage: B = A.cdg_algebra(differential={x:y})
             sage: B.differential()(x^17)
             0
@@ -252,17 +287,17 @@ class Differential(with_metaclass(
                 exp = keyl.pop(0)
                 if exp > 0:
                     v1 = (exp * self._dic_[x.parent().gen(idx)]
-                          * x.parent().gen(idx)**(exp-1))
-                    v2 = prod(x.parent().gen(i+idx+1)**keyl[i] for i in
+                          * x.parent().gen(idx)**(exp - 1))
+                    v2 = prod(x.parent().gen(i + idx + 1)**keyl[i] for i in
                               range(len(keyl)))
-                    res += coef*v1*v2
+                    res += coef * v1 * v2
                     coef *= ((-1) ** total_degree(x.parent()._degrees[idx])
                              * x.parent().gen(idx)**exp)
                 idx += 1
         return res
 
     def _repr_defn(self):
-        """
+        r"""
         Return a string showing where ``self`` sends each generator.
 
         EXAMPLES::
@@ -276,7 +311,8 @@ class Differential(with_metaclass(
             z --> z*t
             t --> -z*t
         """
-        return '\n'.join("{} --> {}".format(i, self(i)) for i in self.domain().gens())
+        return '\n'.join("{} --> {}".format(i, self(i))
+                         for i in self.domain().gens())
 
     def _repr_(self):
         r"""
@@ -311,23 +347,23 @@ class Differential(with_metaclass(
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 3, 2, 4))
-            sage: d = A.differential({t: x*y, x: y, z: y})
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 2, 3, 4))
+            sage: d = A.differential({t: x*z, x: z, y: z})
             sage: d.differential_matrix(4)
-            [0 1]
             [2 0]
             [1 1]
             [0 2]
+            [1 0]
             sage: A.inject_variables()
             Defining x, y, z, t
             sage: d(t)
-            x*y
-            sage: d(z^2)
+            x*z
+            sage: d(y^2)
             2*y*z
-            sage: d(x*z)
-            x*y + y*z
+            sage: d(x*y)
+            x*z + y*z
             sage: d(x^2)
-            2*x*y
+            2*x*z
         """
         A = self.domain()
         dom = A.basis(n)
@@ -339,7 +375,7 @@ class Differential(with_metaclass(
             dic = im.lift().dict()
             for j in dic.keys():
                 k = cokeys.index(j)
-                m[i,k] = dic[j]
+                m[i, k] = dic[j]
         m.set_immutable()
         return m
 
@@ -357,7 +393,7 @@ class Differential(with_metaclass(
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1,1,2))
+            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 2))
             sage: d = A.differential({z: x*z})
             sage: d.coboundaries(2)
             Vector space of degree 2 and dimension 0 over Rational Field
@@ -366,15 +402,21 @@ class Differential(with_metaclass(
             sage: d.coboundaries(3)
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
-            [0 1]
+            [1 0]
+            sage: d.coboundaries(1)
+            Vector space of degree 2 and dimension 0 over Rational Field
+            Basis matrix:
+            []
+
         """
         A = self.domain()
         F = A.base_ring()
         if n == 0:
             return VectorSpace(F, 0)
         if n == 1:
-            return VectorSpace(F, 0)
-        M = self.differential_matrix(n-1)
+            V0 = VectorSpace(F, len(A.basis(1)))
+            return V0.subspace([])
+        M = self.differential_matrix(n - 1)
         V0 = VectorSpace(F, M.nrows())
         V1 = VectorSpace(F, M.ncols())
         mor = V0.Hom(V1)(M)
@@ -394,7 +436,7 @@ class Differential(with_metaclass(
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1,1,2))
+            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 2))
             sage: d = A.differential({z: x*z})
             sage: d.cocycles(2)
             Vector space of degree 2 and dimension 1 over Rational Field
@@ -428,14 +470,14 @@ class Differential(with_metaclass(
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2,3,2,4))
-            sage: d = A.differential({t: x*y, x: y, z: y})
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2, 2, 3, 4))
+            sage: d = A.differential({t: x*z, x: z, y: z})
             sage: d.cohomology_raw(4)
             Vector space quotient V/W of dimension 2 over Rational Field where
             V: Vector space of degree 4 and dimension 2 over Rational Field
             Basis matrix:
-            [   1    0    0 -1/2]
-            [   0    1   -2    1]
+            [   1    0    0   -2]
+            [   0    1 -1/2   -1]
             W: Vector space of degree 4 and dimension 0 over Rational Field
             Basis matrix:
             []
@@ -443,7 +485,7 @@ class Differential(with_metaclass(
         Compare to :meth:`cohomology`::
 
             sage: d.cohomology(4)
-            Free module generated by {[-1/2*x^2 + t], [x^2 - 2*x*z + z^2]} over Rational Field
+            Free module generated by {[x^2 - 2*t], [x*y - 1/2*y^2 - t]} over Rational Field
         """
         return self.cocycles(n).quotient(self.coboundaries(n))
 
@@ -466,10 +508,10 @@ class Differential(with_metaclass(
 
         EXAMPLES::
 
-            sage: A.<a,b,c,d,e> = GradedCommutativeAlgebra(QQ, degrees=(1,1,1,1,1))
+            sage: A.<a,b,c,d,e> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 1, 1, 1))
             sage: d = A.differential({d: a*b, e: b*c})
             sage: d.cohomology(2)
-            Free module generated by {[c*e], [c*d - a*e], [b*e], [b*d], [a*d], [a*c]} over Rational Field
+            Free module generated by {[a*c], [a*d], [b*d], [c*d - a*e], [b*e], [c*e]} over Rational Field
 
         Compare to :meth:`cohomology_raw`::
 
@@ -477,27 +519,31 @@ class Differential(with_metaclass(
             Vector space quotient V/W of dimension 6 over Rational Field where
             V: Vector space of degree 10 and dimension 8 over Rational Field
             Basis matrix:
+            [ 1  0  0  0  0  0  0  0  0  0]
             [ 0  1  0  0  0  0  0  0  0  0]
-            [ 0  0  1  0  0  0 -1  0  0  0]
+            [ 0  0  1  0  0  0  0  0  0  0]
             [ 0  0  0  1  0  0  0  0  0  0]
             [ 0  0  0  0  1  0  0  0  0  0]
-            [ 0  0  0  0  0  1  0  0  0  0]
+            [ 0  0  0  0  0  1 -1  0  0  0]
             [ 0  0  0  0  0  0  0  1  0  0]
             [ 0  0  0  0  0  0  0  0  1  0]
-            [ 0  0  0  0  0  0  0  0  0  1]
             W: Vector space of degree 10 and dimension 2 over Rational Field
             Basis matrix:
-            [0 0 0 0 0 1 0 0 0 0]
-            [0 0 0 0 0 0 0 0 0 1]
+            [1 0 0 0 0 0 0 0 0 0]
+            [0 0 1 0 0 0 0 0 0 0]
         """
         H = self.cohomology_raw(n)
         H_basis_raw = [H.lift(H.basis()[i]) for i in range(H.dimension())]
         A = self.domain()
         B = A.basis(n)
-        H_basis = [sum([c*b for (c,b) in zip(coeffs, B)]) for coeffs in H_basis_raw]
+        H_basis = [sum(c * b for (c, b) in zip(coeffs, B)) for coeffs in
+                   H_basis_raw]
         # Put brackets around classes.
         H_basis_brackets = [CohomologyClass(b) for b in H_basis]
-        return CombinatorialFreeModule(A.base_ring(), H_basis_brackets)
+        return CombinatorialFreeModule(A.base_ring(),
+                                       H_basis_brackets,
+                                       sorting_key=sorting_keys,
+                                       monomial_reverse=True)
 
     def _is_nonzero(self):
         """
@@ -509,7 +555,7 @@ class Differential(with_metaclass(
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1,1,2,3))
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 2, 3))
             sage: B = A.cdg_algebra({x: x*y, y: -x*y , z: t})
             sage: B.differential()._is_nonzero()
             True
@@ -523,6 +569,7 @@ class Differential(with_metaclass(
         """
         return any(x for x in self._dic_.values())
 
+
 class Differential_multigraded(Differential):
     """
     Differential of a commutative multi-graded algebra.
@@ -533,7 +580,7 @@ class Differential_multigraded(Differential):
 
         EXAMPLES::
 
-            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1,0), (0, 1), (0,2)))
+            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1, 0), (0, 1), (0, 2)))
             sage: d = A.differential({a: c})
 
         We skip the category test because homsets/morphisms aren't
@@ -576,19 +623,19 @@ class Differential_multigraded(Differential):
 
         EXAMPLES::
 
-            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1,0), (0, 1), (0,2)))
+            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1, 0), (0, 1), (0, 2)))
             sage: d = A.differential({a: c})
-            sage: d.differential_matrix_multigraded((1,0))
+            sage: d.differential_matrix_multigraded((1, 0))
             [1]
             sage: d.differential_matrix_multigraded(1, total=True)
-            [0 0]
             [0 1]
-            sage: d.differential_matrix_multigraded((1,0), total=True)
             [0 0]
+            sage: d.differential_matrix_multigraded((1, 0), total=True)
             [0 1]
+            [0 0]
             sage: d.differential_matrix_multigraded(1)
-            [0 0]
             [0 1]
+            [0 0]
         """
         if total or n in ZZ:
             return Differential.differential_matrix(self, total_degree(n))
@@ -597,7 +644,7 @@ class Differential_multigraded(Differential):
         G = AdditiveAbelianGroup([0] * A._grading_rank)
         n = G(vector(n))
         dom = A.basis(n)
-        cod = A.basis(n+self._degree_of_differential)
+        cod = A.basis(n + self._degree_of_differential)
         cokeys = [next(iter(a.lift().dict().keys())) for a in cod]
         m = matrix(self.base_ring(), len(dom), len(cod))
         for i in range(len(dom)):
@@ -605,7 +652,7 @@ class Differential_multigraded(Differential):
             dic = im.lift().dict()
             for j in dic.keys():
                 k = cokeys.index(j)
-                m[i,k] = dic[j]
+                m[i, k] = dic[j]
         m.set_immutable()
         return m
 
@@ -628,9 +675,9 @@ class Differential_multigraded(Differential):
 
         EXAMPLES::
 
-            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1,0), (0, 1), (0,2)))
+            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1, 0), (0, 1), (0, 2)))
             sage: d = A.differential({a: c})
-            sage: d.coboundaries((0,2))
+            sage: d.coboundaries((0, 2))
             Vector space of degree 1 and dimension 1 over Rational Field
             Basis matrix:
             [1]
@@ -650,7 +697,7 @@ class Differential_multigraded(Differential):
             return VectorSpace(F, 0)
         if total_degree(n) == 1:
             return VectorSpace(F, 0)
-        M = self.differential_matrix_multigraded(n-self._degree_of_differential)
+        M = self.differential_matrix_multigraded(n - self._degree_of_differential)
         V0 = VectorSpace(F, M.nrows())
         V1 = VectorSpace(F, M.ncols())
         mor = V0.Hom(V1)(M)
@@ -675,16 +722,16 @@ class Differential_multigraded(Differential):
 
         EXAMPLES::
 
-            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1,0), (0, 1), (0,2)))
+            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1, 0), (0, 1), (0, 2)))
             sage: d = A.differential({a: c})
-            sage: d.cocycles((0,1))
+            sage: d.cocycles((0, 1))
             Vector space of degree 1 and dimension 1 over Rational Field
             Basis matrix:
             [1]
-            sage: d.cocycles((0,1), total=True)
+            sage: d.cocycles((0, 1), total=True)
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
-            [1 0]
+            [0 1]
         """
         if total or n in ZZ:
             return Differential.cocycles(self, total_degree(n))
@@ -723,9 +770,9 @@ class Differential_multigraded(Differential):
 
         EXAMPLES::
 
-            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1,0), (0, 1), (0,2)))
+            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1, 0), (0, 1), (0, 2)))
             sage: d = A.differential({a: c})
-            sage: d.cohomology_raw((0,2))
+            sage: d.cohomology_raw((0, 2))
             Vector space quotient V/W of dimension 0 over Rational Field where
             V: Vector space of degree 1 and dimension 1 over Rational Field
             Basis matrix:
@@ -738,7 +785,7 @@ class Differential_multigraded(Differential):
             Vector space quotient V/W of dimension 1 over Rational Field where
             V: Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
-            [1 0]
+            [0 1]
             W: Vector space of degree 2 and dimension 0 over Rational Field
             Basis matrix:
             []
@@ -769,9 +816,9 @@ class Differential_multigraded(Differential):
 
         EXAMPLES::
 
-            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1,0), (0, 1), (0,2)))
+            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1, 0), (0, 1), (0, 2)))
             sage: d = A.differential({a: c})
-            sage: d.cohomology((0,2))
+            sage: d.cohomology((0, 2))
             Free module generated by {} over Rational Field
 
             sage: d.cohomology(1)
@@ -781,13 +828,18 @@ class Differential_multigraded(Differential):
         H_basis_raw = [H.lift(H.basis()[i]) for i in range(H.dimension())]
         A = self.domain()
         B = A.basis(n, total)
-        H_basis = [sum([c*b for (c,b) in zip(coeffs, B)]) for coeffs in H_basis_raw]
+        H_basis = [sum(c * b for (c, b) in zip(coeffs, B))
+                   for coeffs in H_basis_raw]
         # Put brackets around classes.
         H_basis_brackets = [CohomologyClass(b) for b in H_basis]
-        return CombinatorialFreeModule(A.base_ring(), H_basis_brackets)
+        return CombinatorialFreeModule(A.base_ring(),
+                                       H_basis_brackets,
+                                       sorting_key=sorting_keys,
+                                       monomial_reverse=True)
+
 
 ###########################################################
-## Commutative graded algebras
+#  Commutative graded algebras
 
 class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
     r"""
@@ -828,7 +880,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
     EXAMPLES::
 
-        sage: A.<a,b> = GradedCommutativeAlgebra(QQ, degrees = (2,3))
+        sage: A.<a,b> = GradedCommutativeAlgebra(QQ, degrees = (2, 3))
         sage: a.degree()
         2
         sage: B = A.quotient(A.ideal(a**2*b))
@@ -889,7 +941,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             else:
                 n = len(degrees)
             names = tuple('x{}'.format(i) for i in range(n))
-        elif isinstance(names, string_types):
+        elif isinstance(names, str):
             names = tuple(names.split(','))
             n = len(names)
         else:
@@ -901,37 +953,45 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         else:
             # Deal with multigrading: convert lists and tuples to elements
             # of an additive abelian group.
-            if len(degrees) > 0:
+            if degrees:
+                multigrade = False
                 try:
                     rank = len(list(degrees[0]))
-                    G = AdditiveAbelianGroup([0]*rank)
+                    G = AdditiveAbelianGroup([0] * rank)
                     degrees = [G(vector(d)) for d in degrees]
+                    multigrade = True
                 except TypeError:
                     # The entries of degrees are not iterables, so
                     # treat as singly-graded.
                     pass
+                if multigrade:
+                    if sorted(map(sum, degrees)) != list(map(sum, degrees)):
+                        raise ValueError("the generators should be ordered in increased total degree")
+                else:
+                    if sorted(degrees) != list(degrees):
+                        raise ValueError("the generators should be ordered in increasing degree")
             degrees = tuple(degrees)
-
         if not R or not I:
             if n > 1:
                 F = FreeAlgebra(base, n, names)
-            else: # n = 1
+            else:  # n = 1
                 F = PolynomialRing(base, n, names)
             gens = F.gens()
             rels = {}
             tot_degs = [total_degree(d) for d in degrees]
-            for i in range(len(gens)-1):
-                for j in range(i+1, len(gens)):
-                    rels[gens[j]*gens[i]] = ((-1) ** (tot_degs[i] * tot_degs[j])
-                                             * gens[i] * gens[j])
+            for i in range(len(gens) - 1):
+                for j in range(i + 1, len(gens)):
+                    rels[gens[j] * gens[i]] = ((-1)**(tot_degs[i] * tot_degs[j])
+                                               * gens[i] * gens[j])
             if n > 1:
-                R = F.g_algebra(rels, order = TermOrder('wdegrevlex', tot_degs))
-            else: # n = 1
+                R = F.g_algebra(rels, order=TermOrder('wdegrevlex', tot_degs))
+            else:   # n = 1
                 R = F.quotient(rels)
             if base.characteristic() == 2:
                 I = R.ideal(0, side='twosided')
             else:
-                I = R.ideal([R.gen(i)**2 for i in range(n) if is_odd(tot_degs[i])],
+                I = R.ideal([R.gen(i)**2
+                             for i in range(n) if is_odd(tot_degs[i])],
                             side='twosided')
 
         return super(GCAlgebra, cls).__classcall__(cls, base=base, names=names,
@@ -961,9 +1021,9 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ)
             sage: TestSuite(A).run()
-            sage: A = GradedCommutativeAlgebra(QQ, ('x','y','z'), [3,4,2])
+            sage: A = GradedCommutativeAlgebra(QQ, ('x','y','z'), [2,3,4])
             sage: TestSuite(A).run()
-            sage: A = GradedCommutativeAlgebra(QQ, ('x','y','z','t'), [3, 4, 2, 1])
+            sage: A = GradedCommutativeAlgebra(QQ, ('x','y','z','t'), [1,2,3,4])
             sage: TestSuite(A).run()
         """
         self._degrees = tuple(degrees)
@@ -976,11 +1036,11 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=[3, 4, 2, 1])
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=[1, 2, 3, 4])
             sage: A
-            Graded Commutative Algebra with generators ('x', 'y', 'z', 't') in degrees (3, 4, 2, 1) over Rational Field
-            sage: A.quotient(A.ideal(3*x*z - 2*y*t))
-            Graded Commutative Algebra with generators ('x', 'y', 'z', 't') in degrees (3, 4, 2, 1) with relations [3*x*z - 2*y*t] over Rational Field
+            Graded Commutative Algebra with generators ('x', 'y', 'z', 't') in degrees (1, 2, 3, 4) over Rational Field
+            sage: A.quotient(A.ideal(3*x*t - 2*y*z))
+            Graded Commutative Algebra with generators ('x', 'y', 'z', 't') in degrees (1, 2, 3, 4) with relations [-2*y*z + 3*x*t] over Rational Field
         """
         s = "Graded Commutative Algebra with generators {} in degrees {}".format(self._names, self._degrees)
         # Find any nontrivial relations.
@@ -988,7 +1048,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         R = self.cover_ring()
         degrees = self._degrees
         if self.base().characteristic() != 2:
-            squares = [R.gen(i)**2 for i in range(len(degrees)) if is_odd(degrees[i])]
+            squares = [R.gen(i)**2
+                       for i in range(len(degrees)) if is_odd(degrees[i])]
         else:
             squares = [R.zero()]
         relns = [g for g in I.gens() if g not in squares]
@@ -1034,7 +1095,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             []
         """
         if n == 0:
-            return ((0,)*len(self._degrees),)
+            return ((0,) * len(self._degrees),)
         if self.base_ring().characteristic() == 2:
             return [tuple(_) for _ in WeightedIntegerVectors(n, self._degrees)]
 
@@ -1046,17 +1107,19 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             else:
                 odd_degrees.append(a)
 
-        if not even_degrees: # No even generators.
-            return [tuple(_) for _ in exterior_algebra_basis(n, tuple(odd_degrees))]
-        if not odd_degrees: # No odd generators.
-            return [tuple(_) for _ in WeightedIntegerVectors(n, tuple(even_degrees))]
+        if not even_degrees:  # No even generators.
+            return [tuple(_)
+                    for _ in exterior_algebra_basis(n, tuple(odd_degrees))]
+        if not odd_degrees:  # No odd generators.
+            return [tuple(_)
+                    for _ in WeightedIntegerVectors(n, tuple(even_degrees))]
 
         # General case: both even and odd generators.
         result = []
-        for dim in range(n+1):
+        for dim in range(n + 1):
             # First find the even part of the basis.
             if dim == 0:
-                even_result = [[0]*len(even_degrees)]
+                even_result = [[0] * len(even_degrees)]
             else:
                 even_result = WeightedIntegerVectors(dim, tuple(even_degrees))
             # Now find the odd part of the basis.
@@ -1083,17 +1146,20 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
             sage: A.basis(2)
-            [z, y]
+            [y, z]
             sage: A.basis(3)
-            [t, x*z, x*y]
+            [x*y, x*z, t]
             sage: A.basis(4)
-            [x*t, z^2, y*z, y^2]
+            [y^2, y*z, z^2, x*t]
             sage: A.basis(5)
-            [z*t, y*t, x*z^2, x*y*z, x*y^2]
+            [x*y^2, x*y*z, x*z^2, y*t, z*t]
             sage: A.basis(6)
-            [x*z*t, x*y*t, z^3, y*z^2, y^2*z, y^3]
+            [y^3, y^2*z, y*z^2, z^3, x*y*t, x*z*t]
         """
         free_basis = self._basis_for_free_alg(n)
+        fb_reversed_entries = [list(reversed(e)) for e in free_basis]
+        fb_reversed_entries.sort()
+        free_basis = [tuple(reversed(e)) for e in fb_reversed_entries]
         basis = []
         for v in free_basis:
             el = prod([self.gen(i)**v[i] for i in range(len(v))])
@@ -1117,19 +1183,19 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 3, 2, 4))
-            sage: I = A.ideal([x*t+y^2, x*z - t])
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 2, 3, 4))
+            sage: I = A.ideal([x*t+z^2, x*y - t])
             sage: B = A.quotient(I)
             sage: B
-            Graded Commutative Algebra with generators ('x', 'y', 'z', 't') in degrees (2, 3, 2, 4) with relations [x*t, x*z - t] over Finite Field of size 5
+            Graded Commutative Algebra with generators ('x', 'y', 'z', 't') in degrees (2, 2, 3, 4) with relations [x*t, x*y - t] over Finite Field of size 5
             sage: B(x*t)
             0
-            sage: B(x*z)
+            sage: B(x*y)
             t
             sage: A.basis(7)
-            [y*t, y*z^2, x*y*z, x^2*y]
+            [x^2*z, x*y*z, y^2*z, z*t]
             sage: B.basis(7)
-            [y*t, y*z^2, x^2*y]
+            [x^2*z, y^2*z, z*t]
         """
         if check and any(not i.is_homogeneous() for i in I.gens()):
             raise ValueError("The ideal must be homogeneous")
@@ -1142,12 +1208,12 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
     def _coerce_map_from_(self, other):
         r"""
-        Returns ``True`` if there is a coercion map from ``R`` to ``self``.
+        Return ``True`` if there is a coercion map from ``R`` to ``self``.
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(2,1,1))
-            sage: B = A.cdg_algebra({y:y*z, z: y*z})
+            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1,1,2))
+            sage: B = A.cdg_algebra({y:x*y, x: x*y})
             sage: A._coerce_map_from_(B)
             True
             sage: B._coerce_map_from_(A)
@@ -1160,7 +1226,9 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         if isinstance(other, GCAlgebra):
             if self._names != other._names or self._degrees != other._degrees:
                 return False
-            if set(self.defining_ideal().gens()) != set(other.defining_ideal().gens()):
+            if set(self.defining_ideal().gens()) != set(other
+                                                        .defining_ideal()
+                                                        .gens()):
                 return False
             return self.cover_ring().has_coerce_map_from(other.cover_ring())
         return super(GCAlgebra, self)._coerce_map_from_(other)
@@ -1169,12 +1237,18 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
         r"""
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2, 3, 2, 4))
-            sage: A({(1,0,3,1): 2, (2,1,2,2): 3})
-            3*x^2*y*z^2*t^2 + 2*x*z^3*t
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2, 2, 3, 4))
+            sage: A({(1,3,0,1): 2, (2,2,1,2): 3})
+            3*x^2*y^2*z*t^2 + 2*x*y^3*t
             sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5))
-            sage: A({(1,0,3,1): 2, (2,1,2,2): 3})
+            sage: A({(1,3,0,1): 2, (2,2,1,2): 3})
             0
+
+        TESTS::
+
+            sage: B = A.cdg_algebra({})
+            sage: B(x, coerce=False)
+            x
         """
         if isinstance(x, QuotientRingElement):
             if x.parent() is self:
@@ -1184,7 +1258,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             res = self.zero()
             for i in x.keys():
                 mon = prod(self.gen(j)**i[j] for j in range(len(i)))
-                res += x[i]*mon
+                res += x[i] * mon
             return res
         if coerce:
             R = self.cover_ring()
@@ -1192,7 +1266,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         from sage.interfaces.singular import is_SingularElement
         if is_SingularElement(x):
-            #self._singular_().set_ring()
+            # self._singular_().set_ring()
             x = self.element_class(self, x.sage_poly(self.cover_ring()))
             return x
 
@@ -1233,7 +1307,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                                       'when the base rings are the same')
         cat = Algebras(R).Graded()
         if category is not None and not category.is_subcategory(cat):
-            raise TypeError("%s is not a subcategory of graded algebras"%category)
+            raise TypeError("{} is not a subcategory of graded algebras"
+                            .format(category))
         return GCAlgebraHomset(self, B, category=category)
 
     def differential(self, diff):
@@ -1251,13 +1326,13 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(2,1,1))
-            sage: A.differential({y:y*z, z: y*z})
-            Differential of Graded Commutative Algebra with generators ('x', 'y', 'z') in degrees (2, 1, 1) over Rational Field
-              Defn: x --> 0
-                    y --> y*z
-                    z --> y*z
-            sage: B.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=(1,2,2))
+            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 2))
+            sage: A.differential({y:x*y, x: x*y})
+            Differential of Graded Commutative Algebra with generators ('x', 'y', 'z') in degrees (1, 1, 2) over Rational Field
+              Defn: x --> x*y
+                    y --> x*y
+                    z --> 0
+            sage: B.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2))
             sage: d = B.differential({b:a*c, c:a*c})
             sage: d(b*c)
             a*b*c + a*c^2
@@ -1287,7 +1362,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
         EXAMPLES::
 
-            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=(1,1,1))
+            sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 1))
             sage: B = A.cdg_algebra({a: b*c, b: a*c})
             sage: B
             Commutative Differential Graded Algebra with generators ('a', 'b', 'c') in degrees (1, 1, 1) over Rational Field with differential:
@@ -1355,12 +1430,12 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             EXAMPLES::
 
-                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2,3,3,1))
-                sage: el = y*z+2*x*t-x^2*y
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 3, 3))
+                sage: el = z*t+2*x*y-y^2*z
                 sage: el.degree()
                 7
                 sage: el.monomials()
-                [x^2*y, y*z, x*t]
+                [y^2*z, z*t, x*y]
                 sage: [i.degree() for i in el.monomials()]
                 [7, 6, 3]
 
@@ -1389,21 +1464,21 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             EXAMPLES::
 
-                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2,3,3,1))
-                sage: el = y*z + 2*x*t - x^2*y
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 3, 3))
+                sage: el = z*t + 2*x*y - y^2*z
                 sage: el.degree()
                 7
                 sage: el.monomials()
-                [x^2*y, y*z, x*t]
+                [y^2*z, z*t, x*y]
                 sage: [i.degree() for i in el.monomials()]
                 [7, 6, 3]
                 sage: el.is_homogeneous()
                 False
-                sage: em = x^3 - 5*y*z + 3/2*x*z*t
+                sage: em = y^3 - 5*z*t + 3/2*x*y*t
                 sage: em.is_homogeneous()
                 True
                 sage: em.monomials()
-                [x^3, y*z, x*z*t]
+                [y^3, x*y*t, z*t]
                 sage: [i.degree() for i in em.monomials()]
                 [6, 6, 6]
 
@@ -1415,7 +1490,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             A multi-graded example::
 
-                sage: B.<c,d> = GradedCommutativeAlgebra(QQ, degrees=((2,0), (0,4)))
+                sage: B.<c,d> = GradedCommutativeAlgebra(QQ, degrees=((2, 0), (0, 4)))
                 sage: (c^2 - 1/2 * d).is_homogeneous()
                 False
                 sage: (c^2 - 1/2 * d).is_homogeneous(total=True)
@@ -1429,6 +1504,32 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                     if degree != m.degree(total):
                         return False
             return True
+
+        def homogeneous_parts(self):
+            r"""
+            Return the homogeneous parts of the element. The result is given as
+            a dictionary indexed by degree.
+
+
+            EXAMPLES::
+
+                sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
+                sage: a = e1*e3*e5-3*e2*e3*e5 + e1*e2 -2*e3 + e5
+                sage: a.homogeneous_parts()
+                {1: -2*e3 + e5, 2: e1*e2, 3: e1*e3*e5 - 3*e2*e3*e5}
+            """
+            dic = self.dict()
+            terms = [self.parent()({t: dic[t]}) for t in dic.keys()]
+            res = {}
+            for term in terms:
+                deg = term.degree()
+                if deg in res:
+                    res[deg] += term
+                else:
+                    res[deg] = term
+            return {i: res[i] for i in sorted(res.keys())}
+
+        homogenous_parts = deprecated_function_alias(30585, homogeneous_parts)
 
         def dict(self):
             r"""
@@ -1458,7 +1559,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
             INPUT:
 
-            - ``total`` -- boolean (defalt ``False``); this
+            - ``total`` -- boolean (default ``False``); this
               is only used in the multi-graded case, in which case if
               ``True``, it returns the coefficients with respect to
               the basis for the total degree of this element
@@ -1471,9 +1572,9 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
                 sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
                 sage: A.basis(3)
-                [t, x*z, x*y]
+                [x*y, x*z, t]
                 sage: (t + 3*x*y).basis_coefficients()
-                [1, 0, 3]
+                [3, 0, 1]
                 sage: (t + x).basis_coefficients()
                 Traceback (most recent call last):
                 ...
@@ -1481,9 +1582,9 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
 
                 sage: B.<c,d> = GradedCommutativeAlgebra(QQ, degrees=((2,0), (0,4)))
                 sage: B.basis(4)
-                [d, c^2]
+                [c^2, d]
                 sage: (c^2 - 1/2 * d).basis_coefficients(total=True)
-                [-1/2, 1]
+                [1, -1/2]
                 sage: (c^2 - 1/2 * d).basis_coefficients()
                 Traceback (most recent call last):
                 ...
@@ -1567,9 +1668,9 @@ class GCAlgebra_multigraded(GCAlgebra):
 
             sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=((1,0), (0,1), (1,1)))
             sage: TestSuite(A).run()
-            sage: B.<w> = GradedCommutativeAlgebra(GF(2), degrees=((3,2)))
-            sage: TestSuite(B).run()
-            sage: C = GradedCommutativeAlgebra(GF(7), degrees=((3,2)))
+            sage: B.<w> = GradedCommutativeAlgebra(GF(2), degrees=((3,2),))
+            sage: TestSuite(B).run(skip=['_test_construction'])
+            sage: C = GradedCommutativeAlgebra(GF(7), degrees=((3,2),))
             sage: TestSuite(C).run()
         """
         total_degs = [total_degree(d) for d in degrees]
@@ -1606,19 +1707,19 @@ class GCAlgebra_multigraded(GCAlgebra):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 3, 2, 4))
-            sage: I = A.ideal([x*t+y^2, x*z - t])
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(GF(5), degrees=(2, 2, 3, 4))
+            sage: I = A.ideal([x*t+z^2, x*y - t])
             sage: B = A.quotient(I)
             sage: B
-            Graded Commutative Algebra with generators ('x', 'y', 'z', 't') in degrees (2, 3, 2, 4) with relations [x*t, x*z - t] over Finite Field of size 5
+            Graded Commutative Algebra with generators ('x', 'y', 'z', 't') in degrees (2, 2, 3, 4) with relations [x*t, x*y - t] over Finite Field of size 5
             sage: B(x*t)
             0
-            sage: B(x*z)
+            sage: B(x*y)
             t
             sage: A.basis(7)
-            [y*t, y*z^2, x*y*z, x^2*y]
+            [x^2*z, x*y*z, y^2*z, z*t]
             sage: B.basis(7)
-            [y*t, y*z^2, x^2*y]
+            [x^2*z, y^2*z, z*t]
         """
         if check and any(not i.is_homogeneous() for i in I.gens()):
             raise ValueError("The ideal must be homogeneous")
@@ -1632,7 +1733,7 @@ class GCAlgebra_multigraded(GCAlgebra):
 
     def _coerce_map_from_(self, other):
         r"""
-        Returns ``True`` if there is a coercion map from ``R`` to ``self``.
+        Return ``True`` if there is a coercion map from ``R`` to ``self``.
 
         EXAMPLES::
 
@@ -1648,7 +1749,7 @@ class GCAlgebra_multigraded(GCAlgebra):
         if isinstance(other, GCAlgebra_multigraded):
             if self._degrees_multi != other._degrees_multi:
                 return False
-        elif isinstance(other, GCAlgebra): # Not multigraded
+        elif isinstance(other, GCAlgebra):   # Not multigraded
             return False
         return super(GCAlgebra_multigraded, self)._coerce_map_from_(other)
 
@@ -1667,20 +1768,20 @@ class GCAlgebra_multigraded(GCAlgebra):
 
             sage: A.<a,b,c> = GradedCommutativeAlgebra(GF(2), degrees=((1,0), (0,1), (1,1)))
             sage: A.basis((1,1))
-            [c, a*b]
+            [a*b, c]
             sage: A.basis(2, total=True)
-            [c, b^2, a*b, a^2]
+            [a^2, a*b, b^2, c]
 
         Since 2 is a not a multi-index, we don't need to specify ``total=True``::
 
             sage: A.basis(2)
-            [c, b^2, a*b, a^2]
+            [a^2, a*b, b^2, c]
 
         If ``total==True``, then ``n`` can still be a tuple, list,
         etc., and its total degree is used instead::
 
             sage: A.basis((1,1), total=True)
-            [c, b^2, a*b, a^2]
+            [a^2, a*b, b^2, c]
         """
         tot_basis = GCAlgebra.basis(self, total_degree(n))
         if total or n in ZZ:
@@ -1796,8 +1897,9 @@ class GCAlgebra_multigraded(GCAlgebra):
             else:
                 raise ValueError('This element is not homogeneous')
 
+
 ###########################################################
-## Differential algebras
+#  Differential algebras
 
 class DifferentialGCAlgebra(GCAlgebra):
     """
@@ -1825,22 +1927,22 @@ class DifferentialGCAlgebra(GCAlgebra):
 
     EXAMPLES::
 
-        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(3, 2, 2, 3))
-        sage: A.cdg_algebra({x: y*z})
-        Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (3, 2, 2, 3) over Rational Field with differential:
-            x --> y*z
+        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2, 2, 3, 3))
+        sage: A.cdg_algebra({z: x*y})
+        Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (2, 2, 3, 3) over Rational Field with differential:
+            x --> 0
             y --> 0
-            z --> 0
+            z --> x*y
             t --> 0
 
     Alternatively, starting with :func:`GradedCommutativeAlgebra`::
 
-        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(3, 2, 2, 3))
-        sage: A.cdg_algebra(differential={x: y*z})
-        Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (3, 2, 2, 3) over Rational Field with differential:
-            x --> y*z
+        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2, 2, 3, 3))
+        sage: A.cdg_algebra(differential={z: x*y})
+        Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (2, 2, 3, 3) over Rational Field with differential:
+            x --> 0
             y --> 0
-            z --> 0
+            z --> x*y
             t --> 0
 
     See the function :func:`GradedCommutativeAlgebra` for more examples.
@@ -1879,8 +1981,8 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(3, 2, 2, 3))
-            sage: D = A.cdg_algebra({x: y*z})
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2, 2, 3, 3))
+            sage: D = A.cdg_algebra({z: x*y})
             sage: TestSuite(D).run()
 
         The degree of the differential must be 1::
@@ -1904,6 +2006,8 @@ class DifferentialGCAlgebra(GCAlgebra):
                            R=A.cover_ring(),
                            I=A.defining_ideal())
         self._differential = Differential(self, differential._dic_)
+        self._minimalmodels = {}
+        self._numerical_invariants = {}
 
     def graded_commutative_algebra(self):
         """
@@ -1911,8 +2015,8 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(3, 2, 2, 3))
-            sage: D = A.cdg_algebra({x: y*z})
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(2, 2, 3, 3))
+            sage: D = A.cdg_algebra({z: x*y})
             sage: D.graded_commutative_algebra() == A
             True
         """
@@ -1925,9 +2029,9 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=[3, 4, 2, 1])
-            sage: A.cdg_algebra({x:y, t:z})._base_repr()
-            "Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (3, 4, 2, 1) over Rational Field"
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=[1, 2, 3, 4])
+            sage: A.cdg_algebra({x:y, z:t})._base_repr()
+            "Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (1, 2, 3, 4) over Rational Field"
         """
         return GCAlgebra._repr_(self).replace('Graded Commutative', 'Commutative Differential Graded')
 
@@ -1935,13 +2039,13 @@ class DifferentialGCAlgebra(GCAlgebra):
         """
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=[3, 4, 2, 1])
-            sage: A.cdg_algebra({x:y, t:z})
-            Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (3, 4, 2, 1) over Rational Field with differential:
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=[1, 2, 3, 4])
+            sage: A.cdg_algebra({x:y, z:t})
+            Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (1, 2, 3, 4) over Rational Field with differential:
                x --> y
                y --> 0
-               z --> 0
-               t --> z
+               z --> t
+               t --> 0
         """
         d = self._differential._repr_defn().replace('\n', '\n   ')
         return self._base_repr() + " with differential:{}".format('\n   ' + d)
@@ -1959,29 +2063,29 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(2,1,1))
-            sage: B = A.cdg_algebra({y:y*z, z: y*z})
+            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1,1,2))
+            sage: B = A.cdg_algebra({y:x*y, z:x*z})
             sage: B.inject_variables()
             Defining x, y, z
-            sage: I = B.ideal([x*y])
+            sage: I = B.ideal([y*z])
             sage: C = B.quotient(I)
-            sage: (x*y).differential()
-            x*y*z
-            sage: C((x*y).differential())
+            sage: (y*z).differential()
+            2*x*y*z
+            sage: C((y*z).differential())
             0
-            sage: C(x*y)
+            sage: C(y*z)
             0
 
         It is checked that the differential maps the ideal into itself, to make
         sure that the quotient inherits a differential structure::
 
-            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(2,2,1))
-            sage: B = A.cdg_algebra({z:y})
-            sage: B.quotient(B.ideal(y*z))
+            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1,2,2))
+            sage: B = A.cdg_algebra({x:y})
+            sage: B.quotient(B.ideal(y*x))
             Traceback (most recent call last):
             ...
             ValueError: The differential does not preserve the ideal
-            sage: B.quotient(B.ideal(z))
+            sage: B.quotient(B.ideal(x))
             Traceback (most recent call last):
             ...
             ValueError: The differential does not preserve the ideal
@@ -2003,15 +2107,15 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         EXAMPLES::
 
-            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(2,1,1))
-            sage: B = A.cdg_algebra({y:y*z, z: y*z})
+            sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1,1,2))
+            sage: B = A.cdg_algebra({y:x*y, x: y*x})
             sage: d = B.differential(); d
-            Differential of Commutative Differential Graded Algebra with generators ('x', 'y', 'z') in degrees (2, 1, 1) over Rational Field
-              Defn: x --> 0
-                    y --> y*z
-                    z --> y*z
+            Differential of Commutative Differential Graded Algebra with generators ('x', 'y', 'z') in degrees (1, 1, 2) over Rational Field
+              Defn: x --> -x*y
+                    y --> x*y
+                    z --> 0
             sage: d(y)
-            y*z
+            x*y
         """
         return self._differential
 
@@ -2038,9 +2142,9 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: B.coboundaries(3)
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
-            [0 1]
+            [1 0]
             sage: B.basis(3)
-            [y*z, x*z]
+            [x*z, y*z]
         """
         return self._differential.coboundaries(n)
 
@@ -2082,14 +2186,14 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         EXAMPLES::
 
-            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees = (2,3,2,4))
-            sage: B = A.cdg_algebra({t: x*y, x: y, z: y})
+            sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees = (2,2,3,4))
+            sage: B = A.cdg_algebra({t: x*z, x: z, y: z})
             sage: B.cohomology_raw(4)
             Vector space quotient V/W of dimension 2 over Rational Field where
             V: Vector space of degree 4 and dimension 2 over Rational Field
             Basis matrix:
-            [   1    0    0 -1/2]
-            [   0    1   -2    1]
+            [   1    0    0   -2]
+            [   0    1 -1/2   -1]
             W: Vector space of degree 4 and dimension 0 over Rational Field
             Basis matrix:
             []
@@ -2097,7 +2201,7 @@ class DifferentialGCAlgebra(GCAlgebra):
         Compare to :meth:`cohomology`::
 
             sage: B.cohomology(4)
-            Free module generated by {[-1/2*x^2 + t], [x^2 - 2*x*z + z^2]} over Rational Field
+            Free module generated by {[x^2 - 2*t], [x*y - 1/2*y^2 - t]} over Rational Field
         """
         return self._differential.cohomology_raw(n)
 
@@ -2119,7 +2223,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: A.<a,b,c,d,e> = GradedCommutativeAlgebra(QQ, degrees=(1,1,1,1,1))
             sage: B = A.cdg_algebra({d: a*b, e: b*c})
             sage: B.cohomology(2)
-            Free module generated by {[c*e], [c*d - a*e], [b*e], [b*d], [a*d], [a*c]} over Rational Field
+            Free module generated by {[a*c], [a*d], [b*d], [c*d - a*e], [b*e], [c*e]} over Rational Field
 
         Compare to :meth:`cohomology_raw`::
 
@@ -2127,18 +2231,27 @@ class DifferentialGCAlgebra(GCAlgebra):
             Vector space quotient V/W of dimension 6 over Rational Field where
             V: Vector space of degree 10 and dimension 8 over Rational Field
             Basis matrix:
+            [ 1  0  0  0  0  0  0  0  0  0]
             [ 0  1  0  0  0  0  0  0  0  0]
-            [ 0  0  1  0  0  0 -1  0  0  0]
+            [ 0  0  1  0  0  0  0  0  0  0]
             [ 0  0  0  1  0  0  0  0  0  0]
             [ 0  0  0  0  1  0  0  0  0  0]
-            [ 0  0  0  0  0  1  0  0  0  0]
+            [ 0  0  0  0  0  1 -1  0  0  0]
             [ 0  0  0  0  0  0  0  1  0  0]
             [ 0  0  0  0  0  0  0  0  1  0]
-            [ 0  0  0  0  0  0  0  0  0  1]
             W: Vector space of degree 10 and dimension 2 over Rational Field
             Basis matrix:
-            [0 0 0 0 0 1 0 0 0 0]
-            [0 0 0 0 0 0 0 0 0 1]
+            [1 0 0 0 0 0 0 0 0 0]
+            [0 0 1 0 0 0 0 0 0 0]
+
+        TESTS:
+
+        Check that the issue discovered in :trac:`28155` is solved::
+
+            sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
+            sage: B = A.cdg_algebra({e5:e1*e2+e3*e4})
+            sage: B.cohomology(3) is B.cohomology(3)
+            True
         """
         return self._differential.cohomology(n)
 
@@ -2162,12 +2275,8 @@ class DifferentialGCAlgebra(GCAlgebra):
 
         ALGORITHM:
 
-        Use induction on degree, so assume we know what happens in
-        degrees less than `n`. Compute the cocycles `Z` in degree `n`.
-        Form a subspace `W` of this, spanned by the cocycles generated
-        by the lower degree generators, along with the coboundaries in
-        degree `n`. Find a basis for the complement of `W` in `Z`:
-        these represent cohomology generators.
+        Reduce a basis of the `n`'th cohomology modulo all the degree $n$
+        products of the lower degree cohomologies.
 
         EXAMPLES::
 
@@ -2210,51 +2319,524 @@ class DifferentialGCAlgebra(GCAlgebra):
             sage: acyclic = X.cdg_algebra({x: y})
             sage: acyclic.cohomology_generators(3)
             {}
+
+        Test that redundant generators are eliminated::
+
+            sage: A.<e1,e2,e3,e4> = GradedCommutativeAlgebra(QQ)
+            sage: d = A.differential({e1:e4*e3,e2:e4*e3})
+            sage: B = A.cdg_algebra(d)
+            sage: B.cohomology_generators(3)
+            {1: [e1 - e2, e3, e4], 2: [e1*e3, e1*e4]}
+
         """
+        if not (max_degree in ZZ and max_degree > 0):
+            raise ValueError('the given maximal degree must be a '
+                             'positive integer')
+
         def vector_to_element(v, deg):
             """
             If an element of this algebra in degree ``deg`` is represented
             by a raw vector ``v``, convert it back to an element of the
             algebra again.
             """
-            return sum(c*b for (c,b) in zip(v, self.basis(deg)))
+            return sum(c * b for (c, b) in zip(v, self.basis(deg)))
+        if max_degree == 1:
+            cohom1 = self.cohomology(1).basis().keys()
+            if not cohom1:
+                return {}
+            return {1: [g.representative() for g in cohom1]}
+        smaller_degree = {i: [g.representative() for g in
+                              self.cohomology(i).basis().keys()] for i in
+                          range(1, max_degree)}
+        already_generated = []
+        for i in range(1, max_degree):
+            already_generated += [a * b for a in smaller_degree[i] for b in
+                                  smaller_degree[max_degree - i]]
+        CR = self.cohomology_raw(max_degree)
+        V = CR.V()
+        S = CR.submodule([CR(V(g.basis_coefficients(total=True))) for g in
+                          already_generated if not g.is_zero()])
+        Q = CR.quotient(S)
+        res = self.cohomology_generators(max_degree - 1)
+        if Q.basis():
+            res[max_degree] = [vector_to_element(CR.lift(Q.lift(g)),
+                                                 max_degree)
+                               for g in Q.basis()]
+        return res
 
-        field = self.base_ring()
-        # gens: dictionary indexed by degree. Value is a list of
-        # cohomology generators in that degree.
-        gens = {}
-        # cocycles: dictionary indexed by degree. Value is a spanning
-        # set for the cocycles in that degree.
-        cocycles = {0: self.one()}
-        for n in range(1, max_degree+1):
-            old_cocycles = []
-            for i in gens:
-                for g in gens[i]:
-                    lowdim_cocycles = cocycles[n-i]
-                    for x in lowdim_cocycles:
-                        a = g*x
-                        if a:
-                            old_cocycles.append(a)
-            # Eliminate duplicates.
-            old_cocycles = set(old_cocycles)
-            # Convert elements of old_cocycles to raw vectors:
-            old_cocycles_raw = [cocyc.basis_coefficients(total=True)
-                                for cocyc in old_cocycles]
-            old_cocycles_raw += self.coboundaries(n).basis()
-            cochains = VectorSpace(field, len(self.basis(n)))
-            W = cochains.submodule(old_cocycles_raw)
-            basis_of_complement = []
-            all_cocycles = self.cocycles(n).basis()
-            for z in all_cocycles:
-                if z not in W:
-                    basis_of_complement.append(z)
-            cocycle_basis = [vector_to_element(coeffs, n)
-                             for coeffs in basis_of_complement]
-            # Only keep nonempty lists of generators.
-            if cocycle_basis:
-                gens[n] = cocycle_basis
-            cocycles[n] = list(old_cocycles) + cocycle_basis
-        return gens
+    def minimal_model(self, i=3, max_iterations=3):
+        r"""
+        Try to compute a map from a ``i``-minimal gcda that is a
+        ``i``-quasi-isomorphism to self.
+
+        INPUT:
+
+        - ``i`` -- integer (default: `3`); degree to which the result is
+          required to induce an isomorphism in cohomology, and the domain is
+          required to be minimal.
+
+        - ``max_iterations`` -- integer (default: `3`); the number of
+          iterations of the method at each degree. If the algorithm does not
+          finish in this many iterations at each degree, an error is raised.
+
+        OUTPUT:
+
+        A morphism from a minimal Sullivan (up to degree ``i``) CDGA's to self,
+        that induces an isomorphism in cohomology up to degree ``i``, and a
+        monomorphism in degree ``i+1``.
+
+        EXAMPLES::
+
+            sage: S.<x, y, z> = GradedCommutativeAlgebra(QQ, degrees = (1, 1, 2))
+            sage: d = S.differential({x:x*y, y:x*y})
+            sage: R = S.cdg_algebra(d)
+            sage: p = R.minimal_model()
+            sage: T = p.domain()
+            sage: p
+            Commutative Differential Graded Algebra morphism:
+              From: Commutative Differential Graded Algebra with generators ('x1_0', 'x2_0') in degrees (1, 2) over Rational Field with differential:
+               x1_0 --> 0
+               x2_0 --> 0
+              To:   Commutative Differential Graded Algebra with generators ('x', 'y', 'z') in degrees (1, 1, 2) over Rational Field with differential:
+               x --> x*y
+               y --> x*y
+               z --> 0
+              Defn: (x1_0, x2_0) --> (x - y, z)
+            sage: R.cohomology(1)
+            Free module generated by {[x - y]} over Rational Field
+            sage: T.cohomology(1)
+            Free module generated by {[x1_0]} over Rational Field
+            sage: [p(g.representative()) for g in T.cohomology(1).basis().keys()]
+            [x - y]
+            sage: R.cohomology(2)
+            Free module generated by {[z]} over Rational Field
+            sage: T.cohomology(2)
+            Free module generated by {[x2_0]} over Rational Field
+            sage: [p(g.representative()) for g in T.cohomology(2).basis().keys()]
+            [z]
+
+
+
+            sage: A.<e1, e2, e3, e4, e5, e6, e7> = GradedCommutativeAlgebra(QQ)
+            sage: d = A.differential({e1:e1*e7, e2:e2*e7, e3:-e3*e7, e4:-e4*e7})
+            sage: B = A.cdg_algebra(d)
+            sage: phi = B.minimal_model(i=3)
+            sage: M = phi.domain()
+            sage: M
+            Commutative Differential Graded Algebra with generators ('x1_0', 'x1_1', 'x1_2', 'x2_0', 'x2_1', 'x2_2', 'x2_3', 'y3_0', 'y3_1', 'y3_2', 'y3_3', 'y3_4', 'y3_5', 'y3_6', 'y3_7', 'y3_8') in degrees (1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3) over Rational Field with differential:
+               x1_0 --> 0
+               x1_1 --> 0
+               x1_2 --> 0
+               x2_0 --> 0
+               x2_1 --> 0
+               x2_2 --> 0
+               x2_3 --> 0
+               y3_0 --> x2_0^2
+               y3_1 --> x2_0*x2_1
+               y3_2 --> x2_1^2
+               y3_3 --> x2_0*x2_2
+               y3_4 --> x2_1*x2_2 + x2_0*x2_3
+               y3_5 --> x2_2^2
+               y3_6 --> x2_1*x2_3
+               y3_7 --> x2_2*x2_3
+               y3_8 --> x2_3^2
+
+            sage: phi
+            Commutative Differential Graded Algebra morphism:
+              From: Commutative Differential Graded Algebra with generators ('x1_0', 'x1_1', 'x1_2', 'x2_0', 'x2_1', 'x2_2', 'x2_3', 'y3_0', 'y3_1', 'y3_2', 'y3_3', 'y3_4', 'y3_5', 'y3_6', 'y3_7', 'y3_8') in degrees (1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3) over Rational Field with differential:
+               x1_0 --> 0
+               x1_1 --> 0
+               x1_2 --> 0
+               x2_0 --> 0
+               x2_1 --> 0
+               x2_2 --> 0
+               x2_3 --> 0
+               y3_0 --> x2_0^2
+               y3_1 --> x2_0*x2_1
+               y3_2 --> x2_1^2
+               y3_3 --> x2_0*x2_2
+               y3_4 --> x2_1*x2_2 + x2_0*x2_3
+               y3_5 --> x2_2^2
+               y3_6 --> x2_1*x2_3
+               y3_7 --> x2_2*x2_3
+               y3_8 --> x2_3^2
+              To:   Commutative Differential Graded Algebra with generators ('e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7') in degrees (1, 1, 1, 1, 1, 1, 1) over Rational Field with differential:
+               e1 --> e1*e7
+               e2 --> e2*e7
+               e3 --> -e3*e7
+               e4 --> -e4*e7
+               e5 --> 0
+               e6 --> 0
+               e7 --> 0
+              Defn: (x1_0, x1_1, x1_2, x2_0, x2_1, x2_2, x2_3, y3_0, y3_1, y3_2, y3_3, y3_4, y3_5, y3_6, y3_7, y3_8) --> (e5, e6, e7, e1*e3, e2*e3, e1*e4, e2*e4, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+            sage: [B.cohomology(i).dimension() for i in [1..3]]
+            [3, 7, 13]
+            sage: [M.cohomology(i).dimension() for i in [1..3]]
+            [3, 7, 13]
+
+        ALGORITHM:
+
+        We follow the algorithm described in [Man2019]_. It consists in
+        constructing the minimal Sullivan algebra ``S`` by iteratively adding
+        generators to it. Start with one closed generator of degree 1 for each
+        element in the basis of the first cohomology of the algebra. Then
+        proceed degree by degree. At each degree `d`, we keep adding generators
+        of degree `d-1` whose differential kills the elements in the kernel of
+        the map `H^d(S)\to H^d(self)`. Once this map is made injective, we add
+        the needed closed generators in degree `d` to make it surjective.
+
+        .. WARNING::
+
+            The method is not granted to finish (it can't, since the minimal
+            model could be infinitely generated in some degrees).
+            The parameter ``max_iterations`` controls how many iterations of
+            the method are attempted at each degree. In case they are not
+            enough, an exception is raised. If you think that the result will
+            be finitely generated, you can try to run it again with a higher
+            value for ``max_iterations``.
+
+        .. SEEALSO::
+
+            :wikipedia:`Rational_homotopy_theory#Sullivan_algebras`
+
+        TESTS::
+
+            sage: A.<x, y, z, t> = GradedCommutativeAlgebra(QQ,degrees = (1, 2, 3, 3))
+            sage: d = A.differential({x:y})
+            sage: B = A.cdg_algebra(d)
+            sage: B.minimal_model(i=3)
+            Commutative Differential Graded Algebra morphism:
+              From: Commutative Differential Graded Algebra with generators ('x3_0', 'x3_1') in degrees (3, 3) over Rational Field with differential:
+               x3_0 --> 0
+               x3_1 --> 0
+              To:   Commutative Differential Graded Algebra with generators ('x', 'y', 'z', 't') in degrees (1, 2, 3, 3) over Rational Field with differential:
+               x --> y
+               y --> 0
+               z --> 0
+               t --> 0
+              Defn: (x3_0, x3_1) --> (z, t)
+
+        REFERENCES:
+
+        - [Fel2001]_
+
+        - [Man2019]_
+
+        """
+        max_degree = int(i)
+        if max_degree < 1:
+            raise ValueError("the degree must be a positive integer")
+        if max_iterations not in ZZ or max_iterations < 1:
+            raise ValueError("max_iterations must be a positive integer")
+        if max_degree in self._minimalmodels:
+            return self._minimalmodels[max_degree]
+        from copy import copy
+
+        def extend(phi, ndegrees, ndifs, nimags, nnames):
+            """
+            Extend phi to a new algebra with new generators, labeled by nnames
+            """
+            B = phi.domain()
+            names = [str(g) for g in B.gens()]
+            degrees = [g.degree() for g in B.gens()]
+            A = GradedCommutativeAlgebra(B.base_ring(), names=names + nnames,
+                                         degrees=degrees + ndegrees)
+            h = B.hom(A.gens()[:B.ngens()], check=False)
+            d = B.differential()
+            diff = {h(g): h(d(g)) for g in B.gens()}
+            cndifs = copy(ndifs)
+            for g in A.gens()[B.ngens():]:
+                diff[g] = h(cndifs.pop(0))
+            NB = A.cdg_algebra(diff)
+            Nphi = NB.hom([phi(g) for g in B.gens()] + nimags, check=False)
+            return Nphi
+
+        def extendx(phi, degree):
+            B = phi.domain()
+            imagesbcohom = [phi(g.representative())
+                            for g in B.cohomology(degree).basis().keys()]
+            CS = self.cohomology_raw(degree)
+            VS = CS.V()
+            CB = B.cohomology_raw(degree)
+            imagesphico = []
+            for g in imagesbcohom:
+                if g.is_zero():
+                    imagesphico.append(CS.zero())
+                else:
+                    imagesphico.append(CS(VS(g.basis_coefficients())))
+            phico = CB.hom(imagesphico, codomain=CS)
+            QI = CS.quotient(phico.image())
+            self._numerical_invariants[degree] = [QI.dimension()]
+            if QI.dimension() > 0:
+                nnames = ['x{}_{}'.format(degree, j)
+                          for j in range(QI.dimension())]
+                nbasis = []
+                bbasis = self.basis(degree)
+                for v in QI.basis():
+                    vl = CS.lift(QI.lift(v))
+                    g = sum(bbasis[j] * vl[j] for j in range(len(bbasis)))
+                    nbasis.append(g)
+                nimags = nbasis
+                ndegrees = [degree for _ in nbasis]
+                return extend(phi, ndegrees, [B.zero() for _ in nimags],
+                              nimags, nnames)
+            return phi
+
+        def extendy(phi, degree):
+            nnamesy = 0
+            for iteration in range(max_iterations):
+                B = phi.domain()
+                imagesbcohom = [phi(g.representative()) for g in
+                                B.cohomology(degree).basis().keys()]
+                CS = self.cohomology_raw(degree)
+                VS = CS.V()
+                CB = B.cohomology_raw(degree)
+                imagesphico = []
+                for g in imagesbcohom:
+                    if g.is_zero():
+                        imagesphico.append(CS.zero())
+                    else:
+                        imagesphico.append(CS(VS(g.basis_coefficients())))
+                phico = CB.hom(imagesphico, codomain=CS)
+                K = phico.kernel()
+                self._numerical_invariants[degree - 1].append(K.dimension())
+                if K.dimension() == 0:
+                    return phi
+                if iteration == max_iterations - 1:
+                    raise ValueError("could not cover all relations in max iterations in degree {}".format(degree))
+                ndifs = [CB.lift(g) for g in K.basis()]
+                basisdegree = B.basis(degree)
+                ndifs = [sum(basisdegree[j] * g[j] for j in
+                             range(len(basisdegree))) for g in ndifs]
+                MS = self.differential().differential_matrix(degree - 1)
+                nimags = []
+                for g in ndifs:
+                    if phi(g).is_zero():
+                        nimags.append(vector(MS.nrows() * [0]))
+                    else:
+                        nimags.append(MS.solve_left(vector(phi(g).basis_coefficients())))
+                nimags = [sum(self.basis(degree - 1)[j] * g[j]
+                              for j in range(len(self.basis(degree - 1)))
+                              ) for g in nimags]
+                ndegrees = [degree - 1 for g in nimags]
+                nnames = ['y{}_{}'.format(degree - 1, j + nnamesy)
+                          for j in range(len(nimags))]
+                nnamesy += len(nimags)
+                phi = extend(phi, ndegrees, ndifs, nimags, nnames)
+
+        if not self._minimalmodels:
+            degnzero = 1
+            while self.cohomology(degnzero).dimension() == 0:
+                self._numerical_invariants[degnzero] = [0]
+                degnzero += 1
+                if degnzero > max_degree:
+                    raise ValueError("cohomology is trivial up to max_degree")
+            gens = [g.representative()
+                    for g in self.cohomology(degnzero).basis().keys()]
+            self._numerical_invariants[degnzero] = [len(gens)]
+            names = ['x{}_{}'.format(degnzero, j) for j in range(len(gens))]
+            A = GradedCommutativeAlgebra(self.base_ring(),
+                                         names,
+                                         degrees=[degnzero for _ in names])
+            B = A.cdg_algebra(A.differential({}))
+            # Solve case that fails with one generator return B,gens
+            phi = B.hom(gens)
+            phi = extendy(phi, degnzero + 1)
+            self._minimalmodels[degnzero] = phi
+        else:
+            degnzero = max(self._minimalmodels)
+            phi = self._minimalmodels[degnzero]
+
+        for degree in range(degnzero + 1, max_degree + 1):
+            phi = extendx(phi, degree)
+            phi = extendy(phi, degree + 1)
+            self._minimalmodels[degree] = phi
+
+        return phi
+
+    def cohomology_algebra(self, max_degree=3):
+        """
+        Compute a CDGA with trivial differential, that is isomorphic to the cohomology of
+        self up to``max_degree``
+
+        INPUT:
+
+        - ``max_degree`` -- integer (default: `3`); degree to which the result is required to
+          be isomorphic to self's cohomology.
+
+        EXAMPLES::
+
+            sage: A.<e1, e2, e3, e4, e5, e6, e7> = GradedCommutativeAlgebra(QQ)
+            sage: d = A.differential({e1:-e1*e6, e2:-e2*e6, e3:-e3*e6, e4:-e5*e6, e5:e4*e6})
+            sage: B = A.cdg_algebra(d)
+            sage: M = B.cohomology_algebra()
+            sage: M
+            Commutative Differential Graded Algebra with generators ('x0', 'x1', 'x2') in degrees (1, 1, 2) over Rational Field with differential:
+               x0 --> 0
+               x1 --> 0
+               x2 --> 0
+            sage: M.cohomology(1)
+            Free module generated by {[x0], [x1]} over Rational Field
+            sage: B.cohomology(1)
+            Free module generated by {[e6], [e7]} over Rational Field
+            sage: M.cohomology(2)
+            Free module generated by {[x0*x1], [x2]} over Rational Field
+            sage: B.cohomology(2)
+            Free module generated by {[e4*e5], [e6*e7]} over Rational Field
+            sage: M.cohomology(3)
+            Free module generated by {[x0*x2], [x1*x2]} over Rational Field
+            sage: B.cohomology(3)
+            Free module generated by {[e4*e5*e6], [e4*e5*e7]} over Rational Field
+        """
+        cohomgens = self.cohomology_generators(max_degree)
+        if not cohomgens:
+            raise ValueError("Cohomology ring has no generators")
+        chgens = []
+        degrees = []
+        for d in cohomgens:
+            for g in cohomgens[d]:
+                degrees.append(d)
+                chgens.append(g)
+        A = GradedCommutativeAlgebra(self.base_ring(),
+                                     ['x{}'.format(i) for i in range(len(chgens))],
+                                     degrees)
+        rels = []
+        for d in range(1, max_degree + 1):
+            B1 = A.basis(d)
+            V2 = self.cohomology_raw(d)
+            images = []
+            for g in B1:
+                ig = g._im_gens_(self, chgens)
+                if ig.is_zero():
+                    images.append(V2.zero())
+                else:
+                    images.append(V2(V2.V()(ig.basis_coefficients())))
+            V1 = self.base_ring()**len(B1)
+            h = V1.hom(images, codomain=V2)
+            K = h.kernel()
+            for g in K.basis():
+                newrel = sum(g[i] * B1[i] for i in range(len(B1)))
+                rels.append(newrel)
+        return A.quotient(A.ideal(rels)).cdg_algebra({})
+
+    def numerical_invariants(self, max_degree=3, max_iterations=3):
+        r"""
+        Return the numerical invariants of the algebra, up to degree ``d``. The
+        numerical invariants reflect the number of generators added at each step
+        of the construction of the minimal model.
+
+        The numerical invariants are the dimensions of the subsequent Hirsch
+        extensions used at each degree to compute the minimal model.
+
+        INPUT:
+
+        - ``max_degree`` -- integer (default: `3`); the degree up to which the
+          numerical invariants are computed
+
+        - ``max_iterations`` -- integer (default: `3`); the maximum number of iterations
+          used to compute the minimal model, if it is not already cached
+
+        EXAMPLES::
+
+            sage: A.<e1, e2, e3> = GradedCommutativeAlgebra(QQ)
+            sage: B = A.cdg_algebra({e3 : e1*e2})
+            sage: B.minimal_model(4)
+            Commutative Differential Graded Algebra morphism:
+            From: Commutative Differential Graded Algebra with generators ('x1_0', 'x1_1', 'y1_0') in degrees (1, 1, 1) over Rational Field with differential:
+            x1_0 --> 0
+            x1_1 --> 0
+            y1_0 --> x1_0*x1_1
+            To:   Commutative Differential Graded Algebra with generators ('e1', 'e2', 'e3') in degrees (1, 1, 1) over Rational Field with differential:
+            e1 --> 0
+            e2 --> 0
+            e3 --> e1*e2
+            Defn: (x1_0, x1_1, y1_0) --> (e1, e2, e3)
+            sage: B.numerical_invariants(2)
+            {1: [2, 1, 0], 2: [0, 0]}
+
+        ALGORITHM:
+
+        The numerical invariants are stored as the minimal model is constructed.
+
+        .. WARNING::
+
+            The method is not granted to finish (it can't, since the minimal
+            model could be infinitely generated in some degrees).
+            The parameter ``max_iterations`` controls how many iterations of
+            the method are attempted at each degree. In case they are not
+            enough, an exception is raised. If you think that the result will
+            be finitely generated, you can try to run it again with a higher
+            value for ``max_iterations``.
+
+        REFERENCES:
+
+        For a precise definition and properties, see [Man2019]_ .
+
+        """
+        self.minimal_model(max_degree, max_iterations)
+        return {i: self._numerical_invariants[i]
+                for i in range(1, max_degree + 1)}
+
+    def is_formal(self, i, max_iterations=3):
+        r"""
+        Check if the algebra is ``i``-formal. That is, if it is ``i``-quasi-isomorphic
+        to its cohomology algebra.
+
+        INPUT:
+
+        - ``i`` -- integer; the degree up to which the formality is checked
+
+        - ``max_iterations`` -- integer (default: `3`); the maximum number of
+          iterations used in the computation of the minimal model
+
+        .. WARNING::
+
+            The method is not granted to finish (it can't, since the minimal
+            model could be infinitely generated in some degrees).
+            The parameter ``max_iterations`` controls how many iterations of
+            the method are attempted at each degree. In case they are not
+            enough, an exception is raised. If you think that the result will
+            be finitely generated, you can try to run it again with a higher
+            value for ``max_iterations``.
+
+            Moreover, the method uses criteria that are often enough to conclude
+            that the algebra is either formal or non-formal. However, it could
+            happen that the used criteria can not determine the formality. In
+            that case, an error is raised.
+
+        EXAMPLES::
+
+            sage: A.<e1, e2, e3, e4, e5> = GradedCommutativeAlgebra(QQ)
+            sage: B = A.cdg_algebra({e5 : e1*e2 + e3*e4})
+            sage: B.is_formal(1)
+            True
+            sage: B.is_formal(2)
+            False
+
+        ALGORITHM:
+
+        Apply the criteria in [Man2019]_ . Both the `i`-minimal model of the
+        algebra and its cohomology algebra are computed. If the numerical
+        invariants are different, the algebra is not `i`-formal.
+
+        If the numerical invariants match, the `\psi` condition is checked.
+        """
+        phi = self.minimal_model(i, max_iterations)
+        M = phi.domain()
+        H = M.cohomology_algebra(i + 1)
+        try:
+            H.minimal_model(i, max_iterations)
+        except ValueError:  # If we could compute the minimal model in max_iterations
+            return False    # but not for the cohomology, the invariants are distinct
+        N1 = self.numerical_invariants(i, max_iterations)
+        N2 = H.numerical_invariants(i, max_iterations)
+        if any(N1[n] != N2[n] for n in range(1, i + 1)):
+            return False    # numerical invariants don't match
+        subsdict = {y.lift(): 0 for y in M.gens() if not y.differential().is_zero()}
+        tocheck = [M(g.differential().lift().subs(subsdict)) for g in M.gens()]
+        if all(c.is_coboundary() for c in tocheck):
+            return True     # the morphism xi->[xi], yi->0 is i-quasi-iso
+        raise NotImplementedError("the implemented criteria cannot determine formality")
 
     class Element(GCAlgebra.Element):
         def differential(self):
@@ -2263,12 +2845,12 @@ class DifferentialGCAlgebra(GCAlgebra):
 
             EXAMPLES::
 
-                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees = (2, 3, 2, 4))
-                sage: B = A.cdg_algebra({t: x*y, x: y, z: y})
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees = (2, 2, 3, 4))
+                sage: B = A.cdg_algebra({t: x*z, x: z, y: z})
                 sage: B.inject_variables()
                 Defining x, y, z, t
                 sage: x.differential()
-                y
+                z
                 sage: (-1/2 * x^2 + t).differential()
                 0
             """
@@ -2340,14 +2922,107 @@ class DifferentialGCAlgebra(GCAlgebra):
             if other.is_zero():
                 return self.is_coboundary()
             if (not isinstance(other, DifferentialGCAlgebra.Element)
-                or self.parent() is not other.parent()):
-                raise ValueError('The element {} does not lie in this DGA'.format(other))
+               or self.parent() is not other.parent()):
+                raise ValueError('The element {} does not lie in this DGA'
+                                 .format(other))
             if (self - other).is_homogeneous():
                 return (self - other).is_coboundary()
             else:
                 return (self.is_coboundary() and other.is_coboundary())
 
-class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra, GCAlgebra_multigraded):
+        def cohomology_class(self):
+            r"""
+            Return the cohomology class of an homogeneous cycle, as an element
+            of the corresponding cohomology group.
+
+            EXAMPLES::
+
+                sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
+                sage: B = A.cdg_algebra({e5:e1*e2+e3*e4})
+                sage: B.inject_variables()
+                Defining e1, e2, e3, e4, e5
+                sage: a = e1*e3*e5-3*e2*e3*e5
+                sage: a.cohomology_class()
+                B[[e1*e3*e5]] - 3*B[[e2*e3*e5]]
+
+            TESTS::
+
+                sage: A.<a,b,c> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 3))
+                sage: B = A.cdg_algebra({a:b})
+                sage: B.inject_variables()
+                Defining a, b, c
+                sage: b.cohomology_class()
+                0
+                sage: b.cohomology_class().parent()
+                Free module generated by {} over Rational Field
+
+            Check that the issue detected in :trac:`28155` is solved::
+
+                sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
+                sage: B = A.cdg_algebra({e5:e1*e2+e3*e4})
+                sage: B.inject_variables()
+                Defining e1, e2, e3, e4, e5
+                sage: a = e1*e3*e5-3*e2*e3*e5
+                sage: ca = a.cohomology_class()
+                sage: C = B.cohomology(3)
+                sage: ca in C
+                True
+            """
+            if not self.is_homogeneous():
+                raise ValueError("The element is not homogeneous")
+            if not self.differential().is_zero():
+                raise ValueError("The element is not closed")
+            d = self.degree()
+            C = self.parent().cohomology(d)
+            CR = self.parent().cohomology_raw(d)
+            V = CR.V()
+            cohomcoefs = CR(V(self.basis_coefficients()))
+            return C.sum(a * b for (a, b) in zip(cohomcoefs, C.basis().values()))
+
+        def _cohomology_class_dict(self):
+            r"""
+            Return the dictionary that represents the cohomology class of
+            the cycle expressed in terms of the cohomology generators.
+
+            This can be used to map the cycle to the cohomology algebra.
+
+            EXAMPLES::
+
+                sage: A.<e1,e2,e3,e4,e5> = GradedCommutativeAlgebra(QQ)
+                sage: B = A.cdg_algebra({e5:e1*e2+e3*e4})
+                sage: a = B(e1*e3*e5-3*e2*e3*e5)
+                sage: a._cohomology_class_dict()
+                {(0, 0, 0, 0, 0, 0, 1, 0, 0): -3, (0, 0, 0, 0, 0, 1, 0, 0, 0): 1}
+                sage: H = B.cohomology_algebra(3)
+                sage: H(a._cohomology_class_dict())
+                x5 - 3*x6
+                sage: B.cohomology_generators(3)
+                {1: [e1, e2, e3, e4],
+                3: [e1*e2*e5 - e3*e4*e5, e1*e3*e5, e2*e3*e5, e1*e4*e5, e2*e4*e5]}
+                sage: [H(g._cohomology_class_dict()) for g in flatten(B.cohomology_generators(3).values())]
+                [x0, x1, x2, x3, x4, x5, x6, x7, x8]
+            """
+            from sage.misc.flatten import flatten
+            if not self.differential().is_zero():
+                raise ValueError("The element is not closed")
+            if not self.is_homogeneous():
+                res = {}
+                for d in self.homogeneous_parts().values():
+                    res.update(d._cohomology_class_dict())
+                return res
+            d = self.degree()
+            gens = flatten(self.parent().cohomology_generators(d).values())
+            ebasis = exterior_algebra_basis(d, tuple(g.degree() for g in gens))
+            gensd = [prod([gens[i]**b[i]
+                           for i in range(len(b))]) for b in ebasis]
+            m = matrix([g.cohomology_class()._vector_() for g in gensd])
+            coeffs = m.solve_left(self.cohomology_class()._vector_())
+            return {tuple(ebasis[i]): coeffs[i]
+                    for i in range(len(ebasis)) if coeffs[i]}
+
+
+class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
+                                        GCAlgebra_multigraded):
     """
     A commutative differential multi-graded algebras.
 
@@ -2364,7 +3039,7 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra, GCAlgebra_multigr
         sage: B.basis((1,0))
         [a]
         sage: B.basis(1, total=True)
-        [b, a]
+        [a, b]
         sage: B.cohomology((1, 0))
         Free module generated by {} over Rational Field
         sage: B.cohomology(1, total=True)
@@ -2475,7 +3150,7 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra, GCAlgebra_multigr
             sage: B.cocycles((0,1), total=True)
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
-            [1 0]
+            [0 1]
         """
         return self._differential.cocycles(n, total)
 
@@ -2514,7 +3189,7 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra, GCAlgebra_multigr
             Vector space quotient V/W of dimension 1 over Rational Field where
             V: Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
-            [1 0]
+            [0 1]
             W: Vector space of degree 2 and dimension 0 over Rational Field
             Basis matrix:
             []
@@ -2561,6 +3236,7 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra, GCAlgebra_multigr
 ################################################
 # Main entry point
 
+
 def GradedCommutativeAlgebra(ring, names=None, degrees=None, relations=None):
     r"""
     A graded commutative algebra.
@@ -2603,24 +3279,24 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, relations=None):
     As usual in Sage, the ``A.<...>`` notation defines both the
     algebra and the generator names::
 
-        sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 1))
+        sage: A.<x,y,z> = GradedCommutativeAlgebra(QQ, degrees=(1, 1, 2))
         sage: x^2
         0
-        sage: z*x # Odd classes anticommute.
-        -x*z
-        sage: z*y # y is central since it is in degree 2.
+        sage: y*x # Odd classes anticommute.
+        -x*y
+        sage: z*y # z is central since it is in degree 2.
         y*z
-        sage: (x*y**3*z).degree()
+        sage: (x*y*z**3).degree()
         8
         sage: A.basis(3) # basis of homogeneous degree 3 elements
-        [y*z, x*y]
+        [x*z, y*z]
 
     Defining a quotient::
 
-        sage: I = A.ideal(x*y)
+        sage: I = A.ideal(x*z)
         sage: AQ = A.quotient(I)
         sage: AQ
-        Graded Commutative Algebra with generators ('x', 'y', 'z') in degrees (1, 2, 1) with relations [x*y] over Rational Field
+        Graded Commutative Algebra with generators ('x', 'y', 'z') in degrees (1, 1, 2) with relations [x*z] over Rational Field
         sage: AQ.basis(3)
         [y*z]
 
@@ -2641,28 +3317,28 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, relations=None):
 
     Now we add a differential to ``AQ``::
 
-        sage: B = AQ.cdg_algebra({y:y*z})
+        sage: B = AQ.cdg_algebra({z:y*z})
         sage: B
-        Commutative Differential Graded Algebra with generators ('x', 'y', 'z') in degrees (1, 2, 1) with relations [x*y] over Rational Field with differential:
+        Commutative Differential Graded Algebra with generators ('x', 'y', 'z') in degrees (1, 1, 2) with relations [x*z] over Rational Field with differential:
             x --> 0
-            y --> y*z
-            z --> 0
+            y --> 0
+            z --> y*z
         sage: B.differential()
-        Differential of Commutative Differential Graded Algebra with generators ('x', 'y', 'z') in degrees (1, 2, 1) with relations [x*y] over Rational Field
+        Differential of Commutative Differential Graded Algebra with generators ('x', 'y', 'z') in degrees (1, 1, 2) with relations [x*z] over Rational Field
           Defn: x --> 0
-                y --> y*z
-                z --> 0
+                y --> 0
+                z --> y*z
         sage: B.cohomology(1)
-        Free module generated by {[z], [x]} over Rational Field
+        Free module generated by {[x], [y]} over Rational Field
         sage: B.cohomology(2)
-        Free module generated by {[x*z]} over Rational Field
+        Free module generated by {[x*y]} over Rational Field
 
     We compute algebra generators for cohomology in a range of
     degrees. This cohomology algebra appears to be finitely
     generated::
 
         sage: B.cohomology_generators(15)
-        {1: [z, x]}
+        {1: [x, y]}
 
     We can construct multi-graded rings as well. We work in characteristic 2
     for a change, so the algebras here are honestly commutative::
@@ -2681,7 +3357,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, relations=None):
     abelian groups to specify degrees::
 
         sage: D.basis(3) # basis in total degree 3
-        [d, a*c, a*b, a^3]
+        [a^3, a*b, a*c, d]
         sage: D.basis((1,2)) # basis in degree (1,2)
         [a*c]
         sage: D.basis([1,2])
@@ -2718,7 +3394,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, relations=None):
         sage: (a*b*c**2).degree(total=True)  # total degree
         7
         sage: D.cohomology(4)
-        Free module generated by {[b^2], [a^4]} over Finite Field of size 2
+        Free module generated by {[a^4], [b^2]} over Finite Field of size 2
         sage: D.cohomology((2,2))
         Free module generated by {[b^2]} over Finite Field of size 2
 
@@ -2744,6 +3420,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, relations=None):
         return GCAlgebra_multigraded(ring, names=names, degrees=degrees)
     else:
         return GCAlgebra(ring, names=names, degrees=degrees)
+
 
 ################################################
 # Morphisms
@@ -2851,6 +3528,17 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             Traceback (most recent call last):
             ...
             ValueError: the proposed morphism does not respect the differentials
+
+        In the case of only one generator, the cover ring is a polynomial ring,
+        hence the noncommutativity relations should not be checked::
+
+            sage: A.<e1> = GradedCommutativeAlgebra(QQ)
+            sage: A.cover_ring()
+            Multivariate Polynomial Ring in e1 over Rational Field
+            sage: A.hom([2*e1])
+            Graded Commutative Algebra endomorphism of Graded Commutative Algebra with generators ('e1',) in degrees (1,) over Rational Field
+              Defn: (e1,) --> (2*e1,)
+
         """
         domain = parent.domain()
         codomain = parent.codomain()
@@ -2868,16 +3556,17 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
                 raise ValueError('not all elements of im_gens are in '
                                  'the codomain')
             R = domain.cover_ring()
-            from_free = dict(zip(R.free_algebra().gens(), im_gens))
             from_R = dict(zip(R.gens(), im_gens))
-            # First check the nc-relations: x*y=-y*x for x, y in odd
-            # degrees. These are in the form of a dictionary, with
-            # typical entry left:right.
-            for left in R.relations():
-                zero = left.subs(from_free) - R.relations()[left].subs(from_R)
-                if zero:
-                    raise ValueError('the proposed morphism does not respect '
-                                     'the nc-relations')
+            if hasattr(R, 'free_algebra'):
+                from_free = dict(zip(R.free_algebra().gens(), im_gens))
+                # First check the nc-relations: x*y=-y*x for x, y in odd
+                # degrees. These are in the form of a dictionary, with
+                # typical entry left:right.
+                for left in R.relations():
+                    zero = left.subs(from_free) - R.relations()[left].subs(from_R)
+                    if zero:
+                        raise ValueError('the proposed morphism does not respect '
+                                         'the nc-relations')
             # Now check any extra relations, including x**2=0 for x in
             # odd degree. These are defined by a list of generators of
             # the defining ideal.
@@ -2888,8 +3577,8 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
                                      'the relations')
             # If the domain and codomain have differentials, check
             # those, too.
-            if (isinstance(domain, DifferentialGCAlgebra) and
-                isinstance(codomain, DifferentialGCAlgebra)):
+            if (isinstance(domain, DifferentialGCAlgebra)
+                    and isinstance(codomain, DifferentialGCAlgebra)):
                 dom_diff = domain.differential()
                 cod_diff = codomain.differential()
                 if any(cod_diff(self(g)) != self(dom_diff(g))
@@ -2932,7 +3621,7 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
         for mono, coeff in x.dict().items():
             term = prod([gen**y for (y, gen) in zip(mono, self.im_gens())],
                         codomain.one())
-            result += coeff*term
+            result += coeff * term
         return result
 
     def is_graded(self, total=False):
@@ -2968,10 +3657,10 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             sage: H([z,z]).is_graded(total=True)
             True
         """
-        return all(not y or # zero is always allowed as an image
-                   (y.is_homogeneous()
-                    and x.degree(total=total) == y.degree(total=total))
-                   for (x,y) in zip(self.domain().gens(), self.im_gens()))
+        return all(not y   # zero is always allowed as an image
+                   or (y.is_homogeneous()
+                       and x.degree(total=total) == y.degree(total=total))
+                   for (x, y) in zip(self.domain().gens(), self.im_gens()))
 
     def _repr_type(self):
         """
@@ -2986,8 +3675,8 @@ class GCAlgebraMorphism(RingHomomorphism_im_gens):
             sage: Hom(C,C)([x,0,0])._repr_type()
             'Commutative Differential Graded Algebra'
         """
-        if (isinstance(self.domain(), DifferentialGCAlgebra) and
-            isinstance(self.codomain(), DifferentialGCAlgebra)):
+        if (isinstance(self.domain(), DifferentialGCAlgebra)
+                and isinstance(self.codomain(), DifferentialGCAlgebra)):
             return "Commutative Differential Graded Algebra"
         return "Graded Commutative Algebra"
 
@@ -3054,7 +3743,7 @@ class GCAlgebraHomset(RingHomset_generic):
             True
         """
         return GCAlgebraMorphism(self, [self.codomain().zero()]
-                                       * self.domain().ngens())
+                                 * self.domain().ngens())
 
     @cached_method
     def identity(self):
@@ -3109,7 +3798,7 @@ class GCAlgebraHomset(RingHomset_generic):
 ################################################
 # Miscellaneous utility classes and functions
 
-class CohomologyClass(SageObject):
+class CohomologyClass(SageObject, CachedRepresentation):
     """
     A class for representing cohomology classes.
 
@@ -3121,7 +3810,7 @@ class CohomologyClass(SageObject):
         sage: from sage.algebras.commutative_dga import CohomologyClass
         sage: CohomologyClass(3)
         [3]
-        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees = (2,3,3,1))
+        sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees = (2,2,3,3))
         sage: CohomologyClass(x^2+2*y*z)
         [2*y*z + x^2]
     """
@@ -3181,6 +3870,8 @@ class CohomologyClass(SageObject):
         """
         return self._x
 
+
+@cached_function
 def exterior_algebra_basis(n, degrees):
     """
     Basis of an exterior algebra in degree ``n``, where the
@@ -3204,26 +3895,30 @@ def exterior_algebra_basis(n, degrees):
         sage: exterior_algebra_basis(10, (1,5,1,1))
         []
     """
-    zeroes = [0]*len(degrees)
-    if not degrees:
-        if n == 0:
-            return [zeroes]
-        else:
-            return []
+    if n == 0:
+        return [[0 for j in degrees]]
     if len(degrees) == 1:
-        if n == degrees[0]:
+        if degrees[0] == n:
             return [[1]]
-        elif n == 0:
-            return [zeroes]
         else:
             return []
-    result = [[0] + v for
-              v in exterior_algebra_basis(n, degrees[1:])]
-    if n == 0 and zeroes not in result:
-        result += [zeroes]
-    d = degrees[0]
-    return result + [[1] + v for
-                     v in exterior_algebra_basis(n-d, degrees[1:])]
+    if not degrees:
+        return []
+    if min(degrees) > n:
+        return []
+    if sum(degrees) < n:
+        return []
+    if sum(degrees) == n:
+        return [[1 for j in degrees]]
+    i = len(degrees) // 2
+    res = []
+    for j in range(n + 1):
+        v1 = exterior_algebra_basis(j, degrees[:i])
+        v2 = exterior_algebra_basis(n - j, degrees[i:])
+        res += [l1 + l2 for l1 in v1 for l2 in v2]
+    res.sort()
+    return res
+
 
 def total_degree(deg):
     """
@@ -3256,4 +3951,3 @@ def total_degree(deg):
     if deg in ZZ:
         return deg
     return sum(deg)
-

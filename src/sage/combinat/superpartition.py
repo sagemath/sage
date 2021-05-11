@@ -73,8 +73,6 @@ REFERENCES:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from __future__ import print_function, absolute_import, division
-from six import add_metaclass
 
 from functools import reduce
 
@@ -92,8 +90,8 @@ from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 
 
 @richcmp_method
-@add_metaclass(InheritComparisonClasscallMetaclass)
-class SuperPartition(ClonableArray):
+class SuperPartition(ClonableArray,
+        metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A super partition.
 

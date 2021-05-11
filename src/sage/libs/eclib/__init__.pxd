@@ -1,5 +1,9 @@
 # distutils: language = c++
-# distutils: libraries = ec ntl pari gmp m
+# distutils: libraries = ec NTL_LIBRARIES pari gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 
 
 from libcpp.map cimport map
@@ -141,7 +145,7 @@ cdef extern from "eclib/newforms.h":
 
         newforms(long n, int disp)
 
-        void createfromcurve(int sign, CurveRed CR)
+        void createfromcurve(int sign, CurveRed CR, int nap)
         void display()
         # Here i is the index of the relevant newform in the space,
         # which for us will always be 0:

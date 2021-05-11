@@ -1,0 +1,82 @@
+# Sometimes, ECL gives interactive prompts when something goes wrong
+# during the build. Avoid this by redirecting stdin from /dev/null.
+# See http://trac.sagemath.org/sage_trac/ticket/11884#comment:34
+exec </dev/null
+
+
+# We don't have to set up CFLAGS etc., since these are taken from ECL
+# (i.e., ECL uses the ones that were specified when ECL was built).
+# We unset them to avoid passing another copy to the linker,
+# which is overquoted in some cases, see Trac #29606.
+unset CFLAGS
+unset LDFLAGS
+
+# workaround for configure braindamage, see Trac #15546
+export EMACS=no
+
+
+cd src/
+
+# Use newer version of config.guess and config.sub (see Trac #19734)
+cp "$SAGE_ROOT"/config/config.* .
+
+# Note that maxima configure checks for git and, if it finds it, uses
+# versions information from the repo. See #15529. We disable this with
+# git_found=false
+
+echo
+echo "Now configuring Maxima..."
+sdh_configure --enable-ecl git_found=false
+
+# Note the following is regression in maxima build system
+# see https://sourceforge.net/p/maxima/bugs/3278/
+# and https://sourceforge.net/p/maxima/bugs/2878/
+# For the previous time it was fixed.
+#---------------------------------------------------------------
+# Touching html and info file to avoid to regenerate them.
+# This must be done after configuration since the timestamp need
+# to be later than include-maxima.texi which is generated at
+# configuration time
+for i in doc/info/*.html ; do
+    touch "${i}"
+done
+touch doc/info/maxima.info*
+# Maxima 5.44.0 build_html.sh is not compatible with makeinfo 4.8
+# (which is /usr/bin/makeinfo on macOS).  #30063
+# Do not build the HTML docs unless the user asks for it,
+# in which case it is their problem to install a better
+# makeinfo version.
+if [[ "$SAGE_SPKG_INSTALL_DOCS" != yes ]] ; then
+touch doc/info/maxima_toc.html interfaces/xmaxima/doc/xmaxima.html
+fi
+
+#---------------------------------------------------------------
+
+sdh_make
+sdh_make_install
+
+
+# Install Maxima into ECL's library directory:
+ecl -eval '(WITH-OPEN-FILE (f "ecllib" :DIRECTION :OUTPUT :IF-EXISTS :SUPERSEDE) (FORMAT f "~A~%" (SI:GET-LIBRARY-PATHNAME)))' -eval '(QUIT)'
+ECLLIB=$(cat ecllib)
+echo
+echo "Now installing the Maxima library as '$ECLLIB/maxima.fas'..."
+cp -f "src/binary-ecl/maxima.fas" "$ECLLIB/maxima.fas" \
+    || sdh_die "Failed to install 'src/binary-ecl/maxima.fas' as '$ECLLIB/maxima.fas'."
+
+
+if [[ "$SAGE_SPKG_INSTALL_DOCS" = yes ]] ; then
+    # Install a copy of the Maxima HTML documentation locally.
+
+    # The Maxima HTML docs are already built, we just need to copy
+    # them to the sage installation.
+    MAXIMA_DOCS=$SAGE_SHARE/doc/maxima
+    MAXIMA_FIGURES=$MAXIMA_DOCS/figures
+
+    mkdir -p $MAXIMA_FIGURES
+
+    # The HTML documentation only uses the GIF figures, not the PDF
+    # ones.
+    cp doc/info/*.html        $MAXIMA_DOCS
+    cp doc/info/figures/*.gif $MAXIMA_FIGURES
+fi

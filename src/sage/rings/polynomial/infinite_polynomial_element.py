@@ -88,13 +88,13 @@ finite polynomial rings are merged with infinite polynomial rings::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from six.moves import range
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp
 from sage.misc.cachefunc import cached_method
+from sage.rings.polynomial.multi_polynomial_element import is_MPolynomial
 import copy
 
 
@@ -150,12 +150,13 @@ def InfinitePolynomial(A, p):
         alpha_2^2 + 2*alpha_2*alpha_1 + alpha_1^2
 
     In the sparse implementation, it is not checked whether the
-    polynomial really belongs to the parent::
+    polynomial really belongs to the parent, and when it does not,
+    the results may be unexpected due to coercions::
 
         sage: Y.<alpha,beta> = InfinitePolynomialRing(GF(2), implementation='sparse')
         sage: a = (alpha_1+alpha_2)^2
         sage: InfinitePolynomial(Y, a)
-        alpha_1^2 + 2*alpha_1*alpha_2 + alpha_2^2
+        alpha_0^2 + beta_0^2
 
     However, it is checked when doing a conversion::
 
@@ -183,7 +184,7 @@ def InfinitePolynomial(A, p):
                     try:
                         return InfinitePolynomial_dense(A, f(p))
                     except (ValueError, TypeError):
-                        # last desparate attempt: String conversion
+                        # last desperate attempt: String conversion
                         from sage.misc.sage_eval import sage_eval
                         from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
                         # the base ring may be a function field, therefore
@@ -191,12 +192,12 @@ def InfinitePolynomial(A, p):
                         return InfinitePolynomial_dense(A, sage_eval(repr(p), GenDictWithBasering(A._P, A._P.gens_dict())))
                 return InfinitePolynomial_dense(A, A._P(p))
             # there is no coercion, so, we set up a name-preserving map.
-            SV = set([repr(x) for x in p.variables()])
+            SV = set(repr(x) for x in p.variables())
             f = PP.hom([x if x in SV else 0 for x in PP.variable_names()], A._P)
             try:
                 return InfinitePolynomial_dense(A, f(p))
             except (ValueError, TypeError):
-                # last desparate attempt: String conversion
+                # last desperate attempt: String conversion
                 from sage.misc.sage_eval import sage_eval
                 from sage.rings.polynomial.infinite_polynomial_ring import GenDictWithBasering
                 # the base ring may be a function field, therefore
@@ -242,6 +243,15 @@ class InfinitePolynomial_sparse(RingElement):
             True
 
         """
+
+        # Despite the above comment, it can still happen that p is in
+        # the wrong ring and we get here without going through
+        # _element_constructor_.  See trac 22514 for examples.
+        # So a little extra checking is done here.
+        if not is_MPolynomial(p) or p.base_ring() is not A.base_ring():
+            # coerce to a convenient multivariate polynomial ring
+            p = A._minP(p)
+
         self._has_footprint = False
         self._footprint = {}
         self._p = p
@@ -756,15 +766,14 @@ class InfinitePolynomial_sparse(RingElement):
     # order, leading term/monomial, symmetric cancellation order
 
     def _richcmp_(self, x, op):
-        """
+        r"""
         Comparison of Infinite Polynomials.
 
         NOTE:
 
         Let x and y be generators of the parent of self. We only consider
-        monomial orderings in which
-            x[m] > y[n] iff x appears earlier in the list of generators than y, or
-                            x==y and m>n
+        monomial orderings in which x[m] > y[n] iff x appears earlier in the
+        list of generators than y, or x==y and m>n
 
         Under this restriction, the monomial ordering can be 'lex' (default),
         'degrevlex' or 'deglex'.
@@ -790,8 +799,7 @@ class InfinitePolynomial_sparse(RingElement):
         A classical and an infinite sparse polynomial ring. Note that
         the Sage coercion system allows comparison only if a common
         parent for the two rings can be constructed. This is why we
-        have to have the order 'degrevlex'.
-        ::
+        have to have the order 'degrevlex'::
 
             sage: X.<x,y> = InfinitePolynomialRing(ZZ,order='degrevlex', implementation='sparse')
             sage: Y.<z,x_3,x_1> = QQ[]
@@ -1277,7 +1285,7 @@ class InfinitePolynomial_sparse(RingElement):
 
     ## Further methods
     def stretch(self, k):
-        """
+        r"""
         Stretch ``self`` by a given factor.
 
         INPUT:
@@ -1286,7 +1294,7 @@ class InfinitePolynomial_sparse(RingElement):
 
         OUTPUT:
 
-        Replace `v_n` with `v_{n\\cdot k}` for all generators `v_\\ast` occurring in self.
+        Replace `v_n` with `v_{n\cdot k}` for all generators `v_\ast` occurring in self.
 
         EXAMPLES::
 
@@ -1389,8 +1397,8 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
             return res
 
     def _richcmp_(self, x, op):
-        """
-        TESTS::
+        r"""
+        TESTS:
 
         A classical and an infinite polynomial ring::
 
@@ -1554,4 +1562,3 @@ class InfinitePolynomial_dense(InfinitePolynomial_sparse):
 
         # else, n is supposed to be an integer
         return InfinitePolynomial_dense(self.parent(), self._p**n)
-

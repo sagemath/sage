@@ -6,15 +6,15 @@ AUTHORS:
 - David Kohel & William Stein (2005): initial revision
 - Nicolas M. Thiery (2008-2011): rewrote for the category framework
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #                2008-2011 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
@@ -23,8 +23,8 @@ from sage.categories.cartesian_product import CartesianProductsCategory
 from sage.categories.quotients import QuotientsCategory
 from sage.categories.dual import DualObjectsCategory
 from sage.categories.tensor import TensorProductsCategory
-from sage.categories.subobjects import SubobjectsCategory
 from sage.categories.associative_algebras import AssociativeAlgebras
+
 
 class Algebras(CategoryWithAxiom_over_base_ring):
     r"""
@@ -108,15 +108,41 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             from sage.categories.semisimple_algebras import SemisimpleAlgebras
             return self & SemisimpleAlgebras(self.base_ring())
 
-    Commutative = LazyImport('sage.categories.commutative_algebras', 'CommutativeAlgebras', at_startup=True)
-    Filtered    = LazyImport('sage.categories.filtered_algebras',    'FilteredAlgebras')
-    Graded      = LazyImport('sage.categories.graded_algebras',      'GradedAlgebras')
-    Super       = LazyImport('sage.categories.super_algebras',       'SuperAlgebras')
+        @cached_method
+        def Supercommutative(self):
+            r"""
+            Return the full subcategory of the supercommutative objects
+            of ``self``.
+
+            This is shorthand for creating the corresponding super category.
+
+            EXAMPLES::
+
+                sage: Algebras(ZZ).Supercommutative()
+                Category of supercommutative algebras over Integer Ring
+                sage: Algebras(ZZ).WithBasis().Supercommutative()
+                Category of supercommutative super algebras with basis over Integer Ring
+
+                sage: Cat = Algebras(ZZ).Supercommutative()
+                sage: Cat is Algebras(ZZ).Super().Supercommutative()
+                True
+            """
+            return self.Super().Supercommutative()
+
+    Commutative = LazyImport('sage.categories.commutative_algebras',
+                             'CommutativeAlgebras', at_startup=True)
+    Filtered = LazyImport('sage.categories.filtered_algebras',
+                          'FilteredAlgebras')
+    Graded = LazyImport('sage.categories.graded_algebras',
+                        'GradedAlgebras')
+    Super = LazyImport('sage.categories.super_algebras',
+                       'SuperAlgebras')
     # at_startup currently needed for MatrixSpace, see #22955 (e.g., comment:20)
-    WithBasis   = LazyImport('sage.categories.algebras_with_basis',  'AlgebrasWithBasis',
-                             at_startup=True)
-    #if/when Semisimple becomes an axiom
-    Semisimple  = LazyImport('sage.categories.semisimple_algebras',  'SemisimpleAlgebras')
+    WithBasis = LazyImport('sage.categories.algebras_with_basis',
+                           'AlgebrasWithBasis', at_startup=True)
+    # if/when Semisimple becomes an axiom
+    Semisimple = LazyImport('sage.categories.semisimple_algebras',
+                            'SemisimpleAlgebras')
 
     class ElementMethods:
         # TODO: move the content of AlgebraElement here or higher in the category hierarchy
@@ -196,7 +222,6 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             """
             return [self.base_category()]
 
-
     class TensorProducts(TensorProductsCategory):
         @cached_method
         def extra_super_categories(self):
@@ -214,9 +239,9 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             return [self.base_category()]
 
         class ParentMethods:
-            #def coproduct(self):
-            #    tensor products of morphisms are not yet implemented
-            #    return tensor(module.coproduct for module in self.modules)
+            # def coproduct(self):
+            #     tensor products of morphisms are not yet implemented
+            #     return tensor(module.coproduct for module in self.modules)
             pass
 
         class ElementMethods:
@@ -226,7 +251,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
 
         def extra_super_categories(self):
             r"""
-            Returns the dual category
+            Return the dual category
 
             EXAMPLES:
 

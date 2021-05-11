@@ -8,9 +8,9 @@ is a standard part of Sage (and includes the extra data files).
 
 .. note::
 
-   Each call to ``sympow`` runs a complete
-   ``sympow`` process. This incurs about 0.2 seconds
-   overhead.
+    Each call to ``sympow`` runs a complete
+    ``sympow`` process. This incurs about 0.2 seconds
+    overhead.
 
 AUTHORS:
 
@@ -19,7 +19,6 @@ AUTHORS:
 - William Stein (2006-03-05): wrote Sage interface
 
 ACKNOWLEDGEMENT (from sympow readme):
-
 
 -  The quad-double package was modified from David Bailey's
    package: http://crd.lbl.gov/~dhbailey/mpdist/
@@ -44,15 +43,16 @@ ACKNOWLEDGEMENT (from sympow readme):
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
-from __future__ import print_function, absolute_import
 
 import os
 
 from sage.structure.sage_object import SageObject
-from sage.misc.all import pager, verbose
+from sage.misc.all import pager
+from sage.misc.verbose import verbose
 import sage.rings.all
+
 
 class Sympow(SageObject):
     r"""
@@ -68,7 +68,7 @@ class Sympow(SageObject):
     """
     def _repr_(self):
         """
-        Returns a string describing this calculator module
+        Return a string describing this calculator module
         """
         return "Watkins Symmetric Power L-function Calculator"
 
@@ -76,8 +76,9 @@ class Sympow(SageObject):
         """
         Used to call sympow with given args
         """
-        cmd = 'sympow %s'%args
-        v = os.popen(cmd).read().strip()
+        cmd = 'sympow %s' % args
+        with os.popen(cmd) as f:
+            v = f.read().strip()
         verbose(v, level=2)
         return v
 
@@ -85,11 +86,11 @@ class Sympow(SageObject):
         w = err
         j = w.rfind('./sympow')
         if j != -1:
-            w = w[:j-1] + "sympow('" + w[j+9:] + ')'
+            w = w[:j - 1] + "sympow('" + w[j + 9:] + ')'
         return w
 
     def _curve_str(self, E):
-        return '-curve "%s"'%(str(list(E.minimal_model().a_invariants())).replace(' ',''))
+        return '-curve "%s"' % (str(list(E.minimal_model().a_invariants())).replace(' ', ''))
 
     def L(self, E, n, prec):
         r"""
@@ -140,19 +141,18 @@ class Sympow(SageObject):
             1.05759924459096
         """
         if n % 2 == 1:
-            raise ValueError("n (=%s) must be even"%n)
+            raise ValueError("n (=%s) must be even" % n)
         if prec > 64:
-            raise ValueError("prec (=%s) must be at most 64"%prec)
+            raise ValueError("prec (=%s) must be at most 64" % prec)
         if prec < 1:
-            raise ValueError("prec (=%s) must be at least 1"%prec)
-        v = self('-sp %sp%s %s'%(n, prec, self._curve_str(E)))
+            raise ValueError("prec (=%s) must be at least 1" % prec)
+        v = self('-sp %sp%s %s' % (n, prec, self._curve_str(E)))
         i = v.rfind(': ')
         if i == -1:
             print(self._fix_err(v))
             raise RuntimeError("failed to compute symmetric power")
-        x = v[i+2:]
+        x = v[i + 2:]
         return x
-
 
     def Lderivs(self, E, n, prec, d):
         r"""
@@ -194,10 +194,10 @@ class Sympow(SageObject):
              1w2: 3.414818600982502E-02
         """
         if prec > 64:
-            raise ValueError("prec (=%s) must be at most 64"%prec)
+            raise ValueError("prec (=%s) must be at most 64" % prec)
         if prec < 1:
-            raise ValueError("prec (=%s) must be at least 1"%prec)
-        v = self('-sp %sp%sd%s %s'%(n, prec, d, self._curve_str(E)))
+            raise ValueError("prec (=%s) must be at least 1" % prec)
+        v = self('-sp %sp%sd%s %s' % (n, prec, d, self._curve_str(E)))
         return self._fix_err(v)
 
     def modular_degree(self, E):
@@ -231,13 +231,13 @@ class Sympow(SageObject):
             sage: sympow.modular_degree(EllipticCurve([1, -1, 0, -79, 289]))
             334976
         """
-        v = self('%s -moddeg'%self._curve_str(E))
+        v = self('%s -moddeg' % self._curve_str(E))
         s = 'Modular Degree is '
         i = v.find(s)
         if i == -1:
             print(self._fix_err(v))
             raise RuntimeError("failed to compute modular degree")
-        return sage.rings.all.Integer(v[i+len(s):])
+        return sage.rings.all.Integer(v[i + len(s):])
 
     def analytic_rank(self, E):
         r"""
@@ -289,16 +289,16 @@ class Sympow(SageObject):
             sage: sympow.analytic_rank(EllipticCurve([0, 0, 0, -10012, 346900]))  # long time
             (7, '1.32517e+03')
         """
-        v = self('%s -analrank'%self._curve_str(E))
+        v = self('%s -analrank' % self._curve_str(E))
         s = 'Analytic Rank is '
         i = v.rfind(s)
         if i == -1:
             print(self._fix_err(v))
             raise RuntimeError("failed to compute analytic rank")
         j = v.rfind(':')
-        r = sage.rings.all.Integer(v[i+len(s):j])
+        r = sage.rings.all.Integer(v[i + len(s):j])
         i = v.rfind(' ')
-        L = v[i+1:]
+        L = v[i + 1:]
         return r, L
 
     def new_data(self, n):
@@ -434,9 +434,5 @@ Other options are used internally/recursively by -new_data
         pager()(h)
 
 
-
-
 # An instance
 sympow = Sympow()
-
-

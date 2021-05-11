@@ -53,8 +53,6 @@ AUTHORS:
 - Vincent Delecroix (November 2013): additional methods
 
 """
-from __future__ import print_function
-from six.moves import range
 
 from sage.misc.abstract_method import abstract_method
 from sage.misc.fast_methods import WithEqualityById
@@ -144,7 +142,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
 
             sage: R.<x,y> = GF(2).algebraic_closure()[]
             sage: x.resultant(y)
-            -y
+            y
         """
         # TODO: this is *very* slow
         # NOTE: the hash of a generator (e.g. z2, z3, ...) is always the
@@ -504,19 +502,20 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
                To:   Algebraic closure of Finite Field of size 5
                Defn: z2 |--> z2)
 
-        There is currently no automatic conversion between the various
+        There are automatic coercions between the various
         subfields::
 
             sage: a = K.gen(2) + 1
             sage: _,b,_ = a.as_finite_field_element()
             sage: K4 = K.subfield(4)[0]
             sage: K4(b)
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to coerce from a finite field other than the prime
-            subfield
+            z4^3 + z4^2 + z4 + 4
+            sage: b.minimal_polynomial() == K4(b).minimal_polynomial()
+            True
+            sage: K(K4(b)) == K(b)
+            True
 
-        Nevertheless it is possible to use the inclusions that are implemented at
+        You can also use the inclusions that are implemented at
         the level of the algebraic closure::
 
             sage: f = K.inclusion(2,4); f
@@ -766,6 +765,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             from sage.rings.finite_rings.finite_field_constructor import FiniteField
             return FiniteField(self.base_ring().cardinality() ** n,
                                name=self.variable_name() + str(n),
+                               prefix=self.variable_name(),
                                modulus=self._get_polynomial(n),
                                check_irreducible=False)
 
@@ -974,7 +974,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         roots = []    # a list of pair (root,multiplicity)
         while polys:
             g,m,l,phi = polys.pop()
-        
+
             if g.degree() == 1: # found a root
                 r = phi(-g.constant_coefficient())
                 roots.append((r,m))

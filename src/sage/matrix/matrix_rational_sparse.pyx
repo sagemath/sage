@@ -1,5 +1,5 @@
 """
-Sparse rational matrices.
+Sparse rational matrices
 
 AUTHORS:
 
@@ -23,8 +23,6 @@ TESTS::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
-from __future__ import absolute_import
 
 from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport check_calloc, sig_free
@@ -56,7 +54,7 @@ import sage.matrix.matrix_space
 from .matrix_integer_sparse cimport Matrix_integer_sparse
 from .matrix_rational_dense cimport Matrix_rational_dense
 
-from sage.misc.misc import verbose
+from sage.misc.verbose import verbose
 
 cdef class Matrix_rational_sparse(Matrix_sparse):
     def __cinit__(self):
@@ -105,6 +103,19 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
         return x
 
+    cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j):
+        """
+        Return 1 if the entry ``(i, j)`` is zero, otherwise 0.
+
+        EXAMPLES::
+
+            sage: M = matrix(QQ, [[0,1,0],[0,0,0]], sparse=True)
+            sage: M.zero_pattern_matrix()  # indirect doctest
+            [1 0 1]
+            [1 1 1]
+        """
+        return mpq_vector_is_entry_zero_unsafe(&self._matrix[i], j)
+
     def add_to_entry(self, Py_ssize_t i, Py_ssize_t j, elt):
         r"""
         Add ``elt`` to the entry at position ``(i, j)``.
@@ -149,7 +160,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     #   * cdef _add_
     #   * cdef _sub_
     #   * cdef _mul_
-    #   * cpdef _cmp_
+    #   * cpdef _richcmp_
     #   * __neg__
     #   * __invert__
     #   * __copy__
@@ -165,26 +176,33 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         cdef mpq_vector* v
 
         # Build a table that gives the nonzero positions in each column of right
-        nonzero_positions_in_columns = [set([]) for _ in range(right._ncols)]
+        cdef list nonzero_positions_in_columns = [set() for _ in range(right._ncols)]
         cdef Py_ssize_t i, j, k
-        for i from 0 <= i < right._nrows:
+        for i in range(right._nrows):
             v = &(right._matrix[i])
-            for j from 0 <= j < right._matrix[i].num_nonzero:
-                nonzero_positions_in_columns[v.positions[j]].add(i)
+            for j in range(v.num_nonzero):
+                (<set> nonzero_positions_in_columns[v.positions[j]]).add(i)
+        # pre-computes the list of nonzero columns of right
+        cdef list right_indices
+        right_indices = [j for j in range(right._ncols)
+                         if nonzero_positions_in_columns[j]]
 
         ans = self.new_matrix(self._nrows, right._ncols)
 
         # Now do the multiplication, getting each row completely before filling it in.
+        cdef set c
         cdef mpq_t x, y, s
         mpq_init(x)
         mpq_init(y)
         mpq_init(s)
-        for i from 0 <= i < self._nrows:
-            v = &self._matrix[i]
-            for j from 0 <= j < right._ncols:
+        for i in range(self._nrows):
+            v = &(self._matrix[i])
+            if not v.num_nonzero:
+                continue
+            for j in right_indices:
                 mpq_set_si(s, 0, 1)
-                c = nonzero_positions_in_columns[j]
-                for k from 0 <= k < v.num_nonzero:
+                c = <set> nonzero_positions_in_columns[j]
+                for k in range(v.num_nonzero):
                     if v.positions[k] in c:
                         mpq_vector_get_entry(y, &right._matrix[v.positions[k]], j)
                         mpq_mul(x, v.entries[k], y)
@@ -257,7 +275,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     # def _unpickle(self, data, int version):   # use version >= 0
     # cpdef _add_(self, right):
     # cdef _mul_(self, Matrix right):
-    # cpdef int _cmp_(self, Matrix right) except -2:
+    # cpdef _richcmp_(self, Matrix right, int op):
     # def __neg__(self):
     # def __invert__(self):
     # def __copy__(self):
@@ -267,7 +285,8 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
 # TODO
 ##     cpdef _lmul_(self, Element right):
 ##         """
-##         EXAMPLES:
+##         EXAMPLES::
+##
 ##             sage: a = matrix(QQ,2,range(6))
 ##             sage: (3/4) * a
 ##             [   0  3/4  3/2]

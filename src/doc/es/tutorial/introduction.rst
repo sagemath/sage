@@ -3,9 +3,9 @@ Introducción
 ************
 
 Completar este tutorial debería llevarte unas 3 o 4 horas. Puedes leerlo en versión HTML o PDF, o desde el
-notebook (interfaz interactiva vía web) de Sage (Haz click en ``Help``, luego haz click en ``Tutorial`` para trabajar interactivamente en el tutorial desde dentro de Sage).
+notebook (interfaz interactiva vía web) de Sage (haz click en ``Help``, luego haz click en ``Tutorial`` para trabajar interactivamente en el tutorial desde dentro de Sage).
 
-Aunque gran parte de Sage está implementado usando el lenguaje de programación
+Aunque gran parte de Sage está implementada usando el lenguaje de programación
 Python, no es necesario ningún conocimiento previo de Python para poder leer este tutorial.
 En algún punto seguramente querrás aprender Python (¡un lenguaje muy divertido!), y hay muchos
 recursos gratuitos excelentes para hacerlo, incluyendo [PyT]_ y [Dive]_.
@@ -56,7 +56,7 @@ Instalación
 ============
 
 Si no tienes instalado Sage en tu computador y sólo quieres
-probar algunos comandos, usa la versión en linea en http://sagecell.sagemath.org.
+probar algunos comandos, usa la versión en línea en http://sagecell.sagemath.org.
 
 Mira la Guía De Instalación Para Sage en la sección de documentación de la
 página web principal de [Sage]_ para obtener instrucciones sobre cómo instalar
@@ -68,12 +68,8 @@ Sage en tu computador. Aquí hacemos simplemente dos comentarios:
    Maxima, NTL, GMP, etc., no necesitas instalarlos por separado
    pues ya están incluidos con la distribución de Sage.
    Sin embargo, para utilizar ciertas características de Sage, por ejemplo,
-   Macaulay o KASH, debes
-   instalar el paquete opcional relevante o al menos tener los programas
-   pertinentes ya instalados en tu computador. Macaulay y KASH son
-   paquetes opcionales de Sage (para una lista de los paquetes opcionales
-   disponibles, teclea ``sage -optional``, o navega por la página de descarga
-   "Download" en el sitio web de Sage).
+   Macaulay o KASH, debes tener los programas
+   pertinentes ya instalados en tu computador.
 
 #. La versión binaria precompilada de Sage (que se encuentra en el
    sitio web de Sage) puede ser más rápida y fácil de instalar que la
@@ -84,7 +80,7 @@ Sage en tu computador. Aquí hacemos simplemente dos comentarios:
    los resultados de tus cálculos con Sage en un archivo LaTeX),
    necesitarás hacerle conocer SageTeX a tu distribución de TeX.
    Para hacer esto, consulta la sección
-   "Haciendo que TeX conozca a SageTeX" en la guía de intalación de Sage
+   "Haciendo que TeX conozca a SageTeX" en la guía de instalación de Sage
    `Sage installation guide <http://doc.sagemath.org/html/en/installation/index.html>`_
    (`Este enlace
    <../../en/installation/index.html>`_ debería llevarte a tu copia
@@ -104,9 +100,8 @@ Formas de usar Sage
 Puedes usar Sage de varias maneras.
 
 
--  **Interfáz gráfico del Notebook:** Permite usar Sage en forma interactiva
-   desde el navegador web. Véase la sección que trata sobre el
-   Notebook en el manual de referencia,
+-  **Interfaz gráfico del Notebook:** iniciar `sage -n jupyter`; leer
+   `Jupyter documentation on-line <https://jupyter-notebook.readthedocs.io/en/latest/notebook.html>`_,
 
 -  **Línea de comandos interactiva:**,
 
@@ -133,7 +128,7 @@ Metas a largo plazo de Sage
    libremente disponible, de modo que los usuarios puedan entender qué está
    haciendo realmente el sistema y así poder extenderlo fácilmente. Tal como los matemáticos logran
    un entendimiento más profundo de un teorema al leerlo cuidadosamente o, por lo
-   ménos, al echarle una ojeada a la prueba, la gente que efectúa cálculos debe ser capaz de comprender
+   menos, al echarle una ojeada a la prueba, la gente que efectúa cálculos debe ser capaz de comprender
    cómo funcionan los cálculos leyendo el código fuente documentado.
    Si utilizas Sage para hacer cálculos en un artículo que vas a publicar,
    puedes estar seguro que tus lectores siempre tendrán libre acceso
@@ -156,7 +151,7 @@ Metas a largo plazo de Sage
 -  **Extensible:** Debe ser posible definir nuevos tipos de datos o derivar de
    tipos incorporados y utilizar código escrito en una amplia gama de lenguajes.
 
--  **Fácil de usar**: Debe de ser fácil comprender qué
+-  **Fácil de usar**: Debe de ser fácil comprender cual
    funcionalidad se ha provisto para un objeto dado y examinar
    la documentación y el código fuente, así como alcanzar un alto nivel
    de soporte al usuario.
@@ -166,4 +161,4 @@ Metas a largo plazo de Sage
 
 .. [PyT] El Tutorial De Python, http://www.python.org/
 
-.. [Sage] Sage, http://www.sagemath.org
+.. [Sage] Sage, https://www.sagemath.org

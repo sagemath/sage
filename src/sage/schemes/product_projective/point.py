@@ -270,26 +270,22 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         ::
 
             sage: PP = ProductProjectiveSpaces(ZZ, [1, 2])
-            sage: hash(PP([1, 1, 2, 2, 2]))
-            805439612                            # 32-bit
-            7267864846446758012                  # 64-bit
-            sage: hash(PP([1, 1, 1, 1, 1]))
-            805439612                            # 32-bit
-            7267864846446758012                  # 64-bit
+            sage: hash(PP([1, 1, 2, 2, 2])) == hash(PP([1, 1, 1, 1, 1]))
+            True
 
         ::
 
             sage: PP = ProductProjectiveSpaces(QQ, [1, 1])
-            sage: hash(PP([1/7, 1, 2, 1]))
-            1139616004                          # 32-bit
-            -7585172175017137916                # 64-bit
+            sage: hash(PP([1/7, 1, 2, 1])) == hash((1/7, 1, 2, 1))
+            True
 
         ::
 
             sage: PP = ProductProjectiveSpaces(GF(7), [1, 1, 1])
-            sage: hash(PP([4, 1, 5, 4, 6, 1]))
-            1796924635                          # 32-bit
-            -4539377540667874085                # 64-bit
+            sage: hash(PP([4, 1, 5, 4, 6, 1])) == hash((4, 1, 5, 4, 6, 1))
+            False
+            sage: hash(PP([4, 1, 5, 4, 6, 1])) == hash((4, 1, 3, 1, 6, 1))
+            True
         """
         R = self.codomain().base_ring()
         # if there is a fraction field normalize the point so that
@@ -356,7 +352,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: A.dehomogenize([0,0])
             Traceback (most recent call last):
             ...
-            ValueError: can't dehomogenize at 0 coordinate
+            ValueError: can...t dehomogenize at 0 coordinate
         """
         PP = self.codomain()
         A = PP.affine_patch(L)
@@ -423,84 +419,6 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
         S = self.codomain().change_ring(R)
         Q = [P.change_ring(R, **kwds) for P in self._points]
         return S.point(Q, check)
-
-    def nth_iterate(self, f, n, normalize=False):
-        r"""
-        For a map of this point and a point `P` in ``self.domain()``
-        this function returns the nth iterate of `P` by  this point.
-
-        If ``normalize == True``,
-        then the coordinates are automatically normalized.
-
-        INPUT:
-
-        - ``f`` -- a ProductProjectiveSpaces_morphism_ring with ``self`` in ``f.domain()``.
-
-        - ``n`` -- a positive integer.
-
-        - ``normalize`` -- Boolean (optional Default: ``False``).
-
-        OUTPUT:
-
-        - A point in ``self.codomain()``
-
-        EXAMPLES::
-
-            sage: Z.<a,b,x,y> = ProductProjectiveSpaces([1, 1], ZZ)
-            sage: f = DynamicalSystem_projective([a*b, b^2, x^3 - y^3, y^2*x], domain=Z)
-            sage: P = Z([2, 6, 2, 4])
-            sage: P.nth_iterate(f, 2, normalize = True)
-            doctest:warning
-            ...
-            (1 : 3 , 407 : 112)
-
-        .. TODO:: Is there a more efficient way to do this?
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23497, "use f.nth_iterate(P, n, normalize) instead")
-        return f.nth_iterate(self, n, normalize)
-
-    def orbit(self, f, N, **kwds):
-        r"""
-        Return the orbit this point by ``f``.
-
-        If ``N`` is an integer it returns `[P, self(P), \ldots,self^N(P)]`.
-
-        If ``N`` is a list or tuple `N=[m,k]` it returns `[self^m(P),\ldots,self^k(P)`].
-        Automatically normalize the points if ``normalize == True``.
-        Perform the checks on point initialization if
-        ``check==True``
-
-        INPUT:
-
-        - ``f`` -- a :class:`ProductProjectiveSpaces_morphism_ring` with the orbit of `P` in ``f.domain()``.
-
-        - ``N`` -- a non-negative integer or list or tuple of two non-negative integers.
-
-        kwds:
-
-        - ``check`` -- Boolean (optional - default: ``True``).
-
-        - ``normalize`` -- Boolean (optional - default: ``False``).
-
-
-        OUTPUT:
-
-        - a list of points in ``self.codomain()``.
-
-        EXAMPLES::
-
-            sage: Z.<a,b,x,y> = ProductProjectiveSpaces([1, 1], ZZ)
-            sage: f = DynamicalSystem_projective([a*b, b^2, x^3 - y^3, y^2*x], domain=Z)
-            sage: P = Z([2, 6, 2, 4])
-            sage: P.orbit(f, 3, normalize = True)
-            doctest:warning
-            ...
-            [(1 : 3 , 1 : 2), (1 : 3 , -7 : 4), (1 : 3 , 407 : 112), (1 : 3 , 66014215 : 5105408)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(23497, "use f.orbit(P, N, **kwds) instead")
-        return f.orbit(self, N, **kwds)
 
     def global_height(self, prec=None):
         r"""

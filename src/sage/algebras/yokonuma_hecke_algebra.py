@@ -161,7 +161,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         self._assign_names(self.algebra_generators().keys())
 
     def _repr_(self):
-        """ 
+        """
         Return a string representation of ``self``.
 
         EXAMPLES::
@@ -370,8 +370,8 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
         """
         t1,g1 = m1
         t2,g2 = m2
-        # Commmute g1 and t2, then multiply t1 and t2
-        #ig1 = g1
+        # Commute g1 and t2, then multiply t1 and t2
+        # ig1 = g1
         t = [(t1[i] + t2[g1.index(i+1)]) % self._d for i in range(self._n)]
         one = self._Pn.one()
         if g1 == one:
@@ -414,10 +414,8 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
              - (q^-1-q)*t1^2*t2^3*t3^2*g[1] - (q^-1-q)*t1^3*t2^2*t3^2*g[1]
         """
         t, w = m
-        # We have to flip the side due to Sage's multiplication
-        #   convention for permutations
-        wi = w.apply_simple_reflection(i, side="left")
-        if not w.has_descent(i, side="left"):
+        wi = w.apply_simple_reflection(i, side="right")
+        if not w.has_descent(i, side="right"):
             return self.monomial((t, wi))
 
         R = self.base_ring()

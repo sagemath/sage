@@ -1,0 +1,41 @@
+diff --git a/ginac/useries.cpp b/ginac/useries.cpp
+index fd68d49..3af04d8 100644
+--- a/ginac/useries.cpp
++++ b/ginac/useries.cpp
+@@ -462,7 +462,16 @@ void symbol::useries(flint_series_t& fp, int order) const
+ 
+ void add::useries(flint_series_t& fp, int order) const
+ {
+-        fmpq_poly_set_ui(fp.ft, 0);
++        const numeric& oc = overall_coeff;
++        if (oc.is_zero())
++                fmpq_poly_set_ui(fp.ft, 0);
++        else if (oc.is_long())
++                fmpq_poly_set_si(fp.ft, oc.to_long());
++        else if (oc.is_mpz())
++                fmpq_poly_set_mpz(fp.ft, oc.as_mpz());
++        else
++                fmpq_poly_set_mpq(fp.ft, oc.as_mpq());
++
+         for (const auto & elem : seq) {
+ 		const ex& t = recombine_pair_to_ex(elem);
+                 flint_series_t fp1;
+@@ -477,18 +486,6 @@ void add::useries(flint_series_t& fp, int order) const
+                 }
+                 fmpq_poly_add(fp.ft, fp.ft, fp1.ft);
+         }
+-        const numeric& oc = overall_coeff;
+-        if (oc.is_zero())
+-                return;
+-
+-        flint_series_t fp1;
+-        if (oc.is_long())
+-                fmpq_poly_set_si(fp1.ft, oc.to_long());
+-        else if (oc.is_mpz())
+-                fmpq_poly_set_mpz(fp1.ft, oc.as_mpz());
+-        else
+-                fmpq_poly_set_mpq(fp1.ft, oc.as_mpq());
+-        fmpq_poly_add(fp.ft, fp.ft, fp1.ft);
+ }
+ 
+ void mul::useries(flint_series_t& fp, int order) const

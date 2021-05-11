@@ -23,15 +23,14 @@ AUTHORS:
 - Julian Rüth (2016-11-10): initial version
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016-2017 Julian Rüth <julian.rueth@fsfe.org>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-from __future__ import absolute_import
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from .valuation import DiscreteValuation, DiscretePseudoValuation
 from sage.misc.abstract_method import abstract_method
@@ -254,7 +253,7 @@ class MappedValuation_base(DiscretePseudoValuation):
             y + x^32
 
         In this case the simplification can be forced but this should not
-        happen as a default as the recersive simplification can be quite
+        happen as a default as the recursive simplification can be quite
         costly::
 
             sage: w.simplify(y + x^32, force=True)

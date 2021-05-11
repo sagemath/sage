@@ -407,7 +407,6 @@ Otherwise, it depends on what random number generator you want to use.
 Classes and methods
 ===================
 """
-from __future__ import absolute_import
 
 cdef extern from "stdlib.h":
     long c_libc_random "random"()
@@ -450,6 +449,7 @@ cpdef randstate current_randstate():
 
     EXAMPLES::
 
+        sage: set_random_seed(0)
         sage: current_randstate()
         <sage.misc.randstate.randstate object at 0x...>
         sage: current_randstate().python_random().random()
@@ -552,6 +552,7 @@ cdef class randstate:
 
         EXAMPLES::
 
+            sage: set_random_seed(0)
             sage: from sage.misc.randstate import randstate
             sage: r = randstate(314159)
             sage: r.seed()

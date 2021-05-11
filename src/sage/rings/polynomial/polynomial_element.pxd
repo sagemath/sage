@@ -18,9 +18,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
     cpdef _mul_generic(self, right)
     cdef _square_generic(self)
 
-    cpdef bint is_zero(self)
-    cpdef bint is_one(self)
-    cpdef bint is_term(self)
+    cpdef bint is_zero(self) except -1
+    cpdef bint is_one(self) except -1
+    cpdef bint is_term(self) except -1
 
     cpdef dict _mpoly_dict_recursive(self, tuple variables=*, base_ring=*)
 

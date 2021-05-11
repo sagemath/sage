@@ -47,7 +47,7 @@ AUTHORS:
 
 - Simon King (2013-02): added examples
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>, William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -59,10 +59,9 @@ AUTHORS:
 #  See the GNU General Public License for more details; the full text
 #  is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-from __future__ import absolute_import, print_function
 
 from sage.categories.category import Category, JoinCategory
 from . import morphism
@@ -310,7 +309,7 @@ def Hom(X, Y, category=None, check=True):
         sage: Hom(S, S, C)
         Set of Morphisms from S to S in Permissive category
 
-    With ``check=False``, unitialized parents, as can appear upon
+    With ``check=False``, uninitialized parents, as can appear upon
     unpickling, are supported. Case of a parent::
 
         sage: cls = type(Set())
@@ -328,7 +327,7 @@ def Hom(X, Y, category=None, check=True):
         sage: H = Hom(S, S, SimplicialComplexes(), check=False)
 
     Typical example where unpickling involves calling Hom on an
-    unitialized parent::
+    uninitialized parent::
 
         sage: P.<x,y> = QQ['x,y']
         sage: Q = P.quotient([x^2-1,y^2-1])
@@ -364,7 +363,8 @@ def Hom(X, Y, category=None, check=True):
         ....:             raise TypeError
         sage: from sage.structure.element import Element
         sage: class Foo(Parent):
-        ....:     _no_generic_basering_coercion = True
+        ....:     def _coerce_map_from_base_ring(self):
+        ....:         return self._generic_coerce_map(self.base_ring())
         ....:     class Element(Element):
         ....:         pass
         sage: X = Foo(base=QQ, category=AlgebrasWithHom(QQ))
@@ -585,11 +585,10 @@ class Homset(Set_generic):
 
             sage: X = ZZ['x']; X.rename("X")
             sage: Y = ZZ['y']; Y.rename("Y")
+            sage: f = X.hom([0], Y)
             sage: class MyHomset(Homset):
-            ....:     def my_function(self, x):
-            ....:         return Y(x[0])
             ....:     def _an_element_(self):
-            ....:         return sage.categories.morphism.SetMorphism(self, self.my_function)
+            ....:         return sage.categories.morphism.SetMorphism(self, f)
             sage: import __main__; __main__.MyHomset = MyHomset # fakes MyHomset being defined in a Python module
             sage: H = MyHomset(X, Y, category=Monoids(), base = ZZ)
             sage: H
@@ -601,9 +600,6 @@ class Homset(Set_generic):
             ...
             TypeError: category (=1) must be a category
 
-            sage: H
-            Set of Morphisms from X to Y in Category of monoids
-            sage: TestSuite(H).run()
             sage: H = MyHomset(X, Y, category=1, base = ZZ, check = False)
             Traceback (most recent call last):
             ...
@@ -666,7 +662,7 @@ class Homset(Set_generic):
         .. NOTE::
 
             It can happen, that ``Hom(X,X)`` is called during
-            unpickling with an unitialized instance ``X`` of a Python
+            unpickling with an uninitialized instance ``X`` of a Python
             class. In some of these cases, testing that ``X in
             category`` can trigger ``X.category()``. This in turn can
             raise a error, or return a too large category (``Sets()``,
@@ -897,13 +893,13 @@ class Homset(Set_generic):
             ...
             TypeError: unable to convert 0 to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
-             to Free Group on generators {x, y, z} in Category of groups
+             to Free Group on generators {x, y, z} in Category of infinite groups
             sage: H("whatever")
             Traceback (most recent call last):
             ...
             TypeError: unable to convert 'whatever' to an element of
              Set of Morphisms from Free Group on generators {x, y, z}
-             to Free Group on generators {x, y, z} in Category of groups
+             to Free Group on generators {x, y, z} in Category of infinite groups
             sage: HH = Hom(H, H)
             sage: HH(HH.identity(), foo="bar")
             Traceback (most recent call last):
@@ -922,6 +918,8 @@ class Homset(Set_generic):
             try:
                 call_with_keywords = self.__call_on_basis__
             except AttributeError:
+                if 'base_map' in options:
+                    raise NotImplementedError("base_map not supported for this Homset; you may need to specify a category")
                 raise NotImplementedError("no keywords are implemented for constructing elements of {}".format(self))
             options.setdefault("category", self.homset_category())
             return call_with_keywords(**options)
@@ -1167,7 +1165,7 @@ class Homset(Set_generic):
 
             sage: K = GaussianIntegers()
             sage: End(K).one()
-            Identity endomorphism of Gaussian Integers in Number Field in I with defining polynomial x^2 + 1
+            Identity endomorphism of Gaussian Integers in Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         return self.identity()
 
@@ -1236,11 +1234,10 @@ class HomsetWithBase(Homset):
 
             sage: X = ZZ['x']; X.rename("X")
             sage: Y = ZZ['y']; Y.rename("Y")
+            sage: f = X.hom([0], Y)
             sage: class MyHomset(HomsetWithBase):
-            ....:     def my_function(self, x):
-            ....:         return Y(x[0])
             ....:     def _an_element_(self):
-            ....:         return sage.categories.morphism.SetMorphism(self, self.my_function)
+            ....:         return sage.categories.morphism.SetMorphism(self, f)
             sage: import __main__; __main__.MyHomset = MyHomset # fakes MyHomset being defined in a Python module
             sage: H = MyHomset(X, Y, category=Monoids())
             sage: H

@@ -32,11 +32,11 @@
 # takes about five minutes but you don't have to go through the sadly frequent #
 # rebuilds the whole Sage distribution...                                      #
 # To build Sage, run this command from your sage/ directory:                   #
-# $ docker build --build-arg MAKEOPTS="-j4" --build-arg SAGE_NUM_THREADS="4" --build-arg ARTIFACT_BASE="sagemath/sagemath-dev:develop" -f docker/Dockerfile --target=make-build --tag sage .
+# $ docker build --build-arg MAKEFLAGS="-j4" --build-arg SAGE_NUM_THREADS="4" --build-arg ARTIFACT_BASE="sagemath/sagemath-dev:develop" -f docker/Dockerfile --target=make-build --tag sage .
 # To run Sage:                                                                 #
 # $ docker run -it sage                                                        #
 # To run doctests:                                                             #
-# $ docker run -e "MAKEOPTS=-j4" -e "SAGE_NUM_THREADS=4" -it sage sage -tp src/sage
+# $ docker run -e "MAKEFLAGS=-j4" -e "SAGE_NUM_THREADS=4" -it sage sage -tp src/sage
 # Make sure that you always have the latest develop branch merged into your    #
 # local branch for this to work.                                               #
 ################################################################################
@@ -46,7 +46,7 @@ ARG ARTIFACT_BASE=source-clean
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
-FROM ubuntu:xenial as run-time-dependencies
+FROM ubuntu:focal as run-time-dependencies
 LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>"
 # Set sane defaults for common environment variables.
 ENV LC_ALL C.UTF-8
@@ -58,10 +58,10 @@ RUN ln -s "$SAGE_ROOT/sage" /usr/bin/sage
 RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # Sage needs the fortran libraries at run-time because we do not build gfortran
 # with Sage but use the system's.
-# We need gcc/g++ and libstdc++-5-dev to allow compilation of cython at run-time from the notebook.
+# We need gcc/g++ and libstdc++-9-dev to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-5-dev sudo openssl \
+    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-9-dev sudo openssl \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
@@ -94,7 +94,7 @@ ARG SAGE_ROOT=/home/sage/sage
 RUN mkdir -p "$SAGE_ROOT"
 WORKDIR $SAGE_ROOT
 RUN git init
-RUN git remote add trac git://trac.sagemath.org/sage.git
+RUN git remote add trac https://gitlab.com/sagemath/dev/tracmirror.git
 
 ################################################################################
 # Image with the build context added, i.e., the directory from which `docker   #
@@ -109,7 +109,7 @@ RUN git remote add trac git://trac.sagemath.org/sage.git
 FROM $ARTIFACT_BASE as source-from-context
 WORKDIR $HOME
 COPY --chown=sage:sage . sage-context
-# Checkout the commit that checked out in $HOME/sage-context
+# Checkout the commit that is checked out in $HOME/sage-context
 # This is a bit complicated because our local .git/ is empty and we want to
 # make sure that we only change the mtimes of a minimal number of files.
 # 1) Restore the git checkout ARTIFACT_BASE was built from, recorded in
@@ -126,7 +126,7 @@ ARG SAGE_ROOT=/home/sage/sage
 WORKDIR $SAGE_ROOT
 # We create a list of all files present in the artifact-base (with a timestamp
 # of now) so we can find out later which files were added/changed/removed.
-RUN find . -type f > $HOME/artifact-base.manifest
+RUN find . \( -type f -or -type l \) > $HOME/artifact-base.manifest
 RUN git fetch "$HOME/sage-context" HEAD \
     && if [ -e docker/.commit ]; then \
           git reset `cat docker/.commit` \
@@ -160,13 +160,15 @@ ENV SAGE_FAT_BINARY yes
 # Just to be sure Sage doesn't try to build its own GCC (even though
 # it shouldn't with a recent GCC package from the system and with gfortran)
 ENV SAGE_INSTALL_GCC no
-# Set MAKEOPTS and SAGE_NUM_THREADS to build things in parallel during the
+# Set MAKEFLAGS and SAGE_NUM_THREADS to build things in parallel during the
 # docker build. Note that these do not leak into the sagemath and sagemath-dev
 # images.
-ARG MAKEOPTS="-j2"
-ENV MAKEOPTS $MAKEOPTS
+ARG MAKEFLAGS="-j2"
+ENV MAKEFLAGS $MAKEFLAGS
 ARG SAGE_NUM_THREADS="2"
 ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS
+RUN make configure
+RUN ./configure
 RUN make build
 
 ################################################################################
@@ -177,19 +179,16 @@ FROM make-build as make-all
 # os.fork() to spawn an external program which then exceeds easily the
 # overcommit limit of the system (no RAM is actually used, but this limit is
 # very low because there is not even swap on most CI systems.)
-ARG MAKEOPTS_DOCBUILD=$MAKEOPTS
-ENV MAKEOPTS_DOCBUILD $MAKEOPTS_DOCBUILD
+ARG MAKEFLAGS_DOCBUILD=$MAKEFLAGS
+ENV MAKEFLAGS_DOCBUILD $MAKEFLAGS_DOCBUILD
 ARG SAGE_NUM_THREADS_DOCBUILD=$SAGE_NUM_THREADS
-ENV SAGE_NUM_THREADS_DOCBUILD $SAGE_NUM_THREADS_DOCBUILD
+ENV SAGE_NUM_THREADS $SAGE_NUM_THREADS_DOCBUILD
 RUN make
 
 ################################################################################
-# Image with a full build of sage, ready to release, i.e., with stripped       #
-# binaries and some extras to run the jupyter notebook.                        #
+# Image with a full build of sage, ready to release.                           #
 ################################################################################
 FROM make-all as make-release
-RUN sage -pip install terminado "notebook>=5" "ipykernel>=4.6"
-RUN sage -i gap_jupyter singular_jupyter pari_jupyter
 RUN make micro_release
 
 ################################################################################
@@ -214,7 +213,10 @@ CMD ["sage"]
 # stripped that can be quickly rebuild by make.                                #
 ################################################################################
 FROM make-all as make-fast-rebuild-clean
-RUN make fast-rebuild-clean
+# Of course, without site-packages/sage, sage does not start but copying/compiling
+# them from build/pkgs/sagelib/src/build is very fast.
+RUN make fast-rebuild-clean; \
+    rm -rf local/lib/python*/site-packages/sage
 
 ################################################################################
 # Depending on whether we built from source-clean or not, this image is either #
@@ -228,9 +230,9 @@ ARG SAGE_ROOT=/home/sage/sage
 # and a list of all modified files (added/updated/removed).
 RUN if [ x"$ARTIFACT_BASE" != x"source-clean" ]; then \
         mkdir -p $HOME/patch \
-        && find . -type f > $HOME/make-fast-rebuild-clean.manifest \
+        && find . \( -type f -or -type l \) > $HOME/make-fast-rebuild-clean.manifest \
         && cat $HOME/make-fast-rebuild-clean.manifest $HOME/artifact-base.manifest | sort | uniq -u > $HOME/obsolete \
-        && find . -type f -cnewer $HOME/artifact-base.manifest > $HOME/modified \
+        && find . \( -type f -or -type l \) -cnewer $HOME/artifact-base.manifest > $HOME/modified \
         && tar -cJf $HOME/patch/modified.tar.xz -T $HOME/modified \
         && cat $HOME/obsolete $HOME/modified | xz > $HOME/patch/modified.xz \
         && rm -rf $SAGE_ROOT \

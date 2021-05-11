@@ -13,12 +13,10 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from __future__ import print_function
 
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.modules.free_module_element import vector
-from sage.rings.rational_field import QQ
 
 from math import sqrt, floor, ceil
 
@@ -153,9 +151,6 @@ def diamond_cut(V, GM, C, verbose=False):
         sage: V.vertices()
         (A vertex at (2), A vertex at (0))
     """
-    # coerce to floats
-    GM = GM.n()
-    C = float(C)
     if verbose:
         print("Cut\n{}\nwith radius {}".format(GM, C))
 
@@ -223,7 +218,6 @@ def diamond_cut(V, GM, C, verbose=False):
                 cut_count += 1
                 if verbose:
                     print("\n%d) Cut using normal vector %s" % (cut_count, hv))
-                hv = [QQ(elmt.n(digits=6)) for elmt in hv]
                 inequalities.append(plane_inequality(hv))
 
     if verbose:

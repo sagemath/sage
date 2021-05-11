@@ -114,7 +114,7 @@ class AssociatedGradedAlgebra(CombinatorialFreeModule):
         sage: A = Modules(QQ).WithBasis().Filtered().example()
         sage: grA = A.graded_algebra()
         sage: grA.category()
-        Category of graded modules with basis over Rational Field
+        Category of graded vector spaces with basis over Rational Field
         sage: x = A.basis()[Partition([3,2,1])]
         sage: grA(x)
         Bbar[[3, 2, 1]]

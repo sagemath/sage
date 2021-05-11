@@ -15,7 +15,7 @@ Crystals of letters
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from sage.misc.cachefunc import cached_method
@@ -314,7 +314,7 @@ class ClassicalCrystalOfLetters(UniqueRepresentation, Parent):
             return True
         return False
 
-    # temporary workaround while an_element is overriden by Parent
+    # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
 # Utility. Note: much of this class should be factored out at some point!
@@ -2562,7 +2562,7 @@ class CrystalOfBKKLetters(ClassicalCrystalOfLetters):
             ret += " (dual)"
         return ret
 
-    # temporary workaround while an_element is overriden by Parent
+    # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     Element = BKKLetter
@@ -2669,7 +2669,7 @@ class CrystalOfQueerLetters(ClassicalCrystalOfLetters):
         """
         return self._index_set
 
-    # temporary workaround while an_element is overriden by Parent
+    # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     Element = QueerLetter_element
@@ -2987,7 +2987,7 @@ class ClassicalCrystalOfLettersWrapped(ClassicalCrystalOfLetters):
     This class follows the same output as the other crystal of letters,
     where `b` is represented by the "letter" with `\varphi_i(b)` (resp.,
     `\varepsilon_i`) number of `i`'s (resp., `-i`'s or `\bar{i}`'s).
-    However, this uses an auxillary crystal to construct these letters
+    However, this uses an auxiliary crystal to construct these letters
     to avoid hardcoding the crystal elements and the corresponding edges;
     in particular, the 248 nodes of `E_8`.
     """

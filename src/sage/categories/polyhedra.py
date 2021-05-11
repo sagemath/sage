@@ -28,19 +28,23 @@ class PolyhedralSets(Category_over_base_ring):
 
         sage: P = Polyhedron()
         sage: P.parent().category().element_class
-        <class 'sage.categories.polyhedra.PolyhedralSets.element_class'>
+        <class 'sage.categories.category.JoinCategory.element_class'>
         sage: P.parent().category().element_class.mro()
-        [<class 'sage.categories.polyhedra.PolyhedralSets.element_class'>,
+        [<class 'sage.categories.category.JoinCategory.element_class'>,
+         <class 'sage.categories.polyhedra.PolyhedralSets.element_class'>,
          <class 'sage.categories.magmas.Magmas.Commutative.element_class'>,
          <class 'sage.categories.magmas.Magmas.element_class'>,
          <class 'sage.categories.additive_monoids.AdditiveMonoids.element_class'>,
          <class 'sage.categories.additive_magmas.AdditiveMagmas.AdditiveUnital.element_class'>,
          <class 'sage.categories.additive_semigroups.AdditiveSemigroups.element_class'>,
          <class 'sage.categories.additive_magmas.AdditiveMagmas.element_class'>,
+         <class 'sage.categories.finite_enumerated_sets.FiniteEnumeratedSets.element_class'>,
+         <class 'sage.categories.enumerated_sets.EnumeratedSets.element_class'>,
+         <class 'sage.categories.finite_sets.FiniteSets.element_class'>,
          <class 'sage.categories.sets_cat.Sets.element_class'>,
          <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.element_class'>,
          <class 'sage.categories.objects.Objects.element_class'>,
-         <... 'object'>]
+         <class 'object'>]
         sage: isinstance(P, P.parent().category().element_class)
         True
     """

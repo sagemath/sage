@@ -1,0 +1,11 @@
+# Let GLPK use Sage's GMP/MPIR (cf. comments in SPKG.txt and spkg-install):
+CPPFLAGS="-I$SAGE_LOCAL/include $CPPFLAGS"
+LDFLAGS="-L$SAGE_LOCAL/lib $LDFLAGS"
+
+# No need to (re)export LDFLAGS etc., as `sage-env` does this.
+# But it currently *doesn't* export CPPFLAGS. For safety, export them all:
+export CPPFLAGS LDFLAGS
+
+cd src/
+
+$MAKE check

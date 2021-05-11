@@ -39,14 +39,18 @@ eventually be changed so that the trailing underscore is always
 included. This section describes these special methods.
 
 All objects in Sage should derive from the Cython extension class
-``SageObject``::
+``SageObject``:
 
-    from sage.ext.sage_object import SageObject
+.. CODE-BLOCK:: python
+
+    from sage.structure.sage_object import SageObject
 
     class MyClass(SageObject,...):
         ...
 
-or from some other already existing Sage class::
+or from some other already existing Sage class:
+
+.. CODE-BLOCK:: python
 
     from sage.rings.ring import Algebra
 
@@ -84,11 +88,13 @@ support the command ``latex``.
    ``amsfonts``, or the ones defined in
    ``SAGE_ROOT/doc/commontex/macros.tex``.
 
-An example template for a ``_latex_`` method follows:
+An example template for a ``_latex_`` method follows. Note that the
+``.. skip`` line should not be included in your code; it is here to
+prevent doctests from running on this fake example.
 
 .. skip
 
-::
+.. CODE-BLOCK:: python
 
     class X:
        ...
@@ -122,7 +128,9 @@ the context.
 
 Here is an example of the ``_latex_`` and ``_repr_`` functions for the
 ``Pi`` class. It is from the file
-``SAGE_ROOT/src/sage/functions/constants.py``::
+``SAGE_ROOT/src/sage/functions/constants.py``:
+
+.. CODE-BLOCK:: python
 
     class Pi(Constant):
         """
@@ -151,7 +159,9 @@ matrix over a ring `R`. Then the Sage function ``matrix`` will work
 for this object.
 
 The following is from
-``SAGE_ROOT/src/sage/graphs/graph.py``::
+``SAGE_ROOT/src/sage/graphs/graph.py``:
+
+.. CODE-BLOCK:: python
 
     class GenericGraph(SageObject):
         ...
@@ -168,7 +178,9 @@ The following is from
 Similarly, provide a ``_vector_`` method for an object that can be
 coerced to a vector over a ring `R`. Then the Sage function ``vector``
 will work for this object. The following is from the file
-``SAGE_ROOT/sage/sage/modules/free_module_element.pyx``::
+``SAGE_ROOT/sage/sage/modules/free_module_element.pyx``:
+
+.. CODE-BLOCK:: python
 
     cdef class FreeModuleElement(element_Vector):   # abstract base class
         ...
@@ -298,23 +310,25 @@ The  __hash__ Special Method
 Here is the definition of ``__hash__`` from the Python reference
 manual:
 
-    Called by built-in function ``hash()`` and for operations on members of
-    hashed collections including set, frozenset, and dict. ``__hash__()``
-    should return an integer. The only required property is that objects which
-    compare equal have the same hash value; it is advised to somehow mix
-    together (e.g. using exclusive or) the hash values for the components of
-    the object that also play a part in comparison of objects. If a class does
-    not define a
-    ``__cmp__()`` method it should not define a
-    ``__hash__()`` operation either; if it defines
-    ``__cmp__()`` or ``__eq__()`` but not
-    ``__hash__()``, its instances will not be usable as
-    dictionary keys. If a class defines mutable objects and implements
-    a ``__cmp__()`` or ``__eq__()`` method, it
-    should not implement ``__hash__()``, since the dictionary
-    implementation requires that a key's hash value is immutable (if
-    the object's hash value changes, it will be in the wrong hash
-    bucket).
+    Called by built-in function ``hash()`` and for operations on members
+    of hashed collections including ``set``, ``frozenset``, and
+    ``dict``. ``__hash__()`` should return an integer. The only required
+    property is that objects which compare equal have the same hash
+    value; it is advised to mix together the hash values of the
+    components of the object that also play a part in comparison of
+    objects by packing them into a tuple and hashing the tuple.
+
+    If a class does not define an ``__eq__()`` method it should not define
+    a ``__hash__()`` operation either; if it defines ``__eq__()`` but not
+    ``__hash__()``, its instances will not be usable as items in hashable
+    collections. If a class defines mutable objects and implements an
+    ``__eq__()`` method, it should not implement ``__hash__()``, since the
+    implementation of hashable collections requires that a key’s hash
+    value is immutable (if the object’s hash value changes, it will be
+    in the wrong hash bucket).
+
+See https://docs.python.org/3/reference/datamodel.html#object.__hash__ for more
+information on the subject.
 
 Notice the phrase, "The only required property is that objects which
 compare equal have the same hash value." This is an assumption made by
@@ -355,7 +369,7 @@ but ``hash(a)`` should not equal ``hash(1)``.
 
 Unfortunately, in Sage we simply cannot require
 
-::
+.. CODE-BLOCK:: text
 
            (#)   "a == b ==> hash(a) == hash(b)"
 
@@ -390,7 +404,9 @@ coercions.
 Exceptions
 ==========
 
-Please avoid catch-all code like this::
+Please avoid catch-all code like this:
+
+.. CODE-BLOCK:: python
 
     try:
         some_code()
@@ -403,7 +419,9 @@ the code, and alarms, and this will lead to confusion. Also, this
 might catch real errors which should be propagated to the user.
 
 To summarize, only catch specific exceptions as in the following
-example::
+example:
+
+.. CODE-BLOCK:: python
 
     try:
         return self.__coordinate_ring
@@ -422,20 +440,26 @@ large third-party modules.
 
 First, you must avoid circular imports. For example, suppose that the
 file ``SAGE_ROOT/src/sage/algebras/steenrod_algebra.py``
-started with a line::
+started with a line:
+
+.. CODE-BLOCK:: python
 
     from sage.sage.algebras.steenrod_algebra_bases import *
 
 and that the file
 ``SAGE_ROOT/src/sage/algebras/steenrod_algebra_bases.py``
-started with a line::
+started with a line:
+
+.. CODE-BLOCK:: python
 
     from sage.sage.algebras.steenrod_algebra import SteenrodAlgebra
 
 This sets up a loop: loading one of these files requires the other,
 which then requires the first, etc.
 
-With this set-up, running Sage will produce an error::
+With this set-up, running Sage will produce an error:
+
+.. CODE-BLOCK:: text
 
     Exception exceptions.ImportError: 'cannot import name SteenrodAlgebra'
     in 'sage.rings.polynomial.polynomial_element.
@@ -449,7 +473,9 @@ With this set-up, running Sage will produce an error::
 Instead, you might replace the ``import *`` line at the top of the
 file by more specific imports where they are needed in the code. For
 example, the ``basis`` method for the class ``SteenrodAlgebra`` might
-look like this (omitting the documentation string)::
+look like this (omitting the documentation string):
+
+.. CODE-BLOCK:: python
 
     def basis(self, n):
         from steenrod_algebra_bases import steenrod_algebra_basis
@@ -488,7 +514,9 @@ documentation for more information on its behaviour and optional arguments.
 
 * **Rename a keyword:** by decorating a function/method with
   :class:`~sage.misc.decorators.rename_keyword`, any user calling
-  ``my_function(my_old_keyword=5)`` will see a warning::
+  ``my_function(my_old_keyword=5)`` will see a warning:
+
+  .. CODE-BLOCK:: python
 
       from sage.misc.decorators import rename_keyword
       @rename_keyword(deprecation=666, my_old_keyword='my_new_keyword')
@@ -497,7 +525,9 @@ documentation for more information on its behaviour and optional arguments.
 
 * **Rename a function/method:** call
   :func:`~sage.misc.superseded.deprecated_function_alias` to obtain a copy of a
-  function that raises a deprecation warning::
+  function that raises a deprecation warning:
+
+  .. CODE-BLOCK:: python
 
       from sage.misc.superseded import deprecated_function_alias
       def my_new_function():
@@ -510,13 +540,17 @@ documentation for more information on its behaviour and optional arguments.
   different file, it should still be possible to import that function
   from the old module. This can be done using a
   :func:`~sage.misc.lazy_import.lazy_import` with deprecation.
-  In the old module, you would write::
+  In the old module, you would write:
+
+  .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import
     lazy_import('sage.new.module.name', 'name_of_the_function', deprecation=666)
 
   You can also lazily import everything using ``*`` or a few functions
-  using a tuple::
+  using a tuple:
+
+  .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import
     lazy_import('sage.new.module.name', '*', deprecation=666)
@@ -529,7 +563,9 @@ documentation for more information on its behaviour and optional arguments.
   This case is similar as the previous one: use a lazy import with
   deprecation. One detail: in this case, you don't want the name
   ``lazy_import`` to be visible in the global namespace, so we add
-  a leading underscore::
+  a leading underscore:
+
+  .. CODE-BLOCK:: python
 
     from sage.misc.lazy_import import lazy_import as _lazy_import
     _lazy_import('sage.some.package', 'some_function', deprecation=666)
@@ -537,7 +573,9 @@ documentation for more information on its behaviour and optional arguments.
 * **Any other case:** if none of the cases above apply, call
   :func:`~sage.misc.superseded.deprecation` in the function that you want to
   deprecate. It will display the message of your choice (and interact properly
-  with the doctest framework)::
+  with the doctest framework):
+
+  .. CODE-BLOCK:: python
 
       from sage.misc.superseded import deprecation
       deprecation(666, "Do not use your computer to compute 1+1. Use your brain.")
@@ -560,7 +598,9 @@ As usual, all code has to be fully doctested and go through our
 reviewing process.
 
 * **Experimental function/method:** use the decorator
-  :class:`~sage.misc.superseded.experimental`. Here is an example::
+  :class:`~sage.misc.superseded.experimental`. Here is an example:
+
+  .. CODE-BLOCK:: python
 
       from sage.misc.superseded import experimental
       @experimental(66666)
@@ -569,7 +609,9 @@ reviewing process.
 
 * **Experimental class:** use the decorator
   :class:`~sage.misc.superseded.experimental` for its ``__init__``.
-  Here is an example::
+  Here is an example:
+
+  .. CODE-BLOCK:: python
 
       from sage.misc.superseded import experimental
       class experimental_class(SageObject):
@@ -577,7 +619,11 @@ reviewing process.
           def __init__(self, some, arguments):
               # do something
 
-* **Any other case:** if none of the cases above apply, call :func:`~sage.misc.superseded.experimental_warning` in the code where you want to warn. It will display the message of your choice::
+* **Any other case:** if none of the cases above apply, call
+  :func:`~sage.misc.superseded.experimental_warning` in the code where
+  you want to warn. It will display the message of your choice:
+
+  .. CODE-BLOCK:: python
 
       from sage.misc.superseded import experimental_warning
       experimental_warning(66666, 'This code is not foolproof.')
