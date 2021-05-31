@@ -19,7 +19,6 @@ AUTHORS:
 from sage.structure.factory import UniqueFactory
 from sage.arith.all import lcm
 from sage.rings.integer_ring import ZZ
-#from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
 from sage.groups.abelian_gps.dual_abelian_group_element import DualAbelianGroupElement
 from sage.groups.abelian_gps.dual_abelian_group import DualAbelianGroup_class
 from sage.lfunctions.dokchitser import Dokchitser
@@ -189,8 +188,7 @@ class HeckeCharacter(DualAbelianGroupElement):
         """
         Determine whether this character is primitive.
 
-        This means it checks whether its conductor is
-        its modulus.
+        This means it checks whether its conductor is its modulus.
 
         EXAMPLES::
 
@@ -208,7 +206,7 @@ class HeckeCharacter(DualAbelianGroupElement):
         """
         Return the associated primitive character.
 
-        Examples::
+        EXAMPLES::
 
             sage: F.<a> = QuadraticField(13)
             sage: H = HeckeCharacterGroup(F.ideal(-1/2*a + 7/2).modulus([0, 1]))
@@ -241,7 +239,7 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         OUTPUT:
 
-        - The extension of this Hecke character to the one of modulus ``m``.
+        The extension of this Hecke character to the one of modulus ``m``.
 
         EXAMPLES::
 
@@ -302,7 +300,7 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         EXAMPLES:
 
-        Some root numbers over a pure cubic field ::
+        Some root numbers over a pure cubic field::
 
             sage: F.<a> = NumberField(x^3-3)
             sage: H = HeckeCharacterGroup(F.ideal(5*a).modulus([0]))
@@ -311,7 +309,7 @@ class HeckeCharacter(DualAbelianGroupElement):
             sage: rns
             [1, 1, 1]
 
-        A quadratic character whose root number is not 1 ::
+        A quadratic character whose root number is not 1::
 
             sage: F.<a> = QuadraticField(-11)
             sage: H = HeckeCharacterGroup(F.modulus(a + 2))
@@ -354,7 +352,7 @@ class HeckeCharacter(DualAbelianGroupElement):
 
         OUTPUT:
 
-        - A Dokchitser L-function object used to compute values of the L-function of this Hecke character.
+        A Dokchitser L-function object used to compute values of the L-function of this Hecke character.
 
         EXAMPLES:
 
@@ -459,5 +457,6 @@ class HeckeCharacterGroupFactory(UniqueFactory):
     def create_object(self, version, key, **extra_args):
         base_ring, modulus, names = key
         return HeckeCharacterGroup_class(modulus.number_field().ray_class_group(modulus), base_ring, names)
+
 
 HeckeCharacterGroup = HeckeCharacterGroupFactory("HeckeCharacterGroup")
