@@ -1335,7 +1335,7 @@ class RayClassGroup(AbelianGroup_class):
         nf = F.pari_nf()
         f = nf.rnfpolredbest(f)
         d = f.poldegree()
-        cs = [F(f.polcoeff(i)) for i in range(d+1)]
+        cs = [F(f.polcoef(i)) for i in range(d + 1)]
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         f = PolynomialRing(F, 'x')(cs)
         return F.extension(f, names=names)
@@ -1347,7 +1347,7 @@ class RayClassGroup(AbelianGroup_class):
         pass
 
     def _ideal_log(self, ideal):
-        return tuple(ZZ(c) for c in self._bnr.bnrisprincipal(ideal, flag = 0))
+        return tuple(ZZ(c) for c in self._bnr.bnrisprincipal(ideal, flag=0))
 
     def ideal_reduce(self, ideal):
         from cypari2.handle_error import PariError

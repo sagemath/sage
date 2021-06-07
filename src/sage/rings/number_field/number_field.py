@@ -3684,13 +3684,16 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         except AttributeError:
             pass
         pari_conv = self._pari_absolute_structure()[1].lift()
-        pari_conv = [pari_conv.polcoeff(i).sage() for i in range(pari_conv.poldegree() + 1)]
+        pari_conv = [pari_conv.polcoef(i).sage()
+                     for i in range(pari_conv.poldegree() + 1)]
         R = self.defining_polynomial().parent()
         pari_conv = R(pari_conv)
-        pari_roots = [pari_conv(r.sage()) for r in self.pari_nf()[5][:self.signature()[0]]]
+        pari_roots = [pari_conv(r.sage())
+                      for r in self.pari_nf()[5][:self.signature()[0]]]
         pari_roots_sorted = list(pari_roots)
         pari_roots_sorted.sort()
-        self._pari_real_places = tuple(pari_roots_sorted.index(r) for r in pari_roots)
+        self._pari_real_places = tuple(pari_roots_sorted.index(r)
+                                       for r in pari_roots)
         return self._pari_real_places
 
     def modulus(self, finite, infinite=None):
