@@ -1876,7 +1876,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``kwds`` are passed on to the element constructor.
+        - ``kwds`` are passed on to the element constructor
 
         OUTPUT:
 

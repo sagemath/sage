@@ -458,7 +458,7 @@ class kRegularSequence(RecognizableSeries):
 
         OUTPUT:
 
-        A :class:`kRegularSequence`.
+        A :class:`kRegularSequence`
 
         EXAMPLES::
 
@@ -1223,7 +1223,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
 
         OUTPUT:
 
-        An iterator.
+        An iterator
 
         EXAMPLES::
 
