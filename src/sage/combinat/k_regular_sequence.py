@@ -143,14 +143,14 @@ def value(D, k):
 
     INPUT:
 
-    - ``D`` -- a tuple or other iterable.
+    - ``D`` -- a tuple or other iterable
 
-    - ``k`` -- the base.
+    - ``k`` -- the base
 
     OUTPUT:
 
     An element in the common parent of the base `k` and of the entries
-    of `D`.
+    of `D`
 
     EXAMPLES::
 
@@ -168,16 +168,16 @@ def split_interlace(n, k, p):
 
     INPUT:
 
-    - ``n`` -- an integer.
+    - ``n`` -- an integer
 
-    - ``k`` -- an integer specifying the base.
+    - ``k`` -- an integer specifying the base
 
     - ``p`` -- a positive integer specifying in how many parts
       the input ``n`` is split. This has to be a divisor of ``k``.
 
     OUTPUT:
 
-    A tuple of integers.
+    A tuple of integers
 
     EXAMPLES::
 
@@ -896,21 +896,21 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
         INPUT:
 
         - ``f`` -- a function (callable) which determines the sequence.
-          It takes nonnegative integers as an input.
+          It takes nonnegative integers as an input
 
         - ``n_max`` -- (default: ``100``) a positive integer. The resulting
           `k`-regular sequence coincides with `f` on the first ``n_max``
-          terms.
+          terms
 
         - ``max_dimension`` -- (default: ``10``) a positive integer specifying
-          the maxium dimension which is tried when guessing the sequence.
+          the maxium dimension which is tried when guessing the sequence
 
         - ``sequence`` -- (default: ``None``) a `k`-regular sequence used
-          for bootstrapping this guessing.
+          for bootstrapping this guessing
 
         OUTPUT:
 
-        A :class:`kRegularSequence`.
+        A :class:`kRegularSequence`
 
         EXAMPLES:
 
