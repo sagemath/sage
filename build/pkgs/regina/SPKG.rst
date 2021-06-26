@@ -18,4 +18,5 @@ Upstream Contact
 
 Regina: https://regina-normal.github.io/
 
-We use the sageRegina package from http://sageregina.unhyperbolic.org/
+We use the Python packaging from https://pypi.org/project/regina/
+(https://github.com/3-manifolds/regina_wheels)
