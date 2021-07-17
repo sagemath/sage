@@ -6248,6 +6248,11 @@ cdef class Expression(Expression_abc):
 
     def arguments(self):
         """
+        Return sorted tuple of arguments of this callable symbolic expression.
+
+        For ordinary symbolic expressions, this is a deprecated alias of
+        :meth:`variables`.
+
         EXAMPLES::
 
             sage: x,y = var('x,y')
@@ -6263,12 +6268,23 @@ cdef class Expression(Expression_abc):
         try:
             return self._parent.arguments()
         except AttributeError:
+            from sage.misc.superseded import deprecation
+            deprecation(14270,
+                        "methods 'args', 'arguments', 'number_of_arguments' "
+                        "for expressions that are not callable is deprecated; "
+                        "use 'variables' or 'free_variables', or use a "
+                        "callable symbolic expression instead")
             return self.variables()
 
     args = arguments
 
     def number_of_arguments(self):
         """
+        Return the number of arguments of ``self`` as a callable symbolic expression.
+
+        For ordinary symbolic expressions, this is deprecated and returns the length
+        of :meth:`variables`.
+
         EXAMPLES::
 
             sage: x,y = var('x,y')
