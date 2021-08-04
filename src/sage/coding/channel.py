@@ -372,7 +372,7 @@ class StaticErrorRateChannel(Channel):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -388,7 +388,7 @@ class StaticErrorRateChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Returns ``message`` with as many errors as ``self._number_errors`` in it.
+        Return ``message`` with as many errors as ``self._number_errors`` in it.
 
         If ``self._number_errors`` was passed as a tuple for the number of errors, it will
         pick a random integer between the bounds of the tuple and use it as the number of errors.
@@ -434,7 +434,7 @@ class StaticErrorRateChannel(Channel):
 
     def number_errors(self):
         r"""
-        Returns the number of errors created by ``self``.
+        Return the number of errors created by ``self``.
 
         EXAMPLES::
 
@@ -527,7 +527,7 @@ class ErrorErasureChannel(Channel):
 
     def _repr_(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -546,7 +546,7 @@ class ErrorErasureChannel(Channel):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -565,7 +565,7 @@ class ErrorErasureChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Returns ``message`` with as many errors as ``self._number_errors`` in it, and as many erasures
+        Return ``message`` with as many errors as ``self._number_errors`` in it, and as many erasures
         as ``self._number_erasures`` in it.
 
         If ``self._number_errors`` was passed as an tuple for the number of errors, it will
@@ -622,7 +622,7 @@ class ErrorErasureChannel(Channel):
 
     def number_errors(self):
         r"""
-        Returns the number of errors created by ``self``.
+        Return the number of errors created by ``self``.
 
         EXAMPLES::
 
@@ -635,7 +635,7 @@ class ErrorErasureChannel(Channel):
 
     def number_erasures(self):
         r"""
-        Returns the number of erasures created by ``self``.
+        Return the number of erasures created by ``self``.
 
         EXAMPLES::
 
@@ -718,7 +718,7 @@ class QarySymmetricChannel(Channel):
 
     def __repr__(self):
         r"""
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -733,7 +733,7 @@ class QarySymmetricChannel(Channel):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -748,7 +748,7 @@ class QarySymmetricChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Returns ``message`` where each of the symbols has been changed to another from the alphabet with
+        Return ``message`` where each of the symbols has been changed to another from the alphabet with
         probability :meth:`error_probability`.
 
         This method does not check if ``message`` belongs to the input space of``self``.
@@ -781,7 +781,7 @@ class QarySymmetricChannel(Channel):
 
     def error_probability(self):
         r"""
-        Returns the error probability of a single symbol transmission of
+        Return the error probability of a single symbol transmission of
         ``self``.
 
         EXAMPLES::
@@ -795,7 +795,7 @@ class QarySymmetricChannel(Channel):
 
     def probability_of_exactly_t_errors(self, t):
         r"""
-        Returns the probability ``self`` has to return
+        Return the probability ``self`` has to return
         exactly ``t`` errors.
 
         INPUT:
@@ -815,7 +815,7 @@ class QarySymmetricChannel(Channel):
 
     def probability_of_at_most_t_errors(self, t):
         r"""
-        Returns the probability ``self`` has to return
+        Return the probability ``self`` has to return
         at most ``t`` errors.
 
         INPUT:
@@ -945,7 +945,7 @@ class StaticRankErrorChannel(Channel):
 
     def _latex_(self):
         r"""
-        Returns a latex representation of ``self``.
+        Return a latex representation of ``self``.
 
         EXAMPLES::
 
@@ -962,7 +962,7 @@ class StaticRankErrorChannel(Channel):
 
     def transmit_unsafe(self, message):
         r"""
-        Returns ``message`` with as many errors as ``self._rank_errors`` in it.
+        Return ``message`` with as many errors as ``self._rank_errors`` in it.
 
         If ``self._rank_errors`` was passed as a tuple for the number of errors, it will
         pick a random integer between the bounds of the tuple and use it as the number of errors.
@@ -1015,7 +1015,7 @@ class StaticRankErrorChannel(Channel):
 
     def rank_errors(self):
         r"""
-        Returns the number of rank errors created by ``self``.
+        Return the number of rank errors created by ``self``.
 
         EXAMPLES::
 
@@ -1028,8 +1028,11 @@ class StaticRankErrorChannel(Channel):
 
     def number_errors(self):
         r"""
-        This function is here to ease the life of people comming from the Hamming world.
-        Returns the number of errors created by ``self``.
+        Return the number of errors created by ``self``.
+
+        .. NOTE::
+
+            This function is here to ease the life of people comming from the Hamming world.
 
         EXAMPLES::
 
