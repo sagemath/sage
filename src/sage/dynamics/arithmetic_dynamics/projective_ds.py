@@ -5380,15 +5380,45 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: Q = P.point([a,1])
             sage: Q.is_preperiodic(f)
             True
+
+        ::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: X = P.subscheme(z)
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)
+            sage: p = X((-1, 1, 0))
+            sage: f._is_preperiodic(p, return_period=True)
+            (0, 2)
+
+        ::
+
+            sage: R.<t> = QQ[]
+            sage: K.<a> = NumberField(t^2 - t - 1)
+            sage: P.<x,y,z> = ProjectiveSpace(K, 2)
+            sage: X = P.subscheme(z)
+            sage: f = DynamicalSystem([x^2 - y^2, y^2, z^2], domain=X)
+            sage: p = X((-a + 1, 1, 0))
+            sage: f._is_preperiodic(p)
+            True
         """
-        if not is_ProjectiveSpace(self.codomain()):
-            raise NotImplementedError("must be over projective space")
-        if not self.is_morphism():
-            raise TypeError("must be a morphism")
+        codomain = self.codomain()
+        if not is_ProjectiveSpace(codomain):
+            # in order to calculate the canonical height, we need
+            # this map to be a morphism of projective space
+            ambient_space = codomain.ambient_space()
+            f = DynamicalSystem(self.defining_polynomials(), domain=ambient_space)
+            if not f.is_morphism():
+                raise ValueError('must be a morphism of projective space')
+        else:
+            f = self
+            if not f.is_morphism():
+                raise TypeError("must be a morphism")
         if not P.codomain() == self.domain():
             raise TypeError("point must be in domain of map")
 
-        h = self.canonical_height(P, error_bound = err)
+        # we calculate the canonical height without considering
+        # if the domain is a subscheme
+        h = f.canonical_height(P, error_bound = err)
         # we know canonical height 0 if and only if preperiodic
         # however precision issues can occur so we can only tell *not* preperiodic
         # if the value is larger than the error
@@ -5398,14 +5428,20 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             # either we can find the cycle or the height is
             # larger than the difference between the canonical height
             # and the height, so the canonical height cannot be 0
-            B = self.height_difference_bound()
+            B = f.height_difference_bound()
             orbit = [P]
             n = 1 # to compute period
-            Q = self(P)
+            try:
+                Q = self(P)
+            except TypeError:
+                raise ValueError('orbit of point leaves domain')
             H = Q.global_height()
             while Q not in orbit and H <= B:
                 orbit.append(Q)
-                Q = self(Q)
+                try:
+                    Q = self(Q)
+                except TypeError:
+                    raise ValueError('orbit of point leaves domain')
                 H = Q.global_height()
                 n += 1
             if H <= B: #it must have been in the cycle
