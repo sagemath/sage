@@ -37,10 +37,16 @@ This file contains the following elements:
       specific number of erasures in each transmitted message
     - :class:`StaticRankErrorChannel`, which creates an error of specific rank in each
       transmitted message. This is the rank analogue of :class:`StaticErrorRateChannel`
+
+AUTHORS:
+
+ - David Lucas (2015): initial version
+ - Maxime Bombar (2021): Rank metric channel
 """
 
 # ****************************************************************************
 #       Copyright (C) 2015 David Lucas <david.lucas@inria.fr>
+#       Copyright (C) 2021 Maxime Bombar <maxime.bombar@crans.org>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
