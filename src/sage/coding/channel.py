@@ -849,7 +849,7 @@ class StaticRankErrorChannel(Channel):
       two bounds of the tuple.
 
     - ``relative_field`` -- The field to which the extension is relative.
-      If not given, it will default to the prime_subfield of the ambiant space
+      If not given, it will default to the prime_subfield of the ambient space
       base_field.
 
     EXAMPLES:
@@ -1032,7 +1032,7 @@ class StaticRankErrorChannel(Channel):
 
         .. NOTE::
 
-            This function is here to ease the life of people comming from the Hamming world.
+            This function is here to ease the life of people coming from the Hamming world.
 
         EXAMPLES::
 
