@@ -495,25 +495,10 @@ def test_relation_maxima(relation):
     elif repr(m) in ['0#0', '1#1']:
         return False
 
-    if relation.operator() == operator.eq:  # operator is equality
-        try:
-            s = m.parent()._eval_line('is (equal(%s,%s))' % (repr(m.lhs()),
-                                                             repr(m.rhs())))
-        except TypeError:
-            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
-
-    elif relation.operator() == operator.ne: # operator is not equal
-        try:
-            s = m.parent()._eval_line('is (notequal(%s,%s))' % (repr(m.lhs()),
-                                                                repr(m.rhs())))
-        except TypeError:
-            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
-
-    else:  # operator is < or > or <= or >=, which Maxima handles fine
-        try:
-            s = m.parent()._eval_line('is (%s)' % repr(m))
-        except TypeError:
-            raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
+    try:
+        s = m.parent()._eval_line('is (%s)' % repr(m))
+    except TypeError:
+        raise ValueError("unable to evaluate the predicate '%s'" % repr(relation))
 
     if s == 'true':
         return True
