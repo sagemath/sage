@@ -648,6 +648,36 @@ class InterfaceInit(Converter):
 
         return self.interface._function_call_string(op,ops,[])
 
+##########
+# Maxima #
+##########
+
+class MaximaConverter(InterfaceInit):
+
+    def relation(self, ex, op):
+        """
+        EXAMPLES::
+
+            sage: import operator
+            sage: from sage.symbolic.expression_conversions import InterfaceInit
+            sage: m = InterfaceInit(maxima)
+            sage: m.relation(x==3, operator.eq)
+            '_SAGE_VAR_x = 3'
+            sage: m.relation(x==3, operator.lt)
+            '_SAGE_VAR_x < 3'
+        """
+        from operator import eq, ne, gt, lt, ge, le
+        lhs = self(ex.lhs())
+        rhs = self(ex.rhs())
+        if op is eq:
+            return f"equal({lhs}, {rhs})"
+        elif op is ne:
+            return f"notequal({lhs}, {rhs})"
+        else:
+            rel = self.relation_symbols[op]
+            return f"{lhs} {rel} {rhs}"
+
+
 #########
 # Sympy #
 #########
