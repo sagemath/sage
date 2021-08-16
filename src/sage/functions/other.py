@@ -2217,3 +2217,13 @@ class Function_elementof(BuiltinFunction):
         return r"{} \in {}".format(latex(ex), latex(s))
 
 element_of = Function_elementof()
+
+
+
+
+from sage.libs.pynac.pynac import symbol_table, register_symbol
+import operator
+
+
+symbol_table['functions']['equal'] = operator.eq
+symbol_table['functions']['notequal'] = operator.ne
