@@ -1734,7 +1734,8 @@ def solve_ineq_univar(ineq):
     ineqvar = ineq.variables()
     if len(ineqvar) != 1:
         raise NotImplementedError("The command solve_ineq_univar accepts univariate inequalities only. Your variables are " + ineqvar)
-    ineq0 = ineq._maxima_()
+    from sage.calculus.calculus import maxima
+    ineq0 = maxima(ineq._maxima_init_solve_())
     ineq0.parent().eval("if solve_rat_ineq_loaded#true then (solve_rat_ineq_loaded:true,load(\"solve_rat_ineq.mac\")) ")
     sol = ineq0.solve_rat_ineq().sage()
     if repr(sol) == "all":
