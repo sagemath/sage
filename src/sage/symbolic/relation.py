@@ -1118,7 +1118,7 @@ def solve(f, *args, **kwds):
         return _giac_solver(f, x, solution_dict)
 
     from sage.calculus.calculus import maxima
-    m = maxima(f)
+    m = maxima([eqn._maxima_init_solve_() for eqn in f])
 
     try:
         s = m.solve(variables)
@@ -1310,7 +1310,9 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
         return _giac_solver(f, x, solution_dict)
 
     # from here on, maxima is used for solution
-    m = ex._maxima_()
+    from sage.calculus.calculus import maxima
+    m = maxima(ex._maxima_init_solve_())
+
     P = m.parent()
     if explicit_solutions:
         P.eval('solveexplicit: true') # switches Maxima to looking for only explicit solutions
@@ -1367,7 +1369,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                 X.append(eq)
                 continue
             try:
-                m = eq._maxima_()
+                m = maxima(eq._maxima_init_solve_())
                 s = m.to_poly_solve(x, options='algexact:true')
                 T = string_to_list_of_solutions(repr(s))
                 X.extend([t[0] for t in T])
