@@ -5713,8 +5713,36 @@ cdef class Expression(CommutativeRingElement):
         return SubstituteFunction(self, original, new)()
 
     def half_angle(self):
-        """
-        TODO
+        """Replaces all occurrences of trigonometric (or hyperbolic)
+        functions by rational fractions of the (hyperbolic) tangeant
+        of half the original argument.
+
+        This can be helpful in situation where one needs to underscore
+        the algebraic structure of an expression (e. g. integration).
+
+        Note that this method has no direct relation with the
+        ``half_angles`` argument of the :meth:`trig_expand` method.
+
+        EXAMPLES::
+
+            sage: x, t = var("x, t")
+            sage: cos(x).half_angle().subs(tan(x/2)==t)
+            -(t^2 - 1)/(t^2 + 1)
+
+        Note that this structure underscoring works better after expansion :
+
+            sage: x, t = var("x, t")
+            sage: (cos(3*x)/(4-cos(x))).half_angle().subs(tan(x/2)==t).simplify_full()
+            (2*(t^2 + 1)*cos(3/2*x)^2 - t^2 - 1)/(5*t^2 + 3)
+            sage: (cos(3*x)/(4-cos(x))).trig_expand().half_angle().subs(tan(x/2)==t).simplify_full()
+            -(t^6 - 15*t^4 + 15*t^2 - 1)/(5*t^6 + 13*t^4 + 11*t^2 + 3)
+
+        TESTS:
+
+            sage: all([bool(((u(x)==u(x).half_angle()).subs(x==2*x).trig_simplify())) \
+                       for u in (sin, cos, tan, csc, sec, cot, \
+                                 sinh, cosh, tanh, csch, sech, coth)])
+            True
         """
         from sage.symbolic.expression_conversions import HalfAngle
         return HalfAngle(self)()

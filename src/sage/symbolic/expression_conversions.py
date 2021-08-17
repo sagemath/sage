@@ -2402,12 +2402,17 @@ class HalfAngle(ExpressionTreeWalker):
     Halves = list(HalvesDict.keys())
     def __init__(self, ex):
         """
-        TODO
+        A class that walks a symbolic expression tree, replacing each occurrence of a trigonometric or hyperbolic function by its expression as a rational fraction in (hyperbolic) tangent of half the original argument.
         """
         self.ex = ex
     def composition(self, ex, op):
         """
-        TODO
+        EXAMPLES::
+
+            sage: from sage.symbolic.expression_conversions import HalfAngle
+            sage: x, t = SR.var("x, t")
+            sage: HalfAngle(cos(3*x)/(4-cos(x)).trig_expand())().subs(tan(x/2)==t).simplify_full()
+            (2*(t^2 + 1)*cos(3/2*x)^2 - t^2 - 1)/(5*t^2 + 3)
         """
         if op in self.Halves:
             return self.HalvesDict.get(op)(*[self(_) for _ in ex.operands()])
