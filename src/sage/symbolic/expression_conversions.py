@@ -2375,6 +2375,44 @@ class SubstituteFunction(ExpressionTreeWalker):
         else:
             return operator(*[self(_) for _ in ex.operands()])
 
+# Half_angle transformation. Sometimes useful in integration
+
+class HalfAngle(ExpressionTreeWalker):
+    # Code executed once at first class reference : create canned formulae.
+    from sage.functions.hyperbolic import sinh, cosh, sech, csch, tanh, coth
+    from sage.functions.trig import sin, cos, sec, csc, tan, cot
+    from sage.rings.integer import Integer
+    from sage.calculus.var import function
+    from sage.symbolic.ring import SR
+    x = SR.var("x")
+    HalvesDict = {
+        sin: Integer(2)*tan(Integer(1)/Integer(2)*x)/(tan(Integer(1)/Integer(2)*x)**Integer(2) + Integer(1)).function(x),
+        cos: -(tan(Integer(1)/Integer(2)*x)**Integer(2) - Integer(1))/(tan(Integer(1)/Integer(2)*x)**Integer(2) + Integer(1)).function(x),
+        tan: -Integer(2)*tan(Integer(1)/Integer(2)*x)/(tan(Integer(1)/Integer(2)*x)**Integer(2) - Integer(1)).function(x),
+        csc: Integer(1)/Integer(2)*(tan(Integer(1)/Integer(2)*x)**Integer(2) + Integer(1))/tan(Integer(1)/Integer(2)*x).function(x),
+        sec: -(tan(Integer(1)/Integer(2)*x)**Integer(2) + Integer(1))/(tan(Integer(1)/Integer(2)*x)**Integer(2) - Integer(1)).function(x),
+        cot: -Integer(1)/Integer(2)*(tan(Integer(1)/Integer(2)*x)**Integer(2) - Integer(1))/tan(Integer(1)/Integer(2)*x).function(x),
+        sinh: -Integer(2)*tanh(Integer(1)/Integer(2)*x)/(tanh(Integer(1)/Integer(2)*x)**Integer(2) - Integer(1)).function(x),
+        cosh: -(tanh(Integer(1)/Integer(2)*x)**Integer(2) + Integer(1))/(tanh(Integer(1)/Integer(2)*x)**Integer(2) - Integer(1)).function(x),
+        tanh: Integer(2)*tanh(Integer(1)/Integer(2)*x)/(tanh(Integer(1)/Integer(2)*x)**Integer(2) + Integer(1)).function(x),
+        csch: -Integer(1)/Integer(2)*(tanh(Integer(1)/Integer(2)*x)**Integer(2) - Integer(1))/tanh(Integer(1)/Integer(2)*x).function(x),
+        sech: -(tanh(Integer(1)/Integer(2)*x)**Integer(2) - Integer(1))/(tanh(Integer(1)/Integer(2)*x)**Integer(2) + Integer(1)).function(x),
+        coth: Integer(1)/Integer(2)*(tanh(Integer(1)/Integer(2)*x)**Integer(2) + Integer(1))/tanh(Integer(1)/Integer(2)*x).function(x)
+    }
+    Halves = list(HalvesDict.keys())
+    def __init__(self, ex):
+        """
+        TODO
+        """
+        self.ex = ex
+    def composition(self, ex, op):
+        """
+        TODO
+        """
+        if op in self.Halves:
+            return self.HalvesDict.get(op)(*[self(_) for _ in ex.operands()])
+        return super(HalfAngle, self).composition(ex, op)
+
 class HoldRemover(ExpressionTreeWalker):
     def __init__(self, ex, exclude=None):
         """

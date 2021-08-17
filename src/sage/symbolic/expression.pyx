@@ -5712,6 +5712,13 @@ cdef class Expression(CommutativeRingElement):
         from sage.symbolic.expression_conversions import SubstituteFunction
         return SubstituteFunction(self, original, new)()
 
+    def half_angle(self):
+        """
+        TODO
+        """
+        from sage.symbolic.expression_conversions import HalfAngle
+        return HalfAngle(self)()
+
     def substitution_delayed(self, pattern, replacement):
         """
         Replace all occurrences of pattern by the result of replacement.
