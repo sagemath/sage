@@ -5720,8 +5720,9 @@ cdef class Expression(CommutativeRingElement):
         This can be helpful in situation where one needs to underscore
         the algebraic structure of an expression (e. g. integration).
 
-        Note that this method has no direct relation with the
-        ``half_angles`` argument of the :meth:`trig_expand` method.
+        It should be noted that this method has no direct relation
+        with the ``half_angles`` argument of the :meth:`trig_expand`
+        method.
 
         EXAMPLES::
 

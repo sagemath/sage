@@ -1011,11 +1011,11 @@ class FriCASConverter(InterfaceInit):
 
             sage: ex._fricas_()^2                                               # optional - fricas
                        +-+
-            (4 + 2 %i)\|2  + 5 + 4 %i
+            (4 + 2 %i)|2  + 5 + 4 %i
 
             sage: (ex^2)._fricas_()                                             # optional - fricas
                        +-+
-            (4 + 2 %i)\|2  + 5 + 4 %i
+            (4 + 2 %i)|2  + 5 + 4 %i
 
         """
         try:
