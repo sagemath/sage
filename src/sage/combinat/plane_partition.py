@@ -186,7 +186,7 @@ class PlanePartition(ClonableList):
         """
         return Tableau(self)
 
-    def z_tableau(self):
+    def z_tableau(self) -> Tableau:
         r"""
         Return the projection of ``self`` in the `z` direction.
 
@@ -201,7 +201,7 @@ class PlanePartition(ClonableList):
             Z[C[0]][C[1]] += 1
         return Z
 
-    def y_tableau(self):
+    def y_tableau(self) -> Tableau:
         r"""
         Return the projection of ``self`` in the `y` direction.
 
@@ -216,7 +216,7 @@ class PlanePartition(ClonableList):
             Y[C[2]][C[0]] += 1
         return Y
 
-    def x_tableau(self):
+    def x_tableau(self) -> Tableau:
         r"""
         Return the projection of ``self`` in the `x` direction.
 
@@ -248,7 +248,7 @@ class PlanePartition(ClonableList):
                     L.append([r, c, h])
         return L
 
-    def number_of_boxes(self):
+    def number_of_boxes(self) -> Integer:
         r"""
         Return the number of boxes in the plane partition.
 
@@ -260,7 +260,7 @@ class PlanePartition(ClonableList):
         """
         return sum(sum(k for k in row) for row in self)
 
-    def _repr_diagram(self, show_box=False, use_unicode=False):
+    def _repr_diagram(self, show_box=False, use_unicode=False) -> str:
         r"""
         Return a string of the 3D diagram of ``self``.
 
@@ -571,7 +571,7 @@ class PlanePartition(ClonableList):
         TP.axes(show=False)
         return TP
         
-    def contains(self, PP): 
+    def contains(self, PP) -> bool: 
         """
         
         Return ``True`` if ``PP`` is a plane partition that fits
@@ -606,7 +606,7 @@ class PlanePartition(ClonableList):
         return all([self[i][j] >= PP[i][j] for j in range(len(PP[i])) for i in range(len(PP))])        
         
 
-    def complement(self, tableau_only=False):
+    def complement(self, tableau_only=False) -> PP:
         # Complement needs to be more intelligent about which parent to return
         r"""
         Return the complement of ``self``.
@@ -641,7 +641,7 @@ class PlanePartition(ClonableList):
         else:
             return type(self)(self.parent(), T, check=False)
 
-    def transpose(self, tableau_only=False):
+    def transpose(self, tableau_only=False) -> PP:
         r"""
         Return the transpose of ``self``.
 
@@ -893,7 +893,7 @@ class PlanePartition(ClonableList):
         
 
 
-    def maximal_boxes(self):
+    def maximal_boxes(self) -> list:
         """
         Return the coordinates of the maximal boxes of ``self``.
         
@@ -916,7 +916,7 @@ class PlanePartition(ClonableList):
         oi = Q.order_ideal_generators(generate)
         return [list(oi_elem) for oi_elem in oi]
   
-    def cyclically_rotate(self, preserve_parent=False):
+    def cyclically_rotate(self, preserve_parent=False) -> PP:
         """
         Return the cyclic rotation of ``self``.
 
@@ -1097,7 +1097,7 @@ class PlanePartitions_all(PlanePartitions):
         self._symmetry = None
         super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
 
-    def __repr__(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1172,7 +1172,7 @@ class PlanePartitions_box(PlanePartitions):
         c=self._box[2]
         return posets.ProductOfChains([a,b,c])
 
-    def from_order_ideal(self, I):
+    def from_order_ideal(self, I) -> PP:
         r"""
         Return the plane partition corresponding to an order ideal in the
         poset given in :meth:`to_poset`.
@@ -1181,7 +1181,7 @@ class PlanePartitions_box(PlanePartitions):
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
 
-    def from_antichain(self, A):
+    def from_antichain(self, A) -> PP:
         r"""
         Return the plane partition corresponding to an antichain in the poset
         given in :meth:`to_poset`.
@@ -1337,7 +1337,7 @@ class PlanePartitions_n(PlanePartitions):
         self._box = None
         self._symmetry = None
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         TESTS::
 
@@ -1346,10 +1346,10 @@ class PlanePartitions_n(PlanePartitions):
         """
         return "Plane partitions of size {}".format(self._n)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return PlanePartitions.__contains__(self, x) and x.number_of_boxes() ==  self._n
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         r"""
         An iterator to generate all plane partitions of a fixed size.
 
@@ -1407,7 +1407,7 @@ class PlanePartitions_n(PlanePartitions):
                 for a in PP_first_row_iter(n,la):
                     yield self.element_class(self, a, check=False)
             
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r"""
         Return the number of plane partitions with ``n`` boxes.
 
@@ -1464,11 +1464,11 @@ class PlanePartitions_SPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'SPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         return PlanePartitions.__contains__(self, x) and x.is_SPP()
 
 
@@ -1488,7 +1488,7 @@ class PlanePartitions_SPP(PlanePartitions):
                     pl.append((x,y,z))
         return Poset((pl,cmp))
 
-    def from_order_ideal(self, I):
+    def from_order_ideal(self, I) -> PP:
         r"""
         Return the plane partition corresponding to an order ideal in the
         poset given in :meth:`to_poset()`.
@@ -1497,7 +1497,7 @@ class PlanePartitions_SPP(PlanePartitions):
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
 
-    def from_antichain(self, A):
+    def from_antichain(self, A) -> PP:
         r"""
         Return the plane partition corresponding to an antichain in the poset
         given in :meth:`to_poset()`.
@@ -1535,11 +1535,11 @@ class PlanePartitions_SPP(PlanePartitions):
                         ppMatrix[i][j] = ppMatrix[j][i]
         return self.element_class(self, ppMatrix)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         for acl in self.to_poset().antichains_iterator():
             yield self.from_antichain(acl)
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
@@ -1564,7 +1564,7 @@ class PlanePartitions_SPP(PlanePartitions):
         rightProduct = (prod( (i + j + C - 1) / (i + j - 1) for j in range(1, A+1) for i in range(1, j) ))
         return Integer(leftProduct * rightProduct)
 
-    def random_element(self):
+    def random_element(self) -> PP:
         r"""
         Return a uniformly random element of ``self``.
 
@@ -1615,7 +1615,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'CSPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Cyclically symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
@@ -1670,7 +1670,7 @@ class PlanePartitions_CSPP(PlanePartitions):
                         ppMatrix[i][j] = max(iValue,jValue)
         return self.element_class(self, ppMatrix)
 
-    def from_order_ideal(self, I):
+    def from_order_ideal(self, I) -> PP:
         r"""
         Return the plane partition corresponding to an order ideal in the
         poset given in :meth:`to_poset`.
@@ -1679,11 +1679,11 @@ class PlanePartitions_CSPP(PlanePartitions):
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))    
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         for acl in self.to_poset().antichains_iterator():
             yield self.from_antichain(acl)
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
@@ -1742,11 +1742,14 @@ class PlanePartitions_TSPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'TSPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Totally symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
     def to_poset(self):
+        """
+        MAKE SURE DOC EXPLICITLY DESCRIBES WHAT FUNDAMENTAL DOMAIN LOOKS LIKE
+        """
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -1758,7 +1761,7 @@ class PlanePartitions_TSPP(PlanePartitions):
                         pl.append((x,y,z))
         return Poset((pl,cmp))
 
-    def from_antichain(self, acl):
+    def from_antichain(self, acl) -> PP:
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -1794,15 +1797,15 @@ class PlanePartitions_TSPP(PlanePartitions):
                         ppMatrix[i][j] = max(iValue,jValue)
         return self.element_class(self, ppMatrix)
 
-    def random_element(self):
+    def random_element(self) -> PP:
         return self.to_poset().from_antichain(self.to_poset().random_antichain())
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         for A in self.to_poset().antichains_iterator():
             yield self.from_antichain(A)
 
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
@@ -1857,11 +1860,11 @@ class PlanePartitions_SCPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'SCPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -1958,7 +1961,7 @@ class PlanePartitions_SCPP(PlanePartitions):
                     yield self.element_class(self, PP_above+PP_below)
         return
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
@@ -2053,11 +2056,11 @@ class PlanePartitions_TCPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'TCPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Transpose complement plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         for p in PlanePartitions(self._box):
             if p.is_TCPP():
                 yield self.element_class(self,p)
@@ -2065,7 +2068,7 @@ class PlanePartitions_TCPP(PlanePartitions):
 
 
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r"""
         Return the cardinality of ``self``.
 
@@ -2118,17 +2121,17 @@ class PlanePartitions_SSCPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'SSCPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         for p in PlanePartitions(self._box):
             if p.is_SSCPP():
                 yield self.element_class(self,p)
         return
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         r=self._box[0]
         s=self._box[1]
         t=self._box[2]
@@ -2167,17 +2170,17 @@ class PlanePartitions_CSTCPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'CSTCPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Cyclically symmetric transpose complement partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         for p in PlanePartitions(self._box):
             if p.is_CSTCPP():
                 yield self.element_class(self,p)
         return
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -2215,17 +2218,17 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'CSSCPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Cyclically symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         for p in PlanePartitions(self._box):
             if p.is_CSSCPP():
                 yield self.element_class(self,)
         return
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -2266,7 +2269,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'TSSCPP'
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         return "Totally symmetric self-complementary plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
 
@@ -2292,7 +2295,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
         return Poset((pl,cmp))
         
-    def from_antichain(self, acl):
+    def from_antichain(self, acl) -> PP:
         #ac format ex: [x,y,z]
         a=self._box[0]
         b=self._box[1]
@@ -2302,7 +2305,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         width = n/2 - 1
         height = n/2 - 1
 
-        #generate inner triagle
+        #generate inner triangle
         for i in range(width):
             for j in range(height):
                 if(i <= j):
@@ -2379,7 +2382,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
 
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
 #        def componentwise_comparer(thing1,thing2):
 #            if len(thing1) == len(thing2):
 #                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
