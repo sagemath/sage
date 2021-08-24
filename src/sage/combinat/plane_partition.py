@@ -24,7 +24,7 @@ AUTHORS:
 # ****************************************************************************
 from typing import NewType, Iterator, Tuple
 
-from sage.structure.list_clone import ClonableList
+from sage.structure.list_clone import ClonableList, ClonableArray
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
@@ -1536,6 +1536,17 @@ class PlanePartitions_SPP(PlanePartitions):
         return self.element_class(self, ppMatrix)
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((2,2,1), symmetry='SPP'))
+            [Plane partition [],
+            Plane partition [[1, 1], [1, 1]],
+            Plane partition [[1, 1], [1]],
+            Plane partition [[1]]]
+        """
         for acl in self.to_poset().antichains_iterator():
             yield self.from_antichain(acl)
 
@@ -1680,6 +1691,18 @@ class PlanePartitions_CSPP(PlanePartitions):
         return self.from_antichain(self.to_poset().order_ideal_generators(I))    
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((2,2,2), symmetry='CSPP'))
+            [Plane partition [],
+            Plane partition [[2, 2], [2, 2]],
+            Plane partition [[2, 2], [2, 1]],
+            Plane partition [[2, 1], [1]],
+            Plane partition [[1]]]
+        """
         for acl in self.to_poset().antichains_iterator():
             yield self.from_antichain(acl)
 
@@ -1801,6 +1824,18 @@ class PlanePartitions_TSPP(PlanePartitions):
         return self.to_poset().from_antichain(self.to_poset().random_antichain())
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((4,3,2), symmetry='TSPP'))
+            [Plane partition [],
+            Plane partition [[2, 2], [2, 2]],
+            Plane partition [[2, 2], [2, 1]],
+            Plane partition [[2, 1], [1]],
+            Plane partition [[1]]]
+        """
         for A in self.to_poset().antichains_iterator():
             yield self.from_antichain(A)
 
@@ -1865,6 +1900,18 @@ class PlanePartitions_SCPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((4,3,2), symmetry='SCPP'))
+            [Plane partition [],
+            Plane partition [[2, 2], [2, 2]],
+            Plane partition [[2, 2], [2, 1]],
+            Plane partition [[2, 1], [1]],
+            Plane partition [[1]]]
+        """
         a=self._box[0]
         b=self._box[1]
         c=self._box[2]
@@ -2061,6 +2108,18 @@ class PlanePartitions_TCPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((3,3,2), symmetry='TCPP'))
+            [Plane partition [[2, 2, 1], [2, 1], [1]],
+            Plane partition [[2, 1, 1], [2, 1, 1], [1]],
+            Plane partition [[2, 2, 1], [1, 1], [1, 1]],
+            Plane partition [[2, 1, 1], [1, 1, 1], [1, 1]],
+            Plane partition [[1, 1, 1], [1, 1, 1], [1, 1, 1]]]
+        """
         for p in PlanePartitions(self._box):
             if p.is_TCPP():
                 yield self.element_class(self,p)
@@ -2126,6 +2185,16 @@ class PlanePartitions_SSCPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((3,3,2), symmetry='SSCPP'))
+            [Plane partition [[2, 2, 1], [2, 1], [1]],
+            Plane partition [[2, 1, 1], [1, 1, 1], [1, 1]],
+            Plane partition [[1, 1, 1], [1, 1, 1], [1, 1, 1]]]
+        """
         for p in PlanePartitions(self._box):
             if p.is_SSCPP():
                 yield self.element_class(self,p)
@@ -2163,7 +2232,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
         """
         TESTS::
     
-            sage: PP = PlanePartitions([3,3,3], symmetry='CSTCPP')
+            sage: PP = PlanePartitions([2,2,2], symmetry='CSTCPP')
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_CSTCPP, self).__init__(category=FiniteEnumeratedSets())
@@ -2175,6 +2244,14 @@ class PlanePartitions_CSTCPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((2,2,2), symmetry='CSTCPP'))
+            [Plane partition [[2, 1], [1]]]
+        """
         for p in PlanePartitions(self._box):
             if p.is_CSTCPP():
                 yield self.element_class(self,p)
@@ -2223,9 +2300,17 @@ class PlanePartitions_CSSCPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((2,2,2), symmetry='CSSCPP'))
+            [Plane partition [[2, 1], [1]]]
+        """
         for p in PlanePartitions(self._box):
             if p.is_CSSCPP():
-                yield self.element_class(self,)
+                yield self.element_class(self,p)
         return
 
     def cardinality(self) -> Integer:
@@ -2383,6 +2468,15 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
 
     def __iter__(self) -> Iterator:
+        """
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: list(PlanePartitions((4,4,4), symmetry='TSSCPP'))
+            [Plane partition [[4, 4, 2, 2], [4, 4, 2, 2], [2, 2], [2, 2]],
+            Plane partition [[4, 4, 3, 2], [4, 3, 2, 1], [3, 2, 1], [2, 1]]]
+        """
 #        def componentwise_comparer(thing1,thing2):
 #            if len(thing1) == len(thing2):
 #                if all(thing1[i] <= thing2[i] for i in range(len(thing1))):
