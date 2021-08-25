@@ -6,6 +6,7 @@ AUTHORS:
 
 - Jang Soo Kim (2016): Initial implementation
 - Jessica Striker (2016): Added additional methods
+- Kevin Dilks (2021): Added symmetry classes
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Jang Soo Kim <jangsookim@skku.edu>,
@@ -1463,6 +1464,8 @@ class PlanePartitions_SPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
             sage: TestSuite(PP).run()
         """
+        if box_size[0] != box_size[1]:
+            raise ValueError("x and y dimensions must match")
         super(PlanePartitions_SPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'SPP'
@@ -1611,8 +1614,8 @@ class PlanePartitions_CSPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2), symmetry='CSPP')
-            sage: P2 = PlanePartitions([4,3,2], symmetry='CSPP')
+            sage: P1 = PlanePartitions((4,4,4), symmetry='CSPP')
+            sage: P2 = PlanePartitions([4,4,4], symmetry='CSPP')
             sage: P1 is P2
             True
         """
@@ -1625,6 +1628,8 @@ class PlanePartitions_CSPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
             sage: TestSuite(PP).run()
         """
+        if box_size[0] != box_size[1] or box_size[1] != box_size[2]:
+            raise ValueError("x, y, and z dimensions must match")
         super(PlanePartitions_CSPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'CSPP'
@@ -1750,8 +1755,8 @@ class PlanePartitions_TSPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2), symmetry='TSPP')
-            sage: P2 = PlanePartitions([4,3,2], symmetry='TSPP')
+            sage: P1 = PlanePartitions((4,4,4), symmetry='TSPP')
+            sage: P2 = PlanePartitions([4,4,4], symmetry='TSPP')
             sage: P1 is P2
             True
         """
@@ -1764,6 +1769,8 @@ class PlanePartitions_TSPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry='TSPP')
             sage: TestSuite(PP).run()
         """
+        if box_size[0] != box_size[1] or box_size[1] != box_size[2]:
+            raise ValueError("x, y, and z dimensions must match")
         super(PlanePartitions_TSPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'TSPP'
@@ -1892,8 +1899,8 @@ class PlanePartitions_SCPP(PlanePartitions):
             sage: PP = PlanePartitions([4,3,2], symmetry='SCPP')
             sage: TestSuite(PP).run()
         """
-#        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
-#            raise ValueError("box sides cannot all be odd")
+        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
+            raise ValueError("box sides cannot all be odd")
         super(PlanePartitions_SCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'SCPP'
@@ -2100,8 +2107,8 @@ class PlanePartitions_TCPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry='TCPP')
             sage: TestSuite(PP).run()
         """
-#        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
-#            raise ValueError("box sides cannot all be odd")
+        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
+            raise ValueError("x, y, and z dimensions cannot all be odd")
         super(PlanePartitions_TCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'TCPP'
@@ -2153,6 +2160,7 @@ class PlanePartitions_TCPP(PlanePartitions):
 #Class 7
 
 class PlanePartitions_SSCPP(PlanePartitions):
+#Symmetric self-complementary plane partitions
     @staticmethod
     def __classcall_private__(cls, box_size):
         """
@@ -2175,10 +2183,11 @@ class PlanePartitions_SSCPP(PlanePartitions):
             sage: TestSuite(PP).run()
         """
 
-#Think about how to check a=b and not all a,b,c odd
 
+        if box_size[0]!=box_size[1]:
+            raise ValueError("x and y dimensions must be equal")
         if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
-            raise ValueError("box sides cannot all be odd")
+            raise ValueError("x, y, and z dimensions cannot all be odd")
         super(PlanePartitions_SSCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'SSCPP'
@@ -2238,6 +2247,8 @@ class PlanePartitions_CSTCPP(PlanePartitions):
             sage: PP = PlanePartitions([2,2,2], symmetry='CSTCPP')
             sage: TestSuite(PP).run()
         """
+        if box_size[0] != box_size[1] or box_size[1] != box_size[2]:
+            raise ValueError("x, y, and z dimensions must match")
         super(PlanePartitions_CSTCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'CSTCPP'
@@ -2294,6 +2305,10 @@ class PlanePartitions_CSSCPP(PlanePartitions):
             sage: PP = PlanePartitions([3,3,3], symmetry='CSSCPP')
             sage: TestSuite(PP).run()
         """
+        if box_size[0] != box_size[1] or box_size[1] != box_size[2]:
+            raise ValueError("x, y, and z dimensions must match")
+        if (box_size[0] % 2 == 1 and box_size[1] % 2 == 1 and box_size[2] % 2 == 1):
+            raise ValueError("x, y, and z dimensions cannot all be odd")  
         super(PlanePartitions_CSSCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'CSSCPP'
@@ -2352,7 +2367,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             sage: TestSuite(PP).run()
         """
         if (box_size[0] != box_size[1] or (box_size[1] != box_size[2]) or box_size[0] % 2 != 0):
-            raise ValueError("invalid box size; must be (2r,2r,2r)")
+            raise ValueError("x, y, and z dimensions must be (2r,2r,2r)")
         super(PlanePartitions_TSSCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'TSSCPP'
