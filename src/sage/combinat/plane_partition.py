@@ -1915,7 +1915,7 @@ class PlanePartitions_SCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((4,3,2), symmetry='SCPP'))
+            sage: list(PlanePartitions((2,2,2), symmetry='SCPP'))
             [Plane partition [],
             Plane partition [[2, 2], [2, 2]],
             Plane partition [[2, 2], [2, 1]],
@@ -1966,7 +1966,8 @@ class PlanePartitions_SCPP(PlanePartitions):
 
         def possible_middle_row_for_b_even(a,c):
             "Returns the list of possible middle ((b/2)+1)st row for SCPP inside box(a,b,c) when b is even"
-            for mu in Partitions_inside_lambda([floor(c/2) for i in range((a+1)/2)]):
+#            for mu in Partitions_inside_lambda([floor(c/2) for i in range((a+1)/2)]):
+            for mu in Partitions_inside_lambda([floor(c/2) for i in range(floor((a+1)/2))]):
                 nu = [c-mu[len(mu)-1-i] for i in range(floor(a/2))]
                 for tau in Partitions_inside_lambda_with_smallest_at_least_k(nu,mu[0]):
                     la = tau + mu
