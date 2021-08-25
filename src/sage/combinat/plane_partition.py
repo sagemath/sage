@@ -186,9 +186,14 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
         """
         return Tableau(self)
 
-    def z_tableau(self) -> Tableau:
+    def z_tableau(self, tableau=True) -> Tableau:
         r"""
         Return the projection of ``self`` in the `z` direction.
+
+        If ``tableau`` is set to ``False``, then only the list of lists
+        consisting of the projection of boxes size onto the xy-plane
+        is returned instead of a Tableau object. This output will
+        not have empty trailing rows or trailing zeros removed.
 
         EXAMPLES::
 
@@ -199,11 +204,18 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
         Z = [[0 for i in range(self._max_y)] for j in range(self._max_x)]
         for C in self.cells():
             Z[C[0]][C[1]] += 1
+        if tableau:
+            return Tableau(Z)
         return Z
 
-    def y_tableau(self) -> Tableau:
+    def y_tableau(self, tableau=True) -> Tableau:
         r"""
         Return the projection of ``self`` in the `y` direction.
+
+        If ``tableau`` is set to ``False``, then only the list of lists
+        consisting of the projection of boxes size onto the xz-plane
+        is returned instead of a Tableau object. This output will
+        not have empty trailing rows or trailing zeros removed.
 
         EXAMPLES::
 
@@ -214,11 +226,18 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
         Y = [[0 for i in range(self._max_x)] for j in range(self._max_z)]
         for C in self.cells():
             Y[C[2]][C[0]] += 1
+        if tableau:
+            return Tableau(Y)
         return Y
 
-    def x_tableau(self) -> Tableau:
+    def x_tableau(self, tableau=True) -> Tableau:
         r"""
         Return the projection of ``self`` in the `x` direction.
+
+        If ``tableau`` is set to ``False``, then only the list of lists
+        consisting of the projection of boxes size onto the yz-plane
+        is returned instead of a Tableau object. This output will
+        not have empty trailing rows or trailing zeros removed.
 
         EXAMPLES::
 
@@ -229,6 +248,8 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
         X = [[0 for i in range(self._max_z)] for j in range(self._max_y)]
         for C in self.cells():
             X[C[1]][C[2]] += 1
+        if tableau:
+            return Tableau(X)
         return X
 
     def cells(self) -> list:
