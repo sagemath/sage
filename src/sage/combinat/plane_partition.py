@@ -1202,7 +1202,6 @@ class PlanePartitions_box(PlanePartitions):
         Return the plane partition corresponding to an order ideal in the
         poset given in :meth:`to_poset`.
 
-        Note: input may not be checked ? Optional check parameter if too much overhead?
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
 
@@ -1211,7 +1210,6 @@ class PlanePartitions_box(PlanePartitions):
         Return the plane partition corresponding to an antichain in the poset
         given in :meth:`to_poset`.
 
-        Note: input may not be checked? Optional parameter if too much overhead?
         """
         a = self._box[0]
         b = self._box[1]
@@ -1226,7 +1224,7 @@ class PlanePartitions_box(PlanePartitions):
             z = ac[2]
             ppMatrix[x][y] = (z+1)
 
-        #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partitian format
+        #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
         if A != []:
             for i in range(a):
                 i = a-(i+1)
@@ -1264,14 +1262,6 @@ class PlanePartitions_box(PlanePartitions):
                     PP[A - 1 - r][B - 1 - c] = T[r][c] - r - 1
             yield self.element_class(self, PP, check=False)
 
-#        a = self._box[0]
-#        b = self._box[1]
-#        c = self._box[2]
-#        pocp = posets.ProductOfChains([a,b,c])
-#        matrixList = [] #list of all PlanePartitions with parameters(a,b,c)
-        #iterate through each antichain of product of chains poset with parameters (a,b,c)
-#        for acl in self.to_poset().antichains_iterator():
-#            yield self.from_antichain(acl)
 
 
 
@@ -1519,8 +1509,6 @@ class PlanePartitions_SPP(PlanePartitions):
         r"""
         Return the plane partition corresponding to an order ideal in the
         poset given in :meth:`to_poset()`.
-
-        Note: input may not be checked ? Optional check parameter if too much overhead?
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))
 
@@ -1528,8 +1516,6 @@ class PlanePartitions_SPP(PlanePartitions):
         r"""
         Return the plane partition corresponding to an antichain in the poset
         given in :meth:`to_poset()`.
-
-        Note: input may not be checked? Optional parameter if too much overhead?
         """
         #Initialize an empty plane partition
         a=self._box[0]
@@ -1713,8 +1699,6 @@ class PlanePartitions_CSPP(PlanePartitions):
         r"""
         Return the plane partition corresponding to an order ideal in the
         poset given in :meth:`to_poset`.
-
-        Note: input may not be checked ? Optional check parameter if too much overhead?
         """
         return self.from_antichain(self.to_poset().order_ideal_generators(I))    
 
@@ -2353,9 +2337,6 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         c=self._box[2]
         if a == b and b == c and a % 2 == 0:
             return Integer(prod( ((factorial(3*i+1)**2/(factorial(a/2+i)**2) for i in range((a/2))))))
-#            numerator = prod(factorial(3*i+1)**2 for i in range(a/2))
-#            denominator = prod(factorial(a/2+i)**2 for i in range(a/2))
-#            return(Integer(numerator / denominator))
         return Integer(0)
 
 
