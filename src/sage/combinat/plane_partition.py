@@ -44,40 +44,40 @@ from sage.functions.other import floor, ceil, binomial, factorial
 PP = NewType('PP', 'PlanePartition')
 
 
-class PlanePartition(ClonableArray,
-        metaclass=InheritComparisonClasscallMetaclass):
-    r"""
-    A plane partition.
+#class PlanePartition(ClonableArray,
+#        metaclass=InheritComparisonClasscallMetaclass):
+#    r"""
+#    A plane partition.
 
-    A *plane partition* is a stack of cubes in the positive orthant.
+#    A *plane partition* is a stack of cubes in the positive orthant.
 
-    INPUT:
+#    INPUT:
 
-    - ``PP`` -- a list of lists which represents a tableau
+#    - ``PP`` -- a list of lists which represents a tableau
 
-    - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
-      where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
-      `y`-axis, `z`-axis, respectively; if this is not given, it is
-      determined by the smallest box bounding ``PP``
+#    - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
+#      where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
+#      `y`-axis, `z`-axis, respectively; if this is not given, it is
+#      determined by the smallest box bounding ``PP``
 
-    OUTPUT:
+#    OUTPUT:
 
-    The plane partition whose tableau representation is ``PP``.
+#    The plane partition whose tableau representation is ``PP``.
 
-    EXAMPLES::
+#    EXAMPLES::
 
-        sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-        sage: PP
-        Plane partition [[4, 3, 3, 1], [2, 1, 1], [1, 1]]
+#        sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
+#        sage: PP
+#        Plane partition [[4, 3, 3, 1], [2, 1, 1], [1, 1]]
 
-    TESTS::
+#    TESTS::
 
-        sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-        sage: TestSuite(PP).run()
-    """
+#        sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
+#        sage: TestSuite(PP).run()
+#    """
 
 #@add_metaclass(InheritComparisonClasscallMetaclass)
-class PlanePartition(ClonableList):
+class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     @staticmethod
     def __classcall_private__(cls, PP):
         """
@@ -122,8 +122,7 @@ class PlanePartition(ClonableList):
                     while pp[i] and not pp[i][-1]:
                         del pp[i][-1]
                     if not pp[i]:
-                        pp.pop(i)
-                            
+                        pp.pop(i)        
             ClonableList.__init__(self, parent, pp, check=check)
         if self.parent()._box is None:
             if pp:
@@ -614,6 +613,7 @@ class PlanePartition(ClonableList):
         If the parent of ``self`` consists only of partitions inside a given
         box, then the complement is taken in this box. Otherwise, the
         complement is taken in the smallest box containing the plane partition.
+        The empty plane partition with no box specified is its own complement.
 
         If ``tableau_only`` is set to ``True``, then only the tableau
         consisting of the projection of boxes size onto the xy-plane
@@ -638,7 +638,10 @@ class PlanePartition(ClonableList):
                 T[A - 1 - r][B - 1 - c] = C - z_tab[r][c]
         if tableau_only:
             return T
-        else:
+        elif not self.parent()._box:
+            pp = PlanePartitions()
+            return pp.element_class(pp, T)
+        else:            
             return type(self)(self.parent(), T, check=False)
 
     def transpose(self, tableau_only=False) -> PP:
