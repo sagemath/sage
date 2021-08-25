@@ -1930,7 +1930,6 @@ class PlanePartitions_SCPP(PlanePartitions):
             if len(la)==0:
                 yield []
                 return
-            LIST = []
             for mu_0 in range(la[0],0,-1):
                 new_la = [min(mu_0,la[i]) for i in range(1,len(la))]
                 for mu in Partitions_inside_lambda(new_la):
@@ -1946,7 +1945,7 @@ class PlanePartitions_SCPP(PlanePartitions):
             if la[-1] < k:
                 yield
                 return
-            LIST = []
+
             for mu in Partitions_inside_lambda([la[i]-k for i in range(len(la))]):
                 yield ([mu[i]+k for i in range(len(la))])
             return
@@ -1956,7 +1955,6 @@ class PlanePartitions_SCPP(PlanePartitions):
             if a*c % 2 == 1:
                 yield
                 return
-            LIST = []
             for mu in Partitions_inside_lambda([floor(c/2) for i in range(floor(a/2))]):
                 nu = [c-mu[len(mu)-1-i] for i in range(len(mu))]
                 if a % 2 ==0:
@@ -1968,7 +1966,6 @@ class PlanePartitions_SCPP(PlanePartitions):
 
         def possible_middle_row_for_b_even(a,c):
             "Returns the list of possible middle ((b/2)+1)st row for SCPP inside box(a,b,c) when b is even"
-            LIST = []
             for mu in Partitions_inside_lambda([floor(c/2) for i in range((a+1)/2)]):
                 nu = [c-mu[len(mu)-1-i] for i in range(floor(a/2))]
                 for tau in Partitions_inside_lambda_with_smallest_at_least_k(nu,mu[0]):
@@ -1986,7 +1983,6 @@ class PlanePartitions_SCPP(PlanePartitions):
             if k == 1:
                 yield [la]
                 return
-            LIST = []
             for mu in Partitions_inside_lambda(la):
                 for PP in PPs_with_first_row_la_and_with_k_rows(mu,k-1):
                     yield ([la]+PP)
