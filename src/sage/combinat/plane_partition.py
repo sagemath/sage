@@ -35,6 +35,7 @@ from sage.combinat.posets.posets import Poset
 from sage.combinat.posets.poset_examples import posets
 from sage.categories.cartesian_product import cartesian_product
 from sage.rings.integer import Integer
+from sage.rings.all import ZZ
 from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
 from sage.arith.misc import Sigma
@@ -79,6 +80,35 @@ PP = NewType('PP', 'PlanePartition')
 
 #@add_metaclass(InheritComparisonClasscallMetaclass)
 class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
+    r"""
+    A plane partition.
+
+    A *plane partition* is a stack of cubes in the positive orthant.
+
+    INPUT:
+
+    - ``PP`` -- a list of lists which represents a tableau
+
+    - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
+      where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
+      `y`-axis, `z`-axis, respectively; if this is not given, it is
+      determined by the smallest box bounding ``PP``
+
+    OUTPUT:
+
+    The plane partition whose tableau representation is ``PP``.
+
+    EXAMPLES::
+
+        sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
+        sage: PP
+        Plane partition [[4, 3, 3, 1], [2, 1, 1], [1, 1]]
+
+    TESTS::
+
+        sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
+        sage: TestSuite(PP).run()
+    """
     @staticmethod
     def __classcall_private__(cls, PP):
         """
@@ -153,7 +183,18 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
             Traceback (most recent call last):
             ...
             ValueError: Not weakly decreasing along columns
+            sage: d = PlanePartition([[2,-1],[-2]])
+            Traceback (most recent call last):
+            ...
+            ValueError: Entries not all nonnegative
+            sage: e = PlanePartition([[3/2,1],[.5]])
+            Traceback (most recent call last):
+            ...
+            ValueError: Entries not all integers
+
         """
+        if not all(all(a in ZZ for a in b) for b in self):
+            raise ValueError("Entries not all integers")
         for row in self:
             if not all(c >= 0 for c in row):
                 raise ValueError("Entries not all nonnegative")
@@ -781,7 +822,10 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
         r"""
         Return whether ``self`` is a self-complementary plane partition.
         
-        
+        Note that the complement of a plane partition (and thus the property of
+        being self-complementary) is dependent on the choice of a box that is 
+        contained in. If no parent/bounding box is specified,  the box is taken 
+        to be the smallest box that contains the plane partition.
         
         
 
@@ -941,7 +985,7 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
         return [list(oi_elem) for oi_elem in oi]
   
     def cyclically_rotate(self, preserve_parent=False) -> PP:
-        """
+        r"""
         Return the cyclic rotation of ``self``.
 
         By default, if the parent of ``self`` consists of plane
@@ -1081,15 +1125,23 @@ class PlanePartitions(UniqueRepresentation, Parent):
             False        
 
         """
-        for row in pp:
-            if not all(c >= 0 for c in row):
+        if isinstance(pp, PlanePartition):
+            return True
+        if isinstance(pp, (list, tuple)):
+            if not pp:
+                return True
+            if not all(all(a in ZZ for a in b) for b in pp):
                 return False
-            if not all(row[i] >= row[i+1] for i in range(len(row)-1)):
-                return False
-        for row, next in zip(pp, pp[1:]):
-            if not all(row[c] >= next[c] for c in range(len(next))):
-                return False
-        return True
+            for row in pp:
+                if not all(c >= 0 for c in row):
+                    return False
+                if not all(row[i] >= row[i+1] for i in range(len(row)-1)):
+                    return False
+            for row, next in zip(pp, pp[1:]):
+                if not all(row[c] >= next[c] for c in range(len(next))):
+                    return False
+            return True
+        return False
 
 
 
@@ -1164,7 +1216,7 @@ class PlanePartitions_box(PlanePartitions):
 
         EXAMPLES::
 
-            sage: PP = PlanePartitions((4,3,2))
+            sage: PP = PlanePartitions([4,3,2])
             sage: TestSuite(PP).run()
         """
         super(PlanePartitions_box,self).__init__(category=FiniteEnumeratedSets())
@@ -1265,7 +1317,7 @@ class PlanePartitions_box(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((1,2,1)))
+            sage: list(PlanePartitions([1,2,1]))
             [Plane partition [], Plane partition [[1]], Plane partition [[1, 1]]]
         """
 
@@ -1297,7 +1349,7 @@ class PlanePartitions_box(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P = PlanePartitions((4,3,5))
+            sage: P = PlanePartitions([4,3,5])
             sage: P.cardinality()
             116424
         """
@@ -1316,7 +1368,7 @@ class PlanePartitions_box(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P = PlanePartitions((4,3,5))
+            sage: P = PlanePartitions([4,3,5])
             sage: P.box()
             (4, 3, 5)
         """
@@ -1334,7 +1386,7 @@ class PlanePartitions_box(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P = PlanePartitions((4,3,5))
+            sage: P = PlanePartitions([4,3,5])
             sage: P.random_element()
             Plane partition [[4, 3, 3], [4], [2]]
         """
@@ -1371,7 +1423,7 @@ class PlanePartitions_n(PlanePartitions):
 
     def _repr_(self) -> str:
         """
-        EXAMPLES::
+        TESTS::
 
             sage: PlanePartitions(3)
             Plane partitions of size 3
@@ -1379,7 +1431,15 @@ class PlanePartitions_n(PlanePartitions):
         return "Plane partitions of size {}".format(self._n)
 
     def __contains__(self, x) -> bool:
-        return PlanePartitions.__contains__(self, x) and x.number_of_boxes() ==  self._n
+        """
+        TESTS::
+
+            sage: [[2,1],[1]] in PlanePartitions(4)
+            True
+            sage: [[2,1],[1]] in PlanePartitions(3)
+            False
+        """
+        return PlanePartitions.__contains__(self, x) and PlanePartition(x).number_of_boxes() ==  self._n
 
     def __iter__(self) -> Iterator:
         r"""
@@ -1512,7 +1572,19 @@ class PlanePartitions_SPP(PlanePartitions):
                     self._box[0], self._box[1], self._box[2])
 
     def __contains__(self, x) -> bool:
-        return PlanePartitions.__contains__(self, x) and x.is_SPP()
+        """
+        TESTS::
+
+            sage: [[2,1],[1]] in PlanePartitions([2,2,2], symmetry='SPP')
+            True
+            sage: [[2,1],[1]] in PlanePartitions([1,1,1], symmetry='SPP')
+            False
+            sage: [[2,1],[2]] in PlanePartitions([2,2,2], symmetry='SPP')
+            False
+        """
+        P = PlanePartition(x)
+        max = (P._max_x, P._max_y, P._max_z)
+        return PlanePartitions.__contains__(self, x) and P.is_SPP() and all( a<=b for a,b in zip(max,self._box))
 
 
     def to_poset(self):
@@ -1602,7 +1674,7 @@ class PlanePartitions_SPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((2,2,1), symmetry='SPP'))
+            sage: list(PlanePartitions([2,2,1], symmetry='SPP'))
             [Plane partition [],
             Plane partition [[1, 1], [1, 1]],
             Plane partition [[1, 1], [1]],
@@ -1625,7 +1697,7 @@ class PlanePartitions_SPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P = PlanePartitions((3,3,2), symmetry='SPP')
+            sage: P = PlanePartitions([3,3,2], symmetry='SPP')
             sage: P.cardinality()
             35
         """
@@ -1703,6 +1775,21 @@ class PlanePartitions_CSPP(PlanePartitions):
         """
         return "Cyclically symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
+
+    def __contains__(self, x) -> bool:
+        """
+        TESTS::
+
+            sage: [[2,1],[1]] in PlanePartitions([2,2,2], symmetry='CSPP')
+            True
+            sage: [[2,1],[1]] in PlanePartitions([1,1,1], symmetry='CSPP')
+            False
+            sage: [[2,1],[2]] in PlanePartitions([2,2,2], symmetry='CSPP')
+            False
+        """
+        P = PlanePartition(x)
+        max = (P._max_x, P._max_y, P._max_z)
+        return PlanePartitions.__contains__(self, x) and P.is_CSPP() and all( a<=b for a,b in zip(max,self._box))
 
     def to_poset(self):
         """
@@ -1816,7 +1903,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((2,2,2), symmetry='CSPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='CSPP'))
             [Plane partition [],
             Plane partition [[2, 2], [2, 2]],
             Plane partition [[2, 2], [2, 1]],
@@ -1840,7 +1927,7 @@ class PlanePartitions_CSPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P = PlanePartitions((4,4,4), symmetry='CSPP')
+            sage: P = PlanePartitions([4,4,4], symmetry='CSPP')
             sage: P.cardinality()
             132
         """
@@ -1906,6 +1993,21 @@ class PlanePartitions_TSPP(PlanePartitions):
         """
         return "Totally symmetric plane partitions inside a {} x {} x {} box".format(
                     self._box[0], self._box[1], self._box[2])
+
+    def __contains__(self, x) -> bool:
+        """
+        TESTS::
+
+            sage: [[2,1],[1]] in PlanePartitions([2,2,2], symmetry='TSPP')
+            True
+            sage: [[2,1],[1]] in PlanePartitions([1,1,1], symmetry='TSPP')
+            False
+            sage: [[2,1],[2]] in PlanePartitions([2,2,2], symmetry='TSPP')
+            False
+        """
+        P = PlanePartition(x)
+        max = (P._max_x, P._max_y, P._max_z)
+        return PlanePartitions.__contains__(self, x) and P.is_TSPP() and all( a<=b for a,b in zip(max,self._box))
 
     def to_poset(self):
         r"""
@@ -2002,7 +2104,7 @@ class PlanePartitions_TSPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((2,2,2), symmetry='TSPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='TSPP'))
             [Plane partition [],
              Plane partition [[2, 2], [2, 2]],
              Plane partition [[2, 2], [2, 1]],
@@ -2026,7 +2128,7 @@ class PlanePartitions_TSPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P = PlanePartitions((4,4,4), symmetry='TSPP')
+            sage: P = PlanePartitions([4,4,4], symmetry='TSPP')
             sage: P.cardinality()
             66
         """
@@ -2072,6 +2174,21 @@ class PlanePartitions_SCPP(PlanePartitions):
         self._box = box_size
         self._symmetry = 'SCPP'
 
+    def __contains__(self, x) -> bool:
+        """
+        TESTS::
+
+            sage: [[2,1],[1]] in PlanePartitions([2,2,2], symmetry='SCPP')
+            True
+            sage: [[2,1],[1]] in PlanePartitions([1,1,1], symmetry='SCPP')
+            False
+            sage: [[2,1],[2]] in PlanePartitions([2,2,2], symmetry='SCPP')
+            False
+        """
+        P = PlanePartition(x)
+        max = (P._max_x, P._max_y, P._max_z)
+        return PlanePartitions.__contains__(self, x) and P.is_SCPP() and all( a<=b for a,b in zip(max,self._box))
+
     def _repr_(self) -> str:
         """
         EXAMPLES::
@@ -2088,7 +2205,7 @@ class PlanePartitions_SCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((2,2,2), symmetry='SCPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='SCPP'))
             [Plane partition [[1, 1], [1, 1]],
             Plane partition [[2], [2]],
             Plane partition [[2, 1], [1]],
@@ -2219,15 +2336,15 @@ class PlanePartitions_SCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: P = PlanePartitions((4,4,4), symmetry='SCPP')
+            sage: P = PlanePartitions([4,4,4], symmetry='SCPP')
             sage: P.cardinality()
             400
 
-            sage: P = PlanePartitions((5,4,4), symmetry='SCPP')
+            sage: P = PlanePartitions([5,4,4], symmetry='SCPP')
             sage: P.cardinality()
             1000
 
-            sage: P = PlanePartitions((5,5,4), symmetry='SCPP')
+            sage: P = PlanePartitions([5,5,4], symmetry='SCPP')
             sage: P.cardinality()
             2500
         """
@@ -2308,7 +2425,7 @@ class PlanePartitions_TCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((3,3,2), symmetry='TCPP'))
+            sage: list(PlanePartitions([3,3,2], symmetry='TCPP'))
             [Plane partition [[2, 2, 1], [2, 1], [1]],
             Plane partition [[2, 1, 1], [2, 1, 1], [1]],
             Plane partition [[2, 2, 1], [1, 1], [1, 1]],
@@ -2331,7 +2448,7 @@ class PlanePartitions_TCPP(PlanePartitions):
 
         .. MATH::
 
-            \binom{b+1-1}{a-1}\prod_{1\leq i\leq j a-2} \frac{i + j + 2b - 1}{i + j - 1}
+            \binom{b+1-1}{a-1}\prod_{1\leq i,j \leq a-2} \frac{i + j + 2b - 1}{i + j - 1}
         """
 
         a=self._box[0]
@@ -2401,7 +2518,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((4,4,2), symmetry='SSCPP'))
+            sage: list(PlanePartitions([4,4,2], symmetry='SSCPP'))
                 [Plane partition [[2, 2, 2, 1], [2, 2, 1], [2, 1], [1]],
                  Plane partition [[2, 2, 2, 1], [2, 1, 1], [2, 1, 1], [1]],
                  Plane partition [[2, 2, 1, 1], [2, 2, 1, 1], [1, 1], [1, 1]],
@@ -2504,7 +2621,7 @@ class PlanePartitions_CSTCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((2,2,2), symmetry='CSTCPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='CSTCPP'))
             [Plane partition [[2, 1], [1]]]
         """
         for p in PlanePartitions(self._box):
@@ -2589,7 +2706,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((2,2,2), symmetry='CSSCPP'))
+            sage: list(PlanePartitions([2,2,2], symmetry='CSSCPP'))
             [Plane partition [[2, 1], [1]]]
         """
         for p in PlanePartitions(self._box):
@@ -2606,7 +2723,7 @@ class PlanePartitions_CSSCPP(PlanePartitions):
 
         .. MATH::
 
-            \left(\prod_{i=0}^{a-1} \frac{(3i+1)!}{(a+i)!})\right)^2
+            \left(\prod_{i=0}^{a-1} \frac{(3i+1)!}{(a+i)!}\right)^2
         """
         a=self._box[0]
         b=self._box[1]
@@ -2819,7 +2936,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions((4,4,4), symmetry='TSSCPP'))
+            sage: list(PlanePartitions([4,4,4], symmetry='TSSCPP'))
             [Plane partition [[4, 4, 2, 2], [4, 4, 2, 2], [2, 2], [2, 2]],
             Plane partition [[4, 4, 3, 2], [4, 3, 2, 1], [3, 2, 1], [2, 1]]]
         """
