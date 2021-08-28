@@ -10,9 +10,12 @@ include sage/rings/rational*.*
 #include sage/rings/infinity.*
 include sage/arith/rational_reconstruction.*
 include sage/misc/allocator.*
+include sage/ext/mod_int.*
 
-include sage/modules/__init__.py
-include sage/modules/vector_integer_dense.*
+graft sage/modules
+exclude sage/modules/vector_*double*.*  # depends on numpy
+exclude sage/modules/vector_mod2*.*     # depends on m4ri
+exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 
 graft sage/matrix
 exclude sage/matrix/matrix_gap.*
@@ -25,7 +28,7 @@ exclude sage/matrix/matrix_gfpn*.*      # depends on meataxe
 exclude sage/matrix/matrix_integer_*.*  # depends on flint, pari, iml, linbox
 exclude sage/matrix/matrix_mod2*.*      # depends on m4ri
 exclude sage/matrix/matrix_modn*.*      # depends on linbox or flint
-exclude sage/matrix/matrix/mpolynom*.*  # depends on singular
+exclude sage/matrix/matrix_mpolynom*.*  # depends on singular
 exclude sage/matrix/matrix_rational_*.* # depends on flint, pari
 exclude sage/matrix/matrix_symbolic_*.* # --> sagemath-symbolics
 
