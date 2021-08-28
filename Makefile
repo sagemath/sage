@@ -87,6 +87,7 @@ pypi-sdists: sage_setup
 	./sage --sh build/pkgs/sagelib/spkg-src
 	./sage --sh build/pkgs/sagemath_objects/spkg-src
 	./sage --sh build/pkgs/sagemath_categories/spkg-src
+	./sage --sh build/pkgs/sagemath_polyhedra/spkg-src
 	@echo "Built sdists are in upstream/"
 
 # ssl: build Sage, and also install pyOpenSSL. This is necessary for
