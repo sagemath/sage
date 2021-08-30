@@ -11,6 +11,7 @@ AUTHORS:
 # ****************************************************************************
 #       Copyright (C) 2016 Jang Soo Kim <jangsookim@skku.edu>,
 #                     2016 Jessica Striker <jessicapalencia@gmail.com>
+#                     2021 Kevin Dilks <kdilks@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -46,37 +47,6 @@ from sage.functions.other import floor, ceil, binomial, factorial
 PP = NewType('PP', 'PlanePartition')
 
 
-#class PlanePartition(ClonableArray,
-#        metaclass=InheritComparisonClasscallMetaclass):
-#    r"""
-#    A plane partition.
-
-#    A *plane partition* is a stack of cubes in the positive orthant.
-
-#    INPUT:
-
-#    - ``PP`` -- a list of lists which represents a tableau
-
-#    - ``box_size`` -- (optional) a list ``[A, B, C]`` of 3 positive integers,
-#      where ``A``, ``B``, ``C`` are the lengths of the box in the `x`-axis,
-#      `y`-axis, `z`-axis, respectively; if this is not given, it is
-#      determined by the smallest box bounding ``PP``
-
-#    OUTPUT:
-
-#    The plane partition whose tableau representation is ``PP``.
-
-#    EXAMPLES::
-
-#        sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-#        sage: PP
-#        Plane partition [[4, 3, 3, 1], [2, 1, 1], [1, 1]]
-
-#    TESTS::
-
-#        sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
-#        sage: TestSuite(PP).run()
-#    """
 
 #@add_metaclass(InheritComparisonClasscallMetaclass)
 class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
@@ -823,7 +793,7 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
         Return whether ``self`` is a self-complementary plane partition.
         
         Note that the complement of a plane partition (and thus the property of
-        being self-complementary) is dependent on the choice of a box that is 
+        being self-complementary) is dependent on the choice of a box that it is 
         contained in. If no parent/bounding box is specified,  the box is taken 
         to be the smallest box that contains the plane partition.
         
@@ -1194,6 +1164,10 @@ class PlanePartitions_all(PlanePartitions):
 class PlanePartitions_box(PlanePartitions):
     r"""
     All plane partitions that fit inside a box of a specified size.
+
+    By convention, a plane partition in an `a \times b \times c` box
+    will have at most 'a' rows, of lengths at most 'b', with entries
+    at most 'c'. 
     """
     @staticmethod
     def __classcall_private__(cls, box_size):
@@ -1511,6 +1485,12 @@ class PlanePartitions_n(PlanePartitions):
 
         where ``\sigma_k(n)`` is the sum of the kth powers of
         divisors of n.
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions(17)
+            sage: P.cardinality()
+            18334
 
         """
         PPn = [1]
@@ -2180,14 +2160,17 @@ class PlanePartitions_SCPP(PlanePartitions):
 
             sage: [[2,1],[1]] in PlanePartitions([2,2,2], symmetry='SCPP')
             True
-            sage: [[2,1],[1]] in PlanePartitions([1,1,1], symmetry='SCPP')
+            sage: [[2,1],[1]] in PlanePartitions([3,2,2], symmetry='SCPP')
+            False
+            sage: [[2,1],[1]] in PlanePartitions([2,1,1], symmetry='SCPP')
             False
             sage: [[2,1],[2]] in PlanePartitions([2,2,2], symmetry='SCPP')
             False
         """
-        P = PlanePartition(x)
-        max = (P._max_x, P._max_y, P._max_z)
-        return PlanePartitions.__contains__(self, x) and P.is_SCPP() and all( a<=b for a,b in zip(max,self._box))
+        #P = PlanePartitions(self._box)(x)
+        #max = (P._max_x, P._max_y, P._max_z)
+        #return PlanePartitions.__contains__(self, x) and P.is_SCPP() and all( a<=b for a,b in zip(max,self._box))
+        return x in PlanePartitions(self._box) and PlanePartitions(self._box)(x).is_SCPP()
 
     def _repr_(self) -> str:
         """
@@ -2205,14 +2188,16 @@ class PlanePartitions_SCPP(PlanePartitions):
 
         EXAMPLES::
 
-            sage: list(PlanePartitions([2,2,2], symmetry='SCPP'))
-            [Plane partition [[1, 1], [1, 1]],
-            Plane partition [[2], [2]],
-            Plane partition [[2, 1], [1]],
-            Plane partition [[2, 2]]]
+            sage: list(PlanePartitions([3,2,2], symmetry='SCPP'))
+            [Plane partition [[1, 1], [1, 1], [1, 1]],
+             Plane partition [[2, 1], [1, 1], [1]],
+             Plane partition [[2, 2], [1, 1]],
+             Plane partition [[2], [2], [2]],
+             Plane partition [[2, 1], [2], [1]],
+             Plane partition [[2, 2], [2]]]
         """
-        a=self._box[0]
-        b=self._box[1]
+        b=self._box[0]
+        a=self._box[1]
         c=self._box[2]
         def Partitions_inside_lambda(la):
             "Returns the list of partitions contained in la with the same number of parts including 0s."
@@ -2449,6 +2434,12 @@ class PlanePartitions_TCPP(PlanePartitions):
         .. MATH::
 
             \binom{b+1-1}{a-1}\prod_{1\leq i,j \leq a-2} \frac{i + j + 2b - 1}{i + j - 1}
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions([3,3,2], symmetry='TCPP')
+            sage: P.cardinality()
+            5
         """
 
         a=self._box[0]
@@ -2548,6 +2539,13 @@ class PlanePartitions_SSCPP(PlanePartitions):
         .. MATH::
 
             \prod_{i=1}^{a}\prod_{j=1}^{a+1} \frac{i + j + b - 1}{i + j - 1}
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions([4,4,2], symmetry='SSCPP')
+            sage: P.cardinality()
+            6
+
         """
         r=self._box[0]
         s=self._box[1]
@@ -2640,6 +2638,11 @@ class PlanePartitions_CSTCPP(PlanePartitions):
 
             \prod_{i=0}^{a-1} \frac{(3i+1)(6i)!(2i)!}{(4i+1)!(4i)!}
 
+        EXAMPLES::
+
+            sage: P = PlanePartitions([6,6,6], symmetry='CSTCPP')
+            sage: P.cardinality()
+            11
         """
         a=self._box[0]
         b=self._box[1]
@@ -2724,6 +2727,12 @@ class PlanePartitions_CSSCPP(PlanePartitions):
         .. MATH::
 
             \left(\prod_{i=0}^{a-1} \frac{(3i+1)!}{(a+i)!}\right)^2
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions([6,6,6], symmetry='CSSCPP')
+            sage: P.cardinality()
+            49
         """
         a=self._box[0]
         b=self._box[1]
@@ -2954,6 +2963,12 @@ class PlanePartitions_TSSCPP(PlanePartitions):
         .. MATH::
 
             \prod_{i=0}^{a-1} \frac{(3i+1)!}{(a+i)!})
+
+        EXAMPLES::
+
+            sage: P = PlanePartitions([6,6,6], symmetry='TSSCPP')
+            sage: P.cardinality()
+            7
         """
         a=self._box[0]
         b=self._box[1]
