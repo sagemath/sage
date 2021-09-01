@@ -1017,12 +1017,27 @@ class PlanePartitions(UniqueRepresentation, Parent):
     r"""
     A factory class for plane partitions.
 
+    PlanePartitions() returns the class of all plane partitions.
+
+    PlanePartitions(n) return the class of all plane partitions with `n` boxes.
+
     PlanePartitions([a,b,c]) returns the class of plane partitions that fit
     inside an a \times b \times c box.
 
-    Optional keyword is 'symmetry'.
+    Optional keyword is 'symmetry', which gives all plane partitions inside
+    a box of the specified size satisfying certain symmetry conditions.
 
-    Describe options.
+        - 'SPP' Symmetric plane partitions
+        - 'CSPP' Cyclic plane partitions
+        - 'TSPP' Totally symmetric plane partitions
+        - 'SCPP' Self-complementary plane partitions
+        - 'TCPP' Transpose complement plane partitions
+        - 'SSCPP' Symmetric self-complementary plane partitions
+        - 'CSTCPP' Cyclically symmetric transpose complement plane partitions
+        - 'CSSCPP' Cyclically symmetric self-complementary plane partitions
+        - 'TSSCPP' Totally symmetric self-complementary plane partitions
+        
+
 
     """
     @staticmethod
@@ -1193,9 +1208,11 @@ class PlanePartitions_box(PlanePartitions):
             sage: PP = PlanePartitions([4,3,2])
             sage: TestSuite(PP).run()
         """
+        #PlanePartitions.__init__(self)
         super(PlanePartitions_box,self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = None
+
 
     def _repr_(self) -> str:
 
