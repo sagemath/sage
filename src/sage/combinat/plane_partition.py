@@ -28,6 +28,7 @@ from typing import NewType, Iterator, Tuple
 
 from sage.structure.list_clone import ClonableList, ClonableArray
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -48,7 +49,7 @@ PP = NewType('PP', 'PlanePartition')
 
 
 
-#@add_metaclass(InheritComparisonClasscallMetaclass)
+@richcmp_method
 class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A plane partition.
@@ -110,8 +111,14 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
             sage: a = PlanePartitions()([[2,1],[1]])
             sage: b = PlanePartitions([2,2,2])([[2,1],[1]])
             sage: c = PlanePartitions(4)([[2,1],[1]])
-
-        Add more tests to show which parent a,b,c receive, check that a==b, and b==c, but a is not b, and b is not c.
+            sage: a == b
+            True
+            sage: a is b
+            False
+            sage: a == c
+            True
+            sage: a is c
+            False
 
         """
         if isinstance(pp, PlanePartition):
@@ -136,6 +143,54 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
                 self._max_z = 0
         else:
             (self._max_x, self._max_y, self._max_z) = self.parent()._box
+
+    def __richcmp__(self, other, op):
+        r"""
+        Compare ``self`` to ``other``.
+
+        .. TODO::
+
+            This overwrites the comparison check of
+            :class:`~sage.structure.list_clone.ClonableArray`
+            in order to circumvent the coercion framework.
+            Eventually this should be solved more elegantly,
+            for example along the lines of what was done for
+            `k`-tableaux.
+
+            For now, this compares two elements by their underlying
+            defining lists.
+
+        INPUT:
+
+        ``other`` -- the element that ``self`` is compared to
+
+        OUTPUT:
+
+        A Boolean.
+
+        TESTS::
+
+            sage: t = PlanePartition([[2,1],[1]])
+            sage: t == 0
+            False
+            sage: t == PlanePartitions(4)([[2,1],[1]])
+            True
+
+            sage: s = PlanePartition([[3,1],[1]])
+            sage: s != []
+            True
+
+            sage: t < s
+            True
+            sage: s < t
+            False
+            sage: s > t
+            True
+        """
+        if isinstance(other, PlanePartition):
+            return richcmp(list(self), list(other), op)
+        else:
+            return richcmp(list(self), other, op)
 
     def check(self):
         """
@@ -1208,7 +1263,6 @@ class PlanePartitions_box(PlanePartitions):
             sage: PP = PlanePartitions([4,3,2])
             sage: TestSuite(PP).run()
         """
-        #PlanePartitions.__init__(self)
         super(PlanePartitions_box,self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = None
