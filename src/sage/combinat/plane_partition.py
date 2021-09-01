@@ -1121,10 +1121,10 @@ class PlanePartitions_all(PlanePartitions):
     r"""
     All plane partitions.
 
-    .. TODO:
+    .. TODO::
 
-    Consider giving this the structure of disjoint union of the classes
-    PlanePartitions(n) for n an integer.
+        Consider giving this the structure of disjoint union of the classes
+        PlanePartitions(n) for n an integer.
     """
 
 
@@ -1479,11 +1479,11 @@ class PlanePartitions_n(PlanePartitions):
 
         Calculated using the recurrence relation
 
-        .. MATH:
+        .. MATH::
 
-        PL(n) = \sum_{k=1}^n PL(n-k)\sigma_2(k)
+            PL(n) = \sum_{k=1}^n PL(n-k)\sigma_2(k)
 
-        where ``\sigma_k(n)`` is the sum of the kth powers of
+        where `\sigma_k(n)` is the sum of the kth powers of
         divisors of n.
 
         EXAMPLES::
@@ -1667,13 +1667,13 @@ class PlanePartitions_SPP(PlanePartitions):
         r"""
         Return the cardinality of ``self``.
 
-        The number of symmetric plane partitions inside an `r \times r \times t`
+        The number of symmetric plane partitions inside an `a \times a \times b`
         box is equal to
 
         .. MATH::
 
-            \prod_{i=1}^{r} \frac{2*i + t - 1}{2*i - 1}  *
-            \prod_{1 \leq i \leq j \leq r} \frac{i+j+t-1}{i+j-1}
+            \left(\prod_{i=1}^{a} \frac{2i + b - 1}{2i - 1}\right) 
+            \left(\prod_{1 \leq i < j \leq a} \frac{i+j+b-1}{i+j-1}\right)
 
         EXAMPLES::
 
@@ -1898,12 +1898,12 @@ class PlanePartitions_CSPP(PlanePartitions):
         Return the cardinality of ``self``.
 
         The number of cyclically symmetric plane partitions inside an 
-        `r \times r \times r` box is equal to
+        `a \times a \times a` box is equal to
 
         .. MATH::
 
-            \left(\prod_{i=1}^{r} \frac{3i - 1}{3i - 2}\right)  
-            \left(\prod_{1 \leq i \leq j \leq r} \frac{i+j+r-1}{2i+j-1}\right)
+            \left(\prod_{i=1}^{a} \frac{3i - 1}{3i - 2}\right)  
+            \left(\prod_{1 \leq i < j \leq a} \frac{i+j+a-1}{2i+j-1}\right)
 
         EXAMPLES::
 
@@ -2100,11 +2100,11 @@ class PlanePartitions_TSPP(PlanePartitions):
         Return the cardinality of ``self``.
 
         The number of totally symmetric plane partitions inside an 
-        `r \times r \times r` box is equal to
+        `a \times a \times a` box is equal to
 
         .. MATH::
 
-            \prod_{1 \leq i \leq j \leq r} \frac{i+j+r-1}{i+2j-2}
+            \prod_{1 \leq i \leq j \leq a} \frac{i+j+a-1}{i+2j-2}
 
         EXAMPLES::
 
@@ -2534,7 +2534,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
             \prod_{i=1}^{a}\prod_{j=1}^{a} \frac{i + j + b - 1}{i + j - 1}
 
         The number of symmetric self-complementary plane partitions inside a 
-        `2a+1 \times 2a+1 \times 2b` box is equal to
+        `(2a+1) \times (2a+1) \times 2b` box is equal to
 
         .. MATH::
 
@@ -2962,7 +2962,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
         .. MATH::
 
-            \prod_{i=0}^{a-1} \frac{(3i+1)!}{(a+i)!})
+            \prod_{i=0}^{a-1} \frac{(3i+1)!}{(a+i)!}
 
         EXAMPLES::
 
