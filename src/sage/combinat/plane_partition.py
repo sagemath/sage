@@ -1129,7 +1129,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
     If no arguments are passed, then the class of all plane partitions is returned::
 
         sage: PlanePartitions()
-        Plane Partitions
+        Plane partitions
         sage: [[2,1],[1]] in PlanePartitions()
         True
 
