@@ -1077,22 +1077,106 @@ class PlanePartitions(UniqueRepresentation, Parent):
     PlanePartitions(n) return the class of all plane partitions with `n` boxes.
 
     PlanePartitions([a,b,c]) returns the class of plane partitions that fit
-    inside an a \times b \times c box.
+    inside an `a \times b \times c` box.
 
-    Optional keyword is 'symmetry', which gives all plane partitions inside
-    a box of the specified size satisfying certain symmetry conditions.
+    PlanePartitions([a,b,c]) has optional keyword is 'symmetry', which gives all 
+    plane partitions inside a box of the specified size satisfying certain 
+    symmetry conditions.
 
-        - 'SPP' Symmetric plane partitions
-        - 'CSPP' Cyclic plane partitions
-        - 'TSPP' Totally symmetric plane partitions
-        - 'SCPP' Self-complementary plane partitions
-        - 'TCPP' Transpose complement plane partitions
-        - 'SSCPP' Symmetric self-complementary plane partitions
-        - 'CSTCPP' Cyclically symmetric transpose complement plane partitions
-        - 'CSSCPP' Cyclically symmetric self-complementary plane partitions
-        - 'TSSCPP' Totally symmetric self-complementary plane partitions
-        
+        - ``symmetry='SPP'`` gives the class of symmetric plane partitions. which
+          is all plane partitions fixed under reflection across the diagonal.
+          Requires that `a = b`.
 
+        - ``symmetry='CSPP'`` gives the class of cyclic plane partitions, which
+          is all plane partitions fixed under cyclic rotation of coordinates.
+          Requires that `a = b = c`.
+
+        - ``symmetry='TSPP'`` gives the class of totally symmetric plane partitions,
+          which is all plane partitions fixed under any interchanging of coordinates.
+          Requires that `a = b = c`.
+
+        - ``symmetry='SCPP'`` gives the class of self-complementary plane partitions.
+          which is all plane partitions that are equal to their own complement
+          in the specified box. Requires at least one of `a,b,c` be even.
+
+        - ``symmetry='TCPP'`` gives the class of transpose complement plane partitions,
+          which is all plane partitions whose complement in the box of the specified
+          size is equal to their transpose. Requires `a = b` and at least one of
+          `a,b,c` be even.
+            
+        - ``symmetry='SSCPP'`` gives the class of symmetric self-complementary 
+          plane partitions, which is all plane partitions that are both
+          symmetric and self-complementary. Requires `a = b` and at least one of
+          `a,b,c` be even.
+
+        - ``symmetry='CSTCPP'`` gives the class of cyclically symmetric transpose 
+          complement plane partitions, which is all plane partitions that are
+          both symmetric and equal to the transpose of their complement. Requires
+          `a = b = c`.
+
+        - ``symmetry='CSSCPP'`` gives the class of cyclically symmetric 
+          self-complementary plane partitions, which is all plane partitions that
+          are both cyclically symmetric and self-complementary. Requires `a = b = c`
+          and at least one of `a,b,c` be even.
+
+        - ``symmetry='TSSCPP'`` gives the class of totally symmetric 
+          self-complementary plane partitions, which is all plane partitions that
+          are totally symmetric and also self-complementary. Requires `a = b = c`
+          and at least one of `a,b,c` be even.
+
+    EXAMPLES:
+    
+    If no arguments are passed, then the class of all plane partitions is returned::
+
+        sage: PlanePartitions()
+        Plane Partitions
+        sage: [[2,1],[1]] in PlanePartitions()
+        True
+
+    If an integer `n` is passed, then the class of plane partitions of `n` is returned::
+
+        sage: PlanePartitions(3)
+        Plane partitions of size 3
+        sage: PlanePartitions(3).list()
+        [Plane partition [[3]],
+         Plane partition [[2, 1]],
+         Plane partition [[1, 1, 1]],
+         Plane partition [[2], [1]],
+         Plane partition [[1, 1], [1]],
+         Plane partition [[1], [1], [1]]]
+
+    If a three-element tuple or list `[a,b,c]` is passed, then the class of all
+    plane partitions that fit inside and `a\times b\times c` box is returned::
+
+        sage: PlanePartitions([2,2,2])
+        Plane partitions inside a 2 x 2 x 2 box
+        sage: [[2,1],[1]] in PlanePartitions([2,2,2])
+        True
+
+    If an additional keyword ``symmetry`` is pass along with a three-element
+    tuple or list `[a,b,c]`, then the class of all plane partitions that fit
+    inside an `a\times b\times c` box with the specified symmetry is returned::
+
+        sage: PlanePartitions([2,2,2], symmetry='CSPP')
+        Cyclically symmetric plane partitions inside a 2 x 2 x 2 box
+        sage: [[2,1],[1]] in PlanePartitions([2,2,2], symmetry='CSPP')
+        True
+
+    .. SEEALSO::
+
+        - :class:`PlanePartition`
+        - :class:`PlanePartitions_all`
+        - :class:`PlanePartitions_n`
+        - :class:`PlanePartitions_box`
+        - :class:`PlanePartitions_SPP`
+        - :class:`PlanePartitions_CSPP`
+        - :class:`PlanePartitions_TSPP`
+        - :class:`PlanePartitions_SCPP`
+        - :class:`PlanePartitions_TCPP`
+        - :class:`PlanePartitions_SSCPP`
+        - :class:`PlanePartitions_CSTCPP`
+        - :class:`PlanePartitions_CSSCPP`
+        - :class:`PlanePartitions_TSSCPP`
 
     """
     @staticmethod
