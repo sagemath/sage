@@ -2656,14 +2656,14 @@ class PlanePartitions_SSCPP(PlanePartitions):
             sage: PlanePartitions([4,4,3], symmetry='SSCPP')
             Traceback (most recent call last):
             ...
-            ValueError: x, y, and z dimensions (4,4,3) must all be even
+            ValueError: z dimension (3) must be even
         """
 
 
         if box_size[0]!=box_size[1]:
             raise ValueError("x and y dimensions ({} and {}) must be equal".format(box_size[0], box_size[1]))
         if (box_size[2] % 2 == 1):
-            raise ValueError("z dimension ({}) must be even".format(box_size[0]))
+            raise ValueError("z dimension ({}) must be even".format(box_size[2]))
         super(PlanePartitions_SSCPP, self).__init__(category=FiniteEnumeratedSets())
         self._box = box_size
         self._symmetry = 'SSCPP'
@@ -2721,6 +2721,7 @@ class PlanePartitions_SSCPP(PlanePartitions):
             sage: P.cardinality()
             6
             sage: Q = PlanePartitions([3,3,2], symmetry='SSCPP')
+            sage: Q.cardinality()
             3
             
 
