@@ -1516,7 +1516,7 @@ class PlanePartitions_box(PlanePartitions):
         EXAMPLES::
 
             sage: P = PlanePartitions([4,3,5])
-            sage: P.random_element()
+            sage: P.random_element() # random
             Plane partition [[4, 3, 3], [4], [2]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
@@ -1859,7 +1859,7 @@ class PlanePartitions_SPP(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([3,3,2], symmetry='SPP')
-            sage: PP.random_element()
+            sage: PP.random_element() # random
             Plane partition [[2, 2, 2], [2, 2], [2]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
@@ -2026,7 +2026,7 @@ class PlanePartitions_CSPP(PlanePartitions):
         EXAMPLES::
 
             sage: PP = PlanePartitions([3,3,3], symmetry='CSPP')
-            sage: PP.random_element()
+            sage: PP.random_element() # random
             Plane partition [[3, 2, 2], [3, 1], [1, 1]]
         """
         Z = self.from_order_ideal(self.to_poset().random_order_ideal())
