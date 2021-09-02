@@ -32,7 +32,6 @@ from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.posets.posets import Poset
 from sage.combinat.posets.poset_examples import posets
 from sage.rings.integer import Integer
@@ -41,7 +40,6 @@ from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
 from sage.arith.misc import Sigma
 from sage.functions.other import floor, ceil, binomial, factorial
-from sage.categories.sets_cat import Sets
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
@@ -1039,7 +1037,8 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
             sage: PP_rotated in PP_rotated.parent()
             False
         """
-        (a, b, c) = (self._max_x, self._max_y, self._max_z)
+        b = self._max_y 
+        c = self._max_z
         new_antichain = []
         for elem in self.maximal_boxes():
             new = (elem[1], elem[2], elem[0])
@@ -1064,7 +1063,7 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
                             jValue = ppMatrix[i][j+1]
                         ppMatrix[i][j] = max(iValue,jValue)
         # Start code for determining correct parent
-        if self.parent()._box is None or preserve_parent == True or (self.parent()._box[0] == self.parent()._box[1] == self.parent()._box[2]):
+        if self.parent()._box is None or preserve_parent or (self.parent()._box[0] == self.parent()._box[1] == self.parent()._box[2]):
             return type(self)(self.parent(), ppMatrix, check=False)
         new_box = (self.parent()._box[2],self.parent()._box[0],self.parent()._box[1])
         return PlanePartitions(new_box,symmetry=self.parent()._symmetry)(ppMatrix)
@@ -1444,7 +1443,6 @@ class PlanePartitions_box(PlanePartitions):
         """
         a = self._box[0]
         b = self._box[1]
-        c = self._box[2]
         ppMatrix = [[0] * (b) for i in range(a)] #creates a matrix for the plane partition populated by 0s EX: [[0,0,0], [0,0,0], [0,0,0]]
 
         #ac format ex: [x,y,z]
@@ -1756,7 +1754,7 @@ class PlanePartitions_SPP(PlanePartitions):
 
     def to_poset(self):
         r"""
-        Returns a poset whose order ideals are in bijection with
+        Return a poset whose order ideals are in bijection with
         symmetric plane partitions.
 
         EXAMPLES::
@@ -1866,12 +1864,11 @@ class PlanePartitions_SPP(PlanePartitions):
             sage: P.cardinality()
             35
         """
-        A = self._box[0]
-        B = self._box[1]
-        C = self._box[2]
-        leftProduct = (prod( (2*i + C - 1) / (2*i - 1) for i in range(1,A+1)))
-        rightProduct = (prod( (i + j + C - 1) / (i + j - 1) 
-                        for j in range(1, A+1) 
+        a = self._box[0]
+        c = self._box[2]
+        leftProduct = (prod( (2*i + c - 1) / (2*i - 1) for i in range(1,a+1)))
+        rightProduct = (prod( (i + j + c - 1) / (i + j - 1) 
+                        for j in range(1, a+1) 
                         for i in range(1, j) ))
         return Integer(leftProduct * rightProduct)
 
@@ -2173,7 +2170,7 @@ class PlanePartitions_TSPP(PlanePartitions):
 
     def to_poset(self):
         r"""
-        Returns a poset whose order ideals are in bijection with totally
+        Return a poset whose order ideals are in bijection with totally
         symmetric plane partitions.
 
         EXAMPLES::
@@ -2960,7 +2957,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
     def to_poset(self):
         r"""
-        Returns a poset whose order ideals are in bijection with
+        Return a poset whose order ideals are in bijection with
         totally symmetric self-complementary plane partitions.
 
         EXAMPLES::
