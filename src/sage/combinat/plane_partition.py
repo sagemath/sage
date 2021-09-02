@@ -42,6 +42,7 @@ from sage.misc.all import prod
 from sage.combinat.tableau import Tableau
 from sage.arith.misc import Sigma
 from sage.functions.other import floor, ceil, binomial, factorial
+from sage.categories.sets_cat import Sets
 
 
 
@@ -1299,7 +1300,8 @@ class PlanePartitions_all(PlanePartitions):
         """
         self._box = None
         self._symmetry = None
-        super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
+        #super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
+        super(PlanePartitions_all, self).__init__(category=Sets())
 
     def _repr_(self) -> str:
         """
@@ -1311,6 +1313,18 @@ class PlanePartitions_all(PlanePartitions):
             Plane partitions
         """
         return "Plane partitions"
+
+    def an_element(self):
+        r"""
+        Return a particular element of the class.
+
+        TESTS::
+
+            sage: P = PlanePartitions()
+            sage: P.an_element()
+            Plane partition [[2, 1], [1]]
+        """
+        return self.element_class(self, [[2, 1], [1]])
 
 
 
