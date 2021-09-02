@@ -43,7 +43,9 @@ from sage.combinat.tableau import Tableau
 from sage.arith.misc import Sigma
 from sage.functions.other import floor, ceil, binomial, factorial
 from sage.categories.sets_cat import Sets
-
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.family import Family
+from sage.sets.non_negative_integers import NonNegativeIntegers
 
 
 PP = NewType('PP', 'PlanePartition')
@@ -1272,7 +1274,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
 
 
 
-class PlanePartitions_all(PlanePartitions):
+class PlanePartitions_all(PlanePartitions, DisjointUnionEnumeratedSets):
     r"""
     All plane partitions.
 
@@ -1301,7 +1303,13 @@ class PlanePartitions_all(PlanePartitions):
         self._box = None
         self._symmetry = None
         #super(PlanePartitions_all, self).__init__(category=InfiniteEnumeratedSets())
-        super(PlanePartitions_all, self).__init__(category=Sets())
+        #super(PlanePartitions_all, self).__init__(category=Sets())
+
+        def PP_n(n):
+            return PlanePartitions_n(n)
+        DisjointUnionEnumeratedSets.__init__(self,
+                Family(NonNegativeIntegers(), PP_n),
+                facade=True, keepkey=False)
 
     def _repr_(self) -> str:
         """
@@ -1325,7 +1333,6 @@ class PlanePartitions_all(PlanePartitions):
             Plane partition [[2, 1], [1]]
         """
         return self.element_class(self, [[2, 1], [1]])
-
 
 
 
