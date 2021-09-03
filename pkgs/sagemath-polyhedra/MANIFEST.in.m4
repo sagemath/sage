@@ -12,12 +12,19 @@ include sage/arith/rational_reconstruction.*
 include sage/misc/allocator.*
 include sage/ext/mod_int.*
 
+include sage/rings/finite_rings/__init__.py
+include sage/rings/finite_rings/stdint.*
+include sage/rings/finite_rings/integer_mod_limits.h
+include sage/rings/finite_rings/integer_mod.pxd   # .pyx depends on pari
+
 graft sage/modules
 exclude sage/modules/vector_*double*.*  # depends on numpy
 exclude sage/modules/vector_mod2*.*     # depends on m4ri
 exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 
 graft sage/matrix
+exclude sage/matrix/misc.*  # until refactored
+exclude sage/matrix/args.pyx  # until refactored
 exclude sage/matrix/matrix_gap.*
 exclude sage/matrix/matrix_*ball*.*     # depends on arb
 exclude sage/matrix/matrix_*double*.*   # depends on numpy
@@ -38,3 +45,4 @@ exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
 graft sage/geometry
 prune sage/geometry/hyperbolic_space
 prune sage/geometry/riemannian_manifolds
+exclude sage/geometry/integral_points.pyx  # depends on matrix_integer_dense
