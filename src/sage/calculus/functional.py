@@ -29,9 +29,12 @@ EXAMPLES: We illustrate each of the calculus functional functions.
 from .calculus import SR
 from sage.symbolic.expression import Expression
 
-def simplify(f):
+def simplify(f, algorithm="maxima", **kwds):
     r"""
     Simplify the expression `f`.
+
+    See the documentation of the :meth:`simplify` method of symbolic
+    expressions for details on options.
 
     EXAMPLES: We simplify the expression `i + x - x`.
 
@@ -42,11 +45,26 @@ def simplify(f):
 
     In fact, printing `f` yields the same thing - i.e., the
     simplified form.
+
+    Some simplifications are algorithm-specific :
+
+    ::
+
+        sage: x, t = var("x, t")
+        sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
+        sage: ex.simplify()
+        1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
+        sage: ex.simplify(algorithm="giac")
+        I*sqrt(x^2 - 1)
+
     """
-    try:
-        return f.simplify()
-    except AttributeError:
-        return f
+    if f.parent() is SR:
+        return f.simplify(algorithm=algorithm, **kwds)
+    else :
+        try:
+            return f.simplify()
+        except AttributeError:
+            return f
 
 def derivative(f, *args, **kwds):
     r"""

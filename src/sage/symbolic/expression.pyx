@@ -10259,14 +10259,25 @@ cdef class Expression(CommutativeRingElement):
         else:
             return self
 
-    def simplify(self):
+    def simplify(self, algorithm="maxima", **kwds):
         """
         Return a simplified version of this symbolic expression.
 
-        .. NOTE::
+        INPUT:
+        - ``algorithm`` - one of :
 
-           Currently, this just sends the expression to Maxima
-           and converts it back to Sage.
+            - ``maxima`` : currently, sends the expression to
+              ``maxima`` and converts it back to Sage.
+
+            - ``sympy`` : converts the expression to ``sympy``,
+              simplifies it (passing any optional keyword(s)), and
+              converts the result to Sage.
+
+            - ``giac`` : converts the expression to ``giac``,
+              simplifies it, and converts the result to Sage.
+
+            - ``fricas`` : converts the expression to ``fricas``,
+              simplifies it, and converts the result to Sage.
 
         .. SEEALSO::
 
@@ -10283,6 +10294,22 @@ cdef class Expression(CommutativeRingElement):
             sage: f.simplify()
             x^(-a + 1)*sin(2)
 
+        Some simplifications are quite algorithm-specific :
+
+        ::
+
+            sage: x, t = var("x, t")
+            sage: ex = cos(t).exponentialize()
+            sage: ex = ex.subs((sin(t).exponentialize()==x).solve(t)[0])
+            sage: ex
+            1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
+            sage: ex.simplify()
+            1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
+            sage: ex.simplify(algorithm="sympy")
+            I*(x^2 + sqrt(x^2 - 1)*x - 1)/(x + sqrt(x^2 - 1))
+            sage: ex.simplify(algorithm="giac")
+            I*sqrt(x^2 - 1)
+
         TESTS:
 
         Check that :trac:`14637` is fixed::
@@ -10292,7 +10319,15 @@ cdef class Expression(CommutativeRingElement):
             x
             sage: forget()
         """
-        return self._parent(self._maxima_())
+        if algorithm == "maxima" :
+            return self._parent(self._maxima_())
+        if algorithm == "sympy" :
+            return self._sympy_().simplify(**kwds)._sage_()
+        if algorithm == "giac" :
+            return self._giac_().simplify()._sage_()
+        if algorithm == "fricas" :
+            return self._fricas_().simplify()._sage_()
+        raise ValueError("Algorithm %s unknown to simplify."%algorithm)
 
     def simplify_full(self):
         """
