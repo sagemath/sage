@@ -683,11 +683,10 @@ class PlanePartition(ClonableArray, metaclass=InheritComparisonClasscallMetaclas
         if len(self) < len(PP):
             return False
 
-        for i in range(len(PP)):
-            if len(self[i]) < len(PP[i]):
-                return False
-        
-        return all([self[i][j] >= PP[i][j] for j in range(len(PP[i])) for i in range(len(PP))])        
+        if any(len(self[i]) < len(PP[i]) for i in range(len(PP))):
+            return False
+
+        return all(self[i][j] >= val for i,row in enumerate(PP) for j, val in enumerate(row))
 
     def complement(self, tableau_only=False) -> PP:
         r"""
@@ -1074,46 +1073,46 @@ class PlanePartitions(UniqueRepresentation, Parent):
     plane partitions inside a box of the specified size satisfying certain 
     symmetry conditions.
 
-        - ``symmetry = 'SPP'`` gives the class of symmetric plane partitions. which
-          is all plane partitions fixed under reflection across the diagonal.
-          Requires that `a = b`.
+    - ``symmetry = 'SPP'`` gives the class of symmetric plane partitions. which
+      is all plane partitions fixed under reflection across the diagonal.
+      Requires that `a = b`.
 
-        - ``symmetry = 'CSPP'`` gives the class of cyclic plane partitions, which
-          is all plane partitions fixed under cyclic rotation of coordinates.
-          Requires that `a = b = c`.
+    - ``symmetry = 'CSPP'`` gives the class of cyclic plane partitions, which
+      is all plane partitions fixed under cyclic rotation of coordinates.
+      Requires that `a = b = c`.
 
-        - ``symmetry = 'TSPP'`` gives the class of totally symmetric plane partitions,
-          which is all plane partitions fixed under any interchanging of coordinates.
-          Requires that `a = b = c`.
+    - ``symmetry = 'TSPP'`` gives the class of totally symmetric plane partitions,
+      which is all plane partitions fixed under any interchanging of coordinates.
+      Requires that `a = b = c`.
 
-        - ``symmetry = 'SCPP'`` gives the class of self-complementary plane partitions.
-          which is all plane partitions that are equal to their own complement
-          in the specified box. Requires at least one of `a,b,c` be even.
+    - ``symmetry = 'SCPP'`` gives the class of self-complementary plane partitions.
+      which is all plane partitions that are equal to their own complement
+      in the specified box. Requires at least one of `a,b,c` be even.
 
-        - ``symmetry = 'TCPP'`` gives the class of transpose complement plane partitions,
-          which is all plane partitions whose complement in the box of the specified
-          size is equal to their transpose. Requires `a = b` and at least one of
-          `a,b,c` be even.
-            
-        - ``symmetry = 'SSCPP'`` gives the class of symmetric self-complementary 
-          plane partitions, which is all plane partitions that are both
-          symmetric and self-complementary. Requires `a = b` and at least one of
-          `a,b,c` be even.
+    - ``symmetry = 'TCPP'`` gives the class of transpose complement plane partitions,
+      which is all plane partitions whose complement in the box of the specified
+      size is equal to their transpose. Requires `a = b` and at least one of
+      `a,b,c` be even.
 
-        - ``symmetry = 'CSTCPP'`` gives the class of cyclically symmetric transpose 
-          complement plane partitions, which is all plane partitions that are
-          both symmetric and equal to the transpose of their complement. Requires
-          `a = b = c`.
+    - ``symmetry = 'SSCPP'`` gives the class of symmetric self-complementary 
+      plane partitions, which is all plane partitions that are both
+      symmetric and self-complementary. Requires `a = b` and at least one of
+      `a,b,c` be even.
 
-        - ``symmetry = 'CSSCPP'`` gives the class of cyclically symmetric 
-          self-complementary plane partitions, which is all plane partitions that
-          are both cyclically symmetric and self-complementary. Requires `a = b = c`
-          and at least one of `a,b,c` be even.
+    - ``symmetry = 'CSTCPP'`` gives the class of cyclically symmetric transpose 
+      complement plane partitions, which is all plane partitions that are
+      both symmetric and equal to the transpose of their complement. Requires
+      `a = b = c`.
 
-        - ``symmetry = 'TSSCPP'`` gives the class of totally symmetric 
-          self-complementary plane partitions, which is all plane partitions that
-          are totally symmetric and also self-complementary. Requires `a = b = c`
-          and at least one of `a,b,c` be even.
+    - ``symmetry = 'CSSCPP'`` gives the class of cyclically symmetric 
+      self-complementary plane partitions, which is all plane partitions that
+      are both cyclically symmetric and self-complementary. Requires `a = b = c`
+      and at least one of `a,b,c` be even.
+
+    - ``symmetry = 'TSSCPP'`` gives the class of totally symmetric 
+      self-complementary plane partitions, which is all plane partitions that
+      are totally symmetric and also self-complementary. Requires `a = b = c`
+      and at least one of `a,b,c` be even.
 
     EXAMPLES:
 
@@ -1198,7 +1197,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
                 if isinstance(args[0], (int, Integer)):
                     return PlanePartitions_n(args[0])
                 else:
-                    box_size = args[0]
+                    box_size = tuple(args[0])
             if symmetry is None:
                 return PlanePartitions_box(box_size)
             elif symmetry == 'SPP':
@@ -1324,19 +1323,19 @@ class PlanePartitions_box(PlanePartitions):
     will have at most 'a' rows, of lengths at most 'b', with entries
     at most 'c'. 
     """
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2))
-            sage: P2 = PlanePartitions([4,3,2])
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_box, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((4,3,2))
+#            sage: P2 = PlanePartitions([4,3,2])
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_box, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         r"""
@@ -1668,19 +1667,19 @@ class PlanePartitions_n(PlanePartitions):
 # Symmetric Plane Partitions
 
 class PlanePartitions_SPP(PlanePartitions):
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((3,3,2), symmetry='SPP')
-            sage: P2 = PlanePartitions([3,3,2], symmetry='SPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_SPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((3,3,2), symmetry='SPP')
+#            sage: P2 = PlanePartitions([3,3,2], symmetry='SPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_SPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
@@ -1868,19 +1867,19 @@ class PlanePartitions_SPP(PlanePartitions):
 # Cyclically Symmetric Plane Partitions
 
 class PlanePartitions_CSPP(PlanePartitions):
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,4,4), symmetry='CSPP')
-            sage: P2 = PlanePartitions([4,4,4], symmetry='CSPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_CSPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((4,4,4), symmetry='CSPP')
+#            sage: P2 = PlanePartitions([4,4,4], symmetry='CSPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_CSPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
@@ -2077,19 +2076,19 @@ class PlanePartitions_CSPP(PlanePartitions):
 # Totally Symmetric Plane Partitions
 
 class PlanePartitions_TSPP(PlanePartitions):
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,4,4), symmetry='TSPP')
-            sage: P2 = PlanePartitions([4,4,4], symmetry='TSPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_TSPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((4,4,4), symmetry='TSPP')
+#            sage: P2 = PlanePartitions([4,4,4], symmetry='TSPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_TSPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
@@ -2257,19 +2256,19 @@ class PlanePartitions_TSPP(PlanePartitions):
 # Self-complementary Plane Partitions
 
 class PlanePartitions_SCPP(PlanePartitions):
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,3,2), symmetry='SCPP')
-            sage: P2 = PlanePartitions([4,3,2], symmetry='SCPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_SCPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((4,3,2), symmetry='SCPP')
+#            sage: P2 = PlanePartitions([4,3,2], symmetry='SCPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_SCPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
@@ -2482,19 +2481,19 @@ class PlanePartitions_SCPP(PlanePartitions):
 # Transpose-complement Plane Partitions
 
 class PlanePartitions_TCPP(PlanePartitions):
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((3,3,2), symmetry='TCPP')
-            sage: P2 = PlanePartitions([3,3,2], symmetry='TCPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_TCPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((3,3,2), symmetry='TCPP')
+#            sage: P2 = PlanePartitions([3,3,2], symmetry='TCPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_TCPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
@@ -2573,19 +2572,19 @@ class PlanePartitions_TCPP(PlanePartitions):
 # Symmetric Self-complementary Plane Partitions
 
 class PlanePartitions_SSCPP(PlanePartitions):
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,4,2), symmetry='SSCPP')
-            sage: P2 = PlanePartitions([4,4,2], symmetry='SSCPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_SSCPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((4,4,2), symmetry='SSCPP')
+#            sage: P2 = PlanePartitions([4,4,2], symmetry='SSCPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_SSCPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
@@ -2679,19 +2678,19 @@ class PlanePartitions_SSCPP(PlanePartitions):
 #Cyclically Symmetric Transpose-complement Partitions
 
 class PlanePartitions_CSTCPP(PlanePartitions):
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((2,2,2), symmetry='CSTCPP')
-            sage: P2 = PlanePartitions([2,2,2], symmetry='CSTCPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_CSTCPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((2,2,2), symmetry='CSTCPP')
+#            sage: P2 = PlanePartitions([2,2,2], symmetry='CSTCPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_CSTCPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
@@ -2764,20 +2763,19 @@ class PlanePartitions_CSTCPP(PlanePartitions):
 # Cyclically Symmetric Self-complementary Plane Partitions
 
 class PlanePartitions_CSSCPP(PlanePartitions):
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#        EXAMPLES::
 
-        EXAMPLES::
-
-            sage: P1 = PlanePartitions((4,4,4), symmetry='CSSCPP')
-            sage: P2 = PlanePartitions([4,4,4], symmetry='CSSCPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_CSSCPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((4,4,4), symmetry='CSSCPP')
+#            sage: P2 = PlanePartitions([4,4,4], symmetry='CSSCPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_CSSCPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
@@ -2850,19 +2848,19 @@ class PlanePartitions_CSSCPP(PlanePartitions):
 # Totally Symmetric Self-complementary Plane Partitions
 
 class PlanePartitions_TSSCPP(PlanePartitions):
-    @staticmethod
-    def __classcall_private__(cls, box_size):
-        """
-        Normalize input to ensure a unique representation.
+#    @staticmethod
+#    def __classcall_private__(cls, box_size):
+#        """
+#        Normalize input to ensure a unique representation.
 
-        EXAMPLES::
+#        EXAMPLES::
 
-            sage: P1 = PlanePartitions((4,4,4), symmetry='TSSCPP')
-            sage: P2 = PlanePartitions([4,4,4], symmetry='TSSCPP')
-            sage: P1 is P2
-            True
-        """
-        return super(PlanePartitions_TSSCPP, cls).__classcall__(cls, tuple(box_size))
+#            sage: P1 = PlanePartitions((4,4,4), symmetry='TSSCPP')
+#            sage: P2 = PlanePartitions([4,4,4], symmetry='TSSCPP')
+#            sage: P1 is P2
+#            True
+#        """
+#        return super(PlanePartitions_TSSCPP, cls).__classcall__(cls, tuple(box_size))
 
     def __init__(self, box_size):
         """
