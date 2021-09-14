@@ -1435,7 +1435,7 @@ class PlanePartitions_box(PlanePartitions):
             ppMatrix[x][y] = (z+1)
 
         #for each value in current antichain, fill in the rest of the matrix by rule M[y,z] = Max(M[y+1,z], M[y,z+1]) antichiain is now in plane partition format
-        if not A:
+        if A:
             for i in range(a):
                 i = a-(i+1)
                 for j in range(b):
@@ -1786,7 +1786,7 @@ class PlanePartitions_SPP(PlanePartitions):
             ppMatrix[x][y] = (z+1)
         #Fill out the rest of the plane partition using symmetry and the
         #rule pp[i][j]=max(pp[i][j+1],pp[i+1][j])
-        if not A:
+        if A:
             for i in range(a):
                 i = a-(i+1)
                 for j in range(b):
