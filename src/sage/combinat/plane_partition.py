@@ -987,17 +987,12 @@ class PlanePartition(ClonableArray, metaclass=InheritComparisonClasscallMetaclas
             sage: sorted(PlanePartition([[2,1],[1],[1]]).maximal_boxes())
             [[0, 0, 1], [0, 1, 0], [2, 0, 0]]
         """
-        (a, b, c) = (self._max_x, self._max_y, self._max_z)
-        Q = posets.ProductOfChains([a,b,c])
-        count = 0
         generate = []
-        for i in range(len(self)):
-            for j in range(len(self[i])):
-                if (self[i][j] > 0):
-                    generate.append((i,j,self[i][j]-1))
-            count += 1
-        oi = Q.order_ideal_generators(generate)
-        return [list(oi_elem) for oi_elem in oi]
+        for i,row in enumerate(self):
+            for j,entry in enumerate(row):
+                if (i == len(self)-1 or len(self[i+1])-1 < j or self[i+1][j] < entry) and (j == len(row)-1 or row[j+1] < entry):
+                    generate.append([i,j,entry-1])
+        return(generate)
 
     def cyclically_rotate(self, preserve_parent=False) -> PP:
         r"""
@@ -1039,11 +1034,11 @@ class PlanePartition(ClonableArray, metaclass=InheritComparisonClasscallMetaclas
             z = box[1]
             x = box[2]
             ppMatrix[y][z] = (x+1)
-        if new_antichain != []:
+        if new_antichain:
             for i in range(b):
-                i = b-(i+1)
+                i = b - (i+1)
                 for j in range(c):
-                    j = c-(j+1)
+                    j = c - (j+1)
                     if (ppMatrix[i][j] == 0):
                         iValue = 0
                         jValue = 0
