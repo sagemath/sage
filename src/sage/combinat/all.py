@@ -136,9 +136,6 @@ lazy_import('sage.combinat.decorated_permutation', ('DecoratedPermutation',
 # Plane Partitions
 lazy_import('sage.combinat.plane_partition', ('PlanePartition',
                                               'PlanePartitions'))
-
-#from .plane_partition import PlanePartition, PlanePartitions
-
 # Parking Functions
 lazy_import('sage.combinat.non_decreasing_parking_function',
             ['NonDecreasingParkingFunctions', 'NonDecreasingParkingFunction'])

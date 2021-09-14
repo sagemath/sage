@@ -26,7 +26,7 @@ AUTHORS:
 # ****************************************************************************
 from typing import NewType, Iterator, Tuple
 
-from sage.structure.list_clone import ClonableList
+from sage.structure.list_clone import ClonableArray
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import UniqueRepresentation
@@ -50,7 +50,7 @@ PP = NewType('PP', 'PlanePartition')
 
 
 @richcmp_method
-class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
+class PlanePartition(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
     r"""
     A plane partition.
 
@@ -122,7 +122,7 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
 
         """
         if isinstance(pp, PlanePartition):
-            ClonableList.__init__(self, parent, pp, check=False)
+            ClonableArray.__init__(self, parent, pp, check=False)
         else:
             pp = [list(_) for _ in pp]
             if pp:
@@ -131,7 +131,7 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
                         del pp[i][-1]
                     if not pp[i]:
                         pp.pop(i)        
-            ClonableList.__init__(self, parent, pp, check=check)
+            ClonableArray.__init__(self, parent, pp, check=check)
         if self.parent()._box is None:
             if pp:
                 self._max_x = len(pp)
@@ -151,7 +151,7 @@ class PlanePartition(ClonableList, metaclass=InheritComparisonClasscallMetaclass
         .. TODO::
 
             This overwrites the comparison check of
-            :class:`~sage.structure.list_clone.ClonableList`
+            :class:`~sage.structure.list_clone.ClonableArray`
             in order to circumvent the coercion framework.
             Eventually this should be solved more elegantly,
             for example along the lines of what was done for
