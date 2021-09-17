@@ -107,6 +107,9 @@ Untitled*.ipynb
 # GitLab CI generated files
 gitlab-build-docker.log
 
+# airspeed velocity
+/.asv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 **/__pycache__
