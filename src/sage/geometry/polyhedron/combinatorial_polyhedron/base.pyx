@@ -391,8 +391,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             self._n_Hrepresentation = len(facets)
             far_face = tuple(i for i in range(len(Vrep) - 1))
             self._dimension = data.dim()
-            from sage.matrix.all import matrix
-            from sage.rings.all  import ZZ
+            from sage.matrix.constructor import matrix
+            from sage.rings.integer_ring  import ZZ
             data = matrix(ZZ, data.incidence_matrix().rows()
                               + [[ZZ.one() for _ in range(len(facets))]])
         else:
@@ -441,8 +441,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             self._n_Vrepresentation = data.nrows()
 
             if not isinstance(data, Matrix_integer_dense):
-                from sage.rings.all  import ZZ
-                from sage.matrix.all import matrix
+                from sage.rings.integer_ring import ZZ
+                from sage.matrix.constructor import matrix
                 data = matrix(ZZ, data, sparse=False)
                 assert isinstance(data, Matrix_integer_dense), "conversion to ``Matrix_integer_dense`` didn't work"
 
@@ -1096,7 +1096,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.incidence_matrix().base_ring()
             Integer Ring
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
         cdef Matrix_integer_dense incidence_matrix = matrix(
                 ZZ, self.n_Vrepresentation(), self.n_Hrepresentation(), 0)
@@ -1650,7 +1650,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         if not self._f_vector:
             raise ValueError("could not determine f_vector")
         from sage.modules.free_module_element import vector
-        from sage.rings.all                   import ZZ
+        from sage.rings.integer_ring import ZZ
         f_vector = vector(ZZ, self._f_vector)
         f_vector.set_immutable()
         return f_vector
