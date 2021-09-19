@@ -28,11 +28,9 @@ a right ideal, and ``R*[a,b,...]*R`` creates a two-sided ideal.
 
 from types import GeneratorType
 
-import sage.misc.latex as latex
 import sage.rings.ring
 from sage.structure.element import MonoidElement
 from sage.structure.richcmp import rich_to_bool, richcmp
-import sage.rings.infinity
 from sage.structure.sequence import Sequence
 
 def Ideal(*args, **kwds):
@@ -536,6 +534,7 @@ class Ideal_generic(MonoidElement):
             sage: latex(3*ZZ) # indirect doctest
             \left(3\right)\Bold{Z}
         """
+        import sage.misc.latex as latex
         return '\\left(%s\\right)%s' % (", ".join(latex.latex(g)
                                                   for g in self.gens()),
                                         latex.latex(self.ring()))
@@ -1803,6 +1802,7 @@ def FieldIdeal(R):
 
     q = R.base_ring().order()
 
+    import sage.rings.infinity
     if q is sage.rings.infinity.infinity:
         raise TypeError("Cannot construct field ideal for R.base_ring().order()==infinity")
 

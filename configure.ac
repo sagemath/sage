@@ -452,6 +452,14 @@ AC_ARG_ENABLE([r],
     done
   ])
 
+AC_ARG_ENABLE([sagelib],
+  AS_HELP_STRING([--disable-sagelib],
+                 [disable build of the Sage library and packages depending on it]), [
+    for pkg in sagelib sage_docbuild; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
 SAGE_SPKG_COLLECT()
 
 dnl AC_CONFIG_HEADERS([config.h])

@@ -79,6 +79,16 @@ download:
 dist: build/make/Makefile
 	./sage --sdist
 
+pypi-sdists: sage_setup
+	./sage --sh build/pkgs/sage_conf/spkg-src
+	./sage --sh build/pkgs/sage_setup/spkg-src
+	./sage --sh build/pkgs/sage_sws2rst/spkg-src
+	./sage --sh build/pkgs/sage_docbuild/spkg-src
+	./sage --sh build/pkgs/sagelib/spkg-src
+	./sage --sh build/pkgs/sagemath_objects/spkg-src
+	./sage --sh build/pkgs/sagemath_categories/spkg-src
+	@echo "Built sdists are in upstream/"
+
 # ssl: build Sage, and also install pyOpenSSL. This is necessary for
 # running the secure notebook. This make target requires internet
 # access. Note that this requires that your system have OpenSSL

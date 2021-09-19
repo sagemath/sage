@@ -1,2 +1,4 @@
 /sage_conf.py
 /setup.cfg
+/build
+/*.egg-info

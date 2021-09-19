@@ -44,6 +44,8 @@ THREEJS_DIR = SAGE_LOCAL + "/share/threejs-sage"
 OPENMP_CFLAGS = "@OPENMP_CFLAGS@"
 OPENMP_CXXFLAGS = "@OPENMP_CXXFLAGS@"
 
+SAGE_SPKG_WHEELS = "@prefix@/var/lib/sage/wheels"
+
 # Entry point 'sage-config'.  It does not depend on any packages.
 
 def _main():

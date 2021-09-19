@@ -157,6 +157,14 @@ build/bin/sage-build-env-config
 /pkgs/*/*.egg-info
 /pkgs/*/.tox
 
+/pkgs/sagemath-objects/setup.cfg
+/pkgs/sagemath-categories/setup.cfg
+/pkgs/sagemath-objects/pyproject.toml
+/pkgs/sagemath-categories/pyproject.toml
+/pkgs/sagemath-objects/requirements.txt
+/pkgs/sagemath-categories/requirements.txt
+/pkgs/sagemath-categories/MANIFEST.in
+
 # same for old locations - before Trac #31577
 /build/pkgs/*/src/build
 /build/pkgs/*/src/dist
