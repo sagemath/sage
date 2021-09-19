@@ -9,7 +9,7 @@ global-include all__sagemath_polyhedra.py
 
 include sage/rings/integer*.*
 include sage/rings/rational*.*
-#include sage/rings/infinity.*
+include sage/rings/infinity.*
 include sage/arith/rational_reconstruction.*
 include sage/misc/allocator.*
 include sage/ext/mod_int.*
