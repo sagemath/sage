@@ -12,36 +12,13 @@ Rings
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from .all__sagemath_categories import *
-
-# Ring base classes
-from .ring import (Ring, Field, CommutativeRing, IntegralDomain,
-    DedekindDomain, PrincipalIdealDomain, EuclideanDomain)
-
-# Ring element base classes
-from sage.structure.element import (CommutativeAlgebraElement,
-        RingElement, CommutativeRingElement, IntegralDomainElement,
-        DedekindDomainElement, PrincipalIdealDomainElement,
-        EuclideanDomainElement, FieldElement)
-
-# Ideals
-from .ideal import Ideal
-ideal = Ideal
+from .all__sagemath_polyhedra import *
 
 # Quotient
 from .quotient_ring import QuotientRing
 
 # Infinities
 from .infinity import infinity, Infinity, InfinityRing, unsigned_infinity, UnsignedInfinityRing
-
-# Rational integers.
-from .integer_ring import IntegerRing, ZZ, crt_basis
-from .integer import Integer
-
-# Rational numbers
-from .rational_field import RationalField, QQ
-from .rational import Rational
-Rationals = RationalField
 
 # Integers modulo n.
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing, Zmod
