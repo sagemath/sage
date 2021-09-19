@@ -26,7 +26,8 @@ from cypari2.gen cimport objtogen
 from cypari2.stack cimport new_gen
 from .convert_gmp cimport INT_to_mpz, new_gen_from_mpz_t, new_gen_from_mpq_t, INTFRAC_to_mpq
 
-from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si
+from sage.ext.stdsage cimport PY_NEW
+from sage.libs.gmp.mpz cimport mpz_fits_slong_p, mpz_sgn, mpz_get_ui, mpz_set, mpz_set_si, mpz_set_ui
 from sage.libs.gmp.mpq cimport mpq_denref, mpq_numref
 from sage.rings.integer cimport smallInteger
 from sage.rings.all import RealField, ComplexField, QuadraticField
@@ -527,3 +528,49 @@ cpdef pari_is_prime_power(Integer q, bint get_data):
         return (smallInteger(p), smallInteger(n)) if get_data else True
     else:
         return (q, smallInteger(0)) if get_data else False
+
+
+cpdef unsigned long pari_maxprime():
+    """
+    Return to which limit PARI has computed the primes.
+
+    EXAMPLES::
+
+        sage: from sage.libs.pari.convert_sage import pari_maxprime
+        sage: a = pari_maxprime()
+        sage: res = prime_range(2, 2*a)
+        sage: b = pari_maxprime()
+        sage: b >= 2*a
+        True
+    """
+    return maxprime()
+
+
+cpdef list pari_prime_range(long c_start, long c_stop, bint py_ints=False):
+    """
+    Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
+
+    .. SEEALSO::
+
+        :func:`sage.rings.fast_arith.prime_range`
+
+    TESTS::
+
+        sage: from sage.libs.pari.convert_sage import pari_prime_range
+        sage: pari_prime_range(2, 19)
+        [2, 3, 5, 7, 11, 13, 17]
+    """
+    cdef long p = 0
+    cdef byteptr pari_prime_ptr = diffptr
+    res = []
+    while p < c_start:
+        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
+    while p < c_stop:
+        if py_ints:
+            res.append(p)
+        else:
+            z = <Integer>PY_NEW(Integer)
+            mpz_set_ui(z.value, p)
+            res.append(z)
+        NEXT_PRIME_VIADIFF(p, pari_prime_ptr)
+    return res
