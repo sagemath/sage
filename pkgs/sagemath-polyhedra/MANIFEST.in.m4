@@ -5,6 +5,8 @@ include(`../sagemath_categories/src/MANIFEST.in')
 
 # Extra in sagemath-polyhedra:
 
+global-include all__sagemath_polyhedra.py
+
 include sage/rings/integer*.*
 include sage/rings/rational*.*
 #include sage/rings/infinity.*
