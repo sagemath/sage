@@ -13,7 +13,9 @@ include sage/misc/allocator.*
 include sage/ext/mod_int.*
 
 include sage/rings/finite_rings/__init__.py
+include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*
+include sage/rings/fast_arith.*
 include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.pxd   # .pyx depends on pari
 
@@ -24,7 +26,6 @@ exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 
 graft sage/matrix
 exclude sage/matrix/misc.*  # until refactored
-exclude sage/matrix/args.pyx  # until refactored
 exclude sage/matrix/matrix_gap.*
 exclude sage/matrix/matrix_*ball*.*     # depends on arb
 exclude sage/matrix/matrix_*double*.*   # depends on numpy
@@ -38,6 +39,7 @@ exclude sage/matrix/matrix_modn*.*      # depends on linbox or flint
 exclude sage/matrix/matrix_mpolynom*.*  # depends on singular
 exclude sage/matrix/matrix_rational_*.* # depends on flint, pari
 exclude sage/matrix/matrix_symbolic_*.* # --> sagemath-symbolics
+exclude sage/matrix/change_ring.*       # depends on matrix_integer_*
 
 graft sage/data_structures
 exclude sage/data_structures/bounded_integer_sequences.*   # depends on flint
