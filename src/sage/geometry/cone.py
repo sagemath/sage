@@ -216,11 +216,16 @@ from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
 from sage.geometry.toric_plotter import ToricPlotter, label_list
 from sage.geometry.relative_interior import RelativeInterior
 from sage.graphs.digraph import DiGraph
-from sage.matrix.all import column_matrix, matrix, MatrixSpace
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.special import column_matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import flatten, latex
-from sage.modules.all import span, vector, VectorSpace
-from sage.rings.all import QQ, ZZ
+from sage.misc.flatten import flatten
+from sage.misc.latex import latex
+from sage.modules.free_module import span, VectorSpace
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.all import SageObject, parent
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.integral_points import parallelotope_points
@@ -591,8 +596,6 @@ def _ambient_space_point(body, data):
         (1.00000000000000, 3.14159265358979)
 
     """
-    from sage.rings.all import AA, RR
-
     L = body.lattice()
 
     def try_base_extend(ring):
@@ -617,6 +620,9 @@ def _ambient_space_point(body, data):
     # If we don't have a lattice element, try successively
     # less-desirable ambient spaces until (as a last resort) we
     # attempt a numerical representation.
+    from sage.rings.qqbar import AA
+    from sage.rings.real_mpfr import RR
+
     for ring in [QQ, AA, RR]:
         p = try_base_extend(ring)
         if p is not None:

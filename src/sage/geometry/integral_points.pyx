@@ -18,7 +18,9 @@ import copy
 import itertools
 
 from sage.matrix.constructor import matrix, column_matrix, vector, diagonal_matrix
-from sage.rings.all import QQ, RR, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
 from sage.rings.integer cimport Integer
 from sage.arith.all import gcd, lcm
 from sage.combinat.permutation import Permutation

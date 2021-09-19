@@ -77,16 +77,20 @@ As you see, it was necessary to insert two new rays (to prevent "upper" and
 
 import operator
 
-from sage.categories.all import Hom
+from sage.categories.homset import Hom
 from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan, is_Fan
-from sage.matrix.all import identity_matrix, matrix
+from sage.matrix.constructor import matrix
+from sage.matrix.special import identity_matrix
 from sage.structure.element import is_Matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import latex, prod, walltime
+from sage.misc.latex import latex
+from sage.misc.misc import walltime
+from sage.misc.misc_c import prod
 from sage.modules.free_module_morphism import (FreeModuleMorphism,
                                                is_FreeModuleMorphism)
-from sage.rings.all import Infinity, ZZ
+from sage.rings.infinity import Infinity
+from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import is_Infinite
 from functools import reduce
 

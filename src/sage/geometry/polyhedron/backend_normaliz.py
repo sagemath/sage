@@ -31,7 +31,8 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('PyNormaliz', ['NmzResult', 'NmzCompute', 'NmzCone', 'NmzConeCopy'],
                     feature=PythonModule("PyNormaliz", spkg="pynormaliz"))
 
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.arith.functions import LCM_list
 from sage.misc.functional import denominator
 from sage.matrix.constructor import vector

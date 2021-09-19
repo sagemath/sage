@@ -15,7 +15,9 @@ Voronoi diagram of a finite list of points in `\RR^d`.
 
 from sage.structure.sage_object import SageObject
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.all import RDF, QQ, AA
+from sage.rings.qqbar import AA
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RealField_class
 from sage.geometry.triangulation.point_configuration import PointConfiguration
 from sage.modules.free_module_element import vector

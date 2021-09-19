@@ -253,9 +253,12 @@ from sage.geometry.toric_plotter import ToricPlotter
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import walltime, prod
-from sage.modules.all import vector, span
-from sage.rings.all import QQ, ZZ
+from sage.misc.misc import walltime
+from sage.misc.misc_c import prod
+from sage.modules.free_module import span
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 def is_Fan(x):

@@ -86,7 +86,8 @@ from sage.structure.sage_object import SageObject
 from sage.symbolic.constants import I
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.infinity import infinity
-from sage.rings.all import CC, RR
+from sage.rings.all import CC
+from sage.rings.real_mpfr import RR
 from sage.plot.arc import arc
 from sage.plot.line import line
 from sage.symbolic.constants import pi

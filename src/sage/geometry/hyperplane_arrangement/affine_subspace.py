@@ -108,7 +108,7 @@ class AffineSubspace(SageObject):
             (0, 0, 0, 0)
         """
         R = V.base_ring()
-        from sage.categories.all import Fields
+        from sage.categories.fields import Fields
         if R not in Fields():
             R = R.fraction_field()
             V = V.change_ring(R)
