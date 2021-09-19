@@ -649,7 +649,10 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         if base_ring not in Rings():
             raise ValueError('invalid base ring')
 
-        from sage.symbolic.ring import SR
+        try:
+            from sage.symbolic.ring import SR
+        except ImportError:
+            SR = None
         if base_ring is not SR and not base_ring.is_exact():
             # TODO: remove this hack?
             if base_ring is RR:

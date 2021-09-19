@@ -145,7 +145,10 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         else:
             raise ValueError("no default backend for computations with {}".format(base_ring))
 
-    from sage.symbolic.ring import SR
+    try:
+        from sage.symbolic.ring import SR
+    except ImportError:
+        SR = None
     if backend == 'ppl' and base_ring is QQ:
         return Polyhedra_QQ_ppl(base_ring, ambient_dim, backend)
     elif backend == 'ppl' and base_ring is ZZ:
