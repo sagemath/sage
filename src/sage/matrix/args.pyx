@@ -17,8 +17,6 @@ Helpers for creating matrices
 cimport cython
 from cpython.sequence cimport PySequence_Fast
 from cysignals.signals cimport sig_check
-from cypari2.gen cimport Gen
-from cypari2.types cimport typ, t_MAT, t_VEC, t_COL, t_VECSMALL, t_LIST, t_STR, t_CLOSURE
 
 MatrixSpace = None
 
@@ -31,6 +29,12 @@ from sage.structure.element cimport Element, RingElement, Vector
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
 from sage.categories import monoids
+
+
+try:
+    from cypari2.gen import Gen
+except ImportError:
+    Gen = ()
 
 
 CommutativeMonoids = monoids.Monoids().Commutative()
@@ -1250,25 +1254,8 @@ cdef class MatrixArgs:
                 return MA_ENTRIES_NDARRAY
             return MA_ENTRIES_SCALAR
         if isinstance(self.entries, Gen):  # PARI object
-            t = typ((<Gen>self.entries).g)
-            if t == t_MAT:
-                R = self.base
-                if R is None:
-                    self.entries = self.entries.Col().sage()
-                else:
-                    self.entries = [[R(x) for x in v]
-                                    for v in self.entries.mattranspose()]
-                return MA_ENTRIES_SEQ_SEQ
-            elif t in [t_VEC, t_COL, t_VECSMALL, t_LIST]:
-                self.entries = self.entries.sage()
-                return MA_ENTRIES_SEQ_FLAT
-            elif t == t_CLOSURE:
-                return MA_ENTRIES_CALLABLE
-            elif t == t_STR:
-                return MA_ENTRIES_UNKNOWN
-            else:
-                self.entries = self.entries.sage()
-                return MA_ENTRIES_SCALAR
+            from sage.libs.pari.convert_sage import pari_typ_to_entries_type
+            return pari_typ_to_entries_type(self)
         if isinstance(self.entries, MatrixArgs):
             # Prevent recursion
             return MA_ENTRIES_UNKNOWN
