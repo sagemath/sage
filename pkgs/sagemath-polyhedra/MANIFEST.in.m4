@@ -14,6 +14,9 @@ include sage/arith/rational_reconstruction.*
 include sage/misc/allocator.*
 include sage/ext/mod_int.*
 
+include sage/rings/number_field/__init__.py
+include sage/rings/number_field/number_field_base.*
+
 include sage/rings/finite_rings/__init__.py
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*
