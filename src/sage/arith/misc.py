@@ -223,7 +223,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
         is_complex = isinstance(z, ComplexNumber)
         n = degree+1
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         M = matrix(ZZ, n, n+1+int(is_complex))
         r = ZZ.one() << prec
         M[0, 0] = 1

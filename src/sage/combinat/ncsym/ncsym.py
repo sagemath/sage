@@ -29,7 +29,7 @@ from sage.combinat.posets.posets import Poset
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.set import Set
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from functools import reduce
 
 def matchings(A, B):

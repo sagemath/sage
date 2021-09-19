@@ -219,7 +219,7 @@ cdef class Group(Parent):
             sage: G.an_element()
             f0*f1*f2*f3
         """
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         return prod(self.gens())
 
     def quotient(self, H, **kwds):

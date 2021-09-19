@@ -64,9 +64,9 @@ vectors of the vector collection ``VW`` ::
 from collections import defaultdict
 
 from sage.modules.free_module import FreeModule_ambient_field
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.matrix.constructor import matrix
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 def symmetrized_coordinate_sums(dim, n):

@@ -161,7 +161,7 @@ Added 16-02-2008 (wdj): optional calls to scipy and replace all
 from sage.rings.integer import Integer
 from sage.rings.complex_mpfr import ComplexField
 from sage.misc.latex import latex
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.symbolic.constants import pi
 from sage.symbolic.function import BuiltinFunction
 from sage.libs.mpmath import utils as mpmath_utils

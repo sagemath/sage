@@ -74,7 +74,7 @@ VERIFY_RESULT = True
 import itertools
 
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.modules.free_module_element import vector
 from sage.matrix.matrix_space import MatrixSpace
 

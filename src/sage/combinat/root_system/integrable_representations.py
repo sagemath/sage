@@ -14,7 +14,7 @@ Integrable Representations of Affine Lie Algebras
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.category_object import CategoryObject
 from sage.categories.modules import Modules
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.all import cached_method
 from sage.matrix.constructor import Matrix
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet

@@ -801,7 +801,7 @@ def test(n, m, R, c=2):
         3 True
         4 True
     """
-    from sage.matrix.all import matrix
+    from sage.matrix.constructor import matrix
     A = matrix(R,n,m,range(n*m))
     B = A.__copy__(); B._echelon_in_place_classical()
     C = A.__copy__(); C._echelon_strassen(c)

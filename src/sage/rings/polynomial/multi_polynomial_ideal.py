@@ -4723,7 +4723,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
         if m <= n:
             raise ValueError("This function requires an overdefined system of polynomials.")
 
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         from sage.misc.misc_c import prod
         from sage.rings.power_series_ring import PowerSeriesRing
 

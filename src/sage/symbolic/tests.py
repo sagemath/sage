@@ -29,7 +29,7 @@ def rational_powers_memleak():
         sage: rational_powers_memleak()
         False
     """
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
     import gc
     gc.collect()
     c0 = sum(1 for obj in gc.get_objects())

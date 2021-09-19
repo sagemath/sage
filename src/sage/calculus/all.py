@@ -30,7 +30,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.riemann",["Riemann_Map"])
 lazy_import("sage.calculus.interpolators",["polygon_spline","complex_cubic_spline"])
 
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 
 

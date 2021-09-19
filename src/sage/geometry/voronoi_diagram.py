@@ -18,7 +18,7 @@ from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.all import RDF, QQ, AA
 from sage.rings.real_mpfr import RealField_class
 from sage.geometry.triangulation.point_configuration import PointConfiguration
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.plot.all import line, point, rainbow, plot
 
 

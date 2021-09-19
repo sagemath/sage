@@ -17,7 +17,7 @@ H(yperplane) and V(ertex) representation objects for polyhedra
 from sage.structure.sage_object import SageObject
 from sage.structure.element import is_Vector
 from sage.structure.richcmp import richcmp_method, richcmp
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.modules.free_module_element import vector
 from copy import copy
 

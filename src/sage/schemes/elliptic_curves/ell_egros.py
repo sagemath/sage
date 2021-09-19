@@ -90,7 +90,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.all import xmrange
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from .constructor import EllipticCurve, EllipticCurve_from_j
 
 

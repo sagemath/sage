@@ -113,7 +113,7 @@ from sage.plot.line import line
 from sage.plot.text import text
 from sage.plot.point import point
 from sage.plot.plot import parametric_plot
-from sage.symbolic.all import SR
+from sage.symbolic.ring import SR
 
 
 def plot(hyperplane_arrangement, **kwds):

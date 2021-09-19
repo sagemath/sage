@@ -39,7 +39,7 @@ import sage.modular.hecke.element as element
 from sage.arith.all import lcm, divisors, moebius, sigma, factor, crt
 from sage.arith.srange import xsrange
 from sage.matrix.constructor import matrix
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.misc.verbose import verbose
 from sage.modular.dirichlet import DirichletGroup

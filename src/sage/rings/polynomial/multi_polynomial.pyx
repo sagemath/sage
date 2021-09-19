@@ -15,7 +15,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 def is_MPolynomial(x):
     return isinstance(x, MPolynomial)

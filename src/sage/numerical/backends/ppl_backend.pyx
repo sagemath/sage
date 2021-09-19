@@ -67,7 +67,7 @@ cdef class PPLBackend(GenericBackend):
         """
 
         if base_ring is not None:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             if base_ring is not QQ:
                 raise TypeError('The PPL backend only supports rational data.')
 
@@ -90,7 +90,7 @@ cdef class PPLBackend(GenericBackend):
             self.set_sense(-1)
 
     cpdef base_ring(self):
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         return QQ
 
     cpdef zero(self):

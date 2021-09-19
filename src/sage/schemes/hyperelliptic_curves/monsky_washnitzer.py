@@ -49,12 +49,12 @@ AUTHORS:
 from sage.arith.all import binomial, integer_ceil as ceil
 from sage.functions.log import log
 from sage.functions.other import floor
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import newton_method_sizes
 from sage.misc.profiler import Profiler
 from sage.misc.repr import repr_lincomb
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import is_FreeModuleElement
 from sage.modules.module import Module

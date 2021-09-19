@@ -3004,7 +3004,7 @@ cdef class GapElement_List(GapElement):
         """
         if not self.IsVector():
             raise ValueError('not a GAP vector')
-        from sage.modules.all import vector
+        from sage.modules.free_module_element import vector
         entries = self.Flat()
         n = self.Length().sage()
         if ring is None:

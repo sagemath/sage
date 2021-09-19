@@ -16,7 +16,7 @@ The cdd backend for polyhedral computations
 
 
 from subprocess import Popen, PIPE
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix
 
 from .base import Polyhedron_base

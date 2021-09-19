@@ -42,7 +42,7 @@ from sage.plot.plot import list_plot
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.misc.html import html
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 
 class Wave(SageObject):

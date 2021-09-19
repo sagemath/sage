@@ -51,7 +51,7 @@ cdef class MatrixSDPBackend(GenericSDPBackend):
             self.set_sense(-1)
 
         if base_ring is None:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             base_ring = QQ
         self._base_ring = base_ring
 

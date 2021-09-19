@@ -13,7 +13,7 @@ Functions for plotting polyhedra
 
 from math import pi
 
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 from sage.structure.sage_object import SageObject
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix, identity_matrix

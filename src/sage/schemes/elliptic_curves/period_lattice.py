@@ -1183,7 +1183,7 @@ class PeriodLattice_ell(PeriodLattice):
                     raise TypeError("%s is not a complex number"%z)
         prec = C.precision()
         from sage.matrix.all import Matrix
-        from sage.modules.all import vector
+        from sage.modules.free_module_element import vector
         if self.real_flag:
             w1,w2 = self.basis(prec)
             M = Matrix([[w1,0], list(w2)])**(-1)

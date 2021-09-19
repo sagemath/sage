@@ -27,7 +27,7 @@ from sage.rings.all import ZZ, infinity
 from sage.graphs.all import Graph, DiGraph
 from sage.arith.all import binomial, euler_phi
 from sage.all import prod
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 
 
 class QuiverMutationTypeFactory(SageObject):

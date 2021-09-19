@@ -476,7 +476,7 @@ cdef class ListOfFaces:
             sage: facets.matrix().transpose() == Vrep.matrix()
             True
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import matrix
         M = matrix(
                 ZZ, self.n_faces(), self.n_atoms(), 0)

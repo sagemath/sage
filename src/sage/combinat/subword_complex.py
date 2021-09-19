@@ -1529,7 +1529,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             sage: SC.is_root_independent()
             True
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         M = matrix(self.greedy_facet(side="negative").root_configuration())
         return M.rank() == max(M.ncols(), M.nrows())
 
@@ -1689,7 +1689,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
             A 0-dimensional polyhedron in QQ^2 defined as the convex hull of 1 vertex
         """
         G = self.group()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if G.coxeter_matrix().is_crystallographic():
             min_sum = [[QQ(v) for v in F.extended_weight_configuration()[i]] for F in self]
         else:
@@ -1740,7 +1740,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         BV = self.brick_vectors(coefficients=coefficients)
         G = self.group()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if G.coxeter_matrix().is_crystallographic():
             BV = [[QQ(v) for v in V] for V in BV]
         else:

@@ -178,7 +178,7 @@ def test_add_commutes(trials, verbose=False):
         sage: test_add_commutes(10)
         sage: test_add_commutes(1000) # long time
     """
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     for _ in range(trials):
         a = QQ.random_element()
         b = QQ.random_element()
@@ -252,7 +252,7 @@ def test_add_is_mul(trials, verbose=False):
         Random seed: 216390410596009428782506007128692114173
         AssertionError()
     """
-    from sage.rings.all import QQ
+    from sage.rings.rational_field import QQ
     for _ in range(trials):
         a = QQ.random_element()
         b = QQ.random_element()

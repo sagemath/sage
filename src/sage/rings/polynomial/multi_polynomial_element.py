@@ -54,7 +54,7 @@ We verify Lagrange's four squares identity::
 #*****************************************************************************
 
 from sage.structure.element import CommutativeRingElement, coerce_binop
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.rings.integer
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 from . import polydict

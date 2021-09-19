@@ -39,7 +39,7 @@ cdef class GenericSDPBackend:
             sage: GenericSDPBackend().base_ring()
             Real Double Field
         """
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return RDF
 
     cpdef zero(self):

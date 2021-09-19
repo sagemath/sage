@@ -51,7 +51,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.finite_rings.all import GF
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.arith.all import kronecker_symbol as kro
 from sage.structure.sage_object import SageObject
 
@@ -123,7 +123,7 @@ class EllipticCurveSaturator(SageObject):
         self._N = E.discriminant().norm()
         self._field = K = E.base_field()
         if K.absolute_degree() == 1:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             from sage.rings.polynomial.all import polygen
             self._Kpol = polygen(QQ)
         else:
@@ -463,7 +463,7 @@ class EllipticCurveSaturator(SageObject):
 
         if verbose:
             print("Using sieve method to saturate...")
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         from sage.sets.primes import Primes
 
         A = matrix(GF(p), 0, n)
@@ -667,7 +667,7 @@ def p_projections(Eq, Plist, p, debug=False):
         print("gens for {}-primary part of G: {}".format(p, gens))
         print("{}*points: {}".format(m,pts))
     from sage.groups.generic import discrete_log as dlog
-    from sage.modules.all import vector
+    from sage.modules.free_module_element import vector
     Fp = GF(p)
 
     # If the p-primary part is cyclic we use elliptic discrete logs directly:

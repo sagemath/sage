@@ -2937,7 +2937,7 @@ class HyperplaneArrangementElement(Element):
             (h2 - 1) * (h2 + 1) * (h1 - 1) * (h1 + 1)
         """
         from sage.matrix.constructor import identity_matrix
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         k = len(self)
         R = PolynomialRing(QQ, names, k)
         h = R.gens()

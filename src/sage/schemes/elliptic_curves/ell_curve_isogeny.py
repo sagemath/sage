@@ -3783,7 +3783,7 @@ def split_kernel_polynomial(poly):
         sage: poly.factor()
         (x + 10) * (x + 12) * (x + 16)
     """
-    from sage.misc.all import prod
+    from sage.misc.misc_c import prod
     return prod([p for p,e in poly.squarefree_decomposition()])
 
 def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm="starks"):

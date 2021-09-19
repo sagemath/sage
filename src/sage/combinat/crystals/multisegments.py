@@ -20,7 +20,7 @@ from sage.categories.highest_weight_crystals import HighestWeightCrystals
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 class InfinityCrystalOfMultisegments(Parent, UniqueRepresentation):
     r"""

@@ -22,7 +22,7 @@ from sage.rings.all import QQ, RR, ZZ
 from sage.rings.integer cimport Integer
 from sage.arith.all import gcd, lcm
 from sage.combinat.permutation import Permutation
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense

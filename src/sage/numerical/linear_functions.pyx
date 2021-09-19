@@ -1075,7 +1075,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         if coeff == R.one() and not constant_term:
             return ''
         try:
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             coeff = ZZ(coeff)    # print as integer if possible
         except (TypeError, ValueError):
             pass

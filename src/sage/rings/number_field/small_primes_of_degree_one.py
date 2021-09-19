@@ -99,7 +99,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 class Small_primes_of_degree_one_iter():
     r"""

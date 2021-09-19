@@ -19,7 +19,7 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.monoids.indexed_free_monoid import IndexedFreeAbelianMonoid
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 
 
 class RationalCherednikAlgebra(CombinatorialFreeModule):

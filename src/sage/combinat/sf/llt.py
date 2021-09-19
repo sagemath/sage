@@ -33,7 +33,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from . import sfa
 import sage.combinat.ribbon_tableau as ribbon_tableau
 import sage.combinat.skew_partition
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.partition import Partition, Partitions, _Partitions
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom

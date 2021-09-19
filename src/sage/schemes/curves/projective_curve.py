@@ -145,7 +145,7 @@ from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom, End
 
 from sage.interfaces.all import singular
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.all import add, sage_eval
 
 from sage.rings.all import degree_lowest_rational_function, IntegerRing

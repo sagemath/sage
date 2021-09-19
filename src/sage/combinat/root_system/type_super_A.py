@@ -11,7 +11,7 @@ Root system data for super type A
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 from . import ambient_space
 from .cartan_type import SuperCartanType_standard

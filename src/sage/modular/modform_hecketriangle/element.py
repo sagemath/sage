@@ -284,7 +284,7 @@ class FormsElement(FormsRingElement):
             sage: L(10).n(53)
             -23.9781792831...
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         from sage.symbolic.all import pi
         from sage.functions.other import sqrt
         from sage.lfunctions.dokchitser import Dokchitser

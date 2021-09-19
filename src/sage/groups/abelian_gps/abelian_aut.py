@@ -82,7 +82,7 @@ from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
 from sage.groups.libgap_mixin import GroupMixinLibGAP
 from sage.libs.gap.libgap import libgap
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.structure.unique_representation import CachedRepresentation
 
 

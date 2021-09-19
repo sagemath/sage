@@ -8,7 +8,7 @@ from sage.combinat.words.word import Word
 from sage.combinat.combination import Combinations
 from sage.combinat.permutation import Permutation
 from sage.rings.all import QQ, PolynomialRing
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.combinat.backtrack import GenericBacktracker
 from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets

@@ -2276,7 +2276,7 @@ class FormsSpace_abstract(FormsRing_abstract):
         """
 
         from sage.rings.all import prime_range
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         from warnings import warn
 
         denom_factor = ZZ(denom_factor)

@@ -18,7 +18,7 @@ Witt symmetric functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from . import multiplicative
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 
 class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     r"""

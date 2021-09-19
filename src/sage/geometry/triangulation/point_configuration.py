@@ -186,7 +186,7 @@ from sage.misc.cachefunc import cached_method
 from sage.combinat.combination import Combinations
 from sage.rings.all import QQ, ZZ
 from sage.matrix.constructor import matrix
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 
 from copy import copy
 import sys

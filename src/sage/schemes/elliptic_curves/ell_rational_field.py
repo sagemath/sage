@@ -7064,7 +7064,7 @@ def elliptic_curve_congruence_graph(curves):
     from sage.graphs.graph import Graph
     from sage.arith.all import lcm
     from sage.rings.fast_arith import prime_range
-    from sage.misc.all import prod
+    from sage.misc.misc_c import prod
     G = Graph()
     G.add_vertices([curve.cremona_label() for curve in curves])
     n = len(curves)

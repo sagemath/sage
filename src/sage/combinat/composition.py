@@ -36,7 +36,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from .combinat import CombinatorialElement
 from sage.categories.cartesian_product import cartesian_product
 

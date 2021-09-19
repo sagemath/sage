@@ -1479,7 +1479,7 @@ class HyperbolicModelHM(HyperbolicModel):
             sage: H = HyperbolicPlane().HM().get_background_graphic()
         """
         from sage.plot.plot3d.all import plot3d
-        from sage.all import SR
+        from sage.symbolic.ring import SR
         hyperboloid_opacity = bdry_options.get('hyperboloid_opacity', .1)
         z_height = bdry_options.get('z_height', 7.0)
         x_max = sqrt((z_height ** 2 - 1) / 2.0)

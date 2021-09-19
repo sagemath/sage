@@ -105,7 +105,7 @@ from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.all import QQ, ZZ, QQbar, Integer
 from sage.arith.all import lcm
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.structure.element import coercion_model
 
 

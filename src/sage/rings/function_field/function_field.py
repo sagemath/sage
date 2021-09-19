@@ -3402,7 +3402,7 @@ class FunctionField_global(FunctionField_simple):
             sage: F.L_polynomial()
             2*t^2 + t + 1
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         q = self.constant_field().order()
         g = self.genus()
 

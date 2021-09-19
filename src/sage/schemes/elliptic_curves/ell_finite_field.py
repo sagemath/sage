@@ -1429,7 +1429,7 @@ def supersingular_j_polynomial(p, use_cache=True):
         if p in supersingular_j_polynomials:
             return J.parent()(supersingular_j_polynomials[p])
 
-    from sage.misc.all import prod
+    from sage.misc.misc_c import prod
     m=(p-1)//2
     X,T = PolynomialRing(GF(p),2,names=['X','T']).gens()
     H = sum(binomial(m, i) ** 2 * T ** i for i in range(m + 1))

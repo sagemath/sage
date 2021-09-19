@@ -31,7 +31,7 @@ from sage.structure.parent import Parent
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.posets.posets import Poset
 from sage.rings.integer import Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.combinat.tableau import Tableau
 
 

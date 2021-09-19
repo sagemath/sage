@@ -30,7 +30,7 @@ from memory_allocator cimport MemoryAllocator
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 
 def chromatic_polynomial(G, return_tree_basis=False):

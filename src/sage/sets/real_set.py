@@ -91,7 +91,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.topological_spaces import TopologicalSpaces
 from sage.categories.sets_cat import EmptySetError
 from sage.sets.set import Set_base, Set_boolean_operators, Set_add_sub_operators
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.real_lazy import LazyFieldElement, RLF
 from sage.rings.infinity import infinity, minus_infinity
 

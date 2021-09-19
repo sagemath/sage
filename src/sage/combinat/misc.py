@@ -16,7 +16,7 @@ Miscellaneous
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 class DoublyLinkedList():
     """

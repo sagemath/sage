@@ -21,7 +21,7 @@ from sage.arith.misc import factorial
 from sage.misc.cachefunc import cached_function
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.composition_tableau import CompositionTableaux
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 # The following might call for defining a morphism from ``structure

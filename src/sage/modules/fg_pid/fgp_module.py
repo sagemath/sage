@@ -1741,7 +1741,7 @@ class FGP_Module_class(Module):
         except AttributeError:
             pass
         from sage.rings.all import infinity
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         v = self.invariants()
         self.__cardinality = infinity if 0 in v else prod(v)
         return self.__cardinality
@@ -2006,7 +2006,7 @@ def test_morphism_0(*args, **kwds):
     phi = random_fgp_morphism_0(*args, **kwds)
     K = phi.kernel()
     I = phi.image()
-    from sage.misc.all import prod
+    from sage.misc.misc_c import prod
     if prod(K.invariants()):
         assert prod(phi.domain().invariants()) % prod(K.invariants()) == 0
     assert I.is_submodule(phi.codomain())

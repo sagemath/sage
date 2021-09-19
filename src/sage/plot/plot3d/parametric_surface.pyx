@@ -87,7 +87,7 @@ from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_check
 
 from math import cos, sin
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 from sage.plot.colors import check_color_data
 from .base import RenderParams

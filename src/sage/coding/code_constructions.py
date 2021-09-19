@@ -40,7 +40,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.arith.all import quadratic_residues, gcd
 
 from sage.structure.sequence import Sequence, Sequence_generic

@@ -636,7 +636,7 @@ from itertools import product
 from .parser import Parser
 from sage.misc.latex import latex
 from sage.misc.misc import powerset
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import vector

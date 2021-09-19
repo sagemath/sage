@@ -411,7 +411,7 @@ class ProductSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: S.algebraic_equation_system()
             [node0 - z^2]
         """
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         return prod(var_mapping[operand] for operand in self._state_info)
 
 

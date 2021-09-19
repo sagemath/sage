@@ -176,7 +176,7 @@ AUTHOR:
 # ****************************************************************************
 
 from itertools import chain, product
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.arith.misc import factorial
 from sage.arith.all import moebius, divisors
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass

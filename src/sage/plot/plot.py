@@ -2390,7 +2390,7 @@ def _plot(funcs, xrange, parametric=False,
     if excluded_points or detect_poles:
         start_index = 0
         # setup for pole detection
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         epsilon = 0.0001
         pole_options = {}
         pole_options['linestyle'] = '--'
@@ -3023,7 +3023,7 @@ def list_plot(data, plotjoined=False, **kwargs):
             list_data = list(data.items())
         return list_plot(list_data, plotjoined=plotjoined, **kwargs)
     try:
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         RDF(data[0])
         data = list(enumerate(data))
     except TypeError: # we can get this TypeError if the element is a list

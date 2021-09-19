@@ -2393,7 +2393,7 @@ cdef class Matrix(Matrix0):
             :meth:`get_is_zero_unsafe` for derived matrix classes.
         """
         if ring is None:
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             ring = ZZ
 
         cdef object zero = ring.zero()

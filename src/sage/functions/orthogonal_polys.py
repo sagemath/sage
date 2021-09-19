@@ -309,7 +309,7 @@ from sage.rings.complex_mpfr import is_ComplexField
 
 from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.symbolic.expression import Expression
-from sage.symbolic.all import SR
+from sage.symbolic.ring import SR
 from sage.functions.other import factorial, binomial
 from sage.structure.all import parent
 

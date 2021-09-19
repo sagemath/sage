@@ -19,7 +19,7 @@ from sage.modular.cusps import Cusp
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import IntegerModRing, ZZ
 from sage.arith.all import kronecker_symbol
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.modular.modsym.p1list
 import sage.arith.all as arith
 

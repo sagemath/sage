@@ -100,7 +100,7 @@ AUTHORS:
 
 from .all import SL2Z
 from .arithgroup_generic import ArithmeticSubgroup
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 import sage.arith.all as arith
 

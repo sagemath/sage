@@ -28,7 +28,7 @@ symmetric functions `h_\lambda`, not an arbitrary graded basis.
 from . import multiplicative, classical
 from sage.combinat.partition import Partition
 from sage.rings.all import infinity
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.arith.all import factorial, binomial
 
 

@@ -422,7 +422,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
         from sage.rings.polynomial.multi_polynomial import is_MPolynomial
         if is_MPolynomial(v) and parent.degree() == v.parent().ngens():
             ring = v.parent()
-            from sage.modules.all import vector
+            from sage.modules.free_module_element import vector
             image_coords = self._A * vector(ring, ring.gens()) + self._b
             return v(*image_coords)
 

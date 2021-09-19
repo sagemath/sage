@@ -1989,7 +1989,7 @@ cdef class NumberFieldElement(FieldElement):
                 raise ArithmeticError("non-principal ideal in factorization")
         element_fac = [(P.gens_reduced()[0],e) for P,e in fac]
         # Compute the product of the p^e to figure out the unit
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         element_product = prod([p**e for p,e in element_fac], K(1))
         from sage.structure.all import Factorization
         return Factorization(element_fac, unit=self/element_product)

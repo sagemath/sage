@@ -58,7 +58,7 @@ class LCAWithGeneratorsElement(IndexedFreeModuleElement):
             sage: (L + 2*G.T() + 4*C).T(2)
             2*T^(2)L + 12*T^(3)G
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         if n not in ZZ or n < 0:
             raise ValueError("n must be a nonnegative Integer")
         if n == 0 or self.is_zero():

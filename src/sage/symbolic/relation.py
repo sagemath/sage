@@ -1571,8 +1571,8 @@ def solve_mod(eqns, modulus, solution_dict=False):
     from sage.rings.all import Integer, Integers, crt_basis
     from sage.symbolic.expression import is_Expression
     from sage.misc.all import cartesian_product_iterator
-    from sage.modules.all import vector
-    from sage.matrix.all import matrix
+    from sage.modules.free_module_element import vector
+    from sage.matrix.constructor import matrix
 
     if not isinstance(eqns, (list, tuple)):
         eqns = [eqns]
@@ -1685,7 +1685,7 @@ def _solve_mod_prime_power(eqns, p, m, vars):
 
     """
     from sage.rings.all import Integers, PolynomialRing
-    from sage.modules.all import vector
+    from sage.modules.free_module_element import vector
     from sage.misc.all import cartesian_product_iterator
 
     mrunning = 1

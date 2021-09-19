@@ -170,7 +170,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 from bisect import bisect_left, bisect_right
 from sage.structure.element import is_Matrix
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
 
 

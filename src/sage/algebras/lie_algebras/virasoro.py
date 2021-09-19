@@ -19,7 +19,7 @@ AUTHORS:
 from sage.misc.cachefunc import cached_method
 from sage.categories.lie_algebras import LieAlgebras
 from sage.categories.modules import Modules
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.sets.family import Family
 from sage.sets.set import Set

@@ -1222,7 +1222,7 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
         elif maple_type == '`=`':        # (1, 1) = 2
             return (self.op(1)._sage_() == self.op(2)._sage())
         try:
-            from sage.symbolic.all import SR
+            from sage.symbolic.ring import SR
             return SR(result)
         except Exception:
             raise NotImplementedError("Unable to parse Maple output: %s" % result)

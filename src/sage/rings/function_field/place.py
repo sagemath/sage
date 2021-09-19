@@ -59,7 +59,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.arith.all import lcm
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import QQbar
 from sage.rings.number_field.number_field_base import NumberField
 

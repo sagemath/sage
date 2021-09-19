@@ -14,7 +14,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from .set import Set_generic
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.arith.all import nth_prime

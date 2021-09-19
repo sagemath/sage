@@ -391,7 +391,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             far_face = tuple(i for i in range(len(Vrep) - 1))
             self._dimension = data.dim()
             from sage.matrix.constructor import matrix
-            from sage.rings.integer_ring  import ZZ
+            from sage.rings.integer_ring import ZZ
             data = matrix(ZZ, data.incidence_matrix().rows()
                               + [[ZZ.one() for _ in range(len(facets))]])
         else:

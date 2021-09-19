@@ -491,7 +491,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             1
 
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         return ZZ.one()
 
     def F(self):
@@ -508,7 +508,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             1
 
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         return ZZ.one()
 
     def change_domain(self, ring):
@@ -690,7 +690,7 @@ class GaussValuation_generic(NonFinalInductiveValuation):
             Gauss valuation induced by 3 * 2-adic valuation
 
         """
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if scalar in QQ and scalar > 0 and scalar != 1:
             return GaussValuation(self.domain(), self._base_valuation.scale(scalar))
         return super(GaussValuation_generic, self).scale(scalar)

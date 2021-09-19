@@ -29,7 +29,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.arith.all import euler_phi, factorial, divisors, gcd
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.combinat.misc import DoublyLinkedList
 
 

@@ -33,7 +33,7 @@ import os
 from subprocess import Popen, PIPE
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.interfaces.process import terminate
 

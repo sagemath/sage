@@ -1540,10 +1540,10 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
         cls_cls_str = str(self.cls().cls())
 
         if repr_str == "ZZ":
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ
         elif repr_str == "QQ":
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             return QQ
 
         if cls_cls_str == "Type":
@@ -1659,10 +1659,10 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
         else:
             #Handle the integers and rationals separately
             if cls_str == "ZZ":
-                from sage.rings.all import ZZ
+                from sage.rings.integer_ring import ZZ
                 return ZZ(repr_str)
             elif cls_str == "QQ":
-                from sage.rings.all import QQ
+                from sage.rings.rational_field import QQ
                 repr_str = self.external_string()
                 if "/" not in repr_str:
                     repr_str = repr_str + "/1"
@@ -1713,7 +1713,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             sage: matrix(ZZ, m.transpose()).dimensions()  # optional - macaulay2
             (0, 2)
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         m = matrix(R, self.entries()._sage_())
         if not m.nrows():
             return matrix(R, 0, self.numcols()._sage_())

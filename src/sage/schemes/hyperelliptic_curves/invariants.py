@@ -13,7 +13,7 @@ AUTHOR:
 - Nick Alexander
 
 """
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.all import PolynomialRing
 
 

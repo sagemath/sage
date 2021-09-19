@@ -321,7 +321,7 @@ import sage.arith.all as arith
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.rational_field import QQ
 from sage.combinat import combinat
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 
 # This one should be here!

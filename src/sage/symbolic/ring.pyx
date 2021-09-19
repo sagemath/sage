@@ -31,7 +31,7 @@ from sage.structure.element cimport Element
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 # is_SymbolicVariable used to be defined here; re-export it
 from sage.symbolic.expression import _is_SymbolicVariable as is_SymbolicVariable
@@ -1192,10 +1192,10 @@ cdef class NumpyToSRMorphism(Morphism):
 
         import numpy
         if issubclass(numpy_type, numpy.integer):
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             self._intermediate_ring = ZZ
         elif issubclass(numpy_type, numpy.floating):
-            from sage.rings.all import RDF
+            from sage.rings.real_double import RDF
             self._intermediate_ring = RDF
         elif issubclass(numpy_type, numpy.complexfloating):
             from sage.rings.all import CDF

@@ -57,8 +57,8 @@ from sage.modular.modsym.all import ModularSymbols
 from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modular.modform.constructor import Newform
 from sage.matrix.all import matrix, block_diagonal_matrix, identity_matrix
-from sage.modules.all import vector
-from sage.misc.all import prod
+from sage.modules.free_module_element import vector
+from sage.misc.misc_c import prod
 from sage.arith.misc import is_prime
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.sets.primes import Primes

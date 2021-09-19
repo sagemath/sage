@@ -104,8 +104,8 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-from sage.rings.all import ZZ
-from sage.modules.all import vector
+from sage.rings.integer_ring import ZZ
+from sage.modules.free_module_element import vector
 from sage.rings.all import invariant_theory
 from sage.schemes.toric.weierstrass import (
     _partial_discriminant,

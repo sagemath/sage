@@ -4,7 +4,7 @@ Creating A Random Quadratic Form
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.quadratic_forms.ternary_qf import TernaryQF
 from sage.rings.ring import is_Ring
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 ################################################
 ## Routines to create a random quadratic form ##

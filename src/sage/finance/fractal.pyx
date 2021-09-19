@@ -22,7 +22,7 @@ AUTHOR:
 """
 
 from sage.rings.all import RDF, CDF, Integer
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 I = CDF.gen()
 
 from .time_series cimport TimeSeries

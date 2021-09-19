@@ -5,7 +5,7 @@ Cremona matrices
 from ..eclib cimport scalar, addscalar
 
 from sage.matrix.all import MatrixSpace
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense

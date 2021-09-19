@@ -11,7 +11,7 @@ Find isomorphisms between fans
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import column_matrix, matrix
 from sage.geometry.cone import Cone
 
