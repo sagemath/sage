@@ -10,11 +10,11 @@ from sage.structure.element import (CommutativeAlgebraElement,
         DedekindDomainElement, PrincipalIdealDomainElement,
         EuclideanDomainElement, FieldElement)
 
-# Rational integers.
-from .integer_ring import IntegerRing, ZZ, crt_basis
-from .integer import Integer
-
 # Rational numbers
 from .rational_field import RationalField, QQ
 from .rational import Rational
 Rationals = RationalField
+
+# Rational integers.
+from .integer_ring import IntegerRing, ZZ, crt_basis
+from .integer import Integer
