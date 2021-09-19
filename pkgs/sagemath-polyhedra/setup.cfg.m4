@@ -33,4 +33,5 @@ install_requires =
         gmpy2          \
         cysignals      \
         pplpy          \
+        memory_allocator \
         | sed "2,\$s/^/    /;"')dnl
