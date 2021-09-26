@@ -11,8 +11,8 @@ from sage.structure.element import (CommutativeAlgebraElement,
         EuclideanDomainElement, FieldElement)
 
 # Rational numbers
-from .rational_field import RationalField, QQ
 from .rational import Rational
+from .rational_field import RationalField, QQ
 Rationals = RationalField
 
 # Rational integers.
