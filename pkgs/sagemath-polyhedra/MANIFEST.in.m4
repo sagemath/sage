@@ -3,6 +3,10 @@ dnl MANIFEST.in is generated from this file by SAGE_ROOT/bootstrap via m4.
 dnl Include all from sagemath-categories (via m4 include)
 include(`../sagemath_categories/src/MANIFEST.in')
 
+prune .tox
+exclude *.m4
+include requirements.txt
+
 # Extra in sagemath-polyhedra:
 
 global-include all__sagemath_polyhedra.py
@@ -53,3 +57,10 @@ graft sage/geometry
 prune sage/geometry/hyperbolic_space
 prune sage/geometry/riemannian_manifolds
 exclude sage/geometry/integral_points.pyx  # depends on matrix_integer_dense
+
+
+
+
+
+global-exclude *.py[co]
+global-exclude *.so
