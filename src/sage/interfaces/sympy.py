@@ -294,7 +294,7 @@ def _sympysage_function_by_name(fname):
         import sympy
         if getattr(sympy, fname, None) is None:
             # symbolic function
-            from sage.libs.pynac.pynac import symbol_table
+            from sage.symbolic.expression import symbol_table
             func = symbol_table['functions'].get(fname)
             if func is None:
                 from sage.calculus.var import function

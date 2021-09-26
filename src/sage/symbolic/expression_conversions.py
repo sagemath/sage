@@ -691,6 +691,13 @@ class SympyConverter(Converter):
 
     """
     def __init__(self):
+        """
+        TESTS::
+
+            sage: from sage.symbolic.expression_conversions import SympyConverter
+            sage: s = SympyConverter()  # indirect doctest
+            sage: TestSuite(s).run(skip="_test_pickling")
+        """
         from sage.interfaces.sympy import sympy_init
         sympy_init()
 

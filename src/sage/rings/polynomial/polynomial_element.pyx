@@ -7990,7 +7990,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
         if L is SR:
             if self.degree() == 2:
                 from sage.functions.other import sqrt
-                from sage.libs.pynac.pynac import I
+                from sage.symbolic.expression import I
                 coeffs = self.list()
                 D = coeffs[1]*coeffs[1] - 4*coeffs[0]*coeffs[2]
                 l = None

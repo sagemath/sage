@@ -797,7 +797,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             prec = integer.Integer(prec)
             if prec < 0:
                 raise ValueError("prec (= %s) must be non-negative" % prec)
-        from sage.symbolic.series import SymbolicSeries
+        from sage.symbolic.expression import SymbolicSeries
         if isinstance(f, power_series_ring_element.PowerSeries) and f.parent() is self:
             if prec >= f.prec():
                 return f

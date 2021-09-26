@@ -2260,8 +2260,11 @@ def sage_getsourcelines(obj):
         ([...'class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \\\n',
         ...)
         sage: x = var('x')
-        sage: lines, lineno = sage_getsourcelines(x); lines[0:2]
+        sage: lines, lineno = sage_getsourcelines(x); lines[0:5]
         ['cdef class Expression(CommutativeRingElement):\n',
+         '\n',
+         '    cdef GEx _gobj\n',
+         '\n',
          '    cpdef object pyobject(self):\n']
         sage: lines[-1]    # last line
         '        return S\n'

@@ -416,12 +416,11 @@ from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
 
 from sage.symbolic.ring import var, SR, is_SymbolicVariable
-from sage.symbolic.expression import Expression
+from sage.symbolic.expression import Expression, symbol_table
 from sage.symbolic.function import Function
 from sage.symbolic.function_factory import function_factory
 from sage.symbolic.integration.integral import (indefinite_integral,
         definite_integral)
-from sage.libs.pynac.pynac import symbol_table
 
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
@@ -2151,11 +2150,11 @@ def _is_function(v):
 
     Check that :trac:`31756` is fixed::
 
-        sage: from sage.libs.pynac.pynac import symbol_table
+        sage: from sage.symbolic.expression import symbol_table
         sage: _is_function(symbol_table['mathematica']['Gamma'])
         True
 
-        sage: from sage.libs.pynac.pynac import register_symbol
+        sage: from sage.symbolic.expression import register_symbol
         sage: foo = lambda x: x^2 + 1
         sage: register_symbol(foo, dict(mathematica='Foo'))  # optional - mathematica
         sage: mathematica('Foo[x]').sage()                   # optional - mathematica

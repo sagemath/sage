@@ -163,4 +163,44 @@ cpdef unsigned register_or_update_function(self, name, latex_name, int nargs,
 
     g_foptions_assign(g_registered_functions().index(serial), opt)
 
+    sfunction_serial_dict[serial] = self
+
     return serial
+
+
+# we keep a database of symbolic functions initialized in a session
+# this also makes the .operator() method of symbolic expressions work
+cdef dict sfunction_serial_dict = {}
+
+
+cpdef get_sfunction_from_serial(unsigned int serial):
+    """
+    Return an already created :class:`SymbolicFunction` given the serial.
+
+    These are stored in the dictionary ``sfunction_serial_dict``.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.function import get_sfunction_from_serial
+        sage: get_sfunction_from_serial(65) #random
+        f
+    """
+    global sfunction_serial_dict
+    return sfunction_serial_dict.get(serial)
+
+
+cpdef get_sfunction_from_hash(long myhash):
+    """
+    Return an already created :class:`SymbolicFunction` given the hash.
+
+    EXAMPLES::
+
+        sage: from sage.symbolic.expression import get_sfunction_from_hash
+        sage: get_sfunction_from_hash(1)  # random
+    """
+    for sfunc in sfunction_serial_dict.itervalues():
+        if isinstance(sfunc, SymbolicFunction) and \
+                myhash == (<SymbolicFunction>sfunc)._hash_():
+            # found one
+            return sfunc
+    return None

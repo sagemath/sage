@@ -801,7 +801,7 @@ class MathematicaElement(ExpectElement):
             sage: mathematica(RealField(100)(1/3)).sage()  # optional - mathematica
             0.3333333333333333333333333333335
         """
-        from sage.libs.pynac.pynac import symbol_table
+        from sage.symbolic.expression import symbol_table
         from sage.symbolic.constants import constants_name_table as constants
         from sage.calculus.calculus import symbolic_expression_from_string
         from sage.calculus.calculus import _find_func as find_func
@@ -815,7 +815,7 @@ class MathematicaElement(ExpectElement):
         # Find all the mathematica functions, constants and symbolic variables
         # present in `res`.  Convert MMA functions and constants to their
         # Sage equivalents (if possible), using `locals` and
-        # `sage.libs.pynac.pynac.symbol_table['mathematica']` as translation
+        # `sage.symbolic.pynac.symbol_table['mathematica']` as translation
         # dictionaries.  If a MMA function or constant is not either
         # dictionary, then we use a variety of tactics listed in `autotrans`.
         # If a MMA variable is not in any dictionary, then create an
@@ -1275,7 +1275,7 @@ def symbolic_expression_from_mathematica_string(mexpr):
         sage: symbolic_expression_from_mathematica_string(u'-Cos[x]')
         -cos(x)
     """
-    from sage.libs.pynac.pynac import symbol_table
+    from sage.symbolic.expression import symbol_table
     from sage.symbolic.constants import constants_name_table as constants
     from sage.calculus.calculus import symbolic_expression_from_string
     from sage.calculus.calculus import _find_func as find_func

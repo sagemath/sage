@@ -19,8 +19,7 @@ lazy_import('sage.functions.gamma',
              'gamma_inc_lower', 'psi', 'beta'), deprecation=24411)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
-from sage.symbolic.expression import Expression
-from sage.libs.pynac.pynac import (register_symbol, symbol_table, I)
+from sage.symbolic.expression import Expression, register_symbol, symbol_table, I
 from sage.symbolic.ring import SR
 from sage.rings.all import Integer, Rational, RealField, ZZ, ComplexField
 from sage.misc.latex import latex

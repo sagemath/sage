@@ -1101,7 +1101,7 @@ class GiacElement(ExpectElement):
         Same but by adding a new entry to the ``symbol_table``::
 
             sage: ex = giac('myFun(x)')
-            sage: sage.libs.pynac.pynac.register_symbol(sin, {'giac':'myFun'})
+            sage: sage.symbolic.expression.register_symbol(sin, {'giac':'myFun'})
             sage: ex._sage_()
             sin(x)
 
@@ -1127,7 +1127,7 @@ class GiacElement(ExpectElement):
             sage: giac(e * i * pi).sage().variables()
             ()
         """
-        from sage.libs.pynac.pynac import symbol_table
+        from sage.symbolic.expression import symbol_table
         from sage.calculus.calculus import symbolic_expression_from_string, SR_parser_giac
 
         result = repr(self) # string representation

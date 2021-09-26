@@ -957,6 +957,6 @@ class CharacteristicClass(UniqueRepresentation, SageObject):
         from sage.symbolic.constants import pi
         fac = 1 / (2 * pi)
         if self._class_type != 'Pfaffian':
-            from sage.libs.pynac.pynac import I
+            from sage.symbolic.expression import I
             fac = fac / I
         return fac * cmatrix

@@ -524,7 +524,7 @@ Luckily, it's possible to restore symbolic constants.
 ::
 
     sage: type(e)
-    <type 'sage.symbolic.constants_c.E'>
+    <type 'sage.symbolic.expression.E'>
 
 ::
 

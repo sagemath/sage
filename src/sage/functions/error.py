@@ -48,7 +48,7 @@ from sage.functions.all import sqrt, exp
 from sage.symbolic.constants import pi
 from sage.rings.rational import Rational
 from sage.rings.infinity import unsigned_infinity
-from sage.libs.pynac.pynac import I
+from sage.symbolic.expression import I
 
 class Function_erf(BuiltinFunction):
     r"""

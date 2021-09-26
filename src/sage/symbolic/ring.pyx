@@ -4,8 +4,25 @@ The symbolic ring
 """
 
 # ****************************************************************************
-#       Copyright (C) 2008 William Stein <wstein@gmail.com>
-#       Copyright (C) 2008 Burcin Erocal <burcin@erocal.org>
+#       Copyright (C) 2008      William Stein <wstein@gmail.com>
+#       Copyright (C) 2008-2013 Burcin Erocal <burcin@erocal.org>
+#       Copyright (C) 2009      Mike Hansen
+#       Copyright (C) 2011      Karl-Dieter Crisman
+#       Copyright (C) 2011-2012 Volker Braun
+#       Copyright (C) 2013-2019 Frédéric Chapoton
+#       Copyright (C) 2014-2020 Marc Mezzarobba
+#       Copyright (C) 2015      Bruno Grenet
+#       Copyright (C) 2015-2016 Daniel Krenn
+#       Copyright (C) 2015-2016 Jeroen Demeyer
+#       Copyright (C) 2015-2017 Vincent Delecroix
+#       Copyright (C) 2015-2018 Ralf Stephan
+#       Copyright (C) 2016      Julian Rüth
+#       Copyright (C) 2017      Marcelo Forets
+#       Copyright (C) 2018      Martin Rubey
+#       Copyright (C) 2019      E. Madison Bray
+#       Copyright (C) 2019      Markus Wageringel
+#       Copyright (C) 2021      Marius Gerbershagen
+#       Copyright (C) 2021      Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,13 +33,12 @@ The symbolic ring
 
 from sage.rings.integer cimport Integer
 
-from sage.symbolic.expression import (
+from sage.symbolic.expression cimport (
     is_Expression,
     _latex_Expression,
     _repr_Expression,
     new_Expression,
     new_Expression_from_pyobject,
-    new_Expression_force_pyobject,
     new_Expression_wild,
     new_Expression_symbol,
 )
@@ -423,7 +439,7 @@ cdef class SymbolicRing(CommutativeRing):
             (Rational Field, (x, x + 1, x + 2), Complex Field with 53 bits
             of precision)
         """
-        return new_Expression_force_pyobject(self, x, force, recursive)
+        return new_Expression_from_pyobject(self, x, force, recursive)
 
     def wild(self, unsigned int n=0):
         r"""
@@ -1224,7 +1240,8 @@ cdef class NumpyToSRMorphism(Morphism):
             sage: SR(numpy.complex64(1jr)).pyobject().parent()
             Complex Double Field
         """
-        return new_Expression_from_pyobject(self.codomain(), self._intermediate_ring(a))
+        return new_Expression_from_pyobject(self.codomain(), self._intermediate_ring(a), True)
+
 
 cdef class UnderscoreSageMorphism(Morphism):
     def __init__(self, t, R):

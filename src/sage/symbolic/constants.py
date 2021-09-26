@@ -227,7 +227,7 @@ constants_name_table[repr(infinity)] = infinity
 constants_name_table[repr(unsigned_infinity)] = unsigned_infinity
 constants_name_table[repr(minus_infinity)] = minus_infinity
 
-from sage.libs.pynac.pynac import register_symbol, I
+from sage.symbolic.expression import register_symbol, I
 register_symbol(infinity, {'maxima':'inf'})
 register_symbol(minus_infinity, {'maxima':'minf'})
 register_symbol(unsigned_infinity, {'maxima':'infinity'})
@@ -287,7 +287,7 @@ class Constant(object):
             setattr(self, "_%s_"%system, partial(self._generic_interface, value))
             setattr(self, "_%s_init_"%system, partial(self._generic_interface_init, value))
 
-        from sage.libs.pynac.constant import PynacConstant
+        from .expression import PynacConstant
         self._pynac = PynacConstant(self._name, self._latex, self._domain)
         self._serial = self._pynac.serial()
         constants_table[self._serial] = self
@@ -680,8 +680,8 @@ TESTS::
 
 # The base of the natural logarithm, e, is not a constant in GiNaC/Sage. It is
 # represented by exp(1). A dummy class to make this work with arithmetic and
-# coercion is implemented in the module sage.symbolic.constants_c for speed.
-from sage.symbolic.constants_c import E
+# coercion is implemented in the module sage.symbolic.expression for speed.
+from sage.symbolic.expression import E
 e = E()
 
 # Allow for backtranslation to this symbol from Mathematica (#29833).

@@ -207,7 +207,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.libs.pynac.pynac', ['symbol_table', 'register_symbol'])
+lazy_import('sage.symbolic.expression', ['symbol_table', 'register_symbol'])
 lazy_import('sage.calculus.var', ['var', 'function'])
 lazy_import('sage.symbolic.constants', ['I', 'e', 'pi'])
 

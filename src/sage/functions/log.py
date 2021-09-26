@@ -14,14 +14,12 @@ from sage.symbolic.constants import pi as const_pi
 
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.structure.all import parent as s_parent
-from sage.symbolic.expression import Expression
+from sage.symbolic.expression import Expression, register_symbol
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-
-from sage.libs.pynac.pynac import register_symbol
 
 
 class Function_exp(GinacFunction):

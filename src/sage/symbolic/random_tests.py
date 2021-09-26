@@ -16,12 +16,11 @@ from sage.misc.prandom import randint, random
 import operator
 from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
-from sage.libs.pynac.pynac import symbol_table
+from sage.symbolic.expression import symbol_table, mixed_order
 from sage.symbolic.constants import (pi, e, golden_ratio, log2, euler_gamma,
                                      catalan, khinchin, twinprime, mertens)
 from sage.functions.hypergeometric import hypergeometric
 from sage.functions.other import (cases, element_of)
-from sage.symbolic.comparison import mixed_order
 
 ###################################################################
 ### Generate random expressions for doctests ######################

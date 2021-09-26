@@ -1381,6 +1381,7 @@ cdef class RealBall(RingElement):
         else:
             # the initializers that trigger imports
             import sage.symbolic.constants
+            import sage.symbolic.expression
             if isinstance(mid, sage.rings.infinity.AnInfinity):
                 if isinstance(mid, sage.rings.infinity.PlusInfinity):
                     arb_pos_inf(self.value)
@@ -1409,7 +1410,7 @@ cdef class RealBall(RingElement):
                         raise TypeError("unsupported constant")
                 finally:
                     if _do_sig(prec(self)): sig_off()
-            elif isinstance(mid, sage.symbolic.constants_c.E):
+            elif isinstance(mid, sage.symbolic.expression.E):
                 if _do_sig(prec(self)): sig_on()
                 arb_const_e(self.value, prec(self))
                 if _do_sig(prec(self)): sig_off()

@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+# distutils: sources = sage/symbolic/ginac/add.cpp sage/symbolic/ginac/archive.cpp sage/symbolic/ginac/assume.cpp sage/symbolic/ginac/basic.cpp sage/symbolic/ginac/cmatcher.cpp sage/symbolic/ginac/constant.cpp sage/symbolic/ginac/context.cpp sage/symbolic/ginac/ex.cpp sage/symbolic/ginac/expair.cpp sage/symbolic/ginac/expairseq.cpp sage/symbolic/ginac/exprseq.cpp sage/symbolic/ginac/fderivative.cpp sage/symbolic/ginac/function.cpp sage/symbolic/ginac/function_info.cpp sage/symbolic/ginac/infinity.cpp sage/symbolic/ginac/infoflagbase.cpp sage/symbolic/ginac/inifcns.cpp sage/symbolic/ginac/inifcns_comb.cpp sage/symbolic/ginac/inifcns_gamma.cpp sage/symbolic/ginac/inifcns_hyperb.cpp sage/symbolic/ginac/inifcns_hyperg.cpp sage/symbolic/ginac/inifcns_nstdsums.cpp sage/symbolic/ginac/inifcns_orthopoly.cpp sage/symbolic/ginac/inifcns_trans.cpp sage/symbolic/ginac/inifcns_trig.cpp sage/symbolic/ginac/inifcns_zeta.cpp sage/symbolic/ginac/lst.cpp sage/symbolic/ginac/matrix.cpp sage/symbolic/ginac/mpoly-giac.cpp sage/symbolic/ginac/mpoly-ginac.cpp sage/symbolic/ginac/mpoly-singular.cpp sage/symbolic/ginac/mpoly.cpp sage/symbolic/ginac/mul.cpp sage/symbolic/ginac/normal.cpp sage/symbolic/ginac/numeric.cpp sage/symbolic/ginac/operators.cpp sage/symbolic/ginac/order.cpp sage/symbolic/ginac/power.cpp sage/symbolic/ginac/print.cpp sage/symbolic/ginac/pseries.cpp sage/symbolic/ginac/py_funcs.cpp sage/symbolic/ginac/registrar.cpp sage/symbolic/ginac/relational.cpp sage/symbolic/ginac/remember.cpp sage/symbolic/ginac/sum.cpp sage/symbolic/ginac/symbol.cpp sage/symbolic/ginac/templates.cpp sage/symbolic/ginac/upoly-ginac.cpp sage/symbolic/ginac/useries.cpp sage/symbolic/ginac/utils.cpp sage/symbolic/ginac/wildcard.cpp
+# distutils: language = c++
+# distutils: libraries = gmp SINGULAR_LIBRARIES
+# distutils: extra_compile_args = -std=c++11 SINGULAR_CFLAGS
+# distutils: depends = ginac/add.h ginac/archive.h ginac/assertion.h ginac/assume.h ginac/basic.h ginac/class_info.h ginac/cmatcher.h ginac/compiler.h ginac/constant.h ginac/container.h ginac/context.h ginac/ex.h ginac/ex_utils.h ginac/expair.h ginac/expairseq.h ginac/exprseq.h ginac/extern_templates.h ginac/fderivative.h ginac/flags.h ginac/function.h ginac/ginac.h ginac/infinity.h ginac/infoflagbase.h ginac/inifcns.h ginac/lst.h ginac/matrix.h ginac/mpoly.h ginac/mul.h ginac/normal.h ginac/numeric.h ginac/operators.h ginac/order.h ginac/optional.hpp ginac/power.h ginac/print.h ginac/pseries.h ginac/ptr.h ginac/py_funcs.h ginac/pynac-config.h ginac/registrar.h ginac/relational.h ginac/remember.h ginac/sum.h ginac/symbol.h ginac/templates.h ginac/tostring.h ginac/upoly.h ginac/useries-flint.h ginac/useries.h ginac/utils.h ginac/wildcard.h
+# distutils: include_dirs = SINGULAR_INCDIR
+# pynac/basic.h includes
+#   factory/factory.h    so this ^ is needed to find it
 """
 Symbolic Expressions
 
@@ -149,11 +157,11 @@ Test that :trac:`20784` is fixed (equations should stay unevaluated)::
 
 Many tests about comparison.
 
-Use :func:`sage.symbolic.comparison.mixed_order`` instead of
+Use :func:`sage.symbolic.expression.mixed_order`` instead of
 the operators <=, <, etc. to compare symbolic expressions when
 you do not want to get a formal inequality::
 
-    sage: from sage.symbolic.comparison import mixed_order
+    sage: from sage.symbolic.expression import mixed_order
 
     sage: a = sqrt(3)
     sage: b = x^2+1
@@ -299,8 +307,64 @@ More sanity tests::
     False
 """
 # ****************************************************************************
-#       Copyright (C) 2008 William Stein <wstein@gmail.com>
-#       Copyright (C) 2008 Burcin Erocal <burcin@erocal.org>
+#       Copyright (C) 2008-2011 William Stein <wstein@gmail.com>
+#       Copyright (C) 2008-2014 Burcin Erocal <burcin@erocal.org>
+#       Copyright (C) 2009      Alexandru Ghitza
+#       Copyright (C) 2009      Bill Cauchois
+#       Copyright (C) 2009-2010 Minh Van Nguyen
+#       Copyright (C) 2009-2012 Robert Bradshaw
+#       Copyright (C) 2009-2013 Mike Hansen
+#       Copyright (C) 2009-2015 Karl-Dieter Crisman
+#       Copyright (C) 2009-2019 John H. Palmieri
+#       Copyright (C) 2010      Jason Grout
+#       Copyright (C) 2010      Johan Sebastian Rosenkilde Nielsen
+#       Copyright (C) 2010      Mitesh Patel
+#       Copyright (C) 2010      Robert Marik
+#       Copyright (C) 2010-2011 Dan Drake
+#       Copyright (C) 2010-2019 Jeroen Demeyer
+#       Copyright (C) 2011      Florent Hivert
+#       Copyright (C) 2011      Jean-Pierre Flori
+#       Copyright (C) 2011      Martin Albrecht
+#       Copyright (C) 2011-2012 Keshav Kini
+#       Copyright (C) 2011-2014 Paul Zimmermann
+#       Copyright (C) 2011-2015 Volker Braun
+#       Copyright (C) 2012      Andrey Novoseltsev
+#       Copyright (C) 2012      Benjamin Jones
+#       Copyright (C) 2012      D. S. McNeil
+#       Copyright (C) 2012      David Roe
+#       Copyright (C) 2012      Titus Nicolae
+#       Copyright (C) 2012-2015 Karen T. Kohl
+#       Copyright (C) 2012-2021 Dima Pasechnik
+#       Copyright (C) 2012-2021 Michael Orlitzky
+#       Copyright (C) 2013      Jean-Baptiste Priez
+#       Copyright (C) 2013-2014 Eviatar Bach
+#       Copyright (C) 2014      Fredrik Johansson
+#       Copyright (C) 2014      Miguel Marco
+#       Copyright (C) 2014      Peter Bruin
+#       Copyright (C) 2014-2016 Daniel Krenn
+#       Copyright (C) 2014-2018 Clemens Heuberger
+#       Copyright (C) 2014-2018 Ralf Stephan
+#       Copyright (C) 2014-2020 Frédéric Chapoton
+#       Copyright (C) 2014-2021 Marc Mezzarobba
+#       Copyright (C) 2015      Nils Bruin
+#       Copyright (C) 2015-2017 Vincent Delecroix
+#       Copyright (C) 2015-2019 Benjamin Hackl
+#       Copyright (C) 2016      Jori Mäntysalo
+#       Copyright (C) 2016      Julian Rüth
+#       Copyright (C) 2017      Emmanuel Charpentier
+#       Copyright (C) 2017      Marcelo Forets
+#       Copyright (C) 2017      Thierry Monteil
+#       Copyright (C) 2018      Eran Assaf
+#       Copyright (C) 2018      Eric Gourgoulhon
+#       Copyright (C) 2018      Erik M. Bray
+#       Copyright (C) 2018      Martin Rubey
+#       Copyright (C) 2018      Vincent Klein
+#       Copyright (C) 2019      Bruno Grenet
+#       Copyright (C) 2019      Markus Wageringel
+#       Copyright (C) 2020-2021 Dave Witte Morris
+#       Copyright (C) 2020-2021 Matthias Koeppe
+#       Copyright (C) 2021      Jonathan Kliem
+#       Copyright (C) 2021      Marius Gerbershagen
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -314,7 +378,6 @@ from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
 from inspect import isfunction
 import operator
-from .ring import SR
 import sage.rings.integer
 import sage.rings.rational
 
@@ -323,12 +386,8 @@ from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from sage.cpython.string cimport str_to_bytes, char_to_str
 
 from sage.structure.element cimport RingElement, Element, Matrix
-from sage.symbolic.comparison import mixed_order
-from sage.symbolic.getitem cimport OperandsWrapper
-from sage.symbolic.series cimport SymbolicSeries
 from sage.symbolic.complexity_measures import string_length
-from sage.symbolic.function import get_sfunction_from_serial, SymbolicFunction
-cimport sage.symbolic.comparison
+from sage.symbolic.function cimport SymbolicFunction
 from sage.rings.rational import Rational
 from sage.rings.real_mpfr cimport RealNumber
 from sage.misc.derivative import multi_derivative
@@ -340,9 +399,11 @@ from sage.rings.real_mpfr import RR
 from sage.rings.complex_mpfr import is_ComplexField
 from sage.misc.decorators import rename_keyword
 from sage.structure.dynamic_class import dynamic_class
-from sage.symbolic.operators import FDerivativeOperator, add_vararg, mul_vararg
+from sage.structure.element cimport CommutativeRingElement
 from sage.arith.numerical_approx cimport digits_to_bits
-from sage.libs.pynac.pynac cimport *
+
+include "pynac.pxi"
+include "pynac_impl.pxi"
 
 
 cpdef bint is_Expression(x):
@@ -556,6 +617,9 @@ def _subs_make_dict(s):
 
 
 cdef class Expression(CommutativeRingElement):
+
+    cdef GEx _gobj
+
     cpdef object pyobject(self):
         """
         Get the underlying Python object.
@@ -772,6 +836,7 @@ cdef class Expression(CommutativeRingElement):
         if state[0] != 0 or len(state) != 3:
             raise ValueError("unknown state information")
         # set parent
+        from .ring import SR
         self._parent = SR
         # get variables
         cdef GExList sym_lst
@@ -815,6 +880,7 @@ cdef class Expression(CommutativeRingElement):
             True
 
         """
+        from .ring import SR
         SR.cleanup_var(self)
         return False
 
@@ -2293,6 +2359,7 @@ cdef class Expression(CommutativeRingElement):
                     op = self.operator()
                     # check if op is a user defined function, for builtin
                     # functions like abs() we still need to pass 'abs(x) > 0'
+                    from sage.symbolic.function import SymbolicFunction
                     if isinstance(op, SymbolicFunction):
                         return self.operator().name()
         return self._maxima_init_()
@@ -5271,7 +5338,6 @@ cdef class Expression(CommutativeRingElement):
             sage: ((x^y)^z).find(w0^w1)
             [(x^y)^z]
         """
-        from sage.symbolic.comparison import print_sorted
         cdef Expression p = self.coerce_in(pattern)
         cdef GExList found
         sig_on()
@@ -5899,7 +5965,6 @@ cdef class Expression(CommutativeRingElement):
 
         """
         from sage.symbolic.ring import SR
-        from sage.symbolic.comparison import print_sorted
         cdef GExSet sym_set
         g_list_symbols(self._gobj, sym_set)
         res = []
@@ -5933,7 +5998,6 @@ cdef class Expression(CommutativeRingElement):
             (y,)
         """
         from sage.symbolic.ring import SR
-        from sage.symbolic.comparison import print_sorted
         cdef GSymbolSet sym_set
         sym_set = self._gobj.free_symbols()
         res = []
@@ -6065,7 +6129,7 @@ cdef class Expression(CommutativeRingElement):
             sage: type(u._unpack_operands()[0])
             <... 'tuple'>
         """
-        from sage.libs.pynac.pynac import unpack_operands
+        from sage.symbolic.expression import unpack_operands
         return unpack_operands(self)
 
     def operands(self):
@@ -6146,6 +6210,7 @@ cdef class Expression(CommutativeRingElement):
         """
         cdef operators o
         cdef unsigned serial
+        from sage.symbolic.operators import add_vararg, mul_vararg
         if is_a_add(self._gobj):
             return add_vararg
         elif is_a_mul(self._gobj):
@@ -6180,14 +6245,15 @@ cdef class Expression(CommutativeRingElement):
                 raise RuntimeError("cannot find SymbolicFunction in table")
 
             if is_a_fderivative(self._gobj):
-                from sage.libs.pynac.pynac import paramset_from_Expression
                 parameter_set = paramset_from_Expression(self)
+                from sage.symbolic.operators import FDerivativeOperator
                 res = FDerivativeOperator(res, parameter_set)
 
             return res
         elif is_exactly_a_exprseq(self._gobj):
             return tuple
         elif is_a_series(self._gobj):
+            from sage.symbolic.operators import add_vararg
             return add_vararg
 
         # self._gobj is either a symbol, constant or numeric
@@ -11699,6 +11765,7 @@ cdef class Expression(CommutativeRingElement):
             <... 'list'>
         """
         op = self.operator()
+        from sage.symbolic.operators import mul_vararg
         if op is mul_vararg:
             return sum([f._factor_list() for f in self.operands()], [])
         elif op is operator.pow:
@@ -13112,7 +13179,7 @@ cdef class Expression(CommutativeRingElement):
             True
         """
         from sage.symbolic.ring import SR
-        from sage.symbolic.function_factory import SymbolicFunction
+        from sage.symbolic.function import SymbolicFunction
 
         if not self.has(Y):
             raise ValueError("Expression {} contains no {} terms".format(self, Y))
@@ -13337,12 +13404,7 @@ cdef Expression new_Expression_from_GEx(parent, GEx juice):
     return nex
 
 
-cpdef Expression new_Expression_from_pyobject(parent, x):
-    cdef GEx exp = x
-    return new_Expression_from_GEx(parent, exp)
-
-
-cpdef Expression new_Expression(parent, x):
+cpdef new_Expression(parent, x):
     r"""
     Convert ``x`` into the symbolic expression ring ``parent``.
 
@@ -13426,7 +13488,7 @@ cpdef Expression new_Expression(parent, x):
     return new_Expression_from_GEx(parent, exp)
 
 
-cpdef Expression new_Expression_force_pyobject(parent, x, bint force=False, bint recursive=True):
+cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=True):
     r"""
     Wrap the given Python object in a symbolic expression even if it
     cannot be coerced to the Symbolic Ring.
@@ -13437,7 +13499,7 @@ cpdef Expression new_Expression_force_pyobject(parent, x, bint force=False, bint
 
     - ``x`` - a Python object.
 
-    - ``force`` - bool, default ``False``, if True, the Python object
+    - ``force`` - bool, default ``True``, if True, the Python object
       is taken as is without attempting coercion or list traversal.
 
     - ``recursive`` - bool, default ``True``, disables recursive
@@ -13449,6 +13511,22 @@ cpdef Expression new_Expression_force_pyobject(parent, x, bint force=False, bint
         Rational Field
         sage: type(t)
         <type 'sage.symbolic.expression.Expression'>
+
+        sage: from sage.symbolic.expression import new_Expression_from_pyobject
+        sage: t = new_Expression_from_pyobject(SR, 17); t
+        17
+        sage: type(t)
+        <class 'sage.symbolic.expression.Expression'>
+
+        sage: t2 = new_Expression_from_pyobject(SR, t, False); t2
+        17
+        sage: t2 is t
+        True
+
+        sage: tt = new_Expression_from_pyobject(SR, t, True); tt
+        17
+        sage: tt is t
+        False
     """
     cdef GEx exp
     cdef GExprSeq ex_seq
@@ -13480,7 +13558,7 @@ cpdef Expression new_Expression_force_pyobject(parent, x, bint force=False, bint
     return new_Expression_from_GEx(parent, exp)
 
 
-cpdef Expression new_Expression_wild(parent, unsigned int n=0):
+cpdef new_Expression_wild(parent, unsigned int n=0):
     r"""
     Return the n-th wild-card for pattern matching and substitution.
 
@@ -13510,7 +13588,7 @@ cpdef Expression new_Expression_wild(parent, unsigned int n=0):
     return new_Expression_from_GEx(parent, g_wild(n))
 
 
-cpdef Expression new_Expression_symbol(parent, name=None, latex_name=None, domain=None):
+cpdef new_Expression_symbol(parent, name=None, latex_name=None, domain=None):
     r"""
     Look up or create a symbol.
 
@@ -13793,4 +13871,10 @@ cdef class hold_class:
 hold = hold_class()
 
 
+include "comparison_impl.pxi"
+include "constants_c_impl.pxi"
+include "getitem_impl.pxi"
+include "pynac_constant_impl.pxi"
 include "pynac_function_impl.pxi"
+include "series_impl.pxi"
+include "substitution_map_impl.pxi"

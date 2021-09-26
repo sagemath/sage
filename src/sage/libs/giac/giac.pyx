@@ -162,7 +162,7 @@ from sage.structure.element cimport Matrix
 from sage.plot.line import line
 from sage.plot.scatter_plot import scatter_plot
 
-from sage.libs.pynac.pynac import symbol_table
+from sage.symbolic.expression import symbol_table
 from sage.calculus.calculus import symbolic_expression_from_string, SR_parser_giac
 from sage.symbolic.ring import SR
 from sage.symbolic.expression import Expression
@@ -340,7 +340,7 @@ def _giac(s):
         sage: B1 = A.matrix(); B1 # convert the sparse matrix to a matrix, but the size is minimal
         [[0,0,2/7,0],[0,0,0,0],[0,0,0,33]]
         sage: B2 = B1.redim(4,4) # so we may need to resize B1
-        sage: B2.pmin(x)  
+        sage: B2.pmin(x)
         x^3
 
     Lists of Pygen and Giac lists. Here l1 is a giac list and l2 is a python
@@ -747,7 +747,7 @@ cdef class GiacSetting(Pygen):
     property proba_epsilon:
         r"""
         Maximum probability of a wrong answer with a probabilist algorithm.
-        
+
         Set this number to 0 to disable probabilist algorithms (slower).
 
         EXAMPLES::
@@ -1580,7 +1580,7 @@ cdef class Pygen(GiacMethods_base):
          Converting a custom name by adding a new entry to the ``symbols_table``::
 
             sage: ex = libgiac('myFun(x)')
-            sage: sage.libs.pynac.pynac.register_symbol(sin, {'giac':'myFun'})
+            sage: sage.symbolic.expression.register_symbol(sin, {'giac':'myFun'})
             sage: ex.sage()
             sin(x)
 
@@ -1866,7 +1866,7 @@ cdef class Pygen(GiacMethods_base):
      #       return GiacMethods[str(name)](self)
      ##
 
-     
+
      #test
      def giacAiry_Ai(self, *args):
         cdef gen result=GIAC_Airy_Ai(self.gptr[0], context_ptr)
@@ -2220,11 +2220,11 @@ class GiacInstance:
         list[x>(ln(sqrt(2)+1))]
         sage: libgiac.solve? #  doctest: +SKIP
         ...
-        Docstring:     
+        Docstring:
         From Giac's documentation:
         Help for solve: solve(Expr,[Var]) Solves a (or a set of) polynomial
         ...
-    """ 
+    """
 
     def __init__(self):
        self.__dict__.update(GiacMethods)
