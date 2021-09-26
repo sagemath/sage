@@ -714,8 +714,8 @@ class Sets(Category_singleton):
                 sage: TestSuite(Groups().Finite().Algebras(QQ)).run()
             """
             from sage.categories.rings import Rings
-            assert base_ring in Rings or (isinstance(base_ring, Category)
-                                          and base_ring.is_subcategory(Rings()))
+            assert base_ring in Rings() or (isinstance(base_ring, Category)
+                                            and base_ring.is_subcategory(Rings()))
             return AlgebrasCategory.category_of(self, base_ring)
 
         @cached_method

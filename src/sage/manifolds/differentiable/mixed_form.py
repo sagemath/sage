@@ -596,7 +596,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             \mathcal{F}
 
         If not stated otherwise, all homogeneous components are renamed
-        accordingly:
+        accordingly::
 
             sage: F.display()
             F = F_0 + F_1 + F_2 + F_3 + F_4

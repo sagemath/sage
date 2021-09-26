@@ -789,7 +789,7 @@ class FunctionFieldHigherDerivation_global(FunctionFieldHigherDerivation):
 
     def _derive(self, f, i, separating_element=None):
         """
-        Return ``i``-th derivative of ``f` with respect to the separating
+        Return ``i``-th derivative of ``f`` with respect to the separating
         element.
 
         This implements Hess' Algorithm 26 in [Hes2002b]_.
@@ -1012,7 +1012,7 @@ class FunctionFieldHigherDerivation_char_zero(FunctionFieldHigherDerivation):
 
     def _derive(self, f, i, separating_element=None):
         """
-        Return ``i``-th derivative of ``f` with respect to the separating
+        Return ``i``-th derivative of ``f`` with respect to the separating
         element.
 
         EXAMPLES::

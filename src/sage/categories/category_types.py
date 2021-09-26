@@ -343,7 +343,7 @@ class Category_over_base_ring(Category_over_base):
             sage: TestSuite(C).run()
         """
         from sage.categories.rings import Rings
-        if not (base in Rings or
+        if not (base in Rings() or
                 isinstance(base, Category) and base.is_subcategory(Rings())):
             raise ValueError("base must be a ring or a subcategory of Rings()")
         Category_over_base.__init__(self, base, name)

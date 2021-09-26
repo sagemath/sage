@@ -402,13 +402,13 @@ class PermutationGroup_generic(FiniteGroup):
 
         INPUT:
 
-        -  ``gens`` - list of generators (default: ``None``)
+        - ``gens`` -- list of generators (default: ``None``)
 
-        -  ``gap_group`` - a gap or libgap permutation group, or a string
+        - ``gap_group`` -- a gap or libgap permutation group, or a string
           defining one (default: ``None``)
 
-        -  ``canonicalize`` - bool (default: ``True``); if ``True``,
-           sort generators and remove duplicates
+        - ``canonicalize`` -- bool (default: ``True``); if ``True``,
+          sort generators and remove duplicates
 
         OUTPUT:
 

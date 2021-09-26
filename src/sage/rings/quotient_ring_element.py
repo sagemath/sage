@@ -173,7 +173,7 @@ class QuotientRingElement(RingElement):
         if self.__rep.is_unit():
             return True
         from sage.categories.fields import Fields
-        if self.parent() in Fields:
+        if self.parent() in Fields():
             return not self.is_zero()
         try:
             self.__invert__()

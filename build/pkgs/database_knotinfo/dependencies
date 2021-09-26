@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN)
+$(PYTHON) | $(PYTHON_TOOLCHAIN) $(and $(filter-out no,$(SAGE_CHECK_database_knotinfo)), $(SAGERUNTIME) ipywidgets sympy singular gap libhomfly libbraiding matplotlib)
 
 ----------
 All lines of this file are ignored except the first.

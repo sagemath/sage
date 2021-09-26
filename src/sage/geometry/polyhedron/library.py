@@ -91,6 +91,7 @@ from sage.groups.perm_gps.permgroup_named import AlternatingGroup
 from .constructor import Polyhedron
 from .parent import Polyhedra
 from sage.graphs.digraph import DiGraph
+from sage.graphs.graph import Graph
 from sage.combinat.root_system.associahedron import Associahedron
 
 def zero_sum_projection(d, base_ring=RDF):
@@ -3416,6 +3417,8 @@ class Polytopes():
     associahedron = staticmethod(Associahedron)
 
     flow_polytope = staticmethod(DiGraph.flow_polytope)
+    edge_polytope = staticmethod(Graph.edge_polytope)
+    symmetric_edge_polytope = staticmethod(Graph.symmetric_edge_polytope)
 
 
 polytopes = Polytopes()

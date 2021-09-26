@@ -65,7 +65,7 @@ class BindableClass(metaclass=ClasscallMetaclass):
         sage: outer.f_static(1,2,3)
         (1, 2, 3)
 
-    In some cases, we would want instead ``Inner``` to receive ``outer``
+    In some cases, we would want instead ``Inner`` to receive ``outer``
     as parameter, like in a usual method call::
 
         sage: outer.f(1,2,3)

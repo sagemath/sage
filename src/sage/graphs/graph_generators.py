@@ -358,7 +358,8 @@ __append_to_doc(
      "RandomToleranceGraph",
      "RandomTree",
      "RandomTreePowerlaw",
-     "RandomTriangulation"])
+     "RandomTriangulation",
+     "RandomUnitDiskGraph"])
 
 __doc__ += """
 **Graphs with a given degree sequence**
@@ -2252,6 +2253,7 @@ class GraphGenerators():
     RandomTreePowerlaw       = staticmethod(random.RandomTreePowerlaw)
     RandomTree               = staticmethod(random.RandomTree)
     RandomTriangulation      = staticmethod(random.RandomTriangulation)
+    RandomUnitDiskGraph      = staticmethod(random.RandomUnitDiskGraph)
 
 ###########################################################################
 # Maps

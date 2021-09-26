@@ -191,7 +191,6 @@ TESTS::
 #                  http://www.gnu.org/licenses/
 ####################################################################################
 
-import inspect
 import sage.matrix.all as matrix
 import sage.modules.free_module_homspace
 
@@ -375,7 +374,7 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
             pass
         elif is_VectorSpaceMorphism(A):
             A = A.matrix()
-        elif inspect.isfunction(A):
+        elif callable(A):
             try:
                 images = [A(g) for g in D.basis()]
             except (ValueError, TypeError, IndexError) as e:

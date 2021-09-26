@@ -1048,7 +1048,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         .. NOTE:: Before :trac:`8678` this method used to be called co_reduced.
         """
         G = self.codomain()
-        if G.base_ring() not in Fields and not self._unitriangular:
+        if G.base_ring() not in Fields() and not self._unitriangular:
             raise NotImplementedError("coreduce for a triangular but not unitriangular morphism over a ring")
         on_basis = self.on_basis()
         assert y in G
@@ -1119,7 +1119,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             NotImplementedError: cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain
         """
         R = self.domain().base_ring()
-        if R not in Fields and not self._unitriangular:
+        if R not in Fields() and not self._unitriangular:
             raise NotImplementedError("cokernel_basis_indices for a triangular but not unitriangular morphism over a ring")
         if self.codomain() not in Modules(R).FiniteDimensional():
             raise NotImplementedError("cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain")

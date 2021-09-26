@@ -136,7 +136,6 @@ Operations
     :meth:`Transducer.cartesian_product` | Cartesian product of a transducer with another finite state machine
     :meth:`~FiniteStateMachine.product_FiniteStateMachine` | Product of finite state machines
     :meth:`~FiniteStateMachine.composition` | Composition (output of other is input of self)
-    :meth:`~FiniteStateMachine.__call__` | Composition with other finite state machine
     :meth:`~FiniteStateMachine.input_projection` | Input projection (output is deleted)
     :meth:`~FiniteStateMachine.output_projection` | Output projection (old output is new input)
     :meth:`~FiniteStateMachine.projection` | Input or output projection
@@ -1779,8 +1778,6 @@ class FSMState(SageObject):
             False
             sage: B.initial_probability == A.initial_probability
             True
-            sage: B.initial_probability is A.initial_probability
-            False
         """
         return deepcopy(self, memo)
 

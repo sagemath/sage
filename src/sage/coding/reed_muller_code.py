@@ -180,7 +180,7 @@ def ReedMullerCode(base_field, order, num_of_var):
         sage: C
         Binary Reed-Muller Code of order 2 and number of variables 2
     """
-    if not(base_field in FiniteFields):
+    if base_field not in FiniteFields():
         raise ValueError("The parameter `base_field` must be a finite field")
     q = base_field.cardinality()
     if q == 2:
@@ -253,7 +253,7 @@ class QAryReedMullerCode(AbstractLinearCode):
             ValueError: the input `base_field` must be a FiniteField
         """
         # input sanitization
-        if not(base_field in FiniteFields):
+        if base_field not in FiniteFields():
             raise ValueError("the input `base_field` must be a FiniteField")
         if not(isinstance(order, (Integer, int))):
             raise ValueError("The order of the code must be an integer")

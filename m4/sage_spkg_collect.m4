@@ -153,8 +153,8 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
     dnl Jupyter notebook, then packages such as jupyter_core would have to be installed into
     dnl two trees.
     SPKG_TREE_VAR=SAGE_LOCAL
-    if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt"; then
-        dnl A Python package
+    if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt" -o "$SPKG_NAME" = python3; then
+        dnl A Python package or spkg installation of python3 itself
         SPKG_TREE_VAR=SAGE_VENV
     fi
     SAGE_PACKAGE_TREES="${SAGE_PACKAGE_TREES}$(printf '\ntrees_')${SPKG_NAME} = ${SPKG_TREE_VAR}"
@@ -238,6 +238,9 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
                 AS_VAR_COPY([reason], [sage_use_system])
                 AS_CASE([$reason],
                 [yes],                       [ message="no suitable system package; $message"
+                                               AS_VAR_APPEND([$SAGE_NEED_SYSTEM_PACKAGES_VAR], [" $SPKG_NAME"])
+                                             ],
+                [force],                     [ message="no suitable system package; this is an error"
                                                AS_VAR_APPEND([$SAGE_NEED_SYSTEM_PACKAGES_VAR], [" $SPKG_NAME"])
                                              ],
                 [installed],                 [ message="already installed as an SPKG$uninstall_message" ],
@@ -397,7 +400,9 @@ $COMMAND
 
 $COMMAND
 ])
+                AS_VAR_SET([need_reconfig_msg], [yes])
             ])
+            dnl Reconfigure message
             AS_VAR_IF([need_reconfig_msg], [yes], [
                 AC_MSG_NOTICE([
 
@@ -410,4 +415,8 @@ $COMMAND
             ])
         ])
     ])
+    dnl Deferred errors from --with-system-SPKG=force
+    AS_VAR_SET_IF([SAGE_SPKG_ERRORS], [AC_MSG_ERROR([
+$SAGE_SPKG_ERRORS
+    ])])
 ])

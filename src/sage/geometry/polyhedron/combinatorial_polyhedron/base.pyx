@@ -1625,7 +1625,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         TESTS::
 
             sage: type(C.f_vector())
-            <type 'sage.modules.vector_integer_dense.Vector_integer_dense'>
+            <class 'sage.modules.vector_integer_dense.Vector_integer_dense'>
         """
         if num_threads is None:
             from sage.parallel.ncpus import ncpus

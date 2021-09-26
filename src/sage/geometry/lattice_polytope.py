@@ -3805,7 +3805,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable):
 
         In contrast to :meth:`points`, these are not necessarily lattice points.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: o = lattice_polytope.cross_polytope(3)
             sage: o.some_elements()  # indirect doctest

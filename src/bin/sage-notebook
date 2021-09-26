@@ -13,13 +13,10 @@ logger = logging.getLogger()
 from sage.misc.banner import banner
 
 
-class NotebookJupyter(object):
+_system_jupyter_url = "https://doc.sagemath.org/html/en/installation/launching.html#setting-up-sagemath-as-a-jupyter-kernel-in-an-existing-jupyter-notebook-or-jupyterlab-installation"
 
-    PREREQUISITE_ERROR = textwrap.dedent("""
-    The Jupyter notebook requires ssl, even if you do not use
-    https. Install the openssl development packages in your system and
-    then rebuild Python (sage -f python3).
-    """)
+
+class NotebookJupyter(object):
 
     def print_banner(self):
         banner()
@@ -31,11 +28,18 @@ class NotebookJupyter(object):
 
     def __init__(self, argv):
         self.print_banner()
-        from sage.repl.ipython_kernel.install import have_prerequisites
-        if not have_prerequisites():
-            print(self.PREREQUISITE_ERROR)
+        try:
+            from notebook.notebookapp import main
+        except ImportError:
+            import traceback
+            traceback.print_exc()
+            print("The Jupyter notebook is not installed (at least not in this Sage installation).")
+            print("You can install it by running")
+            print("  sage -i notebook")
+            print("Alternatively, you can follow the instructions at")
+            print("  " + _system_jupyter_url)
+            print("to use Sage with an existing Jupyter notebook installation.")
             raise SystemExit(1)
-        from notebook.notebookapp import main
         main(argv)
 
 
@@ -52,12 +56,17 @@ class NotebookJupyterlab(object):
         try:
             from jupyterlab.labapp import main
         except ImportError:
+            import traceback
+            traceback.print_exc()
             print("Jupyterlab is not installed (at least not in this Sage installation).")
             print("You can install it by running")
             print("  sage -i jupyterlab_widgets")
             print("which includes support for interacts and the ability to download and")
             print("install other Jupyterlab extensions. For a minimal installation, run")
             print("  sage -i jupyterlab")
+            print("Alternatively, you can follow the instructions at")
+            print("  " + _system_jupyter_url)
+            print("to use Sage with an existing Jupyterlab installation.")
             raise SystemExit(1)
         self.print_banner()
         main(argv)

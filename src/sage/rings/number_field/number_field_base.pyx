@@ -55,7 +55,7 @@ cdef class NumberField(Field):
         If ``self`` and/or ``other`` are embedded, use this embedding to
         discover a common parent.
 
-        Currently embeddings into ``AA`` and ``QQbar` are supported.
+        Currently embeddings into ``AA`` and ``QQbar`` are supported.
 
         TESTS:
 

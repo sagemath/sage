@@ -3,6 +3,7 @@
 
 import os
 from urllib.request import Request, urlopen
+from ssl import SSLContext
 
 
 def get_remote_file(filename, verbose=True):
@@ -21,7 +22,7 @@ def get_remote_file(filename, verbose=True):
 
     EXAMPLES::
 
-        sage: url = 'http://www.sagemath.org/files/loadtest.py'
+        sage: url = 'https://www.sagemath.org/files/loadtest.py'
         sage: g = get_remote_file(url, verbose=False)      # optional - internet
         sage: with open(g) as f: print(f.read())           # optional - internet
         print("hi from the net")
@@ -43,7 +44,7 @@ def get_remote_file(filename, verbose=True):
     if verbose:
         print("Loading started")
 
-    content = urlopen(req, timeout=1)
+    content = urlopen(req, timeout=1, context=SSLContext())
     with open(temp_name, 'wb') as f:
         f.write(content.read())
 

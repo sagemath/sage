@@ -8,12 +8,13 @@ Quitting interfaces
 #  Distributed under the terms of (any version of) the GNU
 #  General Public License (GPL). The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ################################################################################
 
 import os
 
 expect_objects = []
+
 
 def expect_quitall(verbose=False):
     """
@@ -28,16 +29,17 @@ def expect_quitall(verbose=False):
         sage: gp('a')
         a
         sage: sage.interfaces.quit.expect_quitall(verbose=True)
-        Exiting PARI/GP interpreter with PID ... running .../bin/gp --fast --emacs --quiet --stacksize 10000000
+        Exiting PARI/GP interpreter with PID ... running .../gp --fast --emacs --quiet --stacksize 10000000
     """
     for P in expect_objects:
         R = P()
-        if not R is None:
+        if R is not None:
             try:
                 R.quit(verbose=verbose)
             except RuntimeError:
                 pass
     kill_spawned_jobs()
+
 
 def kill_spawned_jobs(verbose=False):
     """

@@ -400,6 +400,8 @@ from sage.env import GRAPHS_DATA_DIR
 import os
 import zipfile
 from urllib.request import urlopen
+from ssl import SSLContext
+
 
 #*****************************************************************************
 #      Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
@@ -826,7 +828,7 @@ class GraphClasses(UniqueRepresentation):
             sage: graph_classes._download_db() # Not tested -- requires internet
         """
         from sage.misc.misc import SAGE_TMP
-        u = urlopen('http://www.graphclasses.org/data.zip')
+        u = urlopen('https://www.graphclasses.org/data.zip', context=SSLContext())
         localFile = open(os.path.join(SAGE_TMP, 'isgci.zip'), 'w')
         localFile.write(u.read())
         localFile.close()

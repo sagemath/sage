@@ -1470,52 +1470,46 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
         EXAMPLES::
 
-        sage: P2.<y0,y1,y2> = ProjectiveSpace(ZZ, 2)
-        sage: Z = P2.subscheme([y0^2 - y1*y2, y2])
-        sage: Z**3
-        Closed subscheme of Product of projective spaces P^2 x P^2 x P^2 over
-        Integer Ring defined by:
-          x0^2 - x1*x2,
-          x2,
-          x3^2 - x4*x5,
-          x5,
-          x6^2 - x7*x8,
-          x8
+            sage: P2.<y0,y1,y2> = ProjectiveSpace(ZZ, 2)
+            sage: Z = P2.subscheme([y0^2 - y1*y2, y2])
+            sage: Z**3
+            Closed subscheme of Product of projective spaces P^2 x P^2 x P^2 over
+            Integer Ring defined by:
+              x0^2 - x1*x2,
+              x2,
+              x3^2 - x4*x5,
+              x5,
+              x6^2 - x7*x8,
+              x8
 
-        ::
+            sage: A2.<x,y> = AffineSpace(QQ, 2)
+            sage: V = A2.subscheme([x^2-y, x-1])
+            sage: V**4
+            Closed subscheme of Affine Space of dimension 8 over Rational Field
+            defined by:
+              x0^2 - x1,
+              x0 - 1,
+              x2^2 - x3,
+              x2 - 1,
+              x4^2 - x5,
+              x4 - 1,
+              x6^2 - x7,
+              x6 - 1
 
-        sage: A2.<x,y> = AffineSpace(QQ, 2)
-        sage: V = A2.subscheme([x^2-y, x-1])
-        sage: V**4
-        Closed subscheme of Affine Space of dimension 8 over Rational Field
-        defined by:
-          x0^2 - x1,
-          x0 - 1,
-          x2^2 - x3,
-          x2 - 1,
-          x4^2 - x5,
-          x4 - 1,
-          x6^2 - x7,
-          x6 - 1
+            sage: T.<x0,x1,x2,x3,x4,x5> = ProductProjectiveSpaces([2,2], ZZ)
+            sage: X = T.subscheme([x0*x4 - x1*x3])
+            sage: X^2
+            Closed subscheme of Product of projective spaces P^2 x P^2 x P^2 x P^2
+            over Integer Ring defined by:
+              -x1*x3 + x0*x4,
+              -x7*x9 + x6*x10
 
-        ::
-
-        sage: T.<x0,x1,x2,x3,x4,x5> = ProductProjectiveSpaces([2,2], ZZ)
-        sage: X = T.subscheme([x0*x4 - x1*x3])
-        sage: X^2
-        Closed subscheme of Product of projective spaces P^2 x P^2 x P^2 x P^2
-        over Integer Ring defined by:
-          -x1*x3 + x0*x4,
-          -x7*x9 + x6*x10
-
-        ::
-
-        sage: E = EllipticCurve([0,0,0,0,1])
-        sage: E^2
-        Closed subscheme of Product of projective spaces P^2 x P^2 over Rational
-        Field defined by:
-          -x0^3 + x1^2*x2 - x2^3,
-          -x3^3 + x4^2*x5 - x5^3
+            sage: E = EllipticCurve([0,0,0,0,1])
+            sage: E^2
+            Closed subscheme of Product of projective spaces P^2 x P^2 over Rational
+            Field defined by:
+              -x0^3 + x1^2*x2 - x2^3,
+              -x3^3 + x4^2*x5 - x5^3
         """
         AS = self.ambient_space().__pow__(m)
         CR = AS.coordinate_ring()

@@ -245,7 +245,7 @@ def unrank(L, i):
         ...
         IndexError: index out of range
     """
-    if L in EnumeratedSets:
+    if L in EnumeratedSets():
         return L.unrank(i)
     if isinstance(L, Sequence):
         return L[i]

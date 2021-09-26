@@ -376,7 +376,6 @@ More sanity tests::
 from cysignals.signals cimport sig_on, sig_off
 from sage.ext.cplusplus cimport ccrepr, ccreadstr
 
-from inspect import isfunction
 import operator
 import sage.rings.integer
 import sage.rings.rational
@@ -610,6 +609,85 @@ def _subs_make_dict(s):
         result = {}
         for d in s:
             _dict_update_check_duplicate(result, _subs_make_dict(d))
+        return result
+    else:
+        msg = "not able to determine a substitution from {}"
+        raise TypeError(msg.format(s))
+
+def _subs_fun_make_dict(s):
+    r"""
+    There are a few ways we can represent a substitution. The first is
+    a symbolic equation. The second is a dictionary. The third would
+    be a list/tuple whose entries are expressions, dictionaries, or
+    lists/tuples themselves. This function converts all such
+    representations to dictionaries.
+
+    INPUT:
+
+    -  ``s`` -- A representation of a substitution.
+
+    OUTPUT:
+
+    A dictionary of substitutions.
+
+    EXAMPLES:
+
+    An expression::
+
+        sage: from sage.symbolic.expression import _subs_fun_make_dict
+        sage: f, g = function('f g')
+        sage: _subs_fun_make_dict(f(x) == g(x))
+        {f: x |--> g(x)}
+
+    And a dictionary::
+
+        sage: _subs_fun_make_dict({f: g})
+        {f: g}
+        sage: _subs_fun_make_dict({f(x): g(x+1)})
+        {f: x |--> g(x + 1)}
+
+    And finally, a tuple or a list containing one of everything::
+
+        sage: f1, g1, f2, g2, f3, g3, f4, g4 = function('f1 g1 f2 g2 f3 g3 f4 g4')
+        sage: actual = _subs_fun_make_dict([f1(x) == g1(x), {f2: g2}, [f3(x) == g3(x+1)], (f4(x) == g4(x),)])
+        sage: expected = {f1: (g1(x)).function(x), f2: g2, f3: (g3(x + 1)).function(x), f4: (g4(x)).function(x)}
+        sage: actual == expected
+        True
+
+    Note that it recursively calls itself so that the following does work::
+
+        sage: actual = _subs_fun_make_dict([[f1(x) == g1(x)], [[f2(x) == g2(x)], [f3(x) == g3(x)]]])
+        sage: expected = {f1: (g1(x)).function(x), f2: (g2(x)).function(x), f3: (g3(x)).function(x)}
+        sage: actual == expected
+        True
+
+    Check that a ``TypeError`` is raised if the input is not valid::
+
+        sage: _subs_fun_make_dict(1)
+        Traceback (most recent call last):
+        ...
+        TypeError: not able to determine a substitution from 1
+        sage: _subs_fun_make_dict(f)
+        Traceback (most recent call last):
+        ...
+        TypeError: not able to determine a substitution from f
+        sage: _subs_fun_make_dict(f(x) <= g(x))
+        Traceback (most recent call last):
+        ...
+        TypeError: can only substitute equality, not inequalities; got f(x) <= g(x)
+    """
+    if isinstance(s, dict):
+        return dict((k, v) if not isinstance(k, Expression) else (k.operator(), v.function(*k.operands())) for k, v in s.items())
+    elif is_SymbolicEquation(s):
+        if s.operator() is not operator.eq:
+            msg = "can only substitute equality, not inequalities; got {}"
+            raise TypeError(msg.format(s))
+        temp_fun = s.rhs().function(*s.lhs().operands())
+        return {s.lhs().operator(): temp_fun}
+    elif isinstance(s, (tuple,list)):
+        result = {}
+        for d in s:
+            _dict_update_check_duplicate(result, _subs_fun_make_dict(d))
         return result
     else:
         msg = "not able to determine a substitution from {}"
@@ -5781,18 +5859,72 @@ cdef class Expression(CommutativeRingElement):
             sig_off()
         return new_Expression_from_GEx(self._parent, res)
 
-    def substitute_function(self, original, new):
+    def substitute_function(self, *args, **kwds):
         """
-        Return this symbolic expressions all occurrences of the
-        function *original* replaced with the function *new*.
+        Substitute the given functions by their replacements in this expression.
 
         EXAMPLES::
 
             sage: x,y = var('x,y')
             sage: foo = function('foo'); bar = function('bar')
             sage: f = foo(x) + 1/foo(pi*y)
-            sage: f.substitute_function(foo, bar)
+
+        Substitute with a dictionary::
+
+            sage: f.substitute_function({foo: bar})
             1/bar(pi*y) + bar(x)
+            sage: f.substitute_function({foo(x): bar(x)})
+            1/bar(pi*y) + bar(x)
+
+        If the function expression to be substituted includes its arguments, the right hand side can be an arbitrary symbolic expression::
+
+            sage: f.substitute_function({foo(x): x^2})
+            x^2 + 1/(pi^2*y^2)
+
+        Substitute with keyword arguments (works only if no function arguments are given)::
+
+            sage: f.substitute_function(foo=bar)
+            1/bar(pi*y) + bar(x)
+
+        Substitute with a relational expression::
+
+            sage: f.substitute_function(foo(x)==bar(x))
+            1/bar(pi*y) + bar(x)
+            sage: f.substitute_function(foo(x)==bar(x+1))
+            1/bar(pi*y + 1) + bar(x + 1)
+
+        All substitutions are performed at the same time::
+
+            sage: g = foo(x) + 1/bar(pi*y)
+            sage: g.substitute_function({foo: bar, bar: foo})
+            1/foo(pi*y) + bar(x)
+
+        Any number of arguments is accepted::
+
+            sage: g.substitute_function({foo: bar}, bar(x) == x^2)
+            1/(pi^2*y^2) + bar(x)
+
+        As well as lists of substitutions::
+
+            sage: g.substitute_function([foo(x) == 1, bar(x) == x])
+            1/(pi*y) + 1
+
+        Alternative syntax::
+
+            sage: g.substitute_function(foo, bar)
+            1/bar(pi*y) + bar(x)
+
+        Duplicate assignments will throw an error::
+
+            sage: g.substitute_function({foo:bar}, foo(x) == x^2)
+            Traceback (most recent call last):
+            ...
+            ValueError: duplicate substitution for foo, got values bar and x |--> x^2
+
+            sage: g.substitute_function([foo(x) == x^2], foo = bar)
+            Traceback (most recent call last):
+            ...
+            ValueError: duplicate substitution for foo, got values x |--> x^2 and bar
 
         TESTS:
 
@@ -5806,7 +5938,23 @@ cdef class Expression(CommutativeRingElement):
             cos(x) + hypergeometric((1, 1), (2,), -1)
         """
         from sage.symbolic.expression_conversions import SubstituteFunction
-        return SubstituteFunction(self, original, new)()
+        from sage.calculus.calculus import _find_func, _is_function
+
+        sdict = {}
+
+        if len(args) == 2 and _is_function(args[0]):
+            sdict = {args[0]: args[1]}
+        else:
+            for a in args:
+                _dict_update_check_duplicate(sdict, _subs_fun_make_dict(a))
+
+        if kwds:
+            # Ensure that the keys are functions.
+            funkwds = {_find_func(k): v for k,v in kwds.iteritems()}
+            # Check for duplicate
+            _dict_update_check_duplicate(sdict, funkwds)
+
+        return SubstituteFunction(self, sdict)()
 
     def exponentialize(self):
         r"""
@@ -13378,7 +13526,7 @@ cdef get_dynamic_class_for_function(unsigned serial):
         # Fix methods from eval_methods, wrapping them to extract
         # the operands and pass them as arguments
         for name, meth in eval_methods.__dict__.items():
-            if not isfunction(meth):
+            if not callable(meth):
                 continue
             meth = _eval_on_operands(meth)
             setattr(cls, name, meth)

@@ -23,7 +23,10 @@ sage_conf sdist on PyPI
 
 This implementation of the ``sage_conf`` distribution package comes from
 https://trac.sagemath.org/ticket/29039, which adds the directory
-``src/pkgs/sage_conf-pypi/``.
+``pkgs/sage-conf_pypi/``.
+
+To install, use ``pip install -v sage_conf``.  Using ``-v`` ensures that diagnostic
+messages are displayed.
 
 On installation (or building a wheel), it invokes ``sage_bootstrap`` to establish
 a build tree (``SAGE_ROOT``) and installation tree (``SAGE_LOCAL``) for
@@ -46,7 +49,7 @@ Prebuilt binary wheels of the ``sage_conf`` distribution package are available
 at https://github.com/sagemath/sage-wheels/releases/
 
 This implementation of ``sage_conf`` comes from https://trac.sagemath.org/ticket/31396,
-which adds the directory ``src/pkgs/sage_conf-relocatable/``.
+which adds the directory ``pkgs/sage-conf_relocatable/``.
 
 On building a wheel, it invokes ``sage_bootstrap`` to establish a
 build and installation tree (``SAGE_ROOT``, ``SAGE_LOCAL``) in a
@@ -74,9 +77,8 @@ sage_conf in the SageMath distribution
 
 The original version of the distribution package ``sage_conf`` is used
 internally in the SageMath distribution.  It is provided in the directory
-``build/pkgs/sage_conf/src``.  This version of the package is generated
-by the Sage distribution's ``configure``
-script.
+``pkgs/sage-conf/``.  This version of the package is generated
+by the Sage distribution's ``configure`` script.
 
 
 sage_conf in downstream distributions
@@ -98,4 +100,4 @@ Upstream Contact
 https://www.sagemath.org
 
 This package is included in the source code of the Sage distribution,
-in ``pkgs/sage-conf``.
+in ``pkgs/sage-conf*``.

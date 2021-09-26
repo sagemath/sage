@@ -1521,7 +1521,7 @@ class RecognizableSeriesSpace(UniqueRepresentation, Parent):
         if coefficient_ring is None:
             raise ValueError('No coefficient ring specified.')
         from sage.categories.semirings import Semirings
-        if coefficient_ring not in Semirings:
+        if coefficient_ring not in Semirings():
             raise ValueError(
                 'Coefficient ring {} is not a semiring.'.format(coefficient_ring))
 

@@ -8367,7 +8367,7 @@ class Graph(GenericGraph):
             True
 
             sage: G = graphs.PetersenGraph().copy(immutable=True)
-            sage: list(G.perfect_matchings())
+            sage: [sorted(m) for m in G.perfect_matchings()]
             [[(0, 1), (2, 3), (4, 9), (5, 7), (6, 8)],
              [(0, 1), (2, 7), (3, 4), (5, 8), (6, 9)],
              [(0, 4), (1, 2), (3, 8), (5, 7), (6, 9)],
@@ -8385,14 +8385,52 @@ class Graph(GenericGraph):
         if not self:
             yield []
             return
-        # if every connected component has an even number of vertices
-        if not any(len(cc) % 2 for cc in self.connected_components()):
-            v = next(self.vertex_iterator())
-            for e in self.edges_incident(v, labels=labels):
-                Gp = self.copy(immutable=False)
-                Gp.delete_vertices([e[0], e[1]])
-                for mat in Gp.perfect_matchings(labels):
-                    yield [e] + mat
+        if self.order() % 2 or any(len(cc) % 2 for cc in self.connected_components()):
+            return
+
+        def rec(G):
+            """
+            Iterator over all perfect matchings of a simple graph `G`.
+            """
+            if not G:
+                yield []
+                return
+            if G.order() % 2 == 0:
+                v = next(G.vertex_iterator())
+                Nv = list(G.neighbor_iterator(v))
+                G.delete_vertex(v)
+                for u in Nv:
+                    Nu = list(G.neighbor_iterator(u))
+                    G.delete_vertex(u)
+                    for partial_matching in rec(G):
+                        partial_matching.append((u, v))
+                        yield partial_matching
+                    G.add_vertex(u)
+                    G.add_edges((u, nu) for nu in Nu)
+                G.add_vertex(v)
+                G.add_edges((v, nv) for nv in Nv)
+
+        # We create a mutable copy of the graph and remove its loops, if any
+        G = self.copy(immutable=False)
+        G.allow_loops(False)
+
+        # We create a mapping from frozen unlabeled edges to (labeled) edges.
+        # This ease for instance the manipulation of multiedges (if any)
+        edges = {}
+        for e in G.edges(labels=labels):
+            f = frozenset(e[:2])
+            if f in edges:
+                edges[f].append(e)
+            else:
+                edges[f] = [e]
+
+        # We now get rid of multiple edges, if any
+        G.allow_multiple_edges(False)
+
+        # For each unlabeled matching, we yield all its possible labelings
+        for m in rec(G):
+            for pm in itertools.product(*[edges[frozenset(e)] for e in m]):
+                yield pm
 
     @doc_index("Leftovers")
     def has_perfect_matching(self, algorithm="Edmonds", solver=None, verbose=0,

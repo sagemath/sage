@@ -540,8 +540,8 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         .. NOTE::
 
-           This is for demonstration purposes only, mutating rationals
-           is almost always the wrong thing to do.
+           This is for doctesting purposes only.  Rationals are defined
+           to be immutable.
         """
         if x is not None:
             self.__set_value(x, base)
@@ -905,30 +905,35 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     def __copy__(self):
         """
-        Return a copy of ``self``.
-
-        OUTPUT: Rational
-
         EXAMPLES::
 
             sage: a = -17/37
             sage: copy(a) is a
-            False
+            True
 
         Coercion does not make a new copy::
 
             sage: QQ(a) is a
             True
 
-        The constructor also makes a new copy::
+        Calling the constructor directly makes a new copy::
 
             sage: Rational(a) is a
             False
         """
-        cdef Rational z
-        z = <Rational> Rational.__new__(Rational)
-        mpq_set(z.value, self.value)
-        return z
+        # immutable
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: a = -17/37
+            sage: deepcopy(a) is a
+            True
+        """
+        # immutable
+        return self
 
     def  __dealloc__(self):
         """

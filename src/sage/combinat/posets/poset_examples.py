@@ -155,7 +155,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
     @staticmethod
     def BooleanLattice(n, facade=None, use_subsets=False):
-        """
+        r"""
         Return the Boolean lattice containing `2^n` elements.
 
         - ``n`` -- integer; number of elements will be `2^n`

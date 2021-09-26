@@ -94,10 +94,6 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
     module='(scipy|networkx)')
 
-# Ignore collections.abc warnings, there are a lot of them but they are
-# harmless.
-warnings.filterwarnings('ignore', category=DeprecationWarning,
-    message='.*collections[.]abc.*')
 # However, be sure to keep OUR deprecation warnings
 warnings.filterwarnings('default', category=DeprecationWarning,
     message=r'[\s\S]*See https?://trac\.sagemath\.org/[0-9]* for details.')
@@ -182,6 +178,7 @@ from sage.geometry.riemannian_manifolds.all   import *
 from sage.dynamics.all   import *
 
 from sage.homology.all   import *
+
 from sage.topology.all   import *
 
 from sage.quadratic_forms.all import *
@@ -197,7 +194,7 @@ from sage.numerical.all  import *
 from sage.stats.all      import *
 import sage.stats.all as stats
 
-import sage.finance.all  as finance
+lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
 
 from sage.parallel.all   import *
 
@@ -322,6 +319,7 @@ set_random_seed()
 
 # From now on it is ok to resolve lazy imports
 sage.misc.lazy_import.finish_startup()
+
 
 def sage_globals():
     r"""

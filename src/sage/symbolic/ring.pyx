@@ -603,9 +603,17 @@ cdef class SymbolicRing(CommutativeRing):
             -1
             sage: SR.I().parent()
             Symbolic Ring
+
+        TESTS:
+
+        Test that :trac:`32404` is fixed::
+
+            sage: SR0 = SR.subring(no_variables=True)
+            sage: SR0.I().parent()
+            Symbolic Constants Subring
         """
         from sage.symbolic.constants import I
-        return I
+        return self(I)
 
     def symbol(self, name=None, latex_name=None, domain=None):
         """

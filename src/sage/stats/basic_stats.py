@@ -21,7 +21,7 @@ Functions are available in the namespace ``stats``, i.e. you can use them by
 typing ``stats.mean``, ``stats.median``, etc.
 
 REMARK: If all the data you are working with are floating point
-numbers, you may find ``finance.TimeSeries`` helpful, since it is
+numbers, you may find ``stats.TimeSeries`` helpful, since it is
 extremely fast and offers many of the same descriptive statistics as
 in the module.
 
@@ -78,7 +78,7 @@ def mean(v):
         1.5051500000000000?
         sage: mean(range(4))
         3/2
-        sage: v = finance.TimeSeries([1..100])
+        sage: v = stats.TimeSeries([1..100])
         sage: mean(v)
         50.5
     """
@@ -220,7 +220,7 @@ def std(v, bias=False):
         sage: x = numpy.array([1,2,3,4,5])
         sage: std(x, bias=False)
         1.5811388300841898
-        sage: x = finance.TimeSeries([1..100])
+        sage: x = stats.TimeSeries([1..100])
         sage: std(x)
         29.011491975882016
 
@@ -299,7 +299,7 @@ def variance(v, bias=False):
         sage: x = numpy.array([1,2,3,4,5])
         sage: variance(x, bias=False)
         2.5
-        sage: x = finance.TimeSeries([1..100])
+        sage: x = stats.TimeSeries([1..100])
         sage: variance(x)
         841.6666666666666
         sage: variance(x, bias=True)
@@ -459,7 +459,7 @@ def moving_average(v, n):
     different) meaning as defined above (the point is that the
     ``simple_moving_average`` on time series returns `n` values::
 
-        sage: a = finance.TimeSeries([1..10])
+        sage: a = stats.TimeSeries([1..10])
         sage: stats.moving_average(a, 3)
         [2.0000, 3.0000, 4.0000, 5.0000, 6.0000, 7.0000, 8.0000, 9.0000]
         sage: stats.moving_average(list(a), 3)
@@ -470,7 +470,7 @@ def moving_average(v, n):
 
     if not v:
         return v
-    from sage.finance.time_series import TimeSeries
+    from .time_series import TimeSeries
     if isinstance(v, TimeSeries):
         return v.simple_moving_average(n)[n - 1:]
     n = int(n)

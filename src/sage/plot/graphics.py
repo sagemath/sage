@@ -1249,12 +1249,7 @@ class Graphics(WithEqualityById, SageObject):
 
         It does not accept any argument (:trac:`19539`)::
 
-            sage: S.plot(1)  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: plot() takes exactly 1 argument (2 given)
-
-            sage: S.plot(1)  # py3
+            sage: S.plot(1)
             Traceback (most recent call last):
             ...
             TypeError: plot() takes 1 positional argument but 2 were given

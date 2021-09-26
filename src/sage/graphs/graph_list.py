@@ -206,7 +206,7 @@ def to_sparse6(graphs, file=None, output_list=False):
 
 
 def _to_graph6(graphs, file=None, output_list=False, sparse=False):
-    """
+    r"""
     Internal implementation of :func:`to_graph6` and :func:`to_sparse6`.
 
     EXAMPLES::

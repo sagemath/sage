@@ -29,7 +29,7 @@ import math
 cdef double sqrt2pi = sqrt(2*math.pi)
 
 from sage.misc.randstate cimport current_randstate, randstate
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 
 
 
@@ -403,17 +403,17 @@ cdef class GaussianMixtureDistribution(Distribution):
             sage: len(l)
             1
             sage: type(l)
-            <class 'sage.finance.time_series.TimeSeries'>
+            <class 'sage.stats.time_series.TimeSeries'>
             sage: l = P.sample(5)
             sage: len(l)
             5
             sage: type(l)
-            <class 'sage.finance.time_series.TimeSeries'>
+            <class 'sage.stats.time_series.TimeSeries'>
             sage: l = P.sample(0)
             sage: len(l)
             0
             sage: type(l)
-            <class 'sage.finance.time_series.TimeSeries'>
+            <class 'sage.stats.time_series.TimeSeries'>
             sage: P.sample(-3)
             Traceback (most recent call last):
             ...

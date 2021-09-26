@@ -24,7 +24,7 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.misc.flatten  import flatten
 from sage.structure.element import is_Matrix
 
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 from sage.stats.intlist cimport IntList
 
 from .hmm cimport HiddenMarkovModel

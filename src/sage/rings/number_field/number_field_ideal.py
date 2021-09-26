@@ -2718,17 +2718,17 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
             raise ValueError("Given elements do not generate unit group -- they generate a subgroup of index %s" % A.det())
         B = hmat[0:len(invs), len(invs):]
         C = hmat[len(invs):, len(invs):]
-        #print "Matrix of relations:\n%s" % C
         M = (matrix(ZZ, L) * B)
         N = block_matrix(2, 2, [[identity_matrix(1), M], [zero_matrix(len(gens), 1), C]], subdivide=False)
         ans = N.hermite_form()[0, 1:].list()
 
         if check:
             from sage.rings.all import Zmod
+            Z_norm = Zmod(self.norm().numerator())  # norm is an integer ?
             t = 1
-            for i in range(len(ans)):
-                t = self.reduce(t * gens[i]**ans[i])
-            assert t == self.reduce(x * x.denominator() * (~Zmod(self.norm())(x.denominator())).lift())
+            for gi, ai in zip(gens, ans):
+                t = self.reduce(t * gi**ai)
+            assert t == self.reduce(x * x.denominator() * (~Z_norm(x.denominator())).lift())
 
         return ans
 
@@ -3170,6 +3170,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
         bid = self._pari_bid_()
         return ZZ(self.number_field().pari_bnf().bnrclassno(bid))
 
+
 def is_NumberFieldFractionalIdeal(x):
     """
     Return True if x is a fractional ideal of a number field.
@@ -3192,6 +3193,7 @@ def is_NumberFieldFractionalIdeal(x):
         False
     """
     return isinstance(x, NumberFieldFractionalIdeal)
+
 
 class QuotientMap:
     """

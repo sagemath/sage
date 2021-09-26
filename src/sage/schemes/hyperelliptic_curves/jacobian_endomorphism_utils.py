@@ -124,7 +124,7 @@ def satisfies_coefficient_condition(g, p):
 
 
 def get_is_geom_field(f, C, bad_primes, B=200):
-    """
+    r"""
     Determine whether the geometric endomorphism algebra is a field.
 
     This is Algorithm 4.10 in [Lom2019]_. The computation done here
@@ -241,7 +241,7 @@ def get_is_geom_field(f, C, bad_primes, B=200):
 
 
 def is_geom_trivial_when_field(C, bad_primes, B=200):
-    """
+    r"""
     Determine if the geometric endomorphism ring is trivial assuming the
     geometric endomorphism algebra is a field.
 

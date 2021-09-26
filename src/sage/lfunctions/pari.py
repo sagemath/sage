@@ -262,7 +262,7 @@ def lfun_character(chi):
     """
     if not chi.is_primitive():
         chi = chi.primitive_character()
-    G, v = chi._pari_conversion()
+    G, v = chi._pari_init_()
     return pari.lfuncreate([G, v])
 
 

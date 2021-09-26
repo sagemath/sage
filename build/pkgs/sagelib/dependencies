@@ -1,4 +1,4 @@
-FORCE $(SCRIPTS) arb boost_cropped $(BLAS) brial cliquer cypari cysignals cython ecl eclib ecm flint libgd gap giac givaro glpk gmpy2 gsl iml jinja2 jupyter_core lcalc lrcalc libbraiding libhomfly libpng linbox m4ri m4rie memory_allocator mpc mpfi mpfr $(MP_LIBRARY) ntl numpy pari pip pkgconfig planarity ppl pplpy pycygwin pynac $(PYTHON) ratpoints rw sage_conf singular symmetrica zn_poly $(PCFILES) | $(PYTHON_TOOLCHAIN) sage_setup
+FORCE $(SCRIPTS) arb boost_cropped $(BLAS) brial cliquer cypari cysignals cython ecl eclib ecm flint libgd gap giac givaro glpk gmpy2 gsl iml jinja2 jupyter_core lcalc lrcalc libbraiding libhomfly libpng linbox m4ri m4rie memory_allocator mpc mpfi mpfr $(MP_LIBRARY) ntl numpy pari pip pkgconfig planarity ppl pplpy pycygwin $(PYTHON) ratpoints rw sage_conf singular symmetrica zn_poly $(PCFILES) | $(PYTHON_TOOLCHAIN) sage_setup
 
 ----------
 All lines of this file are ignored except the first.

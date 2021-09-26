@@ -80,6 +80,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.flatten import FlatteningMorphism, UnflatteningMorphism
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
+from sage.rings.number_field.number_field import is_NumberField
 from sage.rings.padics.all import Qp
 from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -3653,6 +3654,85 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 pcf = False
             i += 1
         return pcf
+
+    def is_dynamical_belyi_map(self):
+        r"""
+        Return if this dynamical system is a dynamical Belyi map.
+
+        We define a dynamical Belyi map to be a map conjugate to a
+        dynamical system `f: \mathbb{P}^1  \to \mathbb{P}^1`
+        where the branch points are contained in `\{0, 1, \infty \}`
+        and the postcritical set is contained in `\{0, 1, \infty \}`.
+
+        Output: Boolean
+
+        EXAMPLES::
+
+            sage: P.<x,y>=ProjectiveSpace(QQ, 1)
+            sage: f=DynamicalSystem_projective([-2*x^3 - 9*x^2*y - 12*x*y^2 - 6*y^3, y^3])
+            sage: f.is_dynamical_belyi_map()
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([5*x^7 - 7*x^6*y, -7*x*y^6 + 5*y^7])
+            sage: f.is_dynamical_belyi_map()
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([x^2 + y^2,y^2])
+            sage: f.is_dynamical_belyi_map()
+            False
+
+        ::
+
+            sage: F = QuadraticField(-7)
+            sage: P.<x,y> = ProjectiveSpace(F, 1)
+            sage: f = DynamicalSystem_projective([5*x^7 - 7*x^6*y, -7*x*y^6 + 5*y^7])
+            sage: f.is_dynamical_belyi_map()
+            True
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([2*x^3 + 3*x^2*y - 3*x*y^2 + 2*y^3, x^3 + y^3])
+            sage: f.is_dynamical_belyi_map()
+            False
+
+        ::
+
+            sage: R.<t> = PolynomialRing(QQ)
+            sage: N.<c> = NumberField(t^3 - 2)
+            sage: P.<x,y> = ProjectiveSpace(N, 1)
+            sage: f=DynamicalSystem_projective([x^2 + c*y^2, x*y])
+            sage: f.is_dynamical_belyi_map()
+            False
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(GF(7), 1)
+            sage: f = DynamicalSystem_projective([x^3  + 6*y^3, y^3])
+            sage: f.is_dynamical_belyi_map()
+            False
+        """
+        P = self.codomain()
+        if not is_ProjectiveSpace(P):
+            raise NotImplementedError('only implemented for dynamical systems on projective space')
+        if P.dimension_relative() != 1:
+            raise NotImplementedError('only implemented for maps on projective space of dimension 1')
+        embed = self.field_of_definition_critical(return_embedding=True)[1]
+        f = self.change_ring(embed)
+        crit_list = f.critical_points()
+        crit_orbit = []
+        for i in crit_list:
+            crit_orbit += f.orbit(i, 4)
+        if len(set(crit_orbit)) > 3:
+            return False
+        return True
+
 
     def critical_point_portrait(self, check=True, use_algebraic_closure=True):
         r"""
@@ -7417,7 +7497,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             (False, None)
 
         """
-        if self.domain().base_ring() not in NumberFields:
+        if self.domain().base_ring() not in NumberFields():
             raise ValueError('dynamical system must be defined over number field')
 
         field_of_definition_periodic = self.field_of_definition_periodic(1)

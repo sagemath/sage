@@ -7,9 +7,8 @@
   hint: |
     # ifilter, imap, izip           # __metaclass__
     Hint: # update raise statements       # except Exception, var
-    Hint: # cmp                           # sagenb
-    Hint: # next                          # six is no longer allowed
-  pattern: '(import.*ifilter|import.*imap|import.*izip|^\s*raise\s*[A-Za-z]*Error\s*,|[\s,\(]cmp\s*=|[^_a-z]cmp\(|\.next\(\)|__metaclass__|except\s*[A-Za-z]\s*,|sagenb|import six|from six import)'
+    Hint: # sagenb                        # six is no longer allowed
+  pattern: '(import.*[, ]ifilter|import.*[, ]imap|import.*[, ]izip|^\s*raise\s*[A-Za-z]*Error\s*,|__metaclass__|except\s*[A-Za-z]\s*,|sagenb|import six|from six import)'
   filePattern: .*[.](py|pyx|rst)
 
 - name: 'foreign_latex: foreign commands in LaTeX'

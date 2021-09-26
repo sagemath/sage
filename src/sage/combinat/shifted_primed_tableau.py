@@ -176,9 +176,10 @@ class ShiftedPrimedTableau(ClonableArray,
     def _preprocess(T, skew=None):
         """
         Preprocessing list ``T`` to initialize the tableau.
+
         The output is a list of rows as tuples, with explicit
-        ``None``'s to indicate the skew shape, and entries being
-        ``PrimedEntry``s.
+        ``None`` to indicate the skew shape, and entries being
+        ``PrimedEntry`` instances.
 
         Trailing empty rows are removed.
 

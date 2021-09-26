@@ -1,5 +1,5 @@
 """
-Graded Rings of Modular Forms
+Graded rings of modular forms
 
 This module contains functions to find generators for the graded ring of
 modular forms of given level.

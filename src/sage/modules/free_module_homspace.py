@@ -78,7 +78,6 @@ import sage.categories.homset
 from sage.structure.element import is_Matrix
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.matrix.matrix_space import MatrixSpace
-from inspect import isfunction
 from sage.misc.cachefunc import cached_method
 
 
@@ -202,7 +201,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             # generators of the domain to the elements of A.
             C = self.codomain()
             try:
-                if isfunction(A):
+                if callable(A):
                     v = [C(A(g)) for g in self.domain().gens()]
                     A = matrix([C.coordinates(a) for a in v], ncols=C.rank())
                     if side == "right":

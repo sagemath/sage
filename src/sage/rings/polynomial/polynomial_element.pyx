@@ -708,6 +708,14 @@ cdef class Polynomial(CommutativeAlgebraElement):
             sage: p(x=QQ(0))
             0
 
+        Check that :trac:`32513` is fixed::
+
+            sage: R.<x> = PolynomialRing(ZZ)
+            sage: x.substitute([])
+            x
+            sage: Polynomial.__call__(x, [])
+            x
+
         AUTHORS:
 
         -  David Joyner (2005-04-10)
@@ -748,7 +756,8 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     if len(args) > 1:
                         raise TypeError("invalid arguments")
                     args = args[0]
-                a, args = args[0], args[1:]
+                if args:
+                    a, args = args[0], args[1:]
             if a is None:
                 a = self._parent.gen()
 

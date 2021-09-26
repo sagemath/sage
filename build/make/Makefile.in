@@ -534,8 +534,10 @@ $(1)-$(4)-no-deps:
 $(1)-no-deps: $(1)-$(4)-no-deps
 
 $(1)-$(4)-clean:
-	sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
-		$(1) '$$($(4))'
+	if [ -d '$$($(4))' ]; then \
+	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
+		$(1) '$$($(4))'; \
+	fi
 
 $(1)-clean: $(1)-$(4)-clean
 

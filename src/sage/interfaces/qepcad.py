@@ -530,9 +530,9 @@ TESTS:
 
 Check the qepcad configuration file::
 
-    sage: with open(os.path.join(SAGE_LOCAL, 'default.qepcadrc')) as f:  # optional - qepcad
+    sage: with open(os.path.join(SAGE_LOCAL, 'etc', 'default.qepcadrc')) as f:  # optional - qepcad
     ....:     f.readlines()[-1]
-    'SINGULAR .../bin\n'
+    'SINGULAR yes\n'
 
 Tests related to the not tested examples (nondeterministic order of atoms)::
 
@@ -684,7 +684,7 @@ def _update_command_info():
 
     cache = {}
 
-    with open(os.path.join(SAGE_LOCAL, 'bin', 'qepcad.help')) as help:
+    with open(os.path.join(SAGE_LOCAL, 'share/qepcad', 'qepcad.help')) as help:
         assert(help.readline().strip() == '@')
 
         while True:

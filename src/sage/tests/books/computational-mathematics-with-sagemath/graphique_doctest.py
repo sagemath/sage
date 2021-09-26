@@ -67,6 +67,15 @@ Sage example in ./graphique.tex, line 550::
   sage: bar_chart(liste)
   Graphics object consisting of 1 graphics primitive
   sage: finance.TimeSeries(liste).plot_histogram(bins=20)
+  doctest:warning...
+  DeprecationWarning: the package sage.finance is deprecated
+  See https://trac.sagemath.org/32427 for details.
+  doctest:warning...
+  Importing finance from here is deprecated. If you need to use it, please import it directly from sage.finance
+  See https://trac.sagemath.org/32427 for details.
+  doctest:warning...
+  Importing TimeSeries from here is deprecated. If you need to use it, please import it directly from sage.stats.time_series
+  See https://trac.sagemath.org/32427 for details.
   Graphics object consisting of 20 graphics primitives
 
 Sage example in ./graphique.tex, line 714::

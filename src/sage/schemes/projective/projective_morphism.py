@@ -970,7 +970,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
         # There are cases, such as the example above over GF(7),
         # where we want to compute GCDs, but NOT in the case
         # where R is a NumberField of class number > 1.
-        if R in NumberFields:
+        if R in NumberFields():
             if R.class_number() > 1:
                 return
 

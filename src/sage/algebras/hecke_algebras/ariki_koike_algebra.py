@@ -1020,7 +1020,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 This function is used internally by the multiplication and
                 may return elements that are not in the basis. However
                 these will be eventually resolved after the product has
-                been computed.
+                been computed. ::
 
                     sage: H = algebras.ArikiKoike(3, 2).LT()
                     sage: L2 = H.L(2)

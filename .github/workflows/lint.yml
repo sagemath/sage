@@ -31,17 +31,3 @@ jobs:
       run: pip install tox relint
     - name: Lint using relint
       run: tox -e relint src/sage/
-  lint-pyright:
-    name: Static type check with pyright
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Set up node to install pyright
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12'
-    - name: Install pyright
-      run: npm install -g pyright
-    - name: Lint using pyright
-      run: pyright

@@ -142,7 +142,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: Integer Ring must be a field
         """
-        if field not in Fields:
+        if field not in Fields():
             raise ValueError(f"{field} must be a field")
 
         if isinstance(fp, (list, tuple)):

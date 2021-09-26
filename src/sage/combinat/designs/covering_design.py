@@ -46,6 +46,7 @@ Classes and methods
 # ****************************************************************************
 
 from urllib.request import urlopen
+from ssl import SSLContext
 
 from sage.misc.sage_eval import sage_eval
 from sage.structure.sage_object import SageObject
@@ -528,7 +529,7 @@ def best_known_covering_design_www(v, k, t, verbose=False):
     if verbose:
         print("Looking up the bounds at %s" % url)
 
-    f = urlopen(url)
+    f = urlopen(url, context=SSLContext())
     try:
         s = bytes_to_str(f.read())
     finally:

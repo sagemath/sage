@@ -878,7 +878,9 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         # Give the kernel of the map `\pi(x)-x` to determine when `x` lies
         # within the isotypic component of `R`.
-        def proj_difference(g,x): return self._project_ambient(x)-x
+
+        def proj_difference(g, x):
+            return self._project_ambient(x) - x
 
         basis = M.annihilator_basis(M.basis(),
                                     action=proj_difference,

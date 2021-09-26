@@ -70,15 +70,24 @@ SAGE_LOCAL="$prefix"
 # This is nonstandard.
 if test "$SAGE_LOCAL" = NONE; then
     SAGE_LOCAL=local
+    if test -x "$SAGE_LOCAL"/bin/python3; then
+        # Incremental build with an existing installation of python3 spkg
+        # in SAGE_LOCAL or venv in SAGE_LOCAL.  Keep old behavior.
+        SAGE_VENV_AUTO=no
+    else
+        SAGE_VENV_AUTO=yes
+    fi
+else
+    SAGE_VENV_AUTO=no
 fi
 SAGE_SRC="$SAGE_ROOT/src"
 SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 
 AC_ARG_WITH([sage-venv],
-            [AS_HELP_STRING([--with-sage-venv=SAGE_VENV],
+            [AS_HELP_STRING([--with-sage-venv={auto,yes,no,SAGE_VENV}],
                             [put Python packages into an installation hierarchy separate from prefix])],
             [SAGE_VENV="$withval"],
-            [SAGE_VENV='${SAGE_LOCAL}'])dnl Quoted so that it is resolved at build time by shell/Makefile
+            [SAGE_VENV="auto"])
 AC_SUBST([SAGE_VENV])
 
 #---------------------------------------------------------
@@ -460,6 +469,10 @@ AC_ARG_ENABLE([sagelib],
     done
   ])
 
+dnl Packages that require a special override to use the SPKG
+dnl when the system package is not usable.
+AS_VAR_SET([sage_use_system_gcc], [force])
+
 SAGE_SPKG_COLLECT()
 
 dnl AC_CONFIG_HEADERS([config.h])
@@ -496,6 +509,27 @@ AC_CONFIG_COMMANDS(mkdirs,
         SAGE_SHARE="$SAGE_LOCAL/share"
         SAGE_INST="$SAGE_SPKG_INST"
     ])
+
+AC_CONFIG_COMMANDS(links, [
+    dnl Create links for the convenience of users
+    SYMLINK="${ac_top_build_prefix}prefix"
+    AS_IF([test -L "$SYMLINK" -o ! -e "$SYMLINK"], [
+        AC_MSG_NOTICE([creating convenience symlink $SYMLINK -> $SAGE_LOCAL])
+        ln -sf "$SAGE_LOCAL" "$SYMLINK"
+    ], [
+        AC_MSG_NOTICE([cannot create convenience symlink $SYMLINK -> $SAGE_LOCAL because the file exists and is not a symlink; this is harmless])
+    ])
+    SYMLINK="${ac_top_build_prefix}venv"
+    AS_IF([test -L "$SYMLINK" -o ! -e "$SYMLINK"], [
+        AC_MSG_NOTICE([creating convenience symlink $SYMLINK -> $SAGE_VENV])
+        ln -sf "$SAGE_VENV" "$SYMLINK"
+    ], [
+        AC_MSG_NOTICE([cannot create convenience symlink $SYMLINK -> $SAGE_VENV because the file exists and is not a symlink; this is harmless])
+    ])
+], [
+    SAGE_LOCAL="$SAGE_LOCAL"
+    eval SAGE_VENV="$SAGE_VENV"dnl eval so as to evaluate the embedded ${SAGE_LOCAL}
+])
 
 AC_OUTPUT()
 

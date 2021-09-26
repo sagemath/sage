@@ -140,8 +140,9 @@ class SemistandardSuperTableau(Tableau):
     def _preprocess(t):
         """
         Preprocessing list ``T`` to initialize the tableau.
+
         The output is a list of rows as tuples, with entries being
-        ``PrimedEntry``s.
+        ``PrimedEntry`` instances.
 
         TESTS::
 

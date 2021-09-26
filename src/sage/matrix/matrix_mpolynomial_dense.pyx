@@ -62,7 +62,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         The row echelon form of A depending on the chosen algorithm,
         as an immutable matrix.  Note that ``self`` is *not* changed
-        by this command. Use ``A.echelonize()``` to change `A` in
+        by this command. Use ``A.echelonize()`` to change `A` in
         place.
 
         EXAMPLES::

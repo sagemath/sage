@@ -2140,7 +2140,7 @@ class FiniteWord_class(Word_class):
 
     def is_conjugate_with(self, other):
         r"""
-        Return ``True`  if ``self`` is a conjugate of ``other``, and ``False`` otherwise.
+        Return ``True`` if ``self`` is a conjugate of ``other``, and ``False`` otherwise.
 
         INPUT:
 
@@ -3800,7 +3800,7 @@ class FiniteWord_class(Word_class):
         we removed the letters of ``self``.
         There can be more than one.
 
-        To check whether ``self`` is a subword of ``other` (without knowing its
+        To check whether ``self`` is a subword of ``other`` (without knowing its
         complementaries), use ``self.is_subword_of(other)``, and to count the
         number of occurrences of ``self`` in ``other``, use
         ``other.number_of_subword_occurrences(self)``.

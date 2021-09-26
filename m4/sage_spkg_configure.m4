@@ -65,11 +65,13 @@ AS_BOX([Checking whether SageMath should install SPKG $1...]) >& AS_MESSAGE_LOG_
 AC_ARG_WITH([system-]SPKG_NAME,
        AS_HELP_STRING(--with-system-SPKG_NAME={no|yes (default)|force (exit with an error if no usable version is found)},
            [detect and use an existing system SPKG_NAME]),
-       [AS_VAR_SET(SPKG_USE_SYSTEM, [$withval])],
-       [AS_VAR_SET(SPKG_USE_SYSTEM, [yes])]
+       [AS_VAR_SET(SPKG_USE_SYSTEM, [$withval])]
 )
 
 AS_VAR_SET([sage_spkg_name], SPKG_NAME)
+
+dnl Default value for most packages
+AS_VAR_SET_IF([SPKG_USE_SYSTEM], [], [AS_VAR_SET([SPKG_USE_SYSTEM], [yes])])
 
 dnl The default is not to install a package, unless a check below finds that we should.
 AS_VAR_SET(SPKG_INSTALL, [no])
@@ -113,7 +115,10 @@ AS_VAR_IF(SPKG_INSTALL, [no], [
                     AC_MSG_NOTICE(m4_normalize([will use system package and not install SPKG ]SPKG_NAME))
                 ], [
                     AS_VAR_IF(SPKG_USE_SYSTEM, [force], [
-                        AC_MSG_ERROR(m4_normalize([given --with-system-]SPKG_NAME[=force but no system package could be used]))
+                        AS_VAR_APPEND([SAGE_SPKG_ERRORS], ["
+    Given --with-system-]SPKG_NAME[=force, but no system package could be used.
+    That's an error.  Please install the indicated package to continue.
+    (To override this error, use ./configure --without-system-]SPKG_NAME[)"])
                     ], [
                         AC_MSG_NOTICE(m4_normalize([no suitable system package found for SPKG ]SPKG_NAME))
                     ])

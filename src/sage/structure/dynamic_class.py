@@ -202,15 +202,11 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
 
         sage: Foo.__bases__
         (<type 'object'>,)
-        sage: FooBar.__bases__  # py2
-        (<type 'object'>, <class __main__.Bar at ...>)
-        sage: FooBar.__bases__  # py3
+        sage: FooBar.__bases__
         (<class '__main__.Bar'>,)
         sage: Foo.mro()
         [<class '__main__.Foo'>, <type 'object'>]
-        sage: FooBar.mro()  # py2
-        [<class '__main__.FooBar'>, <type 'object'>, <class __main__.Bar at ...>]
-        sage: FooBar.mro()  # py3
+        sage: FooBar.mro()
         [<class '__main__.FooBar'>, <class '__main__.Bar'>, <class 'object'>]
 
     If all the base classes have a zero ``__dictoffset__``, the dynamic
@@ -228,9 +224,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     unpickling, the class will be reconstructed by recalling
     dynamic_class with the same arguments::
 
-        sage: type(FooBar).__reduce__(FooBar)  # py2
-        (<function dynamic_class at ...>, ('FooBar', (<class __main__.Bar at ...>,), <class '__main__.Foo'>, None, None))
-        sage: type(FooBar).__reduce__(FooBar)  # py3
+        sage: type(FooBar).__reduce__(FooBar)
         (<function dynamic_class at ...>, ('FooBar', (<class '__main__.Bar'>,), <class '__main__.Foo'>, None, None))
 
     Technically, this is achieved by using a metaclass, since the
@@ -305,9 +299,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         sage: x.__dict__      # Breaks without the __dict__ deletion in dynamic_class_internal
         {'_x': 3}
 
-        sage: type(FooBar).__reduce__(FooBar)  # py2
-        (<function dynamic_class at ...>, ('FooBar', (<class __main__.Bar at ...>,), <class '__main__.Foo'>, None, None))
-        sage: type(FooBar).__reduce__(FooBar)  # py3
+        sage: type(FooBar).__reduce__(FooBar)
         (<function dynamic_class at ...>, ('FooBar', (<class '__main__.Bar'>,), <class '__main__.Foo'>, None, None))
         sage: import pickle
         sage: pickle.loads(pickle.dumps(FooBar)) == FooBar
@@ -508,10 +500,7 @@ class DynamicMetaclass(type):
             sage: class Foo: pass
             sage: class DocClass: pass
             sage: C = sage.structure.dynamic_class.dynamic_class_internal("bla", (object,), Foo, doccls = DocClass)
-            sage: type(C).__reduce__(C)  # py2
-            (<function dynamic_class at ...>,
-             ('bla', (<type 'object'>,), <class __main__.Foo at ...>, None, <class __main__.DocClass at ...>))
-            sage: type(C).__reduce__(C)  # py3
+            sage: type(C).__reduce__(C)
             (<function dynamic_class at ...>,
              ('bla', (<type 'object'>,), <class '__main__.Foo'>, None, <class '__main__.DocClass'>))
             sage: C = sage.structure.dynamic_class.dynamic_class_internal("bla", (object,), Foo, doccls = DocClass, reduction = "blah")

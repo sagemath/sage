@@ -1,4 +1,4 @@
-"""
+r"""
 Hyperbolic Functions
 
 The full set of hyperbolic and inverse hyperbolic functions is
@@ -20,10 +20,28 @@ available:
 REFERENCES:
 
 - :wikipedia:`Hyperbolic function`
-
 - :wikipedia:`Inverse hyperbolic functions`
-
 - R. Roy, F. W. J. Olver, Elementary Functions, https://dlmf.nist.gov/4
+
+EXAMPLES:
+
+Inverse hyperbolic functions have logarithmic expressions,
+so expressions of the form ``exp(c*f(x))`` simplify::
+
+    sage: exp(2*atanh(x))
+    -(x + 1)/(x - 1)
+    sage: exp(2*acoth(x))
+    (x + 1)/(x - 1)
+
+    sage: exp(2*asinh(x))
+    (x + sqrt(x^2 + 1))^2
+    sage: exp(2*acosh(x))
+    (x + sqrt(x^2 - 1))^2
+
+    sage: exp(2*asech(x))
+    (sqrt(-x^2 + 1)/x + 1/x)^2
+    sage: exp(2*acsch(x))
+    (sqrt(1/x^2 + 1) + 1/x)^2
 """
 
 from sage.symbolic.function import GinacFunction
@@ -499,8 +517,8 @@ class Function_arctanh(GinacFunction):
             sage: atanh(-1/2,hold=True).unhold()
             -1/2*log(3)
 
-        ``conjugate(arctanh(x))==arctanh(conjugate(x))`` unless on the branch
-        cuts which run along the real axis outside the interval [-1, +1].::
+        ``conjugate(arctanh(x)) == arctanh(conjugate(x))`` unless on the branch
+        cuts which run along the real axis outside the interval [-1, +1]. ::
 
             sage: conjugate(atanh(x))
             conjugate(arctanh(x))
@@ -569,7 +587,7 @@ class Function_arccoth(GinacFunction):
             sage: acoth(x)._sympy_()
             acoth(x)
 
-        Check if :trac:`23636` is fixed::
+        Check that :trac:`23636` is fixed::
 
             sage: acoth(float(1.1))
             1.5222612188617113
@@ -661,7 +679,7 @@ class Function_arccsch(GinacFunction):
 
         TESTS:
 
-        Check if :trac:`20818` is fixed::
+        Check that :trac:`20818` is fixed::
 
             sage: acsch(float(0.1))
             2.99822295029797

@@ -199,10 +199,10 @@ class QuiverHomSpace(Homset):
 
     def _coerce_map_from_(self, other):
         r"""
-        A coercion exists if and only if ``other``` is also a
-        QuiverHomSpace and there is a coercion from the domain of ``self``
-        to the domain of ``other`` and from the codomain of ``other`` to
-        the codomain of ``self```.
+        A coercion exists if and only if ``other`` is also a
+        :class:`QuiverHomSpace` and there is a coercion from the
+        domain of ``self`` to the domain of ``other`` and from the
+        codomain of ``other`` to the codomain of ``self``.
 
         EXAMPLES::
 

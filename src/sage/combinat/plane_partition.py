@@ -33,6 +33,7 @@ from sage.combinat.posets.posets import Poset
 from sage.rings.integer import Integer
 from sage.misc.misc_c import prod
 from sage.combinat.tableau import Tableau
+from sage.plot.plot3d.platonic import cube
 
 
 PP = NewType('PP', 'PlanePartition')
@@ -451,7 +452,7 @@ class PlanePartition(ClonableArray,
                         ret += f(r, c, tab[r][c])
         return ret + "\\end{tikzpicture}"
 
-    def plot(self, show_box=False, colors=["white", "lightgray", "darkgray"]):
+    def plot(self, show_box=False, colors=None):
         r"""
         Return a plot of ``self``.
 
@@ -473,6 +474,8 @@ class PlanePartition(ClonableArray,
         from sage.plot.polygon import polygon
         from sage.symbolic.constants import pi
         from sage.plot.plot import plot
+        if colors is None:
+            colors = ["white", "lightgray", "darkgray"]
         Uside = [[0, 0], [cos(-pi / 6), sin(-pi / 6)],
                  [0, -1], [cos(7 * pi / 6), sin(7 * pi / 6)]]
         Lside = [[0, 0], [cos(-pi / 6), sin(-pi / 6)],
@@ -514,6 +517,27 @@ class PlanePartition(ClonableArray,
                     TP += add_leftside(self.x_tableau()[r][c], r, c)
         TP.axes(show=False)
         return TP
+
+    def plot3d(self, colors=None):
+        r"""
+        Return a 3D-plot of ``self``.
+
+        INPUT:
+
+        - ``colors`` -- (default: ``["white", "lightgray", "darkgray"]``)
+          list ``[A, B, C]`` of 3 strings representing colors
+
+        EXAMPLES::
+
+            sage: PP = PlanePartition([[4,3,3,1],[2,1,1],[1,1]])
+            sage: PP.plot3d()
+            Graphics3d Object
+        """
+        if colors is None:
+            colors = ["white", "lightgray", "darkgray"]
+        return sum(cube(c, color=colors, frame_thickness=2,
+                        frame_color='black', frame=False)
+                   for c in self.cells())
 
     def complement(self, tableau_only=False):
         r"""

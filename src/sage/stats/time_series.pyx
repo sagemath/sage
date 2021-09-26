@@ -18,7 +18,7 @@ algebraic structure and are always mutable.
 EXAMPLES::
 
     sage: set_random_seed(1)
-    sage: t = finance.TimeSeries([random()-0.5 for _ in range(10)]); t
+    sage: t = stats.TimeSeries([random()-0.5 for _ in range(10)]); t
     [0.3294, 0.0959, -0.0706, -0.4646, 0.4311, 0.2275, -0.3840, -0.3528, -0.4119, -0.2933]
     sage: t.sums()
     [0.3294, 0.4253, 0.3547, -0.1099, 0.3212, 0.5487, 0.1647, -0.1882, -0.6001, -0.8933]
@@ -56,6 +56,7 @@ from sage.structure.richcmp cimport rich_to_bool
 cimport numpy as cnumpy
 
 from sage.misc.randstate cimport randstate, current_randstate
+from sage.misc.persist import register_unpickle_override
 from sage.rings.integer import Integer
 from sage.rings.real_double import RDF
 from sage.modules.vector_real_double_dense cimport Vector_real_double_dense
@@ -72,7 +73,7 @@ cdef class TimeSeries:
 
         This implicitly calls new::
 
-            sage: finance.TimeSeries([1,3,-4,5])
+            sage: stats.TimeSeries([1,3,-4,5])
             [1.0000, 3.0000, -4.0000, 5.0000]
         """
         self._values = NULL
@@ -95,14 +96,14 @@ cdef class TimeSeries:
 
         This implicitly calls init::
 
-            sage: finance.TimeSeries([pi, 3, 18.2])
+            sage: stats.TimeSeries([pi, 3, 18.2])
             [3.1416, 3.0000, 18.2000]
 
         Conversion from a NumPy 1-D array, which is very fast::
 
-            sage: v = finance.TimeSeries([1..5])
+            sage: v = stats.TimeSeries([1..5])
             sage: w = v.numpy()
-            sage: finance.TimeSeries(w)
+            sage: stats.TimeSeries(w)
             [1.0000, 2.0000, 3.0000, 4.0000, 5.0000]
 
         Conversion from an n-dimensional NumPy array also works::
@@ -111,17 +112,17 @@ cdef class TimeSeries:
             sage: v = numpy.array([[1,2], [3,4]], dtype=float); v
             array([[1., 2.],
                    [3., 4.]])
-            sage: finance.TimeSeries(v)
+            sage: stats.TimeSeries(v)
             [1.0000, 2.0000, 3.0000, 4.0000]
-            sage: finance.TimeSeries(v[:,0])
+            sage: stats.TimeSeries(v[:,0])
             [1.0000, 3.0000]
             sage: u = numpy.array([[1,2],[3,4]])
-            sage: finance.TimeSeries(u)
+            sage: stats.TimeSeries(u)
             [1.0000, 2.0000, 3.0000, 4.0000]
 
         For speed purposes we don't initialize (so value is garbage)::
 
-            sage: t = finance.TimeSeries(10, initialize=False)
+            sage: t = stats.TimeSeries(10, initialize=False)
         """
         cdef Vector_real_double_dense z
         cdef cnumpy.ndarray np
@@ -175,7 +176,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-3.5])
+            sage: v = stats.TimeSeries([1,-3.5])
             sage: v.__reduce__()
             (<cyfunction unpickle_time_series_v1 at ...>, (..., 2))
             sage: loads(dumps(v)) == v
@@ -184,7 +185,7 @@ cdef class TimeSeries:
         Note that dumping and loading with compress ``False`` is much faster,
         though dumping with compress ``True`` can save a lot of space::
 
-            sage: v = finance.TimeSeries([1..10^5])
+            sage: v = stats.TimeSeries([1..10^5])
             sage: loads(dumps(v, compress=False),compress=False) == v
             True
         """
@@ -198,7 +199,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,2,3]); w = finance.TimeSeries([1,2])
+            sage: v = stats.TimeSeries([1,2,3]); w = stats.TimeSeries([1,2])
             sage: v < w
             False
             sage: w < v
@@ -230,7 +231,7 @@ cdef class TimeSeries:
 
         This tests ``__dealloc__`` implicitly::
 
-            sage: v = finance.TimeSeries([1,3,-4,5])
+            sage: v = stats.TimeSeries([1,3,-4,5])
             sage: del v
         """
         sig_free(self._values)
@@ -247,7 +248,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1..10])
+            sage: v = stats.TimeSeries([1..10])
             sage: v.vector()
             (1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
         """
@@ -262,19 +263,19 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,3.1908439,-4,5.93932])
+            sage: v = stats.TimeSeries([1,3.1908439,-4,5.93932])
             sage: v.__repr__()
             '[1.0000, 3.1908, -4.0000, 5.9393]'
 
         By default 4 digits after the decimal point are displayed.  To
-        change this, change ``self.finance.time_series.digits``. ::
+        change this, change ``sage.stats.time_series.digits``. ::
 
-            sage: sage.finance.time_series.digits = 2
+            sage: sage.stats.time_series.digits = 2
             sage: v.__repr__()
             '[1.00, 3.19, -4.00, 5.94]'
             sage: v
             [1.00, 3.19, -4.00, 5.94]
-            sage: sage.finance.time_series.digits = 4
+            sage: sage.stats.time_series.digits = 4
             sage: v
             [1.0000, 3.1908, -4.0000, 5.9393]
         """
@@ -288,7 +289,7 @@ cdef class TimeSeries:
 
         - ``prec`` -- (default: ``None``) number of digits of precision or
           ``None``. If ``None`` use the default
-          ``sage.finance.time_series.digits``.
+          ``sage.stats.time_series.digits``.
 
         OUTPUT:
 
@@ -296,7 +297,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,3.1908439,-4,5.93932])
+            sage: v = stats.TimeSeries([1,3.1908439,-4,5.93932])
             sage: v._repr()
             '[1.0000, 3.1908, -4.0000, 5.9393]'
             sage: v._repr(10)
@@ -324,7 +325,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,3.1908439,-4,5.93932])
+            sage: v = stats.TimeSeries([1,3.1908439,-4,5.93932])
             sage: v.__len__()
             4
             sage: len(v)
@@ -338,7 +339,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-4,3,-2.5,-4,3])
+            sage: v = stats.TimeSeries([1,-4,3,-2.5,-4,3])
             sage: v[2]
             3.0
             sage: v[-1]
@@ -430,7 +431,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,3,-4,5.93932]); v
+            sage: v = stats.TimeSeries([1,3,-4,5.93932]); v
             [1.0000, 3.0000, -4.0000, 5.9393]
             sage: v[0] = -5.5; v
             [-5.5000, 3.0000, -4.0000, 5.9393]
@@ -459,7 +460,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-4,3,-2.5,-4,3])
+            sage: v = stats.TimeSeries([1,-4,3,-2.5,-4,3])
             sage: v.__copy__()
             [1.0000, -4.0000, 3.0000, -2.5000, -4.0000, 3.0000]
             sage: copy(v)
@@ -492,10 +493,10 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,2,3]); w = finance.TimeSeries([1,2])
+            sage: v = stats.TimeSeries([1,2,3]); w = stats.TimeSeries([1,2])
             sage: v + w
             [1.0000, 2.0000, 3.0000, 1.0000, 2.0000]
-            sage: v = finance.TimeSeries([1,2,-5]); v
+            sage: v = stats.TimeSeries([1,2,-5]); v
             [1.0000, 2.0000, -5.0000]
 
         Note that both summands must be a time series::
@@ -540,7 +541,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,2,-5]); v
+            sage: v = stats.TimeSeries([1,2,-5]); v
             [1.0000, 2.0000, -5.0000]
             sage: v*3
             [1.0000, 2.0000, -5.0000, 1.0000, 2.0000, -5.0000, 1.0000, 2.0000, -5.0000]
@@ -549,7 +550,7 @@ cdef class TimeSeries:
             sage: v*v
             Traceback (most recent call last):
             ...
-            TypeError: 'sage.finance.time_series.TimeSeries' object cannot be interpreted as an integer
+            TypeError: 'sage.stats.time_series.TimeSeries' object cannot be interpreted as an integer
         """
         cdef Py_ssize_t n, i
         cdef TimeSeries T
@@ -597,7 +598,7 @@ cdef class TimeSeries:
         EXAMPLES::
 
             sage: set_random_seed(0)
-            sage: v = finance.TimeSeries(10^4).randomize('normal').sums()
+            sage: v = stats.TimeSeries(10^4).randomize('normal').sums()
             sage: F = v.autoregressive_fit(100)
             sage: v
             [0.6767, 0.2756, 0.6332, 0.0469, -0.8897 ... 87.6759, 87.6825, 87.4120, 87.6639, 86.3194]
@@ -607,8 +608,8 @@ cdef class TimeSeries:
             [1.0148, -0.0029, -0.0105, 0.0067, -0.0232 ... -0.0106, -0.0068, 0.0085, -0.0131, 0.0092]
 
             sage: set_random_seed(0)
-            sage: t=finance.TimeSeries(2000)
-            sage: z=finance.TimeSeries(2000)
+            sage: t = stats.TimeSeries(2000)
+            sage: z = stats.TimeSeries(2000)
             sage: z.randomize('normal',1)
             [1.6767, 0.5989, 1.3576, 0.4136, 0.0635 ... 1.0057, -1.1467, 1.2809, 1.5705, 1.1095]
             sage: t[0]=1
@@ -636,7 +637,7 @@ cdef class TimeSeries:
         EXAMPLES::
 
             sage: set_random_seed(0)
-            sage: v = finance.TimeSeries(100).randomize('normal').sums()
+            sage: v = stats.TimeSeries(100).randomize('normal').sums()
             sage: F = v[:-1].autoregressive_fit(5); F
             [1.0019, -0.0524, -0.0643, 0.1323, -0.0539]
             sage: v.autoregressive_forecast(F)
@@ -667,7 +668,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1..5])
+            sage: v = stats.TimeSeries([1..5])
             sage: v.reversed()
             [5.0000, 4.0000, 3.0000, 2.0000, 1.0000]
         """
@@ -689,7 +690,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,2,-5]); v
+            sage: v = stats.TimeSeries([1,2,-5]); v
             [1.0000, 2.0000, -5.0000]
             sage: v.extend([-3.5, 2])
             sage: v
@@ -715,7 +716,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-4,3,-2.5,-4,3])
+            sage: v = stats.TimeSeries([1,-4,3,-2.5,-4,3])
             sage: v.list()
             [1.0, -4.0, 3.0, -2.5, -4.0, 3.0]
         """
@@ -736,7 +737,7 @@ cdef class TimeSeries:
         We exponentiate then log a time series and get back
         the original series::
 
-            sage: v = finance.TimeSeries([1,-4,3,-2.5,-4,3]); v
+            sage: v = stats.TimeSeries([1,-4,3,-2.5,-4,3]); v
             [1.0000, -4.0000, 3.0000, -2.5000, -4.0000, 3.0000]
             sage: v.exp()
             [2.7183, 0.0183, 20.0855, 0.0821, 0.0183, 20.0855]
@@ -745,7 +746,7 @@ cdef class TimeSeries:
 
         Log of 0 gives ``-inf``::
 
-            sage: finance.TimeSeries([1,0,3]).log()[1]
+            sage: stats.TimeSeries([1,0,3]).log()[1]
             -inf
         """
         cdef Py_ssize_t i
@@ -765,7 +766,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1..5]); v
+            sage: v = stats.TimeSeries([1..5]); v
             [1.0000, 2.0000, 3.0000, 4.0000, 5.0000]
             sage: v.exp()
             [2.7183, 7.3891, 20.0855, 54.5982, 148.4132]
@@ -789,7 +790,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,3.1908439,-4,5.93932])
+            sage: v = stats.TimeSeries([1,3.1908439,-4,5.93932])
             sage: v
             [1.0000, 3.1908, -4.0000, 5.9393]
             sage: v.abs()
@@ -820,7 +821,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([5,4,1.3,2,8]); v
+            sage: v = stats.TimeSeries([5,4,1.3,2,8]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000]
             sage: v.diffs()
             [-1.0000, -2.7000, 0.7000, 6.0000]
@@ -849,7 +850,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
+            sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.scale_time(1)
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
@@ -862,7 +863,7 @@ cdef class TimeSeries:
 
         A series of odd length::
 
-            sage: v = finance.TimeSeries([1..5]); v
+            sage: v = stats.TimeSeries([1..5]); v
             [1.0000, 2.0000, 3.0000, 4.0000, 5.0000]
             sage: v.scale_time(2)
             [1.0000, 3.0000, 5.0000]
@@ -900,7 +901,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
+            sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.rescale(0.5)
             sage: v
@@ -924,7 +925,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
+            sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.scale(0.5)
             [2.5000, 2.0000, 0.6500, 1.0000, 4.0000, 5.0000, 1.5000, -2.5000]
@@ -953,7 +954,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
+            sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.add_scalar(0.5)
             [5.5000, 4.5000, 1.8000, 2.5000, 8.5000, 10.5000, 3.5000, -4.5000]
@@ -985,7 +986,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,2,-5]); v
+            sage: v = stats.TimeSeries([1,2,-5]); v
             [1.0000, 2.0000, -5.0000]
             sage: v.add_entries([3,4])
             [4.0000, 6.0000, -5.0000]
@@ -1029,7 +1030,7 @@ cdef class TimeSeries:
 
         Draw a plot of a time series::
 
-            sage: finance.TimeSeries([1..10]).show()
+            sage: stats.TimeSeries([1..10]).show()
             Graphics object consisting of 1 graphics primitive
         """
         return self.plot(*args, **kwds)
@@ -1053,7 +1054,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
+            sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.plot()
             Graphics object consisting of 1 graphics primitive
@@ -1104,7 +1105,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.simple_moving_average(0)
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
@@ -1156,7 +1157,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.exponential_moving_average(0)
             [0.0000, 1.0000, 1.0000, 1.0000, 1.0000]
@@ -1167,7 +1168,7 @@ cdef class TimeSeries:
 
         Some more examples::
 
-            sage: v = finance.TimeSeries([1,2,3,4,5])
+            sage: v = stats.TimeSeries([1,2,3,4,5])
             sage: v.exponential_moving_average(1)
             [0.0000, 1.0000, 2.0000, 3.0000, 4.0000]
             sage: v.exponential_moving_average(0)
@@ -1202,7 +1203,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.sums()
             [1.0000, 2.0000, 3.0000, 5.0000, 8.0000]
@@ -1225,7 +1226,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.sum()
             8.0
@@ -1247,7 +1248,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.prod()
             6.0
@@ -1269,7 +1270,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.mean()
             1.6
@@ -1291,7 +1292,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.pow(2)
             [1.0000, 1.0000, 1.0000, 4.0000, 9.0000]
@@ -1317,7 +1318,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.moment(1)
             1.6
@@ -1350,7 +1351,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,2,3])
+            sage: v = stats.TimeSeries([1,2,3])
             sage: v.central_moment(2)
             0.6666666666666666
 
@@ -1386,7 +1387,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-2,3]); w = finance.TimeSeries([4,5,-10])
+            sage: v = stats.TimeSeries([1,-2,3]); w = stats.TimeSeries([4,5,-10])
             sage: v.covariance(w)
             -11.777777777777779
         """
@@ -1428,7 +1429,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([13,8,15,4,4,12,11,7,14,12])
+            sage: v = stats.TimeSeries([13,8,15,4,4,12,11,7,14,12])
             sage: v.autocovariance(0)
             14.4
             sage: mu = v.mean(); sum([(a-mu)^2 for a in v])/len(v)
@@ -1446,7 +1447,7 @@ cdef class TimeSeries:
         with `\gamma(0) = \sigma^2` and `\gamma(h) = 0` for `h\neq 0`. ::
 
             sage: set_random_seed(0)
-            sage: v = finance.TimeSeries(10^6)
+            sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('normal', 0, 5)
             [3.3835, -2.0055, 1.7882, -2.9319, -4.6827 ... -5.1868, 9.2613, 0.9274, -6.2282, -8.7652]
             sage: v.autocovariance(0)
@@ -1480,7 +1481,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-2,3]); w = finance.TimeSeries([4,5,-10])
+            sage: v = stats.TimeSeries([1,-2,3]); w = stats.TimeSeries([4,5,-10])
             sage: v.correlation(w)
             -0.558041609...
             sage: v.covariance(w)/(v.standard_deviation() * w.standard_deviation())
@@ -1514,7 +1515,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([13,8,15,4,4,12,11,7,14,12])
+            sage: v = stats.TimeSeries([13,8,15,4,4,12,11,7,14,12])
             sage: v.autocorrelation()
             -0.1875
             sage: v.autocorrelation(1)
@@ -1526,7 +1527,7 @@ cdef class TimeSeries:
             sage: v.autocorrelation(3)
             0.18055555555555555
 
-            sage: finance.TimeSeries([1..1000]).autocorrelation()
+            sage: stats.TimeSeries([1..1000]).autocorrelation()
             0.997
         """
         return self.autocovariance(k) / self.variance(bias=True)
@@ -1548,7 +1549,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.variance()
             0.8
@@ -1557,9 +1558,9 @@ cdef class TimeSeries:
 
         TESTS::
 
-            sage: finance.TimeSeries([1]).variance()
+            sage: stats.TimeSeries([1]).variance()
             0.0
-            sage: finance.TimeSeries([]).variance()
+            sage: stats.TimeSeries([]).variance()
             0.0
         """
         if self._length <= 1:
@@ -1592,7 +1593,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,1,1,2,3]); v
+            sage: v = stats.TimeSeries([1,1,1,2,3]); v
             [1.0000, 1.0000, 1.0000, 2.0000, 3.0000]
             sage: v.standard_deviation()
             0.8944271909...
@@ -1601,9 +1602,9 @@ cdef class TimeSeries:
 
         TESTS::
 
-            sage: finance.TimeSeries([1]).standard_deviation()
+            sage: stats.TimeSeries([1]).standard_deviation()
             0.0
-            sage: finance.TimeSeries([]).standard_deviation()
+            sage: stats.TimeSeries([]).standard_deviation()
             0.0
         """
         return sqrt(self.variance(bias=bias))
@@ -1646,9 +1647,9 @@ cdef class TimeSeries:
         Notice that if we make a Brownian motion random walk, there
         is no difference if we change the standard deviation. ::
 
-            sage: set_random_seed(0); finance.TimeSeries(10^6).randomize('normal').sums().range_statistic()
+            sage: set_random_seed(0); stats.TimeSeries(10^6).randomize('normal').sums().range_statistic()
             1897.8392602...
-            sage: set_random_seed(0); finance.TimeSeries(10^6).randomize('normal',0,100).sums().range_statistic()
+            sage: set_random_seed(0); stats.TimeSeries(10^6).randomize('normal',0,100).sums().range_statistic()
             1897.8392602...
         """
         cdef Py_ssize_t j, k, n = self._length
@@ -1682,7 +1683,7 @@ cdef class TimeSeries:
         biased and slightly overestimates. ::
 
             sage: set_random_seed(0)
-            sage: bm = finance.TimeSeries(10^5).randomize('normal').sums(); bm
+            sage: bm = stats.TimeSeries(10^5).randomize('normal').sums(); bm
             [0.6767, 0.2756, 0.6332, 0.0469, -0.8897 ... 152.2437, 151.5327, 152.7629, 152.9169, 152.9084]
             sage: bm.hurst_exponent()
             0.527450972...
@@ -1692,6 +1693,10 @@ cdef class TimeSeries:
         Hurst exponent as 0.706511951... ::
 
             sage: set_random_seed(0)
+            sage: import sage.finance.all as finance
+            doctest:warning...
+            DeprecationWarning: the package sage.finance is deprecated
+            See https://trac.sagemath.org/32427 for details.
             sage: fbm = finance.fractional_brownian_motion_simulation(0.7,0.1,10^5,1)[0]
             sage: fbm.hurst_exponent()
             0.706511951...
@@ -1709,7 +1714,7 @@ cdef class TimeSeries:
 
             sage: set_random_seed(0)
             sage: y = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,100)
-            sage: finance.TimeSeries([z.hurst_exponent() for z in y]).mean()
+            sage: stats.TimeSeries([z.hurst_exponent() for z in y]).mean()
             0.57984822577934...
 
         We compute the mean Hurst exponent of 100 simulated Markov switching
@@ -1718,7 +1723,7 @@ cdef class TimeSeries:
             sage: set_random_seed(0)
             sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,0.5,0.95,3)
             sage: y = msm.simulations(1000,100)
-            sage: finance.TimeSeries([z.hurst_exponent() for z in y]).mean()
+            sage: stats.TimeSeries([z.hurst_exponent() for z in y]).mean()
             0.286102325623705...
         """
         # We use disjoint blocks of size 8, 16, 32, ....
@@ -1760,7 +1765,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-4,3,-2.5,-4])
+            sage: v = stats.TimeSeries([1,-4,3,-2.5,-4])
             sage: v.min()
             -4.0
             sage: v.min(index=True)
@@ -1798,7 +1803,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-4,3,-2.5,-4,3])
+            sage: v = stats.TimeSeries([1,-4,3,-2.5,-4,3])
             sage: v.max()
             3.0
             sage: v.max(index=True)
@@ -1835,7 +1840,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1..10])
+            sage: v = stats.TimeSeries([1..10])
             sage: v.clip_remove(3,7)
             [3.0000, 4.0000, 5.0000, 6.0000, 7.0000]
             sage: v.clip_remove(3)
@@ -1917,7 +1922,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
+            sage: v = stats.TimeSeries([5,4,1.3,2,8,10,3,-5]); v
             [5.0000, 4.0000, 1.3000, 2.0000, 8.0000, 10.0000, 3.0000, -5.0000]
             sage: v.histogram(3)
             ([1, 4, 3], [(-5.0, 0.0), (0.0, 5.0), (5.0, 10.0)])
@@ -1980,7 +1985,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1..50])
+            sage: v = stats.TimeSeries([1..50])
             sage: v.plot_histogram(bins=10)
             Graphics object consisting of 10 graphics primitives
 
@@ -2024,7 +2029,7 @@ cdef class TimeSeries:
 
         Here we look at the candlestick plot for Brownian motion::
 
-            sage: v = finance.TimeSeries(1000).randomize()
+            sage: v = stats.TimeSeries(1000).randomize()
             sage: v.plot_candlestick(bins=20)
             Graphics object consisting of 40 graphics primitives
         """
@@ -2083,7 +2088,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1,-3,4.5,-2])
+            sage: v = stats.TimeSeries([1,-3,4.5,-2])
             sage: w = v.numpy(copy=False); w
             array([ 1. , -3. ,  4.5, -2. ])
             sage: type(w)
@@ -2154,38 +2159,38 @@ cdef class TimeSeries:
         We generate 5 uniform random numbers in the interval [0,1]::
 
             sage: set_random_seed(0)
-            sage: finance.TimeSeries(5).randomize()
+            sage: stats.TimeSeries(5).randomize()
             [0.8685, 0.2816, 0.0229, 0.1456, 0.7314]
 
         We generate 5 uniform random numbers from 5 to `5+2=7`::
 
             sage: set_random_seed(0)
-            sage: finance.TimeSeries(10).randomize('uniform', 5, 2)
+            sage: stats.TimeSeries(10).randomize('uniform', 5, 2)
             [6.7369, 5.5632, 5.0459, 5.2911, 6.4628, 5.2412, 5.2010, 5.2761, 5.5813, 5.5439]
 
         We generate 5 normal random values with mean 0 and variance 1. ::
 
             sage: set_random_seed(0)
-            sage: finance.TimeSeries(5).randomize('normal')
+            sage: stats.TimeSeries(5).randomize('normal')
             [0.6767, -0.4011, 0.3576, -0.5864, -0.9365]
 
         We generate 10 normal random values with mean 5 and variance 2. ::
 
             sage: set_random_seed(0)
-            sage: finance.TimeSeries(10).randomize('normal', 5, 2)
+            sage: stats.TimeSeries(10).randomize('normal', 5, 2)
             [6.3534, 4.1978, 5.7153, 3.8273, 3.1269, 2.9598, 3.7484, 6.7472, 3.8986, 4.6271]
 
         We generate 5 values using the semicircle distribution. ::
 
             sage: set_random_seed(0)
-            sage: finance.TimeSeries(5).randomize('semicircle')
+            sage: stats.TimeSeries(5).randomize('semicircle')
             [0.7369, -0.9541, 0.4628, -0.7990, -0.4187]
 
         We generate 1 million normal random values and create a frequency
         histogram. ::
 
             sage: set_random_seed(0)
-            sage: a = finance.TimeSeries(10^6).randomize('normal')
+            sage: a = stats.TimeSeries(10^6).randomize('normal')
             sage: a.histogram(10)[0]
             [36, 1148, 19604, 130699, 340054, 347870, 137953, 21290, 1311, 35]
 
@@ -2235,14 +2240,14 @@ cdef class TimeSeries:
         We generate 5 values distributed with respect to the uniform
         distribution over the interval [0,1]::
 
-            sage: v = finance.TimeSeries(5)
+            sage: v = stats.TimeSeries(5)
             sage: set_random_seed(0)
             sage: v.randomize('uniform')
             [0.8685, 0.2816, 0.0229, 0.1456, 0.7314]
 
         We now test that the mean is indeed 0.5::
 
-            sage: v = finance.TimeSeries(10^6)
+            sage: v = stats.TimeSeries(10^6)
             sage: set_random_seed(0)
             sage: v.randomize('uniform').mean()
             0.50069085...
@@ -2274,14 +2279,14 @@ cdef class TimeSeries:
         distribution with mean 0 and standard deviation 1::
 
             sage: set_random_seed(0)
-            sage: v = finance.TimeSeries(5)
+            sage: v = stats.TimeSeries(5)
             sage: v.randomize('normal')
             [0.6767, -0.4011, 0.3576, -0.5864, -0.9365]
 
         We now test that the mean is indeed 0::
 
             sage: set_random_seed(0)
-            sage: v = finance.TimeSeries(10^6)
+            sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('normal').mean()
             6.2705472723...
 
@@ -2289,7 +2294,7 @@ cdef class TimeSeries:
         to 5::
 
             sage: set_random_seed(0)
-            sage: v = finance.TimeSeries(10^6)
+            sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('normal', 2, 5).mean()
             2.0003135273...
         """
@@ -2327,21 +2332,21 @@ cdef class TimeSeries:
         We generate 5 values distributed with respect to the semicircle
         distribution located at center::
 
-            sage: v = finance.TimeSeries(5)
+            sage: v = stats.TimeSeries(5)
             sage: set_random_seed(0)
             sage: v.randomize('semicircle')
             [0.7369, -0.9541, 0.4628, -0.7990, -0.4187]
 
         We now test that the mean is indeed the center::
 
-            sage: v = finance.TimeSeries(10^6)
+            sage: v = stats.TimeSeries(10^6)
             sage: set_random_seed(0)
             sage: v.randomize('semicircle').mean()
             0.0007207497...
 
         The same test with center equal to 2::
 
-            sage: v = finance.TimeSeries(10^6)
+            sage: v = stats.TimeSeries(10^6)
             sage: set_random_seed(0)
             sage: v.randomize('semicircle', 2).mean()
             2.0007207497...
@@ -2378,14 +2383,14 @@ cdef class TimeSeries:
         distribution with mean 0 and standard deviation 1::
 
             sage: set_random_seed(0)
-            sage: v = finance.TimeSeries(5)
+            sage: v = stats.TimeSeries(5)
             sage: v.randomize('lognormal')
             [1.9674, 0.6696, 1.4299, 0.5563, 0.3920]
 
         We now test that the mean is indeed `\sqrt{e}`::
 
             sage: set_random_seed(0)
-            sage: v = finance.TimeSeries(10^6)
+            sage: v = stats.TimeSeries(10^6)
             sage: v.randomize('lognormal').mean()
             1.647351973...
             sage: exp(0.5)
@@ -2397,7 +2402,7 @@ cdef class TimeSeries:
         0 and standard deviation 1::
 
             sage: set_random_seed(0)
-            sage: w = finance.TimeSeries(5)
+            sage: w = stats.TimeSeries(5)
             sage: w.randomize('normal')
             [0.6767, -0.4011, 0.3576, -0.5864, -0.9365]
             sage: exp(w)
@@ -2443,19 +2448,19 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1..9]); v
+            sage: v = stats.TimeSeries([1..9]); v
             [1.0000, 2.0000, 3.0000, 4.0000, 5.0000, 6.0000, 7.0000, 8.0000, 9.0000]
             sage: w = v.fft(); w
             [45.0000, -4.5000, 12.3636, -4.5000, 5.3629, -4.5000, 2.5981, -4.5000, 0.7935]
 
         We get just the series of real parts of ::
 
-            sage: finance.TimeSeries([w[0]]) + w[1:].scale_time(2)
+            sage: stats.TimeSeries([w[0]]) + w[1:].scale_time(2)
             [45.0000, -4.5000, -4.5000, -4.5000, -4.5000]
 
         An example with an even number of terms::
 
-            sage: v = finance.TimeSeries([1..10]); v
+            sage: v = stats.TimeSeries([1..10]); v
             [1.0000, 2.0000, 3.0000, 4.0000, 5.0000, 6.0000, 7.0000, 8.0000, 9.0000, 10.0000]
             sage: w = v.fft(); w
             [55.0000, -5.0000, 15.3884, -5.0000, 6.8819, -5.0000, 3.6327, -5.0000, 1.6246, -5.0000]
@@ -2514,7 +2519,7 @@ cdef class TimeSeries:
 
         EXAMPLES::
 
-            sage: v = finance.TimeSeries([1..10]); v
+            sage: v = stats.TimeSeries([1..10]); v
             [1.0000, 2.0000, 3.0000, 4.0000, 5.0000, 6.0000, 7.0000, 8.0000, 9.0000, 10.0000]
             sage: v.ifft()
             [5.1000, -5.6876, 1.4764, -1.0774, 0.4249, -0.1000, -0.2249, 0.6663, -1.2764, 1.6988]
@@ -2548,7 +2553,7 @@ cdef new_time_series(Py_ssize_t length):
 
     This uses ``new_time_series`` implicitly::
 
-        sage: v = finance.TimeSeries([1,-3,4.5,-2])
+        sage: v = stats.TimeSeries([1,-3,4.5,-2])
         sage: v.__copy__()
         [1.0000, -3.0000, 4.5000, -2.0000]
     """
@@ -2571,20 +2576,23 @@ def unpickle_time_series_v1(bytes v, Py_ssize_t n):
 
     EXAMPLES::
 
-        sage: v = finance.TimeSeries([1,2,3])
+        sage: v = stats.TimeSeries([1,2,3])
         sage: s = v.__reduce__()[1][0]
         sage: type(s)
         <type 'bytes'>
-        sage: sage.finance.time_series.unpickle_time_series_v1(s,3)
+        sage: sage.stats.time_series.unpickle_time_series_v1(s,3)
         [1.0000, 2.0000, 3.0000]
-        sage: sage.finance.time_series.unpickle_time_series_v1(s+s,6)
+        sage: sage.stats.time_series.unpickle_time_series_v1(s+s,6)
         [1.0000, 2.0000, 3.0000, 1.0000, 2.0000, 3.0000]
-        sage: sage.finance.time_series.unpickle_time_series_v1(b'',0)
+        sage: sage.stats.time_series.unpickle_time_series_v1(b'',0)
         []
     """
     cdef TimeSeries t = new_time_series(n)
     memcpy(t._values, PyBytes_AsString(v), n * sizeof(double))
     return t
+
+
+register_unpickle_override('sage.finance.time_series', 'unpickle_time_series_v1', unpickle_time_series_v1)
 
 
 def autoregressive_fit(acvs):
@@ -2616,6 +2624,7 @@ def autoregressive_fit(acvs):
     models the logarithms of a stock price sequence. ::
 
         sage: set_random_seed(0)
+        sage: import sage.finance.all as finance
         sage: y = finance.multifractal_cascade_random_walk_simulation(3700,0.02,0.01,0.01,1000,100)
 
     For each walk below we replace the walk by the walk but where each
@@ -2629,7 +2638,7 @@ def autoregressive_fit(acvs):
     We make a time series out of the expected values of the
     autocovariances::
 
-        sage: ac = finance.TimeSeries([finance.TimeSeries(z).mean() for z in c])
+        sage: ac = stats.TimeSeries([stats.TimeSeries(z).mean() for z in c])
         sage: ac
         [3.9962, 3.9842, 3.9722, 3.9601, 3.9481 ... 1.7144, 1.7033, 1.6922, 1.6812, 1.6701]
 
@@ -2641,7 +2650,7 @@ def autoregressive_fit(acvs):
     We compute the autoregression coefficients matching the above
     autocovariances::
 
-        sage: F = finance.autoregressive_fit(ac); F
+        sage: F = stats.autoregressive_fit(ac); F
         [0.9982, -0.0002, -0.0002, 0.0003, 0.0001 ... 0.0002, -0.0002, -0.0000, -0.0002, -0.0014]
 
     Note that the sum is close to 1::
@@ -2696,7 +2705,7 @@ def autoregressive_fit(acvs):
     We find that overall the model beats naive linear forecasting by 35
     percent! ::
 
-        sage: s = finance.TimeSeries([s2[i]/s1[i] for i in range(len(s1))])
+        sage: s = stats.TimeSeries([s2[i]/s1[i] for i in range(len(s1))])
         sage: s.mean()
         1.354073591877...
     """

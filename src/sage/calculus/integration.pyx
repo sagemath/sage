@@ -28,7 +28,6 @@ AUTHORS:
 
 from cysignals.signals cimport sig_on, sig_off
 from memory_allocator cimport MemoryAllocator
-import inspect
 
 from sage.rings.real_double import RDF
 from sage.libs.gsl.all cimport *
@@ -582,19 +581,21 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
         _xu[i] = <double> xu[i]
 
     if not callable(func):
-        # constant
+        # constant. Note that all Expression objects are callable.
         v = float(1)
         for i in range(dim):
             v *= _xu[i] - _xl[i]
         return (v * <double?> func, 0.0)
 
     elif not isinstance(func, Wrapper_rdf):
-        if inspect.isfunction(func):
-            vars = sage_getargspec(func)[0]
-        elif hasattr(func, 'arguments'):
+        # func is either an Expression or another callable.
+        try:
             vars = func.arguments()
-        else:
-            vars = func.variables()
+        except AttributeError:
+            try:
+                vars = func.variables()
+            except AttributeError:
+                vars = sage_getargspec(func)[0]
 
         target_dim = dim + len(params)
         if len(vars) < target_dim:
@@ -611,7 +612,8 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
                               "more items in upper and lower limits"
                              ).format(len(vars), tuple(vars), target_dim))
 
-        if not inspect.isfunction(func):
+        from sage.symbolic.expression import is_Expression
+        if is_Expression(func):
             if params:
                 to_sub = dict(zip(vars[-len(params):], params))
                 func = func.subs(to_sub)

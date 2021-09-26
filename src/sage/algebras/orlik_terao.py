@@ -620,7 +620,9 @@ class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
         self._ambient = OT
 
         if action_on_groundset is None:
-            def action_on_groundset(g, x): return g(x)
+
+            def action_on_groundset(g, x):
+                return g(x)
 
         self._groundset_action = action_on_groundset
 

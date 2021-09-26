@@ -152,8 +152,8 @@ class WeylLieConformalAlgebra(LieConformalAlgebraWithStructureCoefficients):
                                  .format(ngens,gram_matrix))
         elif (gram_matrix is None):
             if ngens is None:
-                ngens = 2;
-            A = identity_matrix(R,ngens/2)
+                ngens = 2
+            A = identity_matrix(R, ngens // 2)
             from sage.matrix.special import block_matrix
             gram_matrix = block_matrix([[R.zero(),A],[-A,R.zero()]])
 

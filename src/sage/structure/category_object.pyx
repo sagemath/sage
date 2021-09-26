@@ -967,11 +967,7 @@ cpdef normalize_names(Py_ssize_t ngens, names):
         Traceback (most recent call last):
         ...
         IndexError: the number of names must equal the number of generators
-        sage: nn(None, "a")  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: 'NoneType' object cannot be interpreted as an index
-        sage: nn(None, "a")  # py3
+        sage: nn(None, "a")
         Traceback (most recent call last):
         ...
         TypeError: 'NoneType' object cannot be interpreted as an integer

@@ -216,9 +216,9 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         from sage.categories.integral_domains import IntegralDomains
         from sage.categories.fields import Fields
-        if self in Fields:
+        if self in Fields():
             return self
-        elif self in IntegralDomains:
+        elif self in IntegralDomains():
             return PuiseuxSeriesRing(self._laurent_series_ring.fraction_field())
         else:
             raise ValueError('must be an integral domain')

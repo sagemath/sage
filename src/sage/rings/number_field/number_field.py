@@ -7315,23 +7315,23 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         INPUT:
 
-        -  ``n`` - positive integer
+        -  ``n`` -- positive integer
 
-        - ``all`` - bool.  If False (default), return a primitive
-          `n`-th root of unity in this field, or raise a ValueError
-          exception if there are none.  If True, return a list of
+        - ``all`` -- boolean.  If ``False`` (default), return a primitive
+          `n`-th root of unity in this field, or raise a ``ValueError``
+          exception if there are none.  If ``True``, return a list of
           all primitive `n`-th roots of unity in this field
           (possibly empty).
 
-        .. note::
+        .. NOTE::
 
-           To obtain the maximal order of a root of unity in this field,
-           use self.number_of_roots_of_unity().
+            To obtain the maximal order of a root of unity in this field,
+            use :meth:`number_of_roots_of_unity`.
 
-        .. note::
+        .. NOTE::
 
-           We do not create the full unit group since that can be
-           expensive, but we do use it if it is already known.
+            We do not create the full unit group since that can be
+            expensive, but we do use it if it is already known.
 
         EXAMPLES::
 
@@ -7374,23 +7374,23 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             -3/2*a - 1/2
         """
         try:
-            return self._unit_group.zeta(n,all)
+            return self._unit_group.zeta(n, all)
         except AttributeError:
             pass
         try:
-            return self._unit_group_no_proof.zeta(n,all)
+            return self._unit_group_no_proof.zeta(n, all)
         except AttributeError:
             pass
 
         K = self
         n = ZZ(n)
         if n <= 0:
-            raise ValueError("n (=%s) must be positive"%n)
+            raise ValueError("n (=%s) must be positive" % n)
         if n == 1:
             if all:
-                return [K(1)]
+                return [K.one()]
             else:
-                return K(1)
+                return K.one()
         elif n == 2:
             if all:
                 return [K(-1)]
@@ -7403,11 +7403,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             # Factor the n-th cyclotomic polynomial over K.
             f = K.pari_polynomial('y')
             factors = f.nffactor(pari.polcyclo(n)).component(1)
-            roots = [K(-g.polcoef(0)) for g in factors if g.poldegree() == 1]
+            roots = (K(-g.polcoef(0)) for g in factors if g.poldegree() == 1)
             if all:
-                return roots
-            if roots:
-                return roots[0]
+                return list(roots)
+            try:
+                return next(roots)
+            except StopIteration:
+                pass
         raise ValueError("There are no %s roots of unity in self." % n.ordinal_str())
 
     def zeta_order(self):

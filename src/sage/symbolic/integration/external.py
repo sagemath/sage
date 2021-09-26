@@ -245,8 +245,7 @@ def giac_integrator(expression, v, a=None, b=None):
     Check that :trac:`29966` is fixed::
 
         sage: giac_integrator(sqrt(x + sqrt(x)), x)
-        1/12*(2*sqrt(x)*(4*sqrt(x) + 1) - 3)*sqrt(x + sqrt(x))
-        - 1/8*log(abs(2*sqrt(x + sqrt(x)) - 2*sqrt(x) - 1))
+        1/12*(2*sqrt(x)*(4*sqrt(x) + 1) - 3)*sqrt(x + sqrt(x))...
     """
     ex = expression._giac_()
     if a is None:

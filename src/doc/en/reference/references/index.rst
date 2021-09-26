@@ -607,8 +607,13 @@ REFERENCES:
               (2006) 306--317.
 
 .. [BDP2013] Thomas Brüstle, Grégoire Dupont, Matthieu Pérotin
-   *On Maximal Green Sequences*
-   :arxiv:`1205.2050`
+             *On Maximal Green Sequences*
+             :arxiv:`1205.2050`
+
+.. [BDPR2011] Marcus Bishop, J. Matthew Douglass, Götz Pfeiffer, Gerhard Röhrle,
+              *Computations for Coxeter arrangements and Solomon's descent algebra:
+              Groups of rank three and four*; Journal of symbolic computation,
+              volume 50, 03-2013, pp. 139-158.
 
 .. [BDMW2010] \K. A. Browning, J. F. Dillon, M. T. McQuistan, and A. J. Wolfe,
               *An APN permutation in dimension six*; in Finite Fields: Theory
@@ -5901,6 +5906,10 @@ REFERENCES:
 
 **Z**
 
+.. [Zag2008]  \D. Zagier, *Elliptic Modular Forms and Their Applications*,
+          In: Ranestad K. (eds) The 1-2-3 of Modular Forms. Universitext.
+          Springer, Berlin, Heidelberg. (2008) :doi:`10.1007/978-3-540-74119-0_1`
+
 .. [ZBLRYV2015] \W. Zhang, Z. Bao, D. Lin, V. Rijmen, B. Yang, and I. Verbauwhede,
                 *RECTANGLE: A bit-slice lightweight block cipher suitable for
                 multiple platforms*; in
@@ -5910,6 +5919,11 @@ REFERENCES:
              778: L-BFGS-B, FORTRAN routines for large scale bound
              constrained optimization. ACM Transactions on
              Mathematical Software, Vol 23, Num. 4, pp.550--560, 1997.
+
+.. [ZC2005] Afra Zomorodian and Gunnar Carlsson
+            "Computing Persistent Homology",
+            Discrete and Computational Geometry (2005)
+            :doi:`10.1007/s00454-004-1146-y`
 
 .. [ZDYBXJZ2019] \W. Zhang, T. Ding, B. Yang, Z. Bao, Z. Xiang, F. Ji, X. Zhao.
                  *KNOT: Algorithm Specifications and Supporting Document*

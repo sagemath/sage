@@ -2044,7 +2044,7 @@ class WedgeOfSimplicialSets(PushoutOfSimplicialSets, Factors):
         return s
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -2250,7 +2250,7 @@ class DisjointUnionOfSimplicialSets(PushoutOfSimplicialSets, Factors):
         return s
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::
@@ -2590,7 +2590,7 @@ class ReducedConeOfSimplicialSet(QuotientOfSimplicialSet):
         return 'Reduced cone of {}'.format(self._base)
 
     def _latex_(self):
-        """
+        r"""
         LaTeX representation
 
         EXAMPLES::

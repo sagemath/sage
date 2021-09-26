@@ -5,17 +5,15 @@ AUTHORS:
 
 - Reimundo Heluani (2019-08-09): Initial implementation.
 """
-
-
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.all import factorial
 from sage.misc.misc_c import prod
@@ -171,7 +169,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             TB[alpha[1]] + 3*B[alpha[2] + alpha[3]]
         """
         if self.is_zero():
-            return "0";
+            return "0"
         p = self.parent()
         if p._names:
             terms = [("T^({0}){1}".format(k[1],
@@ -217,7 +215,7 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             6T^{(3)}\alpha_{1}
         """
         if self.is_zero():
-            return "0";
+            return "0"
         p = self.parent()
         try:
             names = p.latex_variable_names()

@@ -613,7 +613,7 @@ cdef class Cache_givaro(Cache_base):
 
     def _element_log_repr(self, FiniteField_givaroElement e):
         """
-        Return ``str(i)`` where ``self` is ``gen^i`` with ``gen``
+        Return ``str(i)`` where ``self`` is ``gen^i`` with ``gen``
         being the *internal* multiplicative generator of this finite
         field.
 
@@ -1603,6 +1603,19 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: c is b
             True
             sage: copy(5r) == 5r
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: S.<b> = GF(5^2); S
+            Finite Field in b of size 5^2
+            sage: c = deepcopy(b); c
+            b
+            sage: c is b
             True
         """
         return self

@@ -1128,17 +1128,17 @@ def request_wolfram_alpha(input, verbose=False):
          'timing',
          'version']
     """
-    # import compatible with py2 and py3
     from urllib.parse import urlencode
-    from urllib.request import Request, build_opener, HTTPCookieProcessor
+    from urllib.request import Request, build_opener, HTTPCookieProcessor, HTTPSHandler
     import json
     from http.cookiejar import CookieJar
+    from ssl import SSLContext
 
     # we need cookies for this...
     cj = CookieJar()
-    opener = build_opener(HTTPCookieProcessor(cj))
+    opener = build_opener(HTTPCookieProcessor(cj), HTTPSHandler(context=SSLContext()))
     # build initial query for code
-    req = Request("http://www.wolframalpha.com/input/api/v1/code")
+    req = Request("https://www.wolframalpha.com/input/api/v1/code")
     resp = opener.open(req)
     # the website returns JSON containing the code
     page_data = json.loads(resp.read().decode("utf-8"))
@@ -1218,7 +1218,7 @@ def parse_moutput_from_json(page_data, verbose=False):
         sage: page_data = request_wolfram_alpha('Sin[x]')           # optional internet
         sage: L = parse_moutput_from_json(page_data)                # optional internet
         sage: sorted(L)                                             # optional internet
-        ['-Cos[x]', '{{x == 0}}', '{{x == Pi C[1], Element[C[1], Integers]}}']
+        ['-Cos[x]', '{x == 0}', '{x == Pi C[1], Element[C[1], Integers]}']
 
     TESTS::
 

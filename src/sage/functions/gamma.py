@@ -933,7 +933,8 @@ def psi(x, *args, **kwds):
 symbol_table['functions']['psi'] = psi
 
 
-def _swap_psi(a, b): return psi(b, a)
+def _swap_psi(a, b):
+    return psi(b, a)
 register_symbol(_swap_psi, {'giac': 'Psi'})
 
 

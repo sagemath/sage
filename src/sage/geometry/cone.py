@@ -2017,7 +2017,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         r"""
         Generate some points of ``self``.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K = cones.nonnegative_orthant(3)
             sage: K.some_elements()  # indirect doctest
@@ -3547,14 +3547,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             Traceback (most recent call last):
             ...
             NotImplementedError: this function is not implemented for unbounded polyhedra
-            sage: ray = Cone([(1, 1)]
-            Traceback (most recent call last):
-            ...
-            SyntaxError: unexpected EOF while parsing
+            sage: ray = Cone([(1, 1)])
             sage: ray.an_affine_basis()
             Traceback (most recent call last):
             ...
-            NameError: name 'ray' is not defined
+            NotImplementedError: this function is not implemented for unbounded polyhedra
             sage: line = Cone([(1,0), (-1,0)])
             sage: line.an_affine_basis()
             Traceback (most recent call last):
@@ -4509,9 +4506,12 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The primal Normaliz algorithm, see [Normaliz]_.
         """
         if self.is_strictly_convex():
-            def not_in_linear_subspace(x): return True
+
+            def not_in_linear_subspace(x):
+                return True
         else:
             linear_subspace = self.linear_subspace()
+
             def not_in_linear_subspace(x):
                 # "x in linear_subspace" does not work, due to absence
                 # of coercion maps as of Trac ticket #10513.

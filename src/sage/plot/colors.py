@@ -810,11 +810,7 @@ class Color(object):
             ...
             ZeroDivisionError: float division by zero
 
-            sage: papayawhip / yellow  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: float() argument must be a string or a number
-            sage: papayawhip / yellow  # py3
+            sage: papayawhip / yellow
             Traceback (most recent call last):
             ...
             TypeError: float() argument must be a string or a number, not 'Color'
@@ -1232,12 +1228,7 @@ def float_to_html(r, g, b):
 
     TESTS::
 
-        sage: float_to_html((0.2, 0.6, 0.8))  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: float_to_html() takes exactly 3 arguments (1 given)
-
-        sage: float_to_html((0.2, 0.6, 0.8))  # py3
+        sage: float_to_html((0.2, 0.6, 0.8))
         Traceback (most recent call last):
         ...
         TypeError: float_to_html() missing 2 required positional arguments: 'g' and 'b'
@@ -1278,12 +1269,7 @@ def float_to_integer(r, g, b):
 
     TESTS::
 
-        sage: float_to_integer((0.2, 0.6, 0.8))  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: float_to_integer() takes exactly 3 arguments (1 given)
-
-        sage: float_to_integer((0.2, 0.6, 0.8))  # py3
+        sage: float_to_integer((0.2, 0.6, 0.8))
         Traceback (most recent call last):
         ...
         TypeError: float_to_integer() missing 2 required positional arguments: 'g' and 'b'

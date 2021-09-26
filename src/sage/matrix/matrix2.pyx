@@ -11005,6 +11005,16 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: Matrix entries must be from a field, not Ring of integers modulo 6
+
+        Test for :trac:`10563`::
+
+            sage: R = FractionField(PolynomialRing(RationalField(),'a'))
+            sage: a = R.gen()
+            sage: A = matrix(R,[[1,a],[a,1]])
+            sage: A.jordan_form()
+            [ a + 1|     0]
+            [------+------]
+            [     0|-a + 1]
         """
         from sage.matrix.constructor import block_diagonal_matrix, jordan_block, diagonal_matrix
         from sage.combinat.partition import Partition

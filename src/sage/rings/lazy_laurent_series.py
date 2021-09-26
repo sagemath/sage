@@ -355,7 +355,7 @@ class LazyModuleElement(Element):
 
     def _richcmp_(self, other, op):
         r"""
-        Compare ``self` with ``other`` with respect to the comparison
+        Compare ``self`` with ``other`` with respect to the comparison
         operator ``op``.
 
         Equality is verified if the corresponding coefficients of both series

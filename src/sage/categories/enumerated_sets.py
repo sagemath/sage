@@ -171,7 +171,7 @@ class EnumeratedSets(CategoryWithAxiom):
             +------------------------+---------------------------------+
             | ``unrank``             | ``_iterator_from_unrank``       |
             +------------------------+---------------------------------+
-            | ``list`                | ``_iterator_from_next``         |
+            | ``list``               | ``_iterator_from_next``         |
             +------------------------+---------------------------------+
 
             It is also possible to override ``__iter__`` method itself. Then

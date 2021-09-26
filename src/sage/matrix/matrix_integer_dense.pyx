@@ -4099,24 +4099,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
         A, d = self._invert_flint()
         return A / d
 
-    def _invert_unit(self):
-        r"""
-        Deprecated method
-
-        TESTS::
-
-            sage: m = matrix(ZZ, [1])._invert_unit()
-            doctest:warning
-            ...
-            DeprecationWarning: _invert_unit() is deprecated, use inverse_of_unit() instead
-            See https://trac.sagemath.org/25084 for details.
-            sage: m
-            [1]
-        """
-        from sage.misc.superseded import deprecation_cython as deprecation
-        deprecation(25084, "_invert_unit() is deprecated, use inverse_of_unit() instead")
-        return self.inverse_of_unit()
-
     def inverse_of_unit(self):
         r"""
         If self is a matrix with determinant `1` or `-1` return the inverse of

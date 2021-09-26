@@ -1,10 +1,5 @@
 cd $SAGE_ROOT/src/sage/
 
-echo "Testing databases/knotinfo_db.py"
-sage -t --long --optional="sage,database_knotinfo" databases/knotinfo_db.py  || sdh_die "Error testing KnotInfo databases"
-
-echo "Testing knots/knotinfo.py"
-sage -t --optional="sage,database_knotinfo" knots/knotinfo.py  || sdh_die "Error testing KnotInfo funcionality"
-
-echo "Testing knots/link.py"
-sage -t --optional="sage,database_knotinfo" knots/link.py  || sdh_die "Error testing KnotInfo funcionality"
+FILES="databases/ features/ knots/"
+echo "Testing: "$FILES
+sage -tp --long --optional="sage,database_knotinfo" $FILES  || sdh_die "Error testing KnotInfo databases"

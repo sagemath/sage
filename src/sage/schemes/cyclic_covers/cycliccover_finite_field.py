@@ -446,7 +446,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
 
         INPUT:
 
-        - ``s`` -- the integer s
+        - ``s`` -- integer
 
         OUTPUT:
 
@@ -455,27 +455,36 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
 
         ALGORITHM:
 
-        Let W_{e, s} to be the Qq-vector space of differential forms of the form
-            G x^e y^{-s} dx
-        where \deg G \leq d - 1.
+        Let `W_{e, s}` to be the Qq-vector space of differential forms
+        of the form:
 
-        Let v = [G_0, ..., G_{d-1}] represent G
+            .. MATH:: G x^e y^{-s} dx
 
-        There is a map
+        where `\deg G \leq d - 1`.
+
+        Let `v = [G_0, ..., G_{d-1}]` represent G
+
+        There is a map:
+
             `MH_{e, s} : W_{e, s} \to W_{e-1, s}`
-        and a function to
-            `DH: \NN \times \NN \to  Qq`
-        such that
 
-        `G x^e y^{-s} dx \cong H x^{e - 1} y^{-s} dx`
+        and a function to:
+
+            `DH: \NN \times \NN \to  Qq`
+
+        such that:
+
+            `G x^e y^{-s} dx \cong H x^{e - 1} y^{-s} dx`
 
         where `H = DH(e, s)^{-1} * MH_{e,s} ( G )`
 
-        The matrix `MH_{e, s}` can be written as
-             `MH_{e, s}  = M0_{s} + e * M1_{s}`
-        similarly
-            `DH_{e,s} = D0_{s} + e * D1_{s}`
+        The matrix `MH_{e, s}` can be written as:
 
+             `MH_{e, s}  = M0_{s} + e * M1_{s}`
+
+        similarly:
+
+            `DH_{e,s} = D0_{s} + e * D1_{s}`
 
         TESTS::
 

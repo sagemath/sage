@@ -429,7 +429,7 @@ cdef class RingMap(Morphism):
         sage: parent(f)
         Set of Homomorphisms from Integer Ring to Integer Ring
         sage: type(f)
-        <type 'sage.rings.morphism.RingMap'>
+        <class 'sage.rings.morphism.RingMap'>
     """
     def _repr_type(self):
         """
@@ -437,7 +437,7 @@ cdef class RingMap(Morphism):
 
             sage: f = sage.rings.morphism.RingMap(ZZ.Hom(ZZ))
             sage: type(f)
-            <type 'sage.rings.morphism.RingMap'>
+            <class 'sage.rings.morphism.RingMap'>
             sage: f._repr_type()
             'Set-theoretic ring'
             sage: f
@@ -490,9 +490,9 @@ cdef class RingMap_lift(RingMap):
             sage: f(3)
             3
             sage: type(f(3))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(f)
-            <type 'sage.rings.morphism.RingMap_lift'>
+            <class 'sage.rings.morphism.RingMap_lift'>
 
         An invalid example::
 
@@ -585,7 +585,7 @@ cdef class RingMap_lift(RingMap):
 
             sage: f = Zmod(8).lift()
             sage: type(f)
-            <type 'sage.rings.morphism.RingMap_lift'>
+            <class 'sage.rings.morphism.RingMap_lift'>
             sage: hash(f) == hash(f)
             True
             sage: {f: 1}[f]
@@ -621,11 +621,11 @@ cdef class RingMap_lift(RingMap):
 
             sage: f = Zmod(8).lift()
             sage: type(f)
-            <type 'sage.rings.morphism.RingMap_lift'>
+            <class 'sage.rings.morphism.RingMap_lift'>
             sage: f(-1)                       # indirect doctest
             7
             sage: type(f(-1))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self.to_S(x.lift())
 
@@ -1748,7 +1748,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
               Defn: x |--> x
                     y |--> x + y
             sage: type(phi)
-            <type 'sage.rings.morphism.RingHomomorphism_im_gens'>
+            <class 'sage.rings.morphism.RingHomomorphism_im_gens'>
 
         Here's another example where the domain isn't free::
 
@@ -1997,7 +1997,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: R.<x> = ZZ[]
             sage: s = R.hom([x+1])
             sage: type(s)
-            <type 'sage.rings.morphism.RingHomomorphism_im_gens'>
+            <class 'sage.rings.morphism.RingHomomorphism_im_gens'>
             sage: hash(s) == hash(s)
             True
             sage: {s: 1}[s]
@@ -2183,7 +2183,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             sage: PS = S['t']
             sage: phi = PR.hom(f,PS)
             sage: type(phi)
-            <type 'sage.rings.morphism.RingHomomorphism_from_base'>
+            <class 'sage.rings.morphism.RingHomomorphism_from_base'>
             sage: psi = copy(phi); psi    # indirect doctest
             Ring morphism:
               From: Univariate Polynomial Ring in t over Multivariate Polynomial Ring in x, y over Rational Field
@@ -2213,7 +2213,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
             sage: PS = S['t']
             sage: phi = PR.hom(f,PS)
             sage: type(phi)
-            <type 'sage.rings.morphism.RingHomomorphism_from_base'>
+            <class 'sage.rings.morphism.RingHomomorphism_from_base'>
             sage: psi = copy(phi); psi    # indirect doctest
             Ring morphism:
               From: Univariate Polynomial Ring in t over Multivariate Polynomial Ring in x, y over Rational Field
@@ -2379,7 +2379,7 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
         sage: f = S.hom([x^2])
         sage: g = f.extend_to_fraction_field()
         sage: type(g)
-        <type 'sage.rings.morphism.RingHomomorphism_from_fraction_field'>
+        <class 'sage.rings.morphism.RingHomomorphism_from_fraction_field'>
     """
     def __init__(self, parent, morphism):
         r"""
@@ -2513,7 +2513,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
               To:   Ring of integers modulo 6
               Defn: Natural quotient map
             sage: type(f)
-            <type 'sage.rings.morphism.RingHomomorphism_cover'>
+            <class 'sage.rings.morphism.RingHomomorphism_cover'>
         """
         RingHomomorphism.__init__(self, parent)
 
@@ -2526,7 +2526,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
 
             sage: f = Zmod(6).cover()
             sage: type(f)
-            <type 'sage.rings.morphism.RingHomomorphism_cover'>
+            <class 'sage.rings.morphism.RingHomomorphism_cover'>
             sage: f(-5)                 # indirect doctest
             1
 
@@ -2558,7 +2558,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
             sage: f._repr_defn()
             'Natural quotient map'
             sage: type(f)
-            <type 'sage.rings.morphism.RingHomomorphism_cover'>
+            <class 'sage.rings.morphism.RingHomomorphism_cover'>
         """
         return "Natural quotient map"
 
@@ -2605,7 +2605,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
             sage: S.<a,b> = R.quo(x^2 + y^2)
             sage: phi = S.cover()
             sage: type(phi)
-            <type 'sage.rings.morphism.RingHomomorphism_cover'>
+            <class 'sage.rings.morphism.RingHomomorphism_cover'>
             sage: hash(phi) == hash(phi)
             True
             sage: {phi: 1}[phi]
@@ -2841,7 +2841,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
             sage: S.<a, b, c> = R.quo(x^3 + y^3 + z^3)
             sage: phi = S.hom([b, c, a])
             sage: type(phi)
-            <type 'sage.rings.morphism.RingHomomorphism_from_quotient'>
+            <class 'sage.rings.morphism.RingHomomorphism_from_quotient'>
             sage: hash(phi) == hash(phi)
             True
             sage: {phi: 1}[phi]

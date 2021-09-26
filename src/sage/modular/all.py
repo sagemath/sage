@@ -40,3 +40,5 @@ from .cusps_nf import NFCusp, NFCusps, Gamma0_NFCusps
 from .btquotients.all import *
 
 from .pollack_stevens.all import *
+
+from .quasimodform.all import *

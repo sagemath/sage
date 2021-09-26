@@ -567,22 +567,12 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
         Check that :trac:`26038` is fixed::
 
-            sage: a = 1 # py2
-            ....: b = 2
-            Traceback (most recent call last):
-            ...
-            SyntaxError: doctest is not a single statement
-            sage: a = 1 # py3
+            sage: a = 1
             ....: b = 2
             Traceback (most recent call last):
             ...
             SyntaxError: multiple statements found while compiling a single statement
-            sage: a = 1 # py2
-            ....: @syntax error
-            Traceback (most recent call last):
-            ...
-            SyntaxError: invalid syntax
-            sage: a = 1 # py3
+            sage: a = 1
             ....: @syntax error
             Traceback (most recent call last):
             ...

@@ -1,4 +1,4 @@
-$(PYTHON) | ipython jupyter_client $(PYTHON_TOOLCHAIN) scandir
+$(PYTHON) debugpy matplotlib_inline ipython jupyter_client scandir | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

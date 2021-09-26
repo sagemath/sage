@@ -7,15 +7,15 @@ AUTHORS:
 
 """
 
-#******************************************************************************
+# *****************************************************************************
 #       Copyright (C) 2019 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.all import binomial
 from sage.sets.family import Family
@@ -121,11 +121,8 @@ class LieConformalAlgebraWithStructureCoefficients(
         INPUT:
 
         - ``s_coeff`` -- a dictionary as in
-          :class:`LieConformalAlgebraWithStructureCoefficients<sage.\
-          algebras.lie_conformal_algebras.lie_conformal_algebra_with_\
-          structure_coefficients.LieConformalAlgebraWithStructure\
-          Coefficients>`.
-        - ``index_set` -- A finite enumerated set indexing the
+          :class:`~sage.algebras.lie_conformal_algebras.lie_conformal_algebra_with_structure_coefficients.LieConformalAlgebraWithStructureCoefficients`.
+        - ``index_set`` -- a finite enumerated set indexing the
           generators (not counting the central elements).
         - ``ce`` -- a tuple of ``str``; a list of names for the central
           generators of this Lie conformal algebra

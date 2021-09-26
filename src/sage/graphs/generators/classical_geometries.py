@@ -218,7 +218,7 @@ def _orthogonal_polar_graph(m, q, sign="+", point_type=[0]):
     EXAMPLES:
 
     Petersen graph::
-`
+
         sage: from sage.graphs.generators.classical_geometries import _orthogonal_polar_graph
         sage: g=_orthogonal_polar_graph(3,5,point_type=[2,3])
         sage: g.is_strongly_regular(parameters=True)

@@ -141,7 +141,6 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-import inspect
 
 from .tri_plot import TrianglePlot
 from .index_face_set import IndexFaceSet
@@ -153,7 +152,7 @@ from .texture import Texture
 from sage.ext.fast_eval import fast_float_arg
 
 from sage.functions.trig import cos, sin
-from sage.misc.sageinspect import sage_getargspec
+from sage.misc.sageinspect import sage_getargspec, is_function_or_cython_function
 
 
 class _Coordinates(object):
@@ -394,7 +393,7 @@ def _find_arguments_for_callable(func):
         sage: _find_arguments_for_callable(operator.add)
         []
     """
-    if inspect.isfunction(func):
+    if is_function_or_cython_function(func):
         pass
     elif hasattr(func, 'arguments'):
         # Might be a symbolic function with arguments

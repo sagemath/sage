@@ -240,7 +240,7 @@ sdh_pip_install() {
     echo "Installing $PKG_NAME"
     mkdir -p dist
     rm -f dist/*.whl
-    python3 -m pip wheel --use-feature=in-tree-build --wheel-dir=dist --no-binary :all: --verbose --no-deps --no-index --isolated --no-build-isolation "$@" || \
+    python3 -m pip wheel --use-feature=in-tree-build --wheel-dir=dist --no-binary :all: --verbose --no-deps --no-index --isolated --no-build-isolation --ignore-requires-python "$@" || \
         sdh_die "Error building a wheel for $PKG_NAME"
 
     sdh_store_and_pip_install_wheel .
@@ -275,6 +275,17 @@ sdh_store_wheel() {
 }
 
 sdh_store_and_pip_install_wheel() {
+    local pip_options=""
+    while [ $# -gt 0 ]; do
+        case $1 in
+            -*) pip_options="$pip_options $1"
+                ;;
+            *)
+                break
+                ;;
+        esac
+        shift
+    done
     sdh_store_wheel "$@"
     if [ -n "$SAGE_SUDO" ]; then
         # Trac #29585: Do the SAGE_DESTDIR staging of the wheel installation
@@ -295,7 +306,7 @@ sdh_store_and_pip_install_wheel() {
         local sudo=""
         local root=""
     fi
-    $sudo sage-pip-install $root "$wheel" || \
+    $sudo sage-pip-install $root $pip_options "$wheel" || \
         sdh_die "Error installing ${wheel##*/}"
     if [ -n "${SAGE_PKG_DIR}" ]; then
         # Record name of installed distribution name for uninstallation.

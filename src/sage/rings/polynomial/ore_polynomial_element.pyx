@@ -1317,9 +1317,9 @@ cdef class OrePolynomial(AlgebraElement):
             sage: Frob = k.frobenius_endomorphism(3)
             sage: S.<x> = k['x', Frob]
 
-            sage: D = S.random_element()
-            sage: P = S.random_element() * D
-            sage: Q = S.random_element() * D
+            sage: D = S.random_element(degree=2)
+            sage: P = S.random_element(degree=2) * D
+            sage: Q = S.random_element(degree=2) * D
             sage: L = P.left_lcm(Q)
             sage: U = left_lcm_cofactor(P, Q)
             sage: (U*P).right_monic() == L
@@ -1394,9 +1394,9 @@ cdef class OrePolynomial(AlgebraElement):
             sage: Frob = k.frobenius_endomorphism(3)
             sage: S.<x> = k['x', Frob]
 
-            sage: D = S.random_element()
-            sage: P = D * S.random_element()
-            sage: Q = D * S.random_element()
+            sage: D = S.random_element(degree=2)
+            sage: P = D * S.random_element(degree=2)
+            sage: Q = D * S.random_element(degree=2)
             sage: L = P.right_lcm(Q)
             sage: U = right_lcm_cofactor(P, Q)
             sage: (P*U).left_monic() == L

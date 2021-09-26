@@ -924,20 +924,27 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def __copy__(self):
         """
-        Return a copy of the integer.
-
         EXAMPLES::
 
             sage: n = 2
             sage: copy(n)
             2
             sage: copy(n) is n
-            False
+            True
         """
-        cdef Integer z
-        z = PY_NEW(Integer)
-        mpz_set(z.value, self.value)
-        return z
+        # integers are immutable
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: n = 2
+            sage: deepcopy(n) is n
+            True
+        """
+        # integers are immutable
+        return self
 
     def list(self):
         """

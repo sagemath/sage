@@ -121,6 +121,7 @@ Number Theory
 * :doc:`General Hecke Algebras and Hecke Modules <hecke/index>`
 * :doc:`Modular Symbols <modsym/index>`
 * :doc:`Modular Forms <modfrm/index>`
+* :doc:`Quasimodular Forms <quasimodfrm/index>`
 * :doc:`Modular Forms for Hecke Triangle Groups <modfrm_hecketriangle/index>`
 * :doc:`Modular Abelian Varieties <modabvar/index>`
 * :doc:`Miscellaneous Modular-Form-Related Modules <modmisc/index>`
@@ -168,4 +169,3 @@ Indices and Tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

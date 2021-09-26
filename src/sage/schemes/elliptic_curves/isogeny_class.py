@@ -840,8 +840,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
                 if js: # seen codomain already -- up to isomorphism
                     j = js[0]
                     if phi.codomain()!=curves[j]:
-                        iso = E2.isomorphism_to(curves[j])
-                        phi.set_post_isomorphism(iso)
+                        phi = E2.isomorphism_to(curves[j]) * phi
                     assert phi.domain()==curves[i] and phi.codomain()==curves[j]
                     add_tup([i,j,d,phi])
                 else:

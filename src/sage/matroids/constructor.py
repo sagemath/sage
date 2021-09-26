@@ -692,11 +692,11 @@ def Matroid(groundset=None, data=None, **kwds):
     base_ring = None
     if 'field' in kwds:
         base_ring = kwds.pop('field')
-        if check and base_ring not in Fields:
+        if check and base_ring not in Fields():
             raise TypeError("{} is not a field".format(base_ring))
     elif 'ring' in kwds:
         base_ring = kwds.pop('ring')
-        if check and base_ring not in Rings:
+        if check and base_ring not in Rings():
             raise TypeError("{} is not a ring".format(base_ring))
 
     # "key" is the kind of data we got

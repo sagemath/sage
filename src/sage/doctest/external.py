@@ -37,6 +37,7 @@ Array = multiprocessing.Array
 
 import urllib.error
 from urllib.request import Request, urlopen
+from ssl import SSLContext
 
 # Functions in this module whose name is of the form 'has_xxx' tests if the
 # software xxx is available to Sage.
@@ -46,7 +47,7 @@ def has_internet():
     """
     Test if Internet is available.
 
-    Failure of connecting to the site "http://www.sagemath.org" within a second
+    Failure of connecting to the site "https://www.sagemath.org" within a second
     is regarded as internet being not available.
 
     EXAMPLES::
@@ -55,9 +56,9 @@ def has_internet():
         sage: has_internet() # random, optional -- internet
         True
     """
-    req = Request("http://www.sagemath.org",headers={"User-Agent":"sage-doctest"})
+    req = Request("https://www.sagemath.org",headers={"User-Agent":"sage-doctest"})
     try:
-        urlopen(req,timeout=1)
+        urlopen(req, timeout=1, context=SSLContext())
         return True
     except urllib.error.URLError:
         return False

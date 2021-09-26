@@ -257,7 +257,7 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
         morphism_domain = dynamical_system.domain()
 
         if not isinstance(morphism_domain.base_ring(), pAdicBaseGeneric):
-            if morphism_domain.base_ring() in NumberFields:
+            if morphism_domain.base_ring() in NumberFields():
                 if domain is None and ideal != None:
                     if is_AffineSpace(morphism_domain):
                         domain = Berkovich_Cp_Affine(morphism_domain.base_ring(), ideal)

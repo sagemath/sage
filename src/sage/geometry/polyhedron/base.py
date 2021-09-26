@@ -213,16 +213,11 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         If the backend supports precomputed data, ``pref_rep`` is ignored::
 
-            sage: p = Polyhedron_field(parent, Vrep, 'nonsense',  # py3
+            sage: p = Polyhedron_field(parent, Vrep, 'nonsense',
             ....:                      Vrep_minimal=True, Hrep_minimal=True, pref_rep='Vrep')
             Traceback (most recent call last):
             ...
             TypeError: _init_Hrepresentation() takes 3 positional arguments but 9 were given
-            sage: p = Polyhedron_field(parent, Vrep, 'nonsense',  # py2
-            ....:                      Vrep_minimal=True, Hrep_minimal=True, pref_rep='Vrep')
-            Traceback (most recent call last):
-            ...
-            TypeError: _init_Hrepresentation() takes exactly 3 arguments (9 given)
 
         The empty polyhedron is detected when the Vrepresentation is given with generator;
         see :trac:`29899`::
@@ -676,7 +671,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
         """
         from sage.categories.rings import Rings
 
-        if base_ring not in Rings:
+        if base_ring not in Rings():
             raise ValueError("invalid base ring")
 
         try:
@@ -11415,10 +11410,10 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         - ``names`` -- names for the coordinates on the affine hull.
 
-        - optional arguments accepted by :meth:`~sage.geometry.polyhedron.base.affine_hull_projection`.
+        - optional arguments accepted by :meth:`affine_hull_projection`.
 
         The default chart is determined by the optional arguments of
-        :meth:`~sage.geometry.polyhedron.base.affine_hull_projection`.
+        :meth:`affine_hull_projection`.
 
         EXAMPLES::
 

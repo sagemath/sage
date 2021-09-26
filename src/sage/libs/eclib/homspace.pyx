@@ -283,6 +283,6 @@ cdef class ModularSymbols:
                 inc(iter)
         MS = MatrixSpace(base_ring, n, sparse=True)
         # The next step is the bottleneck.
-        ans = MS(entries=d)
+        ans = MS(d)
         return ans
 

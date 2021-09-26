@@ -111,7 +111,7 @@ class DatabaseKnotInfo(PythonModule):
 
         sage: from sage.features.databases import DatabaseKnotInfo
         sage: DatabaseKnotInfo().is_present()  # optional: database_knotinfo
-        FeatureTestResult('sage.knots.knotinfo', True)
+        FeatureTestResult('database_knotinfo', True)
     """
     def __init__(self):
         r"""

@@ -17,6 +17,7 @@ Maps between them
 .. toctree::
    :maxdepth: 2
 
+   sage/schemes/elliptic_curves/hom
    sage/schemes/elliptic_curves/weierstrass_morphism
    sage/schemes/elliptic_curves/ell_curve_isogeny
    sage/schemes/elliptic_curves/isogeny_small_degree

@@ -458,7 +458,6 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
         ...
         ValueError: Invalid profile
     """
-    from inspect import isfunction
     from sage.rings.infinity import Infinity
     if truncation_type == 'zero':
         truncation_type = 0
@@ -482,7 +481,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
             while profile and profile[-1] == truncation_type:
                 profile = profile[:-1]
             new_profile = tuple(profile)
-        elif isfunction(profile):
+        elif callable(profile):
             # profile is a function: turn it into a tuple.  if
             # truncation_type not specified, set it to 'infinity' if
             # the function is ever infinite; otherwise set it to
@@ -522,7 +521,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
                 while e and e[-1] == truncation_type:
                     e = e[:-1]
                 e = tuple(e)
-            elif isfunction(e):
+            elif callable(e):
                 # e is a function: turn it into a tuple.  if
                 # truncation_type not specified, set it to 'infinity'
                 # if the function is ever infinite; otherwise set it
@@ -541,7 +540,7 @@ def normalize_profile(profile, precision=None, truncation_type='auto', p=2, gene
             if isinstance(k, (list, tuple)):
                 # k is a list or tuple: use it as is.
                 k = tuple(k)
-            elif isfunction(k):
+            elif callable(k):
                 # k is a function: turn it into a tuple.
                 if precision is None:
                     k_precision = 100

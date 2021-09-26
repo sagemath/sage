@@ -2184,6 +2184,16 @@ cdef class RealIntervalFieldElement(RingElement):
         """
         return self
 
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: a = RIF(3.5)
+            sage: deepcopy(a) is  a
+            True
+        """
+        return self
+
     # Interval-specific functions
     def lower(self, rnd=None):
         """

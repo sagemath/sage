@@ -2313,7 +2313,7 @@ class ExpressionTreeWalker(Converter):
         return ex.operands()
 
 class SubstituteFunction(ExpressionTreeWalker):
-    def __init__(self, ex, original, new):
+    def __init__(self, ex, *args):
         """
         A class that walks the tree and replaces occurrences of a
         function with another.
@@ -2322,12 +2322,24 @@ class SubstituteFunction(ExpressionTreeWalker):
 
             sage: from sage.symbolic.expression_conversions import SubstituteFunction
             sage: foo = function('foo'); bar = function('bar')
+            sage: s = SubstituteFunction(foo(x), {foo: bar})
+            sage: s(1/foo(foo(x)) + foo(2))
+            1/bar(bar(x)) + bar(2)
+
+        TESTS::
+
+        Check that the old syntax still works::
+
             sage: s = SubstituteFunction(foo(x), foo, bar)
             sage: s(1/foo(foo(x)) + foo(2))
             1/bar(bar(x)) + bar(2)
         """
-        self.original = original
-        self.new = new
+        if len(args) == 2:
+            self.substitutions = {args[0]: args[1]}
+        elif len(args) == 1:
+            self.substitutions = args[0]
+        else:
+            raise TypeError('SubstituteFunction takes either one or two arguments.')
         self.ex = ex
 
     def composition(self, ex, operator):
@@ -2336,7 +2348,7 @@ class SubstituteFunction(ExpressionTreeWalker):
 
             sage: from sage.symbolic.expression_conversions import SubstituteFunction
             sage: foo = function('foo'); bar = function('bar')
-            sage: s = SubstituteFunction(foo(x), foo, bar)
+            sage: s = SubstituteFunction(foo(x), {foo: bar})
             sage: f = foo(x)
             sage: s.composition(f, f.operator())
             bar(x)
@@ -2350,8 +2362,9 @@ class SubstituteFunction(ExpressionTreeWalker):
             sage: s.composition(f, f.operator())
             bar(sin(x))
         """
-        if operator == self.original:
-            return self.new(*[self(_) for _ in ex.operands()])
+        new = self.substitutions.get(operator)
+        if new is not None:
+            return new(*[self(_) for _ in ex.operands()])
         else:
             return super(SubstituteFunction, self).composition(ex, operator)
 
@@ -2361,7 +2374,7 @@ class SubstituteFunction(ExpressionTreeWalker):
 
             sage: from sage.symbolic.expression_conversions import SubstituteFunction
             sage: foo = function('foo'); bar = function('bar')
-            sage: s = SubstituteFunction(foo(x), foo, bar)
+            sage: s = SubstituteFunction(foo(x), {foo: bar})
             sage: f = foo(x).diff(x)
             sage: s.derivative(f, f.operator())
             diff(bar(x), x)
@@ -2373,12 +2386,13 @@ class SubstituteFunction(ExpressionTreeWalker):
 
             sage: f = function('f')
             sage: g = function('g')
-            sage: f(g(x)).diff(x).substitute_function(g, sin)
+            sage: f(g(x)).diff(x).substitute_function({g: sin})
             cos(x)*D[0](f)(sin(x))
 
         """
-        if operator.function() == self.original:
-            return operator.change_function(self.new)(*[self(_) for _ in ex.operands()])
+        new = self.substitutions.get(operator.function())
+        if new is not None:
+            return operator.change_function(new)(*[self(_) for _ in ex.operands()])
         else:
             return operator(*[self(_) for _ in ex.operands()])
 

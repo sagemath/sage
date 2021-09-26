@@ -2028,7 +2028,7 @@ cdef class ModularSymbolNumerical:
 
         INPUT:
 
-        - ``r``, ``rr` -- two Rationals
+        - ``r``, ``rr`` -- two Rationals
 
         - ``espQ`` and ``espQ`` -- two Integers
 

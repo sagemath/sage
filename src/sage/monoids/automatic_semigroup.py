@@ -302,7 +302,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 ambient = one.parent()
             else:
                 raise ValueError("AutomaticSemigroup requires at least one generator or `one` to determine the ambient space")
-        elif ambient not in Sets:
+        elif ambient not in Sets():
             raise ValueError("ambient (=%s) should be a set" % ambient)
 
         # if mul is not operator.mul  and category.is_subcategory(Monoids().Subobjects())  error

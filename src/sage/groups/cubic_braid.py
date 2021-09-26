@@ -66,8 +66,6 @@ AUTHORS:
 
 - Sebastian Oehms 2019-02-16, initial version.
 """
-
-
 # ****************************************************************************
 #       Copyright (C) 2019 Sebastian Oehms <seb.oehms@gmail.com>
 #
@@ -77,7 +75,6 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 
 
 from sage.misc.cachefunc import cached_method
@@ -1278,10 +1275,10 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         Extensions to the _element constructor of :class:`FinitelyPresentedGroup`:
         new functionalities are:
 
-            -- constructing element from an element of the attached classical group
-               (embedded and not embedded)
-            -- constructing element from an element of the attached permutation group
-            -- constructing element from an element of the attached reflection group
+        - constructing element from an element of the attached classical group
+           (embedded and not embedded)
+        - constructing element from an element of the attached permutation group
+        - constructing element from an element of the attached reflection group
 
         INPUT:
 
@@ -1308,7 +1305,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         """
         if hasattr(x, 'parent'):
             parent = x.parent()
-            map_to   = parent.convert_map_from(self)
+            map_to = parent.convert_map_from(self)
             if map_to is not None:
                 if hasattr(map_to, 'lift'):
                     return map_to.lift(x)

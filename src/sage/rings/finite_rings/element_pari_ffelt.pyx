@@ -554,8 +554,6 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
 
     def __copy__(self):
         """
-        Return a copy of ``self``.
-
         TESTS::
 
             sage: k.<a> = FiniteField(3^3, impl='pari_ffelt')
@@ -563,15 +561,26 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             a
             sage: b = copy(a); b
             a
-            sage: a == b
-            True
             sage: a is b
-            False
+            True
         """
-        cdef FiniteFieldElement_pari_ffelt x = self._new()
-        sig_on()
-        x.construct(self.val)
-        return x
+        # immutable
+        return self
+
+    def __deepcopy__(self, memo):
+        """
+        TESTS::
+
+            sage: k.<a> = FiniteField(3^3, impl='pari_ffelt')
+            sage: a
+            a
+            sage: b = deepcopy(a); b
+            a
+            sage: a is b
+            True
+        """
+        # immutable
+        return self
 
     cpdef _richcmp_(self, other, int op):
         """

@@ -1164,10 +1164,15 @@ def edge_connectivity(G,
 
         p.set_objective(p.sum(weight(l) * in_cut[frozenset((u,v))] for u,v,l in g.edge_iterator()))
 
-    obj = p.solve(objective_only=value_only, log=verbose)
+    obj = p.solve(log=verbose)
+
+    in_cut = p.get_values(in_cut, convert=bool, tolerance=integrality_tolerance)
 
     if use_edge_labels is False:
-        obj = Integer(round(obj))
+        if g.is_directed():
+            obj = sum(1 for u, v in g.edge_iterator(labels=False) if in_cut[u, v])
+        else:
+            obj = sum(1 for u, v in g.edge_iterator(labels=False) if in_cut[frozenset((u, v))])
 
     if value_only:
         return obj
@@ -1175,7 +1180,6 @@ def edge_connectivity(G,
     else:
         val = [obj]
 
-        in_cut = p.get_values(in_cut, convert=bool, tolerance=integrality_tolerance)
         in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
 
         if g.is_directed():
@@ -1456,20 +1460,19 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         # the vertex connectivity is >= k.
         p.add_constraint(p.sum(in_set[1, v] for v in g) <= k-1)
         try:
-            p.solve(objective_only=True, log=verbose)
+            p.solve(log=verbose)
             return False
         except MIPSolverException:
             return True
 
-    else:
-        p.set_objective(p.sum(in_set[1, v] for v in g))
+    p.set_objective(p.sum(in_set[1, v] for v in g))
 
-    if value_only:
-        return Integer(round(p.solve(objective_only=True, log=verbose)))
-
-    val = Integer(round(p.solve(log=verbose)))
+    val = p.solve(log=verbose)
 
     in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
+
+    if value_only:
+        return sum(1 for v in g if in_set[1, v])
 
     cut = []
     a = []
@@ -3277,7 +3280,7 @@ cdef class TriconnectivitySPQR:
 
         OUTPUT:
 
-        - If ``check`` is set to ``True``` and a cut vertex is found, the cut
+        - If ``check`` is set to ``True`` and a cut vertex is found, the cut
           vertex is returned. If no cut vertex is found, return ``-1``.
         - If ``check`` is set to ``False``, ``-1`` is returned.
         """

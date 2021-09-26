@@ -310,6 +310,14 @@ class Link(SageObject):
             ...
             ValueError: invalid PD code: each segment must appear twice
 
+        Segments in PD code must be labelled by positive integers::
+
+            sage: code = [(2, 5, 3, 0), (4, 1, 5, 2), (0, 3, 1, 4)]
+            sage: Knot(code)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid PD code: segment label 0 not allowed
+
             sage: L = Link(5)
             Traceback (most recent call last):
             ...
@@ -323,21 +331,29 @@ class Link(SageObject):
             Link with 1 component represented by 4 crossings
             sage: L.braid()
             s0*s1*s0*s1^-1
+
+        PD code can be a list of 4-tuples::
+
+            sage: code = [(2, 5, 3, 6), (4, 1, 5, 2), (6, 3, 1, 4)]
+            sage: K = Knot(code); K.alexander_polynomial()
+            t^-1 - 1 + t
         """
         if isinstance(data, list):
+            # either oriented Gauss or PD code
             if len(data) != 2 or not all(isinstance(i, list) for i in data[0]):
-                for i in data:
-                    if len(i) != 4:
-                        raise ValueError("invalid PD code: crossings must be represented by four segments")
-                    else:
-                        flat = flatten(data)
-                        if any(flat.count(i) != 2 for i in set(flat)):
-                            raise ValueError("invalid PD code: each segment must appear twice")
-                self._pd_code = data
+                # PD code
+                if any(len(i) != 4 for i in data):
+                    raise ValueError("invalid PD code: crossings must be represented by four segments")
+                flat = flatten(data)
+                if 0 in flat:
+                    raise ValueError("invalid PD code: segment label 0 not allowed")
+                if any(flat.count(i) != 2 for i in set(flat)):
+                    raise ValueError("invalid PD code: each segment must appear twice")
+                self._pd_code = [list(vertex) for vertex in data]
                 self._oriented_gauss_code = None
                 self._braid = None
-
             else:
+                # oriented Gauss code
                 flat = flatten(data[0])
                 if flat:
                     a, b = max(flat), min(flat)
@@ -353,9 +369,9 @@ class Link(SageObject):
                 # Remove all unused strands
                 support = sorted(set().union(*((abs(x), abs(x) + 1) for x in data.Tietze())))
                 d = {}
-                for i,s in enumerate(support):
-                    d[s] = i+1
-                    d[-s] = -i-1
+                for i, s in enumerate(support):
+                    d[s] = i + 1
+                    d[-s] = -i - 1
                 if not support:
                     B = BraidGroup(2)
                 else:
@@ -587,7 +603,6 @@ class Link(SageObject):
         """
         return not self.__eq__(other)
 
-
     def braid(self):
         r"""
         Return a braid representation of ``self``.
@@ -640,7 +655,7 @@ class Link(SageObject):
             n1 = b1.parent().strands()
             n2 = b2.parent().strands()
             t1 = list(b1.Tietze())
-            t2 = [sign(x)*(abs(x) + n1) for x in b2.Tietze()]
+            t2 = [sign(x) * (abs(x) + n1) for x in b2.Tietze()]
             B = BraidGroup(n1 + n2)
             self._braid = B(t1 + t2)
             return self._braid
@@ -655,16 +670,16 @@ class Link(SageObject):
         newedge = max(flatten(pd_code)) + 1
         for region in self.regions():
             n = len(region)
-            for i in range(n-1):
+            for i in range(n - 1):
                 a = region[i]
                 seifcirca = [x for x in seifert_circles if abs(a) in x]
-                for j in range(i+1,n):
+                for j in range(i + 1, n):
                     b = region[j]
                     seifcircb = [x for x in seifert_circles if abs(b) in x]
                     if seifcirca != seifcircb and sign(a) == sign(b):
                         tails, heads = self._directions_of_edges()
 
-                        newPD = deepcopy(pd_code)
+                        newPD = [list(vertex) for vertex in pd_code]
                         if sign(a) == 1:
                             C1 = newPD[newPD.index(heads[a])]
                             C1[C1.index(a)] = newedge + 1
@@ -2141,13 +2156,14 @@ class Link(SageObject):
         if len(self._isolated_components()) != 1:
             raise NotImplementedError("can only have one isolated component")
         pd = self.pd_code()
-        tails, heads = self._directions_of_edges()
-        available_edges = set(flatten(pd))
         if len(pd) == 1:
             if pd[0][0] == pd[0][1]:
                 return [[-pd[0][2]], [pd[0][0]], [pd[0][2], -pd[0][0]]]
             else:
                 return [[pd[0][2]], [-pd[0][0]], [-pd[0][2], pd[0][0]]]
+
+        tails, heads = self._directions_of_edges()
+        available_edges = set(flatten(pd))
 
         loops = [i for i in available_edges if heads[i] == tails[i]]
         available_edges = available_edges.union({-i for i in available_edges})
@@ -2511,7 +2527,7 @@ class Link(SageObject):
                 return -t**3
 
         cross = pd_code[0]
-        rest = deepcopy(pd_code[1:])
+        rest = [list(vertex) for vertex in pd_code[1:]]
         [a, b, c, d] = cross
         if a == b and c == d and len(rest) > 0:
             return (~t + t**(-5)) * Link(rest)._bracket()
@@ -2538,7 +2554,7 @@ class Link(SageObject):
                     cross[cross.index(b)] = a
             return -t**(-3) * Link(rest)._bracket()
         else:
-            rest_2 = deepcopy(rest)
+            rest_2 = [list(vertex) for vertex in rest]
             for cross in rest:
                 if d in cross:
                     cross[cross.index(d)] = a

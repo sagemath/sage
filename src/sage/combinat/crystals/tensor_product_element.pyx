@@ -1314,7 +1314,7 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         return repr(self.to_tableau())
 
     def _repr_diagram(self):
-        """
+        r"""
         Return a string representation of ``self`` as a diagram.
 
         EXAMPLES::

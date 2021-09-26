@@ -1,3 +1,6 @@
+"""
+Mobile posets
+"""
 # ****************************************************************************
 #       Copyright (C) 2020 Stefan Grosser <stefan.grosser1@gmail.com>
 #

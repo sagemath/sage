@@ -443,7 +443,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             Create the isotypic component of the action of ``G`` on
             ``self`` with irreducible character given by ``chi``.
 
-            .. SEEALSO:
+            .. SEEALSO::
 
                 -:class:`~sage.modules.with_basis.invariant.FiniteDimensionalTwistedInvariantModule`
 

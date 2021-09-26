@@ -49,6 +49,7 @@ from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.mpfi cimport *
 
 
+from sage.structure.parent cimport Parent
 from sage.structure.parent_base cimport ParentWithBase
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool_sgn
@@ -349,30 +350,52 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             mpz_set(denom.value, self.denom)
             return "new QuadraticExtension({}, {}, {})".format(a/denom, b/denom, self.D)
 
-    def __copy__(self):
+    cpdef _copy_for_parent(self, Parent parent):
         r"""
-        Returns a new copy of self.
+        Return a copy of ``self`` with the parent replaced by ``parent``.
 
-        TESTS::
+        EXAMPLES::
 
-            sage: K.<a> = QuadraticField(-3)
-            sage: b = a + 3
-            sage: c = b.__copy__()
-            sage: b
-            a + 3
-            sage: c
-            a + 3
-            sage: b is c
-            False
-            sage: b == c
+            sage: K.<a> = QuadraticField(3)
+            sage: L.<b> = K.change_names()
+            sage: La = a._copy_for_parent(L)
+            sage: La.parent() is L
+            True
+            sage: La == b
             True
         """
         cdef NumberFieldElement_quadratic x = <NumberFieldElement_quadratic>self._new()
         mpz_set(x.a, self.a)
         mpz_set(x.b, self.b)
         mpz_set(x.denom, self.denom)
+        x._set_parent(parent)
         return x
 
+    def __copy__(self):
+        r"""
+        TESTS::
+
+            sage: K.<a> = QuadraticField(-3)
+            sage: b = a + 3
+            sage: c = b.__copy__()
+            sage: b is c
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(self, memo):
+        r"""
+        TESTS::
+
+            sage: K.<a> = QuadraticField(-3)
+            sage: b = a + 3
+            sage: c = deepcopy(b)
+            sage: b is c
+            True
+        """
+        # immutable
+        return self
 
     def __cinit__(self):
         r"""

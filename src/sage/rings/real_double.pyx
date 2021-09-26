@@ -1203,6 +1203,16 @@ cdef class RealDoubleElement(FieldElement):
         """
         return self
 
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: r = RDF('-1.6')
+            sage: deepcopy(r) is r
+            True
+        """
+        return self
+
     def integer_part(self):
         """
         If in decimal this number is written ``n.defg``, returns ``n``.

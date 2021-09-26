@@ -2123,9 +2123,23 @@ class MPolynomialIdeal_singular_repr(
             sage: print("possible output from giac", flush=True); I.elimination_ideal([t, s], algorithm="giac") == J
             possible output...
             True
+
+        Check that the passed variables are actually variables of the ring
+        (:trac:`31414`)::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: I = R.ideal(x-y, z)
+            sage: I.elimination_ideal([x, R(0)])
+            Traceback (most recent call last):
+            ...
+            ValueError: not a ring variable: 0
         """
         if not isinstance(variables, (list, tuple)):
             variables = (variables,)
+        gens = self.ring().gens()
+        for v in variables:
+            if v not in gens:
+                raise ValueError("not a ring variable: %s" % v)
 
         if (algorithm is None or algorithm.lower() == 'libsingular'
                 or algorithm == 'libsingular:eliminate'):

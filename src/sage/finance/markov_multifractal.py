@@ -13,6 +13,8 @@ AUTHOR:
 TESTS::
 
     sage: msm = finance.MarkovSwitchingMultifractal(8,1.4,1.0,0.95,3)
+    doctest:warning...
+    DeprecationWarning: the package sage.finance is deprecated...
     sage: loads(dumps(msm)) == msm
     True
 """

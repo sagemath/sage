@@ -324,7 +324,7 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
         from sage.rings.number_field.number_field_base import is_NumberField
         model = "minimal" if minimal_models and is_NumberField(F) else None
         isogs = [E1.isogeny(kernel=ker, model=model) for ker in kernels]
-        [isog.set_pre_isomorphism(w) for isog in isogs]
+        isogs = [isog * w for isog in isogs]
         return isogs
 
     if l is None:
@@ -660,7 +660,7 @@ def isogenies_sporadic_Q(E, l=None, minimal_models=True):
     from sage.rings.number_field.number_field_base import is_NumberField
     model = "minimal" if minimal_models and is_NumberField(F) else None
     isog = Ew.isogeny(kernel=ker, degree=l, model=model, check=False)
-    isog.set_pre_isomorphism(E_to_Ew)
+    isog = isog * E_to_Ew
     return [isog]
 
 
@@ -822,7 +822,7 @@ def isogenies_5_0(E, minimal_models=True):
     model = "minimal" if minimal_models and is_NumberField(F) else None
     isogs = [Ew.isogeny(x**2+beta*x+gamma, model=model) for beta,gamma in zip(betas,gammas)]
     iso = E.isomorphism_to(Ew)
-    [isog.set_pre_isomorphism(iso) for isog in isogs]
+    isogs = [isog * iso for isog in isogs]
     return isogs
 
 def isogenies_5_1728(E, minimal_models=True):
@@ -921,13 +921,13 @@ def isogenies_5_1728(E, minimal_models=True):
     if square1:
         i = F(-1).sqrt()
         isogs = [Ew.isogeny(f) for f in [x**2+a/(1+2*i), x**2+a/(1-2*i)]]
-        [isog.set_post_isomorphism(isog.codomain().isomorphism_to(E)) for isog in isogs]
+        isogs = [isog.codomain().isomorphism_to(E) * isog for isog in isogs]
     # Type 2: if 5 is a square we have up to 4 (non-endomorphism) isogenies
     if square5:
         betas = sorted((x**4+20*a*x**2-80*a**2).roots(multiplicities=False))
         gammas = [(beta**2-2*a)/6 for beta in betas]
         isogs += [Ew.isogeny(x**2+beta*x+gamma, model=model) for beta,gamma in zip(betas,gammas)]
-    [isog.set_pre_isomorphism(iso) for isog in isogs]
+    isogs = [isog * iso for isog in isogs]
     return isogs
 
 def isogenies_7_0(E, minimal_models=True):
@@ -1026,8 +1026,7 @@ def isogenies_7_0(E, minimal_models=True):
     kers = [7*x-(2+6*t) for t in ts]
     kers = [k(x**3/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
-    if isogs:
-        [endo.set_post_isomorphism(endo.codomain().isomorphism_to(E)) for endo in isogs]
+    isogs = [endo.codomain().isomorphism_to(E) * endo for endo in isogs]
 
     # we may have up to 6 other isogenies:
     ts = (x**2-21).roots(multiplicities=False)
@@ -1038,7 +1037,7 @@ def isogenies_7_0(E, minimal_models=True):
         kers = [ker(x/s).monic() for s in ss]
         isogs += [Ew.isogeny(k, model=model) for k in kers]
 
-    [isog.set_pre_isomorphism(iso) for isog in isogs]
+    isogs = [isog * iso for isog in isogs]
     return isogs
 
 def isogenies_7_1728(E, minimal_models=True):
@@ -1127,7 +1126,7 @@ def isogenies_7_1728(E, minimal_models=True):
 
         kers = [ker(x/s) for s in ss]
         isogs += [Ew.isogeny(k.monic(), model=model) for k in kers]
-    [isog.set_pre_isomorphism(iso) for isog in isogs]
+    isogs = [isog * iso for isog in isogs]
     return isogs
 
 def isogenies_13_0(E, minimal_models=True):
@@ -1236,8 +1235,7 @@ def isogenies_13_0(E, minimal_models=True):
     kers = [13*x**2 + (78*t + 26)*x + 24*t + 40 for t in ts]
     kers = [k(x**3/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
-    if isogs:
-        [endo.set_post_isomorphism(endo.codomain().isomorphism_to(E)) for endo in isogs]
+    isogs = [endo.codomain().isomorphism_to(E) * endo for endo in isogs]
 
     # we may have up to 12 other isogenies:
     ts = sorted((x**4 + 7*x**3 + 20*x**2 + 19*x + 1).roots(multiplicities=False))
@@ -1253,7 +1251,7 @@ def isogenies_13_0(E, minimal_models=True):
         kers = [ker(x/s).monic() for s in ss]
         isogs += [Ew.isogeny(k, model=model) for k in kers]
 
-    [isog.set_pre_isomorphism(iso) for isog in isogs]
+    isogs = [isog * iso for isog in isogs]
 
     return isogs
 
@@ -1355,8 +1353,7 @@ def isogenies_13_1728(E, minimal_models=True):
     kers = [13*x**3 + (-26*i - 13)*x**2 + (-52*i - 13)*x - 2*i - 3 for i in ts]
     kers = [k(x**2/a).monic() for k in kers]
     isogs = [Ew.isogeny(k,model=model) for k in kers]
-    if isogs:
-        [endo.set_post_isomorphism(endo.codomain().isomorphism_to(E)) for endo in isogs]
+    isogs = [endo.codomain().isomorphism_to(E) * endo for endo in isogs]
 
     # we may have up to 12 other isogenies:
 
@@ -1380,7 +1377,7 @@ def isogenies_13_1728(E, minimal_models=True):
         kers = [ker(x/s).monic() for s in ss]
         isogs += [Ew.isogeny(k, model=model) for k in kers]
 
-    [isog.set_pre_isomorphism(iso) for isog in isogs]
+    isogs = [isog * iso for isog in isogs]
 
     return isogs
 

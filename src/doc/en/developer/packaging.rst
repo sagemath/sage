@@ -602,46 +602,48 @@ version, then the lower bound should be adjusted.
 
 .. _section-spkg-SPKG-txt:
 
-The SPKG.rst or SPKG.txt File
------------------------------
+The SPKG.rst File
+-----------------
 
-The ``SPKG.txt`` file should follow this pattern:
+The ``SPKG.rst`` file should follow this pattern:
 
 .. CODE-BLOCK:: text
 
-     = PACKAGE_NAME =
+     PACKAGE_NAME: One line description
 
-     == Description ==
+     Description
+     -----------
 
      What does the package do?
 
-     == License ==
+     License
+     -------
 
      What is the license? If non-standard, is it GPLv3+ compatible?
 
-     == Upstream Contact ==
+     Upstream Contact
+     ----------------
 
-     Provide information for upstream contact.
+     Provide information for upstream contact.  Usually just an URL.
 
-     == Dependencies ==
+     Dependencies
+     ------------
 
-     Put a bulleted list of dependencies here:
+     Only put special dependencies here that are not captured by the
+     ``dependencies`` file. Otherwise omit this section.
 
-     * python
-     * readline
+     Special Update/Build Instructions
+     ---------------------------------
 
-     == Special Update/Build Instructions ==
-
-     If the tarball was modified by hand and not via a spkg-src
-     script, describe what was changed.
+     If the tarball was modified by hand and not via an ``spkg-src``
+     script, describe what was changed. Otherwise omit this section.
 
 
-with ``PACKAGE_NAME`` replaced by the package name. Legacy
-``SPKG.txt`` files have an additional changelog section, but this
+with ``PACKAGE_NAME`` replaced by the SPKG name (= the directory name in
+``build/pkgs``).
+
+Legacy ``SPKG.txt`` files have an additional changelog section, but this
 information is now kept in the git repository.
-
-It is now also possible to use an ``SPKG.rst`` file instead, with the same
-sections.
 
 .. _section-dependencies:
 
@@ -1019,9 +1021,10 @@ For Python packages available from PyPI, you can use::
 
 This automatically downloads the most recent version from PyPI and also
 obtains most of the necessary information by querying PyPI.
-The ``dependencies`` file may need editing, and also you may want to set
-lower and upper bounds for acceptable package versions in the file
-``install-requires.txt``.
+The ``dependencies`` file may need editing (watch out for warnings regarding
+``--no-deps`` that Sage issues during installation of the package!).
+Also you may want to set lower and upper bounds for acceptable package versions
+in the file ``install-requires.txt``.
 
 To create a pip package rather than a normal package, you can use::
 

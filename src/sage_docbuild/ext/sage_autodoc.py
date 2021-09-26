@@ -47,7 +47,8 @@ from sphinx.util.inspect import isdescriptor, \
 
 from sage.misc.sageinspect import (sage_getdoc_original,
                                    sage_getargspec, isclassinstance,
-                                   sage_formatargspec)
+                                   sage_formatargspec,
+                                   is_function_or_cython_function)
 from sage.misc.lazy_import import LazyImport
 
 # This is used to filter objects of classes that inherit from
@@ -1076,7 +1077,7 @@ class FunctionDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
         # whose doc string coincides with that of f and is thus different from
         # that of the class CachedFunction. In that situation, we want that f is documented.
         # This is part of trac #9976.
-        return (inspect.isfunction(member) or inspect.isbuiltin(member)
+        return (is_function_or_cython_function(member) or inspect.isbuiltin(member)
                 or (isclassinstance(member)
                     and sage_getdoc_original(member) != sage_getdoc_original(member.__class__)))
 
@@ -1223,7 +1224,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
         # __init__ written in C?
         if initmeth is None or \
                 is_builtin_class_method(self.object, '__init__') or \
-                not(inspect.ismethod(initmeth) or inspect.isfunction(initmeth)):
+                not(inspect.ismethod(initmeth) or is_function_or_cython_function(initmeth)):
             return None
         try:
             argspec = sage_getargspec(initmeth)
@@ -1486,7 +1487,7 @@ class AttributeDocumenter(DocstringStripSignatureMixin, ClassLevelDocumenter):  
 
     @staticmethod
     def is_function_or_method(obj):
-        return inspect.isfunction(obj) or inspect.isbuiltin(obj) or inspect.ismethod(obj)
+        return is_function_or_cython_function(obj) or inspect.isbuiltin(obj) or inspect.ismethod(obj)
 
     @classmethod
     def can_document_member(cls, member, membername, isattr, parent):

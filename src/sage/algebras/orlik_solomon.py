@@ -533,7 +533,7 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
         sage: OSH.basis()
         Finite family {0: B[0], 1: B[1], 2: B[2]}
         sage: [OSH.lift(b) for b in OSH.basis()]
-        [OS{}, OS{1} + OS{2} + OS{3}, OS{4} + OS{5} + OS{6}]
+        [OS{}, OS{4} + OS{5} + OS{6}, OS{1} + OS{2} + OS{3}]
 
     We implement an `S_4` action on the vertices::
 
@@ -556,23 +556,22 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
         sage: OSH = M.orlik_solomon_algebra(QQ, invariant=(H, vert_action))
         sage: B = OSH.basis()
         sage: [OSH.lift(b) for b in B]
-        [OS{},
-         OS{0}, OS{1} + OS{2} + OS{3} + OS{4}, OS{5},
-         OS{0, 1} + OS{0, 2} + OS{0, 3} + OS{0, 4}, OS{0, 5},
-         OS{1, 2} - 2*OS{1, 5} + OS{3, 4} - 2*OS{3, 5},
-         OS{0, 1, 2} - 2*OS{0, 1, 5} + OS{0, 3, 4} - 2*OS{0, 3, 5}]
+        [OS{}, OS{5}, OS{1} + OS{2} + OS{3} + OS{4}, OS{0},
+         -1/2*OS{1, 2} + OS{1, 5} - 1/2*OS{3, 4} + OS{3, 5},
+         OS{0, 5}, OS{0, 1} + OS{0, 2} + OS{0, 3} + OS{0, 4},
+         -1/2*OS{0, 1, 2} + OS{0, 1, 5} - 1/2*OS{0, 3, 4} + OS{0, 3, 5}]
 
     We demonstrate the algebra structure::
 
         sage: matrix([[b*bp for b in B] for bp in B])
-        [ B[0]  B[1]  B[2]  B[3]  B[4]  B[5]  B[6]  B[7]]
-        [ B[1]     0 -B[4] -B[5]     0     0  B[7]     0]
-        [ B[2]  B[4]     0  B[6]     0  B[7]     0     0]
-        [ B[3]  B[5] -B[6]     0 -B[7]     0     0     0]
-        [ B[4]     0     0 -B[7]     0     0     0     0]
-        [ B[5]     0  B[7]     0     0     0     0     0]
-        [ B[6]  B[7]     0     0     0     0     0     0]
-        [ B[7]     0     0     0     0     0     0     0]
+        [   B[0]    B[1]    B[2]    B[3]    B[4]    B[5]    B[6]    B[7]]
+        [   B[1]       0  2*B[4]    B[5]       0       0  2*B[7]       0]
+        [   B[2] -2*B[4]       0    B[6]       0 -2*B[7]       0       0]
+        [   B[3]   -B[5]   -B[6]       0    B[7]       0       0       0]
+        [   B[4]       0       0    B[7]       0       0       0       0]
+        [   B[5]       0 -2*B[7]       0       0       0       0       0]
+        [   B[6]  2*B[7]       0       0       0       0       0       0]
+        [   B[7]       0       0       0       0       0       0       0]
 
     .. NOTE::
 
@@ -600,7 +599,9 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         if action_on_groundset is None:
             # if sage knows the action, we don't need to provide it
-            def action_on_groundset(g, x): return g(x)
+
+            def action_on_groundset(g, x):
+                return g(x)
 
         self._groundset_action = action_on_groundset
 
@@ -609,7 +610,7 @@ class OrlikSolomonInvariantAlgebra(FiniteDimensionalInvariantModule):
 
         def action(g, m):
             return OS.sum(c * self._basis_action(g, x)
-                          for x,c in m._monomial_coefficients.items())
+                          for x, c in m._monomial_coefficients.items())
 
         self._action = action
 

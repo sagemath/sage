@@ -505,7 +505,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
     ambient = manifold
 
     def is_open(self):
-        """
+        r"""
         Return if ``self`` is an open set.
 
         This method always returns ``False``, since open subsets must be
@@ -524,7 +524,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         return False
 
     def is_closed(self):
-        """
+        r"""
         Return if ``self`` is a closed set.
 
         EXAMPLES::
@@ -1147,11 +1147,6 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         .. NOTE::
 
-            To get the equal subsets as a family, sorted by name, use the method
-            :meth:`equal_subset_family` instead.
-
-        .. NOTE::
-
             If you only need to iterate over the equal sets in arbitrary order,
             you can use the generator method :meth:`equal_subsets` instead.
 
@@ -1216,7 +1211,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         return ManifoldSubsetFiniteFamily(self.supersets())
 
     def superset_digraph(self, loops=False, quotient=False, open_covers=False, points=False, upper_bound=None):
-        """
+        r"""
         Return the digraph whose arcs represent subset relations among the supersets of ``self``.
 
         INPUT:
@@ -1996,7 +1991,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
         An open subset is a set that is (i) included in the manifold and (ii)
         open with respect to the manifold's topology. It is a topological
         manifold by itself. Hence the returned object is an instance of
-        :class:`TopologicalManifold`.
+        :class:`~sage.manifolds.manifold.TopologicalManifold`.
 
         INPUT:
 
@@ -2012,7 +2007,8 @@ class ManifoldSubset(UniqueRepresentation, Parent):
 
         OUTPUT:
 
-        - the open subset, as an instance of :class:`TopologicalManifold`
+        - the open subset, as an instance of
+          :class:`~sage.manifolds.manifold.TopologicalManifold`
           or one of its subclasses
 
         EXAMPLES::

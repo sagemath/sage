@@ -79,32 +79,32 @@ def getattr_debug(obj, name, default=_no_default):
     EXAMPLES::
 
         sage: _ = getattr_debug(list, "reverse")
-        getattr_debug(obj=<type 'list'>, name='reverse'):
-          type(obj) = <type 'type'>
-          object has __dict__ slot (<type 'dict'>)
+        getattr_debug(obj=<class 'list'>, name='reverse'):
+          type(obj) = <class 'type'>
+          object has __dict__ slot (<class 'dict'>)
           did not find 'reverse' in MRO classes
           found 'reverse' in object __dict__
-          returning <method 'reverse' of 'list' objects> (<type 'method_descriptor'>)
+          returning <method 'reverse' of 'list' objects> (<class 'method_descriptor'>)
         sage: _ = getattr_debug([], "reverse")
         getattr_debug(obj=[], name='reverse'):
-          type(obj) = <type 'list'>
+          type(obj) = <class 'list'>
           object does not have __dict__ slot
-          found 'reverse' in dict of <type 'list'>
-          got <method 'reverse' of 'list' objects> (<type 'method_descriptor'>)
+          found 'reverse' in dict of <class 'list'>
+          got <method 'reverse' of 'list' objects> (<class 'method_descriptor'>)
           attribute is ordinary descriptor (has __get__)
           calling __get__()
-          returning <built-in method reverse of list object at 0x... (<type 'builtin_function_or_method'>)
+          returning <built-in method reverse of list object at 0x... (<class 'builtin_function_or_method'>)
         sage: _ = getattr_debug([], "__doc__")
         getattr_debug(obj=[], name='__doc__'):
-          type(obj) = <type 'list'>
+          type(obj) = <class 'list'>
           object does not have __dict__ slot
-          found '__doc__' in dict of <type 'list'>
+          found '__doc__' in dict of <class 'list'>
           got ... 'str'>)
           returning ... 'str'>)
         sage: _ = getattr_debug(gp(1), "log")
         getattr_debug(obj=1, name='log'):
           type(obj) = <class 'sage.interfaces.gp.GpElement'>
-          object has __dict__ slot (<type 'dict'>)
+          object has __dict__ slot (<class 'dict'>)
           did not find 'log' in MRO classes
           object __dict__ does not have 'log'
           calling __getattr__()
@@ -113,20 +113,20 @@ def getattr_debug(obj, name, default=_no_default):
         sage: _ = getattr_debug(IntSlider(), "value")
         getattr_debug(obj=IntSlider(value=0), name='value'):
           type(obj) = <class 'ipywidgets.widgets.widget_int.IntSlider'>
-          object has __dict__ slot (<type 'dict'>)
+          object has __dict__ slot (<class 'dict'>)
           found 'value' in dict of <class 'ipywidgets.widgets.widget_int._Int'>
           got <traitlets.traitlets.CInt object at ... (<class 'traitlets.traitlets.CInt'>)
           attribute is data descriptor (has __get__ and __set__)
           ignoring __dict__ because we have a data descriptor
           calling __get__()
-          returning 0 (<type 'int'>)
+          returning 0 (<class 'int'>)
         sage: _ = getattr_debug(1, "foo")
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute 'foo'
         sage: _ = getattr_debug(1, "foo", "xyz")
         getattr_debug(obj=1, name='foo'):
-          type(obj) = <type 'sage.rings.integer.Integer'>
+          type(obj) = <class 'sage.rings.integer.Integer'>
           object does not have __dict__ slot
           did not find 'foo' in MRO classes
           class does not have __getattr__
@@ -224,9 +224,9 @@ def type_debug(cls):
     EXAMPLES::
 
         sage: type_debug(object)  # random
-        <type 'object'> (0x7fc57da7f040)
+        <class 'object'> (0x7fc57da7f040)
           ob_refcnt: 9739
-          ob_type: <type 'type'>
+          ob_type: <class 'type'>
           tp_name: object
           tp_basicsize: 16
           tp_itemsize: 0
@@ -235,7 +235,7 @@ def type_debug(cls):
           tp_base (__base__): NULL
           tp_bases (__bases__): tuple:
           tp_mro (__mro__): tuple:
-            <type 'object'>
+            <class 'object'>
           tp_dict (__dict__): dict:
             '__setattr__': <slot wrapper '__setattr__' of 'object' objects>
             '__reduce_ex__': <method '__reduce_ex__' of 'object' objects>

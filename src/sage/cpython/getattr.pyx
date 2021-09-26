@@ -342,15 +342,6 @@ cpdef getattr_from_other_class(self, cls, name):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute '__name__'
 
-    This does not work with an old-style class::
-
-        sage: class OldStyle:  # py2 -- no 'old-style' classes in Python 3
-        ....:     pass
-        sage: getattr_from_other_class(1, OldStyle, "foo")  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: <class __main__.OldStyle at ...> is not a type
-
     Non-strings as "name" are handled gracefully::
 
         sage: getattr_from_other_class(1, type, None)

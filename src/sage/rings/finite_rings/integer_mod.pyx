@@ -54,9 +54,9 @@ TESTS::
     851127
 
     sage: type(IntegerModRing(2^31-1).an_element())
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
     sage: type(IntegerModRing(2^31).an_element())
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
 """
 # ****************************************************************************
 #       Copyright (C) 2006 Robert Bradshaw <robertwb@math.washington.edu>
@@ -173,7 +173,7 @@ def IntegerMod(parent, value):
         sage: from sage.rings.finite_rings.integer_mod import IntegerMod
         sage: R = IntegerModRing(100)
         sage: type(R._pyx_order.table)
-        <type 'list'>
+        <class 'list'>
         sage: IntegerMod(R, 42)
         42
         sage: IntegerMod(R, 142)
@@ -335,7 +335,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: a = Mod(10, 30^10); a
             10
             sage: type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: loads(a.dumps()) == a
             True
 
@@ -912,7 +912,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: a.polynomial()
             1
             sage: type(a.polynomial())
-            <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+            <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
         """
         R = self.parent()[var]
         return R(self)
@@ -2131,12 +2131,29 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         except ZeroDivisionError:
             raise ZeroDivisionError("moduli must be coprime")
 
-
     def __copy__(IntegerMod_gmp self):
-        cdef IntegerMod_gmp x
-        x = self._new_c()
-        mpz_set(x.value, self.value)
-        return x
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10^10)
+            sage: R7 = R(7)
+            sage: copy(R7) is R7
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(IntegerMod_gmp self, memo):
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10^10)
+            sage: R7 = R(7)
+            sage: deepcopy(R7) is R7
+            True
+        """
+        # immutable
+        return self
 
     cpdef _add_(self, right):
         """
@@ -2263,7 +2280,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
             ....:     import IntegerMod_gmp
             sage: zero = IntegerMod_gmp(Integers(1),0)
             sage: type(zero)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: zero^0
             0
 
@@ -2283,7 +2300,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = mod(3,10^100); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: ~a
             6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666667
             sage: ~mod(2,10^100)
@@ -2307,7 +2324,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = Mod(8943, 2^70); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: lift(a)
             8943
             sage: a.lift()
@@ -2513,13 +2530,29 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         except ZeroDivisionError:
             raise ZeroDivisionError("moduli must be coprime")
 
-
     def __copy__(IntegerMod_int self):
-        cdef IntegerMod_int x = IntegerMod_int.__new__(IntegerMod_int)
-        x._parent = self._parent
-        x.__modulus = self.__modulus
-        x.ivalue = self.ivalue
-        return x
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10)
+            sage: R7 = R(7)
+            sage: copy(R7) is R7
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(IntegerMod_int self, memo):
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10)
+            sage: R7 = R(7)
+            sage: deepcopy(R7) is R7
+            True
+        """
+        # immutable
+        return self
 
     cpdef _add_(self, right):
         """
@@ -2794,7 +2827,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = Mod(8943, 2^10); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: lift(a)
             751
             sage: a.lift()
@@ -3186,7 +3219,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         sage: a = Mod(10,3^10); a
         10
         sage: type(a)
-        <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+        <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
         sage: loads(a.dumps()) == a
         True
         sage: Mod(5, 2^31)
@@ -3333,7 +3366,28 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             raise ZeroDivisionError("moduli must be coprime")
 
     def __copy__(IntegerMod_int64 self):
-        return self._new_c(self.ivalue)
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10^5)
+            sage: R7 = R(7)
+            sage: copy(R7) is R7
+            True
+        """
+        # immutable
+        return self
+
+    def __deepcopy__(IntegerMod_int64 self, memo):
+        """
+        EXAMPLES::
+
+            sage: R = Integers(10^5)
+            sage: R7 = R(7)
+            sage: deepcopy(R7) is R7
+            True
+        """
+        # immutable
+        return self
 
     cpdef _add_(self, right):
         """
@@ -3517,7 +3571,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         TESTS::
 
             sage: type(R(0))
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
 
         We define ``0^0`` to be unity, :trac:`13894`::
 
@@ -3539,7 +3593,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             ....:     import IntegerMod_int64
             sage: zero = IntegerMod_int64(Integers(1),0)
             sage: type(zero)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
             sage: zero^0
             0
 
@@ -3583,7 +3637,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = mod(7,2^40); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
             sage: ~a
             471219269047
             sage: a
@@ -3598,7 +3652,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
         EXAMPLES::
 
             sage: a = Mod(8943, 2^25); type(a)
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
             sage: lift(a)
             8943
             sage: a.lift()
@@ -4237,7 +4291,7 @@ cdef class IntegerMod_to_IntegerMod(IntegerMod_hom):
         sage: from sage.rings.finite_rings.integer_mod import IntegerMod_to_IntegerMod
         sage: Rs = [Integers(3**k) for k in range(1,30,5)]
         sage: [type(R(0)) for R in Rs]
-        [<type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
+        [<class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
         sage: fs = [IntegerMod_to_IntegerMod(S, R) for R in Rs for S in Rs if S is not R and S.order() > R.order()]
         sage: all(f(-1) == f.codomain()(-1) for f in fs)
         True
@@ -4307,7 +4361,7 @@ cdef class Integer_to_IntegerMod(IntegerMod_hom):
         sage: from sage.rings.finite_rings.integer_mod import Integer_to_IntegerMod
         sage: Rs = [Integers(10), Integers(10^5), Integers(10^10)]
         sage: [type(R(0)) for R in Rs]
-        [<type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
+        [<class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
         sage: fs = [Integer_to_IntegerMod(R) for R in Rs]
         sage: [f(-1) for f in fs]
         [9, 99999, 9999999999]
@@ -4413,7 +4467,7 @@ cdef class Int_to_IntegerMod(IntegerMod_hom):
         sage: from sage.rings.finite_rings.integer_mod import Int_to_IntegerMod
         sage: Rs = [Integers(2**k) for k in range(1,50,10)]
         sage: [type(R(0)) for R in Rs]
-        [<type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>, <type 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
+        [<class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>, <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>]
         sage: fs = [Int_to_IntegerMod(R) for R in Rs]
         sage: [f(-1) for f in fs]
         [1, 2047, 2097151, 2147483647, 2199023255551]

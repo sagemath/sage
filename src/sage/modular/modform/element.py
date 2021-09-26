@@ -540,6 +540,69 @@ class ModularForm_abstract(ModuleElement):
             self.__q_expansion = (prec, f)
             return f
 
+    def serre_derivative(self):
+        """
+        Return the Serre derivative of the given modular form.
+
+        If ``self`` is of weight `k`, then the returned modular form will be of
+        weight `k+2`.
+
+        EXAMPLES::
+
+            sage: E4 = ModularForms(1, 4).0
+            sage: E6 = ModularForms(1, 6).0
+            sage: DE4 = E4.serre_derivative(); DE4
+            -1/3 + 168*q + 5544*q^2 + 40992*q^3 + 177576*q^4 + 525168*q^5 + O(q^6)
+            sage: DE6 = E6.serre_derivative(); DE6
+            -1/2 - 240*q - 30960*q^2 - 525120*q^3 - 3963120*q^4 - 18750240*q^5 + O(q^6)
+            sage: Del = ModularForms(1, 12).0 # Modular discriminant
+            sage: Del.serre_derivative()
+            0
+            sage: f = ModularForms(DirichletGroup(5).0, 1).0
+            sage: Df = f.serre_derivative(); Df
+            -1/12 + (-11/12*zeta4 + 19/4)*q + (11/6*zeta4 + 59/3)*q^2 + (-41/3*zeta4 + 239/6)*q^3 + (31/4*zeta4 + 839/12)*q^4 + (-251/12*zeta4 + 459/4)*q^5 + O(q^6)
+
+        The Serre derivative raises the weight of a modular form by `2`::
+
+            sage: DE4.weight()
+            6
+            sage: DE6.weight()
+            8
+            sage: Df.weight()
+            3
+
+        The Ramanujan identities are verified (see :wikipedia:`Eisenstein_series#Ramanujan_identities`)::
+
+            sage: DE4 == (-1/3) * E6
+            True
+            sage: DE6 == (-1/2) * E4 * E4
+            True
+        """
+        from .eis_series import eisenstein_series_qexp
+        from .constructor import ModularForms
+
+        # check if the parent space has a character or not
+        if self.parent().has_character():
+            group = self.parent().character()
+        else:
+            group = self.parent().group()
+
+        # raise the weight by 2
+        parent_space = ModularForms(group, self.weight() + 2, self.base_ring())
+
+        # compute the precision for q-expansions
+        bound = parent_space._q_expansion_module().degree() + 1
+        E2 = eisenstein_series_qexp(2, prec=bound, K=self.base_ring(), normalization='integral')
+        self_qexp = self.q_expansion(prec=bound)
+
+        # compute the derivative via q-expansions
+        R = self.base_ring()
+        q = self_qexp.parent().gen()
+        mult = R(self.weight()) * R(12).inverse_of_unit()
+        der = q * self_qexp.derivative() + (mult) * E2 * self_qexp
+
+        return parent_space(der)
+
     def atkin_lehner_eigenvalue(self, d=None, embedding=None):
         """
         Return the eigenvalue of the Atkin-Lehner operator `W_d`

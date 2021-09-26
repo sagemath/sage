@@ -924,7 +924,7 @@ def eta_poly_relations(eta_elements, degree, labels=['x1', 'x2'],
 
     - ``labels`` - (list of strings): labels to use for the polynomial returned.
 
-    - ``verbose``` - (boolean, default False): if True, prints information as
+    - ``verbose`` - (boolean, default ``False``): if ``True``, prints information as
       it goes.
 
     OUTPUT: a list of polynomials which is a Groebner basis for the

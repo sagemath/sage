@@ -1101,6 +1101,16 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         return self    # since object is immutable.
 
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: a = MPComplexField()(3.5, 3)
+            sage: deepcopy(a) is  a
+            True
+        """
+        return self    # since object is immutable.
+
     def __int__(self):
         r"""
         Method for converting ``self`` to type ``int``.

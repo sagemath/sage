@@ -2,7 +2,7 @@ Topology
 ========
 
 Sage includes some tools for topology, and in particular cell
-complexes: simplicial complexes, `\Delta`-complexes, cubical
+complexes: (filtered) simplicial complexes, `\Delta`-complexes, cubical
 complexes, and simplicial sets.  A class of generic cell complexes is
 also available, mainly for developers who want to use it as a base for
 other types of cell complexes.
@@ -22,5 +22,6 @@ other types of cell complexes.
    sage/topology/simplicial_set_catalog
    sage/topology/simplicial_set_morphism
    sage/topology/cell_complex
+   sage/topology/filtered_simplicial_complex
 
 .. include:: ../footer.txt

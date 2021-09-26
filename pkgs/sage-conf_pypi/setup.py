@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import sysconfig
+import platform
 
 from setuptools import setup
 from distutils.command.build_scripts import build_scripts as distutils_build_scripts
@@ -19,18 +20,13 @@ class build_py(setuptools_build_py):
             sage_version = f.read().strip()
         # For convenience, set up the homebrew env automatically. This is a no-op if homebrew is not present.
         SETENV = '(. ./.homebrew-build-env 2> /dev/null || :)'
-        # Until pynac is repackaged as a pip-installable package (#30534), SAGE_LOCAL still has to be specific to
-        # the Python version.  Note that as of pynac-0.7.26.sage-2020-04-03, on Cygwin, pynac is linked through
-        # to libpython; whereas on all other platforms, it is not linked through, so we only key it to the SOABI.
-        soabi = sysconfig.get_config_var('SOABI')
-        if sys.platform == 'cygwin':
-            libdir_tag = sysconfig.get_config_var('LIBDIR').replace(' ', '-').replace('\\', '-').replace('/', '-')
-            ldversion = sysconfig.get_config_var('LDVERSION')
-            python_tag = f'{libdir_tag}-{ldversion}'
-        else:
-            python_tag = soabi
+        # After #30534, SAGE_LOCAL no longer contains any Python.  So we key the SAGE_ROOT only to Sage version
+        # and architecture.
+        system = platform.system()
+        machine = platform.machine()
+        arch_tag = f'{system}-{machine}'
         # TODO: These two should be user-configurable with options passed to "setup.py install"
-        SAGE_ROOT = os.path.join(DOT_SAGE, f'sage-{sage_version}-{python_tag}')
+        SAGE_ROOT = os.path.join(DOT_SAGE, f'sage-{sage_version}-{arch_tag}')
         SAGE_LOCAL = os.path.join(SAGE_ROOT, 'local')
         if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
             print(f'Reusing SAGE_ROOT={SAGE_ROOT}')
@@ -41,15 +37,20 @@ class build_py(setuptools_build_py):
                 shutil.copytree('sage_root', SAGE_ROOT)  # will fail if already exists
             except Exception:
                 raise DistutilsSetupError(f"the directory SAGE_ROOT={SAGE_ROOT} already exists but it is not configured.  Please remove it and try again.")
-            cmd = f"cd {SAGE_ROOT} && {SETENV} && ./configure --prefix={SAGE_LOCAL} --with-python={sys.executable} --enable-build-as-root --enable-download-from-upstream-url --with-system-python3=force --disable-notebook --disable-sagelib"
+            cmd = f"cd {SAGE_ROOT} && {SETENV} && ./configure --prefix={SAGE_LOCAL} --with-python={sys.executable} --enable-build-as-root --enable-download-from-upstream-url --with-system-python3=force --with-sage-venv --disable-notebook --disable-sagelib"
             print(f"Running {cmd}")
+            sys.stdout.flush()
             if os.system(cmd) != 0:
+                print(f"configure failed; this may be caused by missing build prerequisites.")
+                sys.stdout.flush()
+                PREREQ_SPKG = "_prereq bzip2 xz libffi"  # includes python3 SPKG_DEPCHECK packages
+                os.system(f'cd {SAGE_ROOT} && export SYSTEM=$(build/bin/sage-guess-package-system 2>/dev/null) && export PACKAGES="$(build/bin/sage-get-system-packages $SYSTEM {PREREQ_SPKG})" && [ -n "$PACKAGES" ] && echo "You can install the required build prerequisites using the following shell command" && echo "" && build/bin/sage-print-system-package-command $SYSTEM --verbose --sudo install $PACKAGES && echo ""')
                 raise DistutilsSetupError("configure failed")
         # Here we run "make build" -- which builds everything except for sagelib because we
         # used configure --disable-sagelib
         # Alternative:
         # "make build-local" only builds the non-Python packages of the Sage distribution.
-        # It still makes an (empty) venv in SAGE_LOCAL, which is unused by default;
+        # It still makes an (empty) venv in SAGE_VENV, which is unused by default;
         # but then a user could use "make build-venv" to build compatible wheels for all Python packages.
         # TODO: A target to only build wheels of tricky packages
         # (that use native libraries shared with other packages).

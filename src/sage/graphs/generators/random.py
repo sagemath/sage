@@ -18,6 +18,8 @@ import sys
 # import from Sage library
 from sage.graphs.graph import Graph
 from sage.misc.randstate import current_randstate
+from sage.misc.randstate import set_random_seed
+from sage.misc.prandom import random
 from sage.misc.prandom import randint
 
 def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
@@ -2108,3 +2110,58 @@ def RandomBicubicPlanar(n):
         G.add_edge((('n', -1), w[i - 1], colour))
 
     return G
+
+def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
+    r"""
+    Return a random unit disk graph of order `n`.
+
+    A unit disk graph is the intersection graph of a family of unit disks in the
+    Euclidean plane. That is a graph with one vertex per disk of the family and
+    an edge between two vertices whenever they lie within a unit distance of
+    each other. See the :wikipedia:`Unit_disk_graph` for more details.
+
+    INPUT:
+
+    - ``n`` -- number of nodes
+
+    - ``radius`` -- float (default: ``0.1``); two vertices at distance less than
+      ``radius`` are connected by an edge
+
+    - ``side`` -- float (default: ``1``); indicate the side of the area in which
+      the points are drawn
+
+    - ``seed`` -- seed of the random number generator
+
+    EXAMPLES:
+
+    When using twice the same seed, the vertices get the same positions::
+
+        sage: from sage.misc.randstate import current_randstate
+        sage: seed = current_randstate().seed()
+        sage: G = graphs.RandomUnitDiskGraph(20, radius=.5, side=1, seed=seed)
+        sage: H = graphs.RandomUnitDiskGraph(20, radius=.2, side=1, seed=seed)
+        sage: H.is_subgraph(G, induced=False)
+        True
+        sage: H.size() <= G.size()
+        True
+        sage: Gpos = G.get_pos()
+        sage: Hpos = H.get_pos()
+        sage: all(Gpos[u] == Hpos[u] for u in G)
+        True
+
+    When the radius is more than `\sqrt{2 \text{side}}`, the graph is a clique::
+
+        sage: G = graphs.RandomUnitDiskGraph(10, radius=2, side=1)
+        sage: G.is_clique()
+        True
+    """
+    if seed is not None:
+        set_random_seed(seed)
+    from scipy.spatial import KDTree
+    points = [(side*random(), side*random()) for i in range(n)]
+    T = KDTree(points)
+    adj = {i: [u for u in T.query_ball_point([points[i]], radius).item() if u != i]
+               for i in range(n)}
+    return Graph(adj, format='dict_of_lists',
+                 pos={i: points[i] for i in range(n)},
+                 name="Random unit disk graph")

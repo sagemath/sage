@@ -443,7 +443,7 @@ cpdef bint is_numpy_type(t):
         Traceback (most recent call last):
         ...
         TypeError: unsupported operand parent(s) for +: 'Integer Ring' and
-        '<type 'object'>'
+        '<class 'object'>'
     """
     if not isinstance(t, type):
         return False
@@ -531,13 +531,13 @@ cdef class CoercionModel:
         sage: numpy.uint8('2') + 3
         5
         sage: type(_)
-        <type 'numpy.int32'>  # 32-bit
-        <type 'numpy.int64'>  # 64-bit
+        <class 'numpy.int32'>  # 32-bit
+        <class 'numpy.int64'>  # 64-bit
 
         sage: numpy.int8('12') + 1/3
         12.333333333333334
         sage: type(_)
-        <type 'numpy.float64'>
+        <class 'numpy.float64'>
 
     AUTHOR:
 
@@ -834,12 +834,12 @@ cdef class CoercionModel:
             Right operand is numeric, will attempt coercion in both directions.
             Unknown result parent.
             sage: parent(R100(1) + float(1))
-            <type 'float'>
+            <class 'float'>
             sage: cm.explain(QQ, float, operator.add)
             Right operand is numeric, will attempt coercion in both directions.
             Unknown result parent.
             sage: parent(QQ(1) + float(1))
-            <type 'float'>
+            <class 'float'>
 
         Special care is taken to deal with division::
 
@@ -923,7 +923,7 @@ cdef class CoercionModel:
             sage: res
             Finite Field of size 7
             sage: f = steps[1]; type(f)
-            <type 'sage.rings.finite_rings.integer_mod.Integer_to_IntegerMod'>
+            <class 'sage.rings.finite_rings.integer_mod.Integer_to_IntegerMod'>
             sage: f(100)
             2
         """
@@ -1024,9 +1024,9 @@ cdef class CoercionModel:
             sage: cm.common_parent(ZZT, QQT, RDF)
             Power Series Ring in T over Real Double Field
             sage: cm.common_parent(4r, 5r)
-            <type 'int'>
+            <class 'int'>
             sage: cm.common_parent(int, float, ZZ)
-            <type 'float'>
+            <class 'float'>
             sage: real_fields = [RealField(prec) for prec in [10,20..100]]
             sage: cm.common_parent(*real_fields)
             Real Field with 10 bits of precision
@@ -1275,12 +1275,12 @@ cdef class CoercionModel:
 
             sage: x, y = cm.canonical_coercion(int(5), 10)
             sage: type(x), type(y)
-            (<type 'sage.rings.integer.Integer'>, <type 'sage.rings.integer.Integer'>)
+            (<class 'sage.rings.integer.Integer'>, <class 'sage.rings.integer.Integer'>)
 
 
             sage: x, y = cm.canonical_coercion(int(5), complex(3))
             sage: type(x), type(y)
-            (<type 'complex'>, <type 'complex'>)
+            (<class 'complex'>, <class 'complex'>)
 
             sage: class MyClass:
             ....:     def _sage_(self):
@@ -1289,7 +1289,7 @@ cdef class CoercionModel:
             sage: a, b
             (13, 1/3)
             sage: type(a)
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
 
         We also make an exception for 0, even if $\ZZ$ does not map in::
 
@@ -1744,7 +1744,7 @@ cdef class CoercionModel:
                 S = Univariate Polynomial Ring in x over Integer Ring
                 (should be Univariate Polynomial Ring in x over Integer Ring, Rational Field)
                 action = Right scalar multiplication by Rational Field on
-                Univariate Polynomial Ring in x over Integer Ring (<type 'sage.structure.coerce_actions.RightModuleAction'>)
+                Univariate Polynomial Ring in x over Integer Ring (<class 'sage.structure.coerce_actions.RightModuleAction'>)
         """
         if action is None:
             return action
@@ -2022,11 +2022,11 @@ cdef class CoercionModel:
             ...
             RuntimeError: There is a bug in the coercion code in Sage.
             Both x (='f(a)') and y (='g(b)') are supposed to have identical parents but they don't.
-            In fact, x has parent '<type 'str'>'
-            whereas y has parent '<type 'str'>'
-            Original elements 'a' (parent <type 'str'>) and 'b' (parent <type 'str'>) and maps
-            <type 'str'> 'f'
-            <type 'str'> 'g'
+            In fact, x has parent '<class 'str'>'
+            whereas y has parent '<class 'str'>'
+            Original elements 'a' (parent <class 'str'>) and 'b' (parent <class 'str'>) and maps
+            <class 'str'> 'f'
+            <class 'str'> 'g'
         """
         raise RuntimeError("""There is a bug in the coercion code in Sage.
 Both x (=%r) and y (=%r) are supposed to have identical parents but they don't.

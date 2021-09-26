@@ -547,7 +547,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
 
         This is the ring homomorphism of Laurent polynomials in
         `\ZZ[u,u^{-1},v,v^{-1}]` which sends `u` to `u^{-1}` and `v`
-        to `v^{-1}.
+        to `v^{-1}`.
 
         EXAMPLES::
 
@@ -2435,7 +2435,7 @@ class IwahoriHeckeAlgebra_nonstandard(IwahoriHeckeAlgebra):
 
         This is the ring homomorphism of Laurent polynomials in
         `\ZZ[u,u^{-1},v,v^{-1}]` which sends `u` to `u^{-1}` and `v`
-        to `v^{-1}.
+        to `v^{-1}`.
 
         EXAMPLES::
 

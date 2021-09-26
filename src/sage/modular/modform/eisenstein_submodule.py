@@ -385,6 +385,21 @@ class EisensteinSubmodule_g0_Q(EisensteinSubmodule_params):
     r"""
     Space of Eisenstein forms for `\Gamma_0(N)`.
     """
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: E = EisensteinForms(17,4)
+            sage: pari.mfdim(E)
+            2
+            sage: pari.mfparams(E)
+            [17, 4, 1, 3, t - 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 3)
+
 
 class EisensteinSubmodule_gH_Q(EisensteinSubmodule_params):
     r"""

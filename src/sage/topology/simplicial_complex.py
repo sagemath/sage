@@ -2234,6 +2234,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         :type reduced: boolean; optional, default ``False``
 
+
         Algorithm: if ``generators`` is ``True``, directly compute the
         chain complex, compute its homology along with its generators,
         and then convert the chain complex generators to chains in the

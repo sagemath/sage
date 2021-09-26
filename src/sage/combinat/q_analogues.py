@@ -276,7 +276,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         sage: r = q_binomial(3r, 2r, 1r); r
         3
         sage: type(r)
-        <type 'int'>
+        <class 'int'>
 
     Check that arbitrary polynomials work::
 

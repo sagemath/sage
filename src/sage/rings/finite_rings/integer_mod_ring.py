@@ -49,15 +49,15 @@ AUTHORS:
 - Simon King (2013-09): Only allow to prescribe the category of fields
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import sage.misc.prandom as random
@@ -194,7 +194,7 @@ class IntegerModFactory(UniqueFactory):
 
     """
     def get_object(self, version, key, extra_args):
-        out = super(IntegerModFactory,self).get_object(version, key, extra_args)
+        out = super(IntegerModFactory, self).get_object(version, key, extra_args)
         category = extra_args.get('category', None)
         if category is not None:
             out._refine_category_(category)
@@ -214,7 +214,7 @@ class IntegerModFactory(UniqueFactory):
         """
         if is_field:
             from sage.categories.fields import Fields
-            return order, {'category':Fields()}
+            return order, {'category': Fields()}
         return order, {}
 
     def create_object(self, version, order, **kwds):
@@ -234,6 +234,7 @@ class IntegerModFactory(UniqueFactory):
             return integer_ring.IntegerRing(**kwds)
         else:
             return IntegerModRing_generic(order, **kwds)
+
 
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
 
@@ -258,6 +259,7 @@ def is_IntegerModRing(x):
         False
     """
     return isinstance(x, IntegerModRing_generic)
+
 
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -468,7 +470,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
             # If the category is given, e.g., as Fields(), then we still
             # know that the result will also live in default_category.
             # Hence, we use the join of the default and the given category.
-            category = category.join([category,default_category])
+            category = category.join([category, default_category])
         # Give the generator a 'name' to make quotients work.  The
         # name 'x' is used because it's also used for the ring of
         # integers: see the __init__ method for IntegerRing_class in
@@ -851,7 +853,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             return True
 
         if n % 4 == 0:
-            return False # know n > 7, so n=4 case not a problem
+            return False  # know n > 7, so n=4 case not a problem
         if n % 4 == 2:
             n = n // 2
 
@@ -965,9 +967,10 @@ In the latter case, please inform the developers.""".format(self.order()))
                     v = [self(1)]
                 elif n == 4:
                     v = [self(1), self(3)]
-                else: # n >= 8
-                    half_ord = n//2
-                    v = [self(1), self(-1), self(half_ord-1), self(half_ord+1)]
+                else:  # n >= 8
+                    half_ord = n // 2
+                    v = [self(1), self(-1),
+                         self(half_ord - 1), self(half_ord + 1)]
             else:
                 v = [self(1), self(-1)]
         else:
@@ -987,10 +990,8 @@ In the latter case, please inform the developers.""".format(self.order()))
             v = []
             for x in cartesian_product_iterator(vmod):
                 # x is a specific choice of roots modulo each prime power divisor
-                a = sum([basis[i]*x[i] for i in range(len(x))])
+                a = sum([basis[i] * x[i] for i in range(len(x))])
                 v.append(a)
-            #end for
-        #end if
 
         v.sort()
         v = tuple(v)
@@ -1026,7 +1027,8 @@ In the latter case, please inform the developers.""".format(self.order()))
         ans = []
         from sage.structure.factorization import Factorization
         for p, e in self.factored_order():
-            ans.append(Factorization([(p,e-1)]) * factor(p-1, int_=(self.__order < 2**31)))
+            ans.append(Factorization([(p, e - 1)]) *
+                       factor(p - 1, int_=(self.__order < 2**31)))
         return ans
 
     def characteristic(self):
@@ -1177,7 +1179,7 @@ In the latter case, please inform the developers.""".format(self.order()))
                 from sage.interfaces.gap import intmod_gap_to_sage
                 y = intmod_gap_to_sage(x)
                 return integer_mod.IntegerMod(self, y)
-            raise # Continue up with the original TypeError
+            raise  # Continue up with the original TypeError
 
     def __iter__(self):
         """
@@ -1320,7 +1322,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         # of the category.
         try:
             c = bool(other.__class__.__base__ != self.__class__.__base__)
-        except AttributeError: # __base__ does not always exists
+        except AttributeError:  # __base__ does not always exists
             c = bool(type(other) != type(self))
         if c:
             return NotImplemented
@@ -1506,7 +1508,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             gens = []
             orders = []
             for p, r in self.factored_order():
-                m = n/(p**r)
+                m = n // (p**r)
                 for g, o in _unit_gens_primepowercase(p, r):
                     x = g.crt(integer_mod.Mod(1, m))
                     gens.append(x)
@@ -1545,7 +1547,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         """
         if bound is not None:
             return ring.CommutativeRing.random_element(self, bound)
-        a = random.randint(0,self.order()-1)
+        a = random.randint(0, self.order() - 1)
         return self(a)
 
     #######################################################
@@ -1587,6 +1589,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         """
         return integer.Integer(1)
 
+
 Zmod = IntegerModRing
 Integers = IntegerModRing
 
@@ -1594,6 +1597,7 @@ Integers = IntegerModRing
 
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.rings.integer_mod_ring', 'IntegerModRing_generic', IntegerModRing_generic)
+
 
 def crt(v):
     """
@@ -1611,7 +1615,6 @@ def crt(v):
     if len(v) == 0:
         return IntegerModRing(1)(1)
     x = v[0]
-    for i in range(1,len(v)):
+    for i in range(1, len(v)):
         x = x.crt(v[i])
     return x
-

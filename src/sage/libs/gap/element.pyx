@@ -288,7 +288,7 @@ cdef GapElement make_any_gap_element(parent, Obj obj):
         sage: T_CHAR = libgap.eval("'c'");  T_CHAR
         "c"
         sage: type(T_CHAR)
-        <type 'sage.libs.gap.element.GapElement_String'>
+        <class 'sage.libs.gap.element.GapElement_String'>
 
         sage: libgap.eval("['a', 'b', 'c']")   # gap strings are also lists of chars
         "abc"
@@ -382,7 +382,7 @@ cdef GapElement make_GapElement(parent, Obj obj):
         sage: libgap(0)
         0
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Integer'>
+        <class 'sage.libs.gap.element.GapElement_Integer'>
 
         sage: libgap.eval('')
         sage: libgap(None)
@@ -1303,12 +1303,12 @@ cdef class GapElement(RingElement):
             sage: libgap(1).sage()
             1
             sage: type(_)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
             sage: libgap(3/7).sage()
             3/7
             sage: type(_)
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
 
             sage: libgap.eval('5 + 7*E(3)').sage()
             7*zeta3 + 5
@@ -1419,7 +1419,7 @@ cdef GapElement_Integer make_GapElement_Integer(parent, Obj obj):
         sage: libgap(123)
         123
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Integer'>
+        <class 'sage.libs.gap.element.GapElement_Integer'>
     """
     cdef GapElement_Integer r = GapElement_Integer.__new__(GapElement_Integer)
     r._initialize(parent, obj)
@@ -1434,7 +1434,7 @@ cdef class GapElement_Integer(GapElement):
 
         sage: i = libgap(123)
         sage: type(i)
-        <type 'sage.libs.gap.element.GapElement_Integer'>
+        <class 'sage.libs.gap.element.GapElement_Integer'>
         sage: ZZ(i)
         123
     """
@@ -1455,7 +1455,7 @@ cdef class GapElement_Integer(GapElement):
 
             sage: n = libgap(1)
             sage: type(n)
-            <type 'sage.libs.gap.element.GapElement_Integer'>
+            <class 'sage.libs.gap.element.GapElement_Integer'>
             sage: n.is_C_int()
             True
             sage: n.IsInt()
@@ -1463,7 +1463,7 @@ cdef class GapElement_Integer(GapElement):
 
             sage: N = libgap(2^130)
             sage: type(N)
-            <type 'sage.libs.gap.element.GapElement_Integer'>
+            <class 'sage.libs.gap.element.GapElement_Integer'>
             sage: N.is_C_int()
             False
             sage: N.IsInt()
@@ -1538,7 +1538,7 @@ cdef class GapElement_Integer(GapElement):
             sage: int(libgap(3))
             3
             sage: type(_)
-            <type 'int'>
+            <class 'int'>
 
             sage: int(libgap(2)**128)
             340282366920938463463374607431768211456L
@@ -1573,7 +1573,7 @@ cdef GapElement_Float make_GapElement_Float(parent, Obj obj):
         sage: libgap(123.5)
         123.5
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Float'>
+        <class 'sage.libs.gap.element.GapElement_Float'>
     """
     cdef GapElement_Float r = GapElement_Float.__new__(GapElement_Float)
     r._initialize(parent, obj)
@@ -1587,7 +1587,7 @@ cdef class GapElement_Float(GapElement):
 
         sage: i = libgap(123.5)
         sage: type(i)
-        <type 'sage.libs.gap.element.GapElement_Float'>
+        <class 'sage.libs.gap.element.GapElement_Float'>
         sage: RDF(i)
         123.5
         sage: float(i)
@@ -1647,7 +1647,7 @@ cdef GapElement_IntegerMod make_GapElement_IntegerMod(parent, Obj obj):
         sage: libgap(n)
         ZmodnZObj( 13, 123 )
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_IntegerMod'>
+        <class 'sage.libs.gap.element.GapElement_IntegerMod'>
     """
     cdef GapElement_IntegerMod r = GapElement_IntegerMod.__new__(GapElement_IntegerMod)
     r._initialize(parent, obj)
@@ -1662,7 +1662,7 @@ cdef class GapElement_IntegerMod(GapElement):
         sage: n = IntegerModRing(123)(13)
         sage: i = libgap(n)
         sage: type(i)
-        <type 'sage.libs.gap.element.GapElement_IntegerMod'>
+        <class 'sage.libs.gap.element.GapElement_IntegerMod'>
     """
 
     cpdef GapElement_Integer lift(self):
@@ -1680,7 +1680,7 @@ cdef class GapElement_IntegerMod(GapElement):
             sage: n.lift()
             13
             sage: type(_)
-            <type 'sage.libs.gap.element.GapElement_Integer'>
+            <class 'sage.libs.gap.element.GapElement_Integer'>
         """
         return self.Int()
 
@@ -1727,7 +1727,7 @@ cdef GapElement_FiniteField make_GapElement_FiniteField(parent, Obj obj):
         sage: libgap.eval('Z(5)^2')
         Z(5)^2
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_FiniteField'>
+        <class 'sage.libs.gap.element.GapElement_FiniteField'>
     """
     cdef GapElement_FiniteField r = GapElement_FiniteField.__new__(GapElement_FiniteField)
     r._initialize(parent, obj)
@@ -1743,7 +1743,7 @@ cdef class GapElement_FiniteField(GapElement):
         sage: libgap.eval('Z(5)^2')
         Z(5)^2
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_FiniteField'>
+        <class 'sage.libs.gap.element.GapElement_FiniteField'>
     """
 
     cpdef GapElement_Integer lift(self):
@@ -1761,7 +1761,7 @@ cdef class GapElement_FiniteField(GapElement):
             sage: n.lift()
             4
             sage: type(_)
-            <type 'sage.libs.gap.element.GapElement_Integer'>
+            <class 'sage.libs.gap.element.GapElement_Integer'>
 
             sage: n = libgap.eval('Z(25)')
             sage: n.lift()
@@ -1895,7 +1895,7 @@ cdef GapElement_Cyclotomic make_GapElement_Cyclotomic(parent, Obj obj):
         sage: libgap.eval('E(3)')
         E(3)
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Cyclotomic'>
+        <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
     """
     cdef GapElement_Cyclotomic r = GapElement_Cyclotomic.__new__(GapElement_Cyclotomic)
     r._initialize(parent, obj)
@@ -1911,7 +1911,7 @@ cdef class GapElement_Cyclotomic(GapElement):
         sage: libgap.eval('E(3)')
         E(3)
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Cyclotomic'>
+        <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
     """
 
     def sage(self, ring=None):
@@ -1982,7 +1982,7 @@ cdef GapElement_Rational make_GapElement_Rational(parent, Obj obj):
         sage: libgap(123/456)
         41/152
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Rational'>
+        <class 'sage.libs.gap.element.GapElement_Rational'>
     """
     cdef GapElement_Rational r = GapElement_Rational.__new__(GapElement_Rational)
     r._initialize(parent, obj)
@@ -1997,7 +1997,7 @@ cdef class GapElement_Rational(GapElement):
 
         sage: r = libgap(123/456)
         sage: type(r)
-        <type 'sage.libs.gap.element.GapElement_Rational'>
+        <class 'sage.libs.gap.element.GapElement_Rational'>
     """
     def _rational_(self):
         r"""
@@ -2029,11 +2029,11 @@ cdef class GapElement_Rational(GapElement):
             sage: r = libgap(123/456);  r
             41/152
             sage: type(_)
-            <type 'sage.libs.gap.element.GapElement_Rational'>
+            <class 'sage.libs.gap.element.GapElement_Rational'>
             sage: r.sage()
             41/152
             sage: type(_)
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
         """
         if ring is None:
             ring = ZZ
@@ -2055,7 +2055,7 @@ cdef GapElement_Ring make_GapElement_Ring(parent, Obj obj):
         sage: libgap(GF(5))
         GF(5)
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Ring'>
+        <class 'sage.libs.gap.element.GapElement_Ring'>
     """
     cdef GapElement_Ring r = GapElement_Ring.__new__(GapElement_Ring)
     r._initialize(parent, obj)
@@ -2070,7 +2070,7 @@ cdef class GapElement_Ring(GapElement):
 
         sage: i = libgap(ZZ)
         sage: type(i)
-        <type 'sage.libs.gap.element.GapElement_Ring'>
+        <class 'sage.libs.gap.element.GapElement_Ring'>
     """
 
     def ring_integer(self):
@@ -2218,7 +2218,7 @@ cdef GapElement_Boolean make_GapElement_Boolean(parent, Obj obj):
         sage: libgap(True)
         true
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Boolean'>
+        <class 'sage.libs.gap.element.GapElement_Boolean'>
     """
     cdef GapElement_Boolean r = GapElement_Boolean.__new__(GapElement_Boolean)
     r._initialize(parent, obj)
@@ -2233,7 +2233,7 @@ cdef class GapElement_Boolean(GapElement):
 
         sage: b = libgap(True)
         sage: type(b)
-        <type 'sage.libs.gap.element.GapElement_Boolean'>
+        <class 'sage.libs.gap.element.GapElement_Boolean'>
     """
 
     def sage(self):
@@ -2251,7 +2251,7 @@ cdef class GapElement_Boolean(GapElement):
             sage: b = libgap.eval('true');  b
             true
             sage: type(_)
-            <type 'sage.libs.gap.element.GapElement_Boolean'>
+            <class 'sage.libs.gap.element.GapElement_Boolean'>
             sage: b.sage()
             True
             sage: type(_)
@@ -2286,13 +2286,13 @@ cdef class GapElement_Boolean(GapElement):
             sage: for x in gap_bool:
             ....:     if x:     # this calls __nonzero__
             ....:         print("{} {}".format(x, type(x)))
-            true <type 'sage.libs.gap.element.GapElement_Boolean'>
+            true <class 'sage.libs.gap.element.GapElement_Boolean'>
 
             sage: for x in gap_bool:
             ....:     if not x:     # this calls __nonzero__
             ....:         print("{} {}".format( x, type(x)))
-            false <type 'sage.libs.gap.element.GapElement_Boolean'>
-            fail <type 'sage.libs.gap.element.GapElement_Boolean'>
+            false <class 'sage.libs.gap.element.GapElement_Boolean'>
+            fail <class 'sage.libs.gap.element.GapElement_Boolean'>
         """
         return self.value == GAP_True
 
@@ -2310,7 +2310,7 @@ cdef GapElement_String make_GapElement_String(parent, Obj obj):
         sage: libgap('this is a string')
         "this is a string"
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_String'>
+        <class 'sage.libs.gap.element.GapElement_String'>
     """
     cdef GapElement_String r = GapElement_String.__new__(GapElement_String)
     r._initialize(parent, obj)
@@ -2325,7 +2325,7 @@ cdef class GapElement_String(GapElement):
 
         sage: s = libgap('string')
         sage: type(s)
-        <type 'sage.libs.gap.element.GapElement_String'>
+        <class 'sage.libs.gap.element.GapElement_String'>
         sage: s
         "string"
         sage: print(s)
@@ -2344,13 +2344,13 @@ cdef class GapElement_String(GapElement):
             sage: s = libgap.eval(' "string" '); s
             "string"
             sage: type(_)
-            <type 'sage.libs.gap.element.GapElement_String'>
+            <class 'sage.libs.gap.element.GapElement_String'>
             sage: str(s)
             'string'
             sage: s.sage()
             'string'
             sage: type(_)
-            <type 'str'>
+            <class 'str'>
         """
         s = char_to_str(CSTR_STRING(self.value))
         return s
@@ -2380,7 +2380,7 @@ cdef GapElement_Function make_GapElement_Function(parent, Obj obj):
         sage: libgap.CycleLength
         <Gap function "CycleLength">
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Function'>
+        <class 'sage.libs.gap.element.GapElement_Function'>
     """
     cdef GapElement_Function r = GapElement_Function.__new__(GapElement_Function)
     r._initialize(parent, obj)
@@ -2395,7 +2395,7 @@ cdef class GapElement_Function(GapElement):
 
         sage: f = libgap.Cycles
         sage: type(f)
-        <type 'sage.libs.gap.element.GapElement_Function'>
+        <class 'sage.libs.gap.element.GapElement_Function'>
     """
 
 
@@ -2616,7 +2616,7 @@ cdef GapElement_MethodProxy make_GapElement_MethodProxy(parent, Obj function, Ga
 
         sage: lst = libgap([])
         sage: type( lst.Add )
-        <type 'sage.libs.gap.element.GapElement_MethodProxy'>
+        <class 'sage.libs.gap.element.GapElement_MethodProxy'>
     """
     cdef GapElement_MethodProxy r = GapElement_MethodProxy.__new__(GapElement_MethodProxy)
     r._initialize(parent, function)
@@ -2639,7 +2639,7 @@ cdef class GapElement_MethodProxy(GapElement_Function):
         sage: lst.Add
         <Gap function "Add">
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_MethodProxy'>
+        <class 'sage.libs.gap.element.GapElement_MethodProxy'>
         sage: lst.Add(1)
         sage: lst
         [ 1 ]
@@ -2691,7 +2691,7 @@ cdef GapElement_List make_GapElement_List(parent, Obj obj):
         sage: libgap([0, 2, 3])
         [ 0, 2, 3 ]
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_List'>
+        <class 'sage.libs.gap.element.GapElement_List'>
     """
     cdef GapElement_List r = GapElement_List.__new__(GapElement_List)
     r._initialize(parent, obj)
@@ -2713,7 +2713,7 @@ cdef class GapElement_List(GapElement):
         sage: lst = libgap.SymmetricGroup(3).List(); lst
         [ (), (1,3), (1,2,3), (2,3), (1,3,2), (1,2) ]
         sage: type(lst)
-        <type 'sage.libs.gap.element.GapElement_List'>
+        <class 'sage.libs.gap.element.GapElement_List'>
         sage: len(lst)
         6
         sage: lst[3]
@@ -2952,7 +2952,7 @@ cdef class GapElement_List(GapElement):
 
             sage: M = libgap.eval('SL(2,GF(5))').GeneratorsOfGroup()[1]
             sage: type(M)
-            <type 'sage.libs.gap.element.GapElement_List'>
+            <class 'sage.libs.gap.element.GapElement_List'>
             sage: M[0][0]
             Z(5)^2
             sage: M.IsMatrix()
@@ -2994,7 +2994,7 @@ cdef class GapElement_List(GapElement):
             sage: m = libgap([0*a, a, a^3, a^2]); m
             [ 0*Z(2), Z(2^2), Z(2)^0, Z(2^2)^2 ]
             sage: type(m)
-            <type 'sage.libs.gap.element.GapElement_List'>
+            <class 'sage.libs.gap.element.GapElement_List'>
             sage: m[3]
             Z(2^2)^2
             sage: vector(m)
@@ -3029,7 +3029,7 @@ cdef GapElement_Permutation make_GapElement_Permutation(parent, Obj obj):
         sage: libgap.eval('(1,3,2)(4,5,8)')
         (1,3,2)(4,5,8)
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Permutation'>
+        <class 'sage.libs.gap.element.GapElement_Permutation'>
     """
     cdef GapElement_Permutation r = GapElement_Permutation.__new__(GapElement_Permutation)
     r._initialize(parent, obj)
@@ -3048,7 +3048,7 @@ cdef class GapElement_Permutation(GapElement):
 
         sage: perm = libgap.eval('(1,5,2)(4,3,8)')
         sage: type(perm)
-        <type 'sage.libs.gap.element.GapElement_Permutation'>
+        <class 'sage.libs.gap.element.GapElement_Permutation'>
     """
 
     def sage(self, parent=None):
@@ -3069,7 +3069,7 @@ cdef class GapElement_Permutation(GapElement):
             sage: perm_gap.sage(PermutationGroup([(1,2),(1,2,3,4,5,6,7,8)]))
             (1,5,2)(3,8,4)
             sage: type(_)
-            <type 'sage.groups.perm_gps.permgroup_element.PermutationGroupElement'>
+            <class 'sage.groups.perm_gps.permgroup_element.PermutationGroupElement'>
         """
         cdef PermutationGroupElement one_c
 
@@ -3094,7 +3094,7 @@ cdef GapElement_Record make_GapElement_Record(parent, Obj obj):
         sage: libgap.eval('rec(a:=0, b:=2, c:=3)')
         rec( a := 0, b := 2, c := 3 )
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement_Record'>
+        <class 'sage.libs.gap.element.GapElement_Record'>
     """
     cdef GapElement_Record r = GapElement_Record.__new__(GapElement_Record)
     r._initialize(parent, obj)
@@ -3109,7 +3109,7 @@ cdef class GapElement_Record(GapElement):
 
         sage: rec = libgap.eval('rec(a:=123, b:=456)')
         sage: type(rec)
-        <type 'sage.libs.gap.element.GapElement_Record'>
+        <class 'sage.libs.gap.element.GapElement_Record'>
         sage: len(rec)
         2
         sage: rec['a']
@@ -3159,7 +3159,7 @@ cdef class GapElement_Record(GapElement):
             sage: rec = libgap.eval('rec(a:=123, b:=456)')
             sage: iter = rec.__iter__()
             sage: type(iter)
-            <type 'sage.libs.gap.element.GapElement_RecordIterator'>
+            <class 'sage.libs.gap.element.GapElement_RecordIterator'>
             sage: sorted(rec)
             [('a', 123), ('b', 456)]
         """

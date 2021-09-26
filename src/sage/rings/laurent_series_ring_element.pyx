@@ -1844,3 +1844,28 @@ cdef class LaurentSeries(AlgebraElement):
             x = x[0]
 
         return self.__u(*x)*(x[0]**self.__n)
+
+    def __pari__(self):
+        """
+        Convert ``self`` to a PARI object.
+
+        TESTS::
+
+            sage: L.<x> = LaurentSeriesRing(QQ)
+            sage: f = x + 1/x + O(x^2); f
+            x^-1 + x + O(x^2)
+            sage: f.__pari__()
+            x^-1 + x + O(x^2)
+
+        Check that :trac:`32437` is fixed::
+
+            sage: F.<u> = GF(257^2)
+            sage: R.<t> = LaurentSeriesRing(F)
+            sage: g = t + O(t^99)
+            sage: f = u*t + O(t^99)
+            sage: g(f)  # indirect doctest
+            u*t + O(t^99)
+        """
+        f = self.__u
+        x = f.parent().gen()
+        return f.__pari__() * x.__pari__()**self.__n

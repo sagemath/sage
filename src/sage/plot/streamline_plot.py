@@ -272,8 +272,8 @@ def streamline_plot(f_g, xrange, yrange, **options):
         (f,g) = f_g
     else:
         from sage.functions.all import sqrt
-        from inspect import isfunction
-        if isfunction(f_g):
+        from sage.misc.sageinspect import is_function_or_cython_function
+        if is_function_or_cython_function(f_g):
             f = lambda x,y: 1 / sqrt(f_g(x, y)**2 + 1)
             g = lambda x,y: f_g(x, y) * f(x, y)
         else:

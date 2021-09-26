@@ -1,3 +1,4 @@
+prune .tox
 include VERSION.txt
 graft bin
 graft sage_root
@@ -15,4 +16,5 @@ global-exclude .tox
 global-exclude *~*
 global-exclude *.bak
 global-exclude __pycache__
-global-exclude *.pyc
+global-exclude *.py[co]
+global-exclude *.so

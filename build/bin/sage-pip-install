@@ -3,16 +3,15 @@
 # built wheel.
 
 # Default arguments for all packages installed with `pip install`
-# --ignore-installed : Force pip to re-install package even if it thinks it's
-#                      already installed (for which it sometimes gets false
-#                      positives for partially-installed packages).
 # --verbose          : Display the output when running setup.py.
-# --no-deps          : Don't install runtime dependencies from PyPI.
 # --no-index         : Don't look at the package index.
-#                      This also disables pip's version self-check.
+# --disable-pip-version-check : Disables pip's version self-check.
 # --isolated         : Don't read configuration files such as
 #                      ~/.pydistutils.cfg
-pip_install_flags="--ignore-installed --verbose --no-deps --no-index --isolated"
+# --no-cache-dir     : Disable the cache.
+#                      (so that no previously built wheels can sneak in to
+#                      resolve runtime dependencies)
+pip_install_flags="--verbose --no-index --find-links=$SAGE_SPKG_WHEELS --disable-pip-version-check --isolated --no-cache-dir"
 
 # Note: "sage-pip-install" is meant to be run after $(PYTHON) has
 # been installed (either as an spkg or as a venv over a system python3).
@@ -35,6 +34,17 @@ LOCK="$SAGE_LOCAL/var/lock/$PIP.lock"
 # to apply a shared lock)
 sage-flock -s $LOCK $PYTHON -m pip install $pip_install_flags "$@"
 if [ $? -ne 0 ]; then
-    echo >&2 "Error: installing with $PIP failed"
-    exit 3
+    # --ignore-installed : Force pip to re-install package even if it thinks it's
+    #                      already installed (for which it sometimes gets false
+    #                      positives for partially-installed packages).
+    # --no-deps          : Don't install runtime dependencies from PyPI.
+    extra_pip_install_flags="--no-deps --ignore-installed --ignore-requires-python"
+    echo >&2 "Warning: installing with \"$PYTHON -m pip install $pip_install_flags\" failed. Retrying, adding \"$extra_pip_install_flags\""
+    sage-flock -s $LOCK $PYTHON -m pip install $pip_install_flags $extra_pip_install_flags "$@"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error: installing with pip  failed"
+        exit 3
+    else
+        echo >&2 "Warning: The installation needed to use \"$extra_pip_install_flags\" to succeed. This means that a dependencies file in build/pkgs/ needs to be updated. Please report this to sage-devel@googlegroups.com, including the build log of this package."
+    fi
 fi

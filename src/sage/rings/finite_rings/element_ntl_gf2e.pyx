@@ -1152,6 +1152,16 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
         """
         return self
 
+    def __deepcopy__(self, memo):
+        """
+        EXAMPLES::
+
+            sage: k.<a> = GF(2^16)
+            sage: deepcopy(a) is a
+            True
+        """
+        return self
+
     def _gap_init_(self):
         r"""
         Return a string that evaluates to the GAP representation of

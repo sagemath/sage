@@ -1719,7 +1719,6 @@ class RecurrenceParser(object):
         """
         from sage.arith.srange import srange
         from sage.matrix.constructor import Matrix
-        from sage.matrix.matrix_space import MatrixSpace
         from sage.matrix.special import block_matrix, zero_matrix
         from sage.modules.free_module_element import vector
 
@@ -1772,9 +1771,8 @@ class RecurrenceParser(object):
             for i in srange(n1):
                 J = J.stack(vector([int(j*k == i - rem) for j in srange(n1)]))
 
-            Mat = MatrixSpace(coefficient_ring, dim, dim)
-            return Mat(block_matrix([[mat, W],
-                                     [zero_matrix(n1, dim_without_corr), J]]))
+            Z = zero_matrix(coefficient_ring, n1, dim_without_corr)
+            return block_matrix([[mat, W], [Z, J]], subdivide=False)
 
     def left(self, recurrence_rules):
         r"""

@@ -3238,7 +3238,7 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
     INPUT:
 
-    - ``v``` -- vector
+    - ``v`` -- vector
     - ``i`` -- integer
     - ``ring`` -- ring (optional, default: ``None``) of the resulting matrix
 
@@ -3308,7 +3308,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     INPUT:
 
-    - ``v``` -- vector
+    - ``v`` -- vector
     - ``i`` -- integer
     - ``ring`` -- ring (optional, default: ``None``) of the resulting matrix
 

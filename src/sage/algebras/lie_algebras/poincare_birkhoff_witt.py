@@ -325,8 +325,12 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         if R == self._g:
             # Make this into the lift map
             I = self._indices
-            def basis_function(x): return self.monomial(I.gen(x))
-            def inv_supp(m): return None if m.length() != 1 else m.leading_support()
+
+            def basis_function(x):
+                return self.monomial(I.gen(x))
+
+            def inv_supp(m):
+                return None if m.length() != 1 else m.leading_support()
             # TODO: this diagonal, but with a smaller indexing set...
             return self._g.module_morphism(basis_function, codomain=self,
                                            triangular='upper', unitriangular=True,
