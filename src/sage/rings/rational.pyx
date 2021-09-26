@@ -91,9 +91,22 @@ from sage.categories.morphism cimport Morphism
 from sage.categories.map cimport Map
 
 
+RealNumber_classes = ()
+try:
+    from sage.rings.real_mpfr import RealNumber
+    RealNumber_classes += (RealNumber,)
+except ImportError:
+    pass
 
-import sage.rings.real_mpfr
-import sage.rings.real_double
+
+RealDouble_classes = (float,)
+try:
+    from sage.rings.real_double import RealDoubleElement
+    RealDouble_classes += (RealDoubleElement,)
+except ImportError:
+    pass
+
+
 from libc.stdint cimport uint64_t
 from sage.libs.gmp.binop cimport mpq_add_z, mpq_mul_z, mpq_div_zz
 
@@ -582,7 +595,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         elif isinstance(x, integer.Integer):
             set_from_Integer(self, x)
 
-        elif isinstance(x, sage.rings.real_mpfr.RealNumber):
+        elif isinstance(x, RealNumber_classes):
 
             if x == 0:
                 mpq_set_si(self.value, 0, 1)
@@ -659,15 +672,17 @@ cdef class Rational(sage.structure.element.FieldElement):
             temp_rational = x.rational_reconstruction()
             mpq_set(self.value, temp_rational.value)
 
-        elif isinstance(x, (float, sage.rings.real_double.RealDoubleElement)):
-            self.__set_value(sage.rings.real_mpfr.RealNumber(sage.rings.real_mpfr.RR, x), base)
+        elif isinstance(x, RealDouble_classes):
+            from sage.rings.real_mpfr import RR, RealNumber
+            self.__set_value(RealNumber(RR, x), base)
 
         elif is_numpy_type(type(x)):
             import numpy
             if isinstance(x, numpy.integer):
                 self.__set_value(integer.Integer(x), base)
             elif isinstance(x, numpy.floating):
-                self.__set_value(sage.rings.real_mpfr.RR(x), base)
+                from sage.rings.real_mpfr import RR
+                self.__set_value(RR(x), base)
             else:
                 raise TypeError("unable to convert {!r} to a rational".format(x))
 
