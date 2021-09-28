@@ -126,7 +126,7 @@ def is_ComplexDoubleField(x):
     return isinstance(x, ComplexDoubleField_class)
 
 
-cdef class ComplexDoubleField_class(sage.rings.ring.Field):
+cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
     """
     An approximation to the field of complex numbers using double
     precision floating point numbers. Answers derived from calculations

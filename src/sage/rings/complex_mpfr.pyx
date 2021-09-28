@@ -202,7 +202,7 @@ def ComplexField(prec=53, names=None):
     return C
 
 
-class ComplexField_class(ring.Field):
+class ComplexField_class(sage.rings.abc.ComplexField):
     """
     An approximation to the field of complex numbers using floating
     point numbers with any specified precision. Answers derived from
