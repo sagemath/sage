@@ -4,13 +4,14 @@ graft bin
 graft sage_root
 # These sources are not needed because individual distributions of these are made.
 prune sage_root/build/pkgs/*/src*
+prune sage_root/pkgs
 # Except for this one because config.status writes there
-graft sage_root/build/pkgs/sage_conf/src
-prune sage_root/build/pkgs/sage_conf/src/build
+graft sage_root/pkgs/sage-conf
+prune sage_root/pkgs/sage-conf/build
 # And this one because of declared dependencies on source files in Makefile.in
-graft sage_root/build/pkgs/sage_docbuild/src
-prune sage_root/build/pkgs/sage_docbuild/src/build
-prune sage_root/build/pkgs/sage_docbuild/src/sage_docbuild.egg-info
+graft sage_root/pkgs/sage-docbuild
+prune sage_root/pkgs/sage-docbuild/build
+prune sage_root/pkgs/sage-docbuild/*.egg-info
 #
 global-exclude .tox
 global-exclude *~*
