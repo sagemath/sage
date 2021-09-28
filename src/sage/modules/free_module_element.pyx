@@ -475,7 +475,8 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     # We first efficiently handle the important special case of the zero vector
     # over a ring. See trac 11657.
     # !! PLEASE DO NOT MOVE THIS CODE LOWER IN THIS FUNCTION !!
-    if arg2 is None and is_Ring(arg0) and (isinstance(arg1, (int, long, Integer))):
+    arg1_integer = isinstance(arg1, (int, long, Integer))
+    if arg2 is None and is_Ring(arg0) and arg1_integer:
         M = FreeModule(arg0, arg1, bool(sparse))
         v = M.zero_vector()
         if immutable:
@@ -499,7 +500,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     # consider a possible degree specified in second argument
     degree = None
     maxindex = None
-    if isinstance(arg1, (Integer, int, long)):
+    if arg1_integer:
         if arg1 < 0:
             raise ValueError("cannot specify the degree of a vector as a negative integer (%s)" % arg1)
         if isinstance(arg2, dict):
