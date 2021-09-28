@@ -31,7 +31,6 @@ import re
 import shutil
 from subprocess import call, PIPE
 
-from sage.misc import sage_eval
 from sage.misc.cachefunc import cached_function, cached_method
 from sage.misc.sage_ostools import have_program
 from sage.misc.temporary_file import tmp_dir
@@ -1015,6 +1014,7 @@ class Latex(LatexCall):
             sage: sage.misc.latex.Latex()._latex_preparse(r'\sage{s}', locals())
             '2'
         """
+        from sage.misc.sage_eval import sage_eval
         i0 = -1
         while True:
             i = s.find('\\sage{')
@@ -1028,7 +1028,7 @@ class Latex(LatexCall):
 
             var = t[:j]
             try:
-                k = str(latex(sage_eval.sage_eval(var, locals)))
+                k = str(latex(sage_eval(var, locals)))
             except Exception as msg:
                 print(msg)
                 k = '\\mbox{\\rm [%s undefined]}' % var
