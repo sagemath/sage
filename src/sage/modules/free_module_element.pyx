@@ -122,7 +122,6 @@ from sage.rings.ring import is_Ring
 from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.abc import RealDoubleField, ComplexDoubleField
-from sage.misc.derivative import multi_derivative
 
 from sage.rings.ring cimport Ring
 from sage.rings.integer cimport Integer, smallInteger
@@ -3978,6 +3977,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.derivative(x,x)
             (0, 0, 2)
         """
+        from sage.misc.derivative import multi_derivative
         return multi_derivative(self, args)
 
     diff = derivative
