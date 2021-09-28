@@ -19,6 +19,8 @@ include sage/arith/rational_reconstruction.*
 include sage/misc/allocator.*
 include sage/ext/mod_int.*
 
+include sage/misc/latex*.*
+
 include sage/rings/number_field/__init__.py
 include sage/rings/number_field/number_field_base.*
 
@@ -65,3 +67,4 @@ exclude sage/geometry/integral_points.pyx  # depends on matrix_integer_dense
 
 global-exclude *.py[co]
 global-exclude *.so
+global-exclude *.bak
