@@ -32,7 +32,6 @@ import shutil
 from subprocess import call, PIPE
 
 from sage.misc.cachefunc import cached_function, cached_method
-from sage.misc.sage_ostools import have_program
 from sage.misc.temporary_file import tmp_dir
 from sage.structure.sage_object import SageObject
 
@@ -81,6 +80,7 @@ def have_latex() -> bool:
         sage: have_latex() # random
         True
     """
+    from sage.misc.sage_ostools import have_program
     return have_program('latex')
 
 
@@ -98,6 +98,7 @@ def have_pdflatex() -> bool:
         sage: have_pdflatex() # random
         True
     """
+    from sage.misc.sage_ostools import have_program
     return have_program('pdflatex')
 
 
@@ -115,6 +116,7 @@ def have_xelatex() -> bool:
         sage: have_xelatex() # random
         True
     """
+    from sage.misc.sage_ostools import have_program
     return have_program('xelatex')
 
 
@@ -132,6 +134,7 @@ def have_dvipng() -> bool:
         sage: have_dvipng() # random
         True
     """
+    from sage.misc.sage_ostools import have_program
     return have_program('dvipng')
 
 
@@ -150,6 +153,7 @@ def have_convert() -> bool:
         sage: have_convert() # random
         True
     """
+    from sage.misc.sage_ostools import have_program
     return have_program('convert')
 
 
