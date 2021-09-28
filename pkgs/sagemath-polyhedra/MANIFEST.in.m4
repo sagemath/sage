@@ -16,6 +16,7 @@ include sage/rings/integer*.*
 include sage/rings/rational*.*
 include sage/rings/infinity.*
 include sage/arith/rational_reconstruction.*
+include sage/arith/functions.p*
 include sage/misc/allocator.*
 include sage/ext/mod_int.*
 
@@ -30,6 +31,7 @@ include sage/rings/finite_rings/stdint.*
 include sage/rings/fast_arith.*
 include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.pxd   # .pyx depends on pari
+include sage/rings/finite_rings/integer_mod_ring.*
 
 graft sage/modules
 exclude sage/modules/vector_*double*.*  # depends on numpy
