@@ -121,8 +121,7 @@ from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 from sage.rings.ring import is_Ring
 from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
+from sage.rings.abc import RealDoubleField, ComplexDoubleField
 from sage.misc.derivative import multi_derivative
 
 from sage.rings.ring cimport Ring
@@ -536,14 +535,16 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         if len(v.shape) != 1:
             raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
         from .free_module import VectorSpace
-        if (R is None or R is RDF) and v.dtype.kind == 'f':
+        if (R is None or isinstance(R, RealDoubleField)) and v.dtype.kind == 'f':
+            from sage.rings.real_double import RDF
             V = VectorSpace(RDF, v.shape[0])
             from .vector_real_double_dense import Vector_real_double_dense
             v = Vector_real_double_dense(V, v)
             if immutable:
                 v.set_immutable()
             return v
-        if (R is None or R is CDF) and v.dtype.kind == 'c':
+        if (R is None or isinstance(R, ComplexDoubleField)) and v.dtype.kind == 'c':
+            from sage.rings.complex_double import CDF
             V = VectorSpace(CDF, v.shape[0])
             from .vector_complex_double_dense import Vector_complex_double_dense
             v = Vector_complex_double_dense(V, v)
