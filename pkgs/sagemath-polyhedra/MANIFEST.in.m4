@@ -11,6 +11,7 @@ include requirements.txt
 
 global-include all__sagemath_polyhedra.py
 
+include sage/rings/abc.*
 include sage/rings/integer*.*
 include sage/rings/rational*.*
 include sage/rings/infinity.*
