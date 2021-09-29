@@ -172,7 +172,7 @@ import sage.rings.finite_rings.finite_field_constructor as finite_field
 import sage.rings.ring as ring
 import sage.rings.integer_ring
 import sage.rings.rational_field
-import sage.rings.finite_rings.integer_mod_ring
+import sage.rings.abc
 import sage.rings.infinity
 import sage.rings.integer
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -253,7 +253,7 @@ done from the right side.""")
             elif base_ring in PrincipalIdealDomains():
                 return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
 
-            elif isinstance(base_ring, sage.rings.number_field.order.Order) \
+            elif isinstance(base_ring, sage.rings.abc.Order) \
                 and base_ring.is_maximal() and base_ring.class_number() == 1:
                 return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
 
@@ -7434,7 +7434,7 @@ def element_class(R, is_sparse):
     elif sage.rings.rational_field.is_RationalField(R) and not is_sparse:
         from .vector_rational_dense import Vector_rational_dense
         return Vector_rational_dense
-    elif sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R) and not is_sparse:
+    elif isinstance(R, sage.rings.abc.IntegerModRing) and not is_sparse:
         from .vector_mod2_dense import Vector_mod2_dense
         if R.order() == 2:
             return Vector_mod2_dense

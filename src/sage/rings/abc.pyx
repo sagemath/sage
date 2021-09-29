@@ -32,3 +32,18 @@ cdef class ComplexDoubleField(Field):
     """
 
     pass
+
+
+class IntegerModRing:
+    r"""
+    Abstract base class for :class:`~sage.rings.finite_rings.integer_mod_ring.IntegerModRing_generic`.
+    """
+
+    pass
+
+class Order:
+    r"""
+    Abstract base class for :class:`~sage.rings.number_field.order.Order`.
+    """
+
+    pass

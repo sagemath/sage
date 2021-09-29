@@ -297,7 +297,7 @@ def _unit_gens_primepowercase(p, r):
 
 
 @richcmp_method
-class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
+class IntegerModRing_generic(quotient_ring.QuotientRing_generic, IntegerModRing):
     """
     The ring of integers modulo `N`.
 
