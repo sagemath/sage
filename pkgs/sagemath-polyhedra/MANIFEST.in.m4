@@ -21,6 +21,9 @@ include sage/ext/mod_int.*
 
 include sage/misc/latex*.*
 
+include sage/sets/__init__.py
+include sage/sets/set.py
+
 include sage/rings/number_field/__init__.py
 include sage/rings/number_field/number_field_base.*
 
