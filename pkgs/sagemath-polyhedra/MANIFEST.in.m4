@@ -32,7 +32,6 @@ include sage/rings/finite_rings/finite_field_constructor.py
 include sage/rings/fast_arith.*
 include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.pxd   # .pyx depends on pari
-include sage/rings/finite_rings/integer_mod_ring.*
 
 graft sage/modules
 exclude sage/modules/vector_*double*.*  # depends on numpy
