@@ -13,7 +13,7 @@ global-include all__sagemath_polyhedra.py
 
 include sage/rings/quotient_ring*.p*
 include sage/rings/homset.p*
-include sage/rings/ideal.p*
+include sage/rings/ideal*.p*
 include sage/rings/localization.p*
 include sage/rings/morphism.p*
 
