@@ -495,6 +495,35 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             from sage.modules.free_module import FreeModule
             return FreeModule(self.base_ring(), self.ambient_dim()+1)
 
+    def _repr_base_ring(self):
+        """
+        Return an abbreviated string representation of the base ring.
+
+        EXAMPLES::
+
+            sage: from sage.geometry.polyhedron.parent import Polyhedra
+            sage: Polyhedra(QQ, 3)._repr_base_ring()
+            'QQ'
+            sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3).sqrt())
+            sage: Polyhedra(K, 4)._repr_base_ring()
+            '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)'
+        """
+
+        if self.base_ring() is ZZ:
+            return 'ZZ'
+        if self.base_ring() is QQ:
+            return 'QQ'
+        if self.base_ring() is RDF:
+            return 'RDF'
+        try:
+            from sage.rings.qqbar import AA
+        except ImportError:
+            pass
+        else:
+            if self.base_ring() is AA:
+                return 'AA'
+        return '({0})'.format(self.base_ring())
+
     def _repr_ambient_module(self):
         """
         Return an abbreviated string representation of the ambient
@@ -513,17 +542,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: Polyhedra(K, 4)._repr_ambient_module()
             '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)^4'
         """
-        from sage.rings.qqbar import AA
-        if self.base_ring() is ZZ:
-            s = 'ZZ'
-        elif self.base_ring() is QQ:
-            s = 'QQ'
-        elif self.base_ring() is RDF:
-            s = 'RDF'
-        elif self.base_ring() is AA:
-            s = 'AA'
-        else:
-            s = '({0})'.format(self.base_ring())
+        s = self._repr_base_ring()
         s += '^' + repr(self.ambient_dim())
         return s
 
