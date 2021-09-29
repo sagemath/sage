@@ -15,8 +15,7 @@ include sage/rings/abc.*
 include sage/rings/integer*.*
 include sage/rings/rational*.*
 include sage/rings/infinity.*
-include sage/arith/rational_reconstruction.*
-include sage/arith/functions.p*
+include sage/arith/*.*
 include sage/misc/allocator.*
 include sage/ext/mod_int.*
 
