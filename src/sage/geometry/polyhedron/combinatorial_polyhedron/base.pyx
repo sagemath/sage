@@ -85,7 +85,6 @@ AUTHOR:
 
 import numbers
 from sage.rings.integer             import Integer
-from sage.graphs.graph              import Graph
 from sage.geometry.polyhedron.base  import Polyhedron_base
 from sage.geometry.lattice_polytope import LatticePolytopeClass
 from sage.geometry.cone             import ConvexRationalPolyhedralCone
@@ -1238,6 +1237,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         edges = tuple(edge for edge in self.edges(names=names)
                       if edge[0] in vertices and edge[1] in vertices)
 
+        from sage.graphs.graph import Graph
         return Graph([vertices, edges], format="vertices_and_edges")
 
     graph = vertex_graph
@@ -1263,6 +1263,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.misc.superseded import deprecation
         deprecation(28603, "the method edge_graph of CombinatorialPolyhedron is deprecated; use vertex_graph", 3)
+        from sage.graphs.graph import Graph
         return Graph(self.edges(names=names), format="list_of_edges")
 
     def ridges(self, add_equations=False, names=True, add_equalities=False):
@@ -1449,6 +1450,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             # If names is false, the ridges are given as tuple of indices,
             # i.e. (1,2) instead of (('f1',), ('f2',)).
             V = list(v[0] for v in V)
+        from sage.graphs.graph import Graph
         return Graph([V, E], format="vertices_and_edges")
 
     def ridge_graph(self, names=True):
@@ -1472,6 +1474,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.misc.superseded import deprecation
         deprecation(28604, "the method ridge_graph of CombinatorialPolyhedron is deprecated; use facet_graph", 3)
+        from sage.graphs.graph import Graph
         return Graph(self.ridges(names=names), format="list_of_edges")
 
     @cached_method
