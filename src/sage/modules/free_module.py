@@ -241,10 +241,10 @@ done from the right side.""")
         #            raise TypeError, "The base_ring must be a commutative ring."
 
         try:
-            if not sparse and isinstance(base_ring,sage.rings.real_double.RealDoubleField_class):
+            if not sparse and isinstance(base_ring, sage.rings.abc.RealDoubleField):
                 return RealDoubleVectorSpace_class(rank)
 
-            elif not sparse and isinstance(base_ring,sage.rings.complex_double.ComplexDoubleField_class):
+            elif not sparse and isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
                 return ComplexDoubleVectorSpace_class(rank)
 
             elif base_ring.is_field():
@@ -7443,22 +7443,26 @@ def element_class(R, is_sparse):
             return Vector_modn_dense
         else:
             return free_module_element.FreeModuleElement_generic_dense
-    elif sage.rings.real_double.is_RealDoubleField(R) and not is_sparse:
+    elif isinstance(R, sage.rings.abc.RealDoubleField) and not is_sparse:
         return sage.modules.vector_real_double_dense.Vector_real_double_dense
-    elif sage.rings.complex_double.is_ComplexDoubleField(R) and not is_sparse:
+    elif isinstance(R, sage.rings.abc.ComplexDoubleField) and not is_sparse:
         return sage.modules.vector_complex_double_dense.Vector_complex_double_dense
-    elif sage.symbolic.ring.is_SymbolicExpressionRing(R) and not is_sparse:
-        import sage.modules.vector_symbolic_dense
-        return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
-    elif sage.symbolic.callable.is_CallableSymbolicExpressionRing(R) and not is_sparse:
-        import sage.modules.vector_callable_symbolic_dense
-        return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
     else:
-        if is_sparse:
-            return free_module_element.FreeModuleElement_generic_sparse
+        try:
+            import sage.symbolic.ring
+        except ImportError:
+            pass
         else:
-            return free_module_element.FreeModuleElement_generic_dense
-    raise NotImplementedError
+            if sage.symbolic.ring.is_SymbolicExpressionRing(R) and not is_sparse:
+                import sage.modules.vector_symbolic_dense
+                return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
+            elif sage.symbolic.callable.is_CallableSymbolicExpressionRing(R) and not is_sparse:
+                import sage.modules.vector_callable_symbolic_dense
+                return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
+    if is_sparse:
+        return free_module_element.FreeModuleElement_generic_sparse
+    else:
+        return free_module_element.FreeModuleElement_generic_dense
 
 @richcmp_method
 class EchelonMatrixKey(object):
