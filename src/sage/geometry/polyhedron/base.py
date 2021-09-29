@@ -5284,6 +5284,11 @@ class Polyhedron_base(Element, ConvexSet_closed):
         else:
             tester.assertIsInstance(ZZ(1)/3*self, Polyhedron_base)
 
+        try:
+            from sage.rings.qqbar import AA
+        except ImportError:
+            AA = None
+
         if self.n_vertices() > 20 or self.base_ring() is AA:
             # Avoid long time computations.
             return
@@ -5293,6 +5298,9 @@ class Polyhedron_base(Element, ConvexSet_closed):
             tester.assertEqual(self.dilation(3).volume(measure='induced'), self.volume(measure='induced')*3**self.dim())
 
         # Testing coercion with algebraic numbers.
+        if AA is None:
+            return
+
         from sage.rings.number_field.number_field import QuadraticField
         K1 = QuadraticField(2, embedding=AA(2).sqrt())
         sqrt2 = K1.gen()
