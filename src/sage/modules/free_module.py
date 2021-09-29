@@ -2931,7 +2931,7 @@ class FreeModule_generic_pid(FreeModule_generic):
         a = sage.matrix.matrix_space.MatrixSpace(self.base_field(), self.rank())(C).determinant()
         if sage.rings.integer_ring.is_IntegerRing(self.base_ring()):
             return a.abs()
-        elif isinstance(self.base_ring, sage.rings.number_field.order.Order):
+        elif isinstance(self.base_ring, sage.rings.abc.Order):
             return self.base_ring().ideal(a).norm()
         else:
             raise NotImplementedError
