@@ -2642,8 +2642,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         elif self_on_left and op is operator.pow:
             S_is_int = parent_is_integers(S)
             if not S_is_int:
-                from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-                if is_IntegerModRing(S):
+                from sage.rings.abc import IntegerModRing
+                if isinstance(S, IntegerModRing):
                     # We allow powering by an IntegerMod by treating it
                     # as an integer.
                     #
