@@ -64,6 +64,7 @@ import sage.misc.prandom as random
 
 from sage.arith.all import factor, primitive_root, CRT_basis
 import sage.rings.ring as ring
+import sage.rings.abc
 from . import integer_mod
 import sage.rings.integer as integer
 import sage.rings.integer_ring as integer_ring
@@ -297,7 +298,7 @@ def _unit_gens_primepowercase(p, r):
 
 
 @richcmp_method
-class IntegerModRing_generic(quotient_ring.QuotientRing_generic, IntegerModRing):
+class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.IntegerModRing):
     """
     The ring of integers modulo `N`.
 
