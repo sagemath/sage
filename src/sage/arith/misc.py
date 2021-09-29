@@ -19,10 +19,6 @@ from collections.abc import Iterable
 from sage.misc.misc import powerset
 from sage.misc.misc_c import prod
 
-from sage.libs.pari.all import pari
-from sage.libs.flint.arith import (bernoulli_number as flint_bernoulli,
-                                   dedekind_sum as flint_dedekind_sum)
-
 from sage.structure.element import parent
 from sage.structure.coerce import py_scalar_to_element
 
@@ -266,6 +262,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         raise NotImplementedError("proof and height bound only implemented for real and complex numbers")
 
     else:
+        from sage.libs.pari.all import pari
         y = pari(z)
         f = y.algdep(degree)
 
@@ -366,8 +363,10 @@ def bernoulli(n, algorithm='default', num_threads=1):
         if n >= 100000:
             from warnings import warn
             warn("flint is known to not be accurate for large Bernoulli numbers")
+        from sage.libs.flint.arith import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
     elif algorithm == 'pari':
+        from sage.libs.pari.all import pari
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
     elif algorithm == 'gap':
@@ -465,6 +464,7 @@ def factorial(n, algorithm='gmp'):
     if algorithm == 'gmp':
         return ZZ(n).factorial()
     elif algorithm == 'pari':
+        from sage.libs.pari.all import pari
         return pari.factorial(n)
     else:
         raise ValueError('unknown algorithm')
@@ -4160,6 +4160,7 @@ def nth_prime(n):
     """
     if n <= 0:
         raise ValueError("nth prime meaningless for non-positive n (=%s)" % n)
+    from sage.libs.pari.all import pari
     return ZZ(pari.prime(n))
 
 
@@ -5872,6 +5873,7 @@ def dedekind_sum(p, q, algorithm='default'):
     - :wikipedia:`Dedekind\_sum`
     """
     if algorithm == 'default' or algorithm == 'flint':
+        from sage.libs.flint.arith import dedekind_sum as flint_dedekind_sum
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':
