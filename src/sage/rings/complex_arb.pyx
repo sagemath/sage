@@ -182,6 +182,7 @@ from sage.rings.real_arb import RealBallField
 from sage.rings.real_mpfi cimport RealIntervalField_class
 from sage.rings.real_mpfr cimport RealField_class, RealField, RealNumber
 from sage.rings.ring import Field
+import sage.rings.abc
 from sage.structure.element cimport Element, ModuleElement
 from sage.structure.parent cimport Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -301,7 +302,7 @@ cdef int acb_calc_func_callback(acb_ptr out, const acb_t inp, void * param,
     finally:
         sig_on()
 
-class ComplexBallField(UniqueRepresentation, Field):
+class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
     r"""
     An approximation of the field of complex numbers using pairs of mid-rad
     intervals.
