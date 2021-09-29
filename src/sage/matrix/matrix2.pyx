@@ -3554,7 +3554,11 @@ cdef class Matrix(Matrix1):
         """
         from sage.matrix.matrix_space import MatrixSpace
         tm = verbose("computing right kernel matrix over a number field for %sx%s matrix" % (self.nrows(), self.ncols()),level=1)
-        basis = self.__pari__().matker()
+        try:
+            self_pari = self.__pari__()
+        except ImportError:
+            return None, None
+        basis = self_pari.matker()
         # Coerce PARI representations into the number field
         R = self.base_ring()
         basis = [[R(x) for x in row] for row in basis]
