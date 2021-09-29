@@ -216,7 +216,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         if use_bits is not None:
             prec = int(use_bits)
 
-        is_complex = isinstance(z, ComplexNumber)
+        is_complex = isinstance(z.parent(), ComplexField)
         n = degree+1
         from sage.matrix.constructor import matrix
         M = matrix(ZZ, n, n+1+int(is_complex))
@@ -3030,6 +3030,7 @@ class Euler_Phi:
             return ZZ(0)
         if n<=2:
             return ZZ(1)
+        from sage.libs.pari.all import pari
         return ZZ(pari(n).eulerphi())
 
     def plot(self, xmin=1, xmax=50, pointsize=30, rgbcolor=(0,0,1), join=True,
@@ -4100,6 +4101,7 @@ def primitive_root(n, check=True):
         sage: primitive_root(mpz(-46))
         5
     """
+    from sage.libs.pari.all import pari
     if not check:
         return ZZ(pari(n).znprimroot())
     n = ZZ(n).abs()
@@ -4278,6 +4280,7 @@ class Moebius:
         # Use fast PARI algorithm
         if n == 0:
             return ZZ.zero()
+        from sage.libs.pari.all import pari
         return ZZ(pari(n).moebius())
 
 
@@ -4362,6 +4365,8 @@ class Moebius:
         if start <= 0 and 0 < stop and start % step == 0:
             return self.range(start, 0, step) + [ZZ.zero()] +\
                    self.range(step, stop, step)
+
+        from sage.libs.pari.all import pari
 
         if step == 1:
             v = pari('vector(%s, i, moebius(i-1+%s))'%(
@@ -4492,6 +4497,7 @@ def number_of_divisors(n):
     m = ZZ(n)
     if m.is_zero():
         raise ValueError("input must be nonzero")
+    from sage.libs.pari.all import pari
     return ZZ(pari(m).numdiv())
 
 
@@ -4566,6 +4572,7 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
     if algorithm == "pari":
         if p == -1:
             p = 0
+        from sage.libs.pari.all import pari
         return ZZ(pari(a).hilbert(b, p))
 
     elif algorithm == 'direct':
