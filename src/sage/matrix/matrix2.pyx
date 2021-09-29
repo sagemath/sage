@@ -90,7 +90,6 @@ from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ, is_RationalField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.misc.derivative import multi_derivative
 from sage.arith.numerical_approx cimport digits_to_bits
 from copy import copy
 
@@ -15126,6 +15125,7 @@ cdef class Matrix(Matrix1):
             sage: v.derivative(x,x)
             (0, 0, 2)
         """
+        from sage.misc.derivative import multi_derivative
         return multi_derivative(self, args)
 
     def exp(self):
