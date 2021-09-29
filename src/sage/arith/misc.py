@@ -26,8 +26,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer, GCD_list
 from sage.rings.rational import Rational
-from sage.rings.real_mpfr import RealNumber
-from sage.rings.complex_mpfr import ComplexNumber
+from sage.rings.abc import RealField, ComplexField
 
 from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 
@@ -203,7 +202,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
             return None
         return z.denominator()*x - z.numerator()
 
-    if isinstance(z, (RealNumber, ComplexNumber)):
+    if isinstance(z.parent(), (RealField, ComplexField)):
 
         log2_10 = math.log(10,2)
 
@@ -3609,7 +3608,7 @@ def binomial(x, m, **kwds):
         return P(x.binomial(m, **kwds))
 
     # case 3: rational, real numbers, complex numbers -> use pari
-    if isinstance(x, (Rational, RealNumber, ComplexNumber)):
+    if isinstance(x, Rational) or isinstance(P, (RealField, ComplexField)):
         return P(x.__pari__().binomial(m))
 
     # case 4: naive method
