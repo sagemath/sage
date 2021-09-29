@@ -82,10 +82,9 @@ The following constructions are available
 import itertools
 
 from sage.rings.integer_ring import ZZ
-from sage.rings.qqbar import AA, QQbar
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.rings.qqbar', ['AA', 'QQbar'])
 from sage.rings.rational_field import QQ
-from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import RR
 from sage.combinat.permutation import Permutations
 from sage.groups.perm_gps.permgroup_named import AlternatingGroup
 from .constructor import Polyhedron
@@ -94,7 +93,7 @@ from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 from sage.combinat.root_system.associahedron import Associahedron
 
-def zero_sum_projection(d, base_ring=RDF):
+def zero_sum_projection(d, base_ring=None):
     r"""
     Return a matrix corresponding to the projection on the orthogonal of
     `(1,1,\ldots,1)` in dimension `d`.
@@ -126,6 +125,8 @@ def zero_sum_projection(d, base_ring=RDF):
     """
     from sage.matrix.constructor import matrix
     from sage.modules.free_module_element import vector
+    if base_ring is None:
+        from sage.rings.real_double import RDF as base_ring
     basis = [vector(base_ring, [1]*i + [-i] + [0]*(d-i-1)) for i in range(1, d)]
     return matrix(base_ring, [v / v.norm() for v in basis])
 
@@ -190,7 +191,7 @@ def project_points(*points, **kwds):
         return []
     base_ring = kwds.pop('base_ring', None)
     if base_ring is None:
-        base_ring = RDF
+        from sage.rings.real_double import RDF as base_ring
     from sage.modules.free_module_element import vector
     vecs = [vector(base_ring, p) for p in points]
     m = zero_sum_projection(len(vecs[0]), base_ring=base_ring)
@@ -563,9 +564,9 @@ class Polytopes():
 
         if base_ring is None:
             if exact:
-                base_ring = AA
+                from sage.rings.qqbar import AA as base_ring
             else:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
 
         try:
             omega = 2*base_ring.pi() / n
@@ -1512,6 +1513,7 @@ class Polytopes():
         if exact:
             return Polyhedron(vertices=verts, base_ring=K, backend=backend)
         else:
+            from sage.rings.real_mpfr import RR
             verts = [(RR(x), RR(y), RR(z)) for x, y, z in verts]
             return Polyhedron(vertices=verts, backend=backend)
 
