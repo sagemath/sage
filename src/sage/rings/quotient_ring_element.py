@@ -18,7 +18,6 @@ AUTHORS:
 
 from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp, rich_to_bool
-from sage.interfaces.singular import singular as singular_default
 
 
 class QuotientRingElement(RingElement):
@@ -757,7 +756,7 @@ class QuotientRingElement(RingElement):
         """
         return [self.__class__(self.parent(), m) for m in self.__rep.monomials()]
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Return Singular representation of self.
 
@@ -797,6 +796,8 @@ class QuotientRingElement(RingElement):
             sage: S((a-2/3*b)._singular_())
             a - 2/3*b
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         return self.__rep._singular_(singular)
 
     def _magma_init_(self, magma):

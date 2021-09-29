@@ -110,11 +110,9 @@ easily::
 
 import sage.misc.latex as latex
 from . import ring, ideal, quotient_ring_element
-import sage.rings.polynomial.multi_polynomial_ideal
 from sage.structure.category_object import normalize_names
 from sage.structure.richcmp import richcmp_method, richcmp
 import sage.structure.parent_gens
-from sage.interfaces.singular import singular as singular_default, is_SingularElement
 from sage.misc.cachefunc import cached_method
 from sage.categories.rings import Rings
 from sage.categories.commutative_rings import CommutativeRings
@@ -953,13 +951,20 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
                (not hasattr(self.__R, '_has_singular') or not self.__R._has_singular):
             # pass through
             return super(QuotientRing_nc, self).ideal(gens, **kwds)
-        if is_SingularElement(gens):
+        try:
+            from sage.interfaces.singular import is_SingularElement
+        except ImportError:
+            is_singular_element = False
+        else:
+            is_singular_element = is_SingularElement(gens)
+        if is_singular_element:
             gens = list(gens)
         elif not isinstance(gens, (list, tuple)):
             gens = [gens]
         if 'coerce' in kwds and kwds['coerce']:
             gens = [self(x) for x in gens]  # this will even coerce from singular ideals correctly!
-        return sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal(self, gens, **kwds)
+        from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+        return MPolynomialIdeal(self, gens, **kwds)
 
     def _element_constructor_(self, x, coerce=True):
         """
@@ -1005,10 +1010,15 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             if x.parent() is self:
                 return x
             x = x.lift()
-        if is_SingularElement(x):
-            #self._singular_().set_ring()
-            x = self.element_class(self, x.sage_poly(self.cover_ring()))
-            return x
+        try:
+            from sage.interfaces.singular import is_SingularElement
+        except ImportError:
+            pass
+        else:
+            if is_SingularElement(x):
+                #self._singular_().set_ring()
+                x = self.element_class(self, x.sage_poly(self.cover_ring()))
+                return x
         if coerce:
             R = self.cover_ring()
             x = R(x)
@@ -1172,7 +1182,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         return self(self.__R.gen(i))
 
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Returns the Singular quotient ring of ``self`` if the base ring is
         coercible to Singular.
@@ -1203,6 +1213,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             // quotient ring from ideal
             _[1]=x2+y2
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         try:
             Q = self.__singular
             if not (Q.parent() is singular):
@@ -1212,7 +1224,7 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         except (AttributeError, ValueError):
             return self._singular_init_(singular)
 
-    def _singular_init_(self,singular=singular_default):
+    def _singular_init_(self, singular=None):
         """
         Returns a newly created Singular quotient ring matching ``self`` if
         the base ring is coercible to Singular.
@@ -1229,6 +1241,8 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
             sage: parent(T)
             Singular
         """
+        if singular is None:
+            from sage.interfaces.singular import singular
         self.__R._singular_().set_ring()
         self.__singular = singular("%s"%self.__I._singular_().name(),"qring")
         return self.__singular
