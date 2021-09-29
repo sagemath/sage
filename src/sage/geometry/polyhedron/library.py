@@ -85,13 +85,13 @@ from sage.rings.integer_ring import ZZ
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.rings.qqbar', ['AA', 'QQbar'])
 from sage.rings.rational_field import QQ
-from sage.combinat.permutation import Permutations
-from sage.groups.perm_gps.permgroup_named import AlternatingGroup
+lazy_import('sage.combinat.permutation', 'Permutations')
+lazy_import('sage.groups.perm_gps.permgroup_named', 'AlternatingGroup')
 from .constructor import Polyhedron
 from .parent import Polyhedra
-from sage.graphs.digraph import DiGraph
-from sage.graphs.graph import Graph
-from sage.combinat.root_system.associahedron import Associahedron
+lazy_import('sage.graphs.digraph', 'DiGraph')
+lazy_import('sage.graphs.graph', 'Graph')
+lazy_import('sage.combinat.root_system.associahedron', 'Associahedron')
 
 def zero_sum_projection(d, base_ring=None):
     r"""
