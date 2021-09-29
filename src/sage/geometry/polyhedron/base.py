@@ -40,17 +40,16 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.randstate import current_randstate
 from sage.misc.superseded import deprecated_function_alias
+from sage.misc.lazy_import import lazy_import
 
+import sage.rings.abc
 from sage.rings.integer_ring import ZZ
-from sage.rings.qqbar import AA
 from sage.rings.rational_field import QQ
-from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.modules.vector_space_morphism import linear_transformation
 from sage.matrix.constructor import matrix
-from sage.functions.other import sqrt, floor, ceil
-from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-from sage.graphs.graph import Graph
+lazy_import('sage.functions.other', ['sqrt', 'floor', 'ceil'])
+lazy_import('sage.groups.matrix_gps.finitely_generated', 'MatrixGroup')
 from sage.geometry.convex_set import ConvexSet_closed, AffineHullProjectionData
 
 from .constructor import Polyhedron
@@ -1397,7 +1396,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
         except AttributeError:
             if self.base_ring() is ZZ or self.base_ring() is QQ:
                 cdd_type = 'rational'
-            elif self.base_ring() is RDF:
+            elif isinstance(self.base_ring(), sage.rings.abc.RealDoubleField):
                 cdd_type = 'real'
             else:
                 raise TypeError('the base ring must be ZZ, QQ, or RDF')
@@ -1458,7 +1457,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
         except AttributeError:
             if self.base_ring() is ZZ or self.base_ring() is QQ:
                 cdd_type = 'rational'
-            elif self.base_ring() is RDF:
+            elif isinstance(self.base_ring(), sage.rings.abc.RealDoubleField):
                 cdd_type = 'real'
             else:
                 raise TypeError('the base ring must be ZZ, QQ, or RDF')
@@ -4960,9 +4959,14 @@ class Polyhedron_base(Element, ConvexSet_closed):
             if self.base_ring() is not AA and AA.has_coerce_map_from(self.base_ring()):
                 R = self*polytopes.regular_polygon(5, exact=True)
                 assert R
-            if RDF.has_coerce_map_from(self.base_ring()):
-                R = self*polytopes.regular_polygon(5, exact=False)
-                assert R
+            try:
+                from sage.rings.real_double import RDF
+            except ImportError:
+                pass
+            else:
+                if RDF.has_coerce_map_from(self.base_ring()):
+                    R = self*polytopes.regular_polygon(5, exact=False)
+                    assert R
 
         if self.base_ring() in (ZZ, QQ):
             # Check that the double description is set up correctly.
@@ -10550,6 +10554,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
         Qplus = sum(v.column() * v.row() for v in V).pseudoinverse()
 
         # Construct the graph.
+        from sage.graphs.graph import Graph
         G = Graph()
         for i in range(len(V)):
             for j in range(i+1, len(V)):
