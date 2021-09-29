@@ -105,17 +105,16 @@ AUTHORS:
 
 from sage.arith.all import gcd
 from sage.combinat.posets.posets import FinitePoset
-from sage.env import POLYTOPE_DATA_DIR
+from sage.misc.lazy_import import lazy_import
 from sage.geometry.cone import _ambient_space_point, integral_length
-from sage.geometry.hasse_diagram import lattice_from_incidences
+lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import (PointCollection,
                                             is_PointCollection,
                                             read_palp_point_collection)
 from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
-from sage.graphs.graph import DiGraph, Graph
-from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+lazy_import('sage.graphs.graph', ['DiGraph', 'Graph'])
+lazy_import('sage.groups.perm_gps.permgroup_named', 'SymmetricGroup')
 
-from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Linear_Expression'],
                     feature=PythonModule("ppl", spkg="pplpy"))
@@ -128,10 +127,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.temporary_file import tmp_filename
 from sage.modules.free_module_element import vector
-from sage.numerical.mip import MixedIntegerLinearProgram
-from sage.plot.plot3d.index_face_set import IndexFaceSet
-from sage.plot.plot3d.all import line3d, point3d
-from sage.plot.plot3d.shapes2 import text3d
+lazy_import('sage.numerical.mip', 'MixedIntegerLinearProgram')
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -430,6 +426,7 @@ def ReflexivePolytopes(dim):
     if dim not in [2, 3]:
         raise NotImplementedError("only 2- and 3-dimensional reflexive polytopes are available!")
     if _rp[dim] is None:
+        from sage.env import POLYTOPE_DATA_DIR
         rp = read_all_polytopes(
             os.path.join(POLYTOPE_DATA_DIR, "reflexive_polytopes_%dd" % dim))
         for n, p in enumerate(rp):
@@ -3556,6 +3553,10 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable):
             sage: p.plot3d()
             Graphics3d Object
         """
+        from sage.plot.plot3d.index_face_set import IndexFaceSet
+        from sage.plot.plot3d.all import line3d, point3d
+        from sage.plot.plot3d.shapes2 import text3d
+
         dim = self.dim()
         amb_dim = self.lattice_dim()
         if dim > 3:
