@@ -7425,9 +7425,7 @@ def element_class(R, is_sparse):
         sage: sage.modules.free_module.element_class(P, is_sparse=False)
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
     """
-    import sage.modules.vector_real_double_dense
-    import sage.modules.vector_complex_double_dense
-
+    import sage.rings.integer_ring
     if sage.rings.integer_ring.is_IntegerRing(R) and not is_sparse:
         from .vector_integer_dense import Vector_integer_dense
         return Vector_integer_dense
@@ -7444,9 +7442,19 @@ def element_class(R, is_sparse):
         else:
             return free_module_element.FreeModuleElement_generic_dense
     elif isinstance(R, sage.rings.abc.RealDoubleField) and not is_sparse:
-        return sage.modules.vector_real_double_dense.Vector_real_double_dense
+        try:
+            from sage.modules.vector_real_double_dense import Vector_real_double_dense
+        except ImportError:
+            pass
+        else:
+            return Vector_real_double_dense
     elif isinstance(R, sage.rings.abc.ComplexDoubleField) and not is_sparse:
-        return sage.modules.vector_complex_double_dense.Vector_complex_double_dense
+        try:
+            from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
+        except ImportError:
+            pass
+        else:
+            return Vector_complex_double_dense
     else:
         try:
             import sage.symbolic.ring
