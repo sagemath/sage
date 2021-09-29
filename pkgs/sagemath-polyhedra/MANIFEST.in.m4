@@ -27,6 +27,8 @@ include sage/rings/number_field/number_field_base.*
 include sage/rings/finite_rings/__init__.py
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*
+include sage/rings/finite_rings/finite_field_base.p*
+include sage/rings/finite_rings/finite_field_constructor.py
 include sage/rings/fast_arith.*
 include sage/rings/finite_rings/integer_mod_limits.h
 include sage/rings/finite_rings/integer_mod.pxd   # .pyx depends on pari
