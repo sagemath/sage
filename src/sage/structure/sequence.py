@@ -213,15 +213,19 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
         ...
         TypeError: unable to convert a to an element of Integer Ring
     """
-    from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
-
-    if isinstance(x, Sequence_generic) and universe is None:
-        universe = x.universe()
-        x = list(x)
-
-    if isinstance(x, MPolynomialIdeal) and universe is None:
-        universe = x.ring()
-        x = x.gens()
+    if universe is None:
+        if isinstance(x, Sequence_generic):
+            universe = x.universe()
+            x = list(x)
+        else:
+            try:
+                from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
+            except ImportError:
+                pass
+            else:
+                if isinstance(x, MPolynomialIdeal):
+                    universe = x.ring()
+                    x = x.gens()
 
     if universe is None:
         orig_x = x
@@ -248,15 +252,18 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
             if universe is None:   # no type errors raised.
                 universe = sage.structure.element.parent(x[len(x)-1])
 
-    from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-    from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
-    from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
-    from sage.rings.quotient_ring import is_QuotientRing
-
-    if is_MPolynomialRing(universe) or isinstance(universe, BooleanMonomialMonoid) or (is_QuotientRing(universe) and is_MPolynomialRing(universe.cover_ring())):
-        return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
+    try:
+        from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
+        from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
+        from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
+        from sage.rings.quotient_ring import is_QuotientRing
+    except ImportError:
+        pass
     else:
-        return Sequence_generic(x, universe, check, immutable, cr, cr_str, use_sage_types)
+        if is_MPolynomialRing(universe) or isinstance(universe, BooleanMonomialMonoid) or (is_QuotientRing(universe) and is_MPolynomialRing(universe.cover_ring())):
+            return PolynomialSequence(x, universe, immutable=immutable, cr=cr, cr_str=cr_str)
+
+    return Sequence_generic(x, universe, check, immutable, cr, cr_str, use_sage_types)
 
 
 class Sequence_generic(sage.structure.sage_object.SageObject, list):
