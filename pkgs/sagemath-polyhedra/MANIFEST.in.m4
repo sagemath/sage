@@ -28,6 +28,13 @@ include sage/ext/mod_int.*
 
 include sage/misc/latex*.*
 
+graft sage/parallel
+
+include sage/interfaces/__init__.py
+include sage/interfaces/process.p*
+include sage/interfaces/latte.p*
+include sage/interfaces/four_ti_2.p*
+
 include sage/sets/__init__.py
 include sage/sets/set.py
 
