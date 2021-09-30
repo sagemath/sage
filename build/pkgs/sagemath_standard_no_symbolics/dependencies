@@ -1,0 +1,4 @@
+FORCE $(PYTHON) cysignals gmpy2 ipython ppl | $(PYTHON_TOOLCHAIN) cython pkgconfig $(and $(filter-out no,$(SAGE_CHECK)), tox)
+
+# FORCE: Always run the spkg-install script
+# ipython - for the doctester
