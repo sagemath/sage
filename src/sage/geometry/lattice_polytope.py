@@ -103,9 +103,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.all import gcd
-from sage.combinat.posets.posets import FinitePoset
 from sage.misc.lazy_import import lazy_import
+from sage.arith.all import gcd
+lazy_import('sage.combinat.posets.posets', 'FinitePoset')
 from sage.geometry.cone import _ambient_space_point, integral_length
 lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.point_collection import (PointCollection,

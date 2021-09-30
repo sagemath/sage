@@ -205,17 +205,17 @@ from collections.abc import Hashable, Iterable, Container
 from copy import copy
 from warnings import warn
 
+from sage.misc.lazy_import import lazy_import
 from sage.arith.all import gcd, lcm
-from sage.combinat.posets.posets import FinitePoset
+lazy_import('sage.combinat.posets.posets', 'FinitePoset')
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.polyhedron.base import is_Polyhedron
-from sage.geometry.hasse_diagram import lattice_from_incidences
+lazy_import('sage.geometry.hasse_diagram', 'lattice_from_incidences')
 from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
                                          is_ToricLatticeQuotient)
-from sage.geometry.toric_plotter import ToricPlotter, label_list
+lazy_import('sage.geometry.toric_plotter', ['ToricPlotter', 'label_list'])
 from sage.geometry.relative_interior import RelativeInterior
-from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.special import column_matrix
@@ -228,10 +228,9 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.all import SageObject, parent
 from sage.structure.richcmp import richcmp_method, richcmp
-from sage.geometry.integral_points import parallelotope_points
+lazy_import('sage.geometry.integral_points', 'parallelotope_points')
 from sage.geometry.convex_set import ConvexSet_closed
 
-from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('ppl', ['C_Polyhedron', 'Generator_System', 'Constraint_System',
                     'Linear_Expression', 'Poly_Con_Relation'],
@@ -2612,6 +2611,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             else:
                 # Get face lattice as a sublattice of the ambient one
                 allowed_indices = frozenset(self._ambient_ray_indices)
+                from sage.graphs.digraph import DiGraph
                 L = DiGraph()
                 origin = \
                     self._ambient._face_lattice_function().bottom()
