@@ -215,8 +215,9 @@ from sage.structure.all import parent
 from sage.structure.sequence import Sequence
 from .fgp_element import DEBUG, FGP_Element
 from .fgp_morphism import FGP_Morphism, FGP_Homset
-from sage.rings.all import Integer, ZZ
-from sage.arith.all import lcm
+from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
+from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix
 
@@ -1223,7 +1224,7 @@ class FGP_Module_class(Module):
         """
         x = self(x)
         v = x.vector() * self.smith_to_gens()
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if reduce and self.base_ring() == ZZ:
             orders = [g.order() for g in self.gens()]
             v = v.parent()([v[i] if orders[i] == infinity
@@ -1740,7 +1741,7 @@ class FGP_Module_class(Module):
             return self.__cardinality
         except AttributeError:
             pass
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         from sage.misc.misc_c import prod
         v = self.invariants()
         self.__cardinality = infinity if 0 in v else prod(v)
