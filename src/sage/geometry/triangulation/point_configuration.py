@@ -182,6 +182,7 @@ AUTHORS:
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.combinat.combination', 'Combinations')
 from sage.rings.integer_ring import ZZ
