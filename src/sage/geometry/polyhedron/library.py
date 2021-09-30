@@ -3418,9 +3418,12 @@ class Polytopes():
     # --------------------------------------------------------
     associahedron = staticmethod(Associahedron)
 
-    flow_polytope = staticmethod(DiGraph.flow_polytope)
-    edge_polytope = staticmethod(Graph.edge_polytope)
-    symmetric_edge_polytope = staticmethod(Graph.symmetric_edge_polytope)
+    try:
+        flow_polytope = staticmethod(DiGraph.flow_polytope)
+        edge_polytope = staticmethod(Graph.edge_polytope)
+        symmetric_edge_polytope = staticmethod(Graph.symmetric_edge_polytope)
+    except ImportError:
+        pass
 
 
 polytopes = Polytopes()
