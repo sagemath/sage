@@ -11384,6 +11384,10 @@ class Polyhedron_base(Element, ConvexSet_closed):
                                data.image)
 
             M = data.section_linear_map.matrix().transpose()
+            try:
+                from sage.rings.qqbar import AA
+            except ImportError:
+                AA = None
             if M.base_ring() is AA:
                 self_extend = self.change_ring(AA)
             else:
