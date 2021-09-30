@@ -70,15 +70,24 @@ SAGE_LOCAL="$prefix"
 # This is nonstandard.
 if test "$SAGE_LOCAL" = NONE; then
     SAGE_LOCAL=local
+    if test -x "$SAGE_LOCAL"/bin/python3; then
+        # Incremental build with an existing installation of python3 spkg
+        # in SAGE_LOCAL or venv in SAGE_LOCAL.  Keep old behavior.
+        SAGE_VENV_AUTO=no
+    else
+        SAGE_VENV_AUTO=yes
+    fi
+else
+    SAGE_VENV_AUTO=no
 fi
 SAGE_SRC="$SAGE_ROOT/src"
 SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 
 AC_ARG_WITH([sage-venv],
-            [AS_HELP_STRING([--with-sage-venv=SAGE_VENV],
+            [AS_HELP_STRING([--with-sage-venv={auto,yes,no,SAGE_VENV}],
                             [put Python packages into an installation hierarchy separate from prefix])],
             [SAGE_VENV="$withval"],
-            [SAGE_VENV='${SAGE_LOCAL}'])dnl Quoted so that it is resolved at build time by shell/Makefile
+            [SAGE_VENV="auto"])
 AC_SUBST([SAGE_VENV])
 
 #---------------------------------------------------------
@@ -439,7 +448,13 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert sagenb_export nbformat terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol; do
+    for pkg in notebook nbconvert sagenb_export nbformat terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
+    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -448,6 +463,14 @@ AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
     for pkg in r rpy2 r_jupyter; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AC_ARG_ENABLE([sagelib],
+  AS_HELP_STRING([--disable-sagelib],
+                 [disable build of the Sage library and packages depending on it]), [
+    for pkg in sagelib sage_docbuild; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -492,6 +515,27 @@ AC_CONFIG_COMMANDS(mkdirs,
         SAGE_SHARE="$SAGE_LOCAL/share"
         SAGE_INST="$SAGE_SPKG_INST"
     ])
+
+AC_CONFIG_COMMANDS(links, [
+    dnl Create links for the convenience of users
+    SYMLINK="${ac_top_build_prefix}prefix"
+    AS_IF([test -L "$SYMLINK" -o ! -e "$SYMLINK"], [
+        AC_MSG_NOTICE([creating convenience symlink $SYMLINK -> $SAGE_LOCAL])
+        ln -sf "$SAGE_LOCAL" "$SYMLINK"
+    ], [
+        AC_MSG_NOTICE([cannot create convenience symlink $SYMLINK -> $SAGE_LOCAL because the file exists and is not a symlink; this is harmless])
+    ])
+    SYMLINK="${ac_top_build_prefix}venv"
+    AS_IF([test -L "$SYMLINK" -o ! -e "$SYMLINK"], [
+        AC_MSG_NOTICE([creating convenience symlink $SYMLINK -> $SAGE_VENV])
+        ln -sf "$SAGE_VENV" "$SYMLINK"
+    ], [
+        AC_MSG_NOTICE([cannot create convenience symlink $SYMLINK -> $SAGE_VENV because the file exists and is not a symlink; this is harmless])
+    ])
+], [
+    SAGE_LOCAL="$SAGE_LOCAL"
+    eval SAGE_VENV="$SAGE_VENV"dnl eval so as to evaluate the embedded ${SAGE_LOCAL}
+])
 
 AC_OUTPUT()
 

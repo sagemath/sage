@@ -44,9 +44,7 @@ import resource
 import pdb
 import warnings
 
-import sage.misc.prandom as random
 from .lazy_string import lazy_string
-from sage.interfaces.quit import expect_objects
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
@@ -342,6 +340,7 @@ def cputime(t=0, subprocesses=False):
         u, s = resource.getrusage(resource.RUSAGE_SELF)[:2]
         return u + s - t
     else:
+        from sage.interfaces.quit import expect_objects
         if t == 0:
             ret = GlobalCputime(cputime())
             for s in expect_objects:
@@ -918,6 +917,7 @@ def random_sublist(X, s):
         sage: is_sublist(sublist, S)
         True
     """
+    import sage.misc.prandom as random
     return [a for a in X if random.random() <= s]
 
 
@@ -1024,6 +1024,7 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
         True
     """
     from sage.rings.integer import Integer
+    import sage.misc.prandom as random
     N = n if repeat is None else n**repeat
     # We sample on range(N) and create tuples manually since we don't want to create the list of all possible tuples in memory
     for a in random.sample(range(N), max_samples):

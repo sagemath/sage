@@ -397,18 +397,27 @@ def get_cblas_pc_module_name() -> str:
     cblas_pc_modules = CBLAS_PC_MODULES.split(':')
     return next((blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib)))
 
-def cython_aliases(required_modules=('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
-                                     'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas'),
-                   optional_modules=('lapack',)):
+
+default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
+                            'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas')
+
+
+default_optional_modules = ('lapack',)
+
+
+def cython_aliases(required_modules=None,
+                   optional_modules=None):
     """
     Return the aliases for compiling Cython code. These aliases are
     macros which can occur in ``# distutils`` headers.
 
     INPUT:
 
-    - ``required_modules`` -- iterable of ``str`` values.
+    - ``required_modules`` -- (default: taken from ``default_required_modules``)
+      iterable of ``str`` values.
 
-    - ``optional_modules`` -- iterable of ``str`` values.
+    - ``optional_modules`` -- (default: taken from ``default_optional_modules``)
+      iterable of ``str`` values.
 
     EXAMPLES::
 
@@ -450,6 +459,12 @@ def cython_aliases(required_modules=('fflas-ffpack', 'givaro', 'gsl', 'linbox', 
     """
     import pkgconfig
     import itertools
+
+    if required_modules is None:
+        required_modules = default_required_modules
+
+    if optional_modules is None:
+        optional_modules = default_optional_modules
 
     aliases = {}
 

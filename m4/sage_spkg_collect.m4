@@ -153,8 +153,8 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
     dnl Jupyter notebook, then packages such as jupyter_core would have to be installed into
     dnl two trees.
     SPKG_TREE_VAR=SAGE_LOCAL
-    if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt"; then
-        dnl A Python package
+    if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt" -o "$SPKG_NAME" = python3; then
+        dnl A Python package or spkg installation of python3 itself
         SPKG_TREE_VAR=SAGE_VENV
     fi
     SAGE_PACKAGE_TREES="${SAGE_PACKAGE_TREES}$(printf '\ntrees_')${SPKG_NAME} = ${SPKG_TREE_VAR}"
