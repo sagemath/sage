@@ -1,1 +1,1 @@
-../sagemath-objects/setup.py
+../sagemath-standard/setup.py

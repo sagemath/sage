@@ -1,1 +1,1 @@
-../sagemath-objects/requirements.txt.m4
+../sagemath-standard/requirements.txt.m4
