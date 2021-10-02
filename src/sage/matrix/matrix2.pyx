@@ -94,7 +94,6 @@ from sage.rings.complex_double import CDF
 from sage.rings.real_mpfr import RealField
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-from sage.misc.derivative import multi_derivative
 from sage.arith.numerical_approx cimport digits_to_bits
 from copy import copy
 
@@ -15123,6 +15122,7 @@ cdef class Matrix(Matrix1):
             sage: v.derivative(x,x)
             (0, 0, 2)
         """
+        from sage.misc.derivative import multi_derivative
         return multi_derivative(self, args)
 
     def exp(self):
