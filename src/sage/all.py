@@ -138,7 +138,6 @@ from sage.rings.all      import *
 from sage.arith.all      import *
 from sage.matrix.all     import *
 
-from sage.symbolic.all   import *
 from sage.modules.all    import *
 from sage.monoids.all    import *
 from sage.algebras.all   import *
@@ -153,9 +152,6 @@ from sage.categories.all import *
 from sage.sets.all       import *
 from sage.probability.all import *
 from sage.interfaces.all import *
-
-from sage.functions.all  import *
-from sage.calculus.all   import *
 
 lazy_import('sage.tests', 'all', as_='tests', deprecation=27337)
 from sage.cpython.all    import *
@@ -211,8 +207,6 @@ from sage.game_theory.all import *
 
 from sage.knots.all import *
 
-from sage.manifolds.all import *
-
 from cysignals.alarm import alarm, cancel_alarm
 
 # Lazily import interacts (#15335)
@@ -223,6 +217,14 @@ from copy import copy, deepcopy
 # The code executed here uses a large amount of Sage components
 from sage.rings.qqbar import _init_qqbar
 _init_qqbar()
+
+try:
+    from sage.symbolic.all   import *
+    from sage.functions.all  import *
+    from sage.calculus.all   import *
+    from sage.manifolds.all import *
+except ImportError:
+    pass
 
 ###########################################################
 #### WARNING:
