@@ -20,9 +20,7 @@ from .magma import magma, Magma
 from .magma_free import magma_free
 from .macaulay2 import macaulay2, Macaulay2
 from .maple import maple, Maple
-from .maxima import maxima, Maxima
-# import problems
-#from maxima_lib import maxima_lib
+lazy_import('sage.interfaces.maxima', ['maxima', 'Maxima'])
 from .mathematica import mathematica, Mathematica
 from .mathics import mathics, Mathics
 from .matlab import matlab, matlab_version, Matlab
@@ -63,7 +61,7 @@ if get_display_manager().is_in_terminal():
     from .magma import magma_console
     from .macaulay2 import macaulay2_console
     from .maple import maple_console
-    from .maxima_abstract import maxima_console
+    lazy_import('sage.interfaces.maxima_abstract', 'maxima_console')
     from .mathematica import mathematica_console
     from .mathics import mathics_console
     from .matlab import matlab_console

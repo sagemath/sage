@@ -1,7 +1,8 @@
-from .polyhedron.all import *
-from .hyperbolic_space.all import *
-from .polyhedral_complex import PolyhedralComplex
 from sage.misc.lazy_import import lazy_import
+
+from .polyhedron.all import *
+lazy_import('sage.geometry.hyperbolic_space.hyperbolic_interface', 'HyperbolicPlane')
+from .polyhedral_complex import PolyhedralComplex
 
 lazy_import('sage.geometry.cone', ['Cone', 'random_cone'])
 lazy_import('sage.geometry', 'cone_catalog', 'cones')
