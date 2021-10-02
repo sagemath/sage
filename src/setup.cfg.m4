@@ -43,6 +43,7 @@ dnl From build/pkgs/sagelib/dependencies
         numpy          \
         pkgconfig      \
         pplpy          \
+        memory_allocator \
         | sed "2,\$s/^/    /;"')dnl
 dnl From Makefile.in: SAGERUNTIME
     esyscmd(`sage-get-system-packages install-requires \
