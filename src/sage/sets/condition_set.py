@@ -295,6 +295,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             sage: args[0].parent()
             Symbolic Ring
         """
+        from sage.symbolic.ring import SR
         return SR.var(self.variable_names())
 
     def _element_constructor_(self, *args, **kwds):
