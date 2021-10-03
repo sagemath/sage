@@ -26,7 +26,11 @@ import math
 from sage.misc.lazy_import import lazy_import
 from sage.misc.superseded import deprecation
 
-lazy_import('sage.rings.complex_double', 'CDF')
+try:
+    from sage.rings.complex_double import CDF    # FIXME: needed to break import cycle
+except ImportError:
+    pass
+#lazy_import('sage.rings.complex_double', 'CDF')
 lazy_import('sage.rings.real_double', ['RDF', 'RealDoubleElement'])
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
