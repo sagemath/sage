@@ -41,11 +41,8 @@ import sage.rings.fraction_field
 import sage.rings.number_field as number_field
 
 from sage.interfaces.all import singular
-from sage.rings.complex_mpfr import is_ComplexField
-from sage.rings.real_mpfr import is_RealField
-from sage.rings.complex_double import is_ComplexDoubleField
+import sage.rings.abc
 from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-from sage.rings.real_double import is_RealDoubleField
 from sage.rings.rational_field import is_RationalField
 from sage.rings.function_field.function_field import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
@@ -257,26 +254,26 @@ class PolynomialRing_singular_repr:
 
         base_ring = self.base_ring()
 
-        if is_RealField(base_ring):
+        if isinstance(base_ring, sage.rings.abc.RealField):
             # singular converts to bits from base_10 in mpr_complex.cc by:
             #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
             precision = base_ring.precision()
             digits = sage.arith.all.integer_ceil((2*precision - 2)/7.0)
             self.__singular = singular.ring("(real,%d,0)"%digits, _vars, order=order, check=False)
 
-        elif is_ComplexField(base_ring):
+        elif isinstance(base_ring, sage.rings.abc.ComplexField):
             # singular converts to bits from base_10 in mpr_complex.cc by:
             #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
             precision = base_ring.precision()
             digits = sage.arith.all.integer_ceil((2*precision - 2)/7.0)
             self.__singular = singular.ring("(complex,%d,0,I)"%digits, _vars,  order=order, check=False)
 
-        elif is_RealDoubleField(base_ring):
+        elif isinstance(base_ring, sage.rings.abc.RealDoubleField):
             # singular converts to bits from base_10 in mpr_complex.cc by:
             #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
             self.__singular = singular.ring("(real,15,0)", _vars, order=order, check=False)
 
-        elif is_ComplexDoubleField(base_ring):
+        elif isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
             # singular converts to bits from base_10 in mpr_complex.cc by:
             #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
             self.__singular = singular.ring("(complex,15,0,I)", _vars,  order=order, check=False)
@@ -389,10 +386,8 @@ def can_convert_to_singular(R):
         or sage.rings.finite_rings.finite_field_constructor.is_FiniteField(base_ring)
         or is_RationalField(base_ring)
         or is_IntegerModRing(base_ring)
-        or is_RealField(base_ring)
-        or is_ComplexField(base_ring)
-        or is_RealDoubleField(base_ring)
-        or is_ComplexDoubleField(base_ring)):
+        or isinstance(base_ring, (sage.rings.abc.RealField, sage.rings.abc.ComplexField,
+                                  sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))):
         return True
     elif base_ring.is_prime_field():
         return base_ring.characteristic() <= 2147483647

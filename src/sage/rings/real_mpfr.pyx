@@ -5900,14 +5900,24 @@ def is_RealField(x):
     """
     Returns ``True`` if ``x`` is technically of a Python real field type.
 
+    This function is deprecated. Use :func:`isinstance` with
+    :class:`~sage.rings.abc.RealField` instead.
+
     EXAMPLES::
 
         sage: sage.rings.real_mpfr.is_RealField(RR)
+        doctest:warning...
+        DeprecationWarning: is_RealField is deprecated;
+        use isinstance(..., sage.rings.abc.RealField) instead
+        See https://trac.sagemath.org/32610 for details.
         True
         sage: sage.rings.real_mpfr.is_RealField(CC)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32610, 'is_RealField is deprecated; use isinstance(..., sage.rings.abc.RealField) instead')
     return isinstance(x, RealField_class)
+
 
 def is_RealNumber(x):
     """

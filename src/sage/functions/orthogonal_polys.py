@@ -304,8 +304,7 @@ import warnings
 from sage.misc.latex import latex
 from sage.rings.all import ZZ, QQ, RR, CC
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.real_mpfr import is_RealField
-from sage.rings.complex_mpfr import is_ComplexField
+import sage.rings.abc
 
 from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.symbolic.expression import Expression
@@ -672,7 +671,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         except KeyError:
             real_parent = parent(x)
 
-            if not is_RealField(real_parent) and not is_ComplexField(real_parent):
+            if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
                 # parent is not a real or complex field: figure out a good parent
                 if x in RR:
                     x = RR(x)
@@ -681,7 +680,7 @@ class Func_chebyshev_T(ChebyshevFunction):
                     x = CC(x)
                     real_parent = CC
 
-        if not is_RealField(real_parent) and not is_ComplexField(real_parent):
+        if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
             raise TypeError("cannot evaluate chebyshev_T with parent {}".format(real_parent))
 
         from sage.libs.mpmath.all import call as mpcall
@@ -1031,7 +1030,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         except KeyError:
             real_parent = parent(x)
 
-            if not is_RealField(real_parent) and not is_ComplexField(real_parent):
+            if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
                 # parent is not a real or complex field: figure out a good parent
                 if x in RR:
                     x = RR(x)
@@ -1040,7 +1039,7 @@ class Func_chebyshev_U(ChebyshevFunction):
                     x = CC(x)
                     real_parent = CC
 
-        if not is_RealField(real_parent) and not is_ComplexField(real_parent):
+        if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
             raise TypeError("cannot evaluate chebyshev_U with parent {}".format(real_parent))
 
         from sage.libs.mpmath.all import call as mpcall

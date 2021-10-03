@@ -395,7 +395,7 @@ from sage.misc.latex import latex_variable_name
 from sage.rings.infinity import AnInfinity, infinity, minus_infinity, unsigned_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.rings.complex_mpfr import is_ComplexField
+import sage.rings.abc
 from sage.misc.decorators import rename_keyword
 from sage.structure.dynamic_class import dynamic_class
 from sage.structure.element cimport CommutativeRingElement
@@ -13830,7 +13830,7 @@ cdef unsigned sage_domain_to_ginac_domain(object domain) except? 3474701533:
         return domain_real
     elif domain == 'positive':
         return domain_positive
-    elif is_ComplexField(domain) or domain == 'complex':
+    elif isinstance(domain, sage.rings.abc.ComplexField) or domain == 'complex':
         return domain_complex
     elif domain is ZZ or domain == 'integer':
         return domain_integer
@@ -13844,7 +13844,7 @@ cdef void send_sage_domain_to_maxima(Expression v, object domain) except +:
         assume(v, 'real')
     elif domain == 'positive':
         assume(v>0)
-    elif is_ComplexField(domain) or domain == 'complex':
+    elif isinstance(domain, sage.rings.abc.ComplexField) or domain == 'complex':
         assume(v, 'complex')
     elif domain is ZZ or domain == 'integer':
         assume(v, 'integer')
