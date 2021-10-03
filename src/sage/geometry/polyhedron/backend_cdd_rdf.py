@@ -34,7 +34,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
 
         sage: from sage.geometry.polyhedron.parent import Polyhedra
         sage: parent = Polyhedra(RDF, 2, backend='cdd')
-        sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_RDF_cdd
+        sage: from sage.geometry.polyhedron.backend_cdd_rdf import Polyhedron_RDF_cdd
         sage: Polyhedron_RDF_cdd(parent, [ [(1,0),(0,1),(0,0)], [], []], None, verbose=False)
         A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 3 vertices
 
@@ -119,7 +119,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
         EXAMPLES::
 
             sage: from sage.geometry.polyhedron.parent import Polyhedra_RDF_cdd
-            sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_RDF_cdd
+            sage: from sage.geometry.polyhedron.backend_cdd_rdf import Polyhedron_RDF_cdd
             sage: parent = Polyhedra_RDF_cdd(RDF, 1, 'cdd')
             sage: Vrep = [[[0.0], [1.0]], [], []]
             sage: Hrep = [[[0.0, 1.0], [1.0, -1.0]], []]

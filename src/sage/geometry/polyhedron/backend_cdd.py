@@ -22,6 +22,9 @@ from sage.matrix.constructor import matrix
 from .base import Polyhedron_base
 from .base_QQ import Polyhedron_QQ
 
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.geometry.polyhedron.backend_cdd_rdf', 'Polyhedron_RDF_cdd', deprecation=32592)
+
 
 class Polyhedron_cdd(Polyhedron_base):
     r"""
@@ -457,7 +460,3 @@ class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
             sage: TestSuite(p).run()
         """
         Polyhedron_cdd.__init__(self, parent, Vrep, Hrep, **kwds)
-
-
-from sage.misc.lazy_import import lazy_import
-lazy_import('sage.geometry.polyhedron.backend_cdd_rdf', 'Polyhedron_RDF_cdd')

@@ -23,6 +23,7 @@ except ImportError:
     RDF = None
 
 from sage.rings.ring import CommutativeRing
+from sage.misc.lazy_import import lazy_import
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
@@ -1157,7 +1158,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
 
 
-from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd, Polyhedron_RDF_cdd
+from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
+lazy_import('sage.geometry.polyhedron.backend_cdd_rdf', 'Polyhedron_RDF_cdd')
 from sage.geometry.polyhedron.backend_ppl import Polyhedron_ZZ_ppl, Polyhedron_QQ_ppl
 from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz, Polyhedron_ZZ_normaliz, Polyhedron_QQ_normaliz
 from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
