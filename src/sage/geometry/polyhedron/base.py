@@ -7676,16 +7676,16 @@ class Polyhedron_base(Element, ConvexSet_closed):
         EXAMPLES::
 
             sage: penta = Polyhedron([[0,0],[1,0],[0,1],[1,2],[3,2]])
-            sage: G = penta.vertex_digraph(vector([1,1])); G
+            sage: G = penta.vertex_digraph(vector([1,1])); G          # optional - sage.graphs
             Digraph on 5 vertices
-            sage: G.sinks()
+            sage: G.sinks()                                           # optional - sage.graphs
             [A vertex at (3, 2)]
 
             sage: A = matrix(ZZ, [[1], [-1]])
             sage: f = linear_transformation(A)
-            sage: G = penta.vertex_digraph(f) ; G
+            sage: G = penta.vertex_digraph(f); G                      # optional - sage.graphs
             Digraph on 5 vertices
-            sage: G.is_directed_acyclic()
+            sage: G.is_directed_acyclic()                             # optional - sage.graphs
             False
 
         .. SEEALSO::
