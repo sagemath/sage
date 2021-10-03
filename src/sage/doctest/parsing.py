@@ -34,7 +34,7 @@ from functools import reduce
 from .external import available_software
 
 float_regex = re.compile(r'\s*([+-]?\s*((\d*\.?\d+)|(\d+\.?))([eE][+-]?\d+)?)')
-optional_regex = re.compile(r'(arb216|arb218|py2|py3|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w)*))')
+optional_regex = re.compile(r'(arb216|arb218|py2|py3|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))')
 # Version 4.65 of glpk prints the warning "Long-step dual simplex will
 # be used" frequently. When Sage uses a system installation of glpk
 # which has not been patched, we need to ignore that message.
@@ -316,6 +316,8 @@ def parse_optional_tags(string):
         {''}
         sage: sorted(list(parse_optional_tags("sage: #optional -- foo bar, baz")))
         ['bar', 'foo']
+        sage: parse_optional_tags("sage: #optional -- foo.bar, baz")
+        {'foo.bar'}
         sage: sorted(list(parse_optional_tags("    sage: factor(10^(10^10) + 1) # LoNg TiME, NoT TeSTED; OptioNAL -- P4cka9e")))
         ['long time', 'not tested', 'p4cka9e']
         sage: parse_optional_tags("    sage: raise RuntimeError # known bug")

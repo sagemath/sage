@@ -53,6 +53,9 @@ try:
 except ImportError:
     pass
 
+from sage.features.sagemath import sage_optional_tags
+auto_optional_tags.update(sage_optional_tags())
+
 class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.
