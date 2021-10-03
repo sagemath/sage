@@ -19,6 +19,12 @@ class sage__graphs(PythonModule):
         PythonModule.__init__(self, 'sage.graphs.graph')
 
 
+class sage__rings__number_field(PythonModule):
+
+    def __init__(self):
+        PythonModule.__init__(self, 'sage.rings.number_field_element')
+
+
 class sage__rings__real_double(PythonModule):
 
     def __init__(self):
@@ -50,6 +56,8 @@ def sage_optional_tags():
         yield 'sage.combinat'
     if sage__graphs().is_present():
         yield 'sage.graphs'
+    if sage__rings__number_field().is_present():
+        yield 'sage.rings.number_field'
     if sage__rings__real_double().is_present():
         yield 'sage.rings.real_double'
     if sage__symbolic().is_present():
