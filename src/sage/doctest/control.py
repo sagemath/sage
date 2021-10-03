@@ -40,7 +40,7 @@ from .util import Timer, count_noun, dict_difference
 from .external import external_software, available_software
 
 nodoctest_regex = re.compile(r'\s*(#+|%+|r"+|"+|\.\.)\s*nodoctest')
-optionaltag_regex = re.compile(r'^\w+$')
+optionaltag_regex = re.compile(r'^(\w|[.])+$')
 
 # Optional tags which are always automatically added
 
@@ -52,9 +52,6 @@ try:
     auto_optional_tags.add(arb_tag)
 except ImportError:
     pass
-
-from sage.features.sagemath import sage_optional_tags
-auto_optional_tags.update(sage_optional_tags())
 
 class DocTestDefaults(SageObject):
     """
@@ -373,6 +370,9 @@ class DocTestController(SageObject):
 
                     from sage.features import package_systems
                     options.optional.update(system.name for system in package_systems())
+
+                    from sage.features.sagemath import sage_optional_tags
+                    options.optional.update(sage_optional_tags())
 
                 # Check that all tags are valid
                 for o in options.optional:
