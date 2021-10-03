@@ -2061,6 +2061,15 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         return ''
     r = sage_getdoc_original(obj)
     s = sage.misc.sagedoc.format(r, embedded=embedded)
+    f = sage_getfile(obj)
+    if f and os.path.exists(f):
+        from sage.doctest.control import skipfile
+        skip = skipfile(f)
+        if isinstance(skip, str):
+            warn = """WARNING: the enclosing module is marked '{}',
+so doctests may not pass.""".format(skip)
+            s = warn + "\n\n" + s
+        pass
 
     # Fix object naming
     if obj_name != '':
