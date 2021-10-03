@@ -231,8 +231,8 @@ def incidence_matrix_to_bit_rep_of_facets(matrix):
     """
     # Output will be a ``ListOfFaces`` with ``matrix.ncols()`` faces and
     # ``matrix.nrows()`` Vrep.
-    cdef size_t nrows = matrix._nrows
-    cdef size_t ncols = matrix._ncols
+    cdef size_t nrows = matrix.nrows()
+    cdef size_t ncols = matrix.ncols()
     cdef ListOfFaces facets = ListOfFaces(ncols, nrows, ncols)
     cdef face_t output
     cdef size_t entry       # index for the entries in tup
