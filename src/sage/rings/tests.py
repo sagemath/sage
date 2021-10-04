@@ -182,7 +182,7 @@ def relative_number_field(n=2, maxdeg=2):
         sage: from sage.rings.tests import relative_number_field
         sage: _ = relative_number_field(3)
     """
-    from sage.all import ZZ
+    from sage.rings.integer_ring import ZZ
     K = absolute_number_field(maxdeg)
     n -= 1
     var = 'aa'

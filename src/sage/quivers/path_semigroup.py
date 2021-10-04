@@ -543,7 +543,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
             ...
             ValueError: the underlying quiver has cycles, thus, there may be an infinity of directed paths
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         if self._quiver.is_directed_acyclic() and not self._quiver.has_loops():
             return ZZ(len(self))
         from sage.rings.infinity import Infinity

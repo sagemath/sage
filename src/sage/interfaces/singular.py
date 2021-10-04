@@ -1608,7 +1608,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         # extract the ring of coefficients
         singular = self.parent()
         charstr = singular.eval('charstr(basering)').split(',',1)
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         is_extension = len(charstr)==2
         if charstr[0] in ['integer', 'ZZ']:
             br = ZZ
