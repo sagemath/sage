@@ -4,7 +4,7 @@ The Eisenstein Subspace
 """
 
 from sage.structure.all import Sequence
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 import sage.rings.all as rings
 from sage.categories.all import Objects
 from sage.matrix.all import Matrix

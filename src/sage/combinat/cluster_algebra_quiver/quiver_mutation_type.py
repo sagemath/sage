@@ -22,7 +22,7 @@ import pickle
 from sage.structure.sage_object import SageObject
 from copy import copy
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.rings.all import ZZ, infinity
 from sage.graphs.all import Graph, DiGraph
 from sage.arith.all import binomial, euler_phi

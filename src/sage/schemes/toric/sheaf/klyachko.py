@@ -48,7 +48,7 @@ REFERENCES:
 from sage.structure.all import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 from sage.rings.integer_ring import ZZ
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import vector, block_matrix, zero_matrix
 from sage.geometry.cone import is_Cone
 from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace

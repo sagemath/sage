@@ -12,7 +12,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.sets.set import Set
-from sage.misc.all import cached_function
+from sage.misc.cachefunc import cached_function
 from sage.rings.integer import Integer
 
 

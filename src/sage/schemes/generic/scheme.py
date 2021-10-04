@@ -20,7 +20,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.structure.parent import Parent
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.rings.all import (ZZ, CommutativeRing)
 from sage.rings.ideal import is_Ideal
 from sage.structure.unique_representation import UniqueRepresentation

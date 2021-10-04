@@ -113,7 +113,7 @@ from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
 from sage.matrix.constructor import matrix
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 
 
 def is_FilteredVectorSpace(X):
