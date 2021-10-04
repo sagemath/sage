@@ -21,7 +21,8 @@ from sage.sets.family import Family
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.infinity import Infinity
-from sage.misc.all import cached_method, lazy_attribute
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
 
 class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
