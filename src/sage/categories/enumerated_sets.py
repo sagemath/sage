@@ -146,7 +146,7 @@ class EnumeratedSets(CategoryWithAxiom):
         """
         import sage.sets.set
         if isinstance(X, (tuple, list, set, range, sage.sets.set.Set_object_enumerated)):
-            return sage.sets.all.FiniteEnumeratedSet(X)
+            return sage.sets.finite_enumerated_set.FiniteEnumeratedSet(X)
         raise NotImplementedError
 
     class ParentMethods:
