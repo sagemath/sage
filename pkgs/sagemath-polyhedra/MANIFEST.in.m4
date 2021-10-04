@@ -55,6 +55,17 @@ exclude sage/modules/vector_*double*.*  # depends on numpy
 exclude sage/modules/vector_mod2*.*     # depends on m4ri
 exclude sage/modules/vector_*symbol*.*  # --> sagemath-symbolics
 
+# Need sage.combinat.free_module for polyhedral modules
+include sage/combinat/__init__.py
+include sage/combinat/quickref.py     # pulled in by __init__
+include sage/combinat/tutorial.py     # pulled in by __init__
+include sage/combinat/free_module.py
+include sage/combinat/ranker.py
+include sage/combinat/cartesian_product.py
+# could easily include all of sage/sets except disjoint_set (cimports from sage.groups.perm_gps.partn_ref.data_structures)
+include sage/sets/disjoint_union_enumerated_sets.py
+include sage/sets/set_from_iterator.py
+
 graft sage/matrix
 exclude sage/matrix/misc.*  # until refactored
 exclude sage/matrix/matrix_gap.*
