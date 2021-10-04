@@ -63,8 +63,14 @@ include sage/combinat/free_module.py
 include sage/combinat/ranker.py
 include sage/combinat/cartesian_product.py
 # could easily include all of sage/sets except disjoint_set (cimports from sage.groups.perm_gps.partn_ref.data_structures)
+include sage/sets/family.p*
+include sage/sets/finite_enumerated_set.py
 include sage/sets/disjoint_union_enumerated_sets.py
 include sage/sets/set_from_iterator.py
+include sage/sets/non_negative_integers.p*
+include sage/misc/lazy_list.p*
+include sage/misc/mrange.p*
+include sage/misc/callable_dict.p*
 
 graft sage/matrix
 exclude sage/matrix/misc.*  # until refactored
