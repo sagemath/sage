@@ -79,11 +79,15 @@ cdef inline obj(x):
 # boolean to determine whether Sage is still starting up
 cdef bint startup_guard = True
 
+cdef bint finish_startup_called = False
+
 
 cpdef finish_startup():
     """
+    Finish the startup phase.
+
     This function must be called exactly once at the end of the Sage
-    import process
+    import process (:mod:`~sage.all`).
 
     TESTS::
 
@@ -96,6 +100,24 @@ cpdef finish_startup():
     global startup_guard
     assert startup_guard, 'finish_startup() must be called exactly once'
     startup_guard = False
+    finish_startup_called = True
+
+
+cpdef ensure_startup_finished():
+    """
+    Make sure that the startup phase is finished.
+
+    In contrast to :func:`finish_startup`, this function can
+    be called repeatedly.
+
+    TESTS::
+
+        sage: from sage.misc.lazy_import import ensure_startup_finished
+        sage: ensure_startup_finished()
+    """
+    global startup_guard
+    startup_guard = False
+
 
 cpdef bint is_during_startup():
     """
@@ -113,6 +135,7 @@ cpdef bint is_during_startup():
     """
     global startup_guard
     return startup_guard
+
 
 cpdef test_fake_startup():
     """
@@ -218,7 +241,8 @@ cdef class LazyImport(object):
         if startup_guard and not self._at_startup:
             print(f"Resolving lazy import {self._name} during startup")
         elif self._at_startup and not startup_guard:
-            print(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
+            if finish_startup_called:
+                print(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
 
         try:
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)

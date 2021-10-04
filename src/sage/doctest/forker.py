@@ -2496,6 +2496,11 @@ class DocTestTask(object):
         from importlib import import_module
         sage_all = import_module(options.environment)
         dict_all = sage_all.__dict__
+        # When using global environments other than sage.all,
+        # make sure startup is finished so we don't get "Resolving lazy import"
+        # warnings.
+        from sage.misc.lazy_import import ensure_startup_finished
+        ensure_startup_finished()
         # Remove '__package__' item from the globals since it is not
         # always in the globals in an actual Sage session.
         dict_all.pop('__package__', None)
