@@ -4957,9 +4957,14 @@ class Polyhedron_base(Element, ConvexSet_closed):
             tester.assertEqual((self*Q).backend(), self.backend())
 
             # And that it changes the backend correctly where necessary.
-            if self.base_ring() is not AA and AA.has_coerce_map_from(self.base_ring()):
-                R = self*polytopes.regular_polygon(5, exact=True)
-                assert R
+            try:
+                from sage.rings.qqbar import AA
+            except ImportError:
+                pass
+            else:
+                if self.base_ring() is not AA and AA.has_coerce_map_from(self.base_ring()):
+                    R = self*polytopes.regular_polygon(5, exact=True)
+                    assert R
             try:
                 from sage.rings.real_double import RDF
             except ImportError:
@@ -8825,6 +8830,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             if Adet.is_square():
                 sqrt_Adet = Adet.sqrt()
             else:
+                from sage.rings.qqbar import AA
                 sqrt_Adet = AA(Adet).sqrt()
                 scaled_volume = AA(scaled_volume)
             return scaled_volume / sqrt_Adet
@@ -9021,6 +9027,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
                 A = affine_hull_data.projection_linear_map.matrix()
                 Adet = (A.transpose() * A).det()
                 try:
+                    from sage.rings.qqbar import AA
                     Adet = AA.coerce(Adet)
                 except TypeError:
                     pass
@@ -10884,6 +10891,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             except TypeError:
                 if not extend:
                     raise ValueError('the base ring needs to be extended; try with "extend=True"')
+                from sage.rings.qqbar import AA
                 M = matrix(AA, M)
                 A = M.gram_schmidt(orthonormal=orthonormal)[0]
                 if minimal:
