@@ -15,7 +15,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.indexed_generators import IndexedGenerators, parse_indices_names
 from sage.modules.module import Module
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.structure.element import parent
 from sage.modules.with_basis.indexed_element import IndexedFreeModuleElement
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet

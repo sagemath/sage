@@ -74,7 +74,7 @@ from sage.ext.fast_callable import fast_callable
 
 from sage.calculus.functions import jacobian
 
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
 from sage.rings.complex_mpfr import ComplexField_class
 from sage.rings.complex_interval_field import ComplexIntervalField_class

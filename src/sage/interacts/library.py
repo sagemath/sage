@@ -1612,7 +1612,7 @@ def cellular_automaton(
           rule_number: IntSlider(value=110, description=u'Rule number', max=255)
           size: IntSlider(value=6, description=u'size of graphic', max=11, min=1)
     """
-    from sage.all import Integer
+    from sage.rings.integer import Integer
     if not 0 <= rule_number <= 255:
         raise ValueError('Invalid rule number')
     binary_digits = Integer(rule_number).digits(base=2)

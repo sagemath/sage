@@ -61,7 +61,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 
 from sage.arith.all import gcd
 
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.fraction_field import FractionField
 from sage.rings.fraction_field_element import FractionFieldElement

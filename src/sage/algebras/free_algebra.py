@@ -294,7 +294,7 @@ class FreeAlgebraFactory(UniqueFactory):
                     sparse=sparse, order=T)
             return tuple(degrees), R
         # normalise the generator names
-        from sage.all import Integer
+        from sage.rings.integer import Integer
         if isinstance(arg1, (Integer, int)):
             arg1, arg2 = arg2, arg1
         if not names is None:

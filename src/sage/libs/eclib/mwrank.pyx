@@ -28,7 +28,7 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.cpython.string import FS_ENCODING
 from sage.libs.eclib cimport bigint, Curvedata, mw, two_descent
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 
 cdef extern from "wrap.cpp":
     ### misc functions ###

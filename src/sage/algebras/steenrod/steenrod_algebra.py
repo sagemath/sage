@@ -2321,7 +2321,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(generic=True).P(2,0,1)
             P(2,0,1)
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).P(*nums))
         while nums and nums[-1] == 0:
@@ -2542,7 +2542,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(5).pst(3,5)
             P(0,0,0,0,125)
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).pst(s,t))
         if not isinstance(s, (Integer, int)) and s >= 0:
@@ -2731,7 +2731,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             P^1_1
         """
         from sage.rings.infinity import Infinity
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         p = self.prime()
         if not isinstance(i, (Integer, int)) and i >= 0:
             raise ValueError("%s is not a non-negative integer" % i)
@@ -3586,7 +3586,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 3
             """
             from sage.rings.infinity import Infinity
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             p = self.prime()
             generic = self.parent()._generic
             if self == 0:
@@ -3694,7 +3694,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: Sq(0,0,3).wall_height()
                 [1, 2, 2, 1]
             """
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             if self.parent()._generic:
                 raise NotImplementedError("Wall height is not defined at odd primes.")
             if self == 0 or self == 1:
