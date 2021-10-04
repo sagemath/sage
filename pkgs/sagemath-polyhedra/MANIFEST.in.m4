@@ -62,6 +62,7 @@ include sage/combinat/tutorial.py     # pulled in by __init__
 include sage/combinat/free_module.py
 include sage/combinat/ranker.py
 include sage/combinat/cartesian_product.py
+include sage/combinat/family.py       # until https://trac.sagemath.org/ticket/32624 is done
 # could easily include all of sage/sets except disjoint_set (cimports from sage.groups.perm_gps.partn_ref.data_structures)
 include sage/sets/family.p*
 include sage/sets/finite_enumerated_set.py
