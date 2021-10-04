@@ -1221,15 +1221,14 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             sage: P = polytopes.cyclic_polytope(3,5)
             sage: C = CombinatorialPolyhedron(P)
-            sage: C.vertex_graph()
+            sage: G = C.vertex_graph(); G                                       # optional - sage.graphs
             Graph on 5 vertices
-            sage: G = C.vertex_graph()
-            sage: sorted(G.degree())
+            sage: sorted(G.degree())                                            # optional - sage.graphs
             [3, 3, 4, 4, 4]
 
             sage: P = Polyhedron(rays=[[1]])
             sage: C = CombinatorialPolyhedron(P)
-            sage: C.graph()
+            sage: C.graph()                                                     # optional - sage.graphs
             Graph on 1 vertex
         """
         vertices = self.vertices(names=names)
@@ -1420,25 +1419,25 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             sage: P = polytopes.cyclic_polytope(4,6)
             sage: C = CombinatorialPolyhedron(P)
-            sage: C.facet_graph()
+            sage: C.facet_graph()                                               # optional - sage.graphs
             Graph on 9 vertices
 
         TESTS::
 
             sage: P = Polyhedron(ieqs=[[1,-1,0],[1,1,0]])
-            sage: CombinatorialPolyhedron(P).facet_graph()
+            sage: CombinatorialPolyhedron(P).facet_graph()                      # optional - sage.graphs
             Graph on 2 vertices
 
         Checking that :trac:`28604` is fixed::
 
             sage: C = CombinatorialPolyhedron(polytopes.cube()); C
             A 3-dimensional combinatorial polyhedron with 6 facets
-            sage: C.facet_graph(names=False)
+            sage: C.facet_graph(names=False)                                    # optional - sage.graphs
             Graph on 6 vertices
 
             sage: C = CombinatorialPolyhedron(polytopes.hypersimplex(5,2)); C
             A 4-dimensional combinatorial polyhedron with 10 facets
-            sage: C.facet_graph()
+            sage: C.facet_graph()                                               # optional - sage.graphs
             Graph on 10 vertices
         """
         face_iter = self.face_iter(self.dimension() - 1, dual=False)
@@ -1501,7 +1500,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             sage: P = polytopes.hypercube(2).pyramid()
             sage: C = CombinatorialPolyhedron(P)
-            sage: G = C.vertex_facet_graph(); G
+            sage: G = C.vertex_facet_graph(); G                                 # optional - sage.graphs
             Digraph on 10 vertices
             sage: C.Vrepresentation()
             (A vertex at (0, -1, -1),
@@ -1509,7 +1508,7 @@ cdef class CombinatorialPolyhedron(SageObject):
              A vertex at (0, 1, -1),
              A vertex at (0, 1, 1),
              A vertex at (1, 0, 0))
-            sage: sorted(G.neighbors_out(C.Vrepresentation()[4]))
+            sage: sorted(G.neighbors_out(C.Vrepresentation()[4]))               # optional - sage.graphs
             [An inequality (-1, -1, 0) x + 1 >= 0,
              An inequality (-1, 0, -1) x + 1 >= 0,
              An inequality (-1, 0, 1) x + 1 >= 0,
@@ -1522,7 +1521,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         with a string 'H' or 'V'::
 
             sage: C = CombinatorialPolyhedron(P.incidence_matrix())
-            sage: C.vertex_facet_graph().vertices()
+            sage: C.vertex_facet_graph().vertices()                             # optional - sage.graphs
             [('H', 0),
              ('H', 1),
              ('H', 2),
@@ -1536,18 +1535,18 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         If ``names`` is ``False`` then the vertices of the graph are given by integers::
 
-            sage: C.vertex_facet_graph(names=False).vertices()
+            sage: C.vertex_facet_graph(names=False).vertices()                  # optional - sage.graphs
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
         TESTS:
 
         Test that :trac:`29898` is fixed::
 
-            sage: Polyhedron().vertex_facet_graph()
+            sage: Polyhedron().vertex_facet_graph()                             # optional - sage.graphs
             Digraph on 0 vertices
-            sage: Polyhedron([[0]]).vertex_facet_graph()
+            sage: Polyhedron([[0]]).vertex_facet_graph()                        # optional - sage.graphs
             Digraph on 1 vertex
-            sage: Polyhedron([[0]]).vertex_facet_graph(False)
+            sage: Polyhedron([[0]]).vertex_facet_graph(False)                   # optional - sage.graphs
             Digraph on 1 vertex
         """
         from sage.graphs.digraph import DiGraph
@@ -2499,14 +2498,14 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             sage: P = Polyhedron(rays=[[1,0],[0,1]])
             sage: C = CombinatorialPolyhedron(P)
-            sage: C.face_lattice()
+            sage: C.face_lattice()                                              # optional - sage.combinat
             Finite lattice containing 5 elements
 
             sage: P = Polyhedron(rays=[[1,0,0], [-1,0,0], [0,-1,0], [0,1,0]])
             sage: C = CombinatorialPolyhedron(P)
             sage: P1 = Polyhedron(rays=[[1,0], [-1,0]])
             sage: C1 = CombinatorialPolyhedron(P1)
-            sage: C.face_lattice().is_isomorphic(C1.face_lattice())
+            sage: C.face_lattice().is_isomorphic(C1.face_lattice())             # optional - sage.combinat
             True
 
             sage: P = polytopes.permutahedron(5)                                # optional - sage.combinat
@@ -2518,7 +2517,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             sage: P = polytopes.cyclic_polytope(4,10)
             sage: C = CombinatorialPolyhedron(P)
-            sage: C.face_lattice().is_isomorphic(P.face_lattice())
+            sage: C.face_lattice().is_isomorphic(P.face_lattice())              # optional - sage.combinat
             True
 
             sage: P = polytopes.permutahedron(4)                                # optional - sage.combinat
@@ -2555,18 +2554,18 @@ cdef class CombinatorialPolyhedron(SageObject):
 
             sage: P = polytopes.regular_polygon(4).pyramid()
             sage: C = CombinatorialPolyhedron(P)
-            sage: D = C.hasse_diagram(); D
+            sage: D = C.hasse_diagram(); D                                      # optional - sage.graphs
             Digraph on 20 vertices
-            sage: D.average_degree()
+            sage: D.average_degree()                                            # optional - sage.graphs
             21/5
-            sage: D.relabel(C.face_by_face_lattice_index)
-            sage: dim_0_vert = D.vertices()[1:6]; dim_0_vert
+            sage: D.relabel(C.face_by_face_lattice_index)                       # optional - sage.graphs
+            sage: dim_0_vert = D.vertices()[1:6]; dim_0_vert                    # optional - sage.graphs
             [A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron]
-            sage: sorted(D.out_degree(vertices=dim_0_vert))
+            sage: sorted(D.out_degree(vertices=dim_0_vert))                     # optional - sage.graphs
             [3, 3, 3, 3, 4]
         """
         if not self._face_lattice_incidences:
