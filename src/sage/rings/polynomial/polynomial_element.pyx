@@ -92,7 +92,7 @@ CC = ComplexField()
 
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
-from sage.rings.real_mpfi import is_RealIntervalField
+import sage.rings.abc
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.element import coerce_binop
@@ -8030,7 +8030,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             # and complex root isolation and for p-adic factorization
             if (is_IntegerRing(K) or is_RationalField(K)
                 or is_AlgebraicRealField(K)) and \
-                (is_AlgebraicRealField(L) or is_RealIntervalField(L)):
+                (is_AlgebraicRealField(L) or isinstance(L, sage.rings.abc.RealIntervalField)):
 
                 from sage.rings.polynomial.real_roots import real_roots
 
@@ -8060,11 +8060,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
             if (is_IntegerRing(K) or is_RationalField(K)
                 or is_AlgebraicField_common(K) or input_gaussian) and \
-                (is_ComplexIntervalField(L) or is_AlgebraicField_common(L)):
+                (isinstance(L, sage.rings.abc.ComplexIntervalField) or is_AlgebraicField_common(L)):
 
                 from sage.rings.polynomial.complex_roots import complex_roots
 
-                if is_ComplexIntervalField(L):
+                if isinstance(L, sage.rings.abc.ComplexIntervalField):
                     rts = complex_roots(self, min_prec=L.prec())
                 elif is_AlgebraicField(L):
                     rts = complex_roots(self, retval='algebraic')

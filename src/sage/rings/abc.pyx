@@ -10,6 +10,22 @@ cdef class RealField(Field):
     pass
 
 
+class RealBallField(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.real_arb.RealBallField`.
+    """
+
+    pass
+
+
+cdef class RealIntervalField(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.real_mpfi.RealIntervalField_class`.
+    """
+
+    pass
+
+
 cdef class RealDoubleField(Field):
     r"""
     Abstract base class for :class:`~sage.rings.real_double.RealDoubleField_class`.
@@ -21,6 +37,22 @@ cdef class RealDoubleField(Field):
 cdef class ComplexField(Field):
     r"""
     Abstract base class for :class:`~sage.rings.complex_mpfr.ComplexField_class`.
+    """
+
+    pass
+
+
+class ComplexBallField(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.complex_arb.ComplexBallField`.
+    """
+
+    pass
+
+
+class ComplexIntervalField(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.complex_interval_field.ComplexIntervalField_class`.
     """
 
     pass

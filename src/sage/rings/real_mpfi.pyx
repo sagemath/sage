@@ -345,7 +345,7 @@ cpdef RealIntervalField_class RealIntervalField(prec=53, sci_not=False):
         return R
 
 
-cdef class RealIntervalField_class(Field):
+cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
     """
     Class of the real interval field.
 

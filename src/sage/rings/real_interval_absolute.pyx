@@ -185,7 +185,7 @@ cdef class RealIntervalAbsoluteField_class(Field):
         """
         if isinstance(R, RealIntervalAbsoluteField_class):
             return self._absprec < (<RealIntervalAbsoluteField_class>R)._absprec
-        elif is_RealIntervalField(R):
+        elif isinstance(R, sage.rings.abc.RealIntervalField):
             return True
         else:
             return RR_min_prec.has_coerce_map_from(R)

@@ -3565,8 +3565,8 @@ cdef class Expression(CommutativeRingElement):
                 else:
                     domain = RIF
         else:
-            is_interval = (is_RealIntervalField(domain)
-                           or is_ComplexIntervalField(domain)
+            is_interval = (isinstance(domain, (sage.rings.abc.RealIntervalField,
+                                               sage.rings.abc.ComplexIntervalField))
                            or is_AlgebraicField(domain)
                            or is_AlgebraicRealField(domain))
         zero = domain(0)
@@ -3620,7 +3620,7 @@ cdef class Expression(CommutativeRingElement):
                         eq_count += <bint>val.contains_zero()
                 except (TypeError, ValueError, ArithmeticError, AttributeError) as ex:
                     errors += 1
-                    if k == errors > 3 and is_ComplexIntervalField(domain):
+                    if k == errors > 3 and isinstance(domain, sage.rings.abc.ComplexIntervalField):
                         domain = RIF.to_prec(domain.prec())
                     # we are plugging in random values above, don't be surprised
                     # if something goes wrong...
