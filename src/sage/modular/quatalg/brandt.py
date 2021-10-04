@@ -1685,7 +1685,7 @@ def benchmark_sage(levels, silent=False):
         ('sage', 43, 2, ...)
         ('sage', 97, 2, ...)
     """
-    from sage.misc.all import cputime
+    from sage.misc.misc import cputime
     ans = []
     for p, M in levels:
         t = cputime()

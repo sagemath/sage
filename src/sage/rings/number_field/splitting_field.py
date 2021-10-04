@@ -339,7 +339,7 @@ def splitting_field(poly, name, map=False, degree_multiple=None, abort_degree=No
           To:   Number Field in x with defining polynomial x
           Defn: 1 |--> 1)
     """
-    from sage.misc.all import cputime
+    from sage.misc.misc import cputime
     from sage.misc.verbose import verbose
 
     degree_multiple = Integer(degree_multiple or 0)
