@@ -2037,7 +2037,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: B3._coerce_map_from_(A31)
             False
         """
-        from sage.rings.all import ZZ, GF
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.infinity import Infinity
         p = self.prime()
         if S == ZZ or S == GF(p):
@@ -2099,7 +2100,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A1({(2,): 1, (1,): 13})
             Sq(1) + Sq(2)
         """
-        from sage.rings.all import ZZ, GF
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.finite_rings.finite_field_constructor import GF
         if x in GF(self.prime()) or x in ZZ:
             return self.from_base_ring_from_one_basis(x)
 

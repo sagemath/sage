@@ -29,7 +29,8 @@ def prime_finite_field():
         sage: K.cardinality().is_prime()
         True
     """
-    from sage.all import ZZ, GF
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
     return GF(ZZ.random_element(x=2, y=10**20 - 12).next_prime())
 
 
@@ -49,7 +50,8 @@ def finite_field():
         sage: while K.cardinality().is_prime():
         ....:     K = sage.rings.tests.finite_field()
     """
-    from sage.all import ZZ, GF
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
     p = ZZ.random_element(x=2, y=10**6 - 18).next_prime()
     d = ZZ.random_element(x=1, y=20)
     return GF(p**d, 'a')
@@ -72,7 +74,8 @@ def small_finite_field():
         sage: q <= 2^16
         True
     """
-    from sage.all import ZZ, GF
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
     while True:
         q = ZZ.random_element(x=2, y=2**16)
         if q.is_prime_power():

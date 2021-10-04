@@ -1562,7 +1562,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
                 #Handle the ZZ/n case
                 ambient = self.ambient()
                 if ambient.external_string() == 'ZZ':
-                    from sage.rings.all import ZZ, GF
+                    from sage.rings.integer_ring import ZZ
+                    from sage.rings.finite_rings.finite_field_constructor import GF
                     external_string = self.external_string()
                     zz, n = external_string.split("/")
 
@@ -1600,7 +1601,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
 
                 return PolynomialRing(base_ring, order=order, names=gens)
             elif cls_str == "GaloisField":
-                from sage.rings.all import ZZ, GF
+                from sage.rings.integer_ring import ZZ
+                from sage.rings.finite_rings.finite_field_constructor import GF
                 gf, n = repr_str.split(" ")
                 n = ZZ(n)
                 if n.is_prime():
