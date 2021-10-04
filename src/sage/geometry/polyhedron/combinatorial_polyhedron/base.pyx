@@ -596,12 +596,13 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         TESTS::
 
-            sage: P = polytopes.permutahedron(4)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C1 = loads(C.dumps())
-            sage: it = C.face_iter()
-            sage: it1 = C1.face_iter()
-            sage: tup = tuple((face.ambient_Vrepresentation(), face.ambient_Hrepresentation()) for face in it)
+            sage: P = polytopes.permutahedron(4)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: C1 = loads(C.dumps())                                         # optional - sage.combinat
+            sage: it = C.face_iter()                                            # optional - sage.combinat
+            sage: it1 = C1.face_iter()                                          # optional - sage.combinat
+            sage: tup = tuple((face.ambient_Vrepresentation(),                  # optional - sage.combinat
+            ....:              face.ambient_Hrepresentation()) for face in it)
             sage: tup1 = tuple((face.ambient_Vrepresentation(), face.ambient_Hrepresentation()) for face in it1)
             sage: tup == tup1
             True
@@ -701,9 +702,9 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(3)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.Hrepresentation()
+            sage: P = polytopes.permutahedron(3)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: C.Hrepresentation()                                           # optional - sage.combinat
             (An inequality (1, 1, 0) x - 3 >= 0,
              An inequality (-1, -1, 0) x + 5 >= 0,
              An inequality (0, 1, 0) x - 1 >= 0,
@@ -1056,10 +1057,10 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         ::
 
-            sage: P = polytopes.permutahedron(5, backend='field')
-            sage: C = P.combinatorial_polyhedron()
-            sage: C.incidence_matrix.clear_cache()
-            sage: C.incidence_matrix() == P.incidence_matrix()
+            sage: P = polytopes.permutahedron(5, backend='field')               # optional - sage.combinat
+            sage: C = P.combinatorial_polyhedron()                              # optional - sage.combinat
+            sage: C.incidence_matrix.clear_cache()                              # optional - sage.combinat
+            sage: C.incidence_matrix() == P.incidence_matrix()                  # optional - sage.combinat
             True
 
         The incidence matrix is consistent with
@@ -1292,11 +1293,11 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(2)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.ridges()
+            sage: P = polytopes.permutahedron(2)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: C.ridges()                                                    # optional - sage.combinat
             ((An inequality (1, 0) x - 1 >= 0, An inequality (-1, 0) x + 2 >= 0),)
-            sage: C.ridges(add_equations=True)
+            sage: C.ridges(add_equations=True)                                  # optional - sage.combinat
             (((An inequality (1, 0) x - 1 >= 0, An equation (1, 1) x - 3 == 0),
               (An inequality (-1, 0) x + 2 >= 0, An equation (1, 1) x - 3 == 0)),)
 
@@ -1608,9 +1609,9 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(5)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.f_vector()
+            sage: P = polytopes.permutahedron(5)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: C.f_vector()                                                  # optional - sage.combinat
             (1, 120, 240, 150, 30, 1)
 
             sage: P = polytopes.cyclic_polytope(6,10)
@@ -1620,9 +1621,9 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         Using two threads::
 
-            sage: P = polytopes.permutahedron(5)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.f_vector(num_threads=2)
+            sage: P = polytopes.permutahedron(5)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: C.f_vector(num_threads=2)                                     # optional - sage.combinat
             (1, 120, 240, 150, 30, 1)
 
         TESTS::
@@ -2320,15 +2321,15 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(4)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.join_of_Vrep(0,1)
+            sage: P = polytopes.permutahedron(4)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: C.join_of_Vrep(0,1)                                           # optional - sage.combinat
             A 1-dimensional face of a 3-dimensional combinatorial polyhedron
-            sage: C.join_of_Vrep(0,11).ambient_V_indices()
+            sage: C.join_of_Vrep(0,11).ambient_V_indices()                      # optional - sage.combinat
             (0, 1, 10, 11, 12, 13)
-            sage: C.join_of_Vrep(8).ambient_V_indices()
+            sage: C.join_of_Vrep(8).ambient_V_indices()                         # optional - sage.combinat
             (8,)
-            sage: C.join_of_Vrep().ambient_V_indices()
+            sage: C.join_of_Vrep().ambient_V_indices()                          # optional - sage.combinat
             ()
         """
         return self.face_iter().join_of_Vrep(*indices)
@@ -2343,19 +2344,19 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.dodecahedron()
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.meet_of_Hrep(0)
+            sage: P = polytopes.dodecahedron()                                  # optional - sage.rings.number_field
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.rings.number_field
+            sage: C.meet_of_Hrep(0)                                             # optional - sage.rings.number_field
             A 2-dimensional face of a 3-dimensional combinatorial polyhedron
-            sage: C.meet_of_Hrep(0).ambient_H_indices()
+            sage: C.meet_of_Hrep(0).ambient_H_indices()                         # optional - sage.rings.number_field
             (0,)
-            sage: C.meet_of_Hrep(0,1).ambient_H_indices()
+            sage: C.meet_of_Hrep(0,1).ambient_H_indices()                       # optional - sage.rings.number_field
             (0, 1)
-            sage: C.meet_of_Hrep(0,2).ambient_H_indices()
+            sage: C.meet_of_Hrep(0,2).ambient_H_indices()                       # optional - sage.rings.number_field
             (0, 2)
-            sage: C.meet_of_Hrep(0,2,3).ambient_H_indices()
+            sage: C.meet_of_Hrep(0,2,3).ambient_H_indices()                     # optional - sage.rings.number_field
             (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-            sage: C.meet_of_Hrep().ambient_H_indices()
+            sage: C.meet_of_Hrep().ambient_H_indices()                          # optional - sage.rings.number_field
             ()
         """
         return self.face_iter().meet_of_Hrep(*indices)
@@ -2382,38 +2383,38 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(5)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: it = C.face_iter(dimension=2)
-            sage: face = next(it); face
+            sage: P = polytopes.permutahedron(5)                                # optional - sage.rings.number_field
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.rings.number_field
+            sage: it = C.face_iter(dimension=2)                                 # optional - sage.rings.number_field
+            sage: face = next(it); face                                         # optional - sage.rings.number_field
             A 2-dimensional face of a 4-dimensional combinatorial polyhedron
-            sage: face.ambient_Vrepresentation()
+            sage: face.ambient_Vrepresentation()                                # optional - sage.rings.number_field
             (A vertex at (1, 3, 2, 5, 4),
              A vertex at (2, 3, 1, 5, 4),
              A vertex at (3, 1, 2, 5, 4),
              A vertex at (3, 2, 1, 5, 4),
              A vertex at (2, 1, 3, 5, 4),
              A vertex at (1, 2, 3, 5, 4))
-            sage: face = next(it); face
+            sage: face = next(it); face                                         # optional - sage.rings.number_field
             A 2-dimensional face of a 4-dimensional combinatorial polyhedron
-            sage: face.ambient_Vrepresentation()
+            sage: face.ambient_Vrepresentation()                                # optional - sage.rings.number_field
             (A vertex at (2, 1, 4, 5, 3),
              A vertex at (3, 2, 4, 5, 1),
              A vertex at (3, 1, 4, 5, 2),
              A vertex at (1, 3, 4, 5, 2),
              A vertex at (1, 2, 4, 5, 3),
              A vertex at (2, 3, 4, 5, 1))
-            sage: face.ambient_Hrepresentation()
+            sage: face.ambient_Hrepresentation()                                # optional - sage.rings.number_field
             (An inequality (0, 0, -1, -1, 0) x + 9 >= 0,
              An inequality (0, 0, 0, -1, 0) x + 5 >= 0,
              An equation (1, 1, 1, 1, 1) x - 15 == 0)
-            sage: face.ambient_H_indices()
+            sage: face.ambient_H_indices()                                      # optional - sage.rings.number_field
             (25, 29, 30)
-            sage: face = next(it); face
+            sage: face = next(it); face                                         # optional - sage.rings.number_field
             A 2-dimensional face of a 4-dimensional combinatorial polyhedron
-            sage: face.ambient_H_indices()
+            sage: face.ambient_H_indices()                                      # optional - sage.rings.number_field
             (24, 29, 30)
-            sage: face.ambient_V_indices()
+            sage: face.ambient_V_indices()                                      # optional - sage.rings.number_field
             (32, 89, 90, 94)
 
             sage: C = CombinatorialPolyhedron([[0,1,2],[0,1,3],[0,2,3],[1,2,3]])
@@ -2508,9 +2509,9 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.face_lattice().is_isomorphic(C1.face_lattice())
             True
 
-            sage: P = polytopes.permutahedron(5)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.face_lattice()
+            sage: P = polytopes.permutahedron(5)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: C.face_lattice()                                              # optional - sage.combinat
             Finite lattice containing 542 elements
 
         TESTS::
@@ -2520,9 +2521,9 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.face_lattice().is_isomorphic(P.face_lattice())
             True
 
-            sage: P = polytopes.permutahedron(4)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.face_lattice().is_isomorphic(P.face_lattice())
+            sage: P = polytopes.permutahedron(4)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: C.face_lattice().is_isomorphic(P.face_lattice())              # optional - sage.combinat
             True
         """
         from sage.combinat.posets.lattices import FiniteLatticePoset
@@ -2731,9 +2732,9 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: [face.ambient_V_indices() for face in chain]
             [(15,), (6, 15), (5, 6, 14, 15), (0, 5, 6, 7, 8, 9, 14, 15)]
 
-            sage: P = polytopes.permutahedron(4)
-            sage: C = P.combinatorial_polyhedron()
-            sage: chain = C.a_maximal_chain(); chain
+            sage: P = polytopes.permutahedron(4)                                # optional - sage.combinat
+            sage: C = P.combinatorial_polyhedron()                              # optional - sage.combinat
+            sage: chain = C.a_maximal_chain(); chain                            # optional - sage.combinat
             [A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 1-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 2-dimensional face of a 3-dimensional combinatorial polyhedron]
@@ -3493,14 +3494,15 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         TESTS::
 
-            sage: P = polytopes.permutahedron(4)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: it = C.face_iter()
-            sage: tup = tuple((face.ambient_Vrepresentation(),face.ambient_Hrepresentation()) for face in it)
-            sage: rg = range(1,sum(C.f_vector()) - 1)
-            sage: tup2 = tuple((C.face_by_face_lattice_index(i).ambient_Vrepresentation(),
+            sage: P = polytopes.permutahedron(4)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: it = C.face_iter()                                            # optional - sage.combinat
+            sage: tup = tuple((face.ambient_Vrepresentation(),                  # optional - sage.combinat
+            ....:              face.ambient_Hrepresentation()) for face in it)
+            sage: rg = range(1,sum(C.f_vector()) - 1)                           # optional - sage.combinat
+            sage: tup2 = tuple((C.face_by_face_lattice_index(i).ambient_Vrepresentation(),  # optional - sage.combinat
             ....:               C.face_by_face_lattice_index(i).ambient_Hrepresentation()) for i in rg)
-            sage: sorted(tup) == sorted(tup2)
+            sage: sorted(tup) == sorted(tup2)                                   # optional - sage.combinat
             True
 
             sage: P = polytopes.cyclic_polytope(4,10)
