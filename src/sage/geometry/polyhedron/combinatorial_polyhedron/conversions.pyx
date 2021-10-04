@@ -238,16 +238,25 @@ def incidence_matrix_to_bit_rep_of_facets(matrix):
     cdef size_t entry       # index for the entries in tup
 
     cdef size_t i
-    for i in range(ncols):
-        output = facets.data.faces[i]
-        facet_set_coatom(output, i)
+    try:
+        for i in range(ncols):
+            output = facets.data.faces[i]
+            facet_set_coatom(output, i)
 
-        # Filling each facet with its Vrep-incidences, which "is" the
-        # "i-th column" of the original matrix (but we have transposed).
-        for entry in range(nrows):
-            if not matrix.get_is_zero_unsafe(entry, i):
-                # Vrep ``entry`` is contained in the face, so set the corresponding bit
-                face_add_atom_safe(output, entry)
+            # Filling each facet with its Vrep-incidences, which "is" the
+            # "i-th column" of the original matrix (but we have transposed).
+            for entry in range(nrows):
+                if not matrix.get_is_zero_unsafe(entry, i):
+                    # Vrep ``entry`` is contained in the face, so set the corresponding bit
+                    face_add_atom_safe(output, entry)
+    except AttributeError:
+        # fall back to using general matrix API
+        for i in range(ncols):
+            output = facets.data.faces[i]
+            facet_set_coatom(output, i)
+            for entry in range(nrows):
+                if matrix[entry, i]:
+                    face_add_atom_safe(output, entry)
     return facets
 
 def incidence_matrix_to_bit_rep_of_Vrep(matrix):
