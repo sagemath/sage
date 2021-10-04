@@ -1888,7 +1888,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             # for a finite field, we return the isomorphic simple extensions of
             # the underlying prime field
             N = self.cardinality()
-            from sage.rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             isomorphic_ring = GF(N)
 
             # the map to GF(N) maps our generator to a root of our modulus in the isomorphic_ring

@@ -1629,7 +1629,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
         else:
             # it ought to be a finite field
             q = ZZ(charstr[0].lstrip('ZZ/'))
-            from sage.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             if q.is_prime():
                 br = GF(q)
             else:

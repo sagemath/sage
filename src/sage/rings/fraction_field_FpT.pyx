@@ -13,7 +13,7 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.rings.finite_rings.stdint cimport INTEGER_MOD_INT32_LIMIT
 
 from sage.libs.gmp.mpz cimport *
-from sage.rings.all import GF
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport n_jacobi
 from sage.structure.element cimport Element, ModuleElement, FieldElement

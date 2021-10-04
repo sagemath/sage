@@ -163,7 +163,7 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
         [1 2 0]
     """
     from sage.matrix.constructor import matrix
-    from sage.rings.all import GF
+    from sage.rings.finite_rings.finite_field_constructor import GF
     from .steenrod_algebra import SteenrodAlgebra
     if generic == 'auto':
         generic = False if p==2 else True
