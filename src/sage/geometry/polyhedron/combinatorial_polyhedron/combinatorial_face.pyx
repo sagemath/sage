@@ -22,9 +22,9 @@ Obtain a face from a face lattice index:
 
     sage: P = polytopes.simplex(2)
     sage: C = CombinatorialPolyhedron(P)
-    sage: sorted(C.face_lattice()._elements)
+    sage: sorted(C.face_lattice()._elements)                                    # optional - sage.combinat
     [0, 1, 2, 3, 4, 5, 6, 7]
-    sage: face = C.face_by_face_lattice_index(0); face
+    sage: face = C.face_by_face_lattice_index(0); face                          # optional - sage.combinat
     A -1-dimensional face of a 2-dimensional combinatorial polyhedron
 
 Obtain further information regarding a face::
@@ -95,7 +95,7 @@ cdef class CombinatorialFace(SageObject):
 
     Obtain a combinatorial face from an index of the face lattice::
 
-        sage: F = C.face_lattice()
+        sage: F = C.face_lattice()                                              # optional - sage.combinat
         sage: F._elements[3]
         34
         sage: C.face_by_face_lattice_index(29)
@@ -300,15 +300,15 @@ cdef class CombinatorialFace(SageObject):
 
         TESTS::
 
-            sage: P = polytopes.permutahedron(5)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: F = C.face_lattice()
-            sage: G = F.relabel(C.face_by_face_lattice_index)
+            sage: P = polytopes.permutahedron(5)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: F = C.face_lattice()                                          # optional - sage.combinat
+            sage: G = F.relabel(C.face_by_face_lattice_index)                   # optional - sage.combinat
 
             sage: P = polytopes.cyclic_polytope(4,10)
             sage: C = CombinatorialPolyhedron(P)
-            sage: F = C.face_lattice()
-            sage: G = F.relabel(C.face_by_face_lattice_index)
+            sage: F = C.face_lattice()                                          # optional - sage.combinat
+            sage: G = F.relabel(C.face_by_face_lattice_index)                   # optional - sage.combinat
         """
         return self._hash_index
 
@@ -331,7 +331,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F2 = C.face_by_face_lattice_index(1)
             sage: F1 < F2
             True
-            sage: for i,j in Combinations(range(28), 2):
+            sage: for i,j in Combinations(range(28), 2):   # optional - sage.combinat
             ....:     F1 = C.face_by_face_lattice_index(i)
             ....:     F2 = C.face_by_face_lattice_index(j)
             ....:     if F1.dim() != F2.dim():
@@ -343,7 +343,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F2 = C.face_by_face_lattice_index(1)
             sage: F1 < F2
             True
-            sage: for i,j in Combinations(range(28), 2):
+            sage: for i,j in Combinations(range(28), 2):   # optional - sage.combinat
             ....:     F1 = C.face_by_face_lattice_index(i)
             ....:     F2 = C.face_by_face_lattice_index(j)
             ....:     if F1.dim() != F2.dim():
@@ -948,7 +948,7 @@ cdef class CombinatorialFace(SageObject):
             sage: F.f_vector()
             (1, 5, 10, 10, 5, 1)
             sage: F_alt = polytopes.cyclic_polytope(4,5).combinatorial_polyhedron()
-            sage: F_alt.vertex_facet_graph().is_isomorphic(F.vertex_facet_graph())
+            sage: F_alt.vertex_facet_graph().is_isomorphic(F.vertex_facet_graph())  # optional - sage.graphs
             True
 
         Obtaining the quotient::
