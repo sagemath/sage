@@ -4221,7 +4221,12 @@ class Polyhedron_base(Element, ConvexSet_closed):
             g = self.gale_transform()
             P = gale_transform_to_polytope(g, base_ring=self.base_ring(), backend=self.backend())
 
-            tester.assertTrue(self.is_combinatorially_isomorphic(P))
+            try:
+                import sage.graphs.graph
+            except ImportError:
+                pass
+            else:
+                tester.assertTrue(self.is_combinatorially_isomorphic(P))
 
     @cached_method
     def normal_fan(self, direction='inner'):
