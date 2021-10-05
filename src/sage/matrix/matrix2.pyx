@@ -10650,7 +10650,7 @@ cdef class Matrix(Matrix1):
             True
         """
         R = self.base_ring()
-        if instance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
+        if isinstance(R, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField)):
             Q, R = self.transpose().QR()
             m = R.nrows(); n = R.ncols()
             if m > n:
