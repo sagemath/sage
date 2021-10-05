@@ -1101,9 +1101,13 @@ cdef class CombinatorialPolyhedron(SageObject):
         if self.dim() < 1:
             # Small cases.
             if self.dim() == 0:
-                # To be consistent with ``Polyhedron_base``,
-                for i in range(self.n_Hrepresentation()):
-                    incidence_matrix.set_unsafe_si(0, i, 1)
+                try:
+                    # To be consistent with ``Polyhedron_base``,
+                    for i in range(self.n_Hrepresentation()):
+                        incidence_matrix.set_unsafe_si(0, i, 1)
+                except AttributeError:
+                    for i in range(self.n_Hrepresentation()):
+                        incidence_matrix[0, i] = 1
             incidence_matrix.set_immutable()
             return incidence_matrix
 
@@ -1111,15 +1115,24 @@ cdef class CombinatorialPolyhedron(SageObject):
         n_facets = self.n_facets()
         if self.facet_names() is not None:
             n_equations = len(self.equations())
-            for Hindex in range(n_facets, n_facets + n_equations):
-                for Vindex in range(self.n_Vrepresentation()):
-                    incidence_matrix.set_unsafe_si(Vindex, Hindex, 1)
+            try:
+                for Hindex in range(n_facets, n_facets + n_equations):
+                    for Vindex in range(self.n_Vrepresentation()):
+                        incidence_matrix.set_unsafe_si(Vindex, Hindex, 1)
+            except AttributeError:
+                for Hindex in range(n_facets, n_facets + n_equations):
+                    for Vindex in range(self.n_Vrepresentation()):
+                        incidence_matrix[Vindex, Hindex] = 1
 
         facet_iter = self.face_iter(self.dimension() - 1, dual=False)
         for facet in facet_iter:
             Hindex = facet.ambient_H_indices()[0]
-            for Vindex in facet.ambient_V_indices():
-                incidence_matrix.set_unsafe_si(Vindex, Hindex, 1)
+            try:
+                for Vindex in facet.ambient_V_indices():
+                    incidence_matrix.set_unsafe_si(Vindex, Hindex, 1)
+            except AttributeError:
+                for Vindex in facet.ambient_V_indices():
+                    incidence_matrix[Vindex, Hindex] = 1
 
         incidence_matrix.set_immutable()
 
