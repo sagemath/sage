@@ -6384,12 +6384,17 @@ class Polyhedron_base(Element, ConvexSet_closed):
                 with warnings.catch_warnings():
                     warnings.simplefilter("error")
                     try:
+                        from sage.rings.real_double_field import RDF
+                        two = RDF(2.0)
                         # Implicitly checks :trac:`30328`.
-                        R = self.lawrence_extension(2.0*v - self.center())
+                        R = self.lawrence_extension(two * v - self.center())
                         tester.assertEqual(self.dim() + 1, R.dim())
                         tester.assertEqual(self.n_vertices() + 2, R.n_vertices())
 
                         tester.assertTrue(Q.is_combinatorially_isomorphic(R))
+                    except ImportError:
+                        # RDF not available
+                        pass
                     except UserWarning:
                         # Data is numerically complicated.
                         pass
@@ -7388,8 +7393,13 @@ class Polyhedron_base(Element, ConvexSet_closed):
             D2 = f2.as_combinatorial_polyhedron(quotient=True).dual()
             D1._test_bitsets(tester, **options)
             D2._test_bitsets(tester, **options)
-            tester.assertTrue(P.combinatorial_polyhedron().vertex_facet_graph().is_isomorphic(D1.vertex_facet_graph()))
-            tester.assertTrue(P.combinatorial_polyhedron().vertex_facet_graph().is_isomorphic(D2.vertex_facet_graph()))
+            try:
+                import sage.graphs.graph
+            except ImportError:
+                pass
+            else:
+                tester.assertTrue(P.combinatorial_polyhedron().vertex_facet_graph().is_isomorphic(D1.vertex_facet_graph()))
+                tester.assertTrue(P.combinatorial_polyhedron().vertex_facet_graph().is_isomorphic(D2.vertex_facet_graph()))
 
     @cached_method(do_pickle=True)
     def f_vector(self, num_threads=None, parallelization_depth=None):
@@ -7969,7 +7979,12 @@ class Polyhedron_base(Element, ConvexSet_closed):
             tester.assertTrue(b)
             check_pyramid_certificate(polar_pyr, cert)
 
-            tester.assertTrue(pyr_polar.is_combinatorially_isomorphic(pyr_polar))
+            try:
+                import sage.graphs.graph
+            except ImportError:
+                pass
+            else:
+                tester.assertTrue(pyr_polar.is_combinatorially_isomorphic(pyr_polar))
 
             # Basic properties of the pyramid.
 
@@ -10752,6 +10767,11 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         if self.n_vertices() > 200 or self.n_facets() > 200:
             # Avoid very long doctests.
+            return
+
+        try:
+            import sage.graphs.graph
+        except ImportError:
             return
 
         tester.assertTrue(self.is_combinatorially_isomorphic(ZZ(4)*self))
