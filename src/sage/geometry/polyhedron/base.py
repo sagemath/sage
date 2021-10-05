@@ -10639,7 +10639,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         The square is combinatorially isomorphic to the 2-dimensional cube::
 
-            sage: polytopes.hypercube(2).is_combinatorially_isomorphic(polytopes.regular_polygon(4))
+            sage: polytopes.hypercube(2).is_combinatorially_isomorphic(polytopes.regular_polygon(4))  # optional - sage.graphs
             True
 
         All the faces of the 3-dimensional permutahedron are either
@@ -11100,9 +11100,9 @@ class Polyhedron_base(Element, ConvexSet_closed):
              A vertex at (2, 0, 0),
              A vertex at (1, 3/2, 0),
              A vertex at (1, 1/2, 4/3))
-            sage: A = S.affine_hull_projection(orthonormal=True, extend=True); A
+            sage: A = S.affine_hull_projection(orthonormal=True, extend=True); A                  # optional - sage.rings.number_field
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 4 vertices
-            sage: A.vertices()
+            sage: A.vertices()                                                                    # optional - sage.rings.number_field
             (A vertex at (0.7071067811865475?, 0.4082482904638630?, 1.154700538379252?),
              A vertex at (0.7071067811865475?, 1.224744871391589?, 0.?e-18),
              A vertex at (1.414213562373095?, 0.?e-18, 0.?e-18),
@@ -11111,11 +11111,11 @@ class Polyhedron_base(Element, ConvexSet_closed):
         With the parameter ``minimal`` one can get a minimal base ring::
 
             sage: s = polytopes.simplex(3)
-            sage: s_AA = s.affine_hull_projection(orthonormal=True, extend=True)
-            sage: s_AA.base_ring()
+            sage: s_AA = s.affine_hull_projection(orthonormal=True, extend=True)                  # optional - sage.rings.number_field
+            sage: s_AA.base_ring()                                                                # optional - sage.rings.number_field
             Algebraic Real Field
-            sage: s_full = s.affine_hull_projection(orthonormal=True, extend=True, minimal=True)
-            sage: s_full.base_ring()
+            sage: s_full = s.affine_hull_projection(orthonormal=True, extend=True, minimal=True)  # optional - sage.rings.number_field
+            sage: s_full.base_ring()                                                              # optional - sage.rings.number_field
             Number Field in a with defining polynomial y^4 - 4*y^2 + 1 with a = 0.5176380902050415?
 
         More examples with the ``orthonormal`` parameter::
