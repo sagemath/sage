@@ -11369,21 +11369,25 @@ class Polyhedron_base(Element, ConvexSet_closed):
             # Avoid very long doctests.
             return
 
-        data_sets = [None]*4
-        data_sets[0] = self.affine_hull_projection(return_all_data=True)
+        try:
+            from sage.rings.qqbar import AA
+        except ImportError:
+            AA = None
+
+        data_sets = []
+        data_sets.append(self.affine_hull_projection(return_all_data=True))
         if self.is_compact():
-            data_sets[1] = self.affine_hull_projection(return_all_data=True,
-                                                       orthogonal=True,
-                                                       extend=True)
-            data_sets[2] = self.affine_hull_projection(return_all_data=True,
-                                                       orthonormal=True,
-                                                       extend=True)
-            data_sets[3] = self.affine_hull_projection(return_all_data=True,
-                                                       orthonormal=True,
-                                                       extend=True,
-                                                       minimal=True)
-        else:
-            data_sets = data_sets[:1]
+            data_sets.append(self.affine_hull_projection(return_all_data=True,
+                                                         orthogonal=True,
+                                                         extend=True))
+            if AA is not None:
+                data_sets.append(self.affine_hull_projection(return_all_data=True,
+                                                             orthonormal=True,
+                                                             extend=True))
+                data_sets.append(self.affine_hull_projection(return_all_data=True,
+                                                             orthonormal=True,
+                                                             extend=True,
+                                                             minimal=True))
 
         for i, data in enumerate(data_sets):
             if verbose:
@@ -11394,10 +11398,6 @@ class Polyhedron_base(Element, ConvexSet_closed):
                                data.image)
 
             M = data.section_linear_map.matrix().transpose()
-            try:
-                from sage.rings.qqbar import AA
-            except ImportError:
-                AA = None
             if M.base_ring() is AA:
                 self_extend = self.change_ring(AA)
             else:
