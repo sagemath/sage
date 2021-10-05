@@ -5017,7 +5017,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
             sage: C = polytopes.hypercube(5)
             sage: S = Polyhedron([[1]])
-            sage: C.join(S).is_combinatorially_isomorphic(C.pyramid())
+            sage: C.join(S).is_combinatorially_isomorphic(C.pyramid())  # optional - sage.graphs
             True
 
             sage: P = polytopes.simplex(backend='cdd')
@@ -6106,11 +6106,11 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         EXAMPLES::
 
-            sage: P_4 = polytopes.regular_polygon(4)
-            sage: W1 = P_4.wedge(P_4.faces(1)[0]); W1
+            sage: P_4 = polytopes.regular_polygon(4)                                              # optional - sage.rings.number_field
+            sage: W1 = P_4.wedge(P_4.faces(1)[0]); W1                                             # optional - sage.rings.number_field
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 6 vertices
-            sage: triangular_prism = polytopes.regular_polygon(3).prism()
-            sage: W1.is_combinatorially_isomorphic(triangular_prism)
+            sage: triangular_prism = polytopes.regular_polygon(3).prism()                         # optional - sage.rings.number_field
+            sage: W1.is_combinatorially_isomorphic(triangular_prism)  # optional - sage.graphs    # optional - sage.rings.number_field
             True
 
             sage: Q = polytopes.hypersimplex(4,2)
@@ -6142,9 +6142,9 @@ class Polyhedron_base(Element, ConvexSet_closed):
              A vertex at (0, 1, 1, 0, -1))
 
             sage: C_3_7 = polytopes.cyclic_polytope(3,7)
-            sage: P_6 = polytopes.regular_polygon(6)
-            sage: W4 = P_6.wedge(P_6.faces(1)[0])
-            sage: W4.is_combinatorially_isomorphic(C_3_7.polar())
+            sage: P_6 = polytopes.regular_polygon(6)                                              # optional - sage.rings.number_field
+            sage: W4 = P_6.wedge(P_6.faces(1)[0])                                                 # optional - sage.rings.number_field
+            sage: W4.is_combinatorially_isomorphic(C_3_7.polar())     # optional - sage.graphs    # optional - sage.rings.number_field
             True
 
         REFERENCES:
@@ -10838,7 +10838,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: P1 = Polyhedron(vertices=([[-1, 1], [0, -1], [0, 0], [-1, -1]]))
             sage: P2 = Polyhedron(vertices=[[1, 1], [1, -1], [0, -1], [0, 0]])
             sage: P = P1.intersection(P2)
-            sage: A, b = P.affine_hull_projection(as_affine_map=True, orthonormal=True, extend=True)
+            sage: A, b = P.affine_hull_projection(as_affine_map=True, orthonormal=True, extend=True)  # optional - sage.rings.number_field
 
             sage: Polyhedron([(2,3,4)]).affine_hull_projection()
             A 0-dimensional polyhedron in ZZ^0 defined as the convex hull of 1 vertex
@@ -10849,7 +10849,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             'field'
 
             sage: P = Polyhedron(vertices=[[0,0], [1,0]], backend='field')
-            sage: P.affine_hull_projection(orthogonal=True, orthonormal=True, extend=True).backend()
+            sage: P.affine_hull_projection(orthogonal=True, orthonormal=True, extend=True).backend()  # optional - sage.rings.number_field
             'field'
 
         Check that :trac:`29116` is fixed::
@@ -10869,7 +10869,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             Traceback (most recent call last):
             ...
             ValueError: the base ring needs to be extended; try with "extend=True"
-            sage: P.affine_hull_projection(orthonormal=True, extend=True)
+            sage: P.affine_hull_projection(orthonormal=True, extend=True)                             # optional - sage.rings.number_field
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 6 vertices
         """
         result = AffineHullProjectionData()
@@ -11084,13 +11084,13 @@ class Polyhedron_base(Element, ConvexSet_closed):
             A 1-dimensional polyhedron in QQ^1 defined as the convex hull of 2 vertices
             sage: A.vertices()
             (A vertex at (0), A vertex at (2))
-            sage: A = L.affine_hull_projection(orthonormal=True)
+            sage: A = L.affine_hull_projection(orthonormal=True)                                  # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: the base ring needs to be extended; try with "extend=True"
-            sage: A = L.affine_hull_projection(orthonormal=True, extend=True); A
+            sage: A = L.affine_hull_projection(orthonormal=True, extend=True); A                  # optional - sage.rings.number_field
             A 1-dimensional polyhedron in AA^1 defined as the convex hull of 2 vertices
-            sage: A.vertices()
+            sage: A.vertices()                                                                    # optional - sage.rings.number_field
             (A vertex at (1.414213562373095?), A vertex at (0.?e-18))
 
         More generally::
