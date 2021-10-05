@@ -7273,7 +7273,10 @@ cdef class Matrix(Matrix1):
         cdef Matrix d, a
         cdef Py_ssize_t r, c
         cdef bint transformation = 'transformation' in kwds and kwds['transformation']
-        if self._base_ring == ZZ:
+
+        if self._base_ring == ZZ and self.dense_matrix() is not self:
+            # delegate to the specialized echelon form
+            # implemented in matrix_integer_dense
             if 'include_zero_rows' in kwds and not kwds['include_zero_rows']:
                 raise ValueError("cannot echelonize in place and delete zero rows")
             if transformation:
