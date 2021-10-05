@@ -11120,71 +11120,72 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         More examples with the ``orthonormal`` parameter::
 
-            sage: P = polytopes.permutahedron(3); P
+            sage: P = polytopes.permutahedron(3); P                   # optional - sage.combinat  # optional - sage.rings.number_field
             A 2-dimensional polyhedron in ZZ^3 defined as the convex hull of 6 vertices
-            sage: set([F.as_polyhedron().affine_hull_projection(orthonormal=True, extend=True).volume() for F in P.affine_hull_projection().faces(1)]) == {1, sqrt(AA(2))}
+            sage: set([F.as_polyhedron().affine_hull_projection(orthonormal=True, extend=True).volume() for F in P.affine_hull_projection().faces(1)]) == {1, sqrt(AA(2))}  # optional - sage.combinat  # optional - sage.rings.number_field
             True
-            sage: set([F.as_polyhedron().affine_hull_projection(orthonormal=True, extend=True).volume() for F in P.affine_hull_projection(orthonormal=True, extend=True).faces(1)]) == {sqrt(AA(2))}
+            sage: set([F.as_polyhedron().affine_hull_projection(orthonormal=True, extend=True).volume() for F in P.affine_hull_projection(orthonormal=True, extend=True).faces(1)]) == {sqrt(AA(2))}  # optional - sage.combinat  # optional - sage.rings.number_field
             True
-            sage: D = polytopes.dodecahedron()
-            sage: F = D.faces(2)[0].as_polyhedron()
-            sage: F.affine_hull_projection(orthogonal=True)
+
+            sage: D = polytopes.dodecahedron()                                                    # optional - sage.rings.number_field
+            sage: F = D.faces(2)[0].as_polyhedron()                                               # optional - sage.rings.number_field
+            sage: F.affine_hull_projection(orthogonal=True)                                       # optional - sage.rings.number_field
             A 2-dimensional polyhedron in (Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^2 defined as the convex hull of 5 vertices
-            sage: F.affine_hull_projection(orthonormal=True, extend=True)
+            sage: F.affine_hull_projection(orthonormal=True, extend=True)                         # optional - sage.rings.number_field
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 5 vertices
-            sage: K.<sqrt2> = QuadraticField(2)
-            sage: P = Polyhedron([2*[K.zero()],2*[sqrt2]])
-            sage: K.<sqrt2> = QuadraticField(2)
-            sage: P = Polyhedron([2*[K.zero()],2*[sqrt2]]); P
+
+            sage: K.<sqrt2> = QuadraticField(2)                                                   # optional - sage.rings.number_field
+            sage: P = Polyhedron([2*[K.zero()],2*[sqrt2]]); P                                     # optional - sage.rings.number_field
             A 1-dimensional polyhedron in (Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?)^2 defined as the convex hull of 2 vertices
-            sage: P.vertices()
+            sage: P.vertices()                                                                    # optional - sage.rings.number_field
             (A vertex at (0, 0), A vertex at (sqrt2, sqrt2))
-            sage: A = P.affine_hull_projection(orthonormal=True); A
+            sage: A = P.affine_hull_projection(orthonormal=True); A                               # optional - sage.rings.number_field
             A 1-dimensional polyhedron in (Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?)^1 defined as the convex hull of 2 vertices
-            sage: A.vertices()
+            sage: A.vertices()                                                                    # optional - sage.rings.number_field
             (A vertex at (0), A vertex at (2))
-            sage: K.<sqrt3> = QuadraticField(3)
-            sage: P = Polyhedron([2*[K.zero()],2*[sqrt3]]); P
+
+            sage: K.<sqrt3> = QuadraticField(3)                                                   # optional - sage.rings.number_field
+            sage: P = Polyhedron([2*[K.zero()],2*[sqrt3]]); P                                     # optional - sage.rings.number_field
             A 1-dimensional polyhedron in (Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)^2 defined as the convex hull of 2 vertices
-            sage: P.vertices()
+            sage: P.vertices()                                                                    # optional - sage.rings.number_field
             (A vertex at (0, 0), A vertex at (sqrt3, sqrt3))
-            sage: A = P.affine_hull_projection(orthonormal=True)
+            sage: A = P.affine_hull_projection(orthonormal=True)                                  # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: the base ring needs to be extended; try with "extend=True"
-            sage: A = P.affine_hull_projection(orthonormal=True, extend=True); A
+            sage: A = P.affine_hull_projection(orthonormal=True, extend=True); A                  # optional - sage.rings.number_field
             A 1-dimensional polyhedron in AA^1 defined as the convex hull of 2 vertices
-            sage: A.vertices()
+            sage: A.vertices()                                                                    # optional - sage.rings.number_field
             (A vertex at (0), A vertex at (2.449489742783178?))
-            sage: sqrt(6).n()
+            sage: sqrt(6).n()                                                                     # optional - sage.rings.number_field
             2.44948974278318
 
         The affine hull is combinatorially equivalent to the input::
 
-            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection())
+            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection())                     # optional - sage.rings.number_field
             True
-            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection(orthogonal=True))
+            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection(orthogonal=True))      # optional - sage.rings.number_field
             True
-            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection(orthonormal=True, extend=True))
+            sage: P.is_combinatorially_isomorphic(P.affine_hull_projection(orthonormal=True, extend=True))   # optional - sage.rings.number_field
             True
 
         The ``orthonormal=True`` parameter preserves volumes;
         it provides an isometric copy of the polyhedron::
 
-            sage: Pentagon = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
-            sage: P = Pentagon.affine_hull_projection(orthonormal=True, extend=True)
-            sage: _, c= P.is_inscribed(certificate=True)
+            sage: Pentagon = polytopes.dodecahedron().faces(2)[0].as_polyhedron()                 # optional - sage.rings.number_field
+            sage: P = Pentagon.affine_hull_projection(orthonormal=True, extend=True)              # optional - sage.rings.number_field
+            sage: _, c= P.is_inscribed(certificate=True)                                          # optional - sage.rings.number_field
             sage: c
             (0.4721359549995794?, 0.6498393924658126?)
-            sage: circumradius = (c-vector(P.vertices()[0])).norm()
-            sage: p = polytopes.regular_polygon(5)
-            sage: p.volume()
+            sage: circumradius = (c-vector(P.vertices()[0])).norm()                               # optional - sage.rings.number_field
+            sage: p = polytopes.regular_polygon(5)                                                # optional - sage.rings.number_field
+            sage: p.volume()                                                                      # optional - sage.rings.number_field
             2.377641290737884?
-            sage: P.volume()
+            sage: P.volume()                                                                      # optional - sage.rings.number_field
             1.53406271079097?
-            sage: p.volume()*circumradius^2
+            sage: p.volume()*circumradius^2                                                       # optional - sage.rings.number_field
             1.534062710790965?
-            sage: P.volume() == p.volume()*circumradius^2
+            sage: P.volume() == p.volume()*circumradius^2                                         # optional - sage.rings.number_field
             True
 
         One can also use ``orthogonal`` parameter to calculate volumes;
@@ -11192,28 +11193,28 @@ class Polyhedron_base(Element, ConvexSet_closed):
         by the square root of the determinant of the linear part of the
         affine transformation times its transpose::
 
-            sage: Pentagon = polytopes.dodecahedron().faces(2)[0].as_polyhedron()
-            sage: Pnormal = Pentagon.affine_hull_projection(orthonormal=True, extend=True)
-            sage: Pgonal = Pentagon.affine_hull_projection(orthogonal=True)
-            sage: A, b = Pentagon.affine_hull_projection(orthogonal=True, as_affine_map=True)
-            sage: Adet = (A.matrix().transpose()*A.matrix()).det()
-            sage: Pnormal.volume()
+            sage: Pentagon = polytopes.dodecahedron().faces(2)[0].as_polyhedron()                 # optional - sage.rings.number_field
+            sage: Pnormal = Pentagon.affine_hull_projection(orthonormal=True, extend=True)        # optional - sage.rings.number_field
+            sage: Pgonal = Pentagon.affine_hull_projection(orthogonal=True)                       # optional - sage.rings.number_field
+            sage: A, b = Pentagon.affine_hull_projection(orthogonal=True, as_affine_map=True)     # optional - sage.rings.number_field
+            sage: Adet = (A.matrix().transpose()*A.matrix()).det()                                # optional - sage.rings.number_field
+            sage: Pnormal.volume()                                                                # optional - sage.rings.number_field
             1.53406271079097?
-            sage: Pgonal.volume()/Adet.sqrt(extend=True)
+            sage: Pgonal.volume()/Adet.sqrt(extend=True)                                          # optional - sage.rings.number_field
             -80*(55*sqrt(5) - 123)/sqrt(-6368*sqrt(5) + 14240)
-            sage: Pgonal.volume()/AA(Adet).sqrt().n(digits=20)
+            sage: Pgonal.volume()/AA(Adet).sqrt().n(digits=20)                                    # optional - sage.rings.number_field
             1.5340627107909646813
-            sage: AA(Pgonal.volume()^2) == (Pnormal.volume()^2)*AA(Adet)
+            sage: AA(Pgonal.volume()^2) == (Pnormal.volume()^2)*AA(Adet)                          # optional - sage.rings.number_field
             True
 
         Another example with ``as_affine_map=True``::
 
-            sage: P = polytopes.permutahedron(4)
-            sage: A, b = P.affine_hull_projection(orthonormal=True, as_affine_map=True, extend=True)
-            sage: Q = P.affine_hull_projection(orthonormal=True, extend=True)
-            sage: Q.center()
+            sage: P = polytopes.permutahedron(4)                                                      # optional - sage.combinat  # optional - sage.rings.number_field
+            sage: A, b = P.affine_hull_projection(orthonormal=True, as_affine_map=True, extend=True)  # optional - sage.combinat  # optional - sage.rings.number_field
+            sage: Q = P.affine_hull_projection(orthonormal=True, extend=True)                         # optional - sage.combinat  # optional - sage.rings.number_field
+            sage: Q.center()                                                                          # optional - sage.combinat  # optional - sage.rings.number_field
             (0.7071067811865475?, 1.224744871391589?, 1.732050807568878?)
-            sage: A(P.center()) + b == Q.center()
+            sage: A(P.center()) + b == Q.center()                                                     # optional - sage.combinat  # optional - sage.rings.number_field
             True
 
         For unbounded, non full-dimensional polyhedra, the ``orthogonal=True`` and ``orthonormal=True``
