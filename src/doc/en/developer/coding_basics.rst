@@ -1121,9 +1121,10 @@ framework. Here is a comprehensive list:
   .. NOTE::
 
       - Any words after ``# optional`` are interpreted as a list of
-        package names, separated by spaces.
+        package (spkg) names or other feature tags, separated by spaces.
 
-      - Any punctuation (periods, commas, hyphens, semicolons, ...) after the
+      - Any punctuation other than underscores (``_``) and periods (``.``),
+        that is, commas, hyphens, semicolons, ..., after the
         first word ends the list of packages.  Hyphens or colons between the
         word ``optional`` and the first package name are allowed.  Therefore,
         you should not write ``optional: needs package CHomP`` but simply

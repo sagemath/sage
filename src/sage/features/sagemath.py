@@ -19,6 +19,38 @@ class sage__graphs(PythonModule):
         PythonModule.__init__(self, 'sage.graphs.graph')
 
 
+class sage__graphs__bliss(PythonModule):
+
+    def __init__(self):
+        # Currently part of sagemath_standard, conditionally built.
+        # Will be changed to spkg='sagemath_bliss' later
+        PythonModule.__init__(self, 'sage.graphs.bliss', spkg='bliss')
+
+
+class sage__graphs__graph_decompositions__tdlib(PythonModule):
+
+    def __init__(self):
+        # Currently part of sagemath_standard, conditionally built.
+        # Will be changed to spkg='sagemath_tdlib' later
+        PythonModule.__init__(self, 'sage.graphs.graph_decompositions.tdlib', spkg='tdlib')
+
+
+class sage__graphs__mcqd(PythonModule):
+
+    def __init__(self):
+        # Currently part of sagemath_standard, conditionally built.
+        # Will be changed to spkg='sagemath_mcqd' later
+        PythonModule.__init__(self, 'sage.graphs.mcqd', spkg='mcqd')
+
+
+class sage__matrix__matrix_gfpn_dense(PythonModule):
+
+    def __init__(self):
+        # Currently part of sagemath_standard, conditionally built.
+        # Will be changed to spkg='sagemath_meataxe' later
+        PythonModule.__init__(self, 'sage.matrix.matrix_gfpn_dense', spkg='meataxe')
+
+
 class sage__rings__number_field(PythonModule):
 
     def __init__(self):
@@ -56,6 +88,14 @@ def sage_optional_tags():
         yield 'sage.combinat'
     if sage__graphs().is_present():
         yield 'sage.graphs'
+    if sage__graphs__bliss().is_present():
+        yield 'sage.graphs.bliss'
+    if sage__graphs__graph_decompositions__tdlib().is_present():
+        yield 'sage.graphs.graph_decompositions.tdlib'
+    if sage__graphs__mcqd().is_present():
+        yield 'sage.graphs.mcqd'
+    if sage__matrix__matrix_gfpn_dense().is_present():
+        yield 'sage.matrix.matrix_gfpn_dense'
     if sage__rings__number_field().is_present():
         yield 'sage.rings.number_field'
     if sage__rings__real_double().is_present():
