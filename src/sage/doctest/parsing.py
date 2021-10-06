@@ -90,9 +90,7 @@ def RIFtol(*args):
             from warnings import warn
             warn("RealIntervalField not available, ignoring all tolerance specifications in doctests")
             def fake_RIFtol(*args):
-                if len(args) == 2:
-                    return (args[0] + args[1]) / 2
-                return args[0]
+                return 0
             _RIFtol = fake_RIFtol
         else:
             _RIFtol = RealIntervalField(1044)
