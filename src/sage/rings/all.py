@@ -14,12 +14,6 @@ from sage.misc.lazy_import import lazy_import
 
 from .all__sagemath_polyhedra import *
 
-# Quotient
-from .quotient_ring import QuotientRing
-
-# Infinities
-from .infinity import infinity, Infinity, InfinityRing, unsigned_infinity, UnsignedInfinityRing
-
 # Integers modulo n.
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing, Zmod
 from sage.rings.finite_rings.integer_mod import IntegerMod, Mod, mod
@@ -117,9 +111,6 @@ from .big_oh import O
 # Fraction field
 from .fraction_field import FractionField
 Frac = FractionField
-
-# Localization
-from .localization import Localization
 
 # c-finite sequences
 from .cfinite_sequence import CFiniteSequence, CFiniteSequences
