@@ -4,3 +4,7 @@ from sage.rings.all__sagemath_polyhedra import *
 from sage.modules.all import *
 from sage.matrix.all import *
 from sage.geometry.all__sagemath_polyhedra import *
+
+true = True
+false = False
+oo = infinity
