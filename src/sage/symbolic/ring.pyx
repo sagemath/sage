@@ -32,6 +32,7 @@ The symbolic ring
 # ****************************************************************************
 
 from sage.rings.integer cimport Integer
+import sage.rings.abc
 
 from sage.symbolic.expression cimport (
     is_Expression,
@@ -207,7 +208,6 @@ cdef class SymbolicRing(CommutativeRing):
             from sage.rings.fraction_field import is_FractionField
             from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
             from sage.rings.real_mpfi import is_RealIntervalField
-            from sage.rings.complex_interval_field import is_ComplexIntervalField
             from sage.rings.real_arb import RealBallField
             from sage.rings.complex_arb import ComplexBallField
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing

@@ -5,6 +5,11 @@ cdef class RealField(Field):
     pass
 
 
+cdef class RealIntervalField(Field):
+
+    pass
+
+
 cdef class RealDoubleField(Field):
 
     pass

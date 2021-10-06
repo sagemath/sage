@@ -56,11 +56,11 @@ def is_ComplexIntervalField(x):
     EXAMPLES::
 
         sage: from sage.rings.complex_interval_field import is_ComplexIntervalField as is_CIF
+        sage: is_CIF(CIF)
         doctest:warning...
         DeprecationWarning: is_ComplexIntervalField is deprecated;
         use isinstance(..., sage.rings.abc.ComplexIntervalField) instead
         See https://trac.sagemath.org/32612 for details.
-        sage: is_CIF(CIF)
         True
         sage: is_CIF(CC)
         False

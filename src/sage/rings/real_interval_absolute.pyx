@@ -10,12 +10,13 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.element cimport RingElement, ModuleElement, Element, FieldElement
 from sage.rings.ring cimport Field
 from sage.rings.integer cimport Integer
+import sage.rings.abc
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport parent
 
 from sage.rings.real_mpfr import RR_min_prec
-from sage.rings.real_mpfi import RealIntervalField, RealIntervalFieldElement, is_RealIntervalField
+from sage.rings.real_mpfi import RealIntervalField, RealIntervalFieldElement
 from sage.rings.rational_field import QQ
 
 cdef Integer zero = Integer(0)
