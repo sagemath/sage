@@ -26,7 +26,47 @@ include sage/misc/allocator.*
 include sage/misc/functional.p*
 include sage/ext/mod_int.*
 
+# see sage.misc.all__sagemath_polyhedra
 include sage/misc/latex*.*
+include sage/misc/html.p*
+include sage/misc/table.p*
+include sage/misc/map_threaded.p*
+
+graft sage/misc
+# see sage.misc.all__sagemath_polyhedra -- exclude dev tools, session management
+exclude sage/misc/banner.p*
+exclude sage/misc/dev_tools.p*
+exclude sage/misc/sage_timeit_class.p*
+exclude sage/misc/edit_module.p*
+exclude sage/misc/session.p*
+exclude sage/misc/remote_file.p*
+exclude sage/misc/profiler.p*
+exclude sage/misc/dist.p*
+exclude sage/misc/pager.p*
+#??? sage/misc/sagedoc.p*
+exclude sage/misc/classgraph.p*
+exclude sage/misc/reset.p*
+exclude sage/misc/cython.p*
+exclude sage/misc/trace.p*
+exclude sage/misc/explain_pickle.p*
+exclude sage/misc/inline_fortran.p*
+exclude sage/misc/benchmark.p*
+exclude sage/misc/citation.p*
+exclude sage/misc/copying.p*
+exclude sage/misc/gperftools.p*
+exclude sage/misc/messaging.p*
+exclude sage/misc/python.p*
+exclude sage/misc/sh.p*
+exclude sage/misc/viewer.p*
+# lost and abandoned
+prune sage/misc/notes
+# belongs to sagemath-symbolics
+exclude sage/misc/derivative.p*
+# can hopefully be eliminated
+exclude sage/misc/sage_ostools.p*
+# still needed for the doctester
+##exclude sage/misc/package.p*
+
 
 graft sage/parallel
 

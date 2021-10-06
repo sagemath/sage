@@ -1,5 +1,6 @@
 from .all__sagemath_categories import *
 
+from sage.misc.all__sagemath_polyhedra import *
 from sage.rings.all__sagemath_polyhedra import *
 from sage.modules.all import *
 from sage.matrix.all import *
