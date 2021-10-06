@@ -1981,8 +1981,6 @@ cdef class Matrix(Matrix1):
             sage: A.determinant() == B.determinant()
             True
         """
-        from sage.symbolic.ring import is_SymbolicExpressionRing
-
         cdef Py_ssize_t n
         n = self._ncols
 
@@ -2071,7 +2069,14 @@ cdef class Matrix(Matrix1):
         # is then assumed to not be a variable in the symbolic ring.  But this
         # resulted in further exceptions/ errors.
 
-        var = 'A0123456789' if is_SymbolicExpressionRing(R) else 'x'
+        var = 'x'
+        try:
+            from sage.symbolic.ring import is_SymbolicExpressionRing
+        except ImportError:
+            pass
+        else:
+            if is_SymbolicExpressionRing(R):
+                var = 'A0123456789'
         try:
             charp = self.charpoly(var, algorithm="df")
         except ValueError:
