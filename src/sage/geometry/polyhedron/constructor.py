@@ -177,8 +177,8 @@ equilateral triangle whose vertex coordinates involve `\sqrt{3}`. An
 exact way to work with roots in Sage is the :mod:`Algebraic Real Field
 <sage.rings.qqbar>` ::
 
-    sage: triangle = Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)], base_ring=AA)
-    sage: triangle.Hrepresentation()
+    sage: triangle = Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)], base_ring=AA) # optional - sage.rings.number_field
+    sage: triangle.Hrepresentation()                                            # optional - sage.rings.number_field
     (An inequality (-1, -0.5773502691896258?) x + 1 >= 0,
      An inequality (1, -0.5773502691896258?) x + 0 >= 0,
      An inequality (0, 1.154700538379252?) x + 0 >= 0)
@@ -187,20 +187,20 @@ Without specifying the ``base_ring``, the ``sqrt(3)`` would be a
 symbolic ring element and, therefore, the polyhedron defined over the
 symbolic ring. This is currently not supported as SR is not exact::
 
-    sage: Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)])
+    sage: Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)])                          # optional - sage.symbolic
     Traceback (most recent call last):
     ...
     ValueError: no default backend for computations with Symbolic Ring
 
-    sage: SR.is_exact()
+    sage: SR.is_exact()                                                         # optional - sage.symbolic
     False
 
 Even faster than all algebraic real numbers (the field ``AA``) is
 to take the smallest extension field. For the equilateral
 triangle, that would be::
 
-    sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3)**(1/2))
-    sage: Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])
+    sage: K.<sqrt3> = NumberField(x^2 - 3, embedding=AA(3)**(1/2))              # optional - sage.rings.number_field
+    sage: Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])                            # optional - sage.rings.number_field
     A 2-dimensional polyhedron in (Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)^2 defined as the convex hull of 3 vertices
 
 .. WARNING::
@@ -441,24 +441,25 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     by the cyclic shifts of `(0, \pm 1, \pm (1+\sqrt(5))/2)`, cf.
     :wikipedia:`Regular_icosahedron`. It needs a number field::
 
-        sage: R0.<r0> = QQ[]
-        sage: R1.<r1> = NumberField(r0^2-5, embedding=AA(5)**(1/2))
-        sage: gold = (1+r1)/2
-        sage: v = [[0, 1, gold], [0, 1, -gold], [0, -1, gold], [0, -1, -gold]]
-        sage: pp = Permutation((1, 2, 3))
-        sage: icosah = Polyhedron([(pp^2).action(w) for w in v]
-        ....:             + [pp.action(w) for w in v] + v, base_ring=R1)
-        sage: len(icosah.faces(2))
+        sage: R0.<r0> = QQ[]                                                    # optional - sage.rings.number_field
+        sage: R1.<r1> = NumberField(r0^2-5, embedding=AA(5)**(1/2))             # optional - sage.rings.number_field
+        sage: gold = (1+r1)/2                                                   # optional - sage.rings.number_field
+        sage: v = [[0, 1, gold], [0, 1, -gold], [0, -1, gold], [0, -1, -gold]]  # optional - sage.rings.number_field
+        sage: pp = Permutation((1, 2, 3))          # optional - sage.combinat   # optional - sage.rings.number_field
+        sage: icosah = Polyhedron(                 # optional - sage.combinat   # optional - sage.rings.number_field
+        ....:    [(pp^2).action(w) for w in v] + [pp.action(w) for w in v] + v,
+        ....:    base_ring=R1)
+        sage: len(icosah.faces(2))                 # optional - sage.combinat   # optional - sage.rings.number_field
         20
 
     When the input contains elements of a Number Field, they require an
     embedding::
 
-        sage: K = NumberField(x^2-2,'s')
-        sage: s = K.0
-        sage: L = NumberField(x^3-2,'t')
-        sage: t = L.0
-        sage: P = Polyhedron(vertices = [[0,s],[t,0]])
+        sage: K = NumberField(x^2-2,'s')                                        # optional - sage.rings.number_field
+        sage: s = K.0                                                           # optional - sage.rings.number_field
+        sage: L = NumberField(x^3-2,'t')                                        # optional - sage.rings.number_field
+        sage: t = L.0                                                           # optional - sage.rings.number_field
+        sage: P = Polyhedron(vertices = [[0,s],[t,0]])                          # optional - sage.rings.number_field
         Traceback (most recent call last):
         ...
         ValueError: invalid base ring
