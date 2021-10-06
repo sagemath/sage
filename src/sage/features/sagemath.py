@@ -51,6 +51,12 @@ class sage__matrix__matrix_gfpn_dense(PythonModule):
         PythonModule.__init__(self, 'sage.matrix.matrix_gfpn_dense', spkg='meataxe')
 
 
+class sage__plot(PythonModule):
+
+    def __init__(self):
+        PythonModule.__init__(self, 'sage.plot.plot')
+
+
 class sage__rings__number_field(PythonModule):
 
     def __init__(self):
@@ -96,6 +102,8 @@ def sage_optional_tags():
         yield 'sage.graphs.mcqd'
     if sage__matrix__matrix_gfpn_dense().is_present():
         yield 'sage.matrix.matrix_gfpn_dense'
+    if sage__plot().is_present():
+        yield 'sage.plot'
     if sage__rings__number_field().is_present():
         yield 'sage.rings.number_field'
     if sage__rings__real_double().is_present():
