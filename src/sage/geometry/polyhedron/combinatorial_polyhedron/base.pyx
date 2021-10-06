@@ -2565,20 +2565,20 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.regular_polygon(4).pyramid()
-            sage: C = CombinatorialPolyhedron(P)
-            sage: D = C.hasse_diagram(); D                                      # optional - sage.graphs
+            sage: P = polytopes.regular_polygon(4).pyramid()                            # optional - sage.rings.number_field
+            sage: C = CombinatorialPolyhedron(P)                                        # optional - sage.rings.number_field
+            sage: D = C.hasse_diagram(); D                    # optional - sage.graphs  # optional - sage.rings.number_field
             Digraph on 20 vertices
-            sage: D.average_degree()                                            # optional - sage.graphs
+            sage: D.average_degree()                          # optional - sage.graphs  # optional - sage.rings.number_field
             21/5
-            sage: D.relabel(C.face_by_face_lattice_index)                       # optional - sage.graphs
-            sage: dim_0_vert = D.vertices()[1:6]; dim_0_vert                    # optional - sage.graphs
+            sage: D.relabel(C.face_by_face_lattice_index)     # optional - sage.graphs  # optional - sage.rings.number_field
+            sage: dim_0_vert = D.vertices()[1:6]; dim_0_vert  # optional - sage.graphs  # optional - sage.rings.number_field
             [A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron]
-            sage: sorted(D.out_degree(vertices=dim_0_vert))                     # optional - sage.graphs
+            sage: sorted(D.out_degree(vertices=dim_0_vert))   # optional - sage.graphs  # optional - sage.rings.number_field
             [3, 3, 3, 3, 4]
         """
         if not self._face_lattice_incidences:
@@ -3096,7 +3096,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C1 = C.pyramid()
             sage: P1 = P.pyramid()
             sage: C2 = P1.combinatorial_polyhedron()
-            sage: C2.vertex_facet_graph().is_isomorphic(C1.vertex_facet_graph())
+            sage: C2.vertex_facet_graph().is_isomorphic(C1.vertex_facet_graph())   # optional - sage.combinat
             True
 
         One can specify a name for the new vertex::
@@ -3115,10 +3115,10 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         One can specify a name for the new facets::
 
-            sage: P = polytopes.regular_polygon(4)
-            sage: C = P.combinatorial_polyhedron()
-            sage: C1 = C.pyramid(new_facet='base')
-            sage: C1.Hrepresentation()
+            sage: P = polytopes.regular_polygon(4)                              # optional - sage.rings.number_field
+            sage: C = P.combinatorial_polyhedron()                              # optional - sage.rings.number_field
+            sage: C1 = C.pyramid(new_facet='base')                              # optional - sage.rings.number_field
+            sage: C1.Hrepresentation()                                          # optional - sage.rings.number_field
             (An inequality (-1/2, 1/2) x + 1/2 >= 0,
              An inequality (-1/2, -1/2) x + 1/2 >= 0,
              An inequality (1/2, 0.50000000000000000?) x + 1/2 >= 0,
