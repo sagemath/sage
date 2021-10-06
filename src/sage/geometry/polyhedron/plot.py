@@ -348,12 +348,12 @@ class Projection(SageObject):
             The projection of a polyhedron into 2 dimensions
             sage: Projection(p,  lambda x: [x[1],x[2]] )   # another way of doing the same projection
             The projection of a polyhedron into 2 dimensions
-            sage: _.plot()   # plot of the projected icosahedron in 2d
+            sage: _.plot()   # plot of the projected icosahedron in 2d  # optional - sage.plot
             Graphics object consisting of 51 graphics primitives
             sage: proj = Projection(p)
             sage: proj.stereographic([1,2,3])
             The projection of a polyhedron into 2 dimensions
-            sage: proj.plot()
+            sage: proj.plot()  # optional - sage.plot
             Graphics object consisting of 51 graphics primitives
             sage: TestSuite(proj).run(skip='_test_pickling')
         """
@@ -452,7 +452,7 @@ class Projection(SageObject):
             sage: proj = Projection(polytopes.buckyball())  #long time
             sage: proj                                      #long time
             The projection of a polyhedron into 3 dimensions
-            sage: proj.stereographic([5,2,3]).plot()        #long time
+            sage: proj.stereographic([5,2,3]).plot()        #long time  # optional - sage.plot
             Graphics object consisting of 123 graphics primitives
             sage: Projection( polytopes.twenty_four_cell() ).stereographic([2,0,0,0])
             The projection of a polyhedron into 3 dimensions
@@ -489,7 +489,7 @@ class Projection(SageObject):
             sage: from sage.geometry.polyhedron.plot import Projection
             sage: Projection(cube4).schlegel()
             The projection of a polyhedron into 3 dimensions
-            sage: _.plot()
+            sage: _.plot()  # optional - sage.plot
             Graphics3d Object
 
         The 4-cube with a truncated vertex seen into the resulting tetrahedron
@@ -499,13 +499,13 @@ class Projection(SageObject):
             sage: tcube4.facets()[4]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices
             sage: into_tetra = Projection(tcube4).schlegel(tcube4.facets()[4])
-            sage: into_tetra.plot()
+            sage: into_tetra.plot()  # optional - sage.plot
             Graphics3d Object
 
         Taking a larger value for the position changes the image::
 
             sage: into_tetra_far = Projection(tcube4).schlegel(tcube4.facets()[4],4)
-            sage: into_tetra_far.plot()
+            sage: into_tetra_far.plot()  # optional - sage.plot
             Graphics3d Object
 
         A value which is too large or negative give a projection point that
@@ -1094,7 +1094,7 @@ class Projection(SageObject):
             sage: q3 = p3.projection()
             sage: p4 = Polyhedron(vertices=[[2,0]], rays=[[1,-1]], lines=[[1,1]])
             sage: q4 = p4.projection()
-            sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()
+            sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()  # optional - sage.plot
             Graphics object consisting of 17 graphics primitives
          """
         plt = Graphics()
@@ -1126,12 +1126,12 @@ class Projection(SageObject):
             sage: p1 = Polyhedron(vertices=[[1,1,1]], rays=[[1,1,1]])
             sage: p2 = Polyhedron(vertices=[[2,0,0], [0,2,0], [0,0,2]])
             sage: p3 = Polyhedron(vertices=[[1,0,0], [0,1,0], [0,0,1]], rays=[[-1,-1,-1]])
-            sage: p1.projection().plot() + p2.projection().plot() + p3.projection().plot()
+            sage: p1.projection().plot() + p2.projection().plot() + p3.projection().plot()  # optional - sage.plot
             Graphics3d Object
 
         It correctly handles various degenerate cases::
 
-            sage: Polyhedron(lines=[[1,0,0],[0,1,0],[0,0,1]]).plot()           # whole space
+            sage: Polyhedron(lines=[[1,0,0],[0,1,0],[0,0,1]]).plot()           # whole space  # optional - sage.plot
             Graphics3d Object
             sage: Polyhedron(vertices=[[1,1,1]], rays=[[1,0,0]],
             ....:            lines=[[0,1,0],[0,0,1]]).plot()                   # half space
@@ -1139,15 +1139,15 @@ class Projection(SageObject):
             sage: Polyhedron(vertices=[[1,1,1]],
             ....:            lines=[[0,1,0],[0,0,1]]).plot()                   # R^2 in R^3
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0],[0,0,1]], lines=[[1,0,0]]).plot()   # quadrant wedge in R^2
+            sage: Polyhedron(rays=[[0,1,0],[0,0,1]], lines=[[1,0,0]]).plot()   # quadrant wedge in R^2  # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0]], lines=[[1,0,0]]).plot()           # upper half plane in R^3
+            sage: Polyhedron(rays=[[0,1,0]], lines=[[1,0,0]]).plot()           # upper half plane in R^3  # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(lines=[[1,0,0]]).plot()                           # R^1 in R^2
+            sage: Polyhedron(lines=[[1,0,0]]).plot()                           # R^1 in R^2  # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0]]).plot()                            # Half-line in R^3
+            sage: Polyhedron(rays=[[0,1,0]]).plot()                            # Half-line in R^3  # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]]).plot()                        # point in R^3
+            sage: Polyhedron(vertices=[[1,1,1]]).plot()                        # point in R^3  # optional - sage.plot
             Graphics3d Object
 
         The origin is not included, if it is not in the polyhedron (:trac:`23555`)::
@@ -1155,7 +1155,7 @@ class Projection(SageObject):
             sage: Q = Polyhedron([[100],[101]])
             sage: P = Q*Q*Q; P
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: p = P.plot()
+            sage: p = P.plot()  # optional - sage.plot
             sage: p.bounding_box()
             ((100.0, 100.0, 100.0), (101.0, 101.0, 101.0))
         """

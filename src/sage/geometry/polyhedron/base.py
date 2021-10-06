@@ -928,55 +928,55 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         By default, the wireframe is rendered in blue and the fill in green::
 
-            sage: square.plot()
+            sage: square.plot()  # optional - sage.plot
             Graphics object consisting of 6 graphics primitives
-            sage: point.plot()
+            sage: point.plot()  # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: line.plot()
+            sage: line.plot()  # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: cube.plot()
+            sage: cube.plot()  # optional - sage.plot
             Graphics3d Object
-            sage: hypercube.plot()
+            sage: hypercube.plot()  # optional - sage.plot
             Graphics3d Object
 
         Draw the lines in red and nothing else::
 
-            sage: square.plot(point=False, line='red', polygon=False)
+            sage: square.plot(point=False, line='red', polygon=False)  # optional - sage.plot
             Graphics object consisting of 4 graphics primitives
-            sage: point.plot(point=False, line='red', polygon=False)
+            sage: point.plot(point=False, line='red', polygon=False)  # optional - sage.plot
             Graphics object consisting of 0 graphics primitives
-            sage: line.plot(point=False, line='red', polygon=False)
+            sage: line.plot(point=False, line='red', polygon=False)  # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: cube.plot(point=False, line='red', polygon=False)
+            sage: cube.plot(point=False, line='red', polygon=False)  # optional - sage.plot
             Graphics3d Object
-            sage: hypercube.plot(point=False, line='red', polygon=False)
+            sage: hypercube.plot(point=False, line='red', polygon=False)  # optional - sage.plot
             Graphics3d Object
 
         Draw points in red, no lines, and a blue polygon::
 
-            sage: square.plot(point={'color':'red'}, line=False, polygon=(0,0,1))
+            sage: square.plot(point={'color':'red'}, line=False, polygon=(0,0,1))  # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: point.plot(point={'color':'red'}, line=False, polygon=(0,0,1))
+            sage: point.plot(point={'color':'red'}, line=False, polygon=(0,0,1))  # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: line.plot(point={'color':'red'}, line=False, polygon=(0,0,1))
+            sage: line.plot(point={'color':'red'}, line=False, polygon=(0,0,1))  # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: cube.plot(point={'color':'red'}, line=False, polygon=(0,0,1))
+            sage: cube.plot(point={'color':'red'}, line=False, polygon=(0,0,1))  # optional - sage.plot
             Graphics3d Object
-            sage: hypercube.plot(point={'color':'red'}, line=False, polygon=(0,0,1))
+            sage: hypercube.plot(point={'color':'red'}, line=False, polygon=(0,0,1))  # optional - sage.plot
             Graphics3d Object
 
         If we instead use the ``fill`` and ``wireframe`` options, the
         coloring depends on the dimension of the object::
 
-            sage: square.plot(fill='green', wireframe='red')
+            sage: square.plot(fill='green', wireframe='red')  # optional - sage.plot
             Graphics object consisting of 6 graphics primitives
-            sage: point.plot(fill='green', wireframe='red')
+            sage: point.plot(fill='green', wireframe='red')  # optional - sage.plot
             Graphics object consisting of 1 graphics primitive
-            sage: line.plot(fill='green', wireframe='red')
+            sage: line.plot(fill='green', wireframe='red')  # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
-            sage: cube.plot(fill='green', wireframe='red')
+            sage: cube.plot(fill='green', wireframe='red')  # optional - sage.plot
             Graphics3d Object
-            sage: hypercube.plot(fill='green', wireframe='red')
+            sage: hypercube.plot(fill='green', wireframe='red')  # optional - sage.plot
             Graphics3d Object
 
         It is possible to draw polyhedra up to dimension 4, no matter what the
@@ -985,12 +985,12 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: hcube = polytopes.hypercube(5)
             sage: facet = hcube.facets()[0].as_polyhedron();facet
             A 4-dimensional polyhedron in ZZ^5 defined as the convex hull of 16 vertices
-            sage: facet.plot()
+            sage: facet.plot()  # optional - sage.plot
             Graphics3d Object
 
         TESTS::
 
-            sage: for p in square.plot():
+            sage: for p in square.plot():  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             blue Point set defined by 4 point(s)
             blue Line defined by 2 points
@@ -999,18 +999,18 @@ class Polyhedron_base(Element, ConvexSet_closed):
             blue Line defined by 2 points
             green Polygon defined by 4 points
 
-            sage: for p in line.plot():
+            sage: for p in line.plot():  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             blue Point set defined by 2 point(s)
             green Line defined by 2 points
 
-            sage: for p in point.plot():
+            sage: for p in point.plot():  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             green Point set defined by 1 point(s)
 
         Draw the lines in red and nothing else::
 
-            sage: for p in square.plot(point=False, line='red', polygon=False):
+            sage: for p in square.plot(point=False, line='red', polygon=False):  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Line defined by 2 points
             red Line defined by 2 points
@@ -1019,66 +1019,66 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         Draw vertices in red, no lines, and a blue polygon::
 
-            sage: for p in square.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
+            sage: for p in square.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 4 point(s)
             (0, 0, 1) Polygon defined by 4 points
 
-            sage: for p in line.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
+            sage: for p in line.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 2 point(s)
 
-            sage: for p in point.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):
+            sage: for p in point.plot(point={'color':'red'}, line=False, polygon=(0,0,1)):  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 1 point(s)
 
         Draw in red without wireframe::
 
-            sage: for p in square.plot(wireframe=False, fill="red"):
+            sage: for p in square.plot(wireframe=False, fill="red"):  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Polygon defined by 4 points
 
-            sage: for p in line.plot(wireframe=False, fill="red"):
+            sage: for p in line.plot(wireframe=False, fill="red"):  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Line defined by 2 points
 
-            sage: for p in point.plot(wireframe=False, fill="red"):
+            sage: for p in point.plot(wireframe=False, fill="red"):  # optional - sage.plot
             ....:     print("{} {}".format(p.options()['rgbcolor'], p))
             red Point set defined by 1 point(s)
 
         We try to draw the polytope in 2 or 3 dimensions::
 
-            sage: type(Polyhedron(ieqs=[(1,)]).plot())
+            sage: type(Polyhedron(ieqs=[(1,)]).plot())  # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(polytopes.hypercube(1).plot())
+            sage: type(polytopes.hypercube(1).plot())  # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(polytopes.hypercube(2).plot())
+            sage: type(polytopes.hypercube(2).plot())  # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(polytopes.hypercube(3).plot())
+            sage: type(polytopes.hypercube(3).plot())  # optional - sage.plot
             <class 'sage.plot.plot3d.base.Graphics3dGroup'>
 
         In 4d a projection to 3d is used::
 
-            sage: type(polytopes.hypercube(4).plot())
+            sage: type(polytopes.hypercube(4).plot())  # optional - sage.plot
             <class 'sage.plot.plot3d.base.Graphics3dGroup'>
-            sage: type(polytopes.hypercube(5).plot())
+            sage: type(polytopes.hypercube(5).plot())  # optional - sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError: plotting of 5-dimensional polyhedra not implemented
 
         If the polyhedron is not full-dimensional, the :meth:`affine_hull_projection` is used if necessary::
 
-            sage: type(Polyhedron([(0,), (1,)]).plot())
+            sage: type(Polyhedron([(0,), (1,)]).plot())  # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(Polyhedron([(0,0), (1,1)]).plot())
+            sage: type(Polyhedron([(0,0), (1,1)]).plot())  # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(Polyhedron([(0,0,0), (1,1,1)]).plot())
+            sage: type(Polyhedron([(0,0,0), (1,1,1)]).plot())  # optional - sage.plot
             <class 'sage.plot.plot3d.base.Graphics3dGroup'>
-            sage: type(Polyhedron([(0,0,0,0), (1,1,1,1)]).plot())
+            sage: type(Polyhedron([(0,0,0,0), (1,1,1,1)]).plot())  # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(Polyhedron([(0,0,0,0,0), (1,1,1,1,1)]).plot())
+            sage: type(Polyhedron([(0,0,0,0,0), (1,1,1,1,1)]).plot())  # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(Polyhedron([(0,0,0,0), (1,1,1,1), (1,0,0,0)]).plot())
+            sage: type(Polyhedron([(0,0,0,0), (1,1,1,1), (1,0,0,0)]).plot())  # optional - sage.plot
             <class 'sage.plot.graphics.Graphics'>
 
         TESTS:
@@ -6629,7 +6629,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: c5_20_fl = c5_20.face_lattice() # long time
             sage: [len(x) for x in c5_20_fl.level_sets()] # long time
             [1, 20, 190, 580, 680, 272, 1]
-            sage: polytopes.hypercube(2).face_lattice().plot()
+            sage: polytopes.hypercube(2).face_lattice().plot()  # optional - sage.plot
             Graphics object consisting of 27 graphics primitives
             sage: level_sets = polytopes.cross_polytope(2).face_lattice().level_sets()
             sage: level_sets[0][0].ambient_V_indices(), level_sets[-1][0].ambient_V_indices()
@@ -8408,7 +8408,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: tfcube.facets()[-1]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 8 vertices
             sage: sp = tfcube.schlegel_projection(tfcube.facets()[-1])
-            sage: sp.plot()
+            sage: sp.plot()  # optional - sage.plot
             Graphics3d Object
 
         The same truncated cube but see inside the tetrahedral facet::
@@ -8416,16 +8416,16 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: tfcube.facets()[4]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices
             sage: sp = tfcube.schlegel_projection(tfcube.facets()[4])
-            sage: sp.plot()
+            sage: sp.plot()  # optional - sage.plot
             Graphics3d Object
 
         A different values of ``position`` changes the projection::
 
             sage: sp = tfcube.schlegel_projection(tfcube.facets()[4],1/2)
-            sage: sp.plot()
+            sage: sp.plot()  # optional - sage.plot
             Graphics3d Object
             sage: sp = tfcube.schlegel_projection(tfcube.facets()[4],4)
-            sage: sp.plot()
+            sage: sp.plot()  # optional - sage.plot
             Graphics3d Object
 
         A value which is too large give a projection point that sees more than
@@ -11502,7 +11502,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: submanifolds = [
             ....:     F.as_polyhedron().affine_hull_manifold(name=f'F{i}', orthogonal=True, ambient_space=E3)
             ....:     for i, F in enumerate(D.facets())]
-            sage: sum(FM.plot({}, srange(-2, 2, 0.1), srange(-2, 2, 0.1), opacity=0.2)  # not tested
+            sage: sum(FM.plot({}, srange(-2, 2, 0.1), srange(-2, 2, 0.1), opacity=0.2)  # not tested  # optional - sage.plot
             ....:     for FM in submanifolds) + D.plot()
             Graphics3d Object
 
