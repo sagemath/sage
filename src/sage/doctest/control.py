@@ -407,8 +407,8 @@ class DocTestController(SageObject):
                     from sage.features import package_systems
                     options.optional.update(system.name for system in package_systems())
 
-                    from sage.features.sagemath import sage_optional_tags
-                    options.optional.update(sage_optional_tags())
+                    from sage.features.sagemath import sage_features
+                    options.optional.update(feature.name for feature in sage_features())
 
                 # Check that all tags are valid
                 for o in options.optional:

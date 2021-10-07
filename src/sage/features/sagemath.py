@@ -2,21 +2,24 @@ r"""
 Check for SageMath Python modules
 """
 from . import PythonModule
+from .join_feature import JoinFeature
 
 
-class sage__combinat(PythonModule):
+class sage__combinat(JoinFeature):
 
     def __init__(self):
         # sage.combinat will be a namespace package.
         # Testing whether sage.combinat itself can be imported is meaningless.
         # Hence, we test a Python module within the package.
-        PythonModule.__init__(self, 'sage.combinat.combinations')
+        JoinFeature.__init__(self, 'sage.combinat',
+                             [PythonModule('sage.combinat.combinations')])
 
 
-class sage__graphs(PythonModule):
+class sage__graphs(JoinFeature):
 
     def __init__(self):
-        PythonModule.__init__(self, 'sage.graphs.graph')
+        JoinFeature.__init__(self, 'sage.graphs',
+                             [PythonModule('sage.graphs.graph')])
 
 
 class sage__graphs__bliss(PythonModule):
@@ -51,16 +54,18 @@ class sage__matrix__matrix_gfpn_dense(PythonModule):
         PythonModule.__init__(self, 'sage.matrix.matrix_gfpn_dense', spkg='meataxe')
 
 
-class sage__plot(PythonModule):
+class sage__plot(JoinFeature):
 
     def __init__(self):
-        PythonModule.__init__(self, 'sage.plot.plot')
+        JoinFeature.__init__(self, 'sage.plot',
+                             [PythonModule('sage.plot.plot')])
 
 
-class sage__rings__number_field(PythonModule):
+class sage__rings__number_field(JoinFeature):
 
     def __init__(self):
-        PythonModule.__init__(self, 'sage.rings.number_field_element')
+        JoinFeature.__init__(self, 'sage.rings.number_field',
+                             [PythonModule('sage.rings.number_field.number_field_element')])
 
 
 class sage__rings__real_double(PythonModule):
@@ -69,44 +74,47 @@ class sage__rings__real_double(PythonModule):
         PythonModule.__init__(self, 'sage.rings.real_double')
 
 
-class sage__symbolic(PythonModule):
+class sage__symbolic(JoinFeature):
 
     def __init__(self):
-        PythonModule.__init__(self, 'sage.symbolic.expression', spkg="sagemath_symbolics")
+        JoinFeature.__init__(self, 'sage.symbolic',
+                             [PythonModule('sage.symbolic.expression')],
+                             spkg="sagemath_symbolics")
 
 
-def sage_optional_tags():
+def sage_features():
     """
     Return tags for conditionalizing doctests.
 
     These tags are named after Python packages/modules (e.g., :mod:`~sage.symbolic`),
     not distribution packages (``sagemath-symbolics``).
 
-    This is motivated by a separation of concerns: The author of a module that depends
+    This design is motivated by a separation of concerns: The author of a module that depends
     on some functionality provided by a Python module usually already knows the
     name of the Python module, so we do not want to force the author to also
     know about the distribution package that provides the Python module.
 
     Instead, we associate distribution packages to Python modules in
-    :mod:`sage.features.sagemath` via the ``spkg`` parameter of :class:`PythonModule``.
+    :mod:`sage.features.sagemath` via the ``spkg`` parameter of :class:`Feature`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage_features
+        sage: list(sage_features())  # random
+        [Feature('sage.graphs'),
+         Feature('sage.graphs.bliss'),
+         Feature('sage.plot'),
+         Feature('sage.rings.real_double')]
     """
-    if sage__combinat().is_present():
-        yield 'sage.combinat'
-    if sage__graphs().is_present():
-        yield 'sage.graphs'
-    if sage__graphs__bliss().is_present():
-        yield 'sage.graphs.bliss'
-    if sage__graphs__graph_decompositions__tdlib().is_present():
-        yield 'sage.graphs.graph_decompositions.tdlib'
-    if sage__graphs__mcqd().is_present():
-        yield 'sage.graphs.mcqd'
-    if sage__matrix__matrix_gfpn_dense().is_present():
-        yield 'sage.matrix.matrix_gfpn_dense'
-    if sage__plot().is_present():
-        yield 'sage.plot'
-    if sage__rings__number_field().is_present():
-        yield 'sage.rings.number_field'
-    if sage__rings__real_double().is_present():
-        yield 'sage.rings.real_double'
-    if sage__symbolic().is_present():
-        yield 'sage.symbolic'
+    for feature in [sage__combinat(),
+                    sage__graphs(),
+                    sage__graphs__bliss(),
+                    sage__graphs__graph_decompositions__tdlib(),
+                    sage__graphs__mcqd(),
+                    sage__matrix__matrix_gfpn_dense(),
+                    sage__plot(),
+                    sage__rings__number_field(),
+                    sage__rings__real_double(),
+                    sage__symbolic()]:
+        if feature.is_present():
+            yield feature

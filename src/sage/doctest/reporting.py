@@ -141,7 +141,7 @@ class DocTestReporter(SageObject):
             False
 
         """
-        if tag in self.controller.options.optional:
+        if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
         if 'external' in self.controller.options.optional:
             if tag in available_software.seen():
