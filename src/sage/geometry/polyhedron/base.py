@@ -3636,8 +3636,8 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         EXAMPLES::
 
-            sage: p = polytopes.icosahedron()
-            sage: p.is_compact()
+            sage: p = polytopes.icosahedron()                                   # optional - sage.rings.number_field
+            sage: p.is_compact()                                                # optional - sage.rings.number_field
             True
             sage: p = Polyhedron(ieqs = [[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
             sage: p.is_compact()
@@ -8964,8 +8964,8 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         Testing a polytope with non-rational vertices::
 
-            sage: P = polytopes.icosahedron()
-            sage: P.integrate(x^2*y^2*z^2)    # optional - latte_int
+            sage: P = polytopes.icosahedron()                                   # optional - sage.rings.number_field
+            sage: P.integrate(x^2*y^2*z^2)    # optional - latte_int            # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be ZZ, QQ, or RDF
