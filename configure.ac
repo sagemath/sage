@@ -445,6 +445,17 @@ AC_ARG_ENABLE([download-from-upstream-url],
     [disallow downloading packages from their upstream URL if they cannot be found on the Sage mirrors])], [],
     [AS_VAR_SET([enable_download_from_upstream_url], [yes])])
 
+AC_ARG_ENABLE(
+  [system-site-packages], [AS_HELP_STRING(
+    [--enable-system-site-packages],
+    [allow sage to use python packages from the system (experimental; default: no)]
+  )], [
+  AS_IF([test "x$enable_system_site_packages" = "xyes"], [
+    SAGE_VENV_FLAGS="${SAGE_VENV_FLAGS} --system-site-packages"
+  ])
+])
+AC_SUBST([SAGE_VENV_FLAGS])
+
 SAGE_SPKG_OPTIONS=""
 AS_IF([test "x$enable_experimental_packages" = "xyes"], [
   AS_VAR_APPEND([SAGE_SPKG_OPTIONS], [" -y"])
