@@ -603,8 +603,9 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: it1 = C1.face_iter()                                          # optional - sage.combinat
             sage: tup = tuple((face.ambient_Vrepresentation(),                  # optional - sage.combinat
             ....:              face.ambient_Hrepresentation()) for face in it)
-            sage: tup1 = tuple((face.ambient_Vrepresentation(), face.ambient_Hrepresentation()) for face in it1)
-            sage: tup == tup1
+            sage: tup1 = tuple((face.ambient_Vrepresentation(),                 # optional - sage.combinat
+            ....:               face.ambient_Hrepresentation()) for face in it1)
+            sage: tup == tup1                                                   # optional - sage.combinat
             True
 
             sage: P = polytopes.cyclic_polytope(4,10)
@@ -2750,7 +2751,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             [A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 1-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 2-dimensional face of a 3-dimensional combinatorial polyhedron]
-            sage: [face.ambient_V_indices() for face in chain]
+            sage: [face.ambient_V_indices() for face in chain]                  # optional - sage.combinat
             [(16,), (15, 16), (8, 9, 14, 15, 16, 17)]
 
             sage: P = Polyhedron(rays=[[1,0]], lines=[[0,1]])
