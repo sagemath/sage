@@ -87,6 +87,16 @@ In particular,
        def SomeIdentityValue(x):
            return SomeValue(1)
 
+.. _section-python-version:
+
+Python Version
+=================
+
+Sage supports all minor versions of Python released 42 months prior to the next planned release date, and at minimum the two latest minor versions.
+Accordingly, Python 3.7 and newer are supported at the moment.
+On Dec 26, 2021 support for Python 3.7 is dropped (initially released on Jun 27, 2018).
+This is to reduce the technical debt of maintaining the project.
+The support policy follows Numpy's version support recommendations `NEP 29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_. 
 
 .. _chapter-directory-structure:
 
