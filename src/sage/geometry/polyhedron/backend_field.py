@@ -284,7 +284,7 @@ class Polyhedron_field(Polyhedron_base):
             sage: Hrep = [[[0, 1], [1, -1]], []]
             sage: p = Polyhedron_field(parent, Vrep, Hrep,  # indirect doctest  # optional - sage.rings.number_field
             ....:                      Vrep_minimal=True, Hrep_minimal=True)
-            sage: p.inequalities_list()
+            sage: p.inequalities_list()                                         # optional - sage.rings.number_field
             [[0, 1], [1, -1]]
         """
         self._Hrepresentation = []

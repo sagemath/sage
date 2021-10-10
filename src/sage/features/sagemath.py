@@ -22,38 +22,6 @@ class sage__graphs(JoinFeature):
                              [PythonModule('sage.graphs.graph')])
 
 
-class sage__graphs__bliss(PythonModule):
-
-    def __init__(self):
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_bliss' later
-        PythonModule.__init__(self, 'sage.graphs.bliss', spkg='bliss')
-
-
-class sage__graphs__graph_decompositions__tdlib(PythonModule):
-
-    def __init__(self):
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_tdlib' later
-        PythonModule.__init__(self, 'sage.graphs.graph_decompositions.tdlib', spkg='tdlib')
-
-
-class sage__graphs__mcqd(PythonModule):
-
-    def __init__(self):
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_mcqd' later
-        PythonModule.__init__(self, 'sage.graphs.mcqd', spkg='mcqd')
-
-
-class sage__matrix__matrix_gfpn_dense(PythonModule):
-
-    def __init__(self):
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_meataxe' later
-        PythonModule.__init__(self, 'sage.matrix.matrix_gfpn_dense', spkg='meataxe')
-
-
 class sage__plot(JoinFeature):
 
     def __init__(self):
@@ -84,7 +52,7 @@ class sage__symbolic(JoinFeature):
 
 def sage_features():
     """
-    Return tags for conditionalizing doctests.
+    Return features corresponding to parts of the Sage library.
 
     These tags are named after Python packages/modules (e.g., :mod:`~sage.symbolic`),
     not distribution packages (``sagemath-symbolics``).
@@ -102,16 +70,12 @@ def sage_features():
         sage: from sage.features.sagemath import sage_features
         sage: list(sage_features())  # random
         [Feature('sage.graphs'),
-         Feature('sage.graphs.bliss'),
          Feature('sage.plot'),
+         Feature('sage.rings.number_field'),
          Feature('sage.rings.real_double')]
     """
     for feature in [sage__combinat(),
                     sage__graphs(),
-                    sage__graphs__bliss(),
-                    sage__graphs__graph_decompositions__tdlib(),
-                    sage__graphs__mcqd(),
-                    sage__matrix__matrix_gfpn_dense(),
                     sage__plot(),
                     sage__rings__number_field(),
                     sage__rings__real_double(),

@@ -10664,7 +10664,9 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: H = polytopes.regular_polygon(6)                              # optional - sage.rings.number_field
             sage: S = polytopes.hypercube(2)
             sage: P = polytopes.permutahedron(4)
-            sage: all(F.as_polyhedron().is_combinatorially_isomorphic(S) or F.as_polyhedron().is_combinatorially_isomorphic(H) for F in P.faces(2))
+            sage: all(F.as_polyhedron().is_combinatorially_isomorphic(S)        # optional - sage.rings.number_field
+            ....:       or F.as_polyhedron().is_combinatorially_isomorphic(H)
+            ....:     for F in P.faces(2))
             True
 
         Checking that a regular simplex intersected with its reflection
