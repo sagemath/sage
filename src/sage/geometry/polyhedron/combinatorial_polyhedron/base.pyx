@@ -2396,38 +2396,38 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: P = polytopes.permutahedron(5)                                # optional - sage.rings.number_field
-            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.rings.number_field
-            sage: it = C.face_iter(dimension=2)                                 # optional - sage.rings.number_field
-            sage: face = next(it); face                                         # optional - sage.rings.number_field
+            sage: P = polytopes.permutahedron(5)                                # optional - sage.combinat
+            sage: C = CombinatorialPolyhedron(P)                                # optional - sage.combinat
+            sage: it = C.face_iter(dimension=2)                                 # optional - sage.combinat
+            sage: face = next(it); face                                         # optional - sage.combinat
             A 2-dimensional face of a 4-dimensional combinatorial polyhedron
-            sage: face.ambient_Vrepresentation()                                # optional - sage.rings.number_field
+            sage: face.ambient_Vrepresentation()                                # optional - sage.combinat
             (A vertex at (1, 3, 2, 5, 4),
              A vertex at (2, 3, 1, 5, 4),
              A vertex at (3, 1, 2, 5, 4),
              A vertex at (3, 2, 1, 5, 4),
              A vertex at (2, 1, 3, 5, 4),
              A vertex at (1, 2, 3, 5, 4))
-            sage: face = next(it); face                                         # optional - sage.rings.number_field
+            sage: face = next(it); face                                         # optional - sage.combinat
             A 2-dimensional face of a 4-dimensional combinatorial polyhedron
-            sage: face.ambient_Vrepresentation()                                # optional - sage.rings.number_field
+            sage: face.ambient_Vrepresentation()                                # optional - sage.combinat
             (A vertex at (2, 1, 4, 5, 3),
              A vertex at (3, 2, 4, 5, 1),
              A vertex at (3, 1, 4, 5, 2),
              A vertex at (1, 3, 4, 5, 2),
              A vertex at (1, 2, 4, 5, 3),
              A vertex at (2, 3, 4, 5, 1))
-            sage: face.ambient_Hrepresentation()                                # optional - sage.rings.number_field
+            sage: face.ambient_Hrepresentation()                                # optional - sage.combinat
             (An inequality (0, 0, -1, -1, 0) x + 9 >= 0,
              An inequality (0, 0, 0, -1, 0) x + 5 >= 0,
              An equation (1, 1, 1, 1, 1) x - 15 == 0)
-            sage: face.ambient_H_indices()                                      # optional - sage.rings.number_field
+            sage: face.ambient_H_indices()                                      # optional - sage.combinat
             (25, 29, 30)
-            sage: face = next(it); face                                         # optional - sage.rings.number_field
+            sage: face = next(it); face                                         # optional - sage.combinat
             A 2-dimensional face of a 4-dimensional combinatorial polyhedron
-            sage: face.ambient_H_indices()                                      # optional - sage.rings.number_field
+            sage: face.ambient_H_indices()                                      # optional - sage.combinat
             (24, 29, 30)
-            sage: face.ambient_V_indices()                                      # optional - sage.rings.number_field
+            sage: face.ambient_V_indices()                                      # optional - sage.combinat
             (32, 89, 90, 94)
 
             sage: C = CombinatorialPolyhedron([[0,1,2],[0,1,3],[0,2,3],[1,2,3]])
