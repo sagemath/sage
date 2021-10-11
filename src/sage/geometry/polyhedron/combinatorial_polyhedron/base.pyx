@@ -1278,16 +1278,22 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         from sage.rings.all import ZZ
         from sage.matrix.constructor import matrix
-        cdef Matrix_integer_dense adjacency_matrix = matrix(
+        adjacency_matrix = matrix(
                 ZZ, self.n_Vrepresentation(), self.n_Vrepresentation(), 0)
         cdef size_t i, a, b
 
         self._compute_edges(-1)
-        for i in range(self._n_edges):
-            a = self._get_edge(self._edges, i, 0)
-            b = self._get_edge(self._edges, i, 1)
-            adjacency_matrix.set_unsafe_si(a, b, 1)
-            adjacency_matrix.set_unsafe_si(b, a, 1)
+        try:
+            for i in range(self._n_edges):
+                a = self._get_edge(self._edges, i, 0)
+                b = self._get_edge(self._edges, i, 1)
+                adjacency_matrix.set_unsafe_si(a, b, 1)
+                adjacency_matrix.set_unsafe_si(b, a, 1)
+        except AttributeError:
+            for i in range(self._n_edges):
+                a = self._get_edge(self._edges, i, 0)
+                b = self._get_edge(self._edges, i, 1)
+                adjacency_matrix[a, b] = adjacency_matrix[b, a] = 1
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
