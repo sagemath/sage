@@ -96,9 +96,9 @@ cdef class CombinatorialFace(SageObject):
     Obtain a combinatorial face from an index of the face lattice::
 
         sage: F = C.face_lattice()                                              # optional - sage.combinat
-        sage: F._elements[3]
+        sage: F._elements[3]                                                    # optional - sage.combinat
         34
-        sage: C.face_by_face_lattice_index(29)
+        sage: C.face_by_face_lattice_index(29)                                  # optional - sage.combinat
         A 1-dimensional face of a 5-dimensional combinatorial polyhedron
 
     Obtain the dimension of a combinatorial face::
