@@ -578,7 +578,7 @@ class GroupMorphism_libgap(Morphism):
         from sage.categories.homset import Hom
         from sage.categories.sets_cat import Sets
         H = Hom(self.codomain(), self.domain(), category=Sets())
-        return H(lambda x: self.lift(x))
+        return H(self.lift)
 
 
 class GroupHomset_libgap(HomsetWithBase):

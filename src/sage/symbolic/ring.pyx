@@ -35,7 +35,6 @@ from sage.rings.integer cimport Integer
 import sage.rings.abc
 
 from sage.symbolic.expression cimport (
-    is_Expression,
     _latex_Expression,
     _repr_Expression,
     new_Expression,
@@ -44,7 +43,7 @@ from sage.symbolic.expression cimport (
     new_Expression_symbol,
 )
 
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, Expression
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
@@ -871,7 +870,7 @@ cdef class SymbolicRing(CommutativeRing):
             ...
             ValueError: cannot specify n for multiple symbol names
         """
-        if is_Expression(name):
+        if isinstance(name, Expression):
             return name
         if not isinstance(name, (basestring, list, tuple)):
             name = repr(name)
@@ -1272,6 +1271,8 @@ cdef class UnderscoreSageMorphism(Morphism):
         import sage.categories.homset
         from sage.sets.pythonclass import Set_PythonType
         Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(t), R))
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
 
     cpdef Element _call_(self, a):
         """

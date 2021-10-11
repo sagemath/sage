@@ -51,6 +51,8 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.element import AlgebraElement
 from sage.categories.algebras import Algebras
+from .characteristic_cohomology_class import (CharacteristicCohomologyClassRing,
+                                              CharacteristicCohomologyClassRingElement)
 
 class DeRhamCohomologyClass(AlgebraElement):
     r"""
@@ -412,12 +414,44 @@ class DeRhamCohomologyRing(Parent, UniqueRepresentation):
              differentiable manifold M must be a closed form
 
         """
-        if x not in self._module:
+        if isinstance(x, CharacteristicCohomologyClassRingElement):
+            x = x.representative()
+        elif x not in self._module:
             raise TypeError(f"{x} must be an element of {self._module}")
         x = self._module(x)
         if x.derivative() != 0:
             raise ValueError(f"{x} must be a closed form")
         return self.element_class(self, x)
+
+    def _coerce_map_from_(self, other):
+        r"""
+        Determine whether coercion to ``self`` exists from other parent.
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: C = M.de_rham_complex()
+            sage: H = C.cohomology()
+            sage: H.has_coerce_map_from(QQ)
+            True
+
+        ::
+
+            sage: M = Manifold(4, 'M')
+            sage: C = M.de_rham_complex()
+            sage: H = C.cohomology()
+            sage: TM = M.tangent_bundle()
+            sage: C = TM.characteristic_cohomology_class_ring(); C
+            Algebra of characteristic cohomology classes of the Tangent bundle
+             TM over the 4-dimensional differentiable manifold M
+            sage: H.has_coerce_map_from(C)
+            True
+
+        """
+        if isinstance(other, CharacteristicCohomologyClassRing):
+            # TODO: we need to be careful if manifolds have boundary!
+            return other._vbundle._base_space == self._manifold
+        return super()._coerce_map_from_(other)
 
     def _repr_(self):
         r"""

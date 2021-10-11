@@ -469,25 +469,6 @@ class PiecewiseFunction(BuiltinFunction):
                 substitution[variable] = value
             return self.subs(substitution)
 
-        def _fast_float_(self, *args):
-            """
-            Do not support the old ``fast_float``
-
-            OUTPUT:
-
-            This method raises ``NotImplementedError`` so that
-            plotting uses the newer `fast_callable` implementation.
-
-            EXAMPLES::
-
-                sage: f = piecewise([([0,0], sin(x)), ((0,2), cos(x))])
-                sage: f._fast_float_()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
-            """
-            raise NotImplementedError
-
         def _fast_callable_(self, parameters, variable, etb):
             """
             Override the ``fast_callable``

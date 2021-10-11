@@ -113,45 +113,40 @@ ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (mer
 ecl_eval("(remprop 'mfactorial 'grind)") # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
 
-# the following is a direct adaptation of the definition of "retrieve"
-# in the Maxima file macsys.lisp. This routine is normally responsible
-# for displaying a question and returning the answer. We change it to
-# throw an error in which the text of the question is included. We do
-# this by running exactly the same code as in the original definition
-# of "retrieve", but with *standard-output* redirected to a string.
+# The following is an adaptation of the "retrieve" function in maxima
+# itself. This routine is normally responsible for displaying a
+# question and returning the answer. Our version throws an error in
+# which the text of the question is included. This is accomplished by
+# redirecting *standard-output* to a string.
+#
+# After an update in Trac 31553, this routine also preprocesses the
+# text to replace space symbols with strings. This prevents those
+# symbols from being turned into ugly newlines -- a problem that we
+# used to avoid with a custom patch.
 ecl_eval(r"""
 (defun retrieve (msg flag &aux (print? nil))
   (declare (special msg flag print?))
+  (setq msg (mapcar #'(lambda (x) (if (eq x '| |) " " x)) msg))
   (or (eq flag 'noprint) (setq print? t))
   (error
-      (concatenate 'string "Maxima asks: "
+    (concatenate 'string
+      "Maxima asks: "
       (string-trim '(#\Newline)
-      (with-output-to-string (*standard-output*)
-      (cond ((not print?)
-             (setq print? t)
-             (princ *prompt-prefix*)
-             (princ *prompt-suffix*)
-             )
-            ((null msg)
-             (princ *prompt-prefix*)
-             (princ *prompt-suffix*)
-             )
-            ((atom msg)
-             (format t "~a~a~a" *prompt-prefix* msg *prompt-suffix*)
-             )
-            ((eq flag t)
-             (princ *prompt-prefix*)
-             (mapc #'princ (cdr msg))
-             (princ *prompt-suffix*)
-             )
-            (t
-             (princ *prompt-prefix*)
-             (displa msg)
-             (princ *prompt-suffix*)
-             )
-      ))))
-  )
-)
+                   (with-output-to-string (*standard-output*)
+                     (cond ((not print?)
+                            (setq print? t)
+                            (format-prompt t ""))
+                           ((null msg)
+                            (format-prompt t ""))
+                           ((atom msg)
+                            (format-prompt t "~A" msg)
+                            (mterpri))
+                           ((eq flag t)
+                            (format-prompt t "~{~A~}" (cdr msg))
+                            (mterpri))
+                           (t
+                            (format-prompt t "~M" msg)
+                            (mterpri))))))))
 """)
 
 ## Redirection of ECL and Maxima stdout to /dev/null

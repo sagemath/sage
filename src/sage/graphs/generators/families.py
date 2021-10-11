@@ -21,6 +21,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 from copy import copy
 from math import sin, cos, pi
 from sage.graphs.graph import Graph
+from itertools import combinations
 
 
 def JohnsonGraph(n, k):
@@ -199,7 +200,7 @@ def FurerGadget(k, prefix=None):
          (('Prefix', (1, 2)), ('Prefix', (1, 'a')), None),
          (('Prefix', (1, 2)), ('Prefix', (2, 'a')), None)]
     """
-    from itertools import repeat as rep, chain, combinations
+    from itertools import repeat as rep, chain
     if k <= 0:
         raise ValueError("The order of the Furer gadget must be greater than zero")
     G = Graph()
@@ -2091,62 +2092,77 @@ def HararyGraph( k, n ):
     G.name('Harary graph {0}, {1}'.format(k,n))
     return G
 
-def HyperStarGraph(n,k):
+def HyperStarGraph(n, k):
     r"""
-    Returns the hyper-star graph HS(n,k).
+    Return the hyper-star graph `HS(n, k)`.
 
-    The vertices of the hyper-star graph are the set of binary strings
-    of length n which contain k 1s. Two vertices, u and v, are adjacent
-    only if u can be obtained from v by swapping the first bit with a
-    different symbol in another position.
+    The vertices of the hyper-star graph are the set of binary strings of length
+    `n` which contain `k` 1s. Two vertices, `u` and `v`, are adjacent only if
+    `u` can be obtained from `v` by swapping the first bit with a different
+    symbol in another position. For instance, vertex ``'011100'`` of `HS(6, 3)`
+    is adjacent to vertices ``'101100'``, ``'110100'`` and ``'111000'``.
+    See [LKOL2002]_ for more details.
 
     INPUT:
 
-    -  ``n``
+    - ``n`` -- non-negative integer; length of the binary strings
 
-    -  ``k``
+    - ``k`` -- non-negative integer; number of 1s per binary string
 
     EXAMPLES::
 
         sage: g = graphs.HyperStarGraph(6,3)
-        sage: g.plot() # long time
+        sage: sorted(g.neighbors('011100'))
+        ['101100', '110100', '111000']
+        sage: g.plot()  # long time
         Graphics object consisting of 51 graphics primitives
 
-    REFERENCES:
+    TESTS::
 
-    - Lee, Hyeong-Ok, Jong-Seok Kim, Eunseuk Oh, and Hyeong-Seok Lim.
-      "Hyper-Star Graph: A New Interconnection Network Improving the
-      Network Cost of the Hypercube." In Proceedings of the First EurAsian
-      Conference on Information and Communication Technology, 858-865.
-      Springer-Verlag, 2002.
+        sage: graphs.HyperStarGraph(-1, 1)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameters n and k must be non-negative integers satisfying n >= k >= 0
+        sage: graphs.HyperStarGraph(1, -1)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameters n and k must be non-negative integers satisfying n >= k >= 0
+        sage: graphs.HyperStarGraph(1, 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: parameters n and k must be non-negative integers satisfying n >= k >= 0
 
     AUTHORS:
 
     - Michael Yurko (2009-09-01)
     """
-    from sage.combinat.combination import Combinations
-    # dictionary associating the positions of the 1s to the corresponding
-    # string: e.g. if n=6 and k=3, comb_to_str([0,1,4])=='110010'
-    comb_to_str={}
-    for c in Combinations(n,k):
-        L = ['0']*n
-        for i in c:
-            L[i]='1'
-        comb_to_str[tuple(c)] = ''.join(L)
+    if n < 0 or k < 0 or k > n:
+        raise ValueError("parameters n and k must be non-negative integers "
+                         "satisfying n >= k >= 0")
+    if not n:
+        adj = {}
+    elif not k:
+        adj = {'0'*n: []}
+    elif k == n:
+        adj = {'1'*n: []}
+    else:
+        from sage.data_structures.bitset import Bitset
+        adj = dict()
+        # We consider the strings of n bits with k 1s and starting with a 0
+        for c in combinations(range(1, n), k):
+            u = str(Bitset(c, capacity=n))
+            L = []
+            c = list(c)
+            # The neighbors of u are all the strings obtained by swapping a 1
+            # with the first bit (0)
+            for i in range(k):
+                one = c[i]
+                c[i] = 0
+                L.append(str(Bitset(c, capacity=n)))
+                c[i] = one
+            adj[u] = L
 
-    g = Graph(name="HS(%d,%d)"%(n,k))
-    g.add_vertices(comb_to_str.values())
-
-    for c in Combinations(list(range(1, n)), k):  # 0 is not in c
-        L = []
-        u = comb_to_str[tuple(c)]
-        # switch 0 with the 1s
-        for i in range(len(c)):
-            v = tuple([0]+c[:i]+c[i+1:])
-            g.add_edge( u , comb_to_str[v] )
-
-    return g
-
+    return Graph(adj, format='dict_of_lists', name="HS(%d,%d)"%(n,k))
 
 def LCFGraph(n, shift_list, repeats):
     r"""
@@ -3839,7 +3855,6 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     from sage.rings.rational_field import QQ
     from sage.rings.integer_ring import ZZ
     from time import time
-    import itertools
 
     assert d > 1,              'd must be at least 2'
     assert is_even(n * (d-1)), 'n must be even or d must be odd'
@@ -3887,7 +3902,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     for C in ParClasses:
         EC = matrix(QQ, v)
         for line in C:
-            for i,j in itertools.combinations(line, 2):
+            for i,j in combinations(line, 2):
                 EC[i,j] = EC[j,i] = 1/k
         EC -= ones_v
         E[tuple(C[0])] = EC

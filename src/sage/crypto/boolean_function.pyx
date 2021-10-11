@@ -1387,7 +1387,7 @@ cdef class BooleanFunctionIterator:
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(3)
             sage: type(B.__iter__())
-            <type 'sage.crypto.boolean_function.BooleanFunctionIterator'>
+            <class 'sage.crypto.boolean_function.BooleanFunctionIterator'>
         """
         self.f = f
         self.index = -1

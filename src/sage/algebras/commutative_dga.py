@@ -3327,7 +3327,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
         sage: AQ.differential()
         Traceback (most recent call last):
         ...
-        TypeError: differential() missing 1 required positional argument:
+        TypeError: ...differential() missing 1 required positional argument:
         'diff'
 
     Now we add a differential to ``AQ``::

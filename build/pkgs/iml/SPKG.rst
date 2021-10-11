@@ -30,7 +30,7 @@ Dependencies
 ------------
 
 -  GMP
--  ATLAS
+-  a BLAS implementation such as openblas
 
 
 Special Update/Build Instructions

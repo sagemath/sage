@@ -66,14 +66,12 @@ EXAMPLE:
     $ sage --package list | sort
     4ti2
     arb
-    atlas
     autotools
     [...]
     zn_poly
 
     $ sage --package list :standard: | sort
     arb
-    atlas
     backports_ssl_match_hostname
     [...]
     zn_poly

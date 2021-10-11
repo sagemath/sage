@@ -30,8 +30,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 from collections.abc import Iterator
-from typing import List, Tuple, Union, NewType
 
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -58,9 +58,6 @@ from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.graphs.digraph import DiGraph
-
-
-TIP = NewType('TIP', 'TamariIntervalPoset')
 
 
 class TamariIntervalPoset(Element,
@@ -540,7 +537,7 @@ class TamariIntervalPoset(Element,
 
         return start + nodes + relations + end
 
-    def poset(self):
+    def poset(self) -> Poset:
         r"""
         Return ``self`` as a labelled poset.
 
@@ -598,7 +595,7 @@ class TamariIntervalPoset(Element,
                           for i, j in other._poset.cover_relations_iterator()])
         P = FinitePoset(DiGraph([list(range(1, n + m + 1)), relations],
                                 format='vertices_and_edges'))
-        return TamariIntervalPoset(P, check=False)
+        return TamariIntervalPoset(P, check=False)  # type:ignore
 
     def __hash__(self):
         """
@@ -613,7 +610,7 @@ class TamariIntervalPoset(Element,
         return hash(pair)
 
     @cached_method
-    def increasing_cover_relations(self) -> List[Tuple[int, int]]:
+    def increasing_cover_relations(self) -> list[tuple[int, int]]:
         r"""
         Return the cover relations of the initial forest of ``self``.
 
@@ -721,7 +718,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def increasing_parent(self, v) -> Union[None, int]:
+    def increasing_parent(self, v) -> None | int:
         r"""
         Return the vertex parent of ``v`` in the initial forest of ``self``.
 
@@ -754,7 +751,7 @@ class TamariIntervalPoset(Element,
         return parent
 
     @cached_method
-    def decreasing_cover_relations(self) -> List[Tuple[int, int]]:
+    def decreasing_cover_relations(self) -> list[tuple[int, int]]:
         r"""
         Return the cover relations of the final forest of ``self``.
 
@@ -857,7 +854,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return children
 
-    def decreasing_parent(self, v) -> Union[None, int]:
+    def decreasing_parent(self, v) -> None | int:
         r"""
         Return the vertex parent of ``v`` in the final forest of ``self``.
 
@@ -981,7 +978,7 @@ class TamariIntervalPoset(Element,
         return self._size
 
     @cached_method
-    def cubical_coordinates(self) -> Tuple[int, ...]:
+    def cubical_coordinates(self) -> tuple[int, ...]:
         """
         Return the cubical coordinates of ``self``.
 
@@ -1061,7 +1058,7 @@ class TamariIntervalPoset(Element,
                       for i, j in self._poset.cover_relations_iterator()]
         P = FinitePoset(DiGraph([list(range(1, N)), new_covers],
                                 format='vertices_and_edges'))
-        return TamariIntervalPoset(P, check=False)
+        return TamariIntervalPoset(P, check=False)  # type:ignore
 
     def left_branch_involution(self) -> TIP:
         """
@@ -1713,7 +1710,7 @@ class TamariIntervalPoset(Element,
         relations = self.increasing_cover_relations()
         P = FinitePoset(DiGraph([list(range(1, self._size + 1)), relations],
                                 format='vertices_and_edges'))
-        return TamariIntervalPoset(P, check=False)
+        return TamariIntervalPoset(P, check=False)  # type:ignore
 
     def final_forest(self) -> TIP:
         r"""
@@ -1733,7 +1730,7 @@ class TamariIntervalPoset(Element,
         relations = self.decreasing_cover_relations()
         P = FinitePoset(DiGraph([list(range(1, self._size + 1)), relations],
                                 format='vertices_and_edges'))
-        return TamariIntervalPoset(P, check=False)
+        return TamariIntervalPoset(P, check=False)  # type:ignore
 
     def is_initial_interval(self) -> bool:
         r"""
@@ -1972,14 +1969,14 @@ class TamariIntervalPoset(Element,
                                 self.decreasing_cover_relations()],
                                format='vertices_and_edges')
 
-        def add(perm: List, i):
+        def add(perm: list, i):
             r"""
             Internal recursive method to compute the min linear extension.
             """
             for j in sorted(final_forest.neighbors_in(i)):
                 add(perm, j)
             perm.append(i)
-        perm = []
+        perm: list[int] = []
         for i in sorted(final_forest.sinks()):
             add(perm, i)
         return Permutation(perm)
@@ -2022,14 +2019,14 @@ class TamariIntervalPoset(Element,
                                   self.increasing_cover_relations()],
                                  format='vertices_and_edges')
 
-        def add(perm: List, i):
+        def add(perm: list, i):
             r"""
             Internal recursive method to compute the max linear extension.
             """
             for j in sorted(initial_forest.neighbors_in(i), reverse=True):
                 add(perm, j)
             perm.append(i)
-        perm = []
+        perm: list[int] = []
         for i in sorted(initial_forest.sinks(), reverse=True):
             add(perm, i)
         return Permutation(perm)
@@ -2289,7 +2286,7 @@ class TamariIntervalPoset(Element,
         for it in self.maximal_chain_tamari_intervals():
             yield it.lower_dyck_word()
 
-    def tamari_inversions(self) -> List[Tuple[int, int]]:
+    def tamari_inversions(self) -> list[tuple[int, int]]:
         r"""
         Return the Tamari inversions of ``self``.
 
@@ -2440,7 +2437,7 @@ class TamariIntervalPoset(Element,
         t_up = self.upper_binary_tree().to_tilting()
         return sum(1 for p in t_low if p in t_up)
 
-    def new_decomposition(self) -> List[TIP]:
+    def new_decomposition(self) -> list[TIP]:
         """
         Return the decomposition of the interval-poset into
         new interval-posets.
@@ -2508,7 +2505,7 @@ class TamariIntervalPoset(Element,
                                       extract_tree(cx, cy, t_up, common))
                 for cx, cy in common]
 
-    def decomposition_to_triple(self) -> Union[None, Tuple[TIP, TIP, int]]:
+    def decomposition_to_triple(self) -> None | tuple[TIP, TIP, int]:
         """
         Decompose an interval-poset into a triple (``left``, ``right``, ``r``).
 
@@ -2571,7 +2568,9 @@ class TamariIntervalPoset(Element,
         n = self.size()
         if n == 0:
             return LabelledBinaryTree(None)
-        left, right, r = self.decomposition_to_triple()
+        triplet = self.decomposition_to_triple()
+        assert triplet is not None
+        left, right, r = triplet
         return LabelledBinaryTree([left.grafting_tree(),
                                    right.grafting_tree()], label=r)
 
@@ -3047,7 +3046,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         roots, relations, index = get_relations(binary_tree)
         P = FinitePoset(DiGraph([list(range(1, index)), relations],
                                 format='vertices_and_edges'))
-        return TamariIntervalPoset(P, check=False)
+        return TamariIntervalPoset(P, check=False)  # type:ignore
 
     @staticmethod
     def initial_forest(element):
@@ -3155,7 +3154,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         roots, relations, index = get_relations(binary_tree)
         P = FinitePoset(DiGraph([list(range(1, index)), relations],
                                 format='vertices_and_edges'))
-        return TamariIntervalPoset(P, check=False)
+        return TamariIntervalPoset(P, check=False)  # type:ignore
 
     @staticmethod
     def from_binary_trees(tree1, tree2) -> TIP:
@@ -3617,6 +3616,9 @@ class TamariIntervalPosets_all(DisjointUnionEnumeratedSets, TamariIntervalPosets
         return isinstance(x, self.element_class)
 
     Element = TamariIntervalPoset
+
+
+TIP = TamariIntervalPoset
 
 
 #################################################################

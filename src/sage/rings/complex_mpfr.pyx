@@ -972,7 +972,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: coerce(CN, 1+I)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes at least 2 positional arguments (1 given)
+            TypeError: ...__init__() takes at least 2 positional arguments (1 given)
         """
         if self._prec != -1:
             mpfr_clear(self.__re)

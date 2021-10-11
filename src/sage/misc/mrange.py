@@ -700,7 +700,7 @@ def cantor_product(*args, **kwds):
         sage: next(cantor_product(count(), toto='hey'))
         Traceback (most recent call last):
         ...
-        TypeError: __init__() got an unexpected keyword argument 'toto'
+        TypeError: ...__init__() got an unexpected keyword argument 'toto'
 
     ::
 

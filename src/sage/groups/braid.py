@@ -1092,7 +1092,7 @@ class Braid(FiniteTypeArtinGroupElement):
             last_crossing_in_row[abs(cr)] = i
         # tie up the ends of the list
         for k, i in enumerate(first_crossing_in_row):
-            if i != None:
+            if i is not None:
                 j = last_crossing_in_row[k]
                 if abs(crossings[i]["cr"]) == k:
                     crossings[i]["prev_below"] = j
@@ -1696,6 +1696,45 @@ class Braid(FiniteTypeArtinGroupElement):
         slc = sliding_circuits(self)
         B = self.parent()
         return [[B._element_from_libbraiding(i) for i in s] for s in slc]
+
+    def mirror_image(self):
+        r"""
+        Return the image of ``self`` under the mirror involution (see
+        :meth:`BraidGroup_class.mirror_involution`). The link closure of
+        it is mirrored to the closure of ``self`` (see the example below
+        of a positive amphicheiral knot).
+
+        EXAMPLES::
+
+            sage: B5 = BraidGroup(5)
+            sage: b  = B5((-1, 2, -3, -1, -3, 4, 2, -3, 2, 4, 2, -3)) # closure K12a_427
+            sage: bm = b.mirror_image(); bm
+            s0*s1^-1*s2*s0*s2*s3^-1*s1^-1*s2*s1^-1*s3^-1*s1^-1*s2
+            sage: bm.is_conjugated(b)
+            True
+            sage: bm.is_conjugated(~b)
+            False
+        """
+        return self.parent().mirror_involution()(self)
+
+    def reverse(self):
+        r"""
+        Return the reverse of ``self`` obtained by reversing the order of the
+        generators in its word. This defines an anti-involution on the braid
+        group. The link closure of it has the reversed orientation (see the
+        example below of a non reversible knot).
+
+        EXAMPLES::
+
+            sage: b  = BraidGroup(3)((1, 1, -2, 1, -2, 1, -2, -2))  # closure K8_17
+            sage: br = b.reverse(); br
+            s1^-1*(s1^-1*s0)^3*s0
+            sage: br.is_conjugated(b)
+            False
+        """
+        t = [i for i in self.Tietze()]
+        t.reverse()
+        return self.parent()(tuple(t))
 
 
 class BraidGroup_class(FiniteTypeArtinGroup):
@@ -2474,6 +2513,31 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             return self.delta() ** nf[0][0]
         from sage.misc.misc_c import prod
         return self.delta() ** nf[0][0] * prod(self(i) for i in nf[1:])
+
+    def mirror_involution(self):
+        r"""
+        Return the mirror involution of ``self``.
+
+        This automorphism maps a braid to another one by replacing each generator
+        in its word by the inverse. In general this is different from the inverse
+        of the braid since the order of the generators in the word is not reversed.
+
+        EXAMPLES::
+
+            sage: B = BraidGroup(4)
+            sage: mirr = B.mirror_involution()
+            sage: b = B((1,-2,-1,3,2,1))
+            sage: bm = mirr(b); bm
+            s0^-1*s1*s0*s2^-1*s1^-1*s0^-1
+            sage: bm == ~b
+            False
+            sage: bm.is_conjugated(b)
+            False
+            sage: bm.is_conjugated(~b)
+            True
+        """
+        gens_mirr = [~g for g in self.gens()]
+        return self.hom(gens_mirr, check=False)
 
 
 def BraidGroup(n=None, names='s'):

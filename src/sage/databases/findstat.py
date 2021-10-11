@@ -4395,7 +4395,7 @@ _SupportedFindStatCollections = {
                                  lambda x: x.node_number(),
                                  lambda x: isinstance(x, BinaryTree)),
     "Cores":
-    _SupportedFindStatCollection(lambda x: (lambda pi, k: Core(pi, k))(*literal_eval(x)),
+    _SupportedFindStatCollection(lambda x: Core(*literal_eval(x)),
                                  lambda X: "( " + X._repr_() + ", " + str(X.k()) + " )",
                                  lambda x: Cores(x[1], x[0]),
                                  lambda x: (x.length(), x.k()),

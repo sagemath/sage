@@ -585,16 +585,16 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
 
         # coercions between realizations
 
-        W0P_to_PW0 = SetMorphism(Hom(W0P, PW0, Groups()),lambda x: PW0(x.to_opposite()))
+        W0P_to_PW0 = SetMorphism(Hom(W0P, PW0, Groups()), lambda x: PW0(x.to_opposite()))
         W0P_to_PW0.register_as_coercion()
 
-        PW0_to_W0P = SetMorphism(Hom(PW0, W0P, Groups()),lambda x: W0P(x.to_opposite()))
+        PW0_to_W0P = SetMorphism(Hom(PW0, W0P, Groups()), lambda x: W0P(x.to_opposite()))
         PW0_to_W0P.register_as_coercion()
 
-        FW_to_WF = SetMorphism(Hom(FW, WF, Groups()),lambda x: WF(x.to_opposite()))
+        FW_to_WF = SetMorphism(Hom(FW, WF, Groups()), lambda x: WF(x.to_opposite()))
         FW_to_WF.register_as_coercion()
 
-        WF_to_FW = SetMorphism(Hom(WF, FW, Groups()),lambda x: FW(x.to_opposite()))
+        WF_to_FW = SetMorphism(Hom(WF, FW, Groups()), lambda x: FW(x.to_opposite()))
         WF_to_FW.register_as_coercion()
 
         PW0_to_WF = SetMorphism(Hom(PW0, WF, Groups()), self.PW0_to_WF_func)
@@ -602,9 +602,9 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         WF_to_PW0 = SetMorphism(Hom(WF, PW0, Groups()), self.WF_to_PW0_func)
         WF_to_PW0.register_as_coercion()
 
-        PvW0_to_W0Pv = SetMorphism(Hom(PvW0, W0Pv, Groups()),lambda x: W0Pv(x.to_opposite()))
+        PvW0_to_W0Pv = SetMorphism(Hom(PvW0, W0Pv, Groups()), lambda x: W0Pv(x.to_opposite()))
         PvW0_to_W0Pv.register_as_coercion()
-        W0Pv_to_PvW0 = SetMorphism(Hom(W0Pv, PvW0, Groups()),lambda x: PvW0(x.to_opposite()))
+        W0Pv_to_PvW0 = SetMorphism(Hom(W0Pv, PvW0, Groups()), lambda x: PvW0(x.to_opposite()))
         W0Pv_to_PvW0.register_as_coercion()
 
         if self._general_linear:
@@ -629,39 +629,39 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
         W0Pv_to_W0P.register_as_coercion()
 
         # coercions of the translation lattice into the appropriate realizations
-        P_to_PW0 = SetMorphism(Hom(self.lattice(), PW0, Sets()), lambda x: PW0.from_translation(x))
+        P_to_PW0 = SetMorphism(Hom(self.lattice(), PW0, Sets()), PW0.from_translation)
         P_to_PW0.register_as_coercion()
-        P_to_W0P = SetMorphism(Hom(self.lattice(), W0P, Sets()), lambda x: W0P.from_translation(x))
+        P_to_W0P = SetMorphism(Hom(self.lattice(), W0P, Sets()), W0P.from_translation)
         P_to_W0P.register_as_coercion()
-        Pv_to_PvW0 = SetMorphism(Hom(self.dual_lattice(), PvW0, Sets()), lambda x: PvW0.from_dual_translation(x))
+        Pv_to_PvW0 = SetMorphism(Hom(self.dual_lattice(), PvW0, Sets()), PvW0.from_dual_translation)
         Pv_to_PvW0.register_as_coercion()
-        Pv_to_W0Pv = SetMorphism(Hom(self.dual_lattice(), W0Pv, Sets()), lambda x: W0Pv.from_dual_translation(x))
+        Pv_to_W0Pv = SetMorphism(Hom(self.dual_lattice(), W0Pv, Sets()), W0Pv.from_dual_translation)
         Pv_to_W0Pv.register_as_coercion()
 
         # coercions of the classical Weyl group into the appropriate realizations
 
-        W0_to_PW0 = SetMorphism(Hom(self.classical_weyl(), PW0, Groups()), lambda x: PW0.from_classical_weyl(x))
+        W0_to_PW0 = SetMorphism(Hom(self.classical_weyl(), PW0, Groups()), PW0.from_classical_weyl)
         W0_to_PW0.register_as_coercion()
-        W0_to_W0P = SetMorphism(Hom(self.classical_weyl(), W0P, Groups()), lambda x: W0P.from_classical_weyl(x))
+        W0_to_W0P = SetMorphism(Hom(self.classical_weyl(), W0P, Groups()), W0P.from_classical_weyl)
         W0_to_W0P.register_as_coercion()
-        W0v_to_PvW0 = SetMorphism(Hom(self.dual_classical_weyl(), PvW0, Groups()), lambda x: PvW0.from_dual_classical_weyl(x))
+        W0v_to_PvW0 = SetMorphism(Hom(self.dual_classical_weyl(), PvW0, Groups()), PvW0.from_dual_classical_weyl)
         W0v_to_PvW0.register_as_coercion()
-        W0v_to_W0Pv = SetMorphism(Hom(self.dual_classical_weyl(), W0Pv, Groups()), lambda x: W0Pv.from_dual_classical_weyl(x))
+        W0v_to_W0Pv = SetMorphism(Hom(self.dual_classical_weyl(), W0Pv, Groups()), W0Pv.from_dual_classical_weyl)
         W0v_to_W0Pv.register_as_coercion()
 
         # coercions of the fundamental group into the appropriate realizations
 
-        F_to_WF = SetMorphism(Hom(self.fundamental_group(), WF, Groups()), lambda x: WF.from_fundamental(x))
+        F_to_WF = SetMorphism(Hom(self.fundamental_group(), WF, Groups()), WF.from_fundamental)
         F_to_WF.register_as_coercion()
-        F_to_FW = SetMorphism(Hom(self.fundamental_group(), FW, Groups()), lambda x: FW.from_fundamental(x))
+        F_to_FW = SetMorphism(Hom(self.fundamental_group(), FW, Groups()), FW.from_fundamental)
         F_to_FW.register_as_coercion()
 
         # coercions of the affine Weyl group into the appropriate realizations
 
-        W_to_WF = SetMorphism(Hom(self.affine_weyl(), WF, Groups()), lambda x: WF.from_affine_weyl(x))
+        W_to_WF = SetMorphism(Hom(self.affine_weyl(), WF, Groups()), WF.from_affine_weyl)
         W_to_WF.register_as_coercion()
 
-        W_to_FW = SetMorphism(Hom(self.affine_weyl(), FW, Groups()), lambda x: FW.from_affine_weyl(x))
+        W_to_FW = SetMorphism(Hom(self.affine_weyl(), FW, Groups()), FW.from_affine_weyl)
         W_to_FW.register_as_coercion()
 
     def PW0(self):
@@ -2041,7 +2041,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: ExtendedAffineWeylGroup("A3").PW0().simple_reflections()
                 Finite family {0: t[Lambdacheck[1] + Lambdacheck[3]] * s1*s2*s3*s2*s1, 1: s1, 2: s2, 3: s3}
             """
-            return Family(self.realization_of().cartan_type().index_set(), lambda i: self.simple_reflection(i))
+            return Family(self.realization_of().cartan_type().index_set(), self.simple_reflection)
 
         def from_classical_weyl(self, w):
             r"""
@@ -2202,7 +2202,7 @@ class ExtendedAffineWeylGroup_Class(UniqueRepresentation, Parent):
                 sage: ExtendedAffineWeylGroup(["A",3,1]).W0P().simple_reflections()
                 Finite family {0: s1*s2*s3*s2*s1 * t[-Lambdacheck[1] - Lambdacheck[3]], 1: s1, 2: s2, 3: s3}
             """
-            return Family(self.realization_of().cartan_type().index_set(), lambda i: self.simple_reflection(i))
+            return Family(self.realization_of().cartan_type().index_set(), self.simple_reflection)
 
         def from_classical_weyl(self, w):
             r"""

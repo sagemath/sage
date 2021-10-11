@@ -5,8 +5,7 @@
 r"""
 Dense Matrices over `\mathbb F_q`, with `q<255`.
 
-This module is a wrapper for version 2.4.24 of the Aachen
-`C-MeatAxe <http://www.math.rwth-aachen.de/homes/MTX/download.html>`_,
+This module is a wrapper for the `Aachen C-MeatAxe library <../spkg/meataxe.html>`_,
 improved by an implementation of the Winograd-Strassen multiplication
 algorithm. It provides matrices over the finite field `\mathbb F_q`,
 where `q\le 255`.
@@ -14,6 +13,11 @@ where `q\le 255`.
 By default, it is only used when `q` is odd and not prime, because other
 matrix implementations in SageMath perform better for prime fields or in
 characteristic two.
+
+.. NOTE::
+
+    The examples shown here will only work when the `meataxe
+    <../spkg/meataxe.html>` package has been installed.
 
 AUTHORS:
 

@@ -24,6 +24,8 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+import itertools
+
 from sage.rings.all import ZZ, Integer
 from sage.arith.all import binomial
 from .integer_vector import IntegerVectors
@@ -421,24 +423,18 @@ class Combinations_msetk(Parent):
 
 
 class Combinations_setk(Combinations_msetk):
-    def _iterator(self, items, len_items, n):
+    def _iterator(self, items, n):
         """
         An iterator for all the n-combinations of items.
 
         EXAMPLES::
 
-            sage: it = Combinations([1,2,3,4],3)._iterator([1,2,3,4],4,3)
+            sage: it = Combinations([1,2,3,4],3)._iterator([1,2,3,4],3)
             sage: list(it)
             [[1, 2, 3], [1, 2, 4], [1, 3, 4], [2, 3, 4]]
         """
-        for i in range(len_items):
-            v = items[i: i + 1]
-            if n == 1:
-                yield v
-            else:
-                rest = items[i + 1:]
-                for c in self._iterator(rest, len_items - i - 1, n - 1):
-                    yield v + c
+        for combination in itertools.combinations(items, n):
+            yield list(combination)
 
     def _iterator_zero(self):
         """
@@ -454,8 +450,8 @@ class Combinations_setk(Combinations_msetk):
 
     def __iter__(self):
         r"""
-        Posted by Raymond Hettinger, 2006/03/23, to the Python Cookbook:
-        http://aspn.activestate.com/ASPN/Cookbook/Python/Recipe/474124
+        Uses Python's :func:`itertools.combinations` to iterate through all
+        of the combinations.
 
         EXAMPLES::
 
@@ -474,7 +470,7 @@ class Combinations_setk(Combinations_msetk):
         if self.k == 0:
             return self._iterator_zero()
         else:
-            return self._iterator(self.mset, len(self.mset), self.k)
+            return self._iterator(self.mset, self.k)
 
     def list(self):
         """

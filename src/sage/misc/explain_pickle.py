@@ -2826,11 +2826,11 @@ class TestAppendList(list):
             sage: v.append(7)  # py2
             Traceback (most recent call last):
             ...
-            TypeError: append() takes exactly 1 argument (2 given)
+            TypeError: ...append() takes exactly 1 argument (2 given)
             sage: v.append(7)  # py3
             Traceback (most recent call last):
             ...
-            TypeError: append() takes 1 positional argument but 2 were given
+            TypeError: ...append() takes 1 positional argument but 2 were given
 
         We can still append by directly using the list method::
 
@@ -2851,11 +2851,11 @@ class TestAppendList(list):
             sage: v.extend([3,1,4,1,5,9])  # py2
             Traceback (most recent call last):
             ...
-            TypeError: extend() takes exactly 1 argument (2 given)
+            TypeError: ...extend() takes exactly 1 argument (2 given)
             sage: v.extend([3,1,4,1,5,9])  # py3
             Traceback (most recent call last):
             ...
-            TypeError: extend() takes 1 positional argument but 2 were given
+            TypeError: ...extend() takes 1 positional argument but 2 were given
 
         We can still extend by directly using the list method::
 

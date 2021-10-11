@@ -1167,19 +1167,20 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
              sage: Sym.schur()( J[2,1] )
              (q*t^3-t^4-q*t^2+t^3-q*t+t^2+q-t)*s[1, 1, 1] + (-q*t^4+2*q*t^3-q*t^2+t^2-2*t+1)*s[2, 1]
         """
-        q,t = QQqt.gens()
+        q, t = QQqt.gens()
         S = self._macdonald.S()
         res = S(1)
         for k in reversed(part):
             res = res.creation(k)
         res = res._omega_qt_in_schurs()
-        res = res.map_coefficients(lambda c: c(t,q))
-        f = lambda part2: res.coefficient(part2)
+        res = res.map_coefficients(lambda c: c(t, q))
+        f = res.coefficient
         return f
 
     class Element(MacdonaldPolynomials_generic.Element):
         pass
 
+    
 class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""
@@ -1776,14 +1777,14 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             sage: S2(Partition([1,1]))
             (q*t - t^2 - q + t)/(-q^3 + q^2 + q - 1)
         """
-        #Convert to the power sum
-        (q,t) = QQqt.gens()
+        # Convert to the power sum
+        (q, t) = QQqt.gens()
         p = self._sym.p()
         s = self._s
         p_x = p(s(part))
-        f = lambda m, c: (m, c*prod([(1-t**k)/(1-q**k) for k in m]))
+        f = lambda m, c: (m, c * prod([(1 - t**k) / (1 - q**k) for k in m]))
         res = s(p_x.map_item(f))
-        f = lambda part2: res.coefficient(part2)
+        f = res.coefficient
         return f
 
     def _s_cache(self, n):

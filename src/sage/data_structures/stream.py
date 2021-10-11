@@ -95,7 +95,7 @@ AUTHORS:
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
-
+from sage.arith.misc import divisors
 
 class Stream():
     """
@@ -187,6 +187,25 @@ class Stream_inexact(Stream):
             self._cache = list()
             self._offset = approximate_order
             self._iter = self.iterate_coefficients()
+
+    def is_nonzero(self):
+        r"""
+        Return ``True`` if and only if the cache contains a nonzero element.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: CS = Stream_function(lambda n: 1/n, ZZ, False, 1)
+            sage: CS.is_nonzero()
+            False
+            sage: CS[1]
+            1
+            sage: CS.is_nonzero()
+            True
+        """
+        if self._is_sparse:
+            return any(self._cache.values())
+        return any(self._cache)
 
     def __getstate__(self):
         """
@@ -1395,6 +1414,154 @@ class Stream_cauchy_mul(Stream_binary):
             True
         """
         return self._left.is_nonzero() and self._right.is_nonzero()
+
+
+class Stream_dirichlet_convolve(Stream_binary):
+    r"""
+    Operator for the Dirichlet convolution of two streams.
+
+    INPUT:
+
+    - ``left`` -- stream of coefficients on the left side of the operator
+    - ``right`` -- stream of coefficients on the right side of the operator
+
+    The coefficient of `n^{-s}` in the convolution of `l` and `r`
+    equals `\sum_{k | n} l_k r_{n/k}`.
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import (Stream_dirichlet_convolve, Stream_function, Stream_exact)
+        sage: f = Stream_function(lambda n: n, ZZ, True, 1)
+        sage: g = Stream_exact([0], True, constant=1)
+        sage: h = Stream_dirichlet_convolve(f, g)
+        sage: [h[i] for i in range(1, 10)]
+        [1, 3, 4, 7, 6, 12, 8, 15, 13]
+        sage: [sigma(n) for n in range(1, 10)]
+        [1, 3, 4, 7, 6, 12, 8, 15, 13]
+
+        sage: u = Stream_dirichlet_convolve(g, f)
+        sage: [u[i] for i in range(1, 10)]
+        [1, 3, 4, 7, 6, 12, 8, 15, 13]
+    """
+    def __init__(self, left, right):
+        """
+        Initalize ``self``.
+
+            sage: from sage.data_structures.stream import (Stream_dirichlet_convolve, Stream_function, Stream_exact)
+            sage: f = Stream_function(lambda n: n, ZZ, True, 1)
+            sage: g = Stream_exact([1], True, constant=0)
+            sage: Stream_dirichlet_convolve(f, g)
+            Traceback (most recent call last):
+            ...
+            AssertionError: Dirichlet convolution is only defined for coefficient streams with minimal index of nonzero coefficient at least 1
+            sage: Stream_dirichlet_convolve(g, f)
+            Traceback (most recent call last):
+            ...
+            AssertionError: Dirichlet convolution is only defined for coefficient streams with minimal index of nonzero coefficient at least 1
+        """
+        if left._is_sparse != right._is_sparse:
+            raise NotImplementedError
+
+        assert left._approximate_order > 0 and right._approximate_order > 0, "Dirichlet convolution is only defined for coefficient streams with minimal index of nonzero coefficient at least 1"
+
+        vl = left._approximate_order
+        vr = right._approximate_order
+        a = vl * vr
+        super().__init__(left, right, left._is_sparse, a)
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the degree for the coefficient
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_dirichlet_convolve, Stream_function, Stream_exact)
+            sage: f = Stream_function(lambda n: n, ZZ, True, 1)
+            sage: g = Stream_exact([0], True, constant=1)
+            sage: h = Stream_dirichlet_convolve(f, g)
+            sage: h.get_coefficient(7)
+            8
+            sage: [h[i] for i in range(1, 10)]
+            [1, 3, 4, 7, 6, 12, 8, 15, 13]
+        """
+        c = ZZ.zero()
+        for k in divisors(n):
+            if k < self._left._approximate_order or n // k < self._right._approximate_order:
+                continue
+            val = self._left[k]
+            if val:
+                c += val * self._right[n//k]
+        return c
+
+
+class Stream_dirichlet_invert(Stream_unary):
+    r"""
+    Operator for inverse with respect to Dirichlet convolution of the stream.
+
+    INPUT:
+
+    - ``series`` -- a :class:`Stream`
+
+    EXAMPLES::
+
+        sage: from sage.data_structures.stream import (Stream_dirichlet_invert, Stream_function)
+        sage: f = Stream_function(lambda n: 1, ZZ, True, 1)
+        sage: g = Stream_dirichlet_invert(f)
+        sage: [g[i] for i in range(10)]
+        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
+        sage: [moebius(i) for i in range(10)]
+        [0, 1, -1, -1, 0, -1, 1, -1, 0, 0]
+    """
+    def __init__(self, series):
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
+            sage: f = Stream_exact([0, 0], True, constant=1)
+            sage: g = Stream_dirichlet_invert(f)
+            Traceback (most recent call last):
+            ...
+            AssertionError: the Dirichlet inverse only exists if the coefficient with index 1 is non-zero
+        """
+        assert series[1], "the Dirichlet inverse only exists if the coefficient with index 1 is non-zero"
+        super().__init__(series, series._is_sparse, 1)
+
+        self._ainv = ~series[1]
+        self._zero = ZZ.zero()
+
+    def get_coefficient(self, n):
+        """
+        Return the ``n``-th coefficient of ``self``.
+
+        INPUT:
+
+        - ``n`` -- integer; the degree for the coefficient
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import (Stream_exact, Stream_dirichlet_invert)
+            sage: f = Stream_exact([0, 3], True, constant=2)
+            sage: g = Stream_dirichlet_invert(f)
+            sage: g.get_coefficient(6)
+            2/27
+            sage: [g[i] for i in range(8)]
+            [0, 1/3, -2/9, -2/9, -2/27, -2/9, 2/27, -2/9]
+        """
+        if n == 1:
+            return self._ainv
+        c = self._zero
+        for k in divisors(n):
+            if k < n:
+                val = self._series[n//k]
+                if val:
+                    c += self[k] * val
+        return -c * self._ainv
 
 
 class Stream_cauchy_compose(Stream_binary):

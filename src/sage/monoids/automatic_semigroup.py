@@ -912,7 +912,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 sage: m.lift()
                 3
                 sage: type(m.lift())
-                <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+                <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             """
             return self.value
 

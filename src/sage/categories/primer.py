@@ -398,7 +398,7 @@ classes. For example, an integer in Sage is an instance of the class
 
     sage: i = 12
     sage: type(i)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
 Applying an operation is generally done by *calling a method*::
 
@@ -408,7 +408,7 @@ Applying an operation is generally done by *calling a method*::
     sage: x = var('x')
     sage: p = 6*x^2 + 12*x + 6
     sage: type(p)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
     sage: p.factor()
     6*(x + 1)^2
 
@@ -421,7 +421,7 @@ Applying an operation is generally done by *calling a method*::
 
     sage: pZ = ZZ['x'] ( p )
     sage: type(pZ)
-    <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
+    <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
     sage: pZ.factor()
     2 * 3 * (x + 1)^2
 

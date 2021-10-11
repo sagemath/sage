@@ -101,7 +101,7 @@ class DocTestDefaults(SageObject):
         self.all = False
         self.logfile = None
         self.long = False
-        self.warn_long = None
+        self.warn_long = -1.0
         self.randorder = None
         self.random_seed = 0
         self.global_iterations = 1  # sage-runtests default is 0
@@ -122,7 +122,7 @@ class DocTestDefaults(SageObject):
         self.failed = False
         self.new = False
         self.show_skipped = False
-        self.target_walltime = None
+        self.target_walltime = -1
 
         # sage-runtests contains more optional tags. Technically, adding
         # auto_optional_tags here is redundant, since that is added
@@ -421,11 +421,16 @@ class DocTestController(SageObject):
 
         self.files = args
         if options.logfile:
-            try:
-                self.logfile = open(options.logfile, 'a')
-            except IOError:
-                print("Unable to open logfile {!r}\nProceeding without logging.".format(options.logfile))
-                self.logfile = None
+            if not isinstance(options.logfile, str):
+                # file from sage-runtests
+                self.logfile = options.logfile
+            else:
+                # string from DocTestDefaults
+                try:
+                    self.logfile = open(options.logfile, 'a')
+                except IOError:
+                    print("Unable to open logfile {!r}\nProceeding without logging.".format(options.logfile))
+                    self.logfile = None
         else:
             self.logfile = None
 
@@ -489,7 +494,8 @@ class DocTestController(SageObject):
             sage: DC.options.warn_long    # existing command-line options are not changed
             5.00000000000000
         """
-        if self.options.warn_long is not None:     # Specified on the command line
+        # default is -1.0
+        if self.options.warn_long >= 0:     # Specified on the command line
             return
         try:
             self.options.warn_long = 60.0 * self.second_on_modern_computer()

@@ -33,7 +33,7 @@ SPKG_INST_RELDIR = var/lib/sage/installed
 TOOLCHAIN = @SAGE_TOOLCHAIN@
 PYTHON = python3
 MP_LIBRARY = @SAGE_MP_LIBRARY@
-BLAS = @SAGE_BLAS@
+BLAS = openblas
 
 # pkgconfig files generated/installed at build time
 PCFILES = @SAGE_SYSTEM_FACADE_PC_FILES@

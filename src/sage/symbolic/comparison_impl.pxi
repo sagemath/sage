@@ -79,9 +79,9 @@ cpdef int print_order(lhs, rhs) except -2:
         sage: print_order(SR(oo), sqrt(2))
         1
     """
-    if not is_Expression(lhs):
+    if not isinstance(lhs, Expression):
         lhs = SR(lhs)
-    if not is_Expression(rhs):
+    if not isinstance(rhs, Expression):
         rhs = SR(rhs)
     return print_order_c(lhs, rhs)
 
@@ -103,7 +103,7 @@ class _print_key(object):
             sage: _print_key(1)
             <sage.symbolic.expression._print_key object at 0x...>
         """
-        self.ex = ex if is_Expression(ex) else SR(ex)
+        self.ex = ex if isinstance(ex, Expression) else SR(ex)
 
     def __lt__(self, other):
         """
@@ -171,7 +171,7 @@ class _math_key(object):
             sage: _math_key(1)
             <sage.symbolic.expression._math_key object at 0x...>
         """
-        self.ex = ex if is_Expression(ex) else SR(ex)
+        self.ex = ex if isinstance(ex, Expression) else SR(ex)
 
     def __lt__(self, other):
         """
@@ -283,9 +283,9 @@ cpdef int mixed_order(lhs, rhs) except -2:
     """
     if lhs is rhs:
         return 0
-    if not is_Expression(lhs):
+    if not isinstance(lhs, Expression):
         lhs = SR(lhs)
-    if not is_Expression(rhs):
+    if not isinstance(rhs, Expression):
         rhs = SR(rhs)
     less_than = _mixed_key(lhs) < _mixed_key(rhs)
     if less_than:
@@ -318,7 +318,7 @@ class _mixed_key(object):
             sage: _mixed_key(1)
             <sage.symbolic.expression._mixed_key object at 0x...>
         """
-        self.ex = ex if is_Expression(ex) else SR(ex)
+        self.ex = ex if isinstance(ex, Expression) else SR(ex)
 
     def __lt__(self, other):
         """

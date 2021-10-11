@@ -258,13 +258,13 @@ class DynamicalSystem_Berkovich(Element, metaclass=InheritComparisonClasscallMet
 
         if not isinstance(morphism_domain.base_ring(), pAdicBaseGeneric):
             if morphism_domain.base_ring() in NumberFields():
-                if domain is None and ideal != None:
+                if domain is None and ideal is not None:
                     if is_AffineSpace(morphism_domain):
                         domain = Berkovich_Cp_Affine(morphism_domain.base_ring(), ideal)
                     else:
                         domain = Berkovich_Cp_Projective(morphism_domain, ideal)
                 else:
-                    if ideal != None:
+                    if ideal is not None:
                         if ideal != domain.ideal():
                             raise ValueError('conflicting inputs for ideal and domain')
             else:

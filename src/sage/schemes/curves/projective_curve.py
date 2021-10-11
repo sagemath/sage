@@ -1699,7 +1699,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         f = self.affine_patch(2).defining_polynomial()
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
-        else:  #in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
+        else:  # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
             return fundamental_group(f, projective=False)
 
     def rational_parameterization(self):

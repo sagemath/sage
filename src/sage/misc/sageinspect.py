@@ -1188,7 +1188,7 @@ def _sage_getargspec_cython(source):
         sage: sgc('def f(*x = 5, z = {(1,2,3): True}): pass')
         Traceback (most recent call last):
         ...
-        SyntaxError: invalid syntax
+        SyntaxError: invalid ...
         sage: sgc('def f(int *x = 5, z = {(1,2,3): True}): pass')
         Traceback (most recent call last):
         ...
@@ -1200,7 +1200,7 @@ def _sage_getargspec_cython(source):
         sage: sgc('def f(int x = 5, , z = {(1,2,3): True}): pass')
         Traceback (most recent call last):
         ...
-        SyntaxError: invalid syntax
+        SyntaxError: invalid ...
 
     TESTS:
 
@@ -1210,7 +1210,7 @@ def _sage_getargspec_cython(source):
         sage: def dummy_python(self, *args, x=1): pass  # py2
         Traceback (most recent call last):
         ...
-        SyntaxError: invalid syntax
+        SyntaxError: invalid ...
         sage: def dummy_python(self, *args, x=1): pass  # py3
         sage: sgc("def dummy_python(self, *args, x=1): pass")  # py3
         ArgSpec(args=['self', 'x'], varargs='args', keywords=None, defaults=(1,))
@@ -2317,7 +2317,7 @@ def sage_getsourcelines(obj):
         ...)
         sage: x = var('x')
         sage: lines, lineno = sage_getsourcelines(x); lines[0:5]
-        ['cdef class Expression(CommutativeRingElement):\n',
+        ['cdef class Expression(...):\n',
          '\n',
          '    cdef GEx _gobj\n',
          '\n',

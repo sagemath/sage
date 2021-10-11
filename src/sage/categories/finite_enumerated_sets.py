@@ -124,7 +124,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
             does not do it for us::
 
                 sage: type(C._cardinality_from_iterator())
-                <type 'sage.rings.integer.Integer'>
+                <class 'sage.rings.integer.Integer'>
 
             We ignore additional inputs since during doctests classes which
             override ``cardinality()`` call up to the category rather than

@@ -181,8 +181,6 @@ Why did you write Sage from scratch, instead of using other existing software an
 Sage was not written from scratch. Most of its underlying mathematics
 functionalities are made possible through FOSS projects such as
 
-* `ATLAS <http://math-atlas.sourceforge.net>`_ --- Automatically Tuned
-  Linear Algebra Software.
 * `BLAS <https://www.netlib.org/blas>`_ --- Basic Linear Algebra
   Subprograms.
 * `ECL <https://common-lisp.net/project/ecl>`_ --- Embeddable Common-Lisp system

@@ -2,6 +2,7 @@ binutils
 make
 m4
 perl
+pkg-config
 python3
 tar
 bc

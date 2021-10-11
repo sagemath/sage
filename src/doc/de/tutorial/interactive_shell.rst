@@ -385,7 +385,7 @@ z.B. ``NameError`` oder ``ValueError`` (vgl. Python Library Reference
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------

@@ -498,32 +498,32 @@ class BlobAlgebra(CombinatorialFreeModule):
             sage: R.<q,r,s> = ZZ[]
             sage: B2 = algebras.Blob(2, q, r, s)
             sage: latex(B2.an_element())  # indirect doctest
-            2\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] 
-            \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] 
-            \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {}; 
-            \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {}; 
-            \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {}; 
-            \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {}; 
-            \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1); 
-            \draw[] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2); 
-            \end{tikzpicture} 
-             + 3\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] 
-            \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] 
-            \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {}; 
-            \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {}; 
-            \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {}; 
-            \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {}; 
-            \draw[blue,very thick] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. node[midway,circle,fill,scale=0.6] {} (G--1); 
-            \draw[] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2); 
-            \end{tikzpicture} 
-             + 2\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] 
-            \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] 
-            \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {}; 
-            \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {}; 
-            \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {}; 
-            \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {}; 
-            \draw[blue,very thick] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. node[midway,circle,fill,scale=0.6] {} (G-2); 
-            \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1); 
+            2\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}]
+            \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt]
+            \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {};
+            \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {};
+            \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {};
+            \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {};
+            \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
+            \draw[] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
+            \end{tikzpicture}
+             + 3\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}]
+            \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt]
+            \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {};
+            \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {};
+            \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {};
+            \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {};
+            \draw[blue,very thick] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. node[midway,circle,fill,scale=0.6] {} (G--1);
+            \draw[] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. (G-2);
+            \end{tikzpicture}
+             + 2\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}]
+            \tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt]
+            \node[vertex] (G-1) at (0.0, 1) [shape = circle, draw] {};
+            \node[vertex] (G-2) at (1.5, 1) [shape = circle, draw] {};
+            \node[vertex] (G--2) at (1.5, -1) [shape = circle, draw] {};
+            \node[vertex] (G--1) at (0.0, -1) [shape = circle, draw] {};
+            \draw[blue,very thick] (G-1) .. controls +(0.5, -0.5) and +(-0.5, -0.5) .. node[midway,circle,fill,scale=0.6] {} (G-2);
+            \draw[] (G--2) .. controls +(-0.5, 0.5) and +(0.5, 0.5) .. (G--1);
             \end{tikzpicture}
         """
         def edge_options(P):
@@ -678,4 +678,3 @@ class BlobAlgebra(CombinatorialFreeModule):
             return self.zero()
         diagram = self._indices.element_class(self._indices, ret_lists[0], ret_lists[1])
         return self._from_dict({diagram: coeff}, remove_zeros=False)
-

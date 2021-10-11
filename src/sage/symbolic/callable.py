@@ -109,8 +109,8 @@ def is_CallableSymbolicExpression(x):
         sage: is_CallableSymbolicExpression(foo)
         False
     """
-    from sage.symbolic.expression import is_Expression
-    return is_Expression(x) and isinstance(x.parent(), CallableSymbolicExpressionRing_class)
+    from sage.structure.element import Expression
+    return isinstance(x, Expression) and isinstance(x.parent(), CallableSymbolicExpressionRing_class)
 
 class CallableSymbolicExpressionFunctor(ConstructionFunctor):
     def __init__(self, arguments):

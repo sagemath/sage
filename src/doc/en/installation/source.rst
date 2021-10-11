@@ -187,8 +187,7 @@ On Redhat-derived systems not all perl components are installed by
 default and you might have to install the ``perl-ExtUtils-MakeMaker``
 package.
 
-On Cygwin, the ``lapack`` and ``liblapack-devel`` packages are required to
-provide ATLAS support as the Sage package for ATLAS is not built by default.
+On Cygwin, the ``lapack`` and ``liblapack-devel`` packages are required.
 
 Installing prerequisites
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1074,7 +1073,7 @@ Here are some of the more commonly used variables affecting the build process:
 - :envvar:`MAKE` - one useful setting for this variable when building Sage is
   ``MAKE='make -jNUM'`` to tell the ``make`` program to run ``NUM`` jobs in
   parallel when building.
-  Note that not all Sage packages (e.g. ATLAS) support this variable.
+  Note that some Sage packages may not support this variable.
 
   Some people advise using more jobs than there are CPU cores, at least if the
   system is not heavily loaded and has plenty of RAM; for example, a good
@@ -1202,11 +1201,11 @@ Here are some of the more commonly used variables affecting the build process:
 
 - :envvar:`SAGE_BUILD_DIR` - the default behavior is to build each spkg in a
   subdirectory of :file:`$SAGE_ROOT/local/var/tmp/sage/build/`; for
-  example, build version 3.8.3.p12 of
-  :file:`atlas` in the directory
-  :file:`$SAGE_ROOT/local/var/tmp/sage/build/atlas-3.8.3.p12/`.
+  example, build version 7.27.0 of
+  :file:`ipython` in the directory
+  :file:`$SAGE_ROOT/local/var/tmp/sage/build/ipython-7.27.0/`.
   If this variable is set, then build in
-  :file:`$SAGE_BUILD_DIR/atlas-3.8.3.p12/` instead.
+  :file:`$SAGE_BUILD_DIR/ipython-7.27.0/` instead.
   If the directory :file:`$SAGE_BUILD_DIR` does not exist, it is created.
   As of this writing (Sage 4.8), when building the standard Sage packages,
   1.5 gigabytes of free space are required in this directory (or more if
@@ -1287,66 +1286,6 @@ Environment variables dealing with specific Sage packages:
   for multiprecision integer arithmetic. Supported values are
 
     ``MPIR`` (default choice), ``GMP``.
-
-- :envvar:`SAGE_ATLAS_ARCH` - if you are compiling ATLAS (in particular,
-  if :envvar:`SAGE_ATLAS_LIB` is not set), you can use this environment
-  variable to set a particular architecture and instruction set extension,
-  to control the maximum number of threads ATLAS can use, and to trigger the
-  installation of a static library (which is disabled by default unless
-  building our custom shared libraries fails).
-  The syntax is
-
-    ``SAGE_ATLAS_ARCH=[threads:n,][static,]arch[,isaext1][,isaext2]...[,isaextN]``.
-
-  While ATLAS comes with precomputed timings for a variety of CPUs, it only
-  uses them if it finds an exact match.
-  Otherwise, ATLAS runs through a lengthy automated tuning process in order
-  to optimize performance for your particular system, which can take several
-  days on slow and unusual systems.
-  You drastically reduce the total Sage compile time if you manually select a
-  suitable architecture.
-  It is recommended to specify a suitable architecture on laptops or other
-  systems with CPU throttling or if you want to distribute the binaries.
-  Available architectures are
-
-    ``POWER3``, ``POWER4``, ``POWER5``, ``PPCG4``, ``PPCG5``,
-    ``POWER6``, ``POWER7``, ``IBMz9``, ``IBMz10``, ``IBMz196``,
-    ``x86x87``, ``x86SSE1``, ``x86SSE2``, ``x86SSE3``, ``P5``,
-    ``P5MMX``, ``PPRO``, ``PII``, ``PIII``, ``PM``, ``CoreSolo``,
-    ``CoreDuo``, ``Core2Solo``, ``Core2``, ``Corei1``, ``Corei2``,
-    ``Atom``, ``P4``, ``P4E``, ``Efficeon``, ``K7``, ``HAMMER``,
-    ``AMD64K10h``, ``AMDDOZER``, ``UNKNOWNx86``, ``IA64Itan``,
-    ``IA64Itan2``, ``USI``, ``USII``, ``USIII``, ``USIV``, ``UST2``,
-    ``UnknownUS``, ``MIPSR1xK``, ``MIPSICE9``, ``ARMv7``.
-
-  and instruction set extensions are
-
-    ``VSX``, ``AltiVec``, ``AVXMAC``, ``AVXFMA4``, ``AVX``, ``SSE3``,
-    ``SSE2``, ``SSE1``, ``3DNow``, ``NEON``.
-
-  In addition, you can also set
-
-  - ``SAGE_ATLAS_ARCH=fast`` which picks defaults for a modern (2-3 year old)
-    CPU of your processor line, and
-
-  - ``SAGE_ATLAS_ARCH=base`` which picks defaults that should work for a ~10
-    year old CPU.
-
-  For example,
-
-    ``SAGE_ATLAS_ARCH=Corei2,AVX,SSE3,SSE2,SSE1``
-
-  would be appropriate for a Core i7 CPU.
-
-- :envvar:`SAGE_ATLAS_LIB` - if you have an installation of ATLAS on your
-  system and you want Sage to use it instead of building and installing its
-  own version of ATLAS, set this variable to be the directory containing your
-  ATLAS installation.
-  It should contain the files :file:`libatlas`, :file:`liblapack`,
-  :file:`libcblas`, :file:`libf77blas` (and optionally :file:`libptcblas` and
-  :file:`libptf77blas` for multi-threaded computations), with extensions ``.a``,
-  ``.so``, or ``.dylib``.  For backward compatibility, the libraries may also be
-  in the subdirectory :file:`SAGE_ATLAS_LIB/lib/`.
 
 - :envvar:`SAGE_MATPLOTLIB_GUI` - if set to anything non-empty except ``no``,
   then Sage will attempt to build the graphical backend when it builds the

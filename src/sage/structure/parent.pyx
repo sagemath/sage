@@ -1169,8 +1169,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             elif EQ:
                 return True
             else:
-                from sage.symbolic.expression import is_Expression
-                return is_Expression(EQ)
+                from sage.structure.element import Expression
+                return isinstance(EQ, Expression)
             # if comparing gives an Expression, then it must be an equation.
             # We return *true* here, even though the equation
             # EQ must have evaluated to False for us to get to

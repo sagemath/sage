@@ -1993,7 +1993,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 elems = [e for e in H.order_ideal([j]) if e not in too_close]
 
                 achains = PairwiseCompatibleSubsets(elems,
-                                          lambda x, y: H.are_incomparable(x, y))
+                                                    H.are_incomparable)
                 achains_n = achains.elements_of_depth_iterator(B)
 
                 for A in achains_n:
@@ -3347,7 +3347,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return L.canonical_label()
         L = L.relabel(lambda x: tuple(self._vertex_to_element(y) for y in x))
         if labels == 'lattice':
-            return L.relabel(lambda x: self.sublattice(x))
+            return L.relabel(self.sublattice)
         return L
 
     def isomorphic_sublattices_iterator(self, other):
@@ -4934,7 +4934,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         for e in L:
             low = L.lower_covers(e)
             if len(low) == 1:  # a join-irreducible element
-                C[e] = congs[max(e, key=lambda x: cong_ji._element_to_vertex(x))]
+                C[e] = congs[max(e, key=cong_ji._element_to_vertex)]
             if len(low) > 1:  # "extending" congruence to avoid re-computation
                 low_0 = min(low, key=lambda x: C[x].number_of_subsets())
                 for new_pair in e:

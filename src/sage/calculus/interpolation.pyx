@@ -91,7 +91,6 @@ cdef class Spline:
         Traceback (most recent call last):
         ...
         ValueError: Order of derivative must be 1 or 2.
-
     """
     def __init__(self, v=[]):
         """
@@ -100,7 +99,7 @@ cdef class Spline:
             sage: S = spline([(1,1), (2,3), (4,5)]); S
             [(1, 1), (2, 3), (4, 5)]
             sage: type(S)
-            <type 'sage.calculus.interpolation.Spline'>
+            <class 'sage.calculus.interpolation.Spline'>
         """
         self.v = list(v)
         self.started = 0

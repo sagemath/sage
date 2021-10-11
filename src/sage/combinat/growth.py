@@ -1823,8 +1823,7 @@ class Rule(UniqueRepresentation):
             return D
         else:
             return Poset(([w for k in range(n) for w in self.vertices(k)],
-                          lambda x, y: self.is_P_edge(x, y)),
-                         cover_relations=True)
+                          self.is_P_edge), cover_relations=True)
 
     def Q_graph(self, n):
         r"""
@@ -1843,21 +1842,21 @@ class Rule(UniqueRepresentation):
             [[1, 1, 1, 1], [3, 1], [2, 2]]
         """
         if self.has_multiple_edges:
-            D = DiGraph([(x,y,e) for k in range(n-1)
-                            for x in self.vertices(k)
-                            for y in self.vertices(k+1)
-                            for e in self.is_Q_edge(x, y)], multiedges=True)
+            D = DiGraph([(x, y, e) for k in range(n - 1)
+                         for x in self.vertices(k)
+                         for y in self.vertices(k + 1)
+                         for e in self.is_Q_edge(x, y)], multiedges=True)
             # unfortunately, layout_acyclic will not show multiple edges
             # D.layout_default = D.layout_acyclic
             return D
         else:
             return Poset(([w for k in range(n) for w in self.vertices(k)],
-                          lambda x,y: self.is_Q_edge(x, y)),
-                         cover_relations=True)
+                          self.is_Q_edge), cover_relations=True)
 
 ######################################################################
 # Specific rules of growth diagrams
 ######################################################################
+
 
 class RuleShiftedShapes(Rule):
     r"""

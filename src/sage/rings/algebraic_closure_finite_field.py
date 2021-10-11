@@ -865,17 +865,14 @@ class AlgebraicClosureFiniteField_generic(Field):
 
             sage: from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField
             sage: F = AlgebraicClosureFiniteField(GF(5), 'z')
-            sage: g = F.gens()
-            sage: g
-            Lazy family (<lambda>(i))_{i in Positive integers}
+            sage: g = F.gens(); g
+            Lazy family (...(i))_{i in Positive integers}
             sage: g[3]
             z3
-
         """
         from sage.sets.family import Family
         from sage.sets.positive_integers import PositiveIntegers
-
-        return Family(PositiveIntegers(), lambda n: self.gen(n))
+        return Family(PositiveIntegers(), self.gen)
 
     def _first_ngens(self, n):
         """

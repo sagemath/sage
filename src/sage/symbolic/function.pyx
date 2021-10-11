@@ -139,12 +139,11 @@ is attempted, and after that ``sin()`` which succeeds::
 #*****************************************************************************
 
 from sage.structure.sage_object cimport SageObject
-from sage.structure.element cimport Element, parent
+from sage.structure.element cimport Element, parent, Expression
 from sage.misc.lazy_attribute import lazy_attribute
 from .expression import (
     call_registered_function, find_registered_function, register_or_update_function,
-    get_sfunction_from_hash,
-    is_Expression
+    get_sfunction_from_hash
 )
 from .expression import get_sfunction_from_serial as get_sfunction_from_serial
 
@@ -153,7 +152,6 @@ from sage.structure.coerce cimport (coercion_model,
 from sage.structure.richcmp cimport richcmp
 
 from sage.misc.fpickle import pickle_function, unpickle_function
-from sage.ext.fast_eval import FastDoubleFunc
 
 # List of functions which ginac allows us to define custom behavior for.
 # Changing the order of this list could cause problems unpickling old pickles.
@@ -334,7 +332,7 @@ cdef class Function(SageObject):
         try:
             evalf = self._evalf_  # catch AttributeError early
             if any(self._is_numerical(x) for x in args):
-                if not any(is_Expression(x) for x in args):
+                if not any(isinstance(x, Expression) for x in args):
                     p = coercion_model.common_parent(*args)
                     return evalf(*args, parent=p)
         except Exception:
@@ -516,16 +514,6 @@ cdef class Function(SageObject):
         if self._nargs > 0 and len(args) != self._nargs:
             raise TypeError("Symbolic function %s takes exactly %s arguments (%s given)" % (self._name, self._nargs, len(args)))
 
-        # support fast_float
-        if self._nargs == 1:
-            if isinstance(args[0], FastDoubleFunc):
-                try:
-                    method = getattr(args[0], self._name)
-                except AttributeError:
-                    raise TypeError("cannot handle fast float arguments")
-                else:
-                    return method()
-
         # if the given input is a symbolic expression, we don't convert it back
         # to a numeric type at the end
         from .ring import SR
@@ -553,7 +541,7 @@ cdef class Function(SageObject):
 
         else: # coerce == False
             for a in args:
-                if not is_Expression(a):
+                if not isinstance(a, Expression):
                     raise TypeError("arguments must be symbolic expressions")
 
         return call_registered_function(self._serial, self._nargs, args, hold,
@@ -728,47 +716,6 @@ cdef class Function(SageObject):
             'ff'
         """
         return self._conversions.get('maxima', self._name)
-
-    def _fast_float_(self, *vars):
-        """
-        Returns an object which provides fast floating point evaluation of
-        self.
-
-        See sage.ext.fast_eval? for more information.
-
-        EXAMPLES::
-
-            sage: sin._fast_float_()
-            <sage.ext.fast_eval.FastDoubleFunc object at 0x...>
-            sage: sin._fast_float_()(0)
-            0.0
-
-        ::
-
-            sage: ff = cos._fast_float_(); ff
-            <sage.ext.fast_eval.FastDoubleFunc object at 0x...>
-            sage: ff.is_pure_c()
-            True
-            sage: ff(0)
-            1.0
-
-        ::
-
-            sage: ff = erf._fast_float_()
-            sage: ff.is_pure_c()
-            False
-            sage: ff(1.5) # tol 1e-15
-            0.9661051464753108
-            sage: erf(1.5)
-            0.966105146475311
-        """
-        import sage.ext.fast_eval as fast_float
-
-        args = [fast_float.fast_float_arg(n) for n in range(self.number_of_arguments())]
-        try:
-            return self(*args)
-        except TypeError as err:
-            return fast_float.fast_float_func(self, *args)
 
     def _fast_callable_(self, etb):
         r"""

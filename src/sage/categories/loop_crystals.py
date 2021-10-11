@@ -120,9 +120,7 @@ class LoopCrystals(Category_singleton):
             G = Crystals().parent_class.digraph(self, subset, index_set)
             if have_dot2tex():
                 def eopt(u_v_label):
-                    if u_v_label[2] == 0:
-                        return {"dir": "back"}
-                    return {}
+                    return {"backward": u_v_label[2] == 0}
                 G.set_latex_options(edge_options=eopt)
             return G
 

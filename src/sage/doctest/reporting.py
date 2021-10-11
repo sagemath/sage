@@ -182,10 +182,10 @@ class DocTestReporter(SageObject):
             cmd += " --long"
 
         warnlong = self.controller.options.warn_long
-        if warnlong is not None:
+        if warnlong >= 0:
             cmd += " --warn-long"
             if warnlong != 1.0:
-                cmd += " %.1f"%(warnlong)
+                cmd += " %.1f" % (warnlong)
         seed = self.controller.options.random_seed
         cmd += " --random-seed={}".format(seed)
         cmd += " " + source.printpath

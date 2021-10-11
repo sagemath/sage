@@ -756,6 +756,13 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: u = vector([-423434678248195, -18882583298608161305227077482])
             sage: L.closest_vector(u) in L
             True
+
+        Check that the example, of non-maximal rank, from :trac:`32486` works::
+
+            from sage.modules.free_module_integer import IntegerLattice
+            L = IntegerLattice([[-1,  0,  1],[1,0,2]])
+            L.closest_vector((1,1,1))
+            (2, 0, 1)
         """
         voronoi_cell = self.voronoi_cell()
 

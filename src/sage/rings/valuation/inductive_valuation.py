@@ -207,9 +207,7 @@ class InductiveValuation(DevelopingValuation):
         # - we may lift h to arbitrary precision
         # - we can add anything which times e0 has positive valuation, e.g., we
         # may drop coefficients of positive valuation
-        h = h.map_coefficients(lambda c:_lift_to_maximal_precision(c))
-
-        return h
+        return h.map_coefficients(_lift_to_maximal_precision)
 
     @cached_method
     def mu(self):
@@ -1384,8 +1382,8 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             raise ValueError("equivalence units cannot have a minimal representative")
 
         e = list(self.coefficients(f))[degree]
-        h = self.equivalence_reciprocal(e).map_coefficients(lambda c:_lift_to_maximal_precision(c))
-        g = h*f
+        h = self.equivalence_reciprocal(e).map_coefficients(_lift_to_maximal_precision)
+        g = h * f
         vg = self(g)
 
         coeffs = [c if v == vg else c.parent().zero() for v,c in zip(self.valuations(g), self.coefficients(g))]

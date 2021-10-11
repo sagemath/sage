@@ -744,7 +744,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: error = NormalFormGame(p1, p2)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes from 1 to 2 positional arguments but 3 were given
+            TypeError: ...__init__() takes from 1 to 2 positional arguments but 3 were given
 
         When initiating, argument passed must be a list or nothing::
 

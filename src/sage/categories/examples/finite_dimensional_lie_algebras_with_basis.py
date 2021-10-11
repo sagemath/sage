@@ -1,12 +1,12 @@
 r"""
 Examples of a finite dimensional Lie algebra with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
@@ -15,6 +15,7 @@ from sage.modules.free_module import FreeModule
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.examples.lie_algebras import LieAlgebraFromAssociative as BaseExample
+
 
 class AbelianLieAlgebra(Parent, UniqueRepresentation):
     r"""

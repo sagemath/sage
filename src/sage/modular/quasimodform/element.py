@@ -341,3 +341,120 @@ class QuasiModularFormsElement(ModuleElement):
             True
         """
         return self._polynomial.degree() <= 0 and self._polynomial[0].is_modular_form()
+
+    def polynomial(self, names='E2, E4, E6'):
+        r"""
+        Return a multivariate polynomial `P(E_2, E_4, E_6)` corresponding to the
+        given form where `E_2`, `E_4` and `E_6` are the generators of the
+        quasimodular form ring given by
+        :meth:`~sage.modular.quasiform.ring.QuasiModularForms.gens`.
+
+        INPUT:
+
+        - ``names`` (str, default: ``'E2, E4, E6'``) -- a list or tuple of names
+          (strings), or a comma separated string. Correspond to the names of the
+          variables;
+
+        OUTPUT: A multivariate polynomial in the variables ``names``
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: (QM.0 + QM.1).polynomial()
+            E4 + E2
+            sage: (1/2 + QM.0 + 2*QM.1^2 + QM.0*QM.2).polynomial()
+            E2*E6 + 2*E4^2 + E2 + 1/2
+        """
+        P = self.parent().polynomial_ring(names)
+        g0, g1 = self.parent().modular_forms_subring().polynomial_ring(names='x').gens()
+        E2, E4, E6 = P.gens()
+        return sum(f.to_polynomial().subs({g0:E4, g1:E6}) * E2 ** exp for exp, f in enumerate(self._polynomial.coefficients(sparse=False)))
+
+    to_polynomial = polynomial # alias
+
+    def weights_list(self):
+        r"""
+        Return the list of the weights of all the graded components of the given
+        graded quasimodular form.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: (QM.0).weights_list()
+            [2]
+            sage: (QM.0 + QM.1 + QM.2).weights_list()
+            [2, 4, 6]
+            sage: (QM.0 * QM.1 + QM.2).weights_list()
+            [6]
+            sage: QM(1/2).weights_list()
+            [0]
+        """
+        return sorted(list(self.to_polynomial().homogeneous_components()))
+
+    def is_homogeneous(self):
+        r"""
+        Return True if the graded quasimodular form is a homogeneous element,
+        that is it lives in a unique graded components of the graded ring of
+        self.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: (QM.0).is_homogeneous()
+            True
+            sage: (QM.0 + QM.1).is_homogeneous()
+            False
+            sage: (QM.0 * QM.1 + QM.2).is_homogeneous()
+            True
+            sage: QM(1).is_homogeneous()
+            True
+            sage: (1 + QM.0).is_homogeneous()
+            False
+        """
+        return len(self.weights_list()) == 1
+
+    def weight(self):
+        r"""
+        Return the weight of the given quasiform. Note that the given form must
+        be homogeneous.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: (QM.0).weight()
+            2
+            sage: (QM.0 * QM.1 + QM.2).weight()
+            6
+            sage: QM(1/2).weight()
+            0
+            sage: (QM.0 + QM.1).weight()
+            Traceback (most recent call last):
+            ...
+            ValueError: the given graded quasiform is not an homogeneous element
+        """
+        if self.is_homogeneous():
+            return self.to_polynomial().degree()
+        else:
+            raise ValueError("the given graded quasiform is not an homogeneous element")
+
+    def homogeneous_components(self):
+        r"""
+        Return a dictionnary where the values are the homogeneous components of
+        the given graded form and the keys are the weights of those components.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: (QM.0).homogeneous_components()
+            {2: 1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)}
+            sage: (QM.0 + QM.1 + QM.2).homogeneous_components()
+            {2: 1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6),
+            4: 1 + 240*q + 2160*q^2 + 6720*q^3 + 17520*q^4 + 30240*q^5 + O(q^6),
+            6: 1 - 504*q - 16632*q^2 - 122976*q^3 - 532728*q^4 - 1575504*q^5 + O(q^6)}
+            sage: (1 + QM.0).homogeneous_components()
+            {0: 1, 2: 1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)}
+        """
+        QM = self.parent()
+        poly_self = self.to_polynomial()
+        pol_hom_comp = poly_self.homogeneous_components()
+        return { k : QM.from_polynomial(pol) for k, pol in pol_hom_comp.items()}

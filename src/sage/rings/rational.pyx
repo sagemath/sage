@@ -3267,7 +3267,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/2).gamma(5)
             Traceback (most recent call last):
             ...
-            TypeError: gamma() takes exactly 0 positional arguments (1 given)
+            TypeError: ...gamma() takes exactly 0 positional arguments (1 given)
         """
         if prec:
             return self.n(prec).gamma()

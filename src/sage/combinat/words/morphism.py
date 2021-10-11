@@ -89,8 +89,6 @@ Many other functionalities...::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from itertools import chain
-
 from sage.misc.callable_dict import CallableDict
 from sage.structure.sage_object import SageObject
 from sage.misc.cachefunc import cached_method
@@ -1728,73 +1726,6 @@ class WordMorphism(SageObject):
         else:
             return all(w.length() == k for w in self.images())
 
-    def _fixed_point_iterator(self, letter):
-        r"""
-        Returns an iterator of the letters of the fixed point of ``self``
-        starting with ``letter``.
-
-        If w is the iterated word, then this iterator: outputs the elements
-        of morphism[ w[i] ], appends morphism[ w[i+1] ] to w, increments i.
-
-        INPUT:
-
-        - ``self`` - an endomorphism, must be prolongable on
-           letter
-
-        - ``letter`` - a letter in the domain of ``self``
-
-        OUTPUT:
-
-        - iterator of the fixed point
-
-        EXAMPLES::
-
-            sage: m = WordMorphism('a->abc,b->,c->')
-            sage: list(m._fixed_point_iterator('a'))
-            ['a', 'b', 'c']
-
-        The morphism must be prolongable on the letter or the iterator will
-        be empty::
-
-            sage: list(m._fixed_point_iterator('b'))
-            []
-
-        The morphism must be an endomorphism::
-
-            sage: m = WordMorphism('a->ac,b->aac')
-            sage: list(m._fixed_point_iterator('a'))
-            Traceback (most recent call last):
-            ...
-            KeyError: 'c'
-
-        We check that :trac:`8595` is fixed::
-
-            sage: s = WordMorphism({('a', 1):[('a', 1), ('a', 2)], ('a', 2):[('a', 1)]})
-            sage: it = s._fixed_point_iterator(('a',1))
-            sage: next(it)
-            ('a', 1)
-
-        This shows that ticket :trac:`13668` has been resolved::
-
-            sage: s = WordMorphism({1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]})
-            sage: (s^7).fixed_points()
-            [word: 1223234234523456234567234567823456789234...,
-             word: 2,3,4,5,6,7,8,9,10,1,1,2,1,2,2,3,1,2,2,3,2,3,4,1,2,2,3,2,3,4,2,3,4,5,1,2,2,3,2,3,...]
-            sage: (s^7).reversal().fixed_points()
-            []
-        """
-        w = iter(self.image(letter))
-        while True:
-            try:
-                for a in self.image(next(w)):
-                    yield a
-                else:
-                    next_w = next(w)
-                    w = chain([next_w], w, self.image(next_w))
-            except StopIteration:
-                return
-
-
     def fixed_point(self, letter):
         r"""
         Returns the fixed point of ``self`` beginning by the given ``letter``.
@@ -1886,8 +1817,18 @@ class WordMorphism(SageObject):
 
         parent = self.codomain()
         if self.is_growing(letter):
-            parent = parent.shift()
-        return parent(self._fixed_point_iterator(letter))
+            from sage.combinat.words.word import InfiniteWord_morphic
+            return InfiniteWord_morphic(parent.shift(), self, letter,
+                                        coding=None, length=Infinity)
+        else:
+            from sage.combinat.words.word import FiniteWord_morphic
+            w = FiniteWord_morphic(parent, self, letter,
+                                   coding=None, length='finite')
+            # since FiniteWord_morphic uses the method __getitem__
+            # from FiniteWord_callable, the length must be precomputed
+            # for __getitem__ to work properly
+            w.length()
+            return w
 
     def fixed_points(self):
         r"""

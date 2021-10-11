@@ -155,7 +155,7 @@ cdef class Map(Element):
             sage: phi.domain
             <weakref at ...; to 'sage.rings.integer_ring.IntegerRing_class' at ...>
             sage: type(phi)
-            <type 'sage.categories.map.FormalCompositeMap'>
+            <class 'sage.categories.map.FormalCompositeMap'>
             sage: psi = copy(phi)   # indirect doctest
             sage: psi
             Composite map:
@@ -796,7 +796,7 @@ cdef class Map(Element):
             sage: f(1/2)             # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: <type 'sage.categories.map.Map'>
+            NotImplementedError: <class 'sage.categories.map.Map'>
         """
         raise NotImplementedError(type(self))
 
@@ -811,7 +811,7 @@ cdef class Map(Element):
             sage: f(1/2, 2, foo='bar')      # indirect doctest
             Traceback (most recent call last):
             ...
-            NotImplementedError: _call_with_args not overridden to accept arguments for <type 'sage.categories.map.Map'>
+            NotImplementedError: _call_with_args not overridden to accept arguments for <class 'sage.categories.map.Map'>
         """
         if not args and not kwds:
             return self(x)
@@ -1185,7 +1185,7 @@ cdef class Map(Element):
             sage: f.is_surjective()
             Traceback (most recent call last):
             ...
-            NotImplementedError: <type 'sage.categories.map.Map'>
+            NotImplementedError: <class 'sage.categories.map.Map'>
         """
         raise NotImplementedError(type(self))
 
@@ -1278,7 +1278,7 @@ cdef class Map(Element):
 
             sage: f = sage.rings.morphism.RingMap(ZZ.Hom(ZZ))
             sage: type(f)
-            <type 'sage.rings.morphism.RingMap'>
+            <class 'sage.rings.morphism.RingMap'>
             sage: hash(f) == hash(f)
             True
             sage: {f: 1}[f]
@@ -1310,7 +1310,7 @@ cdef class Section(Map):
         sage: sf(a)
         Traceback (most recent call last):
         ...
-        NotImplementedError: <type 'sage.categories.map.Section'>
+        NotImplementedError: <class 'sage.categories.map.Section'>
     """
 
     def __init__(self, map):

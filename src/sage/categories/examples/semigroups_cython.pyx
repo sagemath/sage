@@ -79,7 +79,7 @@ cdef class LeftZeroSemigroupElement(Element):
             sage: S = LeftZeroSemigroup()
             sage: x = S(3)
             sage: x.__reduce__()
-            (<type 'sage.categories.examples.semigroups_cython.LeftZeroSemigroupElement'>,
+            (<class 'sage.categories.examples.semigroups_cython.LeftZeroSemigroupElement'>,
              (An example of a semigroup: the left zero semigroup, 3))
         """
         return LeftZeroSemigroupElement, (self._parent, self._value)

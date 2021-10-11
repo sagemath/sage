@@ -584,7 +584,7 @@ class Sandpile(DiGraph):
             sage: G = Sandpile({0:[]}, 0, weighted=False)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() got an unexpected keyword argument 'weighted'
+            TypeError: ...__init__() got an unexpected keyword argument 'weighted'
         """
         # set graph name
         if isinstance(g, Graph) or isinstance(g, DiGraph):

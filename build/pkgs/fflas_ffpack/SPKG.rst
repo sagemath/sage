@@ -30,7 +30,8 @@ Dependencies
 ------------
 
 -  Givaro
--  ATLAS (non-OSX)/The Accelerate FrameWork (on OSX)
+-  a BLAS implementation such as openblas
+
 
 Patches
 -------

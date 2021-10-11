@@ -7,17 +7,17 @@ Here is an example of a linear function tensored with a vector space::
     sage: lt = x[0] * vector([3,4]) + 1;   lt
     (1, 1) + (3, 4)*x_0
     sage: type(lt)
-    <type 'sage.numerical.linear_tensor_element.LinearTensor'>
+    <class 'sage.numerical.linear_tensor_element.LinearTensor'>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cpython.object cimport *
 

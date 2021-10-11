@@ -706,7 +706,7 @@ class Permutation(CombinatorialElement):
         return len(self)
 
     grade = size  # for the category SetsWithGrading()
-    
+
     def cycle_string(self, singletons=False) -> str:
         """
         Return a string of the permutation in cycle notation.

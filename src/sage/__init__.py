@@ -3,11 +3,6 @@
 # See https://trac.sagemath.org/ticket/29705
 
 
-# IPython calls this when starting up
-def load_ipython_extension(*args):
-    import sage.repl.ipython_extension
-    sage.repl.ipython_extension.load_ipython_extension(*args)
-
 
 # Deprecated leftover of monkey-patching inspect.isfunction() to support Cython functions.
 # We cannot use lazy_import for the deprecation here.

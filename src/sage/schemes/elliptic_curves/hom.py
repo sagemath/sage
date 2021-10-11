@@ -12,6 +12,7 @@ maps --- regardless of differences in internal representations.
 
 from sage.categories.morphism import Morphism
 
+
 class EllipticCurveHom(Morphism):
     """
     Base class for elliptic-curve morphisms.
@@ -67,11 +68,12 @@ class EllipticCurveHom(Morphism):
             raise TypeError(f'cannot compose {type(self)} with {type(other)}')
 
         ret = self._composition_impl(self, other)
-        if ret is not NotImplemented: return ret
+        if ret is not NotImplemented:
+            return ret
 
         ret = other._composition_impl(self, other)
-        if ret is not NotImplemented: return ret
+        if ret is not NotImplemented:
+            return ret
 
         # fall back to generic formal composite map
         return Morphism._composition_(self, other, homset)
-

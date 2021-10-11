@@ -217,7 +217,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             ....:                      Vrep_minimal=True, Hrep_minimal=True, pref_rep='Vrep')
             Traceback (most recent call last):
             ...
-            TypeError: _init_Hrepresentation() takes 3 positional arguments but 9 were given
+            TypeError: ..._init_Hrepresentation() takes 3 positional arguments but 9 were given
 
         The empty polyhedron is detected when the Vrepresentation is given with generator;
         see :trac:`29899`::

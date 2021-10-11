@@ -140,7 +140,7 @@ cdef class PPLBackend(GenericBackend):
             sage: p.base_ring()
             Rational Field
             sage: type(p.zero())
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: p.init_mip()
         """
 

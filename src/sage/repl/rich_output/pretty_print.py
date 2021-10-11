@@ -164,7 +164,7 @@ class SequencePrettyPrinter(SageObject):
             sage: seq._concatenate_graphs().show(edge_labels=True)
             Traceback (most recent call last):
             ...
-            TypeError: matplotlib() got an unexpected keyword argument 'edge_labels'
+            TypeError: ...matplotlib() got an unexpected keyword argument 'edge_labels'
         """
         from sage.plot.plot import Graphics
         from sage.graphs.graph import GenericGraph

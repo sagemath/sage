@@ -168,9 +168,6 @@ Perché avete scritto Sage da zero, invece di usare software e librerie preesist
 Sage non è stato scritto da zero. La maggior parte delle sue funzionalità sono
 realizzate attraverso progetti FOSS come
 
-* `ATLAS <http://math-atlas.sourceforge.net>`_ --- libreria software per Algebra
-  Lineare ottimizzata automaticamente.
-
 * `BLAS <http://www.netlib.org/blas>`_ --- sottoprogrammi per Algebra
   Lineare di base.
 

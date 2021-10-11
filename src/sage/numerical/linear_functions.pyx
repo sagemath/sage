@@ -11,12 +11,12 @@ either equalities or less-or-equal. For example::
     sage: f = 1 + x[1] + 2*x[2];  f     #  a linear function
     1 + x_0 + 2*x_1
     sage: type(f)
-    <type 'sage.numerical.linear_functions.LinearFunction'>
+    <class 'sage.numerical.linear_functions.LinearFunction'>
 
     sage: c = (0 <= f);  c    # a constraint
     0 <= 1 + x_0 + 2*x_1
     sage: type(c)
-    <type 'sage.numerical.linear_functions.LinearConstraint'>
+    <class 'sage.numerical.linear_functions.LinearConstraint'>
 
 Note that you can use this module without any reference to linear
 programming, it only implements linear functions over a base ring and
@@ -529,7 +529,7 @@ cdef class LinearFunctionsParent_class(Parent):
 
         sage: from sage.numerical.linear_functions import LinearFunctionsParent_class
         sage: LinearFunctionsParent_class
-        <type 'sage.numerical.linear_functions.LinearFunctionsParent_class'>
+        <class 'sage.numerical.linear_functions.LinearFunctionsParent_class'>
     """
     def __cinit__(self):
         """
@@ -675,7 +675,7 @@ cdef class LinearFunctionsParent_class(Parent):
             sage: LF(123)    # indirect doctest
             123
             sage: type(_)
-            <type 'sage.numerical.linear_functions.LinearFunction'>
+            <class 'sage.numerical.linear_functions.LinearFunction'>
 
             sage: p_QQ = MixedIntegerLinearProgram(solver='ppl')
             sage: LF_QQ = p_QQ.linear_functions_parent()
@@ -1039,7 +1039,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
             sage: p = MixedIntegerLinearProgram()
             sage: LF = p.linear_functions_parent()
             sage: f = LF(1);  type(f)
-            <type 'sage.numerical.linear_functions.LinearFunction'>
+            <class 'sage.numerical.linear_functions.LinearFunction'>
             sage: f._coeff_formatter(1)
             ''
             sage: f._coeff_formatter(1, constant_term=True)
@@ -1302,7 +1302,7 @@ cdef class LinearConstraintsParent_class(Parent):
             x_0 == x_1 == x_2
 
             sage: type(_)
-            <type 'sage.numerical.linear_functions.LinearConstraint'>
+            <class 'sage.numerical.linear_functions.LinearConstraint'>
 
         TESTS::
 

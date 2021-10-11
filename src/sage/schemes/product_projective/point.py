@@ -442,14 +442,14 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: PP = ProductProjectiveSpaces(QQ, [2,2], 'x')
             sage: Q = PP([1, 7, 5, 18, 2, 3])
             sage: Q.global_height()
-            1.94591014905531
+            2.89037175789616
 
         ::
 
             sage: PP = ProductProjectiveSpaces(ZZ, [1,1], 'x')
             sage: A = PP([-30, 2, 1, 6])
             sage: A.global_height()
-            3.40119738166216
+            2.70805020110221
 
         ::
 
@@ -458,7 +458,7 @@ class ProductProjectiveSpaces_point_ring(SchemeMorphism_point):
             sage: PP = ProductProjectiveSpaces(k, [1, 2], 'y')
             sage: Q = PP([3, 5*w+1, 1, 7*w, 10])
             sage: Q.global_height()
-            2.30258509299405
+            2.75062910527236
 
         ::
 

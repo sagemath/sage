@@ -18,5 +18,6 @@ requires = [
         numpy          \
         pkgconfig      \
         pplpy          \
+        memory_allocator \
                     ')]
 build-backend = "setuptools.build_meta"

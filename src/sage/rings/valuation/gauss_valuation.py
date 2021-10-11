@@ -391,11 +391,10 @@ class GaussValuation_generic(NonFinalInductiveValuation):
         .. SEEALSO::
 
             :meth:`reduce`
-
         """
         F = self.residue_ring().coerce(F)
-
-        return F.map_coefficients(lambda c:self._base_valuation.lift(c), self._base_valuation.domain())
+        return F.map_coefficients(self._base_valuation.lift,
+                                  self._base_valuation.domain())
 
     def lift_to_key(self, F):
         """

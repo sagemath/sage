@@ -40,7 +40,8 @@ jobs:
       matrix:
         # This list is different from the one in tox.yml:
         # Trac #31526 switches gcc 4.x-based distributions to using the gcc_spkg configuration factor
-        tox_system_factor: [ubuntu-trusty-gcc_spkg, ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-groovy, ubuntu-hirsute, debian-jessie-gcc_spkg, debian-stretch, debian-buster, debian-bullseye, debian-sid, linuxmint-17-gcc_spkg, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, centos-7-gcc_spkg, centos-8, gentoo, archlinux-latest, opensuse-15, opensuse-15.3, opensuse-tumbleweed, slackware-14.2, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-gcc_spkg]
+        # Trac #32281 removes gcc 4.x-based distributions whose binutils are unusable
+        tox_system_factor: [ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-groovy, ubuntu-hirsute, debian-jessie-gcc_spkg, debian-stretch, debian-buster, debian-bullseye, debian-sid, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, centos-7-gcc_spkg, centos-8, gentoo, archlinux-latest, opensuse-15, opensuse-15.3, opensuse-tumbleweed, slackware-14.2, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386-gcc_spkg]
         tox_packages_factor: [maximal]
         targets_pattern: [0-g, h-o, p, q-z]
     env:
