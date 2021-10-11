@@ -471,39 +471,6 @@ class Polyhedron_base(Element, ConvexSet_closed):
         M.set_immutable()
         return M
 
-    def _vertex_adjacency_matrix(self):
-        """
-        Compute the vertex adjacency matrix in case it has not been
-        computed during initialization.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)])
-            sage: p._vertex_adjacency_matrix()
-            [0 1 1]
-            [1 0 1]
-            [1 1 0]
-        """
-        # TODO: This implementation computes the whole face lattice,
-        # which is much more information than necessary.
-        M = matrix(ZZ, self.n_Vrepresentation(), self.n_Vrepresentation(), 0)
-
-        def set_adjacent(v1, v2):
-            if v1 is v2:
-                return
-            i = v1.index()
-            j = v2.index()
-            M[i, j] = 1
-            M[j, i] = 1
-
-        face_lattice = self.face_lattice()
-        for face in face_lattice:
-            Vrep = face.ambient_Vrepresentation()
-            if len(Vrep) == 2:
-                set_adjacent(Vrep[0], Vrep[1])
-        M.set_immutable()
-        return M
-
     def _delete(self):
         """
         Delete this polyhedron.
@@ -2786,7 +2753,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
                 sage: P.adjacency_matrix().is_immutable()
                 True
         """
-        return self._vertex_adjacency_matrix()
+        return self.combinatorial_polyhedron().vertex_adjacency_matrix()
 
     adjacency_matrix = vertex_adjacency_matrix
 

@@ -71,7 +71,7 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef inline int _compute_ridges(self, dual) except -1:
         return self._compute_edges_or_ridges(dual, False)
 
-    cdef int _compute_edges_or_ridges(self, bint dual, bint do_edges) except -1
+    cdef int _compute_edges_or_ridges(self, int dual, bint do_edges) except -1
     cdef size_t _compute_edges_or_ridges_with_iterator(
             self, FaceIterator face_iter, const bint do_atom_rep, const bint do_f_vector,
             size_t ***edges_pt, size_t *counter_pt, size_t *current_length_pt,
