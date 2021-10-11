@@ -177,8 +177,8 @@ equilateral triangle whose vertex coordinates involve `\sqrt{3}`. An
 exact way to work with roots in Sage is the :mod:`Algebraic Real Field
 <sage.rings.qqbar>` ::
 
-    sage: triangle = Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)], base_ring=AA) # optional - sage.rings.number_field
-    sage: triangle.Hrepresentation()                                            # optional - sage.rings.number_field
+    sage: triangle = Polyhedron([(0,0), (1,0), (1/2, sqrt(3)/2)], base_ring=AA) # optional - sage.rings.number_field  # optional - sage.symbolic
+    sage: triangle.Hrepresentation()                                            # optional - sage.rings.number_field  # optional - sage.symbolic
     (An inequality (-1, -0.5773502691896258?) x + 1 >= 0,
      An inequality (1, -0.5773502691896258?) x + 0 >= 0,
      An inequality (0, 1.154700538379252?) x + 0 >= 0)
