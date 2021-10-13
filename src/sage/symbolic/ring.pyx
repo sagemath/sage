@@ -233,8 +233,9 @@ cdef class SymbolicRing(CommutativeRing):
                   or isinstance(R, (sage.rings.abc.RealIntervalField,
                                     sage.rings.abc.ComplexIntervalField,
                                     sage.rings.abc.RealBallField,
-                                    sage.rings.abc.ComplexBallField))
-                  or is_IntegerModRing(R) or is_FiniteField(R)):
+                                    sage.rings.abc.ComplexBallField,
+                                    sage.rings.abc.IntegerModRing))
+                  or is_FiniteField(R)):
                 return True
             elif isinstance(R, GenericSymbolicSubring):
                 return True
