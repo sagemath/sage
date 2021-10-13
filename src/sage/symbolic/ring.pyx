@@ -47,6 +47,7 @@ from sage.structure.element cimport Element, Expression
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
+import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 
 # is_SymbolicVariable used to be defined here; re-export it
@@ -205,7 +206,6 @@ cdef class SymbolicRing(CommutativeRing):
             from sage.rings.real_mpfr import mpfr_prec_min
 
             from sage.rings.fraction_field import is_FractionField
-            from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
             from sage.rings.real_mpfi import is_RealIntervalField
             from sage.rings.real_arb import RealBallField
             from sage.rings.complex_arb import ComplexBallField

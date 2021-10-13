@@ -109,7 +109,7 @@ from sage.rings.integer cimport Integer
 from sage.rings.ring import is_Ring
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+import sage.rings.abc
 from sage.rings.rational_field import QQ
 from sage.arith.all import gcd
 
@@ -1487,7 +1487,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             return A
 
         from .matrix_modn_dense_double import MAX_MODULUS
-        if is_IntegerModRing(R) and R.order() < MAX_MODULUS:
+        if isinstance(R, sage.rings.abc.IntegerModRing) and R.order() < MAX_MODULUS:
             b = R.order()
             A, d = self._clear_denom()
             if not b.gcd(d).is_one():

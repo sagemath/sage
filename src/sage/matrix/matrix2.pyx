@@ -1981,6 +1981,11 @@ cdef class Matrix(Matrix1):
             sage: A.determinant() == B.determinant()
             True
         """
+<<<<<<< HEAD
+=======
+        from sage.symbolic.ring import is_SymbolicExpressionRing
+
+>>>>>>> 355dbcbbd525801dfe8e17dad86b9e18662f2902
         cdef Py_ssize_t n
         n = self._ncols
 

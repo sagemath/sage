@@ -46,6 +46,7 @@ AUTHORS:
 
 import math
 
+import sage.rings.abc
 from sage.rings.all import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 import sage.groups.additive_abelian.additive_abelian_group as groups
@@ -156,8 +157,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         # EllipticCurvePoint_finite_field for finite rings, so that we
         # can do some arithmetic on points over Z/NZ, for teaching
         # purposes.
-        from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-        if is_IntegerModRing(K):
+        if isinstance(K, sage.rings.abc.IntegerModRing):
             self._point = ell_point.EllipticCurvePoint_finite_field
 
     _point = ell_point.EllipticCurvePoint

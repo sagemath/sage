@@ -27,9 +27,9 @@ from sage.structure.category_object import normalize_names
 import sage.rings.ring as ring
 import sage.rings.padics.padic_base_leaves as padic_base_leaves
 
+import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
 
 from sage.misc.cachefunc import weak_cached_function
 
@@ -694,7 +694,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
 
     # Specialized implementations
     specialized = None
-    if is_IntegerModRing(base_ring):
+    if isinstance(base_ring, sage.rings.abc.IntegerModRing):
         n = base_ring.order()
         if n.is_prime():
             specialized = polynomial_ring.PolynomialRing_dense_mod_p

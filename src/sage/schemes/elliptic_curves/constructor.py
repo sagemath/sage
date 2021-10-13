@@ -25,7 +25,7 @@ AUTHORS:
 
 import sage.rings.all as rings
 
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+import sage.rings.abc
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.number_field.number_field import is_NumberField
@@ -464,7 +464,7 @@ class EllipticCurveFactory(UniqueFactory):
         elif rings.is_pAdicField(R):
             from .ell_padic_field import EllipticCurve_padic_field
             return EllipticCurve_padic_field(R, x)
-        elif is_FiniteField(R) or (is_IntegerModRing(R) and R.characteristic().is_prime()):
+        elif is_FiniteField(R) or (isinstance(R, sage.rings.abc.IntegerModRing) and R.characteristic().is_prime()):
             from .ell_finite_field import EllipticCurve_finite_field
             return EllipticCurve_finite_field(R, x)
         elif R in _Fields:
