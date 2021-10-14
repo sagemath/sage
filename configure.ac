@@ -448,10 +448,19 @@ AC_ARG_ENABLE([download-from-upstream-url],
 AC_ARG_ENABLE(
   [system-site-packages], [AS_HELP_STRING(
     [--enable-system-site-packages],
-    [allow sage to use python packages from the system (experimental; default: no)]
+    [allow the use of python packages from the system (experimental; default: no)]
   )], [
   AS_IF([test "x$enable_system_site_packages" = "xyes"], [
     SAGE_VENV_FLAGS="${SAGE_VENV_FLAGS} --system-site-packages"
+
+    dnl We want to raise an error if the user asked for "system site
+    dnl packages" but the system python will not be used. Technically
+    dnl that causes no problems (SAGE_PYTHON_PACKAGE_CHECK always fails,
+    dnl so SPKGs are used for all python packages), but it may be confusing
+    dnl to end users who expect the flag to actually give them access to
+    dnl their system python packages and who may not be paying close
+    dnl attention to their ./configure output.
+    with_system_python3="force"
   ])
 ])
 AC_SUBST([SAGE_VENV_FLAGS])
