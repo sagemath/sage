@@ -85,7 +85,9 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
       sage_spkg_install_$1=yes
     ])
 
-    rm -rf config.venv
+    dnl Clean up config.venv, but only if we could have created it.
+    dnl (The --clear flag to pyvenv will not clobber a plain file.)
+    AS_IF([test -d config.venv], [rm -rf config.venv])
   ], [
     sage_spkg_install_$1=yes
   ])
