@@ -47,7 +47,8 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
     AS_IF(["${PYTHON_FOR_VENV}" -m venv --system-site-packages dnl
                                         --clear                dnl
                                         --without-pip          dnl
-					config.venv], [
+                                        config.venv            dnl
+                                        2>&AS_MESSAGE_LOG_FD], [
       AC_MSG_RESULT(yes)
       dnl strip all comments from install-requires.txt; this should leave
       dnl only a single line containing the version specification for this
@@ -72,7 +73,7 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
         [PYTHONUSERBASE="${PYTHONUSERBASE}" config.venv/bin/python3 -c dnl
            "from setuptools.version import pkg_resources;              dnl
             pkg_resources.require('${SAGE_PKG_VERSPEC}'.splitlines())" dnl
-	 2>/dev/null],
+	 2>&AS_MESSAGE_LOG_FD],
         [AC_MSG_RESULT(yes)],
         [AC_MSG_RESULT(no); sage_spkg_install_$1=yes]
       )
