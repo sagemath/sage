@@ -89,6 +89,23 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
     dnl (The --clear flag to pyvenv will not clobber a plain file.)
     AS_IF([test -d config.venv], [rm -rf config.venv])
   ], [
+    dnl System site packages are disabled.
     sage_spkg_install_$1=yes
+
+    dnl We have to retroactively hack the --with-system-foo={no,yes,force}
+    dnl mechanism here because it wasn't designed with the ability to
+    dnl disable arbitrary chunks of system packages in mind. The easy cases
+    dnl are "no" and "force" which require no action; "no" means we won't
+    dnl suggest the package anyway, and "force" will raise an error when
+    dnl the system-package check fails.
+    dnl
+    dnl The default of "yes" is more troubling because it is the default. To
+    dnl avoid prompting users to install packages that won't be used, we want
+    dnl to ignore "yes" when reporting the "hint: install these packages..."
+    dnl at the end of ./configure. To accomplish that, we change "yes" to
+    dnl "no" here, essentially changing the default for packages using this
+    dnl macro when --enable-system-site-packages is disabled. Packages with
+    dnl "no" are not suggested to the user.
+    AS_IF([test "${sage_use_system_$1}" = "yes"],[sage_use_system_$1=no])
   ])
 ])
