@@ -1,4 +1,4 @@
-from sage.rings.ring cimport CommutativeRing
+cimport sage.rings.abc
 
-cdef class SymbolicRing(CommutativeRing):
+cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
     cdef public dict symbols

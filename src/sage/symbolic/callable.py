@@ -61,6 +61,7 @@ The arguments in the definition must be symbolic variables (:trac:`10747`)::
     SyntaxError: can...t assign to function call
 """
 
+import sage.rings.abc
 from sage.symbolic.ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 
@@ -267,7 +268,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         return tuple(new_list)
 
 
-class CallableSymbolicExpressionRing_class(SymbolicRing):
+class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.CallableSymbolicExpressionRing):
     def __init__(self, arguments):
         """
         EXAMPLES:
