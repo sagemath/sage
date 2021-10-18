@@ -34,6 +34,10 @@
 #   ensure that the ./configure- and run-time views of the system
 #   are as similar as possible.
 #
+#   To avoid suggesting these system packages to users who have not
+#   set --enable-system-site-packages, this macro also changes the
+#   default for --with-system-foo from "yes" to "no" in that case.
+#
 
 AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
   AS_IF([test "${enable_system_site_packages}" = "yes"], [
