@@ -40,7 +40,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer cimport Integer
 from sage.arith.all import previous_prime, CRT_basis
 
-from sage.rings.real_mpfr import  is_RealField
+from sage.rings.real_mpfr cimport RealField_class
 from sage.rings.real_mpfr cimport RealNumber
 
 
@@ -510,7 +510,7 @@ def hadamard_row_bound_mpfr(Matrix A):
         ...
         OverflowError: cannot convert float infinity to integer
     """
-    if not is_RealField(A.base_ring()):
+    if not isinstance(A.base_ring(), RealField_class):
         raise TypeError("A must have base field an mpfr real field.")
 
     cdef RealNumber a, b

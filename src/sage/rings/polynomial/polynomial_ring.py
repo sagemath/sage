@@ -165,7 +165,7 @@ from sage.misc.prandom import randint
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
-from sage.rings.real_mpfr import is_RealField
+import sage.rings.abc
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.finite_rings.element_base import FiniteRingElement
 
@@ -1995,7 +1995,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
                 else:
                     from sage.rings.polynomial.polynomial_number_field import Polynomial_relative_number_field_dense
                     element_class = Polynomial_relative_number_field_dense
-            elif is_RealField(base_ring):
+            elif isinstance(base_ring, sage.rings.abc.RealField):
                 element_class = PolynomialRealDense
             elif isinstance(base_ring, sage.rings.complex_arb.ComplexBallField):
                 from sage.rings.polynomial.polynomial_complex_arb import Polynomial_complex_arb

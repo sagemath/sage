@@ -77,15 +77,25 @@ def is_RealDoubleField(x):
     """
     Returns ``True`` if ``x`` is the field of real double precision numbers.
 
+    This function is deprecated. Use :func:`isinstance` with
+    :class:`~sage.rings.abc.RealDoubleField` instead.
+
     EXAMPLES::
 
         sage: from sage.rings.real_double import is_RealDoubleField
         sage: is_RealDoubleField(RDF)
+        doctest:warning...
+        DeprecationWarning: is_RealDoubleField is deprecated;
+        use isinstance(..., sage.rings.abc.RealDoubleField) instead
+        See https://trac.sagemath.org/32610 for details.
         True
         sage: is_RealDoubleField(RealField(53))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32610, 'is_RealDoubleField is deprecated; use isinstance(..., sage.rings.abc.RealDoubleField) instead')
     return isinstance(x, RealDoubleField_class)
+
 
 cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
     """

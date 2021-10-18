@@ -236,7 +236,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                     except ImportError:
                         pass
 
-            if sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R):
+            if isinstance(R, sage.rings.abc.IntegerModRing):
                 from . import matrix_modn_dense_double, matrix_modn_dense_float
                 if R.order() < matrix_modn_dense_float.MAX_MODULUS:
                     return matrix_modn_dense_float.Matrix_modn_dense_float
@@ -326,7 +326,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
     if implementation is not None:
         raise ValueError("cannot choose an implementation for sparse matrices")
 
-    if sage.rings.finite_rings.integer_mod_ring.is_IntegerModRing(R) and R.order() < matrix_modn_sparse.MAX_MODULUS:
+    if isinstance(R, sage.rings.abc.IntegerModRing) and R.order() < matrix_modn_sparse.MAX_MODULUS:
         return matrix_modn_sparse.Matrix_modn_sparse
 
     if sage.rings.rational_field.is_RationalField(R):

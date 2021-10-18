@@ -147,6 +147,7 @@ from cysignals.signals cimport sig_on, sig_str, sig_off, sig_error
 
 import sage.categories.fields
 
+cimport sage.rings.abc
 cimport sage.rings.rational
 
 from cpython.float cimport PyFloat_AS_DOUBLE
@@ -301,7 +302,8 @@ cdef int acb_calc_func_callback(acb_ptr out, const acb_t inp, void * param,
     finally:
         sig_on()
 
-class ComplexBallField(UniqueRepresentation, Field):
+
+class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
     r"""
     An approximation of the field of complex numbers using pairs of mid-rad
     intervals.

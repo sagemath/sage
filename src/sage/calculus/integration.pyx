@@ -605,8 +605,8 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
                               "more items in upper and lower limits"
                              ).format(len(vars), tuple(vars), target_dim))
 
-        from sage.symbolic.expression import is_Expression
-        if is_Expression(func):
+        from sage.structure.element import Expression
+        if isinstance(func, Expression):
             if params:
                 to_sub = dict(zip(vars[-len(params):], params))
                 func = func.subs(to_sub)

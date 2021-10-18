@@ -31,7 +31,7 @@ from sage.libs.singular.decl cimport rDefault, GFInfo, ZnmInfo, nInitChar, AlgEx
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring cimport IntegerRing_class
 from sage.rings.integer_ring import ZZ
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+import sage.rings.abc
 from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.rational_field import RationalField
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
@@ -324,7 +324,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
 
         _ring = rDefault (_cf ,nvars, _names, nblcks, _order, _block0, _block1, _wvhdl)
 
-    elif is_IntegerModRing(base_ring):
+    elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
 
         ch = base_ring.characteristic()
         if ch < 2:

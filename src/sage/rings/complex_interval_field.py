@@ -40,6 +40,7 @@ from sage.structure.parent import Parent
 from .integer_ring import ZZ
 from .rational_field import QQ
 from .ring import Field
+import sage.rings.abc
 from . import integer
 from . import complex_interval
 import weakref
@@ -56,11 +57,18 @@ def is_ComplexIntervalField(x):
 
         sage: from sage.rings.complex_interval_field import is_ComplexIntervalField as is_CIF
         sage: is_CIF(CIF)
+        doctest:warning...
+        DeprecationWarning: is_ComplexIntervalField is deprecated;
+        use isinstance(..., sage.rings.abc.ComplexIntervalField) instead
+        See https://trac.sagemath.org/32612 for details.
         True
         sage: is_CIF(CC)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32612, 'is_ComplexIntervalField is deprecated; use isinstance(..., sage.rings.abc.ComplexIntervalField) instead')
     return isinstance(x, ComplexIntervalField_class)
+
 
 cache = {}
 def ComplexIntervalField(prec=53, names=None):
@@ -93,7 +101,7 @@ def ComplexIntervalField(prec=53, names=None):
     return C
 
 
-class ComplexIntervalField_class(Field):
+class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
     """
     The field of complex (interval) numbers.
 

@@ -304,10 +304,10 @@ class _Coordinates(object):
             Graphics3d Object
 
         """
-        from sage.symbolic.expression import is_Expression
+        from sage.structure.element import Expression
         from sage.rings.real_mpfr import is_RealNumber
         from sage.rings.integer import is_Integer
-        if params is not None and (is_Expression(func) or is_RealNumber(func) or is_Integer(func)):
+        if params is not None and (isinstance(func, Expression) or is_RealNumber(func) or is_Integer(func)):
             return self.transform(**{
                 self.dep_var: func,
                 self.indep_vars[0]: params[0],
@@ -1046,13 +1046,13 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         Graphics3d Object
     """
     if transformation is not None:
-        params=None
-        from sage.symbolic.callable import is_CallableSymbolicExpression
+        params = None
+        from sage.structure.element import Expression
         # First, determine the parameters for f (from the first item of urange
         # and vrange, preferably).
         if len(urange) == 3 and len(vrange) == 3:
             params = (urange[0], vrange[0])
-        elif is_CallableSymbolicExpression(f):
+        elif isinstance(f, Expression) and f.is_callable():
             params = f.variables()
 
         from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense

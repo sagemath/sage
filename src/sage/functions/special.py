@@ -158,8 +158,8 @@ Added 16-02-2008 (wdj): optional calls to scipy and replace all
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 from sage.rings.integer import Integer
-from sage.rings.complex_mpfr import ComplexField
 from sage.misc.latex import latex
 from sage.rings.integer_ring import ZZ
 from sage.symbolic.constants import pi
@@ -362,10 +362,9 @@ def elliptic_j(z, prec=53):
         sage: (-elliptic_j(tau, 100).real().round())^(1/3)
         640320
     """
-
     CC = z.parent()
-    from sage.rings.complex_mpfr import is_ComplexField
-    if not is_ComplexField(CC):
+    if not isinstance(CC, sage.rings.abc.ComplexField):
+        from sage.rings.complex_mpfr import ComplexField
         CC = ComplexField(prec)
         try:
             z = CC(z)

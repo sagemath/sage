@@ -58,8 +58,8 @@ def symbolic_expression(x):
         2*x^2 + 3
         sage: type(a)
         <class 'sage.symbolic.expression.Expression'>
-        sage: from sage.symbolic.expression import is_Expression
-        sage: is_Expression(a)
+        sage: from sage.structure.element import Expression
+        sage: isinstance(a, Expression)
         True
         sage: a in SR
         True

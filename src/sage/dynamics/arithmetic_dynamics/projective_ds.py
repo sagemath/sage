@@ -80,7 +80,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.flatten import FlatteningMorphism, UnflatteningMorphism
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
-from sage.rings.number_field.number_field import is_NumberField
 from sage.rings.padics.all import Qp
 from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -88,8 +87,8 @@ from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import (RealField, is_RealField)
+import sage.rings.abc
+from sage.rings.real_mpfr import RealField
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
 from sage.schemes.projective.projective_morphism import (
@@ -2062,10 +2061,10 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         # Archimedean local heights
         # :: WARNING: If places is fed the default Sage precision of 53 bits,
-        # it uses Real or Complex Double Field in place of RealField(prec) or ComplexField(prec)
-        # the function is_RealField does not identify RDF as real, so we test for that ourselves.
+        # it uses Real or Complex Double Field in place of RealField(prec) or ComplexField(prec).
+        # RDF is an instance of a separate class.
         for v in emb:
-            if is_RealField(v.codomain()) or v.codomain() is RDF:
+            if isinstance(v.codomain(), (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
                 dv = R.one()
             else:
                 dv = R(2)

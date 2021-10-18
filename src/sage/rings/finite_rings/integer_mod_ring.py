@@ -64,6 +64,7 @@ import sage.misc.prandom as random
 
 from sage.arith.all import factor, primitive_root, CRT_basis
 import sage.rings.ring as ring
+import sage.rings.abc
 from . import integer_mod
 import sage.rings.integer as integer
 import sage.rings.integer_ring as integer_ring
@@ -243,11 +244,18 @@ def is_IntegerModRing(x):
     """
     Return ``True`` if ``x`` is an integer modulo ring.
 
+    This function is deprecated.  Use :func:`isinstance` with
+    :class:`sage.rings.abc.IntegerModRing` instead.
+
     EXAMPLES::
 
         sage: from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
         sage: R = IntegerModRing(17)
         sage: is_IntegerModRing(R)
+        doctest:warning...
+        DeprecationWarning: the function is_IntegerModRing is deprecated.
+        Use isinstance(..., sage.rings.abc.IntegerModRing) instead.
+        See https://trac.sagemath.org/32606 for details.
         True
         sage: is_IntegerModRing(GF(13))
         True
@@ -258,6 +266,9 @@ def is_IntegerModRing(x):
         sage: is_IntegerModRing(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32606, "the function is_IntegerModRing is deprecated. "
+                "Use isinstance(..., sage.rings.abc.IntegerModRing) instead.")
     return isinstance(x, IntegerModRing_generic)
 
 
@@ -297,7 +308,7 @@ def _unit_gens_primepowercase(p, r):
 
 
 @richcmp_method
-class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
+class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.IntegerModRing):
     """
     The ring of integers modulo `N`.
 

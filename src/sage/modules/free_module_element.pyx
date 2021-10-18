@@ -118,6 +118,7 @@ from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
+import sage.rings.abc
 from sage.rings.ring import is_Ring
 from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
@@ -3933,9 +3934,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             (r, theta) |--> r*cos(theta)^2 + r*sin(theta)^2
         """
         if var is None:
-            from sage.symbolic.callable import is_CallableSymbolicExpressionRing
-            from sage.calculus.all import jacobian
-            if is_CallableSymbolicExpressionRing(self.coordinate_ring()):
+            if isinstance(self.coordinate_ring(), sage.rings.abc.CallableSymbolicExpressionRing):
+                from sage.calculus.all import jacobian
                 return jacobian(self, self.coordinate_ring().arguments())
             else:
                 raise ValueError("No differentiation variable specified.")

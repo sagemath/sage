@@ -566,7 +566,7 @@ from sage.structure.richcmp import (richcmp, richcmp_method,
 from sage.rings.real_mpfr import RR
 from sage.rings.real_mpfi import RealIntervalField, RIF, is_RealIntervalFieldElement, RealIntervalField_class
 from sage.rings.complex_mpfr import ComplexField
-from sage.rings.complex_interval_field import ComplexIntervalField, is_ComplexIntervalField
+from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_interval import is_ComplexIntervalFieldElement
 from sage.rings.polynomial.all import PolynomialRing
 from sage.rings.polynomial.polynomial_element import is_Polynomial
@@ -5013,7 +5013,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: (a - b).interval_exact(CIF)
             0
         """
-        if not is_ComplexIntervalField(field):
+        if not isinstance(field, sage.rings.abc.ComplexIntervalField):
             raise ValueError("AlgebraicNumber interval_exact requires a ComplexIntervalField")
         rfld = field._real_field()
         re = self.real().interval_exact(rfld)
@@ -5910,7 +5910,7 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: AA(golden_ratio)._complex_mpfr_field_(ComplexField(100))
             1.6180339887498948482045868344
         """
-        if is_ComplexIntervalField(field):
+        if isinstance(field, sage.rings.abc.ComplexIntervalField):
             return field(self.interval(field._real_field()))
         else:
             return field(self.real_number(field._real_field()))

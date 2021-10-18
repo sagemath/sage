@@ -47,6 +47,7 @@ abstract base classes.
                                     EuclideanDomainElement
                         FieldElement
                         CommutativeAlgebraElement
+                        Expression
                     AlgebraElement
                         Matrix
                     InfinityElement
@@ -3251,6 +3252,16 @@ cdef class CommutativeRingElement(RingElement):
                 return [ sq_rt ]
             return [ sq_rt, -sq_rt ]
         return sq_rt
+
+    ##############################################
+
+cdef class Expression(CommutativeRingElement):
+
+    r"""
+    Abstract base class for :class:`~sage.symbolic.expression.Expression`.
+    """
+
+    pass
 
     ##############################################
 

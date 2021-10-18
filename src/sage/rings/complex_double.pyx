@@ -111,18 +111,28 @@ from sage.structure.richcmp cimport rich_to_bool
 cimport gmpy2
 gmpy2.import_gmpy2()
 
+
 def is_ComplexDoubleField(x):
     """
     Return ``True`` if ``x`` is the complex double field.
+
+    This function is deprecated. Use :func:`isinstance` with
+    :class:`~sage.rings.abc.ComplexDoubleField` instead.
 
     EXAMPLES::
 
         sage: from sage.rings.complex_double import is_ComplexDoubleField
         sage: is_ComplexDoubleField(CDF)
+        doctest:warning...
+        DeprecationWarning: is_ComplexDoubleField is deprecated;
+        use isinstance(..., sage.rings.abc.ComplexDoubleField) instead
+        See https://trac.sagemath.org/32610 for details.
         True
         sage: is_ComplexDoubleField(ComplexField(53))
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32610, 'is_ComplexDoubleField is deprecated; use isinstance(..., sage.rings.abc.ComplexDoubleField) instead')
     return isinstance(x, ComplexDoubleField_class)
 
 

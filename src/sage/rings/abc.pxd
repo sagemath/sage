@@ -1,6 +1,11 @@
-from .ring cimport Field
+from .ring cimport CommutativeRing, Field
 
 cdef class RealField(Field):
+
+    pass
+
+
+cdef class RealIntervalField(Field):
 
     pass
 
@@ -16,5 +21,10 @@ cdef class ComplexField(Field):
 
 
 cdef class ComplexDoubleField(Field):
+
+    pass
+
+
+cdef class SymbolicRing(CommutativeRing):
 
     pass

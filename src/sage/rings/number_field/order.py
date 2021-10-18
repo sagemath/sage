@@ -47,6 +47,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.ring import IntegralDomain
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
+import sage.rings.abc
 from sage.structure.element import is_Element
 from .number_field_element import OrderElement_absolute, OrderElement_relative
 
@@ -126,7 +127,7 @@ def EquationOrder(f, names, **kwds):
     return K.order(K.gens())
 
 
-class Order(IntegralDomain):
+class Order(IntegralDomain, sage.rings.abc.Order):
     r"""
     An order in a number field.
 

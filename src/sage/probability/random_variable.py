@@ -15,10 +15,10 @@ functions.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 from sage.structure.parent import Parent
 from sage.functions.log import log
 from sage.functions.all import sqrt
-from sage.rings.real_mpfr import (RealField, is_RealField)
 from sage.rings.rational_field import is_RationalField
 from sage.sets.set import Set
 from pprint import pformat
@@ -83,6 +83,7 @@ class DiscreteRandomVariable(RandomVariable_generic):
         if check:
             raise NotImplementedError("Not implemented")
         if codomain is None:
+            from sage.rings.real_mpfr import RealField
             RR = RealField()
         else:
             RR = codomain
@@ -337,8 +338,9 @@ class DiscreteProbabilitySpace(ProbabilitySpace_generic,DiscreteRandomVariable):
             1.50000000000000
         """
         if codomain is None:
+            from sage.rings.real_mpfr import RealField
             codomain = RealField()
-        if not is_RealField(codomain) and not is_RationalField(codomain):
+        if not isinstance(codomain, sage.rings.abc.RealField) and not is_RationalField(codomain):
             raise TypeError("Argument codomain (= %s) must be the reals or rationals" % codomain)
         if check:
             one = sum(P.values())

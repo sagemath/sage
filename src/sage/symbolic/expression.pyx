@@ -385,6 +385,7 @@ from cpython.object cimport Py_EQ, Py_NE, Py_LE, Py_GE, Py_LT, Py_GT
 from sage.cpython.string cimport str_to_bytes, char_to_str
 
 from sage.structure.element cimport RingElement, Element, Matrix
+from sage.structure.element cimport Expression as Expression_abc
 from sage.symbolic.complexity_measures import string_length
 from sage.symbolic.function cimport SymbolicFunction
 from sage.rings.rational import Rational
@@ -395,7 +396,7 @@ from sage.misc.latex import latex_variable_name
 from sage.rings.infinity import AnInfinity, infinity, minus_infinity, unsigned_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.rings.complex_mpfr import is_ComplexField
+import sage.rings.abc
 from sage.misc.decorators import rename_keyword
 from sage.structure.dynamic_class import dynamic_class
 from sage.structure.element cimport CommutativeRingElement
@@ -407,18 +408,27 @@ include "pynac_impl.pxi"
 
 cpdef bint is_Expression(x):
     """
-    Return True if *x* is a symbolic Expression.
+    Return True if ``x`` is a symbolic expression.
+
+    This method is deprecated.  Use :func:`isinstance` with
+    :class:`sage.structure.element.Expression` instead.
 
     EXAMPLES::
 
         sage: from sage.symbolic.expression import is_Expression
         sage: is_Expression(x)
+        doctest:warning...
+        DeprecationWarning: is_Expression is deprecated;
+        use isinstance(..., sage.structure.element.Expression) instead
+        See https://trac.sagemath.org/32638 for details.
         True
         sage: is_Expression(2)
         False
         sage: is_Expression(SR(2))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32638, 'is_Expression is deprecated; use isinstance(..., sage.structure.element.Expression) instead')
     return isinstance(x, Expression)
 
 
@@ -472,7 +482,7 @@ cpdef bint _is_SymbolicVariable(x):
         sage: ZZ['x']
         Univariate Polynomial Ring in x over Integer Ring
     """
-    return is_Expression(x) and is_a_symbol((<Expression>x)._gobj)
+    return isinstance(x, Expression) and is_a_symbol((<Expression>x)._gobj)
 
 
 def _dict_update_check_duplicate(dict d1, dict d2):
@@ -694,7 +704,7 @@ def _subs_fun_make_dict(s):
         raise TypeError(msg.format(s))
 
 
-cdef class Expression(CommutativeRingElement):
+cdef class Expression(Expression_abc):
 
     cdef GEx _gobj
 
@@ -3114,6 +3124,22 @@ cdef class Expression(CommutativeRingElement):
 
         return obj.is_square()
 
+    def is_callable(self):
+        r"""
+        Return ``True`` if ``self`` is a callable symbolic expression.
+
+        EXAMPLES::
+
+            sage: var('a x y z')
+            (a, x, y, z)
+            sage: f(x, y) = a + 2*x + 3*y + z
+            sage: f.is_callable()
+            True
+            sage: (a+2*x).is_callable()
+            False
+        """
+        return isinstance(self.parent(), sage.rings.abc.CallableSymbolicExpressionRing)
+
     def left_hand_side(self):
         """
         If self is a relational expression, return the left hand side
@@ -3565,8 +3591,8 @@ cdef class Expression(CommutativeRingElement):
                 else:
                     domain = RIF
         else:
-            is_interval = (is_RealIntervalField(domain)
-                           or is_ComplexIntervalField(domain)
+            is_interval = (isinstance(domain, (sage.rings.abc.RealIntervalField,
+                                               sage.rings.abc.ComplexIntervalField))
                            or is_AlgebraicField(domain)
                            or is_AlgebraicRealField(domain))
         zero = domain(0)
@@ -3620,7 +3646,7 @@ cdef class Expression(CommutativeRingElement):
                         eq_count += <bint>val.contains_zero()
                 except (TypeError, ValueError, ArithmeticError, AttributeError) as ex:
                     errors += 1
-                    if k == errors > 3 and is_ComplexIntervalField(domain):
+                    if k == errors > 3 and isinstance(domain, sage.rings.abc.ComplexIntervalField):
                         domain = RIF.to_prec(domain.prec())
                     # we are plugging in random values above, don't be surprised
                     # if something goes wrong...
@@ -4622,7 +4648,7 @@ cdef class Expression(CommutativeRingElement):
                 symb = vars[0]
             elif len(vars) == 0:
                 return self._parent(0)
-            elif sage.symbolic.callable.is_CallableSymbolicExpression(self):
+            elif self.is_callable():
                 return self.gradient()
             else:
                 raise ValueError("No differentiation variable specified.")
@@ -12704,7 +12730,6 @@ cdef class Expression(CommutativeRingElement):
             sage: plot(f,0,1)
             Graphics object consisting of 1 graphics primitive
         """
-        from sage.symbolic.callable import is_CallableSymbolicExpression
         from sage.symbolic.ring import is_SymbolicVariable
         from sage.plot.plot import plot
 
@@ -12720,7 +12745,7 @@ cdef class Expression(CommutativeRingElement):
                     break
 
         if param is None:
-            if is_CallableSymbolicExpression(self):
+            if self.is_callable():
                 A = self.arguments()
                 if len(A) == 0:
                     raise ValueError("function has no input arguments")
@@ -13070,10 +13095,8 @@ cdef class Expression(CommutativeRingElement):
         """
         from sage.symbolic.integration.integral import \
             integral, _normalize_integral_input
-        from sage.symbolic.callable import \
-            CallableSymbolicExpressionRing, is_CallableSymbolicExpressionRing
         R = self._parent
-        if is_CallableSymbolicExpressionRing(R):
+        if isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing):
             f = SR(self)
             f, v, a, b = _normalize_integral_input(f, *args)
             # Definite integral with respect to a positional variable.
@@ -13082,6 +13105,7 @@ cdef class Expression(CommutativeRingElement):
                 arguments.remove(v)
                 if arguments:
                     arguments = tuple(arguments)
+                    from sage.symbolic.callable import CallableSymbolicExpressionRing
                     R = CallableSymbolicExpressionRing(arguments, check=False)
                 else:   # all arguments are gone
                     R = SR
@@ -13574,7 +13598,7 @@ cpdef new_Expression(parent, x):
         x + 1
     """
     cdef GEx exp
-    if is_Expression(x):
+    if isinstance(x, Expression):
         return new_Expression_from_GEx(parent, (<Expression>x)._gobj)
     if hasattr(x, '_symbolic_'):
         return x._symbolic_(parent)
@@ -13826,7 +13850,7 @@ cdef unsigned sage_domain_to_ginac_domain(object domain) except? 3474701533:
         return domain_real
     elif domain == 'positive':
         return domain_positive
-    elif is_ComplexField(domain) or domain == 'complex':
+    elif isinstance(domain, sage.rings.abc.ComplexField) or domain == 'complex':
         return domain_complex
     elif domain is ZZ or domain == 'integer':
         return domain_integer
@@ -13840,7 +13864,7 @@ cdef void send_sage_domain_to_maxima(Expression v, object domain) except +:
         assume(v, 'real')
     elif domain == 'positive':
         assume(v>0)
-    elif is_ComplexField(domain) or domain == 'complex':
+    elif isinstance(domain, sage.rings.abc.ComplexField) or domain == 'complex':
         assume(v, 'complex')
     elif domain is ZZ or domain == 'integer':
         assume(v, 'integer')

@@ -68,7 +68,7 @@ from sage.libs.pari import pari
 
 from sage.categories.map import Map
 from sage.rings.rational_field import is_RationalField
-from sage.rings.complex_mpfr import is_ComplexField
+import sage.rings.abc
 from sage.rings.qqbar import is_AlgebraicField
 from sage.rings.ring import is_Ring
 
@@ -1153,7 +1153,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         # now compute the input for pari (list of exponents)
         P = self.parent()
-        if is_ComplexField(P.base_ring()):
+        if isinstance(P.base_ring(), sage.rings.abc.ComplexField):
             zeta = P.zeta()
             zeta_argument = zeta.argument()
             v = [int(x.argument() / zeta_argument) for x in values_on_gens]
@@ -1345,7 +1345,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         K = G.base_ring()
         chi = self
         m = G.modulus()
-        if is_ComplexField(K):
+        if isinstance(K, sage.rings.abc.ComplexField):
             return self.gauss_sum_numerical(a=a)
         elif is_AlgebraicField(K):
             L = K
@@ -1422,7 +1422,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         G = self.parent()
         K = G.base_ring()
-        if is_ComplexField(K):
+        if isinstance(K, sage.rings.abc.ComplexField):
 
             def phi(t):
                 return t
@@ -2138,7 +2138,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         P = self.parent()
         M = P._module
-        if is_ComplexField(P.base_ring()):
+        if isinstance(P.base_ring(), sage.rings.abc.ComplexField):
             zeta = P.zeta()
             zeta_argument = zeta.argument()
             v = M([int(round(x.argument() / zeta_argument))
@@ -2607,7 +2607,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         w = [a]
         zeta = self.zeta()
         zeta_order = self.zeta_order()
-        if is_ComplexField(R):
+        if isinstance(R, sage.rings.abc.ComplexField):
             for i in range(1, zeta_order):
                 a = a * zeta
                 a._set_multiplicative_order(zeta_order / gcd(zeta_order, i))

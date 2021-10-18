@@ -139,12 +139,11 @@ is attempted, and after that ``sin()`` which succeeds::
 #*****************************************************************************
 
 from sage.structure.sage_object cimport SageObject
-from sage.structure.element cimport Element, parent
+from sage.structure.element cimport Element, parent, Expression
 from sage.misc.lazy_attribute import lazy_attribute
 from .expression import (
     call_registered_function, find_registered_function, register_or_update_function,
-    get_sfunction_from_hash,
-    is_Expression
+    get_sfunction_from_hash
 )
 from .expression import get_sfunction_from_serial as get_sfunction_from_serial
 
@@ -333,7 +332,7 @@ cdef class Function(SageObject):
         try:
             evalf = self._evalf_  # catch AttributeError early
             if any(self._is_numerical(x) for x in args):
-                if not any(is_Expression(x) for x in args):
+                if not any(isinstance(x, Expression) for x in args):
                     p = coercion_model.common_parent(*args)
                     return evalf(*args, parent=p)
         except Exception:
@@ -542,7 +541,7 @@ cdef class Function(SageObject):
 
         else: # coerce == False
             for a in args:
-                if not is_Expression(a):
+                if not isinstance(a, Expression):
                     raise TypeError("arguments must be symbolic expressions")
 
         return call_registered_function(self._serial, self._nargs, args, hold,

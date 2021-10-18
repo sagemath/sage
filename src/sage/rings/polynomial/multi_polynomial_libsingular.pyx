@@ -221,15 +221,14 @@ from sage.rings.polynomial.polydict cimport ETuple
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 
 # base ring imports
+import sage.rings.abc
 from sage.rings.finite_rings.finite_field_prime_modn import FiniteField_prime_modn
 from sage.rings.rational cimport Rational
 from sage.rings.rational_field import QQ
-from sage.rings.complex_mpfr import is_ComplexField
-from sage.rings.real_mpfr import is_RealField
+import sage.rings.abc
 from sage.rings.integer_ring import is_IntegerRing, ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.integer import GCD_list
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
 from sage.rings.number_field.number_field_base cimport NumberField
 
 from sage.structure.element import coerce_binop
@@ -1366,14 +1365,14 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         base_ring = self.base_ring()
 
-        if is_RealField(base_ring):
+        if isinstance(base_ring, sage.rings.abc.RealField):
             # singular converts to bits from base_10 in mpr_complex.cc by:
             #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
             precision = base_ring.precision()
             digits = ceil((2*precision - 2)/7.0)
             self.__singular = singular.ring("(real,%d,0)"%digits, _vars, order=order)
 
-        elif is_ComplexField(base_ring):
+        elif isinstance(base_ring, sage.rings.abc.ComplexField):
             # singular converts to bits from base_10 in mpr_complex.cc by:
             #  size_t bits = 1 + (size_t) ((float)digits * 3.5);
             precision = base_ring.precision()
@@ -1407,7 +1406,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         elif is_IntegerRing(base_ring):
             self.__singular = singular.ring("(integer)", _vars, order=order)
 
-        elif is_IntegerModRing(base_ring):
+        elif isinstance(base_ring, sage.rings.abc.IntegerModRing):
             ch = base_ring.characteristic()
             if ch.is_power_of(2):
                 exp = ch.nbits() -1

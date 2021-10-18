@@ -2317,7 +2317,7 @@ def sage_getsourcelines(obj):
         ...)
         sage: x = var('x')
         sage: lines, lineno = sage_getsourcelines(x); lines[0:5]
-        ['cdef class Expression(CommutativeRingElement):\n',
+        ['cdef class Expression(...):\n',
          '\n',
          '    cdef GEx _gobj\n',
          '\n',

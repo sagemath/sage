@@ -2534,8 +2534,8 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
             prec = Integer(prec)
         if isinstance(names, (list, tuple)):
             names = names[0]
-        from sage.symbolic.expression import is_Expression
-        if not (modulus is None or is_Polynomial(modulus) or is_Expression(modulus)):
+        from sage.structure.element import Expression
+        if not (modulus is None or is_Polynomial(modulus) or isinstance(modulus, Expression)):
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
@@ -3271,9 +3271,9 @@ class pAdicExtension_class(UniqueFactory):
         if print_max_terse_terms is None:
             print_max_terse_terms = base._printer._max_terse_terms()
         show_prec = _canonicalize_show_prec(base._prec_type(), print_mode, show_prec)
-        from sage.symbolic.expression import is_Expression
+        from sage.structure.element import Expression
         if check:
-            if is_Expression(modulus):
+            if isinstance(modulus, Expression):
                 if len(modulus.variables()) != 1:
                     raise ValueError("symbolic expression must be in only one variable")
                 exact_modulus = modulus.polynomial(base.exact_field())
@@ -3378,8 +3378,8 @@ class pAdicExtension_class(UniqueFactory):
         if version[0] < 8:
             (polytype, base, premodulus, approx_modulus, names, prec, halt, print_mode, print_pos, print_sep,
              print_alphabet, print_max_ram_terms, print_max_unram_terms, print_max_terse_terms, implementation) = key
-            from sage.symbolic.expression import is_Expression
-            if is_Expression(premodulus):
+            from sage.structure.element import Expression
+            if isinstance(premodulus, Expression):
                 exact_modulus = premodulus.polynomial(base.exact_field())
             elif is_Polynomial(premodulus):
                 exact_modulus = premodulus.change_ring(base.exact_field())
