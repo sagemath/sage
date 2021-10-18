@@ -800,7 +800,7 @@ class CrystalOfProjectedLevelZeroLSPaths(CrystalOfLSPaths):
             True
         """
         if q is None:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             q = QQ['q'].gens()[0]
         #P0 = self.weight_lattice_realization().classical()
         P0 = RootSystem(self.cartan_type().classical()).weight_lattice()

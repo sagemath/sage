@@ -35,7 +35,7 @@ import sage.categories.all
 from sage.rings.all import Integer, QQ
 from sage.arith.all import gcd, lcm
 from sage.rings.fraction_field import is_FractionField
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom, End
 from sage.rings.fraction_field import FractionField

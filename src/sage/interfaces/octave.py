@@ -503,7 +503,7 @@ class Octave(Expect):
         if m != len(b):
             raise ValueError("dimensions of A and b must be compatible")
         from sage.matrix.all import MatrixSpace
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         MS = MatrixSpace(QQ,m,1)
         b  = MS(list(b)) # converted b to a "column vector"
         sA = self.sage2octave_matrix_string(A)

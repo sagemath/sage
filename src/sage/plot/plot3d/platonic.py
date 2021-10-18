@@ -65,7 +65,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 from sage.matrix.constructor import matrix
 from sage.misc.decorators import rename_keyword
 from .shapes import Box, ColorCube

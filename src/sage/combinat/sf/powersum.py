@@ -22,7 +22,7 @@ from sage.combinat.partition import Partition
 from sage.arith.all import divisors
 from sage.rings.all import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):

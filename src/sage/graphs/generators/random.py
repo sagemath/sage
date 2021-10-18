@@ -577,16 +577,14 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False):
 
 def RandomBoundedToleranceGraph(n):
     r"""
-    Returns a random bounded tolerance graph.
+    Return a random bounded tolerance graph.
 
-    The random tolerance graph is built from a random bounded
-    tolerance representation by using the function
-    `ToleranceGraph`. This representation is a list
-    `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where
-    `k = n-1` and `I_i = (l_i,r_i)` denotes a random interval and
-    `t_i` a random positive value less then or equal to the length
-    of the interval `I_i`. The width of the representation is
-    limited to n**2 * 2**n.
+    The random tolerance graph is built from a random bounded tolerance
+    representation by using the function `ToleranceGraph`. This representation
+    is a list `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where `k =
+    n-1` and `I_i = (l_i,r_i)` denotes a random interval and `t_i` a random
+    positive value less than or equal to the length of the interval `I_i`. The
+    width of the representation is limited to `n^2 * 2^n`.
 
     .. NOTE::
 
@@ -611,15 +609,27 @@ def RandomBoundedToleranceGraph(n):
     Check that :trac:`32186` is fixed::
 
         sage: for _ in range(100): _ = graphs.RandomBoundedToleranceGraph(1)
+
+    Check input parameter::
+
+        sage: g = graphs.RandomToleranceGraph(-2)
+        Traceback (most recent call last):
+        ...
+        ValueError: the number `n` of vertices must be >= 0
     """
-    from sage.misc.prandom import randint
-    from sage.combinat.combination import Combinations
+    if n < 0:
+        raise ValueError('the number `n` of vertices must be >= 0')
+
     from sage.graphs.generators.intersection import ToleranceGraph
 
     W = n ** 2 * 2 ** n
-    C = Combinations(W + 1, 2)
-
-    tolrep = [(l_r[0], l_r[1], randint(1, l_r[1] - l_r[0])) for l_r in [C.random_element() for i in range(n)]]
+    tolrep = []
+    for _ in range(n):
+        l = randint(0, W - 1)
+        r = randint(0, W)
+        if l >= r:
+            l, r = r, l + 1
+        tolrep.append((l, r, randint(1, r - l)))
 
     return ToleranceGraph(tolrep)
 
@@ -1334,7 +1344,6 @@ def RandomTree(n):
         sage: graphs.RandomTree(1)
         Graph on 1 vertex
     """
-    from sage.misc.prandom import randint
     g = Graph(n)
     if n <= 1:
         return g
@@ -1492,13 +1501,13 @@ def RandomShell(constructor, seed=None):
 
 def RandomToleranceGraph(n):
     r"""
-    Returns a random tolerance graph.
+    Return a random tolerance graph.
 
     The random tolerance graph is built from a random tolerance representation
     by using the function `ToleranceGraph`. This representation is a list
     `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where `k = n-1` and
     `I_i = (l_i,r_i)` denotes a random interval and `t_i` a random positive
-    value. The width of the representation is limited to n**2 * 2**n.
+    value. The width of the representation is limited to `n^2 * 2^n`.
 
     .. NOTE::
 
@@ -1524,17 +1533,22 @@ def RandomToleranceGraph(n):
         sage: g = graphs.RandomToleranceGraph(-2)
         Traceback (most recent call last):
         ...
-        ValueError: The number `n` of vertices must be >= 0.
+        ValueError: the number `n` of vertices must be >= 0
     """
-    from sage.misc.prandom import randint
     from sage.graphs.generators.intersection import ToleranceGraph
 
-    if n<0:
-        raise ValueError('The number `n` of vertices must be >= 0.')
+    if n < 0:
+        raise ValueError('the number `n` of vertices must be >= 0')
 
     W = n**2 * 2**n
 
-    tolrep = [tuple(sorted((randint(0,W), randint(0,W)))) + (randint(0,W),) for i in range(n)]
+    tolrep = []
+    for _ in range(n):
+        l = randint(0, W)
+        r = randint(0, W)
+        if l > r:
+            l, r = r, l
+        tolrep.append((l, r, randint(0, W)))
 
     return ToleranceGraph(tolrep)
 

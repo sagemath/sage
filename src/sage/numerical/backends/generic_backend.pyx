@@ -34,7 +34,7 @@ from copy import copy
 cdef class GenericBackend:
 
     cpdef base_ring(self):
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return RDF
 
     cpdef zero(self):
@@ -532,7 +532,7 @@ cdef class GenericBackend:
         p = cls()                         # fresh instance of the backend
         if tester is None:
             tester = p._tester(**options)
-        from sage.modules.all import vector
+        from sage.modules.free_module_element import vector
         # Ensure there are at least 2 variables
         p.add_variables(2)
         coeffs = ([0, vector([1, 2])], [1, vector([2, 3])])

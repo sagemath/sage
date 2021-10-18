@@ -1555,7 +1555,7 @@ class BipartiteGraph(Graph):
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')
             4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='LP')
-            4.0
+            4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Eppstein')
             Traceback (most recent call last):
             ...

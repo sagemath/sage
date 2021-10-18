@@ -43,7 +43,7 @@ from sage.structure.element cimport have_same_parent
 from sage.structure.coerce cimport coercion_model
 from sage.misc.prandom import randint
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import Infinity
 

@@ -6,7 +6,7 @@ This module contains various functions relating to lifting elements of
 problems.
 """
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.arith.all import crt, inverse_mod
 from sage.modular.modsym.p1list import lift_to_sl2z
 

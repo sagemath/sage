@@ -112,7 +112,7 @@ def var(*args, **kwds):
     to the symbolic expression ring::
 
         sage: type(theta)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: parent(theta)
         Symbolic Ring
     """

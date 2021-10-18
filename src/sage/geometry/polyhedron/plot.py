@@ -11,14 +11,15 @@ Functions for plotting polyhedra
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-from sage.rings.all import RDF
+from math import pi
+
+from sage.rings.real_double import RDF
 from sage.structure.sage_object import SageObject
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.matrix.special import diagonal_matrix
 from sage.misc.functional import norm
 from sage.misc.latex import LatexExpr
-from sage.symbolic.constants import pi
 from sage.structure.sequence import Sequence
 
 from sage.plot.all import Graphics, point2d, line2d, arrow, polygon2d

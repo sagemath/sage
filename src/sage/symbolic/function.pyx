@@ -153,7 +153,6 @@ from sage.structure.coerce cimport (coercion_model,
 from sage.structure.richcmp cimport richcmp
 
 from sage.misc.fpickle import pickle_function, unpickle_function
-from sage.ext.fast_eval import FastDoubleFunc
 
 # List of functions which ginac allows us to define custom behavior for.
 # Changing the order of this list could cause problems unpickling old pickles.
@@ -516,16 +515,6 @@ cdef class Function(SageObject):
         if self._nargs > 0 and len(args) != self._nargs:
             raise TypeError("Symbolic function %s takes exactly %s arguments (%s given)" % (self._name, self._nargs, len(args)))
 
-        # support fast_float
-        if self._nargs == 1:
-            if isinstance(args[0], FastDoubleFunc):
-                try:
-                    method = getattr(args[0], self._name)
-                except AttributeError:
-                    raise TypeError("cannot handle fast float arguments")
-                else:
-                    return method()
-
         # if the given input is a symbolic expression, we don't convert it back
         # to a numeric type at the end
         from .ring import SR
@@ -728,47 +717,6 @@ cdef class Function(SageObject):
             'ff'
         """
         return self._conversions.get('maxima', self._name)
-
-    def _fast_float_(self, *vars):
-        """
-        Returns an object which provides fast floating point evaluation of
-        self.
-
-        See sage.ext.fast_eval? for more information.
-
-        EXAMPLES::
-
-            sage: sin._fast_float_()
-            <sage.ext.fast_eval.FastDoubleFunc object at 0x...>
-            sage: sin._fast_float_()(0)
-            0.0
-
-        ::
-
-            sage: ff = cos._fast_float_(); ff
-            <sage.ext.fast_eval.FastDoubleFunc object at 0x...>
-            sage: ff.is_pure_c()
-            True
-            sage: ff(0)
-            1.0
-
-        ::
-
-            sage: ff = erf._fast_float_()
-            sage: ff.is_pure_c()
-            False
-            sage: ff(1.5) # tol 1e-15
-            0.9661051464753108
-            sage: erf(1.5)
-            0.966105146475311
-        """
-        import sage.ext.fast_eval as fast_float
-
-        args = [fast_float.fast_float_arg(n) for n in range(self.number_of_arguments())]
-        try:
-            return self(*args)
-        except TypeError as err:
-            return fast_float.fast_float_func(self, *args)
 
     def _fast_callable_(self, etb):
         r"""

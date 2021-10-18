@@ -617,7 +617,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
             # Skip this test if we exceeded our --short budget of walltime for
             # this doctest
-            if self.options.target_walltime is not None and self.total_walltime >= self.options.target_walltime:
+            if self.options.target_walltime != -1 and self.total_walltime >= self.options.target_walltime:
                 walltime_skips += 1
                 self.optionflags |= doctest.SKIP
 
@@ -766,7 +766,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
             # Report the outcome.
             if outcome is SUCCESS:
-                if self.options.warn_long and example.walltime > self.options.warn_long:
+                if self.options.warn_long > 0 and example.walltime > self.options.warn_long:
                     self.report_overtime(out, test, example, got)
                 elif not quiet:
                     self.report_success(out, test, example, got)
@@ -1743,7 +1743,7 @@ class DocTestDispatcher(SageObject):
         # If we think that we can not finish running all tests until
         # target_endtime, we skip individual tests. (Only enabled with
         # --short.)
-        if opt.target_walltime is None:
+        if opt.target_walltime == -1:
             target_endtime = None
         else:
             target_endtime = time.time() + opt.target_walltime

@@ -33,7 +33,7 @@ from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianGroup
 
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
 

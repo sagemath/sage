@@ -27,6 +27,17 @@ ECL_CONFIG = "@SAGE_ECL_CONFIG@".replace('${prefix}', SAGE_LOCAL)
 
 SAGE_NAUTY_BINS_PREFIX = "@SAGE_NAUTY_BINS_PREFIX@"
 
+# Names or paths of the 4ti2 executables
+FOURTITWO_HILBERT = "@FOURTITWO_HILBERT@"
+FOURTITWO_MARKOV = "@FOURTITWO_MARKOV@"
+FOURTITWO_GRAVER = "@FOURTITWO_GRAVER@"
+FOURTITWO_ZSOLVE = "@FOURTITWO_ZSOLVE@"
+FOURTITWO_QSOLVE = "@FOURTITWO_QSOLVE@"
+FOURTITWO_RAYS = "@FOURTITWO_RAYS@"
+FOURTITWO_PPI = "@FOURTITWO_PPI@"
+FOURTITWO_CIRCUITS = "@FOURTITWO_CIRCUITS@"
+FOURTITWO_GROEBNER = "@FOURTITWO_GROEBNER@"
+
 # Colon-separated list of pkg-config modules to search for cblas functionality.
 # We hard-code it here as cblas because configure (build/pkgs/openblas/spkg-configure.m4)
 # always provides cblas.pc, if necessary by creating a facade pc file for a system BLAS.

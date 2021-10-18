@@ -29,7 +29,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import latex
+from sage.misc.latex import latex
 
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.fields import Fields

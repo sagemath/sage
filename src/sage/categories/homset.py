@@ -1040,7 +1040,7 @@ class Homset(Set_generic):
 
             sage: H = Hom(ZZ, ZZ)
             sage: H.element_class_set_morphism
-            <type 'sage.categories.morphism.SetMorphism'>
+            <class 'sage.categories.morphism.SetMorphism'>
         """
         return self.__make_element_class__(morphism.SetMorphism)
 

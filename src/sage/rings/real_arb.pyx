@@ -752,8 +752,8 @@ class RealBallField(UniqueRepresentation, Field):
 
         EXAMPLES::
 
-            sage: RBF.euler_constant()
-            [0.577215664901533 +/- ...e-16]
+            sage: RBF.euler_constant() # abs tol 1e-15
+            [0.5772156649015329 +/- 9.00e-17]
             sage: RealBallField(128).euler_constant()
             [0.57721566490153286060651209008240243104 +/- ...e-39]
         """
@@ -896,8 +896,8 @@ class RealBallField(UniqueRepresentation, Field):
 
         TESTS::
 
-            sage: RBF.gamma(RLF(pi))
-            [2.2880377953400 +/- ...e-14]
+            sage: RBF.gamma(RLF(pi)) # abs tol 1e-13
+            [2.28803779534003 +/- 4.12e-15]
         """
         cdef RealBall res
         cdef Integer x_as_Integer
@@ -1156,8 +1156,8 @@ cdef class RealBall(RingElement):
 
         sage: a = RealBallField()(RIF(1))                     # indirect doctest
         sage: b = a.psi()
-        sage: b
-        [-0.577215664901533 +/- ...e-16]
+        sage: b # abs tol 1e-15
+        [-0.5772156649015329 +/- 4.84e-17]
         sage: RIF(b)
         -0.577215664901533?
     """
@@ -1302,8 +1302,8 @@ cdef class RealBall(RingElement):
             [1.282427129100623 +/- ...e-16]
             sage: RealBall(RBF, sage.symbolic.constants.e)
             [2.718281828459045 +/- ...e-16]
-            sage: RealBall(RBF, sage.symbolic.constants.EulerGamma())
-            [0.577215664901533 +/- ...e-16]
+            sage: RealBall(RBF, sage.symbolic.constants.EulerGamma()) # abs tol 1e-15
+            [0.5772156649015329 +/- 9.00e-17]
             sage: RBF("1 +/- 0.001")
             [1.00 +/- ...e-3]
             sage: RBF("2.3e10000000000000000000000 +/- 0.00005e10000000000000000000000")
@@ -3536,8 +3536,8 @@ cdef class RealBall(RingElement):
 
             sage: RBF(1).rising_factorial(5)
             120.0000000000000
-            sage: RBF(1/2).rising_factorial(1/3)
-            [0.63684988431797 +/- ...e-15]
+            sage: RBF(1/2).rising_factorial(1/3) # abs tol 1e-14
+            [0.636849884317974 +/- 8.98e-16]
         """
         cdef RealBall result = self._new()
         cdef RealBall my_n = self._parent.coerce(n)
@@ -3552,8 +3552,8 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(1).psi()
-            [-0.577215664901533 +/- ...e-16]
+            sage: RBF(1).psi() # abs tol 1e-15
+            [-0.5772156649015329 +/- 4.84e-17]
         """
 
         cdef RealBall result = self._new()

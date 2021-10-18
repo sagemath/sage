@@ -636,7 +636,7 @@ from itertools import product
 from .parser import Parser
 from sage.misc.latex import latex
 from sage.misc.misc import powerset
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.matrix.constructor import matrix
 from sage.matrix.constructor import vector
@@ -744,7 +744,7 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: error = NormalFormGame(p1, p2)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes from 1 to 2 positional arguments but 3 were given
+            TypeError: ...__init__() takes from 1 to 2 positional arguments but 3 were given
 
         When initiating, argument passed must be a list or nothing::
 

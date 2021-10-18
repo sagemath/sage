@@ -47,7 +47,7 @@ import sage.misc.misc as misc
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 from sage.rings.ideal import Ideal_generic
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange_iter
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import MultiplicativeGroupElement

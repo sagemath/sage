@@ -30,7 +30,7 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.misc.decorators import options
 from sage.plot.all import list_plot, Graphics
 
-from sage.ext.fast_eval import fast_callable
+from sage.ext.fast_callable import fast_callable
 
 from sage.rings.all import CDF
 

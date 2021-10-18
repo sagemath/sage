@@ -64,7 +64,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
         if self.ordp < 0:
             raise ValueError("self must be integral")
         if exactzero(self.ordp):
-            from sage.matrix.all import matrix
+            from sage.matrix.constructor import matrix
             return matrix(ZZ, self.prime_pow.deg, self.prime_pow.deg)
         else:
             return cmatrix_mod_pn(self.unit, self.ordp + self.relprec, self.ordp, self.prime_pow)

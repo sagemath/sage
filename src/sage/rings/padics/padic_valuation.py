@@ -148,7 +148,7 @@ class PadicValuationFactory(UniqueFactory):
             2-adic valuation
 
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         if prime is None:
             raise ValueError("prime must be specified for this ring")
         from sage.rings.valuation.valuation import DiscretePseudoValuation
@@ -462,7 +462,7 @@ class pAdicValuation_base(DiscreteValuation):
         """
         DiscreteValuation.__init__(self, parent)
 
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         self._p = ZZ(p)
 
     def p(self):
@@ -1248,7 +1248,7 @@ class pAdicValuation_int(pAdicValuation_base):
         if error < v:
             return self.domain().zero()
 
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         from sage.rings.all import Qp
         precision_ring = Qp(self.p(), QQ(error).floor() + 1 - v)
         reduced = precision_ring(x)

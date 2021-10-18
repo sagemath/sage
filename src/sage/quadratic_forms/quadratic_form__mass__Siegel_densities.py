@@ -12,7 +12,7 @@ Local Masses and Siegel Densities
 
 import copy
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
 from sage.functions.all import floor
 from sage.rings.integer_ring import ZZ

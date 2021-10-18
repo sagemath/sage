@@ -513,7 +513,7 @@ class FiniteFieldFactory(UniqueFactory):
             sage: GF.create_key_and_extra_args(9, 'a', foo='value')
             Traceback (most recent call last):
             ...
-            TypeError: create_key_and_extra_args() got an unexpected keyword argument 'foo'
+            TypeError: ...create_key_and_extra_args() got an unexpected keyword argument 'foo'
 
         Moreover, ``repr`` and ``elem_cache`` are ignored when not
         using givaro::

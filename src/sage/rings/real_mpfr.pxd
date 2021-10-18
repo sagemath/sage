@@ -1,13 +1,14 @@
 from sage.libs.mpfr.types cimport mpfr_rnd_t, mpfr_t
 
 cimport sage.rings.ring
+cimport sage.rings.abc
 cimport sage.structure.element
 from cypari2.types cimport GEN
 from sage.libs.mpfr.types cimport mpfr_prec_t
 
 cdef class RealNumber(sage.structure.element.RingElement)  # forward decl
 
-cdef class RealField_class(sage.rings.ring.Field):
+cdef class RealField_class(sage.rings.abc.RealField):
     cdef mpfr_prec_t __prec
     cdef bint sci_not
     cdef mpfr_rnd_t rnd

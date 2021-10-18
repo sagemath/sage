@@ -3,6 +3,7 @@ from sage.combinat.integer_lists import IntegerListsLex
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 
+
 def IntegerListsNN(**kwds):
     """
     Lists of nonnegative integers with constraints.

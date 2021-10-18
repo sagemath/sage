@@ -2512,7 +2512,7 @@ def near_polygon_graph(family, params):
         sage: near_polygon_graph((0, 12))
         Traceback (most recent call last):
         ...
-        TypeError: near_polygon_graph() takes exactly 2 positional arguments (1 given)
+        TypeError: ...near_polygon_graph() takes exactly 2 positional arguments (1 given)
         sage: near_polygon_graph(0, 12)
         Cycle graph: Graph on 12 vertices
         sage: near_polygon_graph(*is_near_polygon([8, 7, 6, 5, 1, 2, 3, 8]))

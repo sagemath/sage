@@ -107,7 +107,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             sage: ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement)
             Traceback (most recent call last):
             ...
-            TypeError: __cinit__() takes at least 1 positional argument (0 given)
+            TypeError: ...__cinit__() takes at least 1 positional argument (0 given)
             sage: ComplexIntervalFieldElement.__new__(ComplexIntervalFieldElement, CIF)
             [.. NaN ..] + [.. NaN ..]*I
         """

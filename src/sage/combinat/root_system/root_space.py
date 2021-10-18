@@ -9,7 +9,7 @@ Root lattices and root spaces
 #*****************************************************************************
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.free_module import CombinatorialFreeModule
 from .root_lattice_realizations import RootLatticeRealizations
 import functools

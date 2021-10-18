@@ -173,7 +173,7 @@ from sage.geometry.toric_lattice_element import is_ToricLatticeElement
 from sage.topology.simplicial_complex import SimplicialComplex
 from sage.matrix.constructor import matrix
 from sage.misc.all import cached_method, flatten, latex, prod
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.modules.free_module import (FreeModule_ambient_field,
                                       FreeModule_ambient_pid)
 from sage.rings.all import QQ, ZZ

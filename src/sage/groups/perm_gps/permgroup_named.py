@@ -1934,7 +1934,9 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
             Category of facade infinite enumerated sets
             sage: TestSuite(TransitiveGroups()).run()
         """
-        DisjointUnionEnumeratedSets.__init__(self, Family(NonNegativeIntegers(), lambda i: TransitiveGroups(i)) )
+        DisjointUnionEnumeratedSets.__init__(self,
+                                             Family(NonNegativeIntegers(),
+                                                    TransitiveGroups))
 
     # We override the __call__ as the elements are not instances of Element
     __call__ = DisjointUnionEnumeratedSets._element_constructor_facade
@@ -2338,7 +2340,9 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
             sage: S.category()
             Category of facade infinite enumerated sets
         """
-        DisjointUnionEnumeratedSets.__init__(self, Family(NonNegativeIntegers(), lambda i: PrimitiveGroups(i)) )
+        DisjointUnionEnumeratedSets.__init__(self,
+                                             Family(NonNegativeIntegers(),
+                                                    PrimitiveGroups))
 
     def _repr_(self):
         """

@@ -202,7 +202,7 @@ def ComplexField(prec=53, names=None):
     return C
 
 
-class ComplexField_class(ring.Field):
+class ComplexField_class(sage.rings.abc.ComplexField):
     """
     An approximation to the field of complex numbers using floating
     point numbers with any specified precision. Answers derived from
@@ -960,7 +960,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: coerce(CN, 1+I)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes at least 2 positional arguments (1 given)
+            TypeError: ...__init__() takes at least 2 positional arguments (1 given)
         """
         if self._prec != -1:
             mpfr_clear(self.__re)

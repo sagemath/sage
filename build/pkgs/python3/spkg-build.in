@@ -2,6 +2,7 @@
 # the Python installer.
 unset PYTHONHOME
 unset PYTHONPATH
+unset SETUPTOOLS_USE_DISTUTILS
 
 # Prevent use of the system hg and svn as it might make the installation fail
 export HAS_HG=no

@@ -205,7 +205,6 @@ from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
 from sage.docs.instancedoc import instancedoc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.infinity import infinity
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.symbolic.expression', ['symbol_table', 'register_symbol'])
 lazy_import('sage.calculus.var', ['var', 'function'])
@@ -213,10 +212,7 @@ lazy_import('sage.symbolic.constants', ['I', 'e', 'pi'])
 
 FRICAS_CONSTANTS = {'%i': I,
                     '%e': e,
-                    '%pi': pi,
-                    'infinity': infinity,
-                    'plusInfinity': infinity,
-                    'minusInfinity': -infinity}
+                    '%pi': pi}
 
 FRICAS_SINGLE_LINE_START = 3  # where output starts when it fits next to the line number
 FRICAS_MULTI_LINE_START = 2   # and when it doesn't
@@ -591,7 +587,11 @@ http://fricas.sourceforge.net.
         from sage.functions.other import abs
         from sage.functions.gamma import gamma
         from sage.misc.functional import symbolic_sum, symbolic_prod
-        register_symbol(pi, {'fricas': 'pi'}) # pi is also a function in fricas
+        from sage.rings.infinity import infinity
+        register_symbol(pi, {'fricas': 'pi'}) # %pi::INFORM is %pi, but (pi) also exists
+        register_symbol(lambda: infinity, {'fricas': 'infinity'}) # %infinity::INFORM is (infinity)
+        register_symbol(lambda: infinity, {'fricas': 'plusInfinity'}) # %plusInfinity::INFORM is (minusInfinity)
+        register_symbol(lambda: -infinity, {'fricas': 'minusInfinity'}) # %minusInfinity::INFORM is (minusInfinity)
         register_symbol(cos, {'fricas': 'cos'})
         register_symbol(sin, {'fricas': 'sin'})
         register_symbol(tan, {'fricas': 'tan'})

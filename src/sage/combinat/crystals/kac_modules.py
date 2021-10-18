@@ -15,7 +15,7 @@ Crystals of Kac modules of the general-linear Lie superalgebra
 from sage.structure.parent import Parent
 from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.categories.regular_supercrystals import RegularSuperCrystals
 from sage.combinat.crystals.tensor_product import CrystalOfTableaux

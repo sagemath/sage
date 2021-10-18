@@ -375,7 +375,7 @@ def carmichael_lambda(n):
 
         sage: from sage.crypto.util import carmichael_lambda
         sage: type(carmichael_lambda(16))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     REFERENCES:
 

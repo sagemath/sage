@@ -200,10 +200,6 @@ from sage.tensor.modules.comp import (Components, CompWithSym, CompFullySym,
 from sage.tensor.modules.tensor_with_indices import TensorWithIndices
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
-from sage.manifolds.chart import Chart
-
-# TODO: remove the import of Chart after _preparse_display has been redefined
-# in tensor fields
 
 class FreeModuleTensor(ModuleElementWithMutability):
     r"""
@@ -583,13 +579,6 @@ class FreeModuleTensor(ModuleElementWithMutability):
         """
         if basis is None:
             basis = self._fmodule._def_basis
-        elif isinstance(basis, Chart):
-             # a coordinate chart has been passed instead of a basis;
-             # the basis is then assumed to be the coordinate frame
-             # associated to the chart:
-            if format_spec is None:
-                format_spec = basis
-            basis = basis.frame()
         return (basis, format_spec)
 
     def display(self, basis=None, format_spec=None):

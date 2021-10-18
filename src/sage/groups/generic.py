@@ -111,7 +111,7 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 from copy import copy
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
 from sage.arith.srange import xsrange

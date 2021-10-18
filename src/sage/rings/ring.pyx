@@ -1113,7 +1113,7 @@ cdef class Ring(ParentWithGens):
             for P, e in f.factor():
                 if P.degree() == 1:
                     return -P[0]
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             raise ValueError("no %s root of unity in %r" % (ZZ(n).ordinal_str(), self))
 
     def zeta_order(self):

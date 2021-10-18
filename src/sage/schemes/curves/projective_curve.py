@@ -145,7 +145,7 @@ from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom, End
 
 from sage.interfaces.all import singular
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.all import add, sage_eval
 
 from sage.rings.all import degree_lowest_rational_function, IntegerRing
@@ -1699,7 +1699,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         f = self.affine_patch(2).defining_polynomial()
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
-        else:  #in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
+        else:  # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
             return fundamental_group(f, projective=False)
 
     def rational_parameterization(self):

@@ -55,7 +55,7 @@ from sage.calculus.functions import jacobian
 from sage.categories.homset import Hom, End
 from sage.categories.fields import Fields
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 

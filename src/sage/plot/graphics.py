@@ -1252,12 +1252,12 @@ class Graphics(WithEqualityById, SageObject):
             sage: S.plot(1)
             Traceback (most recent call last):
             ...
-            TypeError: plot() takes 1 positional argument but 2 were given
+            TypeError: ...plot() takes 1 positional argument but 2 were given
 
             sage: S.plot(hey="hou")
             Traceback (most recent call last):
             ...
-            TypeError: plot() got an unexpected keyword argument 'hey'
+            TypeError: ...plot() got an unexpected keyword argument 'hey'
         """
         return self
 

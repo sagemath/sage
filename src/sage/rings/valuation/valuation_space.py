@@ -918,7 +918,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 x^2
 
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             x = self.domain().coerce(x)
             s = self.value_group()(s)
             if s == 0:

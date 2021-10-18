@@ -32,7 +32,6 @@ from memory_allocator cimport MemoryAllocator
 from sage.rings.real_double import RDF
 from sage.libs.gsl.all cimport *
 from sage.misc.sageinspect import sage_getargspec
-from sage.ext.fast_eval cimport FastDoubleFunc
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 from sage.ext.fast_callable import fast_callable
 
@@ -60,9 +59,6 @@ cdef double c_f(double t, void *params):
       return 0
 
    return value
-
-cdef double c_ff(double t, void *params):
-    return (<FastDoubleFunc>params)._call_c(&t)
 
 
 def numerical_integral(func, a, b=None,
@@ -273,7 +269,7 @@ def numerical_integral(func, a, b=None,
     cdef gsl_integration_workspace* W
     W = NULL
 
-    if not isinstance(func, FastDoubleFunc):
+    if True:
         from sage.rings.infinity import Infinity
         try:
             if hasattr(func, 'arguments'):
@@ -315,13 +311,10 @@ def numerical_integral(func, a, b=None,
                 else:
                    if ell.is_numeric() and not ell.is_zero():
                       raise ValueError('integral does not converge at infinity')
-            func = func._fast_float_(v)
+            func = fast_callable(func, vars=[v], domain=float)
 
-    if isinstance(func, FastDoubleFunc):
-        F.function = c_ff
-        F.params = <void *>func
 
-    elif not isinstance(func, compiled_integrand):
+    if not isinstance(func, compiled_integrand):
       wrapper = PyFunctionWrapper()
       if not func is None:
          wrapper.the_function = func

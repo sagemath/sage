@@ -223,7 +223,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
 
         is_complex = isinstance(z, ComplexNumber)
         n = degree+1
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         M = matrix(ZZ, n, n+1+int(is_complex))
         r = ZZ.one() << prec
         M[0, 0] = 1
@@ -807,7 +807,7 @@ def prime_powers(start, stop=None):
 
         sage: v = prime_powers(10)
         sage: type(v[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
         sage: prime_powers(0,1)
         []
@@ -1365,9 +1365,9 @@ def random_prime(n, proof=None, lbound=2):
     TESTS::
 
         sage: type(random_prime(2))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: type(random_prime(100))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: random_prime(1, lbound=-2)   #caused Sage hang #10112
         Traceback (most recent call last):
         ...
@@ -1699,7 +1699,7 @@ def gcd(a, b=None, **kwargs):
         sage: gcd(3, 6, 2)
         Traceback (most recent call last):
         ...
-        TypeError: gcd() takes ...
+        TypeError: ...gcd() takes ...
         sage: gcd([3, 6, 2])
         1
 
@@ -1715,7 +1715,7 @@ def gcd(a, b=None, **kwargs):
         sage: gcd([])
         0
         sage: type(gcd([]))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     TESTS:
 
@@ -2963,7 +2963,7 @@ class Euler_Phi:
         sage: euler_phi(0)
         0
         sage: type(euler_phi(0))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     We verify directly that the phi function is correct for 21.
 
@@ -3472,22 +3472,22 @@ def binomial(x, m, **kwds):
         sage: a = binomial(float(1001), float(1)); a
         1001.0
         sage: type(a)
-        <... 'float'>
+        <class 'float'>
         sage: binomial(float(1000), 1001)
         0.0
 
     Test more output types::
 
         sage: type(binomial(5r, 2))
-        <... 'int'>
+        <class 'int'>
         sage: type(binomial(5, 2r))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
         sage: type(binomial(5.0r, 2))
-        <... 'float'>
+        <class 'float'>
 
         sage: type(binomial(5/1, 2))
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
 
         sage: R = Integers(11)
         sage: b = binomial(R(7), R(3))
@@ -5756,7 +5756,7 @@ def squarefree_divisors(x):
         sage: a
         1
         sage: type(a)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Tests with numpy and gmpy2 numbers::
 

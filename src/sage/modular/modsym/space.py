@@ -27,7 +27,7 @@ import sage.modules.free_module as free_module
 import sage.matrix.matrix_space as matrix_space
 from sage.modules.free_module_element import FreeModuleElement
 from sage.modules.free_module import EchelonMatrixKey
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.modular.hecke.all as hecke
 from sage.arith.all import divisors, next_prime
 from sage.rings.fast_arith import prime_range

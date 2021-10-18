@@ -16,7 +16,7 @@ Elements of Arithmetic Subgroups
 
 from sage.structure.element cimport MultiplicativeGroupElement, MonoidElement, Element
 from sage.structure.richcmp cimport richcmp
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.modular.cusps import Cusp
 
 from sage.matrix.matrix_space import MatrixSpace

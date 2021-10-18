@@ -334,7 +334,7 @@ class Function_ceil(BuiltinFunction):
             sage: ceil(5.4)
             6
             sage: type(ceil(5.4))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         ::
 
@@ -483,7 +483,7 @@ class Function_floor(BuiltinFunction):
             sage: floor(5.4)
             5
             sage: type(floor(5.4))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: var('x')
             x
             sage: a = floor(5.4 + x); a
@@ -693,7 +693,7 @@ class Function_frac(BuiltinFunction):
             sage: frac(5.4)
             0.400000000000000
             sage: type(frac(5.4))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
             sage: frac(456/123)
             29/41
             sage: var('x')
@@ -867,7 +867,7 @@ def sqrt(x, *args, **kwds):
             sage: sqrt(4,hold=True)
             Traceback (most recent call last):
             ...
-            TypeError: _do_sqrt() got an unexpected keyword argument 'hold'
+            TypeError: ..._do_sqrt() got an unexpected keyword argument 'hold'
 
         This illustrates that the bug reported in :trac:`6171` has been fixed::
 
@@ -875,7 +875,7 @@ def sqrt(x, *args, **kwds):
             sage: a.sqrt(prec=100)  # this is supposed to fail
             Traceback (most recent call last):
             ...
-            TypeError: sqrt() got an unexpected keyword argument 'prec'
+            TypeError: ...sqrt() got an unexpected keyword argument 'prec'
             sage: sqrt(a, prec=100)
             1.0488088481701515469914535137
             sage: sqrt(4.00, prec=250)
@@ -1245,7 +1245,7 @@ class Function_real_part(GinacFunction):
             sage: real(a)
             2.50000000000000
             sage: type(real(a))
-            <type 'sage.rings.real_mpfr.RealLiteral'>
+            <class 'sage.rings.real_mpfr.RealLiteral'>
             sage: real(1.0r)
             1.0
             sage: real(complex(3, 4))
@@ -1578,8 +1578,8 @@ class Function_factorial(GinacFunction):
         Check that :trac:`16166` is fixed::
 
             sage: RBF = RealBallField(53)
-            sage: factorial(RBF(4.2))
-            [32.5780960503313 +/- 6.72e-14]
+            sage: factorial(RBF(4.2)) # abs tol 1e-13
+            [32.5780960503314 +/- 6.06e-14]
 
         Test pickling::
 
@@ -1629,7 +1629,7 @@ class Function_factorial(GinacFunction):
             sage: factorial(float(3.2))        # abs tol 1e-14
             7.7566895357931776
             sage: type(factorial(float(3.2)))
-            <type 'float'>
+            <class 'float'>
         """
         if isinstance(x, Integer):
             try:
@@ -1793,7 +1793,7 @@ class Function_binomial(GinacFunction):
         if k == 1:
             return n
 
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         return prod(n - i for i in range(k)) / factorial(k)
 
     def _eval_(self, n, k):
@@ -1803,9 +1803,9 @@ class Function_binomial(GinacFunction):
             sage: binomial._eval_(5, 3)
             10
             sage: type(binomial._eval_(5, 3))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(binomial._eval_(5., 3))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
             sage: binomial._eval_(x, 3)
             1/6*(x - 1)*(x - 2)*x
             sage: binomial._eval_(x, x-2)
@@ -2131,7 +2131,7 @@ class Function_cases(GinacFunction):
             sage: cases()
             Traceback (most recent call last):
             ...
-            TypeError: __call__() missing 1 required positional argument: 'l'
+            TypeError: ...__call__() missing 1 required positional argument: 'l'
 
             sage: cases(x)
             Traceback (most recent call last):

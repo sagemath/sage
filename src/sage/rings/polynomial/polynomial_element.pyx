@@ -51,7 +51,7 @@ TESTS::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-cdef is_FractionField, is_RealField, is_ComplexField
+cdef is_FractionField
 cdef ZZ, QQ, RR, CC, RDF, CDF
 
 cimport cython
@@ -84,13 +84,14 @@ from sage.structure.richcmp cimport (richcmp, richcmp_item,
 from sage.interfaces.singular import singular as singular_default, is_SingularElement
 from sage.libs.all import pari, pari_gen, PariError
 
-from sage.rings.real_mpfr import RealField, is_RealField, RR
+cimport sage.rings.abc
+from sage.rings.real_mpfr import RealField, RR
 
-from sage.rings.complex_mpfr import is_ComplexField, ComplexField
+from sage.rings.complex_mpfr import ComplexField
 CC = ComplexField()
 
-from sage.rings.real_double import is_RealDoubleField, RDF
-from sage.rings.complex_double import is_ComplexDoubleField, CDF
+from sage.rings.real_double import RDF
+from sage.rings.complex_double import CDF
 from sage.rings.real_mpfi import is_RealIntervalField
 
 from sage.structure.coerce cimport coercion_model
@@ -841,66 +842,6 @@ cdef class Polynomial(CommutativeAlgebraElement):
     def _get_compiled(self):
         # For testing
         return self._compiled
-
-    def _fast_float_(self, *vars):
-        """
-        Return a quickly-evaluating function on floats.
-
-        EXAMPLES::
-
-            sage: R.<t> = QQ[]
-            sage: f = t^3-t
-            sage: ff = f._fast_float_()
-            sage: ff(10)
-            990.0
-
-        Horner's method is used::
-
-            sage: f = (t+10)^3; f
-            t^3 + 30*t^2 + 300*t + 1000
-            sage: list(f._fast_float_())
-            ['load 0', 'push 30.0', 'add', 'load 0', 'mul', 'push 300.0', 'add', 'load 0', 'mul', 'push 1000.0', 'add']
-
-        TESTS::
-
-            sage: f = t + 2 - t
-            sage: ff = f._fast_float_()
-            sage: ff(3)
-            2.0
-            sage: list(f._fast_float_())
-            ['push 2.0']
-
-            sage: f = t - t
-            sage: ff = f._fast_float_()
-            sage: ff(3)
-            0.0
-            sage: list(f._fast_float_())
-            ['push 0.0']
-        """
-        from sage.ext.fast_eval import fast_float_arg, fast_float_constant
-        var = self._parent._names[0]
-        if not vars:
-            x = fast_float_arg(0)
-        elif var in vars:
-            x = fast_float_arg(list(vars).index(var))
-        else:
-            raise ValueError("free variable: %s" % var)
-        cdef int i, d = self.degree()
-        expr = x
-        if d == -1:
-            return fast_float_constant(0)
-        coeff = self.get_unsafe(d)
-        if d == 0:
-            return fast_float_constant(coeff)
-        if coeff != 1:
-            expr *= fast_float_constant(coeff)
-        for i from d > i >= 0:
-            coeff = self.get_unsafe(i)
-            if coeff:
-                expr += fast_float_constant(coeff)
-            if i > 0:
-                expr *= x
-        return expr
 
     def _fast_callable_(self, etb):
         r"""
@@ -7912,25 +7853,23 @@ cdef class Polynomial(CommutativeAlgebraElement):
 
         late_import()
 
-        input_fp = (is_RealField(K)
-                    or is_ComplexField(K)
-                    or is_RealDoubleField(K)
-                    or is_ComplexDoubleField(K))
-        output_fp = (is_RealField(L)
-                     or is_ComplexField(L)
-                     or is_RealDoubleField(L)
-                     or is_ComplexDoubleField(L))
-        input_complex = (is_ComplexField(K)
-                         or is_ComplexDoubleField(K))
-        output_complex = (is_ComplexField(L)
-                          or is_ComplexDoubleField(L))
+        input_fp = isinstance(K, (sage.rings.abc.RealField,
+                                  sage.rings.abc.ComplexField,
+                                  sage.rings.abc.RealDoubleField,
+                                  sage.rings.abc.ComplexDoubleField))
+        output_fp = isinstance(L, (sage.rings.abc.RealField,
+                                  sage.rings.abc.ComplexField,
+                                  sage.rings.abc.RealDoubleField,
+                                  sage.rings.abc.ComplexDoubleField))
+        input_complex = isinstance(K, (sage.rings.abc.ComplexField, sage.rings.abc.ComplexDoubleField))
+        output_complex = isinstance(L, (sage.rings.abc.ComplexField, sage.rings.abc.ComplexDoubleField))
         input_gaussian = (isinstance(K, NumberField_quadratic)
                           and list(K.polynomial()) == [1, 0, 1])
 
         if input_fp and output_fp:
             # allow for possibly using a fast but less reliable
             # floating point algorithm from numpy
-            low_prec = is_RealDoubleField(K) or is_ComplexDoubleField(K)
+            low_prec = isinstance(K, (sage.rings.abc.RealDoubleField, sage.rings.abc.ComplexDoubleField))
             if algorithm is None:
                 if low_prec:
                     algorithm = 'either'
@@ -7943,8 +7882,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             # We should support GSL, too.  We could also support PARI's
             # old Newton-iteration algorithm.
 
-            input_arbprec = (is_RealField(K) or
-                             is_ComplexField(K))
+            input_arbprec = isinstance(K, (sage.rings.abc.RealField, sage.rings.abc.ComplexField))
 
             if algorithm == 'numpy' or algorithm == 'either':
                 if K.prec() > 53 and L.prec() > 53:
@@ -8082,7 +8020,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                 # If we want the complex roots, and the input is not
                 # floating point, we convert to a real polynomial
                 # (except when the input coefficients are Gaussian rationals).
-                if is_ComplexDoubleField(L):
+                if isinstance(L, sage.rings.abc.ComplexDoubleField):
                     real_field = RDF
                 else:
                     real_field = RealField(L.prec())
@@ -8250,7 +8188,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             True
         """
         K = self.base_ring()
-        if is_RealField(K) or is_RealDoubleField(K):
+        if isinstance(K, (sage.rings.abc.RealField, sage.rings.abc.RealDoubleField)):
             return self.roots(multiplicities=False)
 
         return self.roots(ring=RR, multiplicities=False)
@@ -8292,11 +8230,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
             True
         """
         K = self.base_ring()
-        if is_RealField(K):
+        if isinstance(K, sage.rings.abc.RealField):
             return self.roots(ring=ComplexField(K.prec()), multiplicities=False)
-        if is_RealDoubleField(K):
+        if isinstance(K, sage.rings.abc.RealDoubleField):
             return self.roots(ring=CDF, multiplicities=False)
-        if is_ComplexField(K) or is_ComplexDoubleField(K):
+        if isinstance(K, (sage.rings.abc.ComplexField, sage.rings.abc.ComplexDoubleField)):
             return self.roots(multiplicities=False)
 
         return self.roots(ring=CC, multiplicities=False)

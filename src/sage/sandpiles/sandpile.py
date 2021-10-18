@@ -322,13 +322,11 @@ from textwrap import dedent
 
 from IPython.lib import pretty
 
-import os  # CHECK: possibly unnecessary after removing 4ti2-dependent methods
 from sage.calculus.functional import derivative
 from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
 from sage.combinat.parking_functions import ParkingFunctions
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.vector_partition import IntegerVectorsIterator
-from sage.env import SAGE_LOCAL
 from sage.functions.log import exp
 from sage.functions.other import binomial
 from sage.geometry.polyhedron.constructor import Polyhedron
@@ -346,10 +344,7 @@ from sage.arith.all import falling_factorial, lcm
 from sage.rings.all import Integer, PolynomialRing, QQ, ZZ
 from sage.symbolic.constants import I, pi
 from sage.symbolic.ring import SR
-
-# TODO: remove the following line once 4ti2 functions are removed
-path_to_zsolve = os.path.join(SAGE_LOCAL, 'bin', 'zsolve')
-
+from sage.features.four_ti_2 import FourTi2Executable
 
 
 def _sandpile_help(cls, usage, verbose=True):
@@ -589,7 +584,7 @@ class Sandpile(DiGraph):
             sage: G = Sandpile({0:[]}, 0, weighted=False)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() got an unexpected keyword argument 'weighted'
+            TypeError: ...__init__() got an unexpected keyword argument 'weighted'
         """
         # set graph name
         if isinstance(g, Graph) or isinstance(g, DiGraph):
@@ -5122,8 +5117,6 @@ class SandpileDivisor(dict):
 
             This method requires 4ti2.
         """
-        # import os
-
         L = self._sandpile._laplacian.transpose()
         n = self._sandpile.num_verts()
 
@@ -5172,7 +5165,9 @@ class SandpileDivisor(dict):
             sign_file.write('\n')
         # compute
         try:
-            os.system(path_to_zsolve+' -q ' + lin_sys + ' > ' + lin_sys_log)
+            import os
+            path_to_zsolve = FourTi2Executable('zsolve').executable
+            os.system(path_to_zsolve + ' -q ' + lin_sys + ' > ' + lin_sys_log)
             # process the results
             zhom_file = open(lin_sys_zhom,'r')
         except IOError:

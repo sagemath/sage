@@ -951,7 +951,7 @@ class SpechtRepresentation(SymmetricGroupRepresentation_generic_class):
         """
         ret = self._representation_matrix_uncached(permutation)
         ret.set_immutable()
-        return ret 
+        return ret
 
     def _representation_matrix_uncached(self, permutation):
         r"""

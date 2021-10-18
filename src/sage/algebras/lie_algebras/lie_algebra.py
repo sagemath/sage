@@ -30,7 +30,7 @@ from sage.categories.homset import Hom
 
 from sage.algebras.lie_algebras.lie_algebra_element import (LieAlgebraElementWrapper,
                                                             LieAlgebraMatrixWrapper)
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.ring import Ring
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.family import Family, AbstractFamily

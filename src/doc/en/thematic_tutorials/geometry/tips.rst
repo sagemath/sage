@@ -81,20 +81,20 @@ the latex presentation, there is a method for that!
 
     sage: print(TCube.Hrepresentation_str(latex=True))
     \begin{array}{rcl}
-    -6 \, x_{0} - 6 \, x_{1} - 6 \, x_{2} & \geq & -7 \\
-    -6 \, x_{0} - 6 \, x_{1} + 6 \, x_{2} & \geq & -7 \\
-    -6 \, x_{0} + 6 \, x_{1} - 6 \, x_{2} & \geq & -7 \\
-    -6 \, x_{0} + 6 \, x_{1} + 6 \, x_{2} & \geq & -7 \\
-                              -2 \, x_{0} & \geq & -1 \\
-                              -2 \, x_{1} & \geq & -1 \\
-                              -2 \, x_{2} & \geq & -1 \\
-     6 \, x_{0} + 6 \, x_{1} + 6 \, x_{2} & \geq & -7 \\
-                               2 \, x_{2} & \geq & -1 \\
-                               2 \, x_{1} & \geq & -1 \\
-                               2 \, x_{0} & \geq & -1 \\
-     6 \, x_{0} - 6 \, x_{1} - 6 \, x_{2} & \geq & -7 \\
-     6 \, x_{0} - 6 \, x_{1} + 6 \, x_{2} & \geq & -7 \\
-     6 \, x_{0} + 6 \, x_{1} - 6 \, x_{2} & \geq & -7
+    -6x_{0} - 6x_{1} - 6x_{2} & \geq & -7 \\
+    -6x_{0} - 6x_{1} + 6x_{2} & \geq & -7 \\
+    -6x_{0} + 6x_{1} - 6x_{2} & \geq & -7 \\
+    -6x_{0} + 6x_{1} + 6x_{2} & \geq & -7 \\
+                      -2x_{0} & \geq & -1 \\
+                      -2x_{1} & \geq & -1 \\
+                      -2x_{2} & \geq & -1 \\
+     6x_{0} + 6x_{1} + 6x_{2} & \geq & -7 \\
+                       2x_{2} & \geq & -1 \\
+                       2x_{1} & \geq & -1 \\
+                       2x_{0} & \geq & -1 \\
+     6x_{0} - 6x_{1} - 6x_{2} & \geq & -7 \\
+     6x_{0} - 6x_{1} + 6x_{2} & \geq & -7 \\
+     6x_{0} + 6x_{1} - 6x_{2} & \geq & -7
     \end{array}
 
     sage: Latex_repr = LatexExpr(TCube.Hrepresentation_str(latex=True))

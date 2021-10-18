@@ -1,7 +1,7 @@
 r"""
 Calculus functions
 """
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
 from sage.structure.element import is_Vector
 from sage.symbolic.ring import is_SymbolicVariable

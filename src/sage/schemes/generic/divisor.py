@@ -43,7 +43,7 @@ EXAMPLES::
 from sage.misc.latex import latex
 from sage.misc.repr import repr_lincomb
 from sage.misc.search import search
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.structure.formal_sum import FormalSum
 
 from .morphism import is_SchemeMorphism

@@ -364,7 +364,7 @@ class MatrixGroup_base(Group):
             2*B['v']
         """
         if base_ring is None:
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             base_ring = ZZ
         from sage.modules.with_basis.representation import SignRepresentationMatrixGroup
         return SignRepresentationMatrixGroup(self, base_ring)

@@ -37,11 +37,13 @@ from sage.structure.richcmp import rich_to_bool, op_NE
 from sage.cpython.string import bytes_to_str
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.randstate import current_randstate
 from sage.misc.superseded import deprecated_function_alias
 
-from sage.rings.all import QQ, ZZ, AA
+from sage.rings.integer_ring import ZZ
+from sage.rings.qqbar import AA
+from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.modules.vector_space_morphism import linear_transformation
@@ -215,7 +217,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             ....:                      Vrep_minimal=True, Hrep_minimal=True, pref_rep='Vrep')
             Traceback (most recent call last):
             ...
-            TypeError: _init_Hrepresentation() takes 3 positional arguments but 9 were given
+            TypeError: ..._init_Hrepresentation() takes 3 positional arguments but 9 were given
 
         The empty polyhedron is detected when the Vrepresentation is given with generator;
         see :trac:`29899`::
@@ -666,9 +668,8 @@ class Polyhedron_base(Element, ConvexSet_closed):
                 A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
                 sage: P.n_vertices() == Q.n_vertices()
                 False
-       """
-
-        from sage.categories.all import Rings
+        """
+        from sage.categories.rings import Rings
 
         if base_ring not in Rings():
             raise ValueError("invalid base ring")
@@ -1819,7 +1820,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
             sage: c = polytopes.cube()
             sage: c.Hrepresentation_str(separator=', ', style='positive')
-            '1 >= x0, 1 >= x1, 1 >= x2, x0 + 1 >= 0, x2 + 1 >= 0, x1 + 1 >= 0'
+            '1 >= x0, 1 >= x1, 1 >= x2, 1 + x0 >= 0, 1 + x2 >= 0, 1 + x1 >= 0'
         """
         pretty_hs = [h.repr_pretty(split=True, latex=latex, style=style, **kwds) for h in self.Hrepresentation()]
         shift = any(pretty_h[2].startswith('-') for pretty_h in pretty_hs)

@@ -52,8 +52,7 @@ As can be seen above, features try to produce helpful error messages.
 """
 
 import os
-from distutils.errors import CCompilerError
-from distutils.spawn import find_executable
+import shutil
 
 from sage.env import SAGE_SHARE
 from sage.misc.lazy_string import lazy_string
@@ -571,6 +570,8 @@ class Executable(Feature):
         sage: from sage.features import Executable
         sage: Executable(name="sh", executable="sh").is_present()
         FeatureTestResult('sh', True)
+        sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").is_present()
+        FeatureTestResult('does-not-exist', False)
     """
     def __init__(self, name, executable, **kwds):
         r"""
@@ -595,7 +596,7 @@ class Executable(Feature):
             sage: Executable(name="sh", executable="sh").is_present()
             FeatureTestResult('sh', True)
         """
-        if find_executable(self.executable) is None:
+        if shutil.which(self.executable) is None:
             return FeatureTestResult(self, False, "Executable {executable!r} not found on PATH.".format(executable=self.executable))
         return self.is_functional()
 
@@ -768,6 +769,7 @@ class CythonFeature(Feature):
             FeatureTestResult('empty', True)
         """
         from sage.misc.temporary_file import tmp_filename
+        from distutils.errors import CCompilerError
         with open(tmp_filename(ext=".pyx"), 'w') as pyx:
             pyx.write(self.test_code)
         from sage.misc.cython import cython_import

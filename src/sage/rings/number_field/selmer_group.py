@@ -346,10 +346,10 @@ def basis_for_p_cokernel(S, C, p):
     k = M.left_kernel()
     bas = [prod([P ** bj.lift() for P, bj in zip(S, b.list())],
                 C.number_field().ideal(1)) for b in k.basis()]
-    f = lambda v: k.coordinate_vector(v)
-    return bas, f
+    return bas, k.coordinate_vector
 
 # The main function
+
 
 def pSelmerGroup(K, S, p, proof=None, debug=False):
     r"""

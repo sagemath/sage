@@ -244,7 +244,7 @@ class PlainPythonRepr(ObjectReprABC):
             sage: from sage.repl.display.fancy_repr import PlainPythonRepr
             sage: pp = PlainPythonRepr()
             sage: pp.format_string(type(1))
-            "<type 'sage.rings.integer.Integer'>"
+            "<class 'sage.rings.integer.Integer'>"
 
         Do not swallow a trailing newline at the end of the output of
         a custom representer. Note that it is undesirable to have a

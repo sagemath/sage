@@ -486,7 +486,7 @@ cdef class randstate:
             sage: seed(1,2)   # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes at most 1 positional argument (2 given)
+            TypeError: ...__init__() takes at most 1 positional argument (2 given)
 
         AUTHOR:
 

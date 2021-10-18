@@ -1473,9 +1473,9 @@ def _run_it_on_static_instead(f):
         sage: Graph.new_graph_method = new_graph_method
         sage: g = Graph(5)
         sage: print("My backend is of type {}".format(type(g._backend)))
-        My backend is of type <type 'sage.graphs.base.sparse_graph.SparseGraphBackend'>
+        My backend is of type <class 'sage.graphs.base.sparse_graph.SparseGraphBackend'>
         sage: g.new_graph_method()
-        My backend is of type <type 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>
+        My backend is of type <class 'sage.graphs.base.static_sparse_backend.StaticSparseBackend'>
     """
     def same_function_on_static_version(*kwd, **kwds):
         if not isinstance(kwd[0]._backend, StaticSparseBackend):
@@ -1485,4 +1485,3 @@ def _run_it_on_static_instead(f):
             return f(*kwd, **kwds)
 
     return same_function_on_static_version
-

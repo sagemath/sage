@@ -36,7 +36,7 @@ from sage.misc.all import cached_method, cartesian_product_iterator
 from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
 from sage.functions.log import log, exp
-from sage.symbolic.all import SR
+from sage.symbolic.ring import SR
 
 
 class UnionOfIntervals:
@@ -1061,7 +1061,7 @@ class EllipticCurveCanonicalHeight:
             sage: E.discriminant()/E.minimal_model().discriminant()
             4096
         """
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         if self.K is QQ:
             return prod([p ** (e - self.E.local_data(p).discriminant_valuation()) for p, e in self.E.discriminant().factor()], QQ.one())
 

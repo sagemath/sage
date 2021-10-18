@@ -257,7 +257,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
             sage: c = kCusps(a,2)
             Traceback (most recent call last):
             ...
-            TypeError: __call__() takes 2 positional arguments but 3 were given
+            TypeError: ...__call__() takes 2 positional arguments but 3 were given
 
          ::
 

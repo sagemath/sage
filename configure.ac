@@ -462,7 +462,7 @@ AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
 AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
-    for pkg in r rpy2 r_jupyter; do
+    for pkg in r rpy2 r_jupyter pcre; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])

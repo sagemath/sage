@@ -375,7 +375,7 @@ def _reduce_invariants(invariants, weights):
         sage: _reduce_invariants(invariants, weights)
         [3, 75, 250]
     """
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
     factors = [dict(I.factor()) for I in invariants]
     scalar = ZZ(1)
     n = len(weights)

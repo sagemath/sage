@@ -237,7 +237,7 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
     """
     from sage.geometry.cone import Cone
     from sage.matrix.constructor import matrix
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
 
     (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
 
@@ -466,7 +466,7 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     """
     from sage.geometry.cone import Cone
     from sage.matrix.constructor import matrix
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
 
     (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
 
@@ -599,7 +599,7 @@ def schur(ambient_dim=None, lattice=None):
     """
     from sage.geometry.cone import Cone
     from sage.matrix.constructor import matrix
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
 
     (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
 

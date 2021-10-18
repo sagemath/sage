@@ -864,5 +864,5 @@ cdef cmatrix_mod_pn(celement a, long aprec, long valshift, PowComputer_ prime_po
             L[-1].append(zero)
         fmpz_poly_shift_left(prime_pow.poly_matmod, prime_pow.poly_matmod, 1)
         creduce(prime_pow.poly_matmod, prime_pow.poly_matmod, aprec, prime_pow)
-    from sage.matrix.all import matrix
+    from sage.matrix.constructor import matrix
     return matrix(R, deg, deg, L)

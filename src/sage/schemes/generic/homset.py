@@ -40,7 +40,7 @@ from sage.categories.homset import HomsetWithBase
 from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Set_generic
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.ring import CommutativeRing
 
 from sage.schemes.generic.scheme import AffineScheme, is_AffineScheme

@@ -93,7 +93,7 @@ The above is consistent with the following analytic computation::
 # ****************************************************************************
 
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 

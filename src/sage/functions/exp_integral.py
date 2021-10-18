@@ -55,7 +55,7 @@ from sage.libs.mpmath import utils as mpmath_utils
 mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
 
 from sage.rings.real_mpfr import RealField
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.functions.log import exp, log
 from sage.functions.trig import sin, cos
 from sage.functions.hyperbolic import sinh, cosh

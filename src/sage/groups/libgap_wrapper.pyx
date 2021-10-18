@@ -430,7 +430,7 @@ class ParentLibGAP(SageObject):
             sage: G._an_element_()
             a*b
         """
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         gens = self.gens()
         if gens:
             return prod(gens)

@@ -292,7 +292,9 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 ########################################################################
 
-from sage.rings.all import ZZ, RDF, RR
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfr import RR
 
 from .misc import _make_listlist, _common_length_of
 
@@ -615,7 +617,8 @@ def Polyhedron(vertices=None, rays=None, lines=None,
     # figure out base_ring
     from sage.misc.flatten import flatten
     from sage.structure.element import parent
-    from sage.categories.all import Rings, Fields
+    from sage.categories.fields import Fields
+    from sage.categories.rings import Rings
 
     values = flatten(vertices + rays + lines + ieqs + eqns)
     if base_ring is not None:
@@ -649,7 +652,10 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         if base_ring not in Rings():
             raise ValueError('invalid base ring')
 
-        from sage.symbolic.ring import SR
+        try:
+            from sage.symbolic.ring import SR
+        except ImportError:
+            SR = None
         if base_ring is not SR and not base_ring.is_exact():
             # TODO: remove this hack?
             if base_ring is RR:

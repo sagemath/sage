@@ -22,7 +22,7 @@ AUTHORS:
 
 from sage.categories.fields import Fields
 from sage.interfaces.all import singular
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 from .affine_morphism import SchemeMorphism_polynomial_affine_subscheme_field

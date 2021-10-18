@@ -17,7 +17,7 @@ Recursive Species
 #*****************************************************************************
 from sage.combinat.species.species import GenericCombinatorialSpecies
 from sage.combinat.species.structure import SpeciesStructureWrapper
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 
 
 class CombinatorialSpeciesStructure(SpeciesStructureWrapper):

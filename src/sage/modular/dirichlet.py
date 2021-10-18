@@ -58,7 +58,7 @@ AUTHORS:
 # ****************************************************************************
 
 import sage.categories.all as cat
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.misc.prandom as random
 from sage.modules.free_module import FreeModule
 import sage.modules.free_module_element as free_module_element

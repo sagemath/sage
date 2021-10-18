@@ -126,10 +126,10 @@ previously::
 # ****************************************************************************
 
 from collections import defaultdict
-from math import sqrt, cos, sin, acos, atan, pi
+from math import sqrt, cos, sin, atan, pi
 from sage.structure.sage_object import SageObject
 from sage.plot.all import (
-    Graphics, scatter_plot, bezier_path, line, arrow, text, arc, circle)
+    Graphics, scatter_plot, bezier_path, line, arrow, text, circle)
 
 layout_options = {
     'layout':
@@ -175,7 +175,11 @@ graphplot_options.update({
     'pos':
         'The position dictionary of vertices.',
     'vertex_labels':
-        'Whether or not to draw vertex labels.',
+        'Vertex labels to draw. This can be ``True``/``False`` to indicate '
+        'whether to print the vertex string representation of not, '
+        'a dictionary keyed by vertices and associating to each vertex '
+        'a label string, or a function taking as input a vertex and returning '
+        'a label string.',
     'vertex_color':
         'Default color for vertices not listed '
         'in vertex_colors dictionary.',
@@ -429,6 +433,54 @@ class GraphPlot(SageObject):
             GP.set_vertices(talk=True)
             GP.set_vertices(vertex_color='green', vertex_shape='^')
             sphinx_plot(GP)
+
+        Vertex labels are flexible::
+
+            sage: g = graphs.PathGraph(4)
+            sage: g.plot(vertex_labels=False)
+            Graphics object consisting of 4 graphics primitives
+
+        .. PLOT::
+
+            g = graphs.PathGraph(4)
+            P = g.graphplot(vertex_labels=False)
+            sphinx_plot(P)
+
+        ::
+
+            sage: g = graphs.PathGraph(4)
+            sage: g.plot(vertex_labels=True)
+            Graphics object consisting of 8 graphics primitives
+
+        .. PLOT::
+
+            g = graphs.PathGraph(4)
+            P = g.graphplot(vertex_labels=True)
+            sphinx_plot(P)
+
+        ::
+
+            sage: g = graphs.PathGraph(4)
+            sage: g.plot(vertex_labels=dict(zip(g, ['+', '-', '/', '*'])))
+            Graphics object consisting of 8 graphics primitives
+
+        .. PLOT::
+
+            g = graphs.PathGraph(4)
+            P = g.graphplot(vertex_labels=dict(zip(g, ['+', '-', '/', '*'])))
+            sphinx_plot(P)
+
+        ::
+
+            sage: g = graphs.PathGraph(4)
+            sage: g.plot(vertex_labels=lambda x: str(x % 2))
+            Graphics object consisting of 8 graphics primitives
+
+        .. PLOT::
+
+            g = graphs.PathGraph(4)
+            P = g.graphplot(vertex_labels=lambda x: str(x % 2))
+            sphinx_plot(P)
         """
         # Handle base vertex options
         voptions = {}
@@ -509,12 +561,18 @@ class GraphPlot(SageObject):
                 self._plot_components['vertices'] = scatter_plot(
                     pos, facecolor=colors, clip=False, **voptions)
 
-        if self._options['vertex_labels']:
-            self._plot_components['vertex_labels'] = []
+        vlabels = self._options['vertex_labels']
+        if vlabels:
+            if vlabels is True:
+                vfun = str
+            elif isinstance(vlabels, dict):
+                def vfun(x):
+                    return vlabels.get(x, "")
+            else:
+                vfun = vlabels
             # TODO: allow text options
-            for v in self._nodelist:
-                self._plot_components['vertex_labels'].append(
-                    text(str(v), self._pos[v], rgbcolor=(0, 0, 0), zorder=8))
+            self._plot_components['vertex_labels'] = [text(vfun(v), self._pos[v], color='black', zorder=8)
+                                                        for v in self._nodelist]
 
     def set_edges(self, **edge_options):
         """

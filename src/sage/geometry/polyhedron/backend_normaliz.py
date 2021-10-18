@@ -25,13 +25,14 @@ AUTHORS:
 
 from sage.structure.element import Element
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.features import PythonModule
 from sage.misc.lazy_import import lazy_import
 lazy_import('PyNormaliz', ['NmzResult', 'NmzCompute', 'NmzCone', 'NmzConeCopy'],
                     feature=PythonModule("PyNormaliz", spkg="pynormaliz"))
 
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.arith.functions import LCM_list
 from sage.misc.functional import denominator
 from sage.matrix.constructor import vector
@@ -951,7 +952,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             A 3-dimensional polyhedron in AA^3 defined as the convex hull of 1 vertex and 3 rays
         """
         from sage.categories.number_fields import NumberFields
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
 
         if self.base_ring() in (QQ, ZZ):
             normaliz_field = QQ

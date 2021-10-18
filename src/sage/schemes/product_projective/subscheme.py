@@ -15,7 +15,7 @@ AUTHORS:
 # http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.rings.fraction_field import FractionField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing

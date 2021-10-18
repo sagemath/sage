@@ -1561,9 +1561,9 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
 
             r = self._repr_()
             if 'Float' in T1:
-                from sage.rings.all import RDF
+                from sage.rings.real_double import RDF
                 base_ring = RDF
-                str_to_base_ring = lambda s: RDF(s)
+                str_to_base_ring = RDF
             elif 'QuadraticExtension' in T1 and 'r' in r:
                 i = r.find('r')
                 i1 = min((r[i:]+' ').find(' '), (r[i:]+'\n').find('\n'))
@@ -1574,12 +1574,12 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
                 def str_to_base_ring(s):
                     m = re.match(r'(-?[0-9/]+)[+]?((-?[0-9/]+)r([0-9/]+))?', s)
                     a, b = m.group(1), m.group(3)
-                    return base_ring(a) + base_ring(b)*base_ring.gen()
+                    return base_ring(a) + base_ring(b) * base_ring.gen()
 
             elif 'Rational' in T1:
-                from sage.rings.all import QQ
+                from sage.rings.rational_field import QQ
                 base_ring = QQ
-                str_to_base_ring = lambda s: QQ(s)
+                str_to_base_ring = QQ
             else:
                 raise NotImplementedError
 

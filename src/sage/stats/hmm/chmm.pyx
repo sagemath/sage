@@ -315,7 +315,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             [(1.0, 0.5), (-1.0, 3.0)]
         """
         cdef Py_ssize_t i
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return [(RDF(self.B[2*i]),RDF(self.B[2*i+1])) for i in range(self.N)]
 
     def __repr__(self):

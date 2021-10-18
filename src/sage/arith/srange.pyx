@@ -223,7 +223,7 @@ def srange(*args, **kwds):
         sage: v = srange(5); v
         [0, 1, 2, 3, 4]
         sage: type(v[2])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: srange(1, 10)
         [1, 2, 3, 4, 5, 6, 7, 8, 9]
         sage: srange(10, 1, -1)

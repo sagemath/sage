@@ -203,7 +203,7 @@ AUTHORS:
 # ****************************************************************************
 
 # imports
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.rings.all import Integer, ZZ, QQ, PolynomialRing, GF, CommutativeRing
 

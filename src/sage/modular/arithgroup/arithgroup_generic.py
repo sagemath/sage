@@ -15,7 +15,7 @@ Arithmetic subgroups (finite index subgroups of `{\rm SL}_2(\ZZ)`)
 
 from sage.groups.old import Group
 from sage.categories.groups import Groups
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.arith.all import lcm
 from sage.misc.cachefunc import cached_method
 from copy import copy # for making copies of lists of cusps

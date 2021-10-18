@@ -3168,7 +3168,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             raise ValueError("log base must be positive")
         self_sgn = mpz_sgn(mpq_numref(self.value))
         if self_sgn < 0 and prec is None:
-            from sage.symbolic.all import SR
+            from sage.symbolic.ring import SR
             return SR(self).log(m)
         if prec:
             if self_sgn >= 0:
@@ -3252,7 +3252,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/2).gamma(5)
             Traceback (most recent call last):
             ...
-            TypeError: gamma() takes exactly 0 positional arguments (1 given)
+            TypeError: ...gamma() takes exactly 0 positional arguments (1 given)
         """
         if prec:
             return self.n(prec).gamma()
@@ -3266,7 +3266,7 @@ cdef class Rational(sage.structure.element.FieldElement):
                 from sage.functions.all import sqrt
                 return sqrt(pi) * rat_part
             else:
-                from sage.symbolic.all import SR
+                from sage.symbolic.ring import SR
                 return SR(self).gamma()
 
     def floor(self):

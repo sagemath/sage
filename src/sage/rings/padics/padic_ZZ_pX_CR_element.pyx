@@ -2859,7 +2859,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         if self.valuation_c() < 0:
             raise ValueError("self must be integral")
         n = self.prime_pow.deg
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         if self._is_exact_zero():
             from sage.rings.integer_ring import IntegerRing
             return matrix(IntegerRing(), n, n)

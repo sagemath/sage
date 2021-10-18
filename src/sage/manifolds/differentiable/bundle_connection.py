@@ -266,7 +266,7 @@ class BundleConnection(SageObject, Mutability):
                             "vector bundle")
         Mutability.__init__(self)
         self._vbundle = vbundle
-        self._base_space = vbundle.base_space()
+        self._domain = vbundle.base_space()
         self._name = name
         if latex_name is None:
             self._latex_name = self._name
@@ -394,7 +394,7 @@ class BundleConnection(SageObject, Mutability):
             return True
         if not isinstance(other, BundleConnection):
             return False
-        if other._base_space != self._base_space:
+        if other._domain != self._domain:
             return False
         if self._connection_forms == {}:
             return False
@@ -566,7 +566,7 @@ class BundleConnection(SageObject, Mutability):
 
         """
         if frame is None:
-            smodule = self._vbundle.section_module(domain=self._base_space)
+            smodule = self._vbundle.section_module(domain=self._domain)
             frame = smodule.default_frame()
             if frame is None:
                 raise ValueError("a frame must be provided")
@@ -832,7 +832,7 @@ class BundleConnection(SageObject, Mutability):
         """
         self._require_mutable()
         if frame is None:
-            smodule = self._vbundle.section_module(domain=self._base_space)
+            smodule = self._vbundle.section_module(domain=self._domain)
             frame = smodule.default_frame()
             if frame is None:
                 raise ValueError("a frame must be provided")
@@ -840,7 +840,7 @@ class BundleConnection(SageObject, Mutability):
         if frame not in self._connection_forms:
             if frame not in self._vbundle._frames:
                 raise ValueError("the {} is not".format(frame) +
-                                 " a frame on the {}".format(self._base_space))
+                                 " a frame on the {}".format(self._domain))
             self._connection_forms[frame] = self._new_forms(frame)
         self._del_derived()  # deletes the derived quantities
         return self._connection_forms[frame][(i, j)]
@@ -967,7 +967,7 @@ class BundleConnection(SageObject, Mutability):
 
         """
         if frame is None:
-            smodule = self._vbundle.section_module(domain=self._base_space)
+            smodule = self._vbundle.section_module(domain=self._domain)
             frame = smodule.default_frame()
             if frame is None:
                 raise ValueError("a frame must be provided")
@@ -1023,7 +1023,7 @@ class BundleConnection(SageObject, Mutability):
 
         """
         if frame is None:
-            smodule = self._vbundle.section_module(domain=self._base_space)
+            smodule = self._vbundle.section_module(domain=self._domain)
             frame = smodule.default_frame()
             if frame is None:
                 raise ValueError("a frame must be provided")
@@ -1127,13 +1127,13 @@ class BundleConnection(SageObject, Mutability):
         # extract frame from first index:
         vb = self._vbundle
         if isinstance(args, (int, Integer, slice)):
-            smodule = vb.section_module(domain=self._base_space)
+            smodule = vb.section_module(domain=self._domain)
             frame = smodule.default_frame()
         elif not isinstance(args[0], (int, Integer, slice)):
             frame = args[0]
             args = args[1:]
         else:
-            smodule = vb.section_module(domain=self._base_space)
+            smodule = vb.section_module(domain=self._domain)
             frame = smodule.default_frame()
         # indexing:
         if isinstance(args, slice):
@@ -1200,13 +1200,13 @@ class BundleConnection(SageObject, Mutability):
         # extract frame from first index:
         vb = self._vbundle
         if isinstance(args, (int, Integer, slice)):
-            smodule = vb.section_module(domain=self._base_space)
+            smodule = vb.section_module(domain=self._domain)
             frame = smodule.default_frame()
         elif not isinstance(args[0], (int, Integer, slice)):
             frame = args[0]
             args = args[1:]
         else:
-            smodule = vb.section_module(domain=self._base_space)
+            smodule = vb.section_module(domain=self._domain)
             frame = smodule.default_frame()
         # determine indices:
         if isinstance(args, slice):
@@ -1350,7 +1350,7 @@ class BundleConnection(SageObject, Mutability):
         """
         vb = self._vbundle
         if frame is None:
-            smodule = vb.section_module(domain=self._base_space)
+            smodule = vb.section_module(domain=self._domain)
             frame = smodule.default_frame()
             if frame is None:
                 raise ValueError("a local frame must be provided")

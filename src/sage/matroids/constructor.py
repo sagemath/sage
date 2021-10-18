@@ -663,19 +663,19 @@ def Matroid(groundset=None, data=None, **kwds):
         sage: Matroid("abc", bases=["abc"], foo="bar")
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'foo'
+        TypeError: ...Matroid() got an unexpected keyword argument 'foo'
         sage: Matroid(data=["x"], matrix=Matrix(1,1))
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'matrix'
+        TypeError: ...Matroid() got an unexpected keyword argument 'matrix'
         sage: Matroid(bases=["x"], matrix=Matrix(1,1))
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'matrix'
+        TypeError: ...Matroid() got an unexpected keyword argument 'matrix'
         sage: Matroid(Matrix(1,1), ring=ZZ, field=QQ)
         Traceback (most recent call last):
         ...
-        TypeError: Matroid() got an unexpected keyword argument 'ring'
+        TypeError: ...Matroid() got an unexpected keyword argument 'ring'
         sage: Matroid(rank_function=lambda X: len(X))
         Traceback (most recent call last):
         ...

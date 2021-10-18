@@ -171,7 +171,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
          File "<string>", line 1
             $x = $y[Integer(3)] # Does Perl syntax work?
             ^
-        SyntaxError: invalid syntax
+        SyntaxError: invalid ...
     """
     if isinstance(source, (list, tuple)):
         cmds = source[0]

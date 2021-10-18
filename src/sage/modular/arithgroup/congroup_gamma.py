@@ -11,7 +11,7 @@ Congruence Subgroup `\Gamma(N)`
 #*****************************************************************************
 
 from .congroup_generic import CongruenceSubgroup
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.rings.all import ZZ, Zmod, QQ
 from sage.rings.integer import GCD_list
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup

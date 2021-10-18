@@ -1,4 +1,4 @@
-$(PYTHON) debugpy matplotlib_inline ipython jupyter_client scandir | $(PYTHON_TOOLCHAIN)
+$(PYTHON) ipython_genutils importlib_metadata argcomplete debugpy matplotlib_inline ipython jupyter_client tornado appnope traitlets | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

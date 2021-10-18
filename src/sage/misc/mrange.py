@@ -19,7 +19,7 @@ AUTHORS:
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 
 def _len(L):
@@ -700,7 +700,7 @@ def cantor_product(*args, **kwds):
         sage: next(cantor_product(count(), toto='hey'))
         Traceback (most recent call last):
         ...
-        TypeError: __init__() got an unexpected keyword argument 'toto'
+        TypeError: ...__init__() got an unexpected keyword argument 'toto'
 
     ::
 

@@ -475,7 +475,7 @@ class Polyomino(SageObject):
 
     - ``coords`` -- iterable of integer coordinates in `\ZZ^d`
     - ``color`` -- string (default: ``'gray'``), color for display
-    - ``dimension`` -- integer (default: ``None``), dimension of the space, 
+    - ``dimension`` -- integer (default: ``None``), dimension of the space,
       if ``None``, it is guessed from the ``coords`` if ``coords`` is non
       empty
 

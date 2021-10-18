@@ -22,7 +22,7 @@ AUTHORS:
 from sage.interfaces.gap import gap
 from sage.categories.morphism import Morphism
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 
 def is_AbelianGroupMorphism(f):

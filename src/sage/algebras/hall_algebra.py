@@ -20,7 +20,7 @@ from sage.combinat.partition import Partition, Partitions
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.hall_polynomial import hall_polynomial
 from sage.combinat.sf.sf import SymmetricFunctions
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from functools import cmp_to_key, reduce
 
 

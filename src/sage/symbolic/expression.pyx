@@ -7639,7 +7639,7 @@ cdef class Expression(CommutativeRingElement):
             ...
             TypeError: y is not a variable of Multivariate Polynomial Ring in x over Ring of integers modulo 4
         """
-        from sage.symbolic.all import SR
+        from sage.symbolic.ring import SR
         from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
         base_ring = R.base_ring()
         if base_ring == SR:
@@ -8273,7 +8273,7 @@ cdef class Expression(CommutativeRingElement):
             sage: abs(SR(-5),hold=True)
             Traceback (most recent call last):
             ...
-            TypeError: abs() takes no keyword arguments
+            TypeError: ...abs() takes no keyword arguments
 
         But this is possible using the method :meth:`abs`::
 
@@ -8558,6 +8558,11 @@ cdef class Expression(CommutativeRingElement):
             sage: (I^m).imag_part()
             sin(1/2*pi*m)
             sage: forget()
+
+        Check that :trac:`29400` is fixed::
+
+            sage: cot(1 + i).imag().n() - (1/tan(1 + i)).imag().n() # abs tol 10^-12
+            0.00000000000000
         """
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_real_part, self._gobj, hold))
@@ -8694,7 +8699,7 @@ cdef class Expression(CommutativeRingElement):
             sage: sqrt(4,hold=True)
             Traceback (most recent call last):
             ...
-            TypeError: _do_sqrt() got an unexpected keyword argument 'hold'
+            TypeError: ..._do_sqrt() got an unexpected keyword argument 'hold'
         """
         return new_Expression_from_GEx(self._parent,
                 g_hold2_wrapper(g_power_construct, self._gobj, g_ex1_2, hold))
@@ -9787,7 +9792,7 @@ cdef class Expression(CommutativeRingElement):
             sage: x.gamma(y)
             Traceback (most recent call last):
             ...
-            TypeError: gamma() takes exactly 0 positional arguments (1 given)
+            TypeError: ...gamma() takes exactly 0 positional arguments (1 given)
         """
         cdef GEx x
         sig_on()
@@ -12481,7 +12486,9 @@ cdef class Expression(CommutativeRingElement):
             else:
                 raise RuntimeError("no zero in the interval, since constant expression is not 0.")
         elif self.number_of_arguments() == 1:
-            f = self._fast_float_(self.default_variable())
+            from sage.ext.fast_callable import fast_callable
+            # The domain=float is important for numpy if we encounter NaN.
+            f = fast_callable(self, vars=[self.default_variable()], domain=float)
             return find_root(f, a=a, b=b, xtol=xtol,
                              rtol=rtol,maxiter=maxiter,
                              full_output=full_output)
@@ -12518,16 +12525,20 @@ cdef class Expression(CommutativeRingElement):
 
         INPUT:
 
-        -  ``var`` - variable (default: first variable in
-           self)
+        -  ``a`` - real number; left endpoint of interval on which to
+           minimize
 
-        -  ``a,b`` - endpoints of interval on which to minimize
-           self.
+        -  ``b`` - real number; right endpoint of interval on which to
+           minimize
 
-        -  ``tol`` - the convergence tolerance
+        -  ``var`` - variable (default: first variable in self); the
+           variable in self to maximize over
 
-        -  ``maxfun`` - maximum function evaluations
+        -  ``tol`` - positive real (default: 1.48e-08); the convergence
+           tolerance
 
+        -  ``maxfun`` - natural number (default: 500); maximum function
+           evaluations
 
         OUTPUT:
 
@@ -12561,33 +12572,18 @@ cdef class Expression(CommutativeRingElement):
         - William Stein (2007-12-07)
         """
         from sage.numerical.optimize import find_local_minimum
+        from sage.ext.fast_callable import fast_callable
 
         if var is None:
             var = self.default_variable()
-        return find_local_minimum(self._fast_float_(var),
-                                        a=a, b=b, tol=tol, maxfun=maxfun )
+
+        # The domain=float is important for numpy if we encounter NaN.
+        f = fast_callable(self, vars=[var], domain=float)
+        return find_local_minimum(f, a=a, b=b, tol=tol, maxfun=maxfun)
 
     ###################
     # Fast Evaluation #
     ###################
-    def _fast_float_(self, *vars):
-        """
-        Return an object which provides fast floating point
-        evaluation of this symbolic expression.
-
-        See :mod:`sage.ext.fast_eval` for more information.
-
-        EXAMPLES::
-
-            sage: f = sqrt(x+1)
-            sage: ff = f._fast_float_('x')
-            sage: ff(1.0)
-            1.4142135623730951
-            sage: type(_)
-            <... 'float'>
-        """
-        from sage.symbolic.expression_conversions import fast_float
-        return fast_float(self, *vars)
 
     def _fast_callable_(self, etb):
         """
@@ -13620,7 +13616,7 @@ cpdef new_Expression(parent, x):
             raise TypeError('positive characteristic not allowed in symbolic computations')
         exp = x
     elif isinstance(x, Factorization):
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         return prod([SR(p)**e for p,e in x], SR(x.unit()))
     elif x in Sets():
         from sage.rings.all import NN, ZZ, QQ, AA

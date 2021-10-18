@@ -92,14 +92,14 @@ class SagePrettyPrinter(PrettyPrinter):
             sage: 'this is a string'
             'this is a string'
             sage: type(123)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type
             <... 'type'>
             sage: import types
             sage: type('name', (), {})
             <class '__main__.name'>
             sage: types.BuiltinFunctionType
-            <type 'builtin_function_or_method'>
+            <class 'builtin_function_or_method'>
 
             sage: def foo(): pass
             sage: foo

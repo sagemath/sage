@@ -21,7 +21,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.calculus.functions import jacobian
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
@@ -309,8 +309,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
               z0*z2 - z1*z3,
               z1 + z3 + 1
         """
-        from sage.modules.all import vector
-        from sage.misc.all import prod
+        from sage.modules.free_module_element import vector
+        from sage.misc.misc_c import prod
         ambient = self.ambient_space()
         fan = ambient.fan()
         if cone is None:

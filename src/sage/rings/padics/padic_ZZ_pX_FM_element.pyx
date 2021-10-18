@@ -1032,7 +1032,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             [1590 1375 1695 1032 2358]
             [2415  590 2370 2970 1032]
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         R = IntegerModRing(self.prime_pow.pow_Integer(self.prime_pow.prec_cap))
         n = self.prime_pow.deg
         L = []

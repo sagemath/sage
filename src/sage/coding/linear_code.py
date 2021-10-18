@@ -223,7 +223,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.functional import is_even
 from sage.misc.cachefunc import cached_method
 from sage.misc.randstate import current_randstate

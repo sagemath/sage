@@ -50,7 +50,7 @@ We check that ridiculous operations are being avoided::
 """
 
 from . import additive_abelian_group as addgp
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.categories.morphism import Morphism
 from sage.structure.element import parent
 from sage.modules.free_module_element import vector

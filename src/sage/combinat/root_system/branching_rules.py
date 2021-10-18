@@ -15,7 +15,7 @@ from sage.misc.flatten import flatten
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.misc.functional import is_even, is_odd
 
 

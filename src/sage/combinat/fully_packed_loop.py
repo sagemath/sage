@@ -40,7 +40,7 @@ from sage.misc.decorators import options
 from sage.matrix.constructor import matrix
 from sage.arith.all import factorial
 from sage.rings.integer import Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 # edges of a fpl in terms of the six vertex possible configurations
 R = (1, 0)

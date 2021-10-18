@@ -669,18 +669,18 @@ class GraphQuery(GenericGraphQuery):
             relabel[col] = ' '.join([word.capitalize() for word in col.split('_')])
 
         if re.search('SELECT .*degree_sequence.* FROM', self.__query_string__):
-            format_cols = {'degree_sequence': (lambda x, y: data_to_degseq(x, y))}
+            format_cols = {'degree_sequence': data_to_degseq}
         else:
             format_cols = {}
         if with_picture:
             SQLQuery.show(self, max_field_size=max_field_size,
-                                plot_cols={'graph6': (lambda x: graph6_to_plot(x))},
-                                format_cols=format_cols, id_col='graph6',
-                                relabel_cols=relabel)
+                          plot_cols={'graph6': graph6_to_plot},
+                          format_cols=format_cols, id_col='graph6',
+                          relabel_cols=relabel)
         else:
             SQLQuery.show(self, max_field_size=max_field_size,
-                                format_cols=format_cols, relabel_cols=relabel,
-                                id_col='graph6')
+                          format_cols=format_cols, relabel_cols=relabel,
+                          id_col='graph6')
 
     def get_graphs_list(self):
         """

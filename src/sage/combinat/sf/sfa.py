@@ -221,7 +221,7 @@ from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from copy import copy
 from functools import reduce
 
@@ -2619,9 +2619,9 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         if ps == 'lex':
             self.print_options(sorting_key=lambda x: x)
         elif ps == 'length':
-            self.print_options(sorting_key=lambda x: len(x))
+            self.print_options(sorting_key=len)
         elif ps == 'maximal_part':
-            self.print_options(sorting_key=lambda x: _lmax(x))
+            self.print_options(sorting_key=_lmax)
         else:
             raise ValueError("the print style must be one of lex, length, or maximal_part ")
         self._print_style = ps

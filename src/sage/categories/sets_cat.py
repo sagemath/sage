@@ -118,10 +118,10 @@ class Sets(Category_singleton):
         <class 'sage.categories.examples.sets_cat.PrimeNumbers_Abstract'>
         <class 'sage.structure.unique_representation.UniqueRepresentation'>
         <class 'sage.structure.unique_representation.CachedRepresentation'>
-        <type 'sage.misc.fast_methods.WithEqualityById'>
-        <type 'sage.structure.parent.Parent'>
-        <type 'sage.structure.category_object.CategoryObject'>
-        <type 'sage.structure.sage_object.SageObject'>
+        <class 'sage.misc.fast_methods.WithEqualityById'>
+        <class 'sage.structure.parent.Parent'>
+        <class 'sage.structure.category_object.CategoryObject'>
+        <class 'sage.structure.sage_object.SageObject'>
         <class 'sage.categories.sets_cat.Sets.parent_class'>
         <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.parent_class'>
         <class 'sage.categories.objects.Objects.parent_class'>
@@ -169,18 +169,18 @@ class Sets(Category_singleton):
         sage: for cl in x.__class__.mro(): print(cl)
         <class 'sage.categories.examples.sets_cat.PrimeNumbers_Inherits_with_category.element_class'>
         <class 'sage.categories.examples.sets_cat.PrimeNumbers_Inherits.Element'>
-        <type 'sage.rings.integer.IntegerWrapper'>
-        <type 'sage.rings.integer.Integer'>
-        <type 'sage.structure.element.EuclideanDomainElement'>
-        <type 'sage.structure.element.PrincipalIdealDomainElement'>
-        <type 'sage.structure.element.DedekindDomainElement'>
-        <type 'sage.structure.element.IntegralDomainElement'>
-        <type 'sage.structure.element.CommutativeRingElement'>
-        <type 'sage.structure.element.RingElement'>
-        <type 'sage.structure.element.ModuleElement'>
+        <class 'sage.rings.integer.IntegerWrapper'>
+        <class 'sage.rings.integer.Integer'>
+        <class 'sage.structure.element.EuclideanDomainElement'>
+        <class 'sage.structure.element.PrincipalIdealDomainElement'>
+        <class 'sage.structure.element.DedekindDomainElement'>
+        <class 'sage.structure.element.IntegralDomainElement'>
+        <class 'sage.structure.element.CommutativeRingElement'>
+        <class 'sage.structure.element.RingElement'>
+        <class 'sage.structure.element.ModuleElement'>
         <class 'sage.categories.examples.sets_cat.PrimeNumbers_Abstract.Element'>
-        <type 'sage.structure.element.Element'>
-        <type 'sage.structure.sage_object.SageObject'>
+        <class 'sage.structure.element.Element'>
+        <class 'sage.structure.sage_object.SageObject'>
         <class 'sage.categories.sets_cat.Sets.element_class'>
         <class 'sage.categories.sets_with_partial_maps.SetsWithPartialMaps.element_class'>
         <class 'sage.categories.objects.Objects.element_class'>
@@ -954,7 +954,7 @@ class Sets(Category_singleton):
 
                 sage: A = FreeModule(QQ, 3)
                 sage: A.element_class
-                <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+                <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
                 sage: A._element_constructor_
                 <bound method FreeModule_ambient_field_with_category._element_constructor_ of Vector space of dimension 3 over Rational Field>
 
@@ -1710,7 +1710,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 sage: list(sF)
                 [1, 2, 3]
                 sage: from sympy import FiniteSet
-                sage: FiniteSet.fromiter(sF)
+                sage: FiniteSet.fromiter(sF)  # random - this output format is sympy >= 1.9
                 FiniteSet(1, 2, 3)
 
                 sage: RR._sympy_().is_finite_set

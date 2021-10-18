@@ -152,7 +152,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
         cartan_type = CartanType(['A',n-1])
         self._cartan_type = cartan_type
         from sage.combinat.sf.sf import SymmetricFunctions
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         Sym = SymmetricFunctions(QQ)
         s = Sym.schur()
         support = s(w.stanley_symmetric_function()).support()

@@ -192,14 +192,14 @@ def unify_arguments(funcs):
     vars=set()
     free_variables=set()
     if not isinstance(funcs, (list, tuple)):
-        funcs=[funcs]
+        funcs = [funcs]
 
     for f in funcs:
         if is_CallableSymbolicExpression(f):
-            f_args=set(f.arguments())
+            f_args = set(f.arguments())
             vars.update(f_args)
         else:
-            f_args=set()
+            f_args = set()
 
         try:
             free_vars = set(f.variables()).difference(f_args)
@@ -208,7 +208,7 @@ def unify_arguments(funcs):
         except AttributeError:
             # we probably have a constant
             pass
-    return tuple(sorted(vars, key=lambda x: str(x))), tuple(sorted(free_variables, key=lambda x: str(x)))
+    return tuple(sorted(vars, key=str)), tuple(sorted(free_variables, key=str))
 
 
 def _multiple_of_constant(n, pos, const):

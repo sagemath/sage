@@ -247,7 +247,7 @@ class Hyperplane(LinearExpression):
         try:
             values = [abs(x) for x in self.A()]
         except ArithmeticError:
-            from sage.rings.all import RDF
+            from sage.rings.real_double import RDF
             values = [abs(RDF(x)) for x in self.A()]
         max_pos = 0
         max_value = values[max_pos]

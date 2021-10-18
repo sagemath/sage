@@ -87,7 +87,7 @@ def is_RealDoubleField(x):
     """
     return isinstance(x, RealDoubleField_class)
 
-cdef class RealDoubleField_class(Field):
+cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
     """
     An approximation to the field of real numbers using double
     precision floating point numbers. Answers derived from calculations

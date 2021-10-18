@@ -304,6 +304,19 @@ def has_rubiks():
     from sage.features.rubiks import Rubiks
     return Rubiks().is_present()
 
+def has_4ti2():
+    """
+    Test if the 4ti2 package is available.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.external import has_4ti2
+        sage: has_4ti2()   # optional -- 4ti2
+        FeatureTestResult('4ti2', True)
+    """
+    from sage.features.four_ti_2 import FourTi2
+    return FourTi2().is_present()
+
 def external_software():
     """
     Return the alphabetical list of external software supported by this module.
@@ -346,7 +359,8 @@ class AvailableSoftware(object):
 
         sage: from sage.doctest.external import external_software, available_software
         sage: external_software
-        ['cplex',
+        ['4ti2',
+         'cplex',
          'ffmpeg',
          'graphviz',
          'gurobi',
