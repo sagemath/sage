@@ -34,10 +34,6 @@ from sage.libs.pari import pari
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from copy import copy, deepcopy
 from sage.misc.verbose import verbose
-from sage.functions.gamma import gamma
-from sage.functions.transcendental import zeta
-from sage.symbolic.constants import pi
-from sage.symbolic.ring import SR
 from sage.quadratic_forms.special_values import quadratic_L_function__exact
 lazy_import('sage.quadratic_forms.genera.normal_form', '_min_nonsquare')
 lazy_import('sage.interfaces.magma', 'magma')
@@ -3217,10 +3213,14 @@ class GenusSymbol_global_ring():
 
             sage: A = matrix.diagonal(ZZ, [1, 1, 1, 1])
             sage: GS = Genus(A)
-            sage: GS._standard_mass()
+            sage: GS._standard_mass()           # optional - sage.symbolic
             1/48
 
         """
+        from sage.symbolic.constants import pi
+        from sage.symbolic.ring import SR
+        from sage.functions.transcendental import zeta
+        from sage.functions.gamma import gamma
         n = self.dimension()
         if n % 2 == 0:
             s = n // 2
@@ -3268,7 +3268,7 @@ class GenusSymbol_global_ring():
 
             sage: from sage.quadratic_forms.genera.genus import genera
             sage: G = genera((8,0), 1, even=True)[0]
-            sage: G.mass()
+            sage: G.mass()                 # optional - sage.symbolic
             1/696729600
             sage: G.mass(backend='magma')  # optional - magma
             1/696729600
