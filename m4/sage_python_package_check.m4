@@ -40,7 +40,9 @@
 #
 
 AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
+  AC_MSG_CHECKING([if --enable-system-site-packages was used])
   AS_IF([test "${enable_system_site_packages}" = "yes"], [
+    AC_MSG_RESULT(yes)
     AC_REQUIRE([SAGE_SPKG_CONFIGURE_PYTHON3])
 
     dnl We run this check inside a python venv, because that's ultimately
@@ -94,6 +96,7 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
     AS_IF([test -d config.venv], [rm -rf config.venv])
   ], [
     dnl System site packages are disabled.
+    AC_MSG_RESULT(no; skipping check)
     sage_spkg_install_$1=yes
 
     dnl We have to retroactively hack the --with-system-foo={no,yes,force}
