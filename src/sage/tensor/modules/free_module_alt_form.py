@@ -554,11 +554,11 @@ class FreeModuleAltForm(FreeModuleTensor):
 
         Check that the bug reported in :trac:`22520` is fixed::
 
-            sage: M = FiniteRankFreeModule(SR, 2, name='M')
-            sage: e = M.basis('e')
-            sage: a = M.alternating_form(2)
-            sage: a[0,1] = SR.var('t', domain='real')
-            sage: a.display()
+            sage: M = FiniteRankFreeModule(SR, 2, name='M')  # optional - sage.symbolic
+            sage: e = M.basis('e')                           # optional - sage.symbolic
+            sage: a = M.alternating_form(2)                  # optional - sage.symbolic
+            sage: a[0,1] = SR.var('t', domain='real')        # optional - sage.symbolic
+            sage: a.display()                                # optional - sage.symbolic
             t e^0∧e^1
 
         """

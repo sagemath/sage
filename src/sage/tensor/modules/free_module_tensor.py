@@ -687,10 +687,10 @@ class FreeModuleTensor(ModuleElementWithMutability):
 
         Check that the bug reported in :trac:`22520` is fixed::
 
-            sage: M = FiniteRankFreeModule(SR, 3, name='M')
-            sage: e = M.basis('e')
-            sage: t = SR.var('t', domain='real')
-            sage: (t*e[0]).display()
+            sage: M = FiniteRankFreeModule(SR, 3, name='M')  # optional - sage.symbolic
+            sage: e = M.basis('e')                           # optional - sage.symbolic
+            sage: t = SR.var('t', domain='real')             # optional - sage.symbolic
+            sage: (t*e[0]).display()                         # optional - sage.symbolic
             t e_0
 
         """
