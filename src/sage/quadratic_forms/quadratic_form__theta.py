@@ -14,9 +14,6 @@ from copy import deepcopy
 from sage.rings.real_mpfr import RealField
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.integer_ring import ZZ
-from sage.functions.all import floor, ceil
-from sage.misc.functional import sqrt
-from sage.misc.misc import cputime
 
 
 def theta_series(self, Max=10, var_str='q', safe_flag=True):
@@ -176,6 +173,8 @@ def theta_by_cholesky(self, q_prec):
     # RAISE AN ERROR -- This routine is deprecated!
     #raise NotImplementedError, "This routine is deprecated.  Try theta_series(), which uses theta_by_pari()."
 
+    from sage.functions.other import sqrt, floor, ceil
+
     n = self.dim()
     theta = [0 for i in range(q_prec+1)]
     PS = PowerSeriesRing(ZZ, 'q')
@@ -303,6 +302,8 @@ def theta_series_degree_2(Q, prec):
     - Raum, Ryan, Skoruppa, Tornaria, 'On Formal Siegel Modular Forms'
       (preprint)
     """
+    from sage.functions.other import sqrt, floor, ceil
+    from sage.misc.misc import cputime
     from sage.misc.verbose import verbose
 
     if Q.base_ring() != ZZ:
