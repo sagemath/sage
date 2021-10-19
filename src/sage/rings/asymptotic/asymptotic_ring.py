@@ -1684,7 +1684,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         else:
             return self.__pow_number__(exponent, precision=precision)
 
-        from sage.symbolic.expression import Expression
+        from sage.structure.element import Expression
         if isinstance(exponent, Expression) and exponent.is_constant():
             return self.__pow_number__(exponent, precision=precision)
 

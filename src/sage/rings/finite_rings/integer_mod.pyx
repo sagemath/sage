@@ -380,7 +380,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             try:
                 z = integer_ring.Z(value)
             except (TypeError, ValueError):
-                from sage.symbolic.expression import Expression
+                from sage.structure.element import Expression
                 if isinstance(value, Expression):
                     value = value.pyobject()
                 else:

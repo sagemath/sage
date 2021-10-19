@@ -650,7 +650,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             # this is not implemented via an _acb_() method, because such a
             # conversion method would also be called by things like
             # CBF(re_expr, im_expr).
-            from sage.symbolic.expression import Expression
+            from sage.structure.element import Expression
             if isinstance(x, Expression):
                 # Parse the expression. Despite the method name, the result
                 # will be a complex ball.
