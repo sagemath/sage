@@ -581,7 +581,7 @@ from math import sin, cos, pi, log, exp #for polar_plot and log scaling
 
 from sage.ext.fast_eval import fast_float, is_fast_float
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.expression", "Expression")
+from sage.structure.element import Expression
 from sage.misc.decorators import options
 
 from .graphics import Graphics
