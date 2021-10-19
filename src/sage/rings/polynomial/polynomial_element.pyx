@@ -7656,9 +7656,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
         back to pari (numpy will fail if some coefficient is infinite,
         for instance).
 
-        If L is SR, then the roots will be radical expressions,
-        computed as the solutions of a symbolic polynomial expression.
-        At the moment this delegates to
+        If L is SR (or one of its subrings), then the roots will be radical
+        expressions, computed as the solutions of a symbolic polynomial
+        expression. At the moment this delegates to
         :meth:`sage.symbolic.expression.Expression.solve`
         which in turn uses Maxima to find radical solutions.
         Some solutions may be lost in this approach.
@@ -7932,8 +7932,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             else:
                 return [rt for (rt, mult) in rts_mult]
 
-        from sage.symbolic.ring import SR
-        if L is SR:
+        if isinstance(L, sage.rings.abc.SymbolicRing):
             if self.degree() == 2:
                 from sage.functions.other import sqrt
                 from sage.symbolic.expression import I
@@ -7953,6 +7952,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                         return l
                     else:
                         return [val for val,m in l]
+            from sage.symbolic.ring import SR
             vname = 'do_not_use_this_name_in_a_polynomial_coefficient'
             var = SR(vname)
             expr = self(var)
