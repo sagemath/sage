@@ -26,7 +26,6 @@ from sage.rings.infinity import PlusInfinity
 from sage.arith.all import prime_powers, next_prime
 from sage.functions.log import log, exp
 from sage.functions.other import real, imag
-from sage.symbolic.constants import pi, euler_gamma
 from sage.libs.pari.all import pari
 from sage.misc.verbose import verbose
 from sage.parallel.decorate import parallel
@@ -942,6 +941,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         # PARI minicurve for computing a_p coefficients
         self._e = E.pari_mincurve()
 
+        from sage.symbolic.constants import pi, euler_gamma
         self._pi = RDF(pi)
         self._euler_gamma = RDF(euler_gamma)
 
