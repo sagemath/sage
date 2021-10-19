@@ -34,7 +34,6 @@ from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from sage.structure.parent cimport Parent
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
-from sage.functions.other import ceil
 from sage.combinat.tableau import Tableau
 from sage.rings.integer_ring import ZZ
 
