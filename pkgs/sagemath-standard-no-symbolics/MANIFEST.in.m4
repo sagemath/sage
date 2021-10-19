@@ -10,6 +10,7 @@ prune sage/symbolic
 prune sage/functions
 prune sage/calculus
 prune sage/manifolds
+prune sage/lfunctions
 prune sage/geometry/riemannian_manifolds
 prune sage/geometry/hyperbolic_space
 prune sage/dynamics/complex_dynamics
@@ -19,5 +20,6 @@ exclude sage/matrix/matrix_symbolic_*.*
 
 prune sage/libs/pynac
 exclude sage/libs/ecl.p*
+exclude sage/libs/giac.p*
 
 exclude sage/interfaces/maxima*.p*

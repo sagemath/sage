@@ -165,11 +165,8 @@ from sage.plot.plot3d.all     import *
 from sage.coding.all     import *
 from sage.combinat.all   import *
 
-from sage.lfunctions.all import *
-
 from sage.geometry.all   import *
 from sage.geometry.triangulation.all   import *
-from sage.geometry.riemannian_manifolds.all   import *
 
 from sage.dynamics.all   import *
 
@@ -223,6 +220,8 @@ try:
     from sage.functions.all  import *
     from sage.calculus.all   import *
     from sage.manifolds.all import *
+    from sage.lfunctions.all import *
+    from sage.geometry.riemannian_manifolds.all   import *
 except ImportError:
     pass
 
