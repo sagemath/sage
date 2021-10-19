@@ -88,7 +88,8 @@ from sage.rings.all import (
     RationalField,
     RIF,
     ZZ)
-from sage.functions.log import log
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
 from math import sqrt
 from sage.misc.verbose import verbose
 import sage.arith.all as arith

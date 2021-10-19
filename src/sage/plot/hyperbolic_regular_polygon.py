@@ -21,9 +21,12 @@ from sage.plot.all import Graphics
 from sage.rings.all import CC
 from sage.rings.integer import Integer
 from sage.misc.decorators import options, rename_keyword
-from sage.symbolic.constants import pi, e
-from sage.functions.hyperbolic import arccosh
-from sage.functions.trig import sin, cos, cot
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.constants", "pi", "e")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.hyperbolic", "arccosh")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.trig", "sin", "cos, cot")
 from sage.misc.functional import is_odd
 from sage.matrix.constructor import matrix
 

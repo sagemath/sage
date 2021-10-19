@@ -199,7 +199,8 @@ from sage.modules.all import random_vector, vector
 from sage.plot.all import Graphics, arrow, line, point, rainbow, text
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
 from sage.structure.all import SageObject
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 
 
 # We produce rather complicated LaTeX code which needs some tweaks to be

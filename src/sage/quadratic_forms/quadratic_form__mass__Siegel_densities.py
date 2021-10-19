@@ -14,15 +14,18 @@ import copy
 
 from sage.misc.misc_c import prod
 from sage.misc.mrange import mrange
-from sage.functions.all import floor
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "floor")
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.rational_field import QQ
 from sage.arith.all import legendre_symbol, kronecker, prime_divisors
-from sage.functions.all import sgn
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "sgn")
 from sage.quadratic_forms.special_values import gamma__exact, zeta__exact, quadratic_L_function__exact
 from sage.misc.functional import squarefree_part
-from sage.symbolic.constants import pi
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.constants", "pi")
 from sage.matrix.matrix_space import MatrixSpace
 
 

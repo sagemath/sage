@@ -89,7 +89,8 @@ AUTHORS:
 
 from sage.structure.element import Element, parent
 from sage.structure.richcmp import op_EQ, op_NE
-from sage.functions.other import factorial
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "factorial")
 from sage.arith.power import generic_power
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ

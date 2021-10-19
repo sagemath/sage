@@ -35,8 +35,10 @@ from sage.rings.all import (ZZ, QQ, RR, RDF, RIF, CC, CDF, CIF, infinity)
 from sage.misc.all import cached_method, cartesian_product_iterator
 from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
-from sage.functions.log import log, exp
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log", "exp")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 
 
 class UnionOfIntervals:

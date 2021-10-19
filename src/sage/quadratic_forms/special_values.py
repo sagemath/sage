@@ -15,7 +15,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
 import sage.rings.abc
-from sage.symbolic.constants import pi, I
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.constants", "pi", "I")
 
 # ---------------- The Gamma Function  ------------------
 

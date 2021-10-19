@@ -37,7 +37,8 @@ from sage.rings.lazy_series import (LazyModuleElement,
                                     LazyLaurentSeries,
                                     LazyDirichletSeries)
 from sage.structure.global_options import GlobalOptions
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 
 from sage.data_structures.stream import (
     Stream_zero,

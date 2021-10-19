@@ -322,13 +322,16 @@ from textwrap import dedent
 
 from IPython.lib import pretty
 
-from sage.calculus.functional import derivative
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.functional", "derivative")
 from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
 from sage.combinat.parking_functions import ParkingFunctions
 from sage.combinat.set_partition import SetPartitions
 from sage.combinat.vector_partition import IntegerVectorsIterator
-from sage.functions.log import exp
-from sage.functions.other import binomial
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "exp")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "binomial")
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.graphs.all import DiGraph, Graph
 from sage.graphs.digraph_generators import digraphs
@@ -342,8 +345,10 @@ from sage.modules.free_module_element import vector
 from sage.plot.colors import rainbow
 from sage.arith.all import falling_factorial, lcm
 from sage.rings.all import Integer, PolynomialRing, QQ, ZZ
-from sage.symbolic.constants import I, pi
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.constants", "I", "pi")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 from sage.features.four_ti_2 import FourTi2Executable
 
 

@@ -87,11 +87,13 @@ from sage.structure.element import Element
 import sage.misc.all as misc
 from sage.misc.verbose import verbose as verbose_verbose
 
-from sage.functions.log import log
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
 
 import sage.matrix.all as matrix
 from sage.libs.pari.all import pari
-from sage.functions.gamma import gamma_inc
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.gamma", "gamma_inc")
 from math import sqrt
 from sage.interfaces.all import gp
 from sage.misc.cachefunc import cached_method

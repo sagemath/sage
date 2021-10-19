@@ -17,9 +17,11 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.all import ZZ, infinity, LaurentSeries, O
-from sage.functions.all import exp
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "exp")
 from sage.rings.number_field.number_field import QuadraticField
-from sage.symbolic.all import pi
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.all", "pi")
 
 from sage.structure.parent_gens import localvars
 from sage.structure.richcmp import op_NE, op_EQ

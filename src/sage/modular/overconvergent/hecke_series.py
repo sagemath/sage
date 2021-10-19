@@ -69,7 +69,8 @@ A list containing the characteristic series of the U_23 operator modulo 23^10 on
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.functions.all import floor, ceil
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "floor", "ceil")
 from sage.arith.all import valuation
 from sage.rings.all import ZZ, Zmod, Infinity, Integer
 from sage.rings.finite_rings.finite_field_constructor import GF

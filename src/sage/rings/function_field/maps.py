@@ -64,7 +64,8 @@ from sage.rings.morphism import RingHomomorphism
 
 from sage.modules.free_module_element import vector
 
-from sage.functions.other import binomial
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "binomial")
 
 from sage.matrix.constructor import matrix
 

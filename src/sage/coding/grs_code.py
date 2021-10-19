@@ -64,8 +64,10 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.functional import symbolic_sum
 from sage.misc.misc_c import prod
 
-from sage.functions.other import binomial
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "binomial")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 
 from .linear_code import AbstractLinearCode
 from .encoder import Encoder

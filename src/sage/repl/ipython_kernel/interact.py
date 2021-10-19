@@ -41,7 +41,8 @@ from collections.abc import Iterable, Iterator
 from .widgets import EvalText, SageColorPicker
 from .widgets_sagenb import input_grid
 from sage.structure.element import parent
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 from sage.plot.colors import Color
 from sage.structure.element import Matrix
 

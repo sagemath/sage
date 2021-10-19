@@ -68,8 +68,10 @@ EXAMPLES::
 
 
 from sage.arith.misc import euler_phi
-from sage.functions.other import ceil, binomial, floor
-from sage.functions.log import log
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "ceil", "binomial, floor")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
 from sage.rings.all import PolynomialRing, PowerSeriesRing
 from sage.rings.padics.factory import Zp, Zq, Qq
 from sage.rings.integer_ring import ZZ

@@ -48,7 +48,8 @@ from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.modules.vector_space_morphism import linear_transformation
 from sage.matrix.constructor import matrix
-from sage.functions.other import sqrt, floor, ceil
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "sqrt", "floor, ceil")
 from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.graphs.graph import Graph
 from sage.geometry.convex_set import ConvexSet_closed, AffineHullProjectionData

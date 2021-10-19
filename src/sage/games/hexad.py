@@ -76,7 +76,8 @@ from sage.rings.infinity import infinity
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.calculus.calculus import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.calculus", "SR")
 
 
 def view_list(L):

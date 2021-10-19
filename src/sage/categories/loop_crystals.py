@@ -20,7 +20,8 @@ from sage.categories.regular_crystals import RegularCrystals
 from sage.categories.tensor import TensorProductsCategory
 from sage.categories.map import Map
 from sage.graphs.dot2tex_utils import have_dot2tex
-from sage.functions.other import ceil
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "ceil")
 
 class LoopCrystals(Category_singleton):
     r"""

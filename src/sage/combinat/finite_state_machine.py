@@ -936,8 +936,10 @@ from collections import defaultdict, deque, namedtuple, OrderedDict
 from collections.abc import Iterator
 from copy import copy, deepcopy
 
-from sage.calculus.var import var
-from sage.functions.trig import atan2
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.var", "var")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.trig", "atan2")
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_function

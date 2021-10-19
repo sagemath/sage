@@ -318,7 +318,8 @@ implementing them on your own as a patch for inclusion!
 
 import sys
 
-from sage.functions.all import factorial
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "factorial")
 from sage.geometry.cone import Cone, is_Cone
 from sage.geometry.fan import Fan
 from sage.misc.all import latex, prod, cached_method

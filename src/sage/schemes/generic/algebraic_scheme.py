@@ -140,7 +140,8 @@ from sage.misc.misc import is_iterator
 from sage.structure.all import Sequence
 from sage.structure.richcmp import richcmp, richcmp_method
 
-from sage.calculus.functions import jacobian
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.functions", "jacobian")
 
 from sage.arith.all import gcd, lcm
 

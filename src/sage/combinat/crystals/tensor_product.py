@@ -56,7 +56,8 @@ from sage.rings.semirings.non_negative_integer_semiring import NN
 ##############################################################################
 # Until trunc gets implemented in sage.function.other
 
-from sage.functions.other import floor, ceil
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "floor", "ceil")
 def trunc(i):
     """
     Truncates to the integer closer to zero

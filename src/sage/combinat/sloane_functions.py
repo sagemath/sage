@@ -128,7 +128,8 @@ import inspect
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.rings.integer_ring import ZZ
-from sage.functions.all import prime_pi
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "prime_pi")
 from sage.rings.integer import Integer as Integer_class
 
 

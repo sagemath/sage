@@ -10,7 +10,8 @@ Affine `n` space over a ring
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.functions.orthogonal_polys import chebyshev_T, chebyshev_U
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.orthogonal_polys", "chebyshev_T", "chebyshev_U")
 from sage.rings.all import (PolynomialRing, ZZ, Integer)
 from sage.rings.rational_field import is_RationalField
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing

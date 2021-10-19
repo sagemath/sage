@@ -42,7 +42,8 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.flatten import flatten
 from sage.misc.misc_c import prod
 from sage.rings.all import ZZ, QQ
-from sage.functions.other import floor, ceil
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "floor", "ceil")
 
 import itertools
 

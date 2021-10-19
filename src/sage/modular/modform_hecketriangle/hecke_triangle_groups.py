@@ -17,9 +17,12 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.all import ZZ, QQ, AA, AlgebraicField, infinity, I, PolynomialRing, NumberField
-from sage.functions.all import cos, exp, sec
-from sage.functions.gamma import psi1
-from sage.symbolic.all import pi
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "cos", "exp, sec")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.gamma", "psi1")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.all", "pi")
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex
 from sage.misc.misc_c import prod

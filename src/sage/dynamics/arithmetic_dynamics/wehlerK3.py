@@ -26,10 +26,12 @@ REFERENCES: [FH2015]_, [CS1996]_, [Weh1998]_, [Hutz2007]
 #                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.calculus.functions import jacobian
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.functions", "jacobian")
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.functions.all import sqrt
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "sqrt")
 from sage.misc.cachefunc import cached_method
 from sage.misc.mrange import xmrange
 from sage.rings.all import CommutativeRing

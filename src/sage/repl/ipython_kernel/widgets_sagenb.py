@@ -42,7 +42,8 @@ from numbers import Integral, Rational, Real
 from sage.structure.all import parent
 from sage.arith.srange import srange
 from sage.plot.colors import Color
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 from sage.rings.all import RR
 
 

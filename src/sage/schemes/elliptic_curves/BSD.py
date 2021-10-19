@@ -3,7 +3,8 @@
 
 from sage.arith.misc import prime_divisors
 from sage.rings.all import ZZ, Infinity, QuadraticField
-from sage.functions.other import ceil
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "ceil")
 
 
 class BSD_data:

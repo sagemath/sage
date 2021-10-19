@@ -27,7 +27,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
 from sage.arith.all import prime_divisors, hilbert_symbol
-from sage.functions.all import sgn
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "sgn")
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
 

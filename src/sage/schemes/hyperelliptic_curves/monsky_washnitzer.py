@@ -47,8 +47,10 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.all import binomial, integer_ceil as ceil
-from sage.functions.log import log
-from sage.functions.other import floor
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "floor")
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import newton_method_sizes

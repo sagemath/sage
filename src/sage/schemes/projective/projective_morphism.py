@@ -72,7 +72,8 @@ from sage.misc.lazy_attribute import lazy_attribute
 
 from sage.ext.fast_callable import fast_callable
 
-from sage.calculus.functions import jacobian
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.functions", "jacobian")
 
 from sage.rings.all import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic

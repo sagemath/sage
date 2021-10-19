@@ -25,7 +25,8 @@ from sage.arith.all import factorial, binomial
 from .permutation import Permutations
 from sage.rings.all import ZZ, QQ
 from .subset import Subsets
-from sage.functions.all import ceil
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "ceil")
 
 
 def _int_or_half_int(k):

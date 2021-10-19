@@ -21,7 +21,8 @@ AUTHORS:
 
 from copy import copy
 from sage.combinat.subset import Subsets
-from sage.functions.all import sqrt
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.all", "sqrt")
 from itertools import permutations, combinations
 from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix

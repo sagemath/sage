@@ -14,7 +14,8 @@ Hyperelliptic curves over a `p`-adic field
 
 from sage.rings.all import (PowerSeriesRing, PolynomialRing, ZZ, QQ,
                             pAdicField, GF, RR, RationalField, Infinity)
-from sage.functions.log import log
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
 from sage.modules.free_module import VectorSpace
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector

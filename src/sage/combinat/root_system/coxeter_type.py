@@ -23,7 +23,8 @@ from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.matrix.args import SparseEntry
 from sage.matrix.all import Matrix
-from sage.symbolic.ring import SR
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.symbolic.ring", "SR")
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
 from sage.rings.number_field.number_field import is_QuadraticField

@@ -66,8 +66,10 @@ from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
 from sage.arith.all import lcm, next_prime, is_prime, next_prime_power, legendre_symbol
-from sage.functions.log import log
-from sage.functions.other import sqrt
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.log", "log")
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.functions.other", "sqrt")
 
 
 class BinaryRecurrenceSequence(SageObject):
