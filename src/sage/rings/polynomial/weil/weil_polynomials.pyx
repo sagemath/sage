@@ -50,7 +50,6 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.functions.generalized import sgn
 
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.types cimport mpz_t
@@ -319,7 +318,7 @@ class WeilPolynomials_iter():
         for _ in range(d2+1-len(coefflist)):
             coefflist.append(0)
             modlist.append(1)
-        coeffsign = sgn(coefflist[0])
+        coeffsign = coefflist[0].sign()
         coefflist = [x*coeffsign for x in reversed(coefflist)]
         if node_limit is None:
             node_limit = -1
