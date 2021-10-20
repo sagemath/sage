@@ -53,13 +53,13 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import is_prime
-from sage.calculus.functions import jacobian
+from sage.misc.lazy_import import lazy_import
+lazy_import('sage.calculus.functions', 'jacobian')
 from sage.categories.fields import Fields
 from sage.categories.function_fields import FunctionFields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import End
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "ceil")
 from sage.misc.functional import sqrt
 from sage.libs.pari.all import PariError
