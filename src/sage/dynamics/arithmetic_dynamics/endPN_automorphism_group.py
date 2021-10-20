@@ -39,7 +39,7 @@ from sage.sets.primes import Primes
 from sage.sets.set import Set
 from sage.combinat.permutation import Arrangements
 from sage.parallel.use_fork import p_iter_fork
-from sage.functions.other import floor
+
 
 def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False, iso_type=False):
     r"""
@@ -2213,8 +2213,8 @@ def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
         # and check linear independence in parallel
         if len(all_subsets) > num_cpus:
             for i in range(num_cpus):
-                start = floor(len(all_subsets)*i/num_cpus)
-                end = floor(len(all_subsets)*(i+1)/num_cpus)
+                start = (len(all_subsets) * i) // num_cpus
+                end = (len(all_subsets) * (i+1)) // num_cpus
                 tuples = all_subsets[start:end]
                 parallel_data.append(([tuples], {}))
 
@@ -2242,8 +2242,8 @@ def conjugating_set_helper(f, g, num_cpus, source, possible_targets):
                 all_arrangements += list(product(*subset_arrangements))
             parallel_data = []
             for i in range(num_cpus):
-                start = floor(len(all_arrangements)*i/num_cpus)
-                end = floor(len(all_arrangements)*(i+1)/num_cpus)
+                start = (len(all_arrangements) * i) // num_cpus
+                end = (len(all_arrangements) * (i+1)) // num_cpus
                 tuples = all_arrangements[start:end]
                 parallel_data.append(([tuples], {}))
             X = p_iter_fork(num_cpus)
@@ -2350,8 +2350,8 @@ def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
         # and check linear independence in parallel
         if len(all_subsets) > num_cpus:
             for i in range(num_cpus):
-                start = floor(len(all_subsets)*i/num_cpus)
-                end = floor(len(all_subsets)*(i+1)/num_cpus)
+                start = (len(all_subsets) * i) // num_cpus
+                end = (len(all_subsets) * (i+1)) // num_cpus
                 tuples = all_subsets[start:end]
                 parallel_data.append(([tuples], {}))
 
@@ -2380,8 +2380,8 @@ def is_conjugate_helper(f, g, num_cpus, source, possible_targets):
                 all_arrangements += list(product(*subset_arrangements))
             parallel_data = []
             for i in range(num_cpus):
-                start = floor(len(all_arrangements)*i/num_cpus)
-                end = floor(len(all_arrangements)*(i+1)/num_cpus)
+                start = (len(all_arrangements) * i) // num_cpus
+                end = (len(all_arrangements) * (i+1)) // num_cpus
                 tuples = all_arrangements[start:end]
                 parallel_data.append(([tuples], {}))
             X = p_iter_fork(num_cpus)
