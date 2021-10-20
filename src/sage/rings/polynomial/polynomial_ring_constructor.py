@@ -426,7 +426,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
         sage: S = PolynomialRing(ZZ, 'x,y'); type(S)
-        <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+        <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
 
     Sparse univariate polynomials only support a generic
     implementation::

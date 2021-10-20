@@ -1784,7 +1784,7 @@ def gcd(a, b=None, **kwargs):
     from sage.structure.sequence import Sequence
     seq = Sequence(py_scalar_to_element(el) for el in a)
     if seq.universe() is ZZ:
-        return GCD_list(a)
+        return GCD_list(seq)
     else:
         return __GCD_sequence(seq, **kwargs)
 
@@ -2242,7 +2242,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     - ``algorithm`` -- (default: 'fast')
 
-      - ``'fast'`` - a fast implementation using direct MPIR calls
+      - ``'fast'`` - a fast implementation using direct GMP library calls
         in Cython.
 
     OUTPUT:
@@ -3434,10 +3434,10 @@ def binomial(x, m, **kwds):
         1/6*x^3 - 1/2*x^2 + 1/3*x
 
     If `x \in \ZZ`, there is an optional 'algorithm' parameter, which
-    can be 'mpir' (faster for small values) or 'pari' (faster for
-    large values)::
+    can be 'gmp' (faster for small values; alias: 'mpir') or
+    'pari' (faster for large values)::
 
-        sage: a = binomial(100, 45, algorithm='mpir')
+        sage: a = binomial(100, 45, algorithm='gmp')
         sage: b = binomial(100, 45, algorithm='pari')
         sage: a == b
         True
@@ -5667,12 +5667,25 @@ def sort_complex_numbers_for_display(nums):
         ....:                     RDF.random_element()))
         sage: shuffle(nums)
         sage: nums = sort_c(nums)
-        sage: nums[:3]
-        [0.0, 1.0, 2.0]
-        sage: for i in range(3, len(nums)-1):
-        ....:     assert nums[i].real() <= nums[i+1].real() + 1e-10
-        ....:     if abs(nums[i].real() - nums[i+1].real()) < 1e-10:
-        ....:         assert nums[i].imag() <= nums[i+1].imag() + 1e-10
+        sage: for i in range(len(nums)):
+        ....:     if nums[i].imag():
+        ....:         first_non_real = i
+        ....:         break
+        ....: else:
+        ....:     first_non_real = len(nums)
+        sage: assert first_non_real >= 3
+        sage: for i in range(first_non_real - 1):
+        ....:     assert nums[i].real() <= nums[i + 1].real()
+
+        sage: def truncate(n):
+        ....:     if n.real() < 1e-10:
+        ....:         return 0
+        ....:     else:
+        ....:         return n.real().n(digits=9)
+        sage: for i in range(first_non_real, len(nums)-1):
+        ....:     assert truncate(nums[i]) <= truncate(nums[i + 1])
+        ....:     if truncate(nums[i]) == truncate(nums[i + 1]):
+        ....:         assert nums[i].imag() <= nums[i+1].imag()
     """
     if not nums:
         return nums

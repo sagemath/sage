@@ -1,7 +1,7 @@
 SAGE_SPKG_CONFIGURE([pari], [
   dnl See gp_version below on how the version is computed from MAJV.MINV.PATCHV
   m4_pushdef([SAGE_PARI_MINVER],["134401"])
-  SAGE_SPKG_DEPCHECK([gmp mpir readline], [
+  SAGE_SPKG_DEPCHECK([gmp readline], [
     AC_PATH_PROG([GP], [gp])
     if test x$GP = x; then dnl GP test
         AC_MSG_NOTICE([gp is not found])

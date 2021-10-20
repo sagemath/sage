@@ -802,6 +802,8 @@ class BackslashOperator:
         EXAMPLES::
 
             sage: A = random_matrix(ZZ, 4)
+            sage: while A.rank() != 4:
+            ....:     A = random_matrix(ZZ, 4)
             sage: B = random_matrix(ZZ, 4)
             sage: temp = A * BackslashOperator()
             sage: temp.left is A

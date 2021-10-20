@@ -22,7 +22,8 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import NewType, Iterator, Tuple
+from __future__ import annotations
+from typing import Iterator
 
 from sage.structure.list_clone import ClonableArray
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
@@ -34,9 +35,6 @@ from sage.rings.integer import Integer
 from sage.misc.misc_c import prod
 from sage.combinat.tableau import Tableau
 from sage.plot.plot3d.platonic import cube
-
-
-PP = NewType('PP', 'PlanePartition')
 
 
 class PlanePartition(ClonableArray,
@@ -141,7 +139,7 @@ class PlanePartition(ClonableArray,
             sage: PP.to_tableau()
             [[4, 3, 3, 1], [2, 1, 1], [1, 1]]
         """
-        return Tableau(self)
+        return Tableau(self)  # type: ignore
 
     def z_tableau(self):
         r"""
@@ -768,6 +766,9 @@ class PlanePartition(ClonableArray,
         return self.is_TSPP() and self.is_SCPP()
 
 
+PP = PlanePartition
+
+
 class PlanePartitions(UniqueRepresentation, Parent):
     r"""
     All plane partitions inside a rectangular box of given side lengths.
@@ -832,7 +833,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
         return "Plane partitions inside a {} x {} x {} box".format(
             self._box[0], self._box[1], self._box[2])
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[PP]:
         """
         Iterate over ``self``.
 
@@ -848,7 +849,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
         C = self._box[2]
         from sage.combinat.tableau import SemistandardTableaux
         for T in SemistandardTableaux([B for i in range(A)], max_entry=C + A):
-            PP = [[0 for i in range(B)] for j in range(A)]
+            PP = [[0 for _ in range(B)] for _ in range(A)]
             for r in range(A):
                 for c in range(B):
                     PP[A - 1 - r][B - 1 - c] = T[r][c] - r - 1
@@ -880,7 +881,7 @@ class PlanePartitions(UniqueRepresentation, Parent):
                             for j in range(1, B + 1)
                             for k in range(1, C + 1)))
 
-    def box(self) -> Tuple:
+    def box(self) -> tuple:
         """
         Return the sizes of the box of the plane partitions of ``self``
         are contained in.

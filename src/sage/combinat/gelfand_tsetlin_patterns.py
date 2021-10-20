@@ -150,7 +150,7 @@ class GelfandTsetlinPattern(ClonableArray,
         """
         return GelfandTsetlinPatterns()(gt)
 
-    def check(self) -> bool:
+    def check(self):
         """
         Check that this is a valid Gelfand-Tsetlin pattern.
 
@@ -159,8 +159,8 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G = GelfandTsetlinPatterns()
             sage: G([[3,2,1],[2,1],[1]]).check()
         """
-        assert all( self[i-1][j] >= self[i][j] >= self[i-1][j+1]
-                    for i in range(1, len(self)) for j in range(len(self[i])) )
+        assert all(self[i - 1][j] >= self[i][j] >= self[i - 1][j + 1]
+                   for i in range(1, len(self)) for j in range(len(self[i])))
 
     def _hash_(self) -> int:
         """

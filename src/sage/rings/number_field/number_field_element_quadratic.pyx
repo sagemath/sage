@@ -173,7 +173,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: F.<a> = QuadraticField(-7)
             sage: c = a + 7
             sage: type(c) # indirect doctest
-            <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic_sqrt'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic_sqrt'>
         """
         self.D = parent._D
         cdef Integer a, b, denom
@@ -2612,7 +2612,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
             sage: OK.<y> = EquationOrder(x^2 + 5)
             sage: v = OK.1 # indirect doctest
             sage: type(v)
-            <type 'sage.rings.number_field.number_field_element_quadratic.OrderElement_quadratic'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.OrderElement_quadratic'>
         """
         K = order.number_field()
         NumberFieldElement_quadratic.__init__(self, K, f)
@@ -2878,14 +2878,14 @@ cdef class Z_to_quadratic_field_element(Morphism):
             sage: K.<a> = QuadraticField(3)
             sage: phi = K.coerce_map_from(ZZ) # indirect doctest
             sage: type(phi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
             sage: phi == loads(dumps(phi)) # todo: comparison not implemented
             True
 
             sage: R.<b> = CyclotomicField(6)
             sage: psi = R.coerce_map_from(ZZ) # indirect doctest
             sage: type(psi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Z_to_quadratic_field_element'>
             sage: psi == loads(dumps(psi)) # todo: comparison not implemented
             True
         """
@@ -2980,14 +2980,14 @@ cdef class Q_to_quadratic_field_element(Morphism):
             sage: K.<a> = QuadraticField(3)
             sage: phi = K.coerce_map_from(QQ) # indirect doctest
             sage: type(phi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
             sage: phi == loads(dumps(phi))  # todo: comparison not implemented
             True
 
             sage: R.<b> = CyclotomicField(6)
             sage: psi = R.coerce_map_from(QQ)
             sage: type(psi)
-            <type 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.Q_to_quadratic_field_element'>
             sage: psi == loads(dumps(psi))  # todo: comparison not implemented
             True
         """

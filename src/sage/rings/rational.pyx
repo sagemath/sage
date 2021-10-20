@@ -416,7 +416,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         sage: a = -2/3
         sage: type(a)
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
         sage: parent(a)
         Rational Field
         sage: Rational('1/0')
@@ -2541,7 +2541,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: a = (0/1)^(0/1); a
             1
             sage: type(a)
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
 
         If the result is rational, it is returned as a rational::
 
@@ -2577,7 +2577,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: a = int(2)^(3/1); a
             8
             sage: type(a)
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
 
         The exponent must fit in a long unless the base is -1, 0, or 1::
 
@@ -3497,7 +3497,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (0/1)._lcm(0/1)
             0
             sage: type((2/3)._lcm(3/5))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
         """
         if mpz_cmp_si(mpq_numref(self.value), 0) == 0 and \
                mpz_cmp_si(mpq_numref(other.value), 0) == 0:
@@ -3788,7 +3788,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: m = n.__pari__(); m
             9390823/17
             sage: type(m)
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
             sage: m.type()
             't_FRAC'
         """
@@ -4163,7 +4163,7 @@ cdef class Q_to_Z(Map):
     TESTS::
 
         sage: type(ZZ.convert_map_from(QQ))
-        <type 'sage.rings.rational.Q_to_Z'>
+        <class 'sage.rings.rational.Q_to_Z'>
     """
     cpdef Element _call_(self, x):
         """

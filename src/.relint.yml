@@ -8,13 +8,14 @@
     # ifilter, imap, izip           # __metaclass__
     Hint: # update raise statements       # except Exception, var
     Hint: # sagenb                        # six is no longer allowed
-  pattern: '(import.*[, ]ifilter|import.*[, ]imap|import.*[, ]izip|^\s*raise\s*[A-Za-z]*Error\s*,|__metaclass__|except\s*[A-Za-z]\s*,|sagenb|import six|from six import)'
+  pattern: '(import.*[, ]ifilter|import.*[, ]imap|import.*[, ]izip|^\s*raise\s*[A-Za-z]*Error\s*,|__metaclass__|except\s*[A-Za-z]\s*,|[^_]sagenb|import six|from six import)'
   filePattern: .*[.](py|pyx|rst)
 
 - name: 'foreign_latex: foreign commands in LaTeX'
   hint: |
     use equivalent LaTeX commands instead of plain TeX commands such as \over, \choose, etc.
-  pattern: '(\\choose|\\over[^l]|\\atop|\\above|\\overwithdelims|\\atopwithdelims|\\abovewithdelims)'
+  pattern: '(\\choose|\\atop|\\above|\\overwithdelims|\\atopwithdelims|\\abovewithdelims)'
+  # \over appears in bad latex code coming from Fricas and Maxima
 
 - name: 'blocks: wrong syntax for blocks (INPUT, OUTPUT, EXAMPLES, NOTE, etc.)'
   hint: |

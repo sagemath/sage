@@ -85,7 +85,6 @@ mistune                     Modified BSD
 mpc                         LGPLv3+
 mpfi                        COPYING is GPLv2, source files state LGPLv2.1+
 mpfr                        LGPLv3+
-mpir                        LGPLv3+
 mpmath                      Modified BSD
 networkx                    Modified BSD
 ntl                         GPLv2+

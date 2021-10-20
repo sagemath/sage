@@ -544,10 +544,12 @@ def tutte_polynomial(G, edge_selector=None, cache=None):
         + 105*x^2*y^2 + 65*x*y^3 + 35*y^4 + 180*x^3 + 240*x^2*y + 171*x*y^2
         + 75*y^3 + 120*x^2 + 168*x*y + 84*y^2 + 36*x + 36*y
 
-    The Tutte polynomial of `G` evaluated at (1,1) is the number of
+    The Tutte polynomial of a connected graph `G` evaluated at (1,1) is the number of
     spanning trees of `G`::
 
         sage: G = graphs.RandomGNP(10,0.6)
+        sage: while not G.is_connected():
+        ....:     G = graphs.RandomGNP(10,0.6)
         sage: G.tutte_polynomial()(1,1) == G.spanning_trees_count()
         True
 

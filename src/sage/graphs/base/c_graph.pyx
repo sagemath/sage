@@ -4400,11 +4400,18 @@ cdef class CGraphBackend(GenericGraphBackend):
 
             sage: Graph(graphs.CubeGraph(3)).is_connected()
             True
+
+        TESTS::
+
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: H._backend.is_connected()
+            True
         """
         cdef int v_int
         cdef CGraph cg = self.cg()
 
-        if cg.num_edges() < cg.num_verts - 1:
+        if cg.num_arcs < cg.num_verts - 1:
             return False
 
         v_int = bitset_first(cg.active_vertices)

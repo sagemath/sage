@@ -27,7 +27,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         sage: A = random_matrix(Integers(25)['x'], 2)
         sage: type(A)
-        <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+        <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
         sage: TestSuite(A).run()
 
     Test comparisons::
@@ -270,7 +270,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
             [  x   y]
             [x^2 y^2]
             sage: type(a)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: a*a
             [  x^2*y + x^2     y^3 + x*y]
             [x^2*y^2 + x^3   y^4 + x^2*y]

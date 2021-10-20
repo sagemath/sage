@@ -9429,6 +9429,7 @@ class Graph(GenericGraph):
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
     from sage.graphs.comparability import is_permutation
+    from sage.graphs.convexity_properties import geodetic_closure
     from sage.graphs.domination import is_dominating
     from sage.graphs.domination import is_redundant
     from sage.graphs.domination import private_neighbors
@@ -9482,7 +9483,8 @@ _additional_categories = {
     "edge_isoperimetric_number" : "Expansion properties",
     "vertex_isoperimetric_number" : "Expansion properties",
     "fractional_chromatic_number" : "Coloring",
-    "fractional_chromatic_index" : "Coloring"
+    "fractional_chromatic_index" : "Coloring",
+    "geodetic_closure"          : "Leftovers"
     }
 
 __doc__ = __doc__.replace("{INDEX_OF_METHODS}",gen_thematic_rest_table_index(Graph,_additional_categories))

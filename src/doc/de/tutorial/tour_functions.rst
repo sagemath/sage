@@ -61,7 +61,7 @@ können geplottet, differenziert und integriert werden.
        sage: Dg(3)
        6
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(g, 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -78,7 +78,7 @@ Erläuterung zu erhalten.
        sage: g(x)
        x^2
        sage: type(g(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: g(x).derivative()
        2*x
        sage: plot(g(x), 0, 2)
@@ -95,7 +95,7 @@ werden.
        sage: plot(sin, 0, 2)
        Graphics object consisting of 1 graphics primitive
        sage: type(sin(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(sin(x), 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -143,7 +143,7 @@ wird, was wiederum bedeutet, dass ``x<2`` ausgewertet wird.
 ::
 
        sage: type(x<2)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 Wenn eine symbolische Gleichung ausgewertet wird, wie in der
 Definition von ``h``, wird falls sie nicht offensichtlicherweise wahr
@@ -176,9 +176,9 @@ Das Problem: ``g(3)``, zum Beispiel, gibt folgenden Fehler zurück:
 ::
 
        sage: type(f)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 ``g`` ist keine Funktion, es ist eine Konstante, hat also keine
 zugehörigen Variablen, und man kann in sie nichts einsetzen.
@@ -196,7 +196,7 @@ Die Lösung: Es gibt mehrere Möglichkeiten.
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 - Oder mit der ursprünglichen Definition von ``f``, definieren Sie
   ``g`` als symbolischen Ausdruck.
@@ -210,7 +210,7 @@ Die Lösung: Es gibt mehrere Möglichkeiten.
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 - Oder mit den ursprünglichen Definitionen von ``f`` and ``g``, geben
   Sie die Variable an, in diese Sie den Wert einsetzen.

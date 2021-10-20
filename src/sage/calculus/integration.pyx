@@ -245,6 +245,14 @@ def numerical_integral(func, a, b=None,
         Traceback (most recent call last):
         ...
         ValueError: integral does not converge at -infinity
+
+    Symbolic functions can be integrated as conveniently as symbolic
+    expressions, as in :trac:`15219`::
+
+        sage: h(x) = x
+        sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
+        0.5
+
     """
     cdef double abs_err # step size
     cdef double result

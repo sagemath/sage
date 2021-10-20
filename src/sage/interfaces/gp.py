@@ -913,7 +913,7 @@ class GpElement(ExpectElement):
            sage: s.sage()
            'foo'
            sage: type(s.sage())
-           <type 'str'>
+           <class 'str'>
         """
         if self.is_string():
             return str(self)

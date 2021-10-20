@@ -31,13 +31,6 @@ except for the known bad apples::
     sage: [inspect.getmodule(f).__name__ for f in frames if is_not_allowed(f)]
     []
 
-Check that the Sage Notebook is not imported at startup (see :trac:`15335`)::
-
-    sage: sagenb
-    Traceback (most recent call last):
-    ...
-    NameError: name 'sagenb' is not defined
-
 Check lazy import of ``interacts``::
 
     sage: type(interacts)
@@ -280,7 +273,7 @@ def quit_sage(verbose=True):
     import sage.libs.flint.flint
     sage.libs.flint.flint.free_flint_stack()
 
-    # Free globally allocated mpir integers.
+    # Free globally allocated gmp integers.
     import sage.rings.integer
     sage.rings.integer.free_integer_pool()
     import sage.algebras.quatalg.quaternion_algebra_element

@@ -776,7 +776,7 @@ class CFiniteSequence(FieldElement,
             sage: s = r.series(4); s
             x + 2*x^2 + 3*x^3 + 4*x^4 + O(x^5)
             sage: type(s)
-            <type 'sage.rings.laurent_series_ring_element.LaurentSeries'>
+            <class 'sage.rings.laurent_series_ring_element.LaurentSeries'>
         """
         R = LaurentSeriesRing(QQ, 'x', default_prec=n)
         return R(self.ogf())

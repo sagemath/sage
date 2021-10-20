@@ -346,7 +346,7 @@ class TableauTuple(CombinatorialElement):
         sage: TableauTuple([[1],[2,3]])
         Traceback (most recent call last):
         ...
-        ValueError: A tableau must be a list of iterables.
+        ValueError: a tableau must be a list of iterables
 
         sage: TestSuite( TableauTuple([ [[1,2],[3,4]], [[1,2],[3,4]] ]) ).run()
         sage: TestSuite( TableauTuple([ [[1,2],[3,4]], [], [[1,2],[3,4]] ]) ).run()

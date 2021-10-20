@@ -132,7 +132,7 @@ following sum but with a much bigger range, and hit control-C.
     sage:  f = axiom('(x^5 - y^5)^10000')       # not tested
     Interrupting Axiom...
     ...
-    <type 'exceptions.TypeError'>: Ctrl-c pressed while running Axiom
+    <class 'exceptions.TypeError'>: Ctrl-c pressed while running Axiom
 
 ::
 

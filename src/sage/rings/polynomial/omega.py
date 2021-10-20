@@ -36,25 +36,20 @@ ACKNOWLEDGEMENT:
 
 - Daniel Krenn is supported by the Austrian Science Fund (FWF): P 24644-N26.
 
-
 Functions
 =========
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Daniel Krenn <dev@danielkrenn.at>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import operator
 from sage.misc.cachefunc import cached_function
-from sage.misc.superseded import deprecated_function_alias
 
 
 def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
@@ -595,6 +590,7 @@ def Omega_ge(a, exponents):
         divisible by ``exponent``.
         """
         p = tuple(var.dict().popitem()[0]).index(1)  # var is the p-th generator
+
         def subs_e(e):
             e = list(e)
             assert e[p] % exponent == 0
@@ -984,5 +980,3 @@ def homogeneous_symmetric_function(j, x):
 
     return sum(prod(xx**pp for xx, pp in zip(x, p))
                for p in IntegerVectors(j, length=len(x)))
-
-homogenous_symmetric_function = deprecated_function_alias(30585, homogeneous_symmetric_function)

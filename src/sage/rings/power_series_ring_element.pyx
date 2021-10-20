@@ -1005,7 +1005,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: t.inverse()
             t^-1
             sage: type(_)
-            <type 'sage.rings.laurent_series_ring_element.LaurentSeries'>
+            <class 'sage.rings.laurent_series_ring_element.LaurentSeries'>
             sage: (1-t).inverse()
             1 + t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + ...
         """

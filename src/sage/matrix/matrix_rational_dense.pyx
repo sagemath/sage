@@ -139,7 +139,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: from sage.matrix.matrix_rational_dense import Matrix_rational_dense
             sage: a = Matrix_rational_dense.__new__(Matrix_rational_dense, Mat(ZZ,3), 0,0,0)
             sage: type(a)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
 
         .. WARNING::
 
@@ -1022,7 +1022,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: M = MatrixSpace(QQ, 2)
             sage: A = M(range(0, 2^2))
             sage: type(A)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: A.charpoly('x')
             x^2 - 3*x - 2
             sage: A.charpoly('y')
@@ -2548,7 +2548,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
             sage: A = matrix(QQ, 2, 3, range(6))
             sage: type(A)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: B = A.transpose()
             sage: print(B)
             [0 3]
@@ -2599,7 +2599,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
             sage: A = matrix(QQ,2,3,range(6))
             sage: type(A)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: A.antitranspose()
             [5 2]
             [4 1]

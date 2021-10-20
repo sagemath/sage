@@ -392,7 +392,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         TESTS::
 
             sage: type(f.degree())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return smallInteger(fmpq_poly_degree(self.__poly))
 

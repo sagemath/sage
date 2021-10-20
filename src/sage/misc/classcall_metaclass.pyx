@@ -391,9 +391,7 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
 
                 sage: bind = obj.Inner
                 calling __classget__(<class '__main__.Outer.Inner'>, <__main__.Outer object at 0x...>, <class '__main__.Outer'>)
-                sage: bind  # py2
-                <functools.partial object at 0x...>
-                sage: bind  # py3
+                sage: bind
                 functools.partial(<class '__main__.Outer.Inner'>, <__main__.Outer object at 0x...>)
         """
         if cls.classget:

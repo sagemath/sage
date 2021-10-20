@@ -97,8 +97,13 @@ AS_VAR_SET_IF([SAGE_ENABLE_$pkgname], [], [AS_VAR_SET([SAGE_ENABLE_$pkgname], [y
                     case "$pkgname" in
                         _*) ;;
                         *)  spkg_configures="$spkg_configures
-AC_SUBST(SAGE_ENABLE_$pkgname, [if_installed])
-SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(head -n1 build/pkgs/$pkgname/SPKG.rst 2>/dev/null || echo $pkgname)])" ;;
+AC_SUBST(SAGE_ENABLE_$pkgname, [if_installed])"
+                            if [ -f build/pkgs/$pkgname/spkg-install -o -f build/pkgs/$pkgname/spkg-install.in ]; then
+                                # Trac #31163: Not just an optional dummy package
+                                spkg_configures="$spkg_configures
+SAGE_SPKG_ENABLE([$pkgname], [$pkgtype], [$(head -n1 build/pkgs/$pkgname/SPKG.rst 2>/dev/null || echo $pkgname)])"
+                            fi
+                            ;;
                     esac
                 fi
     done

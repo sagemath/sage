@@ -31,7 +31,8 @@ it is actually resolved after the startup, so that the developer knows
 that (s)he can remove the flag::
 
     sage: ZZ
-    Option ``at_startup=True`` for lazy import ZZ not needed anymore
+    doctest:warning...
+    UserWarning: Option ``at_startup=True`` for lazy import ZZ not needed anymore
     Integer Ring
 
 .. SEEALSO:: :func:`lazy_import`, :class:`LazyImport`
@@ -63,6 +64,7 @@ cdef extern from *:
 
 import os
 import pickle
+from warnings import warn
 import inspect
 from . import sageinspect
 
@@ -97,7 +99,7 @@ cpdef finish_startup():
         ...
         AssertionError: finish_startup() must be called exactly once
     """
-    global startup_guard
+    global startup_guard, finish_startup_called
     assert startup_guard, 'finish_startup() must be called exactly once'
     startup_guard = False
     finish_startup_called = True
@@ -148,12 +150,14 @@ cpdef test_fake_startup():
         sage: sage.misc.lazy_import.test_fake_startup()
         sage: lazy_import('sage.rings.all', 'ZZ', 'my_ZZ')
         sage: my_ZZ(123)
-        Resolving lazy import ZZ during startup
+        doctest:warning...
+        UserWarning: Resolving lazy import ZZ during startup
         123
         sage: sage.misc.lazy_import.finish_startup()
     """
-    global startup_guard
+    global startup_guard, finish_startup_called
     startup_guard = True
+    finish_startup_called = False
 
 
 @cython.final
@@ -230,19 +234,20 @@ cdef class LazyImport(object):
             Integer Ring
             sage: my_integer_ring._object is None
             False
-            sage: my_integer_ring = LazyImport('sage.rings.all', 'ZZ', at_startup=True)
-            sage: my_integer_ring
-            Option ``at_startup=True`` for lazy import ZZ not needed anymore
-            Integer Ring
+            sage: my_rats = LazyImport('sage.rings.rational_field', 'QQ', at_startup=True)
+            sage: my_rats
+            doctest:warning...
+            UserWarning: Option ``at_startup=True`` for lazy import QQ not needed anymore
+            Rational Field
         """
         if self._object is not None:
             return self._object
 
         if startup_guard and not self._at_startup:
-            print(f"Resolving lazy import {self._name} during startup")
+            warn(f"Resolving lazy import {self._name} during startup")
         elif self._at_startup and not startup_guard:
             if finish_startup_called:
-                print(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
+                warn(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
 
         try:
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
@@ -490,13 +495,9 @@ cdef class LazyImport(object):
 
             sage: Foo().my_method()
             <__main__.Foo object at ...>
-            sage: Foo.my_method  # py2
-            <unbound method Foo.my_method>
-            sage: Foo.my_method  # py3
+            sage: Foo.my_method
             <function my_method at 0x...>
-            sage: Foo().my_method  # py2
-            <bound method Foo.my_method of <__main__.Foo object at ...>>
-            sage: Foo().my_method  # py3
+            sage: Foo().my_method
             <bound method my_method of <__main__.Foo object at ...>>
 
         When a :class:`LazyImport` method is a method (or attribute)
@@ -522,9 +523,7 @@ cdef class LazyImport(object):
 
            We access the ``plot`` method::
 
-               sage: Bar.plot  # py2
-               <unbound method Bar.plot>
-               sage: Bar.plot  # py3
+               sage: Bar.plot
                <function plot at 0x...>
 
            Now ``plot`` has been replaced in the dictionary of ``Foo``::
@@ -847,12 +846,7 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: oct(foo)  # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .oct instead
-            See https://trac.sagemath.org/26756 for details.
-            '12'
-            sage: oct(foo)  # py3
+            sage: oct(foo)
             '0o12'
         """
         return self.get_object().__oct__()
@@ -863,12 +857,7 @@ cdef class LazyImport(object):
 
             sage: sage.all.foo = 10
             sage: lazy_import('sage.all', 'foo')
-            sage: hex(foo)  # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .hex instead
-            See https://trac.sagemath.org/26756 for details.
-            'a'
-            sage: hex(foo)  # py3
+            sage: hex(foo)
             '0xa'
         """
         return self.get_object().__hex__()

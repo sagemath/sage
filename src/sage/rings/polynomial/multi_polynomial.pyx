@@ -273,9 +273,9 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: v = K(0)
             sage: vf = fast_callable(v)
             sage: type(v(0r, 0r, 0r))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: type(vf(0r, 0r, 0r))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: K.<x,y,z> = QQ[]
             sage: from sage.ext.fast_eval import fast_float
             sage: fast_float(K(0)).op_list()
@@ -313,7 +313,7 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: R.<x, y> = PolynomialRing(FiniteField(5))
             sage: f = x^3*y^5 + x^7*y
             sage: type(f)
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: f.derivative(x)
             2*x^6*y - 2*x^2*y^5
             sage: f.derivative(y)
@@ -1776,9 +1776,9 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: x.denominator()
             1
             sage: type(x.denominator())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: type(a.denominator())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: from sage.rings.polynomial.multi_polynomial_element import MPolynomial
             sage: isinstance(a / b, MPolynomial)
             False

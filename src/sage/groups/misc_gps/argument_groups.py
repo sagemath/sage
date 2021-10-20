@@ -1534,7 +1534,7 @@ class Sign(AbstractArgument):
             sage: S(-1) * int(4)
             -4
             sage: type(_)
-            <type 'int'>
+            <class 'int'>
             sage: S(-1) * QQ(4)
             -4
             sage: _.parent()
@@ -1641,7 +1641,7 @@ class SignGroup(AbstractArgumentGroup):
             sage: from sage.groups.misc_gps.argument_groups import SignGroup
             sage: S = SignGroup()
             sage: S.base()  # indirect doctest
-            <type 'int'>
+            <class 'int'>
         """
         return super(SignGroup, self).__init__(base=int,
                                                category=category)

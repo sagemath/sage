@@ -28,9 +28,3 @@ Upstream Contact
 ----------------
 
 -  Clement Pernet
-
-Dependencies
-------------
-
--  GNU patch
--  GMP/MPIR

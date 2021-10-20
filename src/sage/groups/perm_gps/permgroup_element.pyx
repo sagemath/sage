@@ -1560,7 +1560,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: t=PermutationGroupElement(L).multiplicative_order(); t
             1492182350939279320058875736615841068547583863326864530410
             sage: type(t)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         order = None
         cdef long long order_c = 1

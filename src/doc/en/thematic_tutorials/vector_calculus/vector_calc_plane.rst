@@ -32,7 +32,7 @@ the Cartesian coordinates (there is no need to declare them via :func:`var`,
 i.e. to type ``x, y = var('x y')``)::
 
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Instead of using the variables ``x`` and ``y``, one may also access to the
 coordinates by their indices in the chart of Cartesian coordinates::

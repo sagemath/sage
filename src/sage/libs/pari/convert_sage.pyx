@@ -251,7 +251,7 @@ cpdef gen_to_sage(Gen z, locals=None):
         sage: s = pari('"foo"').sage(); s
         'foo'
         sage: type(s)
-        <type 'str'>
+        <class 'str'>
     """
     cdef GEN g = z.g
     cdef long t = typ(g)

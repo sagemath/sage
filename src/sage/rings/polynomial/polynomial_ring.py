@@ -219,7 +219,7 @@ def is_PolynomialRing(x):
         sage: is_PolynomialRing(R)
         False
         sage: type(R)
-        <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+        <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
     """
     return isinstance(x, PolynomialRing_general)
 
@@ -1794,12 +1794,12 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
             sage: R = PRing(ZZ, 'x'); R
             Univariate Polynomial Ring in x over Integer Ring
             sage: type(R.gen())
-            <type 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
+            <class 'sage.rings.polynomial.polynomial_integer_dense_flint.Polynomial_integer_dense_flint'>
 
             sage: R = PRing(ZZ, 'x', implementation='NTL'); R
             Univariate Polynomial Ring in x over Integer Ring (using NTL)
             sage: type(R.gen())
-            <type 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
+            <class 'sage.rings.polynomial.polynomial_integer_dense_ntl.Polynomial_integer_dense_ntl'>
         """
         self._implementation_repr = ''
         if element_class is None:
@@ -1964,7 +1964,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: R = PRing(QQ, 'x'); R
             Univariate Polynomial Ring in x over Rational Field
             sage: type(R.gen())
-            <type 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>
+            <class 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>
             sage: R = PRing(QQ, 'x', sparse=True); R
             Sparse Univariate Polynomial Ring in x over Rational Field
             sage: type(R.gen())
@@ -2384,7 +2384,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
             sage: S = PolynomialRing_dense_finite_field(GF(25, 'a'), implementation='NTL')
             sage: type(S(0))
-            <type 'sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX'>
+            <class 'sage.rings.polynomial.polynomial_zz_pex.Polynomial_ZZ_pEX'>
 
             sage: S = PolynomialRing_dense_finite_field(GF(64), implementation='superfast')
             Traceback (most recent call last):
@@ -2976,17 +2976,17 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             sage: R = PRing(Zmod(15), 'x'); R
             Univariate Polynomial Ring in x over Ring of integers modulo 15
             sage: type(R.gen())
-            <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+            <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
 
             sage: R = PRing(Zmod(15), 'x', implementation='NTL'); R
             Univariate Polynomial Ring in x over Ring of integers modulo 15 (using NTL)
             sage: type(R.gen())
-            <type 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_zz'>
+            <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_zz'>
 
             sage: R = PRing(Zmod(2**63*3), 'x', implementation='NTL'); R
             Univariate Polynomial Ring in x over Ring of integers modulo 27670116110564327424 (using NTL)
             sage: type(R.gen())
-            <type 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
+            <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
 
             sage: R = PRing(Zmod(2**63*3), 'x', implementation='FLINT')
             Traceback (most recent call last):
@@ -2996,7 +2996,7 @@ class PolynomialRing_dense_mod_n(PolynomialRing_commutative):
             sage: R = PRing(Zmod(2**63*3), 'x'); R
             Univariate Polynomial Ring in x over Ring of integers modulo 27670116110564327424 (using NTL)
             sage: type(R.gen())
-            <type 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
+            <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
         """
         if element_class is None:
             implementation = self._implementation_names(implementation, base_ring)[0]
@@ -3131,24 +3131,24 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: P = GF(2)['x']; P
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
             sage: type(P.gen())
-            <type 'sage.rings.polynomial.polynomial_gf2x.Polynomial_GF2X'>
+            <class 'sage.rings.polynomial.polynomial_gf2x.Polynomial_GF2X'>
 
             sage: from sage.rings.polynomial.polynomial_ring import PolynomialRing_dense_mod_p
             sage: P = PolynomialRing_dense_mod_p(GF(5), 'x'); P
             Univariate Polynomial Ring in x over Finite Field of size 5
             sage: type(P.gen())
-            <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+            <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
 
             sage: P = PolynomialRing_dense_mod_p(GF(5), 'x', implementation='NTL'); P
             Univariate Polynomial Ring in x over Finite Field of size 5 (using NTL)
             sage: type(P.gen())
-            <type 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
+            <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
             sage: P = PolynomialRing_dense_mod_p(GF(9223372036854775837), 'x')
             sage: P
             Univariate Polynomial Ring in x over Finite Field of size 9223372036854775837 (using NTL)
             sage: type(P.gen())
-            <type 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
+            <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
         This caching bug was fixed in :trac:`24264`::
 

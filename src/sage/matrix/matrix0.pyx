@@ -78,7 +78,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         [1.0 2.0 3.0]
         [4.0 5.0 6.0]
         sage: type(a)
-        <type 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
+        <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
         sage: parent(a)
         Full MatrixSpace of 2 by 3 dense matrices over Complex Double Field
 
@@ -112,7 +112,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: import sage.matrix.matrix0
             sage: A = sage.matrix.matrix0.Matrix(MatrixSpace(QQ,2))
             sage: type(A)
-            <type 'sage.matrix.matrix0.Matrix'>
+            <class 'sage.matrix.matrix0.Matrix'>
         """
         P = <Parent?>parent
         self._parent = P
@@ -885,11 +885,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: M = MatrixSpace(GF(2), 3, 3, implementation='generic')
             sage: m = M(range(9))
             sage: type(m)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: parent(m)
             Full MatrixSpace of 3 by 3 dense matrices over Finite Field of size 2 (using Matrix_generic_dense)
             sage: type(m[:2,:2])
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: parent(m[:2,:2])
             Full MatrixSpace of 2 by 2 dense matrices over Finite Field of size 2 (using Matrix_generic_dense)
         """
@@ -4830,7 +4830,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: B.multiplicative_order()
             1
 
-            sage: E = MatrixSpace(GF(11^2,'e'),5).random_element()
+            sage: M = MatrixSpace(GF(11^2,'e'),5)
+            sage: E = M.random_element()
+            sage: while E.det() == 0:
+            ....:     E = M.random_element()
             sage: (E^E.multiplicative_order()).is_one()
             True
 
@@ -5563,13 +5566,13 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: m = matrix(Zmod(49),2,[2,1,3,3])
             sage: type(m)
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: ~m
             [ 1 16]
             [48 17]
             sage: m = matrix(Zmod(2^100),2,[2,1,3,3])
             sage: type(m)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: (~m)*m
             [1 0]
             [0 1]

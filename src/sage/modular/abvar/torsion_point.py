@@ -87,7 +87,7 @@ class TorsionPoint(ModuleElement):
             sage: v = (G.0-G.1).element(); v
             (1/3, -1/5)
             sage: type(v)
-            <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+            <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
         """
         return self.__element
 

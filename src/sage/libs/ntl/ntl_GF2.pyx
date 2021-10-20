@@ -250,7 +250,7 @@ def unpickle_class_value(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1)
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(x)
 
@@ -263,7 +263,7 @@ def unpickle_class_args(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1])
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1]))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(*x)
 

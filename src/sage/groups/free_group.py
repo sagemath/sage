@@ -322,7 +322,7 @@ class FreeGroupElement(ElementLibGAP):
             sage: type(a.Tietze())
             <... 'tuple'>
             sage: type(a.Tietze()[0])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         tl = self.gap().TietzeWordAbstractWord()
         return tuple(tl.sage())
@@ -709,7 +709,7 @@ def wrap_FreeGroup(libgap_free_group):
 
         sage: F = libgap.FreeGroup(['a', 'b'])
         sage: type(F)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
     Now wrap it::
 

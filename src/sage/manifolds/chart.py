@@ -206,7 +206,7 @@ class Chart(UniqueRepresentation, SageObject):
     :mod:`sage.symbolic.expression`)::
 
         sage: type(z1)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     In addition to the Python variable name provided in the operator ``<.,.>``,
     the coordinates are accessible by their indices::
@@ -1502,7 +1502,7 @@ class Chart(UniqueRepresentation, SageObject):
             sage: f.expr()
             x^2 + cos(y)*sin(x)
             sage: type(f.expr())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: parent(f.expr())
             Symbolic Ring
             sage: f.display()
@@ -1733,7 +1733,7 @@ class RealChart(Chart):
     :mod:`sage.symbolic.expression`)::
 
         sage: type(th)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: latex(th)
         {\theta}
         sage: assumptions(th)

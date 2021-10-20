@@ -59,7 +59,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: VS([0,0,1])
             (0, 0, 1)
             sage: type(_)
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         cdef Vector_mod2_dense y
         y = Vector_mod2_dense.__new__(Vector_mod2_dense)
@@ -114,7 +114,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: VS([0,0,1])
             (0, 0, 1)
             sage: type(_)
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         self._degree = degree
         self._parent = parent
@@ -131,7 +131,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: VS((0,0,1/3))
             (0, 0, 1)
             sage: type(_)
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         self._entries = NULL
         self._is_immutable = 0
@@ -146,7 +146,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: VS((0,0,1/3))
             (0, 0, 1)
             sage: type(_)
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
             sage: VS((0,0,int(3)))
             (0, 0, 1)
             sage: VS((0,0,3))

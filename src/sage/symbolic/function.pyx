@@ -445,7 +445,7 @@ cdef class Function(SageObject):
             sage: arctan(float(1))
             0.7853981633974483
             sage: type(lambert_w(SR(0)))
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         Precision of the result depends on the precision of the input::
 
@@ -954,7 +954,7 @@ cdef class BuiltinFunction(Function):
             sage: sin(numpy.int32(0))
             0.0
             sage: type(_)
-            <type 'numpy.float64'>
+            <class 'numpy.float64'>
 
         TESTS::
 

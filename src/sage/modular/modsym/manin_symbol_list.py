@@ -351,7 +351,7 @@ class ManinSymbolList(Parent):
             sage: s = m.manin_symbol(3); s
             [Y^2,(1,2)]
             sage: type(s)
-            <type 'sage.modular.modsym.manin_symbol.ManinSymbol'>
+            <class 'sage.modular.modsym.manin_symbol.ManinSymbol'>
         """
         return self.element_class(self, self._symbol_list[i])
 

@@ -58,7 +58,7 @@ cdef Rational si2sa_QQ(number *n, number **nn, ring *_ring):
         sage: P(-1/3).lc()
         -1/3
         sage: type(P(3).lc())
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
     """
     cdef number *nom
     cdef number *denom
@@ -115,7 +115,7 @@ cdef Integer si2sa_ZZ(number *n, ring *_ring):
         sage: P(-1234567890).lc()
         -1234567890
         sage: type(P(3).lc())
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     cdef Integer z
     z = Integer()
@@ -172,7 +172,7 @@ cdef FFgf2eE si2sa_GFqNTLGF2E(number *n, ring *_ring, Cache_ntl_gf2e cache):
         sage: f.lc()
         a^11 + a^10 + a^8 + a^7 + a^6 + a^5 + a^2 + a
         sage: type(f.lc())
-        <type 'sage.rings.finite_rings.element_ntl_gf2e.FiniteField_ntl_gf2eElement'>
+        <class 'sage.rings.finite_rings.element_ntl_gf2e.FiniteField_ntl_gf2eElement'>
     """
     cdef poly *z
     cdef long c
@@ -207,7 +207,7 @@ cdef object si2sa_GFq_generic(number *n, ring *_ring, object base):
         sage: f.lc()
         a^12 + a^11 + a^9 + a^8 + a^7 + 2*a^6 + a^5
         sage: type(f.lc())
-        <type 'sage.rings.finite_rings.element_pari_ffelt.FiniteFieldElement_pari_ffelt'>
+        <class 'sage.rings.finite_rings.element_pari_ffelt.FiniteFieldElement_pari_ffelt'>
 
     Try the largest characteristic which Singular supports::
 

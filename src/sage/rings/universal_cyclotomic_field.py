@@ -1477,7 +1477,7 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
             Traceback (most recent call last):
             ...
             TypeError: [ [ 0, 1 ], [ 0, 2 ] ]
-            of type <type 'sage.libs.gap.element.GapElement_List'> not valid
+            of type <class 'sage.libs.gap.element.GapElement_List'> not valid
             to initialize an element of the universal cyclotomic field
 
         Some conversions from symbolic functions are possible::

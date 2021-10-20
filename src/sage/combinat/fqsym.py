@@ -1337,7 +1337,7 @@ class FQSymBases(Category_realization_of_parent):
                 sage: G.basis(degree=3).list()
                 [G[1, 2, 3], G[1, 3, 2], G[2, 1, 3], G[2, 3, 1], G[3, 1, 2], G[3, 2, 1]]
             """
-            from sage.combinat.family import Family
+            from sage.sets.family import Family
             if degree is None:
                 return Family(self._indices, self.monomial)
             else:

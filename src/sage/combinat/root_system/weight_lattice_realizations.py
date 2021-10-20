@@ -23,7 +23,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.categories.category_types import Category_over_base_ring
-from sage.combinat.family import Family
+from sage.sets.family import Family
 from .root_lattice_realizations import RootLatticeRealizations
 
 

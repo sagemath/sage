@@ -1,4 +1,4 @@
-# Make sure that we prefer Sage's mpir library over system-wide gmp/mpir installs
+# Make sure that we prefer Sage's gmp library over system-wide gmp installs
 export CXXFLAGS="$CXXFLAGS -I$SAGE_LOCAL/include"
 
 cd src

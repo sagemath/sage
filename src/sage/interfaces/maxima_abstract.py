@@ -1216,18 +1216,18 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: b = a._sage_(); b
             sqrt(2) + 2.5
             sage: type(b)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         We illustrate an automatic coercion::
 
             sage: c = b + sqrt(3); c
             sqrt(3) + sqrt(2) + 2.5
             sage: type(c)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: d = sqrt(3) + b; d
             sqrt(3) + sqrt(2) + 2.5
             sage: type(d)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
             sage: a = sage.calculus.calculus.maxima('x^(sqrt(y)+%pi) + sin(%e + %pi)')
             sage: a._sage_()

@@ -1296,7 +1296,7 @@ cdef class EclListIterator:
         sage: from sage.libs.ecl import *
         sage: I=EclListIterator(EclObject("(1 2 3)"))
         sage: type(I)
-        <type 'sage.libs.ecl.EclListIterator'>
+        <class 'sage.libs.ecl.EclListIterator'>
         sage: [i for i in I]
         [<ECL: 1>, <ECL: 2>, <ECL: 3>]
         sage: [i for i in EclObject("(1 2 3)")]
@@ -1318,7 +1318,7 @@ cdef class EclListIterator:
             sage: from sage.libs.ecl import *
             sage: I=EclListIterator(EclObject("(1 2 3)"))
             sage: type(I)
-            <type 'sage.libs.ecl.EclListIterator'>
+            <class 'sage.libs.ecl.EclListIterator'>
 
         """
         if not o.listp():

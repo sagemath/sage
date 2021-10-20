@@ -30,9 +30,6 @@ metaclass:
             from foo import MyMetaclass
             return MyMetaclass
 
-The above ``__getmetaclass__`` method is analogous to
-``__metaclass__ = MyMetaclass`` in Python 2.
-
 .. WARNING::
 
     ``__getmetaclass__`` must be defined as an ordinary method taking a

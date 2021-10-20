@@ -131,7 +131,7 @@ EXAMPLES::
     sage: type(v)
     <class 'sage.geometry.polyhedron.representation.Vertex'>
     sage: type( v() )
-    <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+    <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
     sage: v.polyhedron()
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 2 rays
     sage: r = next(trunc_quadr.ray_generator())

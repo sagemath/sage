@@ -202,7 +202,7 @@ cdef class _bigint:
             sage: _bigint('123')
             123
             sage: type(_bigint(123))
-            <type 'sage.libs.eclib.mwrank._bigint'>
+            <class 'sage.libs.eclib.mwrank._bigint'>
         """
         s = str(x)
         if s.isdigit() or s[0] == "-" and s[1:].isdigit():
@@ -357,7 +357,7 @@ cdef class _Curvedata:   # cython class wrapping eclib's Curvedata class
             sage: E.silverman_bound()
             6.52226179519101...
             sage: type(E.silverman_bound())
-            <type 'float'>
+            <class 'float'>
         """
         return Curvedata_silverman_bound(self.x)
 
@@ -570,7 +570,7 @@ cdef class _mw:
             sage: EQ
             []
             sage: type(EQ)
-            <type 'sage.libs.eclib.mwrank._mw'>
+            <class 'sage.libs.eclib.mwrank._mw'>
 
             sage: E = _Curvedata(0,0,1,-7,6)
             sage: EQ = _mw(E)

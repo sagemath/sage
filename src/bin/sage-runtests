@@ -56,7 +56,7 @@ if __name__ == "__main__":
              'if "build" is listed, will also run tests specific to Sage\'s build/packaging system; '
              'if set to "all", then all tests will be run')
     parser.add_argument("--randorder", type=int, metavar="SEED", help="randomize order of tests")
-    parser.add_argument("--random-seed", dest="random_seed", type=int, metavar="SEED", help="random seed for fuzzing doctests")
+    parser.add_argument("--random-seed", dest="random_seed", type=int, metavar="SEED", help="random seed (integer) for fuzzing doctests")
     parser.add_argument("--global-iterations", "--global_iterations", type=int, default=0, help="repeat the whole testing process this many times")
     parser.add_argument("--file-iterations", "--file_iterations", type=int, default=0, help="repeat each file this many times, stopping on the first failure")
     parser.add_argument("--environment", type=str, default="sage.repl.ipython_kernel.all_jupyter", help="name of a module that provides the global environment for tests")

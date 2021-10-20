@@ -27,13 +27,13 @@ cdef class Matrix_gap(Matrix_dense):
         sage: m1 = M([1, 0, 2, -3])
         sage: m2 = M([2, 2, 5, -1])
         sage: type(m1)
-        <type 'sage.matrix.matrix_gap.Matrix_gap'>
+        <class 'sage.matrix.matrix_gap.Matrix_gap'>
 
         sage: m1 * m2
         [  2   2]
         [-11   7]
         sage: type(m1 * m2)
-        <type 'sage.matrix.matrix_gap.Matrix_gap'>
+        <class 'sage.matrix.matrix_gap.Matrix_gap'>
 
         sage: M = MatrixSpace(QQ, 5, 3, implementation='gap')
         sage: m = M(range(15))
@@ -94,11 +94,11 @@ cdef class Matrix_gap(Matrix_dense):
             [2 0]
             [0 2]
             sage: type(M(0))
-            <type 'sage.matrix.matrix_gap.Matrix_gap'>
+            <class 'sage.matrix.matrix_gap.Matrix_gap'>
             sage: type(M(1))
-            <type 'sage.matrix.matrix_gap.Matrix_gap'>
+            <class 'sage.matrix.matrix_gap.Matrix_gap'>
             sage: type(M(2))
-            <type 'sage.matrix.matrix_gap.Matrix_gap'>
+            <class 'sage.matrix.matrix_gap.Matrix_gap'>
 
             sage: M = MatrixSpace(QQ, 2, 3, implementation='gap')
             sage: M(0)
@@ -175,7 +175,7 @@ cdef class Matrix_gap(Matrix_dense):
             sage: m
             [ [ 1, 2 ], [ 2, 1 ] ]
             sage: type(m)
-            <type 'sage.libs.gap.element.GapElement_List'>
+            <class 'sage.libs.gap.element.GapElement_List'>
 
             sage: m.MatrixAutomorphisms()
             Group([ (1,2) ])

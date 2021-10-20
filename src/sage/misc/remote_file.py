@@ -38,8 +38,7 @@ def get_remote_file(filename, verbose=True):
     # IMPORTANT -- urllib takes a long time to load,
     # so do not import it in the module scope.
 
-    # import compatible with py2 and py3
-    req = Request(filename, headers={"User-Agent":"sage-doctest"})
+    req = Request(filename, headers={"User-Agent": "sage-doctest"})
 
     if verbose:
         print("Loading started")

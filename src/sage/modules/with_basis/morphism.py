@@ -1312,16 +1312,11 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             True
             sage: TestSuite(phi).run(skip=["_test_pickling"])
 
-        Pickling fails (:trac:`17957`) because ``phi._on_basis`` is
-        currently a ``dict.__getitem__`` which is not picklable in Python 2::
+        Pickling works (:trac:`17957`) in Python 3::
 
             sage: phi._on_basis
             <built-in method __getitem__ of dict object at ...>
-            sage: dumps(phi._on_basis) # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: expected string or Unicode object, NoneType found
-            sage: loads(dumps(phi)) == phi # py3
+            sage: loads(dumps(phi)) == phi
             True
 
         The matrix is stored in the morphism, as if it was for an

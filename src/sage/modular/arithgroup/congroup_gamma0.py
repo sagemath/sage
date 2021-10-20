@@ -75,7 +75,7 @@ class Gamma0_class(GammaH_class):
         sage: a = Gamma0(1).dimension_cusp_forms(2); a
         0
         sage: type(a)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: Gamma0(5).dimension_cusp_forms(0)
         0
         sage: Gamma0(20).dimension_cusp_forms(1)

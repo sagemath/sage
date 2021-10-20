@@ -1251,6 +1251,6 @@ def make_ZZ_pEX(v, modulus):
         sage: sage.libs.ntl.ntl_ZZ_pEX.make_ZZ_pEX([a,b,b], c)
         [[3 2] [1 2] [1 2]]
         sage: type(sage.libs.ntl.ntl_ZZ_pEX.make_ZZ_pEX([a,b,b], c))
-        <type 'sage.libs.ntl.ntl_ZZ_pEX.ntl_ZZ_pEX'>
+        <class 'sage.libs.ntl.ntl_ZZ_pEX.ntl_ZZ_pEX'>
     """
     return ntl_ZZ_pEX(v, modulus)

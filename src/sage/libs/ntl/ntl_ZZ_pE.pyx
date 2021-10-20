@@ -296,7 +296,7 @@ cdef class ntl_ZZ_pE(object):
         sage: i
         [9 1]
         sage: type(i)
-        <type 'sage.libs.ntl.ntl_ZZ_pX.ntl_ZZ_pX'>
+        <class 'sage.libs.ntl.ntl_ZZ_pX.ntl_ZZ_pX'>
         """
         return self.get_as_ZZ_pX()
 
@@ -350,6 +350,6 @@ def make_ZZ_pE(x, c):
         sage: sage.libs.ntl.ntl_ZZ_pE.make_ZZ_pE([4,3], c)
         [4 3]
         sage: type(sage.libs.ntl.ntl_ZZ_pE.make_ZZ_pE([4,3], c))
-        <type 'sage.libs.ntl.ntl_ZZ_pE.ntl_ZZ_pE'>
+        <class 'sage.libs.ntl.ntl_ZZ_pE.ntl_ZZ_pE'>
     """
     return ntl_ZZ_pE(x, c)

@@ -1462,10 +1462,17 @@ def mma_free_limit(expression, v, a, dir=None):
     """
     Limit using Mathematica's online interface.
 
+    INPUT:
+
+    - ``expression`` -- symbolic expression
+    - ``v`` -- variable
+    - ``a`` -- value where the variable goes to
+    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (optional, default:``None``)
+
     EXAMPLES::
 
         sage: from sage.calculus.calculus import mma_free_limit
-        sage: mma_free_limit(sin(x)/x, x=0) # optional - internet
+        sage: mma_free_limit(sin(x)/x, x, a=0) # optional - internet
         1
 
     Another simple limit::

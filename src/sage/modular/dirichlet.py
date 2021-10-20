@@ -787,7 +787,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             sage: G.<a, b> = DirichletGroup(20)
             sage: type(G(1).conductor())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if self.modulus() == 1 or self.is_trivial():
             return rings.Integer(1)

@@ -2470,14 +2470,23 @@ class GenericGraph(GenericGraph_pyx):
         """
         Set a combinatorial embedding dictionary to ``_embedding`` attribute.
 
-        Dictionary is organized with vertex labels as keys and a list of each
-        vertex's neighbors in clockwise order.
+        The dictionary ``embedding`` represents a combinatorial embedding of
+        ``self`` and is organized as a mapping from vertex labels to list of
+        vertex neighbors in clockwise order.
 
-        Dictionary is error-checked for validity.
+        Parameter ``embedding`` is error-checked for validity.
+
+        .. WARNING::
+
+            Combinatorial embeddings are defined for simple graphs only (i.e.,
+            without loops or multiple edges). Therefore, an error is raised when
+            this method is used for a graph with loops or multiple edges.
 
         INPUT:
 
-        - ``embedding`` -- a dictionary
+        - ``embedding`` -- dictionary representing a combinatorial embedding of
+          ``self``. Format: "{v1: [v2,v3], v2: [v1], v3: [v1]}" (clockwise
+          ordering of neighbors at each vertex).
 
         EXAMPLES::
 
@@ -2487,7 +2496,21 @@ class GenericGraph(GenericGraph_pyx):
             Traceback (most recent call last):
             ...
             ValueError: vertices in ['s'] from the embedding do not belong to the graph
+
+        TESTS::
+
+            sage: G = Graph([(0, 0)], loops=True)
+            sage: G.set_embedding({0: [0]})
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with loops. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow loops using allow_loops().
+            sage: G = Graph([(0, 1), (0, 1)], multiedges=True)
+            sage: G.set_embedding({0: [1], 1: [0]})
+            Traceback (most recent call last):
+            ...
+            ValueError: This method is not known to work on graphs with multiedges. Perhaps this method can be updated to handle them, but in the meantime if you want to use it please disallow multiedges using allow_multiple_edges().
         """
+        self._scream_if_not_simple()
         self._check_embedding_validity(embedding, boolean=False)
         self._embedding = embedding
 
@@ -3492,7 +3515,7 @@ class GenericGraph(GenericGraph_pyx):
             True
         """
         if not self._directed:
-            # An undirected graph is antisymmetric only if all it's edges are
+            # An undirected graph is antisymmetric only if all its edges are
             # loops
             return self.size() == len(self.loop_edges())
         if self.has_loops():
@@ -6331,8 +6354,11 @@ class GenericGraph(GenericGraph_pyx):
         By Edmond's theorem, a graph which is `k`-connected always has `k`
         edge-disjoint arborescences, regardless of the root we pick::
 
-            sage: g = digraphs.RandomDirectedGNP(28, .3) # reduced from 30 to 28, cf. #9584
+            sage: g = digraphs.RandomDirectedGNP(11, .3)  # reduced from 30 to 11, cf. #32169
             sage: k = Integer(g.edge_connectivity())
+            sage: while not k:
+            ....:     g = digraphs.RandomDirectedGNP(11, .3)
+            ....:     k = Integer(g.edge_connectivity())
             sage: arborescences = g.edge_disjoint_spanning_trees(k)  # long time (up to 15s on sage.math, 2011)
             sage: all(a.is_directed_acyclic() for a in arborescences)  # long time
             True
@@ -6341,7 +6367,9 @@ class GenericGraph(GenericGraph_pyx):
 
         In the undirected case, we can only ensure half of it::
 
-            sage: g = graphs.RandomGNP(30, .3)
+            sage: g = graphs.RandomGNP(14, .3)  # reduced from 30 to 14, see #32169
+            sage: while not g.is_biconnected():
+            ....:     g = graphs.RandomGNP(14, .3)
             sage: k = Integer(g.edge_connectivity()) // 2
             sage: trees = g.edge_disjoint_spanning_trees(k)
             sage: all(t.is_tree() for t in trees)
@@ -23560,18 +23588,18 @@ class GenericGraph(GenericGraph_pyx):
             sage: P.is_combinatorially_isomorphic(polytopes.cross_polytope(3))
             True
 
-        The EP of a graph with edges is isomorphic
-        to the product of it's connected components with edges::
+        The EP of a graph is isomorphic to the subdirect sum of
+        its connected components EPs::
 
-            sage: n = randint(5, 12)
-            sage: G = Graph()
-            sage: while not G.num_edges():
-            ....:     G = graphs.RandomGNP(n, 0.2)
+            sage: n = randint(3, 6)
+            sage: G1 = graphs.RandomGNP(n, 0.2)
+            sage: n = randint(3, 6)
+            sage: G2 = graphs.RandomGNP(n, 0.2)
+            sage: G = G1.disjoint_union(G2)
             sage: P = G.edge_polytope()
-            sage: components = [G.subgraph(c).edge_polytope()
-            ....:               for c in G.connected_components()
-            ....:               if G.subgraph(c).num_edges()]
-            sage: P.is_combinatorially_isomorphic(product(components))
+            sage: P1 = G1.edge_polytope()
+            sage: P2 = G2.edge_polytope()
+            sage: P.is_combinatorially_isomorphic(P1.subdirect_sum(P2))
             True
 
         All trees on `n` vertices have isomorphic EPs::
@@ -23662,18 +23690,18 @@ class GenericGraph(GenericGraph_pyx):
             sage: P.dim() == n - G.connected_components_number()
             True
 
-        The SEP of a graph with edges is isomorphic
-        to the product of it's connected components with edges::
+        The SEP of a graph is isomorphic to the subdirect sum of
+        its connected components SEP's::
 
-            sage: n = randint(5, 12)
-            sage: G = Graph()
-            sage: while not G.num_edges():
-            ....:     G = graphs.RandomGNP(n, 0.2)
+            sage: n = randint(3, 6)
+            sage: G1 = graphs.RandomGNP(n, 0.2)
+            sage: n = randint(3, 6)
+            sage: G2 = graphs.RandomGNP(n, 0.2)
+            sage: G = G1.disjoint_union(G2)
             sage: P = G.symmetric_edge_polytope()
-            sage: components = [G.subgraph(c).symmetric_edge_polytope()
-            ....:               for c in G.connected_components()
-            ....:               if G.subgraph(c).num_edges()]
-            sage: P.is_combinatorially_isomorphic(product(components))
+            sage: P1 = G1.symmetric_edge_polytope()
+            sage: P2 = G2.symmetric_edge_polytope()
+            sage: P.is_combinatorially_isomorphic(P1.subdirect_sum(P2))
             True
 
         All trees on `n` vertices have isomorphic SEPs::

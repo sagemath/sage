@@ -14,7 +14,7 @@ cdef class PowComputer_(PowComputer_flint_unram):
 
             sage: R.<a> = ZqCR(125)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.qadic_flint_CR.PowComputer_'>
+            <class 'sage.rings.padics.qadic_flint_CR.PowComputer_'>
             sage: R.prime_pow._prec_type
             'capped-rel'
         """

@@ -134,7 +134,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
     expression::
 
         sage: type(f.expr())
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     A SymPy expression can also be asked for::
 
@@ -207,7 +207,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
 
         sage: f0(x,y) = x^2 + 3*y + 1
         sage: type(f0)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: f0
         (x, y) |--> x^2 + 3*y + 1
         sage: f0(x,y)
@@ -495,7 +495,7 @@ class ChartFunction(AlgebraElement, ModuleElementWithMutability):
             sage: f.expr()
             x^2 + y
             sage: type(f.expr())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         Asking for the SymPy expression::
 
@@ -3057,7 +3057,7 @@ class MultiCoordFunction(SageObject, Mutability):
             sage: f.expr()
             (x - y, x*y, cos(x)*e^y)
             sage: type(f.expr()[0])
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         A SymPy output::
 

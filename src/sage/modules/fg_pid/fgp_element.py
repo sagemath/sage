@@ -440,7 +440,7 @@ class FGP_Element(ModuleElement):
             sage: Q.0.additive_order()
             12
             sage: type(Q.0.additive_order())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: Q.1.additive_order()
             +Infinity
         """

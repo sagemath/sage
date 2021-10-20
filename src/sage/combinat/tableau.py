@@ -175,11 +175,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         sage: Tableau([[1],[2,3]])
         Traceback (most recent call last):
         ...
-        ValueError: A tableau must be a list of iterables of weakly decreasing length.
+        ValueError: a tableau must be a list of iterables of weakly decreasing length
         sage: Tableau([1,2,3])
         Traceback (most recent call last):
         ...
-        ValueError: A tableau must be a list of iterables.
+        ValueError: a tableau must be a list of iterables
 
     """
     @staticmethod
@@ -208,7 +208,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         try:
             t = [tuple(_) for _ in t]
         except TypeError:
-            raise ValueError("A tableau must be a list of iterables.")
+            raise ValueError("a tableau must be a list of iterables")
 
         return Tableaux_all().element_class(Tableaux_all(), t)
 
@@ -330,16 +330,16 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: t = Tableau([[None, None, 1], [2, 4], [3, 4, 5]])  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: A tableau must be a list of iterables of weakly decreasing length.
+            ValueError: a tableau must be a list of iterables of weakly decreasing length
         """
         # Check that it has partition shape. That's all we require from a
         # general tableau.
-        lens = [len(_) for _ in self]
+        lens = [len(row) for row in self]
         for (a, b) in zip(lens, lens[1:]):
             if a < b:
-                raise ValueError("A tableau must be a list of iterables of weakly decreasing length.")
+                raise ValueError("a tableau must be a list of iterables of weakly decreasing length")
         if lens and lens[-1] == 0:
-            raise ValueError("A tableau must not have empty rows.")
+            raise ValueError("a tableau must not have empty rows")
 
     def _repr_(self):
         """
@@ -4884,7 +4884,8 @@ def from_chain(chain):
         for j in range(len(chain[i - 1])):
             for k in range(chain[i - 1][j]):
                 res[j][k] = i -1
-    return Tableau(res)
+    T = Tableaux_all()
+    return T.element_class(T, res)
 
 
 def from_shape_and_word(shape, w, convention="French"):
@@ -4919,7 +4920,7 @@ def from_shape_and_word(shape, w, convention="French"):
         sage: from_shape_and_word(shape, word)
         [[1, 3], [2], [4]]
         sage: word = Word(flatten(t))
-        sage: from_shape_and_word(shape, word, convention = "English")
+        sage: from_shape_and_word(shape, word, convention="English")
         [[1, 3], [2], [4]]
     """
     res = []
@@ -4927,11 +4928,12 @@ def from_shape_and_word(shape, w, convention="French"):
     if convention == "French":
         shape = reversed(shape)
     for l in shape:
-        res.append( list(w[j:j+l]) )
+        res.append( tuple(w[j:j+l]) )
         j += l
     if convention == "French":
         res.reverse()
-    return Tableau(res)
+    T = Tableaux_all()
+    return T.element_class(T, res)
 
 
 class IncreasingTableau(Tableau):
@@ -5324,7 +5326,7 @@ class Tableaux(UniqueRepresentation, Parent):
         sage: Tableaux(3)([[1, 1]])
         Traceback (most recent call last):
         ...
-        ValueError: [[1, 1]] is not an element of Tableaux of size 3.
+        ValueError: [[1, 1]] is not an element of Tableaux of size 3
 
         sage: t0 = Tableau([[1]])
         sage: t1 = Tableaux()([[1]])
@@ -5498,10 +5500,10 @@ class Tableaux(UniqueRepresentation, Parent):
             sage: T([[1,2]])
             Traceback (most recent call last):
             ...
-            ValueError: [[1, 2]] is not an element of Tableaux of size 3.
+            ValueError: [[1, 2]] is not an element of Tableaux of size 3
         """
         if t not in self:
-            raise ValueError("%s is not an element of %s." % (t, self))
+            raise ValueError("%s is not an element of %s" % (t, self))
 
         return self.element_class(self, t)
 
@@ -5541,7 +5543,7 @@ class Tableaux(UniqueRepresentation, Parent):
             except TypeError:
                 return False
             # any list of lists of partition shape is a tableau
-            return [len(_) for _ in x] in _Partitions
+            return [len(row) for row in x] in _Partitions
         else:
             return False
 

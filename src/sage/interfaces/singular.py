@@ -1994,7 +1994,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement):
             sage: singular(5).sage()
             5
             sage: type(singular(int(5)).sage())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         """
         typ = self.type()

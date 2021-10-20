@@ -176,7 +176,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: A = matrix(QQ['x,y'], 2, [0,-1,2,-2], sparse=True)
             sage: type(A)
-            <type 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
+            <class 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
             sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
             sage: A * B
             [2 2]
@@ -239,7 +239,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: A = matrix(QQ['x,y'], 2, [0,-1,2,-2], sparse=True)
             sage: type(A)
-            <type 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
+            <class 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
             sage: B = matrix(QQ['x,y'], 2, [-1,-1,-2,-2], sparse=True)
             sage: A._multiply_classical_with_cache(B)
             [2 2]

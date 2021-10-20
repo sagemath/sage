@@ -171,7 +171,7 @@ class VectorCollection(FreeModule_ambient_field):
         ((1, 0), (0, 1), (1, 2))
         sage: r = R._vectors[0]
         sage: type(r)
-        <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+        <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
         sage: r.parent() is R
         True
         sage: r.is_immutable()

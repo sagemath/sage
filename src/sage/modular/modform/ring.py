@@ -698,6 +698,7 @@ class ModularFormsRing(Parent):
             3
             sage: [k for k, _ in v]
             [2, 2, 4]
+            sage: from sage.modular.dims import dimension_modular_forms
             sage: dimension_modular_forms(11,2)
             2
             sage: dimension_modular_forms(11,4)

@@ -774,7 +774,7 @@ class FiniteSubgroup(Module):
             ...
             ValueError: object is immutable; please change a copy instead.
             sage: type(v[0])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         ::
 

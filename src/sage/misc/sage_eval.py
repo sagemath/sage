@@ -2,16 +2,17 @@ r"""
 Evaluating a String in Sage
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from copy import copy
 import sage.repl.preparse as preparser
+
 
 def sage_eval(source, locals=None, cmds='', preparse=True):
     r"""
@@ -90,9 +91,7 @@ def sage_eval(source, locals=None, cmds='', preparse=True):
     ::
 
         sage: x = 5
-        sage: eval('4/3 + x', {'x': 25})  # py2
-        26
-        sage: eval('4//3 + x', {'x': 25})  # py3
+        sage: eval('4//3 + x', {'x': 25})
         26
         sage: sage_eval('4/3 + x',  locals={'x': 25})
         79/3

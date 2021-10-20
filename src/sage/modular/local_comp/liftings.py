@@ -53,7 +53,7 @@ def lift_to_gamma1(g, m, n):
         sage: assert matrix(Zmod(11), 2, n) == matrix(Zmod(11),2,m)
         sage: assert matrix(Zmod(17), 2, [n[0], 0, n[2], n[3]]) == 1
         sage: type(lift_to_gamma1([10,11,3,11],19,5)[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Tests with `m = 1` and with `n = 1`::
 
@@ -95,7 +95,7 @@ def lift_matrix_to_sl2z(A, N):
         sage: lift_matrix_to_sl2z([10, 11, 3, 11], 19)
         [29, 106, 3, 11]
         sage: type(_[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: lift_matrix_to_sl2z([2,0,0,1], 5)
         Traceback (most recent call last):
         ...
@@ -130,7 +130,7 @@ def lift_gen_to_gamma1(m, n):
         [1 6]
         [0 1]
         sage: type(lift_gen_to_gamma1(9, 8)[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     return lift_to_gamma1([0,-1,1,0], m, n)
 
@@ -150,7 +150,7 @@ def lift_uniformiser_odd(p, u, n):
         sage: lift_uniformiser_odd(3, 2, 11)
         [432, 377, 165, 144]
         sage: type(lift_uniformiser_odd(3, 2, 11)[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     g = lift_gen_to_gamma1(p**u, n)
     return [p * g[0], g[1], p * g[2], g[3]]
@@ -175,7 +175,7 @@ def lift_ramified(g, p, u, n):
         sage: lift_ramified([8,2,12,2], 3, 2, 23)
         [323, 110, -133584, -45493]
         sage: type(lift_ramified([8,2,12,2], 3, 2, 23)[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     a, b, c, d = lift_to_gamma1(g, p**u, n)
     r = crt((c - g[2]) / p**u * inverse_mod(a, p), 0, p, n)

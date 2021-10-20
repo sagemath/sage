@@ -2132,7 +2132,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             2^I
             sage: r = 2 ^ int(-3); r; type(r)
             1/8
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: f = 2^(sin(x)-cos(x)); f
             2^(-cos(x) + sin(x))
             sage: f(x=3)
@@ -5948,7 +5948,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: m = n.__pari__(); m
             9390823
             sage: type(m)
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
 
         TESTS::
 
@@ -6187,13 +6187,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS::
 
             sage: type(5.sqrt())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: type(5.sqrt(prec=53))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
             sage: type((-5).sqrt(prec=53))
-            <type 'sage.rings.complex_mpfr.ComplexNumber'>
+            <class 'sage.rings.complex_mpfr.ComplexNumber'>
             sage: type(0.sqrt(prec=53))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
 
         Check that :trac:`9466` and :trac:`26509` are fixed::
 
@@ -6431,17 +6431,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS::
 
-            sage: 1 << (2^60)                                        # optional - mpir
-            Traceback (most recent call last):
-            ...
-            MemoryError: failed to allocate ... bytes                # 64-bit
-            OverflowError: Python int too large to convert to C long # 32-bit
-
-            sage: 1 << (2^60)                                        # optional - gmp
-            Traceback (most recent call last):
-            ...
-            RuntimeError: Aborted                                    # 64-bit
-            OverflowError: Python int too large to convert to C long # 32-bit
+            sage: try:
+            ....:     print('Possible error output from gmp')
+            ....:     1 << (2^60)
+            ....: except (MemoryError, OverflowError, RuntimeError):
+            ....:     pass
+            ....: else:
+            ....:     print("Failed to raise exception")
+            Possible error output from gmp...
         """
         cdef long n
 
@@ -6794,7 +6791,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return self
 
-    def binomial(self, m, algorithm='mpir'):
+    def binomial(self, m, algorithm='gmp'):
         """
         Return the binomial coefficient "self choose m".
 
@@ -6802,9 +6799,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - ``m`` -- an integer
 
-        - ``algorithm`` -- ``'mpir'`` (default) or ``'pari'``; ``'mpir'`` is
-          faster for small ``m``, and ``'pari'`` tends to be faster for
-          large ``m``
+        - ``algorithm`` -- ``'gmp'`` (default), ``'mpir'`` (an alias for
+          ``gmp``), or ``'pari'``; ``'gmp'`` is faster for small ``m``,
+          and ``'pari'`` tends to be faster for large ``m``
 
         OUTPUT:
 
@@ -6885,7 +6882,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return self
 
         # now call the various backend
-        if algorithm == 'mpir':
+        if algorithm == 'gmp' or algorithm == 'mpir':
             x = PY_NEW(Integer)
             if mpz_fits_ulong_p(mm.value):
                 sig_on()
@@ -6897,7 +6894,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         elif algorithm == 'pari':
             return the_integer_ring(self.__pari__().binomial(mm))
         else:
-            raise ValueError("algorithm must be one of: 'pari', 'mpir'")
+            raise ValueError("algorithm must be one of: 'pari' or 'gmp' (alias: 'mpir')")
 
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
@@ -7058,7 +7055,7 @@ def GCD_list(v):
         sage: w = GCD_list([3,9,30]); w
         3
         sage: type(w)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Check that the bug reported in :trac:`3118` has been fixed::
 
@@ -7072,7 +7069,7 @@ def GCD_list(v):
         sage: w = GCD_list([int(3), int(9), '30']); w
         3
         sage: type(w)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Check that the GCD of the empty list is zero (:trac:`17257`)::
 
@@ -7137,11 +7134,11 @@ cdef class int_to_Z(Morphism):
         sage: f(5r)
         5
         sage: type(f(5r))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: 1 + 2r
         3
         sage: type(1 + 2r)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     This is intended for internal use by the coercion system,
     to facilitate fast expressions mixing ints and more complex

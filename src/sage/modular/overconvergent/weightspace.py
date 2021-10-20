@@ -447,7 +447,7 @@ class WeightCharacter(Element):
             sage: pAdicWeightSpace(11)(0).one_over_Lvalue()
             0
             sage: type(_)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if self.is_trivial():
             return ZZ(0)

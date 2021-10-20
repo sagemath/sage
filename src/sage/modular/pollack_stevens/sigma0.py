@@ -288,7 +288,7 @@ class Sigma0Element(MonoidElement):
             sage: type(s)
             <class 'sage.modular.pollack_stevens.sigma0.Sigma0_class_with_category.element_class'>
             sage: type(sm)
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: s == sm
             True
         """

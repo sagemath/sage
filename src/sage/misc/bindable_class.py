@@ -210,18 +210,6 @@ class BoundClass(functools.partial):
         sage: g()
         8
 
-    The following has incorrect syntax and thus a ``DeprecationWarning``::
-
-        sage: class mypartial(functools.partial):
-        ....:     def __init__(self, f, i, j):
-        ....:         functools.partial.__init__(self, f, i, j)
-        sage: g = mypartial(f, 2, 3)  # py2; on Python 3 this is an error
-        Traceback (most recent call last):
-        ...
-        DeprecationWarning: object.__init__() takes no parameters
-        sage: g()
-        8
-
     The following has correct syntax and no ``DeprecationWarning``::
 
         sage: class mynewpartial(functools.partial):

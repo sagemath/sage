@@ -2051,7 +2051,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
             sage: w = words.ThueMorseWord([int(1), int(2)])
             sage: t = continued_fraction(w)
             sage: type(t.quotient(1))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         ContinuedFraction_base.__init__(self)
         self._w = w
@@ -2157,7 +2157,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
             sage: t.quotient(1)
             2
             sage: type(t.quotient(1))      # indirect doctest
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return Integer(self._w[n])
 
@@ -2407,7 +2407,7 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
 
         sage: a = 1.575709393346379
         sage: type(a)
-        <type 'sage.rings.real_mpfr.RealLiteral'>
+        <class 'sage.rings.real_mpfr.RealLiteral'>
         sage: continued_fraction_list(a)
         [1, 1, 1, 2, 1, 4, 18, 1, 5, 2, 25037802, 7, 1, 3, 1, 28, 1, 8, 2]
 

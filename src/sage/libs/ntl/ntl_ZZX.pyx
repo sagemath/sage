@@ -226,7 +226,7 @@ cdef class ntl_ZZX(object):
         sage: x[0]
          129381729371289371237128318293718237
         sage: type(x[0])
-         <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+         <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
         sage: x[1]
          2
         sage: x[2]
@@ -278,7 +278,7 @@ cdef class ntl_ZZX(object):
             sage: L = x.list(); L
             [129381729371289371237128318293718237, 2, -3, 0, 4]
             sage: type(L[0])
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
             sage: x = ntl.ZZX()
             sage: L = x.list(); L
             []

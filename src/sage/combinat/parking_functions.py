@@ -62,7 +62,8 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from typing import NewType, Iterator, Tuple
+from __future__ import annotations
+from typing import Iterator
 
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
@@ -79,9 +80,6 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_with_grading import SetsWithGrading
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-
-
-PF = NewType('PF', 'ParkingFunction')
 
 
 def is_a(x, n=None) -> bool:
@@ -107,6 +105,7 @@ def is_a(x, n=None) -> bool:
         return False
     A = sorted(x)
     return check_NDPF(A, n)
+
 
 class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
     r"""
@@ -308,8 +307,9 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         L = self.to_labelling_permutation()
         D = self.to_area_sequence()
         m = max(D)
-        return Permutation([L[-j - 1] for i in range(m + 1)
-                            for j in range(len(L)) if D[-j - 1] == m - i])
+        data = [L[-j - 1] for i in range(m + 1)
+                for j in range(len(L)) if D[-j - 1] == m - i]
+        return Permutation(data)  # type: ignore
 
     diagonal_word = diagonal_reading_word
 
@@ -385,7 +385,8 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             while self[i] + j in out:
                 j += 1
             out[self[i] + j] = i
-        return Permutation([out[i + 1] + 1 for i in range(len(self))])
+        data = [out[i + 1] + 1 for i in range(len(self))]
+        return Permutation(data)  # type: ignore
 
     def jump_list(self) -> list:  # cars displacements
         r"""
@@ -893,7 +894,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             sage: ParkingFunction([2,1,4,1]).to_dyck_word()
             [1, 1, 0, 1, 0, 0, 1, 0]
         """
-        return DyckWord(area_sequence=self.to_area_sequence())
+        return DyckWord(area_sequence=self.to_area_sequence())  # type: ignore
 
     def to_labelled_dyck_word(self):
         r"""
@@ -930,7 +931,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
                 out.insert(i, 0)
         return out
 
-    def to_labelling_dyck_word_pair(self) -> Tuple[Permutation, DyckWord]:
+    def to_labelling_dyck_word_pair(self) -> tuple[Permutation, DyckWord]:
         r"""
         Return the pair ``(L, D)`` where ``L`` is a labelling and
         ``D`` is the Dyck word of the parking function.
@@ -988,7 +989,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             sage: ParkingFunction([4,1,2,1]).to_NonDecreasingParkingFunction()
             [1, 1, 2, 4]
         """
-        return ParkingFunction(sorted(self))
+        return ParkingFunction(sorted(self))  # type: ignore
 
     def characteristic_quasisymmetric_function(self, q=None,
                                                R=QQ['q', 't'].fraction_field()):
@@ -1138,6 +1139,9 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
         else:
             dw.pretty_print(labelling=L, underpath=False)
 
+
+PF = ParkingFunction
+
 # *****************************************************************************
 # CONSTRUCTIONS
 # *****************************************************************************
@@ -1218,8 +1222,9 @@ def from_labelled_dyck_word(LDW) -> PF:
         [2, 1, 4, 1]
     """
     L = [ell for ell in LDW if ell != 0]
-    D = DyckWord([Integer(not x.is_zero()) for x in LDW])
+    D = DyckWord([Integer(not x.is_zero()) for x in LDW])  # type: ignore
     return from_labelling_and_area_sequence(L, D.to_area_sequence())
+
 
 class ParkingFunctions(UniqueRepresentation, Parent):
     r"""
@@ -1318,6 +1323,7 @@ class ParkingFunctions(UniqueRepresentation, Parent):
         if not isinstance(n, (Integer, int)) or n < 0:
             raise ValueError("%s is not a non-negative integer" % n)
         return ParkingFunctions_n(n)
+
 
 class ParkingFunctions_all(ParkingFunctions):
     def __init__(self):
@@ -1606,4 +1612,3 @@ class ParkingFunctions_n(ParkingFunctions):
                 position += Zm.one()
             free.remove(position)
         return self.element_class(self, [(i - free[0]).lift() for i in fun])
-

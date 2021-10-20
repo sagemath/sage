@@ -68,7 +68,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
 
             sage: A = random_matrix(IntegerModRing(2^16), 4, 4)
             sage: type(A[0,0])
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
         """
         self._get_template = self._base_ring.zero()
         # note that INTEGER_MOD_INT32_LIMIT is ceil(sqrt(2^31-1)) < 2^23

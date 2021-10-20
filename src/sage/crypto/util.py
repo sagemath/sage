@@ -334,6 +334,8 @@ def carmichael_lambda(n):
         ....:     L = coprime(n)
         ....:     return list(map(power_mod, L, [k]*len(L), [n]*len(L)))
         sage: def my_carmichael(n):
+        ....:     if n == 1:
+        ....:         return 1
         ....:     for k in range(1, n):
         ....:         L = znpower(n, k)
         ....:         ones = [1] * len(L)

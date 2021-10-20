@@ -20,8 +20,11 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import _stable_uniq
 from sage.structure.element import Expression
-from sage.symbolic.callable import is_CallableSymbolicExpression
-from sage.symbolic.ring import SR
+
+try:
+    from sage.symbolic.callable import is_CallableSymbolicExpression
+except ImportError:
+    is_CallableSymbolicExpression = lambda x: False
 
 from .set import Set, Set_base, Set_boolean_operators, Set_add_sub_operators
 
@@ -169,6 +172,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
                 if names is None:
                     raise TypeError('use callable symbolic expressions or provide variable names')
                 if vars is None:
+                    from sage.symbolic.ring import SR
                     vars = tuple(SR.var(name) for name in names)
                 callable_symbolic_predicates.append(predicate.function(*vars))
             else:
@@ -291,6 +295,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             sage: args[0].parent()
             Symbolic Ring
         """
+        from sage.symbolic.ring import SR
         return SR.var(self.variable_names())
 
     def _element_constructor_(self, *args, **kwds):

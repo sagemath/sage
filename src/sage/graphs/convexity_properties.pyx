@@ -1,3 +1,4 @@
+# cython: binding=True
 r"""
 Convexity properties of graphs
 
@@ -11,6 +12,7 @@ the following methods:
 
     :meth:`ConvexityProperties.hull` | Return the convex hull of a set of vertices
     :meth:`ConvexityProperties.hull_number` | Compute the hull number of a graph and a corresponding generating set
+    :meth:`geodetic_closure`| Return the geodetic closure of a set of vertices
 
 These methods can be used through the :class:`ConvexityProperties` object
 returned by :meth:`Graph.convexity_properties`.
@@ -23,12 +25,16 @@ Methods
 -------
 """
 
-##############################################################################
+# ****************************************************************************
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gmail.com>
-#  Distributed under the terms of the GNU General Public License (GPL)
-#  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                     2021 David Coudert <david.coudert@inria.fr>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.data_structures.binary_matrix cimport *
 from sage.numerical.backends.generic_backend cimport GenericBackend
@@ -36,6 +42,13 @@ from sage.numerical.backends.generic_backend import get_solver
 from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
+from libc.stdint cimport uint32_t
+from sage.graphs.base.static_sparse_graph cimport (short_digraph,
+                                                   init_short_digraph,
+                                                   free_short_digraph,
+                                                   out_degree,
+                                                   simple_BFS)
 
 cdef class ConvexityProperties:
     r"""
@@ -476,3 +489,189 @@ cdef class ConvexityProperties:
                 constraint.append(i)
 
         return self._integers_to_vertices(constraint)
+
+
+def geodetic_closure(G, S):
+    r"""
+    Return the geodetic closure of the set of vertices `S` in `G`.
+
+    The geodetic closure `g(S)` of a subset of vertices `S` of a graph `G` is in
+    [HLT1993]_ as the set of all vertices that lie on a shortest `u-v` path for
+    any pair of vertices `u,v \in S`. We assume that `g(\emptyset) = \emptyset`
+    and that `g(\{u\}) = \{u\}` for any `u` in `G`.
+
+    .. WARNING::
+
+        This operation is **not** a closure function. Indeed, a closure function
+        must satisfy the property that `f(f(X))` should be equal to `f(X)`,
+        which is not always the case here.  The term ``closure`` is used here to
+        follow the terminology of the domain. See for instance [HLT1993]_.
+
+    Here, we implement a simple algorithm to determine this set. Roughly, for
+    each vertex `u \in S`, the algorithm first performs a breadth first search
+    from `u` to get distances, and then identifies the vertices of `G` lying on
+    a shortest path from `u` to any `v\in S` using a reversal traversal from
+    vertices in `S`.  This algorithm has time complexity in `O(|S|(n + m))` and
+    space complexity in `O(n + m)`.
+
+    INPUT:
+
+    - ``G`` -- a Sage graph
+
+    - ``S`` -- a subset of vertices of `G`
+
+    EXAMPLES:
+
+    The vertices of the Petersen graph can be obtained by a geodetic closure of
+    four of its vertices::
+
+        sage: from sage.graphs.convexity_properties import geodetic_closure
+        sage: G = graphs.PetersenGraph()
+        sage: geodetic_closure(G, [0, 2, 8, 9])
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    The vertices of a 2D grid can be obtained by a geodetic closure of
+    two vertices::
+
+        sage: G = graphs.Grid2dGraph(4, 4)
+        sage: c = G.geodetic_closure([(0, 0), (3, 3)])
+        sage: len(c) == G.order()
+        True
+
+    If two vertices belong to different connected components of a graph, their
+    geodetic closure is trivial::
+
+        sage: G = Graph([(0, 1), (2, 3)])
+        sage: geodetic_closure(G, [0, 2])
+        [0, 2]
+
+    The geodetic closure does not satisfy the closure function property that
+    `f(f(X))` should be equal to `f(X)`::
+
+        sage: G = graphs.DiamondGraph()
+        sage: G.subdivide_edge((1, 2), 1)
+        sage: geodetic_closure(G, [0, 3])
+        [0, 1, 2, 3]
+        sage: geodetic_closure(G, geodetic_closure(G, [0, 3]))
+        [0, 1, 2, 3, 4]
+
+    TESTS::
+
+        sage: G = graphs.DiamondGraph()
+        sage: geodetic_closure(G, [])
+        []
+        sage: geodetic_closure(G, [1])
+        [1]
+        sage: S = geodetic_closure(G, list(G))
+        sage: all(u in G for u in S) and len(S) == G.order()
+        True
+        sage: S = geodetic_closure(G, G)
+        sage: all(u in G for u in S) and len(S) == G.order()
+        True
+        sage: geodetic_closure(G, [1, 'foo'])
+        Traceback (most recent call last):
+        ...
+        ValueError: S is not a subset of vertices of the graph
+        sage: geodetic_closure(digraphs.Path(3), [0, 1])
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: the geodetic closure of digraphs has not been implemented yet
+    """
+    if G.is_directed():
+        raise NotImplementedError("the geodetic closure of digraphs has not been implemented yet")
+    S = list(S)
+    if not S:
+        return []
+    elif any(v not in G for v in S):
+        raise ValueError("S is not a subset of vertices of the graph")
+    elif len(S) == 1 or len(S) == G.order():
+        return S
+    elif not G.is_connected():
+        L = []
+        for g in G.connected_components_subgraphs():
+            Sg = [u for u in S if u in g]
+            L.extend(geodetic_closure(g, Sg))
+        return L
+
+    cdef int n = G.order()
+    cdef int nS = len(S)
+    cdef list int_to_vertex = list(G)
+    cdef dict vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
+    cdef list S_int = [vertex_to_int[u] for u in S]
+
+    # Copy the graph as a short digraph
+    cdef short_digraph sd
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
+
+    # Allocate some data structures
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef uint32_t * distances = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    cdef uint32_t * waiting_list = <uint32_t *> mem.malloc(n * sizeof(uint32_t))
+    if not distances or not waiting_list:
+        free_short_digraph(sd)
+        raise MemoryError()
+    cdef bitset_t seen
+    cdef bitset_t visited
+    cdef bitset_t closure
+    bitset_init(seen, n)
+    bitset_init(visited, n)
+    bitset_init(closure, n)
+
+    cdef int ui, vi, xi, yi, i_begin, i_end, i, j, k
+
+    # Vertices in S are in the closure
+    bitset_clear(closure)
+    for ui in S_int:
+        bitset_add(closure, ui)
+
+    # We now explore geodesics between vertices in S, and we avoid visiting
+    # twice the geodesics between u and v
+    for i in range(nS - 1):
+        ui = S_int[i]
+
+        # Compute distances from ui using BFS
+        _ = simple_BFS(sd, ui, distances, NULL, waiting_list, seen)
+
+        # Perform a reverse BFS from vertices in S, following only vertices
+        # along a shortest path from ui to identify vertices of the geodetic
+        # closure.
+        bitset_clear(visited)
+        i_begin = 0
+        i_end = 0
+        for j in range(i + 1, nS):
+            vi = S_int[j]
+            if not bitset_in(seen, vi) or bitset_in(visited, vi):
+                # vi is not reachable from ui using BFS or has already been
+                # considered for the geodetic closure from ui
+                continue
+
+            # We explore all vertices on a shortest path from ui to vi
+            waiting_list[i_end] = vi
+            i_end += 1
+            bitset_add(visited, vi)
+
+            while i_begin < i_end:
+                xi = waiting_list[i_begin]
+                i_begin += 1
+
+                for k in range(out_degree(sd, xi)):
+                    yi = sd.neighbors[xi][k]
+                    if distances[xi] == distances[yi] + 1:
+                        # yi in on a shortest path to ui
+                        if not bitset_in(visited, yi):
+                            waiting_list[i_end] = yi
+                            i_end += 1
+                            bitset_add(visited, yi)
+
+        # Now, visited contains all vertices on geodesics from ui to any other
+        # vertex in S
+        bitset_union(closure, closure, visited)
+
+    cdef list ret = [int_to_vertex[ui] for ui in range(n) if bitset_in(closure, ui)]
+
+    bitset_free(seen)
+    bitset_free(visited)
+    bitset_free(closure)
+    free_short_digraph(sd)
+
+    return ret

@@ -32,7 +32,7 @@ SPKG_INST_RELDIR = var/lib/sage/installed
 # Aliases for mutually exclusive standard packages selected at configure time
 TOOLCHAIN = @SAGE_TOOLCHAIN@
 PYTHON = python3
-MP_LIBRARY = @SAGE_MP_LIBRARY@
+MP_LIBRARY = gmp
 BLAS = openblas
 
 # pkgconfig files generated/installed at build time
@@ -631,7 +631,8 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
 $(1)-$(4)-no-deps:
-	$(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
+	@if [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
+	    $(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
@@ -639,8 +640,20 @@ $(1)-$(4)-no-deps:
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
 		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
 		SAGE_INST_LOCAL=$$($(4)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log'
-	touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"
+		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
+	    touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
+	else \
+	    echo; \
+	    echo "Error: $(1) is a dummy script package that the Sage distribution uses"; \
+	    echo "to provide information about equivalent system packages."; \
+	    echo "It cannot be installed using the Sage distribution."; \
+	    echo "Please install it manually, for example using the system packages"; \
+	    echo "recommended at the end of a run of './configure'"; \
+	    echo "See below for package-specific information."; \
+	    echo; \
+	    $$(SAGE_ROOT)/build/bin/sage-spkg-info $(1); \
+	    exit 1; \
+	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps
 

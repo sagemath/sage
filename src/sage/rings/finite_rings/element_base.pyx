@@ -339,7 +339,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
             sage: t_element
             3*b^2 + 2*b + 4
             sage: type(t_element)
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
         """
         if var is None:
             var = self.parent().variable_name()

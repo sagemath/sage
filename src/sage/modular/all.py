@@ -20,11 +20,12 @@ from .arithgroup.all import (Gamma0, Gamma1, GammaH, Gamma, SL2Z,
 
 from .cusps import Cusp, Cusps
 
-from .dims import (dimension_cusp_forms,
-                   dimension_new_cusp_forms,
-                   dimension_eis,
-                   dimension_modular_forms,
-                   sturm_bound)
+lazy_import('sage.modular.dims', ('dimension_cusp_forms',
+                                  'dimension_new_cusp_forms',
+                                  'dimension_eis',
+                                  'dimension_modular_forms',
+                                  'sturm_bound'),
+            deprecation=(32647, 'removed from main namespace'))
 
 from .etaproducts import (EtaGroup, EtaProduct, EtaGroupElement,
                           AllCusps, CuspFamily)

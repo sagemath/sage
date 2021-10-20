@@ -25,14 +25,3 @@ Upstream Contact
  - https://arblib.org/
 
  - http://github.com/fredrik-johansson/arb/
-
-Dependencies
-------------
-
--  FLINT
--  MPIR or GMP
--  MPFR
-
-
-Special Update/Build Instructions
----------------------------------

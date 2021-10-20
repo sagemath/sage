@@ -359,7 +359,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: cf4(one)
             1
             sage: type(cf4(1))
-            <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
+            <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
             sage: cf33 = CyclotomicField(33) ; z33 = cf33.0
             sage: cf66 = CyclotomicField(66) ; z66 = cf66.0
             sage: z33._lift_cyclotomic_element(cf66)
@@ -574,7 +574,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: libgap(E8 + 3/2*E8^2 + 100*E8^7)
             E(8)+3/2*E(8)^2-100*E(8)^3
             sage: type(_)
-            <type 'sage.libs.gap.element.GapElement_Cyclotomic'>
+            <class 'sage.libs.gap.element.GapElement_Cyclotomic'>
 
         Check that :trac:`15276` is fixed::
 
@@ -3807,7 +3807,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: b.ord(P)
             1
             sage: type(b.valuation(P))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         The function can be applied to elements in relative number fields::
 
@@ -4828,7 +4828,7 @@ cdef class NumberFieldElement_relative(NumberFieldElement):
 
             sage: L.<a, b> = NumberField([x^2 + 1, x^2 + 2])
             sage: type(a) # indirect doctest
-            <type 'sage.rings.number_field.number_field_element.NumberFieldElement_relative'>
+            <class 'sage.rings.number_field.number_field_element.NumberFieldElement_relative'>
         """
         NumberFieldElement.__init__(self, parent, f)
 
@@ -5125,7 +5125,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
             sage: K.<a> = NumberField(x^3 + 2)
             sage: O2 = K.order(2*a)
             sage: type(O2.1) # indirect doctest
-            <type 'sage.rings.number_field.number_field_element.OrderElement_absolute'>
+            <class 'sage.rings.number_field.number_field_element.OrderElement_absolute'>
         """
         K = order.number_field()
         NumberFieldElement_absolute.__init__(self, K, f)
@@ -5229,7 +5229,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         sage: c = O.1; c
         (-2*b^2 - 2)*a - 2*b^2 - b
         sage: type(c)
-        <type 'sage.rings.number_field.number_field_element.OrderElement_relative'>
+        <class 'sage.rings.number_field.number_field_element.OrderElement_relative'>
     """
     def __init__(self, order, f):
         r"""
@@ -5237,7 +5237,7 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
 
             sage: O = EquationOrder([x^2 + x + 1, x^3 - 2],'a,b')
             sage: type(O.1) # indirect doctest
-            <type 'sage.rings.number_field.number_field_element.OrderElement_relative'>
+            <class 'sage.rings.number_field.number_field_element.OrderElement_relative'>
         """
         K = order.number_field()
         NumberFieldElement_relative.__init__(self, K, f)

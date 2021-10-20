@@ -198,7 +198,7 @@ cdef _backend_morphism(f):
         sage: K.<a> = GF(7^3).over()
         sage: f = End(K)(Frob)
         sage: type(f)
-        <type 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism'>
+        <class 'sage.rings.ring_extension_morphism.RingExtensionHomomorphism'>
         sage: backend_morphism(f) == Frob   # indirect doctest
         True
 
@@ -219,7 +219,7 @@ cdef _backend_morphism(f):
 
         sage: iota = End(K).identity()
         sage: type(iota)
-        <type 'sage.categories.morphism.IdentityMorphism'>
+        <class 'sage.categories.morphism.IdentityMorphism'>
         sage: backend_morphism(iota)
         Identity endomorphism of Finite Field in z3 of size 7^3
     """

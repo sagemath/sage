@@ -133,7 +133,7 @@ class GroupMorphism_libgap(Morphism):
         CompositionMapping( [ (6,7,8,10,9)(11,13,14,12,15)(16,19,20,18,17)(21,25,22,24,23) ]
         -> [ [ [ Z(5)^0, 0*Z(5) ], [ Z(5)^0, Z(5)^0 ] ] ], <action isomorphism> )
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
         sage: F = GF(7); MS = MatrixSpace(F,2,2)
         sage: F.multiplicative_generator()

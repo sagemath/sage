@@ -60,7 +60,7 @@ they are Sage's symbolic variables::
     sage: y
     y
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 The South pole is the point of coordinates `(x, y) = (0, 0)` in the above
 chart::
@@ -1550,7 +1550,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: y
             y
             sage: type(y)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         But a shorter way to proceed is to use the operator ``<,>`` in the
         left-hand side of the chart declaration (there is then no need to
@@ -2511,7 +2511,7 @@ class TopologicalManifold(ManifoldSubset):
             sage: f.expr()
             x^2 + cos(y)*sin(x)
             sage: type(f.expr())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: parent(f.expr())
             Symbolic Ring
             sage: f.display()

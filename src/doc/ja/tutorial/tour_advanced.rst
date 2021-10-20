@@ -383,6 +383,7 @@ Sageを使ってモジュラー空間の次元，モジュラー・シンポル�
 
 ::
 
+    sage: from sage.modular.dims import dimension_cusp_forms
     sage: dimension_cusp_forms(Gamma0(11),2)
     1
     sage: dimension_cusp_forms(Gamma0(1),12)

@@ -95,7 +95,7 @@ cdef class ntl_ZZ_pContext_class(object):
 
             sage: c = ntl.ZZ_pContext(10^30)
             sage: type(c.modulus())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: c.modulus() == 10^30
             True
         """

@@ -173,7 +173,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: Q('49/7')
             7
             sage: type(Q('49/7'))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: a = Q('19/374'); a
             19/374
             sage: b = Q('17/371'); b

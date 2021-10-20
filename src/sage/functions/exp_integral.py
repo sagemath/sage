@@ -1497,7 +1497,7 @@ def exponential_integral_1(x, n=0):
         ....:     n = 2^ZZ.random_element(14)
         ....:     x = exponential_integral_1(a, n)
         ....:     y = exponential_integral_1(S(a), n)
-        ....:     c = RDF(2 * max(1.0, y[0]))
+        ....:     c = RDF(4 * max(1.0, y[0]))
         ....:     for i in range(n):
         ....:         e = float(abs(S(x[i]) - y[i]) << prec)
         ....:         if e >= c:
