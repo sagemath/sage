@@ -1965,7 +1965,7 @@ cdef class mpf(mpf_base):
             sage: mpf(-500.5).man
             1001
             sage: type(_)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self._mpf_[1]
 

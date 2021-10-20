@@ -7,13 +7,13 @@ AUTHORS:
 - Siddharth Singh  (2020-03-21): Signed Representation
 """
 
-####################################################################################
+##############################################################################
 #       Copyright (C) 2015 Travis Scrimshaw <tscrimsh at umn.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
 #                  http://www.gnu.org/licenses/
-####################################################################################
+##############################################################################
 
 from sage.misc.abstract_method import abstract_method
 from sage.structure.element import Element
@@ -154,7 +154,7 @@ class Representation_abstract(CombinatorialFreeModule):
         Create the isotypic component of the action of ``G`` on
         ``self`` with irreducible character given by ``chi``.
 
-        .. SEEALSO:
+        .. SEEALSO::
 
             - :class:`~sage.modules.with_basis.invariant.FiniteDimensionalTwistedInvariantModule`
 
@@ -1026,7 +1026,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
     def _default_sign(self, elem):
         """
         Return the sign of the element
-        
+
         INPUT:
 
         - ``elem`` -- the element of the group
@@ -1039,5 +1039,4 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
             sage: V._default_sign(elem)
             1
         """
-        return -1 if elem.length() % 2 == 1 else 1
-
+        return -1 if elem.length() % 2 else 1

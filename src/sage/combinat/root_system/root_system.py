@@ -18,7 +18,8 @@ See :ref:`sage.combinat.root_system` for an overview.
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from .cartan_type import CartanType
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.misc.all import cached_method
 from .root_space import RootSpace
 from .weight_space import WeightSpace

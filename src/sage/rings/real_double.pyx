@@ -1233,7 +1233,7 @@ cdef class RealDoubleElement(FieldElement):
             sage: a = r.integer_part(); a
             -1
             sage: type(a)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: r = RDF(0.0/0.0)
             sage: a = r.integer_part()
             Traceback (most recent call last):

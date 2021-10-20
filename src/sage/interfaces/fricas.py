@@ -1308,7 +1308,7 @@ class FriCASElement(ExpectElement):
             sage: FriCASElement._parse_and_eval('(a "(b c)")')
             Traceback (most recent call last):
             ...
-            TypeError: cannot coerce arguments: no canonical coercion from <type 'str'> to Symbolic Ring
+            TypeError: cannot coerce arguments: no canonical coercion from <class 'str'> to Symbolic Ring
 
         """
         a = start

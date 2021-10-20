@@ -1023,7 +1023,7 @@ class BrandtModule_class(AmbientHeckeModule):
             [ 6  6]
             [ 2 10]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
             sage: B.hecke_matrix(19, algorithm='direct', B=2)
             [ 8 12]
             [ 4 16]
@@ -1079,9 +1079,9 @@ class BrandtModule_class(AmbientHeckeModule):
             [1 0 2]
             [1 2 0]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: type(B._compute_hecke_matrix_prime(2,sparse=True))
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
         """
         return self._compute_hecke_matrix_directly(n=p, B=B, sparse=sparse)
 
@@ -1106,9 +1106,9 @@ class BrandtModule_class(AmbientHeckeModule):
             [1 0 2]
             [1 2 0]
             sage: type(t)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: type(B._compute_hecke_matrix_directly(2,sparse=True))
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
 
         You can't compute the Hecke operator for n not coprime to the level using this function::
 
@@ -1685,7 +1685,7 @@ def benchmark_sage(levels, silent=False):
         ('sage', 43, 2, ...)
         ('sage', 97, 2, ...)
     """
-    from sage.misc.all import cputime
+    from sage.misc.misc import cputime
     ans = []
     for p, M in levels:
         t = cputime()

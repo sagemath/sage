@@ -123,7 +123,7 @@ class OpenInterval(DifferentiableManifold):
         t
         sage: t = I.canonical_coordinate()
         sage: type(t)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     However, it can be obtained in the same step as the interval construction
     by means of the shortcut ``I.<names>``::
@@ -132,7 +132,7 @@ class OpenInterval(DifferentiableManifold):
         sage: t
         t
         sage: type(t)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     The trick is performed by the Sage preparser::
 
@@ -577,7 +577,7 @@ class OpenInterval(DifferentiableManifold):
             sage: I.canonical_coordinate()
             t
             sage: type(I.canonical_coordinate())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: I.canonical_coordinate().is_real()
             True
 
@@ -777,7 +777,7 @@ class RealLine(OpenInterval):
         t
         sage: t = R.canonical_coordinate()
         sage: type(t)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     However, it can be obtained in the same step as the real line construction
     by means of the shortcut ``R.<names>``::
@@ -786,7 +786,7 @@ class RealLine(OpenInterval):
         sage: t
         t
         sage: type(t)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     The trick is performed by Sage preparser::
 

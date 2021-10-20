@@ -717,7 +717,7 @@ class NotANumber(Constant):
             sage: NaN._mpfr_(RealField(53))
             NaN
             sage: type(_)
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
         """
         return R('NaN') #??? nan in mpfr: void mpfr_set_nan (mpfr_t x)
 

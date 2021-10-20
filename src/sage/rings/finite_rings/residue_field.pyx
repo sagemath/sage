@@ -963,7 +963,7 @@ cdef class ReductionMap(Map):
             sage: K = R.fraction_field()
             sage: f = k.convert_map_from(K)
             sage: type(f)
-            <type 'sage.rings.finite_rings.residue_field.ReductionMap'>
+            <class 'sage.rings.finite_rings.residue_field.ReductionMap'>
             sage: f(1/t)
             a^4 + a
             sage: f(1/h)
@@ -1143,7 +1143,7 @@ cdef class ResidueFieldHomomorphism_global(RingHomomorphism):
               From: Maximal Order in Cyclotomic Field of order 5 and degree 4
               To:   Residue field in a of Fractional ideal (7)
             sage: type(phi)
-            <type 'sage.rings.finite_rings.residue_field.ResidueFieldHomomorphism_global'>
+            <class 'sage.rings.finite_rings.residue_field.ResidueFieldHomomorphism_global'>
 
             sage: R.<t> = GF(2)[]; P = R.ideal(t^7 + t^6 + t^5 + t^4 + 1)
             sage: k = P.residue_field(); f = k.coerce_map_from(R)
@@ -1606,7 +1606,7 @@ class ResidueFiniteField_prime_modn(ResidueField_generic, FiniteField_prime_modn
             2
             sage: V = k.vector_space(map=False); v = V([3])
             sage: type(k.convert_map_from(V))
-            <type 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
             sage: k(v) # indirect doctest
             3
 
@@ -1698,7 +1698,7 @@ class ResidueFiniteField_pari_ffelt(ResidueField_generic, FiniteField_pari_ffelt
             6677
             sage: V = ff.vector_space(map=False); v = V([3,-2])
             sage: type(ff.convert_map_from(V))
-            <type 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
             sage: ff(v) # indirect doctest
             10005*alpha + 3
 
@@ -1800,7 +1800,7 @@ class ResidueFiniteField_givaro(ResidueField_generic, FiniteField_givaro):
             2*abar + 4
             sage: V = k.vector_space(map=False); v = V([3,-2])
             sage: type(k.convert_map_from(V))
-            <type 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
             sage: k(v) # indirect doctest
             59*abar + 3
 
@@ -1906,7 +1906,7 @@ class ResidueFiniteField_ntl_gf2e(ResidueField_generic, FiniteField_ntl_gf2e):
             2*abar + 4
             sage: V = k.vector_space(map=False); v = V([3,-2])
             sage: type(k.convert_map_from(V))
-            <type 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
+            <class 'sage.structure.coerce_maps.DefaultConvertMap_unique'>
             sage: k(v) # indirect doctest
             59*abar + 3
 

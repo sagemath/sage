@@ -2454,7 +2454,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
             sage: v = sage.modules.free_module_element.FreeModuleElement(QQ^3)
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement'>
+            <class 'sage.modules.free_module_element.FreeModuleElement'>
         """
         self._parent = parent
         self._is_immutable = is_immutable

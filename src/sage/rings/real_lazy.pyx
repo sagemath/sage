@@ -1709,7 +1709,7 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: a = f(3); a
             3
             sage: type(a)
-            <type 'sage.rings.real_lazy.LazyWrapper'>
+            <class 'sage.rings.real_lazy.LazyWrapper'>
             sage: a._value
             3
             sage: a._value.parent()
@@ -1727,7 +1727,7 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: a = f(1/3); a # indirect doctest
             0.3333333333333334?
             sage: type(a)
-            <type 'sage.rings.real_lazy.LazyWrapper'>
+            <class 'sage.rings.real_lazy.LazyWrapper'>
             sage: Reals(100)(a)
             0.33333333333333333333333333333
 

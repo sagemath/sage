@@ -1,5 +1,0 @@
-cd src
-
-python3 setup.py build_tests
-
-python3 selftest.py

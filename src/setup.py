@@ -52,7 +52,7 @@ setenv()
 # ## Configuration
 # ########################################################
 
-if len(sys.argv) > 1 and sys.argv[1] == "sdist":
+if len(sys.argv) > 1 and (sys.argv[1] == "sdist" or sys.argv[1] == "egg_info"):
     sdist = True
 else:
     sdist = False
@@ -69,52 +69,55 @@ if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
 # ########################################################
 # ## Discovering Sources
 # ########################################################
-
-log.info("Discovering Python/Cython source code....")
-t = time.time()
-
-# Exclude a few files if the corresponding distribution is not loaded
-optional_packages = ['mcqd', 'bliss', 'tdlib', 'primecount',
-                     'coxeter3', 'fes', 'sirocco', 'meataxe']
-not_installed_packages = [package for package in optional_packages
-                          if not is_package_installed_and_updated(package)]
-
-distributions_to_exclude = [f"sagemath-{pkg}"
-                            for pkg in not_installed_packages]
-files_to_exclude = filter_cython_sources(SAGE_SRC, distributions_to_exclude)
-
-log.debug(f"files_to_exclude = {files_to_exclude}")
-
-python_packages = find_namespace_packages(where=SAGE_SRC, include=['sage', 'sage.*'])
-log.debug(f"python_packages = {python_packages}")
-
-log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
-
-# from sage_build_cython:
-import Cython.Compiler.Options
-Cython.Compiler.Options.embed_pos_in_docstring = True
-gdb_debug = os.environ.get('SAGE_DEBUG', None) != 'no'
-
-try:
+if sdist:
+    extensions = []
+    python_packages = []
+else:
     log.info("Generating auto-generated sources")
     from sage_setup.autogen import autogen_all
     autogen_all()
 
-    from Cython.Build import cythonize
-    from sage.env import cython_aliases, sage_include_directories
-    extensions = cythonize(
-        ["**/*.pyx"],
-        exclude=files_to_exclude,
-        include_path=sage_include_directories(use_sources=True) + ['.'],
-        compile_time_env=compile_time_env_variables(),
-        compiler_directives=compiler_directives(False),
-        aliases=cython_aliases(),
-        create_extension=create_extension,
-        gdb_debug=gdb_debug,
-        nthreads=4)
-except Exception as exception:
-    log.warn(f"Exception while generating and cythonizing source files: {exception}")
-    raise
+    log.info("Discovering Python/Cython source code....")
+    t = time.time()
+
+    # Exclude a few files if the corresponding distribution is not loaded
+    optional_packages = ['mcqd', 'bliss', 'tdlib', 'primecount',
+                         'coxeter3', 'fes', 'sirocco', 'meataxe']
+    not_installed_packages = [package for package in optional_packages
+                              if not is_package_installed_and_updated(package)]
+
+    distributions_to_exclude = [f"sagemath-{pkg}"
+                                for pkg in not_installed_packages]
+    files_to_exclude = filter_cython_sources(SAGE_SRC, distributions_to_exclude)
+
+    log.debug(f"files_to_exclude = {files_to_exclude}")
+
+    python_packages = find_namespace_packages(where=SAGE_SRC, include=['sage', 'sage.*'])
+    log.debug(f"python_packages = {python_packages}")
+
+    log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
+
+    # from sage_build_cython:
+    import Cython.Compiler.Options
+    Cython.Compiler.Options.embed_pos_in_docstring = True
+    gdb_debug = os.environ.get('SAGE_DEBUG', None) != 'no'
+
+    try:
+        from Cython.Build import cythonize
+        from sage.env import cython_aliases, sage_include_directories
+        extensions = cythonize(
+            ["sage/**/*.pyx"],
+            exclude=files_to_exclude,
+            include_path=sage_include_directories(use_sources=True) + ['.'],
+            compile_time_env=compile_time_env_variables(),
+            compiler_directives=compiler_directives(False),
+            aliases=cython_aliases(),
+            create_extension=create_extension,
+            gdb_debug=gdb_debug,
+            nthreads=4)
+    except Exception as exception:
+        log.warn(f"Exception while cythonizing source files: {repr(exception)}")
+        raise
 
 # ########################################################
 # ## Distutils

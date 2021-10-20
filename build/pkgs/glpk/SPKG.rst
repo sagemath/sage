@@ -36,13 +36,6 @@ GLPK is currently being maintained by:
 
 http://www.gnu.org/software/glpk/#maintainer
 
-Dependencies
-------------
-
--  GMP/MPIR
--  zlib
-
-
 Special Update/Build Instructions
 ---------------------------------
 

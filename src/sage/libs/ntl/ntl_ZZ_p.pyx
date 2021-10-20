@@ -414,7 +414,7 @@ cdef class ntl_ZZ_p(object):
             sage: x.lift()
             8
             sage: type(x.lift())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
         """
         cdef ntl_ZZ r = ntl_ZZ()
         self.c.restore_c()
@@ -452,12 +452,12 @@ cdef class ntl_ZZ_p(object):
             sage: x.lift_centered()
             8
             sage: type(x.lift_centered())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
             sage: x = ntl.ZZ_p(12, 18)
             sage: x.lift_centered()
             -6
             sage: type(x.lift_centered())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
         """
         cdef ntl_ZZ r = self.lift()
         cdef ntl_ZZ m = self.modulus()
@@ -476,7 +476,7 @@ cdef class ntl_ZZ_p(object):
             8
 
             sage: type(x._integer_())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         self.c.restore_c()
         cdef ZZ_c rep = ZZ_p_rep(self.x)
@@ -493,7 +493,7 @@ cdef class ntl_ZZ_p(object):
             sage: c = ntl.ZZ_pContext(20)
             sage: n = ntl.ZZ_p(2983, c)
             sage: type(n._sage_())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: n
             3
 

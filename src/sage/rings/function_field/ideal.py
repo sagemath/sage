@@ -99,6 +99,8 @@ from sage.structure.richcmp import richcmp
 from sage.structure.factorization import Factorization
 from sage.structure.unique_representation import UniqueRepresentation
 
+from sage.arith.power import generic_power
+
 from sage.modules.free_module_element import vector
 
 from sage.categories.monoids import Monoids
@@ -1228,6 +1230,12 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         # for fast multiplication with other ideal.
         self._kummer_form = None
 
+        # tuple of at most two gens:
+        # the first gen is an element of the base ring of the maximal order
+        # the second gen is the vector form of an element of the maximal order
+        # if the second gen is zero, the tuple has only the first gen.
+        self._gens_two_vecs = None
+
     def __bool__(self):
         """
         Test if this ideal is zero.
@@ -1514,6 +1522,20 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         elif other._kummer_form is not None:
             p, q = other._kummer_form
             vecs = list(p * self._hnf) + [mul(q, v) for v in self._hnf]
+        elif self._gens_two_vecs is not None:
+            if len(self._gens_two_vecs) == 1:
+                g1, = self._gens_two_vecs
+                vecs = list(g1 * other._hnf)
+            else:
+                g1, g2 = self._gens_two_vecs
+                vecs = list(g1 * other._hnf) + [mul(g2, v) for v in other._hnf]
+        elif other._gens_two_vecs is not None:
+            if len(other._gens_two_vecs) == 1:
+                g1, = other._gens_two_vecs
+                vecs = list(g1 * self._hnf)
+            else:
+                g1, g2 = other._gens_two_vecs
+                vecs = list(g1 * self._hnf) + [mul(g2, v) for v in self._hnf]
         else:
             vecs = [mul(r1,r2) for r1 in self._hnf for r2 in other._hnf]
 
@@ -2138,6 +2160,52 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         """
         FunctionFieldIdeal_polymod.__init__(self, ring, hnf, denominator)
 
+    def __pow__(self, mod):
+        """
+        Return ``self`` to the power of ``mod``.
+
+        If a two-generators representation of ``self`` is known, it is used
+        to speed up powering.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^7 - x^3*Y - x)
+            sage: O = L.maximal_order()
+            sage: I = O.ideal(y)
+            sage: J = O.ideal(x + y)
+            sage: S = I / J
+            sage: a = S^100
+            sage: _ = S.gens_two()
+            sage: b = S^100  # faster
+            sage: b == I^100 / J^100
+            True
+            sage: b == a
+            True
+        """
+        if mod > 2 and self._gens_two_vecs is not None:
+            O = self._ring
+            mul = O._mul_vecs
+            R = self._hnf.base_ring()
+            n = self._hnf.ncols()
+
+            I = matrix.identity(R, n)
+
+            if len(self._gens_two_vecs) == 1:
+                p, = self._gens_two_vecs
+                ppow = p**mod
+                J = [ppow * v for v in I]
+            else:
+                p, q = self._gens_two_vecs
+                q = sum(e1 * e2 for e1,e2 in zip(O.basis(), q))
+                ppow = p**mod
+                qpow = O._coordinate_vector(q**mod)
+                J = [ppow * v for v in I] + [mul(qpow,v) for v in I]
+
+            return O._ideal_from_vectors_and_denominator(J, self._denominator**mod)
+
+        return generic_power(self, mod)
+
     def gens(self):
         """
         Return a set of generators of this ideal.
@@ -2171,26 +2239,6 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
 
         If the ideal is principal, one generator *may* be returned.
 
-        ALGORITHM:
-
-        At most two generators are required to generate ideals in
-        Dedekind domains.
-
-        Lemma 4.7.9, algorithm 4.7.10, and exercise 4.29 of [Coh1993]_
-        tell us that for an integral ideal `I` in a number field, if
-        we pick `a` such that `\gcd(N(I), N(a)/N(I)) = 1`, then `a`
-        and `N(I)` generate the ideal.  `N()` is the norm, and this
-        result (presumably) generalizes to function fields.
-
-        After computing `N(I)`, we search exhaustively to find `a`.
-
-        .. TODO::
-
-            Always return a single generator for a principal ideal.
-
-            Testing for principality is not trivial.  Algorithm 6.5.10
-            of [Coh1993]_ could probably be adapted for function fields.
-
         EXAMPLES::
 
             sage: K.<x> = FunctionField(GF(2)); _.<t> = K[]
@@ -2220,9 +2268,29 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
 
     @cached_method
     def _gens_two(self):
-        """
+        r"""
         Return a set of two generators of the integral ideal, that is
         the denominator times this fractional ideal.
+
+        ALGORITHM:
+
+        At most two generators are required to generate ideals in
+        Dedekind domains.
+
+        Lemma 4.7.9, algorithm 4.7.10, and exercise 4.29 of [Coh1993]_
+        tell us that for an integral ideal `I` in a number field, if
+        we pick `a` such that `\gcd(N(I), N(a)/N(I)) = 1`, then `a`
+        and `N(I)` generate the ideal.  `N()` is the norm, and this
+        result (presumably) generalizes to function fields.
+
+        After computing `N(I)`, we search exhaustively to find `a`.
+
+        .. TODO::
+
+            Always return a single generator for a principal ideal.
+
+            Testing for principality is not trivial.  Algorithm 6.5.10
+            of [Coh1993]_ could probably be adapted for function fields.
 
         EXAMPLES::
 
@@ -2247,8 +2315,10 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             g1 = F(_g1)
             g2 = sum([c1*c2 for c1,c2 in zip(_g2, O.basis())])
             if g2:
+                self._gens_two_vecs = (_g1, _g2)
                 return (g1,g2)
             else:
+                self._gens_two_vecs = (_g1,)
                 return (g1,)
 
         ### start to search for two generators
@@ -2260,14 +2330,16 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             norm *= e
 
         if norm.is_constant(): # unit ideal
+            self._gens_two_vecs = (1,)
             return (F(1),)
 
         # one generator; see .ideal_below()
-        l = hnf[0][0]
-        p = l.degree()
-        l = F(l)
+        _l = hnf[0][0]
+        p = _l.degree()
+        l = F(_l)
 
         if self._hnf == O.ideal(l)._hnf: # principal ideal
+            self._gens_two_vecs = (_l,)
             return (l,)
 
         R = hnf.base_ring()
@@ -2286,6 +2358,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
         # Trial 1: search for alpha among generators
         for alpha in basis:
             if check(alpha):
+                self._gens_two_vecs = (_l, O._coordinate_vector(alpha))
                 return (l, alpha)
 
         # Trial 2: exhaustive search for alpha using only polynomials
@@ -2295,6 +2368,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             for g in G:
                 alpha = sum([R(c1)*c2 for c1,c2 in zip(g, basis)])
                 if check(alpha):
+                    self._gens_two_vecs = (_l, O._coordinate_vector(alpha))
                     return (l, alpha)
 
         # Trial 3: exhaustive search for alpha using all polynomials
@@ -2312,6 +2386,7 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
 
                 alpha = sum([c1*c2 for c1,c2 in zip(g, basis)])
                 if check(alpha):
+                    self._gens_two_vecs = (_l, O._coordinate_vector(alpha))
                     return (l, alpha)
 
         # should not reach here

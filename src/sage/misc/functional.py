@@ -809,9 +809,7 @@ def xinterval(a, b):
 
     EXAMPLES::
 
-        sage: I = xinterval(2,5); I  # py2
-        xrange(2, 6)
-        sage: I = xinterval(2,5); I  # py3
+        sage: I = xinterval(2,5); I
         range(2, 6)
         sage: 5 in I
         True

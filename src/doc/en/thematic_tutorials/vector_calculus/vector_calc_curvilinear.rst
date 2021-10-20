@@ -36,7 +36,7 @@ type ``r, th, ph = var('r th ph')``)::
     sage: (r, th, ph) == E.spherical_coordinates()[:]
     True
     sage: type(r)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Moreover, the coordinate LaTeX symbols are already set::
 

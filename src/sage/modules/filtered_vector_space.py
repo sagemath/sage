@@ -218,7 +218,7 @@ def normalize_degree(deg):
 
         sage: from sage.modules.filtered_vector_space import normalize_degree
         sage: type(normalize_degree(int(1)))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: normalize_degree(oo)
         +Infinity
     """

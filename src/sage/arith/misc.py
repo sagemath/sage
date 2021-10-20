@@ -19,10 +19,6 @@ from collections.abc import Iterable
 from sage.misc.misc import powerset
 from sage.misc.misc_c import prod
 
-from sage.libs.pari.all import pari
-from sage.libs.flint.arith import (bernoulli_number as flint_bernoulli,
-                                   dedekind_sum as flint_dedekind_sum)
-
 from sage.structure.element import parent
 from sage.structure.coerce import py_scalar_to_element
 
@@ -30,8 +26,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer, GCD_list
 from sage.rings.rational import Rational
-from sage.rings.real_mpfr import RealNumber
-from sage.rings.complex_mpfr import ComplexNumber
+from sage.rings.abc import RealField, ComplexField
 
 from sage.rings.fast_arith import arith_int, arith_llong, prime_range
 
@@ -207,7 +202,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
             return None
         return z.denominator()*x - z.numerator()
 
-    if isinstance(z, (RealNumber, ComplexNumber)):
+    if isinstance(z.parent(), (RealField, ComplexField)):
 
         log2_10 = math.log(10,2)
 
@@ -221,7 +216,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         if use_bits is not None:
             prec = int(use_bits)
 
-        is_complex = isinstance(z, ComplexNumber)
+        is_complex = isinstance(z.parent(), ComplexField)
         n = degree+1
         from sage.matrix.constructor import matrix
         M = matrix(ZZ, n, n+1+int(is_complex))
@@ -266,6 +261,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None,
         raise NotImplementedError("proof and height bound only implemented for real and complex numbers")
 
     else:
+        from sage.libs.pari.all import pari
         y = pari(z)
         f = y.algdep(degree)
 
@@ -366,8 +362,10 @@ def bernoulli(n, algorithm='default', num_threads=1):
         if n >= 100000:
             from warnings import warn
             warn("flint is known to not be accurate for large Bernoulli numbers")
+        from sage.libs.flint.arith import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
     elif algorithm == 'pari':
+        from sage.libs.pari.all import pari
         x = pari(n).bernfrac()         # Use the PARI C library
         return Rational(x)
     elif algorithm == 'gap':
@@ -465,6 +463,7 @@ def factorial(n, algorithm='gmp'):
     if algorithm == 'gmp':
         return ZZ(n).factorial()
     elif algorithm == 'pari':
+        from sage.libs.pari.all import pari
         return pari.factorial(n)
     else:
         raise ValueError('unknown algorithm')
@@ -1785,7 +1784,7 @@ def gcd(a, b=None, **kwargs):
     from sage.structure.sequence import Sequence
     seq = Sequence(py_scalar_to_element(el) for el in a)
     if seq.universe() is ZZ:
-        return GCD_list(a)
+        return GCD_list(seq)
     else:
         return __GCD_sequence(seq, **kwargs)
 
@@ -2243,7 +2242,7 @@ def rational_reconstruction(a, m, algorithm='fast'):
 
     - ``algorithm`` -- (default: 'fast')
 
-      - ``'fast'`` - a fast implementation using direct MPIR calls
+      - ``'fast'`` - a fast implementation using direct GMP library calls
         in Cython.
 
     OUTPUT:
@@ -3031,6 +3030,7 @@ class Euler_Phi:
             return ZZ(0)
         if n<=2:
             return ZZ(1)
+        from sage.libs.pari.all import pari
         return ZZ(pari(n).eulerphi())
 
     def plot(self, xmin=1, xmax=50, pointsize=30, rgbcolor=(0,0,1), join=True,
@@ -3434,10 +3434,10 @@ def binomial(x, m, **kwds):
         1/6*x^3 - 1/2*x^2 + 1/3*x
 
     If `x \in \ZZ`, there is an optional 'algorithm' parameter, which
-    can be 'mpir' (faster for small values) or 'pari' (faster for
-    large values)::
+    can be 'gmp' (faster for small values; alias: 'mpir') or
+    'pari' (faster for large values)::
 
-        sage: a = binomial(100, 45, algorithm='mpir')
+        sage: a = binomial(100, 45, algorithm='gmp')
         sage: b = binomial(100, 45, algorithm='pari')
         sage: a == b
         True
@@ -3609,7 +3609,7 @@ def binomial(x, m, **kwds):
         return P(x.binomial(m, **kwds))
 
     # case 3: rational, real numbers, complex numbers -> use pari
-    if isinstance(x, (Rational, RealNumber, ComplexNumber)):
+    if isinstance(x, Rational) or isinstance(P, (RealField, ComplexField)):
         return P(x.__pari__().binomial(m))
 
     # case 4: naive method
@@ -4101,6 +4101,7 @@ def primitive_root(n, check=True):
         sage: primitive_root(mpz(-46))
         5
     """
+    from sage.libs.pari.all import pari
     if not check:
         return ZZ(pari(n).znprimroot())
     n = ZZ(n).abs()
@@ -4160,6 +4161,7 @@ def nth_prime(n):
     """
     if n <= 0:
         raise ValueError("nth prime meaningless for non-positive n (=%s)" % n)
+    from sage.libs.pari.all import pari
     return ZZ(pari.prime(n))
 
 
@@ -4278,6 +4280,7 @@ class Moebius:
         # Use fast PARI algorithm
         if n == 0:
             return ZZ.zero()
+        from sage.libs.pari.all import pari
         return ZZ(pari(n).moebius())
 
 
@@ -4362,6 +4365,8 @@ class Moebius:
         if start <= 0 and 0 < stop and start % step == 0:
             return self.range(start, 0, step) + [ZZ.zero()] +\
                    self.range(step, stop, step)
+
+        from sage.libs.pari.all import pari
 
         if step == 1:
             v = pari('vector(%s, i, moebius(i-1+%s))'%(
@@ -4492,6 +4497,7 @@ def number_of_divisors(n):
     m = ZZ(n)
     if m.is_zero():
         raise ValueError("input must be nonzero")
+    from sage.libs.pari.all import pari
     return ZZ(pari(m).numdiv())
 
 
@@ -4566,6 +4572,7 @@ def hilbert_symbol(a, b, p, algorithm="pari"):
     if algorithm == "pari":
         if p == -1:
             p = 0
+        from sage.libs.pari.all import pari
         return ZZ(pari(a).hilbert(b, p))
 
     elif algorithm == 'direct':
@@ -5660,12 +5667,25 @@ def sort_complex_numbers_for_display(nums):
         ....:                     RDF.random_element()))
         sage: shuffle(nums)
         sage: nums = sort_c(nums)
-        sage: nums[:3]
-        [0.0, 1.0, 2.0]
-        sage: for i in range(3, len(nums)-1):
-        ....:     assert nums[i].real() <= nums[i+1].real() + 1e-10
-        ....:     if abs(nums[i].real() - nums[i+1].real()) < 1e-10:
-        ....:         assert nums[i].imag() <= nums[i+1].imag() + 1e-10
+        sage: for i in range(len(nums)):
+        ....:     if nums[i].imag():
+        ....:         first_non_real = i
+        ....:         break
+        ....: else:
+        ....:     first_non_real = len(nums)
+        sage: assert first_non_real >= 3
+        sage: for i in range(first_non_real - 1):
+        ....:     assert nums[i].real() <= nums[i + 1].real()
+
+        sage: def truncate(n):
+        ....:     if n.real() < 1e-10:
+        ....:         return 0
+        ....:     else:
+        ....:         return n.real().n(digits=9)
+        sage: for i in range(first_non_real, len(nums)-1):
+        ....:     assert truncate(nums[i]) <= truncate(nums[i + 1])
+        ....:     if truncate(nums[i]) == truncate(nums[i + 1]):
+        ....:         assert nums[i].imag() <= nums[i+1].imag()
     """
     if not nums:
         return nums
@@ -5872,6 +5892,7 @@ def dedekind_sum(p, q, algorithm='default'):
     - :wikipedia:`Dedekind\_sum`
     """
     if algorithm == 'default' or algorithm == 'flint':
+        from sage.libs.flint.arith import dedekind_sum as flint_dedekind_sum
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':

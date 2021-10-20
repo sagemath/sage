@@ -63,7 +63,7 @@ cdef class GenericAction(Action):
             sage: sage.structure.coerce_actions.GenericAction(QQ, Z6, True)
             Traceback (most recent call last):
             ...
-            NotImplementedError: action for <type 'sage.structure.coerce_actions.GenericAction'> not implemented
+            NotImplementedError: action for <class 'sage.structure.coerce_actions.GenericAction'> not implemented
 
         This will break if we tried to use it::
 

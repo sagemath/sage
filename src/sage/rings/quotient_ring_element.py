@@ -506,7 +506,7 @@ class QuotientRingElement(RingElement):
         TESTS::
 
             sage: type(S(-2/3)._rational_())
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
         """
         from sage.rings.rational_field import QQ
         return QQ(self.lift())

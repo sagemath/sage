@@ -1457,7 +1457,7 @@ cdef class Pygen(GiacMethods_base):
             sage: a=libgiac('10'); b=libgiac('2**300')
             sage: a;type(ZZ(a))
             10
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: next_prime(b)
             2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397533
            sage: c=libgiac('2 % nextprime(2**40)')

@@ -14,7 +14,7 @@ cdef class PowComputer_(PowComputer_flint_unram):
 
             sage: R.<a> = ZqFM(125)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.qadic_flint_FM.PowComputer_'>
+            <class 'sage.rings.padics.qadic_flint_FM.PowComputer_'>
             sage: R.prime_pow._prec_type
             'fixed-mod'
         """

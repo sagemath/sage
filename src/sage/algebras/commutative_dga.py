@@ -99,7 +99,6 @@ from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.misc.cachefunc import cached_function
-from sage.misc.superseded import deprecated_function_alias
 
 
 def sorting_keys(element):
@@ -1534,8 +1533,6 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 else:
                     res[deg] = term
             return {i: res[i] for i in sorted(res.keys())}
-
-        homogenous_parts = deprecated_function_alias(30585, homogeneous_parts)
 
         def dict(self):
             r"""

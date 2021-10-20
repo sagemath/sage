@@ -2127,9 +2127,9 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         TESTS::
 
             sage: type(TransitiveGroups(12).cardinality())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(TransitiveGroups(0).cardinality())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         # gap.NrTransitiveGroups(0) fails, so Sage needs to handle this
 
@@ -2519,9 +2519,9 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         TESTS::
 
             sage: type(PrimitiveGroups(12).cardinality())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(PrimitiveGroups(0).cardinality())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         Check for :trac:`31774`::
 

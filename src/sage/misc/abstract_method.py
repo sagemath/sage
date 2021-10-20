@@ -125,9 +125,7 @@ def abstract_method(f=None, optional=False):
     The syntax ``@abstract_method`` w.r.t. @abstract_method(optional = True)
     is achieved by a little trick which we test here::
 
-        sage: abstract_method(optional = True)  # py2
-        <function <lambda> at ...>
-        sage: abstract_method(optional = True)  # py3
+        sage: abstract_method(optional = True)
         <function abstract_method.<locals>.<lambda> at ...>
         sage: abstract_method(optional = True)(banner)
         <optional abstract method banner at ...>

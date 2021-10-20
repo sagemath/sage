@@ -64,7 +64,7 @@ objects have different types:
     sage: type(gp('znprimroot(10007)'))
     <class 'sage.interfaces.gp.GpElement'>
     sage: type(pari('znprimroot(10007)'))
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 So which should you use? It depends on what you're doing. The GP
 interface can do absolutely anything you could do in the usual
@@ -100,7 +100,7 @@ First we create a PARI list from a Python list.
     sage: v
     [1, 2, 3, 4, 5]
     sage: type(v)
-    <type 'cypari2.gen.Gen'>
+    <class 'cypari2.gen.Gen'>
 
 Every PARI object is of type ``Gen``. The PARI type of the
 underlying object can be obtained using the ``type`` member

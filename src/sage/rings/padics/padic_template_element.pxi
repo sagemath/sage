@@ -89,7 +89,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
             sage: a = Zp(5)(1/2,3); a
             3 + 2*5 + 2*5^2 + O(5^3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+            <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
             sage: TestSuite(a).run()
 
         TESTS::
@@ -888,7 +888,7 @@ cdef class ExpansionIter(object):
         sage: E = Zp(5,4)(373).expansion()
         sage: I = iter(E) # indirect doctest
         sage: type(I)
-        <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
+        <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
     """
     cdef pAdicTemplateElement elt
     cdef celement tmp
@@ -1021,7 +1021,7 @@ cdef class ExpansionIterable(object):
 
         sage: E = Zp(5,4)(373).expansion() # indirect doctest
         sage: type(E)
-        <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIterable'>
+        <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIterable'>
     """
     cdef pAdicTemplateElement elt
     cdef celement tmp
@@ -1076,13 +1076,13 @@ cdef class ExpansionIterable(object):
 
             sage: E = Zp(5,4)(373).expansion()
             sage: type(iter(E))
-            <type 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
+            <class 'sage.rings.padics.padic_capped_relative_element.ExpansionIter'>
             sage: E = Zp(5,4)(373).expansion(start_val=-1)
             sage: type(iter(E))
-            <type 'itertools.chain'>
+            <class 'itertools.chain'>
             sage: E = Zp(5,4)(373).expansion(start_val=1)
             sage: type(iter(E))
-            <type 'itertools.islice'>
+            <class 'itertools.islice'>
         """
         cdef ExpansionIter expansion = ExpansionIter(self.elt, self.prec, self.mode)
         if self.val_shift == 0:

@@ -22,10 +22,10 @@ number theory, but throughout the mathematical sciences.
 Sage builds upon and extends functionalities of many underlying
 packages.  Even from early on, when Sage was primarily used for
 number theory, this included
-`Givaro <http://ljk.imag.fr/CASYS/LOGICIELS/givaro>`_,
-`MPIR <http://www.mpir.org>`_,
-`NTL <http://www.shoup.net/ntl>`_,
-`Pari/GP <http://pari.math.u-bordeaux.fr>`_,
+`Givaro <https://casys.gricad-pages.univ-grenoble-alpes.fr/givaro>`_,
+`GMP <https://gmplib.org>`_,
+`NTL <https://www.shoup.net/ntl>`_,
+`Pari/GP <https://pari.math.u-bordeaux.fr>`_,
 and many others too numerous to list here. Students, teachers,
 professors, researchers throughout the world use Sage because they
 require a comprehensive free open source mathematics package that
@@ -197,7 +197,7 @@ functionalities are made possible through FOSS projects such as
 * `NumPy and SciPy <https://scipy.org>`_ --- numerical linear algebra and
   other numerical computing capabilities for Python.
 * `OpenBLAS <https://www.openblas.net/>`_  --- an optimized BLAS library.
-* `Pari/GP <http://pari.math.u-bordeaux.fr>`_ --- a computer algebra
+* `Pari/GP <https://pari.math.u-bordeaux.fr>`_ --- a computer algebra
   system for fast computations in number theory.
 * `Pynac <http://pynac.sagemath.org>`_ --- a modified version of GiNaC
   that replaces the dependency on CLN by Python.

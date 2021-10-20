@@ -189,7 +189,7 @@ cdef class CAElement(pAdicTemplateElement):
 
             sage: a = ZpCA(5)(-3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
             sage: loads(dumps(a)) == a
             True
         """
@@ -1005,7 +1005,7 @@ cdef class CAElement(pAdicTemplateElement):
             sage: a.unit_part()
             18 + O(17^3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
             sage: R(0).unit_part()
             O(17^0)
         """
@@ -1105,7 +1105,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
         EXAMPLES::
 
             sage: f = ZpCA(5).coerce_map_from(ZZ); type(f)
-            <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCoercion_ZZ_CA'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCoercion_ZZ_CA'>
         """
         RingHomomorphism.__init__(self, ZZ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1181,7 +1181,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
 
             sage: R = ZpCA(5,4)
             sage: type(R(10,2))
-            <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
             sage: R(10,2) # indirect doctest
             2*5 + O(5^2)
             sage: R(10,3,1)
@@ -1255,7 +1255,7 @@ cdef class pAdicConvert_CA_ZZ(RingMap):
         EXAMPLES::
 
             sage: f = ZpCA(5).coerce_map_from(ZZ).section(); type(f)
-            <type 'sage.rings.padics.padic_capped_absolute_element.pAdicConvert_CA_ZZ'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.pAdicConvert_CA_ZZ'>
             sage: f.category()
             Category of homsets of sets
         """
@@ -1300,7 +1300,7 @@ cdef class pAdicConvert_QQ_CA(Morphism):
         EXAMPLES::
 
             sage: f = ZpCA(5).convert_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_capped_absolute_element.pAdicConvert_QQ_CA'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.pAdicConvert_QQ_CA'>
         """
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
         self._zero = R.element_class(R, 0)
@@ -1371,7 +1371,7 @@ cdef class pAdicConvert_QQ_CA(Morphism):
 
             sage: R = ZpCA(5,4)
             sage: type(R(10/3,2))
-            <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
             sage: R(10/3,2) # indirect doctest
             4*5 + O(5^2)
             sage: R(10/3,3,1)
@@ -1436,7 +1436,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R); type(f)
-            <type 'sage.rings.padics.qadic_flint_CA.pAdicCoercion_CA_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_CA.pAdicCoercion_CA_frac_field'>
         """
         RingHomomorphism.__init__(self, R.Hom(K))
         self._zero = K(0)
@@ -1652,7 +1652,7 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
             sage: R.<a> = ZqCA(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); type(f)
-            <type 'sage.rings.padics.qadic_flint_CA.pAdicConvert_CA_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_CA.pAdicConvert_CA_frac_field'>
         """
         Morphism.__init__(self, Hom(K, R, SetsWithPartialMaps()))
         self._zero = R(0)

@@ -823,7 +823,7 @@ def cusps_from_mat(g):
     You can also just give the matrix of ``g``::
 
         sage: type(g)
-        <type 'sage.modular.arithgroup.arithgroup_element.ArithmeticSubgroupElement'>
+        <class 'sage.modular.arithgroup.arithgroup_element.ArithmeticSubgroupElement'>
         sage: cusps_from_mat(g.matrix())
         (+Infinity, 0)
 

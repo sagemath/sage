@@ -57,7 +57,7 @@ and ``y`` have been created and are available to form symbolic expressions::
     sage: y
     y
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
     sage: assumptions()
     [x is real, y is real]
 

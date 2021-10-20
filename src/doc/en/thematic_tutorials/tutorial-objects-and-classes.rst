@@ -314,7 +314,7 @@ http://docs.python.org/library/ for a complete list. ::
 
         sage: e = Integer(9)
         sage: type(e)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: e.__dict__
         Traceback (most recent call last):
         ...
@@ -322,7 +322,7 @@ http://docs.python.org/library/ for a complete list. ::
 
         sage: id4 = SymmetricGroup(4).one()
         sage: type(id4)
-        <type 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement'>
+        <class 'sage.groups.perm_gps.permgroup_element.SymmetricGroupElement'>
         sage: id4.__dict__
         Traceback (most recent call last):
         ...

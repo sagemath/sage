@@ -952,7 +952,7 @@ class ArithmeticSubgroup(Group):
 
     def genus(self):
         r"""
-        Return the genus of the modular curve of self.
+        Return the genus of the modular curve of ``self``.
 
         EXAMPLES::
 
@@ -960,6 +960,7 @@ class ArithmeticSubgroup(Group):
             0
             sage: Gamma1(31).genus()
             26
+            sage: from sage.modular.dims import dimension_cusp_forms
             sage: Gamma1(157).genus() == dimension_cusp_forms(Gamma1(157), 2)
             True
             sage: GammaH(7, [2]).genus()
@@ -968,10 +969,7 @@ class ArithmeticSubgroup(Group):
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 2, 2]
             sage: [n for n in [1..200] if Gamma0(n).genus() == 1]
             [11, 14, 15, 17, 19, 20, 21, 24, 27, 32, 36, 49]
-
-
         """
-
         return ZZ(1 + (self.projective_index()) / ZZ(12)  - (self.nu2())/ZZ(4) - (self.nu3())/ZZ(3) - self.ncusps()/ZZ(2))
 
     def farey_symbol(self):

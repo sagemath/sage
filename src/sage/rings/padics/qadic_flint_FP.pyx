@@ -16,7 +16,7 @@ cdef class PowComputer_(PowComputer_flint_unram):
 
             sage: R.<a> = ZqFP(125)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.qadic_flint_FP.PowComputer_'>
+            <class 'sage.rings.padics.qadic_flint_FP.PowComputer_'>
             sage: R.prime_pow._prec_type
             'floating-point'
         """

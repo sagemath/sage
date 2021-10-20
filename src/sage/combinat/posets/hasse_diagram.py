@@ -2353,6 +2353,64 @@ class HasseDiagram(DiGraph):
         """
         return IncreasingChains(self._leq_storage, element_class, exclude, conversion)
 
+    def is_linear_interval(self, t_min, t_max) -> bool:
+        """
+        Return whether the interval ``[t_min, t_max]`` is linear.
+
+        This means that this interval is a total order.
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: H = P._hasse_diagram
+            sage: H.is_linear_interval(0, 4)
+            False
+            sage: H.is_linear_interval(0, 3)
+            True
+            sage: H.is_linear_interval(1, 3)
+            False
+            sage: H.is_linear_interval(1, 1)
+            True
+
+        TESTS::
+
+            sage: P = posets.TamariLattice(3)
+            sage: H = P._hasse_diagram
+            sage: D = H._leq_storage
+            sage: a, b = H.bottom(), H.top()
+            sage: H.is_linear_interval(a, b)
+            False
+            sage: H.is_linear_interval(a, a)
+            True
+        """
+        if '_leq_storage' in self.__dict__:
+            if not self.is_lequal(t_min, t_max):  # very quick check
+                return False
+            t = t_max
+            while t != t_min:
+                found = False
+                for u in self.neighbor_in_iterator(t):
+                    if self.is_lequal(t_min, u):
+                        if not found:
+                            found = True
+                            t = u
+                        else:
+                            return False
+            return True
+
+        # fall back to default implementation
+        it = self.all_paths_iterator([t_min], [t_max],
+                                     simple=True, trivial=True)
+        try:
+            next(it)
+        except StopIteration:  # not comparable
+            return False
+        try:
+            next(it)
+        except StopIteration:  # one path
+            return True
+        return False
+
     def diamonds(self):
         r"""
         Return the list of diamonds of ``self``.
@@ -3281,7 +3339,7 @@ class HasseDiagram(DiGraph):
                 D[ab] = cong
                 P[ab] = cong_
 
-        # Todo: Make a function that creates the poset from a set
+        # TODO: Make a function that creates the poset from a set
         # by comparison function with minimal number of comparisons.
 
         T = SetPartitions(n)

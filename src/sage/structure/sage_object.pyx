@@ -645,7 +645,7 @@ cdef class SageObject:
         remote Sage session, and get it back.
         """
         tester = self._tester(**options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         tester.assertEqual(loads(dumps(self)), self)
 
     #############################################################################

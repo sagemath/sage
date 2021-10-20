@@ -36,13 +36,6 @@ Anders Nedergaard Jensen
 https://users-math.au.dk/jensen/software/gfan/gfan.html
 
 
-Dependencies
-------------
-
--  GMP/MPIR
--  CDDLIB
-
-
 Special Update/Build Instructions
 ---------------------------------
 

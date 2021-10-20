@@ -138,7 +138,8 @@ class CHomP:
         from sage.topology.simplicial_complex import SimplicialComplex, Simplex
         from sage.homology.chain_complex import HomologyGroup
         from subprocess import Popen, PIPE
-        from sage.rings.all import QQ, ZZ
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
         from sage.modules.all import VectorSpace, vector
         from sage.combinat.free_module import CombinatorialFreeModule
 

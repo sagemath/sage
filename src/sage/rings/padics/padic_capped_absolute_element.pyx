@@ -44,7 +44,7 @@ cdef class PowComputer_(PowComputer_base):
 
             sage: R = ZpCA(5)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.padic_capped_absolute_element.PowComputer_'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.PowComputer_'>
             sage: R.prime_pow._prec_type
             'capped-abs'
         """

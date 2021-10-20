@@ -101,9 +101,9 @@ cdef exprseq_to_PyTuple(GEx seq):
         sage: tfunc = TFunc()
         sage: u = SR._force_pyobject((1, x+1, 2))
         sage: tfunc(u, x, SR._force_pyobject((3.0, 2^x)))
-        len(args): 3, types: [<... 'tuple'>, <type 'sage.symbolic.expression.Expression'>, <... 'tuple'>]
-        argument 0 is a tuple, with types [<type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.rings.integer.Integer'>]
-        argument 2 is a tuple, with types [<type 'sage.rings.real_mpfr.RealLiteral'>, <type 'sage.symbolic.expression.Expression'>]
+        len(args): 3, types: [<... 'tuple'>, <class 'sage.symbolic.expression.Expression'>, <... 'tuple'>]
+        argument 0 is a tuple, with types [<class 'sage.rings.integer.Integer'>, <class 'sage.symbolic.expression.Expression'>, <class 'sage.rings.integer.Integer'>]
+        argument 2 is a tuple, with types [<class 'sage.rings.real_mpfr.RealLiteral'>, <class 'sage.symbolic.expression.Expression'>]
         tfunc((1, x + 1, 2), x, (3.00000000000000, 2^x))
     """
     from sage.symbolic.ring import SR
@@ -128,7 +128,7 @@ def unpack_operands(Expression ex):
         sage: type(unpack_operands(t))
         <... 'tuple'>
         sage: list(map(type, unpack_operands(t)))
-        [<type 'sage.rings.integer.Integer'>, <type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>]
+        [<class 'sage.rings.integer.Integer'>, <class 'sage.rings.integer.Integer'>, <class 'sage.symbolic.expression.Expression'>, <class 'sage.symbolic.expression.Expression'>, <class 'sage.symbolic.expression.Expression'>]
         sage: u = SR._force_pyobject((t, x^2))
         sage: unpack_operands(u)
         ((1, 2, x, x + 1, x + 2), x^2)
@@ -159,7 +159,7 @@ cdef exvector_to_PyTuple(GExVector seq):
         sage: tfunc = TFunc()
         sage: u = SR._force_pyobject((1, x+1, 2))
         sage: tfunc(u, x, 3.0, 5.0r)
-        len(args): 4, types: [<... 'tuple'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.rings.real_mpfr.RealLiteral'>, <... 'float'>]
+        len(args): 4, types: [<... 'tuple'>, <class 'sage.symbolic.expression.Expression'>, <class 'sage.rings.real_mpfr.RealLiteral'>, <... 'float'>]
         tfunc((1, x + 1, 2), x, 3.00000000000000, 5.0)
 
     TESTS:
@@ -167,8 +167,8 @@ cdef exvector_to_PyTuple(GExVector seq):
     Check if symbolic functions in the arguments are preserved::
 
         sage: tfunc(sin(x), tfunc(1, x^2))
-        len(args): 2, types: [<type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>]
-        len(args): 2, types: [<type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>]
+        len(args): 2, types: [<class 'sage.rings.integer.Integer'>, <class 'sage.symbolic.expression.Expression'>]
+        len(args): 2, types: [<class 'sage.symbolic.expression.Expression'>, <class 'sage.symbolic.expression.Expression'>]
         tfunc(sin(x), tfunc(1, x^2))
 
     """
@@ -1343,11 +1343,11 @@ cdef py_float(n, PyObject* kwds):
         sage: py_float(10, {'parent':CDF})
         10.0
         sage: type(py_float(10, {'parent':CDF}))
-        <type 'sage.rings.complex_double.ComplexDoubleElement'>
+        <class 'sage.rings.complex_double.ComplexDoubleElement'>
         sage: py_float(1/2, {'parent':CC})
         0.500000000000000
         sage: type(py_float(1/2, {'parent':CC}))
-        <type 'sage.rings.complex_mpfr.ComplexNumber'>
+        <class 'sage.rings.complex_mpfr.ComplexNumber'>
     """
     if kwds is not NULL:
         p = (<object>kwds)['parent']
@@ -2420,9 +2420,9 @@ def init_pynac_I():
 
         sage: sage.symbolic.expression.init_pynac_I()
         sage: type(sage.symbolic.expression.I)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: type(sage.symbolic.expression.I.pyobject())
-        <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
+        <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
 
     Check that :trac:`10064` is fixed::
 

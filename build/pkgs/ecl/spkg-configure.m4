@@ -3,7 +3,7 @@ SAGE_SPKG_CONFIGURE([ecl], [
   # Default to installing the SPKG
   sage_spkg_install_ecl=yes
 
-  SAGE_SPKG_DEPCHECK([gcc gc gmp mpir], [
+  SAGE_SPKG_DEPCHECK([gcc gc gmp], [
     AC_PATH_PROG([ECL_CONFIG], [ecl-config])
     AS_IF([test x$ECL_CONFIG != x], [
       # "CPPFLAGS" is not a typo, the --cflags output from

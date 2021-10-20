@@ -198,7 +198,7 @@ class DiffChart(Chart):
     :mod:`sage.symbolic.expression`)::
 
         sage: type(z1)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     In addition to the Python variable name provided in the operator ``<.,.>``,
     the coordinates are accessible by their indices::
@@ -829,7 +829,7 @@ class RealDiffChart(DiffChart, RealChart):
     :mod:`sage.symbolic.expression`)::
 
         sage: type(th)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: latex(th)
         {\theta}
         sage: assumptions(th)

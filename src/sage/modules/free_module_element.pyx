@@ -914,7 +914,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: v = sage.modules.free_module_element.FreeModuleElement(QQ^3)
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement'>
+            <class 'sage.modules.free_module_element.FreeModuleElement'>
         """
         self._parent = parent
         self._degree = parent.degree()
@@ -1735,7 +1735,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: F.<y> = PolynomialRing(QQ, 'y')
             sage: type(vector(F, [0]*4, sparse=True))
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
             sage: vector(F, [0,0,0,y]) == vector(F, [0,0,0,y])
             True
             sage: vector(F, [0,0,0,0]) == vector(F, [0,2,0,y])
@@ -1928,7 +1928,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: P.<x,y,z> = QQ[]
             sage: v = vector([x,y,z], sparse=True)
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
             sage: a = v.list(); a
             [x, y, z]
             sage: a[0] = x*y; v
@@ -4012,7 +4012,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: vec
             (0.5, 0.3333333333333334, 0.4596976941318602)
             sage: type(vec)
-            <type 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
+            <class 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
             sage: answers
             [(0.5, 5.55111512312578...e-15, 21, 0), (0.3333333333333..., 3.70074341541719...e-15, 21, 0), (0.45969769413186..., 5.10366964392284...e-15, 21, 0)]
 
@@ -4169,7 +4169,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         EXAMPLES::
 
             sage: type(vector(RR, [-1,0,2/3,pi,oo]))
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
 
         We can initialize with lists, tuples and derived types::
 
@@ -4418,7 +4418,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: P.<x,y,z> = QQ[]
             sage: v = vector([x,y,z])
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
             sage: a = v.list(); a
             [x, y, z]
             sage: a[0] = x*y; v
@@ -5114,7 +5114,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: M = FreeModule(R, 3, sparse=True) * (1/x)
             sage: v = M([-x^2, 3/x, 0])
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
             sage: a = v.list()
             sage: a
             [-x^2, 3/x, 0]

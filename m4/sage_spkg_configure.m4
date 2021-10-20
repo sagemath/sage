@@ -29,8 +29,8 @@
 #
 #   - REQUIRED-CHECK - this checks whether or not the package is a required
 #     dependency of Sage at all, depending typically on the platform.  Some
-#     packages (e.g. yasm, among others) are only dependencies on certain
-#     platforms, and otherwise do not need to be checked for at all.  If
+#     packages (e.g. sqlite) are only dependencies in some circumstances
+#     and otherwise do not need to be checked for at all.  If
 #     a REQUIRED-CHECK determines that the package is not required it sets
 #     sage_require_<packagename>="no".
 #

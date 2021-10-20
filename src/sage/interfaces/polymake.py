@@ -2174,17 +2174,17 @@ class PolymakeExpect(PolymakeAbstract, Expect):
         work in an interactive session and often in doc tests, too. However,
         sometimes it hangs, and therefore we remove it from the tests, for now::
 
-            sage: c = polymake.cube(15)             # optional - polymake
-            sage: polymake.eval('print {}->F_VECTOR;'.format(c.name()), timeout=1) # not tested # optional - polymake
+            sage: c = polymake.cube(15)             # optional - polymake_expect
+            sage: polymake.eval('print {}->F_VECTOR;'.format(c.name()), timeout=1) # not tested # optional - polymake_expect
             Traceback (most recent call last):
             ...
             RuntimeError: Polymake fails to respond timely
 
         We verify that after the timeout, polymake is still able to give answers::
 
-            sage: c                                 # optional - polymake
+            sage: c                                 # optional - polymake_expect
             cube of dimension 15
-            sage: c.N_VERTICES                      # optional - polymake
+            sage: c.N_VERTICES                      # optional - polymake_expect
             32768
 
         Note, however, that the recovery after a timeout is not perfect.

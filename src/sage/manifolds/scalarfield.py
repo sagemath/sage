@@ -211,7 +211,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         sage: f.expr(c_uv)
         (u^2 + v^2)/(u^2 + v^2 + 1)
         sage: type(f.expr(c_uv))
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     The method :meth:`coord_function` returns instead a function of the
     chart coordinates, i.e. an instance of
@@ -1844,7 +1844,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
         backend used for coordinate computations::
 
             sage: type(f.expr())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: M.set_calculus_method('sympy')
             sage: type(f.expr())
             <class 'sympy.core.mul.Mul'>

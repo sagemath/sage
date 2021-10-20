@@ -119,7 +119,8 @@ class PadicValuationFactory(UniqueFactory):
             2-adic valuation
 
         """
-        from sage.rings.all import ZZ, QQ
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
         from sage.rings.padics.padic_generic import pAdicGeneric
         from sage.rings.number_field.number_field import is_NumberField
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
@@ -389,7 +390,8 @@ class PadicValuationFactory(UniqueFactory):
             5-adic valuation
 
         """
-        from sage.rings.all import ZZ, QQ
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
         from sage.rings.padics.padic_generic import pAdicGeneric
         from sage.rings.valuation.valuation_space import DiscretePseudoValuationSpace
         from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
@@ -956,7 +958,8 @@ class pAdicValuation_padic(pAdicValuation_base):
             y^3 + O(y^43)
 
         """
-        from sage.rings.all import QQ, ZZ
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
         v = QQ(v)
         if v not in self.value_semigroup():
             raise ValueError("%r is not in the value semigroup of %r"%(v, self))
@@ -1327,7 +1330,8 @@ class pAdicValuation_int(pAdicValuation_base):
         if self(x) > 0 or precision is infinity:
             raise ValueError("element has no approximate inverse in this ring")
         
-        from sage.rings.all import ZZ, QQ
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
         return self.domain()(ZZ(x).inverse_mod(self.p() ** QQ(precision).ceil()))
 
 

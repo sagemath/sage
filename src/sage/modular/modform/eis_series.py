@@ -12,7 +12,7 @@ Eisenstein Series
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.all import cputime
+from sage.misc.misc import cputime
 import sage.modular.dirichlet as dirichlet
 from sage.modular.arithgroup.congroup_gammaH import GammaH_class
 from sage.rings.all import Integer, CyclotomicField, ZZ, QQ

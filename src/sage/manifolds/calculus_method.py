@@ -52,7 +52,7 @@ def _SR_to_Sympy(expression):
         sage: a = x^2 + sin(x)^2; a
         x^2 + sin(x)^2
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: b = _SR_to_Sympy(a); b
         x**2 + sin(x)**2
         sage: type(b)
@@ -89,7 +89,7 @@ def _Sympy_to_SR(expression):
         sage: from sage.manifolds.calculus_method import _Sympy_to_SR, _SR_to_Sympy
         sage: a = x^2 + sin(x)^2
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: b = _SR_to_Sympy(a); b
         x**2 + sin(x)**2
         sage: type(b)

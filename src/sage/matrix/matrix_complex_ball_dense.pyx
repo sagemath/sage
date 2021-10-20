@@ -143,7 +143,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             sage: a = Matrix_complex_ball_dense.__new__( # indirect doctest
             ....:     Matrix_complex_ball_dense, Mat(CBF, 2), 0, 0, 0)
             sage: type(a)
-            <type 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
+            <class 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
         """
         sig_str("Arb exception")
         acb_mat_init(self.value, self._nrows, self._ncols)

@@ -62,6 +62,7 @@ AUTHORS:
 - Michael Jung (2020-10-02): added Bär-Faddeev-LeVerrier algorithm for the
   Pfaffian
 
+- Moritz Firsching(2020-10-05): added ``quantum_determinant``
 """
 
 # ****************************************************************************
@@ -2109,6 +2110,84 @@ cdef class Matrix(Matrix1):
                 self.swap_rows(level, i)
             return d
 
+    def quantum_determinant(self, q=None):
+        r"""
+        Return the quantum deteminant of ``self``.
+
+        The quantum determinant of a matrix `M = (m_{ij})_{i,j=1}^n`
+        is defined by
+
+        .. MATH::
+
+            \det_q(M) =
+            \sum_{\sigma \in S_n} (-q)^{\ell(\sigma)} M_{\sigma(i),j},
+
+        where `S_n` is the symmetric group on `\{1, \ldots, n\}` and
+        `\ell(\sigma)` denotes the length of `\sigma` written as simple
+        transpositions (equivalently the number of inversions when
+        written in one-line notation).
+
+        INPUT:
+
+        - ``q`` -- the parameter `q`; the default is `q \in F[q]`,
+          where `F` is the base ring of ``self``
+
+        EXAMPLES::
+
+            sage: A = matrix([[SR(f'a{i}{j}') for i in range(2)]
+            ....:             for j in range(2)]); A
+            [a00 a10]
+            [a01 a11]
+            sage: A.quantum_determinant()
+            -a01*a10*q + a00*a11
+
+            sage: A = matrix([[SR(f'a{i}{j}') for i in range(3)]
+            ....:             for j in range(3)])
+            sage: A.quantum_determinant()
+            -a02*a11*a20*q^3 + (a01*a12*a20 + a02*a10*a21)*q^2
+             + (-a00*a12*a21 - a01*a10*a22)*q + a00*a11*a22
+
+            sage: R.<q> = LaurentPolynomialRing(ZZ)
+            sage: MS = MatrixSpace(Integers(8), 3)
+            sage: A = MS([1,7,3, 1,1,1, 3,4,5])
+            sage: A.det()
+            6
+            sage: A.quantum_determinant(q^-2)
+            7*q^-6 + q^-4 + q^-2 + 5
+
+            sage: S.<x,y> = PolynomialRing(GF(7))
+            sage: R.<q> = LaurentPolynomialRing(S)
+            sage: MS = MatrixSpace(S, 3, sparse=True)
+            sage: A = MS([[x, y, 3], [4, 2+y, x^2], [0, 1-x, x+y]])
+            sage: A.det()
+            x^4 - x^3 + x^2*y + x*y^2 + 2*x^2 - 2*x*y + 3*y^2 + 2*x - 2
+            sage: A.quantum_determinant()
+            (2*x - 2)*q^2 + (x^4 - x^3 + 3*x*y + 3*y^2)*q + x^2*y + x*y^2 + 2*x^2 + 2*x*y
+            sage: A.quantum_determinant(int(2))
+            2*x^4 - 2*x^3 + x^2*y + x*y^2 + 2*x^2 + x*y - y^2 + x - 1
+            sage: A.quantum_determinant(q*x + q^-1*y)
+            (2*x*y^2 - 2*y^2)*q^-2 + (x^4*y - x^3*y + 3*x*y^2 + 3*y^3)*q^-1
+             + (-2*x^2*y + x*y^2 + 2*x^2 - 2*x*y)
+             + (x^5 - x^4 + 3*x^2*y + 3*x*y^2)*q + (2*x^3 - 2*x^2)*q^2
+        """
+        cdef Py_ssize_t n = self._ncols
+
+        if self._nrows != n:
+            raise ValueError("self must be a square matrix")
+
+        if q is None:
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            q = PolynomialRing(self.base_ring(), 'q').gen()
+
+        from sage.misc.misc_c import prod
+        from sage.combinat.permutation import Permutations
+        cdef Py_ssize_t i
+        return sum((-q)**s.number_of_inversions()
+                   * prod(self.get_unsafe(s[i] - 1, i) for i in range(n))
+                   for s in Permutations(n))
+
+    qdet = quantum_determinant
+
     def pfaffian(self, algorithm=None, check=True):
         r"""
         Return the Pfaffian of ``self``, assuming that ``self`` is an
@@ -2847,7 +2926,7 @@ cdef class Matrix(Matrix1):
             sage: M = MatrixSpace(RR, 2)
             sage: A = M(range(2^2))
             sage: type(A)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: A.charpoly('x')
             x^2 - 3.00000000000000*x - 2.00000000000000
             sage: A.charpoly('y')
@@ -15147,7 +15226,7 @@ cdef class Matrix(Matrix1):
             [             1/11*(sqrt(33)*e^sqrt(33) - sqrt(33))*e^(-1/2*sqrt(33) + 5/2)  1/22*((sqrt(33) + 11)*e^sqrt(33) - sqrt(33) + 11)*e^(-1/2*sqrt(33) + 5/2)]
 
             sage: type(a.exp())
-            <type 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+            <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
 
             sage: a=matrix([[1/2,2/3],[3/4,4/5]])
             sage: a.exp()

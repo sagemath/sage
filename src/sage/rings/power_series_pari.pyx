@@ -18,21 +18,21 @@ not the type of the parents::
     sage: type(R)
     <class 'sage.rings.power_series_ring.PowerSeriesRing_domain_with_category'>
     sage: type(q)
-    <type 'sage.rings.power_series_pari.PowerSeries_pari'>
+    <class 'sage.rings.power_series_pari.PowerSeries_pari'>
     sage: type(S)
     <class 'sage.rings.power_series_ring.PowerSeriesRing_over_field_with_category'>
     sage: type(t)
-    <type 'sage.rings.power_series_pari.PowerSeries_pari'>
+    <class 'sage.rings.power_series_pari.PowerSeries_pari'>
 
 If `k` is a finite field implemented using PARI, this is the default
 implementation for power series over `k`::
 
     sage: k.<c> = GF(5^12)
     sage: type(c)
-    <type 'sage.rings.finite_rings.element_pari_ffelt.FiniteFieldElement_pari_ffelt'>
+    <class 'sage.rings.finite_rings.element_pari_ffelt.FiniteFieldElement_pari_ffelt'>
     sage: A.<x> = k[[]]
     sage: type(x)
-    <type 'sage.rings.power_series_pari.PowerSeries_pari'>
+    <class 'sage.rings.power_series_pari.PowerSeries_pari'>
 
 .. WARNING::
 

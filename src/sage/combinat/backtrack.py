@@ -41,7 +41,7 @@ class GenericBacktracker(object):
     A generic backtrack tool for exploring a search space organized as a tree,
     with branch pruning, etc.
 
-    See also :class:`RecursivelyEnumeratedSet_forest` and :class:`TransitiveIdeal` for
+    See also :class:`RecursivelyEnumeratedSet_forest` for
     handling simple special cases.
     """
     def __init__(self, initial_data, initial_state):

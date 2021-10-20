@@ -251,7 +251,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: a = SR(-3/4); a
             -3/4
             sage: type(a)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: a.parent()
             Symbolic Ring
             sage: K.<a> = QuadraticField(-3)
@@ -405,7 +405,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: t = SR._force_pyobject(QQ); t
             Rational Field
             sage: type(t)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         Testing tuples::
 
@@ -528,7 +528,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: c = SR.characteristic(); c
             0
             sage: type(c)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return Integer(0)
 
@@ -798,7 +798,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         The return type is a symbolic expression::
 
             sage: type(zz)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         We can specify the domain as well::
 
@@ -1180,7 +1180,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         sage: a = f(numpy.int8('2')).pyobject()
         sage: type(a)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     This behavior also applies to standard functions::
 

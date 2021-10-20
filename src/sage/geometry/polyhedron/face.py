@@ -952,7 +952,19 @@ class PolyhedronFace(ConvexSet_closed):
             A ray in the direction (0, 0, 1),
             A vertex at (1, 0, -1),
             A ray in the direction (-1, 0, 0))
+
+        TESTS:
+
+        Check that :trac:`32658` is fixed::
+
+            sage: P = polytopes.hypercube(2)
+            sage: P.faces(-1)[0].affine_tangent_cone()
+            Traceback (most recent call last):
+            ...
+            ValueError: affine tangent cone of the empty face not defined
         """
+        if self.dim() == -1:
+            raise ValueError("affine tangent cone of the empty face not defined")
         parent = self.polyhedron().parent()
         new_ieqs = [H for H in self.ambient_Hrepresentation()
                     if H.is_inequality()]

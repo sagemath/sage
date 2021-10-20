@@ -96,9 +96,9 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
         sage: prime_range(10**30,10**30+100,"pari_isprime")
         [1000000000000000000000000000057, 1000000000000000000000000000099]
         sage: type(prime_range(8)[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: type(prime_range(8,algorithm="pari_isprime")[0])
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     .. NOTE::
 

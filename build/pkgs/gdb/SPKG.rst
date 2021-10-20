@@ -19,17 +19,6 @@ Upstream Contact
 
 http://www.gnu.org/software/gdb/
 
-Dependencies
-------------
-
--  python
--  mpc
--  mpfr
--  ppl
--  gmp/mpir
--  makeinfo (external)
-
-
 Special Update/Build Instructions
 ---------------------------------
 

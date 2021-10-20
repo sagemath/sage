@@ -403,7 +403,7 @@ cdef class ntl_GF2E(object):
             sage: a.rep()
             [1 0 0 0 0 0 1 1]
             sage: type(a.rep())
-            <type 'sage.libs.ntl.ntl_GF2X.ntl_GF2X'>
+            <class 'sage.libs.ntl.ntl_GF2X.ntl_GF2X'>
         """
         cdef ntl_GF2X x = ntl_GF2X.__new__(ntl_GF2X)
         x.x = GF2E_rep(self.x)

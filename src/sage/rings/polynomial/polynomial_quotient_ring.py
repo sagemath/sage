@@ -1333,7 +1333,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(CG[0][0][1])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic_with_category.element_class'>
             sage: type(CG[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         TESTS:
 
@@ -1493,7 +1493,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(CG[0][0][1])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic_with_category.element_class'>
             sage: type(CG[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         """
         return self.S_class_group((), proof=proof)
@@ -1559,7 +1559,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(U[0][0])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category.element_class'>
             sage: type(U[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(U[1][1])
             <class 'sage.rings.infinity.PlusInfinity'>
 
@@ -1645,7 +1645,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(U[0][0])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category.element_class'>
             sage: type(U[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(U[1][1])
             <class 'sage.rings.infinity.PlusInfinity'>
 

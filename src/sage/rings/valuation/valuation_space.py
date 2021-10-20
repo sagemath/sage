@@ -475,7 +475,8 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 1024
 
             """
-            from sage.rings.all import QQ, ZZ
+            from sage.rings.integer_ring import ZZ
+            from sage.rings.rational_field import QQ
             s = QQ.coerce(s)
             if s not in self.value_semigroup():
                 raise ValueError("s must be in the value semigroup of this valuation but %r is not in %r"%(s, self.value_semigroup()))

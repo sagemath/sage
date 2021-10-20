@@ -98,7 +98,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sage: a = K.gen(); a
         a
         sage: type(a)
-        <type 'sage.rings.finite_rings.element_pari_ffelt.FiniteFieldElement_pari_ffelt'>
+        <class 'sage.rings.finite_rings.element_pari_ffelt.FiniteFieldElement_pari_ffelt'>
 
     TESTS::
 

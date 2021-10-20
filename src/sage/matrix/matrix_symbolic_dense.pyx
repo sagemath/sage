@@ -264,7 +264,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: spectrum = am.eigenvectors_left()
             sage: symbolic_evalue = spectrum[2][0]
             sage: type(symbolic_evalue)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: symbolic_evalue
             1/2*sqrt(5) - 1/2
 
@@ -484,7 +484,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: M = MatrixSpace(SR, 2)
             sage: A = M(range(0, 2^2))
             sage: type(A)
-            <type 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+            <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
             sage: A.charpoly('x')
             x^2 - 3*x - 2
             sage: A.charpoly('y')

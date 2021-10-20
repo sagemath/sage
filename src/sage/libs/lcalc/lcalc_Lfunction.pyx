@@ -455,7 +455,7 @@ cdef class Lfunction_I(Lfunction):
             sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="int")
             sage: type(L)
-            <type 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_I'>
+            <class 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_I'>
         """
         Lfunction.__init__(self, name, what_type_L, dirichlet_coefficient,  period, Q, OMEGA, gamma,lambd, pole,residue)
         self._repr += " with integer Dirichlet coefficients"
@@ -591,7 +591,7 @@ cdef class Lfunction_D(Lfunction):
             sage: chi = DirichletGroup(5)[2] #This is a quadratic character
             sage: L=Lfunction_from_character(chi, type="double")
             sage: type(L)
-            <type 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_D'>
+            <class 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_D'>
         """
         Lfunction.__init__(self, name, what_type_L, dirichlet_coefficient,  period, Q, OMEGA, gamma,lambd, pole,residue)
         self._repr += " with real Dirichlet coefficients"
@@ -731,7 +731,7 @@ cdef class Lfunction_C:
             sage: chi = DirichletGroup(5)[1]
             sage: L=Lfunction_from_character(chi, type="complex")
             sage: type(L)
-            <type 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_C'>
+            <class 'sage.libs.lcalc.lcalc_Lfunction.Lfunction_C'>
         """
         Lfunction.__init__(self, name, what_type_L, dirichlet_coefficient,  period, Q, OMEGA, gamma,lambd, pole,residue)
         self._repr += " with complex Dirichlet coefficients"

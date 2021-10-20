@@ -209,7 +209,7 @@ Integers::
     sage: b = a.sage(); b # optional - lie
     1234
     sage: type(b) # optional - lie
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
 Vectors::
 
@@ -226,7 +226,7 @@ Matrices::
     [1 2]
     [3 4]
     sage: type(b) # optional - lie
-    <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+    <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
 
 Polynomials::
 
@@ -234,7 +234,7 @@ Polynomials::
     sage: b = a.sage(); b              # optional - lie
     -2*x0^2*x1 + x0*x1^2
     sage: type(b)                      # optional - lie
-    <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+    <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
 
 Text::
 

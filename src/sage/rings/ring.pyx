@@ -1406,9 +1406,9 @@ cdef class CommutativeRing(Ring):
             sage: ZZ.krull_dimension()
             1
             sage: type(R); type(QQ); type(ZZ)
-            <type 'sage.rings.ring.CommutativeRing'>
+            <class 'sage.rings.ring.CommutativeRing'>
             <class 'sage.rings.rational_field.RationalField_with_category'>
-            <type 'sage.rings.integer_ring.IntegerRing_class'>
+            <class 'sage.rings.integer_ring.IntegerRing_class'>
 
         All orders in number fields have Krull dimension 1, including
         non-maximal orders::
@@ -2049,7 +2049,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
             sage: QQ.gcd(ZZ(42), ZZ(48)); type(QQ.gcd(ZZ(42), ZZ(48)))
             6
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: QQ.gcd(1/2, 1/3)
             1/6
 
@@ -2091,7 +2091,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
             sage: QQ.content(ZZ(42), ZZ(48)); type(QQ.content(ZZ(42), ZZ(48)))
             6
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: QQ.content(1/2, 1/3)
             1/6
             sage: factor(1/2); factor(1/3); factor(1/6)

@@ -44,7 +44,7 @@ cdef class PowComputer_(PowComputer_base):
 
             sage: R = ZpFM(5)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.padic_fixed_mod_element.PowComputer_'>
+            <class 'sage.rings.padics.padic_fixed_mod_element.PowComputer_'>
             sage: R.prime_pow._prec_type
             'fixed-mod'
         """
@@ -152,7 +152,7 @@ cdef class pAdicFixedModElement(FMElement):
             sage: R = Zp(7,4,'fixed-mod'); a = R(8); a.lift()
             8
             sage: type(a.lift())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self.lift_c()
 

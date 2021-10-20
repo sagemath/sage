@@ -422,7 +422,7 @@ cdef class ring_wrapper_Py(object):
 
         sage: from sage.libs.singular.ring import ring_wrapper_Py
         sage: ring_wrapper_Py
-        <type 'sage.libs.singular.ring.ring_wrapper_Py'>
+        <class 'sage.libs.singular.ring.ring_wrapper_Py'>
     """
 
     cdef ring* _ring

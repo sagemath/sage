@@ -472,39 +472,6 @@ class Polyhedron_base(Element, ConvexSet_closed):
         M.set_immutable()
         return M
 
-    def _vertex_adjacency_matrix(self):
-        """
-        Compute the vertex adjacency matrix in case it has not been
-        computed during initialization.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)])
-            sage: p._vertex_adjacency_matrix()
-            [0 1 1]
-            [1 0 1]
-            [1 1 0]
-        """
-        # TODO: This implementation computes the whole face lattice,
-        # which is much more information than necessary.
-        M = matrix(ZZ, self.n_Vrepresentation(), self.n_Vrepresentation(), 0)
-
-        def set_adjacent(v1, v2):
-            if v1 is v2:
-                return
-            i = v1.index()
-            j = v2.index()
-            M[i, j] = 1
-            M[j, i] = 1
-
-        face_lattice = self.face_lattice()
-        for face in face_lattice:
-            Vrep = face.ambient_Vrepresentation()
-            if len(Vrep) == 2:
-                set_adjacent(Vrep[0], Vrep[1])
-        M.set_immutable()
-        return M
-
     def _delete(self):
         """
         Delete this polyhedron.
@@ -644,13 +611,13 @@ class Polyhedron_base(Element, ConvexSet_closed):
             ...
             TypeError: cannot change the base ring to the Integer Ring
 
-            sage: P = polytopes.regular_polygon(3); P
+            sage: P = polytopes.regular_polygon(3); P                           # optional - sage.rings.number_field
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 3 vertices
-            sage: P.vertices()
+            sage: P.vertices()                                                  # optional - sage.rings.number_field
             (A vertex at (0.?e-16, 1.000000000000000?),
              A vertex at (0.866025403784439?, -0.500000000000000?),
              A vertex at (-0.866025403784439?, -0.500000000000000?))
-            sage: P.change_ring(QQ)
+            sage: P.change_ring(QQ)                                             # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: cannot change the base ring to the Rational Field
@@ -663,11 +630,11 @@ class Polyhedron_base(Element, ConvexSet_closed):
             base ring from an exact ring into ``RDF`` may cause a
             loss of data::
 
-                sage: P = Polyhedron([[2/3,0],[6666666666666667/10^16,0]], base_ring=AA); P
+                sage: P = Polyhedron([[2/3,0],[6666666666666667/10^16,0]], base_ring=AA); P   # optional - sage.rings.number_field
                 A 1-dimensional polyhedron in AA^2 defined as the convex hull of 2 vertices
-                sage: Q = P.change_ring(RDF); Q
+                sage: Q = P.change_ring(RDF); Q                                 # optional - sage.rings.number_field
                 A 0-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex
-                sage: P.n_vertices() == Q.n_vertices()
+                sage: P.n_vertices() == Q.n_vertices()                          # optional - sage.rings.number_field
                 False
         """
         from sage.categories.rings import Rings
@@ -2787,7 +2754,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
                 sage: P.adjacency_matrix().is_immutable()
                 True
         """
-        return self._vertex_adjacency_matrix()
+        return self.combinatorial_polyhedron().vertex_adjacency_matrix()
 
     adjacency_matrix = vertex_adjacency_matrix
 
@@ -3637,8 +3604,8 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         EXAMPLES::
 
-            sage: p = polytopes.icosahedron()
-            sage: p.is_compact()
+            sage: p = polytopes.icosahedron()                                   # optional - sage.rings.number_field
+            sage: p.is_compact()                                                # optional - sage.rings.number_field
             True
             sage: p = Polyhedron(ieqs = [[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
             sage: p.is_compact()
@@ -3833,8 +3800,8 @@ class Polyhedron_base(Element, ConvexSet_closed):
             True
             sage: P.is_pyramid(certificate=True)
             (True, A vertex at (1, 0, 0, 0))
-            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()
-            sage: egyptian_pyramid.is_pyramid()
+            sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()     # optional - sage.rings.number_field
+            sage: egyptian_pyramid.is_pyramid()                                 # optional - sage.rings.number_field
             True
             sage: Q = polytopes.octahedron()
             sage: Q.is_pyramid()
@@ -4222,7 +4189,12 @@ class Polyhedron_base(Element, ConvexSet_closed):
             g = self.gale_transform()
             P = gale_transform_to_polytope(g, base_ring=self.base_ring(), backend=self.backend())
 
-            tester.assertTrue(self.is_combinatorially_isomorphic(P))
+            try:
+                import sage.graphs.graph
+            except ImportError:
+                pass
+            else:
+                tester.assertTrue(self.is_combinatorially_isomorphic(P))
 
     @cached_method
     def normal_fan(self, direction='inner'):
@@ -5333,28 +5305,28 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: b3_proj = proj_mat * b3; b3_proj
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
 
-            sage: square = polytopes.regular_polygon(4)
-            sage: square.vertices_list()
+            sage: square = polytopes.regular_polygon(4)                         # optional - sage.rings.number_field
+            sage: square.vertices_list()                                        # optional - sage.rings.number_field
             [[0, -1], [1, 0], [-1, 0], [0, 1]]
-            sage: transf = matrix([[1,1],[0,1]])
-            sage: sheared = transf * square
-            sage: sheared.vertices_list()
+            sage: transf = matrix([[1,1],[0,1]])                                # optional - sage.rings.number_field
+            sage: sheared = transf * square                                     # optional - sage.rings.number_field
+            sage: sheared.vertices_list()                                       # optional - sage.rings.number_field
             [[-1, -1], [1, 0], [-1, 0], [1, 1]]
-            sage: sheared == square.linear_transformation(transf)
+            sage: sheared == square.linear_transformation(transf)               # optional - sage.rings.number_field
             True
 
         Specifying the new base ring may avoid coercion failure::
 
-            sage: K.<sqrt2> = QuadraticField(2)
-            sage: L.<sqrt3> = QuadraticField(3)
-            sage: P = polytopes.cube()*sqrt2
-            sage: M = matrix([[sqrt3, 0, 0], [0, sqrt3, 0], [0, 0, 1]])
-            sage: P.linear_transformation(M, new_base_ring=K.composite_fields(L)[0])
+            sage: K.<sqrt2> = QuadraticField(2)                                 # optional - sage.rings.number_field
+            sage: L.<sqrt3> = QuadraticField(3)                                 # optional - sage.rings.number_field
+            sage: P = polytopes.cube()*sqrt2                                    # optional - sage.rings.number_field
+            sage: M = matrix([[sqrt3, 0, 0], [0, sqrt3, 0], [0, 0, 1]])         # optional - sage.rings.number_field
+            sage: P.linear_transformation(M, new_base_ring=K.composite_fields(L)[0])   # optional - sage.rings.number_field
             A 3-dimensional polyhedron in (Number Field in sqrt2sqrt3 with defining polynomial x^4 - 10*x^2 + 1 with sqrt2sqrt3 = 0.3178372451957823?)^3 defined as the convex hull of 8 vertices
 
         Linear transformation without specified new base ring fails in this case::
 
-            sage: M*P
+            sage: M*P                                                           # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *: 'Full MatrixSpace of 3 by 3 dense matrices over Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?' and 'Full MatrixSpace of 3 by 8 dense matrices over Number Field in sqrt2 with defining polynomial x^2 - 2 with sqrt2 = 1.414213562373095?'
@@ -5374,7 +5346,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             A 3-dimensional polyhedron in RDF^4 defined as the convex hull of 5 vertices
             sage: (1/1 * proj_mat) * b3
             A 3-dimensional polyhedron in QQ^4 defined as the convex hull of 5 vertices
-            sage: (AA(2).sqrt() * proj_mat) * b3
+            sage: (AA(2).sqrt() * proj_mat) * b3                                # optional - sage.rings.number_field
             A 3-dimensional polyhedron in AA^4 defined as the convex hull of 5 vertices
 
         Check that zero-matrices act correctly::
@@ -5965,15 +5937,15 @@ class Polyhedron_base(Element, ConvexSet_closed):
             (1, 9, 16, 9, 1)
             sage: stacked_square_large = cube.stack(square_face,position=10)
 
-            sage: hexaprism = polytopes.regular_polygon(6).prism()
-            sage: hexaprism.f_vector()
+            sage: hexaprism = polytopes.regular_polygon(6).prism()              # optional - sage.rings.number_field
+            sage: hexaprism.f_vector()                                          # optional - sage.rings.number_field
             (1, 12, 18, 8, 1)
-            sage: square_face = hexaprism.faces(2)[2]
-            sage: stacked_hexaprism = hexaprism.stack(square_face)
-            sage: stacked_hexaprism.f_vector()
+            sage: square_face = hexaprism.faces(2)[2]                           # optional - sage.rings.number_field
+            sage: stacked_hexaprism = hexaprism.stack(square_face)              # optional - sage.rings.number_field
+            sage: stacked_hexaprism.f_vector()                                  # optional - sage.rings.number_field
             (1, 13, 22, 11, 1)
 
-            sage: hexaprism.stack(square_face,position=4)
+            sage: hexaprism.stack(square_face,position=4)                       # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             ValueError: the chosen position is too large
@@ -6320,7 +6292,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         Check that :trac:`28725` is fixed::
 
-            sage: polytopes.regular_polygon(3)._test_lawrence()
+            sage: polytopes.regular_polygon(3)._test_lawrence()                 # optional - sage.rings.number_field
 
         Check that :trac:`30293` is fixed::
 
@@ -6371,12 +6343,17 @@ class Polyhedron_base(Element, ConvexSet_closed):
                 with warnings.catch_warnings():
                     warnings.simplefilter("error")
                     try:
+                        from sage.rings.real_double_field import RDF
+                        two = RDF(2.0)
                         # Implicitly checks :trac:`30328`.
-                        R = self.lawrence_extension(2.0*v - self.center())
+                        R = self.lawrence_extension(two * v - self.center())
                         tester.assertEqual(self.dim() + 1, R.dim())
                         tester.assertEqual(self.n_vertices() + 2, R.n_vertices())
 
                         tester.assertTrue(Q.is_combinatorially_isomorphic(R))
+                    except ImportError:
+                        # RDF not available
+                        pass
                     except UserWarning:
                         # Data is numerically complicated.
                         pass
@@ -6447,8 +6424,8 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: P.barycentric_subdivision()
             A 2-dimensional polyhedron in QQ^3 defined as the convex hull
             of 6 vertices
-            sage: P = polytopes.regular_polygon(4, base_ring=QQ)
-            sage: P.barycentric_subdivision()
+            sage: P = polytopes.regular_polygon(4, base_ring=QQ)                # optional - sage.rings.number_field
+            sage: P.barycentric_subdivision()                                   # optional - sage.rings.number_field
             A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 8
             vertices
 
@@ -6664,31 +6641,31 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         EXAMPLES::
 
-            sage: P = polytopes.regular_polygon(4).pyramid()
-            sage: D = P.hasse_diagram(); D
+            sage: P = polytopes.regular_polygon(4).pyramid()                    # optional - sage.rings.number_field
+            sage: D = P.hasse_diagram(); D                                      # optional - sage.rings.number_field
             Digraph on 20 vertices
-            sage: D.degree_polynomial()
+            sage: D.degree_polynomial()                                         # optional - sage.rings.number_field
             x^5 + x^4*y + x*y^4 + y^5 + 4*x^3*y + 8*x^2*y^2 + 4*x*y^3
 
         Faces of an mutable polyhedron are not hashable. Hence those are not suitable as
         vertices of the hasse diagram. Use the combinatorial polyhedron instead::
 
-            sage: P = polytopes.regular_polygon(4).pyramid()
-            sage: parent = P.parent()
-            sage: parent = parent.change_ring(QQ, backend='ppl')
-            sage: Q = parent._element_constructor_(P, mutable=True)
-            sage: Q.hasse_diagram()
+            sage: P = polytopes.regular_polygon(4).pyramid()                    # optional - sage.rings.number_field
+            sage: parent = P.parent()                                           # optional - sage.rings.number_field
+            sage: parent = parent.change_ring(QQ, backend='ppl')                # optional - sage.rings.number_field
+            sage: Q = parent._element_constructor_(P, mutable=True)             # optional - sage.rings.number_field
+            sage: Q.hasse_diagram()                                             # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: mutable polyhedra are unhashable
-            sage: C = Q.combinatorial_polyhedron()
-            sage: D = C.hasse_diagram()
-            sage: set(D.vertices()) == set(range(20))
+            sage: C = Q.combinatorial_polyhedron()                              # optional - sage.rings.number_field
+            sage: D = C.hasse_diagram()                                         # optional - sage.rings.number_field
+            sage: set(D.vertices()) == set(range(20))                           # optional - sage.rings.number_field
             True
             sage: def index_to_combinatorial_face(n):
             ....:     return C.face_by_face_lattice_index(n)
-            sage: D.relabel(index_to_combinatorial_face, inplace=True)
-            sage: D.vertices()
+            sage: D.relabel(index_to_combinatorial_face, inplace=True)          # optional - sage.rings.number_field
+            sage: D.vertices()                                                  # optional - sage.rings.number_field
             [A -1-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 0-dimensional face of a 3-dimensional combinatorial polyhedron,
@@ -6709,7 +6686,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
              A 2-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 2-dimensional face of a 3-dimensional combinatorial polyhedron,
              A 3-dimensional face of a 3-dimensional combinatorial polyhedron]
-            sage: D.degree_polynomial()
+            sage: D.degree_polynomial()                                         # optional - sage.rings.number_field
             x^5 + x^4*y + x*y^4 + y^5 + 4*x^3*y + 8*x^2*y^2 + 4*x*y^3
         """
 
@@ -7375,8 +7352,13 @@ class Polyhedron_base(Element, ConvexSet_closed):
             D2 = f2.as_combinatorial_polyhedron(quotient=True).dual()
             D1._test_bitsets(tester, **options)
             D2._test_bitsets(tester, **options)
-            tester.assertTrue(P.combinatorial_polyhedron().vertex_facet_graph().is_isomorphic(D1.vertex_facet_graph()))
-            tester.assertTrue(P.combinatorial_polyhedron().vertex_facet_graph().is_isomorphic(D2.vertex_facet_graph()))
+            try:
+                import sage.graphs.graph
+            except ImportError:
+                pass
+            else:
+                tester.assertTrue(P.combinatorial_polyhedron().vertex_facet_graph().is_isomorphic(D1.vertex_facet_graph()))
+                tester.assertTrue(P.combinatorial_polyhedron().vertex_facet_graph().is_isomorphic(D2.vertex_facet_graph()))
 
     @cached_method(do_pickle=True)
     def f_vector(self, num_threads=None, parallelization_depth=None):
@@ -7916,7 +7898,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         TESTS:
 
-            sage: polytopes.regular_polygon(4)._test_pyramid()
+            sage: polytopes.regular_polygon(4)._test_pyramid()                  # optional - sage.rings.number_field
         """
         if tester is None:
             tester = self._tester(**options)
@@ -7956,7 +7938,12 @@ class Polyhedron_base(Element, ConvexSet_closed):
             tester.assertTrue(b)
             check_pyramid_certificate(polar_pyr, cert)
 
-            tester.assertTrue(pyr_polar.is_combinatorially_isomorphic(pyr_polar))
+            try:
+                import sage.graphs.graph
+            except ImportError:
+                pass
+            else:
+                tester.assertTrue(pyr_polar.is_combinatorially_isomorphic(pyr_polar))
 
             # Basic properties of the pyramid.
 
@@ -8180,10 +8167,10 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: ops_cube.f_vector()
             (1, 9, 24, 24, 9, 1)
 
-            sage: pentagon  = polytopes.regular_polygon(5)
-            sage: v = pentagon.vertices()[0]
-            sage: ops_pentagon = pentagon.one_point_suspension(v)
-            sage: ops_pentagon.f_vector()
+            sage: pentagon  = polytopes.regular_polygon(5)                      # optional - sage.rings.number_field
+            sage: v = pentagon.vertices()[0]                                    # optional - sage.rings.number_field
+            sage: ops_pentagon = pentagon.one_point_suspension(v)               # optional - sage.rings.number_field
+            sage: ops_pentagon.f_vector()                                       # optional - sage.rings.number_field
             (1, 6, 12, 8, 1)
 
         It works with a polyhedral face as well::
@@ -8230,10 +8217,10 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         EXAMPLES::
 
-            sage: pentagon  = polytopes.regular_polygon(5)
-            sage: f = pentagon.faces(1)[0]
-            sage: fsplit_pentagon = pentagon.face_split(f)
-            sage: fsplit_pentagon.f_vector()
+            sage: pentagon  = polytopes.regular_polygon(5)                      # optional - sage.rings.number_field
+            sage: f = pentagon.faces(1)[0]                                      # optional - sage.rings.number_field
+            sage: fsplit_pentagon = pentagon.face_split(f)                      # optional - sage.rings.number_field
+            sage: fsplit_pentagon.f_vector()                                    # optional - sage.rings.number_field
             (1, 7, 14, 9, 1)
 
         TESTS:
@@ -8308,7 +8295,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: p = polytopes.hypercube(3)
             sage: p_solid = p.render_solid(opacity = .7)
             sage: type(p_solid)
-            <type 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
+            <class 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
         """
         proj = self.projection()
         if self.ambient_dim() == 3:
@@ -8612,13 +8599,13 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         If the base ring is exact, the answer is exact::
 
-            sage: P5 = polytopes.regular_polygon(5)
-            sage: P5.volume()
+            sage: P5 = polytopes.regular_polygon(5)                             # optional - sage.rings.number_field
+            sage: P5.volume()                                                   # optional - sage.rings.number_field
             2.377641290737884?
 
-            sage: polytopes.icosahedron().volume()
+            sage: polytopes.icosahedron().volume()                              # optional - sage.rings.number_field
             5/12*sqrt5 + 5/4
-            sage: numerical_approx(_) # abs tol 1e9
+            sage: numerical_approx(_) # abs tol 1e9                             # optional - sage.rings.number_field
             2.18169499062491
 
         When considering lower-dimensional polytopes, we can ask for the
@@ -8636,20 +8623,20 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: P.volume(measure='induced_rational') # optional -- latte_int
             1
 
-            sage: S = polytopes.regular_polygon(6); S
+            sage: S = polytopes.regular_polygon(6); S                           # optional - sage.rings.number_field
             A 2-dimensional polyhedron in AA^2 defined as the convex hull of 6 vertices
-            sage: edge = S.faces(1)[4].as_polyhedron()
-            sage: edge.vertices()
+            sage: edge = S.faces(1)[4].as_polyhedron()                          # optional - sage.rings.number_field
+            sage: edge.vertices()                                               # optional - sage.rings.number_field
             (A vertex at (0.866025403784439?, 1/2), A vertex at (0, 1))
-            sage: edge.volume()
+            sage: edge.volume()                                                 # optional - sage.rings.number_field
             0
-            sage: edge.volume(measure='induced')
+            sage: edge.volume(measure='induced')                                # optional - sage.rings.number_field
             1
 
             sage: P = Polyhedron(backend='normaliz',vertices=[[1,0,0],[0,0,1],[-1,1,1],[-1,2,0]]) # optional - pynormaliz
             sage: P.volume()  # optional - pynormaliz
             0
-            sage: P.volume(measure='induced')  # optional - pynormaliz
+            sage: P.volume(measure='induced')  # optional - pynormaliz          # optional - sage.rings.number_field
             2.598076211353316?
             sage: P.volume(measure='induced',engine='normaliz')  # optional - pynormaliz
             2.598076211353316
@@ -8666,12 +8653,12 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: P.volume(measure='induced_lattice',engine='latte')  # optional - latte_int
             3
 
-            sage: Dexact = polytopes.dodecahedron()
-            sage: v = Dexact.faces(2)[0].as_polyhedron().volume(measure='induced', engine='internal'); v
+            sage: Dexact = polytopes.dodecahedron()                             # optional - sage.rings.number_field
+            sage: v = Dexact.faces(2)[0].as_polyhedron().volume(measure='induced', engine='internal'); v   # optional - sage.rings.number_field
             1.53406271079097?
-            sage: v = Dexact.faces(2)[4].as_polyhedron().volume(measure='induced', engine='internal'); v
+            sage: v = Dexact.faces(2)[4].as_polyhedron().volume(measure='induced', engine='internal'); v   # optional - sage.rings.number_field
             1.53406271079097?
-            sage: RDF(v)    # abs tol 1e-9
+            sage: RDF(v)    # abs tol 1e-9                                      # optional - sage.rings.number_field
             1.53406271079044
 
             sage: Dinexact = polytopes.dodecahedron(exact=False)
@@ -8682,13 +8669,13 @@ class Polyhedron_base(Element, ConvexSet_closed):
             True
 
             sage: I = Polyhedron([[-3, 0], [0, 9]])
-            sage: I.volume(measure='induced')
+            sage: I.volume(measure='induced')                                   # optional - sage.rings.number_field
             9.48683298050514?
             sage: I.volume(measure='induced_rational') # optional -- latte_int
             3
 
             sage: T = Polyhedron([[3, 0, 0], [0, 4, 0], [0, 0, 5]])
-            sage: T.volume(measure='induced')
+            sage: T.volume(measure='induced')                                   # optional - sage.rings.number_field
             13.86542462386205?
             sage: T.volume(measure='induced_rational') # optional -- latte_int
             1/2
@@ -8930,8 +8917,8 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         Testing a polytope with non-rational vertices::
 
-            sage: P = polytopes.icosahedron()
-            sage: P.integrate(x^2*y^2*z^2)    # optional - latte_int
+            sage: P = polytopes.icosahedron()                                   # optional - sage.rings.number_field
+            sage: P.integrate(x^2*y^2*z^2)    # optional - latte_int            # optional - sage.rings.number_field
             Traceback (most recent call last):
             ...
             TypeError: the base ring must be ZZ, QQ, or RDF
@@ -9507,7 +9494,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
             sage: polytopes.cross_polytope(3).is_lattice_polytope()
             True
-            sage: polytopes.regular_polygon(5).is_lattice_polytope()
+            sage: polytopes.regular_polygon(5).is_lattice_polytope()            # optional - sage.rings.number_field
             False
         """
         if not self.is_compact():
@@ -10625,10 +10612,12 @@ class Polyhedron_base(Element, ConvexSet_closed):
         All the faces of the 3-dimensional permutahedron are either
         combinatorially isomorphic to a square or a hexagon::
 
-            sage: H = polytopes.regular_polygon(6)
+            sage: H = polytopes.regular_polygon(6)                              # optional - sage.rings.number_field
             sage: S = polytopes.hypercube(2)
             sage: P = polytopes.permutahedron(4)
-            sage: all(F.as_polyhedron().is_combinatorially_isomorphic(S) or F.as_polyhedron().is_combinatorially_isomorphic(H) for F in P.faces(2))
+            sage: all(F.as_polyhedron().is_combinatorially_isomorphic(S)        # optional - sage.rings.number_field
+            ....:       or F.as_polyhedron().is_combinatorially_isomorphic(H)
+            ....:     for F in P.faces(2))
             True
 
         Checking that a regular simplex intersected with its reflection
@@ -10645,7 +10634,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
             ....:    return C.intersection(H)
             sage: [simplex_intersection(k).is_combinatorially_isomorphic(cube_intersection(k)) for k in range(2,5)]
             [True, True, True]
-            sage: simplex_intersection(2).is_combinatorially_isomorphic(polytopes.regular_polygon(6))
+            sage: simplex_intersection(2).is_combinatorially_isomorphic(polytopes.regular_polygon(6))   # optional - sage.rings.number_field
             True
             sage: simplex_intersection(3).is_combinatorially_isomorphic(polytopes.octahedron())
             True
@@ -10736,6 +10725,11 @@ class Polyhedron_base(Element, ConvexSet_closed):
 
         if self.n_vertices() > 200 or self.n_facets() > 200:
             # Avoid very long doctests.
+            return
+
+        try:
+            import sage.graphs.graph
+        except ImportError:
             return
 
         tester.assertTrue(self.is_combinatorially_isomorphic(ZZ(4)*self))

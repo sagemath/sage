@@ -3795,8 +3795,6 @@ class NonCommutativeSymmetricFunctions(UniqueRepresentation, Parent):
                 True
                 sage: psi_int_test(4)   # long time
                 True
-                sage: psi_int_test(5)   # long time
-                True
             """
             # The algorithm used here is described in
             # :meth:`generic_basis_code.GradedModulesWithInternalProduct.ElementMethods.internal_product`.

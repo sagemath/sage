@@ -83,9 +83,17 @@ def RIFtol(*args):
     """
     global _RIFtol
     if _RIFtol is None:
-        # We need to import from sage.all to avoid circular imports.
-        from sage.all import RealIntervalField
-        _RIFtol = RealIntervalField(1044)
+        try:
+            # We need to import from sage.all to avoid circular imports.
+            from sage.all import RealIntervalField
+        except ImportError:
+            from warnings import warn
+            warn("RealIntervalField not available, ignoring all tolerance specifications in doctests")
+            def fake_RIFtol(*args):
+                return 0
+            _RIFtol = fake_RIFtol
+        else:
+            _RIFtol = RealIntervalField(1044)
     return _RIFtol(*args)
 
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:

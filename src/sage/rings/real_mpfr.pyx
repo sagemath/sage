@@ -5366,7 +5366,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         ::
 
             sage: type(z)
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
             sage: R(z)
             1.64493406684823
         """
@@ -5753,9 +5753,9 @@ cdef class RealLiteral(RealNumber):
         The result is a non-literal::
 
             sage: type(1.3)
-            <type 'sage.rings.real_mpfr.RealLiteral'>
+            <class 'sage.rings.real_mpfr.RealLiteral'>
             sage: type(n(1.3))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
         """
         if prec is None:
             prec = digits_to_bits(digits)

@@ -2216,7 +2216,7 @@ def termorder_from_singular(S):
         sage: PolynomialRing(QQ, 'x,y', order='degneglex')('x^2')._singular_().sage()
         x^2
     """
-    from sage.all import ZZ
+    from sage.rings.integer_ring import ZZ
     singular = S
     T = singular('ringlist(basering)[3]')
     order = []

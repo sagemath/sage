@@ -524,12 +524,12 @@ Luckily, it's possible to restore symbolic constants.
 ::
 
     sage: type(e)
-    <type 'sage.symbolic.expression.E'>
+    <class 'sage.symbolic.expression.E'>
 
 ::
 
     sage: type(pi)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Variables are another thing to keep in mind.  As mentioned briefly in
 earlier tutorials, in order to maintain maximum flexibility while not
@@ -539,7 +539,7 @@ nothing else.
 ::
 
     sage: type(x)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 ::
 

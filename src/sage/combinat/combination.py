@@ -159,16 +159,22 @@ def Combinations(mset, k=None):
         [[], [(0, 0)], [(0, 1)], [(0, 0), (0, 1)]]
     """
     # Check to see if everything in mset is unique
+    is_unique = False
     if isinstance(mset, (int, Integer)):
         mset = list(range(mset))
+        is_unique = True
+    elif isinstance(mset, range):
+        mset = list(mset)
+        is_unique = True
     else:
         mset = list(mset)
+        for i, e in enumerate(mset):
+            if mset.index(e) != i:
+                break
+        else:
+            is_unique = True
 
-    d = {}
-    for i in mset:
-        d[mset.index(i)] = 1
-
-    if len(d) == len(mset):
+    if is_unique:
         if k is None:
             return Combinations_set(mset)
         else:
@@ -315,6 +321,17 @@ class Combinations_set(Combinations_mset):
             r += binomial(n, i)
         r += rank(x, n)
         return r
+
+    def cardinality(self):
+        """
+        Return the size of Combinations(set).
+
+        EXAMPLES::
+
+            sage: Combinations(range(16000)).cardinality() == 2^16000
+            True
+        """
+        return 2**len(self.mset)
 
 
 class Combinations_msetk(Parent):
@@ -510,6 +527,17 @@ class Combinations_setk(Combinations_msetk):
         """
         x = [self.mset.index(_) for _ in x]
         return rank(x, len(self.mset))
+
+    def cardinality(self):
+        """
+        Return the size of combinations(set, k).
+
+        EXAMPLES::
+
+            sage: Combinations(range(16000), 5).cardinality()
+            8732673194560003200
+        """
+        return binomial(len(self.mset), self.k)
 
 
 def rank(comb, n, check=True):

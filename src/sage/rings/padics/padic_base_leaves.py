@@ -92,11 +92,11 @@ when cast into the ring.::
     sage: (a * b) // 5^3
     1 + 2*5 + O(5^2)
     sage: type((a * b) // 5^3)
-    <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
+    <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
     sage: (a * b) / 5^3
     1 + 2*5 + O(5^2)
     sage: type((a * b) / 5^3)
-    <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+    <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
 
 The fixed modulus type is the leanest of the p-adic rings: it is
 basically just a wrapper around `\ZZ / p^n \ZZ`

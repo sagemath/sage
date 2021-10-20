@@ -220,10 +220,10 @@ Using Sage's database of equivalent distribution packages
 At the end of the ``./configure`` run, Sage issued a message like the
 following::
 
-  configure: notice: the following SPKGs did not find equivalent system packages: arb boost boost_cropped bzip2 ... yasm zeromq zlib
+  configure: notice: the following SPKGs did not find equivalent system packages: arb boost_cropped bzip2 ... zeromq zlib
   checking for the package system in use... debian
   configure: hint: installing the following system packages is recommended and may avoid building some of the above SPKGs from source:
-  configure:   $ sudo apt-get install libflint-arb-dev ... yasm libzmq3-dev libz-dev
+  configure:   $ sudo apt-get install libflint-arb-dev ... libzmq3-dev libz-dev
   configure: After installation, re-run configure using:
   configure:   $ ./config.status --recheck && ./config.status
 
@@ -248,7 +248,7 @@ system, in particular a list of installed packages and their versions.
 
 Let us install a subset of these packages::
 
-  root@39d693b2a75d:/sage# apt-get install libbz2-dev bzip2 yasm libz-dev
+  root@39d693b2a75d:/sage# apt-get install libbz2-dev bzip2 libz-dev
   Reading package lists... Done
   ...
   Setting up zlib1g-dev:amd64 (1:1.2.11.dfsg-0ubuntu2) ...
@@ -285,8 +285,8 @@ have no access to the worktree::
   root@73987568712c:/# cd sage
   root@73987568712c:/sage# command -v gcc
   /usr/bin/gcc
-  root@73987568712c:/sage# command -v yasm
-  /usr/bin/yasm
+  root@73987568712c:/sage# command -v bunzip2
+  /usr/bin/bunzip2
   root@73987568712c:/sage# ^D
   [mkoeppe@sage worktree-ubuntu-latest]$
 
@@ -337,7 +337,7 @@ image...::
 Then, to install system packages...::
 
   ...
-  RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -qqq --no-install-recommends --yes binutils make m4 perl python3 ... yasm libzmq3-dev libz-dev && apt-get clean
+  RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -qqq --no-install-recommends --yes binutils make m4 perl python3 ... libzmq3-dev libz-dev && apt-get clean
 
 Then, to bootstrap and configure...::
 
@@ -852,10 +852,10 @@ an isolated copy of Homebrew with all prerequisites for bootstrapping::
   checking for a BSD-compatible install... /usr/bin/install -c
   checking whether build environment is sane... yes
   ...
-  configure: notice: the following SPKGs did not find equivalent system packages: arb cbc cliquer ... tachyon xz yasm zeromq
+  configure: notice: the following SPKGs did not find equivalent system packages: arb cbc cliquer ... tachyon xz zeromq
   checking for the package system in use... homebrew
   configure: hint: installing the following system packages is recommended and may avoid building some of the above SPKGs from source:
-  configure:   $ brew install cmake gcc gsl mpfi ninja openblas gpatch r readline xz yasm zeromq
+  configure:   $ brew install cmake gcc gsl mpfi ninja openblas gpatch r readline xz zeromq
   ...
   sage-logger -p 'sage-spkg -y -o  lrslib-062+autotools-2017-03-03.p1' '.../worktree-local/logs/pkgs/lrslib-062+autotools-2017-03-03.p1.log'
   [lrslib-062+autotools-2017-03-03.p1] installing. Log file: .../worktree-local/logs/pkgs/lrslib-062+autotools-2017-03-03.p1.log

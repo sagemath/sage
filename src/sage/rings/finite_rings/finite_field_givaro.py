@@ -152,7 +152,7 @@ class FiniteField_givaro(FiniteField):
             sage: p = GF(19^5,'a').characteristic(); p
             19
             sage: type(p)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return Integer(self._cache.characteristic())
 
@@ -169,7 +169,7 @@ class FiniteField_givaro(FiniteField):
             sage: n = GF(19^5,'a').order(); n
             2476099
             sage: type(n)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self._cache.order()
 
@@ -218,7 +218,7 @@ class FiniteField_givaro(FiniteField):
             sage: e.parent() is k
             True
             sage: type(e)
-            <type 'sage.rings.finite_rings.element_givaro.FiniteField_givaroElement'>
+            <class 'sage.rings.finite_rings.element_givaro.FiniteField_givaroElement'>
 
             sage: P.<x> = PowerSeriesRing(GF(3^3, 'a'))
             sage: P.random_element(5).parent() is P

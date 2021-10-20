@@ -1347,7 +1347,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
            The 'extend' option is not implemented (yet).
 
-        NOTES:
+        NOTE:
 
         - If `n = 0`:
 

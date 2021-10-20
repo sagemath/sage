@@ -507,10 +507,10 @@ class FGP_Homset_class(Homset):
         if category is None:
             from sage.modules.free_module import is_FreeModule
             if is_FreeModule(X) and is_FreeModule(Y):
-                from sage.all import FreeModules
+                from sage.categories.all import FreeModules
                 category = FreeModules(X.base_ring())
             else:
-                from sage.all import Modules
+                from sage.categories.all import Modules
                 category = Modules(X.base_ring())
         Homset.__init__(self, X, Y, category)
 

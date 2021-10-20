@@ -231,7 +231,7 @@ class PolyhedronRepresentation(SageObject):
             sage: v()
             (-1, -1, 0)
             sage: type(v())
-            <type 'sage.modules.vector_integer_dense.Vector_integer_dense'>
+            <class 'sage.modules.vector_integer_dense.Vector_integer_dense'>
 
        Conversion to a different base ring can be forced with the optional argument::
 

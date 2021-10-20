@@ -26,7 +26,7 @@ other types will also coerce to the integers, when it makes sense.
     sage: b = Z(5678); b
     5678
     sage: type(a)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
     sage: a + b
     6912
     sage: Z('94803849083985934859834583945394')
@@ -183,7 +183,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         sage: b = Z(5678); b
         5678
         sage: type(a)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: a + b
         6912
         sage: b + a
@@ -206,18 +206,18 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         sage: a / b
         617/2839
         sage: type(a/b)
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
         sage: a/a
         1
         sage: type(a/a)
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
 
     For floor division, use the ``//`` operator instead::
 
         sage: a // b
         0
         sage: type(a//b)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Next we illustrate arithmetic with automatic coercion. The types
     that coerce are: str, int, long, Integer.
@@ -1046,7 +1046,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             (1,)
             1
             sage: type(ZZ.gens()[0])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return (self(1), )
 
@@ -1066,7 +1066,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: ZZ.gen()
             1
             sage: type(ZZ.gen())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if n == 0:
             return self(1)

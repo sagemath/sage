@@ -345,7 +345,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         [1 2 3]
         [4 0 1]
         sage: type(M)
-        <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+        <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
 
     The documentation of the ``__init__`` methods shows further
     ways of creating a :class:`Matrix_gfpn_dense` instance.
@@ -565,7 +565,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             sage: F.<z> = GF(9)
             sage: M = MatrixSpace(F,3)(sorted(list(F)))
             sage: type(M)
-            <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+            <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
             sage: M                     # indirect doctest
             [      0       1       2]
             [      z   z + 1   z + 2]
@@ -709,7 +709,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      2*z^2 + z             2*z 2*z^2 + 2*z + 1       2*z^2 + 1 2*z^2 + 2*z + 1       2*z^2 + z]
             [        2*z + 1         z^2 + z             z^2             z^2     2*z^2 + 2*z           z + 1]
             sage: type(M)
-            <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+            <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
             sage: MS.random_element(nonzero=True)
             [            2*z               1   z^2 + 2*z + 1   2*z^2 + z + 1             z^2     z^2 + z + 1]
             [    2*z^2 + 2*z   2*z^2 + z + 2         2*z + 1       z^2 + 2*z     2*z^2 + 2*z             z^2]
@@ -1732,11 +1732,11 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
         implementation of dense matrices::
 
             sage: type(M)
-            <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+            <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
             sage: MS = MatrixSpace(M.base_ring(), M.nrows(), M.ncols(), implementation='generic')
             sage: X = MS(M)
             sage: type(X)
-            <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+            <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: X.echelon_form()
             [      0       1       0       0       0       0       0       0       0 4*x + 4]
             [      0       0       1       0       0       0       0       0       0 4*x + 2]
@@ -1876,7 +1876,7 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
         [ 6  7  8  9 10]
         [12 11 10  9  8]
         sage: type(N)
-        <type 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
+        <class 'sage.matrix.matrix_gfpn_dense.Matrix_gfpn_dense'>
 
     We demonstrate that a slightly different pickle format can be understood
     as well, that was at some point used by some optional package::

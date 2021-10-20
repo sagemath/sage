@@ -21,10 +21,3 @@ Upstream Contact
 -  flint-devel Gougle Group
    (http://groups.google.co.uk/group/flint-devel)
 -  William Hart
-
-Dependencies
-------------
-
--  MPIR
--  MPFR
--  NTL

@@ -1503,7 +1503,7 @@ class ContinuousMap(Morphism):
             sage: Phi.expr()  # equivalent to above since 'uv' and 'xyz' are default charts
             (u*v, u/v, u + v)
             sage: type(Phi.expr()[0])
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         Expressions in other charts::
 
