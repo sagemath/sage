@@ -178,7 +178,8 @@ from sage.rings.all import QQ, RR, ZZ, RDF
 from sage.arith.misc import is_prime_power
 from sage.arith.all import binomial
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.all", "log", "sqrt")
+lazy_import("sage.functions.log", "log")
+from sage.misc.functional import sqrt
 from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
 

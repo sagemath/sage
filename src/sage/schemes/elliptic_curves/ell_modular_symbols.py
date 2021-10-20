@@ -608,7 +608,7 @@ class ModularSymbolSage(ModularSymbol):
             sage: m.__lalg__(3)
             5/2
         """
-        from sage.functions.all import sqrt
+        from sage.misc.functional import sqrt
         # the computation of the L-value could take a lot of time,
         # but then the conductor is so large
         # that the computation of modular symbols for E took even longer

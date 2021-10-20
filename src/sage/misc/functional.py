@@ -21,6 +21,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import builtins
+import math
 
 from sage.rings.complex_double import CDF
 from sage.rings.real_double import RDF, RealDoubleElement
@@ -1677,6 +1678,162 @@ def squarefree_part(x):
         if e % 2:
             n *= p
     return n * F.unit()
+
+
+def _do_sqrt(x, prec=None, extend=True, all=False):
+    r"""
+    Used internally to compute the square root of x.
+
+    INPUT:
+
+    -  ``x`` - a number
+
+    -  ``prec`` - None (default) or a positive integer
+       (bits of precision) If not None, then compute the square root
+       numerically to prec bits of precision.
+
+    -  ``extend`` - bool (default: True); this is a place
+       holder, and is always ignored since in the symbolic ring everything
+       has a square root.
+
+    -  ``extend`` - bool (default: True); whether to extend
+       the base ring to find roots. The extend parameter is ignored if
+       prec is a positive integer.
+
+    -  ``all`` - bool (default: False); whether to return
+       a list of all the square roots of x.
+
+
+    EXAMPLES::
+
+        sage: from sage.misc.functional import _do_sqrt
+        sage: _do_sqrt(3)
+        sqrt(3)
+        sage: _do_sqrt(3,prec=10)
+        1.7
+        sage: _do_sqrt(3,prec=100)
+        1.7320508075688772935274463415
+        sage: _do_sqrt(3,all=True)
+        [sqrt(3), -sqrt(3)]
+
+    Note that the extend parameter is ignored in the symbolic ring::
+
+        sage: _do_sqrt(3,extend=False)
+        sqrt(3)
+    """
+    if prec:
+        if x >= 0:
+            from sage.rings.real_mpfr import RealField
+            return RealField(prec)(x).sqrt(all=all)
+        else:
+            from sage.rings.complex_mpfr import ComplexField
+            return ComplexField(prec)(x).sqrt(all=all)
+    if x == -1:
+        from sage.symbolic.expression import I
+        z = I
+    else:
+        from sage.symbolic.ring import SR
+        z = SR(x).sqrt()
+
+    if all:
+        if z:
+            return [z, -z]
+        else:
+            return [z]
+    return z
+
+
+def sqrt(x, *args, **kwds):
+    r"""
+    INPUT:
+
+    -  ``x`` - a number
+
+    -  ``prec`` - integer (default: None): if None, returns
+       an exact square root; otherwise returns a numerical square root if
+       necessary, to the given bits of precision.
+
+    -  ``extend`` - bool (default: True); this is a place
+       holder, and is always ignored or passed to the sqrt function for x,
+       since in the symbolic ring everything has a square root.
+
+    -  ``all`` - bool (default: False); if True, return all
+       square roots of self, instead of just one.
+
+    EXAMPLES::
+
+        sage: sqrt(-1)
+        I
+        sage: sqrt(2)
+        sqrt(2)
+        sage: sqrt(2)^2
+        2
+        sage: sqrt(4)
+        2
+        sage: sqrt(4,all=True)
+        [2, -2]
+        sage: sqrt(x^2)
+        sqrt(x^2)
+
+    For a non-symbolic square root, there are a few options.
+    The best is to numerically approximate afterward::
+
+        sage: sqrt(2).n()
+        1.41421356237310
+        sage: sqrt(2).n(prec=100)
+        1.4142135623730950488016887242
+
+    Or one can input a numerical type.
+
+        sage: sqrt(2.)
+        1.41421356237310
+        sage: sqrt(2.000000000000000000000000)
+        1.41421356237309504880169
+        sage: sqrt(4.0)
+        2.00000000000000
+
+    To prevent automatic evaluation, one can use the ``hold`` parameter
+    after coercing to the symbolic ring::
+
+        sage: sqrt(SR(4),hold=True)
+        sqrt(4)
+        sage: sqrt(4,hold=True)
+        Traceback (most recent call last):
+        ...
+        TypeError: ..._do_sqrt() got an unexpected keyword argument 'hold'
+
+    This illustrates that the bug reported in :trac:`6171` has been fixed::
+
+        sage: a = 1.1
+        sage: a.sqrt(prec=100)  # this is supposed to fail
+        Traceback (most recent call last):
+        ...
+        TypeError: ...sqrt() got an unexpected keyword argument 'prec'
+        sage: sqrt(a, prec=100)
+        1.0488088481701515469914535137
+        sage: sqrt(4.00, prec=250)
+        2.0000000000000000000000000000000000000000000000000000000000000000000000000
+
+    One can use numpy input as well::
+
+        sage: import numpy
+        sage: a = numpy.arange(2,5)
+        sage: sqrt(a)
+        array([1.41421356, 1.73205081, 2.        ])
+    """
+    if isinstance(x, float):
+        return math.sqrt(x)
+    elif type(x).__module__ == 'numpy':
+        from numpy import sqrt
+        return sqrt(x)
+    try:
+        return x.sqrt(*args, **kwds)
+    # The following includes TypeError to catch cases where sqrt
+    # is called with a "prec" keyword, for example, but the sqrt
+    # method for x doesn't accept such a keyword.
+    except (AttributeError, TypeError):
+        pass
+    return _do_sqrt(x, *args, **kwds)
 
 
 def transpose(x):

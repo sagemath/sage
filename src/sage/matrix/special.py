@@ -3402,7 +3402,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
     a, b = v[j], v[i]
     if b == 0:
         return identity_matrix(dim, sparse=True)
-    from sage.functions.all import sqrt
+    from sage.misc.functional import sqrt
     norm = sqrt(a * a + b * b)
     aa = a / norm
     bb = b / norm

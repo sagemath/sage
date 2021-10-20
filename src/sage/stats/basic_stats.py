@@ -42,8 +42,7 @@ AUTHOR:
 from sage.rings.integer_ring import ZZ
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.constants", "NaN")
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "sqrt")
+from sage.misc.functional import sqrt
 from sage.misc.superseded import deprecation
 
 

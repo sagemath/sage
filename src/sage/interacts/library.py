@@ -39,17 +39,12 @@ from sage.arith.misc import factor
 from sage.arith.srange import srange
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.all", "symbolic_expression")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.functional", "derivative")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.integration", "numerical_integral as integral_numerical")
 from sage.ext.fast_callable import fast_callable
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "exp")
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "sqrt")
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.trig", "(acos", "cos, sin", "tan)")
+lazy_import("sage.functions.trig", "acos", "cos", "sin", "tan")
+from sage.misc.functional import sqrt
 from sage.misc.decorators import sage_wraps
 from sage.misc.functional import N
 from sage.misc.latex import latex
@@ -68,11 +63,8 @@ from sage.plot.text import text
 from sage.repl.rich_output.pretty_print import (pretty_print, show)
 from sage.rings.complex_double import CDF
 from sage.rings.integer import Integer
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.constants", "pi")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.relation", "solve")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
 import math
 

@@ -1499,7 +1499,7 @@ class KnotInfoBase(Enum):
             elif puiseux:
                 lc = {'x':  t**(1/2)}
             elif use_sqrt:
-                from sage.functions.other import sqrt
+                from sage.misc.functional import sqrt
                 lc = {'x':  sqrt(t)}
             else:
                 lc = {'x':  t}

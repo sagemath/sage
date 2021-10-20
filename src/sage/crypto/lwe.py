@@ -93,9 +93,8 @@ REFERENCES:
 
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "log")
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "sqrt", "floor, ceil")
-from sage.misc.functional import cyclotomic_polynomial, round
+lazy_import("sage.functions.other", "floor, ceil")
+from sage.misc.functional import sqrt, cyclotomic_polynomial, round
 from sage.misc.randstate import set_random_seed
 from sage.misc.prandom import randint
 from sage.modules.free_module import FreeModule
@@ -105,9 +104,7 @@ from sage.rings.all import ZZ, IntegerModRing, RR
 from sage.arith.all import next_prime, euler_phi
 from sage.structure.element import parent
 from sage.structure.sage_object import SageObject
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.constants", "pi")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
 from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
 from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler

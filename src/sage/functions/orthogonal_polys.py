@@ -1824,7 +1824,7 @@ class Func_assoc_legendre_Q(BuiltinFunction):
             sage: gen_legendre_Q(2,2,x).subs(x=2).expand()
             9/2*I*pi - 9/2*log(3) + 14/3
         """
-        from sage.functions.all import sqrt
+        from sage.misc.functional import sqrt
         if m == n + 1 or n == 0:
             if m.mod(2).is_zero():
                 denom = (1 - x**2)**(m/2)

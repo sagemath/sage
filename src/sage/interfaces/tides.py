@@ -46,12 +46,9 @@ lazy_import("sage.calculus.all", "symbolic_expression")
 from sage.misc.flatten import flatten
 from sage.ext.fast_callable import fast_callable
 from sage.rings.semirings.non_negative_integer_semiring import NN
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "log", "exp")
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.other", "floor", "sqrt, ceil")
-
-
+lazy_import("sage.functions.other", "floor", "ceil")
+from sage.misc.functional import sqrt
 
 
 def subexpressions_list(f, pars=None):

@@ -13,6 +13,7 @@ Siegel Products
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.all import kronecker_symbol, bernoulli, prime_divisors, fundamental_discriminant
+from sage.misc.functional import sqrt
 from sage.quadratic_forms.special_values import QuadraticBernoulliNumber
 
 
@@ -76,8 +77,6 @@ def siegel_product(self, u):
         sage: [1] + [Q.siegel_product(ZZ(a))  for a in range(1,11)] == Q.theta_series(11).list()  # long time (2s on sage.math, 2014)
         True
     """
-    from sage.functions.other import sqrt
-
     ## Protect u (since it fails often if it's an just an int!)
     u = ZZ(u)
 

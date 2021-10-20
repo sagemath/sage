@@ -60,9 +60,8 @@ from sage.categories.number_fields import NumberFields
 from sage.categories.homset import End
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.misc.lazy_import import lazy_import
-lazy_import("sage.functions.all", "sqrt")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "ceil")
+from sage.misc.functional import sqrt
 from sage.libs.pari.all import PariError
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.cachefunc import cached_method
@@ -102,13 +101,11 @@ from sage.schemes.projective.projective_space import (ProjectiveSpace,
                                                       is_ProjectiveSpace)
 from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
 from sage.structure.element import get_coercion_model
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.constants", "e")
 from copy import copy
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
 from sage.dynamics.arithmetic_dynamics.projective_ds_helper import (_fast_possible_periods,_all_periodic_points)
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
 from itertools import count, product
 from .endPN_automorphism_group import (

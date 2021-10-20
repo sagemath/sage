@@ -6203,7 +6203,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             []
         """
         if prec is not None:
-            from sage.functions.other import _do_sqrt
+            from sage.misc.functional import _do_sqrt
             return _do_sqrt(self, prec=prec, all=all)
 
         if mpz_sgn(self.value) == 0:
@@ -6225,7 +6225,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         if not is_square:
             if extend:
-                from sage.functions.other import _do_sqrt
+                from sage.misc.functional import _do_sqrt
                 return _do_sqrt(self, all=all)
             if all:
                 return []

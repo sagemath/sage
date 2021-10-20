@@ -2258,7 +2258,7 @@ cdef class NumberFieldElement(FieldElement):
         if extend and not roots:
             try:
                 # This is what integers, rationals do...
-                from sage.functions.other import sqrt
+                from sage.misc.functional import sqrt
                 from sage.symbolic.ring import SR
                 root = sqrt(SR(self))
                 roots = [[root, 1], [-root, 1]]

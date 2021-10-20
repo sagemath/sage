@@ -159,7 +159,7 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         sage: K.default_chart().coord_range()
         t: (-oo, +oo); r: (0, +oo); th: (0, pi); ph: [-pi, pi] (periodic)
     """
-    from sage.functions.other import sqrt
+    from sage.misc.functional import sqrt
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold
     M = Manifold(4, 'M', structure="Lorentzian")

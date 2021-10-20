@@ -799,7 +799,7 @@ class GraphPlot(SageObject):
             dist = self._options['dist'] * 2
             min_loop_size = self._options['loop_size']
             max_dist = self._options['max_dist']
-            from sage.functions.all import sqrt
+            from sage.misc.functional import sqrt
             for a, b in tmp:
                 if a == b:
                     # Multiple loops need varying loop radius starting at

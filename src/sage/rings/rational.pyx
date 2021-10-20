@@ -1943,7 +1943,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         if mpq_sgn(self.value) < 0:
             if not extend:
                 raise ValueError("square root of negative number not rational")
-            from sage.functions.other import _do_sqrt
+            from sage.misc.functional import _do_sqrt
             return _do_sqrt(self, prec=prec, all=all)
 
         cdef Rational z = <Rational> Rational.__new__(Rational)
@@ -1965,11 +1965,11 @@ cdef class Rational(sage.structure.element.FieldElement):
         if non_square:
             if not extend:
                 raise ValueError("square root of %s not a rational number" % self)
-            from sage.functions.other import _do_sqrt
+            from sage.misc.functional import _do_sqrt
             return _do_sqrt(self, prec=prec, all=all)
 
         if prec:
-            from sage.functions.other import _do_sqrt
+            from sage.misc.functional import _do_sqrt
             return _do_sqrt(self, prec=prec, all=all)
 
         if all:
@@ -3263,7 +3263,7 @@ cdef class Rational(sage.structure.element.FieldElement):
                 numer = self.numer()
                 rat_part = Rational((numer-2).multifactorial(2)) >> ((numer-1)//2)
                 from sage.symbolic.constants import pi
-                from sage.functions.all import sqrt
+                from sage.misc.functional import sqrt
                 return sqrt(pi) * rat_part
             else:
                 from sage.symbolic.ring import SR

@@ -93,7 +93,8 @@ from sage.plot.line import line
 from sage.symbolic.constants import pi
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
-from sage.functions.other import real, imag, sqrt
+from sage.functions.other import real, imag
+from sage.misc.functional import sqrt
 from sage.functions.trig import arccos
 from sage.functions.log import exp
 from sage.functions.hyperbolic import sinh, cosh, arcsinh

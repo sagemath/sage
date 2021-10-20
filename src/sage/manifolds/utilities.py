@@ -30,7 +30,8 @@ from sage.symbolic.expression import Expression
 from sage.symbolic.expression_conversions import ExpressionTreeWalker
 from sage.symbolic.ring import SR
 from sage.symbolic.constants import pi
-from sage.functions.other import sqrt, abs_symbolic
+from sage.functions.other import abs_symbolic
+from sage.misc.functional import sqrt
 from sage.functions.trig import cos, sin
 from sage.rings.all import Rational
 

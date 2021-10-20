@@ -2415,7 +2415,7 @@ class GenericGraph(GenericGraph_pyx):
             [-4 -3 -1  8]
         """
         from sage.matrix.constructor import diagonal_matrix
-        from sage.functions.all import sqrt
+        from sage.misc.functional import sqrt
 
         if weighted is None:
             weighted = self._weighted

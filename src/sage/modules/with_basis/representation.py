@@ -349,7 +349,7 @@ class Representation(Representation_abstract):
             sage: R = Representation(G, M, on_basis, side="right")
             sage: R._test_representation(max_runs=500)
         """
-        from sage.functions.other import sqrt
+        from sage.misc.functional import sqrt
         tester = self._tester(**options)
         S = tester.some_elements()
         L = []

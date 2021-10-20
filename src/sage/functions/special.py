@@ -165,7 +165,8 @@ from sage.rings.integer_ring import ZZ
 from sage.symbolic.constants import pi
 from sage.symbolic.function import BuiltinFunction
 from sage.libs.mpmath import utils as mpmath_utils
-from sage.functions.all import sqrt, sin, cot, exp
+from sage.functions.all import sin, cot, exp
+from sage.misc.functional import sqrt
 from sage.symbolic.constants import I
 
 

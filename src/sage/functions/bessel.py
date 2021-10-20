@@ -210,7 +210,7 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 from sage.functions.log import exp
 from sage.functions.hyperbolic import sinh, cosh
 from sage.functions.trig import sin, cos

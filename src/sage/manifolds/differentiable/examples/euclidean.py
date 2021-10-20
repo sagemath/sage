@@ -410,7 +410,7 @@ REFERENCES:
 #*****************************************************************************
 
 from sage.functions.trig import cos, sin, atan2
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 from sage.misc.latex import latex
 from sage.rings.real_mpfr import RR
 from sage.categories.manifolds import Manifolds
