@@ -4848,7 +4848,7 @@ def falling_factorial(x, a):
 
     - Jaap Spies (2006-03-05)
     """
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
     x = py_scalar_to_element(x)
     a = py_scalar_to_element(a)
     if (isinstance(a, Integer) or
@@ -4942,7 +4942,7 @@ def rising_factorial(x, a):
 
     - Jaap Spies (2006-03-05)
     """
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
     x = py_scalar_to_element(x)
     a = py_scalar_to_element(a)
     if (isinstance(a, Integer) or

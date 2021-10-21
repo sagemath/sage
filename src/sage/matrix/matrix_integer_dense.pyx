@@ -963,7 +963,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 try:
                     n = Integer(n)
                 except TypeError:
-                    from sage.symbolic.expression import Expression
+                    from sage.structure.element import Expression
                     if isinstance(n, Expression):
                         from sage.matrix.matrix2 import _matrix_power_symbolic
                         return _matrix_power_symbolic(self, n)
