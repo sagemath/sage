@@ -21,7 +21,7 @@ from sage.structure.sage_object import SageObject
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 from sage.calculus.functional import diff
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 from sage.misc.cachefunc import cached_method
 from sage.symbolic.ring import SR
 from sage.symbolic.constants import pi

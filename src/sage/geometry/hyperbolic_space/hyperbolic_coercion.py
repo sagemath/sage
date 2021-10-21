@@ -25,7 +25,8 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.functions.other import real, imag, sqrt
+from sage.functions.other import real, imag
+from sage.misc.functional import sqrt
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.misc.call', 'attrcall')
 

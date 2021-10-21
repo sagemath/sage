@@ -42,7 +42,7 @@ from sage.calculus.functional import derivative
 from sage.calculus.integration import numerical_integral as integral_numerical
 from sage.ext.fast_callable import fast_callable
 from sage.functions.log import exp
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 from sage.functions.trig import (acos, cos, sin, tan)
 from sage.misc.decorators import sage_wraps
 from sage.misc.functional import N

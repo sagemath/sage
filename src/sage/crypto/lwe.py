@@ -92,7 +92,8 @@ REFERENCES:
 """
 
 from sage.functions.log import log
-from sage.functions.other import sqrt, floor, ceil
+from sage.functions.other import floor, ceil
+from sage.misc.functional import sqrt
 from sage.misc.functional import cyclotomic_polynomial, round
 from sage.misc.randstate import set_random_seed
 from sage.misc.prandom import randint

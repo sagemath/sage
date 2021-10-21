@@ -252,7 +252,8 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             (1, 17, 123, 456)
         """
         from sage.arith.misc import valuation
-        from sage.functions.other import ceil, sqrt
+        from sage.functions.other import ceil
+        from sage.misc.functional import sqrt
         from itertools import product as iproduct
 
         vals = [valuation(a.order(), p) for a in aa]

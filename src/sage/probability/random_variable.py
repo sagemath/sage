@@ -18,7 +18,7 @@ functions.
 import sage.rings.abc
 from sage.structure.parent import Parent
 from sage.functions.log import log
-from sage.functions.all import sqrt
+from sage.misc.functional import sqrt
 from sage.rings.rational_field import is_RationalField
 from sage.sets.set import Set
 from pprint import pformat

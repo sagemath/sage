@@ -39,7 +39,7 @@ from sage.matrix.constructor import matrix
 from sage.combinat.combinat import catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.functions.trig import cos, sin
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 
 from sage.plot.graphics import Graphics
 from sage.plot.line import line

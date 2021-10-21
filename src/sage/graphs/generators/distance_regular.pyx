@@ -2100,7 +2100,7 @@ def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
     """
     from sage.rings.rational import Rational
     from sage.functions.log import log
-    from sage.functions.other import sqrt
+    from sage.misc.functional import sqrt
     from sage.graphs.generators.families import JohnsonGraph, HammingGraph
     from sage.graphs.generators.classical_geometries import \
         UnitaryDualPolarGraph, OrthogonalDualPolarGraph, SymplecticDualPolarGraph

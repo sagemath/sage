@@ -10217,7 +10217,7 @@ cdef class Matrix(Matrix1):
         """
         from sage.modules.free_module_element import zero_vector
         from sage.matrix.constructor import zero_matrix, matrix
-        from sage.functions.other import sqrt
+        from sage.misc.functional import sqrt
 
         if full:
             QR = self.fetch('QR_factors')
@@ -14673,7 +14673,7 @@ cdef class Matrix(Matrix1):
             True
         """
         from sage.matrix.special import diagonal_matrix
-        from sage.functions.other import sqrt
+        from sage.misc.functional import sqrt
 
         if check_positivity and not self.is_positive_definite():
             return False

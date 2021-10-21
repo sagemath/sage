@@ -1574,7 +1574,7 @@ def barycentric_projection_matrix(n, angle=0):
 
     """
     from sage.matrix.constructor import matrix
-    from sage.functions.other import sqrt
+    from sage.misc.functional import sqrt
     n = ZZ(n)
     if n == 0:
         return matrix(QQ, 0, 1)

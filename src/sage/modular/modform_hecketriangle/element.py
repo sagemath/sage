@@ -286,7 +286,7 @@ class FormsElement(FormsRingElement):
         """
         from sage.rings.integer_ring import ZZ
         from sage.symbolic.all import pi
-        from sage.functions.other import sqrt
+        from sage.misc.functional import sqrt
         from sage.lfunctions.dokchitser import Dokchitser
 
         if (not (self.is_modular() and self.is_holomorphic()) or self.weight() == 0):

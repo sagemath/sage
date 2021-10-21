@@ -18,7 +18,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # import from Sage library
 from sage.graphs.graph import Graph
 from sage.rings.rational_field import QQ
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 
 from math import sin, cos, pi
 

@@ -81,7 +81,8 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.misc.bindable_class import BindableClass
 from sage.misc.lazy_import import lazy_import
-from sage.functions.other import imag, real, sqrt
+from sage.functions.other import imag, real
+from sage.misc.functional import sqrt
 from sage.functions.all import arccosh
 from sage.rings.all import CC
 from sage.rings.real_double import RDF

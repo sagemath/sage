@@ -837,7 +837,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         - Chinen, K. "An abundance of invariant polynomials satisfying the
           Riemann hypothesis", April 2007 preprint.
         """
-        from sage.functions.all import sqrt
+        from sage.misc.functional import sqrt
         C = self
         n = C.length()
         RT = PolynomialRing(QQ,2,"Ts")

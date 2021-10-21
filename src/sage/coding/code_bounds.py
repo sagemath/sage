@@ -177,7 +177,8 @@ from sage.libs.gap.libgap import libgap
 from sage.rings.all import QQ, RR, ZZ, RDF
 from sage.arith.misc import is_prime_power
 from sage.arith.all import binomial
-from sage.functions.all import log, sqrt
+from sage.functions.all import log
+from sage.misc.functional import sqrt
 from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
 

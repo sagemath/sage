@@ -41,7 +41,7 @@ AUTHOR:
 
 from sage.rings.integer_ring import ZZ
 from sage.symbolic.constants import NaN
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 from sage.misc.superseded import deprecation
 
 

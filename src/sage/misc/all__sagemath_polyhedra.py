@@ -94,6 +94,7 @@ from .functional import (additive_order,
                         quo,
                         isqrt,
                         squarefree_part,
+                        sqrt,
                         symbolic_sum as sum,
                         symbolic_prod as product,
                         transpose)

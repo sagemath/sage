@@ -1018,7 +1018,7 @@ class Sphere(PseudoRiemannianSubmanifold):
 
         # transition: stereoN to spher...
         from sage.functions.trig import acos, atan2
-        from sage.functions.special import sqrt
+        from sage.misc.functional import sqrt
         # get ambient coordinates and shift to coordinate origin:
         x = self._shift_coords(imm.expr(stereoN, cart), s='-')
         coordfunc = [atan2(x[1],x[0])]

@@ -29,7 +29,7 @@ REFERENCES: [FH2015]_, [CS1996]_, [Weh1998]_, [Hutz2007]
 from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
-from sage.functions.all import sqrt
+from sage.misc.functional import sqrt
 from sage.misc.cachefunc import cached_method
 from sage.misc.mrange import xmrange
 from sage.rings.all import CommutativeRing

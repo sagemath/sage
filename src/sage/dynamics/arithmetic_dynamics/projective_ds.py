@@ -59,7 +59,7 @@ from sage.categories.function_fields import FunctionFields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import End
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
-from sage.functions.all import sqrt
+from sage.misc.functional import sqrt
 from sage.functions.other import ceil
 from sage.libs.pari.all import PariError
 from sage.matrix.constructor import matrix, identity_matrix
