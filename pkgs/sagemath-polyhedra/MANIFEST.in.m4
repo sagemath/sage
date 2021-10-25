@@ -81,6 +81,8 @@ include sage/sets/set.py
 include sage/rings/number_field/__init__.py
 include sage/rings/number_field/number_field_base.*
 
+include sage/rings/real_double.p*
+
 include sage/rings/finite_rings/__init__.py
 include sage/rings/finite_rings/element_base.*
 include sage/rings/finite_rings/stdint.*

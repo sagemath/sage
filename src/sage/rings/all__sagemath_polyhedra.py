@@ -27,3 +27,6 @@ from .quotient_ring import QuotientRing
 
 # Localization
 from .localization import Localization
+
+# Double precision floating point numbers
+from .real_double import RealDoubleField, RDF, RealDoubleElement
