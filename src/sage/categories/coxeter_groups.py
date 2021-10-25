@@ -22,7 +22,6 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.generalized_coxeter_groups import GeneralizedCoxeterGroups
 from sage.structure.element import have_same_parent, parent
 from sage.misc.flatten import flatten
-from sage.rings.integer_ring import ZZ
 from copy import copy
 from collections import deque
 
@@ -2912,6 +2911,7 @@ class CoxeterGroups(Category_singleton):
             """
             from sage.algebras.iwahori_hecke_algebra import IwahoriHeckeAlgebra
             from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+            from sage.rings.integer_ring import ZZ
 
             R = LaurentPolynomialRing(ZZ, 'v')
             v = R.gen(0)
