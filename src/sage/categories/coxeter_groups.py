@@ -22,7 +22,6 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.generalized_coxeter_groups import GeneralizedCoxeterGroups
 from sage.structure.element import have_same_parent, parent
 from sage.misc.flatten import flatten
-from sage.graphs.digraph import DiGraph
 from sage.rings.integer_ring import ZZ
 from copy import copy
 from collections import deque
@@ -2943,6 +2942,6 @@ class CoxeterGroups(Category_singleton):
                             vertices.add(y)
                             queue.appendleft(y)
 
+            from sage.graphs.digraph import DiGraph
             g = DiGraph([list(vertices), list(edges)])
             return set(g.strongly_connected_component_containing_vertex(w))
-
