@@ -21,12 +21,12 @@ from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.combinat.root_system.cartan_type import CartanType
+import sage.rings.abc
 from sage.matrix.args import SparseEntry
 from sage.matrix.all import Matrix
 from sage.symbolic.ring import SR
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.sage_object import SageObject
-from sage.rings.number_field.number_field import is_QuadraticField
 
 
 class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
@@ -391,7 +391,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
                     return (E(2*x) + ~E(2*x)) / R(-2)
                 else:
                     return R(x)
-        elif is_QuadraticField(R):
+        elif isinstance(R, sage.rings.abc.NumberField_quadratic):
 
             def val(x):
                 if x > -1:

@@ -735,9 +735,9 @@ class UnitCircleGroup(AbstractArgumentGroup):
             zeta2^5
         """
         from sage.groups.generic import discrete_log
+        import sage.rings.abc
         from sage.rings.asymptotic.misc import combine_exceptions
         from sage.rings.rational_field import QQ
-        from sage.rings.number_field.number_field import NumberField_cyclotomic
 
         if exponent is None:
             if isinstance(data, int) and data == 0:
@@ -769,7 +769,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
                 elif isinstance(P, UnitCircleGroup):
                     exponent = data.exponent
 
-                elif isinstance(P, NumberField_cyclotomic):
+                elif isinstance(P, sage.rings.abc.NumberField_cyclotomic):
                     zeta = P.gen()
                     n = zeta.multiplicative_order()
                     try:

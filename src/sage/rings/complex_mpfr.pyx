@@ -46,6 +46,7 @@ from sage.structure.parent_gens import ParentWithGens
 
 from sage.misc.sage_eval import sage_eval
 
+import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 from . import ring, infinity
 from .integer cimport Integer
@@ -63,7 +64,6 @@ gmpy2.import_gmpy2()
 
 # Some objects that are note imported at startup in order to break
 # circular imports
-NumberField_quadratic = None
 NumberFieldElement_quadratic = None
 AlgebraicNumber_base = None
 AlgebraicNumber = None
@@ -80,7 +80,6 @@ def late_import():
 
         sage: sage.rings.complex_mpfr.late_import()
     """
-    global NumberField_quadratic
     global NumberFieldElement_quadratic
     global AlgebraicNumber_base
     global AlgebraicNumber
@@ -91,7 +90,6 @@ def late_import():
     if NumberFieldElement_quadratic is None:
         import sage.rings.number_field.number_field
         import sage.rings.number_field.number_field_element_quadratic as nfeq
-        NumberField_quadratic = sage.rings.number_field.number_field.NumberField_quadratic
         NumberFieldElement_quadratic = nfeq.NumberFieldElement_quadratic
         import sage.rings.qqbar
         AlgebraicNumber_base = sage.rings.qqbar.AlgebraicNumber_base
@@ -511,7 +509,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
 
             late_import()
             if isinstance(x, NumberFieldElement_quadratic):
-                if isinstance(x.parent(), NumberField_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
+                if isinstance(x.parent(), sage.rings.abc.NumberField_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
                     (re, im) = list(x)
                     return ComplexNumber(self, re, im)
 
