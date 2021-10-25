@@ -173,6 +173,12 @@ call individually::
 """
 
 def _get_pari_instance():
+    """
+    TESTS::
+
+        sage: pari  # indirect doctest
+        Interface to the PARI C library
+    """
     # There are two constraints for the virtual stack size:
     # 1) on 32-bit systems, even virtual memory can be a scarce
     #    resource since it is limited by 4GB (of which the kernel
