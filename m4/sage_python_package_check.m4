@@ -50,11 +50,11 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
     AC_MSG_CHECKING([if we can create a python venv in config.venv])
 
     dnl Use --clear because ./configure typically clobbers its output files.
-    AS_IF(["${PYTHON_FOR_VENV}" -m venv --system-site-packages dnl
-                                        --clear                dnl
-                                        --without-pip          dnl
-                                        config.venv            dnl
-                                        2>&AS_MESSAGE_LOG_FD], [
+    AS_IF(["${PYTHON_FOR_VENV}" build/bin/sage-venv      dnl
+                                  --system-site-packages dnl
+                                  --clear                dnl
+                                  config.venv            dnl
+                                  2>&AS_MESSAGE_LOG_FD], [
       AC_MSG_RESULT(yes)
       dnl strip all comments from install-requires.txt; this should leave
       dnl only a single line containing the version specification for this
