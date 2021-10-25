@@ -1195,8 +1195,8 @@ def implicit_plot(f, xrange, yrange, **options):
         ...
         ValueError: only one of color or rgbcolor should be specified
     """
-    from sage.symbolic.expression import is_SymbolicEquation
-    if is_SymbolicEquation(f):
+    from sage.structure.element import Expression
+    if isinstance(f, Expression) and f.is_relational():
         if f.operator() != operator.eq:
             raise ValueError("input to implicit plot must be function "
                              "or equation")

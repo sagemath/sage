@@ -1924,11 +1924,9 @@ class qepcad_formula_factory:
         if isinstance(lhs, qformula):
             return lhs
 
-        from sage.symbolic.expression import is_SymbolicEquation
-        if is_SymbolicEquation(lhs):
-            rhs = lhs.rhs()
-            op = lhs.operator()
-            lhs = lhs.lhs()
+        from sage.structure.element import Expression
+        if isinstance(lhs, Expression) and lhs.is_relational():
+            lhs, op, rhs = lhs.lhs(), lhs.operator(), lhs.rhs()
 
         op = self._normalize_op(op)
 

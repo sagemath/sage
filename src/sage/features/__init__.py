@@ -28,7 +28,7 @@ Here we test whether the grape GAP package is available::
 
     sage: from sage.features.gap import GapPackage
     sage: GapPackage("grape", spkg="gap_packages").is_present()  # optional: gap_packages
-    FeatureTestResult('GAP package grape', True)
+    FeatureTestResult('gap_package_grape', True)
 
 Note that a :class:`FeatureTestResult` acts like a bool in most contexts::
 
@@ -92,20 +92,32 @@ class Feature(TrivialUniqueRepresentation):
     r"""
     A feature of the runtime environment
 
+    INPUT:
+
+    - ``name`` -- (string) name of the feature; this should be suitable as an optional tag
+      for the Sage doctester, i.e., lowercase alphanumeric with underscores (``_``) allowed;
+      features that correspond to Python modules/packages may use periods (``.``)
+
+    - ``spkg`` -- (string) name of the SPKG providing the feature
+
+    - ``description`` -- (string) optional; plain English description of the feature
+
+    - ``url`` -- a URL for the upstream package providing the feature
+
     Overwrite :meth:`_is_present` to add feature checks.
 
     EXAMPLES::
 
         sage: from sage.features.gap import GapPackage
         sage: GapPackage("grape", spkg="gap_packages")  # indirect doctest
-        Feature('GAP package grape')
+        Feature('gap_package_grape')
 
     For efficiency, features are unique::
 
         sage: GapPackage("grape") is GapPackage("grape")
         True
     """
-    def __init__(self, name, spkg=None, url=None):
+    def __init__(self, name, spkg=None, url=None, description=None):
         r"""
         TESTS::
 
@@ -117,6 +129,8 @@ class Feature(TrivialUniqueRepresentation):
         self.name = name
         self.spkg = spkg
         self.url = url
+        self.description = description
+
         self._cache_is_present = None
         self._cache_resolution = None
 
@@ -133,9 +147,9 @@ class Feature(TrivialUniqueRepresentation):
 
             sage: from sage.features.gap import GapPackage
             sage: GapPackage("grape", spkg="gap_packages").is_present()  # optional: gap_packages
-            FeatureTestResult('GAP package grape', True)
+            FeatureTestResult('gap_package_grape', True)
             sage: GapPackage("NOT_A_PACKAGE", spkg="gap_packages").is_present()
-            FeatureTestResult('GAP package NOT_A_PACKAGE', False)
+            FeatureTestResult('gap_package_NOT_A_PACKAGE', False)
 
         The result is cached::
 
@@ -183,7 +197,7 @@ class Feature(TrivialUniqueRepresentation):
             sage: GapPackage("ve1EeThu").require()
             Traceback (most recent call last):
             ...
-            FeatureNotPresentError: GAP package ve1EeThu is not available.
+            FeatureNotPresentError: gap_package_ve1EeThu is not available.
             `TestPackageAvailability("ve1EeThu")` evaluated to `fail` in GAP.
         """
         presence = self.is_present()
@@ -198,9 +212,14 @@ class Feature(TrivialUniqueRepresentation):
 
             sage: from sage.features.gap import GapPackage
             sage: GapPackage("grape")  # indirect doctest
-            Feature('GAP package grape')
+            Feature('gap_package_grape')
+
+            sage: from sage.features.databases import DatabaseConwayPolynomials
+            sage: DatabaseConwayPolynomials()  # indirect doctest
+            Feature('conway_polynomials': Frank Luebeck's database of Conway polynomials)
         """
-        return 'Feature({name!r})'.format(name=self.name)
+        description = f'{self.name!r}: {self.description}' if self.description else f'{self.name!r}'
+        return f'Feature({description})'
 
     def resolution(self):
         r"""
@@ -263,7 +282,7 @@ class FeatureNotPresentError(RuntimeError):
             sage: GapPackage("gapZuHoh8Uu").require()  # indirect doctest
             Traceback (most recent call last):
             ...
-            FeatureNotPresentError: GAP package gapZuHoh8Uu is not available.
+            FeatureNotPresentError: gap_package_gapZuHoh8Uu is not available.
             `TestPackageAvailability("gapZuHoh8Uu")` evaluated to `fail` in GAP.
         """
         lines = ["{feature} is not available.".format(feature=self.feature.name)]
@@ -285,7 +304,7 @@ class FeatureTestResult(object):
 
         sage: from sage.features.gap import GapPackage
         sage: presence = GapPackage("NOT_A_PACKAGE").is_present(); presence  # indirect doctest
-        FeatureTestResult('GAP package NOT_A_PACKAGE', False)
+        FeatureTestResult('gap_package_NOT_A_PACKAGE', False)
         sage: bool(presence)
         False
 
@@ -304,9 +323,9 @@ class FeatureTestResult(object):
         sage: from sage.features import FeatureTestResult
         sage: package = GapPackage("NOT_A_PACKAGE", spkg="no_package")
         sage: str(FeatureTestResult(package, True).resolution)  # optional - sage_spkg
-        '...To install GAP package NOT_A_PACKAGE...you can try to run...sage -i no_package...'
+        '...To install gap_package_NOT_A_PACKAGE...you can try to run...sage -i no_package...'
         sage: str(FeatureTestResult(package, False).resolution) # optional - sage_spkg
-        '...To install GAP package NOT_A_PACKAGE...you can try to run...sage -i no_package...'
+        '...To install gap_package_NOT_A_PACKAGE...you can try to run...sage -i no_package...'
         sage: FeatureTestResult(package, False, resolution="rtm").resolution
         'rtm'
     """
@@ -801,8 +820,8 @@ class PythonModule(Feature):
         TESTS::
 
             sage: from sage.features import PythonModule
-            sage: from sage.features.fes import LibFES
-            sage: isinstance(LibFES(), PythonModule)  # indirect doctest
+            sage: from sage.features.databases import DatabaseKnotInfo
+            sage: isinstance(DatabaseKnotInfo(), PythonModule)  # indirect doctest
             True
         """
         Feature.__init__(self, name, **kwds)

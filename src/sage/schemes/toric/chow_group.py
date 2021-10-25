@@ -128,7 +128,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.factory import UniqueFactory
 from sage.rings.all import ZZ, QQ, Infinity
 
-from sage.geometry.cone import is_Cone
+import sage.geometry.abc
 from sage.schemes.toric.variety import is_ToricVariety
 from sage.schemes.toric.divisor import is_ToricDivisor
 
@@ -697,7 +697,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             ( 0 | -1, -2, -2, -1 | 0 )
         """
         fan = self._variety.fan()
-        if is_Cone(x):
+        if isinstance(x, sage.geometry.abc.ConvexRationalPolyhedralCone):
             cone = fan.embed(x)
             return self.element_class(self, self._cone_to_V(cone), False)
         if is_ToricDivisor(x):

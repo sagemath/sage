@@ -426,8 +426,8 @@ class AffineGroupElement(MultiplicativeGroupElement):
             image_coords = self._A * vector(ring, ring.gens()) + self._b
             return v(*image_coords)
 
-        from sage.geometry.polyhedron.base import is_Polyhedron
-        if is_Polyhedron(v):
+        import sage.geometry.abc
+        if isinstance(v, sage.geometry.abc.Polyhedron):
             return self._A*v + self._b
 
         # otherwise, coerce v into the vector space

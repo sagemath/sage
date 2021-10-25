@@ -9,7 +9,9 @@ Check for rubiks
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from . import Feature, Executable, FeatureTestResult
+from . import Executable
+from .join_feature import JoinFeature
+
 
 class cu2(Executable):
     r"""
@@ -149,7 +151,7 @@ class cubex(Executable):
                             spkg="rubiks")
 
 
-class Rubiks(Feature):
+class Rubiks(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of
     ``cu2``, ``cubex``, ``dikcube``, ``mcube``, ``optimal``, and
@@ -159,7 +161,7 @@ class Rubiks(Feature):
 
         sage: from sage.features.rubiks import Rubiks
         sage: Rubiks().is_present()  # optional: rubiks
-        FeatureTestResult('Rubiks', True)
+        FeatureTestResult('rubiks', True)
     """
     def __init__(self):
         r"""
@@ -169,24 +171,6 @@ class Rubiks(Feature):
             sage: isinstance(Rubiks(), Rubiks)
             True
         """
-        Feature.__init__(self, "Rubiks",
-                         spkg="rubiks")
-
-    def _is_present(self):
-        r"""
-        EXAMPLES::
-
-            sage: from sage.features.rubiks import Rubiks
-            sage: Rubiks()._is_present() # optional: rubiks
-            FeatureTestResult('Rubiks', True)
-        """
-        test = (cu2()._is_present() and
-                size222()._is_present() and
-                optimal()._is_present() and
-                mcube()._is_present() and
-                dikcube()._is_present() and
-                cubex()._is_present())
-        if not test:
-            return test
-        else:
-            return FeatureTestResult(self, True)
+        JoinFeature.__init__(self, "rubiks",
+                             [cu2(), size222(), optimal(), mcube(), dikcube(), cubex()],
+                             spkg="rubiks")

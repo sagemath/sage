@@ -7,6 +7,13 @@ class FourTi2Executable(Executable):
     Feature for the 4ti2 executables.
     """
     def __init__(self, name):
+        r"""
+        TESTS::
+
+            sage: from sage.features.four_ti_2 import FourTi2Executable
+            sage: isinstance(FourTi2Executable('hilbert'), FourTi2Executable)
+            True
+        """
         from sage.env import SAGE_ENV
         Executable.__init__(self,
                             name="4ti2-" + name,
@@ -25,6 +32,13 @@ class FourTi2(JoinFeature):
         FeatureTestResult('4ti2', True)
     """
     def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.four_ti_2 import FourTi2
+            sage: isinstance(FourTi2(), FourTi2)
+            True
+        """
         JoinFeature.__init__(self, '4ti2',
                              [FourTi2Executable(x)
                               # same list is tested in build/pkgs/4ti2/spkg-configure.m4

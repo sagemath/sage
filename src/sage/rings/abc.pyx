@@ -80,3 +80,19 @@ class Order:
     """
 
     pass
+
+
+cdef class SymbolicRing(CommutativeRing):
+    r"""
+    Abstract base class for :class:`~sage.rings.symbolic.ring.SymbolicRing`.
+    """
+
+    pass
+
+
+class CallableSymbolicExpressionRing(SymbolicRing):
+    r"""
+    Abstract base class for :class:`~sage.rings.symbolic.callable.CallableSymbolicExpressionRing_class`.
+    """
+
+    pass

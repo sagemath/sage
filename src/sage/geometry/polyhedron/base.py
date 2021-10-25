@@ -53,6 +53,7 @@ from sage.arith.misc import integer_ceil as ceil
 lazy_import('sage.groups.matrix_gps.finitely_generated', 'MatrixGroup')
 from sage.geometry.convex_set import ConvexSet_closed, AffineHullProjectionData
 
+import sage.geometry.abc
 from .constructor import Polyhedron
 from sage.geometry.relative_interior import RelativeInterior
 from sage.categories.sets_cat import EmptySetError
@@ -100,7 +101,7 @@ def is_Polyhedron(X):
 
 
 #########################################################################
-class Polyhedron_base(Element, ConvexSet_closed):
+class Polyhedron_base(Element, ConvexSet_closed, sage.geometry.abc.Polyhedron):
     """
     Base class for Polyhedron objects
 

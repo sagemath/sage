@@ -32,6 +32,8 @@ The symbolic ring
 # ****************************************************************************
 
 from sage.rings.integer cimport Integer
+from sage.rings.ring cimport CommutativeRing
+
 import sage.rings.abc
 
 from sage.symbolic.expression cimport (
@@ -61,7 +63,7 @@ KEYWORDS = set(keyword.kwlist).union(['exec', 'print', 'None', 'True',
                                       'False', 'nonlocal'])
 
 
-cdef class SymbolicRing(CommutativeRing):
+cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
     """
     Symbolic Ring, parent object for all symbolic expressions.
     """
@@ -1309,16 +1311,28 @@ def the_SymbolicRing():
 
 def is_SymbolicExpressionRing(R):
     """
-    Returns True if *R* is the symbolic expression ring.
+    Returns True if ``R`` is the symbolic expression ring.
+
+    This function is deprecated.  Instead, either use ``R is SR`` (to
+    test whether ``R`` is the unique symbolic ring ``SR``); or
+    ``isinstance`` with :class:`~sage.rings.abc.SymbolicRing`
+    (when also symbolic subrings and callable symbolic rings should
+    be accepted).
 
     EXAMPLES::
 
         sage: from sage.symbolic.ring import is_SymbolicExpressionRing
         sage: is_SymbolicExpressionRing(ZZ)
+        doctest:warning...
+        DeprecationWarning: is_SymbolicExpressionRing is deprecated;
+        use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead
+        See https://trac.sagemath.org/32665 for details.
         False
         sage: is_SymbolicExpressionRing(SR)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32665, 'is_SymbolicExpressionRing is deprecated; use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead')
     return R is SR
 
 def var(name, **kwds):

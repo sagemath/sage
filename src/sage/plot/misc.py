@@ -15,7 +15,7 @@
 
 from sage.ext.fast_eval import fast_float
 
-from sage.structure.element import is_Vector
+from sage.structure.element import is_Vector, Expression
 
 def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
     """
@@ -187,15 +187,13 @@ def unify_arguments(funcs):
         sage: sage.plot.misc.unify_arguments((x+y,x-y))
         ((x, y), (x, y))
     """
-    from sage.symbolic.callable import is_CallableSymbolicExpression
-
     vars=set()
     free_variables=set()
     if not isinstance(funcs, (list, tuple)):
         funcs = [funcs]
 
     for f in funcs:
-        if is_CallableSymbolicExpression(f):
+        if isinstance(f, Expression) and f.is_callable():
             f_args = set(f.arguments())
             vars.update(f_args)
         else:

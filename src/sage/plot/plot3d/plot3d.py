@@ -1046,13 +1046,13 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         Graphics3d Object
     """
     if transformation is not None:
-        params=None
-        from sage.symbolic.callable import is_CallableSymbolicExpression
+        params = None
+        from sage.structure.element import Expression
         # First, determine the parameters for f (from the first item of urange
         # and vrange, preferably).
         if len(urange) == 3 and len(vrange) == 3:
             params = (urange[0], vrange[0])
-        elif is_CallableSymbolicExpression(f):
+        elif isinstance(f, Expression) and f.is_callable():
             params = f.variables()
 
         from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense

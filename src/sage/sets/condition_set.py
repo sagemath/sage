@@ -20,13 +20,8 @@ from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import _stable_uniq
 from sage.structure.element import Expression
-
-try:
-    from sage.symbolic.callable import is_CallableSymbolicExpression
-except ImportError:
-    is_CallableSymbolicExpression = lambda x: False
-
 from .set import Set, Set_base, Set_boolean_operators, Set_add_sub_operators
+
 
 class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_operators,
                    UniqueRepresentation):
@@ -160,7 +155,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         other_predicates = []
 
         for predicate in predicates:
-            if is_CallableSymbolicExpression(predicate):
+            if isinstance(predicate, Expression) and predicate.is_callable():
                 if names is None:
                     names = tuple(str(var) for var in predicate.args())
                 elif len(names) != len(predicate.args()):
@@ -271,7 +266,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             sage: ZeroDimButNotNullary._repr_condition(ZeroDimButNotNullary._predicates[0])
             't > 0'
         """
-        if is_CallableSymbolicExpression(predicate):
+        if isinstance(predicate, Expression) and predicate.is_callable():
             args = self.arguments()
             if len(args) == 1:
                 args = args[0]
@@ -364,7 +359,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             sage: Nullary._call_predicate(predicate, element)
             t > 0
         """
-        if is_CallableSymbolicExpression(predicate):
+        if isinstance(predicate, Expression) and predicate.is_callable():
             if len(predicate.arguments()) != 1:
                 return predicate(*element)
         return predicate(element)

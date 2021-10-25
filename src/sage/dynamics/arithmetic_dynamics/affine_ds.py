@@ -56,9 +56,9 @@ from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.structure.element import get_coercion_model
-from sage.symbolic.ring import is_SymbolicExpressionRing
-from sage.symbolic.ring import var
-from sage.symbolic.ring import SR
+
+import sage.rings.abc
+
 
 class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
                              DynamicalSystem):
@@ -275,7 +275,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             else:
                 polys = [PR(poly) for poly in polys]
         if domain is None:
-            if PR is SR:
+            if isinstance(PR, sage.rings.abc.SymbolicRing):
                 raise TypeError("Symbolic Ring cannot be the base ring")
             if fraction_field:
                 PR = PR.ring()
@@ -292,7 +292,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         if len(polys) != domain.ambient_space().coordinate_ring().ngens():
             raise ValueError('Number of polys does not match dimension of {}'.format(domain))
         R = domain.base_ring()
-        if R is SR:
+        if isinstance(R, sage.rings.abc.SymbolicRing):
             raise TypeError("Symbolic Ring cannot be the base ring")
         if not is_AffineSpace(domain) and not isinstance(domain, AlgebraicScheme_subscheme_affine):
             raise ValueError('"domain" must be an affine scheme')
@@ -529,7 +529,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         F = G.dynatomic_polynomial(period)
         T = G.domain().coordinate_ring()
         S = self.domain().coordinate_ring()
-        if is_SymbolicExpressionRing(F.parent()):
+        if isinstance(F.parent(), sage.rings.abc.SymbolicRing):
+            from sage.symbolic.ring import var
             u = var(self.domain().coordinate_ring().variable_name())
             return F.subs({F.variables()[0]:u,F.variables()[1]:1})
         elif T(F.denominator()).degree() == 0:

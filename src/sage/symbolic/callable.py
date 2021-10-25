@@ -82,12 +82,18 @@ def is_CallableSymbolicExpressionRing(x):
 
         sage: from sage.symbolic.callable import is_CallableSymbolicExpressionRing
         sage: is_CallableSymbolicExpressionRing(QQ)
+        doctest:warning...
+        DeprecationWarning: is_CallableSymbolicExpressionRing is deprecated;
+        use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead
+        See https://trac.sagemath.org/32665 for details.
         False
         sage: var('x,y,z')
         (x, y, z)
         sage: is_CallableSymbolicExpressionRing(CallableSymbolicExpressionRing((x,y,z)))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32665, 'is_CallableSymbolicExpressionRing is deprecated; use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead')
     return isinstance(x, CallableSymbolicExpressionRing_class)
 
 def is_CallableSymbolicExpression(x):
@@ -301,7 +307,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             sage: g.parent().has_coerce_map_from(f.parent())
             True
         """
-        if is_CallableSymbolicExpressionRing(R):
+        if isinstance(R, CallableSymbolicExpressionRing_class):
             args = self.arguments()
             if all(a in args for a in R.arguments()):
                 return True

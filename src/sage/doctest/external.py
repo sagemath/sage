@@ -35,10 +35,6 @@ if os.uname().sysname == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
-import urllib.error
-from urllib.request import Request, urlopen
-from ssl import SSLContext
-
 # Functions in this module whose name is of the form 'has_xxx' tests if the
 # software xxx is available to Sage.
 prefix = 'has_'
@@ -53,15 +49,11 @@ def has_internet():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_internet
-        sage: has_internet() # random, optional -- internet
-        True
+        sage: has_internet()                                 # random, optional -- internet
+        FeatureTestResult('internet', True)
     """
-    req = Request("https://www.sagemath.org",headers={"User-Agent":"sage-doctest"})
-    try:
-        urlopen(req, timeout=1, context=SSLContext())
-        return True
-    except urllib.error.URLError:
-        return False
+    from sage.features.internet import Internet
+    return Internet().is_present()
 
 def has_latex():
     """
@@ -195,7 +187,7 @@ def has_pandoc():
 
         sage: from sage.doctest.external import has_pandoc
         sage: has_pandoc()      # optional -- pandoc
-        FeatureTestResult('Pandoc', True)
+        FeatureTestResult('pandoc', True)
     """
     from sage.features.pandoc import Pandoc
     return Pandoc().is_present()
@@ -225,14 +217,10 @@ def has_cplex():
 
         sage: from sage.doctest.external import has_cplex
         sage: has_cplex() # random, optional - CPLEX
-        True
+        FeatureTestResult('cplex', True)
     """
-    from sage.numerical.mip import MixedIntegerLinearProgram
-    try:
-        MixedIntegerLinearProgram(solver='cplex')
-        return True
-    except Exception:
-        return False
+    from sage.features.mip_backends import CPLEX
+    return CPLEX().is_present()
 
 def has_gurobi():
     """
@@ -242,14 +230,10 @@ def has_gurobi():
 
         sage: from sage.doctest.external import has_gurobi
         sage: has_gurobi() # random, optional - Gurobi
-        True
+        FeatureTestResult('gurobi', True)
     """
-    from sage.numerical.mip import MixedIntegerLinearProgram
-    try:
-        MixedIntegerLinearProgram(solver='gurobi')
-        return True
-    except Exception:
-        return False
+    from sage.features.mip_backends import Gurobi
+    return Gurobi().is_present()
 
 def has_graphviz():
     """
@@ -259,7 +243,7 @@ def has_graphviz():
 
         sage: from sage.doctest.external import has_graphviz
         sage: has_graphviz()   # optional -- graphviz
-        FeatureTestResult('Graphviz', True)
+        FeatureTestResult('graphviz', True)
     """
     from sage.features.graphviz import Graphviz
     return Graphviz().is_present()
@@ -272,7 +256,7 @@ def has_ffmpeg():
 
         sage: from sage.doctest.external import has_ffmpeg
         sage: has_ffmpeg()      # optional -- ffmpeg
-        FeatureTestResult('FFmpeg', True)
+        FeatureTestResult('ffmpeg', True)
     """
     from sage.features.ffmpeg import FFmpeg
     return FFmpeg().is_present()
@@ -285,7 +269,7 @@ def has_imagemagick():
 
         sage: from sage.doctest.external import has_imagemagick
         sage: has_imagemagick() # optional -- imagemagick
-        FeatureTestResult('convert', True)
+        FeatureTestResult('imagemagick', True)
     """
     from sage.features.imagemagick import ImageMagick
     return ImageMagick().is_present()
@@ -299,7 +283,7 @@ def has_rubiks():
 
         sage: from sage.doctest.external import has_rubiks
         sage: has_rubiks()   # optional -- rubiks
-        FeatureTestResult('Rubiks', True)
+        FeatureTestResult('rubiks', True)
     """
     from sage.features.rubiks import Rubiks
     return Rubiks().is_present()

@@ -7456,18 +7456,12 @@ def element_class(R, is_sparse):
             pass
         else:
             return Vector_complex_double_dense
-    else:
-        try:
-            import sage.symbolic.ring
-        except ImportError:
-            pass
-        else:
-            if sage.symbolic.ring.is_SymbolicExpressionRing(R) and not is_sparse:
-                import sage.modules.vector_symbolic_dense
-                return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
-            elif sage.symbolic.callable.is_CallableSymbolicExpressionRing(R) and not is_sparse:
-                import sage.modules.vector_callable_symbolic_dense
-                return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
+    elif isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing) and not is_sparse:
+        import sage.modules.vector_callable_symbolic_dense
+        return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
+    elif isinstance(R, sage.rings.abc.SymbolicRing) and not is_sparse:
+        import sage.modules.vector_symbolic_dense
+        return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
     if is_sparse:
         return free_module_element.FreeModuleElement_generic_sparse
     else:
