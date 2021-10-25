@@ -40,7 +40,7 @@ from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.combinat.root_system.root_system import RootSystem
-from sage.functions.other import floor
+from sage.arith.misc import integer_floor as floor
 from sage.misc.latex import latex
 
 
