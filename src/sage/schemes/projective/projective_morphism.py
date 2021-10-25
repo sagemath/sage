@@ -90,6 +90,7 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField_class
 from sage.rings.real_mpfi import RealIntervalField_class
+import sage.rings.abc
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
@@ -987,14 +988,13 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             self.scale_by(R(1) / GCD)
 
         # scales by 1/gcd of the coefficients.
-        from sage.rings.padics.generic_nodes import is_pAdicField
         if R in _NumberFields:
             O = R.maximal_order()
         elif is_FiniteField(R):
             O = R
         elif isinstance(R, QuotientRing_generic):
             O = R.ring()
-        elif is_pAdicField(R):
+        elif isinstance(R, sage.rings.abc.pAdicField):
             O = R.integer_ring()
         else:
             O = R

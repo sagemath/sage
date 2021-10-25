@@ -1,6 +1,8 @@
 """
 Abstract base classes for rings
 """
+from sage.rings.ring import EuclideanDomain
+
 
 cdef class RealField(Field):
     r"""
@@ -77,6 +79,22 @@ class IntegerModRing:
 class Order:
     r"""
     Abstract base class for :class:`~sage.rings.number_field.order.Order`.
+    """
+
+    pass
+
+
+class pAdicRing(EuclideanDomain):
+    r"""
+    Abstract base class for :class:`~sage.rings.padics.generic_nodes.pAdicRingGeneric`.
+    """
+
+    pass
+
+
+class pAdicField(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.padics.generic_nodes.pAdicFieldGeneric`.
     """
 
     pass
