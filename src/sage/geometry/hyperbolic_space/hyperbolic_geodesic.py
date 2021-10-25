@@ -2029,15 +2029,15 @@ class HyperbolicGeodesicPD(HyperbolicGeodesic):
 
         Then some generic geodesics::
 
-            sage: PD.get_geodesic(-0.5, 0.3+0.4*I).plot()  # optional - sage.plot
+            sage: PD.get_geodesic(-0.5, 0.3+0.4*I).plot()              # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
             sage: g = PD.get_geodesic(-1, exp(3*I*pi/7))
-            sage: G = g.plot(linestyle="dashed",color="red"); G  # optional - sage.plot
+            sage: G = g.plot(linestyle="dashed",color="red"); G        # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
             sage: h = PD.get_geodesic(exp(2*I*pi/11), exp(1*I*pi/11))
-            sage: H = h.plot(thickness=6, color="orange"); H  # optional - sage.plot
-            Graphics object consisting of 2 graphics primitives
-            sage: show(G+H)
+            sage: H = h.plot(thickness=6, color="orange"); H           # optional - sage.plot
+            Graphics object consisting of 2 graphics primitives        # optional - sage.plot
+            sage: show(G+H)                                            # optional - sage.plot
 
         .. PLOT::
 

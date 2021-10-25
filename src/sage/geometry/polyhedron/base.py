@@ -11166,7 +11166,7 @@ class Polyhedron_base(Element, ConvexSet_closed, sage.geometry.abc.Polyhedron):
             sage: Pentagon = polytopes.dodecahedron().faces(2)[0].as_polyhedron()                 # optional - sage.rings.number_field
             sage: P = Pentagon.affine_hull_projection(orthonormal=True, extend=True)              # optional - sage.rings.number_field
             sage: _, c= P.is_inscribed(certificate=True)                                          # optional - sage.rings.number_field
-            sage: c
+            sage: c                                                                               # optional - sage.rings.number_field
             (0.4721359549995794?, 0.6498393924658126?)
             sage: circumradius = (c-vector(P.vertices()[0])).norm()                               # optional - sage.rings.number_field
             sage: p = polytopes.regular_polygon(5)                                                # optional - sage.rings.number_field

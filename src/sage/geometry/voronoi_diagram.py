@@ -264,16 +264,16 @@ class VoronoiDiagram(SageObject):
 
             sage: P = [[0.671, 0.650], [0.258, 0.767], [0.562, 0.406], [0.254, 0.709], [0.493, 0.879]]
 
-            sage: V = VoronoiDiagram(P); S=V.plot()  # optional - sage.plot
-            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
+            sage: V = VoronoiDiagram(P); S=V.plot()                                            # optional - sage.plot
+            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)          # optional - sage.plot
 
             sage: S=V.plot(cell_colors={0:'red', 1:'blue', 2:'green', 3:'white', 4:'yellow'})  # optional - sage.plot
-            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
+            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)          # optional - sage.plot
 
-            sage: S=V.plot(cell_colors=['red','blue','red','white', 'white'])  # optional - sage.plot
-            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)
+            sage: S=V.plot(cell_colors=['red','blue','red','white', 'white'])                  # optional - sage.plot
+            sage: show(S, xmin=0, xmax=1, ymin=0, ymax=1, aspect_ratio=1, axes=false)          # optional - sage.plot
 
-            sage: S=V.plot(cell_colors='something else')  # optional - sage.plot
+            sage: S=V.plot(cell_colors='something else')                                       # optional - sage.plot
             Traceback (most recent call last):
             ...
             AssertionError: 'cell_colors' must be a list or a dictionary
@@ -282,7 +282,7 @@ class VoronoiDiagram(SageObject):
         Trying to plot a Voronoi diagram of dimension other than 2 gives an
         error::
 
-            sage: VoronoiDiagram([[1, 2, 3], [6, 5, 4]]).plot()  # optional - sage.plot
+            sage: VoronoiDiagram([[1, 2, 3], [6, 5, 4]]).plot()                                # optional - sage.plot
             Traceback (most recent call last):
             ...
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not

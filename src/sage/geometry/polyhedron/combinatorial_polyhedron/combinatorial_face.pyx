@@ -416,7 +416,7 @@ cdef class CombinatorialFace(SageObject):
             sage: v5.is_subface(face2)
             True
 
-        Only implemented for faces of the same combintatorial polyhedron::
+        Only implemented for faces of the same combinatorial polyhedron::
 
             sage: P1 = polytopes.cube()
             sage: C1 = P1.combinatorial_polyhedron()
@@ -716,7 +716,7 @@ cdef class CombinatorialFace(SageObject):
 
             sage: P = polytopes.permutahedron(5)         # optional - sage.combinat
             sage: C = CombinatorialPolyhedron(P)         # optional - sage.combinat
-            sage: it = C.face_iter(2)                    # optional - sage.combinta
+            sage: it = C.face_iter(2)                    # optional - sage.combinat
             sage: next(it).ambient_Hrepresentation()     # optional - sage.combinat
             (An inequality (1, 1, 1, 0, 0) x - 6 >= 0,
              An inequality (0, 0, 0, -1, 0) x + 5 >= 0,

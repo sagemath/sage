@@ -1132,23 +1132,23 @@ class Projection(SageObject):
 
         It correctly handles various degenerate cases::
 
-            sage: Polyhedron(lines=[[1,0,0],[0,1,0],[0,0,1]]).plot()           # whole space  # optional - sage.plot
+            sage: Polyhedron(lines=[[1,0,0],[0,1,0],[0,0,1]]).plot()           # whole space              # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]], rays=[[1,0,0]],
+            sage: Polyhedron(vertices=[[1,1,1]], rays=[[1,0,0]],                                          # optional - sage.plot
             ....:            lines=[[0,1,0],[0,0,1]]).plot()                   # half space
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]],
+            sage: Polyhedron(vertices=[[1,1,1]],                                                          # optional - sage.plot
             ....:            lines=[[0,1,0],[0,0,1]]).plot()                   # R^2 in R^3
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0],[0,0,1]], lines=[[1,0,0]]).plot()   # quadrant wedge in R^2  # optional - sage.plot
+            sage: Polyhedron(rays=[[0,1,0],[0,0,1]], lines=[[1,0,0]]).plot()   # quadrant wedge in R^2    # optional - sage.plot
             Graphics3d Object
             sage: Polyhedron(rays=[[0,1,0]], lines=[[1,0,0]]).plot()           # upper half plane in R^3  # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(lines=[[1,0,0]]).plot()                           # R^1 in R^2  # optional - sage.plot
+            sage: Polyhedron(lines=[[1,0,0]]).plot()                           # R^1 in R^2               # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0]]).plot()                            # Half-line in R^3  # optional - sage.plot
+            sage: Polyhedron(rays=[[0,1,0]]).plot()                            # Half-line in R^3         # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]]).plot()                        # point in R^3  # optional - sage.plot
+            sage: Polyhedron(vertices=[[1,1,1]]).plot()                        # point in R^3             # optional - sage.plot
             Graphics3d Object
 
         The origin is not included, if it is not in the polyhedron (:trac:`23555`)::
@@ -1156,8 +1156,8 @@ class Projection(SageObject):
             sage: Q = Polyhedron([[100],[101]])
             sage: P = Q*Q*Q; P
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: p = P.plot()  # optional - sage.plot
-            sage: p.bounding_box()
+            sage: p = P.plot()                                                                            # optional - sage.plot
+            sage: p.bounding_box()                                                                        # optional - sage.plot
             ((100.0, 100.0, 100.0), (101.0, 101.0, 101.0))
         """
         pplt = None
