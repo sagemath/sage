@@ -17,8 +17,7 @@ from sage.structure.sage_object import SageObject
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.rings.qqbar import AA
 from sage.rings.rational_field import QQ
-from sage.rings.real_double import RDF
-from sage.rings.real_mpfr import RealField_class
+import sage.rings.abc
 from sage.geometry.triangulation.point_configuration import PointConfiguration
 from sage.modules.free_module_element import vector
 from sage.plot.all import line, point, rainbow, plot
@@ -103,9 +102,10 @@ class VoronoiDiagram(SageObject):
         self._n = self._points.n_points()
         if not self._n or self._points.base_ring().is_subring(QQ):
             self._base_ring = QQ
-        elif self._points.base_ring() in [RDF, AA]:
+        elif isinstance(self._points.base_ring(), sage.rings.abc.RealDoubleField) or self._points.base_ring() == AA:
             self._base_ring = self._points.base_ring()
-        elif isinstance(self._points.base_ring(), RealField_class):
+        elif isinstance(self._points.base_ring(), sage.rings.abc.RealField):
+            from sage.rings.real_double import RDF
             self._base_ring = RDF
             self._points = PointConfiguration([[RDF(cor) for cor in poi]
                                                for poi in self._points])

@@ -802,7 +802,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
 
         def add_tup(t):
             for T in [t, [t[1], t[0], t[2], 0]]:
-                if not T in tuples:
+                if T not in tuples:
                     tuples.append(T)
                     if verbose:
                         sys.stdout.write(" -added tuple %s..." % T[:3])
@@ -818,7 +818,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
                     sys.stdout.flush()
                 add_tup([0,ncurves,d,phi])
                 ncurves += 1
-                if not d in degs:
+                if d not in degs:
                     degs.append(d)
         if verbose:
             sys.stdout.write("... relevant degrees: %s..." % degs)
@@ -909,8 +909,9 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
         allQs = {} # keys: discriminants d
                    # values: lists of equivalence classes of
                    # primitive forms of discriminant d
-        def find_quadratic_form(d,n):
-            if not d in allQs:
+
+        def find_quadratic_form(d, n):
+            if d not in allQs:
                 from sage.quadratic_forms.binary_qf import BinaryQF_reduced_representatives
 
                 allQs[d] = BinaryQF_reduced_representatives(d, primitive_only=True)

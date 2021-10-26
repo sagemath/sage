@@ -328,7 +328,7 @@ class AlgebraicScheme_subscheme_affine(AlgebraicScheme_subscheme):
             False
         """
         R = self.ambient_space().coordinate_ring()
-        if not point is None:
+        if point is not None:
             self._check_satisfies_equations(point)
             point_subs = dict(zip(R.gens(), point))
             Jac = self.Jacobian().subs(point_subs)

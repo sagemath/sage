@@ -434,7 +434,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: H.is_smooth()  # one of the few cases where the cone over the subvariety is smooth
             True
         """
-        if not point is None:
+        if point is not None:
             self._check_satisfies_equations(point)
             R = self.ambient_space().coordinate_ring()
             point_subs = dict(zip(R.gens(), point))

@@ -354,8 +354,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         if S is ZZ or S is QQ or S is RLF:
             return ToRDF(S)
 
-        from .real_mpfr import RR, RealField_class
-        if isinstance(S, RealField_class):
+        if isinstance(S, sage.rings.abc.RealField):
             if S.prec() >= 53:
                 return ToRDF(S)
             else:
@@ -367,6 +366,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             else:
                 return None
 
+        from .real_mpfr import RR
         connecting = RR._internal_coerce_map_from(S)
         if connecting is not None:
             return ToRDF(RR) * connecting

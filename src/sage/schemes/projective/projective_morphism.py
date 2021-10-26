@@ -1594,18 +1594,19 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         k = ZZ(k)
         if k <= 0:
             raise ValueError("k (=%s) must be a positive integer" % k)
-        #first check if subscheme
+        # first check if subscheme
         from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
         if isinstance(Q, AlgebraicScheme_subscheme_projective):
             return Q.preimage(self, k)
 
-        #else assume a point
+        # else assume a point
         BR = self.base_ring()
         if k > 1 and not self.is_endomorphism():
             raise TypeError("must be an endomorphism of projective space")
-        if not Q in self.codomain():
+        if Q not in self.codomain():
             raise TypeError("point must be in codomain of self")
-        if isinstance(BR.base_ring(),(ComplexField_class, RealField_class,RealIntervalField_class, ComplexIntervalField_class)):
+        if isinstance(BR.base_ring(), (sage.rings.abc.ComplexField, sage.rings.abc.RealField,
+                                       sage.rings.abc.RealIntervalField, sage.rings.abc.ComplexIntervalField)):
             raise NotImplementedError("not implemented over precision fields")
         PS = self.domain().ambient_space()
         N = PS.dimension_relative()

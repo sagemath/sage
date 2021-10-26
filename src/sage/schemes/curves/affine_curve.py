@@ -678,7 +678,7 @@ class AffinePlaneCurve(AffineCurve):
                 # divide T by that power of vars[1]
                 T = self.ambient_space().coordinate_ring()(dict([((v[0],v[1] - t), h) for (v,h) in T.dict().items()]))
             # T is homogeneous in var[0], var[1] if nonconstant, so dehomogenize
-            if not T in self.base_ring():
+            if T not in self.base_ring():
                 if T.degree(vars[0]) > 0:
                     T = T(vars[0], 1)
                     roots = T.univariate_polynomial().roots()
@@ -982,7 +982,7 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
             raise ValueError("(=%s) must be a list or tuple of length between 2 and (=%s), inclusive" % (indices, n - 1))
         if len(set(indices)) < len(indices):
             raise ValueError("(=%s) must be a list or tuple of distinct indices or variables" % indices)
-        if not AS is None:
+        if AS is not None:
             if not is_AffineSpace(AS):
                 raise TypeError("(=%s) must be an affine space" % AS)
             if AS.dimension_relative() != len(indices):
@@ -2145,11 +2145,11 @@ class IntegralAffineCurve(AffineCurve_field):
         basis = list(gbasis)
         syzygy = {}
         for i in range(n):
-            S = k[R._first_ngens(i+1)]
+            S = k[R._first_ngens(i + 1)]
             while basis:
                 f = basis.pop()
                 if f in S:
-                    if not i in syzygy and f:
+                    if i not in syzygy and f:
                         syzygy[i] = f
                 else:
                     basis.append(f)

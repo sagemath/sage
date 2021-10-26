@@ -400,7 +400,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
         variety = self.codomain()
         if finite_field is None:
             finite_field = variety.base_ring()
-        if not finite_field in FiniteFields():
+        if finite_field not in FiniteFields():
             raise ValueError('not a finite field')
         return FiniteFieldPointEnumerator(variety.fan(), finite_field)
 

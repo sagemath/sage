@@ -324,8 +324,8 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
         # inhomogenize the Cox homogeneous polynomial with respect to the given cone
         inhomogenize = dict( (ambient.coordinate_ring().gen(i), 1)
                              for i in range(0,fan.nrays())
-                             if not i in cone.ambient_ray_indices() )
-        polynomials = [ p.subs(inhomogenize) for p in self.defining_polynomials() ]
+                             if i not in cone.ambient_ray_indices() )
+        polynomials = [p.subs(inhomogenize) for p in self.defining_polynomials()]
 
         # map the monomial x^{D_m} to m, see reference.
         n_rho_matrix = cone.rays().matrix()
@@ -581,7 +581,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             sage: Y.is_smooth()
             True
         """
-        if not point is None:
+        if point is not None:
             toric_patch = self.neighborhood(point)
             return toric_patch.is_smooth(toric_patch.embedding_center())
 
@@ -886,7 +886,7 @@ class AlgebraicScheme_subscheme_affine_toric(AlgebraicScheme_subscheme_toric):
             sage: Y.is_smooth([0,0])
             True
         """
-        if not point is None:
+        if point is not None:
             self._check_satisfies_equations(point)
             if self.ambient_space().is_smooth():
                 R = self.ambient_space().coordinate_ring()
