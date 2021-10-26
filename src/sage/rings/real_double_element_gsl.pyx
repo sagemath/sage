@@ -6,8 +6,6 @@ cimport libc.math
 
 from cysignals.signals cimport sig_on, sig_off
 
-import sage.rings.complex_double
-
 from sage.arith.constants cimport *
 
 from sage.libs.gsl.all cimport *
@@ -52,7 +50,8 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             return RealDoubleElement(float('nan'))
         if self._value < 0:
             if GSL_IS_EVEN(n):
-                return self._complex_double_(sage.rings.complex_double.CDF).nth_root(n)
+                from sage.rings.complex_double import CDF
+                return self._complex_double_(CDF).nth_root(n)
             else:
                 return - ( (-self) ** (float(1)/n) )
         else:

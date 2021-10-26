@@ -1543,7 +1543,7 @@ def round(x, ndigits=0):
         sage: q = round(sqrt(2),5); q
         1.41421
         sage: type(q)
-        <type 'sage.rings.real_double.RealDoubleElement'>
+        <class 'sage.rings.real_double...RealDoubleElement...'>
         sage: q = round(sqrt(2)); q
         1
         sage: type(q)
