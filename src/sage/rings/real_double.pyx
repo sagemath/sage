@@ -2198,3 +2198,8 @@ cdef double_repr(double x):
         if x < 0:
             return "-infinity"
     return "NaN"
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Real.register(RealDoubleElement)

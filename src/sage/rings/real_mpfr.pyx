@@ -6122,3 +6122,8 @@ def create_RealField(*args, **kwds):
     deprecation(24511, "Please import create_RealField from sage.rings.real_field")
     from sage.rings.real_field import create_RealField as cr
     return cr(*args, **kwds)
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Real.register(RealNumber)
