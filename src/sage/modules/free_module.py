@@ -7462,6 +7462,7 @@ def element_class(R, is_sparse):
     elif isinstance(R, sage.rings.abc.SymbolicRing) and not is_sparse:
         import sage.modules.vector_symbolic_dense
         return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
+
     if is_sparse:
         return free_module_element.FreeModuleElement_generic_sparse
     else:
