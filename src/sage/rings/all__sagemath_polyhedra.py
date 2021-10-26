@@ -30,3 +30,9 @@ from .localization import Localization
 
 # Double precision floating point numbers
 from .real_double import RealDoubleField, RDF, RealDoubleElement
+
+
+# Preliminary version of real numbers for doctesting without sage.rings.real_mpfr.
+# sage.rings.all redefines it.
+
+RealNumber = RDF             # used by the preparser to wrap real literals
