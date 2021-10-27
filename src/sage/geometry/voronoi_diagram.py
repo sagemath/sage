@@ -51,18 +51,18 @@ class VoronoiDiagram(SageObject):
     Get the Voronoi diagram of a regular pentagon in ``AA^2``.
     All cells meet at the origin::
 
-        sage: DV = VoronoiDiagram([[AA(c) for c in v] for v in polytopes.regular_polygon(5).vertices_list()]); DV
+        sage: DV = VoronoiDiagram([[AA(c) for c in v] for v in polytopes.regular_polygon(5).vertices_list()]); DV  # optional - sage.rings.number_field
         The Voronoi diagram of 5 points of dimension 2 in the Algebraic Real Field
-        sage: all(P.contains([0, 0]) for P in DV.regions().values())
+        sage: all(P.contains([0, 0]) for P in DV.regions().values())                                               # optional - sage.rings.number_field
         True
-        sage: any(P.interior_contains([0, 0]) for P in DV.regions().values())
+        sage: any(P.interior_contains([0, 0]) for P in DV.regions().values())                                      # optional - sage.rings.number_field
         False
 
     If the vertices are not converted to ``AA`` before, the method throws an error::
 
-        sage: polytopes.dodecahedron().vertices_list()[0][0].parent()
+        sage: polytopes.dodecahedron().vertices_list()[0][0].parent()                                              # optional - sage.rings.number_field
         Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-        sage: VoronoiDiagram(polytopes.dodecahedron().vertices_list())
+        sage: VoronoiDiagram(polytopes.dodecahedron().vertices_list())                                             # optional - sage.rings.number_field
         Traceback (most recent call last):
         ...
         NotImplementedError: Base ring of the Voronoi diagram must be
@@ -232,9 +232,9 @@ class VoronoiDiagram(SageObject):
 
         EXAMPLES::
 
-            sage: V = VoronoiDiagram(polytopes.regular_polygon(3).vertices()); V
+            sage: V = VoronoiDiagram(polytopes.regular_polygon(3).vertices()); V         # optional - sage.rings.number_field
             The Voronoi diagram of 3 points of dimension 2 in the Algebraic Real Field
-            sage: VoronoiDiagram([])
+            sage: VoronoiDiagram([])                                                     # optional - sage.rings.number_field
             The empty Voronoi diagram.
         """
         if self._n:
