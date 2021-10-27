@@ -380,7 +380,7 @@ cdef class InverseAction(Action):
                 Action.__init__(self, G, action.underlying_set(), action._is_left)
                 self._action = action
                 return
-        except (AttributeError, NotImplementedError):
+        except (ImportError, AttributeError, NotImplementedError):
             pass
         raise TypeError(f"no inverse defined for {action!r}")
 
