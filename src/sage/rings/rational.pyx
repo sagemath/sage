@@ -679,8 +679,15 @@ cdef class Rational(sage.structure.element.FieldElement):
             mpq_set(self.value, temp_rational.value)
 
         elif isinstance(x, RealDouble_classes):
-            from sage.rings.real_mpfr import RR, RealNumber
-            self.__set_value(RealNumber(RR, x), base)
+            try:
+                from sage.rings.real_mpfr import RR, RealNumber
+            except ImportError:
+                if base:
+                    raise
+                from fractions import Fraction
+                self.__set_value(Fraction.from_float(float(x)), 0)
+            else:
+                self.__set_value(RealNumber(RR, x), base)
 
         elif is_numpy_type(type(x)):
             import numpy
