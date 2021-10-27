@@ -1975,6 +1975,20 @@ cdef class RealDoubleElement(FieldElement):
 
     algdep = algebraic_dependency
 
+    # Methods that RealDoubleElement_gsl redefines
+
+    def sin(self):
+        """
+        Return the sine of ``self``.
+
+        EXAMPLES::
+
+            sage: RDF(2).sin()
+            0.9092974268256817
+        """
+        return self._new_c(libc.math.sin(self._value))
+
+
 cdef class ToRDF(Morphism):
     def __init__(self, R):
         """
