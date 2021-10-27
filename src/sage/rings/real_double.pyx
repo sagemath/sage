@@ -1975,7 +1975,64 @@ cdef class RealDoubleElement(FieldElement):
 
     algdep = algebraic_dependency
 
+    def sincos(self):
+        """
+        Return a pair consisting of the sine and cosine of ``self``.
+
+        EXAMPLES::
+
+            sage: t = RDF.pi()/6
+            sage: t.sincos()
+            (0.49999999999999994, 0.8660254037844387)
+        """
+        return self.sin(), self.cos()
+
     # Methods that RealDoubleElement_gsl redefines
+
+    def _pow_(self, other):
+        """
+        Return ``self`` raised to the real double power ``other``.
+
+        EXAMPLES::
+
+            sage: a = RDF('1.23456')
+            sage: a^a
+            1.2971114817819216
+
+        TESTS::
+
+            sage: RDF(0) ^ RDF(0.5)
+            0.0
+            sage: RDF(0) ^ (1/2)
+            0.0
+            sage: RDF(0) ^ RDF(0)
+            1.0
+            sage: RDF(0) ^ RDF(-1)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: 0.0 cannot be raised to a negative power
+            sage: RDF(-1) ^ RDF(0)
+            1.0
+            sage: RDF(-1) ^ RDF(1)
+            -1.0
+            sage: RDF(-1) ^ RDF(0.5)
+            Traceback (most recent call last):
+            ...
+            ValueError: negative number cannot be raised to a fractional power
+        """
+        return self._new_c(self._value ** (<RealDoubleElement>other)._value)
+
+    def cos(self):
+        """
+        Return the cosine of ``self``.
+
+        EXAMPLES::
+
+            sage: t=RDF.pi()/2
+            sage: t.cos()
+            6.123233995736757e-17
+        """
+        return self._new_c(libc.math.cos(self._value))
 
     def sin(self):
         """
@@ -1987,6 +2044,21 @@ cdef class RealDoubleElement(FieldElement):
             0.9092974268256817
         """
         return self._new_c(libc.math.sin(self._value))
+
+    def tan(self):
+        """
+        Return the tangent of ``self``.
+
+        EXAMPLES::
+
+            sage: q = RDF.pi()/3
+            sage: q.tan()
+            1.7320508075688767
+            sage: q = RDF.pi()/6
+            sage: q.tan()
+            0.5773502691896256
+        """
+        return self._new_c(libc.math.tan(self._value))
 
 
 cdef class ToRDF(Morphism):
