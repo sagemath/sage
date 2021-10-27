@@ -776,7 +776,7 @@ class Polytopes():
             base_ring = K
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             g = (1 + base_ring(5).sqrt()) / 2
 
         r12 = base_ring.one() / 2
@@ -895,7 +895,7 @@ class Polytopes():
             base_ring = K
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             sqrt2 = base_ring(2).sqrt()
 
         one = base_ring.one()
@@ -953,7 +953,7 @@ class Polytopes():
             sqrt2 = base_ring.gen()
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             sqrt2 = base_ring(2).sqrt()
 
         one = base_ring.one()
@@ -1114,7 +1114,7 @@ class Polytopes():
             base_ring = K
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             g = base_ring(2).sqrt() - 1
 
         v = [[a * g, b, c] for a in [-1, 1] for b in [-1, 1] for c in [-1, 1]]
@@ -1382,7 +1382,7 @@ class Polytopes():
             z = base_ring.gen()
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             z = construct_z(base_ring)
 
         verts = []
@@ -1577,7 +1577,7 @@ class Polytopes():
             base_ring = K
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             g = (1 + base_ring(5).sqrt()) / 2
 
         pts = [[g, 0, 0], [-g, 0, 0]]
@@ -1658,7 +1658,7 @@ class Polytopes():
             base_ring = K
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             g = (1 + base_ring(5).sqrt()) / 2
 
         z = base_ring.zero()
@@ -1818,7 +1818,7 @@ class Polytopes():
             base_ring = K
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             g = (1 + base_ring(5).sqrt()) / 2
 
         pts = [[s1 * base_ring.one(), s2 * base_ring.one(), s3 * (g**3)]
@@ -1895,7 +1895,7 @@ class Polytopes():
             base_ring = K
         else:
             if base_ring is None:
-                base_ring = RDF
+                from sage.rings.real_double import RDF as base_ring
             g = (1 + base_ring(5).sqrt()) / 2
 
         pts = [[s1 * 1 / g, s2 * 1 / g, s3 * (3 + g)]
@@ -1960,7 +1960,7 @@ class Polytopes():
 
         """
         if base_ring is None:
-            base_ring = RDF
+            from sage.rings.real_double import RDF as base_ring
         phi = (1 + base_ring(5).sqrt()) / 2
         xi = ((phi/2 + (phi - ZZ(5)/27).sqrt()/2)**(~ZZ(3)) +
               (phi/2 - (phi - ZZ(5)/27).sqrt()/2)**(~ZZ(3)))
@@ -2261,8 +2261,8 @@ class Polytopes():
             g = (1 + sqrt5) / 2
             base_ring = K
         else:
-            g = (1 + RDF(5).sqrt()) / 2
-            base_ring = RDF
+            from sage.rings.real_double import RDF as base_ring
+            g = (1 + base_ring(5).sqrt()) / 2
 
         q12 = base_ring(1) / base_ring(2)
         z = base_ring.zero()
@@ -2332,8 +2332,8 @@ class Polytopes():
             g = (1 + sqrt5) / 2
             base_ring = K
         else:
-            g = (1 + RDF(5).sqrt()) / 2
-            base_ring = RDF
+            from sage.rings.real_double import RDF as base_ring
+            g = (1 + base_ring(5).sqrt()) / 2
 
         q12 = base_ring(1) / base_ring(2)
         z = base_ring.zero()
