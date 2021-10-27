@@ -333,8 +333,16 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         from sage.rings.infinity import Infinity
         if p == Infinity:
-            from sage.rings.real_field import create_RealField
-            return create_RealField(prec, **extras)
+            try:
+                from sage.rings.real_field import create_RealField
+            except ImportError:
+                if prec == 53:
+                    from sage.rings.real_double import RDF
+                    return RDF
+                else:
+                    raise
+            else:
+                return create_RealField(prec, **extras)
         else:
             from sage.rings.padics.factory import Qp
             return Qp(p, prec, **extras)
