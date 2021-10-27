@@ -852,8 +852,14 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     entries = arg0
 
     # sanity check for entries
-    from numpy import ndarray
-    if not isinstance(entries, (list, tuple, ndarray)):
+    types = (list, tuple)
+    try:
+        from numpy import ndarray
+    except ImportError:
+        pass
+    else:
+        types += (ndarray,)
+    if not isinstance(entries, types):
         entries = list(entries)
 
     # Reconcile matrix size and number of entries
