@@ -535,18 +535,6 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         a = self._new_c(gsl_sf_sin(self._value) / cos)
         return a
 
-    def sincos(self):
-        """
-        Return a pair consisting of the sine and cosine of ``self``.
-
-        EXAMPLES::
-
-            sage: t = RDF.pi()/6
-            sage: t.sincos()
-            (0.49999999999999994, 0.8660254037844387)
-        """
-        return self.sin(), self.cos()
-
     def hypot(self, other):
         r"""
         Computes the value `\sqrt{s^2 + o^2}` where `s` is ``self`` and `o`
