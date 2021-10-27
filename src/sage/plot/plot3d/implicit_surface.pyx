@@ -88,7 +88,7 @@ from sage.rings.real_double import RDF
 from sage.plot.misc import setup_for_eval_on_grid
 from sage.plot.colors import check_color_data
 
-from sage.libs.gsl.math cimport gsl_isnan
+from libc.math cimport isnan
 
 include "point_c.pxi"
 
@@ -99,9 +99,7 @@ DEFAULT_PLOT_POINTS = 40
 cdef double nan = float(RDF('NaN'))
 
 cdef inline bint marching_has_edge(double a, double b, double contour, double *f, bint *has_nan):
-    # XXX Would be nicer to use isnan(), because it's inlined.
-    # Is it portable enough?
-    if gsl_isnan(a) or gsl_isnan(b):
+    if isnan(a) or isnan(b):
         has_nan[0] = True
         return False
 
@@ -115,7 +113,7 @@ cdef inline bint marching_has_edge(double a, double b, double contour, double *f
 
 # Returns 0 or 1
 cdef inline int marching_is_inside(double v, double contour):
-    return gsl_isnan(v) or v < contour
+    return isnan(v) or v < contour
 
 cdef void interpolate_point_c(point_c *result, double frac, point_c *inputs):
     result[0].x = inputs[0].x + frac*(inputs[1].x - inputs[0].x)
