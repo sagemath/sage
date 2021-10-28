@@ -1987,7 +1987,8 @@ cdef class RealDoubleElement(FieldElement):
         """
         return self.sin(), self.cos()
 
-    # Methods that RealDoubleElement_gsl redefines
+    # The following methods are redefined by RealDoubleElement_gsl.
+    # In the doctests, we invoke the methods defined here explicitly.
 
     def _pow_(self, other):
         """
@@ -1996,26 +1997,28 @@ cdef class RealDoubleElement(FieldElement):
         EXAMPLES::
 
             sage: a = RDF('1.23456')
-            sage: a^a
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: RealDoubleElement._pow_(a, a)
             1.2971114817819216
 
         TESTS::
 
-            sage: RDF(0) ^ RDF(0.5)
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: RealDoubleElement._pow_(RDF(0), RDF(0.5))
             0.0
-            sage: RDF(0) ^ (1/2)
+            sage: RealDoubleElement._pow_(RDF(0), RDF(1/2))
             0.0
-            sage: RDF(0) ^ RDF(0)
+            sage: RealDoubleElement._pow_(RDF(0), RDF(0))
             1.0
-            sage: RDF(0) ^ RDF(-1)
+            sage: RealDoubleElement._pow_(RDF(0), RDF(-1))
             Traceback (most recent call last):
             ...
             ZeroDivisionError: 0.0 cannot be raised to a negative power
-            sage: RDF(-1) ^ RDF(0)
+            sage: RealDoubleElement._pow_(RDF(-1), RDF(0))
             1.0
-            sage: RDF(-1) ^ RDF(1)
+            sage: RealDoubleElement._pow_(RDF(-1), RDF(1))
             -1.0
-            sage: RDF(-1) ^ RDF(0.5)
+            sage: RealDoubleElement._pow_(RDF(-1), RDF(0.5))
             Traceback (most recent call last):
             ...
             ValueError: negative number cannot be raised to a fractional power
@@ -2028,8 +2031,9 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: t=RDF.pi()/2
-            sage: t.cos()
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: t = RDF.pi()/2
+            sage: RealDoubleElement.cos(t)
             6.123233995736757e-17
         """
         return self._new_c(libc.math.cos(self._value))
@@ -2040,7 +2044,8 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: RDF(2).sin()
+            sage: from sage.rings.real_double import RealDoubleElement
+            sage: RealDoubleElement.sin(RDF(2))
             0.9092974268256817
         """
         return self._new_c(libc.math.sin(self._value))
@@ -2051,11 +2056,12 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
+            sage: from sage.rings.real_double import RealDoubleElement
             sage: q = RDF.pi()/3
-            sage: q.tan()
+            sage: RealDoubleElement.tan(q)
             1.7320508075688767
             sage: q = RDF.pi()/6
-            sage: q.tan()
+            sage: RealDoubleElement.tan(q)
             0.5773502691896256
         """
         return self._new_c(libc.math.tan(self._value))
