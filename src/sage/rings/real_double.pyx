@@ -2068,7 +2068,7 @@ cdef class RealDoubleElement(FieldElement):
     # The following methods are redefined by RealDoubleElement_gsl.
     # In the doctests, we invoke the methods defined here explicitly.
 
-    def _pow_(self, other):
+    cpdef _pow_(self, other):
         """
         Return ``self`` raised to the real double power ``other``.
 

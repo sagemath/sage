@@ -10,6 +10,7 @@ cdef class RealDoubleElement(FieldElement):
     cdef _new_c(self, double value)
     cpdef _add_(self, other)
     cpdef _mul_(self, other)
+    cpdef _pow_(self, other)
     cpdef RealDoubleElement abs(RealDoubleElement self)
 
 cdef double_repr(double x)
