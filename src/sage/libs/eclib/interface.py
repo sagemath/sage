@@ -27,7 +27,7 @@ Check that ``eclib`` is imported as needed::
 """
 import sys
 from sage.structure.sage_object import SageObject
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 
 from .mwrank import _Curvedata, _two_descent, _mw, parse_point_list

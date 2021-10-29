@@ -109,7 +109,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
         elif c.is_prime_power():
             K = self.base_ring()
             p = K.characteristic().prime_factors()[0]
-            from sage.rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             Kp = GF(p)
             newB = [f.change_ring(K) for f in list(self.__M.cuspidal_subspace().q_integral_basis(prec))]
             A = Kp**prec

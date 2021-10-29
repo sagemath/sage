@@ -59,7 +59,7 @@ You can also import the desired functions::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.groups.free_group import FreeGroup
 from sage.groups.finitely_presented import FinitelyPresentedGroup
 from sage.libs.gap.libgap import libgap

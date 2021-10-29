@@ -25,7 +25,7 @@ import pickle
 
 from copy import copy
 
-from sage.misc.all import cached_function
+from sage.misc.cachefunc import cached_function
 from sage.misc.flatten import flatten
 from sage.graphs.all import DiGraph
 from sage.combinat.all import Combinations
