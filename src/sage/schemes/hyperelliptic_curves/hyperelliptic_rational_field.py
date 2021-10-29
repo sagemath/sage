@@ -7,7 +7,9 @@ Hyperelliptic curves over the rationals
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.padics.all import is_pAdicField, is_pAdicRing, pAdicField
+import sage.rings.abc
+
+from sage.rings.padics.all import pAdicField
 
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
@@ -28,7 +30,7 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
             return HyperellipticCurve(f.change_ring(R), h, "%s,%s"%(x,y))
 
         import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
-        if is_pAdicField(p) or is_pAdicRing(p):
+        if isinstance(p, (sage.rings.abc.pAdicField, sage.rings.abc.pAdicRing)):
             K = p
         else:
             K = pAdicField(p, prec)

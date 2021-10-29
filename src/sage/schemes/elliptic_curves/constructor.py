@@ -476,7 +476,7 @@ class EllipticCurveFactory(UniqueFactory):
         elif is_NumberField(R):
             from .ell_number_field import EllipticCurve_number_field
             return EllipticCurve_number_field(R, x)
-        elif rings.is_pAdicField(R):
+        elif isinstance(R, sage.rings.abc.pAdicField):
             from .ell_padic_field import EllipticCurve_padic_field
             return EllipticCurve_padic_field(R, x)
         elif is_FiniteField(R) or (isinstance(R, sage.rings.abc.IntegerModRing) and R.characteristic().is_prime()):

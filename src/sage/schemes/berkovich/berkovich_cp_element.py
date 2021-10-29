@@ -35,10 +35,10 @@ AUTHORS:
 
 from sage.structure.element import Element
 from sage.structure.element import Expression
+import sage.rings.abc
 from sage.rings.real_mpfr import RR, is_RealNumber
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
-from sage.rings.padics.generic_nodes import is_pAdicField
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.rings.rational_field import QQ
@@ -187,7 +187,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                         except (TypeError, ValueError):
                             raise TypeError('could not convert %s to %s' % (center, self._base_space))
                     if self._base_type == 'padic field':
-                        if not is_pAdicField(center.scheme().base_ring()):
+                        if not isinstance(center.scheme().base_ring(), sage.rings.abc.pAdicField):
                             if not isinstance(center.scheme().base_ring(), pAdicBaseGeneric):
                                 try:
                                     center = (self._base_space)(center)
@@ -245,7 +245,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                                 center = (self._base_space)(center)
                             except (TypeError, ValueError):
                                 raise TypeError("could not convert %s to %s" % (center, self._base_space))
-                        elif not is_pAdicField(center.parent()):
+                        elif not isinstance(center.parent(), sage.rings.abc.pAdicField):
                             # center is padic, not but an element of a padic field. we convert to padic field
                             center = (center.parent().fraction_field())(center)
                         if (center.parent()).prime() != self._p:
@@ -291,7 +291,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     except (ValueError, TypeError):
                         raise TypeError("could not convert %s to %s" % (center, self._base_space))
                 if self._base_type == 'padic field':
-                    if not is_pAdicField(center.scheme().base_ring()):
+                    if not isinstance(center.scheme().base_ring(), sage.rings.abc.pAdicField):
                         if not isinstance(center.scheme().base_ring(), pAdicBaseGeneric):
                             try:
                                 center = (self._base_space)(center)
@@ -327,7 +327,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                             center = (self._base_space)(center)
                         except (TypeError, ValueError):
                             raise TypeError("could not convert %s to %s" % (center, self._base_space))
-                    elif not is_pAdicField(center.parent()):
+                    elif not isinstance(center.parent(), sage.rings.abc.pAdicField):
                         # center is padic, not but an element of a padic field. we convert to padic field
                         center = (center.parent().fraction_field())(center)
                     if (center.parent()).prime() != self._p:

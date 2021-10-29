@@ -1,6 +1,8 @@
 """
 Abstract base classes for rings
 """
+from sage.rings.ring import EuclideanDomain
+
 
 class NumberField_quadratic(Field):
     r"""
@@ -113,9 +115,26 @@ class IntegerModRing:
 
     pass
 
+
 class Order:
     r"""
     Abstract base class for :class:`~sage.rings.number_field.order.Order`.
+    """
+
+    pass
+
+
+class pAdicRing(EuclideanDomain):
+    r"""
+    Abstract base class for :class:`~sage.rings.padics.generic_nodes.pAdicRingGeneric`.
+    """
+
+    pass
+
+
+class pAdicField(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.padics.generic_nodes.pAdicFieldGeneric`.
     """
 
     pass

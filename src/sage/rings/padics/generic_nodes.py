@@ -23,7 +23,7 @@ AUTHORS:
 
 from sage.rings.padics.local_generic import LocalGeneric
 from sage.rings.padics.padic_generic import pAdicGeneric
-from sage.rings.ring import EuclideanDomain, Field
+import sage.rings.abc
 from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1187,13 +1187,19 @@ def is_pAdicRing(R):
     EXAMPLES::
 
         sage: is_pAdicRing(Zp(5))
+        doctest:warning...
+        DeprecationWarning: is_pAdicRing is deprecated; use isinstance(..., sage.rings.abc.pAdicRing) instead
+        See https://trac.sagemath.org/32750 for details.
         True
         sage: is_pAdicRing(RR)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32750, "is_pAdicRing is deprecated; use isinstance(..., sage.rings.abc.pAdicRing) instead")
     return isinstance(R, pAdicRingGeneric)
 
-class pAdicRingGeneric(pAdicGeneric, EuclideanDomain):
+
+class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
     def is_field(self, proof = True):
         """
         Return whether this ring is actually a field, ie ``False``.
@@ -1327,14 +1333,19 @@ def is_pAdicField(R):
     EXAMPLES::
 
         sage: is_pAdicField(Zp(17))
+        doctest:warning...
+        DeprecationWarning: is_pAdicField is deprecated; use isinstance(..., sage.rings.abc.pAdicField) instead
+        See https://trac.sagemath.org/32750 for details.
         False
         sage: is_pAdicField(Qp(17))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32750, "is_pAdicField is deprecated; use isinstance(..., sage.rings.abc.pAdicField) instead")
     return isinstance(R, pAdicFieldGeneric)
 
 
-class pAdicFieldGeneric(pAdicGeneric, Field):
+class pAdicFieldGeneric(pAdicGeneric, sage.rings.abc.pAdicField):
     pass
 
     #def class_field(self, group=None, map=None, generators=None):
