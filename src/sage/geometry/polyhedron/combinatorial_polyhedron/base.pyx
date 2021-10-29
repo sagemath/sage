@@ -1854,7 +1854,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         if self.is_simplex():
             return self.dim() + 1
         else:
-            from sage.functions.other import binomial
+            from sage.arith.misc import binomial
             k = 1
             while self.f_vector()[k+1] == binomial(self.n_vertices(), k + 1):
                 k += 1
@@ -1904,7 +1904,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.is_neighborly(k=2)
             True
         """
-        from sage.functions.other import binomial
+        from sage.arith.misc import binomial
         if k is None:
             k = self.dim() // 2
         return all(self.f_vector()[i+1] == binomial(self.n_vertices(), i + 1)

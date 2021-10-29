@@ -19,7 +19,6 @@ from sage.arith.all import inverse_mod, xgcd, gcd
 from sage.quadratic_forms.extras import extend_to_primitive
 from sage.rings.finite_rings.integer_mod import mod
 from sage.misc.prandom import randint
-from sage.functions.other import ceil, floor
 
 
 def red_mfact(a,b):

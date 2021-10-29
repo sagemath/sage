@@ -72,7 +72,7 @@ class Polyhedron:
     By design, there is a unique direct subclass::
 
         sage: sage.geometry.abc.Polyhedron.__subclasses__()                   # optional - sage.geometry.polyhedron
-        [<class 'sage.geometry.polyhedron.base.Polyhedron_base'>]
+        [<class 'sage.geometry.polyhedron.base0.Polyhedron_base0'>]
 
         sage: len(sage.geometry.abc.Polyhedron.__subclasses__()) <= 1
         True

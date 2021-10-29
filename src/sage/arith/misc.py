@@ -5031,6 +5031,24 @@ def integer_floor(x):
     raise NotImplementedError("computation of floor of %s not implemented"%x)
 
 
+def integer_trunc(i):
+    """
+    Truncate to the integer closer to zero
+
+    EXAMPLES::
+
+        sage: from sage.arith.misc import integer_trunc as trunc
+        sage: trunc(-3/2), trunc(-1), trunc(-1/2), trunc(0), trunc(1/2), trunc(1), trunc(3/2)
+        (-1, -1, 0, 0, 0, 1, 1)
+        sage: isinstance(trunc(3/2), Integer)
+        True
+    """
+    if i >= 0:
+        return integer_floor(i)
+    else:
+        return integer_ceil(i)
+
+
 def two_squares(n):
     """
     Write the integer `n` as a sum of two integer squares if possible;

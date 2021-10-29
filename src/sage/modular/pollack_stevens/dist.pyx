@@ -39,7 +39,6 @@ from sage.matrix.matrix cimport Matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import matrix
 from sage.misc.prandom import random
-from sage.functions.other import floor
 from sage.structure.element cimport RingElement, Element
 import operator
 from sage.rings.padics.padic_generic import pAdicGeneric

@@ -1538,7 +1538,7 @@ class Polyhedron_normaliz(Polyhedron_base):
                 from sage.rings.infinity import infinity
                 return infinity
 
-            from sage.functions.other import factorial
+            from sage.arith.misc import factorial
             return self._volume_normaliz('induced_lattice') / factorial(self.dim())
 
         else:
