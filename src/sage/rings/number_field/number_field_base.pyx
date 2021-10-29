@@ -361,8 +361,16 @@ cdef class NumberField(Field):
         if self._gen_approx is not None or self._embedding is None:
             return
 
-        from sage.rings.qqbar import AA
-        from sage.rings.real_lazy import RLF
+        try:
+            from sage.rings.qqbar import AA
+        except ImportError:
+            AA = None
+
+        try:
+            from sage.rings.real_lazy import RLF
+        except ImportError:
+            RLF = None
+
         codomain = self._embedding.codomain()
         if codomain is AA or codomain is RLF:
             self._gen_approx = []

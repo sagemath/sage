@@ -79,6 +79,7 @@ cdef extern from "<complex.h>":
     double complex csqrt(double complex)
     double cabs(double complex)
 
+import sage.rings.abc
 cimport sage.rings.ring
 cimport sage.rings.integer
 
@@ -447,11 +448,10 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
             return FloatToCDF(S)
         from .rational_field import QQ
         from .real_lazy import RLF
-        from .real_mpfr import RR, RealField_class
-        from .complex_mpfr import ComplexField_class
+        from .real_mpfr import RR
         if S is ZZ or S is QQ or S is RDF or S is RLF:
             return FloatToCDF(S)
-        if isinstance(S, RealField_class):
+        if isinstance(S, sage.rings.abc.RealField):
             if S.prec() >= 53:
                 return FloatToCDF(S)
             else:
@@ -466,7 +466,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
                 return None
         elif RR.has_coerce_map_from(S):
             return FloatToCDF(RR) * RR._internal_coerce_map_from(S)
-        elif isinstance(S, ComplexField_class) and S.prec() >= 53:
+        elif isinstance(S, sage.rings.abc.ComplexField) and S.prec() >= 53:
             return complex_mpfr.CCtoCDF(S, self)
         elif CC.has_coerce_map_from(S):
             return complex_mpfr.CCtoCDF(CC, self) * CC._internal_coerce_map_from(S)

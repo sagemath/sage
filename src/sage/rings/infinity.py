@@ -220,6 +220,7 @@ from sage.rings.ring import Ring
 from sage.structure.element import RingElement, InfinityElement
 from sage.structure.richcmp import rich_to_bool, richcmp
 from sage.misc.fast_methods import Singleton
+import sage.rings.abc
 import sage.rings.integer
 import sage.rings.rational
 
@@ -1261,15 +1262,8 @@ class InfinityRing_class(Singleton, Ring):
         from sage.structure.coerce import parent_is_real_numerical
         if parent_is_real_numerical(R):
             return True
-        from sage.rings.real_mpfi import RealIntervalField_class
-        if isinstance(R, RealIntervalField_class):
+        if isinstance(R, (sage.rings.abc.RealIntervalField, sage.rings.abc.RealBallField)):
             return True
-        try:
-            from sage.rings.real_arb import RealBallField
-            if isinstance(R, RealBallField):
-                return True
-        except ImportError:
-            pass
         return False
 
     def _pushout_(self, other):
