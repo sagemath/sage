@@ -2768,6 +2768,7 @@ class Polytopes():
             vertices = [transf * v.change_ring(AA) for v in vertices]
             br = AA
         if not exact:
+            from sage.rings.real_double import RDF
             vertices = [v.change_ring(RDF) for v in vertices]
             br = RDF
         return Polyhedron(vertices=vertices, backend=backend, base_ring=br)
