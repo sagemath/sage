@@ -456,7 +456,13 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert sagenb_export nbformat terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol; do
+    for pkg in notebook nbconvert sagenb_export nbformat terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AS_IF([test "$SAGE_ENABLE_notebook" = no -a "$SAGE_ENABLE_sagelib" = no], [
+    for pkg in jupyter_client ipykernel ipython zeromq pyzmq; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -465,6 +471,14 @@ AC_ARG_ENABLE([r],
   AS_HELP_STRING([--disable-r],
                  [disable build of the R package and related packages]), [
     for pkg in r rpy2 r_jupyter pcre; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
+AC_ARG_ENABLE([sagelib],
+  AS_HELP_STRING([--disable-sagelib],
+                 [disable build of the Sage library and packages depending on it]), [
+    for pkg in sagelib sage_docbuild; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])

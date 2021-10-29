@@ -230,7 +230,6 @@ base-toolchain: _clean-broken-gcc base
 
 # All targets except for the base packages
 all-sage: \
-		sagelib \
 		$(INSTALLED_PACKAGE_INSTS) \
                 $(UNINSTALLED_PACKAGES_CLEANS)
 

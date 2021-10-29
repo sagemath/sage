@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+cd src
+
+if [ "$SAGE_CHECK" != no ]; then
+    tox
+fi
+# We skip the install for now.
+exit 0
