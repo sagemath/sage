@@ -4305,3 +4305,8 @@ cdef class long_to_Q(Morphism):
             'Native'
         """
         return "Native"
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Rational.register(Rational)
