@@ -242,10 +242,10 @@ done from the right side.""")
         #            raise TypeError, "The base_ring must be a commutative ring."
 
         try:
-            if not sparse and isinstance(base_ring,sage.rings.real_double.RealDoubleField_class):
+            if not sparse and isinstance(base_ring, sage.rings.abc.RealDoubleField):
                 return RealDoubleVectorSpace_class(rank)
 
-            elif not sparse and isinstance(base_ring,sage.rings.complex_double.ComplexDoubleField_class):
+            elif not sparse and isinstance(base_ring, sage.rings.abc.ComplexDoubleField):
                 return ComplexDoubleVectorSpace_class(rank)
 
             elif base_ring.is_field():
@@ -2932,7 +2932,7 @@ class FreeModule_generic_pid(FreeModule_generic):
         a = sage.matrix.matrix_space.MatrixSpace(self.base_field(), self.rank())(C).determinant()
         if sage.rings.integer_ring.is_IntegerRing(self.base_ring()):
             return a.abs()
-        elif isinstance(self.base_ring, sage.rings.number_field.order.Order):
+        elif isinstance(self.base_ring, sage.rings.abc.Order):
             return self.base_ring().ideal(a).norm()
         else:
             raise NotImplementedError
@@ -7426,9 +7426,7 @@ def element_class(R, is_sparse):
         sage: sage.modules.free_module.element_class(P, is_sparse=False)
         <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
     """
-    import sage.modules.vector_real_double_dense
-    import sage.modules.vector_complex_double_dense
-
+    import sage.rings.integer_ring
     if sage.rings.integer_ring.is_IntegerRing(R) and not is_sparse:
         from .vector_integer_dense import Vector_integer_dense
         return Vector_integer_dense
@@ -7445,21 +7443,30 @@ def element_class(R, is_sparse):
         else:
             return free_module_element.FreeModuleElement_generic_dense
     elif isinstance(R, sage.rings.abc.RealDoubleField) and not is_sparse:
-        return sage.modules.vector_real_double_dense.Vector_real_double_dense
+        try:
+            from sage.modules.vector_real_double_dense import Vector_real_double_dense
+        except ImportError:
+            pass
+        else:
+            return Vector_real_double_dense
     elif isinstance(R, sage.rings.abc.ComplexDoubleField) and not is_sparse:
-        return sage.modules.vector_complex_double_dense.Vector_complex_double_dense
+        try:
+            from sage.modules.vector_complex_double_dense import Vector_complex_double_dense
+        except ImportError:
+            pass
+        else:
+            return Vector_complex_double_dense
     elif isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing) and not is_sparse:
         import sage.modules.vector_callable_symbolic_dense
         return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
     elif isinstance(R, sage.rings.abc.SymbolicRing) and not is_sparse:
         import sage.modules.vector_symbolic_dense
         return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
+
+    if is_sparse:
+        return free_module_element.FreeModuleElement_generic_sparse
     else:
-        if is_sparse:
-            return free_module_element.FreeModuleElement_generic_sparse
-        else:
-            return free_module_element.FreeModuleElement_generic_dense
-    raise NotImplementedError
+        return free_module_element.FreeModuleElement_generic_dense
 
 @richcmp_method
 class EchelonMatrixKey(object):
