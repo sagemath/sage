@@ -1892,7 +1892,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             r += 1
             power *= p
             if not power.divides(self.__modulus.sageInteger):
-                from sage.rings.all import infinity
+                from sage.rings.infinity import infinity
                 return infinity
         return r
 

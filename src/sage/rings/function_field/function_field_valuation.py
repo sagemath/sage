@@ -923,7 +923,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             # if the caller was sure that we should simplify, then we should try to do the best simplification possible
             error = self(f) if force else self.upper_bound(f)
 
-        from sage.all import infinity
+        from sage.rings.infinity import infinity
         if error is infinity:
             return f
 

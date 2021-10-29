@@ -1055,7 +1055,7 @@ class LocalGeneric(CommutativeRing):
         tester = self._tester(**options)
         for x in tester.some_elements():
             tester.assertEqual(x.add_bigoh(x.precision_absolute()), x)
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             tester.assertEqual(x.add_bigoh(infinity), x)
             tester.assertEqual(x.add_bigoh(x.precision_absolute()+1), x)
 
@@ -1276,7 +1276,7 @@ class LocalGeneric(CommutativeRing):
             [O(5^10) O(5^10)]
             [O(5^10) O(5^10)]
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         from .precision_error import PrecisionError
         from copy import copy
         n = M.nrows()

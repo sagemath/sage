@@ -21,7 +21,7 @@ from . import multiplicative, classical
 from sage.combinat.partition import Partition
 from sage.misc.misc_c import prod
 from sage.arith.all import factorial, binomial
-from sage.rings.all import infinity
+from sage.rings.infinity import infinity
 
 ###################################
 #                                 #
