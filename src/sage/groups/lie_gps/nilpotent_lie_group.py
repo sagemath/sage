@@ -22,8 +22,7 @@ from sage.categories.lie_algebras import LieAlgebras
 from sage.groups.group import Group
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.manifolds.differentiable.manifold", "DifferentiableManifold")
-from sage.manifolds.structure import(DifferentialStructure,
-                                     RealDifferentialStructure)
+lazy_import("sage.manifolds.structure", ("DifferentialStructure", "RealDifferentialStructure"))
 from sage.misc.cachefunc import cached_method
 from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
