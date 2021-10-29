@@ -406,7 +406,7 @@ def call(func, *args, **kwargs):
         sage: a.call(a.polylog, 2, 1/2, parent=RDF)
         0.5822405264650125
         sage: type(_)
-        <class 'sage.rings.real_double.RealDoubleElement'>
+        <class 'sage.rings.real_double...RealDoubleElement...'>
 
     Check that :trac:`11885` is fixed::
 
