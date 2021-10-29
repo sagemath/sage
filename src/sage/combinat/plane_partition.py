@@ -847,8 +847,8 @@ class PlanePartitions(UniqueRepresentation, Parent):
         A = self._box[0]
         B = self._box[1]
         C = self._box[2]
-        from sage.combinat.tableau import SemistandardTableaux
-        for T in SemistandardTableaux([B for i in range(A)], max_entry=C + A):
+        from sage.combinat.tableau import SemistandardTableaux as SST
+        for T in SST([B for i in range(A)], max_entry=C + A):  # type:ignore
             PP = [[0 for _ in range(B)] for _ in range(A)]
             for r in range(A):
                 for c in range(B):

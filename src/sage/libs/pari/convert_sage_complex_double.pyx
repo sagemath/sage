@@ -54,7 +54,76 @@ cpdef Gen new_gen_from_complex_double_element(ComplexDoubleElement self):
         sage: new_gen_from_complex_double_element(CDF(1,1))
         1.00000000000000 + 1.00000000000000*I
     """
-    if not self._complex.imag:
-        return new_gen_from_double(self._complex.real)
+    if not GSL_IMAG(self._complex):
+        return new_gen_from_double(GSL_REAL(self._complex))
     else:
-        return new_t_COMPLEX_from_double(self._complex.real, self._complex.imag)
+        return new_t_COMPLEX_from_double(GSL_REAL(self._complex), GSL_IMAG(self._complex))
+
+
+cpdef ComplexDoubleElement complex_double_element_eta(ComplexDoubleElement self, int flag):
+    """
+    TESTS::
+
+        sage: from sage.libs.pari.convert_sage_complex_double import complex_double_element_eta
+        sage: a = CDF(1,1)
+        sage: complex_double_element_eta(a, 0)
+        0.9981290699259585
+        sage: complex_double_element_eta(a, 1)
+        0.7420487758365647 + 0.1988313702299107*I
+    """
+    return pari_to_cdf(new_gen_from_complex_double_element(self).eta(flag))
+
+
+cpdef ComplexDoubleElement complex_double_element_agm(ComplexDoubleElement self, right):
+    """
+    TESTS::
+
+        sage: from sage.libs.pari.convert_sage_complex_double import complex_double_element_agm
+        sage: complex_double_element_agm(CDF(1, 1), CDF(2, 2))
+        1.4567910310469068 + 1.4567910310469068*I
+    """
+    return pari_to_cdf(new_gen_from_complex_double_element(self).agm(right))
+
+
+cpdef ComplexDoubleElement complex_double_element_dilog(ComplexDoubleElement self):
+    """
+    TESTS::
+
+        sage: from sage.libs.pari.convert_sage_complex_double import complex_double_element_dilog
+        sage: complex_double_element_dilog(CDF(1, 1))
+        0.6168502750680849 + 1.4603621167531196*I
+    """
+    return pari_to_cdf(new_gen_from_complex_double_element(self).dilog())
+
+
+cpdef ComplexDoubleElement complex_double_element_gamma(ComplexDoubleElement self):
+    """
+    TESTS::
+
+        sage: from sage.libs.pari.convert_sage_complex_double import complex_double_element_gamma
+        sage: complex_double_element_gamma(CDF(1, 1))
+        0.49801566811835607 - 0.15494982830181067*I
+    """
+    return pari_to_cdf(new_gen_from_complex_double_element(self).gamma())
+
+
+cpdef ComplexDoubleElement complex_double_element_gamma_inc(ComplexDoubleElement self, t):
+    """
+    TESTS::
+
+        sage: from sage.libs.pari.convert_sage_complex_double import complex_double_element_gamma_inc
+        sage: complex_double_element_gamma_inc(CDF(1, 1), CDF(2, 2))
+        0.054695987717541285 - 0.04676800059213122*I
+    """
+    return pari_to_cdf(new_gen_from_complex_double_element(self).incgam(t))
+
+
+cpdef ComplexDoubleElement complex_double_element_zeta(ComplexDoubleElement self):
+    """
+    TESTS::
+
+        sage: from sage.libs.pari.convert_sage_complex_double import complex_double_element_zeta
+        sage: complex_double_element_zeta(CDF(1, 2))
+        0.5981655697623818 - 0.35185474521784527*I
+    """
+    return pari_to_cdf(new_gen_from_complex_double_element(self).zeta())

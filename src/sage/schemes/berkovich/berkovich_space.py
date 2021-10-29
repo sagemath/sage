@@ -440,7 +440,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
             if not ideal.is_prime():
                 raise ValueError('passed non prime ideal')
             self._base_type = 'number field'
-        elif isinstance(base, sage.rings.abc.pAdicField): # change base to Qpbar
+        elif isinstance(base, sage.rings.abc.pAdicField):  # change base to Qpbar
             prime = base.prime()
             ideal = None
             self._base_type = 'padic field'

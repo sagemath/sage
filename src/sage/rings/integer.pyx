@@ -198,7 +198,7 @@ except ImportError:
     pari_gen = ()
 
 
-set_integer_from_pari_gen = None
+set_integer_from_gen = None
 pari_divisors_small = None
 n_factor_to_list = None
 pari_is_prime_power = None
@@ -646,8 +646,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     raise TypeError("Cannot convert non-integral float to integer")
 
             elif isinstance(x, pari_gen):
-                global set_integer_from_pari_gen
-                if set_integer_from_pari_gen is None:
+                global set_integer_from_gen
+                if set_integer_from_gen is None:
                     from sage.libs.pari.convert_sage import set_integer_from_gen
                 set_integer_from_gen(self, x)
 
@@ -6455,7 +6455,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS::
 
             sage: try:
-            ....:     print('Possible error output from gmp')
+            ....:     print('Possible error output from gmp', flush=True)
             ....:     1 << (2^60)
             ....: except (MemoryError, OverflowError, RuntimeError):
             ....:     pass

@@ -299,7 +299,7 @@ def Associahedra(base_ring, ambient_dim, backend='ppl'):
 
         :class:`Associahedra_base`.
     """
-    if not base_ring is QQ:
+    if base_ring is not QQ:
         raise NotImplementedError("base ring must be QQ")
     if backend == 'ppl':
         return Associahedra_ppl(base_ring, ambient_dim, backend)
@@ -313,6 +313,7 @@ def Associahedra(base_ring, ambient_dim, backend='ppl'):
         return Associahedra_field(base_ring, ambient_dim, backend)
     else:
         raise ValueError("unknown backend")
+
 
 class Associahedra_base(object):
     """

@@ -15,7 +15,7 @@ Manifold Subsets Defined as Pullbacks of Subsets under Continuous Maps
 
 from sage.categories.sets_cat import Sets, EmptySetError
 from sage.categories.metric_spaces import MetricSpaces
-from sage.modules.free_module import is_FreeModule, FreeModule
+from sage.modules.free_module import is_FreeModule
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -573,6 +573,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
                 if chart.domain().dimension() != 1:
                     raise ValueError('to pull back a set of scalars by a chart, the manifold must be 1-dimensional')
                 map = chart.domain().scalar_field({chart: chart[0]})
+
                 def _inverse(coord):
                     return self.point((coord,), chart=chart)
             else:

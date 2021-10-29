@@ -1629,8 +1629,8 @@ class Permutation(CombinatorialElement):
             sage: p.stack_sort()
             [1]
         """
-        stack = []
-        sorted_p = []
+        stack: list[int] = []
+        sorted_p: list[int] = []
         for j in self:
             if stack:
                 for i in reversed(stack):
@@ -1641,7 +1641,7 @@ class Permutation(CombinatorialElement):
                         break
             stack.append(j)
         sorted_p.extend(reversed(stack))
-        return Permutation(sorted_p)
+        return Permutation(sorted_p)  # type: ignore
 
     def to_digraph(self) -> DiGraph:
         r"""
@@ -2192,7 +2192,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([]).longest_increasing_subsequence_length()
             0
         """
-        r = []
+        r: list[int] = []
         for x in self:
             if max(r+[0]) > x:
                 y = min(z for z in r if z > x)
@@ -2380,7 +2380,7 @@ class Permutation(CombinatorialElement):
             sage: Permutation([1]).foata_bijection()
             [1]
         """
-        M = []
+        M: list[int] = []
         for e in self:
             k = len(M)
             if k <= 1:

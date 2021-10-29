@@ -1186,34 +1186,33 @@ class ImplicitSuffixTree(SageObject):
         """
         if n is None:
             length_word = self.word().length()
-            num_factors = 1 # empty word
-            for (u,v,(i,j)) in self.edge_iterator():
+            num_factors = 1  # empty word
+            for (u, v, (i, j)) in self.edge_iterator():
                 if j is None:
                     num_factors += length_word - i
                 else:
                     num_factors += j - i
         elif isinstance(n, (int, Integer)):
-            length_word = self.word().length()
             num_factors = 0
             queue = [(0, 0)]
             while queue:
-                (v,l) = queue.pop()
+                (v, l) = queue.pop()
                 if l == n:
                     num_factors += 1
                 if l < n:
                     if self._transition_function[v] != {}:
-                        for ((i,j),u) in self._transition_function[v].items():
+                        for ((i, j), u) in self._transition_function[v].items():
                             if j is None:
                                 j = self.word().length()
                             if j - i >= n - l:
                                 num_factors += 1
                             else:
-                                queue.append((u,l+j-i+1))
+                                queue.append((u, l + j - i + 1))
         else:
             raise TypeError("not an integer or None: %s" % n)
         return num_factors
 
-    def factor_iterator(self,n=None):
+    def factor_iterator(self, n=None):
         r"""
         Generate distinct factors of ``self``.
 

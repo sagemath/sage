@@ -470,7 +470,7 @@ The labels are now alternating between vertices and edge-colors::
 #
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
+from __future__ import annotations
 from copy import copy
 from itertools import zip_longest
 
@@ -489,6 +489,7 @@ from sage.combinat.k_tableau import WeakTableau, StrongTableau
 from sage.combinat.shifted_primed_tableau import ShiftedPrimedTableau
 from sage.graphs.digraph import DiGraph
 
+
 def _make_partition(l):
     """
     Return the list as a partition.
@@ -505,6 +506,7 @@ def _make_partition(l):
         Partitions
     """
     return _Partitions.element_class(_Partitions, l)
+
 
 class GrowthDiagram(SageObject):
     r"""
@@ -1226,7 +1228,7 @@ class GrowthDiagram(SageObject):
         is_P_edge = getattr(rule, "is_P_edge", None)
         is_Q_edge = getattr(rule, "is_Q_edge", None)
         if rule.has_multiple_edges:
-            def right_left(la, mu, e):
+            def right_left_multi(la, mu, e) -> int:
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and e not in is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in Q" % (la, mu, e))
@@ -1235,13 +1237,12 @@ class GrowthDiagram(SageObject):
                     if is_P_edge is not None and e not in is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in P" % (mu, la, e))
                     return 0
-                else:
-                    raise ValueError("can only determine the shape of the growth"
-                                     " diagram if ranks of successive labels differ")
-            return _Partitions.from_zero_one([right_left(labels[i], labels[i+2], labels[i+1])
+                raise ValueError("can only determine the shape of the growth"
+                                 " diagram if ranks of successive labels differ")
+            return _Partitions.from_zero_one([right_left_multi(labels[i], labels[i+2], labels[i+1])
                                               for i in range(0, len(labels)-2, 2)])
         else:
-            def right_left(la, mu):
+            def right_left(la, mu) -> int:
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and not is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in Q" % (la, mu))
@@ -1250,9 +1251,8 @@ class GrowthDiagram(SageObject):
                     if is_P_edge is not None and not is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in P" % (mu, la))
                     return 0
-                else:
-                    raise ValueError("can only determine the shape of the growth"
-                                     " diagram if ranks of successive labels differ")
+                raise ValueError("can only determine the shape of the growth"
+                                 " diagram if ranks of successive labels differ")
             return _Partitions.from_zero_one([right_left(labels[i], labels[i+1])
                                               for i in range(len(labels)-1)])
 
@@ -2963,7 +2963,7 @@ class RuleSylvester(Rule):
         sage: list(Sylvester(labels=G.out_labels())) == list(G)
         True
     """
-    zero = BinaryTree()
+    zero = BinaryTree()  # type: ignore
 
     def normalize_vertex(self, v):
         r"""

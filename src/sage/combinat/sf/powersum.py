@@ -20,7 +20,7 @@ Power sum symmetric functions
 from . import sfa, multiplicative, classical
 from sage.combinat.partition import Partition
 from sage.arith.all import divisors
-from sage.rings.all import infinity
+from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.misc_c import prod
 

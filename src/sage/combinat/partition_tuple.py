@@ -613,7 +613,7 @@ class PartitionTuple(CombinatorialElement):
         return '%s' % '|'.join(mu._repr_compact_high() for mu in self)
 
     # override default string representation which is str(self._list)
-    __str__ = lambda self: self._repr_()
+    __str__ = lambda self: self._repr_()  # type: ignore
 
     def _latex_(self):
         r"""
@@ -2706,16 +2706,16 @@ class RegularPartitionTuples_level(PartitionTuples_level):
             sage: RPT = PartitionTuples(level=4, regular=3)
             sage: TestSuite(RPT).run()
         """
-        if not level in NN:
+        if level not in NN:
             raise ValueError('level must be a non-negative integer')
         if not isinstance(regular, tuple):
             # This should not happen if called from RegularPartitionTuples
             regular = (regular,) * level
-        if any (r != 1 for r in regular):
+        if any(r != 1 for r in regular):
             category = InfiniteEnumeratedSets()
         else:
             category = FiniteEnumeratedSets()
-        if any (r not in NN for r in regular):
+        if any(r not in NN for r in regular):
             raise ValueError('regular must be a tuple of non-negative integers')
         if len(regular) != level:
             raise ValueError("regular must be a tuple with length {}".format(level))

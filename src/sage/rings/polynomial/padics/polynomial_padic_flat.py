@@ -57,7 +57,7 @@ class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
             else:
                 m = sage.rings.padics.misc.min(a.precision_absolute()
                                                for a in x.values())
-            if not absprec is None:
+            if absprec is not None:
                 m = min(m, absprec)
             Polynomial_generic_dense.__init__(self, parent, x, absprec=m)
             return

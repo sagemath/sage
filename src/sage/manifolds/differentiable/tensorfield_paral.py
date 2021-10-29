@@ -304,6 +304,7 @@ as follows::
 # *****************************************************************************
 
 from sage.tensor.modules.free_module_tensor import FreeModuleTensor
+from sage.manifolds.chart import Chart
 from sage.manifolds.differentiable.tensorfield import TensorField
 from sage.parallel.decorate import parallel
 from sage.parallel.parallelism import Parallelism
@@ -726,6 +727,37 @@ class TensorFieldParal(FreeModuleTensor, TensorField):
         TensorField._del_derived(self)
         if del_restrictions:
             self._del_restrictions()
+
+    def _preparse_display(self, basis=None, format_spec=None):
+        r"""
+        Helper function, to be used by FreeModuleTensor.display.
+
+        TESTS::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart()
+            sage: t = M.tensor_field(1, 1)
+            sage: t._preparse_display()
+            (Coordinate frame (M, (∂/∂x,∂/∂y)), None)
+            sage: t._preparse_display(X.frame())
+            (Coordinate frame (M, (∂/∂x,∂/∂y)), None)
+            sage: t._preparse_display(X.frame(), X)
+            (Coordinate frame (M, (∂/∂x,∂/∂y)), Chart (M, (x, y)))
+            sage: t._preparse_display(X)  # passing a chart instead of a frame
+            (Coordinate frame (M, (∂/∂x,∂/∂y)), Chart (M, (x, y)))
+
+        """
+        if basis is None:
+            basis = self._fmodule._def_basis
+        elif isinstance(basis, Chart):
+             # a coordinate chart has been passed instead of a vector frame;
+             # the frame is then assumed to be the coordinate frame
+             # associated to the chart:
+            if format_spec is None:
+                format_spec = basis
+            basis = basis.frame()
+        return (basis, format_spec)
+
 
     def _set_comp_unsafe(self, basis=None):
         r"""

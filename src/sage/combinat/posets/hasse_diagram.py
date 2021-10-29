@@ -15,6 +15,8 @@ Hasse diagrams of posets
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 from sage.graphs.digraph import DiGraph
 from sage.matrix.constructor import matrix
 from sage.rings.integer_ring import ZZ
@@ -1852,7 +1854,7 @@ class HasseDiagram(DiGraph):
         result.pop()  # Remove the top element.
         return result
 
-    def is_complemented(self) -> bool:
+    def is_complemented(self) -> int | None:
         """
         Return an element of the lattice that has no complement.
 
@@ -3420,18 +3422,18 @@ class HasseDiagram(DiGraph):
         from sage.combinat.set_partition import SetPartition
 
         n = self.order()
-        congs_ji = {}
+        congs_ji: dict[SetPartition, list] = {}
 
         for ji in range(n):
             if self.in_degree(ji) == 1:
-                cong = SetPartition(self.congruence([[ji, next(self.neighbor_in_iterator(ji))]]))
+                cong = SetPartition(self.congruence([[ji, next(self.neighbor_in_iterator(ji))]]))  # type: ignore
                 if cong not in congs_ji:
                     congs_ji[cong] = []
                 congs_ji[cong].append(ji)
 
         for mi in range(n):
             if self.out_degree(mi) == 1:
-                cong = SetPartition(self.congruence([[mi, next(self.neighbor_out_iterator(mi))]]))
+                cong = SetPartition(self.congruence([[mi, next(self.neighbor_out_iterator(mi))]]))  # type: ignore
                 if any(self.is_lequal(ji, mi) for ji in congs_ji[cong]):
                     return False
 

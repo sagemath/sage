@@ -425,7 +425,7 @@ cdef class NumberFieldElement(FieldElement):
 
             sage: k.<a> = NumberField(x^3 - 17*x^2 + 1)
             sage: t = a.__reduce__(); t
-            (<type 'sage.rings.number_field.number_field_element.NumberFieldElement_absolute'>,
+            (<class 'sage.rings.number_field.number_field_element.NumberFieldElement_absolute'>,
              (Number Field in a with defining polynomial x^3 - 17*x^2 + 1, x))
             sage: t[0](*t[1]) == a
             True

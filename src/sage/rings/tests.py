@@ -11,7 +11,6 @@ TESTS::
 
 import sage.misc.prandom as random
 
-from sage.misc.all import get_memory_usage
 from sage.misc.random_testing import random_testing
 
 
@@ -327,11 +326,11 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
 
         sage: import sage.rings.tests
         sage: sage.rings.tests.test_random_elements(trials=2, seed=0)
-        survived 0 tests (memory usage = ...)
+        survived 0 tests
         Rational Field
         -1/2
         ----
-        survived 1 tests (memory usage = ...)
+        survived 1 tests
         Number Field in a with defining polynomial x^2 - 61891 with a = 248.7790184079036?
         -12
         ----
@@ -344,8 +343,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
     r = random_rings(level)
     i = 0
     for R in r:
-        print("survived %s tests (memory usage = %s)" %
-              (i, get_memory_usage()))
+        print("survived %s tests" % i)
         i += 1
         print(R)
         print(R.random_element())
@@ -376,11 +374,11 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
         sage: import sage.rings.tests
         sage: sage.rings.tests.test_random_arith(trials=2, seed=0)
-        survived 0 tests (memory usage = ...)
+        survived 0 tests
         Rational Field
         -1/2 -1/95
         49/95
-        survived 1 tests (memory usage = ...)
+        survived 1 tests
         Number Field in a with defining polynomial x^2 - 15083 with a = 122.81286577553673?
         a -2*a - 1
         2*a - 30164
@@ -392,8 +390,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
     """
     i = 0
     for x in random_rings(level):
-        print("survived %s tests (memory usage = %s)" %
-              (i, get_memory_usage()))
+        print("survived %s tests" % i)
         i += 1
         print(x)
         a = x.random_element()

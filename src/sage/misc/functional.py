@@ -185,9 +185,9 @@ def coerce(P, x):
     EXAMPLES::
 
         sage: type(5)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: type(coerce(QQ,5))
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
     """
     try:
         return P._coerce_(x)
@@ -1397,7 +1397,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         1.41421356237309*I
 
         sage: type(numerical_approx(CC(1/2)))
-        <type 'sage.rings.complex_mpfr.ComplexNumber'>
+        <class 'sage.rings.complex_mpfr.ComplexNumber'>
 
     The following tests :trac:`10761`, in which ``n()`` would break when
     called on complex-valued algebraic numbers.  ::
@@ -1547,7 +1547,7 @@ def round(x, ndigits=0):
         sage: q = round(sqrt(2)); q
         1
         sage: type(q)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: round(pi)
         3
         sage: b = 5.4999999999999999
@@ -1557,7 +1557,7 @@ def round(x, ndigits=0):
     This example addresses :trac:`23502`::
 
         sage: n = round(6); type(n)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Since we use floating-point with a limited range, some roundings can't
     be performed::

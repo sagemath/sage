@@ -7,7 +7,7 @@ from .four_ti_2 import four_ti_2
 from .axiom import Axiom, axiom
 from .fricas import FriCAS, fricas
 
-from .gap import gap, gap_reset_workspace, set_gap_memory_pool_size, Gap
+from .gap import gap, gap_reset_workspace, Gap
 from .gap3 import gap3, gap3_version, Gap3
 lazy_import('sage.interfaces.genus2reduction', ['genus2reduction', 'Genus2reduction'])
 from .gfan import gfan,  Gfan

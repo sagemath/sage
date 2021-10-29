@@ -935,7 +935,7 @@ cdef class ClonableArray(ClonableElement):
             [1, 2, 4]
             sage: t = el.__reduce__(); t
             (<built-in function _make_array_clone>,
-             (<type 'sage.structure.list_clone_demo.IncreasingArray'>,
+             (<class 'sage.structure.list_clone_demo.IncreasingArray'>,
               <sage.structure.list_clone_demo.IncreasingArrays_with_category object at ...>,
               [1, 2, 4],
               True,
@@ -1721,7 +1721,7 @@ cdef class ClonableIntArray(ClonableElement):
             [1, 2, 4]
             sage: t = el.__reduce__(); t
             (<built-in function _make_int_array_clone>,
-             (<type 'sage.structure.list_clone_demo.IncreasingIntArray'>,
+             (<class 'sage.structure.list_clone_demo.IncreasingIntArray'>,
               <sage.structure.list_clone_demo.IncreasingIntArrays_with_category object at ...>,
               [1, 2, 4],
               True,

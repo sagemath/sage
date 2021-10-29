@@ -1734,7 +1734,7 @@ cdef py_log(x):
             return math.log(real)
         elif real < 0:
             res = gsl_complex_log(gsl_complex_rect(real, 0))
-            return PyComplex_FromDoubles(res.real, res.imag)
+            return PyComplex_FromDoubles(GSL_REAL(res), GSL_IMAG(res))
         else:
             return float('-inf')
     elif type(x) is complex:
@@ -1743,7 +1743,7 @@ cdef py_log(x):
         if real == 0 and imag == 0:
             return float('-inf')
         res = gsl_complex_log(gsl_complex_rect(real, imag))
-        return PyComplex_FromDoubles(res.real, res.imag)
+        return PyComplex_FromDoubles(GSL_REAL(res), GSL_IMAG(res))
     elif isinstance(x, Integer):
         return x.log().n()
     elif hasattr(x, 'log'):

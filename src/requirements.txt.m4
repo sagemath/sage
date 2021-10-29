@@ -34,7 +34,6 @@ dnl pynac       # after converting to a pip-installable package
 dnl From Makefile.in: SAGERUNTIME
 ipython==esyscmd(`printf $(sed "s/[.]p.*//;" ../ipython/package-version.txt)')
 pexpect==esyscmd(`printf $(sed "s/[.]p.*//;" ../pexpect/package-version.txt)')
-psutil==esyscmd(`printf $(sed "s/[.]p.*//;" ../psutil/package-version.txt)')
 
 dnl From Makefile.in: DOC_DEPENDENCIES
 sphinx==esyscmd(`printf $(sed "s/[.]p.*//;" ../sphinx/package-version.txt)')

@@ -456,7 +456,7 @@ class FunctionFieldDivisor(ModuleElement):
             sage: D.multiplicity(p2)
             -3
         """
-        if not place in self._data:
+        if place not in self._data:
             return 0
         return self._data[place]
 

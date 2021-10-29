@@ -1,7 +1,7 @@
 cd src
 
 # Unset CC and CFLAGS.  This will make mpc use the same configuration
-# as MPIR, which is probably a good thing.
+# as GMP, which is probably a good thing.
 unset CC
 unset CFLAGS
 

@@ -4930,7 +4930,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           multiplier spectra, which includes the multipliers of all
           periodic points of period ``n``
 
-        - ``embedding`` -- deprecated in :trac:`23333`
+        - ``embedding`` -- (default: ``None``) must be ``None``, passing an embedding
+          is no longer supported, see :trac: `32205`.
 
         - ``type`` -- (default: ``'point'``) string; either ``'point'``
           or ``'cycle'`` depending on whether you compute with one
@@ -5178,14 +5179,14 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             for correctly. try setting chow=True and/or deform=True
         """
         n = ZZ(n)
+
+        if not embedding is None:
+            raise ValueError('do not specify an embedding')
         if n < 1:
             raise ValueError("period must be a positive integer")
         dom = self.domain()
         if not is_ProjectiveSpace(dom):
             raise NotImplementedError("not implemented for subschemes")
-        if not embedding is None:
-            from sage.misc.superseded import deprecation
-            deprecation(23333, "embedding keyword no longer used")
         if self.degree() <= 1:
             raise TypeError("must have degree at least 2")
         if not type in ['point', 'cycle']:
@@ -6396,72 +6397,6 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         else:
             raise TypeError("base field must be an absolute number field")
 
-    def rational_periodic_points(self, **kwds):
-        r"""
-        Determine the set of rational periodic points
-        for this dynamical system.
-
-        The map must be defined over `\QQ` and be an endomorphism of
-        projective space. If the map is a polynomial endomorphism of
-        `\mathbb{P}^1`, i.e. has a totally ramified fixed point, then
-        the base ring can be an absolute number field.
-        This is done by passing to the Weil restriction.
-
-        The default parameter values are typically good choices for
-        `\mathbb{P}^1`. If you are having trouble getting a particular
-        map to finish, try first computing the possible periods, then
-        try various different ``lifting_prime`` values.
-
-        ALGORITHM:
-
-        Modulo each prime of good reduction `p` determine the set of
-        periodic points modulo `p`. For each cycle modulo `p` compute
-        the set of possible periods (`mrp^e`). Take the intersection
-        of the list of possible periods modulo several primes of good
-        reduction to get a possible list of minimal periods of rational
-        periodic points. Take each point modulo `p` associated to each
-        of these possible periods and try to lift it to a rational point
-        with a combination of `p`-adic approximation and the LLL basis
-        reduction algorithm.
-
-        See [Hutz2015]_.
-
-        INPUT:
-
-        kwds:
-
-        - ``prime_bound`` -- (default: ``[1,20]``) a pair (list or tuple)
-          of positive integers that represent the limits of primes to use
-          in the reduction step or an integer that represents the upper bound
-
-        - ``lifting_prime`` -- (default: 23) a prime integer; argument that
-          specifies modulo which prime to try and perform the lifting
-
-        - ``periods`` -- (optional) a list of positive integers that is
-          the list of possible periods
-
-        - ``bad_primes`` -- (optional) a list or tuple of integer primes;
-          the primes of bad reduction
-
-        - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
-
-        OUTPUT: a list of rational points in projective space
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: K.<w> = NumberField(x^2-x+1)
-            sage: P.<u,v> = ProjectiveSpace(K,1)
-            sage: f = DynamicalSystem_projective([u^2 + v^2,v^2])
-            sage: sorted(f.rational_periodic_points())
-            doctest:warning
-            ...
-            [(-w + 1 : 1), (w : 1), (1 : 0)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(28109, "use sage.dynamics.arithmetic_dynamics.projective_ds.all_periodic_points instead")
-        return self.all_periodic_points(**kwds)
-
     def all_rational_preimages(self, points):
         r"""
         Given a set of rational points in the domain of this
@@ -6544,74 +6479,6 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                     points.append(preimages[i])
                     preperiodic.add(preimages[i])
         return list(preperiodic)
-
-    def rational_preperiodic_points(self, **kwds):
-        r"""
-        Determine the set of rational preperiodic points for
-        this dynamical system.
-
-        The map must be defined over `\QQ` and be an endomorphism of
-        projective space. If the map is a polynomial endomorphism of
-        `\mathbb{P}^1`, i.e. has a totally ramified fixed point, then
-        the base ring can be an absolute number field.
-        This is done by passing to the Weil restriction.
-
-        The default parameter values are typically good choices for
-        `\mathbb{P}^1`. If you are having trouble getting a particular
-        map to finish, try first computing the possible periods, then
-        try various different values for ``lifting_prime``.
-
-        ALGORITHM:
-
-        - Determines the list of possible periods.
-
-        - Determines the rational periodic points from the possible periods.
-
-        - Determines the rational preperiodic points from the rational
-          periodic points by determining rational preimages.
-
-        INPUT:
-
-        kwds:
-
-        - ``prime_bound`` -- (default: ``[1, 20]``) a pair (list or tuple)
-          of positive integers that represent the limits of primes to use
-          in the reduction step or an integer that represents the upper bound
-
-        - ``lifting_prime`` -- (default: 23) a prime integer; specifies
-          modulo which prime to try and perform the lifting
-
-        - ``periods`` -- (optional) a list of positive integers that is
-          the list of possible periods
-
-        - ``bad_primes`` -- (optional) a list or tuple of integer primes;
-          the primes of bad reduction
-
-        - ``ncpus`` -- (default: all cpus) number of cpus to use in parallel
-
-        - ``period_degree_bounds`` -- (default: ``[4,4]``) a pair of positive integers
-          (max period, max degree) for which the dynatomic polynomial should be solved
-          for when in dimension 1
-
-        - ``algorithm`` -- (optional) specifies which algorithm to use;
-          current options are `dynatomic` and `lifting`; defaults to solving the
-          dynatomic for low periods and degrees and lifts for everything else
-
-        OUTPUT: a list of rational points in projective space
-
-        EXAMPLES::
-
-            sage: PS.<x,y> = ProjectiveSpace(1,QQ)
-            sage: f = DynamicalSystem_projective([x^2 -y^2, 3*x*y])
-            sage: sorted(f.rational_preperiodic_points())
-            doctest:warning
-            ...
-            [(-2 : 1), (-1 : 1), (-1/2 : 1), (0 : 1), (1/2 : 1), (1 : 0), (1 : 1),
-            (2 : 1)]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(28213, "use sage.dynamics.arithmetic_dynamics.projective_ds.all_preperiodic_points instead")
-        return self.all_preperiodic_points(**kwds)
 
     def all_preperiodic_points(self, **kwds):
         r"""

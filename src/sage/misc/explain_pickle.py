@@ -408,7 +408,7 @@ class PickleInstance(object):
 
             sage: from sage.misc.explain_pickle import *
             sage: PickleInstance(Integer).klass
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         self.klass = klass
 

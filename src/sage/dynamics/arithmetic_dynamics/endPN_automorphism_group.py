@@ -1790,8 +1790,9 @@ def which_group(list_of_elements):
     else:
         return ['A_5']
 
+
 def conjugating_set_initializer(f, g):
-    """
+    r"""
     Return a conjugation invariant set together with information
     to reduce the combinatorics of checking all possible conjugations.
 

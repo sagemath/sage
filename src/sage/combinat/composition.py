@@ -617,7 +617,7 @@ class Composition(CombinatorialElement):
         if check and (sum(self) != sum(other)):
             raise ValueError("{} is not the same size as {}".format(self, other))
 
-        factors = []
+        factors: list[int] = []
 
         I_iter = iter(self)
         i = 0
@@ -893,7 +893,7 @@ class Composition(CombinatorialElement):
         """
         return Compositions(len(self)).map(self.fatten)
 
-    def refinement_splitting(self, J) -> Composition:
+    def refinement_splitting(self, J) -> list[Composition]:
         r"""
         Return the refinement splitting of ``self`` according to ``J``.
 
@@ -1797,7 +1797,7 @@ class Compositions(UniqueRepresentation, Parent):
             [3, 1, 2, 3, 5]
         """
         if code == [0]:
-            return []
+            return self.element_class(self, [])
 
         L = [x for x in range(len(code)) if code[x] == 1]  # the positions of the letter 1
         c = [L[i] - L[i - 1] for i in range(1, len(L))] + [len(code) - L[-1]]

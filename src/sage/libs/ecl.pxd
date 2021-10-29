@@ -36,6 +36,7 @@ cdef extern from "ecl/ecl.h":
     ctypedef cl_fixnum cl_narg
     ctypedef void *cl_object
     ctypedef unsigned long int cl_index
+    ctypedef int ecl_character
 
     ctypedef enum ecl_option:
         ECL_OPT_INCREMENTAL_GC = 0,
@@ -72,8 +73,8 @@ cdef extern from "ecl/ecl.h":
 
     # predefined symbols
 
-    cl_object Cnil
-    cl_object Ct
+    cl_object ECL_NIL
+    cl_object ECL_T
     cl_fixnum MOST_POSITIVE_FIXNUM
     cl_fixnum MOST_NEGATIVE_FIXNUM
 
@@ -108,6 +109,7 @@ cdef extern from "ecl/ecl.h":
 
     # ECL numeric type conversion
 
+    cl_object ecl_make_fixnum(cl_fixnum i)
     cl_object ecl_make_integer(cl_fixnum i)
     cl_object ecl_make_unsigned_integer(cl_index i)
     cl_fixnum ecl_fixint "fixint" (cl_object x)
@@ -141,6 +143,10 @@ cdef extern from "ecl/ecl.h":
     cl_object ecl_cstring_to_base_string_or_nil(char *s)
     cl_object si_coerce_to_base_string(cl_object x)
     cl_object si_base_string_p(cl_object x)
+    cl_object cl_make_string(cl_narg narg, cl_object o, ...)
+    ecl_character ecl_char(cl_object s, cl_index i)
+    ecl_character ecl_char_set(cl_object s, cl_index i, ecl_character c)
+
 
     # S-expr evaluation and function calls
 
@@ -159,3 +165,7 @@ cdef extern from "ecl/ecl.h":
     # symbols
 
     cl_object ecl_make_symbol(const char *name, const char *package)
+
+    # sequences
+
+    cl_fixnum ecl_length(cl_object x)

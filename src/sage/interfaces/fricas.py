@@ -365,13 +365,15 @@ http://fricas.sourceforge.net.
             sage: a.is_running()                                                # optional - fricas
             False
 
-        TESTS::
+        TESTS:
 
-            sage: import psutil                                                 # optional - fricas
-            sage: p = fricas.pid(); pr = psutil.Process(p); pr                  # optional - fricas
-            <psutil.Process(pid=..., name='FRICASsys') at ...>
-            sage: pr.children()                                                 # optional - fricas
-            []
+        Ensure that a new process is started after ``quit()``::
+
+            sage: p = fricas.pid()     # optional - fricas
+            sage: fricas.quit()        # optional - fricas
+            sage: fricas.pid() == p    # optional - fricas
+            False
+
         """
         return ')quit'
 

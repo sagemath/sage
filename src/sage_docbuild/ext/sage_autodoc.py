@@ -1174,8 +1174,7 @@ class ClassDocumenter(DocstringSignatureMixin, ModuleLevelDocumenter):
         # by using the metaclass NestedMetaclass, we change the attribute
         # __name__ of the nested class. For example, in
         #
-        #     class A:
-        #        __metaclass__ = NestedClassMetaclass
+        #     class A(metaclass=NestedMetaclass):
         #        class B(object):
         #            pass
         #

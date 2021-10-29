@@ -378,7 +378,7 @@ class RingExtensionFactory(UniqueFactory):
                 From: Integer Ring
                 To:   Rational Field
                 Defn: 1 |--> 1, (), ()),
-             {'constructors': [(<type 'sage.rings.ring_extension.RingExtension_generic'>,
+             {'constructors': [(<class 'sage.rings.ring_extension.RingExtension_generic'>,
                 {'is_backend_exposed': True,
                  'print_options': {'print_elements_as': None, 'print_parent_as': None}})]})
 
@@ -387,7 +387,7 @@ class RingExtensionFactory(UniqueFactory):
                 From: Finite Field in z2 of size 5^2
                 To:   Finite Field in z4 of size 5^4
                 Defn: z2 |--> z4^3 + z4^2 + z4 + 3, (z4,), ('a',)),
-             {'constructors': [(<type 'sage.rings.ring_extension.RingExtensionWithGen'>,
+             {'constructors': [(<class 'sage.rings.ring_extension.RingExtensionWithGen'>,
                 {'gen': z4, 'is_backend_exposed': True, 'names': ('a',)})]})
         """
         use_generic_constructor = True

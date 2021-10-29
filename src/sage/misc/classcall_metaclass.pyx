@@ -217,12 +217,10 @@ cdef class ClasscallMetaclass(NestedClassMetaclass):
         We now show the usage of ``__classcall_private__``::
 
             sage: class FooNoInherits(object, metaclass=ClasscallMetaclass):
-            ....:     __metaclass__ = ClasscallMetaclass
             ....:     @staticmethod
             ....:     def __classcall_private__(cls):
             ....:         print("calling private classcall")
             ....:         return type.__call__(cls)
-            ...
             sage: FooNoInherits()
             calling private classcall
             <__main__.FooNoInherits object at ...>

@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([4ti2], [
-    SAGE_SPKG_DEPCHECK([gmp mpir glpk zlib], [
+    SAGE_SPKG_DEPCHECK([gmp glpk zlib], [
         dnl Debian installs these programs with an executable prefix "4ti2-",
         dnl OpenSUSE uses the prefix "4ti2_".
         dnl Singular checks for unprefixed and prefixed with "4ti2-".

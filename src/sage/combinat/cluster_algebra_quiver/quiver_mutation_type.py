@@ -23,10 +23,11 @@ from sage.structure.sage_object import SageObject
 from copy import copy
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import ZZ, infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import infinity
 from sage.graphs.all import Graph, DiGraph
 from sage.arith.all import binomial, euler_phi
-from sage.all import prod
+from sage.misc.misc_c import prod
 from sage.matrix.constructor import matrix
 
 
@@ -2089,7 +2090,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
                                  multiplicities[i])
                         for i in range(len(sizes)))
 
-    def dual(self) -> QuiverMutationType:
+    def dual(self):
         """
         Return the QuiverMutationType which is dual to ``self``.
 
@@ -2104,7 +2105,7 @@ class QuiverMutationType_Reducible(QuiverMutationType_abstract):
         return QuiverMutationType([comp.dual() for comp in comps])
 
 
-def _construct_classical_mutation_classes(n) -> dict:
+def _construct_classical_mutation_classes(n) -> dict[tuple, list | set]:
     r"""
     Return a dict with keys being tuples representing regular
     QuiverMutationTypes of the given rank, and with values being lists
@@ -2123,7 +2124,7 @@ def _construct_classical_mutation_classes(n) -> dict:
         ('AO', (((0, 1), (4, -1)),))]
     """
     from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-    data = {}
+    data: dict[tuple, set | list] = {}
 
     # finite A
     data[('A', n)] = ClusterQuiver(['A', n]).mutation_class(data_type='dig6')
@@ -2161,7 +2162,7 @@ def _construct_classical_mutation_classes(n) -> dict:
     return data
 
 
-def _construct_exceptional_mutation_classes(n) -> dict:
+def _construct_exceptional_mutation_classes(n) -> dict[tuple, list | set]:
     r"""
     Return a dict with keys being tuples representing exceptional
     QuiverMutationTypes of the given rank, and with values being lists
@@ -2185,7 +2186,7 @@ def _construct_exceptional_mutation_classes(n) -> dict:
         ('BP_', (((0, 1), (2, -2)), ((1, 2), (1, -3)), ((2, 0), (3, -1))))]
     """
     from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
-    data = {}
+    data: dict[tuple, list | set] = {}
     # finite E
     if n in [6, 7, 8]:
         data[('E', n)] = ClusterQuiver(['E', n]).mutation_class(data_type='dig6')

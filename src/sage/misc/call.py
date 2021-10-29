@@ -120,7 +120,7 @@ class AttrCallObject(object):
             sage: hash(x)       # random # indirect doctest
             210434060
             sage: type(hash(x))
-            <type 'int'>
+            <class 'int'>
             sage: y = attrcall('core', 3, blah = 1, flatten = True)
             sage: hash(y) == hash(x)
             True

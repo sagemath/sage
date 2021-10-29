@@ -2150,7 +2150,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
     def multiplication_by_m_isogeny(self, m):
         r"""
         Return the ``EllipticCurveIsogeny`` object associated to the
-        multiplication-by-`m` map on self.
+        multiplication-by-`m` map on this elliptic curve.
 
         The resulting isogeny will
         have the associated rational maps (i.e. those returned by
@@ -2169,7 +2169,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         OUTPUT:
 
         - An ``EllipticCurveIsogeny`` object associated to the
-          multiplication-by-`m` map on self.
+          multiplication-by-`m` map on this elliptic curve.
 
         EXAMPLES::
 
@@ -2177,6 +2177,29 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E.multiplication_by_m_isogeny(7)
             Isogeny of degree 49 from Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field to Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field
 
+        TESTS:
+
+        Tests for :trac:`32490`::
+
+            sage: E = EllipticCurve(QQbar, [1,0])
+            sage: E.multiplication_by_m_isogeny(1).rational_maps()
+            (x, y)
+
+        ::
+
+            sage: E = EllipticCurve_from_j(GF(31337).random_element())
+            sage: P = E.random_point()
+            sage: [E.multiplication_by_m_isogeny(m)(P) == m*P for m in (1,2,3,5,7,9)]
+            [True, True, True, True, True, True]
+
+        ::
+
+            sage: E = EllipticCurve('99.a1')
+            sage: E.multiplication_by_m_isogeny(5)
+            Isogeny of degree 25 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 17*x + 30 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - x^2 - 17*x + 30 over Rational Field
+            sage: E.multiplication_by_m_isogeny(2).rational_maps()
+            ((1/4*x^4 + 33/4*x^2 - 121/2*x + 363/4)/(x^3 - 3/4*x^2 - 33/2*x + 121/4),
+             (-1/256*x^7 + 1/128*x^6*y - 7/256*x^6 - 3/256*x^5*y - 105/256*x^5 - 165/256*x^4*y + 1255/256*x^4 + 605/128*x^3*y - 473/64*x^3 - 1815/128*x^2*y - 10527/256*x^2 + 2541/128*x*y + 4477/32*x - 1331/128*y - 30613/256)/(1/16*x^6 - 3/32*x^5 - 519/256*x^4 + 341/64*x^3 + 1815/128*x^2 - 3993/64*x + 14641/256))
         """
         mx, my = self.multiplication_by_m(m)
 
@@ -2184,7 +2207,13 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         phi = self.isogeny(torsion_poly, codomain=self)
         phi._EllipticCurveIsogeny__initialize_rational_maps(precomputed_maps=(mx, my))
 
-        return phi
+        # trac 32490: using codomain=self can give a wrong isomorphism
+        for aut in self.automorphisms():
+            psi = aut * phi
+            if psi.rational_maps() == (mx, my):
+                return psi
+
+        assert False, 'bug in multiplication_by_m_isogeny()'
 
     def isomorphism_to(self, other):
         """

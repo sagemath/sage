@@ -707,7 +707,7 @@ other prerequisites installed in your system.  See
 ``build/pkgs/_bootstrap/distros/*.txt`` for a list of system packages that
 provide these prerequisites.
 
-We start by creating a fresh (distclean) git worktree.
+We start by creating a fresh (distclean) git worktree::
 
   [mkoeppe@sage sage] git worktree add worktree-local
   [mkoeppe@sage sage] cd worktree-local

@@ -2893,7 +2893,7 @@ class FunctionField_simple(FunctionField_polymod):
         """
         R = self.base_field()
 
-        if not p in R.place_set():
+        if p not in R.place_set():
             raise TypeError("not a place of the base rational function field")
 
         if p.is_infinite_place():
@@ -3372,9 +3372,9 @@ class FunctionField_global(FunctionField_simple):
         gaps = [1]
         while M.nrows() < d:
             row = vector([der._derive(basis[i], e) for i in range(d)])
-            if not row in M.row_space():
+            if row not in M.row_space():
                 M = matrix(M.rows() + [row])
-                gaps.append(e+1)
+                gaps.append(e + 1)
             e += 1
 
         # This is faster than M.determinant(). Note that Mx

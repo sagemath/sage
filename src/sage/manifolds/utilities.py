@@ -1271,11 +1271,10 @@ def set_axes_labels(graph, xlabel, ylabel, zlabel, **kwds):
     y1 = ymin + dy / 2
     z1 = zmin + dz / 2
     xmin1 = xmin - dx / 20
-    xmax1 = xmax + dx / 20
     ymin1 = ymin - dy / 20
     zmin1 = zmin - dz / 20
     graph += text3d('  ' + xlabel, (x1, ymin1, zmin1), **kwds)
-    graph += text3d('  ' + ylabel, (xmax1, y1, zmin1), **kwds)
+    graph += text3d('  ' + ylabel, (xmin1, y1, zmin1), **kwds)
     graph += text3d('  ' + zlabel, (xmin1, ymin1, z1), **kwds)
     return graph
 

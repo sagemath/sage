@@ -43,9 +43,7 @@ cdef extern from "gsl/gsl_complex.h":
     ctypedef double * gsl_complex_packed_ptr
 
     ctypedef struct gsl_complex:
-        double dat[2]
-        double real "dat[0]"
-        double imag "dat[1]"
+        pass
 
 
 cdef extern from "gsl/gsl_block_double.h":

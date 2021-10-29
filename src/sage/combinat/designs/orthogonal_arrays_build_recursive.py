@@ -545,7 +545,7 @@ def construction_q_x(k,q,x,check=True,explain_construction=False):
     relabel = {i:j for j,i in enumerate(points_to_keep)}
 
     # PBD is a (n,[q,q-x-1,q-x+1,x+2])-PBD
-    PBD = [[relabel[xx] for xx in B if not xx in points_to_delete] for B in TD]
+    PBD = [[relabel[xx] for xx in B if xx not in points_to_delete] for B in TD]
 
     # Taking the unique block of size x+2
     assert list(map(len,PBD)).count(x+2)==1

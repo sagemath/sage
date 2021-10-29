@@ -49,7 +49,6 @@ dnl From Makefile.in: SAGERUNTIME
     esyscmd(`sage-get-system-packages install-requires \
         ipython        \
         pexpect        \
-        psutil         \
         | sed "2,\$s/^/    /;"')dnl
 dnl From Makefile.in: DOC_DEPENDENCIES
     esyscmd(`sage-get-system-packages install-requires \

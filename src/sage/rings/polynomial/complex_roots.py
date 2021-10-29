@@ -228,7 +228,7 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
         ....:     if tiny(x.imag()): return x.real()
         ....:     if tiny(x.real()): return CIF(0, x.imag())
         sage: rts = complex_roots(p); type(rts[0][0]), sorted(map(smash, rts))
-        (<type 'sage.rings.complex_interval.ComplexIntervalFieldElement'>, [-1.618033988749895?, -0.618033988749895?*I, 1.618033988749895?*I, 0.618033988749895?])
+        (<class 'sage.rings.complex_interval.ComplexIntervalFieldElement'>, [-1.618033988749895?, -0.618033988749895?*I, 1.618033988749895?*I, 0.618033988749895?])
         sage: rts = complex_roots(p, retval='algebraic'); type(rts[0][0]), sorted(map(smash, rts))
         (<class 'sage.rings.qqbar.AlgebraicNumber'>, [-1.618033988749895?, -0.618033988749895?*I, 1.618033988749895?*I, 0.618033988749895?])
         sage: rts = complex_roots(p, retval='algebraic_real'); type(rts[0][0]), rts

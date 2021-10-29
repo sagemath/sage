@@ -633,7 +633,7 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False
         M = RSHCD_324(e)
     elif (  e  == 1                 and
           n%16 == 0                 and
-          not sqn is None           and
+          sqn is not None           and
           is_prime_power(sqn-1) and
           is_prime_power(sqn+1)):
         if existence:
@@ -641,7 +641,7 @@ def regular_symmetric_hadamard_matrix_with_constant_diagonal(n,e,existence=False
         M = -rshcd_from_close_prime_powers(sqn)
 
     elif (  e  == 1                 and
-          not sqn is None           and
+          sqn is not None           and
           sqn%4 == 2            and
           strongly_regular_graph(sqn-1,(sqn-2)//2,(sqn-6)//4,
             existence=True) is True and

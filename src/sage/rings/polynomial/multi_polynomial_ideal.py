@@ -2238,7 +2238,7 @@ class MPolynomialIdeal_singular_repr(
         if not isinstance(J, MPolynomialIdeal):
             raise TypeError("J needs to be a multivariate polynomial ideal")
 
-        if not R is J.ring() and not R == J.ring():
+        if R is not J.ring() and not R == J.ring():
             raise TypeError("base rings do not match")
 
         from sage.libs.singular.function_factory import ff

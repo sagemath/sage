@@ -120,7 +120,7 @@ cdef class PynacConstant:
             sage: f + 2
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: '<type 'sage.symbolic.expression.PynacConstant'>' and 'Integer Ring'
+            TypeError: unsupported operand parent(s) for +: '<class 'sage.symbolic.expression.PynacConstant'>' and 'Integer Ring'
 
             sage: foo = f.expression(); foo
             foo

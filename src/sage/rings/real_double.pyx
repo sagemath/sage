@@ -67,6 +67,9 @@ from sage.arith.constants cimport *
 cimport gmpy2
 
 
+new_gen_from_real_double_element = None
+
+
 def is_RealDoubleField(x):
     """
     Returns ``True`` if ``x`` is the field of real double precision numbers.
@@ -1678,7 +1681,9 @@ cdef class RealDoubleElement(FieldElement):
             sage: RDF(1.5).__pari__()
             1.50000000000000
         """
-        from sage.libs.pari.convert_sage_real_double import new_gen_from_real_double_element
+        global new_gen_from_real_double_element
+        if new_gen_from_real_double_element is None:
+            from sage.libs.pari.convert_sage_real_double import new_gen_from_real_double_element
         return new_gen_from_real_double_element(self)
 
 

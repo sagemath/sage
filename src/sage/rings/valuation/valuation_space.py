@@ -161,7 +161,9 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
         """
         from operator import mul
-        from sage.rings.all import QQ, InfinityRing, ZZ
+        from sage.rings.infinity import InfinityRing
+        from sage.rings.rational_field import QQ
+        from sage.rings.integer_ring import ZZ
         if op == mul and (S is InfinityRing or S is QQ or S is ZZ):
             return ScaleAction(S, self, not self_on_left, op)
         return None
@@ -364,7 +366,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 False
 
             """
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             if self(self.domain().one()) is infinity:
                 # the constant infinity
                 return True
@@ -689,7 +691,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 +Infinity
 
             """
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             if scalar is infinity:
                 from .trivial_valuation import TrivialPseudoValuation
                 return TrivialPseudoValuation(self.domain())
@@ -796,7 +798,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 2/3
 
             """
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
 
             numerator = self._weakly_separating_element(other)
             n = self(numerator)
@@ -1081,7 +1083,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             if not self.is_negative_pseudo_valuation():
                 X = self.domain().some_elements()
                 for x in tester.some_elements(X):
-                    from sage.rings.all import infinity
+                    from sage.rings.infinity import infinity
                     tester.assertNotEqual(self(x), -infinity)
 
         def _test_bounds(self, **options):
@@ -1193,7 +1195,8 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             """
             tester = self._tester(**options)
 
-            from sage.rings.all import infinity, QQ
+            from sage.rings.rational_field import QQ
+            from sage.rings.infinity import infinity
             from .trivial_valuation import TrivialValuation, TrivialPseudoValuation
 
             tester.assertEqual(QQ(0)*self, TrivialValuation(self.domain()))
@@ -1246,7 +1249,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
             """
             tester = self._tester(**options)
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             tester.assertEqual(self(self.domain().zero()), infinity)
 
         def _test_mul(self, **options):
@@ -1263,7 +1266,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             S = self.domain().some_elements()
             from itertools import product
             for x,y in tester.some_elements(product(S,S)):
-                from sage.rings.all import infinity
+                from sage.rings.infinity import infinity
                 if set([self(x), self(y)]) == set([infinity, -infinity]):
                     continue
                 tester.assertEqual(self(x*y),self(x)+self(y))
@@ -1293,7 +1296,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             if self.is_negative_pseudo_valuation():
                 return
 
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             tester = self._tester(**options)
             for x in tester.some_elements(self.domain().some_elements()):
                 if self(x) is infinity:
@@ -1309,7 +1312,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
                 sage: v._test_value_group()
 
             """
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             tester = self._tester(**options)
             # check consistency of trivial valuations first
             if self.is_trivial():
@@ -1523,7 +1526,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             if not self.is_discrete_valuation():
                 return
 
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             tester = self._tester(**options)
             for x in tester.some_elements(self.domain().some_elements()):
                 if self(x) is infinity:
@@ -1630,7 +1633,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
             tester = self._tester(**options)
 
             for x in tester.some_elements(self.domain().some_elements()):
-                from sage.rings.all import infinity
+                from sage.rings.infinity import infinity
                 for prec in (0, 1, 42, infinity):
                     try:
                         y = self.inverse(x, prec)

@@ -78,7 +78,6 @@ REFERENCES:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from __future__ import annotations
-from typing import Union
 
 from .combinat import CombinatorialElement, catalan_number
 from sage.combinat.combinatorial_map import combinatorial_map
@@ -1071,7 +1070,7 @@ class DyckWord(CombinatorialElement):
             heights[i + 1] = height
         return tuple(heights)
 
-    def associated_parenthesis(self, pos) -> Union[int, None]:
+    def associated_parenthesis(self, pos) -> int | None:
         r"""
         Report the position for the parenthesis in ``self`` that matches the
         one at position ``pos``.
@@ -1177,12 +1176,12 @@ class DyckWord(CombinatorialElement):
                     break
                 j += 1
             else:
-                result.extend([DyckWord([open_symbol] * up),
-                               DyckWord(self[i:j])])
+                result.extend([DyckWord([open_symbol] * up),  # type: ignore
+                               DyckWord(self[i:j])])  # type: ignore
                 i = j
                 up = 0
 
-        result.append(DyckWord([open_symbol] * up))
+        result.append(DyckWord([open_symbol] * up))  # type:ignore
         return result
 
     def catalan_factorization(self) -> list:
@@ -1219,7 +1218,7 @@ class DyckWord(CombinatorialElement):
         result = []
         while i <= n:
             if H[j] == h or j == i:
-                result.append(DyckWord(self[i:j]))
+                result.append(DyckWord(self[i:j]))  # type:ignore
                 h += 1
                 i = j + 1
                 j = n
@@ -1959,7 +1958,7 @@ class DyckWord_complete(DyckWord):
         """
         alist = self.to_area_sequence()
         if not alist:
-            return Permutation([])
+            return Permutation([])  # type: ignore
         m = max(alist)
         p1 = Word([m - alist[-i - 1]
                    for i in range(len(alist))]).standard_permutation()
@@ -2028,13 +2027,13 @@ class DyckWord_complete(DyckWord):
         from sage.combinat.tableau import Tableau
         n = self.semilength()
         if n == 0:
-            return (Tableau([]), Tableau([]))
+            return (Tableau([]), Tableau([]))  # type: ignore
         elif self.height() == n:
-            T = Tableau([list(range(1, n + 1))])
+            T = Tableau([list(range(1, n + 1))])  # type: ignore
             return (T, T)
         else:
-            left = [[], []]
-            right = [[], []]
+            left: list[list[int]] = [[], []]
+            right: list[list[int]] = [[], []]
             for pos in range(n):
                 if self[pos] == open_symbol:
                     left[0].append(pos + 1)
@@ -2044,7 +2043,7 @@ class DyckWord_complete(DyckWord):
                     right[0].append(pos + 1)
                 else:
                     right[1].append(pos + 1)
-            return (Tableau(left), Tableau(right))
+            return (Tableau(left), Tableau(right))  # type: ignore
 
     @combinatorial_map(name='to 312 avoiding permutation')
     def to_312_avoiding_permutation(self) -> Permutation:
@@ -2117,7 +2116,7 @@ class DyckWord_complete(DyckWord):
         """
         n = self.semilength()
         if n == 0:
-            return Permutation([])
+            return Permutation([])  # type: ignore
         D, touch_sequence = pealing(self, return_touches=True)
         pi = list(range(1, n + 1))
         while touch_sequence:
@@ -2218,7 +2217,7 @@ class DyckWord_complete(DyckWord):
                 v = min(v for v in values if v > n - i - area[n - i - 1])
                 pi.append(v)
                 values.remove(v)
-        return Permutation(pi)
+        return Permutation(pi)  # type: ignore
 
     def to_permutation(self, map) -> Permutation:
         r"""
@@ -2394,7 +2393,7 @@ class DyckWord_complete(DyckWord):
         cut = self.associated_parenthesis(0)
         if cut is None:
             raise ValueError('not valid for incomplete Dyck words')
-        recdw = DyckWord(self[1:cut] + self[cut + 1:])
+        recdw = DyckWord(self[1:cut] + self[cut + 1:])  # type:ignore
         returns = [0] + recdw.returns_to_zero()
         res = recdw.to_Catalan_code()
         res.append(returns.index(cut - 1))
@@ -2715,7 +2714,7 @@ class DyckWord_complete(DyckWord):
             else:
                 list.append(open_symbol)
         list.reverse()
-        return DyckWord(list)
+        return DyckWord(list)  # type:ignore
 
     def first_return_decomposition(self) -> tuple:
         r"""
@@ -2733,7 +2732,7 @@ class DyckWord_complete(DyckWord):
             ([], [1, 0])
         """
         k = self.position_of_first_return() * 2
-        return DyckWord(self[1:k - 1]), DyckWord(self[k:])
+        return DyckWord(self[1:k - 1]), DyckWord(self[k:])  # type:ignore
 
     def decomposition_reverse(self) -> DyckWord:
         r"""
@@ -2756,10 +2755,10 @@ class DyckWord_complete(DyckWord):
         """
         if not self:
             return self
-        else:
-            D1, D2 = self.first_return_decomposition()
-            return DyckWord([1] + list(D2.decomposition_reverse())
-                            + [0] + list(D1.decomposition_reverse()))
+        D1, D2 = self.first_return_decomposition()
+        D = [1] + list(D2.decomposition_reverse())
+        D += [0] + list(D1.decomposition_reverse())
+        return DyckWord(D)  # type:ignore
 
     @combinatorial_map(name="Area-dinv to bounce-area")
     def area_dinv_to_bounce_area_map(self) -> DyckWord:
@@ -2805,7 +2804,7 @@ class DyckWord_complete(DyckWord):
                     image.append(1)
                 elif j == i + 1:
                     image.append(0)
-        return DyckWord(image)
+        return DyckWord(image)  # type:ignore
 
     @combinatorial_map(name="Bounce-area to area-dinv")
     def bounce_area_to_area_dinv_map(self) -> DyckWord:
@@ -2846,13 +2845,13 @@ class DyckWord_complete(DyckWord):
             [1, 1, 0, 0]
         """
         aseq = self.to_area_sequence()
-        out = []
-        zeros = []
+        out: list[int] = []
+        zeros: list[int] = []
         for i in range(len(aseq)):
             p = (zeros + [len(out)])[aseq[i]]
             out = [1] + out[p:] + [0] + out[:p]
             zeros = [0] + [j + len(out) - p for j in zeros[:aseq[i]]]
-        return DyckWord(out)
+        return DyckWord(out)  # type:ignore
 
     def area(self) -> int:
         r"""
@@ -2964,7 +2963,7 @@ class DyckWord_complete(DyckWord):
                 i -= 1
                 area_seq[i] = area_seq[i + 1] - 1
             i -= 1
-        return DyckWord(area_sequence=area_seq)
+        return DyckWord(area_sequence=area_seq)  # type:ignore
 
     def bounce(self) -> int:
         r"""

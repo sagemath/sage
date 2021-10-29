@@ -30,9 +30,13 @@ import numpy
 import math
 import bisect
 
-from sage.rings.all import (ZZ, QQ, RR, RDF, RIF, CC, CDF, CIF, infinity)
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
+from sage.rings.all import RR, RDF, RIF, CC, CDF, CIF
 
-from sage.misc.all import cached_method, cartesian_product_iterator
+from sage.misc.cachefunc import cached_method
+from sage.misc.all import cartesian_product_iterator
 from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
 from sage.functions.log import log, exp

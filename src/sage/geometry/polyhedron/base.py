@@ -5135,18 +5135,6 @@ class Polyhedron_base(Polyhedron_base1):
             sage: [[ls.ambient_V_indices() for ls in lss] for lss in Polyhedron(lines=[(1,0)], vertices=[(0,0)]).face_lattice().level_sets()]
             [[()], [(0, 1)]]
 
-        Test that computing the face lattice does not lead to a memory leak::
-
-            sage: import gc
-            sage: _ = gc.collect()
-            sage: P = polytopes.cube()
-            sage: a = P.face_lattice()
-            sage: n = get_memory_usage()
-            sage: P = polytopes.cube()
-            sage: a = P.face_lattice()
-            sage: _ = gc.collect()
-            sage: n == get_memory_usage()
-            True
         """
         from sage.combinat.posets.lattices import FiniteLatticePoset
         return FiniteLatticePoset(self.hasse_diagram())

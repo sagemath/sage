@@ -61,7 +61,11 @@ from sage.modules.free_module_element import vector
 
 from operator import itemgetter
 
-from . import quaternion_algebra_element
+from .quaternion_algebra_element import \
+        QuaternionAlgebraElement_abstract, \
+        QuaternionAlgebraElement_generic, \
+        QuaternionAlgebraElement_rational_field, \
+        QuaternionAlgebraElement_number_field
 from . import quaternion_algebra_cython
 
 from sage.modular.modsym.p1list import P1List
@@ -650,7 +654,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         self._a = a
         self._b = b
         if is_RationalField(base_ring) and a.denominator() == 1 and b.denominator() == 1:
-            self.Element = quaternion_algebra_element.QuaternionAlgebraElement_rational_field
+            self.Element = QuaternionAlgebraElement_rational_field
         elif is_NumberField(base_ring) and base_ring.degree() > 2 and base_ring.is_absolute() and \
                  a.denominator() == 1 and b.denominator() == 1 and base_ring.defining_polynomial().is_monic():
             # This QuaternionAlgebraElement_number_field class is not
@@ -660,9 +664,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             # (or more?) speedup.  Much care must be taken because the
             # underlying representation of quadratic fields is a bit
             # tricky.
-            self.Element = quaternion_algebra_element.QuaternionAlgebraElement_number_field
+            self.Element = QuaternionAlgebraElement_number_field
         else:
-            self.Element = quaternion_algebra_element.QuaternionAlgebraElement_generic
+            self.Element = QuaternionAlgebraElement_generic
         self._populate_coercion_lists_(coerce_list=[base_ring])
         self._gens = [self([0,1,0,0]), self([0,0,1,0]), self([0,0,0,1])]
 
@@ -1666,7 +1670,7 @@ class QuaternionOrder(Algebra):
         for d in self.basis():
             MM = []
             for e in self.basis():
-                MM.append((d * e.conjugate()).reduced_trace())
+                MM.append(d.pair(e))
             L.append(MM)
 
         return (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
@@ -1767,7 +1771,8 @@ class QuaternionOrder(Algebra):
 
         This function computes the positive definition quadratic form
         obtained by letting G be the trace zero subspace of `\ZZ` +
-        2* ``self``, which has rank 3, and restricting the pairing::
+        2* ``self``, which has rank 3, and restricting the pairing
+        :meth:`QuaternionAlgebraElement_abstract.pair`::
 
            (x,y) = (x.conjugate()*y).reduced_trace()
 
@@ -2336,9 +2341,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             [ 1920 16320 15360 19200]
         """
         A = self.gens()
-        B = [z.conjugate() for z in A]
         two = QQ(2)
-        m = [two * (a * b).reduced_trace() for b in B for a in A]
+        m = [two * a.pair(b) for b in A for a in A]
         M44 = MatrixSpace(QQ, 4, 4)
         return M44(m, coerce=False)
 
@@ -2811,7 +2815,7 @@ def intersection_of_row_modules_over_ZZ(v):
         return intersection_of_row_modules_over_ZZ([w] + v[2:])
 
 
-def normalize_basis_at_p(e, p, B = lambda x,y: (x*y.conjugate()).reduced_trace()):
+def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
     r"""
     Compute a (at ``p``) normalized basis from the given basis ``e``
     of a `\ZZ`-module.
@@ -2835,8 +2839,8 @@ def normalize_basis_at_p(e, p, B = lambda x,y: (x*y.conjugate()).reduced_trace()
 
     - ``p`` -- prime for at which the basis should be normalized
 
-    - ``B`` -- (default:
-      ``lambda x,y: ((x*y).conjugate()).reduced_trace()``)
+    - ``B`` --
+      (default: :meth:`QuaternionAlgebraElement_abstract.pair`)
       a bilinear form with respect to which to normalize
 
     OUTPUT:

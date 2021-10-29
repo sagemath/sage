@@ -394,12 +394,7 @@ def orbits_lines_mod_p(self, p):
         reps:= List(orb, g->g[1]);
         return reps;
         end;""")
-    # run this at startup if you need more memory...
-    #from sage.interfaces.gap import get_gap_memory_pool_size, set_gap_memory_pool_size
-    #memory_gap = get_gap_memory_pool_size()
-    #set_gap_memory_pool_size(1028*memory_gap)
     orbs_reps = orbs(gens, p)
-    #set_gap_memory_pool_size(memory_gap)
     M = GF(p)**self.dim()
     return [M(m.sage()) for m in orbs_reps if not m.IsZero()]
 

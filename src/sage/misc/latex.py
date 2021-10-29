@@ -553,7 +553,7 @@ def has_latex_attr(x) -> bool:
     but calling it is broken::
 
         sage: T = type(identity_matrix(3)); T
-        <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+        <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         sage: hasattr(T, '_latex_')
         True
         sage: T._latex_()

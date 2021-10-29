@@ -1415,6 +1415,5 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
         """
         if self._strict:
             return self._cftp(1)
-        else:
-            l = [i for i in self._row if i > 0]
-            return SemistandardTableaux(l, max_entry=self._n).random_element().to_Gelfand_Tsetlin_pattern()
+        l = [i for i in self._row if i > 0]
+        return SemistandardTableaux(l, max_entry=self._n).random_element().to_Gelfand_Tsetlin_pattern()  # type:ignore
