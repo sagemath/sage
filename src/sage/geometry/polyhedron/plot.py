@@ -348,12 +348,12 @@ class Projection(SageObject):
             The projection of a polyhedron into 2 dimensions
             sage: Projection(p,  lambda x: [x[1],x[2]] )   # another way of doing the same projection
             The projection of a polyhedron into 2 dimensions
-            sage: _.plot()   # plot of the projected icosahedron in 2d
+            sage: _.plot()   # plot of the projected icosahedron in 2d  # optional - sage.plot
             Graphics object consisting of 51 graphics primitives
             sage: proj = Projection(p)
             sage: proj.stereographic([1,2,3])
             The projection of a polyhedron into 2 dimensions
-            sage: proj.plot()
+            sage: proj.plot()  # optional - sage.plot
             Graphics object consisting of 51 graphics primitives
             sage: TestSuite(proj).run(skip='_test_pickling')
         """
@@ -452,7 +452,7 @@ class Projection(SageObject):
             sage: proj = Projection(polytopes.buckyball())  #long time
             sage: proj                                      #long time
             The projection of a polyhedron into 3 dimensions
-            sage: proj.stereographic([5,2,3]).plot()        #long time
+            sage: proj.stereographic([5,2,3]).plot()        #long time  # optional - sage.plot
             Graphics object consisting of 123 graphics primitives
             sage: Projection( polytopes.twenty_four_cell() ).stereographic([2,0,0,0])
             The projection of a polyhedron into 3 dimensions
@@ -489,7 +489,7 @@ class Projection(SageObject):
             sage: from sage.geometry.polyhedron.plot import Projection
             sage: Projection(cube4).schlegel()
             The projection of a polyhedron into 3 dimensions
-            sage: _.plot()
+            sage: _.plot()  # optional - sage.plot
             Graphics3d Object
 
         The 4-cube with a truncated vertex seen into the resulting tetrahedron
@@ -499,13 +499,13 @@ class Projection(SageObject):
             sage: tcube4.facets()[4]
             A 3-dimensional face of a Polyhedron in QQ^4 defined as the convex hull of 4 vertices
             sage: into_tetra = Projection(tcube4).schlegel(tcube4.facets()[4])
-            sage: into_tetra.plot()
+            sage: into_tetra.plot()  # optional - sage.plot
             Graphics3d Object
 
         Taking a larger value for the position changes the image::
 
             sage: into_tetra_far = Projection(tcube4).schlegel(tcube4.facets()[4],4)
-            sage: into_tetra_far.plot()
+            sage: into_tetra_far.plot()  # optional - sage.plot
             Graphics3d Object
 
         A value which is too large or negative give a projection point that
@@ -881,8 +881,8 @@ class Projection(SageObject):
 
             sage: cube1 = polytopes.hypercube(1)
             sage: proj = cube1.projection()
-            sage: points = proj.render_points_1d()
-            sage: points._objects
+            sage: points = proj.render_points_1d()  # optional - sage.plot
+            sage: points._objects                   # optional - sage.plot
             [Point set defined by 2 point(s)]
         """
         return point2d([c + [0] for c in self.coordinates_of(self.points)], **kwds)
@@ -902,8 +902,8 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: outline = polytopes.hypercube(1).projection().render_line_1d()
-            sage: outline._objects[0]
+            sage: outline = polytopes.hypercube(1).projection().render_line_1d()  # optional - sage.plot
+            sage: outline._objects[0]                                             # optional - sage.plot
             Line defined by 2 points
         """
         if len(self.lines) == 0:
@@ -922,8 +922,8 @@ class Projection(SageObject):
 
             sage: hex = polytopes.regular_polygon(6)
             sage: proj = hex.projection()
-            sage: hex_points = proj.render_points_2d()
-            sage: hex_points._objects
+            sage: hex_points = proj.render_points_2d()  # optional - sage.plot
+            sage: hex_points._objects                   # optional - sage.plot
             [Point set defined by 6 point(s)]
         """
         return point2d(self.coordinates_of(self.points), **kwds)
@@ -935,8 +935,8 @@ class Projection(SageObject):
         EXAMPLES::
 
             sage: penta = polytopes.regular_polygon(5)
-            sage: outline = penta.projection().render_outline_2d()
-            sage: outline._objects[0]
+            sage: outline = penta.projection().render_outline_2d()  # optional - sage.plot
+            sage: outline._objects[0]                               # optional - sage.plot
             Line defined by 2 points
         """
         wireframe = []
@@ -957,8 +957,8 @@ class Projection(SageObject):
             sage: cps = [i^3 for i in srange(-2,2,1/5)]
             sage: p = Polyhedron(vertices = [[(t^2-1)/(t^2+1),2*t/(t^2+1)] for t in cps])
             sage: proj = p.projection()
-            sage: filled_poly = proj.render_fill_2d()
-            sage: filled_poly.axes_width()
+            sage: filled_poly = proj.render_fill_2d()  # optional - sage.plot
+            sage: filled_poly.axes_width()             # optional - sage.plot
             0.8
         """
         poly = [polygon2d(self.coordinates_of(p), **kwds)
@@ -973,8 +973,8 @@ class Projection(SageObject):
 
             sage: p = polytopes.cross_polytope(3)
             sage: proj = p.projection()
-            sage: verts = proj.render_vertices_3d()
-            sage: verts.bounding_box()
+            sage: verts = proj.render_vertices_3d()  # optional - sage.plot
+            sage: verts.bounding_box()               # optional - sage.plot
             ((-1.0, -1.0, -1.0), (1.0, 1.0, 1.0))
         """
         return point3d(self.coordinates_of(self.points), **kwds)
@@ -987,8 +987,8 @@ class Projection(SageObject):
 
             sage: cube = polytopes.hypercube(3)
             sage: cube_proj = cube.projection()
-            sage: wire = cube_proj.render_wireframe_3d()
-            sage: print(wire.tachyon().split('\n')[77])  # for testing
+            sage: wire = cube_proj.render_wireframe_3d()                # optional - sage.plot
+            sage: print(wire.tachyon().split('\n')[77])  # for testing  # optional - sage.plot
             FCylinder base 1.0 1.0 -1.0 apex -1.0 1.0 -1.0 rad 0.005 texture...
         """
         wireframe = []
@@ -1007,8 +1007,8 @@ class Projection(SageObject):
         EXAMPLES::
 
             sage: p = polytopes.hypercube(3).projection()
-            sage: p_solid = p.render_solid_3d(opacity = .7)
-            sage: type(p_solid)
+            sage: p_solid = p.render_solid_3d(opacity=.7)  # optional - sage.plot
+            sage: type(p_solid)                            # optional - sage.plot
             <class 'sage.plot.plot3d.index_face_set.IndexFaceSet'>
         """
         polys = self.polygons
@@ -1031,9 +1031,9 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: print(Polyhedron([]).projection().render_0d().description())
+            sage: print(Polyhedron([]).projection().render_0d().description())           # optional - sage.plot
             <BLANKLINE>
-            sage: print(Polyhedron(ieqs=[(1,)]).projection().render_0d().description())
+            sage: print(Polyhedron(ieqs=[(1,)]).projection().render_0d().description())  # optional - sage.plot
             Point set defined by 1 point(s):    [(0.0, 0.0)]
         """
         if point_opts is None:
@@ -1062,7 +1062,7 @@ class Projection(SageObject):
 
         EXAMPLES::
 
-            sage: Polyhedron([(0,), (1,)]).projection().render_1d()
+            sage: Polyhedron([(0,), (1,)]).projection().render_1d()  # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         plt = Graphics()
@@ -1094,7 +1094,7 @@ class Projection(SageObject):
             sage: q3 = p3.projection()
             sage: p4 = Polyhedron(vertices=[[2,0]], rays=[[1,-1]], lines=[[1,1]])
             sage: q4 = p4.projection()
-            sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()
+            sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()  # optional - sage.plot
             Graphics object consisting of 17 graphics primitives
          """
         plt = Graphics()
@@ -1126,28 +1126,28 @@ class Projection(SageObject):
             sage: p1 = Polyhedron(vertices=[[1,1,1]], rays=[[1,1,1]])
             sage: p2 = Polyhedron(vertices=[[2,0,0], [0,2,0], [0,0,2]])
             sage: p3 = Polyhedron(vertices=[[1,0,0], [0,1,0], [0,0,1]], rays=[[-1,-1,-1]])
-            sage: p1.projection().plot() + p2.projection().plot() + p3.projection().plot()
+            sage: p1.projection().plot() + p2.projection().plot() + p3.projection().plot()  # optional - sage.plot
             Graphics3d Object
 
         It correctly handles various degenerate cases::
 
-            sage: Polyhedron(lines=[[1,0,0],[0,1,0],[0,0,1]]).plot()           # whole space
+            sage: Polyhedron(lines=[[1,0,0],[0,1,0],[0,0,1]]).plot()           # whole space              # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]], rays=[[1,0,0]],
+            sage: Polyhedron(vertices=[[1,1,1]], rays=[[1,0,0]],                                          # optional - sage.plot
             ....:            lines=[[0,1,0],[0,0,1]]).plot()                   # half space
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]],
+            sage: Polyhedron(vertices=[[1,1,1]],                                                          # optional - sage.plot
             ....:            lines=[[0,1,0],[0,0,1]]).plot()                   # R^2 in R^3
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0],[0,0,1]], lines=[[1,0,0]]).plot()   # quadrant wedge in R^2
+            sage: Polyhedron(rays=[[0,1,0],[0,0,1]], lines=[[1,0,0]]).plot()   # quadrant wedge in R^2    # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0]], lines=[[1,0,0]]).plot()           # upper half plane in R^3
+            sage: Polyhedron(rays=[[0,1,0]], lines=[[1,0,0]]).plot()           # upper half plane in R^3  # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(lines=[[1,0,0]]).plot()                           # R^1 in R^2
+            sage: Polyhedron(lines=[[1,0,0]]).plot()                           # R^1 in R^2               # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(rays=[[0,1,0]]).plot()                            # Half-line in R^3
+            sage: Polyhedron(rays=[[0,1,0]]).plot()                            # Half-line in R^3         # optional - sage.plot
             Graphics3d Object
-            sage: Polyhedron(vertices=[[1,1,1]]).plot()                        # point in R^3
+            sage: Polyhedron(vertices=[[1,1,1]]).plot()                        # point in R^3             # optional - sage.plot
             Graphics3d Object
 
         The origin is not included, if it is not in the polyhedron (:trac:`23555`)::
@@ -1155,8 +1155,8 @@ class Projection(SageObject):
             sage: Q = Polyhedron([[100],[101]])
             sage: P = Q*Q*Q; P
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
-            sage: p = P.plot()
-            sage: p.bounding_box()
+            sage: p = P.plot()                                                                            # optional - sage.plot
+            sage: p.bounding_box()                                                                        # optional - sage.plot
             ((100.0, 100.0, 100.0), (101.0, 101.0, 101.0))
         """
         pplt = None

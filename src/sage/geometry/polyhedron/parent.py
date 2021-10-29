@@ -576,7 +576,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: lp.set_objective(x[0] + x[1])
             sage: b = lp.get_backend()
             sage: P = b.interactive_lp_problem()
-            sage: p = P.plot()
+            sage: p = P.plot()  # optional - sage.plot
 
             sage: Q = Polyhedron(ieqs=[[-499999, 1000000], [1499999, -1000000]])
             sage: P = Polyhedron(ieqs=[[0, 1.0], [1.0, -1.0]], base_ring=RDF)

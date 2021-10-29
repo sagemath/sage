@@ -67,7 +67,7 @@ A triangulation of it::
     (2, 3, 4)
     sage: list(t)
     [(1, 3, 4), (2, 3, 4)]
-    sage: t.plot(axes=False)
+    sage: t.plot(axes=False)  # optional - sage.plot
     Graphics object consisting of 12 graphics primitives
 
 .. PLOT::
@@ -98,7 +98,7 @@ A 3-dimensional point configuration::
     sage: p = [[0,-1,-1],[0,0,1],[0,1,0], [1,-1,-1],[1,0,1],[1,1,0]]
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate()
-    sage: triang.plot(axes=False)
+    sage: triang.plot(axes=False)  # optional - sage.plot
     Graphics3d Object
 
 .. PLOT::
@@ -119,7 +119,7 @@ The standard example of a non-regular triangulation (requires TOPCOM)::
     16
     sage: len(nonregular)  # optional - topcom
     2
-    sage: nonregular[0].plot(aspect_ratio=1, axes=False)   # optional - topcom
+    sage: nonregular[0].plot(aspect_ratio=1, axes=False)   # optional - topcom  # optional - sage.plot
     Graphics object consisting of 25 graphics primitives
     sage: PointConfiguration.set_engine('internal')   # to make doctests independent of TOPCOM
 
@@ -1555,9 +1555,9 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)
+            sage: Tpos.plot(axes=False)  # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
-            sage: Tneg.plot(axes=False)
+            sage: Tneg.plot(axes=False)  # optional - sage.plot
             Graphics object consisting of 11 graphics primitives
 
         The 3d analog::
@@ -1572,7 +1572,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.bistellar_flips()
             (((<0,1,3>, <0,2,3>), (<0,1,2>, <1,2,3>)),)
             sage: Tpos, Tneg = pc.bistellar_flips()[0]
-            sage: Tpos.plot(axes=False)
+            sage: Tpos.plot(axes=False)  # optional - sage.plot
             Graphics3d Object
         """
         flips = []
@@ -2114,7 +2114,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         EXAMPLES::
 
             sage: p = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
-            sage: p.plot(axes=False)
+            sage: p.plot(axes=False)  # optional - sage.plot
             Graphics object consisting of 5 graphics primitives
 
         .. PLOT::

@@ -1381,7 +1381,7 @@ class Polyhedron_normaliz(Polyhedron_base):
             sage: P = Polyhedron(ieqs=[[1, 0, 2], [3, 0, -2], [3, 2, -2]], # optional - pynormaliz
             ....:              backend='normaliz')
             sage: PI = P.integral_hull()                                   # optional - pynormaliz
-            sage: P.plot(color='yellow') + PI.plot(color='green')          # optional - pynormaliz
+            sage: P.plot(color='yellow') + PI.plot(color='green')          # optional - pynormaliz  # optional - sage.plot
             Graphics object consisting of 10 graphics primitives
             sage: PI.Vrepresentation()                                     # optional - pynormaliz
             (A vertex at (-1, 0), A vertex at (0, 1), A ray in the direction (1, 0))
