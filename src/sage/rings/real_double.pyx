@@ -56,8 +56,6 @@ gsl_set_error_handler_off()
 
 import math, operator
 
-from cypari2.convert cimport new_gen_from_double
-
 import sage.rings.integer
 import sage.rings.rational
 
@@ -71,6 +69,9 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.arith.constants cimport *
 
 cimport gmpy2
+
+
+new_gen_from_real_double_element = None
 
 
 def is_RealDoubleField(x):
@@ -1679,7 +1680,10 @@ cdef class RealDoubleElement(FieldElement):
             sage: RDF(1.5).__pari__()
             1.50000000000000
         """
-        return new_gen_from_double(self._value)
+        global new_gen_from_real_double_element
+        if new_gen_from_real_double_element is None:
+            from sage.libs.pari.convert_sage_real_double import new_gen_from_real_double_element
+        return new_gen_from_real_double_element(self)
 
 
     ###########################################
