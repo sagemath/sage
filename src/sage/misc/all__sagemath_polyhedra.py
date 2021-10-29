@@ -28,8 +28,6 @@ from .mrange import xmrange, mrange, xmrange_iter, mrange_iter, cartesian_produc
 
 from .fpickle import pickle_function, unpickle_function
 
-from .getusage import get_memory_usage
-
 from .mathml import mathml
 
 from .defaults import (set_default_variable_name,
