@@ -120,7 +120,7 @@ def _triangles(dg):
     for e in E:
         v1, v2 = e
         for v in V:
-            if not v in e:
+            if v not in e:
                 if (v, v1) in E:
                     if (v2, v) in E:
                         flat_trian = sorted([v,v1,v2])
@@ -1165,7 +1165,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
                 connecting_vertices.append( v )
             # if a vertex is of valence two and contained in an oriented 3-cycle, it is a connecting vertex
             elif w[0] == 1 and w[1] == 1:
-                if v in o_trian_verts and not v in long_cycle_verts:
+                if v in o_trian_verts and v not in long_cycle_verts:
                     connecting_vertices.append( v )
 
     # post-parsing 1: if we are in the affine type A case, the two parameters for the non-oriented long cycle are computed

@@ -25,15 +25,15 @@ heavily modified:
     ``+/-1``.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.structure.parent import Parent
@@ -94,7 +94,7 @@ def ComplexIntervalField(prec=53, names=None):
     if prec in cache:
         X = cache[prec]
         C = X()
-        if not C is None:
+        if C is not None:
             return C
     C = ComplexIntervalField_class(prec)
     cache[prec] = weakref.ref(C)

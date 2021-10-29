@@ -167,7 +167,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.combinat.combination import Combinations
-from sage.geometry.cone import is_Cone
+import sage.geometry.abc
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.geometry.toric_lattice_element import is_ToricLatticeElement
 from sage.topology.simplicial_complex import SimplicialComplex
@@ -540,7 +540,7 @@ def ToricDivisor(toric_variety, arg=None, ring=None, check=True, reduce=True):
                              % (arg, toric_variety.fan()))
         arg = toric_variety.fan().cone_containing(arg)
     # Divisor by a one-cone
-    if is_Cone(arg):
+    if isinstance(arg, sage.geometry.abc.ConvexRationalPolyhedralCone):
         fan = toric_variety.fan()
         cone = fan.embed(arg)
         if cone.dim() != 1:

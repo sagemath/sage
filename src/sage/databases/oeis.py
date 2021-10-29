@@ -344,7 +344,7 @@ class OEIS:
         sage: fibo.formulas()[4]                        # optional -- internet
         'F(n) = F(n-1) + F(n-2) = -(-1)^n F(-n).'
 
-        sage: fibo.comments()[1]                        # optional -- internet
+        sage: fibo.comments()[6]                        # optional -- internet
         "F(n+2) = number of binary sequences of length n that have no
         consecutive 0's."
 
@@ -539,10 +539,10 @@ class OEIS:
 
         EXAMPLES::
 
-            sage: oeis.find_by_subsequence([2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377]) # optional -- internet
+            sage: oeis.find_by_subsequence([2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377])  # optional -- internet
             0: A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
             1: A212804: Expansion of (1 - x)/(1 - x - x^2).
-            2: A177194: Fibonacci numbers whose decimal expansion does not contain any digit 0.
+            2: A020695: Pisot sequence E(2,3).
 
             sage: fibo = _[0] ; fibo                    # optional -- internet
             A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
@@ -1504,7 +1504,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             A007540: Wilson primes: primes p such that (p-1)! == -1 (mod p^2).
 
             sage: w.references()                        # optional -- internet
-            ...A. H. Beiler, Recreations in the Theory of Numbers, Dover, NY, 1964, p. 52.
+            ...Albert H. Beiler, Recreations in the Theory of Numbers, Dover, NY, 1964, p. 52.
             ...
 
         TESTS::
@@ -1639,7 +1639,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: nbalanced.cross_references(fetch=True)    # optional -- internet
             0: A049703: a(0) = 0; for n>0, a(n) = A005598(n)/2.
             1: A049695: Array T read by diagonals; ...
-            2: A103116: a(n) = A005598(n) - 1.
+            2: A103116: a(n) = Sum_{i=1..n} (n-i+1)*phi(i).
             3: A000010: Euler totient function phi(n): count numbers <= n and prime to n.
 
             sage: phi = _[3]                                # optional -- internet
@@ -1721,10 +1721,15 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: f = oeis(45) ; f                      # optional -- internet
             A000045: Fibonacci numbers: F(n) = F(n-1) + F(n-2) with F(0) = 0 and F(1) = 1.
 
-            sage: f.comments()[:3]                      # optional -- internet
-            0: Also sometimes called Lamé's sequence.
-            1: F(n+2) = number of binary sequences of length n that have no consecutive 0's.
-            2: F(n+2) = number of subsets of {1,2,...,n} that contain no consecutive integers.
+            sage: f.comments()[:8]                      # optional -- internet
+            0: D. E. Knuth writes...
+            1: In keeping with historical accounts...
+            2: Susantha Goonatilake writes...
+            3: Also sometimes called Hemachandra numbers.
+            4: Also sometimes called Lamé's sequence.
+            5: ...
+            6: F(n+2) = number of binary sequences of length n that have no consecutive 0's.
+            7: F(n+2) = number of subsets of {1,2,...,n} that contain no consecutive integers.
 
         TESTS::
 

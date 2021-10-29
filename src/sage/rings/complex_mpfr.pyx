@@ -46,12 +46,14 @@ from sage.structure.parent_gens import ParentWithGens
 
 from sage.misc.sage_eval import sage_eval
 
+import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 from . import ring, infinity
 from .integer cimport Integer
 
 from .complex_double cimport ComplexDoubleElement
 from .real_mpfr cimport RealNumber
+from sage.libs.gsl.complex cimport *
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
@@ -63,7 +65,6 @@ gmpy2.import_gmpy2()
 
 # Some objects that are note imported at startup in order to break
 # circular imports
-NumberField_quadratic = None
 NumberFieldElement_quadratic = None
 AlgebraicNumber_base = None
 AlgebraicNumber = None
@@ -80,7 +81,6 @@ def late_import():
 
         sage: sage.rings.complex_mpfr.late_import()
     """
-    global NumberField_quadratic
     global NumberFieldElement_quadratic
     global AlgebraicNumber_base
     global AlgebraicNumber
@@ -91,7 +91,6 @@ def late_import():
     if NumberFieldElement_quadratic is None:
         import sage.rings.number_field.number_field
         import sage.rings.number_field.number_field_element_quadratic as nfeq
-        NumberField_quadratic = sage.rings.number_field.number_field.NumberField_quadratic
         NumberFieldElement_quadratic = nfeq.NumberFieldElement_quadratic
         import sage.rings.qqbar
         AlgebraicNumber_base = sage.rings.qqbar.AlgebraicNumber_base
@@ -499,19 +498,35 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: CC(i)
             1.00000000000000*I
 
+        TESTS::
+
+            sage: CC('1.2+3.4*j')
+            1.20000000000000 + 3.40000000000000*I
+            sage: CC('hello')
+            Traceback (most recent call last):
+            ...
+            ValueError: given string 'hello' is not a complex number
         """
         if not isinstance(x, (RealNumber, tuple)):
             if isinstance(x, ComplexDoubleElement):
                 return ComplexNumber(self, x.real(), x.imag())
             elif isinstance(x, str):
+                x = x.replace(' ', '')
+                x = x.replace('i', 'I')
+                x = x.replace('j', 'I')
+                x = x.replace('E', 'e')
+                allowed = '+-.*0123456789Ie'
+                if not all(letter in allowed for letter in x):
+                    raise ValueError(f'given string {x!r} is not a complex number')
+                # This should rather use a proper parser to validate input.
                 # TODO: this is probably not the best and most
                 # efficient way to do this.  -- Martin Albrecht
                 return ComplexNumber(self,
-                            sage_eval(x.replace(' ',''), locals={"I":self.gen(),"i":self.gen()}))
+                                     sage_eval(x, locals={"I": self.gen()}))
 
             late_import()
             if isinstance(x, NumberFieldElement_quadratic):
-                if isinstance(x.parent(), NumberField_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
+                if isinstance(x.parent(), sage.rings.abc.NumberField_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
                     (re, im) = list(x)
                     return ComplexNumber(self, re, im)
 
@@ -3450,8 +3465,9 @@ cdef class CCtoCDF(Map):
             0.7071067811865476 + 0.7071067811865475*I
         """
         z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
-        z._complex.real = mpfr_get_d((<ComplexNumber>x).__re, MPFR_RNDN)
-        z._complex.imag = mpfr_get_d((<ComplexNumber>x).__im, MPFR_RNDN)
+        GSL_SET_COMPLEX(&z._complex,
+                        mpfr_get_d((<ComplexNumber>x).__re, MPFR_RNDN),
+                        mpfr_get_d((<ComplexNumber>x).__im, MPFR_RNDN))
         return z
 
 

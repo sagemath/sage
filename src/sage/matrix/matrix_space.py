@@ -255,7 +255,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
                 if R.order() < matrix_modn_dense_double.MAX_MODULUS:
                     return matrix_modn_dense_double.Matrix_modn_dense_double
 
-            if sage.rings.number_field.number_field.is_CyclotomicField(R):
+            if isinstance(R, sage.rings.abc.NumberField_cyclotomic):
                 from . import matrix_cyclo_dense
                 return matrix_cyclo_dense.Matrix_cyclo_dense
 
@@ -338,7 +338,7 @@ def get_matrix_class(R, nrows, ncols, sparse, implementation):
             raise ValueError("'numpy' matrices are only available over RDF and CDF")
 
         if implementation == 'rational':
-            if sage.rings.number_field.number_field.is_CyclotomicField(R):
+            if isinstance(R, sage.rings.abc.NumberField_cyclotomic):
                 from . import matrix_cyclo_dense
                 return matrix_cyclo_dense.Matrix_cyclo_dense
             raise ValueError("'rational' matrices are only available over a cyclotomic field")

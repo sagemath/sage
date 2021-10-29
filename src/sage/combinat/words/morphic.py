@@ -124,8 +124,8 @@ class WordDatatype_morphic(WordDatatype_callable):
         self._morphism = morphism
         self._letter = letter
         self._alphabet = self._morphism.domain().alphabet()
-        if coding == None:
-            self._coding = {a:a for a in self._alphabet}
+        if coding is None:
+            self._coding = {a: a for a in self._alphabet}
         else:
             self._coding = coding
 

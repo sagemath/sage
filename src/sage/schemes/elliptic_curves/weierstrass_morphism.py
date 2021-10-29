@@ -282,6 +282,19 @@ def isomorphisms(E, F, JustOne=False):
         sage: isomorphisms(EllipticCurve_from_j(0),EllipticCurve('27a1'))
         []
         sage: isomorphisms(EllipticCurve_from_j(0),EllipticCurve('27a1'),JustOne=True)
+
+    TESTS:
+
+    Check that :trac:`32632` is fixed::
+
+        sage: z8 = GF(2^8).gen()
+        sage: E1 = EllipticCurve([z8, z8, z8, z8, z8])
+        sage: isomorphisms(E1, E1)
+        [(1, 0, 0, 0), (1, 0, z8, z8)]
+        sage: E2 = EllipticCurve([z8^2, 0, 0, 0, z8^7 + z8^4])
+        sage: isomorphisms(E1, E2)
+        [(z8^7 + z8^3 + z8^2 + z8, 1, 1, z8^7 + z8^3 + z8^2 + z8 + 1),
+         (z8^7 + z8^3 + z8^2 + z8, 1, z8 + 1, z8^7 + z8^3 + z8^2 + z8 + 1)]
     """
     from .ell_generic import is_EllipticCurve
     if not is_EllipticCurve(E) or not is_EllipticCurve(F):
@@ -325,7 +338,7 @@ def isomorphisms(E, F, JustOne=False):
             r = (a3E+a3F*u**3)/a1E
             slist = [s[0] for s in (x**2+a1E*x+(r+a2E+a2F*u**2)).roots()]
             for s in slist:
-                t = (a4E+a4F*u**4 + s*a3E + r*s*a1E + r**2)
+                t = (a4E+a4F*u**4 + s*a3E + r*s*a1E + r**2) / a1E
                 if JustOne:
                     return (u, r, s, t)
                 ans.append((u, r, s, t))

@@ -571,7 +571,7 @@ cdef class Farey:
         Serialization for pickling::
 
             sage: FareySymbol(Gamma0(4)).__reduce__()
-            (<type 'sage.modular.arithgroup.farey_symbol.Farey'>, ...))
+            (<class 'sage.modular.arithgroup.farey_symbol.Farey'>, ...))
 
         """
         return Farey, (self.group, self.this_ptr.dumps())

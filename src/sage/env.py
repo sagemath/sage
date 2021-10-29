@@ -227,6 +227,12 @@ NTL_INCDIR = var("NTL_INCDIR")
 NTL_LIBDIR = var("NTL_LIBDIR")
 LIE_INFO_DIR = var("LIE_INFO_DIR", join(SAGE_LOCAL, "lib", "LiE"))
 
+# The path to libSingular, to be passed to dlopen(). This will
+# typically be set to an absolute path in sage_conf, but the relative
+# fallback path here works on systems where dlopen() searches the
+# system's library locations.
+LIBSINGULAR_PATH = var("LIBSINGULAR_PATH", "libSingular.so")
+
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
@@ -315,10 +321,6 @@ def _get_shared_lib_path(*libnames: str) -> Optional[str]:
 
     # Just return None if no files were found
     return None
-
-# locate singular shared object
-# On Debian it's libsingular-Singular so try that as well
-SINGULAR_SO = var("SINGULAR_SO", _get_shared_lib_path("Singular", "singular-Singular"))
 
 # locate libgap shared object
 GAP_SO = var("GAP_SO", _get_shared_lib_path("gap", ""))

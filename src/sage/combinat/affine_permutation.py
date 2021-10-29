@@ -1707,7 +1707,7 @@ class AffinePermutationTypeG(AffinePermutation):
         EXAMPLES::
 
             sage: G = AffinePermutationGroup(['G',2,1])
-            sage: p=G([2, 10, -5, 12, -3, 5])
+            sage: p = G([2, 10, -5, 12, -3, 5])
             sage: p.apply_simple_reflection_right(0)
             Type G affine permutation with window [-9, -1, -5, 12, 8, 16]
             sage: p.apply_simple_reflection_right(1)
@@ -1715,7 +1715,7 @@ class AffinePermutationTypeG(AffinePermutation):
             sage: p.apply_simple_reflection_right(2)
             Type G affine permutation with window [2, -5, 10, -3, 12, 5]
         """
-        if not i in self.parent().index_set():
+        if i not in self.parent().index_set():
             raise ValueError('index not in index set')
         j = i
         l = self[:]

@@ -944,7 +944,7 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
 
     key = ("pbori", names, n, order)
     R = _get_from_cache(key)
-    if not R is None:
+    if R is not None:
         return R
 
     from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
@@ -953,6 +953,6 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
     _save_in_cache(key, R)
     return R
 
-#########################################################################################
+############################################################################
 # END (Factory function for making polynomial rings)
-#########################################################################################
+############################################################################

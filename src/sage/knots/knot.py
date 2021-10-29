@@ -74,6 +74,8 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         31
         sage: K.signature()
         -2
+        sage: K.colored_jones_polynomial(2)  # long time
+        q^-1 - 2 + 4*q - 5*q^2 + 6*q^3 - 5*q^4 + 4*q^5 - 3*q^6 + q^7
 
     REFERENCES:
 
@@ -348,6 +350,44 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         if (a % 8) == 1 or (a % 8) == 7:
             return 0
         return 1
+
+    def colored_jones_polynomial(self, N, variab=None, try_inverse=True):
+        r"""
+        Return the colored Jones polynomial of the trace closure of the braid.
+
+        INPUT:
+
+        - ``N`` -- integer; the number of colors
+        - ``variab`` -- (default: `q`) the variable in the resulting
+          Laurent polynomial
+        - ``try_inverse`` -- boolean (default: ``True``); if ``True``,
+          attempt a faster calculation by using the inverse of the braid
+
+        ALGORITHM:
+
+        The algorithm used is described in [HL2018]_ for the corresponding
+        braid representation. We follow their notation, but work in a
+        suitable free algebra over a Laurent polynomial ring in one
+        variable to simplify bookkeeping.
+
+        EXAMPLES::
+
+            sage: W = Knots()
+            sage: K = W.from_dowker_code([-4,-6,-2])
+            sage: K.colored_jones_polynomial(2)
+            -q^-4 + q^-3 + q^-1
+            sage: K.colored_jones_polynomial(2, 't')
+            -t^-4 + t^-3 + t^-1
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: K.colored_jones_polynomial(2, -t)
+            -t^-4 - t^-3 - t^-1
+
+            sage: R.<t> = ZZ[]
+            sage: K.colored_jones_polynomial(2, t+1)
+            (t^3 + 3*t^2 + 4*t + 1)/(t^4 + 4*t^3 + 6*t^2 + 4*t + 1)
+        """
+        return self.braid().colored_jones_polynomial(N=N, variab=variab,
+                                                     try_inverse=try_inverse)
 
     def connected_sum(self, other):
         r"""

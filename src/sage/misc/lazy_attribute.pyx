@@ -454,7 +454,7 @@ class lazy_attribute(_lazy_attribute):
         sage: cython('\n'.join(cython_code))
         sage: P = MyParent(category=Rings())
         sage: P.element_class    # indirect doctest
-        <type '...MyElement'>
+        <class '...MyElement'>
 
     .. rubric:: About descriptor specifications
 

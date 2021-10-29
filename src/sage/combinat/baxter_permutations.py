@@ -117,7 +117,7 @@ class BaxterPermutations_size(BaxterPermutations):
             sage: sorted([p for p in Permutations(6) if p in BaxterPermutations(6)]) == sorted(BaxterPermutations(6).list())
             True
         """
-        if not x in Permutations(self._n):
+        if x not in Permutations(self._n):
             return False
         for i in range(1, len(x) - 1):
             a = x[i]
@@ -299,7 +299,7 @@ class BaxterPermutations_all(DisjointUnionEnumeratedSets, BaxterPermutations):
             sage: 42 in BaxterPermutations()
             False
         """
-        if not x in Permutations():
+        if x not in Permutations():
             return False
         return x in BaxterPermutations(len(x))
 

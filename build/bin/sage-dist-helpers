@@ -306,6 +306,17 @@ sdh_store_and_pip_install_wheel() {
         local sudo=""
         local root=""
     fi
+    # Trac #32659: pip no longer reinstalls local wheels if the version is the same.
+    # Because neither (1) applying patches nor (2) local changes (in the case
+    # of sage-conf, sage-setup, etc.) bump the version number, we need to
+    # override this behavior.  The pip install option --force-reinstall does too
+    # much -- it also reinstalls all dependencies, which we do not want.
+    wheel_basename="${wheel##*/}"
+    distname="${wheel_basename%%-*}"
+    $sudo sage-pip-uninstall "$distname"
+    if [ $? -ne 0 ]; then
+        echo "(ignoring error)" >&2
+    fi
     $sudo sage-pip-install $root $pip_options "$wheel" || \
         sdh_die "Error installing ${wheel##*/}"
     if [ -n "${SAGE_PKG_DIR}" ]; then
@@ -316,11 +327,7 @@ sdh_store_and_pip_install_wheel() {
 }
 
 sdh_pip_uninstall() {
-    # --disable-pip-version-check: Don't periodically check PyPI to determine whether a new version of pip is available
-    # --no-input: Disable prompting for input.
-    # --yes: Don't ask for confirmation of uninstall deletions
-    # See sage-pip-install for a discussion of the other flags.
-    python3 -m pip uninstall --isolated --disable-pip-version-check --yes --no-input "$@"
+    sage-pip-uninstall "$@"
     if [ $? -ne 0 ]; then
         echo "Warning: pip exited with status $?" >&2
     fi

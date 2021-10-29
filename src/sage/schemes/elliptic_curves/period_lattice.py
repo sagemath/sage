@@ -204,12 +204,12 @@ class PeriodLattice_ell(PeriodLattice):
         K = E.base_field()
         if embedding is None:
             embs = K.embeddings(AA)
-            real = len(embs)>0
+            real = len(embs) > 0
             if not real:
                 embs = K.embeddings(QQbar)
             embedding = embs[0]
         else:
-            embedding = refine_embedding(embedding,Infinity)
+            embedding = refine_embedding(embedding, Infinity)
             real = embedding(K.gen()).imag().is_zero()
 
         self.embedding = embedding
@@ -1802,7 +1802,7 @@ class PeriodLattice_ell(PeriodLattice):
                     z = C(z)
                     z_is_real = z.is_real()
                 except TypeError:
-                    raise TypeError("%s is not a complex number"%z)
+                    raise TypeError("%s is not a complex number" % z)
         prec = C.precision()
 
         # test for the point at infinity:
@@ -1813,7 +1813,7 @@ class PeriodLattice_ell(PeriodLattice):
             if to_curve:
                 return self.curve().change_ring(K)(0)
             else:
-                return (K('+infinity'), K('+infinity'))
+                return K(Infinity), K(Infinity)
 
         # general number field code (including QQ):
 
@@ -1830,7 +1830,7 @@ class PeriodLattice_ell(PeriodLattice):
         # the same precision as the input.
 
         x, y = pari(self.basis(prec=prec)).ellwp(z, flag=1)
-        x, y = [C(t) for t in (x,y)]
+        x, y = [C(t) for t in (x, y)]
 
         if self.real_flag and z_is_real:
             x = x.real()
@@ -1839,14 +1839,15 @@ class PeriodLattice_ell(PeriodLattice):
         if to_curve:
             K = x.parent()
             v = refine_embedding(self.embedding, Infinity)
-            a1,a2,a3,a4,a6 = [K(v(a)) for a in self.E.ainvs()]
+            a1, a2, a3, a4, a6 = [K(v(a)) for a in self.E.ainvs()]
             b2 = K(v(self.E.b2()))
             x = x - b2 / 12
             y = (y - (a1 * x + a3)) / 2
-            EK = EllipticCurve(K,[a1,a2,a3,a4,a6])
-            return EK.point((x,y,K(1)), check=False)
+            EK = EllipticCurve(K, [a1, a2, a3, a4, a6])
+            return EK.point((x, y, K.one()), check=False)
         else:
-            return (x,y)
+            return (x, y)
+
 
 def reduce_tau(tau):
     r"""

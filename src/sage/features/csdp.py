@@ -20,7 +20,7 @@ class CSDP(Executable):
 
         sage: from sage.features.csdp import CSDP
         sage: CSDP().is_present()  # optional: csdp
-        FeatureTestResult('CSDP', True)
+        FeatureTestResult('csdp', True)
     """
     def __init__(self):
         r"""
@@ -30,7 +30,7 @@ class CSDP(Executable):
             sage: isinstance(CSDP(), CSDP)
             True
         """
-        Executable.__init__(self, name="CSDP", spkg="csdp", executable="theta",
+        Executable.__init__(self, name="csdp", spkg="csdp", executable="theta",
                                 url="https://github.com/dimpase/csdp")
 
     def is_functional(self):
@@ -41,7 +41,7 @@ class CSDP(Executable):
 
             sage: from sage.features.csdp import CSDP
             sage: CSDP().is_functional()  # optional: csdp
-            FeatureTestResult('CSDP', True)
+            FeatureTestResult('csdp', True)
         """
         from sage.misc.temporary_file import tmp_filename
         tf_name = tmp_filename()

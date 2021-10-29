@@ -384,7 +384,7 @@ cdef class ECModularSymbol:
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E)
             sage: M.__reduce__()
-            (<type 'sage.libs.eclib.newforms.ECModularSymbol'>,
+            (<class 'sage.libs.eclib.newforms.ECModularSymbol'>,
              (Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field,
               1))
         """

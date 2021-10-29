@@ -157,6 +157,7 @@ class CDFInterpreter(StackInterpreter):
             """)
 
         self.pyx_header = ri(0, """
+            from sage.libs.gsl.complex cimport *
             from sage.rings.complex_double cimport ComplexDoubleElement
             import sage.rings.complex_double
             cdef object CDF = sage.rings.complex_double.CDF
@@ -168,12 +169,11 @@ class CDFInterpreter(StackInterpreter):
 
             cdef inline double_complex CDE_to_dz(zz):
                 cdef ComplexDoubleElement z = <ComplexDoubleElement>(zz if isinstance(zz, ComplexDoubleElement) else CDF(zz))
-                return z._complex.real + _Complex_I * z._complex.imag
+                return GSL_REAL(z._complex) + _Complex_I * GSL_IMAG(z._complex)
 
             cdef inline ComplexDoubleElement dz_to_CDE(double_complex dz):
                 cdef ComplexDoubleElement z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
-                z._complex.real = creal(dz)
-                z._complex.imag = cimag(dz)
+                GSL_SET_COMPLEX(&z._complex, creal(dz), cimag(dz))
                 return z
 
             cdef public bint cdf_py_call_helper(object fn,

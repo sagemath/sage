@@ -878,7 +878,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve):
             ...
             ValueError: The conic self (=Projective Conic Curve over Rational Field defined by x^2 + y^2) is not smooth, hence does not have a parametrization.
         """
-        if (not self._parametrization is None) and not point:
+        if (self._parametrization is not None) and not point:
             par = self._parametrization
         else:
             if not self.is_smooth():

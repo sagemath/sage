@@ -334,8 +334,6 @@ if [ -n "$SAGE_LOCAL" ]; then
 fi
 
 if [ -n "$SAGE_LOCAL" ]; then
-    SINGULARPATH="$SAGE_LOCAL/share/singular" && export SINGULARPATH
-
     # Ensure that there is a colon at the end of $INFOPATH by
     # stripping the existing one (if it exists), and then adding a new
     # one. This forces the "info" program to check various default

@@ -398,7 +398,7 @@ class SchemeHomset_points_affine(sage.schemes.generic.homset.SchemeHomset_points
         from sage.schemes.affine.affine_space import is_AffineSpace
         if F is None:
             F = CC
-        if not F in Fields() or not hasattr(F, 'precision'):
+        if F not in Fields() or not hasattr(F, 'precision'):
             raise TypeError('F must be a numerical field')
         X = self.codomain()
         if X.base_ring() not in NumberFields():

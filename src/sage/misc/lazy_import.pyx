@@ -11,7 +11,7 @@ EXAMPLES::
 
     sage: lazy_import('sage.rings.all', 'ZZ')
     sage: type(ZZ)
-    <type 'sage.misc.lazy_import.LazyImport'>
+    <class 'sage.misc.lazy_import.LazyImport'>
     sage: ZZ(4.0)
     4
 
@@ -468,7 +468,7 @@ cdef class LazyImport(object):
 
             sage: lazy_import('sys', 'version_info')
             sage: type(version_info)
-            <type 'sage.misc.lazy_import.LazyImport'>
+            <class 'sage.misc.lazy_import.LazyImport'>
             sage: len(version_info)
             5
         """
@@ -519,7 +519,7 @@ cdef class LazyImport(object):
                sage: class Bar(Foo):
                ....:     pass
                sage: type(Foo.__dict__['plot'])
-               <type 'sage.misc.lazy_import.LazyImport'>
+               <class 'sage.misc.lazy_import.LazyImport'>
 
            We access the ``plot`` method::
 
@@ -978,7 +978,7 @@ def lazy_import(module, names, as_=None, *,
 
         sage: lazy_import('sage.rings.all', 'ZZ')
         sage: type(ZZ)
-        <type 'sage.misc.lazy_import.LazyImport'>
+        <class 'sage.misc.lazy_import.LazyImport'>
         sage: ZZ(4.0)
         4
         sage: lazy_import('sage.rings.all', 'RDF', 'my_RDF')
@@ -1011,7 +1011,7 @@ def lazy_import(module, names, as_=None, *,
         sage: class Bar(Foo):
         ....:     pass
         sage: type(Foo.__dict__['plot'])
-        <type 'sage.misc.lazy_import.LazyImport'>
+        <class 'sage.misc.lazy_import.LazyImport'>
         sage: 'EXAMPLES' in Bar.plot.__doc__
         True
         sage: type(Foo.__dict__['plot'])

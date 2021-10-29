@@ -247,7 +247,7 @@ class RingDerivationModule(Module, UniqueRepresentation):
             TypeError: the domain of the derivation must coerce to the domain of the twisting homomorphism
 
         """
-        if not domain in Rings().Commutative():
+        if domain not in Rings().Commutative():
             raise TypeError("the domain must be a commutative ring")
 
         if codomain in Rings().Commutative() and codomain.has_coerce_map_from(domain):

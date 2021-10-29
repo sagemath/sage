@@ -272,7 +272,7 @@ def QuotientRing(R, I, names=None, **kwds):
     #if not isinstance(R, commutative_ring.CommutativeRing):
     #    raise TypeError, "R must be a commutative ring."
     from sage.all import Integers, ZZ
-    if not R in Rings():
+    if R not in Rings():
         raise TypeError("R must be a ring.")
     try:
         is_commutative = R.is_commutative()

@@ -384,8 +384,7 @@ def _reduce_invariants(invariants, weights):
     for prime in gcd(invariants).factor():
         p = prime[0]
         for D in factors:
-            if not p in D:
+            if p not in D:
                 D[p] = 0
         scalar = scalar*p**min([factors[i][p]//weights[i] for i in range(n)])
     return [invariants[i]*scalar**-weights[i] for i in range(n)]
-

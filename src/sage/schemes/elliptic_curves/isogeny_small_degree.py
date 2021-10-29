@@ -188,7 +188,7 @@ def Psi(l, use_stored=True):
         sage: assert Psi(7, use_stored=True) == Psi(7, use_stored=False)
         sage: assert Psi(13, use_stored=True) == Psi(13, use_stored=False) # not tested (very long time)
     """
-    if not l in [2, 3, 5, 7, 13]:
+    if l not in [2, 3, 5, 7, 13]:
         raise ValueError("Genus zero primes are 2, 3, 5, 7 or 13.")
 
     R = PolynomialRing(ZZ, 2, 'Xt')
@@ -276,7 +276,7 @@ def isogenies_prime_degree_genus_0(E, l=None, minimal_models=True):
         Isogeny of degree 5 from Elliptic Curve defined by y^2 + x*y + y = x^3 - x - 2 over Rational Field to Elliptic Curve defined by y^2 + x*y + y = x^3 - 76*x + 298 over Rational Field]
 
     """
-    if not l in [2, 3, 5, 7, 13, None]:
+    if l not in [2, 3, 5, 7, 13, None]:
         raise ValueError("%s is not a genus 0 prime."%l)
     F = E.base_ring()
     j = E.j_invariant()
@@ -1423,7 +1423,7 @@ def _hyperelliptic_isogeny_data(l):
         ValueError: 37 must be one of [11, 17, 19, 23, 29, 31, 41, 47, 59, 71].
 
     """
-    if not l in hyperelliptic_primes:
+    if l not in hyperelliptic_primes:
         raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
     data = {}
     Zu = PolynomialRing(ZZ,'u')
@@ -1692,7 +1692,7 @@ def isogenies_prime_degree_genus_plus_0(E, l=None, minimal_models=True):
         return sum([isogenies_prime_degree_genus_plus_0(E, ell, minimal_models=minimal_models)
                     for ell in hyperelliptic_primes],[])
 
-    if not l in hyperelliptic_primes:
+    if l not in hyperelliptic_primes:
         raise ValueError("%s must be one of %s." % (l, hyperelliptic_primes))
 
     F = E.base_ring()
@@ -1782,7 +1782,7 @@ def isogenies_prime_degree_genus_plus_0_j0(E, l, minimal_models=True):
         sage: isogenies_prime_degree_genus_plus_0_j0(E,17)
         [Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6, Isogeny of degree 17 from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 5^6 to Elliptic Curve defined by y^2 = x^3 + 2 over Finite Field in a of size 5^6]
     """
-    if not l in hyperelliptic_primes:
+    if l not in hyperelliptic_primes:
         raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
     F = E.base_field()
     if E.j_invariant() != 0:
@@ -1873,7 +1873,7 @@ def isogenies_prime_degree_genus_plus_0_j1728(E, l, minimal_models=True):
         sage: [(p,len(isogenies_prime_degree_genus_plus_0_j1728(Emin,p))) for p in [17, 29, 41]]
         [(17, 2), (29, 2), (41, 2)]
     """
-    if not l in  hyperelliptic_primes:
+    if l not in  hyperelliptic_primes:
         raise ValueError("%s must be one of %s."%(l,hyperelliptic_primes))
     F = E.base_ring()
     if E.j_invariant() != 1728:
@@ -2352,10 +2352,10 @@ def isogenies_prime_degree(E, l, minimal_models=True):
     if l==p:
         return isogenies_prime_degree_general(E,l, minimal_models=minimal_models)
 
-    if l in [5,7,13] and not p in [2,3]:
+    if l in [5,7,13] and p not in [2,3]:
         return isogenies_prime_degree_genus_0(E,l, minimal_models=minimal_models)
 
-    if l in hyperelliptic_primes and not p in [2,3]:
+    if l in hyperelliptic_primes and p not in [2,3]:
         return isogenies_prime_degree_genus_plus_0(E,l, minimal_models=minimal_models)
 
     j = E.j_invariant()

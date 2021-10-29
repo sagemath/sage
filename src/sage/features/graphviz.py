@@ -11,7 +11,8 @@ Check for graphviz
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from . import Feature, Executable, FeatureTestResult
+from . import Executable
+from .join_feature import JoinFeature
 
 
 class dot(Executable):
@@ -86,7 +87,7 @@ class twopi(Executable):
                             url="https://www.graphviz.org/")
 
 
-class Graphviz(Feature):
+class Graphviz(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of
     ``dot``, ``neato`` and ``twopi``.
@@ -95,7 +96,7 @@ class Graphviz(Feature):
 
         sage: from sage.features.graphviz import Graphviz
         sage: Graphviz().is_present()  # optional: graphviz
-        FeatureTestResult('Graphviz', True)
+        FeatureTestResult('graphviz', True)
     """
     def __init__(self):
         r"""
@@ -105,22 +106,7 @@ class Graphviz(Feature):
             sage: isinstance(Graphviz(), Graphviz)
             True
         """
-        Feature.__init__(self, "Graphviz",
-                         spkg="graphviz",
-                         url="https://www.graphviz.org/")
-
-    def _is_present(self):
-        r"""
-        EXAMPLES::
-
-            sage: from sage.features.graphviz import Graphviz
-            sage: Graphviz()._is_present() # optional: graphviz
-            FeatureTestResult('Graphviz', True)
-        """
-        test = (dot()._is_present() and
-                neato()._is_present() and
-                twopi()._is_present())
-        if not test:
-            return test
-        else:
-            return FeatureTestResult(self, True)
+        JoinFeature.__init__(self, "graphviz",
+                             [dot(), neato(), twopi()],
+                             spkg="graphviz",
+                             url="https://www.graphviz.org/")

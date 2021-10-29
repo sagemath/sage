@@ -357,7 +357,7 @@ class SuperPartition(ClonableArray,
             sage: SuperPartition([[2,1,0],[3,3]]).to_partition().parent()
             Partitions
         """
-        return Partition(sorted(self[0] + self[1], reverse=True))
+        return Partition(sorted(self[0] + self[1], reverse=True))  # type:ignore
 
     def antisymmetric_part(self) -> list:
         r"""
@@ -508,8 +508,9 @@ class SuperPartition(ClonableArray,
             sage: SuperPartition([[2,1,0],[3,3]]).shape_circled_diagram()
             [3, 3, 3, 2, 1]
         """
-        return Partition(sorted([a + 1 for a in self.antisymmetric_part()]
-                                + self.symmetric_part(), reverse=True))
+        pi = sorted([a + 1 for a in self.antisymmetric_part()] +
+                    self.symmetric_part(), reverse=True)
+        return Partition(pi)  # type:ignore
 
     @staticmethod
     def from_circled_diagram(shape, corners) -> SuperPartition:
@@ -539,9 +540,10 @@ class SuperPartition(ClonableArray,
             sage: all(sp == from_cd(*sp.to_circled_diagram()) for sp in SuperPartitions(4))
             True
         """
-        return SuperPartition([sorted([c[1] for c in corners], reverse=True),
-                               [shape[i] for i in range(len(shape))
-                                if i not in [c[0] for c in corners]]])
+        data = [sorted([c[1] for c in corners], reverse=True),
+                [shape[i] for i in range(len(shape))
+                 if i not in [c[0] for c in corners]]]
+        return SuperPartition(data)  # type: ignore
 
     def to_circled_diagram(self) -> list:
         r"""
@@ -611,7 +613,7 @@ class SuperPartition(ClonableArray,
             sage: sum(1/sp.zee() for sp in SuperPartitions(6,0))
             1
         """
-        return Partition(self.symmetric_part()).centralizer_size()
+        return Partition(self.symmetric_part()).centralizer_size()  # type:ignore
 
     def sign(self) -> int:
         r"""
@@ -755,7 +757,7 @@ class SuperPartition(ClonableArray,
         for asp in nsp:
             asp = asp + [0]
             change_in_rows = [asp[i] - sp1[i] for i in range(len(sp1))]
-            moved_circ_list = [[] for i in range(len(circ_list))]
+            moved_circ_list: list[list[tuple]] = [[] for _ in range(len(circ_list))]
             for i, pos in enumerate(circ_list):
                 if change_in_rows[pos[0]] == 0:
                     moved_circ_list[i].append(pos)

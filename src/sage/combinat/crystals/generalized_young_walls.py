@@ -711,7 +711,7 @@ class GeneralizedYoungWall(CombinatorialElement):
             sage: x.in_highest_weight_crystal(La)
             False
         """
-        if not La in self.parent().weight_lattice_realization():
+        if La not in self.parent().weight_lattice_realization():
             raise TypeError("Must be an element in the weight lattice realization")
         ac = self.parent().weight_lattice_realization().simple_coroots()
         n = self.cartan_type().classical().rank()

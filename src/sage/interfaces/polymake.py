@@ -332,8 +332,10 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             r.__sage_dict = z # do this to avoid having the entries of the list be garbage collected
             return r
 
-        from sage.rings.all import Integer, Rational, RDF
-        from sage.rings.number_field.number_field import is_QuadraticField
+        import sage.rings.abc
+        from sage.rings.integer import Integer
+        from sage.rings.rational import Rational
+        from sage.rings.real_double import RDF
 
         def to_str(x):
             if isinstance(x, list):
@@ -350,7 +352,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             except AttributeError:
                 pass
 
-            if is_QuadraticField(parent):
+            if isinstance(parent, sage.rings.abc.NumberField_quadratic):
                 return x._polymake_init_()
             try:
                 if x.parent().is_exact():

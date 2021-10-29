@@ -22,7 +22,7 @@ Dependencies
 ------------
 
 -  zlib
--  MPIR
+-  GMP 
 -  MPFR
 -  MPC
 

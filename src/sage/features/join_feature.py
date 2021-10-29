@@ -24,7 +24,7 @@ class JoinFeature(Feature):
         sage: F.is_present()
         FeatureTestResult('xxyyyy', False)
     """
-    def __init__(self, name, features, spkg=None, url=None):
+    def __init__(self, name, features, spkg=None, url=None, description=None):
         """
         TESTS:
 
@@ -46,7 +46,7 @@ class JoinFeature(Feature):
                 raise ValueError('given features have more than one url; provide url argument')
             elif len(urls) == 1:
                 url = next(iter(urls))
-        super().__init__(name, spkg=spkg, url=url)
+        super().__init__(name, spkg=spkg, url=url, description=description)
         self._features = features
 
     def _is_present(self):
@@ -57,7 +57,7 @@ class JoinFeature(Feature):
 
             sage: from sage.features.latte import Latte
             sage: Latte()._is_present()  # optional - latte_int
-            FeatureTestResult('LattE', True)
+            FeatureTestResult('latte_int', True)
         """
         for f in self._features:
             test = f._is_present()
@@ -73,7 +73,7 @@ class JoinFeature(Feature):
 
             sage: from sage.features.latte import Latte
             sage: Latte().is_functional()  # optional - latte_int
-            FeatureTestResult('LattE', True)
+            FeatureTestResult('latte_int', True)
         """
         for f in self._features:
             test = f.is_functional()

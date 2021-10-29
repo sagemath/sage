@@ -6432,7 +6432,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS::
 
             sage: try:
-            ....:     print('Possible error output from gmp')
+            ....:     print('Possible error output from gmp', flush=True)
             ....:     1 << (2^60)
             ....: except (MemoryError, OverflowError, RuntimeError):
             ....:     pass

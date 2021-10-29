@@ -730,7 +730,7 @@ class PartialConversionElement(SageObject):
             ....:     E((-2)^x)
             ....: except PartialConversionValueError as e:
             ....:     e.element.split()
-            (2^x, element with parameter -1 (<type 'int'>) in Growth Group ZZ^x)
+            (2^x, element with parameter -1 (<class 'int'>) in Growth Group ZZ^x)
 
         TESTS::
 

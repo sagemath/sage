@@ -230,6 +230,7 @@ from sage.structure.all import SageObject, parent
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.integral_points import parallelotope_points
 from sage.geometry.convex_set import ConvexSet_closed
+import sage.geometry.abc
 
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
@@ -1420,7 +1421,7 @@ def classify_cone_2d(ray0, ray1, check=True):
 # and ``ambient_ray_indices`` keyword parameters. See ``intersection`` method
 # for an example why this is needed.
 @richcmp_method
-class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_closed):
+class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_closed, sage.geometry.abc.ConvexRationalPolyhedralCone):
     r"""
     Create a convex rational polyhedral cone.
 

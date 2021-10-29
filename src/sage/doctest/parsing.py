@@ -151,51 +151,6 @@ def remove_unicode_u(string):
     return string
 
 
-_type_repr_re = re.compile(r"<type '(?P<name>[^']+)'>")
-
-def normalize_type_repr(s):
-    r"""
-    Convert the repr of type objects (e.g. ``int``, ``float``) from their
-    Python 2 representation to their Python 3 representation.
-
-    In Python 2, the repr of built-in types like ``int`` is like
-    ``<type 'int'>``, whereas user-defined pure Python classes are displayed
-    as ``<class 'classname'>``.  On Python 3 this was normalized so that
-    built-in types are represented the same as user-defined classes (e.g.
-    ``<class 'int'>``.
-
-    This simply normalizes all class/type reprs to the Python 3 convention for
-    the sake of output checking.
-
-    EXAMPLES::
-
-        sage: from sage.doctest.parsing import normalize_type_repr
-        sage: s = "<type 'int'>"
-        sage: normalize_type_repr(s)
-        "<class 'int'>"
-        sage: normalize_type_repr(repr(float))
-        "<class 'float'>"
-
-    This can work on multi-line output as well::
-
-        sage: s = "The desired output was <class 'int'>\n"
-        sage: s += "The received output was <type 'int'>"
-        sage: print(normalize_type_repr(s))
-        The desired output was <class 'int'>
-        The received output was <class 'int'>
-
-    And should work when types are embedded in other nested expressions::
-
-        sage: normalize_type_repr(repr([Integer, float]))
-        "[<class 'sage.rings.integer.Integer'>, <class 'float'>]"
-    """
-
-    def subst(m):
-        return "<class '{0}'>".format(m.group('name'))
-
-    return _type_repr_re.sub(subst, s)
-
-
 _long_repr_re = re.compile(r'([+-]?[0-9]+)[lL]')
 def normalize_long_repr(s):
     """
@@ -284,10 +239,6 @@ def normalize_bound_method_repr(s):
 _repr_fixups = [
     (lambda g, w: 'u"' in w or "u'" in w,
      lambda g, w: (g, remove_unicode_u(w))),
-
-    (lambda g, w: '<class' in g and '<type' in w,
-     lambda g, w: (g, normalize_type_repr(w))),
-
     (lambda g, w: 'L' in w or 'l' in w,
      lambda g, w: (g, normalize_long_repr(w))),
     (lambda g, w: '<bound method' in w,
@@ -386,7 +337,7 @@ def parse_tolerance(source, want):
         sage: from sage.doctest.parsing import parse_tolerance
         sage: marked = parse_tolerance("sage: s.update(abs_tol = .0000001)", "")
         sage: type(marked)
-        <... 'str'>
+        <class 'str'>
         sage: marked = parse_tolerance("sage: s.update(tol = 0.1); s.rel_tol # abs tol     0.01 ", "")
         sage: marked.tol
         0
@@ -1088,14 +1039,6 @@ class SageOutputChecker(doctest.OutputChecker):
             [u'Fermat',  u'Euler']
             sage: c = u'you'; c
             u'you'
-
-        Also allowance for the difference in reprs of ``type`` instances (i.e.
-        classes) between Python 2 and Python 3::
-
-            sage: int
-            <class 'int'>
-            sage: float
-            <class 'float'>
         """
         got = self.human_readable_escape_sequences(got)
         got = glpk_simplex_warning_regex.sub('', got)

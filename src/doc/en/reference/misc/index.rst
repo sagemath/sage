@@ -281,7 +281,6 @@ Miscellaneous Inspection and Development Tools
    sage/docs/instancedoc
    sage/misc/sageinspect
    sage/misc/edit_module
-   sage/misc/getusage
    sage/misc/classgraph
    sage/misc/dev_tools
    sage/misc/function_mangling

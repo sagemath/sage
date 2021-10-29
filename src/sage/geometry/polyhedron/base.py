@@ -39,7 +39,6 @@ from sage.cpython.string import bytes_to_str
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.misc.randstate import current_randstate
-from sage.misc.superseded import deprecated_function_alias
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import AA
@@ -55,6 +54,7 @@ from sage.groups.matrix_gps.finitely_generated import MatrixGroup
 from sage.graphs.graph import Graph
 from sage.geometry.convex_set import ConvexSet_closed, AffineHullProjectionData
 
+import sage.geometry.abc
 from .constructor import Polyhedron
 from sage.geometry.relative_interior import RelativeInterior
 from sage.categories.sets_cat import EmptySetError
@@ -102,7 +102,7 @@ def is_Polyhedron(X):
 
 
 #########################################################################
-class Polyhedron_base(Element, ConvexSet_closed):
+class Polyhedron_base(Element, ConvexSet_closed, sage.geometry.abc.Polyhedron):
     """
     Base class for Polyhedron objects
 
@@ -3282,7 +3282,7 @@ class Polyhedron_base(Element, ConvexSet_closed):
         OUTPUT:
 
         A point as a coordinate vector. The point is chosen to be
-        interior as far as possible. If the polyhedron is not
+        interior if possible. If the polyhedron is not
         full-dimensional, the point is in the relative interior. If
         the polyhedron is zero-dimensional, its single point is
         returned.
@@ -6615,18 +6615,6 @@ class Polyhedron_base(Element, ConvexSet_closed):
             sage: [[ls.ambient_V_indices() for ls in lss] for lss in Polyhedron(lines=[(1,0)], vertices=[(0,0)]).face_lattice().level_sets()]
             [[()], [(0, 1)]]
 
-        Test that computing the face lattice does not lead to a memory leak::
-
-            sage: import gc
-            sage: _ = gc.collect()
-            sage: P = polytopes.cube()
-            sage: a = P.face_lattice()
-            sage: n = get_memory_usage()
-            sage: P = polytopes.cube()
-            sage: a = P.face_lattice()
-            sage: _ = gc.collect()
-            sage: n == get_memory_usage()
-            True
         """
         from sage.combinat.posets.lattices import FiniteLatticePoset
         return FiniteLatticePoset(self.hasse_diagram())

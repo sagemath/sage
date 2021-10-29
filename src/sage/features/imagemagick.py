@@ -18,9 +18,10 @@ checked in this module.
 # ****************************************************************************
 
 from . import Executable
+from .join_feature import JoinFeature
 
 
-class ImageMagick(Executable):
+class ImageMagick(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of
     ``ImageMagick``
@@ -31,7 +32,7 @@ class ImageMagick(Executable):
 
         sage: from sage.features.imagemagick import ImageMagick
         sage: ImageMagick().is_present()  # optional: imagemagick
-        FeatureTestResult('convert', True)
+        FeatureTestResult('imagemagick', True)
     """
     def __init__(self):
         r"""
@@ -41,5 +42,7 @@ class ImageMagick(Executable):
             sage: isinstance(ImageMagick(), ImageMagick)
             True
         """
-        Executable.__init__(self, "convert", executable="convert",
-                            url="https://www.imagemagick.org/")
+        JoinFeature.__init__(self, "imagemagick",
+                             [Executable("convert", executable="convert")],
+                             spkg="_recommended",
+                             url="https://www.imagemagick.org/")

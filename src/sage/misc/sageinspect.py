@@ -192,9 +192,9 @@ def loadable_module_extension():
 
 def isclassinstance(obj):
     r"""
-    Checks if argument is instance of non built-in class
+    Check if argument is instance of non built-in class
 
-    INPUT: ``obj`` - object
+    INPUT: ``obj`` -- object
 
     EXAMPLES::
 
@@ -207,12 +207,10 @@ def isclassinstance(obj):
         sage: isclassinstance(myclass)
         False
         sage: class mymetaclass(type): pass
-        sage: class myclass2:
-        ....:     __metaclass__ = mymetaclass
+        sage: class myclass2(metaclass=mymetaclass): pass
         sage: isclassinstance(myclass2)
         False
     """
-
     builtin_mods = set(['__builtin__', 'builtins', 'exceptions'])
 
     return (not inspect.isclass(obj) and
@@ -529,7 +527,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: [vis(n) for n in ['True', 'False', 'None']]  # py3
             [True, False, None]
             sage: [type(vis(n)) for n in ['True', 'False', 'None']]  # py3
-            [<type 'bool'>, <type 'bool'>, <type 'NoneType'>]
+            [<class 'bool'>, <class 'bool'>, <class 'NoneType'>]
         """
 
         return node.value
@@ -1630,7 +1628,7 @@ def sage_getargspec(obj):
         except (TypeError, AttributeError):
             pass
     if isclassinstance(obj):
-        if hasattr(obj,'_sage_src_'): #it may be a decorator!
+        if hasattr(obj, '_sage_src_'): #it may be a decorator!
             source = sage_getsource(obj)
             try:
                 # we try to find the definition and parse it by
@@ -2384,7 +2382,7 @@ def sage_getsourcelines(obj):
 
     # Check if we deal with an instance
     if isclassinstance(obj):
-        if isinstance(obj,functools.partial):
+        if isinstance(obj, functools.partial):
             return sage_getsourcelines(obj.func)
         else:
             return sage_getsourcelines(obj.__class__)

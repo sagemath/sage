@@ -66,7 +66,7 @@ class Buckygen(Executable):
 
         sage: from sage.features.graph_generators import Buckygen
         sage: Buckygen().is_present()  # optional: buckygen
-        FeatureTestResult('Buckygen', True)
+        FeatureTestResult('buckygen', True)
     """
     def __init__(self):
         r"""
@@ -76,7 +76,7 @@ class Buckygen(Executable):
             sage: isinstance(Buckygen(), Buckygen)
             True
         """
-        Executable.__init__(self, name="Buckygen", spkg="buckygen",
+        Executable.__init__(self, name="buckygen", spkg="buckygen",
                             executable="buckygen",
                             url="http://caagt.ugent.be/buckygen/")
 
@@ -88,7 +88,7 @@ class Buckygen(Executable):
 
             sage: from sage.features.graph_generators import Buckygen
             sage: Buckygen().is_functional()  # optional: buckygen
-            FeatureTestResult('Buckygen', True)
+            FeatureTestResult('buckygen', True)
         """
         command = ["buckygen", "-d", "22d"]
         try:
@@ -114,7 +114,7 @@ class Benzene(Executable):
 
         sage: from sage.features.graph_generators import Benzene
         sage: Benzene().is_present()  # optional: benzene
-        FeatureTestResult('Benzene', True)
+        FeatureTestResult('benzene', True)
     """
     def __init__(self):
         r"""
@@ -124,7 +124,7 @@ class Benzene(Executable):
             sage: isinstance(Benzene(), Benzene)
             True
         """
-        Executable.__init__(self, name="Benzene", spkg="benzene",
+        Executable.__init__(self, name="benzene", spkg="benzene",
                             executable="benzene",
                             url="http://www.grinvin.org/")
 
@@ -136,7 +136,7 @@ class Benzene(Executable):
 
             sage: from sage.features.graph_generators import Benzene
             sage: Benzene().is_functional()  # optional: benzene
-            FeatureTestResult('Benzene', True)
+            FeatureTestResult('benzene', True)
         """
         devnull = open(os.devnull, 'wb')
         command = ["benzene", "2", "p"]

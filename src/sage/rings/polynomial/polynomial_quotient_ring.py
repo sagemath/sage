@@ -1925,9 +1925,9 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             try:
                 isomorphic_ring = self.base_ring().extension(self.modulus(), names=self.variable_names())
             except ValueError:
-                pass # modulus is not irreducible
+                pass  # modulus is not irreducible
             else:
-                if not isomorphic_ring in NumberFields():
+                if isomorphic_ring not in NumberFields():
                     raise NotImplementedError("cannot handle extensions of number fields that do not produce number fields")
                 # refine the category of self
                 if not self.is_field():

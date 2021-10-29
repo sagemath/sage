@@ -3864,7 +3864,7 @@ class FiniteWord_class(Word_class):
         from sage.combinat.words.word import Word
         comp_words = []
         for sp in selfpos:  # list with positions of one occurrence of `self`
-            comp_pos = [i for i in range(lo) if not i in set(sp)]
+            comp_pos = (i for i in range(lo) if i not in set(sp))
             comp_words.append(Word([other[i] for i in comp_pos]))
         return comp_words
 

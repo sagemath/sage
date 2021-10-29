@@ -4,6 +4,8 @@ Checks for FES
 """
 
 from . import CythonFeature, PythonModule
+from .join_feature import JoinFeature
+
 
 TEST_CODE = """
 # distutils: libraries=fes
@@ -70,7 +72,7 @@ class LibFESLibrary(CythonFeature):
                                url="http://www.lifl.fr/~bouillag/fes/")
 
 
-class LibFES(PythonModule):
+class LibFES(JoinFeature):
     r"""
     A :class:`Feature` which describes whether the :mod:`sage.libs.fes`
     module has been enabled for this build of Sage and is functional.
@@ -88,5 +90,7 @@ class LibFES(PythonModule):
             sage: isinstance(LibFES(), LibFES)
             True
         """
-        PythonModule.__init__(self, "sage.libs.fes", spkg="fes",
-                              url="http://www.lifl.fr/~bouillag/fes/")
+        JoinFeature.__init__(self, 'fes',
+                             [PythonModule("sage.libs.fes")],
+                             spkg="fes",
+                             url="http://www.lifl.fr/~bouillag/fes/")

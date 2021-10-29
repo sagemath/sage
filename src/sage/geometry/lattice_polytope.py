@@ -140,6 +140,7 @@ from sage.structure.all import Sequence
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.convex_set import ConvexSet_compact
+import sage.geometry.abc
 
 from copy import copy
 from collections.abc import Hashable
@@ -469,7 +470,7 @@ def is_LatticePolytope(x):
     return isinstance(x, LatticePolytopeClass)
 
 @richcmp_method
-class LatticePolytopeClass(ConvexSet_compact, Hashable):
+class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.LatticePolytope):
     r"""
     Create a lattice polytope.
 

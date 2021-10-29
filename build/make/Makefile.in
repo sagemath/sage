@@ -287,8 +287,7 @@ python3-SAGE_VENV-no-deps: setuptools-clean
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
-SAGERUNTIME = sagelib $(inst_ipython) $(inst_pexpect) \
-		$(inst_psutil)
+SAGERUNTIME = sagelib $(inst_ipython) $(inst_pexpect)
 
 all-sageruntime: toolchain-deps
 	+$(MAKE_REC) $(SAGERUNTIME)

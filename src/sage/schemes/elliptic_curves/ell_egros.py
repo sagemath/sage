@@ -447,10 +447,10 @@ def egros_get_j(S=[], proof=None, verbose=False):
             P = urst(P)
             x = P[0]
             y = P[1]
-            j = x**3 /w
-            assert j-1728 == y**2 /w
+            j = x**3 / w
+            assert j - 1728 == y**2 / w
             if is_possible_j(j, S):
-                if not j in jlist:
+                if j not in jlist:
                     if verbose:
                         print("Adding possible j = ", j)
                         sys.stdout.flush()

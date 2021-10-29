@@ -2,6 +2,46 @@
 Abstract base classes for rings
 """
 
+class NumberField_quadratic(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.number_field.number_field.NumberField_quadratic`.
+    """
+
+    pass
+
+
+class NumberField_cyclotomic(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.number_field.number_field.NumberField_cyclotomic`.
+    """
+
+    pass
+
+
+class AlgebraicField_common(Field):
+    r"""
+    Abstract base class for :class:`~sage.rings.qqbar.AlgebraicField_common`.
+    """
+
+    pass
+
+
+class AlgebraicField(AlgebraicField_common):
+    r"""
+    Abstract base class for :class:`~sage.rings.qqbar.AlgebraicField`.
+    """
+
+    pass
+
+
+class AlgebraicRealField(AlgebraicField_common):
+    r"""
+    Abstract base class for :class:`~sage.rings.qqbar.AlgebraicRealField`.
+    """
+
+    pass
+
+
 cdef class RealField(Field):
     r"""
     Abstract base class for :class:`~sage.rings.real_mpfr.RealField_class`.

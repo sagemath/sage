@@ -148,6 +148,7 @@ Functions and classes
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 from typing import Iterator
 
 from sage.rings.all import ZZ, QQ, Integer, infinity
@@ -552,7 +553,7 @@ def euler_number(n, algorithm='flint') -> Integer:
     if n < 0:
         raise ValueError("n (=%s) must be a nonnegative integer" % n)
     if algorithm == 'maxima':
-        return ZZ(maxima.euler(n))
+        return ZZ(maxima.euler(n))  # type:ignore
     elif algorithm == 'flint':
         import sage.libs.flint.arith
         return sage.libs.flint.arith.euler_number(n)
@@ -990,7 +991,7 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
         from sage.libs.gap.libgap import libgap
         return libgap.Stirling2(n, k).sage()
     elif algorithm == 'maxima':
-        return ZZ(maxima.stirling2(n, k))
+        return ZZ(maxima.stirling2(n, k))  # type:ignore
     else:
         raise ValueError("unknown algorithm: %s" % algorithm)
 
@@ -1691,7 +1692,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
         """
         return hash(repr(self))
 
-    def __cardinality_from_iterator(self) -> Integer:
+    def __cardinality_from_iterator(self) -> Integer | infinity:
         """
         Default implementation of cardinality which just goes through the iterator
         of the combinatorial class to count the number of objects.
@@ -1709,6 +1710,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
         for _ in self:
             c += one
         return c
+
     cardinality = __cardinality_from_iterator
 
     # __call__, element_class, and _element_constructor_ are poor
@@ -2256,7 +2258,7 @@ class UnionCombinatorialClass(CombinatorialClass):
         """
         return x in self.left_cc or x in self.right_cc
 
-    def cardinality(self) -> Integer:
+    def cardinality(self) -> Integer | infinity:
         """
         EXAMPLES::
 
@@ -2443,7 +2445,7 @@ class MapCombinatorialClass(CombinatorialClass):
         else:
             return "Image of %s by %s" % (self.cc, self.f)
 
-    def cardinality(self) -> Integer:
+    def cardinality(self) -> Integer | infinity:
         """
         Return the cardinality of this combinatorial class
 
@@ -2452,7 +2454,6 @@ class MapCombinatorialClass(CombinatorialClass):
             sage: R = Permutations(10).map(attrcall('reduced_word'))
             sage: R.cardinality()
             3628800
-
         """
         return self.cc.cardinality()
 
@@ -2494,7 +2495,7 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
     self._infinite_cclass_slice is supposed to accept any integer as an
     argument and return something which is iterable.
     """
-    def cardinality(self):
+    def cardinality(self) -> Integer | infinity:
         """
         Count the elements of the combinatorial class.
 
@@ -2945,7 +2946,7 @@ def bell_polynomial(n: Integer, k: Integer):
     R = PolynomialRing(ZZ, 'x', n - k + 1)
     vars = R.gens()
     result = R.zero()
-    for p in Partitions(n, length=k):
+    for p in Partitions(n, length=k):  # type:ignore
         factorial_product = 1
         power_factorial_product = 1
         for part, count in p.to_exp_dict().items():

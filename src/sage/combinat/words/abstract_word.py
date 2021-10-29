@@ -6,7 +6,7 @@ words.
 
 AUTHORS:
 
-- Sebastien Labbe
+- Sébastien Labbé
 - Franco Saliola
 
 EXAMPLES::
@@ -20,7 +20,7 @@ EXAMPLES::
     sage: p.length()
     231
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008-2010 Sebastien Labbe <slabqc@gmail.com>,
 #                     2008-2010 Franco Saliola <saliola@gmail.com>
 #
@@ -28,8 +28,8 @@ EXAMPLES::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.combinat.words.word_options import word_options
@@ -127,7 +127,7 @@ class Word_class(SageObject):
         if word_options['display'] == 'string':
             ls = word_options['letter_separator']
             letters = [str(_) for _ in letters]
-            if all(len(a)==1 for a in letters):
+            if all(len(a) == 1 for a in letters):
                 return ''.join(letters) + suffix
             elif suffix == "...":
                 return ls.join(letters) + ls + suffix
@@ -349,7 +349,7 @@ class Word_class(SageObject):
                 cs = next(self_it)
             except StopIteration:
                 try:
-                    co = next(other_it)
+                    next(other_it)
                 except StopIteration:
                     # If both self_it and other_it are exhausted then
                     # self == other. Return 0.
@@ -631,7 +631,7 @@ class Word_class(SageObject):
         """
         from sage.combinat.words.words import FiniteWords, InfiniteWords
         if use_parent_alphabet and\
-            isinstance(self.parent(), (FiniteWords,InfiniteWords)):
+            isinstance(self.parent(), (FiniteWords, InfiniteWords)):
             A = self.parent().alphabet()
             for letter in self:
                 yield A.rank(letter)
@@ -1161,8 +1161,8 @@ class Word_class(SageObject):
         """
         to_consider = self if max_length is None else self[:max_length]
         yield self[:0]
-        for (i,a) in enumerate(to_consider):
-            yield self[:i+1]
+        for (i, a) in enumerate(to_consider):
+            yield self[:i + 1]
 
     def palindrome_prefixes_iterator(self, max_length=None):
         r"""
@@ -1244,7 +1244,7 @@ class Word_class(SageObject):
             sum = Zn(start)
 
         else:
-            raise TypeError('mod(=%s) must be None or an integer'%mod)
+            raise TypeError('mod(=%s) must be None or an integer' % mod)
 
         yield sum
         for letter in self:
@@ -1385,7 +1385,7 @@ class Word_class(SageObject):
                 return
 
         else:
-            raise TypeError('mod(=%s) must be None or an integer'%mod)
+            raise TypeError('mod(=%s) must be None or an integer' % mod)
 
     def finite_differences(self, mod=None):
         r"""
@@ -1529,7 +1529,7 @@ class Word_class(SageObject):
         elif mod in ZZ and mod >= 2:
             alphabet = list(range(mod))
         else:
-            raise ValueError("base (=%s) and mod (=%s) must be integers greater or equal to 2"%(base, mod))
+            raise ValueError("base (=%s) and mod (=%s) must be integers greater or equal to 2" % (base, mod))
 
         # The iterator
         f = partial(words._ThueMorseWord_nth_digit, alphabet=alphabet, base=base)
@@ -1609,7 +1609,7 @@ class Word_class(SageObject):
             for j in range(lf-1, -1, -1):
                 a = self[s+j]
                 if other[j] != a:
-                    s += max(suff[j + 1], j - occ.get(a,-1))
+                    s += max(suff[j + 1], j - occ.get(a, -1))
                     break
             else:
                 return s
@@ -1754,4 +1754,3 @@ class Word_class(SageObject):
                 i = j
         except StopIteration:
             return
-

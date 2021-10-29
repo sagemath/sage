@@ -132,7 +132,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             if not isinstance(polynomial, Polynomial):
                 raise TypeError("polynomial must be a polynomial")
 
-            if not polynomial in parent.polynomial_ring():
+            if polynomial not in parent.polynomial_ring():
                 raise TypeError("polynomial must be in the polynomial ring of the parent")
 
         f = parent.modulus()

@@ -59,8 +59,6 @@ from .classgraph import class_graph
 
 from .reset import reset, restore
 
-from .getusage import get_memory_usage
-
 from .mathml import mathml
 
 from .defaults import (set_default_variable_name,

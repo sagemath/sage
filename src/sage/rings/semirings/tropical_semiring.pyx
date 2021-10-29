@@ -72,7 +72,7 @@ cdef class TropicalSemiringElement(Element):
             sage: T = TropicalSemiring(QQ)
             sage: elt = T(2)
             sage: elt.__reduce__()
-            (<type 'sage.rings.semirings.tropical_semiring.TropicalSemiringElement'>,
+            (<class 'sage.rings.semirings.tropical_semiring.TropicalSemiringElement'>,
              (Tropical semiring over Rational Field, 2))
         """
         return (TropicalSemiringElement, (self.parent(), self._val))

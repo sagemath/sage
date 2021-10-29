@@ -592,7 +592,7 @@ class FunctionKroneckerDelta(BuiltinFunction):
         Kronecker delta is a symmetric function. We keep arguments sorted to
         ensure that k_d(m, n) - k_d(n, m) cancels automatically::
 
-            sage: x,y=var('x,y')
+            sage: x,y = var('x,y')
             sage: kronecker_delta(x, y)
             kronecker_delta(x, y)
             sage: kronecker_delta(y, x)
@@ -621,17 +621,14 @@ class FunctionKroneckerDelta(BuiltinFunction):
         """
         if bool(repr(m) > repr(n)):
             return kronecker_delta(n, m)
-
         x = m - n
         approx_x = ComplexIntervalField()(x)
-        if bool(approx_x.imag() == 0):      # x is real
-            if bool(approx_x.real() == 0):  # x is zero
+        if approx_x.imag() == 0:      # x is real
+            if approx_x.real() == 0:  # x is zero
                 return 1
             else:
                 return 0
-        else:
-            return 0            # x is complex
-        raise ValueError("Numeric evaluation of symbolic expression")
+        return 0            # x is complex
 
     def _derivative_(self, *args, **kwds):
         """

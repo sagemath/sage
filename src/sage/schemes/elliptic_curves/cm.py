@@ -623,9 +623,8 @@ def is_cm_j_invariant(j, method='new'):
         True
     """
     # First we check that j is an algebraic number:
-
     from sage.rings.all import NumberFieldElement, NumberField
-    if not isinstance(j, NumberFieldElement) and not j in QQ:
+    if not isinstance(j, NumberFieldElement) and j not in QQ:
         raise NotImplementedError("is_cm_j_invariant() is only implemented for number field elements")
 
     # for j in ZZ we have a lookup-table:

@@ -288,7 +288,9 @@ def tex_from_skew_array(array, with_lines=False, align='b'):
     # function end_line which puts in the required \cline's.
     if with_lines:
         # last position of None in each row
-        nones=[1 if not None in row else 1+len(row)-row[::-1].index(None) for row in array]
+        nones = [1 if None not in row else 1 + len(row) - row[::-1].index(None)
+                 for row in array]
+
         def end_line(r):
             # in a slightly unpythonic way, we label the lines as 0, 1, ..., len(array)
             if r==0:

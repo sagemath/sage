@@ -1534,8 +1534,9 @@ cdef class Expression(Expression_abc):
             ValueError: cannot convert sqrt(-3) to int
         """
         from sage.functions.all import floor, ceil
+        from sage.rings.real_mpfi import RIF
         try:
-            rif_self = sage.rings.all.RIF(self)
+            rif_self = RIF(self)
         except TypeError:
             raise ValueError("cannot convert %s to int" % self)
         if rif_self > 0 or (rif_self.contains_zero() and self > 0):
@@ -3574,27 +3575,22 @@ cdef class Expression(Expression_abc):
         if not self.is_relational():
             raise ValueError("self must be a relation")
         cdef operators op = relational_operator(self._gobj)
-        from sage.rings.real_mpfi import is_RealIntervalField
-        from sage.rings.complex_interval_field import is_ComplexIntervalField
-        from sage.rings.all import RIF, CIF
-        from sage.rings.qqbar import is_AlgebraicField, is_AlgebraicRealField, AA, QQbar
         if domain is None:
             is_interval = True
             if self.lhs().is_algebraic() and self.rhs().is_algebraic():
                 if op == equal or op == not_equal:
-                    domain = QQbar
+                    from sage.rings.qqbar import QQbar as domain
                 else:
-                    domain = AA
+                    from sage.rings.qqbar import AA as domain
             else:
                 if op == equal or op == not_equal:
-                    domain = CIF
+                    from sage.rings.qqbar import CIF as domain
                 else:
-                    domain = RIF
+                    from sage.rings.real_mpfi import RIF as domain
         else:
-            is_interval = (isinstance(domain, (sage.rings.abc.RealIntervalField,
-                                               sage.rings.abc.ComplexIntervalField))
-                           or is_AlgebraicField(domain)
-                           or is_AlgebraicRealField(domain))
+            is_interval = isinstance(domain, (sage.rings.abc.RealIntervalField,
+                                              sage.rings.abc.ComplexIntervalField,
+                                              sage.rings.abc.AlgebraicField_common))
         zero = domain(0)
         diff = self.lhs() - self.rhs()
         vars = diff.variables()
@@ -3647,6 +3643,7 @@ cdef class Expression(Expression_abc):
                 except (TypeError, ValueError, ArithmeticError, AttributeError) as ex:
                     errors += 1
                     if k == errors > 3 and isinstance(domain, sage.rings.abc.ComplexIntervalField):
+                        from sage.rings.real_mpfi import RIF
                         domain = RIF.to_prec(domain.prec())
                     # we are plugging in random values above, don't be surprised
                     # if something goes wrong...
@@ -6670,8 +6667,9 @@ cdef class Expression(Expression_abc):
         except (TypeError, AttributeError):
             pass
         from sage.functions.all import floor, ceil
+        from sage.rings.real_mpfi import RIF
         try:
-            rif_self = sage.rings.all.RIF(self)
+            rif_self = RIF(self)
         except TypeError:
             raise ValueError("could not convert %s to a real number" % self)
         half = 1 / sage.rings.integer.Integer(2)

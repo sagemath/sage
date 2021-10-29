@@ -531,19 +531,19 @@ def unpickle_global(module, name):
 
         sage: from sage.misc.persist import unpickle_override, register_unpickle_override
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Now we horribly break the pickling system::
 
         sage: register_unpickle_override('sage.rings.integer', 'Integer', Rational, call_name=('sage.rings.rational', 'Rational'))
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
 
     and we reach into the internals and put it back::
 
         sage: del unpickle_override[('sage.rings.integer', 'Integer')]
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     A meaningful error message with resolution instructions is displayed for
     old pickles that accidentally got broken because a class or entire module

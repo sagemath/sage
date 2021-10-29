@@ -813,7 +813,7 @@ class WeakTableau_core(WeakTableau_abstract):
         if not self.parent()._weight == WeakTableau_bounded.from_core_tableau(self,self.k).weight():
             raise ValueError("The weight of the parent does not agree with the weight of the tableau!")
         t = SkewTableau(list(self))
-        if not t in SemistandardSkewTableaux():
+        if t not in SemistandardSkewTableaux():
             raise ValueError("The tableau is not semistandard!")
         outer = Core(t.outer_shape(),self.k+1)
         inner = Core(t.inner_shape(),self.k+1)
@@ -1539,7 +1539,7 @@ class WeakTableau_bounded(WeakTableau_abstract):
             ValueError: The tableaux is not semistandard!
         """
         t = SkewTableau(list(self))
-        if not t in SemistandardSkewTableaux():
+        if t not in SemistandardSkewTableaux():
             raise ValueError("The tableaux is not semistandard!")
         if not self.parent()._weight == tuple(t.weight()):
             raise ValueError("The weight of the parent does not agree with the weight of the tableau!")
@@ -4450,7 +4450,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
             nextv = ST.entries_by_content(i + 1)
             for c in ST.cells_by_content(i):
                 v = T[c[0]][c[1]]
-                if not v in nextv:
+                if v not in nextv:
                     if v in dout:
                         dout[v] += [c]
                     else:
@@ -4458,7 +4458,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
         return dout
 
     @classmethod
-    def marked_CST_to_transposition_sequence( self, T, k ):
+    def marked_CST_to_transposition_sequence(self, T, k):
         """
         Return a list of transpositions corresponding to ``T``.
 
@@ -4534,7 +4534,7 @@ class StrongTableaux(UniqueRepresentation, Parent):
                     MM = [[LL[a][b] for b in range(len(LL[a])) if (a,b) in mcells]
                           for a in range(len(mP))]
                     transeq = self.marked_CST_to_transposition_sequence(MM, k)
-                    if not transeq is None:
+                    if transeq is not None:
                         return [[j-l, j+1]] + transeq
 
     @classmethod
