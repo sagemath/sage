@@ -564,7 +564,7 @@ class Polytopes():
 
         if base_ring is None:
             if exact:
-                from sage.rings.qqbar import AA as base_ring
+                base_ring = AA
             else:
                 from sage.rings.real_double import RDF as base_ring
 
