@@ -207,6 +207,7 @@ import numbers
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, rich_to_bool
+import sage.rings.abc
 from .integer import Integer
 from .integer_ring import ZZ
 from .infinity import Infinity
@@ -2601,6 +2602,12 @@ def continued_fraction(x, value=None):
 
         sage: continued_fraction(1.575709393346379)
         [1; 1, 1, 2, 1, 4, 18, 1, 5, 2, 25037802, 7, 1, 3, 1, 28, 1, 8, 2]
+
+    Constants in symbolic subrings work like constants in ``SR``::
+
+        sage: SCR = SR.subring(no_variables=True)
+        sage: continued_fraction(SCR(pi))
+        [3; 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14, 2, 1, 1, 2, 2, 2, 2, ...]
     """
 
     if isinstance(x, ContinuedFraction_base):
@@ -2675,10 +2682,9 @@ def continued_fraction(x, value=None):
     if x.parent().is_exact():
         return ContinuedFraction_real(x)
 
-    # we treat separately the symbolic ring that holds all constants and
-    # which is not exact
-    from sage.symbolic.ring import SR
-    if x.parent() == SR:
+    # We treat the Symbolic Ring and its subrings separately.  They hold all constants and
+    # are not exact.
+    if isinstance(x.parent(), sage.rings.abc.SymbolicRing):
         return ContinuedFraction_real(x)
 
     return continued_fraction(continued_fraction_list(x))

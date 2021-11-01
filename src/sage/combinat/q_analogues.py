@@ -172,7 +172,8 @@ def q_binomial(n, k, q=None, algorithm='auto'):
       uses the naive algorithm. When both ``n`` and ``k`` are big, one
       uses the cyclotomic algorithm.
 
-    - If ``q`` is in the symbolic ring, one uses the cyclotomic algorithm.
+    - If ``q`` is in the symbolic ring (or a symbolic subring), one uses
+      the cyclotomic algorithm.
 
     - Otherwise one uses the naive algorithm, unless ``q`` is a root of
       unity, then one uses the cyclotomic algorithm.
@@ -248,7 +249,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     This also works for variables in the symbolic ring::
 
         sage: z = var('z')
-        sage: factor(q_binomial(4,2,z))
+        sage: factor(q_binomial(4, 2, z))
         (z^2 + z + 1)*(z^2 + 1)
 
     This also works for complex roots of unity::
@@ -346,8 +347,8 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         elif is_polynomial:
             algorithm = 'cyclotomic'
         else:
-            from sage.symbolic.ring import SR
-            if R is SR:
+            import sage.rings.abc
+            if isinstance(R, sage.rings.abc.SymbolicRing):
                 algorithm = 'cyclotomic'
             else:
                 algorithm = 'naive'

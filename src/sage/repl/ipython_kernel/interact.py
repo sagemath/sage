@@ -41,8 +41,7 @@ from collections.abc import Iterable, Iterator
 from .widgets import EvalText, SageColorPicker
 from .widgets_sagenb import input_grid
 from sage.structure.element import parent
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.ring", "SR")
+import sage.rings.abc
 from sage.plot.colors import Color
 from sage.structure.element import Matrix
 
@@ -210,6 +209,14 @@ class sage_interactive(interactive):
             Dropdown(index=1, options={'one': 1, 'two': 2, 'three': 3}, value=2)
             sage: sage_interactive.widget_from_tuple( (sqrt(2), pi) )
             FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)
+
+        TESTS:
+
+        Symbolic subrings::
+
+            sage: SCR = SR.subring(no_variables=True)
+            sage: sage_interactive.widget_from_tuple( (SCR(sqrt(2)), SCR(pi)) )
+            FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)
         """
         # Support (description, abbrev)
         if len(abbrev) == 2 and isinstance(abbrev[0], str):
@@ -224,7 +231,7 @@ class sage_interactive(interactive):
         # Numerically evaluate symbolic expressions
 
         def n(x):
-            if parent(x) is SR:
+            if isinstance(parent(x), sage.rings.abc.SymbolicRing):
                 return x.numerical_approx()
             else:
                 return x

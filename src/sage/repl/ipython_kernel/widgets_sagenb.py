@@ -42,9 +42,7 @@ from numbers import Integral, Rational, Real
 from sage.structure.all import parent
 from sage.arith.srange import srange
 from sage.plot.colors import Color
-from sage.misc.lazy_import import lazy_import
-lazy_import("sage.symbolic.ring", "SR")
-from sage.rings.all import RR
+import sage.rings.abc
 
 
 from .widgets import HTMLText as text_control
@@ -235,6 +233,14 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
         True
         sage: slider(5, display_value=False).readout
         False
+
+    Symbolic subrings work like ``SR``::
+
+        sage: SCR = SR.subring(no_variables=True)
+        sage: w = slider(SCR(e), SCR(pi)); w
+        TransformFloatSlider(value=2.718281828459045, max=3.141592653589793, min=2.718281828459045)
+        sage: parent(w.get_interact_value())
+        Real Field with 53 bits of precision
     """
     kwds = {"readout": display_value}
     if label:
@@ -272,7 +278,8 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
     p = parent(sum(x for x in (vmin, vmax, step_size) if x is not None))
 
     # Change SR to RR
-    if p is SR:
+    if isinstance(p, sage.rings.abc.SymbolicRing):
+        from sage.rings.real_mpfr import RR
         p = RR
 
     # Convert all inputs to the common parent

@@ -36,7 +36,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.cachefunc import cached_method
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.topological_spaces import TopologicalSpaces
-from sage.symbolic.ring import SR
+from sage.symbolic.ring import SymbolicRing, SR
 from sage.manifolds.scalarfield import ScalarField
 
 class ScalarFieldAlgebra(UniqueRepresentation, Parent):
@@ -509,6 +509,10 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
             sage: CM = M.scalar_field_algebra()
             sage: CM._coerce_map_from_(SR)
             True
+            sage: SCR = SR.subring(no_variables=True); SCR
+            Symbolic Constants Subring
+            sage: CM._coerce_map_from_(SCR)
+            True
             sage: CM._coerce_map_from_(X.function_ring())
             True
             sage: U = M.open_subset('U', coord_def={X: x>0})
@@ -520,7 +524,7 @@ class ScalarFieldAlgebra(UniqueRepresentation, Parent):
 
         """
         from .chart_func import ChartFunctionRing
-        if other is SR:
+        if isinstance(other, SymbolicRing):
             return True  # coercion from the base ring (multiplication by the
                          # algebra unit, i.e. self.one())
                          # cf. ScalarField._lmul_() for the implementation of
