@@ -27,7 +27,7 @@ AUTHORS:
 
 from __future__ import annotations
 #from typing import Iterator
-from typing import NewType, Iterator, Tuple
+from typing import NewType, Iterator
 from sage.structure.list_clone import ClonableArray
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.richcmp import richcmp, richcmp_method
@@ -47,7 +47,7 @@ from sage.functions.other import floor, ceil, binomial, factorial
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
-from sage.categories.sets_cat import Sets
+#from sage.categories.sets_cat import Sets
 
 PP = NewType('PP', 'PlanePartition')
 
