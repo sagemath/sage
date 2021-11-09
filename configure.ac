@@ -451,6 +451,14 @@ AC_ARG_ENABLE(
     [allow the use of python packages from the system (experimental; default: no)]
   )], [
   AS_IF([test "x$enable_system_site_packages" = "xyes"], [
+    dnl When installing python SPKGs in the presence of system-site
+    dnl packages, we need to --ignore-installed so that a patched SPKG
+    dnl can be installed in the presence of an unpatched system package
+    dnl that appears (to pip) to be identical. The --no-deps flag is
+    dnl then needed because --ignore-installed will make any installed
+    dnl dependencies invisible to pip, who does not appreciate that.
+    SAGE_PIP_INSTALL_FLAGS="${SAGE_PIP_INSTALL_FLAGS} --no-deps --ignore-installed"
+
     SAGE_VENV_FLAGS="${SAGE_VENV_FLAGS} --system-site-packages"
 
     dnl We want to raise an error if the user asked for "system site
@@ -463,6 +471,7 @@ AC_ARG_ENABLE(
     with_system_python3="force"
   ])
 ])
+AC_SUBST([SAGE_PIP_INSTALL_FLAGS])
 AC_SUBST([SAGE_VENV_FLAGS])
 
 SAGE_SPKG_OPTIONS=""
