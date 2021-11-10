@@ -725,7 +725,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
         elif isinstance(x, float):
             if x in [float('+inf'), float('-inf')]:
                 return self.gen()
-        elif isinstance(x.parent(), sage.rings.abc.RealIntervalField):
+        elif isinstance(x, RingElement) and isinstance(x.parent(), sage.rings.abc.RealIntervalField):
             if x.upper().is_infinity() or x.lower().is_infinity():
                 return self.gen()
         else:
@@ -1190,7 +1190,7 @@ class InfinityRing_class(Singleton, Ring):
                 return self.gen(0)
             if x == float('-inf'):
                 return self.gen(1)
-        elif isinstance(x.parent(), sage.rings.abc.RealIntervalField):
+        elif isinstance(x, RingElement) and isinstance(x.parent(), sage.rings.abc.RealIntervalField):
             if x.upper().is_positive_infinity():
                 return self.gen(0)
             if x.lower().is_negative_infinity():
