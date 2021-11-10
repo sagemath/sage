@@ -19,7 +19,6 @@ from sage.rings.rational_field import QQ
 import sage.rings.abc
 from sage.geometry.triangulation.point_configuration import PointConfiguration
 from sage.modules.free_module_element import vector
-from sage.plot.all import line, point, rainbow, plot
 
 
 class VoronoiDiagram(SageObject):
@@ -287,6 +286,7 @@ class VoronoiDiagram(SageObject):
             NotImplementedError: Plotting of 3-dimensional Voronoi diagrams not
             implemented
         """
+        from sage.plot.all import line, point, rainbow, plot
 
         if self.ambient_dim() == 2:
             S = line([])
