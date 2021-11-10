@@ -394,13 +394,13 @@ class HyperplaneArrangementElement(Element):
 
         It is possible to specify a backend for polyhedral computations::
 
-            sage: R.<sqrt5> = QuadraticField(5)
-            sage: H = HyperplaneArrangements(R, names='xyz')
-            sage: x,y,z = H.gens()
-            sage: A = H(sqrt5*x+2*y+3*z, backend='normaliz')
-            sage: A.backend()
+            sage: R.<sqrt5> = QuadraticField(5)                                 # optional - sage.rings.number_field
+            sage: H = HyperplaneArrangements(R, names='xyz')                    # optional - sage.rings.number_field
+            sage: x, y, z = H.gens()                                            # optional - sage.rings.number_field
+            sage: A = H(sqrt5*x + 2*y + 3*z, backend='normaliz')                # optional - sage.rings.number_field
+            sage: A.backend()                                                   # optional - sage.rings.number_field
             'normaliz'
-            sage: A.regions()[0].backend()  # optional - pynormaliz
+            sage: A.regions()[0].backend()             # optional - pynormaliz  # optional - sage.rings.number_field
             'normaliz'
         """
         super(HyperplaneArrangementElement, self).__init__(parent)
