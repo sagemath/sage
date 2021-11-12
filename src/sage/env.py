@@ -237,6 +237,9 @@ LIBSINGULAR_PATH = var("LIBSINGULAR_PATH", "libSingular.so")
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
 
+# Make sure mpmath uses Sage types
+os.environ['MPMATH_SAGE'] = '1'
+
 # misc
 SAGE_BANNER = var("SAGE_BANNER", "")
 SAGE_IMPORTALL = var("SAGE_IMPORTALL", "yes")

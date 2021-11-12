@@ -158,7 +158,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             (1,23)
         """
         z = self.ambient_hecke_module()(x).element()
-        if check and not z in self.__submodule:
+        if check and z not in self.__submodule:
             raise TypeError("x does not coerce to an element of this Hecke module")
         return self.element_class(self, z)
 

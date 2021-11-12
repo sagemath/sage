@@ -2,7 +2,7 @@ r"""
 Root systems
 ============
 
-See :ref:`sage.combinat.root_system` for an overview.
+See :ref:`sage.combinat.root_system.all` for an overview.
 """
 #*****************************************************************************
 #       Copyright (C) 2007      Mike Hansen <mhansen@gmail.com>,

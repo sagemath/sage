@@ -15,11 +15,15 @@ case $(uname) in
 esac
 
 # We disable SoPlex to avoid linking errors (#24905).
+
 # Since polymake v3.4, it does not find our lrs installation if we do not provide --with-lrs explicitly.
+if [ -x $SAGE_LOCAL/bin/lrs1 ]; then
+    more_configure_options="$more_configure_options --with-lrs=$SAGE_LOCAL"
+fi
+
 ./configure --without-java \
             --without-javaview \
             --without-soplex \
-            --with-lrs="$SAGE_LOCAL" \
             --prefix="$SAGE_LOCAL" \
             --exec-prefix="$SAGE_LOCAL" \
             --includedir="$SAGE_LOCAL"/include \

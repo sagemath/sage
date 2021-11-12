@@ -1171,7 +1171,7 @@ def CubeGraph(n, embedding=1):
         vertices in each column represents rows in Pascal's triangle. See for
         instance the :wikipedia:`10-cube` for more details.
 
-      - ``None`` or ``O``: no embedding is provided 
+      - ``None`` or ``O``: no embedding is provided
 
     EXAMPLES:
 
@@ -1268,7 +1268,7 @@ def CubeGraph(n, embedding=1):
             for u, d in G.breadth_first_search(s, report_distance=True):
                 L[d].append(u)
 
-            p = G._circle_embedding(list(range(2*n)), radius=(n + 1)//2, angle=pi, return_dict=True)        
+            p = G._circle_embedding(list(range(2*n)), radius=(n + 1)//2, angle=pi, return_dict=True)
             for i in range(n + 1):
                 y = p[i][1] / 1.5
                 G._line_embedding(L[i], first=(i, y), last=(i, -y), return_dict=False)
@@ -1462,11 +1462,11 @@ def FriendshipGraph(n):
         sage: G.is_isomorphic(graphs.ButterflyGraph())
         True
 
-    If `n \geq 1`, then the friendship graph `F_n` has `2n + 1` vertices
+    If `n \geq 2`, then the friendship graph `F_n` has `2n + 1` vertices
     and `3n` edges. It has radius 1, diameter 2, girth 3, and
     chromatic number 3. Furthermore, `F_n` is planar and Eulerian. ::
 
-        sage: n = randint(1, 10^3)
+        sage: n = randint(2, 10^3)
         sage: G = graphs.FriendshipGraph(n)
         sage: G.order() == 2*n + 1
         True
@@ -4016,7 +4016,7 @@ def CubeConnectedCycle(d):
     For each vertex, `(x,y)`, add an edge between it and `(x, (y-1) \mod d))`,
     `(x,(y+1) \mod d)`, and `(x \oplus 2^y, y)`, where `\oplus` is the bitwise
     xor operator.
-    
+
     For `d=1` and `2`, the cube-connected cycle graph contains self-loops or
     multiple edges between a pair of vertices, but for all other `d`, it is
     simple.

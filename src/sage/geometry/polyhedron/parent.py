@@ -15,6 +15,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.modules.free_module import FreeModule, is_FreeModule
 from sage.misc.cachefunc import cached_method, cached_function
 from sage.misc.lazy_import import lazy_import
+import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
@@ -118,6 +119,13 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         ...
         ValueError: the 'polymake' backend for polyhedron cannot be used with Algebraic Real Field
 
+        sage: Polyhedra(QQ, 2, backend='normaliz')   # optional - pynormaliz
+        Polyhedra in QQ^2
+        sage: Polyhedra(SR, 2, backend='normaliz')   # optional - pynormaliz  # optional - sage.symbolic
+        Polyhedra in (Symbolic Ring)^2
+        sage: SCR = SR.subring(no_variables=True)                             # optional - sage.symbolic
+        sage: Polyhedra(SCR, 2, backend='normaliz')  # optional - pynormaliz  # optional - sage.symbolic
+        Polyhedra in (Symbolic Constants Subring)^2
     """
     if ambient_space_or_base_ring is not None:
         if ambient_space_or_base_ring in Rings():
@@ -166,7 +174,7 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         return Polyhedra_QQ_normaliz(base_ring, ambient_dim, backend)
     elif backend == 'normaliz' and base_ring is ZZ:
         return Polyhedra_ZZ_normaliz(base_ring, ambient_dim, backend)
-    elif backend == 'normaliz' and (base_ring is SR or base_ring.is_exact()):
+    elif backend == 'normaliz' and (isinstance(base_ring, sage.rings.abc.SymbolicRing) or base_ring.is_exact()):
         return Polyhedra_normaliz(base_ring, ambient_dim, backend)
     elif backend == 'cdd' and base_ring in (ZZ, QQ):
         return Polyhedra_QQ_cdd(QQ, ambient_dim, backend)

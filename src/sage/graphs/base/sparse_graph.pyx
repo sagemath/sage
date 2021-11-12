@@ -1167,8 +1167,10 @@ def _test_adjacency_sequence_out():
     from sage.misc.prandom import randint, random
     low = 0
     high = 1000
-    randg = DiGraph(GraphGenerators().RandomGNP(randint(low, high), random()))
-    n = randg.order()
+    n = 0
+    while not n:
+        randg = DiGraph(GraphGenerators().RandomGNP(randint(low, high), random()))
+        n = randg.order()
     # set all labels to 0
     E = [(u, v, 0) for u, v in randg.edges(labels=False)]
     cdef SparseGraph g = SparseGraph(n,

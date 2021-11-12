@@ -402,8 +402,8 @@ class DocTestController(SageObject):
                     options.optional.discard('optional')
                     from sage.misc.package import list_packages
                     for pkg in list_packages('optional', local=True).values():
-                        if pkg['installed'] and pkg['installed_version'] == pkg['remote_version']:
-                            options.optional.add(pkg['name'])
+                        if pkg.is_installed() and pkg.installed_version == pkg.remote_version:
+                            options.optional.add(pkg.name)
 
                     from sage.features import package_systems
                     options.optional.update(system.name

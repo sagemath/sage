@@ -512,8 +512,8 @@ def VectorSpace(K, dimension_or_basis_keys=None, sparse=False, inner_product_mat
     """
     if not K.is_field():
         raise TypeError("Argument K (= %s) must be a field." % K)
-    if not sparse in (True,False):
-        raise TypeError("Argument sparse (= %s) must be a boolean."%sparse)
+    if sparse not in (True, False):
+        raise TypeError("Argument sparse (= %s) must be a boolean." % sparse)
     return FreeModule(K, dimension_or_basis_keys, sparse, inner_product_matrix,
                       with_basis=with_basis, rank=dimension, basis_keys=basis_keys,
                       **args)
@@ -4449,7 +4449,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
         """
         if check:
             for v in vectors:
-                if not v in self:
+                if v not in self:
                     raise ValueError('vector %s is not an element of %s' % (v, self))
         if zeros == 'left':
             basis = 'echelon'

@@ -497,7 +497,7 @@ class StringMonoidElement(FreeMonoidElement):
             [(AB, 0.333333333333333), (BC, 0.333333333333333), (CD, 0.333333333333333)]
         """
         from sage.probability.random_variable import DiscreteProbabilitySpace
-        if not length in (1, 2):
+        if length not in (1, 2):
             raise NotImplementedError("Not implemented")
         if prec == 0:
             RR = RealField()
@@ -510,7 +510,7 @@ class StringMonoidElement(FreeMonoidElement):
             Alph = tuple(x * y for x in S.gens() for y in S.gens())
         X = {}
         N = len(self) - length + 1
-        eps = RR(Integer(1)/N)
+        eps = RR(Integer(1) / N)
         for i in range(N):
             c = self[i:i+length]
             if c in X:

@@ -1,16 +1,8 @@
 r"""
 Algebraic combinatorics
-=======================
-
-Quickref
---------
-
-.. TODO:: write it!
 
 Thematic tutorials
 ------------------
-
-.. TODO:: get Sphinx to create those cross links properly
 
 - `Algebraic Combinatorics in Sage <../../../../thematic_tutorials/algebraic_combinatorics.html>`_
 - `Lie Methods and Related Combinatorics in Sage <../../../../thematic_tutorials/lie.html>`_
@@ -41,10 +33,10 @@ Groups and Algebras
 Combinatorial Representation Theory
 -----------------------------------
 
-- :ref:`sage.combinat.root_system`
-- :ref:`sage.combinat.crystals`
-- :ref:`sage.combinat.rigged_configurations`
-- :ref:`sage.combinat.cluster_algebra_quiver`
+- :ref:`sage.combinat.root_system.all`
+- :ref:`sage.combinat.crystals.all`
+- :ref:`sage.combinat.rigged_configurations.all`
+- :ref:`sage.combinat.cluster_algebra_quiver.all`
 - :class:`~sage.combinat.kazhdan_lusztig.KazhdanLusztigPolynomial`
 - :class:`~sage.combinat.symmetric_group_representations.SymmetricGroupRepresentation`
 - :ref:`sage.combinat.yang_baxter_graph`

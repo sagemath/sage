@@ -364,10 +364,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             ...
             sage: L.reduced_basis == A
             True
-            sage: old_min = min(v.norm().n() for v in L.reduced_basis)
+            sage: old = L.reduced_basis[0].norm().n()
             sage: _ = L.LLL()
-            sage: new_min = L.reduced_basis[0].norm().n()
-            sage: new_min <= old_min
+            sage: new = L.reduced_basis[0].norm().n()
+            sage: new <= old
             True
         """
         basis = self.reduced_basis

@@ -293,7 +293,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def is_graded_modular_form(self):
         r"""
-        Return ``True`` if the given quasiform is a graded modular forms element
+        Return ``True`` if the given quasimodular form is a graded modular forms element
         and ``False`` otherwise.
 
         EXAMPLES::
@@ -325,8 +325,8 @@ class QuasiModularFormsElement(ModuleElement):
 
     def is_modular_form(self):
         r"""
-        Return ``True`` if the given quasiform is a modular form and ``False``
-        otherwise.
+        Return ``True`` if the given quasimodular form is a modular form and
+        ``False`` otherwise.
 
         EXAMPLES::
 
@@ -415,8 +415,9 @@ class QuasiModularFormsElement(ModuleElement):
 
     def weight(self):
         r"""
-        Return the weight of the given quasiform. Note that the given form must
-        be homogeneous.
+        Return the weight of the given quasimodular form.
+
+        Note that the given form must be homogeneous.
 
         EXAMPLES::
 
@@ -458,3 +459,99 @@ class QuasiModularFormsElement(ModuleElement):
         poly_self = self.to_polynomial()
         pol_hom_comp = poly_self.homogeneous_components()
         return { k : QM.from_polynomial(pol) for k, pol in pol_hom_comp.items()}
+
+    def serre_derivative(self):
+        r"""
+        Return the Serre derivative of the given quasimodular form.
+
+        If the form is not homogeneous, then this method sums the serre
+        derivative of each homogeneous component.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: E2, E4, E6 = QM.gens()
+            sage: DE2 = E2.serre_derivative(); DE2
+            -1/6 - 16*q - 216*q^2 - 832*q^3 - 2248*q^4 - 4320*q^5 + O(q^6)
+            sage: DE2 == (-E2^2 - E4)/12
+            True
+            sage: DE4 = E4.serre_derivative(); DE4
+            -1/3 + 168*q + 5544*q^2 + 40992*q^3 + 177576*q^4 + 525168*q^5 + O(q^6)
+            sage: DE4 == (-1/3) * E6
+            True
+            sage: DE6 = E6.serre_derivative(); DE6
+            -1/2 - 240*q - 30960*q^2 - 525120*q^3 - 3963120*q^4 - 18750240*q^5 + O(q^6)
+            sage: DE6 == (-1/2) * E4^2
+            True
+
+        The Serre derivative raises the weight of homogeneous elements by 2::
+
+            sage: F = E6 + E4 * E2
+            sage: F.weight()
+            6
+            sage: F.serre_derivative().weight()
+            8
+        """
+        # initial variables:
+        QM = self.parent()
+        R = QM.base_ring()
+        E2 = QM.gen(0)
+        E4 = QM.gen(1)
+
+        # compute the derivative of E2: q*dE2/dq
+        E2deriv = R(12).inverse_of_unit() * (E2 ** 2 - E4)
+
+        # sum the Serre derivative of each monomial of the form: f * E2^n
+        # they are equal to:
+        # [E2^n * serre_deriv(f)]  +  [n * f * E2^(n-1) * D(E2)]  -  [n/6 * f * E2^(n+1)]
+        #   =      A               +              B               -           C
+        der = QM.zero()
+        u6 = R(6).inverse_of_unit()
+        for n, f in enumerate(self._polynomial.coefficients(sparse=False)):
+            if n == 0:
+                der += QM(f.serre_derivative())
+            else:
+                A = (E2 ** n) * f.serre_derivative()
+                B = R(n) * f * E2 ** (n - 1) * E2deriv
+                C = R(n) * u6 * E2 ** (n + 1) * f
+                der += QM(A + B - C)
+        return der
+
+    def derivative(self):
+        r"""
+        Return the derivative `q \frac{d}{dq}` of the given quasimodular form.
+
+        If the form is not homogeneous, then this method sums the derivative of
+        each homogeneous component.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: E2, E4, E6 = QM.gens()
+            sage: dE2 = E2.derivative(); dE2
+            -24*q - 144*q^2 - 288*q^3 - 672*q^4 - 720*q^5 + O(q^6)
+            sage: dE2 == (E2^2 - E4)/12 # Ramanujan identity
+            True
+            sage: dE4 = E4.derivative(); dE4
+            240*q + 4320*q^2 + 20160*q^3 + 70080*q^4 + 151200*q^5 + O(q^6)
+            sage: dE4 == (E2 * E4 - E6)/3 # Ramanujan identity
+            True
+            sage: dE6 = E6.derivative(); dE6
+            -504*q - 33264*q^2 - 368928*q^3 - 2130912*q^4 - 7877520*q^5 + O(q^6)
+            sage: dE6 == (E2 * E6 - E4^2)/2 # Ramanujan identity
+            True
+
+        Note that the derivative of a modular form is not necessarily a modular form::
+
+            sage: dE4.is_modular_form()
+            False
+            sage: dE4.weight()
+            6
+        """
+        QM = self.parent()
+        E2 = QM.gen(0)
+        R = self.base_ring()
+        u = R(12).inverse_of_unit()
+        hom_comp = self.homogeneous_components()
+
+        return sum(f.serre_derivative() + R(k) * u * f * E2 for k, f in hom_comp.items())

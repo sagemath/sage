@@ -574,7 +574,7 @@ class GenericGraph(GenericGraph_pyx):
             True
             sage: G = graphs.RandomGNP(8, .9999)
             sage: H = graphs.CompleteGraph(8)
-            sage: G == H # most often true
+            sage: G == H  # random - most often true
             True
             sage: G = Graph({0: [1, 2, 3, 4, 5, 6, 7]} )
             sage: H = Graph({1: [0], 2: [0], 3: [0], 4: [0], 5: [0], 6: [0], 7: [0]} )

@@ -307,7 +307,6 @@ cdef subs_args_to_PyTuple(const GExMap& map, unsigned options, const GExVector& 
           <class 'sage.symbolic.expression.Expression'>]
         x
     """
-    from sage.symbolic.ring import SR
     res = []
     res.append(new_SubstitutionMap_from_GExMap(map))
     res.append(options)
@@ -1118,6 +1117,10 @@ cdef bint py_is_integer(x):
         True
         sage: py_is_integer(SR(5))
         True
+        sage: SCR = SR.subring(no_variables=True); SCR
+        Symbolic Constants Subring
+        sage: py_is_integer(SCR(5))
+        True
         sage: py_is_integer(4/2)
         True
         sage: py_is_integer(QQbar(sqrt(2))^2)
@@ -1132,8 +1135,8 @@ cdef bint py_is_integer(x):
     if not isinstance(x, Element):
         return False
     P = (<Element>x)._parent
-    from .ring import SR
-    return (P is SR or P.is_exact()) and x in ZZ
+    from .ring import SymbolicRing
+    return (isinstance(P, SymbolicRing) or P.is_exact()) and x in ZZ
 
 
 def py_is_integer_for_doctests(x):
@@ -1221,8 +1224,8 @@ cdef bint py_is_exact(x):
     if not isinstance(x, Element):
         return False
     P = (<Element>x)._parent
-    from .ring import SR
-    return P is SR or P.is_exact()
+    from .ring import SymbolicRing
+    return isinstance(P, SymbolicRing) or P.is_exact()
 
 
 cdef py_numer(n):

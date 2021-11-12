@@ -367,7 +367,7 @@ class ManinMap(object):
             38
         """
         for B in self._manin.reps():
-            if not B in self._dict:
+            if B not in self._dict:
                 self._dict[B] = self._compute_image_from_gens(B)
 
     def __add__(self, right):

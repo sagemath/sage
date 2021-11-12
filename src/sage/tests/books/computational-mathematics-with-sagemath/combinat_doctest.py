@@ -288,13 +288,6 @@ Sage example in ./combinat.tex, line 1179::
   [[[], [1, 2, 4], [1, 3], [1, 3, 4], [1, 4], [2], [2, 3], [2, 4], [4]],
    [[], [1, 2, 4], [1, 3], [2, 4], [3, 4]]]
 
-Sage example in ./combinat.tex, line 1203::
-
-  sage: len(S)  # py2
-  Traceback (most recent call last):
-  ...
-  OverflowError: Python int too large to convert to C long
-
 Sage example in ./combinat.tex, line 1237::
 
   sage: P5 = Partitions(5); P5

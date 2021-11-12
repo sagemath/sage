@@ -1,1 +1,1 @@
-cd src && sdh_pip_install .
+cd src && sdh_pip_install --build-isolation .
