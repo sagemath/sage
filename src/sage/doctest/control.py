@@ -402,14 +402,17 @@ class DocTestController(SageObject):
                     options.optional.discard('optional')
                     from sage.misc.package import list_packages
                     for pkg in list_packages('optional', local=True).values():
-                        if pkg['installed'] and pkg['installed_version'] == pkg['remote_version']:
-                            options.optional.add(pkg['name'])
+                        if pkg.is_installed() and pkg.installed_version == pkg.remote_version:
+                            options.optional.add(pkg.name)
 
                     from sage.features import package_systems
-                    options.optional.update(system.name for system in package_systems())
+                    options.optional.update(system.name
+                                            for system in package_systems())
 
+                    logger = sys.stderr if options.verbose else None
                     from sage.features.sagemath import sage_features
-                    options.optional.update(feature.name for feature in sage_features())
+                    options.optional.update(feature.name
+                                            for feature in sage_features(logger=logger))
 
                 # Check that all tags are valid
                 for o in options.optional:

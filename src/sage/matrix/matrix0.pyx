@@ -5835,7 +5835,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [ 2*k + 2 -2*k - 1]
             [ 2*k + 1     -2*k]
         """
-        from sage.symbolic.expression import Expression
+        from sage.structure.element import Expression
 
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")

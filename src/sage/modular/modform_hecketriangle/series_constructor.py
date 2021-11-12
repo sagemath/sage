@@ -20,7 +20,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, QQ, infinity, PowerSeriesRing
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
+from sage.rings.all import PowerSeriesRing
 from sage.rings.big_oh import O
 from sage.arith.all import bernoulli, sigma, rising_factorial
 

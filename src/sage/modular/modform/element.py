@@ -3590,7 +3590,8 @@ class GradedModularFormElement(ModuleElement):
 
     def weights_list(self):
         r"""
-        Return the list of the weights of all the graded components of the given graded modular form.
+        Return the list of the weights of all the homogeneous components of the
+        given graded modular form.
 
         EXAMPLES::
 
@@ -3628,7 +3629,8 @@ class GradedModularFormElement(ModuleElement):
 
     def _homogeneous_to_polynomial(self, names, gens):
         r"""
-        If ``self`` is a homogeneous form, return a polynomial `P(x_0,..., x_n)` corresponding to ``self``.
+        Return a polynomial `P(x_0,..., x_n)` corresponding to the given homogeneous graded form.
+
         Each variable `x_i` of the returned polynomial correspond to a generator `g_i` of the
         list ``gens`` (following the order of the list)
 
@@ -3744,3 +3746,66 @@ class GradedModularFormElement(ModuleElement):
 
         # sum the polynomial of each homogeneous part
         return sum(M(self[k])._homogeneous_to_polynomial(names, gens) for k in self.weights_list())
+
+    def serre_derivative(self):
+        r"""
+        Return the Serre derivative of the given graded modular form.
+
+        If ``self`` is a modular form of weight `k`, then the returned modular
+        form will be of weight `k + 2`. If the form is not homogeneous, then
+        this method sums the Serre derivative of each homogeneous component.
+
+        EXAMPLES::
+
+            sage: M = ModularFormsRing(1)
+            sage: E4 = M.0
+            sage: E6 = M.1
+            sage: DE4 = E4.serre_derivative(); DE4
+            -1/3 + 168*q + 5544*q^2 + 40992*q^3 + 177576*q^4 + 525168*q^5 + O(q^6)
+            sage: DE4 == (-1/3) * E6
+            True
+            sage: DE6 = E6.serre_derivative(); DE6
+            -1/2 - 240*q - 30960*q^2 - 525120*q^3 - 3963120*q^4 - 18750240*q^5 + O(q^6)
+            sage: DE6 == (-1/2) * E4^2
+            True
+            sage: f = E4 + E6
+            sage: Df = f.serre_derivative(); Df
+            -5/6 - 72*q - 25416*q^2 - 484128*q^3 - 3785544*q^4 - 18225072*q^5 + O(q^6)
+            sage: Df == (-1/3) * E6 + (-1/2) * E4^2
+            True
+            sage: M(1/2).serre_derivative()
+            0
+        """
+        M = self.parent()
+        return M(sum(M(f.serre_derivative()) for k, f in self._forms_dictionary.items() if k != 0))
+
+    def derivative(self, name='E2'):
+        r"""
+        Return the derivative `q \frac{d}{dq}` of the given graded form.
+
+        Note that this method returns an element of a new parent, that is a
+        quasimodular form. If the form is not homogeneous, then this method sums
+        the derivative of each homogeneous component.
+
+        INPUT:
+
+        - ``name`` (str, default: 'E2') - the name of the weight 2 Eisenstein
+           series generating the graded algebra of quasimodular forms over the
+           ring of modular forms.
+
+        OUTPUT: a :class:`sage.modular.quasimodform.element.QuasiModularFormsElement`
+
+        EXAMPLES::
+
+            sage: M = ModularFormsRing(1)
+            sage: E4 = M.0; E6 = M.1
+            sage: dE4 = E4.derivative(); dE4
+            240*q + 4320*q^2 + 20160*q^3 + 70080*q^4 + 151200*q^5 + O(q^6)
+            sage: dE4.parent()
+            Ring of Quasimodular Forms for Modular Group SL(2,Z) over Rational Field
+            sage: dE4.is_modular_form()
+            False
+        """
+        from sage.modular.quasimodform.ring import QuasiModularForms
+        F = QuasiModularForms(self.group(), self.base_ring(), name)(self)
+        return F.derivative()

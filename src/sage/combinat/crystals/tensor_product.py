@@ -52,27 +52,8 @@ from sage.combinat.crystals.tensor_product_element import (TensorProductOfCrysta
 from sage.misc.flatten import flatten
 from sage.structure.element import get_coercion_model
 from sage.rings.semirings.non_negative_integer_semiring import NN
+from sage.arith.misc import integer_trunc as trunc
 
-##############################################################################
-# Until trunc gets implemented in sage.function.other
-
-from sage.functions.other import floor, ceil
-def trunc(i):
-    """
-    Truncates to the integer closer to zero
-
-    EXAMPLES::
-
-        sage: from sage.combinat.crystals.tensor_product import trunc
-        sage: trunc(-3/2), trunc(-1), trunc(-1/2), trunc(0), trunc(1/2), trunc(1), trunc(3/2)
-        (-1, -1, 0, 0, 0, 1, 1)
-        sage: isinstance(trunc(3/2), Integer)
-        True
-    """
-    if i>= 0:
-        return floor(i)
-    else:
-        return ceil(i)
 
 ##############################################################################
 # Support classes

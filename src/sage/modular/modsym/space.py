@@ -31,7 +31,11 @@ from sage.misc.misc_c import prod
 import sage.modular.hecke.all as hecke
 from sage.arith.all import divisors, next_prime
 from sage.rings.fast_arith import prime_range
-from sage.rings.all import PowerSeriesRing, Integer, QQ, ZZ, infinity, Zmod
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
+from sage.rings.infinity import infinity
+from sage.rings.all import PowerSeriesRing, Zmod
 from sage.rings.number_field.number_field_base import is_NumberField
 from sage.structure.all import Sequence, SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,

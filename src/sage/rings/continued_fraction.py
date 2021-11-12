@@ -264,11 +264,13 @@ def rat_interval_cf_list(r1, r2):
         sage: rat_interval_cf_list(257/113, 5224/2297)
         [2, 3, 1, 1, 1, 4]
         sage: for prec in range(10,54):
-        ....:     R = RealIntervalField(20)
+        ....:     R = RealIntervalField(prec)
         ....:     for _ in range(100):
         ....:         x = R.random_element() * R.random_element() + R.random_element() / 100
         ....:         l = x.lower().exact_rational()
         ....:         u = x.upper().exact_rational()
+        ....:         if l.floor() != u.floor():
+        ....:             continue
         ....:         cf = rat_interval_cf_list(l,u)
         ....:         a = continued_fraction(cf).value()
         ....:         b = continued_fraction(cf+[1]).value()
@@ -2601,6 +2603,12 @@ def continued_fraction(x, value=None):
 
         sage: continued_fraction(1.575709393346379)
         [1; 1, 1, 2, 1, 4, 18, 1, 5, 2, 25037802, 7, 1, 3, 1, 28, 1, 8, 2]
+
+    Constants in symbolic subrings work like constants in ``SR``::
+
+        sage: SCR = SR.subring(no_variables=True)
+        sage: continued_fraction(SCR(pi))
+        [3; 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14, 2, 1, 1, 2, 2, 2, 2, ...]
     """
 
     if isinstance(x, ContinuedFraction_base):
@@ -2675,10 +2683,9 @@ def continued_fraction(x, value=None):
     if x.parent().is_exact():
         return ContinuedFraction_real(x)
 
-    # we treat separately the symbolic ring that holds all constants and
-    # which is not exact
-    from sage.symbolic.ring import SR
-    if x.parent() == SR:
+    # We treat the Symbolic Ring and its subrings separately.  They hold all constants and
+    # are not exact.
+    if isinstance(x.parent(), sage.rings.abc.SymbolicRing):
         return ContinuedFraction_real(x)
 
     return continued_fraction(continued_fraction_list(x))

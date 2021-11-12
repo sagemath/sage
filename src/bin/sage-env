@@ -131,7 +131,9 @@ fi
 
 
 # Don't execute the commands more than once for the same version of
-# sage-env.  Check this after checking the validity of SAGE_ROOT, but
+# sage-env... for the same combination of SAGE_LOCAL and SAGE_VENV.
+#
+# Check this after checking the validity of SAGE_ROOT, but
 # before modifying its value.
 #
 # The idea of versioning is that SAGE_ENV_SOURCED will be set to a
@@ -147,13 +149,14 @@ fi
 # - sage-5.4:   version 2 (#13395)
 # - sage-5.10:  version 3 (#14699)
 # - sage-6.0:   version 4 (#14715)
+# - sage-9.5:   version 5 (#32745)
 #
-SAGE_ENV_VERSION=4
+SAGE_ENV_VERSION="5:$SAGE_LOCAL:$SAGE_VENV"
 if [ "$SAGE_ENV_SOURCED" = "$SAGE_ENV_VERSION" ]; then
     # Already sourced, nothing to do.
     return 0
 fi
-export SAGE_ENV_SOURCED=$SAGE_ENV_VERSION
+export SAGE_ENV_SOURCED="$SAGE_ENV_VERSION"
 
 if [ -n "$NEW_SAGE_ROOT" ]; then
     export SAGE_ROOT="$NEW_SAGE_ROOT"

@@ -1496,7 +1496,7 @@ class FiniteWord_class(Word_class):
         if n == 0:
             return 1
         pn = self.number_of_factors(n)
-        from sage.functions.all import log
+        from sage.functions.log import log
         return log(pn, base=d)/n
 
     def rauzy_graph(self, n):

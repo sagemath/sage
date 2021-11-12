@@ -156,7 +156,7 @@ if __name__ == "__main__":
         pytest_options = ["--import-mode", "importlib"]
         if args.verbose:
             pytest_options.append("-v")
-        exit_code_pytest = pytest.main(pytest_options + args)
+        exit_code_pytest = pytest.main(pytest_options + args.filenames)
     except ModuleNotFoundError:
         print("Pytest is not installed, skip checking tests that rely on it.")
 

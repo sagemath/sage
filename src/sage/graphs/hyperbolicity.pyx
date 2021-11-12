@@ -158,7 +158,6 @@ from sage.graphs.distances_all_pairs cimport c_distances_all_pairs
 from sage.arith.all import binomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.functions.other import floor
 from sage.data_structures.bitset import Bitset
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph

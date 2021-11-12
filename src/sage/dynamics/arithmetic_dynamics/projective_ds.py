@@ -105,7 +105,6 @@ from copy import copy
 from sage.parallel.ncpus import ncpus
 from sage.parallel.use_fork import p_iter_fork
 from sage.dynamics.arithmetic_dynamics.projective_ds_helper import (_fast_possible_periods,_all_periodic_points)
-from sage.symbolic.ring import SR
 from itertools import count, product
 from .endPN_automorphism_group import (
     automorphism_group_QQ_CRT,
@@ -422,8 +421,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         if len(polys) != domain.ambient_space().coordinate_ring().ngens():
             raise ValueError('Number of polys does not match dimension of {}'.format(domain))
         R = domain.base_ring()
-        if R is SR:
-            raise TypeError("Symbolic Ring cannot be the base ring")
+        if isinstance(R, sage.rings.abc.SymbolicRing):
+            raise TypeError("the base ring cannot be the Symbolic Ring or a symbolic subring")
 
         if is_ProductProjectiveSpaces(domain):
             splitpolys = domain._factors(polys)
@@ -6939,10 +6938,10 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
             sage: P.<x,y> = ProjectiveSpace(GF(7), 1)
             sage: D6 = DynamicalSystem_projective([y^2, x^2])
-            sage: D6.conjugating_set(D6)
+            sage: sorted(D6.conjugating_set(D6))
             [
-            [1 0]  [0 1]  [0 2]  [4 0]  [2 0]  [0 4]
-            [0 1], [1 0], [1 0], [0 1], [0 1], [1 0]
+            [0 1]  [0 2]  [0 4]  [1 0]  [2 0]  [4 0]
+            [1 0], [1 0], [1 0], [0 1], [0 1], [0 1]
             ]
 
         ::

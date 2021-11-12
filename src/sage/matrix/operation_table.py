@@ -540,8 +540,8 @@ class OperationTable(SageObject):
             ...
             ValueError: element names must be a list, or one of the keywords: 'letters', 'digits', 'elements'
         """
-        from sage.functions.log import log
-        name_list=[]
+        from sage.misc.functional import log
+        name_list = []
         if names == 'digits':
             if self._n == 0 or self._n == 1:
                 width = 1

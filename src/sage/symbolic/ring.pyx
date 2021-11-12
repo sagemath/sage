@@ -1311,7 +1311,7 @@ def the_SymbolicRing():
 
 def is_SymbolicExpressionRing(R):
     """
-    Returns True if ``R`` is the symbolic expression ring.
+    Return True if ``R`` is the symbolic expression ring.
 
     This function is deprecated.  Instead, either use ``R is SR`` (to
     test whether ``R`` is the unique symbolic ring ``SR``); or

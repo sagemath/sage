@@ -1528,11 +1528,8 @@ cdef class CRElement(pAdicTemplateElement):
             sage: hash(R(17)) #indirect doctest
             17
 
-            sage: hash(R(-1))     # py3
+            sage: hash(R(-1))
             1977844648            # 32-bit
-            95367431640624        # 64-bit
-            sage: hash(R(-1))     # py2
-            1977822444            # 32-bit
             95367431640624        # 64-bit
         """
         if exactzero(self.ordp):

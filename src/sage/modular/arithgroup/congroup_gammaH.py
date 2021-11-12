@@ -930,7 +930,7 @@ class GammaH_class(CongruenceSubgroup):
                     a += w
                 c = self.reduce_cusp(Cusp(a,d))
                 h = hash(c)
-                if not h in hashes:
+                if h not in hashes:
                     hashes.append(h)
                     s.append(c)
         return sorted(s)
@@ -1427,12 +1427,13 @@ def _GammaH_coset_helper(N, H):
     for i in range(1, N):
         if gcd(i, N) != 1:
             continue
-        if not i in W:
+        if i not in W:
             t.append(t[0]*i)
-            W = W + [i*h for h in HH]
+            W += [i*h for h in HH]
             if len(W) == k:
                 break
     return t
+
 
 def mumu(N):
     """
@@ -1464,9 +1465,9 @@ def mumu(N):
     if N < 1:
         raise ValueError("N must be at least 1")
     p = 1
-    for _,r in factor(N):
+    for _, r in factor(N):
         if r > 2:
-            return ZZ(0)
+            return ZZ.zero()
         elif r == 1:
             p *= -2
     return ZZ(p)

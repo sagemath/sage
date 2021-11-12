@@ -4848,7 +4848,7 @@ def falling_factorial(x, a):
 
     - Jaap Spies (2006-03-05)
     """
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
     x = py_scalar_to_element(x)
     a = py_scalar_to_element(a)
     if (isinstance(a, Integer) or
@@ -4942,7 +4942,7 @@ def rising_factorial(x, a):
 
     - Jaap Spies (2006-03-05)
     """
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
     x = py_scalar_to_element(x)
     a = py_scalar_to_element(a)
     if (isinstance(a, Integer) or
@@ -5029,6 +5029,24 @@ def integer_floor(x):
         except TypeError:
             pass
     raise NotImplementedError("computation of floor of %s not implemented"%x)
+
+
+def integer_trunc(i):
+    """
+    Truncate to the integer closer to zero
+
+    EXAMPLES::
+
+        sage: from sage.arith.misc import integer_trunc as trunc
+        sage: trunc(-3/2), trunc(-1), trunc(-1/2), trunc(0), trunc(1/2), trunc(1), trunc(3/2)
+        (-1, -1, 0, 0, 0, 1, 1)
+        sage: isinstance(trunc(3/2), Integer)
+        True
+    """
+    if i >= 0:
+        return integer_floor(i)
+    else:
+        return integer_ceil(i)
 
 
 def two_squares(n):

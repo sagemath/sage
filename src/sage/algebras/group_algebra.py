@@ -108,10 +108,11 @@ def GroupAlgebra(G, R=IntegerRing()):
          over Rational Field
     """
     if not (G in Magmas() or G in AdditiveMagmas()):
-        raise ValueError("%s is not a magma or additive magma"%G)
-    if not R in Rings():
-        raise ValueError("%s is not a ring"%R)
+        raise ValueError("%s is not a magma or additive magma" % G)
+    if R not in Rings():
+        raise ValueError("%s is not a ring" % R)
     return G.algebra(R)
+
 
 class GroupAlgebra_class(CombinatorialFreeModule):
     def _coerce_map_from_(self, S):

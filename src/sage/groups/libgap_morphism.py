@@ -507,7 +507,7 @@ class GroupMorphism_libgap(Morphism):
             ValueError: f2 is not an element of the image of Group endomorphism
              of Abelian group with gap, generator orders (2, 4)
         """
-        if not h in self.codomain():
+        if h not in self.codomain():
             raise TypeError("h (={}) must be an element of the codomain".format(h))
         h = self.codomain()(h)
         phi = self.gap()

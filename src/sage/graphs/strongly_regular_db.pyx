@@ -2628,13 +2628,20 @@ def SRG_1288_792_476_504():
 
 cdef bint seems_feasible(int v, int k, int l, int mu):
     r"""
-    Tests is the set of parameters seems feasible
+    Check if the set of parameters seems feasible.
 
     INPUT:
 
     - ``v,k,l,mu`` (integers)
+
+    TESTS:
+
+    :trac:`32306` is fixed::
+
+        sage: from sage.graphs.strongly_regular_db import strongly_regular_graph
+        sage: strongly_regular_graph(16384, 8256, 4160, 4160, existence=True)
+        True
     """
-    cdef int r,s,f,g
     cdef uint_fast32_t tmp[2]
 
     if (v<0 or k<=0 or l<0 or mu<0 or

@@ -48,7 +48,7 @@ def is_package_installed_and_updated(pkg):
         # Might be an installed old-style package
         condition = is_package_installed(pkg)
     else:
-        condition = (pkginfo["installed_version"] == pkginfo["remote_version"])
+        condition = (pkginfo.installed_version == pkginfo.remote_version)
     return condition
 
 

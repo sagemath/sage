@@ -604,7 +604,7 @@ class Hyperplane(LinearExpression):
         EXAMPLES::
 
             sage: L.<x, y> = HyperplaneArrangements(QQ)
-            sage: (x+y-2).plot()
+            sage: (x+y-2).plot()  # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.geometry.hyperplane_arrangement.plot import plot_hyperplane

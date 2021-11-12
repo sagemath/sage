@@ -504,7 +504,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: fan = Fan([c1, c2], allow_arrangement=True)
         sage: fan.ngenerating_cones()
         7
-        sage: fan.plot()
+        sage: fan.plot()  # optional - sage.plot
         Graphics3d Object
 
     Cones of different dimension::
@@ -524,7 +524,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: c3 = Cone([[0, 1, 1], [1, 0, 1], [0, -1, 1], [-1, 0, 1]])
         sage: c1 = Cone([[0, 0, 1]])
         sage: fan1 = Fan([c1, c3], allow_arrangement=True)
-        sage: fan1.plot()
+        sage: fan1.plot()  # optional - sage.plot
         Graphics3d Object
 
     A 3-d cone and two 2-d cones::
@@ -2970,7 +2970,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         EXAMPLES::
 
             sage: fan = toric_varieties.dP6().fan()
-            sage: fan.plot()
+            sage: fan.plot()  # optional - sage.plot
             Graphics object consisting of 31 graphics primitives
         """
         tp = ToricPlotter(options, self.lattice().degree(), self.rays())

@@ -3626,3 +3626,8 @@ def _format_complex_number(real, imag, format_spec):
                              "complex format specifier")
         result = format(result, align + width)
     return result
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Complex.register(ComplexNumber)

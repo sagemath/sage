@@ -18,7 +18,7 @@ AUTHORS:
   of irreducible modules
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Eric Webster
 #       Copyright (C) 2011 Hugh Thomas <hugh.ross.thomas@gmail.com>
 #
@@ -26,8 +26,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 
@@ -240,7 +240,7 @@ class SchurAlgebra(CombinatorialFreeModule):
             raise ValueError("n (={}) must be a positive integer".format(n))
         if r not in ZZ or r < 0:
             raise ValueError("r (={}) must be a non-negative integer".format(r))
-        if not R in Rings.Commutative():
+        if R not in Rings.Commutative():
             raise ValueError("R (={}) must be a commutative ring".format(R))
 
         self._n = n

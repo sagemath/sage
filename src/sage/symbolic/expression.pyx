@@ -1698,7 +1698,7 @@ cdef class Expression(Expression_abc):
             sage: SR(CBF(1))._convert({'parent':RDF})
             1.0
             sage: type(_.pyobject())
-            <class 'sage.rings.real_double.RealDoubleElement'>
+            <class 'sage.rings.real_double...RealDoubleElement...'>
         """
         cdef GEx res = self._gobj.evalf(0, kwds)
         return new_Expression_from_GEx(self._parent, res)

@@ -90,11 +90,6 @@ from sage.rings.number_field.number_field_base import is_NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ, is_RationalField
-from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
-from sage.rings.real_mpfr import RealField
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 import sage.rings.abc
 from sage.arith.numerical_approx cimport digits_to_bits
 from copy import copy
@@ -1545,6 +1540,8 @@ cdef class Matrix(Matrix1):
         ring = self.base_ring()
         if algorithm is None:
             # Choose algorithm depending on base ring
+            from sage.rings.real_mpfr import RealField
+            from sage.rings.complex_mpfr import ComplexField
             is_complex = ComplexField(2).has_coerce_map_from(ring)
             if is_complex:
                 if ring.is_exact():
@@ -14288,7 +14285,6 @@ cdef class Matrix(Matrix1):
         code. The boolean ``semi`` argument exists only to change
         "greater than zero" into "greater than or equal to zero."
         """
-        from sage.symbolic.ring import SR
         from sage.rings.real_lazy import RLF,CLF
 
         R = self.base_ring()
@@ -14297,7 +14293,7 @@ cdef class Matrix(Matrix1):
                 R.has_coerce_map_from(RLF) or
                 CLF.has_coerce_map_from(R) or
                 R.has_coerce_map_from(CLF) or
-                R is SR):
+                isinstance(R, sage.rings.abc.SymbolicRing)):
             # This is necessary to avoid "going through the motions"
             # with e.g. a one-by-one identity matrix over the finite
             # field of order 5^2, which might otherwise look positive-
@@ -15020,6 +15016,8 @@ cdef class Matrix(Matrix1):
             sage: matrix(CDF, 2, 2, sparse=True).norm(1)
             0.0
         """
+        from sage.rings.real_double import RDF
+        from sage.rings.complex_double import CDF
 
         if self._nrows == 0 or self._ncols == 0:
             return RDF(0)
@@ -15124,14 +15122,17 @@ cdef class Matrix(Matrix1):
             sage: _ = A.n()
 
         """
+        from sage.rings.real_mpfr import RealField
+        from sage.rings.complex_mpfr import ComplexField
+
         if prec is None:
             prec = digits_to_bits(digits)
 
         try:
-            return self.change_ring(sage.rings.real_mpfr.RealField(prec))
+            return self.change_ring(RealField(prec))
         except (TypeError, ValueError):
             # try to return a complex result
-            return self.change_ring(sage.rings.complex_mpfr.ComplexField(prec))
+            return self.change_ring(ComplexField(prec))
 
     def plot(self, *args, **kwds):
         """
@@ -16904,8 +16905,15 @@ cdef class Matrix(Matrix1):
             ValueError: The base ring of the matrix is neither symbolic nor
             exact.
 
+        Symbolic subrings are fine::
+
+            sage: SCR = SR.subring(no_variables=True); SCR
+            Symbolic Constants Subring
+            sage: K = Cone([(1,2,3), (4,5,6)])
+            sage: L = identity_matrix(SCR, 3)
+            sage: L.is_positive_operator_on(K)
+            True
         """
-        from sage.symbolic.ring import SR
         import sage.geometry.abc
 
         if K2 is None:
@@ -16913,7 +16921,7 @@ cdef class Matrix(Matrix1):
         if not (isinstance(K1, sage.geometry.abc.ConvexRationalPolyhedralCone)
                 and isinstance(K2, sage.geometry.abc.ConvexRationalPolyhedralCone)):
             raise TypeError('K1 and K2 must be cones.')
-        if not self.base_ring().is_exact() and not self.base_ring() is SR:
+        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), sage.rings.abc.SymbolicRing):
             msg = 'The base ring of the matrix is neither symbolic nor exact.'
             raise ValueError(msg)
 
@@ -17048,13 +17056,20 @@ cdef class Matrix(Matrix1):
             ValueError: The base ring of the matrix is neither symbolic nor
             exact.
 
+        Symbolic subrings are fine::
+
+            sage: SCR = SR.subring(no_variables=True); SCR
+            Symbolic Constants Subring
+            sage: K = Cone([(1,2,3), (4,5,6)])
+            sage: L = identity_matrix(SCR, 3)
+            sage: L.is_cross_positive_on(K)
+            True
         """
-        from sage.symbolic.ring import SR
         import sage.geometry.abc
 
         if not isinstance(K, sage.geometry.abc.ConvexRationalPolyhedralCone):
             raise TypeError('K must be a cone.')
-        if not self.base_ring().is_exact() and not self.base_ring() is SR:
+        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), sage.rings.abc.SymbolicRing):
             msg = 'The base ring of the matrix is neither symbolic nor exact.'
             raise ValueError(msg)
 
@@ -17302,6 +17317,15 @@ cdef class Matrix(Matrix1):
             ValueError: The base ring of the matrix is neither symbolic nor
             exact.
 
+        Symbolic subrings are fine::
+
+            sage: SCR = SR.subring(no_variables=True); SCR
+            Symbolic Constants Subring
+            sage: K = Cone([(1,2,3), (4,5,6)])
+            sage: L = identity_matrix(SCR, 3)
+            sage: L.is_lyapunov_like_on(K)
+            True
+
         A matrix is Lyapunov-like on a cone if and only if both the
         matrix and its negation are cross-positive on the cone::
 
@@ -17314,14 +17338,12 @@ cdef class Matrix(Matrix1):
             ....:             (-L).is_cross_positive_on(K))  # long time
             sage: actual == expected                         # long time
             True
-
         """
-        from sage.symbolic.ring import SR
         import sage.geometry.abc
 
         if not isinstance(K, sage.geometry.abc.ConvexRationalPolyhedralCone):
             raise TypeError('K must be a cone.')
-        if not self.base_ring().is_exact() and not self.base_ring() is SR:
+        if not self.base_ring().is_exact() and not isinstance(self.base_ring(), sage.rings.abc.SymbolicRing):
             msg = 'The base ring of the matrix is neither symbolic nor exact.'
             raise ValueError(msg)
 

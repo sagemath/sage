@@ -175,12 +175,12 @@ class ModuleMorphism(Morphism):
             sage: TestSuite(phi).run()
         """
         if category is None:
-            if not domain in ModulesWithBasis:
-                raise ValueError("domain(=%s) should be a module with basis"%(codomain))
+            if domain not in ModulesWithBasis:
+                raise ValueError("domain(=%s) should be a module with basis" % codomain)
             base_ring = domain.base_ring()
 
-            if not hasattr( codomain, 'base_ring' ):
-                raise ValueError("codomain(=%s) needs to have a base_ring attribute"%(codomain))
+            if not hasattr(codomain, 'base_ring'):
+                raise ValueError("codomain(=%s) needs to have a base_ring attribute" % codomain)
             # codomain should be a module over base_ring
             # The natural test would be ``codomains in Modules(base_ring)``
             # But this is not properly implemented yet::
@@ -227,6 +227,7 @@ class ModuleMorphism(Morphism):
         if not issubclass(self.__class__, H._abstract_element_class):
             self.__class__ = H.__make_element_class__(self.__class__)
 
+
 class ModuleMorphismFromFunction(ModuleMorphism, SetMorphism):
     """
     A class for module morphisms implemented by a plain function.
@@ -263,6 +264,7 @@ class ModuleMorphismFromFunction(ModuleMorphism, SetMorphism):
         # Caveat: This calls Morphism.__init__ twice ...
         ModuleMorphism.__init__(self, domain, codomain, category=category)
         SetMorphism.__init__(self, self.parent(), function)
+
 
 class ModuleMorphismByLinearity(ModuleMorphism):
     """
@@ -318,7 +320,7 @@ class ModuleMorphismByLinearity(ModuleMorphism):
             self._on_basis = on_basis
 
         self._is_module_with_basis_over_same_base_ring = \
-            codomain in ModulesWithBasis( base_ring ) and zero == codomain.zero()
+            codomain in ModulesWithBasis(base_ring) and zero == codomain.zero()
 
         ModuleMorphism.__init__(self, domain, codomain,
                                 category=category,
@@ -954,7 +956,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         F = self.domain()
         G = self.codomain()
         on_basis = self.on_basis()
-        if not f in G:
+        if f not in G:
             raise ValueError("f(={}) must be in the codomain of the morphism to have a preimage under the latter".format(f))
 
         remainder = f
@@ -1333,17 +1335,17 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             [2 5]
         """
         C = ModulesWithBasis(domain.base_ring()).FiniteDimensional()
-        if not domain in C:
-            raise ValueError("The domain %s should be finite dimensional"%domain)
+        if domain not in C:
+            raise ValueError("The domain %s should be finite dimensional" % domain)
         if codomain is None:
             raise ValueError("The codomain %s should be specified")
-        if not codomain in C:
-            raise ValueError("The codomain %s should be finite dimensional"%codomain)
+        if codomain not in C:
+            raise ValueError("The codomain %s should be finite dimensional" % codomain)
         if not is_Matrix(matrix):
-            raise ValueError("matrix (=%s) should be a matrix"%matrix)
+            raise ValueError("matrix (=%s) should be a matrix" % matrix)
         import sage.combinat.ranker
         indices = tuple(domain.basis().keys())
-        rank_domain  = sage.combinat.ranker.rank_from_list(indices)
+        rank_domain = sage.combinat.ranker.rank_from_list(indices)
         if side == "left":
             matrix = matrix.transpose()
         if matrix.nrows() != len(indices):

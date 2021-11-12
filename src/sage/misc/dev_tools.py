@@ -493,7 +493,7 @@ def import_statements(*objects, **kwds):
     :trac:`23779`)::
 
         sage: import_statements('log')
-        from sage.functions.log import log
+        from sage.misc.functional import log
 
     .. NOTE::
 

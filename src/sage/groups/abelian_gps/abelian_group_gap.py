@@ -161,10 +161,10 @@ class AbelianGroupElement_gap(ElementLibGAP):
         orders = P.gens_orders()
         i = 0
         for k in range(len(P.gens())):
-            if not k+1 in Lgens:
+            if k + 1 not in Lgens:
                 exp.append(0)
             else:
-                i = Lgens.index(k+1)
+                i = Lgens.index(k + 1)
                 exp.append(Lexpo[i] % orders[k])
         return tuple(exp)
 

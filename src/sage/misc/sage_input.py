@@ -1011,9 +1011,9 @@ class SageInputBuilder:
             R.<y> = ZZ[]
             y
         """
-        if not parent in self._parent_gens:
+        if parent not in self._parent_gens:
             self(parent)
-            if not parent in self._parent_gens:
+            if parent not in self._parent_gens:
                 raise ValueError("{} did not register generators for sage_input".format(parent))
 
         gens = self._parent_gens[parent]

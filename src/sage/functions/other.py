@@ -20,7 +20,7 @@ lazy_import('sage.functions.gamma',
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
 from sage.symbolic.expression import Expression, register_symbol, symbol_table
-from sage.symbolic.ring import SR
+from sage.symbolic.ring import SR, SymbolicRing
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
@@ -179,6 +179,15 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
         Traceback (most recent call last):
         ...
         ValueError: Calling ceil() on infinity or NaN
+
+    Test that elements of symbolic subrings work in the same way as
+    elements of ``SR``, :trac:`32724`::
+
+        sage: SCR = SR.subring(no_variables=True)
+        sage: floor(log(2^(3/2)) / log(2) + 1/2)
+        2
+        sage: floor(SCR(log(2^(-3/2)) / log(2) + 1/2))
+        -1
     """
     # First, some obvious things...
     try:
@@ -215,8 +224,8 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
     from sage.rings.all import RealIntervalField
 
     # Might it be needed to simplify x? This only applies for
-    # elements of SR.
-    need_to_simplify = (s_parent(x) is SR)
+    # elements of SR (or its subrings)
+    need_to_simplify = isinstance(s_parent(x), SymbolicRing)
 
     # An integer which is close to x. We use this to increase precision
     # by subtracting this guess before converting to an interval field.
@@ -2182,7 +2191,7 @@ class Function_elementof(BuiltinFunction):
             ValueError: not a set: 0
         """
         from sage.categories.sets_cat import Sets
-        if not s in Sets():
+        if s not in Sets():
             raise ValueError("not a set: {}".format(s))
 
     def _latex_(self):

@@ -1025,10 +1025,9 @@ class Sandpile(DiGraph):
             sage: s.out_degree(2)
             3
         """
-        if not v is None:
+        if v is not None:
             return self._out_degrees[v]
-        else:
-            return self._out_degrees
+        return self._out_degrees
 
     def _set_in_degrees(self):
         """
@@ -1065,10 +1064,9 @@ class Sandpile(DiGraph):
             sage: s.in_degree(2)
             3
         """
-        if not v is None:
+        if v is not None:
             return self._in_degrees[v]
-        else:
-            return self._in_degrees
+        return self._in_degrees
 
     def _set_burning_config(self):
         r"""

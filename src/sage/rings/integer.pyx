@@ -198,6 +198,15 @@ except ImportError:
     pari_gen = ()
 
 
+set_integer_from_gen = None
+pari_divisors_small = None
+n_factor_to_list = None
+pari_is_prime_power = None
+pari_is_prime = None
+objtogen = None
+new_gen_from_integer = None
+
+
 cdef extern from *:
     int unlikely(int) nogil  # Defined by Cython
 
@@ -637,7 +646,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     raise TypeError("Cannot convert non-integral float to integer")
 
             elif isinstance(x, pari_gen):
-                from sage.libs.pari.convert_sage import set_integer_from_gen
+                global set_integer_from_gen
+                if set_integer_from_gen is None:
+                    from sage.libs.pari.convert_sage import set_integer_from_gen
                 set_integer_from_gen(self, x)
 
             else:
@@ -3046,12 +3057,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ValueError("n must be nonzero")
 
         if (method is None or method == 'pari') and mpz_fits_slong_p(self.value):
-            try:
-                from sage.libs.pari.convert_sage import pari_divisors_small
-            except ImportError:
-                if method == 'pari':
-                    raise ImportError("method `pari` requested, but cypari2 not present")
-            else:
+            global pari_divisors_small
+            if pari_divisors_small is None:
+                try:
+                    from sage.libs.pari.convert_sage import pari_divisors_small
+                except ImportError:
+                    if method == 'pari':
+                        raise ImportError("method `pari` requested, but cypari2 not present")
+            if pari_divisors_small is not None:
                 if mpz_sgn(self.value) > 0:
                     return pari_divisors_small(self)
                 else:
@@ -3909,11 +3922,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return factor_trial_division(self, limit)
 
         if mpz_fits_slong_p(n.value):
-            try:
-                from sage.libs.flint.ulong_extras import n_factor_to_list
-            except ImportError:
-                pass
-            else:
+            global n_factor_to_list
+            if n_factor_to_list is None:
+                try:
+                    from sage.libs.flint.ulong_extras import n_factor_to_list
+                except ImportError:
+                    pass
+            if n_factor_to_list is not None:
                 if proof is None:
                     from sage.structure.proof.proof import get_flag
                     proof = get_flag(proof, "arithmetic")
@@ -5108,11 +5123,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (self, zero) if get_data else False
 
         if mpz_fits_slong_p(self.value):
-            try:
-                from sage.libs.pari.convert_sage import pari_is_prime_power
-            except ImportError:
-                pass
-            else:
+            global pari_is_prime_power
+            if pari_is_prime_power is None:
+                try:
+                    from sage.libs.pari.convert_sage import pari_is_prime_power
+                except ImportError:
+                    pass
+            if pari_is_prime_power is not None:
                 return pari_is_prime_power(self, get_data)
 
         cdef long n
@@ -5194,11 +5211,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return False
 
         if mpz_fits_ulong_p(self.value):
-            try:
-                from sage.libs.pari.convert_sage import pari_is_prime
-            except ImportError:
-                pass
-            else:
+            global pari_is_prime
+            if pari_is_prime is None:
+                try:
+                    from sage.libs.pari.convert_sage import pari_is_prime
+                except ImportError:
+                    pass
+            if pari_is_prime is not None:
                 return pari_is_prime(self)
 
         if proof is None:
@@ -5550,7 +5569,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
 
         """
-        from cypari2.gen import objtogen
+        global objtogen
+        if objtogen is None:
+            from cypari2.gen import objtogen
         if self.is_square():
             raise ValueError("class_number not defined for square integers")
         if not self%4 in [0,1]:
@@ -5958,7 +5979,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             1041334
 
         """
-        from sage.libs.pari.convert_sage import new_gen_from_integer
+        global new_gen_from_integer
+        if new_gen_from_integer is None:
+            from sage.libs.pari.convert_sage import new_gen_from_integer
         return new_gen_from_integer(self)
 
     def _interface_init_(self, I=None):
@@ -7564,3 +7587,8 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
     if resultsign < 0:
         d = -d
     return ldexp(d, shift)
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Integral.register(Integer)

@@ -133,7 +133,7 @@ class FiniteGroups(CategoryWithAxiom):
                 connecting_set = self.group_generators()
             else:
                 for g in connecting_set:
-                    if not g in self:
+                    if g not in self:
                         raise RuntimeError("Each element of the connecting set must be in the group!")
                 connecting_set = [self(g) for g in connecting_set]
             from sage.graphs.all import DiGraph

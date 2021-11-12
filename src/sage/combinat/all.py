@@ -1,6 +1,54 @@
+r"""
+Combinatorics
+
+Introductory material
+---------------------
+
+- :ref:`sage.combinat.quickref`
+- :ref:`sage.combinat.tutorial`
+
+Thematic indexes
+----------------
+
+- :ref:`sage.combinat.algebraic_combinatorics`
+
+  - :ref:`sage.combinat.chas.all`
+  - :ref:`sage.combinat.cluster_algebra_quiver.all`
+  - :ref:`sage.combinat.crystals.all`
+  - :ref:`sage.combinat.root_system.all`
+  - :ref:`sage.combinat.sf.all`
+  - :class:`~sage.combinat.fully_commutative_elements.FullyCommutativeElements`
+
+- :ref:`sage.combinat.counting`
+- :ref:`sage.combinat.enumerated_sets`
+- :ref:`sage.combinat.catalog_partitions`
+- :ref:`sage.combinat.finite_state_machine`
+- :ref:`sage.combinat.species.all`
+- :ref:`sage.combinat.designs.all`
+- :ref:`sage.combinat.posets.all`
+- :ref:`sage.combinat.words`
+
+Utilities
+---------
+
+- :ref:`sage.combinat.output`
+- :ref:`sage.combinat.ranker`
+- :func:`Combinatorial maps <sage.combinat.combinatorial_map.combinatorial_map>`
+- :ref:`sage.combinat.misc`
+
+Related topics
+--------------
+
+- :ref:`sage.coding`
+- :ref:`sage.dynamics`
+- :ref:`sage.graphs`
+
 """
-Combinatorics features that are imported by default in the interpreter namespace
-"""
+# install the docstring of this module to the containing package
+from sage.misc.namespace_package import install_doc
+install_doc(__package__, __doc__)
+
+from . import quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
 

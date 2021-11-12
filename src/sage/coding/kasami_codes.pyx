@@ -322,7 +322,7 @@ class KasamiCode(AbstractLinearCode):
             sage: C.minimum_distance()
             3
         """
-        from sage.functions.log import log
+        from sage.misc.functional import log
 
         m = log(self._s, 2)
         F = GF(self._s)

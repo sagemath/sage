@@ -11,8 +11,5 @@ cdef class RealDoubleElement(FieldElement):
     cpdef _add_(self, other)
     cpdef _mul_(self, other)
     cpdef RealDoubleElement abs(RealDoubleElement self)
-    cdef __pow_double(self, double exponent, double sign)
-    cpdef _pow_(self, other)
-    cdef _log_base(self, double log_of_base)
 
 cdef double_repr(double x)

@@ -558,7 +558,7 @@ def _isom_fqf(A, B=None):
             if not automorphisms:
                 return f
             g = ambient(matrix(f))
-            if not g in G:
+            if g not in G:
                 G = B.orthogonal_group(tuple(ambient(s.matrix()) for s in G.gens())+(g,))
                 waiting = orbits(G, waiting)
             continue

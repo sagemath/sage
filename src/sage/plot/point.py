@@ -475,7 +475,7 @@ def point2d(points, **options):
     """
     from sage.plot.plot import xydata_from_point_list
     from sage.plot.all import Graphics
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
 
     # points could be a single number
     if isinstance(points, numbers.Complex):

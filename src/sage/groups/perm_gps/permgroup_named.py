@@ -1552,13 +1552,11 @@ class SplitMetacyclicGroup(PermutationGroup_unique):
         AUTHOR:
 
         - Kevin Halasz (2012-8-7)
-
         """
-
         if not isinstance(p, Integer) or not isinstance(m, Integer):
             raise TypeError('both p and m must be integers')
 
-        if not p in Primes():
+        if p not in Primes():
             raise ValueError('p must be prime, %s is not prime' % p)
 
         if p == 2 and m <= 3:

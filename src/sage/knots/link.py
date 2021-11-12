@@ -3744,40 +3744,41 @@ class Link(SageObject):
 
             sage: k11  = KnotInfo.K11n_82.link()      # optional - database_knotinfo
             sage: k11m = k11.mirror_image()           # optional - database_knotinfo
-            sage: k11m.braid()                        # optional - database_knotinfo
-            s0*s1^-1*s0*s2^-1*s1*(s1*s2^-1)^2*s2^-2
-            sage: k11m.get_knotinfo()                 # optional - database_knotinfo
+            sage: k11mr = k11m.reverse()              # optional - database_knotinfo
+            sage: k11mr.get_knotinfo()                # optional - database_knotinfo
             Traceback (most recent call last):
             ...
             NotImplementedError: mirror type of this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
 
-            sage: k11m.get_knotinfo(unique=False)     # optional - database_knotinfo
+            sage: k11mr.get_knotinfo(unique=False)    # optional - database_knotinfo
             [(<KnotInfo.K11n_82: '11n_82'>, '?')]
 
-            sage: t = (-1, 2, -1, 2, -1, 3, -2, 3, -2)
-            sage: l9 = Link(BraidGroup(4)(t))
-            sage: l9.get_knotinfo()                   # optional - database_knotinfo
+            sage: t = (1, -2, 1, 1, -2, 1, -2, -2)
+            sage: l8 = Link(BraidGroup(3)(t))
+            sage: l8.get_knotinfo()                   # optional - database_knotinfo
             Traceback (most recent call last):
             ...
             NotImplementedError: this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
 
-            sage: l9.get_knotinfo(unique=False)       # optional - database_knotinfo
-            [(<KnotInfo.L9n25_0_0: 'L9n25{0,0}'>, False),
-             (<KnotInfo.L9n25_1_1: 'L9n25{1,1}'>, False)]
+            sage: l8.get_knotinfo(unique=False)       # optional - database_knotinfo
+            [(<KnotInfo.L8a19_0_0: 'L8a19{0,0}'>, None),
+             (<KnotInfo.L8a19_1_1: 'L8a19{1,1}'>, None)]
 
-            sage: t = (1, 2, 3, -4, 3, -2, -1, 3, -2, 3, -2, 3, -4, 3, -2)
-            sage: l15 = Link(BraidGroup(5)(t))
-            sage: l15.get_knotinfo()                  # optional - database_knotinfo
+            sage: t = (2, -3, -3, -2, 3, 3, -2, 3, 1, -2, -2, 1)
+            sage: l12 = Link(BraidGroup(5)(t))
+            sage: l12.get_knotinfo()                  # optional - database_knotinfo
             Traceback (most recent call last):
             ...
             NotImplementedError: this link having more than 11 crossings cannot be uniquely determined
             use keyword argument `unique` to obtain more details
 
-            sage:l15.get_knotinfo(unique=False)       # optional - database_knotinfo
-            [(<KnotInfo.L11a1_0: 'L11a1{0}'>, False),
-             (<KnotInfo.L11a1_1: 'L11a1{1}'>, False)]
+            sage: l12.get_knotinfo(unique=False)      # optional - database_knotinfo
+            [(<KnotInfo.L10n36_0: 'L10n36{0}'>, '?'),
+             (<KnotInfo.L10n36_1: 'L10n36{1}'>, None),
+             (<KnotInfo.L10n59_0: 'L10n59{0}'>, None),
+             (<KnotInfo.L10n59_1: 'L10n59{1}'>, None)]
 
         Furthermore, if the result is a complete  series of oriented links having
         the same unoriented name (according to the note above) the option can be

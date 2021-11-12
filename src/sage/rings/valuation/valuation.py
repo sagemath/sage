@@ -108,7 +108,7 @@ class DiscretePseudoValuation(Morphism):
             True
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if self(f) is infinity:
             return self(g) is infinity
 
@@ -879,7 +879,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         # Check that valuation is an approximant for a valuation
         # on domain that extends its restriction to the base field.
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if valuation(G) is not infinity:
             v = valuation
             while not v.is_gauss_valuation():
@@ -982,7 +982,7 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         """
         if required_precision is None:
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             required_precision = infinity
 
         R = G.parent()

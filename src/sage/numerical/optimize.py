@@ -384,7 +384,7 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der, algorithm="bfgs") # abs tol 1e-6
         (1.0, 1.0, 1.0)
     """
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
     import numpy
     from scipy import optimize
@@ -505,7 +505,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         sage: minimize_constrained(f, c, [100, 300])
         (805.985..., 1005.985...)
     """
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
     from sage.ext.fast_callable import fast_callable
     import numpy
     from scipy import optimize
@@ -751,7 +751,7 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
     if data.ndim != 2:
         raise ValueError("data has to be a two dimensional table of floating point numbers")
 
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
 
     if isinstance(model, Expression):
         if variables is None:

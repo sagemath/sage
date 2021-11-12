@@ -735,7 +735,7 @@ class CubeGroup(PermutationGroup_generic):
             return mv if mv.parent() is self else PermutationGroup_generic.__call__(self, mv, check)
         elif isinstance(mv, str):
             # It is a string: may be in cycle notation or Rubik's notation
-            if '(' in mv and not '^' in mv:
+            if '(' in mv and '^' not in mv:
                 return PermutationGroup_generic.__call__(self, mv, check)
             else:
                 gens = self.gens()

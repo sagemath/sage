@@ -53,17 +53,17 @@ cdef class InteractiveLPBackend:
 
         This backend can work with irrational algebraic numbers::
 
-            sage: poly = polytopes.dodecahedron(base_ring=AA)
-            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()
+            sage: poly = polytopes.dodecahedron(base_ring=AA)                                   # optional - sage.rings.number_field
+            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)  # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                          # optional - sage.rings.number_field
+            sage: lp.solve()                                                                    # optional - sage.rings.number_field
             2.291796067500631?
-            sage: lp.get_values(x[0], x[1], x[2])
+            sage: lp.get_values(x[0], x[1], x[2])                                               # optional - sage.rings.number_field
             [0.763932022500211?, 0.763932022500211?, 0.763932022500211?]
-            sage: lp.set_objective(x[0] - x[1] - x[2])
-            sage: lp.solve()
+            sage: lp.set_objective(x[0] - x[1] - x[2])                                          # optional - sage.rings.number_field
+            sage: lp.solve()                                                                    # optional - sage.rings.number_field
             2.291796067500631?
-            sage: lp.get_values(x[0], x[1], x[2])
+            sage: lp.get_values(x[0], x[1], x[2])                                               # optional - sage.rings.number_field
             [0.763932022500211?, -0.763932022500211?, -0.763932022500211?]
         """
 

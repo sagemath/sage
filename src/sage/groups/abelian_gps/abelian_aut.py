@@ -115,7 +115,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
             sage: TestSuite(f).run()
         """
         if check:
-            if not x in parent.gap():
+            if x not in parent.gap():
                 raise ValueError("%s is not in the group %s" % (x, parent))
         ElementLibGAP.__init__(self, parent, x)
 

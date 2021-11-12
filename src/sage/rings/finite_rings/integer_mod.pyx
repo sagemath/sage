@@ -380,7 +380,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             try:
                 z = integer_ring.Z(value)
             except (TypeError, ValueError):
-                from sage.symbolic.expression import Expression
+                from sage.structure.element import Expression
                 if isinstance(value, Expression):
                     value = value.pyobject()
                 else:
@@ -1892,7 +1892,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             r += 1
             power *= p
             if not power.divides(self.__modulus.sageInteger):
-                from sage.rings.all import infinity
+                from sage.rings.infinity import infinity
                 return infinity
         return r
 

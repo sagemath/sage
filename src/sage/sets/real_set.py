@@ -1103,7 +1103,7 @@ class RealSet(UniqueRepresentation, Parent, Set_base,
         if kwds:
             raise TypeError(f'unless manifold keywords {manifold_keywords} are given, RealSet constructors take no keyword arguments')
 
-        from sage.symbolic.expression import Expression
+        from sage.structure.element import Expression
         if len(args) == 1 and isinstance(args[0], RealSet):
             return args[0]   # common optimization
         intervals = []

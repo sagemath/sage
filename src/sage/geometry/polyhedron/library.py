@@ -2522,7 +2522,7 @@ class Polytopes():
             sage: perm4 = polytopes.permutahedron(4, project=True)
             sage: perm4
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 24 vertices
-            sage: perm4.plot()
+            sage: perm4.plot()  # optional - sage.plot
             Graphics3d Object
             sage: perm4.graph().is_isomorphic(graphs.BubbleSortGraph(4))
             True
@@ -3305,7 +3305,7 @@ class Polytopes():
             (1, 8, 12, 6, 1)
             sage: c.volume()
             8
-            sage: c.plot()
+            sage: c.plot()  # optional - sage.plot
             Graphics3d Object
 
         Return the `0/1`-cube::

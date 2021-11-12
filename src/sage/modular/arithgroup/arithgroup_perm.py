@@ -1819,7 +1819,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             else:
                 c2 = len(c) // 2
                 if exp:
-                    if not c2 in widths:
+                    if c2 not in widths:
                         widths[c2] = 0
                     widths[c2] += 1
                 else:
