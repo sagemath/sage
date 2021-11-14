@@ -1,4 +1,4 @@
-$(PYTHON) $(MP_LIBRARY) gmpy2 cysignals mpfr mpc ppl | $(PYTHON_TOOLCHAIN) sphinx
+$(PYTHON) $(MP_LIBRARY) gmpy2 cysignals mpfr mpc ppl | $(PYTHON_TOOLCHAIN) $(if $(findstring no,$(SAGE_SPKG_INSTALL_DOCS)),,sphinx)
 
 ----------
 All lines of this file are ignored except the first.

@@ -22,7 +22,10 @@ About this experimental pip-installable source distribution
 
 This pip-installable source distribution `sagemath-standard` is an experimental distribution of the Sage Library.  Use at your own risk.
 
-Building `sagemath-standard` has a large number of system packages as prerequisites. See https://doc.sagemath.org/html/en/installation/source.html#linux-recommended-installation
+Building `sagemath-standard` has a large number of system packages as prerequisites.
+See https://doc.sagemath.org/html/en/installation/source.html#linux-recommended-installation
 for partial lists for various systems.
+
+The connection to the system environment is facilitated through the https://pypi.org/project/sage-conf/ distribution package.
 
 A modularization effort is in progress with the goal of making it possible to install parts of the Sage Library with fewer prerequisites. https://trac.sagemath.org/ticket/29705

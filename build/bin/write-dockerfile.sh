@@ -187,7 +187,7 @@ FROM with-system-packages as bootstrapped
 #:bootstrapping:
 RUN mkdir -p /sage
 WORKDIR /sage
-ADD Makefile VERSION.txt README.md bootstrap configure.ac sage ./
+ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
 ADD src/doc/bootstrap src/doc/bootstrap
 ADD src/bin src/bin
 ADD m4 ./m4
