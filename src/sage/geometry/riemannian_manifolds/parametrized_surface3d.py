@@ -97,7 +97,7 @@ class ParametrizedSurface3D(SageObject):
         sage: ellipsoid_eq = (cos(u1)*cos(u2), 2*sin(u1)*cos(u2), 3*sin(u2))
         sage: ellipsoid = ParametrizedSurface3D(ellipsoid_eq, coords, 'ellipsoid'); ellipsoid
         Parametrized surface ('ellipsoid') with equation (cos(u1)*cos(u2), 2*cos(u2)*sin(u1), 3*sin(u2))
-        sage: ellipsoid.plot()
+        sage: ellipsoid.plot()  # optional - sage.plot
         Graphics3d Object
 
     Standard surfaces can be constructed using the ``surfaces`` generator::
@@ -120,7 +120,7 @@ class ParametrizedSurface3D(SageObject):
 
         sage: enneper = surfaces.Enneper(); enneper
         Parametrized surface ('Enneper's surface') with equation (-1/9*(u^2 - 3*v^2 - 3)*u, -1/9*(3*u^2 - v^2 + 3)*v, 1/3*u^2 - 1/3*v^2)
-        sage: enneper.plot(aspect_ratio='automatic')
+        sage: enneper.plot(aspect_ratio='automatic')  # optional - sage.plot
         Graphics3d Object
 
     We construct an ellipsoid whose axes are given by symbolic variables `a`,
@@ -314,7 +314,7 @@ class ParametrizedSurface3D(SageObject):
         sage: g1 = [c[-1] for c in S.geodesics_numerical((0,0),(1,0),(0,2*pi,100))]
         sage: g2 = [c[-1] for c in S.geodesics_numerical((0,0),(cos(pi/3),sin(pi/3)),(0,2*pi,100))]
         sage: g3 = [c[-1] for c in S.geodesics_numerical((0,0),(cos(2*pi/3),sin(2*pi/3)),(0,2*pi,100))]
-        sage: (S.plot(opacity=0.3) + line3d(g1,color='red') + line3d(g2,color='red') + line3d(g3,color='red')).show()
+        sage: (S.plot(opacity=0.3) + line3d(g1,color='red') + line3d(g2,color='red') + line3d(g3,color='red')).show()  # optional - sage.plot
 
     """
 
@@ -488,7 +488,7 @@ class ParametrizedSurface3D(SageObject):
             sage: u, v = var('u, v', domain='real')
             sage: eq = (3*u + 3*u*v^2 - u^3, 3*v + 3*u^2*v - v^3, 3*(u^2-v^2))
             sage: enneper = ParametrizedSurface3D(eq, (u, v), 'Enneper Surface')
-            sage: enneper.plot((-5, 5), (-5, 5))
+            sage: enneper.plot((-5, 5), (-5, 5))  # optional - sage.plot
             Graphics3d Object
 
         """

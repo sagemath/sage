@@ -24,7 +24,7 @@ from .hyperelliptic_rational_field import HyperellipticCurve_rational_field
 from .hyperelliptic_padic_field import HyperellipticCurve_padic_field
 from .hyperelliptic_g2 import HyperellipticCurve_g2
 
-from sage.rings.padics.all import is_pAdicField
+import sage.rings.abc
 from sage.rings.rational_field import is_RationalField
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.polynomial.polynomial_element import is_Polynomial
@@ -250,6 +250,8 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     genus_classes = {
         2 :  HyperellipticCurve_g2}
+
+    is_pAdicField = lambda x: isinstance(x, sage.rings.abc.pAdicField)
 
     fields = [
         ("FiniteField", is_FiniteField, HyperellipticCurve_finite_field),

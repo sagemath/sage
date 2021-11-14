@@ -1196,8 +1196,8 @@ cdef class InequalityCollection:
         Check that :trac:`21037` is fixed::
 
             sage: P = Polyhedron(vertices=((0, 0), (17,3)))
-            sage: P += 1/1000*polytopes.regular_polygon(5)
-            sage: P.integral_points()
+            sage: P += 1/1000*polytopes.regular_polygon(5)  # optional - sage.rings.number_field
+            sage: P.integral_points()                       # optional - sage.rings.number_field
             ((0, 0), (17, 3))
         """
         cdef list A

@@ -580,7 +580,6 @@ from sage.misc.randstate import current_randstate #for plot adaptive refinement
 from math import sin, cos, pi, log, exp #for polar_plot and log scaling
 
 from sage.ext.fast_eval import fast_float, is_fast_float
-from sage.misc.lazy_import import lazy_import
 from sage.structure.element import Expression
 from sage.misc.decorators import options
 

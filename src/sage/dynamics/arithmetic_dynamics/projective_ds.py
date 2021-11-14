@@ -872,10 +872,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                 PHI = PHI(fm._polys) / PHI(fm1._polys)
         #even when the ring can be passed to singular in quo_rem,
         #it can't always do the division, so we call Maxima
-        from sage.rings.padics.generic_nodes import is_pAdicField, is_pAdicRing
         if period != [0,1]: #period==[0,1] we don't need to do any division
             BR = self.domain().base_ring().base_ring()
-            if not (is_pAdicRing(BR) or is_pAdicField(BR)):
+            if not isinstance(BR, (sage.rings.abc.pAdicRing, sage.rings.abc.pAdicField)):
                 try:
                     QR2 = PHI.numerator()._maxima_().divide(PHI.denominator())
                     if not QR2[1].sage():
@@ -6940,10 +6939,10 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
             sage: P.<x,y> = ProjectiveSpace(GF(7), 1)
             sage: D6 = DynamicalSystem_projective([y^2, x^2])
-            sage: D6.conjugating_set(D6)
+            sage: sorted(D6.conjugating_set(D6))
             [
-            [1 0]  [0 1]  [0 2]  [4 0]  [2 0]  [0 4]
-            [0 1], [1 0], [1 0], [0 1], [0 1], [1 0]
+            [0 1]  [0 2]  [0 4]  [1 0]  [2 0]  [4 0]
+            [1 0], [1 0], [1 0], [0 1], [0 1], [0 1]
             ]
 
         ::

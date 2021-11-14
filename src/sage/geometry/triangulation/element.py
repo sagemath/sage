@@ -23,7 +23,7 @@ Here is a simple example of how to triangulate a point configuration::
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate();  triang
     (<0,1,2,5>, <0,1,3,5>, <1,3,4,5>)
-    sage: triang.plot(axes=False)
+    sage: triang.plot(axes=False)  # optional - sage.plot
     Graphics3d Object
 
 See :mod:`sage.geometry.triangulation.point_configuration` for more details.
@@ -68,7 +68,7 @@ def triangulation_render_2d(triangulation, **kwds):
 
         sage: points = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
         sage: triang = points.triangulate()
-        sage: triang.plot(axes=False, aspect_ratio=1)   # indirect doctest
+        sage: triang.plot(axes=False, aspect_ratio=1)   # indirect doctest  # optional - sage.plot
         Graphics object consisting of 12 graphics primitives
     """
     from sage.plot.all import point2d, line2d, polygon2d
@@ -132,7 +132,7 @@ def triangulation_render_3d(triangulation, **kwds):
         sage: p = [[0,-1,-1],[0,0,1],[0,1,0], [1,-1,-1],[1,0,1],[1,1,0]]
         sage: points = PointConfiguration(p)
         sage: triang = points.triangulate()
-        sage: triang.plot(axes=False)     # indirect doctest
+        sage: triang.plot(axes=False)     # indirect doctest  # optional - sage.plot
         Graphics3d Object
     """
     from sage.plot.plot3d.all import point3d, line3d, polygon3d
@@ -416,7 +416,7 @@ class Triangulation(Element):
             sage: triangulation = p.triangulate()
             sage: triangulation
             (<1,3,4>, <2,3,4>)
-            sage: triangulation.plot(axes=False)
+            sage: triangulation.plot(axes=False)  # optional - sage.plot
             Graphics object consisting of 12 graphics primitives
         """
         dim = self.point_configuration().dim()

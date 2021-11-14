@@ -2367,10 +2367,7 @@ class MPolynomialIdeal_singular_repr(
             sage: sorted(I.variety(ring=RR), key=str)
             [{y: 0.361103080528647, x: 2.76929235423863},
              {y: 1.00000000000000, x: 1.00000000000000}]
-            sage: I.variety(ring=AA) # py2
-            [{x: 1, y: 1},
-             {x: 2.769292354238632?, y: 0.3611030805286474?}]
-            sage: I.variety(ring=AA) # py3
+            sage: I.variety(ring=AA)
             [{y: 1, x: 1},
              {y: 0.3611030805286474?, x: 2.769292354238632?}]
 
@@ -2573,8 +2570,7 @@ class MPolynomialIdeal_singular_repr(
         if d == -1:
             return []
 
-        import sage.rings.complex_mpfr as CCmod
-        if isinstance(self.base_ring(), CCmod.ComplexField_class):
+        if isinstance(self.base_ring(), sage.rings.abc.ComplexField):
           verbose("Warning: computations in the complex field are inexact; variety may be computed partially or incorrectly.", level=0)
         P = self.ring()
         if ring is not None:
@@ -5012,9 +5008,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             Multivariate Polynomial Ring in x0, x1, y0, y1 over Finite Field of size
             2
             sage: J += sage.rings.ideal.FieldIdeal(J.ring()) # ensure radical ideal
-            sage: J.variety() # py2
-            [{y1: 1, x1: 1, x0: 1, y0: 0}]
-            sage: J.variety() # py3
+            sage: J.variety()
             [{y1: 1, y0: 0, x1: 1, x0: 1}]
 
             sage: J.weil_restriction() # returns J
@@ -5027,9 +5021,7 @@ class MPolynomialIdeal( MPolynomialIdeal_singular_repr, \
             sage: I = sage.rings.ideal.Katsura(P)
             sage: I.dimension()
             0
-            sage: I.variety() # py2
-            [{y: 0, z: 0, x: 1}]
-            sage: I.variety() # py3
+            sage: I.variety()
              [{z: 0, y: 0, x: 1}]
 
             sage: J = I.weil_restriction(); J

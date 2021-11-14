@@ -16,7 +16,11 @@ if [ "$UNAME" = "CYGWIN" ]; then
     export CPPFLAGS="${CPPFLAGS} -D_GNU_SOURCE"
 fi
 
-python3 ../lapack_conf.py
+# Trac #32746: pkg-config omits -I and -L flags that refer to directories
+# that are already on CPATH, LIBRARY_PATH.
+# But our script tries to obtain the list of include_dirs and library_dirs
+# from pkg-config!
+(unset CPATH LIBRARY_PATH; python3 ../lapack_conf.py)
 
 # Make sure that the fortran objects are compiled with -fPIC
 export FFLAGS="$FFLAGS -fPIC"

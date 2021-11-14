@@ -52,6 +52,7 @@ include sage/misc/fast_methods.*
 include sage/misc/constant_function.*
 include sage/misc/call.*
 include sage/misc/bindable_class.*
+include sage/misc/namespace_package.p*
 
 include sage/misc/verbose.*
 include sage/misc/repr.*

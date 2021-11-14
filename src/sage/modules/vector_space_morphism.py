@@ -693,7 +693,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     except ImportError:
         Vector_callable_symbolic_dense = ()
 
-    if not side in ['left', 'right']:
+    if side not in ['left', 'right']:
         raise ValueError("side must be 'left' or 'right', not {0}".format(side))
     if not (is_Matrix(arg0) or is_VectorSpace(arg0)):
         raise TypeError('first argument must be a matrix or a vector space, not {0}'.format(arg0))

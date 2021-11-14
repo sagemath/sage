@@ -413,7 +413,8 @@ class InductiveValuation(DevelopingValuation):
         tester = self._tester(**options)
         chain = self.augmentation_chain()
         for w,v in zip(chain, chain[1:]):
-            from sage.rings.all import infinity, ZZ
+            from sage.rings.infinity import infinity
+            from sage.rings.integer_ring import ZZ
             if w(w.phi()) is infinity:
                 tester.assertEqual(w.E(), v.E())
             tester.assertIn(w.E(), ZZ)
@@ -803,7 +804,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         if check and not assume_squarefree and not G.is_squarefree():
             raise ValueError("G must be squarefree")
 
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         assert self(G) is not infinity # this is a valuation and G is non-zero
 
         ret = []
@@ -1105,7 +1106,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         R = self.equivalence_unit(-valuation)
         R = next(self.coefficients(R))
         fR_valuations = [vv - valuation for vv in valuations]
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         fR_coefficients = [next(self.coefficients(c * R))
                            if vv is not infinity and vv == 0 else 0
                            for c, vv in zip(coefficients, fR_valuations)]
@@ -1566,7 +1567,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
                 # check that augmentation produces a valuation with roots of F
                 # in the residue ring
-                from sage.rings.all import infinity
+                from sage.rings.infinity import infinity
                 w = self.augmentation(f, infinity)
                 F = F.change_ring(w.residue_ring())
                 roots = F.roots(multiplicities=False)

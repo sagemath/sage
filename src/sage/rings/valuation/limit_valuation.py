@@ -346,7 +346,7 @@ class LimitValuation_generic(DiscretePseudoValuation):
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2 , … ]
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         from .augmented_valuation import AugmentedValuation_base
         if self._initial_approximation(self._G) is not infinity:
             if isinstance(self._initial_approximation, AugmentedValuation_base):
@@ -489,7 +489,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
         """
         self._improve_approximation_for_call(f)
         if self._G.divides(f):
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             return infinity
         return self._approximation(f)
 
@@ -519,7 +519,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             [ Gauss valuation induced by 2-adic valuation, v(t + 1) = 1/2, v(t^2 + 1) = +Infinity ]
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if self._approximation(self._G) is infinity:
             # an infinite valuation can not be improved further
             return
@@ -585,7 +585,7 @@ class MacLaneLimitValuation(LimitValuation_generic, InfiniteDiscretePseudoValuat
             for all future computations.)
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if self._approximation(self._approximation.phi()) is infinity:
             # an infinite valuation can not be improved further
             return

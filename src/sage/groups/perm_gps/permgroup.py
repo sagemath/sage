@@ -1910,7 +1910,7 @@ class PermutationGroup_generic(FiniteGroup):
             True
         """
         if implementation == "gap":
-            if not base_of_group is None:
+            if base_of_group is not None:
                 raise ValueError("the optional argument 'base_of_group'"
                                  " (='%s') must be None if 'implementation'='gap'" % base_of_group)
 
@@ -3823,9 +3823,9 @@ class PermutationGroup_generic(FiniteGroup):
         from copy import copy
         from sage.categories.finite_permutation_groups import FinitePermutationGroups
 
-        if not side in ['right','left']:
+        if side not in ['right', 'left']:
             raise ValueError("side should be 'right' or 'left', not %s" % side)
-        if not S in FinitePermutationGroups():
+        if S not in FinitePermutationGroups():
             raise TypeError("%s is not a permutation group" % S)
         if not S.is_subgroup(self):
             raise ValueError("%s is not a subgroup of %s" % (S, self))
@@ -3836,9 +3836,9 @@ class PermutationGroup_generic(FiniteGroup):
         while group:
             rep = group[0]
             if side == 'right':
-                coset = [e*rep for e in subgroup]
+                coset = [e * rep for e in subgroup]
             if side == 'left':
-                coset = [rep*e for e in subgroup]
+                coset = [rep * e for e in subgroup]
             for e in coset:
                 group.remove(e)
             decomposition.append(coset)

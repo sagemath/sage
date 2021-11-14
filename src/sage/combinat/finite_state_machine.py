@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Finite State Machines, Automata, Transducers
+Finite state machines, automata, transducers
 
 This module adds support for finite state machines, automata and
 transducers.

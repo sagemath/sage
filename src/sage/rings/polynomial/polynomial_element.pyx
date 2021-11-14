@@ -104,7 +104,6 @@ from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.integer cimport Integer, smallInteger
 from sage.libs.gmp.mpz cimport *
 from sage.rings.fraction_field import is_FractionField
-from sage.rings.padics.generic_nodes import is_pAdicRing, is_pAdicField
 from sage.rings.padics.padic_generic import pAdicGeneric
 
 from sage.structure.category_object cimport normalize_names
@@ -7997,7 +7996,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
                     real_field = RealField(L.prec())
 
                 return self.change_ring(real_field).roots(ring=L, multiplicities=multiplicities, algorithm=algorithm)
-            elif (is_pAdicRing(L) or is_pAdicField(L)) and L.absolute_degree() == 1:
+            elif isinstance(L, (sage.rings.abc.pAdicRing, sage.rings.abc.pAdicField)) and L.absolute_degree() == 1:
                 p = L.prime()
                 n = L.precision_cap()
                 try:

@@ -418,6 +418,7 @@ from sage.rings.ring import Algebra
 from sage.structure.element import CommutativeAlgebraElement
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.defaults import series_precision
+import sage.rings.abc
 from sage.rings.all import RIF
 from .misc import WithLocals
 
@@ -2964,8 +2965,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         points = self.compare_with_values(variable, function,
                                           values, rescaled=rescaled, ring=ring)
 
-        from sage.rings.real_mpfi import RealIntervalField_class
-        if isinstance(ring, RealIntervalField_class):
+        if isinstance(ring, sage.rings.abc.RealIntervalField):
             if not all(p[1].relative_diameter() <= relative_tolerance for p in points):
                 raise ValueError('Numerical noise is too high, the '
                                  'comparison is inaccurate')

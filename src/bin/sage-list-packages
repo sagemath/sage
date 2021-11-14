@@ -91,16 +91,16 @@ else:
 if WARN:
     print(WARN)
 if args['installed_only']:
-    L = [pkg for pkg in L if pkg['installed']]
+    L = [pkg for pkg in L if pkg.is_installed()]
 elif args['not_installed_only']:
-    L = [pkg for pkg in L if not pkg['installed']]
+    L = [pkg for pkg in L if not pkg.is_installed()]
 
-L.sort(key=lambda pkg: pkg['name'])
+L.sort(key=lambda pkg: pkg.name)
 
 # print (while getting rid of None in versions)
 for pkg in L:
-    pkg['installed_version'] = pkg['installed_version'] or 'not_installed'
-    pkg['remote_version'] = pkg['remote_version'] or '?'
-    print(format_string.format(**pkg))
+    pkg.installed_version = pkg.installed_version or 'not_installed'
+    pkg.remote_version = pkg.remote_version or '?'
+    print(format_string.format(**pkg._asdict()))
 if WARN:
     print(WARN)

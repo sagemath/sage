@@ -16,12 +16,13 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ, QQ, AA, AlgebraicField, infinity, I, PolynomialRing, NumberField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
+from sage.rings.all import AA, AlgebraicField, I, PolynomialRing, NumberField
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.all", "cos", "exp, sec")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.gamma", "psi1")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.all", "pi")
 from sage.matrix.constructor import matrix
 from sage.misc.latex import latex

@@ -5,12 +5,12 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-10-17): Initial version
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
@@ -230,7 +230,7 @@ class HallAlgebra(CombinatorialFreeModule):
         self._q = q
         try:
             q_inverse = q**-1
-            if not q_inverse in base_ring:
+            if q_inverse not in base_ring:
                 hopf_structure = False
             else:
                 hopf_structure = True
@@ -580,7 +580,7 @@ class HallAlgebraMonomials(CombinatorialFreeModule):
         self._q = q
         try:
             q_inverse = q**-1
-            if not q_inverse in base_ring:
+            if q_inverse not in base_ring:
                 hopf_structure = False
             else:
                 hopf_structure = True

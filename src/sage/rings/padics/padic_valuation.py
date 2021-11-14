@@ -48,7 +48,7 @@ from sage.rings.valuation.mapped_valuation import FiniteExtensionFromLimitValuat
 from sage.structure.factory import UniqueFactory
 from sage.misc.cachefunc import cached_method
 
-from sage.rings.all import infinity
+from sage.rings.infinity import infinity
 
 class PadicValuationFactory(UniqueFactory):
     r"""
@@ -1068,7 +1068,7 @@ class pAdicValuation_padic(pAdicValuation_base):
 
         if error is None:
             error = self(x)
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if error is infinity:
             return x
         # we need to scale by the ramification index because p-adics use a
@@ -1245,7 +1245,7 @@ class pAdicValuation_int(pAdicValuation_base):
         v = self(x)
         if error is None:
             error = v
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if error is infinity:
             return x
         if error < v:
@@ -1326,7 +1326,7 @@ class pAdicValuation_int(pAdicValuation_base):
         if precision <= 0:
             return self.domain().one()
 
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if self(x) > 0 or precision is infinity:
             raise ValueError("element has no approximate inverse in this ring")
         

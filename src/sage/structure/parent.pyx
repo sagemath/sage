@@ -2812,9 +2812,16 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: [R._is_numerical() for R in [RIF, RBF, CIF, CBF]]
             [False, False, False, False]
         """
-        from sage.rings.complex_mpfr import ComplexField
-        from sage.rings.real_mpfr import mpfr_prec_min
-        return ComplexField(mpfr_prec_min()).has_coerce_map_from(self)
+        try:
+            from sage.rings.complex_mpfr import ComplexField
+            from sage.rings.real_mpfr import mpfr_prec_min
+        except ImportError:
+            pass
+        else:
+            return ComplexField(mpfr_prec_min()).has_coerce_map_from(self)
+
+        from sage.rings.real_double import CDF
+        return CDF.has_coerce_map_from(self)
 
     @cached_method
     def _is_real_numerical(self):
@@ -2833,8 +2840,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: [R._is_real_numerical() for R in [RIF, RBF, CIF, CBF]]
             [False, False, False, False]
         """
-        from sage.rings.real_mpfr import RealField, mpfr_prec_min
-        return RealField(mpfr_prec_min()).has_coerce_map_from(self)
+        try:
+            from sage.rings.real_mpfr import RealField, mpfr_prec_min
+        except ImportError:
+            pass
+        else:
+            return RealField(mpfr_prec_min()).has_coerce_map_from(self)
+
+        from sage.rings.real_double import RDF
+        return RDF.has_coerce_map_from(self)
 
 ############################################################################
 # Set base class --

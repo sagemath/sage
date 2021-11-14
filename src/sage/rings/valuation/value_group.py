@@ -28,7 +28,9 @@ EXAMPLES::
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import QQ, ZZ, infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
 from sage.misc.cachefunc import cached_method
 
 

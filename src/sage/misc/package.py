@@ -40,6 +40,7 @@ Functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from typing import Dict, List, NamedTuple, Optional, Union
 
 import sage.env
 
@@ -160,14 +161,13 @@ def pip_installed_packages(normalization=None):
         )
         stdout = proc.communicate()[0].decode()
 
-        def normalize(name):
+        def normalize(name: str) -> str:
             if normalization is None:
                 return name
             elif normalization == 'spkg':
                 return name.lower().replace('-', '_').replace('.', '_')
             else:
                 raise NotImplementedError(f'normalization {normalization} is not implemented')
-
         try:
             return {normalize(package['name']): package['version']
                     for package in json.loads(stdout)}
@@ -176,12 +176,56 @@ def pip_installed_packages(normalization=None):
             # This may happen if pip is not correctly installed.
             return {}
 
-def list_packages(*pkg_types, **opts):
+
+class PackageInfo(NamedTuple):
+    """Represents information about a package."""
+    name: str
+    type: Optional[str] = None
+    source: Optional[str] = None
+    installed_version: Optional[str] = None
+    remote_version: Optional[str] = None
+
+    def is_installed(self) -> bool:
+        r"""
+        Whether the package is installed in the system.
+        """
+        return self.installed_version is not None
+
+    def __getitem__(self, key: Union[int, str]):
+        r"""
+        Only for backwards compatibility to allow dict-like access.
+
+        TESTS::
+
+            sage: from sage.misc.package import PackageInfo
+            sage: package = PackageInfo("test_package")
+            sage: package["name"]
+            doctest:warning...
+            dict-like access is deprecated, use pkg.name instead of pkg['name'], for example
+            See https://trac.sagemath.org/31013 for details.
+            'test_package'
+            sage: package[0]
+            'test_package'
+        """
+        if isinstance(key, str):
+            from sage.misc.superseded import deprecation
+
+            if key == "installed":
+                deprecation(31013, "dict-like access via 'installed' is deprecated, use method is_installed instead")
+                return self.is_installed()
+            else:
+                deprecation(31013, "dict-like access is deprecated, use pkg.name instead of pkg['name'], for example")
+                return self.__getattribute__(key)
+        else:
+            return tuple.__getitem__(self, key)
+
+
+def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 'script'],
+                  local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> Dict[str, PackageInfo]:
     r"""
     Return a dictionary of information about each package.
 
-    The keys are package names and values are dictionaries with the following
-    keys:
+    The keys are package names and values are named tuples with the following keys:
 
     - ``'type'``: either ``'base``, ``'standard'``, ``'optional'``, or ``'experimental'``
     - ``'source'``: either ``'normal', ``'pip'``, or ``'script'``
@@ -213,32 +257,32 @@ def list_packages(*pkg_types, **opts):
     EXAMPLES::
 
         sage: from sage.misc.package import list_packages
-        sage: L = list_packages('standard')  # optional - build
-        sage: sorted(L.keys())  # optional - build, random
+        sage: L = list_packages('standard')    # optional - build
+        sage: sorted(L.keys())                 # optional - build, random
         ['alabaster',
          'arb',
          'babel',
          ...
          'zn_poly']
         sage: sage_conf_info = L['sage_conf']  # optional - build
-        sage: sage_conf_info['type'] # optional - build
+        sage: sage_conf_info.type              # optional - build
         'standard'
-        sage: sage_conf_info['installed'] # optional - build
+        sage: sage_conf_info.is_installed()    # optional - build
         True
-        sage: sage_conf_info['source'] # optional - build
+        sage: sage_conf_info.source            # optional - build
         'script'
 
         sage: L = list_packages(pkg_sources=['pip'], local=True)  # optional - build internet
         sage: bs4_info = L['beautifulsoup4'] # optional - build internet
-        sage: bs4_info['type'] # optional - build internet
+        sage: bs4_info.type                    # optional - build internet
         'optional'
-        sage: bs4_info['source'] # optional - build internet
+        sage: bs4_info.source                  # optional - build internet
         'pip'
 
     Check the option ``exclude_pip``::
 
         sage: [p for p, d in list_packages('optional', exclude_pip=True).items()  # optional - build
-        ....:  if d['source'] == 'pip']
+        ....:  if d.source == 'pip']
         []
     """
     if not pkg_types:
@@ -246,21 +290,13 @@ def list_packages(*pkg_types, **opts):
     elif any(pkg_type not in ('base', 'standard', 'optional', 'experimental') for pkg_type in pkg_types):
         raise ValueError("Each pkg_type must be one of 'base', 'standard', 'optional', 'experimental'")
 
-    pkg_sources = opts.pop('pkg_sources',
-                           ('normal', 'pip', 'script'))
-
-    local = opts.pop('local', False)
-    ignore_URLError = opts.pop('ignore_URLError', False)
-    exclude_pip = opts.pop('exclude_pip', False)
     if exclude_pip:
         pkg_sources = [s for s in pkg_sources if s != 'pip']
-    if opts:
-        raise ValueError("{} are not valid options".format(sorted(opts)))
 
-    pkgs = {p: {'name': p, 'installed_version': v, 'installed': True,
-                'remote_version': None, 'source': None}
+    pkgs = {p: PackageInfo(name=p, installed_version=v)
             for p, v in installed_packages('pip' not in pkg_sources).items()}
 
+    # Add additional information based on Sage's package repository
     lp = []
     SAGE_PKGS = sage.env.SAGE_PKGS
     if not SAGE_PKGS:
@@ -289,33 +325,29 @@ def list_packages(*pkg_types, **opts):
         else:
             src = 'script'
 
-        pkg = pkgs.get(p, dict())
-        pkgs[p] = pkg
-
         if typ not in pkg_types or src not in pkg_sources:
-            del pkgs[p]
+            try:
+                del pkgs[p]
+            except KeyError:
+                pass
             continue
 
-        pkg.update({'name': p, 'type': typ, 'source': src})
-        if pkg.get('installed_version', None):
-            pkg['installed'] = True
-        else:
-            pkg['installed'] = False
-            pkg['installed_version'] = None
-
-        if pkg['source'] == 'pip':
+        if src == 'pip':
             if not local:
-                pkg['remote_version'] = pip_remote_version(p, ignore_URLError=ignore_URLError)
+                remote_version = pip_remote_version(p, ignore_URLError=ignore_URLError)
             else:
-                pkg['remote_version'] = None
-        elif pkg['source'] == 'normal':
+                remote_version = None
+        elif src == 'normal':
             # If package-version.txt does not exist, that is an error
             # in the build system => we just propagate the exception
             package_filename = os.path.join(SAGE_PKGS, p, "package-version.txt")
             with open(package_filename) as f:
-                pkg['remote_version'] = f.read().strip()
+                remote_version = f.read().strip()
         else:
-            pkg['remote_version'] = 'none'
+            remote_version = None
+
+        pkg = pkgs.get(p, PackageInfo(name=p))
+        pkgs[p] = PackageInfo(p, typ, src, pkg.installed_version, remote_version)
 
     return pkgs
 
@@ -444,7 +476,7 @@ def package_versions(package_type, local=False):
         sage: std['zn_poly']  # optional - build, random
         ('0.9.p12', '0.9.p12')
     """
-    return {pkg['name']: (pkg['installed_version'], pkg['remote_version']) for pkg in list_packages(package_type, local=local).values()}
+    return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 
 
 def standard_packages():
@@ -477,8 +509,8 @@ def standard_packages():
                 'the functions standard_packages, optional_packages, experimental_packages'
                 'are deprecated, use sage.features instead')
     pkgs = list_packages('standard', local=True).values()
-    return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
-            sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
+    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
+            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
 
 
 def optional_packages():
@@ -515,8 +547,8 @@ def optional_packages():
                 'are deprecated, use sage.features instead')
     pkgs = list_packages('optional', local=True)
     pkgs = pkgs.values()
-    return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
-            sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
+    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
+            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
 
 
 def experimental_packages():
@@ -547,8 +579,8 @@ def experimental_packages():
                 'the functions standard_packages, optional_packages, experimental_packages'
                 'are deprecated, use sage.features instead')
     pkgs = list_packages('experimental', local=True).values()
-    return (sorted(pkg['name'] for pkg in pkgs if pkg['installed']),
-            sorted(pkg['name'] for pkg in pkgs if not pkg['installed']))
+    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
+            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
 
 def package_manifest(package):
     """

@@ -1640,14 +1640,13 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
         sage: TestSuite(f).run()
 
     """
-    def __init__(self, parent, check = True):
+    def __init__(self, parent, check=True):
         r"""
         TESTS:
 
             sage: from sage.rings.morphism import RingHomomorphism_coercion
             sage: parent = Hom(ZZ,ZZ)
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent) # py2
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent) # py3
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
             doctest:warning
             ...
             DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.

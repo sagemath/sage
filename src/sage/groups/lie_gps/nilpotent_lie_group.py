@@ -26,7 +26,7 @@ lazy_import("sage.manifolds.structure", ("DifferentialStructure", "RealDifferent
 from sage.misc.cachefunc import cached_method
 from sage.misc.repr import repr_lincomb
 from sage.modules.free_module_element import vector
-from sage.rings.real_mpfr import RealField_class
+import sage.rings.abc
 from sage.structure.element import MultiplicativeGroupElement
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR", "var")
@@ -230,7 +230,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         R = L.base_ring()
         category = kwds.pop('category', None)
         category = LieGroups(R).or_subcategory(category)
-        if isinstance(R, RealField_class):
+        if isinstance(R, sage.rings.abc.RealField):
             structure = RealDifferentialStructure()
         else:
             structure = DifferentialStructure()

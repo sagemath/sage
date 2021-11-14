@@ -1498,11 +1498,11 @@ class HillCryptosystem(SymmetricKeyCryptosystem):
         """
         S = self.plaintext_space()
         M = self.key_space()
-        if not A in M:
+        if A not in M:
             raise TypeError("A (= %s) must be a matrix in the key space of %s." % (A, self))
         m = self.block_length()
         MatZZ = MatrixSpace(ZZ, m)
-        AZ = MatZZ([ [ A[i, j].lift() for j in range(m) ] for i in range(m) ])
+        AZ = MatZZ([[A[i, j].lift() for j in range(m)] for i in range(m)])
         AZ_adj = AZ.adjugate()
         u, r, s = xgcd(A.det().lift(), S.ngens())
         if u != 1:
@@ -3396,7 +3396,7 @@ class TranspositionCryptosystem(SymmetricKeyCryptosystem):
             True
         """
         if check:
-            if not K in self.key_space():
+            if K not in self.key_space():
                 raise TypeError("Argument K (= %s) is not in the key space." % K)
         return K**-1
 

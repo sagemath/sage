@@ -407,7 +407,7 @@ class Posets(Category):
                 ....:     for P in P4)
                 True
             """
-            if not v in I:
+            if v not in I:
                 if all(u in I for u in self.lower_covers(v)):
                     from sage.sets.set import Set
                     return I.union(Set({v}))

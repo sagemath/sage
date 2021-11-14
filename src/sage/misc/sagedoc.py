@@ -571,7 +571,6 @@ def process_mathtt(s):
         s = s[:start] + s[start+8:end] + s[end+1:]
     return s
 
-
 def format(s, embedded=False):
     r"""noreplace
     Format Sage documentation ``s`` for viewing with IPython.
@@ -746,7 +745,6 @@ def format(s, embedded=False):
         s = process_extlinks(s, embedded=embedded)
         s = detex(s, embedded=embedded)
     return s
-
 
 def format_src(s):
     """
@@ -959,7 +957,6 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
                                      # formatted for Jupyter use
     })
 
-
 def search_src(string, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
     r"""
@@ -1136,7 +1133,6 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
                               extra3=extra3, extra4=extra4, extra5=extra5,
                               **kwds)
 
-
 def search_doc(string, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
     r"""
@@ -1304,7 +1300,6 @@ def format_search_as_html(what, results, search):
     append('</font>')
     append('</html>')
     return ''.join(s)
-
 
 
 #######################################

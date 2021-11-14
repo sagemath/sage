@@ -842,6 +842,6 @@ class PythonModule(Feature):
         import importlib
         try:
             importlib.import_module(self.name)
-        except ImportError:
-            return FeatureTestResult(self, False, reason="Failed to import `{name}`.".format(name=self.name))
-        return FeatureTestResult(self, True, reason="Successfully imported `{name}`.".format(name=self.name))
+        except ImportError as exception:
+            return FeatureTestResult(self, False, reason=f"Failed to import `{self.name}`: {exception}")
+        return FeatureTestResult(self, True, reason=f"Successfully imported `{self.name}`.")

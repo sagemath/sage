@@ -110,6 +110,10 @@ except ImportError:
     pari_gen = ()
 
 
+set_rational_from_gen = None
+new_gen_from_rational = None
+
+
 cdef sage.rings.fast_arith.arith_int ai
 ai = sage.rings.fast_arith.arith_int()
 
@@ -650,7 +654,9 @@ cdef class Rational(sage.structure.element.FieldElement):
             mpq_canonicalize(self.value)
 
         elif isinstance(x, pari_gen):
-            from sage.libs.pari.convert_sage import set_rational_from_gen
+            global set_rational_from_gen
+            if set_rational_from_gen is None:
+                from sage.libs.pari.convert_sage import set_rational_from_gen
             set_rational_from_gen(self, x)
 
         elif isinstance(x, list) and len(x) == 1:
@@ -3777,7 +3783,9 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: m.type()
             't_FRAC'
         """
-        from sage.libs.pari.convert_sage import new_gen_from_rational
+        global new_gen_from_rational
+        if new_gen_from_rational is None:
+            from sage.libs.pari.convert_sage import new_gen_from_rational
         return new_gen_from_rational(self)
 
     def _interface_init_(self, I=None):
@@ -4297,3 +4305,8 @@ cdef class long_to_Q(Morphism):
             'Native'
         """
         return "Native"
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Rational.register(Rational)

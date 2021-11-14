@@ -173,6 +173,12 @@ call individually::
 """
 
 def _get_pari_instance():
+    """
+    TESTS::
+
+        sage: pari  # indirect doctest
+        Interface to the PARI C library
+    """
     from cypari2 import Pari
     stack_initial = 1024*1024
     stack_max = 1024*stack_initial

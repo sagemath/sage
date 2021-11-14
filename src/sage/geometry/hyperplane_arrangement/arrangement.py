@@ -689,7 +689,7 @@ class HyperplaneArrangementElement(Element):
         EXAMPLES::
 
             sage: L.<x, y> = HyperplaneArrangements(QQ)
-            sage: L(x, y, x+y-2).plot()
+            sage: L(x, y, x+y-2).plot()  # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         from sage.geometry.hyperplane_arrangement.plot import plot
@@ -1690,7 +1690,7 @@ class HyperplaneArrangementElement(Element):
             (6, 21, 16)
             sage: A.vertices()
             ((-2/3, 1/3), (-1/3, -1/3), (0, -1), (0, 0), (1/3, -2/3), (2/3, -1/3))
-            sage: point2d(A.vertices(), size=20) + A.plot()
+            sage: point2d(A.vertices(), size=20) + A.plot()  # optional - sage.plot
             Graphics object consisting of 7 graphics primitives
 
             sage: H.<x,y> = HyperplaneArrangements(QQ)

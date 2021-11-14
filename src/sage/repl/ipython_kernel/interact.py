@@ -140,9 +140,7 @@ class sage_interactive(interactive):
 
             sage: from sage.repl.ipython_kernel.interact import sage_interactive
             sage: def myfunc(x=[1,2,3], auto_update=False): pass
-            sage: sage_interactive(myfunc).signature().parameters  # py2
-            OrderedDict([('x', <Parameter ... 'x'>)])
-            sage: sage_interactive(myfunc).signature().parameters  # py3
+            sage: sage_interactive(myfunc).signature().parameters
             mappingproxy({'x': <Parameter "x=[1, 2, 3]">})
         """
         return self.__signature
@@ -203,9 +201,7 @@ class sage_interactive(interactive):
             IntSlider(value=5, description=u'number', max=10)
             sage: sage_interactive.widget_from_tuple( (3, (0, 10)) )
             IntSlider(value=3, max=10)
-            sage: sage_interactive.widget_from_tuple((2, dict(one=1, two=2, three=3))) # py2
-            Dropdown(index=1, options={'three': 3, 'two': 2, 'one': 1}, value=2)
-            sage: sage_interactive.widget_from_tuple((2, dict(one=1, two=2, three=3))) # py3
+            sage: sage_interactive.widget_from_tuple((2, dict(one=1, two=2, three=3)))
             Dropdown(index=1, options={'one': 1, 'two': 2, 'three': 3}, value=2)
             sage: sage_interactive.widget_from_tuple( (sqrt(2), pi) )
             FloatSlider(value=2.277903107981444, max=3.141592653589793, min=1.4142135623730951)

@@ -122,8 +122,7 @@ import sage.rings.abc
 from sage.rings.ring import is_Ring
 from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
+from sage.rings.abc import RealDoubleField, ComplexDoubleField
 
 from sage.rings.ring cimport Ring
 from sage.rings.integer cimport Integer, smallInteger
@@ -476,23 +475,32 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     # We first efficiently handle the important special case of the zero vector
     # over a ring. See trac 11657.
     # !! PLEASE DO NOT MOVE THIS CODE LOWER IN THIS FUNCTION !!
-    if arg2 is None and is_Ring(arg0) and (isinstance(arg1, (int, long, Integer))):
+    arg1_integer = isinstance(arg1, (int, long, Integer))
+    if arg2 is None and is_Ring(arg0) and arg1_integer:
         M = FreeModule(arg0, arg1, bool(sparse))
         v = M.zero_vector()
         if immutable:
             v.set_immutable()
         return v
 
-    # WARNING TO FUTURE OPTIMIZERS: The following two hasattr's take
+    # The try...except is slightly faster than testing with hasattr first
     # quite a significant amount of time.
-    if hasattr(arg0, '_vector_'):
-        v = arg0._vector_(arg1)
+    try:
+        arg0_vector_ = arg0._vector_
+    except AttributeError:
+        pass
+    else:
+        v = arg0_vector_(arg1)
         if immutable:
             v.set_immutable()
         return v
 
-    if hasattr(arg1, '_vector_'):
-        v = arg1._vector_(arg0)
+    try:
+        arg1_vector_ = arg1._vector_
+    except AttributeError:
+        pass
+    else:
+        v = arg1_vector_(arg0)
         if immutable:
             v.set_immutable()
         return v
@@ -500,7 +508,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     # consider a possible degree specified in second argument
     degree = None
     maxindex = None
-    if isinstance(arg1, (Integer, int, long)):
+    if arg1_integer:
         if arg1 < 0:
             raise ValueError("cannot specify the degree of a vector as a negative integer (%s)" % arg1)
         if isinstance(arg2, dict):
@@ -531,27 +539,33 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         v = arg0
         R = None
 
-    from numpy import ndarray
-    if isinstance(v, ndarray):
-        if len(v.shape) != 1:
-            raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
-        from .free_module import VectorSpace
-        if (R is None or R is RDF) and v.dtype.kind == 'f':
-            V = VectorSpace(RDF, v.shape[0])
-            from .vector_real_double_dense import Vector_real_double_dense
-            v = Vector_real_double_dense(V, v)
-            if immutable:
-                v.set_immutable()
-            return v
-        if (R is None or R is CDF) and v.dtype.kind == 'c':
-            V = VectorSpace(CDF, v.shape[0])
-            from .vector_complex_double_dense import Vector_complex_double_dense
-            v = Vector_complex_double_dense(V, v)
-            if immutable:
-                v.set_immutable()
-            return v
-        # Use slower conversion via list
-        v = list(v)
+    try:
+        from numpy import ndarray
+    except ImportError:
+        pass
+    else:
+        if isinstance(v, ndarray):
+            if len(v.shape) != 1:
+                raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
+            from .free_module import VectorSpace
+            if (R is None or isinstance(R, RealDoubleField)) and v.dtype.kind == 'f':
+                from sage.rings.real_double import RDF
+                V = VectorSpace(RDF, v.shape[0])
+                from .vector_real_double_dense import Vector_real_double_dense
+                v = Vector_real_double_dense(V, v)
+                if immutable:
+                    v.set_immutable()
+                return v
+            if (R is None or isinstance(R, ComplexDoubleField)) and v.dtype.kind == 'c':
+                from sage.rings.complex_double import CDF
+                V = VectorSpace(CDF, v.shape[0])
+                from .vector_complex_double_dense import Vector_complex_double_dense
+                v = Vector_complex_double_dense(V, v)
+                if immutable:
+                    v.set_immutable()
+                return v
+            # Use slower conversion via list
+            v = list(v)
 
     if isinstance(v, dict):
         if degree is None:

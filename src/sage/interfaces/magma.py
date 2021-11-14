@@ -373,7 +373,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: m.set_seed(1) # optional - magma
             1
             sage: [m.Random(100) for i in range(5)] # optional - magma
-            [13, 55, 84, 100, 37]
+            [14, 81, 45, 75, 67]
         """
         if seed is None:
             seed = self.rand_seed()
@@ -2318,7 +2318,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             sage: R.<x> = QQ[]
             sage: f = magma(x^2 + 2/3*x + 5)                 # optional - magma
             sage: f                                          # optional - magma
-            x^2 + 2/3*x + 5
+            t^2 + 2/3*t + 5
             sage: f.Type()                                   # optional - magma
             RngUPolElt
             sage: f._polynomial_(R)                          # optional - magma
@@ -2626,13 +2626,27 @@ class MagmaElement(ExtraTabCompletion, ExpectElement):
             True
             sage: bool(magma(0))                          # optional - magma
             False
+            
+        TESTS::
+        
+        Verify that :trac:`32602` is fixed::
+        
+            sage: magma("1 eq 0").bool()                  # optional - magma
+            False
+            sage: magma("1 eq 1").bool()                  # optional - magma
+            True
+            sage: Q.<x> = PolynomialRing(GF(3))           
+            sage: u = x^6+x^4+2*x^3+2*x+1 
+            sage: F0 = magma.FunctionField(GF(3))         # optional - magma
+            sage: bool(F0.1)                              # optional - magma
+            True
         """
         try:
-            return not self.parent()("%s eq 0" % self.name()).bool()
+            return str(self.parent()("%s eq 0" % self.name())) == "false"
         except TypeError:
-            # comparing with 0 didn't work; try comparing with
+            # comparing with 0 didn't work; try comparing with false
             try:
-                return not self.parent()("%s eq false" % self.name()).bool()
+                return str(self.parent()("%s eq false" % self.name())) == "false"
             except TypeError:
                 pass
         return True

@@ -264,11 +264,13 @@ def rat_interval_cf_list(r1, r2):
         sage: rat_interval_cf_list(257/113, 5224/2297)
         [2, 3, 1, 1, 1, 4]
         sage: for prec in range(10,54):
-        ....:     R = RealIntervalField(20)
+        ....:     R = RealIntervalField(prec)
         ....:     for _ in range(100):
         ....:         x = R.random_element() * R.random_element() + R.random_element() / 100
         ....:         l = x.lower().exact_rational()
         ....:         u = x.upper().exact_rational()
+        ....:         if l.floor() != u.floor():
+        ....:             continue
         ....:         cf = rat_interval_cf_list(l,u)
         ....:         a = continued_fraction(cf).value()
         ....:         b = continued_fraction(cf+[1]).value()
@@ -2452,12 +2454,11 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
 
     cf = None
 
-    from sage.rings.real_arb import RealBallField
-    from sage.rings.real_mpfi import RealIntervalField, RealIntervalField_class
     from sage.rings.real_mpfr import RealLiteral
     if isinstance(x, RealLiteral):
+        from sage.rings.real_mpfi import RealIntervalField
         x = RealIntervalField(x.prec())(x)
-    if isinstance(x.parent(), (RealIntervalField_class, RealBallField)):
+    if isinstance(x.parent(), (sage.rings.abc.RealIntervalField, sage.rings.abc.RealBallField)):
         cf = continued_fraction(rat_interval_cf_list(
                  x.lower().exact_rational(),
                  x.upper().exact_rational()))
@@ -2665,8 +2666,8 @@ def continued_fraction(x, value=None):
     except AttributeError:
         pass
 
-    from .real_mpfi import RealIntervalField
     if is_real is False:
+        from .real_mpfi import RealIntervalField
         # we cannot rely on the answer of .is_real() for elements of the
         # symbolic ring. The thing below is a dirty temporary hack.
         RIF = RealIntervalField(53)

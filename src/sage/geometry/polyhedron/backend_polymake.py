@@ -96,9 +96,12 @@ class Polyhedron_polymake(Polyhedron_base):
 
     Quadratic fields work::
 
-        sage: V = polytopes.dodecahedron().vertices_list()
-        sage: Polyhedron(vertices=V, backend='polymake')                   # optional - polymake
-        A 3-dimensional polyhedron in (Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?)^3 defined as the convex hull of 20 vertices
+        sage: V = polytopes.dodecahedron().vertices_list()                                        # optional - sage.rings.number_field
+        sage: Polyhedron(vertices=V, backend='polymake')                   # optional - polymake  # optional - sage.rings.number_field
+        A 3-dimensional polyhedron
+         in (Number Field in sqrt5 with defining polynomial x^2 - 5
+             with sqrt5 = 2.236067977499790?)^3
+         defined as the convex hull of 20 vertices
 
     TESTS:
 
@@ -662,11 +665,11 @@ class Polyhedron_polymake(Polyhedron_base):
             sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)                          # optional - polymake
             sage: P._test_polymake_pickling(other=P2)                                                               # optional - polymake
 
-            sage: print("Possible output"); P = polytopes.dodecahedron(backend='polymake')  # optional - polymake
+            sage: print("Possible output"); P = polytopes.dodecahedron(backend='polymake')  # optional - polymake  # optional - sage.rings.number_field
             Possible output...
-            sage: P1 = loads(dumps(P))                                                      # optional - polymake
-            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)  # optional - polymake
-            sage: P._test_polymake_pickling(other=P2)                                       # optional - polymake
+            sage: P1 = loads(dumps(P))                                                      # optional - polymake  # optional - sage.rings.number_field
+            sage: P2 = Polyhedron_polymake(P1.parent(), None, None, P1._polymake_polytope)  # optional - polymake  # optional - sage.rings.number_field
+            sage: P._test_polymake_pickling(other=P2)                                       # optional - polymake  # optional - sage.rings.number_field
         """
         if "_pickle_vertices" in state[1]:
             vertices = state[1].pop("_pickle_vertices")

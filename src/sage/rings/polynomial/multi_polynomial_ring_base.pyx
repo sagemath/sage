@@ -990,7 +990,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
             sage: R = QQ['x,y']
             sage: S = R['t,u']
-            sage: f = S.random_element(degree=2, terms=1)
+            sage: f = S._random_nonzero_element(degree=2, terms=1)
             sage: len(list(f))
             1
             sage: f.degree() <= 2

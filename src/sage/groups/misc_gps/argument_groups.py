@@ -46,7 +46,7 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.parent import Parent
 from sage.structure.richcmp import richcmp_by_eq_and_lt
 from sage.structure.unique_representation import UniqueRepresentation
-
+import sage.rings.abc
 
 class AbstractArgument(MultiplicativeGroupElement):
     r"""
@@ -1870,13 +1870,13 @@ class ArgumentGroupFactory(UniqueFactory):
 
         if domain is not None:
             if domain in (ZZ, QQ, AA) \
-               or isinstance(domain, (RealField_class,
-                                      RealIntervalField_class,
-                                      RealBallField)):
+               or isinstance(domain, (sage.rings.abc.RealField,
+                                      sage.rings.abc.RealIntervalField,
+                                      sage.rings.abc.RealBallField)):
                 return (SignGroup, ()), kwds
-            elif isinstance(domain, (ComplexField_class,
-                                     ComplexIntervalField_class,
-                                     ComplexBallField)):
+            elif isinstance(domain, (sage.rings.abc.ComplexField,
+                                     sage.rings.abc.ComplexIntervalField,
+                                     sage.rings.abc.ComplexBallField)):
                 return (UnitCircleGroup, (domain._real_field(),)), kwds
             else:
                 return (ArgumentByElementGroup, (domain,)), kwds

@@ -2013,7 +2013,7 @@ class Func_jacobi_P(OrthogonalFunction):
             return legendre_P(n, x)
         if SR(n).is_numeric() and not (n > -1):
             raise ValueError("n must be greater than -1, got n = {0}".format(n))
-        if not n in ZZ:
+        if n not in ZZ:
             return
         from .gamma import gamma
         s = sum(binomial(n,m) * gamma(a+b+n+m+1) / gamma(a+m+1) * ((x-1)/2)**m for m in range(n+1))

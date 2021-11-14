@@ -803,8 +803,11 @@ cdef init_libsingular():
 
     error_messages = []
 
-# call the init routine
+# Save/restore the PATH because libSingular clobbers it:
+# https://github.com/Singular/Singular/issues/1119
+saved_PATH = os.environ["PATH"]
 init_libsingular()
+os.environ["PATH"] = saved_PATH
 
 cdef void libsingular_error_callback(const_char_ptr s):
     _s = char_to_str(s)

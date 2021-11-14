@@ -2133,7 +2133,7 @@ class PolymakeExpect(PolymakeAbstract, Expect):
         If polymake raises an error, the polymake *interface* raises
         a :class:`PolymakeError`::
 
-            sage: polymake.eval('FOOBAR(3);')       # optional - polymake
+            sage: polymake.eval('FOOBAR(3);')       # optional - polymake_expect
             Traceback (most recent call last):
             ...
             PolymakeError: Undefined subroutine &Polymake::User::FOOBAR called...
@@ -2141,17 +2141,17 @@ class PolymakeExpect(PolymakeAbstract, Expect):
         If a command is incomplete, then polymake returns a continuation
         prompt. In that case, we raise an error::
 
-            sage: polymake.eval('print 3')          # optional - polymake
+            sage: polymake.eval('print 3')          # optional - polymake_expect
             Traceback (most recent call last):
             ...
             SyntaxError: Incomplete polymake command 'print 3'
-            sage: polymake.eval('print 3;')         # optional - polymake
+            sage: polymake.eval('print 3;')         # optional - polymake_expect
             '3'
 
         However, if the command contains line breaks but eventually is complete,
         no error is raised::
 
-            sage: print(polymake.eval('$tmp="abc";\nprint $tmp;'))  # optional - polymake
+            sage: print(polymake.eval('$tmp="abc";\nprint $tmp;'))  # optional - polymake_expect
             abc
 
         When requesting help, polymake sometimes expect the user to choose
@@ -2159,7 +2159,7 @@ class PolymakeExpect(PolymakeAbstract, Expect):
         the list from which the user can choose; we could demonstrate this using
         the :meth:`help` method, but here we use an explicit code evaluation::
 
-            sage: print(polymake.eval('help "TRIANGULATION";'))     # optional - polymake # random
+            sage: print(polymake.eval('help "TRIANGULATION";'))     # optional - polymake_expect # random
             doctest:warning
             ...
             UserWarning: Polymake expects user interaction. We abort and return

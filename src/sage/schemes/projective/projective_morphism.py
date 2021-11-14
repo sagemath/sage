@@ -75,6 +75,7 @@ from sage.ext.fast_callable import fast_callable
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.functions", "jacobian")
 
+import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
 from sage.rings.complex_mpfr import ComplexField_class
@@ -988,14 +989,13 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             self.scale_by(R(1) / GCD)
 
         # scales by 1/gcd of the coefficients.
-        from sage.rings.padics.generic_nodes import is_pAdicField
         if R in _NumberFields:
             O = R.maximal_order()
         elif is_FiniteField(R):
             O = R
         elif isinstance(R, QuotientRing_generic):
             O = R.ring()
-        elif is_pAdicField(R):
+        elif isinstance(R, sage.rings.abc.pAdicField):
             O = R.integer_ring()
         else:
             O = R
@@ -1606,9 +1606,8 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             raise TypeError("must be an endomorphism of projective space")
         if Q not in self.codomain():
             raise TypeError("point must be in codomain of self")
-        if isinstance(BR.base_ring(), (ComplexField_class, RealField_class,
-                                       RealIntervalField_class,
-                                       ComplexIntervalField_class)):
+        if isinstance(BR.base_ring(), (sage.rings.abc.ComplexField, sage.rings.abc.RealField,
+                                       sage.rings.abc.RealIntervalField, sage.rings.abc.ComplexIntervalField)):
             raise NotImplementedError("not implemented over precision fields")
         PS = self.domain().ambient_space()
         N = PS.dimension_relative()
