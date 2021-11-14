@@ -77,8 +77,6 @@ from sage.calculus.functions import jacobian
 import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
-from sage.rings.complex_mpfr import ComplexField_class
-from sage.rings.complex_interval_field import ComplexIntervalField_class
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -89,8 +87,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealField_class
-from sage.rings.real_mpfi import RealIntervalField_class
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 

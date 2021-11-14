@@ -1825,16 +1825,10 @@ class ArgumentGroupFactory(UniqueFactory):
             sage: ArgumentGroup('Arg_CC') is ArgumentGroup(domain=CC)  # indirect doctest
             True
         """
-        from sage.rings.complex_arb import ComplexBallField
-        from sage.rings.complex_mpfr import ComplexField_class
-        from sage.rings.complex_interval_field import ComplexIntervalField_class
         from sage.rings.integer_ring import ZZ
         from sage.misc.misc import exactly_one_is_true
         from sage.rings.qqbar import AA
         from sage.rings.rational_field import QQ
-        from sage.rings.real_arb import RealBallField
-        from sage.rings.real_mpfr import RealField_class
-        from sage.rings.real_mpfi import RealIntervalField_class
 
         if not exactly_one_is_true(
                 (data is not None,

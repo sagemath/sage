@@ -21,8 +21,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import (AA, RLF, PolynomialRing)
 from sage.rings.rational_field import is_RationalField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from .con_field import ProjectiveConic_field
 
 
@@ -343,6 +343,9 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             if self._local_obstruction is None:
                 from sage.categories.map import Map
                 from sage.categories.all import Rings
+                from sage.rings.qqbar import AA
+                from sage.rings.real_lazy import RLF
+
                 if not (isinstance(p, Map) and p.category_for().is_subcategory(Rings())) or p.codomain() is AA or p.codomain() is RLF:
                     self._local_obstruction = p
             return False
@@ -387,6 +390,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             if read_cache and self._infinite_obstructions is not None:
                 obs0 = self._infinite_obstructions
             else:
+                from sage.rings.qqbar import AA
                 for b in B.embeddings(AA):
                     if not self.is_locally_solvable(b):
                         obs0.append(b)
