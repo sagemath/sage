@@ -75,7 +75,7 @@ from sage.ext.fast_callable import fast_callable
 from sage.calculus.functions import jacobian
 
 import sage.rings.abc
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
 from sage.rings.complex_mpfr import ComplexField_class
 from sage.rings.complex_interval_field import ComplexIntervalField_class
@@ -91,7 +91,6 @@ from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RealField_class
 from sage.rings.real_mpfi import RealIntervalField_class
-import sage.rings.abc
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 

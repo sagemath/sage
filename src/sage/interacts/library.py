@@ -65,12 +65,13 @@ from sage.rings.integer import Integer
 from sage.symbolic.constants import pi
 from sage.symbolic.relation import solve
 from sage.symbolic.ring import SR
-import math
 
 x = SR.var('x')
 
 # It is important that this file is lazily imported for this to work
 from sage.repl.user_globals import get_global
+
+assert get_global  # to suppress pyflakes warning
 
 from sage.repl.ipython_kernel.all_jupyter import (interact, checkbox,
     input_box, input_grid, range_slider, selector, slider, text_control)
@@ -1612,7 +1613,7 @@ def cellular_automaton(
           rule_number: IntSlider(value=110, description=u'Rule number', max=255)
           size: IntSlider(value=6, description=u'size of graphic', max=11, min=1)
     """
-    from sage.all import Integer
+    from sage.rings.integer import Integer
     if not 0 <= rule_number <= 255:
         raise ValueError('Invalid rule number')
     binary_digits = Integer(rule_number).digits(base=2)
@@ -1682,7 +1683,7 @@ def polar_prime_spiral(
 
     start, end = interval
     from sage.ext.fast_eval import fast_float
-    from math import floor, ceil
+    from math import ceil
     from sage.plot.colors import hue
 
     if start < 1 or end <= start:

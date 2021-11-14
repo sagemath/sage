@@ -1149,7 +1149,7 @@ class pAdicValuation_int(pAdicValuation_base):
             Finite Field of size 3
 
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         return GF(self.p())
 
     def _ge_(self, other):

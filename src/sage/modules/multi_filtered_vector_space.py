@@ -43,7 +43,7 @@ from sage.rings.all import QQ, ZZ, Integer
 from sage.rings.infinity import infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.modules.filtered_vector_space import FilteredVectorSpace
 
 

@@ -2821,7 +2821,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     """
 
     # sanitize input
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     pegs = Integer(pegs)
     if pegs < 2:
         raise ValueError("Pegs for Tower of Hanoi graph should be two or greater (not %d)" % pegs)

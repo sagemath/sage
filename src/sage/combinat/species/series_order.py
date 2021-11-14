@@ -11,7 +11,7 @@ http://www.risc.uni-linz.ac.at/people/hemmecke/aldor/combinat/index.html.
 In particular, the relevant section for this file can be found at
 http://www.risc.uni-linz.ac.at/people/hemmecke/AldorCombinat/combinatsu30.html.
 """
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 
 class SeriesOrderElement:
     pass

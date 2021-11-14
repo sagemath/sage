@@ -67,7 +67,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import typecall
 from sage.misc.mrange import xmrange
 from sage.modules.free_module_element import vector
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.arith.all import gcd, lcm, next_prime, binomial, primes, moebius
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.complex_mpfr import ComplexField

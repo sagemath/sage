@@ -591,7 +591,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         from sage.sets.set_from_iterator import EnumeratedSetFromIterator
         from functools import partial
         from .steenrod_algebra_bases import steenrod_algebra_basis
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         profile = kwds.get('profile', None)
         truncation_type = kwds.get('truncation_type', 'auto')
         self._generic = kwds.get('generic')
@@ -1088,7 +1088,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: max([H[n].dimension() - G[n].dimension() for n in range(100)])
             0
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         basis = self._basis_fcn(n)
         M = CombinatorialFreeModule(GF(self.prime()), basis,
                                     element_class=self.Element,
@@ -1780,7 +1780,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             P^4 P^2 + P^5 P^1 + P^6
         """
         from sage.matrix.constructor import matrix
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         from .steenrod_algebra_bases import steenrod_algebra_basis,\
             convert_from_milnor_matrix
         from .steenrod_algebra_misc import get_basis_name
@@ -2153,7 +2153,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A_3.P(1) * A_3.Q(2) in B_3
             False
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         p = self.prime()
         if x in GF(p):
             return True
@@ -2321,7 +2321,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(generic=True).P(2,0,1)
             P(2,0,1)
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).P(*nums))
         while nums and nums[-1] == 0:
@@ -2478,7 +2478,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(basis='pst', profile=[3,2,1]).an_element()
             P^0_1
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         basis = self.basis_name()
         p = self.prime()
 
@@ -2542,7 +2542,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(5).pst(3,5)
             P(0,0,0,0,125)
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).pst(s,t))
         if not isinstance(s, (Integer, int)) and s >= 0:
@@ -2731,7 +2731,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             P^1_1
         """
         from sage.rings.infinity import Infinity
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         p = self.prime()
         if not isinstance(i, (Integer, int)) and i >= 0:
             raise ValueError("%s is not a non-negative integer" % i)
@@ -3586,7 +3586,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 3
             """
             from sage.rings.infinity import Infinity
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             p = self.prime()
             generic = self.parent()._generic
             if self == 0:
@@ -3694,7 +3694,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: Sq(0,0,3).wall_height()
                 [1, 2, 2, 1]
             """
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             if self.parent()._generic:
                 raise NotImplementedError("Wall height is not defined at odd primes.")
             if self == 0 or self == 1:

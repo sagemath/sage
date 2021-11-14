@@ -20,7 +20,7 @@ AUTHORS:
 # ****************************************************************************
 
 import operator
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.categories.semigroups import Semigroups
 from sage.categories.sets_cat import Sets
 from sage.categories.monoids import Monoids

@@ -437,7 +437,7 @@ def milnor_multiplication_odd(m1,m2,p):
     iterate through the possible matrices: see
     http://mathweb.scranton.edu/monks/software/Steenrod/steen.html.
     """
-    from sage.rings.all import GF
+    from sage.rings.finite_rings.finite_field_constructor import GF
     F = GF(p)
     (f,s) = m2
     # First compute Q_e0 Q_e1 ... P(r1, r2, ...) Q_f0 Q_f1 ...
@@ -890,7 +890,7 @@ def make_mono_admissible(mono, p=2, generic=None):
         sage: SteenrodAlgebra(p=2, basis='adem').Q(2) * (Sq(6) * Sq(2)) # indirect doctest
         Sq^10 Sq^4 Sq^1 + Sq^10 Sq^5 + Sq^12 Sq^3 + Sq^13 Sq^2
     """
-    from sage.rings.all import GF
+    from sage.rings.finite_rings.finite_field_constructor import GF
     if generic is None:
         generic = False if p==2 else True
     F = GF(p)

@@ -1542,7 +1542,7 @@ class PolynomialConverter(Converter):
         if not any(repr(v) in self.varnames for v in ex.variables()):
             return self.base_ring(ex)
         elif operator == _operator.pow:
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             base, exp = ex.operands()
             return self(base)**Integer(exp)
         if operator == add_vararg:

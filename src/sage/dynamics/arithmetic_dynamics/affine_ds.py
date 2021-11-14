@@ -42,7 +42,7 @@ from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.matrix.constructor import identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import typecall
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.fraction_field import FractionField

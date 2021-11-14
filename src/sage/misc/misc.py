@@ -759,7 +759,7 @@ def nest(f, n, x):
         x
 
     """
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     n = Integer(n)
 
     if n < 0:

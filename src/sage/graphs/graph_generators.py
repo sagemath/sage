@@ -814,7 +814,7 @@ class GraphGenerators():
                     yield copyfun(gg) if copy else gg
         elif augment == 'edges':
             if vertices is None:
-                from sage.rings.all import Integer
+                from sage.rings.integer import Integer
                 vertices = Integer(0)
                 while True:
                     for g in self(vertices, loops=loops, sparse=sparse):

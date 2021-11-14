@@ -458,7 +458,7 @@ class GenericCombinatorialSpecies(SageObject):
             ...
             ValueError: only positive exponents are currently supported
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         import operator
         n = Integer(n)
         if n <= 0:
