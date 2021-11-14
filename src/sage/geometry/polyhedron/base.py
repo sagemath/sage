@@ -1115,16 +1115,16 @@ class Polyhedron_base(Polyhedron_base1):
 
         Same example with floating point::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve() # tol 1e-5
+            sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)      # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
+            sage: lp.solve()                                               # tol 1e-5   # optional - sage.rings.number_field
             1.3090169943749475
 
         Same example with a specific floating point solver::
 
-            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve() # tol 1e-8
+            sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')      # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                  # optional - sage.rings.number_field
+            sage: lp.solve()                                               # tol 1e-8   # optional - sage.rings.number_field
             1.3090169943749475
 
         Irrational algebraic linear program over `AA`::

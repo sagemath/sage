@@ -83,7 +83,6 @@ import itertools
 
 from sage.rings.integer_ring import ZZ
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.rings.qqbar', ['AA', 'QQbar'])
 from sage.rings.rational_field import QQ
 lazy_import('sage.combinat.permutation', 'Permutations')
 lazy_import('sage.groups.perm_gps.permgroup_named', 'AlternatingGroup')
@@ -572,6 +571,7 @@ class Polytopes():
             omega = 2*base_ring.pi() / n
             verts = [((i*omega).sin(), (i*omega).cos()) for i in range(n)]
         except AttributeError:
+            from sage.rings.qqbar import QQbar
             z = QQbar.zeta(n)
             verts = [(base_ring((z**k).imag()), base_ring((z**k).real())) for k in range(n)]
 
@@ -1374,6 +1374,7 @@ class Polytopes():
 
         if exact and base_ring is None:
             # construct the exact number field
+            from sage.rings.qqbar import AA
             from sage.rings.number_field.number_field import NumberField
             R = QQ['x']
             f = R([-1, 1, 1, 1])
@@ -2744,6 +2745,7 @@ class Polytopes():
             new_point.set_immutable()
             vertices.add(new_point)
         if regular:
+            from sage.rings.qqbar import AA
             from sage.matrix.constructor import matrix
             from sage.modules.free_module_element import vector
             # This transformation fixes the first root and adjust the other

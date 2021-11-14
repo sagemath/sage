@@ -679,7 +679,7 @@ examples.
 
 ::
 
-    sage: type(D)
+    sage: type(D)                                                                         # optional - sage.rings.number_field
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
 
 .. end of output
@@ -689,13 +689,13 @@ backend :code:`field` is called.
 
 ::
 
-    sage: P4.parent()
+    sage: P4.parent()                                                                     # optional - sage.rings.number_field
     Polyhedra in AA^2
-    sage: P5.parent()
+    sage: P5.parent()                                                                     # optional - sage.rings.number_field
     Polyhedra in AA^2
-    sage: type(P4)
+    sage: type(P4)                                                                        # optional - sage.rings.number_field
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
-    sage: type(P5)
+    sage: type(P5)                                                                        # optional - sage.rings.number_field
     <class 'sage.geometry.polyhedron.parent.Polyhedra_field_with_category.element_class'>
 
 .. end of output

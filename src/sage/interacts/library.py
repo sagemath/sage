@@ -65,12 +65,13 @@ from sage.rings.integer import Integer
 from sage.symbolic.constants import pi
 from sage.symbolic.relation import solve
 from sage.symbolic.ring import SR
-import math
 
 x = SR.var('x')
 
 # It is important that this file is lazily imported for this to work
 from sage.repl.user_globals import get_global
+
+assert get_global  # to suppress pyflakes warning
 
 from sage.repl.ipython_kernel.all_jupyter import (interact, checkbox,
     input_box, input_grid, range_slider, selector, slider, text_control)
@@ -1682,7 +1683,7 @@ def polar_prime_spiral(
 
     start, end = interval
     from sage.ext.fast_eval import fast_float
-    from math import floor, ceil
+    from math import ceil
     from sage.plot.colors import hue
 
     if start < 1 or end <= start:
