@@ -1027,6 +1027,69 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         return tuple(self.vertex_generator())
 
+    @cached_method
+    def vertices_matrix(self, base_ring=None):
+        """
+        Return the coordinates of the vertices as the columns of a matrix.
+
+        INPUT:
+
+        - ``base_ring`` -- A ring or ``None`` (default). The base ring
+          of the returned matrix. If not specified, the base ring of
+          the polyhedron is used.
+
+        OUTPUT:
+
+        A matrix over ``base_ring`` whose columns are the coordinates
+        of the vertices. A ``TypeError`` is raised if the coordinates
+        cannot be converted to ``base_ring``.
+
+        .. WARNING::
+
+            If the polyhedron has lines, return the coordinates of the vertices
+            of the ``Vrepresentation``. However, the represented polyhedron
+            has no 0-dimensional faces (i.e. vertices)::
+
+                sage: P = Polyhedron(rays=[[1,0,0]],lines=[[0,1,0]])
+                sage: P.vertices_matrix()
+                [0]
+                [0]
+                [0]
+                sage: P.faces(0)
+                ()
+
+        EXAMPLES::
+
+            sage: triangle = Polyhedron(vertices=[[1,0],[0,1],[1,1]])
+            sage: triangle.vertices_matrix()
+            [0 1 1]
+            [1 0 1]
+            sage: (triangle/2).vertices_matrix()
+            [  0 1/2 1/2]
+            [1/2   0 1/2]
+            sage: (triangle/2).vertices_matrix(ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+
+        TESTS:
+
+        Check that :trac:`28828` is fixed::
+
+                sage: P.vertices_matrix().is_immutable()
+                True
+        """
+        from sage.matrix.constructor import matrix
+
+        if base_ring is None:
+            base_ring = self.base_ring()
+        m = matrix(base_ring, self.ambient_dim(), self.n_vertices())
+        for i, v in enumerate(self.vertices()):
+            for j in range(self.ambient_dim()):
+                m[j, i] = v[j]
+        m.set_immutable()
+        return m
+
     def ray_generator(self):
         """
         Return a generator for the rays of the polyhedron.
