@@ -125,3 +125,10 @@ class DatabaseKnotInfo(PythonModule):
             True
         """
         PythonModule.__init__(self, 'database_knotinfo', spkg='database_knotinfo')
+
+
+def all_features():
+    return [DatabaseConwayPolynomials(),
+            DatabaseCremona(), DatabaseCremona('cremona_mini'),
+            DatabaseJones(),
+            DatabaseKnotInfo()]

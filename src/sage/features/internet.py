@@ -44,3 +44,7 @@ class Internet(Feature):
             return FeatureTestResult(self, True)
         except urllib.error.URLError:
             return FeatureTestResult(self, False)
+
+
+def all_features():
+    return [Internet()]

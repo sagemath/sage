@@ -34,3 +34,7 @@ class dvipng(Executable):
         """
         Executable.__init__(self, "dvipng", executable="dvipng",
                             url="https://savannah.nongnu.org/projects/dvipng/")
+
+
+def all_features():
+    return [dvipng()]

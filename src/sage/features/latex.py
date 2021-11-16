@@ -136,3 +136,10 @@ class lualatex(Executable):
         """
         Executable.__init__(self, "lualatex", executable="lualatex",
                             url="https://www.latex-project.org/")
+
+
+def all_features():
+    return [latex(),
+            pdflatex(),
+            xelatex(),
+            lualatex()]

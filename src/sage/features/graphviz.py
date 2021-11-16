@@ -110,3 +110,7 @@ class Graphviz(JoinFeature):
                              [dot(), neato(), twopi()],
                              spkg="graphviz",
                              url="https://www.graphviz.org/")
+
+
+def all_features():
+    return [Graphviz()]

@@ -26,10 +26,10 @@ AUTHORS:
 from sage.structure.element import Element
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
-from sage.features import PythonModule
 from sage.misc.lazy_import import lazy_import
+import sage.features.normaliz
 lazy_import('PyNormaliz', ['NmzResult', 'NmzCompute', 'NmzCone', 'NmzConeCopy'],
-                    feature=PythonModule("PyNormaliz", spkg="pynormaliz"))
+            feature=sage.features.normaliz.PyNormaliz())
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ

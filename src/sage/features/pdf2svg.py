@@ -35,3 +35,7 @@ class pdf2svg(Executable):
         Executable.__init__(self, "pdf2svg", executable="pdf2svg",
                             spkg='pdf2svg',
                             url="http://www.cityinthesky.co.uk/opensource/pdf2svg/")
+
+
+def all_features():
+    return [pdf2svg()]

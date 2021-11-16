@@ -174,3 +174,7 @@ class Rubiks(JoinFeature):
         JoinFeature.__init__(self, "rubiks",
                              [cu2(), size222(), optimal(), mcube(), dikcube(), cubex()],
                              spkg="rubiks")
+
+
+def all_features():
+    return [Rubiks()]

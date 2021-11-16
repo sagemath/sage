@@ -65,3 +65,7 @@ class Latte(JoinFeature):
         JoinFeature.__init__(self, "latte_int",
                              (Latte_count(), Latte_integrate()),
                              description="LattE")
+
+
+def all_features():
+    return [Latte()]

@@ -35,3 +35,7 @@ class Pandoc(Executable):
         """
         Executable.__init__(self, "pandoc", executable="pandoc",
                             url="https://pandoc.org/")
+
+
+def all_features():
+    return [Pandoc()]

@@ -25,3 +25,7 @@ class Mcqd(JoinFeature):
         # Will be changed to spkg='sagemath_mcqd' later
         JoinFeature.__init__(self, 'mcqd',
                              [PythonModule('sage.graphs.mcqd', spkg='mcqd')])
+
+
+def all_features():
+    return [Mcqd()]

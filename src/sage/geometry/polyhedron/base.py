@@ -5306,7 +5306,7 @@ class Polyhedron_base(Polyhedron_base3):
             sage: Q.volume.is_in_cache()
             True
         """
-        from sage.features import FeatureNotPresentError, PythonModule
+        from sage.features import FeatureNotPresentError
         if measure == 'induced_rational' and engine not in ['auto', 'latte', 'normaliz']:
             raise RuntimeError("the induced rational measure can only be computed with the engine set to `auto`, `latte`, or `normaliz`")
         if measure == 'induced_lattice' and engine not in ['auto', 'latte', 'normaliz']:
@@ -5318,16 +5318,18 @@ class Polyhedron_base(Polyhedron_base3):
                 Latte().require()
                 engine = 'latte'
             except FeatureNotPresentError:
+                from sage.features.normaliz import PyNormaliz
                 try:
-                    PythonModule("PyNormaliz", spkg="pynormaliz").require()
+                    PyNormaliz().require()
                     engine = 'normaliz'
                 except FeatureNotPresentError:
                     raise RuntimeError("the induced rational measure can only be computed with the optional packages `latte_int`, or `pynormaliz`")
 
         if engine == 'auto' and measure == 'induced_lattice':
             # Enforce a default choice, change if a better engine is found.
+            from sage.features.normaliz import PyNormaliz
             try:
-                PythonModule("PyNormaliz", spkg="pynormaliz").require()
+                PyNormaliz().require()
                 engine = 'normaliz'
             except FeatureNotPresentError:
                 try:
