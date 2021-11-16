@@ -949,8 +949,8 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: M = Q.vertex_adjacency_matrix()
             sage: sum(M)
             (4, 4, 3, 3, 4, 4, 4, 3, 3)
-            sage: G = Q.vertex_graph()
-            sage: G.degree()
+            sage: G = Q.vertex_graph()                                  # optional - sage.graphs
+            sage: G.degree()                                            # optional - sage.graphs
             [4, 4, 3, 3, 4, 4, 4, 3, 3]
 
         TESTS:
