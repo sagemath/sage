@@ -1085,8 +1085,8 @@ cdef class CoercionModel:
             sage: Zmod100 = Integers(100)
             sage: cm.division_parent(Zmod100)
             Ring of integers modulo 100
-            sage: S5 = SymmetricGroup(5)
-            sage: cm.division_parent(S5)
+            sage: S5 = SymmetricGroup(5)                                                # optional - sage.groups
+            sage: cm.division_parent(S5)                                                # optional - sage.groups
             Symmetric group of order 5! as a permutation group
         """
         try:

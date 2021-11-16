@@ -74,6 +74,28 @@ class sage__graphs(JoinFeature):
                              [PythonModule('sage.graphs.graph')])
 
 
+class sage__groups(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of ``sage.groups``.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__groups
+        sage: sage__groups().is_present()  # optional - sage.groups
+        FeatureTestResult('sage.groups', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__groups
+            sage: isinstance(sage__groups(), sage__groups)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.groups',
+                             [PythonModule('sage.groups.perm_gps.permgroup')])
+
+
 class sage__plot(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of ``sage.plot``.
@@ -186,6 +208,7 @@ def all_features():
     return [sage__combinat(),
             sage__geometry__polyhedron(),
             sage__graphs(),
+            sage__groups(),
             sage__plot(),
             sage__rings__number_field(),
             sage__rings__real_double(),
