@@ -1113,11 +1113,11 @@ class Polyhedron_base3(Polyhedron_base2):
 
         EXAMPLES::
 
-            sage: polytopes.hypersimplex(4,2).simplicity()
+            sage: polytopes.hypersimplex(4,2).simplicity()              # optional - sage.combinat
             1
-            sage: polytopes.hypersimplex(5,2).simplicity()
+            sage: polytopes.hypersimplex(5,2).simplicity()              # optional - sage.combinat
             2
-            sage: polytopes.hypersimplex(6,2).simplicity()
+            sage: polytopes.hypersimplex(6,2).simplicity()              # optional - sage.combinat
             3
             sage: polytopes.simplex(3).simplicity()
             3
@@ -1166,7 +1166,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
             sage: polytopes.cyclic_polytope(10,4).simpliciality()
             3
-            sage: polytopes.hypersimplex(5,2).simpliciality()
+            sage: polytopes.hypersimplex(5,2).simpliciality()           # optional - sage.combinat
             2
             sage: polytopes.cross_polytope(4).simpliciality()
             3
@@ -1539,9 +1539,9 @@ class Polyhedron_base3(Polyhedron_base2):
 
         EXAMPLES::
 
-            sage: P = polytopes.hypersimplex(5,2)
-            sage: L = P.lawrence_polytope()
-            sage: L.is_lattice_polytope()
+            sage: P = polytopes.hypersimplex(5,2)                               # optional - sage.combinat
+            sage: L = P.lawrence_polytope()                                     # optional - sage.combinat
+            sage: L.is_lattice_polytope()                                       # optional - sage.combinat
             True
             sage: egyptian_pyramid = polytopes.regular_polygon(4).pyramid()
             sage: egyptian_pyramid.is_lawrence_polytope()
