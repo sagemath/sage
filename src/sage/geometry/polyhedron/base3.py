@@ -288,10 +288,10 @@ class Polyhedron_base3(Polyhedron_base2):
         Test that this method works for inexact base ring
         (``cdd`` sets the cache already)::
 
-            sage: P = polytopes.dodecahedron(exact=False)
-            sage: M = P.incidence_matrix.cache
-            sage: P.incidence_matrix.clear_cache()
-            sage: M == P.incidence_matrix()
+            sage: P = polytopes.dodecahedron(exact=False)                   # optional - sage.groups
+            sage: M = P.incidence_matrix.cache                              # optional - sage.groups
+            sage: P.incidence_matrix.clear_cache()                          # optional - sage.groups
+            sage: M == P.incidence_matrix()                                 # optional - sage.groups
             True
         """
         if self.base_ring() in (ZZ, QQ):
