@@ -1,6 +1,6 @@
-=========================================================================
- Sage: Open Source Mathematics Software: Sage categories and basic rings
-=========================================================================
+=================================================================================
+ Sage: Open Source Mathematics Software: Convex polyhedra in arbitrary dimension
+=================================================================================
 
 About SageMath
 --------------
@@ -20,16 +20,22 @@ The traditional and recommended way to install SageMath is from source via Sage-
 About this experimental pip-installable source distribution
 -----------------------------------------------------------
 
-This pip-installable source distribution `sagemath-categories` is an experimental distribution of a small part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`).  It is a superset of the `sagemath-objects` (providing Sage objects, the element/parent framework, categories, the coercion system and the related metaclasses), making various additional categories available without introducing dependencies on additional mathematical libraries.
+This pip-installable source distribution `sagemath-polyhedra` is an experimental distribution of a part of the Sage Library.  Use at your own risk.  It provides a small subset of the modules of the Sage library ("sagelib", `sagemath-standard`), sufficient for computations with convex polyhedra in arbitrary dimension, in exact rational arithmetic.
 
+By default, `sagemath-polyhedra` makes use of the Parma Polyhedra Library (PPL) as a backend for the computations, via https://pypi.org/project/pplpy/, which is a dependency of this distribution.
+
+Using `sagemath-polyhedra`'s unified interface, other optional backends can also be used:
+
+* Normaliz, via https://pypi.org/project/PyNormaliz/,
+* Polymake, via https://pypi.org/project/JuPyMake/;
+* `cddlib <https://github.com/cddlib/cddlib>`_
+
+`sagemath-polyhedra` also provides integration with other packages for additional functionality:
+
+* `LattE integrale <https://www.math.ucdavis.edu/~latte/software.php>`_
+* `lrslib <http://cgm.cs.mcgill.ca/~avis/C/lrs.html>`_
 
 Documentation
 -------------
 
-* `Categories <https://doc.sagemath.org/html/en/reference/categories/index.html>`_
-
-* `Structure <https://doc.sagemath.org/html/en/reference/structure/index.html>`_
-
-* `Coercion <https://doc.sagemath.org/html/en/reference/coercion/index.html>`_
-
-* `Classes, Metaclasses <https://doc.sagemath.org/html/en/reference/misc/index.html#special-base-classes-decorators-etc>`_
+* `Combinatorial and Discrete Geometry <https://doc.sagemath.org/html/en/reference/discrete_geometry/index.html>`_
