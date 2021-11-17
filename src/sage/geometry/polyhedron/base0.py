@@ -260,6 +260,75 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         self._Vrepresentation = tuple(self._Vrepresentation)
         self._Hrepresentation = tuple(self._Hrepresentation)
 
+    def _delete(self):
+        """
+        Delete this polyhedron.
+
+        This speeds up creation of new polyhedra by reusing
+        objects. After recycling a polyhedron object, it is not in a
+        consistent state any more and neither the polyhedron nor its
+        H/V-representation objects may be used any more.
+
+        .. SEEALSO::
+
+            :meth:`~sage.geometry.polyhedron.parent.Polyhedra_base.recycle`
+
+        EXAMPLES::
+
+            sage: p = Polyhedron([(0,0),(1,0),(0,1)])
+            sage: p._delete()
+
+            sage: vertices = [(0,0,0,0),(1,0,0,0),(0,1,0,0),(1,1,0,0),(0,0,1,0),(0,0,0,1)]
+            sage: def loop_polyhedra():
+            ....:     for i in range(100):
+            ....:         p = Polyhedron(vertices)
+
+            sage: timeit('loop_polyhedra()')                   # not tested - random
+            5 loops, best of 3: 79.5 ms per loop
+
+            sage: def loop_polyhedra_with_recycling():
+            ....:     for i in range(100):
+            ....:         p = Polyhedron(vertices)
+            ....:         p._delete()
+
+            sage: timeit('loop_polyhedra_with_recycling()')    # not tested - random
+            5 loops, best of 3: 57.3 ms per loop
+        """
+        self.parent().recycle(self)
+
+    def _sage_input_(self, sib, coerced):
+        """
+        Return Sage command to reconstruct ``self``.
+
+        See :mod:`sage.misc.sage_input` for details.
+
+        .. TODO::
+
+            Add the option ``preparse`` to the method.
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='ppl')
+            sage: sage_input(P)
+            Polyhedron(backend='ppl', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(0), QQ(1)), (QQ(1), QQ(0))])
+            sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='normaliz') # optional - pynormaliz
+            sage: sage_input(P)                                                                    # optional - pynormaliz
+            Polyhedron(backend='normaliz', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(0), QQ(1)), (QQ(1), QQ(0))])
+            sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='polymake') # optional - polymake
+            sage: sage_input(P)                                                                    # optional - polymake
+            Polyhedron(backend='polymake', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(1), QQ(0)), (QQ(0), QQ(1))])
+       """
+        kwds = dict()
+        kwds['base_ring'] = sib(self.base_ring())
+        kwds['backend'] = sib(self.backend())
+        if self.n_vertices() > 0:
+            kwds['vertices'] = [sib(tuple(v)) for v in self.vertices()]
+        if self.n_rays() > 0:
+            kwds['rays'] = [sib(tuple(r)) for r in self.rays()]
+        if self.n_lines() > 0:
+            kwds['lines'] = [sib(tuple(l)) for l in self.lines()]
+        return sib.name('Polyhedron')(**kwds)
+
     def base_extend(self, base_ring, backend=None):
         """
         Return a new polyhedron over a larger base ring.
