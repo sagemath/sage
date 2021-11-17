@@ -1,3 +1,10 @@
+import os
+import sys
+import operator
+import math
+
+import warnings
+
 # TODO: More to be moved from all.py
 
 import os
@@ -14,9 +21,20 @@ from functools import reduce  # in order to keep reduce in python3
 
 from sage.misc.all__sagemath_objects       import *
 from sage.structure.all  import *
+from sage.arith.power    import generic_power as power
 from sage.categories.all__sagemath_objects import *
 
+from sage.cpython.all    import *
 
 from cysignals.alarm import alarm, cancel_alarm
 
 from copy import copy, deepcopy
+
+true = True
+false = False
+
+
+# For doctesting. These are overwritten later
+
+Integer = int
+RealNumber = float
