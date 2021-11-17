@@ -11,27 +11,6 @@ include requirements.txt
 
 global-include all__sagemath_polyhedra.py
 
-include sage/rings/quotient_ring*.p*
-include sage/rings/homset.p*
-include sage/rings/ideal*.p*
-include sage/rings/localization.p*
-include sage/rings/morphism.p*
-
-include sage/rings/abc.*
-include sage/rings/integer*.*
-include sage/rings/rational*.*
-include sage/rings/infinity.*
-include sage/arith/*.*
-include sage/misc/allocator.*
-include sage/misc/functional.p*
-include sage/ext/mod_int.*
-
-# see sage.misc.all__sagemath_polyhedra
-include sage/misc/latex*.*
-include sage/misc/html.p*
-include sage/misc/table.p*
-include sage/misc/map_threaded.p*
-
 graft sage/misc
 # see sage.misc.all__sagemath_polyhedra -- exclude dev tools, session management
 exclude sage/misc/banner.p*
@@ -77,20 +56,6 @@ include sage/interfaces/four_ti_2.p*
 
 include sage/sets/__init__.py
 include sage/sets/set.py
-
-include sage/rings/number_field/__init__.py
-include sage/rings/number_field/number_field_base.*
-
-include sage/rings/real_double.p*
-
-include sage/rings/finite_rings/__init__.py
-include sage/rings/finite_rings/element_base.*
-include sage/rings/finite_rings/stdint.*
-include sage/rings/finite_rings/finite_field_base.p*
-include sage/rings/finite_rings/finite_field_constructor.py
-include sage/rings/fast_arith.*
-include sage/rings/finite_rings/integer_mod_limits.h
-include sage/rings/finite_rings/integer_mod.pxd   # .pyx depends on pari
 
 graft sage/modules
 exclude sage/modules/vector_*double*.*  # depends on numpy
