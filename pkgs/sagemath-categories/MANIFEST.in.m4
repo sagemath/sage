@@ -44,3 +44,11 @@ include sage/rings/number_field/__init__.py
 include sage/rings/number_field/number_field_base.*
 
 include sage/rings/real_double.p*
+
+include sage/rings/fraction_field.p*
+include sage/rings/fraction_field_element.p*
+
+include sage/rings/polynomial/__init__.py
+include sage/rings/polynomial/polynomial_ring.p*
+include sage/rings/polynomial/polynomial_ring_constructor.p*
+include sage/rings/polynomial/polynomial_singular_interface.p*
