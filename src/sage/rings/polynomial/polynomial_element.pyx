@@ -81,7 +81,6 @@ from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
 
-from sage.interfaces.singular import singular as singular_default, is_SingularElement
 from sage.libs.all import pari, pari_gen, PariError
 
 cimport sage.rings.abc
