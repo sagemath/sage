@@ -1670,7 +1670,7 @@ class PolynomialRing_general(ring.Algebra):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-class PolynomialRing_commutative(PolynomialRing_general, rings.CommutativeAlgebra):
+class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra):
     """
     Univariate polynomial ring over a commutative ring.
     """
