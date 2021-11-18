@@ -147,7 +147,6 @@ from sage.structure.element import Element
 import sage.categories as categories
 from sage.categories.morphism import IdentityMorphism
 
-import sage.rings.commutative_algebra as commutative_algebra
 import sage.rings.ring as ring
 from sage.structure.element import is_RingElement
 import sage.rings.polynomial.polynomial_element_generic as polynomial_element_generic
@@ -1661,7 +1660,7 @@ class PolynomialRing_general(ring.Algebra):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-class PolynomialRing_commutative(PolynomialRing_general, commutative_algebra.CommutativeAlgebra):
+class PolynomialRing_commutative(PolynomialRing_general, rings.CommutativeAlgebra):
     """
     Univariate polynomial ring over a commutative ring.
     """
