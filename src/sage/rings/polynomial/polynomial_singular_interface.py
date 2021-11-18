@@ -43,7 +43,12 @@ import sage.rings.number_field as number_field
 
 from sage.interfaces.all import singular
 from sage.rings.rational_field import is_RationalField
-from sage.rings.function_field.function_field import RationalFunctionField
+
+try:
+    from sage.rings.function_field.function_field import RationalFunctionField
+except ImportError:
+    RationalFunctionField = ()
+
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
 from sage.rings.integer_ring import ZZ
 
@@ -328,7 +333,7 @@ class PolynomialRing_singular_repr:
 
                 self.__singular = singular("std(ideal(%s))"%(self.base_ring().__minpoly),type='qring')
 
-        elif isinstance(base_ring, sage.rings.function_field.function_field.RationalFunctionField) and base_ring.constant_field().is_prime_field():
+        elif isinstance(base_ring, RationalFunctionField) and base_ring.constant_field().is_prime_field():
             gen = str(base_ring.gen())
             self.__singular = singular.ring( "(%s,%s)"%(base_ring.characteristic(),gen), _vars, order=order, check=False)
 
