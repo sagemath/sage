@@ -22,7 +22,15 @@ rings but rather quotients of them (see module
 # ****************************************************************************
 from sage.structure.category_object import normalize_names
 import sage.rings.ring as ring
-import sage.rings.padics.padic_base_leaves as padic_base_leaves
+
+try:
+    import sage.rings.padics.padic_base_leaves as padic_base_leaves
+except ImportError:
+    class padic_base_leaves:
+        pAdicFieldCappedRelative = ()
+        pAdicRingCappedRelative = ()
+        pAdicRingCappedAbsolute = ()
+        pAdicRingFixedMod = ()
 
 import sage.rings.abc
 from sage.rings.integer import Integer
