@@ -41,7 +41,11 @@ import sage.rings.fraction_field
 import sage.rings.abc
 import sage.rings.number_field as number_field
 
-from sage.interfaces.all import singular
+try:
+    from sage.interfaces.singular import singular
+except ImportError:
+    singular = None
+
 from sage.rings.rational_field import is_RationalField
 
 try:
