@@ -265,14 +265,14 @@ the possible options available through Sage's interface to the ``tkz-graph``
 package.  So it is worth viewing this in the notebook to see the effects of
 various defaults and choices.::
 
-    sage: var('x y u w')
+    sage: var('x y u w')                                                        # optional - sage.symbolic
     (x, y, u, w)
     sage: G = Graph(loops=True)
-    sage: for i in range(5):
+    sage: for i in range(5):                                                    # optional - sage.symbolic
     ....:    for j in range(i+1, 5):
     ....:         G.add_edge((i, j), label=(x^i*y^j).expand())
-    sage: G.add_edge((0,0), label=sin(u))
-    sage: G.add_edge((4,4), label=w^5)
+    sage: G.add_edge((0,0), label=sin(u))                                       # optional - sage.symbolic
+    sage: G.add_edge((4,4), label=w^5)                                          # optional - sage.symbolic
     sage: G.set_pos(G.layout_circular())
     sage: G.set_latex_options(
     ....: units='in',
@@ -307,7 +307,7 @@ various defaults and choices.::
     ....: )
     sage: from sage.graphs.graph_latex import check_tkz_graph
     sage: check_tkz_graph()  # random - depends on TeX installation
-    sage: print(latex(G))
+    sage: print(latex(G))                                                       # optional - sage.symbolic
     \begin{tikzpicture}
     \definecolor{cv0}{rgb}{0.8,0.8,0.8}
     \definecolor{cfv0}{rgb}{0.0,0.0,1.0}
