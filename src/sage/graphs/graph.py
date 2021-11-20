@@ -3141,7 +3141,7 @@ class Graph(GenericGraph):
 
             sage: g = graphs.CompleteBipartiteGraph(3,4)
             sage: o = g.minimum_outdegree_orientation()
-            sage: max(o.out_degree()) == ceil((4*3)/(3+4))
+            sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))
             True
         """
         self._scream_if_not_simple()
@@ -3264,7 +3264,7 @@ class Graph(GenericGraph):
         out-degree at most `\lceil \frac {d(v)} 2 \rceil`::
 
             sage: g = graphs.RandomGNP(40, .4)
-            sage: b = lambda v: ceil(g.degree(v)/2)
+            sage: b = lambda v: integer_ceil(g.degree(v)/2)
             sage: D = g.bounded_outdegree_orientation(b)
             sage: all( D.out_degree(v) <= b(v) for v in g )
             True
@@ -3287,12 +3287,12 @@ class Graph(GenericGraph):
 
         Hence this is possible ::
 
-            sage: d = g.bounded_outdegree_orientation(ceil(mad/2))
+            sage: d = g.bounded_outdegree_orientation(integer_ceil(mad/2))
 
         While this is not::
 
             sage: try:
-            ....:     g.bounded_outdegree_orientation(ceil(mad/2-1))
+            ....:     g.bounded_outdegree_orientation(integer_ceil(mad/2-1))
             ....:     print("Error")
             ....: except ValueError:
             ....:     pass
@@ -3303,7 +3303,7 @@ class Graph(GenericGraph):
 
             sage: for i in range(30):      # long time (up to 6s on sage.math, 2012)
             ....:     g = graphs.RandomGNP(40, .4)
-            ....:     b = lambda v: ceil(g.degree(v)/2)
+            ....:     b = lambda v: integer_ceil(g.degree(v)/2)
             ....:     D = g.bounded_outdegree_orientation(b)
             ....:     if not (
             ....:          all( D.out_degree(v) <= b(v) for v in g ) or

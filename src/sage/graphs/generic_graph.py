@@ -2363,7 +2363,7 @@ class GenericGraph(GenericGraph_pyx):
             [-1  2 -1  0]
             [-1 -1  2  0]
             [-1  0  0  1]
-            sage: M = G.laplacian_matrix(normalized=True); M
+            sage: M = G.laplacian_matrix(normalized=True); M                                            # optional - sage.symbolic
             [                   1 -1/6*sqrt(3)*sqrt(2) -1/6*sqrt(3)*sqrt(2)         -1/3*sqrt(3)]
             [-1/6*sqrt(3)*sqrt(2)                    1                 -1/2                    0]
             [-1/6*sqrt(3)*sqrt(2)                 -1/2                    1                    0]
@@ -2415,7 +2415,6 @@ class GenericGraph(GenericGraph_pyx):
             [-4 -3 -1  8]
         """
         from sage.matrix.constructor import diagonal_matrix
-        from sage.misc.functional import sqrt
 
         if weighted is None:
             weighted = self._weighted
@@ -2451,6 +2450,7 @@ class GenericGraph(GenericGraph_pyx):
                     D[i,i] += row_sums[i]
 
         if normalized:
+            from sage.misc.functional import sqrt
             Dsqrt = diagonal_matrix([1 / sqrt(D[i,i]) if D[i,i] else 1 \
                                      for i in range(D.nrows())])
             if signless:
@@ -20654,8 +20654,8 @@ class GenericGraph(GenericGraph_pyx):
 
         A digraph using latex labels for vertices and edges::
 
-            sage: f(x) = -1 / x
-            sage: g(x) = 1 / (x + 1)
+            sage: f = lambda x: -1 / x
+            sage: g = lambda x: 1 / (x + 1)
             sage: G = DiGraph()
             sage: G.add_edges((i, f(i), f) for i in (1, 2, 1/2, 1/4))
             sage: G.add_edges((i, g(i), g) for i in (1, 2, 1/2, 1/4))
