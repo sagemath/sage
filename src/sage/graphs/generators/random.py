@@ -1208,8 +1208,8 @@ def RandomChordalGraph(n, algorithm="growing", k=None, l=None, f=None, s=None):
     # 2. Generate n non-empty subtrees of T: {T1,...,Tn}
     if algorithm == "growing":
         if k is None:
-            from sage.rings.integer import Integer
-            k = int(Integer(n).sqrt())
+            from sage.misc.functional import isqrt
+            k = isqrt(n)
         elif k < 1:
             raise ValueError("parameter k must be >= 1")
 
