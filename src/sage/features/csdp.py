@@ -64,3 +64,7 @@ class CSDP(Executable):
                                          .format(command=" ".join(command)))
 
         return FeatureTestResult(self, True)
+
+
+def all_features():
+    return [CSDP()]

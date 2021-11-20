@@ -2056,6 +2056,7 @@ class DocTestWorker(multiprocessing.Process):
             Total time for all tests: ... seconds
                 cpu time: ... seconds
                 cumulative wall time: ... seconds
+            Features detected...
         """
         multiprocessing.Process.__init__(self)
 
@@ -2101,6 +2102,7 @@ class DocTestWorker(multiprocessing.Process):
             Total time for all tests: ... seconds
                 cpu time: ... seconds
                 cumulative wall time: ... seconds
+            Features detected...
         """
         os.setpgid(os.getpid(), os.getpid())
 

@@ -71,3 +71,9 @@ class COIN(JoinFeature):
         JoinFeature.__init__(self, 'sage_numerical_backends_coin',
                              [MIPBackend('coin')],
                              spkg='sage_numerical_backends_coin')
+
+
+def all_features():
+    return [CPLEX(),
+            Gurobi(),
+            COIN()]

@@ -24,3 +24,7 @@ class Meataxe(JoinFeature):
         # Will be changed to spkg='sagemath_meataxe' later
         JoinFeature.__init__(self, 'meataxe',
                              [PythonModule('sage.matrix.matrix_gfpn_dense', spkg='meataxe')])
+
+
+def all_features():
+    return [Meataxe()]

@@ -18704,33 +18704,33 @@ class GenericGraph(GenericGraph_pyx):
         We consider the Cayley graph of the symmetric group, whose edges are
         labelled by the numbers 1,2, and 3::
 
-            sage: G = SymmetricGroup(4).cayley_graph()
-            sage: set(G.edge_labels())
+            sage: G = SymmetricGroup(4).cayley_graph()                                          # optional - sage.groups
+            sage: set(G.edge_labels())                                                          # optional - sage.groups
             {1, 2, 3}
 
         We first request the coloring as a function::
 
-            sage: f = G._color_by_label(as_function=True)
-            sage: [f(1), f(2), f(3)]
+            sage: f = G._color_by_label(as_function=True)                                       # optional - sage.groups
+            sage: [f(1), f(2), f(3)]                                                            # optional - sage.groups
             ['#0000ff', '#ff0000', '#00ff00']
-            sage: f = G._color_by_label({1: "blue", 2: "red", 3: "green"}, as_function=True)
-            sage: [f(1), f(2), f(3)]
+            sage: f = G._color_by_label({1: "blue", 2: "red", 3: "green"}, as_function=True)    # optional - sage.groups
+            sage: [f(1), f(2), f(3)]                                                            # optional - sage.groups
             ['blue', 'red', 'green']
-            sage: f = G._color_by_label({1: "red"}, as_function=True)
-            sage: [f(1), f(2), f(3)]
+            sage: f = G._color_by_label({1: "red"}, as_function=True)                           # optional - sage.groups
+            sage: [f(1), f(2), f(3)]                                                            # optional - sage.groups
             ['red', 'black', 'black']
-            sage: f = G._color_by_label({1: "red"}, as_function=True, default_color='blue')
-            sage: [f(1), f(2), f(3)]
+            sage: f = G._color_by_label({1: "red"}, as_function=True, default_color='blue')     # optional - sage.groups
+            sage: [f(1), f(2), f(3)]                                                            # optional - sage.groups
             ['red', 'blue', 'blue']
 
         The default output is a dictionary assigning edges to colors::
 
-            sage: G._color_by_label()
+            sage: G._color_by_label()                                                           # optional - sage.groups
             {'#0000ff': [((), (1,2), 1), ...],
              '#00ff00': [((), (3,4), 3), ...],
              '#ff0000': [((), (2,3), 2), ...]}
 
-            sage: G._color_by_label({1: "blue", 2: "red", 3: "green"})
+            sage: G._color_by_label({1: "blue", 2: "red", 3: "green"})                          # optional - sage.groups
             {'blue': [((), (1,2), 1), ...],
              'green': [((), (3,4), 3), ...],
              'red': [((), (2,3), 2), ...]}
@@ -18739,12 +18739,12 @@ class GenericGraph(GenericGraph_pyx):
 
         We check what happens when several labels have the same color::
 
-            sage: result = G._color_by_label({1: "blue", 2: "blue", 3: "green"})
-            sage: sorted(result)
+            sage: result = G._color_by_label({1: "blue", 2: "blue", 3: "green"})                # optional - sage.groups
+            sage: sorted(result)                                                                # optional - sage.groups
             ['blue', 'green']
-            sage: len(result['blue'])
+            sage: len(result['blue'])                                                           # optional - sage.groups
             48
-            sage: len(result['green'])
+            sage: len(result['green'])                                                          # optional - sage.groups
             24
         """
         if format is True:
@@ -21636,10 +21636,10 @@ class GenericGraph(GenericGraph_pyx):
         Relabeling using a Sage permutation::
 
             sage: G = graphs.PathGraph(3)
-            sage: from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-            sage: S = SymmetricGroup(3)
-            sage: gamma = S('(1,2)')
-            sage: G.relabel(gamma, inplace=False).am()
+            sage: from sage.groups.perm_gps.permgroup_named import SymmetricGroup               # optional - sage.groups
+            sage: S = SymmetricGroup(3)                                                         # optional - sage.groups
+            sage: gamma = S('(1,2)')                                                            # optional - sage.groups
+            sage: G.relabel(gamma, inplace=False).am()                                          # optional - sage.groups
             [0 0 1]
             [0 0 1]
             [1 1 0]
@@ -22574,21 +22574,21 @@ class GenericGraph(GenericGraph_pyx):
 
         Graphs::
 
-            sage: from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+            sage: from sage.groups.perm_gps.permgroup_named import SymmetricGroup       # optional - sage.groups
             sage: D = graphs.DodecahedralGraph()
             sage: E = copy(D)
-            sage: gamma = SymmetricGroup(20).random_element()
-            sage: E.relabel(gamma)
+            sage: gamma = SymmetricGroup(20).random_element()                           # optional - sage.groups
+            sage: E.relabel(gamma)                                                      # optional - sage.groups
             sage: D.is_isomorphic(E)
             True
 
         ::
 
             sage: D = graphs.DodecahedralGraph()
-            sage: S = SymmetricGroup(20)
-            sage: gamma = S.random_element()
-            sage: E = copy(D)
-            sage: E.relabel(gamma)
+            sage: S = SymmetricGroup(20)                                                # optional - sage.groups
+            sage: gamma = S.random_element()                                            # optional - sage.groups
+            sage: E = copy(D)                                                           # optional - sage.groups
+            sage: E.relabel(gamma)                                                      # optional - sage.groups
             sage: a,b = D.is_isomorphic(E, certificate=True); a
             True
             sage: from sage.graphs.generic_graph_pyx import spring_layout_fast

@@ -35,3 +35,7 @@ class FFmpeg(Executable):
         """
         Executable.__init__(self, "ffmpeg", executable="ffmpeg",
                             url="https://www.ffmpeg.org/")
+
+
+def all_features():
+    return [FFmpeg()]

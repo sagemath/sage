@@ -46,3 +46,7 @@ class ImageMagick(JoinFeature):
                              [Executable("convert", executable="convert")],
                              spkg="_recommended",
                              url="https://www.imagemagick.org/")
+
+
+def all_features():
+    return [ImageMagick()]

@@ -74,6 +74,28 @@ class sage__graphs(JoinFeature):
                              [PythonModule('sage.graphs.graph')])
 
 
+class sage__groups(JoinFeature):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of ``sage.groups``.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sage__groups
+        sage: sage__groups().is_present()  # optional - sage.groups
+        FeatureTestResult('sage.groups', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sage__groups
+            sage: isinstance(sage__groups(), sage__groups)
+            True
+        """
+        JoinFeature.__init__(self, 'sage.groups',
+                             [PythonModule('sage.groups.perm_gps.permgroup')])
+
+
 class sage__plot(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of ``sage.plot``.
@@ -162,9 +184,40 @@ class sage__symbolic(JoinFeature):
                              spkg="sagemath_symbolics")
 
 
-def sage_features(logger=None):
+def all_features():
     """
     Return features corresponding to parts of the Sage library.
+
+    These tags are named after Python packages/modules (e.g., :mod:`~sage.symbolic`),
+    not distribution packages (``sagemath-symbolics``).
+
+    This design is motivated by a separation of concerns: The author of a module that depends
+    on some functionality provided by a Python module usually already knows the
+    name of the Python module, so we do not want to force the author to also
+    know about the distribution package that provides the Python module.
+
+    Instead, we associate distribution packages to Python modules in
+    :mod:`sage.features.sagemath` via the ``spkg`` parameter of :class:`Feature`.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import all_features
+        sage: list(all_features())
+        [Feature('sage.combinat'), ...]
+    """
+    return [sage__combinat(),
+            sage__geometry__polyhedron(),
+            sage__graphs(),
+            sage__groups(),
+            sage__plot(),
+            sage__rings__number_field(),
+            sage__rings__real_double(),
+            sage__symbolic()]
+
+
+def sage_features(logger=None):
+    """
+    Return features corresponding to parts of the Sage library that are present.
 
     These tags are named after Python packages/modules (e.g., :mod:`~sage.symbolic`),
     not distribution packages (``sagemath-symbolics``).
@@ -186,13 +239,7 @@ def sage_features(logger=None):
          Feature('sage.rings.number_field'),
          Feature('sage.rings.real_double')]
     """
-    for feature in [sage__combinat(),
-                    sage__geometry__polyhedron(),
-                    sage__graphs(),
-                    sage__plot(),
-                    sage__rings__number_field(),
-                    sage__rings__real_double(),
-                    sage__symbolic()]:
+    for feature in all_features():
         result = feature.is_present()
         if logger:
             logger.write(f'{result}, reason: {result.reason}\n')

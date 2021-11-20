@@ -601,8 +601,8 @@ class Graph(GenericGraph):
        'out' is the label for the edge on 2 and 5. Labels can be used as
        weights, if all the labels share some common parent.::
 
-        sage: a,b,c,d,e,f = sorted(SymmetricGroup(3))
-        sage: Graph({b:{d:'c',e:'p'}, c:{d:'p',e:'c'}})
+        sage: a, b, c, d, e, f = sorted(SymmetricGroup(3))              # optional - sage.groups
+        sage: Graph({b: {d: 'c', e: 'p'}, c: {d: 'p', e: 'c'}})         # optional - sage.groups
         Graph on 4 vertices
 
     #. A dictionary of lists::

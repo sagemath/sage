@@ -2036,7 +2036,7 @@ class HyperbolicGeodesicPD(HyperbolicGeodesic):
             Graphics object consisting of 2 graphics primitives
             sage: h = PD.get_geodesic(exp(2*I*pi/11), exp(1*I*pi/11))
             sage: H = h.plot(thickness=6, color="orange"); H           # optional - sage.plot
-            Graphics object consisting of 2 graphics primitives        # optional - sage.plot
+            Graphics object consisting of 2 graphics primitives
             sage: show(G+H)                                            # optional - sage.plot
 
         .. PLOT::

@@ -152,3 +152,9 @@ class Benzene(Executable):
                     reason="Call `{command}` did not produce output that started with `{expected}`.".format(command=" ".join(command), expected=expected))
 
         return FeatureTestResult(self, True)
+
+
+def all_features():
+    return [Plantri(),
+            Buckygen(),
+            Benzene()]

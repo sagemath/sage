@@ -44,3 +44,7 @@ class FourTi2(JoinFeature):
                               # same list is tested in build/pkgs/4ti2/spkg-configure.m4
                               for x in ('hilbert', 'markov', 'graver', 'zsolve', 'qsolve',
                                         'rays', 'ppi', 'circuits', 'groebner')])
+
+
+def all_features():
+    return [FourTi2()]

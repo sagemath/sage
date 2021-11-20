@@ -63,3 +63,7 @@ class Lrs(Executable):
                     expected=" or ".join(expected_list)))
 
         return FeatureTestResult(self, True)
+
+
+def all_features():
+    return [Lrs()]
