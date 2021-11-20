@@ -1321,7 +1321,7 @@ class FiniteWord_class(Word_class):
         TESTS::
 
             sage: type( Word('cacao').factor_iterator() )
-            <... 'generator'>
+            <class 'generator'>
         """
         return self.suffix_tree().factor_iterator(n)
 
@@ -5288,15 +5288,15 @@ class FiniteWord_class(Word_class):
             sage: w._s(1).parent()
             Finite words over {1, 2, 3}
         """
-        unpaired_i  = [] # positions of unpaired is
-        unpaired_ip = [] # positions of unpaired i+1s
-        for p,x in enumerate(self):
+        unpaired_i = []  # positions of unpaired is
+        unpaired_ip = []  # positions of unpaired i+1s
+        for p, x in enumerate(self):
             if x == i:
                 if unpaired_ip:
                     unpaired_ip.pop()
                 else:
                     unpaired_i.append(p)
-            elif x == i+1:
+            elif x == i + 1:
                 unpaired_ip.append(p)
 
         unpaired = unpaired_i + unpaired_ip

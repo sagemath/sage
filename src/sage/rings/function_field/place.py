@@ -81,7 +81,7 @@ class FunctionFieldPlace(Element):
 
     INPUT:
 
-    - ``field`` -- function field
+    - ``parent`` -- place set of a function field
 
     - ``prime`` -- prime ideal associated with the place
 
@@ -1188,3 +1188,16 @@ class PlaceSet(UniqueRepresentation, Parent):
                 break
         return p
 
+    def function_field(self):
+        """
+        Return the function field to which this place set belongs.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
+            sage: PS = L.place_set()
+            sage: PS.function_field() == L
+            True
+        """
+        return self._field

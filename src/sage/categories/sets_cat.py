@@ -956,14 +956,13 @@ class Sets(Category_singleton):
                 sage: A.element_class
                 <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
                 sage: A._element_constructor_
-                <bound method FreeModule_ambient_field_with_category._element_constructor_ of Vector space of dimension 3 over Rational Field>
+                <bound method FreeModule_ambient_field._element_constructor_ of Vector space of dimension 3 over Rational Field>
 
                 sage: B = SymmetricGroup(3).algebra(ZZ)
                 sage: B.element_class
                 <...SymmetricGroupAlgebra_n_with_category.element_class'>
                 sage: B._element_constructor_
-                <bound method SymmetricGroupAlgebra_n_with_category._element_constructor_
-                of Symmetric group algebra of order 3 over Integer Ring>
+                <bound method SymmetricGroupAlgebra_n._element_constructor_ of Symmetric group algebra of order 3 over Integer Ring>
             """
             if hasattr(self, "element_class"):
                 return self._element_constructor_from_element_class

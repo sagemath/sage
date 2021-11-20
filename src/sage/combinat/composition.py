@@ -2017,7 +2017,7 @@ def composition_iterator_fast(n):
         sage: L = list(composition_iterator_fast(4)); L
         [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 3], [2, 1, 1], [2, 2], [3, 1], [4]]
         sage: type(L[0])
-        <... 'list'>
+        <class 'list'>
     """
     # Special cases
     if n < 0:

@@ -212,7 +212,24 @@ class MatrixGroup_base(Group):
 
             sage: TestSuite(G).run()
             sage: TestSuite(S).run()
+
+            sage: W = CoxeterGroup(['I',7])
+            sage: s = W.simple_reflections()
+            sage: G = W.subgroup([s[1]])
+            sage: G.category()
+            Category of finite groups
+
+            sage: W = WeylGroup(['A',2])
+            sage: s = W.simple_reflections()
+            sage: G = W.subgroup([s[1]])
+            sage: G.category()
+            Category of finite groups
         """
+        try:
+            test = self.is_finite()
+        except NotImplementedError:
+            test = self in Groups().Finite()
+        cat = Groups().Finite() if test else Groups()
         # this method enlarges the method with same name of
         # ParentLibGAP to cases where the ambient group is not
         # inherited from ParentLibGAP.
@@ -224,7 +241,7 @@ class MatrixGroup_base(Group):
                 raise ValueError("generator %s is not in the group" % (g))
 
         from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-        subgroup = MatrixGroup(generators, check=check)
+        subgroup = MatrixGroup(generators, check=check, category=cat)
         subgroup._ambient = self
         return subgroup
 
@@ -409,12 +426,11 @@ class MatrixGroup_generic(MatrixGroup_base):
         if self._deg <= 0:
             raise ValueError('the degree must be at least 1')
 
-        if category is None:
-            category = Groups()
+        cat = Groups() if category is None else category
         if base_ring in Rings().Finite():
-            category = category.Finite()
+            cat = cat.Finite()
         super(MatrixGroup_generic, self).__init__(base=base_ring,
-                                                  category=category)
+                                                  category=cat)
 
     def degree(self):
         """
@@ -759,8 +775,12 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
             sage: G.ambient() is SL2Z
             True
         """
+        cat = Groups()
+        if self in Groups().Finite():
+            cat = cat.Finite()
         from sage.groups.matrix_gps.finitely_generated import FinitelyGeneratedMatrixGroup_gap
         return FinitelyGeneratedMatrixGroup_gap(self.degree(), self.base_ring(),
-                                                libgap_subgroup, ambient=self)
+                                                libgap_subgroup, ambient=self,
+                                                category=cat)
 
     from sage.groups.generic import structure_description

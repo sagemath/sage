@@ -292,7 +292,7 @@ class Polyhedron_cdd(Polyhedron_base):
             from itertools import chain
             # We add equations to the end of the Hrepresentation.
             for i in chain(
-                    (j for j in range(len(data)) if not j in equations),
+                    (j for j in range(len(data)) if j not in equations),
                     equations):
                 line = data[i]
                 coefficients = [R(x) for x in line]

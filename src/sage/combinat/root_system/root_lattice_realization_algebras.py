@@ -42,7 +42,7 @@ class Algebras(AlgebrasCategory):
                 sage: RootSystem(["A",2,1]).ambient_space().algebra(QQ) # indirect doctest
                 Algebra of the Ambient space of the Root system of type ['A', 2, 1] over Rational Field
             """
-            return "Algebra of the %s over %s"%(self.basis().keys(),self.base_ring())
+            return "Algebra of the %s over %s" % (self.basis().keys(), self.base_ring())
 
         def some_elements(self):
             r"""
@@ -1168,13 +1168,15 @@ class Algebras(AlgebrasCategory):
             TESTS::
 
                 sage: type(p.expand(F.gens()))
-                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <class 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
 
                 sage: p = KL.zero()
                 sage: p.expand(F.gens())
                 0
                 sage: type(p.expand(F.gens()))
-                <... 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
+                <class 'sage.rings.polynomial.laurent_polynomial.LaurentPolynomial_mpair'>
             """
             codomain = alphabet[0].parent()
-            return codomain.sum( c * prod(X**int(n) for X,n in zip(alphabet,vector(m))) for m,c in self)
+            return codomain.sum(c * prod(X**int(n)
+                                         for X, n in zip(alphabet, vector(m)))
+                                for m, c in self)

@@ -105,11 +105,11 @@ class IntegralCurveClosedPoint(CurveClosedPoint):
         sage: C.closed_points()
         [Point (x, y),
          Point (x, y + 1),
-         Point (x + (a), y + (a)),
-         Point (x + (a), y + (a + 1)),
-         Point (x + (a + 1), y + (a)),
+         Point (x + a, y + a),
+         Point (x + a, y + (a + 1)),
+         Point (x + (a + 1), y + a),
          Point (x + (a + 1), y + (a + 1)),
-         Point (x + 1, y + (a)),
+         Point (x + 1, y + a),
          Point (x + 1, y + (a + 1))]
     """
     def __init__(self, curve, prime_ideal, degree):
@@ -269,7 +269,7 @@ class IntegralAffineCurveClosedPoint(IntegralCurveClosedPoint):
              Point (x + (z2 + 1), y + (-z2 + 1)),
              Point (x - 1, y + (z2 + 1)),
              Point (x - 1, y + (-z2 - 1)),
-             Point (x + (-z2 - 1), y + (z2)),
+             Point (x + (-z2 - 1), y + z2),
              Point (x + (-z2 - 1), y + (-z2)),
              Point (x + 1, y + 1),
              Point (x + 1, y - 1)]
@@ -356,8 +356,8 @@ class IntegralProjectiveCurveClosedPoint(IntegralCurveClosedPoint):
             [Point (x, z),
              Point (x, y),
              Point (y, z),
-             Point (x + (a)*z, y + (a + 1)*z),
-             Point (x + (a + 1)*z, y + (a)*z)]
+             Point (x + a*z, y + (a + 1)*z),
+             Point (x + (a + 1)*z, y + a*z)]
             sage: [p.rational_point() for p in _]
             [(0 : 1 : 0), (0 : 0 : 1), (1 : 0 : 0), (a : a + 1 : 1), (a + 1 : a : 1)]
             sage: set(_) == set(C.rational_points())

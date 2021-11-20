@@ -920,11 +920,11 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: len(L) == G.cardinality()
             True
             sage: type(L[0])
-            <... 'list'>
+            <class 'list'>
         """
         # Setup the first row
-        iters = [None]*n
-        ret = [None]*n
+        iters = [None] * n
+        ret = [None] * n
         iters[0] = self._top_row_iter(n)
         ret[0] = next(iters[0])
         min_pos = 0
@@ -959,7 +959,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: for x in G._top_row_iter(3): x
             [2, 1, 0]
         """
-        row = [-1]*n
+        row = [-1] * n
         pos = 0
         while pos >= 0:
             if pos == n:
@@ -967,7 +967,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                 pos -= 1
                 continue
             # If it would create an invalid entry, backstep
-            if ( pos > 0 and (row[pos] >= row[pos-1] \
+            if (pos > 0 and (row[pos] >= row[pos-1]
                     or (self._strict and row[pos] == row[pos-1]-1)) ) \
                     or (self._k is not None and row[pos] >= self._k):
                 row[pos] = -1

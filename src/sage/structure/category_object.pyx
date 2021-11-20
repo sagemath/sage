@@ -782,7 +782,7 @@ cdef class CategoryObject(SageObject):
         its categories, that is from ``EuclideanDomains().parent_class``::
 
             sage: ZZ._test_associativity
-            <bound method JoinCategory.parent_class._test_associativity of Integer Ring>
+            <bound method Semigroups.ParentMethods._test_associativity of Integer Ring>
             sage: ZZ._test_associativity(verbose = True)
             sage: TestSuite(ZZ).run(verbose = True)
             running ._test_additive_associativity() . . . pass

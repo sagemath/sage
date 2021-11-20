@@ -237,12 +237,12 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
             return
 
         perm = Word(self._weights).standard_permutation()
-        perm = [len(self._weights)-i for i in perm]
+        perm = [len(self._weights) - i for i in perm]
         l = [x for x in sorted(self._weights, reverse=True)]
         for x in iterator_fast(self._n, l):
             yield self.element_class(self, [x[i] for i in perm])
-            #.action(x)
-            #_left_to_right_multiply_on_right(Permutation(x))
+            # .action(x)
+            # _left_to_right_multiply_on_right(Permutation(x))
 
 
 class WeightedIntegerVectors_all(DisjointUnionEnumeratedSets):
@@ -360,7 +360,7 @@ def iterator_fast(n, l):
     Test that :trac:`20491` is fixed::
 
         sage: type(list(iterator_fast(2, [2]))[0][0])
-        <... 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
     """
     if n < 0:
         return

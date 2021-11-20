@@ -154,14 +154,14 @@ def ChessboardGraphGenerator(dim_list, rook=True, rook_radius=None,
     if rook:
         if rook_radius is None:
             rook_radius = max(dim)
-        elif not rook_radius in ZZ or rook_radius < 1:
+        elif rook_radius not in ZZ or rook_radius < 1:
             raise ValueError('the rook_radius must be either None or have an integer value >= 1')
     if bishop:
         if bishop_radius is None:
             bishop_radius = max(dim)
-        elif not bishop_radius in ZZ or bishop_radius < 1:
+        elif bishop_radius not in ZZ or bishop_radius < 1:
             raise ValueError('the bishop_radius must be either None or have an integer value >= 1')
-    if knight and ( not knight_x in ZZ or not knight_y in ZZ or knight_x < 1 or knight_y < 1 ):
+    if knight and (knight_x not in ZZ or knight_y not in ZZ or knight_x < 1 or knight_y < 1):
         raise ValueError('the knight_x and knight_y values must be integers of value >= 1')
 
     # We build the set of vertices of the d-dimensional chessboard

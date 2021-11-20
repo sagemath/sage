@@ -767,16 +767,20 @@ class Polynomial_generic_sparse(Polynomial):
         Returns the quotient and remainder of the Euclidean division of
         ``self`` and ``other``.
 
-        Raises ZerodivisionError if ``other`` is zero. Raises ArithmeticError
-        if ``other`` has a nonunit leading coefficient.
+        Raises ZerodivisionError if ``other`` is zero.
+
+        Raises ArithmeticError if ``other`` has a nonunit leading coefficient
+        and this causes the Euclidean division to fail.
 
         EXAMPLES::
 
-            sage: P.<x> = PolynomialRing(ZZ,sparse=True)
-            sage: R.<y> = PolynomialRing(P,sparse=True)
+            sage: P.<x> = PolynomialRing(ZZ, sparse=True)
+            sage: R.<y> = PolynomialRing(P, sparse=True)
             sage: f = R.random_element(10)
-            sage: g = y^5+R.random_element(4)
-            sage: q,r = f.quo_rem(g)
+            sage: while x.divides(f.leading_coefficient()):
+            ....:     f = R.random_element(10)
+            sage: g = y^5 + R.random_element(4)
+            sage: q, r = f.quo_rem(g)
             sage: f == q*g + r and r.degree() < g.degree()
             True
             sage: g = x*y^5
@@ -790,25 +794,32 @@ class Polynomial_generic_sparse(Polynomial):
             ...
             ZeroDivisionError: Division by zero polynomial
 
+        If the leading coefficient of ``other`` is not a unit, Euclidean division may still work::
+
+            sage: f = -x*y^10 + 2*x*y^7 + y^3 - 2*x^2*y^2 - y
+            sage: g = x*y^5
+            sage: f.quo_rem(g)
+            (-y^5 + 2*y^2, y^3 - 2*x^2*y^2 - y)
+
         TESTS::
 
-            sage: P.<x> = PolynomialRing(ZZ,sparse=True)
-            sage: f = x^10-4*x^6-5
-            sage: g = 17*x^22+x^15-3*x^5+1
-            sage: q,r = g.quo_rem(f)
+            sage: P.<x> = PolynomialRing(ZZ, sparse=True)
+            sage: f = x^10 - 4*x^6 - 5
+            sage: g = 17*x^22 + x^15 - 3*x^5 + 1
+            sage: q, r = g.quo_rem(f)
             sage: g == f*q + r and r.degree() < f.degree()
             True
             sage: zero = P(0)
             sage: zero.quo_rem(f)
             (0, 0)
             sage: Q.<y> = IntegerModRing(14)[]
-            sage: f = y^10-4*y^6-5
-            sage: g = 17*y^22+y^15-3*y^5+1
-            sage: q,r = g.quo_rem(f)
+            sage: f = y^10 - 4*y^6 - 5
+            sage: g = 17*y^22 + y^15 - 3*y^5 + 1
+            sage: q, r = g.quo_rem(f)
             sage: g == f*q + r and r.degree() < f.degree()
             True
-            sage: f += 2*y^10 # 3 is invertible mod 14
-            sage: q,r = g.quo_rem(f)
+            sage: f += 2*y^10  # 3 is invertible mod 14
+            sage: q, r = g.quo_rem(f)
             sage: g == f*q + r and r.degree() < f.degree()
             True
 

@@ -145,7 +145,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         self.__base_ring = K
         self.__ainvs = tuple(K(a) for a in ainvs)
         if self.discriminant() == 0:
-            raise ArithmeticError("invariants " + str(ainvs) + " define a singular curve")
+            raise ArithmeticError(self._equation_string() + " defines a singular curve")
         PP = projective_space.ProjectiveSpace(2, K, names='xyz')
         x, y, z = PP.coordinate_ring().gens()
         a1, a2, a3, a4, a6 = ainvs

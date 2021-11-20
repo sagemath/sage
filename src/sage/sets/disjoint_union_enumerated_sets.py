@@ -468,12 +468,12 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=False)
             sage: U._element_constructor_
-            <bound method DisjointUnionEnumeratedSets_with_category._element_constructor_default
+            <bound method DisjointUnionEnumeratedSets._element_constructor_default
              of Disjoint union of Finite family {...}>
             sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=True)
             sage: U._element_constructor_
-            <bound method DisjointUnionEnumeratedSets_with_category._element_constructor_facade
+            <bound method DisjointUnionEnumeratedSets._element_constructor_facade
              of Disjoint union of Finite family {...}>
         """
         if not self._facade:

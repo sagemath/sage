@@ -1366,7 +1366,7 @@ In the latter case, please inform the developers.""".format(self.order()))
 
         The choice of generators is affected by the optional keyword
         ``algorithm``; this can be ``'sage'`` (default) or ``'pari'``.
-        See :meth:`unit_group` for details.
+        See :meth:`unit_group` for details. ::
 
             sage: A = Zmod(55)
             sage: A.unit_gens(algorithm='sage')

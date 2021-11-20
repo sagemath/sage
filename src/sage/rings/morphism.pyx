@@ -1255,11 +1255,21 @@ cdef class RingHomomorphism(RingMap):
             Traceback (most recent call last):
             ...
             NotImplementedError: base map must be trivial
+
+        Non-commutative rings are not supported (:trac:`32824`)::
+
+            sage: A = GradedCommutativeAlgebra(QQ, 'x,y,z')
+            sage: A.hom(A.gens(), A).kernel()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: rings are not commutative
         """
         from .quotient_ring import is_QuotientRing
         from .ideal import Ideal_generic
         A = self.domain()
         B = self.codomain()
+        if not (A.is_commutative() and B.is_commutative()):
+            raise NotImplementedError("rings are not commutative")
         if A.base_ring() != B.base_ring():
             raise NotImplementedError("base rings must be equal")
         try:

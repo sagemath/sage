@@ -171,7 +171,8 @@ The following are some additional files which can be added:
     |   `-- baz.patch
     |-- spkg-check.in
     |-- spkg-configure.m4
-    `-- spkg-src
+    |-- spkg-src
+    `-- trees.txt
 
 We discuss the individual files in the following sections.
 
@@ -410,6 +411,13 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
    ``sdh_pip_install`` actually does the installation via ``pip wheel``,
    creating a wheel file in ``dist/``, followed by
    ``sdh_store_and_pip_install_wheel`` (see below).
+
+- ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install -e``
+   with the given arguments, as well as additional default arguments used for
+   installing packages into Sage with pip. The last argument must be
+   ``.`` to indicate installation from the current directory.
+   See `pip documentation <https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs>`_
+   for more details concerning editable installs.
 
 - ``sdh_pip_uninstall [...]``: Runs ``pip uninstall`` with the given arguments.
    If unsuccessful, it displays a warning.
@@ -715,6 +723,28 @@ correct, the following command should work without errors::
 Finally, note that standard packages should only depend on standard
 packages and optional packages should only depend on standard or
 optional packages.
+
+
+.. _section-trees:
+
+Where packages are installed
+----------------------------
+
+The Sage distribution has the notion of several installation trees.
+
+- ``$SAGE_VENV`` is the default installation tree for all Python packages, i.e.,
+  normal packages with an ``install-requires.txt`` and pip packages
+  with a ``requirements.txt``.
+
+- ``$SAGE_LOCAL`` is the default installation tree for all non-Python packages.
+
+- ``$SAGE_DOCS`` (only set at build time) is an installation tree for the
+  HTML and PDF documentation.
+
+By placing a file ``trees.txt`` in the package directory, the installation tree
+can be overridden.  For example, ``build/pkgs/python3/trees.txt`` contains the
+word ``SAGE_VENV``, and ``build/pkgs/sagemath_doc_html/trees.txt`` contains the
+word ``SAGE_DOCS``.
 
 
 .. _section-spkg-patching:

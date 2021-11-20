@@ -702,16 +702,15 @@ class PanAxiomElement(ExpectElement):
             sage: a = axiom(1/2) #optional - axiom
             sage: latex(a)       #optional - axiom
             \frac{1}{2}
-
         """
         self._check_valid()
         P = self.parent()
-        s = P._eval_line('outputAsTex(%s)'%self.name(), reformat=False)
-        if not '$$' in s:
+        s = P._eval_line('outputAsTex(%s)' % self.name(), reformat=False)
+        if '$$' not in s:
             raise RuntimeError("Error texing axiom object.")
         i = s.find('$$')
         j = s.rfind('$$')
-        s = s[i+2:j]
+        s = s[i + 2:j]
         s = multiple_replace({'\r':'', '\n':' ',
                               ' \\sp ':'^',
                               '\\arcsin ':'\\sin^{-1} ',

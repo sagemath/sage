@@ -467,7 +467,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
             sage: B = species.BinaryTreeSpecies()
             sage: B.algebraic_equation_system()
-            [-node3^2 + node1, -node1 + node3 - z]
+            [-node3^2 + node1, -node1 + node3 + (-z)]
         """
         try:
             return var_mapping[self._reference]

@@ -179,9 +179,9 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         if not base_field.is_field():
             raise ValueError("'base_field' must be a field (and {} is not one)".format(base_field))
-        if not default_encoder_name in self._registered_encoders:
+        if default_encoder_name not in self._registered_encoders:
             raise ValueError("You must set a valid encoder as default encoder for this code, by filling in the dictionary of registered encoders")
-        if not default_decoder_name in self._registered_decoders:
+        if default_decoder_name not in self._registered_decoders:
             raise ValueError("You must set a valid decoder as default decoder for this code, by filling in the dictionary of registered decoders")
 
         #if not self.dimension() <= length:
@@ -509,7 +509,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             sage: vector((1, 0, 0, 0, 0, 1/2, 1)) in C # indirect doctest
             False
         """
-        if not v in self.ambient_space() or len(v) != self.length():
+        if v not in self.ambient_space() or len(v) != self.length():
             return False
         return self.syndrome(v) == 0
 
@@ -1296,13 +1296,13 @@ class LinearCodeSystematicEncoder(Encoder):
         n = self.code().length()
         systematic_positions = self.systematic_positions()
         k = len(systematic_positions)
-        lp = [ None ]*n
-        for (i,j) in zip(range(k), systematic_positions):
+        lp = [None] * n
+        for (i, j) in zip(range(k), systematic_positions):
             lp[i] = j
         j = k
         set_sys_pos = set(systematic_positions)
         for i in range(n):
-            if not i in set_sys_pos:
+            if i not in set_sys_pos:
                 lp[j] = i
                 j += 1
         from sage.combinat.permutation import Permutation

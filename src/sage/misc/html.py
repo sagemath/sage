@@ -294,12 +294,13 @@ class MathJax:
             sage: MathJax().eval(3, mode='inline')
             <html>\(\newcommand{\Bold}[1]{\mathbf{#1}}3\)</html>
             sage: MathJax().eval(type(3), mode='inline')
-            <html>\(\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<class|\phantom{\verb!x!}\verb|'sage.rings.integer.Integer'>|\)</html>
+            <html>\(\newcommand{\Bold}[1]{\mathbf{#1}}\verb|&lt;class|\verb| |\verb|'sage.rings.integer.Integer'>|\)</html>
         """
         # Get a regular LaTeX representation of x
         x = latex(x, combine_all=combine_all)
 
-        # The following block, hopefully, can be removed in some future MathJax.
+        # The "\text{\texttt{...}}" blocks are reformed to be renderable by MathJax.
+        # These blocks are produced by str_function() defined in sage.misc.latex.
         prefix = r"\text{\texttt{"
         parts = x.split(prefix)
         for i, part in enumerate(parts):
@@ -324,7 +325,6 @@ class MathJax:
                 delimiter = "|"
                 y = "(complicated string)"
             wrapper = r"\verb" + delimiter + "%s" + delimiter
-            spacer = r"\phantom{\verb!%s!}"
             y = y.replace("{ }", " ").replace("{-}", "-")
             for c in r"#$%&\^_{}~":
                 char_wrapper = r"{\char`\%s}" % c
@@ -336,14 +336,12 @@ class MathJax:
                     nspaces += 1
                     continue
                 if nspaces > 0:
-                    subparts.append(spacer % ("x" * nspaces))
+                    subparts.append(wrapper % (" " * nspaces))
                 nspaces = 1
                 subparts.append(wrapper % subpart)
-            # There is a bug with omitting empty lines in arrays
-            if not y:
-                subparts.append(spacer % "x")
             subparts.append(part[closing + 1:])
             parts[i] = "".join(subparts)
+
         from sage.misc.latex_macros import sage_configurable_latex_macros
         from sage.misc.latex import _Latex_prefs
         latex_string = ''.join(
@@ -351,15 +349,16 @@ class MathJax:
             [_Latex_prefs._option['macros']] +
             parts
         )
+        mathjax_string = latex_string.replace('<', '&lt;')
         if mode == 'display':
             html = r'<html>\[{0}\]</html>'
         elif mode == 'inline':
             html = r'<html>\({0}\)</html>'
         elif mode == 'plain':
-            return latex_string
+            return mathjax_string
         else:
             raise ValueError("mode must be either 'display', 'inline', or 'plain'")
-        return MathJaxExpr(html.format(latex_string))
+        return MathJaxExpr(html.format(mathjax_string))
 
 
 class HTMLFragmentFactory(SageObject):
@@ -412,7 +411,7 @@ class HTMLFragmentFactory(SageObject):
             <a href="http://sagemath.org">sagemath</a>
 
             sage: html('<a href="http://sagemath.org">sagemath</a>', strict=True)
-            <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<a|\phantom{\verb!x!}\verb|href="http://sagemath.org">sagemath</a>|\]</html>
+            <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\verb|&lt;a|\verb| |\verb|href="http://sagemath.org">sagemath&lt;/a>|\]</html>
         """
         # string obj is interpreted as an HTML in not strict mode
         if isinstance(obj, str) and not strict:

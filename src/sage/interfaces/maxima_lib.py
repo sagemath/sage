@@ -1609,18 +1609,18 @@ def sr_to_max(expr):
             # This should be safe if we treated all special operators above
             #furthermore, this should already use any _maxima_ methods on op, so use any
             #conversion methods that are registered in pynac.
-            op_max=maxima(op).ecl()
+            op_max = maxima(op).ecl()
             if op_max in max_op_dict:
                 raise RuntimeError("Encountered operator mismatch in sr-to-maxima translation")
-            sage_op_dict[op]=op_max
-            max_op_dict[op_max]=op
+            sage_op_dict[op] = op_max
+            max_op_dict[op_max] = op
         return EclObject(([sage_op_dict[op]],
                      [sr_to_max(o) for o in expr.operands()]))
     elif expr.is_symbol() or expr._is_registered_constant_():
-        if not expr in sage_sym_dict:
-            sym_max=maxima(expr).ecl()
-            sage_sym_dict[expr]=sym_max
-            max_sym_dict[sym_max]=expr
+        if expr not in sage_sym_dict:
+            sym_max = maxima(expr).ecl()
+            sage_sym_dict[expr] = sym_max
+            max_sym_dict[sym_max] = expr
         return sage_sym_dict[expr]
     else:
         try:

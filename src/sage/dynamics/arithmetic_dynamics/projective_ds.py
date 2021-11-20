@@ -503,7 +503,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f._number_field_from_algebraics()
             Dynamical System of Projective Space of dimension 1 over Number Field in a with defining polynomial y^2 - 2 with a = 1.414213562373095?
               Defn: Defined on coordinates by sending (x : y) to
-                    (x^2 + (a)*y^2 : y^2)
+                    (x^2 + a*y^2 : y^2)
         """
         return self.as_scheme_morphism()._number_field_from_algebraics().as_dynamical_system()
 
@@ -1331,7 +1331,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             return []
 
         R = self.domain()(P)
-        if R in self.domain(): #Check whether R is a zero-dimensional point
+        if R in self.domain():  # Check whether R is a zero-dimensional point
             Q = R
         else:
             Q = P
@@ -1746,7 +1746,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         BR = FractionField(P.codomain().base_ring())
         GBR = self.change_ring(BR) #so the heights work
 
-        if not BR in NumberFields():
+        if BR not in NumberFields():
             raise NotImplementedError("must be over a number field or a number field order")
         if not BR.is_absolute():
             raise TypeError("must be an absolute field")
@@ -1775,7 +1775,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
             #if doing error estimates, compute needed number of iterates
             D = (dim + 1) * (d - 1) + 1
-            #compute upper bound
+            # compute upper bound
             if isinstance(v, RingHomomorphism_im_gens): #archimedean
                 vindex = BR.places(prec=prec).index(v)
                 U = GBR.local_height_arch(vindex, prec=prec) + R(binomial(dim + d, d)).log()
@@ -1961,8 +1961,8 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         error_bound = kwds.get("error_bound", None)
         K = FractionField(self.codomain().base_ring())
 
-        if not K in NumberFields():
-            if not K is QQbar:
+        if K not in NumberFields():
+            if K is not QQbar:
                 raise NotImplementedError("must be over a number field or a number field order or QQbar")
             else:
                 #since this an absolute height, we can compute the height of a QQbar point
@@ -2011,9 +2011,9 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             R = RealField(prec)
             N = kwds.get('N', 10)
             err = kwds.get('error_bound', None)
-            #computes the error bound as defined in Algorithm 3.1 of [WELLS]
+            # computes the error bound as defined in Algorithm 3.1 of [WELLS]
             if Res > 1:
-                if not err is None:
+                if err is not None:
                     err = err / 2
                     N = ceil((R(Res).log().log() - R(d-1).log() - R(err).log())/(R(d).log()))
                     if N < 1:
@@ -2054,7 +2054,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
 
         emb = K.places(prec=prec)
         num_places = len(emb) + len(bad_primes)
-        if not error_bound is None:
+        if error_bound is not None:
             error_bound /= num_places
         R = RealField(prec)
         h = R.zero()
@@ -2137,7 +2137,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             3.43967790223022
         """
         FF = FractionField(self.domain().base_ring()) #lift will only work over fields, so coercing into FF
-        if not FF in NumberFields():
+        if FF not in NumberFields():
             if FF == QQbar:
                 #since this is absolute height, we can choose any number field over which the
                 #function is defined.
@@ -3949,7 +3949,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         crit_points = F.critical_points()
         n = len(crit_points)
         err_bound = kwds.get("error_bound", None)
-        if not err_bound is None:
+        if err_bound is not None:
             kwds["error_bound"] = err_bound / n
         ch = 0
         for P in crit_points:
@@ -5180,7 +5180,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         """
         n = ZZ(n)
 
-        if not embedding is None:
+        if embedding is not None:
             raise ValueError('do not specify an embedding')
         if n < 1:
             raise ValueError("period must be a positive integer")
@@ -5189,7 +5189,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             raise NotImplementedError("not implemented for subschemes")
         if self.degree() <= 1:
             raise TypeError("must have degree at least 2")
-        if not type in ['point', 'cycle']:
+        if type not in ['point', 'cycle']:
             raise ValueError("type must be either point or cycle")
         if dom.dimension_relative() > 1 or return_polynomial:
             if type == 'cycle':
@@ -5588,7 +5588,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             (
             Dynamical System of Projective Space of dimension 1 over Number Field in w with defining polynomial x^2 - 2 with w = 1.414213562373095?
               Defn: Defined on coordinates by sending (x : y) to
-                    (x^3 : (w)*y^3)                                                                                                                ,
+                    (x^3 : w*y^3)                                                                                                                ,
             <BLANKLINE>
             [  1 -12]
             [  0   1]
@@ -6281,10 +6281,10 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
             ValueError: algorithm must be 'dynatomic' or 'lifting'
         """
         ring = kwds.pop("R", None)
-        if not ring is None:
-            #changes to the new ring
+        if ring is not None:
+            # changes to the new ring
             DS = self.change_ring(ring)
-            #ensures that the correct method is run, in case user switches to a finite field
+            # ensures that the correct method is run, in case user switches to a finite field
             return DS.all_periodic_points(**kwds)
         else:
             DS = self
@@ -6327,8 +6327,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                         pt = [sum([P[i]*w**i for i in range(d)])]
                         pt.insert(k,1)
                         Q = PS(pt)
-                        #for each periodic point get the entire cycle
-                        if not Q in periodic_points:
+                        # for each periodic point get the entire cycle
+                        if Q not in periodic_points:
                             #check periodic not preperiodic and add all points in cycle
                             orb = set([Q])
                             Q2 = DS(Q)
@@ -6346,7 +6346,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                 periods = kwds.pop("periods", None)
                 badprimes = kwds.pop("bad_primes", None)
                 num_cpus = kwds.pop("ncpus", ncpus())
-                if not alg is None and alg not in ['dynatomic','lifting']:
+                if alg is not None and alg not in ['dynatomic', 'lifting']:
                     raise ValueError("algorithm must be 'dynatomic' or 'lifting'")
 
                 if not isinstance(primebound, (list, tuple)):
@@ -6584,7 +6584,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
              (1/12*w + 1 : 1)]
         """
         ring = kwds.pop("R",None)
-        if not ring is None:
+        if ring is not None:
             DS = self.change_ring(ring)
         else:
             DS = self
@@ -6626,8 +6626,8 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
                     pt = [sum([P[i]*w**i for i in range(d)])]
                     pt.insert(k,1)
                     Q = PS(pt)
-                    #for each preperiodic point get the entire connected component
-                    if not Q in preper:
+                    # for each preperiodic point get the entire connected component
+                    if Q not in preper:
                         for t in DS.connected_rational_component(Q):
                             preper.add(t)
             preper = list(preper)
@@ -7350,7 +7350,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         if self.codomain().dimension_relative() != 1:
             raise NotImplementedError("space must have dimension equal to 1")
         K = self.base_ring()
-        if not K in FiniteFields() and (not K in NumberFields() or not K.is_absolute()):
+        if K not in FiniteFields() and (K not in NumberFields() or not K.is_absolute()):
             raise NotImplementedError("must be over an absolute number field or finite field")
         if K in FiniteFields():
             q = K.characteristic()
@@ -7489,7 +7489,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
         if self.codomain().dimension_relative() != 1:
             raise NotImplementedError("space must have dimension equal to 1")
         K = self.base_ring()
-        if not K in FiniteFields() and (not K in NumberFields() or not K.is_absolute()):
+        if K not in FiniteFields() and (K not in NumberFields() or not K.is_absolute()):
             raise NotImplementedError("must be over an absolute number field or finite field")
         if K in FiniteFields():
             q = K.characteristic()
@@ -8078,7 +8078,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
         Q.normalize_coordinates()
         F = copy(self)
         F.normalize_coordinates()
-        while not Q in orbit:
+        while Q not in orbit:
             orbit.append(Q)
             Q = F(Q)
             Q.normalize_coordinates()

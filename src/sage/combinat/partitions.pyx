@@ -42,7 +42,7 @@ def ZS1_iterator(int n):
         sage: next(it)
         [4]
         sage: type(_)
-        <... 'list'>
+        <class 'list'>
     """
     # Easy cases.
     if n < 0:
@@ -102,7 +102,7 @@ def ZS1_iterator_nk(int n, int k):
         sage: next(it)
         [4]
         sage: type(_)
-        <... 'list'>
+        <class 'list'>
     """
     # Easy cases.
     if n <= 0:
@@ -137,7 +137,7 @@ def ZS1_iterator_nk(int n, int k):
             h -= 1
             yield x[:m+1]
         else:
-            t = m - h + 1 # 1 + "the number of 1s to the right of x[h] that belong to the partition"
+            t = m - h + 1  # 1 + "the number of 1s to the right of x[h] that belong to the partition"
             r = x[h] - 1
 
             # This loop finds the largest h such that x[:h] can be completed

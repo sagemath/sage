@@ -711,9 +711,13 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             True
         """
         # Lazy elements can wrap infinity or not, unwrap first
-        from sage.rings.real_lazy import LazyWrapper
-        if isinstance(x, LazyWrapper):
-            x = x._value
+        try:
+            from sage.rings.real_lazy import LazyWrapper
+        except ImportError:
+            pass
+        else:
+            if isinstance(x, LazyWrapper):
+                x = x._value
 
         # Handle all ways to represent infinity first
         if isinstance(x, InfinityElement):
@@ -721,7 +725,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
         elif isinstance(x, float):
             if x in [float('+inf'), float('-inf')]:
                 return self.gen()
-        elif isinstance(x, sage.rings.real_mpfi.RealIntervalFieldElement):
+        elif isinstance(x, RingElement) and isinstance(x.parent(), sage.rings.abc.RealIntervalField):
             if x.upper().is_infinity() or x.lower().is_infinity():
                 return self.gen()
         else:
@@ -1167,9 +1171,13 @@ class InfinityRing_class(Singleton, Ring):
             ValueError: infinite but not with +/- phase
         """
         # Lazy elements can wrap infinity or not, unwrap first
-        from sage.rings.real_lazy import LazyWrapper
-        if isinstance(x, LazyWrapper):
-            x = x._value
+        try:
+            from sage.rings.real_lazy import LazyWrapper
+        except ImportError:
+            pass
+        else:
+            if isinstance(x, LazyWrapper):
+                x = x._value
 
         # Handle all ways to represent infinity first
         if isinstance(x, InfinityElement):
@@ -1182,7 +1190,7 @@ class InfinityRing_class(Singleton, Ring):
                 return self.gen(0)
             if x == float('-inf'):
                 return self.gen(1)
-        elif isinstance(x, sage.rings.real_mpfi.RealIntervalFieldElement):
+        elif isinstance(x, RingElement) and isinstance(x.parent(), sage.rings.abc.RealIntervalField):
             if x.upper().is_positive_infinity():
                 return self.gen(0)
             if x.lower().is_negative_infinity():

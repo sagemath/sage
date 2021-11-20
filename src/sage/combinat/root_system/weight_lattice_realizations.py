@@ -248,8 +248,8 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: RootSystem(['A',3]).weight_lattice()._test_weight_lattice_realization()
             """
             from sage.rings.integer_ring import ZZ
-            tester     = self._tester(**options)
-            Lambda     = self.fundamental_weights()
+            tester = self._tester(**options)
+            Lambda = self.fundamental_weights()
             alphacheck = self.simple_coroots()
             tester.assertEqual(tuple(Lambda.keys()), self.index_set())
 
@@ -868,7 +868,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 16
 
                 sage: type(RootSystem(['A',3]).ambient_lattice().weyl_dimension([2,1,0,0]))
-                <... 'sage.rings.integer.Integer'>
+                <class 'sage.rings.integer.Integer'>
             """
             highest_weight = self(highest_weight)
             if not highest_weight.is_dominant():

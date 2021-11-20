@@ -81,7 +81,7 @@ class BaxterPermutations_size(BaxterPermutations):
         self.element_class = Permutations(n).element_class
         self._n = ZZ(n)
         from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-        super(BaxterPermutations, self).__init__(category=FiniteEnumeratedSets())
+        super(BaxterPermutations_size, self).__init__(category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -128,7 +128,7 @@ class BaxterPermutations_size(BaxterPermutations):
                     if x_j > a and x_j < b and x_j > max_l:
                         max_l = x_j
                 min_r = len(x) + 1
-                for x_j in x[i+2:]:
+                for x_j in x[i + 2:]:
                     if x_j > a and x_j < b and x_j < min_r:
                         min_r = x_j
                 if max_l > min_r:
@@ -139,7 +139,7 @@ class BaxterPermutations_size(BaxterPermutations):
                     if x_j < a and x_j > b and x_j < min_l:
                         min_l = x_j
                 max_r = 0
-                for x_j in x[i+2:]:
+                for x_j in x[i + 2:]:
                     if x_j < a and x_j > b and x_j > max_r:
                         max_r = x_j
                 if min_l < max_r:
@@ -186,7 +186,8 @@ class BaxterPermutations_size(BaxterPermutations):
         else:
             for b in BaxterPermutations(self._n - 1):
                 # Left to right maxima.
-                for i in [self._n - 2 - i for i in b.reverse().saliances()]:
+                for j in b.reverse().saliances():
+                    i = self._n - 2 - j
                     yield Permutations(self._n)(b[:i] + [self._n] + b[i:])
                 # Right to left maxima.
                 for i in b.saliances():

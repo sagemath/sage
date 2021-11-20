@@ -119,7 +119,7 @@ such::
 
     sage: mc_pc = rgf.mix_columns_poly_constr()
     sage: mc_pc(1, 2)
-    a02 + (x)*a12 + (x + 1)*a22 + a32
+    a02 + x*a12 + (x + 1)*a22 + a32
     sage: mc_pc(2, 3, algorithm='decrypt')
     (x^3 + x^2 + 1)*a03 + (x^3 + 1)*a13 + (x^3 + x^2 + x)*a23 + (x^3 + x + 1)*a33
 
@@ -274,7 +274,7 @@ entries of `A`. ::
     sage: rcpc
     A polynomial constructor of a round component of Rijndael-GF block cipher with block length 4, key length 6, and 12 rounds.
     sage: rcpc(2, 1)
-    a01 + a12 + (x)*a23 + (x + 1)*a30
+    a01 + a12 + x*a23 + (x + 1)*a30
     <BLANKLINE>
     sage: state = rgf._hex_to_GF('afb73eeb1cd1b85162280f27fb20d585')
     sage: result = rgf.apply_poly(state, rcpc)
@@ -303,7 +303,7 @@ of the entries of `A`. ::
 
     sage: poly = rgf.mix_columns_poly_constr()(0, 3)
     sage: poly
-    (x)*a03 + (x + 1)*a13 + a23 + a33
+    x*a03 + (x + 1)*a13 + a23 + a33
     sage: rgf.compose(rgf.sub_bytes_poly_constr(), poly)
     (x^3 + x)*a03^254 +
     (x^3 + x^2 + x + 1)*a13^254 +
@@ -325,7 +325,7 @@ of the entries of `A`. ::
     (x^2 + x + 1)*a13^239 +
     (x^7 + x^6 + x^5 + x^4 + x^2)*a23^239 +
     (x^7 + x^6 + x^5 + x^4 + x^2)*a33^239 +
-    (x)*a03^223 +
+    x*a03^223 +
     (x + 1)*a13^223 +
     a23^223 +
     a33^223 +
@@ -462,7 +462,7 @@ class RijndaelGF(SageObject):
 
             sage: rgf = RijndaelGF(4, 6, state_chr='myChr')
             sage: rgf.mix_columns_poly_constr()(3, 2)
-            (x + 1)*myChr02 + myChr12 + myChr22 + (x)*myChr32
+            (x + 1)*myChr02 + myChr12 + myChr22 + x*myChr32
 
         We can also alter the name of variables in polynomials representing
         elements from round keys by changing ``key_chr``. ::
@@ -1483,10 +1483,10 @@ class RijndaelGF(SageObject):
             sage: from sage.crypto.mq.rijndael_gf import RijndaelGF
             sage: rgf = RijndaelGF(4, 4)
             sage: mcp = rgf.mix_columns_poly_constr()(1, 3); mcp
-            a03 + (x)*a13 + (x + 1)*a23 + a33
+            a03 + x*a13 + (x + 1)*a23 + a33
             sage: result = rgf.compose(rgf.shift_rows_poly_constr(), mcp)
             sage: result
-            a03 + (x)*a10 + (x + 1)*a21 + a32
+            a03 + x*a10 + (x + 1)*a21 + a32
 
         We can test the correctness of this::
 
@@ -1503,7 +1503,7 @@ class RijndaelGF(SageObject):
             sage: fn = rgf.compose(rgf.shift_rows_poly_constr(),
             ....: rgf.mix_columns_poly_constr())
             sage: fn(1, 3)
-            a03 + (x)*a10 + (x + 1)*a21 + a32
+            a03 + x*a10 + (x + 1)*a21 + a32
 
         If we use ``compose`` to make a new ``Round_Component_Poly_Constr``
         object, we can use that object as input to ``apply_poly`` and
@@ -1958,7 +1958,7 @@ class RijndaelGF(SageObject):
             sage: mc_pc
             A polynomial constructor for the function 'Mix Columns' of Rijndael-GF block cipher with block length 4, key length 4, and 10 rounds.
             sage: mc_pc(1, 2)
-            a02 + (x)*a12 + (x + 1)*a22 + a32
+            a02 + x*a12 + (x + 1)*a22 + a32
             sage: mc_pc(1, 0, algorithm='decrypt')
             (x^3 + 1)*a00 + (x^3 + x^2 + x)*a10 + (x^3 + x + 1)*a20 + (x^3 + x^2 + 1)*a30
 
@@ -1994,7 +1994,7 @@ class RijndaelGF(SageObject):
             sage: from sage.crypto.mq.rijndael_gf import RijndaelGF
             sage: rgf = RijndaelGF(4, 4)
             sage: rgf._mix_columns_pc(3, 1)
-            (x + 1)*a01 + a11 + a21 + (x)*a31
+            (x + 1)*a01 + a11 + a21 + x*a31
 
         We can use this to calculate individual entries of a state matrix after
         the decryption version of MixColumns has been applied to it as such::
@@ -2197,7 +2197,7 @@ class RijndaelGF(SageObject):
                 sage: rcpc = RijndaelGF.Round_Component_Poly_Constr(
                 ....: rgf._mix_columns_pc, rgf, "Mix Columns")
                 sage: poly = rcpc(1, 2); poly
-                a02 + (x)*a12 + (x + 1)*a22 + a32
+                a02 + x*a12 + (x + 1)*a22 + a32
                 sage: state = rgf._hex_to_GF('d1876c0f79c4300ab45594add66ff41f')
                 sage: result = rgf.mix_columns(state)
                 sage: result[1,2] == poly(state.list())

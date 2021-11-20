@@ -1597,7 +1597,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         The bug in :trac:`14967` and :trac:`14853` is fixed::
 
             sage: DiGraph({0: {}, 1/2: {}})
-            Multi-digraph on 2 vertices
+            Digraph on 2 vertices
             sage: A = Set([RDF.random_element(min=0, max=10) for k in range(10)])
             sage: G = Graph()
             sage: G.add_vertices(A)

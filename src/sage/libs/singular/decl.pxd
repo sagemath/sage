@@ -127,6 +127,7 @@ cdef extern from "singular/Singular/libsingular.h":
         number* cfMult(number *, number *, const n_Procs_s* r)  # algebraic number multiplication
 
         number*  (*cfInit)(int i, const n_Procs_s* r ) # algebraic number from int
+        number*  (*cfInitMPZ)(mpz_t i, const n_Procs_s* r)
         number*  (*cfParameter)(int i, const n_Procs_s* r)
         int     (*cfParDeg)(number* n, const n_Procs_s* r)
         int     (*cfSize)(number* n, const n_Procs_s* r)
@@ -1136,3 +1137,11 @@ cdef extern from "singular/kernel/GBEngine/kstd1.h":
 cdef extern from "singular/kernel/GBEngine/syz.h":
     ctypedef struct syStrategy "ssyStrategy":
         short references
+
+cdef extern from "singular/polys/ext_fields/transext.h":
+    ctypedef struct TransExtInfo:
+        ring * r
+
+
+
+

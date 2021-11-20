@@ -213,7 +213,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         if use_subsets:
             from sage.sets.set import Set
-            cur_level = [frozenset(range(1, n+1))]
+            cur_level = [frozenset(range(1, n + 1))]
             D = DiGraph()
             D.add_vertex(Set(cur_level[0]))
             while cur_level:
@@ -227,7 +227,8 @@ class Posets(metaclass=ClasscallMetaclass):
             return FiniteLatticePoset(D, category=FiniteLatticePosets(),
                                       facade=facade)
 
-        D = DiGraph({v: [Integer(v|(1<<y)) for y in range(n) if v & (1<<y) == 0]
+        D = DiGraph({v: [Integer(v | (1 << y))
+                         for y in range(n) if v & (1 << y) == 0]
                      for v in range(2**n)})
         return FiniteLatticePoset(hasse_diagram=D,
                                   category=FiniteLatticePosets(),

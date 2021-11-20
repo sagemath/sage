@@ -1045,4 +1045,13 @@ class Function_beta(GinacFunction):
                                                 fricas='Beta',
                                                 giac='Beta'))
 
+    def _method_arguments(self, x, y):
+        r"""
+        TESTS::
+
+            sage: RBF(beta(sin(3),sqrt(RBF(2).add_error(1e-8)/3)))
+            [7.407662 +/- 6.17e-7]
+        """
+        return [x, y]
+
 beta = Function_beta()

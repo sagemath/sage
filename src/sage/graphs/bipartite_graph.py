@@ -1757,7 +1757,7 @@ class BipartiteGraph(Graph):
             Y = set()
             for u in X:
                 for v in self.neighbors(u):
-                    if not v in Z and not M.has_edge(u, v):
+                    if v not in Z and not M.has_edge(u, v):
                         Y.add(v)
             Z.update(Y)
 
@@ -1765,7 +1765,7 @@ class BipartiteGraph(Graph):
             X = set()
             for u in Y:
                 for v in M.neighbor_iterator(u):
-                    if not v in Z:
+                    if v not in Z:
                         X.add(v)
             Z.update(X)
 

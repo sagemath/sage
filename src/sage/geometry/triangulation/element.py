@@ -92,7 +92,7 @@ def triangulation_render_2d(triangulation, **kwds):
             all_lines.append(l)
         else:
             interior_lines.append(l)
-    exterior_lines = [ l for l in all_lines if not l in interior_lines ]
+    exterior_lines = [l for l in all_lines if l not in interior_lines]
 
     plot_interior_lines = sum([ line2d([ coord[l[0]], coord[l[1]] ],
                                        zorder=1, rgbcolor=(0,1,0), **kwds)
@@ -160,7 +160,7 @@ def triangulation_render_3d(triangulation, **kwds):
             all_lines.append(l)
         else:
             interior_lines.append(l)
-    exterior_lines = [ l for l in all_lines if not l in interior_lines ]
+    exterior_lines = [l for l in all_lines if l not in interior_lines]
 
     from sage.plot.plot3d.texture import Texture
     line_int = Texture(color='darkblue', ambient=1, diffuse=0)
@@ -190,7 +190,7 @@ def triangulation_render_3d(triangulation, **kwds):
             all_triangs.append(l)
         else:
             interior_triangs.append(l)
-    exterior_triangs = [ l for l in all_triangs if not l in interior_triangs ]
+    exterior_triangs = [l for l in all_triangs if l not in interior_triangs]
 
     plot_interior_triangs = \
         sum([ polygon3d([coord[t[0]], coord[t[1]], coord[t[2]]],

@@ -1273,15 +1273,14 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: p.exclude_points( p.face_interior(codim=1) ).points()
             (P(-1, 0), P(0, 0), P(1, -1), P(1, 1))
         """
-        points = [ self.point(i) for i in range(self.n_points())
-                   if not i in point_idx_list ]
+        points = [self.point(i) for i in range(self.n_points())
+                  if i not in point_idx_list]
         return PointConfiguration(points,
                                   projective=False,
                                   connected=self._connected,
                                   fine=self._fine,
                                   regular=self._regular,
                                   star=self._star)
-
 
     def volume(self, simplex=None):
         """

@@ -430,7 +430,7 @@ class GraphQuery(GenericGraphQuery):
 
             for key in kwds:
                 # check validity
-                if not key in valid_kwds:
+                if key not in valid_kwds:
                     raise KeyError('%s is not a valid key for this database.'%str(key))
 
                 # designate a query_dict

@@ -462,7 +462,7 @@ class MPowerSeries(PowerSeries):
             sage: cc = K.hom([-i])
             sage: R.<s,t> = PowerSeriesRing(K)
             sage: f = s^2 + i*s*t + (3+4*i)*s^3 + R.O(4); f
-            s^2 + (i)*s*t + (4*i + 3)*s^3 + O(s, t)^4
+            s^2 + i*s*t + (4*i + 3)*s^3 + O(s, t)^4
             sage: f(t, s, base_map=cc)
             (-i)*s*t + t^2 + (-4*i + 3)*t^3 + O(s, t)^4
         """

@@ -663,7 +663,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: f([t^2*y-z])
             Closed subscheme of Projective Space of dimension 2 over Fraction Field
             of Univariate Polynomial Ring in t over Rational Field defined by:
-              y + (-1/t^2)*z
+              y - 1/(t^2)*z
 
         ::
 

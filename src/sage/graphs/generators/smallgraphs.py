@@ -3571,7 +3571,7 @@ def McLaughlinGraph():
     g = Graph()
     for b in B:
         for x in range(1, 23):
-            if not x in b:
+            if x not in b:
                 g.add_edge(b, x)
 
     for b in C:

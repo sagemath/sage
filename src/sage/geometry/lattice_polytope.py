@@ -5520,10 +5520,10 @@ def convex_hull(points):
     vpoints = []
     for p in points:
         v = vector(ZZ, p)
-        if not v in vpoints:
+        if v not in vpoints:
             vpoints.append(v)
     p0 = vpoints[0]
-    vpoints = [p-p0 for p in vpoints]
+    vpoints = [p - p0 for p in vpoints]
     N = ZZ**p0.degree()
     H = N.submodule(vpoints)
     if H.rank() == 0:
@@ -5534,7 +5534,7 @@ def convex_hull(points):
         H_points = [H.coordinates(p) for p in vpoints]
         H_polytope = LatticePolytope(H_points)
         vpoints = (H_polytope.vertices() * H.basis_matrix()).rows(copy=False)
-    vpoints = [p+p0 for p in vpoints]
+    vpoints = [p + p0 for p in vpoints]
     return vpoints
 
 

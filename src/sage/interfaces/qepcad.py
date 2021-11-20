@@ -1223,7 +1223,6 @@ class Qepcad:
 
         return cells
 
-
     def __getattr__(self, attrname):
         r"""
         Return a :class:`QepcadFunction` object for any QEPCAD command.
@@ -1236,7 +1235,7 @@ class Qepcad:
         """
         if attrname[:1] == "_":
             raise AttributeError
-        if not attrname in self._tab_completion():
+        if attrname not in self._tab_completion():
             raise AttributeError
         return QepcadFunction(self, attrname)
 
