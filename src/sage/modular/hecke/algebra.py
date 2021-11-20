@@ -27,11 +27,11 @@ the full Hecke algebra, only with the anemic algebra.
 # ****************************************************************************
 
 import sage.rings.infinity
-import sage.rings.commutative_algebra
 from sage.matrix.constructor import matrix
 from sage.arith.all import lcm, gcd
 from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
+from sage.rings.ring import CommutativeAlgebra
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.element import Element
@@ -103,7 +103,7 @@ def _heckebasis(M):
 
 
 @richcmp_method
-class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.CommutativeAlgebra):
+class HeckeAlgebra_base(CachedRepresentation, CommutativeAlgebra):
     """
     Base class for algebras of Hecke operators on a fixed Hecke module.
 
@@ -179,7 +179,7 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         if not module.is_HeckeModule(M):
             raise TypeError("M (=%s) must be a HeckeModule" % M)
         self.__M = M
-        sage.rings.commutative_algebra.CommutativeAlgebra.__init__(self, M.base_ring())
+        CommutativeAlgebra.__init__(self, M.base_ring())
 
     def _an_element_impl(self):
         r"""
