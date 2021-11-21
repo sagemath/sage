@@ -8195,8 +8195,8 @@ class Graph(GenericGraph):
 
             sage: g = graphs.CycleGraph(6)
             sage: m = g.magnitude_function()
-            sage: t = var('t')
-            sage: m(exp(-t))
+            sage: t = var('t')                                                  # optional - sage.symbolic
+            sage: m(exp(-t))                                                    # optional - sage.symbolic
             6/(2*e^(-t) + 2*e^(-2*t) + e^(-3*t) + 1)
 
         TESTS::
