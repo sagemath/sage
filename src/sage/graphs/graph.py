@@ -4527,12 +4527,12 @@ class Graph(GenericGraph):
         of each vertex. The ISR of such a family defines a 3-coloring::
 
             sage: g = 3 * graphs.PetersenGraph()
-            sage: n = g.order()/3
-            sage: f = [[i,i+n,i+2*n] for i in range(n)]
+            sage: n = g.order() / 3
+            sage: f = [[i, i + n, i + 2*n] for i in range(n)]
             sage: isr = g.independent_set_of_representatives(f)
-            sage: c = [floor(i/n) for i in isr]
-            sage: color_classes = [[],[],[]]
-            sage: for v,i in enumerate(c):
+            sage: c = [integer_floor(i / n) for i in isr]
+            sage: color_classes = [[], [], []]
+            sage: for v, i in enumerate(c):
             ....:   color_classes[i].append(v)
             sage: for classs in color_classes:
             ....:   g.subgraph(classs).size() == 0
