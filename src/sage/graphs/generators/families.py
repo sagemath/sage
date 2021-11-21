@@ -3727,7 +3727,7 @@ def TuranGraph(n,r):
         sage: n = 13
         sage: r = 4
         sage: g = graphs.TuranGraph(n,r)
-        sage: g.size() == floor((r-1)*(n**2)/(2*r))
+        sage: g.size() == (r-1) * (n**2) // (2*r)
         True
 
     TESTS::
