@@ -66,7 +66,8 @@ def BullGraph():
     the identity matrix of the same dimensions as `A`::
 
         sage: chrompoly = g.chromatic_polynomial()
-        sage: bool(expand(x * (x - 2) * (x - 1)^3) == chrompoly)
+        sage: x = chrompoly.parent()('x')
+        sage: x * (x - 2) * (x - 1)^3 == chrompoly
         True
         sage: charpoly = g.characteristic_polynomial()
         sage: M = g.adjacency_matrix(); M
@@ -77,9 +78,9 @@ def BullGraph():
         [0 0 1 0 0]
         sage: Id = identity_matrix(ZZ, M.nrows())
         sage: D = x*Id - M
-        sage: bool(D.determinant() == charpoly)
+        sage: D.determinant() == charpoly
         True
-        sage: bool(expand(x * (x^2 - x - 3) * (x^2 + x - 1)) == charpoly)
+        sage: x * (x^2 - x - 3) * (x^2 + x - 1) == charpoly
         True
     """
     edge_list = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 4)]
