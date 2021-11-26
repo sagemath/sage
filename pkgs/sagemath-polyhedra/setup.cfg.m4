@@ -35,3 +35,15 @@ install_requires =
         pplpy          \
         memory_allocator \
         | sed "2,\$s/^/    /;"')dnl
+
+scripts =
+    bin/sage
+    bin/sage-env
+    bin/sage-eval
+    bin/sage-fixdoctests
+    bin/sage-ipython
+    bin/sage-python
+    bin/sage-run
+    bin/sage-runtests
+    bin/sage-venv-config
+    bin/sage-version.sh
