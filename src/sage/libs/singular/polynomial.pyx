@@ -23,6 +23,8 @@ cdef extern from *: # hack to get at cython macro
 
 import re
 plusminus_pattern = re.compile("([^\(^])([\+\-])")
+parenthvar_pattern = re.compile(r"\(([a-zA-Z][a-zA-Z0-9]*)\)")
+
 
 from sage.cpython.string cimport bytes_to_str, str_to_bytes
 
@@ -441,6 +443,7 @@ cdef object singular_polynomial_str(poly *p, ring *r):
 
     s = bytes_to_str(p_String(p, r, r))
     s = plusminus_pattern.sub("\\1 \\2 ", s)
+    s = parenthvar_pattern.sub("\\1", s)
     return s
 
 
@@ -618,6 +621,9 @@ cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r
     - ``r`` - a ring
     """
 
+    if r != currRing:
+        rChangeCurrRing(r)
+
     if p_IsConstant(value, r):
         p[0] = pSubst(p[0], var_index+1, value)
         return 0
@@ -625,8 +631,6 @@ cdef int singular_polynomial_subst(poly **p, int var_index, poly *value, ring *r
     cdef unsigned long exp = p_GetExp(p[0], var_index+1, r) * p_GetMaxExp(value, r)
 
     overflow_check(exp, r)
-    if r != currRing:
-        rChangeCurrRing(r)
 
     cdef int count = singular_polynomial_length_bounded(p[0], 15)
     if unlikely(count >= 15 or exp > 15): sig_on()

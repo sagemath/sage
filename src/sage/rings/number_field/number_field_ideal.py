@@ -46,7 +46,7 @@ from sage.arith.all import kronecker_symbol, gcd
 import sage.misc.misc as misc
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
-from sage.rings.ideal import Ideal_generic
+from sage.rings.ideal import Ideal_generic, Ideal_fractional
 from sage.misc.misc_c import prod
 from sage.misc.mrange import xmrange_iter
 from sage.misc.cachefunc import cached_method
@@ -1734,7 +1734,7 @@ def is_NumberFieldIdeal(x):
     return isinstance(x, NumberFieldIdeal)
 
 
-class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
+class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal, Ideal_fractional):
     r"""
     A fractional ideal in a number field.
 
@@ -1747,6 +1747,14 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal):
         sage: Jinv = I^(-2)
         sage: J*Jinv
         Fractional ideal (1)
+
+    TESTS:
+
+    Number-field fractional ideals are fractional ideals (:trac:`32380`)::
+
+        sage: from sage.rings.ideal import Ideal_fractional
+        sage: isinstance(I, Ideal_fractional)
+        True
     """
     def __init__(self, field, gens, coerce=True):
         """

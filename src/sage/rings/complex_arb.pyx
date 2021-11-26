@@ -189,6 +189,7 @@ from sage.structure.parent cimport Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.arith.long cimport is_small_python_int
 
+from sage.misc.superseded import deprecated_function_alias
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField, ComplexIntervalField_class
 from sage.rings.integer_ring import ZZ
@@ -4176,16 +4177,21 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    def ei(self):
+    def Ei(self):
         """
         Return the exponential integral with argument ``self``.
 
         EXAMPLES::
 
-            sage: CBF(1, 1).ei()
+            sage: CBF(1, 1).Ei()
             [1.76462598556385 +/- ...e-15] + [2.38776985151052 +/- ...e-15]*I
-            sage: CBF(0).ei()
+            sage: CBF(0).Ei()
             nan
+
+        TESTS:
+
+            sage: CBF(Ei(I))
+            [0.337403922900968 +/- 3.76e-16] + [2.51687939716208 +/- 2.01e-15]*I
         """
         cdef ComplexBall result = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -4193,16 +4199,23 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return result
 
-    def si(self):
+    ei = deprecated_function_alias(32869, Ei)
+
+    def Si(self):
         """
         Return the sine integral with argument ``self``.
 
         EXAMPLES::
 
-            sage: CBF(1, 1).si()
+            sage: CBF(1, 1).Si()
             [1.10422265823558 +/- ...e-15] + [0.88245380500792 +/- ...e-15]*I
-            sage: CBF(0).si()
+            sage: CBF(0).Si()
             0
+
+        TESTS:
+
+            sage: CBF(Si(I))
+            [1.05725087537573 +/- 2.77e-15]*I
         """
         cdef ComplexBall result = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -4210,16 +4223,25 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return result
 
-    def ci(self):
+    sin_integral = Si # as for the symbolic function
+
+    si = deprecated_function_alias(32869, Si)
+
+    def Ci(self):
         """
         Return the cosine integral with argument ``self``.
 
         EXAMPLES::
 
-            sage: CBF(1, 1).ci()
+            sage: CBF(1, 1).Ci()
             [0.882172180555936 +/- ...e-16] + [0.287249133519956 +/- ...e-16]*I
-            sage: CBF(0).ci()
+            sage: CBF(0).Ci()
             nan + nan*I
+
+        TESTS:
+
+            sage: CBF(Ci(I))
+            [0.837866940980208 +/- 4.72e-16] + [1.570796326794897 +/- 5.54e-16]*I
         """
         cdef ComplexBall result = self._new()
         if _do_sig(prec(self)): sig_on()
@@ -4227,40 +4249,61 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return result
 
-    def shi(self):
+    cos_integral = Ci # as for the symbolic function
+
+    ci = deprecated_function_alias(32869, Ci)
+
+    def Shi(self):
         """
         Return the hyperbolic sine integral with argument ``self``.
 
         EXAMPLES::
 
-            sage: CBF(1, 1).shi()
+            sage: CBF(1, 1).Shi()
             [0.88245380500792 +/- ...e-15] + [1.10422265823558 +/- ...e-15]*I
-            sage: CBF(0).shi()
+            sage: CBF(0).Shi()
             0
-        """
 
+        TESTS:
+
+            sage: CBF(Shi(I))
+            [0.946083070367183 +/- 9.22e-16]*I
+        """
         cdef ComplexBall result = self._new()
         if _do_sig(prec(self)): sig_on()
         acb_hypgeom_shi(result.value, self.value, prec(self))
         if _do_sig(prec(self)): sig_off()
         return result
 
-    def chi(self):
+    sinh_integral = Shi
+
+    shi = deprecated_function_alias(32869, Shi)
+
+    def Chi(self):
         """
         Return the hyperbolic cosine integral with argument ``self``.
 
         EXAMPLES::
 
-            sage: CBF(1, 1).chi()
+            sage: CBF(1, 1).Chi()
             [0.882172180555936 +/- ...e-16] + [1.28354719327494 +/- ...e-15]*I
-            sage: CBF(0).chi()
+            sage: CBF(0).Chi()
             nan + nan*I
+
+        TESTS:
+
+            sage: CBF(Chi(I))
+            [0.337403922900968 +/- 3.25e-16] + [1.570796326794897 +/- 5.54e-16]*I
         """
         cdef ComplexBall result = self._new()
         if _do_sig(prec(self)): sig_on()
         acb_hypgeom_chi(result.value, self.value, prec(self))
         if _do_sig(prec(self)): sig_off()
         return result
+
+    cosh_integral = Chi
+
+    chi = deprecated_function_alias(32869, Chi)
 
     def li(self, bint offset=False):
         """
@@ -4280,12 +4323,42 @@ cdef class ComplexBall(RingElement):
             0.000000000000000
             sage: Li(0).n()
             -1.04516378011749
+
+        TESTS::
+
+            sage: CBF(li(0))
+            0
+            sage: CBF(Li(0))
+            [-1.04516378011749...]
         """
         cdef ComplexBall result = self._new()
         if _do_sig(prec(self)): sig_on()
         acb_hypgeom_li(result.value, self.value, offset, prec(self))
         if _do_sig(prec(self)): sig_off()
         return result
+
+    log_integral = li
+
+    def Li(self):
+        """
+        Offset logarithmic integral.
+
+        EXAMPLES::
+
+            sage: CBF(0).Li()
+            [-1.045163780117493 +/- ...e-16]
+            sage: li(0).n()
+            0.000000000000000
+            sage: Li(0).n()
+            -1.04516378011749
+        """
+        cdef ComplexBall result = self._new()
+        if _do_sig(prec(self)): sig_on()
+        acb_hypgeom_li(result.value, self.value, True, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return result
+
+    log_integral_offset = Li
 
     def jacobi_theta(self, tau):
         r"""

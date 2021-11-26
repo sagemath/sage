@@ -2141,8 +2141,10 @@ class RightQuantumWord:
             in parallel.
         """
         def eps_monom(q_tuple):
+            r"""
+            Evaluate the map `\mathcal{E}_N` for a single mononial.
+            """
             q = self.q
-            r"""Evaluate the map $\mathcal{E}_N$ for a single mononial."""
             ret_q = q**sum((N - 1 - q_tuple[3*i + 2])*q_tuple[3*i + 1]
                            for i in range(self._minus_begin//3))
             ret_q *= q**sum((N - 1)*(-q_tuple[rj])

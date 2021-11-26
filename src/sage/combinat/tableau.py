@@ -2628,7 +2628,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: T = Tableau([[1]])
             sage: type(T.promotion_inverse(2)[0][0])
-            <... 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if self.is_rectangular():
             n = Integer(n)

@@ -44,10 +44,4 @@ setup(
     packages = python_packages,
     py_modules  = python_modules,
     ext_modules = cython_modules,
-    scripts = [## The sage script
-                 'bin/sage',
-                 'bin/sage-env',
-                 'bin/sage-env-config',
-                 'bin/sage-runtests',
-                 ],
 )

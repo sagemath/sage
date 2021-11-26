@@ -256,9 +256,9 @@ def transvectant(f, g, h=1, scale='default'):
         sage: S.<x> = R[]
         sage: quintic = invariant_theory.binary_quintic(x^5+x^3+2*x^2+y^5, x)
         sage: transvectant(quintic, quintic, 2)
-        Binary sextic given by 1/5*x^6 + 6/5*x^5*h + (-3/25)*x^4*h^2
-        + (2*y^5 - 8/25)*x^3*h^3 + (-12/25)*x^2*h^4 + 3/5*y^5*x*h^5
-        + 2/5*y^5*h^6
+        Binary sextic given by 1/5*x^6 + 6/5*x^5*h - 3/25*x^4*h^2
+        + (50*y^5 - 8)/25*x^3*h^3 - 12/25*x^2*h^4 + (3*y^5)/5*x*h^5
+        + (2*y^5)/5*h^6
     """
     f = f.homogenized()
     g = g.homogenized()

@@ -30,6 +30,7 @@ doc-inventory-reference:
 else
 doc-inventory-reference:
 	$(eval DOCS = $(shell cd $(SAGE_ROOT) && ./sage --docbuild --all-documents reference))
+	@if [ -z "$(DOCS)" ]; then echo "Error: './sage --docbuild --all-documents' failed"; exit 1; fi
 	$(eval BIBLIO = $(firstword $(DOCS)))
 	$(eval OTHER_DOCS = $(wordlist 2, 100, $(DOCS)))
 	$(MAKE) doc-inventory--$(subst /,-,$(BIBLIO))
@@ -40,6 +41,7 @@ endif
 # reference manual, html
 doc-html-reference: doc-inventory-reference
 	$(eval DOCS = $(shell cd $(SAGE_ROOT) && ./sage --docbuild --all-documents reference))
+	@if [ -z "$(DOCS)" ]; then echo "Error: './sage --docbuild --all-documents' failed"; exit 1; fi
 	$(eval BIBLIO = $(firstword $(DOCS)))
 	$(eval OTHER_DOCS = $(wordlist 2, 100, $(DOCS)))
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" doc-html--$(subst /,-,$(BIBLIO))
@@ -48,7 +50,9 @@ doc-html-reference: doc-inventory-reference
 
 # other documentation, html
 doc-html-other: doc-html-reference
-	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(wordlist 2, 100, $(shell cd $(SAGE_ROOT) && ./sage --docbuild --all-documents all)), doc-html--$(subst /,-,$(doc)))
+	$(eval DOCS = $(shell cd $(SAGE_ROOT) && ./sage --docbuild --all-documents all))
+	@if [ -z "$(DOCS)" ]; then echo "Error: './sage --docbuild --all-documents' failed"; exit 1; fi
+	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(wordlist 2, 100, $(DOCS)), doc-html--$(subst /,-,$(doc)))
 
 doc-html: doc-html-reference doc-html-other
 
@@ -59,6 +63,7 @@ doc-pdf--%:
 # reference manual, pdf
 doc-pdf-reference: doc-inventory-reference
 	$(eval DOCS = $(shell cd $(SAGE_ROOT) && ./sage --docbuild --all-documents reference))
+	@if [ -z "$(DOCS)" ]; then echo "Error: './sage --docbuild --all-documents' failed"; exit 1; fi
 	$(eval BIBLIO = $(firstword $(DOCS)))
 	$(eval OTHER_DOCS = $(wordlist 2, 100, $(DOCS)))
 	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" doc-pdf--$(subst /,-,$(BIBLIO))
@@ -67,7 +72,9 @@ doc-pdf-reference: doc-inventory-reference
 
 # other documentation, pdf
 doc-pdf-other: doc-html-reference
-	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(wordlist 2, 100, $(shell cd $(SAGE_ROOT) && ./sage --docbuild --all-documents all)), doc-pdf--$(subst /,-,$(doc)))
+	$(eval DOCS = $(shell cd $(SAGE_ROOT) && ./sage --docbuild --all-documents all))
+	@if [ -z "$(DOCS)" ]; then echo "Error: './sage --docbuild --all-documents' failed"; exit 1; fi
+	$(MAKE) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-prune-empty-dirs" $(foreach doc, $(wordlist 2, 100, $(DOCS)), doc-pdf--$(subst /,-,$(doc)))
 
 doc-pdf: doc-pdf-reference doc-pdf-other
 

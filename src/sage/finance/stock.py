@@ -551,9 +551,7 @@ class Stock:
             sage: with open(filename, 'w') as fobj:
             ....:     _ = fobj.write("Date,Open,High,Low,Close,Volume\n1212405780,187.80,187.80,187.80,187.80,100\n1212407640,187.75,188.00,187.75,188.00,2000\n1212407700,188.00,188.00,188.00,188.00,1000\n1212408000,188.00,188.11,188.00,188.00,2877\n1212408060,188.00,188.00,188.00,188.00,687")
             sage: finance.Stock('aapl').load_from_file(filename)[:5]
-            doctest:warning...
-            DeprecationWarning: Importing finance from here is deprecated...
-            [
+            ...
             1212408060 188.00 188.00 188.00 188.00        687,
             1212408000 188.00 188.11 188.00 188.00       2877,
             1212407700 188.00 188.00 188.00 188.00       1000,

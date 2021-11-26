@@ -203,7 +203,8 @@ def automorphism_group_QQ_fixedpoints(rational_function, return_functions=False,
     psi = phi(phi(z))
     f2 = psi.numerator()
     g2 = psi.denominator()
-    period2_points = [x for x in (f2 - z*g2).roots(multiplicities=False) if not x in rational_roots]
+    period2_points = [x for x in (f2 - z*g2).roots(multiplicities=False)
+                      if x not in rational_roots]
     for S in Subsets(period2_points, 2):
         zeta = -1
         alpha = S[0]
@@ -759,9 +760,11 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                         return(elements, which_group(elements))
                     return elements
             else:
-                N = gcd(orderaut + [12]) #all orders of elements divide N
-                for order in [O for O in divisors(N) \
-                                if not O in badorders]: #range over all orders
+                N = gcd(orderaut + [12])  # all orders of elements divide N
+                for order in divisors(N):
+                    if order in badorders:
+                        continue
+                    # range over all orders
                     # that are possible over QQ such that we haven't already
                     # found all elements of that order
 
@@ -772,7 +775,7 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                     numelts = min(numeltsoffixedorder)
                     # Have some elts of fixed order mod p for each p
                     if numelts != 0:
-                        #CRT order d elements together and check if
+                        # CRT order d elements together and check if
                         # they are an automorphism
                         autos, M = CRT_automorphisms(automorphisms,
                                 orderelts, order, primepowers)
@@ -808,13 +811,12 @@ def automorphism_group_QQ_CRT(rational_function, prime_lower_bound=4, return_fun
                                 badorders.append(m)
                                 #no elements of that order or any order that
                                 # is a multiple of it
-                if len([order for order in divisors(N) \
-                        if not order in badorders]) == 0:
+                if all(order in badorders for order in divisors(N)):
                     #found all elements of every possible order
                         if iso_type:
-                            return(elements, which_group(elements))
+                            return (elements, which_group(elements))
                         return elements
-            congruence = congruence*p
+            congruence = congruence * p
 
         p = primes.next(p)
 
@@ -1918,7 +1920,7 @@ def conjugating_set_initializer(f, g):
     # does find a subset, then the subset will most likely minimize the combinatorics
     # of checking conjugations
     tup = greedy_independence_check(P, repeated_mult_L, point_to_mult_L)
-    if not tup is None:
+    if tup is not None:
         more = False
         source, corresponding = tup
 
@@ -1974,7 +1976,7 @@ def conjugating_set_initializer(f, g):
                     # we again do a greedy check for a subset of n+2 points, of which no n+1
                     # are linearly dependent
                     tup = greedy_independence_check(P, repeated_mult_L, point_to_mult_L)
-                    if not tup is None:
+                    if tup is not None:
                         more = False
                         source, corresponding = tup
                 if not more:

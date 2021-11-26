@@ -52,6 +52,10 @@ SAGE_SPKG = sage-spkg
 # These are added to SAGE_SPKG in the call
 SAGE_SPKG_OPTIONS = @SAGE_SPKG_OPTIONS@
 
+# Where the Sage distribution installs documentation.
+# set to empty if --disable-doc is used
+SAGE_DOCS = $(SAGE_LOCAL)
+
 # Where the Sage distribution installs Python packages.
 # This can be overridden by 'make SAGE_VENV=/some/venv'.
 SAGE_VENV = @SAGE_VENV@
@@ -142,7 +146,7 @@ SCRIPT_PACKAGES = @SAGE_SCRIPT_PACKAGES@
 # inst_git = $(INST)/.dummy
 
 $(foreach pkgname,$(BUILT_PACKAGES),\
-	$(eval inst_$(pkgname) = $(foreach tree, $(trees_$(pkgname)), $($(tree))/$(SPKG_INST_RELDIR)/$(pkgname)-$(vers_$(pkgname)))))
+	$(eval inst_$(pkgname) = $(foreach tree, $(trees_$(pkgname)), $(and $($(tree)), $($(tree))/$(SPKG_INST_RELDIR)/$(pkgname)-$(vers_$(pkgname))))))
 $(foreach pkgname,$(DUMMY_PACKAGES),\
 	$(eval inst_$(pkgname) = $(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/.dummy))
 
@@ -157,7 +161,7 @@ $(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/.dummy:
 
 
 # Filtered by installation tree
-$(foreach tree,SAGE_LOCAL SAGE_VENV, \
+$(foreach tree,SAGE_LOCAL SAGE_VENV SAGE_DOCS, \
     $(eval $(tree)_INSTALLED_PACKAGE_INSTS = \
                $(foreach pkgname,$(INSTALLED_PACKAGES), \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
@@ -228,10 +232,10 @@ build-start: all-build
 base-toolchain: _clean-broken-gcc base
 	+$(MAKE_REC) toolchain
 
-# All targets except for the base packages
+# All targets except for the base packages and except the documentation
 all-sage: \
-		$(INSTALLED_PACKAGE_INSTS) \
-                $(UNINSTALLED_PACKAGES_CLEANS)
+		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_CLEANS) \
+		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_CLEANS)
 
 # Same but filtered by installation trees:
 all-build-local: toolchain-deps
@@ -243,6 +247,11 @@ all-build-venv: toolchain-deps
 	+$(MAKE_REC) all-sage-venv
 
 all-sage-venv:  $(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_CLEANS)
+
+all-build-docs: toolchain-deps
+	+$(MAKE_REC) all-sage-docs
+
+all-sage-docs:  $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_CLEANS)
 
 # Download all packages which should be inside an sdist tarball (the -B
 # option to make forces all targets to be built unconditionally)
@@ -315,35 +324,28 @@ base: $(inst_patch) $(inst_pkgconf)
 #
 # $ ./sage --docbuild -H
 
-# Building the documentation has many dependencies, because all
-# documented modules are imported and because we use matplotlib to
-# produce plots.
-DOC_DEPENDENCIES = sagelib sage_docbuild $(inst_sphinx) \
-	| $(SAGERUNTIME) $(inst_maxima) $(inst_networkx) $(inst_scipy) $(inst_sympy) \
-	$(inst_matplotlib) $(inst_pillow) $(inst_mathjax) $(inst_mpmath) \
-	$(inst_ipykernel) $(inst_jupyter_client) $(inst_conway_polynomials) \
-	$(inst_tachyon) $(inst_jmol) $(inst_thebe) $(inst_ipywidgets)
+doc: $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_CLEANS)
 
-doc: doc-html
-
-doc-html: $(DOC_DEPENDENCIES)
-	$(AM_V_at)cd "$(SAGE_SRC)/doc" && sage-logger -p "$(MAKE) doc-html" $(SAGE_ROOT)/logs/dochtml.log
+# All doc-building is delegated to the script packages
+# sagemath_doc_html, sagemath_doc_pdf
+doc-html: sagemath_doc_html
 
 # 'doc-html-no-plot': build docs without building the graphics coming
 # from the '.. plot' directive, in case you want to save a few
 # megabytes of disk space. 'doc-clean' is a prerequisite because the
 # presence of graphics is cached in src/doc/output.
 doc-html-no-plot: doc-clean
-	$(AM_V_at)sage-logger -p "$(MAKE) SAGE_DOCBUILD_OPTS=\"$(SAGE_DOCBUILD_OPTS) --no-plot\" doc-html" $(SAGE_ROOT)/logs/dochtml.log
+	+$(MAKE_REC) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-plot" doc-html
 
+# Using mathjax is actually the default, but this target can be used
+# to override an environment setting of SAGE_DOC_MATHJAX=no
 doc-html-mathjax:
-	$(AM_V_at)sage-logger -p "$(MAKE) SAGE_DOCBUILD_OPTS=\"$(SAGE_DOCBUILD_OPTS) -j\" doc-html" $(SAGE_ROOT)/logs/dochtml.log
+	+$(MAKE_REC) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) -j" doc-html
 
 # Keep target 'doc-html-jsmath' for backwards compatibility.
 doc-html-jsmath: doc-html-mathjax
 
-doc-pdf: $(DOC_DEPENDENCIES)
-	$(AM_V_at)cd "$(SAGE_SRC)/doc" && sage-logger -p "$(MAKE) doc-pdf" $(SAGE_ROOT)/logs/docpdf.log
+doc-pdf: sagemath_doc_pdf
 
 doc-clean: doc-src-clean doc-output-clean
 

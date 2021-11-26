@@ -950,7 +950,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
               From: Affine Space of dimension 2 over Finite Field in t of size 5^4
               To:   Affine Space of dimension 1 over Finite Field in t of size 5^4
               Defn: Defined on coordinates by sending (a, b) to
-                    (a^2 + (t)*b)
+                    (a^2 + t*b)
 
         ::
 
@@ -961,7 +961,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
             sage: g = f.reduce_base_field();g
             Scheme endomorphism of Affine Space of dimension 1 over Cyclotomic Field of order 4 and degree 2
               Defn: Defined on coordinates by sending (x) to
-                (x^2 + (v))
+                (x^2 + v)
             sage: g.base_ring() is K
             True
 
@@ -1005,7 +1005,7 @@ class SchemeMorphism_polynomial_affine_space_field(SchemeMorphism_polynomial_aff
                   To:   Affine Space of dimension 2 over Number Field in a with
                   defining polynomial x^3 - x + 1 with a = -1.324717957244746?
                   Defn: Defined on coordinates by sending (x) to
-                        (x^2 + (a)*x + 3, 5*x)
+                        (x^2 + a*x + 3, 5*x)
 
         ::
 

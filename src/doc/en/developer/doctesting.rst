@@ -855,6 +855,9 @@ This seed can be set explicitly to reproduce possible failures::
         cpu time: 0.0 seconds
         cumulative wall time: 0.0 seconds
 
+It can also be set explicitly using the environment variable
+``SAGE_DOCTEST_RANDOM_SEED``.
+
 .. _section-optional-doctest-flag:
 
 Run Optional Doctests

@@ -763,7 +763,7 @@ class DiGraphGenerators():
         # Bad input and loops
         loops = False
         for i in integers:
-            if not i in ZZ:
+            if i not in ZZ:
                 raise ValueError("the list must contain only integers")
             if not i % n:
                 loops = True
@@ -1456,7 +1456,7 @@ class DiGraphGenerators():
             u = int(rand.random() * n)
             v = int(rand.random() * n)
 
-            if (u != v or loops) and (not v in adj[u]):
+            if (u != v or loops) and (v not in adj[u]):
                 adj[u][v] = 1
                 m -= 1
                 if not is_dense:

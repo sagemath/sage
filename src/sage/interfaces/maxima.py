@@ -847,13 +847,13 @@ class Maxima(MaximaAbstract, Expect):
         # The 0; *is* necessary... it comes up in certain rare cases
         # that are revealed by extensive testing.
         # Don't delete it. -- william stein
-        cmd = '''0;sconcat("%s",(%s+1));\n'''%(marker,r)
+        cmd = '''0;sconcat("%s",(%s+1));\n''' % (marker, r)
         self._sendstr(cmd)
         try:
             try:
                 self._expect_expr(timeout=0.5)
-                if not s in self._before():
-                    self._expect_expr(s,timeout=0.5)
+                if s not in self._before():
+                    self._expect_expr(s, timeout=0.5)
                     self._expect_expr(timeout=0.5)
             except pexpect.TIMEOUT:
                 # Don't call self._interrupt() here, as that might send multiple
@@ -944,7 +944,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         r = self._error_re
         m = r.search(out)
-        if not m is None:
+        if m is not None:
             self._error_msg(cmd, out)
 
     def _error_msg(self, cmd, out):

@@ -163,9 +163,9 @@ class IncidenceStructure(object):
             sage: blocks = [[e0,e1,e2],[e0,e1],[e2,e4]]
             sage: I = IncidenceStructure(V, blocks)
             sage: type(I.ground_set()[0])
-            <... 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: type(I.blocks()[0][0])
-            <... 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
 
         TESTS::
 
@@ -1290,7 +1290,7 @@ class IncidenceStructure(object):
             if k is False:
                 raise ValueError("The incidence structure is not uniform.")
 
-            blocks     = []
+            blocks = []
             num_blocks = self.num_blocks()
             i = 0
             from itertools import combinations
@@ -1388,9 +1388,9 @@ class IncidenceStructure(object):
 
         self._points = [perm[x] for x in self._points]
         if self._points == list(range(self.num_points())):
-            self._point_to_index  = None
+            self._point_to_index = None
         else:
-            self._point_to_index = {v:i for i,v in enumerate(self._points)}
+            self._point_to_index = {v: i for i, v in enumerate(self._points)}
 
     __hash__ = None
     # This object is mutable because of .relabel()
@@ -2128,7 +2128,7 @@ class IncidenceStructure(object):
         blocks = self.blocks()
         blocks_sets = [frozenset(b) for b in blocks]
         g = Graph([list(range(self.num_blocks())),
-                   lambda x, y: len(blocks_sets[x]&blocks_sets[y])],
+                   lambda x, y: len(blocks_sets[x] & blocks_sets[y])],
                   loops=False)
         return [[blocks[i] for i in C] for C in g.coloring(algorithm="MILP")]
 

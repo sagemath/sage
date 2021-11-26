@@ -2623,6 +2623,7 @@ def _has_nonempty_sets(x):
                 and block and len(set(block)) == len(block))
                for block in x)
 
+
 def _union_of_sets(list_of_sets):
     """
     Return the union of a list of iterables as a frozenset.
@@ -2634,7 +2635,9 @@ def _union_of_sets(list_of_sets):
         sage: _union_of_sets(L)
         frozenset({1, 2, 3, 5, 6, 7})
     """
-    return reduce(lambda a,b: frozenset(a)|frozenset(b), list_of_sets, frozenset())
+    return reduce(lambda a, b: frozenset(a) | frozenset(b),
+                  list_of_sets, frozenset())
+
 
 def _concatenate(list_of_iters):
     """

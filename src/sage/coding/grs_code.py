@@ -1965,13 +1965,14 @@ class GRSErrorErasureDecoder(Decoder):
         n, k = C.length(), C.dimension()
         if word not in C.ambient_space():
             raise ValueError("The word to decode has to be in the ambient space of the code")
-        if not erasure_vector in VectorSpace(GF(2), n):
+        if erasure_vector not in VectorSpace(GF(2), n):
             raise ValueError("The erasure vector has to be a vector over GF(2) of the same length as the code")
         if erasure_vector.hamming_weight() >= self.code().minimum_distance():
             raise DecodingError("Too many erasures in the received word")
 
-        punctured_word = vector(self.code().base_ring(), [word[i] for i in
-            range(len(word)) if erasure_vector[i]!=1])
+        punctured_word = vector(self.code().base_ring(),
+                                [word[i] for i in range(len(word))
+                                 if not erasure_vector[i]])
         C1_length = len(punctured_word)
         if C1_length == k:
             return self.connected_encoder().unencode_nocheck(word)

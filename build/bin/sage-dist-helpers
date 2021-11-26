@@ -268,6 +268,12 @@ sdh_pip_install() {
     sdh_store_and_pip_install_wheel $install_options .
 }
 
+sdh_pip_editable_install() {
+    echo "Installing $PKG_NAME (editable mode)"
+    python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable "$@" || \
+        sdh_die "Error installing $PKG_NAME"
+}
+
 sdh_store_wheel() {
     if [ -n "$SAGE_DESTDIR" ]; then
         local sudo=""

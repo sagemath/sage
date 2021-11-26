@@ -2628,11 +2628,11 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
             [Point (x0, x1),
              Point (x0 + (-z2 - 1)*x2, x1),
              Point (x0 + (z2 + 1)*x2, x1),
-             Point (x0 + (z2)*x2, x1 + (z2 - 1)*x2),
+             Point (x0 + z2*x2, x1 + (z2 - 1)*x2),
              Point (x0 + (-z2)*x2, x1 + (-z2 + 1)*x2),
              Point (x0 + (-z2 - 1)*x2, x1 + (-z2 - 1)*x2),
              Point (x0 + (z2 + 1)*x2, x1 + (z2 + 1)*x2),
-             Point (x0 + (z2 - 1)*x2, x1 + (z2)*x2),
+             Point (x0 + (z2 - 1)*x2, x1 + z2*x2),
              Point (x0 + (-z2 + 1)*x2, x1 + (-z2)*x2),
              Point (x0 + x2, x1 - x2),
              Point (x0 - x2, x1 + x2)]

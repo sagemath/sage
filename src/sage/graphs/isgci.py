@@ -456,7 +456,7 @@ class GraphClass(SageObject, CachedRepresentation):
         self._name = name
         self._gc_id = gc_id
 
-        if not recognition_function is None:
+        if recognition_function is not None:
             self._recognition_function = recognition_function
 
     def _repr_(self):

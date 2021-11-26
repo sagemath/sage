@@ -426,15 +426,14 @@ def ncube_isometry_group_cosets(n, orientation_preserving=True):
         sage: [len(c) for c in cosets]
         [8, 8, 8, 8, 8, 8]
         sage: type(cosets[0][0])
-        <... 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
-
+        <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
     """
     from sage.misc.misc_c import prod
     from sage.matrix.constructor import diagonal_matrix
     G = ncube_isometry_group(n, orientation_preserving)
 
     # Construct the subgroup H of G of diagonal matrices
-    it = itertools.product((1,-1), repeat=n)
+    it = itertools.product((1, -1), repeat=n)
     if orientation_preserving:
         H = [diagonal_matrix(L) for L in it if prod(L) == 1]
     else:
@@ -1490,7 +1489,7 @@ class Polyomino(SageObject):
         # Add one row to force the placement of the central tile
         coord_to_int = T.coord_to_int_dict()
         new_row = [coord_to_int[coord] for coord in self]
-        new_row.append(len(coord_to_int)) # to force this row in the solution
+        new_row.append(len(coord_to_int))  # to force this row in the solution
         forced_row_number = len(rows)
         rows.append(new_row)
 

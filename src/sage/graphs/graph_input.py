@@ -453,6 +453,13 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
         sage: from_dict_of_dicts(g, graphs.PetersenGraph().to_dictionary(edge_labels=True))
         sage: g.is_isomorphic(graphs.PetersenGraph())
         True
+
+    TESTS:
+
+    :trac:`32831` is fixed::
+
+        sage: DiGraph({0: {}, 1: {}, 2: {}, 3: {}, 4: {}})
+        Digraph on 5 vertices
     """
     if any(not isinstance(M[u], dict) for u in M):
         raise ValueError("input dict must be a consistent format")
@@ -467,6 +474,7 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
             loops = False
     if weighted is None:
         G._weighted = False
+    input_multiedges = multiedges
     if multiedges is not False:
         if not all(isinstance(M[u][v], list) for u in M for v in M[u]):
             if multiedges:
@@ -501,6 +509,8 @@ def from_dict_of_dicts(G, M, loops=False, multiedges=False, weighted=False, conv
         for u in M:
             for v in M[u]:
                 G._backend.add_edge(u, v, relabel(M[u][v]), is_directed)
+    if not G.size() and input_multiedges is not True:
+        G.allow_multiple_edges(False, check=False)
 
 def from_dict_of_lists(G, D, loops=False, multiedges=False, weighted=False):
     r"""

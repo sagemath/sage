@@ -142,7 +142,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         sage: DynamicalSystem([GF(5)(3)*x^2, K(t)*y^2])
         Dynamical System of Projective Space of dimension 1 over Finite Field in t of size 5^2
           Defn: Defined on coordinates by sending (x : y) to
-                (-2*x^2 : (t)*y^2)
+                (-2*x^2 : t*y^2)
     """
 
     @staticmethod
@@ -160,7 +160,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
         """
         if isinstance(morphism_or_polys, SchemeMorphism_polynomial):
             domain = morphism_or_polys.domain()
-        if not domain is None:
+        if domain is not None:
             if is_AffineSpace(domain) or isinstance(domain, AlgebraicScheme_subscheme_affine):
                 from sage.dynamics.arithmetic_dynamics.affine_ds import DynamicalSystem_affine
                 return DynamicalSystem_affine(morphism_or_polys, domain)
@@ -640,7 +640,7 @@ class DynamicalSystem(SchemeMorphism_polynomial,
                 N = K
             if N.absolute_degree() == 1:
                 if return_embedding:
-                    return (QQ,ds.base_ring().embeddings(QQ)[0])
+                    return (QQ, ds.base_ring().embeddings(QQ)[0])
                 else:
                     return QQ
             else:

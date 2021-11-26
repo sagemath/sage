@@ -1005,7 +1005,7 @@ class SkewPartition(CombinatorialElement):
             sage: s.to_list()
             [[4, 3, 1], [2]]
             sage: type(s.to_list())
-            <... 'list'>
+            <class 'list'>
         """
         return [list(_) for _ in list(self)]
 
@@ -1504,9 +1504,9 @@ class SkewPartitions(UniqueRepresentation, Parent):
         if not all(i>0 for i in rowL) or not all(i>0 for i in colL):
             raise ValueError("row and column length must be positive")
         if rowL == []:
-            return self.element_class(self, [[],[]])
+            return self.element_class(self, [[], []])
         colL_new = colL[:]
-        resIn  = []
+        resIn = []
         resOut = []
         inPOld = len(colL)
         for row in rowL:
@@ -1714,13 +1714,10 @@ class SkewPartitions_n(SkewPartitions):
             sage: [ sp for sp in s if sp.row_lengths() == [2,1] ]
             [[2, 1] / []]
         """
-        nn = len(co)
         result = 1
-        for i in range(nn-1):
-            comb    = min(co[i], co[i+1])
-            comb   += 1 - overlap
-            result *= comb
-
+        shift = 1 - overlap
+        for i in range(len(co) - 1):
+            result *= min(co[i], co[i + 1]) + shift
         return result
 
     def cardinality(self):

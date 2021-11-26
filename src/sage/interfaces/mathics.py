@@ -1062,15 +1062,15 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         self._check_valid()
         if self.is_inexact():
             m = self.to_mpmath()
-            if not self is m and not m is None:
+            if self is not m and m is not None:
                 from sage.libs.mpmath.utils import mpmath_to_sage
                 return mpmath_to_sage(m, self.get_precision())
         s = self.to_sympy()
-        if not self is s and not s is None:
+        if self is not s and s is not None:
             if hasattr(s, '_sage_'):
                 return s._sage_()
         p = self.to_python()
-        if not self is p and not p is None:
+        if self is not p and p is not None:
             def conv(i):
                 return self.parent()(i).sage()
             if type(p) is list:
@@ -1078,7 +1078,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             elif type(p) is tuple:
                 return tuple([conv(i) for i in p])
             elif type(p) is dict:
-                return {conv(k):conv(v) for k, v in p.items()}
+                return {conv(k): conv(v) for k, v in p.items()}
             else:
                 return p
         return s

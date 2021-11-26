@@ -293,7 +293,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
             sage: IntegerVectorsModPermutationGroup(PermutationGroup([[(1,2,3)]]))
             Integer vectors of length 3 enumerated up to the action of Permutation Group with generators [(1,2,3)]
         """
-        return "Integer vectors of length %s enumerated up to the action of %r"%(self.n, self._permgroup)
+        return "Integer vectors of length %s enumerated up to the action of %r" % (self.n, self._permgroup)
 
     def ambient(self):
         r"""
@@ -317,7 +317,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
             sage: v = S.lift(S([4,3,0,1])); v
             [4, 3, 0, 1]
             sage: type(v)
-            <... 'list'>
+            <class 'list'>
         """
         # TODO: For now, Sage integer vectors are just python list.
         # Once Integer vectors will have an element class, update this
@@ -360,7 +360,7 @@ class IntegerVectorsModPermutationGroup_All(UniqueRepresentation, RecursivelyEnu
         """
         # TODO: Once Sage integer vector will have a data structure
         # based on ClonableIntArray, remove the conversion intarray
-        assert len(elt) == self.n, "%s is a quotient set of %s"%(self, self.ambient())
+        assert len(elt) == self.n, "%s is a quotient set of %s" % (self, self.ambient())
         intarray = self.element_class(self, elt, check=False)
         return self.element_class(self, canonical_representative_of_orbit_of(self._sgs, intarray), check=False)
 
@@ -628,11 +628,11 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         """
         if self._sum is not None:
             if self._max_part >= 0:
-                return "Vectors of length %s and of sum %s whose entries is in {0, ..., %s} enumerated up to the action of %s"%(self.n, self._sum, self._max_part, self.permutation_group())
+                return "Vectors of length %s and of sum %s whose entries is in {0, ..., %s} enumerated up to the action of %s" % (self.n, self._sum, self._max_part, self.permutation_group())
             else:
-                return "Integer vectors of length %s and of sum %s enumerated up to the action of %s"%(self.n, self._sum, self.permutation_group())
+                return "Integer vectors of length %s and of sum %s enumerated up to the action of %s" % (self.n, self._sum, self.permutation_group())
         else:
-            return "Integer vectors of length %s whose entries is in {0, ..., %s} enumerated up to the action of %s"%(self.n, self._max_part, self.permutation_group())
+            return "Integer vectors of length %s whose entries is in {0, ..., %s} enumerated up to the action of %s" % (self.n, self._max_part, self.permutation_group())
 
     def roots(self):
         r"""
@@ -858,11 +858,11 @@ class IntegerVectorsModPermutationGroup_with_constraints(UniqueRepresentation, R
         """
         # TODO: Once Sage integer vector will have a data structure
         # based on ClonableIntArray, remove the conversion intarray
-        assert len(elt) == self.n, "%s is a quotient set of %s"%(self, self.ambient())
+        assert len(elt) == self.n, "%s is a quotient set of %s" % (self, self.ambient())
         if self._sum is not None:
-            assert sum(elt) == self._sum, "%s is a quotient set of %s"%(self, self.ambient())
+            assert sum(elt) == self._sum, "%s is a quotient set of %s" % (self, self.ambient())
         if self._max_part >= 0:
-            assert max(elt) <= self._max_part, "%s is a quotient set of %s"%(self, self.ambient())
+            assert max(elt) <= self._max_part, "%s is a quotient set of %s" % (self, self.ambient())
         intarray = self.element_class(self, elt, check=False)
         return self.element_class(self, canonical_representative_of_orbit_of(self._sgs, intarray), check=False)
 

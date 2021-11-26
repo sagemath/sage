@@ -2416,7 +2416,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: R.<x> = F[]
             sage: f = x + alpha^2 + 1
             sage: phi._EllipticCurveIsogeny__init_odd_kernel_polynomial(E, f)
-            (x^3 + (alpha^2 + 1)*x + alpha^3 + alpha^2 + alpha, x^3*y + (alpha^2 + 1)*x^2*y + (alpha^2 + alpha + 1)*x^2 + (alpha^2 + 1)*x*y + (alpha^2 + alpha)*x + (alpha)*y + (alpha), alpha^2 + alpha + 1, alpha^3 + alpha^2 + alpha, 1, 3)
+            (x^3 + (alpha^2 + 1)*x + alpha^3 + alpha^2 + alpha, x^3*y + (alpha^2 + 1)*x^2*y + (alpha^2 + alpha + 1)*x^2 + (alpha^2 + 1)*x*y + (alpha^2 + alpha)*x + alpha*y + alpha, alpha^2 + alpha + 1, alpha^3 + alpha^2 + alpha, 1, 3)
 
             sage: E = EllipticCurve(j=-262537412640768000)
             sage: f = (E.isogenies_prime_degree()[0]).kernel_polynomial()
@@ -2565,7 +2565,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: fi = phi._EllipticCurveIsogeny__phi
             sage: fi_pr = fi.derivative()
             sage: phi._EllipticCurveIsogeny__compute_omega_general(E, psi, psi_pr, fi, fi_pr)
-            x^3*y + (alpha^2 + 1)*x^2*y + (alpha^2 + alpha + 1)*x^2 + (alpha^2 + 1)*x*y + (alpha^2 + alpha)*x + (alpha)*y + (alpha)
+            x^3*y + (alpha^2 + 1)*x^2*y + (alpha^2 + alpha + 1)*x^2 + (alpha^2 + 1)*x*y + (alpha^2 + alpha)*x + alpha*y + alpha
 
         A bug fixed in :trac:`7907`::
 

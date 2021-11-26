@@ -1982,7 +1982,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Closed subscheme of Affine Space of dimension 4 over Number Field in w
             with defining polynomial x^5 - 2 defined by:
               (-w)*z0^3 + (3*w)*z0*z1^2 + z2^2 - z3^2,
-              (-3*w)*z0^2*z1 + (w)*z1^3 + 2*z2*z3 - 1
+              (-3*w)*z0^2*z1 + w*z1^3 + 2*z2*z3 - 1
             sage: X.weil_restriction().ambient_space() is A.weil_restriction()
             True
 

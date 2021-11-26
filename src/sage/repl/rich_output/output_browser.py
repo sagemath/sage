@@ -40,10 +40,12 @@ class OutputHtml(OutputBase):
         # pdf export of a notebook
         m = latex_re.match(html)
         if m:
+            mathjax_string = m.group('latex')
+            latex_string = mathjax_string.replace('&lt;', '<')
             if m.group('mathstart') == r'\[' and m.group('mathend') == r'\]':
-                self.latex = OutputBuffer('$$' + m.group('latex') + '$$')
+                self.latex = OutputBuffer('$$' + latex_string + '$$')
             else:
-                self.latex = OutputBuffer('$' + m.group('latex') + '$')
+                self.latex = OutputBuffer('$' + latex_string + '$')
         else:
             self.latex = None
 

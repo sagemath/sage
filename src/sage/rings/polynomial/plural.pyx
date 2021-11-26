@@ -138,6 +138,8 @@ from sage.structure.parent cimport Parent
 from sage.structure.parent_gens cimport ParentWithGens
 from sage.rings.polynomial.term_order import TermOrder
 
+from sage.misc.functional import coerce
+
 
 class G_AlgFactory(UniqueFactory):
     """
@@ -487,6 +489,17 @@ cdef class NCPolynomialRing_plural(Ring):
             Traceback (most recent call last):
             ...
             ValueError: unable to construct an element of this ring
+
+        Check that it works for rings with parameters::
+
+            sage: F = PolynomialRing(QQ,'t1,t2').fraction_field()
+            sage: A = FreeAlgebra(F, 2, 'x,y')
+            sage: A.inject_variables()
+            Defining x, y
+            sage: B = A.g_algebra({y*x:-x*y})
+            sage: B(2)
+            2
+
         """
 
         if element == 0:
@@ -501,6 +514,11 @@ cdef class NCPolynomialRing_plural(Ring):
         _ring = self._ring
 
         base_ring = self.base_ring()
+
+        try:
+            element = coerce(base_ring, element)
+        except:
+            pass
 
         if(_ring != currRing): rChangeCurrRing(_ring)
 
@@ -721,7 +739,7 @@ cdef class NCPolynomialRing_plural(Ring):
             -x*y
         """
         from sage.repl.rich_output.backend_base import BackendBase
-        from sage.repl.display.pretty_print import SagePrettyPrinter        
+        from sage.repl.display.pretty_print import SagePrettyPrinter
         varstr = ", ".join(char_to_str(rRingVar(i, self._ring))
                            for i in range(self.__ngens))
         backend = BackendBase()
@@ -2254,7 +2272,7 @@ cdef class NCPolynomial_plural(RingElement):
             sage: phi(x*y - x^2*z)
             a^2*b^3 - a^2*b^2*c
             sage: phi(x*y - z2*x^2*z)
-            (z2)*a^2*b^3 - a^2*b^2*c
+            z2*a^2*b^3 - a^2*b^2*c
             sage: phi = R.hom([a*b, b, a*b*c], base_map=GF(9).frobenius_endomorphism(), check=False)
             sage: phi(x*y - x^2*z)
             a^2*b^3 - a^2*b^2*c

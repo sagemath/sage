@@ -484,7 +484,7 @@ cdef class CoercionModel:
     EXAMPLES::
 
         sage: f = ZZ['t','x'].0 + QQ['x'].0 + CyclotomicField(13).gen(); f
-        t + x + (zeta13)
+        t + x + zeta13
         sage: f.parent()
         Multivariate Polynomial Ring in t, x over Cyclotomic Field of order 13 and degree 12
         sage: ZZ['x','y'].0 + ~Frac(QQ['y']).0

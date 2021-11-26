@@ -17,14 +17,13 @@ AUTHORS:
 REFERENCES: [FH2015]_, [CS1996]_, [Weh1998]_, [Hutz2007]
 
 """
-
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.calculus.functions import jacobian
 from sage.categories.fields import Fields
@@ -83,7 +82,8 @@ def WehlerK3Surface(polys):
     elif isinstance(R, CommutativeRing):
         return WehlerK3Surface_ring(polys)
     else:
-        raise TypeError("R (= %s) must be a commutative ring"%R)
+        raise TypeError("R (= %s) must be a commutative ring" % R)
+
 
 def random_WehlerK3Surface(PP):
     r"""
@@ -267,10 +267,10 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             sage: X._Lcoeff(1, 0)
             x0
         """
-        #Error Checks for Passed in Values
-        if not component in [0,1]:
+        # Error Checks for Passed in Values
+        if component not in [0, 1]:
             raise ValueError("component can only be 1 or 0")
-        if not i in [0,1,2]:
+        if i not in [0, 1, 2]:
             raise ValueError("index must be 0, 1, or 2")
         R = self.ambient_space().coordinate_ring()
         return self.L.coefficient(R.gen(component*3 + i))
@@ -317,11 +317,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             sage: X._Qcoeff(1, 1, 0)
             x0^2
         """
-        #Check Errors in Passed in Values
-        if not component in [0,1]:
+        # Check Errors in Passed in Values
+        if component not in [0, 1]:
             raise ValueError("component can only be 1 or 0")
 
-        if not (i in [0,1,2]) and not (j in [0,1,2]):
+        if i not in [0, 1, 2] or j not in [0, 1, 2]:
             raise ValueError("the two indexes must be either 0, 1, or 2")
 
         R = self.ambient_space().coordinate_ring()
@@ -355,11 +355,11 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             sage: X.Gpoly(1, 0)
             x0^2*x1^2 + x1^4 - x0*x1^2*x2 + x1^3*x2 + x1^2*x2^2 + x2^4
         """
-        #Check Errors in passed in values
-        if not component in [0, 1]:
+        # Check Errors in passed in values
+        if component not in [0, 1]:
             raise ValueError("component can only be 1 or 0")
 
-        if not k in [0,1,2]:
+        if k not in [0, 1, 2]:
             raise ValueError("index must be either 0, 1, or 2")
 
         Indices = [0, 1, 2]
@@ -447,7 +447,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             sage: X.Lxa(T[0])
             y0 + y1
         """
-        if not a in self.ambient_space()[0]:
+        if a not in self.ambient_space()[0]:
             raise TypeError("point must be in projective space of dimension 2")
         AS = self.ambient_space()
         ASC = AS.coordinate_ring()
@@ -484,7 +484,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
            sage: X.Qxa(T[0])
            5*y0^2 + 7*y0*y1 + y1^2 + 11*y1*y2 + y2^2
         """
-        if not a in self.ambient_space()[0]:
+        if a not in self.ambient_space()[0]:
             raise TypeError("point must be in Projective Space of dimension 2")
         AS = self.ambient_space()
         ASC = AS.coordinate_ring()
@@ -525,7 +525,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
               y0 + y1,
               5*y0^2 + 7*y0*y1 + y1^2 + 11*y1*y2 + y2^2
         """
-        if not a in self.ambient_space()[0]:
+        if a not in self.ambient_space()[0]:
             raise TypeError("point must be in projective space of dimension 2")
         PSY = self.ambient_space()[1]
         return PSY.subscheme([self.Lxa(a),self.Qxa(a)])
@@ -559,7 +559,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
            sage: X.Lyb(T[1])
              x0
         """
-        if not b in self.ambient_space()[1]:
+        if b not in self.ambient_space()[1]:
             raise TypeError("point must be in projective space of dimension 2")
         AS = self.ambient_space()
         ASC = AS.coordinate_ring()
@@ -596,7 +596,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             sage: X.Qyb(T[1])
             x0^2 + 3*x0*x1 + x1^2
         """
-        if not b in self.ambient_space()[1]:
+        if b not in self.ambient_space()[1]:
             raise TypeError("point must be in projective space of dimension 2")
         AS = self.ambient_space()
         ASC = AS.coordinate_ring()
@@ -635,7 +635,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
               x0^2 + 3*x0*x1 + x1^2
 
         """
-        if not b in self.ambient_space()[1]:
+        if b not in self.ambient_space()[1]:
             raise TypeError("point must be in projective space of dimension 2")
         AS = self.ambient_space()
         PSY = AS[0]
@@ -2130,7 +2130,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
         for x in Points:
             if (self.L(x) == 0) and (self.Q(x) == 0):
                 Y = self.point(x, False)
-                if not Y in fiber:
+                if Y not in fiber:
                     fiber.append(Y)
         return fiber
 

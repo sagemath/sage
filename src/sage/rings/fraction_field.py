@@ -586,7 +586,7 @@ class FractionField_generic(ring.Field):
             sage: B.<d,e> = PolynomialRing(A,'d,e')
             sage: R.<x> = PolynomialRing(B,'x')
             sage: (a*d*x^2+a+e+1).resultant(-4*c^2*x+1)
-            a*d + 16*c^4*e + 16*a*c^4 + 16*c^4
+            a*d + (16*c^4)*e + (16*a*c^4 + 16*c^4)
 
         Check that :trac:`24539` is fixed::
 
@@ -618,6 +618,8 @@ class FractionField_generic(ring.Field):
             sage: F(x)
             -1/2/(a^2 + a)
         """
+        if isinstance(x, (list, tuple)) and len(x) == 1:
+            x = x[0]
         if y is None:
             if parent(x) is self:
                 return x

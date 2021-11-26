@@ -2628,7 +2628,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             sage: A3 = SteenrodAlgebra(3, 'adem')
             sage: A3.gens()
-            Lazy family (<bound method SteenrodAlgebra_generic_with_category.gen of mod 3 Steenrod algebra, serre-cartan basis>(i))_{i in Non negative integers}
+            Lazy family (<bound method SteenrodAlgebra_generic.gen of mod 3 Steenrod algebra, serre-cartan basis>(i))_{i in Non negative integers}
             sage: A3.gens()[0]
             beta
             sage: A3.gens()[1]
@@ -2647,7 +2647,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(p=5, profile=[[2,1], [2,2,2]]).gens()
             Family (Q_0, P(1), P(5))
             sage: SteenrodAlgebra(profile=lambda n: n).gens()
-            Lazy family (<bound method SteenrodAlgebra_mod_two_with_category.gen of sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [1, 2, 3, ..., 98, 99, +Infinity, +Infinity, +Infinity, ...]>(i))_{i in Non negative integers}
+            Lazy family (<bound method SteenrodAlgebra_generic.gen of sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [1, 2, 3, ..., 98, 99, +Infinity, +Infinity, +Infinity, ...]>(i))_{i in Non negative integers}
 
         You may also use ``algebra_generators`` instead of ``gens``::
 

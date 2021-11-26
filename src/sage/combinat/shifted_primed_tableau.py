@@ -686,8 +686,8 @@ class ShiftedPrimedTableau(ClonableArray,
         """
         t = self[:]
         n = PrimedEntry(n)
-        return ShiftedPrimedTableau([z for z in [[y for y in x if y is not None and y <= n]
-                                                 for x in t] if z], skew=self._skew)
+        loop = ([y for y in x if y is not None and y <= n] for x in t)
+        return ShiftedPrimedTableau([z for z in loop if z], skew=self._skew)
 
     def restriction_outer_shape(self, n):
         """

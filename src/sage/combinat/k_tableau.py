@@ -2369,14 +2369,15 @@ class StrongTableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass)
         """
         if isinstance(T, cls):
             return T
-        outer_shape = Core([len(t) for t in T], k+1)
-        inner_shape = Core([x for x in [row.count(None) for row in T] if x], k+1)
-        Te = [v for row in T for v in row if v is not None]+[0]
+        outer_shape = Core([len(t) for t in T], k + 1)
+        loop = (row.count(None) for row in T)
+        inner_shape = Core([x for x in loop if x], k + 1)
+        Te = [v for row in T for v in row if v is not None] + [0]
         count_marks = tuple(Te.count(-(i+1)) for i in range(-min(Te)))
-        if not all( v==1 for v in count_marks ):
+        if not all(v == 1 for v in count_marks):
             # if T is not standard -> turn into standard
-            if weight is not None and tuple(weight)!=count_marks:
-                raise ValueError("Weight = %s and tableau = %s do not agree"%(weight, T))
+            if weight is not None and tuple(weight) != count_marks:
+                raise ValueError("Weight = %s and tableau = %s do not agree" % (weight, T))
             tijseq = StrongTableaux.marked_CST_to_transposition_sequence(T, k)
             if tijseq is None or len(tijseq)<sum(list(count_marks)):
                 raise ValueError("Unable to parse strong marked tableau : %s"%T)
