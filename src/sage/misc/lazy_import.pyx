@@ -59,6 +59,7 @@ cimport cython
 from cpython.object cimport PyObject_RichCompare
 from cpython.number cimport PyNumber_TrueDivide, PyNumber_Power, PyNumber_Index
 import sage.misc.startup_guard as startup_guard
+from sage.misc.startup_guard import StartupState
 
 cdef extern from *:
     int likely(int) nogil  # Defined by Cython
@@ -189,10 +190,10 @@ cdef class LazyImport(object):
         if self._object is not None:
             return self._object
 
-        if startup_guard.IS_STARTUP and not self._at_startup:
+        if startup_guard.startup_state is StartupState.RUNNING and not self._at_startup:
             global imports_resolved_at_startup
             imports_resolved_at_startup.append(self._name)
-        elif self._at_startup and not startup_guard.IS_STARTUP:
+        elif startup_guard.startup_state is StartupState.FINISHED and self._at_startup:
             warn(f"Option ``at_startup=True`` for lazy import {self._name} not needed anymore")
         try:
             self._object = getattr(__import__(self._module, {}, {}, [self._name]), self._name)
