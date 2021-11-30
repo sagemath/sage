@@ -10,7 +10,7 @@ class StartupState(Enum):
     UNINITIALIZED = 0
     """
     The startup process is not yet started.
-    This either that we are at the very beginning of the startup process,
+    This either means that we are at the very beginning of the startup process,
     or that another global environment other than :mod:`~sage.all` is used.
     """
 
