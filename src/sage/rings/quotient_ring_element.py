@@ -23,7 +23,7 @@ from sage.structure.richcmp import richcmp, rich_to_bool
 try:
     from sage.interfaces.singular import singular as singular_default
 except ImportError:
-    is_singularElement = lambda x : False
+    singular_default = None
 
 
 class QuotientRingElement(RingElement):
