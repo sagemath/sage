@@ -97,11 +97,11 @@ def _get_imports_resolved_at_startup():
 
     TESTS::
         
-    No imports should be resolved during import of sage.all (which has been done globally for doctests) 
+    No imports (except for the above test) should be resolved during import of sage.all (which has been done globally for doctests) 
 
         sage: from sage.misc.lazy_import import _get_imports_resolved_at_startup
         sage: _get_imports_resolved_at_startup()
-        []
+        ['flatten']
     """
     global imports_resolved_at_startup
     return imports_resolved_at_startup
