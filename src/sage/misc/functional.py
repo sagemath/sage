@@ -11,7 +11,7 @@ AUTHORS:
 
 - David Joyner (2005-12-20): More Examples
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2004 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,9 @@ AUTHORS:
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 import builtins
+import math
 
 from sage.rings.complex_double import CDF
 from sage.rings.real_double import RDF, RealDoubleElement
@@ -89,7 +90,7 @@ def base_field(x):
         return x.base_field()
     except AttributeError:
         y = x.base_ring()
-        if is_field(y):
+        if y.is_field():
             return y
         else:
             raise AttributeError("The base ring of %s is not a field" % x)
@@ -178,9 +179,9 @@ def coerce(P, x):
     EXAMPLES::
 
         sage: type(5)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: type(coerce(QQ,5))
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
     """
     try:
         return P._coerce_(x)
@@ -673,7 +674,9 @@ def integral(x, *args, **kwds):
 
     Numerical approximation::
 
-        sage: h = integral(tan(x)/x, (x, 1, pi/3)); h
+        sage: h = integral(tan(x)/x, (x, 1, pi/3))
+        ...
+        sage: h
         integrate(tan(x)/x, x, 1, 1/3*pi)
         sage: h.n()
         0.07571599101...
@@ -751,7 +754,9 @@ def integral(x, *args, **kwds):
     :trac:`11590` can be integrated::
 
         sage: x = SR.symbol('x', domain='real')
-        sage: integrate(x * sgn(x^2 - 1/4), x, -1, 0)
+        sage: result = integrate(x * sgn(x^2 - 1/4), x, -1, 0)
+        ...
+        sage: result
         -1/4
 
     """
@@ -805,9 +810,7 @@ def xinterval(a, b):
 
     EXAMPLES::
 
-        sage: I = xinterval(2,5); I  # py2
-        xrange(2, 6)
-        sage: I = xinterval(2,5); I  # py3
+        sage: I = xinterval(2,5); I
         range(2, 6)
         sage: 5 in I
         True
@@ -825,8 +828,11 @@ def is_commutative(x):
 
         sage: R = PolynomialRing(QQ, 'x')
         sage: is_commutative(R)
+        doctest:...DeprecationWarning: use X.is_commutative() or X in Rings().Commutative()
+        See https://trac.sagemath.org/32347 for details.
         True
     """
+    deprecation(32347, "use X.is_commutative() or X in Rings().Commutative()")
     return x.is_commutative()
 
 
@@ -856,12 +862,15 @@ def is_integrally_closed(x):
     EXAMPLES::
 
         sage: is_integrally_closed(QQ)
+        doctest:...DeprecationWarning: use X.is_integrally_closed()
+        See https://trac.sagemath.org/32347 for details.
         True
         sage: K.<a> = NumberField(x^2 + 189*x + 394)
         sage: R = K.order(2*a)
         sage: is_integrally_closed(R)
         False
     """
+    deprecation(32347, "use X.is_integrally_closed()")
     return x.is_integrally_closed()
 
 
@@ -876,8 +885,11 @@ def is_field(x, proof=True):
         sage: R = PolynomialRing(QQ, 'x')
         sage: F = FractionField(R)
         sage: is_field(F)
+        doctest:...DeprecationWarning: use X.is_field() or X in Fields()
+        See https://trac.sagemath.org/32347 for details.
         True
     """
+    deprecation(32347, "use X.is_field() or X in Fields()")
     return x.is_field(proof=proof)
 
 
@@ -980,19 +992,15 @@ def lift(x):
         raise ArithmeticError("no lift defined.")
 
 
-def log(x, b=None):
-    r"""
-    Return the log of ``x`` to the base `b`. The default base is `e`.
+def log(*args, **kwds):
+    """
+    Return the logarithm of the first argument to the base of
+    the second argument which if missing defaults to ``e``.
 
-    DEPRECATED by :trac:`19444`
-
-    INPUT:
-
-    - ``x`` -- number
-
-    - `b` -- base (default: ``None``, which means natural log)
-
-    OUTPUT: number
+    It calls the ``log`` method of the first argument when computing
+    the logarithm, thus allowing the use of logarithm on any object
+    containing a ``log`` method. In other words, ``log`` works
+    on more than just real numbers.
 
     .. NOTE::
 
@@ -1002,28 +1010,175 @@ def log(x, b=None):
 
     EXAMPLES::
 
-        sage: from sage.misc.functional import log
         sage: log(e^2)
-        doctest:warning...
-        DeprecationWarning: use .log() or log() from sage.functions.log instead
-        See http://trac.sagemath.org/19444 for details.
         2
-        sage: log(16,2)
-        4
-        sage: log(3.)
-        1.09861228866811
-        sage: log(float(3))  # abs tol 1e-15
-        1.0986122886681098
+
+    To change the base of the logarithm, add a second parameter::
+
+        sage: log(1000,10)
+        3
+
+    The synonym ``ln`` can only take one argument::
+
+        sage: ln(RDF(10))
+        2.302585092994046
+        sage: ln(2.718)
+        0.999896315728952
+        sage: ln(2.0)
+        0.693147180559945
+        sage: ln(float(-1))
+        3.141592653589793j
+        sage: ln(complex(-1))
+        3.141592653589793j
+
+    You can use
+    :class:`RDF<sage.rings.real_double.RealDoubleField_class>`,
+    :class:`~sage.rings.real_mpfr.RealField` or ``n`` to get a
+    numerical real approximation::
+
+        sage: log(1024, 2)
+        10
+        sage: RDF(log(1024, 2))
+        10.0
+        sage: log(10, 4)
+        1/2*log(10)/log(2)
+        sage: RDF(log(10, 4))
+        1.6609640474436813
+        sage: log(10, 2)
+        log(10)/log(2)
+        sage: n(log(10, 2))
+        3.32192809488736
+        sage: log(10, e)
+        log(10)
+        sage: n(log(10, e))
+        2.30258509299405
+
+    The log function works for negative numbers, complex
+    numbers, and symbolic numbers too, picking the branch
+    with angle between `-\\pi` and `\\pi`::
+
+        sage: log(-1+0*I)
+        I*pi
+        sage: log(CC(-1))
+        3.14159265358979*I
+        sage: log(-1.0)
+        3.14159265358979*I
+
+    Small integer powers are factored out immediately::
+
+        sage: log(4)
+        2*log(2)
+        sage: log(1000000000)
+        9*log(10)
+        sage: log(8) - 3*log(2)
+        0
+        sage: bool(log(8) == 3*log(2))
+        True
+
+    The ``hold`` parameter can be used to prevent automatic evaluation::
+
+        sage: log(-1,hold=True)
+        log(-1)
+        sage: log(-1)
+        I*pi
+        sage: I.log(hold=True)
+        log(I)
+        sage: I.log(hold=True).simplify()
+        1/2*I*pi
+
+    For input zero, the following behavior occurs::
+
+        sage: log(0)
+        -Infinity
+        sage: log(CC(0))
+        -infinity
+        sage: log(0.0)
+        -infinity
+
+    The log function also works in finite fields as long as the
+    argument lies in the multiplicative group generated by the base::
+
+        sage: F = GF(13); g = F.multiplicative_generator(); g
+        2
+        sage: a = F(8)
+        sage: log(a,g); g^log(a,g)
+        3
+        8
+        sage: log(a,3)
+        Traceback (most recent call last):
+        ...
+        ValueError: no logarithm of 8 found to base 3 modulo 13
+        sage: log(F(9), 3)
+        2
+
+    The log function also works for p-adics (see documentation for
+    p-adics for more information)::
+
+        sage: R = Zp(5); R
+        5-adic Ring with capped relative precision 20
+        sage: a = R(16); a
+        1 + 3*5 + O(5^20)
+        sage: log(a)
+        3*5 + 3*5^2 + 3*5^4 + 3*5^5 + 3*5^6 + 4*5^7 + 2*5^8 + 5^9 +
+        5^11 + 2*5^12 + 5^13 + 3*5^15 + 2*5^16 + 4*5^17 + 3*5^18 +
+        3*5^19 + O(5^20)
+
+
+    TESTS:
+
+    Check if :trac:`10136` is fixed::
+
+        sage: ln(x).operator() is ln
+        True
+        sage: log(x).operator() is ln
+        True
+
+        sage: log(1000, 10)
+        3
+        sage: log(3,-1)
+        -I*log(3)/pi
+        sage: log(int(8),2)
+        3
+        sage: log(8,int(2))
+        3
+        sage: log(8,2)
+        3
+        sage: log(1/8,2)
+        -3
+        sage: log(1/8,1/2)
+        3
+        sage: log(8,1/2)
+        -3
+
+        sage: log(1000, 10, base=5)
+        Traceback (most recent call last):
+        ...
+        TypeError: log takes at most 2 arguments (3 given)
+
+    Check if :trac:`29164` is fixed::
+
+        sage: log(0, 2)
+        -Infinity
     """
-    deprecation(19444, 'use .log() or log() from sage.functions.log instead')
-    if b is None:
-        if hasattr(x, 'log'):
-            return x.log()
-        return RDF(x).log()
-    else:
-        if hasattr(x, 'log'):
-            return x.log(b)
-        return RDF(x).log(b)
+    base = kwds.pop('base', None)
+    if base:
+        args = args + (base,)
+    if not args:
+        raise TypeError("log takes at least 1 arguments (0 given)")
+    if len(args) == 1:
+        from sage.functions.log import ln
+        return ln(args[0], **kwds)
+    if len(args) > 2:
+        raise TypeError("log takes at most 2 arguments (%s given)" % (len(args) + 1 - (base is not None)))
+    try:
+        return args[0].log(args[1])
+    except ValueError as ex:
+        if ex.args[0].startswith("no logarithm"):
+            raise
+    except (AttributeError, TypeError):
+        pass
+    from sage.functions.log import logb
+    return logb(args[0], args[1])
 
 
 def minimal_polynomial(x, var='x'):
@@ -1379,7 +1534,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         1.41421356237309*I
 
         sage: type(numerical_approx(CC(1/2)))
-        <type 'sage.rings.complex_mpfr.ComplexNumber'>
+        <class 'sage.rings.complex_mpfr.ComplexNumber'>
 
     The following tests :trac:`10761`, in which ``n()`` would break when
     called on complex-valued algebraic numbers.  ::
@@ -1423,6 +1578,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         return numerical_approx_generic(x, prec)
     else:
         return n(prec, algorithm=algorithm)
+
 
 n = numerical_approx
 N = numerical_approx
@@ -1524,11 +1680,11 @@ def round(x, ndigits=0):
         sage: q = round(sqrt(2),5); q
         1.41421
         sage: type(q)
-        <type 'sage.rings.real_double.RealDoubleElement'>
+        <class 'sage.rings.real_double...RealDoubleElement...'>
         sage: q = round(sqrt(2)); q
         1
         sage: type(q)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: round(pi)
         3
         sage: b = 5.4999999999999999
@@ -1538,7 +1694,7 @@ def round(x, ndigits=0):
     This example addresses :trac:`23502`::
 
         sage: n = round(6); type(n)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Since we use floating-point with a limited range, some roundings can't
     be performed::
@@ -1665,6 +1821,162 @@ def squarefree_part(x):
         if e % 2:
             n *= p
     return n * F.unit()
+
+
+def _do_sqrt(x, prec=None, extend=True, all=False):
+    r"""
+    Used internally to compute the square root of x.
+
+    INPUT:
+
+    -  ``x`` - a number
+
+    -  ``prec`` - None (default) or a positive integer
+       (bits of precision) If not None, then compute the square root
+       numerically to prec bits of precision.
+
+    -  ``extend`` - bool (default: True); this is a place
+       holder, and is always ignored since in the symbolic ring everything
+       has a square root.
+
+    -  ``extend`` - bool (default: True); whether to extend
+       the base ring to find roots. The extend parameter is ignored if
+       prec is a positive integer.
+
+    -  ``all`` - bool (default: False); whether to return
+       a list of all the square roots of x.
+
+
+    EXAMPLES::
+
+        sage: from sage.misc.functional import _do_sqrt
+        sage: _do_sqrt(3)
+        sqrt(3)
+        sage: _do_sqrt(3,prec=10)
+        1.7
+        sage: _do_sqrt(3,prec=100)
+        1.7320508075688772935274463415
+        sage: _do_sqrt(3,all=True)
+        [sqrt(3), -sqrt(3)]
+
+    Note that the extend parameter is ignored in the symbolic ring::
+
+        sage: _do_sqrt(3,extend=False)
+        sqrt(3)
+    """
+    if prec:
+        if x >= 0:
+            from sage.rings.real_mpfr import RealField
+            return RealField(prec)(x).sqrt(all=all)
+        else:
+            from sage.rings.complex_mpfr import ComplexField
+            return ComplexField(prec)(x).sqrt(all=all)
+    if x == -1:
+        from sage.symbolic.expression import I
+        z = I
+    else:
+        from sage.symbolic.ring import SR
+        z = SR(x).sqrt()
+
+    if all:
+        if z:
+            return [z, -z]
+        else:
+            return [z]
+    return z
+
+
+def sqrt(x, *args, **kwds):
+    r"""
+    INPUT:
+
+    -  ``x`` - a number
+
+    -  ``prec`` - integer (default: None): if None, returns
+       an exact square root; otherwise returns a numerical square root if
+       necessary, to the given bits of precision.
+
+    -  ``extend`` - bool (default: True); this is a place
+       holder, and is always ignored or passed to the sqrt function for x,
+       since in the symbolic ring everything has a square root.
+
+    -  ``all`` - bool (default: False); if True, return all
+       square roots of self, instead of just one.
+
+    EXAMPLES::
+
+        sage: sqrt(-1)
+        I
+        sage: sqrt(2)
+        sqrt(2)
+        sage: sqrt(2)^2
+        2
+        sage: sqrt(4)
+        2
+        sage: sqrt(4,all=True)
+        [2, -2]
+        sage: sqrt(x^2)
+        sqrt(x^2)
+
+    For a non-symbolic square root, there are a few options.
+    The best is to numerically approximate afterward::
+
+        sage: sqrt(2).n()
+        1.41421356237310
+        sage: sqrt(2).n(prec=100)
+        1.4142135623730950488016887242
+
+    Or one can input a numerical type.
+
+        sage: sqrt(2.)
+        1.41421356237310
+        sage: sqrt(2.000000000000000000000000)
+        1.41421356237309504880169
+        sage: sqrt(4.0)
+        2.00000000000000
+
+    To prevent automatic evaluation, one can use the ``hold`` parameter
+    after coercing to the symbolic ring::
+
+        sage: sqrt(SR(4),hold=True)
+        sqrt(4)
+        sage: sqrt(4,hold=True)
+        Traceback (most recent call last):
+        ...
+        TypeError: ..._do_sqrt() got an unexpected keyword argument 'hold'
+
+    This illustrates that the bug reported in :trac:`6171` has been fixed::
+
+        sage: a = 1.1
+        sage: a.sqrt(prec=100)  # this is supposed to fail
+        Traceback (most recent call last):
+        ...
+        TypeError: ...sqrt() got an unexpected keyword argument 'prec'
+        sage: sqrt(a, prec=100)
+        1.0488088481701515469914535137
+        sage: sqrt(4.00, prec=250)
+        2.0000000000000000000000000000000000000000000000000000000000000000000000000
+
+    One can use numpy input as well::
+
+        sage: import numpy
+        sage: a = numpy.arange(2,5)
+        sage: sqrt(a)
+        array([1.41421356, 1.73205081, 2.        ])
+    """
+    if isinstance(x, float):
+        return math.sqrt(x)
+    elif type(x).__module__ == 'numpy':
+        from numpy import sqrt
+        return sqrt(x)
+    try:
+        return x.sqrt(*args, **kwds)
+    # The following includes TypeError to catch cases where sqrt
+    # is called with a "prec" keyword, for example, but the sqrt
+    # method for x doesn't accept such a keyword.
+    except (AttributeError, TypeError):
+        pass
+    return _do_sqrt(x, *args, **kwds)
 
 
 def transpose(x):

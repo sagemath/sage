@@ -23,8 +23,8 @@ import sage.libs.symmetrica.all as symmetrica
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
 from sage.combinat.partition import Partition, _Partitions
-from sage.functions.other import factorial, binomial
-from sage.arith.misc import multinomial
+from sage.arith.misc import multinomial, factorial, binomial
+
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):
     def __init__(self, Sym):

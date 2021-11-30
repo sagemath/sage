@@ -1,5 +1,5 @@
-rst2ipynb
-=========
+rst2ipynb: Convert reStructuredText files to Jupyter notebooks
+==============================================================
 
 Description
 -----------

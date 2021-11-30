@@ -18,7 +18,7 @@ AUTHORS:
 cdef class SatSolver:
     def __cinit__(self, *args, **kwds):
         """
-        Constuct a new SATSolver.
+        Construct a new SATSolver.
 
         EXAMPLES::
 

@@ -15,6 +15,12 @@ all: base-toolchain
 build: base-toolchain
 	$(MAKE) all-build
 
+build-local: base-toolchain
+	$(MAKE) all-build-local
+
+build-venv: base-toolchain
+	$(MAKE) all-build-venv
+
 start: base-toolchain
 	$(MAKE) build-start
 
@@ -35,7 +41,7 @@ sageruntime: base-toolchain
 
 # CONFIG_FILES lists all files that appear in AC_CONFIG_FILES in configure.ac;
 # except for build/make/Makefile-auto, which is unused by the build system
-CONFIG_FILES = build/make/Makefile src/bin/sage-env-config build/bin/sage-build-env-config build/pkgs/sage_conf/src/sage_conf.py build/pkgs/sage_conf/src/setup.cfg
+CONFIG_FILES = build/make/Makefile src/bin/sage-env-config build/bin/sage-build-env-config pkgs/sage-conf/sage_conf.py pkgs/sage-conf/setup.cfg
 
 # SPKG_COLLECT_FILES contains all files that influence the SAGE_SPKG_COLLECT macro
 SPKG_COLLECT_FILES = build/pkgs/*/type build/pkgs/*/package-version.txt build/pkgs/*/dependencies build/pkgs/*/requirements.txt build/pkgs/*/checksums.ini build/pkgs/*/spkg-install
@@ -103,6 +109,7 @@ distclean: build-clean
 	@echo "Deleting all remaining output from build system ..."
 	rm -rf local
 	rm -f src/bin/sage-env-config
+	rm -f prefix venv
 
 # Delete all auto-generated files which are distributed as part of the
 # source tarball
@@ -169,6 +176,7 @@ PTESTALL = ./sage -t -p --all
 # https://trac.sagemath.org/ticket/25345 and
 # https://trac.sagemath.org/ticket/26110.
 TESTALL_FLAGS = --optional=sage,dochtml,optional,external,build
+TESTALL_NODOC_FLAGS = --optional=sage,optional,external,build
 
 test: all
 	$(TESTALL) --logfile=logs/test.log
@@ -208,7 +216,45 @@ ptestoptional: all
 ptestoptionallong: all
 	$(PTESTALL) --long --logfile=logs/ptestoptionallong.log
 
-configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*.txt build/pkgs/*/distros/*.txt
+test-nodoc: build
+	$(TESTALL) --logfile=logs/test.log
+
+check-nodoc: test-nodoc
+
+testall-nodoc: build
+	$(TESTALL) $(TESTALL_NODOC_FLAGS) --logfile=logs/testall.log
+
+testlong-nodoc: build
+	$(TESTALL) --long --logfile=logs/testlong.log
+
+testalllong-nodoc: build
+	$(TESTALL) --long $(TESTALL_NODOC_FLAGS) --logfile=logs/testalllong.log
+
+ptest-nodoc: build
+	$(PTESTALL) --logfile=logs/ptest.log
+
+ptestall-nodoc: build
+	$(PTESTALL) $(TESTALL_NODOC_FLAGS) --logfile=logs/ptestall.log
+
+ptestlong-nodoc: build
+	$(PTESTALL) --long --logfile=logs/ptestlong.log
+
+ptestalllong-nodoc: build
+	$(PTESTALL) --long $(TESTALL_NODOC_FLAGS) --logfile=logs/ptestalllong.log
+
+testoptional-nodoc: build
+	$(TESTALL) --logfile=logs/testoptional.log
+
+testoptionallong-nodoc: build
+	$(TESTALL) --long --logfile=logs/testoptionallong.log
+
+ptestoptional-nodoc: build
+	$(PTESTALL) --logfile=logs/ptestoptional.log
+
+ptestoptionallong-nodoc: build
+	$(PTESTALL) --long --logfile=logs/ptestoptionallong.log
+
+configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*/distros/*.txt
 	./bootstrap -d
 
 install: all
@@ -220,9 +266,11 @@ install: all
 	@echo "from https://github.com/sagemath/binary-pkg"
 	@echo "******************************************************************"
 
+# Setting SAGE_PKGCONFIG is only so that make does not exit with
+# "This Makefile needs to be invoked by build/make/install".
 list:
 	@$(MAKE) --silent build/make/Makefile >&2
-	@$(MAKE) --silent -f build/make/Makefile SAGE_SPKG_INST=local $@
+	@$(MAKE) --silent -f build/make/Makefile SAGE_PKGCONFIG=dummy $@
 
 .PHONY: default build dist install micro_release \
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \

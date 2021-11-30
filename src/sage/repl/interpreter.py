@@ -80,7 +80,7 @@ Check that Cython source code appears in tracebacks::
     ZeroDivisionError...Traceback (most recent call last)
     <ipython-input-...> in <module>...
     ----> 1 Integer(1)/Integer(0)
-    .../sage/rings/integer.pyx in sage.rings.integer.Integer...div... (.../cythonized/sage/rings/integer.c:...)()
+    .../sage/rings/integer.pyx in sage.rings.integer.Integer...div...
     ...
     -> ...                  raise ZeroDivisionError("rational division by zero")
        ....:            x = <Rational> Rational.__new__(Rational)
@@ -154,20 +154,6 @@ from IPython.terminal.ipapp import TerminalIPythonApp, IPAppCrashHandler
 from IPython.core.crashhandler import CrashHandler
 
 
-def embedded():
-    """
-    Return True if Sage is being run from the notebook.
-
-    EXAMPLES::
-
-        sage: from sage.repl.interpreter import embedded
-        sage: embedded()
-        False
-    """
-    import sage.server.support
-    return sage.server.support.EMBEDDED_MODE
-
-
 # TODO: This global variable _do_preparse should be associated with an
 # IPython InteractiveShell as opposed to a global variable in this
 # module.
@@ -239,9 +225,9 @@ class SageShellOverride(object):
             sage: shell.system_raw('true')
             sage: shell.user_ns['_exit_code']
             0
-            sage: shell.system_raw('R --version')
+            sage: shell.system_raw('R --version')   # optional - r
             R version ...
-            sage: shell.user_ns['_exit_code']
+            sage: shell.user_ns['_exit_code']       # optional - r
             0
             sage: shell.quit()
         """

@@ -1,5 +1,5 @@
-SIP
-===
+sip: Python extension module generator for C and C++ libraries
+==============================================================
 
 Description
 -----------

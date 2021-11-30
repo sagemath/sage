@@ -1,11 +1,91 @@
 #!/usr/bin/env bash
 
+# WARNING: this function is copy/pasted from both src/bin/sage-env and
+# the top-level "sage" script. Please keep them synchronized.
+resolvelinks() {
+    # $in is what still needs to be converted (normally has no starting slash)
+    in="$1"
+    # $out is the part which is converted (normally ends with trailing slash)
+    out="./"
+
+    # Move stuff from $in to $out
+    while [ -n "$in" ]; do
+        # Normalize $in by replacing consecutive slashes by one slash
+        in=$(echo "${in}" | sed 's://*:/:g')
+
+        # If $in starts with a slash, remove it and set $out to the root
+        in_without_slash=${in#/}
+        if [ "$in" != "$in_without_slash" ]; then
+            in=$in_without_slash
+            out="/"
+            continue
+        fi
+
+        # Check that the directory $out exists by trying to cd to it.
+        # If this fails, then cd will show an error message (unlike
+        # test -d "$out"), so no need to be more verbose.
+        ( cd "$out" ) || return $?
+
+
+        # Get the first component of $in
+        f=${in%%/*}
+
+        # If it is not a symbolic link, simply move it to $out
+        if [ ! -L "$out$f" ]; then
+            in=${in#"$f"}
+            out="$out$f"
+
+            # If the new $in starts with a slash, move it to $out
+            in_without_slash=${in#/}
+            if [ "$in" != "$in_without_slash" ]; then
+                in=$in_without_slash
+                out="$out/"
+            fi
+            continue
+        fi
+
+        # Now resolve the symbolic link "$f"
+        f_resolved=`readlink -n "$out$f" 2>/dev/null`
+        status=$?
+        # status 127 means readlink could not be found.
+        if [ $status -eq 127 ]; then
+            # We don't have "readlink", try a stupid "ls" hack instead.
+            # This will fail if we have filenames like "a -> b".
+            fls=`ls -l "$out$f" 2>/dev/null`
+            status=$?
+            f_resolved=${fls##*-> }
+
+            # If $fls equals $f_resolved, then certainly
+            # something is wrong
+            if [ $status -eq 0 -a "$fls" = "$f_resolved" ]; then
+                echo >&2 "Cannot parse output from ls -l '$out$f'"
+                return 1
+            fi
+        fi
+        if [ $status -ne 0 ]; then
+            echo >&2 "Cannot read symbolic link '$out$f'"
+            return $status
+        fi
+
+        # In $in, replace $f by $f_resolved (leave $out alone)
+        in="${in#${f}}"
+        in="${f_resolved}${in}"
+    done
+
+    # Return $out
+    echo "$out"
+}
+
+# Resolve the links in $0 so that local/bin/sage can be executed from
+# a symlink (Trac #30888).
+SELF=$(resolvelinks "${0}")
+
 # Display the current version of Sage
 # usage: sage_version [-v]
 #   -v    display the full version banner including release date
 sage_version() {
-    if [ -f "$0-version.sh" ]; then
-        . "$0-version.sh"
+    if [ -f "${SELF}-version.sh" ]; then
+        . "${SELF}-version.sh"
     else
         . "$SAGE_ROOT/src/bin/sage-version.sh"
     fi
@@ -58,23 +138,25 @@ usage() {
 # 'usage_advanced', which prints a longer help message, is defined
 # below, after sourcing sage-env.
 
-# Determine SAGE_ROOT and SAGE_LOCAL.
-if [ -x "$0-config" ]; then
+# Determine SAGE_ROOT, SAGE_LOCAL, and SAGE_VENV.
+unset SAGE_VENV
+if [ -x "${SELF}-config" ]; then
     # optional sage-config console script, installed by sage_conf
-    export SAGE_ROOT=$("$0-config" SAGE_ROOT)
-    export SAGE_LOCAL=$("$0-config" SAGE_LOCAL)
+    export SAGE_ROOT=$("${SELF}-config" SAGE_ROOT)
+    export SAGE_LOCAL=$("${SELF}-config" SAGE_LOCAL)
 fi
-if [ -f "$0-src-env-config" ]; then
+if [ -f "${SELF}-src-env-config" ]; then
     # Not installed script, present only in src/bin/
-    . "$0-src-env-config" >&2
+    SAGE_SRC_ENV_CONFIG=1
+    . "${SELF}-src-env-config" >&2
 fi
-if [ -x "$0-venv-config" ]; then
+if [ -z "$SAGE_VENV" -a -x "${SELF}-venv-config" ]; then
     # installed by setup.py
-    export SAGE_VENV=$("$0-venv-config" SAGE_VENV)
+    export SAGE_VENV=$("${SELF}-venv-config" SAGE_VENV)
 fi
-if [ -f "$0-env-config" ]; then
+if [ -f "${SELF}-env-config" ]; then
     # As of Trac #22731, sage-env-config is optional.
-    . "$0-env-config" >&2
+    . "${SELF}-env-config" >&2
 fi
 
 #####################################################################
@@ -87,7 +169,7 @@ fi
 if [ "$1" = '--nodotsage' ]; then
     export DOT_SAGE=`mktemp -d ${TMPDIR:-/tmp}/dotsageXXXXXX`
     shift
-    command "$0" "$@"
+    command "${SELF}" "$@"
     status=$?
     rm -rf "$DOT_SAGE"
     exit $status
@@ -203,14 +285,14 @@ fi
 
 
 #####################################################################
-# Source sage-env ($0 is the name of this "sage" script, so we can just
+# Source sage-env ($SELF is the name of this "sage" script, so we can just
 # append -env to that). We redirect stdout to stderr, which is safer
 # for scripts.
 #####################################################################
-if [ -f "$0-env" ]; then
-    . "$0-env" >&2
+if [ -f "${SELF}-env" ]; then
+    . "${SELF}-env" >&2
     if [ $? -ne 0 ]; then
-        echo >&2 "Error setting environment variables by sourcing '$0-env';"
+        echo >&2 "Error setting environment variables by sourcing '${SELF}-env';"
         echo >&2 "possibly contact sage-devel (see http://groups.google.com/group/sage-devel)."
         exit 1
     fi
@@ -228,7 +310,7 @@ fi
 # Prepare for running Sage, either interactively or non-interactively.
 sage_setup() {
     # Check that we're not in a source tarball which hasn't been built yet (#13561).
-    if [ ! -z "$SAGE_LOCAL" ] && [ ! -x "$SAGE_LOCAL/bin/sage" ]; then
+    if [ "$SAGE_SRC_ENV_CONFIG" = 1 ] && [ ! -z "$SAGE_VENV" ] && [ ! -x "$SAGE_VENV/bin/sage" ]; then
         echo >&2 '************************************************************************'
         echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
         echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
@@ -258,7 +340,7 @@ sage_setup() {
 maybe_sage_location()
 {
     if [ -n "$SAGE_LOCAL" -a -w "$SAGE_LOCAL" ]; then
-        if [ -x "$SAGE_LOCAL/bin/python" ] && [ -x "$SAGE_LOCAL/bin/sage-location" ]; then
+        if [ -x "$SAGE_VENV/bin/python" ] && [ -x "$SAGE_VENV/bin/sage-location" ]; then
             sage-location || exit $?
         fi
     fi
@@ -384,7 +466,7 @@ usage_advanced() {
     echo "                         labeled \"# optional\" or labeled"
     echo "                         \"# optional tag\" for any of the tags given."
     echo "     --randorder[=seed] -- randomize order of tests"
-    echo "     --random-seed[=seed]  -- random seed for fuzzing doctests"
+    echo "     --random-seed[=seed]  -- random seed (integer) for fuzzing doctests"
     echo "     --new            -- only test files modified since last commit"
     echo "     --initial        -- only show the first failure per block"
     echo "     --debug          -- drop into PDB after an unexpected error"
@@ -414,9 +496,10 @@ usage_advanced() {
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
         echo "  --tox [options] <files|dirs> -- general entry point for testing"
         echo "                                  and linting of the Sage library"
-        echo "     -e <envlist>     -- run specific test environments (default: run all)"
-        tox -c "$SAGE_SRC" --listenvs -v 2>/dev/null | sed -n '/->/s/^/        /;s/(/\
-                            (/;s/->/     --/p;'
+        echo "     -e <envlist>     -- run specific test environments"
+        echo "                         (default: run all except full pycodestyle)"
+        tox -c "$SAGE_SRC" --listenvs-all -v 2>/dev/null | sed -n '/->/s/^/        /;s/(/\
+                                  (/;s/->/   --/p;'
         echo "     -p auto          -- run test environments in parallel"
         echo "     --help           -- show tox help"
         command -v tox &>/dev/null || \
@@ -441,8 +524,6 @@ usage_advanced() {
     echo "                         (not installed currently, run sage -i rst2ipynb)"
     echo "  --ipynb2rst [...]   -- Generates a reStructuredText source file from"
     echo "                         a Jupyter notebook (.ipynb)."
-    echo "  --rst2txt [...]     -- Generates Sage worksheet text file from standalone"
-    echo "                         reStructuredText source."
     echo "  --sws2rst <sws doc> -- Generates a reStructuredText source file from"
     echo "                         a Sage worksheet (.sws) document."
     command -v sage-sws2rst >&/dev/null || \
@@ -529,7 +610,7 @@ fi
 
 if [ "$1" = '-pip' -o "$1" = '--pip' -o "$1" = "--pip3" ]; then
     shift
-    exec python3 -m pip "$@"
+    exec python3 -m pip --disable-pip-version-check "$@"
 fi
 
 if [ "$1" = '-python' -o "$1" = '--python' -o  "$1" = '-python3' -o "$1" = '--python3' ]; then
@@ -784,11 +865,6 @@ if [ "$1" = '-ipynb2rst' -o "$1" = '--ipynb2rst' ]; then
     exec sage-ipynb2rst "$@"
 fi
 
-if [ "$1" = '-rst2txt' -o "$1" = '--rst2txt' ]; then
-    shift
-    exec sage-rst2txt "$@"
-fi
-
 if [ "$1" = '-sws2rst' -o "$1" = '--sws2rst' ]; then
     shift
     exec sage-sws2rst "$@"
@@ -803,7 +879,7 @@ fi
 
 build_sage() {
     maybe_sage_location
-    ( cd "$SAGE_ROOT/build/make" && $MAKE sagelib-no-deps ) || exit $?
+    ( cd "$SAGE_ROOT/build/make" && ./install sagelib-no-deps ) || exit $?
 }
 
 if [[ "$1" =~ ^--notebook=.* || "$1" =~ ^-n=.* || "$1" =~ ^-notebook=.* ]] ; then
@@ -840,7 +916,7 @@ if [ -n "$SAGE_SRC" -a -d "$SAGE_SRC" ]; then
 fi
 
 if [ "$1" = '-b' ]; then
-    time build_sage
+    build_sage
     exit $?
 fi
 
@@ -869,18 +945,22 @@ if [ "$1" = '-ba' ]; then
     exit $?
 fi
 
+exec-runtests() {
+    sage_setup
+    export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
+    exec sage-runtests "$@"
+}
+
 if [ "$1" = '-t' -o "$1" = '-bt' -o "$1" = '-tp' -o "$1" = '-btp' ]; then
     if [ "$1" = '-bt' -o "$1" = '-btp' ]; then
         build_sage
     fi
-    sage_setup
-    export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
     if [ "$1" = '-tp' -o "$1" = '-btp' ]; then
         shift
-        exec sage-runtests -p "$@"
+        exec-runtests -p "$@"
     else
         shift
-        exec sage-runtests "$@"
+        exec-runtests "$@"
     fi
 fi
 
@@ -889,16 +969,12 @@ if [ "$1" = '-tnew' -o "$1" = '-btnew' ]; then
         build_sage
     fi
     shift
-    sage_setup
-    export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
-    exec sage-runtests --new "$@"
+    exec-runtests --new "$@"
 fi
 
 if [ "$1" = '-testall' -o "$1" = "--testall" ]; then
     shift
-    sage_setup
-    export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
-    exec sage-runtests -a "$@"
+    exec-runtests -a "$@"
 fi
 
 if [ "$1" = '-fixdoctests' -o "$1" = '--fixdoctests' ]; then
@@ -913,7 +989,7 @@ fi
 
 if [ "$1" = "-coverageall" -o "$1" = "--coverageall" ]; then
     shift
-    exec sage-coverageall "$@"
+    exec sage-coverage --all "$@"
 fi
 
 if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
@@ -968,14 +1044,6 @@ install() {
             exit 1
         fi
     done
-    # Display a message if we actually installed something (using this
-    # file, generated by sage-spkg, is a bit of a hack though)
-    if [ -n "$SAGE_LOCAL" -a -f "$SAGE_LOCAL/lib/sage-force-relocate.txt" ]; then
-        echo
-        echo "Warning: it might be needed to update the Sage library before"
-        echo "installed packages work: you should run 'make' from \$SAGE_ROOT"
-        echo "before running Sage."
-    fi
     exit 0
 }
 
@@ -1007,13 +1075,13 @@ if [ "$1" = '-gdb' -o "$1" = "--gdb" ]; then
     shift
     sage_setup
     if [ "$SAGE_DEBUG" = "no" ]; then
-        gdb -x "$0-gdb-commands" \
-            -args python "$0-ipython" "$@" -i
+        gdb -x "${SELF}-gdb-commands" \
+            -args python "${SELF}-ipython" "$@" -i
     else
         sage_dir=$(sage-python -c 'import os, sage; print(os.path.dirname(sage.__file__))')
         cygdb "$sage_dir" "$SAGE_SRC/sage" \
-            -- -x "$0-gdb-commands" \
-            -args python "$0-ipython" "$@" -i
+            -- -x "${SELF}-gdb-commands" \
+            -args python "${SELF}-ipython" "$@" -i
     fi
     exit $?
 fi

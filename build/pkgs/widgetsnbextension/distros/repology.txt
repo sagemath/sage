@@ -1,0 +1,3 @@
+python:widgetsnbextension
+jupyter-widgetsnbextension
+python:jupyter-widgetsnbextension

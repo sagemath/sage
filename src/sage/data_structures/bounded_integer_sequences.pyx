@@ -1081,16 +1081,16 @@ cdef class BoundedIntegerSequence:
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             True
-            sage: L0[-1] += 1
+            sage: L0[-1] = (L0[-1] + 1) % 27
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             False
-            sage: L0[-1] -= 1
-            sage: L0[0] += 1
+            sage: L0[-1] = (L0[-1] - 1) % 27
+            sage: L0[0] = (L0[0] + 1) % 27
             sage: T = BoundedIntegerSequence(27, L0)
             sage: S.startswith(T)
             False
-            sage: L0[0] -= 1
+            sage: L0[0] = (L0[0] - 1) % 27
 
         The bounds of the sequences must be compatible, or :meth:`startswith`
         returns ``False``::

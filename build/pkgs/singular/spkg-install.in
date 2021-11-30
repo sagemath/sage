@@ -58,6 +58,11 @@ remove_old_version()
 
 config()
 {
+    if [ "$UNAME" = "CYGWIN" ]; then
+        # from Hans Schoenemann - https://github.com/Singular/Singular/issues/1017
+        SINGULAR_CONFIGURE="$SINGULAR_CONFIGURE --disable-p-procs-dynamic --enable-p-procs-static --with-builtinmodules=gfanlib,gitfan,interval,loctriv,partialgb,syzextra,customstd,cohomo,subsets,freealgebra,systhreads --disable-cf-inline --disable-Order-module --disable-bigintm-module --disable-pyobject-module"
+    fi
+
     # configure notes (dates from Singular 3.x, maybe outdated for 4.x):
     # 1) We really need to add --exec-prefix and --bindir as Singular
     #    uses some weird defaults.
@@ -76,15 +81,31 @@ config()
                   --disable-doc \
                   --disable-polymake \
                   --without-python \
+                  --without-pythonmodule \
                   --disable-python \
+                  --disable-python_module \
+                  --disable-python-module \
+                  --disable-static \
+                  --with-libparse \
                   $SINGULAR_CONFIGURE
 }
 
 
 build_singular()
 {
-    sdh_make
+    for subdir in omalloc gfanlib resources omalloc factory libpolys gfanlib IntegerProgramming; do
+        sdh_make -w -C $subdir
+    done
+    # Possible parallelization bugs in subdirectory Singular
+    sdh_make -j1
     sdh_make_install
+    # Trac #32001/#32323: Singular does not install singular.idx
+    sdh_install doc/singular.idx "$SAGE_SHARE/singular/"
+
+    # Singular tarballs made using "make dist" (without --enable-doc-build) do not contain built documentation.
+    if [ ! -e doc/doc.tbz2 ]; then
+        (cd doc && make singular.hlp && sdh_install singular.hlp "$SAGE_SHARE/info/") || sdh_die "Building documentation failed"
+    fi
 }
 
 

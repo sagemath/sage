@@ -1,5 +1,5 @@
-prometheus_client
-=================
+prometheus_client: Python client for the systems monitoring and alerting toolkit Prometheus
+===========================================================================================
 
 Description
 -----------

@@ -58,7 +58,7 @@ from sage.symbolic.constants import pi, I
 from sage.functions.log import exp
 from sage.functions.other import ceil
 from sage.misc.flatten import flatten
-from sage.calculus.var import var
+from sage.symbolic.ring import SR
 from sage.functions.other import real_part, imag_part
 from sage.misc.cachefunc import cached_method
 
@@ -461,7 +461,7 @@ class SineGordonYsystem(SageObject):
         EXAMPLES::
 
             sage: Y = SineGordonYsystem('A',(6,4,3))
-            sage: Y.plot()  # long time 2s  # known bug
+            sage: Y.plot()  # long time 2s
             Graphics object consisting of 219 graphics primitives
         """
         # Set up plotting options
@@ -516,7 +516,7 @@ class SineGordonYsystem(SageObject):
             # plot the arc from p to q differently depending on the type of self
             p = ZZ(p)
             q = ZZ(q)
-            t = var('t')
+            t = SR.var('t')
             if p - q in [1, -1]:
                 def f(t):
                     return (radius * cos(t), radius * sin(t))

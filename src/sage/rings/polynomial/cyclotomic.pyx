@@ -93,8 +93,6 @@ def cyclotomic_coeffs(nn, sparse=None):
     The polynomial is a palindrome for any n::
 
         sage: n = ZZ.random_element(50000)
-        sage: factor(n)
-        3 * 10009
         sage: v = cyclotomic_coeffs(n, sparse=False)
         sage: v == list(reversed(v))
         True

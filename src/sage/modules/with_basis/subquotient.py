@@ -1,18 +1,19 @@
 r"""
 Quotients of Modules With Basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010-2015 Florent Hivert <Florent.Hivert@univ-mlv.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.categories.all import ModulesWithBasis
+
 
 class QuotientModuleWithBasis(CombinatorialFreeModule):
     r"""
@@ -376,7 +377,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
             return True
         if not isinstance(self, SubmoduleWithBasis) and self.ambient() is other.ambient():
             raise ValueError("other (=%s) should be a submodule of the same ambient space" % other)
-        if not self in ModulesWithBasis.FiniteDimensional:
+        if self not in ModulesWithBasis.FiniteDimensional:
             raise NotImplementedError("is_submodule for infinite dimensional modules")
         for b in self.basis():
             try:
@@ -384,4 +385,3 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
             except ValueError:
                 return False
         return True
-

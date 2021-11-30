@@ -58,7 +58,7 @@ AUTHORS:
 # ****************************************************************************
 
 import sage.categories.all as cat
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.misc.prandom as random
 from sage.modules.free_module import FreeModule
 import sage.modules.free_module_element as free_module_element
@@ -68,8 +68,7 @@ from sage.libs.pari import pari
 
 from sage.categories.map import Map
 from sage.rings.rational_field import is_RationalField
-from sage.rings.complex_mpfr import is_ComplexField
-from sage.rings.qqbar import is_AlgebraicField
+import sage.rings.abc
 from sage.rings.ring import is_Ring
 
 from sage.misc.functional import round
@@ -787,7 +786,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             sage: G.<a, b> = DirichletGroup(20)
             sage: type(G(1).conductor())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if self.modulus() == 1 or self.is_trivial():
             return rings.Integer(1)
@@ -992,7 +991,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         elif algorithm == "pari":
             # Use pari
-            G, chi = self._pari_conversion()
+            G, chi = self._pari_init_()
             K = pari.charker(G, chi)
             H = pari.galoissubcyclo(G, K)
             P = PolynomialRing(rings.RationalField(), "x")
@@ -1112,9 +1111,9 @@ class DirichletCharacter(MultiplicativeGroupElement):
         H = DirichletGroup(M, self.base_ring())
         return H(self)
 
-    def _pari_conversion(self):
+    def _pari_init_(self):
         r"""
-        Prepare data for the conversion of the character to Pari.
+        Conversion of the character to Pari.
 
         OUTPUT:
 
@@ -1123,19 +1122,23 @@ class DirichletCharacter(MultiplicativeGroupElement):
         EXAMPLES::
 
             sage: chi4 = DirichletGroup(4).gen()
-            sage: chi4._pari_conversion()
-            ([[4, [0]], [2, [2], [3]], [[2]~, Vecsmall([2])],
-            [[4], [[1, matrix(0,2)]], Mat(1), [3], [2], [0]], Mat(1)], [1])
+            sage: pari(chi4)
+            [[[4, [0]], [2, [2], [3]], [[2]~, Vecsmall([2])],
+            [[4], [[1, matrix(0,2)]], Mat(1), [3], [2], [0]], Mat(1)], [1]]
+            sage: pari.charker(*pari(chi4)).sage()
+            [2]
 
             sage: chi = DirichletGroup(24)([1,-1,-1]); chi
             Dirichlet character modulo 24 of conductor 24
             mapping 7 |--> 1, 13 |--> -1, 17 |--> -1
-            sage: chi._pari_conversion()
-            ([[24, [0]], [8, [2, 2, 2], [7, 13, 17]],
+            sage: pari(chi)
+            [[[24, [0]], [8, [2, 2, 2], [7, 13, 17]],
             [[2, 2, 3]~, Vecsmall([3, 3, 1])],
             [[8, 8, 3], [[1, matrix(0,2)], [1, matrix(0,2)], [2, Mat([2, 1])]],
             [1, 0, 0; 0, 1, 0; 0, 0, 1], [7, 13, 17], [2, 2, 2], [0, 0, 0]],
-            [1, 0, 0; 0, 1, 0; 0, 0, 1]], [0, 1, 1])
+            [1, 0, 0; 0, 1, 0; 0, 0, 1]], [0, 1, 1]]
+            sage: pari.charorder(*pari(chi))
+            2
         """
         G = pari.znstar(self.modulus(), 1)
 
@@ -1149,7 +1152,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         # now compute the input for pari (list of exponents)
         P = self.parent()
-        if is_ComplexField(P.base_ring()):
+        if isinstance(P.base_ring(), sage.rings.abc.ComplexField):
             zeta = P.zeta()
             zeta_argument = zeta.argument()
             v = [int(x.argument() / zeta_argument) for x in values_on_gens]
@@ -1196,7 +1199,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: eps1.conrey_number() == eps2.conrey_number()
             True
         """
-        G, v = self._pari_conversion()
+        G, v = self._pari_init_()
         return pari.znconreyexp(G, v).sage()
 
     def lmfdb_page(self):
@@ -1341,12 +1344,12 @@ class DirichletCharacter(MultiplicativeGroupElement):
         K = G.base_ring()
         chi = self
         m = G.modulus()
-        if is_ComplexField(K):
+        if isinstance(K, sage.rings.abc.ComplexField):
             return self.gauss_sum_numerical(a=a)
-        elif is_AlgebraicField(K):
+        elif isinstance(K, sage.rings.abc.AlgebraicField):
             L = K
             zeta = L.zeta(m)
-        elif number_field.is_CyclotomicField(K) or is_RationalField(K):
+        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K):
             chi = chi.minimize_base_ring()
             n = lcm(m, G.zeta_order())
             L = rings.CyclotomicField(n)
@@ -1418,16 +1421,16 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         G = self.parent()
         K = G.base_ring()
-        if is_ComplexField(K):
+        if isinstance(K, sage.rings.abc.ComplexField):
 
             def phi(t):
                 return t
             CC = K
-        elif is_AlgebraicField(K):
+        elif isinstance(K, sage.rings.abc.AlgebraicField):
             from sage.rings.complex_mpfr import ComplexField
             CC = ComplexField(prec)
             phi = CC.coerce_map_from(K)
-        elif number_field.is_CyclotomicField(K) or is_RationalField(K):
+        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K):
             phi = K.complex_embedding(prec)
             CC = phi.codomain()
         else:
@@ -1590,10 +1593,10 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             sage: G = DirichletGroup(12, QQbar)
             sage: e = G.gens()[0]
+            sage: e.kloosterman_sum(5, 4)
+            0.?e-17 - 4.000000000000000?*I
             sage: e.kloosterman_sum(5,11)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Kloosterman sums not implemented over this ring
+            0
         """
         G = self.parent()
         zo = G.zeta_order()
@@ -1646,7 +1649,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         G = self.parent()
         K = G.base_ring()
-        if not (number_field.is_CyclotomicField(K) or is_RationalField(K)):
+        if not (isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K)):
             raise NotImplementedError("Kloosterman sums only currently implemented when the base ring is a cyclotomic field or QQ.")
         phi = K.complex_embedding(prec)
         CC = phi.codomain()
@@ -2134,7 +2137,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         P = self.parent()
         M = P._module
-        if is_ComplexField(P.base_ring()):
+        if isinstance(P.base_ring(), sage.rings.abc.ComplexField):
             zeta = P.zeta()
             zeta_argument = zeta.argument()
             v = M([int(round(x.argument() / zeta_argument))
@@ -2603,7 +2606,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         w = [a]
         zeta = self.zeta()
         zeta_order = self.zeta_order()
-        if is_ComplexField(R):
+        if isinstance(R, sage.rings.abc.ComplexField):
             for i in range(1, zeta_order):
                 a = a * zeta
                 a._set_multiplicative_order(zeta_order / gcd(zeta_order, i))
@@ -3143,12 +3146,35 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
         EXAMPLES::
 
-            sage: DirichletGroup(37).random_element()
-            Dirichlet character modulo 37 of conductor 37 mapping 2 |--> zeta36^4
-            sage: DirichletGroup(20).random_element()
-            Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1
-            sage: DirichletGroup(60).random_element()
-            Dirichlet character modulo 60 of conductor 3 mapping 31 |--> 1, 41 |--> -1, 37 |--> 1
+            sage: D = DirichletGroup(37)
+            sage: g = D.random_element()
+            sage: g.parent() is D
+            True
+            sage: g**36
+            Dirichlet character modulo 37 of conductor 1 mapping 2 |--> 1
+            sage: S = set(D.random_element().conductor() for _ in range(100))
+            sage: while S != {1, 37}:
+            ....:     S.add(D.random_element().conductor())
+
+            sage: D = DirichletGroup(20)
+            sage: g = D.random_element()
+            sage: g.parent() is D
+            True
+            sage: g**4
+            Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1
+            sage: S = set(D.random_element().conductor() for _ in range(100))
+            sage: while S != {1, 4, 5, 20}:
+            ....:     S.add(D.random_element().conductor())
+
+            sage: D = DirichletGroup(60)
+            sage: g = D.random_element()
+            sage: g.parent() is D
+            True
+            sage: g**4
+            Dirichlet character modulo 60 of conductor 1 mapping 31 |--> 1, 41 |--> 1, 37 |--> 1
+            sage: S = set(D.random_element().conductor() for _ in range(100))
+            sage: while S != {1, 3, 4, 5, 12, 15, 20, 60}:
+            ....:     S.add(D.random_element().conductor())
         """
         e = self(1)
         for i in range(self.ngens()):

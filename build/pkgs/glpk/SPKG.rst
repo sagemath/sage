@@ -1,5 +1,5 @@
-GLPK
-====
+glpk: GNU Linear Programming Kit
+================================
 
 Description
 -----------
@@ -35,13 +35,6 @@ GLPK is currently being maintained by:
 -  Andrew Makhorin (mao@gnu.org, mao@mai2.rcnet.ru)
 
 http://www.gnu.org/software/glpk/#maintainer
-
-Dependencies
-------------
-
--  GMP/MPIR
--  zlib
-
 
 Special Update/Build Instructions
 ---------------------------------

@@ -1,6 +1,6 @@
 # distutils: language = c++
 # distutils: libraries = bliss
-# sage_setup: distribution = sage-bliss
+# sage_setup: distribution = sagemath-bliss
 
 r"""
 Interface with bliss: graph (iso/auto)morphism
@@ -483,6 +483,26 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: g2can = canonical_form(g2, use_edge_labels=True)               # optional - bliss
         sage: g1can == g2can                                                 # optional - bliss
         True
+
+    Check that :trac:`32395` is fixed::
+
+        sage: g = Graph([[0, 2]])  # 1 is not a vertex!
+        sage: g.canonical_label(partition=[[0], [1], [2]], algorithm="bliss")  # optional - bliss
+        Traceback (most recent call last):
+        ...
+        ValueError: vertex 1 of the partition is not a vertex of the graph
+        sage: g.canonical_label(partition=[[0], [0, 2]], algorithm="bliss")  # optional - bliss
+        Traceback (most recent call last):
+        ...
+        ValueError: vertex 0 can appear only once in the partition
+        sage: g.canonical_label(partition=[[0, 0], [2]], algorithm="bliss")  # optional - bliss
+        Traceback (most recent call last):
+        ...
+        ValueError: vertex 0 can appear only once in the partition
+        sage: g.canonical_label(partition=[[0]], algorithm="bliss")  # optional - bliss
+        Traceback (most recent call last):
+        ...
+        ValueError: some vertices of the graph are not in the partition
     """
     # We need this to convert the numbers from <unsigned int> to <long>.
     # This assertion should be true simply for memory reasons.
@@ -505,6 +525,17 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
     if partition:
         from itertools import chain
         int2vert = list(chain(*partition))
+        # We check that the partition constains only vertices of the graph
+        # and that it is actually a partition
+        seen = set()
+        for u in int2vert:
+            if u not in G:
+                raise ValueError("vertex {} of the partition is not a vertex of the graph".format(u))
+            if u in seen:
+                raise ValueError("vertex {} can appear only once in the partition".format(u))
+            seen.add(u)
+        if len(seen) != G.order():
+            raise ValueError("some vertices of the graph are not in the partition")
     else:
         int2vert = list(G)
     vert2int = {v: i for i, v in enumerate(int2vert)}

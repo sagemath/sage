@@ -694,12 +694,12 @@ class LinearRankMetricCode(AbstractLinearRankMetricCode):
 
         try:
             gen_basis = None
-            if hasattr(generator,"nrows"): # generator matrix case
+            if hasattr(generator, "nrows"):  # generator matrix case
                 if generator.rank() < generator.nrows():
                     gen_basis = generator.row_space().basis()
             else:
-                gen_basis = generator.basis() # vector space etc. case
-            if not gen_basis is None:
+                gen_basis = generator.basis()  # vector space etc. case
+            if gen_basis is not None:
                 from sage.matrix.constructor import matrix
                 generator = matrix(base_field, gen_basis)
                 if generator.nrows() == 0:

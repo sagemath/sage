@@ -1113,7 +1113,7 @@ cdef class Ring(ParentWithGens):
             for P, e in f.factor():
                 if P.degree() == 1:
                     return -P[0]
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             raise ValueError("no %s root of unity in %r" % (ZZ(n).ordinal_str(), self))
 
     def zeta_order(self):
@@ -1183,8 +1183,8 @@ cdef class Ring(ParentWithGens):
 
         EXAMPLES::
 
-            sage: ZZ._random_nonzero_element()
-            -8
+            sage: ZZ._random_nonzero_element() != 0
+            True
         """
         while True:
             x = self.random_element(*args, **kwds)
@@ -1365,29 +1365,6 @@ cdef class CommutativeRing(Ring):
         except (NotImplementedError,TypeError):
             return coercion_model.division_parent(self)
 
-    def __pow__(self, n, _):
-        """
-        Return the free module of rank `n` over this ring.  If n is a tuple of
-        two elements, creates a matrix space.
-
-        EXAMPLES::
-
-            sage: QQ^5
-            Vector space of dimension 5 over Rational Field
-            sage: Integers(20)^1000
-            Ambient free module of rank 1000 over Ring of integers modulo 20
-
-            sage: QQ^(2,3)
-            Full MatrixSpace of 2 by 3 dense matrices over Rational Field
-        """
-        if isinstance(n, tuple):
-            m, n = n
-            from sage.matrix.matrix_space import MatrixSpace
-            return MatrixSpace(self, m, n)
-        else:
-            import sage.modules.all
-            return sage.modules.all.FreeModule(self, n)
-
     def is_commutative(self):
         """
         Return ``True``, since this ring is commutative.
@@ -1429,9 +1406,9 @@ cdef class CommutativeRing(Ring):
             sage: ZZ.krull_dimension()
             1
             sage: type(R); type(QQ); type(ZZ)
-            <type 'sage.rings.ring.CommutativeRing'>
+            <class 'sage.rings.ring.CommutativeRing'>
             <class 'sage.rings.rational_field.RationalField_with_category'>
-            <type 'sage.rings.integer_ring.IntegerRing_class'>
+            <class 'sage.rings.integer_ring.IntegerRing_class'>
 
         All orders in number fields have Krull dimension 1, including
         non-maximal orders::
@@ -1515,9 +1492,9 @@ cdef class CommutativeRing(Ring):
             name = str(poly.parent().gen(0))
         for key, val in kwds.items():
             if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_name', 'latex_names']:
-                raise TypeError("extension() got an unexpected keyword argument '%s'"%key)
+                raise TypeError("extension() got an unexpected keyword argument '%s'" % key)
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
-                raise NotImplementedError("ring extension with prescripted %s is not implemented"%key)
+                raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
         R = self[name]
         I = R.ideal(R(poly.list()))
         return R.quotient(I, name)
@@ -2072,7 +2049,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
             sage: QQ.gcd(ZZ(42), ZZ(48)); type(QQ.gcd(ZZ(42), ZZ(48)))
             6
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: QQ.gcd(1/2, 1/3)
             1/6
 
@@ -2114,7 +2091,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
             sage: QQ.content(ZZ(42), ZZ(48)); type(QQ.content(ZZ(42), ZZ(48)))
             6
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: QQ.content(1/2, 1/3)
             1/6
             sage: factor(1/2); factor(1/3); factor(1/6)

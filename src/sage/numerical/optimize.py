@@ -11,6 +11,7 @@ Functions and Methods
 ----------------------
 """
 
+from sage.misc.superseded import deprecation
 from sage.modules.free_module_element import vector
 from sage.rings.real_double import RDF
 
@@ -105,7 +106,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         return f.find_root(a=a,b=b,xtol=xtol,rtol=rtol,maxiter=maxiter,full_output=full_output)
     except AttributeError:
         pass
-    a = float(a); b = float(b)
+    a = float(a)
+    b = float(b)
     if a > b:
         a, b = b, a
     left = f(a)
@@ -382,8 +384,8 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
         sage: minimize(rosen, [.1,.3,.4], gradient=rosen_der, algorithm="bfgs") # abs tol 1e-6
         (1.0, 1.0, 1.0)
     """
-    from sage.symbolic.expression import Expression
-    from sage.ext.fast_eval import fast_callable
+    from sage.structure.element import Expression
+    from sage.ext.fast_callable import fast_callable
     import numpy
     from scipy import optimize
     if isinstance(func, Expression):
@@ -416,7 +418,8 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
                 hess=func.hessian()
                 hess_fast= [ [fast_callable(a, vars=var_names, domain=float) for a in row] for row in hess]
                 hessian=lambda p: [[a(*p) for a in row] for row in hess_fast]
-                hessian_p=lambda p,v: scipy.dot(numpy.array(hessian(p)),v)
+                from scipy import dot
+                hessian_p=lambda p,v: dot(numpy.array(hessian(p)),v)
                 min = optimize.fmin_ncg(f, [float(_) for _ in x0], fprime=gradient, \
                       fhess=hessian, fhess_p=hessian_p, disp=verbose, **args)
     return vector(RDF, min)
@@ -502,24 +505,28 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         sage: minimize_constrained(f, c, [100, 300])
         (805.985..., 1005.985...)
     """
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
+    from sage.ext.fast_callable import fast_callable
     import numpy
     from scipy import optimize
     function_type = type(lambda x,y: x+y)
 
     if isinstance(func, Expression):
         var_list = func.variables()
-        var_names = [str(_) for _ in var_list]
-        fast_f = func._fast_float_(*var_names)
+        fast_f = fast_callable(func, vars=var_list, domain=float)
         f = lambda p: fast_f(*p)
         gradient_list = func.gradient()
-        fast_gradient_functions = [gi._fast_float_(*var_names) for gi in gradient_list]
+        fast_gradient_functions = [ fast_callable(gi,
+                                                  vars=var_list,
+                                                  domain=float)
+                                    for gi in gradient_list ]
         gradient = lambda p: numpy.array([ a(*p) for a in fast_gradient_functions])
         if isinstance(cons, Expression):
-            fast_cons = cons._fast_float_(*var_names)
+            fast_cons = fast_callable(cons, vars=var_list, domain=float)
             cons = lambda p: numpy.array([fast_cons(*p)])
         elif isinstance(cons, list) and isinstance(cons[0], Expression):
-            fast_cons = [ci._fast_float_(*var_names) for ci in cons]
+            fast_cons = [ fast_callable(ci, vars=var_list, domain=float)
+                          for ci in cons ]
             cons = lambda p: numpy.array([a(*p) for a in fast_cons])
     else:
         f = func
@@ -552,6 +559,9 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
 
     - Maximize  `-h'z - b'y` subject to `G'z + A'y + c = 0` and `z \geq 0`.
 
+    This function is deprecated.  Use :class:`MixedIntegerLinearProgram` instead.
+
+    This function depends on the optional package ``cvxopt``.
 
     INPUT:
 
@@ -593,17 +603,20 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
         sage: c=vector(RDF,[-4,-5])
         sage: G=matrix(RDF,[[2,1],[1,2],[-1,0],[0,-1]])
         sage: h=vector(RDF,[3,3,0,0])
-        sage: sol=linear_program(c,G,h)
-        sage: sol['x']
+        sage: sol=linear_program(c,G,h)                                                # optional - cvxopt
+        doctest:warning...
+        DeprecationWarning: linear_program is deprecated; use MixedIntegerLinearProgram instead
+        See https://trac.sagemath.org/32226 for details.
+        sage: sol['x']                                                                 # optional - cvxopt
         (0.999..., 1.000...)
 
     Here we solve the same problem with 'glpk' interface to 'cvxopt'::
 
-        sage: sol=linear_program(c,G,h,solver='glpk')
+        sage: sol=linear_program(c,G,h,solver='glpk')                                  # optional - cvxopt
         GLPK Simplex Optimizer...
         ...
         OPTIMAL LP SOLUTION FOUND
-        sage: sol['x']
+        sage: sol['x']                                                                 # optional - cvxopt
         (1.0, 1.0)
 
     Next, we maximize `x+y-50` subject to `50x + 24y \leq 2400`,
@@ -612,15 +625,17 @@ def linear_program(c, G, h, A=None, b=None, solver=None):
         sage: v=vector([-1.0,-1.0,-1.0])
         sage: m=matrix([[50.0,24.0,0.0],[30.0,33.0,0.0],[-1.0,0.0,0.0],[0.0,-1.0,0.0],[0.0,0.0,1.0],[0.0,0.0,-1.0]])
         sage: h=vector([2400.0,2100.0,-45.0,-5.0,1.0,-1.0])
-        sage: sol=linear_program(v,m,h)
-        sage: sol['x']
+        sage: sol=linear_program(v,m,h)                                                # optional - cvxopt
+        sage: sol['x']                                                                 # optional - cvxopt
         (45.000000..., 6.2499999..., 1.00000000...)
-        sage: sol=linear_program(v,m,h,solver='glpk')
+        sage: sol=linear_program(v,m,h,solver='glpk')                                  # optional - cvxopt
         GLPK Simplex Optimizer...
         OPTIMAL LP SOLUTION FOUND
-        sage: sol['x']
+        sage: sol['x']                                                                 # optional - cvxopt
         (45.0..., 6.25..., 1.0...)
     """
+    deprecation(32226, 'linear_program is deprecated; use MixedIntegerLinearProgram instead')
+
     from cvxopt.base import matrix as m
     from cvxopt import solvers
     solvers.options['show_progress']=False
@@ -736,7 +751,7 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
     if data.ndim != 2:
         raise ValueError("data has to be a two dimensional table of floating point numbers")
 
-    from sage.symbolic.expression import Expression
+    from sage.structure.element import Expression
 
     if isinstance(model, Expression):
         if variables is None:
@@ -768,9 +783,9 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
         raise ValueError("length of initial_guess does not coincide with the number of parameters")
 
     if isinstance(model, Expression):
+        from sage.ext.fast_callable import fast_callable
         var_list = variables + parameters
-        var_names = [str(_) for _ in var_list]
-        func = model._fast_float_(*var_names)
+        func = fast_callable(model, vars=var_list, domain=float)
     else:
         func = model
 
@@ -807,7 +822,8 @@ def find_fit(data, model, initial_guess = None, parameters = None, variables = N
 
     return [item[0] == item[1] for item in zip(parameters, estimated_params)]
 
-def binpacking(items, maximum=1, k=None, solver=None, verbose=0):
+def binpacking(items, maximum=1, k=None, solver=None, verbose=0,
+               *, integrality_tolerance=1e-3):
     r"""
     Solve the bin packing problem.
 
@@ -841,14 +857,19 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0):
       - When set to ``None``, the function returns a partition of the items
         using the least possible number of bins.
 
-    - ``solver`` -- (default: ``None``); Specify a Linear Program (LP) solver to
-      be used. If set to ``None``, the default one is used. For more information
-      on LP solvers and which default solver is used, see the method
-      :meth:`~sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
-      :class:`~sage.numerical.mip.MixedIntegerLinearProgram`.
+    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear Programming
+      (MILP) solver to be used. If set to ``None``, the default one is used. For
+      more information on MILP solvers and which default solver is used, see
+      the method
+      :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>`
+      of the class
+      :class:`MixedIntegerLinearProgram <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
       to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
 
     OUTPUT:
 
@@ -930,7 +951,8 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0):
         while True:
             from sage.numerical.mip import MIPSolverException
             try:
-                return binpacking(items, k=k, maximum=maximum, solver=solver, verbose=verbose)
+                return binpacking(items, k=k, maximum=maximum, solver=solver, verbose=verbose,
+                                  integrality_tolerance=integrality_tolerance)
             except MIPSolverException:
                 k = k + 1
 
@@ -953,12 +975,12 @@ def binpacking(items, maximum=1, k=None, solver=None, verbose=0):
     except MIPSolverException:
         raise ValueError("this problem has no solution !")
 
-    box = p.get_values(box)
+    box = p.get_values(box, convert=bool, tolerance=integrality_tolerance)
 
     boxes = [[] for i in range(k)]
 
     for i,b in box:
-        if box[i,b] == 1:
+        if box[i,b]:
             boxes[b].append(weight[i] if isinstance(items, list) else i)
 
     return boxes

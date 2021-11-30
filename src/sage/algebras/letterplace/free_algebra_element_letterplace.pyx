@@ -17,6 +17,7 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.groups.perm_gps.all import CyclicPermutationGroup
 from sage.libs.singular.function import lib, singular_function
 from sage.misc.repr import repr_lincomb
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
@@ -25,7 +26,6 @@ from cpython.object cimport PyObject_RichCompare
 # Define some singular functions
 lib("freegb.lib")
 poly_reduce = singular_function("NF")
-singular_system=singular_function("system")
 
 #####################
 # Free algebra elements
@@ -445,9 +445,10 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         cdef int i
         if P.monomial_divides(s_poly,p_poly):
             return True
+        realngens = A._commutative_ring.ngens()
+        CG = CyclicPermutationGroup(P.ngens())
         for i from 0 <= i < p_d-s_d:
-            s_poly = singular_system("stest",s_poly,1,
-                                     A._degbound,A.__ngens,ring=P)
+            s_poly = s_poly * CG[realngens]
             if P.monomial_divides(s_poly,p_poly):
                 return True
         return False
@@ -601,7 +602,9 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         # we must put the polynomials into the same ring
         left._poly = A._current_ring(left._poly)
         right._poly = A._current_ring(right._poly)
-        rshift = singular_system("stest",right._poly,left._poly.degree(),A._degbound,A.__ngens, ring=A._current_ring)
+        realngens = A._commutative_ring.ngens()
+        CG = CyclicPermutationGroup(A._current_ring.ngens())
+        rshift = right._poly * CG[left._poly.degree() * realngens]
         return FreeAlgebraElement_letterplace(A,left._poly*rshift, check=False)
 
     def __pow__(FreeAlgebraElement_letterplace self, int n, k):
@@ -627,10 +630,11 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         self._poly = A._current_ring(self._poly)
         cdef int d = self._poly.degree()
         q = p = self._poly
+        realngens = A._commutative_ring.ngens()
         cdef int i
+        CG = CyclicPermutationGroup(A._current_ring.ngens())
         for i from 0<i<n:
-            q = singular_system("stest",q,d,A._degbound,A.__ngens,
-                                     ring=A._current_ring)
+            q = q * CG[d * realngens]
             p *= q
         return FreeAlgebraElement_letterplace(A, p, check=False)
 

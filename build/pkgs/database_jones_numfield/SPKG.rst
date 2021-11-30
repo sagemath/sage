@@ -1,5 +1,5 @@
-database_jones_numfield
-=======================
+database_jones_numfield: Table of number fields
+===============================================
 
 Description
 -----------

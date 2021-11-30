@@ -461,7 +461,7 @@ Quand quelque chose ne marche pas, cela se manifeste habituellement par
 une « exception » Python. Python essaie de plus de donner une idée de ce
 qui a pu déclencher l'exception. Bien souvent, il affiche le nom de
 l'exception (par exemple ``NameError`` ou ``ValueError``, voir le manuel
-de référence de Python [Py]_ pour une liste complète). Par exemple :
+de référence de la bibliothèque de Python [PyLR]_ pour une liste complète). Par exemple :
 
 .. skip
 
@@ -472,7 +472,7 @@ de référence de Python [Py]_ pour une liste complète). Par exemple :
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------
@@ -495,7 +495,7 @@ pile d'exécution. Par exemple :
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
 
     ipdb>
@@ -604,7 +604,7 @@ d'une fonction, tapez son nom suivi d'un point d'interrogation.
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive

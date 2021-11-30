@@ -449,6 +449,7 @@ cpdef randstate current_randstate():
 
     EXAMPLES::
 
+        sage: set_random_seed(0)
         sage: current_randstate()
         <sage.misc.randstate.randstate object at 0x...>
         sage: current_randstate().python_random().random()
@@ -485,7 +486,7 @@ cdef class randstate:
             sage: seed(1,2)   # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes at most 1 positional argument (2 given)
+            TypeError: ...__init__() takes at most 1 positional argument (2 given)
 
         AUTHOR:
 
@@ -551,6 +552,7 @@ cdef class randstate:
 
         EXAMPLES::
 
+            sage: set_random_seed(0)
             sage: from sage.misc.randstate import randstate
             sage: r = randstate(314159)
             sage: r.seed()

@@ -119,7 +119,7 @@ def print_table(module_list, limit):
 def guess_module_name(src):
     module = []
     src, ext = os.path.splitext(src)
-    while src:
+    while src and src != '/':
         head, tail = os.path.split(os.path.abspath(src))
         if (tail == 'src'
             or any(os.path.exists(os.path.join(head, tail, f))
@@ -127,7 +127,7 @@ def guess_module_name(src):
             return '.'.join(module)
         module.insert(0, tail)
         src = head
-    raise ValueError('"' + file_name + '" does not appear to be a Python module source file or package directory.')
+    return None
 
 if not have_cmdline_args:
     print('== Slowest module imports (excluding / including children) ==')
@@ -140,8 +140,13 @@ else:
         matching_modules = [m for m in all_modules if m.__name__ == module_arg]
         if not matching_modules:
             if '/' in module_arg or any(module_arg.endswith(ext) for ext in ('.py', '.pyx')) or os.path.isdir(module_arg):
-                module_arg = guess_module_name(module_arg)
-                matching_modules = [m for m in all_modules if m.__name__.startswith(module_arg)]
+                file_name = module_arg
+                module_arg = guess_module_name(file_name)
+                if not module_arg:
+                    print('Warning: "' + file_name + '" does not appear to be a Python module source file or package directory.')
+                    continue
+                else:
+                    matching_modules = [m for m in all_modules if m.__name__.startswith(module_arg)]
             else:
                 matching_modules = [m for m in all_modules if m.__name__.endswith(module_arg)]
         if not matching_modules:

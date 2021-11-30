@@ -1,5 +1,5 @@
-Benzene
-=======
+benzene: Generate fusenes and benzenoids with a given number of faces
+=====================================================================
 
 Description
 -----------
@@ -21,7 +21,9 @@ Upstream Contact
 
 Benzene was written by Gunnar Brinkmann and Gilles Caporossi. This
 version was adapted by Gunnar Brinkmann and Nico Van Cleemput for
-Grinvin. http://www.grinvin.org/
+Grinvin.
+
+http://www.grinvin.org/
 
 Dependencies
 ------------

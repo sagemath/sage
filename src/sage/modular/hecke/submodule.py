@@ -158,7 +158,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             (1,23)
         """
         z = self.ambient_hecke_module()(x).element()
-        if check and not z in self.__submodule:
+        if check and z not in self.__submodule:
             raise TypeError("x does not coerce to an element of this Hecke module")
         return self.element_class(self, z)
 
@@ -364,7 +364,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             bound = A.hecke_bound()
         while True:
             if anemic:
-                while N % p == 0: p = arith.next_prime(p)
+                while N % p == 0:
+                    p = arith.next_prime(p)
             verbose("using T_%s"%p)
             f = self.hecke_polynomial(p)
             T = A.hecke_matrix(p)
@@ -568,7 +569,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             bound = A.hecke_bound()
         while True:
             if anemic:
-                while N % p == 0: p = arith.next_prime(p)
+                while N % p == 0:
+                    p = arith.next_prime(p)
             verbose("using T_%s"%p)
             f = self.hecke_polynomial(p)
             T = A.dual_hecke_matrix(p)

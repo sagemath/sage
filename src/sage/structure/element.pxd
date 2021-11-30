@@ -193,7 +193,7 @@ cdef class ModuleElement(Element):
     cpdef _rmul_(self, Element left)
 
 cdef class ModuleElementWithMutability(ModuleElement):
-    cdef bint _is_mutable
+    cdef bint _is_immutable
     cpdef bint is_immutable(self)
     cpdef bint is_mutable(self)
 
@@ -236,9 +236,11 @@ cdef class AlgebraElement(RingElement):
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
 
-cdef class InfinityElement(RingElement):
+cdef class Expression(CommutativeRingElement):
     pass
 
+cdef class InfinityElement(RingElement):
+    pass
 
 cdef class Vector(ModuleElementWithMutability):
     cdef Py_ssize_t _degree

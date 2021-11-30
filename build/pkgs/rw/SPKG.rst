@@ -1,12 +1,12 @@
-rw
-==
+rw: Compute rank-width and rank-decompositions
+==============================================
 
 Description
 -----------
 
 rw is a program that calculates rank-width and rank-decompositions.
 
-http://pholia.tdi.informatik.uni-frankfurt.de/~philipp/software/rw.shtml
+https://sourceforge.net/projects/rankwidth/
 
 License
 -------

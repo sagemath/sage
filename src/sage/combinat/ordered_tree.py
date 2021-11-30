@@ -16,8 +16,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-#python 3 support
-
 import itertools
 
 from sage.structure.list_clone import ClonableArray, ClonableList
@@ -237,7 +235,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         """
         return OrderedTrees_all()
 
-    def __init__(self, parent=None, children=[], check=True):
+    def __init__(self, parent=None, children=None, check=True):
         """
         TESTS::
 
@@ -248,6 +246,8 @@ class OrderedTree(AbstractClonableTree, ClonableList,
             sage: all(OrderedTree(repr(tr)) == tr for i in range(6) for tr in OrderedTrees(i))
             True
         """
+        if children is None:
+            children = []
         if isinstance(children, str):
             children = eval(children)
         if (children.__class__ is self.__class__ and
@@ -419,7 +419,7 @@ class OrderedTree(AbstractClonableTree, ClonableList,
         for h in range(0, self.depth(), 2):
             for node in self.paths_at_depth(h):
                 h_coordinate[node] = cpt
-                lower_nodes.append( node )
+                lower_nodes.append(node)
                 cpt += 1
 
         cpt = 0

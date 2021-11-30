@@ -25,7 +25,8 @@ from sage.structure.parent import Parent
 from sage.categories.sets_cat import Sets
 from sage.combinat.path_tableaux.path_tableau import PathTableau, PathTableaux, CylindricalDiagram
 from sage.categories.fields import Fields
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
@@ -142,7 +143,7 @@ class FriezePattern(PathTableau, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: Integer Ring must be a field
         """
-        if field not in Fields:
+        if field not in Fields():
             raise ValueError(f"{field} must be a field")
 
         if isinstance(fp, (list, tuple)):

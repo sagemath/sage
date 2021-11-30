@@ -444,6 +444,7 @@ sage: for e in E.eisenstein_series():
 (Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta6, Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1, 1)
 (Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1, Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta6 + 1, 1)
 (Dirichlet character modulo 13 of conductor 13 mapping 2 |--> -zeta6 + 1, Dirichlet character modulo 13 of conductor 1 mapping 2 |--> 1, 1)
+sage: from sage.modular.dims import *
 sage: dimension_cusp_forms(Gamma0(2007),2)
 221
 sage: dimension_eis(Gamma0(2007),2)

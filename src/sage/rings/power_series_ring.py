@@ -35,6 +35,17 @@ Construct univariate power series from a list of coefficients::
     sage: S = R([1, 3, 5, 7]); S
     1 + 3*t + 5*t^2 + 7*t^3
 
+The default precision of a power series ring stays fixed and cannot be
+changed. To work with different default precision, create a new power series
+ring::
+
+    sage: R.<x> = PowerSeriesRing(QQ, default_prec=10)
+    sage: sin(x)
+    x - 1/6*x^3 + 1/120*x^5 - 1/5040*x^7 + 1/362880*x^9 + O(x^10)
+    sage: R.<x> = PowerSeriesRing(QQ, default_prec=15)
+    sage: sin(x)
+    x - 1/6*x^3 + 1/120*x^5 - 1/5040*x^7 + 1/362880*x^9 - 1/39916800*x^11 + 1/6227020800*x^13 + O(x^15)
+
 An iterated example::
 
     sage: R.<t> = PowerSeriesRing(ZZ)
@@ -372,12 +383,11 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
     # if isinstance(name, (int,integer.Integer)) or isinstance(arg2,(int,integer.Integer)):
     #     deprecation(trac_number, "This behavior of PowerSeriesRing is being deprecated in favor of constructing multivariate power series rings. (See Trac ticket #1956.)")
 
-
     # the following is the original, univariate-only code
 
     if isinstance(name, (int, integer.Integer)):
         default_prec = name
-    if not names is None:
+    if names is not None:
         name = names
     name = normalize_names(1, name)
 
@@ -730,7 +740,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: R(1/x, 5)
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Laurent Series Ring in t over Integer Ring to Power Series Ring in t over Integer Ring
+            TypeError: no canonical coercion from Laurent Series Ring in t over
+             Rational Field to Power Series Ring in t over Integer Ring
 
             sage: PowerSeriesRing(PowerSeriesRing(QQ,'x'),'y')(x)
             x
@@ -785,7 +796,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             prec = integer.Integer(prec)
             if prec < 0:
                 raise ValueError("prec (= %s) must be non-negative" % prec)
-        from sage.symbolic.series import SymbolicSeries
+        from sage.symbolic.expression import SymbolicSeries
         if isinstance(f, power_series_ring_element.PowerSeries) and f.parent() is self:
             if prec >= f.prec():
                 return f
@@ -860,7 +871,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: R._coerce_(1/t)
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Laurent Series Ring in t over Integer Ring to Power Series Ring in t over Integer Ring
+            TypeError: no canonical coercion from Laurent Series Ring in t over
+             Rational Field to Power Series Ring in t over Integer Ring
             sage: R._coerce_(5)
             5
             sage: tt = PolynomialRing(ZZ,'t').gen()
@@ -1253,14 +1265,18 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                                                  self.base_ring(), self.variable_name(), default_prec=self.default_prec(), sparse=self.is_sparse())
             return self.__laurent_series_ring
 
+
 class PowerSeriesRing_domain(PowerSeriesRing_generic, ring.IntegralDomain):
     def fraction_field(self):
         """
-        Return the fraction field of this power series ring, which is
-        defined since this is over a domain.
+        Return the Laurent series ring over the fraction field of the base
+        ring.
 
-        This fraction field is just the Laurent series ring over the
-        fraction field of the base ring.
+        This is actually *not* the fraction field of this ring, but its
+        completion with respect to the topology defined by the valuation.
+        When we are working at finite precision, these two fields are
+        indistinguishable; that is the reason why we allow ourselves to
+        make this confusion here.
 
         EXAMPLES::
 
@@ -1294,6 +1310,7 @@ class PowerSeriesRing_over_field(PowerSeriesRing_domain):
             Laurent Series Ring in t over Finite Field of size 7
         """
         return self.laurent_series_ring()
+
 
 def unpickle_power_series_ring_v0(base_ring, name, default_prec, sparse):
     """

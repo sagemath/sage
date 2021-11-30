@@ -1,5 +1,5 @@
-coxeter3
-========
+coxeter3: Library for Coxeter groups, Bruhat ordering, Kazhdan-Lusztig polynomials
+==================================================================================
 
 Description
 -----------

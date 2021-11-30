@@ -1,5 +1,5 @@
-readline
-========
+readline: Command line editing library
+======================================
 
 Description
 -----------

@@ -1,5 +1,5 @@
-r_jupyter
-=========
+r_jupyter: Jupyter kernel for R
+===============================
 
 Description
 -----------

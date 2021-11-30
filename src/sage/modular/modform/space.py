@@ -43,6 +43,10 @@ An example in characteristic `7`::
 
     sage: ModularForms(13,3,base_ring=GF(7)).base_ring()
     Finite Field of size 7
+
+AUTHORS:
+
+- William Stein (2007): first version
 """
 
 #########################################################################
@@ -390,7 +394,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         ::
 
             sage: type(N._ModularFormsSpace__normalize_prec(int(3)))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if prec is None:
             prec = self.prec()
@@ -904,8 +908,10 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             raise ArithmeticError(("Sum of %s and %s not defined because " + \
                                     "they do not lie in a common ambient space.")%\
                                    (self, right))
-        if self.is_ambient(): return self
-        if right.is_ambient(): return right
+        if self.is_ambient():
+            return self
+        if right.is_ambient():
+            return right
         V = self.free_module() + right.free_module()
         return ModularFormsSubmodule(self.ambient_module(), V)
 
@@ -1057,6 +1063,16 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: g.is_old()
             True
 
+        Test that :trac:`32168` is fixed::
+
+            sage: M0 = ModularForms(Gamma0(8), 10)
+            sage: M1 = ModularForms(Gamma1(8), 10)
+            sage: f = M0.0; g = M1.0
+            sage: f + g
+            2*q + O(q^6)
+            sage: M1(f)
+            q + O(q^6)
+
         ::
 
             sage: M = ModularForms(22,2) ; S = CuspForms(22,2)
@@ -1081,9 +1097,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: M(M([1, 2, 3, 4, 5]), check=True)
             4 + 6*q + 47*q^2 + 143*q^3 + 358*q^4 + 630*q^5 + O(q^6)
         """
-        if isinstance(x, self.element_class):
-            if x.parent() is self:
-                return x
+        if isinstance(x, ModularFormElement):
 
             if not check:
                 from copy import copy
@@ -1117,10 +1131,45 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             else:
                 raise TypeError("q-expansion needed to at least precision %s" % W.degree())
 
-        if isinstance(x, ModularFormElement):
-            x = x.element()
-
         return self.element_class(self, self.free_module()(x, check))
+
+    def _pushout_(self, other):
+        r"""
+        Implement the pushout of ``self`` and ``other``.
+
+        INPUT:
+
+        - ``other`` -- ``ModularFormSpace`` or a ``ModularFormRing``
+
+        OUTPUT: If ``self`` and ``other`` have the same groups and base rings, then this method returns
+        ``self`` if the weights of the two spaces are equal, otherwise it returns a ``ModularFormsRing``.
+
+
+        TESTS::
+
+            sage: e4 = ModularForms(1,4).0; e6 = ModularForms(1,6).0;
+            sage: M = ModularFormsRing(1)
+            sage: e4 + e6
+            2 - 264*q - 14472*q^2 - 116256*q^3 - 515208*q^4 - 1545264*q^5 + O(q^6)
+            sage: (e4 + e6).parent()
+            Ring of Modular Forms for Modular Group SL(2,Z) over Rational Field
+            sage: (M(e4)*e6).parent()
+            Ring of Modular Forms for Modular Group SL(2,Z) over Rational Field
+            sage: f = ModularForms(5,12).0
+            sage: f+e4
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for +: 'Modular Forms space of dimension 7 for Congruence Subgroup Gamma0(5) of weight 12 over Rational Field' and 'Modular Forms space of dimension 1 for Modular Group SL(2,Z) of weight 4 over Rational Field'
+        """
+        from .ring import ModularFormsRing
+        if isinstance(other, ModularFormsSpace):
+            if self.group() == other.group() and self.base_ring() == other.base_ring():
+                if self.weight() == other.weight():
+                    return self
+                else:
+                    return ModularFormsRing(self.group(), base_ring=self.base_ring())
+        if isinstance(other, ModularFormsRing) and other.has_coerce_map_from(self):
+            return other
 
     def __richcmp__(self, x, op):
         """

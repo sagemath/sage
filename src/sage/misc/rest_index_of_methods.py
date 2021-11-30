@@ -11,6 +11,7 @@ for use in doc-strings.
 import inspect
 
 from sage.misc.sageinspect import _extract_embedded_position
+from sage.misc.sageinspect import is_function_or_cython_function as _isfunction
 
 
 def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
@@ -172,10 +173,10 @@ def gen_rest_table_index(obj, names=None, sort=True, only_local_functions=True):
             link = ":meth:`~{module}.{cls}.{func}`".format(
                 module=e.im_class.__module__, cls=e.im_class.__name__,
                 func=fname(e))
-        elif inspect.isfunction(e) and inspect.isclass(obj):
+        elif _isfunction(e) and inspect.isclass(obj):
             link = ":meth:`~{module}.{cls}.{func}`".format(
                 module=obj.__module__, cls=obj.__name__, func=fname(e))
-        elif inspect.isfunction(e):
+        elif _isfunction(e):
             link = ":func:`~{module}.{func}`".format(
                 module=e.__module__, func=fname(e))
         else:
@@ -232,9 +233,7 @@ def list_of_subfunctions(root, only_local_functions=True):
 
         sage: class A:
         ....:     x = staticmethod(Graph.order)
-        sage: list_of_subfunctions(A)  # py2
-        ([<unbound method Graph.order>], {<unbound method Graph.order>: 'x'})
-        sage: list_of_subfunctions(A)  # py3
+        sage: list_of_subfunctions(A)
         ([<function GenericGraph.order at 0x...>],
          {<function GenericGraph.order at 0x...>: 'x'})
 

@@ -44,22 +44,22 @@ following command::
     Differentiable map iota from the 2-sphere S^2_r of radius r smoothly
      embedded in the Euclidean space E^3 to the Euclidean space E^3
     sage: i.display()
-    iota: S^2_r --> E^3
-    on A: (theta, phi) |--> (x, y, z) = (r*cos(phi)*sin(theta),
+    iota: S^2_r → E^3
+    on A: (theta, phi) ↦ (x, y, z) = (r*cos(phi)*sin(theta),
                                          r*sin(phi)*sin(theta),
                                          r*cos(theta))
 
 As a submanifold of a Riemannian manifold, namely the Euclidean space,
 the 2-sphere admits an induced metric::
 
-    sage: h = S2_r.induced_metric()
-    sage: h.display()
-    gamma = r^2 dtheta*dtheta + r^2*sin(theta)^2 dphi*dphi
+    sage: g = S2_r.induced_metric()
+    sage: g.display()
+    g = r^2 dtheta⊗dtheta + r^2*sin(theta)^2 dphi⊗dphi
 
 The induced metric is also known as the *first fundamental form* (see
 :meth:`~sage.manifolds.differentiable.pseudo_riemannian_submanifold.PseudoRiemannianSubmanifold.first_fundamental_form`)::
 
-    sage: h is S2_r.first_fundamental_form()
+    sage: g is S2_r.first_fundamental_form()
     True
 
 The *second fundamental form* encodes the extrinsic curvature of the
@@ -70,15 +70,15 @@ The *second fundamental form* encodes the extrinsic curvature of the
     Field of symmetric bilinear forms K on the 2-sphere S^2_r of radius r
      smoothly embedded in the Euclidean space E^3
     sage: K.display()
-    K = r dtheta*dtheta + r*sin(theta)^2 dphi*dphi
+    K = r dtheta⊗dtheta + r*sin(theta)^2 dphi⊗dphi
 
 One quantity that can be derived from the second fundamental form is the
 Gaussian curvature::
 
     sage: K = S2_r.gauss_curvature()
     sage: K.display()
-    S^2_r --> R
-    on A: (theta, phi) |--> r^(-2)
+    S^2_r → ℝ
+    on A: (theta, phi) ↦ r^(-2)
 
 As we have seen, spherical coordinates are initialized by default. To
 initialize stereographic coordinates retrospectively, we can use the following
@@ -126,10 +126,10 @@ Get stereographic coordinates::
 The embedding takes now the following form in all coordinates::
 
     sage: S1c.embedding().display()
-    iota: S^1(c) --> E^2
-    on A: chi |--> (x, y) = (cos(chi) + 1, sin(chi))
-    on S^1(c)-{NP}: y1 |--> (x, y) = (2*y1/(y1^2 + 1) + 1, (y1^2 - 1)/(y1^2 + 1))
-    on S^1(c)-{SP}: yp1 |--> (x, y) = (2*yp1/(yp1^2 + 1) + 1, -(yp1^2 - 1)/(yp1^2 + 1))
+    iota: S^1(c) → E^2
+    on A: chi ↦ (x, y) = (cos(chi) + 1, sin(chi))
+    on S^1(c)-{NP}: y1 ↦ (x, y) = (2*y1/(y1^2 + 1) + 1, (y1^2 - 1)/(y1^2 + 1))
+    on S^1(c)-{SP}: yp1 ↦ (x, y) = (2*yp1/(yp1^2 + 1) + 1, -(yp1^2 - 1)/(yp1^2 + 1))
 
 Since the sphere is a hypersurface, we can get a normal vector field by using
 ``normal``::
@@ -147,22 +147,22 @@ However, the vector field `n` is indeed non-vanishing and hence the sphere
 admits an orientation (as all spheres do)::
 
     sage: orient = S1c.orientation(); orient
-    [Coordinate frame (S^1(c)-{SP}, (d/dyp1)), Vector frame (S^1(c)-{NP}, (f_1))]
+    [Coordinate frame (S^1(c)-{SP}, (∂/∂yp1)), Vector frame (S^1(c)-{NP}, (f_1))]
     sage: f = orient[1]
     sage: f[1].display()
-    f_1 = -d/dy1
+    f_1 = -∂/∂y1
 
 Notice that the orientation is chosen is such a way that `(\iota_*(f_1), -n)`
 is oriented in the ambient Euclidean space, i.e. the last entry is the normal
 vector field pointing outwards. Henceforth, the manifold admits
 a volume form::
 
-    sage: h = S1c.induced_metric()
-    sage: h.display()
-    gamma = dchi*dchi
-    sage: eps = h.volume_form()
+    sage: g = S1c.induced_metric()
+    sage: g.display()
+    g = dchi⊗dchi
+    sage: eps = g.volume_form()
     sage: eps.display()
-    eps_gamma = -dchi
+    eps_g = -dchi
 
 """
 
@@ -253,8 +253,9 @@ class Sphere(PseudoRiemannianSubmanifold):
     Each `n`-sphere is a compact manifold and a complete metric space::
 
         sage: S2.category()
-        Join of Category of compact topological spaces and Category of
-         smooth manifolds over Real Field with 53 bits of precision and
+        Join of Category of compact topological spaces and Category of smooth
+         manifolds over Real Field with 53 bits of precision and Category of
+         connected manifolds over Real Field with 53 bits of precision and
          Category of complete metric spaces
 
     If not stated otherwise, each `n`-sphere is automatically endowed with
@@ -274,12 +275,9 @@ class Sphere(PseudoRiemannianSubmanifold):
         sage: stereoN, stereoS = S2.coordinate_charts('stereographic')
         sage: stereoN, stereoS
         (Chart (S^2-{NP}, (y1, y2)), Chart (S^2-{SP}, (yp1, yp2)))
-        sage: S2.open_covers()
-        [[2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3],
-         [Open subset S^2-{NP} of the 2-sphere S^2 of radius 1 smoothly
-          embedded in the Euclidean space E^3,
-          Open subset S^2-{SP} of the 2-sphere S^2 of radius 1 smoothly
-          embedded in the Euclidean space E^3]]
+        sage: list(S2.open_covers())
+        [Set {S^2} of open subsets of the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3,
+         Set {S^2-{NP}, S^2-{SP}} of open subsets of the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3]
 
     .. NOTE::
 
@@ -377,12 +375,13 @@ class Sphere(PseudoRiemannianSubmanifold):
                     latex_name += r'({})'.format(center._latex_name)
         if category is None:
             category = Manifolds(RR).Smooth() & MetricSpaces().Complete() & \
-                       TopologicalSpaces().Compact()
+                       TopologicalSpaces().Compact().Connected()
         # initialize
         PseudoRiemannianSubmanifold.__init__(self, n, name,
                                              ambient=ambient_space,
                                              signature=n, latex_name=latex_name,
-                                             start_index=1, category=category)
+                                             metric_name='g', start_index=1,
+                                             category=category)
         # set attributes
         self._radius = radius
         self._center = center
@@ -410,8 +409,8 @@ class Sphere(PseudoRiemannianSubmanifold):
             Differentiable map iota from the 2-sphere S^2 of radius 1 smoothly
              embedded in the Euclidean space E^3 to the Euclidean space E^3
             sage: i.display()
-            iota: S^2 --> E^3
-             on A: (theta, phi) |--> (x, y, z) = (cos(phi)*sin(theta),
+            iota: S^2 → E^3
+             on A: (theta, phi) ↦ (x, y, z) = (cos(phi)*sin(theta),
              sin(phi)*sin(theta), cos(theta))
 
         """
@@ -500,11 +499,10 @@ class Sphere(PseudoRiemannianSubmanifold):
         TESTS::
 
             sage: S2 = manifolds.Sphere(2)
-            sage: S2.open_covers()
-            [[2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3],
-             [Open subset S^2-{NP} of the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3,
-              Open subset S^2-{SP} of the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3]]
-            sage: S2.subsets()  # random
+            sage: list(S2.open_covers())
+            [Set {S^2} of open subsets of the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3,
+             Set {S^2-{NP}, S^2-{SP}} of open subsets of the 2-sphere S^2 of radius 1 smoothly embedded in the Euclidean space E^3]
+            sage: frozenset(S2.subsets())  # random
             frozenset({Euclidean 2-sphere S^2 of radius 1,
              Open subset A of the Euclidean 2-sphere S^2 of radius 1,
              Open subset S^2-{NP,SP} of the Euclidean 2-sphere S^2 of radius 1,
@@ -713,9 +711,9 @@ class Sphere(PseudoRiemannianSubmanifold):
             sage: S1.coordinate_charts('stereographic')
             [Chart (S^1(c)-{NP}, (a,)), Chart (S^1(c)-{SP}, (ap,))]
             sage: S1.embedding().display()
-            iota: S^1(c) --> E^2
-            on S^1(c)-{NP}: a |--> (x, y) = (2*a/(a^2 + 1) + 1, (a^2 - 1)/(a^2 + 1))
-            on S^1(c)-{SP}: ap |--> (x, y) = (2*ap/(ap^2 + 1) + 1, -(ap^2 - 1)/(ap^2 + 1))
+            iota: S^1(c) → E^2
+            on S^1(c)-{NP}: a ↦ (x, y) = (2*a/(a^2 + 1) + 1, (a^2 - 1)/(a^2 + 1))
+            on S^1(c)-{SP}: ap ↦ (x, y) = (2*ap/(ap^2 + 1) + 1, -(ap^2 - 1)/(ap^2 + 1))
 
         Initialize a 2-sphere from scratch::
 
@@ -832,8 +830,8 @@ class Sphere(PseudoRiemannianSubmanifold):
         coordinates::
 
             sage: S2.embedding().display()
-            iota: S^2 --> E^3
-             on A: (theta, phi) |--> (x, y, z) =
+            iota: S^2 → E^3
+             on A: (theta, phi) ↦ (x, y, z) =
                                      (cos(phi)*sin(theta),
                                       sin(phi)*sin(theta),
                                       cos(theta))
@@ -844,8 +842,8 @@ class Sphere(PseudoRiemannianSubmanifold):
             sage: spher = S3.spherical_coordinates(); spher
             Chart (A, (chi, theta, phi))
             sage: S3.embedding().display()
-            iota: S^3 --> E^4
-            on A: (chi, theta, phi) |--> (x1, x2, x3, x4) =
+            iota: S^3 → E^4
+            on A: (chi, theta, phi) ↦ (x1, x2, x3, x4) =
                                          (cos(phi)*sin(chi)*sin(theta),
                                           sin(chi)*sin(phi)*sin(theta),
                                           cos(theta)*sin(chi),
@@ -1020,7 +1018,7 @@ class Sphere(PseudoRiemannianSubmanifold):
 
         # transition: stereoN to spher...
         from sage.functions.trig import acos, atan2
-        from sage.functions.special import sqrt
+        from sage.misc.functional import sqrt
         # get ambient coordinates and shift to coordinate origin:
         x = self._shift_coords(imm.expr(stereoN, cart), s='-')
         coordfunc = [atan2(x[1],x[0])]
@@ -1144,7 +1142,7 @@ class Sphere(PseudoRiemannianSubmanifold):
             2
 
         """
-        from sage.homology.examples import Sphere as SymplicialSphere
+        from sage.topology.simplicial_complex_examples import Sphere as SymplicialSphere
         return SymplicialSphere(self._dim)
 
     def center(self):
@@ -1167,8 +1165,8 @@ class Sphere(PseudoRiemannianSubmanifold):
         We can see that the embedding is shifted accordingly::
 
             sage: S2c.embedding().display()
-            iota: S^2(c) --> E^3
-            on A: (theta, phi) |--> (x, y, z) = (cos(phi)*sin(theta) + 1,
+            iota: S^2(c) → E^3
+            on A: (theta, phi) ↦ (x, y, z) = (cos(phi)*sin(theta) + 1,
                                                  sin(phi)*sin(theta) + 2,
                                                  cos(theta) + 3)
 

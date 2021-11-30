@@ -1,5 +1,5 @@
-pkgconf
-=======
+pkgconf: An implementation of the pkg-config spec
+=================================================
 
 Description
 -----------

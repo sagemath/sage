@@ -1,0 +1,12 @@
+diff --git a/src/include/cfuns-c.H1 b/src/include/cfuns-c.H1
+index 643a532..da22a8d 100644
+--- a/src/include/cfuns-c.H1
++++ b/src/include/cfuns-c.H1
+@@ -3,5 +3,7 @@ extern int directoryp(char *);
+ extern int make_path_from_file(char *, char *);
+ extern int writeablep(char *);
+ extern int readablep(char *);
++extern int remove_directory(char *);
++extern int makedir(char *);
+ extern long findString(char *, char *);
+ extern int copyEnvValue(char *, char *);

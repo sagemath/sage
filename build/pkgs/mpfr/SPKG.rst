@@ -1,5 +1,5 @@
-MPFR
-====
+mpfr: Multiple-precision floating-point computations with correct rounding
+==========================================================================
 
 Description
 -----------

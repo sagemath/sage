@@ -146,7 +146,7 @@ class EnumeratedSets(CategoryWithAxiom):
         """
         import sage.sets.set
         if isinstance(X, (tuple, list, set, range, sage.sets.set.Set_object_enumerated)):
-            return sage.sets.all.FiniteEnumeratedSet(X)
+            return sage.sets.finite_enumerated_set.FiniteEnumeratedSet(X)
         raise NotImplementedError
 
     class ParentMethods:
@@ -171,7 +171,7 @@ class EnumeratedSets(CategoryWithAxiom):
             +------------------------+---------------------------------+
             | ``unrank``             | ``_iterator_from_unrank``       |
             +------------------------+---------------------------------+
-            | ``list`                | ``_iterator_from_next``         |
+            | ``list``               | ``_iterator_from_next``         |
             +------------------------+---------------------------------+
 
             It is also possible to override ``__iter__`` method itself. Then

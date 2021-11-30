@@ -149,12 +149,8 @@ if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
 
     # Trac #30002: ensure an English locale so that it is possible to
     # scrape out warnings by pattern matching.
-    # Trac #30576: But we have to avoid the C locale, which disables
-    # proper UTF-8 operation in Python 3.6 or older.
-    LC_ALL=$(locale -a | grep -E -i '^(c|en_us)[-.]utf-?8$' | head -n 1)
-    LANG=$LC_ALL
-    export LC_ALL
-    export LANG
+    export LANG=C
+    export LANGUAGE=C
 
     # See #30351: bugs in macOS implementations of openblas/libgopm can cause
     # docbuild to hang if multiple OpenMP threads are allowed.
@@ -162,7 +158,7 @@ if [ "$1" = "-docbuild" -o "$1" = "--docbuild" ]; then
         export OMP_NUM_THREADS=1
     fi
 
-    exec sage-python -m sage_setup.docbuild "$@" </dev/null
+    exec sage-python -m sage_docbuild "$@" </dev/null
 fi
 
 if [ "$1" = '-git-branch' -o "$1" = '--git-branch' ]; then

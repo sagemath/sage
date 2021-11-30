@@ -32,6 +32,18 @@ Check that :trac:`24212` is fixed::
     sage: integrate(sin(x^2), x, algorithm='sympy')
     3/8*sqrt(2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))*gamma(3/4)/gamma(7/4)
 
+Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+
+    sage: var('phi')
+    phi
+    sage: function('Cp', latex_name='C_+')
+    Cp
+    sage: test = Cp(phi)._sympy_()._sage_()
+    sage: test.operator() == Cp
+    True
+    sage: test.operator()._latex_() == 'C_+'
+    True
+
 AUTHORS:
 
 - Ralf Stephan (2017-10)
@@ -262,6 +274,59 @@ def _sympysage_Subs(self):
 
 ##############       functions       ###############
 
+def _sympysage_function_by_name(fname):
+    """
+    Given a sympy function with name ``fname`` find the corresponding
+    sage function or create a new one with the given name.
+
+    EXAMPLES::
+
+        sage: from sympy import Function
+        sage: f = function('f')
+        sage: F = Function('f')
+        sage: assert f._sympy_() == F
+        sage: assert f == F._sage_()
+    """
+    from sage.functions import all as sagefuncs
+    func = getattr(sagefuncs, fname, None)
+    # In the case the function is not known in sage:
+    if func is None:
+        import sympy
+        if getattr(sympy, fname, None) is None:
+            # symbolic function
+            from sage.symbolic.expression import symbol_table
+            func = symbol_table['functions'].get(fname)
+            if func is None:
+                from sage.calculus.var import function
+                return function(fname)
+
+        else:
+            # the function defined in sympy is not known in sage
+            raise AttributeError
+    return func
+
+# the convoluted class structure with metaclasses and stuff sympy uses
+# to implement undefined functions makes things a bit harder for us
+# here
+class UndefSageHelper:
+    """
+    Helper class to convert sympy function objects to sage functions
+
+    EXAMPLES::
+
+        sage: from sympy import Function
+        sage: f = function('f')
+        sage: F = Function('f')
+        sage: assert f._sympy_() == F
+        sage: assert f == F._sage_()
+    """
+    def __get__(self, ins, typ):
+        if ins is None:
+            return lambda: _sympysage_function_by_name(typ.__name__)
+        else:
+            args = [arg._sage_() for arg in ins.args]
+            return lambda : _sympysage_function_by_name(ins.__class__.__name__)(*args)
+
 def _sympysage_function(self):
     """
     EXAMPLES::
@@ -287,22 +352,9 @@ def _sympysage_function(self):
         ...
         AttributeError...
         """
-    from sage.functions import all as sagefuncs
     fname = self.func.__name__
-    func = getattr(sagefuncs, fname, None)
+    func = _sympysage_function_by_name(fname)
     args = [arg._sage_() for arg in self.args]
-
-    # In the case the function is not known in sage:
-    if func is None:
-        import sympy
-        if getattr(sympy, fname, None) is None:
-            # abstract function
-            from sage.calculus.var import function
-            return function(fname)(*args)
-
-        else:
-            # the function defined in sympy is not known in sage
-            raise AttributeError
 
     return func(*args)
 
@@ -356,7 +408,9 @@ def _sympysage_derivative(self):
         integrate(diff(f(x, t), x), t)
         sage: diff(f(x, t), x).integrate(t, algorithm='sympy')
         integrate(diff(f(x, t), x), t)
-        sage: integrate(f(x, t), x).diff(t)
+        sage: result = integrate(f(x, t), x).diff(t)
+        ...
+        sage: result
         integrate(diff(f(x, t), t), x)
     """
     from sage.calculus.functional import derivative
@@ -695,6 +749,99 @@ def _sympysage_crootof(self):
     from sage.symbolic.ring import SR
     return complex_root_of(self.args[0]._sage_(), SR(self.args[1]))
 
+def _sympysage_matrix(self):
+    """
+    Convert SymPy matrix ``self`` to Sage.
+
+    EXAMPLES::
+
+        sage: from sympy.matrices import Matrix, SparseMatrix, ImmutableMatrix
+        sage: from sage.interfaces.sympy import sympy_init
+        sage: from sympy.abc import x
+        sage: sympy_init()
+        sage: sM = Matrix([[1, x + 1], [x - 1, 1]]); sM
+        Matrix([
+        [    1, x + 1],
+        [x - 1,     1]])
+        sage: M = sM._sage_(); M
+        [    1 x + 1]
+        [x - 1     1]
+        sage: M.parent()
+        Full MatrixSpace of 2 by 2 dense matrices over Symbolic Ring
+
+        sage: sN = SparseMatrix.eye(3); sN
+        Matrix([
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]])
+        sage: N = sN._sage_(); N
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+        sage: N.parent()
+        Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
+
+        sage: sO = SparseMatrix.zeros(3); sO
+        Matrix([
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]])
+        sage: O = sO._sage_(); O
+        [0 0 0]
+        [0 0 0]
+        [0 0 0]
+        sage: O.parent()
+        Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
+
+    If ``self`` is immutable, the result is cached::
+
+        sage: sImmM = ImmutableMatrix([[1, x + 1], [x - 1, 1]]); sImmM
+        Matrix([
+        [    1, x + 1],
+        [x - 1,     1]])
+        sage: ImmM = sImmM._sage_(); ImmM
+        [    1 x + 1]
+        [x - 1     1]
+        sage: ImmM is sImmM._sage_()
+        True
+
+    If ``self`` is mutable, the conversion is redone every time::
+
+        sage: sM[0, 0] = 1000
+        sage: MutatedM = sM._sage_(); MutatedM
+        [ 1000 x + 1]
+        [x - 1     1]
+        sage: M == MutatedM
+        False
+
+    """
+    try:
+        return self._sage_object
+    except AttributeError:
+        from sympy.matrices import SparseMatrix, ImmutableMatrix
+        from sage.matrix.constructor import matrix
+
+        rows, cols = self.shape
+        d = {row_col: value._sage_()
+             for row_col, value in self.todok().items()}
+        if not d:
+            from sage.rings.integer_ring import ZZ
+            base_ring = ZZ
+        else:
+            from sage.structure.element import get_coercion_model
+            from sage.symbolic.ring import SR
+            coercion_model = get_coercion_model()
+            try:
+                base_ring = coercion_model.common_parent(*d.values())
+            except TypeError: # no common canonical parent
+                base_ring = SR
+        result = matrix(base_ring, rows, cols, d,
+                        sparse=isinstance(self, SparseMatrix),
+                        immutable=True)
+        if isinstance(self, ImmutableMatrix):
+            self._sage_object = result
+        return result
+
 def _sympysage_relational(self):
     """
     EXAMPLES::
@@ -793,6 +940,7 @@ def sympy_init():
     from sympy.integrals.integrals import Integral
     from sympy.polys.rootoftools import CRootOf
     from sympy.series.order import Order
+    from sympy.matrices import ImmutableMatrix, ImmutableSparseMatrix, Matrix, SparseMatrix
 
     Float._sage_ = _sympysage_float
     Integer._sage_ = _sympysage_integer
@@ -801,6 +949,10 @@ def sympy_init():
     NegativeInfinity._sage_ = _sympysage_ninfty
     ComplexInfinity._sage_ = _sympysage_uinfty
     sympy_nan._sage_ = _sympysage_nan
+    ImmutableMatrix._sage_ = _sympysage_matrix
+    ImmutableSparseMatrix._sage_ = _sympysage_matrix
+    Matrix._sage_ = _sympysage_matrix
+    SparseMatrix._sage_ = _sympysage_matrix
     Relational._sage_ = _sympysage_relational
     Exp1._sage_ = _sympysage_e
     Pi._sage_ = _sympysage_pi
@@ -815,6 +967,8 @@ def sympy_init():
     Subs._sage_ = _sympysage_Subs
     Function._sage_ = _sympysage_function
     AppliedUndef._sage_ = _sympysage_function
+    import sympy.core.function
+    sympy.core.function._undef_sage_helper = UndefSageHelper()
     Integral._sage_ = _sympysage_integral
     Derivative._sage_ = _sympysage_derivative
     Order._sage_ = _sympysage_order
@@ -868,7 +1022,7 @@ def check_expression(expr, var_symbols, only_from_sympy=False):
 
     # evaluate the expression in the context of SymPy:
     if var_symbols:
-        sympy_vars = svar(var_symbols)
+        svar(var_symbols)
     b = globals().copy()
     b.update(sympydict)
     assert "sin" in b
@@ -901,33 +1055,27 @@ def test_all():
         check_expression("x**2+y**3", "x y")
         check_expression("1/(x+y)**2-x**3/4", "x y")
 
-
     def test_complex():
         check_expression("I", "")
         check_expression("23+I*4", "x")
-
 
     def test_complex_fail():
         # Sage doesn't properly implement _sympy_ on I
         check_expression("I*y", "y")
         check_expression("x+I*y", "x y")
 
-
     def test_integer():
         check_expression("4*x", "x")
         check_expression("-4*x", "x")
-
 
     def test_real():
         check_expression("1.123*x", "x")
         check_expression("-18.22*x", "x")
 
-
-
     def test_functions():
         # Test at least one Function without own _sage_ method
         from sympy import factorial
-        assert not "_sage_" in factorial.__dict__
+        assert "_sage_" not in factorial.__dict__
         check_expression("factorial(x)", "x")
         check_expression("sin(x)", "x")
         check_expression("cos(x)", "x")

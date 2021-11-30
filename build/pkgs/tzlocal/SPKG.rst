@@ -1,16 +1,7 @@
-pytz
-====
+tzlocal: Python timezone information for the local timezone
+===========================================================
 
 Description
 -----------
 
-World Timezone Definitions for Python
-
-
-Special Update/Build Instructions
----------------------------------
-
-The upstream tarball was repackaged after sanitizing the file
-permissions with
-
-$ chmod go-w
+tzinfo object for the local timezone

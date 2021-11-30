@@ -67,10 +67,8 @@ latex_documents = [
 ]
 
 latex_elements['hyperref'] = r"""
-\usepackage{xcite}
-\usepackage{xr-hyper}
+\usepackage{xr}
 \externaldocument[../references/]{../references/references}
-\externalcitedocument[../references/]{../references/references}
 % Include hyperref last.
 \usepackage{hyperref}
 % Fix anchor placement for figures with captions.

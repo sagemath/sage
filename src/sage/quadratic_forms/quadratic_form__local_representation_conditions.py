@@ -570,19 +570,19 @@ class QuadraticFormLocalRepresentationConditions():
             True
 
         """
-        ## Sanity Check
-        if not m in QQ:
-            raise TypeError("Oops!  m = " + str(m) +  " is not a rational number!")
+        # Sanity Check
+        if m not in QQ:
+            raise TypeError("Oops!  m = " + str(m) + " is not a rational number!")
 
-       ## Representing zero
+        # Representing zero
         if m == 0:
             return True
 
-        ## 0-dim'l forms
-        if self.dim == 0:    ## Here m != 0
+        # 0-dim'l forms
+        if self.dim == 0:   # Here m != 0
             return False
 
-        ## 1-dim'l forms
+        # 1-dim'l forms
         if self.dim == 1:
             m1 = QQ(m) / self.coeff
             if p == infinity:
@@ -642,33 +642,33 @@ class QuadraticFormLocalRepresentationConditions():
             False
 
         """
-        ## Representing zero
+        # Representing zero
         if m == 0:
             return True
 
-        ## 0-dim'l forms
-        if self.dim == 0:    ## Here m != 0
+        # 0-dim'l forms
+        if self.dim == 0:    # Here m != 0
             return False
 
-        ## 1-dim'l forms
+        # 1-dim'l forms
         if self.dim == 1:
             m1 = m / self.coeff
             return (m1 in ZZ) and is_square(m1)
 
-        ## Check the generic primes (when n = 2 or n >= 3)
+        # Check the generic primes (when n = 2 or n >= 3)
         m_primes = prime_divisors(numerator(m) * denominator(m))
         for p in m_primes:
-            if not p in self.exceptional_primes:
-               val = valuation(m, p)
-               if (val < 0):
-                   return False
+            if p not in self.exceptional_primes:
+                val = valuation(m, p)
+                if val < 0:
+                    return False
 
-        ## Check the non-generic primes (when n = 2 or n >= 3)
+        # Check the non-generic primes (when n = 2 or n >= 3)
         for p in self.exceptional_primes:
             if not self.is_locally_represented_at_place(m, p):
                 return False
 
-        ## If we got here, we're locally represented!
+        # If we got here, we're locally represented!
         return True
 
 

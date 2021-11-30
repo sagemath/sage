@@ -88,7 +88,7 @@ not based on the latest (beta) version of SageMath.
 
 .. NOTE::
 
-    Continue working on a feature based on an old branch is perfecly
+    Continue working on a feature based on an old branch is perfectly
     fine and usually there is no need to merge in this latest SageMath
     version.
 

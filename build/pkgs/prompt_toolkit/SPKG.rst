@@ -1,5 +1,5 @@
-prompt_toolkit
-==============
+prompt_toolkit: Interactive command lines for Python
+====================================================
 
 Description
 -----------

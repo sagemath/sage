@@ -88,34 +88,11 @@ computer:
 - **perl**: version 5.8.0 or later.
 - **ar** and **ranlib**: can be obtained as part of GNU binutils.
 - **tar**: GNU tar version 1.17 or later, or BSD tar.
-- **python**: Python 3, 3.6 or later, or Python 2.7 (deprecated).
+- **python**: Python 3.4 or later, or Python 2.7.
+  (This range of versions is a minimal requirement for internal purposes of the SageMath
+  build system, which is referred to as ``sage-bootstrap-python``.)
 
 Other versions of these may work, but they are untested.
-
-Libraries
-^^^^^^^^^
-
-Some Sage components (and among them, most notably, Python) *"use the
-OpenSSL library for added performance if made available by the
-operating system"* (literal quote from the Python license). Testing
-has proved that:
-
-   * Sage can be successfully built against other SSL libraries (at
-     least GnuTLS).
-
-   * Sage's ``-pip`` facility (used to install some Sage packages) is
-     disabled when Sage is compiled against those libraries.
-
-Furthermore, the Sage license mention that the ``hashlib`` library
-(used in Sage) uses OpenSSL.
-
-Therefore, the OpenSSL library is recommended. However, Sage's license
-seems to clash with OpenSSL license, which makes the distribution of
-OpenSSL along with Sage sources dubious. However, there is no problem
-for Sage using a systemwide-installed OpenSSL library.
-
-In any case, you must install systemwide your chosen library and its
-development files.
 
 
 Fortran and compiler suites
@@ -176,9 +153,11 @@ rather than building a Python 3 installation from scratch.
 Use the configure option ``--without-system-python3`` in case you want Python 3
 built from scratch.
 
+Sage will accept versions 3.7.x to 3.9.x.
+
 You can also use ``--with-python=/path/to/python3_binary`` to tell Sage to use
 ``/path/to/python3_binary`` to set up the venv. Note that setting up venv requires
-a number of Python modules to be availabe within the Python in question. Currently,
+a number of Python modules to be available within the Python in question. Currently,
 for Sage 9.2, these modules are as follows: sqlite3, ctypes, math, hashlib, crypt,
 readline, socket, zlib, distutils.core - they will be checked for by configure.
 
@@ -208,8 +187,7 @@ On Redhat-derived systems not all perl components are installed by
 default and you might have to install the ``perl-ExtUtils-MakeMaker``
 package.
 
-On Cygwin, the ``lapack`` and ``liblapack-devel`` packages are required to
-provide ATLAS support as the Sage package for ATLAS is not built by default.
+On Cygwin, the ``lapack`` and ``liblapack-devel`` packages are required.
 
 Installing prerequisites
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -226,6 +204,8 @@ or::
 on the command line. If it gives an error (or returns nothing), then
 either ``perl`` is not installed, or it is installed but not in your
 `PATH <https://en.wikipedia.org/wiki/PATH_%28variable%29>`_.
+
+.. _sec-installation-from-sources-linux-recommended-installation:
 
 Linux recommended installation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -264,8 +244,6 @@ On Fedora / Redhat / CentOS:
 On Arch Linux:
 
 .. literalinclude:: arch.txt
-
-(These examples suppose that you choose to use a systemwide OpenSSL library.)
 
 In addition to these, if you don't want Sage to build optional packages that might
 be available from your OS, cf. the growing list of such packages on :trac:`27330`,
@@ -398,6 +376,32 @@ Optional packages that are also known to be installable via system packages
 include:
 
 .. literalinclude:: cygwin-optional.txt
+
+Ubuntu on Windows Subsystem for Linux (WSL) prerequisite installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Sage can be installed onto linux running on Windows Subsystem for Linux (WSL). These instructions describe a fresh install of Ubuntu 20.10, but other distibutions or installation methods should work too, though have not been tested.
+
+- Enable hardware-assisted virtualization in the EFI or BIOS of your system. Refer to your system (or motherboard) maker's documentation for instructions on how to do this.
+
+- Set up WSL by following the `official WSL setup guide <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be sure to do the steps to install WSL2 and set it as default.
+
+- Go to the Microsoft Store and install Ubuntu.
+            
+- Start Ubuntu from the start menu. Update all packages to the latest version.
+
+- Reboot the all running WSL instances one of the following ways:
+
+  - Open Windows Services and restart the LxssManager service.
+  - Open the Command Prompt or Powershell and enter this command::
+
+      wsl --shutdown
+
+- `Upgrade to the Ubuntu 20.10 <https://linuxconfig.org/how-to-upgrade-ubuntu-to-20-10>`_. This step will not be necessary once Ubuntu 20.10 is available in the Microsoft Store.
+
+From this point on, follow the instructions in the :ref:`sec-installation-from-sources-linux-recommended-installation` section.
+
+When the installation is complete, you may be interested in :ref:`sec-launching-wsl-post-installation`.
 
 Other platforms
 ^^^^^^^^^^^^^^^
@@ -618,43 +622,6 @@ On Debian/Ubuntu, the following system packages are recommended.
 
 - ``libavdevice-dev`` (to produce animations)
 
-Notebook additional features
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-**attention: Sage's notebook is deprecated, and notebook() command has been removed. Use Jupyter notebook instead**
-
-By default, the Sage notebook uses the
-`HTTP <https://en.wikipedia.org/wiki/HTTP>`_
-protocol when you type the command ``notebook()``.
-To run the notebook in secure mode by typing ``notebook(secure=True)`` which
-uses the `HTTPS <https://en.wikipedia.org/wiki/HTTPS>`_ protocol,
-or to use `OpenID <https://en.wikipedia.org/wiki/OpenID>`_ authentication,
-you need to follow specific installation steps described in
-:ref:`section_notebook_ssl`.
-
-Although all necessary components are provided through Sage optional
-packages, i.e., even if you choose not to install a systemwide version
-of OpenSSL, you can install a local (Sage_specific) version of
-`OpenSSL <https://www.openssl.org>`_ by using Sage's **openssl**
-package and running ``sage -i openssl`` as suggested in
-:ref:`section_notebook_ssl` (this requires an Internet
-connection). Alternatively, you might prefer to install OpenSSL and
-the OpenSSL development headers globally on your system, as described
-above.
-
-Finally, if you intend to distribute the notebook load onto several Sage
-servers, you will surely want to setup an
-`SSH <https://en.wikipedia.org/wiki/SSH>`_ server and generate SSH keys.
-This can be achieved using `OpenSSH <https://www.openssh.com/>`_.
-
-On Linux systems, the OpenSSH server, client and utilities are usually provided
-by the **openssh-server** and **openssh-client** packages and can be installed
-using::
-
-    $ sudo apt-get install openssh-server openssh-client
-
-or similar commands.
-
 Tcl/Tk
 ~~~~~~
 
@@ -816,11 +783,9 @@ Running Sage from a directory with spaces in its name will also fail.
    (There are no formal requirements for bug reports -- just send them;
    we appreciate everything.)
 
-   See :ref:`section_make` for some targets for the ``make`` command,
+   See :ref:`section_make` for some targets for the ``make`` command and
    :ref:`section_envvar` for additional information on useful environment
-   variables used by Sage,
-   and :ref:`section_notebook_ssl` for additional instruction on how to build
-   the notebook with SSL support.
+   variables used by Sage.
 
 #. To start Sage, you can now simply type from Sage's home directory::
 
@@ -974,49 +939,6 @@ Running Sage from a directory with spaces in its name will also fail.
 
 #. Have fun! Discover some amazing conjectures!
 
-.. _section_notebook_ssl:
-
-Building the notebook with SSL support
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Read this section if you are intending to run a Sage notebook server for
-multiple users.
-
-For security, you may wish users to access the server using the HTTPS protocol
-(i.e., to run ``notebook(secure=True)``).
-You also may want to use OpenID for user authentication.
-The first of these requires you to install
-`pyOpenSSL <https://pyopenssl.org/>`_,
-and they both require OpenSSL.
-
-If you have OpenSSL and the OpenSSL development headers installed on your
-system, you can install pyOpenSSL by building Sage and then typing::
-
-    $ ./sage -i pyopenssl
-
-Alternatively, ``make ssl`` builds Sage and installs pyOpenSSL at once.
-Note that these commands require Internet access.
-
-If you are missing either OpenSSL or OpenSSL's development headers,
-you can install a local copy of both into your Sage installation first.
-Ideally, this should be done before installing Sage; otherwise, you should at
-least rebuild Sage's Python, and ideally any part of Sage relying on it.
-The procedure is as follows (again, with a computer connected to the
-Internet).
-Starting from a fresh Sage tarball::
-
-    $ ./sage -i openssl
-    $ make ssl
-
-And if you've already built Sage::
-
-    $ ./sage -i openssl
-    $ ./sage -f python3
-    $ make ssl
-
-The third line will rebuild all parts of Sage that depend on Python;
-this can take a while.
-
 Rebasing issues on Cygwin
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1151,7 +1073,7 @@ Here are some of the more commonly used variables affecting the build process:
 - :envvar:`MAKE` - one useful setting for this variable when building Sage is
   ``MAKE='make -jNUM'`` to tell the ``make`` program to run ``NUM`` jobs in
   parallel when building.
-  Note that not all Sage packages (e.g. ATLAS) support this variable.
+  Note that some Sage packages may not support this variable.
 
   Some people advise using more jobs than there are CPU cores, at least if the
   system is not heavily loaded and has plenty of RAM; for example, a good
@@ -1202,8 +1124,8 @@ Here are some of the more commonly used variables affecting the build process:
   An entry ``package-name`` means to run the test suite for the named package
   regardless of the setting of :envvar:`SAGE_CHECK`.
   An entry ``!package-name`` means to skip its test suite.
-  So if this is set to ``mpir,!python3``, then always run the test suite for
-  MPIR, but always skip the test suite for Python 3.
+  So if this is set to ``ppl,!python3``, then always run the test suite for
+  PPL, but always skip the test suite for Python 3.
 
   .. note::
 
@@ -1279,11 +1201,11 @@ Here are some of the more commonly used variables affecting the build process:
 
 - :envvar:`SAGE_BUILD_DIR` - the default behavior is to build each spkg in a
   subdirectory of :file:`$SAGE_ROOT/local/var/tmp/sage/build/`; for
-  example, build version 3.8.3.p12 of
-  :file:`atlas` in the directory
-  :file:`$SAGE_ROOT/local/var/tmp/sage/build/atlas-3.8.3.p12/`.
+  example, build version 7.27.0 of
+  :file:`ipython` in the directory
+  :file:`$SAGE_ROOT/local/var/tmp/sage/build/ipython-7.27.0/`.
   If this variable is set, then build in
-  :file:`$SAGE_BUILD_DIR/atlas-3.8.3.p12/` instead.
+  :file:`$SAGE_BUILD_DIR/ipython-7.27.0/` instead.
   If the directory :file:`$SAGE_BUILD_DIR` does not exist, it is created.
   As of this writing (Sage 4.8), when building the standard Sage packages,
   1.5 gigabytes of free space are required in this directory (or more if
@@ -1359,71 +1281,6 @@ Here are some of the more commonly used variables affecting the build process:
   hierarchy (:envvar:`SAGE_LOCAL`).
 
 Environment variables dealing with specific Sage packages:
-
-- :envvar:`SAGE_MP_LIBRARY` - to use an alternative library in place of ``MPIR``
-  for multiprecision integer arithmetic. Supported values are
-
-    ``MPIR`` (default choice), ``GMP``.
-
-- :envvar:`SAGE_ATLAS_ARCH` - if you are compiling ATLAS (in particular,
-  if :envvar:`SAGE_ATLAS_LIB` is not set), you can use this environment
-  variable to set a particular architecture and instruction set extension,
-  to control the maximum number of threads ATLAS can use, and to trigger the
-  installation of a static library (which is disabled by default unless
-  building our custom shared libraries fails).
-  The syntax is
-
-    ``SAGE_ATLAS_ARCH=[threads:n,][static,]arch[,isaext1][,isaext2]...[,isaextN]``.
-
-  While ATLAS comes with precomputed timings for a variety of CPUs, it only
-  uses them if it finds an exact match.
-  Otherwise, ATLAS runs through a lengthy automated tuning process in order
-  to optimize performance for your particular system, which can take several
-  days on slow and unusual systems.
-  You drastically reduce the total Sage compile time if you manually select a
-  suitable architecture.
-  It is recommended to specify a suitable architecture on laptops or other
-  systems with CPU throttling or if you want to distribute the binaries.
-  Available architectures are
-
-    ``POWER3``, ``POWER4``, ``POWER5``, ``PPCG4``, ``PPCG5``,
-    ``POWER6``, ``POWER7``, ``IBMz9``, ``IBMz10``, ``IBMz196``,
-    ``x86x87``, ``x86SSE1``, ``x86SSE2``, ``x86SSE3``, ``P5``,
-    ``P5MMX``, ``PPRO``, ``PII``, ``PIII``, ``PM``, ``CoreSolo``,
-    ``CoreDuo``, ``Core2Solo``, ``Core2``, ``Corei1``, ``Corei2``,
-    ``Atom``, ``P4``, ``P4E``, ``Efficeon``, ``K7``, ``HAMMER``,
-    ``AMD64K10h``, ``AMDDOZER``, ``UNKNOWNx86``, ``IA64Itan``,
-    ``IA64Itan2``, ``USI``, ``USII``, ``USIII``, ``USIV``, ``UST2``,
-    ``UnknownUS``, ``MIPSR1xK``, ``MIPSICE9``, ``ARMv7``.
-
-  and instruction set extensions are
-
-    ``VSX``, ``AltiVec``, ``AVXMAC``, ``AVXFMA4``, ``AVX``, ``SSE3``,
-    ``SSE2``, ``SSE1``, ``3DNow``, ``NEON``.
-
-  In addition, you can also set
-
-  - ``SAGE_ATLAS_ARCH=fast`` which picks defaults for a modern (2-3 year old)
-    CPU of your processor line, and
-
-  - ``SAGE_ATLAS_ARCH=base`` which picks defaults that should work for a ~10
-    year old CPU.
-
-  For example,
-
-    ``SAGE_ATLAS_ARCH=Corei2,AVX,SSE3,SSE2,SSE1``
-
-  would be appropriate for a Core i7 CPU.
-
-- :envvar:`SAGE_ATLAS_LIB` - if you have an installation of ATLAS on your
-  system and you want Sage to use it instead of building and installing its
-  own version of ATLAS, set this variable to be the directory containing your
-  ATLAS installation.
-  It should contain the files :file:`libatlas`, :file:`liblapack`,
-  :file:`libcblas`, :file:`libf77blas` (and optionally :file:`libptcblas` and
-  :file:`libptf77blas` for multi-threaded computations), with extensions ``.a``,
-  ``.so``, or ``.dylib``.  For backward compatibility, the libraries may also be
-  in the subdirectory :file:`SAGE_ATLAS_LIB/lib/`.
 
 - :envvar:`SAGE_MATPLOTLIB_GUI` - if set to anything non-empty except ``no``,
   then Sage will attempt to build the graphical backend when it builds the
@@ -1611,4 +1468,4 @@ the directory where you want to install Sage.
 
 
 
-**This page was last updated in May 2020 (Sage 9.1).**
+**This page was last updated in December 2020 (Sage 9.3).**

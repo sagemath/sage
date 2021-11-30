@@ -437,7 +437,8 @@ class SkewTableau(ClonableList,
             sage: SkewTableau([[None, 2], [1, 3]]).size()
             3
         """
-        return sum(len([x for x in row if x is not None]) for row in self)
+        one = ZZ.one()
+        return sum(one for row in self for x in row if x is not None)
 
     def conjugate(self):
         """
@@ -539,10 +540,8 @@ class SkewTableau(ClonableList,
             []
         """
         from sage.combinat.permutation import Permutation
-        word = []
-        for row in reversed(self):
-            word += [i for i in row if i is not None]
-        return Permutation(word)
+        perm = [i for row in reversed(self) for i in row if i is not None]
+        return Permutation(perm)
 
     def weight(self):
         r"""
@@ -591,7 +590,7 @@ class SkewTableau(ClonableList,
             sage: all(by_word(t) == SkewTableau(t).weight() for t in SST)
             True
         """
-        if len(self) == 0 or all(c is None for row in self for c in row):
+        if (not self) or all(c is None for row in self for c in row):
             return []
         m = max(c for row in self for c in row if c is not None)
         if m is None:
@@ -623,10 +622,7 @@ class SkewTableau(ClonableList,
         """
         # Check to make sure that it is filled with 1...size
         w = [i for row in self for i in row if i is not None]
-        if sorted(w) != list(range(1, len(w) + 1)):
-            return False
-        else:
-            return self.is_semistandard()
+        return sorted(w) == list(range(1, len(w) + 1)) and self.is_semistandard()
 
     def is_semistandard(self):
         """
@@ -683,9 +679,8 @@ class SkewTableau(ClonableList,
 
         if self.inner_size() != 0:
             raise ValueError("the inner size of the skew tableau must be 0")
-        else:
-            from sage.combinat.tableau import Tableau
-            return Tableau(self[:])
+        from sage.combinat.tableau import Tableau
+        return Tableau(self[:])
 
     def restrict(self, n):
         """
@@ -708,9 +703,8 @@ class SkewTableau(ClonableList,
             sage: SkewTableau([[None,1],[1],[2]]).restrict(1)
             [[None, 1], [1]]
         """
-        t = self[:]
-        return SkewTableau([z for z in [[y for y in x if y is None or y <= n]
-                                        for x in t] if z])
+        data = ([y for y in x if y is None or y <= n] for x in self)
+        return SkewTableau([z for z in data if z])
 
     def restriction_outer_shape(self, n):
         """
@@ -743,9 +737,10 @@ class SkewTableau(ClonableList,
             sage: T.restriction_outer_shape(19)
             [4, 3, 1]
         """
-        from sage.combinat.partition import Partition
-        res = [len([y for y in row if y is None or y <= n]) for row in self]
-        return Partition(res)
+        from sage.combinat.partition import _Partitions
+        one = ZZ.one()
+        res = [sum(one for y in row if y is None or y <= n) for row in self]
+        return _Partitions(res)
 
     def restriction_shape(self, n):
         """
@@ -821,7 +816,7 @@ class SkewTableau(ClonableList,
             [[1]]
         """
         if max_entry is None:
-            if len(self) == 0 or all(c is None for row in self for c in row):
+            if (not self) or all(c is None for row in self for c in row):
                 max_entry = 0
             else:
                 max_entry = max(c for row in self for c in row if c is not None)
@@ -1214,38 +1209,49 @@ class SkewTableau(ClonableList,
 
         EXAMPLES::
 
-            sage: t = SkewTableau([[None,None,None,4,4,5,6,7],[None,2,4,6,7,7,7],[None,4,5,8,8,9],[None,6,7,10],[None,8,8,11],[None],[4]])
+            sage: t = SkewTableau([[None,None,None,4,4,5,6,7],[None,2,4,6,7,7,7],
+            ....:                  [None,4,5,8,8,9],[None,6,7,10],[None,8,8,11],[None],[4]])
             sage: t
-            [[None, None, None, 4, 4, 5, 6, 7], [None, 2, 4, 6, 7, 7, 7], [None, 4, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [4]]
+            [[None, None, None, 4, 4, 5, 6, 7], [None, 2, 4, 6, 7, 7, 7],
+             [None, 4, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [4]]
             sage: t.bender_knuth_involution(1)
-            [[None, None, None, 4, 4, 5, 6, 7], [None, 1, 4, 6, 7, 7, 7], [None, 4, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [4]]
+            [[None, None, None, 4, 4, 5, 6, 7], [None, 1, 4, 6, 7, 7, 7],
+             [None, 4, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [4]]
             sage: t.bender_knuth_involution(4)
-            [[None, None, None, 4, 5, 5, 6, 7], [None, 2, 4, 6, 7, 7, 7], [None, 5, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [5]]
+            [[None, None, None, 4, 5, 5, 6, 7], [None, 2, 4, 6, 7, 7, 7],
+             [None, 5, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [5]]
             sage: t.bender_knuth_involution(5)
-            [[None, None, None, 4, 4, 5, 6, 7], [None, 2, 4, 5, 7, 7, 7], [None, 4, 6, 8, 8, 9], [None, 5, 7, 10], [None, 8, 8, 11], [None], [4]]
+            [[None, None, None, 4, 4, 5, 6, 7], [None, 2, 4, 5, 7, 7, 7],
+             [None, 4, 6, 8, 8, 9], [None, 5, 7, 10], [None, 8, 8, 11], [None], [4]]
             sage: t.bender_knuth_involution(6)
-            [[None, None, None, 4, 4, 5, 6, 6], [None, 2, 4, 6, 6, 7, 7], [None, 4, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [4]]
+            [[None, None, None, 4, 4, 5, 6, 6], [None, 2, 4, 6, 6, 7, 7],
+             [None, 4, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [4]]
             sage: t.bender_knuth_involution(666) == t
             True
             sage: t.bender_knuth_involution(4, 2) == t
             True
             sage: t.bender_knuth_involution(4, 3)
-            [[None, None, None, 4, 4, 5, 6, 7], [None, 2, 4, 6, 7, 7, 7], [None, 5, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [4]]
+            [[None, None, None, 4, 4, 5, 6, 7], [None, 2, 4, 6, 7, 7, 7],
+             [None, 5, 5, 8, 8, 9], [None, 6, 7, 10], [None, 8, 8, 11], [None], [4]]
 
         The Bender--Knuth involution is an involution::
 
             sage: t = SkewTableau([[None,3,4,4],[None,6,10],[7,7,11],[18]])
-            sage: all(t.bender_knuth_involution(k).bender_knuth_involution(k) == t for k in range(1,4))
+            sage: all(t.bender_knuth_involution(k).bender_knuth_involution(k)
+            ....:     == t for k in range(1,4))
             True
 
         The same for the single switches::
 
-            sage: all(t.bender_knuth_involution(k, j).bender_knuth_involution(k, j) == t for k in range(1,5) for j in range(1, 5))
+            sage: all(t.bender_knuth_involution(k, j).bender_knuth_involution(k, j)
+            ....:     == t for k in range(1,5) for j in range(1, 5))
             True
 
         Locality of the Bender--Knuth involutions::
 
-            sage: all(t.bender_knuth_involution(k).bender_knuth_involution(l) == t.bender_knuth_involution(l).bender_knuth_involution(k) for k in range(1,5) for l in range(1,5) if abs(k - l) > 1)
+            sage: all(t.bender_knuth_involution(k).bender_knuth_involution(l)
+            ....:     == t.bender_knuth_involution(l).bender_knuth_involution(k)
+            ....:     for k in range(1,5) for l in range(1,5) if abs(k - l) > 1)
             True
 
         TESTS::
@@ -1494,7 +1500,7 @@ class SkewTableau(ClonableList,
             sage: s.cells_by_content(-2)
             [(2, 0)]
         """
-        if len(self) == 0:
+        if not self:
             return []
 
         if c >= 0:
@@ -1704,8 +1710,10 @@ class SkewTableaux(UniqueRepresentation, Parent):
 
     def from_expr(self, expr):
         """
-        Return a :class:`SkewTableau` from a MuPAD-Combinat expr for a skew
-        tableau. The first list in ``expr`` is the inner shape of the skew
+        Return a :class:`SkewTableau` from a MuPAD-Combinat expr for
+        a skew tableau.
+
+        The first list in ``expr`` is the inner shape of the skew
         tableau. The second list are the entries in the rows of the skew
         tableau from bottom to top.
 
@@ -1735,7 +1743,7 @@ class SkewTableaux(UniqueRepresentation, Parent):
             [[None, 1, 2], [None, 3, 4], [5]]
         """
         shape = chain[-1]
-        T = [[None for _ in range(r)] for r in shape]
+        T = [[None]*r for r in shape]
         for i in range(1, len(chain)):
             la = chain[i]
             mu = chain[i - 1]
@@ -1760,11 +1768,16 @@ class SkewTableaux(UniqueRepresentation, Parent):
             sage: SkewTableaux().from_shape_and_word(shape, word)
             [[None, 1, 3], [None, 2], [4]]
         """
-        st = [[None] * row_length for row_length in shape[0]]
+        outer, inner = shape
+        st = [[None] * row_length for row_length in outer]
         w_count = 0
-        for i in reversed(range(len(shape[0]))):
-            for j in range(shape[0][i]):
-                if i >= len(shape[1]) or j >= shape[1][i]:
+        for i in reversed(range(len(inner), len(outer))):
+            for j in range(outer[i]):
+                st[i][j] = word[w_count]
+                w_count += 1
+        for i in reversed(range(len(inner))):
+            for j in range(outer[i]):
+                if j >= inner[i]:
                     st[i][j] = word[w_count]
                     w_count += 1
         return self.element_class(self, st)

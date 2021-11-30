@@ -807,7 +807,7 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
     def _new_retraction_map(self, seed=None):
         r"""
         Create a retraction map from the ring of coefficient
-        of this skew polynomial ring to its fixed subfield under 
+        of this skew polynomial ring to its fixed subfield under
         the twisting morphism
 
         This is an internal function used in factorization.
@@ -860,11 +860,11 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
         (see also :meth:`_new_retraction_map`)
 
         This is an internal function used in factorization.
-        
+
         INPUT:
 
         - ``newmap`` -- a boolean (default: ``False``); whether we
-          first create and use a new retraction map 
+          first create and use a new retraction map
 
         - ``seed`` -- an element of the base ring or ``None`` (default:
           ``None``); if given, first create a new random retraction map
@@ -892,7 +892,7 @@ class SkewPolynomialRing_finite_field(SkewPolynomialRing_finite_order):
 
         We can specify a seed::
 
-            sage: S._retraction(a^2, seed=a)
+            sage: S._retraction(a^2, seed=a)  # random
             10
         """
         # Better to return the retraction map but more difficult

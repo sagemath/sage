@@ -15,7 +15,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 def is_MPolynomial(x):
     return isinstance(x, MPolynomial)
@@ -35,6 +35,87 @@ cdef class MPolynomial(CommutativeRingElement):
     ####################
     # Some standard conversions
     ####################
+    def _scalar_conversion(self, R):
+        r"""
+        TESTS::
+
+            sage: ZZ(RR['x,y'](0)) # indirect doctest
+            0
+            sage: ZZ(RR['x,y'](0.5))
+            Traceback (most recent call last):
+            ...
+            TypeError: Attempt to coerce non-integral RealNumber to Integer
+            sage: ZZ(RR['x,y'].gen(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert non-constant polynomial x to Integer Ring
+
+            sage: RR(RR['x,y'](0)) # indirect doctest
+            0.000000000000000
+            sage: RR(ZZ['x,y'].gen(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert non-constant polynomial x to Real Field with 53 bits of precision
+
+            sage: CC(RR['x,y'](0)) # indirect doctest
+            0.000000000000000
+            sage: CC(ZZ['x,y'].gen(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert non-constant polynomial x to Complex Field with 53 bits of precision
+
+            sage: RDF(RR['x,y'](0))
+            0.0
+            sage: RDF(ZZ['x,y'].gen(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert non-constant polynomial x to Real Double Field
+
+            sage: CDF(RR['x,y'](0)) # indirect doctest
+            0.0
+            sage: CDF(ZZ['x,y'].gen(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert non-constant polynomial x to Complex Double Field
+
+            sage: a = RR['x,y'](1)
+            sage: RBF(a)
+            1.000000000000000
+            sage: RIF(a)
+            1
+            sage: CBF(a)
+            1.000000000000000
+            sage: CIF(a)
+            1
+
+            sage: CBF(RR['x,y'](1)) # indirect doctest
+            1.000000000000000
+            sage: CBF(ZZ['x,y'].gen(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert non-constant polynomial x to Complex ball field with 53 bits of precision
+
+            sage: x = polygen(QQ)
+            sage: A.<u> = NumberField(x^3 - 2)
+            sage: A(A['x,y'](u))
+            u
+        """
+        if self.degree() <= 0:
+            return R(self.constant_coefficient())
+        raise TypeError(f"unable to convert non-constant polynomial {self} to {R}")
+
+    _real_double_ = _scalar_conversion
+    _complex_double_ = _scalar_conversion
+    _mpfr_ = _scalar_conversion
+    _complex_mpfr_ = _scalar_conversion
+    _real_mpfi_ = _scalar_conversion
+    _complex_mpfi_ = _scalar_conversion
+    _arb_ = _scalar_conversion
+    _acb_ = _scalar_conversion
+    _integer_ = _scalar_conversion
+    _algebraic_ = _scalar_conversion
+    _number_field_ = _scalar_conversion
+
     def __int__(self):
         """
         TESTS::
@@ -51,106 +132,7 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: int(ZZ['x,y'].gen(0))
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert non-constant polynomial x to an integer
-        """
-        if self.degree() <= 0:
-            return int(self.constant_coefficient())
-        raise TypeError(f"unable to convert non-constant polynomial {self} to an integer")
-
-    def __float__(self):
-        """
-        TESTS::
-
-            sage: float(RR['x,y'](0)) # indirect doctest
-            0.0
-            sage: float(ZZ['x,y'].gen(0))
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert non-constant polynomial x to a float
-        """
-        if self.degree() <= 0:
-            return float(self.constant_coefficient())
-        raise TypeError(f"unable to convert non-constant polynomial {self} to a float")
-
-    def _mpfr_(self, R):
-        """
-        TESTS::
-
-            sage: RR(RR['x,y'](0)) # indirect doctest
-            0.000000000000000
-            sage: RR(ZZ['x,y'].gen(0))
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert non-constant polynomial x to a real number
-        """
-        if self.degree() <= 0:
-            return R(self.constant_coefficient())
-        raise TypeError(f"unable to convert non-constant polynomial {self} to a real number")
-
-    def _complex_mpfr_field_(self, R):
-        """
-        TESTS::
-
-            sage: CC(RR['x,y'](0)) # indirect doctest
-            0.000000000000000
-            sage: CC(ZZ['x,y'].gen(0))
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert non-constant polynomial x to a complex number
-        """
-        if self.degree() <= 0:
-            return R(self.constant_coefficient())
-        raise TypeError(f"unable to convert non-constant polynomial {self} to a complex number")
-
-    def _complex_double_(self, R):
-        """
-        TESTS::
-
-            sage: CDF(RR['x,y'](0)) # indirect doctest
-            0.0
-            sage: CDF(ZZ['x,y'].gen(0))
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert non-constant polynomial x to a complex number
-        """
-        if self.degree() <= 0:
-            return R(self.constant_coefficient())
-        raise TypeError(f"unable to convert non-constant polynomial {self} to a complex number")
-
-    def _real_double_(self, R):
-        """
-        TESTS::
-
-            sage: RDF(RR['x,y'](0))
-            0.0
-            sage: RDF(ZZ['x,y'].gen(0))
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert non-constant polynomial x to a real number
-        """
-        if self.degree() <= 0:
-            return R(self.constant_coefficient())
-        raise TypeError(f"unable to convert non-constant polynomial {self} to a real number")
-
-    def _rational_(self):
-        """
-        TESTS::
-
-            sage: QQ(RR['x,y'](0.5)) # indirect doctest
-            1/2
-            sage: QQ(RR['x,y'].gen(0))
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert non-constant polynomial x to a rational
-        """
-        if self.degree() <= 0:
-            from sage.rings.rational import Rational
-            return Rational(self.constant_coefficient())
-        raise TypeError(f"unable to convert non-constant polynomial {self} to a rational")
-
-    def _integer_(self, ZZ=None):
-        """
-        TESTS::
+            TypeError: unable to convert non-constant polynomial x to <class 'int'>
 
             sage: ZZ(RR['x,y'](0)) # indirect doctest
             0
@@ -161,12 +143,36 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: ZZ(RR['x,y'].gen(0))
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert non-constant polynomial x to an integer
+            TypeError: unable to convert non-constant polynomial x to Integer Ring
         """
-        if self.degree() <= 0:
-            from sage.rings.integer import Integer
-            return Integer(self.constant_coefficient())
-        raise TypeError(f"unable to convert non-constant polynomial {self} to an integer")
+        return self._scalar_conversion(int)
+
+    def __float__(self):
+        """
+        TESTS::
+
+            sage: float(RR['x,y'](0)) # indirect doctest
+            0.0
+            sage: float(ZZ['x,y'].gen(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert non-constant polynomial x to <class 'float'>
+        """
+        return self._scalar_conversion(float)
+
+    def _rational_(self):
+        """
+        TESTS::
+
+            sage: QQ(RR['x,y'](0.5)) # indirect doctest
+            1/2
+            sage: QQ(RR['x,y'].gen(0))
+            Traceback (most recent call last):
+            ...
+            TypeError: unable to convert non-constant polynomial x to Rational Field
+        """
+        from sage.rings.rational_field import QQ
+        return self._scalar_conversion(QQ)
 
     def _symbolic_(self, R):
         """
@@ -248,65 +254,6 @@ cdef class MPolynomial(CommutativeRingElement):
         d = self.dict()
         return R(dict([(k, c) for k, c in d.iteritems() if k[ind] < n]))
 
-    def _fast_float_(self, *vars):
-        """
-        Returns a quickly-evaluating function on floats.
-
-        EXAMPLES::
-
-            sage: K.<x,y,z> = QQ[]
-            sage: f = (x+2*y+3*z^2)^2 + 42
-            sage: f(1, 10, 100)
-            901260483
-            sage: ff = f._fast_float_()
-            sage: ff(0, 0, 1)
-            51.0
-            sage: ff(0, 1, 0)
-            46.0
-            sage: ff(1, 10, 100)
-            901260483.0
-            sage: ff_swapped = f._fast_float_('z', 'y', 'x')
-            sage: ff_swapped(100, 10, 1)
-            901260483.0
-            sage: ff_extra = f._fast_float_('x', 'A', 'y', 'B', 'z', 'C')
-            sage: ff_extra(1, 7, 10, 13, 100, 19)
-            901260483.0
-
-        Currently, we use a fairly unoptimized method that evaluates one
-        monomial at a time, with no sharing of repeated computations and
-        with useless additions of 0 and multiplications by 1::
-
-            sage: g = (x*y**2*z)._fast_float_()
-            sage: list(g)
-            ['push 0.0', 'push 1.0', 'load 0', 'load 1', 'dup', 'mul',
-             'mul', 'load 2', 'mul', 'mul', 'add']
-
-        TESTS::
-
-            sage: from sage.ext.fast_eval import fast_float
-            sage: list(fast_float(K(0), old=True))
-            ['push 0.0']
-            sage: list(fast_float(K(17), old=True))
-            ['push 0.0', 'push 17.0', 'add']
-            sage: list(fast_float(y, old=True))
-            ['push 0.0', 'push 1.0', 'load 1', 'mul', 'add']
-        """
-        from sage.ext.fast_eval import fast_float_arg, fast_float_constant
-        my_vars = self.parent().variable_names()
-        vars = list(vars)
-        if len(vars) == 0:
-            indices = list(xrange(len(my_vars)))
-        else:
-            indices = [vars.index(v) for v in my_vars]
-        x = [fast_float_arg(i) for i in indices]
-
-        n = len(x)
-        expr = fast_float_constant(0)
-        for m, c in self.dict().iteritems():
-            monom = prod([ x[i]**m[i] for i in range(n) if m[i] != 0], fast_float_constant(c))
-            expr = expr + monom
-        return expr
-
     def _fast_callable_(self, etb):
         """
         Given an ExpressionTreeBuilder, return an Expression representing
@@ -326,9 +273,9 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: v = K(0)
             sage: vf = fast_callable(v)
             sage: type(v(0r, 0r, 0r))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: type(vf(0r, 0r, 0r))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: K.<x,y,z> = QQ[]
             sage: from sage.ext.fast_eval import fast_float
             sage: fast_float(K(0)).op_list()
@@ -366,7 +313,7 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: R.<x, y> = PolynomialRing(FiniteField(5))
             sage: f = x^3*y^5 + x^7*y
             sage: type(f)
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: f.derivative(x)
             2*x^6*y - 2*x^2*y^5
             sage: f.derivative(y)
@@ -821,6 +768,41 @@ cdef class MPolynomial(CommutativeRingElement):
         else:
             return True
 
+    def homogeneous_components(self):
+        """
+        Return the homogeneous components of this polynomial.
+
+        OUTPUT:
+
+        A dictionary mapping degrees to homogeneous polynomials.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: (x^3 + 2*x*y^3 + 4*y^3 + y).homogeneous_components()
+            {1: y, 3: x^3 + 4*y^3, 4: 2*x*y^3}
+            sage: R.zero().homogeneous_components()
+            {}
+
+        In case of weighted term orders, the polynomials are homogeneous with
+        respect to the weights::
+
+             sage: S.<a,b,c> = PolynomialRing(ZZ, order=TermOrder('wdegrevlex', (1,2,3)))
+             sage: (a^6 + b^3 + b*c + a^2*c + c + a + 1).homogeneous_components()
+             {0: 1, 1: a, 3: c, 5: a^2*c + b*c, 6: a^6 + b^3}
+        """
+        cdef ETuple e
+        from collections import defaultdict
+        d = defaultdict(dict)
+        if self._parent.term_order()._weights:
+            for c, m in self:
+                d[m.degree()][m.exponents()[0]] = c
+        else:
+            # Otherwise it is unweighted, so we use a faster implementation
+            for e, c in self.iterator_exp_coeff():
+               d[e.unweighted_degree()][e] = c
+        return {k: self._parent(d[k]) for k in d}
+
     cpdef _mod_(self, other):
         """
         EXAMPLES::
@@ -875,7 +857,7 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: R.<x,y> = K[]
             sage: f = x^2 + z*y
             sage: f.change_ring(K.embeddings(CC)[1])
-            x^2 + (-0.500000000000000 + 0.866025403784439*I)*y
+            x^2 + (-0.500000000000000 - 0.866025403784438*I)*y
 
         TESTS:
 
@@ -1077,6 +1059,26 @@ cdef class MPolynomial(CommutativeRingElement):
 
         return '%s!(%s)'%(R.name(), s)
 
+    def _giac_init_(self):
+        r"""
+        Return a Giac string representation of this polynomial.
+
+        TESTS::
+
+            sage: R.<x,y,z> = GF(101)['e,i'][]
+            sage: f = R('e*i') * x + y^2
+            sage: f._giac_init_()
+            '((1)*1)*sageVARy^2+((1)*sageVARe*sageVARi)*sageVARx'
+            sage: giac(f)
+            sageVARy^2+sageVARe*sageVARi*sageVARx
+            sage: giac(R.zero())
+            0
+        """
+        g = ['sageVAR' + x for x in self.parent().variable_names()]
+        s = '+'.join('(%s)*%s' % (c._giac_init_(),
+                                  m._repr_with_changed_varnames(g))
+                     for c, m in self)
+        return s if s else '0'
 
     def gradient(self):
         r"""
@@ -1774,9 +1776,9 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: x.denominator()
             1
             sage: type(x.denominator())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: type(a.denominator())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: from sage.rings.polynomial.multi_polynomial_element import MPolynomial
             sage: isinstance(a / b, MPolynomial)
             False
@@ -1968,7 +1970,7 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: p.weighted_degree(x,1,1)
             Traceback (most recent call last):
             ...
-            TypeError: unable to convert non-constant polynomial x to an integer
+            TypeError: unable to convert non-constant polynomial x to Integer Ring
             sage: p.weighted_degree(2/1,1,1)
             6
 

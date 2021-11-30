@@ -17,20 +17,20 @@ case "$UNAME" in
     TARGET=bsd
     ;;
 "Linux")
-    case "`uname -m`" in
-    i[3456]86)
+    case "$($CC -dumpmachine)" in
+    i[3456]86*)
         TARGET=linux-thr
         ;;
-    ia64)
+    ia64*)
         TARGET=linux-ia64-thr
         ;;
-    amd64|x86_64)
+    amd64*|x86_64*)
         TARGET=linux-64-thr
         ;;
     ppc*|powerpc*)
         TARGET=linux-ppc
         ;;
-    armv6l|armv7l)
+    armv6l*|armv7l*)
         TARGET=linux-arm-thr
         ;;
     esac

@@ -75,6 +75,7 @@ enum_map = {
   MATRIX:     'MATRIX',
 }
 
+
 def token_to_str(int token):
     """
     For speed reasons, tokens are integers. This function returns a string
@@ -507,6 +508,30 @@ cdef class Parser:
         self.variable_constructor = make_var
         self.callable_constructor = make_function
         self.implicit_multiplication = implicit_multiplication
+
+    def _variable_constructor(self):
+        """
+        Return the variable constructor of this parser.
+
+        EXAMPLES::
+
+            sage: from sage.calculus.calculus import SR_parser
+            sage: SR_parser._variable_constructor()
+            <sage.misc.parser.LookupNameMaker...
+        """
+        return self.variable_constructor
+
+    def _callable_constructor(self):
+        """
+        Return the callable constructor of this parser.
+
+        EXAMPLES::
+
+            sage: from sage.calculus.calculus import SR_parser
+            sage: SR_parser._callable_constructor()
+            <sage.misc.parser.LookupNameMaker...
+        """
+        return self.callable_constructor
 
     cpdef parse(self, s, bint accept_eqn=True):
         """
@@ -1041,6 +1066,18 @@ cdef class LookupNameMaker:
         """
         self.names = names
         self.fallback = fallback
+
+    def set_names(self, new_names):
+        """
+        TESTS::
+
+            sage: from sage.misc.parser import LookupNameMaker
+            sage: maker = LookupNameMaker({}, str)
+            sage: maker.set_names({'a': x})
+            sage: maker('a') is x
+            True
+        """
+        self.names = new_names
 
     def __call__(self, name):
         """

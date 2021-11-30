@@ -140,8 +140,10 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
     def __setitem__(self, size_t i, xy):
         """
-        Assign a value to an index of the array. Currently the input has to be
-        en element that can be coerced to ``float` or a ``ComplexNumber`` element.
+        Assign a value to an index of the array.
+
+        Currently the input has to be en element that can be coerced
+        to ``float`` or a ``ComplexNumber`` element.
 
         INPUT:
 

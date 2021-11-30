@@ -43,6 +43,10 @@ Options currently supported by the viewer:
 
 - ``decimals`` -- (default: 2) integer determining decimals displayed in labels
 
+- ``depth_write`` -- (default: True for opaque surfaces, False for transparent surfaces)
+  whether to write the surface's depth into the depth buffer for the purpose of occluding
+  objects behind it
+
 - ``frame`` -- (default: True) Boolean determining whether frame is drawn
 
 - ``online`` -- (default: False) Boolean determining whether the local standard package

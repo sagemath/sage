@@ -297,7 +297,7 @@ def test_skewtab_to_SkewTableau(outer, inner):
 cdef dict sf_hashtab_to_dict(hashtab *ht):
     """
     Return a dictionary representing a Schur function. The keys are
-    partitions and the values are integers <type 'sage.rings.integer.Integer'>.
+    partitions and the values are integers <class 'sage.rings.integer.Integer'>.
 
     EXAMPLES::
 
@@ -320,7 +320,7 @@ cdef dict sf_hashtab_to_dict(hashtab *ht):
 cdef dict schubert_hashtab_to_dict(hashtab *ht):
     """
     Return a dictionary corresponding to a Schubert polynomial whose keys
-    are permutations and whose values are integers <type 'sage.rings.integer.Integer'>.
+    are permutations and whose values are integers <class 'sage.rings.integer.Integer'>.
 
     EXAMPLES::
 
@@ -341,7 +341,7 @@ cdef dict schubert_hashtab_to_dict(hashtab *ht):
 cdef dict vp_hashtab_to_dict(hashtab *ht):
     """
     Return a dictionary corresponding to the coproduct of a Schur function whose keys are
-    pairs of partitions and whose values are integers <type 'sage.rings.integer.Integer'>.
+    pairs of partitions and whose values are integers <class 'sage.rings.integer.Integer'>.
 
     EXAMPLES::
 

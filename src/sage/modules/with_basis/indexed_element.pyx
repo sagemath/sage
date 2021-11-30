@@ -664,16 +664,18 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             return self.base_ring().zero()
         return res
 
-    def _vector_(self, new_base_ring=None, order=None):
-        """
-        Returns ``self`` as a dense vector
+    def _vector_(self, new_base_ring=None, order=None, sparse=False):
+        r"""
+        Return ``self`` as a vector.
 
         INPUT:
 
         - ``new_base_ring`` -- a ring (default: ``None``)
         - ``order`` -- (optional) an ordering of the support of ``self``
+        - ``sparse`` -- (default: ``False``) whether to return a sparse
+          vector or a dense vector
 
-        OUTPUT: a dense :func:`FreeModule` vector
+        OUTPUT: a :func:`FreeModule` vector
 
         .. WARNING:: This will crash/run forever if ``self`` is infinite dimensional!
 
@@ -711,6 +713,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             (2, 0, 0, 0, 0, 4)
             sage: a == QS3.from_vector(a.to_vector())
             True
+            sage: a.to_vector(sparse=True)
+            (2, 0, 0, 0, 0, 4)
 
         If ``new_base_ring`` is specified, then a vector over
         ``new_base_ring`` is returned::
@@ -733,14 +737,23 @@ cdef class IndexedFreeModuleElement(ModuleElement):
              Other use cases may call for different or further
              optimizations.
         """
-        dense_free_module = self._parent._dense_free_module(new_base_ring)
+        free_module = self._parent._dense_free_module(new_base_ring)
+        if sparse:
+            free_module = free_module.sparse_module()
         d = self._monomial_coefficients
-        zero = dense_free_module.base_ring().zero()
-        if order is None:
-            order = self._parent.get_order()
-        return dense_free_module.element_class(dense_free_module,
-                                               [d.get(m, zero) for m in order],
-                                               coerce=True, copy=False)
+        zero = free_module.base_ring().zero()
+        if sparse:
+            if order is None:
+                order = {k: i for i,k in enumerate(self._parent.get_order())}
+            return free_module.element_class(free_module,
+                                             {order[k]: c for k, c in d.items()},
+                                             coerce=True, copy=False)
+        else:
+            if order is None:
+                order = self._parent.get_order()
+            return free_module.element_class(free_module,
+                                             [d.get(m, zero) for m in order],
+                                             coerce=True, copy=False)
 
     to_vector = _vector_
 

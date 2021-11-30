@@ -3,7 +3,7 @@
 r"""
 Rank Decompositions of graphs
 
-This modules wraps a C code from Philipp Klaus Krause computing a an optimal
+This module wraps C code from Philipp Klaus Krause computing an optimal
 rank-decomposition.
 
 **Definitions :**
@@ -30,7 +30,7 @@ achieving the minimal *rank-width*.
 **RW -- The original source code :**
 
 RW is a program that calculates rank-width and
-rank-decompositions. It is based on ideas from :
+rank-decompositions. It is based on ideas from:
 
     * "Computing rank-width exactly" by Sang-il Oum [Oum2009]_
     * "Sopra una formula numerica" by Ernesto Pascal
@@ -94,15 +94,15 @@ Methods
 -------
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Nathann Cohen <nathann.cohen@gail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport *

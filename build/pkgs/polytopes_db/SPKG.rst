@@ -1,6 +1,5 @@
-
-Reflexive Polytopes Databases
-=============================
+polytopes_db: Databases of 2- and 3-dimensional reflexive polytopes
+===================================================================
 
 Description
 -----------
@@ -20,6 +19,12 @@ License
 -------
 
 GPL
+
+Upstream Contact
+----------------
+
+http://hep.itp.tuwien.ac.at/~kreuzer/CY/CYpalp.html
+
 
 Dependencies
 ------------

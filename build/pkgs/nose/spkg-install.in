@@ -1,6 +1,0 @@
-cd src
-
-# Install new version
-echo "Installing nose..."
-sdh_pip_install .
-echo

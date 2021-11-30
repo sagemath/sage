@@ -1,1 +1,1 @@
-mpfr
+mpfr-devel

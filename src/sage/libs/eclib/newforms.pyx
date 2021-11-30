@@ -126,16 +126,21 @@ cdef class ECModularSymbol:
         sage: ECModularSymbol.__new__(ECModularSymbol)
         Modular symbol with sign 0 over Rational Field attached to None
     """
-    def __init__(self, E, sign=1):
+    def __init__(self, E, sign=1, nap=1000):
         """
         Construct the modular symbol object from an elliptic curve.
 
         INPUT:
 
-        - ``E``- an elliptic curve defined over Q
+        - ``E``- an elliptic curve defined over Q.
+
         - ``sign`` (int) -- 0 or +1.  If +1, only plus modular symbols
-           of this sign are available.  If 0, modular symbols of both
-           signs are available but the construction is more expensive.
+         of this sign are available.  If 0, modular symbols of both
+         signs are available but the construction is more expensive.
+
+        - ``nap`` - (int, default 1000): the number of ap of E to use
+         in determining the normalisation of the modular symbols.
+         Note that eclib will increase this to 100*sqrt(N) if necessary.
 
         EXAMPLES::
 
@@ -211,7 +216,7 @@ cdef class ECModularSymbol:
         self.sign = sign
 
         self.nfs = new newforms(n, 0)
-        self.nfs.createfromcurve(sign,CR)
+        self.nfs.createfromcurve(sign, CR, nap)
         sig_off()
 
     def __dealloc__(self):
@@ -245,9 +250,7 @@ cdef class ECModularSymbol:
         - ``sign`` (int) - either +1, -1 or 0.  If the sign of the
           space is +1, only sign +1 is allowed.  Default: self.sign, or +1 when self.sign=0.
 
-
-
-           - ``base_at_infinity`` (bool) - if True, evaluates
+        - ``base_at_infinity`` (bool) - if True, evaluates
           {oo,r}. otherwise (default) evaluates {0,r}.
 
         OUTPUT:
@@ -381,7 +384,7 @@ cdef class ECModularSymbol:
             sage: E = EllipticCurve('11a')
             sage: M = ECModularSymbol(E)
             sage: M.__reduce__()
-            (<type 'sage.libs.eclib.newforms.ECModularSymbol'>,
+            (<class 'sage.libs.eclib.newforms.ECModularSymbol'>,
              (Elliptic Curve defined by y^2 + y = x^3 - x^2 - 10*x - 20 over Rational Field,
               1))
         """

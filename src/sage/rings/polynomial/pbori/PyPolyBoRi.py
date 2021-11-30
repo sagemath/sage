@@ -65,7 +65,10 @@ AUTHOR:
         [a, b, c, d, e, y2]
 """
 
-from sage.rings.polynomial.pbori.pbori import *
+from .pbori import (order_dict, TermOrder_from_pb_order, BooleanPolynomialRing,
+                    BooleanPolynomialVector, MonomialFactory,
+                    PolynomialFactory, VariableFactory, add_up_polynomials,
+                    gauss_on_polys)
 
 import weakref
 

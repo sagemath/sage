@@ -1,5 +1,5 @@
-OpenSSL
-=======
+openssl: Implementation of the SSL and TLS protocols
+====================================================
 
 Description
 -----------
@@ -13,16 +13,10 @@ variety of computer languages are available.
 License
 -------
 
--  Custom GPL-incompatible license
+- Apache License v2 (considered compatible with GPL v3)
 
 
 Upstream Contact
 ----------------
 
 -  http://openssl.org/
--  http://openssl.org/support/community.html
-
-Patches
-~~~~~~~
-
--  src/config: patched to fix a problem on Solaris.

@@ -137,6 +137,8 @@ from .ideal import (
     FunctionFieldIdealInfinite_rational,
     FunctionFieldIdealInfinite_polymod)
 
+from .hermite_form_polynomial import reversed_hermite_form
+
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):
     """
@@ -1475,10 +1477,8 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
         # so that we get a unique hnf. Here the hermite form
         # algorithm also makes the pivots monic.
 
-        # compute the reverse hermite form with zero rows deleted
-        mat.reverse_rows_and_columns()
-        mat._hermite_form_euclidean(normalization=lambda p: ~p.lc())
-        mat.reverse_rows_and_columns()
+        # compute the reversed hermite form with zero rows deleted
+        reversed_hermite_form(mat)
         i = 0
         while i < mat.nrows() and mat.row(i).is_zero():
             i += 1
@@ -1997,7 +1997,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 row.append( V([to(e) for e in self._mtable[i][j]]) )
             mtable.append(row)
 
-        if not p in self._kummer_places:
+        if p not in self._kummer_places:
             #####################################
             # Decomposition by Kummer's theorem #
             #####################################
@@ -2605,9 +2605,7 @@ class FunctionFieldMaximalOrderInfinite_polymod(FunctionFieldMaximalOrderInfinit
                 k = x * k
 
                 h2 = block_matrix([[h],[k]])
-                h2.reverse_rows_and_columns()
-                h2._hermite_form_euclidean(normalization=lambda p: ~p.lc())
-                h2.reverse_rows_and_columns()
+                reversed_hermite_form(h2)
                 i = 0
                 while i < h2.nrows() and h2.row(i).is_zero():
                     i += 1

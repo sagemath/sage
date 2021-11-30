@@ -1168,9 +1168,9 @@ class Components(SageObject):
 
         Check that the bug reported in :trac:`22520` is fixed::
 
-            sage: c = Components(SR, [1, 2], 1)
-            sage: c[0] = SR.var('t', domain='real')
-            sage: c.display('c')
+            sage: c = Components(SR, [1, 2], 1)      # optional - sage.symbolic
+            sage: c[0] = SR.var('t', domain='real')  # optional - sage.symbolic
+            sage: c.display('c')                     # optional - sage.symbolic
             c_0 = t
 
         """
@@ -1202,7 +1202,12 @@ class Components(SageObject):
             raise ValueError("the argument 'index_latex_labels' must " +
                              "contain {} items".format(self._dim))
         if only_nonredundant:
-            generator = self.non_redundant_index_generator()
+            # To simplify the implementation of the non-redundant
+            # index generator, it generates indices in a different
+            # order than the redundant index generator. For the
+            # display, we sort the indices again.
+            generator = list(self.non_redundant_index_generator())
+            generator.sort()
         else:
             generator = self.index_generator()
         rtxt = ''
@@ -2123,6 +2128,34 @@ class Components(SageObject):
             sage: a.contract(0, a, 0) == b.trace(0,1)
             True
 
+        TESTS:
+
+        Check that :trac:`32355` is fixed::
+
+            sage: from sage.tensor.modules.comp import CompFullyAntiSym
+            sage: a = CompFullyAntiSym(QQ, V.basis(), 2)
+            sage: a[0,1] = 1
+            sage: b = CompFullyAntiSym(QQ, V.basis(), 2)
+            sage: b[0,1], b[0,2] = 2, 3
+            sage: a.contract(0, 1, b, 0, 1)
+            4
+            sage: a.contract(0, 1, b, 1, 0)
+            -4
+            sage: a.contract(1, 0, b, 0, 1)
+            -4
+            sage: a.contract(1, 0, b, 1, 0)
+            4
+            sage: Parallelism().set('tensor', nproc=2)  # same tests with parallelization
+            sage: a.contract(0, 1, b, 0, 1)
+            4
+            sage: a.contract(0, 1, b, 1, 0)
+            -4
+            sage: a.contract(1, 0, b, 0, 1)
+            -4
+            sage: a.contract(1, 0, b, 1, 0)
+            4
+            sage: Parallelism().set('tensor', nproc=1)  # switch off parallelization
+
         """
         #
         # Treatment of the input
@@ -2159,35 +2192,32 @@ class Components(SageObject):
         # Special case of a scalar result
         #
         if res_nid == 0:
-            # To generate the indices tuples (of size ncontr) involved in the
-            # the contraction, we create an empty instance of Components with
-            # ncontr indices and call the method index_generator() on it:
-            comp_for_contr = Components(self._ring, self._frame, ncontr,
-                                        start_index=self._sindex)
-            res = 0
-
+            # Pairs of indices tuples for the contraction:
+            ind_pairs = []
+            for ind_s in self.index_generator():
+                ind_o = [None] * ncontr
+                for pos_s, pos_o in contractions:
+                    ind_o[pos_o] = ind_s[pos_s]
+                ind_pairs.append((ind_s, ind_o))
 
             if Parallelism().get('tensor') != 1:
-                # parallel contraction to scalar
+                # parallel computation
 
-                # parallel multiplication
-                @parallel(p_iter='multiprocessing',ncpus=Parallelism().get('tensor'))
-                def compprod(a,b):
+                @parallel(p_iter='multiprocessing', ncpus=Parallelism().get('tensor'))
+                def compprod(a, b):
                     return a*b
 
                 # parallel list of inputs
-                partial = list(compprod([(other[[ind]],self[[ind]]) for ind in
-                                     comp_for_contr.index_generator()
-                    ]))
-                res = sum(map(itemgetter(1),partial))
+                partial = list(compprod([(self[[ind_s]], other[[ind_o]])
+                                         for ind_s, ind_o in ind_pairs]))
+                res = sum(map(itemgetter(1), partial))
             else:
-                # sequential
+                # sequential computation
                 res = 0
-                for ind in comp_for_contr.index_generator():
-                    res += self[[ind]] * other[[ind]]
+                for ind_s, ind_o in ind_pairs:
+                    res += self[[ind_s]] * other[[ind_o]]
 
             return res
-
 
         #
         # Positions of self and other indices in the result
@@ -2300,16 +2330,18 @@ class Components(SageObject):
             nproc = Parallelism().get('tensor')
             lol = lambda lst, sz: [lst[i:i+sz] for i in range(0, len(lst), sz)]
             ind_list = [ind for ind in res.non_redundant_index_generator()]
-            ind_step = max(1,int(len(ind_list)/nproc/2))
-            local_list = lol(ind_list,ind_step)
+            ind_step = max(1, int(len(ind_list)/nproc/2))
+            local_list = lol(ind_list, ind_step)
 
             listParalInput = []
             for ind_part in local_list:
-                listParalInput.append((self,other,ind_part,rev_s,rev_o,shift_o,contractions,comp_for_contr))
+                listParalInput.append((self, other, ind_part, rev_s, rev_o,
+                                       shift_o, contractions, comp_for_contr))
 
             # definition of the parallel function
-            @parallel(p_iter='multiprocessing',ncpus=nproc)
-            def make_Contraction(this,other,local_list,rev_s,rev_o,shift_o,contractions,comp_for_contr):
+            @parallel(p_iter='multiprocessing', ncpus=nproc)
+            def make_Contraction(this, other, local_list, rev_s, rev_o,
+                                 shift_o,contractions, comp_for_contr):
                 local_res = []
                 for ind in local_list:
                     ind_s = [None for i in range(this._nid)]  # initialization
@@ -2334,7 +2366,7 @@ class Components(SageObject):
                 for jj in val:
                       res[[jj[0]]] = jj[1]
         else:
-            # sequential
+            # sequential computation
             for ind in res.non_redundant_index_generator():
                 ind_s = [None for i in range(self._nid)]  # initialization
                 ind_o = [None for i in range(other._nid)] # initialization
@@ -2384,21 +2416,16 @@ class Components(SageObject):
         si = self._sindex
         imax = self._dim - 1 + si
         ind = [si for k in range(self._nid)]
-        ind_end = [si for k in range(self._nid)]
-        ind_end[0] = imax+1
-        while ind != ind_end:
+        while True:
             yield tuple(ind)
-            ret = 1
             for pos in range(self._nid-1,-1,-1):
                 if ind[pos] != imax:
-                    ind[pos] += ret
-                    ret = 0
-                elif ret == 1:
-                    if pos == 0:
-                        ind[pos] = imax + 1 # end point reached
-                    else:
-                        ind[pos] = si
-                        ret = 1
+                    ind[pos] += 1
+                    break
+                elif pos != 0:
+                    ind[pos] = si
+                else:
+                    return # end point reached
 
     def non_redundant_index_generator(self):
         r"""
@@ -3890,14 +3917,14 @@ class CompWithSym(Components):
             [(0, 1), (0, 2), (1, 2)]
             sage: c = CompWithSym(QQ, V.basis(), 3, sym=(1,2))  # symmetry on the last two indices
             sage: list(c.non_redundant_index_generator())
-            [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 1), (0, 1, 2),
-             (0, 2, 2), (1, 0, 0), (1, 0, 1), (1, 0, 2), (1, 1, 1),
-             (1, 1, 2), (1, 2, 2), (2, 0, 0), (2, 0, 1), (2, 0, 2),
-             (2, 1, 1), (2, 1, 2), (2, 2, 2)]
+            [(0, 0, 0), (1, 0, 0), (2, 0, 0), (0, 0, 1), (1, 0, 1),
+             (2, 0, 1), (0, 0, 2), (1, 0, 2), (2, 0, 2), (0, 1, 1),
+             (1, 1, 1), (2, 1, 1), (0, 1, 2), (1, 1, 2), (2, 1, 2),
+             (0, 2, 2), (1, 2, 2), (2, 2, 2)]
             sage: c = CompWithSym(QQ, V.basis(), 3, antisym=(1,2))  # antisymmetry on the last two indices
             sage: list(c.non_redundant_index_generator())
-            [(0, 0, 1), (0, 0, 2), (0, 1, 2), (1, 0, 1), (1, 0, 2), (1, 1, 2),
-             (2, 0, 1), (2, 0, 2), (2, 1, 2)]
+            [(0, 0, 1), (1, 0, 1), (2, 0, 1), (0, 0, 2), (1, 0, 2),
+             (2, 0, 2), (0, 1, 2), (1, 1, 2), (2, 1, 2)]
             sage: c = CompFullySym(QQ, V.basis(), 3)
             sage: list(c.non_redundant_index_generator())
             [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 1), (0, 1, 2), (0, 2, 2),
@@ -3926,36 +3953,67 @@ class CompWithSym(Components):
             []
 
         """
+        if self._nid == 0 or self._dim == 0:
+            return
         si = self._sindex
         imax = self._dim - 1 + si
         ind = [si for k in range(self._nid)]
-        ind_end = [si for k in range(self._nid)]
-        ind_end[0] = imax+1
-        while ind != ind_end:
-            ordered = True
-            for isym in self._sym:
-                for k in range(len(isym)-1):
-                    if ind[isym[k+1]] < ind[isym[k]]:
-                        ordered = False
-                        break
-            for isym in self._antisym:
-                for k in range(len(isym)-1):
-                    if ind[isym[k+1]] <= ind[isym[k]]:
-                        ordered = False
-                        break
-            if ordered:
-                yield tuple(ind)
-            ret = 1
-            for pos in range(self._nid-1,-1,-1):
-                if ind[pos] != imax:
-                    ind[pos] += ret
-                    ret = 0
-                elif ret == 1:
-                    if pos == 0:
-                        ind[pos] = imax + 1 # end point reached
-                    else:
-                        ind[pos] = si
-                        ret = 1
+        sym = self._sym.copy() # we may modify this in the following
+        antisym = self._antisym
+        for pos in range(self._nid):
+            for isym in antisym:
+                for k in range(1, len(isym)):
+                    if pos == isym[k]:
+                        if ind[isym[k-1]] == imax:
+                            return
+                        ind[pos] = ind[isym[k-1]] + 1
+            if not any([pos in isym for isym in sym]) and not any([pos in isym for isym in antisym]):
+                sym.append([pos]) # treat non-symmetrized indices as being symmetrized with themselves
+        while True:
+            yield tuple(ind)
+            step_finished = False # each step generates a new index
+            for i in range(len(sym)-1,-1,-1):
+                # start with symmetrized indices, loop until we find
+                # an index which we can increase without going over
+                # the maximum
+                isym = sym[i]
+                if not step_finished:
+                    for k in range(len(isym)-1,-1,-1):
+                        if ind[isym[k]] != imax:
+                            # we have found an index which we can
+                            # increase; adjust other indices in the
+                            # `isym` symmetrization
+                            ind[isym[k]] += 1
+                            for l in range(k+1, len(isym)):
+                                ind[isym[l]] = ind[isym[l-1]]
+                            step_finished = True
+                            break
+                        else:
+                            # this index is at the maximum and we have
+                            # to reset it
+                            ind[isym[k]] = si
+                if not step_finished and i == 0 and len(antisym) == 0:
+                    return # we went through all indices and didn't
+                           # find one which we can increase, thus we
+                           # have generated all indices
+            for i in range(len(antisym)-1,-1,-1):
+                # the antisymmetrized indices work similar to the
+                # symmetrized ones
+                isym = antisym[i]
+                if not step_finished:
+                    for k in range(len(isym)-1,-1,-1):
+                        if ind[isym[k]] + len(isym)-1-k != imax:
+                            ind[isym[k]] += 1
+                            for l in range(k+1, len(isym)):
+                                # adjust antisymmetrized index
+                                ind[isym[l]] = ind[isym[l-1]] + 1
+                            step_finished = True
+                            break
+                        else:
+                            # reset the index
+                            ind[isym[k]] = si + k
+                if not step_finished and i == 0:
+                    return # end point reach
 
     def symmetrize(self, *pos):
         r"""
@@ -5388,7 +5446,7 @@ class CompFullyAntiSym(CompWithSym):
             True
 
         """
-        from sage.functions.other import factorial
+        from sage.arith.all import factorial
         # Sanity checks:
         if not isinstance(other, CompFullyAntiSym):
             raise TypeError("{} is not a fully antisymmetric ".format(other) +

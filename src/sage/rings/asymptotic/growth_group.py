@@ -191,7 +191,7 @@ grow faster than ``x`` (which is nonsense, mathematically). See
 for more details or see :ref:`above <growth_group_description>`
 for a more extensive description.
 
-Short notation also allows the construction of more complicated 
+Short notation also allows the construction of more complicated
 growth groups::
 
     sage: G = GrowthGroup('(QQ_+)^x * x^ZZ * log(x)^QQ * y^QQ')
@@ -240,6 +240,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import (CachedRepresentation,
                                                   UniqueRepresentation)
 from sage.structure.richcmp import richcmp_by_eq_and_lt
+import sage.rings.abc
 from .misc import WithLocals
 
 
@@ -730,7 +731,7 @@ class PartialConversionElement(SageObject):
             ....:     E((-2)^x)
             ....: except PartialConversionValueError as e:
             ....:     e.element.split()
-            (2^x, element with parameter -1 (<type 'int'>) in Growth Group ZZ^x)
+            (2^x, element with parameter -1 (<class 'int'>) in Growth Group ZZ^x)
 
         TESTS::
 
@@ -1610,6 +1611,33 @@ class GenericGrowthElement(MultiplicativeGroupElement):
         """
         raise NotImplementedError('singularity analysis of {} '
                                   'not implemented '.format(self))
+
+    def _find_minimum_(self, valid_from):
+        r"""
+        Find the minimum of this growth element over the range implied by ``valid_from``.
+
+        INPUT:
+
+        - ``valid_from`` -- a dictionary describing the range of the minimization:
+          the keys are names of variables and the range is the intersection over
+          the ranges where the absolute value of the variable designated by the
+          key is at least the corresponding value
+
+        OUTPUT:
+
+        A number
+
+        TESTS::
+
+            sage: from sage.rings.asymptotic.growth_group import GenericGrowthGroup
+
+            sage: G = GenericGrowthGroup(ZZ)
+            sage: G(raw_element=42)._find_minimum_(valid_from={'m': 10})
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: find minimum for GenericGrowthElement(42) not implemented
+        """
+        raise NotImplementedError(f'find minimum for {self} not implemented')
 
 
 class GenericGrowthGroup(UniqueRepresentation, Parent, WithLocals):
@@ -2779,6 +2807,35 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
         return not self == other
 
 
+class DecreasingGrowthElementError(ValueError):
+    r"""
+    A special :python:`ValueError<library/exceptions.html#exceptions.ValueError>`
+    which is raised when a growth element is less than one.
+
+    INPUT:
+
+    - ``element`` -- a :class:`GenericGrowthElement`
+
+    The remaining arguments are passed on to
+    :python:`ValueError<library/exceptions.html#exceptions.ValueError>`.
+    """
+    def __init__(self, element, *args, **kwds):
+        r"""
+        See :class:`DecreasingGrowthElementError` for more information.
+
+        TESTS::
+
+            sage: from sage.rings.asymptotic.growth_group import DecreasingGrowthElementError, GenericGrowthElement, MonomialGrowthGroup
+            sage: raise DecreasingGrowthElementError(
+            ....:     GenericGrowthElement(MonomialGrowthGroup(QQ, 'x'), 1/2), 'wrong value')
+            Traceback (most recent call last):
+            ...
+            DecreasingGrowthElementError: wrong value
+        """
+        super().__init__(*args, **kwds)
+        self.element = element
+
+
 class MonomialGrowthElement(GenericGrowthElement):
     r"""
     An implementation of monomial growth elements.
@@ -3308,6 +3365,58 @@ class MonomialGrowthElement(GenericGrowthElement):
             raise NotImplementedError(
                 'singularity analysis of {} not implemented'.format(self))
 
+    def _find_minimum_(self, valid_from):
+        r"""
+        Find the minimum of this growth element over the range implied by ``valid_from``.
+
+        INPUT:
+
+        - ``valid_from`` -- a dictionary describing the range of the minimization:
+          the keys are names of variables and the range is the intersection over
+          the ranges where the absolute value of the variable designated by the
+          key is at least the corresponding value
+
+        OUTPUT:
+
+        A number
+
+        TESTS::
+
+            sage: from sage.rings.asymptotic.growth_group import MonomialGrowthGroup, GrowthGroup
+
+            sage: G = MonomialGrowthGroup(QQ, 'x')
+            sage: G('x^3')._find_minimum_(valid_from={'x': 10})
+            1000
+            sage: e1 = G(raw_element=3); e2 = G(raw_element=2)
+            sage: e3 = e2 / e1
+            sage: e3
+            x^(-1)
+            sage: e3._find_minimum_(valid_from={'x': 5})
+            Traceback (most recent call last):
+            ...
+            DecreasingGrowthElementError: the growth of x^(-1) is less than one
+            sage: H = GrowthGroup('log(x)^ZZ')
+            sage: l1 = H(raw_element=2)
+            sage: l1._find_minimum_(valid_from={'x': 5})
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Minimum of log(x)^2 is not implemented
+            sage: I = GrowthGroup('log(log(x))^ZZ')
+            sage: l2 = I(raw_element=5)
+            sage: l2._find_minimum_(valid_from={'x': 5})
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Minimum of log(log(x))^5 is not implemented
+        """
+        if not self.parent().gens_monomial():
+            raise NotImplementedError(f'Minimum of {self} is not implemented')
+        if self.is_lt_one():
+            raise DecreasingGrowthElementError(self, f'the growth of {self} is less than one')
+        elif self.is_one():
+            return 1
+        assert self.variable_names(), f'{self.variable_names()} is empty'
+        return valid_from[self.variable_names()[0]] ** self.exponent
+
 
 class MonomialGrowthGroup(GenericGrowthGroup):
     r"""
@@ -3514,13 +3623,12 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             from sage.symbolic.ring import SR
             return self._convert_(SR(data))
 
-        from sage.symbolic.ring import SymbolicRing
         from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         from sage.rings.polynomial.multi_polynomial_ring_base import \
             MPolynomialRing_base
         from sage.rings.power_series_ring import PowerSeriesRing_generic
         import operator
-        if isinstance(P, SymbolicRing):
+        if isinstance(P, sage.rings.abc.SymbolicRing):
             if data.operator() == operator.pow:
                 base, exponent = data.operands()
                 if str(base) == var:
@@ -4311,10 +4419,9 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             sage: forget()
         """
         from warnings import warn
-        from sage.symbolic.ring import SymbolicRing
 
         super(ExponentialGrowthGroup, self).__init__(base, *args, **kwds)
-        if isinstance(base, SymbolicRing) and not self._an_element_base_() > 0:
+        if isinstance(base, sage.rings.abc.SymbolicRing) and not self._an_element_base_() > 0:
             warn("When using the Exponential {}, make "
                  "assumptions on the used symbolic elements.\n"
                  "In particular, use something like "
@@ -4444,9 +4551,8 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         import operator
         from sage.functions.log import Function_exp
         from sage.symbolic.operators import mul_vararg
-        from sage.symbolic.ring import SymbolicRing
 
-        if isinstance(P, SymbolicRing):
+        if isinstance(P, sage.rings.abc.SymbolicRing):
             op = data.operator()
             if op == operator.pow:
                 base, exponent = data.operands()
@@ -4546,20 +4652,13 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             (-x, -1)
             sage: forget()
         """
-        from sage.rings.complex_arb import ComplexBallField
-        from sage.rings.complex_mpfr import ComplexField_class
-        from sage.rings.complex_interval_field import ComplexIntervalField_class
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
-        from sage.rings.real_arb import RealBallField
-        from sage.rings.real_mpfr import RealField_class
-        from sage.rings.real_mpfi import RealIntervalField_class
         from sage.rings.qqbar import AA
         from sage.structure.element import parent
-        from sage.symbolic.ring import SymbolicRing
 
         P = base.parent()
-        if isinstance(P, SymbolicRing):
+        if isinstance(P, sage.rings.abc.SymbolicRing):
             try:
                 base = base.pyobject()
             except TypeError:
@@ -4567,17 +4666,17 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             else:
                 P = base.parent()
 
-        if P in (ZZ, QQ, AA) or isinstance(P, (SymbolicRing,
-                                               RealField_class,
-                                               RealIntervalField_class,
-                                               RealBallField)):
+        if P in (ZZ, QQ, AA) or isinstance(P, (sage.rings.abc.SymbolicRing,
+                                               sage.rings.abc.RealField,
+                                               sage.rings.abc.RealIntervalField,
+                                               sage.rings.abc.RealBallField)):
             if base > 0:
                 return base, None
             if base < 0:
                 return -base, -1
-        elif isinstance(P, (ComplexField_class,
-                            ComplexIntervalField_class,
-                            ComplexBallField)):
+        elif isinstance(P, (sage.rings.abc.ComplexField,
+                            sage.rings.abc.ComplexIntervalField,
+                            sage.rings.abc.ComplexBallField)):
             size = abs(base)
             direction = base / size
             return size, direction
@@ -4739,9 +4838,6 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from sage.categories.cartesian_product import cartesian_product
         from sage.groups.misc_gps.argument_groups import AbstractArgumentGroup
         from sage.groups.misc_gps.argument_groups import ArgumentGroup
-        from sage.rings.complex_arb import ComplexBallField
-        from sage.rings.complex_mpfr import ComplexField_class
-        from sage.rings.complex_interval_field import ComplexIntervalField_class
         from sage.rings.number_field.number_field import NumberField_cyclotomic
         from sage.rings.qqbar import QQbar, AA
 
@@ -4753,9 +4849,9 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
                 UU = cls._non_growth_group_class_(
                     ArgumentGroup(domain=base), var)
                 groups = (EE, UU)
-            elif isinstance(base, (ComplexField_class,
-                                   ComplexIntervalField_class,
-                                   ComplexBallField)):
+            elif isinstance(base, (sage.rings.abc.ComplexField,
+                                   sage.rings.abc.ComplexIntervalField,
+                                   sage.rings.abc.ComplexBallField)):
                 EE = cls(base._real_field(), var, **kwds)
                 UU = cls._non_growth_group_class_(
                     ArgumentGroup(exponents=base._real_field()), var)
@@ -5394,14 +5490,14 @@ class GrowthGroupFactory(UniqueFactory):
         def has_l_property(s, properties, invert=False):
             for p in properties:
                 if s.startswith(p):
-                    return s[len(p):].strip(), True != invert
-            return s, False != invert
+                    return s[len(p):].strip(), not invert
+            return s, invert
 
         def has_r_property(s, properties, invert=False):
             for p in properties:
                 if s.endswith(p):
-                    return s[:-len(p)].strip(), True != invert
-            return s, False != invert
+                    return s[:-len(p)].strip(), not invert
+            return s, invert
 
         factors = []
 

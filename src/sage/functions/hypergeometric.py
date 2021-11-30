@@ -389,24 +389,6 @@ class Hypergeometric(BuiltinFunction):
                 hypergeometric([c + 1 for c in a], [c + 1 for c in b], z))
 
     class EvaluationMethods(object):
-        def _fast_float_(self, *args):
-            """
-            Do not support the old ``fast_float``.
-
-            OUTPUT:
-
-            This method raises ``NotImplementedError``; use the newer
-            ``fast_callable`` implementation.
-
-            EXAMPLES::
-
-                sage: f = hypergeometric([], [], x)
-                sage: f._fast_float_()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
-            """
-            raise NotImplementedError
 
         def _fast_callable_(self, a, b, z, etb):
             """
@@ -429,8 +411,6 @@ class Hypergeometric(BuiltinFunction):
                 (x, y)
                 sage: f = fast_callable(hypergeometric([y], [], x), vars=[x, y])
                 sage: f(3, 4)
-                doctest:...: DeprecationWarning: Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)
-                See http://trac.sagemath.org/5930 for details.
                 hypergeometric((4,), (), 3)
             """
             return etb.call(self, *map(etb.var, etb._vars))

@@ -1,7 +1,7 @@
-diff --git a/configure.in b/configure.in
+diff --git a/configure.ac b/configure.ac
 index 204d17a..434e4c9 100644
---- a/configure.in
-+++ b/configure.in
+--- a/configure.ac
++++ b/configure.ac
 @@ -38,6 +38,7 @@ AC_LANG([C++])
  AC_PROG_LIBTOOL
  AC_PROG_YACC

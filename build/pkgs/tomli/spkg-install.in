@@ -1,0 +1,4 @@
+cd src
+# tomli's build system, flit_core, has a runtime dependency on tomli.
+export PYTHONPATH="$(pwd)"
+sdh_pip_install .

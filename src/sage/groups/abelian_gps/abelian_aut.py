@@ -82,7 +82,7 @@ from sage.groups.libgap_wrapper import ParentLibGAP, ElementLibGAP
 from sage.groups.libgap_mixin import GroupMixinLibGAP
 from sage.libs.gap.libgap import libgap
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.structure.unique_representation import CachedRepresentation
 
 
@@ -115,7 +115,7 @@ class AbelianGroupAutomorphism(ElementLibGAP):
             sage: TestSuite(f).run()
         """
         if check:
-            if not x in parent.gap():
+            if x not in parent.gap():
                 raise ValueError("%s is not in the group %s" % (x, parent))
         ElementLibGAP.__init__(self, parent, x)
 

@@ -224,7 +224,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
             if from_base_ring.__func__ != generic_from_base_ring:
                 # Custom from_base_ring()
                 use_from_base_ring = True
-            if isinstance(generic_from_base_ring, lazy_attribute):
+            elif isinstance(generic_from_base_ring, lazy_attribute):
                 # If the category implements from_base_ring() as lazy
                 # attribute, then we always use it.
                 # This is for backwards compatibility, see Trac #25181

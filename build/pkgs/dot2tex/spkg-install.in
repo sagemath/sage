@@ -2,7 +2,7 @@ cd src
 
 # Check that Graphviz is installed by running dot2tex from the source
 # directory.
-sage-python23 -c "import sys; from dot2tex.dotparsing import find_graphviz; sys.exit(0 if find_graphviz() else 1)"
+python3 -c "import sys; from dot2tex.dotparsing import find_graphviz; sys.exit(0 if find_graphviz() else 1)"
 if [ $? -ne 0 ]; then
     echo >&2 "Error: dot2tex requires Graphviz but Graphviz is not installed. You can download Graphviz at https://www.graphviz.org/download/"
     exit 1

@@ -9,6 +9,15 @@ precision.
 The main purpose of these classes is to provide a place for exact rings (e.g.
 number fields) to embed for the coercion model (as only one embedding can be
 specified in the forward direction).
+
+TESTS:
+
+Bug :trac:`21991`::
+
+    sage: a = QuadraticField(5).gen()
+    sage: u = -573147844013817084101/2*a + 1281597540372340914251/2
+    sage: RealIntervalField(128)(RLF(u)).is_exact()
+    False
 """
 
 # ****************************************************************************
@@ -1596,8 +1605,7 @@ cdef class LazyAlgebraic(LazyFieldElement):
             c, b, a = self._poly.list()
             self._quadratic_disc = b*b - 4*a*c
         if isinstance(parent, RealLazyField_class):
-            from sage.rings.real_double import RDF
-            if len(self._poly.roots(RDF)) == 0:
+            if not self._poly.number_of_real_roots():
                 raise ValueError("%s has no real roots" % self._poly)
             approx = (RR if prec == 0 else RealField(prec))(approx)
         else:
@@ -1701,7 +1709,7 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: a = f(3); a
             3
             sage: type(a)
-            <type 'sage.rings.real_lazy.LazyWrapper'>
+            <class 'sage.rings.real_lazy.LazyWrapper'>
             sage: a._value
             3
             sage: a._value.parent()
@@ -1719,7 +1727,7 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: a = f(1/3); a # indirect doctest
             0.3333333333333334?
             sage: type(a)
-            <type 'sage.rings.real_lazy.LazyWrapper'>
+            <class 'sage.rings.real_lazy.LazyWrapper'>
             sage: Reals(100)(a)
             0.33333333333333333333333333333
 

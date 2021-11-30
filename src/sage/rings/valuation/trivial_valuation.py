@@ -174,7 +174,7 @@ class TrivialDiscretePseudoValuation(TrivialDiscretePseudoValuation_base, Infini
             +Infinity
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         return infinity
 
     def _repr_(self):
@@ -302,7 +302,7 @@ class TrivialDiscreteValuation(TrivialDiscretePseudoValuation_base, DiscreteValu
             0
 
         """
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         return infinity if x == 0 else self.codomain().zero()
 
     def _repr_(self):

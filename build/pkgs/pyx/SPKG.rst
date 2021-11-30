@@ -1,5 +1,5 @@
-pyx
-===
+pyx: Generate PostScript, PDF, and SVG files in Python
+======================================================
 
 Description
 -----------

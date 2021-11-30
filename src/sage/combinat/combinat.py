@@ -148,15 +148,19 @@ Functions and classes
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from numbers import Integral
+from __future__ import annotations
+from typing import Iterator
 
-from sage.rings.all import ZZ, QQ, Integer, infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
+from sage.rings.infinity import infinity
 from sage.arith.all import bernoulli, factorial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.all import pari
 from sage.misc.prandom import randint
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function
 from sage.structure.sage_object import SageObject
 from sage.structure.parent import Parent
@@ -170,7 +174,7 @@ from sage.structure.element import Element
 lazy_import('sage.interfaces.maxima_lib', 'maxima')
 
 
-def bell_number(n, algorithm='flint', **options) -> Integral:
+def bell_number(n, algorithm='flint', **options) -> Integer:
     r"""
     Return the `n`-th Bell number.
 
@@ -476,7 +480,7 @@ def catalan_number(n):
     return (2 * n).binomial(n).divide_knowing_divisible_by(n + 1)
 
 
-def narayana_number(n, k) -> Integral:
+def narayana_number(n: Integer, k: Integer) -> Integer:
     r"""
     Return the Narayana number of index ``(n, k)``.
 
@@ -511,7 +515,7 @@ def narayana_number(n, k) -> Integral:
     return (n.binomial(k + 1) * n.binomial(k)).divide_knowing_divisible_by(n)
 
 
-def euler_number(n, algorithm='flint') -> Integral:
+def euler_number(n, algorithm='flint') -> Integer:
     """
     Return the `n`-th Euler number.
 
@@ -552,7 +556,7 @@ def euler_number(n, algorithm='flint') -> Integral:
     if n < 0:
         raise ValueError("n (=%s) must be a nonnegative integer" % n)
     if algorithm == 'maxima':
-        return ZZ(maxima.euler(n))
+        return ZZ(maxima.euler(n))  # type:ignore
     elif algorithm == 'flint':
         import sage.libs.flint.arith
         return sage.libs.flint.arith.euler_number(n)
@@ -561,7 +565,7 @@ def euler_number(n, algorithm='flint') -> Integral:
 
 
 @cached_function(key=lambda n, k, a: (n, k))
-def eulerian_number(n, k, algorithm='recursive') -> Integral:
+def eulerian_number(n, k, algorithm='recursive') -> Integer:
     """
     Return the Eulerian number of index ``(n, k)``.
 
@@ -659,7 +663,7 @@ def eulerian_polynomial(n, algorithm='derivative'):
         return R([eulerian_number(n, k, "formula") for k in range(n)])
 
 
-def fibonacci(n, algorithm="pari") -> Integral:
+def fibonacci(n, algorithm="pari") -> Integer:
     """
     Return the `n`-th Fibonacci number.
 
@@ -815,11 +819,11 @@ def lucas_number2(n, P, Q):
         sage: n = lucas_number2(5,2,3); n
         2
         sage: type(n)
-        <... 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: n = lucas_number2(5,2,-3/9); n
         418/9
         sage: type(n)
-        <... 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
 
     The case `P=1`, `Q=-1` is the Lucas sequence in Brualdi's Introductory
     Combinatorics, 4th ed., Prentice-Hall, 2004::
@@ -834,7 +838,7 @@ def lucas_number2(n, P, Q):
     return libgap.Lucas(P, Q, n)[1].sage()
 
 
-def stirling_number1(n, k) -> Integral:
+def stirling_number1(n, k) -> Integer:
     r"""
     Return the `n`-th Stirling number `S_1(n,k)` of the first kind.
 
@@ -863,7 +867,7 @@ def stirling_number1(n, k) -> Integral:
     return libgap.Stirling1(n, k).sage()
 
 
-def stirling_number2(n, k, algorithm=None) -> Integral:
+def stirling_number2(n, k, algorithm=None) -> Integer:
     r"""
     Return the `n`-th Stirling number `S_2(n,k)` of the second
     kind.
@@ -935,17 +939,17 @@ def stirling_number2(n, k, algorithm=None) -> Integral:
         sage: n
         1900842429486
         sage: type(n)
-        <... 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: n = stirling_number2(20,11,algorithm='gap')
         sage: n
         1900842429486
         sage: type(n)
-        <... 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: n = stirling_number2(20,11,algorithm='maxima')
         sage: n
         1900842429486
         sage: type(n)
-        <... 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
      Sage's implementation splitting the computation of the Stirling
      numbers of the second kind in two cases according to `n`, let us
@@ -990,7 +994,7 @@ def stirling_number2(n, k, algorithm=None) -> Integral:
         from sage.libs.gap.libgap import libgap
         return libgap.Stirling2(n, k).sage()
     elif algorithm == 'maxima':
-        return ZZ(maxima.stirling2(n, k))
+        return ZZ(maxima.stirling2(n, k))  # type:ignore
     else:
         raise ValueError("unknown algorithm: %s" % algorithm)
 
@@ -1315,7 +1319,7 @@ class CombinatorialObject(SageObject):
             sage: c + [4]
             [1, 2, 3, 4]
             sage: type(_)
-            <... 'list'>
+            <class 'list'>
         """
         return self._list + other
 
@@ -1386,7 +1390,7 @@ class CombinatorialObject(SageObject):
 
     __nonzero__ = __bool__
 
-    def __len__(self) -> Integral:
+    def __len__(self) -> Integer:
         """
         EXAMPLES::
 
@@ -1408,7 +1412,7 @@ class CombinatorialObject(SageObject):
             sage: c[1:]
             [2, 3]
             sage: type(_)
-            <... 'list'>
+            <class 'list'>
         """
         return self._list[key]
 
@@ -1508,19 +1512,19 @@ class CombinatorialElement(CombinatorialObject, Element,
             sage: CombinatorialElement(ZZ)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes exactly 2 arguments (1 given)
+            TypeError: ...__init__() takes exactly 2 arguments (1 given)
             sage: CombinatorialElement(ZZ, 1, 2)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes exactly 2 arguments (3 given)
+            TypeError: ...__init__() takes exactly 2 arguments (3 given)
             sage: CombinatorialElement(ZZ, 1, list=2)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes exactly 2 arguments (3 given)
+            TypeError: ...__init__() takes exactly 2 arguments (3 given)
             sage: CombinatorialElement(ZZ, a=1, b=2)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes exactly 2 arguments (3 given)
+            TypeError: ...__init__() takes exactly 2 arguments (3 given)
         """
         # There should be one "list" argument, which can be given as
         # positional or keyword argument (in the latter case, the name
@@ -1691,7 +1695,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
         """
         return hash(repr(self))
 
-    def __cardinality_from_iterator(self) -> Integral:
+    def __cardinality_from_iterator(self) -> Integer | infinity:
         """
         Default implementation of cardinality which just goes through the iterator
         of the combinatorial class to count the number of objects.
@@ -1709,6 +1713,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
         for _ in self:
             c += one
         return c
+
     cardinality = __cardinality_from_iterator
 
     # __call__, element_class, and _element_constructor_ are poor
@@ -1725,7 +1730,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
             sage: p5 = Partitions(5)
             sage: a = [2,2,1]
             sage: type(a)
-            <... 'list'>
+            <class 'list'>
             sage: a = p5(a)
             sage: type(a)
             <class 'sage.combinat.partition.Partitions_n_with_category.element_class'>
@@ -1796,7 +1801,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
     # Set the default object class to be CombinatorialObject
     Element = CombinatorialObject
 
-    def __iterator_from_next(self):
+    def __iterator_from_next(self) -> Iterator:
         """
         An iterator to use when the .first() and .next(x) methods are provided.
 
@@ -1857,7 +1862,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
                 li.append(l)
         return reversed(li)
 
-    def __iterator_from_unrank(self):
+    def __iterator_from_unrank(self) -> Iterator:
         """
         An iterator to use when .unrank() is provided.
 
@@ -1884,7 +1889,7 @@ class CombinatorialClass(Parent, metaclass=ClasscallMetaclass):
             else:
                 yield u
 
-    def __iterator_from_list(self):
+    def __iterator_from_list(self) -> Iterator:
         """
         An iterator to use when .list() is provided()
 
@@ -2180,7 +2185,7 @@ class FilteredCombinatorialClass(CombinatorialClass):
         """
         return x in self.combinatorial_class and self.f(x)
 
-    def cardinality(self) -> Integral:
+    def cardinality(self) -> Integer:
         """
         EXAMPLES::
 
@@ -2194,7 +2199,7 @@ class FilteredCombinatorialClass(CombinatorialClass):
             c += 1
         return c
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         EXAMPLES::
 
@@ -2256,7 +2261,7 @@ class UnionCombinatorialClass(CombinatorialClass):
         """
         return x in self.left_cc or x in self.right_cc
 
-    def cardinality(self) -> Integral:
+    def cardinality(self) -> Integer | infinity:
         """
         EXAMPLES::
 
@@ -2285,7 +2290,7 @@ class UnionCombinatorialClass(CombinatorialClass):
         """
         return self.left_cc.list() + self.right_cc.list()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         EXAMPLES::
 
@@ -2443,7 +2448,7 @@ class MapCombinatorialClass(CombinatorialClass):
         else:
             return "Image of %s by %s" % (self.cc, self.f)
 
-    def cardinality(self) -> Integral:
+    def cardinality(self) -> Integer | infinity:
         """
         Return the cardinality of this combinatorial class
 
@@ -2452,11 +2457,10 @@ class MapCombinatorialClass(CombinatorialClass):
             sage: R = Permutations(10).map(attrcall('reduced_word'))
             sage: R.cardinality()
             3628800
-
         """
         return self.cc.cardinality()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         Return an iterator over the elements of this combinatorial class
 
@@ -2494,13 +2498,17 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
     self._infinite_cclass_slice is supposed to accept any integer as an
     argument and return something which is iterable.
     """
-    def cardinality(self):
+    def cardinality(self) -> Integer | infinity:
         """
         Count the elements of the combinatorial class.
 
         EXAMPLES::
 
             sage: R = InfiniteAbstractCombinatorialClass()
+            doctest:warning...
+            DeprecationWarning: this class is deprecated, do not use
+            See https://trac.sagemath.org/31545 for details.
+
             sage: R.cardinality()
             +Infinity
         """
@@ -2520,7 +2528,7 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
         """
         raise NotImplementedError("infinite list")
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
         Return an iterator for the infinite combinatorial class ``self`` if
         possible or raise a NotImplementedError.
@@ -2654,7 +2662,7 @@ def _tuples_native(S, k):
     return ans
 
 
-def number_of_tuples(S, k, algorithm='naive') -> Integral:
+def number_of_tuples(S, k, algorithm='naive') -> Integer:
     """
     Return the size of ``tuples(S, k)`` when `S` is a set. More
     generally, return the size of ``tuples(set(S), k)``. (So,
@@ -2773,7 +2781,7 @@ def unordered_tuples(S, k, algorithm='itertools'):
     raise ValueError('invalid algorithm')
 
 
-def number_of_unordered_tuples(S, k, algorithm='naive') -> Integral:
+def number_of_unordered_tuples(S, k, algorithm='naive') -> Integer:
     r"""
     Return the size of ``unordered_tuples(S, k)`` when `S` is a set.
 
@@ -2820,7 +2828,7 @@ def number_of_unordered_tuples(S, k, algorithm='naive') -> Integral:
     raise ValueError('invalid algorithm')
 
 
-def unshuffle_iterator(a, one=1):
+def unshuffle_iterator(a, one=1) -> Iterator:
     r"""
     Iterate over the unshuffles of a list (or tuple) ``a``, also
     yielding the signs of the respective permutations.
@@ -2882,7 +2890,7 @@ def unshuffle_iterator(a, one=1):
                (one if sign else - one))
 
 
-def bell_polynomial(n: Integral, k: Integral):
+def bell_polynomial(n: Integer, k: Integer):
     r"""
     Return the Bell Polynomial
 
@@ -2941,7 +2949,7 @@ def bell_polynomial(n: Integral, k: Integral):
     R = PolynomialRing(ZZ, 'x', n - k + 1)
     vars = R.gens()
     result = R.zero()
-    for p in Partitions(n, length=k):
+    for p in Partitions(n, length=k):  # type:ignore
         factorial_product = 1
         power_factorial_product = 1
         for part, count in p.to_exp_dict().items():
@@ -2952,7 +2960,7 @@ def bell_polynomial(n: Integral, k: Integral):
     return result
 
 
-def fibonacci_sequence(start, stop=None, algorithm=None):
+def fibonacci_sequence(start, stop=None, algorithm=None) -> Iterator:
     r"""
     Return an iterator over the Fibonacci sequence, for all fibonacci
     numbers `f_n` from ``n = start`` up to (but
@@ -3002,7 +3010,7 @@ def fibonacci_sequence(start, stop=None, algorithm=None):
             yield fibonacci(n)
 
 
-def fibonacci_xrange(start, stop=None, algorithm='pari'):
+def fibonacci_xrange(start, stop=None, algorithm='pari') -> Iterator:
     r"""
     Return an iterator over all of the Fibonacci numbers in the given
     range, including ``f_n = start`` up to, but not
@@ -3063,7 +3071,7 @@ def fibonacci_xrange(start, stop=None, algorithm='pari'):
             return
 
 
-def bernoulli_polynomial(x, n: Integral):
+def bernoulli_polynomial(x, n: Integer):
     r"""
     Return the ``n``-th Bernoulli polynomial evaluated at ``x``.
 

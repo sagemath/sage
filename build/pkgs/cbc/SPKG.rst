@@ -1,6 +1,5 @@
-
-COIN-OR / CBC
-=============
+cbc: COIN-OR branch and cut solver for mixed-integer programs
+=============================================================
 
 Description
 -----------

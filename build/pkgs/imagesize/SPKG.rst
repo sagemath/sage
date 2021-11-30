@@ -1,5 +1,5 @@
-imagesize
-=========
+imagesize: Parser for image file metadata
+=========================================
 
 Description
 -----------

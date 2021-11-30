@@ -17,7 +17,7 @@ EXAMPLES:
 This is how a typical user interface initializes the globals::
 
     sage: ui_globals = globals()  # or wherever the user interface stores its globals
-    sage: from sage import all_cmdline  # or all_notebook
+    sage: from sage import all_cmdline
     sage: from sage.repl.user_globals import initialize_globals
     sage: _ = initialize_globals(all_cmdline, ui_globals)
 

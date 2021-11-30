@@ -221,7 +221,7 @@ class ModularSymbolsSubspace(sage.modular.modsym.space.ModularSymbolsSpace, heck
 
     def factorization(self):
         """
-        Returns a list of pairs `(S,e)` where `S` is simple
+        Return a list of pairs `(S,e)` where `S` is simple
         spaces of modular symbols and self is isomorphic to the direct sum
         of the `S^e` as a module over the *anemic* Hecke algebra
         adjoin the star involution.

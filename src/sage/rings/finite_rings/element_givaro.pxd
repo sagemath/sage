@@ -1,4 +1,4 @@
-# distutils: extra_compile_args = GIVARO_CFLAGS
+# distutils: extra_compile_args = GIVARO_CFLAGS -std=c++11
 # distutils: include_dirs = GIVARO_INCDIR
 
 from libcpp.vector cimport vector

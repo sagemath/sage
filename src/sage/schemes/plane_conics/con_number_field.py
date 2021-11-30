@@ -47,7 +47,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         r"""
         See ``Conic`` for full documentation.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: Conic([1, 1, 1])
             Projective Conic Curve over Rational Field defined by x^2 + y^2 + z^2
@@ -364,7 +364,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
         Local obstructions are cached. The parameter ``read_cache``
         specifies whether to look at the cache before computing anything.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: K.<i> = QuadraticField(-1)
             sage: Conic(K, [1, 2, 3]).local_obstructions()

@@ -1,5 +1,5 @@
-rubiks.spkg
-===========
+rubiks: Programs for Rubik's cube
+=================================
 
 Description
 -----------
@@ -9,7 +9,7 @@ different people. Look inside the directories under /src to see specific
 info and licensing. In summary the three contributers are:
 
 Michael Reid (GPL)
-http://www.math.ucf.edu/~reid/Rubik/optimal_solver.html
+http://www.cflmath.com/~reid/Rubik/optimal_solver.html
 
 -  optimal - uses many pre-computed tables to find an optimal
    solution to the 3x3x3 Rubik's cube

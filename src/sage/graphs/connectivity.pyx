@@ -877,7 +877,8 @@ def edge_connectivity(G,
                       use_edge_labels=False,
                       vertices=False,
                       solver=None,
-                      verbose=0):
+                      verbose=0,
+                      *, integrality_tolerance=1e-3):
     r"""
     Return the edge connectivity of the graph.
 
@@ -928,16 +929,20 @@ def edge_connectivity(G,
       - When set to ``True``, also returns the two sets of vertices that are
         disconnected by the cut. Implies ``value_only=False``.
 
-    - ``solver`` -- string (default: ``None``); specify a Linear Program (LP)
-      solver to be used (ignored if ``implementation='boost'``). If set to
-      ``None``, the default one is used. For more information on LP solvers and
-      which default solver is used, see the method :meth:`solve
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
       <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
       :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
       to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
 
     EXAMPLES:
 
@@ -1159,10 +1164,15 @@ def edge_connectivity(G,
 
         p.set_objective(p.sum(weight(l) * in_cut[frozenset((u,v))] for u,v,l in g.edge_iterator()))
 
-    obj = p.solve(objective_only=value_only, log=verbose)
+    obj = p.solve(log=verbose)
+
+    in_cut = p.get_values(in_cut, convert=bool, tolerance=integrality_tolerance)
 
     if use_edge_labels is False:
-        obj = Integer(round(obj))
+        if g.is_directed():
+            obj = sum(1 for u, v in g.edge_iterator(labels=False) if in_cut[u, v])
+        else:
+            obj = sum(1 for u, v in g.edge_iterator(labels=False) if in_cut[frozenset((u, v))])
 
     if value_only:
         return obj
@@ -1170,13 +1180,12 @@ def edge_connectivity(G,
     else:
         val = [obj]
 
-        in_cut = p.get_values(in_cut)
-        in_set = p.get_values(in_set)
+        in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
 
         if g.is_directed():
-            edges = [(u,v,l) for u,v,l in g.edge_iterator() if in_cut[u,v] == 1]
+            edges = [(u,v,l) for u,v,l in g.edge_iterator() if in_cut[u,v]]
         else:
-            edges = [(u,v,l) for u,v,l in g.edge_iterator() if in_cut[frozenset((u,v))] == 1]
+            edges = [(u,v,l) for u,v,l in g.edge_iterator() if in_cut[frozenset((u,v))]]
 
         val.append(edges)
 
@@ -1184,7 +1193,7 @@ def edge_connectivity(G,
             a = []
             b = []
             for v in g:
-                if in_set[0,v] == 1:
+                if in_set[0,v]:
                     a.append(v)
                 else:
                     b.append(v)
@@ -1192,7 +1201,8 @@ def edge_connectivity(G,
 
         return val
 
-def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, verbose=0):
+def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, verbose=0,
+                        *, integrality_tolerance=1e-3):
     r"""
     Return the vertex connectivity of the graph.
 
@@ -1232,17 +1242,20 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
       connectivity of the (di)graph is larger or equal to `k`. The method thus
       outputs a boolean only.
 
-    - ``solver`` -- string (default: ``None``); specify a Linear Program (LP)
-      solver to be used. If set to ``None``, the default one is used. For more
-      information on LP solvers, see the method :meth:`solve
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
       <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
       :class:`MixedIntegerLinearProgram
-      <sage.numerical.mip.MixedIntegerLinearProgram>`.  Use method
-      :meth:`sage.numerical.backends.generic_backend.default_mip_solver` to know
-      which default solver is used or to set the default solver.
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
       to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
 
     EXAMPLES:
 
@@ -1383,7 +1396,7 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         value_only = False
 
     # When the graph is complete, the MILP below is infeasible.
-    if (g.is_clique(directed_clique=g.is_directed()) \
+    if (g.is_clique(directed_clique=g.is_directed())
         or (not g.is_directed() and g.to_simple().is_clique())):
         if k is not None:
             return g.order() > k
@@ -1447,20 +1460,19 @@ def vertex_connectivity(G, value_only=True, sets=False, k=None, solver=None, ver
         # the vertex connectivity is >= k.
         p.add_constraint(p.sum(in_set[1, v] for v in g) <= k-1)
         try:
-            p.solve(objective_only=True, log=verbose)
+            p.solve(log=verbose)
             return False
         except MIPSolverException:
             return True
 
-    else:
-        p.set_objective(p.sum(in_set[1, v] for v in g))
+    p.set_objective(p.sum(in_set[1, v] for v in g))
+
+    val = p.solve(log=verbose)
+
+    in_set = p.get_values(in_set, convert=bool, tolerance=integrality_tolerance)
 
     if value_only:
-        return Integer(round(p.solve(objective_only=True, log=verbose)))
-
-    val = Integer(round(p.solve(log=verbose)))
-
-    in_set = p.get_values(in_set)
+        return sum(1 for v in g if in_set[1, v])
 
     cut = []
     a = []
@@ -1952,7 +1964,8 @@ def bridges(G, labels=True):
 # Methods for finding 3-vertex-connected components and building SPQR-tree
 # ==============================================================================
 
-def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0):
+def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0,
+           *, integrality_tolerance=1e-3):
     r"""
     Return the connected subgraphs separated by the input vertex cut.
 
@@ -1973,14 +1986,20 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0):
       edges to the sides of the cut or not. A virtual edge is an edge between a
       pair of vertices of the cut that are not connected by an edge in ``G``.
 
-    - ``solver`` -- string (default: ``None``); specifies a Linear Program (LP)
-      solver to be used. If set to ``None``, the default one is used. For more
-      information on LP solvers and which default solver is used, see the method
-      :meth:`sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
-      :class:`sage.numerical.mip.MixedIntegerLinearProgram`.
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
       to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
 
     OUTPUT: A triple `(S, C, f)`, where
 
@@ -2091,7 +2110,8 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0):
     # If a vertex cut is given, we check that it is valid. Otherwise, we compute
     # a small vertex cut
     if cut_vertices is None:
-        cut_size,cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose)
+        cut_size,cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
+                                                      integrality_tolerance=integrality_tolerance)
         if not cut_vertices:
             # Typical example is a clique
             raise ValueError("the input graph has no vertex cut")
@@ -2141,7 +2161,8 @@ def cleave(G, cut_vertices=None, virtual_edges=True, solver=None, verbose=0):
 
     return cut_sides, cocycles, virtual_cut_graph
 
-def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
+def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
+              *, integrality_tolerance=1e-3):
     r"""
     Return an SPQR-tree representing the triconnected components of the graph.
 
@@ -2184,14 +2205,20 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
 
       - ``"cleave"`` -- using method :meth:`~sage.graphs.connectivity.cleave`
 
-    - ``solver`` -- string (default: ``None``); specifies a Linear Program (LP)
-      solver to be used. If set to ``None``, the default one is used. For more
-      information on LP solvers and which default solver is used, see the method
-      :meth:`sage.numerical.mip.MixedIntegerLinearProgram.solve` of the class
-      :class:`sage.numerical.mip.MixedIntegerLinearProgram`.
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
       to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
 
     OUTPUT: ``SPQR-tree`` a tree whose vertices are labeled with the block's type
     and the subgraph of three-blocks in the decomposition.
@@ -2333,7 +2360,8 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
         return Graph({('Q' if G.size() == 1 else 'P', Graph(G, immutable=True, multiedges=True)): []},
                          name='SPQR-tree of {}'.format(G.name()))
 
-    cut_size, cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose)
+    cut_size, cut_vertices = G.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
+                                                   integrality_tolerance=integrality_tolerance)
 
     if cut_size < 2:
         raise ValueError("generation of SPQR-trees is only implemented for 2-connected graphs")
@@ -2384,7 +2412,8 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0):
                 # Add this cycle to the list of cycles
                 cycles_list.append(K)
             else:
-                K_cut_size,K_cut_vertices = K.vertex_connectivity(value_only=False, solver=solver, verbose=verbose)
+                K_cut_size,K_cut_vertices = K.vertex_connectivity(value_only=False, solver=solver, verbose=verbose,
+                                                                  integrality_tolerance=integrality_tolerance)
                 if K_cut_size == 2:
                     # The graph has a 2-vertex cut. We add it to the stack
                     two_blocks.append((K, K_cut_vertices))
@@ -3251,7 +3280,7 @@ cdef class TriconnectivitySPQR:
 
         OUTPUT:
 
-        - If ``check`` is set to ``True``` and a cut vertex is found, the cut
+        - If ``check`` is set to ``True`` and a cut vertex is found, the cut
           vertex is returned. If no cut vertex is found, return ``-1``.
         - If ``check`` is set to ``False``, ``-1`` is returned.
         """

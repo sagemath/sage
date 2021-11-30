@@ -26,7 +26,7 @@ AUTHORS:
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
 from sage.interfaces.gap import gap
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.rings.all import CyclotomicField
 from sage.libs.gap.element import GapElement
 from sage.libs.gap.libgap import libgap
@@ -84,7 +84,6 @@ def ClassFunction(group, values):
 ###
 #####################################################################
 
-
 @richcmp_method
 class ClassFunction_gap(SageObject):
     """
@@ -104,6 +103,7 @@ class ClassFunction_gap(SageObject):
         sage: loads(dumps(chi)) == chi
         True
     """
+
     def __init__(self, G, values):
         r"""
         Return the character of the group ``G`` with values given by the list
@@ -140,7 +140,6 @@ class ClassFunction_gap(SageObject):
         """
         return str(self._gap_classfunction)
 
-
     def _gap_(self, *args):
         r"""
         Coerce self into a GAP element.
@@ -160,7 +159,6 @@ class ClassFunction_gap(SageObject):
         """
         return self._gap_classfunction
 
-
     def __repr__(self):
         r"""
         Return a string representation.
@@ -177,7 +175,6 @@ class ClassFunction_gap(SageObject):
             Character of Symmetric group of order 4! as a permutation group
         """
         return "Character of %s" % repr(self._group)
-
 
     def __iter__(self):
         r"""
@@ -222,6 +219,16 @@ class ClassFunction_gap(SageObject):
                            (other._group, other.values()), op)
         else:
             return NotImplemented
+
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: G = SymmetricGroup(5)
+            sage: chi1 = ClassFunction(G,[1,1,1,1,1,1,1])
+            sage: d = {chi1:'trivial'}
+        """
+        return hash((self._group, tuple(self)))
 
     def __reduce__(self):
         r"""

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Piecewise-defined Functions
 
@@ -282,6 +283,37 @@ class PiecewiseFunction(BuiltinFunction):
         """
         raise NotImplementedError
 
+    def _tderivative_(self, parameters, variable, *args, **kwds):
+        """
+        Return the derivative of the piecewise function by applying the
+        derivative to each piece.
+
+        EXAMPLES::
+
+            sage: f = piecewise([ [(-1,1), x**2], [(1,3), x**3]])
+            sage: f.diff()
+            piecewise(x|-->2*x on (-1, 1), x|-->3*x^2 on (1, 3); x)
+            sage: f.diff(x,x)
+            piecewise(x|-->2 on (-1, 1), x|-->6*x on (1, 3); x)
+
+        This still fails miserably::
+
+            sage: y = SR.var('y')
+            sage: f = piecewise([ [(-6,0), x+y], [(0,8), x*y]],var=x)
+            sage: f.derivative(x)  # known bug
+            piecewise(x|-->1 on (-6, 0), x|-->y on (0, 8); x)
+            sage: f.derivative(y)  # known bug
+            piecewise(x|-->1 on (-6, 0), x|-->x on (0, 8); x)
+
+        TESTS::
+
+            sage: f = piecewise([((-oo, -1),0), ((-1, 1),exp(-1/(1 - x^2))), ((1, oo),0)])
+            sage: f.diff()
+            piecewise(x|-->0 on (-oo, -1), x|-->-2*x*e^(1/(x^2 - 1))/(x^2 - 1)^2 on (-1, 1), x|-->0 on (1, +oo); x)
+        """
+        return piecewise([(domain, func.derivative(*args))
+                          for domain, func in parameters],
+                         var=variable)
 
     class EvaluationMethods(object):
 
@@ -468,25 +500,6 @@ class PiecewiseFunction(BuiltinFunction):
                 substitution[variable] = value
             return self.subs(substitution)
 
-        def _fast_float_(self, *args):
-            """
-            Do not support the old ``fast_float``
-
-            OUTPUT:
-
-            This method raises ``NotImplementedError`` so that
-            plotting uses the newer `fast_callable` implementation.
-
-            EXAMPLES::
-
-                sage: f = piecewise([([0,0], sin(x)), ((0,2), cos(x))])
-                sage: f._fast_float_()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
-            """
-            raise NotImplementedError
-
         def _fast_callable_(self, parameters, variable, etb):
             """
             Override the ``fast_callable``
@@ -527,7 +540,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([((-oo, oo), x)]);  f
                 piecewise(x|-->x on (-oo, +oo); x)
                 sage: f.restriction([[-1,1], [3,3]])
-                piecewise(x|-->x on [-1, 1] + {3}; x)
+                piecewise(x|-->x on [-1, 1] ∪ {3}; x)
             """
             restricted_domain = RealSet(*restricted_domain)
             new_param = []
@@ -559,7 +572,7 @@ class PiecewiseFunction(BuiltinFunction):
                 ValueError: point 3 is not in the domain
 
                 sage: g = f.extension(0);  g
-                piecewise(x|-->x on (-1, 1), x|-->0 on (-oo, -1] + [1, +oo); x)
+                piecewise(x|-->x on (-1, 1), x|-->0 on (-oo, -1] ∪ [1, +oo); x)
                 sage: g(3)
                 0
 
@@ -583,7 +596,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([((-1,1), x)]);  f
                 piecewise(x|-->x on (-1, 1); x)
                 sage: g = f.extension(0);  g
-                piecewise(x|-->x on (-1, 1), x|-->0 on (-oo, -1] + [1, +oo); x)
+                piecewise(x|-->x on (-1, 1), x|-->0 on (-oo, -1] ∪ [1, +oo); x)
                 sage: g(3)
                 0
                 sage: h = g.unextend_zero()
@@ -652,7 +665,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([([0,1], 1), ((2,3), x)])
                 sage: g = piecewise([((1/2, 2), x)])
                 sage: f.piecewise_add(g).unextend_zero()
-                piecewise(x|-->1 on (0, 1/2], x|-->x + 1 on (1/2, 1], x|-->x on (1, 2) + (2, 3); x)
+                piecewise(x|-->1 on (0, 1/2], x|-->x + 1 on (1/2, 1], x|-->x on (1, 2) ∪ (2, 3); x)
             """
             points = ([minus_infinity] +
                       sorted(set(self.end_points() + other.end_points())) +
@@ -714,7 +727,7 @@ class PiecewiseFunction(BuiltinFunction):
                     funcs.append(ex)
             return piecewise(zip(domain, funcs))
 
-        def integral(self, parameters, variable, x=None, a=None, b=None, definite=False):
+        def integral(self, parameters, variable, x=None, a=None, b=None, definite=False, **kwds):
             r"""
             By default, return the indefinite integral of the function.
 
@@ -785,7 +798,9 @@ class PiecewiseFunction(BuiltinFunction):
 
                 sage: f1(x) = e^(-abs(x))
                 sage: f = piecewise([[(-infinity, infinity), f1]])
-                sage: f.integral(definite=True)
+                sage: result = f.integral(definite=True)
+                ...
+                sage: result
                 2
                 sage: f.integral()
                 piecewise(x|-->-integrate(e^(-abs(x)), x, x, +Infinity) on (-oo, +oo); x)
@@ -795,7 +810,6 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([((0, 5), cos(x))])
                 sage: f.integral()
                 piecewise(x|-->sin(x) on (0, 5); x)
-
 
             TESTS:
 
@@ -812,9 +826,16 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f.integral(x,0,1)
                 0
 
+            Check that the algorithm keyword can be used::
+
+                sage: ex = piecewise([([0, 1], 1), ((1, oo), 1/x**2)])
+                sage: integral(ex,x,0,100,algorithm='giac')
+                199/100
+                sage: integral(ex,x,algorithm='giac')
+                piecewise(x|-->x on [0, 1], x|-->-1/x + 2 on (1, +oo); x)
             """
             if a is not None and b is not None:
-                F = self.integral(x)
+                F = self.integral(x, **kwds)
                 return F(b) - F(a)
 
             if a is not None or b is not None:
@@ -846,16 +867,16 @@ class PiecewiseFunction(BuiltinFunction):
                     start = interval.lower()
                     end = interval.upper()
                     if start == -infinity and not definite:
-                        fun_integrated = fun.integral(x, end, x)
+                        fun_integrated = fun.integral(x, end, x, **kwds)
                     else:
                         try:
                             assume(start < x)
                         except ValueError: # Assumption is redundant
                             pass
-                        fun_integrated = fun.integral(x, start, x) + area
+                        fun_integrated = fun.integral(x, start, x, **kwds) + area
                         forget(start < x)
                         if definite or end != infinity:
-                            area += fun.integral(x, start, end)
+                            area += fun.integral(x, start, end, **kwds)
                     new_pieces.append([interval, SR(fun_integrated).function(x)])
 
             if definite:
@@ -946,8 +967,6 @@ class PiecewiseFunction(BuiltinFunction):
             g = other
             if len(f.end_points())*len(g.end_points()) == 0:
                 raise ValueError('one of the piecewise functions is nowhere defined')
-            tt = SR.var('tt')
-            uu = SR.var('uu')
             fd, f0 = parameters[0]
             gd, g0 = next(other.items())
             if len(f)==1 and len(g)==1:
@@ -957,12 +976,14 @@ class PiecewiseFunction(BuiltinFunction):
                 a2 = fd[0].upper()
                 b1 = gd[0].lower()
                 b2 = gd[0].upper()
-                i1 = f0.subs({variable: uu})
-                i2 = g0.subs({variable: tt-uu})
-                fg1 = definite_integral(i1*i2, uu, a1, tt-b1).subs(tt = variable)
-                fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs(tt = variable)
-                fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs(tt = variable)
-                fg4 = definite_integral(i1*i2, uu, a1, a2).subs(tt = variable)
+                with SR.temp_var() as tt:
+                    with SR.temp_var() as uu:
+                        i1 = f0.subs({variable: uu})
+                        i2 = g0.subs({variable: tt-uu})
+                        fg1 = definite_integral(i1*i2, uu, a1, tt-b1).subs({tt:variable})
+                        fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs({tt:variable})
+                        fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs({tt:variable})
+                        fg4 = definite_integral(i1*i2, uu, a1, a2).subs({tt:variable})
                 if a1-b1<a2-b2:
                     if a2+b1!=a1+b2:
                         h = piecewise([[(a1+b1,a1+b2),fg1],[(a1+b2,a2+b1),fg2],[(a2+b1,a2+b2),fg3]])
@@ -1169,13 +1190,12 @@ class PiecewiseFunction(BuiltinFunction):
                     raise ValueError("the width of the domain of " +
                                      "{} is not a multiple ".format(self) +
                                      "of the given period")
-            x = SR.var('x')
             result = 0
             for domain, f in parameters:
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    result += (f*cos(pi*x*n/L)).integrate(x, a, b)
+                    result += (f*cos(pi*variable*n/L)).integrate(variable, a, b)
             return SR(result/L0).simplify_trig()
 
         def fourier_series_sine_coefficient(self, parameters, variable,
@@ -1260,13 +1280,12 @@ class PiecewiseFunction(BuiltinFunction):
                     raise ValueError("the width of the domain of " +
                                      "{} is not a multiple ".format(self) +
                                      "of the given period")
-            x = SR.var('x')
             result = 0
             for domain, f in parameters:
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    result += (f*sin(pi*x*n/L)).integrate(x, a, b)
+                    result += (f*sin(pi*variable*n/L)).integrate(variable, a, b)
             return SR(result/L0).simplify_trig()
 
         def fourier_series_partial_sum(self, parameters, variable, N,
@@ -1372,6 +1391,33 @@ class PiecewiseFunction(BuiltinFunction):
                      domain._sympy_condition_(variable))
                     for domain, func in parameters]
             return pw(*args)
+
+        def _giac_init_(self, parameters, variable):
+            """
+            Convert this piecewise expression to its Giac equivalent.
+
+            Backward conversion is not yet implemented.
+
+            EXAMPLES::
+
+                sage: ex = piecewise([((0, 1), pi), ([1, 2], x)])
+                sage: f = ex._giac_(); f
+                piecewise([((sageVARx>0) and (1>sageVARx)),pi,((sageVARx>=1) and (2>=sageVARx)),sageVARx])
+                sage: f.diff(x)
+                piecewise([((sageVARx>0) and (1>sageVARx)),0,((sageVARx>=1) and (2>=sageVARx)),1])
+
+                sage: ex = piecewise([((-100, -2), 1/x), ((1, +oo), cos(x))])
+                sage: g = ex._giac_(); g
+                piecewise([((sageVARx>-100) and ((-2)>sageVARx)),1/sageVARx,sageVARx>1,cos(sageVARx)])
+                sage: g.diff(x)
+                piecewise([((sageVARx>-100) and ((-2)>sageVARx)),-1/sageVARx^2,sageVARx>1,-sin(sageVARx)])
+            """
+            from sage.misc.flatten import flatten
+            args = [(domain._giac_condition_(variable),
+                     func._giac_init_())
+                    for domain, func in parameters]
+            args = flatten(args)
+            return f"piecewise({args})"
 
 
 piecewise = PiecewiseFunction()

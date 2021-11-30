@@ -16,7 +16,7 @@ AUTHORS:
 This module defines a class for immutable partitioning of a set. For
 mutable version see :func:`DisjointSet`.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -28,8 +28,8 @@ mutable version see :func:`DisjointSet`.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.sets.set import Set, Set_generic
 
@@ -49,11 +49,12 @@ from sage.combinat.combinat_cython import (set_partition_iterator,
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.combinat import bell_number, stirling_number2
 from sage.combinat.permutation import Permutation
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.misc.prandom import random, randint
 from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.sets.disjoint_set import DisjointSet
 from sage.combinat.posets.hasse_diagram import HasseDiagram
+
 
 class AbstractSetPartition(ClonableArray,
         metaclass=InheritComparisonClasscallMetaclass):
@@ -444,6 +445,7 @@ class AbstractSetPartition(ClonableArray,
             [{}]
         """
         SP = SetPartitions(len(self))
+
         def union(s):
             # Return the partition obtained by combining, for every
             # part of s, those parts of self which are indexed by
@@ -500,12 +502,14 @@ class AbstractSetPartition(ClonableArray,
         """
         def next(a, support):
             return support[(support.index(a)+1) % len(support)]
+
         def addback(S, terminals, rsupport):
             out = list(S)
             for a in terminals*2:
                 if a not in out and next(a, rsupport) in out:
                     out.append(a)
             return out
+
         def pre_conjugate(sp):
             if len(sp) <= 1:
                 return SetPartition([[a] for S in sp for a in S])
@@ -525,6 +529,7 @@ class AbstractSetPartition(ClonableArray,
         support = sorted(a for S in self for a in S)
         return SetPartition([[support[-support.index(a)-1] for a in S]
             for S in pre_conjugate(self)])
+
 
 class SetPartition(AbstractSetPartition,
         metaclass=InheritComparisonClasscallMetaclass):
@@ -1997,6 +2002,7 @@ class SetPartition(AbstractSetPartition,
         diag.axes(False)
         return diag
 
+
 class SetPartitions(UniqueRepresentation, Parent):
     r"""
     An (unordered) partition of a set `S` is a set of pairwise
@@ -2188,7 +2194,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         integers such that each letter is at most 1 larger than all
         the letters before to a set partition of `\{1,...,n\}`.
 
-        ``w[i]` is the index of the block containing ``i+1`` when
+        ``w[i]`` is the index of the block containing ``i+1`` when
         sorting the blocks by their minimal element.
 
         INPUT:
@@ -2653,6 +2659,7 @@ class SetPartitions(UniqueRepresentation, Parent):
                 return False
         return True
 
+
 class SetPartitions_all(SetPartitions):
     r"""
     All set partitions.
@@ -2667,6 +2674,21 @@ class SetPartitions_all(SetPartitions):
             sage: TestSuite(S).run()
         """
         SetPartitions.__init__(self, category=InfiniteEnumeratedSets())
+
+    def subset(self, size=None, **kwargs):
+        """
+        Return the subset of set partitions of a given size and
+        additional keyword arguments.
+
+        EXAMPLES::
+
+            sage: P = SetPartitions()
+            sage: P.subset(4)
+            Set partitions of {1, 2, 3, 4}
+        """
+        if size is None:
+            return self
+        return SetPartitions(size, **kwargs)
 
     def _repr_(self):
         """
@@ -2695,6 +2717,7 @@ class SetPartitions_all(SetPartitions):
             for x in SetPartitions_set(frozenset(range(1, n+1))):
                 yield self.element_class(self, list(x))
             n += 1
+
 
 class SetPartitions_set(SetPartitions):
     """
@@ -2865,6 +2888,7 @@ class SetPartitions_set(SetPartitions):
         """
         return len(self._set)
 
+
 class SetPartitions_setparts(SetPartitions_set):
     r"""
     Set partitions with fixed partition sizes corresponding to an
@@ -3024,7 +3048,6 @@ class SetPartitions_setparts(SetPartitions_set):
                     covers[first].append(i)
         return HasseDiagram(covers)
 
-
     def __iter__(self):
         """
         An iterator for all the set partitions of the given set with
@@ -3082,6 +3105,7 @@ class SetPartitions_setparts(SetPartitions_set):
         if not SetPartitions_set.__contains__(self, x):
             return False
         return sorted(map(len, x)) == list(reversed(self._parts))
+
 
 class SetPartitions_setn(SetPartitions_set):
     """
@@ -3241,7 +3265,7 @@ class SetPartitions_setn(SetPartitions_set):
 
 def cyclic_permutations_of_set_partition(set_part):
     """
-    Returns all combinations of cyclic permutations of each cell of the
+    Return all combinations of cyclic permutations of each cell of the
     set partition.
 
     AUTHORS:
@@ -3266,6 +3290,7 @@ def cyclic_permutations_of_set_partition(set_part):
          [[1, 4, 3, 2], [5, 7, 6]]]
     """
     return list(cyclic_permutations_of_set_partition_iterator(set_part))
+
 
 def cyclic_permutations_of_set_partition_iterator(set_part):
     """

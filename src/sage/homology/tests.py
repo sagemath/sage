@@ -22,7 +22,7 @@ from sage.misc.prandom import randint
 from sage.matrix.constructor import random_matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.rings.integer_ring import ZZ
-from sage.homology.examples import RandomComplex
+from sage.topology.simplicial_complex_examples import RandomComplex
 
 def random_chain_complex(level=1):
     """
@@ -40,9 +40,11 @@ def random_chain_complex(level=1):
         sage: from sage.homology.tests import random_chain_complex
         sage: C = random_chain_complex()
         sage: C
-        Chain complex with at most 2 nonzero terms over Integer Ring
-        sage: C.degree_of_differential() # random: either 1 or -1
-        1
+        Chain complex with at most ... nonzero terms over Integer Ring
+        sage: len(C.nonzero_degrees()) in [1, 2]
+        True
+        sage: C.degree_of_differential() in [-1, 1]
+        True
     """
     bound = 50*level
     nrows = randint(0, bound)

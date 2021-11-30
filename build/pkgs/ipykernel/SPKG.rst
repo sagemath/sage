@@ -1,9 +1,7 @@
-ipykernel
-=========
+ipykernel: IPython Kernel for Jupyter
+=====================================
 
 Description
 -----------
-
-IPython Kernel for Jupyter
 
 This package provides the IPython kernel for Jupyter.

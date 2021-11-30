@@ -435,7 +435,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.gen(0)
             Traceback (most recent call last):
             ...
-            ValueError: only 0 generators known for Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(24) of weight 4 and over Rational Field
+            ValueError: only 0 generators known for Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(24) of weight 4 over Rational Field
             sage: B(Cusp(1/3))
             [1/3]
             sage: B.gen(0)
@@ -541,7 +541,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B(7)
             Traceback (most recent call last):
             ...
-            TypeError: Coercion of 7 (of type <type 'sage.rings.integer.Integer'>) into Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(15) of weight 2 and over Rational Field not (yet) defined.
+            TypeError: Coercion of 7 (of type <class 'sage.rings.integer.Integer'>) into Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(15) of weight 2 over Rational Field not (yet) defined.
         """
         from .ambient import ModularSymbolsAmbient
         if isinstance(x, int) and x == 0:
@@ -644,15 +644,15 @@ class BoundarySpace_wtk_g0(BoundarySpace):
         level = int(level)
         sign = int(sign)
         weight = int(weight)
-        if not sign in [-1, 0, 1]:
+        if sign not in [-1, 0, 1]:
             raise ArithmeticError("sign must be an int in [-1,0,1]")
         if level <= 0:
             raise ArithmeticError("level must be positive")
         BoundarySpace.__init__(self,
-                                 weight = weight,
-                                 group  = arithgroup.Gamma0(level),
-                                 sign   = sign,
-                                 base_ring = F)
+                               weight=weight,
+                               group=arithgroup.Gamma0(level),
+                               sign=sign,
+                               base_ring=F)
 
     def _repr_(self):
         """
@@ -662,10 +662,10 @@ class BoundarySpace_wtk_g0(BoundarySpace):
 
             sage: B = ModularSymbols(Gamma0(97), 3).boundary_space()
             sage: B._repr_()
-            'Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(97) of weight 3 and over Rational Field'
+            'Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(97) of weight 3 over Rational Field'
         """
-        return ("Space of Boundary Modular Symbols for %s of weight %s " + \
-                "and over %s") % (self.group(), self.weight(), self.base_ring())
+        return ("Space of Boundary Modular Symbols for %s of weight %s over %s"
+                % (self.group(), self.weight(), self.base_ring()))
 
     def _coerce_cusp(self, c):
         """
@@ -776,7 +776,6 @@ class BoundarySpace_wtk_g1(BoundarySpace):
 
         -  ``F`` - base ring
 
-
         EXAMPLES::
 
             sage: from sage.modular.modsym.boundary import BoundarySpace_wtk_g1
@@ -787,16 +786,16 @@ class BoundarySpace_wtk_g1(BoundarySpace):
         """
         level = int(level)
         sign = int(sign)
-        if not sign in [-1,0,1]:
+        if sign not in [-1, 0, 1]:
             raise ArithmeticError("sign must be an int in [-1,0,1]")
         if level <= 0:
             raise ArithmeticError("level must be positive")
 
         BoundarySpace.__init__(self,
-                weight = weight,
-                group  = arithgroup.Gamma1(level),
-                sign   = sign,
-                base_ring = F)
+                               weight=weight,
+                               group=arithgroup.Gamma1(level),
+                               sign=sign,
+                               base_ring=F)
 
     def _repr_(self):
         """
@@ -828,7 +827,7 @@ class BoundarySpace_wtk_g1(BoundarySpace):
 
     def _cusp_index(self, cusp):
         """
-        Returns a pair (i, t), where i is the index of the first cusp in
+        Return a pair (i, t), where i is the index of the first cusp in
         self._known_cusps() which is equivalent to cusp, and t is 1 or -1
         as cusp is Gamma1-equivalent to plus or minus
         self._known_cusps()[i]. If cusp is not equivalent to any known
@@ -999,14 +998,14 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             Codomain: Boundary Modular Symbols space for Congruence Subgroup Gamma_H(8) ...
         """
         sign = int(sign)
-        if not sign in [-1, 0, 1]:
+        if sign not in [-1, 0, 1]:
             raise ArithmeticError("sign must be an int in [-1,0,1]")
 
         BoundarySpace.__init__(self,
-                weight = weight,
-                group  = group,
-                sign   = sign,
-                base_ring = F)
+                               weight=weight,
+                               group=group,
+                               sign=sign,
+                               base_ring=F)
 
     def _repr_(self):
         """
@@ -1151,14 +1150,18 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
         sign = self.sign()
         i, eps = self._cusp_index(c)
         if i != -1:
-            if i == -2: return self(0)
-            else: return BoundarySpaceElement(self, {i : eps**k})
+            if i == -2:
+                return self(0)
+            else:
+                return BoundarySpaceElement(self, {i : eps**k})
 
         if sign != 0:
             i2, eps = self._cusp_index(-c)
             if i2 != -1:
-                if i2 == -2: return self(0)
-                else: return BoundarySpaceElement(self, {i2:sign*(eps**k)})
+                if i2 == -2:
+                    return self(0)
+                else:
+                    return BoundarySpaceElement(self, {i2:sign*(eps**k)})
 
         # found a new cusp class
         g = self._known_gens
@@ -1240,16 +1243,16 @@ class BoundarySpace_wtk_eps(BoundarySpace):
         level = eps.modulus()
         sign = int(sign)
         self.__eps = eps
-        if not sign in [-1,0,1]:
+        if sign not in [-1, 0, 1]:
             raise ArithmeticError("sign must be an int in [-1,0,1]")
         if level <= 0:
             raise ArithmeticError("level must be positive")
         BoundarySpace.__init__(self,
-                weight = weight,
-                group = arithgroup.Gamma1(level),
-                sign = sign,
-                base_ring = eps.base_ring(),
-                character = eps)
+                               weight=weight,
+                               group=arithgroup.Gamma1(level),
+                               sign=sign,
+                               base_ring=eps.base_ring(),
+                               character=eps)
 
     def _repr_(self):
         """
@@ -1371,13 +1374,15 @@ class BoundarySpace_wtk_eps(BoundarySpace):
             if i == -2:
                 return self(0)
             else:
-                return BoundarySpaceElement(self, {i : eps})
+                return BoundarySpaceElement(self, {i: eps})
 
         if sign != 0:
             i2, eps = self._cusp_index(-c)
             if i2 != -1:
-                if i2 == -2: return self(0)
-                else: return BoundarySpaceElement(self, {i2:sign*eps})
+                if i2 == -2:
+                    return self(0)
+                else:
+                    return BoundarySpaceElement(self, {i2: sign * eps})
 
         # found a new cusp class
         g = self._known_gens

@@ -1,5 +1,5 @@
-Valgrind
-========
+valgrind: Memory error detector, call graph generator, runtime profiler
+=======================================================================
 
 Description
 -----------

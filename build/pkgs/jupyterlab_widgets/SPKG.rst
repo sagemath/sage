@@ -1,5 +1,5 @@
-Jupyter Widgets JupyterLab Extension
-====================================
+jupyterlab_widgets: A JupyterLab extension for Jupyter/IPython widgets
+======================================================================
 
 Description
 -----------

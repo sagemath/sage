@@ -87,7 +87,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         #We now coerce various types into lists of coefficients.  There are fast pathways for some types of polynomials
         if isinstance(x, Polynomial):
             if x.parent() is self.parent():
-                if not absprec is infinity or not relprec is infinity:
+                if absprec is not infinity or relprec is not infinity:
                     x._normalize()
                 self._poly = x._poly
                 self._valbase = x._valbase
@@ -95,7 +95,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
                 self._relprecs = x._relprecs
                 self._normalized = x._normalized
                 self._list = x._list
-                if not absprec is infinity or not relprec is infinity:
+                if absprec is not infinity or relprec is not infinity:
                     self._adjust_prec_info(absprec, relprec)
                 return
             elif x.base_ring() is ZZ:
@@ -106,7 +106,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
                 self._comp_valaddeds()
                 self._normalized = len(self._valaddeds) == 0 or (min(self._valaddeds) == 0)
                 self._list = None
-                if not absprec is infinity or not relprec is infinity:
+                if absprec is not infinity or relprec is not infinity:
                     self._adjust_prec_info(absprec, relprec)
                 return
             else:
@@ -147,14 +147,14 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             self._relprecs = []
             self._poly = PolynomialRing(ZZ, parent.variable_name())()
             self._normalized = True
-            if not absprec is infinity or not relprec is infinity:
+            if absprec is not infinity or relprec is not infinity:
                 self._adjust_prec_info(absprec, relprec)
         else:
             self._valaddeds = [c - self._valbase for c in self._valaddeds]
             self._relprecs = [a.precision_absolute() - self._valbase for a in x]
             self._poly = PolynomialRing(ZZ, parent.variable_name())([a >> self._valbase for a in x])
             self._normalized = True
-            if not absprec is infinity or not relprec is infinity:
+            if absprec is not infinity or relprec is not infinity:
                 self._adjust_prec_info(absprec, relprec)
 
     def _new_constant_poly(self, a, P):
@@ -702,21 +702,21 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
                 self._poly._unsafe_mutate(self, n, 0)
             if n < len(self._relprecs):
                 self._relprecs[n] = value.precision_absolute() - self._valbase
-                if not self._valaddeds is None:
+                if self._valaddeds is not None:
                     self._valaddeds[n] = value.valuation() - self._valbase
-                if not self._list is None:
+                if self._list is not None:
                     self._list[n] = value
             else:
                 self._relprecs.extend([infinity] * (n - len(self._relprecs)) + [value.precision_absolute() - self._valbase])
-                if not self._valaddeds is None:
+                if self._valaddeds is not None:
                     self._valaddeds.extend([infinity] * (n - len(self._relprecs)) + [value.valuation() - self._valbase])
-                if not self._list is None:
+                if self._list is not None:
                     zero = self.base_ring()(0)
                     self._list.extend([zero] * (n - len(self._relprecs)) + [value])
         else:
             basediff = self._valbase - value.valuation()
             self._valbase = value.valuation()
-            if not self._valaddeds is None:
+            if self._valaddeds is not None:
                 self._valaddeds = [c + basediff for c in self._valaddeds]
             self._poly = self._poly * self.base_ring().prime_pow(basediff)
             if value != 0:
@@ -728,7 +728,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             else:
                 self._relprecs.extend([infinity] * (n - len(self._relprecs)) + [value.precision_relative()])
             self._normalized = False
-            if not self._list is None:
+            if self._list is not None:
                 if n < len(self._list):
                     self._list[n] = value
                 else:
@@ -1245,13 +1245,16 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         valaddeds = self._valaddeds
         relprecs = self._relprecs
         if relprecs[0] <= compval:   # not enough precision
-            if valaddeds[0] < relprecs[0]: return False
+            if valaddeds[0] < relprecs[0]:
+                return False
             raise PrecisionError("Not enough precision on the constant coefficient")
         else:
-            if valaddeds[0] != compval: return False
+            if valaddeds[0] != compval:
+                return False
         for i in range(1, deg):
             if relprecs[i] < compval:   # not enough precision
-                if valaddeds[i] < relprecs[i]: return False
+                if valaddeds[i] < relprecs[i]:
+                    return False
                 if secure:
                     if i == 1:
                         raise PrecisionError("Not enough precision on the coefficient of %s" % self.variable_name())

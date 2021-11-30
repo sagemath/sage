@@ -1,6 +1,5 @@
-
-MCQD 1.0
-========
+mcqd: An exact algorithm for finding a maximum clique in an undirected graph
+============================================================================
 
 Description
 -----------

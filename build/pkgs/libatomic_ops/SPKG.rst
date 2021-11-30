@@ -1,5 +1,5 @@
-libatomic_ops
-=============
+libatomic_ops: Access hardware-provided atomic memory update operations
+=======================================================================
 
 Description
 -----------

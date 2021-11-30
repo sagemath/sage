@@ -343,7 +343,7 @@ def sieve(X, bound):
         sage: from sage.schemes.projective.projective_rational_point import sieve
         sage: P.<x,y,z,q>=ProjectiveSpace(QQ,3)
         sage: Y=P.subscheme([x^2-3^2*y^2+z*q,x+z+4*q])
-        sage: sorted(sieve(Y, 12))
+        sage: sorted(sieve(Y, 12))  # long time
         [(-4 : -4/3 : 0 : 1), (-4 : 4/3 : 0 : 1),
          (-1 : -1/3 : 1 : 0), (-1 : 1/3 : 1 : 0)]
 
@@ -351,7 +351,7 @@ def sieve(X, bound):
 
         sage: from sage.schemes.projective.projective_rational_point import sieve
         sage: E = EllipticCurve('37a')
-        sage: sorted(sieve(E, 14))
+        sage: sorted(sieve(E, 14))  # long time
         [(-1 : -1 : 1), (-1 : 0 : 1), (0 : -1 : 1),
          (0 : 0 : 1), (0 : 1 : 0), (1/4 : -5/8 : 1),
          (1/4 : -3/8 : 1), (1 : -1 : 1), (1 : 0 : 1),
@@ -539,12 +539,11 @@ def sieve(X, bound):
     primes_list = good_primes(B.ceil())
 
     modulo_points = points_modulo_primes(X, primes_list)
-    len_modulo_points = [len(_) for _ in modulo_points]
+    len_modulo_points = [len(pt) for pt in modulo_points]
     len_primes = len(primes_list)
     prod_primes = prod(primes_list)
 
     # stores final result
-    rat_points = set()
 
     for i in range(N + 1):
         w = [0 for _ in range(N + 1)]
@@ -554,4 +553,3 @@ def sieve(X, bound):
     rat_points = lift_all_points()
 
     return sorted(rat_points)
-

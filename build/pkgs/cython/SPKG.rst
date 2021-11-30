@@ -1,5 +1,5 @@
-Cython
-======
+cython: C-Extensions for Python, an optimizing static compiler
+==============================================================
 
 Description
 -----------
@@ -17,7 +17,6 @@ This makes Cython the ideal language for wrapping for external C
 libraries, and for fast C modules that speed up the execution of Python
 code.
 
-Website: http://www.cython.org/
 
 License
 -------
@@ -27,6 +26,8 @@ Apache License, Version 2.0
 
 Upstream Contact
 ----------------
+
+-  http://www.cython.org/
 
 -  cython-devel@python.org
 

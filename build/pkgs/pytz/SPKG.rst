@@ -1,5 +1,5 @@
-pytz
-====
+pytz: Timezone definitions for Python
+=====================================
 
 Description
 -----------

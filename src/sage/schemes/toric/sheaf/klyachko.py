@@ -47,12 +47,11 @@ REFERENCES:
 
 from sage.structure.all import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
-from sage.rings.all import ZZ
-from sage.misc.all import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import vector, block_matrix, zero_matrix
-from sage.geometry.cone import is_Cone
 from sage.modules.multi_filtered_vector_space import MultiFilteredVectorSpace
-
+import sage.geometry.abc
 
 def is_KlyachkoBundle(X):
     """
@@ -168,7 +167,8 @@ class KlyachkoBundle_class(SageObject):
         """
         self._variety = toric_variety
         self._filt = multi_filtration
-        if not check: return
+        if not check:
+            return
         from sage.sets.set import Set
         if multi_filtration.index_set() != Set(list(toric_variety.fan().rays())):
             raise ValueError('the index set of the multi-filtration must be'
@@ -298,7 +298,7 @@ class KlyachkoBundle_class(SageObject):
             return self._filt
         X = self.variety()
         fan = X.fan()
-        if is_Cone(ray):
+        if isinstance(ray, sage.geometry.abc.ConvexRationalPolyhedralCone):
             if ray.dim() != 1:
                 raise ValueError('not a one-dimensional cone')
             ray = ray.ray(0)
@@ -951,4 +951,6 @@ class KlyachkoBundle_class(SageObject):
            (1, 0)
         """
         filt = self._filt.random_deformation(epsilon)
+        while not filt.is_exhaustive():
+            filt = self._filt.random_deformation(epsilon)
         return self.__class__(self.variety(), filt, check=True)

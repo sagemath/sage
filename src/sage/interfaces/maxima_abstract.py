@@ -62,7 +62,6 @@ from sage.cpython.string import bytes_to_str
 from sage.misc.misc import ECL_TMP
 from sage.misc.multireplace import multiple_replace
 from sage.structure.richcmp import richcmp, rich_to_bool
-import sage.server.support
 
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
                         InterfaceFunction, AsciiArtString)
@@ -166,9 +165,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             ...
         """
         cmd = '{} --very-quiet --batch-string="{}({});" '.format(MAXIMA, command, s)
-        if sage.server.support.EMBEDDED_MODE:
-            cmd += '< /dev/null'
-
         env = os.environ.copy()
         env['TMPDIR'] = str(ECL_TMP)
 
@@ -674,9 +670,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 ##         represented in 2-d.
 
 ##         INPUT:
-##             flag -- bool (default: True)
 
-##         EXAMPLES
+##         flag -- bool (default: True)
+
+##         EXAMPLES::
+
 ##             sage: maxima('1/2')
 ##             1/2
 ##             sage: maxima.display2d(True)
@@ -983,7 +981,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: u.parent()
             Number Field in a with defining polynomial x^2 - 13 with a = 3.605551275463990?
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         from sage.rings.number_field.number_field import QuadraticField
         # Take square-free part so sqrt(n) doesn't get simplified
         # further by maxima
@@ -994,9 +992,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             raise ValueError("n (=%s) must be >= 1" % n)
         s = repr(self('qunit(%s)' % n)).lower()
         r = re.compile(r'sqrt\(.*\)')
-        a = QuadraticField(n, 'a').gen()
+        Qa = QuadraticField(n, 'a')
         s = r.sub('a', s)
-        return eval(s)
+        return Qa(s)
 
     def plot_list(self, ptsx, ptsy, options=None):
         r"""
@@ -1218,18 +1216,18 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: b = a._sage_(); b
             sqrt(2) + 2.5
             sage: type(b)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         We illustrate an automatic coercion::
 
             sage: c = b + sqrt(3); c
             sqrt(3) + sqrt(2) + 2.5
             sage: type(c)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: d = sqrt(3) + b; d
             sqrt(3) + sqrt(2) + 2.5
             sage: type(d)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
             sage: a = sage.calculus.calculus.maxima('x^(sqrt(y)+%pi) + sin(%e + %pi)')
             sage: a._sage_()
@@ -1538,7 +1536,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: gp('intnum(x=0,1,exp(-sqrt(x)))')
             0.52848223531423071361790491935415653021675547587292866196865279321015401702040079
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         v = self.quad_qags(var, a, b, epsrel=desired_relative_error,
                            limit=maximum_num_subintervals)
         return v[0], v[1], Integer(v[2]), Integer(v[3])
@@ -1766,7 +1764,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: y,d = var('y,d')
             sage: f = function('f')
             sage: latex(maxima(derivative(f(x*y), x)))
-            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it t}_{0}}}\,f\left({\it t}_{0}\right)  \right|_{{\it t}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
+            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it \_symbol}_{0}}}\,f\left(  {\it \_symbol}_{0}\right)\right|_{  {\it \_symbol}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
             sage: latex(maxima(derivative(f(x,y,d), d,x,x,y)))
             {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,  {\it y}}}\,f\left({\it x} ,  {\it y} , {\it d}\right)
             sage: latex(maxima(d/(d-2)))
@@ -1774,8 +1772,8 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         self._check_valid()
         P = self.parent()
-        s = P._eval_line('tex(%s);'%self.name(), reformat=False)
-        if not '$$' in s:
+        s = P._eval_line('tex(%s);' % self.name(), reformat=False)
+        if '$$' not in s:
             raise RuntimeError("Error texing Maxima object.")
         i = s.find('$$')
         j = s.rfind('$$')

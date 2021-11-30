@@ -363,8 +363,9 @@ class ModularSymbol(SageObject):
 
     def manin_symbol_rep(self):
         """
-        Returns a representation of self as a formal sum of Manin symbols.
-        (The result is not cached.)
+        Return a representation of ``self`` as a formal sum of Manin symbols.
+
+        The result is not cached.
 
         EXAMPLES::
 

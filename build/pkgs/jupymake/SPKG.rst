@@ -1,5 +1,5 @@
-jupymake
-========
+jupymake: A Python wrapper for the polymake shell
+=================================================
 
 Description
 -----------

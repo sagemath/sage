@@ -1,5 +1,5 @@
-pcre
-====
+pcre: Perl-compatible regular expressions library
+=================================================
 
 Description
 -----------
@@ -9,7 +9,7 @@ Perl-compatible regular expressions library.
 License
 -------
 
-BSD License ; see LICENCE (sic) at the root of the original tarball.
+BSD License; see LICENCE (sic) at the root of the original tarball.
 
 
 Upstream Contact

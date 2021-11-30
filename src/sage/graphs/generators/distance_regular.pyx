@@ -1786,6 +1786,789 @@ def _intersection_array_from_graph(G):
 
     return t[0][:-1] + t[1][1:]
 
+
+cdef enum ClassicalParametersGraph:
+    NonExisting = 0,
+    Johnson,
+    Hamming,
+    HalvedCube,
+    UnitaryDualPolar,
+    HermitianForms,
+    GeneralisedHexagon,
+    Grassmann,
+    OrthogonalDualPolar1,
+    SymplecticDualPolar,
+    OrthogonalDualPolar2,
+    UnitaryDualPolar1,
+    UnitaryDualPolar2,
+    Ustimenko,
+    BilinearForms,
+    AlternatingForms,
+    LieE77,
+    AffineE6
+
+def is_classical_parameters_graph(list array):
+    r"""
+    Return a tuple of parameters representing the array given. If such no tuple
+    can be produced, it returns ``False``.
+
+    Given an intersection array, if it represents a family of  distance-regular
+    graphs with classical parameters, then this function  returns a tuple
+    consisting of the  parameters `(d, b, \alpha, \beta)` and a fourth parameter
+    which is the enum ``CalssicalParametersGraph`` indicating the family with
+    the given itersection array.
+    If the array doesn't belong to any classical parameter graph, then this
+    function returns ``False``.
+    If the array belongs to a sporadic graph rather than a family of graphs,
+    then the function returns ``False``. This is to reduce the overlap with
+    ``sage.graphs.generators.distance_regular._sporadic_graph_database``.
+
+
+    .. NOTE::
+
+        The array given as an input is expected to be an intersection array.
+        If this is not the case, then some exception may be raised.
+
+    INPUT:
+
+    - ``array`` -- list; an intersection array
+
+    OUTPUT:
+
+    ``False`` or a tuple ``(d, b, alpha, beta, gamma)``.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.distance_regular import \
+        ....: is_classical_parameters_graph
+        sage: G = graphs.HammingGraph(5, 4)
+        sage: G.is_distance_regular(True)
+        ([15, 12, 9, 6, 3, None], [None, 1, 2, 3, 4, 5])
+        sage: is_classical_parameters_graph([15, 12, 9, 6, 3, 1, 2, 3, 4, 5])
+        (5, 1, 0, 3, 2)
+
+    REFERENCES:
+
+    See [BCN1989]_ chapter 9 for a discussion of distance-regular graphs with
+    classical parameters. See [BCN1989]_ chapter 6.2 for a method to compute
+    the classical parameters of a graph. See also [VDKT2016]_ section 3.1.1.
+
+    TESTS::
+
+        sage: from sage.graphs.generators.distance_regular import \
+        ....: is_classical_parameters_graph
+        sage: is_classical_parameters_graph([68, 64, 1, 17])  # srg not drg
+        False
+        sage: G = graphs.GossetGraph() # sporadic classical parameters graph
+        sage: G.is_distance_regular(True)
+        ([27, 10, 1, None], [None, 1, 10, 27])
+        sage: is_classical_parameters_graph([27, 10, 1, 1, 10, 27])
+        False
+    """
+    from sage.misc.functional import log
+    from sage.rings.integer_ring import ZZ
+    from sage.arith.misc import is_prime_power
+    from sage.combinat.q_analogues import q_binomial
+
+    def integral_log(const int x, const int b):
+        # compute log_b(x) if is not a positive iteger, return -1
+        if x <= 0:
+            return -1
+        k = log(x, b)
+        if k in ZZ and k > 0:
+            return int(k)
+        return -1
+
+    def check_parameters(int d, int b, int alpha, int beta, list arr):
+        bs = [(q_binomial(d, 1, b) - q_binomial(i, 1, b)) * \
+              (beta - alpha * q_binomial(i, 1, b)) for i in range(d)]
+        cs = [q_binomial(i, 1, b) * (1 + alpha*q_binomial(i-1, 1, b))
+              for i in range(1, d+1)]
+        return arr == bs + cs
+
+    def b_(i):
+        if i == d:
+            return 0
+        return array[i]
+
+    def c_(i):
+        if i == 0:
+            return 0
+        return array[d - 1 + i]
+
+    def a_(i):
+        return b_(0) - b_(i) - c_(i)
+
+    if len(array) % 2 != 0 :
+        return False
+
+    d = len(array) // 2
+    if d < 3:
+        return False
+
+    # if array is classical parameters, then we have 2 cases:
+    # 1. a_i != \lambda c_i for 2<= i <= d
+    # 2. a_i == \lambda c_i for 0<= i <= d
+    if all(a_(i) == a_(1) * c_(i) for i in range(2, d+1)):
+        case = 2
+    elif all(a_(i) != a_(1) * c_(i) for i in range(2, d+1)):
+        case = 1
+    else:
+        return False
+
+    if case == 1:
+        # b = (a_2 c_3 - c_2 a_3) / (a_1 c_3 - a_3)
+        num = a_(2) * c_(3) - c_(2) * a_(3)
+        den = a_(1) * c_(3) - a_(3)
+        b = num / den
+        if b in {0, -1}:
+            return False
+
+        alpha = c_(2) / (1 + b) - 1
+        beta = b_(0) / q_binomial(d, 1, b)
+
+    else:  # case 2
+        # b is either c_2 - 1 or - a_1 - 1
+        # try c_2 - 1
+        valid = True
+        b = c_(2) - 1
+        if b in {0, -1}:
+            valid = False
+        else:
+            alpha = c_(2) / (1 + b) - 1
+            beta = b_(0) / q_binomial(d, 1, b)
+            valid = check_parameters(d, b, alpha, beta, array)
+
+        if not valid:  # must have -a_1 - 1
+            b = -a_(1) - 1
+            if b in {0, -1}:
+                return False  # even this case is invalid
+
+            alpha = c_(2) / (1 + b) - 1
+            beta = a_(1) + 1 - alpha*(q_binomial(d, 1, b) - 1)
+
+    if not check_parameters(d, b, alpha, beta, array):
+        return False
+
+    gamma = ClassicalParametersGraph.NonExisting
+
+    if b == 1 :
+        if alpha == 1 and beta >= d:  # since beta+d = n >= 2*d
+            # Johnson Graph
+            gamma = ClassicalParametersGraph.Johnson
+        elif alpha == 0:
+            # Hamming Graph
+            gamma = ClassicalParametersGraph.Hamming
+        elif alpha == 2 and (beta == 2*d + 1 or beta == 2*d - 1):
+            # Halved cube graph
+            gamma = ClassicalParametersGraph.HalvedCube
+        else :
+            return False  # no other (unbounbded) drg exists with b = 1
+
+    elif b < 0 and is_prime_power(-b):
+        if alpha + 1 == (1 + b*b) / (1 + b) and \
+           beta + 1 == (1 - b**(d+1)) / (1 + b):
+            # U(2d,r)
+            gamma = ClassicalParametersGraph.UnitaryDualPolar1
+        elif alpha + 1 == b and beta + 1 == - (b**d):
+            gamma = ClassicalParametersGraph.HermitianForms
+        elif d == 3 and alpha + 1 == 1 / (1+b) and \
+             beta + 1 == q_binomial(3, 1, -b):
+            gamma = ClassicalParametersGraph.GeneralisedHexagon
+        else:
+            return False
+
+    if gamma != ClassicalParametersGraph.NonExisting:
+        return (d, b, alpha, beta, gamma)
+
+    # all remaining cases need b to be a prime power
+    (p, k) = is_prime_power(b, get_data=True)
+    if k == 0:  # b not a prime power
+        return False
+    r = p**(k//2)  # will be used later
+
+    if alpha == b and integral_log((beta+1) * (b-1) + 1, b) >= d + 1:
+        # we checked that beta + 1 = (b^(n-d+1) - 1)/(b - 1) for n >= 2d
+        # Grassmann graph
+        gamma = ClassicalParametersGraph.Grassmann
+
+    elif alpha == 0 and  beta * beta in {1, b, b * b, b**3, b**4}:
+        # checked beta in {b^0, b^(0.5), b, b^(1.5), b^2}
+        # dual polar graphs
+        if beta == 1:
+            gamma = ClassicalParametersGraph.OrthogonalDualPolar1
+        elif beta == b:
+            gamma = ClassicalParametersGraph.SymplecticDualPolar
+        elif beta == b * b:
+            gamma = ClassicalParametersGraph.OrthogonalDualPolar2
+        else:
+            if k % 2 == 1:
+                return False  # we need b a square
+            if beta == r**3:
+                gamma = ClassicalParametersGraph.UnitaryDualPolar1
+            elif beta == r:
+                gamma = ClassicalParametersGraph.UnitaryDualPolar2
+
+    elif k % 2 == 0 and alpha + 1 == q_binomial(3, 1, r) and \
+         beta + 1 in {q_binomial(2*d + 2, 1, r),
+                      q_binomial(2*d + 1, 1, r)}:
+        gamma = ClassicalParametersGraph.Ustimenko
+
+    elif alpha + 1 == b and integral_log(beta + 1, b) >= d:
+        gamma = ClassicalParametersGraph.BilinearForms
+
+    elif k % 2 == 0 and alpha + 1 == b and \
+         beta + 1 in {r**(2*d - 1),r**(2*d + 1)}:
+        gamma = ClassicalParametersGraph.AlternatingForms
+
+    elif d == 3 and k % 4 == 0 and alpha + 1 == q_binomial(5, 1, p**(k//4)) and \
+         beta + 1 == q_binomial(10, 1, p**(k//4)):
+        gamma = ClassicalParametersGraph.LieE77
+
+    elif d == 3 and k % 4 == 0 and alpha + 1 == b and beta + 1 == (p**(k//4))**9:
+        gamma = ClassicalParametersGraph.AffineE6
+
+    if gamma == ClassicalParametersGraph.NonExisting:
+        return False
+    return (d, b, alpha, beta, gamma)
+
+def graph_with_classical_parameters(int d, int b, alpha_in, beta_in, int gamma):
+    r"""
+    Return the graph with the classical parameters given.
+
+    The last parameter ``gamma`` is meant to be an element of the enum
+    ``ClassicalParametersGraph`` used to identify the family of graphs to
+    construct.
+    In particular this function doesn't build any sporadic graph.
+    To build such a graph use
+    :func:`sage.graphs.generators.distance_regular.distance_regular_graph`.
+
+    INPUT:
+
+    - ``d, b, alpha_in, beta_in`` -- numbers; the parameters of the graph;
+      ``d`` and ``b`` must be integers
+
+    - ``gamma`` -- element of the enum ``ClassicalParametersGraph``
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.distance_regular import *
+        sage: graph_with_classical_parameters(3, 1, 1, 3, 1)
+        Johnson graph with parameters 6,3: Graph on 20 vertices
+
+    The last parameter is very important as it takes precedence.
+    This function will not check that the other four parameters match the correct
+    family. Use
+    :func:`sage.graphs.generators.distance_regular.is_classical_parameters_graph`
+    to check the parameters::
+
+        sage: from sage.graphs.generators.distance_regular import *
+        sage: graph_with_classical_parameters(3, 1, 1, 3, 2)
+        Hamming Graph with parameters 3,4: Graph on 64 vertices
+        sage: G = _; G.is_distance_regular(True)
+        ([9, 6, 3, None], [None, 1, 2, 3])
+        sage: is_classical_parameters_graph([9, 6, 3, 1, 2, 3])
+        (3, 1, 0, 3, 2)
+
+    Two families of graphs are not implemented yet::
+
+        sage: from sage.graphs.generators.distance_regular import *
+        sage: graph_with_classical_parameters(3, 16, 15, 511, 17)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Graph would be too big
+        sage: graph_with_classical_parameters(3, 16, 30, 1022, 16)
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: Graph would be too big
+
+    REFERENCES:
+
+    See [BCN1989]_ chapter 9 for a discussion of distance-regular graphs with
+    classical parameters. See also [VDKT2016]_ section 3.1.1.
+
+    TESTS::
+
+        sage: graph_with_classical_parameters(3, 1, 2, 3, 3)
+        Half 4 Cube: Graph on 8 vertices
+        sage: graph_with_classical_parameters(3, 2, 0, 2, 9)
+        Symplectic Dual Polar Graph DSp(6, 2): Graph on 135 vertices
+        sage: graph_with_classical_parameters(3, 2, 2, 14, 7)  # long time
+        Grassmann graph J_2(6, 3): Graph on 1395 vertices
+        sage: graph_with_classical_parameters(3, -2, -2, 6, 6) # optional - gap_packages internet
+        Generalised hexagon of order (2, 8): Graph on 819 vertices
+    """
+    from sage.rings.rational import Rational
+    from sage.misc.functional import sqrt, log
+    from sage.graphs.generators.families import JohnsonGraph, HammingGraph
+    from sage.graphs.generators.classical_geometries import \
+        UnitaryDualPolarGraph, OrthogonalDualPolarGraph, SymplecticDualPolarGraph
+
+    alpha = Rational(alpha_in)
+    beta = Rational(beta_in)
+    if alpha.is_integer():
+        alpha = int(alpha)
+    if beta.is_integer():
+        beta = int(beta)
+
+    if gamma == ClassicalParametersGraph.Johnson:
+        return JohnsonGraph(beta + d, d)
+
+    elif gamma == ClassicalParametersGraph.Hamming:
+        return HammingGraph(d, beta + 1)
+
+    elif gamma == ClassicalParametersGraph.HalvedCube:
+        a = 0 if beta == 2*d + 1 else 1
+        return HalfCube(beta + a)
+
+    elif gamma == ClassicalParametersGraph.UnitaryDualPolar:
+        return UnitaryDualPolarGraph(2 * d, -b)
+
+    elif gamma == ClassicalParametersGraph.HermitianForms:
+        return HermitianFormsGraph(d,(-b)**2)
+
+    elif gamma == ClassicalParametersGraph.GeneralisedHexagon:
+        q = -b
+        return GeneralisedHexagonGraph(q, q**3)
+
+    elif gamma == ClassicalParametersGraph.Grassmann:
+        n = int(log((beta+1) * (b-1) + 1, b)) + d -1
+        return GrassmannGraph(b, n, d)
+
+    elif gamma == ClassicalParametersGraph.OrthogonalDualPolar1:
+        return OrthogonalDualPolarGraph(1, d, b)
+
+    elif gamma == ClassicalParametersGraph.SymplecticDualPolar:
+        return SymplecticDualPolarGraph(2 * d, b)
+
+    elif gamma == ClassicalParametersGraph.OrthogonalDualPolar2:
+        return OrthogonalDualPolarGraph(-1, d, b)
+
+    elif gamma == ClassicalParametersGraph.UnitaryDualPolar1:
+        r = int(sqrt(b))
+        return UnitaryDualPolarGraph(2*d + 1, r)
+
+    elif gamma == ClassicalParametersGraph.UnitaryDualPolar2:
+        r = int(sqrt(b))
+        return UnitaryDualPolarGraph(2 * d, r)
+
+    elif gamma == ClassicalParametersGraph.Ustimenko:
+        q = int(sqrt(b))
+        m = int(log((beta+1) * (q-1) + 1, q)) - 1
+        UstimenkoGraph(m, q)
+
+    elif gamma == ClassicalParametersGraph.BilinearForms:
+        e = int(log(beta + 1, b))
+        return BilinearFormsGraph(d, e, b)
+
+    elif gamma == ClassicalParametersGraph.AlternatingForms:
+        q = int(sqrt(b))
+        a = 0 if beta + 1 == q**(2*d - 1) else 1
+        return AlternatingFormsGraph(2*d + a, q)
+
+    elif gamma == ClassicalParametersGraph.LieE77 or \
+         gamma == ClassicalParametersGraph.AffineE6:
+        raise NotImplementedError("Graph would be too big")
+
+    raise ValueError("Incorrect family of graphs")
+
+def is_pseudo_partition_graph(list arr):
+    r"""
+    Return `(m, a)` if the intersection array given satisfies:
+    `b_i = (m - i)(1 + a(m - 1 - i))` for `0 \leq i < d`
+    `c_i = i(1 + a(i - 1))` for `0 \leq i < d`
+    `c_d = (2d + 2 - m) d (1 + a(d - 1))` where `d` is the diameter of the graph.
+
+    If such pair `(m, a)` doesn't exist or the diameter is less than 3, then
+    this function returns ``False``.
+
+    These graphs are called pseudo partition graphs in [BCN1989]_ chapter 6.3.
+
+    INPUT:
+
+    - ``arr`` -- list; intersection array
+
+    OUTPUT:
+
+    A pair `(m, a)` of integers or ``False`` if such pair doesn't exist.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.distance_regular import *
+        sage: is_pseudo_partition_graph([36, 25, 16, 1, 4, 18])
+        (6, 1)
+        sage: pseudo_partition_graph(6, 1)  # long time
+        Folded Johnson graph with parameters 12,6: Graph on 462 vertices
+        sage: _.is_distance_regular(True)  # long time
+        ([36, 25, 16, None], [None, 1, 4, 18])
+
+    REFERENCE:
+
+    See [BCN1989]_ pp. 197, 198 or [VDKT2016]_ pp. 38, 39.
+
+    TESTS::
+
+        sage: from sage.graphs.generators.distance_regular import *
+        sage: is_pseudo_partition_graph([])
+        False
+        sage: is_pseudo_partition_graph([36, 25, 16, 1, 0, 18])
+        False
+        sage: is_pseudo_partition_graph([217, 156, 105, 1, 12, 33])
+        (7, 5)
+        sage: pseudo_partition_graph(7, 5)
+        Traceback (most recent call last):
+        ...
+        ValueError: No known graph exists
+    """
+    d = len(arr)
+    if d % 2 != 0:
+        return False
+
+    d = d // 2
+
+    if d < 3 :
+        return False
+
+    # c_2 = 2 (1+a)
+    c2 = arr[d+1]
+    if c2 % 2 != 0:
+        return False
+    a = c2//2 - 1
+
+    cd = arr[2*d - 1]
+    K = d * (1+a * (d-1))
+    if cd % K != 0:
+        return False
+
+    gamma = cd // K
+    m = 2*d + 2 - gamma
+
+    # we must have m = 2*d or 2*d +1
+    if m not in {2*d, 2*d + 1}:
+        return False
+
+    newArr = [(m-i) * (1 + a * (m-1-i)) for i in range(d)] + \
+             [i * (1 + a * (i-1)) for i in range(1, d)] + \
+             [(2*d + 2 - m) * d * (1 + a * (d-1))]
+
+    if arr == newArr:
+        return (m, a)
+
+    return False
+
+def pseudo_partition_graph(int m, int a):
+    r"""
+    Return a pseudo partition graph with the given parameters.
+
+    A graph is a pseudo partition graph if it is distance-regular with
+    diameter at least 3 and whose intersection numbers satisfy:
+    `b_i = (m - i)(1 + a(m - 1 - i))` for `0 \leq i < d`
+    `c_i = i(1 + a(i - 1))` for `0 \leq i < d`
+    `c_d = (2d + 2 - m) d (1 + a(d - 1))` where `d` is the diameter of the graph.
+
+    INPUT:
+
+    - ``m, a`` -- integers; parameters of the graph
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.distance_regular import *
+        sage: pseudo_partition_graph(6, 1)
+        Folded Johnson graph with parameters 12,6: Graph on 462 vertices
+
+    Not all graphs built with this function are pseudo partition graphs as
+    intended by
+    :func:`sage.graphs.generators.distance_regular.is_pseudo_partition_graph`,
+    since that function requires the diameter to be at least 3::
+
+        sage: from sage.graphs.generators.distance_regular import *
+        sage: pseudo_partition_graph(3, 1)
+        Folded Johnson graph with parameters 6,3: Graph on 10 vertices
+        sage: G=_; G.is_distance_regular(True)
+        ([9, None], [None, 1])
+        sage: is_pseudo_partition_graph([9, 1])
+        False
+
+    REFERENCES:
+
+    See [BCN1989]_ pp. 197, 198 or [VDKT2016]_ pp. 38, 39 for a discussion of
+    known pseudo partition graphs.
+
+    TESTS::
+
+        sage: from sage.graphs.generators.distance_regular import *
+        sage: pseudo_partition_graph(3, 3)
+        Traceback (most recent call last):
+        ...
+        ValueError: No known graph exists
+        sage: pseudo_partition_graph(8, 0).is_distance_regular(True)
+        ([8, 7, 6, 5, None], [None, 1, 2, 3, 8])
+        sage: pseudo_partition_graph(6, 2).is_distance_regular(True)
+        ([66, 45, 28, None], [None, 1, 6, 30])
+    """
+    from sage.graphs.generators.families import JohnsonGraph, FoldedCubeGraph
+    from sage.graphs.bipartite_graph import BipartiteGraph
+
+    if a == 0:
+        return FoldedCubeGraph(m)
+    elif a == 1:
+        return JohnsonGraph(2 * m, m).folded_graph()
+    elif a == 2:
+        return BipartiteGraph(FoldedCubeGraph(2 * m)).project_left()
+
+    raise ValueError("No known graph exists")
+
+cdef enum NearPolygonGraph:
+    RegularPolygon = 0,
+    GeneralisedPolygon,
+    OddGraph,
+    DoubleOdd,
+    DoubleGrassmann,
+    FoldedCube,
+    HammingGraph,
+    DualPolarGraph
+
+def is_near_polygon(array):
+    r"""
+    Return a tuple of parameters which identify the near polygon graph with
+    the given intersection array. If such tuple doesn't exist, return ``False``.
+
+    Note that ``array`` may be the intersection array of a near polygon, but if
+    such graph has diameter less than 3, then this function will return
+    ``False``.
+
+    INPUT:
+
+    - ``array`` -- list; intersection array
+
+    OUTPUT:
+
+    The tuple has the form ``(id, params)`` where ``id`` is a value of the
+    enum `NearPolygonGraph` which identify a family of graphs and ``params``
+    are all parameters needed to construct the final graph.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.distance_regular import (
+        ....: is_near_polygon, near_polygon_graph)
+        sage: is_near_polygon([7, 6, 6, 5, 5, 4, 1, 1, 2, 2, 3, 3])
+        (2, 7)
+        sage: near_polygon_graph(2, 7)
+        Odd Graph with parameter 7: Graph on 1716 vertices
+        sage: _.is_distance_regular(True)
+        ([7, 6, 6, 5, 5, 4, None], [None, 1, 1, 2, 2, 3, 3])
+
+    REFERECES:
+
+    See [BCN1989]_ pp. 198-206 for some theory about near polygons as well as
+    a list of known examples.
+
+    TESTS::
+
+        sage: from sage.graphs.generators.distance_regular import (
+        ....: is_near_polygon, near_polygon_graph)
+        sage: is_near_polygon([7, 6, 6, 4, 4, 1, 1, 3, 3, 7])
+        (4, (2, 2))
+        sage: near_polygon_graph(4, (2, 2))
+        Double Grassmann graph (5, 2, 2): Graph on 310 vertices
+        sage: near_polygon_graph(*is_near_polygon([3, 2, 2, 1, 1, 3]))
+        Generalised hexagon of order (1, 2): Graph on 14 vertices
+        sage: is_near_polygon([16, 12, 8, 4, 1, 2, 3, 4])
+        (6, (4, 5))
+        sage: is_near_polygon([])
+        False
+        sage: is_near_polygon([25, 16, 9, 4, 1, 1, 4, 9, 16, 25]) # JohnsonGraph
+        False
+    """
+    from sage.arith.misc import is_prime_power
+    from sage.combinat.q_analogues import q_binomial
+    from sage.misc.functional import log
+
+    if len(array) % 2 != 0:
+        return False
+
+    d = len(array) // 2
+
+    if d < 3:
+        return False
+
+    k = array[0]
+    l = k - array[1] - 1
+
+    if l < 0:
+        return False
+
+    if any(array[i] != k - (l+1) * array[d - 1 + i] for i in range(1, d)) or \
+       k < (l+1) * array[2*d - 1]:
+        return False
+
+    # additional checks
+    if k < (l+1) * array[2*d - 1] or k % (l + 1) != 0:
+        return False
+
+    # check if it is known example
+    if k == (l+1) * array[2*d - 1] and \
+       all(array[d + i] == 1 for i in range(d-1)) and \
+       (l + 1 > 1 or array[2*d - 1] - 1 >  1):  # last 2 reject regular polygons
+        # generalised polygon
+        s = l+1
+        t = array[2*d - 1] - 1
+
+        if (d == 3 and (s == 1 or t == 1) and is_prime_power(s * t)) or \
+           (d, s, t) in {(3, 2, 2), (3, 3, 3), (3, 4, 4), (3, 5, 5), (3, 2, 8),
+                         (3, 8, 2), (3, 3, 27), (3, 27, 3), (4, 2, 4), (4, 4, 2),
+                         (6, 1, 2), (6, 1, 3), (6, 1, 4), (6, 1, 5), (6, 2, 1),
+                         (6, 3, 1), (6, 4, 1), (6, 5, 1)}:
+            return (NearPolygonGraph.GeneralisedPolygon, (d, s, t))
+
+        if d == 4 and (s == 1 or t == 1):
+            q = s * t
+            if strongly_regular_graph((q+1) * (q*q + 1), q * (q+1), q-1, q+1,
+                                      existence=True):
+                return (NearPolygonGraph.GeneralisedPolygon, (d, s, t))
+
+        # otherwise not known generalised polygon
+        return False
+
+    n = 2 * d if k == (l+1) * array[2*d - 1] else 2*d + 1
+
+    if k == 2 and l == 0 and all(array[d + i] == 1 for i in range(d - 1)) and \
+       array[2*d - 1] in {1, 2}:
+        return (NearPolygonGraph.RegularPolygon, 2*d + 2 - array[2*d - 1])
+
+    if l == 0 and k == d + 1 and n == 2*d + 1 and \
+       all(array[d + i] == (i + 2) // 2 for i in range(d)):
+        return (NearPolygonGraph.OddGraph, d + 1)
+
+    if l == 0 and k == n and all(array[d - 1 + i] == i for i in range(1, d)) \
+       and array[2*d - 1] == d * (2*d + 2 - n):
+        return (NearPolygonGraph.FoldedCube, k)
+
+    if l == 0 and n == 2 * d and d % 2 == 1 and (d-1) // 2 + 1 == k and \
+       all(array[d - 1 + i] == (i+1) // 2 for i in range(1, d + 1)):
+        return (NearPolygonGraph.DoubleOdd, k - 1)
+
+    if l == 0 and n == 2 * d and d % 2 == 1 and \
+       is_prime_power(array[d + 2] - 1) and \
+       all(array[d - 1 + i] == q_binomial((i+1) // 2, 1, array[d + 2] - 1)
+           for i in range(1, d+1)) and \
+       k == q_binomial((d-1) // 2 + 1, 1, array[d + 2] - 1):
+        return (NearPolygonGraph.DoubleGrassmann, (array[d + 2] - 1, (d-1) // 2))
+
+    if n == 2 * d and k == (l+1) * d and \
+       all(array[d - 1 + i] == i for i in range(1, d + 1)):
+        return (NearPolygonGraph.HammingGraph, (d, l + 2))
+
+    if n == 2 * d and is_prime_power(array[d + 1] - 1) and \
+       (l + 1) in [(array[d + 1] - 1) ** e for e in [0, 0.5, 1, 1.5, 2]] and \
+       k == (l+1) * q_binomial(d, 1, array[d + 1] - 1) and \
+       all(array[d - 1 + i] == q_binomial(i, 1, array[d + 1] - 1)
+           for i in range(1, d + 1)):
+        return (NearPolygonGraph.DualPolarGraph, (d, array[d + 1] - 1,
+                log(l + 1, array[d + 1] - 1)))
+
+    # otherwise we don't know the near polygon
+    return False
+
+def near_polygon_graph(family, params):
+    r"""
+    Return the near polygon graph with the given parameters.
+
+    The input is expected to be the result of the function
+    :func:`sage.graphs.generators.distance_regular.is_near_polygon`.
+
+    INPUT:
+
+    - ``family`` -- int; an element of the enum ``NearPolygonGraph``.
+
+    - ``params`` -- int or tuple; the paramters needed to construct a graph
+      of the family ``family``.
+
+    EXAMPLES::
+
+        sage: from sage.graphs.generators.distance_regular import (
+        ....: is_near_polygon, near_polygon_graph)
+        sage: near_polygon_graph(*is_near_polygon([6, 5, 5, 4, 4, 3, 3, 2, 2, \
+        ....: 1, 1, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6]))
+        Bipartite double of Odd graph on a set of 11 elements: Graph on 924 vertices
+        sage: G=_; G.is_distance_regular(True)
+        ([6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, None],
+         [None, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6])
+
+    REFERENCES:
+
+    See [BCN1989]_ pp. 198-206 for some theory about near polygons as well as
+    a list of known examples.
+
+    TESTS::
+
+        sage: near_polygon_graph(12, 9)
+        Traceback (most recent call last):
+        ...
+        ValueError: No known near polygons with the given parameters
+        sage: is_near_polygon([2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2])
+        (0, 12)
+        sage: near_polygon_graph((0, 12))
+        Traceback (most recent call last):
+        ...
+        TypeError: ...near_polygon_graph() takes exactly 2 positional arguments (1 given)
+        sage: near_polygon_graph(0, 12)
+        Cycle graph: Graph on 12 vertices
+        sage: near_polygon_graph(*is_near_polygon([8, 7, 6, 5, 1, 2, 3, 8]))
+        Folded Cube Graph: Graph on 128 vertices
+    """
+
+    if family == NearPolygonGraph.RegularPolygon:
+        from sage.graphs.generators.basic import CycleGraph
+        return CycleGraph(params)
+
+    if family == NearPolygonGraph.GeneralisedPolygon:
+        d, s, t = params
+        if d == 3:
+            return GeneralisedHexagonGraph(s, t)
+        if d == 4:
+            return GeneralisedOctagonGraph(s, t)
+        if d == 6:
+            return GeneralisedDodecagonGraph(s, t)
+
+    if family == NearPolygonGraph.OddGraph:
+        from sage.graphs.generators.families import OddGraph
+        return OddGraph(params)
+
+    if family == NearPolygonGraph.DoubleOdd:
+        return DoubleOddGraph(params)
+
+    if family == NearPolygonGraph.DoubleGrassmann:
+        return DoubleGrassmannGraph(*params)
+
+    if family == NearPolygonGraph.FoldedCube:
+        from sage.graphs.generators.families import FoldedCubeGraph
+        return FoldedCubeGraph(params)
+
+    if family == NearPolygonGraph.HammingGraph:
+        from sage.graphs.generators.families import HammingGraph
+        return HammingGraph(*params)
+
+    if family == NearPolygonGraph.DualPolarGraph:
+        from sage.graphs.generators.classical_geometries import (
+            UnitaryDualPolarGraph,
+            OrthogonalDualPolarGraph,
+            SymplecticDualPolarGraph)
+
+        d, q, e = params
+        if e == 0:
+            return OrthogonalDualPolarGraph(1, d, q)
+        if e == 0.5:
+            return UnitaryDualPolarGraph(2 * d, int(q**0.5))
+        if e == 1:
+            return SymplecticDualPolarGraph(2 * d, q)
+        if e == 1.5:
+            return UnitaryDualPolarGraph(2*d + 1, int(q**0.5))
+        if e == 2:
+            return OrthogonalDualPolarGraph(-1, d, q)
+
+    raise ValueError("No known near polygons with the given parameters")
+
 # dictionary intersection_array (as tuple)  -> construction
 # of spordaic distance-regular graphs
 from sage.graphs.generators.smallgraphs import (FosterGraph, BiggsSmithGraph,
@@ -1809,18 +2592,18 @@ _sporadic_graph_database = {
     (21, 20, 16, 9, 2, 1, 1, 2, 3, 16, 20, 21) : \
     shortened_000_111_extended_binary_Golay_code_graph,
     (22, 21, 20, 3, 2, 1, 1, 2, 3, 20, 21, 22) : lambda : \
-    codes.GolayCode(GF(2), extended=False).shortened([0]).cosetGraph,
+    codes.GolayCode(GF(2), extended=False).shortened([0]).cosetGraph(),
     (3, 2, 1, 1, 1, 1, 1, 1, 2, 3) : DodecahedralGraph,
     (22, 20, 18, 2, 1, 1, 2, 9, 20, 22) : lambda : \
-    codes.GolayCode(GF(3)).shortened([0]).cosetGraph,
+    codes.GolayCode(GF(3)).shortened([0]).cosetGraph(),
     (7, 6, 6, 1, 1, 1, 1, 6, 6, 7) : lambda : \
-    HoffmanSingletonGraph().bipartite_double,
+    HoffmanSingletonGraph().bipartite_double(),
     (10, 9, 8, 2, 1, 1, 2, 8, 9, 10) : lambda : \
-    SimsGewirtzGraph().bipartite_double,
+    SimsGewirtzGraph().bipartite_double(),
     (16, 15, 12, 4, 1, 1, 4, 12, 15, 16) : lambda : \
-    strongly_regular_graph(77, 16, 0, check=False).bipartite_double,
+    strongly_regular_graph(77, 16, 0, check=False).bipartite_double(),
     (22, 21, 16, 6, 1, 1, 6, 16, 21, 22) : lambda : \
-    HigmanSimsGraph().bipartite_double,
+    HigmanSimsGraph().bipartite_double(),
     (3, 2, 2, 1, 1, 1, 1, 2) : CoxeterGraph,
     (6, 5, 5, 4, 1, 1, 2, 6) : vanLintSchrijverGraph,
     (7, 6, 4, 4, 1, 1, 1, 6) : DoublyTruncatedWittGraph,
@@ -1831,23 +2614,30 @@ _sporadic_graph_database = {
     (6, 4, 2, 1, 1, 1, 4, 6) : FosterGraph3S6,
     (10, 6, 4, 1, 1, 2, 6, 10) :  ConwaySmith_for_3S7,
     (20, 18, 4, 1, 1, 2, 18, 20) : lambda : \
-    codes.GolayCode(GF(3), extended=False).shortened([0]).cosetGraph,
+    codes.GolayCode(GF(3), extended=False).shortened([0]).cosetGraph(),
     (45, 32, 12, 1, 1, 6, 32, 45) : locally_GQ42_distance_transitive_graph,
     (117, 80, 24, 1, 1, 12, 80, 117) : graph_3O73,
     (22, 21, 20, 1, 2, 6): lambda : \
-    codes.GolayCode(GF(2), extended=False).punctured([0]).cosetGraph,
+    codes.GolayCode(GF(2), extended=False).punctured([0]).cosetGraph(),
     (23, 22, 21, 1, 2, 3): lambda : \
-    codes.GolayCode(GF(2), extended=False).cosetGraph,
-    (24, 23, 22, 21, 1, 2, 3, 24): lambda : codes.GolayCode(GF(2)).cosetGraph,
+    codes.GolayCode(GF(2), extended=False).cosetGraph(),
+    (24, 23, 22, 21, 1, 2, 3, 24): lambda : codes.GolayCode(GF(2)).cosetGraph(),
     (12, 11, 10, 7, 1, 2, 5, 12): LeonardGraph,
     (15, 14, 10, 3, 1, 5, 12, 15): cocliques_HoffmannSingleton,
     (27, 10, 1, 1, 10, 27): GossetGraph,
     (30, 28, 24, 1, 3, 15): LargeWittGraph,
     (15, 14, 12, 1, 1, 9): TruncatedWittGraph,
-    (24, 22, 20, 1, 2, 12): lambda : codes.GolayCode(GF(3)).cosetGraph,
+    (24, 22, 20, 1, 2, 12): lambda : codes.GolayCode(GF(3)).cosetGraph(),
     (21, 20, 16, 1, 2, 12): lambda : \
-    codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph
+    codes.GolayCode(GF(2), extended=False).punctured([0, 1]).cosetGraph()
 }
+
+_infinite_families_database = [
+    (is_classical_parameters_graph, graph_with_classical_parameters),
+    (is_pseudo_partition_graph, pseudo_partition_graph),
+    (is_near_polygon, near_polygon_graph),
+    (is_from_GQ_spread, graph_from_GQ_spread),
+]
 
 def distance_regular_graph(list arr, existence=False, check=True):
     r"""
@@ -1876,16 +2666,6 @@ def distance_regular_graph(list arr, existence=False, check=True):
         sage: G.is_distance_regular(True)
         ([12, 11, 10, 7, None], [None, 1, 2, 5, 12])
 
-    Not all distance-regular graphs can be built with this function::
-
-        sage: G = graphs.DoubleOddGraph(2)
-        sage: G.is_distance_regular(True)
-        ([3, 2, 2, 1, 1, None], [None, 1, 1, 2, 2, 3])
-        sage: graphs.distance_regular_graph([3, 2, 2, 1, 1, 1, 1, 2, 2, 3])
-        Traceback (most recent call last):
-        ...
-        RuntimeError: No distance-regular graph with intersection array [3, 2, 2, 1, 1, 1, 1, 2, 2, 3] known
-
     REFERENCES:
 
     See [BCN1989]_ and [VDKT2016]_.
@@ -1894,11 +2674,21 @@ def distance_regular_graph(list arr, existence=False, check=True):
 
         sage: graphs.distance_regular_graph([3, 2, 2, 1, 1, 1, 1, 2, 2, 3],
         ....: existence=True)
-        Unknown
+        True
         sage: graphs.distance_regular_graph([3, 2, 2, 1, 2, 1, 1, 2, 2, 3],
         ....: existence=True)
         False
-
+        sage: graphs.distance_regular_graph([18, 16, 16, 1, 1, 9])  # optional - internet gap_packages
+        Generalised hexagon of order (2, 8): Graph on 819 vertices
+        sage: graphs.distance_regular_graph([14, 12, 10, 8, 6, 4, 2,
+        ....: 1, 2, 3, 4, 5, 6, 7])
+        Hamming Graph with parameters 7,3: Graph on 2187 vertices
+        sage: graphs.distance_regular_graph([66, 45, 28, 1, 6, 30])
+        Graph on 1024 vertices
+        sage: graphs.distance_regular_graph([6,5,5,5,1,1,1,6])
+        Generalised octagon of order (1, 5): Graph on 312 vertices
+        sage: graphs.distance_regular_graph([64, 60, 1, 1, 15, 64], check=True)
+        Graph on 325 vertices
     """
     from sage.misc.unknown import Unknown
     from sage.categories.sets_cat import EmptySetError
@@ -1969,6 +2759,15 @@ def distance_regular_graph(list arr, existence=False, check=True):
         if existence:
             return True
         return result(_sporadic_graph_database[t]())
+
+    for (f, g) in _infinite_families_database:
+        t = f(arr)
+        if t is not False:
+            if existence:
+                return True
+
+            G = g(*t) if is_iterable(t) else g(t)
+            return result(G)
 
     # now try drg feasibility
     if drgModule:

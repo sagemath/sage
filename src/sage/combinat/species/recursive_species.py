@@ -17,7 +17,7 @@ Recursive Species
 #*****************************************************************************
 from sage.combinat.species.species import GenericCombinatorialSpecies
 from sage.combinat.species.structure import SpeciesStructureWrapper
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 
 
 class CombinatorialSpeciesStructure(SpeciesStructureWrapper):
@@ -467,7 +467,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
             sage: B = species.BinaryTreeSpecies()
             sage: B.algebraic_equation_system()
-            [-node3^2 + node1, -node1 + node3 - z]
+            [-node3^2 + node1, -node1 + node3 + (-z)]
         """
         try:
             return var_mapping[self._reference]

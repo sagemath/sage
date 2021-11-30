@@ -1,1 +1,1 @@
-cd src && $MAKE check PYTHON=sage-python23
+cd src && $MAKE check PYTHON=python3

@@ -1806,7 +1806,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             return self.tensor_square().sum_of_monomials((self._indices(compo[:i]),
                                                           self._indices(compo[i:]))
-                                                         for i in range(0,len(compo)+1))
+                                                         for i in range(len(compo)+1))
 
         def lambda_of_monomial(self, I, n):
             r"""
@@ -1908,7 +1908,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             # The following algorithm is a rewriting of the formula in the docstring.
             # We are working over QQ because there are denominators which don't
             # immediately cancel.
-            from sage.rings.all import ZZ, QQ
+            from sage.rings.integer_ring import ZZ
+            from sage.rings.rational_field import QQ
             QQM = QuasiSymmetricFunctions(QQ).M()
             QQ_result = QQM.zero()
             for lam in Partitions(n):
@@ -2758,7 +2759,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             return self.tensor_square().sum_of_monomials((self._indices(compo[:i]),
                                                           self._indices(compo[i:]))
-                                                         for i in range(0,len(compo)+1))
+                                                         for i in range(len(compo)+1))
 
         def product_on_basis(self, I, J):
             r"""
@@ -2897,7 +2898,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 return (matrix([[]]), [])
             CO = compositions_order(n)
             # ZZ is faster than over QQ for inverting a matrix
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             MS = MatrixSpace(ZZ, len(CO))
             M = MS([[number_of_SSRCT(al, be) for al in CO] for be in CO])
             return (M.inverse_of_unit(), CO)
@@ -3906,7 +3907,9 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             R = self.base_ring()
             minus_one = -R.one()
-            def z(J): return R(J.to_partition().centralizer_size())
+
+            def z(J):
+                return R(J.to_partition().centralizer_size())
             return self._from_dict({J: minus_one**(len(I)-len(J)) / z(J) * coeff_lp(I, J)
                                     for J in I.fatter()})
 
@@ -4046,7 +4049,9 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             R = self.base_ring()
             minus_one = -R.one()
-            def z(J): return R(J.to_partition().centralizer_size())
+
+            def z(J):
+                return R(J.to_partition().centralizer_size())
             return self._from_dict({J: minus_one**(len(I)-len(J)) * R.prod(J) / (coeff_ell(I, J) * z(J))
                                     for J in I.fatter()})
 

@@ -282,7 +282,7 @@ class LieConformalAlgebras(Category_over_base_ring):
             tester = self._tester(**options)
             S = tester.some_elements()
             from sage.misc.misc import some_tuples
-            from sage.functions.other import binomial
+            from sage.arith.misc import binomial
             pz = tester._instance.zero()
             for x,y,z in some_tuples(S, 3, tester._max_runs):
                 brxy = x.bracket(y)

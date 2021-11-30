@@ -20,7 +20,7 @@ from sage.categories.graded_hopf_algebras import GradedHopfAlgebras
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 
-from sage.functions.other import factorial
+from sage.arith.misc import factorial
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.ncsym.bases import NCSymBases, MultiplicativeNCSymBases, NCSymBasis_abstract
 from sage.combinat.set_partition import SetPartitions
@@ -29,7 +29,7 @@ from sage.combinat.posets.posets import Poset
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.set import Set
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from functools import reduce
 
 def matchings(A, B):

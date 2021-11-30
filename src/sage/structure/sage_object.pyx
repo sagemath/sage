@@ -217,7 +217,9 @@ cdef class SageObject:
         You can use the :func:`~sage.typeset.ascii_art.ascii_art` function
         to get the ASCII art representation of any object in Sage::
 
-            sage: ascii_art(integral(exp(x+x^2)/(x+1), x))
+            sage: result = ascii_art(integral(exp(x+x^2)/(x+1), x))
+            ...
+            sage: result
               /
              |
              |   2
@@ -643,7 +645,7 @@ cdef class SageObject:
         remote Sage session, and get it back.
         """
         tester = self._tester(**options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         tester.assertEqual(loads(dumps(self)), self)
 
     #############################################################################
@@ -882,6 +884,14 @@ cdef class SageObject:
         I = sage.interfaces.mathematica.mathematica
         return self._interface_init_(I)
 
+    def _mathics_(self, G=None):
+        if G is None:
+            import sage.interfaces.mathics
+            G = sage.interfaces.mathics.mathics
+        return self._interface_(G)
+
+    _mathics_init_ = _mathematica_init_
+
     def _octave_(self, G=None):
         if G is None:
             import sage.interfaces.octave
@@ -915,8 +925,8 @@ cdef class SageObject:
 
         EXAMPLES::
 
-            sage: a = 2/3
-            sage: a._r_init_()
+            sage: a = 2/3                                    # optional - rpy2
+            sage: a._r_init_()                               # optional - rpy2
             '2/3'
         """
         import sage.interfaces.r

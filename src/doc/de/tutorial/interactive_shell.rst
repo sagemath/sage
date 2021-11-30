@@ -373,8 +373,8 @@ Fehlerbehandlung
 Wenn irgendetwas schief geht, werden Sie normalerweise eine
 Python-Fehlermeldung sehen. Python macht sogar einen Vorschlag, was den
 Fehler ausgelöst hat. Oft sehen Sie den Namen der Fehlermeldung,
-z.B. ``NameError`` oder ``ValueError`` (vgl. Python Reference Manual
-[Py]_ für eine komplette Liste der Fehlermeldungen). Zum Beispiel:
+z.B. ``NameError`` oder ``ValueError`` (vgl. Python Library Reference
+[PyLR]_ für eine komplette Liste der Fehlermeldungen). Zum Beispiel:
 
 .. skip
 
@@ -385,7 +385,7 @@ z.B. ``NameError`` oder ``ValueError`` (vgl. Python Reference Manual
        File "<console>", line 1
          ZZ(3)_2
                ^
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
     sage: EllipticCurve([0,infinity])
     ------------------------------------------------------------
@@ -410,7 +410,7 @@ Zum Beispiel:
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
 
     ipdb>
@@ -519,7 +519,7 @@ Funktionsnamen ein ``?`` an, um die Dokumentation dazu aufzurufen.
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive

@@ -194,20 +194,20 @@ class ElementaryCellularAutomata(SageObject):
           X
          XX
         #
-         X 
-        XX 
+         X
+        XX
         #
          XX
         XXX
         #
-        X  
-        X  
+        X
+        X
         #
         X X
         XXX
         #
-        XX 
-        XX 
+        XX
+        XX
         #
         XXX
         X X
@@ -606,4 +606,3 @@ class ElementaryCellularAutomata(SageObject):
                 self.evolve()
         M = matrix(self._states[:number])
         return matrix_plot(M)
-

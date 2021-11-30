@@ -1,5 +1,5 @@
-d3js
-====
+d3js: JavaScript library for manipulating documents based on data
+=================================================================
 
 Description
 -----------

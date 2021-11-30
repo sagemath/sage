@@ -50,7 +50,6 @@ from sage.misc.prandom import randint
 
 import sage.schemes.elliptic_curves.constructor as elliptic
 from .sql_db import SQLDatabase, verify_column
-from sage.env import CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR, SAGE_SHARE
 from sage.features.databases import DatabaseCremona
 from sage.misc.all import walltime
 
@@ -298,7 +297,7 @@ cremona_label_regex = re.compile(r'(\d+)([a-z]*)(\d*)$')
 lmfdb_label_regex = re.compile(r'(\d+)\.([a-z]+)(\d*)$')
 
 
-def parse_cremona_label(label):
+def parse_cremona_label(label, numerical_class_code=False):
     """
     Given a Cremona label that defines an elliptic
     curve, e.g., 11a1 or 37b3, parse the label and return the
@@ -314,12 +313,16 @@ def parse_cremona_label(label):
 
     INPUT:
 
-    -  ``label`` - str
+    -  ``label`` (string) - a valid Cremona elliptic curve label
+
+    - ``numerical_class_code`` (boolean, default False) - if ``True``,
+       convert the isogeny class label from a letter code in base 26
+       to an integer;  this is useful for sorting
 
     OUTPUT:
 
     -  ``int`` - the conductor
-    -  ``str`` - the isogeny class label
+    -  ``str`` or ``int`` - the isogeny class label
     -  ``int`` - the number
 
     EXAMPLES::
@@ -345,6 +348,14 @@ def parse_cremona_label(label):
         ...
         ValueError: 5AB2 is not a valid Cremona label
 
+    When ``numerical_class_code`` is ``True``, the output is a triple of integers::
+
+        sage: from sage.databases.cremona import parse_cremona_label
+        sage: parse_cremona_label('100800hj2')
+        (100800, 'hj', 2)
+        sage: parse_cremona_label('100800hj2', numerical_class_code=True)
+        (100800, 191, 2)
+
     TESTS::
 
         sage: from sage.databases.cremona import parse_cremona_label
@@ -352,6 +363,7 @@ def parse_cremona_label(label):
         Traceback (most recent call last):
         ...
         ValueError: x11 is not a valid Cremona label
+
     """
     m = cremona_label_regex.match(str(label))
     if m is None:
@@ -373,10 +385,14 @@ def parse_cremona_label(label):
     if iso.lower() != iso:
         raise ValueError('%s is not a valid Cremona label' % label)
 
+    # convert class label to an int if requested
+    if numerical_class_code:
+        iso = class_to_int(iso)
+
     return int(conductor), iso, int(num)
 
 
-def parse_lmfdb_label(label):
+def parse_lmfdb_label(label, numerical_class_code=False):
     """
     Given an LMFDB label that defines an elliptic curve, e.g., 11.a1
     or 37.b3, parse the label and return the conductor, isogeny class
@@ -405,10 +421,14 @@ def parse_lmfdb_label(label):
 
     -  ``label`` - str
 
+    - ``numerical_class_code`` (boolean, default False) - if ``True``,
+       convert the isogeny class label from a letter code in base 26
+       to an integer;  this is useful for sorting
+
     OUTPUT:
 
     -  ``int`` - the conductor
-    -  ``str`` - the isogeny class label
+    -  ``str`` or ``int`` - the isogeny class label
     -  ``int`` - the number
 
     EXAMPLES::
@@ -420,6 +440,14 @@ def parse_lmfdb_label(label):
         (37, 'b', 1)
         sage: parse_lmfdb_label('10.bb2')
         (10, 'bb', 2)
+
+    When ``numerical_class_code`` is ``True``, the output is a triple of integers::
+
+        sage: from sage.databases.cremona import parse_lmfdb_label
+        sage: parse_lmfdb_label('100800.bg4')
+        (100800, 'bg', 4)
+        sage: parse_lmfdb_label('100800.bg4', numerical_class_code=True)
+        (100800, 32, 4)
     """
     m = lmfdb_label_regex.match(str(label).lower())
     if m is None:
@@ -429,6 +457,10 @@ def parse_lmfdb_label(label):
         iso = "a"
     if len(num) == 0:
         num = "1"
+    # convert class label to an int if requested
+    if numerical_class_code:
+        iso = class_to_int(iso)
+
     return int(conductor), iso, int(num)
 
 
@@ -1324,7 +1356,7 @@ class MiniCremonaDatabase(SQLDatabase):
         To create the large database from Cremona's text files, see
         sage.databases.cremona.build.  Alternatively:
 
-        If the cremona database has already been installed, remove
+        If the Cremona database has already been installed, remove
         `SAGE_DATA/cremona/cremona.db`. Then run::
 
             sage: C = sage.databases.cremona.LargeCremonaDatabase('cremona',False, True)  # not tested
@@ -1405,7 +1437,8 @@ class MiniCremonaDatabase(SQLDatabase):
             curve_data = []
             for L in open(ftpdata + "/" + F).readlines():
                 N, iso, num, ainvs, r, tor = L.split()
-                if largest_conductor and int(N) > largest_conductor: break
+                if largest_conductor and int(N) > largest_conductor:
+                    break
                 cls = N+iso
                 cur = cls+num
                 if num == "1":
@@ -1420,7 +1453,8 @@ class MiniCremonaDatabase(SQLDatabase):
             print("Committing...")
             print("num_iso_classes =", num_iso_classes)
             self.commit()
-            if largest_conductor and int(N) > largest_conductor: break
+            if largest_conductor and int(N) > largest_conductor:
+                break
         return num_curves, num_iso_classes
 
 
@@ -1554,13 +1588,15 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             class_data = []
             for L in open(ftpdata + "/" + F).readlines():
                 N, iso, num, degree, primes, curve = L.split()
-                if largest_conductor and int(N) > largest_conductor: break
+                if largest_conductor and int(N) > largest_conductor:
+                    break
                 class_data.append((degree,N+iso))
             con.executemany('UPDATE t_class SET deg=? WHERE class=?',
                 class_data)
             print("Committing...")
             self.commit()
-            if largest_conductor and int(N) > largest_conductor: break
+            if largest_conductor and int(N) > largest_conductor:
+                break
 
     def _init_allbsd(self, ftpdata, largest_conductor=0):
         """
@@ -1588,7 +1624,8 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             class_data = []
             for L in open(ftpdata + "/" + F).readlines():
                 N, iso, num, eqn, rank, tor, cp, om, L, reg, sha  = L.split()
-                if largest_conductor and int(N) > largest_conductor: break
+                if largest_conductor and int(N) > largest_conductor:
+                    break
                 cls = N+iso
                 if num == "1":
                     class_data.append((L,cls))
@@ -1598,7 +1635,8 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
                     + "curve=?", curve_data)
             print("Committing...")
             self.commit()
-            if largest_conductor and int(N) > largest_conductor: break
+            if largest_conductor and int(N) > largest_conductor:
+                break
 
     def _init_allgens(self, ftpdata, largest_conductor=0):
         """
@@ -1625,13 +1663,15 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             curve_data = []
             for L in open(ftpdata + "/" + F).readlines():
                 v = L.split()
-                if largest_conductor and int(v[0]) > largest_conductor: break
+                if largest_conductor and int(v[0]) > largest_conductor:
+                    break
                 gens = '['+','.join(v[6:6+int(v[4])]).replace(':',',')+']'
                 curve_data.append((gens,''.join(v[:3])))
             con.executemany("UPDATE t_curve SET gens=? WHERE curve=?",
                 curve_data)
             print("Committing...")
-            if largest_conductor and int(v[0]) > largest_conductor: break
+            if largest_conductor and int(v[0]) > largest_conductor:
+                break
 
 
 _db = None
@@ -1656,16 +1696,16 @@ def CremonaDatabase(name=None,mini=None,set_global=None):
 
     Verify that :trac:`12341` has been resolved::
 
-        sage: c = CremonaDatabase('should not exist',mini=True)
+        sage: c = CremonaDatabase('should not exist', mini=True)
         Traceback (most recent call last):
         ...
-        FeatureNotPresentError: Cremona's database of elliptic curves is not available.
+        FeatureNotPresentError: database_should_not_exist_ellcurve is not available.
         '...db' not found in any of [...]
         ...Further installation instructions might be available at https://github.com/JohnCremona/ecdata.
         sage: c = CremonaDatabase('should not exist',mini=False)
         Traceback (most recent call last):
         ...
-        FeatureNotPresentError: Cremona's database of elliptic curves is not available.
+        FeatureNotPresentError: database_should_not_exist_ellcurve is not available.
         '...db' not found in any of [...]
         ...Further installation instructions might be available at https://github.com/JohnCremona/ecdata.
     """

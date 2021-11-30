@@ -1,4 +1,5 @@
-from .PyPolyBoRi import Polynomial, ReductionStrategy
+from .pbori import ReductionStrategy
+from .PyPolyBoRi import Polynomial
 
 
 def interred(l, completely=False):

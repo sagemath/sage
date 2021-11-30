@@ -1,5 +1,5 @@
-docutils
-========
+docutils: Processing plaintext documentation into useful formats, such as HTML or LaTeX
+=======================================================================================
 
 Description
 -----------
@@ -18,7 +18,9 @@ Modified BSD
 Upstream Contact
 ----------------
 
-Author: David Goodger Home Page: http://docutils.sourceforge.net/
+Author: David Goodger
+
+Home Page: http://docutils.sourceforge.net/
 
 Dependencies
 ------------

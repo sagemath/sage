@@ -454,6 +454,6 @@ cdef class Fmpz_poly(SageObject):
             sage: Fmpz_poly([-1,0,0,1])._sage_()
             x^3 - 1
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         return ZZ[var](self.list())
 

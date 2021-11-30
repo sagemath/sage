@@ -212,7 +212,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import Integer, PolynomialRing, QQ, ZZ, infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.integer import Integer
+from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.rings.polynomial.multi_polynomial import is_MPolynomial
 from sage.combinat.partition import _Partitions, Partitions, Partitions_n, Partition
@@ -221,7 +225,7 @@ from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.categories.tensor import tensor
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from copy import copy
 from functools import reduce
 
@@ -2619,9 +2623,9 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         if ps == 'lex':
             self.print_options(sorting_key=lambda x: x)
         elif ps == 'length':
-            self.print_options(sorting_key=lambda x: len(x))
+            self.print_options(sorting_key=len)
         elif ps == 'maximal_part':
-            self.print_options(sorting_key=lambda x: _lmax(x))
+            self.print_options(sorting_key=_lmax)
         else:
             raise ValueError("the print style must be one of lex, length, or maximal_part ")
         self._print_style = ps

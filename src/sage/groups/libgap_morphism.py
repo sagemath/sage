@@ -133,7 +133,7 @@ class GroupMorphism_libgap(Morphism):
         CompositionMapping( [ (6,7,8,10,9)(11,13,14,12,15)(16,19,20,18,17)(21,25,22,24,23) ]
         -> [ [ [ Z(5)^0, 0*Z(5) ], [ Z(5)^0, Z(5)^0 ] ] ], <action isomorphism> )
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
         sage: F = GF(7); MS = MatrixSpace(F,2,2)
         sage: F.multiplicative_generator()
@@ -444,44 +444,44 @@ class GroupMorphism_libgap(Morphism):
 
         The following tests we do fall back behind :trac:`10659`::
 
-        sage: O = WeylGroup(['D',6])
-        sage: r = prod(O.gens())
-        sage: r_ = r^-1
-        sage: f = O.hom([r*x*r_ for x in O.gens()])  # long time (19s on sage.math, 2011)
-        sage: [f(x) for x in O.gens()]  # long time
-        [
-        [1 0 0 0 0 0]  [1 0 0 0 0 0]  [1 0 0 0 0 0]  [ 0  0  0  0 -1  0]
-        [0 0 1 0 0 0]  [0 1 0 0 0 0]  [0 1 0 0 0 0]  [ 0  1  0  0  0  0]
-        [0 1 0 0 0 0]  [0 0 0 1 0 0]  [0 0 1 0 0 0]  [ 0  0  1  0  0  0]
-        [0 0 0 1 0 0]  [0 0 1 0 0 0]  [0 0 0 0 1 0]  [ 0  0  0  1  0  0]
-        [0 0 0 0 1 0]  [0 0 0 0 1 0]  [0 0 0 1 0 0]  [-1  0  0  0  0  0]
-        [0 0 0 0 0 1], [0 0 0 0 0 1], [0 0 0 0 0 1], [ 0  0  0  0  0  1],
-        <BLANKLINE>
-        [0 0 0 0 0 1]  [ 0  0  0  0  0 -1]
-        [0 1 0 0 0 0]  [ 0  1  0  0  0  0]
-        [0 0 1 0 0 0]  [ 0  0  1  0  0  0]
-        [0 0 0 1 0 0]  [ 0  0  0  1  0  0]
-        [0 0 0 0 1 0]  [ 0  0  0  0  1  0]
-        [1 0 0 0 0 0], [-1  0  0  0  0  0]
-        ]
-        sage: f(O)  # long time
-        Subgroup with 6 generators of Weyl Group of type ['D', 6] (as a matrix group acting on the ambient space)
-        sage: f(O).gens()   # long time
-        (
-        [1 0 0 0 0 0]  [1 0 0 0 0 0]  [1 0 0 0 0 0]  [ 0  0  0  0 -1  0]
-        [0 0 1 0 0 0]  [0 1 0 0 0 0]  [0 1 0 0 0 0]  [ 0  1  0  0  0  0]
-        [0 1 0 0 0 0]  [0 0 0 1 0 0]  [0 0 1 0 0 0]  [ 0  0  1  0  0  0]
-        [0 0 0 1 0 0]  [0 0 1 0 0 0]  [0 0 0 0 1 0]  [ 0  0  0  1  0  0]
-        [0 0 0 0 1 0]  [0 0 0 0 1 0]  [0 0 0 1 0 0]  [-1  0  0  0  0  0]
-        [0 0 0 0 0 1], [0 0 0 0 0 1], [0 0 0 0 0 1], [ 0  0  0  0  0  1],
-        <BLANKLINE>
-        [0 0 0 0 0 1]  [ 0  0  0  0  0 -1]
-        [0 1 0 0 0 0]  [ 0  1  0  0  0  0]
-        [0 0 1 0 0 0]  [ 0  0  1  0  0  0]
-        [0 0 0 1 0 0]  [ 0  0  0  1  0  0]
-        [0 0 0 0 1 0]  [ 0  0  0  0  1  0]
-        [1 0 0 0 0 0], [-1  0  0  0  0  0]
-        )
+            sage: O = WeylGroup(['D',6])
+            sage: r = prod(O.gens())
+            sage: r_ = r^-1
+            sage: f = O.hom([r*x*r_ for x in O.gens()])  # long time (19s on sage.math, 2011)
+            sage: [f(x) for x in O.gens()]  # long time
+            [
+            [1 0 0 0 0 0]  [1 0 0 0 0 0]  [1 0 0 0 0 0]  [ 0  0  0  0 -1  0]
+            [0 0 1 0 0 0]  [0 1 0 0 0 0]  [0 1 0 0 0 0]  [ 0  1  0  0  0  0]
+            [0 1 0 0 0 0]  [0 0 0 1 0 0]  [0 0 1 0 0 0]  [ 0  0  1  0  0  0]
+            [0 0 0 1 0 0]  [0 0 1 0 0 0]  [0 0 0 0 1 0]  [ 0  0  0  1  0  0]
+            [0 0 0 0 1 0]  [0 0 0 0 1 0]  [0 0 0 1 0 0]  [-1  0  0  0  0  0]
+            [0 0 0 0 0 1], [0 0 0 0 0 1], [0 0 0 0 0 1], [ 0  0  0  0  0  1],
+            <BLANKLINE>
+            [0 0 0 0 0 1]  [ 0  0  0  0  0 -1]
+            [0 1 0 0 0 0]  [ 0  1  0  0  0  0]
+            [0 0 1 0 0 0]  [ 0  0  1  0  0  0]
+            [0 0 0 1 0 0]  [ 0  0  0  1  0  0]
+            [0 0 0 0 1 0]  [ 0  0  0  0  1  0]
+            [1 0 0 0 0 0], [-1  0  0  0  0  0]
+            ]
+            sage: f(O)  # long time
+            Subgroup with 6 generators of Weyl Group of type ['D', 6] (as a matrix group acting on the ambient space)
+            sage: f(O).gens()   # long time
+            (
+            [1 0 0 0 0 0]  [1 0 0 0 0 0]  [1 0 0 0 0 0]  [ 0  0  0  0 -1  0]
+            [0 0 1 0 0 0]  [0 1 0 0 0 0]  [0 1 0 0 0 0]  [ 0  1  0  0  0  0]
+            [0 1 0 0 0 0]  [0 0 0 1 0 0]  [0 0 1 0 0 0]  [ 0  0  1  0  0  0]
+            [0 0 0 1 0 0]  [0 0 1 0 0 0]  [0 0 0 0 1 0]  [ 0  0  0  1  0  0]
+            [0 0 0 0 1 0]  [0 0 0 0 1 0]  [0 0 0 1 0 0]  [-1  0  0  0  0  0]
+            [0 0 0 0 0 1], [0 0 0 0 0 1], [0 0 0 0 0 1], [ 0  0  0  0  0  1],
+            <BLANKLINE>
+            [0 0 0 0 0 1]  [ 0  0  0  0  0 -1]
+            [0 1 0 0 0 0]  [ 0  1  0  0  0  0]
+            [0 0 1 0 0 0]  [ 0  0  1  0  0  0]
+            [0 0 0 1 0 0]  [ 0  0  0  1  0  0]
+            [0 0 0 0 1 0]  [ 0  0  0  0  1  0]
+            [1 0 0 0 0 0], [-1  0  0  0  0  0]
+            )
         """
         img_gap = self.gap().Image(g.gap())
         return self.codomain()(img_gap)
@@ -507,7 +507,7 @@ class GroupMorphism_libgap(Morphism):
             ValueError: f2 is not an element of the image of Group endomorphism
              of Abelian group with gap, generator orders (2, 4)
         """
-        if not h in self.codomain():
+        if h not in self.codomain():
             raise TypeError("h (={}) must be an element of the codomain".format(h))
         h = self.codomain()(h)
         phi = self.gap()
@@ -578,7 +578,7 @@ class GroupMorphism_libgap(Morphism):
         from sage.categories.homset import Hom
         from sage.categories.sets_cat import Sets
         H = Hom(self.codomain(), self.domain(), category=Sets())
-        return H(lambda x: self.lift(x))
+        return H(self.lift)
 
 
 class GroupHomset_libgap(HomsetWithBase):

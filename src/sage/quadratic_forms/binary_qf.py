@@ -61,6 +61,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
 
+
 @total_ordering
 class BinaryQF(SageObject):
     r"""
@@ -477,9 +478,8 @@ class BinaryQF(SageObject):
             sage: Q = BinaryQF([0, 0, 0])
             sage: Q.polynomial()
             0
-
         """
-        # Note: Cacheing in _poly seems to give a very slight
+        # Note: Caching in _poly seems to give a very slight
         # improvement (~0.2 usec) in 'timeit()' runs.  Not sure it
         # is worth the instance variable.
         if self._poly is None:
@@ -1230,7 +1230,7 @@ class BinaryQF(SageObject):
                 a = selfred._a
                 ao = otherred._a
                 assert otherred._b == b
-                # p. 359 of Conway-Sloane [Co1999]_
+                # p. 359 of Conway-Sloane [CS1999]_
                 # but `2b` in their notation is `b` in our notation
                 is_properly_equiv = ((a-ao) % b == 0)
                 if proper:
@@ -1664,7 +1664,8 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
             a4 = 4*a
             s = D + a*a4
             w = 1+(s-1).isqrt() if s > 0 else 0
-            if w%2 != D%2: w += 1
+            if w%2 != D%2:
+                w += 1
             for b in xsrange(w, a+1, 2):
                 t = b*b-D
                 if t % a4 == 0:

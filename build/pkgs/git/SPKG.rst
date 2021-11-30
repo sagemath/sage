@@ -1,6 +1,5 @@
-
-git - the stupid content tracker
-================================
+git: Version control system
+===========================
 
 Description
 -----------
@@ -15,14 +14,4 @@ Description
 Upstream Contact
 ----------------
 
--  Maintainer: Junio C. Hamano
--  Website: http://git-scm.com/
-
-Dependencies
-------------
-
--  zlib
-
-Note: excluding libcurl and expat because they are large and only
-required if you're communicating with repositories over HTTP. If you
-need to do so, please use an external version of git.
+-  Website: https://git-scm.com/

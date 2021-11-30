@@ -37,7 +37,7 @@ def have_program(program, path=None):
         True
         sage: have_program('sage', '/there_is_not_a_path_with_this_name')
         False
-        sage: have_program('there_is_not_a_program_with_this_name', os.path.join(SAGE_LOCAL, 'bin'))
+        sage: have_program('there_is_not_a_program_with_this_name', os.path.join(SAGE_VENV, 'bin'))
         False
     """
     if path is None:
@@ -318,8 +318,9 @@ IF PY_PLATFORM == 'cygwin':
 
     def fix_for_ticket_30157():
         """
-        Cygwin-only workaround for an issue caused by the sqlite3 library.  See
-        trac:`30157`.
+        Cygwin-only workaround for an issue caused by the sqlite3 library.
+
+        See :trac:`30157`.
 
         The issue here is that when the sqlite3 library is first initialized
         it modifies Windows' default DLL search path order, which can possibly

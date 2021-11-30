@@ -68,6 +68,7 @@ Display Backend Infrastructure
 
    sage/repl/rich_output/display_manager
    sage/repl/rich_output/preferences
+   sage/repl/rich_output/pretty_print
    sage/repl/rich_output/buffer
    sage/repl/rich_output/output_basic
    sage/repl/rich_output/output_graphics

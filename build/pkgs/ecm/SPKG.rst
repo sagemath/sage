@@ -1,5 +1,5 @@
-ecm
-===
+ecm: Elliptic curve method for integer factorization
+====================================================
 
 Description
 -----------
@@ -18,13 +18,6 @@ Upstream Contact
 ----------------
 
 -  ecm-discuss@lists.gforge.inria.fr (requires subscription)
-
-Dependencies
-------------
-
--  GMP/MPIR (Note: Python is \*not\* required for ordinary builds.)
--  GNU patch
-
 
 Special Update/Build Instructions
 ---------------------------------
@@ -47,11 +40,10 @@ Special Update/Build Instructions
    Note that this doesn't affect the packages' selection of processor-
    specific optimized [assembly] code.
    'spkg-install' already reads the settings from Sage's and also a
-   system-wide GMP / MPIR now, but doesn't (yet) use all of them.
+   system-wide GMP now, but doesn't (yet) use all of them.
    If SAGE_FAT_BINARY="yes", we should avoid too specific settings of
    "-mcpu=...", and perhaps pass a more generic "--host=..." to
-   'configure'. (MPIR honors '--enable-fat' to some extent, but this
-   option isn't used on anything other than x86 / x86_64.)
+   'configure'.
 
 -  We currently work around a linker bug on MacOS X 10.5 PPC (with
    GCC 4.2.1) which breaks 'configure' if debug symbols are enabled.

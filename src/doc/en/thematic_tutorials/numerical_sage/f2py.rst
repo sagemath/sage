@@ -352,7 +352,7 @@ There is one final version which combines the previous two.
             end do
             end
 
-The (in,out,overwite) intent says that if :math:`a` is in FORTRAN
+The (in,out,overwrite) intent says that if :math:`a` is in FORTRAN
 ordering we work in place, however if its not we copy it and return
 the contents afterwards. This is sort of the best of both worlds.
 Note that if you are repeatedly passing large numpy arrays to

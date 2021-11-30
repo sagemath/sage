@@ -1,5 +1,5 @@
-pycosat
-=======
+pycosat: SAT solver picosat with Python bindings
+================================================
 
 Description
 -----------

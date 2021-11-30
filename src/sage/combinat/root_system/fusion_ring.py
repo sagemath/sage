@@ -3,8 +3,9 @@ Fusion Rings
 """
 # ****************************************************************************
 #  Copyright (C) 2019 Daniel Bump <bump at match.stanford.edu>
-#                     Nicolas Thiery <nthiery at users.sf.net>
 #                     Guillermo Aboumrad <gh_willieab>
+#                     Travis Scrimshaw <tcscrims at gmail.com>
+#                     Nicolas Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
@@ -735,10 +736,17 @@ class FusionRing(WeylCharacterRing):
         else:
             return S
         
+    @cached_method
     def r_matrix(self, i, j, k):
         r"""
         Return the R-matrix entry corresponding to the subobject ``k``
         in the tensor product of ``i`` with ``j``.
+
+        .. WARNING:: 
+
+            This method only gives complete information when `N_{ij}^k = 1`
+            (an important special case). Tables of MTC including R-matrices
+            may be found in Section 5.3 of [RoStWa2009]_ and in [Bond2007]_.
 
         The R-matrix is a homomorphism `i \otimes j \rightarrow j \otimes i`.
         This may be hard to describe since the object `i \otimes j`
@@ -756,14 +764,8 @@ class FusionRing(WeylCharacterRing):
 
         If `i \neq j`, the gauge may be used to control the sign of
         the square root. But if `i = j` then we must be careful
-        about the sign. This sign is `+` if `k` is a subobject of 
-        the symmetric square of `i` and `-` if it is a subobject of 
-        the exterior square. See [LR1997]_ Corollary 2.22
-        (actually due to Reshetikhin).
-
-        This method only gives complete information when `N_{ij}^k = 1`
-        (an important special case). Tables of MTC including R-matrices
-        may be found in Section 5.3 of [RoStWa2009]_ and in [Bond2007]_.
+        about the sign. These cases are computed by a formula
+        of [BDGRTW2019]_, Proposition 2.3.
 
         EXAMPLES::
 
@@ -782,14 +784,14 @@ class FusionRing(WeylCharacterRing):
         """
         if self.Nk_ij(i, j, k) == 0:
             return 0
-        r = self.root_of_unity((k.twist(reduced=False) - i.twist(reduced=False) - j.twist(reduced=False)) / 2)
         if i != j:
-            return r
-        wt = k.weight()
-        if wt in i.symmetric_power(2).monomial_coefficients():
-            return r
-        # We instead have wt in i.exterior_power(2).monomial_coefficients():
-        return -r
+            return self.root_of_unity((k.twist(reduced=False) - i.twist(reduced=False) - j.twist(reduced=False)) / 2)
+        i0 = self.one()
+        B = self.basis()
+        return sum(y.ribbon()**2 / (i.ribbon() * x.ribbon()**2)
+                   * self.s_ij(i0,y) * self.s_ij(i,z) * self.s_ij(x,z).conjugate()
+                   * self.s_ij(k,x).conjugate() * self.s_ij(y,z).conjugate() / self.s_ij(i0,z)
+                   for x in B for y in B for z in B) / (self.total_q_order()**4)
 
     def global_q_dimension(self):
         r"""
@@ -1026,4 +1028,3 @@ class FusionRing(WeylCharacterRing):
             expr = expr.substitute(q=q**4) / (q**(2*expr.degree()))
             zet = P.field().gen() ** (P._cyclotomic_order/P._l)
             return expr.substitute(q=zet)
-

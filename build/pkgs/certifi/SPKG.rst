@@ -1,5 +1,5 @@
-Certifi
-=======
+certifi: Python package for providing Mozilla's CA Bundle
+=========================================================
 
 Description
 -----------

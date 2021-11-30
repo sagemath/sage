@@ -1,5 +1,5 @@
-tornado
-=======
+tornado: Python web framework and asynchronous networking library
+=================================================================
 
 Description
 -----------

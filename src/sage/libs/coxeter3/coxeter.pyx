@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # distutils: language = c++
 # distutils: libraries = coxeter3
-# sage_setup: distribution = sage-coxeter3
+# sage_setup: distribution = sagemath-coxeter3
 
 """
 Low level part of the interface to Fokko Ducloux's Coxeter 3 library

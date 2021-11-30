@@ -13,7 +13,7 @@ This being said, it is technically possible to add/remove edges. The data
 structure does not mind at all.
 
 It is all based on the binary matrix data structure described in
-``misc/binary_matrix.pxi``, which is almost a copy of the bitset data
+``data_structures/binary_matrix.pxd``, which is almost a copy of the bitset data
 structure. The only difference is that it differentiates the rows (the vertices)
 instead of storing the whole data in a long bitset, and we can use that.
 
@@ -47,7 +47,7 @@ Index
 Functions
 ---------
 """
-include "sage/data_structures/binary_matrix.pxi"
+from sage.data_structures.binary_matrix cimport *
 from cysignals.signals cimport sig_on, sig_off, sig_check
 
 

@@ -1,13 +1,25 @@
-from .PyPolyBoRi import (Monomial, random_set, Polynomial,
-                         set_random_seed, ll_red_nf_redsb, Variable)
-from .ll import ll_encode
 from random import Random
 from pprint import pformat
+
+from .PyPolyBoRi import (Monomial, Polynomial, Variable)
+from .pbori import random_set, set_random_seed, ll_red_nf_redsb
+from .ll import ll_encode
 from .blocks import declare_ring
 
 
 def gen_random_poly(ring, l, deg, vars_set, seed=123):
+    """
+    Generate a random polynomial with coefficients in ``ring``.
 
+    EXAMPLES::
+
+        sage: from sage.rings.polynomial.pbori.PyPolyBoRi import Ring, Variable
+        sage: from sage.rings.polynomial.pbori.randompoly import gen_random_poly
+        sage: r = Ring(16)
+        sage: vars = [Variable(i,r) for i in range(10)]
+        sage: gen_random_poly(r, 4, 10, vars)  # random
+        x(0)*x(1)*x(2)*x(5)*x(8)*x(9) + x(0)*x(1)*x(4)*x(6) + x(0)*x(2)*x(3)*x(7)*x(9) + x(5)*x(8)
+    """
     myrange = vars_set
     r = Random(seed)
 
@@ -22,9 +34,9 @@ def gen_random_poly(ring, l, deg, vars_set, seed=123):
                 m = m * Variable(v, ring)
             return Polynomial(m)
         assert samples >= 2
-        return helper(samples / 2) + helper(samples - samples / 2)
+        return helper(samples // 2) + helper(samples - samples // 2)
     p = Polynomial(ring.zero())
-    while(len(p) < l):
+    while len(p) < l:
         p = Polynomial(p.set().union(helper(l - len(p)).set()))
     return p
 
@@ -32,7 +44,7 @@ def gen_random_poly(ring, l, deg, vars_set, seed=123):
 def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
                          degree, random_seed=None):
     r"""
-    Generates a sparse random system
+    Generate a sparse random system.
 
     Generate a system, which is sparse in the sense, that each polynomial
     contains only a small subset of variables. In each variable that occurrs
@@ -72,9 +84,8 @@ def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
         p = sum([p.graded_part(i) for i in range(degree + 1)])
         if p.deg() == degree:
             res.append(p)
-    res = [p + ll_red_nf_redsb(p, solutions) for p in res]
     # evaluate it to guarantee a solution
-    return res
+    return [p + ll_red_nf_redsb(p, solutions) for p in res]
 
 
 def sparse_random_system_data_file_content(number_of_variables, **kwds):
@@ -85,11 +96,10 @@ def sparse_random_system_data_file_content(number_of_variables, **kwds):
         sage: sparse_random_system_data_file_content(10, number_of_polynomials=5, variables_per_polynomial=3, degree=2, random_seed=int(123))
         "declare_ring(['x'+str(i) for in range(10)])\nideal=\\\n[...]\n\n"
     """
-    dummy_dict = dict()
+    dummy_dict = {}
     r = declare_ring(['x' + str(i) for i in range(number_of_variables)],
                      dummy_dict)
     polynomials = sparse_random_system(r, **kwds)
     polynomials = pformat(polynomials)
-    res = "declare_ring(['x'+str(i) for in range(%s)])\nideal=\\\n%s\n\n" % (
+    return "declare_ring(['x'+str(i) for in range(%s)])\nideal=\\\n%s\n\n" % (
         number_of_variables, polynomials)
-    return res

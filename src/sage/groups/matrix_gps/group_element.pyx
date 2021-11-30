@@ -84,7 +84,7 @@ from sage.groups.libgap_wrapper cimport ElementLibGAP
 from sage.structure.element import is_Matrix
 from sage.structure.factorization import Factorization
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 cpdef is_MatrixGroupElement(x):

@@ -107,8 +107,8 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
     def _extension_type(self):
         """
-        Return the type (``Unramified``, ``Eisenstein``) of this 
-        extension as a string, if any. 
+        Return the type (``Unramified``, ``Eisenstein``) of this
+        extension as a string, if any.
 
         Used for printing.
 
@@ -550,12 +550,12 @@ class pAdicExtensionGeneric(pAdicGeneric):
 
         EXAMPLES::
 
-            sage: R.<a> = Zq(125, 5); R.random_element()
-            (3*a^2 + 3*a + 3) + (a^2 + 4*a + 1)*5 + (3*a^2 + 4*a + 1)*5^2 + 
-            (2*a^2 + 3*a + 3)*5^3 + (4*a^2 + 3)*5^4 + O(5^5)
+            sage: R.<a> = Zq(125, 5)
+            sage: R.random_element().parent() is R
+            True
             sage: R = Zp(5,3); S.<x> = ZZ[]; f = x^5 + 25*x^2 - 5; W.<w> = R.ext(f)
-            sage: W.random_element()
-            4 + 3*w + w^2 + 4*w^3 + w^5 + 3*w^6 + w^7 + 4*w^10 + 2*w^12 + 4*w^13 + 3*w^14 + O(w^15)
+            sage: W.random_element().parent() is W
+            True
         """
         return reduce(lambda x,y: x+y,
                       [self.ground_ring().random_element() * self.gen()**i for i in
@@ -890,8 +890,11 @@ class DefPolyConversion(Morphism):
             sage: S.<x> = ZZ[]
             sage: W.<w> = Zp(3).extension(x^4 + 9*x^2 + 3*x - 3)
             sage: z = W.random_element()
-            sage: repr(W.change(print_mode='digits')(z))
-            '...20112102111011011200001212210222202220100111100200011222122121202100210120010120'
+            sage: r = repr(W.change(print_mode='digits')(z))
+            sage: r[:3] == '...'
+            True
+            sage: all(l in ['0', '1', '2'] for l in r[3:])
+            True
 
         TESTS:
 
@@ -934,8 +937,11 @@ class DefPolyConversion(Morphism):
             sage: S.<x> = ZZ[]
             sage: W.<w> = Zp(3).extension(x^4 + 9*x^2 + 3*x - 3)
             sage: z = W.random_element()
-            sage: repr(W.change(print_mode='digits')(z, absprec=8)) # indirect doctest
-            '...20010120'
+            sage: r = repr(W.change(print_mode='digits')(z, absprec=8)) # indirect doctest
+            sage: r[:3] == '...'
+            True
+            sage: all(l in ['0', '1', '2'] for l in r[3:])
+            True
 
         TESTS::
 

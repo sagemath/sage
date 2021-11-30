@@ -1,5 +1,5 @@
-notedown
-========
+notedown: Create IPython notebooks from markdown
+================================================
 
 Description
 -----------

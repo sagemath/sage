@@ -40,7 +40,7 @@ class Text(GraphicPrimitive):
     """
     def __init__(self, string, point, options):
         """
-        Initializes base class Text.
+        Initialize base class Text.
 
         EXAMPLES::
 
@@ -60,7 +60,7 @@ class Text(GraphicPrimitive):
 
     def get_minmax_data(self):
         """
-        Returns a dictionary with the bounding box data. Notice
+        Return a dictionary with the bounding box data. Notice
         that, for text, the box is just the location itself.
 
         EXAMPLES::
@@ -151,13 +151,13 @@ class Text(GraphicPrimitive):
 
     def plot3d(self, **kwds):
         """
-        Plots 2D text in 3D.
+        Plot 2D text in 3D.
 
         EXAMPLES::
 
-            sage: T = text("ABC",(1,1))
+            sage: T = text("ABC", (1, 1))
             sage: t = T[0]
-            sage: s=t.plot3d()
+            sage: s = t.plot3d()
             sage: s.jmol_repr(s.testing_render_params())[0][2]
             'label "ABC"'
             sage: s._trans
@@ -221,7 +221,7 @@ class Text(GraphicPrimitive):
          vertical_alignment='center', axis_coords=False, clip=False)
 def text(string, xy, **options):
     r"""
-    Returns a 2D text graphics object at the point `(x,y)`.
+    Return a 2D text graphics object at the point `(x, y)`.
 
     Type ``text.options`` for a dictionary of options for 2D text.
 
@@ -361,19 +361,55 @@ def text(string, xy, **options):
 
         sphinx_plot(text("So good", (-2,2), background_color='red'))
 
-    Text must be 2D (use the text3d command for 3D text)::
+    Use dollar signs for LaTeX and raw strings to avoid having to
+    escape backslash characters::
 
-        sage: t = text("hi",(1,2,3))
+        sage: A = arc((0, 0), 1, sector=(0.0, RDF.pi()))
+        sage: a = sqrt(1./2.)
+        sage: PQ = point2d([(-a, a), (a, a)])
+        sage: botleft = dict(horizontal_alignment='left', vertical_alignment='bottom')
+        sage: botright = dict(horizontal_alignment='right', vertical_alignment='bottom')
+        sage: tp = text(r'$z_P = e^{3i\pi/4}$', (-a, a), **botright)
+        sage: tq = text(r'$Q = (\frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2})$', (a, a), **botleft)
+        sage: A + PQ + tp + tq
+        Graphics object consisting of 4 graphics primitives
+
+    .. PLOT::
+
+        A = arc((0, 0), 1, sector=(0.0, RDF.pi()))
+        a = sqrt(1./2.)
+        PQ = point2d([(-a, a), (a, a)])
+        botleft = dict(horizontal_alignment='left', vertical_alignment='bottom')
+        botright = dict(horizontal_alignment='right', vertical_alignment='bottom')
+        tp = text(r'$z_P = e^{3i\pi/4}$', (-a, a), **botright)
+        tq = text(r'$Q = (\frac{\sqrt{2}}{2}, \frac{\sqrt{2}}{2})$', (a, a), **botleft)
+        sphinx_plot(A + PQ + tp + tq)
+
+    Text coordinates must be 2D, an error is raised if 3D coordinates are passed::
+
+        sage: t = text("hi", (1, 2, 3))
         Traceback (most recent call last):
         ...
         ValueError: use text3d instead for text in 3d
-        sage: t = text3d("hi",(1,2,3))
 
-    Extra options will get passed on to show(), as long as they are valid::
+    Use the :func:`text3d <sage.plot.plot3d.shapes2.text3d>` function for 3D text::
+
+        sage: t = text3d("hi", (1, 2, 3))
+
+    Or produce 2D text with coordinates `(x, y)` and plot it in 3D (at `z = 0`)::
+
+        sage: t = text("hi", (1, 2))
+        sage: t.plot3d()  # text at position (1, 2, 0)
+        Graphics3d Object
+
+    Extra options will get passed on to ``show()``, as long as they are valid. Hence this ::
 
         sage: text("MATH IS AWESOME", (0, 0), fontsize=40, axes=False)
         Graphics object consisting of 1 graphics primitive
-        sage: text("MATH IS AWESOME", (0, 0), fontsize=40).show(axes=False) # These are equivalent
+
+    is equivalent to ::
+
+        sage: text("MATH IS AWESOME", (0, 0), fontsize=40).show(axes=False)
     """
     try:
         x, y = xy

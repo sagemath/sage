@@ -530,9 +530,9 @@ TESTS:
 
 Check the qepcad configuration file::
 
-    sage: with open(os.path.join(SAGE_LOCAL, 'default.qepcadrc')) as f:  # optional - qepcad
+    sage: with open(os.path.join(SAGE_LOCAL, 'etc', 'default.qepcadrc')) as f:  # optional - qepcad
     ....:     f.readlines()[-1]
-    'SINGULAR .../bin\n'
+    'SINGULAR yes\n'
 
 Tests related to the not tested examples (nondeterministic order of atoms)::
 
@@ -684,7 +684,7 @@ def _update_command_info():
 
     cache = {}
 
-    with open(os.path.join(SAGE_LOCAL, 'bin', 'qepcad.help')) as help:
+    with open(os.path.join(SAGE_LOCAL, 'share/qepcad', 'qepcad.help')) as help:
         assert(help.readline().strip() == '@')
 
         while True:
@@ -1214,14 +1214,14 @@ class Qepcad:
         for line in lines:
             if 'Information about the cell' in line:
                 in_cell = True
-            if in_cell: cell_lines.append(line)
+            if in_cell:
+                cell_lines.append(line)
             if line == '----------------------------------------------------':
                 cells.append(QepcadCell(self, cell_lines))
                 cell_lines = []
                 in_cell = False
 
         return cells
-
 
     def __getattr__(self, attrname):
         r"""
@@ -1235,7 +1235,7 @@ class Qepcad:
         """
         if attrname[:1] == "_":
             raise AttributeError
-        if not attrname in self._tab_completion():
+        if attrname not in self._tab_completion():
             raise AttributeError
         return QepcadFunction(self, attrname)
 
@@ -1285,10 +1285,12 @@ class Qepcad:
         result = self._qex._eval_line(cmd + ' &')
 
         nl = result.find('\n')
-        if nl < 0: nl = len(result)
+        if nl < 0:
+            nl = len(result)
 
         amp = result.find('&', 0, nl)
-        if amp > 0: result = result[amp+1:]
+        if amp > 0:
+            result = result[amp+1:]
 
         result = result.strip()
 
@@ -1802,15 +1804,23 @@ class qepcad_formula_factory:
             '='
         """
         import operator
-        if op == operator.eq: return '='
-        if op == operator.ne: return '/='
-        if op == operator.lt: return '<'
-        if op == operator.gt: return '>'
-        if op == operator.le: return '<='
-        if op == operator.ge: return '>='
+        if op == operator.eq:
+            return '='
+        if op == operator.ne:
+            return '/='
+        if op == operator.lt:
+            return '<'
+        if op == operator.gt:
+            return '>'
+        if op == operator.le:
+            return '<='
+        if op == operator.ge:
+            return '>='
 
-        if op == '==': return '='
-        if op == '!=': return '/='
+        if op == '==':
+            return '='
+        if op == '!=':
+            return '/='
 
         return op
 
@@ -1913,11 +1923,9 @@ class qepcad_formula_factory:
         if isinstance(lhs, qformula):
             return lhs
 
-        from sage.symbolic.expression import is_SymbolicEquation
-        if is_SymbolicEquation(lhs):
-            rhs = lhs.rhs()
-            op = lhs.operator()
-            lhs = lhs.lhs()
+        from sage.structure.element import Expression
+        if isinstance(lhs, Expression) and lhs.is_relational():
+            lhs, op, rhs = lhs.lhs(), lhs.operator(), lhs.rhs()
 
         op = self._normalize_op(op)
 
@@ -2242,7 +2250,7 @@ class qepcad_formula_factory:
             sage: qf.exactly_k(0, b, a*b == 1)
             (A b)[~a b = 1]
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         k = ZZ(k)
         if k < 0:
             raise ValueError("negative k in exactly_k quantifier")

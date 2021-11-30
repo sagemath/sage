@@ -1,5 +1,5 @@
-surf
-====
+surf: Visualization of algebraic curves, algebraic surfaces and hyperplane sections of surfaces
+===============================================================================================
 
 Description
 -----------

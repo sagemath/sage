@@ -1,5 +1,6 @@
 import os
-
+from . import interpreters
+from sage.env import SAGE_SRC
 
 def autogen_all():
     """
@@ -8,8 +9,6 @@ def autogen_all():
     Return a list of sub-packages that should be appended to the list
     of packages built/installed by setup.py.
     """
-
-    from . import interpreters
-    interpreters.rebuild(os.path.join("sage", "ext", "interpreters"))
+    interpreters.rebuild(os.path.join(SAGE_SRC, "sage", "ext", "interpreters"))
 
     return ['sage.ext.interpreters']

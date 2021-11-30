@@ -37,7 +37,6 @@ test.spyx
 --root
 --rst2ipynb
 --ipynb2rst
---rst2txt
 --sh
 --singular
 --sqlite3
@@ -217,10 +216,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
 
         sage: out, err, ret = test_executable(["sage", "--info", "sqlite"])  # optional - build
         sage: print(out)  # optional - build
-        Found local metadata for sqlite-...
-        SQLite
-        ======
-        ...
+        sqlite...
         SQLite is a software library that implements a self-contained,
         serverless, zero-configuration, transactional SQL database engine.
         ...
@@ -231,10 +227,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
 
         sage: out, err, ret = test_executable(["sage", "-p", "--info", "--info", "sqlite"])  # optional - build
         sage: print(out)  # optional - build
-        Found local metadata for sqlite-...
-        SQLite
-        ======
-        ...
+        sqlite...
         SQLite is a software library that implements a self-contained,
         serverless, zero-configuration, transactional SQL database engine.
         ...
@@ -271,7 +264,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: dir = tmp_dir(); name = 'sage_test_file.sage'
         sage: fullname = os.path.join(dir, name)
         sage: F = open(fullname, 'w')
-        sage: _ = F.write("from __future__ import print_function\nk.<a> = GF(5^3); print(a^124)\n")
+        sage: _ = F.write("k.<a> = GF(5^3); print(a^124)\n")
         sage: F.close()
         sage: (out, err, ret) = test_executable(["sage", fullname])
         sage: print(out)
@@ -298,15 +291,16 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: (out, err, ret) = test_executable(["sage", fullname], pydebug_ignore_warnings=True)
         sage: print(out)
         499500
-        sage: err
-        'Compiling ...spyx...'
+        sage: import re
+        sage: bool(re.match('Compiling.*spyx.*', err))
+        True
         sage: ret
         0
         sage: (out, err, ret) = test_executable(["sage", name], cwd=dir, pydebug_ignore_warnings=True)
         sage: print(out)
         499500
-        sage: err
-        'Compiling ...spyx...'
+        sage: bool(re.match('Compiling.*spyx.*', err))
+        True
         sage: ret
         0
 
@@ -580,12 +574,12 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: ret
         0
 
-        sage: (out, err, ret) = test_executable(["sage", "--R", "--version"])
-        sage: out.find("R version ") >= 0
+        sage: (out, err, ret) = test_executable(["sage", "--R", "--version"])  # optional - r
+        sage: out.find("R version ") >= 0                                      # optional - r
         True
-        sage: err
+        sage: err                                                              # optional - r
         ''
-        sage: ret
+        sage: ret                                                              # optional - r
         0
 
         sage: (out, err, ret) = test_executable(["sage", "--sqlite3", "--version"])
@@ -737,53 +731,6 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: _ = test_executable(L)                        # optional - pandoc
         sage: print(open(output, 'r').read() == t)          # optional - pandoc
         True
-
-    Test ``sage --rst2txt file.rst`` on a ReST file::
-
-        sage: s = "::\n\n    sage: 2^10\n    1024\n    sage: 2 + 2\n    4"
-        sage: input = tmp_filename(ext='.rst')
-        sage: with open(input, 'w') as F:
-        ....:     _ = F.write(s)
-        sage: (out, err, ret) = test_executable(["sage", "--rst2txt", input]) # py2 # optional -- sagenb
-        sage: print(out) # py2 # optional -- sagenb
-        {{{id=0|
-        2^10
-        ///
-        1024
-        }}}
-        <BLANKLINE>
-        {{{id=1|
-        2 + 2
-        ///
-        4
-        }}}
-        sage: err # py2 # optional -- sagenb
-        ''
-        sage: ret # py2 # optional -- sagenb
-        0
-
-    Test ``sage --rst2txt file.rst file.txt`` on a ReST file::
-
-        sage: s = "::\n\n    sage: 2^10\n    1024\n    sage: 2 + 2\n    4"
-        sage: input = tmp_filename(ext='.rst')
-        sage: output = tmp_filename(ext='.txt')
-        sage: with open(input, 'w') as F:
-        ....:     _ = F.write(s)
-        sage: test_executable(["sage", "--rst2txt", input, output]) # py2 # optional -- sagenb
-        ('', ..., 0)
-        sage: print(open(output, 'r').read()) # py2 # optional -- sagenb
-        {{{id=0|
-        2^10
-        ///
-        1024
-        }}}
-        <BLANKLINE>
-        {{{id=1|
-        2 + 2
-        ///
-        4
-        }}}
-
     """
     pexpect_env = dict(os.environ)
     try:

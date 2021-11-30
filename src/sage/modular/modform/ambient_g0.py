@@ -45,6 +45,21 @@ class ModularFormsAmbient_g0_Q(ambient.ModularFormsAmbient):
         """
         ambient.ModularFormsAmbient.__init__(self, arithgroup.Gamma0(level), weight, rings.QQ)
 
+    def _pari_init_(self):
+        """
+        Conversion to Pari.
+
+        EXAMPLES::
+
+            sage: m = ModularForms(Gamma0(11),4)
+            sage: pari.mfdim(m)
+            4
+            sage: pari.mfparams(m)
+            [11, 4, 1, 4, t - 1]
+        """
+        from sage.libs.pari import pari
+        return pari.mfinit([self.level(), self.weight()], 4)
+
     ####################################################################
     # Computation of Special Submodules
     ####################################################################

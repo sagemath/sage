@@ -54,9 +54,10 @@ Named associative algebras
    sage/combinat/posets/moebius_algebra
    sage/algebras/orlik_terao
    sage/algebras/orlik_solomon
-   sage/algebras/quantum_matrix_coordinate_algebra
    sage/combinat/partition_algebra
+   sage/algebras/quantum_clifford
    sage/algebras/quantum_groups/quantum_group_gap
+   sage/algebras/quantum_matrix_coordinate_algebra
    sage/algebras/quatalg/quaternion_algebra
    sage/algebras/rational_cherednik_algebra
    sage/algebras/schur_algebra
@@ -78,6 +79,15 @@ Hecke algebras
    sage/algebras/nil_coxeter_algebra
    sage/algebras/yokonuma_hecke_algebra
 
+Graded algebras
+---------------
+
+.. toctree::
+   :maxdepth: 2
+
+   sage/algebras/finite_gca
+   sage/algebras/commutative_dga
+
 Various associative algebras
 ----------------------------
 
@@ -86,7 +96,6 @@ Various associative algebras
 
    sage/algebras/associated_graded
    sage/algebras/cellular_basis
-   sage/algebras/commutative_dga
    sage/algebras/q_system
    sage/algebras/splitting_algebra
 

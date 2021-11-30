@@ -1,5 +1,5 @@
-alabaster
-=========
+alabaster: Default theme for the Sphinx documentation system
+============================================================
 
 Description
 -----------
@@ -13,3 +13,8 @@ is selected as the default theme.
 
 Live examples of this theme can be seen on paramiko.org, fabfile.org and
 pyinvoke.org.
+
+Upstream Contact
+----------------
+
+https://alabaster.readthedocs.io/en/latest/

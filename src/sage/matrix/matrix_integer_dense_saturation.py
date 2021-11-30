@@ -81,10 +81,18 @@ def random_sublist_of_size(k, n):
     EXAMPLES::
 
         sage: import sage.matrix.matrix_integer_dense_saturation as s
-        sage: s.random_sublist_of_size(10,3)
-        [0, 1, 5]
-        sage: s.random_sublist_of_size(10,7)
-        [0, 1, 3, 4, 5, 7, 8]
+        sage: l = s.random_sublist_of_size(10, 3)
+        sage: len(l)
+        3
+        sage: l_check = [-1] + l + [10]
+        sage: all(l_check[i] < l_check[i+1] for i in range(4))
+        True
+        sage: l = s.random_sublist_of_size(10, 7)
+        sage: len(l)
+        7
+        sage: l_check = [-1] + l + [10]
+        sage: all(l_check[i] < l_check[i+1] for i in range(8))
+        True
     """
     if n > k:
         raise ValueError("n must be <= len(v)")
@@ -103,7 +111,7 @@ def random_sublist_of_size(k, n):
     w = set([])
     while len(w) < n:
         z = randrange(k)
-        if not z in w:
+        if z not in w:
             w.add(z)
     return sorted(w)
 
@@ -238,7 +246,8 @@ def saturation(A, proof=True, p=0, max_dets=5):
 
     if max_dets > 0:
         # Take the GCD of at most num_dets randomly chosen determinants.
-        nr = A.nrows(); nc = A.ncols()
+        nr = A.nrows()
+        nc = A.ncols()
         d = 0
         trials = min(binomial(nc, nr), max_dets)
         already_tried = []

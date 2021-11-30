@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -289,7 +293,7 @@ cdef class ntl_ZZ(object):
 
         sage: n=ntl.ZZ(2983)
         sage: type(n._integer_())
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
         AUTHOR: Joel B. Mohler
         """
@@ -399,7 +403,7 @@ def unpickle_class_value(cls, x):
         sage: sage.libs.ntl.ntl_ZZ.unpickle_class_value(ntl.ZZ, 3)
         3
         sage: type(sage.libs.ntl.ntl_ZZ.unpickle_class_value(ntl.ZZ, 3))
-        <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+        <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
     """
     return cls(x)
 
@@ -412,7 +416,7 @@ def unpickle_class_args(cls, x):
         sage: sage.libs.ntl.ntl_ZZ.unpickle_class_args(ntl.ZZ, [3])
         3
         sage: type(sage.libs.ntl.ntl_ZZ.unpickle_class_args(ntl.ZZ, [3]))
-        <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+        <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
     """
     return cls(*x)
 
@@ -433,6 +437,7 @@ def ntl_setSeed(x=None):
 
     This is automatically seeded from the main Sage random number seed::
 
+        sage: set_random_seed(0)
         sage: ntl.ZZ_random(1000)
         979
 
@@ -458,7 +463,7 @@ ntl_setSeed()
 
 def randomBnd(q):
     r"""
-    Return a random number in the range [0,n).
+    Return a random number in the range `[0, n)`.
 
     According to the NTL documentation, these numbers are
     "cryptographically strong"; of course, that depends in part on
@@ -466,8 +471,12 @@ def randomBnd(q):
 
     EXAMPLES::
 
-        sage: [ntl.ZZ_random(99999) for i in range(5)]
-        [30675, 84282, 80559, 6939, 44798]
+        sage: n = 99999
+        sage: l = [ntl.ZZ_random(n) for i in range(5)]
+        sage: all(type(m) is sage.libs.ntl.ntl_ZZ.ntl_ZZ for m in l)
+        True
+        sage: all(0 <= m < n for m in l)
+        True
 
     AUTHOR:
 
@@ -489,12 +498,16 @@ def randomBnd(q):
 
 def randomBits(long n):
     r"""
-    Return a pseudo-random number between 0 and `2^n-1`.
+    Return a pseudo-random number in the range `[0, 2^n)`.
 
     EXAMPLES::
 
-        sage: [ntl.ZZ_random_bits(20) for i in range(3)]
-        [948179, 477498, 1020180]
+        sage: l = [ntl.ZZ_random_bits(20) for i in range(3)]
+        sage: all(0 <= m < 2^20 for m in l)
+        True
+        sage: l = [ntl.ZZ_random_bits(3) for i in range(10)]
+        sage: all(0 <= m < 8 for m in l)
+        True
 
     AUTHOR:
         -- Didier Deshommes <dfdeshom@gmail.com>

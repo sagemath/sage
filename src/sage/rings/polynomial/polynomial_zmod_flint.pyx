@@ -1,4 +1,8 @@
-# distutils: libraries = gmp ntl zn_poly
+# distutils: libraries = gmp NTL_LIBRARIES zn_poly
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 """
 Dense univariate polynomials over `\ZZ/n\ZZ`, implemented using FLINT
@@ -12,10 +16,10 @@ EXAMPLES::
 
     sage: R.<a> = PolynomialRing(Integers(100))
     sage: type(a)
-    <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+    <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
     sage: R.<a> = PolynomialRing(Integers(5*2^64))
     sage: type(a)
-    <type 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
+    <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_modn_ntl_ZZ'>
     sage: R.<a> = PolynomialRing(Integers(5*2^64), implementation="FLINT")
     Traceback (most recent call last):
     ...

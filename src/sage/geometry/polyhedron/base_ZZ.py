@@ -2,7 +2,7 @@ r"""
 Base class for polyhedra over `\ZZ`
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,10 +10,11 @@ Base class for polyhedra over `\ZZ`
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
-from sage.rings.all import ZZ, QQ
-from sage.misc.all import cached_method
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from .base_QQ import Polyhedron_QQ
 from sage.arith.all import gcd
@@ -28,7 +29,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         sage: p = Polyhedron([(0,0)], base_ring=ZZ);  p
         A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex
-        sage: TestSuite(p).run(skip='_test_pickling')
+        sage: TestSuite(p).run()
     """
     _base_ring = ZZ
 
@@ -79,7 +80,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
             sage: polytopes.cross_polytope(3).is_lattice_polytope()
             True
-            sage: polytopes.regular_polygon(5).is_lattice_polytope()
+            sage: polytopes.regular_polygon(5).is_lattice_polytope()  # optional - sage.rings.number_field
             False
 
         TESTS:
@@ -347,7 +348,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         OUTPUT:
 
-        The Ehrhart polynomial as a a univariate polynomial in ``variable``
+        The Ehrhart polynomial as a univariate polynomial in ``variable``
         over a rational field.
 
         .. SEEALSO::
@@ -741,7 +742,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             yield self
             return
         edge_vectors = []
-        for i in range(0,n):
+        for i in range(n):
             v = vertices[(i+1) % n].vector() - vertices[i].vector()
             d = gcd(list(v))
             v_prim = (v/d).change_ring(ZZ)

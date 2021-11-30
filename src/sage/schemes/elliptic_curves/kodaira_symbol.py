@@ -97,6 +97,11 @@ class KodairaSymbol_class(SageObject):
             I_n
             sage: KodairaSymbol_class('In')
             In
+
+        Check that :trac:`31147` is fixed::
+
+            sage: latex(KodairaSymbol_class(-14))
+            I_{10}^{*}
         """
         if not isinstance(symbol, str):
             n = Integer(symbol)
@@ -124,8 +129,8 @@ class KodairaSymbol_class(SageObject):
                 nu = n - 4
                 self._n = nu
                 self._roman = 1
-                self._str = 'I' + nu.str()
-                self._latex = 'I_{' + nu.str() + '}'
+                self._str = 'I%s' % nu
+                self._latex = 'I_{%s}' % nu
             elif n == -1:
                 self._roman = 1
                 self._n = 0
@@ -147,8 +152,8 @@ class KodairaSymbol_class(SageObject):
                 nu = -n - 4
                 self._roman = 1
                 self._n = nu
-                self._str = 'I' + nu.str() +'*'
-                self._latex = 'I_' + nu.str() + '^{*}'
+                self._str = 'I%s*' % nu
+                self._latex = 'I_{%s}^{*}' % nu
             self._starred = (n < 0)
             self._pari = n
             return

@@ -9,6 +9,9 @@ AUTHORS:
 
 - Jeroen Demeyer (2013-03-17): add :class:`atomic_write`,
   see :trac:`14292`.
+
+- Sebastian Oehms (2021-08-07): add :class:`atomic_dir`,
+  see :trac:`32344`
 """
 # ****************************************************************************
 #       Copyright (C) 2012 Volker Braun <vbraun@stp.dias.ie>
@@ -335,7 +338,8 @@ class atomic_write(object):
         self.tmpdir = os.path.dirname(self.target)
         self.append = append
         # Remove umask bits from mode
-        umask = os.umask(0); os.umask(umask)
+        umask = os.umask(0)
+        os.umask(umask)
         self.mode = mode & (~umask)
 
         # 'binary' mode is the default on Python 2, whereas 'text' mode is the
@@ -427,3 +431,115 @@ class atomic_write(object):
         else:
             # Failure: delete temporary file
             os.unlink(self.tempname)
+
+#################################################################
+# write to a temporary directory and move it in place
+#################################################################
+class atomic_dir(object):
+    """
+    Write to a given directory using a temporary directory and then rename it
+    to the target directory. This is for creating a directory whose contents
+    are determined uniquely by the directory name. If multiple threads or
+    processes attempt to create it in parallel, then it does not matter which
+    thread created it. Despite this assumption the contents of the directories
+    differ in the examples for demonstration purpose.
+
+    See also :class:`atomic_write`.
+
+    INPUT:
+
+    - ``target_directory`` -- the name of the directory to be written.
+      If it exists then the previous contents will be kept.
+
+    EXAMPLES::
+
+        sage: from sage.misc.temporary_file import atomic_dir
+        sage: target_dir = tmp_dir()
+        sage: with atomic_dir(target_dir) as d:
+        ....:     target_file = os.path.join(d.name, 'test')
+        ....:     with open(target_file, 'w') as f:
+        ....:        _ = f.write("First")
+        ....:        f.flush()
+        ....:     with atomic_dir(target_dir) as e:
+        ....:         target_file2 = os.path.join(e.name, 'test')
+        ....:         with open(target_file2, 'w') as g:
+        ....:            _ = g.write("Second")
+        ....:            g.flush()
+        ....:     with open(target_file, 'r') as f:
+        ....:         f.read()
+        'First'
+        sage: with atomic_dir(target_dir) as d:
+        ....:     target_file = os.path.join(d.name, 'test')
+        ....:     with open(target_file, 'w') as f:
+        ....:        _ = f.write("Third")
+        sage: target = os.path.join(target_dir, 'test')
+        sage: with open(target, 'r') as h:
+        ....:     h.read()
+        'Second'
+    """
+    def __init__(self, target_directory):
+        r"""
+        TESTS::
+
+            sage: from sage.misc.temporary_file import atomic_dir
+            sage: link_to_target = os.path.join(tmp_dir(), "templink")
+            sage: os.symlink("/foobar", link_to_target)
+            sage: aw = atomic_dir(link_to_target)
+            sage: print(aw.target)
+            /foobar
+            sage: print(aw.tmpdir)
+            /
+        """
+        self.target = os.path.realpath(target_directory)
+        self.tmpdir = os.path.dirname(self.target)
+
+    def __enter__(self):
+        r"""
+        Create and return a temporary directory in ``self.tmpdir`` (normally
+        the same directory as the target file).
+
+        OUTPUT: a directory returned by :func:`tempfile.TemporaryDirectory`.
+
+        TESTS::
+
+            sage: from sage.misc.temporary_file import atomic_dir
+            sage: aw = atomic_dir(tmp_dir())
+            sage: with aw as d:
+            ....:     os.path.dirname(aw.target) == os.path.dirname(d.name)
+            True
+        """
+        tdir = tempfile.TemporaryDirectory(dir=self.tmpdir)
+        self.tempname = os.path.abspath(tdir.name)
+        return tdir
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        If the ``with`` block was successful, move the temporary directory
+        to the target directory. Otherwise, delete the temporary directory.
+
+        TESTS:
+
+        Check that the temporary directory is deleted if there was an
+        exception::
+
+            sage: from sage.misc.temporary_file import atomic_dir
+            sage: with atomic_dir(tmp_dir()) as d:
+            ....:     tempname = d.name
+            ....:     raise RuntimeError
+            Traceback (most recent call last):
+            ...
+            RuntimeError
+            sage: os.path.exists(tempname)
+            False
+        """
+        import shutil
+        if exc_type is None:
+            # Success: move temporary file to target file
+            try:
+                os.rename(self.tempname, self.target)
+            except OSError:
+                # Race: Another thread or process must have created the directory
+                pass
+        else:
+            # Failure: delete temporary file
+            shutil.rmtree(self.tempname)

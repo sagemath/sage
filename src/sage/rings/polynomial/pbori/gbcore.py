@@ -3,8 +3,9 @@ from itertools import chain
 from inspect import getfullargspec as getargspec
 
 from .nf import GeneratorLimitExceeded, symmGB_F2_C, symmGB_F2_python
+from .pbori import GroebnerStrategy, ll_red_nf_redsb
 from .PyPolyBoRi import (Monomial, Polynomial,
-                         GroebnerStrategy, OrderCode, ll_red_nf_redsb)
+                         OrderCode)
 from .ll import eliminate, ll_encode
 from .statistics import used_vars_set
 from .heuristics import dense_system, gauss_on_linear
@@ -307,9 +308,9 @@ def variety_size_from_gb(I):
     """
     TESTS::
 
-        sage: from sage.rings.polynomial.pbori.frontend import *
+        sage: from sage.rings.polynomial.pbori import Ring, Monomial, Polynomial
         sage: from sage.rings.polynomial.pbori.gbcore import variety_size_from_gb
-        sage: r=Ring(100)
+        sage: r = Ring(100)
         sage: x = r.variable
         sage: variety_size_from_gb([])
         1
@@ -332,9 +333,9 @@ def variety_size_from_gb(I):
         sage: variety_size_from_gb(mons)
         1.2676506002282294e+30
     """
-    I = [Polynomial(p) for p in I]
+    I = (Polynomial(p) for p in I)
     I = [p for p in I if not p.is_zero()]
-    if len(I) == 0:
+    if not I:
         return 1
 #     # TODO Here's something wrong! See the example with 5 solutions.
 #     # (reverting for now)

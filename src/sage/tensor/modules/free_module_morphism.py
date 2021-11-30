@@ -488,8 +488,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
         matrix_rep = next(iter(self._matrices.values()))
         return not matrix_rep.is_zero()
 
-    __nonzero__ = __bool__
-
     def _add_(self, other):
         r"""
         Homomorphism addition.
@@ -1053,7 +1051,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
             [-1  2  0]
             [ 5  1  2]
             sage: type(phi.matrix())
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
 
         Matrix in bases different from those in which the homomorphism has
         been defined::

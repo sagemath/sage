@@ -1,5 +1,5 @@
-bleach
-======
+bleach: An HTML-sanitizing tool
+===============================
 
 Description
 -----------

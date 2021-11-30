@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -246,7 +250,7 @@ def unpickle_class_value(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1)
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_value(ntl.GF2,1))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(x)
 
@@ -259,7 +263,7 @@ def unpickle_class_args(cls, x):
         sage: sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1])
         1
         sage: type(sage.libs.ntl.ntl_GF2.unpickle_class_args(ntl.GF2,[1]))
-        <type 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
+        <class 'sage.libs.ntl.ntl_GF2.ntl_GF2'>
     """
     return cls(*x)
 

@@ -1,5 +1,5 @@
-pip
-===
+pip: Tool for installing and managing Python packages
+=====================================================
 
 Description
 -----------

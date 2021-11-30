@@ -78,18 +78,18 @@ Nous pouvons tout de même en voir quelques exemples en employant la classe
 représentation LaTeX, puis emballe le résultat dans du code HTML qui fait
 possède la classe CSS "math", laquelle indique de faire appel à MathJax. ::
 
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj = MathJax()
     sage: var('z')
     z
     sage: mj(z^12)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}\]</html>
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: mj(ZZ['x'])
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]\]</html>
     sage: mj(integrate(z^4, z))
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}\]</html>
 
 Utilisation de base
 ===================
@@ -126,9 +126,9 @@ HTML utilisant MathJax. C'est le code qui sera ensuite utilisé dans le
 bloc-notes ::
 
     sage: pretty_print(x^12)
-    <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}x^{12}</script></html>
+    x^12
     sage: pretty_print(integrate(sin(x), x))
-    <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}-\cos\left(x\right)</script></html>
+    -cos(x)
 
 Le bloc-notes dispose de deux autres fonctionnalités pour appeler LaTeX.
 Premièrement, lorsque la case « Typeset » (juste au-dessus de la première
@@ -194,13 +194,13 @@ mais la définition de la macro TeX ``\Bold{}`` fournie par Sage. ::
 
     sage: latex(QQ)
     \Bold{Q}
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(True)
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(False)
 
 On peut aussi définir de nouvelles macros TeX ou charger des packages
@@ -217,10 +217,10 @@ bloc-notes. ::
     (x, y)
     sage: latex(x+y)
     x + y
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(x+y)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y\]</html>
 
 Ces macros supplémentaires sont disponibles aussi quand Sage appelle TeX pour
 compiler un fragment de document trop gros pour MathJax. C'est la fonction
@@ -306,17 +306,17 @@ d'appeler latex (ou plus généralement le moteur choisi via ``latex.engine()``)
 au lieu MathJax. Les méthodes ``latex.add_to_mathjax_avoid_list`` et
 ``latex.mathjax_avoid_list`` permettent de gérer le contenu de cette liste. ::
 
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
+    sage: latex.mathjax_avoid_list()                # not tested
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
 
 Supposons maintenant que, dans le bloc-notes, un appel à ``view()`` ou
@@ -367,13 +367,10 @@ la commande ``view()`` pour visualiser l'exemple. ::
     LaTeX example for testing display of a commutative diagram produced
     by xypic.
     <BLANKLINE>
-    To use, try to view this object -- it won't work.  Now try
+    To use, try to view this object -- it will not work.  Now try
     'latex.add_to_preamble("\\usepackage[matrix,arrow,curve,cmtip]{xy}")',
-    and try viewing again -- it should work in the command line but not
-    from the notebook.  In the notebook, run
-    'latex.add_to_mathjax_avoid_list("xymatrix")' and try again -- you
-    should get a picture (a part of the diagram arising from a filtered
-    chain complex).
+    and try viewing again. You should get a picture (a part of the diagram arising
+    from a filtered chain complex).
 
 .. _sec-tkz-graph:
 
@@ -413,8 +410,8 @@ la feuille de travail. Les commandes suivantes reprennent l'ensemble des
     sage: latex.extra_preamble() # random - depends on system's TeX installation
     '\\usepackage{tikz}\n\\usepackage{tkz-graph}\n\\usepackage{tkz-berge}\n'
     sage: latex.engine('pdflatex')
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['tikz', 'tikzpicture']
 
 La mise en forme du graphe est faite en traitant des commandes ``tkz-graph``

@@ -27,7 +27,7 @@ AUTHOR::
 
 from sage.structure.element cimport parent
 from sage.rings.ring cimport Ring
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix2 import NotFullRankError
@@ -684,8 +684,6 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         may get a different ordering::
 
             sage: leftdiv2 = [ d for d in a.left_irreducible_divisors() ]
-            sage: leftdiv == leftdiv2
-            False
             sage: Set(leftdiv) == Set(leftdiv2)
             True
         """

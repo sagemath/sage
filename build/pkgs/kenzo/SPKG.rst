@@ -1,5 +1,5 @@
-Kenzo
-=====
+kenzo: Construct topological spaces and compute homology groups
+===============================================================
 
 Description
 -----------
@@ -18,6 +18,8 @@ Upstream Contact
 ----------------
 
 -  https://github.com/gheber/kenzo
+
+-  https://github.com/miguelmarco/kenzo/
 
 Dependencies
 ------------

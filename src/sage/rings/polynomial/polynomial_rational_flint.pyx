@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp
+# distutils: libraries = NTL_LIBRARIES gmp
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 r"""
 Univariate polynomials over `\QQ` implemented via FLINT
@@ -56,7 +60,7 @@ from sage.misc.cachefunc import cached_method
 
 cdef inline bint _do_sig(fmpq_poly_t op):
     """
-    Returns 1 when signal handling should be carried out for an operation
+    Return 1 when signal handling should be carried out for an operation
     on this polynomial and 0 otherwise.
 
     Strictly speaking, whether or not signal handling should be carried
@@ -304,7 +308,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: R.<t> = QQ[]
             sage: f = 2/3 * t^2 + 1
             sage: r = f.__reduce__(); r
-            (<type 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>, (Univariate Polynomial Ring in t over Rational Field, [1, 0, 2/3], False, False))
+            (<class 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>, (Univariate Polynomial Ring in t over Rational Field, [1, 0, 2/3], False, False))
             sage: r[0](*r[1])
             2/3*t^2 + 1
             sage: loads(dumps(f)) == f
@@ -315,7 +319,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __copy__(self):
         """
-        Returns a copy of self.
+        Return a copy of self.
 
         TESTS::
 
@@ -330,7 +334,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def _singular_(self, singular=singular_default, have_ring=False):
         """
-        Returns a Singular representation of self.
+        Return a Singular representation of self.
 
         INPUT:
 
@@ -388,7 +392,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         TESTS::
 
             sage: type(f.degree())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return smallInteger(fmpq_poly_degree(self.__poly))
 
@@ -551,7 +555,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef Polynomial truncate(self, long n):
         """
-        Returns self truncated modulo `t^n`.
+        Return self truncated modulo `t^n`.
 
         INPUT:
 
@@ -719,7 +723,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef bint is_zero(self) except -1:
         """
-        Returns whether or not self is the zero polynomial.
+        Return whether or not self is the zero polynomial.
 
         EXAMPLES::
 
@@ -734,7 +738,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef bint is_one(self) except -1:
         r"""
-        Returns whether or not this polynomial is one.
+        Return whether or not this polynomial is one.
 
         EXAMPLES::
 
@@ -754,7 +758,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __nonzero__(self):
         """
-        Returns whether or not self is non-zero.
+        Return whether or not self is non-zero.
 
         EXAMPLES::
 
@@ -838,7 +842,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _add_(self, right):
         """
-        Returns the sum of two rational polynomials.
+        Return the sum of two rational polynomials.
 
         EXAMPLES::
 
@@ -866,7 +870,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _sub_(self, right):
         """
-        Returns the difference of two rational polynomials.
+        Return the difference of two rational polynomials.
 
         EXAMPLES::
 
@@ -894,7 +898,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _neg_(self):
         """
-        Returns the difference of two rational polynomials.
+        Return the difference of two rational polynomials.
 
         EXAMPLES::
 
@@ -921,7 +925,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     @coerce_binop
     def quo_rem(self, right):
         """
-        Returns the quotient and remainder of the Euclidean division of
+        Return the quotient and remainder of the Euclidean division of
         self and right.
 
         Raises a ZerodivisionError if right is zero.
@@ -952,7 +956,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     @coerce_binop
     def gcd(self, right):
         """
-        Returns the (monic) greatest common divisor of self and right.
+        Return the (monic) greatest common divisor of self and right.
 
         Corner cases:  if self and right are both zero, returns zero.  If
         only one of them is zero, returns the other polynomial, up to
@@ -981,7 +985,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     @coerce_binop
     def lcm(self, right):
         """
-        Returns the monic (or zero) least common multiple of self and right.
+        Return the monic (or zero) least common multiple of self and right.
 
         Corner cases:  if either of self and right are zero, returns zero.
         This behaviour is ensures that the relation lcm(a,b) gcd(a,b) == a b
@@ -1008,7 +1012,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     @coerce_binop
     def xgcd(self, right):
         """
-        Returns polynomials d, s, and t such that d == s * self + t * right,
+        Return polynomials d, s, and t such that d == s * self + t * right,
         where d is the (monic) greatest common divisor of self and right.
         The choice of s and t is not specified any further.
 
@@ -1048,7 +1052,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _mul_(self, right):
         """
-        Returns the product of self and right.
+        Return the product of self and right.
 
         EXAMPLES::
 
@@ -1114,7 +1118,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _rmul_(self, Element left):
         r"""
-        Returns left * self, where left is a rational number.
+        Return left * self, where left is a rational number.
 
         EXAMPLES::
 
@@ -1134,7 +1138,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _lmul_(self, Element right):
         r"""
-        Returns self * right, where right is a rational number.
+        Return self * right, where right is a rational number.
 
         EXAMPLES::
 
@@ -1154,7 +1158,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __pow__(Polynomial_rational_flint self, exp, ignored):
         """
-        Returns self raised to the power of exp.
+        Return self raised to the power of exp.
 
         The corner case of ``exp == 0`` is handled by returning the constant
         polynomial 1.  Note that this includes the case ``0^0 == 1``.
@@ -1297,7 +1301,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def __floordiv__(Polynomial_rational_flint self, right):
         """
-        Returns the quotient of self and right obtain by Euclidean division.
+        Return the quotient of self and right obtain by Euclidean division.
 
         EXAMPLES::
 
@@ -1394,7 +1398,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     cpdef _mod_(self, right):
         """
-        Returns the remainder of self and right obtain by Euclidean division.
+        Return the remainder of self and right obtain by Euclidean division.
 
         EXAMPLES::
 
@@ -1433,7 +1437,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def numerator(self):
         """
-        Returns the numerator of self.
+        Return the numerator of self.
 
         Representing self as the quotient of an integer polynomial and
         a positive integer denominator (coprime to the content of the
@@ -1458,7 +1462,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def denominator(self):
         """
-        Returns the denominator of self.
+        Return the denominator of self.
 
         EXAMPLES::
 
@@ -1525,7 +1529,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def real_root_intervals(self):
         """
-        Returns isolating intervals for the real roots of self.
+        Return isolating intervals for the real roots of self.
 
         EXAMPLES:
 
@@ -1543,7 +1547,7 @@ cdef class Polynomial_rational_flint(Polynomial):
     @coerce_binop
     def resultant(Polynomial_rational_flint self, right):
         r"""
-        Returns the resultant of self and right.
+        Return the resultant of self and right.
 
         Enumerating the roots over `\QQ` as `r_1, \cdots, r_m` and
         `s_1, \cdots, s_n` and letting `x` and `y` denote the leading
@@ -2054,9 +2058,9 @@ cdef class Polynomial_rational_flint(Polynomial):
     # Methods using PARI                                                      #
     ###########################################################################
 
-    def galois_group(self, pari_group = False, algorithm = 'pari'):
+    def galois_group(self, pari_group=False, algorithm='pari'):
         """
-        Returns the Galois group of self as a permutation group.
+        Return the Galois group of this polynomial as a permutation group.
 
         INPUT:
 
@@ -2068,9 +2072,10 @@ cdef class Polynomial_rational_flint(Polynomial):
            up a group in Gap.  To get a permutation group from a PARI
            group ``P``, type ``PermutationGroup(P)``.
 
-        -  ``algorithm`` - ``'pari'``, ``'kash'``, ``'magma'`` (default:
-           ``'pari'``, except when the degree is at least 12 in which case
-           ``'kash'`` is tried).
+        -  ``algorithm`` - ``'pari'``, ``'gap'``, ``'kash'``, ``'magma'`` (default:
+           ``'pari'``, for degrees is at most 11;
+           ``'gap'``, for degrees from 12 to 15;
+           ``'kash'``, for degrees from 16 or more).
 
         OUTPUT:
 
@@ -2079,7 +2084,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         ALGORITHM:
 
         The Galois group is computed using PARI in C library mode, or possibly
-        KASH or MAGMA.
+        GAP, KASH, or MAGMA.
 
         .. NOTE::
 
@@ -2088,6 +2093,9 @@ cdef class Polynomial_rational_flint(Polynomial):
             current precision. The precision is updated internally but, in very
             rare cases, a wrong result may be returned if the initial precision
             was not sufficient.
+
+            GAP uses the "Transitive Groups Libraries" from the "TransGrp"
+            GAP package which comes installed with the "gap" Sage package.
 
             MAGMA does not return a provably correct result.  Please see the
             MAGMA documentation for how to obtain a provably correct result.
@@ -2116,10 +2124,10 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: PermutationGroup(G)
             Transitive group number 5 of degree 4
 
-        You can use KASH to compute Galois groups as well.  The advantage is
-        that KASH can compute Galois groups of fields up to degree 21, whereas
-        PARI only goes to degree 11.  (In my not-so-thorough experiments PARI
-        is faster than KASH.)
+        You can use KASH or GAP to compute Galois groups as well.  The advantage is
+        that KASH (resp. GAP) can compute Galois groups of fields up to
+        degree 23 (resp. 15), whereas PARI only goes to degree 11.
+        (In my not-so-thorough experiments PARI is faster than KASH.)
 
         ::
 
@@ -2128,6 +2136,14 @@ cdef class Polynomial_rational_flint(Polynomial):
             Transitive group number 5 of degree 4
 
             sage: f = x^4 - 17*x^3 - 2*x + 1
+            sage: f.galois_group(algorithm='gap')
+            Transitive group number 5 of degree 4
+            sage: f = x^13 - 17*x^3 - 2*x + 1
+            sage: f.galois_group(algorithm='gap')
+            Transitive group number 9 of degree 13
+            sage: f = x^12 - 2*x^8 - x^7 + 2*x^6 + 4*x^4 - 2*x^3 - x^2 - x + 1
+            sage: f.galois_group(algorithm='gap')
+            Transitive group number 183 of degree 12
             sage: f.galois_group(algorithm='magma')  # optional - magma
             Transitive group number 5 of degree 4
 
@@ -2148,7 +2164,6 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: R.<zeta> = QQ[]
             sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)
             PARI group [2, -1, 1, "S2"] of degree 2
-
         """
         from sage.groups.all import PariGroup, PermutationGroup, TransitiveGroup
 
@@ -2156,7 +2171,10 @@ cdef class Polynomial_rational_flint(Polynomial):
             raise ValueError("The polynomial must be irreducible")
 
         if self.degree() > 11 and algorithm == 'pari':
-            algorithm = 'kash'
+            if self.degree() < 16:
+                algorithm = 'gap'
+            else:
+                algorithm = 'kash'
 
         if self.degree() > 21 and algorithm == 'kash':
             raise NotImplementedError("Galois group computation is "
@@ -2189,6 +2207,15 @@ cdef class Polynomial_rational_flint(Polynomial):
                     "supports degrees up to 21, or use algorithm='magma' if " +
                     "you have magma.")
 
+        elif algorithm == 'gap':
+            if self.degree() > 15:
+                raise NotImplementedError("Galois group computation is " +
+                    "supported for degrees up to 15 using GAP. Try " +
+                    "algorithm='kash'.")
+            from sage.libs.gap.libgap import libgap
+            fgap = libgap(self)
+            return TransitiveGroup(self.degree(), fgap.GaloisType())
+
         elif algorithm == 'magma':
             from sage.interfaces.all import magma
             X = magma(self).GaloisGroup()
@@ -2207,7 +2234,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def factor_mod(self, p):
         """
-        Returns the factorization of self modulo the prime ``p``.
+        Return the factorization of self modulo the prime ``p``.
 
         Assumes that the degree of this polynomial is at least one, and raises
         a ``ValueError`` otherwise.
@@ -2300,7 +2327,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: f.factor_padic(3,-1)
             Traceback (most recent call last):
             ...
-            ValueError: prec_cap must be non-negative.
+            ValueError: prec_cap must be non-negative
             sage: f.factor_padic(6,10)
             Traceback (most recent call last):
             ...
@@ -2331,7 +2358,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         monic factors, computes the Hensel lifts of these factors modulo
         `p^e`. We assume that ``self`` has integer coefficients.
 
-        Returns an empty list if this polynomial has degree less than one.
+        Return an empty list if this polynomial has degree less than one.
 
         INPUT:
 
@@ -2406,7 +2433,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
     def discriminant(self):
         r"""
-        Returns the discriminant of this polynomial.
+        Return the discriminant of this polynomial.
 
         The discriminant `R_n` is defined as
 
@@ -2485,4 +2512,44 @@ cdef class Polynomial_rational_flint(Polynomial):
     # Alias for discriminant
     disc = discriminant
 
+    def galois_group_davenport_smith_test(self, num_trials=50, assume_irreducible=False):
+        """
+        Use the Davenport-Smith test to attempt to certify that `f` has Galois group A_n or S_n.
+ 
+        Return 1 if the Galois group is certified as S_n, 2 if A_n, or 0 if no conclusion is reached.
+        
+        By default, we first check that `f` is irreducible. For extra efficiency, one can override this
+        by specifying `assume_irreducible=True`; this yields undefined results if `f` is not irreducible.
+        
+        A corresponding function in Magma is `IsEasySnAn`.
 
+        EXAMPLES::
+
+            sage: P.<x> = QQ[]
+            sage: u = x^7 + x + 1
+            sage: u.galois_group_davenport_smith_test()                                                         
+            1
+            sage: u = x^7 - x^4 - x^3 + 3*x^2 - 1                                           
+            sage: u.galois_group_davenport_smith_test()                                                         
+            2
+            sage: u = x^7 - 2
+            sage: u.galois_group_davenport_smith_test()                                                         
+            0
+
+        """
+        from sage.arith.misc import primes_first_n
+        from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+
+        if not assume_irreducible and not self.is_irreducible():
+            return 0
+        d = self.degree()
+        for p in primes_first_n(num_trials):
+            fp = self.change_ring(IntegerModRing(p))
+            g = fp.factor()[-1][0]
+            d1 = g.degree()
+            # Here we use the fact that a transitive permutation representation with a long prime cycle
+            # must have image at least as big as A_n.
+            if (d1 <= 7 and (d,d1) in ((1,1),(2,2),(3,2),(3,3),(4,3),(5,3),(5,4),(6,5),(7,5))) or\
+                (d1 > d/2 and d1 < d-2 and d1.is_prime()):
+                return (2 if self.disc().is_square() else 1)
+        return 0

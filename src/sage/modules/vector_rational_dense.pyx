@@ -135,7 +135,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
     def __cinit__(self, parent=None, x=None, coerce=True, copy=True):
         self._entries = NULL
-        self._is_mutable = 1
+        self._is_immutable = 0
         if parent is None:
             self._degree = 0
             return
@@ -252,7 +252,8 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
                                   xrange(self._degree)]
 
     def __reduce__(self):
-        return (unpickle_v1, (self._parent, self.list(), self._degree, self._is_mutable))
+        return (unpickle_v1, (self._parent, self.list(), self._degree,
+                              not self._is_immutable))
 
     cpdef _add_(self, right):
         cdef Vector_rational_dense z, r
@@ -382,5 +383,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Rational(entries[i])
         mpq_set(v._entries[i], z.value)
-    v._is_mutable = is_mutable
+    v._is_immutable = not is_mutable
     return v

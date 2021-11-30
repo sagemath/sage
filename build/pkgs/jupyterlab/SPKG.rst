@@ -1,5 +1,5 @@
-JupyterLab
-==========
+jupyterlab: An extensible environment for interactive and reproducible computing
+================================================================================
 
 Description
 -----------

@@ -122,16 +122,16 @@ Functions
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-include "sage/data_structures/binary_matrix.pxi"
+from sage.data_structures.binary_matrix cimport *
 from libc.string cimport memset
 from libc.stdint cimport uint64_t, UINT64_MAX
 from libc.stdint cimport uint32_t, INT32_MAX, UINT32_MAX
 from cysignals.memory cimport sig_malloc, sig_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.graphs.base.c_graph cimport CGraph
-from sage.ext.memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.static_sparse_graph cimport (short_digraph,
                                                    init_short_digraph,
@@ -566,7 +566,7 @@ def is_distance_regular(G, parameters=False):
 
     cdef bitset_t b_tmp
     bitset_init(b_tmp, n)
-            
+
     # b_distance_matrix[d*n+v] is the set of vertices at distance d from v.
     cdef binary_matrix_t b_distance_matrix
     try:
@@ -773,7 +773,7 @@ cdef uint32_t * c_eccentricity_bounding(short_digraph sd) except NULL:
 
     # The first vertex is the one with largest degree
     next_v = max((out_degree(sd, v), v) for v in range(n))[1]
-    
+
     sig_on()
     while next_v != UINT32_MAX:
 
@@ -1103,7 +1103,7 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
       each vertex during the BFS search from `v`. The predecessor of `v` is
       itself. This method assumes that this array has already been allocated.
       However, it is possible to pass a ``NULL`` pointer in which case the
-      predecessors are not recorded. 
+      predecessors are not recorded.
 
     - ``waiting_list`` -- array of size ``n`` to store the order in which the
       vertices are visited during the BFS search from `v`. This method assumes
@@ -1359,7 +1359,7 @@ cdef uint32_t diameter_iFUB(short_digraph g,
 
     # We allocate some arrays and a bitset
     cdef bitset_t seen
-    bitset_init(seen, n)    
+    bitset_init(seen, n)
     cdef uint32_t * distances = <uint32_t *>sig_malloc(4 * n * sizeof(uint32_t))
     if not distances:
         bitset_free(seen)
@@ -1790,7 +1790,7 @@ def diameter(G, algorithm=None, source=None):
         sage: d1 == d2 and d1 == d3
         True
 
-    TESTS::
+    TESTS:
 
     This was causing a segfault. Fixed in :trac:`17873` ::
 
@@ -1828,7 +1828,7 @@ def diameter(G, algorithm=None, source=None):
     init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_vertex)
     cdef short_digraph rev_sd # to store copy of sd with edges reversed
 
-    # and we map the source to an int in [0,n-1] 
+    # and we map the source to an int in [0,n-1]
     cdef uint32_t isource = 0 if source is None else int_to_vertex.index(source)
 
     cdef bitset_t seen
@@ -1843,7 +1843,7 @@ def diameter(G, algorithm=None, source=None):
             free_short_digraph(sd)
             bitset_free(seen)
             raise MemoryError()
-        
+
         LB = diameter_lower_bound_2sweep(sd, isource, tab, NULL, tab + n, seen)
 
         bitset_free(seen)
@@ -2344,7 +2344,7 @@ def szeged_index(G, algorithm=None):
 
     elif algorithm not in ["low", "high"]:
         raise ValueError(f"unknown algorithm '{algorithm}'")
-    
+
     if algorithm is "low" and (G.has_loops() or G.has_multiple_edges()):
         raise ValueError("the 'low' algorithm is for simple connected "
                          "undirected graphs only")
@@ -2786,7 +2786,7 @@ def floyd_warshall(gg, paths=True, distances=False):
             if v != u and dv[u_int] !=  <unsigned short> -1:
                 if paths:
                     tmp_prec[u] = cgb.vertex_label(prec[v_int][u_int])
-                
+
                 if distances:
                     tmp_dist[u] = dv[u_int]
 

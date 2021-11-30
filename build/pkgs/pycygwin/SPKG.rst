@@ -1,5 +1,5 @@
-pycygwin
-========
+pycygwin: Python bindings for Cygwin's C API
+============================================
 
 Description
 -----------

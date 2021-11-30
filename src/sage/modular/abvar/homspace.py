@@ -288,7 +288,7 @@ class Homspace(HomsetWithBase):
         """
         return self.element_class(self, *args, **keywords)
 
-    def __call__(self, M):
+    def __call__(self, M, **kwds):
         r"""
         Create a homomorphism in this space from M. M can be any of the
         following:
@@ -343,23 +343,28 @@ class Homspace(HomsetWithBase):
             [-1  0  1 -1]
             [ 0 -1  0 -1]
         """
+        side = kwds.get("side", "left")
         if isinstance(M, morphism.Morphism):
             if M.parent() is self:
                 return M
             elif M.domain() == self.domain() and M.codomain() == self.codomain():
                 M = M.matrix()
             else:
-                raise ValueError("cannot convert %s into %s" % (M, self))
+                raise ValueError("cannot convert %s into %s" % (M, self)) 
         elif is_Matrix(M):
             if M.base_ring() != ZZ:
                 M = M.change_ring(ZZ)
-            if M.nrows() != 2*self.domain().dimension() or M.ncols() != 2*self.codomain().dimension():
-                raise TypeError("matrix has wrong dimension")
+            if side == "left":
+                if M.nrows() != 2*self.domain().dimension() or M.ncols() != 2*self.codomain().dimension():
+                    raise TypeError("matrix has wrong dimension")
+            else:
+                if M.ncols() != 2*self.domain().dimension() or M.nrows() != 2*self.codomain().dimension():
+                    raise TypeError("matrix has wrong dimension")
         elif self.matrix_space().has_coerce_map_from(parent(M)):
             M = self.matrix_space()(M)
         else:
             raise TypeError("can only coerce in matrices or morphisms")
-        return self.element_class(self, M)
+        return self.element_class(self, M, side)
 
     def _coerce_impl(self, x):
         """

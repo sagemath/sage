@@ -72,7 +72,12 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
     We construct a very small-scale AES system of equations::
 
         sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
-        sage: F,s = sr.polynomial_system()
+        sage: while True:  # workaround (see :trac:`31891`)
+        ....:     try:
+        ....:         F, s = sr.polynomial_system()
+        ....:         break
+        ....:     except ZeroDivisionError:
+        ....:         pass
 
     and pass it to a SAT solver::
 

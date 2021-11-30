@@ -50,8 +50,9 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
 from sage.misc.latex import latex
-from sage.rings.all import RDF
-from sage.functions.other import imag, sqrt
+from sage.rings.real_double import RDF
+from sage.functions.other import imag
+from sage.misc.functional import sqrt
 from sage.functions.all import arccosh, sign
 
 from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
@@ -656,7 +657,13 @@ class HyperbolicIsometryUHP(HyperbolicIsometry):
             sage: bool(UHP.dist(I2(p), p) < 10**-9)
             True
         """
-        return self.codomain().get_point(moebius_transform(self._matrix, p.coordinates()))
+        coords = p.coordinates()
+        # We apply complex conjugation to the point for negative determinants
+        # We check the coordinate is not equal to infinity. If we use !=, then
+        #   it cannot determine it is not infinity, so it also returns False.
+        if not (coords == infinity) and bool(self._matrix.det() < 0):
+            coords = coords.conjugate()
+        return self.codomain().get_point(moebius_transform(self._matrix, coords))
 
     def preserves_orientation(self): #UHP
         r"""
@@ -913,7 +920,11 @@ class HyperbolicIsometryPD(HyperbolicIsometry):
             sage: bool(PD.dist(I2(q), q) < 10**-9)
             True
         """
-        _image = moebius_transform(self._matrix, p.coordinates())
+        coords = p.coordinates()
+        # We apply complex conjugation to the point for negative determinants
+        if bool(self._matrix.det() < 0):
+            coords = coords.conjugate()
+        _image = moebius_transform(self._matrix, coords)
         return self.codomain().get_point(_image)
 
     def __mul__(self, other): #PD
@@ -1040,7 +1051,7 @@ def moebius_transform(A, z):
 
         sage: from sage.geometry.hyperbolic_space.hyperbolic_model import moebius_transform
         sage: moebius_transform(matrix(2,[1,2,3,4]),2 + I)
-        2/109*I + 43/109
+        -2/109*I + 43/109
         sage: y = var('y')
         sage: moebius_transform(matrix(2,[1,0,0,1]),x + I*y)
         x + I*y
@@ -1076,12 +1087,9 @@ def moebius_transform(A, z):
             if c == 0:
                 return infinity
             return a / c
-        if a * d - b * c < 0:
-            w = z.conjugate()  # Reverses orientation
-        else:
-            w = z
         if c * z + d == 0:
             return infinity
-        return (a * w + b) / (c * w + d)
+        return (a * z + b) / (c * z + d)
     raise TypeError("A must be an invertible 2x2 matrix over the"
                     " complex numbers or a symbolic ring")
+

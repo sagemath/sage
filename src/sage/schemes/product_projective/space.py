@@ -41,7 +41,7 @@ We can also construct the product by specifying the dimensions and the base ring
 
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.rings.all import (PolynomialRing, QQ, Integer, CommutativeRing)
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.categories.fields import Fields
@@ -1255,17 +1255,13 @@ class ProductProjectiveSpaces_finite_field(ProductProjectiveSpaces_field):
 
             sage: P = ProductProjectiveSpaces([2, 1], GF(3))
             sage: [x for x in P]
-            [(0 : 0 : 1 , 0 : 1), (1 : 0 : 1 , 0 : 1), (2 : 0 : 1 , 0 : 1), (0 : 1 : 1 , 0 : 1), (1 : 1 : 1 , 0 : 1),
-            (2 : 1 : 1 , 0 : 1), (0 : 2 : 1 , 0 : 1), (1 : 2 : 1 , 0 : 1), (2 : 2 : 1 , 0 : 1), (0 : 1 : 0 , 0 : 1),
-            (1 : 1 : 0 , 0 : 1), (2 : 1 : 0 , 0 : 1), (1 : 0 : 0 , 0 : 1), (0 : 0 : 1 , 1 : 1), (1 : 0 : 1 , 1 : 1),
-            (2 : 0 : 1 , 1 : 1), (0 : 1 : 1 , 1 : 1), (1 : 1 : 1 , 1 : 1), (2 : 1 : 1 , 1 : 1), (0 : 2 : 1 , 1 : 1),
-            (1 : 2 : 1 , 1 : 1), (2 : 2 : 1 , 1 : 1), (0 : 1 : 0 , 1 : 1), (1 : 1 : 0 , 1 : 1), (2 : 1 : 0 , 1 : 1),
-            (1 : 0 : 0 , 1 : 1), (0 : 0 : 1 , 2 : 1), (1 : 0 : 1 , 2 : 1), (2 : 0 : 1 , 2 : 1), (0 : 1 : 1 , 2 : 1),
-            (1 : 1 : 1 , 2 : 1), (2 : 1 : 1 , 2 : 1), (0 : 2 : 1 , 2 : 1), (1 : 2 : 1 , 2 : 1), (2 : 2 : 1 , 2 : 1),
-            (0 : 1 : 0 , 2 : 1), (1 : 1 : 0 , 2 : 1), (2 : 1 : 0 , 2 : 1), (1 : 0 : 0 , 2 : 1), (0 : 0 : 1 , 1 : 0),
-            (1 : 0 : 1 , 1 : 0), (2 : 0 : 1 , 1 : 0), (0 : 1 : 1 , 1 : 0), (1 : 1 : 1 , 1 : 0), (2 : 1 : 1 , 1 : 0),
-            (0 : 2 : 1 , 1 : 0), (1 : 2 : 1 , 1 : 0), (2 : 2 : 1 , 1 : 0), (0 : 1 : 0 , 1 : 0), (1 : 1 : 0 , 1 : 0),
-            (2 : 1 : 0 , 1 : 0), (1 : 0 : 0 , 1 : 0)]
+            [(0 : 0 : 1 , 0 : 1),
+            (0 : 1 : 1 , 0 : 1),
+            (0 : 2 : 1 , 0 : 1),
+            ...
+            (1 : 1 : 0 , 1 : 0),
+            (2 : 1 : 0 , 1 : 0),
+            (1 : 0 : 0 , 1 : 0)]
         """
         iters = [iter(T) for T in self._components]
         L=[]

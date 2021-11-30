@@ -40,8 +40,9 @@ def _to_space_separated_string(l, base_ring=None):
 
 def _set_to_None_if_empty(x):
     """
-    Helper function to clean up arguments: Returns None if x==None or
-    x is an empty container.
+    Helper function to clean up arguments.
+
+    This returns None if x is None or x is an empty container.
 
     EXAMPLES::
 

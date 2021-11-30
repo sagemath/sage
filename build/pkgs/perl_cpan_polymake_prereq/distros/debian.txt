@@ -7,4 +7,3 @@ libjson-perl
 libsvg-perl
 libterm-readkey-perl
 libterm-readline-gnu-perl
-libmongodb-perl

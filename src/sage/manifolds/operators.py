@@ -157,8 +157,8 @@ def div(tensor):
         sage: s = div(v); s
         Scalar field div(v) on the Euclidean plane E^2
         sage: s.display()
-        div(v): E^2 --> R
-           (x, y) |--> x*cos(x*y) - y*sin(x*y)
+        div(v): E^2 → ℝ
+           (x, y) ↦ x*cos(x*y) - y*sin(x*y)
         sage: s.expr()
         x*cos(x*y) - y*sin(x*y)
 
@@ -277,8 +277,8 @@ def laplacian(field):
         sage: Df = laplacian(f); Df
         Scalar field Delta(f) on the Euclidean plane E^2
         sage: Df.display()
-        Delta(f): E^2 --> R
-           (x, y) |--> -(x^2 + y^2)*sin(x*y)
+        Delta(f): E^2 → ℝ
+           (x, y) ↦ -(x^2 + y^2)*sin(x*y)
         sage: Df.expr()
         -(x^2 + y^2)*sin(x*y)
 
@@ -341,8 +341,8 @@ def dalembertian(field):
         sage: Df = dalembertian(f); Df
         Scalar field Box(f) on the 2-dimensional Lorentzian manifold M
         sage: Df.display()
-        Box(f): M --> R
-           (t, x) |--> 0
+        Box(f): M → ℝ
+           (t, x) ↦ 0
 
     See the method
     :meth:`~sage.manifolds.differentiable.scalarfield.DiffScalarField.dalembertian`

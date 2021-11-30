@@ -1,7 +1,7 @@
 r"""
 Monoids
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008      Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
@@ -9,8 +9,8 @@ Monoids
 #                2008-2014 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
@@ -65,8 +65,13 @@ class Monoids(CategoryWithAxiom):
         sage: x = S("aa")
         sage: x^0, x^1, x^2, x^3, x^4, x^5
         ('', 'aa', 'aaaa', 'aaaaaa', 'aaaaaaaa', 'aaaaaaaaaa')
-    """
 
+    Check for :trac:`31212`::
+
+        sage: R = IntegerModRing(15)
+        sage: R.submonoid([R.one()]).list()
+        [1]
+    """
     _base_category_class_and_axiom = (Semigroups, "Unital")
 
     Finite = LazyImport('sage.categories.finite_monoids', 'FiniteMonoids', at_startup=True)
@@ -574,6 +579,7 @@ class Monoids(CategoryWithAxiom):
                 """
                 F = self.cartesian_factors()
                 ids = tuple(M.one() for M in F)
+
                 def lift(i, gen):
                     cur = list(ids)
                     cur[i] = gen
@@ -582,9 +588,11 @@ class Monoids(CategoryWithAxiom):
 
                 # Finitely generated
                 cat = FiniteEnumeratedSets()
-                if all(M.monoid_generators() in cat
-                       or isinstance(M.monoid_generators(), (tuple, list)) for M in F):
-                    ret = [lift(i, gen) for i,M in enumerate(F) for gen in M.monoid_generators()]
+                if all(M.monoid_generators() in cat or
+                       isinstance(M.monoid_generators(), (tuple, list))
+                       for M in F):
+                    ret = [lift(i, gen) for i, M in enumerate(F)
+                           for gen in M.monoid_generators()]
                     return Family(ret)
 
                 # Infinitely generated
@@ -593,6 +601,5 @@ class Monoids(CategoryWithAxiom):
                 from sage.categories.cartesian_product import cartesian_product
                 gens_prod = cartesian_product([Family(M.monoid_generators(),
                                                       lambda g: (i, g))
-                                               for i,M in enumerate(F)])
+                                               for i, M in enumerate(F)])
                 return Family(gens_prod, lift, name="gen")
-

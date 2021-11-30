@@ -42,7 +42,7 @@ from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.matrix.constructor import identity_matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.classcall_metaclass import typecall
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.fraction_field import FractionField
@@ -56,9 +56,9 @@ from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.affine.affine_subscheme import AlgebraicScheme_subscheme_affine
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 from sage.structure.element import get_coercion_model
-from sage.symbolic.ring import is_SymbolicExpressionRing
-from sage.symbolic.ring import var
-from sage.symbolic.ring import SR
+
+import sage.rings.abc
+
 
 class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
                              DynamicalSystem):
@@ -91,7 +91,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
 
       * ``morphism_or_polys`` is a list of polynomials or rational
         functions and ``domain`` is unspecified; ``domain`` is then
-        taken to be the affine space of appropriate dimension over the 
+        taken to be the affine space of appropriate dimension over the
         common base ring, if one exists, of the elements of ``morphism_or_polys``
 
       * ``morphism_or_polys`` is a single polynomial or rational
@@ -259,7 +259,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         else:
             polys = [morphism_or_polys]
 
-        PR = get_coercion_model().common_parent(*polys)         
+        PR = get_coercion_model().common_parent(*polys)
         fraction_field = any(is_FractionField(poly.parent()) for poly in polys)
         if fraction_field:
             K = PR.base_ring().fraction_field()
@@ -275,13 +275,13 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
             else:
                 polys = [PR(poly) for poly in polys]
         if domain is None:
-            if PR is SR:
+            if isinstance(PR, sage.rings.abc.SymbolicRing):
                 raise TypeError("Symbolic Ring cannot be the base ring")
             if fraction_field:
                 PR = PR.ring()
             domain = AffineSpace(PR)
         else:
-            # Check if we can coerce the given polynomials over the given domain 
+            # Check if we can coerce the given polynomials over the given domain
             PR = domain.ambient_space().coordinate_ring()
             try:
                 if fraction_field:
@@ -292,7 +292,7 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         if len(polys) != domain.ambient_space().coordinate_ring().ngens():
             raise ValueError('Number of polys does not match dimension of {}'.format(domain))
         R = domain.base_ring()
-        if R is SR:
+        if isinstance(R, sage.rings.abc.SymbolicRing):
             raise TypeError("Symbolic Ring cannot be the base ring")
         if not is_AffineSpace(domain) and not isinstance(domain, AlgebraicScheme_subscheme_affine):
             raise ValueError('"domain" must be an affine scheme')
@@ -529,7 +529,8 @@ class DynamicalSystem_affine(SchemeMorphism_polynomial_affine_space,
         F = G.dynatomic_polynomial(period)
         T = G.domain().coordinate_ring()
         S = self.domain().coordinate_ring()
-        if is_SymbolicExpressionRing(F.parent()):
+        if isinstance(F.parent(), sage.rings.abc.SymbolicRing):
+            from sage.symbolic.ring import var
             u = var(self.domain().coordinate_ring().variable_name())
             return F.subs({F.variables()[0]:u,F.variables()[1]:1})
         elif T(F.denominator()).degree() == 0:
@@ -979,12 +980,12 @@ class DynamicalSystem_affine_finite_field(DynamicalSystem_affine_field,
         orbit = []
         index = 1
         Q = P
-        while not Q in orbit:
+        while Q not in orbit:
             orbit.append(Q)
             Q = self(Q)
             index += 1
         I = orbit.index(Q)
-        return([I, index-I-1])
+        return([I, index - I - 1])
 
     def cyclegraph(self):
         r"""
@@ -1020,7 +1021,7 @@ class DynamicalSystem_affine_finite_field(DynamicalSystem_affine_field,
         V = []
         E = []
         from sage.schemes.affine.affine_space import is_AffineSpace
-        if is_AffineSpace(self.domain()) == True:
+        if is_AffineSpace(self.domain()):
             for P in self.domain():
                 V.append(str(P))
                 Q = self(P)
@@ -1036,6 +1037,4 @@ class DynamicalSystem_affine_finite_field(DynamicalSystem_affine_field,
                 except TypeError:  # not on the scheme
                     pass
         from sage.graphs.digraph import DiGraph
-        g = DiGraph(dict(zip(V, E)), loops=True)
-        return g
-
+        return DiGraph(dict(zip(V, E)), loops=True)

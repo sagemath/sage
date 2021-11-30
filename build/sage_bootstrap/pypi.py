@@ -100,12 +100,13 @@ class PyPiVersion(object):
         """
         return self.json['info']['summary']
 
-    def update(self):
-        package = Package(self.name)
+    def update(self, package=None):
+        if package is None:
+            package = Package(self.name)
         if package.version == self.version:
             log.info('%s is already at the latest version', self.name)
             return
-        log.info('Updating %s: %s -> %s', self.name, package.version, self.version)
-        update = PackageUpdater(self.name, self.version)
+        log.info('Updating %s: %s -> %s', package.name, package.version, self.version)
+        update = PackageUpdater(package.name, self.version)
         update.download_upstream(self.url)
         update.fix_checksum()

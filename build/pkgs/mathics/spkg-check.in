@@ -1,0 +1,4 @@
+cd $SAGE_ROOT/src/sage/
+
+echo "Testing interfaces/mathics.py"
+sage -tp --long --optional="sage,mathics" interfaces/mathics.py  || sdh_die "Error testing Mathics interface"

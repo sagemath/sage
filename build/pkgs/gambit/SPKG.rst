@@ -1,5 +1,5 @@
-gambit
-======
+gambit: Computations on finite, noncooperative games
+====================================================
 
 Description
 -----------

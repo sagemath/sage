@@ -1,5 +1,5 @@
-polylib
-=======
+polylib: Operations on unions of polyhedra
+==========================================
 
 Description
 -----------

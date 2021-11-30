@@ -1,5 +1,5 @@
-fplll
-=====
+fplll: Lattice algorithms, including LLL with floating-point orthogonalization
+==============================================================================
 
 Description
 -----------

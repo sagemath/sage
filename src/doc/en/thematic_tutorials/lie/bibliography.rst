@@ -134,11 +134,11 @@ Bibliography
    Longman, 1998.
 
 .. [LNSSS14I] \C. Lenart, S. Naito, D. Sagaki, A. Schilling, and M. Shimozono.
-   A uniform model for for Kirillov-Reshetikhin crystals I: Lifting the
+   A uniform model for Kirillov-Reshetikhin crystals I: Lifting the
    parabolic quantum Bruhat graph. (2014) :arxiv:`1211.2042`
 
 .. [LNSSS14II] \C. Lenart, S. Naito, D. Sagaki, A. Schilling, and M. Shimozono.
-   A uniform model for for Kirillov-Reshetikhin crystals II: Alcove model,
+   A uniform model for Kirillov-Reshetikhin crystals II: Alcove model,
    path model, and `P = X`. (2014) :arxiv:`1402.2203`
 
 .. [L1995] \P. Littelmann. *Paths and root operators in representation theory*.

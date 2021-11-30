@@ -1,0 +1,2 @@
+polymake
+libpolymake-dev

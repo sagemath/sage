@@ -21,12 +21,6 @@ from sage.graphs.isgci import graph_classes
 """
 TESTS:
 
-Test that sagenb.misc.support is not imported (see :trac:`22941`)::
-
-    sage: import sage.graphs.graph_editor
-    sage: 'sagenb.misc.support' in sys.modules
-    False
-
 Test that methods all_max_clique, max_clique and clique_number from
 sage.graphs.cliquer are deprecated from the global namespace (:trac:`26200`)::
 

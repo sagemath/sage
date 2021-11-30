@@ -467,7 +467,6 @@ def setup_latex_preamble():
         True
     """
     latex.add_package_to_preamble_if_available("tikz")
-    latex.add_to_mathjax_avoid_list("tikz")
     latex.add_package_to_preamble_if_available("tkz-graph")
     latex.add_package_to_preamble_if_available("tkz-berge")
     if have_tkz_graph():

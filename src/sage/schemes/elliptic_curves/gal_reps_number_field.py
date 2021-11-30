@@ -1021,12 +1021,12 @@ def _possible_normalizers(E, SA):
     K = E.base_field()
     SA = [K.ideal(I.gens()) for I in SA]
 
-    selmer_group = K.selmer_group(SA, 2) # Generators of the selmer group.
+    selmer_gens = K.selmer_generators(SA, 2) # Generators of the selmer group.
 
-    if not selmer_group:
+    if not selmer_gens:
         return []
 
-    V = VectorSpace(GF(2), len(selmer_group))
+    V = VectorSpace(GF(2), len(selmer_gens))
     # We think of this as the character group of the selmer group.
 
     traces_list = []
@@ -1048,7 +1048,7 @@ def _possible_normalizers(E, SA):
         splitting_vector = [] # This will be the values of this
         # character on the generators of the Selmer group.
 
-        for a in selmer_group:
+        for a in selmer_gens:
             abar = k(a)
             if abar == 0:
                 # Ramification.
@@ -1091,9 +1091,9 @@ def _possible_normalizers(E, SA):
 
     # We find the element a of the selmer group corresponding to v:
     a = 1
-    for i in range(len(selmer_group)):
+    for i in range(len(selmer_gens)):
         if v[i] == 1:
-            a *= selmer_group[i]
+            a *= selmer_gens[i]
 
     # Since we've already included the above bad primes, we can assume
     # that the quadratic character corresponding to the exceptional primes

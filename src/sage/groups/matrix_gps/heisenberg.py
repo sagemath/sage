@@ -22,7 +22,7 @@ from sage.misc.latex import latex
 from sage.matrix.matrix_space import MatrixSpace
 from sage.categories.groups import Groups
 from sage.categories.rings import Rings
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from copy import copy
 
 class HeisenbergGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gap):

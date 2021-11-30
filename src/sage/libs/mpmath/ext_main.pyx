@@ -1965,7 +1965,7 @@ cdef class mpf(mpf_base):
             sage: mpf(-500.5).man
             1001
             sage: type(_)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self._mpf_[1]
 
@@ -2491,11 +2491,21 @@ cdef class mpc(mpnumber):
         """
         Returns the hash value of self ::
 
+        EXAMPLES::
+
             sage: from mpmath import mp
             sage: hash(mp.mpc(2,3)) == hash(complex(2,3))
             True
+
+        TESTS:
+
+        Check that :trac:`31676` is fixed::
+
+            sage: from mpmath import mpc
+            sage: hash(mpc(1, -1)) == hash(mpc(-1, -1))  # should not return OverflowError: Python int too large to convert to C ssize_t
+            False
         """
-        return libmp.mpc_hash(self._mpc_)
+        return hash(libmp.mpc_hash(self._mpc_))
 
     def __neg__(s):
         """

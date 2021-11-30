@@ -39,10 +39,10 @@
 #
 # - sdh_configure [...]
 #
-#    Runs `./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"`,
-#    (for autoconf'd projects with extra
-#        --disable-maintainer-mode --disable-dependency-tracking)
-#    Additional arguments to `./configure` may be given as arguments.
+#    Runs `./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"`
+#    --disable-static, (for autoconf'd projects with extra
+#    --disable-maintainer-mode --disable-dependency-tracking) Additional
+#    arguments to `./configure` may be given as arguments.
 #
 # - sdh_make [...]
 #
@@ -56,13 +56,23 @@
 #    be given as arguments.  If $SAGE_DESTDIR is not set then the command is
 #    run with $SAGE_SUDO, if set.
 #
-# - sdh_pip_install [...]
+# - sdh_pip_install [--no-deps] [--build-isolation] [...]
 #
-#    Runs `pip install` with the given arguments, as well as additional
-#    default arguments used for installing packages into Sage with pip.
-#    Currently this is just a wrapper around the `sage-pip-install` command.
+#    Builds a wheel using `pip wheel` with the given options [...], then installs
+#    the wheel.  Unless the special option --build-isolation is given,
+#    the wheel is built using the option --no-build-isolation.
+#    If the special option --no-deps is given, it is passed to pip install.
 #    If $SAGE_DESTDIR is not set then the command is run with $SAGE_SUDO, if
 #    set.
+#
+# - sdh_pip_uninstall [...]
+#
+#    Runs `pip uninstall` with the given arguments.  If unsuccessful, it displays a warning.
+#
+# - eval sdh_prefix_args PREFIX [...]
+#
+#    Helper function for transforming build options so that they can be passed
+#    through "pip".
 #
 # - sdh_cmake [...]
 #
@@ -148,7 +158,7 @@ _EOF_
 
 
 sdh_guard() {
-    sdh_check_vars SAGE_ROOT SAGE_LOCAL SAGE_SHARE
+    sdh_check_vars SAGE_ROOT SAGE_LOCAL SAGE_INST_LOCAL SAGE_SHARE
 }
 
 
@@ -160,9 +170,16 @@ sdh_configure() {
     if [ -z "$CONFIG_SHELL" ]; then
         export CONFIG_SHELL=`command -v bash`
     fi
-    ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" --disable-maintainer-mode --disable-dependency-tracking "$@"
+    if [ "$UNAME" = "CYGWIN" ]; then
+        # TODO: To use --disable-static for all packages on Cygwin, need
+        # #30814: Cygwin: Fix remaining packages to build shared libraries, using AM_LDFLAGS=-no-undefined
+        DISABLE_STATIC=
+    else
+        DISABLE_STATIC=--disable-static
+    fi
+    ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" $DISABLE_STATIC --disable-maintainer-mode --disable-dependency-tracking "$@"
     if [ $? -ne 0 ]; then # perhaps it is a non-autoconf'd project
-      ./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" "$@"
+      ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" $DISABLE_STATIC "$@"
       if [ $? -ne 0 ]; then
         if [ -f "$(pwd)/config.log" ]; then
             sdh_die <<_EOF_
@@ -201,43 +218,70 @@ sdh_make_install() {
 }
 
 sdh_setup_bdist_wheel() {
+    # Trac #32046: Most uses of this function can be replaced by sdh_pip_install
     mkdir -p dist
     rm -f dist/*.whl
     BDIST_DIR="$(mktemp -d)"
-    sage-python23 setup.py --no-user-cfg \
+    python3 setup.py --no-user-cfg \
          bdist_wheel --bdist-dir "$BDIST_DIR" \
          "$@" || sdh_die "Error building a wheel for $PKG_NAME"
 }
 
-sdh_pip_install() {
-    echo "Installing $PKG_NAME"
-    if [ -n "$SAGE_DESTDIR" ]; then
-        local sudo=""
-    else
-        local sudo="$SAGE_SUDO"
-    fi
-    $sudo sage-pip-uninstall "$@" || \
-        sdh_die "Error uninstalling a previous version of $PKG_NAME"
-
-    mkdir -p dist
-    rm -f dist/*.whl
-    sage-python23 -m pip wheel --wheel-dir=dist --no-binary :all: --verbose --no-deps --no-index --isolated --no-build-isolation "$@" || \
-        sdh_die "Error building a wheel for $PKG_NAME"
-
-    sdh_store_and_pip_install_wheel .
+sdh_prefix_args () {
+    prefix="$1"
+    shift
+    while [ $# -gt 0 ]; do
+        # Quoted quotes because the result is to be run through eval
+        echo "$prefix" \"$1\"
+        shift
+    done
 }
 
-sdh_store_and_pip_install_wheel() {
+sdh_pip_install() {
+    echo "Installing $PKG_NAME"
+    mkdir -p dist
+    rm -f dist/*.whl
+    install_options=""
+    # pip has --no-build-isolation but no flag that turns the default back on...
+    build_isolation_option="--no-build-isolation --no-binary :all:"
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --build-isolation)
+                # If a package requests build isolation, we allow it to provision
+                # its build environment using the stored wheels.
+                # We pass --find-links and remove the --no-binary option.
+                # The SPKG needs to declare "setuptools_wheel" as a dependency.
+                build_isolation_option="--find-links=$SAGE_SPKG_WHEELS"
+                ;;
+            --no-deps)
+                install_options="$install_options $1"
+                ;;
+            *)
+                break
+                ;;
+        esac
+        shift
+    done
+    python3 -m pip wheel --use-feature=in-tree-build --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option "$@" || \
+        sdh_die "Error building a wheel for $PKG_NAME"
+
+    sdh_store_and_pip_install_wheel $install_options .
+}
+
+sdh_pip_editable_install() {
+    echo "Installing $PKG_NAME (editable mode)"
+    python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable "$@" || \
+        sdh_die "Error installing $PKG_NAME"
+}
+
+sdh_store_wheel() {
     if [ -n "$SAGE_DESTDIR" ]; then
         local sudo=""
-        # --no-warn-script-location: Suppress a warning caused by --root
-        local root="--root=$SAGE_DESTDIR --no-warn-script-location"
     else
         local sudo="$SAGE_SUDO"
-        local root=""
     fi
     if [ "$*" != "." ]; then
-        sdh_die "Error: sdh_store_and_pip_install_wheel requires . as only argument"
+        sdh_die "Error: sdh_store_wheel requires . as only argument"
     fi
     wheel=""
     for w in dist/*.whl; do
@@ -252,16 +296,74 @@ sdh_store_and_pip_install_wheel() {
         sdh_die "Error: no wheel found after building"
     fi
 
-    $sudo sage-pip-install $root "$wheel" || \
-        sdh_die "Error installing $wheel"
     mkdir -p "${SAGE_DESTDIR}${SAGE_SPKG_WHEELS}" && \
         $sudo mv "$wheel" "${SAGE_DESTDIR}${SAGE_SPKG_WHEELS}/" || \
         sdh_die "Error storing $wheel"
+    wheel="${SAGE_DESTDIR}${SAGE_SPKG_WHEELS}/${wheel##*/}"
+}
+
+sdh_store_and_pip_install_wheel() {
+    local pip_options=""
+    while [ $# -gt 0 ]; do
+        case $1 in
+            -*) pip_options="$pip_options $1"
+                ;;
+            *)
+                break
+                ;;
+        esac
+        shift
+    done
+    sdh_store_wheel "$@"
+    if [ -n "$SAGE_SUDO" ]; then
+        # Trac #29585: Do the SAGE_DESTDIR staging of the wheel installation
+        # ONLY if SAGE_SUDO is set (in that case, we still do the staging so
+        # that we do not invoke pip as root).
+        if [ -n "$SAGE_DESTDIR" ]; then
+            # --no-warn-script-location: Suppress a warning caused by --root
+            local sudo=""
+            local root="--root=$SAGE_DESTDIR --no-warn-script-location"
+        else
+            # Trac #32361: Of course, this can only be done for normal packages,
+            # whose installation goes through sage-spkg.
+            # For script packages, we do have to invoke pip as root.
+            local sudo="$SAGE_SUDO"
+            local root=""
+        fi
+    else
+        local sudo=""
+        local root=""
+    fi
+    # Trac #32659: pip no longer reinstalls local wheels if the version is the same.
+    # Because neither (1) applying patches nor (2) local changes (in the case
+    # of sage-conf, sage-setup, etc.) bump the version number, we need to
+    # override this behavior.  The pip install option --force-reinstall does too
+    # much -- it also reinstalls all dependencies, which we do not want.
+    wheel_basename="${wheel##*/}"
+    distname="${wheel_basename%%-*}"
+    $sudo sage-pip-uninstall "$distname"
+    if [ $? -ne 0 ]; then
+        echo "(ignoring error)" >&2
+    fi
+    $sudo sage-pip-install $root $pip_options "$wheel" || \
+        sdh_die "Error installing ${wheel##*/}"
+    if [ -n "${SAGE_PKG_DIR}" ]; then
+        # Record name of installed distribution name for uninstallation.
+        wheel=${wheel##*/}
+        echo "${wheel%%-*}" >> ${SAGE_PKG_DIR}/spkg-piprm-requirements.txt
+    fi
+}
+
+sdh_pip_uninstall() {
+    sage-pip-uninstall "$@"
+    if [ $? -ne 0 ]; then
+        echo "Warning: pip exited with status $?" >&2
+    fi
 }
 
 sdh_cmake() {
     echo "Configuring $PKG_NAME with cmake"
-    cmake . -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}" \
+    cmake . -DCMAKE_INSTALL_PREFIX="${SAGE_INST_LOCAL}" \
             -DCMAKE_INSTALL_LIBDIR=lib \
             "$@"
     if [ $? -ne 0 ]; then

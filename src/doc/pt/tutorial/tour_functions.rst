@@ -61,7 +61,7 @@ integradas.
        sage: Dg(3)
        6
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(g, 0, 2)
        Graphics object consisting of 1 graphics primitive
 
@@ -77,7 +77,7 @@ embora com algumas ressalvas: veja o item 5 abaixo.
        sage: g(x)
        x^2
        sage: type(g(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: g(x).derivative()
        2*x
        sage: plot(g(x), 0, 2)
@@ -93,7 +93,7 @@ gráfico, e com uma pequena ajuda, diferenciadas e integradas.
        sage: plot(sin, 0, 2)
        Graphics object consisting of 1 graphics primitive
        sage: type(sin(x))
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: plot(sin(x), 0, 2)
        Graphics object consisting of 1 graphics primitive
        
@@ -140,7 +140,7 @@ na função ``h``, o que significa que ``x<2`` é calculado.
 ::
 
        sage: type(x<2)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
 
 Quando uma equação simbólica é calculada, como na definição de ``h``,
 se ela não é obviamente verdadeira, então ela retorna False. Logo
@@ -173,9 +173,9 @@ number of arguments must be less than or equal to 0."
 ::
 
        sage: type(f)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        sage: type(g)
-       <type 'sage.symbolic.expression.Expression'>
+       <class 'sage.symbolic.expression.Expression'>
        
 ``g`` não é uma função, é uma constante, logo não possui variáveis
 associadas, e você não pode substituir nenhum valor em ``g``.
@@ -193,7 +193,7 @@ Solução: existem vária opções.
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 - Ou com ``f`` como definida originalmente, defina ``g`` como uma
   expressão simbólica.
@@ -207,7 +207,7 @@ Solução: existem vária opções.
          sage: g(3)
          1
          sage: type(g)
-         <type 'sage.symbolic.expression.Expression'>
+         <class 'sage.symbolic.expression.Expression'>
 
 - Ou com ``f`` e ``g`` como definidas originalmente, especifique a
   variável para a qual você está substituindo.

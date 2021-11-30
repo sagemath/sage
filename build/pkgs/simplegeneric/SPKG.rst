@@ -1,5 +1,5 @@
-simplegeneric
-=============
+simplegeneric: Simple single-dispatch generic functions for Python
+==================================================================
 
 Description
 -----------

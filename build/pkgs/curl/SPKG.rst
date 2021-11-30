@@ -1,5 +1,5 @@
-curl
-====
+curl: Multiprotocol data transfer library and utility
+=====================================================
 
 Description
 -----------

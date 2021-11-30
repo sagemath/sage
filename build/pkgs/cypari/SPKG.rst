@@ -1,5 +1,5 @@
-cypari2
-=======
+cypari2: Python interface to the number theory library libpari
+==============================================================
 
 Description
 -----------

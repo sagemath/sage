@@ -124,17 +124,23 @@ lazy_import('ppl', 'point', as_='PPL_point',
 
 from sage.matrix.constructor import matrix
 from sage.structure.element import is_Matrix
-from sage.misc.all import cached_method, flatten, tmp_filename
-from sage.modules.all import vector
+from sage.misc.cachefunc import cached_method
+from sage.misc.flatten import flatten
+from sage.misc.temporary_file import tmp_filename
+from sage.modules.free_module_element import vector
 from sage.numerical.mip import MixedIntegerLinearProgram
 from sage.plot.plot3d.index_face_set import IndexFaceSet
 from sage.plot.plot3d.all import line3d, point3d
 from sage.plot.plot3d.shapes2 import text3d
-from sage.rings.all import Integer, ZZ, QQ
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.sets.set import Set_generic
 from sage.structure.all import Sequence
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
+from sage.geometry.convex_set import ConvexSet_compact
+import sage.geometry.abc
 
 from copy import copy
 from collections.abc import Hashable
@@ -464,7 +470,7 @@ def is_LatticePolytope(x):
     return isinstance(x, LatticePolytopeClass)
 
 @richcmp_method
-class LatticePolytopeClass(SageObject, Hashable):
+class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.LatticePolytope):
     r"""
     Create a lattice polytope.
 
@@ -517,6 +523,8 @@ class LatticePolytopeClass(SageObject, Hashable):
 
             sage: LatticePolytope([(1,2,3), (4,5,6)]) # indirect test
             1-d lattice polytope in 3-d lattice M
+            sage: TestSuite(_).run()
+
         """
         if ambient is None:
             self._ambient = self
@@ -2596,6 +2604,8 @@ class LatticePolytopeClass(SageObject, Hashable):
         r"""
         Return the dimension of the ambient lattice of ``self``.
 
+        An alias is :meth:`ambient_dim`.
+
         OUTPUT:
 
         - integer.
@@ -2609,6 +2619,28 @@ class LatticePolytopeClass(SageObject, Hashable):
             0
         """
         return self.lattice().dimension()
+
+    ambient_dim = lattice_dim
+
+    def ambient_vector_space(self, base_field=None):
+        r"""
+        Return the ambient vector space.
+
+        It is the ambient lattice (:meth:`lattice`) tensored with a field.
+
+        INPUT:
+
+        - ``base_field`` -- (default: the rationals) a field.
+
+        EXAMPLES::
+
+            sage: p = LatticePolytope([(1,0)])
+            sage: p.ambient_vector_space()
+            Vector space of dimension 2 over Rational Field
+            sage: p.ambient_vector_space(AA)
+            Vector space of dimension 2 over Algebraic Real Field
+        """
+        return self.lattice().vector_space(base_field=base_field)
 
     def linearly_independent_vertices(self):
         r"""
@@ -3127,7 +3159,8 @@ class LatticePolytopeClass(SageObject, Hashable):
             True
         """
         def PGE(S, u, v):
-            if u == v: return S.one()
+            if u == v:
+                return S.one()
             return S((u, v), check=False)
 
         PM = self.vertex_facet_pairing_matrix()
@@ -3766,6 +3799,36 @@ class LatticePolytopeClass(SageObject, Hashable):
             return self._points(*args, **kwds)
         else:
             return self._points
+
+    def _some_elements_(self):
+        r"""
+        Generate some points of ``self`` as a convex polytope.
+
+        In contrast to :meth:`points`, these are not necessarily lattice points.
+
+        EXAMPLES::
+
+            sage: o = lattice_polytope.cross_polytope(3)
+            sage: o.some_elements()  # indirect doctest
+            [(1, 0, 0),
+            (1/2, 1/2, 0),
+            (1/4, 1/4, 1/2),
+            (-3/8, 1/8, 1/4),
+            (-3/16, -7/16, 1/8),
+            (-3/32, -7/32, -7/16)]
+        """
+        if not self._vertices:
+            return
+        V = self.ambient_vector_space()
+        v_iter = iter(self._vertices)
+        p = V(next(v_iter))
+        yield p
+        for i in range(5):
+            try:
+                p = (p + next(v_iter)) / 2
+            except StopIteration:
+                return
+            yield p
 
     def polar(self):
         r"""
@@ -5457,10 +5520,10 @@ def convex_hull(points):
     vpoints = []
     for p in points:
         v = vector(ZZ, p)
-        if not v in vpoints:
+        if v not in vpoints:
             vpoints.append(v)
     p0 = vpoints[0]
-    vpoints = [p-p0 for p in vpoints]
+    vpoints = [p - p0 for p in vpoints]
     N = ZZ**p0.degree()
     H = N.submodule(vpoints)
     if H.rank() == 0:
@@ -5471,7 +5534,7 @@ def convex_hull(points):
         H_points = [H.coordinates(p) for p in vpoints]
         H_polytope = LatticePolytope(H_points)
         vpoints = (H_polytope.vertices() * H.basis_matrix()).rows(copy=False)
-    vpoints = [p+p0 for p in vpoints]
+    vpoints = [p + p0 for p in vpoints]
     return vpoints
 
 

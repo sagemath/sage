@@ -1,5 +1,5 @@
-pari_galdata
-============
+pari_galdata: PARI data package needed to compute Galois groups in degrees 8 through 11
+=======================================================================================
 
 Description
 -----------

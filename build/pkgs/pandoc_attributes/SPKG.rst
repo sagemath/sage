@@ -1,5 +1,5 @@
-pandoc_attributes
-=================
+pandoc_attributes: A parser and generator for pandoc block attributes
+=====================================================================
 
 Description
 -----------

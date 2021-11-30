@@ -51,7 +51,7 @@ from pprint import pformat
 
 from sage.misc.misc import cputime
 from sage.misc.latex import latex
-from sage.misc.superseded import deprecation
+from sage.misc.superseded import deprecation_cython as deprecation
 
 
 cdef class PolyDict:
@@ -1624,11 +1624,12 @@ cdef class ETuple:
 
             sage: R.<y, z> = Frac(QQ['x'])[]
             sage: type(y)
-            <class 'sage.rings.polynomial.multi_polynomial_element.MPolynomial_polydict'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: y^(2^32)
             Traceback (most recent call last):
             ...
-            OverflowError: exponent overflow (2147483648)
+            OverflowError: exponent overflow (...)   # 64-bit
+            OverflowError: Python int too large to convert to C unsigned long  # 32-bit
         """
         if self._length!=other._length:
             raise ArithmeticError

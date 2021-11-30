@@ -709,11 +709,11 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
         self._names = tuple(names)
         if not isinstance(order, str):
             raise TypeError("The monomial order must be given as a string")
-        if not R in Rings().Commutative():
+        if R not in Rings().Commutative():
             raise TypeError("The given 'base ring' (= %s) must be a commutative ring" % R)
 
         # now, the input is accepted
-        if hasattr(R,'_underlying_ring'):
+        if hasattr(R, '_underlying_ring'):
             self._underlying_ring = R._underlying_ring
         else:
             self._underlying_ring = R.base_ring()

@@ -127,7 +127,7 @@ class G1list(SageObject):
             sage: L = sage.modular.modsym.g1list.G1list(4); L.normalize(6, 2) # nonsense!
             (2, 2)
         """
-        return u % self.__N,   v % self.__N
+        return u % self.__N, v % self.__N
 
 
 class _G1list_old_pickle(G1list):

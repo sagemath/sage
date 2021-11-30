@@ -1555,7 +1555,7 @@ class EllipticCurveTraces(Benchmark):
             sage: isinstance(B.sage(), float)
             Traceback (most recent call last):
             ...
-            TypeError: anlist() got an unexpected keyword argument 'pari_ints'
+            TypeError: ...anlist() got an unexpected keyword argument 'pari_ints'
 
         """
         E = EllipticCurve([1,2,3,4,5])

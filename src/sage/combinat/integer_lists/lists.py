@@ -299,7 +299,7 @@ class IntegerLists(Parent):
             ....:     Element = MyElt
             sage: L = MyIntegersLists(5)
             sage: L._element_constructor_
-            <bound method MyIntegersLists._element_constructor_default of Integer lists of sum 5 satisfying certain constraints>
+            <bound method IntegerLists._element_constructor_default of Integer lists of sum 5 satisfying certain constraints>
         """
         return self.element_class(self, l)
 
@@ -320,7 +320,7 @@ class IntegerLists(Parent):
         iterator::
 
             sage: L._element_constructor_
-            <bound method IntegerListsLex._element_constructor_nocheck of ...>
+            <bound method IntegerLists._element_constructor_nocheck of ...>
             sage: L._element_constructor_([1,2,3])
             [1, 2, 3]
         """

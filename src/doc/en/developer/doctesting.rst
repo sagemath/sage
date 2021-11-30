@@ -803,7 +803,33 @@ You can also pass in an explicit amount of time::
 Finally, you can disable any warnings about long tests with
 ``--warn-long 0``.
 
-Doctests may start from a random seed::
+Doctests start from a random seed::
+
+    [kliem@sage sage-9.2]$ sage -t src/sage/doctest/tests/random_seed.rst
+    Running doctests with ID 2020-06-23-23-22-59-49f37a55.
+    ...
+    Doctesting 1 file.
+    sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst
+    **********************************************************************
+    File "src/sage/doctest/tests/random_seed.rst", line 3, in sage.doctest.tests.random_seed
+    Failed example:
+        randint(5, 10)
+    Expected:
+        9
+    Got:
+        8
+    **********************************************************************
+    1 item had failures:
+       1 of   2 in sage.doctest.tests.random_seed
+        [1 test, 1 failure, 0.00 s]
+    ----------------------------------------------------------------------
+    sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst  # 1 doctest failed
+    ----------------------------------------------------------------------
+    Total time for all tests: 0.0 seconds
+        cpu time: 0.0 seconds
+        cumulative wall time: 0.0 seconds
+
+This seed can be set explicitly to reproduce possible failures::
 
     [kliem@sage sage-9.2]$ sage -t --warn-long 89.5 --random-seed=112986622569797306072457879734474628454 src/sage/doctest/tests/random_seed.rst
     Running doctests with ID 2020-06-23-23-24-28-14a52269.
@@ -828,6 +854,9 @@ Doctests may start from a random seed::
     Total time for all tests: 0.0 seconds
         cpu time: 0.0 seconds
         cumulative wall time: 0.0 seconds
+
+It can also be set explicitly using the environment variable
+``SAGE_DOCTEST_RANDOM_SEED``.
 
 .. _section-optional-doctest-flag:
 
@@ -1010,8 +1039,8 @@ a Python exception occurs.  As an example, I modified
     152                     ainvs = [K(0),K(0),K(0)] + ainvs
     153                 self.__ainvs = tuple(ainvs)
     154                 if self.discriminant() == 0:
-    155                     raise ArithmeticError, \
-    156  ->                       "Invariants %s define a singular curve."%ainvs
+    155                     raise ArithmeticError(
+    156  ->                     "Invariants %s define a singular curve."%ainvs)
     157                 PP = projective_space.ProjectiveSpace(2, K, names='xyz');
     158                 x, y, z = PP.coordinate_ring().gens()
     159                 a1, a2, a3, a4, a6 = ainvs
@@ -1268,8 +1297,8 @@ code loads the globals from that file into the namespace before
 running tests.  To disable this behaviour (and require imports to be
 explicitly specified), use the ``--force-lib`` option.
 
-Auxilliary files
-^^^^^^^^^^^^^^^^
+Auxiliary files
+^^^^^^^^^^^^^^^
 
 To specify a logfile (rather than use the default which is created for
 ``sage -t --all``), use the ``--logfile`` flag::

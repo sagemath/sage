@@ -1,6 +1,8 @@
 # distutils: libraries = primecount
 # distutils: language = c++
 
+# Use of this file is deprecated.
+
 from libc.stdint cimport int64_t
 from libcpp.string cimport string as cppstring
 

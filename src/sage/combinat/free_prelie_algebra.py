@@ -7,14 +7,14 @@ AUTHORS:
 - Florent Hivert, Frédéric Chapoton (2011)
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010-2015 Florent Hivert <Florent.Hivert@lri.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.categories.magmatic_algebras import MagmaticAlgebras
 from sage.categories.lie_algebras import LieAlgebras
@@ -30,6 +30,7 @@ from sage.combinat.words.alphabet import Alphabet
 from sage.combinat.rooted_tree import (RootedTrees, RootedTree,
                                        LabelledRootedTrees,
                                        LabelledRootedTree)
+from sage.combinat.grossman_larson_algebras import GrossmanLarsonAlgebra, ROOT
 
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -137,6 +138,15 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         B[1[-1[2[]]]] + B[1[-1[], 2[]]]
         sage: w*(x*y)
         B[1[-1[2[]]]]
+
+    Elements of a free pre-Lie algebra can be lifted to the universal
+    enveloping algebra of the associated Lie algebra. The universal
+    enveloping algebra is the Grossman-Larson Hopf algebra::
+
+        sage: F = algebras.FreePreLie(QQ,'abc')
+        sage: a,b,c = F.gens()
+        sage: (a*b+b*c).lift()
+        B[#[a[b[]]]] + B[#[b[c[]]]]
 
     .. NOTE::
 
@@ -636,6 +646,22 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
                     return True
         return False
 
+    def _construct_UEA(self):
+        """
+        Build the universal enveloping algebra.
+
+        This is a Grossman-Larson Hopf algebra, based on forests of rooted
+        trees.
+
+        EXAMPLES::
+
+            sage: S = algebras.FreePreLie(QQ, 'zt')
+            sage: S._construct_UEA()
+            Grossman-Larson Hopf algebra on 2 generators ['z', 't']
+            over Rational Field
+        """
+        return GrossmanLarsonAlgebra(self.base_ring(), self.variable_names())
+
     def construction(self):
         """
         Return a pair ``(F, R)``, where ``F`` is a :class:`PreLieFunctor`
@@ -656,6 +682,26 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
             Free PreLie algebra on 2 generators ['x', 'y'] over Rational Field
         """
         return PreLieFunctor(self.variable_names()), self.base_ring()
+
+    class Element(CombinatorialFreeModule.Element):
+        def lift(self):
+            """
+            Lift element to the Grossman-Larson algebra.
+
+            EXAMPLES::
+
+                sage: F = algebras.FreePreLie(QQ,'abc')
+                sage: elt = F.an_element().lift(); elt
+                B[#[a[a[a[a[]]]]]] + B[#[a[a[], a[a[]]]]]
+                sage: parent(elt)
+                Grossman-Larson Hopf algebra on 3 generators ['a', 'b', 'c']
+                over Rational Field
+            """
+            UEA = self.parent()._construct_UEA()
+            LRT = UEA.basis().keys()
+            data = {LRT([x], ROOT): cf
+                    for x, cf in self.monomial_coefficients(copy=False).items()}
+            return UEA.element_class(UEA, data)
 
 
 class PreLieFunctor(ConstructionFunctor):

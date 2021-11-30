@@ -1,5 +1,5 @@
-defusedxml
-==========
+defusedxml: Addresses vulnerabilities of XML parsers and XML libraries
+======================================================================
 
 Description
 -----------

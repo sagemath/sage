@@ -100,7 +100,7 @@ AUTHORS:
 
 from .all import SL2Z
 from .arithgroup_generic import ArithmeticSubgroup
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 import sage.arith.all as arith
 
@@ -895,8 +895,10 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
             True
         """
         n = self.index()
-        S2_win = [None]*n;  S3_win = [None]*n
-        S2_test = [None]*n; S3_test = [None]*n
+        S2_win = [None] * n
+        S3_win = [None] * n
+        S2_test = [None] * n
+        S3_test = [None] * n
 
         m_win = self._canonical_rooted_labels(0)
         for i in range(n): # conjugation
@@ -960,7 +962,8 @@ class ArithmeticSubgroup_Permutation_class(ArithmeticSubgroup):
                 j = x[j]
 
             # if everybody is labelled do not go further
-            if k == n: break
+            if k == n:
+                break
 
             # find another guy with y
             j0 = y[waiting.pop(0)]
@@ -1816,7 +1819,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             else:
                 c2 = len(c) // 2
                 if exp:
-                    if not c2 in widths:
+                    if c2 not in widths:
                         widths[c2] = 0
                     widths[c2] += 1
                 else:
@@ -2046,8 +2049,14 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             s3,s3
             s3,s3,s2
 
-            sage: gens
-            [(0, 1, 's2'), (3, 3, 's3')]
+            sage: edges = G.coset_graph().edges(); edges
+            [(0, 1, 's2'), (0, 1, 's3'), (1, 0, 's2'), (1, 2, 's3'), (2, 0, 's3'), (2, 3, 's2'), (3, 2, 's2'), (3, 3, 's3')]
+            sage: len(gens)
+            2
+            sage: (3, 3, 's3') in gens
+            True
+            sage: any(e in gens for e in edges[:5])
+            True
         """
         from sage.graphs.digraph import DiGraph
         from sage.misc.prandom import randint
@@ -2175,8 +2184,14 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             ****
             sage: wreps
             ['', 's', 'll', 'l']
-            sage: gens
-            [(2, 0, 'l'), (1, 1, 'l'), (2, 3, 's')]
+            sage: len(gens)
+            3
+            sage: (1, 1, 'l') in gens
+            True
+            sage: (2, 3, 's') in gens or (3, 2, 's') in gens
+            True
+            sage: (2, 0, 'l') in gens
+            True
 
         .. TODO::
 
@@ -2276,12 +2291,10 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             sage: g1,g2 = gens
             sage: g1 in G and g2 in G
             True
-            sage: g1
-            [-1  0]
-            [ 1 -1]
-            sage: g2
-            [-1  3]
-            [-1  2]
+            sage: Matrix(2, 2, [-1, 3, -1, 2]) in gens
+            True
+            sage: Matrix(2, 2, [-1, 0, 1, -1]) in gens or Matrix(2, 2, [1, 0, 1, 1]) in gens
+            True
             sage: S2 = SL2Z([0,-1,1,0])
             sage: S3 = SL2Z([0,1,-1,1])
             sage: reps[0] == SL2Z([1,0,0,1])
@@ -2320,11 +2333,14 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             [1 0]  [ 0 -1]  [1 2]  [1 1]
             [0 1], [ 1  0], [0 1], [0 1]
             ]
-            sage: gens
-            [
-            [1 3]  [ 1  0]  [ 2 -3]
-            [0 1], [-1  1], [ 1 -1]
-            ]
+            sage: len(gens)
+            3
+            sage: Matrix(2, 2, [1, 3, 0, 1]) in gens
+            True
+            sage: Matrix(2, 2, [1, 0, -1, 1]) in gens
+            True
+            sage: Matrix(2, 2, [1, -3, 1, -2]) in gens or Matrix(2, 2, [2, -3, 1, -1]) in gens
+            True
             sage: l
             [3, 1, 0, 2]
             sage: s

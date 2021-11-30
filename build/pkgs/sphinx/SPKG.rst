@@ -1,5 +1,5 @@
-Sphinx
-======
+sphinx: Python documentation generator
+======================================
 
 Description
 -----------
@@ -21,8 +21,8 @@ Upstream Contact
 ----------------
 
 - Author: Georg Brandl
-- Home Page: http://sphinx.pocoo.org,
-  see also http://pypi.python.org/pypi/Sphinx
+- Home Page: http://www.sphinx-doc.org
+- see also http://pypi.python.org/pypi/Sphinx
 
 Dependencies
 ------------

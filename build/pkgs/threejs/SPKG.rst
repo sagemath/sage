@@ -1,5 +1,5 @@
-Three.js
-========
+threejs: JavaScript library to display 3D graphics in the browser
+=================================================================
 
 Description
 -----------

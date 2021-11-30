@@ -11,7 +11,7 @@ tree or graph structure.
 This module has mostly been superseded by ``RecursivelyEnumeratedSet``.
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>,
 #                     2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #                     2010 Nicolas Borie <nicolas.borie at math.u-psud.fr>
@@ -25,22 +25,23 @@ This module has mostly been superseded by ``RecursivelyEnumeratedSet``.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.monoids import Monoids
 from sage.categories.commutative_additive_semigroups import (
-        CommutativeAdditiveSemigroups)
+    CommutativeAdditiveSemigroups)
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.integer_ring import ZZ
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
+
 
 class GenericBacktracker(object):
     r"""
     A generic backtrack tool for exploring a search space organized as a tree,
     with branch pruning, etc.
 
-    See also :class:`RecursivelyEnumeratedSet_forest` and :class:`TransitiveIdeal` for
+    See also :class:`RecursivelyEnumeratedSet_forest` for
     handling simple special cases.
     """
     def __init__(self, initial_data, initial_state):
@@ -64,32 +65,33 @@ class GenericBacktracker(object):
             sage: len(list(p))
             14
         """
-        #Initialize the stack of generators with the initial data.
-        #The generator in stack[i] is a generator for the i^th level
-        #of the search tree.
+        # Initialize the stack of generators with the initial data.
+        # The generator in stack[i] is a generator for the i^th level
+        # of the search tree.
         stack = []
         stack.append(self._rec(self._initial_data, self._initial_state))
 
         done = False
         while not done:
-            #Try to get the next object in this level
+            # Try to get the next object in this level
             try:
                 obj, state, yld = next(stack[-1])
             except StopIteration:
-                #If there are no more, go back up the tree
-                #We also need to check if we've exhausted all
-                #possibilities
+                # If there are no more, go back up the tree
+                # We also need to check if we've exhausted all
+                # possibilities
                 stack.pop()
                 done = len(stack) == 0
                 continue
 
-            #If the return state is None, then obj is a leaf
-            #of the search tree.  If yld is True, then obj
-            #should be yielded.
+            # If the return state is None, then obj is a leaf
+            # of the search tree.  If yld is True, then obj
+            # should be yielded.
             if yld is True:
                 yield obj
             if state is not None:
-                stack.append( self._rec(obj, state) )
+                stack.append(self._rec(obj, state))
+
 
 class PositiveIntegerSemigroup(UniqueRepresentation, RecursivelyEnumeratedSet_forest):
     r"""
@@ -132,7 +134,7 @@ class PositiveIntegerSemigroup(UniqueRepresentation, RecursivelyEnumeratedSet_fo
             sage: from sage.combinat.backtrack import PositiveIntegerSemigroup
             sage: PP = PositiveIntegerSemigroup()
         """
-        RecursivelyEnumeratedSet_forest.__init__(self, facade = ZZ, category=(InfiniteEnumeratedSets(), CommutativeAdditiveSemigroups(), Monoids()))
+        RecursivelyEnumeratedSet_forest.__init__(self, facade=ZZ, category=(InfiniteEnumeratedSets(), CommutativeAdditiveSemigroups(), Monoids()))
 
     def roots(self):
         r"""
@@ -160,7 +162,7 @@ class PositiveIntegerSemigroup(UniqueRepresentation, RecursivelyEnumeratedSet_fo
             sage: list(PP.children(42))
             [43]
         """
-        return [ZZ(x+1)]
+        return [ZZ(x + 1)]
 
     def one(self):
         r"""

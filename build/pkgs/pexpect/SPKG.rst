@@ -1,5 +1,5 @@
-pexpect
-=======
+pexpect: Python module for controlling and automating other programs
+====================================================================
 
 Description
 -----------

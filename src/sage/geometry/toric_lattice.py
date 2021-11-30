@@ -148,7 +148,7 @@ Or you can create a homomorphism from one lattice to any other::
 from sage.geometry.toric_lattice_element import (ToricLatticeElement,
                                                  is_ToricLatticeElement)
 from sage.geometry.toric_plotter import ToricPlotter
-from sage.misc.all import latex
+from sage.misc.latex import latex
 from sage.structure.all import parent
 from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
                                     richcmp_not_equal)
@@ -158,7 +158,8 @@ from sage.modules.free_module import (FreeModule_ambient_pid,
                                       FreeModule_generic_pid,
                                       FreeModule_submodule_pid,
                                       FreeModule_submodule_with_basis_pid)
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.factory import UniqueFactory
 
 
@@ -425,7 +426,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: N3 = ToricLattice(3, 'N3')
             sage: Q = N3 / N3.span([ N3(1,2,3) ])
             sage: Q.an_element()
-            N3[0, 0, 1]
+            N3[1, 0, 0]
             sage: N2 = ToricLattice(2, 'N2')
             sage: N2( Q.an_element() )
             N2(1, 0)
@@ -1047,7 +1048,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         EXAMPLES::
 
             sage: N = ToricLattice(3)
-            sage: N.plot()
+            sage: N.plot()  # optional - sage.plot
             Graphics3d Object
         """
         if "show_lattice" not in options:
@@ -1169,7 +1170,7 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
             2-d lattice, quotient of 3-d lattice M by Sublattice <M(1, -1, -1)>
         """
         if "_dual" not in self.__dict__:
-            if not self is self.saturation():
+            if self is not self.saturation():
                 raise ValueError("only dual lattices of saturated sublattices "
                                  "can be constructed! Got %s." % self)
             self._dual = (self.ambient_module().dual() /
@@ -1194,12 +1195,12 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
 
             sage: N = ToricLattice(3)
             sage: sublattice = N.submodule_with_basis([(1,1,0), (3,2,1)])
-            sage: sublattice.plot()
+            sage: sublattice.plot()  # optional - sage.plot
             Graphics3d Object
 
         Now we plot both the ambient lattice and its sublattice::
 
-            sage: N.plot() + sublattice.plot(point_color="red")
+            sage: N.plot() + sublattice.plot(point_color="red")  # optional - sage.plot
             Graphics3d Object
         """
         if "show_lattice" not in options:
@@ -1297,9 +1298,9 @@ class ToricLattice_quotient_element(FGP_Element):
         sage: e == e2
         True
         sage: e.vector()
-        (4)
+        (-4)
         sage: e2.vector()
-        (4)
+        (-4)
     """
 
     def _latex_(self):
@@ -1407,7 +1408,7 @@ class ToricLattice_quotient(FGP_Module_class):
         sage: Q
         1-d lattice, quotient of 3-d lattice N by Sublattice <N(1, 0, 1), N(0, 1, -1)>
         sage: Q.gens()
-        (N[0, 0, 1],)
+        (N[1, 0, 0],)
 
     Here, ``sublattice`` happens to be of codimension one in ``N``. If
     you want to prescribe the sign of the quotient generator, you can
@@ -1416,15 +1417,15 @@ class ToricLattice_quotient(FGP_Module_class):
         sage: Q = N.quotient(sublattice, positive_point=N(0,0,-1)); Q
         1-d lattice, quotient of 3-d lattice N by Sublattice <N(1, 0, 1), N(0, 1, -1)>
         sage: Q.gens()
-        (N[0, 0, -1],)
+        (N[1, 0, 0],)
 
     or::
 
         sage: M = N.dual()
-        sage: Q = N.quotient(sublattice, positive_dual_point=M(0,0,-1)); Q
+        sage: Q = N.quotient(sublattice, positive_dual_point=M(1,0,0)); Q
         1-d lattice, quotient of 3-d lattice N by Sublattice <N(1, 0, 1), N(0, 1, -1)>
         sage: Q.gens()
-        (N[0, 0, -1],)
+        (N[1, 0, 0],)
 
     TESTS::
 

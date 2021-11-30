@@ -1,4 +1,4 @@
-$(PYTHON) nbconvert ipython six | $(PYTHON_TOOLCHAIN)
+$(PYTHON) notebook nbconvert ipython six | $(PYTHON_TOOLCHAIN)
 
 ----------
 All lines of this file are ignored except the first.

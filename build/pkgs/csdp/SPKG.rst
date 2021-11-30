@@ -1,5 +1,5 @@
-csdp
-====
+csdp: Solver for semidefinite programs
+======================================
 
 Description
 -----------
@@ -28,7 +28,7 @@ Special Update/Build Instructions
 
 csdp is an autotool'ed version of CSDP, see
 https://projects.coin-or.org/Csdp, developed in its own repository at
-http://github.org/dimpase/csdp.
+https://github.com/dimpase/csdp.
 
 To update to a new version, you need to bump the version number in
 configure.ac and rerun autotools (autoreconf -fiv). Any changes should

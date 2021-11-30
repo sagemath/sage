@@ -1,5 +1,5 @@
-pplpy
-=====
+pplpy: Python interface to the Parma Polyhedra Library
+======================================================
 
 Description
 -----------

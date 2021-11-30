@@ -14,7 +14,8 @@ TESTS::
 ###########################################################################
 from sage.misc.lazy_import import lazy_import
 
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 from sage.modular.modform.element import Newform
 from sage.modular.arithgroup.all import is_Gamma0, is_Gamma1, is_GammaH

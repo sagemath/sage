@@ -1,6 +1,5 @@
-
-bliss 0.73+debian-1
-===================
+bliss: Computing automorphism groups and canonical forms of graphs
+==================================================================
 
 Description
 -----------

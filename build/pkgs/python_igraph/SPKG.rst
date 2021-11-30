@@ -1,6 +1,5 @@
-
-python-igraph
-=============
+python_igraph: Python bindings for igraph
+=========================================
 
 Description
 -----------

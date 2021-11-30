@@ -1,6 +1,5 @@
-
-texttable
-=============
+texttable: Python module for creating simple ASCII tables
+=========================================================
 
 Description
 -----------

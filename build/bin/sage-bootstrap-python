@@ -17,6 +17,9 @@ fi
 # So it needs to find a python that has the urllib module.
 # For example, on Debian buster, the python3-minimal package does NOT provide it.
 #
+# Also, Trac #20023 removed the vendored argparse library from sage_bootstrap,
+# so we test that python is new enough (>= 2.7) to run it.
+#
 # See https://trac.sagemath.org/ticket/29090
 
 # Trac #29890: Our first choice is "python", not "python3". This is to avoid
@@ -37,11 +40,23 @@ if [ "$LC_ALL" = "C" -o "$LANG" = "C" -o "$LC_CTYPE" = "C" ]; then
     export LANG
 fi
 
-PYTHONS="python python3 python3.8 python3.7 python2.7 python3.6 python2"
+PYTHONS="python python3 python3.10 python3.9 python3.8 python3.7 python2.7 python3.6 python2"
+# Trac #32405: Prefer a Python that provides ssl with SNI, which allows developers
+# to download from upstream URLs (configure --enable-download-from-upstream-url),
+# in particular from PyPI, which requires SNI.
 for PY in $PYTHONS; do
     PYTHON="$(PATH="$SAGE_ORIG_PATH" command -v $PY)"
     if [ -n "$PYTHON" ]; then
-        if "$PYTHON" -c "import urllib; from hashlib import sha1; from os import listdir; listdir(\"$(pwd)\");" 2>/dev/null; then
+        if "$PYTHON" -c "import argparse; import urllib; from hashlib import sha1; from ssl import HAS_SNI; assert HAS_SNI; from os import listdir; listdir(\"$(pwd)\");" 2>/dev/null; then
+            exec "$PYTHON" "$@"
+        fi
+    fi
+done
+# Second round, no ssl/SNI test.
+for PY in $PYTHONS; do
+    PYTHON="$(PATH="$SAGE_ORIG_PATH" command -v $PY)"
+    if [ -n "$PYTHON" ]; then
+        if "$PYTHON" -c "import argparse; import urllib; from hashlib import sha1; from os import listdir; listdir(\"$(pwd)\");" 2>/dev/null; then
             exec "$PYTHON" "$@"
         fi
     fi

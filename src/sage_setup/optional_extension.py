@@ -7,18 +7,17 @@ compiled depending on some condition. Typically, this condition is a
 package which must be installed.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-
-from distutils.extension import Extension
+from setuptools.extension import Extension
 from sage.misc.package import list_packages
 
 all_packages = list_packages(local=True)
@@ -40,6 +39,7 @@ class CythonizeExtension(Extension):
     """
     skip_build = True
 
+
 def is_package_installed_and_updated(pkg):
     from sage.misc.package import is_package_installed
     try:
@@ -48,8 +48,9 @@ def is_package_installed_and_updated(pkg):
         # Might be an installed old-style package
         condition = is_package_installed(pkg)
     else:
-        condition = (pkginfo["installed_version"] == pkginfo["remote_version"])
+        condition = (pkginfo.installed_version == pkginfo.remote_version)
     return condition
+
 
 def OptionalExtension(*args, **kwds):
     """

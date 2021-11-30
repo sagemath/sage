@@ -141,7 +141,7 @@ class DocTestReporter(SageObject):
             False
 
         """
-        if tag in self.controller.options.optional:
+        if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
         if 'external' in self.controller.options.optional:
             if tag in available_software.seen():
@@ -182,10 +182,10 @@ class DocTestReporter(SageObject):
             cmd += " --long"
 
         warnlong = self.controller.options.warn_long
-        if warnlong is not None:
+        if warnlong >= 0:
             cmd += " --warn-long"
             if warnlong != 1.0:
-                cmd += " %.1f"%(warnlong)
+                cmd += " %.1f" % (warnlong)
         seed = self.controller.options.random_seed
         cmd += " --random-seed={}".format(seed)
         cmd += " " + source.printpath
@@ -488,10 +488,6 @@ class DocTestReporter(SageObject):
                             if not self.controller.options.long:
                                 if self.controller.options.show_skipped:
                                     log("    %s not run"%(count_noun(nskipped, "long test")))
-                        elif tag == "memlimit":
-                            if self.controller.options.memlimit <= 0:
-                                seen_other = True
-                                log("    %s not run"%(count_noun(nskipped, "memlimit")))
                         elif tag == "not tested":
                             if self.controller.options.show_skipped:
                                 log("    %s not run"%(count_noun(nskipped, "not tested test")))

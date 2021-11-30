@@ -1,1 +1,7 @@
-XML::Writer XML::LibXML XML::LibXSLT File::Slurp JSON SVG MongoDB
+XML::Writer
+XML::LibXML
+XML::LibXSLT
+File::Slurp
+JSON
+SVG
+Term::ReadKey

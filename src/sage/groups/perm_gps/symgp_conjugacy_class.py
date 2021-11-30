@@ -338,10 +338,6 @@ def conjugacy_class_iterator(part, S=None):
     It is also possible to specify any underlying set::
 
         sage: it = conjugacy_class_iterator([2,2,2], 'abcdef')
-        sage: next(it) # py2
-        [('a', 'b'), ('c', 'd'), ('e', 'f')]
-        sage: next(it) # py2
-        [('a', 'f'), ('c', 'b'), ('e', 'd')]
         sage: sorted(flatten(next(it)))
         ['a', 'b', 'c', 'd', 'e', 'f']
         sage: all(len(x) == 2 for x in next(it))
@@ -351,11 +347,11 @@ def conjugacy_class_iterator(part, S=None):
     if part not in _Partitions:
         raise ValueError("invalid partition")
     if S is None:
-        S = range(1, n+1)
+        S = range(1, n + 1)
     else:
         S = list(S)
         if n != len(S):
-            raise ValueError("the sum of the partition %s does not match the size of %s"%(part,S))
+            raise ValueError("the sum of the partition %s does not match the size of %s" % (part, S))
 
     m = len(part)
     for s in SetPartitions(S, part):

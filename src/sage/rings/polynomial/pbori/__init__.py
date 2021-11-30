@@ -10,7 +10,8 @@ as well as sophisticated and extendable strategies for Groebner base computation
 PolyBoRi features a powerful reference implementation for Groebner basis computation.
 
 AUTHOR:
-    The PolyBoRi Team, 2007-2011
+
+The PolyBoRi Team, 2007-2011
 
 REFERENCES:
 M. Brickenstein, A. Dreyer, G. Greuel, M. Wedler, O. Wienand,
@@ -38,15 +39,10 @@ from .nf import normal_form
 from .blocks import declare_ring
 from .blocks import HigherOrderBlock, AlternatingBlock, Block
 from .gbrefs import load_file
-from .specialsets import *
-
-
-def plist(a, b):
-    return [a, b]
+from .specialsets import all_monomials_of_degree_d, power_set
 
 # Advertised reimports
 # ... any from below? ...
-
 
 # Deprecated reimports
 

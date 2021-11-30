@@ -1,5 +1,5 @@
-iconv
-=====
+iconv: Library for language/country-dependent character encodings
+=================================================================
 
 Description
 -----------

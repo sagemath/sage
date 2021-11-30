@@ -1,5 +1,5 @@
-barvinok
-========
+barvinok: Projections of integer point sets of parametric polytopes
+===================================================================
 
 Description
 -----------

@@ -43,10 +43,11 @@ import time
 import resource
 import pdb
 import warnings
+
 import sage.misc.prandom as random
 from .lazy_string import lazy_string
-import sage.server.support
-
+from sage.interfaces.quit import expect_objects
+from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
 lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
@@ -58,8 +59,6 @@ lazy_import("sage.misc.verbose", ["verbose", "set_verbose", "set_verbose_files",
 
 lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
             deprecation=29892)
-
-from sage.env import DOT_SAGE, HOSTNAME
 
 LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 
@@ -87,7 +86,7 @@ def sage_makedirs(dirname, mode=0o777):
         sage: sage_makedirs(filename)
         Traceback (most recent call last):
         ...
-        OSError: [Errno ...] File exists: ...
+        FileExistsError: [Errno ...] File exists: ...
     """
     try:
         os.makedirs(dirname)
@@ -96,7 +95,7 @@ def sage_makedirs(dirname, mode=0o777):
             raise
 
 
-# We create the DOT_SAGE directory (if it doesn't exist yet; note in particular
+# We create the DOT_SAGE directory (if it does not exist yet; note in particular
 # that it may already have been created by the bin/sage script) with
 # restrictive permissions, since otherwise possibly just anybody can easily see
 # every command you type.
@@ -345,7 +344,7 @@ def cputime(t=0, subprocesses=False):
     else:
         if t == 0:
             ret = GlobalCputime(cputime())
-            for s in sage.interfaces.quit.expect_objects:
+            for s in expect_objects:
                 S = s()
                 if S and S.is_running():
                     try:
@@ -359,7 +358,7 @@ def cputime(t=0, subprocesses=False):
             if not isinstance(t, GlobalCputime):
                 t = GlobalCputime(t)
             ret = GlobalCputime(cputime() - t.local)
-            for s in sage.interfaces.quit.expect_objects:
+            for s in expect_objects:
                 S = s()
                 if S and S.is_running():
                     try:
@@ -519,6 +518,8 @@ def union(x, y=None):
     EXAMPLES::
 
         sage: answer = union([1,2,3,4], [5,6]); answer
+        doctest:...: DeprecationWarning: sage.misc.misc.union is deprecated...
+        See https://trac.sagemath.org/32096 for details.
         [1, 2, 3, 4, 5, 6]
         sage: union([1,2,3,4,5,6], [5,6]) == answer
         True
@@ -527,6 +528,8 @@ def union(x, y=None):
         sage: union((1,2,3,4,5,6), set([5,6])) == answer
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32096, "sage.misc.misc.union is deprecated, use 'list(set(x).union(y)' or a more suitable replacement")
     if y is None:
         return list(set(x))
     return list(set(x).union(y))
@@ -756,7 +759,7 @@ def nest(f, n, x):
         x
 
     """
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     n = Integer(n)
 
     if n < 0:
@@ -800,6 +803,8 @@ class BackslashOperator:
         EXAMPLES::
 
             sage: A = random_matrix(ZZ, 4)
+            sage: while A.rank() != 4:
+            ....:     A = random_matrix(ZZ, 4)
             sage: B = random_matrix(ZZ, 4)
             sage: temp = A * BackslashOperator()
             sage: temp.left is A
@@ -833,7 +838,7 @@ class BackslashOperator:
 #################################################################
 # is_iterator function
 #################################################################
-def is_iterator(it):
+def is_iterator(it) -> bool:
     """
     Tests if it is an iterator.
 
@@ -847,13 +852,7 @@ def is_iterator(it):
         sage: is_iterator(it)
         True
 
-        sage: class wrong():  # py2
-        ....:    def __init__(self): self.n = 5
-        ....:    def next(self):
-        ....:        self.n -= 1
-        ....:        if self.n == 0: raise StopIteration
-        ....:        return self.n
-        sage: class wrong():  # py3
+        sage: class wrong():
         ....:    def __init__(self): self.n = 5
         ....:    def __next__(self):
         ....:        self.n -= 1
@@ -862,11 +861,7 @@ def is_iterator(it):
         sage: x = wrong()
         sage: is_iterator(x)
         False
-        sage: list(x)  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: iteration over non-sequence
-        sage: list(x)  # py3
+        sage: list(x)
         Traceback (most recent call last):
         ...
         TypeError: 'wrong' object is not iterable
@@ -914,13 +909,44 @@ def random_sublist(X, s):
 
     EXAMPLES::
 
+        sage: from sage.misc.misc import is_sublist
         sage: S = [1,7,3,4,18]
-        sage: random_sublist(S, 0.5)
+        sage: sublist = random_sublist(S, 0.5); sublist  # random
         [1, 3, 4]
-        sage: random_sublist(S, 0.5)
+        sage: is_sublist(sublist, S)
+        True
+        sage: sublist = random_sublist(S, 0.5); sublist  # random
         [1, 3]
+        sage: is_sublist(sublist, S)
+        True
     """
     return [a for a in X if random.random() <= s]
+
+
+def is_sublist(X, Y):
+    """
+    Test whether ``X`` is a sublist of ``Y``.
+
+    EXAMPLES::
+
+        sage: from sage.misc.misc import is_sublist
+        sage: S = [1, 7, 3, 4, 18]
+        sage: is_sublist([1, 7], S)
+        True
+        sage: is_sublist([1, 3, 4], S)
+        True
+        sage: is_sublist([1, 4, 3], S)
+        False
+        sage: is_sublist(S, S)
+        True
+    """
+    X_i = 0
+    for Y_i, y in enumerate(Y):
+        if X_i == len(X):
+            return True
+        if y == X[X_i]:
+            X_i += 1
+    return X_i == len(X)
 
 
 def some_tuples(elements, repeat, bound, max_samples=None):
@@ -986,10 +1012,18 @@ def _some_tuples_sampling(elements, repeat, max_samples, n):
     TESTS::
 
         sage: from sage.misc.misc import _some_tuples_sampling
-        sage: list(_some_tuples_sampling(range(3), 3, 2, 3))
-        [(0, 1, 0), (1, 1, 1)]
-        sage: list(_some_tuples_sampling(range(20), None, 4, 20))
-        [0, 6, 9, 3]
+        sage: l = list(_some_tuples_sampling(range(3), 3, 2, 3))
+        sage: len(l)
+        2
+        sage: all(len(tup) == 3 for tup in l)
+        True
+        sage: all(el in range(3) for tup in l for el in tup)
+        True
+        sage: l = list(_some_tuples_sampling(range(20), None, 4, 20))
+        sage: len(l)
+        4
+        sage: all(el in range(20) for el in l)
+        True
     """
     from sage.rings.integer import Integer
     N = n if repeat is None else n**repeat
@@ -1229,19 +1263,6 @@ def pad_zeros(s, size=3):
         '0000000389'
     """
     return "0" * (size - len(str(s))) + str(s)
-
-
-def embedded():
-    """
-    Return ``True`` if this copy of Sage is running embedded in the Sage
-    notebook.
-
-    EXAMPLES::
-
-        sage: sage.misc.misc.embedded()    # output True if in the notebook
-        False
-    """
-    return sage.server.support.EMBEDDED_MODE
 
 
 def is_in_string(line, pos):

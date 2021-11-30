@@ -1,5 +1,5 @@
-decorator
-=========
+decorator: Python library providing decorators
+==============================================
 
 Description
 -----------

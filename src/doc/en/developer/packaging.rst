@@ -171,7 +171,8 @@ The following are some additional files which can be added:
     |   `-- baz.patch
     |-- spkg-check.in
     |-- spkg-configure.m4
-    `-- spkg-src
+    |-- spkg-src
+    `-- trees.txt
 
 We discuss the individual files in the following sections.
 
@@ -295,15 +296,21 @@ Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
 
     .. CODE-BLOCK:: text
 
-        exec sage-python23 spkg-install.py
+        exec python3 spkg-install.py
 
-   In more detail: ``sage-bootstrap-python`` runs the version of Python
-   pre-installed on the machine. Use this if the package may be
-   installed before Sage has built its own Python. ``sage-python23``
-   runs the version of Python built by Sage, either Python 2 or 3,
-   depending on how the build was configured; you should use this
-   script if you are installing a Python package, to make sure that
-   the libraries are installed in the right place.
+   In more detail: ``sage-bootstrap-python`` runs a version of Python
+   pre-installed on the machine, which is a build prerequisite of Sage.
+   Note that ``sage-bootstrap-python`` accepts a wide range of Python
+   versions, Python >= 2.6 and >= 3.4, see ``SAGE_ROOT/build/tox.ini``
+   for details.  You should only use ``sage-bootstrap-python`` for
+   installation tasks that must be able to run before Sage has made
+   ``python3`` available.  It must not be used for running ``pip`` or
+   ``setup.py`` for any package.
+
+   ``python3`` runs the version of Python managed by Sage (either its
+   own installation of Python 3 from an SPKG or a venv over a system
+   python3.  You should use this if you are installing a Python package
+   to make sure that the libraries are installed in the right place.
 
    By the way, there is also a script ``sage-python``. This should be
    used at runtime, for example in scripts in ``SAGE_LOCAL/bin`` which
@@ -379,9 +386,9 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
 
 - ``sdh_configure [...]``: Runs ``./configure`` with arguments
   ``--prefix="$SAGE_LOCAL"``, ``--libdir="$SAGE_LOCAL/lib"``,
-  ``--disable-maintainer-mode``, and
-  ``--disable-dependency-tracking``. Additional arguments to
-  ``./configure`` may be given as arguments.
+  ``--disable-static``, ``--disable-maintainer-mode``, and
+  ``--disable-dependency-tracking``. Additional arguments to ``./configure``
+  may be given as arguments.
 
 - ``sdh_make [...]``: Runs ``$MAKE`` with the default target.
    Additional arguments to ``$MAKE`` may be given as arguments.
@@ -404,6 +411,16 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
    ``sdh_pip_install`` actually does the installation via ``pip wheel``,
    creating a wheel file in ``dist/``, followed by
    ``sdh_store_and_pip_install_wheel`` (see below).
+
+- ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install -e``
+   with the given arguments, as well as additional default arguments used for
+   installing packages into Sage with pip. The last argument must be
+   ``.`` to indicate installation from the current directory.
+   See `pip documentation <https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs>`_
+   for more details concerning editable installs.
+
+- ``sdh_pip_uninstall [...]``: Runs ``pip uninstall`` with the given arguments.
+   If unsuccessful, it displays a warning.
 
 - ``sdh_store_and_pip_install_wheel .``: The current directory,
    indicated by the required argument ``.``, must have a subdirectory
@@ -539,60 +556,102 @@ Where ``sdh_pip_install`` is a function provided by ``sage-dist-helpers`` that
 points to the correct ``pip`` for the Python used by Sage, and includes some
 default flags needed for correct installation into Sage.
 
-If pip will not work but a command like ``python setup.py install``
-will, then the ``spkg-install.in`` script template should call
+If pip will not work but a command like ``python3 setup.py install``
+will, you may use ``sdh_setup_bdist_wheel``, followed by
+``sdh_store_and_pip_install_wheel .``.
+
+For ``spkg-check.in`` script templates, make sure to call
 ``sage-python23`` rather than ``python``. This will ensure that the
-correct version of Python is used to build and install the
-package. The same holds for ``spkg-check.in`` script templates; for
-example, the ``scipy`` ``spkg-check.in`` file contains the line
+correct version of Python is used to check the package.
+The same holds for ; for example, the ``scipy`` ``spkg-check.in``
+file contains the line
 
 .. CODE-BLOCK:: bash
 
     exec sage-python23 spkg-check.py
 
+All normal Python packages must have a file ``install-requires.txt``.
+If a Python package is available on PyPI, this file must contain the
+name of the package as it is known to PyPI.  Optionally,
+``install-requires.txt`` can encode version constraints (such as lower
+and upper bounds).  The constraints are in the format of the
+``install_requires`` key of `setup.cfg
+<https://setuptools.readthedocs.io/en/latest/userguide/declarative_config.html>`_
+or `setup.py
+<https://packaging.python.org/discussions/install-requires-vs-requirements/#id5>`_.
+
+The files may include comments (starting with ``#``) that explain why a particular lower
+bound is warranted or why we wish to include or reject certain versions.
+
+For example:
+
+.. CODE-BLOCK:: bash
+
+    $ cat build/pkgs/sphinx/package-version.txt
+    3.1.2.p0
+    $ cat build/pkgs/sphinx/install-requires.txt
+    # gentoo uses 3.2.1
+    sphinx >=3, <3.3
+
+The comments may include links to Trac tickets, as in the following example:
+
+.. CODE-BLOCK:: bash
+
+    $ cat build/pkgs/packaging/install-requires.txt
+    packaging >=18.0
+    # Trac #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
+
+The currently encoded version constraints are merely a starting point.
+Developers and downstream packagers are invited to refine the version
+constraints based on their experience and tests.  When a package
+update is made in order to pick up a critical bug fix from a newer
+version, then the lower bound should be adjusted.
+
 
 .. _section-spkg-SPKG-txt:
 
-The SPKG.rst or SPKG.txt File
------------------------------
+The SPKG.rst File
+-----------------
 
-The ``SPKG.txt`` file should follow this pattern:
+The ``SPKG.rst`` file should follow this pattern:
 
 .. CODE-BLOCK:: text
 
-     = PACKAGE_NAME =
+     PACKAGE_NAME: One line description
 
-     == Description ==
+     Description
+     -----------
 
      What does the package do?
 
-     == License ==
+     License
+     -------
 
      What is the license? If non-standard, is it GPLv3+ compatible?
 
-     == Upstream Contact ==
+     Upstream Contact
+     ----------------
 
-     Provide information for upstream contact.
+     Provide information for upstream contact.  Usually just an URL.
 
-     == Dependencies ==
+     Dependencies
+     ------------
 
-     Put a bulleted list of dependencies here:
+     Only put special dependencies here that are not captured by the
+     ``dependencies`` file. Otherwise omit this section.
 
-     * python
-     * readline
+     Special Update/Build Instructions
+     ---------------------------------
 
-     == Special Update/Build Instructions ==
-
-     If the tarball was modified by hand and not via a spkg-src
-     script, describe what was changed.
+     If the tarball was modified by hand and not via an ``spkg-src``
+     script, describe what was changed. Otherwise omit this section.
 
 
-with ``PACKAGE_NAME`` replaced by the package name. Legacy
-``SPKG.txt`` files have an additional changelog section, but this
+with ``PACKAGE_NAME`` replaced by the SPKG name (= the directory name in
+``build/pkgs``).
+
+Legacy ``SPKG.txt`` files have an additional changelog section, but this
 information is now kept in the git repository.
-
-It is now also possible to use an ``SPKG.rst`` file instead, with the same
-sections.
 
 .. _section-dependencies:
 
@@ -664,6 +723,28 @@ correct, the following command should work without errors::
 Finally, note that standard packages should only depend on standard
 packages and optional packages should only depend on standard or
 optional packages.
+
+
+.. _section-trees:
+
+Where packages are installed
+----------------------------
+
+The Sage distribution has the notion of several installation trees.
+
+- ``$SAGE_VENV`` is the default installation tree for all Python packages, i.e.,
+  normal packages with an ``install-requires.txt`` and pip packages
+  with a ``requirements.txt``.
+
+- ``$SAGE_LOCAL`` is the default installation tree for all non-Python packages.
+
+- ``$SAGE_DOCS`` (only set at build time) is an installation tree for the
+  HTML and PDF documentation.
+
+By placing a file ``trees.txt`` in the package directory, the installation tree
+can be overridden.  For example, ``build/pkgs/python3/trees.txt`` contains the
+word ``SAGE_VENV``, and ``build/pkgs/sagemath_doc_html/trees.txt`` contains the
+word ``SAGE_DOCS``.
 
 
 .. _section-spkg-patching:
@@ -849,7 +930,7 @@ to apply the same modifications to future versions.
 Package Versioning
 ------------------
 
-The ``package-version.txt`` file containts just the version. So if
+The ``package-version.txt`` file contains just the version. So if
 upstream is ``FoO-1.3.tar.gz`` then the package version file would only
 contain ``1.3``.
 
@@ -970,9 +1051,10 @@ For Python packages available from PyPI, you can use::
 
 This automatically downloads the most recent version from PyPI and also
 obtains most of the necessary information by querying PyPI.
-The ``dependencies`` file may need editing, and also you may want to set
-lower and upper bounds for acceptable package versions in the file
-``install-requires.txt``.
+The ``dependencies`` file may need editing (watch out for warnings regarding
+``--no-deps`` that Sage issues during installation of the package!).
+Also you may want to set lower and upper bounds for acceptable package versions
+in the file ``install-requires.txt``.
 
 To create a pip package rather than a normal package, you can use::
 

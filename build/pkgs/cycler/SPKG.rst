@@ -1,5 +1,5 @@
-cycler
-======
+cycler: Composable cycles
+=========================
 
 Description
 -----------

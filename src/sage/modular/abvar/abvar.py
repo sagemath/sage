@@ -38,7 +38,7 @@ from sage.categories.all import ModularAbelianVarieties
 from sage.structure.sequence import Sequence, Sequence_generic
 from sage.structure.richcmp import (richcmp_method, richcmp_not_equal,
                                     rich_to_bool)
-from sage.structure.parent_base import ParentWithBase
+from sage.structure.parent import Parent
 from .morphism import HeckeOperator, Morphism, DegeneracyMap
 from .torsion_subgroup import RationalTorsionSubgroup, QQbarTorsionSubgroup
 from .finite_subgroup import (FiniteSubgroup_lattice, FiniteSubgroup,
@@ -57,8 +57,8 @@ from sage.modular.modsym.all import ModularSymbols
 from sage.modular.modsym.space import ModularSymbolsSpace
 from sage.modular.modform.constructor import Newform
 from sage.matrix.all import matrix, block_diagonal_matrix, identity_matrix
-from sage.modules.all import vector
-from sage.misc.all import prod
+from sage.modules.free_module_element import vector
+from sage.misc.misc_c import prod
 from sage.arith.misc import is_prime
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.sets.primes import Primes
@@ -96,7 +96,7 @@ def is_ModularAbelianVariety(x) -> bool:
 
 
 @richcmp_method
-class ModularAbelianVariety_abstract(ParentWithBase):
+class ModularAbelianVariety_abstract(Parent):
     def __init__(self, groups, base_field, is_simple=None, newform_level=None,
                  isogeny_number=None, number=None, check=True):
         """
@@ -165,7 +165,8 @@ class ModularAbelianVariety_abstract(ParentWithBase):
             self.__isogeny_number = isogeny_number
         if check and not is_Ring(base_field) and base_field.is_field():
             raise TypeError("base_field must be a field")
-        ParentWithBase.__init__(self, base_field, category=ModularAbelianVarieties(base_field))
+        Parent.__init__(self, base=base_field,
+                        category=ModularAbelianVarieties(base_field))
 
     def groups(self):
         r"""

@@ -591,7 +591,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         from sage.sets.set_from_iterator import EnumeratedSetFromIterator
         from functools import partial
         from .steenrod_algebra_bases import steenrod_algebra_basis
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         profile = kwds.get('profile', None)
         truncation_type = kwds.get('truncation_type', 'auto')
         self._generic = kwds.get('generic')
@@ -1088,7 +1088,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: max([H[n].dimension() - G[n].dimension() for n in range(100)])
             0
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         basis = self._basis_fcn(n)
         M = CombinatorialFreeModule(GF(self.prime()), basis,
                                     element_class=self.Element,
@@ -1780,7 +1780,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             P^4 P^2 + P^5 P^1 + P^6
         """
         from sage.matrix.constructor import matrix
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         from .steenrod_algebra_bases import steenrod_algebra_basis,\
             convert_from_milnor_matrix
         from .steenrod_algebra_misc import get_basis_name
@@ -2037,7 +2037,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: B3._coerce_map_from_(A31)
             False
         """
-        from sage.rings.all import ZZ, GF
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.finite_rings.finite_field_constructor import GF
         from sage.rings.infinity import Infinity
         p = self.prime()
         if S == ZZ or S == GF(p):
@@ -2099,7 +2100,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A1({(2,): 1, (1,): 13})
             Sq(1) + Sq(2)
         """
-        from sage.rings.all import ZZ, GF
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.finite_rings.finite_field_constructor import GF
         if x in GF(self.prime()) or x in ZZ:
             return self.from_base_ring_from_one_basis(x)
 
@@ -2151,7 +2153,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: A_3.P(1) * A_3.Q(2) in B_3
             False
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         p = self.prime()
         if x in GF(p):
             return True
@@ -2319,7 +2321,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(generic=True).P(2,0,1)
             P(2,0,1)
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).P(*nums))
         while nums and nums[-1] == 0:
@@ -2476,7 +2478,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(basis='pst', profile=[3,2,1]).an_element()
             P^0_1
         """
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         basis = self.basis_name()
         p = self.prime()
 
@@ -2540,7 +2542,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(5).pst(3,5)
             P(0,0,0,0,125)
         """
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         if self.basis_name() != 'milnor':
             return self(SteenrodAlgebra(p=self.prime(),generic=self._generic).pst(s,t))
         if not isinstance(s, (Integer, int)) and s >= 0:
@@ -2626,7 +2628,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
 
             sage: A3 = SteenrodAlgebra(3, 'adem')
             sage: A3.gens()
-            Lazy family (<bound method SteenrodAlgebra_generic_with_category.gen of mod 3 Steenrod algebra, serre-cartan basis>(i))_{i in Non negative integers}
+            Lazy family (<bound method SteenrodAlgebra_generic.gen of mod 3 Steenrod algebra, serre-cartan basis>(i))_{i in Non negative integers}
             sage: A3.gens()[0]
             beta
             sage: A3.gens()[1]
@@ -2645,7 +2647,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             sage: SteenrodAlgebra(p=5, profile=[[2,1], [2,2,2]]).gens()
             Family (Q_0, P(1), P(5))
             sage: SteenrodAlgebra(profile=lambda n: n).gens()
-            Lazy family (<bound method SteenrodAlgebra_mod_two_with_category.gen of sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [1, 2, 3, ..., 98, 99, +Infinity, +Infinity, +Infinity, ...]>(i))_{i in Non negative integers}
+            Lazy family (<bound method SteenrodAlgebra_generic.gen of sub-Hopf algebra of mod 2 Steenrod algebra, milnor basis, profile function [1, 2, 3, ..., 98, 99, +Infinity, +Infinity, +Infinity, ...]>(i))_{i in Non negative integers}
 
         You may also use ``algebra_generators`` instead of ``gens``::
 
@@ -2729,7 +2731,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             P^1_1
         """
         from sage.rings.infinity import Infinity
-        from sage.rings.all import Integer
+        from sage.rings.integer import Integer
         p = self.prime()
         if not isinstance(i, (Integer, int)) and i >= 0:
             raise ValueError("%s is not a non-negative integer" % i)
@@ -3584,7 +3586,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 3
             """
             from sage.rings.infinity import Infinity
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             p = self.prime()
             generic = self.parent()._generic
             if self == 0:
@@ -3692,7 +3694,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 sage: Sq(0,0,3).wall_height()
                 [1, 2, 2, 1]
             """
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             if self.parent()._generic:
                 raise NotImplementedError("Wall height is not defined at odd primes.")
             if self == 0 or self == 1:

@@ -676,7 +676,7 @@ def projective_plane_to_OA(pplane, pt=None, check=True):
     assert all(len(B) == n+1 for B in pplane), "pplane is not a projective plane"
 
     pplane = _relabel_bibd(pplane,n**2+n+1,p=n**2+n)
-    OA = [[x%n for x in sorted(X)] for X in pplane if not n**2+n in X]
+    OA = [[x % n for x in sorted(X)] for X in pplane if n**2+n not in X]
 
     assert len(OA) == n**2, "pplane is not a projective plane"
 
@@ -685,6 +685,7 @@ def projective_plane_to_OA(pplane, pt=None, check=True):
         is_orthogonal_array(OA,n+1,n,2)
 
     return OA
+
 
 def projective_plane(n, check=True, existence=False):
     r"""

@@ -397,10 +397,6 @@ cdef class MonoDict:
         ....:     prev = newA
         sage: len(M)
         1000
-        sage: del a  # py2 -- does not appear to be an issue on Python 3
-        Exception RuntimeError: 'maximum recursion depth exceeded...' in <function remove at ...> ignored
-        sage: len(M) > 0  # py2
-        True
 
     Check that also in the presence of circular references, :class:`MonoDict`
     gets properly collected::

@@ -1,5 +1,5 @@
-planarity
-=========
+planarity: Planarity-related graph algorithms
+=============================================
 
 Description
 -----------

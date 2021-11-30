@@ -122,7 +122,7 @@ class SuperLieConformalAlgebras(SuperModulesCategory):
                 elements.append(s)
             S = elements
             from sage.misc.misc import some_tuples
-            from sage.functions.other import binomial
+            from sage.arith.misc import binomial
             pz = tester._instance.zero()
             for x,y,z in some_tuples(S, 3, tester._max_runs):
                 if x.is_zero() or y.is_zero():

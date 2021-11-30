@@ -1,5 +1,5 @@
-ptyprocess
-==========
+ptyprocess: Python interaction with subprocesses in a pseudoterminal
+====================================================================
 
 Description
 -----------

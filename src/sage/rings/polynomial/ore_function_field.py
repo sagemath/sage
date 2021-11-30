@@ -61,6 +61,8 @@ twisting morphism), computing the left numerator and the right denominator fails
     sage: S.<x> = R['x', sigma]
     sage: F = S.fraction_field()
     sage: f = F.random_element()
+    sage: while not f:
+    ....:     f = F.random_element()
     sage: f.left_numerator()
     Traceback (most recent call last):
     ...
@@ -383,7 +385,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.polynomial.ore_polynomial_element.OrePolynomial.twisting_morphism`, 
+            :meth:`sage.rings.polynomial.ore_polynomial_element.OrePolynomial.twisting_morphism`,
             :meth:`twisting_derivation`
         """
         return self._ring.twisting_morphism(n)
@@ -411,7 +413,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
 
         .. SEEALSO::
 
-            :meth:`sage.rings.polynomial.ore_polynomial_element.OrePolynomial.twisting_derivation`, 
+            :meth:`sage.rings.polynomial.ore_polynomial_element.OrePolynomial.twisting_derivation`,
             :meth:`twisting_morphism`
         """
         return self._ring.twisting_derivation()
@@ -592,7 +594,7 @@ class OreFunctionField(Algebra, UniqueRepresentation):
         """
         return self._ring.is_commutative()
 
-    def is_field(self):
+    def is_field(self, proof=False):
         r"""
         Return always ``True`` since Ore function field are (skew) fields.
 
@@ -607,6 +609,17 @@ class OreFunctionField(Algebra, UniqueRepresentation):
             False
             sage: K.is_field()
             True
+
+        TESTS:
+
+        We check that :trac:`31470` is fixed::
+
+            sage: k.<a> = GF(5^3)
+            sage: S.<x> = k['x', k.frobenius_endomorphism()]
+            sage: K = S.fraction_field()
+            sage: zero_matrix(K, 2).row(0)
+            ...
+            (0, 0)
         """
         return True
 

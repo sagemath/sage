@@ -1,5 +1,5 @@
-database_symbolic_data
-======================
+database_symbolic_data: Database from the SymbolicData project
+==============================================================
 
 Description
 -----------

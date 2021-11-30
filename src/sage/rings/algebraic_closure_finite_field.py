@@ -502,19 +502,20 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
                To:   Algebraic closure of Finite Field of size 5
                Defn: z2 |--> z2)
 
-        There is currently no automatic conversion between the various
+        There are automatic coercions between the various
         subfields::
 
             sage: a = K.gen(2) + 1
             sage: _,b,_ = a.as_finite_field_element()
             sage: K4 = K.subfield(4)[0]
             sage: K4(b)
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to coerce from a finite field other than the prime
-            subfield
+            z4^3 + z4^2 + z4 + 4
+            sage: b.minimal_polynomial() == K4(b).minimal_polynomial()
+            True
+            sage: K(K4(b)) == K(b)
+            True
 
-        Nevertheless it is possible to use the inclusions that are implemented at
+        You can also use the inclusions that are implemented at
         the level of the algebraic closure::
 
             sage: f = K.inclusion(2,4); f
@@ -764,6 +765,7 @@ class AlgebraicClosureFiniteField_generic(Field):
             from sage.rings.finite_rings.finite_field_constructor import FiniteField
             return FiniteField(self.base_ring().cardinality() ** n,
                                name=self.variable_name() + str(n),
+                               prefix=self.variable_name(),
                                modulus=self._get_polynomial(n),
                                check_irreducible=False)
 
@@ -863,17 +865,14 @@ class AlgebraicClosureFiniteField_generic(Field):
 
             sage: from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField
             sage: F = AlgebraicClosureFiniteField(GF(5), 'z')
-            sage: g = F.gens()
-            sage: g
-            Lazy family (<lambda>(i))_{i in Positive integers}
+            sage: g = F.gens(); g
+            Lazy family (...(i))_{i in Positive integers}
             sage: g[3]
             z3
-
         """
         from sage.sets.family import Family
         from sage.sets.positive_integers import PositiveIntegers
-
-        return Family(PositiveIntegers(), lambda n: self.gen(n))
+        return Family(PositiveIntegers(), self.gen)
 
     def _first_ngens(self, n):
         """

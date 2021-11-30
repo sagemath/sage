@@ -809,7 +809,8 @@ from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.structure.element import parent
 from sage.modules.free_module_element import vector
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.combinat.root_system.cartan_type import CartanType
 lazy_import("sage.combinat.root_system.root_lattice_realizations",
             "RootLatticeRealizations")
@@ -845,7 +846,7 @@ class PlotOptions(object):
             2
             sage: options._projections
             [Weight space over the Rational Field of the Root system of type ['B', 2],
-             <bound method WeightSpace_with_category._plot_projection of Weight space over the Rational Field of the Root system of type ['B', 2]>]
+             <bound method RootLatticeRealizations.ParentMethods._plot_projection of Weight space over the Rational Field of the Root system of type ['B', 2]>]
 
             sage: L = RootSystem(['B',2,1]).ambient_space()
             sage: options = L.plot_parse_options()
@@ -853,24 +854,24 @@ class PlotOptions(object):
             2
             sage: options._projections
             [Ambient space of the Root system of type ['B', 2],
-             <bound method AmbientSpace_with_category._plot_projection of Ambient space of the Root system of type ['B', 2]>]
+             <bound method RootLatticeRealizations.ParentMethods._plot_projection of Ambient space of the Root system of type ['B', 2]>]
 
             sage: options = L.plot_parse_options(affine=True)
             sage: options.dimension
             2
             sage: options._projections
             [Ambient space of the Root system of type ['B', 2],
-             <bound method AmbientSpace_with_category._plot_projection of Ambient space of the Root system of type ['B', 2]>]
+             <bound method RootLatticeRealizations.ParentMethods._plot_projection of Ambient space of the Root system of type ['B', 2]>]
 
             sage: options = L.plot_parse_options(affine=False)
             sage: options._projections
-            [<bound method AmbientSpace_with_category._plot_projection of Ambient space of the Root system of type ['B', 2, 1]>]
+            [<bound method AmbientSpace._plot_projection of Ambient space of the Root system of type ['B', 2, 1]>]
             sage: options.dimension
             3
 
             sage: options = L.plot_parse_options(affine=False, projection='barycentric')
             sage: options._projections
-            [<bound method AmbientSpace_with_category._plot_projection_barycentric of Ambient space of the Root system of type ['B', 2, 1]>]
+            [<bound method RootLatticeRealizations.ParentMethods._plot_projection_barycentric of Ambient space of the Root system of type ['B', 2, 1]>]
             sage: options.dimension
             3
         """
@@ -1573,7 +1574,7 @@ def barycentric_projection_matrix(n, angle=0):
 
     """
     from sage.matrix.constructor import matrix
-    from sage.functions.other import sqrt
+    from sage.misc.functional import sqrt
     n = ZZ(n)
     if n == 0:
         return matrix(QQ, 0, 1)

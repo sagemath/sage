@@ -241,39 +241,39 @@ class BackendIPythonCommandline(BackendIPython):
             ({u'text/plain': u'Mot\xf6rhead'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
-            return ({u'text/plain': rich_output.text.get_unicode()}, {})
+            return ({'text/plain': rich_output.text.get_str()}, {})
         elif isinstance(rich_output, OutputAsciiArt):
-            return ({u'text/plain': rich_output.ascii_art.get_unicode()}, {})
+            return ({'text/plain': rich_output.ascii_art.get_str()}, {})
         elif isinstance(rich_output, OutputUnicodeArt):
-            return ({u'text/plain': rich_output.unicode_art.get_unicode()}, {})
+            return ({'text/plain': rich_output.unicode_art.get_str()}, {})
         elif isinstance(rich_output, OutputLatex):
-            return ({u'text/plain': rich_output.latex.get_unicode()}, {})
+            return ({'text/plain': rich_output.latex.get_str()}, {})
         elif isinstance(rich_output, OutputImagePng):
             msg = self.launch_viewer(
-                rich_output.png.filename(ext='png'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.png.filename(ext='png'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImageGif):
             msg = self.launch_viewer(
-                rich_output.gif.filename(ext='gif'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.gif.filename(ext='gif'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImagePdf):
             msg = self.launch_viewer(
-                rich_output.pdf.filename(ext='pdf'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.pdf.filename(ext='pdf'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputImageDvi):
             msg = self.launch_viewer(
-                rich_output.dvi.filename(ext='dvi'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.dvi.filename(ext='dvi'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneJmol):
-            msg = self.launch_jmol(rich_output, plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+            msg = self.launch_jmol(rich_output, plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneWavefront):
-            msg = self.launch_sage3d(rich_output, plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+            msg = self.launch_sage3d(rich_output, plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         elif isinstance(rich_output, OutputSceneThreejs):
             msg = self.launch_viewer(
-                rich_output.html.filename(ext='html'), plain_text.text.get_unicode())
-            return ({u'text/plain': msg}, {})
+                rich_output.html.filename(ext='html'), plain_text.text.get_str())
+            return ({'text/plain': msg}, {})
         else:
             raise TypeError('rich_output type not supported')
 
@@ -413,8 +413,9 @@ class BackendIPythonCommandline(BackendIPython):
             '...<script ...</script>...'
         """
         from sage.env import THREEJS_DIR
+        from sage.repl.rich_output.display_manager import _required_threejs_version
 
-        script = os.path.join(THREEJS_DIR, 'build/three.min.js')
+        script = os.path.join(THREEJS_DIR, '{}/three.min.js'.format(_required_threejs_version()))
 
         if sys.platform == 'cygwin':
             import cygwin
@@ -530,55 +531,56 @@ class BackendIPythonNotebook(BackendIPython):
             ({u'text/plain': u'Example plain text output'}, {})
         """
         if isinstance(rich_output, OutputPlainText):
-            return ({u'text/plain': rich_output.text.get_unicode()}, {})
+            return ({'text/plain': rich_output.text.get_str()}, {})
         elif isinstance(rich_output, OutputAsciiArt):
-            return ({u'text/plain': rich_output.ascii_art.get_unicode()}, {})
+            return ({'text/plain': rich_output.ascii_art.get_str()}, {})
         elif isinstance(rich_output, OutputUnicodeArt):
-            return ({u'text/plain': rich_output.unicode_art.get_unicode()}, {})
+            return ({'text/plain': rich_output.unicode_art.get_str()}, {})
         elif isinstance(rich_output, OutputLatex):
-            return ({u'text/html':  rich_output.mathjax(),
-                     u'text/latex': rich_output.inline_equation(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'text/latex': rich_output.latex.get_str(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputHtml):
-            return ({u'text/html':  rich_output.html.get_unicode(),
-                     u'text/plain': plain_text.text.get_unicode(),
-            }, {})
+            data = {'text/html':  rich_output.html.get_str(),
+                    'text/plain': plain_text.text.get_str()}
+            if rich_output.latex:
+                data['text/latex'] = rich_output.latex.get_str()
+            return (data, {})
         elif isinstance(rich_output, OutputImagePng):
-            return ({u'image/png':  rich_output.png.get(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'image/png':  rich_output.png.get(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageGif):
-            return ({u'text/html':  rich_output.html_fragment(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'text/html':  rich_output.html_fragment(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageJpg):
-            return ({u'image/jpeg':  rich_output.jpg.get(),
-                     u'text/plain':  plain_text.text.get_unicode(),
+            return ({'image/jpeg':  rich_output.jpg.get(),
+                     'text/plain':  plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImageSvg):
-            return ({u'image/svg+xml': rich_output.svg.get(),
-                     u'text/plain':    plain_text.text.get_unicode(),
+            return ({'image/svg+xml': rich_output.svg.get(),
+                     'text/plain':    plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputImagePdf):
-            return ({u'image/png':  rich_output.png.get(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'image/png':  rich_output.png.get(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneJmol):
             from sage.repl.display.jsmol_iframe import JSMolHtml
             jsmol = JSMolHtml(rich_output, height=500)
-            return ({u'text/html':  jsmol.iframe(),
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'text/html':  jsmol.iframe(),
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         elif isinstance(rich_output, OutputSceneThreejs):
-            escaped_html = rich_output.html.get_unicode().replace('"', '&quot;')
+            escaped_html = rich_output.html.get_str().replace('"', '&quot;')
             iframe = IFRAME_TEMPLATE.format(
                 escaped_html=escaped_html,
                 width='100%',
                 height=400,
             )
-            return ({u'text/html':  iframe,
-                     u'text/plain': plain_text.text.get_unicode(),
+            return ({'text/html':  iframe,
+                     'text/plain': plain_text.text.get_str(),
             }, {})
         else:
             raise TypeError('rich_output type not supported')
@@ -596,13 +598,15 @@ class BackendIPythonNotebook(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
             sage: backend.threejs_offline_scripts()
-            '...<script src="/nbextensions/threejs/build/three.min...<\\/script>...'
+            '...<script src="/nbextensions/threejs-sage/r.../three.min.js...<\\/script>...'
         """
         from sage.repl.rich_output import get_display_manager
+        from sage.repl.rich_output.display_manager import _required_threejs_version
         CDN_script = get_display_manager().threejs_scripts(online=True)
+        CDN_script = CDN_script.replace('</script>', r'<\/script>').replace('\n', ' \\\n')
         return """
-<script src="/nbextensions/threejs/build/three.min.js"></script>
+<script src="/nbextensions/threejs-sage/{}/three.min.js"></script>
 <script>
   if ( !window.THREE ) document.write('{}');
 </script>
-        """.format(CDN_script.replace('</script>', r'<\/script>').replace('\n', ' \\\n'))
+        """.format(_required_threejs_version(), CDN_script)

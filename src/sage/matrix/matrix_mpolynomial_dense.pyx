@@ -62,7 +62,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
         The row echelon form of A depending on the chosen algorithm,
         as an immutable matrix.  Note that ``self`` is *not* changed
-        by this command. Use ``A.echelonize()``` to change `A` in
+        by this command. Use ``A.echelonize()`` to change `A` in
         place.
 
         EXAMPLES::
@@ -447,10 +447,12 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
 
             sage: R.<x,y> = QQ[]
             sage: C = random_matrix(R, 2, 2, terms=2)
+            sage: while C.rank() != 2:
+            ....:     C = random_matrix(R, 2, 2, terms=2)
             sage: C.swapped_columns()
             sage: E = C.echelon_form('bareiss')
-            sage: E.swapped_columns()
-            (0, 1)
+            sage: sorted(E.swapped_columns())
+            [0, 1]
         """
         return self.fetch('swapped_columns')
 

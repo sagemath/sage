@@ -17,12 +17,14 @@ Partition Species
 #*****************************************************************************
 
 from .species import GenericCombinatorialSpecies
-from .generating_series import _integers_from, factorial_stream
+from .generating_series import _integers_from
+from sage.arith.misc import factorial
 from .subset_species import SubsetSpeciesStructure
 from .set_species import SetSpecies
 from .structure import GenericSpeciesStructure
 from sage.combinat.species.misc import accept_size
 from functools import reduce
+
 
 class PartitionSpeciesStructure(GenericSpeciesStructure):
     def __init__(self, parent, labels, list):
@@ -181,23 +183,23 @@ class PartitionSpecies(GenericCombinatorialSpecies):
             yield structure_class(self, labels, [])
             return
 
-        u = [i for i in reversed(range(1, n+1))]
+        u = [i for i in reversed(range(1, n + 1))]
         s0 = u.pop()
 
-        #Reconstruct the set partitions from
-        #restricted growth arrays
+        # Reconstruct the set partitions from
+        # restricted growth arrays
         for a in RestrictedGrowthArrays(n):
             m = a.pop(0)
             r = [[] for _ in range(m)]
             i = n
-            for i,z in enumerate(u):
+            for i, z in enumerate(u):
                 r[a[i]].append(z)
             r[0].append(s0)
 
             for sp in r:
                 sp.reverse()
 
-            r.sort(key=lambda x: len(x), reverse=True)
+            r.sort(key=len, reverse=True)
 
             yield structure_class(self, labels, r)
 
@@ -242,7 +244,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         """
         from sage.combinat.combinat import bell_number
         for n in _integers_from(0):
-            yield self._weight*base_ring(bell_number(n)/factorial_stream[n])
+            yield self._weight * base_ring(bell_number(n) / factorial(n))
 
     def _itgs_iterator(self, base_ring):
         r"""

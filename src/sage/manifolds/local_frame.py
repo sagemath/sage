@@ -422,7 +422,7 @@ class LocalFrame(FreeModuleBasis):
     of the base space `M`, such that `e(p)` is a basis of the fiber `E_p` for
     any `p \in U`.
 
-    For each instanciation of a local frame, a local coframe is automatically
+    For each instantiation of a local frame, a local coframe is automatically
     created, as an instance of the class :class:`LocalCoFrame`. It is returned
     by the method :meth:`coframe`.
 
@@ -1088,12 +1088,12 @@ class LocalFrame(FreeModuleBasis):
             Automorphism of the Fiber of E at Point p on the 2-dimensional
              topological manifold M
             sage: Ep.change_of_basis(ep, fp).display()
-            5 e_0*e^0 + 2 e_1*e^1
+            5 e_0⊗e^0 + 2 e_1⊗e^1
             sage: Ep.change_of_basis(fp, ep)
             Automorphism of the Fiber of E at Point p on the 2-dimensional
              topological manifold M
             sage: Ep.change_of_basis(fp, ep).display()
-            1/5 e_0*e^0 + 1/2 e_1*e^1
+            1/5 e_0⊗e^0 + 1/2 e_1⊗e^1
 
         The dual bases::
 

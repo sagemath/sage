@@ -795,7 +795,7 @@ repeated runs on the same computer. However, Sage sort the dictionary
 entries by key when printing the dictionary specifically to make the
 docstrings more reproducible. However, the Python methods ``keys()``
 and ``values()`` do not sort for you. If you want your output to be
-reproducable, then you have to sort it first just like in the examples
+reproducible, then you have to sort it first just like in the examples
 below::
 
     sage: d = {10 : 'newvalue', 20: 'newervalue', 3: 14, 0.5:(1,2,3)}

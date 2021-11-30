@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -55,8 +59,8 @@ def ntl_GF2E_random(ntl_GF2EContext_class ctx):
     EXAMPLES::
 
         sage: ctx = ntl.GF2EContext([1,1,0,1,1,0,0,0,1])
-        sage: ntl.GF2E_random(ctx)
-        [1 1 0 0 1 0 1 1]
+        sage: ntl.GF2E_random(ctx).modulus_context() is ctx
+        True
     """
     current_randstate().set_seed_ntl(False)
 
@@ -399,7 +403,7 @@ cdef class ntl_GF2E(object):
             sage: a.rep()
             [1 0 0 0 0 0 1 1]
             sage: type(a.rep())
-            <type 'sage.libs.ntl.ntl_GF2X.ntl_GF2X'>
+            <class 'sage.libs.ntl.ntl_GF2X.ntl_GF2X'>
         """
         cdef ntl_GF2X x = ntl_GF2X.__new__(ntl_GF2X)
         x.x = GF2E_rep(self.x)

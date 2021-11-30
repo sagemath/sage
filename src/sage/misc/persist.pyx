@@ -40,8 +40,37 @@ from textwrap import dedent
 import zlib; comp = zlib
 import bz2; comp_other = bz2
 
-from .misc import SAGE_DB
 from .sage_unittest import TestSuite
+
+
+# We define two global dictionaries `already_pickled` and
+# `already_unpickled`, which are intended to help you to implement
+# pickling when cyclic definitions could happen.
+#
+# You have the guarantee that the dictionary `already_pickled`
+# (resp. `already_unpickled`) will be cleared after the complete
+# pickling (resp. unpickling) process has been completed (and not
+# before!).
+# Apart from this, you are free to use these variables as you like.
+#
+# However, the standard utilisation is the following.
+# The pickling method (namely `__reduce__`) checks if the id of the
+# current element appears in the dictionary `already_pickled`. If it
+# does not, the methods records that this element is about to be
+# pickled by adding the entry { id: True } to `already_pickled`.
+# In all cases, the pickling method pickles the element and includes
+# the id in the tuple of arguments that will be passed in afterwards
+# to the unpickling function.
+# The unpickling function then receives all the necessary information
+# to reconstruct the element, together with an id.
+# If this id appears as a key of the dictionary `already_unpickled`, it
+# returns the corresponding value.
+# Otherwise, it builds the element, adds the entry { id: element } to
+# `already_unpickled` and finally returns the element.
+#
+# For a working example, see sage.rings.padics.lazy_template.LazyElement_unknown
+already_pickled = { }
+already_unpickled = { }
 
 
 cdef _normalize_filename(s):
@@ -83,9 +112,9 @@ def load(*filename, compress=True, verbose=True, **kwargs):
 
     EXAMPLES::
 
-        sage: u = 'http://www.sagemath.org/files/test.sobj'
+        sage: u = 'https://www.sagemath.org/files/test.sobj'
         sage: s = load(u)                                                  # optional - internet
-        Attempting to load remote file: http://www.sagemath.org/files/test.sobj
+        Attempting to load remote file: https://www.sagemath.org/files/test.sobj
         Loading started
         Loading ended
         sage: s                                                            # optional - internet
@@ -261,7 +290,9 @@ def _base_dumps(obj, compress=True):
     method, in which case that is tried first.
     """
 
+    global already_pickled
     gherkin = SagePickler.dumps(obj)
+    already_pickled = { }   
 
     if compress:
         return comp.compress(gherkin)
@@ -285,12 +316,15 @@ def dumps(obj, compress=True):
         sage: a2
         2/3
     """
+    global already_pickled
     if make_pickle_jar:
         picklejar(obj)
     try:
-        return obj.dumps(compress)
+        ans = obj.dumps(compress)
     except (AttributeError, RuntimeError, TypeError):
-        return _base_dumps(obj, compress=compress)
+        ans = _base_dumps(obj, compress=compress)
+    already_pickled = { }
+    return ans
 
 
 # This is used below, and also by explain_pickle.py
@@ -346,7 +380,7 @@ def register_unpickle_override(module, name, callable, call_name=None):
             :meth:`__setstate__`, the state object needn't be a dictionary and these methods
             can do what they want.
 
-    .. _python pickling documentation: http://docs.python.org/library/pickle.html#pickle-protocol
+    .. _python pickling documentation: https://docs.python.org/library/pickle.html#pickle-protocol
 
     By implementing a :meth:`__setstate__` method for a class it should be
     possible to fix any unpickling problems for the class. As an example of what
@@ -497,19 +531,19 @@ def unpickle_global(module, name):
 
         sage: from sage.misc.persist import unpickle_override, register_unpickle_override
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Now we horribly break the pickling system::
 
         sage: register_unpickle_override('sage.rings.integer', 'Integer', Rational, call_name=('sage.rings.rational', 'Rational'))
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
 
     and we reach into the internals and put it back::
 
         sage: del unpickle_override[('sage.rings.integer', 'Integer')]
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     A meaningful error message with resolution instructions is displayed for
     old pickles that accidentally got broken because a class or entire module
@@ -528,6 +562,14 @@ def unpickle_global(module, name):
         ImportError: cannot import some_old_class from sage.some_old_module, call
         register_unpickle_override('sage.some_old_module', 'some_old_class', ...)
         to fix this
+
+    TESTS:
+
+    Test that :func:`register_unpickle_override` calls in lazily imported modules
+    are respected::
+
+        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')
+        <class 'sage.combinat.root_system.type_A.AmbientSpace'>
     """
     unpickler = unpickle_override.get((module, name))
     if unpickler is not None:
@@ -548,6 +590,12 @@ def unpickle_global(module, name):
         __import__(module)
     except ImportError:
         error()
+
+    # Importing the module may have run register_unpickle_override.
+    unpickler = unpickle_override.get((module, name))
+    if unpickler is not None:
+        return unpickler[0]
+
     mod = sys.modules[module]
     return getattr(mod, name)
 
@@ -765,10 +813,11 @@ class SagePickler(_BasePickler):
             sage: pickle.loads(gherkin)
             1
         """
-
+        global already_pickled
         buf = io.BytesIO()
         pickler = cls(buf, **kwargs)
         pickler.dump(obj)
+        already_pickled = { }
         return buf.getvalue()
 
 
@@ -933,7 +982,10 @@ def loads(s, compress=True, **kwargs):
                 pass
 
     unpickler = SageUnpickler(io.BytesIO(s), **kwargs)
-    return unpickler.load()
+    global already_unpickled
+    ans = unpickler.load()
+    already_unpickled = { }
+    return ans
 
 
 cdef bint make_pickle_jar = 'SAGE_PICKLE_JAR' in os.environ
@@ -972,21 +1024,25 @@ def picklejar(obj, dir=None):
     Test an unaccessible directory::
 
         sage: import os, sys
+        sage: s = os.stat(dir)
         sage: os.chmod(dir, 0o000)
         sage: try:
         ....:     uid = os.getuid()
         ....: except AttributeError:
         ....:     uid = -1
-        sage: if uid==0:
-        ....:     raise OSError('You must not run the doctests as root, geez!')
+        sage: if uid == 0:
+        ....:     print("OK (cannot test this as root)")
         ....: elif sys.platform == 'cygwin':
-        ....:     raise OSError("This won't always behave on Cygwin depending on permission handling configuration.")
+        ....:     print("OK (cannot test this on Cygwin)")
         ....: else:
-        ....:     sage.misc.persist.picklejar(1, dir + '/noaccess')
-        Traceback (most recent call last):
-        ...
-        OSError: ...
-        sage: os.chmod(dir, 0o755)
+        ....:     try:
+        ....:         sage.misc.persist.picklejar(1, dir + '/noaccess')
+        ....:     except PermissionError:
+        ....:         print("OK (correctly raised PermissionError)")
+        ....:     else:
+        ....:         print("FAIL (did not raise an exception")
+        OK...
+        sage: os.chmod(dir, s.st_mode)
     """
     if dir is None:
         from sage.env import DOT_SAGE
@@ -999,7 +1055,9 @@ def picklejar(obj, dir=None):
         if not err.errno == errno.EEXIST:
             raise
 
+    global already_pickled
     s = comp.compress(SagePickler.dumps(obj))
+    already_pickled = { }
 
     typ = str(type(obj))
     name = ''.join([x if (x.isalnum() or x == '_') else '_' for x in typ])
@@ -1124,6 +1182,7 @@ def db(name):
 
     The database directory is ``$HOME/.sage/db``.
     """
+    from .misc import SAGE_DB
     return load('%s/%s'%(SAGE_DB,name))
 
 
@@ -1136,4 +1195,5 @@ def db_save(x, name=None):
     try:
         x.db(name)
     except AttributeError:
+        from .misc import SAGE_DB
         save(x, '%s/%s'%(SAGE_DB,name))

@@ -447,6 +447,19 @@ Test that Maxima gracefully handles this syntax error (:trac:`17667`)::
     Traceback (most recent call last):
     ...
     TypeError: ...incorrect syntax: = is not a prefix operator...
+
+Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+
+    sage: var('phi')
+    phi
+    sage: function('Cp', latex_name='C_+')
+    Cp
+    sage: test = Cp(phi)._maxima_()._sage_()
+    sage: test.operator() == Cp
+    True
+    sage: test.operator()._latex_() == 'C_+'
+    True
+
 """
 
 #*****************************************************************************
@@ -471,7 +484,7 @@ import shlex
 
 from random import randrange
 
-from sage.env import DOT_SAGE, SAGE_LOCAL, MAXIMA
+from sage.env import MAXIMA
 from sage.misc.misc import ECL_TMP
 
 from .expect import (Expect, ExpectElement, gc_disabled)
@@ -826,20 +839,21 @@ class Maxima(MaximaAbstract, Expect):
             4
         """
         marker = '__SAGE_SYNCHRO_MARKER_'
-        if self._expect is None: return
+        if self._expect is None:
+            return
         r = randrange(2147483647)
         s = marker + str(r+1)
 
         # The 0; *is* necessary... it comes up in certain rare cases
         # that are revealed by extensive testing.
         # Don't delete it. -- william stein
-        cmd = '''0;sconcat("%s",(%s+1));\n'''%(marker,r)
+        cmd = '''0;sconcat("%s",(%s+1));\n''' % (marker, r)
         self._sendstr(cmd)
         try:
             try:
                 self._expect_expr(timeout=0.5)
-                if not s in self._before():
-                    self._expect_expr(s,timeout=0.5)
+                if s not in self._before():
+                    self._expect_expr(s, timeout=0.5)
                     self._expect_expr(timeout=0.5)
             except pexpect.TIMEOUT:
                 # Don't call self._interrupt() here, as that might send multiple
@@ -930,7 +944,7 @@ class Maxima(MaximaAbstract, Expect):
         """
         r = self._error_re
         m = r.search(out)
-        if not m is None:
+        if m is not None:
             self._error_msg(cmd, out)
 
     def _error_msg(self, cmd, out):

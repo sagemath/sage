@@ -1,5 +1,5 @@
-libtheora
-=========
+libtheora: Library for the Theora video codec
+=============================================
 
 Description
 -----------

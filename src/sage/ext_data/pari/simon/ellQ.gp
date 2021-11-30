@@ -516,7 +516,7 @@ return(listpoints);
 \\ pol is a squarefree polynomial in Z[x].
 \\ Returns a list of vectors [a,b] with a and b rationals
 \\ such that the intervals ]a,b] are disjoint and contain
-\\ all the real roots of pol, and excatly one in each interval.
+\\ all the real roots of pol, and exactly one in each interval.
 my(st,a,res,ind,b,c,stab,stac);
 
 if( DEBUGLEVEL_ell >= 5, print("     starting polrealrootsisolate with pol = ",pol));
@@ -1162,7 +1162,7 @@ if( DEBUGLEVEL_ell >= 4, print("    kerval = ",kerval));
       LS2gen[j]^kerval[j,i]));
 
 \\ Add the units
-  LS2gen = concat(Mod(bnf[8][5],bnf.pol),LS2gen); \\ LS2gen = concat(bnf.fu,LS2gen);
+  LS2gen = concat(bnf.fu,LS2gen); \\ LS2gen = concat(bnf.fu,LS2gen);
 \\ Add also the torsion unit if its order is divisible by p.
   if( bnf[8][4][1]%p == 0, \\ if( bnf.tu[1]%p == 0,
     LS2gen = concat( [Mod(bnf[8][4][2],bnf.pol)], LS2gen)); \\ LS2gen = concat( [Mod(bnf.tu[2],bnf.pol)], LS2gen));

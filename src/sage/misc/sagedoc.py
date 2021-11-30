@@ -24,7 +24,7 @@ see :trac:`12849`::
     ....:     for line in fobj:
     ....:         if "#sage.symbolic.expression.Expression.numerical_approx" in line:
     ....:             print(line)
-    <code class="sig-name descname">numerical_approx</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prec</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">digits</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">algorithm</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span>...
+    <span class="sig-name descname"><span class="pre">numerical_approx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span>...
 
 Check that sphinx is not imported at Sage start-up::
 
@@ -186,6 +186,7 @@ def _rmcmd(s, cmd, left='', right=''):
 
 itempattern = re.compile(r"\\item\[?([^]]*)\]? *(.*)")
 itemreplace = r"* \1 \2"
+
 
 def detex(s, embedded=False):
     r"""nodetex
@@ -698,13 +699,12 @@ def format(s, embedded=False):
     else:
         first_line = s
     # Moreover, we must strip blank space in order to get the directives
-    directives = [ d.strip().lower() for d in first_line.split(',') ]
+    directives = [d.strip().lower() for d in first_line.split(',')]
 
     if 'noreplace' in directives or 'nodetex' in directives:
-        s = s[first_newline+len(os.linesep):]
+        s = s[first_newline + len(os.linesep):]
 
     import sage.all
-    import sage.server.support
     docs = set([])
     if 'noreplace' not in directives:
         i_0 = 0
@@ -945,23 +945,17 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
 
     html_results = format_search_as_html(title, results, [string] + extras)
 
-    from sage.server.support import EMBEDDED_MODE
-    if EMBEDDED_MODE:
-        # Running from the legacy Sage Notebook
-        print(html_results)
-    else:
-        # Pass through the IPython pager in a mime bundle
-        from IPython.core.page import page
-        if not isinstance(text_results, str):
-            text_results = text_results.decode('utf-8', 'replace')
+    # Pass through the IPython pager in a mime bundle
+    from IPython.core.page import page
+    if not isinstance(text_results, str):
+        text_results = text_results.decode('utf-8', 'replace')
 
-        page({
-            'text/plain': text_results,
-            # 'text/html': html_results  # don't return HTML results since
-                                         # they currently are not correctly
-                                         # formatted for Jupyter use
-        })
-
+    page({
+        'text/plain': text_results,
+        # 'text/html': html_results  # don't return HTML results since
+                                     # they currently are not correctly
+                                     # formatted for Jupyter use
+    })
 
 def search_src(string, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
@@ -1055,12 +1049,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     The following produces an error because the string 'fetch(' is a
     malformed regular expression::
 
-        sage: print(search_src(" fetch(", "def", interact=False)) # py2
-        Traceback (most recent call last):
-        ...
-        error: unbalanced parenthesis
-
-        sage: print(search_src(" fetch(", "def", interact=False)) # py3
+        sage: print(search_src(" fetch(", "def", interact=False))
         Traceback (most recent call last):
         ...
         error: missing ), unterminated subpattern at position 6
@@ -1109,8 +1098,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) # random # long time
         misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines()) # random
         misc/sagedoc.py:... len(search_src("matrix", path_re="calc", interact=False).splitlines()) > 15
-        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False)) # py2
-        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False)) # py3
+        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False))
         misc/sagedoc.py:... print(search_src(r" fetch\(", "def", interact=False)) # random # long time
         misc/sagedoc.py:... print(search_src(r" fetch\(", "def", "pyx", interact=False)) # random # long time
         misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0
@@ -1144,7 +1132,6 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     return _search_src_or_doc('src', string, extra1=extra1, extra2=extra2,
                               extra3=extra3, extra4=extra4, extra5=extra5,
                               **kwds)
-
 
 def search_doc(string, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
@@ -1315,7 +1302,6 @@ def format_search_as_html(what, results, search):
     return ''.join(s)
 
 
-
 #######################################
 ## Add detex'ing of documentation
 #######################################
@@ -1422,8 +1408,8 @@ class _sage_doc:
         """
         if output != 'html' and view:
             view = False
-        # much of the following is taken from 'docstring' in server/support.py
-        s  = ''
+
+        s = ''
         newline = "\n\n"  # blank line to start new paragraph
 
         try:
@@ -1445,7 +1431,7 @@ class _sage_doc:
         s += newline
         s += '**Docstring:**'
         s += newline
-        s += sageinspect.sage_getdoc(obj, obj_name, embedded_override=True)
+        s += sageinspect.sage_getdoc(obj, obj_name, embedded=True)
 
         # now s should be the reST version of the docstring
         if output == 'html':
@@ -1551,11 +1537,7 @@ with 'sage -docbuild {0} html --mathjax' and try again.""".format(name))
         if testing:
             return (url, path)
 
-        from sage.server.support import EMBEDDED_MODE
-        if EMBEDDED_MODE:
-            os.system(browser() + " " + url)
-        else:
-            os.system(browser() + " " + path)
+        os.system(browser() + " " + path)
 
     def tutorial(self):
         """

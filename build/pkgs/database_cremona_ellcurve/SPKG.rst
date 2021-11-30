@@ -1,5 +1,5 @@
-database_cremona_ellcurve
-=========================
+database_cremona_ellcurve: Database of elliptic curves
+======================================================
 
 Description
 -----------

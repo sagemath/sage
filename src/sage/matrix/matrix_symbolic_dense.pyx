@@ -159,17 +159,20 @@ from sage.structure.element cimport ModuleElement, RingElement, Element
 from sage.structure.factorization import Factorization
 
 from .matrix_generic_dense cimport Matrix_generic_dense
-cimport sage.matrix.matrix as matrix
+from .constructor import matrix
 
 cdef maxima
 
 from sage.calculus.calculus import symbolic_expression_from_maxima_string, maxima
 
 cdef class Matrix_symbolic_dense(Matrix_generic_dense):
-    def eigenvalues(self):
+    def eigenvalues(self, extend=True):
         """
         Compute the eigenvalues by solving the characteristic
         polynomial in maxima.
+
+        The argument ``extend`` is ignored but kept for compatibility with
+        other matrix classes.
 
         EXAMPLES::
 
@@ -177,6 +180,15 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: a.eigenvalues()
             [-1/2*sqrt(33) + 5/2, 1/2*sqrt(33) + 5/2]
 
+        TESTS:
+
+        Check for :trac:`31700`::
+
+            sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]])
+            sage: t = linear_transformation(m)
+            sage: t.eigenvalues()
+            [1/4*sqrt(5) - 1/4*sqrt(2*sqrt(5) - 10) + 1/4,
+             1/4*sqrt(5) + 1/4*sqrt(2*sqrt(5) - 10) + 1/4]
         """
         maxima_evals = self._maxima_(maxima).eigenvalues()._sage_()
         if not len(maxima_evals):
@@ -252,7 +264,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: spectrum = am.eigenvectors_left()
             sage: symbolic_evalue = spectrum[2][0]
             sage: type(symbolic_evalue)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: symbolic_evalue
             1/2*sqrt(5) - 1/2
 
@@ -275,6 +287,12 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             ...
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Symbolic Ring
+
+        Check that :trac:`23332` is fixed::
+
+            sage: matrix([[x, x^2], [1, 0]]).eigenvectors_left()
+            [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*x*(sqrt(5) + 1))], 1),
+             (1/2*x*(sqrt(5) + 1), [(1, 1/2*x*(sqrt(5) - 1))], 1)]
         """
         if other is not None:
             raise NotImplementedError('generalized eigenvector decomposition '
@@ -334,6 +352,12 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             ...
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Symbolic Ring
+
+        Check that :trac:`23332` is fixed::
+
+            sage: matrix([[x, x^2], [1, 0]]).eigenvectors_right()
+            [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*(sqrt(5) + 1)/x)], 1),
+             (1/2*x*(sqrt(5) + 1), [(1, 1/2*(sqrt(5) - 1)/x)], 1)]
         """
         return self.transpose().eigenvectors_left(other=other)
 
@@ -460,7 +484,7 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
             sage: M = MatrixSpace(SR, 2)
             sage: A = M(range(0, 2^2))
             sage: type(A)
-            <type 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
+            <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
             sage: A.charpoly('x')
             x^2 - 3*x - 2
             sage: A.charpoly('y')
@@ -969,3 +993,20 @@ cdef class Matrix_symbolic_dense(Matrix_generic_dense):
         else:
             return 1
 
+    def function(self, *args):
+        """
+        Return a matrix over a callable symbolic expression ring.
+
+        EXAMPLES::
+
+            sage: x, y = var('x,y')
+            sage: v = matrix([[x,y],[x*sin(y), 0]])
+            sage: w = v.function([x,y]); w
+            [       (x, y) |--> x        (x, y) |--> y]
+            [(x, y) |--> x*sin(y)        (x, y) |--> 0]
+            sage: w.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Callable function ring with arguments (x, y)
+        """
+        from sage.symbolic.callable import CallableSymbolicExpressionRing
+        return matrix(CallableSymbolicExpressionRing(args),
+                      self.nrows(), self.ncols(), self.list())

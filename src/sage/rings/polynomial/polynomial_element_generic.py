@@ -81,6 +81,8 @@ class Polynomial_generic_sparse(Polynomial):
 
             sage: PolynomialRing(RIF, 'z', sparse=True)([RIF(-1, 1), RIF(-1,1)])
             0.?*z + 0.?
+            sage: PolynomialRing(RIF, 'z', sparse=True)((RIF(-1, 1), RIF(-1,1)))
+            0.?*z + 0.?
             sage: PolynomialRing(CIF, 'z', sparse=True)([CIF(RIF(-1,1), RIF(-1,1)), RIF(-1,1)])
             0.?*z + 0.? + 0.?*I
         """
@@ -101,7 +103,7 @@ class Polynomial_generic_sparse(Polynomial):
                 # The following line has been added in trac ticket #9944.
                 # Apparently, the "else" case has never occurred before.
                 x = w
-        elif isinstance(x, list):
+        elif isinstance(x, (list, tuple)):
             x = dict((i, c) for (i, c) in enumerate(x) if c)
         elif isinstance(x, pari_gen):
             y = {}
@@ -180,7 +182,7 @@ class Polynomial_generic_sparse(Polynomial):
         """
         return sorted(self.__coeffs)
 
-    def valuation(self):
+    def valuation(self, p=None):
         """
         Return the valuation of ``self``.
 
@@ -197,6 +199,13 @@ class Polynomial_generic_sparse(Polynomial):
         """
         if not self.__coeffs:
             return infinity
+
+        if p is infinity:
+            return -self.degree()
+
+        if p is not None:
+            raise NotImplementedError("input p is not support for sparse polynomials")
+
         return ZZ(min(self.__coeffs))
 
     def _derivative(self, var=None):
@@ -758,16 +767,20 @@ class Polynomial_generic_sparse(Polynomial):
         Returns the quotient and remainder of the Euclidean division of
         ``self`` and ``other``.
 
-        Raises ZerodivisionError if ``other`` is zero. Raises ArithmeticError
-        if ``other`` has a nonunit leading coefficient.
+        Raises ZerodivisionError if ``other`` is zero.
+
+        Raises ArithmeticError if ``other`` has a nonunit leading coefficient
+        and this causes the Euclidean division to fail.
 
         EXAMPLES::
 
-            sage: P.<x> = PolynomialRing(ZZ,sparse=True)
-            sage: R.<y> = PolynomialRing(P,sparse=True)
+            sage: P.<x> = PolynomialRing(ZZ, sparse=True)
+            sage: R.<y> = PolynomialRing(P, sparse=True)
             sage: f = R.random_element(10)
-            sage: g = y^5+R.random_element(4)
-            sage: q,r = f.quo_rem(g)
+            sage: while x.divides(f.leading_coefficient()):
+            ....:     f = R.random_element(10)
+            sage: g = y^5 + R.random_element(4)
+            sage: q, r = f.quo_rem(g)
             sage: f == q*g + r and r.degree() < g.degree()
             True
             sage: g = x*y^5
@@ -781,25 +794,32 @@ class Polynomial_generic_sparse(Polynomial):
             ...
             ZeroDivisionError: Division by zero polynomial
 
+        If the leading coefficient of ``other`` is not a unit, Euclidean division may still work::
+
+            sage: f = -x*y^10 + 2*x*y^7 + y^3 - 2*x^2*y^2 - y
+            sage: g = x*y^5
+            sage: f.quo_rem(g)
+            (-y^5 + 2*y^2, y^3 - 2*x^2*y^2 - y)
+
         TESTS::
 
-            sage: P.<x> = PolynomialRing(ZZ,sparse=True)
-            sage: f = x^10-4*x^6-5
-            sage: g = 17*x^22+x^15-3*x^5+1
-            sage: q,r = g.quo_rem(f)
+            sage: P.<x> = PolynomialRing(ZZ, sparse=True)
+            sage: f = x^10 - 4*x^6 - 5
+            sage: g = 17*x^22 + x^15 - 3*x^5 + 1
+            sage: q, r = g.quo_rem(f)
             sage: g == f*q + r and r.degree() < f.degree()
             True
             sage: zero = P(0)
             sage: zero.quo_rem(f)
             (0, 0)
             sage: Q.<y> = IntegerModRing(14)[]
-            sage: f = y^10-4*y^6-5
-            sage: g = 17*y^22+y^15-3*y^5+1
-            sage: q,r = g.quo_rem(f)
+            sage: f = y^10 - 4*y^6 - 5
+            sage: g = 17*y^22 + y^15 - 3*y^5 + 1
+            sage: q, r = g.quo_rem(f)
             sage: g == f*q + r and r.degree() < f.degree()
             True
-            sage: f += 2*y^10 # 3 is invertible mod 14
-            sage: q,r = g.quo_rem(f)
+            sage: f += 2*y^10  # 3 is invertible mod 14
+            sage: q, r = g.quo_rem(f)
             sage: g == f*q + r and r.degree() < f.degree()
             True
 
@@ -1199,7 +1219,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         b = ~dera
         while(True):
             na = a - selfa * b
-            if na == a: return a
+            if na == a:
+                return a
             a = na
             selfa = self(a)
             dera = der(a)
@@ -1477,7 +1498,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
                 continue
             if hint is not None and slope == minval:
                 rootsbar = hint
-                if not rootsbar: continue
+                if not rootsbar:
+                    continue
             if i < len(vertices) - 1:
                 F = P._factor_of_degree(deg_right - deg)
                 P = P // F
@@ -1491,7 +1513,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             if hint is None or slope != minval:
                 Fbar = Pk([ F[j] >> (val - j*slope) for j in range(F.degree()+1) ])
                 rootsbar = [ r for (r, _) in Fbar.roots() ]
-                if not rootsbar: continue
+                if not rootsbar:
+                    continue
             rbar = rootsbar.pop()
             shift = K(rbar).lift_to_precision() << slope  # probably we should choose a better lift
             roots += [(r+shift, m) for (r, m) in F(x+shift)._roots(secure, slope, [r-rbar for r in rootsbar])]  # recursive call

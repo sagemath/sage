@@ -35,6 +35,8 @@ from sage.rings.all import CC
 from sage.rings.real_mpfr import RR
 from sage.manifolds.vector_bundle import TopologicalVectorBundle
 from sage.rings.infinity import infinity
+from sage.misc.superseded import deprecated_function_alias
+from sage.rings.rational_field import QQ
 
 class DifferentiableVectorBundle(TopologicalVectorBundle):
     r"""
@@ -163,45 +165,72 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
         from .bundle_connection import BundleConnection
         return BundleConnection(self, name, latex_name)
 
-    def characteristic_class(self, func, **kwargs):
+    def characteristic_cohomology_class_ring(self, base=QQ):
         r"""
-        Return a characteristic class of the given type with respect to the
-        given function.
+        Return the characteristic cohomology class ring of ``self`` over
+        a given base.
 
         INPUT:
 
-        - ``func`` -- the function corresponding to the characteristic class
-          using the Chern-Weil homomorphism; this argument can be either one of
-          the predefined classes, in the following specified by
-          (field type, class type, name, LaTeX name, function):
+        - ``base`` -- (default: ``QQ``) base over which the ring should be
+          constructed; typically that would be `\ZZ`, `\QQ`, `\RR` or the
+          symbolic ring
 
-          - ``'Chern'`` -- (complex, multiplicative, ``c``, `c`, `1+x`),
-          - ``'ChernChar'`` -- (complex, additive, ``ch``, `\mathrm{ch}`,
-            `\exp(x)`),
-          - ``'Todd'`` -- (complex, additive, ``Td``, `\mathrm{Td}`,
-            `\frac{x}{1-\exp(-x)}`),
-          - ``'Pontryagin'`` -- (real, multiplicative, ``p``, `p`, `1+x`),
-          - ``'Hirzebruch'`` -- (real, multiplicative, ``L``, `L`,
-            `\frac{\sqrt{x}}{\tanh(\sqrt{x})}`),
-          - ``'AHat'`` -- (real, multiplicative, ``A^``, `\hat{A}`,
-            `\frac{\sqrt{x}/2}{\sinh(\sqrt{x}/2)}`),
-          - ``'Euler'`` -- (real, Pfaffian, ``e``, `e`, `x`),
+        EXAMPLES::
 
-        or a symbolic expression. If ``func`` is one of the predefined classes,
-        the following arguments are obsolete.
+            sage: M = Manifold(4, 'M', start_index=1)
+            sage: R = M.tangent_bundle().characteristic_cohomology_class_ring()
+            sage: R
+            Algebra of characteristic cohomology classes of the Tangent bundle
+             TM over the 4-dimensional differentiable manifold M
+            sage: p1 = R.gen(0); p1
+            Characteristic cohomology class (p_1)(TM) of the Tangent bundle TM
+             over the 4-dimensional differentiable manifold M
+            sage: 1 + p1
+            Characteristic cohomology class (1 + p_1)(TM) of the Tangent bundle
+             TM over the 4-dimensional differentiable manifold M
 
-        - ``class_type`` -- (default: ``'multiplicative'``) the type of the
-          characteristic class; possible values are:
+        """
+        from .characteristic_cohomology_class import CharacteristicCohomologyClassRing
 
-          - ``'multiplicative'`` -- returns a class of multiplicative type,
-            using the determinant
-          - ``'additive'`` -- returns a class of additive type, using the trace
-          - ``'Pfaffian'`` -- returns a class of Pfaffian type, using the
-            Pfaffian
+        return CharacteristicCohomologyClassRing(base, self)
 
-        - ``name`` -- string representation given to the characteristic class
+    def characteristic_cohomology_class(self, *args, **kwargs):
+        r"""
+        Return a characteristic cohomology class associated with the input
+        data.
+
+        INPUT:
+
+        - ``val`` -- the input data associated with the characteristic class
+          using the Chern-Weil homomorphism; this argument can be either a
+          symbolic expression, a polynomial or one of the following predefined
+          classes:
+
+          - ``'Chern'`` -- total Chern class,
+          - ``'ChernChar'`` -- Chern character,
+          - ``'Todd'`` -- Todd class,
+          - ``'Pontryagin'`` -- total Pontryagin class,
+          - ``'Hirzebruch'`` -- Hirzebruch class,
+          - ``'AHat'`` -- `\hat{A}` class,
+          - ``'Euler'`` -- Euler class.
+
+        - ``base_ring`` -- (default: ``QQ``) base ring over which the
+          characteristic cohomology class ring shall be defined
+        - ``name`` -- (default: ``None``) string representation given to the
+          characteristic cohomology class; if ``None`` the default algebra
+          representation or predefined name is used
         - ``latex_name`` -- (default: ``None``) LaTeX name given to the
-          characteristic class
+          characteristic class; if ``None`` the value of ``name`` is used
+        - ``class_type`` -- (default: ``None``) class type of the characteristic
+          cohomology class; the following options are possible:
+
+          - ``'multiplicative'`` -- returns a class of multiplicative type
+          - ``'additive'`` -- returns a class of additive type
+          - ``'Pfaffian'`` -- returns a class of Pfaffian type
+
+          This argument must be stated if ``val`` is a polynomial or symbolic
+          expression.
 
         EXAMPLES:
 
@@ -215,7 +244,7 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             sage: g[3,3] = 1
             sage: g[4,4] = 1
             sage: g.display()
-            g = -dt*dt + dx*dx + dy*dy + dz*dz
+            g = -dt⊗dt + dx⊗dx + dy⊗dy + dz⊗dz
 
         Let us introduce the corresponding Levi-Civita connection::
 
@@ -233,14 +262,11 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
 
             sage: TM = M.tangent_bundle(); TM
             Tangent bundle TM over the 4-dimensional Lorentzian manifold M
-            sage: p = TM.characteristic_class('Pontryagin'); p
-            Characteristic class p of multiplicative type associated to x + 1
-             on the Tangent bundle TM over the 4-dimensional Lorentzian
-             manifold M
-            sage: p.function()
-            x + 1
+            sage: p = TM.characteristic_cohomology_class('Pontryagin'); p
+            Characteristic cohomology class p(TM) of the Tangent bundle TM over
+             the 4-dimensional Lorentzian manifold M
             sage: p_form = p.get_form(nab); p_form.display_expansion()
-            p(TM, nabla_g) = [1] + [0] + [0] + [0] + [0]
+            p(TM, nabla_g) = 1
 
         .. SEEALSO::
 
@@ -248,27 +274,11 @@ class DifferentiableVectorBundle(TopologicalVectorBundle):
             :class:`~sage.manifolds.differentiable.characteristic_class.CharacteristicClass`.
 
         """
-        if self._field_type == 'neither_real_nor_complex':
-            raise ValueError("the vector bundle must be real or complex")
-        from .characteristic_class import CharacteristicClass, _get_predefined_class
-        # Is func a predefined class?
-        if isinstance(func, str):
-            func_str = func
-            # Get predefined class:
-            (field_type, class_type, name,
-                         latex_name, func) = _get_predefined_class(func_str)
-            # The fields must be equal:
-            if field_type != self._field_type:
-                raise ValueError("base field must be {} ".format(field_type) +
-                                 "for class '{}'".format(func_str))
-        else:
-            # Get arguments:
-            class_type = kwargs.pop('class_type', 'multiplicative')
-            name = kwargs.pop('name', None)
-            latex_name = kwargs.pop('latex_name', None)
+        base_ring = kwargs.get('base_ring', QQ)
+        R = self.characteristic_cohomology_class_ring(base_ring)
+        return R(*args, **kwargs)
 
-        return CharacteristicClass(self, func, class_type=class_type,
-                                   name=name, latex_name=latex_name)
+    characteristic_class = deprecated_function_alias(29581, characteristic_cohomology_class)
 
     def diff_degree(self):
         r"""
@@ -410,8 +420,8 @@ class TensorBundle(DifferentiableVectorBundle):
         Differentiable map Phi from the 1-dimensional differentiable manifold R
          to the 2-dimensional differentiable manifold M
         sage: Phi.display()
-        Phi: R --> M
-           t |--> (x, y) = (cos(t), sin(t))
+        Phi: R → M
+           t ↦ (x, y) = (cos(t), sin(t))
         sage: PhiTM = R.tangent_bundle(dest_map=Phi); PhiTM
         Tangent bundle Phi^*TM over the 1-dimensional differentiable manifold R
          along the Differentiable map Phi from the 1-dimensional differentiable
@@ -711,7 +721,7 @@ class TensorBundle(DifferentiableVectorBundle):
             Tensor field t of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: t.display()
-            t = d/dx*dx + x d/dx*dy + 2 d/dy*dy
+            t = ∂/∂x⊗dx + x ∂/∂x⊗dy + 2 ∂/∂y⊗dy
 
         An example of use with the arguments ``comp`` and ``domain``::
 
@@ -720,7 +730,7 @@ class TensorBundle(DifferentiableVectorBundle):
             Vector field on the Open subset U of the 2-dimensional
              differentiable manifold M
             sage: w.display()
-            -y d/dx + x d/dy
+            -y ∂/∂x + x ∂/∂y
 
         """
         nargs = [self._tensor_type[0], self._tensor_type[1]]
@@ -872,7 +882,7 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: X.<x,y> = M.chart()
             sage: TM = M.tangent_bundle()
             sage: e = X.frame(); e
-            Coordinate frame (M, (d/dx,d/dy))
+            Coordinate frame (M, (∂/∂x,∂/∂y))
 
         At this stage, the dictionary of changes of frame is empty::
 
@@ -890,11 +900,11 @@ class TensorBundle(DifferentiableVectorBundle):
         Then we have::
 
             sage: TM.changes_of_frame()  # random (dictionary output)
-            {(Coordinate frame (M, (d/dx,d/dy)),
+            {(Coordinate frame (M, (∂/∂x,∂/∂y)),
               Vector frame (M, (f_0,f_1))): Field of tangent-space
                automorphisms on the 2-dimensional differentiable manifold M,
              (Vector frame (M, (f_0,f_1)),
-              Coordinate frame (M, (d/dx,d/dy))): Field of tangent-space
+              Coordinate frame (M, (∂/∂x,∂/∂y))): Field of tangent-space
                automorphisms on the 2-dimensional differentiable manifold M}
 
         Some checks::
@@ -935,19 +945,19 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: c_cart.<x,y> = M.chart() # Cartesian coordinates on R^2
             sage: TM = M.tangent_bundle()
             sage: TM.frames()
-            [Coordinate frame (R^2, (d/dx,d/dy))]
+            [Coordinate frame (R^2, (∂/∂x,∂/∂y))]
             sage: e = TM.vector_frame('e')
             sage: TM.frames()
-            [Coordinate frame (R^2, (d/dx,d/dy)),
+            [Coordinate frame (R^2, (∂/∂x,∂/∂y)),
              Vector frame (R^2, (e_0,e_1))]
             sage: U = M.open_subset('U', coord_def={c_cart: x^2+y^2<1})
             sage: TU = U.tangent_bundle()
             sage: TU.frames()
-            [Coordinate frame (U, (d/dx,d/dy))]
+            [Coordinate frame (U, (∂/∂x,∂/∂y))]
             sage: TM.frames()
-            [Coordinate frame (R^2, (d/dx,d/dy)),
+            [Coordinate frame (R^2, (∂/∂x,∂/∂y)),
              Vector frame (R^2, (e_0,e_1)),
-             Coordinate frame (U, (d/dx,d/dy))]
+             Coordinate frame (U, (∂/∂x,∂/∂y))]
 
         List of vector frames of a tensor bundle of type `(1 ,1)` along a
         curve::
@@ -961,18 +971,18 @@ class TensorBundle(DifferentiableVectorBundle):
             Differentiable map Phi from the 1-dimensional differentiable
              manifold R to the 2-dimensional differentiable manifold M
             sage: Phi.display()
-            Phi: R --> M
-               t |--> (x, y) = (cos(t), sin(t))
+            Phi: R → M
+               t ↦ (x, y) = (cos(t), sin(t))
             sage: PhiT11 = R.tensor_bundle(1, 1, dest_map=Phi); PhiT11
             Tensor bundle Phi^*T^(1,1)M over the 1-dimensional differentiable
              manifold R along the Differentiable map Phi from the 1-dimensional
              differentiable manifold R to the 2-dimensional differentiable
              manifold M
             sage: f = PhiT11.local_frame(); f
-            Vector frame (R, (d/dx,d/dy)) with values on the 2-dimensional
+            Vector frame (R, (∂/∂x,∂/∂y)) with values on the 2-dimensional
              differentiable manifold M
             sage: PhiT11.frames()
-            [Vector frame (R, (d/dx,d/dy)) with values on the 2-dimensional
+            [Vector frame (R, (∂/∂x,∂/∂y)) with values on the 2-dimensional
              differentiable manifold M]
 
         """
@@ -1464,8 +1474,8 @@ class TensorBundle(DifferentiableVectorBundle):
             Differentiable map Phi from the 1-dimensional differentiable
              manifold R to the 2-dimensional differentiable manifold M
             sage: Phi.display()
-            Phi: R --> M
-               t |--> (x, y) = (cos(t), sin(t))
+            Phi: R → M
+               t ↦ (x, y) = (cos(t), sin(t))
                 sage: PhiT11 = R.tensor_bundle(1, 1, dest_map=Phi)
             sage: PhiT11.ambient_domain()
             2-dimensional differentiable manifold M
@@ -1493,8 +1503,8 @@ class TensorBundle(DifferentiableVectorBundle):
             Differentiable map Phi from the 1-dimensional differentiable
              manifold R to the 2-dimensional differentiable manifold M
             sage: Phi.display()
-            Phi: R --> M
-               t |--> (x, y) = (cos(t), sin(t))
+            Phi: R → M
+               t ↦ (x, y) = (cos(t), sin(t))
             sage: PhiT11 = R.tensor_bundle(1, 1, dest_map=Phi)
             sage: PhiT11.destination_map()
             Differentiable map Phi from the 1-dimensional differentiable
@@ -1532,7 +1542,7 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: c_xy.<x,y> = M.chart()
             sage: TM = M.tangent_bundle()
             sage: TM.default_frame()
-            Coordinate frame (M, (d/dx,d/dy))
+            Coordinate frame (M, (∂/∂x,∂/∂y))
 
         """
         def_bframe = self._base_space.default_frame()
@@ -1566,7 +1576,7 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: TM = M.tangent_bundle()
             sage: e = TM.vector_frame('e')
             sage: TM.default_frame()
-            Coordinate frame (M, (d/dx,d/dy))
+            Coordinate frame (M, (∂/∂x,∂/∂y))
             sage: TM.set_default_frame(e)
             sage: TM.default_frame()
             Vector frame (M, (e_0,e_1))
@@ -1676,7 +1686,7 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: c_xy.<x,y> = M.chart()
             sage: T11 = M.tensor_bundle(1, 1)
             sage: T11.orientation()
-            [Coordinate frame (M, (d/dx,d/dy))]
+            [Coordinate frame (M, (∂/∂x,∂/∂y))]
 
         The same holds true if the ambient domain admits a trivial
         orientation::
@@ -1692,10 +1702,10 @@ class TensorBundle(DifferentiableVectorBundle):
              differentiable manifold R to the 2-dimensional differentiable
              manifold M
             sage: PhiT22.local_frame()  # initialize frame
-            Vector frame (R, (d/dx,d/dy)) with values on the 2-dimensional
+            Vector frame (R, (∂/∂x,∂/∂y)) with values on the 2-dimensional
              differentiable manifold M
             sage: PhiT22.orientation()
-            [Vector frame (R, (d/dx,d/dy)) with values on the 2-dimensional
+            [Vector frame (R, (∂/∂x,∂/∂y)) with values on the 2-dimensional
              differentiable manifold M]
             sage: PhiT22.local_frame() is PhiT22.orientation()[0]
             True
@@ -1714,15 +1724,15 @@ class TensorBundle(DifferentiableVectorBundle):
             []
             sage: T11.set_orientation([c_xy.frame(), c_uv.frame()])
             sage: T11.orientation()
-            [Coordinate frame (U, (d/dx,d/dy)), Coordinate frame
-             (V, (d/du,d/dv))]
+            [Coordinate frame (U, (∂/∂x,∂/∂y)), Coordinate frame
+             (V, (∂/∂u,∂/∂v))]
 
         If the destination map is the identity, the orientation is
         automatically set for the manifold, too::
 
             sage: M.orientation()
-            [Coordinate frame (U, (d/dx,d/dy)), Coordinate frame
-             (V, (d/du,d/dv))]
+            [Coordinate frame (U, (∂/∂x,∂/∂y)), Coordinate frame
+             (V, (∂/∂u,∂/∂v))]
 
         Conversely, if one sets an orientation on the manifold,
         the orientation on its tensor bundles is set accordingly::
@@ -1730,8 +1740,8 @@ class TensorBundle(DifferentiableVectorBundle):
             sage: c_tz.<t,z> = U.chart()
             sage: M.set_orientation([c_tz, c_uv])
             sage: T11.orientation()
-            [Coordinate frame (U, (d/dt,d/dz)), Coordinate frame
-             (V, (d/du,d/dv))]
+            [Coordinate frame (U, (∂/∂t,∂/∂z)), Coordinate frame
+             (V, (∂/∂u,∂/∂v))]
 
         """
         if self._dest_map.is_identity():

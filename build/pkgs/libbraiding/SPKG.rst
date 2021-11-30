@@ -1,5 +1,5 @@
-LIBBRAIDING
-===========
+libbraiding: Computing with braids
+==================================
 
 Description
 -----------

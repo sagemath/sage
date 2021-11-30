@@ -1,5 +1,5 @@
-R
-=
+r: A free software environment for statistical computing and graphics
+=====================================================================
 
 Description
 -----------
@@ -22,6 +22,7 @@ License
 Upstream Contact
 ----------------
 
+-  https://www.r-project.org
 -  R mailing list, #R in IRC
 
 Dependencies

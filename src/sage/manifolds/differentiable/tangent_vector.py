@@ -56,11 +56,31 @@ class TangentVector(FiniteRankFreeModuleElement):
         Tangent vector v at Point p on the 2-dimensional differentiable
          manifold M
         sage: v.display()
-        v = -2 d/dx + d/dy
+        v = -2 ∂/∂x + ∂/∂y
         sage: v.parent()
         Tangent space at Point p on the 2-dimensional differentiable manifold M
         sage: v in Tp
         True
+
+    Tangent vectors can also be constructed via the manifold method
+    :meth:`~sage.manifolds.differentiable.manifold.DifferentiableManifold.tangent_vector`::
+
+        sage: v = M.tangent_vector(p, (-2, 1), name='v'); v
+        Tangent vector v at Point p on the 2-dimensional differentiable
+         manifold M
+        sage: v.display()
+        v = -2 ∂/∂x + ∂/∂y
+
+    or via the method
+    :meth:`~sage.manifolds.differentiable.tensorfield_paral.TensorFieldParal.at`
+    of vector fields::
+
+        sage: vf = M.vector_field(x - 4*y/3, (x-y)^2, name='v')
+        sage: v = vf.at(p); v
+        Tangent vector v at Point p on the 2-dimensional differentiable
+         manifold M
+        sage: v.display()
+        v = -2 ∂/∂x + ∂/∂y
 
     By definition, a tangent vector at `p\in M` is a *derivation at* `p` on
     the space `C^\infty(M)` of smooth scalar fields on `M`. Indeed  let us
@@ -68,8 +88,8 @@ class TangentVector(FiniteRankFreeModuleElement):
 
         sage: f = M.scalar_field(function('F')(x,y), name='f')
         sage: f.display()
-        f: M --> R
-           (x, y) |--> F(x, y)
+        f: M → ℝ
+           (x, y) ↦ F(x, y)
 
     The tangent vector `v` maps `f` to the real number
     `v^i \left. \frac{\partial F}{\partial x^i} \right|_p`::
@@ -89,8 +109,8 @@ class TangentVector(FiniteRankFreeModuleElement):
     then the product `f g` is also a scalar field on `M`::
 
         sage: (f*g).display()
-        f*g: M --> R
-           (x, y) |--> F(x, y)*G(x, y)
+        f*g: M → ℝ
+           (x, y) ↦ F(x, y)*G(x, y)
 
     and we have the derivation law `v(f g) = v(f) g(p) + f(p) v(g)`::
 
@@ -321,7 +341,7 @@ class TangentVector(FiniteRankFreeModuleElement):
             sage: var('a b')
             (a, b)
             sage: v = Tp((1+a, -b^2), name='v') ; v.display()
-            v = (a + 1) d/dx - b^2 d/dy
+            v = (a + 1) ∂/∂x - b^2 ∂/∂y
             sage: X.plot() + v.plot(parameters={a: -2, b: 3})
             Graphics object consisting of 20 graphics primitives
 
@@ -405,11 +425,11 @@ class TangentVector(FiniteRankFreeModuleElement):
             ....:                                 sin(th)*sin(ph),
             ....:                                 cos(th)]}, name='F')
             sage: F.display() # the standard embedding of S^2 into R^3
-            F: S^2 --> R^3
-            on U: (th, ph) |--> (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
+            F: S^2 → R^3
+            on U: (th, ph) ↦ (x, y, z) = (cos(ph)*sin(th), sin(ph)*sin(th), cos(th))
             sage: p = U.point((pi/4, 7*pi/4), name='p')
-            sage: v = XS.frame()[1].at(p) ; v  # the coordinate vector d/dphi at p
-            Tangent vector d/dph at Point p on the 2-dimensional differentiable
+            sage: v = XS.frame()[1].at(p) ; v  # the coordinate vector ∂/∂phi at p
+            Tangent vector ∂/∂ph at Point p on the 2-dimensional differentiable
              manifold S^2
             sage: graph_v = v.plot(mapping=F)
             sage: graph_S2 = XS.plot(chart=X3, mapping=F, number_values=9)  # long time
@@ -544,7 +564,7 @@ class TangentVector(FiniteRankFreeModuleElement):
             sage: Tp = M.tangent_space(p)
             sage: v = Tp((-1, 2))
             sage: v.display()
-            -d/dx + 2 d/dy
+            -∂/∂x + 2 ∂/∂y
 
         The action of `v` on a scalar field `f`::
 

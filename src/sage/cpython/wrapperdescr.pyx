@@ -16,13 +16,11 @@ Pure Python classes have normal methods, not slot wrappers::
     sage: class X(object):
     ....:     def __add__(self, other):
     ....:         return NotImplemented
-    sage: X.__add__    # py2
-    <unbound method X.__add__>
-    sage: X.__add__    # py3
+    sage: X.__add__
     <function X.__add__ at ...>
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -30,7 +28,7 @@ Pure Python classes have normal methods, not slot wrappers::
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from .string import bytes_to_str
 

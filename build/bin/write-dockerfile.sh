@@ -8,13 +8,14 @@ shopt -s extglob
 SAGE_PACKAGE_LIST_ARGS="${2:- --has-file=spkg-configure.m4 :standard:}"
 WITH_SYSTEM_SPKG="${3:-yes}"
 IGNORE_MISSING_SYSTEM_PACKAGES="${4:-no}"
+EXTRA_SAGE_PACKAGES="${5:-_bootstrap}"
 #
 STRIP_COMMENTS="sed s/#.*//;"
 SAGE_ROOT=.
 export PATH="$SAGE_ROOT"/build/bin:$PATH
-SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} "$SAGE_ROOT"/build/pkgs/$SYSTEM{,-bootstrap}.txt))
+SYSTEM_PACKAGES=
 CONFIGURE_ARGS="--enable-option-checking "
-for PKG_BASE in $($SAGE_ROOT/sage -package list --has-file=distros/$SYSTEM.txt $SAGE_PACKAGE_LIST_ARGS); do
+for PKG_BASE in $($SAGE_ROOT/sage -package list --has-file=distros/$SYSTEM.txt $SAGE_PACKAGE_LIST_ARGS) $EXTRA_SAGE_PACKAGES; do
     PKG_SCRIPTS="$SAGE_ROOT"/build/pkgs/$PKG_BASE
     if [ -d $PKG_SCRIPTS ]; then
        SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/distros/$SYSTEM.txt
@@ -196,6 +197,8 @@ $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
 
 FROM bootstrapped as configured
 #:configuring:
+# config.status needs to write in pkgs/sage-conf/
+ADD pkgs pkgs
 RUN mkdir -p logs/pkgs; ln -s logs/pkgs/config.log config.log
 ARG EXTRA_CONFIGURE_ARGS=""
 EOF
@@ -216,7 +219,7 @@ ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
-ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!python2,!nose,!pathpy,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!networkx,!symengine_py"
+ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 #:toolchain:
 $RUN make \${USE_MAKEFLAGS} base-toolchain $ENDRUN
 
@@ -225,9 +228,9 @@ ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
-ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!python2,!nose,!pathpy,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!networkx,!symengine_py"
+ENV SAGE_CHECK_PACKAGES="!gfan,!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 #:make:
-ARG TARGETS_PRE="sagelib-build-deps"
+ARG TARGETS_PRE="all-sage-local"
 $RUN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_PRE} $ENDRUN
 
 FROM with-targets-pre as with-targets
@@ -235,7 +238,7 @@ ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
-ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!python2,!nose,!pathpy,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!networkx,!symengine_py"
+ENV SAGE_CHECK_PACKAGES="!gfan,!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 ADD src src
 ARG TARGETS="build"
 $RUN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN
@@ -245,7 +248,7 @@ ARG NUMPROC=8
 ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
-ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!python2,!nose,!pathpy,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!networkx,!symengine_py"
+ENV SAGE_CHECK_PACKAGES="!gfan,!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 ARG TARGETS_OPTIONAL="ptest"
 $RUN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_OPTIONAL} || echo "(error ignored)" $ENDRUN
 

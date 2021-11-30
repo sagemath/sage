@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([gsl], [
     m4_pushdef([SAGE_GSL_MINVER],["2.4"])
-    SAGE_SPKG_DEPCHECK([atlas openblas], [
+    SAGE_SPKG_DEPCHECK([openblas], [
       PKG_CHECK_MODULES([GSL], [gsl >= $SAGE_GSL_MINVER], [
         PKG_CHECK_VAR([GSLPCDIR], [gsl], [pcfiledir], [
           GSL_PC="$GSLPCDIR"/gsl.pc

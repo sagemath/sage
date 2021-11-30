@@ -1,5 +1,5 @@
-4ti2
-====
+4ti2: Algebraic, geometric and combinatorial problems on linear spaces
+======================================================================
 
 Description
 -----------
@@ -15,6 +15,8 @@ License
 
 Upstream Contact
 ----------------
+
+- https://4ti2.github.io/
 
 - Raymond Hemmecke, TU Munich, Germany
 - Matthias Köppe, UC Davis, CA, USA

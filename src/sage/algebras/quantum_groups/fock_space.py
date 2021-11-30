@@ -25,7 +25,7 @@ from sage.structure.global_options import GlobalOptions
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field import FractionField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -1146,7 +1146,7 @@ class FockSpace(Parent, UniqueRepresentation):
             while any(c[1]*k + c[0] >= b for c in corners):
                 power = 0
                 i = -b + r # This will be converted to a mod n number
-                for x in range(0, b // k + 1):
+                for x in range(b // k + 1):
                     if (b-x*k, x) in cells:
                         power += 1
                         cur = cur.f(i)
@@ -1907,7 +1907,7 @@ class FockSpaceTruncated(FockSpace):
             while any(c[1]*k + c[0] >= b for c in corners): # While there is some cell left to count
                 power = 0
                 i = -b + r # This will be converted to a mod n number
-                for x in range(0, b // k + 1):
+                for x in range(b // k + 1):
                     if (b-x*k, x) in cells:
                         power += 1
                         cur = cur.f(i)

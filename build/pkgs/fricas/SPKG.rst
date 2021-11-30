@@ -1,5 +1,5 @@
-fricas
-======
+fricas: A general purpose computer algebra system
+=================================================
 
 Description
 -----------

@@ -16,7 +16,7 @@ functions are defined to be ``var(...)``. As an example:
     sage: diff(sin(u), u)
     cos(u)
 
-If you get a ``NameError``, check to see if you mispelled something,
+If you get a ``NameError``, check to see if you misspelled something,
 or forgot to define a variable with ``var(...)``.
 
 

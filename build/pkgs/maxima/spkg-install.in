@@ -57,9 +57,12 @@ sdh_make_install
 
 
 # Install Maxima into ECL's library directory:
-ECLLIB=`ecl -eval "(princ (SI:GET-LIBRARY-PATHNAME))" -eval "(quit)"`
+# Ensure that the $ECLLIB directory exists in
+# case we're using ECL from the system.
+ECLLIB="${SAGE_LOCAL}/lib/ecl"
 echo
 echo "Now installing the Maxima library as '$ECLLIB/maxima.fas'..."
+mkdir -p "${ECLLIB}"
 cp -f "src/binary-ecl/maxima.fas" "$ECLLIB/maxima.fas" \
     || sdh_die "Failed to install 'src/binary-ecl/maxima.fas' as '$ECLLIB/maxima.fas'."
 

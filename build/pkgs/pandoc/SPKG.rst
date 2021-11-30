@@ -1,5 +1,5 @@
-Pandoc
-======
+pandoc: A document converter
+============================
 
 Description
 -----------

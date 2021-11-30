@@ -1,6 +1,5 @@
-
-modular decomposition
-=====================
+modular_decomposition: A modular decomposition algorithm
+========================================================
 
 Description
 -----------

@@ -23,9 +23,11 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch:
+    # Allow to run manually
 
 env:
-  TARGETS_PRE: sagelib-build-deps
+  TARGETS_PRE: all-sage-local
   TARGETS: build doc-html
   TARGETS_OPTIONAL: ptest
 
@@ -36,7 +38,7 @@ jobs:
       fail-fast: false
       max-parallel: 20
       matrix:
-        tox_system_factor: [ubuntu-trusty, ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-groovy, ubuntu-hirsute, debian-jessie, debian-stretch, debian-buster, debian-bullseye, debian-sid, linuxmint-17, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, centos-7, centos-8, gentoo, gentoo-python3.7, archlinux-latest, slackware-14.2, conda-forge, ubuntu-bionic-i386, ubuntu-focal-i386, debian-buster-i386, centos-7-i386]
+        tox_system_factor: [ubuntu-trusty, ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-groovy, ubuntu-hirsute, ubuntu-impish, debian-jessie, debian-stretch, debian-buster, debian-bullseye, debian-sid, linuxmint-17, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, linuxmint-20.2, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, fedora-35, centos-7, centos-8, gentoo-python3.9, gentoo-python3.10, archlinux-latest, opensuse-15, opensuse-15.3, opensuse-tumbleweed, slackware-14.2, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386]
         tox_packages_factor: [minimal, standard]
     env:
       TOX_ENV: docker-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
@@ -50,15 +52,21 @@ jobs:
         run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: free disk space
         run: |
+          df -h
           sudo swapoff -a
           sudo rm -f /swapfile
-          sudo apt clean
+          sudo apt-get clean
           docker rmi $(docker image ls -aq)
+          echo "Largest packages:"
+          dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -n 50
+          sudo apt-get --fix-broken --yes remove $(dpkg-query -f '${Package}\n' -W | grep -E '^(ghc-|google-cloud-sdk|google-chrome|firefox|mysql-server|dotnet-sdk|hhvm|mono)') || echo "(error ignored)"
           df -h
       - name: Install test prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install python-tox
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
+          sudo apt-get clean
+          df -h
       - name: Try to login to docker.pkg.github.com
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
         run: |
@@ -102,10 +110,54 @@ jobs:
       fail-fast: false
       max-parallel: 4
       matrix:
-        os: [ macos-10.15, macos-11.0 ]
-        tox_system_factor: [homebrew-macos, homebrew-macos-python3_xcode, homebrew-macos-python3_xcode-nokegonly, homebrew-macos-python3_pythonorg, homebrew-macos-python3_xcode-gcc_spkg, conda-forge-macos]
+        tox_system_factor: [homebrew-macos, conda-forge-macos]
         tox_packages_factor: [minimal, standard]
-        xcode_version_factor: [11.7, default, 12.3]
+        # As of 2021-03, default xcode is 12.4
+        # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#xcode
+        xcode_version_factor: [default]
+        os: [ macos-10.15, macos-11.0 ]
+        include:
+          # Test xcode 11.7 only on macos-10.15
+          - tox_system_factor: homebrew-macos
+            tox_packages_factor: minimal
+            xcode_version_factor: 11.7
+            os: macos-10.15
+          - tox_system_factor: homebrew-macos
+            tox_packages_factor: standard
+            xcode_version_factor: 11.7
+            os: macos-10.15
+          # python3_xcode is only accepted if enough packages are available from the system
+          # --> to test "minimal", we will need https://trac.sagemath.org/ticket/30949
+          - tox_system_factor: homebrew-macos-python3_xcode
+            tox_packages_factor: standard
+            xcode_version_factor: 11.7
+            os: macos-10.15
+          - tox_system_factor: homebrew-macos-python3_xcode
+            tox_packages_factor: standard
+            xcode_version_factor: default
+            os: macos-10.15
+          - tox_system_factor: homebrew-macos-python3_xcode
+            tox_packages_factor: standard
+            xcode_version_factor: default
+            os: macos-11.0
+          - tox_system_factor: homebrew-macos-python3_xcode-nokegonly
+            tox_packages_factor: standard
+            xcode_version_factor: default
+            os: macos-11.0
+          # likewise for python3_pythonorg
+          - tox_system_factor: homebrew-macos-python3_pythonorg
+            tox_packages_factor: standard
+            xcode_version_factor: default
+            os: macos-11.0
+          # conda-forge-macos-environment
+          - tox_system_factor: conda-forge-macos
+            tox_packages_factor: environment
+            xcode_version_factor: default
+            os: macos-11.0
+          - tox_system_factor: conda-forge-macos
+            tox_packages_factor: environment-optional
+            xcode_version_factor: default
+            os: macos-11.0
     env:
       TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}-${{ matrix.os }}-xcode_${{ matrix.xcode_version_factor }}
@@ -152,7 +204,7 @@ jobs:
       max-parallel: 1
       matrix:
         tox_system_factor: [conda-forge-ubuntu]
-        tox_packages_factor: [minimal, standard]
+        tox_packages_factor: [minimal, standard, environment, environment-optional]
     env:
       TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
@@ -161,7 +213,7 @@ jobs:
       - name: Install test prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install python-tox
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install tox
       - name: Build and test with tox
         # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
         # For doctesting, we use a lower parallelization to avoid timeouts.
@@ -194,7 +246,7 @@ jobs:
       - name: Install bootstrap prerequisites
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(sed "s/#.*//;" build/pkgs/debian-bootstrap.txt)
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
       - name: Bootstrap with sage-update-version
         # We set SAGE_ROOT and SAGE_SRC by hand
         # because 'sage -sh' does not work with an unconfigured tree,
@@ -205,7 +257,7 @@ jobs:
           SAGE_ROOT=. SAGE_SRC=./src src/bin/sage-update-version $(git describe) || echo "(ignoring error)"
       - name: make dist
         run: |
-          ./configure && make dist
+          ./configure --enable-download-from-upstream-url && make dist
       - uses: actions/upload-artifact@v2
         with:
           path: "dist/*.tar.gz"
@@ -223,7 +275,19 @@ jobs:
         os: [ macos-10.15, macos-11.0 ]
         tox_system_factor: [macos-nobootstrap, macos-nobootstrap-python3_pythonorg]
         tox_packages_factor: [minimal]
-        xcode_version_factor: [default, 12]
+        # As of 2021-03, default is 12.4
+        # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#xcode
+        xcode_version_factor: [default]
+        include:
+          # Test xcode 11.7 only on macos-10.15
+          - tox_system_factor: macos-nobootstrap
+            tox_packages_factor: minimal
+            xcode_version_factor: 11.7
+            os: macos-10.15
+          - tox_system_factor: macos-nobootstrap-python3_pythonorg
+            tox_packages_factor: minimal
+            xcode_version_factor: 11.7
+            os: macos-10.15
     env:
       TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
       LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}-xcode_${{ matrix.xcode_version_factor }}

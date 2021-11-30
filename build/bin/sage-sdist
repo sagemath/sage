@@ -2,7 +2,8 @@
 
 ########################################################
 # Build Sage source distribution
-# This script should be called by the spkg/bin/sage script
+# This script should not be invoked directly.
+# Use "sage --sdist" or "make dist".
 ########################################################
 
 set -e

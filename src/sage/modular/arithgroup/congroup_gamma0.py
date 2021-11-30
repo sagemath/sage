@@ -19,7 +19,7 @@ from sage.modular.cusps import Cusp
 from sage.misc.cachefunc import cached_method
 from sage.rings.all import IntegerModRing, ZZ
 from sage.arith.all import kronecker_symbol
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.modular.modsym.p1list
 import sage.arith.all as arith
 
@@ -75,7 +75,7 @@ class Gamma0_class(GammaH_class):
         sage: a = Gamma0(1).dimension_cusp_forms(2); a
         0
         sage: type(a)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: Gamma0(5).dimension_cusp_forms(0)
         0
         sage: Gamma0(20).dimension_cusp_forms(1)

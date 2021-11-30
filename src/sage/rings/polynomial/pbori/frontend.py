@@ -5,7 +5,7 @@ a given context.
 
 EXAMPLES::
 
-    sage: from sage.rings.polynomial.pbori.frontend import *
+    sage: from sage.rings.polynomial.pbori.frontend import x
     sage: x(0)
     x(0)
     sage: x(0)*x(0)
@@ -19,7 +19,7 @@ EXAMPLES::
     sage: x(9999) + x(9999)
     0
 
-    sage: from sage.rings.polynomial.pbori.frontend import *
+    sage: from sage.rings.polynomial.pbori.frontend import x, polybori_start
     sage: context = dict(globals())
     sage: polybori_start(context)
     ipbori...
@@ -31,7 +31,7 @@ EXAMPLES::
 """
 
 
-from .PyPolyBoRi import Ring, Monomial, Polynomial
+from .PyPolyBoRi import Ring
 from .pbori import VariableFactory
 from .blocks import declare_ring as orig_declare_ring
 

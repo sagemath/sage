@@ -28,7 +28,6 @@ from sage.repl.rich_output.backend_base import BackendBase
 from sage.repl.rich_output.output_catalog import *
 
 
-
 class BackendDoctest(BackendBase):
 
     def _repr_(self):
@@ -134,7 +133,7 @@ class BackendDoctest(BackendBase):
             True
         """
         return set([
-            OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputLatex,
+            OutputPlainText, OutputAsciiArt, OutputUnicodeArt,
             OutputImagePng, OutputImageGif, OutputImageJpg,
             OutputImageSvg, OutputImagePdf, OutputImageDvi,
             OutputSceneJmol, OutputSceneCanvas3d, OutputSceneWavefront,
@@ -176,7 +175,7 @@ class BackendDoctest(BackendBase):
         """
         self.validate(rich_output)
         if any(isinstance(rich_output, cls)
-               for cls in [OutputPlainText, OutputAsciiArt, OutputLatex]):
+               for cls in [OutputPlainText, OutputAsciiArt, OutputLatex, OutputHtml]):
             rich_output.print_to_stdout()
         else:
             plain_text.print_to_stdout()
@@ -209,9 +208,7 @@ class BackendDoctest(BackendBase):
         """
         self.validate(rich_output)
         types_to_print = [OutputPlainText, OutputAsciiArt, OutputUnicodeArt, OutputHtml]
-        if isinstance(rich_output, OutputLatex):
-            print(rich_output.mathjax(display=False))
-        elif any(isinstance(rich_output, cls) for cls in types_to_print):
+        if any(isinstance(rich_output, cls) for cls in types_to_print):
             rich_output.print_to_stdout()
 
     def validate(self, rich_output):
@@ -266,7 +263,9 @@ class BackendDoctest(BackendBase):
         elif isinstance(rich_output, OutputUnicodeArt):
             pass
         elif isinstance(rich_output, OutputLatex):
-            assert rich_output.mathjax().startswith('<html>')
+            pass
+        elif isinstance(rich_output, OutputHtml):
+            pass
         elif isinstance(rich_output, OutputImagePng):
             assert rich_output.png.get().startswith(b'\x89PNG')
         elif isinstance(rich_output, OutputImageGif):

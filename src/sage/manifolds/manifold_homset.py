@@ -88,8 +88,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         Continuous map from the 2-dimensional topological manifold M to the
          3-dimensional topological manifold N
         sage: f.display()
-        M --> N
-           (x, y) |--> (u, v, w) = (0, 0, 0)
+        M → N
+           (x, y) ↦ (u, v, w) = (0, 0, 0)
 
     The test suite is passed::
 
@@ -126,8 +126,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         sage: E.one() is M.identity_map()
         True
         sage: E.one().display()
-        Id_M: M --> M
-           (x, y) |--> (x, y)
+        Id_M: M → M
+           (x, y) ↦ (x, y)
 
     The test suite is passed by ``E``::
 
@@ -164,6 +164,15 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
              Real Field with 53 bits of precision
             sage: TestSuite(E).run()
 
+        Check whether :trac:`31233` is solved::
+
+            sage: S1 = manifolds.Sphere(1)
+            sage: iota = S1.embedding()
+            sage: phi = S1.identity_map()
+            sage: iota * phi
+            Differentiable map iota from the 1-sphere S^1 of radius 1 smoothly
+             embedded in the Euclidean plane E^2 to the Euclidean plane E^2
+
         """
         from sage.manifolds.manifold import TopologicalManifold
         if not isinstance(domain, TopologicalManifold):
@@ -172,7 +181,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         if not isinstance(codomain, TopologicalManifold):
             raise TypeError("codomain = {} is not an ".format(codomain) +
                             "instance of TopologicalManifold")
-        Homset.__init__(self, domain, codomain)
+        common_cat = domain.category()._meet_(codomain.category())
+        Homset.__init__(self, domain, codomain, category=common_cat)
         if name is None:
             self._name = "Hom({},{})".format(domain._name, codomain._name)
         else:
@@ -250,14 +260,14 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             Continuous map f from the 2-dimensional topological manifold M to
              the 3-dimensional topological manifold N
             sage: f.display()
-            f: M --> N
-               (x, y) |--> (u, v, w) = (x + y, x - y, x*y)
+            f: M → N
+               (x, y) ↦ (u, v, w) = (x + y, x - y, x*y)
             sage: id = Hom(M, M)({}, is_identity=True)
             sage: id
             Identity map Id_M of the 2-dimensional topological manifold M
             sage: id.display()
-            Id_M: M --> M
-               (x, y) |--> (x, y)
+            Id_M: M → M
+               (x, y) ↦ (x, y)
 
         """
         # Standard construction
@@ -285,8 +295,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             Continuous map from the 2-dimensional topological manifold M to the
              3-dimensional topological manifold N
             sage: f.display()
-            M --> N
-               (x, y) |--> (u, v, w) = (0, 0, 0)
+            M → N
+               (x, y) ↦ (u, v, w) = (0, 0, 0)
             sage: p = M((-2,3)) ; p
             Point on the 2-dimensional topological manifold M
             sage: f(p)
@@ -349,8 +359,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             Continuous map f from the 2-dimensional topological manifold M to
              the 3-dimensional topological manifold N
             sage: f.display()
-            f: M --> N
-               (x, y) |--> (u, v, w) = (x + y, x - y, x*y)
+            f: M → N
+               (x, y) ↦ (u, v, w) = (x + y, x - y, x*y)
 
         There is also the following shortcut for :meth:`one`::
 
@@ -404,8 +414,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             sage: H.one().parent() is H
             True
             sage: H.one().display()
-            Id_M: M --> M
-               (x, y) |--> (x, y)
+            Id_M: M → M
+               (x, y) ↦ (x, y)
 
         The identity map is cached::
 

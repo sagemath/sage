@@ -626,7 +626,6 @@ cdef class EdgesView:
         elif i < 0:
             return list(self)[i]
         else:
-            i = int(i)  # For Python < 3.7 where islice doesn't support non-int
             try:
                 return next(islice(self, i, i + 1, 1))
             except StopIteration:

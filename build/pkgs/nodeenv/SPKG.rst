@@ -1,5 +1,5 @@
-nodeenv
-=======
+nodeenv: A tool to create isolated node.js environments
+=======================================================
 
 Description
 -----------

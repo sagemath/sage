@@ -304,7 +304,7 @@ class Semigroups(CategoryWithAxiom):
             from sage.graphs.digraph import DiGraph
             from .monoids import Monoids
             from .groups import Groups
-            if not side in ["left", "right", "twosided"]:
+            if side not in ["left", "right", "twosided"]:
                 raise ValueError("option 'side' must be 'left', 'right' or 'twosided'")
             if elements is None:
                 assert self.is_finite(), "elements should be specified for infinite semigroups"
@@ -314,7 +314,7 @@ class Semigroups(CategoryWithAxiom):
             if simple or self in Groups():
                 result = DiGraph()
             else:
-                result = DiGraph(multiedges = True, loops = True)
+                result = DiGraph(multiedges=True, loops=True)
             result.add_vertices(elements)
 
             if connecting_set is not None:
@@ -454,7 +454,7 @@ class Semigroups(CategoryWithAxiom):
                  as a permutation group over Integer Ring
             """
             if base_ring is None:
-                from sage.rings.all import ZZ
+                from sage.rings.integer_ring import ZZ
                 base_ring = ZZ
             from sage.modules.with_basis.representation import TrivialRepresentation
             return TrivialRepresentation(self, base_ring)
@@ -474,7 +474,7 @@ class Semigroups(CategoryWithAxiom):
                  as a permutation group over Integer Ring
             """
             if base_ring is None:
-                from sage.rings.all import ZZ
+                from sage.rings.integer_ring import ZZ
                 base_ring = ZZ
             from sage.modules.with_basis.representation import RegularRepresentation
             return RegularRepresentation(self, base_ring, side)

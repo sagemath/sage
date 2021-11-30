@@ -20,7 +20,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.structure.parent import Parent
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.rings.all import (ZZ, CommutativeRing)
 from sage.rings.ideal import is_Ideal
 from sage.structure.unique_representation import UniqueRepresentation
@@ -866,11 +866,11 @@ class AffineScheme(UniqueRepresentation, Scheme):
             <class 'sage.schemes.generic.scheme.AffineScheme_with_category'>
         """
         from sage.categories.commutative_rings import CommutativeRings
-        if not R in CommutativeRings():
+        if R not in CommutativeRings():
             raise TypeError("R (={}) must be a commutative ring".format(R))
         self.__R = R
-        if not S is None:
-            if not S in CommutativeRings():
+        if S is not None:
+            if S not in CommutativeRings():
                 raise TypeError("S (={}) must be a commutative ring".format(S))
             if not R.has_coerce_map_from(S):
                 raise ValueError("There must be a natural map S --> R, but S = {} and R = {}".format(S, R))

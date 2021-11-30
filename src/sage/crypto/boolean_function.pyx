@@ -996,11 +996,11 @@ cdef class BooleanFunction(SageObject):
         G = R.gens()
         r = [R(1)]
 
-        from sage.modules.all import vector
+        from sage.modules.free_module_element import vector
         s = vector(self.truth_table()).support()
 
         from sage.combinat.combination import Combinations
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
 
         from sage.matrix.constructor import Matrix
         from sage.arith.all import binomial
@@ -1387,7 +1387,7 @@ cdef class BooleanFunctionIterator:
             sage: from sage.crypto.boolean_function import BooleanFunction
             sage: B = BooleanFunction(3)
             sage: type(B.__iter__())
-            <type 'sage.crypto.boolean_function.BooleanFunctionIterator'>
+            <class 'sage.crypto.boolean_function.BooleanFunctionIterator'>
         """
         self.f = f
         self.index = -1
@@ -1439,9 +1439,8 @@ def random_boolean_function(n):
         sage: B = random_boolean_function(9)
         sage: B.nvariables()
         9
-        sage: B.nonlinearity()
-        217                     # 32-bit
-        222                     # 64-bit
+        sage: while not (210 < B.nonlinearity() < 220):
+        ....:     B = random_boolean_function(9)
     """
     from sage.misc.randstate import current_randstate
     r = current_randstate().python_random()

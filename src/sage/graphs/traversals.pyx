@@ -38,16 +38,16 @@ Methods
 from collections import deque
 
 from libc.string cimport memset
-from sage.ext.memory_allocator cimport MemoryAllocator
-from sage.graphs.base.static_sparse_graph cimport init_short_digraph
-from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
 from libc.stdint cimport uint32_t
-from cysignals.signals cimport sig_on, sig_off, sig_check
-
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
+from cysignals.signals cimport sig_on, sig_off, sig_check
+from memory_allocator cimport MemoryAllocator
+
+from sage.graphs.base.static_sparse_graph cimport init_short_digraph
+from sage.graphs.base.static_sparse_graph cimport free_short_digraph
+from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
 
 
 def _is_valid_lex_BFS_order(G, L):
@@ -1937,7 +1937,7 @@ def maximum_cardinality_search_M(G, initial_vertex=None):
     - `F` is the list of edges of a minimal triangulation of `G` according
       `\alpha`
 
-    - `X` is is a list of vertices such that for each `x \in X`, the
+    - `X` is a list of vertices such that for each `x \in X`, the
       neighborhood of `x` in `G` is a separator (i.e., `G \setminus N(x)` is not
       connected). Note that we may have `N(x) = \emptyset` if `G` is not
       connected and `x` has degree 0.

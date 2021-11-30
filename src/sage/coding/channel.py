@@ -44,8 +44,9 @@ This file contains the following elements:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+from copy import copy
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer import Integer
@@ -55,8 +56,7 @@ from sage.modules.free_module_element import vector
 from sage.misc.abstract_method import abstract_method
 from sage.categories.cartesian_product import cartesian_product
 from sage.modules.free_module import VectorSpace
-from sage.functions.other import binomial
-from copy import copy
+from sage.arith.misc import binomial
 
 
 def random_error_vector(n, F, error_positions):

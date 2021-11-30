@@ -1,7 +1,13 @@
 #! /doesnotexist/python3
-#  this interpreter will be replaced by the interpreter in the venv
-#  during installation.
-
+#
+#  This interpreter will be replaced by the interpreter in the venv
+#  during installation.  The "sage" script uses this script to
+#  determine the correct SAGE_VENV.
+#
+#  By using a non-existing interpreter here in src/bin/sage-venv-config,
+#  we make sure that it cannot be successfully executed accidentally,
+#  which would give the wrong SAGE_VENV.
+#
 VERSION = 'unknown'
 
 try:

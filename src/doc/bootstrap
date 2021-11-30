@@ -26,7 +26,7 @@ mkdir -p "$OUTPUT_DIR"
 shopt -s extglob
 
 for SYSTEM in arch debian fedora cygwin homebrew conda; do
-    SYSTEM_PACKAGES=$(echo $(${STRIP_COMMENTS} build/pkgs/$SYSTEM.txt))
+    SYSTEM_PACKAGES=
     OPTIONAL_SYSTEM_PACKAGES=
     SAGELIB_SYSTEM_PACKAGES=
     SAGELIB_OPTIONAL_SYSTEM_PACKAGES=
@@ -108,20 +108,73 @@ cat > "$OUTPUT_INDEX" <<EOF
 External Packages
 =================
 
+Standard Packages
+-----------------
+
+The Sage distribution includes most programs and libraries on which
+Sage depends.  It installs them automatically if it does not find
+equivalent system packages.
+
+EOF
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst :standard: | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Optional Packages
+-----------------
+
+For additional functionality, you can install some of the following
+optional packages.
+
+EOF
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst :optional: | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Experimental Packages
+---------------------
+
+Some packages that provide additional functionality are marked as
+"experimental".  Developers are needed in order to improve the
+integration of these packages into the Sage distribution.
+
+EOF
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst :experimental: | sort); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+All External Packages
+---------------------
+
+.. toctree::
+   :maxdepth: 1
+
+   index_alph
+
+EOF
+
+OUTPUT_INDEX="$OUTPUT_DIR"/index_alph.rst
+cat >> "$OUTPUT_INDEX" <<EOF
+Details of external packages
+============================
+
+Packages are in alphabetical order.
+
 .. toctree::
    :maxdepth: 1
 
 EOF
-for PKG_BASE in $(./sage --package list --has-file SPKG.rst); do
+for PKG_BASE in $(./sage --package list --has-file SPKG.rst | sort); do
             PKG_SCRIPTS=build/pkgs/$PKG_BASE
             # Instead of just copying, we may want to call
             # a version of sage-spkg-info to format extra information.
-            cp "$PKG_SCRIPTS"/SPKG.rst "$OUTPUT_DIR"/$PKG_BASE.rst
+
+            (echo ".. _spkg_$PKG_BASE:" && echo && OUTPUT_RST=1 sage-spkg-info $PKG_BASE) > "$OUTPUT_DIR"/$PKG_BASE.rst
             echo >> "$OUTPUT_INDEX" "   $PKG_BASE"
 done
-cat >> "$OUTPUT_INDEX" <<EOF
-.. include:: ../footer.txt
-EOF
 
 # #30064: Create the directory first
 OUTPUT_DIR="src/doc/en/reference/repl"

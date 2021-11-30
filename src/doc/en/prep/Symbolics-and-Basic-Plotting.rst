@@ -122,28 +122,6 @@ But with ``FV=100*e^(r*t)``, there is no particular reason :math:`r` or
     128.402541668774
     128.402541668774
 
-This is why we receive a deprecation error message when we try to do
-:math:`FV` without explicitly mentioning the variables.
-
-::
-
-    sage: FV(5,.05)
-    doctest:...: DeprecationWarning: Substitution using function-call syntax and unnamed arguments is deprecated and will be removed from a future release of Sage; you can use named arguments instead, like EXPR(x=..., y=...)
-    See http://trac.sagemath.org/5930 for details.
-    128.402541668774
-
-In this case, the outcome is the same, since :math:`rt=tr`!  Of course,
-in most expressions, one would not be so lucky, as the following example
-indicates.
-
-::
-
-    sage: y = var('y')
-    sage: G = x*y^2
-    sage: G(1,2); G(2,1)
-    4
-    2
-
 Also remember that when we don't use function notation, we'll need to
 define our variables.
 

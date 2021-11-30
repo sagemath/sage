@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Finite State Machines, Automata, Transducers
+Finite state machines, automata, transducers
 
 This module adds support for finite state machines, automata and
 transducers.
@@ -136,7 +136,6 @@ Operations
     :meth:`Transducer.cartesian_product` | Cartesian product of a transducer with another finite state machine
     :meth:`~FiniteStateMachine.product_FiniteStateMachine` | Product of finite state machines
     :meth:`~FiniteStateMachine.composition` | Composition (output of other is input of self)
-    :meth:`~FiniteStateMachine.__call__` | Composition with other finite state machine
     :meth:`~FiniteStateMachine.input_projection` | Input projection (output is deleted)
     :meth:`~FiniteStateMachine.output_projection` | Output projection (old output is new input)
     :meth:`~FiniteStateMachine.projection` | Input or output projection
@@ -1779,8 +1778,6 @@ class FSMState(SageObject):
             False
             sage: B.initial_probability == A.initial_probability
             True
-            sage: B.initial_probability is A.initial_probability
-            False
         """
         return deepcopy(self, memo)
 
@@ -3889,10 +3886,10 @@ class FiniteStateMachine(SageObject):
             (1, 0, 1, 1, 0, 1, 0, 1, 1, 0)
             sage: type(inverter((1, 0, 1, 1, 0, 1, 0, 1, 1, 0),
             ....:               automatic_output_type=False))
-            <... 'list'>
+            <class 'list'>
             sage: type(inverter((1, 0, 1, 1, 0, 1, 0, 1, 1, 0),
             ....:               automatic_output_type=True))
-            <... 'tuple'>
+            <class 'tuple'>
         """
         if not args:
             raise TypeError("Called with too few arguments.")
@@ -15252,6 +15249,5 @@ def setup_latex_preamble():
         True
     """
     latex.add_package_to_preamble_if_available('tikz')
-    latex.add_to_mathjax_avoid_list("tikz")
     if latex.has_file("tikz.sty"):
         latex.add_to_preamble(r'\usetikzlibrary{automata}')

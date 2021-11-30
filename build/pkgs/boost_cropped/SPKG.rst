@@ -1,5 +1,5 @@
-Boost
-=====
+boost_cropped: Portable C++ libraries (subset needed for Sage)
+==============================================================
 
 Description
 -----------
@@ -19,8 +19,6 @@ new C++0x Standard now being finalized. C++0x will also include several
 more Boost libraries in addition to those from TR1. More Boost libraries
 are proposed for TR2.
 
-Website: http://www.boost.org/
-
 License
 -------
 
@@ -29,6 +27,8 @@ Boost Software License - see http://www.boost.org/users/license.html
 
 Upstream Contact
 ----------------
+
+Website: http://www.boost.org/
 
 See mailing list page at http://www.boost.org/community/groups.html
 

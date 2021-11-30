@@ -10,11 +10,11 @@ cdef extern from "gsl/gsl_complex.h":
 
   int GSL_COMPLEX_EQ(gsl_complex z1,gsl_complex z2)
 
-  double GSL_SET_COMPLEX(gsl_complex * zp, double  x, double  y)
+  void GSL_SET_COMPLEX(gsl_complex * zp, double  x, double  y)
 
-  double GSL_SET_REAL(gsl_complex * zp, double x)
+  void GSL_SET_REAL(gsl_complex * zp, double x)
 
-  double GSL_SET_IMAG(gsl_complex * zp, double y)
+  void GSL_SET_IMAG(gsl_complex * zp, double y)
 
 
 cdef extern from "gsl/gsl_complex_math.h":

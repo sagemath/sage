@@ -1,15 +1,17 @@
-glucose
-=======
+glucose: A SAT solver
+=====================
 
 Description
 -----------
 
 Glucose is a SAT solver.
 
-Citing its website: \*The name of the solver is a contraction of the
-concept of "glue clauses", a particular kind of clauses that glucose
-detects and preserves during search. Glucose is heavily based on
-Minisat, so please do cite Minisat also if you want to cite Glucose.\*
+Citing its website:
+
+  The name of the solver is a contraction of the
+  concept of "glue clauses", a particular kind of clauses that glucose
+  detects and preserves during search. Glucose is heavily based on
+  Minisat, so please do cite Minisat also if you want to cite Glucose.
 
 License
 -------

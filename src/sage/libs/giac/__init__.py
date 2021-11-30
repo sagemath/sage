@@ -198,8 +198,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         sage: P = PolynomialRing(QQ,5, 'x')
         sage: I = ideal([P.random_element(3,7) for j in range(5)])
         sage: B1 = gb_giac(I.gens(),1e-16) # long time (1s)
-        ...Running a probabilistic check for the reconstructed Groebner basis.
-        If successfull, error probability is less than 1e-16 ...
+        ...
         sage: sage.structure.proof.all.polynomial(True)
         sage: B2 = gb_giac(I.gens()) # long time (4s)
         <BLANKLINE>
@@ -214,7 +213,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         sage: P = PolynomialRing(QQ, 8, 'x')
         sage: I = sage.rings.ideal.Cyclic(P)
         sage: time B = gb_giac(I.gens(),1e-6,threads=2) # doctest: +SKIP
-        Running a probabilistic check for the reconstructed Groebner basis...
+        ...
         Time: CPU 168.98 s, Wall: 94.13 s
 
     You can get detailled information by setting ``prot=True``
@@ -237,7 +236,7 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         checking pairs for i=73, j=
         Number of critical pairs to check 373
         +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++...
-        Successfull check of 373 critical pairs
+        Successful... check of 373 critical pairs
         12380865 end final check
         Polynomial Sequence with 74 Polynomials in 8 Variables
 
@@ -354,6 +353,6 @@ def groebner_basis(gens, proba_epsilon=None, threads=None, prot=False,
         gb_giac = F.gbasis(list(var_names), giac_order)
 
     else:
-        gb_giac = F.eliminate(list(elim_variables))
+        gb_giac = F.eliminate(list(elim_variables), 'gbasis')
 
     return PolynomialSequence(gb_giac, P, immutable=True)

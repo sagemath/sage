@@ -823,6 +823,19 @@ def contour_plot(f, xrange, yrange, **options):
         sage: contour_plot(x - y^2, (x,-5,5), (y,-3,3),
         ....:              contours=[-4,-2,0], fill=False)
         Graphics object consisting of 1 graphics primitive
+
+    Check that :trac:`18074` is fixed::
+
+        sage: contour_plot(0, (0,1), (0,1))
+        ... UserWarning: No contour levels were found within the data range.
+        Graphics object consisting of 1 graphics primitive
+
+    Domain points in :trac:`11648` with complex output are now skipped::
+
+        sage: x,y = SR.var('x,y', domain='real')
+        sage: contour_plot(log(x) + log(y), (-1, 5), (-1, 5))
+        Graphics object consisting of 1 graphics primitive
+
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
@@ -1182,8 +1195,8 @@ def implicit_plot(f, xrange, yrange, **options):
         ...
         ValueError: only one of color or rgbcolor should be specified
     """
-    from sage.symbolic.expression import is_SymbolicEquation
-    if is_SymbolicEquation(f):
+    from sage.structure.element import Expression
+    if isinstance(f, Expression) and f.is_relational():
         if f.operator() != operator.eq:
             raise ValueError("input to implicit plot must be function "
                              "or equation")
@@ -1204,8 +1217,8 @@ def implicit_plot(f, xrange, yrange, **options):
         options.pop('contours', None)
         incol = options.pop('fillcolor', 'blue')
         bordercol = options.pop('cmap', [None])[0]
-        from sage.symbolic.expression import is_Expression
-        if not is_Expression(f):
+        from sage.structure.element import Expression
+        if not isinstance(f, Expression):
             return region_plot(lambda x, y: f(x, y) < 0, xrange, yrange,
                                borderwidth=linewidths, borderstyle=linestyles,
                                incol=incol, bordercol=bordercol,
@@ -1486,7 +1499,7 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
     """
     from sage.plot.all import Graphics
     from sage.plot.misc import setup_for_eval_on_grid
-    from sage.symbolic.expression import is_Expression
+    from sage.structure.element import Expression
     from warnings import warn
     import numpy
 
@@ -1494,10 +1507,10 @@ def region_plot(f, xrange, yrange, plot_points, incol, outcol, bordercol,
         f = [f]
 
     feqs = [equify(g) for g in f
-            if is_Expression(g) and g.operator() is operator.eq
+            if isinstance(g, Expression) and g.operator() is operator.eq
             and not equify(g).is_zero()]
     f = [equify(g) for g in f
-         if not (is_Expression(g) and g.operator() is operator.eq)]
+         if not (isinstance(g, Expression) and g.operator() is operator.eq)]
     neqs = len(feqs)
     if neqs > 1:
         warn("There are at least 2 equations; "
@@ -1607,8 +1620,8 @@ def equify(f):
         -1
     """
     from sage.calculus.all import symbolic_expression
-    from sage.symbolic.expression import is_Expression
-    if not is_Expression(f):
+    from sage.structure.element import Expression
+    if not isinstance(f, Expression):
         return lambda x, y: -1 if f(x, y) else 1
 
     op = f.operator()

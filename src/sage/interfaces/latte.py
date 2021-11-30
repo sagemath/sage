@@ -110,6 +110,17 @@ def count(arg, ehrhart_polynomial=False, multivariate_generating_function=False,
         sage: count(cddin, cdd=True, raw_output=False)  # optional - latte_int
         1
 
+    Testing the runtime error::
+
+        sage: P = Polyhedron(rays=[[0,1], [1,0]])
+        sage: cddin = P.cdd_Hrepresentation()
+        sage: count(cddin, cdd=True, raw_output=False)  # optional - latte_int
+        Traceback (most recent call last):
+        ...
+        RuntimeError: LattE integrale program failed (exit code 1):
+        This is LattE integrale ...
+        ...
+        The polyhedron is unbounded.
     """
     # Check that LattE is present
     Latte().require()
@@ -307,6 +318,17 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
         ...
         Invocation: integrate --valuation=volume --triangulate --redundancy-check=none --cdd /dev/stdin
         ...
+
+    Testing the runtime error::
+
+        sage: P = Polyhedron(rays=[[1,0],[0,1]])
+        sage: P._volume_latte()  # optional - latte_int
+        Traceback (most recent call last):
+        ...
+        RuntimeError: LattE integrale program failed (exit code -6):
+        This is LattE integrale ...
+        ...
+        determinant: nonsquare matrix
     """
     # Check that LattE is present
     Latte().require()
@@ -366,6 +388,8 @@ def integrate(arg, polynomial=None, algorithm='triangulate', raw_output=False, v
                        cwd=str(SAGE_TMP))
 
     ans, err = latte_proc.communicate(arg)
+    if err:
+        err = bytes_to_str(err)
     ret_code = latte_proc.poll()
     if ret_code:
         if err is None:
@@ -408,12 +432,21 @@ def to_latte_polynomial(polynomial):
         sage: to_latte_polynomial(f)
         '[[3, [2, 4, 6]], [7, [0, 3, 5]]]'
 
+        sage: to_latte_polynomial(x.parent().zero())
+        '[]'
+
     Testing a univariate polynomial::
 
         sage: x = polygen(QQ, 'x')
         sage: to_latte_polynomial((x-1)^2)
         '[[1, [0]], [-2, [1]], [1, [2]]]'
+
+        sage: to_latte_polynomial(x.parent().zero())
+        '[]'
     """
+    if polynomial == 0:
+        return str([])
+
     from sage.rings.polynomial.polydict import ETuple
 
     coefficients_list = polynomial.coefficients()
@@ -426,8 +459,8 @@ def to_latte_polynomial(polynomial):
         exponents_list = [[exponent_vector_i] for exponent_vector_i in polynomial.exponents()]
 
     # assuming that the order in coefficients() and exponents() methods match
-    monomials_list = zip(coefficients_list, exponents_list)
-    monomials_list = [list(monomial_i) for monomial_i in monomials_list]
-    monomials_list = str(monomials_list)
+    monomials_list = [list(monomial_i)
+                      for monomial_i
+                      in zip(coefficients_list, exponents_list)]
 
-    return monomials_list
+    return str(monomials_list)

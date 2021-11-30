@@ -961,13 +961,33 @@ framework. Here is a comprehensive list:
       sage: hash(c)  # random
       This doctest passes too, as the output is not checked
 
-  However, most functions generating pseudorandom output do not need this tag
-  since the doctesting framework guarantees the state of the pseudorandom
-  number generators (PRNGs) used in Sage for a given doctest.
-
+  Doctests are expected to pass with any state of the pseudorandom number
+  generators (PRNGs).
   When possible, avoid the problem, e.g.: rather than checking the value of the
   hash in a doctest, one could illustrate successfully using it as a key in a
   dict.
+
+  One can also avoid the ``random``-tag by checking basic properties::
+
+      sage: QQ.random_element().parent() is QQ
+      True
+      sage: QQ.random_element() in QQ
+      True
+      sage: a = QQ.random_element()
+      sage: b = QQ._random_nonzero_element()
+      sage: c = QQ._random_nonzero_element()
+      sage: (a/c) / (b/c) == a/b
+      True
+
+  Distribution can be checked with loops::
+
+      sage: found = {i: False for i in range(-2, 3)}
+      sage: while not all(found.values()):
+      ....:     found[ZZ.random_element(-2, 3)] = True
+
+  This is mathematically correct, as it is
+  guaranteed to terminate. However, there is a
+  nonzero probability of a timout.
 
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.
@@ -1059,6 +1079,26 @@ framework. Here is a comprehensive list:
 
       sage: SloaneEncyclopedia[60843]    # optional - sloane_database
 
+    .. NOTE::
+
+       If one of the first 10 lines of a file starts with any of
+       ``r""" sage.doctest: optional - keyword``
+       (or ``""" sage.doctest: optional - keyword``
+       or ``# sage.doctest: optional - keyword``
+       or ``% sage.doctest: optional - keyword``
+       or ``.. sage.doctest: optional - keyword``,
+       or any of these with different spacing),
+       then that file will be skipped unless
+       the ``--optional=keyword`` flag is passed to ``sage -t``.
+
+       This does not apply to files which are explicitly given
+       as command line arguments: those are always tested.
+
+       If you add such a line to a file, you are strongly encouraged
+       to add a note to the module-level documentation, saying that
+       the doctests in this file will be skipped unless the
+       appropriate conditions are met.
+
   - **internet:** For lines that require an internet connection::
 
        sage: oeis(60843)                 # optional - internet
@@ -1081,9 +1121,10 @@ framework. Here is a comprehensive list:
   .. NOTE::
 
       - Any words after ``# optional`` are interpreted as a list of
-        package names, separated by spaces.
+        package (spkg) names or other feature tags, separated by spaces.
 
-      - Any punctuation (periods, commas, hyphens, semicolons, ...) after the
+      - Any punctuation other than underscores (``_``) and periods (``.``),
+        that is, commas, hyphens, semicolons, ..., after the
         first word ends the list of packages.  Hyphens or colons between the
         word ``optional`` and the first package name are allowed.  Therefore,
         you should not write ``optional: needs package CHomP`` but simply
@@ -1231,8 +1272,8 @@ Global Options
 Global options for classes can be defined in Sage using
 :class:`~sage.structure.global_options.GlobalOptions`.
 
-Miscellanous minor things
-=========================
+Miscellaneous minor things
+==========================
 
 Some decisions are arbitrary, but common conventions make life easier.
 
@@ -1260,7 +1301,7 @@ Some decisions are arbitrary, but common conventions make life easier.
     result. With ``certificate=True`` the return value should be a
     pair `(r, c)` where `r` is the result that would be given with
     ``certificate=False`` and `c` is the certificate or ``None`` if
-    there is no meaningfull certificate.
+    there is no meaningful certificate.
 
   * ``proof``, a Boolean with ``True`` as default: if ``True``,
     require a mathematically proven computation. If ``False``, a

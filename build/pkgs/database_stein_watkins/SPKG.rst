@@ -1,5 +1,5 @@
-database_stein_watkins
-======================
+database_stein_watkins: Database of elliptic curves (full version)
+==================================================================
 
 Description
 -----------

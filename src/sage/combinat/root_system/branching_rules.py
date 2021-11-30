@@ -15,7 +15,7 @@ from sage.misc.flatten import flatten
 from sage.structure.sage_object import SageObject
 from sage.combinat.root_system.cartan_type import CartanType
 from sage.modules.free_module_element import vector
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.misc.functional import is_even, is_odd
 
 
@@ -979,7 +979,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         sage: A3(0,1,0).branch(C2,rule=br)
         C2(0,0) + C2(0,1)
     """
-    if isinstance(rule, str) or isinstance(rule, list):
+    if isinstance(rule, (str, list)):
         rule = branching_rule(R._cartan_type, S._cartan_type, rule)
     if hasattr(rule, "_S"):
         if rule._S != S.cartan_type():

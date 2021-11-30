@@ -24,10 +24,22 @@ SAGE_SPKG_CONFIGURE([lcalc], [
             AC_MSG_RESULT([no; install lcalc])
             sage_spkg_install_lcalc=yes
             LIBS=$LCALC_SAVED_LIBS
+            ], [
+               AC_MSG_RESULT([cross compiling; check linking only])
+                 AC_LINK_IFELSE([
+                   AC_LANG_PROGRAM([[#include <Lfunction/L.h>]],
+                             [[initialize_globals();
+                               Complex x;
+                               x = Pi*I;
+                               L_function<int> L4;
+                               return 0;]]
+                   )], [AC_MSG_RESULT([yes; use lcalc from the system])], [
+                   AC_MSG_RESULT([no; install lcalc])
+                   sage_spkg_install_lcalc=yes
+                   LIBS=$LCALC_SAVED_LIBS
+                 ])
+            ])
           ])
-               ], [
-               AC_MSG_RESULT([no. Install lcalc])
-               sage_spkg_install_lcalc=yes])
         ])
     ])
     m4_popdef([SAGE_LCALC_MINVER])

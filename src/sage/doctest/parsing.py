@@ -34,12 +34,14 @@ from functools import reduce
 from .external import available_software
 
 float_regex = re.compile(r'\s*([+-]?\s*((\d*\.?\d+)|(\d+\.?))([eE][+-]?\d+)?)')
-optional_regex = re.compile(r'(arb216|arb218|py2|py3|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w)*))')
+optional_regex = re.compile(r'(arb216|arb218|py2|py3|long time|not implemented|not tested|known bug)|([^ a-z]\s*optional\s*[:-]*((\s|\w|[.])*))')
 # Version 4.65 of glpk prints the warning "Long-step dual simplex will
 # be used" frequently. When Sage uses a system installation of glpk
 # which has not been patched, we need to ignore that message.
 # See :trac:`29317`.
 glpk_simplex_warning_regex = re.compile(r'(Long-step dual simplex will be used)')
+# :trac:`31204` -- suppress warning about ld and OS version for dylib files.
+ld_warning_regex = re.compile(r'.*dylib.*was built for newer macOS version.*than being linked.*')
 find_sage_prompt = re.compile(r"^(\s*)sage: ", re.M)
 find_sage_continuation = re.compile(r"^(\s*)\.\.\.\.:", re.M)
 find_python_continuation = re.compile(r"^(\s*)\.\.\.([^\.])", re.M)
@@ -81,9 +83,17 @@ def RIFtol(*args):
     """
     global _RIFtol
     if _RIFtol is None:
-        # We need to import from sage.all to avoid circular imports.
-        from sage.all import RealIntervalField
-        _RIFtol = RealIntervalField(1044)
+        try:
+            # We need to import from sage.all to avoid circular imports.
+            from sage.all import RealIntervalField
+        except ImportError:
+            from warnings import warn
+            warn("RealIntervalField not available, ignoring all tolerance specifications in doctests")
+            def fake_RIFtol(*args):
+                return 0
+            _RIFtol = fake_RIFtol
+        else:
+            _RIFtol = RealIntervalField(1044)
     return _RIFtol(*args)
 
 # This is the correct pattern to match ISO/IEC 6429 ANSI escape sequences:
@@ -141,51 +151,6 @@ def remove_unicode_u(string):
     return string
 
 
-_type_repr_re = re.compile(r"<type '(?P<name>[^']+)'>")
-
-def normalize_type_repr(s):
-    r"""
-    Convert the repr of type objects (e.g. ``int``, ``float``) from their
-    Python 2 representation to their Python 3 representation.
-
-    In Python 2, the repr of built-in types like ``int`` is like
-    ``<type 'int'>``, whereas user-defined pure Python classes are displayed
-    as ``<class 'classname'>``.  On Python 3 this was normalized so that
-    built-in types are represented the same as user-defined classes (e.g.
-    ``<class 'int'>``.
-
-    This simply normalizes all class/type reprs to the Python 3 convention for
-    the sake of output checking.
-
-    EXAMPLES::
-
-        sage: from sage.doctest.parsing import normalize_type_repr
-        sage: s = "<type 'int'>"
-        sage: normalize_type_repr(s)
-        "<class 'int'>"
-        sage: normalize_type_repr(repr(float))
-        "<class 'float'>"
-
-    This can work on multi-line output as well::
-
-        sage: s = "The desired output was <class 'int'>\n"
-        sage: s += "The received output was <type 'int'>"
-        sage: print(normalize_type_repr(s))
-        The desired output was <class 'int'>
-        The received output was <class 'int'>
-
-    And should work when types are embedded in other nested expressions::
-
-        sage: normalize_type_repr(repr([Integer, float]))
-        "[<class 'sage.rings.integer.Integer'>, <class 'float'>]"
-    """
-
-    def subst(m):
-        return "<class '{0}'>".format(m.group('name'))
-
-    return _type_repr_re.sub(subst, s)
-
-
 _long_repr_re = re.compile(r'([+-]?[0-9]+)[lL]')
 def normalize_long_repr(s):
     """
@@ -208,81 +173,21 @@ def normalize_long_repr(s):
     return _long_repr_re.sub(lambda m: m.group(1), s)
 
 
-_normalize_bound_method_re = re.compile(
-    r'<bound method \S+[.](?P<meth>[^. ]+)\sof\s(?P<obj>.+)>', re.M | re.S)
-
-def normalize_bound_method_repr(s):
-    """
-    Normalize differences between Python 2 and 3 in how bound methods are
-    represented.
-
-    On Python 2 bound methods are represented using the class name of the
-    object the method was bound to, whereas on Python 3 they are represented
-    with the fully-qualified name of the function that implements the method.
-
-    In the context of a doctest it's almost impossible to convert accurately
-    from the latter to the former or vice-versa, so we simplify the reprs of
-    bound methods to just the bare method name.
-
-    This is slightly regressive since it means one can't use the repr of a
-    bound method to test whether some element is getting a method from the
-    correct class (important sometimes in the cases of dynamic classes).
-    However, such tests could be written could be written more explicitly to
-    emphasize that they are testing such behavior.
-
-    EXAMPLES:
-
-    ::
-
-        sage: from sage.doctest.parsing import normalize_bound_method_repr
-        sage: el = Semigroups().example().an_element()
-        sage: el
-        42
-        sage: el.is_idempotent
-        <bound method ....is_idempotent of 42>
-        sage: normalize_bound_method_repr(repr(el.is_idempotent))
-        '<bound method is_idempotent of 42>'
-
-    An example where the object ``repr`` contains whitespace::
-
-        sage: U = DisjointUnionEnumeratedSets(
-        ....:          Family([1, 2, 3], Partitions), facade=False)
-        sage: U._element_constructor_
-        <bound method ...._element_constructor_default of Disjoint union of
-        Finite family {...}>
-        sage: normalize_bound_method_repr(repr(U._element_constructor_))
-        '<bound method _element_constructor_default of Disjoint union of Finite
-        family {...}>'
-    """
-
-    def subst(m):
-        return '<bound method {meth} of {obj}>'.format(**m.groupdict())
-
-    return _normalize_bound_method_re.sub(subst, s)
-
-
 # Collection of fixups applied in the SageOutputChecker.  Each element in this
 # this list a pair of functions applied to the actual test output ('g' for
 # "got") and the expected test output ('w' for "wanted").  The first function
 # should be a simple fast test on the expected and/or actual output to
 # determine if a fixup should be applied.  The second function is the actual
 # fixup, which is applied if the test function passes.  In most fixups only one
-# of the expected or recevied outputs are normalized, depending on the
+# of the expected or received outputs are normalized, depending on the
 # application.
 # For example, on Python 3 we strip all u prefixes from unicode strings in the
 # expected output, because we never expect to see those on Python 3.
 _repr_fixups = [
     (lambda g, w: 'u"' in w or "u'" in w,
      lambda g, w: (g, remove_unicode_u(w))),
-
-    (lambda g, w: '<class' in g and '<type' in w,
-     lambda g, w: (g, normalize_type_repr(w))),
-
     (lambda g, w: 'L' in w or 'l' in w,
-     lambda g, w: (g, normalize_long_repr(w))),
-    (lambda g, w: '<bound method' in w,
-     lambda g, w: (normalize_bound_method_repr(g),
-                   normalize_bound_method_repr(w)))
+     lambda g, w: (g, normalize_long_repr(w)))
 ]
 
 
@@ -314,6 +219,8 @@ def parse_optional_tags(string):
         {''}
         sage: sorted(list(parse_optional_tags("sage: #optional -- foo bar, baz")))
         ['bar', 'foo']
+        sage: parse_optional_tags("sage: #optional -- foo.bar, baz")
+        {'foo.bar'}
         sage: sorted(list(parse_optional_tags("    sage: factor(10^(10^10) + 1) # LoNg TiME, NoT TeSTED; OptioNAL -- P4cka9e")))
         ['long time', 'not tested', 'p4cka9e']
         sage: parse_optional_tags("    sage: raise RuntimeError # known bug")
@@ -374,7 +281,7 @@ def parse_tolerance(source, want):
         sage: from sage.doctest.parsing import parse_tolerance
         sage: marked = parse_tolerance("sage: s.update(abs_tol = .0000001)", "")
         sage: type(marked)
-        <... 'str'>
+        <class 'str'>
         sage: marked = parse_tolerance("sage: s.update(tol = 0.1); s.rel_tol # abs tol     0.01 ", "")
         sage: marked.tol
         0
@@ -527,7 +434,7 @@ class MarkedOutput(str):
 
 def make_marked_output(s, D):
     """
-    Auxilliary function for pickling.
+    Auxiliary function for pickling.
 
     EXAMPLES::
 
@@ -693,7 +600,7 @@ class SageDocTestParser(doctest.DocTestParser):
 
     def __ne__(self, other):
         """
-        Test for unequality.
+        Test for non-equality.
 
         EXAMPLES::
 
@@ -935,17 +842,17 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: want_tol = MarkedOutput().update(tol=0.0001)
             sage: want_abs = MarkedOutput().update(abs_tol=0.0001)
             sage: want_rel = MarkedOutput().update(rel_tol=0.0001)
-            sage: OC.add_tolerance(pi.n(64), want_tol).endpoints()
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_tol).endpoints()
             (3.14127849432443, 3.14190681285516)
-            sage: OC.add_tolerance(pi.n(64), want_abs).endpoints()
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_abs).endpoints()
             (3.14149265358979, 3.14169265358980)
-            sage: OC.add_tolerance(pi.n(64), want_rel).endpoints()
+            sage: OC.add_tolerance(RIF(pi.n(64)), want_rel).endpoints()
             (3.14127849432443, 3.14190681285516)
-            sage: OC.add_tolerance(1e1000, want_tol)
+            sage: OC.add_tolerance(RIF(1e1000), want_tol)
             1.000?e1000
-            sage: OC.add_tolerance(1e1000, want_abs)
+            sage: OC.add_tolerance(RIF(1e1000), want_abs)
             1.000000000000000?e1000
-            sage: OC.add_tolerance(1e1000, want_rel)
+            sage: OC.add_tolerance(RIF(1e1000), want_rel)
             1.000?e1000
             sage: OC.add_tolerance(0, want_tol)
             0.000?
@@ -956,13 +863,13 @@ class SageOutputChecker(doctest.OutputChecker):
         """
         if want.tol:
             if wantval == 0:
-                return want.tol * RIFtol(-1,1)
+                return RIFtol(want.tol) * RIFtol(-1,1)
             else:
-                return wantval * (1 + want.tol * RIFtol(-1,1))
+                return wantval * (1 + RIFtol(want.tol) * RIFtol(-1,1))
         elif want.abs_tol:
-            return wantval + want.abs_tol * RIFtol(-1,1)
+            return wantval + RIFtol(want.abs_tol) * RIFtol(-1,1)
         elif want.rel_tol:
-            return wantval * (1 + want.rel_tol * RIFtol(-1,1))
+            return wantval * (1 + RIFtol(want.rel_tol) * RIFtol(-1,1))
         else:
             return wantval
 
@@ -1076,17 +983,10 @@ class SageOutputChecker(doctest.OutputChecker):
             [u'Fermat',  u'Euler']
             sage: c = u'you'; c
             u'you'
-
-        Also allowance for the difference in reprs of ``type`` instances (i.e.
-        classes) between Python 2 and Python 3::
-
-            sage: int
-            <class 'int'>
-            sage: float
-            <class 'float'>
         """
         got = self.human_readable_escape_sequences(got)
         got = glpk_simplex_warning_regex.sub('', got)
+        got = ld_warning_regex.sub('', got)
         if isinstance(want, MarkedOutput):
             if want.random:
                 return True

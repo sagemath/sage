@@ -1,16 +1,69 @@
+r"""
+Combinatorics
+
+Introductory material
+---------------------
+
+- :ref:`sage.combinat.quickref`
+- :ref:`sage.combinat.tutorial`
+
+Thematic indexes
+----------------
+
+- :ref:`sage.combinat.algebraic_combinatorics`
+
+  - :ref:`sage.combinat.chas.all`
+  - :ref:`sage.combinat.cluster_algebra_quiver.all`
+  - :ref:`sage.combinat.crystals.all`
+  - :ref:`sage.combinat.root_system.all`
+  - :ref:`sage.combinat.sf.all`
+  - :class:`~sage.combinat.fully_commutative_elements.FullyCommutativeElements`
+
+- :ref:`sage.combinat.counting`
+- :ref:`sage.combinat.enumerated_sets`
+- :ref:`sage.combinat.catalog_partitions`
+- :ref:`sage.combinat.finite_state_machine`
+- :ref:`sage.combinat.species.all`
+- :ref:`sage.combinat.designs.all`
+- :ref:`sage.combinat.posets.all`
+- :ref:`sage.combinat.words`
+
+Utilities
+---------
+
+- :ref:`sage.combinat.output`
+- :ref:`sage.combinat.ranker`
+- :func:`Combinatorial maps <sage.combinat.combinatorial_map.combinatorial_map>`
+- :ref:`sage.combinat.misc`
+
+Related topics
+--------------
+
+- :ref:`sage.coding`
+- :ref:`sage.dynamics`
+- :ref:`sage.graphs`
+
 """
-Combinatorics features that are imported by default in the interpreter namespace
-"""
+# install the docstring of this module to the containing package
+from sage.misc.namespace_package import install_doc
+install_doc(__package__, __doc__)
+
+from . import quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
 
 from .combinat import bell_number, catalan_number, euler_number, fibonacci, \
         lucas_number1, lucas_number2, stirling_number1, stirling_number2, \
         polygonal_number, CombinatorialObject, CombinatorialClass, \
-        FilteredCombinatorialClass, UnionCombinatorialClass, \
-        MapCombinatorialClass, InfiniteAbstractCombinatorialClass, \
+        MapCombinatorialClass, \
         tuples, number_of_tuples, unordered_tuples, number_of_unordered_tuples, \
         bell_polynomial, fibonacci_sequence, fibonacci_xrange, bernoulli_polynomial
+
+lazy_import('sage.combinat.combinat',
+            ('InfiniteAbstractCombinatorialClass', 'UnionCombinatorialClass',
+             'FilteredCombinatorialClass'),
+            deprecation=(31545, 'this class is deprecated, do not use'))
+
 
 from .expnums import expnums
 
@@ -208,9 +261,11 @@ lazy_import('sage.combinat.finite_state_machine',
 lazy_import('sage.combinat.finite_state_machine_generators',
             ['automata', 'transducers'])
 
-# Binary Recurrence Sequences
+# Sequences
 lazy_import('sage.combinat.binary_recurrence_sequences',
             'BinaryRecurrenceSequence')
+lazy_import('sage.combinat.recognizable_series', 'RecognizableSeriesSpace')
+lazy_import('sage.combinat.k_regular_sequence', 'kRegularSequenceSpace')
 
 # Six Vertex Model
 lazy_import('sage.combinat.six_vertex_model', 'SixVertexModel')

@@ -1,5 +1,5 @@
-LIBHOMFLY
-=========
+libhomfly: Compute the homfly polynomial of knots and links
+===========================================================
 
 Description
 -----------

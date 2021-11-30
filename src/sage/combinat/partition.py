@@ -281,6 +281,7 @@ We use the lexicographic ordering::
 # ****************************************************************************
 
 from copy import copy
+from itertools import accumulate
 
 from sage.libs.all import pari
 from sage.libs.flint.arith import number_of_partitions as flint_number_of_partitions
@@ -295,7 +296,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import('sage.combinat.skew_partition', 'SkewPartition')
 lazy_import('sage.combinat.partition_tuple', 'PartitionTuple')
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.prandom import randrange
 from sage.misc.cachefunc import cached_method, cached_function
 
@@ -316,12 +317,13 @@ from . import composition
 from sage.combinat.partitions import ZS1_iterator, ZS1_iterator_nk
 from sage.combinat.integer_vector import IntegerVectors
 from sage.combinat.integer_lists import IntegerListsLex
+from sage.combinat.integer_vector_weighted import iterator_fast as weighted_iterator_fast
 from sage.combinat.combinat_cython import conjugate
 from sage.combinat.root_system.weyl_group import WeylGroup
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.groups.perm_gps.permgroup import PermutationGroup
 from sage.graphs.dot2tex_utils import have_dot2tex
-from sage.functions.other import binomial
+from sage.arith.all import binomial
 
 
 class Partition(CombinatorialElement):
@@ -966,7 +968,6 @@ class Partition(CombinatorialElement):
         return '%s' % ','.join('%s%s' % (M-m, '' if e==1 else '^{%s}'%e)
                                  for (m,e) in enumerate(exp) if e>0)
 
-
     def ferrers_diagram(self):
         r"""
         Return the Ferrers diagram of ``self``.
@@ -1032,7 +1033,7 @@ class Partition(CombinatorialElement):
 
     def __truediv__(self, p):
         """
-        Returns the skew partition ``self / p``.
+        Return the skew partition ``self / p``.
 
         EXAMPLES::
 
@@ -1704,6 +1705,7 @@ class Partition(CombinatorialElement):
         min = min + [0] * (len(max) - len(min))
         # finally, run the algo to find next_p
         next_p = copy(p)
+
         def condition(a, b):
             if partition_type in ('strict', 'strictly decreasing'):
                 return a < b - 1
@@ -2645,10 +2647,9 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2,2]).initial_tableau()
             [[1, 2, 3], [4, 5], [6, 7]]
         """
-        mu = self._list
-        # In Python 3, improve this using itertools.accumulate
-        tab = [list(range(1+sum(mu[:i]), 1+sum(mu[:(i+1)])))
-               for i in range(len(mu))]
+        sigma = list(accumulate([1] + self._list))
+        tab = [list(range(sigma[i], sigma[i + 1]))
+               for i in range(len(sigma) - 1)]
         return tableau.StandardTableau(tab)
 
     def initial_column_tableau(self):
@@ -4631,7 +4632,7 @@ class Partition(CombinatorialElement):
             sage: p = Partition([2,1]).to_list(); p
             [2, 1]
             sage: type(p)
-            <... 'list'>
+            <class 'list'>
 
         TESTS::
 
@@ -4987,7 +4988,7 @@ class Partition(CombinatorialElement):
         from sage.combinat.misc import umbral_operation
         return umbral_operation(res)
 
-    def dimension(self, smaller = [], k = 1):
+    def dimension(self, smaller=None, k=1):
         r"""
         Return the number of paths from the ``smaller`` partition to
         the partition ``self``, where each step consists of adding a
@@ -5054,7 +5055,7 @@ class Partition(CombinatorialElement):
         Checks that the dimension satisfies the obvious recursion relation::
 
             sage: test = lambda larger, smaller: larger.dimension(smaller) == sum(mu.dimension(smaller) for mu in larger.down())
-            sage: all(test(larger,smaller) for l in range(1,10) for s in range(0,10)
+            sage: all(test(larger,smaller) for l in range(1,10) for s in range(10)
             ....:     for larger in Partitions(l) for smaller in Partitions(s) if smaller != larger)
             True
 
@@ -5074,7 +5075,7 @@ class Partition(CombinatorialElement):
         - Paul-Olivier Dehaye (2011-06-07)
         """
         larger = self
-        if smaller == []:
+        if smaller is None:
             smaller = Partition([])
         if k == 1:
             if smaller == Partition([]):        # In this case, use the hook dimension formula
@@ -5281,6 +5282,7 @@ class Partition(CombinatorialElement):
                 if coloring is None:
                     d = {2: 'red', 3: 'blue', 4: 'green', 5: 'purple',
                          6: 'brown', 7: 'orange', 8: 'yellow'}
+
                     def coloring(i):
                         if i in d:
                             return d[i]
@@ -5999,7 +6001,7 @@ class Partitions_all(Partitions):
 
     def subset(self, size=None, **kwargs):
         """
-        Returns the subset of partitions of a given size and additional
+        Return the subset of partitions of a given size and additional
         keyword arguments.
 
         EXAMPLES::
@@ -6060,10 +6062,9 @@ class Partitions_all(Partitions):
                 yield self.element_class(self, p)
             n += 1
 
-
     def from_frobenius_coordinates(self, frobenius_coordinates):
         """
-        Returns a partition from a pair of sequences of Frobenius coordinates.
+        Return a partition from a pair of sequences of Frobenius coordinates.
 
         EXAMPLES::
 
@@ -6131,7 +6132,7 @@ class Partitions_all(Partitions):
 
     def from_exp(self, exp):
         """
-        Returns a partition from its list of multiplicities.
+        Return a partition from its list of multiplicities.
 
         EXAMPLES::
 
@@ -6189,7 +6190,7 @@ class Partitions_all(Partitions):
 
     def from_core_and_quotient(self, core, quotient):
         """
-        Returns a partition from its core and quotient.
+        Return a partition from its core and quotient.
 
         Algorithm from mupad-combinat.
 
@@ -6355,7 +6356,7 @@ class Partitions_n(Partitions):
 
     def _an_element_(self):
         """
-        Returns a partition in ``self``.
+        Return a partition in ``self``.
 
         EXAMPLES::
 
@@ -6605,7 +6606,7 @@ class Partitions_n(Partitions):
 
     def first(self):
         """
-        Returns the lexicographically first partition of a positive integer
+        Return the lexicographically first partition of a positive integer
         `n`. This is the partition ``[n]``.
 
         EXAMPLES::
@@ -6654,9 +6655,15 @@ class Partitions_n(Partitions):
 
             sage: [x for x in Partitions(4)]
             [[4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
+
+        TESTS::
+
+            sage: all(isinstance(i, Integer) for p in Partitions(4) for i in p)
+            True
+
         """
         for p in ZS1_iterator(self.n):
-            yield self.element_class(self, p)
+            yield self.element_class(self, [Integer(i) for i in p])
 
     def subset(self, **kwargs):
         r"""
@@ -6730,7 +6737,7 @@ class Partitions_nk(Partitions):
 
     def _an_element_(self):
         """
-        Returns a partition in ``self``.
+        Return a partition in ``self``.
 
         EXAMPLES::
 
@@ -6786,10 +6793,17 @@ class Partitions_nk(Partitions):
             ....:      == number_of_partitions_length(n, k)
             ....:      for n in range(9) for k in range(n+2) )
             True
+
+        TESTS::
+
+            sage: partitions = Partitions(9, length=3)
+            sage: all(isinstance(i, Integer) for p in partitions for i in p)
+            True
+
         """
         for p in ZS1_iterator_nk(self.n - self.k, self.k):
-            v = [i + 1 for i in p]
-            adds = [1] * (self.k - len(v))
+            v = [Integer(i + 1) for i in p]
+            adds = [Integer(1)] * (self.k - len(v))
             yield self.element_class(self, v + adds)
 
     def cardinality(self, algorithm='hybrid'):
@@ -7114,10 +7128,10 @@ class Partitions_parts_in(Partitions):
 
         EXAMPLES::
 
-            sage: [x for x in Partitions(4)]
-            [[4], [3, 1], [2, 2], [2, 1, 1], [1, 1, 1, 1]]
+            sage: [x for x in Partitions(5, parts_in=[1,2,3])]
+            [[3, 2], [3, 1, 1], [2, 2, 1], [2, 1, 1, 1], [1, 1, 1, 1, 1]]
         """
-        for p in self._fast_iterator(self.n, self.parts[:]):
+        for p in self._other_iterator(self.n, self.parts):
             yield self.element_class(self, p)
 
     def _fast_iterator(self, n, parts):
@@ -7152,7 +7166,7 @@ class Partitions_parts_in(Partitions):
             sage: next(it)
             [4]
             sage: type(_)
-            <... 'list'>
+            <class 'list'>
         """
         if n == 0:
             yield []
@@ -7162,6 +7176,38 @@ class Partitions_parts_in(Partitions):
                 for k in range(n.quo_rem(p)[0], 0, -1):
                     for q in self._fast_iterator(n - k * p, parts[:]):
                         yield k * [p] + q
+
+    def _other_iterator(self, n, parts):
+        """
+        A fast iterator for the partitions of ``n`` which returns lists and
+        not partition types. This function is not intended to be called
+        directly.
+
+        INPUT:
+
+        - ``n`` -- nonnegative integer.
+
+        - ``parts`` -- a list of parts to use.
+
+        OUTPUT:
+
+        A generator object for partitions of `n` with parts in
+        ``parts``.
+
+        EXAMPLES::
+
+            sage: P = Partitions(4, parts_in=[2,4])
+            sage: it = P._other_iterator(4, [2,4])
+            sage: next(it)
+            [4]
+            sage: type(_)
+            <class 'list'>
+        """
+        sorted_parts = sorted(parts, reverse=True)
+        for vec in weighted_iterator_fast(n, sorted_parts):
+            yield sum(([pi] * multi
+                       for pi, multi in zip(sorted_parts, vec)), [])
+
 
 class Partitions_starting(Partitions):
     """
@@ -7434,8 +7480,8 @@ class PartitionsInBox(Partitions):
         if h == 0:
             return [self.element_class(self, [])]
         else:
-            l = [[i] for i in range(0, w+1)]
-            add = lambda x: [ x+[i] for i in range(0, x[-1]+1)]
+            l = [[i] for i in range(w + 1)]
+            add = lambda x: [x + [i] for i in range(x[-1] + 1)]
             for i in range(h-1):
                 new_list = []
                 for element in l:
@@ -7488,10 +7534,11 @@ class Partitions_constraints(IntegerListsLex):
         """
         n = data['n']
         self.__class__ = Partitions_with_constraints
-        constraints = {'max_slope' : 0,
-                       'min_part' : 1}
+        constraints = {'max_slope': 0,
+                       'min_part': 1}
         constraints.update(data['constraints'])
         self.__init__(n, **constraints)
+
 
 class Partitions_with_constraints(IntegerListsLex):
     """
@@ -7994,7 +8041,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
 
     def _an_element_(self):
         """
-        Returns a partition in ``self``.
+        Return a partition in ``self``.
 
         EXAMPLES::
 
@@ -8607,7 +8654,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
 
 def number_of_partitions(n, algorithm='default'):
     r"""
-    Returns the number of partitions of `n` with, optionally, at most `k`
+    Return the number of partitions of `n` with, optionally, at most `k`
     parts.
 
     The options of :meth:`number_of_partitions()` are being deprecated

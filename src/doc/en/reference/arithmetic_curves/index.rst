@@ -17,6 +17,7 @@ Maps between them
 .. toctree::
    :maxdepth: 2
 
+   sage/schemes/elliptic_curves/hom
    sage/schemes/elliptic_curves/weierstrass_morphism
    sage/schemes/elliptic_curves/ell_curve_isogeny
    sage/schemes/elliptic_curves/isogeny_small_degree
@@ -42,6 +43,7 @@ Elliptic curves over number fields
 
    sage/schemes/elliptic_curves/sha_tate
    sage/schemes/elliptic_curves/cm
+   sage/schemes/elliptic_curves/Qcurves
 
 
 The following relate to elliptic curves over local nonarchimedean fields.

@@ -18,4 +18,4 @@ set -e
 cd build/pkgs/sagelib
 
 cd src
-sage-python23 -u setup.py --no-user-cfg sdist --dist-dir "$SAGE_DISTFILES"
+python3 -u setup.py --no-user-cfg sdist --dist-dir "$SAGE_DISTFILES"

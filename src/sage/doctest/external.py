@@ -35,9 +35,6 @@ if os.uname().sysname == 'Darwin':
     multiprocessing.set_start_method('fork', force=True)
 Array = multiprocessing.Array
 
-import urllib.error
-from urllib.request import Request, urlopen
-
 # Functions in this module whose name is of the form 'has_xxx' tests if the
 # software xxx is available to Sage.
 prefix = 'has_'
@@ -46,21 +43,17 @@ def has_internet():
     """
     Test if Internet is available.
 
-    Failure of connecting to the site "http://www.sagemath.org" within a second
+    Failure of connecting to the site "https://www.sagemath.org" within a second
     is regarded as internet being not available.
 
     EXAMPLES::
 
         sage: from sage.doctest.external import has_internet
-        sage: has_internet() # random, optional -- internet
-        True
+        sage: has_internet()  # random, optional -- internet
+        FeatureTestResult('internet', True)
     """
-    req = Request("http://www.sagemath.org",headers={"User-Agent":"sage-doctest"})
-    try:
-        urlopen(req,timeout=1)
-        return True
-    except urllib.error.URLError:
-        return False
+    from sage.features.internet import Internet
+    return Internet().is_present()
 
 def has_latex():
     """
@@ -69,20 +62,50 @@ def has_latex():
     EXAMPLES::
 
         sage: from sage.doctest.external import has_latex
-        sage: has_latex() # random, optional - latex
-        True
+        sage: has_latex() # optional - latex
+        FeatureTestResult('latex', True)
     """
-    from sage.misc.latex import _run_latex_, _latex_file_
-    from sage.misc.temporary_file import tmp_filename
-    try:
-        f = tmp_filename(ext='.tex')
-        O = open(f, 'w')
-        O.write(_latex_file_('2+3'))
-        O.close()
-        _run_latex_(f)
-        return True
-    except Exception:
-        return False
+    from sage.features.latex import latex
+    return latex().is_present()
+
+def has_xelatex():
+    """
+    Test if xelatex is available.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.external import has_xelatex
+        sage: has_xelatex()   # optional - xelatex
+        FeatureTestResult('xelatex', True)
+    """
+    from sage.features.latex import xelatex
+    return xelatex().is_present()
+
+def has_pdflatex():
+    """
+    Test if pdflatex is available.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.external import has_pdflatex
+        sage: has_pdflatex()   # optional - pdflatex
+        FeatureTestResult('pdflatex', True)
+    """
+    from sage.features.latex import pdflatex
+    return pdflatex().is_present()
+
+def has_lualatex():
+    """
+    Test if lualatex is available.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.external import has_lualatex
+        sage: has_lualatex()   # optional - lualatex
+        FeatureTestResult('lualatex', True)
+    """
+    from sage.features.latex import lualatex
+    return lualatex().is_present()
 
 def has_magma():
     """
@@ -194,7 +217,7 @@ def has_pandoc():
 
         sage: from sage.doctest.external import has_pandoc
         sage: has_pandoc()      # optional -- pandoc
-        FeatureTestResult('Pandoc', True)
+        FeatureTestResult('pandoc', True)
     """
     from sage.features.pandoc import Pandoc
     return Pandoc().is_present()
@@ -224,14 +247,10 @@ def has_cplex():
 
         sage: from sage.doctest.external import has_cplex
         sage: has_cplex() # random, optional - CPLEX
-        True
+        FeatureTestResult('cplex', True)
     """
-    from sage.numerical.mip import MixedIntegerLinearProgram
-    try:
-        MixedIntegerLinearProgram(solver='cplex')
-        return True
-    except Exception:
-        return False
+    from sage.features.mip_backends import CPLEX
+    return CPLEX().is_present()
 
 def has_gurobi():
     """
@@ -241,14 +260,10 @@ def has_gurobi():
 
         sage: from sage.doctest.external import has_gurobi
         sage: has_gurobi() # random, optional - Gurobi
-        True
+        FeatureTestResult('gurobi', True)
     """
-    from sage.numerical.mip import MixedIntegerLinearProgram
-    try:
-        MixedIntegerLinearProgram(solver='gurobi')
-        return True
-    except Exception:
-        return False
+    from sage.features.mip_backends import Gurobi
+    return Gurobi().is_present()
 
 def has_graphviz():
     """
@@ -258,7 +273,7 @@ def has_graphviz():
 
         sage: from sage.doctest.external import has_graphviz
         sage: has_graphviz()   # optional -- graphviz
-        FeatureTestResult('Graphviz', True)
+        FeatureTestResult('graphviz', True)
     """
     from sage.features.graphviz import Graphviz
     return Graphviz().is_present()
@@ -271,7 +286,7 @@ def has_ffmpeg():
 
         sage: from sage.doctest.external import has_ffmpeg
         sage: has_ffmpeg()      # optional -- ffmpeg
-        FeatureTestResult('FFmpeg', True)
+        FeatureTestResult('ffmpeg', True)
     """
     from sage.features.ffmpeg import FFmpeg
     return FFmpeg().is_present()
@@ -284,10 +299,36 @@ def has_imagemagick():
 
         sage: from sage.doctest.external import has_imagemagick
         sage: has_imagemagick() # optional -- imagemagick
-        FeatureTestResult('convert', True)
+        FeatureTestResult('imagemagick', True)
     """
     from sage.features.imagemagick import ImageMagick
     return ImageMagick().is_present()
+
+def has_dvipng():
+    """
+    Test if dvipng is available.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.external import has_dvipng
+        sage: has_dvipng() # optional -- dvipng
+        FeatureTestResult('dvipng', True)
+    """
+    from sage.features.dvipng import dvipng
+    return dvipng().is_present()
+
+def has_pdf2svg():
+    """
+    Test if pdf2svg is available.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.external import has_pdf2svg
+        sage: has_pdf2svg() # optional -- pdf2svg
+        FeatureTestResult('pdf2svg', True)
+    """
+    from sage.features.pdf2svg import pdf2svg
+    return pdf2svg().is_present()
 
 def has_rubiks():
     """
@@ -298,10 +339,23 @@ def has_rubiks():
 
         sage: from sage.doctest.external import has_rubiks
         sage: has_rubiks()   # optional -- rubiks
-        FeatureTestResult('Rubiks', True)
+        FeatureTestResult('rubiks', True)
     """
     from sage.features.rubiks import Rubiks
     return Rubiks().is_present()
+
+def has_4ti2():
+    """
+    Test if the 4ti2 package is available.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.external import has_4ti2
+        sage: has_4ti2()   # optional -- 4ti2
+        FeatureTestResult('4ti2', True)
+    """
+    from sage.features.four_ti_2 import FourTi2
+    return FourTi2().is_present()
 
 def external_software():
     """
@@ -345,13 +399,16 @@ class AvailableSoftware(object):
 
         sage: from sage.doctest.external import external_software, available_software
         sage: external_software
-        ['cplex',
+        ['4ti2',
+         'cplex',
+         'dvipng',
          'ffmpeg',
          'graphviz',
          'gurobi',
          'imagemagick',
          'internet',
          'latex',
+         'lualatex',
          'macaulay2',
          'magma',
          'maple',
@@ -359,8 +416,11 @@ class AvailableSoftware(object):
          'matlab',
          'octave',
          'pandoc',
+         'pdf2svg',
+         'pdflatex',
          'rubiks',
-         'scilab']
+         'scilab',
+         'xelatex']
         sage: 'internet' in available_software # random, optional - internet
         True
         sage: available_software.issuperset(set(['internet','latex'])) # random, optional - internet latex

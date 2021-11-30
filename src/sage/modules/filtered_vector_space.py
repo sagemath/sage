@@ -113,7 +113,7 @@ from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
 from sage.matrix.constructor import matrix
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 
 
 def is_FilteredVectorSpace(X):
@@ -218,7 +218,7 @@ def normalize_degree(deg):
 
         sage: from sage.modules.filtered_vector_space import normalize_degree
         sage: type(normalize_degree(int(1)))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: normalize_degree(oo)
         +Infinity
     """
@@ -1254,10 +1254,15 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             [1 0 0]
             sage: G = F.random_deformation(1/50);  G
             QQ^3 >= QQ^1 >= QQ^1 >= 0
-            sage: G.get_degree(2)
-            Vector space of degree 3 and dimension 1 over Rational Field
-            Basis matrix:
-            [      1 -15/304       0]
+            sage: D = G.get_degree(2)
+            sage: D.degree()
+            3
+            sage: v = D.basis_matrix()[0]
+            sage: v[0]
+            1
+
+            sage: while F.random_deformation(1/50).get_degree(2).matrix() == matrix([1, 0, 0]):
+            ....:     pass
         """
         from sage.modules.free_module_element import random_vector
         R = self.base_ring()

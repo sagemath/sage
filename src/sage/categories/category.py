@@ -348,9 +348,9 @@ class Category(UniqueRepresentation, SageObject):
         sage: D.__class__.mro()
         [<class '__main__.myparent_with_category'>,
         <class '__main__.myparent'>,
-        <type 'sage.structure.parent.Parent'>,
-        <type 'sage.structure.category_object.CategoryObject'>,
-        <type 'sage.structure.sage_object.SageObject'>,
+        <class 'sage.structure.parent.Parent'>,
+        <class 'sage.structure.category_object.CategoryObject'>,
+        <class 'sage.structure.sage_object.SageObject'>,
         <class '__main__.Ds.parent_class'>,
         <class '__main__.Cs.parent_class'>,
         <class '__main__.Bs.parent_class'>,
@@ -1765,16 +1765,12 @@ class Category(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: Algebras(QQ).required_methods() # py2
-            {'element': {'optional': ['_add_', '_mul_'], 'required': ['__nonzero__']},
-             'parent': {'optional': ['algebra_generators'], 'required': ['__contains__']}}
-            sage: Algebras(QQ).required_methods() # py3
+            sage: Algebras(QQ).required_methods()
             {'element': {'optional': ['_add_', '_mul_'], 'required': ['__bool__']},
              'parent': {'optional': ['algebra_generators'], 'required': ['__contains__']}}
         """
-        return { "parent"  : abstract_methods_of_class(self.parent_class),
-                 "element" : abstract_methods_of_class(self.element_class) }
-
+        return {"parent": abstract_methods_of_class(self.parent_class),
+                "element": abstract_methods_of_class(self.element_class)}
 
     # Operations on the lattice of categories
     def is_subcategory(self, c):

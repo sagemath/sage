@@ -1,3 +1,6 @@
+"""
+Mobile posets
+"""
 # ****************************************************************************
 #       Copyright (C) 2020 Stefan Grosser <stefan.grosser1@gmail.com>
 #
@@ -140,7 +143,7 @@ class MobilePoset(FinitePoset):
             sage: M._anchor
             (4, 3)
         """
-        ribbon = list(map(lambda x: self._element_to_vertex(x), self._ribbon))
+        ribbon = [self._element_to_vertex(x) for x in self._ribbon]
         H = self._hasse_diagram
         R = H.subgraph(ribbon)
 

@@ -1,5 +1,5 @@
-Maxima
-======
+maxima: System for manipulating symbolic and numerical expressions
+==================================================================
 
 Description
 -----------

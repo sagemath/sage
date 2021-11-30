@@ -1,4 +1,5 @@
 from configparser import ConfigParser
+import pkgconfig
 import os
 
 config = ConfigParser()
@@ -8,6 +9,8 @@ config.set('directories', 'basedirlist', os.environ['SAGE_LOCAL'])
 
 config.add_section('libs')
 config.set('libs', 'system_freetype', 'True')
+if pkgconfig.installed('qhull', '>= 7.2.0'):
+    config.set('libs', 'system_qhull', 'True')
 # lto is problematic if we mix libraries from the OS with our own libraries,
 # which are not necessarily compiled with the same gcc version
 # https://trac.sagemath.org/ticket/27754

@@ -13,7 +13,7 @@ Siegel Products
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.arith.all import kronecker_symbol, bernoulli, prime_divisors, fundamental_discriminant
-from sage.functions.all import sqrt
+from sage.misc.functional import sqrt
 from sage.quadratic_forms.special_values import QuadraticBernoulliNumber
 
 
@@ -83,10 +83,10 @@ def siegel_product(self, u):
     n = self.dim()
     d = self.det()       ## ??? Warning: This is a factor of 2^n larger than it should be!
 
-    ## DIAGNOSTIC
+    # DIAGNOSTIC
     verbose("n = " + str(n))
     verbose("d = " + str(d))
-    verbose("In siegel_product:  d = " + str(d) + "\n");
+    verbose("In siegel_product:  d = " + str(d) + "\n")
 
     ## Product of "bad" places to omit
     S = 2 * d * u

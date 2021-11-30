@@ -1,11 +1,13 @@
-gfan
-====
+gfan: Groebner fans and tropical varieties
+==========================================
 
 Description
 -----------
 
 Gfan is a software package for computing Groebner fans and tropical
-varieties. These are polyhedral fans associated to polynomial ideals.
+varieties.
+
+These are polyhedral fans associated to polynomial ideals.
 The maximal cones of a Groebner fan are in bijection with the marked
 reduced Groebner bases of its defining ideal. The software computes all
 marked reduced Groebner bases of an ideal. Their union is a universal
@@ -29,14 +31,9 @@ License
 Upstream Contact
 ----------------
 
-Anders Nedergaard Jensen; for contact info check out
-http://home.imf.au.dk/jensen/software/gfan/gfan.html
+Anders Nedergaard Jensen
 
-Dependencies
-------------
-
--  GMP/MPIR
--  CDDLIB
+https://users-math.au.dk/jensen/software/gfan/gfan.html
 
 
 Special Update/Build Instructions

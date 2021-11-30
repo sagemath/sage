@@ -96,15 +96,7 @@ from ``CGraph`` (for explanation, refer to the documentation there)::
 
 It also contains the following variables::
 
-        cdef int num_longs
-        cdef unsigned long *edges
-
-The array ``edges`` is a series of bits which are turned on or off, and due to
-this, dense graphs only support graphs without edge labels and with no multiple
-edges. ``num_longs`` stores the length of the ``edges`` array. Recall that this
-length reflects the number of available vertices, not the number of "actual"
-vertices. For more details about this, refer to the documentation for
-``CGraph``.
+        cdef binary_matrix_t edges
 """
 
 #*****************************************************************************
@@ -119,15 +111,12 @@ vertices. For more details about this, refer to the documentation for
 
 from sage.data_structures.bitset_base cimport *
 
-from libc.string cimport memcpy
-
 from cysignals.memory cimport sig_calloc, sig_realloc, sig_free
+from sage.data_structures.binary_matrix cimport *
+from libc.string cimport memcpy
 
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
-
-cdef int radix = sizeof(unsigned long) * 8 # number of bits per 'unsigned long'
-cdef int radix_mod_mask = radix - 1        # (assumes that radix is a power of 2)
 
 cdef class DenseGraph(CGraph):
     """
@@ -175,17 +164,14 @@ cdef class DenseGraph(CGraph):
         cdef int total_verts = nverts + extra_vertices
         self._directed = directed
 
-        # self.num_longs = "ceil(total_verts/radix)"
-        self.num_longs = total_verts / radix + (0 != (total_verts & radix_mod_mask))
-
-        self.edges = <unsigned long *> sig_calloc(total_verts * self.num_longs, sizeof(unsigned long))
+        binary_matrix_init(self.edges, total_verts, total_verts)
         self.in_degrees  = <int *> sig_calloc(total_verts, sizeof(int))
         self.out_degrees = <int *> sig_calloc(total_verts, sizeof(int))
 
-        if not self.edges or not self.in_degrees or not self.out_degrees:
-            sig_free(self.edges)
+        if not self.in_degrees or not self.out_degrees:
             sig_free(self.in_degrees)
             sig_free(self.out_degrees)
+            binary_matrix_free(self.edges)
             raise MemoryError
 
         bitset_init(self.active_vertices, total_verts)
@@ -202,7 +188,7 @@ cdef class DenseGraph(CGraph):
         """
         New and dealloc are both tested at class level.
         """
-        sig_free(self.edges)
+        binary_matrix_free(self.edges)
         sig_free(self.in_degrees)
         sig_free(self.out_degrees)
         bitset_free(self.active_vertices)
@@ -255,7 +241,7 @@ cdef class DenseGraph(CGraph):
             raise RuntimeError('dense graphs must allocate space for vertices')
 
         cdef bitset_t bits
-        cdef int min_verts, min_longs, old_longs = self.num_longs
+        cdef int min_verts, min_longs
         if <size_t>total_verts < self.active_vertices.size:
             min_verts = total_verts
             min_longs = -1
@@ -267,21 +253,9 @@ cdef class DenseGraph(CGraph):
             bitset_free(bits)
         else:
             min_verts = self.active_vertices.size
-            min_longs = self.num_longs
-
-        # self.num_longs = "ceil(total_verts/radix)"
-        self.num_longs = total_verts / radix + (0 != (total_verts & radix_mod_mask))
-
-        if min_longs == -1:
-            min_longs = self.num_longs
 
         # Resize of self.edges
-        cdef unsigned long *new_edges = <unsigned long *> sig_calloc(total_verts * self.num_longs, sizeof(unsigned long))
-        for i in range(min_verts):
-            memcpy(new_edges + i * self.num_longs, self.edges + i * old_longs, min_longs * sizeof(unsigned long))
-
-        sig_free(self.edges)
-        self.edges = new_edges
+        binary_matrix_realloc(self.edges, total_verts, total_verts)
 
         self.in_degrees  = <int *> sig_realloc(self.in_degrees , total_verts * sizeof(int))
         self.out_degrees = <int *> sig_realloc(self.out_degrees, total_verts * sizeof(int))
@@ -304,13 +278,11 @@ cdef class DenseGraph(CGraph):
 
         Add arc (u, v) with label l in only one direction.
         """
-        cdef int place = (u * self.num_longs) + (v / radix)
-        cdef unsigned long word = (<unsigned long>1) << (v & radix_mod_mask)
-        if not self.edges[place] & word:
+        if not binary_matrix_get(self.edges, u, v):
             self.in_degrees[v] += 1
             self.out_degrees[u] += 1
             self.num_arcs += 1
-            self.edges[place] |= word
+            binary_matrix_set1(self.edges, u, v)
 
     cdef int add_arc_label_unsafe(self, int u, int v, int l) except -1:
         """
@@ -345,9 +317,7 @@ cdef class DenseGraph(CGraph):
         """
         if unlikely(l > 0):
             raise ValueError("cannot locate labeled arc in unlabeled graph")
-        cdef int place = (u * self.num_longs) + (v / radix)
-        cdef unsigned long word = (<unsigned long>1) << (v & radix_mod_mask)
-        return (self.edges[place] & word) >> (v & radix_mod_mask)
+        return binary_matrix_get(self.edges, u, v)
 
     cdef inline int _del_arc_unsafe(self, int u, int v) except -1:
         """
@@ -357,13 +327,11 @@ cdef class DenseGraph(CGraph):
 
         Remove arc (u, v) with label l in only one direction.
         """
-        cdef int place = (u * self.num_longs) + (v / radix)
-        cdef unsigned long word = (<unsigned long>1) << (v & radix_mod_mask)
-        if self.edges[place] & word:
+        if binary_matrix_get(self.edges, u, v):
             self.in_degrees[v] -= 1
             self.out_degrees[u] -= 1
             self.num_arcs -= 1
-            self.edges[place] &= ~word
+            binary_matrix_set0(self.edges, u, v)
 
     cdef int del_arc_unsafe(self, int u, int v) except -1:
         """
@@ -432,19 +400,14 @@ cdef class DenseGraph(CGraph):
         """
         cdef int num_arcs_old = self.num_arcs
 
-        # The following cast assumes that mp_limb_t is an unsigned long.
-        # (this assumption is already made in bitset.pxi)
-        cdef unsigned long * active_vertices_bitset
-        active_vertices_bitset = <unsigned long *> self.active_vertices.bits
-
         cdef size_t i, j
-        for i in range(self.active_vertices.size):
-            if bitset_in(self.active_vertices, i):
-                self.add_arc_unsafe(i, i)
-                for j in range(self.num_longs): # the actual job
-                    self.edges[i * self.num_longs + j] ^= active_vertices_bitset[j]
-                self.in_degrees[i]  = self.num_verts-self.in_degrees[i]
-                self.out_degrees[i] = self.num_verts-self.out_degrees[i]
+        i = bitset_next(self.active_vertices, 0)
+        while i != -1:
+            self.add_arc_unsafe(i, i)
+            bitset_xor(self.edges.rows[i], self.edges.rows[i], self.active_vertices)
+            self.in_degrees[i]  = self.num_verts-self.in_degrees[i]
+            self.out_degrees[i] = self.num_verts-self.out_degrees[i]
+            i = bitset_next(self.active_vertices, i+1)
 
         self.num_arcs = self.num_verts*(self.num_verts - 1) - num_arcs_old
 
@@ -462,23 +425,8 @@ cdef class DenseGraph(CGraph):
 
         Set ``l`` to be the label of the first arc.
         """
-        v = v+1
         l[0] = 0
-        cdef int place = (u * self.num_longs)
-        cdef size_t i
-        cdef unsigned long word, data
-        cdef size_t start = (<size_t> v)/(8*sizeof(unsigned long))
-        for i in range(start, self.num_longs):
-            data = self.edges[place + i]
-            word = 1
-            word = word << (v % (8*sizeof(unsigned long)))
-            while word:
-                if word & data:
-                    return v
-                else:
-                    word = word << 1
-                    v += 1
-        return -1
+        return bitset_next(self.edges.rows[u], v+1)
 
     cdef inline int next_in_neighbor_unsafe(self, int v, int u, int* l) except -2:
         """
@@ -491,15 +439,32 @@ cdef class DenseGraph(CGraph):
         Set ``l`` to be the label of the first arc.
         """
         l[0] = 0
-        cdef int place = v / radix
-        cdef unsigned long word = (<unsigned long>1) << (v & radix_mod_mask)
         cdef size_t i
         i = bitset_next(self.active_vertices, u+1)
         while i != -1:
-            if self.edges[place + i * self.num_longs] & word:
+            if binary_matrix_get(self.edges, i, v):
                 return i
             i = bitset_next(self.active_vertices, i+1)
         return -1
+
+cdef int copy_dense_graph(DenseGraph dest, DenseGraph src) except -1:
+    r"""
+    Unsafely copy ``dest`` over ``src``.
+
+    .. NOTE::
+
+        ``dest.active_vertices`` and ``src.active_vertices`` must be of same size!
+    """
+    if unlikely(dest.active_vertices.size != src.active_vertices.size):
+        raise ValueError("``dest.active_vertices`` and ``src.active_vertices`` must be of same size")
+    if unlikely(dest.edges.n_rows != src.edges.n_rows or dest.edges.n_cols != src.edges.n_cols):
+        raise ValueError("the edges are not of same size")
+    memcpy(dest.in_degrees,  src.in_degrees,  src.active_vertices.size * sizeof(int))
+    memcpy(dest.out_degrees, src.out_degrees, src.active_vertices.size * sizeof(int))
+    binary_matrix_copy(dest.edges, src.edges)
+    bitset_copy(dest.active_vertices, src.active_vertices)
+    dest.num_verts = src.num_verts
+    dest.num_arcs  = src.num_arcs
 
 ##############################
 # Further tests. Unit tests for methods, functions, classes defined with cdef.
@@ -522,6 +487,10 @@ def _test_adjacency_sequence_out():
     high = 500
     randg = DiGraph(GraphGenerators().RandomGNP(randint(low, high), random()))
     n = randg.order()
+    while n <= 1:
+        randg = DiGraph(GraphGenerators().RandomGNP(randint(low, high), random()))
+        n = randg.order()
+
     cdef DenseGraph g = DenseGraph(n,
                                    verts=randg.vertex_iterator(),
                                    arcs=randg.edge_iterator(labels=False))

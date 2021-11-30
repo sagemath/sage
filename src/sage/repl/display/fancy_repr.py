@@ -200,10 +200,7 @@ class LargeMatrixHelpRepr(ObjectReprABC):
         if not p.toplevel():
             # Do not print the help for matrices inside containers
             return False
-        try:
-            from sage.matrix.matrix1 import Matrix
-        except ModuleNotFoundError:
-            return False
+        from sage.structure.element import Matrix
         if not isinstance(obj, Matrix):
             return False
         from sage.matrix.constructor import options
@@ -244,7 +241,7 @@ class PlainPythonRepr(ObjectReprABC):
             sage: from sage.repl.display.fancy_repr import PlainPythonRepr
             sage: pp = PlainPythonRepr()
             sage: pp.format_string(type(1))
-            "<type 'sage.rings.integer.Integer'>"
+            "<class 'sage.rings.integer.Integer'>"
 
         Do not swallow a trailing newline at the end of the output of
         a custom representer. Note that it is undesirable to have a

@@ -1,5 +1,5 @@
-importlib_metadata
-==================
+importlib_metadata: Library to access the metadata for a Python package
+=======================================================================
 
 Description
 -----------

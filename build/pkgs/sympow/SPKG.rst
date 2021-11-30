@@ -1,5 +1,5 @@
-sympow
-======
+sympow: Computes special values of symmetric power elliptic curve L-functions
+=============================================================================
 
 Description
 -----------
@@ -17,10 +17,11 @@ License
 Upstream Contact
 ----------------
 
-SYMPOW does not appear to be maintained any longer, so there is no
-upstream web site.
+SYMPOW does not appear to be maintained any longer.
 Mark Watkins, the package author, now works at Magma.
 Previous (possibly still usable) email is watkins@maths.usyd.edu.au
+
+New upstream: https://gitlab.com/rezozer/forks/sympow
 
 Dependencies
 ------------

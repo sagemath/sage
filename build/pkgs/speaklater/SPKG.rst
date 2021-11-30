@@ -1,5 +1,5 @@
-speaklater
-==========
+speaklater: Lazy strings for Python
+===================================
 
 Description
 -----------

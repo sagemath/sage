@@ -1,4 +1,4 @@
-$(PYTHON) | setuptools pip
+$(PYTHON) | setuptools pip wheel tomli packaging
 
 ----------
 All lines of this file are ignored except the first.

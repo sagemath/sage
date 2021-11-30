@@ -58,15 +58,15 @@ This example illustrates generators for a free module over `\ZZ`.
     ((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1))
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005, 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from . import gens_py
 cimport sage.structure.parent as parent
@@ -81,13 +81,14 @@ cdef inline check_old_coerce(parent.Parent p):
 
 cdef class ParentWithGens(ParentWithBase):
     # Derived class *must* call __init__ and set the base!
-    def __init__(self, base, names=None, normalize=True, category = None):
+    def __init__(self, base, names=None, normalize=True, category=None):
         """
         EXAMPLES::
 
+            sage: from sage.structure.parent_gens import ParentWithGens
             sage: class MyParent(ParentWithGens):
             ....:     def ngens(self): return 3
-            sage: P = MyParent(base = QQ, names = 'a,b,c', normalize = True, category = Groups())
+            sage: P = MyParent(base=QQ, names='a,b,c', normalize=True, category=Groups())
             sage: P.category()
             Category of groups
             sage: P._names

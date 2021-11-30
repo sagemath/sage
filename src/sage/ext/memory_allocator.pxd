@@ -64,6 +64,8 @@ cdef class MemoryAllocator:
             ....:     ptr = mem.aligned_malloc(2**i, 4048)
             ....:     assert <size_t> ptr == (<size_t> ptr) & ~(2**i-1)
             ....: ''')
+            doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
+            See https://trac.sagemath.org/31591 for details.
         """
         cdef size_t extra = alignment - 1
         return align(self.malloc(size + extra), alignment)

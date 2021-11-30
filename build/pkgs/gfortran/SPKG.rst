@@ -1,5 +1,5 @@
-gfortran
-========
+gfortran: Fortran compiler from the GNU Compiler Collection
+===========================================================
 
 Description
 -----------
@@ -22,7 +22,7 @@ Dependencies
 ------------
 
 -  zlib
--  MPIR
+-  GMP 
 -  MPFR
 -  MPC
 

@@ -3,24 +3,20 @@
 Utility to manage lists of packages
 """
 
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
-
-import os
-import sys
 import logging
-log = logging.getLogger()
-
 from sage_bootstrap.package import Package
+
+log = logging.getLogger()
 
 
 class PackageClass(object):
@@ -30,6 +26,7 @@ class PackageClass(object):
         filenames = filters.pop('has_files', [])
         if filters:
             raise ValueError('filter not supported')
+
         def included_in_filter(pkg):
             return all(pkg.has_file(filename) for filename in filenames)
         for package_name_or_class in package_names_or_classes:

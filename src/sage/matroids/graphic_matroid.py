@@ -225,7 +225,7 @@ class GraphicMatroid(Matroid):
             self._G = Graph(1, loops=True, multiedges=True, weighted=True,
                 data_structure='static_sparse')
         # Map ground set elements to graph edges:
-        # The the edge labels should already be the elements.
+        # The edge labels should already be the elements.
         self._groundset_edge_map = ({l: (u, v) for
             (u, v, l) in self._G.edge_iterator()})
 

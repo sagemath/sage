@@ -467,7 +467,7 @@ class Lseries_ell(SageObject):
         approximation for `L(E,1)` and ``err`` is a bound on the error
         in the approximation.
 
-        This function is disjoint from the PARI ``elllseries``
+        This function is disjoint from the PARI :pari:`elllseries`
         command, which is for a similar purpose.  To use that command
         (via the PARI C library), simply type
         ``E.pari_mincurve().elllseries(1)``.
@@ -871,7 +871,7 @@ class Lseries_ell(SageObject):
         # and is a multiple of the degree of an isogeny between E
         # and the optimal curve.
         #
-        # NOTES: We *do* have to worry about the Manin constant, since
+        # NOTE: We *do* have to worry about the Manin constant, since
         # we are using the Neron model to compute omega, not the
         # newform.  My theorem replaces the omega above by omega/c,
         # where c is the Manin constant, and the bound must be

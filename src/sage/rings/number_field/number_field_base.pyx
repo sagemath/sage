@@ -55,7 +55,7 @@ cdef class NumberField(Field):
         If ``self`` and/or ``other`` are embedded, use this embedding to
         discover a common parent.
 
-        Currently embeddings into ``AA`` and ``QQbar` are supported.
+        Currently embeddings into ``AA`` and ``QQbar`` are supported.
 
         TESTS:
 
@@ -403,7 +403,7 @@ cdef class NumberField(Field):
             sage: N._get_embedding_approx(1)
             Traceback (most recent call last):
             ...
-            ValueError: No embedding set. You need to specify a a real embedding.
+            ValueError: No embedding set. You need to specify a real embedding.
 
 
         .. SEEALSO::
@@ -423,4 +423,47 @@ cdef class NumberField(Field):
                 j += 1
             return self._gen_approx[i]
         else:
-            raise ValueError("No embedding set. You need to specify a a real embedding.")
+            raise ValueError("No embedding set. You need to specify a real embedding.")
+
+    def _matrix_charpoly(self, M, var):
+        r"""
+        Use PARI to compute the characteristic polynomial of self as a
+        polynomial over the base ring.
+
+        EXAMPLES::
+
+            sage: x = QQ['x'].gen()
+            sage: K.<a> = NumberField(x^2 - 2)
+            sage: m = matrix(K, [[a-1, 2], [a, a+1]])
+            sage: m.charpoly('Z')   # indirect doctest
+            Z^2 - 2*a*Z - 2*a + 1
+            sage: m.charpoly('a')(m) == 0   # indirect doctest
+            True
+            sage: m = matrix(K, [[0, a, 0], [-a, 0, 0], [0, 0, 0]])
+            sage: m.charpoly('Z')   # indirect doctest
+            Z^3 + 2*Z
+
+         ::
+
+            sage: L.<b> = K.extension(x^3 - a)
+            sage: m = matrix(L, [[b+a, 1], [a, b^2-2]])
+            sage: m.charpoly('Z')   # indirect doctest
+            Z^2 + (-b^2 - b - a + 2)*Z + a*b^2 - 2*b - 2*a
+            sage: m.charpoly('a')   # indirect doctest
+            a^2 + (-b^2 - b - a + 2)*a + a*b^2 - 2*b - 2*a
+            sage: m.charpoly('a')(m) == 0
+            True
+
+        ::
+
+            sage: M.<c> = L.extension(x^2 - a*x + b)
+            sage: m = matrix(M, [[a+b+c, 0, b], [0, c, 1], [a-1, b^2+1, 2]])
+            sage: f = m.charpoly('Z'); f    # indirect doctest
+            Z^3 + (-2*c - b - a - 2)*Z^2 + ((b + 2*a + 4)*c - b^2 + (-a + 2)*b + 2*a - 1)*Z + (b^2 + (a - 3)*b - 4*a + 1)*c + a*b^2 + 3*b + 2*a
+            sage: f(m) == 0
+            True
+            sage: f.base_ring() is M
+            True
+        """
+        paripoly = M.__pari__().charpoly()
+        return self[var](paripoly)

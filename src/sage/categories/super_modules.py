@@ -158,7 +158,7 @@ class SuperModules(SuperModulesCategory):
         from sage.categories.modules import Modules
         from sage.categories.fields import Fields
         base_ring = self.base_ring()
-        if base_ring in Fields:
+        if base_ring in Fields():
             return [Modules(base_ring)]
         else:
             return []

@@ -1,5 +1,5 @@
-vcversioner
-===========
+vcversioner: Python build system extension to obtain package version from version control
+=========================================================================================
 
 Description
 -----------

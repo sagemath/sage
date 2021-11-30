@@ -74,9 +74,9 @@ There is an important distinction between Parents and types::
     sage: a = GF(5).random_element()
     sage: b = GF(7).random_element()
     sage: type(a)
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
     sage: type(b)
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
     sage: type(a) == type(b)
     True
     sage: parent(a)

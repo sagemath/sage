@@ -166,7 +166,7 @@ def p1_normalize_int(N, u, v):
 
 def p1list_int(int N):
     r"""
-    Returns a list of the normalized elements of
+    Return a list of the normalized elements of
     `\mathbb{P}^1(\ZZ/N\ZZ)`.
 
     INPUT:
@@ -421,7 +421,7 @@ def p1_normalize_llong(N, u, v):
 
 def p1list_llong(int N):
     r"""
-    Returns a list of the normalized elements of
+    Return a list of the normalized elements of
     `\mathbb{P}^1(\ZZ/N\ZZ)`, as a plain list of
     2-tuples.
 
@@ -482,7 +482,7 @@ def p1list_llong(int N):
 
 def p1list(N):
     """
-    Returns the elements of the projective line modulo `N`,
+    Return the elements of the projective line modulo `N`,
     `\mathbb{P}^1(\ZZ/N\ZZ)`, as a plain list of 2-tuples.
 
     INPUT:
@@ -969,7 +969,7 @@ cdef class P1List(object):
 
     cpdef index(self, int u, int v):
         r"""
-        Returns the index of the class of `(u,v)` in the fixed list
+        Return the index of the class of `(u,v)` in the fixed list
         of representatives of
         `\mathbb{P}^1(\ZZ/N\ZZ)`.
 
@@ -1056,7 +1056,7 @@ cdef class P1List(object):
 
     def index_of_normalized_pair(self, int u, int v):
         r"""
-        Returns the index of the class of `(u,v)` in the fixed list
+        Return the index of the class of `(u,v)` in the fixed list
         of representatives of
         `\mathbb{P}^1(\ZZ/N\ZZ)`.
 
@@ -1102,7 +1102,7 @@ cdef class P1List(object):
 
     def normalize(self, int u, int v):
         r"""
-        Returns a normalised element of `\mathbb{P}^1(\ZZ/N\ZZ)`.
+        Return a normalised element of `\mathbb{P}^1(\ZZ/N\ZZ)`.
 
         INPUT:
 
@@ -1134,7 +1134,7 @@ cdef class P1List(object):
 
     def normalize_with_scalar(self, int u, int v):
         r"""
-        Returns a normalised element of `\mathbb{P}^1(\ZZ/N\ZZ)`, together with
+        Return a normalised element of `\mathbb{P}^1(\ZZ/N\ZZ)`, together with
         the normalizing scalar.
 
         INPUT:
@@ -1163,11 +1163,11 @@ cdef class P1List(object):
         """
         cdef int uu, vv, ss
         self.__normalize(self.__N, u, v, &uu, &vv, &ss, 1)
-        return (uu,vv,ss)
+        return (uu, vv, ss)
 
     def N(self):
         """
-        Returns the level or modulus of this P1List.
+        Return the level or modulus of this P1List.
 
         EXAMPLES::
 
@@ -1390,6 +1390,6 @@ def _make_p1list(n):
         See https://trac.sagemath.org/25848 for details.
         The projective line over the integers modulo 3
     """
-    from sage.misc.superseded import deprecation
+    from sage.misc.superseded import deprecation_cython as deprecation
     deprecation(25848, '_make_p1list() is deprecated')
     return P1List(n)

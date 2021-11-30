@@ -21,7 +21,8 @@ from sage.structure.element import parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.skew_partition import SkewPartition, SkewPartitions
@@ -1110,14 +1111,13 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
         parts = self._shape
         mu = self._weight
 
-        #Splitting the partition
-        s = [ p.size() for p in parts ]
+        # Splitting the partition
+        s = [p.size() for p in parts]
         parts = [p.to_list() for p in parts]
 
-        #Gluing the partitions
+        # Gluing the partitions
         parttmp = parts[0]
-        i = 1
-        for i in range(1,len(parts)):
+        for i in range(1, len(parts)):
             trans = parttmp[0][0]
             current_part = parts[i]
             current_part[1] += [0]*(len(current_part[0])-len(current_part[1]))
@@ -1125,7 +1125,7 @@ class SemistandardMultiSkewTableaux(MultiSkewTableaux):
             outer_current = [ trans + j for j in current_part[0] ]
             parttmp = [ outer_current + parttmp[0], inner_current + parttmp[1] ]
 
-        #List the corresponding skew tableaux
+        # List the corresponding skew tableaux
         l = [ st.to_word() for st in SemistandardSkewTableaux(parttmp, mu) ]
 
         S = SkewTableaux()

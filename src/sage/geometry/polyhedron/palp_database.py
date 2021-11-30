@@ -33,7 +33,7 @@ import os
 from subprocess import Popen, PIPE
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.interfaces.process import terminate
 
@@ -88,7 +88,7 @@ class PALPreader(SageObject):
         [-1, -1]
         in Ambient free module of rank 2 over the principal ideal domain Integer Ring
         sage: type(_)
-        <type 'sage.geometry.point_collection.PointCollection'>
+        <class 'sage.geometry.point_collection.PointCollection'>
     """
 
     def __init__(self, dim, data_basename=None, output='Polyhedron'):
@@ -154,9 +154,9 @@ class PALPreader(SageObject):
             sage: polygons._read_vertices(palp.stdout, 2, 3)
             [[1, 0], [0, 1], [-1, -1]]
         """
-        m = [[] for col in range(0, cols)]
-        for row in range(0, rows):
-            for col,x in enumerate(stdout.readline().split()):
+        m = [[] for col in range(cols)]
+        for row in range(rows):
+            for col, x in enumerate(stdout.readline().split()):
                 m[col].append(ZZ(x))
         return m
 
@@ -179,7 +179,7 @@ class PALPreader(SageObject):
             [[1, 0, -1], [0, 1, -1]]
         """
         m = []
-        for row in range(0, rows):
+        for row in range(rows):
             m.append([ZZ(x) for x in stdout.readline().split()])
         return m
 
@@ -229,7 +229,7 @@ class PALPreader(SageObject):
                         raise ValueError('PALP output dimension mismatch.')
                     yield vertices
                 else:
-                    for row in range(0, dim):
+                    for row in range(dim):
                         palp_out.readline()
                 i += 1
                 if stop is not None and i >= stop:
@@ -392,8 +392,6 @@ class PALPreader(SageObject):
                 raise IndexError('Index out of range.')
 
 
-
-#########################################################################
 class Reflexive4dHodge(PALPreader):
     """
     Read the PALP database for Hodge numbers of 4d polytopes.
@@ -427,7 +425,7 @@ class Reflexive4dHodge(PALPreader):
 
             sage: from sage.geometry.polyhedron.palp_database import Reflexive4dHodge
             sage: Reflexive4dHodge(1,101)  # optional - polytopes_db_4d
-            <class 'sage.geometry.polyhedron.palp_database.Reflexive4dHodge'>
+            <sage.geometry.polyhedron.palp_database.Reflexive4dHodge object at ...>
         """
         dim = 4
         if data_basename is None:
@@ -463,4 +461,4 @@ class Reflexive4dHodge(PALPreader):
         return Popen(['class-4d.x', '-He',
                       'H{}:{}L100000000'.format(self._h21, self._h11),
                       '-di', self._data_basename], stdout=PIPE,
-                      encoding='utf-8', errors='surrogateescape')
+                     encoding='utf-8', errors='surrogateescape')

@@ -685,7 +685,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: M.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
         """
-        from sage.modules.all import FreeModule
+        from sage.modules.free_module import FreeModule
         return FreeModule(self.base_ring(), self.ngens())
 
     @cached_method
@@ -714,7 +714,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: M.ambient_vector_space()
             Vector space of dimension 2 over Rational Field
         """
-        from sage.modules.all import VectorSpace
+        from sage.modules.free_module import VectorSpace
         field = self.base_ring().fraction_field()
         return VectorSpace(field, self.ngens())
 

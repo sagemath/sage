@@ -37,7 +37,15 @@ The preceding containment test is based on the computation of Groebner
 bases with degree bound::
 
     sage: I.groebner_basis(degbound=4)
-    Twosided Ideal (y*z*y*y - y*z*y*z + y*z*z*y - y*z*z*z, y*z*y*x + y*z*y*z + y*z*z*x + y*z*z*z, y*y*z*y - y*y*z*z + y*z*z*y - y*z*z*z, y*y*z*x + y*y*z*z + y*z*z*x + y*z*z*z, y*y*y - y*y*z + y*z*y - y*z*z, y*y*x + y*y*z + y*z*x + y*z*z, x*y + y*z, x*x - y*x - y*y - y*z) of Free Associative Unital Algebra on 3 generators (x, y, z) over Rational Field
+    Twosided Ideal (x*y + y*z,
+        x*x - y*x - y*y - y*z,
+        y*y*y - y*y*z + y*z*y - y*z*z,
+        y*y*x + y*y*z + y*z*x + y*z*z,
+        y*y*z*y - y*y*z*z + y*z*z*y - y*z*z*z,
+        y*z*y*y - y*z*y*z + y*z*z*y - y*z*z*z,
+        y*y*z*x + y*y*z*z + y*z*z*x + y*z*z*z,
+        y*z*y*x + y*z*y*z + y*z*z*x + y*z*z*z) of Free Associative Unital
+        Algebra on 3 generators (x, y, z) over Rational Field
 
 When reducing an element by `I`, the original generators are chosen::
 
@@ -67,7 +75,13 @@ different normal form::
     Lexicographic term order
     sage: J = L*[a*b+b*c,a^2+a*b-b*c-c^2]*L
     sage: J.groebner_basis(4)
-    Twosided Ideal (2*b*c*b - b*c*c + c*c*b, a*c*c - 2*b*c*a - 2*b*c*c - c*c*a, a*b + b*c, a*a - 2*b*c - c*c) of Free Associative Unital Algebra on 3 generators (a, b, c) over Rational Field
+    Twosided Ideal (2*b*c*b - b*c*c + c*c*b,
+        a*b + b*c,
+        -a*c*c + 2*b*c*a + 2*b*c*c + c*c*a,
+        a*c*c*b - 2*b*c*c*b + b*c*c*c,
+        a*a - 2*b*c - c*c,
+        a*c*c*a - 2*b*c*c*a - 4*b*c*c*c - c*c*c*c) of Free Associative Unital
+        Algebra on 3 generators (a, b, c) over Rational Field
     sage: (b*c*b*b).normal_form(J)
     1/2*b*c*c*b - 1/2*c*c*b*b
 
@@ -105,15 +119,16 @@ TESTS::
 from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.libs.singular.function import lib, singular_function
-from sage.rings.polynomial.term_order import TermOrder
+from sage.libs.singular.function cimport RingWrap
+from sage.libs.singular.ring cimport singular_ring_delete, singular_ring_reference
 from sage.categories.algebras import Algebras
 from sage.rings.noncommutative_ideals import IdealMonoid_nc
+from sage.rings.polynomial.plural cimport new_CRing
 
 #####################
 # Define some singular functions
 lib("freegb.lib")
-poly_reduce = singular_function("NF")
-singular_system=singular_function("system")
+freeAlgebra = singular_function("freeAlgebra")
 
 # unfortunately we cannot set Singular attributes for MPolynomialRing_libsingular
 # Hence, we must constantly work around Letterplace's sanity checks,
@@ -242,7 +257,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
             sage: F.<a,b,c> = FreeAlgebra(K, implementation='letterplace')
             sage: TestSuite(F).run()
         """
-        if not isinstance(R,MPolynomialRing_libsingular):
+        if not isinstance(R, MPolynomialRing_libsingular):
             raise TypeError("A letterplace algebra must be provided by a polynomial ring of type %s" % MPolynomialRing_libsingular)
         self.__ngens = R.ngens()
         if degrees is None:
@@ -260,7 +275,9 @@ cdef class FreeAlgebra_letterplace(Algebra):
         if degrees is None:
             self._degrees = tuple([int(1)]*self.__ngens)
         else:
-            if (not isinstance(degrees,(tuple,list))) or len(degrees)!=self.__ngens-1 or any(i <= 0 for i in degrees):
+            if (not isinstance(degrees, (tuple, list))) \
+                    or len(degrees) != self.__ngens - self._nb_slackvars \
+                    or any(i <= 0 for i in degrees):
                 raise TypeError("The generator degrees must be given by a list or tuple of %d positive integers" % (self.__ngens-1))
             self._degrees = tuple([int(i) for i in degrees])
             self.set_degbound(max(self._degrees))
@@ -662,7 +679,7 @@ cdef class FreeAlgebra_letterplace(Algebra):
         Sage, since it does the reductions in a different order
         compared to Singular. Therefore, we call the original Singular
         reduction method, and prevent a warning message by asserting
-        that `G` is a Groebner basis.
+        that `G` is a Groebner basis. ::
 
             sage: from sage.libs.singular.function import singular_function
             sage: poly_reduce = singular_function("NF")
@@ -678,8 +695,10 @@ cdef class FreeAlgebra_letterplace(Algebra):
         ngens = self.__ngens
         degbound = self._degbound
         cdef list G = [C(x._poly) for x in g]
+        from sage.groups.perm_gps.all import CyclicPermutationGroup
+        CG = CyclicPermutationGroup(C.ngens())
         for y in G:
-            out.extend([y]+[singular_system("stest",y,n+1,degbound,ngens,ring=C) for n in xrange(d-y.degree())])
+            out.extend([y]+[y * CG[ngens*(n+1)] for n in xrange(d-y.degree())])
         return C.ideal(out)
 
     ###########################
@@ -875,3 +894,28 @@ cdef class FreeAlgebra_letterplace(Algebra):
             PNames[P.ngens(): len(PNames): P.ngens()+1] = list(Names[self.ngens(): len(Names): self.ngens()+1])[:P.degbound()]
             x = Ppoly.hom([Gens[Names.index(asdf)] for asdf in PNames])(x.letterplace_polynomial())
         return FreeAlgebraElement_letterplace(self,self._current_ring(x))
+
+cdef class FreeAlgebra_letterplace_libsingular():
+    """
+    Internally used wrapper around a Singular Letterplace polynomial ring.
+    """
+
+    def __cinit__(self, MPolynomialRing_libsingular commutative_ring,
+                  int degbound):
+        cdef RingWrap rw = freeAlgebra(commutative_ring, degbound)
+        self._lp_ring = singular_ring_reference(rw._ring)
+        # `_lp_ring` viewed as `MPolynomialRing_libsingular` with additional
+        # letterplace attributes set (for internal use only)
+        self._lp_ring_internal = new_CRing(rw, commutative_ring.base_ring())
+        self._commutative_ring = commutative_ring
+
+    def __init__(self, commutative_ring, degbound):
+        self.__ngens = commutative_ring.ngens() * degbound
+
+    def __dealloc__(self):
+        r"""
+        Carefully deallocate the ring, without changing ``currRing``
+        (since this method can be at unpredictable times due to garbage
+        collection).
+        """
+        singular_ring_delete(self._lp_ring)

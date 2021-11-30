@@ -1,12 +1,12 @@
 r"""
 Examples of a finite dimensional Lie algebra with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2014 Travis Scrimshaw <tscrim at ucdavis.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
@@ -15,6 +15,7 @@ from sage.modules.free_module import FreeModule
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.examples.lie_algebras import LieAlgebraFromAssociative as BaseExample
+
 
 class AbelianLieAlgebra(Parent, UniqueRepresentation):
     r"""
@@ -369,7 +370,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             gens = UEA.gens()
             return UEA.sum(c * gens[i] for i, c in self.value.items())
 
-        def to_vector(self, order=None):
+        def to_vector(self, order=None, sparse=False):
             """
             Return ``self`` as a vector in
             ``self.parent().module()``.
@@ -385,6 +386,8 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
                 sage: elt.to_vector()
                 (2, 2, 3)
             """
+            if sparse:
+                return self.value.sparse_vector()
             return self.value
 
         def monomial_coefficients(self, copy=True):

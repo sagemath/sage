@@ -57,7 +57,7 @@ class WeierstrassTransformation(SchemeMorphism_polynomial):
 
     def __init__(self, domain, codomain, defining_polynomials, post_multiplication):
         r"""
-        A morphism of a a genus-one curve to/from the Weierstrass form.
+        A morphism of a genus-one curve to/from the Weierstrass form.
 
         INPUT:
 
@@ -146,7 +146,7 @@ def WeierstrassTransformationWithInverse(domain, codomain,
                                          defining_polynomials, post_multiplication,
                                          inv_defining_polynomials, inv_post_multiplication):
     """
-    Construct morphism of a a genus-one curve to/from the Weierstrass
+    Construct morphism of a genus-one curve to/from the Weierstrass
     form with its inverse.
 
     EXAMPLES::

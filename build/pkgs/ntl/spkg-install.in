@@ -44,7 +44,7 @@ ntl_configure()
     # rily the case, but safer.  TODO: Improve by adding real checks.)
     if [ "$SAGE_FAT_BINARY" = "yes" ]; then
         echo "Configuring NTL with NATIVE=off because we're building a 'fat' binary."
-        DISABLE_NATIVE="NATIVE=off"
+        DISABLE_NATIVE="NATIVE=off NTL_AVOID_AVX512=on"
     elif [ -x "$SAGE_LOCAL"/bin/gcc ]; then
         # Don't be too rigorous, since on Darwin, Sage's GCC is *always* built.
         # White-list newer versions of GAS, and LLVM's assembler (on Darwin)

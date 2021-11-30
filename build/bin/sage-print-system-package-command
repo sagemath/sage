@@ -5,7 +5,11 @@ shift
 IF_VERBOSE=:
 SUDO=
 PROMPT=
-COMMENT="# "
+if [ -n "$OUTPUT_RST" ]; then
+    COMMENT=""
+else
+    COMMENT="# "
+fi
 while :
 do
     case "$1" in
@@ -49,7 +53,27 @@ if [ -z "$system" -o -z "$command" ]; then
 fi
 system_packages="$*"
 options=
+env=
 shopt -s extglob
+
+function print_shell_command()
+{
+    if [ -n "$OUTPUT_RST" ]; then
+        echo
+        echo ".. CODE-BLOCK:: bash"
+        echo
+    fi
+    echo "${PROMPT}$1"
+    if [ -n "$OUTPUT_RST" ]; then
+        echo
+    fi
+}
+
+function print_comment()
+{
+    echo "${COMMENT}$1"
+}
+
 case $system:$command in
     homebrew*:setup-build-env)
         $IF_VERBOSE echo "${COMMENT}"
@@ -69,63 +93,82 @@ case $system:$command in
     # Verbs handled above are our own inventions. Verbs handled below are apt-get verbs.
     #
     @(debian*|ubuntu*):update)
-        echo "${PROMPT}${SUDO}apt-get $command $system_packages"
+        print_shell_command "${SUDO}apt-get $command $system_packages"
         ;;
     @(debian*|ubuntu*):*)
         [ "$NO_INSTALL_RECOMMENDS" = yes ] && options="$options --no-install-recommends"
-        [ "$YES" = yes ] && options="$options --yes"
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}apt-get $command $options $system_packages"
+        [ "$YES" = yes ] && options="$options --yes" env="DEBIAN_FRONTEND=noninteractive "
+        [ -n "$system_packages" ] && print_shell_command "${SUDO}${env}apt-get $command $options $system_packages"
         ;;
     @(fedora*|redhat*|centos*):install)
         [ "$YES" = yes ] && options="$options -y"
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}yum install $options $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "${SUDO}yum install $options $system_packages"
         ;;
     gentoo*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}emerge $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "${SUDO}emerge $system_packages"
         ;;
     arch*:update)
-        echo "${PROMPT}${SUDO}pacman -Sy"
+        print_shell_command "${SUDO}pacman -Sy"
         ;;
     arch*:install)
         [ "$YES" = yes ] && options="$options --noconfirm"
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}pacman -S $options $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "${SUDO}pacman -S $options $system_packages"
         ;;
     void*:update)
-        echo "${PROMPT}${SUDO}xbps-install -Su"
+        print_shell_command "${SUDO}xbps-install -Su"
         ;;
     void*:install)
         [ "$YES" = yes ] && options="$options --yes"
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}xbps-install $options $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "${SUDO}xbps-install $options $system_packages"
         ;;
     opensuse*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}zypper install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "${SUDO}zypper install $system_packages"
         ;;
     *conda*:install)
         [ "$YES" = yes ] && options="$options --yes"
-        [ -n "$system_packages" ] && echo "${PROMPT}conda install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "conda install $system_packages"
         ;;
     homebrew*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}brew install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "brew install $system_packages"
         ;;
     slackware*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}slackpkg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "${SUDO}slackpkg install $system_packages"
         ;;
     cygwin*:update)
-        echo "# first install apt-cyg from https://github.com/transcode-open/apt-cyg"
+        print_comment "first install apt-cyg from https://github.com/transcode-open/apt-cyg"
         ;;
     cygwin*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}apt-cyg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "apt-cyg install $system_packages"
         ;;
     freebsd*:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}${SUDO}pkg install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "${SUDO}pkg install $system_packages"
+        ;;
+    nix*:install)
+        [ -n "$system_packages" ] && print_shell_command "nix-env --install $system_packages"
         ;;
     pip:install)
-        [ -n "$system_packages" ] && echo "${PROMPT}sage -pip install $system_packages"
+        [ -n "$system_packages" ] && print_shell_command "sage -pip install $system_packages"
+        ;;
+    cpan:install)
+        [ -n "$system_packages" ] && print_shell_command "cpan -i $system_packages"
+        ;;
+    repology:install)
+        if [ -n "$system_packages" ]; then
+            links=""
+            for pkg in $system_packages; do
+                link="https://repology.org/project/$pkg/versions"
+                if [ -n "$links" ]; then
+                    links="$links, "
+                fi
+                links="$links$link"
+            done
+            print_comment "See ${links}"
+        fi
         ;;
     *:update)
         # Nothing needed
         ;;
     *)
-        echo "# $command the following packages: $system_packages"
+        print_comment "$command the following packages: $system_packages"
         ;;
 esac

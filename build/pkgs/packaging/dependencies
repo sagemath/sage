@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN) pyparsing six
+$(PYTHON) | setuptools pip wheel pyparsing setuptools_wheel
 
 ----------
 All lines of this file are ignored except the first.

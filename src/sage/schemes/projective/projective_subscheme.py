@@ -28,7 +28,7 @@ from sage.categories.homset import Hom
 
 from sage.matrix.constructor import matrix
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import is_RationalField
@@ -434,7 +434,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: H.is_smooth()  # one of the few cases where the cone over the subvariety is smooth
             True
         """
-        if not point is None:
+        if point is not None:
             self._check_satisfies_equations(point)
             R = self.ambient_space().coordinate_ring()
             point_subs = dict(zip(R.gens(), point))
@@ -663,7 +663,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
             sage: f([t^2*y-z])
             Closed subscheme of Projective Space of dimension 2 over Fraction Field
             of Univariate Polynomial Ring in t over Rational Field defined by:
-              y + (-1/t^2)*z
+              y - 1/(t^2)*z
 
         ::
 

@@ -14,7 +14,12 @@ from sage.structure.element import get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.modules.free_module import FreeModule, is_FreeModule
 from sage.misc.cachefunc import cached_method, cached_function
-from sage.rings.all import ZZ, QQ, RDF, CommutativeRing
+from sage.misc.lazy_import import lazy_import
+import sage.rings.abc
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
+from sage.rings.ring import CommutativeRing
 from sage.categories.fields import Fields
 from sage.categories.rings import Rings
 from sage.categories.modules import Modules
@@ -104,7 +109,18 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         Traceback (most recent call last):
         ...
         ValueError: invalid base ring: Number Field in I with defining polynomial x^2 + 1 with I = 1*I cannot be coerced to a real field
+        sage: Polyhedra(AA, 3, backend='polymake')  # optional - polymake
+        Traceback (most recent call last):
+        ...
+        ValueError: the 'polymake' backend for polyhedron cannot be used with Algebraic Real Field
 
+        sage: Polyhedra(QQ, 2, backend='normaliz')   # optional - pynormaliz
+        Polyhedra in QQ^2
+        sage: Polyhedra(SR, 2, backend='normaliz')   # optional - pynormaliz  # optional - sage.symbolic
+        Polyhedra in (Symbolic Ring)^2
+        sage: SCR = SR.subring(no_variables=True)                             # optional - sage.symbolic
+        sage: Polyhedra(SCR, 2, backend='normaliz')  # optional - pynormaliz  # optional - sage.symbolic
+        Polyhedra in (Symbolic Constants Subring)^2
     """
     if ambient_space_or_base_ring is not None:
         if ambient_space_or_base_ring in Rings():
@@ -141,7 +157,10 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         else:
             raise ValueError("no default backend for computations with {}".format(base_ring))
 
-    from sage.symbolic.ring import SR
+    try:
+        from sage.symbolic.ring import SR
+    except ImportError:
+        SR = None
     if backend == 'ppl' and base_ring is QQ:
         return Polyhedra_QQ_ppl(base_ring, ambient_dim, backend)
     elif backend == 'ppl' and base_ring is ZZ:
@@ -150,14 +169,20 @@ def Polyhedra(ambient_space_or_base_ring=None, ambient_dim=None, backend=None, *
         return Polyhedra_QQ_normaliz(base_ring, ambient_dim, backend)
     elif backend == 'normaliz' and base_ring is ZZ:
         return Polyhedra_ZZ_normaliz(base_ring, ambient_dim, backend)
-    elif backend == 'normaliz' and (base_ring is SR or base_ring.is_exact()):
+    elif backend == 'normaliz' and (isinstance(base_ring, sage.rings.abc.SymbolicRing) or base_ring.is_exact()):
         return Polyhedra_normaliz(base_ring, ambient_dim, backend)
     elif backend == 'cdd' and base_ring in (ZZ, QQ):
         return Polyhedra_QQ_cdd(QQ, ambient_dim, backend)
     elif backend == 'cdd' and base_ring is RDF:
         return Polyhedra_RDF_cdd(RDF, ambient_dim, backend)
     elif backend == 'polymake':
-        return Polyhedra_polymake(base_ring.fraction_field(), ambient_dim, backend)
+        base_field = base_ring.fraction_field()
+        try:
+            from sage.interfaces.polymake import polymake
+            polymake_base_field = polymake(base_field)
+        except TypeError:
+            raise ValueError(f"the 'polymake' backend for polyhedron cannot be used with {base_field}")
+        return Polyhedra_polymake(base_field, ambient_dim, backend)
     elif backend == 'field':
         if not base_ring.is_exact():
             raise ValueError("the 'field' backend for polyhedron cannot be used with non-exact fields")
@@ -211,9 +236,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
             sage: from sage.geometry.polyhedron.parent import Polyhedra
             sage: P = Polyhedra(QQ, 3)
-            sage: TestSuite(P).run(skip='_test_pickling')
+            sage: TestSuite(P).run()
             sage: P = Polyhedra(QQ, 0)
-            sage: TestSuite(P).run(skip='_test_pickling')
+            sage: TestSuite(P).run()
         """
         self._backend = backend
         self._ambient_dim = ambient_dim
@@ -296,6 +321,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             Vrep._polyhedron = None
         polyhedron._Hrepresentation = None
         polyhedron._Vrepresentation = None
+        if polyhedron.is_mutable():
+            polyhedron._dependent_objects = []
 
     def ambient_dim(self):
         r"""
@@ -324,7 +351,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
     @cached_method
     def an_element(self):
         r"""
-        Returns a Polyhedron.
+        Return a Polyhedron.
 
         EXAMPLES::
 
@@ -336,7 +363,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         one = self.base_ring().one()
         p = [zero] * self.ambient_dim()
         points = [p]
-        for i in range(0, self.ambient_dim()):
+        for i in range(self.ambient_dim()):
             p = [zero] * self.ambient_dim()
             p[i] = one
             points.append(p)
@@ -345,7 +372,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
     @cached_method
     def some_elements(self):
         r"""
-        Returns a list of some elements of the semigroup.
+        Return a list of some elements of the semigroup.
 
         EXAMPLES::
 
@@ -365,8 +392,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
                 self.element_class(self, None, [[], []])]
         points = []
         R = self.base_ring()
-        for i in range(0, self.ambient_dim() + 5):
-            points.append([R(i*j^2) for j in range(0, self.ambient_dim())])
+        for i in range(self.ambient_dim() + 5):
+            points.append([R(i*j^2) for j in range(self.ambient_dim())])
         return [
             self.element_class(self, [points[0:self.ambient_dim()+1], [], []], None),
             self.element_class(self, [points[0:1], points[1:self.ambient_dim()+1], []], None),
@@ -557,7 +584,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: lp.set_objective(x[0] + x[1])
             sage: b = lp.get_backend()
             sage: P = b.interactive_lp_problem()
-            sage: p = P.plot()
+            sage: p = P.plot()  # optional - sage.plot
 
             sage: Q = Polyhedron(ieqs=[[-499999, 1000000], [1499999, -1000000]])
             sage: P = Polyhedron(ieqs=[[0, 1.0], [1.0, -1.0]], base_ring=RDF)
@@ -565,6 +592,45 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             A 1-dimensional polyhedron in RDF^1 defined as the convex hull of 2 vertices
             sage: P.intersection(Q)
             A 1-dimensional polyhedron in RDF^1 defined as the convex hull of 2 vertices
+
+        The default is not to copy an object if the parent is ``self``::
+
+            sage: p = polytopes.cube(backend='field')
+            sage: P = p.parent()
+            sage: q = P._element_constructor_(p)
+            sage: q is p
+            True
+            sage: r = P._element_constructor_(p, copy=True)
+            sage: r is p
+            False
+
+        When the parent of the object is not ``self``, the default is not to copy::
+
+            sage: Q = P.base_extend(AA)
+            sage: q = Q._element_constructor_(p)
+            sage: q is p
+            False
+            sage: q = Q._element_constructor_(p, copy=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: you need to make a copy when changing the parent
+
+        For mutable polyhedra either ``copy`` or ``mutable`` must be specified::
+
+            sage: p = Polyhedron(vertices=[[0, 1], [1, 0]], mutable=True)
+            sage: P = p.parent()
+            sage: q = P._element_constructor_(p)
+            Traceback (most recent call last):
+            ...
+            ValueError: must make a copy to obtain immutable object from mutable input
+            sage: q = P._element_constructor_(p, mutable=True)
+            sage: q is p
+            True
+            sage: r = P._element_constructor_(p, copy=True)
+            sage: r.is_mutable()
+            False
+            sage: r is p
+            False
         """
         nargs = len(args)
         convert = kwds.pop('convert', True)
@@ -596,8 +662,18 @@ class Polyhedra_base(UniqueRepresentation, Parent):
                 Vrep = [convert_base_ring(_) for _ in Vrep]
             return self.element_class(self, Vrep, Hrep, **kwds)
         if nargs == 1 and is_Polyhedron(args[0]):
+            copy = kwds.pop('copy', args[0].parent() is not self)
+            mutable = kwds.pop('mutable', False)
+
+            if not copy and args[0].parent() is not self:
+                raise ValueError("you need to make a copy when changing the parent")
+            if args[0].is_mutable() and not copy and not mutable:
+                raise ValueError("must make a copy to obtain immutable object from mutable input")
+            if not copy and mutable is args[0].is_mutable():
+                return args[0]
+
             polyhedron = args[0]
-            return self._element_constructor_polyhedron(polyhedron, **kwds)
+            return self._element_constructor_polyhedron(polyhedron, mutable=mutable, **kwds)
         if nargs == 1 and args[0] == 0:
             return self.zero()
         raise ValueError('Cannot convert to polyhedron object.')
@@ -614,7 +690,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: from sage.geometry.polyhedron.parent import Polyhedra
-            sage: P = Polyhedra(QQ, 3)
+            sage: P = Polyhedra(QQ, 3, backend='cdd')
             sage: p = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
             sage: p
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
@@ -1066,7 +1142,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
 
 
-from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd, Polyhedron_RDF_cdd
+from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
+lazy_import('sage.geometry.polyhedron.backend_cdd_rdf', 'Polyhedron_RDF_cdd')
 from sage.geometry.polyhedron.backend_ppl import Polyhedron_ZZ_ppl, Polyhedron_QQ_ppl
 from sage.geometry.polyhedron.backend_normaliz import Polyhedron_normaliz, Polyhedron_ZZ_normaliz, Polyhedron_QQ_normaliz
 from sage.geometry.polyhedron.backend_polymake import Polyhedron_polymake
@@ -1075,11 +1152,63 @@ from sage.geometry.polyhedron.backend_field import Polyhedron_field
 class Polyhedra_ZZ_ppl(Polyhedra_base):
     Element = Polyhedron_ZZ_ppl
 
+    def _element_constructor_polyhedron(self, polyhedron, **kwds):
+        """
+        The element (polyhedron) constructor for the case of 1 argument, a polyhedron.
+
+        Set up with the ``ppl_polyhedron`` of ``self``, if available.
+
+        EXAMPLES::
+
+            sage: from sage.geometry.polyhedron.parent import Polyhedra
+            sage: P = Polyhedra(ZZ, 3)
+            sage: p = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)], base_ring=QQ)
+            sage: p
+            A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
+            sage: P(p)
+            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+
+            sage: p = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)], backend='cdd')
+            sage: P(p)
+            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+        """
+        from copy import copy
+        if polyhedron.backend() == "ppl":
+            return self._element_constructor_(None, None, ppl_polyhedron=copy(polyhedron._ppl_polyhedron), **kwds)
+        else:
+            return Polyhedra_base._element_constructor_polyhedron(self, polyhedron, **kwds)
+
 class Polyhedra_ZZ_normaliz(Polyhedra_base):
     Element = Polyhedron_ZZ_normaliz
 
 class Polyhedra_QQ_ppl(Polyhedra_base):
     Element = Polyhedron_QQ_ppl
+
+    def _element_constructor_polyhedron(self, polyhedron, **kwds):
+        """
+        The element (polyhedron) constructor for the case of 1 argument, a polyhedron.
+
+        Set up with the ``ppl_polyhedron`` of ``self``, if available.
+
+        EXAMPLES::
+
+            sage: from sage.geometry.polyhedron.parent import Polyhedra
+            sage: P = Polyhedra(QQ, 3)
+            sage: p = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)])
+            sage: p
+            A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 4 vertices
+            sage: P(p)
+            A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
+
+            sage: p = Polyhedron(vertices=[(0, 0, 0), (1, 0, 0), (0, 1, 0), (0, 0, 1)], backend='cdd')
+            sage: P(p)
+            A 3-dimensional polyhedron in QQ^3 defined as the convex hull of 4 vertices
+        """
+        from copy import copy
+        if polyhedron.backend() == "ppl":
+            return self._element_constructor_(None, None, ppl_polyhedron=copy(polyhedron._ppl_polyhedron), **kwds)
+        else:
+            return Polyhedra_base._element_constructor_polyhedron(self, polyhedron, **kwds)
 
 class Polyhedra_QQ_normaliz(Polyhedra_base):
     Element = Polyhedron_QQ_normaliz

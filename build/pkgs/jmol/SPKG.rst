@@ -1,9 +1,10 @@
-
-Jmol for Sage
-=============
+jmol: Java viewer for chemical structures in 3D
+===============================================
 
 Description
 -----------
+
+Java viewer for chemical structures in 3D.
 
 This provides files necessary for Jmol (java).
 
@@ -19,6 +20,7 @@ GPLv2+
 Upstream Contact
 ----------------
 
+-  http://jmol.sourceforge.net
 -  Bob Hanson
 -  e-mail: hansonr@stolaf.edu
 -  Homepage: https://www.stolaf.edu/people/hansonr/

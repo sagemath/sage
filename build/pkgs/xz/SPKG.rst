@@ -1,5 +1,5 @@
-xz
-==
+xz: General-purpose data compression software
+=============================================
 
 Description
 -----------

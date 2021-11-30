@@ -1,5 +1,5 @@
-arb
-===
+arb: Arbitrary-precision floating-point ball arithmetic
+=======================================================
 
 Description
 -----------
@@ -20,15 +20,8 @@ GNU General Public License v2+
 Upstream Contact
 ----------------
 
--  Fredrik Johansson: fredrik.johansson@gmail.com
+ - Fredrik Johansson: fredrik.johansson@gmail.com
 
-Dependencies
-------------
+ - https://arblib.org/
 
--  FLINT
--  MPIR or GMP
--  MPFR
-
-
-Special Update/Build Instructions
----------------------------------
+ - http://github.com/fredrik-johansson/arb/

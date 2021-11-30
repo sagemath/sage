@@ -1,5 +1,5 @@
-Plantri
-=======
+plantri: Generate non-isomorphic sphere-embdedded graphs
+========================================================
 
 Description
 -----------

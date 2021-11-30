@@ -1,5 +1,5 @@
-pyparsing
-=========
+pyparsing: A Python parsing module
+==================================
 
 Description
 -----------

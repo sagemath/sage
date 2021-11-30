@@ -32,8 +32,8 @@
 export SAGE_LOCAL="@prefix@"
 
 # SAGE_VENV is the root of the virtual environment of sagelib.
-# Currently, it is identical to SAGE_LOCAL
-export SAGE_VENV="@prefix@"
+# By default, it is identical to SAGE_LOCAL
+export SAGE_VENV="@SAGE_VENV@"
 
 # SAGE_ROOT is the location of the Sage source/build tree.
 export SAGE_ROOT="@SAGE_ROOT@"

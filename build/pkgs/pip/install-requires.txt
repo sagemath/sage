@@ -1,1 +1,2 @@
-pip >=20.2.3
+pip >=21.1.0
+# for use of "pip --use-feature=in-tree-build" by the Sage distribution

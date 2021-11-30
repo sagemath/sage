@@ -162,8 +162,8 @@ from sage.structure.element cimport Matrix
 from sage.plot.line import line
 from sage.plot.scatter_plot import scatter_plot
 
-from sage.libs.pynac.pynac import symbol_table
-from sage.calculus.calculus import symbolic_expression_from_string
+from sage.symbolic.expression import symbol_table
+from sage.calculus.calculus import symbolic_expression_from_string, SR_parser_giac
 from sage.symbolic.ring import SR
 from sage.symbolic.expression import Expression
 from sage.symbolic.expression_conversions import InterfaceInit
@@ -340,7 +340,7 @@ def _giac(s):
         sage: B1 = A.matrix(); B1 # convert the sparse matrix to a matrix, but the size is minimal
         [[0,0,2/7,0],[0,0,0,0],[0,0,0,33]]
         sage: B2 = B1.redim(4,4) # so we may need to resize B1
-        sage: B2.pmin(x)  
+        sage: B2.pmin(x)
         x^3
 
     Lists of Pygen and Giac lists. Here l1 is a giac list and l2 is a python
@@ -747,7 +747,7 @@ cdef class GiacSetting(Pygen):
     property proba_epsilon:
         r"""
         Maximum probability of a wrong answer with a probabilist algorithm.
-        
+
         Set this number to 0 to disable probabilist algorithms (slower).
 
         EXAMPLES::
@@ -898,12 +898,12 @@ cdef class Pygen(GiacMethods_base):
 
          # Other types are converted with strings.
          else:
-           sig_on()
            if isinstance(s,Expression):
               # take account of conversions with key giac in the sage symbol dict
               s=SRexpressiontoGiac(s)
            if not(isinstance(s,str)):  #modif python3
              s=s.__str__()
+           sig_on()
            self.gptr = new gen(<string>encstring23(s),context_ptr)
            sig_off()
 
@@ -1012,7 +1012,7 @@ cdef class Pygen(GiacMethods_base):
                 except:
                   raise RuntimeError
             else:
-                raise IndexError,'list index %s out of range'%(i)
+                raise IndexError('list index %s out of range'%(i))
           else:
             if isinstance(i,slice):
               sig_on()
@@ -1029,14 +1029,14 @@ cdef class Pygen(GiacMethods_base):
                else:
                   return self[i[0],i[1]][tuple(i[2:])]
             else:
-              raise TypeError,'gen indexes are not yet implemented'
+              raise TypeError('gen indexes are not yet implemented')
         # Here we add support to formal variable indexes:
         else:
           cmd='%s[%s]'%(self,i)
           ans=Pygen(cmd).eval()
           # if the answer is a string, it must be an error message because self is not a list or a string
           if (ans._type == 12):
-            raise TypeError, "Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, ans)
+            raise TypeError("Error executing code in Giac\nCODE:\n\t%s\nGiac ERROR:\n\t%s"%(cmd, ans))
           return ans
 
 
@@ -1380,7 +1380,7 @@ cdef class Pygen(GiacMethods_base):
            else:
               return self
         else:
-           raise TypeError, "self is not a giac List"
+           raise TypeError("self is not a giac List")
 
 
      # def htmlhelp(self, str lang='en'):
@@ -1397,7 +1397,7 @@ cdef class Pygen(GiacMethods_base):
      #       url=decstring23(browser_help(self.gptr[0],l[lang])) #python3
      #       giacbasedir=decstring23(GIAC_giac_aide_dir())  # python3
      #     except:
-     #       raise RuntimeError,'giac docs dir not found'
+     #       raise RuntimeError('giac docs dir not found')
      #     print(url)
      #     if os.access(giacbasedir,os.F_OK):
      #        url='file:'+url
@@ -1457,7 +1457,7 @@ cdef class Pygen(GiacMethods_base):
             sage: a=libgiac('10'); b=libgiac('2**300')
             sage: a;type(ZZ(a))
             10
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: next_prime(b)
             2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397533
            sage: c=libgiac('2 % nextprime(2**40)')
@@ -1494,7 +1494,7 @@ cdef class Pygen(GiacMethods_base):
             return result
 
         else:
-           raise TypeError, "Cannot convert non giac integers to Integer"
+           raise TypeError("Cannot convert non giac integers to Integer")
 
 
      def _rational_(self,Z=None):
@@ -1522,9 +1522,9 @@ cdef class Pygen(GiacMethods_base):
                result=ZZ(self.numer())/ZZ(self.denom())
                return result
             except:
-               RuntimeError, "Failed to convert to QQ"
+               RuntimeError("Failed to convert to QQ")
         else:
-           raise TypeError, "Cannot convert non giac _FRAC_ to QQ"
+           raise TypeError("Cannot convert non giac _FRAC_ to QQ")
 
 
      def sage(self):
@@ -1573,14 +1573,14 @@ cdef class Pygen(GiacMethods_base):
            sage: f(4)
            6
            sage: f(x)
-           Gamma(x)
+           Gamma(sageVARx)
            sage: (f(x)).sage()
            gamma(x)
 
          Converting a custom name by adding a new entry to the ``symbols_table``::
 
             sage: ex = libgiac('myFun(x)')
-            sage: sage.libs.pynac.pynac.register_symbol(sin, {'giac':'myFun'})
+            sage: sage.symbolic.expression.register_symbol(sin, {'giac':'myFun'})
             sage: ex.sage()
             sin(x)
 
@@ -1633,13 +1633,30 @@ cdef class Pygen(GiacMethods_base):
             sage: u,v=var('u,v');a=libgiac('cos(u+v)').texpand()
             sage: simplify(SR(a)+sin(u)*sin(v))
             cos(u)*cos(v)
+
+        TESTS:
+
+        Check that variables and constants are not mixed up (:trac:`30133`)::
+
+            sage: ee, ii, pp = SR.var('e,i,pi')
+            sage: libgiac(ee * ii * pp).sage().variables()
+            (e, i, pi)
+            sage: libgiac(e * i * pi).sage().variables()
+            ()
+            sage: libgiac.integrate(ee^x, x).sage()
+            e^x/log(e)
+            sage: y = SR.var('π')
+            sage: libgiac.integrate(cos(y), y).sage()
+            sin(π)
         """
         if isinstance(R,SR.__class__):
            # Try to convert some functions names to the symbolic ring
            lsymbols = symbol_table['giac'].copy()
            #lsymbols.update(locals)
            try:
-              result=symbolic_expression_from_string(self.__str__(),lsymbols,accept_sequence=True)
+              result = symbolic_expression_from_string(self.__str__(), lsymbols,
+                                                       accept_sequence=True,
+                                                       parser=SR_parser_giac)
               return result
 
            except Exception:
@@ -1711,7 +1728,7 @@ cdef class Pygen(GiacMethods_base):
         try:
            n = v._val
         except:
-           raise TypeError, "Entry is not a giac vector"
+           raise TypeError("Entry is not a giac vector")
         from sage.modules.free_module_element import vector
         sig_on()
         entries = [R(self[c]) for c in range(n)]
@@ -1816,7 +1833,7 @@ cdef class Pygen(GiacMethods_base):
                sig_off()
                return result
             else:
-               raise TypeError,"Cannot convert non _INT_ giac gen"
+               raise TypeError("Cannot convert non _INT_ giac gen")
 
 
      property _double:  # immediate double (type _DOUBLE_)
@@ -1830,7 +1847,7 @@ cdef class Pygen(GiacMethods_base):
                sig_off()
                return result
             else:
-               raise TypeError,"Cannot convert non _DOUBLE_ giac gen"
+               raise TypeError("Cannot convert non _DOUBLE_ giac gen")
 
      property help:
          def __get__(self):
@@ -1849,7 +1866,7 @@ cdef class Pygen(GiacMethods_base):
      #       return GiacMethods[str(name)](self)
      ##
 
-     
+
      #test
      def giacAiry_Ai(self, *args):
         cdef gen result=GIAC_Airy_Ai(self.gptr[0], context_ptr)
@@ -1903,7 +1920,7 @@ cdef inline _wrap_gen(gen  g)except +:
 #    if(pyg.gptr !=NULL):
 #      return pyg
 #    else:
-#      raise MemoryError,"empty gen"
+#      raise MemoryError("empty gen")
 
 
 
@@ -1925,7 +1942,7 @@ cdef  vecteur _wrap_pylist(L) except +:
       sig_off()
       return V[0]
    else:
-     raise TypeError,"argument must be a tuple or a list"
+     raise TypeError("argument must be a tuple or a list")
 
 
 #################################
@@ -1947,7 +1964,7 @@ cdef  vecteur _getgiacslice(Pygen L,slice sl) except +:
       sig_off()
       return V[0]
    else:
-     raise TypeError,"argument must be a Pygen list and a slice"
+     raise TypeError("argument must be a Pygen list and a slice")
 
 
 
@@ -2057,8 +2074,8 @@ class GiacFunction(Pygen):
      EXAMPLES::
 
          sage: from sage.libs.giac.giac import *
-         sage: libgiac.simplify(exp(I*pi/5)^3)  # simplify is a GiacFunction
-         rootof([[-1,-1+2*i,25+4*i,-7-30*i],[1,0,-30,40,5]])/32
+         sage: libgiac.simplify(exp(I*pi))  # simplify is a GiacFunction
+         -1
          sage: libgiac('a:=1')
          1
          sage: libgiac.purge('a')  # purge is not a GiacFunction
@@ -2114,8 +2131,6 @@ class GiacFunctionNoEV(Pygen):
      EXAMPLES::
 
          sage: from sage.libs.giac.giac import *
-         sage: libgiac.simplify(exp(I*pi/5)^3)  # simplify is a GiacFunction
-         rootof([[-1,-1+2*i,25+4*i,-7-30*i],[1,0,-30,40,5]])/32
          sage: libgiac('a:=1')
          1
          sage: libgiac.purge('a')  # purge is a GiacFunctionNoEV
@@ -2205,11 +2220,11 @@ class GiacInstance:
         list[x>(ln(sqrt(2)+1))]
         sage: libgiac.solve? #  doctest: +SKIP
         ...
-        Docstring:     
+        Docstring:
         From Giac's documentation:
         Help for solve: solve(Expr,[Var]) Solves a (or a set of) polynomial
         ...
-    """ 
+    """
 
     def __init__(self):
        self.__dict__.update(GiacMethods)

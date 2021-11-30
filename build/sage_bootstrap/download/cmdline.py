@@ -19,11 +19,7 @@ import sys
 import logging
 log = logging.getLogger()
 
-# Note that argparse is not part of Python 2.6, so we bundle it
-try:
-    import argparse
-except ImportError:
-    from sage_bootstrap.compat import argparse
+import argparse
 
 from sage_bootstrap.download.app import Application
 from sage_bootstrap.env import SAGE_DISTFILES

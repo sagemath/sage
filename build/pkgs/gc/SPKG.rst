@@ -1,5 +1,5 @@
-gc
-==
+gc: The Boehm-Demers-Weiser conservative garbage collector
+==========================================================
 
 Description
 -----------
@@ -15,8 +15,9 @@ License
 Upstream Contact
 ----------------
 
-Webpage: http://www.hboehm.info/gc/ Email List:
-bdwgc@lists.opendylan.org
+Webpage: http://www.hboehm.info/gc/
+
+Email List: bdwgc@lists.opendylan.org
 
 Dependencies
 ------------

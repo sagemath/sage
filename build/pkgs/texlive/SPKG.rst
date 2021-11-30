@@ -1,5 +1,5 @@
-TeXlive
-=======
+texlive: A comprehensive TeX system
+===================================
 
 Description
 -----------

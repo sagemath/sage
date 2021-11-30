@@ -74,6 +74,8 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         31
         sage: K.signature()
         -2
+        sage: K.colored_jones_polynomial(2)  # long time
+        q^-1 - 2 + 4*q - 5*q^2 + 6*q^3 - 5*q^4 + 4*q^5 - 3*q^6 + q^7
 
     REFERENCES:
 
@@ -349,6 +351,44 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             return 0
         return 1
 
+    def colored_jones_polynomial(self, N, variab=None, try_inverse=True):
+        r"""
+        Return the colored Jones polynomial of the trace closure of the braid.
+
+        INPUT:
+
+        - ``N`` -- integer; the number of colors
+        - ``variab`` -- (default: `q`) the variable in the resulting
+          Laurent polynomial
+        - ``try_inverse`` -- boolean (default: ``True``); if ``True``,
+          attempt a faster calculation by using the inverse of the braid
+
+        ALGORITHM:
+
+        The algorithm used is described in [HL2018]_ for the corresponding
+        braid representation. We follow their notation, but work in a
+        suitable free algebra over a Laurent polynomial ring in one
+        variable to simplify bookkeeping.
+
+        EXAMPLES::
+
+            sage: W = Knots()
+            sage: K = W.from_dowker_code([-4,-6,-2])
+            sage: K.colored_jones_polynomial(2)
+            -q^-4 + q^-3 + q^-1
+            sage: K.colored_jones_polynomial(2, 't')
+            -t^-4 + t^-3 + t^-1
+            sage: R.<t> = LaurentPolynomialRing(ZZ)
+            sage: K.colored_jones_polynomial(2, -t)
+            -t^-4 - t^-3 - t^-1
+
+            sage: R.<t> = ZZ[]
+            sage: K.colored_jones_polynomial(2, t+1)
+            (t^3 + 3*t^2 + 4*t + 1)/(t^4 + 4*t^3 + 6*t^2 + 4*t + 1)
+        """
+        return self.braid().colored_jones_polynomial(N=N, variab=variab,
+                                                     try_inverse=try_inverse)
+
     def connected_sum(self, other):
         r"""
         Return the oriented connected sum of ``self`` and ``other``.
@@ -386,9 +426,9 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         ::
 
             sage: rev_trefoil = Knot(B([-1,-1,-1]))
-            sage: K = trefoil.connected_sum(rev_trefoil); K
+            sage: K2 = trefoil.connected_sum(rev_trefoil); K2
             Knot represented by 6 crossings
-            sage: K.braid()
+            sage: K2.braid()
             s0^3*s1^-1*s0^-3*s1
 
         .. PLOT::
@@ -397,8 +437,19 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             B = BraidGroup(2)
             t = Knot(B([1,1,1]))
             tr = Knot(B([-1,-1,-1]))
-            K = t.connected_sum(tr)
-            sphinx_plot(K.plot())
+            K2 = t.connected_sum(tr)
+            sphinx_plot(K2.plot())
+
+        Observe that both knots have according ``dowker_notation`` (showing that
+        the constructing from DT-code may not be unique for non prime knots, see
+        :meth:`from_dowker_code`)::
+
+            sage: K.dowker_notation()
+            [(4, 1), (2, 5), (6, 3), (10, 7), (8, 11), (12, 9)]
+            sage: K2.dowker_notation()
+            [(4, 1), (2, 5), (6, 3), (7, 10), (11, 8), (9, 12)]
+            sage: K.homfly_polynomial() == K2.homfly_polynomial()
+            False
 
         TESTS::
 
@@ -428,7 +479,7 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         m1 = max(abs(i) for i in ogc1[0][0])
         m2 = min(abs(i) for i in ogc2[0][0])
         n = m1 - m2 + 1
-        # construct the oriented gauss code of the result
+        # construct the oriented Gauss code of the result
         ogc2_0_0 = [a + int(sign(a)) * n for a in ogc2[0][0]]
         nogc = [[ogc1[0][0] + ogc2_0_0], ogc1[1] + ogc2[1]]
         return type(self)(nogc)
@@ -533,6 +584,15 @@ class Knots(Singleton, Parent):
         OUTPUT:
 
         a knot
+
+        .. WARNING::
+
+            In general the Dowker-Thistlethwaite code does not describe a knot
+            uniquely. It is not only insensitive on mirror images, but may also
+            mix up non prime knots. For example ``[4, 6, 2, 10, 12, 8]`` describes
+            the connected sum of two trefoil knots, as well as the connected sum
+            of a trefoil with its mirror (see the corresponding example in the
+            documentation of :meth:`connected_sum`).
 
         EXAMPLES::
 

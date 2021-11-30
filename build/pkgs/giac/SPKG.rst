@@ -1,5 +1,5 @@
-GIAC
-====
+giac: A general purpose computer algebra system
+===============================================
 
 Description
 -----------

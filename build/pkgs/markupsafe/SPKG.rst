@@ -1,5 +1,5 @@
-markupsafe
-==========
+markupsafe: Safely add untrusted strings to HTML/XML markup
+===========================================================
 
 Description
 -----------

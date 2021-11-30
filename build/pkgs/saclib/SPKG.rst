@@ -1,5 +1,5 @@
-saclib
-======
+saclib: Computations with real algebraic numbers
+================================================
 
 Description
 -----------

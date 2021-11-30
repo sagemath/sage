@@ -62,13 +62,15 @@ def is_FreeModuleMorphism(x):
     return isinstance(x, FreeModuleMorphism)
 
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
-    def __init__(self, parent, A):
+    def __init__(self, parent, A, side="left"):
         """
         INPUT:
 
             -  ``parent`` - a homspace in a (sub) category of free modules
 
             -  ``A`` - matrix
+
+            - side -- side of the vectors acted on by the matrix  (default: ``"left"``)
 
         EXAMPLES::
 
@@ -81,8 +83,8 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             raise TypeError("parent (=%s) must be a free module hom space"%parent)
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()
-        A = parent._matrix_space()(A)
-        matrix_morphism.MatrixMorphism.__init__(self, parent, A)
+        A = parent._matrix_space(side)(A)
+        matrix_morphism.MatrixMorphism.__init__(self, parent, A, side=side)
 
     def pushforward(self, x):
         """
@@ -157,9 +159,30 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             40 x 40 dense matrix over Rational Field
             Domain: Vector space of dimension 40 over Rational Field
             Codomain: Vector space of dimension 40 over Rational Field
+
+        The representation displays which side of the vectors the matrix is acting::
+
+            sage: V = ZZ^3                                                                  
+            sage: h = V.hom([V.1, V.2, V.0]); h                                             
+            Free module morphism defined by the matrix
+            [0 1 0]
+            [0 0 1]
+            [1 0 0]
+            Domain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
+            Codomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
+            sage: h2 = V.hom([V.1, V.2, V.0], side="right"); h2                             
+            Free module morphism defined as left-multiplication by the matrix
+            [0 0 1]
+            [1 0 0]
+            [0 1 0]
+            Domain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
+            Codomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring
         """
-        r = "Free module morphism defined by the matrix\n{!r}\nDomain: {}\nCodomain: {}"
-        return r.format(self.matrix(), self.domain(), self.codomain())
+        r = "Free module morphism defined {}by the matrix\n{!r}\nDomain: {}\nCodomain: {}"
+        act = ""
+        if self.side() == "right":
+            act = "as left-multiplication "
+        return r.format(act, self.matrix(), self.domain(), self.codomain())
 
     def change_ring(self, R):
         """
@@ -206,7 +229,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         D = self.domain().change_ring(R)
         C = self.codomain().change_ring(R)
         A = self.matrix().change_ring(R)
-        return D.hom(A, C)
+        return D.hom(A, C, side=self.side())
 
     def inverse_image(self, V):
         """
@@ -278,6 +301,25 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             Free module of degree 1 and rank 1 over Integer Ring
             Echelon basis matrix:
             [1]
+
+        We test that it respects the ``side``::
+
+            sage: V = ZZ^2
+            sage: m = matrix(2, [1, 1, 0, 1])
+            sage: h = V.hom(m, side="right")
+            sage: h
+            Free module morphism defined as left-multiplication by the matrix
+            [1 1]
+            [0 1]...
+            sage: SV = V.span([V.0])
+            sage: h.inverse_image(SV)
+            Free module of degree 2 and rank 1 over Integer Ring
+            Echelon basis matrix:
+            [1 0]
+            sage: V.hom(m).inverse_image(SV)
+            Free module of degree 2 and rank 1 over Integer Ring
+            Echelon basis matrix:
+            [ 1 -1]
         """
         if self.rank() == 0:
             # Special case -- if this is the 0 map, then the only possibility
@@ -285,7 +327,10 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             return self.domain()
 
         R = self.base_ring()
-        A = self.matrix()
+        if self.side() == "left":
+            A = self.matrix()
+        else:
+            A = self.matrix().transpose()
 
         # Replace the module V that we are going to pullback by a
         # submodule that is contained in the image of self, since our
@@ -390,10 +435,21 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: f = V.hom([w, w, w], W)
             sage: f.preimage_representative(vector(ZZ, [10, 20]))
             (0, 0, 10)
+
+        ::
+
+            sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
+            sage: V.hom(m, side="right").lift(V.0+V.1)
+            (0, 1)
+            sage: V.hom(m).lift(V.0+V.1)
+            (1, 0)
         """
         from .free_module_element import vector
         x = self.codomain()(x)
-        A = self.matrix()
+        if self.side() == "right":
+            A = self.matrix().transpose()
+        else:
+            A = self.matrix()
         R = self.base_ring()
         if R.is_field():
             try:
@@ -495,10 +551,30 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             ], 1), (2, [
             (0, 1, 0, 17/7)
             ], 2)]
+        
+        ::
+
+            sage: V = QQ^2                                                                  
+            sage: m = matrix(2, [1, 1, 0, 1])                                               
+            sage: V.hom(m, side="right").eigenvectors()                                                          
+            [(1,
+              [
+              (1, 0)
+              ],
+              2)]
+            sage: V.hom(m).eigenvectors()                                                   
+            [(1,
+              [
+              (0, 1)
+              ],
+              2)]
         """
         if self.base_ring().is_field():
             if self.is_endomorphism():
-                seigenvec=self.matrix().eigenvectors_left(extend=extend)
+                if self.side() == "right":
+                    seigenvec=self.matrix().eigenvectors_right(extend=extend)
+                else:
+                    seigenvec=self.matrix().eigenvectors_left(extend=extend)
                 resu=[]
                 for i in seigenvec:
                     V=self.domain().base_extend(i[0].parent())
@@ -562,6 +638,20 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
               Basis matrix:
               [0 1 0]
               [0 0 1])]
+        
+        ::
+
+            sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])                                     
+            sage: V.hom(m, side="right").eigenspaces()                                      
+            [(1,
+              Vector space of degree 2 and dimension 1 over Rational Field
+              Basis matrix:
+              [1 0])]
+            sage: V.hom(m).eigenspaces()                                                    
+            [(1,
+              Vector space of degree 2 and dimension 1 over Rational Field
+              Basis matrix:
+              [0 1])]
         """
         ev = self.eigenvectors(extend)
         return [(vec[0], Sequence(vec[1]).universe().subspace(vec[1]))

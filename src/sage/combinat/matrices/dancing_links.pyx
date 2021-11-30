@@ -135,7 +135,7 @@ cdef class dancing_linksWrapper:
             sage: x
             Dancing links solver for 3 columns and 2 rows
             sage: type(x)
-            <... 'sage.combinat.matrices.dancing_links.dancing_linksWrapper'>
+            <class 'sage.combinat.matrices.dancing_links.dancing_linksWrapper'>
 
         TESTS:
 
@@ -1018,7 +1018,7 @@ cdef class dancing_linksWrapper:
         OUTPUT:
 
         - MixedIntegerLinearProgram instance
-        - MIPVariable of dimension 1
+        - MIPVariable with binary components
 
         EXAMPLES::
 
@@ -1029,7 +1029,7 @@ cdef class dancing_linksWrapper:
             sage: p
             Boolean Program (no objective, 4 variables, 4 constraints)
             sage: x
-            MIPVariable of dimension 1
+            MIPVariable with 4 binary components
 
         In the reduction, the boolean variable x_i is True if and only if
         the i-th row is in the solution::
@@ -1053,7 +1053,7 @@ cdef class dancing_linksWrapper:
 
             sage: d.to_milp('gurobi')   # optional - gurobi sage_numerical_backends_gurobi
             (Boolean Program (no objective, 4 variables, 4 constraints),
-             MIPVariable of dimension 1)
+             MIPVariable with 4 binary components)
 
         """
         from sage.numerical.mip import MixedIntegerLinearProgram
@@ -1064,19 +1064,19 @@ cdef class dancing_linksWrapper:
 
         # Construction of the columns (transpose of the rows)
         columns = [[] for _ in range(self.ncols())]
-        for i,row in enumerate(self.rows()):
+        for i, row in enumerate(self.rows()):
             for a in row:
                 columns[a].append(i)
 
         # Constraints: exactly one 1 in each column
-        for j,column in enumerate(columns):
+        for j, column in enumerate(columns):
             S = p.sum(x[a] for a in column)
             name = "one 1 in {}-th column".format(j)
-            p.add_constraint(S==1, name=name)
+            p.add_constraint(S == 1, name=name)
 
-        return p,x
+        return p, x
 
-    def one_solution_using_milp_solver(self, solver=None):
+    def one_solution_using_milp_solver(self, solver=None, integrality_tolerance=1e-3):
         r"""
         Return a solution found using a MILP solver.
 
@@ -1129,7 +1129,7 @@ cdef class dancing_linksWrapper:
         except MIPSolverException:
             return None
         else:
-            soln = p.get_values(x)
+            soln = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
             support = sorted(key for key in soln if soln[key])
             return support
 

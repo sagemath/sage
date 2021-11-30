@@ -1,5 +1,5 @@
-qepcad
-======
+qepcad: Quantifier elimination by partial cylindrical algebraic decomposition
+=============================================================================
 
 Description
 -----------

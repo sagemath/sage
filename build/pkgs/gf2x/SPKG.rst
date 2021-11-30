@@ -1,5 +1,5 @@
-gf2x
-====
+gf2x: Fast arithmetic in GF(2)[x] and searching for irreducible/primitive trinomials
+====================================================================================
 
 Description
 -----------

@@ -373,7 +373,7 @@ class SchemeHomset_points_projective_field(SchemeHomset_points):
         from sage.schemes.projective.projective_space import is_ProjectiveSpace
         if F is None:
             F = CC
-        if not F in Fields() or not hasattr(F, 'precision'):
+        if F not in Fields() or not hasattr(F, 'precision'):
             raise TypeError('F must be a numerical field')
         X = self.codomain()
         if X.base_ring() not in NumberFields():

@@ -303,8 +303,8 @@ class TensorFieldModule(UniqueRepresentation, Parent):
             Tensor field t of type (2,0) on the 2-dimensional differentiable
              manifold M
             sage: t.display(c_xy.frame())
-            t = (x + 1) d/dx*d/dx + 2 d/dx*d/dy + x*y d/dy*d/dx
-             + (-y + 3) d/dy*d/dy
+            t = (x + 1) ∂/∂x⊗∂/∂x + 2 ∂/∂x⊗∂/∂y + x*y ∂/∂y⊗∂/∂x
+             + (-y + 3) ∂/∂y⊗∂/∂y
             sage: T20(0) is T20.zero()
             True
 
@@ -403,14 +403,13 @@ class TensorFieldModule(UniqueRepresentation, Parent):
 
         """
         resu = self.element_class(self._vmodule, self._tensor_type)
-        # Non-trivial open covers of the domain:
-        open_covers = self._domain.open_covers()[1:]  # the open cover 0 is trivial
-        if open_covers != []:
-            oc = open_covers[0]  # the first non-trivial open cover is selected
+        for oc in self._domain.open_covers(trivial=False):
+            # the first non-trivial open cover is selected
             for dom in oc:
                 vmodule_dom = dom.vector_field_module(dest_map=self._dest_map.restrict(dom))
                 tmodule_dom = vmodule_dom.tensor_module(*(self._tensor_type))
                 resu.set_restriction(tmodule_dom._an_element_())
+            return resu
         return resu
 
     def _coerce_map_from_(self, other):
@@ -792,9 +791,9 @@ class TensorFieldFreeModule(TensorFreeModule):
             Tensor field t of type (1,2) on the 2-dimensional
              differentiable manifold M
             sage: t.display()
-            t = x d/dx*dx*dx - y d/dx*dx*dy + 2 d/dx*dy*dx + y d/dx*dy*dy
-             + (x + 1) d/dy*dx*dx + y^2 d/dy*dx*dy + x^2 d/dy*dy*dx
-             + 3 d/dy*dy*dy
+            t = x ∂/∂x⊗dx⊗dx - y ∂/∂x⊗dx⊗dy + 2 ∂/∂x⊗dy⊗dx + y ∂/∂x⊗dy⊗dy
+             + (x + 1) ∂/∂y⊗dx⊗dx + y^2 ∂/∂y⊗dx⊗dy + x^2 ∂/∂y⊗dy⊗dx
+             + 3 ∂/∂y⊗dy⊗dy
             sage: T12(0) is T12.zero()
             True
 

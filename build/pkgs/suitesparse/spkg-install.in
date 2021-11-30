@@ -1,4 +1,7 @@
+# -*- shell-script -*-
 cd src
+
+export CC="${CC-gcc} -std=c99"
 
 echo "print configuration"
 $MAKE MY_METIS_LIB=none CHOLMOD_CONFIG=-DNPARTITION \

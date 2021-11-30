@@ -52,6 +52,7 @@ rather nice diagonal shape.
     q + 195660*q^3 + 12080128*q^4 + 44656110*q^5 + O(q^6),
     q^2 - 48*q^3 + 1080*q^4 - 15040*q^5 + O(q^6)
     ]
+    sage: from sage.modular.dims import dimension_modular_forms
     sage: dimension_modular_forms(1,200)
     17
     sage: B = victor_miller_basis(200, 18) #5 seconds
@@ -64,7 +65,7 @@ rather nice diagonal shape.
     ]
 
 Note: Craig Citro has made the above computation an order of
-magnitude faster in code he hasn't quite got into Sage yet.
+magnitude faster in code he has not quite got into Sage yet.
 
    "I'll clean those up and submit them soon, since I need them for
    something I'm working on ... I'm currently in the process of making

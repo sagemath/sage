@@ -106,7 +106,7 @@ import sage.libs.symmetrica.all as symmetrica
 import sage.misc.prandom as random
 from sage.combinat import permutation
 from sage.groups.perm_gps.permgroup import PermutationGroup
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.misc import powerset
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -175,11 +175,11 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         sage: Tableau([[1],[2,3]])
         Traceback (most recent call last):
         ...
-        ValueError: A tableau must be a list of iterables of weakly decreasing length.
+        ValueError: a tableau must be a list of iterables of weakly decreasing length
         sage: Tableau([1,2,3])
         Traceback (most recent call last):
         ...
-        ValueError: A tableau must be a list of iterables.
+        ValueError: a tableau must be a list of iterables
 
     """
     @staticmethod
@@ -208,7 +208,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         try:
             t = [tuple(_) for _ in t]
         except TypeError:
-            raise ValueError("A tableau must be a list of iterables.")
+            raise ValueError("a tableau must be a list of iterables")
 
         return Tableaux_all().element_class(Tableaux_all(), t)
 
@@ -330,16 +330,16 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: t = Tableau([[None, None, 1], [2, 4], [3, 4, 5]])  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: A tableau must be a list of iterables of weakly decreasing length.
+            ValueError: a tableau must be a list of iterables of weakly decreasing length
         """
         # Check that it has partition shape. That's all we require from a
         # general tableau.
-        lens = [len(_) for _ in self]
+        lens = [len(row) for row in self]
         for (a, b) in zip(lens, lens[1:]):
             if a < b:
-                raise ValueError("A tableau must be a list of iterables of weakly decreasing length.")
+                raise ValueError("a tableau must be a list of iterables of weakly decreasing length")
         if lens and lens[-1] == 0:
-            raise ValueError("A tableau must not have empty rows.")
+            raise ValueError("a tableau must not have empty rows")
 
     def _repr_(self):
         """
@@ -1125,7 +1125,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             ...
             ValueError: the entries must be non-negative integers
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         from sage.sets.positive_integers import PositiveIntegers
         PI = PositiveIntegers()
         for row in self:
@@ -2628,7 +2628,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
             sage: T = Tableau([[1]])
             sage: type(T.promotion_inverse(2)[0][0])
-            <... 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if self.is_rectangular():
             n = Integer(n)
@@ -4312,14 +4312,34 @@ class SemistandardTableau(Tableau):
         if t not in Tableaux():
             raise ValueError('%s is not a tableau' % t)
 
-        if not all(isinstance(c, (int, Integer)) and c > 0 for row in t for c in row):
-            raise ValueError("entries must be positive integers" % t)
+        for (rix, row) in enumerate(t):
+            for (cix, v) in enumerate(row):
+                if not isinstance(v, (int, Integer)):
+                    raise ValueError("expected entry to be an integer at (row=%s, col=%s)" % (rix, cix))
+                if v <= 0:
+                    raise ValueError("expected entry to be a positive integer at (row=%s, col=%s). Found (%s)" % (rix, cix, v))
 
-        if any(row[c] > row[c+1] for row in t for c in range(len(row)-1)):
-            raise ValueError("The rows of %s are not weakly increasing" % t)
+        for (rix, row) in enumerate(t):
+            for cix in range(len(row)-1):
+                if row[cix] > row[cix+1]:
+                    raise ValueError("row (%s) is not weakly increasing between columns (%s, %s)" % (rix, cix, cix+1))
 
         # If we're still here ``t`` cannot be column strict
-        raise ValueError('%s is not a column strict tableau' % t)
+        for rix in range(len(t)-1):
+            rcur = t[rix]
+            rnext = t[rix+1]
+
+            # check that SST is strictly increasing in columns
+            # we know that len(rnext) <= len(rcur) as the SST cannot have
+            # more columns in the next row than the current row.
+            assert (len(rnext) <= len(rcur))
+
+            for cix in range(len(rnext)):
+                if rnext[cix] <= rcur[cix]:
+                    raise ValueError("column (%s) is not strictly increasing between rows (%s, %s)" % (cix, rix, rix+1))
+
+        # we should have found an error by now.
+        raise ValueError('We should have found an error by now in tableau %s' % t)
 
     def check(self):
         """
@@ -4330,17 +4350,17 @@ class SemistandardTableau(Tableau):
             sage: SemistandardTableau([[1,2,3],[1]])  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: [[1, 2, 3], [1]] is not a column strict tableau
+            ValueError: column (0) is not strictly increasing between rows (0, 1)
 
             sage: SemistandardTableau([[1,2,1]])  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: The rows of [[1, 2, 1]] are not weakly increasing
+            ValueError: row (0) is not weakly increasing between columns (1, 2)
 
             sage: SemistandardTableau([[0,1]])  # indirect doctest
             Traceback (most recent call last):
             ...
-            ValueError: entries must be positive integers
+            ValueError: expected entry to be a positive integer at (row=0, col=0). Found (0)
         """
         super(SemistandardTableau, self).check()
 
@@ -4864,7 +4884,8 @@ def from_chain(chain):
         for j in range(len(chain[i - 1])):
             for k in range(chain[i - 1][j]):
                 res[j][k] = i -1
-    return Tableau(res)
+    T = Tableaux_all()
+    return T.element_class(T, res)
 
 
 def from_shape_and_word(shape, w, convention="French"):
@@ -4899,7 +4920,7 @@ def from_shape_and_word(shape, w, convention="French"):
         sage: from_shape_and_word(shape, word)
         [[1, 3], [2], [4]]
         sage: word = Word(flatten(t))
-        sage: from_shape_and_word(shape, word, convention = "English")
+        sage: from_shape_and_word(shape, word, convention="English")
         [[1, 3], [2], [4]]
     """
     res = []
@@ -4907,11 +4928,12 @@ def from_shape_and_word(shape, w, convention="French"):
     if convention == "French":
         shape = reversed(shape)
     for l in shape:
-        res.append( list(w[j:j+l]) )
+        res.append( tuple(w[j:j+l]) )
         j += l
     if convention == "French":
         res.reverse()
-    return Tableau(res)
+    T = Tableaux_all()
+    return T.element_class(T, res)
 
 
 class IncreasingTableau(Tableau):
@@ -5304,7 +5326,7 @@ class Tableaux(UniqueRepresentation, Parent):
         sage: Tableaux(3)([[1, 1]])
         Traceback (most recent call last):
         ...
-        ValueError: [[1, 1]] is not an element of Tableaux of size 3.
+        ValueError: [[1, 1]] is not an element of Tableaux of size 3
 
         sage: t0 = Tableau([[1]])
         sage: t1 = Tableaux()([[1]])
@@ -5478,10 +5500,10 @@ class Tableaux(UniqueRepresentation, Parent):
             sage: T([[1,2]])
             Traceback (most recent call last):
             ...
-            ValueError: [[1, 2]] is not an element of Tableaux of size 3.
+            ValueError: [[1, 2]] is not an element of Tableaux of size 3
         """
         if t not in self:
-            raise ValueError("%s is not an element of %s." % (t, self))
+            raise ValueError("%s is not an element of %s" % (t, self))
 
         return self.element_class(self, t)
 
@@ -5521,7 +5543,7 @@ class Tableaux(UniqueRepresentation, Parent):
             except TypeError:
                 return False
             # any list of lists of partition shape is a tableau
-            return [len(_) for _ in x] in _Partitions
+            return [len(row) for row in x] in _Partitions
         else:
             return False
 
@@ -6193,7 +6215,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
         EXAMPLES::
 
             sage: sst = SemistandardTableaux(3, max_entry=oo)
-            sage: [sst[t] for t in range(0,5)]
+            sage: [sst[t] for t in range(5)]
             [[[1, 1, 1]],
              [[1, 1, 2]],
              [[1, 2, 2]],
@@ -6295,7 +6317,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
             sage: SST = SemistandardTableaux([3, 1], max_entry=oo)
             sage: SST[1000]
             [[1, 1, 10], [6]]
-            sage: [ SST[t] for t in range(0, 5) ]
+            sage: [ SST[t] for t in range(5) ]
             [[[1, 1, 1], [2]],
              [[1, 1, 2], [2]],
              [[1, 2, 2], [2]],
@@ -6419,7 +6441,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
             sage: SemistandardTableaux(6, max_entry=7).random_element() # random
             [[2, 4, 4, 6, 6, 6]]
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         from sage.matrix.constructor import diagonal_matrix
         from sage.combinat.rsk import RSK
         kchoose2m1 = self.max_entry * (self.max_entry - 1) // 2 - 1
@@ -8740,7 +8762,7 @@ class IncreasingTableaux_size_inf(IncreasingTableaux):
         EXAMPLES::
 
             sage: IT = IncreasingTableaux(3, max_entry=oo)
-            sage: [IT[t] for t in range(0,5)]
+            sage: [IT[t] for t in range(5)]
             [[[1, 2, 3]], [[1, 3], [2]], [[1, 2], [3]], [[1], [2], [3]], [[1, 2, 4]]]
             sage: IT[1000]
             [[3, 13], [10]]
@@ -8820,7 +8842,7 @@ class IncreasingTableaux_shape_inf(IncreasingTableaux):
             sage: IT = IncreasingTableaux([3, 1], max_entry=oo)
             sage: IT[1000]
             [[1, 2, 12], [6]]
-            sage: [ IT[t] for t in range(0, 5) ]
+            sage: [IT[t] for t in range(5)]
             [[[1, 3, 4], [2]],
              [[1, 2, 4], [3]],
              [[1, 2, 3], [4]],

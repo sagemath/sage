@@ -156,7 +156,7 @@ class GroupAlgebras(AlgebrasCategory):
                 sage: latex(A) # indirect doctest
                 \Bold{Z}[\langle (3,4), (1,2) \rangle]
             """
-            from sage.misc.all import latex
+            from sage.misc.latex import latex
             return "%s[%s]" % (latex(self.base_ring()), latex(self.group()))
 
         def group(self):

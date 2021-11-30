@@ -27,9 +27,10 @@ symmetric functions `h_\lambda`, not an arbitrary graded basis.
 ####################################
 from . import multiplicative, classical
 from sage.combinat.partition import Partition
-from sage.rings.all import infinity
-from sage.misc.all import prod
-from sage.functions.other import factorial, binomial
+from sage.rings.infinity import infinity
+from sage.misc.misc_c import prod
+from sage.arith.all import factorial, binomial
+
 
 class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgebra_multiplicative):
     def __init__(self, Sym):
@@ -120,10 +121,10 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             sage: h.coproduct_on_generators(0)
             h[] # h[]
         """
-        def P(i): return Partition([i]) if i else Partition([])
+        def P(i):
+            return Partition([i]) if i else Partition([])
         T = self.tensor_square()
         return T.sum_of_monomials( (P(j), P(i-j)) for j in range(i+1) )
-
 
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def omega(self):

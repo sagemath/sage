@@ -1,5 +1,5 @@
-SharedMeatAxe
-=============
+meataxe: Library for computing with modular representations
+===========================================================
 
 Description
 -----------

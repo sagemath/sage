@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 #*****************************************************************************
@@ -47,8 +51,11 @@ def ntl_ZZ_p_random_element(v):
 
     EXAMPLES::
 
-        sage: sage.libs.ntl.ntl_ZZ_p.ntl_ZZ_p_random_element(17)
-        9
+        sage: a = sage.libs.ntl.ntl_ZZ_p.ntl_ZZ_p_random_element(17)
+        sage: type(a)
+        <class 'sage.libs.ntl.ntl_ZZ_p.ntl_ZZ_p'>
+        sage: a.modulus()
+        17
     """
     current_randstate().set_seed_ntl(False)
 
@@ -407,7 +414,7 @@ cdef class ntl_ZZ_p(object):
             sage: x.lift()
             8
             sage: type(x.lift())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
         """
         cdef ntl_ZZ r = ntl_ZZ()
         self.c.restore_c()
@@ -445,12 +452,12 @@ cdef class ntl_ZZ_p(object):
             sage: x.lift_centered()
             8
             sage: type(x.lift_centered())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
             sage: x = ntl.ZZ_p(12, 18)
             sage: x.lift_centered()
             -6
             sage: type(x.lift_centered())
-            <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+            <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
         """
         cdef ntl_ZZ r = self.lift()
         cdef ntl_ZZ m = self.modulus()
@@ -469,7 +476,7 @@ cdef class ntl_ZZ_p(object):
             8
 
             sage: type(x._integer_())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         self.c.restore_c()
         cdef ZZ_c rep = ZZ_p_rep(self.x)
@@ -486,7 +493,7 @@ cdef class ntl_ZZ_p(object):
             sage: c = ntl.ZZ_pContext(20)
             sage: n = ntl.ZZ_p(2983, c)
             sage: type(n._sage_())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: n
             3
 

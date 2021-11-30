@@ -23,6 +23,15 @@ AUTHORS:
 - Bobby Moretti and Gonzalo Tornaria (2007-07-01): First version
 - William Stein (2007-07-03): add more
 - Bobby Moretti (2007-07-03): add doctests
+
+This module (and all of ``sage.media``) is deprecated.
+
+EXAMPLES::
+
+    sage: import sage.media
+    doctest:warning...
+    DeprecationWarning: the package sage.media is deprecated
+    See http://trac.sagemath.org/12673 for details.
 """
 
 import math
@@ -33,7 +42,7 @@ from sage.plot.plot import list_plot
 from sage.structure.sage_object import SageObject
 from sage.arith.srange import srange
 from sage.misc.html import html
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 
 class Wave(SageObject):

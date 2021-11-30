@@ -85,12 +85,15 @@ REFERENCE:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 from .ell_field import EllipticCurve_field
 from .ell_generic import is_EllipticCurve
 from .ell_point import EllipticCurvePoint_number_field
 from .constructor import EllipticCurve
 from sage.rings.all import PolynomialRing, ZZ, QQ, RealField, Integer
-from sage.misc.all import cached_method, prod, union
+from sage.misc.cachefunc import cached_method
+from sage.misc.misc_c import prod
+
 
 class EllipticCurve_number_field(EllipticCurve_field):
     r"""
@@ -214,9 +217,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E == loads(dumps(E))
             True
             sage: E.simon_two_descent()
-            (2, 2, [(0 : 0 : 1), (1/8*a + 5/8 : -3/16*a - 7/16 : 1)])
-            sage: E.simon_two_descent(lim1=3, lim3=20, limtriv=5, maxprob=7, limbigprime=10)
-            (2, 2, [(-1 : 0 : 1), (-1/8*a + 5/8 : -3/16*a - 9/16 : 1)])
+            (2, 2, [(0 : 0 : 1)])
+            sage: E.simon_two_descent(lim1=5, lim3=5, limtriv=10, maxprob=7, limbigprime=10)
+            (2, 2, [(-1 : 0 : 1), (-2 : -1/2*a - 1/2 : 1)])
 
         ::
 
@@ -238,35 +241,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             K = bnfinit(y^2 + 7);
             a = Mod(y,K.pol);
             bnfellrank(K, [0, 0, 0, 1, a], [[Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7)]]);
-             elliptic curve: Y^2 = x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7)
-              A = Mod(0, y^2 + 7)
-              B = Mod(1, y^2 + 7)
-              C = Mod(y, y^2 + 7)
-            <BLANKLINE>
-              Computing L(S,2)
-              L(S,2) = [Mod(Mod(-1/2*y + 1/2, y^2 + 7)*x^2 + Mod(-1/2*y - 1/2, y^2 + 7)*x + Mod(-y - 1, y^2 + 7), x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7)), Mod(-x^2 + Mod(-1/2*y - 1/2, y^2 + 7)*x + 1, x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7)), Mod(-1, x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7)), Mod(x^2 + 2, x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7)), Mod(x + Mod(1/2*y + 3/2, y^2 + 7), x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7)), Mod(x + Mod(1/2*y - 3/2, y^2 + 7), x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7))]
-            <BLANKLINE>
-              Computing the Selmer group
-              #LS2gen = 2
-               LS2gen = [Mod(Mod(-1/2*y + 1/2, y^2 + 7)*x^2 + Mod(-1/2*y - 1/2, y^2 + 7)*x + Mod(-y - 1, y^2 + 7), x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7)), Mod(x^2 + Mod(1/2*y + 1/2, y^2 + 7)*x - 1, x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7))]
-              Search for trivial points on the curve
-             Trivial points on the curve = [[Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7)], [1, 1, 0], [Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7), 1]]
-              zc = Mod(Mod(-1/2*y + 1/2, y^2 + 7)*x^2 + Mod(-1/2*y - 1/2, y^2 + 7)*x + Mod(-y - 1, y^2 + 7), x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7))
-              Hilbert symbol (Mod(1, y^2 + 7),Mod(-2*y + 2, y^2 + 7)) =
-              sol of quadratic equation = [1, 1, 0]~
-              zc*z1^2 = Mod(4*x + Mod(-2*y + 6, y^2 + 7), x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7))
-              quartic: (-1)*Y^2 = x^4 + (3*y - 9)*x^2 + (-8*y + 16)*x + (9/2*y - 11/2)
-              reduced: Y^2 = -x^4 + (-3*y + 9)*x^2 + (-8*y + 16)*x + (-9/2*y + 11/2)
-              not ELS at [2, [0, 1]~, 1, 1, [1, -2; 1, 0]]
-              zc = Mod(Mod(1, y^2 + 7)*x^2 + Mod(1/2*y + 1/2, y^2 + 7)*x + Mod(-1, y^2 + 7), x^3 + Mod(1, y^2 + 7)*x + Mod(y, y^2 + 7))
-              comes from the trivial point [Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7)]
-              m1 = 1
-              m2 = 1
-            #S(E/K)[2]    = 2
-            #E(K)/2E(K)   = 2
-            #III(E/K)[2]  = 1
-            rank(E/K)     = 1
-             listpoints = [[Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7)]]
+            ...
             v = [1, 1, [[Mod(1/2*y + 3/2, y^2 + 7), Mod(-y - 2, y^2 + 7)]]]
             sage: v
             (1, 1, [(1/2*a + 3/2 : -a - 2 : 1)])
@@ -298,8 +273,8 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.simon_two_descent()  # long time (4s on sage.math, 2013)
             (3,
              3,
-             [(0 : 0 : 1),
-              (-1/2*zeta43_0^2 - 1/2*zeta43_0 + 7 : -3/2*zeta43_0^2 - 5/2*zeta43_0 + 18 : 1)...)
+             [(5/8*zeta43_0^2 + 17/8*zeta43_0 - 9/4 : -27/16*zeta43_0^2 - 103/16*zeta43_0 + 39/8 : 1),
+              (0 : 0 : 1)])
         """
         verbose = int(verbose)
         if known_points is None:
@@ -868,9 +843,9 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         K = self.base_field()
         ai = self.a_invariants()
-        Ps = union(ff[0]
-                   for a in ai if not a.is_integral()
-                   for ff in a.denominator_ideal().factor())
+        Ps = set(ff[0]
+                 for a in ai if not a.is_integral()
+                 for ff in a.denominator_ideal().factor())
         for P in Ps:
             pi = K.uniformizer(P, 'positive')
             e = min((ai[i].valuation(P)/[1,2,3,4,6][i])
@@ -1010,7 +985,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         c4, c6 = self.c_invariants()
         c4s = [e(c4) for e in embs]
         c6s = [e(c6) for e in embs]
-        from sage.modules.all import vector
+        from sage.modules.free_module_element import vector
         v = vector([(x4.abs().nth_root(4)+x6.abs().nth_root(6)).log()*d for x4,x6,d in zip(c4s,c6s,degs)])
         es = [e.round() for e in -Ainv*U*v]
         u = prod([uj**ej for uj,ej in zip(fu,es)])
@@ -2228,29 +2203,29 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: EK = E.base_extend(K)
             sage: EK.torsion_points()  # long time (1s on sage.math, 2014)
             [(0 : 1 : 0),
-             (16 : 60 : 1),
-             (5 : 5 : 1),
-             (5 : -6 : 1),
-             (16 : -61 : 1),
              (t : 1/11*t^3 + 6/11*t^2 + 19/11*t + 48/11 : 1),
-             (-3/55*t^3 - 7/55*t^2 - 2/55*t - 133/55 : 6/55*t^3 + 3/55*t^2 + 25/11*t + 156/55 : 1),
-             (-9/121*t^3 - 21/121*t^2 - 127/121*t - 377/121 : -7/121*t^3 + 24/121*t^2 + 197/121*t + 16/121 : 1),
-             (5/121*t^3 - 14/121*t^2 - 158/121*t - 453/121 : -49/121*t^3 - 129/121*t^2 - 315/121*t - 207/121 : 1),
-             (10/121*t^3 + 49/121*t^2 + 168/121*t + 73/121 : 32/121*t^3 + 60/121*t^2 - 261/121*t - 807/121 : 1),
              (1/11*t^3 - 5/11*t^2 + 19/11*t - 40/11 : -6/11*t^3 - 3/11*t^2 - 26/11*t - 321/11 : 1),
-             (14/121*t^3 - 15/121*t^2 + 90/121*t + 232/121 : 16/121*t^3 - 69/121*t^2 + 293/121*t - 46/121 : 1),
-             (3/55*t^3 + 7/55*t^2 + 2/55*t + 78/55 : 7/55*t^3 - 24/55*t^2 + 9/11*t + 17/55 : 1),
-             (-5/121*t^3 + 36/121*t^2 - 84/121*t + 24/121 : 34/121*t^3 - 27/121*t^2 + 305/121*t + 708/121 : 1),
-             (-26/121*t^3 + 20/121*t^2 - 219/121*t - 995/121 : 15/121*t^3 + 156/121*t^2 - 232/121*t + 2766/121 : 1),
              (1/11*t^3 - 5/11*t^2 + 19/11*t - 40/11 : 6/11*t^3 + 3/11*t^2 + 26/11*t + 310/11 : 1),
-             (-26/121*t^3 + 20/121*t^2 - 219/121*t - 995/121 : -15/121*t^3 - 156/121*t^2 + 232/121*t - 2887/121 : 1),
-             (-5/121*t^3 + 36/121*t^2 - 84/121*t + 24/121 : -34/121*t^3 + 27/121*t^2 - 305/121*t - 829/121 : 1),
-             (3/55*t^3 + 7/55*t^2 + 2/55*t + 78/55 : -7/55*t^3 + 24/55*t^2 - 9/11*t - 72/55 : 1),
-             (14/121*t^3 - 15/121*t^2 + 90/121*t + 232/121 : -16/121*t^3 + 69/121*t^2 - 293/121*t - 75/121 : 1),
              (t : -1/11*t^3 - 6/11*t^2 - 19/11*t - 59/11 : 1),
+             (16 : 60 : 1),
+             (-3/55*t^3 - 7/55*t^2 - 2/55*t - 133/55 : 6/55*t^3 + 3/55*t^2 + 25/11*t + 156/55 : 1),
+             (14/121*t^3 - 15/121*t^2 + 90/121*t + 232/121 : 16/121*t^3 - 69/121*t^2 + 293/121*t - 46/121 : 1),
+             (-26/121*t^3 + 20/121*t^2 - 219/121*t - 995/121 : -15/121*t^3 - 156/121*t^2 + 232/121*t - 2887/121 : 1),
              (10/121*t^3 + 49/121*t^2 + 168/121*t + 73/121 : -32/121*t^3 - 60/121*t^2 + 261/121*t + 686/121 : 1),
+             (5 : 5 : 1),
+             (-9/121*t^3 - 21/121*t^2 - 127/121*t - 377/121 : -7/121*t^3 + 24/121*t^2 + 197/121*t + 16/121 : 1),
+             (3/55*t^3 + 7/55*t^2 + 2/55*t + 78/55 : 7/55*t^3 - 24/55*t^2 + 9/11*t + 17/55 : 1),
+             (-5/121*t^3 + 36/121*t^2 - 84/121*t + 24/121 : -34/121*t^3 + 27/121*t^2 - 305/121*t - 829/121 : 1),
              (5/121*t^3 - 14/121*t^2 - 158/121*t - 453/121 : 49/121*t^3 + 129/121*t^2 + 315/121*t + 86/121 : 1),
+             (5 : -6 : 1),
+             (5/121*t^3 - 14/121*t^2 - 158/121*t - 453/121 : -49/121*t^3 - 129/121*t^2 - 315/121*t - 207/121 : 1),
+             (-5/121*t^3 + 36/121*t^2 - 84/121*t + 24/121 : 34/121*t^3 - 27/121*t^2 + 305/121*t + 708/121 : 1),
+             (3/55*t^3 + 7/55*t^2 + 2/55*t + 78/55 : -7/55*t^3 + 24/55*t^2 - 9/11*t - 72/55 : 1),
              (-9/121*t^3 - 21/121*t^2 - 127/121*t - 377/121 : 7/121*t^3 - 24/121*t^2 - 197/121*t - 137/121 : 1),
+             (16 : -61 : 1),
+             (10/121*t^3 + 49/121*t^2 + 168/121*t + 73/121 : 32/121*t^3 + 60/121*t^2 - 261/121*t - 807/121 : 1),
+             (-26/121*t^3 + 20/121*t^2 - 219/121*t - 995/121 : 15/121*t^3 + 156/121*t^2 - 232/121*t + 2766/121 : 1),
+             (14/121*t^3 - 15/121*t^2 + 90/121*t + 232/121 : -16/121*t^3 + 69/121*t^2 - 293/121*t - 75/121 : 1),
              (-3/55*t^3 - 7/55*t^2 - 2/55*t - 133/55 : -6/55*t^3 - 3/55*t^2 - 25/11*t - 211/55 : 1)]
 
         ::
@@ -2597,6 +2572,60 @@ class EllipticCurve_number_field(EllipticCurve_field):
         """
         from sage.schemes.elliptic_curves.period_lattice import PeriodLattice_ell
         return PeriodLattice_ell(self,embedding)
+
+
+    def real_components(self, embedding):
+        """
+        Return the number of real components with respect to a real embedding of the base field.
+
+        EXAMPLES::
+
+            sage: K.<a> = QuadraticField(5)
+            sage: embs = K.real_embeddings()
+            sage: E = EllipticCurve([0,1,1,a,a])
+            sage: [e(E.discriminant()) > 0 for e in embs]
+            [True, False]
+            sage: [E.real_components(e) for e in embs]
+            [2, 1]
+
+
+        TESTS::
+
+            sage: K.<a> = QuadraticField(-1)
+            sage: e = K.complex_embeddings()[0]
+            sage: E = EllipticCurve([0,1,1,a,a])
+            sage: E.real_components(e)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid embedding specified: should be real
+
+            sage: E.real_components('banana')
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid embedding
+
+            sage: K.<a> = QuadraticField(-1)
+            sage: E = EllipticCurve([0,1,1,a,a])
+            sage: K1.<a> = QuadraticField(5)
+            sage: e = K1.real_embeddings()[0]
+            sage: E.real_components(e)
+            Traceback (most recent call last):
+            ...
+            ValueError: invalid embedding specified: should have domain ...
+        """
+        try:
+            if not embedding.domain() is self.base_field():
+                raise ValueError("invalid embedding specified: should have domain {}".format(self.base_field()))
+            if not isinstance(embedding.codomain(), sage.rings.abc.RealField):
+                raise ValueError("invalid embedding specified: should be real")
+        except AttributeError:
+                raise ValueError("invalid embedding")
+
+        from sage.rings.number_field.number_field import refine_embedding
+        from sage.rings.infinity import Infinity
+        e = refine_embedding(embedding,Infinity)
+
+        return 2 if e(self.discriminant()) > 0 else 1
 
     def height_function(self):
         """
@@ -3725,6 +3754,152 @@ class EllipticCurve_number_field(EllipticCurve_field):
             return D.is_square()
         raise ValueError("Error in has_rational_cm: %s is not an extension field of %s"
                          % (field,self.base_field()))
+
+    @cached_method
+    def is_Q_curve(self, maxp=100, certificate=False, verbose=False):
+        r"""
+        Return ``True`` if this is a `\QQ`-curve, with optional certificate.
+
+        INPUT:
+
+        - ``maxp`` (int, default 100): bound on primes used for
+          checking necessary local conditions.  The result will not
+          depend on this, but using a larger value may return
+          ``False`` faster.
+
+        - ``certificate`` (bool, default ``False``): if ``True`` then
+          a second value is returned giving a certificate for the
+          `\QQ`-curve property.
+
+        OUTPUT:
+
+        If ``certificate`` is ``False``: either ``True`` (if `E` is a
+        `\QQ`-curve), or ``False``.
+
+        If ``certificate`` is ``True``: a tuple consisting of a boolean
+        flag as before and a certificate, defined as follows:
+
+        - when the flag is ``True``, so `E` is a `\QQ`-curve:
+
+            - either {'CM':`D`} where `D` is a negative discriminant, when
+              `E` has potential CM with discriminant `D`;
+
+            - otherwise {'CM': `0`, 'core_poly': `f`, 'rho': `\rho`,
+              'r': `r`, 'N': `N`}, when `E` is a non-CM `\QQ`-curve,
+              where the core polynomial `f` is an irreducible monic
+              polynomial over `QQ` of degree `2^\rho`, all of whose
+              roots are `j`-invariants of curves isogenous to `E`, the
+              core level `N` is a square-free integer with `r` prime
+              factors which is the LCM of the degrees of the isogenies
+              between these conjugates.  For example, if there exists
+              a curve `E'` isogenous to `E` with `j(E')=j\in\QQ`, then
+              the certificate is {'CM':0, 'r':0, 'rho':0, 'core_poly':
+              x-j, 'N':1}.
+
+        - when the flag is ``False``, so `E` is not a `\QQ`-curve, the
+          certificate is a prime `p` such that the reductions of `E`
+          at the primes dividing `p` are inconsistent with the
+          property of being a `\QQ`-curve.  See the documentation for
+          :meth:`sage.src.schemes.elliptic_curves.Qcurves.is_Q_curve`
+          for details.
+
+        ALGORITHM:
+
+        See the documentation for
+        :meth:`sage.src.schemes.elliptic_curves.Qcurves.is_Q_curve`, and
+        [CrNa2020]_ for details.
+
+        EXAMPLES:
+
+        A non-CM curve over `\QQ` and a CM curve over `\QQ` are both
+        trivially `\QQ`-curves::
+
+            sage: E = EllipticCurve([1,2,3,4,5])
+            sage: flag, cert = E.is_Q_curve(certificate=True)
+            sage: flag
+            True
+            sage: cert
+            {'CM': 0, 'N': 1, 'core_poly': x, 'r': 0, 'rho': 0}
+
+            sage: E = EllipticCurve(j=8000)
+            sage: flag, cert = E.is_Q_curve(certificate=True)
+            sage: flag
+            True
+            sage: cert
+            {'CM': -8}
+
+        A non-`\QQ`-curve over a quartic field.  The local data at bad
+        primes above `3` is inconsistent::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(R([3, 0, -5, 0, 1]))
+            sage: E = EllipticCurve([K([-3,-4,1,1]),K([4,-1,-1,0]),K([-2,0,1,0]),K([-621,778,138,-178]),K([9509,2046,-24728,10380])])
+            sage: E.is_Q_curve(certificate=True, verbose=True)
+            Checking whether Elliptic Curve defined by y^2 + (a^3+a^2-4*a-3)*x*y + (a^2-2)*y = x^3 + (-a^2-a+4)*x^2 + (-178*a^3+138*a^2+778*a-621)*x + (10380*a^3-24728*a^2+2046*a+9509) over Number Field in a with defining polynomial x^4 - 5*x^2 + 3 is a Q-curve
+            No: inconsistency at the 2 primes dividing 3
+            - potentially multiplicative: [True, False]
+            (False, 3)
+
+        A non-`\QQ`-curve over a quadratic field.  The local data at bad
+        primes is consistent, but the local test at good primes above `13`
+        is not::
+
+            sage: K.<a> = NumberField(R([-10, 0, 1]))
+            sage: E = EllipticCurve([K([0,1]),K([-1,-1]),K([0,0]),K([-236,40]),K([-1840,464])])
+            sage: E.is_Q_curve(certificate=True, verbose=True)
+            Checking whether Elliptic Curve defined by y^2 + a*x*y = x^3 + (-a-1)*x^2 + (40*a-236)*x + (464*a-1840) over Number Field in a with defining polynomial x^2 - 10 is a Q-curve
+            Applying local tests at good primes above p<=100
+            No: inconsistency at the 2 ordinary primes dividing 13
+            - Frobenius discriminants mod squares: [-1, -3]
+            No: local test at p=13 failed
+            (False, 13)
+
+        A quadratic `\QQ`-curve with CM discriminant `-15`
+        (so the `j`-invariant is not in `\QQ`)::
+
+            sage: R.<x> = PolynomialRing(QQ)
+            sage: K.<a> = NumberField(R([-1, -1, 1]))
+            sage: E = EllipticCurve([K([1,0]),K([-1,0]),K([0,1]),K([0,-2]),K([0,1])])
+            sage: E.is_Q_curve(certificate=True, verbose=True)
+            Checking whether Elliptic Curve defined by y^2 + x*y + a*y = x^3 + (-1)*x^2 + (-2*a)*x + a over Number Field in a with defining polynomial x^2 - x - 1 is a Q-curve
+            Yes: E is CM (discriminant -15)
+            (True, {'CM': -15})
+
+        An example over `\QQ(\sqrt{2},\sqrt{3})`.  The `j`-invariant
+        is in `\QQ(\sqrt{6})`, so computations will be done over that
+        field, and in fact there is an isogenous curve with rational
+        `j`, so we have a so-called rational `\QQ`-curve::
+
+            sage: K.<a> = NumberField(R([1, 0, -4, 0, 1]))
+            sage: E = EllipticCurve([K([-2,-4,1,1]),K([0,1,0,0]),K([0,1,0,0]),K([-4780,9170,1265,-2463]),K([163923,-316598,-43876,84852])])
+            sage: flag, cert = E.is_Q_curve(certificate=True)
+            sage: flag
+            True
+            sage: cert
+            {'CM': 0, 'N': 1, 'core_degs': [1], 'core_poly': x - 85184/3, 'r': 0, 'rho': 0}
+
+        Over the same field, a so-called strict `\QQ`-curve which is
+        not isogenous to one with rational `j`, but whose core field
+        is quadratic. In fact the isogeny class over `K` consists of
+        `6` curves, four with conjugate quartic `j`-invariants and `2`
+        with quadratic conjugate `j`-invariants in `\QQ(\sqrt{3})`
+        (but which are not base-changes from the quadratic subfield)::
+
+            sage: E = EllipticCurve([K([0,-3,0,1]),K([1,4,0,-1]),K([0,0,0,0]),K([-2,-16,0,4]),K([-19,-32,4,8])])
+            sage: flag, cert = E.is_Q_curve(certificate=True)
+            sage: flag
+            True
+            sage: cert
+            {'CM': 0,
+            'N': 2,
+            'core_degs': [1, 2],
+            'core_poly': x^2 - 840064*x + 1593413632,
+            'r': 1,
+            'rho': 1}
+
+        """
+        from sage.schemes.elliptic_curves.Qcurves import is_Q_curve as isQ
+        return isQ(self, maxp, certificate, verbose)
 
     def saturation(self, points, verbose=False,
                    max_prime=0, one_prime=0, odd_primes_only=False,

@@ -189,12 +189,12 @@ from libc.math cimport sqrt
 from libcpp.vector cimport vector
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.c_graph cimport CGraph
 from .static_sparse_backend cimport StaticSparseCGraph
 from .static_sparse_backend cimport StaticSparseBackend
-from sage.ext.memory_allocator cimport MemoryAllocator
 
 cdef extern from "fenv.h":
     int FE_TONEAREST

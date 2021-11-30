@@ -33,9 +33,9 @@ Obtain the Vrepresentation of a polyhedron as facet-incidences stored in
 
     sage: from sage.geometry.polyhedron.combinatorial_polyhedron.conversions \
     ....:         import incidence_matrix_to_bit_rep_of_Vrep
-    sage: P = polytopes.associahedron(['A',4])
-    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())
-    sage: face_list.compute_dimension()
+    sage: P = polytopes.associahedron(['A',4])                                   # optional - sage.combinat
+    sage: face_list = incidence_matrix_to_bit_rep_of_Vrep(P.incidence_matrix())  # optional - sage.combinat
+    sage: face_list.compute_dimension()                                          # optional - sage.combinat
     4
 
 Obtain the facets of a polyhedron as :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces` from a facet list::
@@ -67,16 +67,19 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from memory_allocator                 cimport MemoryAllocator
+
 from sage.structure.element import is_Matrix
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 
 from .list_of_faces                   cimport ListOfFaces
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
-from sage.ext.memory_allocator        cimport MemoryAllocator
 from .face_data_structure             cimport face_next_atom, face_add_atom_safe, facet_set_coatom, face_clear
 from .face_list_data_structure        cimport face_list_t
 
+
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
+
 
 def _Vrep_list_to_bit_rep_wrapper(tup):
     r"""

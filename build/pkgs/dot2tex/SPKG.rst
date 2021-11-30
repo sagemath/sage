@@ -1,5 +1,5 @@
-dot2tex
-=======
+dot2tex: Create PGF/TikZ commands from Graphviz output
+======================================================
 
 Description
 -----------

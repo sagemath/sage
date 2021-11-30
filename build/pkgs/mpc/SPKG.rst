@@ -1,5 +1,5 @@
-MPC
-===
+mpc: Arithmetic of complex numbers with arbitrarily high precision and correct rounding
+=======================================================================================
 
 Description
 -----------

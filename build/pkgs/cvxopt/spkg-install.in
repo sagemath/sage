@@ -65,9 +65,9 @@ export CVXOPT_BLAS_LIB="$(cvxopt_output l blas)"
 export CVXOPT_BLAS_LIB_DIR="$(pkg-config --variable=libdir blas)"
 export CVXOPT_LAPACK_LIB="$(cvxopt_output l lapack)"
 
-if test "x$SAGE_SUITESPARSE_LOCALINSTALL" != "x"; then
-   export CVXOPT_SUITESPARSE_LIB_DIR="${SAGE_LOCAL}"
-   export CVXOPT_SUITESPARSE_INC_DIR="${SAGE_LOCAL}/include"
+if test "x$SAGE_SUITESPARSE_PREFIX" != "x"; then
+   export CVXOPT_SUITESPARSE_LIB_DIR="${SAGE_SUITESPARSE_PREFIX}"
+   export CVXOPT_SUITESPARSE_INC_DIR="${SAGE_SUITESPARSE_PREFIX}/include"
 fi
 
 export CVXOPT_BUILD_GLPK=1

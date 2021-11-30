@@ -10,24 +10,32 @@
 # important in particular for Cygwin. Any libraries which are not
 # listed here will be added at the end of the list (without changing
 # their relative order).
-from sage.env import cython_aliases
-aliases = cython_aliases()
+from sage.env import cython_aliases, default_required_modules, default_optional_modules
 
-arb_dylib_name = aliases["ARB_LIBRARY"]
-library_order_list = aliases["SINGULAR_LIBRARIES"] + [
+modules = default_required_modules + default_optional_modules
+
+aliases = cython_aliases(required_modules=(), optional_modules=modules)
+
+if "ARB_LIBRARY" in aliases:
+    arb_dylib_names = [aliases["ARB_LIBRARY"]]
+else:
+    arb_dylib_names = []
+
+library_order_list = aliases.get("SINGULAR_LIBRARIES", []) + [
     "giac", "intl", "curl",
     "ec", "ecm"
-] + aliases["LINBOX_LIBRARIES"] + aliases["FFLASFFPACK_LIBRARIES"] + aliases["GSL_LIBRARIES"] + [
+] + aliases.get("LINBOX_LIBRARIES", []) + aliases.get("FFLASFFPACK_LIBRARIES", []) + aliases.get("GSL_LIBRARIES", []) + [
     "pari", "flint", "ratpoints", "ecl", "glpk", "ppl",
-    arb_dylib_name, "mpfi", "mpfr", "mpc", "ntl", "gmp", "gmpxx",
+] + arb_dylib_names + [
+    "mpfi", "mpfr", "mpc", "ntl", "gmp", "gmpxx",
     "brial",
     "brial_groebner",
     "m4rie",
-] + aliases["M4RI_LIBRARIES"] + [
+] + aliases.get("M4RI_LIBRARIES", []) + [
     "zn_poly", "gap",
-] + aliases["GDLIB_LIBRARIES"] + aliases["LIBPNG_LIBRARIES"] + [
-    "m", "readline", "Lfunction" ,
-] + aliases["CBLAS_LIBRARIES"] + aliases["ZLIB_LIBRARIES"]
+] + aliases.get("GDLIB_LIBRARIES", []) + aliases.get("LIBPNG_LIBRARIES", []) + [
+    "m", "readline", "Lfunction",
+] + aliases.get("CBLAS_LIBRARIES", []) + aliases.get("ZLIB_LIBRARIES", [])
 
 # Make a dict with library:order pairs, where the order are negative
 # integers sorted according to library_order_list. When sorting,

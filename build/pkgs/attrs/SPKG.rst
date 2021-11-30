@@ -1,5 +1,5 @@
-attrs
-=====
+attrs: Decorator for Python classes with attributes
+===================================================
 
 Description
 -----------

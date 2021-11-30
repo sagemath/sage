@@ -3,3 +3,4 @@ PRing
 ans
 arithmetics
 numer
+desolve

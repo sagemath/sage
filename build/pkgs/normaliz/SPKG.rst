@@ -1,5 +1,5 @@
-normaliz
-========
+normaliz: Computations in affine monoids, vector configurations, lattice polytopes, and rational cones
+======================================================================================================
 
 Description
 -----------

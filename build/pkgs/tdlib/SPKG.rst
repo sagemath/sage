@@ -1,5 +1,5 @@
-TdLib
-=====
+tdlib: Algorithms for computing tree decompositions
+===================================================
 
 Description
 -----------

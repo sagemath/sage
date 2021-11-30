@@ -10,23 +10,21 @@ AUTHORS:
 - Thierry Monteil (2018): initial version.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2018 Thierry Monteil <sage!lma.metelu.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-# Support of Python 3
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .satsolver import SatSolver
 
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('pycosat', ['solve'],
             feature=PythonModule('pycosat', spkg='pycosat'))
+
 
 class PicoSAT(SatSolver):
     r"""
@@ -45,7 +43,7 @@ class PicoSAT(SatSolver):
     """
     def __init__(self, verbosity=0, prop_limit=0):
         r"""
-        Constuct a new PicoSAT instance.
+        Construct a new PicoSAT instance.
 
         See the documentation class for the description of inputs.
 

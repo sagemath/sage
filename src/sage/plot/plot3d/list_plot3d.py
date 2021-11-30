@@ -3,8 +3,8 @@ List Plots
 """
 
 from sage.structure.element import is_Matrix
-from sage.matrix.all import matrix
-from sage.rings.all import RDF
+from sage.matrix.constructor import matrix
+from sage.rings.real_double import RDF
 from sage.misc.superseded import deprecation
 
 
@@ -452,7 +452,7 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
     if interpolation_type == 'linear':
         T = tri.Triangulation(x, y)
         f = tri.LinearTriInterpolator(T, z)
-        j = numpy.complex(0, 1)
+        j = complex(0, 1)
         from .parametric_surface import ParametricSurface
 
         def g(x, y):
@@ -467,7 +467,7 @@ def list_plot3d_tuples(v, interpolation_type, **kwds):
     if interpolation_type == 'clough' or interpolation_type == 'default':
 
         points = [[x[i], y[i]] for i in range(len(x))]
-        j = numpy.complex(0, 1)
+        j = complex(0, 1)
         f = interpolate.CloughTocher2DInterpolator(points, z)
         from .parametric_surface import ParametricSurface
 

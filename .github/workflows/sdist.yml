@@ -1,0 +1,45 @@
+name: Prepare source distributions
+
+on:
+  push:
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
+
+  workflow_dispatch:
+    # Allow to run manually
+
+jobs:
+
+  release_dist:
+
+    # This job, in contrast to "dist" in tox.yml,
+    # does not use "configure --enable-download-from-upstream-url".
+    #
+    # In this way, we check that all necessary package tarballs
+    # have already been uploaded to the Sage server at the time
+    # of pushing a release tag.
+    #
+    # It also uses "bootstrap -D", thus checking that the "configure"
+    # tarball has been uploaded to the Sage server at the time
+    # of pushing a release tag.
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install bootstrap prerequisites
+        run: |
+          sudo DEBIAN_FRONTEND=noninteractive apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install $(build/bin/sage-get-system-packages debian _bootstrap)
+      - name: make dist
+        run: |
+          ./bootstrap -D && ./configure && make dist
+      - uses: actions/upload-artifact@v2
+        with:
+          path: "dist/*.tar.gz"
+          name: release_dist

@@ -152,7 +152,7 @@ from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport richcmp, rich_to_bool
 
 ############################################################################
-###                         Basic clone elements                         ###
+#                          Basic clone elements                            #
 ############################################################################
 cdef class ClonableElement(Element):
     r"""
@@ -484,7 +484,7 @@ cdef class ClonableElement(Element):
 
 
 ############################################################################
-###     The most common case of clone object : list with constraints     ###
+#       The most common case of clone object : list with constraints       #
 ############################################################################
 cdef class ClonableArray(ClonableElement):
     """
@@ -501,7 +501,7 @@ cdef class ClonableArray(ClonableElement):
     - ``lst``    -- a list
     - ``check``  -- a boolean specifying if the invariant must be checked
       using method :meth:`check`.
-    - ``immutable`` -- a boolean telling wether the created element is
+    - ``immutable`` -- a boolean telling whether the created element is
       immutable (defaults to ``True``)
 
     .. SEEALSO:: :class:`~sage.structure.list_clone_demo.IncreasingArray` for
@@ -523,7 +523,7 @@ cdef class ClonableArray(ClonableElement):
         ...
         ValueError: array is not increasing
     """
-    def __init__(self, Parent parent, lst, check = True, immutable = True):
+    def __init__(self, Parent parent, lst, check=True, immutable=True):
         """
         Initialize ``self``
 
@@ -935,7 +935,7 @@ cdef class ClonableArray(ClonableElement):
             [1, 2, 4]
             sage: t = el.__reduce__(); t
             (<built-in function _make_array_clone>,
-             (<type 'sage.structure.list_clone_demo.IncreasingArray'>,
+             (<class 'sage.structure.list_clone_demo.IncreasingArray'>,
               <sage.structure.list_clone_demo.IncreasingArrays_with_category object at ...>,
               [1, 2, 4],
               True,
@@ -1231,7 +1231,7 @@ cdef class ClonableIntArray(ClonableElement):
     - ``lst``      -- a list
     - ``check`` -- a boolean specifying if the invariant must be checked
       using method :meth:`check`
-    - ``immutable`` -- a boolean telling wether the created element is
+    - ``immutable`` -- a boolean telling whether the created element is
       immutable (defaults to ``True``)
 
     .. SEEALSO:: :class:`~sage.structure.list_clone_demo.IncreasingIntArray`
@@ -1241,7 +1241,7 @@ cdef class ClonableIntArray(ClonableElement):
         self._len = -1
         self._list = NULL
 
-    def __init__(self, Parent parent, lst, check = True, immutable = True):
+    def __init__(self, Parent parent, lst, check=True, immutable=True):
         """
         Initialize ``self``
 
@@ -1392,7 +1392,7 @@ cdef class ClonableIntArray(ClonableElement):
         cdef int i
         cdef list L = <list> PyList_New(self._len)
         cdef object o
-        for  i from 0<=i<self._len:
+        for i from 0<=i<self._len:
             o = PyInt_FromLong(self._list[i])
             Py_INCREF(o)
             PyList_SET_ITEM(L, i, o)
@@ -1552,7 +1552,6 @@ cdef class ClonableIntArray(ClonableElement):
                 return i
         raise ValueError("list.index(x): x not in list")
 
-
     # __hash__ is not properly inherited if comparison is changed
     # see <http://groups.google.com/group/cython-users/t/e89a9bd2ff20fd5a>
     def __hash__(self):
@@ -1601,7 +1600,7 @@ cdef class ClonableIntArray(ClonableElement):
         cdef int i, minlen, reslen
         cdef ClonableIntArray rgt = <ClonableIntArray>right
         if left is right:
-             return rich_to_bool(op, 0)
+            return rich_to_bool(op, 0)
         if left._list is NULL:
             if rgt._list is NULL:
                 return rich_to_bool(op, 0)
@@ -1722,7 +1721,7 @@ cdef class ClonableIntArray(ClonableElement):
             [1, 2, 4]
             sage: t = el.__reduce__(); t
             (<built-in function _make_int_array_clone>,
-             (<type 'sage.structure.list_clone_demo.IncreasingIntArray'>,
+             (<class 'sage.structure.list_clone_demo.IncreasingIntArray'>,
               <sage.structure.list_clone_demo.IncreasingIntArrays_with_category object at ...>,
               [1, 2, 4],
               True,
@@ -1804,8 +1803,7 @@ cdef class NormalizedClonableList(ClonableList):
         sage: sl2
         [1, 4, 6, 12]
     """
-
-    def __init__(self, Parent parent, lst, check = True, immutable = True):
+    def __init__(self, Parent parent, lst, check=True, immutable=True):
         r"""
         TESTS::
 
@@ -1859,4 +1857,3 @@ cdef class NormalizedClonableList(ClonableList):
             ValueError: list is not strictly increasing
         """
         raise NotImplementedError("This should never be called, please overload the normalize method")
-

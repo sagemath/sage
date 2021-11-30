@@ -16,7 +16,7 @@ version 2, or later.
 TESTS:
 
     sage: type(polygen(ComplexBallField(140)))
-    <type 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
+    <class 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
     sage: Pol.<x> = CBF[]
     sage: (x+1/2)^3
     x^3 + 1.500000000000000*x^2 + 0.7500000000000000*x + 0.1250000000000000
@@ -45,7 +45,7 @@ cdef class Polynomial_complex_arb(Polynomial):
 
         sage: Pol.<x> = CBF[]
         sage: type(x)
-        <type 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
+        <class 'sage.rings.polynomial.polynomial_complex_arb.Polynomial_complex_arb'>
 
         sage: Pol(), Pol(1), Pol([0,1,2]), Pol({1: pi, 3: i})
         (0,

@@ -37,7 +37,7 @@ Methods
 # ****************************************************************************
 
 cimport cython
-from sage.ext.memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
 
 
@@ -197,7 +197,7 @@ cpdef kruskal(G, wfunction=None, bint check=False):
 
         sage: def my_disconnected_graph(n, ntries, directed=False, multiedges=False, loops=False):
         ....:     G = Graph()
-        ....:     k = randint(1, n)
+        ....:     k = randint(2, n)
         ....:     G.add_vertices(range(k))
         ....:     if directed:
         ....:         G = G.to_directed()
@@ -796,7 +796,7 @@ cpdef boruvka(G, wfunction=None, bint check=False, bint by_weight=True):
     return T
 
 
-def random_spanning_tree(self, output_as_graph=False):
+def random_spanning_tree(G, output_as_graph=False, by_weight=False, weight_function=None, check_weight=True):
     r"""
     Return a random spanning tree of the graph.
 
@@ -808,10 +808,29 @@ def random_spanning_tree(self, output_as_graph=False):
     edge `(i, j)` to the spanning tree, where `i` is the previous vertex in the
     random walk.
 
+    When ``by_weight`` is ``True`` or a weight function is given, the selection
+    of the neighbor is done proportionaly to the edge weights.
+
     INPUT:
+
+    - ``G`` -- an undirected graph
 
     - ``output_as_graph`` -- boolean (default: ``False``); whether to return a
       list of edges or a graph
+
+    - ``by_weight`` -- boolean (default: ``False``); if ``True``, the edges in
+      the graph are weighted, otherwise all edges have weight 1
+
+    - ``weight_function`` -- function (default: ``None``); a function that takes
+      as input an edge ``(u, v, l)`` and outputs its weight. If not ``None``,
+      ``by_weight`` is automatically set to ``True``. If ``None`` and
+      ``by_weight`` is ``True``, we use the edge label ``l`` , if ``l`` is not
+      ``None``, else ``1`` as a weight. The ``weight_function`` can be used to
+      transform the label into a weight (note that, if the weight returned is
+      not convertible to a float, an error is raised)
+
+    - ``check_weight`` -- boolean (default: ``True``); whether to check that
+      the ``weight_function`` outputs a number for each edge.
 
     .. SEEALSO::
 
@@ -846,6 +865,35 @@ def random_spanning_tree(self, output_as_graph=False):
         sage: T.set_pos(pos)
         sage: T.show(vertex_labels=False)
 
+    We can also use edge weights to change the probability of returning a
+    spanning tree::
+
+        sage: def foo(G, k):
+        ....:     S = set()
+        ....:     for _ in range(k):
+        ....:         E = G.random_spanning_tree(by_weight=True)
+        ....:         S.add(Graph(E).graph6_string())
+        ....:     return S
+        sage: K3 = graphs.CompleteGraph(3)
+        sage: for u, v in K3.edges(labels=False):
+        ....:     K3.set_edge_label(u, v, randint(1, 2))
+        sage: foo(K3, 100) == {'BW', 'Bg', 'Bo'}  # random
+        True
+        sage: K4 = graphs.CompleteGraph(4)
+        sage: for u, v in K4.edges(labels=False):
+        ....:     K4.set_edge_label(u, v, randint(1, 2))
+        sage: print(len(foo(K4, 100)))  # random
+        16
+
+    Check that the spanning tree returned when using weights is a tree::
+
+        sage: G = graphs.RandomBarabasiAlbert(50, 2)
+        sage: for u, v in G.edge_iterator(labels=False):
+        ....:     G.set_edge_label(u, v, randint(1, 10))
+        sage: T = G.random_spanning_tree(by_weight=True, output_as_graph=True)
+        sage: T.is_tree()
+        True
+
     TESTS::
 
         sage: G = Graph()
@@ -861,21 +909,43 @@ def random_spanning_tree(self, output_as_graph=False):
         ValueError: works only for non-empty connected graphs
     """
     from sage.misc.prandom import randint
+    from sage.misc.prandom import random
     from sage.graphs.graph import Graph
 
-    cdef int N = self.order()
+    cdef int N = G.order()
 
-    if not N or not self.is_connected():
+    if not N or not G.is_connected():
         raise ValueError('works only for non-empty connected graphs')
 
-    s = next(self.vertex_iterator())
+    if G.order() == G.size() + 1:
+        # G is a tree
+        if output_as_graph:
+            return G.copy()
+        return list(G.edge_iterator(label=False))
+
+    by_weight, weight_function = G._get_weight_function(by_weight=by_weight,
+                                                        weight_function=weight_function,
+                                                        check_weight=check_weight)
+
+    if by_weight:
+        def next_neighbor(s):
+            p = random() * sum(weight_function(e)
+                               for e in G.edge_iterator(s, sort_vertices=False))
+            for e in G.edge_iterator(s, sort_vertices=False):
+                p -= weight_function(e)
+                if p <= 0:
+                    break
+            return e[1] if e[0] == s else e[0]
+    else:
+        def next_neighbor(s):
+            return G.neighbors(s)[randint(0, G.degree(s) - 1)]
+
+    s = next(G.vertex_iterator())
     cdef set found = set([s])
     cdef int found_nr = 1
     cdef list tree_edges = []
-    cdef list neighbors
     while found_nr < N:
-        neighbors = self.neighbors(s)
-        new_s = neighbors[randint(0, len(neighbors) - 1)]
+        new_s = next_neighbor(s)
         if new_s not in found:
             found.add(new_s)
             found_nr += 1

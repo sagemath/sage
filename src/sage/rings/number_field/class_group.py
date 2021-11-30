@@ -44,7 +44,7 @@ EXAMPLES::
 from sage.groups.abelian_gps.values import AbelianGroupWithValues_class, AbelianGroupWithValuesElement
 from sage.groups.abelian_gps.abelian_group_element import AbelianGroupElement
 from sage.structure.element import MonoidElement
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 
 class FractionalIdealClass(AbelianGroupWithValuesElement):
@@ -157,7 +157,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
             sage: C=K.class_group()
             sage: c = C(2, a)
             sage: c^2
-            Fractional ideal class (2, a^2 + 2*a - 1)
+            Fractional ideal class (4, a)
             sage: c^3
             Trivial principal fractional ideal class
             sage: c^1000
@@ -213,7 +213,7 @@ class FractionalIdealClass(AbelianGroupWithValuesElement):
     def reduce(self):
         r"""
         Return representative for this ideal class that has been
-        reduced using PARI's idealred.
+        reduced using PARI's :pari:`idealred`.
 
         EXAMPLES::
 
@@ -467,7 +467,7 @@ class ClassGroup(AbelianGroupWithValues_class):
             sage: CK = K.class_group()
             sage: CL = L.class_group()
             sage: [CL(I).exponents() for I in CK]
-            [(0,), (4,), (2,)]
+            [(0,), (2,), (4,)]
         """
         if isinstance(args[0], FractionalIdealClass):
             return self.element_class(self, None, self._number_field.ideal(args[0].ideal()))

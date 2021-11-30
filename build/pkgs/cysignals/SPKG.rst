@@ -1,5 +1,5 @@
-cysignals
-=========
+cysignals: Interrupt and signal handling for Cython
+===================================================
 
 Description
 -----------

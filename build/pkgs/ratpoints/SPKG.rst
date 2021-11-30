@@ -1,5 +1,5 @@
-ratpoints
-=========
+ratpoints: Find rational points on hyperelliptic curves
+=======================================================
 
 Description
 -----------
@@ -17,17 +17,7 @@ Upstream Contact
 
 -  Author: Michael Stoll
 -  Email: Michael.Stoll@uni-bayreuth.de
--  Website: http://www.mathe2.uni-bayreuth.de/stoll/
-
-Dependencies
-------------
-
--  GMP/MPIR
--  (GNU) patch
-
-
-Special Update/Build Instructions
----------------------------------
+-  Website: http://www.mathe2.uni-bayreuth.de/stoll/programs/
 
 
 Note on SSE2 instructions

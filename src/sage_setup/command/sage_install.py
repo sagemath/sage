@@ -4,6 +4,11 @@
 
 import os
 import time
+
+# Import setuptools before importing distutils, so that setuptools
+# can replace distutils by its own vendored copy.
+import setuptools
+
 from distutils import log
 from distutils.command.install import install
 

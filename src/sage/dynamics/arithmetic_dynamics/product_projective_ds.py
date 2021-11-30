@@ -27,7 +27,7 @@ EXAMPLES::
 from copy import copy
 from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
 from sage.dynamics.arithmetic_dynamics.projective_ds import DynamicalSystem_projective
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.schemes.product_projective.morphism import ProductProjectiveSpaces_morphism_ring
 
@@ -325,7 +325,7 @@ class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_pr
         V = []
         E = []
         from sage.schemes.product_projective.space import is_ProductProjectiveSpaces
-        if is_ProductProjectiveSpaces(self.domain()) == True:
+        if is_ProductProjectiveSpaces(self.domain()):
             for P in self.domain():
                 V.append(str(P))
                 Q = self(P)
@@ -333,5 +333,4 @@ class DynamicalSystem_product_projective_finite_field(DynamicalSystem_product_pr
         else:
             raise NotImplementedError("Cyclegraph for product projective spaces not implemented for subschemes")
         from sage.graphs.digraph import DiGraph
-        g = DiGraph(dict(zip(V, E)), loops=True)
-        return g
+        return DiGraph(dict(zip(V, E)), loops=True)

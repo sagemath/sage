@@ -1,8 +1,11 @@
-eclib
-=====
+eclib: Enumerating and computing with elliptic curves defined over the rational numbers
+=======================================================================================
 
 Description
 -----------
+
+John Cremona's programs for enumerating and computing with elliptic curves
+defined over the rational numbers.
 
 mwrank is a program written in C++ for computing Mordell-Weil groups of
 elliptic curves over Q via 2-descent. It is available as source code in

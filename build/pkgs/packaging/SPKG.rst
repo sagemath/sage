@@ -1,5 +1,5 @@
-packaging
-=========
+packaging: Core utilities for Python packages
+=============================================
 
 Description
 -----------

@@ -1,5 +1,5 @@
-IML
-===
+iml: Integer Matrix Library
+===========================
 
 Description
 -----------
@@ -12,7 +12,7 @@ bignum library.
 Written in portable C, IML can be used on both 32-bit and 64-bit
 machines. It can be called from C++.
 
-Website: http://www.cs.uwaterloo.ca/~astorjoh/iml.html
+Website: https://www.cs.uwaterloo.ca/~astorjoh/iml.html
 
 License
 -------
@@ -30,7 +30,7 @@ Dependencies
 ------------
 
 -  GMP
--  ATLAS
+-  a BLAS implementation such as openblas
 
 
 Special Update/Build Instructions

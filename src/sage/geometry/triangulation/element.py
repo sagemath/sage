@@ -23,7 +23,7 @@ Here is a simple example of how to triangulate a point configuration::
     sage: points = PointConfiguration(p)
     sage: triang = points.triangulate();  triang
     (<0,1,2,5>, <0,1,3,5>, <1,3,4,5>)
-    sage: triang.plot(axes=False)
+    sage: triang.plot(axes=False)  # optional - sage.plot
     Graphics3d Object
 
 See :mod:`sage.geometry.triangulation.point_configuration` for more details.
@@ -41,8 +41,9 @@ See :mod:`sage.geometry.triangulation.point_configuration` for more details.
 
 from sage.structure.richcmp import richcmp
 from sage.structure.element import Element
-from sage.rings.all import QQ, ZZ
-from sage.modules.all import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.modules.free_module_element import vector
 from sage.misc.cachefunc import cached_method
 from sage.sets.set import Set
 from sage.graphs.graph import Graph
@@ -67,7 +68,7 @@ def triangulation_render_2d(triangulation, **kwds):
 
         sage: points = PointConfiguration([[0,0],[0,1],[1,0],[1,1],[-1,-1]])
         sage: triang = points.triangulate()
-        sage: triang.plot(axes=False, aspect_ratio=1)   # indirect doctest
+        sage: triang.plot(axes=False, aspect_ratio=1)   # indirect doctest  # optional - sage.plot
         Graphics object consisting of 12 graphics primitives
     """
     from sage.plot.all import point2d, line2d, polygon2d
@@ -91,7 +92,7 @@ def triangulation_render_2d(triangulation, **kwds):
             all_lines.append(l)
         else:
             interior_lines.append(l)
-    exterior_lines = [ l for l in all_lines if not l in interior_lines ]
+    exterior_lines = [l for l in all_lines if l not in interior_lines]
 
     plot_interior_lines = sum([ line2d([ coord[l[0]], coord[l[1]] ],
                                        zorder=1, rgbcolor=(0,1,0), **kwds)
@@ -131,7 +132,7 @@ def triangulation_render_3d(triangulation, **kwds):
         sage: p = [[0,-1,-1],[0,0,1],[0,1,0], [1,-1,-1],[1,0,1],[1,1,0]]
         sage: points = PointConfiguration(p)
         sage: triang = points.triangulate()
-        sage: triang.plot(axes=False)     # indirect doctest
+        sage: triang.plot(axes=False)     # indirect doctest  # optional - sage.plot
         Graphics3d Object
     """
     from sage.plot.plot3d.all import point3d, line3d, polygon3d
@@ -159,7 +160,7 @@ def triangulation_render_3d(triangulation, **kwds):
             all_lines.append(l)
         else:
             interior_lines.append(l)
-    exterior_lines = [ l for l in all_lines if not l in interior_lines ]
+    exterior_lines = [l for l in all_lines if l not in interior_lines]
 
     from sage.plot.plot3d.texture import Texture
     line_int = Texture(color='darkblue', ambient=1, diffuse=0)
@@ -189,7 +190,7 @@ def triangulation_render_3d(triangulation, **kwds):
             all_triangs.append(l)
         else:
             interior_triangs.append(l)
-    exterior_triangs = [ l for l in all_triangs if not l in interior_triangs ]
+    exterior_triangs = [l for l in all_triangs if l not in interior_triangs]
 
     plot_interior_triangs = \
         sum([ polygon3d([coord[t[0]], coord[t[1]], coord[t[2]]],
@@ -415,7 +416,7 @@ class Triangulation(Element):
             sage: triangulation = p.triangulate()
             sage: triangulation
             (<1,3,4>, <2,3,4>)
-            sage: triangulation.plot(axes=False)
+            sage: triangulation.plot(axes=False)  # optional - sage.plot
             Graphics object consisting of 12 graphics primitives
         """
         dim = self.point_configuration().dim()
@@ -576,7 +577,7 @@ class Triangulation(Element):
 
         OUTPUT:
 
-        A :class:`~sage.homology.simplicial_complex.SimplicialComplex`.
+        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
 
         EXAMPLES::
 
@@ -590,7 +591,7 @@ class Triangulation(Element):
             sage: sc.homology()
             {0: 0, 1: 0, 2: 0, 3: 0}
         """
-        from sage.homology.simplicial_complex import SimplicialComplex
+        from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self)
 
 

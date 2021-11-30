@@ -1,6 +1,5 @@
-
-Zeros of the Riemann zeta function
-==================================
+database_odlyzko_zeta: Table of zeros of the Riemann zeta function
+==================================================================
 
 Description
 -----------

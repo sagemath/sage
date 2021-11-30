@@ -1,4 +1,4 @@
-# sage_setup: distribution = sage-primecount
+# sage_setup: distribution = sagemath-primecount
 
 r"""
 Interface to the primecount library
@@ -17,6 +17,11 @@ from libcpp.string cimport string as cppstring
 from cpython.int cimport PyInt_FromString
 
 from cysignals.signals cimport sig_on, sig_off
+
+
+from sage.misc.superseded import deprecation
+deprecation(32412, "the module sage.interfaces.primecount is deprecated")
+
 
 cimport sage.libs.primecount as primecount
 
@@ -37,6 +42,10 @@ cpdef int64_t prime_pi(int64_t n, method=None) except -1:
     EXAMPLES::
 
         sage: from sage.interfaces.primecount import prime_pi # optional - primecount
+        doctest:warning
+        ...
+        DeprecationWarning: the module sage.interfaces.primecount is deprecated
+        See https://trac.sagemath.org/32412 for details.
 
         sage: prime_pi(1000) == 168                     # optional - primecount
         True
@@ -49,7 +58,7 @@ cpdef int64_t prime_pi(int64_t n, method=None) except -1:
     """
     cdef int64_t ans
     if method is not None:
-        from sage.misc.superseded import deprecation
+        from sage.misc.superseded import deprecation_cython as deprecation
         deprecation(28493, "primecount 5 no longer supports the 'method' parameter")
     if _do_sig(n): sig_on()
     ans = primecount.pi(n)

@@ -135,7 +135,7 @@
         var sprite = new THREE.Sprite( new THREE.SpriteMaterial( { map: texture } ) );
         sprite.position.set( x, y, z );
 
-        // Set the initial scale based on plot size to accomodate orthographic projection.
+        // Set the initial scale based on plot size to accommodate orthographic projection.
         // For other projections, the scale will get reset each frame based on camera distance.
         var scale = midToCorner/2;
         sprite.scale.set( scale, scale*.25 ); // ratio of canvas width to height
@@ -362,7 +362,7 @@
         renderer.render( scene, camera );
 
         // Resize text based on distance from camera.
-        // Not neccessary for orthographic due to the nature of the projection (preserves sizes).
+        // Not necessary for orthographic due to the nature of the projection (preserves sizes).
         if ( !camera.isOrthographicCamera ) {
             for ( var i=0 ; i < scene.children.length ; i++ ) {
                 if ( scene.children[i].type === 'Sprite' ) {

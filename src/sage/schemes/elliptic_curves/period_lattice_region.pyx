@@ -168,7 +168,7 @@ cdef class PeriodicRegion:
             sage: S = PeriodicRegion(CDF(1), CDF(I), data)
             sage: S.border()
             [(1, 1, 0), (2, 1, 0), (1, 1, 1), (1, 2, 1)]
-            sage: condition = lambda z: z.real().abs()<0.5
+            sage: condition = lambda z: z.real().abs()<1/2
             sage: S.verify(condition)
             False
             sage: condition = lambda z: z.real().abs()<1

@@ -1,8 +1,10 @@
-gsl
-===
+gsl: The GNU Scientific Library
+===============================
 
 Description
 -----------
+
+The GNU Scientific Library
 
 Website: http://www.gnu.org/software/gsl/
 

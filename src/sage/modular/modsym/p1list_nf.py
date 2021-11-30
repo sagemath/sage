@@ -211,7 +211,7 @@ class MSymbol(SageObject):
 
     def __repr__(self):
         """
-        Returns the string representation of this MSymbol.
+        Return the string representation of this MSymbol.
 
         EXAMPLES::
 
@@ -261,7 +261,7 @@ class MSymbol(SageObject):
 
     def N(self):
         """
-        Returns the level or modulus of this MSymbol.
+        Return the level or modulus of this MSymbol.
 
         EXAMPLES::
 
@@ -275,7 +275,7 @@ class MSymbol(SageObject):
 
     def tuple(self):
         """
-        Returns the MSymbol as a list (c, d).
+        Return the MSymbol as a list (c, d).
 
         EXAMPLES::
 
@@ -312,7 +312,7 @@ class MSymbol(SageObject):
 
     def __get_c(self):
         """
-        Returns the first coefficient of the M-symbol.
+        Return the first coefficient of the M-symbol.
 
         EXAMPLES::
 
@@ -327,7 +327,7 @@ class MSymbol(SageObject):
 
     def __get_d(self):
         """
-        Returns the second coefficient of the M-symbol.
+        Return the second coefficient of the M-symbol.
 
         EXAMPLES::
 
@@ -546,7 +546,7 @@ class P1NFList(SageObject):
 
     def __len__(self):
         """
-        Returns the length of this P1NFList.
+        Return the length of this P1NFList.
 
         EXAMPLES::
 
@@ -560,7 +560,7 @@ class P1NFList(SageObject):
 
     def __repr__(self):
         """
-        Returns the string representation of this P1NFList.
+        Return the string representation of this P1NFList.
 
         EXAMPLES::
 
@@ -574,7 +574,7 @@ class P1NFList(SageObject):
 
     def list(self):
         """
-        Returns the underlying list of this P1NFList object.
+        Return the underlying list of this P1NFList object.
 
         EXAMPLES::
 
@@ -645,7 +645,7 @@ class P1NFList(SageObject):
 
     def N(self):
         """
-        Returns the level or modulus of this P1NFList.
+        Return the level or modulus of this P1NFList.
 
         EXAMPLES::
 
@@ -771,13 +771,14 @@ class P1NFList(SageObject):
         """
         if d is None:
             try:
-                c = MSymbol(self.__N, c) # check that c is an MSymbol
-            except ValueError: # catch special case of wrong level
+                c = MSymbol(self.__N, c)  # check that c is an MSymbol
+            except ValueError:  # catch special case of wrong level
                 raise ValueError("The MSymbol is of a different level")
             t, i = search(self.__list, c)
         else:
             t, i = search(self.__list, MSymbol(self.__N, c, d))
-        if t: return i
+        if t:
+            return i
         return False
 
     def lift_to_sl2_Ok(self, i):
@@ -956,7 +957,7 @@ class P1NFList(SageObject):
             sage: N = k.ideal(a + 1)
             sage: P = P1NFList(N)
             sage: u = k.unit_group().gens_values(); u
-            [-1, a^3 + a^2 + a + 12, a^3 + 3*a^2 - 1]
+            [-1, -a^3 - a^2 - a - 12, -a^3 - 3*a^2 + 1]
             sage: P.apply_J_epsilon(3, u[2]^2)==P.apply_J_epsilon(P.apply_J_epsilon(3, u[2]),u[2])
             True
         """
@@ -975,7 +976,7 @@ class P1NFList(SageObject):
 
 def p1NFlist(N):
     """
-    Returns a list of the normalized elements of `\\mathbb{P}^1(R/N)`, where
+    Return a list of the normalized elements of `\\mathbb{P}^1(R/N)`, where
     `N` is an integral ideal.
 
     INPUT:
@@ -1124,9 +1125,10 @@ def lift_to_sl2_Ok(N, c, d):
     a = (1-B)/d
     return [a, b, c, d]
 
+
 def make_coprime(N, c, d):
     """
-    Returns (c, d') so d' is congruent to d modulo N, and such that c and d' are
+    Return (c, d') so d' is congruent to d modulo N, and such that c and d' are
     coprime (<c> + <d'> = R).
 
     INPUT:
@@ -1196,7 +1198,7 @@ def psi(N):
     if not N.is_integral():
         raise ValueError("psi only defined for integral ideals")
 
-    from sage.misc.all import prod
+    from sage.misc.misc_c import prod
     return prod([(np+1)*np**(e-1) \
                      for np,e in [(p.absolute_norm(),e) \
                                   for p,e in N.factor()]])

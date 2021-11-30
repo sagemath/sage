@@ -207,15 +207,15 @@ class PariRing(Singleton, ring.Ring):
         EXAMPLES::
 
             sage: R = PariRing()
-            sage: R.random_element()
-            -8
-            sage: R.random_element(5,13)
-            12
-            sage: [R.random_element(distribution="1/n") for _ in range(10)]
-            [0, 1, -1, 2, 1, -95, -1, -2, -12, 0]
+            sage: R.random_element().parent() is R
+            True
+            sage: R(5) <= R.random_element(5,13) < R(13)
+            True
+            sage: R.random_element(distribution="1/n").parent() is R
+            True
 
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         return self(ZZ.random_element(x, y, distribution))
 
     def zeta(self):

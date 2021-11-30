@@ -304,12 +304,11 @@ import warnings
 from sage.misc.latex import latex
 from sage.rings.all import ZZ, QQ, RR, CC
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.real_mpfr import is_RealField
-from sage.rings.complex_mpfr import is_ComplexField
+import sage.rings.abc
 
 from sage.symbolic.function import BuiltinFunction, GinacFunction
 from sage.symbolic.expression import Expression
-from sage.symbolic.all import SR
+from sage.symbolic.ring import SR
 from sage.functions.other import factorial, binomial
 from sage.structure.all import parent
 
@@ -672,7 +671,7 @@ class Func_chebyshev_T(ChebyshevFunction):
         except KeyError:
             real_parent = parent(x)
 
-            if not is_RealField(real_parent) and not is_ComplexField(real_parent):
+            if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
                 # parent is not a real or complex field: figure out a good parent
                 if x in RR:
                     x = RR(x)
@@ -681,7 +680,7 @@ class Func_chebyshev_T(ChebyshevFunction):
                     x = CC(x)
                     real_parent = CC
 
-        if not is_RealField(real_parent) and not is_ComplexField(real_parent):
+        if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
             raise TypeError("cannot evaluate chebyshev_T with parent {}".format(real_parent))
 
         from sage.libs.mpmath.all import call as mpcall
@@ -1031,7 +1030,7 @@ class Func_chebyshev_U(ChebyshevFunction):
         except KeyError:
             real_parent = parent(x)
 
-            if not is_RealField(real_parent) and not is_ComplexField(real_parent):
+            if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
                 # parent is not a real or complex field: figure out a good parent
                 if x in RR:
                     x = RR(x)
@@ -1040,7 +1039,7 @@ class Func_chebyshev_U(ChebyshevFunction):
                     x = CC(x)
                     real_parent = CC
 
-        if not is_RealField(real_parent) and not is_ComplexField(real_parent):
+        if not isinstance(real_parent, (sage.rings.abc.RealField, sage.rings.abc.ComplexField)):
             raise TypeError("cannot evaluate chebyshev_U with parent {}".format(real_parent))
 
         from sage.libs.mpmath.all import call as mpcall
@@ -1424,6 +1423,115 @@ class Func_legendre_Q(BuiltinFunction):
 legendre_Q = Func_legendre_Q()
 
 class Func_assoc_legendre_P(BuiltinFunction):
+    r"""
+    Return the Ferrers function `\mathtt{P}_n^m(x)` of first kind for
+    `x \in (-1,1)` with general order `m` and general degree `n`.
+
+    Ferrers functions of first kind are one of two linearly independent
+    solutions of the associated Legendre differential equation
+
+    .. MATH::
+
+        (1-x^2) \frac{\mathrm{d}^2 w}{\mathrm{d}x^2} -
+            2x \frac{\mathrm{d} w}{\mathrm{d}x} +
+            \left(n(n+1) - \frac{m^2}{1-x^2}\right) w = 0
+
+    on the interval `x \in (-1, 1)` and are usually denoted by
+    `\mathtt{P}_n^m(x)`.
+
+    .. SEEALSO ::
+
+        The other linearly independent solution is called *Ferrers function of
+        second kind* and denoted by `\mathtt{Q}_n^m(x)`,
+        see :class:`Func_assoc_legendre_Q`.
+
+    .. WARNING::
+
+        Ferrers functions must be carefully distinguished from associated
+        Legendre functions which are defined on `\CC \setminus (- \infty, 1]`
+        and have not yet been implemented.
+
+    EXAMPLES:
+
+    We give the first Ferrers functions for non-negative integers
+    `n` and `m` in the interval `-1<x<1`::
+
+        sage: for n in range(4):
+        ....:     for m in range(n+1):
+        ....:         print(f"P_{n}^{m}({x}) = {gen_legendre_P(n, m, x)}")
+        P_0^0(x) = 1
+        P_1^0(x) = x
+        P_1^1(x) = -sqrt(-x^2 + 1)
+        P_2^0(x) = 3/2*x^2 - 1/2
+        P_2^1(x) = -3*sqrt(-x^2 + 1)*x
+        P_2^2(x) = -3*x^2 + 3
+        P_3^0(x) = 5/2*x^3 - 3/2*x
+        P_3^1(x) = -3/2*(5*x^2 - 1)*sqrt(-x^2 + 1)
+        P_3^2(x) = -15*(x^2 - 1)*x
+        P_3^3(x) = -15*(-x^2 + 1)^(3/2)
+
+    These expressions for non-negative integers are computed by the
+    Rodrigues-type given in :meth:`eval_gen_poly`. Negative values for `n` are
+    obtained by the following identity:
+
+    .. MATH::
+
+        P^{m}_{-n}(x) = P^{m}_{n-1}(x).
+
+    For `n` being a non-negative integer, negative values for `m` are
+    obtained by
+
+    .. MATH::
+
+        P^{-|m|}_n(x) = (-1)^{|m|} \frac{(n-|m|)!}{(n+|m|)!} P_n^{|m|}(x),
+
+    where `|m| \leq n`.
+
+    Here are some specific values with negative integers::
+
+        sage: gen_legendre_P(-2, -1, x)
+        1/2*sqrt(-x^2 + 1)
+        sage: gen_legendre_P(2, -2, x)
+        -1/8*x^2 + 1/8
+        sage: gen_legendre_P(3, -2, x)
+        -1/8*(x^2 - 1)*x
+        sage: gen_legendre_P(1, -2, x)
+        0
+
+    Here are some other random values with floating numbers::
+
+        sage: m = var('m'); assume(m, 'integer')
+        sage: gen_legendre_P(m, m, .2)
+        0.960000000000000^(1/2*m)*(-1)^m*factorial(2*m)/(2^m*factorial(m))
+        sage: gen_legendre_P(.2, m, 0)
+        sqrt(pi)*2^m/(gamma(-1/2*m + 1.10000000000000)*gamma(-1/2*m + 0.400000000000000))
+        sage: gen_legendre_P(.2, .2, .2)
+        0.757714892929573
+
+    TESTS:
+
+    Some consistency checks::
+
+        sage: gen_legendre_P(1, 1, x)
+        -sqrt(-x^2 + 1)
+        sage: gen_legendre_P.eval_gen_poly(1, 1, x)
+        -sqrt(-x^2 + 1)
+        sage: gen_legendre_P(1, 1, 0.5) # abs tol 1e-14
+        -0.866025403784439
+        sage: gen_legendre_P.eval_gen_poly(1, 1, 0.5) # abs tol 1e-14
+        -0.866025403784439
+        sage: gen_legendre_P._evalf_(1, 1, 0.5) # abs tol 1e-14
+        -0.866025403784439
+        sage: gen_legendre_P(2/3,1,0.) # abs tol 1e-14
+        -0.773063511309286
+        sage: gen_legendre_P._eval_special_values_(2/3,1,0.).n() # abs tol 1e-14
+        -0.773063511309286
+
+    REFERENCES:
+
+    - [DLMF-Legendre]_
+
+    """
     def __init__(self):
         r"""
         EXAMPLES::
@@ -1433,9 +1541,11 @@ class Func_assoc_legendre_P(BuiltinFunction):
             sage: maxima(gen_legendre_P(20,6,x, hold=True))._sage_().expand().coefficient(x,10)
             2508866163428625/128
         """
-        BuiltinFunction.__init__(self, "gen_legendre_P", nargs=3, latex_name=r"P",
-                conversions={'maxima':'assoc_legendre_p', 'mathematica':'LegendreP',
-                    'maple':'LegendreP'})
+        BuiltinFunction.__init__(self, "gen_legendre_P", nargs=3,
+                                 latex_name=r"\mathtt{P}",
+                                 conversions={'maxima':'assoc_legendre_p',
+                                              'mathematica':'LegendreP',
+                                              'maple':'LegendreP'})
 
     def _eval_(self, n, m, x, *args, **kwds):
         r"""
@@ -1443,65 +1553,104 @@ class Func_assoc_legendre_P(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: gen_legendre_P(3,2,2)
-            -90
             sage: gen_legendre_P(13/2,2,0)
-            2*sqrt(2)*gamma(19/4)/(sqrt(pi)*gamma(13/4))
+            4*sqrt(pi)/(gamma(13/4)*gamma(-15/4))
             sage: gen_legendre_P(3,2,x)
             -15*(x^2 - 1)*x
-            sage: gen_legendre_P(3,2,2).n() # abs tol 1e-14
-            -90.0000000000000
         """
         ret = self._eval_special_values_(n, m, x)
         if ret is not None:
             return ret
-        if (n in ZZ and m in ZZ
-            and n >= 0 and m >= 0
-            and (x in ZZ or not SR(x).is_numeric())):
-            return self.eval_poly(n, m, x)
+        if n in ZZ and m in ZZ and (x in ZZ or not SR(x).is_numeric()):
+            return self._eval_int_ord_deg_(n, m, x)
 
     def _eval_special_values_(self, n, m, x):
         """
         Special values known.
 
-        EXAMPLES::
+        EXAMPLES:
+
+        Case `|m| > |n|` for integers::
 
             sage: gen_legendre_P(2,3,4)
             0
-            sage: gen_legendre_P(2,0,4)==legendre_P(2,4)
-            True
-            sage: gen_legendre_P(2,2,4)
-            45
-            sage: gen_legendre_P(2,2,x)
-            3*x^2 - 3
+
+        Case `x = 0`::
+
             sage: gen_legendre_P(13/2,2,0)
-            2*sqrt(2)*gamma(19/4)/(sqrt(pi)*gamma(13/4))
+            4*sqrt(pi)/(gamma(13/4)*gamma(-15/4))
             sage: (m,n) = var('m,n')
             sage: gen_legendre_P(n,m,0)
-            2^m*cos(1/2*pi*m + 1/2*pi*n)*gamma(1/2*m + 1/2*n + 1/2)/(sqrt(pi)*gamma(-1/2*m + 1/2*n + 1))
+            sqrt(pi)*2^m/(gamma(-1/2*m + 1/2*n + 1)*gamma(-1/2*m - 1/2*n + 1/2))
             sage: gen_legendre_P(n,3,0)
-            8*cos(3/2*pi + 1/2*pi*n)*gamma(1/2*n + 2)/(sqrt(pi)*gamma(1/2*n - 1/2))
+            8*sqrt(pi)/(gamma(1/2*n - 1/2)*gamma(-1/2*n - 1))
             sage: gen_legendre_P(3,m,0)
-            2^m*cos(3/2*pi + 1/2*pi*m)*gamma(1/2*m + 2)/(sqrt(pi)*gamma(-1/2*m + 5/2))
+            sqrt(pi)*2^m/(gamma(-1/2*m + 5/2)*gamma(-1/2*m - 1))
+
+        Case `m = n` for integers::
+
+            sage: m = var('m')
+            sage: assume(m, 'integer')
+            sage: gen_legendre_P(m, m, x)
+            (-1)^m*(-x^2 + 1)^(1/2*m)*factorial(2*m)/(2^m*factorial(m))
+            sage: gen_legendre_P(m, m, .2)
+            0.960000000000000^(1/2*m)*(-1)^m*factorial(2*m)/(2^m*factorial(m))
+            sage: gen_legendre_P(2, 2, x)
+            -3*x^2 + 3
+
+        Case `n = 0`::
+
+            sage: gen_legendre_P(m, 0, x)
+            legendre_P(m, x)
+            sage: gen_legendre_P(2,0,4) == legendre_P(2,4)
+            True
+
         """
-        if m > n:
-            return ZZ(0)
         if m == 0:
+            # https://dlmf.nist.gov/14.7#E1
             return legendre_P(n, x)
-        if n == m:
-            return factorial(2*m)/2**m/factorial(m) * (x**2-1)**(m/2)
         if x == 0:
             from .gamma import gamma
             from .other import sqrt
-            from .trig import cos
-            if m in QQ and n in QQ:
-                return 2**m/sqrt(SR.pi())*cos((n+m)/2*SR.pi())*(gamma(QQ(n+m+1)/2)/gamma(QQ(n-m)/2+1))
-            elif isinstance(n, Expression) or isinstance(m, Expression):
-                return 2**m/sqrt(SR.pi())*cos((n+m)/2*SR.pi())*(gamma((n+m+1)/2)/gamma((n-m)/2+1))
+            # https://dlmf.nist.gov/14.5#E1
+            return 2**m*sqrt(SR.pi())/gamma(n/2-m/2+1)/gamma(QQ(1/2)-n/2-m/2)
+        if m.is_integer() and n.is_integer():
+            if abs(m) > abs(n):
+                # https://dlmf.nist.gov/14.7#E10 and https://dlmf.nist.gov/14.9#E3
+                # and https://dlmf.nist.gov/14.9#E5
+                return ZZ.zero()
+            if m == n:
+                # http://dlmf.nist.gov/14.5.iv and https://dlmf.nist.gov/14.9#E3
+                return (-1)**m*factorial(2*m)/(2**m*factorial(m)) * (1-x**2)**(m/2)
+
+    def _eval_int_ord_deg_(self, n, m, x):
+        r"""
+        Evaluate the Ferrers function `P(n, m, x)` for `m` and `n` being
+        concrete integers.
+
+        TESTS::
+
+            sage: gen_legendre_P._eval_int_ord_deg_(-2, 1, x)
+            -sqrt(-x^2 + 1)
+            sage: gen_legendre_P._eval_int_ord_deg_(2, -1, x)
+            1/2*sqrt(-x^2 + 1)*x
+            sage: gen_legendre_P._eval_int_ord_deg_(-2, -1, x)
+            1/2*sqrt(-x^2 + 1)
+
+        """
+        # use connection formulas to fall back on non-negative n and m:
+        if n < 0:
+            # https://dlmf.nist.gov/14.9#E5
+            return self._eval_int_ord_deg_(-n-1, m, x)
+        if m < 0:
+            # https://dlmf.nist.gov/14.9#E3
+            return (-1)**(-m)*factorial(n+m)/factorial(n-m) * self._eval_int_ord_deg_(n, -m, x)
+        # apply Rodrigues formula:
+        return self.eval_gen_poly(n, m, x)
 
     def _evalf_(self, n, m, x, parent=None, **kwds):
         """
-        Float evaluation of Legendre P(n, m, x) function.
+        Float evaluation of Ferrers function P(n, m, x).
 
         EXAMPLES::
 
@@ -1511,18 +1660,30 @@ class Func_assoc_legendre_P(BuiltinFunction):
             14.3165258449040 - 12.7850496155152*I
             sage: gen_legendre_P(5/2,2,ComplexField(70)(1+I))
             14.316525844904028532 - 12.785049615515157033*I
-        """
-        ret = self._eval_special_values_(n, m, x)
-        if ret is not None:
-            return ret
+            sage: gen_legendre_P(2/3,1,0.)
+            -0.773063511309286
 
+        """
         import mpmath
         from sage.libs.mpmath.all import call as mpcall
         return mpcall(mpmath.legenp, n, m, x, parent=parent)
 
-    def eval_poly(self, n, m, arg, **kwds):
-        """
-        Return the associated Legendre P(n, m, arg) polynomial for integers `n > -1, m > -1`.
+    def eval_gen_poly(self, n, m, arg, **kwds):
+        r"""
+        Return the Ferrers function of first kind `\mathtt{P}_n^m(x)` for
+        integers `n > -1, m > -1` given by the following Rodrigues-type
+        formula:
+
+        .. MATH::
+
+            \mathtt{P}_n^m(x) = (-1)^{m+n} \frac{(1-x^2)^{m/2}}{2^n n!}
+                \frac{\mathrm{d}^{m+n}}{\mathrm{d}x^{m+n}} (1-x^2)^n.
+
+        INPUT:
+
+        - ``n`` -- an integer degree
+        - ``m`` -- an integer order
+        - ``x`` -- either an integer or a non-numerical symbolic expression
 
         EXAMPLES::
 
@@ -1533,21 +1694,23 @@ class Func_assoc_legendre_P(BuiltinFunction):
 
         REFERENCE:
 
-        - T. M. Dunster, Legendre and Related Functions, https://dlmf.nist.gov/14.7#E10
+        - [DLMF-Legendre]_, Section 14.7 eq. 10 (https://dlmf.nist.gov/14.7#E10)
         """
-        from sage.functions.other import factorial
         if n < 0 or m < 0:
             return
         R = PolynomialRing(QQ, 'x')
         x = R.gen()
         p = (1-x**2)**ZZ(n)
-        for i in range(m + n):
+        for _ in range(m + n):
             p = p.diff(x)
         ex1 = (1-arg**2)**(QQ(m)/2)/2**n/factorial(ZZ(n))
         ex2 = sum(b * arg**a for a, b in enumerate(p))
         return (-1)**(m+n)*ex1*ex2
 
-    def _derivative_(self, n, m, x, *args,**kwds):
+    from sage.misc.superseded import deprecated_function_alias
+    eval_poly = deprecated_function_alias(25034, eval_gen_poly)
+
+    def _derivative_(self, n, m, x, *args, **kwds):
         """
         Return the derivative of ``gen_legendre_P(n,m,x)``.
 
@@ -1562,12 +1725,14 @@ class Func_assoc_legendre_P(BuiltinFunction):
             Traceback (most recent call last):
             ...
             NotImplementedError: Derivative w.r.t. to the index is not supported.
+
         """
         diff_param = kwds['diff_param']
         if diff_param == 0:
             raise NotImplementedError("Derivative w.r.t. to the index is not supported.")
         else:
-            return ((n-m+1)*gen_legendre_P(n+1, m, x) - (n+1)*x*gen_legendre_P(n, m, x))/(x**2 - 1)
+            # https://dlmf.nist.gov/14.10#E4
+            return ((m-n-1)*gen_legendre_P(n+1, m, x) + (n+1)*x*gen_legendre_P(n, m, x))/(1 - x**2)
 
 gen_legendre_P = Func_assoc_legendre_P()
 
@@ -1659,7 +1824,7 @@ class Func_assoc_legendre_Q(BuiltinFunction):
             sage: gen_legendre_Q(2,2,x).subs(x=2).expand()
             9/2*I*pi - 9/2*log(3) + 14/3
         """
-        from sage.functions.all import sqrt
+        from sage.misc.functional import sqrt
         if m == n + 1 or n == 0:
             if m.mod(2).is_zero():
                 denom = (1 - x**2)**(m/2)
@@ -1848,7 +2013,7 @@ class Func_jacobi_P(OrthogonalFunction):
             return legendre_P(n, x)
         if SR(n).is_numeric() and not (n > -1):
             raise ValueError("n must be greater than -1, got n = {0}".format(n))
-        if not n in ZZ:
+        if n not in ZZ:
             return
         from .gamma import gamma
         s = sum(binomial(n,m) * gamma(a+b+n+m+1) / gamma(a+m+1) * ((x-1)/2)**m for m in range(n+1))
@@ -1917,7 +2082,7 @@ class Func_ultraspherical(GinacFunction):
         32*t^3 - 12*t
         sage: _ = var('x')
         sage: for N in range(100):
-        ....:     n = ZZ.random_element().abs() + 5
+        ....:     n = ZZ.random_element(5, 5001)
         ....:     a = QQ.random_element().abs() + 5
         ....:     assert ((n+1)*ultraspherical(n+1,a,x) - 2*x*(n+a)*ultraspherical(n,a,x) + (n+2*a-1)*ultraspherical(n-1,a,x)).expand().is_zero()
         sage: ultraspherical(5,9/10,3.1416)

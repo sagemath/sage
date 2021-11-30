@@ -59,7 +59,7 @@ You can also import the desired functions::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.groups.free_group import FreeGroup
 from sage.groups.finitely_presented import FinitelyPresentedGroup
 from sage.libs.gap.libgap import libgap
@@ -273,7 +273,8 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
     y = F.gens()[n:2*n] # list of generators x1, x2, ..., xn
     z = F.gen(n*2)
 
-    def commutator(a, b): return a * b * a**-1 * b**-1
+    def commutator(a, b):
+        return a * b * a**-1 * b**-1
     # First set of relations: [xi, yi] = z
     r1 = [commutator(x[i], y[i]) * z**-1 for i in range(n)]
     # Second set of relations: [z, xi] = 1

@@ -21,7 +21,7 @@ in the same number alpha of triples of `T`.
 
 This module implements a direct construction of a two-graph from a list of
 triples, construction of descendant graphs, regularity checking, and other
-things such as constructing the complement two-graph, cf. [BH12]_.
+things such as constructing the complement two-graph, cf. [BH2012]_.
 
 AUTHORS:
 

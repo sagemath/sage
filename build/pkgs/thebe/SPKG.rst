@@ -1,5 +1,5 @@
-thebe
-=====
+thebe: Add live Jupyter interaction to static websites
+======================================================
 
 Description
 -----------

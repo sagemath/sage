@@ -1,5 +1,5 @@
-lidia
-=====
+lidia: A library for computational number theory
+================================================
 
 Description
 -----------

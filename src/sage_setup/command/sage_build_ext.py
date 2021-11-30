@@ -1,7 +1,12 @@
 import os
 import errno
+
+# Import setuptools before importing distutils, so that setuptools
+# can replace distutils by its own vendored copy.
+import setuptools
+
 from distutils import log
-from distutils.command.build_ext import build_ext
+from setuptools.command.build_ext import build_ext
 from distutils.dep_util import newer_group
 from distutils.errors import DistutilsSetupError
 from sage_setup.run_parallel import execute_list_of_commands

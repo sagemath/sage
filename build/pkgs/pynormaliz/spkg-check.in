@@ -1,2 +1,2 @@
 cd src
-sage-python23 tests/runtests.py
+python3 tests/runtests.py

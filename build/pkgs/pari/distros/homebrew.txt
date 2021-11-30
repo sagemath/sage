@@ -1,2 +1,7 @@
-## cannot currently be used by Sage because the pari packages are not in Homebrew
-#pari
+pari
+# We add these data packages added in https://github.com/Homebrew/homebrew-core/pull/83158
+# because they are checked by spkg-configure.m4
+pari-elldata
+pari-galdata
+pari-galpol
+pari-seadata

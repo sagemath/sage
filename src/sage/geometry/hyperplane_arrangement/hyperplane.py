@@ -247,7 +247,7 @@ class Hyperplane(LinearExpression):
         try:
             values = [abs(x) for x in self.A()]
         except ArithmeticError:
-            from sage.rings.all import RDF
+            from sage.rings.real_double import RDF
             values = [abs(RDF(x)) for x in self.A()]
         max_pos = 0
         max_value = values[max_pos]
@@ -604,7 +604,7 @@ class Hyperplane(LinearExpression):
         EXAMPLES::
 
             sage: L.<x, y> = HyperplaneArrangements(QQ)
-            sage: (x+y-2).plot()
+            sage: (x+y-2).plot()  # optional - sage.plot
             Graphics object consisting of 2 graphics primitives
         """
         from sage.geometry.hyperplane_arrangement.plot import plot_hyperplane

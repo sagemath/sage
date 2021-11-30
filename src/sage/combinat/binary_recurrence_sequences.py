@@ -67,7 +67,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
 from sage.arith.all import lcm, next_prime, is_prime, next_prime_power, legendre_symbol
 from sage.functions.log import log
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 
 
 class BinaryRecurrenceSequence(SageObject):

@@ -46,7 +46,8 @@ from sage.misc.flatten import flatten
 from sage.ext.fast_callable import fast_callable
 from sage.rings.semirings.non_negative_integer_semiring import NN
 from sage.functions.log import log, exp
-from sage.functions.other import floor, sqrt, ceil
+from sage.functions.other import floor, ceil
+from sage.misc.functional import sqrt
 
 
 

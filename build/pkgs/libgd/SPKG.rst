@@ -1,5 +1,5 @@
-gd
-==
+libgd: Dynamic graphics generation tool
+=======================================
 
 Description
 -----------
@@ -21,6 +21,7 @@ License
 Upstream Contact
 ----------------
 
+-  https://libgd.github.io
 -  Pierre Joye (http://blog.thepimp.net)
 -  http://libgd.bitbucket.org/
 

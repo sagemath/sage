@@ -18,6 +18,8 @@ import sys
 # import from Sage library
 from sage.graphs.graph import Graph
 from sage.misc.randstate import current_randstate
+from sage.misc.randstate import set_random_seed
+from sage.misc.prandom import random
 from sage.misc.prandom import randint
 
 def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
@@ -179,7 +181,7 @@ def RandomBarabasiAlbert(n, m, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.barabasi_albert_graph(n, m, seed=seed))
+    return Graph(networkx.barabasi_albert_graph(int(n), int(m), seed=seed))
 
 def RandomBipartite(n1, n2, p, set_position=False):
     r"""
@@ -575,16 +577,14 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False):
 
 def RandomBoundedToleranceGraph(n):
     r"""
-    Returns a random bounded tolerance graph.
+    Return a random bounded tolerance graph.
 
-    The random tolerance graph is built from a random bounded
-    tolerance representation by using the function
-    `ToleranceGraph`. This representation is a list
-    `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where
-    `k = n-1` and `I_i = (l_i,r_i)` denotes a random interval and
-    `t_i` a random positive value less then or equal to the length
-    of the interval `I_i`. The width of the representation is
-    limited to n**2 * 2**n.
+    The random tolerance graph is built from a random bounded tolerance
+    representation by using the function `ToleranceGraph`. This representation
+    is a list `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where `k =
+    n-1` and `I_i = (l_i,r_i)` denotes a random interval and `t_i` a random
+    positive value less than or equal to the length of the interval `I_i`. The
+    width of the representation is limited to `n^2 * 2^n`.
 
     .. NOTE::
 
@@ -603,13 +603,33 @@ def RandomBoundedToleranceGraph(n):
         sage: g = graphs.RandomBoundedToleranceGraph(8)
         sage: g.clique_number() == g.chromatic_number()
         True
+
+    TESTS:
+
+    Check that :trac:`32186` is fixed::
+
+        sage: for _ in range(100): _ = graphs.RandomBoundedToleranceGraph(1)
+
+    Check input parameter::
+
+        sage: g = graphs.RandomToleranceGraph(-2)
+        Traceback (most recent call last):
+        ...
+        ValueError: the number `n` of vertices must be >= 0
     """
-    from sage.misc.prandom import randint
+    if n < 0:
+        raise ValueError('the number `n` of vertices must be >= 0')
+
     from sage.graphs.generators.intersection import ToleranceGraph
 
     W = n ** 2 * 2 ** n
-
-    tolrep = [(l_r[0], l_r[1], randint(0, l_r[1] - l_r[0])) for l_r in [sorted((randint(0, W), randint(0, W))) for i in range(n)]]
+    tolrep = []
+    for _ in range(n):
+        l = randint(0, W - 1)
+        r = randint(0, W)
+        if l >= r:
+            l, r = r, l + 1
+        tolrep.append((l, r, randint(1, r - l)))
 
     return ToleranceGraph(tolrep)
 
@@ -1266,7 +1286,10 @@ def RandomLobster(n, p, q, seed=None):
         sage: G.delete_vertices(leaves)                                 # path
         sage: s = G.degree_sequence()
         sage: if G:
-        ....:     assert s[-2:] == [1, 1]
+        ....:     if G.num_verts() == 1:
+        ....:         assert s == [0]
+        ....:     else:
+        ....:         assert s[-2:] == [1, 1]
         ....:     assert all(d == 2 for d in s[:-2])
 
     ::
@@ -1314,9 +1337,16 @@ def RandomTree(n):
         ....:      for i in range(100) )
         True
 
+    Random tree with one and zero vertices::
+
+        sage: graphs.RandomTree(0)
+        Graph on 0 vertices
+        sage: graphs.RandomTree(1)
+        Graph on 1 vertex
     """
-    from sage.misc.prandom import randint
-    g = Graph()
+    g = Graph(n)
+    if n <= 1:
+        return g
 
     # create random Prufer code
     code = [ randint(0,n-1) for i in range(n-2) ]
@@ -1329,8 +1359,6 @@ def RandomTree(n):
     count = [0] * n
     for k in code:
         count[k] += 1
-
-    g.add_vertices(range(n))
 
     for s in code:
         for x in range(n):
@@ -1473,13 +1501,13 @@ def RandomShell(constructor, seed=None):
 
 def RandomToleranceGraph(n):
     r"""
-    Returns a random tolerance graph.
+    Return a random tolerance graph.
 
     The random tolerance graph is built from a random tolerance representation
     by using the function `ToleranceGraph`. This representation is a list
     `((l_0,r_0,t_0), (l_1,r_1,t_1), ..., (l_k,r_k,t_k))` where `k = n-1` and
     `I_i = (l_i,r_i)` denotes a random interval and `t_i` a random positive
-    value. The width of the representation is limited to n**2 * 2**n.
+    value. The width of the representation is limited to `n^2 * 2^n`.
 
     .. NOTE::
 
@@ -1505,17 +1533,22 @@ def RandomToleranceGraph(n):
         sage: g = graphs.RandomToleranceGraph(-2)
         Traceback (most recent call last):
         ...
-        ValueError: The number `n` of vertices must be >= 0.
+        ValueError: the number `n` of vertices must be >= 0
     """
-    from sage.misc.prandom import randint
     from sage.graphs.generators.intersection import ToleranceGraph
 
-    if n<0:
-        raise ValueError('The number `n` of vertices must be >= 0.')
+    if n < 0:
+        raise ValueError('the number `n` of vertices must be >= 0')
 
     W = n**2 * 2**n
 
-    tolrep = [tuple(sorted((randint(0,W), randint(0,W)))) + (randint(0,W),) for i in range(n)]
+    tolrep = []
+    for _ in range(n):
+        l = randint(0, W)
+        r = randint(0, W)
+        if l > r:
+            l, r = r, l
+        tolrep.append((l, r, randint(0, W)))
 
     return ToleranceGraph(tolrep)
 
@@ -1798,7 +1831,7 @@ def RandomTriangulation(n, set_position=False, k=3):
     .. SEEALSO::
 
         :meth:`~sage.graphs.graph_generators.GraphGenerators.triangulations`,
-        :func:`~sage.homology.examples.RandomTwoSphere`.
+        :func:`~sage.topology.simplicial_complex_examples.RandomTwoSphere`.
 
     EXAMPLES::
 
@@ -2091,3 +2124,58 @@ def RandomBicubicPlanar(n):
         G.add_edge((('n', -1), w[i - 1], colour))
 
     return G
+
+def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
+    r"""
+    Return a random unit disk graph of order `n`.
+
+    A unit disk graph is the intersection graph of a family of unit disks in the
+    Euclidean plane. That is a graph with one vertex per disk of the family and
+    an edge between two vertices whenever they lie within a unit distance of
+    each other. See the :wikipedia:`Unit_disk_graph` for more details.
+
+    INPUT:
+
+    - ``n`` -- number of nodes
+
+    - ``radius`` -- float (default: ``0.1``); two vertices at distance less than
+      ``radius`` are connected by an edge
+
+    - ``side`` -- float (default: ``1``); indicate the side of the area in which
+      the points are drawn
+
+    - ``seed`` -- seed of the random number generator
+
+    EXAMPLES:
+
+    When using twice the same seed, the vertices get the same positions::
+
+        sage: from sage.misc.randstate import current_randstate
+        sage: seed = current_randstate().seed()
+        sage: G = graphs.RandomUnitDiskGraph(20, radius=.5, side=1, seed=seed)
+        sage: H = graphs.RandomUnitDiskGraph(20, radius=.2, side=1, seed=seed)
+        sage: H.is_subgraph(G, induced=False)
+        True
+        sage: H.size() <= G.size()
+        True
+        sage: Gpos = G.get_pos()
+        sage: Hpos = H.get_pos()
+        sage: all(Gpos[u] == Hpos[u] for u in G)
+        True
+
+    When the radius is more than `\sqrt{2 \text{side}}`, the graph is a clique::
+
+        sage: G = graphs.RandomUnitDiskGraph(10, radius=2, side=1)
+        sage: G.is_clique()
+        True
+    """
+    if seed is not None:
+        set_random_seed(seed)
+    from scipy.spatial import KDTree
+    points = [(side*random(), side*random()) for i in range(n)]
+    T = KDTree(points)
+    adj = {i: [u for u in T.query_ball_point([points[i]], radius).item() if u != i]
+               for i in range(n)}
+    return Graph(adj, format='dict_of_lists',
+                 pos={i: points[i] for i in range(n)},
+                 name="Random unit disk graph")

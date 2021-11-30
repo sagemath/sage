@@ -24,7 +24,7 @@ from cysignals.signals cimport sig_on, sig_off
 from cysignals.memory cimport check_malloc, sig_free
 
 from sage.graphs.base.static_sparse_graph cimport short_digraph, init_short_digraph, free_short_digraph, out_degree
-include "sage/data_structures/binary_matrix.pxi"
+from sage.data_structures.binary_matrix cimport *
 from sage.graphs.base.static_dense_graph cimport dense_graph_init
 
 from sage.rings.infinity import Infinity

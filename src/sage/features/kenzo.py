@@ -14,7 +14,7 @@ class Kenzo(Feature):
 
         sage: from sage.features.kenzo import Kenzo
         sage: Kenzo().is_present()  # optional - kenzo
-        FeatureTestResult('Kenzo', True)
+        FeatureTestResult('kenzo', True)
     """
     def __init__(self):
         r"""
@@ -24,7 +24,7 @@ class Kenzo(Feature):
             sage: isinstance(Kenzo(), Kenzo)
             True
         """
-        Feature.__init__(self, name="Kenzo", spkg="kenzo",
+        Feature.__init__(self, name="kenzo", spkg="kenzo",
                          url="https://github.com/miguelmarco/kenzo/")
 
     def _is_present(self):
@@ -35,7 +35,7 @@ class Kenzo(Feature):
 
             sage: from sage.features.kenzo import Kenzo
             sage: Kenzo()._is_present()  # optional - kenzo
-            FeatureTestResult('Kenzo', True)
+            FeatureTestResult('kenzo', True)
         """
         # Redirection of ECL and Maxima stdout to /dev/null
         # This is also done in the Maxima library, but we
@@ -46,7 +46,12 @@ class Kenzo(Feature):
         ecl_eval("(setf *standard-output* *dev-null*)")
 
         try:
-            ecl_eval("(require :kenzo)")
+            from sage.env import KENZO_FAS
+            if KENZO_FAS:
+                ecl_eval("(require :kenzo \"{}\")".format(KENZO_FAS))
+            else:
+                ecl_eval("(require :kenzo)")
+
         except RuntimeError:
             return FeatureTestResult(self, False, reason="Unable to make ECL require kenzo")
         return FeatureTestResult(self, True)

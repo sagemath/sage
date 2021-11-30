@@ -108,7 +108,7 @@ class ProjectiveConic_finite_field(ProjectiveConic_field, ProjectivePlaneCurve_f
 
             sage: F.<a> = FiniteField(7^20)
             sage: C = Conic([1, a, -5]); C
-            Projective Conic Curve over Finite Field in a of size 7^20 defined by x^2 + (a)*y^2 + 2*z^2
+            Projective Conic Curve over Finite Field in a of size 7^20 defined by x^2 + a*y^2 + 2*z^2
             sage: C.has_rational_point(point = True)  # output is random
             (True,
              (a^18 + 2*a^17 + 4*a^16 + 6*a^13 + a^12 + 6*a^11 + 3*a^10 + 4*a^9 + 2*a^8 + 4*a^7 + a^6 + 4*a^4 + 6*a^2 + 3*a + 6 : 5*a^19 + 5*a^18 + 5*a^17 + a^16 + 2*a^15 + 3*a^14 + 4*a^13 + 5*a^12 + a^11 + 3*a^10 + 2*a^8 + 3*a^7 + 4*a^6 + 4*a^5 + 6*a^3 + 5*a^2 + 2*a + 4 : 1))

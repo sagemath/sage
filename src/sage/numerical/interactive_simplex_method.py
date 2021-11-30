@@ -46,10 +46,10 @@ in acres, we can construct the following LP problem::
     sage: c = (10, 5)
     sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
     sage: P
-    LP problem (use typeset mode to see details)
+    LP problem (use 'view(...)' or '%display typeset' for details)
 
 It is recommended to copy-paste such examples into your own worksheet, so that
-you can run these commands with typeset mode on and get
+you can run these commands with typeset mode on (``%display typeset``) and get
 
 .. MATH::
 
@@ -72,7 +72,7 @@ The simplex method can be applied only to :class:`problems in standard form
 <InteractiveLPProblemStandardForm>`, which can be created either directly ::
 
     sage: InteractiveLPProblemStandardForm(A, b, c, ["C", "B"])
-    LP problem (use typeset mode to see details)
+    LP problem (use ...)
 
 or from an already constructed problem of "general type"::
 
@@ -95,7 +95,7 @@ by creating the initial dictionary::
 
     sage: D = P.initial_dictionary()
     sage: D
-    LP problem dictionary (use typeset mode to see details)
+    LP problem dictionary (use ...)
 
 Using typeset mode as recommended, you'll see
 
@@ -199,7 +199,7 @@ from sage.modules.all import random_vector, vector
 from sage.plot.all import Graphics, arrow, line, point, rainbow, text
 from sage.rings.all import Infinity, PolynomialRing, QQ, RDF, ZZ
 from sage.structure.all import SageObject
-from sage.symbolic.all import SR
+from sage.symbolic.ring import SR
 
 
 # We produce rather complicated LaTeX code which needs some tweaks to be
@@ -804,9 +804,9 @@ class InteractiveLPProblem(SageObject):
             sage: c = (10, 5)
             sage: P = InteractiveLPProblem(A, b, c, ["C", "B"], variable_type=">=")
             sage: print(P._repr_())
-            LP problem (use typeset mode to see details)
+            LP problem (use ...)
         """
-        return "LP problem (use typeset mode to see details)"
+        return "LP problem (use 'view(...)' or '%display typeset' for details)"
 
     def _solution(self, x):
         r"""
@@ -2015,6 +2015,44 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
                 "primal objective" if is_primal else "dual objective")
         self._objective_name = SR(objective_name)
 
+    @staticmethod
+    def random_element(m, n, bound=5, special_probability=0.2,
+                       **kwds):
+        r"""
+        Construct a random ``InteractiveLPProblemStandardForm``.
+
+        INPUT:
+
+        - ``m`` -- the number of constraints/basic variables
+
+        - ``n`` -- the number of decision/non-basic variables
+
+        - ``bound`` -- (default: 5) a bound on coefficients
+
+        - ``special_probability`` -- (default: 0.2) probability of
+          constructing a problem whose initial dictionary is allowed
+          to be primal infeasible or dual feasible
+
+        All other keyword arguments are passed to the constructor.
+
+        EXAMPLES::
+
+            sage: InteractiveLPProblemStandardForm.random_element(3, 4)
+            LP problem (use 'view(...)' or '%display typeset' for details)
+        """
+        if not kwds.pop('is_primal', True):
+            raise NotImplementedError('only random primal problems are implemented')
+        A = random_matrix(ZZ, m, n, x=-bound, y=bound).change_ring(QQ)
+        if special_probability < random():
+            b = random_vector(ZZ, m, x=0, y=bound).change_ring(QQ)
+        else:   # Allow infeasible dictionary
+            b = random_vector(ZZ, m, x=-bound, y=bound).change_ring(QQ)
+        if special_probability < random():
+            c = random_vector(ZZ, n, x=-bound, y=bound).change_ring(QQ)
+        else:   # Make dual feasible dictionary
+            c = random_vector(ZZ, n, x=-bound, y=0).change_ring(QQ)
+        return InteractiveLPProblemStandardForm(A, b, c, **kwds)
+
     def add_constraint(self, coefficients, constant_term, slack_variable=None):
         r"""
         Return a new LP problem by adding a constraint to``self``.
@@ -2721,9 +2759,7 @@ class LPAbstractDictionary(SageObject):
             ...
             \end{equation*}
         """
-        return HtmlFragment("\n".join([r"\begin{equation*}",
-                                       latex(self),
-                                       r"\end{equation*}"]))
+        return "\n".join([r"\begin{equation*}", latex(self), r"\end{equation*}"])
 
     def _preupdate_output(self, direction):
         r"""
@@ -2779,12 +2815,12 @@ class LPAbstractDictionary(SageObject):
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: D = P.initial_dictionary()
             sage: print(D._repr_())
-            LP problem dictionary (use typeset mode to see details)
+            LP problem dictionary (use ...)
             sage: D = P.revised_dictionary()
             sage: print(D._repr_())
-            LP problem dictionary (use typeset mode to see details)
+            LP problem dictionary (use ...)
         """
-        return "LP problem dictionary (use typeset mode to see details)"
+        return "LP problem dictionary (use 'view(...)' or '%display typeset' for details)"
 
     @abstract_method
     def add_row(self, nonbasic_coefficients, constant, basic_variable=None):
@@ -3825,7 +3861,7 @@ class LPDictionary(LPAbstractDictionary):
         sage: P = InteractiveLPProblemStandardForm(A, b, c)
         sage: D = P.initial_dictionary()
         sage: D
-        LP problem dictionary (use typeset mode to see details)
+        LP problem dictionary (use ...)
 
     But if you want you can create a dictionary without starting with an LP
     problem, here is construction of the same dictionary as above::
@@ -3866,6 +3902,49 @@ class LPDictionary(LPAbstractDictionary):
         B = vector(basic_variables)
         N = vector(nonbasic_variables)
         self._AbcvBNz = [A, b, c, objective_value, B, N, SR(objective_name)]
+
+    @staticmethod
+    def random_element(m, n, bound=5, special_probability=0.2):
+        r"""
+        Construct a random dictionary.
+
+        INPUT:
+
+        - ``m`` -- the number of constraints/basic variables
+
+        - ``n`` -- the number of decision/non-basic variables
+
+        - ``bound`` -- (default: 5) a bound on dictionary entries
+
+        - ``special_probability`` -- (default: 0.2) probability of constructing a
+          potentially infeasible or potentially optimal dictionary
+
+        OUTPUT:
+
+        - an :class:`LP problem dictionary <LPDictionary>`
+
+        EXAMPLES::
+
+            sage: from sage.numerical.interactive_simplex_method \
+            ....:     import random_dictionary
+            sage: random_dictionary(3, 4)  # indirect doctest
+            LP problem dictionary (use 'view(...)' or '%display typeset' for details)
+        """
+        A = random_matrix(ZZ, m, n, x=-bound, y=bound).change_ring(QQ)
+        if special_probability < random():
+            b = random_vector(ZZ, m, x=0, y=bound).change_ring(QQ)
+        else:   # Allow infeasible dictionary
+            b = random_vector(ZZ, m, x=-bound, y=bound).change_ring(QQ)
+        if special_probability < random():
+            c = random_vector(ZZ, n, x=-bound, y=bound).change_ring(QQ)
+        else:   # Make dual feasible dictionary
+            c = random_vector(ZZ, n, x=-bound, y=0).change_ring(QQ)
+        x_N = list(PolynomialRing(QQ, "x", m + n + 1, order="neglex").gens())
+        x_N.pop(0)
+        x_B = []
+        for i in range(m):
+            x_B.append(x_N.pop(randint(0, n + m - i - 1)))
+        return LPDictionary(A, b, c, randint(-bound, bound), x_B, x_N, "z")
 
     def __eq__(self, other):
         r"""
@@ -3959,10 +4038,11 @@ class LPDictionary(LPAbstractDictionary):
             # Highlight the entering variable column
             e = 2 * tuple(N).index(self._entering) + 4
             for i, lin in enumerate(lines):
-                lin = lin.split("&")
+                lin = lin[:-2].split("&")
+                # Trac #30809: The MathJaX version of \color takes an argument
                 if len(lin) > 1:
-                    lin[e] = r"\color{green}" + lin[e]
-                    lines[i] = "&".join(lin)
+                    lin[e] = r"\color{green}{%s}" % (lin[e],)
+                    lines[i] = "&".join(lin) + r"\\"
         if self._leaving is not None:
             # Highlight the leaving variable row
             l = tuple(B).index(self._leaving)
@@ -3970,11 +4050,11 @@ class LPDictionary(LPAbstractDictionary):
                l += 3
             if style() == "Vanderbei":
                 l += 4
-            lin = lines[l].split("&")
+            lin = lines[l][:-2].split("&")
             for i, term in enumerate(lin):
-                lin[i] = r"\color{red}" + term
-            lin = "&".join(lin)
-            lin = lin.replace(r"\color{red}\color{green}", r"\color{blue}")
+                lin[i] = r"\color{red}{%s}" % (term,)
+            lin = "&".join(lin) + r"\\"
+            lin = lin.replace(r"\color{red}{\color{green}{", r"\color{blue}{{")
             lines[l] = lin
         return  "\n".join(lines)
 
@@ -4287,48 +4367,7 @@ class LPDictionary(LPAbstractDictionary):
         self._leaving = None
 
 
-def random_dictionary(m, n, bound=5, special_probability=0.2):
-    r"""
-    Construct a random dictionary.
-
-    INPUT:
-
-    - ``m`` -- the number of constraints/basic variables
-
-    - ``n`` -- the number of decision/non-basic variables
-
-    - ``bound`` -- (default: 5) a bound on dictionary entries
-
-    - ``special_probability`` -- (default: 0.2) probability of constructing a
-      potentially infeasible or potentially optimal dictionary
-
-    OUTPUT:
-
-    - an :class:`LP problem dictionary <LPDictionary>`
-
-    EXAMPLES::
-
-        sage: from sage.numerical.interactive_simplex_method \
-        ....:     import random_dictionary
-        sage: random_dictionary(3, 4)
-        LP problem dictionary (use typeset mode to see details)
-    """
-    A = random_matrix(ZZ, m, n, x=-bound, y=bound).change_ring(QQ)
-    if special_probability < random():
-        b = random_vector(ZZ, m, x=0, y=bound).change_ring(QQ)
-    else:   # Allow infeasible dictionary
-        b = random_vector(ZZ, m, x=-bound, y=bound).change_ring(QQ)
-    if special_probability < random():
-        c = random_vector(ZZ, n, x=-bound, y=bound).change_ring(QQ)
-    else:   # Make dual feasible dictionary
-        c = random_vector(ZZ, n, x=-bound, y=0).change_ring(QQ)
-    x_N = list(PolynomialRing(QQ, "x", m + n + 1, order="neglex").gens())
-    x_N.pop(0)
-    x_B = []
-    for i in range(m):
-        x_B.append(x_N.pop(randint(0, n + m - i - 1)))
-    return LPDictionary(A, b, c, randint(-bound, bound), x_B, x_N, "z")
-
+random_dictionary = LPDictionary.random_element
 
 class LPRevisedDictionary(LPAbstractDictionary):
     r"""
@@ -4411,7 +4450,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
         sage: D.basic_variables()
         (x1, x2)
         sage: D
-        LP problem dictionary (use typeset mode to see details)
+        LP problem dictionary (use ...)
 
     The same dictionary can be constructed through the problem::
 
@@ -4531,18 +4570,18 @@ class LPRevisedDictionary(LPAbstractDictionary):
             \begin{array}{l|r|rr||r||r|r|r}
             x_B & c_B &  & \mspace{-16mu} B^{-1} & y & B^{-1} b & B^{-1} A_{x_{1}} & \hbox{Ratio} \\
             \hline
-            \color{red} x_{3} & \color{red} 0 & \color{red} 1 & \color{red} 0 & 0 & \color{red} 1000 & \color{red} 1 & \color{red} 1000 \\
+            \color{red}{ x_{3} } & \color{red}{ 0 } & \color{red}{ 1 } & \color{red}{ 0 } & 0 & \color{red}{ 1000 } & \color{red}{ 1 } & \color{red}{ 1000 } \\
             x_{4} & 0 & 0 & 1 & 0 & 1500 & 3 & 500 \\
             \end{array}\\
             \\
             \begin{array}{r|rr}
-            x_N & \color{green} x_{1} & x_{2} \\
+            x_N & \color{green}{ x_{1} } & x_{2} \\
             \hline
-            c_N^T & \color{green} 10 & 5 \\
+            c_N^T & \color{green}{ 10 } & 5 \\
             \hline
-            y^T A_N & \color{green} 0 & 0 \\
+            y^T A_N & \color{green}{ 0 } & 0 \\
             \hline
-            c_N^T - y^T A_N & \color{green} 10 & 5 \\
+            c_N^T - y^T A_N & \color{green}{ 10 } & 5 \\
             \end{array}
             \end{array}
         """
@@ -4593,7 +4632,8 @@ class LPRevisedDictionary(LPAbstractDictionary):
                 for j, t in enumerate(terms):
                     if j == m + 2:
                         continue
-                    terms[j] = r"\color{red} " + t
+                    # Trac #30809: The MathJaX version of \color takes an argument
+                    terms[j] = r"\color{red}{" + t + "}"
             lines.append(" & ".join(terms) + r" \\")
         lines.append(r"\end{array}")
         top = "\n".join(lines)
@@ -4601,7 +4641,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
         def make_line(header, terms):
             terms = [latex(_) for _ in terms]
             if entering is not None:
-                terms[k] = r"\color{green} " + terms[k]
+                terms[k] = r"\color{green}{" + terms[k] + "}"
             lines.append(" & ".join([header] + terms) + r" \\")
 
         lines = []
@@ -5120,7 +5160,7 @@ class LPRevisedDictionary(LPAbstractDictionary):
             sage: P = InteractiveLPProblemStandardForm(A, b, c)
             sage: D = P.revised_dictionary()
             sage: D.dictionary()
-            LP problem dictionary (use typeset mode to see details)
+            LP problem dictionary (use ...)
         """
         D = LPDictionary(self.B_inverse() * self.A_N(),
                          self.constant_terms(),

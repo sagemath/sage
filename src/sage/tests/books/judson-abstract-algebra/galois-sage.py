@@ -66,8 +66,7 @@ r"""
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
     sage: G = L.galois_group(); G
-    Galois group of Number Field in b with
-    defining polynomial x^8 + 28*x^4 + 2500
+    Galois group 8T4 ([4]2) with order 8 of x^8 + 28*x^4 + 2500
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 
@@ -415,18 +414,18 @@ r"""
        To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
        Defn: c4 |--> 2*c^2,
      None),
-    (Number Field in c5 with defining polynomial x^4 + 648,
-     Ring morphism:
-       From: Number Field in c5 with defining polynomial x^4 + 648
-       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-       Defn: c5 |--> 1/80*c^5 + 79/40*c,
-     None),
-    (Number Field in c6 with defining polynomial x^4 + 8,
+    (Number Field in c5 with defining polynomial x^4 + 8,
     Ring morphism:
-      From: Number Field in c6 with defining polynomial x^4 + 8
+      From: Number Field in c5 with defining polynomial x^4 + 8
       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
-      Defn: c6 |--> -1/80*c^5 + 1/40*c,
+      Defn: c5 |--> -1/80*c^5 + 1/40*c,
       None),
+    (Number Field in c6 with defining polynomial x^4 + 648,
+     Ring morphism:
+       From: Number Field in c6 with defining polynomial x^4 + 648
+       To:   Number Field in c with defining polynomial x^8 + 28*x^4 + 2500
+       Defn: c6 |--> 1/80*c^5 + 79/40*c,
+     None),
     (Number Field in c7 with defining polynomial x^4 - 512,
      Ring morphism:
        From: Number Field in c7 with defining polynomial x^4 - 512

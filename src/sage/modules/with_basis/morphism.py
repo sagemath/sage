@@ -175,12 +175,12 @@ class ModuleMorphism(Morphism):
             sage: TestSuite(phi).run()
         """
         if category is None:
-            if not domain in ModulesWithBasis:
-                raise ValueError("domain(=%s) should be a module with basis"%(codomain))
+            if domain not in ModulesWithBasis:
+                raise ValueError("domain(=%s) should be a module with basis" % codomain)
             base_ring = domain.base_ring()
 
-            if not hasattr( codomain, 'base_ring' ):
-                raise ValueError("codomain(=%s) needs to have a base_ring attribute"%(codomain))
+            if not hasattr(codomain, 'base_ring'):
+                raise ValueError("codomain(=%s) needs to have a base_ring attribute" % codomain)
             # codomain should be a module over base_ring
             # The natural test would be ``codomains in Modules(base_ring)``
             # But this is not properly implemented yet::
@@ -227,6 +227,7 @@ class ModuleMorphism(Morphism):
         if not issubclass(self.__class__, H._abstract_element_class):
             self.__class__ = H.__make_element_class__(self.__class__)
 
+
 class ModuleMorphismFromFunction(ModuleMorphism, SetMorphism):
     """
     A class for module morphisms implemented by a plain function.
@@ -263,6 +264,7 @@ class ModuleMorphismFromFunction(ModuleMorphism, SetMorphism):
         # Caveat: This calls Morphism.__init__ twice ...
         ModuleMorphism.__init__(self, domain, codomain, category=category)
         SetMorphism.__init__(self, self.parent(), function)
+
 
 class ModuleMorphismByLinearity(ModuleMorphism):
     """
@@ -318,7 +320,7 @@ class ModuleMorphismByLinearity(ModuleMorphism):
             self._on_basis = on_basis
 
         self._is_module_with_basis_over_same_base_ring = \
-            codomain in ModulesWithBasis( base_ring ) and zero == codomain.zero()
+            codomain in ModulesWithBasis(base_ring) and zero == codomain.zero()
 
         ModuleMorphism.__init__(self, domain, codomain,
                                 category=category,
@@ -650,24 +652,16 @@ class TriangularModuleMorphism(ModuleMorphism):
             ....:                         inverse_on_support="compute")
             sage: TestSuite(phi).run(skip=["_test_pickling"])
 
-        Pickling fails (:trac:`17957`) because the attribute
-        ``phi._inverse_on_support`` is a ``dict.get`` method which is
-        not picklable in Python 2::
+        Pickling works in Python3 (:trac:`17957`)::
 
             sage: phi = X.module_morphism(lt, triangular="lower", codomain=X,
             ....:                         inverse_on_support="compute")
-            sage: dumps(phi) # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: expected string or Unicode object, NoneType found
+            sage: loads(dumps(phi))
+            Generic endomorphism of X
             sage: phi._inverse_on_support
             <built-in method get of dict object at ...>
-            sage: dumps(phi._inverse_on_support) # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: expected string or Unicode object, NoneType found
-            sage: ldp = loads(dumps(phi._inverse_on_support)) # py3
-            sage: [ldp(i) == phi._inverse_on_support(i) for i in range(1, 4)] # py3
+            sage: ldp = loads(dumps(phi._inverse_on_support))
+            sage: [ldp(i) == phi._inverse_on_support(i) for i in range(1, 4)]
             [True, True, True]
         """
         if key is not None:
@@ -962,7 +956,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         F = self.domain()
         G = self.codomain()
         on_basis = self.on_basis()
-        if not f in G:
+        if f not in G:
             raise ValueError("f(={}) must be in the codomain of the morphism to have a preimage under the latter".format(f))
 
         remainder = f
@@ -1056,7 +1050,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         .. NOTE:: Before :trac:`8678` this method used to be called co_reduced.
         """
         G = self.codomain()
-        if G.base_ring() not in Fields and not self._unitriangular:
+        if G.base_ring() not in Fields() and not self._unitriangular:
             raise NotImplementedError("coreduce for a triangular but not unitriangular morphism over a ring")
         on_basis = self.on_basis()
         assert y in G
@@ -1127,7 +1121,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             NotImplementedError: cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain
         """
         R = self.domain().base_ring()
-        if R not in Fields and not self._unitriangular:
+        if R not in Fields() and not self._unitriangular:
             raise NotImplementedError("cokernel_basis_indices for a triangular but not unitriangular morphism over a ring")
         if self.codomain() not in Modules(R).FiniteDimensional():
             raise NotImplementedError("cokernel_basis_indices implemented only for morphisms with a finite dimensional codomain")
@@ -1320,16 +1314,11 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             True
             sage: TestSuite(phi).run(skip=["_test_pickling"])
 
-        Pickling fails (:trac:`17957`) because ``phi._on_basis`` is
-        currently a ``dict.__getitem__`` which is not picklable in Python 2::
+        Pickling works (:trac:`17957`) in Python 3::
 
             sage: phi._on_basis
             <built-in method __getitem__ of dict object at ...>
-            sage: dumps(phi._on_basis) # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: expected string or Unicode object, NoneType found
-            sage: loads(dumps(phi)) == phi # py3
+            sage: loads(dumps(phi)) == phi
             True
 
         The matrix is stored in the morphism, as if it was for an
@@ -1346,17 +1335,17 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             [2 5]
         """
         C = ModulesWithBasis(domain.base_ring()).FiniteDimensional()
-        if not domain in C:
-            raise ValueError("The domain %s should be finite dimensional"%domain)
+        if domain not in C:
+            raise ValueError("The domain %s should be finite dimensional" % domain)
         if codomain is None:
             raise ValueError("The codomain %s should be specified")
-        if not codomain in C:
-            raise ValueError("The codomain %s should be finite dimensional"%codomain)
+        if codomain not in C:
+            raise ValueError("The codomain %s should be finite dimensional" % codomain)
         if not is_Matrix(matrix):
-            raise ValueError("matrix (=%s) should be a matrix"%matrix)
+            raise ValueError("matrix (=%s) should be a matrix" % matrix)
         import sage.combinat.ranker
         indices = tuple(domain.basis().keys())
-        rank_domain  = sage.combinat.ranker.rank_from_list(indices)
+        rank_domain = sage.combinat.ranker.rank_from_list(indices)
         if side == "left":
             matrix = matrix.transpose()
         if matrix.nrows() != len(indices):

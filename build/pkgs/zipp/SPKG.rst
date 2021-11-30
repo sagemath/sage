@@ -1,5 +1,5 @@
-zipp
-====
+zipp: A pathlib-compatible zipfile object wrapper
+=================================================
 
 Description
 -----------

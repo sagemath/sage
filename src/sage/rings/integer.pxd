@@ -31,7 +31,6 @@ cdef class Integer(EuclideanDomainElement):
     cdef bint _is_power_of(Integer self, Integer n)
 
     cdef bint _pseudoprime_is_prime(self, proof) except -1
-    cpdef list _pari_divisors_small(self)
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1
 

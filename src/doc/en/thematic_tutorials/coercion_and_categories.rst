@@ -108,8 +108,6 @@ This base class provides a lot more methods than a general parent::
      '__ideal_monoid',
      '__iter__',
      '__len__',
-     '__pow__',
-     '__rpow__',
      '__rtruediv__',
      '__rxor__',
      '__truediv__',
@@ -1744,7 +1742,7 @@ The new test is inherited from the category. Since ``an_element()`` is returning
 complicated element, ``_test_factorisation`` is a serious test::
 
     sage: P.an_element()._test_factorisation
-    <bound method MyFrac_with_category.element_class._test_factorisation of (x^2):(x^3 + 3*x^2 + 3*x + 1)>
+    <bound method QuotientFieldsWithTest.ElementMethods._test_factorisation of (x^2):(x^3 + 3*x^2 + 3*x + 1)>
 
 .. end of output
 

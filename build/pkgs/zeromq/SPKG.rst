@@ -1,5 +1,5 @@
-zeromq
-======
+zeromq: A modern networking library
+===================================
 
 Description
 -----------

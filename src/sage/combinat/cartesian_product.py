@@ -57,7 +57,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         sage: c = cartesian_product([F1, F2, F3])
 
         sage: type(C.an_element())
-        <... 'list'>
+        <class 'list'>
         sage: type(c.an_element())
         <class 'sage.sets.cartesian_product.CartesianProduct_with_category.element_class'>
 
@@ -98,7 +98,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         category = EnumeratedSets()
         try:
             category = category.Finite() if self.is_finite() else category.Infinite()
-        except ValueError: # Unable to determine if it is finite or not
+        except ValueError:  # Unable to determine if it is finite or not
             pass
 
         def iterfunc():
@@ -141,7 +141,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
         TESTS::
 
-            sage: cp = cartesian_product([[1,2],range(0,9)])
+            sage: cp = cartesian_product([[1,2],range(9)])
             sage: loads(dumps(cp)) == cp
             True
         """

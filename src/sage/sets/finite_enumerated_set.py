@@ -368,7 +368,7 @@ class FiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: S(1)
             1
             sage: type(S(1))
-            <type 'int'>
+            <class 'int'>
         """
         if not isinstance(el, Element):
             return self._element_constructor_(el)

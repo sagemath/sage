@@ -75,6 +75,11 @@ EXAMPLES::
     sage: k = GF(5^2,'c'); type(k)
     <class 'sage.rings.finite_rings.finite_field_givaro.FiniteField_givaro_with_category'>
 
+One can also give the cardinality `q=p^n` as the tuple `(p,n)`::
+
+    sage: k = GF((5, 2),'c'); k
+    Finite Field in c of size 5^2
+
 ::
 
     sage: k = GF(2^16,'c'); type(k)
@@ -82,7 +87,7 @@ EXAMPLES::
 
 ::
 
-    sage: k = GF(3^16,'c'); type(k)
+    sage: k = GF((3, 16),'c'); type(k)
     <class 'sage.rings.finite_rings.finite_field_pari_ffelt.FiniteField_pari_ffelt_with_category'>
 
 Finite Fields support iteration, starting with 0.
@@ -126,7 +131,7 @@ We output the base rings of several finite fields.
 
 ::
 
-    sage: k = GF(3^40,'b'); type(k)
+    sage: k = GF((3, 40),'b'); type(k)
     <class 'sage.rings.finite_rings.finite_field_pari_ffelt.FiniteField_pari_ffelt_with_category'>
     sage: k.base_ring()
     Finite Field of size 3
@@ -166,6 +171,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from collections import defaultdict
 from sage.structure.category_object import normalize_names
 
 from sage.rings.integer import Integer
@@ -278,20 +284,20 @@ class FiniteFieldFactory(UniqueFactory):
         sage: f = K.modulus(); f
         x^5 + 4*x + 1
         sage: type(f)
-         <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+         <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
 
     By default, the given generator is not guaranteed to be primitive
     (a generator of the multiplicative group), use
     ``modulus="primitive"`` if you need this::
 
-        sage: K.<a> = GF(5^40)
+        sage: K.<a> = GF(5^45)
         sage: a.multiplicative_order()
-        189478062869360049565633138
+        7105427357601001858711242675781
         sage: a.is_square()
         True
-        sage: K.<b> = GF(5^40, modulus="primitive")
+        sage: K.<b> = GF(5^45, modulus="primitive")
         sage: b.multiplicative_order()
-        9094947017729282379150390624
+        28421709430404007434844970703124
 
     The modulus must be irreducible::
 
@@ -364,6 +370,8 @@ class FiniteFieldFactory(UniqueFactory):
 
         sage: k.<a> = GF(5**10, modulus='random')
         sage: n.<a> = GF(5**10, modulus='random')
+        sage: while k.modulus() == n.modulus():
+        ....:     n.<a> = GF(5**10, modulus='random')
         sage: n is k
         False
         sage: GF(5**10, 'a') is GF(5**10, 'a')
@@ -467,7 +475,23 @@ class FiniteFieldFactory(UniqueFactory):
         sage: GF(next_prime(2^63)^6)
         Finite Field in z6 of size 9223372036854775837^6
 
+    Check that :trac:`31547` has been fixed::
+
+        sage: q=2**152
+        sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
+        True
     """
+    def __init__(self, *args, **kwds):
+        """
+        Initialization.
+
+        EXAMPLES::
+
+            sage: TestSuite(GF).run()
+        """
+        self._modulus_cache = defaultdict(dict)
+        super().__init__(*args, **kwds)
+
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
                                   impl=None, proof=None, check_irreducible=True,
                                   prefix=None, repr=None, elem_cache=None,
@@ -478,13 +502,18 @@ class FiniteFieldFactory(UniqueFactory):
             sage: GF.create_key_and_extra_args(9, 'a')
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
 
+        The order `q` can also be given as a pair `(p,n)`::
+
+            sage: GF.create_key_and_extra_args((3, 2), 'a')
+            ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
+
         We do not take invalid keyword arguments and raise a value error
         to better ensure uniqueness::
 
             sage: GF.create_key_and_extra_args(9, 'a', foo='value')
             Traceback (most recent call last):
             ...
-            TypeError: create_key_and_extra_args() got an unexpected keyword argument 'foo'
+            TypeError: ...create_key_and_extra_args() got an unexpected keyword argument 'foo'
 
         Moreover, ``repr`` and ``elem_cache`` are ignored when not
         using givaro::
@@ -512,6 +541,28 @@ class FiniteFieldFactory(UniqueFactory):
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True), {})
+
+        TESTS::
+
+            sage: GF.create_key_and_extra_args((6, 1), 'a')
+            Traceback (most recent call last):
+            ...
+            ValueError: the order of a finite field must be a prime power
+
+            sage: GF.create_key_and_extra_args((9, 1), 'a')
+            Traceback (most recent call last):
+            ...
+            ValueError: the order of a finite field must be a prime power
+
+            sage: GF.create_key_and_extra_args((5, 0), 'a')
+            Traceback (most recent call last):
+            ...
+            ValueError: the order of a finite field must be a prime power
+
+            sage: GF.create_key_and_extra_args((3, 2, 1), 'a')
+            Traceback (most recent call last):
+            ...
+            ValueError: wrong input for finite field constructor
         """
         import sage.arith.all
         from sage.structure.proof.all import WithProof, arithmetic
@@ -519,29 +570,41 @@ class FiniteFieldFactory(UniqueFactory):
             proof = arithmetic()
         for key, val in kwds.items():
             if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_names']:
-                raise TypeError("create_key_and_extra_args() got an unexpected keyword argument '%s'"%key)
+                raise TypeError("create_key_and_extra_args() got an unexpected keyword argument '%s'" % key)
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
-                raise NotImplementedError("ring extension with prescribed %s is not implemented"%key)
+                raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
         with WithProof('arithmetic', proof):
-            order = Integer(order)
-            if order <= 1:
-                raise ValueError("the order of a finite field must be at least 2")
+            if isinstance(order, tuple):
+                if len(order) != 2:
+                    raise ValueError('wrong input for finite field constructor')
+                p, n = order
+                p = Integer(p)
+                if not p.is_prime() or n < 1:
+                    raise ValueError("the order of a finite field must be a prime power")
+                n = Integer(n)
+                order = p**n
+            else:
+                order = Integer(order)
+                if order <= 1:
+                    raise ValueError("the order of a finite field must be at least 2")
+                if order.is_prime():
+                    p = order
+                    n = Integer(1)
+                else:
+                    p, n = order.is_prime_power(get_data=True)
+                    if n == 0:
+                        raise ValueError("the order of a finite field must be a prime power")
+            # at this point, order = p**n
 
-            if order.is_prime():
-                p = order
-                n = Integer(1)
+            if n == 1:
                 if impl is None:
                     impl = 'modn'
                 name = ('x',)  # Ignore name
                 # Every polynomial of degree 1 is irreducible
                 check_irreducible = False
-            elif order.is_prime_power():
+            else:
                 if names is not None:
                     name = names
-                if name is not None:
-                    name = normalize_names(1, name)
-
-                p, n = order.factor()[0]
                 if name is None:
                     if prefix is None:
                         prefix = 'z'
@@ -555,6 +618,7 @@ class FiniteFieldFactory(UniqueFactory):
                     # and a pseudo-Conway polynomial if it's not.
                     modulus = Fpbar._get_polynomial(n)
                     check_irreducible = False
+                name = normalize_names(1, name)
 
                 if impl is None:
                     if order < zech_log_bound:
@@ -563,8 +627,6 @@ class FiniteFieldFactory(UniqueFactory):
                         impl = 'ntl'
                     else:
                         impl = 'pari_ffelt'
-            else:
-                raise ValueError("the order of a finite field must be a prime power")
 
             # Determine modulus.
             # For the 'modn' implementation, we use the following
@@ -576,7 +638,10 @@ class FiniteFieldFactory(UniqueFactory):
                     modulus = R.irreducible_element(n)
                 if isinstance(modulus, str):
                     # A string specifies an algorithm to find a suitable modulus.
-                    modulus = R.irreducible_element(n, algorithm=modulus)
+                    if modulus != "random" and modulus in self._modulus_cache[order]:
+                        modulus = self._modulus_cache[order][modulus]
+                    else:
+                        self._modulus_cache[order][modulus] = modulus = R.irreducible_element(n, algorithm=modulus)
                 else:
                     if sage.rings.polynomial.polynomial_element.is_Polynomial(modulus):
                         modulus = modulus.change_variable_name('x')

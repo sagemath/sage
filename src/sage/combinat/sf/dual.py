@@ -18,7 +18,7 @@ Generic dual bases symmetric functions
 #*****************************************************************************
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 import sage.combinat.partition
 import sage.data_structures.blas_dict as blas
 from . import classical

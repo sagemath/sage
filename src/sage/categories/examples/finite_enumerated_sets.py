@@ -1,18 +1,18 @@
 r"""
 Examples of finite enumerated sets
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009 Florent Hivert <Florent.Hivert@univ-rouen.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
-from sage.functions.other import sqrt
+
 
 class Example(UniqueRepresentation, Parent):
     r"""
@@ -75,8 +75,9 @@ class Example(UniqueRepresentation, Parent):
             Category of facade finite enumerated sets
             sage: TestSuite(C).run()
         """
-        self._set = [Integer(_) for _ in [1,2,3]]
-        Parent.__init__(self, facade = IntegerRing(), category = FiniteEnumeratedSets())
+        self._set = [Integer(_) for _ in [1, 2, 3]]
+        Parent.__init__(self, facade=IntegerRing(),
+                        category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -109,9 +110,10 @@ class Example(UniqueRepresentation, Parent):
         """
         return iter(self._set)
 
+
 class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
 
-    def __init__(self, ambient = Example()):
+    def __init__(self, ambient=Example()):
         """
         TESTS::
 
@@ -123,7 +125,8 @@ class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: TestSuite(C).run()
         """
         self._ambient = ambient
-        Parent.__init__(self, facade = IntegerRing(), category = FiniteEnumeratedSets().IsomorphicObjects())
+        Parent.__init__(self, facade=IntegerRing(),
+                        category=FiniteEnumeratedSets().IsomorphicObjects())
 
     def ambient(self):
         """
@@ -156,7 +159,7 @@ class IsomorphicObjectOfFiniteEnumeratedSet(UniqueRepresentation, Parent):
             sage: C.lift(9)
             3
         """
-        return sqrt(x)
+        return x.sqrt()
 
     def retract(self, x):
         """

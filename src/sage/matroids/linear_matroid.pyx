@@ -117,7 +117,9 @@ from sage.data_structures.bitset_base cimport *
 from sage.structure.richcmp cimport rich_to_bool
 from sage.matroids.matroid cimport Matroid
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
-from .lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, generic_identity
+from .lean_matrix cimport (LeanMatrix, GenericMatrix, BinaryMatrix,
+                           TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix,
+                           RationalMatrix, generic_identity)
 from .set_system cimport SetSystem
 from .utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
 from sage.graphs.spanning_tree import kruskal
@@ -310,7 +312,10 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         if matrix is not None:
             reduced = False
             if not isinstance(matrix, LeanMatrix):
-                A = GenericMatrix(matrix.nrows(), matrix.ncols(), M=matrix, ring=ring)
+                if matrix.base_ring() is QQ:
+                    A = RationalMatrix(matrix.nrows(), matrix.ncols(), M=matrix)
+                else:
+                    A = GenericMatrix(matrix.nrows(), matrix.ncols(), M=matrix, ring=ring)
             else:
                 A = (<LeanMatrix>matrix).copy()   # Deprecated Sage matrix operation
             if keep_initial_representation:
@@ -320,7 +325,10 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         else:
             reduced = True
             if not isinstance(reduced_matrix, LeanMatrix):
-                self._A = GenericMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix, ring=ring)
+                if reduced_matrix.base_ring() is QQ:
+                    self._A = RationalMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix)
+                else:
+                    self._A = GenericMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix, ring=ring)
             else:
                 self._A = (<LeanMatrix>reduced_matrix).copy()   # Deprecated Sage matrix operation
             P = list(xrange(self._A.nrows()))
@@ -570,11 +578,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: R = GF(7)
             sage: A = Matrix(R, [[1, 0, 6, 1, 2],[6, 1, 0, 0, 1],[0, 6, 3, 6, 0]])
             sage: M = LinearMatroid(reduced_matrix = A)
-            sage: M.representation(lift_map=lift_map('sru')) # py2
-            [     1      0      0      1      0      1      1      1]
-            [     0      1      0 -z + 1      1      0      0      1]
-            [     0      0      1      0     -1      1 -z + 1      0]
-            sage: M.representation(lift_map=lift_map('sru')) # py3
+            sage: M.representation(lift_map=lift_map('sru'))
             [     1      0      0      1      0      1      1      1]
             [     0      1      0 -z + 1      1      0      0      1]
             [     0      0      1      0     -z      z      1      0]
@@ -2827,7 +2831,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             return True, None
         return True
 
-    def orlik_terao_algebra(self, R=None, ordering=None):
+    def orlik_terao_algebra(self, R=None, ordering=None, **kwargs):
         """
         Return the Orlik-Terao algebra of ``self``.
 
@@ -2852,9 +2856,40 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             Integer Ring
             sage: M.orlik_terao_algebra(QQ).base_ring()
             Rational Field
-        """
+
+            sage: G = SymmetricGroup(3);
+            sage: OTG = M.orlik_terao_algebra(QQ, invariant=G)
+
+            sage: G = SymmetricGroup(4)
+            sage: action = lambda g,x: g(x+1)-1
+            sage: OTG1 = M.orlik_terao_algebra(QQ, invariant=(G,action))
+            sage: OTG2 = M.orlik_terao_algebra(QQ, invariant=(action,G))
+            sage: OTG1 is OTG2
+            True
+
+         """
         if R is None:
             R = self.base_ring()
+
+        if 'invariant' in kwargs:
+            G_action = kwargs.pop('invariant')
+
+            from sage.categories.semigroups import Semigroups
+            if len(G_action) > 1 and G_action not in Semigroups:
+                G, action = G_action
+                if action in Semigroups:
+                    G, action = action, G
+            else:
+                G, action = G_action, None # the None action is g.__call__
+
+
+            from sage.algebras.orlik_terao import OrlikTeraoInvariantAlgebra
+
+            return OrlikTeraoInvariantAlgebra(R, self, G,
+                                              action_on_groundset=action,
+                                              ordering=ordering,
+                                              **kwargs)
+
         from sage.algebras.orlik_terao import OrlikTeraoAlgebra
         return OrlikTeraoAlgebra(R, self, ordering)
 

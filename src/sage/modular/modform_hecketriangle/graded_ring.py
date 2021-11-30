@@ -16,7 +16,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.infinity import infinity
 
 from sage.rings.ring import CommutativeAlgebra
 from sage.categories.all import CommutativeAlgebras

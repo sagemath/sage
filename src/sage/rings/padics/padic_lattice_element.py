@@ -208,7 +208,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         EXAMPLES::
 
             sage: K = QpLC(7)
-            sage: K.random_element()._is_base_elt(7)
+            sage: K.random_element()._is_base_elt(7)  # not tested, known bug (see :trac:`32126`)
             True
         """
         return p == self._parent.prime()
@@ -291,11 +291,11 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: a.residue(-1)
             Traceback (most recent call last):
             ...
-            ValueError: cannot reduce modulo a negative power of p.
+            ValueError: cannot reduce modulo a negative power of p
             sage: a.residue(5)
             Traceback (most recent call last):
             ...
-            PrecisionError: not enough precision known in order to compute residue.
+            PrecisionError: not enough precision known in order to compute residue
             sage: a.residue(5, check_prec=False)
             8
 
@@ -305,11 +305,11 @@ class pAdicLatticeElement(pAdicGenericElement):
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if check_prec and absprec > self.precision_absolute():
-            raise PrecisionError("not enough precision known in order to compute residue.")
+            raise PrecisionError("not enough precision known in order to compute residue")
         elif absprec < 0:
-            raise ValueError("cannot reduce modulo a negative power of p.")
+            raise ValueError("cannot reduce modulo a negative power of p")
         if self.valuation() < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue.")
+            raise ValueError("element must have non-negative valuation in order to compute residue")
         if field is None:
             field = (absprec == 1)
         elif field and absprec != 1:
@@ -429,14 +429,14 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: y.valuation(secure=True)
             Traceback (most recent call last):
             ...
-            PrecisionError: Not enough precision
+            PrecisionError: not enough precision
         """
         val = self._value.valuation()
         prec = self.precision_absolute()
         if val < prec: 
             return val
         elif secure:
-            raise PrecisionError("Not enough precision")
+            raise PrecisionError("not enough precision")
         else:
             return prec
 
@@ -467,7 +467,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: y.precision_relative(secure=True)
             Traceback (most recent call last):
             ...
-            PrecisionError: Not enough precision
+            PrecisionError: not enough precision
         """
         if not secure and self.is_zero():
             return ZZ(0)
@@ -1017,7 +1017,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: c.unit_part()
             Traceback (most recent call last):
             ...
-            PrecisionError: Not enough precision
+            PrecisionError: not enough precision
         """
         v = self.valuation(secure=True)
         return self >> v
@@ -1046,7 +1046,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             sage: c.val_unit()
             Traceback (most recent call last):
             ...
-            PrecisionError: Not enough precision
+            PrecisionError: not enough precision
         """
         v = self.valuation(secure=True)
         return v, self >> v
@@ -1193,7 +1193,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             [4, 1, 4, 4, 1, 0, 0, 0, 0, 0]
         """
         if lift_mode != 'simple':
-            raise NotImplementedError("Other modes than 'simple' are not implemented yet")
+            raise NotImplementedError("other modes than 'simple' are not implemented yet")
         prec = self.precision_absolute()
         val = self.valuation()
         expansion = self._value.list(prec)
@@ -1203,7 +1203,7 @@ class pAdicLatticeElement(pAdicGenericElement):
             try:
                 return expansion[n-val]
             except KeyError:
-                raise PrecisionError("The digit in position %s is not determined" % n)
+                raise PrecisionError("the digit in position %s is not determined" % n)
         if start_val is None:
             if self._parent.is_field():
                 start_val = val

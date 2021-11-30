@@ -92,11 +92,11 @@ when cast into the ring.::
     sage: (a * b) // 5^3
     1 + 2*5 + O(5^2)
     sage: type((a * b) // 5^3)
-    <type 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
+    <class 'sage.rings.padics.padic_capped_absolute_element.pAdicCappedAbsoluteElement'>
     sage: (a * b) / 5^3
     1 + 2*5 + O(5^2)
     sage: type((a * b) / 5^3)
-    <type 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
+    <class 'sage.rings.padics.padic_capped_relative_element.pAdicCappedRelativeElement'>
 
 The fixed modulus type is the leanest of the p-adic rings: it is
 basically just a wrapper around `\ZZ / p^n \ZZ`
@@ -197,7 +197,8 @@ from .generic_nodes import pAdicFieldBaseGeneric, \
                           pAdicCappedAbsoluteRingGeneric, \
                           pAdicFloatingPointRingGeneric, \
                           pAdicFloatingPointFieldGeneric, \
-                          pAdicLatticeGeneric
+                          pAdicLatticeGeneric, \
+                          pAdicRelaxedGeneric
 from .padic_capped_relative_element import pAdicCappedRelativeElement
 from .padic_capped_absolute_element import pAdicCappedAbsoluteElement
 from .padic_fixed_mod_element import pAdicFixedModElement
@@ -274,7 +275,7 @@ class pAdicRingCappedRelative(pAdicRingBaseGeneric, pAdicCappedRelativeRingGener
             sage: K.has_coerce_map_from(ZpCA(17,40))
             False
         """
-        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingRelaxed) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingCappedRelative) and R.prime() == self.prime():
             if R.precision_cap() < self.precision_cap():
@@ -370,7 +371,7 @@ class pAdicRingCappedAbsolute(pAdicRingBaseGeneric, pAdicCappedAbsoluteRingGener
             sage: K.has_coerce_map_from(Zp(17,40))
             True
         """
-        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingRelaxed) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingCappedRelative) and R.prime() == self.prime():
             return True
@@ -571,7 +572,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
             sage: K.has_coerce_map_from(Zp(17,40))
             False
         """
-        #if isinstance(R, pAdicRingLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingRelaxed) and R.prime() == self.prime():
         #    return True
         if isinstance(R, pAdicRingFixedMod) and R.prime() == self.prime():
             if R.precision_cap() > self.precision_cap():
@@ -677,7 +678,7 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
             True
 
         """
-        #if isinstance(R, pAdicRingLazy) or isinstance(R, pAdicFieldLazy) and R.prime() == self.prime():
+        #if isinstance(R, pAdicRingRelaxed) or isinstance(R, pAdicFieldRelaxed) and R.prime() == self.prime():
         #    return True
         if isinstance(R, (pAdicRingCappedRelative, pAdicRingCappedAbsolute)) and R.prime() == self.prime():
             return True
@@ -722,8 +723,8 @@ class pAdicFieldCappedRelative(pAdicFieldBaseGeneric, pAdicCappedRelativeFieldGe
 
         EXAMPLES::
 
-            sage: Qp(17,6).random_element()
-            15*17^-8 + 10*17^-7 + 3*17^-6 + 2*17^-5 + 11*17^-4 + 6*17^-3 + O(17^-2)
+            sage: Qp(17,6).random_element().parent() is Qp(17,6)
+            True
         """
         if (algorithm == 'default'):
             k = ZZ.random_element()
@@ -1067,7 +1068,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         EXAMPLES::
 
             sage: K = QpLC(2)
-            sage: K.random_element()   # random
+            sage: K.random_element()   # not tested, known bug (see :trac:`32126`)
             2^-8 + 2^-7 + 2^-6 + 2^-5 + 2^-3 + 1 + 2^2 + 2^3 + 2^5 + O(2^12)
             sage: K.random_element(integral=True)    # random
             2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16 + 2^17 + 2^18 + 2^19 + O(2^20)
@@ -1095,3 +1096,76 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         if relcap < prec:
             prec = relcap
         return self._element_class(self, x*(p**val), prec=prec)
+
+# Relaxed
+#########
+
+class pAdicRingRelaxed(pAdicRelaxedGeneric, pAdicRingBaseGeneric):
+    r"""
+    An implementation of relaxed arithmetics over `\ZZ_p`.
+
+    INPUT:
+
+    - ``p`` -- prime
+
+    - ``prec`` -- default precision
+
+    - ``print_mode`` -- dictionary with print options
+
+    - ``names`` -- how to print the prime
+
+    EXAMPLES::
+
+        sage: R = ZpER(5)  # indirect doctest
+        sage: type(R)
+        <class 'sage.rings.padics.padic_base_leaves.pAdicRingRelaxed_with_category'>
+    """
+    def __init__(self, p, prec, print_mode, names):
+        """
+        Initialization.
+
+        TESTS::
+
+            sage: R = ZpER(7)
+            sage: TestSuite(R).run(skip=['_test_log', '_test_matrix_smith'])
+        """
+        from sage.rings.padics import padic_relaxed_element
+        self._default_prec, self._halting_prec, self._secure = prec
+        pAdicRingBaseGeneric.__init__(self, p, self._default_prec, print_mode, names, padic_relaxed_element.pAdicRelaxedElement)
+        self._element_class_module = padic_relaxed_element
+        self._element_class_prefix = "pAdicRelaxedElement_"
+
+class pAdicFieldRelaxed(pAdicRelaxedGeneric, pAdicFieldBaseGeneric):
+    r"""
+    An implementation of relaxed arithmetics over `\QQ_p`.
+
+    INPUT:
+
+    - ``p`` -- prime
+
+    - ``prec`` -- default precision
+
+    - ``print_mode`` -- dictionary with print options
+
+    - ``names`` -- how to print the prime
+
+    EXAMPLES::
+
+        sage: R = QpER(5)  # indirect doctest
+        sage: type(R)
+        <class 'sage.rings.padics.padic_base_leaves.pAdicFieldRelaxed_with_category'>
+    """
+    def __init__(self, p, prec, print_mode, names):
+        """
+        Initialization.
+
+        TESTS::
+
+            sage: K = QpER(7)
+            sage: TestSuite(K).run(skip=['_test_log', '_test_matrix_smith'])
+        """
+        from sage.rings.padics import padic_relaxed_element
+        self._default_prec, self._halting_prec, self._secure = prec
+        pAdicFieldBaseGeneric.__init__(self, p, self._default_prec, print_mode, names, padic_relaxed_element.pAdicRelaxedElement)
+        self._element_class_module = padic_relaxed_element
+        self._element_class_prefix = "pAdicRelaxedElement_"

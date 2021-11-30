@@ -1,5 +1,5 @@
-ninja_build
-===========
+ninja_build: A build system with a focus on speed
+=================================================
 
 Description
 -----------

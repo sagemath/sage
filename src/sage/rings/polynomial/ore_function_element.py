@@ -167,12 +167,12 @@ class OreFunction(AlgebraElement):
             sage: P = K.random_element()
             sage: Q = K.random_element()
             sage: D = K.random_element()
-            sage: (P*D) / (Q*D) == P/Q
+            sage: Q == 0 or D == 0 or (P*D) / (Q*D) == P/Q
             True
 
         """
         if self.parent()._simplification:
-            return richcmp((self._numerator, self._denominator), (other._numerator, other._denominator), op) 
+            return richcmp((self._numerator, self._denominator), (other._numerator, other._denominator), op)
         if op == op_EQ or op == op_NE:
             _, U, V = self._denominator.left_xlcm(other._denominator)
             return richcmp(U * self._numerator, V * other._numerator, op)
@@ -211,7 +211,7 @@ class OreFunction(AlgebraElement):
 
         In the example below, a simplification occurs::
 
-            sage: u = S.random_element()
+            sage: u = S.random_element(degree=2)
             sage: g = (u*s)^(-1) * (u*t)
             sage: g.left_denominator()
             x + a
@@ -272,7 +272,7 @@ class OreFunction(AlgebraElement):
 
         In the example below, a simplification occurs::
 
-            sage: u = S.random_element()
+            sage: u = S.random_element(degree=2)
             sage: g = (u*s)^(-1) * (u*t)
             sage: g.right_numerator()
             x^2 + a*x + a^2
@@ -344,7 +344,7 @@ class OreFunction(AlgebraElement):
 
         In the example below, a simplification occurs::
 
-            sage: u = S.random_element()
+            sage: u = S.random_element(degree=2)
             sage: g = (t*u) / (s*u)
             sage: g.right_denominator()
             x + a
@@ -398,7 +398,7 @@ class OreFunction(AlgebraElement):
 
         In the example below, a simplification occurs::
 
-            sage: u = S.random_element()
+            sage: u = S.random_element(degree=2)
             sage: g = (t*u) / (s*u)
             sage: g.left_numerator()
             x^2 + a*x + a^2
@@ -549,7 +549,7 @@ class OreFunction(AlgebraElement):
             sage: f = K.random_element()
             sage: g = K.random_element()
             sage: h = K.random_element()
-            sage: f / (g / h) == f*h / g
+            sage: g == 0 or h == 0 or f / (g / h) == f*h / g
             True
 
             sage: 0/f
@@ -558,11 +558,18 @@ class OreFunction(AlgebraElement):
             Traceback (most recent call last):
             ...
             ZeroDivisionError: cannot divide by zero
+
+        We check that :trac:`32109` is fixed::
+
+            sage: K(0)/K(0)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: cannot divide by zero
         """
-        if not self._numerator:
-            return self
         if not other._numerator:
             raise ZeroDivisionError("cannot divide by zero")
+        if not self._numerator:
+            return self
         L, U, V = self._numerator.left_xlcm(other._numerator, monic=False)
         denominator = U * self._denominator
         numerator = V * other._denominator
@@ -689,7 +696,7 @@ class ConstantOreFunctionSection(Map):
             sage: sigma = R.hom([t^2])
             sage: S.<x> = R['x', sigma]
 
-            sage: P = S.random_element()
+            sage: P = S._random_nonzero_element()
             sage: f = (t*P) / P
             sage: F(f)
             t

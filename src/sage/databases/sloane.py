@@ -87,6 +87,7 @@ import os
 import re
 
 from urllib.request import urlretrieve
+import ssl
 
 from sage.misc.verbose import verbose
 from sage.env import SAGE_SHARE
@@ -177,18 +178,18 @@ class SloaneEncyclopediaClass:
 
         return answer
 
-    def install(self, oeis_url="http://oeis.org/stripped.gz",
-                names_url="http://oeis.org/names.gz", overwrite=False):
+    def install(self, oeis_url="https://oeis.org/stripped.gz",
+                names_url="https://oeis.org/names.gz", overwrite=False):
         """
         Download and install the online encyclopedia, raising an IOError if
         either step fails.
 
         INPUT:
 
-        - ``oeis_url`` - string (default: "http://oeis.org...")
+        - ``oeis_url`` - string (default: "https://oeis.org...")
           The URL of the stripped.gz encyclopedia file.
 
-        - ``names_url`` - string (default: "http://oeis.org...")
+        - ``names_url`` - string (default: "https://oeis.org...")
           The URL of the names.gz encyclopedia file.  If you do not want to
           download this file, set names_url=None.
 
@@ -201,6 +202,7 @@ class SloaneEncyclopediaClass:
             raise IOError("Sloane encyclopedia is already installed")
 
         tm = verbose("Downloading stripped version of Sloane encyclopedia")
+        ssl._create_default_https_context = ssl.SSLContext
         try:
             fname, _ = urlretrieve(oeis_url)
         except IOError as msg:

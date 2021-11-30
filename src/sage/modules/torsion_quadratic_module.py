@@ -62,7 +62,7 @@ def TorsionQuadraticForm(q):
 
     TESTS::
 
-        sage: TorsionQuadraticForm(matrix.diagonal([3/8,3/8,3/4]))
+        sage: TorsionQuadraticForm(matrix.diagonal([3/4,3/8,3/8]))
         Finite quadratic module over Integer Ring with invariants (4, 8, 8)
         Gram matrix of the quadratic form with values in Q/2Z:
         [3/4   0   0]
@@ -867,26 +867,24 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
         from sage.groups.fqf_orthogonal import FqfOrthogonalGroup,_isom_fqf
         from sage.groups.abelian_gps.abelian_group_gap import AbelianGroupGap
 
+        ambient = AbelianGroupGap(self.invariants()).aut()
         # slow brute force implementation
-        flag = False
         if gens is None:
             try:
-                return self._orthogonal_group
+                gens = self._orthogonal_group_gens
             except AttributeError:
-                flag = True
                 gens = _isom_fqf(self)
+                gens = tuple(ambient(g) for g in gens)
+                self._orthogonal_group_gens = gens
         else:
             # see if there is an action
             try:
                 gens = [matrix(x*g for x in self.smith_form_gens()) for g in gens]
             except TypeError:
-                pass
-        ambient = AbelianGroupGap(self.invariants()).aut()
-        # the ambient knows what to do with the generators
-        gens = tuple(ambient(g) for g in gens)
+                pass 
+            # the ambient knows what to do with the generators
+            gens = tuple(ambient(g) for g in gens)
         Oq =  FqfOrthogonalGroup(ambient, gens, self, check=check)
-        if flag:
-            self._orthogonal_group = Oq
         return Oq
 
     def orthogonal_submodule_to(self, S):
@@ -1032,10 +1030,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             sage: T
             Finite quadratic module over Integer Ring with invariants (6, 6, 12, 12)
             Gram matrix of the quadratic form with values in Q/(1/3)Z:
-            [1/18 5/36    0    0]
-            [5/36 1/18 5/36 5/36]
-            [   0 5/36 1/36 1/72]
-            [   0 5/36 1/72 1/36]
+            [ 1/18  1/12  5/36  1/36]
+            [ 1/12   1/6  1/36   1/9]
+            [ 5/36  1/36  1/36 11/72]
+            [ 1/36   1/9 11/72  1/36]
             sage: T.normal_form()
             Finite quadratic module over Integer Ring with invariants (6, 6, 12, 12)
             Gram matrix of the quadratic form with values in Q/(1/3)Z:

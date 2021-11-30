@@ -1,0 +1,2 @@
+pkgconf
+pkg-config

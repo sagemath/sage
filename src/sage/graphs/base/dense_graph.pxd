@@ -8,17 +8,16 @@
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-
 from .c_graph cimport CGraph, CGraphBackend
+from sage.data_structures.binary_matrix cimport binary_matrix_t
 
 cdef class DenseGraph(CGraph):
-    cdef int radix_div_shift
-    cdef int radix_mod_mask
-    cdef size_t num_longs
-    cdef unsigned long *edges
     cdef bint _directed
+    cdef binary_matrix_t edges
     cdef inline int _add_arc_unsafe(self, int, int) except -1
     cdef inline int _del_arc_unsafe(self, int u, int v) except -1
+
+cdef int copy_dense_graph(DenseGraph dest, DenseGraph src) except -1
 
 cdef class DenseGraphBackend(CGraphBackend):
     cdef DenseGraph _cg

@@ -23,7 +23,7 @@ from sage_bootstrap.package import Package
 from sage_bootstrap.tarball import Tarball, FileNotMirroredError
 from sage_bootstrap.updater import ChecksumUpdater, PackageUpdater
 from sage_bootstrap.creator import PackageCreator
-from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound
+from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound, PyPiError
 from sage_bootstrap.fileserver import FileServer
 from sage_bootstrap.expand_class import PackageClass
 
@@ -50,7 +50,6 @@ class Application(object):
         $ sage --package list | sort
         4ti2
         arb
-        atlas
         autotools
         [...]
         zn_poly
@@ -138,21 +137,24 @@ class Application(object):
             log.debug('%s is not a pypi package', package_name)
             return
         else:
-            pypi.update()
+            pypi.update(Package(package_name))
 
-    def update_latest_all(self):
-        log.debug('Attempting to update all packages')
+    def update_latest_cls(self, package_name_or_class):
         exclude = [
-            'atlas', 'flint', 'bzip2', 'ecm', 'freetype', 'gap', 'glpk', 'graphs',
-            'iconv', 'patch', 'r', 'configure', 'bliss', 'readline', 'decorator',
-            'igraph', 'rw', 'planarity', 'gambit', 
+            'cypari'   # Name conflict
         ]
-        pc = PackageClass(':standard:')
-        for package_name in pc.names:
+        # Restrict to normal Python packages
+        pc = PackageClass(package_name_or_class, has_files=['checksums.ini', 'install-requires.txt'])
+        if not pc.names:
+            log.warn('nothing to do (does not name a normal Python package)')
+        for package_name in sorted(pc.names):
             if package_name in exclude:
                 log.debug('skipping %s because of pypi name collision', package_name)
                 continue
-            self.update_latest(package_name)
+            try:
+                self.update_latest(package_name)
+            except PyPiError as e:
+                log.warn('updating %s failed: %s', package_name, e)
 
     def download(self, package_name, allow_upstream=False):
         """
@@ -210,22 +212,14 @@ class Application(object):
         log.info('Publishing')
         fs.publish()
         
-    def fix_all_checksums(self):
+    def fix_checksum_cls(self, *package_classes):
         """
-        Fix the checksum of a package
+        Fix the checksum of packages
 
         $ sage --package fix-checksum
         """
-        for pkg in Package.all():
-            if not os.path.exists(pkg.tarball.upstream_fqn):
-                log.debug('Ignoring {0} because tarball is not cached'.format(pkg.tarball_filename))
-                continue
-            if pkg.tarball.checksum_verifies():
-                log.debug('Checksum of {0} (tarball {1}) unchanged'.format(pkg.name, pkg.tarball_filename))
-                continue
-            update = ChecksumUpdater(pkg.name)
-            print('Updating checksum of {0} (tarball {1})'.format(pkg.name, pkg.tarball_filename))
-            update.fix_checksum()
+        pc = PackageClass(*package_classes, has_files=['checksums.ini'])
+        pc.apply(self.fix_checksum)
 
     def fix_checksum(self, package_name):
         """
@@ -237,12 +231,18 @@ class Application(object):
         log.debug('Correcting the checksum of %s', package_name)
         update = ChecksumUpdater(package_name)
         pkg = update.package
+        if not pkg.tarball_filename:
+            log.info('Ignoring {0} because it is not a normal package'.format(package_name))
+            return
+        if not os.path.exists(pkg.tarball.upstream_fqn):
+            log.info('Ignoring {0} because tarball is not cached'.format(package_name))
+            return
         if pkg.tarball.checksum_verifies():
-            print('Checksum of {0} (tarball {1}) unchanged'.format(package_name, pkg.tarball_filename))
+            log.info('Checksum of {0} (tarball {1}) unchanged'.format(package_name, pkg.tarball_filename))
         else:
-            print('Updating checksum of {0} (tarball {1})'.format(package_name, pkg.tarball_filename))
+            log.info('Updating checksum of {0} (tarball {1})'.format(package_name, pkg.tarball_filename))
             update.fix_checksum()
-        
+
     def create(self, package_name, version=None, tarball=None, pkg_type=None, upstream_url=None,
                description=None, license=None, upstream_contact=None, pypi=False, source='normal'):
         """

@@ -1213,7 +1213,7 @@ cdef class GLPKGraphBackend(object):
             sage: gbe.write_maxflow(SAGE_TMP+"/graph.max")
             Traceback (most recent call last):
             ...
-            IOError: Cannot write empty graph
+            OSError: Cannot write empty graph
         """
 
         if self.graph.nv <= 0:

@@ -18,7 +18,7 @@ EXAMPLES::
     sage: G = [from_A(z) for z in I.gens()]; G
     [7, -2*b*a - 1]
     sage: K.fractional_ideal(G)
-    Fractional ideal (2*b*a + 1)
+    Fractional ideal ((1/2*b + 2)*a - 1/2*b + 2)
     sage: K.fractional_ideal(G).absolute_norm().factor()
     7^2
 """

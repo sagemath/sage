@@ -1,5 +1,5 @@
-patch
-=====
+patch: Applies diffs and patches to files
+=========================================
 
 Description
 -----------
@@ -9,7 +9,7 @@ the 'diff' program and applies those differences to one or more original
 files, producing patched versions.
 
 The version of 'patch' included is the GNU one. Some of the 'diff' files
-produced by GNU 'diff' are not acceptble to some versions of the 'patch'
+produced by GNU 'diff' are not acceptable to some versions of the 'patch'
 command, such as the 'patch' command that comes with Solaris.
 
 License
@@ -24,10 +24,13 @@ later version.
 Upstream Contact
 ----------------
 
-Main web site: http://savannah.gnu.org/projects/patch/ Bug database at
-http://savannah.gnu.org/bugs/?group=patch Submit bugs at
-http://savannah.gnu.org/bugs/?func=additem&group=patch Mailing lists
-bug-patch@gnu.org
+Main web site: http://savannah.gnu.org/projects/patch/
+
+Bug database: http://savannah.gnu.org/bugs/?group=patch
+
+Submit bugs: http://savannah.gnu.org/bugs/?func=additem&group=patch
+
+Mailing lists: bug-patch@gnu.org
 
 Dependencies
 ------------

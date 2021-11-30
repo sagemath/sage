@@ -1,4 +1,4 @@
-"""
+r"""
 `p`-Adic Floating Point Elements
 
 Elements of `p`-Adic Rings with Floating Point Precision
@@ -42,7 +42,7 @@ cdef class PowComputer_(PowComputer_base):
 
             sage: R = ZpFP(5)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.padic_floating_point_element.PowComputer_'>
+            <class 'sage.rings.padics.padic_floating_point_element.PowComputer_'>
             sage: R.prime_pow._prec_type
             'floating-point'
         """
@@ -139,7 +139,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
     """
     def lift(self):
-        """
+        r"""
         Return an integer or rational congruent to ``self`` modulo ``self``'s
         precision.  If a rational is returned, its denominator will equal
         ``p^ordp(self)``.
@@ -158,7 +158,7 @@ cdef class pAdicFloatingPointElement(FPElement):
         return self.lift_c()
 
     cdef lift_c(self):
-        """
+        r"""
         Implementation of lift.
 
         TESTS::
@@ -192,7 +192,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
     def __pari__(self):
         """
-        Converts this element to an equivalent pari element.
+        Convert this element to an equivalent pari element.
 
         EXAMPLES::
 
@@ -205,7 +205,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
     cdef pari_gen _to_gen(self):
         """
-        Converts this element to an equivalent pari element.
+        Convert this element to an equivalent pari element.
 
         EXAMPLES::
 
@@ -224,8 +224,8 @@ cdef class pAdicFloatingPointElement(FPElement):
                                       self.prime_pow.pow_mpz_t_top(),
                                       self.unit)
     def _integer_(self, Z=None):
-        """
-        Returns an integer congruent to this element modulo
+        r"""
+        Return an integer congruent to this element modulo
         ``p^self.absolute_precision()``.
 
          EXAMPLES::
@@ -234,25 +234,26 @@ cdef class pAdicFloatingPointElement(FPElement):
             95367431640624
          """
         if self.ordp < 0:
-            raise ValueError("Cannot form an integer out of a p-adic field element with negative valuation")
+            raise ValueError("cannot form an integer out of a p-adic field element with negative valuation")
         return self.lift_c()
 
     def residue(self, absprec=1, field=None, check_prec=False):
-        """
-        Reduces this element modulo `p^{\mathrm{absprec}}`.
+        r"""
+        Reduce this element modulo `p^{\mathrm{absprec}}`.
 
         INPUT:
 
         - ``absprec`` -- a non-negative integer (default: ``1``)
 
-        - ``field`` -- boolean (default ``None``).  Whether to return an element of GF(p) or Zmod(p).
+        - ``field`` -- boolean (default ``None``); whether to return an
+          element of `\GF{p}` or `\ZZ / p\ZZ`
 
-        - ``check_prec`` -- boolean (default ``False``).  No effect (for compatibility with other types).
+        - ``check_prec`` -- ignored (for compatibility with other types)
 
         OUTPUT:
 
-        This element reduced modulo `p^\mathrm{absprec}` as an element of
-        `\ZZ/p^\mathrm{absprec}\ZZ`
+        This element reduced modulo `p^{\mathrm{absprec}}` as an element of
+        `\ZZ/p^{\mathrm{absprec}}\ZZ`.
 
         EXAMPLES::
 
@@ -273,7 +274,7 @@ cdef class pAdicFloatingPointElement(FPElement):
             sage: b.residue()
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue.
+            ValueError: element must have non-negative valuation in order to compute residue
 
         TESTS::
 
@@ -284,7 +285,7 @@ cdef class pAdicFloatingPointElement(FPElement):
             sage: a.residue(-1)
             Traceback (most recent call last):
             ...
-            ValueError: cannot reduce modulo a negative power of p.
+            ValueError: cannot reduce modulo a negative power of p
             sage: a.residue(5)
             8
 
@@ -296,9 +297,9 @@ cdef class pAdicFloatingPointElement(FPElement):
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if mpz_sgn((<Integer>absprec).value) < 0:
-            raise ValueError("cannot reduce modulo a negative power of p.")
+            raise ValueError("cannot reduce modulo a negative power of p")
         if self.ordp < 0:
-            raise ValueError("element must have non-negative valuation in order to compute residue.")
+            raise ValueError("element must have non-negative valuation in order to compute residue")
         if field is None:
             field = (absprec == 1)
         elif field and absprec != 1:
@@ -315,13 +316,13 @@ cdef class pAdicFloatingPointElement(FPElement):
             # Need to do this better.
             mpz_mul(selfvalue.value, self.prime_pow.pow_mpz_t_tmp(self.ordp), self.unit)
         if field:
-            from sage.rings.finite_rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             return GF(self.parent().prime())(selfvalue)
         else:
             return Mod(selfvalue, modulus)
 
     def _exp_binary_splitting(self, aprec):
-        """
+        r"""
         Compute the exponential power series of this element
 
         This is a helper method for :meth:`exp`.
@@ -331,7 +332,7 @@ cdef class pAdicFloatingPointElement(FPElement):
         - ``aprec`` -- an integer, the precision to which to compute the
           exponential
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
@@ -343,7 +344,7 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         .. MATH::
 
-            self = \sum_{i=1}^\infty a_i p^{2^i}
+            \mathrm{self} = \sum_{i=1}^\infty a_i p^{2^i}
 
         with `0 \leq a_i < p^{2^i}` and compute
         `\exp(a_i p^{2^i})` using the standard Taylor expansion
@@ -370,7 +371,7 @@ cdef class pAdicFloatingPointElement(FPElement):
         cdef Integer selfint = self.lift_c()
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()
@@ -382,22 +383,22 @@ cdef class pAdicFloatingPointElement(FPElement):
         return ans
 
     def _exp_newton(self, aprec, log_algorithm=None):
-        """
+        r"""
         Compute the exponential power series of this element
 
         This is a helper method for :meth:`exp`.
 
         INPUT:
 
-        - ``aprec`` -- an integer, the precision to which to compute the
+        - ``aprec`` -- an integer; the precision to which to compute the
           exponential
 
-        - ``log_algorithm`` (default: None) -- the algorithm used for
-          computing the logarithm. This attribute is passed to the log
-          method. See :meth:`log` for more details about the possible
-          algorithms.
+        - ``log_algorithm`` -- (default: ``None``) the algorithm used for
+          computing the logarithm. This attribute is passed to the :meth:`log`
+          method; see :meth:`log` for more details about the possible
+          algorithms
 
-        NOTE::
+        .. NOTE::
 
             The function does not check that its argument ``self`` is
             the disk of convergence of ``exp``. If this assumption is not
@@ -405,11 +406,11 @@ cdef class pAdicFloatingPointElement(FPElement):
 
         ALGORITHM:
 
-        Solve the equation `\log(x) = self` using the Newton scheme::
+        Solve the equation `\log(x) = \mathrm{self}` using the Newton scheme::
 
         .. MATH::
 
-            x_{i+1} = x_i \cdot (1 + self - \log(x_i))
+            x_{i+1} = x_i \cdot (1 + \mathrm{self} - \log(x_i)).
 
         The binary complexity of this algorithm is roughly the same
         than that of the computation of the logarithm.
@@ -427,7 +428,7 @@ cdef class pAdicFloatingPointElement(FPElement):
         cdef Integer selfint = self.lift_c()
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()
@@ -441,3 +442,4 @@ cdef class pAdicFloatingPointElement(FPElement):
         sig_off()
 
         return ans
+

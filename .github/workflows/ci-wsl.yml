@@ -9,6 +9,7 @@ on:
     branches:
       - 'public/build/**wsl**'
   workflow_dispatch:
+    # Allow to run manually
 
 jobs:
   windows:

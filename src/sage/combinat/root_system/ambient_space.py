@@ -11,7 +11,8 @@ Ambient lattices and ambient spaces
 from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
 from .weight_lattice_realizations import WeightLatticeRealizations
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.categories.homset import End
 
 
@@ -85,11 +86,11 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         self.root_system = root_system
         if index_set is None:
-            index_set = tuple(range(0, self.dimension()))
+            index_set = tuple(range(self.dimension()))
         CombinatorialFreeModule.__init__(self, base_ring,
                                          index_set,
                                          prefix='e',
-                                         category = WeightLatticeRealizations(base_ring))
+                                         category=WeightLatticeRealizations(base_ring))
         coroot_lattice = self.root_system.coroot_lattice()
         coroot_lattice.module_morphism(self.simple_coroot, codomain=self).register_as_coercion()
 

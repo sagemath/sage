@@ -1,5 +1,5 @@
-tachyon
-=======
+tachyon: A ray tracing system
+=============================
 
 Description
 -----------
@@ -41,6 +41,7 @@ Upstream Contact
 ----------------
 
 - http://jedi.ks.uiuc.edu/~johns/raytracer/
+- http://www.photonlimited.com/~johns/raytracer/
 - John Stone <johns@ks.uiuc.edu>
 
 Dependencies

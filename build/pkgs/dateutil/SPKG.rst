@@ -1,5 +1,5 @@
-dateutil
-========
+dateutil: Extensions to the standard Python module datetime
+===========================================================
 
 Description
 -----------
@@ -16,8 +16,11 @@ Simplified BSD License
 Upstream Contact
 ----------------
 
-Author: Gustavo Niemeyer <gustavo@niemeyer.net> Home page:
-http://labix.org/python-dateutil
+Author: Gustavo Niemeyer <gustavo@niemeyer.net>
+
+Home page: http://labix.org/python-dateutil
+
+https://pypi.org/project/python-dateutil/
 
 Dependencies
 ------------

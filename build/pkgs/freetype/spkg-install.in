@@ -1,7 +1,7 @@
 cd src
 
 # Enable the now-deprecated `freetype-config`
-GNUMAKE=${MAKE} sdh_configure --enable-freetype-config
+GNUMAKE=${MAKE} sdh_configure --enable-freetype-config $FREETYPE_CONFIGURE
 sdh_make
 sdh_make_install
 

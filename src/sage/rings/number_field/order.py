@@ -47,6 +47,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.ring import IntegralDomain
 from sage.structure.sequence import Sequence
 from sage.rings.integer_ring import ZZ
+import sage.rings.abc
 from sage.structure.element import is_Element
 from .number_field_element import OrderElement_absolute, OrderElement_relative
 
@@ -126,7 +127,7 @@ def EquationOrder(f, names, **kwds):
     return K.order(K.gens())
 
 
-class Order(IntegralDomain):
+class Order(IntegralDomain, sage.rings.abc.Order):
     r"""
     An order in a number field.
 
@@ -2034,7 +2035,7 @@ def absolute_order_from_module_generators(gens,
 
         sage: F.<alpha> = NumberField(x**4+3)
         sage: F.order([alpha**2], allow_subfield=True)
-        Order in Number Field in beta with defining polynomial x^2 + 2*x + 13 with beta = 2*alpha^2 - 1
+        Order in Number Field in beta with defining polynomial ... with beta = ...
     """
     if not gens:
         raise ValueError("gens must span an order over ZZ")
@@ -2180,7 +2181,7 @@ def EisensteinIntegers(names="omega"):
         sage: R
         Eisenstein Integers in Number Field in omega with defining polynomial x^2 + x + 1 with omega = -0.50000000000000000? + 0.866025403784439?*I
         sage: factor(3 + omega)
-        (omega) * (-3*omega - 2)
+        (-1) * (-omega - 3)
         sage: CC(omega)
         -0.500000000000000 + 0.866025403784439*I
         sage: omega.minpoly()

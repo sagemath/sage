@@ -1,5 +1,5 @@
-mistune
-=======
+mistune: A markdown parser in pure Python
+=========================================
 
 Description
 -----------

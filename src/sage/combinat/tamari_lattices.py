@@ -46,11 +46,12 @@ are also available directly using the catalogue of posets, as follows::
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
 from sage.arith.all import gcd
 
 
-def paths_in_triangle(i, j, a, b):
+def paths_in_triangle(i, j, a, b) -> list[tuple]:
     r"""
     Return all Dyck paths from `(0,0)` to `(i,j)` in the `(a \times
     b)`-rectangle.
@@ -100,7 +101,7 @@ def paths_in_triangle(i, j, a, b):
     return [u + tuple([0]) for u in paths_in_triangle(i - 1, j, a, b)]
 
 
-def swap(p, i, m=1):
+def swap(p, i, m=1) -> tuple:
     r"""
     Perform a covering move in the `(a,b)`-Tamari lattice of parameter `m`.
 
@@ -268,7 +269,7 @@ def TamariLattice(n, m=1):
 # a variation : the Dexter meet-semilattices
 
 
-def swap_dexter(p, i):
+def swap_dexter(p, i) -> list:
     r"""
     Perform covering moves in the `(a,b)`-Dexter posets.
 

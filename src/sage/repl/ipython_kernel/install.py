@@ -20,7 +20,7 @@ import errno
 from sage.env import (
     SAGE_DOC, SAGE_VENV, SAGE_EXTCODE,
     SAGE_VERSION,
-    MATHJAX_DIR, THREEJS_DIR,
+    THREEJS_DIR,
 )
 
 
@@ -114,23 +114,6 @@ class SageKernelSpec(object):
                 return
         os.symlink(src, dst)
 
-    def use_local_mathjax(self):
-        """
-        Symlink SageMath's Mathjax install to the Jupyter notebook.
-
-        EXAMPLES::
-
-            sage: from sage.repl.ipython_kernel.install import SageKernelSpec
-            sage: spec = SageKernelSpec(prefix=tmp_dir())
-            sage: spec.use_local_mathjax()
-            sage: mathjax = os.path.join(spec.nbextensions_dir, 'mathjax')
-            sage: os.path.isdir(mathjax)
-            True
-        """
-        src = MATHJAX_DIR
-        dst = os.path.join(self.nbextensions_dir, 'mathjax')
-        self.symlink(src, dst)
-
     def use_local_threejs(self):
         """
         Symlink threejs to the Jupyter notebook.
@@ -140,12 +123,12 @@ class SageKernelSpec(object):
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.use_local_threejs()
-            sage: threejs = os.path.join(spec.nbextensions_dir, 'threejs')
+            sage: threejs = os.path.join(spec.nbextensions_dir, 'threejs-sage')
             sage: os.path.isdir(threejs)
             True
         """
         src = THREEJS_DIR
-        dst = os.path.join(self.nbextensions_dir, 'threejs')
+        dst = os.path.join(self.nbextensions_dir, 'threejs-sage')
         self.symlink(src, dst)
 
     def _kernel_cmd(self):
@@ -255,7 +238,6 @@ class SageKernelSpec(object):
 
         """
         instance = cls(*args, **kwds)
-        instance.use_local_mathjax()
         instance.use_local_threejs()
         instance._install_spec()
         instance._symlink_resources()

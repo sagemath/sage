@@ -5,6 +5,10 @@
 #  This script is typically invoked by giving the command
 #      sage {-i|-p} <options> <package name>...
 #
+#  sage-spkg itself only accepts one <package name>.
+#
+#      sage-spkg <options> <package name> [<installation tree>]
+#
 #  Options can be:
 #   -s: do not delete temporary build directory
 #   -k: do not uninstall existing installation of this package before
@@ -24,8 +28,11 @@
 #  A package may assume that the following environment
 #  variables are defined:
 #
-#      SAGE_ROOT      -- root directory of sage install
-#      SAGE_LOCAL     -- $SAGE_ROOT/local
+#      SAGE_ROOT      -- root directory of sage distribution
+#      SAGE_LOCAL     -- prefix where packages are installed (usually $SAGE_ROOT/local)
+#      SAGE_INST_LOCAL-- prefix where to install this package;
+#                        this is set by the optional argument <installation tree>
+#                        and defaults to $SAGE_LOCAL.
 #      SAGE_DISTFILES -- directory that stores upstream tarballs
 #      SAGE_DESTDIR   -- temporary root the package will be installed to
 #      PKG_BASE       -- the base name of the package itself (e.g. 'patch')
@@ -112,8 +119,10 @@ cat >&2 <<MESSAGE
 $1
 ************************************************************************
 Please email sage-devel (http://groups.google.com/group/sage-devel)
-explaining the problem and including the log file
+explaining the problem and including the log files
   $SAGE_LOGS/$PKG_NAME.log
+and
+  $SAGE_ROOT/config.log
 Describe your computer, operating system, etc.
 MESSAGE
 
@@ -137,7 +146,8 @@ lookup_param()
 {
     local param=$1
     local file=$2
-    sed -n "s/^${param} *= *//p" $file
+    # Ignore errors if the file does not exist
+    sed -n "s/^${param} *= *//p" $file 2>/dev/null
 }
 
 write_to_tty()
@@ -183,14 +193,6 @@ if [ $? -ne 0 ]; then
     error_msg "Error setting environment variables by sourcing sage-build-env"
     exit 1
 fi
-
-if [ -z "$SAGE_BUILD_DIR" ]; then
-    export SAGE_BUILD_DIR="$SAGE_LOCAL/var/tmp/sage/build"
-fi
-
-export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
-export SAGE_SPKG_SCRIPTS="$SAGE_LOCAL/var/lib/sage/scripts"
-export SAGE_SPKG_WHEELS="$SAGE_LOCAL/var/lib/sage/wheels"
 
 # Remove '.' from PYTHONPATH, to avoid trouble with setuptools / easy_install
 # (cf. #10192, #10176):
@@ -271,11 +273,27 @@ fi
 PKG_NAME="$PKG_SRC"
 PKG_BASE=`echo "$PKG_NAME" | sed 's/-.*//'` # strip version number
 
-# USE_LOCAL_SCRIPTS is a flag that if non-empty will cause
-# this script to try to install the package using local metadata
-# i.e. use upstream tarballs (vs spkgs) and scripts located in build/pkgs/$PKG_BASE
-# the value of this flag is set in the next codeblock
-USE_LOCAL_SCRIPTS=
+case $# in
+    1)
+        SAGE_INST_LOCAL="$SAGE_LOCAL"
+        ;;
+    2)
+        SAGE_INST_LOCAL="$2"
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
+export SAGE_INST_LOCAL
+
+if [ -z "$SAGE_BUILD_DIR" ]; then
+    export SAGE_BUILD_DIR="$SAGE_INST_LOCAL/var/tmp/sage/build"
+fi
+
+export SAGE_SPKG_INST="$SAGE_INST_LOCAL/var/lib/sage/installed"
+export SAGE_SPKG_SCRIPTS="$SAGE_INST_LOCAL/var/lib/sage/scripts"
+export SAGE_SPKG_WHEELS="$SAGE_INST_LOCAL/var/lib/sage/wheels"
 
 # PKG_SRC should look like "package-VERSION" or just "package".
 # If VERSION matches the version in build/pkgs or there is no version
@@ -291,10 +309,8 @@ if [ -z "$PKG_VER" ]; then
 else
     PKG_NAME="${PKG_BASE}-${PKG_VER}"
 fi
-USE_LOCAL_SCRIPTS=yes
 PKG_BASE_VER=`echo $PKG_VER | sed 's/\.p[0-9][0-9]*$//'`
 PKG_NAME_UPSTREAM=`lookup_param tarball "$PKG_SCRIPTS/checksums.ini" | sed "s/VERSION/$PKG_BASE_VER/"`
-echo "Found local metadata for $PKG_NAME"
 
 # Warning for experimental packages
 if [ x`cat "$PKG_SCRIPTS/type"` = x"experimental" -a $INFO = 0 ]; then
@@ -328,7 +344,7 @@ EOF
     fi
 fi
 
-if [ $INFO -ne 0 -a "$USE_LOCAL_SCRIPTS" = yes ]; then
+if [ $INFO -ne 0 ]; then
     exec sage-spkg-info $PKG_BASE
 fi
 
@@ -373,20 +389,6 @@ if [ -n "$SAGE_INSTALL_FETCH_ONLY" ]; then
 fi
 
 ##################################################################
-# Handle --info
-##################################################################
-
-if [ $INFO -ne 0 -a -z "$USE_LOCAL_SCRIPTS" ]; then
-        cat "$PKG_SCRIPTS/SPKG.txt"
-    sage-uncompress-spkg "$PKG_SRC" "$PKG_NAME/SPKG.txt"
-    if [ $? -ne 0 ]; then
-        error_msg "Error: no file SPKG.txt in $PKG_NAME"
-        exit 1
-    fi
-    exit 0
-fi
-
-##################################################################
 # Setup directories
 ##################################################################
 
@@ -403,12 +405,12 @@ if [ ! -w "$SAGE_BUILD_DIR" ]; then
     error_msg "Error: no write access to build directory $SAGE_BUILD_DIR"
     exit 1
 fi
-if [ ! -d "$SAGE_LOCAL" ]; then
+if [ ! -d "$SAGE_INST_LOCAL" ]; then
     # If you just unpack Sage and run "sage -p <pkg>" then local does not yet exist
-    mkdir "$SAGE_LOCAL"
+    mkdir "$SAGE_INST_LOCAL"
 fi
-if [ ! -w "$SAGE_LOCAL" ]; then
-    error_msg "Error: no write access to installation directory $SAGE_LOCAL"
+if [ ! -w "$SAGE_INST_LOCAL" ]; then
+    error_msg "Error: no write access to installation directory $SAGE_INST_LOCAL"
     exit 1
 fi
 
@@ -444,19 +446,13 @@ fi
 # Extract the package
 ##################################################################
 
-if [ "$USE_LOCAL_SCRIPTS" = yes ]; then
-    # New-style package
-    echo "Setting up build directory for $PKG_NAME"
-    cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
-    cd "$PKG_NAME" || exit $?
+echo "Setting up build directory for $PKG_NAME"
+cp -RLp "$PKG_SCRIPTS" "$PKG_NAME"
+cd "$PKG_NAME" || exit $?
 
-    sage-uncompress-spkg -d src "$PKG_SRC"
-    if [ $? -ne 0 ]; then
-        error_msg "Error: failed to extract $PKG_SRC"
-        exit 1
-    fi
-else
-    echo >&2 "Error: Installing old-style SPKGs is no longer supported."
+sage-uncompress-spkg -d src "$PKG_SRC"
+if [ $? -ne 0 ]; then
+    error_msg "Error: failed to extract $PKG_SRC"
     exit 1
 fi
 
@@ -502,7 +498,7 @@ export PKG_NAME="$PKG_NAME"
 export PKG_BASE="$PKG_BASE"
 export PKG_VER="$PKG_VER"
 
-for lib in "\$SAGE_ROOT/build/bin/sage-dist-helpers" "\$SAGE_SRC/bin/sage-env-config" "\$SAGE_SRC/bin/sage-env" "\$SAGE_ROOT/build/bin/sage-build-env-config"; do
+for lib in "\$SAGE_ROOT/build/bin/sage-dist-helpers" "\$SAGE_SRC/bin/sage-src-env-config" "\$SAGE_SRC/bin/sage-env-config" "\$SAGE_SRC/bin/sage-env" "\$SAGE_ROOT/build/bin/sage-build-env-config" "\$SAGE_ROOT/build/bin/sage-build-env"; do
     source "\$lib"
     if [ \$? -ne 0 ]; then
         echo >&2 "Error: failed to source \$lib"
@@ -510,6 +506,8 @@ for lib in "\$SAGE_ROOT/build/bin/sage-dist-helpers" "\$SAGE_SRC/bin/sage-env-co
         exit 1
     fi
 done
+
+export SAGE_INST_LOCAL="$SAGE_INST_LOCAL"
 
 sdh_guard
 if [ \$? -ne 0 ]; then
@@ -533,9 +531,12 @@ __EOF__
 }
 
 
-WRAPPED_SCRIPTS="build install check preinst postinst prerm postrm"
-INSTALLED_SCRIPTS="prerm postrm"
+INSTALLED_SCRIPTS="prerm piprm postrm"
+WRAPPED_SCRIPTS="build install check preinst postinst $INSTALLED_SCRIPTS"
 
+# Prepare script for uninstallation of packages that use sdh_pip_install
+# or sdh_store_and_pip_install_wheel.
+echo 'sdh_pip_uninstall -r $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-piprm-requirements.txt' > spkg-piprm.in
 
 for script in $WRAPPED_SCRIPTS; do
     # 'Installed' scripts are not run immediately out of the package build
@@ -550,14 +551,7 @@ for script in $WRAPPED_SCRIPTS; do
     script="spkg-$script"
 
     if [ -f "$script.in" ]; then
-        if [ "$USE_LOCAL_SCRIPTS" = "yes" ]; then
             write_script_wrapper "$(pwd)/$script" "$script_dir"
-        else
-            if [ ! -x "$script" ]; then
-                echo >&2 "WARNING: $script is not executable, making it executable"
-                chmod +x "$script"
-            fi
-        fi
     fi
 done
 
@@ -568,7 +562,7 @@ done
 if [ ! -f spkg-install ]; then
     echo '#!/usr/bin/env bash' > spkg-install
     if [ -x configure ]; then
-        echo './configure --prefix="$SAGE_LOCAL" && make && $SAGE_SUDO make install' >> spkg-install
+        echo './configure --prefix="$SAGE_INST_LOCAL" && make && $SAGE_SUDO make install' >> spkg-install
     elif [ -f setup.py ]; then
         echo 'python setup.py install' >> spkg-install
     else
@@ -609,6 +603,7 @@ export rsync_proxy=$http_proxy
 ##################################################################
 
 if [ "$UNAME" = "CYGWIN" ]; then
+    # This is a global lock - so we use SAGE_LOCAL, not SAGE_INST_LOCAL.
     if [ ! -d "$SAGE_LOCAL/var/lock" ]; then
         mkdir -p "$SAGE_LOCAL/var/lock"
     fi
@@ -627,9 +622,9 @@ export SAGE_DESTDIR="${SAGE_BUILD_DIR}/${PKG_NAME}/inst"
 
 # The actual prefix where the installation will be staged. This is the
 # directory that you need to work in if you want to change the staged
-# installation tree (before final installation to $SAGE_LOCAL) at the
+# installation tree (before final installation to $SAGE_INST_LOCAL) at the
 # end of spkg-install.
-export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_LOCAL}"
+export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_INST_LOCAL}"
 
 # First uninstall the previous version of this package, if any
 if [ "$KEEP_EXISTING" != "yes" ]; then
@@ -675,7 +670,7 @@ rm -f "$SAGE_DESTDIR_LOCAL/lib64"
 
 # All spkgs should eventually support this, but fall back on old behavior in
 # case DESTDIR=$SAGE_DESTDIR installation was not used
-echo "Copying package files from temporary location $SAGE_DESTDIR to $SAGE_LOCAL"
+echo "Copying package files from temporary location $SAGE_DESTDIR to $SAGE_INST_LOCAL"
 if [ -d "$SAGE_DESTDIR" ]; then
     # Some `find` implementations will put superfluous slashes in the
     # output if we give them a directory name with a slash; so make sure
@@ -691,8 +686,8 @@ if [ -d "$SAGE_DESTDIR" ]; then
     # Generate installed file manifest
     FILE_LIST="$(cd "$PREFIX" && find . -type f -o -type l | sed 's|^\./||' | sort)"
 
-    # Copy files into $SAGE_LOCAL
-    $SAGE_SUDO cp -Rp "$PREFIX/." "$SAGE_LOCAL"
+    # Copy files into $SAGE_INST_LOCAL
+    $SAGE_SUDO cp -Rp "$PREFIX/." "$SAGE_INST_LOCAL"
     if [ $? -ne 0 ]; then
         error_msg "Error copying files for $PKG_NAME."
         exit 1
@@ -714,6 +709,14 @@ unset SAGE_DESTDIR_LOCAL
 # $SAGE_SPKG_SCRIPTS; they are not included in the package's manifest, but are
 # removed by sage-spkg-uninstall
 INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
+
+if [ -f spkg-piprm-requirements.txt ]; then
+    INSTALLED_SCRIPTS="$INSTALLED_SCRIPTS piprm-requirements.txt"
+else
+    # No packages to uninstall with pip, so remove the prepared uninstall script
+    rm -f spkg-piprm spkg-piprm.in
+fi
+
 for script in $INSTALLED_SCRIPTS; do
     script="spkg-$script"
 
@@ -758,7 +761,7 @@ fi
 
 
 # Note: spkg-check tests are run after the package has been copied into
-# SAGE_LOCAL.  It might make more sense to run the tests before, but the
+# SAGE_INST_LOCAL.  It might make more sense to run the tests before, but the
 # spkg-check scripts were written before use of DESTDIR installs, and so
 # fail in many cases.  This might be good to change later.
 
@@ -769,6 +772,7 @@ if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
         if [ $? -ne 0 ]; then
             TEST_SUITE_RESULT="failed"
             if [ "$SAGE_CHECK" = "warn" ]; then
+                # The following warning message must be consistent with SAGE_ROOT/build/make/install (see trac:32781)
                 error_msg "Warning: Failures testing package $PKG_NAME (ignored)" "make check"
             else
                 error_msg "Error testing package $PKG_NAME" "make check"
@@ -829,12 +833,6 @@ else
     echo "You can safely delete the temporary build directory"
     echo "$SAGE_BUILD_DIR/$PKG_NAME"
 fi
-
-
-# Touch this file to force a sage-location run next time Sage is
-# started.  This is needed to make some of the installed libraries and
-# scripts independent of the SAGE_ROOT path.
-touch "$SAGE_LOCAL/lib/sage-force-relocate.txt"
 
 
 echo "Finished installing $PKG_NAME"

@@ -1,5 +1,5 @@
-jupyter_core
-============
+jupyter_core: Jupyter core package
+==================================
 
 Description
 -----------

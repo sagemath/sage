@@ -156,7 +156,7 @@ class Encoder(SageObject):
             sage: E.encode(word)
             Traceback (most recent call last):
             ...
-            ArithmeticError: reduction modulo 2 not defined
+            ValueError: The value to encode must be in Vector space of dimension 4 over Finite Field of size 2
         """
         M = self.message_space()
         if word not in M:

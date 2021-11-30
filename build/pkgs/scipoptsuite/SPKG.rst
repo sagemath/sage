@@ -1,5 +1,5 @@
-scipoptsuite
-============
+scipoptsuite: Mixed integer programming solver
+==============================================
 
 Description
 -----------

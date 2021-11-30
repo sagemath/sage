@@ -63,7 +63,7 @@ cdef class DefaultConvertMap(Map):
         # When removing this deprecation, this class should be merged
         # into DefaultConvertMap_unique.
         if not isinstance(self, DefaultConvertMap_unique):
-            from sage.misc.superseded import deprecation
+            from sage.misc.superseded import deprecation_cython as deprecation
             deprecation(26879, "DefaultConvertMap is deprecated, use DefaultConvertMap_unique instead. This probably means that _element_constructor_ should be a method and not some other kind of callable")
 
         if not isinstance(domain, Parent):

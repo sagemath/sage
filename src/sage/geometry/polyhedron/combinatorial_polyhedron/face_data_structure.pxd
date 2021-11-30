@@ -11,7 +11,7 @@ Cython data structure for combinatorial faces.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.ext.memory_allocator  cimport MemoryAllocator
+from memory_allocator                 cimport MemoryAllocator
 from sage.data_structures.bitset_base cimport *
 
 ctypedef int simple
@@ -28,7 +28,7 @@ ctypedef fused algorithm_variant:
     standard
 
 #############################################################################
-# Face Initalization
+# Face Initialization
 #############################################################################
 
 cdef inline bint face_init(face_t face, mp_bitcnt_t n_atoms, mp_bitcnt_t n_coatoms, MemoryAllocator mem) except -1:
@@ -151,6 +151,14 @@ cdef inline long face_next_atom(face_t face, mp_bitcnt_t n):
     """
     return bitset_next(face.atoms, n)
 
+cdef inline long face_first_missing_atom(face_t face):
+    """
+    Return the index of the first atom not in ``face``.
+
+    In case there are none, return ``-1``.
+    """
+    return bitset_first_in_complement(face.atoms)
+
 cdef inline long face_len_atoms(face_t face) nogil:
     """
     Calculate the number of atoms in the face.
@@ -166,8 +174,11 @@ cdef inline void face_intersection_fused(face_t dest, face_t A, face_t B, algori
     """
     Set ``dest`` to the intersection of ``A`` and ``B``.
     """
-    bitset_intersection(dest.atoms, A.atoms, B.atoms)
-    if algorithm_variant is simple:
+    if algorithm_variant is standard:
+        # Also setting the non zero positions.
+        sparse_bitset_intersection(dest.atoms, A.atoms, B.atoms)
+    else:
+        bitset_intersection(dest.atoms, A.atoms, B.atoms)
         bitset_union(dest.coatoms, A.coatoms, B.coatoms)
 
 cdef inline void face_intersection(face_t dest, face_t A, face_t B) nogil:
@@ -183,3 +194,6 @@ cdef inline void swap_faces(face_t a, face_t b) nogil:
     tmp[0] = a[0]
     a[0] = b[0]
     b[0] = tmp[0]
+
+cdef inline bint faces_are_identical(face_t a, face_t b) nogil:
+    return a.atoms.limbs == b.atoms.limbs

@@ -1,5 +1,5 @@
-awali
-=====
+awali: Computation of/with finite state machines
+================================================
 
 Description
 -----------

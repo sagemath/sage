@@ -1,4 +1,4 @@
-$(PYTHON) | $(PYTHON_TOOLCHAIN)
+$(PYTHON) | setuptools pip wheel
 
 ----------
 All lines of this file are ignored except the first.

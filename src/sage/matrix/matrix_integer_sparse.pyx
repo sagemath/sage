@@ -611,13 +611,13 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 3 0]
             [0 0 0]
             sage: U
-            [ 0  1  0]
+            [ 0  2 -1]
             [ 0 -1  1]
-            [-1  2 -1]
+            [ 1 -2  1]
             sage: V
-            [-1  4  1]
-            [ 1 -3 -2]
             [ 0  0  1]
+            [-1  2 -2]
+            [ 1 -1  1]
             sage: U*A*V
             [1 0 0]
             [0 3 0]
@@ -632,12 +632,12 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 2]
             [0 0]
             sage: U
-            [ 0  1  0]
+            [ 0  2 -1]
             [ 0 -1  1]
-            [-1  2 -1]
+            [ 1 -2  1]
             sage: V
-            [-1  3]
-            [ 1 -2]
+            [-1  1]
+            [ 1  0]
             sage: U * A * V
             [1 0]
             [0 2]

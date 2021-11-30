@@ -863,9 +863,25 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
+            sage: from collections import defaultdict
             sage: K.<x,y,z,w> = QQ[]
-            sage: K._random_monomial_upto_degree_class(5, 7)
-            (0, 0, 0, 3, 0)
+            sage: dic = defaultdict(Integer)
+            sage: counter = 0
+
+            sage: def more_samples():
+            ....:     global dic, counter
+            ....:     for _ in range(100):
+            ....:         dic[K._random_monomial_upto_degree_class(5, 7)] += 1
+            ....:         counter += 1.0
+
+            sage: def prob(entries):
+            ....:     degree = sum(entries)
+            ....:     total = binomial(5 + degree - 1, degree)
+            ....:     return 1.0/(8*total)
+
+            sage: more_samples()
+            sage: while any(abs(prob(i) - dic[i]/counter) > 0.01 for i in dic):
+            ....:     more_samples()
             """
         # bug: doesn't handle n=1
         #Select random degree
@@ -873,7 +889,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         total = binomial(n+d-1, d)
 
         #Select random monomial of degree d
-        random_index = ZZ.random_element(0, total-1)
+        random_index = ZZ.random_element(0, total)
         #Generate the corresponding monomial
         return self._to_monomial(random_index, n, d)
 
@@ -894,9 +910,20 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
 
         EXAMPLES::
 
+            sage: from collections import defaultdict
             sage: K.<x,y,z,w> = QQ[]
-            sage: K._random_monomial_upto_degree_uniform(4, 3)
-            (1, 0, 0, 1)
+            sage: dic = defaultdict(Integer)
+            sage: counter = 0
+
+            sage: def more_samples():
+            ....:     global dic, counter
+            ....:     for _ in range(100):
+            ....:         dic[K._random_monomial_upto_degree_uniform(5, 7)] += 1
+            ....:         counter += 1.0
+
+            sage: more_samples()
+            sage: while any(abs(1.0/len(dic) - dic[i]/counter) > 0.001 for i in dic):
+            ....:     more_samples()
             """
         if counts is None or total is None:
             counts, total = self._precomp_counts(n, degree)
@@ -943,64 +970,82 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         EXAMPLES::
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
-            sage: P.random_element(2, 5)
-            -6/5*x^2 + 2/3*z^2 - 1
+            sage: f = P.random_element(2, 5)
+            sage: f.degree() <= 2
+            True
+            sage: f.parent() is P
+            True
+            sage: len(list(f)) <= 5
+            True
 
-            sage: P.random_element(2, 5, choose_degree=True)
-            -1/4*x*y - x - 1/14*z - 1
+            sage: f = P.random_element(2, 5, choose_degree=True)
+            sage: f.degree() <= 2
+            True
+            sage: f.parent() is P
+            True
+            sage: len(list(f)) <= 5
+            True
 
         Stacked rings::
 
             sage: R = QQ['x,y']
             sage: S = R['t,u']
-            sage: S.random_element(degree=2, terms=1)
-            -1/2*x^2 - 1/4*x*y - 3*y^2 + 4*y
-            sage: S.random_element(degree=2, terms=1)
-            (-x^2 - 2*y^2 - 1/3*x + 2*y + 9)*u^2
+            sage: f = S._random_nonzero_element(degree=2, terms=1)
+            sage: len(list(f))
+            1
+            sage: f.degree() <= 2
+            True
+            sage: f.parent() is S
+            True
 
         Default values apply if no degree and/or number of terms is
         provided::
 
-            sage: random_matrix(QQ['x,y,z'], 2, 2)
-            [357*x^2 + 1/4*y^2 + 2*y*z + 2*z^2 + 28*x      2*x*y + 3/2*y^2 + 2*y*z - 2*z^2 - z]
-            [                       x*y - y*z + 2*z^2         -x^2 - 4/3*x*z + 2*z^2 - x + 4*y]
+            sage: M = random_matrix(QQ['x,y,z'], 2, 2)
+            sage: all(a.degree() <= 2 for a in M.list())
+            True
+            sage: all(len(list(a)) <= 5 for a in M.list())
+            True
 
-            sage: random_matrix(QQ['x,y,z'], 2, 2, terms=1, degree=2)
-            [ 1/2*y -1/4*x]
-            [   1/2  1/3*x]
+            sage: M = random_matrix(QQ['x,y,z'], 2, 2, terms=1, degree=2)
+            sage: all(a.degree() <= 2 for a in M.list())
+            True
+            sage: all(len(list(a)) <= 1 for a in M.list())
+            True
 
-            sage: P.random_element(0, 1)
-            1
+            sage: P.random_element(0, 1) in QQ
+            True
 
             sage: P.random_element(2, 0)
             0
 
             sage: R.<x> = PolynomialRing(Integers(3), 1)
-            sage: R.random_element()
-            2*x^2 + x
+            sage: f = R.random_element()
+            sage: f.degree() <= 2
+            True
+            sage: len(list(f)) <= 3
+            True
 
         To produce a dense polynomial, pick ``terms=Infinity``::
 
             sage: P.<x,y,z> = GF(127)[]
-            sage: P.random_element(degree=2, terms=Infinity)
-            -55*x^2 - 51*x*y + 5*y^2 + 55*x*z - 59*y*z + 20*z^2 + 19*x -
-            55*y - 28*z + 17
-            sage: P.random_element(degree=3, terms=Infinity)
-            -54*x^3 + 15*x^2*y - x*y^2 - 15*y^3 + 61*x^2*z - 12*x*y*z +
-            20*y^2*z - 61*x*z^2 - 5*y*z^2 + 62*z^3 + 15*x^2 - 47*x*y +
-            31*y^2 - 14*x*z + 29*y*z + 13*z^2 + 61*x - 40*y - 49*z + 30
-            sage: P.random_element(degree=3, terms=Infinity, choose_degree=True)
-            57*x^3 - 58*x^2*y + 21*x*y^2 + 36*y^3 + 7*x^2*z - 57*x*y*z +
-            8*y^2*z - 11*x*z^2 + 7*y*z^2 + 6*z^3 - 38*x^2 - 18*x*y -
-            52*y^2 + 27*x*z + 4*y*z - 51*z^2 - 63*x + 7*y + 48*z + 14
+            sage: f = P.random_element(degree=2, terms=Infinity)
+            sage: while len(list(f)) != 10:
+            ....:     f = P.random_element(degree=2, terms=Infinity)
+            sage: f = P.random_element(degree=3, terms=Infinity)
+            sage: while len(list(f)) != 20:
+            ....:     f = P.random_element(degree=3, terms=Infinity)
+            sage: f = P.random_element(degree=3, terms=Infinity, choose_degree=True)
+            sage: while len(list(f)) != 20:
+            ....:     f = P.random_element(degree=3, terms=Infinity)
 
         The number of terms is silently reduced to the maximum
         available if more terms are requested::
 
             sage: P.<x,y,z> = GF(127)[]
-            sage: P.random_element(degree=2, terms=1000)
-            5*x^2 - 10*x*y + 10*y^2 - 44*x*z + 31*y*z + 19*z^2 - 42*x
-            - 50*y - 49*z - 60
+            sage: f = P.random_element(degree=2, terms=1000)
+            sage: len(list(f)) <= 10
+            True
 
         TESTS:
 

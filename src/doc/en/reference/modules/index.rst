@@ -33,6 +33,7 @@ Modules
 
    sage/modules/with_basis/__init__
    sage/modules/with_basis/cell_module
+   sage/modules/with_basis/invariant
    sage/modules/with_basis/morphism
    sage/modules/with_basis/subquotient
    sage/modules/with_basis/representation

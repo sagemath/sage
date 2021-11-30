@@ -219,7 +219,7 @@ def find_objects_from_name(name, module_name=None):
 
         sage: import sage.misc.dev_tools as dt
         sage: dt.find_objects_from_name('FareySymbol')
-        [<type 'sage.modular.arithgroup.farey_symbol.Farey'>]
+        [<class 'sage.modular.arithgroup.farey_symbol.Farey'>]
 
         sage: import sympy
         sage: dt.find_objects_from_name('RR')
@@ -493,7 +493,7 @@ def import_statements(*objects, **kwds):
     :trac:`23779`)::
 
         sage: import_statements('log')
-        from sage.functions.log import log
+        from sage.misc.functional import log
 
     .. NOTE::
 

@@ -15,7 +15,7 @@
 
 from sage.ext.fast_eval import fast_float
 
-from sage.structure.element import is_Vector
+from sage.structure.element import is_Vector, Expression
 
 def setup_for_eval_on_grid(funcs, ranges, plot_points=None, return_vars=False):
     """
@@ -187,19 +187,17 @@ def unify_arguments(funcs):
         sage: sage.plot.misc.unify_arguments((x+y,x-y))
         ((x, y), (x, y))
     """
-    from sage.symbolic.callable import is_CallableSymbolicExpression
-
     vars=set()
     free_variables=set()
     if not isinstance(funcs, (list, tuple)):
-        funcs=[funcs]
+        funcs = [funcs]
 
     for f in funcs:
-        if is_CallableSymbolicExpression(f):
-            f_args=set(f.arguments())
+        if isinstance(f, Expression) and f.is_callable():
+            f_args = set(f.arguments())
             vars.update(f_args)
         else:
-            f_args=set()
+            f_args = set()
 
         try:
             free_vars = set(f.variables()).difference(f_args)
@@ -208,7 +206,7 @@ def unify_arguments(funcs):
         except AttributeError:
             # we probably have a constant
             pass
-    return tuple(sorted(vars, key=lambda x: str(x))), tuple(sorted(free_variables, key=lambda x: str(x)))
+    return tuple(sorted(vars, key=str)), tuple(sorted(free_variables, key=str))
 
 
 def _multiple_of_constant(n, pos, const):

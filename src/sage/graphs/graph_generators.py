@@ -130,6 +130,7 @@ __append_to_doc(
      "GossetGraph",
      "graph_3O73",
      "GrayGraph",
+     "GritsenkoGraph",
      "GrotzschGraph",
      "HallJankoGraph",
      "HarborthGraph",
@@ -357,7 +358,8 @@ __append_to_doc(
      "RandomToleranceGraph",
      "RandomTree",
      "RandomTreePowerlaw",
-     "RandomTriangulation"])
+     "RandomTriangulation",
+     "RandomUnitDiskGraph"])
 
 __doc__ += """
 **Graphs with a given degree sequence**
@@ -812,7 +814,7 @@ class GraphGenerators():
                     yield copyfun(gg) if copy else gg
         elif augment == 'edges':
             if vertices is None:
-                from sage.rings.all import Integer
+                from sage.rings.integer import Integer
                 vertices = Integer(0)
                 while True:
                     for g in self(vertices, loops=loops, sparse=sparse):
@@ -1391,7 +1393,11 @@ class GraphGenerators():
 
     def planar_graphs(self, order, minimum_degree=None,
                       minimum_connectivity=None,
-                      exact_connectivity=False, only_bipartite=False,
+                      exact_connectivity=False,
+                      minimum_edges=None,
+                      maximum_edges=None,
+                      maximum_face_size=None,
+                      only_bipartite=False,
                       dual=False):
         r"""
         An iterator over connected planar graphs using the plantri generator.
@@ -1427,6 +1433,15 @@ class GraphGenerators():
           graphs with exactly the specified connectivity will be generated.
           This option cannot be used with ``minimum_connectivity=3``, or if
           the minimum connectivity is not explicitly set.
+
+        - ``minimum_edges`` -- integer (default: ``None``); lower bound on the
+          number of edges
+
+        - ``maximum_edges`` -- integer (default: ``None``); upper bound on the
+          number of edges
+
+        - ``maximum_face_size`` -- integer (default: ``None``); upper bound on
+          the size of a face and so on the maximum degree of the dual graph
 
         - ``only_bipartite`` - default: ``False`` - if ``True`` only bipartite
           graphs will be generated. This option cannot be used for graphs with
@@ -1491,6 +1506,24 @@ class GraphGenerators():
             sage: list(graphs.planar_graphs(1, minimum_degree=1))  # optional plantri
             []
 
+        Specifying lower and upper bounds on the number of edges::
+
+            sage: len(list(graphs.planar_graphs(4)))  # optional plantri
+            6
+            sage: len(list(graphs.planar_graphs(4, minimum_edges=4)))  # optional plantri
+            4
+            sage: len(list(graphs.planar_graphs(4, maximum_edges=4)))  # optional plantri
+            4
+            sage: len(list(graphs.planar_graphs(4, minimum_edges=4, maximum_edges=4)))  # optional plantri
+            2
+
+        Specifying the maximum size of a face::
+
+            sage: len(list(graphs.planar_graphs(4, maximum_face_size=3)))  # optional plantri
+            1
+            sage: len(list(graphs.planar_graphs(4, maximum_face_size=4)))  # optional plantri
+            3
+
         TESTS:
 
         The number of edges in a planar graph is equal to the number of edges in
@@ -1545,6 +1578,31 @@ class GraphGenerators():
         if only_bipartite and minimum_degree > 3:
             raise NotImplementedError("Generation of bipartite planar graphs with minimum degree 4 or 5 is not implemented.")
 
+        edges = ''
+        if minimum_edges is None:
+            if maximum_edges is not None:
+                if maximum_edges < order - 1:
+                    raise ValueError("the number of edges cannot be less than order - 1")
+                edges = '-e:{}'.format(maximum_edges)
+        else:
+            if minimum_edges > 3*order - 6:
+                raise ValueError("the number of edges cannot be more than 3*order - 6")
+            if maximum_edges is None:
+                edges = '-e{}:'.format(minimum_edges)
+            elif minimum_edges > maximum_edges:
+                raise ValueError("the maximum number of edges must be larger "
+                                 "or equal to the minimum number of edges")
+            elif minimum_edges == maximum_edges:
+                edges = '-e{}'.format(minimum_edges)
+            else:
+                edges = '-e{}:{}'.format(minimum_edges, maximum_edges)
+
+        faces = ''
+        if maximum_face_size is not None:
+            if maximum_face_size < 3:
+                raise ValueError("the upper bound on the size of a face must be at least 3")
+            faces = '-f{}'.format(maximum_face_size)
+
         if order == 0:
             return
 
@@ -1563,12 +1621,13 @@ class GraphGenerators():
         from sage.features.graph_generators import Plantri
         Plantri().require()
 
-        cmd = 'plantri -p{}m{}c{}{}{} {}'
+        cmd = 'plantri -p{}m{}c{}{}{} {} {} {}'
         command = cmd.format('b' if only_bipartite else '',
                              minimum_degree,
                              minimum_connectivity,
                              'x' if exact_connectivity else '',
                              'd' if dual else '',
+                             edges, faces,
                              order)
 
         sp = subprocess.Popen(command, shell=True,
@@ -1980,6 +2039,7 @@ class GraphGenerators():
     GossetGraph              = staticmethod(smallgraphs.GossetGraph)
     graph_3O73               = staticmethod(distance_regular.graph_3O73)
     GrayGraph                = staticmethod(smallgraphs.GrayGraph)
+    GritsenkoGraph           = staticmethod(smallgraphs.GritsenkoGraph)
     GrotzschGraph            = staticmethod(smallgraphs.GrotzschGraph)
     HallJankoGraph           = staticmethod(smallgraphs.HallJankoGraph)
     WellsGraph               = staticmethod(smallgraphs.WellsGraph)
@@ -2075,6 +2135,7 @@ class GraphGenerators():
     DipoleGraph            = staticmethod(families.DipoleGraph)
     distance_regular_graph = staticmethod(distance_regular.distance_regular_graph)
     DorogovtsevGoltsevMendesGraph = staticmethod(families.DorogovtsevGoltsevMendesGraph)
+    DoubleGeneralizedPetersenGraph = staticmethod(families.DoubleGeneralizedPetersenGraph)
     DoubleGrassmannGraph   = staticmethod(distance_regular.DoubleGrassmannGraph)
     DoubleOddGraph         = staticmethod(distance_regular.DoubleOddGraph)
     EgawaGraph             = staticmethod(families.EgawaGraph)
@@ -2095,6 +2156,7 @@ class GraphGenerators():
     HararyGraph            = staticmethod(families.HararyGraph)
     HermitianFormsGraph     = staticmethod(distance_regular.HermitianFormsGraph)
     HyperStarGraph         = staticmethod(families.HyperStarGraph)
+    IGraph                 = staticmethod(families.IGraph)
     JohnsonGraph           = staticmethod(families.JohnsonGraph)
     KneserGraph            = staticmethod(families.KneserGraph)
     LCFGraph               = staticmethod(families.LCFGraph)
@@ -2112,10 +2174,12 @@ class GraphGenerators():
     PasechnikGraph         = staticmethod(families.PasechnikGraph)
     petersen_family        = staticmethod(families.petersen_family)
     RingedTree             = staticmethod(families.RingedTree)
+    RoseWindowGraph        = staticmethod(families.RoseWindowGraph)
     SierpinskiGasketGraph  = staticmethod(families.SierpinskiGasketGraph)
     SquaredSkewHadamardMatrixGraph = staticmethod(families.SquaredSkewHadamardMatrixGraph)
     SwitchedSquaredSkewHadamardMatrixGraph = staticmethod(families.SwitchedSquaredSkewHadamardMatrixGraph)
     strongly_regular_graph = staticmethod(strongly_regular_db.strongly_regular_graph)
+    TabacjnGraph           = staticmethod(families.TabacjnGraph)
     TadpoleGraph           = staticmethod(families.TadpoleGraph)
     trees                  = staticmethod(families.trees)
     TuranGraph             = staticmethod(families.TuranGraph)
@@ -2189,6 +2253,7 @@ class GraphGenerators():
     RandomTreePowerlaw       = staticmethod(random.RandomTreePowerlaw)
     RandomTree               = staticmethod(random.RandomTree)
     RandomTriangulation      = staticmethod(random.RandomTriangulation)
+    RandomUnitDiskGraph      = staticmethod(random.RandomUnitDiskGraph)
 
 ###########################################################################
 # Maps

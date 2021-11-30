@@ -38,8 +38,9 @@ AUTHORS:
 
 from sage.categories.homset import HomsetWithBase
 from sage.structure.factory import UniqueFactory
+from sage.structure.parent import Set_generic
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.ring import CommutativeRing
 
 from sage.schemes.generic.scheme import AffineScheme, is_AffineScheme
@@ -270,7 +271,6 @@ class SchemeHomset_generic(HomsetWithBase):
             (4, 5)
         """
         # Homset (base of HomsetWithBase) overrides __call__ @#$
-        from sage.structure.parent import Set_generic
         return Set_generic.__call__(self, *args, **kwds)
 
     def _repr_(self):

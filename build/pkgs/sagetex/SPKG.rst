@@ -1,5 +1,5 @@
-SageTeX
-=======
+sagetex: Embed code, results of computations, and plots from Sage into LaTeX documents
+======================================================================================
 
 Description
 -----------
@@ -35,7 +35,9 @@ Dan Drake (dr.dan.drake at gmail) and SageMath developers
 Upstream Contact
 ----------------
 
-Author: Dan Drake. Web: https://github.com/sagemath/sagetex
+Author: Dan Drake.
+
+Web: https://github.com/sagemath/sagetex
 
 Dependencies
 ------------

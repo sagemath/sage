@@ -161,40 +161,28 @@ exact object. Therefore, you should set the precision for each method
 call individually::
 
     sage: e = pari([0,0,0,-82,0]).ellinit()
-    sage: eta1 = e.elleta(precision=100)[0]
+    sage: eta1 = e.elleta(precision=50)[0]
     sage: eta1.sage()
-    3.6054636014326520859158205642077267748
-    sage: eta1 = e.elleta(precision=180)[0]
+    3.6054636014326520859158205642077267748 # 64-bit
+    3.605463601432652085915820564           # 32-bit
+    sage: eta1 = e.elleta(precision=150)[0]
     sage: eta1.sage()
-    3.60546360143265208591582056420772677481026899659802474544
+    3.605463601432652085915820564207726774810268996598024745444380641429820491740 # 64-bit
+    3.60546360143265208591582056420772677481026899659802474544                    # 32-bit
 
 """
 
 def _get_pari_instance():
-    # There are two constraints for the virtual stack size:
-    # 1) on 32-bit systems, even virtual memory can be a scarce
-    #    resource since it is limited by 4GB (of which the kernel
-    #    needs a significant part)
-    # 2) the system should actually be able to handle a stack size
-    #    as large as the complete virtual stack.
-    # As a simple heuristic, we set the virtual stack to 1/4 of the
-    # virtual memory.
-    from sage.misc.getusage import virtual_memory_limit
+    """
+    TESTS::
 
-    sizemax = virtual_memory_limit() // 4
-
-    from sage.env import CYGWIN_VERSION
-    if CYGWIN_VERSION and CYGWIN_VERSION < (2, 5, 2):
-        # Cygwin's mmap is broken for large NORESERVE mmaps (>~ 4GB) See
-        # http://trac.sagemath.org/ticket/20463 So we set the max stack
-        # size to a little below 4GB (putting it right on the margin proves
-        # too fragile)
-        #
-        # The underlying issue is fixed in Cygwin v2.5.2
-        sizemax = min(sizemax, 0xf0000000)
-
+        sage: pari  # indirect doctest
+        Interface to the PARI C library
+    """
     from cypari2 import Pari
-    P = Pari(1000000, sizemax)
+    stack_initial = 1024*1024
+    stack_max = 1024*stack_initial
+    P = Pari(stack_initial, stack_max)
 
     # pari_init_opts() overrides MPIR's memory allocation functions,
     # so we need to reset them.

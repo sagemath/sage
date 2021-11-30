@@ -139,7 +139,7 @@ Other methods
 
        sage: singular.lib("brnoeth.lib")
        sage: s = singular.ring(2,'(x,y)','lp')
-       sage: I = singular.ideal('[x^4+x, y^4+y]')
+       sage: I = singular.ideal('x^4+x', 'y^4+y')
        sage: L = singular.closed_points(I)
        sage: # Here you have all the points :
        sage: L       # random
@@ -329,7 +329,7 @@ Singular itself to help an understanding of how the wrapper works.
        sage: X = Curve(f); pts = X.rational_points()
        sage: D = X.divisor([ (3, pts[0]), (-1,pts[1]), (10, pts[5]) ])
        sage: X.riemann_roch_basis(D)
-       [(-x - 2*y)/(-2*x - 2*y), (-x + z)/(x + y)]
+       [(-2*x + y)/(x + y), (-x + z)/(x + y)]
 
 -  Using Singular's ``BrillNoether`` command (for details see the section
    Brill-Noether in the Singular online documentation

@@ -101,8 +101,6 @@ def wigner_3j(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
         ...
         ValueError: m values must be integer or half integer
 
-    NOTES:
-
     The Wigner 3-`j` symbol obeys the following symmetry rules:
 
     - invariant under any permutation of the columns (with the
@@ -232,19 +230,19 @@ def clebsch_gordan(j_1, j_2, j_3, m_1, m_2, m_3, prec=None):
         sage: clebsch_gordan(3/2,1/2,1, -1/2,1/2,0)
         -sqrt(3)*sqrt(1/6)
 
-    NOTES:
+    .. NOTE::
 
-    The Clebsch-Gordan coefficient will be evaluated via its relation
-    to Wigner 3-`j` symbols:
+        The Clebsch-Gordan coefficient will be evaluated via its relation
+        to Wigner 3-`j` symbols:
 
-    .. MATH::
+        .. MATH::
 
-        \langle j_1 m_1 \; j_2 m_2 | j_3 m_3 \rangle
-        =(-1)^{j_1-j_2+m_3} \sqrt{2j_3+1}
-        \begin{pmatrix} j_1 & j_2 & j_3 \\ m_1 & m_2 & -m_3 \end{pmatrix}
+            \langle j_1 m_1 \; j_2 m_2 | j_3 m_3 \rangle
+            =(-1)^{j_1-j_2+m_3} \sqrt{2j_3+1}
+            \begin{pmatrix} j_1 & j_2 & j_3 \\ m_1 & m_2 & -m_3 \end{pmatrix}
 
-    See also the documentation on Wigner 3-`j` symbols which exhibit much
-    higher symmetry relations than the Clebsch-Gordan coefficient.
+        See also the documentation on Wigner 3-`j` symbols which exhibit much
+        higher symmetry relations than the Clebsch-Gordan coefficient.
 
     AUTHORS:
 
@@ -330,17 +328,17 @@ def racah(aa, bb, cc, dd, ee, ff, prec=None):
         sage: racah(3,3,3,3,3,3)
         -1/14
 
-    NOTES:
+    .. NOTE::
 
-    The Racah symbol is related to the Wigner 6-`j` symbol:
+        The Racah symbol is related to the Wigner 6-`j` symbol:
 
-    .. MATH::
+        .. MATH::
 
-       \begin{Bmatrix} j_1 & j_2 & j_3 \\ j_4 & j_5 & j_6 \end{Bmatrix}
-       =(-1)^{j_1+j_2+j_4+j_5} W(j_1,j_2,j_5,j_4;j_3,j_6)
+           \begin{Bmatrix} j_1 & j_2 & j_3 \\ j_4 & j_5 & j_6 \end{Bmatrix}
+           =(-1)^{j_1+j_2+j_4+j_5} W(j_1,j_2,j_5,j_4;j_3,j_6)
 
-    Please see the 6-`j` symbol for its much richer symmetries and for
-    additional properties.
+        Please see the 6-`j` symbol for its much richer symmetries and for
+        additional properties.
 
     ALGORITHM:
 
@@ -426,8 +424,6 @@ def wigner_6j(j_1, j_2, j_3, j_4, j_5, j_6, prec=None):
         Traceback (most recent call last):
         ...
         ValueError: j values must be integer or half integer and fulfill the triangle relation
-
-    NOTES:
 
     The Wigner 6-`j` symbol is related to the Racah symbol but exhibits
     more symmetries as detailed below.
@@ -628,8 +624,6 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
         sage: gaunt(int(1),int(1),int(1),int(0),int(1),int(-1))
         0
-
-    NOTES:
 
     The Gaunt coefficient obeys the following symmetry rules:
 

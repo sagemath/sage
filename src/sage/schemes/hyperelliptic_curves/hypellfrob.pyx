@@ -1,8 +1,11 @@
 # distutils: language = c++
 # distutils: sources = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.cpp sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.cpp sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_zn_poly.cpp
 # distutils: depends = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.h sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.h sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_zn_poly.h
-# distutils: include_dirs = sage/libs/ntl/ sage/schemes/hyperelliptic_curves/hypellfrob/
-# distutils: libraries = gmp ntl zn_poly
+# distutils: include_dirs = sage/libs/ntl/ sage/schemes/hyperelliptic_curves/hypellfrob/ NTL_INCDIR
+# distutils: libraries = gmp NTL_LIBRARIES zn_poly
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 
 r"""
 Frobenius on Monsky-Washnitzer cohomology of a hyperelliptic curve over a

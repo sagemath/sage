@@ -1,5 +1,5 @@
-Ncurses
-=======
+ncurses: Classic terminal output library
+========================================
 
 Description
 -----------

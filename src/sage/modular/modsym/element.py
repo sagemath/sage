@@ -271,7 +271,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def manin_symbol_rep(self):
         """
-        Returns a representation of self as a formal sum of Manin symbols.
+        Return a representation of self as a formal sum of Manin symbols.
 
         EXAMPLES::
 
@@ -298,8 +298,7 @@ class ModularSymbolsElement(hecke.HeckeModuleElement):
 
     def modular_symbol_rep(self):
         """
-        Returns a representation of self as a formal sum of modular
-        symbols.
+        Return a representation of ``self`` as a formal sum of modular symbols.
 
         EXAMPLES::
 

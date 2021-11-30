@@ -1,5 +1,5 @@
-CMake
-=====
+cmake: A cross-platform build system generator
+==============================================
 
 Description
 -----------
@@ -15,8 +15,6 @@ directory of a source tree with the name CMakeLists.txt. Users build a
 project by using CMake to generate a build system for a native tool on
 their platform.
 
-Website: www.cmake.org
-
 License
 -------
 
@@ -25,6 +23,8 @@ CMake is distributed under the OSI-approved BSD 3-clause License.
 
 Upstream Contact
 ----------------
+
+-  https://cmake.org/
 
 -  cmake-developers@cmake.org
 

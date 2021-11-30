@@ -1,5 +1,5 @@
-pari_elldata
-============
+pari_elldata: PARI data package for elliptic curves
+===================================================
 
 Description
 -----------

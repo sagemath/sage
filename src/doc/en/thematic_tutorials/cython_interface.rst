@@ -9,7 +9,7 @@ How to call a C code (or a compiled library) from Sage ?
 If you have some C/C++ code that you would like to call from Sage for your own
 use, this document is for you.
 
-- Do you want to **contibute** to Sage by adding your interface to its code? The
+- Do you want to **contribute** to Sage by adding your interface to its code? The
   (more complex) instructions are `available here
   <http://doc.sagemath.org/html/en/developer/index.html#packaging-third-party-code>`_.
 

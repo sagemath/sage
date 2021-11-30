@@ -284,7 +284,7 @@ class FSymBases(Category_realization_of_parent):
                 sage: TG.basis(degree=3).list()
                 [G[123], G[13|2], G[12|3], G[1|2|3]]
             """
-            from sage.combinat.family import Family
+            from sage.sets.family import Family
             if degree is None:
                 return Family(self._indices, self.monomial)
             else:

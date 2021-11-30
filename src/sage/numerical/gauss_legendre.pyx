@@ -1,18 +1,31 @@
 r"""
-Gauss-Legendre integration for vector-valued functions
+Gauss-Legendre Integration for Vector-Valued Functions
 
 Routine to perform Gauss-Legendre integration for vector-functions.
+
+EXAMPLES:
+
+We verify that `\int_0^1 n x^{n-1} \, dx = 1` for `n=1, \dots, 4`::
+
+    sage: from sage.numerical.gauss_legendre import integrate_vector
+    sage: prec = 100
+    sage: K = RealField(prec)
+    sage: N = 4
+    sage: V = VectorSpace(K, N)
+    sage: f =  lambda x: V([(n+1)*x^n for n in range(N)])
+    sage: I = integrate_vector(f, prec)
+    sage: max([c.abs() for c in I-V(N*[1])])
+    0.00000000000000000000000000000
 
 AUTHORS:
 
  - Nils Bruin (2017-06-06): initial version
+ - Linden Disney-Hogg (2021-06-17): documentation and integrate_vector method changes
 
-EXAMPLES::
+.. NOTE::
 
-NOTE:
-
-The code here is directly based on mpmath (see http://mpmath.org), but has a highly
-optimized routine to compute the nodes.
+    The code here is directly based on mpmath (see http://mpmath.org), but has a highly
+    optimized routine to compute the nodes.
 """
 
 # ****************************************************************************
@@ -39,19 +52,24 @@ from sage.misc.cachefunc import cached_function
 from sage.rings.real_mpfr cimport RealNumber, RealField_class
 
 @cached_function
-def nodes(degree,prec):
+def nodes(degree, prec):
     r"""
-    Compute the integration nodes and weights for the Gauss-Legendre quadrature scheme.
+    Compute the integration nodes and weights for the Gauss-Legendre quadrature
+    scheme
+
+    We use the recurrence relations for Legendre polynomials to compute their values.
+    This is a version of the algorithm that in [Neu2018]_ is called the REC algorithm.
 
     INPUT:
 
      - ``degree`` -- integer. The number of nodes. Must be 3 or even.
 
-     - ``prec`` -- integer (minimal value 53). Binary precision with which the nodes and weights are computed.
+     - ``prec`` -- integer (minimal value 53). Binary precision with which the 
+       nodes and weights are computed.
 
     OUTPUT:
 
-    A list of (node,weight) pairs.
+    A list of (node, weight) pairs.
 
     EXAMPLES:
 
@@ -61,12 +79,34 @@ def nodes(degree,prec):
     from this routine are actually more accurate than what the values the closed formula produces)::
 
         sage: from sage.numerical.gauss_legendre import nodes
-        sage: L1=nodes(24,53)
-        sage: P=RR['x'](sage.functions.orthogonal_polys.legendre_P(24,x))
-        sage: Pdif=P.diff()
-        sage: L2=[( (r+1)/2,1/(1-r^2)/Pdif(r)^2) for r,_ in RR['x'](P).roots()]
-        sage: all((a[0]-b[0]).abs() < 10^-15 and (a[1]-b[1]).abs() < 10^-9 for a,b in zip(L1,L2))
+        sage: L1 = nodes(24, 53)
+        sage: P = RR['x'](sage.functions.orthogonal_polys.legendre_P(24, x))
+        sage: Pdif = P.diff()
+        sage: L2 = [((r + 1)/2, 1/(1 - r^2)/Pdif(r)^2)
+        ....:        for r, _ in RR['x'](P).roots()]
+        sage: all((a[0] - b[0]).abs() < 1e-15 and (a[1] - b[1]).abs() < 1e-9
+        ....:      for a, b in zip(L1, L2))
         True
+
+    TESTS::
+
+        sage: from sage.numerical.gauss_legendre import nodes
+        sage: nodes(1,100)
+        Traceback (most recent call last):
+        ...
+        ValueError: degree=1 not supported (degree must be 3 or even)
+
+        sage: from sage.numerical.gauss_legendre import nodes
+        sage: nodes(3,100)
+        [(0.11270166537925831148207346002, 0.27777777777777777777777777778),
+         (0.50000000000000000000000000000, 0.44444444444444444444444444444),
+         (0.88729833462074168851792653998, 0.27777777777777777777777777778)]
+
+    .. TODO::
+
+        It may be worth testing if using the Arb algorithm for finding the
+        nodes and weights in ``arb/acb_calc/integrate_gl_auto_deg.c`` has better
+        performance.
     """
     cdef long j,j1,n
     cdef RealNumber r,t1,t2,t3,t4,a,w
@@ -86,15 +126,14 @@ def nodes(degree,prec):
     TWO = 2*ONE
     rnd = R.rnd
     epsilon = R(1)>>(prec+8)
-    if degree == 1:
+    if degree == 3:
         x = (R(3)/5).sqrt()
         w = R(5)/18
         nodes = [((1-x)/2,w),(HALF,R(4)/9),((1+x)/2,w)]
     else:
         nodes = []
         n = degree
-        upto = n//2+1
-        for j in xrange(1,upto):
+        for j in xrange(1, n // 2 + 1):
             r = R(math.cos(math.pi*(j-0.25)/(n+0.5)))
             while True:
                 t1,t2=ONE,ZERO
@@ -122,7 +161,7 @@ def nodes(degree,prec):
     mpfr_clear(v)
     return nodes
 
-def estimate_error(results,prec,epsilon):
+def estimate_error(results, prec, epsilon):
     r"""
     Routine to estimate the error in a list of quadrature approximations.
     
@@ -151,11 +190,11 @@ def estimate_error(results,prec,epsilon):
         sage: from sage.numerical.gauss_legendre import estimate_error
         sage: prec = 200
         sage: K = RealField(prec)
-        sage: V = VectorSpace(K,2)
-        sage: a = V([1,-1])
-        sage: b = V([1,1/2])
-        sage: L = [a+2^(-2^i)*b for i in [0..5]]
-        sage: estimate_error(L,prec,K(2^(-prec)))
+        sage: V = VectorSpace(K, 2)
+        sage: a = V([1, -1])
+        sage: b = V([1, 1/2])
+        sage: L = [a + 2^(-2^i)*b for i in [0..5]]
+        sage: estimate_error(L, prec, K(2^(-prec)))
         2.328235...e-10
     """
     if len(results)==2:
@@ -175,20 +214,65 @@ def estimate_error(results,prec,epsilon):
         e.append(D4.exp())
     return max(e)
 
-def integrate_vector(f,prec,epsilon=None):
+def integrate_vector_N(f, prec, N=3):
+    r"""
+    Integrate a one-argument vector-valued function numerically using Gauss-Legendre,
+    setting the number of nodes.
+
+    This function uses the Gauss-Legendre quadrature scheme to approximate the 
+    integral `\int_0^1 f(t) \, dt`. It is different from ``integrate_vector``
+    by using a specific number of nodes rather than targeting a specified error
+    bound on the result. 
+
+    INPUT:
+
+     - ``f`` -- callable. Vector-valued integrand.
+
+     - ``prec`` -- integer. Binary precision to be used.
+
+     - ``N`` -- integer (default: 3). Number of nodes to use.
+
+     OUTPUT: 
+
+     Vector approximating value of the integral. 
+
+     EXAMPLES::
+
+         sage: from sage.numerical.gauss_legendre import integrate_vector_N
+         sage: prec = 100
+         sage: K = RealField(prec)
+         sage: V = VectorSpace(K,1)
+         sage: f = lambda t: V([t])
+         sage: integrate_vector_N(f, prec, 4)
+         (0.50000000000000000000000000000)
+
+    .. NOTE::
+
+        The nodes and weights are calculated in the real field with ``prec`` 
+        bits of precision. If the the vector space in which ``f`` takes values
+        is over a field which is incompatible with this field (e.g. a finite
+        field) then a TypeError occurs. 
+    """
+    nodelist = nodes(N, prec)
+    I = nodelist[0][1]*f(nodelist[0][0])
+    for i in range(1,len(nodelist)):
+        I += nodelist[i][1]*f(nodelist[i][0])
+    return I
+
+def integrate_vector(f, prec, epsilon=None):
     r"""
     Integrate a one-argument vector-valued function numerically using Gauss-Legendre.
 
     This function uses the Gauss-Legendre quadrature scheme to approximate
-    the integral of f(t) for t=0..1.
+    the integral `\int_0^1 f(t) \, dt`.
 
     INPUT:
 
-     - `f` -- callable. Vector-valued integrand.
+     - ``f`` -- callable. Vector-valued integrand.
 
-     - `prec` -- integer. Binary precision to be used.
+     - ``prec`` -- integer. Binary precision to be used.
 
-     - `epsilon` -- Multiprecision float. Target error bound.
+     - ``epsilon`` -- multiprecision float (default: `2^{(-\text{prec}+3)}`). Target error bound.
 
     OUTPUT:
 
@@ -197,38 +281,39 @@ def integrate_vector(f,prec,epsilon=None):
     EXAMPLES::
 
         sage: from sage.numerical.gauss_legendre import integrate_vector
-        sage: prec=200
-        sage: K=RealField(prec)
-        sage: V=VectorSpace(K,2)
-        sage: epsilon=K(2^(-prec+4))
-        sage: f=lambda t:V((1+t^2,1/(1+t^2)))
-        sage: I=integrate_vector(f,prec,epsilon)
-        sage: J=V((4/3,pi/4))
-        sage: max(c.abs() for c in (I-J)) < epsilon
+        sage: prec = 200
+        sage: K = RealField(prec)
+        sage: V = VectorSpace(K, 2)
+        sage: epsilon = K(2^(-prec + 4))
+        sage: f = lambda t:V((1 + t^2, 1/(1 + t^2)))
+        sage: I = integrate_vector(f, prec, epsilon=epsilon)
+        sage: J = V((4/3, pi/4))
+        sage: max(c.abs() for c in (I - J)) < epsilon
         True
 
     We can also use complex-valued integrands::
 
-        sage: prec=200
-        sage: Kreal=RealField(prec)
-        sage: K=ComplexField(prec)
-        sage: V=VectorSpace(K,2)
-        sage: epsilon=Kreal(2^(-prec+4))
-        sage: f=lambda t: V((t,K(exp(2*pi*t*K.0))))
-        sage: I=integrate_vector(f,prec,epsilon)
-        sage: J=V((1/2,0))
-        sage: max(c.abs() for c in (I-J)) < epsilon
+        sage: prec = 200
+        sage: Kreal = RealField(prec)
+        sage: K = ComplexField(prec)
+        sage: V = VectorSpace(K, 2)
+        sage: epsilon = Kreal(2^(-prec + 4))
+        sage: f = lambda t: V((t, K(exp(2*pi*t*K.0))))
+        sage: I = integrate_vector(f, prec, epsilon=epsilon)
+        sage: J = V((1/2, 0))
+        sage: max(c.abs() for c in (I - J)) < epsilon
         True
     """
     results = []
     cdef long degree = 3
     Rout = RealField(prec)
+
     if epsilon is None:
         epsilon = Rout(2)**(-prec+3)
     while True:
         nodelist = nodes(degree,prec)
         I = nodelist[0][1]*f(nodelist[0][0])
-        for i in xrange(1,len(nodelist)):
+        for i in range(1,len(nodelist)):
             I += nodelist[i][1]*f(nodelist[i][0])
         results.append(I)
         if degree > 3:

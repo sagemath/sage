@@ -66,7 +66,11 @@ class PackageCreator(object):
         with open(os.path.join(self.path, 'SPKG.rst'), 'w+') as f:
             def heading(title, char='-'):
                 return '{0}\n{1}\n\n'.format(title, char * len(title))
-            f.write(heading(self.package_name, '='))
+            if description:
+                title = '{0}: {1}'.format(self.package_name, description)
+            else:
+                title = self.package_name
+            f.write(heading(title, '='))
             f.write(heading('Description'))
             if description:
                 f.write('{0}\n\n'.format(description))

@@ -1,5 +1,5 @@
-igraph
-======
+igraph: A library for creating and manipulating graphs
+======================================================
 
 Description
 -----------

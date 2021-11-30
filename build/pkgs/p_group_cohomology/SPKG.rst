@@ -1,5 +1,5 @@
-p_group_cohomology
-==================
+p_group_cohomology: Modular cohomology rings of finite groups
+=============================================================
 
 Description
 -----------

@@ -683,7 +683,8 @@ def julia_plot(f=None, **kwds):
     if f is not None and period is None: # f user-specified and no period given
 
         # try to coerce f to live in a polynomial ring
-        S = PolynomialRing(CC,names='z'); z = S.gen()
+        S = PolynomialRing(CC, names='z')
+        z = S.gen()
         try:
             f_poly = S(f)
         except TypeError:

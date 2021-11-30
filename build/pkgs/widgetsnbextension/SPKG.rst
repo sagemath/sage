@@ -1,5 +1,5 @@
-widgetsnbextension
-==================
+widgetsnbextension: Jupyter notebook extension for interactive HTML widgets
+===========================================================================
 
 Description
 -----------

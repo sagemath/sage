@@ -412,9 +412,9 @@ to override ``decode_to_code``::
 
     One notices that if default ``decode_to_code`` calls default
     ``decode_to_message`` and default ``decode_to_message`` calls default
-    ``decode_to_code``, if none is overriden and one is called,
+    ``decode_to_code``, if none is overridden and one is called,
     it will end up stuck in an infinite loop. We added a trigger guard
-    against this, so if none is overriden and one is called,
+    against this, so if none is overridden and one is called,
     an exception will be raised.
 
 Only one method is missing: one to provide to the user the number of
@@ -584,7 +584,7 @@ We propose several catalog files to store our constructions, namely:
 - ``decoders_catalog.py`` and
 - ``channels_catalog.py``.
 
-Everytime one creates a new object, it should be added in the dedicated
+Every time one creates a new object, it should be added in the dedicated
 catalog file instead of coding theory folder's ``all.py``.
 
 Here it means the following:

@@ -514,7 +514,7 @@ class Groups(CategoryWithAxiom):
                 sage: F.<x,y,z> = Groups().Commutative().free(); F
                 Multiplicative Abelian group isomorphic to Z x Z x Z
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             if names is not None:
                 if isinstance(names, str):
                     if ',' not in names and index_set in ZZ:

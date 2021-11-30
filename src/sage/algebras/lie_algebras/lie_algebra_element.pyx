@@ -542,7 +542,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
         x_lift = (<LieSubalgebraElementWrapper> x).value
         return type(self)(self._parent, self.value._bracket_(x_lift))
 
-    def to_vector(self):
+    def to_vector(self, order=None, sparse=False):
         r"""
         Return the vector in ``g.module()`` corresponding to the
         element ``self`` of ``g`` (where ``g`` is the parent of ``self``).
@@ -570,7 +570,7 @@ cdef class LieSubalgebraElementWrapper(LieAlgebraElementWrapper):
             sage: S(X).to_vector().parent() is S.module()
             True
         """
-        return self._parent.module()(self.value.to_vector())
+        return self._parent.module()(self.value.to_vector(sparse=sparse))
 
     cpdef dict monomial_coefficients(self, bint copy=True):
         r"""
@@ -831,7 +831,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             if v != zero:
                 yield (I[i], v)
 
-    cpdef to_vector(self):
+    cpdef to_vector(self, bint sparse=False):
         """
         Return ``self`` as a vector.
 
@@ -842,6 +842,8 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             sage: a.to_vector()
             (1, 3, -1/2)
         """
+        if sparse:
+            return self.value.sparse_vector()
         return self.value
 
     def lift(self):

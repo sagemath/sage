@@ -60,18 +60,18 @@ SageはLaTeXを多種多様な形で利用している．
 
 ::
 
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj = MathJax()
     sage: var('z')
     z
     sage: mj(z^12)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}z^{12}\]</html>
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: mj(ZZ[x])
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}[x]\]</html>
     sage: mj(integrate(z^4, z))
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{5} \, z^{5}\]</html>
 
 
 
@@ -166,17 +166,17 @@ LaTeXで使われるバックスラッシュには，Pythonの文字列内でエ
 
     sage: latex(QQ)
     \Bold{Q}
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(True)
     sage: mj(QQ)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbb{#1}}\Bold{Q}\]</html>
     sage: latex.blackboard_bold(False)
 
 新しいマクロやパッケージなどを追加して，TeXの高い拡張性を利用することができる．
-まず，ノートブックでMathJaxが短いTeXコードを解釈する際に使われる，自分用のマクロを追加してみよう． 
+まず，ノートブックでMathJaxが短いTeXコードを解釈する際に使われる，自分用のマクロを追加してみよう．
 
 
 ::
@@ -190,10 +190,10 @@ LaTeXで使われるバックスラッシュには，Pythonの文字列内でエ
     (x, y)
     sage: latex(x+y)
     x + y
-    sage: from sage.misc.latex import MathJax
+    sage: from sage.misc.html import MathJax
     sage: mj=MathJax()
     sage: mj(x+y)
-    <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y</script></html>
+    <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\newcommand{\foo}{bar}x + y\]</html>
 
 
 以上のようなやり方で追加したマクロは，MathJaxでは対応しきれない大規模な処理が発生してシステム上のTeXが呼ばれるような場合にも使われる．
@@ -280,17 +280,17 @@ LaTeX処理のカスタマイズ
 
 ::
 
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
-    sage: latex.mathjax_avoid_list(['foo', 'bar'])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list(['foo', 'bar'])  # not tested
+    sage: latex.mathjax_avoid_list()                # not tested
     ['foo', 'bar']
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['foo', 'bar', 'tikzpicture']
-    sage: latex.mathjax_avoid_list([])
-    sage: latex.mathjax_avoid_list()
+    sage: latex.mathjax_avoid_list([])  # not tested
+    sage: latex.mathjax_avoid_list()    # not tested
     []
 
 
@@ -329,13 +329,10 @@ LaTeX表式とLaTeXエンジンの生成するdvi形式にdvipngが扱えないs
     LaTeX example for testing display of a commutative diagram produced
     by xypic.
     <BLANKLINE>
-    To use, try to view this object -- it won't work.  Now try
+    To use, try to view this object -- it will not work.  Now try
     'latex.add_to_preamble("\\usepackage[matrix,arrow,curve,cmtip]{xy}")',
-    and try viewing again -- it should work in the command line but not
-    from the notebook.  In the notebook, run
-    'latex.add_to_mathjax_avoid_list("xymatrix")' and try again -- you
-    should get a picture (a part of the diagram arising from a filtered
-    chain complex).
+    and try viewing again. You should get a picture (a part of the diagram arising
+    from a filtered chain complex).
 
 
 .. _sec-tkz-graph:
@@ -368,8 +365,8 @@ LaTeX表式とLaTeXエンジンの生成するdvi形式にdvipngが扱えないs
     sage: latex.extra_preamble() # random - システムで運用されているTeXに依存
     '\\usepackage{tikz}\n\\usepackage{tkz-graph}\n\\usepackage{tkz-berge}\n'
     sage: latex.engine('pdflatex')
-    sage: latex.add_to_mathjax_avoid_list('tikzpicture')
-    sage: latex.mathjax_avoid_list()
+    sage: latex.add_to_mathjax_avoid_list('tikzpicture')  # not tested
+    sage: latex.mathjax_avoid_list()                      # not tested
     ['tikz', 'tikzpicture']
 
 ここまで設定してから ``view(graphs.CompleteGraph(4))`` のようなコマンドを実行すると， ``tkz-graph``  で表現されたグラフが  ``pdflatex`` で処理されてノートブックに挿入される．
@@ -384,7 +381,7 @@ TeXシステムの完全な運用
 ================================
 
 TeXをSageに統合して運用する際，高度な機能の多くはシステムに独立してインストールされたTeXがないと利用できない．
-Linux系システムではTeXliveを基にした基本TeXパッケージを採用しているディストリビューションが多く，OSXではTeXshop，WindowsではMikTeXなどが使われている． 
+Linux系システムではTeXliveを基にした基本TeXパッケージを採用しているディストリビューションが多く，OSXではTeXshop，WindowsではMikTeXなどが使われている．
 ``convert`` ユーティリティは `ImageMagick <http://www.imagemagick.org/>`_ パッケージ(簡単にダウンロード可能)に含まれているし， ``dvipng``, ``ps2pdf`` と ``dvips`` の三つのプログラムはTeXパッケージに同梱されているはずだ．
 また ``dvipng`` は http://sourceforge.net/projects/dvipng/ から， ``ps2pdf`` は `Ghostscript <http://www.ghostscript.com/>`_ の一部として入手することもできる．
 

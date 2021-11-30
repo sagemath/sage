@@ -125,6 +125,7 @@ def collect_small_blocks(G):
         blocks.append(block)
     return blocks
 
+
 def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
     r"""
     Return the transformation to the `p`-adic normal form of a symmetric matrix.
@@ -258,14 +259,12 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
         precision = G.det().valuation(p) + 4
     R = Zp(p, prec=precision, type='fixed-mod')
     G = G.change_ring(R)
-    G.set_immutable() # is not changed during computation
-    D = copy(G)    # is transformed into jordan form
+    G.set_immutable()  # is not changed during computation
     n = G.ncols()
     # The trivial case
     if n == 0:
         return G.parent().zero(), G.parent().zero()
     # the transformation matrix is called B
-    B = Matrix.identity(R, n)
     if p == 2:
         D, B = _jordan_2_adic(G)
     else:
@@ -291,7 +290,7 @@ def p_adic_normal_form(G, p, precision=None, partial=False, debug=False):
 
 def _find_min_p(G, cnt, lower_bound=0):
     r"""
-    Find smallest valuation below and right from ``cnt`` prefering the diagonal.
+    Find smallest valuation below and right from ``cnt`` preferring the diagonal.
 
     INPUT:
 
@@ -348,6 +347,7 @@ def _find_min_p(G, cnt, lower_bound=0):
                 min_j = j
                 minval = v
     return minval, min_i, min_j
+
 
 def _get_small_block_indices(G):
     r"""
@@ -531,7 +531,7 @@ def _homogeneous_normal_form(G, w):
             e2 = D[-1,-1].unit_part()
             e = {e1, e2}
             E = [{1,3}, {1,7}, {5,7}, {3,5}]
-            if not e in E:
+            if e not in E:
                 B[-4:,:] = _relations(D[-4:,-4:], 5) * B[-4:,:]
                 D = B * G * B.T
         e1 = D[-2,-2].unit_part()
@@ -591,7 +591,7 @@ def _jordan_odd_adic(G):
     # transformation matrix
     B = Matrix.identity(R, n)
 
-    # indices of the diagonal entrys which are already used
+    # indices of the diagonal entries which are already used
     cnt = 0
     minval = 0
     while cnt < n:
@@ -625,9 +625,10 @@ def _jordan_odd_adic(G):
             # the smallest valuation is now on the diagonal
     return D, B
 
+
 def _jordan_2_adic(G):
     r"""
-    Transform a symmetric matrix over the `2`-adic integers into jordan form.
+    Transform a symmetric matrix over the `2`-adic integers into Jordan form.
 
     Note that if the precision is too low, this method fails.
     The method is only tested for input over `\ZZ_2` of ``'type=fixed-mod'``.
@@ -675,7 +676,7 @@ def _jordan_2_adic(G):
     # transformation matrix
     B = Matrix.identity(R, n)
 
-    # indices of the diagonal entrys which are already used
+    # indices of the diagonal entries which are already used
     cnt = 0
     minval = None
     while cnt < n:
@@ -1376,7 +1377,7 @@ def _two_adic_normal_forms(G, partial=False):
     INPUT:
 
     - ``G`` -- block diagonal matrix with blocks of type `U`, `V`, `W`
-    - ``partial`` -- bool (defaul: ``False``)
+    - ``partial`` -- bool (default: ``False``)
 
     OUTPUT:
 
@@ -1475,12 +1476,17 @@ def _two_adic_normal_forms(G, partial=False):
         # We want type a or W = []
         # modify D[w,w] to go from type b to type a
         x = [len(V)] + [ZZ(mod(w.unit_part(),8)) for w in D[W,W].diagonal()]
-        x.sort()
-      # a = [[0,1], [2,3], [2,5], [0,7], [0,1,1], [1,2,3], [0,7,7], [0,1,7]]
-        b = [[0,5], [2,7], [1,2], [0,3], [0,1,5], [1,2,7], [0,3,7], [0,1,3]]
+        if len(x)==3 and x[1]>x[2]:
+            x[1],x[2] = x[2], x[1]
+        # the first entry of x is either
+        # 0 if there is no type V component or
+        # 2 if there is a single type V component
+      # a = [[0,1], [2,3], [2,5], [0,7], [0,1,1], [2,1,3], [0,7,7], [0,1,7]]
+        b = [[0,5], [2,7], [2,1], [0,3], [0,1,5], [2,1,7], [0,3,7], [0,1,3]]
         if x in b:
             w = W[-1]
-            if x == [3,7]:
+            if x == [0,3,7]:
+                # relation 10 should be applied to 3 to stay in homogeneous normal form
                 w = W[0]
             if len(UVm) > 0:
                 R = UVm[-2:] + [w]

@@ -1,5 +1,5 @@
-FlintQS
-=======
+flintqs: Multi-polynomial quadratic sieve for integer factorization
+===================================================================
 
 Description
 -----------

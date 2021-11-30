@@ -1,5 +1,5 @@
-M4RI
-====
+m4ri: fast arithmetic with dense matrices over GF(2)
+====================================================
 
 Description
 -----------

@@ -1,5 +1,5 @@
-primecount
-==========
+primecount: Algorithms for counting primes
+==========================================
 
 Description
 -----------

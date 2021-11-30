@@ -39,7 +39,7 @@ class FGP_Element(ModuleElement):
         sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
         sage: Q = V/W
         sage: x = Q(V.0-V.1); x #indirect doctest
-        (0, 3)
+        (0, 9)
         sage: isinstance(x, sage.modules.fg_pid.fgp_element.FGP_Element)
         True
         sage: type(x)
@@ -76,7 +76,8 @@ class FGP_Element(ModuleElement):
 
         For full documentation, see :class:`FGP_Element`.
         """
-        if check: assert x in parent.V(), 'The argument x='+str(x)+' is not in the covering module!'
+        if check:
+            assert x in parent.V(), 'The argument x='+str(x)+' is not in the covering module!'
         ModuleElement.__init__(self, parent)
         self._x = x
 
@@ -94,14 +95,14 @@ class FGP_Element(ModuleElement):
             sage: Q.1
             (0, 1)
             sage: Q.0.lift()
-            (0, 0, 1)
+            (0, 6, 1)
             sage: Q.1.lift()
-            (0, 2, 0)
+            (0, -2, 0)
             sage: x = Q(V.0); x
-            (0, 4)
+            (0, 8)
             sage: x.lift()
             (1/2, 0, 0)
-            sage: x == 4*Q.1
+            sage: x == 8*Q.1
             True
             sage: x.lift().parent() == V
             True
@@ -158,9 +159,9 @@ class FGP_Element(ModuleElement):
         We test canonical coercion from V and W.
 
             sage: Q.0 + V.0
-            (1, 4)
+            (1, 8)
             sage: V.0 + Q.0
-            (1, 4)
+            (1, 8)
             sage: W.0 + Q.0
             (1, 0)
             sage: W.0 + Q.0 == Q.0
@@ -291,7 +292,7 @@ class FGP_Element(ModuleElement):
             sage: V = span([[1/2,1,1],[3/2,2,1],[0,0,1]],ZZ); W = V.span([2*V.0+4*V.1, 9*V.0+12*V.1, 4*V.2])
             sage: Q = V/W
             sage: Q(V.1)._repr_()
-            '(0, 1)'
+            '(0, 11)'
         """
         return repr(self.vector())
 
@@ -332,7 +333,8 @@ class FGP_Element(ModuleElement):
             sage: x.vector().parent()
             Ambient free module of rank 2 over the principal ideal domain Integer Ring
         """
-        try: return self.__vector
+        try:
+            return self.__vector
         except AttributeError:
             self.__vector = self.parent().coordinate_vector(self, reduce=True)
             self.__vector.set_immutable()
@@ -438,7 +440,7 @@ class FGP_Element(ModuleElement):
             sage: Q.0.additive_order()
             12
             sage: type(Q.0.additive_order())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: Q.1.additive_order()
             +Infinity
         """
@@ -446,7 +448,9 @@ class FGP_Element(ModuleElement):
         I = Q.invariants()
         v = self.vector()
 
-        from sage.rings.all import infinity, Mod, Integer
+        from sage.rings.infinity import infinity
+        from sage.rings.finite_rings.integer_mod import Mod
+        from sage.rings.integer import Integer
         from sage.arith.all import lcm
         n = Integer(1)
         for i, a in enumerate(I):

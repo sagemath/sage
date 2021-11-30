@@ -285,9 +285,9 @@ ought to be chosen. A typical example is
     sage: I.groebner_basis() is I.groebner_basis()
     True
     sage: type(I.gens)
-    <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+    <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
     sage: type(I.groebner_basis)
-    <type 'sage.misc.cachefunc.CachedMethodCaller'>
+    <class 'sage.misc.cachefunc.CachedMethodCaller'>
 
 By :trac:`12951`, the cached_method decorator is also supported on non-c(p)def
 methods of extension classes, as long as they either support attribute assignment
@@ -459,7 +459,7 @@ def _cached_function_unpickle(module, name, cache=None):
     TESTS::
 
         sage: type(hilbert_class_polynomial)
-        <type 'sage.misc.cachefunc.CachedFunction'>
+        <class 'sage.misc.cachefunc.CachedFunction'>
         sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial #indirect doctest
         True
 
@@ -513,7 +513,7 @@ cdef class NonpicklingDict(dict):
             sage: d = NonpicklingDict()
             sage: d[0] = 0
             sage: d.__reduce__()
-            (<type 'sage.misc.cachefunc.NonpicklingDict'>, ())
+            (<class 'sage.misc.cachefunc.NonpicklingDict'>, ())
 
         """
         return NonpicklingDict, ()
@@ -822,7 +822,7 @@ cdef class CachedFunction(object):
         TESTS::
 
             sage: type(hilbert_class_polynomial)
-            <type 'sage.misc.cachefunc.CachedFunction'>
+            <class 'sage.misc.cachefunc.CachedFunction'>
             sage: loads(dumps(hilbert_class_polynomial)) is hilbert_class_polynomial  #indirect doctest
             True
         """
@@ -857,7 +857,7 @@ cdef class CachedFunction(object):
 
             sage: from sage.misc.sageinspect import sage_getfile
             sage: type(I.groebner_basis)
-            <type 'sage.misc.cachefunc.CachedMethodCaller'>
+            <class 'sage.misc.cachefunc.CachedMethodCaller'>
             sage: os.path.exists(sage_getfile(I.groebner_basis))
             True
 
@@ -1495,9 +1495,9 @@ class CachedMethodPickle(object):
         sage: __main__.A = A
         sage: a = A()
         sage: type(a.f)
-        <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+        <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
         sage: type(a.g)
-        <type 'sage.misc.cachefunc.CachedMethodCaller'>
+        <class 'sage.misc.cachefunc.CachedMethodCaller'>
 
     We demonstrate that both implementations can be pickled and
     preserve the cache. For that purpose, we assign nonsense to the
@@ -1687,7 +1687,7 @@ cdef class CachedMethodCaller(CachedFunction):
         sage: a.bar
         Cached version of <function ...bar at 0x...>
         sage: type(a.bar)
-        <type 'sage.misc.cachefunc.CachedMethodCaller'>
+        <class 'sage.misc.cachefunc.CachedMethodCaller'>
         sage: a.bar(2) is a.bar(x=2)
         True
 
@@ -2154,7 +2154,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
         sage: I.gens
         Cached version of <function ...gens at 0x...>
         sage: type(I.gens)
-        <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+        <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
         sage: I.gens is I.gens
         True
         sage: I.gens() is I.gens()
@@ -2437,7 +2437,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
             sage: b1.f is b1.f
             True
             sage: type(b1.f)
-            <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+            <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
 
         Any instance of ``Bar`` gets its own instance of
         :class:`CachedMethodCaller``::
@@ -2553,7 +2553,7 @@ cdef class CachedMethod(object):
         sage: P.<a,b,c,d> = QQ[]
         sage: I = P*[a,b]
         sage: type(I.__class__.gens)
-        <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+        <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
 
     So, you would hardly ever see an instance of this class alive.
 
@@ -2652,7 +2652,7 @@ cdef class CachedMethod(object):
         of the ``CachedMethodCaller``::
 
             sage: type(a.f)
-            <type 'sage.misc.cachefunc.CachedMethodCaller'>
+            <class 'sage.misc.cachefunc.CachedMethodCaller'>
             sage: a.f.cache is a._cache__f
             True
 
@@ -2667,7 +2667,7 @@ cdef class CachedMethod(object):
         it is not additionally stored as an attribute of ``a``::
 
             sage: type(a.f0)
-            <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+            <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
             sage: a.f0.cache
             4
             sage: sorted(n for n in dir(a) if not n.startswith('__'))
@@ -2778,9 +2778,9 @@ cdef class CachedMethod(object):
             ....:         return x^n
             sage: a = Foo()
             sage: type(a.f)
-            <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+            <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
             sage: type(a.g)
-            <type 'sage.misc.cachefunc.CachedMethodCaller'>
+            <class 'sage.misc.cachefunc.CachedMethodCaller'>
 
         By :trac:`8611`, it is attempted to set the
         CachedMethodCaller as an attribute of the instance ``a``,
@@ -2891,7 +2891,7 @@ cdef class CachedSpecialMethod(CachedMethod):
         ....:
         sage: c = C()
         sage: type(C.__hash__)
-        <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+        <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
 
     The hash is computed only once, subsequent calls will use the value from
     the cache. This was implemented in :trac:`12601`.
@@ -2918,7 +2918,7 @@ cdef class CachedSpecialMethod(CachedMethod):
             ....:         return int(5)
             sage: c = C()
             sage: type(C.__hash__)
-            <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+            <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
             sage: hash(c)       # indirect doctest
             compute hash
             5
@@ -3016,7 +3016,7 @@ def cached_method(f, name=None, key=None, do_pickle=None):
         ....:         return x*2
         sage: c = C()
         sage: type(C.__hash__)
-        <type 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
+        <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
         sage: hash(c)
         compute hash
         5

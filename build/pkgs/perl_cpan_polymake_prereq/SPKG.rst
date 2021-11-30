@@ -1,5 +1,5 @@
-perl_cpan_polymake_prereq
-=========================
+perl_cpan_polymake_prereq: Represents all Perl packages that are prerequisites for polymake
+===========================================================================================
 
 Description
 -----------

@@ -1,5 +1,5 @@
-CryptoMiniSat
-=============
+cryptominisat: A SAT solver
+===========================
 
 Description
 -----------

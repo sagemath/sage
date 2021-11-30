@@ -75,7 +75,7 @@ The same holds for the group elements::
     sage: a.gap().Order()
     2
     sage: type(_)    # note that the above output is not a Sage integer
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
 
 You can use call syntax to replace the generators with a set of
 arbitrary ring elements. For example, take the free abelian group
@@ -397,7 +397,7 @@ def wrap_FpGroup(libgap_fpgroup):
         sage: P = F / libgap([ a_cubed ]);   P
         <fp group of size infinity on the generators [ a, b ]>
         sage: type(P)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
     Now wrap it::
 
@@ -775,7 +775,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         sage: H.gap()
         <fp group on the generators [ x0, x1 ]>
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
     """
     Element = FinitelyPresentedGroupElement
 
@@ -1014,7 +1014,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         Calls GAP function ``DirectProduct``, which returns the direct
         product of a list of groups of any representation.
 
-        From [Joh1990]_ (pg 45, proposition 4): If `G`, `H` are groups
+        From [Joh1990]_ (p. 45, proposition 4): If `G`, `H` are groups
         presented by `\langle X \mid R \rangle` and `\langle Y \mid S \rangle`
         respectively, then their direct product has the presentation
         `\langle X, Y \mid R, S, [X, Y] \rangle` where `[X, Y]` denotes the
@@ -1264,7 +1264,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         if not isinstance(H, FinitelyPresentedGroup):
             raise TypeError("input must be a finitely presented group")
 
-        GAP_self = self.gap(); GAP_H = H.gap()
+        GAP_self = self.gap()
+        GAP_H = H.gap()
         auto_grp = libgap.AutomorphismGroup(H.gap())
         self_gens = [h.gap() for h in hom[0]]
         # construct image automorphisms in GAP

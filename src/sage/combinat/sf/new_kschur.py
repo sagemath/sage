@@ -1072,7 +1072,7 @@ class kSchur(CombinatorialFreeModule):
         return s.sum_of_terms((tab.shape(), self.t**tab.charge())
                               for tab in katom)
 
-    def _multiply_basis(self, left, right):
+    def _product_on_basis_via_rectangles(self, left, right):
         r"""
         Multiply two `k`-Schur functions at `t=1` indexed by ``left`` and ``right``
 
@@ -1099,14 +1099,14 @@ class kSchur(CombinatorialFreeModule):
 
             sage: Sym = SymmetricFunctions(QQ)
             sage: ks = Sym.kschur(5,1)
-            sage: ks._multiply_basis(Partition([5,4,4,3,3,3]),Partition([4,4,2,2,2,2]))
+            sage: ks._product_on_basis_via_rectangles(Partition([5,4,4,3,3,3]),Partition([4,4,2,2,2,2]))
             ks5[5, 4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 2]
-            sage: ks._multiply_basis(Partition([5,4,4,3,3,3,1]),Partition([4,4,2]))
+            sage: ks._product_on_basis_via_rectangles(Partition([5,4,4,3,3,3,1]),Partition([4,4,2]))
             ks5[5, 4, 4, 4, 4, 3, 3, 3, 2, 1] + ks5[5, 4, 4, 4, 4, 3, 3, 3, 3]
 
         TESTS::
 
-            sage: ks._multiply_basis(Partition([]), Partition([]))
+            sage: ks._product_on_basis_via_rectangles(Partition([]), Partition([]))
             ks5[]
         """
         leftir = self._to_schur_on_basis(left.k_irreducible(self.k))
@@ -1120,20 +1120,18 @@ class kSchur(CombinatorialFreeModule):
                       for m in range(rightexp[r] // (self.k - r))), [])
         return heart.map_support(lambda lam: Partition(sorted(lam + rects, reverse=True)))
 
-    def product(self, left, right):
+    def product_on_basis(self, left, right):
         r"""
         Take the product of two `k`-Schur functions.
 
         If `t \neq 1`, then take the product by lifting to the Schur functions and then
         retracting back into the `k`-bounded subspace (if possible).
 
-        If `t=1`, then the product is done using
-        :meth:`~AlgebrasWithBasis.ParentMethods._product_from_combinatorial_algebra_multiply`
-        and this method calls :meth:`_multiply_basis`.
+        If `t=1`, then the product calls :meth:`_product_on_basis_via_rectangles`.
 
         INPUT:
 
-        - ``left``, ``right`` -- elements of the `k`-Schur functions
+        - ``left``, ``right`` -- partitions
 
         OUTPUT:
 
@@ -1170,12 +1168,14 @@ class kSchur(CombinatorialFreeModule):
             sage: ks3.product( ks3([]), kH([]) )
             ks3[]
             sage: ks3 = Sym.kschur(3)
-            sage: ks3.product( ks3([]), ks3([]) )
+            sage: ks3([]) * ks3([])
             ks3[]
         """
         if self.t == 1:
-            return self._product_from_combinatorial_algebra_multiply(left, right)
-        return self.retract(self.lift(left) * self.lift(right))
+            return self._product_on_basis_via_rectangles(left, right)
+        left_s = self._to_schur_on_basis(left)
+        right_s = self._to_schur_on_basis(right)
+        return self.retract(left_s * right_s)
 
 
 class kSplit(CombinatorialFreeModule):

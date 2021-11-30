@@ -120,7 +120,7 @@ class RelativeFiniteFieldExtension(SageObject):
         if not s.divides(sm):
             raise ValueError("relative_field has to be a subfield of absolute_field")
         H = Hom(relative_field, absolute_field)
-        if embedding is not None and not embedding in H:
+        if embedding is not None and embedding not in H:
             raise ValueError("embedding has to be an embedding from relative_field to absolute_field")
         elif embedding is not None:
             self._phi = embedding
@@ -231,7 +231,7 @@ class RelativeFiniteFieldExtension(SageObject):
             sage: FE._flattened_relative_field_representation(b)
             (1, 0, 1, 1)
         """
-        if not b in self.absolute_field():
+        if b not in self.absolute_field():
             raise ValueError("The input has to be an element of the absolute field")
         return self._representation_matrix() * vector(b)
 
@@ -254,19 +254,18 @@ class RelativeFiniteFieldExtension(SageObject):
             sage: FE.relative_field_representation(b)
             (1, a + 1)
         """
-        if not b in self.absolute_field():
+        if b not in self.absolute_field():
             raise ValueError("The input has to be an element of the absolute field")
         s = self.relative_field_degree()
         if s == 1:
             return vector(b)
-        else:
-            Fq = self.relative_field()
-            vect = self._flattened_relative_field_representation(b)
-            sm = self.absolute_field_degree()
-            list_elts = []
-            for i in range(0, sm, s):
-                list_elts.append(Fq(vect[i:i+s]))
-            return vector(Fq, list_elts)
+        Fq = self.relative_field()
+        vect = self._flattened_relative_field_representation(b)
+        sm = self.absolute_field_degree()
+        list_elts = []
+        for i in range(0, sm, s):
+            list_elts.append(Fq(vect[i:i + s]))
+        return vector(Fq, list_elts)
 
     def absolute_field_representation(self, a):
         r"""

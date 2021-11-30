@@ -30,11 +30,13 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 from copy import copy
 
 from .combinat import catalan_number
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+from sage.categories.sets_with_grading import SetsWithGrading
 from sage.categories.monoids import Monoids
 from sage.rings.all import NN
 from sage.rings.integer import Integer
@@ -119,7 +121,7 @@ def NonDecreasingParkingFunctions(n=None):
         return NonDecreasingParkingFunctions_n(n)
 
 
-def is_a(x, n=None):
+def is_a(x, n=None) -> bool:
     """
     Check whether a list is a non-decreasing parking function.
 
@@ -143,9 +145,7 @@ def is_a(x, n=None):
         if prev > elt or elt > i + 1:
             return False
         prev = elt
-    if n is not None and n != len(x):
-        return False
-    return True
+    return n is None or n == len(x)
 
 
 class NonDecreasingParkingFunction(Element):
@@ -219,7 +219,7 @@ class NonDecreasingParkingFunction(Element):
         """
         return self._list[n - 1]
 
-    def _mul_(self, lp):
+    def _mul_(self, lp) -> NonDecreasingParkingFunction:
         """
         The composition of non-decreasing parking functions.
 
@@ -279,7 +279,7 @@ class NonDecreasingParkingFunction(Element):
         from sage.combinat.dyck_word import CompleteDyckWords_all
         return CompleteDyckWords_all().from_non_decreasing_parking_function(self)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the length of ``self``.
 
@@ -291,7 +291,9 @@ class NonDecreasingParkingFunction(Element):
         """
         return len(self._list)
 
-    def _repr_(self):
+    grade = __len__  # for the category SetsWithGrading
+
+    def _repr_(self) -> str:
         """
         Return the string representation of ``self``.
 
@@ -302,7 +304,7 @@ class NonDecreasingParkingFunction(Element):
         """
         return str(self._list)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` with ``other``.
 
@@ -315,7 +317,7 @@ class NonDecreasingParkingFunction(Element):
         """
         return richcmp(self._list, other._list, op)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         """
         Return the hash of ``self``.
 
@@ -329,7 +331,7 @@ class NonDecreasingParkingFunction(Element):
         return hash(tuple(self._list))
 
     @classmethod
-    def from_dyck_word(cls, dw):
+    def from_dyck_word(cls, dw) -> NonDecreasingParkingFunction:
         """
         Bijection from :class:`Dyck
         words<sage.combinat.dyck_word.DyckWords>`. It is the inverse of the
@@ -374,9 +376,10 @@ class NonDecreasingParkingFunctions_all(UniqueRepresentation, Parent):
             sage: PF == loads(dumps(PF))
             True
         """
-        Parent.__init__(self, category=InfiniteEnumeratedSets())
+        cat = InfiniteEnumeratedSets() & SetsWithGrading()
+        Parent.__init__(self, category=cat)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -385,7 +388,7 @@ class NonDecreasingParkingFunctions_all(UniqueRepresentation, Parent):
         """
         return "Non-decreasing parking functions"
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -417,6 +420,18 @@ class NonDecreasingParkingFunctions_all(UniqueRepresentation, Parent):
         for n in NN:
             for pf in NonDecreasingParkingFunctions_n(n):
                 yield pf
+
+    def graded_component(self, n):
+        """
+        Return the graded component.
+
+        EXAMPLES::
+
+            sage: P = NonDecreasingParkingFunctions()
+            sage: P.graded_component(4) == NonDecreasingParkingFunctions(4)
+            True
+        """
+        return NonDecreasingParkingFunctions_n(n)
 
 
 class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
@@ -466,7 +481,7 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
         self.n = n
         Parent.__init__(self, category=Monoids().Enumerated().Finite())
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         TESTS::
 
@@ -475,7 +490,7 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
         """
         return "Non-decreasing parking functions of size %s" % self.n
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         TESTS::
 
@@ -498,7 +513,7 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
             return True
         return is_a(x, self.n)
 
-    def cardinality(self):
+    def cardinality(self) -> Integer:
         """
         Return the number of non-decreasing parking functions of size
         `n`.
@@ -523,7 +538,7 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
         """
         return catalan_number(self.n)
 
-    def random_element(self):
+    def random_element(self) -> NonDecreasingParkingFunction:
         """
         Return a random parking function of the given size.
 
@@ -540,7 +555,7 @@ class NonDecreasingParkingFunctions_n(UniqueRepresentation, Parent):
         dw = DyckWords(n).random_element()
         return NonDecreasingParkingFunction.from_dyck_word(dw)
 
-    def one(self):
+    def one(self) -> NonDecreasingParkingFunction:
         """
         Return the unit of this monoid.
 

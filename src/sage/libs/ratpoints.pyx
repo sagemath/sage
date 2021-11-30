@@ -13,7 +13,7 @@ This module is deprecated, use PARI instead::
 from cysignals.memory cimport sig_malloc, sig_realloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
-from sage.misc.superseded import deprecation
+from sage.misc.superseded import deprecation_cython as deprecation
 deprecation(24531, "the module sage.libs.ratpoints is deprecated; use pari.ellratpoints or pari.hyperellratpoints instead")
 
 

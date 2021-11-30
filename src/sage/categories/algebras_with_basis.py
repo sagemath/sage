@@ -56,7 +56,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         B[word: acb]
 
         sage: A.product
-        <bound method FreeAlgebra_with_category._product_from_product_on_basis_multiply of
+        <bound method MagmaticAlgebras.WithBasis.ParentMethods._product_from_product_on_basis_multiply of
          An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field>
         sage: A.product(a*b,b)
         B[word: abb]
@@ -131,54 +131,6 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         # For backward compatibility
         one = UnitalAlgebras.WithBasis.ParentMethods.one
 
-        # Backward compatibility temporary cruft to help migrating
-        # from CombinatorialAlgebra
-        def _product_from_combinatorial_algebra_multiply(self, left, right):
-            r"""
-            Return left\*right where left and right are elements of self.
-
-            product() uses _multiply basis to carry out
-            the actual multiplication.
-
-            DO NOT USE, see :trac:`30959`.
-
-            EXAMPLES::
-
-                sage: Sym = SymmetricFunctions(QQ)
-                sage: s = Sym.kBoundedSubspace(3,1).kschur()
-                sage: a = s([2])
-                sage: s.product(a, a)  # indirect doctest
-                ks3[2, 2] + ks3[3, 1]
-            """
-            # to be deprecated, once new_kschur is fixed
-            A = left.parent()
-            BR = A.base_ring()
-            z_elt = {}
-
-            # the case where the user specifies how to multiply basis elements
-            if hasattr(self, '_multiply_basis'):
-                for (left_m, left_c) in left._monomial_coefficients.items():
-                    for (right_m, right_c) in right._monomial_coefficients.items():
-                        res = self._multiply_basis(left_m, right_m)
-                        #Handle the case where the user returns a dictionary
-                        #where the keys are the monomials and the values are
-                        #the coefficients.  If res is not a dictionary, then
-                        #it is assumed to be an element of self
-                        if not isinstance(res, dict):
-                            if isinstance(res, self._element_class):
-                                res = res._monomial_coefficients
-                            else:
-                                res = {res: BR(1)}
-                        for m in res:
-                            if m in z_elt:
-                                z_elt[ m ] = z_elt[m] + left_c * right_c * res[m]
-                            else:
-                                z_elt[ m ] = left_c * right_c * res[m]
-                return self._from_dict(z_elt)
-
-            # the usage of "_multiply" is no longer allowed, see ticket 31081
-            raise TypeError('using _multiply is no longer allowed')
-
         def hochschild_complex(self, M):
             """
             Return the Hochschild complex of ``self`` with coefficients
@@ -242,8 +194,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             if len(mcs) == 1 and one in mcs:
                 return self.parent().term(one, ~mcs[one])
             else:
-                raise ValueError("cannot invert self (= %s)"%self)
-
+                raise ValueError("cannot invert self (= %s)" % self)
 
     class CartesianProducts(CartesianProductsCategory):
         """

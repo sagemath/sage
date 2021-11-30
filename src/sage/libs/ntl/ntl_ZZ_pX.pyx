@@ -1,4 +1,8 @@
-# distutils: libraries = ntl gmp m
+# distutils: libraries = NTL_LIBRARIES gmp m
+# distutils: extra_compile_args = NTL_CFLAGS
+# distutils: include_dirs = NTL_INCDIR
+# distutils: library_dirs = NTL_LIBDIR
+# distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
 
 # ****************************************************************************
@@ -308,7 +312,7 @@ cdef class ntl_ZZ_pX(object):
             sage: x.list()
             [1, 3, 5]
             sage: type(x.list()[0])
-            <type 'sage.libs.ntl.ntl_ZZ_p.ntl_ZZ_p'>
+            <class 'sage.libs.ntl.ntl_ZZ_p.ntl_ZZ_p'>
         """
         # could be sped up.
         self.c.restore_c()

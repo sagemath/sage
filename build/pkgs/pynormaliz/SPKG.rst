@@ -1,5 +1,5 @@
-pynormaliz
-==========
+pynormaliz: Python bindings for the normaliz library
+====================================================
 
 Description
 -----------

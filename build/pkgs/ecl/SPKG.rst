@@ -1,5 +1,5 @@
-ECL
-===
+ecl: An implementation of the Common Lisp language
+==================================================
 
 Description
 -----------

@@ -67,7 +67,6 @@ import types
 cdef caller_locals = builtins.locals
 
 # Sage imports
-from .misc import embedded
 from sage.misc.persist import load, save, loads, dumps
 
 # This module-scope variables is used to save the
@@ -326,17 +325,6 @@ def save_session(name='sage_session', verbose=False):
                 print("Not saving {}: {}".format(k, msg))
             pass
     save(D, name)
-    if embedded():
-        # Also save D to the data directory if we're using the notebook.
-        # This is broken for now. Simply print some information to the user
-        # if the user does not save it in the DATA directory.
-        # save(D, '../../data/' + name)
-        if name.find('.sagenb/') <= 0 or name.find('/data/') <= 0:
-            print("To store the session in a common directory that the "
-                  "entire worksheet can access, save it using the command:\n"
-                  "save_session(DATA + '{0}')\n"
-                  "You can later load it by running in any cell:\n"
-                  "load_session(DATA + '{0}')".format(name.rsplit('/', 1)[-1]))
 
 
 def load_session(name='sage_session', verbose=False):
@@ -382,13 +370,6 @@ def load_session(name='sage_session', verbose=False):
     """
     state = caller_locals()
 
-    if embedded():
-        if not os.path.exists(name):
-            nm = '../../data/' + name
-            if not nm.endswith('.sobj'): nm += '.sobj'
-            if os.path.exists(nm):
-                name = nm
     D = load(name)
     for k, x in D.items():
         state[k] = x
-

@@ -12,6 +12,7 @@ Testing Arithmetic subgroup
 #                  https://www.gnu.org/licenses/
 #
 ################################################################################
+from __future__ import annotations
 
 from .arithgroup_perm import ArithmeticSubgroup_Permutation, EvenArithmeticSubgroup_Permutation, OddArithmeticSubgroup_Permutation
 from sage.modular.arithgroup.all import Gamma, Gamma0, Gamma1, GammaH
@@ -21,9 +22,9 @@ import sage.misc.prandom as prandom
 from sage.misc.misc import cputime
 
 
-def random_even_arithgroup(index,nu2_max=None,nu3_max=None):
+def random_even_arithgroup(index, nu2_max=None, nu3_max=None):
     r"""
-    Return a random even arithmetic subgroup
+    Return a random even arithmetic subgroup.
 
     EXAMPLES::
 
@@ -38,41 +39,42 @@ def random_even_arithgroup(index,nu2_max=None,nu3_max=None):
     test = False
 
     if nu2_max is None:
-        nu2_max = index//5
+        nu2_max = index // 5
     elif nu2_max == 0:
-        assert index%2 == 0
+        assert index % 2 == 0
     if nu3_max is None:
-        nu3_max = index//7
+        nu3_max = index // 7
     elif nu3_max == 0:
-        assert index%3 == 0
+        assert index % 3 == 0
 
     while not test:
-        nu2 = prandom.randint(0,nu2_max)
-        nu2 = index%2 + nu2*2
-        nu3 = prandom.randint(0,nu3_max)
-        nu3 = index%3 + nu3*3
+        nu2 = prandom.randint(0, nu2_max)
+        nu2 = index % 2 + nu2 * 2
+        nu3 = prandom.randint(0, nu3_max)
+        nu3 = index % 3 + nu3 * 3
 
         l = list(range(1, index + 1))
         prandom.shuffle(l)
-        S2 = []
+        S2: list[tuple] = []
         for i in range(nu2):
             S2.append((l[i],))
-        for i in range(nu2,index,2):
-            S2.append((l[i],l[i+1]))
+        for i in range(nu2, index, 2):
+            S2.append((l[i], l[i + 1]))
         prandom.shuffle(l)
-        S3 = []
+        S3: list[tuple] = []
         for i in range(nu3):
             S3.append((l[i],))
-        for i in range(nu3,index,3):
-            S3.append((l[i],l[i+1],l[i+2]))
-        G = PermutationGroup([S2,S3])
+        for i in range(nu3, index, 3):
+            S3.append((l[i], l[i + 1], l[i + 2]))
+        G = PermutationGroup([S2, S3])
         test = G.is_transitive()
 
-    return ArithmeticSubgroup_Permutation(S2=S2,S3=S3)
+    return ArithmeticSubgroup_Permutation(S2=S2, S3=S3)
 
-def random_odd_arithgroup(index,nu3_max=None):
+
+def random_odd_arithgroup(index, nu3_max=None):
     r"""
-    Return a random odd arithmetic subgroup
+    Return a random odd arithmetic subgroup.
 
     EXAMPLES::
 
@@ -82,14 +84,16 @@ def random_odd_arithgroup(index,nu3_max=None):
         sage: G.is_odd()
         True
     """
-    assert index%4 == 0
-    G = random_even_arithgroup(index//2,nu2_max=0,nu3_max=nu3_max)
+    assert index % 4 == 0
+    G = random_even_arithgroup(index // 2, nu2_max=0, nu3_max=nu3_max)
     return G.one_odd_subgroup(random=True)
+
 
 class Test:
     r"""
     Testing class for arithmetic subgroup implemented via permutations.
     """
+
     def __init__(self, index=20, index_max=50, odd_probability=0.5):
         r"""
         Create an arithmetic subgroup testing object.
@@ -110,7 +114,7 @@ class Test:
         i = 1
         self.odd_probability = odd_probability
         if index % 4:
-            self.odd_probability=0
+            self.odd_probability = 0
         while Gamma(i).index() < index_max:
             self.congroups.append(Gamma(i))
             i += 1
@@ -123,15 +127,15 @@ class Test:
             self.congroups.append(Gamma1(i))
             M = Zmod(i)
             U = [x for x in M if x.is_unit()]
-            for j in range(1,len(U)-1):
-                self.congroups.append(GammaH(i,prandom.sample(U,j)))
+            for j in range(1, len(U) - 1):
+                self.congroups.append(GammaH(i, prandom.sample(U, j)))
             i += 1
 
         self.index = index
 
     def __repr__(self):
         r"""
-        Return the string representation of self
+        Return the string representation of ``self``.
 
         EXAMPLES::
 
@@ -197,9 +201,9 @@ class Test:
         total = cputime()
         n = 1
         while seconds == 0 or cputime(total) < seconds:
-            s = "** test_dimension: number %s"%n
+            s = "** test_dimension: number %s" % n
             if seconds > 0:
-                s += " (will stop after about %s seconds)"%seconds
+                s += " (will stop after about %s seconds)" % seconds
             t = cputime()
             self._do(name)
             print("\ttime=%s\telapsed=%s" % (cputime(t), cputime(total)))
@@ -230,7 +234,7 @@ class Test:
             sage: from sage.modular.arithgroup.tests import Test
             sage: Test().test_relabel() # random
         """
-        if prandom.uniform(0,1) < self.odd_probability:
+        if prandom.uniform(0, 1) < self.odd_probability:
             G = random_odd_arithgroup(self.index)
         else:
             G = random_even_arithgroup(self.index)
@@ -249,22 +253,22 @@ class Test:
             prandom.shuffle(p)
             # we add 0 to the mapping
             pp = [0] + p
-            ss2 = [None]*self.index
-            ss3 = [None]*self.index
-            ll = [None]*self.index
-            rr = [None]*self.index
+            ss2 = [None] * self.index
+            ss3 = [None] * self.index
+            ll = [None] * self.index
+            rr = [None] * self.index
             for i in range(self.index):
                 ss2[pp[i]] = pp[s2[i]]
                 ss3[pp[i]] = pp[s3[i]]
                 ll[pp[i]] = pp[l[i]]
                 rr[pp[i]] = pp[r[i]]
             if G.is_even():
-                GG = EvenArithmeticSubgroup_Permutation(ss2,ss3,ll,rr)
+                GG = EvenArithmeticSubgroup_Permutation(ss2, ss3, ll, rr)
             else:
-                GG = OddArithmeticSubgroup_Permutation(ss2,ss3,ll,rr)
+                GG = OddArithmeticSubgroup_Permutation(ss2, ss3, ll, rr)
             GG.relabel()
 
-            for elt in ['_S2','_S3','_L','_R']:
+            for elt in ['_S2', '_S3', '_L', '_R']:
                 if getattr(G, elt) != getattr(GG, elt):
                     print("s2 = %s" % str(s2))
                     print("s3 = %s" % str(s3))
@@ -303,16 +307,16 @@ class Test:
             'generalised_level']
 
         for f in methods:
-            if getattr(G,f)() != getattr(GG,f)():
-                raise AssertionError("results of %s does not coincide for %s" %(f,G))
+            if getattr(G, f)() != getattr(GG, f)():
+                raise AssertionError("results of %s does not coincide for %s" % (f, G))
 
         if sorted((G.cusp_width(c) for c in G.cusps())) != GG.cusp_widths():
-            raise AssertionError("Cusps widths are different for %s" %G)
+            raise AssertionError("Cusps widths are different for %s" % G)
 
         for _ in range(20):
             m = GG.random_element()
             if m not in G:
-                raise AssertionError("random element generated by perm. group not in %s" %(str(m),str(G)))
+                raise AssertionError("random element generated by perm. group not in %s" % str(G))
 
     def test_contains(self):
         r"""
@@ -324,7 +328,7 @@ class Test:
             sage: from sage.modular.arithgroup.tests import Test
             sage: Test().test_contains() #random
         """
-        if prandom.uniform(0,1) < self.odd_probability:
+        if prandom.uniform(0, 1) < self.odd_probability:
             G = random_odd_arithgroup(self.index)
         else:
             G = random_even_arithgroup(self.index)
@@ -332,7 +336,7 @@ class Test:
         for _ in range(20):
             g = G.random_element()
             if G.random_element() not in G:
-                raise AssertionError("%s not in %s" %(g,G))
+                raise AssertionError("%s not in %s" % (g, G))
 
     def test_spanning_trees(self):
         r"""
@@ -347,37 +351,37 @@ class Test:
         """
         from sage.all import prod
         from .all import SL2Z
-        from .arithgroup_perm import S2m,S3m,Lm
+        from .arithgroup_perm import S2m, S3m, Lm
 
         G = random_even_arithgroup(self.index)
 
-        m = {'l':Lm, 's':S2m}
-        tree,reps,wreps,gens = G._spanning_tree_verrill()
-        assert reps[0] == SL2Z([1,0,0,1])
+        m = {'l': Lm, 's': S2m}
+        tree, reps, wreps, gens = G._spanning_tree_verrill()
+        assert reps[0] == SL2Z([1, 0, 0, 1])
         assert wreps[0] == ''
-        for i in range(1,self.index):
+        for i in range(1, self.index):
             assert prod(m[letter] for letter in wreps[i]) == reps[i]
-        tree,reps,wreps,gens = G._spanning_tree_verrill(on_right=False)
-        assert reps[0] == SL2Z([1,0,0,1])
+        tree, reps, wreps, gens = G._spanning_tree_verrill(on_right=False)
+        assert reps[0] == SL2Z([1, 0, 0, 1])
         assert wreps[0] == ''
-        for i in range(1,self.index):
+        for i in range(1, self.index):
             assert prod(m[letter] for letter in wreps[i]) == reps[i]
 
-        m = {'s2':S2m, 's3':S3m}
-        tree,reps,wreps,gens = G._spanning_tree_kulkarni()
-        assert reps[0] == SL2Z([1,0,0,1])
+        m = {'s2': S2m, 's3': S3m}
+        tree, reps, wreps, gens = G._spanning_tree_kulkarni()
+        assert reps[0] == SL2Z([1, 0, 0, 1])
         assert wreps[0] == []
-        for i in range(1,self.index):
+        for i in range(1, self.index):
             assert prod(m[letter] for letter in wreps[i]) == reps[i]
-        tree,reps,wreps,gens = G._spanning_tree_kulkarni(on_right=False)
-        assert reps[0] == SL2Z([1,0,0,1])
+        tree, reps, wreps, gens = G._spanning_tree_kulkarni(on_right=False)
+        assert reps[0] == SL2Z([1, 0, 0, 1])
         assert wreps[0] == []
-        for i in range(1,self.index):
+        for i in range(1, self.index):
             assert prod(m[letter] for letter in wreps[i]) == reps[i]
 
     def test_todd_coxeter(self):
         r"""
-        Test representatives of Todd-Coxeter algorithm
+        Test representatives of Todd-Coxeter algorithm.
 
         EXAMPLES::
 
@@ -385,29 +389,28 @@ class Test:
             sage: Test().test_todd_coxeter() #random
         """
         from .all import SL2Z
-        from .arithgroup_perm import S2m,S3m,Lm
+        from .arithgroup_perm import S2m, S3m, Lm
 
         G = random_even_arithgroup(self.index)
 
-        reps,gens,l,s2 = G.todd_coxeter_l_s2()
-        assert reps[0] == SL2Z([1,0,0,1])
+        reps, gens, l, s2 = G.todd_coxeter_l_s2()
+        assert reps[0] == SL2Z([1, 0, 0, 1])
         assert len(reps) == G.index()
-        for i in range(1,len(reps)):
+        for i in range(1, len(reps)):
             assert reps[i] not in G
-            assert reps[i]*S2m*~reps[s2[i]] in G
-            assert reps[i]*Lm*~reps[l[i]] in G
-            for j in range(i+1,len(reps)):
+            assert reps[i] * S2m * ~reps[s2[i]] in G
+            assert reps[i] * Lm * ~reps[l[i]] in G
+            for j in range(i + 1, len(reps)):
                 assert reps[i] * ~reps[j] not in G
                 assert reps[j] * ~reps[i] not in G
 
-        reps,gens,s2,s3 = G.todd_coxeter_s2_s3()
-        assert reps[0] == SL2Z([1,0,0,1])
+        reps, gens, s2, s3 = G.todd_coxeter_s2_s3()
+        assert reps[0] == SL2Z([1, 0, 0, 1])
         assert len(reps) == G.index()
-        for i in range(1,len(reps)):
+        for i in range(1, len(reps)):
             assert reps[i] not in G
-            assert reps[i]*S2m*~reps[s2[i]] in G
-            assert reps[i]*S3m*~reps[s3[i]] in G
-            for j in range(i+1,len(reps)):
+            assert reps[i] * S2m * ~reps[s2[i]] in G
+            assert reps[i] * S3m * ~reps[s3[i]] in G
+            for j in range(i + 1, len(reps)):
                 assert reps[i] * ~reps[j] not in G
                 assert reps[j] * ~reps[i] not in G
-

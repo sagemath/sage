@@ -1,5 +1,5 @@
-gmpy2
-=====
+gmpy2: Python interface to GMP/MPIR, MPFR, and MPC
+==================================================
 
 Description
 -----------

@@ -105,10 +105,10 @@ class FreeFermionsLieConformalAlgebra(GradedLieConformalAlgebra):
                     "{0} x {0} matrix, got {1}".format(ngens,gram_matrix))
         else:
             if ngens is None:
-                ngens = 1;
-            gram_matrix = identity_matrix(R,ngens,ngens)
+                ngens = 1
+            gram_matrix = identity_matrix(R, ngens, ngens)
 
-        latex_names=None
+        latex_names = None
 
         if (names is None) and (index_set is None):
             if ngens==1:

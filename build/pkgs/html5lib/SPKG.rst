@@ -1,5 +1,5 @@
-html5lib
-========
+html5lib: An HTML parser
+========================
 
 Description
 -----------

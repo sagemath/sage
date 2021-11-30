@@ -34,9 +34,8 @@ from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from sage.structure.parent cimport Parent
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
-from sage.functions.other import ceil
 from sage.combinat.tableau import Tableau
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 ##############################################################################
 # Support classes
@@ -744,10 +743,10 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             sage: T = crystals.Tableaux(['A',3], shape = [2,2])
             sage: t = T(list=[int(3),1,4,2])
             sage: type(t[0])
-            <... 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
+            <class 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
             sage: t = T(list=[3,int(1),4,2])
             sage: type(t[1])
-            <... 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
+            <class 'sage.combinat.crystals.letters.Crystal_of_letters_type_A_element'>
             sage: C = crystals.KirillovReshetikhin(['A',int(3),1], 1,1)
             sage: C[0].e(0)
             [[4]]
@@ -917,7 +916,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             sage: type(t)
             <class 'sage.combinat.tableau.Tableaux_all_with_category.element_class'>
             sage: type(t[0][0])
-            <... 'int'>
+            <class 'int'>
             sage: T = crystals.Tableaux(['D',3], shape = [1,1])
             sage: t=T(rows=[[-3],[3]]).to_tableau(); t
             [[-3], [3]]
@@ -1314,7 +1313,7 @@ cdef class CrystalOfBKKTableauxElement(TensorProductOfSuperCrystalsElement):
         return repr(self.to_tableau())
 
     def _repr_diagram(self):
-        """
+        r"""
         Return a string representation of ``self`` as a diagram.
 
         EXAMPLES::

@@ -1,5 +1,5 @@
-NTL
-===
+ntl: A library for doing number theory
+======================================
 
 Description
 -----------

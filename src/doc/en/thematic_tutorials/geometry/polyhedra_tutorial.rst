@@ -791,17 +791,17 @@ polytope is already defined!
 Bibliography
 =============
 
-.. [Bro1983] Brondsted, A., An Introduction to Convex Polytopes, volume 90
-             of Graduate Texts in Mathematics. Springer-Verlag, New York, 1983. ISBN
-             978-1-4612-7023-2
+.. [Bro1983] \A. Brondsted, An Introduction to Convex Polytopes, volume 90
+             of Graduate Texts in Mathematics. Springer-Verlag, New York, 1983.
+             ISBN 978-1-4612-7023-2
 
-.. [Goo2004] J.E. Goodman and J. O'Rourke, editors, CRC Press LLC, Boca Raton, FL, 2004.
+.. [Goo2004] \J. E. Goodman and J. O'Rourke, editors, CRC Press LLC, Boca Raton, FL, 2004.
              ISBN 978-1584883012 (65 chapters, xvii + 1539 pages).
 
-.. [Gru1967] Grünbaum, B., Convex polytopes, volume 221 of Graduate Texts in
-             Mathematics. Springer-Verlag, New York, 2003. ISBN
-             978-1-4613-0019-9
+.. [Gru1967] \B. Grünbaum, Convex polytopes, volume 221 of Graduate Texts in
+             Mathematics. Springer-Verlag, New York, 2003.
+             ISBN 978-1-4613-0019-9
 
-.. [Zie2007] Ziegler, G. M., Lectures on polytopes, volume 152 of Graduate
+.. [Zie2007] \G. M. Ziegler, Lectures on polytopes, volume 152 of Graduate
              Texts in Mathematics. Springer-Verlag, New York, 2007.
              ISBN 978-0-387-94365-7

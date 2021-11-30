@@ -18,7 +18,7 @@ AUTHORS:
   of irreducible modules
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Eric Webster
 #       Copyright (C) 2011 Hugh Thomas <hugh.ross.thomas@gmail.com>
 #
@@ -26,8 +26,8 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 
@@ -41,11 +41,12 @@ from sage.combinat.permutation import Permutations
 from sage.combinat.sf.sf import SymmetricFunctions
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
 from sage.combinat.tableau import SemistandardTableaux
-from sage.functions.other import binomial
+from sage.arith.all import binomial
 from sage.matrix.constructor import Matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 def _schur_I_nr_representatives(n, r):
@@ -239,7 +240,7 @@ class SchurAlgebra(CombinatorialFreeModule):
             raise ValueError("n (={}) must be a positive integer".format(n))
         if r not in ZZ or r < 0:
             raise ValueError("r (={}) must be a non-negative integer".format(r))
-        if not R in Rings.Commutative():
+        if R not in Rings.Commutative():
             raise ValueError("R (={}) must be a commutative ring".format(R))
 
         self._n = n

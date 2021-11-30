@@ -1,5 +1,5 @@
-jsonschema
-==========
+jsonschema: Python implementation of JSON Schema
+================================================
 
 Description
 -----------

@@ -194,7 +194,7 @@ class Timer:
 
     def __ne__(self, other):
         """
-        Test for unequality
+        Test for non-equality
 
         EXAMPLES::
 
@@ -376,9 +376,10 @@ class RecordingDict(dict):
         """
         return make_recording_dict, (dict(self), self.set, self.got)
 
+
 def make_recording_dict(D, st, gt):
     """
-    Auxilliary function for pickling.
+    Auxiliary function for pickling.
 
     EXAMPLES::
 
@@ -508,7 +509,7 @@ class NestedName:
 
     def __ne__(self, other):
         """
-        Test for unequality.
+        Test for non-equality.
 
         EXAMPLES::
 

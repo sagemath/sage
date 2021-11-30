@@ -187,7 +187,7 @@ tips on making your branch easy to review:
   consideration?
 * Have you clearly described how to test the changes in your branch?
 * Have you listed any tickets that your branch depends on?
-* Is your branch based on a recent (peferably, the lastest) Sage beta version?
+* Is your branch based on a recent (preferably, the latest) Sage beta version?
 * Does your branch
   `follow relevant conventions <https://doc.sagemath.org/html/en/developer/#writing-code-for-sage>`_
   as documented in the Developer's Guide?

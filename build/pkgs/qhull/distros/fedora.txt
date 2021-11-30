@@ -1,0 +1,2 @@
+qhull
+qhull-devel

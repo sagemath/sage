@@ -9,7 +9,7 @@ major differences are in the way elements are printed.
 from sage.groups.old import AbelianGroup
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.fg_pid.fgp_element import FGP_Element
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 def AdditiveAbelianGroup(invs, remember_generators = True):
     r"""
@@ -43,7 +43,7 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
         sage: H = AdditiveAbelianGroup([0, 2, 3], remember_generators = False); H
         Additive abelian group isomorphic to Z/6 + Z
         sage: H.gens()
-        ((0, 1, 2), (1, 0, 0))
+        ((0, 1, 1), (1, 0, 0))
 
     There are several ways to create elements of an additive abelian group.
     Realize that there are two sets of generators:  the "obvious" ones composed

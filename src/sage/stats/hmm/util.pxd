@@ -1,4 +1,4 @@
-from sage.finance.time_series cimport TimeSeries
+from sage.stats.time_series cimport TimeSeries
 
 cdef class HMM_Util:
     cpdef normalize_probability_TimeSeries(self, TimeSeries T, Py_ssize_t i, Py_ssize_t j)

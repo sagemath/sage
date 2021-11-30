@@ -571,8 +571,10 @@ class WordQuasiSymmetricFunctions(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: WQSym = algebras.WQSym(QQ)
-            sage: WQSym.M()
+            sage: M = WQSym.M(); M
             Word Quasi-symmetric functions over Rational Field in the Monomial basis
+            sage: sorted(M.basis(2))
+            [M[{1, 2}], M[{2}, {1}], M[{1}, {2}]]
         """
         _prefix = "M"
         _basis_name = "Monomial"

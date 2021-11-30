@@ -320,7 +320,7 @@ class CooperativeGame(SageObject):
             sortedkey = tuple(sorted(key))
             self.ch_f[sortedkey] = self.ch_f.pop(key)
 
-        self.player_list = max(characteristic_function, key=lambda key: len(key))
+        self.player_list = max(characteristic_function, key=len)
         for coalition in powerset(self.player_list):
             if tuple(sorted(coalition)) not in self.ch_f:
                 raise ValueError("characteristic function must be the power set")

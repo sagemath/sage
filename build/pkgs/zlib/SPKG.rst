@@ -1,5 +1,5 @@
-zlib
-====
+zlib: Data compression library
+==============================
 
 Description
 -----------

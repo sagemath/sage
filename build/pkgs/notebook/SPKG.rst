@@ -1,5 +1,5 @@
-notebook
-========
+notebook: Jupyter notebook, a web-based notebook environment for interactive computing
+======================================================================================
 
 Description
 -----------

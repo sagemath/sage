@@ -386,6 +386,18 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: S == PolynomialQuotientRing_generic(R,x^2-4,'xbar')
             True
 
+        Check that :trac:`26161` has been resolved::
+
+            sage: R.<x> = GF(2)[]
+            sage: S = R.quo(x)
+            sage: S in FiniteFields()
+            True
+            sage: type(S).mro()
+            [<class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category'>,
+            ...
+             <class 'sage.categories.finite_fields.FiniteFields.parent_class'>,
+            ...
+
         """
         if not isinstance(ring, PolynomialRing_commutative):
             raise TypeError("R must be a univariate polynomial ring.")
@@ -399,6 +411,11 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         self.__ring = ring
         self.__polynomial = polynomial
         category = CommutativeAlgebras(ring.base_ring().category()).Quotients().or_subcategory(category)
+        if self.is_finite():
+            # We refine the category for finite quotients.
+            # Note that is_finite() is cheap so it does not seem to do a lazy
+            # _refine_category_() in is_finite() as we do for is_field()
+            category = category.Finite()
         CommutativeRing.__init__(self, ring, names=name, category=category)
 
     def _element_constructor_(self, x):
@@ -1028,8 +1045,10 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         try:
             ret = ret and self.modulus().is_irreducible()
         except NotImplementedError:
-            if proof: raise
-            else: ret = False
+            if proof:
+                raise
+            else:
+                ret = False
 
         if ret:
             from sage.categories.all import Fields
@@ -1037,6 +1056,23 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         return ret
 
     def krull_dimension(self):
+        """
+        Return the Krull dimension.
+
+        This is the Krull dimension of the base ring, unless the
+        quotient is zero.
+
+        EXAMPLES::
+
+            sage: R = PolynomialRing(ZZ,'x').quotient(x**6-1)
+            sage: R.krull_dimension()
+            1
+            sage: R = PolynomialRing(ZZ,'x').quotient(1)
+            sage: R.krull_dimension()
+            -1
+        """
+        if self.is_zero():
+            return -1
         return self.base_ring().krull_dimension()
 
     def modulus(self):
@@ -1126,8 +1162,8 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: F1.<a> = GF(2^7)
             sage: P1.<x> = F1[]
             sage: F2 = F1.extension(x^2+x+1, 'u')
-            sage: F2.random_element()
-            (a^6 + a^5 + a^2 + a)*u + a^6 + a^4 + a^3 + a^2 + 1
+            sage: F2.random_element().parent() is F2
+            True
         """
         return self(self.polynomial_ring().random_element( \
             degree=self.degree()-1, *args, **kwds))
@@ -1138,7 +1174,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         Compute the decomposition of self into a product of number fields.
 
         This is an internal function used by
-        :meth:`S_class_group`, :meth:`S_units` and :meth:`selmer_group`.
+        :meth:`S_class_group`, :meth:`S_units` and :meth:`selmer_generators`.
 
         EXAMPLES::
 
@@ -1199,9 +1235,10 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
             seen_before = False
             j = 0
-            for D_iso,_ in iso_classes:
+            for D_iso, _ in iso_classes:
                 if D_abs.is_isomorphic(D_iso):
-                    seen_before = True; break
+                    seen_before = True
+                    break
                 j += 1
             if not seen_before:
                 S_abs = []
@@ -1304,7 +1341,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         `x^2 + 31` from 12 to 2, i.e. we lose a generator of order 6 (this was
         fixed in :trac:`14489`)::
 
-            sage: S.S_class_group([K.ideal(a)])
+            sage: S.S_class_group([K.ideal(a)])  # representation varies, not tested
             [((1/4*xbar^2 + 31/4, (-1/8*a + 1/8)*xbar^2 - 31/8*a + 31/8, 1/16*xbar^3 + 1/16*xbar^2 + 31/16*xbar + 31/16, -1/16*a*xbar^3 + (1/16*a + 1/8)*xbar^2 - 31/16*a*xbar + 31/16*a + 31/8), 6), ((-1/4*xbar^2 - 23/4, (1/8*a - 1/8)*xbar^2 + 23/8*a - 23/8, -1/16*xbar^3 - 1/16*xbar^2 - 23/16*xbar - 23/16, 1/16*a*xbar^3 + (-1/16*a - 1/8)*xbar^2 + 23/16*a*xbar - 23/16*a - 23/8), 2)]
 
         Note that all the returned values live where we expect them to::
@@ -1313,7 +1350,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(CG[0][0][1])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic_with_category.element_class'>
             sage: type(CG[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         TESTS:
 
@@ -1473,7 +1510,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(CG[0][0][1])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic_with_category.element_class'>
             sage: type(CG[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         """
         return self.S_class_group((), proof=proof)
@@ -1539,7 +1576,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(U[0][0])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category.element_class'>
             sage: type(U[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(U[1][1])
             <class 'sage.rings.infinity.PlusInfinity'>
 
@@ -1625,14 +1662,14 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(U[0][0])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category.element_class'>
             sage: type(U[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(U[1][1])
             <class 'sage.rings.infinity.PlusInfinity'>
 
         """
         return self.S_units((), proof=proof)
 
-    def selmer_group(self, S, m, proof=True):
+    def selmer_generators(self, S, m, proof=True):
         r"""
         If self is an étale algebra `D` over a number field `K` (i.e.
         a quotient of `K[x]` by a squarefree polynomial) and `S` is a
@@ -1658,19 +1695,19 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: K.<a> = QuadraticField(-5)
             sage: R.<x> = K[]
             sage: D.<T> = R.quotient(x)
-            sage: D.selmer_group((), 2)
+            sage: D.selmer_generators((), 2)
             [-1, 2]
-            sage: D.selmer_group([K.ideal(2, -a+1)], 2)
+            sage: D.selmer_generators([K.ideal(2, -a+1)], 2)
             [2, -1]
-            sage: D.selmer_group([K.ideal(2, -a+1), K.ideal(3, a+1)], 2)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 2)
             [2, a + 1, -1]
-            sage: D.selmer_group((K.ideal(2, -a+1),K.ideal(3, a+1)), 4)
+            sage: D.selmer_generators((K.ideal(2, -a+1),K.ideal(3, a+1)), 4)
             [2, a + 1, -1]
-            sage: D.selmer_group([K.ideal(2, -a+1)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1)], 3)
             [2]
-            sage: D.selmer_group([K.ideal(2, -a+1), K.ideal(3, a+1)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1)], 3)
             [2, a + 1]
-            sage: D.selmer_group([K.ideal(2, -a+1), K.ideal(3, a+1), K.ideal(a)], 3)
+            sage: D.selmer_generators([K.ideal(2, -a+1), K.ideal(3, a+1), K.ideal(a)], 3)
             [2, a + 1, a]
 
         """
@@ -1679,7 +1716,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
 
         component_selmer_groups = []
         for D_iso, S_iso in iso_classes:
-            sel = D_iso.selmer_group(S_iso, m, proof=proof)
+            sel = D_iso.selmer_generators(S_iso, m, proof=proof)
             component_selmer_groups.append(sel)
 
         gens = []
@@ -1695,6 +1732,9 @@ class PolynomialQuotientRing_generic(CommutativeRing):
                 gens.append(poly_gen)
 
         return gens
+
+    # For backwards compatibility:
+    selmer_group = selmer_generators
 
     def _factor_multivariate_polynomial(self, f, proof=True):
         r"""
@@ -1865,7 +1905,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             # for a finite field, we return the isomorphic simple extensions of
             # the underlying prime field
             N = self.cardinality()
-            from sage.rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             isomorphic_ring = GF(N)
 
             # the map to GF(N) maps our generator to a root of our modulus in the isomorphic_ring
@@ -1902,9 +1942,9 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             try:
                 isomorphic_ring = self.base_ring().extension(self.modulus(), names=self.variable_names())
             except ValueError:
-                pass # modulus is not irreducible
+                pass  # modulus is not irreducible
             else:
-                if not isomorphic_ring in NumberFields():
+                if isomorphic_ring not in NumberFields():
                     raise NotImplementedError("cannot handle extensions of number fields that do not produce number fields")
                 # refine the category of self
                 if not self.is_field():

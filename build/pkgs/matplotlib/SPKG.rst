@@ -1,5 +1,5 @@
-matplotlib
-==========
+matplotlib: Python 2D plotting library
+======================================
 
 Description
 -----------
@@ -25,6 +25,8 @@ licencing choice, see Licenses.
 
 Upstream Contact
 ----------------
+
+https://matplotlib.org
 
 The matplotlib mailing lists: see
 http://sourceforge.net/projects/matplotlib

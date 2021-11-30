@@ -1,5 +1,5 @@
-libogg
-======
+libogg: Library for the Ogg multimedia container format
+=======================================================
 
 Description
 -----------

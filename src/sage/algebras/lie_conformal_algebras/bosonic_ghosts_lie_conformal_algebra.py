@@ -85,7 +85,7 @@ class BosonicGhostsLieConformalAlgebra(GradedLieConformalAlgebra):
             sage: V = lie_conformal_algebras.BosonicGhosts(QQ)
             sage: TestSuite(V).run()
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         try:
             assert (ngens in ZZ and ngens > 0 and ngens % 2 == 0)
         except AssertionError:

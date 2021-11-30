@@ -1,0 +1,26 @@
+From 4b3769823ac865e66eafe7724f95873cca236751 Mon Sep 17 00:00:00 2001
+From: Martin Kroeker <martin@ruby.chemie.uni-freiburg.de>
+Date: Sun, 24 Oct 2021 23:57:06 +0200
+Subject: [PATCH] Revert #3252
+
+---
+ interface/trsv.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/interface/trsv.c b/interface/trsv.c
+index 6a6e8f8bab..a054d8eeb6 100644
+--- a/interface/trsv.c
++++ b/interface/trsv.c
+@@ -188,12 +188,6 @@ void CNAME(enum CBLAS_ORDER order, enum CBLAS_UPLO Uplo,
+ 
+   if (n == 0) return;
+ 
+-  if (incx == 1 && trans == 0 && n < 50) {
+-    buffer = NULL;
+-    (trsv[(trans<<2) | (uplo<<1) | unit])(n, a, lda, x, incx, buffer);
+-    return;  
+-  }
+-
+   IDEBUG_START;
+ 
+   FUNCTION_PROFILE_START();

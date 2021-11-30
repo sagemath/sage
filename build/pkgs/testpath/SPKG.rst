@@ -1,5 +1,5 @@
-testpath
-========
+testpath: Testing utilities for filesystem-related code
+=======================================================
 
 Description
 -----------

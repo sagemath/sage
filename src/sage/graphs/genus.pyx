@@ -38,7 +38,7 @@ described throughout the file.
 #*****************************************************************************
 
 from libc.string cimport memcpy
-from sage.ext.memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
 from cysignals.signals cimport sig_on, sig_off
 
 cimport sage.combinat.permutation_cython
@@ -488,7 +488,7 @@ cdef class simple_connected_genus_backtracker:
         """
         Here's the main backtracking routine.
 
-        We iterate over all all embeddings of self's graph by considering all
+        We iterate over all embeddings of self's graph by considering all
         cyclic orderings of `self.vertex_darts`.  We use the Steinhaus-
         Johnson-Trotter algorithm to enumerate these by walking over a poly-ary
         Gray code, and each time the Gray code would flip a bit, we apply the

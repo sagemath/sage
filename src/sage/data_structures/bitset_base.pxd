@@ -33,13 +33,13 @@ AUTHORS:
 
 from libc.string cimport strlen
 from cysignals.memory cimport check_calloc, check_reallocarray, sig_malloc, sig_free
+from memory_allocator  cimport MemoryAllocator
+from cython.operator import preincrement as preinc
 
 from sage.cpython.string cimport char_to_str, str_to_bytes, bytes_to_str
 from sage.libs.gmp.mpn cimport *
 from sage.libs.gmp.types cimport *
 from sage.data_structures.sparse_bitset cimport sparse_bitset_t
-from cython.operator import preincrement as preinc
-from sage.ext.memory_allocator  cimport MemoryAllocator
 
 
 cdef extern from *:
@@ -89,11 +89,21 @@ cdef extern from "bitset_intrinsics.h":
     cdef const mp_bitcnt_t LIMB_SIZE
     cdef const mp_bitcnt_t ALIGNMENT
 
+    cdef mp_bitcnt_t _set_non_zero(
+            mp_limb_t* bits, mp_bitcnt_t* non_zero_chunks, mp_bitcnt_t limbs) nogil
+
     # Bitset Comparison
+    ctypedef enum cmpop_t:
+        EQUAL
+        SUBSET
+        DISJOINT
     cdef bint _bitset_isempty(mp_limb_t* bits, mp_bitcnt_t limbs) nogil
-    cdef bint _bitset_eq(mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs) nogil
-    cdef bint _bitset_issubset(mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs) nogil
-    cdef bint _bitset_are_disjoint(mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs) nogil
+    cdef bint _bitset_cmp(mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs, cmpop_t) nogil
+
+    # Bitset Comparison for sparse bitsets (only subset and disjoint)
+    cdef bint _sparse_bitset_cmp(
+            mp_limb_t* a, mp_bitcnt_t* a_non_zero_chunks, mp_bitcnt_t a_n_non_zero_chunks,
+            mp_limb_t* b, cmpop_t) nogil
 
     # Bitset Searching
     cdef long _bitset_first_in_limb(mp_limb_t limb) nogil
@@ -101,10 +111,18 @@ cdef extern from "bitset_intrinsics.h":
     cdef long _bitset_len(mp_limb_t* bits, mp_bitcnt_t limbs) nogil
 
     # Bitset Arithmetic
-    cdef void _bitset_intersection(mp_limb_t* dst, mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs) nogil
-    cdef void _bitset_union(mp_limb_t* dst, mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs) nogil
-    cdef void _bitset_difference(mp_limb_t* dst, mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs) nogil
-    cdef void _bitset_symmetric_difference(mp_limb_t* dst, mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs) nogil
+    ctypedef enum operation_t:
+        AND
+        OR
+        ANDNOT
+        XOR
+    cdef void _bitset_operation(
+            mp_limb_t* dst, mp_limb_t* a, mp_limb_t* b, mp_bitcnt_t limbs, operation_t) nogil
+
+    # Bitset Arithmetic for sparse bitsets.
+    cdef mp_bitcnt_t _sparse_bitset_operation(
+            mp_limb_t* dst, mp_bitcnt_t* dst_non_zero_chunks, mp_limb_t* a,
+            mp_limb_t* b, mp_bitcnt_t limbs, operation_t) nogil
 
 #############################################################################
 # Creating limb patterns
@@ -160,6 +178,8 @@ cdef inline bint bitset_init_with_allocator(fused_bitset_t bits, mp_bitcnt_t siz
     Allocate an empty bitset of size ``size``.
 
     Size must be at least 1.
+
+    Note that ``sparse_bitset_t`` is assumed to be allocated over-aligned.
     """
     if size <= 0:
         raise ValueError("bitset capacity must be greater than 0")
@@ -167,6 +187,9 @@ cdef inline bint bitset_init_with_allocator(fused_bitset_t bits, mp_bitcnt_t siz
     bits.size = size
     bits.limbs = ((size - 1) / (8*ALIGNMENT) + 1) * (ALIGNMENT/LIMB_SIZE)
     bits.bits = <mp_limb_t*> mem.aligned_calloc(ALIGNMENT, bits.limbs, LIMB_SIZE)
+    if fused_bitset_t is sparse_bitset_t:
+        bits.non_zero_chunks_are_initialized = False
+        bits.non_zero_chunks = <mp_bitcnt_t*> mem.allocarray((bits.limbs*LIMB_SIZE)/ALIGNMENT, sizeof(mp_bitcnt_t))
 
 cdef inline bint bitset_check_alignment(fused_bitset_t bits):
     """
@@ -210,6 +233,8 @@ cdef inline void bitset_clear(fused_bitset_t bits):
     Remove all elements from the set.
     """
     mpn_zero(bits.bits, bits.limbs)
+    if fused_bitset_t is sparse_bitset_t:
+        bits.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_zero(fused_bitset_t bits):
     """
@@ -218,6 +243,8 @@ cdef inline void bitset_zero(fused_bitset_t bits):
     This function is the same as bitset_clear(bits).
     """
     mpn_zero(bits.bits, bits.limbs)
+    if fused_bitset_t is sparse_bitset_t:
+        bits.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_copy(fused_bitset_t dst, fused_bitset_t src):
     """
@@ -226,6 +253,8 @@ cdef inline void bitset_copy(fused_bitset_t dst, fused_bitset_t src):
     We assume ``dst.limbs == src.limbs``.
     """
     mpn_copyi(dst.bits, src.bits, src.limbs)
+    if fused_bitset_t is sparse_bitset_t:
+        dst.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_copy_flex(fused_bitset_t dst, fused_bitset_t src):
     """
@@ -237,12 +266,21 @@ cdef inline void bitset_copy_flex(fused_bitset_t dst, fused_bitset_t src):
     """
     mpn_copyi(dst.bits, src.bits, src.limbs)
     mpn_zero(dst.bits+src.limbs, src.limbs-dst.limbs)
+    if fused_bitset_t is sparse_bitset_t:
+        dst.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_fix(fused_bitset_t bits):
     """
     Clear upper bits in upper limb which should be zero.
     """
     bits.bits[bits.limbs - 1] &= limb_lower_bits_up(bits.size)
+
+cdef inline void sparse_bitset_set_non_zero(sparse_bitset_t bits) nogil:
+    """
+    Set the non zero chunks of ``bits``.
+    """
+    bits.n_non_zero_chunks = _set_non_zero(bits.bits, bits.non_zero_chunks, bits.limbs)
+    bits.non_zero_chunks_are_initialized = True
 
 #############################################################################
 # Bitset Comparison
@@ -317,7 +355,7 @@ cdef inline bint bitset_eq(fused_bitset_t a, fused_bitset_t b):
 
     We assume ``a.limbs >= b.limbs``.
     """
-    return _bitset_eq(a.bits, b.bits, b.limbs)
+    return _bitset_cmp(a.bits, b.bits, b.limbs, EQUAL)
 
 cdef inline int bitset_cmp(fused_bitset_t a, fused_bitset_t b):
     """
@@ -365,7 +403,10 @@ cdef inline bint bitset_issubset(fused_bitset_t a, fused_bitset_t b) nogil:
 
     We assume ``a.limbs <= b.limbs``.
     """
-    return _bitset_issubset(a.bits, b.bits, a.limbs)
+    if fused_bitset_t is sparse_bitset_t and a.non_zero_chunks_are_initialized:
+        return _sparse_bitset_cmp(a.bits, a.non_zero_chunks, a.n_non_zero_chunks, b.bits, SUBSET)
+    else:
+        return _bitset_cmp(a.bits, b.bits, a.limbs, SUBSET)
 
 cdef inline bint bitset_issuperset(fused_bitset_t a, fused_bitset_t b) nogil:
     """
@@ -382,7 +423,10 @@ cdef inline bint bitset_are_disjoint(fused_bitset_t a, fused_bitset_t b):
 
     We assume ``a.limbs <= b.limbs``.
     """
-    return _bitset_are_disjoint(a.bits, b.bits, a.limbs)
+    if fused_bitset_t is sparse_bitset_t and a.non_zero_chunks_are_initialized:
+        return _sparse_bitset_cmp(a.bits, a.non_zero_chunks, a.n_non_zero_chunks, b.bits, DISJOINT)
+    else:
+        return _bitset_cmp(a.bits, b.bits, a.limbs, DISJOINT)
 
 
 #############################################################################
@@ -419,12 +463,16 @@ cdef inline bint bitset_remove(fused_bitset_t bits, mp_bitcnt_t n) except -1:
     if not bitset_in(bits, n):
         raise KeyError(n)
     bitset_discard(bits, n)
+    if fused_bitset_t is sparse_bitset_t:
+        bits.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_discard(fused_bitset_t bits, mp_bitcnt_t n):
     """
     Remove n from bits.
     """
     bits.bits[n >> index_shift] &= limb_one_zero_bit(n)
+    if fused_bitset_t is sparse_bitset_t:
+        bits.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_unset(fused_bitset_t bits, mp_bitcnt_t n):
     """
@@ -434,12 +482,13 @@ cdef inline void bitset_unset(fused_bitset_t bits, mp_bitcnt_t n):
     """
     bitset_discard(bits, n)
 
-
 cdef inline void bitset_add(fused_bitset_t bits, mp_bitcnt_t n):
     """
     Add n to bits.
     """
     bits.bits[n >> index_shift] |= limb_one_set_bit(n)
+    if fused_bitset_t is sparse_bitset_t:
+        bits.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_set(fused_bitset_t bits, mp_bitcnt_t n):
     """
@@ -462,6 +511,8 @@ cdef inline void bitset_flip(fused_bitset_t bits, mp_bitcnt_t n):
     to bits.
     """
     bits.bits[n >> index_shift] ^= limb_one_set_bit(n)
+    if fused_bitset_t is sparse_bitset_t:
+        bits.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_set_first_n(fused_bitset_t bits, mp_bitcnt_t n):
     """
@@ -475,6 +526,8 @@ cdef inline void bitset_set_first_n(fused_bitset_t bits, mp_bitcnt_t n):
         bits.bits[index] = limb_lower_bits_down(n)
     for i in range(index+1, bits.limbs):
         bits.bits[i] = 0
+    if fused_bitset_t is sparse_bitset_t:
+        bits.non_zero_chunks_are_initialized = False
 
 #############################################################################
 # Bitset Searching
@@ -599,6 +652,8 @@ cdef inline void bitset_complement(fused_bitset_t r, fused_bitset_t a):
     """
     mpn_com(r.bits, a.bits, a.limbs)
     bitset_fix(r)
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_not(fused_bitset_t r, fused_bitset_t a):
     """
@@ -609,6 +664,8 @@ cdef inline void bitset_not(fused_bitset_t r, fused_bitset_t a):
     This function is the same as bitset_complement(r, a).
     """
     bitset_complement(r, a)
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_intersection(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b) nogil:
     """
@@ -616,7 +673,20 @@ cdef inline void bitset_intersection(fused_bitset_t r, fused_bitset_t a, fused_b
 
     We assume ``a.limbs >= r.limbs == b.limbs``.
     """
-    _bitset_intersection(r.bits, a.bits, b.bits, b.limbs)
+    _bitset_operation(r.bits, a.bits, b.bits, b.limbs, AND)
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
+
+cdef inline void sparse_bitset_intersection(sparse_bitset_t r, fused_bitset_t a, fused_bitset_t b) nogil:
+    """
+    Set r to the intersection of a and b, overwriting r.
+
+    Also set the non zero positions of ``r``.
+
+    We assume ``a.limbs >= r.limbs == b.limbs``.
+    """
+    r.n_non_zero_chunks = _sparse_bitset_operation(r.bits, r.non_zero_chunks, a.bits, b.bits, b.limbs, AND)
+    r.non_zero_chunks_are_initialized = True
 
 cdef inline void bitset_and(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b):
     """
@@ -626,7 +696,7 @@ cdef inline void bitset_and(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b
 
     This function is the same as bitset_intersection(r, a, b).
     """
-    _bitset_intersection(r.bits, a.bits, b.bits, b.limbs)
+    bitset_intersection(r, a, b)
 
 cdef inline void bitset_union(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b) nogil:
     """
@@ -635,7 +705,21 @@ cdef inline void bitset_union(fused_bitset_t r, fused_bitset_t a, fused_bitset_t
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.
     """
-    _bitset_union(r.bits, a.bits, b.bits, b.limbs)
+    _bitset_operation(r.bits, a.bits, b.bits, b.limbs, OR)
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
+
+cdef inline void sparse_bitset_union(sparse_bitset_t r, fused_bitset_t a, fused_bitset_t b) nogil:
+    """
+    Set r to the union of a and b, overwriting r.
+
+    Also set the non zero positions of ``r``.
+
+    We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
+    or ``r.limbs == b.limbs``.
+    """
+    r.n_non_zero_chunks = _sparse_bitset_operation(r.bits, r.non_zero_chunks, a.bits, b.bits, b.limbs, OR)
+    r.non_zero_chunks_are_initialized = True
 
 cdef inline void bitset_or(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b):
     """
@@ -646,7 +730,7 @@ cdef inline void bitset_or(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b)
 
     This function is the same as bitset_union(r, a, b).
     """
-    _bitset_union(r.bits, a.bits, b.bits, b.limbs)
+    bitset_union(r, a, b)
 
 cdef inline void bitset_difference(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b):
     """
@@ -656,7 +740,22 @@ cdef inline void bitset_difference(fused_bitset_t r, fused_bitset_t a, fused_bit
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.
     """
-    _bitset_difference(r.bits, a.bits, b.bits, b.limbs)
+    _bitset_operation(r.bits, a.bits, b.bits, b.limbs, ANDNOT)
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
+
+cdef inline void sparse_bitset_difference(sparse_bitset_t r, fused_bitset_t a, fused_bitset_t b):
+    """
+    Set r to the difference of a and b (i.e., things in a that are not
+    in b), overwriting r.
+
+    Also set the non zero positions of ``r``.
+
+    We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
+    or ``r.limbs == b.limbs``.
+    """
+    r.n_non_zero_chunks = _sparse_bitset_operation(r.bits, r.non_zero_chunks, a.bits, b.bits, b.limbs, ANDNOT)
+    r.non_zero_chunks_are_initialized = True
 
 cdef inline void bitset_symmetric_difference(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b):
     """
@@ -665,7 +764,21 @@ cdef inline void bitset_symmetric_difference(fused_bitset_t r, fused_bitset_t a,
     We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
     or ``r.limbs == b.limbs``.
     """
-    _bitset_symmetric_difference(r.bits, a.bits, b.bits, b.limbs)
+    _bitset_operation(r.bits, a.bits, b.bits, b.limbs, XOR)
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
+
+cdef inline void sparse_bitset_symmetric_difference(sparse_bitset_t r, fused_bitset_t a, fused_bitset_t b):
+    """
+    Set r to the symmetric difference of a and b, overwriting r.
+
+    Also set the non zero positions of ``r``.
+
+    We assume ``r.limbs >= a.limbs >= b.limbs`` and either ``r is a``
+    or ``r.limbs == b.limbs``.
+    """
+    r.n_non_zero_chunks = _sparse_bitset_operation(r.bits, r.non_zero_chunks, a.bits, b.bits, b.limbs, XOR)
+    r.non_zero_chunks_are_initialized = True
 
 cdef inline void bitset_xor(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b):
     """
@@ -676,7 +789,7 @@ cdef inline void bitset_xor(fused_bitset_t r, fused_bitset_t a, fused_bitset_t b
 
     This function is the same as bitset_symmetric_difference(r, a, b).
     """
-    _bitset_symmetric_difference(r.bits, a.bits, b.bits, b.limbs)
+    bitset_symmetric_difference(r, a, b)
 
 cdef inline void bitset_rshift(fused_bitset_t r, fused_bitset_t a, mp_bitcnt_t n):
     """
@@ -717,6 +830,9 @@ cdef inline void bitset_rshift(fused_bitset_t r, fused_bitset_t a, mp_bitcnt_t n
 
         # Clear bits outside bitset in top limb
         bitset_fix(r)
+
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
 
 cdef inline void bitset_lshift(fused_bitset_t r, fused_bitset_t a, mp_bitcnt_t n):
     """
@@ -760,6 +876,9 @@ cdef inline void bitset_lshift(fused_bitset_t r, fused_bitset_t a, mp_bitcnt_t n
     # Clear bottom limbs
     mpn_zero(r.bits, nlimbs)
 
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
+
 cdef inline int bitset_map(fused_bitset_t r, fused_bitset_t a, m) except -1:
     """
     Fill bitset ``r`` so ``r == {m[i] for i in a}``.
@@ -768,6 +887,8 @@ cdef inline int bitset_map(fused_bitset_t r, fused_bitset_t a, m) except -1:
     ``m[i]`` is an integer in ``[0 ... n-1]`` for all ``i`` in ``a``,
     where ``n`` is the capacity of ``r``.
     """
+    if fused_bitset_t is sparse_bitset_t:
+        r.non_zero_chunks_are_initialized = False
     cdef long i
     bitset_clear(r)
     i = bitset_first(a)

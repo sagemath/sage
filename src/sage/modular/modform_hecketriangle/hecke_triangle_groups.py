@@ -16,7 +16,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ, QQ, AA, AlgebraicField, infinity, I, PolynomialRing, NumberField
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
+from sage.rings.all import AA, AlgebraicField, I, PolynomialRing, NumberField
 from sage.functions.all import cos, exp, sec
 from sage.functions.gamma import psi1
 from sage.symbolic.all import pi

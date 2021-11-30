@@ -1,5 +1,5 @@
-zn_poly
-=======
+zn_poly: C library for polynomial arithmetic in Z/nZ[x]
+=======================================================
 
 Description
 -----------
@@ -9,7 +9,7 @@ any modulus that fits into an unsigned long.
 
 Website: https://gitlab.com/sagemath/zn_poly
 
-Note: Original website is at http://cims.nyu.edu/~harvey/zn_poly/ but is
+Note: Original website is at https://web.maths.unsw.edu.au/~davidharvey/code/zn_poly/ but is
 no longer maintained. Sage maintains an "official" continuation of the
 project at the above link.
 

@@ -343,7 +343,6 @@ Sage example in fsm-in-sage.tex, line 854::
 Sage example in fsm-in-sage.tex, line 872::
 
     sage: sage.combinat.finite_state_machine.setup_latex_preamble()
-    sage: latex.mathjax_avoid_list('tikzpicture')
 
 
 Sage example in fsm-in-sage.tex, line 888::

@@ -1,9 +1,18 @@
-wcwidth
-=======
+wcwidth: Measures the displayed width of unicode strings in a terminal
+======================================================================
 
 Description
 -----------
 
-Measures number of Terminal column cells of wide-character codes
+Measures the displayed width of unicode strings in a terminal
 
-https://pypi.python.org/pypi/wcwidth
+License
+-------
+
+MIT
+
+Upstream Contact
+----------------
+
+https://pypi.org/project/wcwidth/
+

@@ -1,5 +1,5 @@
-pyzmq
-=====
+pyzmq: Python bindings for the zeromq networking library
+========================================================
 
 Description
 -----------

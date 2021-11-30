@@ -418,7 +418,7 @@ IPythonのクイック レファレンスガイドを見たければ， ``%quick
 =====================
 
 処理中に何かまずいことが起きると，Pythonはふつう『例外』(exception)を発生し，その例外を引き起こした原因を教えてくれることもある．
-よくお目にかかることになるのは， ``NameError`` や ``ValueError`` といった名称の例外だ(Pythonレファレンスマニュアル [Py]_ に例外名の包括的なリストがある)．
+よくお目にかかることになるのは， ``NameError`` や ``ValueError`` といった名称の例外だ(Pythonライブラリーリファレンス [PyLR]_ に例外名の包括的なリストがある)．
 実例を見てみよう:
 
 ::
@@ -442,7 +442,7 @@ IPythonのクイック レファレンスガイドを見たければ， ``%quick
     Automatic pdb calling has been turned ON
     sage: EllipticCurve([1,infinity])
     ---------------------------------------------------------------------------
-    <type 'exceptions.TypeError'>             Traceback (most recent call last)
+    <class 'exceptions.TypeError'>             Traceback (most recent call last)
     ...
 
     ipdb>
@@ -542,7 +542,7 @@ Sageの特長の一つは，総合的なヘルプ機能の装備である．
     sage: V = QQ^3
     sage: V.coordinates?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <bound method FreeModule_ambient_field.coordinates of Vector
     space of dimension 3 over Rational Field>
     Namespace:      Interactive

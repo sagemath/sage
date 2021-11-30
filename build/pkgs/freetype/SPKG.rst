@@ -1,5 +1,5 @@
-FreeType
-========
+freetype: A free, high-quality, and portable font engine
+========================================================
 
 Description
 -----------

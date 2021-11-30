@@ -1,5 +1,5 @@
-pandocfilters
-=============
+pandocfilters: A Python module for writing pandoc filters
+=========================================================
 
 Description
 -----------

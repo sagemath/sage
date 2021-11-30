@@ -149,7 +149,6 @@ class AutomatonGenerators(object):
                          initial_states=[z],
                          final_states=[o])
 
-
     def AnyWord(self, input_alphabet):
         r"""
         Return an automaton recognizing any word of the given
@@ -1026,7 +1025,7 @@ class TransducerGenerators(object):
             sage: G = transducers.GrayCode()
             sage: G
             Transducer with 3 states
-            sage: for v in srange(0, 10):
+            sage: for v in srange(10):
             ....:     print("{} {}".format(v, G(v.digits(base=2))))
             0 []
             1 [1]

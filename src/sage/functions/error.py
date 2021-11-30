@@ -44,11 +44,12 @@ from sage.structure.all import parent as s_parent
 from sage.symbolic.function import BuiltinFunction
 from sage.libs.mpmath import utils as mpmath_utils
 from sage.symbolic.expression import Expression
-from sage.functions.all import sqrt, exp
+from sage.functions.all import exp
+from sage.misc.functional import sqrt
 from sage.symbolic.constants import pi
 from sage.rings.rational import Rational
 from sage.rings.infinity import unsigned_infinity
-from sage.libs.pynac.pynac import I
+from sage.symbolic.expression import I
 
 class Function_erf(BuiltinFunction):
     r"""

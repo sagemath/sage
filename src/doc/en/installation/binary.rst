@@ -36,9 +36,6 @@ Not sure what to download? Just follow these steps.
 Linux
 -----
 
-Make sure that you have an SSL library installed
-(OpenSSL recommended).
-
 It is highly recommended that you have LaTeX installed. If you want
 to view animations, you should install either ImageMagick or ffmpeg.
 ImageMagick or dvipng is also used for displaying some LaTeX output
@@ -87,24 +84,27 @@ installation.
 macOS
 -----
 
-On macOS there are three possible binaries for each version. They can
-be recognized by their suffixes:
+On macOS there are two possible binaries for each version. They can be
+recognized by their suffixes, but their actual contents are identical.
 
 - ``tar.bz2``: a binary tarball
 - ``dmg``: a compressed image of the binary
-- ``app.dmg``: a compressed image of a full macOS application (with
-  shortcuts)
 
-This section explains how to install from ``dmg`` or ``app.dmg``. For
-the installation of the binary tarball ``tar.bz2`` just follow the steps
+This section explains how to install from ``dmg``. For the
+installation of the binary tarball ``tar.bz2`` just follow the steps
 of the Linux installation.
 
-After downloading the file, double click on the dmg file to mount it which will
-take some time.  Then drag the folder ``SageMath`` that just appeared to
-``/Applications/``. If you did download the app, an icon should have appeared
-on your desktop. Simply use it. In both situations you might want to have
-shortcuts so that ``sage`` in the console simply works out of the box.  For
-that purpose, follows the steps at the end of the section "Linux".
+After downloading the file, double click on the dmg file to mount it,
+which will take some time.  Then drag the folder ``SageMath`` that
+just appeared to ``/Applications/``.  You might want to have shortcuts
+so that ``sage`` in the console simply works out of the box.  For that
+purpose, follows the steps at the end of the section "Linux".
+
+Alternative macOS binaries are available `here
+<https://github.com/3-manifolds/Sage_macOS/releases/>`_.  These
+have been signed and notarized, eliminating various errors caused by
+Apple's gatekeeper antimalware protections.
+
 
 Microsoft Windows (Cygwin)
 --------------------------

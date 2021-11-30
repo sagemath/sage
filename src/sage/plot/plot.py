@@ -6,7 +6,6 @@ rendering is done using the matplotlib Python library.
 
 The following graphics primitives are supported:
 
-
 -  :func:`~sage.plot.arrow.arrow` - an arrow from a min point to a max point.
 
 -  :func:`~sage.plot.circle.circle` - a circle with given radius
@@ -27,9 +26,7 @@ The following graphics primitives are supported:
 
 -  :func:`~sage.plot.polygon.polygon` - a filled polygon
 
-
 The following plotting functions are supported:
-
 
 -  :func:`plot` - plot of a function or other Sage object (e.g., elliptic
    curve).
@@ -74,16 +71,13 @@ The following plotting functions are supported:
 
    - :func:`list_plot_semilogx` and :func:`list_plot_semilogy`
 
-
 The following miscellaneous Graphics functions are included:
-
 
 -  :func:`~sage.plot.graphics.Graphics`
 
 -  :func:`~sage.plot.graphics.is_Graphics`
 
 -  :func:`~sage.plot.colors.hue`
-
 
 Type ``?`` after each primitive in Sage for help and examples.
 
@@ -148,7 +142,6 @@ both axes, even if it is quite close::
     g = plot(x**3, (x,1,10))
     sphinx_plot(g)
 
-
 When the labels have quite different orders of magnitude or are very
 large, scientific notation (the `e` notation for powers of ten) is used::
 
@@ -169,7 +162,6 @@ large, scientific notation (the `e` notation for powers of ten) is used::
 
     g = plot(x**2, (x,300,500))
     sphinx_plot(g)
-
 
 But you can fix your own tick labels, if you know what to expect and
 have a preference::
@@ -588,7 +580,7 @@ from sage.misc.randstate import current_randstate #for plot adaptive refinement
 from math import sin, cos, pi, log, exp #for polar_plot and log scaling
 
 from sage.ext.fast_eval import fast_float, is_fast_float
-from sage.symbolic.expression import Expression
+from sage.structure.element import Expression
 from sage.misc.decorators import options
 
 from .graphics import Graphics
@@ -756,7 +748,6 @@ def SelectiveFormatter(formatter, skip_values):
 
     return _SelectiveFormatterClass(formatter, skip_values)
 
-
 def xydata_from_point_list(points):
     r"""
     Return two lists (xdata, ydata), each coerced to a list of floats,
@@ -821,7 +812,6 @@ def xydata_from_point_list(points):
                 ydata.append(float(y))
     return xdata, ydata
 
-
 @options(alpha=1, thickness=1, fill=False, fillcolor='automatic', fillalpha=0.5, plot_points=200,
          adaptive_tolerance=0.01, adaptive_recursion=5, detect_poles=False, exclude=None, legend_label=None,
          __original_opts=True, aspect_ratio='automatic')
@@ -848,24 +838,24 @@ def plot(funcs, *args, **kwds):
 
     PLOT OPTIONS:
 
-    - ``plot_points`` - (default: 200) the minimal number of plot points.
+    - ``plot_points`` -- (default: `200`); the minimal number of plot points.
 
-    - ``adaptive_recursion`` - (default: 5) how many levels of recursion to go
+    - ``adaptive_recursion`` -- (default: `5`); how many levels of recursion to go
       before giving up when doing adaptive refinement.  Setting this to 0
       disables adaptive refinement.
 
-    - ``adaptive_tolerance`` - (default: 0.01) how large a difference should be
+    - ``adaptive_tolerance`` -- (default: `0.01`); how large a difference should be
       before the adaptive refinement code considers it significant.  See the
       documentation further below for more information, starting at "the
       algorithm used to insert".
 
-    - ``base`` - (default: 10) the base of the logarithm if
+    - ``base`` -- (default: `10`); the base of the logarithm if
       a logarithmic scale is set. This must be greater than 1. The base
       can be also given as a list or tuple ``(basex, basey)``.
       ``basex`` sets the base of the logarithm along the horizontal
       axis and ``basey`` sets the base along the vertical axis.
 
-    - ``scale`` -- (default: ``"linear"``) string. The scale of the axes.
+    - ``scale`` -- string (default: ``"linear"``); scale of the axes.
       Possible values are ``"linear"``, ``"loglog"``, ``"semilogx"``,
       ``"semilogy"``.
 
@@ -878,26 +868,26 @@ def plot(funcs, *args, **kwds):
       to logarithmic scale. The ``"linear"`` scale is the default value
       when :class:`~sage.plot.graphics.Graphics` is initialized.
 
-    - ``xmin`` - starting x value in the rendered figure. This parameter is
+    - ``xmin`` -- starting x value in the rendered figure. This parameter is
       passed directly to the ``show`` procedure and it could be overwritten.
 
-    - ``xmax`` - ending x value in the rendered figure. This parameter is passed
+    - ``xmax`` -- ending x value in the rendered figure. This parameter is passed
       directly to the ``show`` procedure and it could be overwritten.
 
-    - ``ymin`` - starting y value in the rendered figure. This parameter is
+    - ``ymin`` -- starting y value in the rendered figure. This parameter is
       passed directly to the ``show`` procedure and it could be overwritten.
 
-    - ``ymax`` - ending y value in the rendered figure. This parameter is passed
+    - ``ymax`` -- ending y value in the rendered figure. This parameter is passed
       directly to the ``show`` procedure and it could be overwritten.
 
-    - ``detect_poles`` - (Default: False) If set to True poles are detected.
+    - ``detect_poles`` -- (default: ``False``) If set to ``True`` poles are detected.
       If set to "show" vertical asymptotes are drawn.
 
-    - ``legend_label`` - a (TeX) string serving as the label for `X` in the legend.
+    - ``legend_label`` -- a (TeX) string serving as the label for `X` in the legend.
       If `X` is a list, then this option can be a single string, or a list or dictionary
       with strings as entries/values. If a dictionary, then keys are taken from ``range(len(X))``.
 
-    .. note::
+    .. NOTE::
 
         - If the ``scale`` is ``"linear"``, then irrespective of what
           ``base`` is set to, it will default to 10 and will remain unused.
@@ -954,13 +944,13 @@ def plot(funcs, *args, **kwds):
 
     INPUT:
 
-    - ``alpha`` - How transparent the line is
+    - ``alpha`` -- how transparent the line is
 
-    - ``thickness`` - How thick the line is
+    - ``thickness`` -- how thick the line is
 
-    - ``rgbcolor`` - The color as an RGB tuple
+    - ``rgbcolor`` -- the color as an RGB tuple
 
-    - ``hue`` - The color given as a hue
+    - ``hue`` -- the color given as a hue
 
     LINE OPTIONS:
 
@@ -1021,9 +1011,9 @@ def plot(funcs, *args, **kwds):
 
     FILLING OPTIONS:
 
-    - ``fill`` - (Default: False) One of:
+    - ``fill`` - (default: ``False``) One of:
 
-      - "axis" or True: Fill the area between the function and the x-axis.
+      - "axis" or ``True``: Fill the area between the function and the x-axis.
 
       - "min": Fill the area between the function and its minimal value.
 
@@ -1040,7 +1030,7 @@ def plot(funcs, *args, **kwds):
         the j-th function in the list.  (But if ``d[i] == j``: Fill the area
         between the i-th function in the list and the horizontal line y = j.)
 
-    - ``fillalpha`` - (default: 0.5) How transparent the fill is.
+    - ``fillalpha`` - (default: `0.5`) How transparent the fill is.
       A number between 0 and 1.
 
     MATPLOTLIB STYLE SHEET OPTION:
@@ -1509,7 +1499,6 @@ def plot(funcs, *args, **kwds):
         sphinx_plot(g)
         set_verbose(0)
 
-
     Plotting the real cube root function for negative input requires avoiding
     the complex numbers one would usually get.  The easiest way is to use
     :class:`real_nth_root(x, n)<sage.functions.other.Function_real_nth_root>` ::
@@ -1541,7 +1530,6 @@ def plot(funcs, *args, **kwds):
     .. PLOT::
 
         sphinx_plot(plot(lambda x : RR(x).nth_root(3), (x,-1, 1)))
-
 
     We can detect the poles of a function::
 
@@ -1600,7 +1588,6 @@ def plot(funcs, *args, **kwds):
         p4 = plot([f1, f2], (x,-pi, pi), fill=[x/3, 0], fillcolor=['grey'], color=['red', 'blue'])
         g = graphics_array([[p1, p2], [p3, p4]])
         sphinx_plot(g, frame=True, axes=False)
-
 
     A example about the growth of prime numbers::
 
@@ -1966,7 +1953,6 @@ def plot(funcs, *args, **kwds):
     if kwds.get('parametric',False) and is_Vector(funcs):
         funcs = tuple(funcs)
 
-
     if hasattr(funcs, 'plot'):
         G = funcs.plot(*args, **original_opts)
 
@@ -2013,7 +1999,6 @@ def plot(funcs, *args, **kwds):
         G.show()
     return G
 
-
 def _plot(funcs, xrange, parametric=False,
               polar=False, fill=False, label='', randomize=True, **options):
     """
@@ -2021,15 +2006,15 @@ def _plot(funcs, xrange, parametric=False,
 
     INPUT:
 
-    - ``funcs`` - function or list of functions to be plotted
-    - ``xrange`` - two or three tuple of [input variable], min and max
-    - ``parametric`` - (default: False) a boolean for whether
+    - ``funcs`` -- function or list of functions to be plotted
+    - ``xrange`` -- two or three tuple of [input variable], min and max
+    - ``parametric`` -- boolean (default: ``False``); whether
       this is a parametric plot
-    - ``polar`` - (default: False) a boolean for whether
+    - ``polar`` -- boolean (default: ``False``); whether
       this is a polar plot
-    - ``fill`` - (default: False) an input for whether
+    - ``fill`` -- boolean (default: ``False``); whether
       this plot is filled
-    - ``randomize`` - (default: True) a boolean for whether
+    - ``randomize`` -- boolean (default: ``True``); whether
       to use random plot points
 
     The following option is deprecated in favor of ``legend_label``:
@@ -2040,9 +2025,7 @@ def _plot(funcs, xrange, parametric=False,
     are required (see the example below) which are normally passed
     through the options decorator to :func:`plot`.
 
-    OUTPUT:
-
-    - A ``Graphics`` object
+    OUTPUT: a ``Graphics`` object
 
     EXAMPLES::
 
@@ -2305,22 +2288,19 @@ def _plot(funcs, xrange, parametric=False,
             log_initial_points = None
         else:
             log_initial_points = [log(x) for x in initial_points]
-        data = generate_plot_points(f_exp, log_xrange, plot_points,
-                                    adaptive_tolerance, adaptive_recursion,
-                                    randomize, log_initial_points)
-        average_distance_between_points = abs(log_xrange[1] - log_xrange[0])/plot_points
+        data, extra_excluded = generate_plot_points(
+            f_exp, log_xrange, plot_points,
+            adaptive_tolerance, adaptive_recursion,
+            randomize, log_initial_points,
+            excluded=True)
     else:
-        data = generate_plot_points(f, xrange, plot_points,
-                                    adaptive_tolerance, adaptive_recursion,
-                                    randomize, initial_points)
-        average_distance_between_points = abs(xrange[1] - xrange[0])/plot_points
+        data, extra_excluded = generate_plot_points(
+            f, xrange, plot_points,
+            adaptive_tolerance, adaptive_recursion,
+            randomize, initial_points,
+            excluded=True)
 
-    for i in range(len(data)-1):
-        # If the difference between consecutive x-values is more than
-        # 2 times the average difference between two consecutive plot points, then
-        # add an exclusion point.
-        if abs(data[i+1][0] - data[i][0]) > 2*average_distance_between_points:
-            excluded_points.append((data[i][0] + data[i+1][0])/2)
+    excluded_points += extra_excluded
 
     # If we did a change in variables, undo it now
     if is_log_scale:
@@ -2410,7 +2390,7 @@ def _plot(funcs, xrange, parametric=False,
     if excluded_points or detect_poles:
         start_index = 0
         # setup for pole detection
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         epsilon = 0.0001
         pole_options = {}
         pole_options['linestyle'] = '--'
@@ -2494,11 +2474,9 @@ def parametric_plot(funcs, *args, **kwargs):
 
     INPUT:
 
+    -  ``funcs`` -- 2 or 3-tuple of functions, or a vector of dimension 2 or 3.
 
-    -  ``funcs`` - 2 or 3-tuple of functions, or a vector of dimension 2 or 3.
-
-    -  ``other options`` - passed to :func:`plot` or :func:`~sage.plot.plot3d.parametric_plot3d.parametric_plot3d`
-
+    -  ``other options`` -- passed to :func:`plot` or :func:`~sage.plot.plot3d.parametric_plot3d.parametric_plot3d`
 
     EXAMPLES: We draw some 2d parametric plots.  Note that the default aspect ratio
     is 1, so that circles look like circles. ::
@@ -2627,7 +2605,6 @@ def parametric_plot(funcs, *args, **kwargs):
         sage: p = parametric_plot((x, x**2), (x, 1, 10))
         sage: p.show(scale='semilogy', aspect_ratio='automatic')
 
-
     TESTS::
 
         sage: parametric_plot((x, t^2), (x, -4, 4))
@@ -2703,7 +2680,8 @@ def polar_plot(funcs, *args, **kwds):
 
     INPUT:
 
-    - ``funcs`` - a function
+    - ``funcs`` -- a function
+
     - other options are passed to plot
 
     EXAMPLES:
@@ -3045,7 +3023,7 @@ def list_plot(data, plotjoined=False, **kwargs):
             list_data = list(data.items())
         return list_plot(list_data, plotjoined=plotjoined, **kwargs)
     try:
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         RDF(data[0])
         data = list(enumerate(data))
     except TypeError: # we can get this TypeError if the element is a list
@@ -3088,7 +3066,7 @@ def plot_loglog(funcs, *args, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: 10) the base of the logarithm. This must be
+    - ``base`` -- (default: `10`); the base of the logarithm. This must be
       greater than 1. The base can be also given as a list or tuple
       ``(basex, basey)``.  ``basex`` sets the base of the logarithm along the
       horizontal axis and ``basey`` sets the base along the vertical axis.
@@ -3138,7 +3116,7 @@ def plot_semilogx(funcs, *args, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: 10) the base of the logarithm. This must be
+    - ``base`` -- (default: `10`); the base of the logarithm. This must be
       greater than 1.
 
     - ``funcs`` -- any Sage object which is acceptable to the :func:`plot`.
@@ -3190,7 +3168,7 @@ def plot_semilogy(funcs, *args, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: 10) the base of the logarithm. This must be
+    - ``base`` -- (default: `10`); the base of the logarithm. This must be
       greater than 1.
 
     - ``funcs`` -- any Sage object which is acceptable to the :func:`plot`.
@@ -3228,13 +3206,12 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: 10) the base of the logarithm. This must be
+    - ``base`` -- (default: `10`); the base of the logarithm. This must be
       greater than 1. The base can be also given as a list or tuple
       ``(basex, basey)``.  ``basex`` sets the base of the logarithm along the
       horizontal axis and ``basey`` sets the base along the vertical axis.
 
     For all other inputs, look at the documentation of :func:`list_plot`.
-
 
     EXAMPLES::
 
@@ -3295,7 +3272,7 @@ def list_plot_semilogx(data, plotjoined=False, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: 10) the base of the logarithm. This must be
+    - ``base`` -- (default: `10`); the base of the logarithm. This must be
       greater than 1.
 
     For all other inputs, look at the documentation of :func:`list_plot`.
@@ -3350,7 +3327,7 @@ def list_plot_semilogy(data, plotjoined=False, **kwds):
 
     INPUT:
 
-    - ``base`` -- (default: 10) the base of the logarithm. This must be
+    - ``base`` -- (default: `10`); the base of the logarithm. This must be
       greater than 1.
 
     For all other inputs, look at the documentation of :func:`list_plot`.
@@ -3400,7 +3377,6 @@ def list_plot_semilogy(data, plotjoined=False, **kwds):
     """
     return list_plot(data, plotjoined=plotjoined, scale='semilogy', **kwds)
 
-
 def to_float_list(v):
     """
     Given a list or tuple or iterable v, coerce each element of v to a
@@ -3414,7 +3390,6 @@ def to_float_list(v):
     """
     return [float(x) for x in v]
 
-
 def reshape(v, n, m):
     """
     Helper function for creating graphics arrays.
@@ -3425,13 +3400,11 @@ def reshape(v, n, m):
 
     INPUT:
 
-    -  ``v`` - a list of lists or tuples
+    -  ``v`` -- a list of lists or tuples
 
-    -  ``n, m`` - integers
+    -  ``n, m`` -- integers
 
-    OUTPUT:
-
-    A list of lists of graphics objects
+    OUTPUT: a list of lists of graphics objects
 
     EXAMPLES::
 
@@ -3499,11 +3472,11 @@ def graphics_array(array, nrows=None, ncols=None):
       if necessary. If only one is specified, the other is chosen
       automatically.
 
-    OUTPUT:
+    OUTPUT: an instance of :class:`~sage.plot.multigraphics.GraphicsArray`
 
-    - instance of :class:`~sage.plot.multigraphics.GraphicsArray`
+    EXAMPLES:
 
-    EXAMPLES: Make some plots of `\sin` functions::
+    Make some plots of `\sin` functions::
 
         sage: f(x) = sin(x)
         sage: g(x) = sin(2*x)
@@ -3674,9 +3647,7 @@ def multi_graphics(graphics_list):
         this corresponds to the default position
         ``(left, bottom, width, height) = (0.125, 0.11, 0.775, 0.77)``
 
-    OUTPUT:
-
-    - instance of :class:`~sage.plot.multigraphics.MultiGraphics`
+    OUTPUT: an instance of :class:`~sage.plot.multigraphics.MultiGraphics`
 
     EXAMPLES:
 
@@ -3762,35 +3733,38 @@ def minmax_data(xdata, ydata, dict=False):
     else:
         return xmin, xmax, ymin, ymax
 
-
-def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01, adaptive_recursion=5, level=0):
+def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
+                        adaptive_recursion=5, level=0, *, excluded=False):
     r"""
     The adaptive refinement algorithm for plotting a function ``f``. See
     the docstring for plot for a description of the algorithm.
 
     INPUT:
 
+    - ``f`` -- a function of one variable
 
-    -  ``f`` - a function of one variable
+    - ``p1, p2`` -- two points to refine between
 
-    -  ``p1, p2`` - two points to refine between
+    - ``adaptive_recursion`` -- (default: `5`); how many
+      levels of recursion to go before giving up when doing adaptive
+      refinement. Setting this to 0 disables adaptive refinement.
 
-    -  ``adaptive_recursion`` - (default: 5) how many
-       levels of recursion to go before giving up when doing adaptive
-       refinement. Setting this to 0 disables adaptive refinement.
+    - ``adaptive_tolerance`` -- (default: `0.01`); how large
+      a relative difference should be before the adaptive refinement
+      code considers it significant; see documentation for generate_plot_points
+      for more information.  See the documentation for :func:`plot` for more
+      information on how the adaptive refinement algorithm works.
 
-    -  ``adaptive_tolerance`` - (default: 0.01) how large
-       a relative difference should be before the adaptive refinement
-       code considers it significant; see documentation for generate_plot_points
-       for more information.  See the documentation for :func:`plot` for more
-       information on how the adaptive refinement algorithm works.
+    - ``excluded`` -- (default: ``False``); also return locations where it has been
+      discovered that the function is not defined
+      (y-value will be ``'NaN'`` in this case)
 
     OUTPUT:
 
-
-    -  ``list`` - a list of points to insert between ``p1`` and
-       ``p2`` to get a better linear approximation between them
-
+    A list of points to insert between ``p1`` and
+    ``p2`` to get a better linear approximation between them.
+    If ``excluded``, also x-values for which the calculation failed are given
+    with ``'NaN'`` as y-value.
 
     TESTS::
 
@@ -3815,6 +3789,14 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01, adaptive_recursion=5
         79
         sage: n3 = len(adaptive_refinement(f, (0,0), (pi,0), adaptive_tolerance=0.001)); n3
         26
+
+    Exclusion points will be added if ``excluded`` is set::
+
+        sage: f(x) = 1/x
+        sage: adaptive_refinement(f, (-1, -1), (3, 1/3), adaptive_recursion=2, excluded=False)
+        [(1.0, 1.0), (2.0, 0.5)]
+        sage: adaptive_refinement(f, (-1, -1), (3, 1/3), adaptive_recursion=2, excluded=True)
+        [(0.0, 'NaN'), (1.0, 1.0), (2.0, 0.5)]
     """
     if level >= adaptive_recursion:
         return []
@@ -3827,11 +3809,15 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01, adaptive_recursion=5
         if str(y) in ['nan', 'NaN', 'inf', '-inf']:
             sage.misc.verbose.verbose("%s\nUnable to compute f(%s)"%(msg, x),1)
             # give up for this branch
+            if excluded:
+                return [(x, 'NaN')]
             return []
 
     except (ZeroDivisionError, TypeError, ValueError, OverflowError) as msg:
         sage.misc.verbose.verbose("%s\nUnable to compute f(%s)"%(msg, x), 1)
         # give up for this branch
+        if excluded:
+            return [(x, 'NaN')]
         return []
 
     # this distance calculation is not perfect.
@@ -3839,17 +3825,20 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01, adaptive_recursion=5
         return adaptive_refinement(f, p1, (x, y),
                     adaptive_tolerance=adaptive_tolerance,
                     adaptive_recursion=adaptive_recursion,
-                    level=level+1) \
+                    level=level+1,
+                    excluded=excluded) \
                     + [(x, y)] + \
             adaptive_refinement(f, (x, y), p2,
                     adaptive_tolerance=adaptive_tolerance,
                     adaptive_recursion=adaptive_recursion,
-                    level=level+1)
+                    level=level+1,
+                    excluded=excluded)
     else:
         return []
 
-
-def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adaptive_recursion=5, randomize=True, initial_points=None):
+def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
+                         adaptive_recursion=5, randomize=True,
+                         initial_points=None, *, excluded=False):
     r"""
     Calculate plot points for a function f in the interval xrange.  The
     adaptive refinement algorithm is also automatically invoked with a
@@ -3857,30 +3846,36 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adap
 
     INPUT:
 
-    - ``f`` - a function of one variable
+    - ``f`` -- a function of one variable
 
-    - ``p1, p2`` - two points to refine between
+    - ``p1, p2`` -- two points to refine between
 
-    - ``plot_points`` - (default: 5) the minimal number of plot points. (Note
+    - ``plot_points`` -- (default: `5`); the minimal number of plot points. (Note
       however that in any actual plot a number is passed to this, with default
       value 200.)
 
-    - ``adaptive_recursion`` - (default: 5) how many levels of recursion to go
+    - ``adaptive_recursion`` -- (default: `5`); how many levels of recursion to go
       before giving up when doing adaptive refinement.  Setting this to 0
       disables adaptive refinement.
 
-    - ``adaptive_tolerance`` - (default: 0.01) how large the relative difference
+    - ``adaptive_tolerance`` -- (default: `0.01`); how large the relative difference
       should be before the adaptive refinement code considers it significant.  If
       the actual difference is greater than adaptive_tolerance*delta, where delta
       is the initial subinterval size for the given xrange and plot_points, then
       the algorithm will consider it significant.
 
-    - ``initial_points`` - (default: None) a list of points that should be evaluated.
+    - ``initial_points`` -- (default: ``None``); a list of x-values that should be evaluated.
+
+    - ``excluded`` -- (default: ``False``); add a list of discovered x-values, for
+      which ``f`` is not defined
 
     OUTPUT:
 
     - a list of points (x, f(x)) in the interval xrange, which approximate
       the function f.
+
+    - if ``excluded`` a tuple consisting of the above and a list of x-values
+      at which ``f`` is not defined
 
     TESTS::
 
@@ -3924,30 +3919,39 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adap
 
         sage: [len(generate_plot_points(f, (-pi, pi), plot_points=16, adaptive_recursion=i, randomize=False)) for i in [5, 10, 15]]
         [97, 499, 2681]
+
+    Excluded x-values will be added, if ``exclusion`` is set::
+
+        sage: generate_plot_points(log, (0, 1), plot_points=2, adaptive_recursion=0)
+        [(1.0, 0.0)]
+        sage: generate_plot_points(log, (0, 1), plot_points=2, adaptive_recursion=0, excluded=True)
+        ([(1.0, 0.0)], [0.0])
     """
     from sage.plot.misc import setup_for_eval_on_grid
     ignore, ranges = setup_for_eval_on_grid([], [xrange], plot_points)
     xmin, xmax, delta = ranges[0]
-    data = srange(*ranges[0], include_endpoint=True)
+    x_values = srange(*ranges[0], include_endpoint=True)
 
     random = current_randstate().python_random().random
 
-    for i in range(len(data)):
-        xi = data[i]
+    for i in range(len(x_values)):
+        xi = x_values[i]
         # Slightly randomize the interior sample points if
         # randomize is true
         if randomize and i > 0 and i < plot_points-1:
             xi += delta*(random() - 0.5)
-            data[i] = xi
+            x_values[i] = xi
 
     # add initial points
     if isinstance(initial_points, list):
-        data = sorted(data + initial_points)
+        x_values = sorted(x_values + initial_points)
+
+    data = [None]*len(x_values)
 
     exceptions = 0
     exception_indices = []
-    for i in range(len(data)):
-        xi = data[i]
+    for i in range(len(x_values)):
+        xi = x_values[i]
 
         try:
             data[i] = (float(xi), float(f(xi)))
@@ -3997,6 +4001,7 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adap
                 exception_indices.append(i)
 
     data = [data[i] for i in range(len(data)) if i not in exception_indices]
+    excluded_points = [x_values[i] for i in exception_indices]
 
     # calls adaptive refinement
     i, j = 0, 0
@@ -4004,15 +4009,21 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01, adap
     adaptive_recursion = int(adaptive_recursion)
 
     while i < len(data) - 1:
-       for p in adaptive_refinement(f, data[i], data[i+1],
+        for p in adaptive_refinement(f, data[i], data[i+1],
                                      adaptive_tolerance=adaptive_tolerance,
-                                     adaptive_recursion=adaptive_recursion):
-            data.insert(i+1, p)
-            i += 1
-       i += 1
+                                     adaptive_recursion=adaptive_recursion,
+                                     excluded=True):
+            if p[1] == "NaN":
+                excluded_points.append(p[0])
+            else:
+                data.insert(i+1, p)
+                i += 1
+        i += 1
 
     if (len(data) == 0 and exceptions > 0) or exceptions > 10:
         sage.misc.verbose.verbose("WARNING: When plotting, failed to evaluate function at %s points." % exceptions, level=0)
         sage.misc.verbose.verbose("Last error message: '%s'" % msg, level=0)
 
+    if excluded:
+        return data, excluded_points
     return data

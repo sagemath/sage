@@ -1,5 +1,5 @@
-perl_term_readline_gnu
-======================
+perl_term_readline_gnu: Perl extension for the GNU Readline/History libraries
+=============================================================================
 
 Description
 -----------

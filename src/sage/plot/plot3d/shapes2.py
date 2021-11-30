@@ -225,6 +225,19 @@ def bezier3d(path, **options):
         sage: curve = bezier3d(path, thickness=5, color='blue')
         sage: curve
         Graphics3d Object
+
+    TESTS:
+
+    Check for :trac:`31640`::
+
+        sage: p2d = [[(3,0.0),(3,0.13),(2,0.2),(2,0.3)], [(2.7,0.4),(2.6,0.5),(2.5,0.5)], [(2.3,0.5),(2.2,0.4),(2.1,0.3)]]
+        sage: bp = bezier_path(p2d)
+        sage: bp.plot3d()
+        Graphics3d Object
+
+        sage: p3d = p3d = [[(3,0,0),(3,0.1,0),(2.9,0.2,0),(2.8,0.3,0)], [(2.7,0.4,0),(2,0.5,0),(2.5,0.5,0)], [(2.3,0.5,0),(2.2,0.4,0),(2.1,0.3,0)]]
+        sage: bezier3d(p3d)
+        Graphics3d Object
     """
     from . import parametric_plot3d as P3D
     from sage.modules.free_module_element import vector
@@ -247,7 +260,7 @@ def bezier3d(path, **options):
             G += P3D.parametric_plot3d(list(B), (0, 1), color=options['color'], aspect_ratio=options['aspect_ratio'], thickness=options['thickness'], opacity=options['opacity'])
         else:
             G += line3d([p0,curve[0]], color=options['color'], thickness=options['thickness'], opacity=options['opacity'])
-        p0 = curve[-1]
+        p0 = vector(curve[-1])
     return G
 
 @rename_keyword(alpha='opacity')

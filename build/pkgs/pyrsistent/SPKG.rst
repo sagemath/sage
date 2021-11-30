@@ -1,5 +1,5 @@
-pyrsistent
-==========
+pyrsistent: Persistent data structures in Python
+================================================
 
 Description
 -----------
@@ -25,7 +25,6 @@ Dependencies
 - Setuptools
 - hypothesis
 - memory-profiler
-- psutil
 - pyperform
 - pytest
 - Sphinx

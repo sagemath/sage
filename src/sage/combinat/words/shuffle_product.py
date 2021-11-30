@@ -31,7 +31,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
-    def __init__(self, w1, w2):
+    def __init__(self, w1, w2, check=True):
         r"""
         The shuffle product of the two words ``w1`` and ``w2``.
 
@@ -54,6 +54,11 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
         all `w(I)` with `I` ranging over the `a`-element subsets of
         `\{1, 2, \cdots, a+b\}`.
 
+        INPUT:
+
+        - ``check`` -- boolean (default ``True``) whether to check that
+          all words in the shuffle product belong to the correct parent
+
         EXAMPLES::
 
             sage: from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
@@ -73,9 +78,17 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
             sage: s = ShuffleProduct_w1w2(W([1,4,3]),W([]))
             sage: sorted(s)
             [word: 143]
+
+        TESTS::
+
+            sage: W = Words([1,2,3,4])
+            sage: s = ShuffleProduct_w1w2(W([1,2]), W([3,4]), check=False)
+            sage: len(list(s))
+            6
         """
         self._w1 = w1
         self._w2 = w2
+        self._check = bool(check)
         Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def __repr__(self):
@@ -160,8 +173,9 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
             sage: S.cardinality()
             6
         """
-        return binomial(self._w1.length() + self._w2.length(),
-                        self._w1.length())
+        len_w1 = self._w1.length()
+        len_w2 = self._w2.length()
+        return binomial(len_w1 + len_w2, len_w1)
 
     def _proc(self, vect):
         """
@@ -215,8 +229,8 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
                 i2 += 1
                 res.append(self._w2[i2])
         try:
-            return self._w1.parent()(res)
-        except ValueError:
+            return self._w1.parent()(res, check=self._check)
+        except (ValueError, TypeError):
             # Special situation: the parent of w1 is too
             # restrictive to be cast on res.
             if isinstance(self._w1, Composition):
@@ -246,7 +260,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
 
 
 class ShuffleProduct_shifted(ShuffleProduct_w1w2):
-    def __init__(self, w1, w2):
+    def __init__(self, w1, w2, check=True):
         """
         Shifted shuffle product of ``w1`` with ``w2``.
 
@@ -257,6 +271,11 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
         Note that this class is meant to be used for words; it
         misbehaves when ``w1`` is a permutation or composition.
 
+        INPUT:
+
+        - ``check`` -- boolean (default ``True``) whether to check that
+          all words in the shuffle product belong to the correct parent
+
         EXAMPLES::
 
             sage: from sage.combinat.words.shuffle_product import ShuffleProduct_shifted
@@ -264,10 +283,17 @@ class ShuffleProduct_shifted(ShuffleProduct_w1w2):
             sage: S = ShuffleProduct_shifted(w,u)
             sage: S == loads(dumps(S))
             True
+
+        TESTS::
+
+            sage: w, u = Word([1,2]), Word([3,4])
+            sage: S = ShuffleProduct_shifted(w, u, check=False)
+            sage: len(list(S))
+            6
         """
         shift = w1.length()
-        shifted_w2 = w1.parent()([x + shift for x in w2])
-        ShuffleProduct_w1w2.__init__(self, w1, shifted_w2)
+        shifted_w2 = w1.parent()([x + shift for x in w2], check=check)
+        ShuffleProduct_w1w2.__init__(self, w1, shifted_w2, check)
 
     def __repr__(self):
         """

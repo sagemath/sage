@@ -34,6 +34,7 @@ import sage.groups.generic as generic
 from . import ell_point
 from sage.arith.all import gcd, lcm, binomial
 from sage.misc.cachefunc import cached_method
+from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 
 import sage.plot.all as plot
 
@@ -294,7 +295,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: k = GF(next_prime(7^5))
             sage: E = EllipticCurve(k,[2,4])
-            sage: P = E.random_element(); P # random
+            sage: P = E.random_element(); P  # random
             (16740 : 12486 : 1)
             sage: type(P)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
@@ -305,7 +306,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: k.<a> = GF(7^5)
             sage: E = EllipticCurve(k,[2,4])
-            sage: P = E.random_element(); P
+            sage: P = E.random_element(); P  # random
             (5*a^4 + 3*a^3 + 2*a^2 + a + 4 : 2*a^4 + 3*a^3 + 4*a^2 + a + 5 : 1)
             sage: type(P)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
@@ -316,7 +317,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: k.<a> = GF(2^5)
             sage: E = EllipticCurve(k,[a^2,a,1,a+1,1])
-            sage: P = E.random_element(); P
+            sage: P = E.random_element();P  # random
             (a^4 + a : a^4 + a^3 + a^2 : 1)
             sage: type(P)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
@@ -326,10 +327,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         Ensure that the entire point set is reachable::
 
             sage: E = EllipticCurve(GF(11), [2,1])
-            sage: len(set(E.random_element() for _ in range(100)))
-            16
-            sage: E.cardinality()
-            16
+            sage: S = set()
+            sage: while len(S) < E.cardinality():
+            ....:     S.add(E.random_element())
 
         TESTS:
 
@@ -719,6 +719,13 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         Return points which generate the abelian group of points on
         this elliptic curve.
 
+        The algorithm involves factoring the group order of ``self``,
+        but is otherwise (randomized) polynomial-time.
+
+        (The points returned by this function are not guaranteed to be
+        the same each time, although they should remain fixed within a
+        single run of Sage unless :meth:`abelian_group` is called.)
+
         OUTPUT: a tuple of points on the curve.
 
         - if the group is trivial: an empty tuple.
@@ -734,8 +741,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             guaranteed that the group is the cartesian product of the 2
             cyclic groups `\langle P \rangle` and `\langle Q \rangle`.
             In other words, the order of `Q` is not as small as possible.
-            If you really need to know the group structure, use
-            :meth:`abelian_group`.
+            If you really need a basis (rather than just a generating set)
+            of the group, use :meth:`abelian_group`.
 
         EXAMPLES::
 
@@ -755,10 +762,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: E.abelian_group()
             Additive abelian group isomorphic to Z/22 + Z/2 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 2*x + 5 over Finite Field of size 41
-            sage: E.abelian_group().gens()
-            ((30 : 13 : 1), (23 : 0 : 1))
-            sage: E.gens()
-            ((30 : 13 : 1), (23 : 0 : 1))
+            sage: ab_gens = E.abelian_group().gens()
+            sage: ab_gens == E.gens()
+            True
             sage: E.gens()[0].order()
             22
             sage: E.gens()[1].order()
@@ -777,22 +783,29 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.gens()
             ()
 
-        This works over larger finite fields where :meth:abelian_group may be
-        too expensive::
+        This works over larger finite fields where :meth:`abelian_group`
+        may be too expensive::
 
             sage: k.<a> = GF(5^60)
             sage: E = EllipticCurve([a, a])
             sage: len(E.gens())
             2
             sage: E.cardinality()
-            867361737988403547207212930746733987710588
-            sage: E.gens()[0].order()
-            433680868994201773603606465373366993855294
-            sage: E.gens()[1].order()
-            433680868994201773603606465373366993855294
+            867361737988403547206134229616487867594472
+            sage: a = E.gens()[0].order(); a # random
+            433680868994201773603067114808243933797236
+            sage: b = E.gens()[1].order(); b # random
+            30977204928157269543076222486303138128374
+            sage: lcm(a,b)
+            433680868994201773603067114808243933797236
         """
-        G = self.__pari__().ellgroup(flag=1)
-        return tuple(self.point(list(pt)) for pt in G[2])
+        card, ords, pts = self.__pari__().ellgroup(flag=1)
+        if not hasattr(self, '_order'):
+            self._order = ZZ(card)
+        pts = tuple(self.point(list(P)) for P in pts)
+        if len(pts) >= 1:
+            pts[0]._order = ZZ(ords[0]) # PARI documentation: "P is of order d_1"
+        return pts
 
     def __iter__(self):
         """
@@ -840,46 +853,45 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         return self.points()[n]
 
     @cached_method
-    def abelian_group(self, debug=False):
+    def abelian_group(self):
         r"""
         Return the abelian group structure of the group of points on this
         elliptic curve.
 
-        .. warning::
-
-           The algorithm is definitely *not* intended for use with
-           *large* finite fields! The factorization of the orders of
-           elements must be feasible. Also, baby-step-giant-step
-           methods are used which have space and time requirements
-           which are `O(\sqrt{q})`.
-
         .. SEEALSO::
 
             If you do not need the complete abelian group structure but
-            only generators of the group, use :meth:`gens` which is
-            much faster.
+            only generators of the group, use :meth:`gens` which can
+            be much faster in some cases.
 
-        Also, the algorithm uses random points on the curve and hence the
-        generators are likely to differ from one run to another; but the
-        group is cached so the generators will not change in any one run of
-        Sage.
-
-        INPUT:
-
-
-        -  ``debug`` - (default: False): if True, print
-           debugging messages
+        This method relies on :meth:`gens`, which uses random points on the
+        curve and hence the generators are likely to differ from one run to
+        another. However, the group is cached, so the generators will not
+        change in any one run of Sage.
 
         OUTPUT:
 
-        - an abelian group
+        - an :class:`AdditiveAbelianGroupWrapper` object encapsulating the
+          abelian group of rational points on this elliptic curve
 
-        - tuple of images of each of the generators of the abelian
-          group as points on this curve
+        ALGORITHM:
+
+        We first call :meth:`gens` to obtain a generating set `(P,Q)`.
+        Letting `P` denote the point of larger order `n_1`, we extend `P`
+        to a basis `(P,Q')` by computing a scalar `x` such that `Q'=Q-[x]P`
+        has order `n_2=\#E/n_1`. Finding `x` involves a (typically easy)
+        discrete-logarithm computation.
+
+        The complexity of the algorithm is the cost of factoring the group
+        order, plus `\Theta(\sqrt{\ell})` for each prime `\ell` such that
+        the rational `\ell^\infty`-torsion of ``self`` is isomorphic to
+        `\ZZ/\ell^r\times\ZZ/\ell^s` with `r>s>0`, times a polynomial in
+        the logarithm of the base-field size.
 
         AUTHORS:
 
-        - John Cremona
+        - John Cremona: original implementation
+        - Lorenz Panny (2021): current implementation
 
         EXAMPLES::
 
@@ -941,178 +953,33 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             (Multiplicative Abelian group isomorphic to C50067594 x C2,
             ((3152*ibar + 7679 : 7330*ibar + 7913 : 1), (8466*ibar + 1770 : 0 : 1)))
         """
-        k = self.base_field()
-        q = k.order()
 
-        bounds = Hasse_bounds(q)
-        lower, upper = bounds
-        if debug:
-            print("Lower and upper bounds on group order: [",lower,",",upper,"]")
+        gens = self.gens()
+        assert len(gens) <= 2
 
-        # Before computing the group structure we compute the
-        # cardinality.  This makes the code simpler and also makes
-        # computation of orders of points much faster.
-        N = self.cardinality()
-        plist = N.prime_factors()
-        if debug:
-            print("Curve cardinality:", N)
+        if len(gens) == 2:
 
-        # At all stages the current subgroup is generated by P1, P2 with
-        # orders n1,n2 which are disjoint.  We stop when n1*n2 == N
-        P1 = self(0)
-        P2 = self(0)
-        n1 = Integer(1)
-        n2 = Integer(1)
-        P1._order = n1
-        P2._order = n2
-        npts = 0
+            P, Q = gens
+            n = self.cardinality()      # cached
+            n1 = P.order()              # cached
+            n2 = n//n1
+            assert not n1 * Q           # PARI should guarantee this
 
-        if debug:
-            print("About to start generating random points")
+            k = n1.prime_to_m_part(n2)
+            Q *= k                      # don't need; kill that part
+            nQ = n2 * generic.order_from_multiple(n2*Q, n1//k//n2)
 
-        while n1*n2 != N:
-            if debug:
-                print("Getting a new random point")
-            Q = self.random_point()
-            while Q.is_zero():
-                Q = self.random_point()
-            npts += 1
-            if debug:
-                print("Q = ", Q, ": Order(Q) = ", Q.order())
+            S = n//nQ * P
+            T = n2 * Q
+            S.set_order(nQ//n2)         # for .discrete_log()
+            x = S.discrete_log(T)
+            Q -= x * n1//nQ * P
 
-            Q1 = n1 * Q
+            Q.set_order(n2)             # verifies n2*Q == 0
+            gens = P, Q
 
-            if Q1.is_zero() and npts >= 10:  # then P1,n1 will not change but we may increase n2
-                if debug:
-                    print("Case 2: n2 may increase")
-                n1a = 1
-                n1b = n1
-                P1a = P1
-                n1a = n1.prime_to_m_part(N//n1)
-                n1b = n1//n1a
-                Q = n1a*Q       # has order | n1b
-                P1a = n1a*P1    # has order = n1b
-                if debug:
-                    print("n1a=", n1a)
-                a = None
-                for m in n1b.divisors():
-                    try:
-                        a = generic.bsgs(m*P1a,m*Q,(0,(n1b//m)-1),operation='+')
-                        break
-                    except ValueError:
-                        pass
-                assert a is not None
-                a *= (m*n1a)
-                if debug:
-                    print("linear relation gives m=", m, ", a=", a)
-                if debug:
-                    assert m * Q == a * P1
-                if m>1:  # else Q is in <P1>
-                    Q = Q - (a // m) * P1  # has order m and is disjoint from P1
-                    if debug:
-                        assert Q.order() == m
-                    Q._order = m
-                    if n2 == 1:  # this is our first nontrivial P2
-                        P2 = Q
-                        n2 = m
-                        if debug:
-                            print("Adding second generator ",P2," of order ",n2)
-                            print("Subgroup order now ",n1*n2,"=",n1,"*",n2)
-                    else:     # we must merge P2 and Q:
-                        oldn2 = n2  # holds old value
-                        P2, n2 = generic.merge_points((P2, n2), (Q, m),
-                                                      operation='+',
-                                                      check=debug)
-                        if debug:
-                            assert P2.order() == n2
-                        P2._order = n2
-                        if debug:
-                            if n2>oldn2:
-                                print("Replacing second generator by ",P2,end="")
-                                print(" of order ",n2, "  gaining index ",n2//oldn2)
-                                print("Subgroup order now ",n1*n2,"=",n1,"*",n2)
-            elif not Q1.is_zero():  # Q1 nonzero: n1 will increase
-                if debug:
-                    print("Case 1: n1 may increase")
-                oldn1 = n1
-                if n2>1:
-                    P3=(n1//n2)*P1  # so P2,P3 are a basis for n2-torsion
-                    if debug:
-                        assert P3.order() == n2
-                    P3._order=n2
-                    if debug:
-                        print("storing generator ",P3," of ",n2,"-torsion")
-                m = generic.order_from_multiple(Q,N,plist,operation='+', check=debug)
-                P1,n1=generic.merge_points((P1,n1),(Q,m), check=debug)
-                if debug:
-                    assert P1.order() == n1
-                P1._order=n1
-                if debug:
-                    print("Replacing first  generator by ",P1," of order ",end="")
-                    print(n1,", gaining index ",n1//oldn1)
-                    print("Subgroup order now ",n1*n2,"=",n1,"*",n2)
+        orders = [T.order() for T in gens]  # cached
 
-                # Now replace P2 by a point of order n2 s.t. it and
-                # (n1//n2)*P1 are still a basis for n2-torsion:
-                if n2>1:
-                    a,m = generic.linear_relation(P1,P3,operation='+')
-                    if debug:
-                        print("linear relation gives m=",m,", a=",a)
-                    P3=P3-(a//m)*P1
-                    if debug:
-                        assert P3.order() == m
-                    P3._order = m
-                    if debug:
-                        print("First  P2 component =", P3)
-                    if m==n2:
-                        P2=P3
-                    else:
-                        a,m = generic.linear_relation(P1,P2,operation='+')
-                        if debug:
-                            print("linear relation gives m=", m, ", a=", a)
-                        P2 = P2 - (a // m) * P1
-                        if debug:
-                            assert P2.order() == m
-                        P2._order = m
-                        if debug:
-                            print("Second  P2 component =", P2)
-                        P2,n2=generic.merge_points((P2,n2),(P3,m), check=debug)
-                        if debug:
-                            assert P2.order() == n2
-                        P2._order = n2
-                        if debug:
-                            print("Combined P2 component =", P2)
-
-            if debug:
-                if P1.order()!=n1:
-                    print("Generator P1 = ",P1," has order ",P1.order(),end="")
-                    print(" and not ",n1)
-                    raise ValueError
-                if P2.order()!=n2:
-                    print("Generator P2 = ",P2," has order ",P2.order())
-                    print(" and not ", n2)
-                    raise ValueError
-                if n2>1:
-                    if generic.linear_relation(P1,P2,operation='+')[1]!=n2:
-                        print("Generators not independent!")
-                        raise ValueError
-                print("Generators: P1 = ",P1," of order ",n1,end="")
-                print(", P2 = ",P2," of order ",n2)
-                print("Subgroup order is now ",n1*n2,"=",n1,"*",n2)
-
-        # Finished: record group order, structure and generators
-
-        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
-        self._order = n1 * n2
-        if n1 == 1:
-            return AdditiveAbelianGroupWrapper(self.point_homset(), [], [])
-        elif n2 == 1:
-            gens = (P1,)
-            orders = (n1,)
-        else:
-            gens = (P1, P2)
-            orders = (n1, n2)
-        # Cache these gens as self.gens()
         self.gens.set_cache(gens)
         return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
 
@@ -1420,15 +1287,90 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
                 raise ValueError('Value %s illegal (multiple of random point not the identity)' % value)
         self._order = value
 
+# dict to hold precomputed coefficient vectors of supersingular j values (excluding 0, 1728):
 
-def supersingular_j_polynomial(p):
+supersingular_j_polynomials = {}
+
+def fill_ss_j_dict():
     r"""
-    Return a polynomial whose roots are the supersingular `j`-invariants
-    in characteristic `p`, other than 0, 1728.
+    Fill the global cache of supersingular j-_polynomials.
+
+    This function does nothing except the first time it is called,
+    when it fills ``supersingular_j_polynomials`` with precomputed
+    values for `p<300`.  Setting the values this way avoids start-up
+    costs.
+
+    """
+    global supersingular_j_polynomials
+    if not supersingular_j_polynomials:
+        supersingular_j_polynomials[13] = [8, 1]
+        supersingular_j_polynomials[17] = [9, 1]
+        supersingular_j_polynomials[19] = [12, 1]
+        supersingular_j_polynomials[23] = [4, 1]
+        supersingular_j_polynomials[29] = [21, 2, 1]
+        supersingular_j_polynomials[31] = [8, 25, 1]
+        supersingular_j_polynomials[37] = [11, 5, 23, 1]
+        supersingular_j_polynomials[41] = [18, 10, 19, 1]
+        supersingular_j_polynomials[43] = [32, 11, 21, 1]
+        supersingular_j_polynomials[47] = [35, 33, 31, 1]
+        supersingular_j_polynomials[53] = [24, 9, 30, 7, 1]
+        supersingular_j_polynomials[59] = [39, 31, 35, 39, 1]
+        supersingular_j_polynomials[61] = [60, 21, 27, 8, 60, 1]
+        supersingular_j_polynomials[67] = [8, 36, 47, 4, 53, 1]
+        supersingular_j_polynomials[71] = [18, 54, 28, 33, 1, 1]
+        supersingular_j_polynomials[73] = [7, 39, 38, 9, 68, 60, 1]
+        supersingular_j_polynomials[79] = [10, 25, 1, 63, 57, 55, 1]
+        supersingular_j_polynomials[83] = [43, 72, 81, 81, 62, 11, 1]
+        supersingular_j_polynomials[89] = [42, 79, 23, 22, 37, 86, 60, 1]
+        supersingular_j_polynomials[97] = [19, 28, 3, 72, 2, 96, 10, 60, 1]
+        supersingular_j_polynomials[101] = [9, 76, 45, 79, 1, 68, 87, 60, 1]
+        supersingular_j_polynomials[103] = [64, 15, 24, 58, 70, 83, 84, 100, 1]
+        supersingular_j_polynomials[107] = [6, 18, 72, 59, 43, 19, 17, 68, 1]
+        supersingular_j_polynomials[109] = [107, 22, 39, 83, 30, 34, 108, 104, 60, 1]
+        supersingular_j_polynomials[113] = [86, 71, 75, 6, 47, 97, 100, 4, 60, 1]
+        supersingular_j_polynomials[127] = [32, 31, 5, 50, 115, 122, 114, 67, 38, 35, 1]
+        supersingular_j_polynomials[131] = [65, 64, 10, 34, 129, 35, 94, 127, 7, 7, 1]
+        supersingular_j_polynomials[137] = [104, 83, 3, 82, 112, 23, 77, 135, 18, 50, 60, 1]
+        supersingular_j_polynomials[139] = [87, 79, 109, 21, 138, 9, 104, 130, 61, 118, 90, 1]
+        supersingular_j_polynomials[149] = [135, 55, 80, 86, 87, 74, 32, 60, 130, 80, 146, 60, 1]
+        supersingular_j_polynomials[151] = [94, 125, 8, 6, 93, 21, 114, 80, 107, 58, 42, 18, 1]
+        supersingular_j_polynomials[157] = [14, 95, 22, 58, 110, 23, 71, 51, 47, 5, 147, 59, 60, 1]
+        supersingular_j_polynomials[163] = [102, 26, 74, 95, 112, 151, 98, 107, 27, 37, 25, 111, 109, 1]
+        supersingular_j_polynomials[167] = [14, 9, 27, 109, 97, 55, 51, 74, 145, 125, 36, 113, 89, 1]
+        supersingular_j_polynomials[173] = [152, 73, 56, 12, 18, 96, 98, 49, 30, 43, 52, 79, 163, 60, 1]
+        supersingular_j_polynomials[179] = [110, 51, 3, 94, 123, 90, 156, 90, 88, 119, 158, 27, 71, 29, 1]
+        supersingular_j_polynomials[181] = [7, 65, 77, 29, 139, 34, 65, 84, 164, 73, 51, 136, 7, 141, 60, 1]
+        supersingular_j_polynomials[191] = [173, 140, 144, 3, 135, 80, 182, 84, 93, 75, 83, 17, 22, 42, 160, 1]
+        supersingular_j_polynomials[193] = [23, 48, 26, 15, 108, 141, 124, 44, 132, 49, 72, 173, 126, 101, 22, 60, 1]
+        supersingular_j_polynomials[197] = [14, 111, 64, 170, 193, 32, 124, 91, 112, 163, 14, 112, 167, 191, 183, 60, 1]
+        supersingular_j_polynomials[199] = [125, 72, 65, 30, 63, 45, 10, 177, 91, 102, 28, 27, 5, 150, 51, 128, 1]
+        supersingular_j_polynomials[211] = [27, 137, 128, 90, 102, 141, 5, 77, 131, 144, 83, 108, 23, 105, 98, 13, 80, 1]
+        supersingular_j_polynomials[223] = [56, 183, 46, 133, 191, 94, 20, 8, 92, 100, 57, 200, 166, 67, 59, 218, 28, 32, 1]
+        supersingular_j_polynomials[227] = [79, 192, 142, 66, 11, 114, 100, 208, 57, 147, 32, 5, 144, 93, 185, 147, 92, 16, 1]
+        supersingular_j_polynomials[229] = [22, 55, 182, 130, 228, 172, 63, 25, 108, 99, 100, 101, 220, 111, 205, 199, 91, 163, 60, 1]
+        supersingular_j_polynomials[233] = [101, 148, 85, 113, 226, 68, 71, 103, 61, 44, 173, 175, 5, 225, 227, 99, 146, 170, 60, 1]
+        supersingular_j_polynomials[239] = [225, 81, 47, 26, 133, 182, 238, 2, 144, 154, 234, 178, 165, 130, 35, 61, 144, 112, 207, 1]
+        supersingular_j_polynomials[241] = [224, 51, 227, 139, 134, 186, 187, 152, 161, 175, 213, 59, 105, 88, 87, 124, 202, 40, 15, 60, 1]
+        supersingular_j_polynomials[251] = [30, 183, 80, 127, 40, 56, 230, 168, 192, 48, 226, 61, 214, 54, 165, 147, 105, 88, 38, 171, 1]
+        supersingular_j_polynomials[257] = [148, 201, 140, 146, 169, 147, 220, 4, 205, 224, 35, 42, 198, 97, 127, 7, 110, 229, 118, 202, 60, 1]
+        supersingular_j_polynomials[263] = [245, 126, 72, 213, 14, 64, 152, 83, 169, 114, 9, 128, 138, 231, 103, 85, 114, 211, 173, 249, 135, 1]
+        supersingular_j_polynomials[269] = [159, 32, 69, 95, 201, 266, 190, 176, 76, 151, 212, 21, 106, 49, 263, 105, 136, 194, 215, 181, 237, 60, 1]
+        supersingular_j_polynomials[271] = [169, 87, 179, 109, 133, 101, 31, 167, 208, 99, 127, 120, 83, 62, 36, 23, 61, 50, 69, 263, 265, 111, 1]
+        supersingular_j_polynomials[277] = [251, 254, 171, 72, 190, 237, 12, 231, 123, 217, 263, 151, 270, 183, 29, 228, 85, 4, 67, 101, 29, 169, 60, 1]
+        supersingular_j_polynomials[281] = [230, 15, 146, 69, 41, 23, 142, 232, 18, 80, 58, 134, 270, 62, 272, 70, 247, 189, 118, 255, 274, 159, 60, 1]
+        supersingular_j_polynomials[283] = [212, 4, 42, 155, 38, 1, 270, 175, 172, 256, 264, 232, 50, 82, 244, 127, 148, 46, 249, 72, 59, 124, 75, 1]
+        supersingular_j_polynomials[293] = [264, 66, 165, 144, 243, 25, 163, 210, 18, 107, 160, 153, 70, 255, 91, 211, 22, 7, 256, 50, 150, 94, 225, 60, 1]
+
+def supersingular_j_polynomial(p, use_cache=True):
+    r"""
+    Return a polynomial whose roots are the supersingular
+    `j`-invariants in characteristic `p`, other than 0, 1728.
 
     INPUT:
 
     - `p` (integer) -- a prime number.
+
+    - `use_cache` (boolean, default ``True``) -- use cached coefficients if they exist
 
     ALGORITHM:
 
@@ -1439,6 +1381,11 @@ def supersingular_j_polynomial(p):
     we recover the polynomial (in variable ``j``) whose roots are the
     `j`-invariants.  Factors of `j` and `j-1728` are removed if
     present.
+
+    .. note::
+
+        The only point of the use_cache parameter is to allow checking
+        the precomputed coefficients.
 
     EXAMPLES::
 
@@ -1455,10 +1402,17 @@ def supersingular_j_polynomial(p):
 
     TESTS::
 
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import supersingular_j_polynomial
         sage: supersingular_j_polynomial(6)
         Traceback (most recent call last):
         ...
         ValueError: p (=6) should be a prime number
+
+    Check the cached values are correct::
+
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import supersingular_j_polynomial as ssjpol
+        sage: assert all(ssjpol(p,True) == ssjpol(p,False) for p in primes(300))
+
     """
     try:
         p = ZZ(p)
@@ -1470,7 +1424,12 @@ def supersingular_j_polynomial(p):
     J = polygen(GF(p),'j')
     if p<13:
         return J.parent().one()
-    from sage.misc.all import prod
+    if use_cache:
+        fill_ss_j_dict()
+        if p in supersingular_j_polynomials:
+            return J.parent()(supersingular_j_polynomials[p])
+
+    from sage.misc.misc_c import prod
     m=(p-1)//2
     X,T = PolynomialRing(GF(p),2,names=['X','T']).gens()
     H = sum(binomial(m, i) ** 2 * T ** i for i in range(m + 1))
@@ -1481,72 +1440,8 @@ def supersingular_j_polynomial(p):
         R = R // J
     if R(1728) == 0:
         R = R // (J - 1728)
+    supersingular_j_polynomials[p] = R.coefficients(sparse=False)
     return R
-
-# For p in [13..300] we have precomputed these polynomials and store
-# them (as lists of their coefficients in ZZ) in a dict:
-
-
-supersingular_j_polynomials = {}
-
-supersingular_j_polynomials[13] = [8, 1]
-supersingular_j_polynomials[17] = [9, 1]
-supersingular_j_polynomials[19] = [12, 1]
-supersingular_j_polynomials[23] = [4, 1]
-supersingular_j_polynomials[29] = [21, 2, 1]
-supersingular_j_polynomials[31] = [8, 25, 1]
-supersingular_j_polynomials[37] = [11, 5, 23, 1]
-supersingular_j_polynomials[41] = [18, 10, 19, 1]
-supersingular_j_polynomials[43] = [32, 11, 21, 1]
-supersingular_j_polynomials[47] = [35, 33, 31, 1]
-supersingular_j_polynomials[53] = [24, 9, 30, 7, 1]
-supersingular_j_polynomials[59] = [39, 31, 35, 39, 1]
-supersingular_j_polynomials[61] = [60, 21, 27, 8, 60, 1]
-supersingular_j_polynomials[67] = [8, 36, 47, 4, 53, 1]
-supersingular_j_polynomials[71] = [18, 54, 28, 33, 1, 1]
-supersingular_j_polynomials[73] = [7, 39, 38, 9, 68, 60, 1]
-supersingular_j_polynomials[79] = [10, 25, 1, 63, 57, 55, 1]
-supersingular_j_polynomials[83] = [43, 72, 81, 81, 62, 11, 1]
-supersingular_j_polynomials[89] = [42, 79, 23, 22, 37, 86, 60, 1]
-supersingular_j_polynomials[97] = [19, 28, 3, 72, 2, 96, 10, 60, 1]
-supersingular_j_polynomials[101] = [9, 76, 45, 79, 1, 68, 87, 60, 1]
-supersingular_j_polynomials[103] = [64, 15, 24, 58, 70, 83, 84, 100, 1]
-supersingular_j_polynomials[107] = [6, 18, 72, 59, 43, 19, 17, 68, 1]
-supersingular_j_polynomials[109] = [107, 22, 39, 83, 30, 34, 108, 104, 60, 1]
-supersingular_j_polynomials[113] = [86, 71, 75, 6, 47, 97, 100, 4, 60, 1]
-supersingular_j_polynomials[127] = [32, 31, 5, 50, 115, 122, 114, 67, 38, 35, 1]
-supersingular_j_polynomials[131] = [65, 64, 10, 34, 129, 35, 94, 127, 7, 7, 1]
-supersingular_j_polynomials[137] = [104, 83, 3, 82, 112, 23, 77, 135, 18, 50, 60, 1]
-supersingular_j_polynomials[139] = [87, 79, 109, 21, 138, 9, 104, 130, 61, 118, 90, 1]
-supersingular_j_polynomials[149] = [135, 55, 80, 86, 87, 74, 32, 60, 130, 80, 146, 60, 1]
-supersingular_j_polynomials[151] = [94, 125, 8, 6, 93, 21, 114, 80, 107, 58, 42, 18, 1]
-supersingular_j_polynomials[157] = [14, 95, 22, 58, 110, 23, 71, 51, 47, 5, 147, 59, 60, 1]
-supersingular_j_polynomials[163] = [102, 26, 74, 95, 112, 151, 98, 107, 27, 37, 25, 111, 109, 1]
-supersingular_j_polynomials[167] = [14, 9, 27, 109, 97, 55, 51, 74, 145, 125, 36, 113, 89, 1]
-supersingular_j_polynomials[173] = [152, 73, 56, 12, 18, 96, 98, 49, 30, 43, 52, 79, 163, 60, 1]
-supersingular_j_polynomials[179] = [110, 51, 3, 94, 123, 90, 156, 90, 88, 119, 158, 27, 71, 29, 1]
-supersingular_j_polynomials[181] = [7, 65, 77, 29, 139, 34, 65, 84, 164, 73, 51, 136, 7, 141, 60, 1]
-supersingular_j_polynomials[191] = [173, 140, 144, 3, 135, 80, 182, 84, 93, 75, 83, 17, 22, 42, 160, 1]
-supersingular_j_polynomials[193] = [23, 48, 26, 15, 108, 141, 124, 44, 132, 49, 72, 173, 126, 101, 22, 60, 1]
-supersingular_j_polynomials[197] = [14, 111, 64, 170, 193, 32, 124, 91, 112, 163, 14, 112, 167, 191, 183, 60, 1]
-supersingular_j_polynomials[199] = [125, 72, 65, 30, 63, 45, 10, 177, 91, 102, 28, 27, 5, 150, 51, 128, 1]
-supersingular_j_polynomials[211] = [27, 137, 128, 90, 102, 141, 5, 77, 131, 144, 83, 108, 23, 105, 98, 13, 80, 1]
-supersingular_j_polynomials[223] = [56, 183, 46, 133, 191, 94, 20, 8, 92, 100, 57, 200, 166, 67, 59, 218, 28, 32, 1]
-supersingular_j_polynomials[227] = [79, 192, 142, 66, 11, 114, 100, 208, 57, 147, 32, 5, 144, 93, 185, 147, 92, 16, 1]
-supersingular_j_polynomials[229] = [22, 55, 182, 130, 228, 172, 63, 25, 108, 99, 100, 101, 220, 111, 205, 199, 91, 163, 60, 1]
-supersingular_j_polynomials[233] = [101, 148, 85, 113, 226, 68, 71, 103, 61, 44, 173, 175, 5, 225, 227, 99, 146, 170, 60, 1]
-supersingular_j_polynomials[239] = [225, 81, 47, 26, 133, 182, 238, 2, 144, 154, 234, 178, 165, 130, 35, 61, 144, 112, 207, 1]
-supersingular_j_polynomials[241] = [224, 51, 227, 139, 134, 186, 187, 152, 161, 175, 213, 59, 105, 88, 87, 124, 202, 40, 15, 60, 1]
-supersingular_j_polynomials[251] = [30, 183, 80, 127, 40, 56, 230, 168, 192, 48, 226, 61, 214, 54, 165, 147, 105, 88, 38, 171, 1]
-supersingular_j_polynomials[257] = [148, 201, 140, 146, 169, 147, 220, 4, 205, 224, 35, 42, 198, 97, 127, 7, 110, 229, 118, 202, 60, 1]
-supersingular_j_polynomials[263] = [245, 126, 72, 213, 14, 64, 152, 83, 169, 114, 9, 128, 138, 231, 103, 85, 114, 211, 173, 249, 135, 1]
-supersingular_j_polynomials[269] = [159, 32, 69, 95, 201, 266, 190, 176, 76, 151, 212, 21, 106, 49, 263, 105, 136, 194, 215, 181, 237, 60, 1]
-supersingular_j_polynomials[271] = [169, 87, 179, 109, 133, 101, 31, 167, 208, 99, 127, 120, 83, 62, 36, 23, 61, 50, 69, 263, 265, 111, 1]
-supersingular_j_polynomials[277] = [251, 254, 171, 72, 190, 237, 12, 231, 123, 217, 263, 151, 270, 183, 29, 228, 85, 4, 67, 101, 29, 169, 60, 1]
-supersingular_j_polynomials[281] = [230, 15, 146, 69, 41, 23, 142, 232, 18, 80, 58, 134, 270, 62, 272, 70, 247, 189, 118, 255, 274, 159, 60, 1]
-supersingular_j_polynomials[283] = [212, 4, 42, 155, 38, 1, 270, 175, 172, 256, 264, 232, 50, 82, 244, 127, 148, 46, 249, 72, 59, 124, 75, 1]
-supersingular_j_polynomials[293] = [264, 66, 165, 144, 243, 25, 163, 210, 18, 107, 160, 153, 70, 255, 91, 211, 22, 7, 256, 50, 150, 94, 225, 60, 1]
-
 
 def is_j_supersingular(j, proof=True):
     r"""
@@ -1625,11 +1520,9 @@ def is_j_supersingular(j, proof=True):
 
     # if p occurs in the precomputed list, use that:
 
-    try:
-        coeffs = supersingular_j_polynomials[p]
-        return PolynomialRing(F,'x')(coeffs)(j).is_zero()
-    except KeyError:
-        pass
+    fill_ss_j_dict()
+    if p in supersingular_j_polynomials:
+        return supersingular_j_polynomial(p)(j).is_zero()
 
     # Over GF(p), supersingular elliptic curves have cardinality
     # exactly p+1, so we check some random points in order to detect

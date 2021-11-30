@@ -1,10 +1,8 @@
-nbformat
-========
+nbformat: Base implementation of the Jupyter notebook format
+============================================================
 
 Description
 -----------
-
-The Jupyter Notebook format
 
 This package contains the base implementation of the Jupyter Notebook
 format, and Python APIs for working with notebooks.

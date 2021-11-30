@@ -17,6 +17,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.categories.algebras import Algebras
 from sage.matrix.constructor import matrix
 from sage.sets.family import Family
+from sage.modules.with_basis.invariant import FiniteDimensionalInvariantModule
 
 
 class OrlikTeraoAlgebra(CombinatorialFreeModule):
@@ -513,3 +514,225 @@ class OrlikTeraoAlgebra(CombinatorialFreeModule):
         X = sorted(X, key=self._sorting.__getitem__)
         return R(matrix([V.echelon_coordinates(rep_vecs[x]) for x in X]).det())
 
+
+class OrlikTeraoInvariantAlgebra(FiniteDimensionalInvariantModule):
+    r"""
+    Give the invariant algebra of the Orlik-Terao algebra from the
+    action on `A(M)` which is induced from the ``action_on_groundset``.
+
+    INPUT:
+
+    - ``R`` -- the ring of coefficients
+    - ``M`` -- a matroid
+    - ``G`` -- a semigroup
+    - ``action_on_groundset`` -- a function defining the action of
+      ``G`` on the elements of the groundset of ``M`` default
+
+    OUTPUT:
+
+    - The invariant algebra of the Orlik-Terao algebra induced by
+      the action of ``action_on_groundset``
+
+    EXAMPLES:
+
+    Lets start with the action of `S_3` on the rank-`2` braid matroid::
+
+        sage: A = matrix([[1,1,0],[-1,0,1],[0,-1,-1]])
+        sage: M = Matroid(A)
+        sage: M.groundset()
+        frozenset({0, 1, 2})
+        sage: G = SymmetricGroup(3)
+
+    Calling elements ``g`` of ``G`` on an element `i` of `\{1,2,3\}`
+    defines the action we want, but since the groundset is `\{0,1,2\}`
+    we first add `1` and then subtract `1`::
+
+        sage: def on_groundset(g,x):
+        ....:     return g(x+1)-1
+
+    Now that we have defined an action we can create the invariant, and
+    get its basis::
+
+        sage: OTG = M.orlik_terao_algebra(QQ, invariant = (G, on_groundset))
+        sage: OTG.basis()
+        Finite family {0: B[0], 1: B[1]}
+        sage: [OTG.lift(b) for b in OTG.basis()]
+        [OT{}, OT{0} + OT{1} + OT{2}]
+
+    Since it is invariant, the action of any ``g`` in ``G`` is trivial::
+
+        sage: x = OTG.an_element(); x
+        2*B[0] + 2*B[1]
+        sage: g = G.an_element(); g
+        (2,3)
+        sage: g*x
+        2*B[0] + 2*B[1]
+
+        sage: x = OTG.random_element()
+        sage: g = G.random_element()
+        sage: g*x == x
+        True
+
+    The underlying ambient module is the Orlik-Terao algebra,
+    which is accessible via :meth:`ambient()`::
+
+        sage: M.orlik_terao_algebra(QQ) is OTG.ambient()
+        True
+
+    For a bigger example, here we will look at the rank-`3` braid matroid::
+
+        sage: A = matrix([[1,1,1,0,0,0],[-1,0,0,1,1,0],
+        ....:             [0,-1,0,-1,0,1],[0,0,-1,0,-1,-1]]); A
+        [ 1  1  1  0  0  0]
+        [-1  0  0  1  1  0]
+        [ 0 -1  0 -1  0  1]
+        [ 0  0 -1  0 -1 -1]
+        sage: M = Matroid(A); M.groundset()
+        frozenset({0, 1, 2, 3, 4, 5})
+        sage: G = SymmetricGroup(6)
+        sage: OTG = M.orlik_terao_algebra(QQ, invariant = (G, on_groundset))
+        sage: OTG.ambient()
+        Orlik-Terao algebra of Linear matroid of rank 3 on 6 elements represented over the Rational Field over Rational Field
+        sage: OTG.basis()
+        Finite family {0: B[0], 1: B[1]}
+        sage: [OTG.lift(b) for b in OTG.basis()]
+        [OT{}, OT{0} + OT{1} + OT{2} + OT{3} + OT{4} + OT{5}]
+
+    """
+    def __init__(self, R, M, G, action_on_groundset=None, *args, **kwargs):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,1,1,0,0,0],[-1,0,0,1,1,0],[0,-1,0,-1,0,1],
+            ....:             [0,0,-1,0,-1,-1]])
+            sage: M = Matroid(A);
+            sage: G = SymmetricGroup(6)
+            sage: def on_groundset(g,x): return g(x+1)-1
+            sage: import __main__; __main__.on_groundset = on_groundset
+            sage: OTG = M.orlik_terao_algebra(QQ, invariant = (G,on_groundset))
+            sage: TestSuite(OTG).run()
+
+        """
+        ordering = kwargs.pop('ordering', None)
+        OT = OrlikTeraoAlgebra(R, M, ordering)
+        self._ambient = OT
+
+        if action_on_groundset is None:
+
+            def action_on_groundset(g, x):
+                return g(x)
+
+        self._groundset_action = action_on_groundset
+
+        self._side = kwargs.pop('side', 'left')
+
+        # the action on the Orlik-Terao is not neccesarily by ring automorphim,
+        # so the best we can assume is a finite dimensional module with basis.
+        if 'category' in kwargs:
+            category = kwargs.pop('category')
+        else:
+            from sage.categories.modules import Modules
+            category = Modules(R).FiniteDimensional().WithBasis().Subobjects()
+
+        def action(g, m):
+            return OT.sum(c * self._basis_action(g, x)
+                          for x, c in m._monomial_coefficients.items())
+
+        self._action = action
+
+        max_deg = max([b.degree() for b in OT.basis()])
+        B = []
+        # compute invariant degree-by-degree
+        for d in range(max_deg+1):
+            OT_d = OT.homogeneous_component(d)
+            OTG_d = OT_d.invariant_module(G, action=action, category=category)
+            B += [OT_d.lift(OTG_d.lift(b)) for b in OTG_d.basis()]
+
+        from sage.modules.with_basis.subquotient import SubmoduleWithBasis
+        SubmoduleWithBasis.__init__(self, Family(B),
+                                    support_order=OT._compute_support_order(B),
+                                    ambient=OT,
+                                    unitriangular=False,
+                                    category=category,
+                                    *args, **kwargs)
+
+        self._semigroup = G
+
+    def _basis_action(self, g, f):
+        r"""
+        Let ``f`` be an n.b.c. set so that it indexes a basis
+        element of the ambient Orlik-Terao algebra of ``M``.
+
+        INPUT:
+
+        - ``g`` -- a group element
+        - ``f`` -- a ``frozenset`` representing an n.b.c. set
+
+        OUTPUT:
+
+        - ``x`` -- the result of the action of ``g`` on ``f`` inside
+          of the Orlik-Terao algebra
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,1,0],[-1,0,1],[0,-1,-1]])
+            sage: M = Matroid(A)
+            sage: M.groundset()
+            frozenset({0, 1, 2})
+            sage: G = SymmetricGroup(3)
+            sage: def on_groundset(g,x):
+            ....:     return g(x+1)-1
+            sage: OTG = M.orlik_terao_algebra(QQ, invariant=(G,on_groundset))
+            sage: def act(g):
+            ....:     a = OTG._basis_action(g,frozenset({0,1}))
+            ....:     b = OTG._basis_action(g,frozenset({0,2}))
+            ....:     return a,b
+            sage: [act(g) for g in G]
+            [(OT{0, 1}, OT{0, 2}),
+             (OT{0, 2}, -OT{0, 1} + OT{0, 2}),
+             (-OT{0, 1} + OT{0, 2}, OT{0, 1}),
+             (OT{0, 2}, OT{0, 1}),
+             (-OT{0, 1} + OT{0, 2}, OT{0, 2}),
+             (OT{0, 1}, -OT{0, 1} + OT{0, 2})]
+
+        We also check that the ordering is respected::
+
+            sage: fset = frozenset({1,2})
+            sage: OT1 = M.orlik_terao_algebra(QQ)
+            sage: OT1.subset_image(fset)
+            -OT{0, 1} + OT{0, 2}
+            sage: OT2 = M.orlik_terao_algebra(QQ,range(2,-1,-1))
+            sage: OT2.subset_image(fset)
+            OT{1, 2}
+
+            sage: OTG2 = M.orlik_terao_algebra(QQ,
+            ....:                              invariant=(G,on_groundset),
+            ....:                              ordering=range(2,-1,-1))
+            sage: g = G.an_element(); g
+            (2,3)
+
+        This choice of ``g`` fixes these elements::
+
+            sage: OTG._basis_action(g, fset)
+            -OT{0, 1} + OT{0, 2}
+            sage: OTG2._basis_action(g, fset)
+            OT{1, 2}
+
+        TESTS::
+
+            sage: [on_groundset(g, e) for e in M.groundset()]
+            [0, 2, 1]
+            sage: [OTG._groundset_action(g,e) for e in M.groundset()]
+            [0, 2, 1]
+            sage: [OTG2._groundset_action(g,e) for e in M.groundset()]
+            [0, 2, 1]
+        """
+
+        OT = self._ambient
+        if not f:
+            return OT(f)
+
+        fset = frozenset(self._groundset_action(g, e) for e in f)
+        return OT.subset_image(fset)

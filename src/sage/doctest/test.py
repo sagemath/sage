@@ -165,11 +165,13 @@ Test the ``--exitfirst`` option::
     ...
     1
 
-Test a timeout using the ``SAGE_TIMEOUT`` environment variable::
+Test a timeout using the ``SAGE_TIMEOUT`` environment variable.  Also set
+``CYSIGNALS_CRASH_NDEBUG`` to help ensure the test times out in a timely
+manner (:trac:`26912`)::
 
     sage: from copy import deepcopy
     sage: kwds2 = deepcopy(kwds)
-    sage: kwds2['env']['SAGE_TIMEOUT'] = "3"
+    sage: kwds2['env'].update({'SAGE_TIMEOUT': '3', 'CYSIGNALS_CRASH_NDEBUG': '1'})
     sage: subprocess.call(["sage", "-t", "--warn-long", "0", "--random-seed=0", "99seconds.rst"], **kwds2)  # long time
     Running doctests...
     Doctesting 1 file.
@@ -249,7 +251,7 @@ in max(60, 120 * 0.05) = 60 seconds::
     sage: os.kill(pid, signal.SIGQUIT) # long time; 65 seconds passed => dead
     Traceback (most recent call last):
     ...
-    OSError: ...
+    ProcessLookupError: ...
 
 Test a doctest failing with ``abort()``::
 
@@ -325,7 +327,7 @@ Test that ``sig_on_count`` is checked correctly::
 Test logfiles in serial and parallel mode (see :trac:`19271`)::
 
     sage: t = tmp_filename()
-    sage: subprocess.call(["sage", "-t", "--serial", "--warn-long", "0", "--random-seed=0", "simple_failure.rst", "--logfile", t], stdout=open(os.devnull, "w"), **kwds)  # long time
+    sage: subprocess.call(["sage", "-t", "--serial", "--warn-long", "0", "--random-seed=0", "--logfile", t, "simple_failure.rst"], stdout=open(os.devnull, "w"), **kwds)  # long time
     1
     sage: print(open(t).read())  # long time
     Running doctests...
@@ -348,7 +350,7 @@ Test logfiles in serial and parallel mode (see :trac:`19271`)::
     ----------------------------------------------------------------------
     ...
 
-    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "--random-seed=0", "simple_failure.rst", "--logfile", t], stdout=open(os.devnull, "w"), **kwds)  # long time
+    sage: subprocess.call(["sage", "-t", "--warn-long", "0", "--random-seed=0", "--logfile", t, "simple_failure.rst"], stdout=open(os.devnull, "w"), **kwds)  # long time
     1
     sage: print(open(t).read())  # long time
     Running doctests...
@@ -511,20 +513,6 @@ Test ``atexit`` support in the doctesting framework::
     ....: except OSError:
     ....:     pass
 
-Test the ``--memlimit`` option and ``# optional - memlimit``
-(but only on Linux). If this test fails, the memory needed to
-run it may have increased. Try increasing the limit. ::
-
-    sage: from platform import system
-    sage: ok = True
-    sage: from sage.cpython.string import bytes_to_str
-    sage: if system() == "Linux":
-    ....:     P = subprocess.Popen(["sage", "-t", "--warn-long", "0", "--random-seed=0", "--memlimit=2000", "memlimit.rst"], stdout=subprocess.PIPE, **kwds)
-    ....:     out, err = P.communicate()
-    ....:     ok = ("MemoryError: failed to allocate" in bytes_to_str(out))
-    sage: ok or out
-    True
-
 Test that random tests are reproducible::
 
     sage: subprocess.call(["sage", "-t", "--warn-long", "0", "--random-seed=0", "random_seed.rst"], **kwds)  # long time
@@ -558,5 +546,4 @@ Test that random tests are reproducible::
     ----------------------------------------------------------------------
     ...
     0
-
 """

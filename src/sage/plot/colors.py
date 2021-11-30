@@ -21,7 +21,7 @@ comprises the "official" W3C CSS3_ / SVG_ colors.
 For a list of color maps in Sage, evaluate::
 
     sage: sorted(colormaps)
-    [u'Accent', u'Blues', u'BrBG', ...]
+    ['Accent', 'Blues', 'BrBG', ...]
 
 These are imported from matplotlib's cm_ module.
 
@@ -290,15 +290,9 @@ def rgbcolor(c, space='rgb'):
         (0.25, 0.4, 0.9)
         sage: rgbcolor('purple')
         (0.5019607843137255, 0.0, 0.5019607843137255)
-        sage: rgbcolor(u'purple')
-        (0.5019607843137255, 0.0, 0.5019607843137255)
         sage: rgbcolor('#fa0')
         (1.0, 0.6666666666666666, 0.0)
-        sage: rgbcolor(u'#fa0')
-        (1.0, 0.6666666666666666, 0.0)
         sage: rgbcolor('#ffffff')
-        (1.0, 1.0, 1.0)
-        sage: rgbcolor(u'#ffffff')
         (1.0, 1.0, 1.0)
         sage: rgbcolor((1,1/2,1/3))
         (1.0, 0.5, 0.3333333333333333)
@@ -510,8 +504,7 @@ class Color(object):
         """
         if isinstance(right, Color):
             return self._rgb == right._rgb
-        else:
-            return False
+        return False
 
     def __ne__(self, right):
         """
@@ -810,14 +803,10 @@ class Color(object):
             ...
             ZeroDivisionError: float division by zero
 
-            sage: papayawhip / yellow  # py2
+            sage: papayawhip / yellow
             Traceback (most recent call last):
             ...
-            TypeError: float() argument must be a string or a number
-            sage: papayawhip / yellow  # py3
-            Traceback (most recent call last):
-            ...
-            TypeError: float() argument must be a string or a number, not 'Color'
+            TypeError: float() argument must be a string or a... number...
         """
         return self * (1 / float(right))
 
@@ -828,7 +817,7 @@ class Color(object):
         OUTPUT:
 
         - the integer `256^2 r_int + 256 g_int + b_int`, where `r_int`, `g_int`, and `b_int`
-          are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0] 
+          are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0]
           to the integer range 0, 1, ..., 255.
 
         EXAMPLES::
@@ -1119,7 +1108,7 @@ class ColorsDict(dict):
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'%s' has no attribute or colormap %s"%(type(self).__name__,name))
+            raise AttributeError("'%s' has no attribute or colormap %s" % (type(self).__name__, name))
 
     def __dir__(self):
         """
@@ -1140,7 +1129,9 @@ class ColorsDict(dict):
         methods = ['__dir__', '__getattr__']
         return dir(super(ColorsDict, self)) + methods + sorted(self)
 
+
 colors = ColorsDict()
+
 
 # Add convenient module-scope colors.  These are Color instances.
 for c in colors:
@@ -1232,15 +1223,10 @@ def float_to_html(r, g, b):
 
     TESTS::
 
-        sage: float_to_html((0.2, 0.6, 0.8))  # py2
+        sage: float_to_html((0.2, 0.6, 0.8))
         Traceback (most recent call last):
         ...
-        TypeError: float_to_html() takes exactly 3 arguments (1 given)
-
-        sage: float_to_html((0.2, 0.6, 0.8))  # py3
-        Traceback (most recent call last):
-        ...
-        TypeError: float_to_html() missing 2 required positional arguments: 'g' and 'b'
+        TypeError: ...float_to_html() missing 2 required positional arguments: 'g' and 'b'
     """
     return "#%06x" % float_to_integer(r, g, b)
 
@@ -1263,7 +1249,7 @@ def float_to_integer(r, g, b):
     OUTPUT:
 
     - the integer `256^2 r_int + 256 g_int + b_int`, where `r_int`, `g_int`, and `b_int`
-      are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0] 
+      are obtained from `r`, `g`, and `b` by converting from the real interval [0.0, 1.0]
       to the integer range 0, 1, ..., 255.
 
     EXAMPLES::
@@ -1278,15 +1264,10 @@ def float_to_integer(r, g, b):
 
     TESTS::
 
-        sage: float_to_integer((0.2, 0.6, 0.8))  # py2
+        sage: float_to_integer((0.2, 0.6, 0.8))
         Traceback (most recent call last):
         ...
-        TypeError: float_to_integer() takes exactly 3 arguments (1 given)
-
-        sage: float_to_integer((0.2, 0.6, 0.8))  # py3
-        Traceback (most recent call last):
-        ...
-        TypeError: float_to_integer() missing 2 required positional arguments: 'g' and 'b'
+        TypeError: ...float_to_integer() missing 2 required positional arguments: 'g' and 'b'
     """
     r, g, b = map(mod_one, (r, g, b))
     return int(r * 255) << 16 | int(g * 255) << 8 | int(b * 255)
@@ -1351,7 +1332,7 @@ def get_cmap(cmap):
     and color names.  For a list of map names, evaluate::
 
         sage: sorted(colormaps)
-        [u'Accent', u'Blues', ...]
+        ['Accent', 'Blues', ...]
 
     See :func:`rgbcolor` for valid list/tuple element formats.
 
@@ -1369,8 +1350,6 @@ def get_cmap(cmap):
 
         sage: from sage.plot.colors import get_cmap
         sage: get_cmap('jet')
-        <matplotlib.colors.LinearSegmentedColormap object at 0x...>
-        sage: get_cmap(u'jet')
         <matplotlib.colors.LinearSegmentedColormap object at 0x...>
         sage: get_cmap([(0,0,0), (0.5,0.5,0.5), (1,1,1)])
         <matplotlib.colors.ListedColormap object at 0x...>
@@ -1397,7 +1376,7 @@ def get_cmap(cmap):
         return cmap
 
     elif isinstance(cmap, str):
-        if not cmap in cm.datad:
+        if cmap not in cm.datad:
             raise RuntimeError("Color map %s not known (type import matplotlib.cm; matplotlib.cm.datad.keys() for valid names)" % cmap)
         return cm.__dict__[cmap]
 
@@ -1445,7 +1424,7 @@ class Colormaps(MutableMapping):
     For a list of map names, evaluate::
 
         sage: sorted(colormaps)
-        [u'Accent', u'Blues', ...]
+        ['Accent', 'Blues', ...]
     """
     def __init__(self):
         """
@@ -1630,7 +1609,7 @@ class Colormaps(MutableMapping):
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'%s' has no attribute or colormap %s"%(type(self).__name__,name))
+            raise AttributeError("'%s' has no attribute or colormap %s" % (type(self).__name__, name))
 
     def __repr__(self):
         """
@@ -1692,7 +1671,7 @@ class Colormaps(MutableMapping):
             sage: maps = Colormaps()
             sage: count = len(maps)
             sage: maps.popitem()  # random
-            (u'Spectral', <matplotlib.colors.LinearSegmentedColormap object at ...>)
+            ('Spectral', <matplotlib.colors.LinearSegmentedColormap object at ...>)
             sage: count - 1 == len(maps)
             True
         """

@@ -1,10 +1,10 @@
-TIDES
-=====
+tides: Integration of ODEs
+==========================
 
 Description
 -----------
 
-TIDES is a library for integration of ODE's with high precision.
+TIDES is a library for integration of ODEs with high precision.
 
 License
 -------

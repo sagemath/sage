@@ -169,12 +169,12 @@ class TensorFreeModule(FiniteRankFreeModule):
          [[1, 2, 3], [0, 1, 2], [-1, 0, 1]],
          [[2, 3, 4], [1, 2, 3], [0, 1, 2]]]
         sage: t.display(e)
-        t = e_0*e^0*e^1 + 2 e_0*e^0*e^2 - e_0*e^1*e^0 + e_0*e^1*e^2
-         - 2 e_0*e^2*e^0 - e_0*e^2*e^1 + e_1*e^0*e^0 + 2 e_1*e^0*e^1
-         + 3 e_1*e^0*e^2 + e_1*e^1*e^1 + 2 e_1*e^1*e^2 - e_1*e^2*e^0
-         + e_1*e^2*e^2 + 2 e_2*e^0*e^0 + 3 e_2*e^0*e^1 + 4 e_2*e^0*e^2
-         + e_2*e^1*e^0 + 2 e_2*e^1*e^1 + 3 e_2*e^1*e^2 + e_2*e^2*e^1
-         + 2 e_2*e^2*e^2
+        t = e_0⊗e^0⊗e^1 + 2 e_0⊗e^0⊗e^2 - e_0⊗e^1⊗e^0 + e_0⊗e^1⊗e^2
+         - 2 e_0⊗e^2⊗e^0 - e_0⊗e^2⊗e^1 + e_1⊗e^0⊗e^0 + 2 e_1⊗e^0⊗e^1
+         + 3 e_1⊗e^0⊗e^2 + e_1⊗e^1⊗e^1 + 2 e_1⊗e^1⊗e^2 - e_1⊗e^2⊗e^0
+         + e_1⊗e^2⊗e^2 + 2 e_2⊗e^0⊗e^0 + 3 e_2⊗e^0⊗e^1 + 4 e_2⊗e^0⊗e^2
+         + e_2⊗e^1⊗e^0 + 2 e_2⊗e^1⊗e^1 + 3 e_2⊗e^1⊗e^2 + e_2⊗e^2⊗e^1
+         + 2 e_2⊗e^2⊗e^2
 
     An alternative is to construct the tensor from an empty list of components
     and to set the nonzero components afterwards::
@@ -183,7 +183,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         sage: t.set_comp(e)[0,1,1] = -3
         sage: t.set_comp(e)[2,0,1] = 4
         sage: t.display(e)
-        t = -3 e_0*e^1*e^1 + 4 e_2*e^0*e^1
+        t = -3 e_0⊗e^1⊗e^1 + 4 e_2⊗e^0⊗e^1
 
     See the documentation of
     :class:`~sage.tensor.modules.free_module_tensor.FreeModuleTensor`
@@ -195,7 +195,7 @@ class TensorFreeModule(FiniteRankFreeModule):
         sage: t.set_comp(e)[0,1,1] = -3
         sage: t.set_comp(e)[2,0,1] = 4
         sage: t.display(e)  # notice that t^2_{10} has be set equal to t^2_{01} by symmetry
-        t = -3 e_0*e^1*e^1 + 4 e_2*e^0*e^1 + 4 e_2*e^1*e^0
+        t = -3 e_0⊗e^1⊗e^1 + 4 e_2⊗e^0⊗e^1 + 4 e_2⊗e^1⊗e^0
 
     The tensor modules over a given module `M` are unique::
 
@@ -227,13 +227,13 @@ class TensorFreeModule(FiniteRankFreeModule):
          Integer Ring
         sage: a[0,1], a[1,2] = 4, -3
         sage: a.display(e)
-        a = 4 e^0/\e^1 - 3 e^1/\e^2
+        a = 4 e^0∧e^1 - 3 e^1∧e^2
         sage: a.parent() is L2
         True
         sage: ta = T02(a) ; ta
         Type-(0,2) tensor a on the Rank-3 free module M over the Integer Ring
         sage: ta.display(e)
-        a = 4 e^0*e^1 - 4 e^1*e^0 - 3 e^1*e^2 + 3 e^2*e^1
+        a = 4 e^0⊗e^1 - 4 e^1⊗e^0 - 3 e^1⊗e^2 + 3 e^2⊗e^1
         sage: ta.symmetries() # the antisymmetry is of course preserved
         no symmetry;  antisymmetry: (0, 1)
 
@@ -349,9 +349,9 @@ class TensorFreeModule(FiniteRankFreeModule):
         sage: ta = T11(a) ; ta
         Type-(1,1) tensor on the Rank-3 free module M over the Integer Ring
         sage: ta.display(e)
-        e_0*e^0 - e_1*e^1 + e_2*e^2
+        e_0⊗e^0 - e_1⊗e^1 + e_2⊗e^2
         sage: a.display(e)
-        e_0*e^0 - e_1*e^1 + e_2*e^2
+        e_0⊗e^0 - e_1⊗e^1 + e_2⊗e^2
 
     Of course, there is no coercion in the reverse direction, since not
     every type-`(1,1)` tensor is invertible::
@@ -412,7 +412,7 @@ class TensorFreeModule(FiniteRankFreeModule):
             Type-(1,1) tensor t on the 2-dimensional vector space M over the
              Rational Field
             sage: t.display()
-            t = 2 e_0*e^0 + 1/2 e_1*e^0 - 3 e_1*e^1
+            t = 2 e_0⊗e^0 + 1/2 e_1⊗e^0 - 3 e_1⊗e^1
             sage: t.parent()
             Free module of type-(1,1) tensors on the 2-dimensional vector
              space M over the Rational Field
@@ -532,11 +532,11 @@ class TensorFreeModule(FiniteRankFreeModule):
             Type-(1,1) tensor on the 2-dimensional vector space M over the
              Rational Field
             sage: t.display()
-            1/2 e_0*e^0
+            1/2 e_0⊗e^0
             sage: t.parent() is T
             True
             sage: M.tensor_module(2,3)._an_element_().display()
-            1/2 e_0*e_0*e^0*e^0*e^0
+            1/2 e_0⊗e_0⊗e^0⊗e^0⊗e^0
 
         """
         resu = self.element_class(self._fmodule, self._tensor_type)

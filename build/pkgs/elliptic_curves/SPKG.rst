@@ -1,5 +1,5 @@
-elliptic_curves
-===============
+elliptic_curves: Databases of elliptic curves
+=============================================
 
 Description
 -----------

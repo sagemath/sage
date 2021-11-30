@@ -1,5 +1,5 @@
-pari_elldata
-============
+pari_nftables: PARI data package for number fields
+==================================================
 
 Description
 -----------

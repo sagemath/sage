@@ -42,6 +42,19 @@ cdef extern from "flint_wrap.h":
 
     ctypedef fmpz_preinvn_struct[1] fmpz_preinvn_t
 
+# flint/fmpz_mod.h:
+cdef extern from "flint_wrap.h":
+    ctypedef struct fmpz_mod_ctx_struct:
+        pass
+
+    ctypedef fmpz_mod_ctx_struct fmpz_mod_ctx_t[1]
+
+    ctypedef struct fmpz_mod_discrete_log_pohlig_hellman_entry_struct:
+        pass
+    ctypedef struct fmpz_mod_discrete_log_pohlig_hellman_struct:
+        pass
+    ctypedef fmpz_mod_discrete_log_pohlig_hellman_struct fmpz_mod_discrete_log_pohlig_hellman_t[1]
+
 # flint/fmpz_poly.h:
 cdef extern from "flint_wrap.h":
     ctypedef struct fmpz_poly_struct:
@@ -90,8 +103,33 @@ cdef extern from "flint_wrap.h":
 cdef extern from "flint_wrap.h":
     ctypedef struct fmpz_mod_poly_struct:
         pass
-
     ctypedef fmpz_mod_poly_struct fmpz_mod_poly_t[1]
+
+    ctypedef struct fmpz_mod_poly_res_struct:
+        pass
+    ctypedef fmpz_mod_poly_res_struct fmpz_mod_poly_res_t[1]
+
+    ctypedef struct fmpz_mod_poly_frobenius_powers_2exp_struct:
+        pass
+    ctypedef fmpz_mod_poly_frobenius_powers_2exp_struct fmpz_mod_poly_frobenius_powers_2exp_t[1]
+
+    ctypedef struct fmpz_mod_poly_frobenius_powers_struct:
+        pass
+    ctypedef fmpz_mod_poly_frobenius_powers_struct fmpz_mod_poly_frobenius_powers_t[1]
+
+    ctypedef struct fmpz_mod_poly_matrix_precompute_arg_t:
+        pass
+
+    ctypedef struct fmpz_mod_poly_compose_mod_precomp_preinv_arg_t:
+        pass
+
+    ctypedef struct fmpz_mod_poly_radix_struct:
+        pass
+    ctypedef fmpz_mod_poly_radix_struct fmpz_mod_poly_radix_t[1]
+
+    ctypedef struct fmpz_mod_berlekamp_massey_struct:
+        pass
+    ctypedef fmpz_mod_berlekamp_massey_struct fmpz_mod_berlekamp_massey_t[1]
 
 # flint/nmod_poly.h:
 cdef extern from "flint_wrap.h":

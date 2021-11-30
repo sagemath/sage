@@ -51,6 +51,7 @@ from sage.structure.parent import Parent
 from sage.categories.sets_cat import Sets
 
 from sage.combinat.combinat import CombinatorialObject
+from sage.structure.list_clone import ClonableElement
 from sage.combinat.words.alphabet import build_alphabet
 
 from sage.rings.all import Infinity
@@ -134,9 +135,9 @@ class AbstractLanguage(Parent):
             True
 
             sage: Words('abc').sortkey_letters
-            <bound method FiniteOrInfiniteWords._sortkey_trivial of ...>
+            <bound method AbstractLanguage._sortkey_trivial of ...>
             sage: Words('bac').sortkey_letters
-            <bound method FiniteOrInfiniteWords._sortkey_letters of ...>
+            <bound method AbstractLanguage._sortkey_letters of ...>
         """
         if isinstance(alphabet, (int, Integer)):
             from sage.sets.integer_range import IntegerRange
@@ -407,7 +408,7 @@ class FiniteWords(AbstractLanguage):
 
             sage: d = FiniteWords()._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             7
             sage: e = FiniteWords('abcdefg')._element_classes
@@ -829,7 +830,7 @@ class FiniteWords(AbstractLanguage):
         elif isinstance(data, tuple):
             w = self._element_classes['tuple'](self, data)
 
-        elif isinstance(data, CombinatorialObject):
+        elif isinstance(data, (CombinatorialObject, ClonableElement)):
             w = self._element_classes['list'](self, list(data))
 
         elif callable(data):
@@ -1346,7 +1347,7 @@ class InfiniteWords(AbstractLanguage):
 
             sage: d = InfiniteWords()._element_classes
             sage: type(d)
-            <... 'dict'>
+            <class 'dict'>
             sage: len(d)
             4
             sage: e = InfiniteWords('abcdefg')._element_classes
