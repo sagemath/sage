@@ -177,7 +177,6 @@ def _random_admissible_cone(ambient_dim):
 
     The result has all of the desired properties::
 
-        sage: set_random_seed()
         sage: from sage.geometry.cone_critical_angles import (
         ....:   _random_admissible_cone )
         sage: K = _random_admissible_cone(5)
@@ -190,7 +189,6 @@ def _random_admissible_cone(ambient_dim):
 
     Unless the ``ambient_dim`` argument is nonsense::
 
-        sage: set_random_seed()
         sage: from sage.geometry.cone_critical_angles import (
         ....:   _random_admissible_cone )
         sage: K = _random_admissible_cone(0)
@@ -353,7 +351,6 @@ def gevp_licis(G):
     All sets corresponding to the returned indices should be linearly
     independent::
 
-        sage: set_random_seed()
         sage: from sage.geometry.cone_critical_angles import gevp_licis
         sage: K = random_cone(max_rays=8)
         sage: G = matrix.column(K.rays())
@@ -594,7 +591,6 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     This function should return the same solutions (with zero included,
     of course) as the naive implementation even for random cones::
 
-        sage: set_random_seed()                                   # long time
         sage: from sage.geometry.cone_critical_angles import (    # long time
         ....:   _lists_equivalent,                                # long time
         ....:   _normalize_gevp_solution,                         # long time
@@ -630,7 +626,6 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     According to Proposition 7, the only eigenvalues that arise when
     either ``G`` or ``H`` is invertible are `-1`, `0`, and `1`::
 
-        sage: set_random_seed()                                   # long time
         sage: from sage.geometry.cone_critical_angles import (    # long time
         ....:   _random_admissible_cone,                          # long time
         ....:   gevp_licis,                                       # long time
@@ -732,7 +727,6 @@ def compute_gevp_M(gs, hs):
     6. Note that SageMath does (row,column) indexing but [Or2020]_
     does (column,row) indexing::
 
-        sage: set_random_seed()
         sage: from sage.geometry.cone_critical_angles import (
         ....:   _random_admissible_cone,
         ....:   compute_gevp_M,

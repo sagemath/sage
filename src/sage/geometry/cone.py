@@ -6274,7 +6274,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: expected = P.max_angle(Q)[0]                   # long time
             sage: bool(actual == expected)                       # long time
             True
-            sage: set_random_seed()                              # long time
             sage: (theta,u,v) = choice(gamma)                    # long time
             sage: u.norm() == 1                                  # long time
             True
@@ -6302,7 +6301,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         can raise an error if there are big eigenspaces, so we just
         punt in that case::
 
-            sage: set_random_seed()                                # long time
             sage: from sage.geometry.cone_critical_angles import ( # long time
             ....:   _is_critical,                                  # long time
             ....:   _random_admissible_cone )                      # long time
@@ -6404,7 +6402,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The maximal angle in a single ray is zero::
 
-            sage: set_random_seed()
             sage: K = random_cone(min_rays=1, max_rays=1, max_ambient_dim=5)
             sage: K.max_angle()[0]
             0
@@ -6458,7 +6455,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         When ``self`` and ``-other`` have nontrivial intersection, we
         expect the maximal angle to be `\pi`::
 
-            sage: set_random_seed()                                # long time
             sage: from sage.geometry.cone_critical_angles import ( # long time
             ....:   _random_admissible_cone )                      # long time
             sage: n = ZZ.random_element(1,3)                       # long time
