@@ -47,3 +47,7 @@ scripts =
     bin/sage-runtests
     bin/sage-venv-config
     bin/sage-version.sh
+
+[options.extras_require]
+normaliz = esyscmd(`sage-get-system-packages install-requires pynormaliz')
+polymake = esyscmd(`sage-get-system-packages install-requires jupymake')
