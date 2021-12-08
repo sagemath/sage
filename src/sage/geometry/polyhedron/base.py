@@ -4844,9 +4844,9 @@ class Polyhedron_base(Polyhedron_base4):
 
             sage: R.<x, y, z> = QQ[]
             sage: P = polytopes.simplex(2)
-            sage: V = AA(P.volume(measure='induced')); V.radical_expression()                            # optional - sage.rings.number_field
+            sage: V = AA(P.volume(measure='induced')); V.radical_expression()
             1/2*sqrt(3)
-            sage: P.integrate(R(1), measure='induced') == V                      # optional - latte_int  # optional - sage.rings.number_field
+            sage: P.integrate(R(1), measure='induced') == V                      # optional - latte_int
             True
 
         Computing the mass center::
