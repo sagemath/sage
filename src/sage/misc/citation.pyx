@@ -3,7 +3,7 @@
 Dependency usage tracking for citations
 """
 
-from sage.misc.all import tmp_filename
+from sage.misc.temporary_file import tmp_filename
 from sage.env import SAGE_LOCAL, SAGE_VENV
 
 systems = {}

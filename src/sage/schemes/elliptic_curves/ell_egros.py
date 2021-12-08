@@ -89,7 +89,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.all import xmrange
+from sage.misc.mrange import xmrange
 from sage.rings.rational_field import QQ
 from .constructor import EllipticCurve, EllipticCurve_from_j
 

@@ -42,7 +42,7 @@ import bz2
 
 from urllib.request import urlopen
 
-from sage.misc.all import tmp_filename
+from sage.misc.temporary_file import tmp_filename
 
 
 XML_NAMESPACE   = 'http://designtheory.org/xml-namespace'

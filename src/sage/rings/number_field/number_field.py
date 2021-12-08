@@ -5100,7 +5100,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         """
         KSgens, ords = self.selmer_generators(S=S, m=m, proof=proof, orders=True)
         one = self.one()
-        from sage.misc.all import cartesian_product_iterator
+        from sage.misc.mrange import cartesian_product_iterator
         for ev in cartesian_product_iterator([range(o) for o in ords]):
             yield prod([p ** e for p, e in zip(KSgens, ev)], one)
 

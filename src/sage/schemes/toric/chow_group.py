@@ -119,14 +119,16 @@ Chow cycles can be of mixed degrees::
 # ****************************************************************************
 from __future__ import annotations
 
-from sage.misc.all import flatten
+from sage.misc.flatten import flatten
 from sage.misc.fast_methods import WithEqualityById
 from sage.modules.fg_pid.fgp_module import FGP_Module_class
 from sage.modules.fg_pid.fgp_element import FGP_Element
 from sage.modules.free_module import FreeModule
 from sage.structure.sage_object import SageObject
 from sage.structure.factory import UniqueFactory
-from sage.rings.all import ZZ, QQ, Infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import Infinity
 
 import sage.geometry.abc
 from sage.schemes.toric.variety import is_ToricVariety

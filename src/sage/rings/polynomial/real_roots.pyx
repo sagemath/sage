@@ -144,7 +144,8 @@ from sage.modules.all import vector, FreeModule
 from sage.matrix.all import MatrixSpace
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_ring import polygen
-from sage.misc.all import numerator, denominator, prod
+from sage.misc.functional import numerator, denominator
+from sage.misc.misc_c import prod
 
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.modules.vector_integer_dense cimport Vector_integer_dense

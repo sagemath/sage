@@ -32,7 +32,7 @@ import subprocess
 import shlex
 
 from sage.sat.solvers.satsolver import SatSolver
-from sage.misc.all import tmp_filename
+from sage.misc.temporary_file import tmp_filename
 from time import sleep
 
 

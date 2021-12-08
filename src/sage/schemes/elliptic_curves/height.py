@@ -36,7 +36,7 @@ from sage.rings.infinity import infinity
 from sage.rings.all import RR, RDF, RIF, CC, CDF, CIF
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import cartesian_product_iterator
+from sage.misc.mrange import cartesian_product_iterator
 from sage.arith.all import lcm, factorial
 from sage.ext.fast_callable import fast_callable
 from sage.misc.lazy_import import lazy_import

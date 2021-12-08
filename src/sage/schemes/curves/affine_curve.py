@@ -128,7 +128,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.arith.misc import binomial
 from sage.interfaces.all import singular
-from sage.misc.all import add
+from builtins import sum as add
 
 from sage.categories.fields import Fields
 from sage.categories.finite_fields import FiniteFields
