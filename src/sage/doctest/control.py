@@ -595,7 +595,8 @@ class DocTestController(SageObject):
         finish in less than about 5 seconds. Longer tests typically
         don't add coverage, they just make testing slow.
 
-        The default used here, for all tests, is 60 seconds.
+        The default used here is 10 seconds, unless `--long` was used,
+        in which case it is 60 seconds.
 
         TESTS:
 
@@ -613,7 +614,12 @@ class DocTestController(SageObject):
         if self.options.warn_long >= 0:     # Specified on the command line
             return
 
-        self.options.warn_long = 60.0
+        # The developer's guide says that even a "long time" test
+        # should ideally complete in under five seconds, so we're
+        # being rather generous here.
+        self.options.warn_long = 10.0
+        if self.options.long:
+            self.options.warn_long = 60.0
 
     def second_on_modern_computer(self):
         """
