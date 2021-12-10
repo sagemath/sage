@@ -162,7 +162,7 @@ class Lseries_ell(SageObject):
             algorithm = 'pari'
 
         if algorithm == 'magma':
-            from sage.interfaces.all import magma
+            from sage.interfaces.magma import magma
             return magma(self.__E).LSeries(Precision=prec)
 
         if algorithm == 'pari':

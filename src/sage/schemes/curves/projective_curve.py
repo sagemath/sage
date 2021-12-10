@@ -144,7 +144,7 @@ from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom, End
 
-from sage.interfaces.all import singular
+from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix
 from builtins import sum as add
 from sage.misc.sage_eval import sage_eval

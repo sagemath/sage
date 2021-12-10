@@ -53,7 +53,7 @@ import sage.rings.polynomial.polynomial_ring
 from sage.rings.infinity import infinity
 
 from . import polynomial_singular_interface
-from sage.interfaces.all import singular as singular_default
+from sage.interfaces.singular import singular as singular_default
 
 from sage.structure.element import coerce_binop
 

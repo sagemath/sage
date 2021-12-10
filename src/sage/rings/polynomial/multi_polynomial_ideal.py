@@ -232,8 +232,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.interfaces.all import (singular as singular_default,
-                                 magma as magma_default)
+from sage.interfaces.singular import singular as singular_default
+from sage.interfaces.magma import magma as magma_default
 
 from sage.interfaces.expect import StdOutContext
 

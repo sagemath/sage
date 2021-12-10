@@ -24,7 +24,7 @@ from sage.libs.all import pari_gen
 
 import operator
 
-from sage.interfaces.all import singular as singular_default
+from sage.interfaces.singular import singular as singular_default
 
 def make_element(parent, args):
     return parent(*args)

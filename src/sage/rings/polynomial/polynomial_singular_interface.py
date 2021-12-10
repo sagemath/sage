@@ -41,7 +41,7 @@ import sage.rings.fraction_field
 import sage.rings.abc
 import sage.rings.number_field as number_field
 
-from sage.interfaces.all import singular
+from sage.interfaces.singular import singular
 from sage.rings.rational_field import is_RationalField
 from sage.rings.function_field.function_field import RationalFunctionField
 from sage.rings.finite_rings.finite_field_base import is_FiniteField

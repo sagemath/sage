@@ -209,7 +209,7 @@ from io import StringIO
 from copy import copy
 
 from sage.cpython.string import bytes_to_str
-from sage.interfaces.all import gap
+from sage.interfaces.gap import gap
 from sage.categories.cartesian_product import cartesian_product
 from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
