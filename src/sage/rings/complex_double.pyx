@@ -2408,8 +2408,9 @@ cdef class ComplexDoubleElement(FieldElement):
                 from .infinity import unsigned_infinity
                 return unsigned_infinity
             try:
-                from sage.rings.all import Integer, CC
+                from .integer import Integer
                 if Integer(GSL_REAL(self._complex)) < 0:
+                    from .cc import CC
                     return CC(self).gamma()
             except TypeError:
                 pass

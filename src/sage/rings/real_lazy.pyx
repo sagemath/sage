@@ -50,7 +50,7 @@ cdef QQ, RR, CC, RealField, ComplexField
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR, RealField
 from sage.rings.complex_mpfr import ComplexField
-CC = ComplexField(53)
+from sage.rings.cc import CC
 
 cdef _QQx = None
 
@@ -411,10 +411,11 @@ class ComplexLazyField_class(LazyField):
             sage: CLF.interval_field() is CIF
             True
         """
-        from sage.rings.all import CIF, ComplexIntervalField
         if prec is None:
+            from sage.rings.cif import CIF
             return CIF
         else:
+            from sage.rings.complex_interval_field import ComplexIntervalField
             return ComplexIntervalField(prec)
 
     def gen(self, i=0):

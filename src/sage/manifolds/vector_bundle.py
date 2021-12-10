@@ -38,7 +38,7 @@ from sage.structure.category_object import CategoryObject
 from sage.categories.vector_bundles import VectorBundles
 from sage.structure.unique_representation import UniqueRepresentation
 import sage.rings.abc
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
 from sage.manifolds.vector_bundle_fiber import VectorBundleFiber

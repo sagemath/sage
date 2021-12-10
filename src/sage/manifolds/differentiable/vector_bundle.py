@@ -31,7 +31,7 @@ AUTHORS:
 #******************************************************************************
 
 from sage.categories.vector_bundles import VectorBundles
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import RR
 from sage.manifolds.vector_bundle import TopologicalVectorBundle
 from sage.rings.infinity import infinity

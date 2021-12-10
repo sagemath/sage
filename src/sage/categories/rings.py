@@ -1135,7 +1135,7 @@ class Rings(CategoryWithAxiom):
                 # how to pass in names?
                 names = tuple(_gen_names(elts))
                 if len(elts) == 1:
-                    from sage.rings.all import CIF, CLF, RLF
+                    from sage.rings.cif import CIF
                     elt = elts[0]
                     try:
                         iv = CIF(elt)
@@ -1157,6 +1157,7 @@ class Rings(CategoryWithAxiom):
                             pass
                         # Force a real embedding when possible, to get the
                         # right ordered ring structure.
+                        from sage.rings.real_lazy import CLF, RLF
                         if (iv.imag().is_zero() or iv.imag().contains_zero()
                                                    and elt.imag().is_zero()):
                             emb = RLF(elt)

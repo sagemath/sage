@@ -26,7 +26,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.rings.infinity import infinity
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.modules.free_module import span
 from sage.misc.misc_c import prod
 

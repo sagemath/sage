@@ -88,7 +88,8 @@ Integer_sage = sage.rings.integer.Integer
 from sage.rings.real_mpfi import RealInterval
 
 from sage.rings.complex_mpfr import ComplexField
-CC = ComplexField(53)
+from sage.rings.cc import CC
+
 
 # this is a threshold for the charpoly() methods in this file
 # for degrees <= this threshold, pari is used

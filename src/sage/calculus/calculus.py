@@ -408,9 +408,12 @@ To check that :trac:`27092` is fixed::
 """
 
 import re
-from sage.arith.all import algdep
-from sage.rings.all import RR, Integer, CC, QQ, RealDoubleElement
-from sage.rings.real_mpfr import create_RealNumber
+from sage.arith.misc import algdep
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.real_mpfr import RR, create_RealNumber
+from sage.rings.cc import CC
 
 from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
