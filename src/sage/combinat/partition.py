@@ -283,7 +283,7 @@ We use the lexicographic ordering::
 from copy import copy
 from itertools import accumulate
 
-from sage.libs.all import pari
+from sage.libs.pari.all import pari
 from sage.libs.flint.arith import number_of_partitions as flint_number_of_partitions
 
 from sage.arith.misc import multinomial

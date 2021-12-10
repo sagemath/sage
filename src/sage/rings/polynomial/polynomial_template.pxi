@@ -20,7 +20,7 @@ from sage.structure.element import coerce_binop
 from sage.structure.richcmp cimport rich_to_bool
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.integer cimport Integer
-from sage.libs.all import pari_gen
+from sage.libs.pari.all import pari_gen
 
 import operator
 

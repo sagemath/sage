@@ -20,7 +20,7 @@ import sage.rings.padics.precision_error as precision_error
 import sage.rings.fraction_field_element as fraction_field_element
 import copy
 
-from sage.libs.all import pari, pari_gen
+from sage.libs.pari.all import pari, pari_gen
 from sage.libs.ntl.all import ZZX
 from sage.rings.infinity import infinity
 
