@@ -1,4 +1,6 @@
 cd src
-sdh_configure --disable-gmp
+sdh_cmake -DUSE_GMP=OFF -DCMAKE_VERBOSE_MAKEFILE=ON
 sdh_make
-sdh_make_install
+install -D src/*.hh -t $SAGE_LOCAL/include/bliss/
+install libbliss.so -t $SAGE_LOCAL/lib/
+install bliss -t $SAGE_LOCAL/bin/
