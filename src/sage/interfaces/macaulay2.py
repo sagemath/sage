@@ -1575,7 +1575,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
                     ideal = self.ideal()._sage_()
                     return ambient_ring.quotient(ideal, names=ambient_ring.variable_names())
             elif cls_str == "PolynomialRing":
-                from sage.rings.all import PolynomialRing
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 from sage.rings.polynomial.term_order import inv_macaulay2_name_mapping
 
                 #Get the base ring

@@ -1432,7 +1432,7 @@ class PolynomialConverter(Converter):
             vars = self.ex.variables()
             if len(vars) == 0:
                 vars = ['x']
-            from sage.rings.all import PolynomialRing
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             self.ring = PolynomialRing(self.base_ring, names=vars)
             self.varnames = self.ring.variable_names()
         else:

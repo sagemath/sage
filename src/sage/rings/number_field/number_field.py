@@ -2600,7 +2600,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.quadratic_defect(5, p)
             +Infinity
         """
-        from sage.rings.all import PolynomialRing
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         if a not in self:
             raise TypeError(str(a) + " must be an element of " + str(self))
         if not self == QQ and not p.parent() == self.ideal_monoid():

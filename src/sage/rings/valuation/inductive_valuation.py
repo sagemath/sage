@@ -1095,7 +1095,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
                 break
 
         if phi_divides:
-            from sage.rings.all import PolynomialRing
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(f.parent(), 'phi')
             f = R(coefficients[phi_divides:])(self.phi())
         valuations = [vv - self.mu() * phi_divides
