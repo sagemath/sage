@@ -1448,6 +1448,51 @@ cdef class CombinatorialPolyhedron(SageObject):
             return tuple((facet_one(i), facet_two(i))
                          for i in range(n_ridges))
 
+    @cached_method
+    def facet_adjacency_matrix(self):
+        """
+        Return the binary matrix of facet adjacencies.
+
+        .. SEEALSO::
+
+            :meth:`~sage.geometry.polyhedron.base.Polyhedron_base.vertex_adjacency_matrix`.
+
+        EXAMPLES::
+
+            sage: P = polytopes.cube()
+            sage: C = P.combinatorial_polyhedron()
+            sage: C.facet_adjacency_matrix()
+            [0 1 1 0 1 1]
+            [1 0 1 1 1 0]
+            [1 1 0 1 0 1]
+            [0 1 1 0 1 1]
+            [1 1 0 1 0 1]
+            [1 0 1 1 1 0]
+
+        TESTS::
+
+            sage: CombinatorialPolyhedron(-1).facet_adjacency_matrix()
+            []
+            sage: CombinatorialPolyhedron(0).facet_adjacency_matrix()
+            []
+            sage: polytopes.cube().facet_adjacency_matrix().is_immutable()
+            True
+        """
+        from sage.rings.integer_ring import ZZ
+        from sage.matrix.constructor import matrix
+        cdef Matrix_integer_dense adjacency_matrix = matrix(
+                ZZ, self.n_facets(), self.n_facets(), 0)
+        cdef size_t i, a, b
+
+        self._compute_ridges(-1)
+        for i in range(self._n_ridges):
+            a = self._get_edge(self._ridges, i, 0)
+            b = self._get_edge(self._ridges, i, 1)
+            adjacency_matrix.set_unsafe_si(a, b, 1)
+            adjacency_matrix.set_unsafe_si(b, a, 1)
+        adjacency_matrix.set_immutable()
+        return adjacency_matrix
+
     def facet_graph(self, names=True):
         r"""
         Return the facet graph.

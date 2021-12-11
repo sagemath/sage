@@ -967,7 +967,7 @@ class Polyhedron_base3(Polyhedron_base2):
     @cached_method
     def facet_adjacency_matrix(self):
         """
-        Return the adjacency matrix for the facets and hyperplanes.
+        Return the adjacency matrix for the facets.
 
         EXAMPLES::
 
@@ -978,6 +978,13 @@ class Polyhedron_base3(Polyhedron_base2):
             [1 1 0 1 1]
             [1 1 1 0 1]
             [1 1 1 1 0]
+
+            sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)])
+            sage: p.facet_adjacency_matrix()
+            [0 1 1]
+            [1 0 1]
+            [1 1 0]
+
 
         The facet adjacency matrix has base ring integers. This way one can express various
         counting questions::
@@ -992,52 +999,18 @@ class Polyhedron_base3(Polyhedron_base2):
 
         Check that :trac:`28828` is fixed::
 
-                sage: s4.facet_adjacency_matrix().is_immutable()
-                True
-        """
-        return self._facet_adjacency_matrix()
-
-    def _facet_adjacency_matrix(self):
-        """
-        Compute the facet adjacency matrix in case it has not been
-        computed during initialization.
-
-        EXAMPLES::
-
-            sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)])
-            sage: p._facet_adjacency_matrix()
-            [0 1 1]
-            [1 0 1]
-            [1 1 0]
+            sage: s4.facet_adjacency_matrix().is_immutable()
+            True
 
         Checks that :trac:`22455` is fixed::
 
             sage: s = polytopes.simplex(2)
-            sage: s._facet_adjacency_matrix()
+            sage: s.facet_adjacency_matrix()
             [0 1 1]
             [1 0 1]
             [1 1 0]
-
         """
-        # TODO: This implementation computes the whole face lattice,
-        # which is much more information than necessary.
-        M = matrix(ZZ, self.n_facets(), self.n_facets(), 0)
-        codim = self.ambient_dim()-self.dim()
-
-        def set_adjacent(h1, h2):
-            if h1 is h2:
-                return
-            i = h1.index() - codim
-            j = h2.index() - codim
-            M[i, j] = 1
-            M[j, i] = 1
-
-        for face in self.faces(self.dim()-2):
-            Hrep = face.ambient_Hrepresentation()
-            assert(len(Hrep) == codim+2)
-            set_adjacent(Hrep[-2], Hrep[-1])
-        M.set_immutable()
-        return M
+        return self.combinatorial_polyhedron().facet_adjacency_matrix()
 
     def a_maximal_chain(self):
         r"""
