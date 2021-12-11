@@ -38,7 +38,9 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ, CC, RR
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.schemes.generic.homset import SchemeHomset_points
 
 from sage.misc.verbose import verbose

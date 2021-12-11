@@ -20,8 +20,11 @@ Number-Theoretic Functions
 import sys
 import sage.rings.complex_mpfr as complex_field
 
-from sage.rings.all import (ComplexField, ZZ, RR, RDF)
-from sage.rings.complex_mpfr import is_ComplexNumber
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.real_double import RDF
+from sage.rings.complex_mpfr import ComplexField, is_ComplexNumber
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import (RealField, is_RealNumber)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
@@ -32,7 +35,6 @@ from sage.combinat.combinat import bernoulli_polynomial
 from .gamma import psi
 from .other import factorial
 
-CC = complex_field.ComplexField()
 I = CC.gen(0)
 
 

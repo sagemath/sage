@@ -22,7 +22,8 @@ from sage.misc.cachefunc import cached_method
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import infinity
-from sage.rings.all import AA, QQbar, CC
+from sage.rings.cc import CC
+from sage.rings.qqbar import AA, QQbar
 
 from sage.groups.matrix_gps.group_element import MatrixGroupElement_generic
 from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane

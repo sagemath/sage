@@ -28,7 +28,7 @@ AUTHORS:
 import numpy as np
 cimport numpy as np
 
-from sage.rings.all import CIF
+from sage.rings.cif import CIF
 from cpython.object cimport Py_EQ, Py_NE
 
 

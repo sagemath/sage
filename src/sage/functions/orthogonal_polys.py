@@ -302,7 +302,10 @@ Willis of the University of Nebraska at Kearney.
 import warnings
 
 from sage.misc.latex import latex
-from sage.rings.all import ZZ, QQ, RR, CC
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.rings.abc
 

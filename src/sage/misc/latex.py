@@ -2085,7 +2085,7 @@ def repr_lincomb(symbols, coeffs):
     first = True
     i = 0
 
-    from sage.rings.all import CC
+    from sage.rings.cc import CC
 
     for c in coeffs:
         bv = symbols[i]

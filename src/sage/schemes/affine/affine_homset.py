@@ -34,7 +34,9 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.misc.verbose import verbose
-from sage.rings.all import ZZ, CC, RR
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.rings.rational_field import is_RationalField
 from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields

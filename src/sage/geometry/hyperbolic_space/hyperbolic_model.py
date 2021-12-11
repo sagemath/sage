@@ -84,7 +84,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.functions.other import imag, real
 from sage.misc.functional import sqrt
 from sage.functions.all import arccosh
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.real_mpfr import RR
 from sage.rings.infinity import infinity

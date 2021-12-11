@@ -329,7 +329,7 @@ from sage.categories.fields import Fields
 from sage.categories.manifolds import Manifolds
 from sage.categories.homset import Hom
 import sage.rings.abc
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import RR
 from sage.misc.prandom import getrandbits
 from sage.misc.cachefunc import cached_method

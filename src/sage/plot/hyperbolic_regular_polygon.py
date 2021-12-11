@@ -18,7 +18,7 @@ AUTHORS:
 
 from sage.plot.hyperbolic_polygon import HyperbolicPolygon
 from sage.plot.all import Graphics
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.integer import Integer
 from sage.misc.decorators import options, rename_keyword
 from sage.symbolic.constants import pi, e

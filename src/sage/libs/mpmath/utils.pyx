@@ -14,7 +14,6 @@ from sage.structure.element cimport Element
 from sage.libs.mpfr cimport *
 from sage.libs.gmp.all cimport *
 
-from sage.rings.complex_mpfr import ComplexField
 from sage.rings.real_mpfr cimport RealField
 
 cpdef int bitcount(n):
@@ -272,6 +271,7 @@ def mpmath_to_sage(x, prec):
         mpfr_from_mpfval(y.value, x._mpf_)
         return y
     elif hasattr(x, "_mpc_"):
+        from sage.rings.complex_mpfr import ComplexField
         z = ComplexField(prec)(0)
         re, im = x._mpc_
         mpfr_from_mpfval(z.__re, re)
@@ -331,6 +331,7 @@ def sage_to_mpmath(x, prec):
             if isinstance(x, ComplexNumber):
                 return x._mpmath_()
             else:
+                from sage.rings.complex_mpfr import ComplexField
                 x = ComplexField(prec)(x)
                 return x._mpmath_()
     if isinstance(x, tuple) or isinstance(x, list):

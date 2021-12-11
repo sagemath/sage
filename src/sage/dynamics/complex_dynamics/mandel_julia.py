@@ -45,7 +45,9 @@ from sage.plot.colors import Color
 from sage.repl.image import Image
 from sage.functions.log import logb
 from sage.functions.other import floor
-from sage.rings.all import QQ, CC, CDF
+from sage.rings.rational_field import QQ
+from sage.rings.cc import CC
+from sage.rings.complex_double import CDF
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.misc.prandom import randint
