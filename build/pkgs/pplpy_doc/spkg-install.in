@@ -1,0 +1,16 @@
+if [[ "$SAGE_SPKG_INSTALL_DOCS" != no ]] ; then
+    # Compile pplpy's documentation
+    cd src
+    cd docs
+    if ! command -v sphinx-build >/dev/null; then
+        echo "sphinx-build not found, not attempting documentation build"
+        exit 0
+    fi
+    if ! $MAKE html; then
+        echo "Documentation build failed (ignored)"
+        exit 0
+    fi
+    # install pplpy's documentation
+    PPLPY_DOCS=$SAGE_SHARE/doc/pplpy
+    sdh_install build/html/* $PPLPY_DOCS
+fi

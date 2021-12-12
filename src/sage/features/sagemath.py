@@ -1,8 +1,34 @@
 r"""
 Check for SageMath Python modules
 """
-from . import PythonModule
+from . import PythonModule, StaticFile
 from .join_feature import JoinFeature
+
+
+class sagemath_doc_html(StaticFile):
+    r"""
+    A :class:`Feature` which describes the presence of the documentation
+    of the Sage library in HTML format.
+
+    EXAMPLES::
+
+        sage: from sage.features.sagemath import sagemath_doc_html
+        sage: sagemath_doc_html().is_present()  # optional - sagemath_doc_html
+        FeatureTestResult('sagemath_doc_html', True)
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.sagemath import sagemath_doc_html
+            sage: isinstance(sagemath_doc_html(), sagemath_doc_html)
+            True
+        """
+        from sage.env import SAGE_DOC
+        StaticFile.__init__(self, 'sagemath_doc_html',
+                            filename='html',
+                            search_path=(SAGE_DOC,),
+                            spkg='sagemath_doc_html')
 
 
 class sage__combinat(JoinFeature):
@@ -239,7 +265,14 @@ def sage_features(logger=None):
          Feature('sage.rings.number_field'),
          Feature('sage.rings.real_double')]
     """
-    for feature in all_features():
+    for feature in [sagemath_doc_html(),
+                    sage__combinat(),
+                    sage__geometry__polyhedron(),
+                    sage__graphs(),
+                    sage__plot(),
+                    sage__rings__number_field(),
+                    sage__rings__real_double(),
+                    sage__symbolic()]:
         result = feature.is_present()
         if logger:
             logger.write(f'{result}, reason: {result.reason}\n')

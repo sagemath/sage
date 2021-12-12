@@ -29,8 +29,7 @@ dnl ... already needed by sage.env
 pkgconfig==esyscmd(`printf $(sed "s/[.]p.*//;" ../pkgconfig/package-version.txt)')
 pplpy==esyscmd(`printf $(sed "s/[.]p.*//;" ../pplpy/package-version.txt)')
 pycygwin==esyscmd(`printf $(sed "s/[.]p.*//;" ../pycygwin/package-version.txt)'); sys_platform == 'cygwin'
-dnl pynac       # after converting to a pip-installable package
-
+requests==esyscmd(`printf $(sed "s/[.]p.*//;" ../requests/package-version.txt)')
 
 dnl From Makefile.in: SAGERUNTIME
 ipython==esyscmd(`printf $(sed "s/[.]p.*//;" ../ipython/package-version.txt)')

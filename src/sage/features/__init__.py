@@ -708,7 +708,7 @@ class StaticFile(Feature):
         """
         for directory in self.search_path:
             path = os.path.join(directory, self.filename)
-            if os.path.isfile(path):
+            if os.path.isfile(path) or os.path.isdir(path):
                 return os.path.abspath(path)
         raise FeatureNotPresentError(self,
             reason="{filename!r} not found in any of {search_path}".format(filename=self.filename, search_path=self.search_path),

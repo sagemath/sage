@@ -18,9 +18,9 @@ TESTS:
 Check that argspecs of extension function/methods appear correctly,
 see :trac:`12849`::
 
-    sage: from sage.env import SAGE_DOC  # optional - dochtml
-    sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')  # optional - dochtml
-    sage: with open(docfilename) as fobj:  # optional - dochtml
+    sage: from sage.env import SAGE_DOC  # optional - sagemath_doc_html
+    sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')  # optional - sagemath_doc_html
+    sage: with open(docfilename) as fobj:  # optional - sagemath_doc_html
     ....:     for line in fobj:
     ....:         if "#sage.symbolic.expression.Expression.numerical_approx" in line:
     ....:             print(line)
@@ -28,8 +28,8 @@ see :trac:`12849`::
 
 Check that sphinx is not imported at Sage start-up::
 
-    sage: "sphinx" in sys.modules
-    False
+    sage: os.system("sage -c \"if 'sphinx' in sys.modules: sys.exit(1)\"")
+    0
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -47,7 +47,6 @@ import sys
 import pydoc
 from sage.misc.temporary_file import tmp_dir
 from .viewer import browser
-from .sphinxify import sphinxify
 import sage.version
 from sage.env import SAGE_DOC, SAGE_SRC
 
@@ -242,7 +241,12 @@ def detex(s, embedded=False):
     if not embedded: # not in the notebook
         s = _rmcmd(s, 'mathop')
         s = _rmcmd(s, 'mathrm')
-        s = sphinxify(s, format='text')
+        try:
+            from .sphinxify import sphinxify
+        except ImportError:
+            s = s.replace('``', '"').replace('`', '') + '\n'
+        else:
+            s = sphinxify(s, format='text')
         # Do math substitutions. The strings to be replaced should be
         # TeX commands like "\\blah". Do a regular expression
         # replacement to replace "\\blah" but not "\\blahxyz", etc.:
@@ -623,14 +627,16 @@ def format(s, embedded=False):
         '<<<identity_matrix\n'
         sage: format('identity_matrix>>>')
         'identity_matrix>>>\n'
-        sage: format('<<<identity_matrix>>>')[:28]
+        sage: format('<<<identity_matrix>>>')
+        '...Definition: identity_matrix(...'
+        sage: format('<<<identity_matrix>>>')[:28]                            # optional - sphinx
         'Definition: identity_matrix('
 
     TESTS:
 
     We check that the todo Sphinx extension is correctly activated::
 
-        sage: sage.misc.sagedoc.format(sage.combinat.ranker.on_fly.__doc__)
+        sage: sage.misc.sagedoc.format(sage.combinat.ranker.on_fly.__doc__)   # optional - sphinx
         "   Returns ...  Todo: add tests as in combinat::rankers\n"
 
     In the following use case, the ``nodetex`` directive would have been ignored prior
@@ -674,7 +680,7 @@ def format(s, embedded=False):
 
     Check that backslashes are preserved in code blocks (:trac:`29140`)::
 
-        sage: format('::\n'
+        sage: format('::\n'                                                   # optional - sphinx
         ....:        '\n'
         ....:        r'    sage: print(r"\\\\.")' '\n'
         ....:        r'    \\\\.')
@@ -839,12 +845,12 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
 
     ::
 
-        sage: from sage.misc.sagedoc import _search_src_or_doc  # optional - dochtml
-        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1  # optional - dochtml
+        sage: from sage.misc.sagedoc import _search_src_or_doc  # optional - sagemath_doc_html
+        sage: len(_search_src_or_doc('src', r'matrix\(', 'incidence_structures', 'self', 'combinat', interact=False).splitlines()) > 1  # optional - sagemath_doc_html
         True
-        sage: 'abvar/homology' in _search_src_or_doc('doc', 'homology', 'variety', interact=False)  # optional - dochtml, long time (4s on sage.math, 2012)
+        sage: 'abvar/homology' in _search_src_or_doc('doc', 'homology', 'variety', interact=False)  # optional - sagemath_doc_html, long time (4s on sage.math, 2012)
         True
-        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)  # optional - dochtml
+        sage: 'divisors' in _search_src_or_doc('src', '^ *def prime', interact=False)  # optional - sagemath_doc_html
         True
 
     When passing ``interactive=True``, in a terminal session this will pass the
@@ -1161,13 +1167,13 @@ def search_doc(string, extra1='', extra2='', extra3='', extra4='',
     counting the length of ``search_doc('tree',
     interact=False).splitlines()`` gives the number of matches. ::
 
-        sage: N = len(search_doc('tree', interact=False).splitlines())  # optional - dochtml, long time
-        sage: L = search_doc('tree', whole_word=True, interact=False).splitlines()  # optional - dochtml, long time
-        sage: len(L) < N  # optional - dochtml, long time
+        sage: N = len(search_doc('tree', interact=False).splitlines())  # optional - sagemath_doc_html, long time
+        sage: L = search_doc('tree', whole_word=True, interact=False).splitlines()  # optional - sagemath_doc_html, long time
+        sage: len(L) < N  # optional - sagemath_doc_html, long time
         True
         sage: import re
         sage: tree_re = re.compile(r'(^|\W)tree(\W|$)', re.I)
-        sage: all(tree_re.search(l) for l in L) # optional - dochtml, long time
+        sage: all(tree_re.search(l) for l in L) # optional - sagemath_doc_html, long time
         True
     """
     return _search_src_or_doc('doc', string, extra1=extra1, extra2=extra2,
@@ -1361,9 +1367,9 @@ class _sage_doc:
 
     EXAMPLES::
 
-        sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - dochtml, indirect doctest
+        sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - sagemath_doc_html, indirect doctest
         'http://localhost:8000/doc/live/reference/index.html'
-        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]  # optional - dochtml
+        sage: browse_sage_doc(identity_matrix, 'rst')[-107:-47]  # optional - sagemath_doc_html
         'Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring'
     """
     def __init__(self):
@@ -1395,7 +1401,7 @@ class _sage_doc:
             "...**File:**...**Type:**...**Definition:** identity_matrix..."
             sage: identity_matrix.__doc__ in browse_sage_doc(identity_matrix, 'rst')
             True
-            sage: browse_sage_doc(identity_matrix, 'html', False)
+            sage: browse_sage_doc(identity_matrix, 'html', False)             # optional - sphinx
             '...div...File:...Type:...Definition:...identity_matrix...'
 
         In the 'text' version, double colons have been replaced with
@@ -1403,7 +1409,7 @@ class _sage_doc:
 
             sage: '::' in browse_sage_doc(identity_matrix, 'rst')
             True
-            sage: '::' in browse_sage_doc(identity_matrix, 'text')
+            sage: '::' in browse_sage_doc(identity_matrix, 'text')            # optional - sphinx
             False
         """
         if output != 'html' and view:
@@ -1435,7 +1441,13 @@ class _sage_doc:
 
         # now s should be the reST version of the docstring
         if output == 'html':
-            html = sphinxify(s)
+            try:
+                from .sphinxify import sphinxify
+            except ImportError:
+                from html import escape
+                html = escape(s)
+            else:
+                html = sphinxify(s)
             if view:
                 path = os.path.join(tmp_dir(), "temp.html")
                 filed = open(path, 'w')
@@ -1503,7 +1515,12 @@ class _sage_doc:
         elif output == 'rst':
             return s
         elif output == 'text':
-            return sphinxify(s, format='text')
+            try:
+                from .sphinxify import sphinxify
+            except ImportError:
+                return s
+            else:
+                return sphinxify(s, format='text')
         else:
             raise ValueError("output type {} not recognized".format(output))
 
@@ -1523,9 +1540,9 @@ class _sage_doc:
 
         EXAMPLES::
 
-            sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - dochtml
+            sage: browse_sage_doc._open("reference", testing=True)[0]  # optional - sagemath_doc_html
             'http://localhost:8000/doc/live/reference/index.html'
-            sage: browse_sage_doc._open("tutorial", testing=True)[1]  # optional - dochtml
+            sage: browse_sage_doc._open("tutorial", testing=True)[1]  # optional - sagemath_doc_html
             '.../html/en/tutorial/index.html'
         """
         url = self._base_url + os.path.join(name, "index.html")

@@ -15,7 +15,7 @@ os.environ['SAGE_STARTUP_FILE'] = os.path.join(DOT_SAGE, 'init-doctests.sage')
 
 def _get_optional_defaults():
     """Return the default value for the --optional flag."""
-    optional = ['sage', 'dochtml', 'optional']
+    optional = ['sage', 'optional']
 
     # This should be good-enough to determine if we are in a sage source
     # repository working tree
@@ -47,13 +47,13 @@ if __name__ == "__main__":
     parser.add_argument("--warn-long", dest="warn_long", nargs='?',
                         type=float, default=-1.0, const=1.0, metavar="SECONDS",
                         help="warn if tests take more time than SECONDS")
-    # By default, include all tests marked 'dochtml' -- see
+    # By default, include all tests marked 'sagemath_doc_html' -- see
     # https://trac.sagemath.org/ticket/25345 and
     # https://trac.sagemath.org/ticket/26110:
     parser.add_argument("--optional", metavar="PKGS", default=_get_optional_defaults(),
         help='only run tests including one of the "# optional" tags listed in PKGS; '
              'if "sage" is listed, will also run the standard doctests; '
-             'if "dochtml" is listed, will also run the tests relying on the HTML documentation; '
+             'if "sagemath_doc_html" is listed, will also run the tests relying on the HTML documentation; '
              'if "optional" is listed, will also run tests for installed optional (new-style) packages; '
              'if "external" is listed, will also run tests for available external software; '
              'if "build" is listed, will also run tests specific to Sage\'s build/packaging system; '

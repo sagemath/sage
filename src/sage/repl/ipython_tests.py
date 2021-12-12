@@ -16,11 +16,11 @@ calls when you ask for the single-questionmark help, like `foo?` ::
     <BLANKLINE>
        INPUT:
     <BLANKLINE>
-       * "argument" -- anything. Dummy argument.
+       ... "argument" -- anything. Dummy argument.
     <BLANKLINE>
-       * "optional" -- anything (optional). Dummy optional.
+       ... "optional" -- anything (optional). Dummy optional.
     <BLANKLINE>
-       EXAMPLES:
+       EXAMPLES...
     <BLANKLINE>
     ...
     Init docstring: ...ee help(type(...)) for...signature...
@@ -36,7 +36,7 @@ Next, test the pinfo magic for Cython code::
     ...
        Example class wrapping an STL vector
     <BLANKLINE>
-       EXAMPLES:
+       EXAMPLES...
     <BLANKLINE>
     ...
     Init docstring: ...ee help(type(...)) for...signature...

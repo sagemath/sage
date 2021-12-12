@@ -1,3 +1,4 @@
+# nodoctest
 # Sage documentation build configuration file, created by
 # sphinx-quickstart on Thu Aug 21 20:15:55 2008.
 #

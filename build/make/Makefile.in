@@ -54,7 +54,8 @@ SAGE_SPKG_OPTIONS = @SAGE_SPKG_OPTIONS@
 
 # Where the Sage distribution installs documentation.
 # set to empty if --disable-doc is used
-SAGE_DOCS = $(SAGE_LOCAL)
+SAGE_DOCS = @SAGE_DOCS@
+SAGE_DOCS_DISABLED_MESSAGE = This Sage build is configured with "configure --disable-doc", so building the documentation will not work.
 
 # Where the Sage distribution installs Python packages.
 # This can be overridden by 'make SAGE_VENV=/some/venv'.
@@ -219,7 +220,7 @@ endif
 # the doc build takes the most time and should be started as soon as
 # possible.
 all-start: toolchain-deps
-	+$(MAKE_REC) doc all-sage
+	+$(MAKE_REC) all-sage-docs all-sage
 
 # Build everything except the documentation
 all-build: toolchain-deps
@@ -324,7 +325,7 @@ base: $(inst_patch) $(inst_pkgconf)
 #
 # $ ./sage --docbuild -H
 
-doc: $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_CLEANS)
+doc: doc-html
 
 # All doc-building is delegated to the script packages
 # sagemath_doc_html, sagemath_doc_pdf
@@ -527,9 +528,15 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
 $(1)-$(4)-no-deps:
-	+$(AM_V_at)sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
+	+@if [ -z '$$($(4))' ]; then \
+	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
+	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
+	    exit 1; \
+	else \
+	    $(AM_V_at)sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
 		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
-		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
+		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
+	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps
 
@@ -631,7 +638,11 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
 $(1)-$(4)-no-deps:
-	@if [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
+	+@if [ -z '$$($(4))' ]; then \
+	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
+	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
+	    exit 1; \
+	elif [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
 	    $(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \

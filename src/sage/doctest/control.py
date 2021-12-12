@@ -409,6 +409,16 @@ class DocTestController(SageObject):
                     options.optional.update(system.name
                                             for system in package_systems())
 
+                    from sage.features.sphinx import Sphinx
+                    doc_features = [feature for feature in [Sphinx()]
+                                    if feature.is_present()]
+                    options.optional.update(feature.name for feature in doc_features)
+
+                    logger = sys.stderr if options.verbose else None
+                    from sage.features.sagemath import sage_features
+                    options.optional.update(feature.name
+                                            for feature in sage_features(logger=logger))
+
                 # Check that all tags are valid
                 for o in options.optional:
                     if not optionaltag_regex.search(o):
@@ -735,13 +745,22 @@ class DocTestController(SageObject):
 
         def all_files():
             self.files.append(opj(SAGE_SRC, 'sage'))
-            # Don't run these tests when not in the git repository; they are
-            # of interest for building sage, but not for runtime behavior and
-            # don't make sense to run outside a build environment
-            if have_git:
+            # Only test sage_setup and sage_docbuild if the relevant
+            # imports work. They may not work if not in a build
+            # environment or if the documentation build has been
+            # disabled.
+            try:
+                import sage_setup
                 self.files.append(opj(SAGE_SRC, 'sage_setup'))
+            except ImportError:
+                pass
+            try:
+                import sage_docbuild
                 self.files.append(opj(SAGE_SRC, 'sage_docbuild'))
-            self.files.append(SAGE_DOC_SRC)
+            except ImportError:
+                pass
+            if os.path.isdir(SAGE_DOC_SRC):
+                self.files.append(SAGE_DOC_SRC)
 
         if self.options.all or (self.options.new and not have_git):
             self.log("Doctesting entire Sage library.")
