@@ -30,15 +30,10 @@ Base class for polyhedra
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import itertools
-
 from sage.structure.element import coerce_binop, is_Vector, is_Matrix
-from sage.structure.richcmp import rich_to_bool, op_NE
 from sage.cpython.string import bytes_to_str
 
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
-from sage.misc.randstate import current_randstate
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import AA
@@ -47,15 +42,12 @@ from sage.rings.real_double import RDF
 from sage.modules.free_module_element import vector
 from sage.modules.vector_space_morphism import linear_transformation
 from sage.matrix.constructor import matrix
-from sage.arith.misc import integer_floor as floor
-from sage.arith.misc import integer_ceil as ceil
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.groups.matrix_gps.finitely_generated', 'MatrixGroup')
 from sage.geometry.convex_set import AffineHullProjectionData
 
 from .constructor import Polyhedron
-from .base1 import Polyhedron_base1
-from sage.categories.sets_cat import EmptySetError
+from .base2 import Polyhedron_base2
 
 #########################################################################
 # Notes if you want to implement your own backend:
@@ -100,7 +92,7 @@ def is_Polyhedron(X):
 
 
 #########################################################################
-class Polyhedron_base(Polyhedron_base1):
+class Polyhedron_base(Polyhedron_base2):
     """
     Base class for Polyhedron objects
 
@@ -184,7 +176,7 @@ class Polyhedron_base(Polyhedron_base1):
             sage: Polyhedron().facet_adjacency_matrix()
             [0]
         """
-        Polyhedron_base1._init_empty_polyhedron(self)
+        Polyhedron_base2._init_empty_polyhedron(self)
 
         V_matrix = matrix(ZZ, 0, 0, 0)
         V_matrix.set_immutable()
@@ -329,95 +321,6 @@ class Polyhedron_base(Polyhedron_base1):
             tester.assertEqual(self, Polyhedron(vertices=self.vertices(), rays=self.rays(), lines=self.lines(), ambient_dim=self.ambient_dim()))
         if self.n_inequalities() < 40:
             tester.assertEqual(self, Polyhedron(ieqs=self.inequalities(), eqns=self.equations(), ambient_dim=self.ambient_dim()))
-
-    def _richcmp_(self, other, op):
-        """
-        Compare ``self`` and ``other``.
-
-        INPUT:
-
-        - ``other`` -- a polyhedron
-
-        OUTPUT:
-
-        If ``other`` is a polyhedron, then the comparison
-        operator "less or equal than" means "is contained in", and
-        "less than" means "is strictly contained in".
-
-        EXAMPLES::
-
-            sage: P = Polyhedron(vertices=[(1,0), (0,1)], rays=[(1,1)])
-            sage: Q = Polyhedron(vertices=[(1,0), (0,1)])
-            sage: P >= Q
-            True
-            sage: Q <= P
-            True
-            sage: P == P
-            True
-
-       The polytope ``Q`` is strictly contained in ``P``::
-
-            sage: P > Q
-            True
-            sage: P < Q
-            False
-            sage: P == Q
-            False
-
-        Test that we have fixed a problem revealed in :trac:`31701`,
-        where neither of the two polyhedra contains the other::
-
-            sage: P = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
-            sage: Q = Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])
-            sage: Q < P
-            False
-            sage: P > Q
-            False
-         """
-        if self.Vrepresentation() is None or other.Vrepresentation() is None:
-            raise RuntimeError('some V representation is missing')
-            # make sure deleted polyhedra are not used in cache
-
-        if self.ambient_dim() != other.ambient_dim():
-            return op == op_NE
-
-        c0 = self._is_subpolyhedron(other)
-        c1 = other._is_subpolyhedron(self)
-        if c0 and c1:
-            return rich_to_bool(op, 0)
-        elif c0:
-            return rich_to_bool(op, -1)
-        elif c1:
-            return rich_to_bool(op, 1)
-        else:
-            return op == op_NE
-
-    @coerce_binop
-    def _is_subpolyhedron(self, other):
-        """
-        Test whether ``self`` is a (not necessarily strict)
-        sub-polyhedron of ``other``.
-
-        INPUT:
-
-        - ``other`` -- a :class:`Polyhedron`
-
-        OUTPUT:
-
-        Boolean
-
-        EXAMPLES::
-
-            sage: P = Polyhedron(vertices=[(1,0), (0,1)], rays=[(1,1)])
-            sage: Q = Polyhedron(vertices=[(1,0), (0,1)])
-            sage: P._is_subpolyhedron(Q)
-            False
-            sage: Q._is_subpolyhedron(P)
-            True
-        """
-        return all(other_H.contains(self_V)
-                   for other_H in other.Hrepresentation()
-                   for self_V in self.Vrepresentation())
 
     @cached_method
     def vertex_facet_graph(self, labels=True):
@@ -1729,7 +1632,7 @@ class Polyhedron_base(Polyhedron_base1):
 
         .. SEEALSO::
 
-            :meth:`representative_point`.
+            :meth:`sage.geometry.polyhedron.base1.Polyhedron_base1.representative_point`.
 
         OUTPUT:
 
@@ -2105,21 +2008,6 @@ class Polyhedron_base(Polyhedron_base1):
                 return (False, None)
         else:
             return is_inscribed
-
-    def is_compact(self):
-        """
-        Test for boundedness of the polytope.
-
-        EXAMPLES::
-
-            sage: p = polytopes.icosahedron()                                   # optional - sage.rings.number_field
-            sage: p.is_compact()                                                # optional - sage.rings.number_field
-            True
-            sage: p = Polyhedron(ieqs = [[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
-            sage: p.is_compact()
-            False
-        """
-        return self.n_rays() == 0 and self.n_lines() == 0
 
     @cached_method
     def combinatorial_polyhedron(self):
@@ -7662,260 +7550,6 @@ class Polyhedron_base(Polyhedron_base1):
         return self.combinatorial_polyhedron().is_neighborly()
 
     @cached_method
-    def is_lattice_polytope(self):
-        r"""
-        Return whether the polyhedron is a lattice polytope.
-
-        OUTPUT:
-
-        ``True`` if the polyhedron is compact and has only integral
-        vertices, ``False`` otherwise.
-
-        EXAMPLES::
-
-            sage: polytopes.cross_polytope(3).is_lattice_polytope()
-            True
-            sage: polytopes.regular_polygon(5).is_lattice_polytope()            # optional - sage.rings.number_field
-            False
-        """
-        if not self.is_compact():
-            return False
-        if self.base_ring() is ZZ:
-            return True
-        return all(v.is_integral() for v in self.vertex_generator())
-
-    @cached_method
-    def lattice_polytope(self, envelope=False):
-        r"""
-        Return an encompassing lattice polytope.
-
-        INPUT:
-
-        - ``envelope`` -- boolean (default: ``False``). If the
-          polyhedron has non-integral vertices, this option decides
-          whether to return a strictly larger lattice polytope or
-          raise a ``ValueError``. This option has no effect if the
-          polyhedron has already integral vertices.
-
-        OUTPUT:
-
-        A :class:`LatticePolytope
-        <sage.geometry.lattice_polytope.LatticePolytopeClass>`. If the
-        polyhedron is compact and has integral vertices, the lattice
-        polytope equals the polyhedron. If the polyhedron is compact
-        but has at least one non-integral vertex, a strictly larger
-        lattice polytope is returned.
-
-        If the polyhedron is not compact, a ``NotImplementedError`` is
-        raised.
-
-        If the polyhedron is not integral and ``envelope=False``, a
-        ``ValueError`` is raised.
-
-        ALGORITHM:
-
-        For each non-integral vertex, a bounding box of integral
-        points is added and the convex hull of these integral points
-        is returned.
-
-        EXAMPLES:
-
-        First, a polyhedron with integral vertices::
-
-            sage: P = Polyhedron( vertices = [(1, 0), (0, 1), (-1, 0), (0, -1)])
-            sage: lp = P.lattice_polytope(); lp
-            2-d reflexive polytope #3 in 2-d lattice M
-            sage: lp.vertices()
-            M(-1,  0),
-            M( 0, -1),
-            M( 0,  1),
-            M( 1,  0)
-            in 2-d lattice M
-
-        Here is a polyhedron with non-integral vertices::
-
-            sage: P = Polyhedron( vertices = [(1/2, 1/2), (0, 1), (-1, 0), (0, -1)])
-            sage: lp = P.lattice_polytope()
-            Traceback (most recent call last):
-            ...
-            ValueError: Some vertices are not integral. You probably want
-            to add the argument "envelope=True" to compute an enveloping
-            lattice polytope.
-            sage: lp = P.lattice_polytope(True); lp
-            2-d reflexive polytope #5 in 2-d lattice M
-            sage: lp.vertices()
-            M(-1,  0),
-            M( 0, -1),
-            M( 1,  1),
-            M( 0,  1),
-            M( 1,  0)
-            in 2-d lattice M
-        """
-        if not self.is_compact():
-            raise NotImplementedError('only compact lattice polytopes are allowed')
-
-        try:
-            vertices = self.vertices_matrix(ZZ).columns()
-        except TypeError:
-            if not envelope:
-                raise ValueError('Some vertices are not integral. '
-                    'You probably want to add the argument '
-                    '"envelope=True" to compute an enveloping lattice polytope.')
-            vertices = []
-            for v in self.vertex_generator():
-                vbox = [ set([floor(x), ceil(x)]) for x in v ]
-                vertices.extend( itertools.product(*vbox) )
-
-        # construct the (enveloping) lattice polytope
-        from sage.geometry.lattice_polytope import LatticePolytope
-        return LatticePolytope(vertices)
-
-    def _integral_points_PALP(self):
-        r"""
-        Return the integral points in the polyhedron using PALP.
-
-        This method is for testing purposes and will eventually be removed.
-
-        OUTPUT:
-
-        The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
-
-        EXAMPLES::
-
-            sage: Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)])._integral_points_PALP()
-            [M(-1, -1), M(0, 1), M(1, 0), M(1, 1), M(0, 0)]
-            sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)]).lattice_polytope(True).points()
-            M(-1, -1),
-            M(-1,  0),
-            M( 0, -1),
-            M( 1,  1),
-            M( 0,  1),
-            M( 1,  0),
-            M( 0,  0)
-            in 2-d lattice M
-            sage: Polyhedron(vertices=[(-1/2,-1/2),(1,0),(1,1),(0,1)])._integral_points_PALP()
-            [M(1, 1), M(0, 1), M(1, 0), M(0, 0)]
-        """
-        if not self.is_compact():
-            raise ValueError('can only enumerate points in a compact polyhedron')
-        lp = self.lattice_polytope(True)
-        # remove cached values to get accurate timings
-        try:
-            del lp._points
-            del lp._npoints
-        except AttributeError:
-            pass
-        if self.is_lattice_polytope():
-            return list(lp.points())
-        return [p for p in lp.points() if self.contains(p)]
-
-    @cached_method(do_pickle=True)
-    def h_star_vector(self):
-        r"""
-        Return the `h^*`-vector of the lattice polytope.
-
-        The `h^*`-vector records the coefficients of the polynomial in the
-        numerator of the Ehrhart series of a lattice polytope.
-
-        INPUT:
-
-        - ``self`` -- A lattice polytope.
-
-        OUTPUT:
-
-        A list whose entries give the `h^*`-vector.
-
-        .. NOTE:
-
-            The backend of ``self`` should be ``'normaliz'``.
-            This function depends on Normaliz (i.e. the ``'pynormaliz'`` optional
-            package). See the Normaliz documentation for further details.
-
-        EXAMPLES:
-
-        The `h^*`-vector of a unimodular simplex S (a simplex with
-        volume = `\frac{1}{dim(S)!}`) is always 1. Here we test this on
-        simplices up to dimension 3::
-
-            sage: s1 = polytopes.simplex(1,backend='normaliz')              # optional - pynormaliz
-            sage: s2 = polytopes.simplex(2,backend='normaliz')              # optional - pynormaliz
-            sage: s3 = polytopes.simplex(3,backend='normaliz')              # optional - pynormaliz
-            sage: [s1.h_star_vector(),s2.h_star_vector(),s3.h_star_vector()]  # optional - pynormaliz
-            [[1], [1], [1]]
-
-        For a less trivial example, we compute the `h^*`-vector of the
-        `0/1`-cube, which has the Eulerian numbers `(3,i)` for `i \in [0,2]`
-        as an `h^*`-vector::
-
-            sage: cube = polytopes.cube(intervals='zero_one', backend='normaliz') # optional - pynormaliz
-            sage: cube.h_star_vector()   # optional - pynormaliz
-            [1, 4, 1]
-            sage: from sage.combinat.combinat import eulerian_number
-            sage: [eulerian_number(3,i) for i in range(3)]
-            [1, 4, 1]
-
-        TESTS::
-
-            sage: s3 = polytopes.simplex(3)
-            sage: s3.h_star_vector()
-            Traceback (most recent call last):
-            ...
-            TypeError: The backend of self must be normaliz
-
-            sage: t = Polyhedron(vertices=[[0],[1/2]])
-            sage: t.h_star_vector()
-            Traceback (most recent call last):
-            ...
-            TypeError: The h_star vector is only defined for lattice polytopes
-
-            sage: t2 = Polyhedron(vertices=[[AA(sqrt(2))],[1/2]])
-            sage: t2.h_star_vector()
-            Traceback (most recent call last):
-            ...
-            TypeError: The h_star vector is only defined for lattice polytopes
-
-        Check that the `h^*`-vector is pickled::
-
-            sage: new_cube = loads(dumps(cube))         # optional - pynormaliz
-            sage: new_cube.h_star_vector.is_in_cache()  # optional - pynormaliz
-            True
-        """
-        if self.is_empty():
-            return 0
-        if not self.is_lattice_polytope():
-            raise TypeError('The h_star vector is only defined for lattice polytopes')
-        if not self.backend() == 'normaliz':
-            raise TypeError('The backend of self must be normaliz')
-        return self._h_star_vector_normaliz()
-
-    def _h_star_vector_normaliz(self):
-        r"""
-        Return the `h^*`-vector of a lattice polytope with backend = 'normaliz'.
-
-        INPUT:
-
-        - ``self`` -- A lattice polytope.
-
-        OUTPUT:
-
-        The `h^*`-vector as a list.
-
-        .. NOTE:
-
-        The backend of ``self`` should be ``'normaliz'``.
-
-        TESTS::
-
-            sage: s3 = polytopes.simplex(3)
-            sage: s3._h_star_vector_normaliz()
-            Traceback (most recent call last):
-            ...
-            TypeError: the backend should be normaliz
-        """
-        raise TypeError("the backend should be normaliz")
-
-    @cached_method
     def bounding_box(self, integral=False, integral_hull=False):
         r"""
         Return the coordinates of a rectangular box containing the non-empty polytope.
@@ -7956,6 +7590,8 @@ class Polyhedron_base(Polyhedron_base1):
             ...
             ValueError: empty polytope is not allowed
         """
+        from sage.arith.misc import integer_ceil as ceil
+        from sage.arith.misc import integer_floor as floor
         box_min = []
         box_max = []
         if not self.is_compact():
@@ -7980,339 +7616,6 @@ class Polyhedron_base(Polyhedron_base1):
                 box_max.append(max_coord)
                 box_min.append(min_coord)
         return (tuple(box_min), tuple(box_max))
-
-    def integral_points_count(self, **kwds):
-        r"""
-        Return the number of integral points in the polyhedron.
-
-        This generic version of this method simply calls ``integral_points``.
-
-        EXAMPLES::
-
-            sage: P = polytopes.cube()
-            sage: P.integral_points_count()
-            27
-
-        We shrink the polyhedron a little bit::
-
-            sage: Q = P*(8/9)
-            sage: Q.integral_points_count()
-            1
-
-        Same for a polyhedron whose coordinates are not rationals.  Note that
-        the answer is an integer even though there are no guarantees for
-        exactness::
-
-            sage: Q = P*RDF(8/9)
-            sage: Q.integral_points_count()
-            1
-
-        Unbounded polyhedra (with or without lattice points) are not supported::
-
-            sage: P = Polyhedron(vertices=[[1/2, 1/3]], rays=[[1, 1]])
-            sage: P.integral_points_count()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: ...
-            sage: P = Polyhedron(vertices=[[1, 1]], rays=[[1, 1]])
-            sage: P.integral_points_count()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: ...
-
-        """
-        return len(self.integral_points())
-
-    def integral_points(self, threshold=100000):
-        r"""
-        Return the integral points in the polyhedron.
-
-        Uses either the naive algorithm (iterate over a rectangular
-        bounding box) or triangulation + Smith form.
-
-        INPUT:
-
-        - ``threshold`` -- integer (default: 100000). Use the naive
-          algorithm as long as the bounding box is smaller than this.
-
-        OUTPUT:
-
-        The list of integral points in the polyhedron. If the
-        polyhedron is not compact, a ``ValueError`` is raised.
-
-        EXAMPLES::
-
-            sage: Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)]).integral_points()
-            ((-1, -1), (0, 0), (0, 1), (1, 0), (1, 1))
-
-            sage: simplex = Polyhedron([(1,2,3), (2,3,7), (-2,-3,-11)])
-            sage: simplex.integral_points()
-            ((-2, -3, -11), (0, 0, -2), (1, 2, 3), (2, 3, 7))
-
-        The polyhedron need not be full-dimensional::
-
-            sage: simplex = Polyhedron([(1,2,3,5), (2,3,7,5), (-2,-3,-11,5)])
-            sage: simplex.integral_points()
-            ((-2, -3, -11, 5), (0, 0, -2, 5), (1, 2, 3, 5), (2, 3, 7, 5))
-
-            sage: point = Polyhedron([(2,3,7)])
-            sage: point.integral_points()
-            ((2, 3, 7),)
-
-            sage: empty = Polyhedron()
-            sage: empty.integral_points()
-            ()
-
-        Here is a simplex where the naive algorithm of running over
-        all points in a rectangular bounding box no longer works fast
-        enough::
-
-            sage: v = [(1,0,7,-1), (-2,-2,4,-3), (-1,-1,-1,4), (2,9,0,-5), (-2,-1,5,1)]
-            sage: simplex = Polyhedron(v); simplex
-            A 4-dimensional polyhedron in ZZ^4 defined as the convex hull of 5 vertices
-            sage: len(simplex.integral_points())
-            49
-
-        A case where rounding in the right direction goes a long way::
-
-            sage: P = 1/10*polytopes.hypercube(14, backend='field')
-            sage: P.integral_points()
-            ((0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),)
-
-        Finally, the 3-d reflexive polytope number 4078::
-
-            sage: v = [(1,0,0), (0,1,0), (0,0,1), (0,0,-1), (0,-2,1),
-            ....:      (-1,2,-1), (-1,2,-2), (-1,1,-2), (-1,-1,2), (-1,-3,2)]
-            sage: P = Polyhedron(v)
-            sage: pts1 = P.integral_points()                     # Sage's own code
-            sage: all(P.contains(p) for p in pts1)
-            True
-            sage: pts2 = LatticePolytope(v).points()          # PALP
-            sage: for p in pts1: p.set_immutable()
-            sage: set(pts1) == set(pts2)
-            True
-
-            sage: timeit('Polyhedron(v).integral_points()')   # not tested - random
-            625 loops, best of 3: 1.41 ms per loop
-            sage: timeit('LatticePolytope(v).points()')       # not tested - random
-            25 loops, best of 3: 17.2 ms per loop
-
-        TESTS:
-
-        Test some trivial cases (see :trac:`17937`)::
-
-            sage: P = Polyhedron(ambient_dim=1)  # empty polyhedron in 1 dimension
-            sage: P.integral_points()
-            ()
-            sage: P = Polyhedron(ambient_dim=0)  # empty polyhedron in 0 dimensions
-            sage: P.integral_points()
-            ()
-            sage: P = Polyhedron([[3]])  # single point in 1 dimension
-            sage: P.integral_points()
-            ((3),)
-            sage: P = Polyhedron([[1/2]])  # single non-integral point in 1 dimension
-            sage: P.integral_points()
-            ()
-            sage: P = Polyhedron([[]])  # single point in 0 dimensions
-            sage: P.integral_points()
-            ((),)
-
-        Test unbounded polyhedron::
-
-            sage: P = Polyhedron(rays=[[1,0,0]])
-            sage: P.integral_points()
-            Traceback (most recent call last):
-            ...
-            ValueError: can only enumerate points in a compact polyhedron
-        """
-        if not self.is_compact():
-            raise ValueError('can only enumerate points in a compact polyhedron')
-        # Trivial cases: polyhedron with 0 or 1 vertices
-        if self.n_vertices() == 0:
-            return ()
-        if self.n_vertices() == 1:
-            v = self.vertices_list()[0]
-            try:
-                return (vector(ZZ, v),)
-            except TypeError:  # vertex not integral
-                return ()
-
-        # for small bounding boxes, it is faster to naively iterate over the points of the box
-        box_min, box_max = self.bounding_box(integral_hull=True)
-        if box_min is None:
-            return ()
-        box_points = prod(max_coord-min_coord+1 for min_coord, max_coord in zip(box_min, box_max))
-        if not self.is_lattice_polytope() or \
-                (self.is_simplex() and box_points < 1000) or \
-                box_points < threshold:
-            from sage.geometry.integral_points import rectangular_box_points
-            return rectangular_box_points(list(box_min), list(box_max), self)
-
-        # for more complicate polytopes, triangulate & use smith normal form
-        from sage.geometry.integral_points import simplex_points
-        if self.is_simplex():
-            return simplex_points(self.Vrepresentation())
-        triangulation = self.triangulate()
-        points = set()
-        for simplex in triangulation:
-            triang_vertices = [self.Vrepresentation(i) for i in simplex]
-            new_points = simplex_points(triang_vertices)
-            for p in new_points:
-                p.set_immutable()
-            points.update(new_points)
-        # assert all(self.contains(p) for p in points)   # slow
-        return tuple(points)
-
-    def get_integral_point(self, index, **kwds):
-        r"""
-        Return the ``index``-th integral point in this polyhedron.
-
-        This is equivalent to ``sorted(self.integral_points())[index]``.
-        However, so long as self.integral_points_count() does not need to
-        enumerate all integral points, neither does this method. Hence it can
-        be significantly faster. If the polyhedron is not compact, a
-        ``ValueError`` is raised.
-
-        INPUT:
-
-        - ``index`` -- integer. The index of the integral point to be found. If
-          this is not in [0, ``self.integral_point_count()``), an ``IndexError``
-          is raised.
-
-        - ``**kwds`` -- optional keyword parameters that are passed to
-          :meth:`self.integral_points_count`.
-
-        ALGORITHM:
-
-        The function computes each of the components of the requested point in
-        turn. To compute x_i, the ith component, it bisects the upper and lower
-        bounds on x_i given by the bounding box. At each bisection, it uses
-        :meth:`integral_points_count` to determine on which side of the
-        bisecting hyperplane the requested point lies.
-
-        .. SEEALSO::
-
-            :meth:`integral_points_count`.
-
-        EXAMPLES::
-
-            sage: P = Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)])
-            sage: P.get_integral_point(1)
-            (0, 0)
-            sage: P.get_integral_point(4)
-            (1, 1)
-            sage: sorted(P.integral_points())
-            [(-1, -1), (0, 0), (0, 1), (1, 0), (1, 1)]
-            sage: P.get_integral_point(5)
-            Traceback (most recent call last):
-            ...
-            IndexError: ...
-
-            sage: Q = Polyhedron([(1,3), (2, 7), (9, 77)])
-            sage: [Q.get_integral_point(i) for i in range(Q.integral_points_count())] == sorted(Q.integral_points())
-            True
-            sage: Q.get_integral_point(0, explicit_enumeration_threshold=0, triangulation='cddlib')  # optional - latte_int
-            (1, 3)
-            sage: Q.get_integral_point(0, explicit_enumeration_threshold=0, triangulation='cddlib', foo=True)  # optional - latte_int
-            Traceback (most recent call last):
-            ...
-            RuntimeError: ...
-
-            sage: R = Polyhedron(vertices=[[1/2, 1/3]], rays=[[1, 1]])
-            sage: R.get_integral_point(0)
-            Traceback (most recent call last):
-            ...
-            ValueError: ...
-        """
-
-        if not self.is_compact():
-            raise ValueError('can only enumerate points in a compact polyhedron')
-
-        if not 0 <= index < self.integral_points_count(**kwds):
-            raise IndexError('polytope index out of range')
-
-        D = self.ambient_dim()
-        lower_bounds, upper_bounds = self.bounding_box()
-        coordinate = []
-        P = self
-        S = self.parent()
-        for i in range(D):  # Now compute x_i, the ith component of coordinate.
-            lower, upper = ceil(lower_bounds[i]), floor(upper_bounds[i]) + 1  # So lower <= x_i < upper.
-            while lower < upper-1:
-                guess = (lower + upper) // 2  # > lower.
-                # Build new polyhedron by intersecting P with the halfspace {x_i < guess}.
-                P_lt_guess = P.intersection(S(None, ([[guess-1] + [0] * i + [-1] + [0] * (D - i - 1)], [])))
-                # Avoid computing P_geq_guess = P.intersection({x_i >= guess}) right now, it might not be needed.
-                P_lt_guess_count = P_lt_guess.integral_points_count(**kwds)
-                if P_lt_guess_count > index:  # Move upper down to guess.
-                    upper = guess
-                    index -= 0
-                    P = P_lt_guess
-                else:  # P_lt_guess_count <= index:  # Move lower up to guess.
-                    lower = guess
-                    index -= P_lt_guess_count
-                    P_geq_guess = P.intersection(S(None, ([[-guess] + [0] * i + [1] + [0] * (D - i - 1)], [])))
-                    P = P_geq_guess
-            coordinate.append(lower)  # Record the new component that we have found.
-        point = vector(ZZ, coordinate)
-        point.set_immutable()
-        return point
-
-    def random_integral_point(self, **kwds):
-        r"""
-        Return an integral point in this polyhedron chosen uniformly at random.
-
-        INPUT:
-
-        - ``**kwds`` -- optional keyword parameters that are passed to
-          :meth:`self.get_integral_point`.
-
-        OUTPUT:
-
-        The integral point in the polyhedron chosen uniformly at random. If the
-        polyhedron is not compact, a ``ValueError`` is raised. If the
-        polyhedron does not contain any integral points, an ``EmptySetError`` is
-        raised.
-
-        .. SEEALSO::
-
-            :meth:`get_integral_point`.
-
-        EXAMPLES::
-
-            sage: P = Polyhedron(vertices=[(-1,-1),(1,0),(1,1),(0,1)])
-            sage: P.random_integral_point()  # random
-            (0, 0)
-            sage: P.random_integral_point() in P.integral_points()
-            True
-            sage: P.random_integral_point(explicit_enumeration_threshold=0, triangulation='cddlib')  # random, optional - latte_int
-            (1, 1)
-            sage: P.random_integral_point(explicit_enumeration_threshold=0, triangulation='cddlib', foo=7)  # optional - latte_int
-            Traceback (most recent call last):
-            ...
-            RuntimeError: ...
-
-            sage: Q = Polyhedron(vertices=[(2, 1/3)], rays=[(1, 2)])
-            sage: Q.random_integral_point()
-            Traceback (most recent call last):
-            ...
-            ValueError: ...
-
-            sage: R = Polyhedron(vertices=[(1/2, 0), (1, 1/2), (0, 1/2)])
-            sage: R.random_integral_point()
-            Traceback (most recent call last):
-            ...
-            EmptySetError: ...
-        """
-
-        if not self.is_compact():
-            raise ValueError('can only sample integral points in a compact polyhedron')
-
-        count = self.integral_points_count()
-        if count == 0:
-            raise EmptySetError('polyhedron does not contain any integral points')
-
-        return self.get_integral_point(current_randstate().python_random().randint(0, count-1), **kwds)
 
     @cached_method
     def combinatorial_automorphism_group(self, vertex_graph_only=False):

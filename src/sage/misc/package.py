@@ -506,7 +506,7 @@ def standard_packages():
     """
     from sage.misc.superseded import deprecation
     deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages'
+                'the functions standard_packages, optional_packages, experimental_packages '
                 'are deprecated, use sage.features instead')
     pkgs = list_packages('standard', local=True).values()
     return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
@@ -543,7 +543,7 @@ def optional_packages():
     """
     from sage.misc.superseded import deprecation
     deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages'
+                'the functions standard_packages, optional_packages, experimental_packages '
                 'are deprecated, use sage.features instead')
     pkgs = list_packages('optional', local=True)
     pkgs = pkgs.values()
@@ -576,7 +576,7 @@ def experimental_packages():
     """
     from sage.misc.superseded import deprecation
     deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages'
+                'the functions standard_packages, optional_packages, experimental_packages '
                 'are deprecated, use sage.features instead')
     pkgs = list_packages('experimental', local=True).values()
     return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),

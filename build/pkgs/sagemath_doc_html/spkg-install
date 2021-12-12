@@ -1,17 +1,3 @@
 #! /usr/bin/env bash
-
-# When building documentation, use MathJax by default. To turn it off,
-# set SAGE_DOC_MATHJAX to be "no" or "False".
-if [ -z "$SAGE_DOC_MATHJAX" ]; then
-    # For backwards compatibility, we use the value of SAGE_DOC_JSMATH
-    # if it is set.
-    if [ -n "$SAGE_DOC_JSMATH" ]; then
-        SAGE_DOC_MATHJAX="$SAGE_DOC_JSMATH"
-    else
-        SAGE_DOC_MATHJAX="True"
-    fi
-    export SAGE_DOC_MATHJAX
-fi
-
 cd $SAGE_ROOT/src/doc
 $MAKE doc-html

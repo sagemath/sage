@@ -225,19 +225,54 @@ class LCalc(SageObject):
         EXAMPLES::
 
             sage: I = CC.0
-            sage: lcalc.values_along_line(0.5, 0.5+20*I, 5)
-            [(0.500000000, -1.46035451), (0.500000000 + 4.00000000*I, 0.606783764 + 0.0911121400*I), (0.500000000 + 8.00000000*I, 1.24161511 + 0.360047588*I), (0.500000000 + 12.0000000*I, 1.01593665 - 0.745112472*I), (0.500000000 + 16.0000000*I, 0.938545408 + 1.21658782*I)]
+            sage: values = lcalc.values_along_line(0.5, 0.5+20*I, 5)
+            sage: values[0][0] # abs tol 1e-8
+            0.5
+            sage: values[0][1] # abs tol 1e-8
+            -1.46035451 + 0.0*I
+            sage: values[1][0] # abs tol 1e-8
+            0.5 + 4.0*I
+            sage: values[1][1] # abs tol 1e-8
+            0.606783764 + 0.0911121400*I
+            sage: values[2][0] # abs tol 1e-8
+            0.5 + 8.0*I
+            sage: values[2][1] # abs tol 1e-8
+            1.24161511 + 0.360047588*I
+            sage: values[3][0] # abs tol 1e-8
+            0.5 + 12.0*I
+            sage: values[3][1] # abs tol 1e-8
+            1.01593665 - 0.745112472*I
+            sage: values[4][0] # abs tol 1e-8
+            0.5 + 16.0*I
+            sage: values[4][1] # abs tol 1e-8
+            0.938545408 + 1.21658782*I
 
         Sometimes warnings are printed (by lcalc) when this command is
         run::
 
             sage: E = EllipticCurve('389a')
-            sage: E.lseries().values_along_line(0.5, 3, 5)
-            [(0.000000000, 0.209951303),
-             (0.500000000, -...e-16),
-             (1.00000000, 0.133768433),
-             (1.50000000, 0.360092864),
-             (2.00000000, 0.552975867)]
+            sage: values = E.lseries().values_along_line(0.5, 3, 5)
+            sage: values[0][0] # abs tol 1e-8
+            0.0
+            sage: values[0][1] # abs tol 1e-8
+            0.209951303  + 0.0*I
+            sage: values[1][0] # abs tol 1e-8
+            0.5
+            sage: values[1][1] # abs tol 1e-8
+            0.0  + 0.0*I
+            sage: values[2][0] # abs tol 1e-8
+            1.0
+            sage: values[2][1] # abs tol 1e-8
+            0.133768433 - 0.0*I
+            sage: values[3][0] # abs tol 1e-8
+            1.5
+            sage: values[3][1] # abs tol 1e-8
+            0.360092864 - 0.0*I
+            sage: values[4][0] # abs tol 1e-8
+            2.0
+            sage: values[4][1] # abs tol 1e-8
+            0.552975867 + 0.0*I
+
         """
         L = self._compute_L(L)
         CC = sage.rings.all.ComplexField(prec)
@@ -281,8 +316,31 @@ class LCalc(SageObject):
 
         EXAMPLES::
 
-            sage: lcalc.twist_values(0.5, -10, 10)
-            [(-8, 1.10042141), (-7, 1.14658567), (-4, 0.667691457), (-3, 0.480867558), (5, 0.231750947), (8, 0.373691713)]
+            sage: values = lcalc.twist_values(0.5, -10, 10)
+            sage: values[0][0]
+            -8
+            sage: values[0][1] # abs tol 1e-8
+            1.10042141 + 0.0*I
+            sage: values[1][0]
+            -7
+            sage: values[1][1] # abs tol 1e-8
+            1.14658567 + 0.0*I
+            sage: values[2][0]
+            -4
+            sage: values[2][1] # abs tol 1e-8
+            0.667691457 + 0.0*I
+            sage: values[3][0]
+            -3
+            sage: values[3][1] # abs tol 1e-8
+            0.480867558 + 0.0*I
+            sage: values[4][0]
+            5
+            sage: values[4][1] # abs tol 1e-8
+            0.231750947 + 0.0*I
+            sage: values[5][0]
+            8
+            sage: values[5][1] # abs tol 1e-8
+            0.373691713 + 0.0*I
         """
         L = self._compute_L(L)
         CC = sage.rings.all.ComplexField(prec)

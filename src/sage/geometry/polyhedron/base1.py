@@ -33,6 +33,8 @@ but not constructions such as dilation or product.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.structure.element import coerce_binop
+from sage.structure.richcmp import rich_to_bool, op_NE
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
@@ -167,6 +169,95 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
                     desc += ' lines'
 
         return desc
+
+    def _richcmp_(self, other, op):
+        """
+        Compare ``self`` and ``other``.
+
+        INPUT:
+
+        - ``other`` -- a polyhedron
+
+        OUTPUT:
+
+        If ``other`` is a polyhedron, then the comparison
+        operator "less or equal than" means "is contained in", and
+        "less than" means "is strictly contained in".
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(vertices=[(1,0), (0,1)], rays=[(1,1)])
+            sage: Q = Polyhedron(vertices=[(1,0), (0,1)])
+            sage: P >= Q
+            True
+            sage: Q <= P
+            True
+            sage: P == P
+            True
+
+       The polytope ``Q`` is strictly contained in ``P``::
+
+            sage: P > Q
+            True
+            sage: P < Q
+            False
+            sage: P == Q
+            False
+
+        Test that we have fixed a problem revealed in :trac:`31701`,
+        where neither of the two polyhedra contains the other::
+
+            sage: P = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
+            sage: Q = Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])
+            sage: Q < P
+            False
+            sage: P > Q
+            False
+         """
+        if self.Vrepresentation() is None or other.Vrepresentation() is None:
+            raise RuntimeError('some V representation is missing')
+            # make sure deleted polyhedra are not used in cache
+
+        if self.ambient_dim() != other.ambient_dim():
+            return op == op_NE
+
+        c0 = self._is_subpolyhedron(other)
+        c1 = other._is_subpolyhedron(self)
+        if c0 and c1:
+            return rich_to_bool(op, 0)
+        elif c0:
+            return rich_to_bool(op, -1)
+        elif c1:
+            return rich_to_bool(op, 1)
+        else:
+            return op == op_NE
+
+    @coerce_binop
+    def _is_subpolyhedron(self, other):
+        """
+        Test whether ``self`` is a (not necessarily strict)
+        sub-polyhedron of ``other``.
+
+        INPUT:
+
+        - ``other`` -- a :class:`Polyhedron`
+
+        OUTPUT:
+
+        Boolean
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(vertices=[(1,0), (0,1)], rays=[(1,1)])
+            sage: Q = Polyhedron(vertices=[(1,0), (0,1)])
+            sage: P._is_subpolyhedron(Q)
+            False
+            sage: Q._is_subpolyhedron(P)
+            True
+        """
+        return all(other_H.contains(self_V)
+                   for other_H in other.Hrepresentation()
+                   for self_V in self.Vrepresentation())
 
     def is_empty(self):
         """
@@ -423,7 +514,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
 
         .. SEEALSO::
 
-            :meth:`center`.
+            :meth:`sage.geometry.polyhedron.base.Polyhedron_base.center`.
 
         OUTPUT:
 

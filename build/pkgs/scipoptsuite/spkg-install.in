@@ -3,7 +3,7 @@ echo "Building scipoptsuite with cmake"
 cd src
 mkdir build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX="${SAGE_LOCAL}"/ -DCMAKE_VERBOSE_MAKEFILE=ON -DGMP_DIR="${SAGE_LOCAL}" -DZLIB_ROOT="${SAGE_LOCAL}" -DReadline_ROOT_DIR="${SAGE_LOCAL}" -DBLISS_DIR="${SAGE_LOCAL}" -DIPOPT=FALSE
+cmake .. -DCMAKE_VERBOSE_MAKEFILE=ON -DGMP_DIR="${SAGE_LOCAL}" -DZLIB_ROOT="${SAGE_LOCAL}" -DReadline_ROOT_DIR="${SAGE_LOCAL}" -DBLISS_DIR="${SAGE_LOCAL}" -DIPOPT=FALSE
 make
 make install
 

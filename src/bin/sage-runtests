@@ -161,6 +161,10 @@ if __name__ == "__main__":
         if args.verbose:
             pytest_options.append("-v")
         exit_code_pytest = pytest.main(pytest_options + args.filenames)
+        if exit_code_pytest == 5:
+            # Exit code 5 means there were no test files, pass in this case
+            exit_code_pytest = 0
+
     except ModuleNotFoundError:
         print("Pytest is not installed, skip checking tests that rely on it.")
 

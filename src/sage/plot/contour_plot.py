@@ -331,6 +331,14 @@ def contour_plot(f, xrange, yrange, **options):
         of two variables. Only segments of the surface where region(x,y)
         returns a number >0 will be included in the plot.
 
+    .. WARNING::
+
+        Due to an implementation detail in matplotlib, single-contour
+        plots whose data all lie on one side of the sole contour may
+        not be plotted correctly. We attempt to detect this situation
+        and to produce something better than an empty plot when it
+        happens; a ``UserWarning`` is emitted in that case.
+
     EXAMPLES:
 
     Here we plot a simple function of two variables.  Note that
@@ -814,6 +822,45 @@ def contour_plot(f, xrange, yrange, **options):
         g = contour_plot(f, (-pi,pi), (-pi,pi), fill=False, axes=True)
         sphinx_plot(g)
 
+    If you are plotting a sole countour and if all of your data lie on
+    one side of it, then (as part of :trac:`21042`) a heuristic may be
+    used to improve the result; in that case, a warning is emitted::
+
+        sage: contour_plot(lambda x,y: abs(x^2-y^2), (-1,1), (-1,1),
+        ....:              contours=[0], fill=False, cmap=['blue'])
+        ...
+        UserWarning: pathological contour plot of a function whose values
+        all lie on one side of the sole contour; we are adding more plot
+        points and perturbing your function values.
+        Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            g = contour_plot(lambda x,y: abs(x**2-y**2), (-1,1), (-1,1),
+                             contours=[0], fill=False, cmap=['blue'])
+        sphinx_plot(g)
+
+    Constant functions (with a single contour) can be plotted as well;
+    this was not possible before :trac:`21042`::
+
+        sage: contour_plot(lambda x,y: 0, (-1,1), (-1,1),
+        ....:              contours=[0], fill=False, cmap=['blue'])
+        ...
+        UserWarning: No contour levels were found within the data range.
+        Graphics object consisting of 1 graphics primitive
+
+    .. PLOT::
+
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            g = contour_plot(lambda x,y: 0, (-1,1), (-1,1),
+                             contours=[0], fill=False, cmap=['blue'])
+        sphinx_plot(g)
+
     TESTS:
 
     To check that :trac:`5221` is fixed, note that this has three curves, not
@@ -845,12 +892,129 @@ def contour_plot(f, xrange, yrange, **options):
 
     F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
                                        options['plot_points'])
-    g = F[0]
+    h = F[0]
     xrange, yrange = [r[:2] for r in ranges]
 
-    xy_data_array = [[g(x, y) for x in xsrange(*ranges[0],
+    xy_data_array = [[h(x, y) for x in xsrange(*ranges[0],
                                                include_endpoint=True)]
                      for y in xsrange(*ranges[1], include_endpoint=True)]
+
+    g = Graphics()
+
+    # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
+    # Otherwise matplotlib complains.
+    scale = options.get('scale', None)
+    if isinstance(scale, (list, tuple)):
+        scale = scale[0]
+    if scale in ('semilogy', 'semilogx'):
+        options['aspect_ratio'] = 'automatic'
+
+    g._set_extra_kwds(Graphics._extract_kwds_for_show(options,
+                                                      ignore=['xmin', 'xmax']))
+
+
+    # Was a single contour level explicitly given? If "contours" is
+    # the integer 1, then there will be a single level, but we can't
+    # know what it is because it's determined within matplotlib's
+    # "contour" or "contourf" function. So we punt in that case. If
+    # there's a single contour and fill=True, we fall through to let
+    # matplotlib complain that "Filled contours require at least 2
+    # levels."
+    if ( isinstance(options["contours"], (list, tuple))
+         and
+         len(options["contours"]) == 1
+         and
+         options.get("fill") == False):
+        # When there's only one level (say, zero), matplotlib doesn't
+        # handle it well. If all of the data lie on one side of that
+        # level -- for example, if f(x,y) >= 0 for all x,y -- then it
+        # will fail to plot the points where f(x,y) == 0. This is
+        # especially catastrophic for implicit_plot(), which tries to
+        # do just that. Here we handle that special case: if there's
+        # only one level, and if all of the data lie on one side of
+        # it, we perturb the data a bit so that they don't. The resulting
+        # plots don't look great, but they're not empty, which is an
+        # improvement.
+        import numpy as np
+        dx = ranges[0][2]
+        dy = ranges[1][2]
+        z0 = options["contours"][0]
+
+        # This works OK for the examples in the doctests, but basing
+        # it off the plot scale rather than how fast the function
+        # changes can never be truly satisfactory.
+        tol = max(dx,dy)/4.0
+        xy_data_array = np.ma.asarray(xy_data_array, dtype=float)
+
+        # Special case for constant functions. This is needed because
+        # otherwise the forthcoming perturbation trick will take values
+        # like 0,0,0... and perturb them to -tol, -tol, -tol... which
+        # doesn't work for the same reason 0,0,0... doesn't work.
+        if np.all(np.abs(xy_data_array - z0) <= tol):
+            # Up to our tolerance, this is the const_z0 function.
+            # ...make it actually the const_z0 function.
+            xy_data_array.fill(z0)
+
+            # We're going to set fill=True in a momemt, so we need to
+            # prepend an entry to the cmap so that the user's original
+            # cmap winds up in the right place.
+            if "cmap" in options:
+                if isinstance(options["cmap"], (list, tuple)):
+                    oldcmap = options["cmap"][0]
+                else:
+                    oldcmap = options["cmap"]
+            else:
+                # The docs promise this as the default.
+                oldcmap = "gray"
+
+            # Trick matplotlib into plotting all of the points (minus
+            # those masked) by using a single, filled contour that
+            # covers the entire plotting surface.
+            options["cmap"] = ["white", oldcmap]
+            options["contours"] = (z0-1, z0)
+            options["fill"] = True
+        else:
+            # The "c" constant is set to plus/minus one to handle both
+            # of the "all values greater than z0" and "all values less
+            # than z0" cases at once.
+            c = 1
+            if np.all(xy_data_array <= z0):
+                xy_data_array *= -1
+                c = -1
+            # Now we check if (a) all of the data lie on one side of
+            # z0, and (b) if perturbing the data will actually help by
+            # moving anything across z0.
+            if (np.all(xy_data_array >= z0) and
+                np.any(xy_data_array - z0 < tol)):
+
+                from warnings import warn
+                warn("pathological contour plot of a function whose "
+                     "values all lie on one side of the sole contour; "
+                     "we are adding more plot points and perturbing "
+                     "your function values.")
+
+                # The choice of "4" here is not based on much of anything.
+                # It works well enough for the examples in the doctests.
+                if not isinstance(options["plot_points"], (list, tuple)):
+                    options["plot_points"] = (options["plot_points"],
+                                              options["plot_points"])
+                    options["plot_points"] = (options["plot_points"][0]*4,
+                                              options["plot_points"][1]*4)
+
+                # Re-plot with more points...
+                F, ranges = setup_for_eval_on_grid(ev, [xrange, yrange],
+                                                   options['plot_points'])
+                h = F[0]
+                xrange, yrange = [r[:2] for r in ranges]
+
+                # ...and a function whose values are shifted towards
+                # z0 by "tol".
+                xy_data_array = [ [h(x, y) - c*tol
+                                   for x in xsrange(*ranges[0],
+                                                   include_endpoint=True)]
+                                  for y in xsrange(*ranges[1],
+                                                   include_endpoint=True) ]
+
 
     if region is not None:
         import numpy
@@ -868,19 +1032,8 @@ def contour_plot(f, xrange, yrange, **options):
 
         xy_data_array[mask] = numpy.ma.masked
 
-    g = Graphics()
-
-    # Reset aspect_ratio to 'automatic' in case scale is 'semilog[xy]'.
-    # Otherwise matplotlib complains.
-    scale = options.get('scale', None)
-    if isinstance(scale, (list, tuple)):
-        scale = scale[0]
-    if scale in ('semilogy', 'semilogx'):
-        options['aspect_ratio'] = 'automatic'
-
-    g._set_extra_kwds(Graphics._extract_kwds_for_show(options,
-                                                      ignore=['xmin', 'xmax']))
     g.add_primitive(ContourPlot(xy_data_array, xrange, yrange, options))
+
     return g
 
 
@@ -950,6 +1103,14 @@ def implicit_plot(f, xrange, yrange, **options):
       to logarithmic scale. The ``"semilogy"`` scale sets the vertical axis
       to logarithmic scale. The ``"linear"`` scale is the default value
       when :class:`~sage.plot.graphics.Graphics` is initialized.
+
+    .. WARNING::
+
+        Due to an implementation detail in matplotlib, implicit plots
+        whose data are all nonpositive or nonnegative may not be
+        plotted correctly. We attempt to detect this situation and to
+        produce something better than an empty plot when it happens; a
+        ``UserWarning`` is emitted in that case.
 
     EXAMPLES:
 

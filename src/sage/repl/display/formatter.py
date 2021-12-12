@@ -69,6 +69,7 @@ from IPython.core.display import DisplayObject
 from ipywidgets.widgets.interaction import interactive
 
 from sage.repl.display.pretty_print import SagePrettyPrinter
+from sage.misc.lazy_import import lazy_import
 
 IPYTHON_NATIVE_TYPES = (DisplayObject, interactive)
 
@@ -76,6 +77,7 @@ PLAIN_TEXT = 'text/plain'
 TEXT_LATEX = 'text/latex'
 TEXT_HTML = 'text/html'
 
+lazy_import('matplotlib.figure', 'Figure')
 
 class SageDisplayFormatter(DisplayFormatter):
 
@@ -178,14 +180,17 @@ class SageDisplayFormatter(DisplayFormatter):
         """
         sage_format, sage_metadata = self.dm.displayhook(obj)
         assert PLAIN_TEXT in sage_format, 'plain text is always present'
+
         # use Sage rich output for any except those native to IPython, but only
         # if it is not plain and dull
-        if (not isinstance(obj, IPYTHON_NATIVE_TYPES) and
+        if (not isinstance(obj, (IPYTHON_NATIVE_TYPES, Figure)) and
             not set(sage_format.keys()).issubset([PLAIN_TEXT])):
             return sage_format, sage_metadata
+
         if self.ipython_display_formatter(obj):
             # object handled itself, don't proceed
             return {}, {}
+
         # try IPython display formatter
         if exclude is not None:
             exclude = list(exclude) + [PLAIN_TEXT]

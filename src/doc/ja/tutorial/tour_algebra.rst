@@ -214,7 +214,7 @@ Sageを使って常微分方程式を研究することもできる． :math:`x'
 
     sage: de1 = maxima("2*diff(x(t),t, 2) + 6*x(t) - 2*y(t)")
     sage: lde1 = de1.laplace("t","s"); lde1
-    2*((-%at('diff(x(t),t,1),t=0))+s^2*'laplace(x(t),t,s)-x(0)*s)-2*'laplace(y(t),t,s)+6*'laplace(x(t),t,s)
+    2*((-%at('diff(x(t),t,1),t = 0))+s^2*'laplace(x(t),t,s)-x(0)*s) -2*'laplace(y(t),t,s)+6*'laplace(x(t),t,s)
 
 この出力は読みにくいけれども，意味しているのは
 
@@ -228,7 +228,7 @@ Sageを使って常微分方程式を研究することもできる． :math:`x'
 
     sage: de2 = maxima("diff(y(t),t, 2) + 2*y(t) - 2*x(t)")
     sage: lde2 = de2.laplace("t","s"); lde2
-    (-%at('diff(y(t),t,1),t=0))+s^2*'laplace(y(t),t,s)+2*'laplace(y(t),t,s)-2*'laplace(x(t),t,s)-y(0)*s
+    (-%at('diff(y(t),t,1),t = 0))+s^2*'laplace(y(t),t,s) +2*'laplace(y(t),t,s)-2*'laplace(x(t),t,s) -y(0)*s
 
 意味するところは
 

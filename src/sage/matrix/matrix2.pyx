@@ -5130,14 +5130,47 @@ cdef class Matrix(Matrix1):
         """
         return self.row_module()
 
-    def _row_ambient_module(self, base_ring=None):
+    cpdef _row_ambient_module(self, base_ring=None):
+        """
+        Return the parent of the rows.
+
+        INPUT:
+
+        -  ``base_ring`` -- (optional); change the ring of the parent
+
+        EXAMPLES::
+
+            sage: M = Matrix(ZZ, 3, 4)
+            sage: M._row_ambient_module()
+            Ambient free module of rank 4 over the principal ideal domain Integer Ring
+            sage: M._row_ambient_module(QQ)
+            Vector space of dimension 4 over Rational Field
+            sage: M = Matrix(QQ, 4, 5)
+            sage: M._row_ambient_module()
+            Vector space of dimension 5 over Rational Field
+            sage: M._row_ambient_module(ZZ)
+            Ambient free module of rank 5 over the principal ideal domain Integer Ring
+        """
+        # We optimize for the case ``base_ring == None``
+        # to achieve the (almost) same speed as ``_column_ambient_module``
+        # in this case.
+        # See :trac:`32901`.
         if base_ring is None:
-            base_ring = self.base_ring()
-        x = self.fetch('row_ambient_module_%s'%base_ring)
-        if not x is None:
+            x = self.fetch('row_ambient_module')
+            if x is not None:
+                return x
+            x = sage.modules.free_module.FreeModule(self._base_ring, self._ncols,
+                                                    sparse=self.is_sparse_c())
+            self.cache('row_ambient_module', x)
             return x
-        x = sage.modules.free_module.FreeModule(base_ring, self.ncols(), sparse=self.is_sparse())
-        self.cache('row_ambient_module',x)
+
+        cache_name = 'row_ambient_module_' + base_ring.__repr__()
+        x = self.fetch(cache_name)
+        if x is not None:
+            return x
+        x = sage.modules.free_module.FreeModule(base_ring, self._ncols,
+                                                sparse=self.is_sparse_c())
+        self.cache(cache_name, x)
         return x
 
     def row_module(self, base_ring=None):
@@ -5191,12 +5224,24 @@ cdef class Matrix(Matrix1):
         """
         return self.row_module(base_ring=base_ring)
 
-    def _column_ambient_module(self):
+    cpdef _column_ambient_module(self):
+        """
+        Return the parent of the columns.
+
+        EXAMPLES::
+
+            sage: M = Matrix(ZZ, 3, 4)
+            sage: M._column_ambient_module()
+            Ambient free module of rank 3 over the principal ideal domain Integer Ring
+            sage: M = Matrix(QQ, 4, 5)
+            sage: M._column_ambient_module()
+            Vector space of dimension 4 over Rational Field
+        """
         x = self.fetch('column_ambient_module')
         if not x is None:
             return x
-        x = sage.modules.free_module.FreeModule(self.base_ring(), self.nrows(),
-                                                sparse=self.is_sparse())
+        x = sage.modules.free_module.FreeModule(self._base_ring, self._nrows,
+                                                sparse=self.is_sparse_c())
         self.cache('column_ambient_module',x)
         return x
 

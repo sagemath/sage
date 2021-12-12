@@ -192,6 +192,39 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
     fi
     SAGE_PACKAGE_TREES="${SAGE_PACKAGE_TREES}$(printf '\ntrees_')${SPKG_NAME} = ${SPKG_TREE_VAR}"
 
+    dnl Determine whether it is installed already
+    AS_VAR_SET([is_installed], [no])
+    for treevar in ${SPKG_TREE_VAR} SAGE_LOCAL; do
+        AS_VAR_COPY([t], [$treevar])
+        AS_IF([test -n "$t" -a -d "$t/var/lib/sage/installed/" ], [
+            for f in "$t/var/lib/sage/installed/$SPKG_NAME"-*; do
+                AS_IF([test -r "$f"], [
+                    AS_VAR_IF([SPKG_SOURCE], [normal], [
+                        dnl Only run the multiple installation record test for normal packages,
+                        dnl not for script packages. We actually do not clean up after those...
+                        AS_IF([test "$is_installed" = "yes"], [
+                            AC_MSG_ERROR(m4_normalize([
+                                multiple installation records for $SPKG_NAME:
+                                m4_newline($(ls -l "$t/var/lib/sage/installed/$SPKG_NAME"-*))
+                                m4_newline([only one should exist, so please delete some or all
+                                of these files and re-run "$srcdir/configure"])
+                            ]))
+                        ])
+                    ])
+                    AS_VAR_SET([is_installed], [yes])
+                ])
+            done
+            dnl Only check the first existing tree, so that we do not issue "multiple installation" warnings
+            dnl when SAGE_LOCAL = SAGE_VENV
+            break
+        ])
+    done
+
+    # Determine whether package is enabled
+    AS_VAR_IF([SAGE_ENABLE_${SPKG_NAME}], [if_installed],
+          [AS_VAR_SET([SAGE_ENABLE_${SPKG_NAME}], $is_installed)])
+    AS_VAR_COPY([want_spkg], [SAGE_ENABLE_${SPKG_NAME}])
+
     uninstall_message=""
     SAGE_NEED_SYSTEM_PACKAGES_VAR=SAGE_NEED_SYSTEM_PACKAGES
     # Check consistency of 'DIR/type' file
@@ -229,20 +262,6 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
     optional|experimental)
         in_sdist=no
         uninstall_message=", use \"$srcdir/configure --disable-$SPKG_NAME\" to uninstall"
-        stampfile=""
-        for f in "$SAGE_SPKG_INST/$SPKG_NAME"-*; do
-            AS_IF([test -r "$f"], [
-                AS_IF([test -n "$stampfile"], [
-                    AC_MSG_ERROR(m4_normalize([
-                        multiple installation records for $SPKG_NAME:
-                        m4_newline($(ls -l "$SAGE_SPKG_INST/$SPKG_NAME"-*))
-                        m4_newline([only one should exist, so please delete some or all
-                        of these files and re-run "$srcdir/configure"])
-                    ]))
-                ])
-                stampfile=yes
-            ])
-        done
         ;;
     esac
 
@@ -306,17 +325,6 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
     if test "$in_sdist" = yes; then
         SAGE_SDIST_PACKAGES="${SAGE_SDIST_PACKAGES} \\$(printf '\n    ')${SPKG_NAME}"
     fi
-
-    # Determine whether package is enabled
-    AS_VAR_SET([is_installed], [no])
-    for f in "$SAGE_SPKG_INST/${SPKG_NAME}"-*; do
-        AS_IF([test -r "$f"],
-              [AS_VAR_SET([is_installed], [yes])])
-    done
-
-    AS_VAR_IF([SAGE_ENABLE_${SPKG_NAME}}], [if_installed],
-          [AS_VAR_SET([SAGE_ENABLE_${SPKG_NAME}], $is_installed)])
-    AS_VAR_COPY([want_spkg], [SAGE_ENABLE_${SPKG_NAME}])
 
     spkg_line=" \\$(printf '\n    ')$SPKG_NAME"
     AS_CASE([$is_installed-$want_spkg],

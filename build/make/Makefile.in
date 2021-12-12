@@ -337,12 +337,11 @@ doc-html: sagemath_doc_html
 doc-html-no-plot: doc-clean
 	+$(MAKE_REC) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-plot" doc-html
 
-# Using mathjax is actually the default, but this target can be used
-# to override an environment setting of SAGE_DOC_MATHJAX=no
-doc-html-mathjax:
-	+$(MAKE_REC) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) -j" doc-html
+# Using mathjax is actually the only options, but we keep
+# this target for backwards compatibility.
+doc-html-mathjax: doc-html
 
-# Keep target 'doc-html-jsmath' for backwards compatibility.
+# Also Keep target 'doc-html-jsmath' for backwards compatibility.
 doc-html-jsmath: doc-html-mathjax
 
 doc-pdf: sagemath_doc_pdf

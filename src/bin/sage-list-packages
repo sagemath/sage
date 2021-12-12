@@ -99,8 +99,8 @@ L.sort(key=lambda pkg: pkg.name)
 
 # print (while getting rid of None in versions)
 for pkg in L:
-    pkg.installed_version = pkg.installed_version or 'not_installed'
-    pkg.remote_version = pkg.remote_version or '?'
+    pkg = pkg._replace(installed_version = pkg.installed_version or 'not_installed',
+                       remote_version = pkg.remote_version or '?')
     print(format_string.format(**pkg._asdict()))
 if WARN:
     print(WARN)

@@ -1,5 +1,3 @@
-# sage_setup: distribution = sagemath-primecount
-
 r"""
 Interface to the primecount library
 """
@@ -17,12 +15,6 @@ from libcpp.string cimport string as cppstring
 from cpython.int cimport PyInt_FromString
 
 from cysignals.signals cimport sig_on, sig_off
-
-
-from sage.misc.superseded import deprecation
-deprecation(32412, "the module sage.interfaces.primecount is deprecated")
-
-
 cimport sage.libs.primecount as primecount
 
 cdef inline int _do_sig(int64_t n):
@@ -37,29 +29,15 @@ cpdef int64_t prime_pi(int64_t n, method=None) except -1:
 
     - ``n`` - an integer
 
-    - ``method`` - deprecated, no longer supported in primecount 5
-
     EXAMPLES::
 
-        sage: from sage.interfaces.primecount import prime_pi # optional - primecount
-        doctest:warning
-        ...
-        DeprecationWarning: the module sage.interfaces.primecount is deprecated
-        See https://trac.sagemath.org/32412 for details.
-
-        sage: prime_pi(1000) == 168                     # optional - primecount
+        sage: from sage.interfaces.primecount import prime_pi
+        sage: prime_pi(1000) == 168
         True
-        sage: prime_pi(1000, method='deleglise_rivat') == 168 # optional - primecount
-        doctest:warning
-        ...
-        DeprecationWarning: primecount 5 no longer supports the 'method' parameter
-        See https://trac.sagemath.org/28493 for details.
+        sage: prime_pi(1000, method='deleglise_rivat') == 168
         True
     """
     cdef int64_t ans
-    if method is not None:
-        from sage.misc.superseded import deprecation_cython as deprecation
-        deprecation(28493, "primecount 5 no longer supports the 'method' parameter")
     if _do_sig(n): sig_on()
     ans = primecount.pi(n)
     if _do_sig(n): sig_off()
@@ -71,9 +49,9 @@ cpdef prime_pi_128(n):
 
     EXAMPLES::
 
-        sage: from sage.interfaces.primecount import prime_pi_128 # optional - primecount
+        sage: from sage.interfaces.primecount import prime_pi_128
 
-        sage: prime_pi_128(1000)     # optional - primecount
+        sage: prime_pi_128(1000)
         168
         sage: nth_prime_128(2**65)   # not tested
         ?
@@ -91,9 +69,9 @@ cpdef int64_t nth_prime(int64_t n) except -1:
 
     EXAMPLES::
 
-        sage: from sage.interfaces.primecount import nth_prime # optional - primecount
+        sage: from sage.interfaces.primecount import nth_prime
 
-        sage: nth_prime(168) == 997  # optional - primecount
+        sage: nth_prime(168) == 997
         True
     """
     if n <= 0:
@@ -114,11 +92,11 @@ cpdef int64_t phi(int64_t x, int64_t a):
 
     EXAMPLES::
 
-         sage: from sage.interfaces.primecount import phi # optional - primecount
+         sage: from sage.interfaces.primecount import phi
 
-         sage: phi(1000, 3) == 266 # optional - primecount
+         sage: phi(1000, 3) == 266
          True
-         sage: phi(2**30, 100) == 95446716 # optional - primecount
+         sage: phi(2**30, 100) == 95446716
          True
     """
     return primecount.phi(x, a)

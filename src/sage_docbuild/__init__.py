@@ -38,7 +38,7 @@ in a subprocess call to sphinx, see :func:`builder_helper`.
 # ****************************************************************************
 
 import logging
-import optparse
+import argparse
 import os
 import pickle
 import re
@@ -49,8 +49,6 @@ import time
 import types
 import warnings
 
-logger = logging.getLogger(__name__)
-
 import sphinx.util.console
 import sphinx.ext.intersphinx
 
@@ -59,9 +57,14 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc import sage_makedirs
 from sage.env import SAGE_DOC_SRC, SAGE_DOC, SAGE_SRC, DOT_SAGE
 
-from .build_options import (LANGUAGES, SPHINXOPTS, PAPER, OMIT,
-     PAPEROPTS, ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS,
+from .build_options import (LANGUAGES, SPHINXOPTS, OMIT,
+     ALLSPHINXOPTS, NUM_THREADS, WEBSITESPHINXOPTS,
      INCREMENTAL_BUILD, ABORT_ON_ERROR)
+
+from .utils import build_many as _build_many
+
+logger = logging.getLogger(__name__)
+
 
 ##########################################
 #      Parallel Building Ref Manual      #
@@ -77,6 +80,7 @@ def build_ref_doc(args):
         kwds['use_multidoc_inventory'] = False
     getattr(ReferenceSubBuilder(doc, lang), format)(*args, **kwds)
 
+
 ##########################################
 #             Builders                   #
 ##########################################
@@ -91,7 +95,7 @@ def builder_helper(type):
     Check that :trac:`25161` has been resolved::
 
         sage: from sage_docbuild import DocBuilder, setup_parser
-        sage: DocBuilder._options = setup_parser().parse_args([])[0] # builder_helper needs _options to be set
+        sage: DocBuilder._options = setup_parser().parse_args([]) # builder_helper needs _options to be set
 
         sage: import sage_docbuild.sphinxbuild
         sage: def raiseBaseException():
@@ -121,7 +125,7 @@ def builder_helper(type):
         else:
             options += ' -D multidoc_first_pass=1'
 
-        build_command = '-b %s -d %s %s %s %s'%(type, self._doctrees_dir(),
+        build_command = '-b %s -d %s %s %s %s' % (type, self._doctrees_dir(),
                                                   options, self.dir,
                                                   output_dir)
         logger.debug(build_command)
@@ -139,7 +143,7 @@ def builder_helper(type):
             # regular Exception. Otherwise multiprocessing.Pool.get hangs, see
             # #25161
             if ABORT_ON_ERROR:
-                raise Exception("Non-exception during docbuild: %s"%(e,), e)
+                raise Exception("Non-exception during docbuild: %s" % (e,), e)
 
         if "/latex" in output_dir:
             logger.warning("LaTeX file written to {}".format(output_dir))
@@ -218,9 +222,9 @@ class DocBuilder(object):
             ['changes', 'html', 'htmlhelp', 'inventory', 'json', 'latex', 'linkcheck', 'pickle', 'web']
 
         """
-        #Go through all the attributes of self and check to
-        #see which ones have an 'is_output_format' attribute.  These
-        #are the ones created with builder_helper.
+        # Go through all the attributes of self and check to
+        # see which ones have an 'is_output_format' attribute.  These
+        # are the ones created with builder_helper.
         output_formats = []
         for attr in dir(self):
             if hasattr(getattr(self, attr), 'is_output_format'):
@@ -262,8 +266,8 @@ class DocBuilder(object):
         error_message = "failed to run $MAKE %s in %s"
         command = 'all-pdf'
 
-        if subprocess.call(make_target%(tex_dir, command, pdf_dir), shell=True):
-            raise RuntimeError(error_message%(command, tex_dir))
+        if subprocess.call(make_target % (tex_dir, command, pdf_dir), shell=True):
+            raise RuntimeError(error_message % (command, tex_dir))
         logger.warning("Build finished.  The built documents can be found in %s", pdf_dir)
 
     def clean(self, *args):
@@ -284,8 +288,6 @@ class DocBuilder(object):
     inventory = builder_helper('inventory')
 
 
-from .utils import build_many as _build_many
-
 def build_many(target, args, processes=None):
     """
     Thin wrapper around `sage_docbuild.utils.build_many` which uses the
@@ -295,9 +297,10 @@ def build_many(target, args, processes=None):
         processes = NUM_THREADS
     try:
         _build_many(target, args, processes=processes)
-    except BaseException as exc:
+    except BaseException:
         if ABORT_ON_ERROR:
             raise
+
 
 ##########################################
 #      Parallel Building Ref Manual      #
@@ -358,7 +361,7 @@ class AllBuilder(object):
                 build_other_doc(target)
         else:
             build_many(build_other_doc, L)
-        logger.warning("Elapsed time: %.1f seconds."%(time.time()-start))
+        logger.warning("Elapsed time: %.1f seconds." % (time.time() - start))
         logger.warning("Done building the documentation!")
 
     def get_all_documents(self):
@@ -380,7 +383,7 @@ class AllBuilder(object):
         for lang in LANGUAGES:
             for document in os.listdir(os.path.join(SAGE_DOC_SRC, lang)):
                 if (document not in OMIT
-                    and os.path.isdir(os.path.join(SAGE_DOC_SRC, lang, document))):
+                        and os.path.isdir(os.path.join(SAGE_DOC_SRC, lang, document))):
                     documents.append(os.path.join(lang, document))
 
         # Ensure that the reference guide is compiled first so that links from
@@ -445,7 +448,7 @@ class WebsiteBuilder(DocBuilder):
             # Walk through all of the files in the sage_directory
             for dirpath, dirnames, filenames in os.walk(sage_directory):
                 # a string like reference/algebras/sage/algebras
-                short_path = dirpath[len(path)+1:]
+                short_path = dirpath[len(path) + 1:]
 
                 # a string like sage/algebras
                 shorter_path = os.path.join(*short_path.split(os.sep)[2:])
@@ -467,13 +470,12 @@ class WebsiteBuilder(DocBuilder):
                     levels_up = len(shorter_path.split(os.sep))
 
                     # the relative url that we will redirect to
-                    redirect_url = "/".join(['..']*levels_up + [document_name, shorter_path, filename])
+                    redirect_url = "/".join(['..'] * levels_up + [document_name, shorter_path, filename])
 
                     # write the html file which performs the redirect
                     with open(redirect_filename, 'w') as f:
                         print(redirect_filename)
                         f.write(html_template % redirect_url)
-
 
     def clean(self):
         """
@@ -575,7 +577,6 @@ class ReferenceBuilder(AllBuilder):
         Builds reference manuals: build the
         top-level document and its components.
         """
-        refdir = self._refdir()
         logger.info('Building bibliography')
         self._build_bibliography(format, *args, **kwds)
         logger.info('Bibliography finished, building dependent manuals')
@@ -616,7 +617,7 @@ class ReferenceBuilder(AllBuilder):
                 n = len(os.listdir(directory))
                 documents.append((-n, os.path.join(self.name, doc)))
 
-        return [ doc[1] for doc in sorted(documents) ]
+        return [doc[1] for doc in sorted(documents)]
 
 
 class ReferenceTopBuilder(DocBuilder):
@@ -707,7 +708,7 @@ class ReferenceTopBuilder(DocBuilder):
         rst = re.sub(r'`([^`\n]*)`__.*\n\n__ (.*)',
                      r'<a href="\2">\1</a>.', rst)
         rst = re.sub(r'`([^<\n]*)\s+<(.*)>`_',
-                     r'<a href="\2">\1</a>',  rst)
+                     r'<a href="\2">\1</a>', rst)
         rst = re.sub(r':doc:`([^<]*?)\s+<(.*)/index>`',
                      r'<a href="\2/\2.pdf">\1 <img src="_static/pdf.png"/></a>', rst)
         # Body: add paragraph <p> markup.
@@ -729,7 +730,7 @@ class ReferenceTopBuilder(DocBuilder):
         # now write the file.
         with open(os.path.join(output_dir, 'index.html'), 'w') as new_index:
             new_index.write(html[:html_end_preamble])
-            new_index.write('<h1> Sage Reference Manual (PDF version)'+ '</h1>')
+            new_index.write('<h1>Sage Reference Manual (PDF version)</h1>')
             new_index.write(rst_body)
             new_index.write('<ul>')
             new_index.write(rst_toc)
@@ -788,7 +789,7 @@ class ReferenceSubBuilder(DocBuilder):
         force = False
         try:
             if (cache['option_inherited'] != self._options.inherited or
-                cache['option_underscore'] != self._options.underscore):
+                    cache['option_underscore'] != self._options.underscore):
                 logger.info("Detected change(s) in inherited and/or underscored members option(s).")
                 force = True
         except KeyError:
@@ -863,9 +864,9 @@ class ReferenceSubBuilder(DocBuilder):
         """
         Returns the Sphinx environment for this project.
         """
-        from sphinx.environment import BuildEnvironment
         class FakeConfig(object):
             values = tuple()
+
         class FakeApp(object):
             def __init__(self, dir):
                 self.srcdir = dir
@@ -1008,13 +1009,14 @@ class ReferenceSubBuilder(DocBuilder):
             module_filename = sys.modules[module_name].__file__
             if (module_filename.endswith('.pyc') or module_filename.endswith('.pyo')):
                 source_filename = module_filename[:-1]
-                if (os.path.exists(source_filename)): module_filename = source_filename
+                if (os.path.exists(source_filename)):
+                    module_filename = source_filename
             newtime = os.path.getmtime(module_filename)
 
             if newtime > mtime:
                 updated_modules.append(module_name)
                 yield module_name
-            else: # keep good old module
+            else:  # keep good old module
                 old_modules.append(module_name)
 
         removed_modules = []
@@ -1024,9 +1026,9 @@ class ReferenceSubBuilder(DocBuilder):
                 if not (module_name in old_modules or module_name in updated_modules):
                     try:
                         os.remove(os.path.join(self.dir, docname) + '.rst')
-                    except OSError: # already removed
+                    except OSError:  # already removed
                         pass
-                    logger.debug("Deleted auto-generated reST file %s".format(docname))
+                    logger.debug("Deleted auto-generated reST file {}".format(docname))
                     removed_modules.append(module_name)
 
         logger.info("Found %d new modules", len(new_modules))
@@ -1061,7 +1063,7 @@ class ReferenceSubBuilder(DocBuilder):
         """
         Returns the title of the module from its docstring.
         """
-        #Try to import the module
+        # Try to import the module
         try:
             __import__(module_name)
         except ImportError as err:
@@ -1069,15 +1071,15 @@ class ReferenceSubBuilder(DocBuilder):
             return "UNABLE TO IMPORT MODULE"
         module = sys.modules[module_name]
 
-        #Get the docstring
+        # Get the docstring
         doc = module.__doc__
         if doc is None:
             doc = module.doc if hasattr(module, 'doc') else ""
 
-        #Extract the title
+        # Extract the title
         i = doc.find('\n')
         if i != -1:
-            return doc[i+1:].lstrip().splitlines()[0]
+            return doc[i + 1:].lstrip().splitlines()[0]
         else:
             return doc
 
@@ -1091,7 +1093,7 @@ class ReferenceSubBuilder(DocBuilder):
             sage: ReferenceSubBuilder("reference").auto_rest_filename("sage.combinat.partition")
             '.../doc/en/reference/sage/combinat/partition.rst'
         """
-        return self.dir + os.path.sep + module_name.replace('.',os.path.sep) + '.rst'
+        return self.dir + os.path.sep + module_name.replace('.', os.path.sep) + '.rst'
 
     def write_auto_rest_file(self, module_name):
         """
@@ -1112,9 +1114,9 @@ class ReferenceSubBuilder(DocBuilder):
             # Don't doctest the autogenerated file.
             outfile.write(".. nodoctest\n\n")
             # Now write the actual content.
-            outfile.write(".. _%s:\n\n"%(module_name.replace(".__init__","")))
+            outfile.write(".. _%s:\n\n" % (module_name.replace(".__init__", "")))
             outfile.write(title + '\n')
-            outfile.write('='*len(title) + "\n\n")
+            outfile.write('=' * len(title) + "\n\n")
             outfile.write('.. This file has been autogenerated.\n\n')
 
             inherited = ':inherited-members:' if self._options.inherited else ''
@@ -1145,7 +1147,7 @@ class ReferenceSubBuilder(DocBuilder):
         Returns an iterator for all the modules in the Sage library
         which are not included in the reference manual.
         """
-        #Make a dictionary of the included modules
+        # Make a dictionary of the included modules
         included_modules = {}
         for module_name in self.get_all_included_modules():
             included_modules[module_name] = True
@@ -1159,12 +1161,12 @@ class ReferenceSubBuilder(DocBuilder):
 
                 path = os.path.join(directory, filename)
 
-                #Create the module name
+                # Create the module name
                 module_name = path[len(base_path):].replace(os.path.sep, '.')
                 module_name = 'sage' + module_name
                 module_name = module_name[:-4] if module_name.endswith('pyx') else module_name[:-3]
 
-                #Exclude some ones  -- we don't want init the manual
+                # Exclude some ones  -- we don't want init the manual
                 if module_name.endswith('__init__') or module_name.endswith('all'):
                     continue
 
@@ -1336,9 +1338,10 @@ def get_builder(name):
     elif name in get_documents() or name in AllBuilder().get_all_documents():
         return DocBuilder(name)
     else:
-        print("'%s' is not a recognized document. Type 'sage --docbuild -D' for a list"%name)
+        print("'%s' is not a recognized document. Type 'sage --docbuild -D' for a list" % name)
         print("of documents, or 'sage --docbuild --help' for more help.")
         sys.exit(1)
+
 
 def format_columns(lst, align='<', cols=None, indent=4, pad=3, width=80):
     """
@@ -1363,6 +1366,7 @@ def format_columns(lst, align='<', cols=None, indent=4, pad=3, width=80):
     s += "\n"
     return s
 
+
 def help_usage(s="", compact=False):
     """
     Appends and returns a brief usage message for the Sage
@@ -1374,23 +1378,19 @@ def help_usage(s="", compact=False):
         s += "\n"
     return s
 
+
 def help_description(s="", compact=False):
     """
     Appends and returns a brief description of the Sage documentation
-    builder.  If 'compact' is False, the function adds a final newline
+    builder.  If 'compact' is ``False``, the function adds a final newline
     character.
     """
-    s += "Build or return information about Sage documentation.\n\n"
-    s += "    DOCUMENT    name of the document to build\n"
-    s += "    FORMAT      document output format\n"
-    s += "    COMMAND     document-specific command\n\n"
-    s += "Note that DOCUMENT may have the form 'file=/path/to/FILE',\n"
-    s += "which builds the documentation for the specified file.\n\n"
-    s += "A DOCUMENT and either a FORMAT or a COMMAND are required,\n"
-    s += "unless a list of one or more of these is requested."
+    s += "Build or return information about Sage documentation. "
+    s += "A DOCUMENT and either a FORMAT or a COMMAND are required."
     if not compact:
         s += "\n"
     return s
+
 
 def help_examples(s=""):
     """
@@ -1398,13 +1398,13 @@ def help_examples(s=""):
     builder.
     """
     s += "Examples:\n"
-    s += "    sage --docbuild -FDC all\n"
+    s += "    sage --docbuild -C all\n"
     s += "    sage --docbuild constructions pdf\n"
     s += "    sage --docbuild reference html -jv3\n"
-    s += "    sage --docbuild --mathjax tutorial html\n"
     s += "    sage --docbuild reference print_unincluded_modules\n"
-    s += "    sage --docbuild developer -j html --sphinx-opts -q,-aE --verbose 2"
+    s += "    sage --docbuild developer html --sphinx-opts='-q,-aE' --verbose 2"
     return s
+
 
 def get_documents():
     """
@@ -1416,23 +1416,25 @@ def get_documents():
     docs = [(d[3:] if d[0:3] == 'en/' else d) for d in docs]
     return docs
 
-def help_documents(s=""):
+
+def help_documents():
     """
     Appends and returns a tabular list of documents, including a
     shortcut 'all' for all documents, available to the Sage
     documentation builder.
     """
     docs = get_documents()
-    s += "DOCUMENTs:\n"
+    s = "DOCUMENTs:\n"
     s += format_columns(docs)
     s += "\n"
     if 'reference' in docs:
-        s+= "Other valid document names take the form 'reference/DIR', where\n"
-        s+= "DIR is a subdirectory of SAGE_DOC_SRC/en/reference/.\n"
-        s+= "This builds just the specified part of the reference manual.\n"
+        s += "Other valid document names take the form 'reference/DIR', where\n"
+        s += "DIR is a subdirectory of SAGE_DOC_SRC/en/reference/.\n"
+        s += "This builds just the specified part of the reference manual.\n"
     s += "DOCUMENT may also have the form 'file=/path/to/FILE', which builds\n"
     s += "the documentation for the specified file.\n"
     return s
+
 
 def get_formats():
     """
@@ -1444,16 +1446,16 @@ def get_formats():
     formats.remove('html')
     return ['html', 'pdf'] + formats
 
-def help_formats(s=""):
+
+def help_formats():
     """
     Appends and returns a tabular list of output formats available to
     the Sage documentation builder.
     """
-    s += "FORMATs:\n"
-    s += format_columns(get_formats())
-    return s
+    return "FORMATs:\n" + format_columns(get_formats())
 
-def help_commands(name='all', s=""):
+
+def help_commands(name='all'):
     """
     Appends and returns a tabular list of commands, if any, the Sage
     documentation builder can run on the indicated document.  The
@@ -1461,10 +1463,10 @@ def help_commands(name='all', s=""):
     """
     # To do: Generate the lists dynamically, using class attributes,
     # as with the Builders above.
-    command_dict = { 'reference' : [
-        'print_included_modules',   'print_modified_modules        (*)',
-        'print_unincluded_modules', 'print_new_and_updated_modules (*)',
-        ] }
+    s = ""
+    command_dict = {'reference': [
+        'print_included_modules', 'print_modified_modules        (*)',
+        'print_unincluded_modules', 'print_new_and_updated_modules (*)']}
     for doc in command_dict:
         if name == 'all' or doc == name:
             s += "COMMANDs for the DOCUMENT '" + doc + "':\n"
@@ -1472,20 +1474,23 @@ def help_commands(name='all', s=""):
             s += "(*) Since the last build.\n"
     return s
 
-def help_message_long(option, opt_str, value, parser):
+
+class help_message_long(argparse.Action):
     """
     Prints an extended help message for the Sage documentation builder
     and exits.
     """
-    help_funcs = [ help_usage, help_description, help_documents,
-                   help_formats, help_commands, parser.format_option_help,
-                   help_examples ]
-    for f in help_funcs:
-        print(f())
-    sys.exit(0)
+    def __call__(self, parser, namespace, values, option_string=None):
+        help_funcs = [help_usage, help_description, help_documents,
+                      help_formats, help_commands]
+        for f in help_funcs:
+            print(f())
+        parser.print_help()
+        print(help_examples())
+        sys.exit(0)
 
-def help_message_short(option=None, opt_str=None, value=None, parser=None,
-                       error=False):
+
+class help_message_short(argparse.Action):
     """
     Prints a help message for the Sage documentation builder.  The
     message includes command-line usage and a list of options.  The
@@ -1493,171 +1498,135 @@ def help_message_short(option=None, opt_str=None, value=None, parser=None,
     during this call, the message is printed only if the user hasn't
     requested a list (e.g., documents, formats, commands).
     """
-    if not hasattr(parser.values, 'printed_help'):
-        if error is True:
-            if not hasattr(parser.values, 'printed_list'):
-                parser.print_help()
-        else:
+    def __call__(self, parser, namespace, values, option_string=None):
+        if not hasattr(namespace, 'printed_help'):
             parser.print_help()
-        setattr(parser.values, 'printed_help', 1)
+            setattr(namespace, 'printed_help', 1)
+        sys.exit(0)
 
-def help_wrapper(option, opt_str, value, parser):
+
+class help_wrapper(argparse.Action):
     """
     A helper wrapper for command-line options to the Sage
     documentation builder that print lists, such as document names,
     formats, and document-specific commands.
     """
-    if option.dest == 'commands':
-        print(help_commands(value), end="")
-    if option.dest == 'documents':
-        print(help_documents(), end="")
-    if option.dest == 'formats':
-        print(help_formats(), end="")
-    if option.dest == 'all_documents':
-        if value == 'en/reference' or value == 'reference':
-            b = ReferenceBuilder('reference')
-            refdir = os.path.join(os.environ['SAGE_DOC_SRC'], 'en', b.name)
-            s = b.get_all_documents(refdir)
-            # Put the bibliography first, because it needs to be built first:
-            s.remove('reference/references')
-            s.insert(0, 'reference/references')
-        elif value == 'all':
-            s = get_documents()
-            # Put the reference manual first, because it needs to be built first:
-            s.remove('reference')
-            s.insert(0, 'reference')
-        else:
-            raise ValueError("argument for --all-documents must be either 'all'"
-                             " or 'reference'")
-        for d in s:
-            print(d)
-    setattr(parser.values, 'printed_list', 1)
-
-
-class IndentedHelpFormatter2(optparse.IndentedHelpFormatter, object):
-    """
-    Custom help formatter class for optparse's OptionParser.
-    """
-    def format_description(self, description):
-        """
-        Returns a formatted description, preserving any original
-        explicit new line characters.
-        """
-        if description:
-            lines_in = description.split('\n')
-            lines_out = [self._format_text(line) for line in lines_in]
-            return "\n".join(lines_out) + "\n"
-        else:
-            return ""
-
-    def format_heading(self, heading):
-        """
-        Returns a formatted heading using the superclass' formatter.
-        If the heading is 'options', up to case, the function converts
-        it to ALL CAPS.  This allows us to match the heading 'OPTIONS' with
-        the same token in the builder's usage message.
-        """
-        if heading.lower() == 'options':
-            heading = "OPTIONS"
-        return super(IndentedHelpFormatter2, self).format_heading(heading)
+    def __call__(self, parser, namespace, values, option_string=None):
+        if option_string in ['-D', '--documents']:
+            print(help_documents(), end="")
+        if option_string in ['-F', '--formats']:
+            print(help_formats(), end="")
+        if self.dest == 'commands':
+            print(help_commands(values), end="")
+        if self.dest == 'all_documents':
+            if values == 'reference':
+                b = ReferenceBuilder('reference')
+                refdir = os.path.join(os.environ['SAGE_DOC_SRC'], 'en', b.name)
+                s = b.get_all_documents(refdir)
+                # Put the bibliography first, because it needs to be built first:
+                s.remove('reference/references')
+                s.insert(0, 'reference/references')
+            elif values == 'all':
+                s = get_documents()
+                # Put the reference manual first, because it needs to be built first:
+                s.remove('reference')
+                s.insert(0, 'reference')
+            for d in s:
+                print(d)
+        setattr(namespace, 'printed_list', 1)
+        sys.exit(0)
 
 
 def setup_parser():
     """
-    Sets up and returns a command-line OptionParser instance for the
+    Sets up and returns a command-line ArgumentParser instance for the
     Sage documentation builder.
     """
-    # Documentation: http://docs.python.org/library/optparse.html
-    parser = optparse.OptionParser(add_help_option=False,
-                                   usage=help_usage(compact=True),
-                                   formatter=IndentedHelpFormatter2(),
-                                   description=help_description(compact=True))
-
+    # Documentation: https://docs.python.org/library/argparse.html
+    parser = argparse.ArgumentParser(usage=help_usage(compact=True),
+                                     description=help_description(compact=True),
+                                     add_help=False)
     # Standard options. Note: We use explicit option.dest names
     # to avoid ambiguity.
-    standard = optparse.OptionGroup(parser, "Standard")
-    standard.add_option("-h", "--help",
-                        action="callback", callback=help_message_short,
-                        help="show a help message and exit")
-    standard.add_option("-H", "--help-all",
-                        action="callback", callback=help_message_long,
-                        help="show an extended help message and exit")
-    standard.add_option("-D", "--documents", dest="documents",
-                        action="callback", callback=help_wrapper,
-                        help="list all available DOCUMENTs")
-    standard.add_option("-F", "--formats", dest="formats",
-                        action="callback", callback=help_wrapper,
-                        help="list all output FORMATs")
-    standard.add_option("-C", "--commands", dest="commands",
-                        type="string", metavar="DOC",
-                        action="callback", callback=help_wrapper,
-                        help="list all COMMANDs for DOCUMENT DOC; use 'all' to list all")
-
-    standard.add_option("-i", "--inherited", dest="inherited",
-                        default=False, action="store_true",
-                        help="include inherited members in reference manual; may be slow, may fail for PDF output")
-    standard.add_option("-u", "--underscore", dest="underscore",
-                        default=False, action="store_true",
-                        help="include variables prefixed with '_' in reference manual; may be slow, may fail for PDF output")
-
-    standard.add_option("-j", "--mathjax", "--jsmath", dest="mathjax",
-                        action="store_true",
-                        help="render math using MathJax; FORMATs: html, json, pickle, web")
-    standard.add_option("--no-plot", dest="no_plot",
-                        action="store_true",
-                        help="do not include graphics auto-generated using the '.. plot' markup")
-    standard.add_option("--include-tests-blocks", dest="skip_tests", default=True,
-                        action="store_false",
-                        help="include TESTS blocks in the reference manual")
-    standard.add_option("--no-pdf-links", dest="no_pdf_links",
-                        action="store_true",
-                        help="do not include PDF links in DOCUMENT 'website'; FORMATs: html, json, pickle, web")
-    standard.add_option("--warn-links", dest="warn_links",
-                        default=False, action="store_true",
-                        help="issue a warning whenever a link is not properly resolved; equivalent to '--sphinx-opts -n' (sphinx option: nitpicky)")
-    standard.add_option("--check-nested", dest="check_nested",
-                        action="store_true",
-                        help="check picklability of nested classes in DOCUMENT 'reference'")
-    standard.add_option("--no-prune-empty-dirs", dest="no_prune_empty_dirs",
-                        action="store_true",
-                        help="do not prune empty directories in the documentation sources")
-    standard.add_option("-N", "--no-colors", dest="color", default=True,
-                        action="store_false",
-                        help="do not color output; does not affect children")
-    standard.add_option("-q", "--quiet", dest="verbose",
-                        action="store_const", const=0,
-                        help="work quietly; same as --verbose=0")
-    standard.add_option("-v", "--verbose", dest="verbose",
-                        type="int", default=1, metavar="LEVEL",
-                        action="store",
-                        help="report progress at LEVEL=0 (quiet), 1 (normal), 2 (info), or 3 (debug); does not affect children")
-    standard.add_option("-o", "--output", dest="output_dir", default=None,
-                        metavar="DIR", action="store",
-                        help="if DOCUMENT is a single file ('file=...'), write output to this directory")
-    parser.add_option_group(standard)
+    standard = parser.add_argument_group("Standard")
+    standard.add_argument("-h", "--help", nargs=0, action=help_message_short,
+                          help="show a help message and exit")
+    standard.add_argument("-H", "--help-all", nargs=0, action=help_message_long,
+                          help="show an extended help message and exit")
+    standard.add_argument("-D", "--documents", nargs=0, action=help_wrapper,
+                          help="list all available DOCUMENTs")
+    standard.add_argument("-F", "--formats", nargs=0, action=help_wrapper,
+                          help="list all output FORMATs")
+    standard.add_argument("-C", "--commands", dest="commands",
+                          type=str, metavar="DOC", action=help_wrapper,
+                          help="list all COMMANDs for DOCUMENT DOC; use 'all' to list all")
+    standard.add_argument("-i", "--inherited", dest="inherited",
+                          action="store_true",
+                          help="include inherited members in reference manual; may be slow, may fail for PDF output")
+    standard.add_argument("-u", "--underscore", dest="underscore",
+                          action="store_true",
+                          help="include variables prefixed with '_' in reference manual; may be slow, may fail for PDF output")
+    standard.add_argument("-j", "--mathjax", "--jsmath", dest="mathjax",
+                          action="store_true",
+                          help="ignored for backwards compatibility")
+    standard.add_argument("--no-plot", dest="no_plot",
+                          action="store_true",
+                          help="do not include graphics auto-generated using the '.. plot' markup")
+    standard.add_argument("--include-tests-blocks", dest="skip_tests", default=True,
+                          action="store_false",
+                          help="include TESTS blocks in the reference manual")
+    standard.add_argument("--no-pdf-links", dest="no_pdf_links",
+                          action="store_true",
+                          help="do not include PDF links in DOCUMENT 'website'; FORMATs: html, json, pickle, web")
+    standard.add_argument("--warn-links", dest="warn_links",
+                          action="store_true",
+                          help="issue a warning whenever a link is not properly resolved; equivalent to '--sphinx-opts -n' (sphinx option: nitpicky)")
+    standard.add_argument("--check-nested", dest="check_nested",
+                          action="store_true",
+                          help="check picklability of nested classes in DOCUMENT 'reference'")
+    standard.add_argument("--no-prune-empty-dirs", dest="no_prune_empty_dirs",
+                          action="store_true",
+                          help="do not prune empty directories in the documentation sources")
+    standard.add_argument("-N", "--no-colors", dest="color",
+                          action="store_false",
+                          help="do not color output; does not affect children")
+    standard.add_argument("-q", "--quiet", dest="verbose",
+                          action="store_const", const=0,
+                          help="work quietly; same as --verbose=0")
+    standard.add_argument("-v", "--verbose", dest="verbose",
+                          type=int, default=1, metavar="LEVEL",
+                          action="store",
+                          help="report progress at LEVEL=0 (quiet), 1 (normal), 2 (info), or 3 (debug); does not affect children")
+    standard.add_argument("-o", "--output", dest="output_dir", default=None,
+                          metavar="DIR", action="store",
+                          help="if DOCUMENT is a single file ('file=...'), write output to this directory")
 
     # Advanced options.
-    advanced = optparse.OptionGroup(parser, "Advanced",
-                                    "Use these options with care.")
-    advanced.add_option("-S", "--sphinx-opts", dest="sphinx_opts",
-                        type="string", metavar="OPTS",
+    advanced = parser.add_argument_group("Advanced",
+                                         "Use these options with care.")
+    advanced.add_argument("-S", "--sphinx-opts", dest="sphinx_opts",
+                        type=str, metavar="OPTS",
                         action="store",
-                        help="pass comma-separated OPTS to sphinx-build")
-    advanced.add_option("-U", "--update-mtimes", dest="update_mtimes",
-                        default=False, action="store_true",
+                        help="pass comma-separated OPTS to sphinx-build; must precede OPTS with '=', as in '-S=-q,-aE' or '-S=\"-q,-aE\"'")
+    advanced.add_argument("-U", "--update-mtimes", dest="update_mtimes",
+                        action="store_true",
                         help="before building reference manual, update modification times for auto-generated reST files")
-    advanced.add_option("-k", "--keep-going", dest="keep_going",
-                        default=False, action="store_true",
+    advanced.add_argument("-k", "--keep-going", dest="keep_going",
+                        action="store_true",
                         help="Do not abort on errors but continue as much as possible after an error")
-    advanced.add_option("--all-documents", dest="all_documents",
-                        type="str", metavar="ARG",
-                        action="callback", callback=help_wrapper,
-                        help="if ARG is 'reference', list all subdocuments"
-                        " of en/reference. If ARG is 'all', list all main"
-                        " documents")
-    parser.add_option_group(advanced)
-
+    advanced.add_argument("--all-documents", dest="all_documents",
+                          type=str, metavar="ARG",
+                          choices=['all', 'reference'],
+                          action=help_wrapper,
+                          help="if ARG is 'reference', list all subdocuments"
+                          " of en/reference. If ARG is 'all', list all main"
+                          " documents")
+    parser.add_argument("document", nargs='?', type=str, metavar="DOCUMENT",
+                        help="name of the document to build. It can be either one of the documents listed by -D or 'file=/path/to/FILE' to build documentation for this specific file.")
+    parser.add_argument("format", nargs='?', type=str,
+                        metavar="FORMAT or COMMAND", help='document output format (or command)')
     return parser
+
 
 def setup_logger(verbose=1, color=True):
     r"""
@@ -1744,19 +1713,18 @@ class IntersphinxCache:
 def main():
     # Parse the command-line.
     parser = setup_parser()
-    options, args = parser.parse_args()
-    DocBuilder._options = options
+    args = parser.parse_args()
+    DocBuilder._options = args
 
     # Get the name and type (target format) of the document we are
     # trying to build.
-    try:
-        name, type = args
-    except ValueError:
-        help_message_short(parser=parser, error=True)
+    name, typ = args.document, args.format
+    if not name or not type:
+        parser.print_help()
         sys.exit(1)
 
     # Set up module-wide logging.
-    setup_logger(options.verbose, options.color)
+    setup_logger(args.verbose, args.color)
 
     def excepthook(*exc_info):
         logger.error('Error building the documentation.', exc_info=exc_info)
@@ -1769,35 +1737,27 @@ def main():
     sys.excepthook = excepthook
 
     # Process selected options.
-    #
-    # MathJax: this check usually has no practical effect, since
-    # SAGE_DOC_MATHJAX is set to "True" by the script sage-env.
-    # To disable MathJax, set SAGE_DOC_MATHJAX to "no" or "False".
-    if options.mathjax or (os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'no'
-                           and os.environ.get('SAGE_DOC_MATHJAX', 'no') != 'False'):
-        os.environ['SAGE_DOC_MATHJAX'] = 'True'
-
-    if options.check_nested:
+    if args.check_nested:
         os.environ['SAGE_CHECK_NESTED'] = 'True'
 
-    if options.underscore:
+    if args.underscore:
         os.environ['SAGE_DOC_UNDERSCORE'] = "True"
 
     global ALLSPHINXOPTS, WEBSITESPHINXOPTS, ABORT_ON_ERROR
-    if options.sphinx_opts:
-        ALLSPHINXOPTS += options.sphinx_opts.replace(',', ' ') + " "
-    if options.no_pdf_links:
+    if args.sphinx_opts:
+        ALLSPHINXOPTS += args.sphinx_opts.replace(',', ' ') + " "
+    if args.no_pdf_links:
         WEBSITESPHINXOPTS = " -A hide_pdf_links=1 "
-    if options.warn_links:
+    if args.warn_links:
         ALLSPHINXOPTS += "-n "
-    if options.no_plot:
+    if args.no_plot:
         os.environ['SAGE_SKIP_PLOT_DIRECTIVE'] = 'yes'
-    if options.skip_tests:
+    if args.skip_tests:
         os.environ['SAGE_SKIP_TESTS_BLOCKS'] = 'True'
 
-    ABORT_ON_ERROR = not options.keep_going
+    ABORT_ON_ERROR = not args.keep_going
 
-    if not options.no_prune_empty_dirs:
+    if not args.no_prune_empty_dirs:
         # Delete empty directories. This is needed in particular for empty
         # directories due to "git checkout" which never deletes empty
         # directories it leaves behind. See Trac #20010.
@@ -1809,7 +1769,7 @@ def main():
                 os.rmdir(dirpath)
 
     # Set up Intersphinx cache
-    C = IntersphinxCache()
+    _ = IntersphinxCache()
 
-    builder = getattr(get_builder(name), type)
+    builder = getattr(get_builder(name), typ)
     builder()

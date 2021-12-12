@@ -405,7 +405,11 @@ class Arrow(GraphicPrimitive):
                     self._n = n
 
                 def get_paths(self, renderer):
-                    paths, fillables = self._patch.get_path_in_displaycoord()
+                    # get_path_in_displaycoord was made private in matplotlib 3.5
+                    try:
+                        paths, fillables = self._patch._get_path_in_displaycoord()
+                    except AttributeError:
+                        paths, fillables = self._patch.get_path_in_displaycoord()
                     return paths
 
                 def __call__(self, renderer, gc, tpath, affine, rgbFace):

@@ -503,6 +503,21 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         """
         return len(self.lines())
 
+    def is_compact(self):
+        """
+        Test for boundedness of the polytope.
+
+        EXAMPLES::
+
+            sage: p = polytopes.icosahedron()                                   # optional - sage.rings.number_field
+            sage: p.is_compact()                                                # optional - sage.rings.number_field
+            True
+            sage: p = Polyhedron(ieqs = [[0,1,0,0],[0,0,1,0],[0,0,0,1],[1,-1,0,0]])
+            sage: p.is_compact()
+            False
+        """
+        return self.n_rays() == 0 and self.n_lines() == 0
+
     def Hrepresentation(self, index=None):
         """
         Return the objects of the H-representation. Each entry is
