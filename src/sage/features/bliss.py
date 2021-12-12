@@ -30,7 +30,7 @@ class BlissLibrary(CythonFeature):
     EXAMPLES::
 
         sage: from sage.features.bliss import BlissLibrary
-        sage: BlissLibrary().require()  # optional: bliss
+        sage: BlissLibrary().require()  # optional: libbliss
     """
 
     def __init__(self):
@@ -39,9 +39,9 @@ class BlissLibrary(CythonFeature):
 
             sage: from sage.features.bliss import BlissLibrary
             sage: BlissLibrary()
-            Feature('Bliss')
+            Feature('libbliss')
         """
-        CythonFeature.__init__(self, "Bliss", test_code=TEST_CODE,
+        CythonFeature.__init__(self, "libbliss", test_code=TEST_CODE,
                                spkg="bliss",
                                url="http://www.tcs.hut.fi/Software/bliss/")
 
@@ -72,5 +72,4 @@ class Bliss(JoinFeature):
 
 
 def all_features():
-    return [BlissLibrary(),
-            Bliss()]
+    return [Bliss()]

@@ -204,7 +204,7 @@ def all_features():
     r"""
     Return features corresponding to interpreter interfaces.
 
-     EXAMPLES::
+    EXAMPLES::
 
         sage: from sage.features.interfaces import all_features
         sage: list(all_features())

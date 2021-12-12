@@ -1544,10 +1544,10 @@ Warning: `{}` is not part of this computer's TeX installation.""".format(file_na
 
         TESTS::
 
-            sage: latex.add_package_to_preamble_if_available("xypic")
+            sage: latex.add_package_to_preamble_if_available("tkz-graph")
             sage: latex.add_package_to_preamble_if_available("nonexistent_package")
-            sage: latex.extra_preamble()       # optional - latex
-            '\\usepackage{xypic}\n'
+            sage: latex.extra_preamble()  # optional - latex latex_package_tkz_graph
+            '\\usepackage{tkz-graph}\n'
             sage: latex.extra_preamble('')
         """
         assert isinstance(package_name, str)
@@ -1852,11 +1852,11 @@ def view(objects, title='Sage', debug=False, sep='', tiny=False,
 
         sage: from sage.misc.latex import _run_latex_, _latex_file_
         sage: g = sage.misc.latex.latex_examples.graph()
-        sage: latex.add_to_preamble(r"\usepackage{tkz-graph}")
+        sage: latex.add_to_preamble(r"\usepackage{tkz-graph}")  # optional - latex_package_tkz_graph
         sage: file = os.path.join(SAGE_TMP, "temp.tex")
         sage: with open(file, 'w') as O:
         ....:     _ = O.write(_latex_file_(g))
-        sage: _run_latex_(file, engine="pdflatex") # optional - latex
+        sage: _run_latex_(file, engine="pdflatex") # optional - latex latex_package_tkz_graph
         'pdf'
 
         sage: view(4, margin=5, debug=True)     # not tested
@@ -1965,7 +1965,7 @@ def png(x, filename, density=150, debug=False,
     EXAMPLES::
 
         sage: from sage.misc.latex import png
-        sage: png(ZZ[x], os.path.join(SAGE_TMP, "zz.png")) # random, optional - latex
+        sage: png(ZZ[x], os.path.join(SAGE_TMP, "zz.png")) # random, optional - latex imagemagick
     """
     if not pdflatex:
         engine = "latex"
