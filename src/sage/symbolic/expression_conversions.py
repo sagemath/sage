@@ -525,7 +525,7 @@ class InterfaceInit(Converter):
             sage: a = df.subs(x=exp(x)); a
             D[0](f)(e^x)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0=%e^_SAGE_VAR_x)
+            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = %e^_SAGE_VAR_x)
             sage: bool(b.sage() == a)
             True
 
@@ -534,7 +534,7 @@ class InterfaceInit(Converter):
             sage: a = df.subs(x=4); a
             D[0](f)(4)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0=4)
+            %at('diff('f(_SAGE_VAR__symbol0),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 
@@ -554,7 +554,7 @@ class InterfaceInit(Converter):
             sage: a = f_x.subs(x=4); a
             D[0](f)(4, y)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0,_SAGE_VAR_y),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0=4)
+            %at('diff('f(_SAGE_VAR__symbol0,_SAGE_VAR_y),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 
@@ -563,7 +563,7 @@ class InterfaceInit(Converter):
             sage: a = f_x.subs(x=4).subs(y=8); a
             D[0](f)(4, 8)
             sage: b = maxima(a); b
-            %at('diff('f(_SAGE_VAR__symbol0,8),_SAGE_VAR__symbol0,1),_SAGE_VAR__symbol0=4)
+            %at('diff('f(_SAGE_VAR__symbol0,8),_SAGE_VAR__symbol0,1), _SAGE_VAR__symbol0 = 4)
             sage: bool(b.sage() == a)
             True
 

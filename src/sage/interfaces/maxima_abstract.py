@@ -293,7 +293,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         # create NAME-IMPL, without the leading $).  This causes
         # name-impl to show up in $APROPOS.  We remove it.
         # https://sourceforge.net/p/maxima/bugs/3643/
-        cmd_list = self._eval_line('apropos("%s")'%s, error_check=False).replace('\\ - ','-').replace('\\-','-')
+        cmd_list = self._eval_line('apropos("%s")'%s, error_check=False)
+        cmd_list = cmd_list.replace(' ', '').replace('\n', '').replace('\\ - ','-').replace('\\-','-')
         cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?' and not x.endswith('-impl')]
         return [x for x in cmd_list if x.find(s) == 0]
 
@@ -512,7 +513,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
              sage: var('x y')
              (x, y)
              sage: maxima(x == y)
-             _SAGE_VAR_x=_SAGE_VAR_y
+             _SAGE_VAR_x = _SAGE_VAR_y
         """
         return '='
 
@@ -529,7 +530,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
              sage: maxima._inequality_symbol()
              '#'
              sage: maxima((x != 1))
-             _SAGE_VAR_x#1
+             _SAGE_VAR_x # 1
         """
         return '#'
 
@@ -853,13 +854,13 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'], [1,1,1])
-            y=3*x-2*%e^(x-1)
+            y = 3*x-2*%e^(x-1)
             sage: maxima.de_solve('diff(y,x,2) + 3*x = y', ['x','y'])
-            y=%k1*%e^x+%k2*%e^-x+3*x
+            y = %k1*%e^x+%k2*%e^-x+3*x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'])
-            y=(%c-3*((-x)-1)*%e^-x)*%e^x
+            y = (%c-3*((-x)-1)*%e^-x)*%e^x
             sage: maxima.de_solve('diff(y,x) + 3*x = y', ['x','y'],[1,1])
-            y=-%e^-1*(5*%e^x-3*%e*x-3*%e)
+            y = -%e^-1*(5*%e^x-3*%e*x-3*%e)
         """
         if not isinstance(vars, str):
             str_vars = '%s, %s'%(vars[1], vars[0])
@@ -897,14 +898,14 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
             sage: maxima.clear('x'); maxima.clear('f')
             sage: maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"], [0,1,2])
-            f(x)=x*%e^x+%e^x
+            f(x) = x*%e^x+%e^x
 
         ::
 
             sage: maxima.clear('x'); maxima.clear('f')
             sage: f = maxima.de_solve_laplace("diff(f(x),x,2) = 2*diff(f(x),x)-f(x)", ["x","f"])
             sage: f
-            f(x)=x*%e^x*('at('diff(f(x),x,1),x=0))-f(0)*x*%e^x+f(0)*%e^x
+            f(x) = x*%e^x*('at('diff(f(x),x,1),x = 0))-f(0)*x*%e^x+f(0)*%e^x
             sage: print(f)
                                                !
                                    x  d        !                  x          x
@@ -944,7 +945,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: eqns = ["x + z = y","2*a*x - y = 2*a^2","y - 2*z = 2"]
             sage: vars = ["x","y","z"]
             sage: maxima.solve_linear(eqns, vars)
-            [x=a+1,y=2*a,z=a-1]
+            [x = a+1,y = 2*a,z = a-1]
         """
         eqs = "["
         for i in range(len(eqns)):

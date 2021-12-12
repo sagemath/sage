@@ -2201,7 +2201,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         sage: sefms('?%at(f(x),x=2)#1')
         f(2) != 1
         sage: a = sage.calculus.calculus.maxima("x#0"); a
-        x#0
+        x # 0
         sage: a.sage()
         x != 0
 

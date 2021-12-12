@@ -345,16 +345,6 @@ if DOT_SAGE is not None and ' ' in DOT_SAGE:
         print("permissions to before you start sage.")
 
 
-CYGWIN_VERSION = None
-if UNAME[:6] == 'CYGWIN':
-    import re
-    _uname = os.uname()
-    if len(_uname) >= 2:
-        m = re.match(r'(\d+\.\d+\.\d+)\(.+\)', _uname[2])
-        if m:
-            CYGWIN_VERSION = tuple(map(int, m.group(1).split('.')))
-
-
 def sage_include_directories(use_sources=False):
     """
     Return the list of include directories for compiling Sage extension modules.

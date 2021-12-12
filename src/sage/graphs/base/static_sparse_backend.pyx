@@ -863,7 +863,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def iterator_verts(self, vertices):
         r"""
-        Return an iterator over the vertices
+        Iterate over the vertices
 
         INPUT:
 
@@ -882,9 +882,15 @@ cdef class StaticSparseBackend(CGraphBackend):
             [1]
         """
         if vertices is None:
-            return iter(self._vertex_to_labels)
-        else:
-            return (x for x in self._vertex_to_labels if x in vertices)
+            for x in self._vertex_to_labels:
+                yield x
+            return
+
+        cdef set V = set(vertices)
+        for x in self._vertex_to_labels:
+            if x in V:
+                yield x
+        return
 
     def num_verts(self):
         r"""
@@ -1003,7 +1009,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def iterator_edges(self, vertices, bint labels):
         r"""
-        Return an iterator over the graph's edges.
+        Iterate over the graph's edges.
 
         INPUT:
 
@@ -1290,7 +1296,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def iterator_nbrs(self, v):
         r"""
-        Return an iterator over the neighbors of a vertex
+        Iterate over the neighbors of a vertex
 
         INPUT:
 
@@ -1347,7 +1353,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def iterator_out_nbrs(self, v):
         r"""
-        Return an iterator over the out-neighbors of a vertex
+        Iterate over the out-neighbors of a vertex
 
         INPUT:
 
@@ -1376,7 +1382,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
     def iterator_in_nbrs(self, v):
         r"""
-        Return an iterator over the in-neighbors of a vertex
+        Iterate over the in-neighbors of a vertex
 
         INPUT:
 

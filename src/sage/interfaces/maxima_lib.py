@@ -68,6 +68,15 @@ Maxima has some flags that affect how the result gets simplified (By default, be
     sage: maxima_calculus("besselexpand:true")
     true
 
+The output is parseable (i. e. :trac:`31796` is fixed)::
+
+    sage: foo = maxima_calculus('a and (b or c)') ; foo
+    a and (b or c)
+    sage: bar = maxima_calculus(foo) ; bar
+    a and (b or c)
+    sage: bar == foo
+    True
+
 """
 
 # ****************************************************************************
@@ -453,7 +462,7 @@ class MaximaLib(MaximaAbstract):
                     maxima_eval("#$%s$" % statement)
         if not reformat:
             return result
-        return ''.join([x.strip() for x in result.split()])
+        return ' '.join(x.strip() for x in result.split())
 
     eval = _eval_line
 
@@ -1388,12 +1397,12 @@ def max_at_to_sage(expr):
         sage: from sage.interfaces.maxima_lib import maxima_lib, max_at_to_sage
         sage: a=maxima_lib("'at(f(x,y,z),[x=1,y=2,z=3])")
         sage: a
-        'at(f(x,y,z),[x=1,y=2,z=3])
+        'at(f(x,y,z),[x = 1,y = 2,z = 3])
         sage: max_at_to_sage(a.ecl())
         f(1, 2, 3)
         sage: a=maxima_lib("'at(f(x,y,z),x=1)")
         sage: a
-        'at(f(x,y,z),x=1)
+        'at(f(x,y,z),x = 1)
         sage: max_at_to_sage(a.ecl())
         f(1, y, z)
     """

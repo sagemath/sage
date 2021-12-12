@@ -5,16 +5,15 @@ AUTHORS:
 
 - Travis Scrimshaw (2013-05-03): Initial version
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -35,7 +34,8 @@ from sage.rings.ring import Ring
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.family import Family, AbstractFamily
 
-class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
+
+class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
     r"""
     A Lie algebra `L` over a base ring `R`.
 
@@ -404,9 +404,10 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
         if R is None:
             raise ValueError("invalid arguments")
 
-        check_assoc = lambda A: (isinstance(A, (Ring, MatrixSpace))
-                                 or A in Rings()
-                                 or A in Algebras(R).Associative())
+        def check_assoc(A):
+            return (isinstance(A, (Ring, MatrixSpace))
+                    or A in Rings()
+                    or A in Algebras(R).Associative())
         if arg0 in ZZ or check_assoc(arg1):
             # Check if we need to swap the arguments
             arg0, arg1 = arg1, arg0
@@ -627,8 +628,8 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
             return False
 
         # We check if it is a subalgebra of something that can coerce into ``self``
-        #from sage.algebras.lie_algebras.subalgebra import LieSubalgebra
-        #if isinstance(R, LieSubalgebra) and self.has_coerce_map_from(R._ambient):
+        # from sage.algebras.lie_algebras.subalgebra import LieSubalgebra
+        # if isinstance(R, LieSubalgebra) and self.has_coerce_map_from(R._ambient):
         #    return R.ambient_lift
 
         # Lie algebras in the same indices over any base that coerces in
@@ -663,9 +664,9 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
         """
         cat = LieAlgebras(self.base_ring())
         if category is not None and not category.is_subcategory(cat):
-            raise TypeError("%s is not a subcategory of Lie algebras"%category)
+            raise TypeError(f"{category} is not a subcategory of Lie algebras")
         if Y not in cat:
-            raise TypeError("%s is not a Lie algebra"%Y)
+            raise TypeError(f"{Y} is not a Lie algebra")
         from sage.algebras.lie_algebras.morphism import LieAlgebraHomset
         return LieAlgebraHomset(self, Y, category=category)
 
@@ -710,7 +711,7 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
         assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {key: R(coeff) for key,coeff in d.items()}
+            d = {key: R(coeff) for key, coeff in d.items()}
         if remove_zeros:
             d = {key: coeff for key, coeff in d.items() if coeff}
         return self.element_class(self, d)
@@ -764,7 +765,8 @@ class LieAlgebra(Parent, UniqueRepresentation): # IndexedGenerators):
         except AttributeError:
             raise ValueError("the Lie algebra is not finite dimensional with a basis")
 
-    #Element = LieAlgebraElement # Default for all Lie algebras
+    # Element = LieAlgebraElement # Default for all Lie algebras
+
 
 class LieAlgebraWithGenerators(LieAlgebra):
     """
@@ -824,7 +826,7 @@ class LieAlgebraWithGenerators(LieAlgebra):
             return tuple(G[i] for i in self.variable_names())
         except (KeyError, IndexError):
             return tuple(G[i] for i in self.indices())
-        except (KeyError, ValueError):
+        except ValueError:
             return tuple(G)
 
     def gen(self, i):
@@ -850,6 +852,7 @@ class LieAlgebraWithGenerators(LieAlgebra):
             {'x', 'y'}
         """
         return self._indices
+
 
 class FinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
     r"""
@@ -890,9 +893,9 @@ class FinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
         """
         if self.__ngens == 1:
             return "Lie algebra on the generator {0} over {1}".format(
-                    self.gen(0), self.base_ring())
+                self.gen(0), self.base_ring())
         return "Lie algebra on {0} generators {1} over {2}".format(
-                self.__ngens, self.gens(), self.base_ring())
+            self.__ngens, self.gens(), self.base_ring())
 
     @lazy_attribute
     def _ordered_indices(self):
@@ -918,6 +921,7 @@ class FinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
             x + y
         """
         return self.sum(self.lie_algebra_generators())
+
 
 class InfinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
     r"""
@@ -948,6 +952,7 @@ class InfinitelyGeneratedLieAlgebra(LieAlgebraWithGenerators):
 #            (x, y)
 #        """
 #        return self.lie_algebra_generators()
+
 
 class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
     """
@@ -1097,7 +1102,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
                 index_set = gens.keys()
             gens = gens.values()
             ngens = len(gens)
-        elif gens is not None: # Assume it is list-like
+        elif gens is not None:  # Assume it is list-like
             gens = tuple(gens)
             ngens = len(gens)
             if index_set is None and names is None:
@@ -1155,9 +1160,9 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
         if isinstance(gens, tuple):
             # This guarantees that the generators have a specified ordering
             d = {self._indices[i]: self.element_class(self, v)
-                 for i,v in enumerate(gens)}
+                 for i, v in enumerate(gens)}
             gens = Family(self._indices, lambda i: d[i])
-        elif gens is not None: # It is a family
+        elif gens is not None:  # It is a family
             gens = Family(self._indices,
                           lambda i: self.element_class(self, gens[i]),
                           name="generator map")
@@ -1276,7 +1281,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
             x
         """
         if i not in self._assoc.basis().keys():
-            #return self(self._assoc.monomial(i))
+            # return self(self._assoc.monomial(i))
             raise ValueError("not an index")
         return self.element_class(self, self._assoc.monomial(i))
 
@@ -1292,7 +1297,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
             4*x
         """
         if i not in self._assoc.basis().keys():
-            #return self(self._assoc.term(i, c))
+            # return self(self._assoc.term(i, c))
             raise ValueError("not an index")
         return self.element_class(self, self._assoc.term(i, c))
 
@@ -1439,6 +1444,7 @@ class LieAlgebraFromAssociative(LieAlgebraWithGenerators):
                 raise NotImplementedError("the basis is not defined")
             return self.value.monomial_coefficients(copy)
 
+
 class LiftMorphismToAssociative(LiftMorphism):
     """
     The natural lifting morphism from a Lie algebra constructed from
@@ -1494,6 +1500,7 @@ class LiftMorphismToAssociative(LiftMorphism):
         return SetMorphism(Hom(self.codomain(), self.domain()),
                            self.preimage)
 
+
 class MatrixLieAlgebraFromAssociative(LieAlgebraFromAssociative):
     """
     A Lie algebra constructed from a matrix algebra.
@@ -1540,4 +1547,3 @@ class MatrixLieAlgebraFromAssociative(LieAlgebraFromAssociative):
             return self.value
 
         _matrix_ = matrix
-

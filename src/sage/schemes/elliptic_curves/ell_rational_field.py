@@ -1516,7 +1516,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: EllipticCurve([1234567,89101112]).analytic_rank(algorithm='rubinstein')
             Traceback (most recent call last):
             ...
-            RuntimeError: unable to compute analytic rank using rubinstein algorithm (unable to convert ' 6.19283e+19 and is too large' to an integer)
+            RuntimeError: unable to compute analytic rank using rubinstein algorithm (unable to convert ' 6.19283... and is too large' to an integer)
             sage: EllipticCurve([1234567,89101112]).analytic_rank(algorithm='sympow')
             Traceback (most recent call last):
             ...

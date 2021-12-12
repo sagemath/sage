@@ -244,30 +244,21 @@ html_favicon = 'favicon.ico'
 html_common_static_path = [os.path.join(SAGE_DOC_SRC, 'common', 'static'),
                            THEBE_DIR, 'static']
 
-# We use MathJax to build the documentation unless the environment
-# variable SAGE_DOC_MATHJAX is set to "no" or "False".  (Note that if
-# the user does not set this variable, then the script sage-env sets
-# it to "True".)
+# We use MathJax to build the documentation.
+extensions.append('sphinx.ext.mathjax')
+mathjax_path = 'MathJax.js?config=TeX-AMS_HTML-full,../mathjax_sage.js'
 
-if (os.environ.get('SAGE_DOC_MATHJAX', 'no') not in ['no', 'False']):
-    extensions.append('sphinx.ext.mathjax')
-    mathjax_path = 'MathJax.js?config=TeX-AMS_HTML-full,../mathjax_sage.js'
+from sage.misc.latex_macros import sage_mathjax_macros
+html_theme_options['mathjax_macros'] = sage_mathjax_macros()
 
-    from sage.misc.latex_macros import sage_mathjax_macros
-    html_theme_options['mathjax_macros'] = sage_mathjax_macros()
+mathjax_relative = os.path.basename(MATHJAX_DIR)
 
-    mathjax_relative = os.path.basename(MATHJAX_DIR)
-
-    # It would be really nice if sphinx would copy the entire mathjax
-    # directory, (so we could have a _static/mathjax directory), rather than
-    # the contents of the directory
-
-    html_common_static_path.append(MATHJAX_DIR)
-    exclude_patterns += ['**/'+os.path.join(mathjax_relative, i)
-                         for i in ('docs', 'README*', 'test', 'unpacked', 'LICENSE')]
-else:
-     extensions.append('sphinx.ext.imgmath')
-
+# It would be really nice if sphinx would copy the entire mathjax
+# directory, (so we could have a _static/mathjax directory), rather than
+# the contents of the directory
+html_common_static_path.append(MATHJAX_DIR)
+exclude_patterns += ['**/' + os.path.join(mathjax_relative, i)
+                     for i in ('docs', 'README*', 'test', 'unpacked', 'LICENSE')]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.

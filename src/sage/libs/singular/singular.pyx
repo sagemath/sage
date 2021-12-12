@@ -1524,15 +1524,18 @@ cdef init_libsingular():
     from os.path import dirname
     os.environ["SINGULAR_BIN_DIR"] = dirname(which("Singular"))
 
-    handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
-    if not handle:
-        err = dlerror()
-        raise ImportError(f"cannot load Singular library from {LIBSINGULAR_PATH} ({err})")
+    import platform
+    if not platform.system().startswith("CYGWIN"):
+        handle = dlopen(lib, RTLD_GLOBAL|RTLD_LAZY)
+        if not handle:
+            err = dlerror()
+            raise ImportError(f"cannot load Singular library from {LIBSINGULAR_PATH} ({err})")
 
     # load SINGULAR
     siInit(lib)
 
-    dlclose(handle)
+    if handle:
+        dlclose(handle)
 
     # we set and save some global Singular options
     singular_options = singular_options | Sy_bit(OPT_REDSB) | Sy_bit(OPT_INTSTRATEGY) | Sy_bit(OPT_REDTAIL) | Sy_bit(OPT_REDTHROUGH)

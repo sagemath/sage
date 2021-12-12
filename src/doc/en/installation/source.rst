@@ -1182,14 +1182,6 @@ Here are some of the more commonly used variables affecting the build process:
   Some spkgs might also assume that certain programs are available on the
   system (for example, ``latex`` or ``pdflatex``).
 
-- :envvar:`SAGE_DOC_MATHJAX` - by default, any LaTeX code in Sage's
-  documentation is processed by MathJax.
-  If this variable is set to ``no``, then MathJax is not used -- instead,
-  math is processed using LaTeX and converted by dvipng to image files,
-  and then those files are included into the documentation.
-  Typically, building the documentation using LaTeX and dvipng takes longer
-  and uses more memory and disk space than using MathJax.
-
 - :envvar:`SAGE_DOCBUILD_OPTS` - the value of this variable is passed as an
   argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
   you run ``make``, ``make doc``, or ``make doc-pdf``.

@@ -341,7 +341,7 @@ Sage):
 
 ::
 
-    sage: range(1, 15)  # py2
+    sage: list(range(1, 15))
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
 
 Isso é útil quando se usa "list comprehensions" para construir listas:
@@ -547,8 +547,7 @@ sobre o quadrados dos números inteiros até :math:`10000000`.
 
 ::
 
-    sage: v = (n^2 for n in xrange(10000000))  # py2
-    sage: v = (n^2 for n in range(10000000))  # py3
+    sage: v = (n^2 for n in range(10000000))
     sage: next(v)
     0
     sage: next(v)
@@ -694,8 +693,6 @@ o int ``1`` do Python é único, mas o Inteiro ``1`` do Sage não é.
 
     sage: 1 is 2/2
     False
-    sage: int(1) is int(2)/int(2)  # py2
-    True
     sage: 1 is 1
     False
     sage: 1 == 2/2

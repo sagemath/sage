@@ -1,4 +1,4 @@
-# distutils: libraries = primecount
+# distutils: libraries = primecount primesieve
 # distutils: language = c++
 
 # Use of this file is deprecated.

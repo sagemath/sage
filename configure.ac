@@ -89,7 +89,6 @@ else
     SAGE_VENV_AUTO=no
 fi
 SAGE_SRC="$SAGE_ROOT/src"
-SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 
 AC_ARG_WITH([sage-venv],
             [AS_HELP_STRING([--with-sage-venv={auto (default),yes,no,SAGE_VENV}],
@@ -502,7 +501,7 @@ AC_CONFIG_COMMANDS(mkdirs,
             "$SAGE_LOCAL/bin" "$SAGE_LOCAL/etc" \
             "$SAGE_LOCAL/include" "$SAGE_LOCAL/lib" \
             "$SAGE_LOCAL/lib/pkgconfig" \
-            "$SAGE_SHARE" "$SAGE_INST"; do
+            "$SAGE_SHARE" "$SAGE_LOCAL/var/lib/sage/installed"; do
                 AC_MSG_NOTICE([creating directory $d])
                 mkdir -p "$d" || AC_MSG_ERROR(could not create $d)
         done
@@ -521,7 +520,6 @@ AC_CONFIG_COMMANDS(mkdirs,
         SAGE_LOGS="$SAGE_ROOT/logs/pkgs"
         SAGE_LOCAL="$SAGE_LOCAL"
         SAGE_SHARE="$SAGE_LOCAL/share"
-        SAGE_INST="$SAGE_SPKG_INST"
     ])
 
 AC_CONFIG_COMMANDS(links, [

@@ -293,7 +293,7 @@ Creating Lists III: list comprehensions
 
 **Example** We already know how to create the list `[1, 2, \dots, 16]`::
 
-    sage: range(1,17)   # py2
+    sage: list(range(1,17))
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
 Using a *list comprehension*, we can now create the list
@@ -1032,22 +1032,22 @@ included:
 
 ::
 
-    sage: range(4)  # py2
+    sage: list(range(4))
     [0, 1, 2, 3]
 
 ::
 
-    sage: range(1, 5)  # py2
+    sage: list(range(1, 5))
     [1, 2, 3, 4]
 
 ::
 
-    sage: range(1, 11, 2)  # py2
+    sage: list(range(1, 11, 2))
     [1, 3, 5, 7, 9]
 
 ::
 
-    sage: range(10, 0, -1)  # py2
+    sage: list(range(10, 0, -1))
     [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
 
 ::

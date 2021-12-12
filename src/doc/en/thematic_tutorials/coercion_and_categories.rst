@@ -533,9 +533,7 @@ methods are place-holders: There is no default implementation, but it is
     sage: from sage.misc.abstract_method import abstract_methods_of_class
     sage: abstract_methods_of_class(QuotientFields().element_class)['optional']
     ['_add_', '_mul_']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py2
-    ['__nonzero__', 'denominator', 'numerator']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py3
+    sage: abstract_methods_of_class(QuotientFields().element_class)['required']
     ['__bool__', 'denominator', 'numerator']
 
 Hence, when implementing elements of a quotient field, it is *required* to
@@ -1498,9 +1496,7 @@ The elements have to provide more::
 
     sage: abstract_methods_of_class(QuotientFields().element_class)['optional']
     ['_add_', '_mul_']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py2
-    ['__nonzero__', 'denominator', 'numerator']
-    sage: abstract_methods_of_class(QuotientFields().element_class)['required'] # py3
+    sage: abstract_methods_of_class(QuotientFields().element_class)['required']
     ['__bool__', 'denominator', 'numerator']
 
 .. end of output

@@ -262,7 +262,7 @@ sdh_pip_install() {
         esac
         shift
     done
-    python3 -m pip wheel --use-feature=in-tree-build --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option "$@" || \
+    python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option "$@" || \
         sdh_die "Error building a wheel for $PKG_NAME"
 
     sdh_store_and_pip_install_wheel $install_options .

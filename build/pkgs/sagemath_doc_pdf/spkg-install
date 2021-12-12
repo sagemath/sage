@@ -1,7 +1,3 @@
 #! /usr/bin/env bash
-# This must be set; otherwise, sage.docs.conf uses sphinx.ext.imgmath,
-# which leads to errors.
-export SAGE_DOC_MATHJAX=yes
-
 cd $SAGE_ROOT/src/doc
 $MAKE doc-pdf

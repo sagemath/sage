@@ -254,13 +254,9 @@ y hacemos una tabla de cuadrados y cubos.
 
 La estructura de datos más básica en Sage es la lista, la cual es -- como
 sugiere su nombre -- solo una lista de objetos arbitrarios.
-Por ejemplo, el comando ``range`` que hemos usado crea una lista (python 2):
+Por ejemplo, el comando ``range`` que hemos usado crea una lista::
 
-::
-
-    sage: range(2,10)   # py2
-    [2, 3, 4, 5, 6, 7, 8, 9]
-    sage: list(range(2,10))   # py3
+    sage: list(range(2,10))
     [2, 3, 4, 5, 6, 7, 8, 9]
 
 He aquí una lista más complicada:

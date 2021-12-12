@@ -192,7 +192,7 @@ class DiffChart(Chart):
         sage: N = Manifold(2, 'N', field='complex')
         sage: XN.<Z1,Z2> = N.chart('Z1:period=1+2*I Z2')
         sage: XN.periods()
-        {0: 2*I + 1}
+        (2*I + 1, None)
 
     Coordinates are Sage symbolic variables (see
     :mod:`sage.symbolic.expression`)::
@@ -877,7 +877,7 @@ class RealDiffChart(DiffChart, RealChart):
         sage: c_spher1.<r,th,ph1> = \
         ....: V.chart(r'r:(0,+oo) th:(0,pi):\theta ph1:(0,2*pi):periodic:\phi_1')
         sage: c_spher1.periods()
-        {3: 2*pi}
+        (None, None, 2*pi)
         sage: c_spher1.coord_range()
         r: (0, +oo); th: (0, pi); ph1: [0, 2*pi] (periodic)
 
@@ -887,7 +887,7 @@ class RealDiffChart(DiffChart, RealChart):
         sage: c_spher2.<r,th,ph2> = \
         ....: V.chart(r'r:(0,+oo) th:(0,pi):\theta ph2:period=2*pi:\phi_2')
         sage: c_spher2.periods()
-        {3: 2*pi}
+        (None, None, 2*pi)
         sage: c_spher2.coord_range()
         r: (0, +oo); th: (0, pi); ph2: [0, 2*pi] (periodic)
 

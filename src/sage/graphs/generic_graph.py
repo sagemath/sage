@@ -10651,7 +10651,7 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: D = DiGraph({0: [1, 2], 3: [0]})
-            sage: list(D.neighbor_iterator(0))
+            sage: sorted(D.neighbor_iterator(0))
             [1, 2, 3]
 
         ::
@@ -16714,6 +16714,10 @@ class GenericGraph(GenericGraph_pyx):
             Floyd-Warshall algorithm. Works also with weighted graphs, even with
             negative weights (but no negative cycle is allowed).
 
+          - ``'Floyd-Warshall_SciPy'``: the SciPy implementation of the
+            Floyd-Warshall algorithm. Works also with weighted graphs, even with
+            negative weights (but no negative cycle is allowed).
+
           - ``'Dijkstra_NetworkX'``: the Dijkstra algorithm, implemented in
             NetworkX. It works with weighted graphs, but no negative weight is
             allowed.
@@ -16818,7 +16822,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: d5, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_Boost")
             sage: d6, _ = g.shortest_path_all_pairs(algorithm="Johnson_Boost")
             sage: d7, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_Boost")
-            sage: d1 == d2 == d3 == d4 == d5 == d6 == d7
+            sage: d8, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")
+            sage: d1 == d2 == d3 == d4 == d5 == d6 == d7 == d8
             True
 
         Checking that distances are equal regardless of the algorithm used::
@@ -16831,7 +16836,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: d5, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_Boost")
             sage: d6, _ = g.shortest_path_all_pairs(algorithm="Johnson_Boost")
             sage: d7, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_Boost")
-            sage: d1 == d2 == d3 == d4 == d5 == d6 == d7
+            sage: d8, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")
+            sage: d1 == d2 == d3 == d4 == d5 == d6 == d7 == d8
             True
 
         Checking that weighted distances are equal regardless of the algorithm
@@ -16846,7 +16852,8 @@ class GenericGraph(GenericGraph_pyx):
             sage: d3, _ = g.shortest_path_all_pairs(algorithm="Dijkstra_Boost")
             sage: d4, _ = g.shortest_path_all_pairs(algorithm="Johnson_Boost")
             sage: d5, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_Boost")
-            sage: d1 == d2 == d3 == d4 == d5
+            sage: d6, _ = g.shortest_path_all_pairs(algorithm="Floyd-Warshall_SciPy")
+            sage: d1 == d2 == d3 == d4 == d5 == d6
             True
 
         Checking a random path is valid::
@@ -16884,6 +16891,9 @@ class GenericGraph(GenericGraph_pyx):
              {0: {0: None, 1: 0, 2: 1}, 1: {1: None, 2: 1}, 2: {2: None}})
             sage: g.shortest_path_all_pairs(algorithm='Floyd-Warshall-Cython')
             ({0: {0: 0, 1: 1, 2: 2}, 1: {1: 0, 2: 1}, 2: {2: 0}},
+             {0: {0: None, 1: 0, 2: 1}, 1: {1: None, 2: 1}, 2: {2: None}})
+            sage: g.shortest_path_all_pairs(algorithm='Floyd-Warshall_SciPy')
+            ({0: {0: 0.0, 1: 1.0, 2: 2.0}, 1: {1: 0.0, 2: 1.0}, 2: {2: 0.0}},
              {0: {0: None, 1: 0, 2: 1}, 1: {1: None, 2: 1}, 2: {2: None}})
 
         In order to change the default behavior if the graph is disconnected,
@@ -16931,6 +16941,8 @@ class GenericGraph(GenericGraph_pyx):
             ...
             RuntimeError: Dijkstra algorithm does not work with negative weights, use Bellman-Ford instead
         """
+        from sage.rings.infinity import Infinity
+
         if weight_function is not None:
             by_weight = True
 
@@ -16976,6 +16988,38 @@ class GenericGraph(GenericGraph_pyx):
             from sage.graphs.base.boost_graph import floyd_warshall_shortest_paths
             return floyd_warshall_shortest_paths(self, weight_function, distances=True, predecessors=True)
 
+        elif algorithm == "Floyd-Warshall_SciPy":
+            # Turn the graph to a n x n matrix
+            n = self.order()
+            int_to_vertex = list(self)
+            vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
+            if by_weight:
+                M = [[float('inf')]*n for _ in range(n)]
+                for i in range(n):
+                    M[i][i] = 0
+                for e in self.edges(sort=False):
+                    u = vertex_to_int[e[0]]
+                    v = vertex_to_int[e[1]]
+                    M[u][v] = min(M[u][v], weight_function(e))
+                    if not self.is_directed():
+                        M[v][u] = M[u][v]
+            else:
+                M = self.adjacency_matrix(vertices=int_to_vertex)
+
+            # We call the Floyd-Warshall method from SciPy
+            from numpy import array as np_array
+            from scipy.sparse.csgraph import floyd_warshall
+            dd, pp = floyd_warshall(np_array(M), directed=self.is_directed(),
+                                    return_predecessors=True, unweighted=not by_weight)
+
+            # and format the result
+            dist = {int_to_vertex[i]: {int_to_vertex[j]: dd[i, j] for j in range(n) if dd[i, j] != +Infinity}
+                        for i in range(n)}
+            pred = {int_to_vertex[i]: {int_to_vertex[j]: (int_to_vertex[pp[i, j]] if i != j else None)
+                                           for j in range(n) if (i == j or pp[i, j] != -9999)}
+                        for i in range(n)}
+            return dist, pred
+
         elif algorithm == "Johnson_Boost":
             from sage.graphs.base.boost_graph import johnson_shortest_paths
             return johnson_shortest_paths(self, weight_function, distances=True, predecessors=True)
@@ -17004,8 +17048,6 @@ class GenericGraph(GenericGraph_pyx):
 
         elif algorithm != "Floyd-Warshall-Python":
             raise ValueError('unknown algorithm "{}"'.format(algorithm))
-
-        from sage.rings.infinity import Infinity
 
         if self.is_directed():
             neighbor = self.neighbor_out_iterator
@@ -17585,11 +17627,11 @@ class GenericGraph(GenericGraph_pyx):
         You can get edges of the DFS tree instead of the vertices using the
         ``edges`` parameter::
 
-            sage: D = DiGraph({1: [2, 3], 2: [4], 3: [4], 4: [1, 5], 5: [2, 6]})
-            sage: list(D.depth_first_search(1, edges=True))
-            [(1, 3), (3, 4), (4, 5), (5, 6), (5, 2)]
-            sage: list(D.depth_first_search(1, ignore_direction=True, edges=True))
-            [(1, 4), (4, 5), (5, 6), (5, 2), (4, 3)]
+            sage: D = digraphs.Path(5)
+            sage: list(D.depth_first_search(2, edges=True))
+            [(2, 3), (3, 4)]
+            sage: list(D.depth_first_search(2, edges=True, ignore_direction=True))
+            [(2, 3), (3, 4), (2, 1), (1, 0)]
 
         TESTS::
 

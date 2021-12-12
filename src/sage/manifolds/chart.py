@@ -200,7 +200,7 @@ class Chart(UniqueRepresentation, SageObject):
         sage: N = Manifold(2, 'N', field='complex', structure='topological')
         sage: XN.<Z1,Z2> = N.chart('Z1:period=1+2*I Z2')
         sage: XN.periods()
-        {0: 2*I + 1}
+        (2*I + 1, None)
 
     Coordinates are Sage symbolic variables (see
     :mod:`sage.symbolic.expression`)::
@@ -309,7 +309,10 @@ class Chart(UniqueRepresentation, SageObject):
                 for x in names:
                     coordinates += x + ' '
                 coordinates = coordinates[:-1]
-            coordinates, coordinate_options = cls._parse_coordinates(domain, coordinates)
+            coordinates, parsed_options = cls._parse_coordinates(domain,
+                                                                 coordinates)
+            if not coordinate_options:
+                coordinate_options = parsed_options
 
         coord_string = ' '.join(str(x) for x in coordinates)
 
@@ -317,14 +320,16 @@ class Chart(UniqueRepresentation, SageObject):
             return domain._charts_by_coord[coord_string]
         except KeyError:
             # Make coord_restrictions hashable
-            coord_restrictions = cls._normalize_coord_restrictions(coordinates, coord_restrictions)
+            coord_restrictions = cls._normalize_coord_restrictions(coordinates,
+                                                                   coord_restrictions)
             self = super().__classcall__(cls, domain, coordinates, calc_method,
                                          coord_restrictions=coord_restrictions,
                                          **coordinate_options)
             domain._charts_by_coord[coord_string] = self
             return self
 
-    def __init__(self, domain, coordinates, calc_method=None, periods=None, coord_restrictions=None):
+    def __init__(self, domain, coordinates, calc_method=None, periods=None,
+                 coord_restrictions=None):
         r"""
         Construct a chart.
 
@@ -364,13 +369,7 @@ class Chart(UniqueRepresentation, SageObject):
         self.simplify = self._calc_method.simplify
 
         # Treatment of the coordinates:
-        if periods is None:
-            self._periods = {}
-        else:
-            # dictionary of periods (if any); key = coord. index
-            self._periods = {self._sindex + i: period
-                             for i, period in enumerate(periods)
-                             if period is not None}
+        self._periods = periods
 
         if len(coordinates) != self._manifold.dim():
             raise ValueError("the list of coordinates must contain " +
@@ -431,7 +430,8 @@ class Chart(UniqueRepresentation, SageObject):
 
         - a tuple of variables (as elements of ``SR``)
         - a dictionary with possible keys:
-          - `"periods": a tuple of periods
+
+          - ``"periods"``: a tuple of periods
 
         TESTS::
 
@@ -504,7 +504,8 @@ class Chart(UniqueRepresentation, SageObject):
         if coord_restrictions is None:
             return frozenset()
 
-        if callable(coord_restrictions) and not isinstance(coord_restrictions, Expression):
+        if callable(coord_restrictions) and not isinstance(coord_restrictions,
+                                                           Expression):
             # lambda-quoted
             coord_restrictions = coord_restrictions(*coordinates)
 
@@ -679,13 +680,12 @@ class Chart(UniqueRepresentation, SageObject):
 
     def periods(self):
         r"""
-        Return the coordinate periods as a dictionary, possibly empty if no
-        coordinate is periodic.
+        Return the coordinate periods.
 
         OUTPUT:
 
-        - a dictionary with keys the indices of the periodic coordinates and
-          with values the periods.
+        - a tuple containing the period of each coordinate, with the
+          value ``None`` if the coordinate is not periodic
 
         EXAMPLES:
 
@@ -694,31 +694,16 @@ class Chart(UniqueRepresentation, SageObject):
             sage: M = Manifold(2, 'M', structure='topological')
             sage: X.<x,y> = M.chart()
             sage: X.periods()
-            {}
+            (None, None)
 
         Charts with a periodic coordinate::
 
             sage: Y.<u,v> = M.chart("u v:(0,2*pi):periodic")
             sage: Y.periods()
-            {1: 2*pi}
+            (None, 2*pi)
             sage: Z.<a,b> = M.chart(r"a:period=sqrt(2):\alpha b:\beta")
             sage: Z.periods()
-            {0: sqrt(2)}
-
-        The key in the output dictionary takes into account the index range
-        declared on the manifold with ``start_index``::
-
-            sage: M = Manifold(2, 'M', structure='topological', start_index=1)
-            sage: Y.<u,v> = M.chart("u v:(0,2*pi):periodic")
-            sage: Y[2]
-            v
-            sage: Y.periods()
-            {2: 2*pi}
-            sage: Z.<a,b> = M.chart(r"a:period=sqrt(2):\alpha b:\beta")
-            sage: Z[1]
-            a
-            sage: Z.periods()
-            {1: sqrt(2)}
+            (sqrt(2), None)
 
         Complex manifold with a periodic coordinate::
 
@@ -726,13 +711,13 @@ class Chart(UniqueRepresentation, SageObject):
             ....:              start_index=1)
             sage: X.<x,y> = M.chart("x y:period=1+I")
             sage: X.periods()
-            {2: I + 1}
+            (None, I + 1)
 
         TESTS::
 
             sage: M = Manifold(2, 'M', field=QQ, structure='topological')
             sage: X.<xq,yq> = M.chart(r"xq:period=3/2 yq:\zeta:period=2")
-            sage: X.periods()[0], X.periods()[1]
+            sage: X.periods()
             (3/2, 2)
 
         """
@@ -843,9 +828,11 @@ class Chart(UniqueRepresentation, SageObject):
             for coord in self._xx:
                 coordinates += repr(coord) + ' '
             res_coord_restrictions = set(self._restrictions)
-            res_coord_restrictions.update(self._normalize_coord_restrictions(self._xx, restrictions))
+            res_coord_restrictions.update(self._normalize_coord_restrictions(self._xx,
+                                                                             restrictions))
             res = type(self)(subset, coordinates,
                              calc_method=self._calc_method._current,
+                             periods=self._periods,
                              # The coordinate restrictions are added
                              # to the result chart
                              coord_restrictions=res_coord_restrictions)
@@ -1781,7 +1768,7 @@ class RealChart(Chart):
         sage: c_spher1.<r,th,ph1> = \
         ....: V.chart(r'r:(0,+oo) th:(0,pi):\theta ph1:(0,2*pi):periodic:\phi_1')
         sage: c_spher1.periods()
-        {3: 2*pi}
+        (None, None, 2*pi)
         sage: c_spher1.coord_range()
         r: (0, +oo); th: (0, pi); ph1: [0, 2*pi] (periodic)
 
@@ -1791,7 +1778,7 @@ class RealChart(Chart):
         sage: c_spher2.<r,th,ph2> = \
         ....: V.chart(r'r:(0,+oo) th:(0,pi):\theta ph2:period=2*pi:\phi_2')
         sage: c_spher2.periods()
-        {3: 2*pi}
+        (None, None, 2*pi)
         sage: c_spher2.coord_range()
         r: (0, +oo); th: (0, pi); ph2: [0, 2*pi] (periodic)
 
@@ -1869,7 +1856,8 @@ class RealChart(Chart):
     :meth:`plot`.
 
     """
-    def __init__(self, domain, coordinates, calc_method=None, bounds=None, periods=None, coord_restrictions=None):
+    def __init__(self, domain, coordinates, calc_method=None, bounds=None,
+                 periods=None, coord_restrictions=None):
         r"""
         Construct a chart on a real topological manifold.
 
@@ -1909,6 +1897,14 @@ class RealChart(Chart):
           (optional) coordinate range or indicator of the periodic
           character of the coordinate, and the (optional) coordinate
           LaTeX symbol
+
+        OUTPUT:
+
+        - a tuple of variables (as elements of ``SR``)
+        - a dictionary with possible keys:
+
+          - ``"periods"``: a tuple of periods
+          - ``"bounds"``: a tuple of coordinate ranges
 
         TESTS::
 
@@ -2385,6 +2381,19 @@ class RealChart(Chart):
             sage: a in A
             True
 
+        TESTS:
+
+        Check that :trac:`32929` is fixed::
+
+            sage: M = Manifold(2, 'M')
+            sage: X.<x,y> = M.chart(r"x:(0,+oo) y:(0,2):periodic")
+            sage: U = M.open_subset('U', coord_def={X: x<1})
+            sage: XU = X.restrict(U)
+            sage: XU.coord_range()
+            x: (0, 1); y: [0, 2] (periodic)
+            sage: XU.periods()
+            (None, 2)
+
         """
         if subset == self.domain():
             return self
@@ -2396,10 +2405,11 @@ class RealChart(Chart):
             for coord in self._xx:
                 coordinates += repr(coord) + ' '
             res_coord_restrictions = set(self._restrictions)
-            res_coord_restrictions.update(self._normalize_coord_restrictions(self._xx, restrictions))
+            res_coord_restrictions.update(self._normalize_coord_restrictions(self._xx,
+                                                                             restrictions))
             res = type(self)(subset, coordinates,
                              calc_method=self._calc_method._current,
-                             bounds=self._bounds,
+                             bounds=self._bounds, periods=self._periods,
                              # The coordinate restrictions are added
                              # to the result chart and possibly
                              # transformed into coordinate bounds:
