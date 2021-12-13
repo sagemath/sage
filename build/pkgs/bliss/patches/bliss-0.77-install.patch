@@ -1,0 +1,32 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 01ed093..cfdb0a6 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -62,3 +62,27 @@ if(USE_GMP)
+   target_link_libraries(bliss-executable ${GMP_LIBRARIES})
+ endif(USE_GMP)
+ set_target_properties(bliss-executable PROPERTIES OUTPUT_NAME bliss)
++
++include(GNUInstallDirs)
++
++set(
++  BLISS_HEADERS
++  src/bliss_C.h
++  src/uintseqhash.hh
++  src/abstractgraph.hh
++  src/stats.hh
++  src/digraph.hh
++  src/defs.hh
++  src/heap.hh
++  src/graph.hh
++  src/partition.hh
++  src/kqueue.hh
++  src/utils.hh
++  src/orbit.hh
++  src/timer.hh
++  src/bignum.hh
++)
++
++install(TARGETS bliss-executable RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
++install(TARGETS bliss LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
++install(FILES ${BLISS_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/bliss)
