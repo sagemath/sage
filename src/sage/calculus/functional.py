@@ -52,9 +52,9 @@ def simplify(f, algorithm="maxima", **kwds):
 
         sage: x, t = var("x, t")
         sage: ex = 1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/2/(I*x + I*sqrt(x^2 - 1))
-        sage: ex.simplify()
+        sage: simplify(ex)
         1/2*I*x + 1/2*I*sqrt(x^2 - 1) + 1/(2*I*x + 2*I*sqrt(x^2 - 1))
-        sage: ex.simplify(algorithm="giac")
+        sage: simplify(ex, algorithm="giac")
         I*sqrt(x^2 - 1)
 
     """
