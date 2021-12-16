@@ -1390,7 +1390,7 @@ class RiemannSurface(object):
             sage: S = RiemannSurface(f)
             sage: _ = S.homology_basis()
             sage: g,d = S.make_zw_interpolator([(0,0),(1,0)]);
-            sage: all(f(*g(i*0.1)).abs() < 1e-13for i in range(10))
+            sage: all(f(*g(i*0.1)).abs() < 1e-13 for i in range(10))
             True
             sage: abs((g(1)[0]-g(0)[0]) - d) < 1e-13
             True

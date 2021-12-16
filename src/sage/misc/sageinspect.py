@@ -1585,6 +1585,8 @@ def sage_getargspec(obj):
         ....:     'class Foo:\n'
         ....:     '    def __call__(self):\n'
         ....:     '        return None\n'
+        ....:     '    def __module__(self):\n'
+        ....:     '        return "sage.misc.sageinspect"\n'
         ....:     '    def _sage_src_(self):\n'
         ....:     '        return "the source code string"')
         sage: shell.run_cell('f = Foo()')
