@@ -136,10 +136,11 @@ including exponentiation::
     [          1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x)) 1/2*(x*e^(2*sqrt(x)) - x)*sqrt(x)*e^(x - sqrt(x))]
     [  1/2*(e^(2*sqrt(x)) - 1)*e^(x - sqrt(x))/x^(3/2)           1/2*(e^(2*sqrt(x)) + 1)*e^(x - sqrt(x))]
 
-And complex exponentiation works now::
+Complex exponentiation works, but may require a patched version of
+maxima (:trac:`32898`) for now::
 
     sage: M = i*matrix([[pi]])
-    sage: e^M
+    sage: e^M # not tested, requires patched maxima
     [-1]
     sage: M = i*matrix([[pi,0],[0,2*pi]])
     sage: e^M
