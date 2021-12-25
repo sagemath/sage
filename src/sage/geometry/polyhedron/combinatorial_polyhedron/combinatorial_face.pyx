@@ -64,6 +64,8 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from cysignals.memory           cimport check_allocarray, sig_free
+
 from sage.misc.superseded        import deprecated_function_alias
 
 import numbers
@@ -72,12 +74,14 @@ from .conversions               cimport bit_rep_to_Vrep_list
 from .base                      cimport CombinatorialPolyhedron
 from .face_iterator             cimport FaceIterator_base
 from .polyhedron_face_lattice   cimport PolyhedronFaceLattice
-from .face_data_structure       cimport face_len_atoms, face_init, face_copy, face_issubset
+from .face_data_structure       cimport face_len_atoms, face_init, face_free, face_copy, face_issubset
 from .face_list_data_structure  cimport bit_rep_to_coatom_rep
 from .list_of_faces              cimport face_as_combinatorial_polyhedron
 
+
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
+
 
 cdef class CombinatorialFace(SageObject):
     r"""
@@ -140,7 +144,7 @@ cdef class CombinatorialFace(SageObject):
         sage: face.n_ambient_Hrepresentation()
         11
     """
-    def __init__(self, data, dimension=None, index=None):
+    def __cinit__(self, data, dimension=None, index=None):
         r"""
         Initialize :class:`CombinatorialFace`.
 
@@ -159,6 +163,10 @@ cdef class CombinatorialFace(SageObject):
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace).run()
         """
+        # Note that all values are set to zero at the time ``__cinit__`` is called:
+        # https://cython.readthedocs.io/en/latest/src/userguide/special_methods.html#initialisation-methods
+        # In particular, ``__dealloc__`` will not do harm in this case.
+
         cdef FaceIterator_base it
         cdef PolyhedronFaceLattice all_faces
 
@@ -168,14 +176,13 @@ cdef class CombinatorialFace(SageObject):
             # Copy data from FaceIterator.
             it = data
             self._dual              = it.dual
-            self._mem               = MemoryAllocator()
             self.atoms              = it.atoms
             self.coatoms            = it.coatoms
 
             if it.structure.face_status == 0:
                 raise LookupError("face iterator not set to a face")
 
-            face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms(), self._mem)
+            face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms())
             face_copy(self.face, it.structure.face)
 
             self._dimension         = it.structure.current_dimension
@@ -199,11 +206,10 @@ cdef class CombinatorialFace(SageObject):
 
             # Copy data from PolyhedronFaceLattice.
             self._dual              = all_faces.dual
-            self._mem               = MemoryAllocator()
             self.atoms              = all_faces.atoms
             self.coatoms            = all_faces.coatoms
 
-            face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms(), self._mem)
+            face_init(self.face, self.coatoms.n_atoms(), self.coatoms.n_coatoms())
             face_copy(self.face, all_faces.faces[dimension+1].faces[index])
 
             self._dimension         = dimension
@@ -230,11 +236,25 @@ cdef class CombinatorialFace(SageObject):
             for i in range(-1,self._ambient_dimension+1):
                 self._hash_index += all_faces.f_vector[i+1]
         else:
-            raise NotImplementedError("data must be face iterator or a list of all faces")
+            raise ValueError("data must be face iterator or a list of all faces")
 
         if self._dual:
             # Reverse the hash index in dual mode to respect inclusion of faces.
             self._hash_index = -self._hash_index - 1
+
+    def __dealloc__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face import CombinatorialFace
+            sage: CombinatorialFace(2)  # indirect doctest
+            Traceback (most recent call last):
+            ...
+            ValueError: data must be face iterator or a list of all faces
+        """
+        face_free(self.face)
+        sig_free(self.atom_rep)
+        sig_free(self.coatom_rep)
 
     def _repr_(self):
         r"""
@@ -1085,7 +1105,7 @@ cdef class CombinatorialFace(SageObject):
         Return its length.
         """
         if self.coatom_rep is NULL:
-            self.coatom_rep = <size_t *> self._mem.allocarray(self.coatoms.n_faces(), sizeof(size_t))
+            self.coatom_rep = <size_t *> check_allocarray(self.coatoms.n_faces(), sizeof(size_t))
             self._n_coatom_rep = bit_rep_to_coatom_rep(self.face, self.coatoms.data, self.coatom_rep)
         return self._n_coatom_rep
 
@@ -1095,7 +1115,6 @@ cdef class CombinatorialFace(SageObject):
         Return its length.
         """
         if self.atom_rep is NULL:
-            self.atom_rep = <size_t *> self._mem.allocarray(self.coatoms.n_atoms(), sizeof(size_t))
+            self.atom_rep = <size_t *> check_allocarray(self.coatoms.n_atoms(), sizeof(size_t))
             self._n_atom_rep = bit_rep_to_Vrep_list(self.face, self.atom_rep)
         return self._n_atom_rep
-

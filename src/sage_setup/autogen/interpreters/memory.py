@@ -107,7 +107,7 @@ class MemoryChunk(object):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkArguments('args', ty_mpfr)
             sage: mc.declare_class_members()
-            u'    cdef int _n_args\n    cdef mpfr_t* _args\n'
+            '    cdef int _n_args\n    cdef mpfr_t* _args\n'
         """
         return self.storage_type.declare_chunk_class_members(self.name)
 
@@ -174,7 +174,7 @@ class MemoryChunk(object):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkRRRetval('retval', ty_mpfr)
             sage: mc.declare_call_locals()
-            u'        cdef RealNumber retval = (self.domain)()\n'
+            '        cdef RealNumber retval = (self.domain)()\n'
         """
         return ""
 

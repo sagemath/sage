@@ -1697,13 +1697,13 @@ cdef class FiniteField(Field):
             inc = self.coerce_map_from(self)
         elif hasattr(self, '_prefix'):
             modulus = self.prime_subfield().algebraic_closure(self._prefix)._get_polynomial(degree)
-            K = GF(p**degree, name=name, prefix=self._prefix, modulus=modulus, check_irreducible=False)
+            K = GF((p, degree), name=name, prefix=self._prefix, modulus=modulus, check_irreducible=False)
             a = self.gen()**((p**n-1)//(p**degree - 1))
             inc = K.hom([a], codomain=self, check=False)
         else:
             fam = self._compatible_family()
             a, modulus = fam[degree]
-            K = GF(p**degree, modulus=modulus, name=name)
+            K = GF((p, degree), modulus=modulus, name=name)
             inc = K.hom([a], codomain=self, check=False)
             if fam[n][0] == self.gen():
                 try: # to register a coercion map, embedding of K to self

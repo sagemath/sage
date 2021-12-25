@@ -567,6 +567,7 @@ from sage.structure.richcmp import (richcmp, richcmp_method,
 from sage.rings.real_mpfr import RR
 from sage.rings.real_mpfi import RealIntervalField, RIF, is_RealIntervalFieldElement, RealIntervalField_class
 from sage.rings.cc import CC
+from sage.rings.cif import CIF
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_interval import is_ComplexIntervalFieldElement
 from sage.rings.polynomial.all import PolynomialRing
@@ -581,7 +582,6 @@ from sage.categories.action import Action
 
 from sage.structure.global_options import GlobalOptions
 
-CIF = ComplexIntervalField()
 
 class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
     r"""

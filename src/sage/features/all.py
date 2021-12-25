@@ -1,3 +1,6 @@
+r"""
+Enumeration of all defined features
+"""
 
 def all_features():
     r"""

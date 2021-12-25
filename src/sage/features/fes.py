@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Checks for FES
+Features for testing the presence of ``fes``
 """
 
 from . import CythonFeature, PythonModule
@@ -52,13 +52,13 @@ if solutions != 3:
 
 class LibFESLibrary(CythonFeature):
     r"""
-    A :class:`Feature` which describes whether the FES library
+    A :class:`~sage.features.Feature` which describes whether the FES library
     is present and functional.
 
     EXAMPLES::
 
         sage: from sage.features.fes import LibFESLibrary
-        sage: LibFESLibrary().require()  # optional: fes
+        sage: LibFESLibrary().require()  # optional - fes
     """
     def __init__(self):
         r"""
@@ -74,13 +74,13 @@ class LibFESLibrary(CythonFeature):
 
 class LibFES(JoinFeature):
     r"""
-    A :class:`Feature` which describes whether the :mod:`sage.libs.fes`
+    A :class:`~sage.features.Feature` which describes whether the :mod:`sage.libs.fes`
     module has been enabled for this build of Sage and is functional.
 
     EXAMPLES::
 
         sage: from sage.features.fes import LibFES
-        sage: LibFES().require()  # optional: fes
+        sage: LibFES().require()  # optional - fes
     """
     def __init__(self):
         r"""

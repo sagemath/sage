@@ -257,7 +257,7 @@ cdef class ntl_ZZ(object):
             <... 'int'>
 
             sage: ntl.ZZ(10^30).__int__()
-            1000000000000000000000000000000L
+            1000000000000000000000000000000
             sage: type(ntl.ZZ(10^30).__int__())
             <class 'int'>
         """

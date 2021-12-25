@@ -951,7 +951,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             5
             sage: k.<a> = GF(2^70)
             sage: (a^65 + a^64 + 1).integer_representation()
-            55340232221128654849L
+            55340232221128654849
         """
         cdef unsigned int i = 0
         ret = int(0)

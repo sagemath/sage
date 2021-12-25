@@ -266,7 +266,7 @@ class DocBuilder(object):
         error_message = "failed to run $MAKE %s in %s"
         command = 'all-pdf'
 
-        if subprocess.call(make_target % (tex_dir, command, pdf_dir), shell=True):
+        if subprocess.call(make_target % (tex_dir, command, pdf_dir), close_fds=False, shell=True):
             raise RuntimeError(error_message % (command, tex_dir))
         logger.warning("Build finished.  The built documents can be found in %s", pdf_dir)
 

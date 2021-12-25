@@ -31,23 +31,30 @@ ctypedef fused algorithm_variant:
 # Face Initialization
 #############################################################################
 
-cdef inline bint face_init(face_t face, mp_bitcnt_t n_atoms, mp_bitcnt_t n_coatoms, MemoryAllocator mem) except -1:
+cdef inline bint face_init(face_t face, mp_bitcnt_t n_atoms, mp_bitcnt_t n_coatoms) except -1:
     """
-    Initialize and clear ``face`` using the memory allocator.
+    Initialize and clear ``face``.
     """
     if n_coatoms == 0:
         # Special case for trivial polyhedra.
         n_coatoms += 1
     if n_atoms == 0:
         n_atoms += 1
-    bitset_init_with_allocator(face.atoms, n_atoms, mem)
-    bitset_init_with_allocator(face.coatoms, n_coatoms, mem)
+    bitset_init(face.atoms, n_atoms)
+    bitset_init(face.coatoms, n_coatoms)
+
+cdef inline void face_free(face_t face):
+    """
+    Free ``face``.
+    """
+    bitset_free(face.atoms)
+    bitset_free(face.coatoms)
 
 cdef inline bint face_check_alignment(face_t face):
     """
     Return whether the data is correctly aligned.
     """
-    return bitset_check_alignment(face.atoms) and bitset_check_alignment(face.coatoms)
+    return bitset_check_alignment(face.atoms)
 
 cdef inline void face_clear(face_t face):
     """

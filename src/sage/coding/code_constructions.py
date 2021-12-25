@@ -212,11 +212,12 @@ def _lift2smallest_field(a):
     if d == k:
         return a, FF
     p = FF.characteristic()
-    F = GF(p**d,"z")
-    b = pol.roots(F,multiplicities=False)[0]
+    F = GF((p, d), "z")
+    b = pol.roots(F, multiplicities=False)[0]
     return b, F
 
-def permutation_action(g,v):
+
+def permutation_action(g, v):
     r"""
     Returns permutation of rows g\*v. Works on lists, matrices,
     sequences and vectors (by permuting coordinates). The code requires

@@ -521,15 +521,14 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
         EXAMPLES::
 
-            sage: import ast, sage.misc.sageinspect as sms  # py3
-            sage: visitor = sms.SageArgSpecVisitor()  # py3
-            sage: vis = lambda x: visitor.visit_NameConstant(ast.parse(x).body[0].value)  # py3
-            sage: [vis(n) for n in ['True', 'False', 'None']]  # py3
+            sage: import ast, sage.misc.sageinspect as sms
+            sage: visitor = sms.SageArgSpecVisitor()
+            sage: vis = lambda x: visitor.visit_NameConstant(ast.parse(x).body[0].value)
+            sage: [vis(n) for n in ['True', 'False', 'None']]
             [True, False, None]
-            sage: [type(vis(n)) for n in ['True', 'False', 'None']]  # py3
+            sage: [type(vis(n)) for n in ['True', 'False', 'None']]
             [<class 'bool'>, <class 'bool'>, <class 'NoneType'>]
         """
-
         return node.value
 
     def visit_arg(self, node):
@@ -552,11 +551,11 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
         EXAMPLES::
 
-            sage: import ast, sage.misc.sageinspect as sms  # py3
-            sage: s = "def f(a, b=2, c={'a': [4, 5.5, False]}, d=(None, True)):\n    return"  # py3
-            sage: visitor = sms.SageArgSpecVisitor()  # py3
-            sage: args = ast.parse(s).body[0].args.args  # py3
-            sage: [visitor.visit_arg(n) for n in args]  # py3
+            sage: import ast, sage.misc.sageinspect as sms
+            sage: s = "def f(a, b=2, c={'a': [4, 5.5, False]}, d=(None, True)):\n    return"
+            sage: visitor = sms.SageArgSpecVisitor()
+            sage: args = ast.parse(s).body[0].args.args
+            sage: [visitor.visit_arg(n) for n in args]
             ['a', 'b', 'c', 'd']
         """
         return node.arg
@@ -1570,10 +1569,6 @@ def sage_getargspec(obj):
     inspect module does)::
 
         sage: import inspect
-        sage: inspect.getargspec(range)  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: <built-in function range> is not a Python function
         sage: sage_getargspec(range)
         ArgSpec(args=[], varargs='args', keywords='kwds', defaults=None)
 
@@ -1585,6 +1580,8 @@ def sage_getargspec(obj):
         ....:     'class Foo:\n'
         ....:     '    def __call__(self):\n'
         ....:     '        return None\n'
+        ....:     '    def __module__(self):\n'
+        ....:     '        return "sage.misc.sageinspect"\n'
         ....:     '    def _sage_src_(self):\n'
         ....:     '        return "the source code string"')
         sage: shell.run_cell('f = Foo()')
@@ -1702,20 +1699,20 @@ def formatannotation(annotation, base_module=None):
 
         sage: from sage.misc.sageinspect import formatannotation
         sage: import inspect
-        sage: def foo(a, *, b:int, **kwargs): # py3
+        sage: def foo(a, *, b:int, **kwargs):
         ....:     pass
-        sage: s = inspect.signature(foo) # py3
+        sage: s = inspect.signature(foo)
 
-        sage: a = s.parameters['a'].annotation # py3
-        sage: a # py3
+        sage: a = s.parameters['a'].annotation
+        sage: a
         <class 'inspect._empty'>
-        sage: formatannotation(a) # py3
+        sage: formatannotation(a)
         'inspect._empty'
 
-        sage: b = s.parameters['b'].annotation # py3
-        sage: b # py3
+        sage: b = s.parameters['b'].annotation
+        sage: b
         <class 'int'>
-        sage: formatannotation(b) # py3
+        sage: formatannotation(b)
         'int'
     """
     if getattr(annotation, '__module__', None) == 'typing':
@@ -1723,7 +1720,7 @@ def formatannotation(annotation, base_module=None):
     if isinstance(annotation, type):
         if annotation.__module__ in ('builtins', base_module):
             return annotation.__qualname__
-        return annotation.__module__+'.'+annotation.__qualname__
+        return annotation.__module__ + '.' + annotation.__qualname__
     return repr(annotation)
 
 

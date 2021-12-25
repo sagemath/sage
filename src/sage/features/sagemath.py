@@ -1,5 +1,5 @@
 r"""
-Check for SageMath Python modules
+Features for testing the presence of Python modules in the Sage library
 """
 from . import PythonModule
 from .join_feature import JoinFeature
@@ -7,7 +7,7 @@ from .join_feature import JoinFeature
 
 class sage__combinat(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.combinat``.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.combinat`.
 
     EXAMPLES::
 
@@ -32,7 +32,7 @@ class sage__combinat(JoinFeature):
 
 class sage__geometry__polyhedron(PythonModule):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.geometry.polyhedron``.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.geometry.polyhedron`.
 
     EXAMPLES::
 
@@ -54,7 +54,7 @@ class sage__geometry__polyhedron(PythonModule):
 
 class sage__graphs(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.graphs``.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.graphs`.
 
     EXAMPLES::
 
@@ -98,7 +98,7 @@ class sage__groups(JoinFeature):
 
 class sage__plot(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.plot``.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.plot`.
 
     EXAMPLES::
 
@@ -120,7 +120,7 @@ class sage__plot(JoinFeature):
 
 class sage__rings__number_field(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.rings.number_field``.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.number_field`.
 
     EXAMPLES::
 
@@ -142,7 +142,7 @@ class sage__rings__number_field(JoinFeature):
 
 class sage__rings__real_double(PythonModule):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.rings.real_double``.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.rings.real_double`.
 
     EXAMPLES::
 
@@ -163,7 +163,7 @@ class sage__rings__real_double(PythonModule):
 
 class sage__symbolic(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``sage.symbolic``.
+    A :class:`~sage.features.Feature` describing the presence of :mod:`sage.symbolic`.
 
     EXAMPLES::
 
@@ -185,11 +185,11 @@ class sage__symbolic(JoinFeature):
 
 
 def all_features():
-    """
+    r"""
     Return features corresponding to parts of the Sage library.
 
-    These tags are named after Python packages/modules (e.g., :mod:`~sage.symbolic`),
-    not distribution packages (``sagemath-symbolics``).
+    These features are named after Python packages/modules (e.g., :mod:`sage.symbolic`),
+    not distribution packages (**sagemath-symbolics**).
 
     This design is motivated by a separation of concerns: The author of a module that depends
     on some functionality provided by a Python module usually already knows the
@@ -197,7 +197,8 @@ def all_features():
     know about the distribution package that provides the Python module.
 
     Instead, we associate distribution packages to Python modules in
-    :mod:`sage.features.sagemath` via the ``spkg`` parameter of :class:`Feature`.
+    :mod:`sage.features.sagemath` via the ``spkg`` parameter of
+    :class:`~sage.features.Feature`.
 
     EXAMPLES::
 
@@ -213,35 +214,3 @@ def all_features():
             sage__rings__number_field(),
             sage__rings__real_double(),
             sage__symbolic()]
-
-
-def sage_features(logger=None):
-    """
-    Return features corresponding to parts of the Sage library that are present.
-
-    These tags are named after Python packages/modules (e.g., :mod:`~sage.symbolic`),
-    not distribution packages (``sagemath-symbolics``).
-
-    This design is motivated by a separation of concerns: The author of a module that depends
-    on some functionality provided by a Python module usually already knows the
-    name of the Python module, so we do not want to force the author to also
-    know about the distribution package that provides the Python module.
-
-    Instead, we associate distribution packages to Python modules in
-    :mod:`sage.features.sagemath` via the ``spkg`` parameter of :class:`Feature`.
-
-    EXAMPLES::
-
-        sage: from sage.features.sagemath import sage_features
-        sage: list(sage_features())  # random
-        [Feature('sage.graphs'),
-         Feature('sage.plot'),
-         Feature('sage.rings.number_field'),
-         Feature('sage.rings.real_double')]
-    """
-    for feature in all_features():
-        result = feature.is_present()
-        if logger:
-            logger.write(f'{result}, reason: {result.reason}\n')
-        if result:
-            yield feature

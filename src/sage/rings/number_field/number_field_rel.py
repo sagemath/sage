@@ -101,8 +101,6 @@ from sage.libs.pari.all import pari_gen
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-import sage.rings.complex_interval_field
-CIF = sage.rings.complex_interval_field.ComplexIntervalField()
 
 
 def is_RelativeNumberField(x):

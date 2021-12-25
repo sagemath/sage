@@ -238,8 +238,8 @@ from sage.libs.pari.all import pari, pari_gen
 
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-RIF = sage.rings.real_mpfi.RealIntervalField()
-CIF = sage.rings.complex_interval_field.ComplexIntervalField()
+from sage.rings.real_mpfi import RIF
+from sage.rings.cif import CIF
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 from sage.rings.real_lazy import RLF, CLF

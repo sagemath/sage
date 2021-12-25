@@ -1,10 +1,14 @@
+r"""
+Feature for testing the presence of ``meataxe``
+"""
+
 from . import PythonModule
 from .join_feature import JoinFeature
 
 
 class Meataxe(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``MeatAxe``.
+    A :class:`~sage.features.Feature` describing the presence of ``meataxe``.
 
     EXAMPLES::
 

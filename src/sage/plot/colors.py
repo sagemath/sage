@@ -918,12 +918,12 @@ class Color(object):
 
             sage: Color(0.3, 0.5, 0.7, space='hls').hls()
             (0.30000000000000004, 0.5, 0.7)
-            sage: Color(0.3, 0.5, 0.7, space='hsl').hls()
+            sage: Color(0.3, 0.5, 0.7, space='hsl').hls() # abs tol 1e-15
             (0.30000000000000004, 0.7, 0.5000000000000001)
-            sage: Color('#aabbcc').hls()
+            sage: Color('#aabbcc').hls() # abs tol 1e-15
             (0.5833333333333334, 0.7333333333333334, 0.25000000000000017)
             sage: from sage.plot.colors import orchid
-            sage: orchid.hls()
+            sage: orchid.hls() # abs tol 1e-15
             (0.8396226415094339, 0.6470588235294117, 0.5888888888888889)
         """
         return tuple(map(float, rgb_to_hls(*self._rgb)))
@@ -942,9 +942,9 @@ class Color(object):
             sage: Color(1,0,0).hsl()
             (0.0, 1.0, 0.5)
             sage: from sage.plot.colors import orchid
-            sage: orchid.hsl()
+            sage: orchid.hsl() # abs tol 1e-15
             (0.8396226415094339, 0.5888888888888889, 0.6470588235294117)
-            sage: Color('#aabbcc').hsl()
+            sage: Color('#aabbcc').hsl() # abs tol 1e-15
             (0.5833333333333334, 0.25000000000000017, 0.7333333333333334)
         """
         h, l, s = tuple(map(float, rgb_to_hls(*self._rgb)))

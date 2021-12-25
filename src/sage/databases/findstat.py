@@ -46,7 +46,7 @@ supply :func:`findstat` with a list of ``(object, value)`` pairs.
 For example::
 
     sage: PM = PerfectMatchings
-    sage: r = findstat([(m, m.number_of_nestings()) for n in range(6) for m in PM(2*n)]); r # optional -- internet
+    sage: r = findstat([(m, m.number_of_nestings()) for n in range(6) for m in PM(2*n)], depth=1); r # optional -- internet
     0: St000042oMp00116 (quality [100, 100])
     1: St000041 (quality [20, 100])
     ...
@@ -60,7 +60,8 @@ The precise meaning of the result is as follows:
 
     The composition `f_n \circ ... \circ f_2 \circ f_1` applied to
     the objects sent to FindStat agrees with all ``(object, value)``
-    pairs of `s` in the database.
+    pairs of `s` in the database.  The optional parameter ``depth=1``
+    limits the output to `n=1`.
 
     Suppose that the quality of the match is `(q_a, q_d)`.  Then
     `q_a` is the percentage of ``(object, value)`` pairs that are in
@@ -99,7 +100,8 @@ Another interesting possibility is to look for equidistributed
 statistics.  Instead of submitting a list of ``(object, value)``
 pairs, we pass a list of pairs ``(objects, values)``::
 
-    sage: r = findstat([(PM(2*n), [m.number_of_nestings() for m in PM(2*n)]) for n in range(5)], depth=0); r # optional -- internet
+    sage: data = [(PM(2*n), [m.number_of_nestings() for m in PM(2*n)]) for n in range(5)]
+    sage: findstat(data, depth=0)                                               # optional -- internet
     0: St000041 (quality [99, 100])
     1: St000042 (quality [99, 100])
 
@@ -116,9 +118,7 @@ maps and a statistic known to FindStat.  We use the occasion to
 advertise yet another way to pass values to FindStat::
 
     sage: r = findstat(Permutations, lambda pi: pi.saliances()[0], depth=2); r  # optional -- internet
-    0: St000740oMp00066 with offset 1 (quality [100, 100])
-    ...
-    7: St000051oMp00061oMp00069 (quality [87, 86])
+    0: St000740oMp00087 with offset 1 (quality [100, 100])
     ...
 
 Note that some of the matches are up to a global offset.  For
@@ -127,7 +127,7 @@ example, we have::
     sage: r[0].info()                                                           # optional -- internet
     after adding 1 to every value
     and applying
-        Mp00066: inverse: Permutations -> Permutations
+        Mp00087: inverse first fundamental transformation: Permutations -> Permutations
     to the objects (see `.compound_map()` for details)
     <BLANKLINE>
     your input matches
@@ -138,20 +138,11 @@ example, we have::
 
 Let us pick another particular result::
 
-    sage: s = next(s for s in r if s.statistic().id() == 51); s                 # optional -- internet
-    St000051oMp00061oMp00069 (quality [87, 86])
-
+    sage: s = findstat("St000051oMp00061oMp00069")                              # optional -- internet
     sage: s.info()                                                              # optional -- internet
-    after applying
         Mp00069: complement: Permutations -> Permutations
         Mp00061: to increasing tree: Permutations -> Binary trees
-    to the objects (see `.compound_map()` for details)
-    <BLANKLINE>
-    your input matches
         St000051: The size of the left subtree of a binary tree.
-    <BLANKLINE>
-    among the values you sent, 87 percent are actually in the database,
-    among the distinct values you sent, 86 percent are actually in the database
 
 To obtain the value of the statistic sent to FindStat on a given
 object, apply the maps in the list in the given order to this object,
@@ -777,9 +768,9 @@ def _distribution_from_data(data, domain, max_values, generating_functions=False
     TESTS::
 
         sage: from sage.databases.findstat import _distribution_from_data, FindStatCollection
+        sage: n = 3; l = lambda i: [pi for pi in Permutations(n) if pi(1) == i]
+        sage: data = [([pi for pi in l(i)], [pi(1) for pi in l(i)]) for i in range(1,n+1)]
         sage: cc = FindStatCollection(1)                                        # optional -- internet
-        sage: n = 3; l = lambda i: [pi for pi in Permutations(n) if pi(1) == i] # optional -- internet
-        sage: data = [([pi for pi in l(i)], [pi(1) for pi in l(i)]) for i in range(1,n+1)] # optional -- internet
         sage: _distribution_from_data(data, cc, 10)                             # optional -- internet
         [([[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]],
           [1, 1, 2, 2, 3, 3])]
@@ -973,12 +964,12 @@ def findstat(query=None, values=None, distribution=None, domain=None,
     The database can be searched by providing a list of pairs::
 
         sage: l = [m for n in range(1, 4) for m in PerfectMatchings(2*n)]
-        sage: q = findstat([(m, m.number_of_nestings()) for m in l], depth=0); q          # optional -- internet
+        sage: findstat([(m, m.number_of_nestings()) for m in l], depth=0)       # optional -- internet
         0: St000041 (quality [100, 100])
 
     or a dictionary::
 
-        sage: p = findstat({m: m.number_of_nestings() for m in l}, depth=0); p  # optional -- internet
+        sage: findstat({m: m.number_of_nestings() for m in l}, depth=0)         # optional -- internet
         0: St000041 (quality [100, 100])
 
     Note however, that the results of these two queries need not
@@ -1050,7 +1041,7 @@ def findstat(query=None, values=None, distribution=None, domain=None,
 
     Check that ``None`` values are omitted::
 
-        sage: findstat("graphs", lambda g: g.diameter() if g.is_connected() else None, max_values=100) # optional -- internet
+        sage: findstat("graphs", lambda g: g.diameter() if g.is_connected() else None, max_values=100, depth=0) # optional -- internet
         0: St000259 (quality [100, 100])
     """
     try:
@@ -1228,13 +1219,13 @@ def findmap(*args, **kwargs):
     The database can be searched by providing a list of pairs::
 
         sage: l = [pi for n in range(5) for pi in Permutations(n)]
-        sage: q = findmap([(pi, pi.complement().increasing_tree_shape()) for pi in l], depth=2); q  # optional -- internet
-        0: Mp00061oMp00069 (quality [100])
+        sage: findmap([(pi, pi.complement().increasing_tree_shape()) for pi in l], depth=2) # optional -- internet
+        0: Mp00061oMp00069 (quality [...])
 
     or a dictionary::
 
-        sage: p = findmap({pi: pi.complement().increasing_tree_shape() for pi in l}, depth=2); p    # optional -- internet
-        0: Mp00061oMp00069 (quality [100])
+        sage: findmap({pi: pi.complement().increasing_tree_shape() for pi in l}, depth=2) # optional -- internet
+        0: Mp00061oMp00069 (quality [...])
 
     Note however, that the results of these two queries need not
     compare equal, because we compare queries by the data
@@ -1437,7 +1428,7 @@ class FindStatFunction(SageObject):
 
         TESTS::
 
-            sage: from sage.databases.findstat import FindStatFunction, FindStatCollection # optional -- internet
+            sage: from sage.databases.findstat import FindStatFunction, FindStatCollection
             sage: FindStatFunction("St000000",                                  # optional -- internet
             ....:                  data={"Bibliography": {},
             ....:                        "Code": "",
@@ -1473,7 +1464,7 @@ class FindStatFunction(SageObject):
 
         TESTS::
 
-            sage: from sage.databases.findstat import FindStatFunction, FindStatCollection # optional -- internet
+            sage: from sage.databases.findstat import FindStatFunction, FindStatCollection
             sage: FindStatFunction("St000000",                                  # optional -- internet
             ....:                  data={"Bibliography": {},
             ....:                        "Code": "",
@@ -1502,7 +1493,8 @@ class FindStatFunction(SageObject):
 
         EXAMPLES::
 
-            sage: q = findstat("graphs", lambda g: g.diameter() if g.is_connected() else None, max_values=100) # optional -- internet
+            sage: s = lambda g: g.diameter() if g.is_connected() else None
+            sage: q = findstat("graphs", s, max_values=100)                     # optional -- internet
             sage: q(graphs.PetersenGraph().copy(immutable=True))                # optional -- internet
             2
         """
@@ -2139,7 +2131,8 @@ class FindStatStatistic(Element,
 
         EXAMPLES::
 
-            sage: q = findstat("graphs", lambda g: g.diameter() if g.is_connected() else None, max_values=100) # optional -- internet
+            sage: s = lambda g: g.diameter() if g.is_connected() else None
+            sage: q = findstat("graphs", s, max_values=100)                     # optional -- internet
             sage: q(graphs.PetersenGraph().copy(immutable=True))                # optional -- internet
             2
         """
@@ -2377,6 +2370,17 @@ class FindStatStatistic(Element,
         """
         return self.id()
 
+    def info(self):
+        """
+        Print a detailed description of the statistic.
+
+        EXAMPLES::
+
+            sage: findstat("St000042").info()                                   # optional -- internet
+                St000042: The number of crossings of a perfect matching.
+        """
+        print("    %s" % self)
+
 
 _all_statistics = {}
 class FindStatStatistics(UniqueRepresentation, Parent):
@@ -2534,13 +2538,12 @@ class FindStatStatisticQuery(FindStatStatistic):
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatStatisticQuery
-            sage: data = [[[m],[m.number_of_nestings()]] for n in range(5) for m in PerfectMatchings(2*n)] # optional -- internet
+            sage: data = [[[m], [m.number_of_nestings()]] for n in range(5) for m in PerfectMatchings(2*n)]
             sage: FindStatStatisticQuery(domain=12, data=data, depth=1)         # optional -- internet
             0: St000041 (quality [99, 100])
-            1: St000042oMp00116 (quality [99, 100])
-            2: St000233oMp00092 (quality [99, 100])
-            3: St000496oMp00092 (quality [99, 100])
-            4: St001513oMp00058 (quality [15, 57])
+            1: St000041oMp00113 (quality [99, 100])
+            2: St000042oMp00116 (quality [99, 100])
+            ...
         """
         self._first_terms = data
         if data is not None and known_terms is None:
@@ -2674,7 +2677,8 @@ class FindStatStatisticQuery(FindStatStatistic):
         EXAMPLES::
 
             sage: PM = PerfectMatchings
-            sage: r = findstat([(m, m.number_of_nestings()) for n in range(6) for m in PM(2*n)], depth=1); r # optional -- internet
+            sage: data = [(m, m.number_of_nestings()) for n in range(6) for m in PM(2*n)]
+            sage: findstat(data, depth=1)                                       # optional -- internet
             0: St000042oMp00116 (quality [100, 100])
             1: St000041 (quality [20, 100])
             ...
@@ -2690,7 +2694,8 @@ class FindStatStatisticQuery(FindStatStatistic):
         EXAMPLES::
 
             sage: PM = PerfectMatchings
-            sage: r = findstat([(m, m.number_of_nestings()) for n in range(6) for m in PM(2*n)], depth=1) # optional -- internet
+            sage: data = [(m, m.number_of_nestings()) for n in range(6) for m in PM(2*n)]
+            sage: r = findstat(data, depth=1)                                   # optional -- internet
             sage: r[1]                                                          # optional -- internet
             St000041 (quality [20, 100])
         """
@@ -2701,6 +2706,8 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
     def __init__(self, id, domain=None, check=True):
         """
         Initialize a compound statistic.
+
+        A compound statistic is a sequence of maps followed by a statistic.
 
         INPUT:
 
@@ -2852,6 +2859,21 @@ class FindStatCompoundStatistic(Element, FindStatCombinatorialStatistic):
         webbrowser.open(FINDSTAT_URL_STATISTICS + self.id_str())
 
 
+    def info(self):
+        """
+        Print a detailed description of the compound statistic.
+
+        EXAMPLES::
+
+            sage: findstat("St000042oMp00116").info()                           # optional -- internet
+                Mp00116: Kasraoui-Zeng: Perfect matchings -> Perfect matchings
+                St000042: The number of crossings of a perfect matching.
+        """
+        if len(self.compound_map()):
+            self.compound_map().info()
+        self.statistic().info()
+
+
 class FindStatMatchingStatistic(FindStatCompoundStatistic):
     def __init__(self, matching_statistic, offset, quality, domain=None):
         """
@@ -2966,14 +2988,11 @@ class FindStatMatchingStatistic(FindStatCompoundStatistic):
                 print("and applying")
             else:
                 print("after applying")
-            for mp in self.compound_map():
-                print("    %s: %s -> %s" % (mp,
-                                            mp.domain().name("plural"),
-                                            mp.codomain().name("plural")))
+            self.compound_map().info()
             print("to the objects (see `.compound_map()` for details)")
         print()
         print("your input matches")
-        print("    %s" % self.statistic())
+        self.statistic().info()
         print()
         print("among the values you sent, %s percent are actually in the database," % self.quality()[0])
         print("among the distinct values you sent, %s percent are actually in the database" % self.quality()[1])
@@ -3238,6 +3257,19 @@ class FindStatMap(Element,
             self._modified = True
             self._data_cache["Name"] = value
 
+    def info(self):
+        """
+        Print a detailed description of the map.
+
+        EXAMPLES::
+
+            sage: findmap("Mp00116").info()                                     # optional -- internet
+                Mp00116: Kasraoui-Zeng: Perfect matchings -> Perfect matchings
+        """
+        print("    %s: %s -> %s" % (self,
+                                    self.domain().name("plural"),
+                                    self.codomain().name("plural")))
+
 
 _all_maps = {}
 class FindStatMaps(UniqueRepresentation, Parent):
@@ -3427,7 +3459,8 @@ class FindStatMapQuery(FindStatMap):
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatMapQuery
-            sage: FindStatMapQuery(domain=1, codomain=10, data=[[[pi],[pi.complement().increasing_tree_shape()]] for pi in Permutations(4)]) # optional -- internet
+            sage: data = [[[pi], [pi.complement().increasing_tree_shape()]] for pi in Permutations(4)]
+            sage: FindStatMapQuery(domain=1, codomain=10, data=data)            # optional -- internet
             0: Mp00061oMp00069 (quality [100])
         """
         self._first_terms = data
@@ -3508,7 +3541,8 @@ class FindStatMapQuery(FindStatMap):
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatMapQuery
-            sage: FindStatMapQuery(domain=1, codomain=10, data=[[[pi],[pi.complement().increasing_tree_shape()]] for pi in Permutations(4)]) # optional -- internet
+            sage: data = [[[pi],[pi.complement().increasing_tree_shape()]] for pi in Permutations(4)]
+            sage: FindStatMapQuery(domain=1, codomain=10, data=data)            # optional -- internet
             0: Mp00061oMp00069 (quality [100])
         """
         if self._result:
@@ -3522,7 +3556,8 @@ class FindStatMapQuery(FindStatMap):
         EXAMPLES::
 
             sage: from sage.databases.findstat import FindStatMapQuery
-            sage: r = FindStatMapQuery(domain=1, codomain=10, data=[[[pi],[pi.complement().increasing_tree_shape()]] for pi in Permutations(4)]) # optional -- internet
+            sage: data = [[[pi],[pi.complement().increasing_tree_shape()]] for pi in Permutations(4)]
+            sage: r = FindStatMapQuery(domain=1, codomain=10, data=data)        # optional -- internet
             sage: r[0]                                                          # optional -- internet
             Mp00061oMp00069 (quality [100])
         """
@@ -3700,6 +3735,19 @@ class FindStatCompoundMap(Element, FindStatCombinatorialMap):
         """
         webbrowser.open(FINDSTAT_URL_MAPS + self.id_str())
 
+    def info(self):
+        """
+        Print a detailed explanation of the compound map.
+
+        EXAMPLES::
+
+            sage: findmap("Mp00099oMp00127").info()                             # optional -- internet
+                Mp00127: left-to-right-maxima to Dyck path: Permutations -> Dyck paths
+                Mp00099: bounce path: Dyck paths -> Dyck paths
+        """
+        for mp in self:
+                mp.info()
+
 
 class FindStatMatchingMap(FindStatCompoundMap):
     def __init__(self, matching_map, quality, domain=None, codomain=None):
@@ -3749,6 +3797,25 @@ class FindStatMatchingMap(FindStatCompoundMap):
             [83]
         """
         return self._quality[:]
+
+    def info(self):
+        """
+        Print a detailed explanation of the match.
+
+        EXAMPLES::
+
+            sage: from sage.databases.findstat import FindStatMatchingMap
+            sage: FindStatMatchingMap("Mp00099oMp00127", [83]).info()           # optional -- internet
+            your input matches
+                Mp00127: left-to-right-maxima to Dyck path: Permutations -> Dyck paths
+                Mp00099: bounce path: Dyck paths -> Dyck paths
+            <BLANKLINE>
+            among the values you sent, 83 percent are actually in the database
+        """
+        print("your input matches")
+        super().info()
+        print()
+        print("among the values you sent, %s percent are actually in the database" % self.quality()[0])
 
 
 ######################################################################

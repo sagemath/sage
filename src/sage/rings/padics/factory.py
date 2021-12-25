@@ -1338,21 +1338,21 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     if k == 1:
         return base
 
-    if isinstance(names, (list,tuple)):
+    if isinstance(names, (list, tuple)):
         if len(names) != 1:
             raise ValueError("must provide exactly one generator name")
         names = names[0]
     if names is None:
         raise TypeError("You must specify the name of the generator.")
     if not isinstance(names, str):
-       names = str(names)
+        names = str(names)
 
     if res_name is None:
         res_name = names + '0'
 
     if modulus is None:
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-        modulus = GF(p**k, res_name).modulus().change_ring(ZZ)
+        modulus = GF((p, k), res_name).modulus().change_ring(ZZ)
     return ExtensionFactory(base=base, modulus=modulus, prec=prec, print_mode=print_mode,
                             names=names, res_name=res_name, ram_name=ram_name, print_pos=print_pos,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,

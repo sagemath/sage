@@ -576,7 +576,7 @@ def _cardinality_subfield(self, jpol):
 
     # Let j be the j-invariant as element of the smallest finite
     # field over which j is defined.
-    GFj = GF(p**jdeg, name='j', modulus=jpol)
+    GFj = GF((p, jdeg), name='j', modulus=jpol)
     j = GFj.gen()
 
     # Use special code for j = 0, 1728
@@ -587,7 +587,7 @@ def _cardinality_subfield(self, jpol):
 
     # Recursive call which does all the real work:
     E0 = EllipticCurve_from_j(j)
-    N = E0.cardinality(extension_degree=d//jdeg)
+    N = E0.cardinality(extension_degree=d // jdeg)
 
     # Map to the original larger field
     phi = GFj.hom([self.j_invariant()])

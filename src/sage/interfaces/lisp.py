@@ -381,7 +381,7 @@ class Lisp(Expect):
         """
         args, kwds = self._convert_args_kwds(args, kwds)
         self._check_valid_function_name(function)
-        return self.new("(%s %s)"%(function, ",".join([s.name() for s in args])))
+        return self.new("(%s %s)" % (function, ",".join(s.name() for s in args)))
 
 
 # Inherit from RingElement to make __pow__ work

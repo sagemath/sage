@@ -729,7 +729,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         ....:     _ = F.write(s)
         sage: L = ["sage", "--ipynb2rst", input, output]
         sage: _ = test_executable(L)                        # optional - pandoc
-        sage: print(open(output, 'r').read() == t)          # optional - pandoc
+        sage: print(open(output, 'r').read() == t)          # optional - pandoc  # known bug #32697
         True
     """
     pexpect_env = dict(os.environ)
@@ -766,6 +766,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
             rfd.append(fderr)
         if len(rfd) == 0:
             break
+        timeout = float(timeout)
         rlist = select.select(rfd, [], [], timeout)[0]
 
         if len(rlist) == 0:

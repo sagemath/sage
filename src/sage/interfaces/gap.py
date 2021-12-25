@@ -1516,9 +1516,9 @@ class GapElement(GapElement_generic):
         """
         self._check_valid()
         if not isinstance(n, tuple):
-            return self.parent().new('%s[%s]'%(self._name, n))
-        else:
-            return self.parent().new('%s%s'%(self._name, ''.join(['[%s]'%x for x in n])))
+            return self.parent().new('%s[%s]' % (self._name, n))
+        return self.parent().new('%s%s' % (self._name,
+                                           ''.join('[%s]' % x for x in n)))
 
     def str(self, use_file=False):
         """

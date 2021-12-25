@@ -725,9 +725,9 @@ class GAP3Element(GapElement_generic):
         """
         gap3_session = self._check_valid()
         if not isinstance(n, tuple):
-            return gap3_session.new('%s[%s]'%(self.name(), n))
-        else:
-            return gap3_session.new('%s%s'%(self.name(), ''.join(['[%s]'%x for x in n])))
+            return gap3_session.new('%s[%s]' % (self.name(), n))
+        return gap3_session.new('%s%s' % (self.name(),
+                                          ''.join('[%s]' % x for x in n)))
 
     def _latex_(self):
         r"""

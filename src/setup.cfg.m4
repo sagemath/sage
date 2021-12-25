@@ -31,7 +31,7 @@ install_requires =
     sage_conf
     esyscmd(`sage-get-system-packages install-requires \
         six \
-        | sed "2,\$s/^/    /;"')dnl
+        | sed "2,\$s/^/    /;"')dnl'
 dnl From build/pkgs/sagelib/dependencies
     esyscmd(`sage-get-system-packages install-requires \
         cypari         \
@@ -44,12 +44,12 @@ dnl From build/pkgs/sagelib/dependencies
         pkgconfig      \
         pplpy          \
         memory_allocator \
-        | sed "2,\$s/^/    /;"')dnl
+        | sed "2,\$s/^/    /;"')dnl'
 dnl From Makefile.in: SAGERUNTIME
     esyscmd(`sage-get-system-packages install-requires \
         ipython        \
         pexpect        \
-        | sed "2,\$s/^/    /;"')dnl
+        | sed "2,\$s/^/    /;"')dnl'
 dnl From Makefile.in: DOC_DEPENDENCIES
     esyscmd(`sage-get-system-packages install-requires \
         sphinx         \
@@ -62,10 +62,98 @@ dnl From Makefile.in: DOC_DEPENDENCIES
         ipykernel      \
         jupyter_client \
         ipywidgets     \
-        | sed "2,\$s/^/    /;"')dnl
+        | sed "2,\$s/^/    /;"')dnl'
 dnl Other Python packages that are standard spkg, used in doctests
     esyscmd(`sage-get-system-packages install-requires \
         rpy2           \
         fpylll         \
-        | sed "2,\$s/^/    /;"')dnl
+        | sed "2,\$s/^/    /;"')dnl'
 dnl pycryptosat  # Sage distribution installs it as part of cryptominisat. According to its README on https://pypi.org/project/pycryptosat/: "The pycryptosat python package compiles while compiling CryptoMiniSat. It cannot be compiled on its own, it must be compiled at the same time as CryptoMiniSat."
+
+scripts =
+    # The sage script
+    bin/sage
+    # Other scripts that should be in the path also for OS packaging of sage:
+    bin/sage-eval
+    # Included because it is useful for doctesting/coverage testing user scripts too:
+    bin/sage-runtests
+    bin/sage-fixdoctests
+    bin/sage-coverage
+    # The following is deprecated but might still be used in user package install scripts
+    bin/sage-cython
+    # Helper scripts invoked by sage script
+    # (they would actually belong to something like libexec)
+    bin/sage-cachegrind
+    bin/sage-callgrind
+    bin/sage-massif
+    bin/sage-omega
+    bin/sage-valgrind
+    bin/sage-venv-config
+    bin/sage-version.sh
+    bin/sage-cleaner
+    # Only makes sense in sage-the-distribution. TODO: Move to another installation script.
+    bin/sage-list-packages
+    bin/sage-location
+    # Uncategorized scripts in alphabetical order
+    bin/math-readline
+    bin/sage-env
+    # sage-env-config -- installed by sage_conf
+    # sage-env-config.in -- not to be installed
+    bin/sage-gdb-commands
+    bin/sage-grep
+    bin/sage-grepdoc
+    bin/sage-inline-fortran
+    bin/sage-ipynb2rst
+    bin/sage-ipython
+    bin/sage-native-execute
+    bin/sage-notebook
+    bin/sage-num-threads.py
+    bin/sage-open
+    bin/sage-preparse
+    bin/sage-python
+    bin/sage-rebase.bat
+    bin/sage-rebase.sh
+    bin/sage-rebaseall.bat
+    bin/sage-rebaseall.sh
+    bin/sage-run
+    bin/sage-run-cython
+    bin/sage-startuptime.py
+    bin/sage-update-src
+    bin/sage-update-version
+
+[options.package_data]
+
+sage.libs.gap =
+    sage.gaprc
+
+sage.interfaces =
+    sage-maxima.lisp
+
+sage.doctest =
+    tests/*
+
+sage =
+    ext_data/*
+    ext_data/kenzo/*
+    ext_data/singular/*
+    ext_data/singular/function_field/*
+    ext_data/images/*
+    ext_data/doctest/*
+    ext_data/doctest/invalid/*
+    ext_data/doctest/rich_output/*
+    ext_data/doctest/rich_output/example_wavefront/*
+    ext_data/gap/*
+    ext_data/gap/joyner/*
+    ext_data/mwrank/*
+    ext_data/notebook-ipython/*
+    ext_data/nbconvert/*
+    ext_data/graphs/*
+    ext_data/pari/*
+    ext_data/pari/dokchitser/*
+    ext_data/pari/buzzard/*
+    ext_data/pari/simon/*
+    ext_data/magma/*
+    ext_data/magma/latex/*
+    ext_data/magma/sage/*
+    ext_data/valgrind/*
+    ext_data/threejs/*

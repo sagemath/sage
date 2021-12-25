@@ -90,7 +90,7 @@ def AfricaMap(continental=False, year=2018):
      }
 
     no_land_border = ['Cape Verde', 'Seychelles', 'Mauritius',
-                      u'São Tomé and Príncipe', 'Madagascar', 'Comoros']
+                      'São Tomé and Príncipe', 'Madagascar', 'Comoros']
 
     G = Graph(common_border, format='dict_of_lists')
 

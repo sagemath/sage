@@ -717,7 +717,7 @@ class LiE(ExtraTabCompletion, Expect):
         # than a LiEElement
         if function in ['diagram', 'setdefault', 'print_tab', 'type', 'factor', 'void', 'gcol']:
             args, kwds = self._convert_args_kwds(args, kwds)
-            cmd = "%s(%s)" % (function, ",".join([s.name() for s in args]))
+            cmd = "%s(%s)" % (function, ",".join(s.name() for s in args))
             return AsciiArtString(self.eval(cmd))
 
         return Expect.function_call(self, function, args, kwds)

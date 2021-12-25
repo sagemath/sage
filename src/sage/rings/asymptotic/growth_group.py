@@ -5434,7 +5434,7 @@ class GrowthGroupFactory(UniqueFactory):
             describing a growth group.
             > *previous* ValueError: Cannot create a parent out of 'as'.
             >> *previous* ValueError: unknown specification as
-            >> *and* SyntaxError: unexpected EOF while parsing (<string>, line 1)
+            >> *and* SyntaxError: ... (<string>, line 1)
             > *and* ValueError: Cannot create a parent out of 'df'.
             >> *previous* ValueError: unknown specification df
             >> *and* NameError: name 'df' is not defined

@@ -3141,7 +3141,7 @@ class Graph(GenericGraph):
 
             sage: g = graphs.CompleteBipartiteGraph(3,4)
             sage: o = g.minimum_outdegree_orientation()
-            sage: max(o.out_degree()) == ceil((4*3)/(3+4))
+            sage: max(o.out_degree()) == integer_ceil((4*3)/(3+4))
             True
         """
         self._scream_if_not_simple()
@@ -3264,7 +3264,7 @@ class Graph(GenericGraph):
         out-degree at most `\lceil \frac {d(v)} 2 \rceil`::
 
             sage: g = graphs.RandomGNP(40, .4)
-            sage: b = lambda v: ceil(g.degree(v)/2)
+            sage: b = lambda v: integer_ceil(g.degree(v)/2)
             sage: D = g.bounded_outdegree_orientation(b)
             sage: all( D.out_degree(v) <= b(v) for v in g )
             True
@@ -3287,12 +3287,12 @@ class Graph(GenericGraph):
 
         Hence this is possible ::
 
-            sage: d = g.bounded_outdegree_orientation(ceil(mad/2))
+            sage: d = g.bounded_outdegree_orientation(integer_ceil(mad/2))
 
         While this is not::
 
             sage: try:
-            ....:     g.bounded_outdegree_orientation(ceil(mad/2-1))
+            ....:     g.bounded_outdegree_orientation(integer_ceil(mad/2-1))
             ....:     print("Error")
             ....: except ValueError:
             ....:     pass
@@ -3303,7 +3303,7 @@ class Graph(GenericGraph):
 
             sage: for i in range(30):      # long time (up to 6s on sage.math, 2012)
             ....:     g = graphs.RandomGNP(40, .4)
-            ....:     b = lambda v: ceil(g.degree(v)/2)
+            ....:     b = lambda v: integer_ceil(g.degree(v)/2)
             ....:     D = g.bounded_outdegree_orientation(b)
             ....:     if not (
             ....:          all( D.out_degree(v) <= b(v) for v in g ) or
@@ -4527,12 +4527,12 @@ class Graph(GenericGraph):
         of each vertex. The ISR of such a family defines a 3-coloring::
 
             sage: g = 3 * graphs.PetersenGraph()
-            sage: n = g.order()/3
-            sage: f = [[i,i+n,i+2*n] for i in range(n)]
+            sage: n = g.order() / 3
+            sage: f = [[i, i + n, i + 2*n] for i in range(n)]
             sage: isr = g.independent_set_of_representatives(f)
-            sage: c = [floor(i/n) for i in isr]
-            sage: color_classes = [[],[],[]]
-            sage: for v,i in enumerate(c):
+            sage: c = [integer_floor(i / n) for i in isr]
+            sage: color_classes = [[], [], []]
+            sage: for v, i in enumerate(c):
             ....:   color_classes[i].append(v)
             sage: for classs in color_classes:
             ....:   g.subgraph(classs).size() == 0
@@ -8195,8 +8195,8 @@ class Graph(GenericGraph):
 
             sage: g = graphs.CycleGraph(6)
             sage: m = g.magnitude_function()
-            sage: t = var('t')
-            sage: m(exp(-t))
+            sage: t = var('t')                                                  # optional - sage.symbolic
+            sage: m(exp(-t))                                                    # optional - sage.symbolic
             6/(2*e^(-t) + 2*e^(-2*t) + e^(-3*t) + 1)
 
         TESTS::

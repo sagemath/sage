@@ -117,13 +117,10 @@ então faça o seguinte:
                     Recompiling factorial.spyx
     ***************************************************
     sage: factorial(50)
-    30414093201713378043612608166064768844377641568960512000000000000L
+    30414093201713378043612608166064768844377641568960512000000000000
     sage: time n = factorial(10000)
     CPU times: user 0.03 s, sys: 0.00 s, total: 0.03 s
     Wall time: 0.03
-
-Aqui o sufixo L indica um "long integer" do Python (veja
-:ref:`section-mathannoy`).
 
 Note que o Sage vai recompilar ``factorial.spyx`` se você encerrar e
 reiniciar o Sage. A biblioteca compilada e compartilhada é armazenada

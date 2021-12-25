@@ -13,5 +13,5 @@ dvipng
 # to run the Jmol 3D viewer from the console and generate images for 3D plots in the documentation
 default-jdk
 # to produce animations
-ffmpeg
+# ffmpeg -- this is a separate script package
 libavdevice-dev

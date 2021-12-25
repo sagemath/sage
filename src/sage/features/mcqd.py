@@ -1,15 +1,19 @@
+r"""
+Features for testing the presence of ``mcqd``
+"""
+
 from . import PythonModule
 from .join_feature import JoinFeature
 
 
 class Mcqd(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of :mod:`~sage.graphs.mcqd`
+    A :class:`~sage.features.Feature` describing the presence of :mod:`~sage.graphs.mcqd`
 
     EXAMPLES::
 
         sage: from sage.features.mcqd import Mcqd
-        sage: Mcqd().is_present()  # optional: mcqd
+        sage: Mcqd().is_present()  # optional - mcqd
         FeatureTestResult('mcqd', True)
     """
 

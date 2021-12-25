@@ -168,7 +168,18 @@ class AsymptoticExpansionGenerators(SageObject):
             Traceback (most recent call last):
             ...
             ValueError: precision must be at least 3
+
+        Check that :trac:`20066` is resolved::
+
+            sage: set_series_precision(5)
+            sage: asymptotic_expansions.Stirling('n')
+            sqrt(2)*sqrt(pi)*e^(n*log(n))*(e^n)^(-1)*n^(1/2) + 
+            ... + O(e^(n*log(n))*(e^n)^(-1)*n^(-5/2))
+            sage: set_series_precision(20)  # restore series precision default
         """
+        if precision is None:
+            precision = series_precision()
+
         if precision < 3:
             raise ValueError("precision must be at least 3")
         log_Stirling = AsymptoticExpansionGenerators.log_Stirling(
@@ -550,6 +561,13 @@ class AsymptoticExpansionGenerators(SageObject):
             ....:     SR(S.subs(n=k*n) / (S.subs(n=(k-1)*n) * S)).canonicalize_radical()
             ....:     for k in [2, 3, 4])
             True
+
+        Check that :trac:`20066` is resolved::
+
+            sage: set_series_precision(3)
+            sage: asymptotic_expansions.Binomial_kn_over_n('n', k=2)
+            1/sqrt(pi)*4^n*n^(-1/2) - 1/8/sqrt(pi)*4^n*n^(-3/2) + ... + O(4^n*n^(-7/2))
+            sage: set_series_precision(20)  # restore series precision default
         """
         from sage.symbolic.ring import SR
         SCR = SR.subring(no_variables=True)
@@ -559,6 +577,9 @@ class AsymptoticExpansionGenerators(SageObject):
             from .misc import combine_exceptions
             raise combine_exceptions(
                 TypeError('Cannot use k={}.'.format(k)), e)
+
+        if precision is None:
+            precision = series_precision()
 
         S = AsymptoticExpansionGenerators._log_StirlingNegativePowers_(
                 var, precision=max(precision - 2,0))

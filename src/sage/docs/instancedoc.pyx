@@ -312,11 +312,7 @@ def instancedoc(cls):
         TypeError: expected type, got 7
 
         sage: class OldStyle: pass
-        sage: instancedoc(OldStyle)  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: expected type, got <class __main__.OldStyle at ...>
-        sage: instancedoc(OldStyle)  # py3
+        sage: instancedoc(OldStyle)
         Traceback (most recent call last):
         ...
         TypeError: instancedoc requires <class '__main__.OldStyle'> to have an '_instancedoc_' attribute
