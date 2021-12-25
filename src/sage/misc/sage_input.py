@@ -418,9 +418,9 @@ class SageInputBuilder:
             sage: sage_input('Icky chars: \0\n\t\b\'\"\200\300\234', verify=True)
             # Verified
             'Icky chars: \x00\n\t\x08\'"\x80\xc0\x9c'
-            sage: sage_input(u'unicode with spectral: \u1234\U00012345', verify=True)
+            sage: sage_input('unicode with spectral: \u1234\U00012345', verify=True)
             # Verified
-            u'unicode with spectral: \u1234\U00012345'
+            'unicode with spectral: \u1234\U00012345'
             sage: sage_input((2, 3.5, 'Hi'), verify=True)
             # Verified
             (2, 3.5, 'Hi')

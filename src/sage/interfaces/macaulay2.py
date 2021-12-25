@@ -694,7 +694,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
                 gens2.append(self(g))
             else:
                 gens2.append(g)
-        return self('ideal {%s}'%(",".join([g.name() for g in gens2])))
+        return self('ideal {%s}' % (",".join(g.name() for g in gens2)))
 
     def ring(self, base_ring='ZZ', vars='[x]', order='Lex'):
         r"""

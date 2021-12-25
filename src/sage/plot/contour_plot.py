@@ -912,7 +912,6 @@ def contour_plot(f, xrange, yrange, **options):
     g._set_extra_kwds(Graphics._extract_kwds_for_show(options,
                                                       ignore=['xmin', 'xmax']))
 
-
     # Was a single contour level explicitly given? If "contours" is
     # the integer 1, then there will be a single level, but we can't
     # know what it is because it's determined within matplotlib's
@@ -920,11 +919,9 @@ def contour_plot(f, xrange, yrange, **options):
     # there's a single contour and fill=True, we fall through to let
     # matplotlib complain that "Filled contours require at least 2
     # levels."
-    if ( isinstance(options["contours"], (list, tuple))
-         and
-         len(options["contours"]) == 1
-         and
-         options.get("fill") == False):
+    if (isinstance(options["contours"], (list, tuple))
+        and len(options["contours"]) == 1
+        and options.get("fill") is False):
         # When there's only one level (say, zero), matplotlib doesn't
         # handle it well. If all of the data lie on one side of that
         # level -- for example, if f(x,y) >= 0 for all x,y -- then it

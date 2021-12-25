@@ -65,7 +65,6 @@ from cysignals.signals cimport sig_on, sig_off
 import operator
 import fractions
 
-from sage.misc.mathml import mathml
 from sage.arith.long cimport pyobject_to_long, integer_check_long_py
 from sage.cpython.string cimport char_to_str, str_to_bytes
 
@@ -1093,6 +1092,7 @@ cdef class Rational(sage.structure.element.FieldElement):
         if self.denom() == 1:
             return '<mn>%s</mn>'%(self.numer())
         else:
+            from sage.misc.mathml import mathml
             t = ''
             if self < 0:
                 t = t + '<mo>-</mo>'
@@ -4221,12 +4221,7 @@ cdef class int_to_Q(Morphism):
             sage: f = sage.rings.rational.int_to_Q()
             sage: f(int(4)) # indirect doctest
             4
-            sage: f(4^100)  # py2 - this will crash on Python 3
-            Traceback (most recent call last):
-            ...
-            TypeError: must be a Python int object
         """
-
         cdef Rational rat
 
         if type(a) is not int:

@@ -1965,17 +1965,17 @@ for i from 0 <= i < 256:
 # assembly instructions, could be faster
 cpdef inline unsigned long parity(m4ri_word a):
     """
-    Returns the parity of the number of bits in a.
+    Return the parity of the number of bits in a.
 
     EXAMPLES::
 
         sage: from sage.matrix.matrix_mod2_dense import parity
         sage: parity(1)
-        1L
+        1
         sage: parity(3)
-        0L
+        0
         sage: parity(0x10000101011)
-        1L
+        1
     """
     if sizeof(m4ri_word) == 8:
         a ^= a >> 32

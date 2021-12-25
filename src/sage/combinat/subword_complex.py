@@ -1693,7 +1693,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         if G.coxeter_matrix().is_crystallographic():
             min_sum = [[QQ(v) for v in F.extended_weight_configuration()[i]] for F in self]
         else:
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             from warnings import warn
             warn("the polytope is build with rational vertices", RuntimeWarning)
             min_sum = [[QQ(CC(v)) for v in F.extended_weight_configuration()[i]] for F in self]
@@ -1744,7 +1744,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         if G.coxeter_matrix().is_crystallographic():
             BV = [[QQ(v) for v in V] for V in BV]
         else:
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             from warnings import warn
             warn("the polytope is build with rational vertices", RuntimeWarning)
             BV = [[QQ(CC(v).real()) for v in V] for V in BV]

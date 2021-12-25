@@ -59,7 +59,7 @@ Test comparison by equality::
 # ****************************************************************************
 
 from sage.modules.free_module import FreeModule
-from sage.algebras.algebra import Algebra
+from sage.rings.ring import Algebra
 from sage.algebras.free_algebra import is_FreeAlgebra
 from sage.algebras.free_algebra_quotient_element import FreeAlgebraQuotientElement
 from sage.structure.unique_representation import UniqueRepresentation

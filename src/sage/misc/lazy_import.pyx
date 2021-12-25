@@ -416,17 +416,6 @@ cdef class LazyImport(object):
         """
         return str(self.get_object())
 
-    def __unicode__(self):
-        """
-        TESTS::
-
-            sage: from sage.misc.lazy_import import LazyImport
-            sage: lazy_ZZ = LazyImport('sage.rings.all', 'ZZ')
-            sage: str(lazy_ZZ) == str(ZZ)
-            True
-        """
-        return unicode(self.get_object())
-
     def __bool__(self):
         """
         TESTS::

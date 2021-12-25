@@ -43,6 +43,9 @@ cdef struct sparse_bitset_s:
     # NOTE: ``sparse_bitset_t`` is assumed to be allocated over-aligned.
     mp_limb_t* bits
 
+    # Pointer to the memory of ``bits``.
+    void* mem
+
     # Storing the non zero positions can safe time, when performing
     # multiple comparisons.
     # E.g. one can set them while computing the intersection

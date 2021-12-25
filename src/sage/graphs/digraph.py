@@ -2215,40 +2215,36 @@ class DiGraph(GenericGraph):
             ...
             ValueError: algorithm 'Johnson_Boost' works only if all eccentricities are needed
         """
-        if weight_function is not None:
-            by_weight = True
-        elif by_weight:
-            def weight_function(e):
-                return 1 if e[2] is None else e[2]
+        by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
+                                                               weight_function=weight_function,
+                                                               check_weight=check_weight)
 
+        if not by_weight:
+            # We don't want the default weight function
+            weight_function = None
+        elif algorithm in ['BFS', 'Floyd-Warshall-Cython']:
+            raise ValueError("algorithm '{}' does not work with weights".format(algorithm))
         if algorithm is None:
             if dist_dict is not None:
                 algorithm = 'From_Dictionary'
             elif not by_weight:
                 algorithm = 'BFS'
-            else:
-                for e in self.edge_iterator():
-                    try:
-                        if float(weight_function(e)) < 0:
-                            algorithm = 'Johnson_Boost'
-                            break
-                    except (ValueError, TypeError):
-                        raise ValueError("the weight function cannot find the"
-                                         " weight of " + str(e))
+            elif any(float(weight_function(e)) < 0 for e in self.edge_iterator()):
+                algorithm = 'Johnson_Boost'
             if algorithm is None:
                 algorithm = 'Dijkstra_Boost'
 
-        if v is not None and not isinstance(v, list):
-            v = [v]
+        if v is not None:
+            if not isinstance(v, list):
+                v = [v]
+            v_set = set(v)
 
-        if v is None or all(u in v for u in self):
+        if v is None or all(u in v_set for u in self):
             if v is None:
                 v = list(self)
 
             # If we want to use BFS, we use the Cython routine
             if algorithm == 'BFS':
-                if by_weight:
-                    raise ValueError("algorithm 'BFS' does not work with weights")
                 from sage.graphs.distances_all_pairs import eccentricity
                 algo = 'standard'
                 if with_labels:
@@ -2257,9 +2253,9 @@ class DiGraph(GenericGraph):
                     return eccentricity(self, algorithm=algo)
 
             if algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
-                dist_dict = self.shortest_path_all_pairs(by_weight, algorithm,
-                                                         weight_function,
-                                                         check_weight)[0]
+                dist_dict = self.shortest_path_all_pairs(by_weight=by_weight, algorithm=algorithm,
+                                                         weight_function=weight_function,
+                                                         check_weight=False)[0]
                 algorithm = 'From_Dictionary'
 
         elif algorithm in ['Floyd-Warshall-Python', 'Floyd-Warshall-Cython', 'Johnson_Boost']:
@@ -2279,7 +2275,7 @@ class DiGraph(GenericGraph):
                 length = self.shortest_path_lengths(u, by_weight=by_weight,
                                                     algorithm=algorithm,
                                                     weight_function=weight_function,
-                                                    check_weight=check_weight)
+                                                    check_weight=False)
 
             if len(length) != self.num_verts():
                 ecc[u] = Infinity
@@ -2351,13 +2347,6 @@ class DiGraph(GenericGraph):
         """
         if not self.order():
             raise ValueError("radius is not defined for the empty DiGraph")
-
-        if weight_function is not None:
-                by_weight = True
-
-        if by_weight and not weight_function:
-            def weight_function(e):
-                return 1 if e[2] is None else e[2]
 
         return min(self.eccentricity(v=None, by_weight=by_weight,
                                      weight_function=weight_function,
@@ -2452,13 +2441,22 @@ class DiGraph(GenericGraph):
             sage: d2 = max(G.eccentricity(algorithm='Dijkstra_Boost', by_weight=True))
             sage: d1 == d2
             True
+            sage: G.diameter(algorithm='BFS', by_weight=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'BFS' does not work with weights
+            sage: G.diameter(algorithm='Floyd-Warshall-Cython', by_weight=True)
+            Traceback (most recent call last):
+            ...
+            ValueError: algorithm 'Floyd-Warshall-Cython' does not work with weights
             sage: G = digraphs.Path(5)
             sage: G.diameter(algorithm = 'DiFUB')
             +Infinity
             sage: G = DiGraph([(1,2,4), (2,1,7)])
             sage: G.diameter(algorithm='2Dsweep', by_weight=True)
             7.0
-            sage: G.delete_edge(2,1,7); G.add_edge(2,1,-5);
+            sage: G.delete_edge(2,1,7)
+            sage: G.add_edge(2,1,-5)
             sage: G.diameter(algorithm='2Dsweep', by_weight=True)
             Traceback (most recent call last):
             ...
@@ -2483,17 +2481,18 @@ class DiGraph(GenericGraph):
         if not self.order():
             raise ValueError("diameter is not defined for the empty DiGraph")
 
-        if weight_function is not None:
-            by_weight = True
+        by_weight, weight_function = self._get_weight_function(by_weight=by_weight,
+                                                               weight_function=weight_function,
+                                                               check_weight=check_weight)
 
-        if by_weight and not weight_function:
-            def weight_function(e):
-                return 1 if e[2] is None else e[2]
+        if not by_weight:
+            # We don't want the default weight function
+            weight_function = None
+        elif algorithm in ['BFS', 'Floyd-Warshall-Cython']:
+            raise ValueError("algorithm '{}' does not work with weights".format(algorithm))
 
         if algorithm is None:
             algorithm = 'DiFUB'
-        elif algorithm == 'BFS':
-            algorithm = 'standard'
 
         if algorithm in ['2Dsweep', 'DiFUB']:
             if not by_weight:
@@ -2503,18 +2502,15 @@ class DiGraph(GenericGraph):
                 from sage.graphs.base.boost_graph import diameter
                 return diameter(self, algorithm=algorithm,
                                 weight_function=weight_function,
-                                check_weight=check_weight)
+                                check_weight=False)
 
-        if algorithm == 'standard':
-            if by_weight:
-                raise ValueError("algorithm '" + algorithm + "' does not work" +
-                                 " on weighted DiGraphs")
+        if algorithm == 'BFS':
             from sage.graphs.distances_all_pairs import diameter
-            return diameter(self, algorithm=algorithm)
+            return diameter(self, algorithm='standard')
 
         return max(self.eccentricity(v=None, by_weight=by_weight,
                                      weight_function=weight_function,
-                                     check_weight=check_weight,
+                                     check_weight=False,
                                      algorithm=algorithm))
 
     def center(self, by_weight=False, algorithm=None, weight_function=None,

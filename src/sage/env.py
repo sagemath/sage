@@ -267,20 +267,12 @@ def _get_shared_lib_path(*libnames: str) -> Optional[str]:
 
     EXAMPLES::
 
-        sage: import sys
-        sage: from fnmatch import fnmatch
         sage: from sage.env import _get_shared_lib_path
-        sage: lib_filename = _get_shared_lib_path("Singular", "singular-Singular")
-        sage: if sys.platform == 'cygwin':
-        ....:     pattern = "*/cygSingular-*.dll"
-        ....: elif sys.platform == 'darwin':
-        ....:     pattern = "*/libSingular-*.dylib"
-        ....: else:
-        ....:     pattern = "*/lib*Singular-*.so"
-        sage: fnmatch(str(lib_filename), pattern)
+        sage: "gap" in _get_shared_lib_path("gap")
         True
         sage: _get_shared_lib_path("an_absurd_lib") is None
         True
+
     """
 
     for libname in libnames:

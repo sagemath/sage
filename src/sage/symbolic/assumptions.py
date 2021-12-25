@@ -71,7 +71,10 @@ Assumptions are added and in some cases checked for consistency::
     ValueError: Assumption is inconsistent
     sage: forget()
 """
-from sage.rings.all import ZZ, QQ, RR, CC
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.symbolic.ring import is_SymbolicVariable
 from sage.structure.unique_representation import UniqueRepresentation
 

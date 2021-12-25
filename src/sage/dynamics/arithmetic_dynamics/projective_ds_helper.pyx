@@ -115,13 +115,13 @@ cpdef _fast_possible_periods(self, return_points=False):
                 points_periods.append([P_proj, period])
                 l = P_proj.multiplier(self, period, False)
                 lorders = set()
-                for poly,_ in l.charpoly().factor():
+                for poly, _ in l.charpoly().factor():
                     if poly.degree() == 1:
                         eig = -poly.constant_coefficient()
                         if not eig:
-                            continue # exclude 0
+                            continue  # exclude 0
                     else:
-                        eig = GF(p**poly.degree(), 't', modulus=poly).gen()
+                        eig = GF((p, poly.degree()), 't', modulus=poly).gen()
                     if eig:
                         lorders.add(eig.multiplicative_order())
                 S = subsets(lorders)

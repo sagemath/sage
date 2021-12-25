@@ -1,4 +1,4 @@
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 Carl Witty <Carl.Witty@gmail.com>
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
@@ -6,11 +6,8 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
-from __future__ import print_function, absolute_import
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from .base import StackInterpreter
 from ..instructions import (params_gen, instr_funcall_2args, instr_unary,
                             InstrSpec)
@@ -118,7 +115,7 @@ class MemoryChunkPyConstant(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.declare_class_members()
-            u'    cdef object _domain\n'
+            '    cdef object _domain\n'
         """
         return je(ri(4,
             """

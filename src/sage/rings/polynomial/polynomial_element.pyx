@@ -88,7 +88,7 @@ cimport sage.rings.abc
 from sage.rings.real_mpfr import RealField, RR
 
 from sage.rings.complex_mpfr import ComplexField
-CC = ComplexField()
+from sage.rings.cc import CC
 
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF

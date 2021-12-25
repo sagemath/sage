@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Check for imagemagick
+Feature for testing the presence of ``imagemagick``
 
 Currently we only check for the presence of ``convert``. When needed other
 commands like ``magick``, ``magick-script``, ``convert``, ``mogrify``,
@@ -23,7 +23,7 @@ from .join_feature import JoinFeature
 
 class ImageMagick(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of
+    A :class:`~sage.features.Feature` describing the presence of
     ``ImageMagick``
 
     Currently, only the availability of ``convert`` is checked.
@@ -31,7 +31,7 @@ class ImageMagick(JoinFeature):
     EXAMPLES::
 
         sage: from sage.features.imagemagick import ImageMagick
-        sage: ImageMagick().is_present()  # optional: imagemagick
+        sage: ImageMagick().is_present()  # optional - imagemagick
         FeatureTestResult('imagemagick', True)
     """
     def __init__(self):
@@ -44,5 +44,9 @@ class ImageMagick(JoinFeature):
         """
         JoinFeature.__init__(self, "imagemagick",
                              [Executable("convert", executable="convert")],
-                             spkg="_recommended",
+                             spkg="imagemagick",
                              url="https://www.imagemagick.org/")
+
+
+def all_features():
+    return [ImageMagick()]

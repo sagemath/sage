@@ -11,17 +11,17 @@ import sage.doctest
 
 
 class Mime(object):
-    TEXT = u'text/plain'
-    HTML = u'text/html'
-    LATEX = u'text/latex'
-    JSON = u'application/json'
-    JAVASCRIPT = u'application/javascript'
-    PDF = u'application/pdf'
-    PNG = u'image/png'
-    JPG = u'image/jpeg'
-    SVG = u'image/svg+xml'
+    TEXT = 'text/plain'
+    HTML = 'text/html'
+    LATEX = 'text/latex'
+    JSON = 'application/json'
+    JAVASCRIPT = 'application/javascript'
+    PDF = 'application/pdf'
+    PNG = 'image/png'
+    JPG = 'image/jpeg'
+    SVG = 'image/svg+xml'
 
-    JMOL = u'application/jmol'
+    JMOL = 'application/jmol'
 
     @classmethod
     def validate(cls, value):
@@ -41,7 +41,7 @@ class Mime(object):
 
             sage: from sage.structure.graphics_file import Mime
             sage: Mime.validate('image/png')
-            u'image/png'
+            'image/png'
             sage: Mime.validate('foo/bar')
             Traceback (most recent call last):
             ...

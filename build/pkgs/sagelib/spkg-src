@@ -15,7 +15,7 @@ fi
 # Exit on failure
 set -e
 
-cd build/pkgs/sagelib
+cd "$SAGE_ROOT"/build/pkgs/sagelib
 
 cd src
 python3 -u setup.py --no-user-cfg sdist --dist-dir "$SAGE_DISTFILES"

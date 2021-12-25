@@ -796,6 +796,7 @@ class Function_psi1(GinacFunction):
         GinacFunction.__init__(self, "psi", nargs=1, latex_name=r'\psi',
                                conversions=dict(mathematica='PolyGamma',
                                                 maxima='psi[0]',
+                                                maple='Psi',
                                                 sympy='digamma',
                                                 fricas='digamma'))
 
@@ -847,10 +848,16 @@ class Function_psi2(GinacFunction):
             polygamma(2, x)
             sage: psi(2, x)._fricas_()  # optional - fricas
             polygamma(2,x)
+
+        Fixed conversion::
+
+            sage: psi(2,x)._maple_init_()
+            'Psi(2,x)'
         """
         GinacFunction.__init__(self, "psi", nargs=2, latex_name=r'\psi',
                                conversions=dict(mathematica='PolyGamma',
                                                 sympy='polygamma',
+                                                maple='Psi',
                                                 giac='Psi',
                                                 fricas='polygamma'))
 
@@ -1041,6 +1048,7 @@ class Function_beta(GinacFunction):
                                latex_name=r"\operatorname{B}",
                                conversions=dict(maxima='beta',
                                                 mathematica='Beta',
+                                                maple='Beta',
                                                 sympy='beta',
                                                 fricas='Beta',
                                                 giac='Beta'))
@@ -1049,7 +1057,7 @@ class Function_beta(GinacFunction):
         r"""
         TESTS::
 
-            sage: RBF(beta(sin(3),sqrt(RBF(2).add_error(1e-8)/3)))
+            sage: RBF(beta(sin(3),sqrt(RBF(2).add_error(1e-8)/3)))  # abs tol 6e-7
             [7.407662 +/- 6.17e-7]
         """
         return [x, y]

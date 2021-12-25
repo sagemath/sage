@@ -32,7 +32,7 @@ from sage.functions.log import exp
 from sage.matrix.constructor import matrix
 from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.integer_ring import ZZ

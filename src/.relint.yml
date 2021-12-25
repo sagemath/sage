@@ -40,3 +40,12 @@
   hint: |
     in mathematics it should be "homogeneous"
   pattern: 'homogenous'
+
+# Modularization anti-patterns
+
+- name: 'namespace_pkg_all_import: import from .all of a namespace package'
+  hint: |
+    Sage library code should not import from sage.PAC.KAGE.all when sage.PAC.KAGE is an implicit
+    Hint: namespace package. Type import_statements("SOME_IDENTIFIER") to find a more specific import.
+  pattern: 'from\s+sage[.](categories|misc|rings|combinat|graphs|interfaces|libs)[.]all\s+import'
+  filePattern: '.*[.](py|pyx)$'

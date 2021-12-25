@@ -90,7 +90,7 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
 
         sage: from sage.misc.package import pip_remote_version
         sage: pip_remote_version('beautifulsoup4') # optional - internet # not tested
-        u'...'
+        '...'
 
     These tests are reliable since the tested package does not exist::
 

@@ -232,7 +232,8 @@ class FunctionAiryAiSimple(BuiltinFunction):
         if algorithm == 'scipy':
             if hasattr(parent, 'prec') and parent.prec() > 53:
                 raise NotImplementedError("%s not implemented for precision > 53" % self.name())
-            from sage.rings.all import RR, CC
+            from sage.rings.real_mpfr import RR
+            from sage.rings.cc import CC
             from sage.functions.other import real, imag
             from scipy.special import airy as airy
             if x in RR:
@@ -331,7 +332,8 @@ class FunctionAiryAiPrime(BuiltinFunction):
         if algorithm == 'scipy':
             if hasattr(parent, 'prec') and parent.prec() > 53:
                 raise NotImplementedError("%s not implemented for precision > 53" % self.name())
-            from sage.rings.all import RR, CC
+            from sage.rings.real_mpfr import RR
+            from sage.rings.cc import CC
             from sage.functions.other import real, imag
             from scipy.special import airy as airy
             if x in RR:
@@ -669,7 +671,8 @@ class FunctionAiryBiSimple(BuiltinFunction):
         if algorithm == 'scipy':
             if hasattr(parent, 'prec') and parent.prec() > 53:
                 raise NotImplementedError("%s not implemented for precision > 53" % self.name())
-            from sage.rings.all import RR, CC
+            from sage.rings.real_mpfr import RR
+            from sage.rings.cc import CC
             from sage.functions.other import real, imag
             from scipy.special import airy as airy
             if x in RR:
@@ -768,7 +771,8 @@ class FunctionAiryBiPrime(BuiltinFunction):
         if algorithm == 'scipy':
             if hasattr(parent, 'prec') and parent.prec() > 53:
                 raise NotImplementedError("%s not implemented for precision > 53" % self.name())
-            from sage.rings.all import RR, CC
+            from sage.rings.real_mpfr import RR
+            from sage.rings.cc import CC
             from sage.functions.other import real, imag
             from scipy.special import airy as airy
             if x in RR:

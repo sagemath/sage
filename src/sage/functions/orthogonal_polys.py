@@ -302,7 +302,10 @@ Willis of the University of Nebraska at Kearney.
 import warnings
 
 from sage.misc.latex import latex
-from sage.rings.all import ZZ, QQ, RR, CC
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 import sage.rings.abc
 
@@ -495,8 +498,7 @@ class ChebyshevFunction(OrthogonalFunction):
             sage: chebyshev_T(5,Qp(3)(2))
             2 + 3^2 + 3^3 + 3^4 + 3^5 + O(3^20)
             sage: chebyshev_T(100001/2, 2)
-            doctest:...: RuntimeWarning: mpmath failed, keeping expression unevaluated
-            chebyshev_T(100001/2, 2)
+            ...chebyshev_T(100001/2, 2)
             sage: chebyshev_U._eval_(1.5, Mod(8,9)) is None
             True
         """
@@ -1911,7 +1913,7 @@ class Func_hermite(GinacFunction):
         ...
         RuntimeError: hermite_eval: The index n must be a nonnegative integer
 
-        sage: _ = var('m x')
+        sage: m,x = SR.var('m,x')
         sage: hermite(m, x).diff(m)
         Traceback (most recent call last):
         ...
@@ -1962,7 +1964,7 @@ class Func_jacobi_P(OrthogonalFunction):
 
         EXAMPLES::
 
-            sage: _ = var('n a b x')
+            sage: n,a,b,x = SR.var('n,a,b,x')
             sage: loads(dumps(jacobi_P))
             jacobi_P
             sage: jacobi_P(n, a, b, x, hold=True)._sympy_()
@@ -1976,7 +1978,7 @@ class Func_jacobi_P(OrthogonalFunction):
         """
         EXAMPLES::
 
-            sage: _ = var('n a b x')
+            sage: n,a,b,x = SR.var('n,a,b,x')
             sage: jacobi_P(1,n,n,n)
             (n + 1)*n
             sage: jacobi_P(2,n,n,n)
@@ -2080,17 +2082,20 @@ class Func_ultraspherical(GinacFunction):
         sage: t = PolynomialRing(RationalField(),"t").gen()
         sage: gegenbauer(3,2,t)
         32*t^3 - 12*t
-        sage: _ = var('x')
-        sage: for N in range(100):
-        ....:     n = ZZ.random_element(5, 5001)
-        ....:     a = QQ.random_element().abs() + 5
-        ....:     assert ((n+1)*ultraspherical(n+1,a,x) - 2*x*(n+a)*ultraspherical(n,a,x) + (n+2*a-1)*ultraspherical(n-1,a,x)).expand().is_zero()
+        sage: x = SR.var('x')
+        sage: n = ZZ.random_element(5, 5001)
+        sage: a = QQ.random_element().abs() + 5
+        sage: s = (  (n+1)*ultraspherical(n+1,a,x)
+        ....:      - 2*x*(n+a)*ultraspherical(n,a,x)
+        ....:      + (n+2*a-1)*ultraspherical(n-1,a,x) )
+        sage: s.expand().is_zero()
+        True
         sage: ultraspherical(5,9/10,3.1416)
         6949.55439044240
         sage: ultraspherical(5,9/10,RealField(100)(pi))
         6949.4695419382702451843080687
 
-        sage: _ = var('a n')
+        sage: a,n = SR.var('a,n')
         sage: gegenbauer(2,a,x)
         2*(a + 1)*a*x^2 - a
         sage: gegenbauer(3,a,x)

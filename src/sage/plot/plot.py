@@ -3047,8 +3047,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         # Need to catch IndexError because if data is, say, [(0, 1), (1, I)],
         # point3d() throws an IndexError on the (0,1) before it ever
         # gets to (1, I).
-        from sage.rings.complex_mpfr import ComplexField
-        CC = ComplexField()
+        from sage.rings.cc import CC
         # if we get here, we already did "list(enumerate(data))",
         # so look at z[1] in inner list
         data = [(z.real(), z.imag()) for z in [CC(z[1]) for z in data]]

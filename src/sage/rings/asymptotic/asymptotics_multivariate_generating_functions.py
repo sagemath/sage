@@ -1765,7 +1765,7 @@ class FractionWithFactoredDenominator(RingElement):
         from sage.modules.free_module_element import vector
         from sage.symbolic.constants import pi
         from sage.symbolic.relation import solve
-        from sage.rings.all import CC
+        from sage.rings.cc import CC
         from sage.rings.rational_field import QQ
 
         R = self.denominator_ring
@@ -2144,7 +2144,7 @@ class FractionWithFactoredDenominator(RingElement):
         from sage.matrix.constructor import matrix
         from sage.misc.mrange import xmrange
         from sage.modules.free_module_element import vector
-        from sage.rings.all import CC
+        from sage.rings.cc import CC
         from sage.arith.misc import binomial
         from sage.rings.rational_field import QQ
         from sage.symbolic.constants import pi

@@ -29,7 +29,7 @@ from sage.functions.log import exp, log
 from sage.symbolic.constants import pi
 from sage.symbolic.relation import solve
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.real_double import RDF
 from sage.rings.complex_double import CDF
 from sage.ext.fast_callable import fast_callable

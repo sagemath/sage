@@ -742,8 +742,7 @@ class SageDocTestParser(doctest.DocTestParser):
                     if self.optional_tags is not True:
                         extra = optional_tags - self.optional_tags # set difference
                         if extra:
-                            if not('external' in self.optional_tags
-                                   and available_software.issuperset(extra)):
+                            if not available_software.issuperset(extra):
                                 continue
                 elif self.optional_only:
                     self.optionals['sage'] += 1

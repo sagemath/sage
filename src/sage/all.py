@@ -91,6 +91,10 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
     module='(.*[.]_vendor[.])?packaging')
 
+# Ignore numpy warnings triggered by pythran
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        module='pythran')
+
 ################ end setup warnings ###############################
 
 

@@ -1,10 +1,14 @@
+r"""
+Feature for testing the presence of ``meataxe``
+"""
+
 from . import PythonModule
 from .join_feature import JoinFeature
 
 
 class Meataxe(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``MeatAxe``.
+    A :class:`~sage.features.Feature` describing the presence of ``meataxe``.
 
     EXAMPLES::
 
@@ -24,3 +28,7 @@ class Meataxe(JoinFeature):
         # Will be changed to spkg='sagemath_meataxe' later
         JoinFeature.__init__(self, 'meataxe',
                              [PythonModule('sage.matrix.matrix_gfpn_dense', spkg='meataxe')])
+
+
+def all_features():
+    return [Meataxe()]

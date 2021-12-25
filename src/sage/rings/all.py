@@ -149,8 +149,8 @@ from .bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
 
 from .monomials import monomials
 
-CC = ComplexField()
-CIF = ComplexIntervalField()
+from .cc import CC
+from .cif import CIF
 
 # invariant theory
 from .invariants.all import *

@@ -33,7 +33,12 @@ import bisect
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.infinity import infinity
-from sage.rings.all import RR, RDF, RIF, CC, CDF, CIF
+from sage.rings.cif import CIF
+from sage.rings.cc import CC
+from sage.rings.complex_double import CDF
+from sage.rings.real_double import RDF
+from sage.rings.real_mpfi import RIF
+from sage.rings.real_mpfr import RR
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.all import cartesian_product_iterator

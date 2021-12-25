@@ -1,9 +1,13 @@
+r"""
+Feature for testing if the Internet is available
+"""
+
 from . import Feature, FeatureTestResult
 
 
 class Internet(Feature):
     r"""
-    A feature describing if Internet is available.
+    A :class:`~sage.features.Feature` describing if Internet is available.
 
     Failure of connecting to the site "https://www.sagemath.org" within a second
     is regarded as internet being not available.
@@ -44,3 +48,7 @@ class Internet(Feature):
             return FeatureTestResult(self, True)
         except urllib.error.URLError:
             return FeatureTestResult(self, False)
+
+
+def all_features():
+    return [Internet()]

@@ -27,7 +27,8 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gmpxx cimport *
 
-from sage.rings.all import CC, RR
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
 from .congroup_gammaH import is_GammaH

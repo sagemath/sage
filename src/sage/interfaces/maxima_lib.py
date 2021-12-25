@@ -91,8 +91,8 @@ The output is parseable (i. e. :trac:`31796` is fixed)::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.symbolic.ring import SR
 
@@ -105,8 +105,8 @@ from sage.docs.instancedoc import instancedoc
 from sage.env import MAXIMA_FAS
 
 
-## We begin here by initializing Maxima in library mode
-## i.e. loading it into ECL
+# We begin here by initializing Maxima in library mode
+# i.e. loading it into ECL
 ecl_eval("(setf *load-verbose* NIL)")
 if MAXIMA_FAS:
     ecl_eval("(require 'maxima \"{}\")".format(MAXIMA_FAS))
@@ -119,7 +119,7 @@ ecl_eval("(set-locale-subdir)")
 ecl_eval("(set-pathnames)")
 ecl_eval("(defun add-lineinfo (x) x)")
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
-ecl_eval("(remprop 'mfactorial 'grind)") # don't use ! for factorials (#11539)
+ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
 
 # The following is an adaptation of the "retrieve" function in maxima
@@ -1695,7 +1695,7 @@ def max_to_sr(expr):
             max_sym_dict[expr]=sage_symbol
         return max_sym_dict[expr]
     else:
-        e=expr.python()
-        if isinstance(e,float):
+        e = expr.python()
+        if isinstance(e, float):
             return sage.rings.real_double.RealDoubleElement(e)
         return e

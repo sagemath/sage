@@ -3301,7 +3301,7 @@ class LazyDirichletSeries(LazyModuleElement):
 
         # Special behavior for finite series
         if isinstance(coeff_stream, Stream_exact):
-            from sage.rings.all import CC
+            from sage.rings.cc import CC
             if not coeff_stream._constant:
                 try:
                     return sum(self[k] * ~(ZZ(k)**p)

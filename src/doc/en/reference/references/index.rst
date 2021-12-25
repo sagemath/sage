@@ -4963,6 +4963,11 @@ REFERENCES:
             Proceedings of seventh annual ACM symposium on Theory of computing,
             Pages 245-254, ACM 1975. :doi:`10.1145/800116.803775`.
 
+.. [RT1985] James Roskind and Robert Endre Tarjan.
+            *A note on finding minimum-cost edge-disjoint spanning trees*.
+            Mathematics of Operations Research, 10(4):701-708, 1985.
+            :doi:`10.1287/moor.10.4.701`
+
 .. [RTL76] Donald J. Rose, Robert Endre Tarjan and George S. Lueker.
            *Algorithmic aspects of vertex elimination on graphs*.
            SIAM J. Comput., 5(2), 266–283 (1976).

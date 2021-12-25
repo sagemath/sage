@@ -2885,14 +2885,13 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     # clockwise/counterclockwise placements, which
     # works well for three pegs (planar layout)
     #
-    from sage.functions.trig import sin, cos, csc
     if labels or positions:
         mapping = {}
         pos = {}
         a = Integer(-1)
         one = Integer(1)
         if positions:
-            radius_multiplier = 1 + csc(pi/pegs)
+            radius_multiplier = 1 + 1/sin(pi/pegs)
             sine = []
             cosine = []
             for i in range(pegs):
@@ -3728,7 +3727,7 @@ def TuranGraph(n,r):
         sage: n = 13
         sage: r = 4
         sage: g = graphs.TuranGraph(n,r)
-        sage: g.size() == floor((r-1)*(n**2)/(2*r))
+        sage: g.size() == (r-1) * (n**2) // (2*r)
         True
 
     TESTS::

@@ -2875,7 +2875,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         To establish that the rank is in fact 0 in this case, we would
         need to carry out a higher descent::
 
-            sage: E.three_selmer_rank() # optional: magma
+            sage: E.three_selmer_rank() # optional - magma
             0
 
         Or use the L-function to compute the analytic rank::

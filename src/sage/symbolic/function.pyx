@@ -626,7 +626,7 @@ cdef class Function(SageObject):
             sage: b = RBF(3/2, 1e-10)
             sage: airy_ai(b)
             airy_ai([1.500000000 +/- 1.01e-10])
-            sage: gamma(b, 1)
+            sage: gamma(b, 1)  # abs tol 4.5e-9
             [0.50728223 +/- 4.67e-9]
             sage: hurwitz_zeta(b, b)
             hurwitz_zeta([1.500000000 +/- 1.01e-10], [1.500000000 +/- 1.01e-10])

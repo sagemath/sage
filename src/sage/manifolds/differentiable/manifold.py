@@ -441,7 +441,7 @@ REFERENCES:
 
 from sage.categories.manifolds import Manifolds
 from sage.categories.homset import Hom
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import RR
 from sage.rings.infinity import infinity, minus_infinity
 from sage.rings.integer import Integer

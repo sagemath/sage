@@ -79,11 +79,11 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: A = matrix.random(RDF, n, sparse=True)
             sage: I = matrix.identity(RDF, n, sparse=True)
             sage: A = A*A.transpose() + I
-            sage: L = A.cholesky()
-            sage: (A - L*L.T).norm(1) < 1e-10
+            sage: L = A.cholesky()                    # known bug, 33031
+            sage: (A - L*L.T).norm(1) < 1e-10         # known bug, 33031
             True
-            sage: B = A.change_ring(RR)
-            sage: (B.cholesky() - L).norm(1) < 1e-10
+            sage: B = A.change_ring(RR)               # known bug, 33031
+            sage: (B.cholesky() - L).norm(1) < 1e-10  # known bug, 33031
             True
 
         ::
@@ -92,11 +92,11 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: A = matrix.random(CDF, n, sparse=True)
             sage: I = matrix.identity(CDF, n, sparse=True)
             sage: A = A*A.conjugate_transpose() + I
-            sage: L = A.cholesky()
-            sage: (A - L*L.H).norm(1) < 1e-10
+            sage: L = A.cholesky()                    # known bug, 33031
+            sage: (A - L*L.H).norm(1) < 1e-10         # known bug, 33031
             True
-            sage: B = A.change_ring(CC)
-            sage: (B.cholesky() - L).norm(1) < 1e-10
+            sage: B = A.change_ring(CC)               # known bug, 33031
+            sage: (B.cholesky() - L).norm(1) < 1e-10  # known bug, 33031
             True
         """
         cdef Matrix L # output matrix
@@ -116,7 +116,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             # handle the case where cvxopt is not present. The
             # superclass method is slow, but no longer raises an
             # error, so let's try that.
-            L = super().cholesky()
+            return super().cholesky()
 
         cdef list idx_pairs = self.nonzero_positions(copy=False)
         cdef list row_idxs = [r for (r, c) in idx_pairs]

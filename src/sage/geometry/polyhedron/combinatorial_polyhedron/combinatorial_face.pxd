@@ -1,5 +1,4 @@
 cimport cython
-from memory_allocator           cimport MemoryAllocator
 from sage.structure.sage_object cimport SageObject
 from .list_of_faces             cimport ListOfFaces
 from .face_data_structure       cimport face_t
@@ -10,7 +9,6 @@ cdef class CombinatorialFace(SageObject):
     cdef readonly bint _dual        # if 1, then iterate over dual Polyhedron
     cdef face_t face                # the face in bit-rep
 
-    cdef MemoryAllocator _mem
     cdef size_t *atom_rep           # a place where atom-representation of face will be stored
     cdef size_t _n_atom_rep
     cdef size_t *coatom_rep         # a place where coatom-representation of face will be stored

@@ -68,7 +68,7 @@ from sage.structure.element import is_Matrix
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import RR
 from sage.functions.other import real, imag
 

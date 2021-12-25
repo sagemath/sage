@@ -71,7 +71,7 @@ def _pyrand():
         sage: _pyrand()
         <...random.Random object at 0x...>
         sage: _pyrand().getrandbits(10)
-        114L
+        114
     """
     return current_randstate().python_random()
 

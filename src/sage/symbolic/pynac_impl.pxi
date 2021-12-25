@@ -57,7 +57,7 @@ from sage.rings.rational cimport Rational
 from sage.rings.real_mpfr import RR, RealField
 from sage.rings.rational cimport rational_power_parts
 from sage.rings.real_double cimport RealDoubleElement
-from sage.rings.all import CC
+from sage.rings.cc import CC
 
 from sage.symbolic.function cimport Function
 

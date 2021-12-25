@@ -17,6 +17,7 @@ cdef extern from "Python.h":
 from .face_data_structure             cimport *
 from libc.string                      cimport memset
 from cysignals.signals                cimport sig_check
+from cysignals.memory                 cimport check_allocarray, check_calloc, sig_free
 
 cdef struct face_list_s:
     face_t* faces
@@ -33,17 +34,17 @@ ctypedef face_list_s face_list_t[1]
 # Face List Initialization
 #############################################################################
 
-cdef inline int face_list_init(face_list_t faces, size_t n_faces, size_t n_atoms, size_t n_coatoms, MemoryAllocator mem) except -1:
+cdef inline int face_list_init(face_list_t faces, size_t n_faces, size_t n_atoms, size_t n_coatoms) except -1:
     """
     Sets the initial values for a list of faces with given number of faces
     and number of atoms.
     """
-    face_list_shallow_init(faces, n_faces, n_atoms, n_coatoms, mem)
+    face_list_shallow_init(faces, n_faces, n_atoms, n_coatoms)
     cdef size_t i
     for i in range(n_faces):
-        face_init(faces.faces[i], n_atoms, n_coatoms, mem)
+        face_init(faces.faces[i], n_atoms, n_coatoms)
 
-cdef inline int face_list_shallow_init(face_list_t faces, size_t n_faces, size_t n_atoms, size_t n_coatoms, MemoryAllocator mem) except -1:
+cdef inline int face_list_shallow_init(face_list_t faces, size_t n_faces, size_t n_atoms, size_t n_coatoms) except -1:
     """
     Initialize ``faces`` completely, but only set up memory for the pointers to the faces.
     """
@@ -51,9 +52,26 @@ cdef inline int face_list_shallow_init(face_list_t faces, size_t n_faces, size_t
     faces.total_n_faces = n_faces
     faces.n_atoms = n_atoms
     faces.n_coatoms = n_coatoms
-    faces.faces = <face_t *> mem.allocarray(n_faces, sizeof(face_t))
-    faces.is_not_new_face = <bint *> mem.allocarray(n_faces, sizeof(bint))
+    faces.faces = <face_t *> check_calloc(n_faces, sizeof(face_t))
+    faces.is_not_new_face = <bint *> check_allocarray(n_faces, sizeof(bint))
     faces.polyhedron_is_simple = False
+
+cdef inline void face_list_free(face_list_t faces):
+    """
+    Free faces.
+    """
+    cdef size_t i
+    if faces.faces is not NULL:
+        for i in range(faces.total_n_faces):
+            face_free(faces.faces[i])
+    face_list_shallow_free(faces)
+
+cdef inline void face_list_shallow_free(face_list_t faces):
+    """
+    Free a shallow list of faces.
+    """
+    sig_free(faces.faces)
+    sig_free(faces.is_not_new_face)
 
 cdef inline int face_list_copy(face_list_t dst, face_list_t src) except -1:
     """
@@ -86,7 +104,7 @@ cdef inline int face_list_shallow_copy(face_list_t dst, face_list_t src) except 
 
     cdef size_t i
     for i in range(src.n_faces):
-        dst.faces[i] = src.faces[i]
+        dst.faces[i][0] = src.faces[i][0]
 
 cdef inline int add_face_shallow(face_list_t faces, face_t face) nogil except -1:
     """
@@ -120,8 +138,11 @@ cdef inline void face_list_delete_faces_by_array(face_list_t faces, bint *delete
         if not delete[i]:
             faces.faces[n_newfaces][0] = faces.faces[i][0]
             n_newfaces += 1
+        else:
+            face_free(faces.faces[i])
 
     faces.n_faces = n_newfaces
+    faces.total_n_faces = n_newfaces
 
 cdef inline void face_list_delete_faces_by_face(face_list_t faces, face_t face):
     r"""
@@ -138,8 +159,11 @@ cdef inline void face_list_delete_faces_by_face(face_list_t faces, face_t face):
         if face_atom_in(face, i):
             faces.faces[n_newfaces][0] = faces.faces[i][0]
             n_newfaces += 1
+        else:
+            face_free(faces.faces[i])
 
     faces.n_faces = n_newfaces
+    faces.total_n_faces = n_newfaces
 
 
 #############################################################################

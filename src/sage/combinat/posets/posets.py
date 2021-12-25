@@ -6232,9 +6232,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Poset().canonical_label()  # Test the empty poset
             Finite poset containing 0 elements
 
-            sage: D2 = posets.DiamondPoset(4).canonical_label(algorithm='bliss')  # optional: bliss
-            sage: B2 = posets.BooleanLattice(2).canonical_label(algorithm='bliss')  # optional: bliss
-            sage: D2 == B2  # optional: bliss
+            sage: D2 = posets.DiamondPoset(4).canonical_label(algorithm='bliss')  # optional - bliss
+            sage: B2 = posets.BooleanLattice(2).canonical_label(algorithm='bliss')  # optional - bliss
+            sage: D2 == B2  # optional - bliss
             True
         """
         canonical_label = self._hasse_diagram.canonical_label(certificate=True,

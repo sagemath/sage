@@ -1,10 +1,14 @@
+r"""
+Features for testing the presence of ``4ti2``
+"""
+
 from . import Executable
 from .join_feature import JoinFeature
 
 
 class FourTi2Executable(Executable):
     r"""
-    Feature for the 4ti2 executables.
+    A :class:`~sage.features.Feature` for the 4ti2 executables.
     """
     def __init__(self, name):
         r"""
@@ -23,7 +27,7 @@ class FourTi2Executable(Executable):
 
 class FourTi2(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of the ``4ti2`` executables.
+    A :class:`~sage.features.Feature` describing the presence of the ``4ti2`` executables.
 
     EXAMPLES::
 
@@ -44,3 +48,7 @@ class FourTi2(JoinFeature):
                               # same list is tested in build/pkgs/4ti2/spkg-configure.m4
                               for x in ('hilbert', 'markov', 'graver', 'zsolve', 'qsolve',
                                         'rays', 'ppi', 'circuits', 'groebner')])
+
+
+def all_features():
+    return [FourTi2()]

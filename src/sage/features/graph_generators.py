@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Check various graph generator programs
+Features for testing the presence of various graph generator programs
 """
 
 import os
@@ -11,13 +11,12 @@ from . import Executable, FeatureTestResult
 
 class Plantri(Executable):
     r"""
-    A :class:`sage.features.graph_generators.Feature` which checks for
-    the ``plantri`` binary.
+    A :class:`~sage.features.Feature` which checks for the ``plantri`` binary.
 
     EXAMPLES::
 
         sage: from sage.features.graph_generators import Plantri
-        sage: Plantri().is_present()  # optional: plantri
+        sage: Plantri().is_present()  # optional - plantri
         FeatureTestResult('plantri', True)
     """
     def __init__(self):
@@ -39,7 +38,7 @@ class Plantri(Executable):
         EXAMPLES::
 
             sage: from sage.features.graph_generators import Plantri
-            sage: Plantri().is_functional()  # optional: plantri
+            sage: Plantri().is_functional()  # optional - plantri
             FeatureTestResult('plantri', True)
         """
         command = ["plantri", "4"]
@@ -59,13 +58,12 @@ class Plantri(Executable):
 
 class Buckygen(Executable):
     r"""
-    A :class:`sage.features.graph_generators.Feature` which checks for the ``buckygen``
-    binary.
+    A :class:`~sage.features.Feature` which checks for the ``buckygen`` binary.
 
     EXAMPLES::
 
         sage: from sage.features.graph_generators import Buckygen
-        sage: Buckygen().is_present()  # optional: buckygen
+        sage: Buckygen().is_present()  # optional - buckygen
         FeatureTestResult('buckygen', True)
     """
     def __init__(self):
@@ -87,7 +85,7 @@ class Buckygen(Executable):
         EXAMPLES::
 
             sage: from sage.features.graph_generators import Buckygen
-            sage: Buckygen().is_functional()  # optional: buckygen
+            sage: Buckygen().is_functional()  # optional - buckygen
             FeatureTestResult('buckygen', True)
         """
         command = ["buckygen", "-d", "22d"]
@@ -107,13 +105,13 @@ class Buckygen(Executable):
 
 class Benzene(Executable):
     r"""
-    A :class:`sage.features.graph_generators.Feature` which checks for the ``benzene``
+    A :class:`~sage.features.Feature` which checks for the ``benzene``
     binary.
 
     EXAMPLES::
 
         sage: from sage.features.graph_generators import Benzene
-        sage: Benzene().is_present()  # optional: benzene
+        sage: Benzene().is_present()  # optional - benzene
         FeatureTestResult('benzene', True)
     """
     def __init__(self):
@@ -135,7 +133,7 @@ class Benzene(Executable):
         EXAMPLES::
 
             sage: from sage.features.graph_generators import Benzene
-            sage: Benzene().is_functional()  # optional: benzene
+            sage: Benzene().is_functional()  # optional - benzene
             FeatureTestResult('benzene', True)
         """
         devnull = open(os.devnull, 'wb')
@@ -152,3 +150,9 @@ class Benzene(Executable):
                     reason="Call `{command}` did not produce output that started with `{expected}`.".format(command=" ".join(command), expected=expected))
 
         return FeatureTestResult(self, True)
+
+
+def all_features():
+    return [Plantri(),
+            Buckygen(),
+            Benzene()]

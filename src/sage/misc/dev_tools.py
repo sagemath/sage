@@ -479,7 +479,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements(sage.combinat.partition_algebra.SetPartitionsAk)
         from sage.combinat.partition_algebra import SetPartitionsAk
         sage: import_statements(CIF)
-        from sage.rings.all import CIF
+        from sage.rings.cif import CIF
         sage: import_statements(NaN)
         from sage.symbolic.constants import NaN
         sage: import_statements(pi)

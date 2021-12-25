@@ -313,14 +313,14 @@ cdef class BooleanFunction(SageObject):
                 raise ValueError("the length of the truth table must be a power of 2")
 
             # then, initialize our bitset
-            bitset_init(self._truth_table, L)
+            bitset_init(self._truth_table, <mp_bitcnt_t> L)
             for 0<= i < L:
                 bitset_set_to(self._truth_table, i, x[i])#int(x[i])&1)
 
         elif isinstance(x, BooleanPolynomial):
         # initialisation from a Boolean polynomial
             self._nvariables = ZZ(x.parent().ngens())
-            bitset_init(self._truth_table, (1<<self._nvariables))
+            bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
             bitset_zero(self._truth_table)
             for m in x:
                 i = sum( [1<<k for k in m.iterindex()] )
@@ -330,14 +330,14 @@ cdef class BooleanFunction(SageObject):
         elif isinstance(x, (int,long,Integer) ):
         # initialisation to the zero function
             self._nvariables = ZZ(x)
-            bitset_init(self._truth_table,(1<<self._nvariables))
+            bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
             bitset_zero(self._truth_table)
 
         elif is_Polynomial(x):
             K = x.base_ring()
             if is_FiniteField(K) and K.characteristic() == 2:
                 self._nvariables = K.degree()
-                bitset_init(self._truth_table,(1<<self._nvariables))
+                bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
                 bitset_zero(self._truth_table)
                 if isinstance(K,FiniteField_givaro): #the ordering is not the same in this case
                     for u in K:
@@ -347,7 +347,7 @@ cdef class BooleanFunction(SageObject):
                         bitset_set_to(self._truth_table, i , (x(u)).trace())
         elif isinstance(x, BooleanFunction):
             self._nvariables = x.nvariables()
-            bitset_init(self._truth_table,(1<<self._nvariables))
+            bitset_init(self._truth_table, <mp_bitcnt_t> (1<<self._nvariables))
             bitset_copy(self._truth_table,(<BooleanFunction>x)._truth_table)
         else:
             raise TypeError("unable to init the Boolean function")
@@ -504,7 +504,7 @@ cdef class BooleanFunction(SageObject):
         """
         cdef bitset_t anf
         cdef mp_bitcnt_t i, inf, sup, j
-        bitset_init(anf, (1<<self._nvariables))
+        bitset_init(anf, <mp_bitcnt_t> (1<<self._nvariables))
         bitset_copy(anf, self._truth_table)
         reed_muller(anf.bits, ZZ(anf.limbs).exact_log(2))
         from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing

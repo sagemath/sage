@@ -24,6 +24,7 @@ REFERENCES:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 from sage.rings.integer_ring import ZZ
 from sage.arith.all import lcm
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -97,7 +98,7 @@ def CyclicSievingPolynomial(L, cyc_act=None, order=None, get_order=False):
         else:
             orbit_sizes[length] = 1
 
-    n = lcm(list(orbit_sizes))
+    n = lcm(orbit_sizes)
 
     if order:
         if order.mod(n):
@@ -110,19 +111,16 @@ def CyclicSievingPolynomial(L, cyc_act=None, order=None, get_order=False):
         if i == 0:
             j = sum(orbit_sizes.values())
         else:
-            j = sum(orbit_sizes[l] for l in orbit_sizes
-                    if ZZ(i).mod(n / l) == 0)
+            j = sum(orb for l, orb in orbit_sizes.items()
+                    if not ZZ(i).mod(n // l))
         p += j * q**i
 
     p = p(q**(order // n))
 
-    if get_order:
-        return [p, order]
-    else:
-        return p
+    return [p, order] if get_order else p
 
 
-def CyclicSievingCheck(L, cyc_act, f, order=None):
+def CyclicSievingCheck(L, cyc_act, f, order=None) -> bool:
     """
     Return whether the triple ``(L, cyc_act, f)`` exhibits
     the cyclic sieving phenomenon.
@@ -162,11 +160,10 @@ def CyclicSievingCheck(L, cyc_act, f, order=None):
                                     get_order=True)
     R = p1.parent()
     q = R.gen()
-    p2 = R(f).mod(q**n - 1)
-    return p1 == p2
+    return p1 == R(f).mod(q**n - 1)
 
 
-def orbit_decomposition(L, cyc_act):
+def orbit_decomposition(L, cyc_act) -> list[list]:
     """
     Return the orbit decomposition of ``L`` by the action of ``cyc_act``.
 
@@ -196,7 +193,7 @@ def orbit_decomposition(L, cyc_act):
     """
     orbits = []
     L_prime = set(L)
-    while L_prime != set():
+    while L_prime:
         obj = L_prime.pop()
         orbit = [obj]
         obj = cyc_act(obj)

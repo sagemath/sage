@@ -146,7 +146,7 @@ class SageSpawn(spawn):
             sage: E = SageSpawn("sh", ["-c", "echo hello world"])
             sage: _ = E.expect_peek("w")
             sage: E.read().decode('ascii')
-            u'hello world\r\n'
+            'hello world\r\n'
         """
         ret = self.expect(*args, **kwds)
         self._before = self.buffer_type()
@@ -165,7 +165,7 @@ class SageSpawn(spawn):
             sage: E = SageSpawn("sh", ["-c", "echo hello world"])
             sage: _ = E.expect_upto("w")
             sage: E.read().decode('ascii')
-            u'world\r\n'
+            'world\r\n'
         """
         ret = self.expect(*args, **kwds)
         self._before = self.buffer_type()

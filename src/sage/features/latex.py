@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Check for pdflatex and equivalent programs
+Features for testing the presence of ``latex`` and equivalent programs
 """
 # ****************************************************************************
 #       Copyright (C) 2021 Sebastien Labbe <slabqc@gmail.com>
@@ -12,16 +12,16 @@ Check for pdflatex and equivalent programs
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import Executable, FeatureTestResult
+from . import StaticFile, Executable, FeatureTestResult, FeatureNotPresentError
 
 class latex(Executable):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``latex``
+    A :class:`~sage.features.Feature` describing the presence of ``latex``
 
     EXAMPLES::
 
         sage: from sage.features.latex import latex
-        sage: latex().is_present()             # optional: latex
+        sage: latex().is_present()             # optional - latex
         FeatureTestResult('latex', True)
     """
     def __init__(self):
@@ -37,12 +37,12 @@ class latex(Executable):
 
     def is_functional(self):
         r"""
-        Return whether `latex` in the path is functional.
+        Return whether ``latex`` in the path is functional.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: from sage.features.latex import latex
-            sage: latex().is_functional()             # optional: latex
+            sage: latex().is_functional()             # optional - latex
             FeatureTestResult('latex', True)
         """
         lines = []
@@ -76,12 +76,12 @@ class latex(Executable):
 
 class pdflatex(Executable):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``pdflatex``
+    A :class:`~sage.features.Feature` describing the presence of ``pdflatex``
 
     EXAMPLES::
 
         sage: from sage.features.latex import pdflatex
-        sage: pdflatex().is_present()             # optional: pdflatex
+        sage: pdflatex().is_present()             # optional - pdflatex
         FeatureTestResult('pdflatex', True)
     """
     def __init__(self):
@@ -97,12 +97,12 @@ class pdflatex(Executable):
 
 class xelatex(Executable):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``xelatex``
+    A :class:`~sage.features.Feature` describing the presence of ``xelatex``
 
     EXAMPLES::
 
         sage: from sage.features.latex import xelatex
-        sage: xelatex().is_present()             # optional: xelatex
+        sage: xelatex().is_present()             # optional - xelatex
         FeatureTestResult('xelatex', True)
     """
     def __init__(self):
@@ -118,12 +118,12 @@ class xelatex(Executable):
 
 class lualatex(Executable):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``lualatex``
+    A :class:`~sage.features.Feature` describing the presence of ``lualatex``
 
     EXAMPLES::
 
         sage: from sage.features.latex import lualatex
-        sage: lualatex().is_present()             # optional: lualatex
+        sage: lualatex().is_present()             # optional - lualatex
         FeatureTestResult('lualatex', True)
     """
     def __init__(self):
@@ -136,3 +136,74 @@ class lualatex(Executable):
         """
         Executable.__init__(self, "lualatex", executable="lualatex",
                             url="https://www.latex-project.org/")
+
+
+class TeXFile(StaticFile):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of a TeX file
+
+    EXAMPLES::
+
+        sage: from sage.features.latex import TeXFile
+        sage: TeXFile('x', 'x.tex').is_present()  # optional: pdflatex
+        FeatureTestResult('x', True)
+        sage: TeXFile('nonexisting', 'xxxxxx-nonexisting-file.tex').is_present()  # optional - pdflatex
+        FeatureTestResult('nonexisting', False)
+    """
+    def __init__(self, name, filename, **kwds):
+        StaticFile.__init__(self, name, filename, search_path=[], **kwds)
+
+    def absolute_path(self):
+        r"""
+        The absolute path of the file.
+
+        EXAMPLES::
+
+            sage: from sage.features.latex import TeXFile
+            sage: feature = TeXFile('latex_class_article', 'article.cls')
+            sage: feature.absolute_path()  # optional - pdflatex
+            '.../latex/base/article.cls'
+        """
+        from subprocess import run, CalledProcessError, PIPE
+        try:
+            proc = run(['kpsewhich', self.filename],
+                       stdout=PIPE, stderr=PIPE,
+                       universal_newlines=True, check=True)
+            return proc.stdout.strip()
+        except CalledProcessError:
+            raise FeatureNotPresentError(self,
+                                         reason="{filename!r} not found by kpsewhich".format(filename=self.filename))
+
+
+class LaTeXPackage(TeXFile):
+    r"""
+    A :class:`sage.features.Feature` describing the presence of a LaTeX package
+    (``.sty`` file).
+
+    EXAMPLES::
+
+        sage: from sage.features.latex import LaTeXPackage
+        sage: LaTeXPackage('graphics').is_present()  # optional - pdflatex
+        FeatureTestResult('latex_package_graphics', True)
+    """
+    @staticmethod
+    def __classcall__(cls, package_name, **kwds):
+        """
+        TESTS::
+
+            sage: from sage.features.latex import LaTeXPackage
+            sage: LaTeXPackage('graphics') is LaTeXPackage('graphics')
+            True
+        """
+        return TeXFile.__classcall__(cls,
+                                     f'latex_package_{package_name}'.replace('-', '_'),
+                                     f'{package_name}.sty',
+                                     **kwds)
+
+
+def all_features():
+    return [latex(),
+            pdflatex(),
+            xelatex(),
+            lualatex(),
+            LaTeXPackage("tkz-graph")]

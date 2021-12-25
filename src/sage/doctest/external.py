@@ -333,6 +333,26 @@ def has_4ti2():
     from sage.features.four_ti_2 import FourTi2
     return FourTi2().is_present()
 
+def external_features():
+    r"""
+    Generate the features that are only to be tested if ``--optional=external`` is used.
+
+    EXAMPLES::
+
+        sage: from sage.doctest.external import external_features
+        sage: next(external_features())
+        Feature('internet')
+    """
+    from sage.features.internet import Internet
+    yield Internet()
+    import sage.features.latex
+    yield from sage.features.latex.all_features()
+    import sage.features.interfaces
+    yield from sage.features.interfaces.all_features()
+    from sage.features.mip_backends import CPLEX, Gurobi
+    yield CPLEX()
+    yield Gurobi()
+
 def external_software():
     """
     Return the alphabetical list of external software supported by this module.
@@ -343,28 +363,10 @@ def external_software():
         sage: sorted(external_software) == external_software
         True
     """
-    supported = list()
-    for func in globals():
-        if func.startswith(prefix):
-            supported.append(func[len(prefix):])
-    return sorted(supported)
+    return sorted(f.name for f in external_features())
 
 external_software = external_software()
 
-def _lookup(software):
-    """
-    Test if the software is available on the system.
-
-    EXAMPLES::
-
-        sage: sage.doctest.external._lookup('internet') # random, optional - internet
-        True
-    """
-    if software in external_software:
-        func = globals().get(prefix + software)
-        return func()
-    else:
-        return False
 
 class AvailableSoftware(object):
     """
@@ -375,15 +377,11 @@ class AvailableSoftware(object):
 
         sage: from sage.doctest.external import external_software, available_software
         sage: external_software
-        ['4ti2',
-         'cplex',
-         'dvipng',
-         'ffmpeg',
-         'graphviz',
+        ['cplex',
          'gurobi',
-         'imagemagick',
          'internet',
          'latex',
+         'latex_package_tkz_graph',
          'lualatex',
          'macaulay2',
          'magma',
@@ -391,10 +389,7 @@ class AvailableSoftware(object):
          'mathematica',
          'matlab',
          'octave',
-         'pandoc',
-         'pdf2svg',
          'pdflatex',
-         'rubiks',
          'scilab',
          'xelatex']
         sage: 'internet' in available_software # random, optional - internet
@@ -413,10 +408,17 @@ class AvailableSoftware(object):
             sage: S.seen() # random
             []
         """
+        self._allow_external = True
         # For multiprocessing of doctests, the data self._seen should be
         # shared among subprocesses. Thus we use Array class from the
         # multiprocessing module.
-        self._seen = Array('i', len(external_software)) # initialized to zeroes
+        from sage.features.all import all_features
+        self._external_features = set(external_features())
+        features = set(self._external_features)
+        features.update(all_features())
+        self._features = sorted(features, key=lambda feature: feature.name)
+        self._indices = {feature.name: idx for idx, feature in enumerate(self._features)}
+        self._seen = Array('i', len(self._features)) # initialized to zeroes
 
     def __contains__(self, item):
         """
@@ -429,11 +431,13 @@ class AvailableSoftware(object):
             True
         """
         try:
-            idx = external_software.index(item)
-        except Exception:
+            idx = self._indices[item]
+        except KeyError:
             return False
         if not self._seen[idx]:
-            if _lookup(item):
+            if not self._allow_external and self._features[idx] in self._external_features:
+                self._seen[idx] = -1 # not available
+            elif self._features[idx].is_present():
                 self._seen[idx] = 1 # available
             else:
                 self._seen[idx] = -1 # not available
@@ -459,6 +463,14 @@ class AvailableSoftware(object):
                 return False
         return True
 
+    def detectable(self):
+        """
+        Return the list of names of those features for which testing their presence is allowed.
+        """
+        return [feature.name
+                for feature in self._features
+                if self._allow_external or feature not in self._external_features]
+
     def seen(self):
         """
         Return the list of detected external software.
@@ -469,6 +481,9 @@ class AvailableSoftware(object):
             sage: available_software.seen() # random
             ['internet', 'latex', 'magma']
         """
-        return [external_software[i] for i in range(len(external_software)) if self._seen[i] > 0]
+        return [feature.name
+                for feature, seen in zip(self._features, self._seen)
+                if seen > 0]
+
 
 available_software = AvailableSoftware()

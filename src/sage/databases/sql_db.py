@@ -245,7 +245,7 @@ def construct_skeleton(database):
         sage: G = SQLDatabase(GraphDatabase().__dblocation__, False)
         sage: from sage.databases.sql_db import construct_skeleton
         sage: sorted(construct_skeleton(G))
-        [u'aut_grp', u'degrees', u'graph_data', u'misc', u'spectrum']
+        ['aut_grp', 'degrees', 'graph_data', 'misc', 'spectrum']
     """
     skeleton = {}
     cur = database.__connection__.cursor()
@@ -253,7 +253,7 @@ def construct_skeleton(database):
     from sage.env import GRAPHS_DATA_DIR
     for table in exe.fetchall():
         skeleton[table[0]] = {}
-        exe1 = cur.execute("PRAGMA table_info(%s)"%table[0])
+        exe1 = cur.execute("PRAGMA table_info(%s)" % table[0])
         for col in exe1.fetchall():
             if not col[2]:
                 typ = u'NOTYPE'

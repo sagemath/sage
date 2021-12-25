@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 r"""
-Check for Kenzo
+Feature for testing the presence of ``kenzo``
 """
 
-from sage.libs.ecl import ecl_eval
 from . import Feature, FeatureTestResult
 
 class Kenzo(Feature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of ``Kenzo``.
+    A :class:`~sage.features.Feature` describing the presence of ``Kenzo``.
 
     EXAMPLES::
 
@@ -37,6 +36,7 @@ class Kenzo(Feature):
             sage: Kenzo()._is_present()  # optional - kenzo
             FeatureTestResult('kenzo', True)
         """
+        from sage.libs.ecl import ecl_eval
         # Redirection of ECL and Maxima stdout to /dev/null
         # This is also done in the Maxima library, but we
         # also do it here for redundancy.
@@ -56,3 +56,6 @@ class Kenzo(Feature):
             return FeatureTestResult(self, False, reason="Unable to make ECL require kenzo")
         return FeatureTestResult(self, True)
 
+
+def all_features():
+    return [Kenzo()]

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Check for LattE
+Features for testing the presence of ``latte_int``
 """
 from . import Executable
 from .join_feature import JoinFeature
@@ -45,7 +45,7 @@ class Latte_integrate(Executable):
 
 class Latte(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of the ``LattE``
+    A :class:`~sage.features.Feature` describing the presence of the ``LattE``
     binaries which comes as a part of ``latte_int``.
 
     EXAMPLES::
@@ -65,3 +65,7 @@ class Latte(JoinFeature):
         JoinFeature.__init__(self, "latte_int",
                              (Latte_count(), Latte_integrate()),
                              description="LattE")
+
+
+def all_features():
+    return [Latte()]
