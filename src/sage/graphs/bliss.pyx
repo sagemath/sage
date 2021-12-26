@@ -639,11 +639,11 @@ cdef automorphism_group_gens_from_edge_list(int Vnr, Vout, Vin, int Lnr=1, label
 
     if directed:
         d = bliss_digraph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
-        d.find_automorphisms(s, add_gen, <void*>data)
+        bliss_find_automorphisms(d, add_gen, <void*>data, s)
         del d
     else:
         g = bliss_graph_from_labelled_edges(Vnr, Lnr, Vout, Vin, labels, partition)
-        g.find_automorphisms(s, add_gen, <void*>data)
+        bliss_find_automorphisms(g, add_gen, <void*>data, s)
         del g
 
     return [[cyc for cyc in gen if cyc[0] is not None] for gen in gens]
