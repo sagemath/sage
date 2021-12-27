@@ -8,3 +8,4 @@ bc
 gcc
 g++
 ca-certificates
+coreutils
