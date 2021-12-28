@@ -2465,21 +2465,21 @@ class Polytopes():
 
         EXAMPLES::
 
-            sage: h_4_2 = polytopes.hypersimplex(4, 2)
-            sage: h_4_2
+            sage: h_4_2 = polytopes.hypersimplex(4, 2)                                          # optional - sage.combinat
+            sage: h_4_2                                                                         # optional - sage.combinat
             A 3-dimensional polyhedron in ZZ^4 defined as the convex hull of 6 vertices
-            sage: h_4_2.f_vector()
+            sage: h_4_2.f_vector()                                                              # optional - sage.combinat
             (1, 6, 12, 8, 1)
-            sage: h_4_2.ehrhart_polynomial()    # optional - latte_int
+            sage: h_4_2.ehrhart_polynomial()    # optional - latte_int                          # optional - sage.combinat
             2/3*t^3 + 2*t^2 + 7/3*t + 1
-            sage: TestSuite(h_4_2).run()
+            sage: TestSuite(h_4_2).run()                                                        # optional - sage.combinat
 
-            sage: h_7_3 = polytopes.hypersimplex(7, 3, project=True)
-            sage: h_7_3
+            sage: h_7_3 = polytopes.hypersimplex(7, 3, project=True)                            # optional - sage.combinat
+            sage: h_7_3                                                                         # optional - sage.combinat
             A 6-dimensional polyhedron in RDF^6 defined as the convex hull of 35 vertices
-            sage: h_7_3.f_vector()
+            sage: h_7_3.f_vector()                                                              # optional - sage.combinat
             (1, 35, 210, 350, 245, 84, 14, 1)
-            sage: TestSuite(h_7_3).run(skip=["_test_pyramid", "_test_lawrence"])
+            sage: TestSuite(h_7_3).run(skip=["_test_pyramid", "_test_lawrence"])                # optional - sage.combinat
         """
         verts = Permutations([0] * (dim - k) + [1] * k).list()
         if project:

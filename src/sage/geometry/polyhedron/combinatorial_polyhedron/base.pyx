@@ -1565,9 +1565,9 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.facet_graph(names=False)                                    # optional - sage.graphs
             Graph on 6 vertices
 
-            sage: C = CombinatorialPolyhedron(polytopes.hypersimplex(5,2)); C
+            sage: C = CombinatorialPolyhedron(polytopes.hypersimplex(5,2)); C                               # optional - sage.combinat
             A 4-dimensional combinatorial polyhedron with 10 facets
-            sage: C.facet_graph()                                               # optional - sage.graphs
+            sage: C.facet_graph()                                               # optional - sage.graphs    # optional - sage.combinat
             Graph on 10 vertices
         """
         face_iter = self.face_iter(self.dimension() - 1, dual=False)
@@ -2087,8 +2087,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: CombinatorialPolyhedron(cyclic).simpliciality()
             3
 
-            sage: hypersimplex = polytopes.hypersimplex(5,2)
-            sage: CombinatorialPolyhedron(hypersimplex).simpliciality()
+            sage: hypersimplex = polytopes.hypersimplex(5,2)                    # optional - sage.combinat
+            sage: CombinatorialPolyhedron(hypersimplex).simpliciality()         # optional - sage.combinat
             2
 
             sage: cross = polytopes.cross_polytope(4)
@@ -2193,16 +2193,16 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         EXAMPLES::
 
-            sage: hyper4 = polytopes.hypersimplex(4,2)
-            sage: CombinatorialPolyhedron(hyper4).simplicity()
+            sage: hyper4 = polytopes.hypersimplex(4,2)                      # optional - sage.combinat
+            sage: CombinatorialPolyhedron(hyper4).simplicity()              # optional - sage.combinat
             1
 
-            sage: hyper5 = polytopes.hypersimplex(5,2)
-            sage: CombinatorialPolyhedron(hyper5).simplicity()
+            sage: hyper5 = polytopes.hypersimplex(5,2)                      # optional - sage.combinat
+            sage: CombinatorialPolyhedron(hyper5).simplicity()              # optional - sage.combinat
             2
 
-            sage: hyper6 = polytopes.hypersimplex(6,2)
-            sage: CombinatorialPolyhedron(hyper6).simplicity()
+            sage: hyper6 = polytopes.hypersimplex(6,2)                      # optional - sage.combinat
+            sage: CombinatorialPolyhedron(hyper6).simplicity()              # optional - sage.combinat
             3
 
             sage: P = polytopes.simplex(3)

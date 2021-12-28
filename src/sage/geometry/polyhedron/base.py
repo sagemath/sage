@@ -3272,7 +3272,7 @@ class Polyhedron_base(Polyhedron_base4):
             sage: W1.is_combinatorially_isomorphic(triangular_prism)  # optional - sage.graphs    # optional - sage.rings.number_field
             True
 
-            sage: Q = polytopes.hypersimplex(4,2)
+            sage: Q = polytopes.hypersimplex(4,2)                                                 # optional - sage.combinat
             sage: W2 = Q.wedge(Q.faces(2)[7]); W2
             A 4-dimensional polyhedron in QQ^5 defined as the convex hull of 9 vertices
             sage: W2.vertices()
