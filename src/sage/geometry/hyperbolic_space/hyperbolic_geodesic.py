@@ -88,8 +88,9 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.infinity import infinity
 from sage.rings.cc import CC
 from sage.rings.real_mpfr import RR
-from sage.plot.arc import arc
-from sage.plot.line import line
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.arc", "arc")
+lazy_import("sage.plot.line", "line")
 from sage.symbolic.constants import pi
 from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
@@ -101,7 +102,6 @@ from sage.functions.hyperbolic import sinh, cosh, arcsinh
 from sage.symbolic.ring import SR
 from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
 
-from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.hyperbolic_space.hyperbolic_isometry',
             'moebius_transform')
 

@@ -31,7 +31,8 @@ from traitlets import List, Unicode, link
 
 from sage.misc.sage_eval import sage_eval
 from sage.repl.user_globals import get_globals
-from sage.plot.colors import Color
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.colors", "Color")
 
 
 class HTMLText(HTMLMath):

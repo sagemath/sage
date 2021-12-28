@@ -41,7 +41,8 @@ from numbers import Integral, Rational, Real
 
 from sage.structure.all import parent
 from sage.arith.srange import srange
-from sage.plot.colors import Color
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.colors", "Color")
 import sage.rings.abc
 
 

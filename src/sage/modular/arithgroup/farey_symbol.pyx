@@ -38,11 +38,7 @@ from .congroup_gamma import is_Gamma
 from .congroup_sl2z import SL2Z
 from sage.modular.cusps import Cusp
 
-from sage.plot.all import Graphics
-from sage.plot.colors import to_mpl_color
 from sage.misc.decorators import options, rename_keyword
-from sage.plot.all import hyperbolic_arc, hyperbolic_triangle, text
-
 from sage.misc.latex import latex
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
@@ -964,7 +960,10 @@ cdef class Farey:
             Graphics object consisting of 58 graphics primitives
 
         """
-        from sage.plot.colors import rainbow
+        from sage.plot.all import Graphics
+        from sage.plot.colors import rainbow, to_mpl_color
+        from sage.plot.all import hyperbolic_arc, hyperbolic_triangle, text
+
         I = CC(0, 1)
         w = RR(3).sqrt()
         L = 1000

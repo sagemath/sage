@@ -41,7 +41,8 @@ from sage.dynamics.complex_dynamics.mandel_julia_helper import (fast_mandelbrot_
                                                                 polynomial_mandelbrot,
                                                                 julia_helper)
 
-from sage.plot.colors import Color
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.colors", "Color")
 from sage.repl.image import Image
 from sage.functions.log import logb
 from sage.functions.other import floor

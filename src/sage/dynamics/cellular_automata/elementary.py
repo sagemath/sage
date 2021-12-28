@@ -22,7 +22,8 @@ from sage.typeset.ascii_art import AsciiArt
 from sage.typeset.unicode_art import UnicodeArt
 from sage.rings.integer_ring import ZZ
 from sage.matrix.constructor import matrix
-from sage.plot.matrix_plot import matrix_plot
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.matrix_plot", "matrix_plot")
 from sage.misc.constant_function import ConstantFunction
 
 class ElementaryCellularAutomata(SageObject):

@@ -339,7 +339,8 @@ from sage.matrix.constructor import matrix, identity_matrix
 from sage.misc.all import prod, det, tmp_filename, exists, denominator
 from sage.arith.srange import xsrange
 from sage.modules.free_module_element import vector
-from sage.plot.colors import rainbow
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.colors", "rainbow")
 from sage.arith.all import falling_factorial, lcm
 from sage.rings.all import Integer, PolynomialRing, QQ, ZZ
 from sage.symbolic.constants import I, pi

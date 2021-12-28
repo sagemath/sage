@@ -47,13 +47,14 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
 from sage.rings.all import NN
 from sage.functions.trig import cos, sin
-from sage.plot.plot import parametric_plot
-from sage.plot.graphics import Graphics
-from sage.plot.polygon import polygon2d
-from sage.plot.circle import circle
-from sage.plot.bezier_path import bezier_path
-from sage.plot.point import point
-from sage.plot.line import line
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.plot.plot", "parametric_plot")
+lazy_import("sage.plot.graphics", "Graphics")
+lazy_import("sage.plot.polygon", "polygon2d")
+lazy_import("sage.plot.circle", "circle")
+lazy_import("sage.plot.bezier_path", "bezier_path")
+lazy_import("sage.plot.point", "point")
+lazy_import("sage.plot.line", "line")
 from sage.symbolic.constants import pi, I
 from sage.functions.log import exp
 from sage.functions.other import ceil
