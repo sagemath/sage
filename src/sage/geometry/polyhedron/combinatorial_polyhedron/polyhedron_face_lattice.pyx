@@ -215,7 +215,7 @@ cdef class PolyhedronFaceLattice:
             sage: P = polytopes.cube()
             sage: C = CombinatorialPolyhedron(P)
             sage: C._record_all_faces() # indirect doctests
-            sage: C.face_lattice()
+            sage: C.face_lattice()                                                      # optional - sage.combinat
             Finite lattice containing 28 elements
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.polyhedron_face_lattice.PolyhedronFaceLattice).run()
