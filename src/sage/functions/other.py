@@ -1819,9 +1819,9 @@ class Function_prod(BuiltinFunction):
             product(sin(m), m, 1, n)
             sage: isinstance(r.operator(), sage.functions.other.Function_prod)
             True
-            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r # known bug
+            sage: r = sympy(sprod(sin(m), m, 1, n)).sage(); r  # known bug
             product(sin(m), m, 1, n)
-            sage: isinstance(r.operator(),
+            sage: isinstance(r.operator(),                     # known bug
             ....:     sage.functions.other.Function_prod)
             True
             sage: giac(sprod(m, m, 1, n)).sage()
