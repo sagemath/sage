@@ -415,8 +415,12 @@ def parametric_plot3d(f, urange, vrange=None, plot_points="automatic",
         sage: f_x = K * (cos(u)*cos(2*v)+sqrt(2)*sin(u)*cos(v))
         sage: f_y = K * (cos(u)*sin(2*v)-sqrt(2)*sin(u)*sin(v))
         sage: f_z = 3 * K * cos(u)
-        sage: parametric_plot3d([f_x, f_y, f_z], (u,-2*pi,2*pi), (v,0,pi),
-        ....:                   plot_points=[90,90], frame=False, color="orange") # long time -- about 30 seconds
+        sage: parametric_plot3d([f_x, f_y, f_z],      # long time
+        ....:                   (u,-2*pi,2*pi),       # long time
+        ....:                   (v,0,pi),             # long time
+        ....:                   plot_points=[90,90],  # long time
+        ....:                   frame=False,          # long time
+        ....:                   color="orange")       # long time
         Graphics3d Object
 
     .. PLOT::
