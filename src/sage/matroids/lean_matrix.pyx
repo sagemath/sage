@@ -2777,7 +2777,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
     EXAMPLES::
 
         sage: M = Matroid(graphs.CompleteGraph(4).incidence_matrix(oriented=True),
-        ....:             regular=True)  # indirect doctest
+        ....:             regular=True)
         sage: M.is_isomorphic(matroids.Wheel(3))
         True
     """

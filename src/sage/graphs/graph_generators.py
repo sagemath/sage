@@ -682,7 +682,7 @@ class GraphGenerators():
 
         sage: L = list(graphs(5,augment='vertices',loops=True))               # long time
         sage: for i in [0..5]:  # long time
-        ....:     print((i, len([g for g in L if g.order() == i]))) # long time
+        ....:     print((i, len([g for g in L if g.order() == i])))
         (0, 1)
         (1, 2)
         (2, 6)
@@ -2115,8 +2115,8 @@ class GraphGenerators():
         agrees with :oeis:`A081621`::
 
             sage: for i in range(12, 23):                                             # optional plantri
-            ....:     L = len(list(graphs.triangulations(i, minimum_connectivity=5))) # optional plantri
-            ....:     print("{}   {:3d}".format(i,L))                                 # optional plantri
+            ....:     L = len(list(graphs.triangulations(i, minimum_connectivity=5)))
+            ....:     print("{}   {:3d}".format(i,L))
             12     1
             13     0
             14     1
@@ -2273,8 +2273,8 @@ class GraphGenerators():
         agrees with :oeis:`A113201`::
 
             sage: for i in range(4,13):                          # optional plantri
-            ....:     L =  len(list(graphs.quadrangulations(i))) # optional plantri
-            ....:     print("{:2d}   {:3d}".format(i,L))         # optional plantri
+            ....:     L =  len(list(graphs.quadrangulations(i)))
+            ....:     print("{:2d}   {:3d}".format(i,L))
              4     1
              5     1
              6     2

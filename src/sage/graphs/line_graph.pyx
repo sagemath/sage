@@ -442,9 +442,9 @@ def root_graph(g, verbose=False):
         ....:    gl = g.line_graph(labels=False)
         ....:    d = root_graph(gl)
         sage: for i,g in enumerate(graphs(6)): # long time
-        ....:   if not g.is_connected():       # long time
-        ....:     continue                     # long time
-        ....:   test(g)                        # long time
+        ....:   if not g.is_connected():
+        ....:     continue
+        ....:   test(g)
 
     Non line-graphs::
 

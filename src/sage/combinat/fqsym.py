@@ -1093,7 +1093,7 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
                 ....:     for w in Permutations(i))
                 True
                 sage: all(M(F(M[w])) == M[w] for i in range(5)
-                ....:     for w in Permutations(i)) # indirect doctest
+                ....:     for w in Permutations(i))
                 True
                 sage: M[3, 2, 1] == F[3, 2, 1]
                 True

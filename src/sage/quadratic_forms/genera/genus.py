@@ -2972,8 +2972,8 @@ class GenusSymbol_global_ring():
             ....:     G = genera((1,2), det, even=False)
             ....:     assert all(g==Genus(g.representative()) for g in G)
             sage: for det in range(1, 9): # long time (8s, 2020)
-            ....:     G = genera((2,2), det, even=False) # long time
-            ....:     assert all(g==Genus(g.representative()) for g in G) # long time
+            ....:     G = genera((2,2), det, even=False)
+            ....:     assert all(g==Genus(g.representative()) for g in G)
         """
         from sage.modules.free_quadratic_module_integer_symmetric import IntegralLattice, local_modification
         q = self.rational_representative()

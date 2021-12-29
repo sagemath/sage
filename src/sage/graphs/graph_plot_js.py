@@ -183,7 +183,7 @@ def gen_html_code(G,
         sage: g.show(method="js", vertex_labels=True,edge_labels=True,
         ....:        link_distance=200, gravity=.05, charge=-500,
         ....:        edge_partition=[[("11", "12", "2"), ("21", "21", "a")]],
-        ....:        edge_thickness=4) # optional -- internet
+        ....:        edge_thickness=4)
 
     TESTS::
 

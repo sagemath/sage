@@ -282,7 +282,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
         EXAMPLES::
 
             sage: p = Polyhedron(vertices=[(0,1/2),(2,0),(4,5/6)],
-            ....:                backend='ppl')  # indirect doctest
+            ....:                backend='ppl')
             sage: p.Hrepresentation()
             (An inequality (1, 4) x - 2 >= 0,
              An inequality (1, -12) x + 6 >= 0,
@@ -322,7 +322,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
         EXAMPLES::
 
             sage: p = Polyhedron(vertices=[(0,1/2),(2,0),(4,5/6)],
-            ....:                backend='ppl')  # indirect doctest
+            ....:                backend='ppl')
             sage: p.Hrepresentation()
             (An inequality (1, 4) x - 2 >= 0,
              An inequality (1, -12) x + 6 >= 0,

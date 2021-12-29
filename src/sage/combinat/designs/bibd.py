@@ -772,8 +772,8 @@ def v_4_1_BIBD(v, check=True):
 
         sage: from sage.combinat.designs.bibd import v_4_1_BIBD  # long time
         sage: for n in range(13,100):                            # long time
-        ....:    if n%12 in [1,4]:                               # long time
-        ....:       _ = v_4_1_BIBD(n, check = True)              # long time
+        ....:    if n%12 in [1,4]:
+        ....:       _ = v_4_1_BIBD(n, check = True)
 
     TESTS:
 
@@ -787,8 +787,8 @@ def v_4_1_BIBD(v, check=True):
     Check some larger `(v,4,1)`-BIBD (see :trac:`17557`)::
 
         sage: for v in range(400):                                      # long time
-        ....:     if v%12 in [1,4]:                                     # long time
-        ....:         _ = designs.balanced_incomplete_block_design(v,4) # long time
+        ....:     if v%12 in [1,4]:
+        ....:         _ = designs.balanced_incomplete_block_design(v,4)
     """
     k = 4
     if v == 0:
@@ -1262,7 +1262,7 @@ def BIBD_5q_5_for_q_prime_power(q):
 
         sage: from sage.combinat.designs.bibd import BIBD_5q_5_for_q_prime_power
         sage: for q in [25, 45, 65, 85, 125, 145, 185, 205, 305, 405, 605]: # long time
-        ....:     _ = BIBD_5q_5_for_q_prime_power(q/5)                      # long time
+        ....:     _ = BIBD_5q_5_for_q_prime_power(q/5)
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
 

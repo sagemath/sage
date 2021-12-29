@@ -1026,7 +1026,7 @@ class ParallelogramPolyomino(ClonableList,
 
             sage: pp = ParallelogramPolyomino(
             ....:     [[1, 0], [0, 1]]
-            ....: ) # indirect doctest
+            ....: )
             Traceback (most recent call last):
             ...
             ValueError: the lower and upper paths are crossing
@@ -4151,7 +4151,7 @@ class ParallelogramPolyominoes_size(
             sage: PPS = ParallelogramPolyominoes(3)
             sage: ParallelogramPolyomino(
             ....:     [[0, 1, 1], [1, 1, 0]]
-            ....: ) in PPS # indirect doctest
+            ....: ) in PPS
             True
         """
         if el.size() != self.size():
@@ -4324,7 +4324,7 @@ class ParallelogramPolyominoes_all(
             sage: PPS = ParallelogramPolyominoes()
             sage: ParallelogramPolyomino(
             ....:     [[0, 1, 1], [1, 1, 0]]
-            ....: ) in PPS # indirect doctest
+            ....: ) in PPS
             True
         """
         pass

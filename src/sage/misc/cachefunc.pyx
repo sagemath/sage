@@ -2490,7 +2490,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
             ....:         self.x = x
             ....:     def parent(self):
             ....:         return MyParent()
-            ....:     @cached_in_parent_method  #indirect doctest
+            ....:     @cached_in_parent_method
             ....:     def f(self):
             ....:         return self.x^2
             sage: a = MyElement(2)
@@ -3130,7 +3130,7 @@ cdef class CachedInParentMethod(CachedMethod):
             ....:         self._parent = MyParent()
             ....:     def parent(self):
             ....:         return self._parent
-            ....:     @cached_in_parent_method  #indirect doctest
+            ....:     @cached_in_parent_method
             ....:     def f(self):
             ....:         return self._x^2
             sage: a = Foo(2)

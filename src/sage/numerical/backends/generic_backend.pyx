@@ -777,7 +777,7 @@ cdef class GenericBackend:
             sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
             sage: b = p.new_variable(binary=True)                      # optional - Nonexistent_LP_solver
             sage: for u,v in graphs.CycleGraph(5).edges(labels=False): # optional - Nonexistent_LP_solver
-            ....:     p.add_constraint(b[u]+b[v]<=1)                   # optional - Nonexistent_LP_solver
+            ....:     p.add_constraint(b[u]+b[v]<=1)
             sage: p.set_objective(p.sum(b[x] for x in range(5)))       # optional - Nonexistent_LP_solver
             sage: p.solve()                                            # optional - Nonexistent_LP_solver
             2.0
@@ -812,7 +812,7 @@ cdef class GenericBackend:
             sage: p = MixedIntegerLinearProgram(solver="Nonexistent_LP_solver") # optional - Nonexistent_LP_solver
             sage: b = p.new_variable(binary=True)                      # optional - Nonexistent_LP_solver
             sage: for u,v in graphs.CycleGraph(5).edges(labels=False): # optional - Nonexistent_LP_solver
-            ....:     p.add_constraint(b[u]+b[v]<=1)                   # optional - Nonexistent_LP_solver
+            ....:     p.add_constraint(b[u]+b[v]<=1)
             sage: p.set_objective(p.sum(b[x] for x in range(5)))       # optional - Nonexistent_LP_solver
             sage: p.solve()                                            # optional - Nonexistent_LP_solver
             2.0

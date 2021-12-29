@@ -705,8 +705,8 @@ def steiner_quadruple_system(n, check = False):
     TESTS::
 
         sage: for n in range(4, 100):                                      # long time
-        ....:     if (n%6) in [2,4]:                                        # long time
-        ....:         sqs = designs.steiner_quadruple_system(n, check=True) # long time
+        ....:     if (n%6) in [2,4]:
+        ....:         sqs = designs.steiner_quadruple_system(n, check=True)
     """
     n = int(n)
     if not ((n%6) in [2, 4]):

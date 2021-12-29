@@ -124,7 +124,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
             sage: Vrep = [[[0.0], [1.0]], [], []]
             sage: Hrep = [[[0.0, 1.0], [1.0, -1.0]], []]
             sage: p = Polyhedron_RDF_cdd(parent, Vrep, Hrep,
-            ....:                        Vrep_minimal=True, Hrep_minimal=True)  # indirect doctest
+            ....:                        Vrep_minimal=True, Hrep_minimal=True)
             sage: p
             A 1-dimensional polyhedron in RDF^1 defined as the convex hull of 2 vertices
 
@@ -145,7 +145,7 @@ class Polyhedron_RDF_cdd(Polyhedron_cdd, Polyhedron_RDF):
             sage: Vrep = [[], [], [[1.0]]]
             sage: Hrep = [[], []]
             sage: p = Polyhedron_RDF_cdd(parent, Vrep, Hrep,
-            ....:                        Vrep_minimal=True, Hrep_minimal=True)  # indirect doctest
+            ....:                        Vrep_minimal=True, Hrep_minimal=True)
             sage: p
             A 1-dimensional polyhedron in RDF^1 defined as the convex hull of 1 vertex and 1 line
 

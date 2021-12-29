@@ -4971,10 +4971,10 @@ class BTermMonoid(TermWithCoefficientMonoid):
             sage: T.from_construction((None, {'growth': G.gen()}))  # indirect doctest
             B(x, x >= 0)
             sage: T.from_construction(
-            ....:     (None, {'growth': G.gen(), 'coefficient': 2}))  # indirect doctest
+            ....:     (None, {'growth': G.gen(), 'coefficient': 2}))
             B(2*x, x >= 0)
             sage: T.from_construction(
-            ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))  # indirect doctest
+            ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))
             B(x, x >= 5)
         """
         defaults = {}

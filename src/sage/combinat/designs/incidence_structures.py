@@ -2201,7 +2201,7 @@ class IncidenceStructure():
             # verify that :trac:`30976` is fixed
             sage: IS = IncidenceStructure([1,2,3], [[1,2], [2,3]])
             sage: if latex.has_file("tikz.sty"):          # optional - latex
-            ....:     IS._latex_()                        # optional - latex
+            ....:     IS._latex_()
             ...UserWarning:
             The hypergraph is drawn as a set of closed curves...
             \begin{tikzpicture}...

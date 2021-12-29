@@ -3838,7 +3838,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: y = R.random_element()
             sage: for n in [5, 10, 15]:
             ....:     z = y**n
-            ....:     assert z.nth_root(n)**n == z  # indirect doctest
+            ....:     assert z.nth_root(n)**n == z
 
         """
         ring = self.parent()

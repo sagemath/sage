@@ -412,7 +412,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
             t^6 + 6*t^5 + 15*t^4 + 20*t^3 + 15*t^2 + 6*t + 1
 
             sage: def hypercube(d):
-            ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)),backend='normaliz') # optional - pynormaliz
+            ....:     return Polyhedron(vertices=list(product([0,1],repeat=d)),backend='normaliz')
             sage: hypercube(3).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz
             t^3 + 3*t^2 + 3*t + 1
             sage: hypercube(4).ehrhart_polynomial(engine='normaliz') # optional - pynormaliz

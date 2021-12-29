@@ -17349,7 +17349,7 @@ cdef class Matrix(Matrix1):
 
             sage: K = random_cone(max_ambient_dim=5)
             sage: all(L.change_ring(SR).is_Z_operator_on(K)  # long time
-            ....:     for L in K.Z_operators_gens())         # long time
+            ....:     for L in K.Z_operators_gens())
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17467,7 +17467,7 @@ cdef class Matrix(Matrix1):
 
             sage: K = random_cone(max_ambient_dim=5)
             sage: all(L.change_ring(SR).is_lyapunov_like_on(K)  # long time
-            ....:     for L in K.lyapunov_like_basis())         # long time
+            ....:     for L in K.lyapunov_like_basis())
             True
 
         Technically we could test this, but for now only closed convex cones
@@ -17507,7 +17507,7 @@ cdef class Matrix(Matrix1):
             sage: L = random_matrix(R, K.lattice_dim())
             sage: actual = L.is_lyapunov_like_on(K)          # long time
             sage: expected = (L.is_cross_positive_on(K) and  # long time
-            ....:             (-L).is_cross_positive_on(K))  # long time
+            ....:             (-L).is_cross_positive_on(K))
             sage: actual == expected                         # long time
             True
         """
