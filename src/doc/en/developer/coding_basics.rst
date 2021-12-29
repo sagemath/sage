@@ -1223,7 +1223,7 @@ Per coding style (:ref:`section-coding-python`), the magic comment
 should be separated by at least 2 spaces.
 
 For multiline doctests, the comment should appear on the first
-`physical line <https://docs.python.org/3/reference/lexical_analysis.html#physical-lines>`
+`physical line <https://docs.python.org/3/reference/lexical_analysis.html#physical-lines>`_
 of the doctest (the line with the prompt ``sage:``), not on the
 continuation lines (the lines with the prompt ``....:``)::
 
