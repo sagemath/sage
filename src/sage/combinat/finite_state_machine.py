@@ -14121,7 +14121,7 @@ class FSMProcessIterator(SageObject, Iterator):
                 sage: T = Transducer([(0, 0, 0, 0)],
                 ....:     initial_states=[0], final_states=[0])
                 sage: it = FSMProcessIterator(T, input_tape=[0, 0])
-                sage: for current in it:
+                sage: for current in it:                             # indirect doctest
                 ....:     print(current)
                 process (1 branch)
                 + at state 0
@@ -14289,7 +14289,7 @@ class FSMProcessIterator(SageObject, Iterator):
             +-- tape at 0, [[]]
             + at state 'b'
             +-- tape at 0, [[]]
-            sage: it._push_branches_(
+            sage: it._push_branches_(                               # indirect doctest
             ....:     A.state('c'),
             ....:     deepcopy(it._current_[((0, 0),)][A.state('a')][0]),
             ....:     [[]])

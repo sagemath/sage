@@ -399,7 +399,7 @@ def v_4_1_rbibd(v,existence=False):
 
     TESTS::
 
-        sage: for q in prime_powers(2,30):
+        sage: for q in prime_powers(2,30):  # indirect doctest
         ....:     if (3*q+1)%12 == 4:
         ....:         _ = designs.resolvable_balanced_incomplete_block_design(3*q+1,4)
     """

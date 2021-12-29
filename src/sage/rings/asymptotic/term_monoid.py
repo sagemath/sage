@@ -4968,12 +4968,12 @@ class BTermMonoid(TermWithCoefficientMonoid):
             sage: T = TermMonoid('B', G, ZZ)
             sage: T._default_kwds_construction_()
             {'coefficient': 1, 'valid_from': {'x': 0}}
-            sage: T.from_construction((None, {'growth': G.gen()}))  # indirect doctest
+            sage: T.from_construction((None, {'growth': G.gen()}))          # indirect doctest
             B(x, x >= 0)
-            sage: T.from_construction(
+            sage: T.from_construction(                                      # indirect doctest
             ....:     (None, {'growth': G.gen(), 'coefficient': 2}))
             B(2*x, x >= 0)
-            sage: T.from_construction(
+            sage: T.from_construction(                                      # indirect doctest
             ....:     (None, {'growth': G.gen(), 'valid_from': {'x': 5}}))
             B(x, x >= 5)
         """
