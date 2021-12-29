@@ -1222,9 +1222,10 @@ framework. Here is a comprehensive list:
 Per coding style (:ref:`section-coding-python`), the magic comment
 should be separated by at least 2 spaces.
 
-For multiline doctests, the comment should appear on the first line
-(the line with the prompt ``sage:``), not on the continuation lines
-(the lines with the prompt ``....:``)::
+For multiline doctests, the comment should appear on the first
+`physical line <https://docs.python.org/3/reference/lexical_analysis.html#physical-lines>`
+of the doctest (the line with the prompt ``sage:``), not on the
+continuation lines (the lines with the prompt ``....:``)::
 
     sage: print(ZZ.random_element())        # random
     42
