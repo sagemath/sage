@@ -1226,8 +1226,13 @@ For multiline doctests, the comment should appear on the first line
 (the line with the prompt ``sage:``), not on the continuation lines
 (the lines with the prompt ``....:``)::
 
+    sage: print(ZZ.random_element())        # random
+    42
     sage: for _ in range(3):                # random
     ....:     print(QQ.random_element())
+    1
+    1/77
+    -1/2
 
 Using ``search_src`` from the Sage prompt (or ``grep``), one can
 easily find the aforementioned keywords. In the case of ``todo: not
