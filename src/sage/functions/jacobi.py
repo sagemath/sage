@@ -136,17 +136,15 @@ AUTHORS:
 - Eviatar Bach (2013): complete rewrite, new numerical evaluation, and
   addition of the Jacobi amplitude function
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 David Joyner <wdj@usna.edu>
 #       Copyright (C) 2013 Eviatar Bach <eviatarbach@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
-
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.symbolic.function import BuiltinFunction
 from sage.functions.trig import (arctan, arcsin, arccos, arccot, arcsec,
                                  arccsc, csc, sec, sin, cos, tan, cot)
@@ -977,6 +975,7 @@ def jacobi(kind, z, m, **kwargs):
         raise ValueError("kind must be one of 'nd', 'ns', 'nc', 'dn', "
                          "'ds', 'dc', 'sn', 'sd', 'sc', 'cn', 'cd', 'cs'.")
 
+
 def inverse_jacobi(kind, x, m, **kwargs):
     r"""
     The inverses of the 12 Jacobi elliptic functions. They have the property
@@ -1134,6 +1133,7 @@ class JacobiAmplitude(BuiltinFunction):
         """
         return r"\operatorname{{am}}\left({}\middle|{}\right)".format(latex(x),
                                                                       latex(m))
+
 
 jacobi_am = JacobiAmplitude()
 
@@ -1293,7 +1293,7 @@ def inverse_jacobi_f(kind, x, m):
                 ctx.prec += 10
                 phi = ctx.asin(x)
                 return sign * ctx.ellipf(phi, m)
-            elif 1 < x <= 1 / ctx.sqrt(m):
+            elif x <= 1 / ctx.sqrt(m):
                 K = ctx.ellipk(m)
                 ctx.prec += 10
                 xpn2 = x ** (-2)
@@ -1682,4 +1682,3 @@ def jacobi_am_f(x, m):
                 return ctx.atan2(snz, cnz) + npi
     finally:
         ctx.prec = prec
-

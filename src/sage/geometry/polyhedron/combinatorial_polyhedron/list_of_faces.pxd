@@ -1,11 +1,8 @@
 cimport cython
-from memory_allocator          cimport MemoryAllocator
 from .face_list_data_structure cimport face_list_t, face_t
 
 @cython.final
 cdef class ListOfFaces:
-    cdef MemoryAllocator _mem
-
     # ``data`` points to the raw data.
     # It will be of "type" ``uint64_t[n_faces][face_length]``
     cdef face_list_t data

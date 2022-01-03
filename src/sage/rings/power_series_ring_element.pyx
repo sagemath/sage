@@ -1005,7 +1005,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: t.inverse()
             t^-1
             sage: type(_)
-            <type 'sage.rings.laurent_series_ring_element.LaurentSeries'>
+            <class 'sage.rings.laurent_series_ring_element.LaurentSeries'>
             sage: (1-t).inverse()
             1 + t + t^2 + t^3 + t^4 + t^5 + t^6 + t^7 + t^8 + ...
         """
@@ -1160,17 +1160,18 @@ cdef class PowerSeries(AlgebraElement):
 
     def shift(self, n):
         r"""
-        Return this power series multiplied by the power `t^n`. If
-        `n` is negative, terms below `t^n` will be
-        discarded. Does not change this power series.
+        Return this power series multiplied by the power `t^n`.
+
+        If `n` is negative, terms below `t^{-n}` are discarded.
+
+        This power series is left unchanged.
 
         .. NOTE::
 
            Despite the fact that higher order terms are printed to the
            right in a power series, right shifting decreases the
-           powers of `t`, while left shifting increases
-           them. This is to be consistent with polynomials, integers,
-           etc.
+           powers of `t`, while left shifting increases them.
+           This is to be consistent with polynomials, integers, etc.
 
         EXAMPLES::
 
@@ -1190,13 +1191,47 @@ cdef class PowerSeries(AlgebraElement):
 
         - Robert Bradshaw (2007-04-18)
         """
-        return self._parent(self.polynomial().shift(n), self._prec + n)
+        if not n:
+            return self
+        prec = max(0, self.prec() + Integer(n))
+        return self._parent(self.polynomial().shift(n), prec)
 
     def __lshift__(self, n):
-        return self.parent()(self.polynomial() << n, self.prec())
+        """
+        Left-shift this power series by `n`, i.e., multiply by `t^n`.
+
+        EXAMPLES::
+
+            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
+            sage: f = exp(x) + O(x^7); f
+            1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
+            sage: f << 2
+            x^2 + x^3 + 1/2*x^4 + 1/6*x^5 + 1/24*x^6 + 1/120*x^7 + 1/720*x^8 + O(x^9)
+            sage: (f << 99) >> 99
+            1 + x + 1/2*x^2 + 1/6*x^3 + 1/24*x^4 + 1/120*x^5 + 1/720*x^6 + O(x^7)
+        """
+        return self.shift(n)
 
     def __rshift__(self, n):
-        return self.parent()(self.polynomial() >> n, self.prec())
+        """
+        Right-shift this power series by `n`, i.e., divide by `t^n`.
+
+        Terms below `t^n` are discarded.
+
+        EXAMPLES::
+
+            sage: R.<x> = PowerSeriesRing(QQ, implementation='pari')
+            sage: f = exp(x) + O(x^7)
+            sage: f >> 3
+            1/6 + 1/24*x + 1/120*x^2 + 1/720*x^3 + O(x^4)
+            sage: f >> 7
+            O(x^0)
+            sage: f >> 99
+            O(x^0)
+            sage: (f >> 99) << 99
+            O(x^99)
+        """
+        return self.shift(-n)
 
     def is_monomial(self):
         """

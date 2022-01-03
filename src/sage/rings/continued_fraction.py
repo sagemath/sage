@@ -207,6 +207,7 @@ import numbers
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, rich_to_bool
+import sage.rings.abc
 from .integer import Integer
 from .integer_ring import ZZ
 from .infinity import Infinity
@@ -263,11 +264,13 @@ def rat_interval_cf_list(r1, r2):
         sage: rat_interval_cf_list(257/113, 5224/2297)
         [2, 3, 1, 1, 1, 4]
         sage: for prec in range(10,54):
-        ....:     R = RealIntervalField(20)
+        ....:     R = RealIntervalField(prec)
         ....:     for _ in range(100):
         ....:         x = R.random_element() * R.random_element() + R.random_element() / 100
         ....:         l = x.lower().exact_rational()
         ....:         u = x.upper().exact_rational()
+        ....:         if l.floor() != u.floor():
+        ....:             continue
         ....:         cf = rat_interval_cf_list(l,u)
         ....:         a = continued_fraction(cf).value()
         ....:         b = continued_fraction(cf+[1]).value()
@@ -2051,7 +2054,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
             sage: w = words.ThueMorseWord([int(1), int(2)])
             sage: t = continued_fraction(w)
             sage: type(t.quotient(1))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         ContinuedFraction_base.__init__(self)
         self._w = w
@@ -2157,7 +2160,7 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
             sage: t.quotient(1)
             2
             sage: type(t.quotient(1))      # indirect doctest
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return Integer(self._w[n])
 
@@ -2407,7 +2410,7 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
 
         sage: a = 1.575709393346379
         sage: type(a)
-        <type 'sage.rings.real_mpfr.RealLiteral'>
+        <class 'sage.rings.real_mpfr.RealLiteral'>
         sage: continued_fraction_list(a)
         [1, 1, 1, 2, 1, 4, 18, 1, 5, 2, 25037802, 7, 1, 3, 1, 28, 1, 8, 2]
 
@@ -2451,12 +2454,11 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
 
     cf = None
 
-    from sage.rings.real_arb import RealBallField
-    from sage.rings.real_mpfi import RealIntervalField, RealIntervalField_class
     from sage.rings.real_mpfr import RealLiteral
     if isinstance(x, RealLiteral):
+        from sage.rings.real_mpfi import RealIntervalField
         x = RealIntervalField(x.prec())(x)
-    if isinstance(x.parent(), (RealIntervalField_class, RealBallField)):
+    if isinstance(x.parent(), (sage.rings.abc.RealIntervalField, sage.rings.abc.RealBallField)):
         cf = continued_fraction(rat_interval_cf_list(
                  x.lower().exact_rational(),
                  x.upper().exact_rational()))
@@ -2601,6 +2603,12 @@ def continued_fraction(x, value=None):
 
         sage: continued_fraction(1.575709393346379)
         [1; 1, 1, 2, 1, 4, 18, 1, 5, 2, 25037802, 7, 1, 3, 1, 28, 1, 8, 2]
+
+    Constants in symbolic subrings work like constants in ``SR``::
+
+        sage: SCR = SR.subring(no_variables=True)
+        sage: continued_fraction(SCR(pi))
+        [3; 7, 15, 1, 292, 1, 1, 1, 2, 1, 3, 1, 14, 2, 1, 1, 2, 2, 2, 2, ...]
     """
 
     if isinstance(x, ContinuedFraction_base):
@@ -2658,8 +2666,8 @@ def continued_fraction(x, value=None):
     except AttributeError:
         pass
 
-    from .real_mpfi import RealIntervalField
     if is_real is False:
+        from .real_mpfi import RealIntervalField
         # we cannot rely on the answer of .is_real() for elements of the
         # symbolic ring. The thing below is a dirty temporary hack.
         RIF = RealIntervalField(53)
@@ -2675,10 +2683,9 @@ def continued_fraction(x, value=None):
     if x.parent().is_exact():
         return ContinuedFraction_real(x)
 
-    # we treat separately the symbolic ring that holds all constants and
-    # which is not exact
-    from sage.symbolic.ring import SR
-    if x.parent() == SR:
+    # We treat the Symbolic Ring and its subrings separately.  They hold all constants and
+    # are not exact.
+    if isinstance(x.parent(), sage.rings.abc.SymbolicRing):
         return ContinuedFraction_real(x)
 
     return continued_fraction(continued_fraction_list(x))

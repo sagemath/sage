@@ -70,7 +70,7 @@ group elements instead of the values::
 #                  http://www.gnu.org/licenses/
 ##########################################################################
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.rings.integer import Integer
 from sage.categories.morphism import Morphism
 from sage.groups.abelian_gps.abelian_group import AbelianGroup_class, _normalize

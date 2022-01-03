@@ -1050,7 +1050,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         # and trac:11940
         if not self.is_even() and (p is None or p==2):
             raise ValueError("This lattice must be even to admit an even overlattice")
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         L = self
         if p is None:
             P = ZZ(self.determinant()).prime_factors()

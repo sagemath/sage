@@ -315,13 +315,13 @@ Ausdruck::
     sage: var('x')
     x
     sage: type(x*2)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Auch eine Funktion (siehe unten) ist ein symbolischer Ausdruck::
 
     sage: f(x) = x + 1
     sage: type(f)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Benutzen wir jedoch eine Variable, um etwas zu speichern und nicht als symbolischen
 Parameter, so ist ein Ausdruck, welcher sie enthält, nicht mehr ein symbolischer
@@ -329,7 +329,7 @@ Ausdruck::
 
     sage: x = 3
     sage: type(x*2)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
 Terme können auch in Variablen gespeichert werden. Dazu benutzen wir
 wie bei Zahlenwerten den Operator ``=`` für die Zuordnung::

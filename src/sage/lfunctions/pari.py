@@ -316,7 +316,7 @@ def lfun_number_field(K):
         sage: L(3)
         1.15202784126080
         sage: L(0)
-        0.000000000000000
+        ...0.000000000000000
     """
     return pari.lfuncreate(K)
 

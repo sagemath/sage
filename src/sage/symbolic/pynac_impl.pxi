@@ -57,7 +57,7 @@ from sage.rings.rational cimport Rational
 from sage.rings.real_mpfr import RR, RealField
 from sage.rings.rational cimport rational_power_parts
 from sage.rings.real_double cimport RealDoubleElement
-from sage.rings.all import CC
+from sage.rings.cc import CC
 
 from sage.symbolic.function cimport Function
 
@@ -101,9 +101,9 @@ cdef exprseq_to_PyTuple(GEx seq):
         sage: tfunc = TFunc()
         sage: u = SR._force_pyobject((1, x+1, 2))
         sage: tfunc(u, x, SR._force_pyobject((3.0, 2^x)))
-        len(args): 3, types: [<... 'tuple'>, <type 'sage.symbolic.expression.Expression'>, <... 'tuple'>]
-        argument 0 is a tuple, with types [<type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.rings.integer.Integer'>]
-        argument 2 is a tuple, with types [<type 'sage.rings.real_mpfr.RealLiteral'>, <type 'sage.symbolic.expression.Expression'>]
+        len(args): 3, types: [<... 'tuple'>, <class 'sage.symbolic.expression.Expression'>, <... 'tuple'>]
+        argument 0 is a tuple, with types [<class 'sage.rings.integer.Integer'>, <class 'sage.symbolic.expression.Expression'>, <class 'sage.rings.integer.Integer'>]
+        argument 2 is a tuple, with types [<class 'sage.rings.real_mpfr.RealLiteral'>, <class 'sage.symbolic.expression.Expression'>]
         tfunc((1, x + 1, 2), x, (3.00000000000000, 2^x))
     """
     from sage.symbolic.ring import SR
@@ -128,7 +128,7 @@ def unpack_operands(Expression ex):
         sage: type(unpack_operands(t))
         <... 'tuple'>
         sage: list(map(type, unpack_operands(t)))
-        [<type 'sage.rings.integer.Integer'>, <type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>]
+        [<class 'sage.rings.integer.Integer'>, <class 'sage.rings.integer.Integer'>, <class 'sage.symbolic.expression.Expression'>, <class 'sage.symbolic.expression.Expression'>, <class 'sage.symbolic.expression.Expression'>]
         sage: u = SR._force_pyobject((t, x^2))
         sage: unpack_operands(u)
         ((1, 2, x, x + 1, x + 2), x^2)
@@ -159,7 +159,7 @@ cdef exvector_to_PyTuple(GExVector seq):
         sage: tfunc = TFunc()
         sage: u = SR._force_pyobject((1, x+1, 2))
         sage: tfunc(u, x, 3.0, 5.0r)
-        len(args): 4, types: [<... 'tuple'>, <type 'sage.symbolic.expression.Expression'>, <type 'sage.rings.real_mpfr.RealLiteral'>, <... 'float'>]
+        len(args): 4, types: [<... 'tuple'>, <class 'sage.symbolic.expression.Expression'>, <class 'sage.rings.real_mpfr.RealLiteral'>, <... 'float'>]
         tfunc((1, x + 1, 2), x, 3.00000000000000, 5.0)
 
     TESTS:
@@ -167,8 +167,8 @@ cdef exvector_to_PyTuple(GExVector seq):
     Check if symbolic functions in the arguments are preserved::
 
         sage: tfunc(sin(x), tfunc(1, x^2))
-        len(args): 2, types: [<type 'sage.rings.integer.Integer'>, <type 'sage.symbolic.expression.Expression'>]
-        len(args): 2, types: [<type 'sage.symbolic.expression.Expression'>, <type 'sage.symbolic.expression.Expression'>]
+        len(args): 2, types: [<class 'sage.rings.integer.Integer'>, <class 'sage.symbolic.expression.Expression'>]
+        len(args): 2, types: [<class 'sage.symbolic.expression.Expression'>, <class 'sage.symbolic.expression.Expression'>]
         tfunc(sin(x), tfunc(1, x^2))
 
     """
@@ -307,7 +307,6 @@ cdef subs_args_to_PyTuple(const GExMap& map, unsigned options, const GExVector& 
           <class 'sage.symbolic.expression.Expression'>]
         x
     """
-    from sage.symbolic.ring import SR
     res = []
     res.append(new_SubstitutionMap_from_GExMap(map))
     res.append(options)
@@ -1118,6 +1117,10 @@ cdef bint py_is_integer(x):
         True
         sage: py_is_integer(SR(5))
         True
+        sage: SCR = SR.subring(no_variables=True); SCR
+        Symbolic Constants Subring
+        sage: py_is_integer(SCR(5))
+        True
         sage: py_is_integer(4/2)
         True
         sage: py_is_integer(QQbar(sqrt(2))^2)
@@ -1132,8 +1135,8 @@ cdef bint py_is_integer(x):
     if not isinstance(x, Element):
         return False
     P = (<Element>x)._parent
-    from .ring import SR
-    return (P is SR or P.is_exact()) and x in ZZ
+    from .ring import SymbolicRing
+    return (isinstance(P, SymbolicRing) or P.is_exact()) and x in ZZ
 
 
 def py_is_integer_for_doctests(x):
@@ -1221,8 +1224,8 @@ cdef bint py_is_exact(x):
     if not isinstance(x, Element):
         return False
     P = (<Element>x)._parent
-    from .ring import SR
-    return P is SR or P.is_exact()
+    from .ring import SymbolicRing
+    return isinstance(P, SymbolicRing) or P.is_exact()
 
 
 cdef py_numer(n):
@@ -1343,11 +1346,11 @@ cdef py_float(n, PyObject* kwds):
         sage: py_float(10, {'parent':CDF})
         10.0
         sage: type(py_float(10, {'parent':CDF}))
-        <type 'sage.rings.complex_double.ComplexDoubleElement'>
+        <class 'sage.rings.complex_double.ComplexDoubleElement'>
         sage: py_float(1/2, {'parent':CC})
         0.500000000000000
         sage: type(py_float(1/2, {'parent':CC}))
-        <type 'sage.rings.complex_mpfr.ComplexNumber'>
+        <class 'sage.rings.complex_mpfr.ComplexNumber'>
     """
     if kwds is not NULL:
         p = (<object>kwds)['parent']
@@ -1734,7 +1737,7 @@ cdef py_log(x):
             return math.log(real)
         elif real < 0:
             res = gsl_complex_log(gsl_complex_rect(real, 0))
-            return PyComplex_FromDoubles(res.real, res.imag)
+            return PyComplex_FromDoubles(GSL_REAL(res), GSL_IMAG(res))
         else:
             return float('-inf')
     elif type(x) is complex:
@@ -1743,7 +1746,7 @@ cdef py_log(x):
         if real == 0 and imag == 0:
             return float('-inf')
         res = gsl_complex_log(gsl_complex_rect(real, imag))
-        return PyComplex_FromDoubles(res.real, res.imag)
+        return PyComplex_FromDoubles(GSL_REAL(res), GSL_IMAG(res))
     elif isinstance(x, Integer):
         return x.log().n()
     elif hasattr(x, 'log'):
@@ -2420,9 +2423,9 @@ def init_pynac_I():
 
         sage: sage.symbolic.expression.init_pynac_I()
         sage: type(sage.symbolic.expression.I)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: type(sage.symbolic.expression.I.pyobject())
-        <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
+        <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
 
     Check that :trac:`10064` is fixed::
 

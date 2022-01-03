@@ -209,7 +209,7 @@ class DiffScalarField(ScalarField):
         sage: f.expr(c_uv)
         (u^2 + v^2)/(u^2 + v^2 + 1)
         sage: type(f.expr(c_uv))
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
 
     The method :meth:`~sage.manifolds.scalarfield.ScalarField.coord_function`
     returns instead a function of the chart coordinates, i.e. an instance of

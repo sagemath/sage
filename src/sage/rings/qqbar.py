@@ -555,6 +555,7 @@ import itertools
 import operator
 
 import sage.rings.ring
+import sage.rings.abc
 import sage.rings.number_field.number_field_base
 from sage.misc.fast_methods import Singleton
 from sage.misc.cachefunc import cached_method
@@ -565,8 +566,9 @@ from sage.structure.richcmp import (richcmp, richcmp_method,
                                     op_EQ, op_NE, op_GT)
 from sage.rings.real_mpfr import RR
 from sage.rings.real_mpfi import RealIntervalField, RIF, is_RealIntervalFieldElement, RealIntervalField_class
-from sage.rings.complex_mpfr import ComplexField
-from sage.rings.complex_interval_field import ComplexIntervalField, is_ComplexIntervalField
+from sage.rings.cc import CC
+from sage.rings.cif import CIF
+from sage.rings.complex_interval_field import ComplexIntervalField
 from sage.rings.complex_interval import is_ComplexIntervalFieldElement
 from sage.rings.polynomial.all import PolynomialRing
 from sage.rings.polynomial.polynomial_element import is_Polynomial
@@ -580,10 +582,8 @@ from sage.categories.action import Action
 
 from sage.structure.global_options import GlobalOptions
 
-CC = ComplexField()
-CIF = ComplexIntervalField()
 
-class AlgebraicField_common(sage.rings.ring.Field):
+class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
     r"""
     Common base class for the classes :class:`~AlgebraicRealField` and
     :class:`~AlgebraicField`.
@@ -1013,7 +1013,7 @@ class AlgebraicField_common(sage.rings.ring.Field):
         return Factorization(factorization, unit = f.lc() / trial.lc())
 
 
-class AlgebraicRealField(Singleton, AlgebraicField_common):
+class AlgebraicRealField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicRealField):
     r"""
     The field of algebraic reals.
 
@@ -1449,12 +1449,21 @@ def is_AlgebraicRealField(F):
     r"""
     Check whether ``F`` is an :class:`~AlgebraicRealField` instance. For internal use.
 
+    This function is deprecated. Use :func:`isinstance` with
+    :class:`~sage.rings.abc.AlgebraicRealField` instead.
+
     EXAMPLES::
 
         sage: from sage.rings.qqbar import is_AlgebraicRealField
         sage: [is_AlgebraicRealField(x) for x in [AA, QQbar, None, 0, "spam"]]
+        doctest:warning...
+        DeprecationWarning: is_AlgebraicRealField is deprecated;
+        use isinstance(..., sage.rings.abc.AlgebraicRealField instead
+        See https://trac.sagemath.org/32660 for details.
         [True, False, False, False, False]
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32660, 'is_AlgebraicRealField is deprecated; use isinstance(..., sage.rings.abc.AlgebraicRealField instead')
     return isinstance(F, AlgebraicRealField)
 
 
@@ -1462,7 +1471,7 @@ def is_AlgebraicRealField(F):
 AA = AlgebraicRealField()
 
 
-class AlgebraicField(Singleton, AlgebraicField_common):
+class AlgebraicField(Singleton, AlgebraicField_common, sage.rings.abc.AlgebraicField):
     """
     The field of all algebraic complex numbers.
     """
@@ -1993,12 +2002,21 @@ def is_AlgebraicField(F):
     r"""
     Check whether ``F`` is an :class:`~AlgebraicField` instance.
 
+    This function is deprecated. Use :func:`isinstance` with
+    :class:`~sage.rings.abc.AlgebraicField` instead.
+
     EXAMPLES::
 
         sage: from sage.rings.qqbar import is_AlgebraicField
         sage: [is_AlgebraicField(x) for x in [AA, QQbar, None, 0, "spam"]]
+        doctest:warning...
+        DeprecationWarning: is_AlgebraicField is deprecated;
+        use isinstance(..., sage.rings.abc.AlgebraicField instead
+        See https://trac.sagemath.org/32660 for details.
         [False, True, False, False, False]
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32660, 'is_AlgebraicField is deprecated; use isinstance(..., sage.rings.abc.AlgebraicField instead')
     return isinstance(F, AlgebraicField)
 
 
@@ -2010,12 +2028,21 @@ def is_AlgebraicField_common(F):
     r"""
     Check whether ``F`` is an :class:`~AlgebraicField_common` instance.
 
+    This function is deprecated. Use :func:`isinstance` with
+    :class:`~sage.rings.abc.AlgebraicField_common` instead.
+
     EXAMPLES::
 
         sage: from sage.rings.qqbar import is_AlgebraicField_common
         sage: [is_AlgebraicField_common(x) for x in [AA, QQbar, None, 0, "spam"]]
+        doctest:warning...
+        DeprecationWarning: is_AlgebraicField_common is deprecated;
+        use isinstance(..., sage.rings.abc.AlgebraicField_common) instead
+        See https://trac.sagemath.org/32610 for details.
         [True, True, False, False, False]
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32610, 'is_AlgebraicField_common is deprecated; use isinstance(..., sage.rings.abc.AlgebraicField_common) instead')
     return isinstance(F, AlgebraicField_common)
 
 
@@ -5013,7 +5040,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: (a - b).interval_exact(CIF)
             0
         """
-        if not is_ComplexIntervalField(field):
+        if not isinstance(field, sage.rings.abc.ComplexIntervalField):
             raise ValueError("AlgebraicNumber interval_exact requires a ComplexIntervalField")
         rfld = field._real_field()
         re = self.real().interval_exact(rfld)
@@ -5210,7 +5237,7 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: b._value
             0.7071067811865475244?
             sage: type(b._value)
-            <type 'sage.rings.real_mpfi.RealIntervalFieldElement'>
+            <class 'sage.rings.real_mpfi.RealIntervalFieldElement'>
         """
         if is_ComplexIntervalFieldElement(self._value):
             self._value = self._value.real()
@@ -5910,7 +5937,7 @@ class AlgebraicReal(AlgebraicNumber_base):
             sage: AA(golden_ratio)._complex_mpfr_field_(ComplexField(100))
             1.6180339887498948482045868344
         """
-        if is_ComplexIntervalField(field):
+        if isinstance(field, sage.rings.abc.ComplexIntervalField):
             return field(self.interval(field._real_field()))
         else:
             return field(self.real_number(field._real_field()))
@@ -6551,7 +6578,7 @@ class AlgebraicPolynomialTracker(SageObject):
             poly = QQy(poly)
             complex = False
         elif isinstance(B, AlgebraicField_common):
-            complex = is_AlgebraicField(poly.base_ring())
+            complex = isinstance(poly.base_ring(), AlgebraicField)
         else:
             try:
                 poly = poly.change_ring(AA)
@@ -7698,7 +7725,7 @@ class ANExtensionElement(ANDescr):
         # for instance, the .exactify() call will try to factor poly,
         # even though we know that poly is irreducible
         poly = self.minpoly()
-        intv = isolating_interval(lambda prec: n._interval_fast(prec), poly)
+        intv = isolating_interval(n._interval_fast, poly)
         new_v = QQbar.polynomial_root(poly, intv)
         new_v.exactify()
         return new_v._descr
@@ -8546,3 +8573,9 @@ def get_AA_golden_ratio():
         AA_golden_ratio_generator = AlgebraicGenerator(AA_golden_ratio_nf, ANRoot(AAPoly.gen()**2 - AAPoly.gen() - 1, RIF(1.618, 1.6181)))
         AA_golden_ratio = AlgebraicReal(ANExtensionElement(AA_golden_ratio_generator, AA_golden_ratio_nf.gen()))
     return AA_golden_ratio
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Real.register(AlgebraicReal)
+numbers.Complex.register(AlgebraicNumber)

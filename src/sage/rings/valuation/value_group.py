@@ -28,7 +28,9 @@ EXAMPLES::
 
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import QQ, ZZ, infinity
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
 from sage.misc.cachefunc import cached_method
 
 
@@ -531,7 +533,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
             return {0 : exp}
 
         if len(self._generators) == 2 and self._generators[0] == - self._generators[1]:
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             exp = target / self._generators[0]
             if exp not in ZZ:
                 return None
@@ -679,7 +681,7 @@ class DiscreteValueSemigroup(UniqueRepresentation, Parent):
             return
         for g in self._generators:
             yield g
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         for x in (ZZ**len(self._generators)).some_elements():
             yield QQ.coerce(sum([abs(c)*g for c,g in zip(x,self._generators)]))
 

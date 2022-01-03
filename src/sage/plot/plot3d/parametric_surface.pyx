@@ -87,12 +87,11 @@ from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_check
 
 from math import cos, sin
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 from sage.plot.colors import check_color_data
 from .base import RenderParams
 from .transform cimport point_c, face_c
-from sage.ext.fast_eval cimport FastDoubleFunc
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 
 include "point_c.pxi"
@@ -605,8 +604,7 @@ cdef class ParametricSurface(IndexFaceSet):
         - tuple -- split into fx, fy, fz and call each separately
         - callable -- call f(u,v)
 
-        In addition, branches are taken for efficient calling of FastDoubleFunc
-        (including whether to iterate over python or c doubles).
+        In addition, branches are taken for efficient calling of fast callables
         """
         cdef Py_ssize_t i, j
         cdef Py_ssize_t m = len(urange)
@@ -634,23 +632,15 @@ cdef class ParametricSurface(IndexFaceSet):
             fx, fy, fz = self.f
 
             # First, deal with the fast functions (if any)
-            fast_x = isinstance(fx, (FastDoubleFunc, Wrapper_rdf))
-            fast_y = isinstance(fy, (FastDoubleFunc, Wrapper_rdf))
-            fast_z = isinstance(fz, (FastDoubleFunc, Wrapper_rdf))
+            fast_x = isinstance(fx, Wrapper_rdf)
+            fast_y = isinstance(fy, Wrapper_rdf)
+            fast_z = isinstance(fz, Wrapper_rdf)
             if fast_x or fast_y or fast_z:
                 ulist = to_double_array(urange)
                 vlist = to_double_array(vrange)
 
                 res = self.vs
-                if isinstance(fx, FastDoubleFunc):
-                    for i in range(m):
-                        uv[0] = ulist[i]
-                        for j in range(n):
-                            sig_check()
-                            uv[1] = vlist[j]
-                            res.x = (<FastDoubleFunc>fx)._call_c(uv)
-                            res += 1
-                elif fast_x: # must be Wrapper_rdf
+                if fast_x: # must be Wrapper_rdf
                     for i in range(m):
                         uv[0] = ulist[i]
                         for j in range(n):
@@ -660,15 +650,7 @@ cdef class ParametricSurface(IndexFaceSet):
                             res += 1
 
                 res = self.vs
-                if isinstance(fy, FastDoubleFunc):
-                    for i in range(m):
-                        uv[0] = ulist[i]
-                        for j in range(n):
-                            sig_check()
-                            uv[1] = vlist[j]
-                            res.y = (<FastDoubleFunc>fy)._call_c(uv)
-                            res += 1
-                elif fast_y: # must be Wrapper_rdf
+                if fast_y: # must be Wrapper_rdf
                     for i from 0 <= i < m:
                         uv[0] = ulist[i]
                         for j from 0 <= j < n:
@@ -678,15 +660,7 @@ cdef class ParametricSurface(IndexFaceSet):
                             res += 1
 
                 res = self.vs
-                if isinstance(fz, FastDoubleFunc):
-                    for i in range(m):
-                        uv[0] = ulist[i]
-                        for j in range(n):
-                            sig_check()
-                            uv[1] = vlist[j]
-                            res.z = (<FastDoubleFunc>fz)._call_c(uv)
-                            res += 1
-                elif fast_z: # must be Wrapper_rdf
+                if fast_z: # must be Wrapper_rdf
                     for i in range(m):
                         uv[0] = ulist[i]
                         for j in range(n):

@@ -28,7 +28,7 @@ from sage.structure.richcmp cimport rich_to_bool
 from sage.categories.semirings import Semirings
 from sage.categories.map cimport Map
 from sage.sets.family import Family
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 import operator
 
@@ -72,7 +72,7 @@ cdef class TropicalSemiringElement(Element):
             sage: T = TropicalSemiring(QQ)
             sage: elt = T(2)
             sage: elt.__reduce__()
-            (<type 'sage.rings.semirings.tropical_semiring.TropicalSemiringElement'>,
+            (<class 'sage.rings.semirings.tropical_semiring.TropicalSemiringElement'>,
              (Tropical semiring over Rational Field, 2))
         """
         return (TropicalSemiringElement, (self.parent(), self._val))

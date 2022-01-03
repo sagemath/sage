@@ -283,6 +283,37 @@ class PiecewiseFunction(BuiltinFunction):
         """
         raise NotImplementedError
 
+    def _tderivative_(self, parameters, variable, *args, **kwds):
+        """
+        Return the derivative of the piecewise function by applying the
+        derivative to each piece.
+
+        EXAMPLES::
+
+            sage: f = piecewise([ [(-1,1), x**2], [(1,3), x**3]])
+            sage: f.diff()
+            piecewise(x|-->2*x on (-1, 1), x|-->3*x^2 on (1, 3); x)
+            sage: f.diff(x,x)
+            piecewise(x|-->2 on (-1, 1), x|-->6*x on (1, 3); x)
+
+        This still fails miserably::
+
+            sage: y = SR.var('y')
+            sage: f = piecewise([ [(-6,0), x+y], [(0,8), x*y]],var=x)
+            sage: f.derivative(x)  # known bug
+            piecewise(x|-->1 on (-6, 0), x|-->y on (0, 8); x)
+            sage: f.derivative(y)  # known bug
+            piecewise(x|-->1 on (-6, 0), x|-->x on (0, 8); x)
+
+        TESTS::
+
+            sage: f = piecewise([((-oo, -1),0), ((-1, 1),exp(-1/(1 - x^2))), ((1, oo),0)])
+            sage: f.diff()
+            piecewise(x|-->0 on (-oo, -1), x|-->-2*x*e^(1/(x^2 - 1))/(x^2 - 1)^2 on (-1, 1), x|-->0 on (1, +oo); x)
+        """
+        return piecewise([(domain, func.derivative(*args))
+                          for domain, func in parameters],
+                         var=variable)
 
     class EvaluationMethods(object):
 
@@ -468,25 +499,6 @@ class PiecewiseFunction(BuiltinFunction):
             if value is not None:
                 substitution[variable] = value
             return self.subs(substitution)
-
-        def _fast_float_(self, *args):
-            """
-            Do not support the old ``fast_float``
-
-            OUTPUT:
-
-            This method raises ``NotImplementedError`` so that
-            plotting uses the newer `fast_callable` implementation.
-
-            EXAMPLES::
-
-                sage: f = piecewise([([0,0], sin(x)), ((0,2), cos(x))])
-                sage: f._fast_float_()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
-            """
-            raise NotImplementedError
 
         def _fast_callable_(self, parameters, variable, etb):
             """

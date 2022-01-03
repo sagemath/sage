@@ -36,7 +36,7 @@ from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from .combinat import CombinatorialElement
 from sage.categories.cartesian_product import cartesian_product
 
@@ -617,7 +617,7 @@ class Composition(CombinatorialElement):
         if check and (sum(self) != sum(other)):
             raise ValueError("{} is not the same size as {}".format(self, other))
 
-        factors = []
+        factors: list[int] = []
 
         I_iter = iter(self)
         i = 0
@@ -893,7 +893,7 @@ class Composition(CombinatorialElement):
         """
         return Compositions(len(self)).map(self.fatten)
 
-    def refinement_splitting(self, J) -> Composition:
+    def refinement_splitting(self, J) -> list[Composition]:
         r"""
         Return the refinement splitting of ``self`` according to ``J``.
 
@@ -1797,7 +1797,7 @@ class Compositions(UniqueRepresentation, Parent):
             [3, 1, 2, 3, 5]
         """
         if code == [0]:
-            return []
+            return self.element_class(self, [])
 
         L = [x for x in range(len(code)) if code[x] == 1]  # the positions of the letter 1
         c = [L[i] - L[i - 1] for i in range(1, len(L))] + [len(code) - L[-1]]
@@ -2017,7 +2017,7 @@ def composition_iterator_fast(n):
         sage: L = list(composition_iterator_fast(4)); L
         [[1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [1, 3], [2, 1, 1], [2, 2], [3, 1], [4]]
         sage: type(L[0])
-        <... 'list'>
+        <class 'list'>
     """
     # Special cases
     if n < 0:

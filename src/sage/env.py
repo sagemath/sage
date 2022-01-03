@@ -211,6 +211,15 @@ MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
+FOURTITWO_HILBERT = var("FOURTITWO_HILBERT")
+FOURTITWO_MARKOV = var("FOURTITWO_MARKOV")
+FOURTITWO_GRAVER = var("FOURTITWO_GRAVER")
+FOURTITWO_ZSOLVE = var("FOURTITWO_ZSOLVE")
+FOURTITWO_QSOLVE = var("FOURTITWO_QSOLVE")
+FOURTITWO_RAYS = var("FOURTITWO_RAYS")
+FOURTITWO_PPI = var("FOURTITWO_PPI")
+FOURTITWO_CIRCUITS = var("FOURTITWO_CIRCUITS")
+FOURTITWO_GROEBNER = var("FOURTITWO_GROEBNER")
 ARB_LIBRARY = var("ARB_LIBRARY", "arb")
 CBLAS_PC_MODULES = var("CBLAS_PC_MODULES", "cblas:openblas:blas")
 ECL_CONFIG = var("ECL_CONFIG", "ecl-config")
@@ -218,9 +227,18 @@ NTL_INCDIR = var("NTL_INCDIR")
 NTL_LIBDIR = var("NTL_LIBDIR")
 LIE_INFO_DIR = var("LIE_INFO_DIR", join(SAGE_LOCAL, "lib", "LiE"))
 
+# The path to libSingular, to be passed to dlopen(). This will
+# typically be set to an absolute path in sage_conf, but the relative
+# fallback path here works on systems where dlopen() searches the
+# system's library locations.
+LIBSINGULAR_PATH = var("LIBSINGULAR_PATH", "libSingular.so")
+
 # OpenMP
 OPENMP_CFLAGS = var("OPENMP_CFLAGS", "")
 OPENMP_CXXFLAGS = var("OPENMP_CXXFLAGS", "")
+
+# Make sure mpmath uses Sage types
+os.environ['MPMATH_SAGE'] = '1'
 
 # misc
 SAGE_BANNER = var("SAGE_BANNER", "")
@@ -249,20 +267,12 @@ def _get_shared_lib_path(*libnames: str) -> Optional[str]:
 
     EXAMPLES::
 
-        sage: import sys
-        sage: from fnmatch import fnmatch
         sage: from sage.env import _get_shared_lib_path
-        sage: lib_filename = _get_shared_lib_path("Singular", "singular-Singular")
-        sage: if sys.platform == 'cygwin':
-        ....:     pattern = "*/cygSingular-*.dll"
-        ....: elif sys.platform == 'darwin':
-        ....:     pattern = "*/libSingular-*.dylib"
-        ....: else:
-        ....:     pattern = "*/lib*Singular-*.so"
-        sage: fnmatch(str(lib_filename), pattern)
+        sage: "gap" in _get_shared_lib_path("gap")
         True
         sage: _get_shared_lib_path("an_absurd_lib") is None
         True
+
     """
 
     for libname in libnames:
@@ -307,10 +317,6 @@ def _get_shared_lib_path(*libnames: str) -> Optional[str]:
     # Just return None if no files were found
     return None
 
-# locate singular shared object
-# On Debian it's libsingular-Singular so try that as well
-SINGULAR_SO = var("SINGULAR_SO", _get_shared_lib_path("Singular", "singular-Singular"))
-
 # locate libgap shared object
 GAP_SO = var("GAP_SO", _get_shared_lib_path("gap", ""))
 
@@ -329,16 +335,6 @@ if DOT_SAGE is not None and ' ' in DOT_SAGE:
         print("is to set the environment variable HOME to a")
         print("directory with no spaces that you have write")
         print("permissions to before you start sage.")
-
-
-CYGWIN_VERSION = None
-if UNAME[:6] == 'CYGWIN':
-    import re
-    _uname = os.uname()
-    if len(_uname) >= 2:
-        m = re.match(r'(\d+\.\d+\.\d+)\(.+\)', _uname[2])
-        if m:
-            CYGWIN_VERSION = tuple(map(int, m.group(1).split('.')))
 
 
 def sage_include_directories(use_sources=False):
@@ -397,18 +393,27 @@ def get_cblas_pc_module_name() -> str:
     cblas_pc_modules = CBLAS_PC_MODULES.split(':')
     return next((blas_lib for blas_lib in cblas_pc_modules if pkgconfig.exists(blas_lib)))
 
-def cython_aliases(required_modules=('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
-                                     'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas'),
-                   optional_modules=('lapack',)):
+
+default_required_modules = ('fflas-ffpack', 'givaro', 'gsl', 'linbox', 'Singular',
+                            'libpng', 'gdlib', 'm4ri', 'zlib', 'cblas')
+
+
+default_optional_modules = ('lapack',)
+
+
+def cython_aliases(required_modules=None,
+                   optional_modules=None):
     """
     Return the aliases for compiling Cython code. These aliases are
     macros which can occur in ``# distutils`` headers.
 
     INPUT:
 
-    - ``required_modules`` -- iterable of ``str`` values.
+    - ``required_modules`` -- (default: taken from ``default_required_modules``)
+      iterable of ``str`` values.
 
-    - ``optional_modules`` -- iterable of ``str`` values.
+    - ``optional_modules`` -- (default: taken from ``default_optional_modules``)
+      iterable of ``str`` values.
 
     EXAMPLES::
 
@@ -450,6 +455,12 @@ def cython_aliases(required_modules=('fflas-ffpack', 'givaro', 'gsl', 'linbox', 
     """
     import pkgconfig
     import itertools
+
+    if required_modules is None:
+        required_modules = default_required_modules
+
+    if optional_modules is None:
+        optional_modules = default_optional_modules
 
     aliases = {}
 

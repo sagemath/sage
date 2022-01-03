@@ -20,8 +20,11 @@ Number-Theoretic Functions
 import sys
 import sage.rings.complex_mpfr as complex_field
 
-from sage.rings.all import (ComplexField, ZZ, RR, RDF)
-from sage.rings.complex_mpfr import is_ComplexNumber
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RR
+from sage.rings.real_double import RDF
+from sage.rings.complex_mpfr import ComplexField, is_ComplexNumber
+from sage.rings.cc import CC
 from sage.rings.real_mpfr import (RealField, is_RealNumber)
 
 from sage.symbolic.function import GinacFunction, BuiltinFunction
@@ -32,7 +35,6 @@ from sage.combinat.combinat import bernoulli_polynomial
 from .gamma import psi
 from .other import factorial
 
-CC = complex_field.ComplexField()
 I = CC.gen(0)
 
 
@@ -140,8 +142,15 @@ class Function_zeta(GinacFunction):
             +infinity
             sage: zeta(SR(1.0))
             Infinity
+
+        Fixed conversion::
+
+            sage: zeta(3)._maple_init_()
+            'Zeta(3)'
         """
-        GinacFunction.__init__(self, 'zeta', conversions={'giac':'Zeta'})
+        GinacFunction.__init__(self, 'zeta', conversions={'giac': 'Zeta',
+                                                    'maple': 'Zeta',
+                                                    'mathematica': 'Zeta'})
 
 zeta = Function_zeta()
 
@@ -213,6 +222,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, 'hurwitz_zeta', nargs=2,
                                  conversions=dict(mathematica='HurwitzZeta',
+                                                  maple='Zeta',
                                                   sympy='zeta'),
                                  latex_name=r'\zeta')
 

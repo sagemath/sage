@@ -809,7 +809,7 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
     a1list = [d[1] for d in dat]
     a1 = K.solve_CRT(a1list,P2list, check=True)
     # See comment below: this is needed for when we combine with the primes above 3.
-    if not a1 in three: # three.divides(a1) causes a segfault
+    if a1 not in three:  # three.divides(a1) causes a segfault
         a1 = 3*a1
 
     # Using this a1, recompute the local a3's:

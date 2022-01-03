@@ -80,6 +80,7 @@ class Function_sinh(GinacFunction):
         """
         GinacFunction.__init__(self, "sinh", latex_name=r"\sinh")
 
+
 sinh = Function_sinh()
 
 
@@ -115,6 +116,7 @@ class Function_cosh(GinacFunction):
             sqrt(x^2 + 1)
         """
         GinacFunction.__init__(self, "cosh", latex_name=r"\cosh")
+
 
 cosh = Function_cosh()
 
@@ -180,6 +182,7 @@ class Function_tanh(GinacFunction):
         """
         GinacFunction.__init__(self, "tanh", latex_name=r"\tanh")
 
+
 tanh = Function_tanh()
 
 
@@ -235,6 +238,7 @@ class Function_coth(GinacFunction):
         """
         return 1.0 / tanh(x)
 
+
 coth = Function_coth()
 
 
@@ -288,6 +292,7 @@ class Function_sech(GinacFunction):
         """
         return 1.0 / cosh(x)
 
+
 sech = Function_sech()
 
 
@@ -338,6 +343,7 @@ class Function_csch(GinacFunction):
             array([0.27572056, 0.09982157, 0.03664357])
         """
         return 1.0 / sinh(x)
+
 
 csch = Function_csch()
 
@@ -403,7 +409,8 @@ class Function_arcsinh(GinacFunction):
         GinacFunction.__init__(self, "arcsinh",
                 latex_name=r"\operatorname{arsinh}",
                 conversions=dict(maxima='asinh', sympy='asinh', fricas='asinh',
-                                giac='asinh'))
+                                 giac='asinh', mathematica='ArcSinh'))
+
 
 arcsinh = asinh = Function_arcsinh()
 
@@ -488,7 +495,8 @@ class Function_arccosh(GinacFunction):
         GinacFunction.__init__(self, "arccosh",
                 latex_name=r"\operatorname{arcosh}",
                 conversions=dict(maxima='acosh', sympy='acosh', fricas='acosh',
-                                giac='acosh'))
+                                 giac='acosh', mathematica='ArcCosh'))
+
 
 arccosh = acosh = Function_arccosh()
 
@@ -547,7 +555,8 @@ class Function_arctanh(GinacFunction):
         GinacFunction.__init__(self, "arctanh",
                 latex_name=r"\operatorname{artanh}",
                 conversions=dict(maxima='atanh', sympy='atanh', fricas='atanh',
-                                giac='atanh'))
+                                 giac='atanh', mathematica='ArcTanh'))
+
 
 arctanh = atanh = Function_arctanh()
 
@@ -594,7 +603,8 @@ class Function_arccoth(GinacFunction):
         """
         GinacFunction.__init__(self, "arccoth",
                 latex_name=r"\operatorname{arcoth}",
-                conversions=dict(maxima='acoth', sympy='acoth', fricas='acoth'))
+                conversions=dict(maxima='acoth', sympy='acoth',
+                                 giac='acoth', fricas='acoth'))
 
     def _eval_numpy_(self, x):
         """
@@ -606,6 +616,7 @@ class Function_arccoth(GinacFunction):
             array([0.54930614, 0.34657359, 0.25541281])
         """
         return arctanh(1.0 / x)
+
 
 arccoth = acoth = Function_arccoth()
 
@@ -637,7 +648,8 @@ class Function_arcsech(GinacFunction):
         """
         GinacFunction.__init__(self, "arcsech",
                 latex_name=r"\operatorname{arsech}",
-                conversions=dict(maxima='asech', sympy='asech', fricas='asech'))
+                conversions=dict(maxima='asech', sympy='asech',
+                                 fricas='asech'))
 
     def _eval_numpy_(self, x):
         """
@@ -650,6 +662,7 @@ class Function_arcsech(GinacFunction):
             array([       inf,  1.3169579,  0.       ])
         """
         return arccosh(1.0 / x)
+
 
 arcsech = asech = Function_arcsech()
 
@@ -701,5 +714,6 @@ class Function_arccsch(GinacFunction):
             array([        inf,  1.44363548,  0.88137359])
         """
         return arcsinh(1.0 / x)
+
 
 arccsch = acsch = Function_arccsch()

@@ -229,7 +229,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             [ 9 12 15]
             [19 26 33]
             sage: type(c)
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
         """
         cdef Matrix_rational_sparse right
         cdef Matrix_rational_dense ans
@@ -620,9 +620,9 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
         EXAMPLES::
 
             sage: a = matrix(QQ,2,[1..4],sparse=True); type(a)
-            <type 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+            <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
             sage: type(a.dense_matrix())
-            <type 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+            <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
             sage: a.dense_matrix()
             [1 2]
             [3 4]

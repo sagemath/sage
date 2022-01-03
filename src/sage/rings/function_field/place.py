@@ -59,7 +59,7 @@ from sage.misc.cachefunc import cached_method
 
 from sage.arith.all import lcm
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.qqbar import QQbar
 from sage.rings.number_field.number_field_base import NumberField
 
@@ -81,7 +81,7 @@ class FunctionFieldPlace(Element):
 
     INPUT:
 
-    - ``field`` -- function field
+    - ``parent`` -- place set of a function field
 
     - ``prime`` -- prime ideal associated with the place
 
@@ -759,7 +759,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         gaps = [1]
         while M.nrows() < d:
             row = vector([to_R(der._derive(basis[i], e, sep)) for i in range(d)])
-            if not row in M.row_space():
+            if row not in M.row_space():
                 M = matrix(M.rows() + [row])
                 M.echelonize()
                 gaps.append(e + 1)
@@ -1065,7 +1065,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         alpha_powered_by_ramification_index = alpha ** prime._ramification_index
 
         def to_K(f):
-            if not f in O:
+            if f not in O:
                 den = O.coordinate_vector(f).denominator()
                 num = den * f
 
@@ -1188,3 +1188,16 @@ class PlaceSet(UniqueRepresentation, Parent):
                 break
         return p
 
+    def function_field(self):
+        """
+        Return the function field to which this place set belongs.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x + x^3*Y)
+            sage: PS = L.place_set()
+            sage: PS.function_field() == L
+            True
+        """
+        return self._field

@@ -118,12 +118,11 @@ from sage.structure.element cimport Element, ModuleElement, RingElement, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
+import sage.rings.abc
 from sage.rings.ring import is_Ring
 from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_double import RDF
-from sage.rings.complex_double import CDF
-from sage.misc.derivative import multi_derivative
+from sage.rings.abc import RealDoubleField, ComplexDoubleField
 
 from sage.rings.ring cimport Ring
 from sage.rings.integer cimport Integer, smallInteger
@@ -476,23 +475,32 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     # We first efficiently handle the important special case of the zero vector
     # over a ring. See trac 11657.
     # !! PLEASE DO NOT MOVE THIS CODE LOWER IN THIS FUNCTION !!
-    if arg2 is None and is_Ring(arg0) and (isinstance(arg1, (int, long, Integer))):
+    arg1_integer = isinstance(arg1, (int, long, Integer))
+    if arg2 is None and is_Ring(arg0) and arg1_integer:
         M = FreeModule(arg0, arg1, bool(sparse))
         v = M.zero_vector()
         if immutable:
             v.set_immutable()
         return v
 
-    # WARNING TO FUTURE OPTIMIZERS: The following two hasattr's take
+    # The try...except is slightly faster than testing with hasattr first
     # quite a significant amount of time.
-    if hasattr(arg0, '_vector_'):
-        v = arg0._vector_(arg1)
+    try:
+        arg0_vector_ = arg0._vector_
+    except AttributeError:
+        pass
+    else:
+        v = arg0_vector_(arg1)
         if immutable:
             v.set_immutable()
         return v
 
-    if hasattr(arg1, '_vector_'):
-        v = arg1._vector_(arg0)
+    try:
+        arg1_vector_ = arg1._vector_
+    except AttributeError:
+        pass
+    else:
+        v = arg1_vector_(arg0)
         if immutable:
             v.set_immutable()
         return v
@@ -500,7 +508,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     # consider a possible degree specified in second argument
     degree = None
     maxindex = None
-    if isinstance(arg1, (Integer, int, long)):
+    if arg1_integer:
         if arg1 < 0:
             raise ValueError("cannot specify the degree of a vector as a negative integer (%s)" % arg1)
         if isinstance(arg2, dict):
@@ -531,27 +539,33 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         v = arg0
         R = None
 
-    from numpy import ndarray
-    if isinstance(v, ndarray):
-        if len(v.shape) != 1:
-            raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
-        from .free_module import VectorSpace
-        if (R is None or R is RDF) and v.dtype.kind == 'f':
-            V = VectorSpace(RDF, v.shape[0])
-            from .vector_real_double_dense import Vector_real_double_dense
-            v = Vector_real_double_dense(V, v)
-            if immutable:
-                v.set_immutable()
-            return v
-        if (R is None or R is CDF) and v.dtype.kind == 'c':
-            V = VectorSpace(CDF, v.shape[0])
-            from .vector_complex_double_dense import Vector_complex_double_dense
-            v = Vector_complex_double_dense(V, v)
-            if immutable:
-                v.set_immutable()
-            return v
-        # Use slower conversion via list
-        v = list(v)
+    try:
+        from numpy import ndarray
+    except ImportError:
+        pass
+    else:
+        if isinstance(v, ndarray):
+            if len(v.shape) != 1:
+                raise TypeError("cannot convert %r-dimensional array to a vector" % len(v.shape))
+            from .free_module import VectorSpace
+            if (R is None or isinstance(R, RealDoubleField)) and v.dtype.kind == 'f':
+                from sage.rings.real_double import RDF
+                V = VectorSpace(RDF, v.shape[0])
+                from .vector_real_double_dense import Vector_real_double_dense
+                v = Vector_real_double_dense(V, v)
+                if immutable:
+                    v.set_immutable()
+                return v
+            if (R is None or isinstance(R, ComplexDoubleField)) and v.dtype.kind == 'c':
+                from sage.rings.complex_double import CDF
+                V = VectorSpace(CDF, v.shape[0])
+                from .vector_complex_double_dense import Vector_complex_double_dense
+                v = Vector_complex_double_dense(V, v)
+                if immutable:
+                    v.set_immutable()
+                return v
+            # Use slower conversion via list
+            v = list(v)
 
     if isinstance(v, dict):
         if degree is None:
@@ -914,7 +928,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: v = sage.modules.free_module_element.FreeModuleElement(QQ^3)
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement'>
+            <class 'sage.modules.free_module_element.FreeModuleElement'>
         """
         self._parent = parent
         self._degree = parent.degree()
@@ -1735,7 +1749,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: F.<y> = PolynomialRing(QQ, 'y')
             sage: type(vector(F, [0]*4, sparse=True))
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
             sage: vector(F, [0,0,0,y]) == vector(F, [0,0,0,y])
             True
             sage: vector(F, [0,0,0,0]) == vector(F, [0,2,0,y])
@@ -1928,7 +1942,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: P.<x,y,z> = QQ[]
             sage: v = vector([x,y,z], sparse=True)
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
             sage: a = v.list(); a
             [x, y, z]
             sage: a[0] = x*y; v
@@ -3934,9 +3948,8 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             (r, theta) |--> r*cos(theta)^2 + r*sin(theta)^2
         """
         if var is None:
-            from sage.symbolic.callable import is_CallableSymbolicExpressionRing
-            from sage.calculus.all import jacobian
-            if is_CallableSymbolicExpressionRing(self.coordinate_ring()):
+            if isinstance(self.coordinate_ring(), sage.rings.abc.CallableSymbolicExpressionRing):
+                from sage.calculus.all import jacobian
                 return jacobian(self, self.coordinate_ring().arguments())
             else:
                 raise ValueError("No differentiation variable specified.")
@@ -3968,6 +3981,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: v.derivative(x,x)
             (0, 0, 2)
         """
+        from sage.misc.derivative import multi_derivative
         return multi_derivative(self, args)
 
     diff = derivative
@@ -4012,7 +4026,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: vec
             (0.5, 0.3333333333333334, 0.4596976941318602)
             sage: type(vec)
-            <type 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
+            <class 'sage.modules.vector_real_double_dense.Vector_real_double_dense'>
             sage: answers
             [(0.5, 5.55111512312578...e-15, 21, 0), (0.3333333333333..., 3.70074341541719...e-15, 21, 0), (0.45969769413186..., 5.10366964392284...e-15, 21, 0)]
 
@@ -4169,7 +4183,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         EXAMPLES::
 
             sage: type(vector(RR, [-1,0,2/3,pi,oo]))
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
 
         We can initialize with lists, tuples and derived types::
 
@@ -4418,7 +4432,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: P.<x,y,z> = QQ[]
             sage: v = vector([x,y,z])
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_dense'>
             sage: a = v.list(); a
             [x, y, z]
             sage: a[0] = x*y; v
@@ -5114,7 +5128,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: M = FreeModule(R, 3, sparse=True) * (1/x)
             sage: v = M([-x^2, 3/x, 0])
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
+            <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
             sage: a = v.list()
             sage: a
             [-x^2, 3/x, 0]

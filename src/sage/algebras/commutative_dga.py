@@ -92,14 +92,13 @@ from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianG
 from sage.matrix.constructor import matrix
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.homset import RingHomset_generic
 from sage.rings.morphism import RingHomomorphism_im_gens
 from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.quotient_ring import QuotientRing_nc
 from sage.rings.quotient_ring_element import QuotientRingElement
 from sage.misc.cachefunc import cached_function
-from sage.misc.superseded import deprecated_function_alias
 
 
 def sorting_keys(element):
@@ -1534,8 +1533,6 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 else:
                     res[deg] = term
             return {i: res[i] for i in sorted(res.keys())}
-
-        homogenous_parts = deprecated_function_alias(30585, homogeneous_parts)
 
         def dict(self):
             r"""
@@ -3327,7 +3324,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, max_degree=None,
         sage: AQ.differential()
         Traceback (most recent call last):
         ...
-        TypeError: differential() missing 1 required positional argument:
+        TypeError: ...differential() missing 1 required positional argument:
         'diff'
 
     Now we add a differential to ``AQ``::

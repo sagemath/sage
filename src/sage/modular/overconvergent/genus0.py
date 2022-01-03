@@ -184,7 +184,10 @@ from sage.modules.module    import Module
 from sage.structure.element import Vector, ModuleElement
 from sage.structure.richcmp import richcmp
 from sage.plot.plot         import plot
-from sage.rings.all         import (O, Infinity, ZZ, QQ, pAdicField, PolynomialRing, PowerSeriesRing, is_pAdicField)
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+import sage.rings.abc
+from sage.rings.all         import (O, Infinity, pAdicField, PolynomialRing, PowerSeriesRing)
 import weakref
 
 from .weightspace import WeightSpace_constructor as WeightSpace, WeightCharacter
@@ -295,7 +298,7 @@ class OverconvergentModularFormsSpace(Module):
 
         self._p = prime
 
-        if not ( base_ring == QQ or is_pAdicField(base_ring) ):
+        if not ( base_ring == QQ or isinstance(base_ring, sage.rings.abc.pAdicField) ):
             raise TypeError("Base ring must be QQ or a p-adic field")
 
         if base_ring != QQ and base_ring.prime() != self._p:
@@ -1033,9 +1036,9 @@ class OverconvergentModularFormsSpace(Module):
             [0, 2, 4, 6, 8]
         """
         if self.base_ring() == QQ:
-            slopelist=self.cps_u(n).truncate().newton_slopes(self.prime())
-        elif is_pAdicField(self.base_ring()):
-            slopelist=self.cps_u(n).truncate().newton_slopes()
+            slopelist = self.cps_u(n).truncate().newton_slopes(self.prime())
+        elif isinstance(self.base_ring(), sage.rings.abc.pAdicField):
+            slopelist = self.cps_u(n).truncate().newton_slopes()
         else:
             print("slopes are only defined for base field QQ or a p-adic field")
         return [-i for i in slopelist]
@@ -1574,7 +1577,7 @@ class OverconvergentModularFormElement(ModuleElement):
         s = self.parent().radius()
 
         F = self.parent().base_ring()
-        if not is_pAdicField(F):
+        if not isinstance(F, sage.rings.abc.pAdicField):
             F = pAdicField(p)
 
         for i in range(self.prec()):
@@ -1595,7 +1598,7 @@ class OverconvergentModularFormElement(ModuleElement):
             sage: (3^18 * (M.2)).valuation()
             18
         """
-        if is_pAdicField(self.parent().base_ring()):
+        if isinstance(self.parent().base_ring(), sage.rings.abc.pAdicField):
             v = lambda u: u.normalized_valuation()
         else:
             v = lambda u: u.valuation(self.parent().prime())
@@ -1614,7 +1617,7 @@ class OverconvergentModularFormElement(ModuleElement):
         """
         p = self.prime()
         F = self.parent().base_ring()
-        if not is_pAdicField(F):
+        if not isinstance(F, sage.rings.abc.pAdicField):
             F = pAdicField(p)
         s = self.parent().radius()
         p = self.prime()

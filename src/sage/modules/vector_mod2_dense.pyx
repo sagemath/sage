@@ -59,7 +59,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: VS([0,0,1])
             (0, 0, 1)
             sage: type(_)
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         cdef Vector_mod2_dense y
         y = Vector_mod2_dense.__new__(Vector_mod2_dense)
@@ -114,7 +114,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: VS([0,0,1])
             (0, 0, 1)
             sage: type(_)
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         self._degree = degree
         self._parent = parent
@@ -131,7 +131,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: VS((0,0,1/3))
             (0, 0, 1)
             sage: type(_)
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         self._entries = NULL
         self._is_immutable = 0
@@ -146,7 +146,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: VS((0,0,1/3))
             (0, 0, 1)
             sage: type(_)
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
             sage: VS((0,0,int(3)))
             (0, 0, 1)
             sage: VS((0,0,3))
@@ -344,8 +344,9 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         """
         cdef int i
         cdef int res = 0
+        cdef m4ri_word *row = mzd_row(self._entries, 0) 
         for i from 0 <= i < self._entries.width:
-            res += Integer(self._entries.rows[0][i]).popcount()
+            res += Integer(row[i]).popcount()
         return res
 
 
@@ -386,9 +387,10 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         n =  IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self.base_ring())
         n.ivalue = 0
-
+        cdef m4ri_word *lrow = mzd_row(self._entries, 0)
+        cdef m4ri_word *rrow = mzd_row(r._entries, 0)
         for i from 0 <= i < self._entries.width:
-            tmp ^= self._entries.rows[0][i] & r._entries.rows[0][i]
+            tmp ^= lrow[i] & rrow[i]
 
         for i in range(64):
             n.ivalue ^= <int>(tmp & 1)
@@ -411,8 +413,11 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         r = right
         z = self._new_c()
         cdef Py_ssize_t i
+        cdef m4ri_word *lrow = mzd_row(self._entries, 0)
+        cdef m4ri_word *rrow = mzd_row(r._entries, 0)
+        cdef m4ri_word *zrow = mzd_row(z._entries, 0)
         for i from 0 <= i < self._entries.width:
-            z._entries.rows[0][i] = (self._entries.rows[0][i] & r._entries.rows[0][i])
+            zrow[i] = (lrow[i] & rrow[i])
         return z
 
     cpdef _lmul_(self, Element left):

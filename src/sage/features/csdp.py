@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Testing for CSDP at runtime
+Feature for testing the presence of ``csdp``
 """
 
 import os
@@ -13,14 +13,14 @@ from . import Executable, FeatureTestResult
 
 class CSDP(Executable):
     r"""
-    A :class:`sage.features.Feature` which checks for the ``theta`` binary
+    A :class:`~sage.features.Feature` which checks for the ``theta`` binary
     of CSDP.
 
     EXAMPLES::
 
         sage: from sage.features.csdp import CSDP
-        sage: CSDP().is_present()  # optional: csdp
-        FeatureTestResult('CSDP', True)
+        sage: CSDP().is_present()  # optional - csdp
+        FeatureTestResult('csdp', True)
     """
     def __init__(self):
         r"""
@@ -30,7 +30,7 @@ class CSDP(Executable):
             sage: isinstance(CSDP(), CSDP)
             True
         """
-        Executable.__init__(self, name="CSDP", spkg="csdp", executable="theta",
+        Executable.__init__(self, name="csdp", spkg="csdp", executable="theta",
                                 url="https://github.com/dimpase/csdp")
 
     def is_functional(self):
@@ -40,8 +40,8 @@ class CSDP(Executable):
         EXAMPLES::
 
             sage: from sage.features.csdp import CSDP
-            sage: CSDP().is_functional()  # optional: csdp
-            FeatureTestResult('CSDP', True)
+            sage: CSDP().is_functional()  # optional - csdp
+            FeatureTestResult('csdp', True)
         """
         from sage.misc.temporary_file import tmp_filename
         tf_name = tmp_filename()
@@ -64,3 +64,7 @@ class CSDP(Executable):
                                          .format(command=" ".join(command)))
 
         return FeatureTestResult(self, True)
+
+
+def all_features():
+    return [CSDP()]

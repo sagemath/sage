@@ -290,7 +290,7 @@ cdef class FPElement(pAdicTemplateElement):
 
             sage: a = ZpFP(5)(-3)
             sage: type(a)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: loads(dumps(a)) == a
             True
         """
@@ -1152,7 +1152,7 @@ cdef class FPElement(pAdicTemplateElement):
             ...
             ValueError: unit part of 0 and infinity not defined
             sage: type(R(5).unit_part())
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: R = ZpFP(5, 5); a = R(75); a.unit_part()
             3
         """
@@ -1268,7 +1268,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
         EXAMPLES::
 
             sage: f = ZpFP(5).coerce_map_from(ZZ); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicCoercion_ZZ_FP'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicCoercion_ZZ_FP'>
         """
         RingHomomorphism.__init__(self, ZZ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1350,7 +1350,7 @@ cdef class pAdicCoercion_ZZ_FP(RingHomomorphism):
 
             sage: R = ZpFP(5,4)
             sage: type(R(10,2))
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: R(30,2)
             5
             sage: R(30,3,2)
@@ -1416,7 +1416,7 @@ cdef class pAdicConvert_FP_ZZ(RingMap):
         EXAMPLES::
 
             sage: f = ZpFP(5).coerce_map_from(ZZ).section(); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicConvert_FP_ZZ'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicConvert_FP_ZZ'>
             sage: f.category()
             Category of homsets of sets
         """
@@ -1480,7 +1480,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
         EXAMPLES::
 
             sage: f = QpFP(5).coerce_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicCoercion_QQ_FP'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicCoercion_QQ_FP'>
         """
         RingHomomorphism.__init__(self, QQ.Hom(R))
         self._zero = R.element_class(R, 0)
@@ -1571,7 +1571,7 @@ cdef class pAdicCoercion_QQ_FP(RingHomomorphism):
 
             sage: R = QpFP(5,4)
             sage: type(R(10/3,2))
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: R(10/3,2)
             4*5
             sage: R(10/3,3,1)
@@ -1636,7 +1636,7 @@ cdef class pAdicConvert_FP_QQ(RingMap):
         EXAMPLES::
 
             sage: f = QpFP(5).coerce_map_from(QQ).section(); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicConvert_FP_QQ'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicConvert_FP_QQ'>
             sage: f.category()
             Category of homsets of sets with partial maps
         """
@@ -1684,7 +1684,7 @@ cdef class pAdicConvert_QQ_FP(Morphism):
         EXAMPLES::
 
             sage: f = ZpFP(5).convert_map_from(QQ); type(f)
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicConvert_QQ_FP'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicConvert_QQ_FP'>
         """
         Morphism.__init__(self, Hom(QQ, R, SetsWithPartialMaps()))
         self._zero = R.element_class(R, 0)
@@ -1765,7 +1765,7 @@ cdef class pAdicConvert_QQ_FP(Morphism):
 
             sage: R = ZpFP(5,4)
             sage: type(R(1/7,2))
-            <type 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
+            <class 'sage.rings.padics.padic_floating_point_element.pAdicFloatingPointElement'>
             sage: R(1/7,2)
             3 + 3*5
             sage: R(1/7,3,2)
@@ -1820,7 +1820,7 @@ cdef class pAdicCoercion_FP_frac_field(RingHomomorphism):
             sage: R.<a> = ZqFP(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = K.coerce_map_from(R); type(f)
-            <type 'sage.rings.padics.qadic_flint_FP.pAdicCoercion_FP_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_FP.pAdicCoercion_FP_frac_field'>
         """
         RingHomomorphism.__init__(self, R.Hom(K))
         self._zero = K(0)
@@ -1997,7 +1997,7 @@ cdef class pAdicConvert_FP_frac_field(Morphism):
             sage: R.<a> = ZqFP(27, implementation='FLINT')
             sage: K = R.fraction_field()
             sage: f = R.convert_map_from(K); type(f)
-            <type 'sage.rings.padics.qadic_flint_FP.pAdicConvert_FP_frac_field'>
+            <class 'sage.rings.padics.qadic_flint_FP.pAdicConvert_FP_frac_field'>
         """
         Morphism.__init__(self, Hom(K, R, SetsWithPartialMaps()))
         self._zero = R(0)

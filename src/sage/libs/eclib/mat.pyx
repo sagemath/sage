@@ -5,7 +5,7 @@ Cremona matrices
 from ..eclib cimport scalar, addscalar
 
 from sage.matrix.all import MatrixSpace
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.matrix.matrix_integer_sparse cimport Matrix_integer_sparse
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
@@ -21,7 +21,7 @@ cdef class Matrix:
         sage: M = CremonaModularSymbols(225)
         sage: t = M.hecke_matrix(2)
         sage: type(t)
-        <type 'sage.libs.eclib.mat.Matrix'>
+        <class 'sage.libs.eclib.mat.Matrix'>
         sage: t
         61 x 61 Cremona matrix over Rational Field
 
@@ -30,7 +30,7 @@ cdef class Matrix:
         sage: t = CremonaModularSymbols(11).hecke_matrix(2); t
         3 x 3 Cremona matrix over Rational Field
         sage: type(t)
-        <type 'sage.libs.eclib.mat.Matrix'>
+        <class 'sage.libs.eclib.mat.Matrix'>
     """
     def __repr__(self):
         """
@@ -204,12 +204,12 @@ cdef class Matrix:
             [ 0  1]
             [ 1 -1]
             sage: type(s)
-            <type 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
+            <class 'sage.matrix.matrix_integer_sparse.Matrix_integer_sparse'>
             sage: s = t.sage_matrix_over_ZZ(sparse=False); s
             [ 0  1]
             [ 1 -1]
             sage: type(s)
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
         """
         cdef long n = self.nrows()
         cdef long i, j, k

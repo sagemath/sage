@@ -289,7 +289,7 @@ class DevelopingValuation(DiscretePseudoValuation):
         """
         f = self.domain().coerce(f)
 
-        from sage.rings.all import infinity
+        from sage.rings.infinity import infinity
         if f.is_zero():
             return infinity
 

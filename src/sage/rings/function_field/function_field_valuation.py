@@ -150,7 +150,7 @@ developed for number fields in [Mac1936I]_ and [Mac1936II]_.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.structure.factory import UniqueFactory
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
 
 from sage.rings.valuation.valuation import DiscreteValuation, DiscretePseudoValuation, InfiniteDiscretePseudoValuation, NegativeInfiniteDiscretePseudoValuation
@@ -923,7 +923,7 @@ class InducedRationalFunctionFieldValuation_base(FunctionFieldValuation_base):
             # if the caller was sure that we should simplify, then we should try to do the best simplification possible
             error = self(f) if force else self.upper_bound(f)
 
-        from sage.all import infinity
+        from sage.rings.infinity import infinity
         if error is infinity:
             return f
 
@@ -1247,7 +1247,7 @@ class FunctionFieldMappedValuation_base(FunctionFieldValuation_base, MappedValua
             3 * (x)-adic valuation (in Rational function field in x over Finite Field of size 2 after x |--> 1/x)
 
         """
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if scalar in QQ and scalar > 0 and scalar != 1:
             return self.domain().valuation((self._base_valuation.scale(scalar), self._to_base, self._from_base))
         return super(FunctionFieldMappedValuation_base, self).scale(scalar)

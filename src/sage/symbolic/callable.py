@@ -38,29 +38,30 @@ The arguments in the definition must be symbolic variables (:trac:`10747`)::
     sage: f(1)=2
     Traceback (most recent call last):
     ...
-    SyntaxError: can...t assign to function call
+    SyntaxError: can...t assign to function call...
 
     sage: f(x,1)=2
     Traceback (most recent call last):
     ...
-    SyntaxError: can...t assign to function call
+    SyntaxError: can...t assign to function call...
 
     sage: f(1,2)=3
     Traceback (most recent call last):
     ...
-    SyntaxError: can...t assign to function call
+    SyntaxError: can...t assign to function call...
 
     sage: f(1,2)=x
     Traceback (most recent call last):
     ...
-    SyntaxError: can...t assign to function call
+    SyntaxError: can...t assign to function call...
 
     sage: f(x,2)=x
     Traceback (most recent call last):
     ...
-    SyntaxError: can...t assign to function call
+    SyntaxError: can...t assign to function call...
 """
 
+import sage.rings.abc
 from sage.symbolic.ring import SymbolicRing, SR
 from sage.categories.pushout import ConstructionFunctor
 
@@ -81,12 +82,18 @@ def is_CallableSymbolicExpressionRing(x):
 
         sage: from sage.symbolic.callable import is_CallableSymbolicExpressionRing
         sage: is_CallableSymbolicExpressionRing(QQ)
+        doctest:warning...
+        DeprecationWarning: is_CallableSymbolicExpressionRing is deprecated;
+        use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead
+        See https://trac.sagemath.org/32665 for details.
         False
         sage: var('x,y,z')
         (x, y, z)
         sage: is_CallableSymbolicExpressionRing(CallableSymbolicExpressionRing((x,y,z)))
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32665, 'is_CallableSymbolicExpressionRing is deprecated; use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead')
     return isinstance(x, CallableSymbolicExpressionRing_class)
 
 def is_CallableSymbolicExpression(x):
@@ -109,8 +116,8 @@ def is_CallableSymbolicExpression(x):
         sage: is_CallableSymbolicExpression(foo)
         False
     """
-    from sage.symbolic.expression import is_Expression
-    return is_Expression(x) and isinstance(x.parent(), CallableSymbolicExpressionRing_class)
+    from sage.structure.element import Expression
+    return isinstance(x, Expression) and isinstance(x.parent(), CallableSymbolicExpressionRing_class)
 
 class CallableSymbolicExpressionFunctor(ConstructionFunctor):
     def __init__(self, arguments):
@@ -267,7 +274,7 @@ class CallableSymbolicExpressionFunctor(ConstructionFunctor):
         return tuple(new_list)
 
 
-class CallableSymbolicExpressionRing_class(SymbolicRing):
+class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.CallableSymbolicExpressionRing):
     def __init__(self, arguments):
         """
         EXAMPLES:
@@ -300,7 +307,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing):
             sage: g.parent().has_coerce_map_from(f.parent())
             True
         """
-        if is_CallableSymbolicExpressionRing(R):
+        if isinstance(R, CallableSymbolicExpressionRing_class):
             args = self.arguments()
             if all(a in args for a in R.arguments()):
                 return True

@@ -315,7 +315,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             [(1.0, 0.5), (-1.0, 3.0)]
         """
         cdef Py_ssize_t i
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return [(RDF(self.B[2*i]),RDF(self.B[2*i+1])) for i in range(self.N)]
 
     def __repr__(self):
@@ -903,7 +903,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
             sage: v = m.sample(10)
             sage: l = stats.TimeSeries([m.baum_welch(v,max_iter=1)[0] for _ in range(len(v))])
-            sage: all(l[i] <= l[i+1] for i in range(9))
+            sage: all(l[i] <= l[i+1] + 0.0001 for i in range(9))
             True
             sage: l  # random
             [-20.1167, -17.7611, -16.9814, -16.9364, -16.9314, -16.9309, -16.9309, -16.9309, -16.9309, -16.9309]

@@ -87,12 +87,12 @@ def handle_AA_and_QQbar(func):
         from sage.rings.polynomial.multi_polynomial import MPolynomial
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence, is_PolynomialSequence
         from sage.rings.ideal import Ideal, Ideal_generic
-        from sage.rings.qqbar import is_AlgebraicField_common, number_field_elements_from_algebraics
+        from sage.rings.qqbar import AlgebraicField_common, number_field_elements_from_algebraics
 
         if not any(isinstance(a, (Polynomial, MPolynomial, Ideal_generic))
-                   and is_AlgebraicField_common(a.base_ring())
+                   and isinstance(a.base_ring(), AlgebraicField_common)
                    or is_PolynomialSequence(a)
-                   and is_AlgebraicField_common(a.ring().base_ring()) for a in args):
+                   and isinstance(a.ring().base_ring(), AlgebraicField_common) for a in args):
             return func(*args, **kwds)
 
         polynomials = []

@@ -571,7 +571,6 @@ def process_mathtt(s):
         s = s[:start] + s[start+8:end] + s[end+1:]
     return s
 
-
 def format(s, embedded=False):
     r"""noreplace
     Format Sage documentation ``s`` for viewing with IPython.
@@ -746,7 +745,6 @@ def format(s, embedded=False):
         s = process_extlinks(s, embedded=embedded)
         s = detex(s, embedded=embedded)
     return s
-
 
 def format_src(s):
     """
@@ -959,7 +957,6 @@ def _search_src_or_doc(what, string, extra1='', extra2='', extra3='',
                                      # formatted for Jupyter use
     })
 
-
 def search_src(string, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
     r"""
@@ -1052,12 +1049,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     The following produces an error because the string 'fetch(' is a
     malformed regular expression::
 
-        sage: print(search_src(" fetch(", "def", interact=False)) # py2
-        Traceback (most recent call last):
-        ...
-        error: unbalanced parenthesis
-
-        sage: print(search_src(" fetch(", "def", interact=False)) # py3
+        sage: print(search_src(" fetch(", "def", interact=False))
         Traceback (most recent call last):
         ...
         error: missing ), unterminated subpattern at position 6
@@ -1106,8 +1098,7 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
         misc/sagedoc.py:... len(search_src("matrix", interact=False).splitlines()) # random # long time
         misc/sagedoc.py:... len(search_src("matrix", module="sage.calculus", interact=False).splitlines()) # random
         misc/sagedoc.py:... len(search_src("matrix", path_re="calc", interact=False).splitlines()) > 15
-        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False)) # py2
-        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False)) # py3
+        misc/sagedoc.py:... print(search_src(" fetch(", "def", interact=False))
         misc/sagedoc.py:... print(search_src(r" fetch\(", "def", interact=False)) # random # long time
         misc/sagedoc.py:... print(search_src(r" fetch\(", "def", "pyx", interact=False)) # random # long time
         misc/sagedoc.py:... s = search_src('Matrix', path_re='matrix', interact=False); s.find('x') > 0
@@ -1141,7 +1132,6 @@ def search_src(string, extra1='', extra2='', extra3='', extra4='',
     return _search_src_or_doc('src', string, extra1=extra1, extra2=extra2,
                               extra3=extra3, extra4=extra4, extra5=extra5,
                               **kwds)
-
 
 def search_doc(string, extra1='', extra2='', extra3='', extra4='',
                extra5='', **kwds):
@@ -1310,7 +1300,6 @@ def format_search_as_html(what, results, search):
     append('</font>')
     append('</html>')
     return ''.join(s)
-
 
 
 #######################################
@@ -1543,7 +1532,7 @@ class _sage_doc:
         path = os.path.join(self._base_path, name, "index.html")
         if not os.path.exists(path):
             raise OSError("""The document '{0}' does not exist.  Please build it
-with 'sage -docbuild {0} html --mathjax' and try again.""".format(name))
+with 'sage -docbuild {0} html' and try again.""".format(name))
 
         if testing:
             return (url, path)

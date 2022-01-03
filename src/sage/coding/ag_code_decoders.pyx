@@ -19,27 +19,27 @@ EXAMPLES::
     sage: pls.remove(O)
     sage: G = -O + 18*Q
     sage: code = codes.EvaluationAGCode(pls, G)  # long time
-    sage: code  # long time
+    sage: code                                   # long time
     [26, 15] evaluation AG code over GF(9)
-    sage: decoder = code.decoder('K')  # long time
-    sage: tau = decoder.decoding_radius()  # long time
-    sage: tau  # long time
+    sage: decoder = code.decoder('K')            # long time
+    sage: tau = decoder.decoding_radius()        # long time
+    sage: tau                                    # long time
     4
 
 The ``decoder`` is now ready for correcting vectors received from a noisy
 channel::
 
     sage: channel = channels.StaticErrorRateChannel(code.ambient_space(), tau)  # long time
-    sage: message_space = decoder.message_space()  # long time
-    sage: message = message_space.random_element()  # long time
-    sage: encoder = decoder.connected_encoder()  # long time
-    sage: sent_codeword = encoder.encode(message)  # long time
-    sage: received_vector = channel(sent_codeword)  # long time
-    sage: (received_vector - sent_codeword).hamming_weight()  # long time
+    sage: message_space = decoder.message_space()                   # long time
+    sage: message = message_space.random_element()                  # long time
+    sage: encoder = decoder.connected_encoder()                     # long time
+    sage: sent_codeword = encoder.encode(message)                   # long time
+    sage: received_vector = channel(sent_codeword)                  # long time
+    sage: (received_vector - sent_codeword).hamming_weight()        # long time
     4
     sage: decoder.decode_to_code(received_vector) == sent_codeword  # long time
     True
-    sage: decoder.decode_to_message(received_vector) == message  # long time
+    sage: decoder.decode_to_message(received_vector) == message     # long time
     True
 
 AUTHORS:

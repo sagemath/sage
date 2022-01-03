@@ -1056,6 +1056,23 @@ class PolynomialQuotientRing_generic(CommutativeRing):
         return ret
 
     def krull_dimension(self):
+        """
+        Return the Krull dimension.
+
+        This is the Krull dimension of the base ring, unless the
+        quotient is zero.
+
+        EXAMPLES::
+
+            sage: R = PolynomialRing(ZZ,'x').quotient(x**6-1)
+            sage: R.krull_dimension()
+            1
+            sage: R = PolynomialRing(ZZ,'x').quotient(1)
+            sage: R.krull_dimension()
+            -1
+        """
+        if self.is_zero():
+            return -1
         return self.base_ring().krull_dimension()
 
     def modulus(self):
@@ -1333,7 +1350,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(CG[0][0][1])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic_with_category.element_class'>
             sage: type(CG[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         TESTS:
 
@@ -1493,7 +1510,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(CG[0][0][1])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_generic_with_category.element_class'>
             sage: type(CG[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         """
         return self.S_class_group((), proof=proof)
@@ -1559,7 +1576,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(U[0][0])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category.element_class'>
             sage: type(U[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(U[1][1])
             <class 'sage.rings.infinity.PlusInfinity'>
 
@@ -1645,7 +1662,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             sage: type(U[0][0])
             <class 'sage.rings.polynomial.polynomial_quotient_ring.PolynomialQuotientRing_field_with_category.element_class'>
             sage: type(U[0][1])
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: type(U[1][1])
             <class 'sage.rings.infinity.PlusInfinity'>
 
@@ -1888,7 +1905,7 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             # for a finite field, we return the isomorphic simple extensions of
             # the underlying prime field
             N = self.cardinality()
-            from sage.rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             isomorphic_ring = GF(N)
 
             # the map to GF(N) maps our generator to a root of our modulus in the isomorphic_ring
@@ -1925,9 +1942,9 @@ class PolynomialQuotientRing_generic(CommutativeRing):
             try:
                 isomorphic_ring = self.base_ring().extension(self.modulus(), names=self.variable_names())
             except ValueError:
-                pass # modulus is not irreducible
+                pass  # modulus is not irreducible
             else:
-                if not isomorphic_ring in NumberFields():
+                if isomorphic_ring not in NumberFields():
                     raise NotImplementedError("cannot handle extensions of number fields that do not produce number fields")
                 # refine the category of self
                 if not self.is_field():

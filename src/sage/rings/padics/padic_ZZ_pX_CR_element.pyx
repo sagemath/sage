@@ -1905,7 +1905,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: type(W(0))
-            <type 'sage.rings.padics.padic_ZZ_pX_CR_element.pAdicZZpXCRElement'>
+            <class 'sage.rings.padics.padic_ZZ_pX_CR_element.pAdicZZpXCRElement'>
             sage: W(0)^0
             1 + O(w^25)
             sage: W(0)^0 == W(1)
@@ -2859,7 +2859,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         if self.valuation_c() < 0:
             raise ValueError("self must be integral")
         n = self.prime_pow.deg
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         if self._is_exact_zero():
             from sage.rings.integer_ring import IntegerRing
             return matrix(IntegerRing(), n, n)

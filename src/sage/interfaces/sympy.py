@@ -1055,33 +1055,27 @@ def test_all():
         check_expression("x**2+y**3", "x y")
         check_expression("1/(x+y)**2-x**3/4", "x y")
 
-
     def test_complex():
         check_expression("I", "")
         check_expression("23+I*4", "x")
-
 
     def test_complex_fail():
         # Sage doesn't properly implement _sympy_ on I
         check_expression("I*y", "y")
         check_expression("x+I*y", "x y")
 
-
     def test_integer():
         check_expression("4*x", "x")
         check_expression("-4*x", "x")
-
 
     def test_real():
         check_expression("1.123*x", "x")
         check_expression("-18.22*x", "x")
 
-
-
     def test_functions():
         # Test at least one Function without own _sage_ method
         from sympy import factorial
-        assert not "_sage_" in factorial.__dict__
+        assert "_sage_" not in factorial.__dict__
         check_expression("factorial(x)", "x")
         check_expression("sin(x)", "x")
         check_expression("cos(x)", "x")

@@ -111,7 +111,7 @@ def random_sublist_of_size(k, n):
     w = set([])
     while len(w) < n:
         z = randrange(k)
-        if not z in w:
+        if z not in w:
             w.add(z)
     return sorted(w)
 

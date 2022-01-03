@@ -759,7 +759,7 @@ def nest(f, n, x):
         x
 
     """
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     n = Integer(n)
 
     if n < 0:
@@ -803,6 +803,8 @@ class BackslashOperator:
         EXAMPLES::
 
             sage: A = random_matrix(ZZ, 4)
+            sage: while A.rank() != 4:
+            ....:     A = random_matrix(ZZ, 4)
             sage: B = random_matrix(ZZ, 4)
             sage: temp = A * BackslashOperator()
             sage: temp.left is A

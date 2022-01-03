@@ -16,10 +16,7 @@ the MathJax macros are produced from the LaTeX macros.  The list of
 LaTeX macros is used in the file
 ``sage.docs.conf`` to add to the preambles of
 both the LaTeX file used to build the PDF version of the documentation
-and the LaTeX file used to build the HTML version.  The list of
-MathJax macros is used in the file
-``sagenb/notebook/tutorial.py`` to define MathJax macros for use
-in the live documentation (and also in the notebook).
+and the LaTeX file used to build the HTML version.
 
 Any macro defined here may be used in docstrings or in the tutorial
 (or other pieces of documentation).  In a docstring, for example,

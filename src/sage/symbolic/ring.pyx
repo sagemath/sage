@@ -32,9 +32,11 @@ The symbolic ring
 # ****************************************************************************
 
 from sage.rings.integer cimport Integer
+from sage.rings.ring cimport CommutativeRing
+
+import sage.rings.abc
 
 from sage.symbolic.expression cimport (
-    is_Expression,
     _latex_Expression,
     _repr_Expression,
     new_Expression,
@@ -43,10 +45,11 @@ from sage.symbolic.expression cimport (
     new_Expression_symbol,
 )
 
-from sage.structure.element cimport Element
+from sage.structure.element cimport Element, Expression
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
+import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 
 # is_SymbolicVariable used to be defined here; re-export it
@@ -60,7 +63,7 @@ KEYWORDS = set(keyword.kwlist).union(['exec', 'print', 'None', 'True',
                                       'False', 'nonlocal'])
 
 
-cdef class SymbolicRing(CommutativeRing):
+cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
     """
     Symbolic Ring, parent object for all symbolic expressions.
     """
@@ -205,9 +208,7 @@ cdef class SymbolicRing(CommutativeRing):
             from sage.rings.real_mpfr import mpfr_prec_min
 
             from sage.rings.fraction_field import is_FractionField
-            from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
             from sage.rings.real_mpfi import is_RealIntervalField
-            from sage.rings.complex_interval_field import is_ComplexIntervalField
             from sage.rings.real_arb import RealBallField
             from sage.rings.complex_arb import ComplexBallField
             from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
@@ -231,10 +232,12 @@ cdef class SymbolicRing(CommutativeRing):
                 base = R.base_ring()
                 return base is not self and self.has_coerce_map_from(base)
             elif (R is InfinityRing or R is UnsignedInfinityRing
-                  or is_RealIntervalField(R) or is_ComplexIntervalField(R)
-                  or isinstance(R, RealBallField)
-                  or isinstance(R, ComplexBallField)
-                  or is_IntegerModRing(R) or is_FiniteField(R)):
+                  or isinstance(R, (sage.rings.abc.RealIntervalField,
+                                    sage.rings.abc.ComplexIntervalField,
+                                    sage.rings.abc.RealBallField,
+                                    sage.rings.abc.ComplexBallField,
+                                    sage.rings.abc.IntegerModRing))
+                  or is_FiniteField(R)):
                 return True
             elif isinstance(R, GenericSymbolicSubring):
                 return True
@@ -248,7 +251,7 @@ cdef class SymbolicRing(CommutativeRing):
             sage: a = SR(-3/4); a
             -3/4
             sage: type(a)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: a.parent()
             Symbolic Ring
             sage: K.<a> = QuadraticField(-3)
@@ -402,7 +405,7 @@ cdef class SymbolicRing(CommutativeRing):
             sage: t = SR._force_pyobject(QQ); t
             Rational Field
             sage: type(t)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         Testing tuples::
 
@@ -525,7 +528,7 @@ cdef class SymbolicRing(CommutativeRing):
             sage: c = SR.characteristic(); c
             0
             sage: type(c)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return Integer(0)
 
@@ -795,7 +798,7 @@ cdef class SymbolicRing(CommutativeRing):
         The return type is a symbolic expression::
 
             sage: type(zz)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
 
         We can specify the domain as well::
 
@@ -870,7 +873,7 @@ cdef class SymbolicRing(CommutativeRing):
             ...
             ValueError: cannot specify n for multiple symbol names
         """
-        if is_Expression(name):
+        if isinstance(name, Expression):
             return name
         if not isinstance(name, (basestring, list, tuple)):
             name = repr(name)
@@ -1177,7 +1180,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         sage: a = f(numpy.int8('2')).pyobject()
         sage: type(a)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     This behavior also applies to standard functions::
 
@@ -1216,10 +1219,10 @@ cdef class NumpyToSRMorphism(Morphism):
 
         import numpy
         if issubclass(numpy_type, numpy.integer):
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             self._intermediate_ring = ZZ
         elif issubclass(numpy_type, numpy.floating):
-            from sage.rings.all import RDF
+            from sage.rings.real_double import RDF
             self._intermediate_ring = RDF
         elif issubclass(numpy_type, numpy.complexfloating):
             from sage.rings.all import CDF
@@ -1271,6 +1274,8 @@ cdef class UnderscoreSageMorphism(Morphism):
         import sage.categories.homset
         from sage.sets.pythonclass import Set_PythonType
         Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(t), R))
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
 
     cpdef Element _call_(self, a):
         """
@@ -1306,16 +1311,28 @@ def the_SymbolicRing():
 
 def is_SymbolicExpressionRing(R):
     """
-    Returns True if *R* is the symbolic expression ring.
+    Return True if ``R`` is the symbolic expression ring.
+
+    This function is deprecated.  Instead, either use ``R is SR`` (to
+    test whether ``R`` is the unique symbolic ring ``SR``); or
+    ``isinstance`` with :class:`~sage.rings.abc.SymbolicRing`
+    (when also symbolic subrings and callable symbolic rings should
+    be accepted).
 
     EXAMPLES::
 
         sage: from sage.symbolic.ring import is_SymbolicExpressionRing
         sage: is_SymbolicExpressionRing(ZZ)
+        doctest:warning...
+        DeprecationWarning: is_SymbolicExpressionRing is deprecated;
+        use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead
+        See https://trac.sagemath.org/32665 for details.
         False
         sage: is_SymbolicExpressionRing(SR)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32665, 'is_SymbolicExpressionRing is deprecated; use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead')
     return R is SR
 
 def var(name, **kwds):

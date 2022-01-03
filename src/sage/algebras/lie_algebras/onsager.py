@@ -197,7 +197,7 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
             Lazy family (Onsager monomial(i))_{i in
              Disjoint union of Family (Integer Ring, Positive integers)}
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
         from sage.sets.positive_integers import PositiveIntegers
         I = DisjointUnionEnumeratedSets([ZZ, PositiveIntegers()],

@@ -177,7 +177,7 @@ from sage.libs.gap.libgap import libgap
 from sage.rings.all import QQ, RR, ZZ, RDF
 from sage.arith.misc import is_prime_power
 from sage.arith.all import binomial
-from sage.functions.all import log, sqrt
+from sage.misc.functional import sqrt, log
 from .delsarte_bounds import (delsarte_bound_hamming_space,
                               delsarte_bound_additive_hamming_space)
 
@@ -581,9 +581,9 @@ def entropy(x, q=2):
 
         sage: codes.bounds.entropy(0, 2)
         0
-        sage: codes.bounds.entropy(1/5,4).factor()
+        sage: codes.bounds.entropy(1/5,4).factor()    # optional - sage.symbolic
         1/10*(log(3) - 4*log(4/5) - log(1/5))/log(2)
-        sage: codes.bounds.entropy(1, 3)
+        sage: codes.bounds.entropy(1, 3)              # optional - sage.symbolic
         log(2)/log(3)
 
     Check that values not within the limits are properly handled::

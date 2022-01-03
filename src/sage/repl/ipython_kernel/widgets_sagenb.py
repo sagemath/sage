@@ -42,8 +42,7 @@ from numbers import Integral, Rational, Real
 from sage.structure.all import parent
 from sage.arith.srange import srange
 from sage.plot.colors import Color
-from sage.symbolic.ring import SR
-from sage.rings.all import RR
+import sage.rings.abc
 
 
 from .widgets import HTMLText as text_control
@@ -234,6 +233,14 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
         True
         sage: slider(5, display_value=False).readout
         False
+
+    Symbolic subrings work like ``SR``::
+
+        sage: SCR = SR.subring(no_variables=True)
+        sage: w = slider(SCR(e), SCR(pi)); w
+        TransformFloatSlider(value=2.718281828459045, max=3.141592653589793, min=2.718281828459045)
+        sage: parent(w.get_interact_value())
+        Real Field with 53 bits of precision
     """
     kwds = {"readout": display_value}
     if label:
@@ -271,7 +278,8 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
     p = parent(sum(x for x in (vmin, vmax, step_size) if x is not None))
 
     # Change SR to RR
-    if p is SR:
+    if isinstance(p, sage.rings.abc.SymbolicRing):
+        from sage.rings.real_mpfr import RR
         p = RR
 
     # Convert all inputs to the common parent
@@ -458,13 +466,9 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
     is not ordered, it is better to use an :class:`OrderedDict`::
 
         sage: from collections import OrderedDict
-        sage: selector(OrderedDict(one=1, two=2, three=3))  # py2
-        Dropdown(options=OrderedDict([('one', 1), ('three', 3), ('two', 2)]), value=1)
-        sage: selector(OrderedDict(one=1, two=2, three=3))  # py3
+        sage: selector(OrderedDict(one=1, two=2, three=3))
         Dropdown(options=OrderedDict([('one', 1), ('two', 2), ('three', 3)]), value=1)
-        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True) # py2
-        ToggleButtons(options=OrderedDict([('one', 1), ('three', 3), ('two', 2)]), value=1)
-        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True) # py3
+        sage: selector(OrderedDict(one=1, two=2, three=3), buttons=True)
         ToggleButtons(options=OrderedDict([('one', 1), ('two', 2), ('three', 3)]), value=1)
 
     The values can be any kind of object:

@@ -40,7 +40,8 @@ EXAMPLES::
 ###########################################################################
 
 from sage.categories.morphism import Morphism as base_Morphism
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 import sage.modules.matrix_morphism
 import sage.matrix.matrix_space as matrix_space
@@ -796,7 +797,7 @@ class HeckeOperator(Morphism):
             sage: t.index()
             997
             sage: type(t.index())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return self.__n
 

@@ -14,6 +14,11 @@ package using
 - ``sage -i database_knotinfo`` (does not install if the current version is present)
 - ``sage -f database_knotinfo`` (installs even if the current version is present)
 
+This will install a `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__
+for the original databases in Sage. This wrapper perfoms an automatic progress
+of version numbers. For more details and further install instructions please see
+the correspondig web-page.
+
 To perform all the doctests concerning the usage of the database on the installation
 add the option ``-c``. In this case (for instance ``sage -f -c database_knotinfo``)
 the installation breaks on failing tests.
@@ -79,7 +84,7 @@ Defining a link from the original name string::
 Obtaining an instance of :class:`~sage.groups.braid.Braid`::
 
     sage: L.braid()
-    s0*s1^-1*s2*s1^-1*s0^-1*s1^-1*s2^-1*s1^-1
+    s1^-2*s0^-1*s1*s0^-1
     sage: type(_)
     <class 'sage.groups.braid.BraidGroup_class_with_category.element_class'>
 
@@ -255,9 +260,9 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
         sage: from sage.knots.knotinfo import KnotInfo, eval_knotinfo
         sage: L = KnotInfo.L4a1_0
         sage: L.braid_notation(original=True)
-        '{4, {1, -2, 3, -2, -1, -2, -3, -2}}'
+        '{3, {-2, -2, -1, 2, -1}}'
         sage: eval_knotinfo(_)
-        (4, (1, -2, 3, -2, -1, -2, -3, -2))
+        (3, (-2, -2, -1, 2, -1))
     """
     if to_tuple:
         new_string = string.replace('{', '(')
@@ -348,7 +353,7 @@ class KnotInfoBase(Enum):
             sage: L = KnotInfo.L4a1_0
             sage: it = L.items
             sage: [i.name for i in it if i.name.startswith('braid')]
-            ['braid_index', 'braid_length', 'braid_notation']
+            ['braid_index', 'braid_length', 'braid_notation', 'braid_notation_old']
             sage: L.items.dt_notation.column_name()
             'DT Notation'
 
@@ -376,7 +381,7 @@ class KnotInfoBase(Enum):
         sage: L[L.items.arc_notation]
         '{{6, 4}, {3, 5}, {4, 2}, {1, 3}, {2, 6}, {5, 1}}'
         sage: L[L.items.braid_notation]
-        '{4, {1, -2, 3, -2, -1, -2, -3, -2}}'
+        '{3, {-2, -2, -1, 2, -1}}'
         sage: L[0]
         Traceback (most recent call last):
         ...
@@ -425,7 +430,7 @@ class KnotInfoBase(Enum):
             sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L._braid_group()
-            Braid group on 4 strands
+            Braid group on 3 strands
         """
         n = self.braid_index()
         if n == 1:
@@ -589,13 +594,22 @@ class KnotInfoBase(Enum):
         Python tuple representing the braid whose closure is ``self``
         in Tietze form.
 
+        ..NOTE::
+
+            There has been a major change to braid representatives for
+            proper links since version 2021.10.1. The former braid
+            reresentatives can be obtained by the column
+            ``braid_notation_old`` (see the final example below).
+
         EXAMPLES::
 
             sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L.braid_notation()
-            (1, -2, 3, -2, -1, -2, -3, -2)
+            (-2, -2, -1, 2, -1)
             sage: L.braid_notation(original=True)
+            '{3, {-2, -2, -1, 2, -1}}'
+            sage: L[L.items.braid_notation_old]
             '{4, {1, -2, 3, -2, -1, -2, -3, -2}}'
         """
         braid_notation = self[self.items.braid_notation]
@@ -640,7 +654,7 @@ class KnotInfoBase(Enum):
             sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L.braid_index()
-            4
+            3
         """
         if self.is_knot():
             return int(self[self.items.braid_index])
@@ -720,7 +734,7 @@ class KnotInfoBase(Enum):
             sage: KnotInfo.K3_1.crossing_number()
             3
             sage: Link(KnotInfo.L4a1_0.braid())
-            Link with 2 components represented by 8 crossings
+            Link with 2 components represented by 5 crossings
         """
         return int(self[self.items.crossing_number])
 
@@ -946,9 +960,9 @@ class KnotInfoBase(Enum):
             False
             sage: KnotInfo.L10n59_1.is_amphicheiral() # optional - database_knotinfo
             True
-            sage: KnotInfo.L10n59_0.inject()          # optional - database_knotinfo
-            Defining L10n59_0
-            sage: L10n59_0.is_amphicheiral() is None  # optional - database_knotinfo
+            sage: KnotInfo.L10n36_0.inject()          # optional - database_knotinfo
+            Defining L10n36_0
+            sage: L10n36_0.is_amphicheiral() is None  # optional - database_knotinfo
             True
         """
         if self.is_knot():
@@ -1499,7 +1513,7 @@ class KnotInfoBase(Enum):
             elif puiseux:
                 lc = {'x':  t**(1/2)}
             elif use_sqrt:
-                from sage.functions.other import sqrt
+                from sage.misc.functional import sqrt
                 lc = {'x':  sqrt(t)}
             else:
                 lc = {'x':  t}
@@ -1705,7 +1719,7 @@ class KnotInfoBase(Enum):
         observe::
 
             sage: L.link(use_item=L.items.braid_notation)
-            Link with 2 components represented by 8 crossings
+            Link with 2 components represented by 5 crossings
 
             sage: K6_1 = KnotInfo.K6_1
             sage: K6_1.link().braid() == K6_1.braid()
@@ -1776,14 +1790,14 @@ class KnotInfoBase(Enum):
             True
             sage: KnotInfo.L5a1_0.is_unique()
             False
-            sage: L = KnotInfo.L7a7_0_0              # optional - database_knotinfo
+            sage: L = KnotInfo.L9a43_0_1             # optional - database_knotinfo
             sage: L.series(oriented=True).inject()   # optional - database_knotinfo
-            Defining L7a7
-            sage: [(L,L.is_unique()) for L in L7a7]  # optional - database_knotinfo
-            [(<KnotInfo.L7a7_0_0: 'L7a7{0,0}'>, False),
-             (<KnotInfo.L7a7_1_0: 'L7a7{1,0}'>, None),
-             (<KnotInfo.L7a7_0_1: 'L7a7{0,1}'>, False),
-             (<KnotInfo.L7a7_1_1: 'L7a7{1,1}'>, True)]
+            Defining L9a43
+            sage: [(L,L.is_unique()) for L in L9a43] # optional - database_knotinfo
+            [(<KnotInfo.L9a43_0_0: 'L9a43{0,0}'>, True),
+             (<KnotInfo.L9a43_1_0: 'L9a43{1,0}'>, False),
+             (<KnotInfo.L9a43_0_1: 'L9a43{0,1}'>, None),
+             (<KnotInfo.L9a43_1_1: 'L9a43{1,1}'>, False)]
         """
         # an isotopic pair must have the same unoriented name. So, we can focus
         # on such series

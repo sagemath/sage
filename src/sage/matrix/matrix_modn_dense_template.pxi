@@ -475,13 +475,13 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
 
             sage: A = random_matrix(GF(3),1000,1000)
             sage: type(A)
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: A = random_matrix(Integers(10),1000,1000)
             sage: type(A)
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: A = random_matrix(Integers(2^16),1000,1000)
             sage: type(A)
-            <type 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
 
         TESTS::
 
@@ -1350,7 +1350,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
             sage: M = MatrixSpace(Integers(37), 2)
             sage: A = M(range(0, 2^2))
             sage: type(A)
-            <type 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
+            <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: A.charpoly('x').variables()
             (x,)
             sage: A.charpoly('y').variables()

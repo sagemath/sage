@@ -44,7 +44,7 @@ cdef class PowComputer_(PowComputer_base):
 
             sage: R = ZpCA(5)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.padic_capped_absolute_element.PowComputer_'>
+            <class 'sage.rings.padics.padic_capped_absolute_element.PowComputer_'>
             sage: R.prime_pow._prec_type
             'capped-abs'
         """
@@ -249,7 +249,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         cdef Integer selfvalue = Integer.__new__(Integer)
         mpz_set(selfvalue.value, self.value)
         if field:
-            from sage.rings.finite_rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             return GF(self.parent().prime())(selfvalue)
         else:
             return Mod(selfvalue, modulus)

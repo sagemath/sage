@@ -115,9 +115,9 @@ class DocTestReporter(SageObject):
         self.stats = {}
         self.error_status = 0
 
-    def have_optional_tag(self, tag):
+    def were_doctests_with_optional_tag_run(self, tag):
         r"""
-        Return whether doctests marked with this tag are run.
+        Return whether doctests marked with this tag were run.
 
         INPUT:
 
@@ -135,17 +135,25 @@ class DocTestReporter(SageObject):
 
         ::
 
-            sage: DTR.have_optional_tag('sage')
+            sage: DTR.were_doctests_with_optional_tag_run('sage')
             True
-            sage: DTR.have_optional_tag('nice_unavailable_package')
+            sage: DTR.were_doctests_with_optional_tag_run('nice_unavailable_package')
             False
 
+        When latex is available, doctests marked with optional tag
+        ``latex`` are run by default since :trac:`32174`::
+
+            sage: filename = os.path.join(SAGE_SRC,'sage','misc','latex.py')
+            sage: DC = DocTestController(DocTestDefaults(),[filename])
+            sage: DTR = DocTestReporter(DC)
+            sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
+            True
+
         """
-        if tag in self.controller.options.optional:
+        if self.controller.options.optional is True or tag in self.controller.options.optional:
             return True
-        if 'external' in self.controller.options.optional:
-            if tag in available_software.seen():
-                return True
+        if tag in available_software.seen():
+            return True
         return False
 
     def report_head(self, source):
@@ -182,10 +190,10 @@ class DocTestReporter(SageObject):
             cmd += " --long"
 
         warnlong = self.controller.options.warn_long
-        if warnlong is not None:
+        if warnlong >= 0:
             cmd += " --warn-long"
             if warnlong != 1.0:
-                cmd += " %.1f"%(warnlong)
+                cmd += " %.1f" % (warnlong)
         seed = self.controller.options.random_seed
         cmd += " --random-seed={}".format(seed)
         cmd += " " + source.printpath
@@ -495,7 +503,7 @@ class DocTestReporter(SageObject):
                             if self.controller.options.show_skipped:
                                 log("    %s for not implemented functionality not run"%(count_noun(nskipped, "test")))
                         else:
-                            if not self.have_optional_tag(tag):
+                            if not self.were_doctests_with_optional_tag_run(tag):
                                 if tag == "bug":
                                     if self.controller.options.show_skipped:
                                         log("    %s not run due to known bugs"%(count_noun(nskipped, "test")))

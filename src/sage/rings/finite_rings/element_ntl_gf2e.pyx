@@ -951,7 +951,7 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             5
             sage: k.<a> = GF(2^70)
             sage: (a^65 + a^64 + 1).integer_representation()
-            55340232221128654849L
+            55340232221128654849
         """
         cdef unsigned int i = 0
         ret = int(0)
@@ -1253,30 +1253,21 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
 
     def log(self, base):
         """
-        Return `x` such that `b^x = a`, where `x` is `a` and `b`
-        is the base.
+        Compute an integer `x` such that `b^x = a`, where `a` is ``self``
+        and `b` is ``base``.
 
         INPUT:
 
-        - ``base`` -- finite field element that generates the multiplicative
-          group.
+        - ``base`` -- finite-field element.
 
         OUTPUT:
 
         Integer `x` such that `a^x = b`, if it exists.
         Raises a ``ValueError`` exception if no such `x` exists.
 
-        EXAMPLES::
+        ALGORITHM: :pari:`fflog`
 
-            sage: F = GF(17)
-            sage: F(3^11).log(F(3))
-            11
-            sage: F = GF(113)
-            sage: F(3^19).log(F(3))
-            19
-            sage: F = GF(next_prime(10000))
-            sage: F(23^997).log(F(23))
-            997
+        EXAMPLES::
 
             sage: F = FiniteField(2^10, 'a')
             sage: g = F.gen()
@@ -1287,12 +1278,46 @@ cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
             a^8 + a^7 + a^4 + a + 1
             a^8 + a^7 + a^4 + a + 1
 
-        AUTHOR: David Joyner and William Stein (2005-11)
-        """
-        from sage.groups.generic import discrete_log
+        Big instances used to take a very long time before :trac:`32842`::
 
-        b = self.parent()(base)
-        return discrete_log(self, b)
+            sage: g = GF(2^61).gen()
+            sage: g.log(g^7)
+            1976436865040309101
+
+        TESTS:
+
+        Check that non-existence is correctly detected::
+
+            sage: g = GF(2^50).gen()
+            sage: (2^50-1) % 1023
+            0
+            sage: g.log(g^1023)
+            Traceback (most recent call last):
+            ...
+            ValueError: no logarithm of z50 exists to base z50^49 + z50^46 + z50^45 + z50^44 + z50^41 + z50^34 + z50^33 + z50^32 + z50^27 + z50^25 + z50^24 + z50^21 + z50^18 + z50^17 + z50^16 + z50^15 + z50^12 + z50^11 + z50^10 + z50^8 + z50^7 + z50^3 + z50^2
+
+        AUTHORS:
+
+        - David Joyner and William Stein (2005-11)
+        - Lorenz Panny (2021-11): use PARI's :pari:`fflog` instead of :func:`sage.groups.generic.discrete_log`
+        """
+        base = self.parent()(base)
+
+        # The result is undefined if the input to fflog() is invalid.
+        # Since the unit group is cyclic, it suffices to check orders.
+        cdef Integer base_order = base.multiplicative_order()
+        cdef Integer self_order = self.multiplicative_order()
+        if not self_order.divides(base_order):
+            raise ValueError(f'no logarithm of {self} exists to base {base}')
+
+        # Let's pass the known factorization of the order to PARI.
+        fs, = self._parent.factored_unit_order()  # cached
+        ps = pari.Col(p for p,_ in fs)
+        vs = pari.Col(base_order.valuation(p) for p,_ in fs)
+        fac = pari.matconcat((ps, vs))
+
+        x = pari.fflog(self, base, (base_order, fac))
+        return Integer(x)
 
 def unpickleFiniteField_ntl_gf2eElement(parent, elem):
     """

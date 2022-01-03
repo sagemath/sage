@@ -56,11 +56,12 @@
 #    be given as arguments.  If $SAGE_DESTDIR is not set then the command is
 #    run with $SAGE_SUDO, if set.
 #
-# - sdh_pip_install [...]
+# - sdh_pip_install [--no-deps] [--build-isolation] [...]
 #
-#    Runs `pip install` with the given arguments, as well as additional
-#    default arguments used for installing packages into Sage with pip.
-#    Currently this is just a wrapper around the `sage-pip-install` command.
+#    Builds a wheel using `pip wheel` with the given options [...], then installs
+#    the wheel.  Unless the special option --build-isolation is given,
+#    the wheel is built using the option --no-build-isolation.
+#    If the special option --no-deps is given, it is passed to pip install.
 #    If $SAGE_DESTDIR is not set then the command is run with $SAGE_SUDO, if
 #    set.
 #
@@ -240,10 +241,37 @@ sdh_pip_install() {
     echo "Installing $PKG_NAME"
     mkdir -p dist
     rm -f dist/*.whl
-    python3 -m pip wheel --use-feature=in-tree-build --wheel-dir=dist --no-binary :all: --verbose --no-deps --no-index --isolated --no-build-isolation --ignore-requires-python "$@" || \
+    install_options=""
+    # pip has --no-build-isolation but no flag that turns the default back on...
+    build_isolation_option="--no-build-isolation --no-binary :all:"
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --build-isolation)
+                # If a package requests build isolation, we allow it to provision
+                # its build environment using the stored wheels.
+                # We pass --find-links and remove the --no-binary option.
+                # The SPKG needs to declare "setuptools_wheel" as a dependency.
+                build_isolation_option="--find-links=$SAGE_SPKG_WHEELS"
+                ;;
+            --no-deps)
+                install_options="$install_options $1"
+                ;;
+            *)
+                break
+                ;;
+        esac
+        shift
+    done
+    python3 -m pip wheel --wheel-dir=dist --verbose --no-deps --no-index --isolated --ignore-requires-python $build_isolation_option "$@" || \
         sdh_die "Error building a wheel for $PKG_NAME"
 
-    sdh_store_and_pip_install_wheel .
+    sdh_store_and_pip_install_wheel $install_options .
+}
+
+sdh_pip_editable_install() {
+    echo "Installing $PKG_NAME (editable mode)"
+    python3 -m pip install --verbose --no-deps --no-index --no-build-isolation --isolated --editable "$@" || \
+        sdh_die "Error installing $PKG_NAME"
 }
 
 sdh_store_wheel() {
@@ -306,6 +334,17 @@ sdh_store_and_pip_install_wheel() {
         local sudo=""
         local root=""
     fi
+    # Trac #32659: pip no longer reinstalls local wheels if the version is the same.
+    # Because neither (1) applying patches nor (2) local changes (in the case
+    # of sage-conf, sage-setup, etc.) bump the version number, we need to
+    # override this behavior.  The pip install option --force-reinstall does too
+    # much -- it also reinstalls all dependencies, which we do not want.
+    wheel_basename="${wheel##*/}"
+    distname="${wheel_basename%%-*}"
+    $sudo sage-pip-uninstall "$distname"
+    if [ $? -ne 0 ]; then
+        echo "(ignoring error)" >&2
+    fi
     $sudo sage-pip-install $root $pip_options "$wheel" || \
         sdh_die "Error installing ${wheel##*/}"
     if [ -n "${SAGE_PKG_DIR}" ]; then
@@ -316,11 +355,7 @@ sdh_store_and_pip_install_wheel() {
 }
 
 sdh_pip_uninstall() {
-    # --disable-pip-version-check: Don't periodically check PyPI to determine whether a new version of pip is available
-    # --no-input: Disable prompting for input.
-    # --yes: Don't ask for confirmation of uninstall deletions
-    # See sage-pip-install for a discussion of the other flags.
-    python3 -m pip uninstall --isolated --disable-pip-version-check --yes --no-input "$@"
+    sage-pip-uninstall "$@"
     if [ $? -ne 0 ]; then
         echo "Warning: pip exited with status $?" >&2
     fi

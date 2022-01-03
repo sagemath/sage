@@ -93,7 +93,7 @@ The above is consistent with the following analytic computation::
 # ****************************************************************************
 
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 
@@ -101,6 +101,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import (richcmp_method, richcmp,
                                     richcmp_not_equal, rich_to_bool)
 
+import sage.rings.abc
 import sage.rings.number_field.number_field_element
 import sage.rings.number_field.number_field as number_field
 import sage.rings.all as rings
@@ -1107,7 +1108,7 @@ class GaloisGroup(SageObject):
             sage: M.galois_group(heegner_points(389,-20,1).ring_class_field())._base_is_quad_imag_field()
             False
         """
-        return number_field.is_QuadraticField(self.__base)
+        return isinstance(self.__base, sage.rings.abc.NumberField_quadratic)
 
     def is_kolyvagin(self):
         """

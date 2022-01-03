@@ -1997,7 +1997,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 row.append( V([to(e) for e in self._mtable[i][j]]) )
             mtable.append(row)
 
-        if not p in self._kummer_places:
+        if p not in self._kummer_places:
             #####################################
             # Decomposition by Kummer's theorem #
             #####################################

@@ -223,7 +223,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.functional import is_even
 from sage.misc.cachefunc import cached_method
 from sage.misc.randstate import current_randstate
@@ -837,7 +837,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         - Chinen, K. "An abundance of invariant polynomials satisfying the
           Riemann hypothesis", April 2007 preprint.
         """
-        from sage.functions.all import sqrt
+        from sage.misc.functional import sqrt
         C = self
         n = C.length()
         RT = PolynomialRing(QQ,2,"Ts")
@@ -2309,12 +2309,12 @@ class LinearCode(AbstractLinearCode):
 
         try:
             basis = None
-            if hasattr(generator,"nrows"): # generator matrix case
+            if hasattr(generator, "nrows"):  # generator matrix case
                 if generator.rank() < generator.nrows():
                     basis = generator.row_space().basis()
             else:
-                basis = generator.basis() # vector space etc. case
-            if not basis is None:
+                basis = generator.basis()  # vector space etc. case
+            if basis is not None:
                 from sage.matrix.constructor import matrix
                 generator = matrix(base_ring, basis)
                 if generator.nrows() == 0:

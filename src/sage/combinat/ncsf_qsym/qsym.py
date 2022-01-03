@@ -1908,7 +1908,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             # The following algorithm is a rewriting of the formula in the docstring.
             # We are working over QQ because there are denominators which don't
             # immediately cancel.
-            from sage.rings.all import ZZ, QQ
+            from sage.rings.integer_ring import ZZ
+            from sage.rings.rational_field import QQ
             QQM = QuasiSymmetricFunctions(QQ).M()
             QQ_result = QQM.zero()
             for lam in Partitions(n):
@@ -2897,7 +2898,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 return (matrix([[]]), [])
             CO = compositions_order(n)
             # ZZ is faster than over QQ for inverting a matrix
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             MS = MatrixSpace(ZZ, len(CO))
             M = MS([[number_of_SSRCT(al, be) for al in CO] for be in CO])
             return (M.inverse_of_unit(), CO)

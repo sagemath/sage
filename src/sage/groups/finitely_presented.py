@@ -75,7 +75,7 @@ The same holds for the group elements::
     sage: a.gap().Order()
     2
     sage: type(_)    # note that the above output is not a Sage integer
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
 
 You can use call syntax to replace the generators with a set of
 arbitrary ring elements. For example, take the free abelian group
@@ -397,7 +397,7 @@ def wrap_FpGroup(libgap_fpgroup):
         sage: P = F / libgap([ a_cubed ]);   P
         <fp group of size infinity on the generators [ a, b ]>
         sage: type(P)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
     Now wrap it::
 
@@ -775,7 +775,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         sage: H.gap()
         <fp group on the generators [ x0, x1 ]>
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
     """
     Element = FinitelyPresentedGroupElement
 

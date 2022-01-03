@@ -97,7 +97,7 @@ def normalize_args_vectorspace(*args, **kwds):
         sage: normalize_args_vectorspace(2, QQ)
         (2, Rational Field)
     """
-    from sage.rings.all import ZZ
+    from sage.rings.integer_ring import ZZ
     if len(args) == 1:
         V = args[0]
         try:

@@ -300,7 +300,7 @@ cdef class Cache_givaro(Cache_base):
             sage: e.parent() is k
             True
             sage: type(e)
-            <type 'sage.rings.finite_rings.element_givaro.FiniteField_givaroElement'>
+            <class 'sage.rings.finite_rings.element_givaro.FiniteField_givaroElement'>
 
             sage: P.<x> = PowerSeriesRing(GF(3^3, 'a'))
             sage: P.random_element(5).parent() is P
@@ -1413,7 +1413,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: b._log_to_int()
             5
             sage: type(b._log_to_int())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return Integer(self._cache.log_to_int(self.element))
 
@@ -1494,7 +1494,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
             sage: f = (b^2+1).polynomial(); f
             b + 4
             sage: type(f)
-            <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+            <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
             sage: parent(f)
             Univariate Polynomial Ring in b over Finite Field of size 5
         """

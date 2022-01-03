@@ -19,7 +19,6 @@ Miscellaneous matrix functions
 #*****************************************************************************
 
 from sage.categories.fields import Fields
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 _Fields = Fields()
 
 
@@ -269,6 +268,8 @@ def permanental_minor_polynomial(A, permanent_only=False, var='t', prec=None):
         prec = int(prec)
         if prec == 0:
             raise ValueError('the argument `prec` must be a positive integer')
+
+    from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
     K = PolynomialRing(A.base_ring(), var)
     nrows = A.nrows()

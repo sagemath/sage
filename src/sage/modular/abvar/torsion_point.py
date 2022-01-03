@@ -87,7 +87,7 @@ class TorsionPoint(ModuleElement):
             sage: v = (G.0-G.1).element(); v
             (1/3, -1/5)
             sage: type(v)
-            <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+            <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
         """
         return self.__element
 
@@ -223,7 +223,7 @@ class TorsionPoint(ModuleElement):
             [(1/3, 0)]
         """
         A = self.parent().abelian_variety()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if self.__element.change_ring(QQ) - right.__element.change_ring(QQ) in A.lattice():
             return rich_to_bool(op, 0)
         return richcmp(self.__element, right.__element, op)

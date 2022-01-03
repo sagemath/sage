@@ -46,12 +46,14 @@ from sage.structure.parent_gens import ParentWithGens
 
 from sage.misc.sage_eval import sage_eval
 
+import sage.rings.abc
 from sage.arith.constants cimport LOG_TEN_TWO_PLUS_EPSILON
 from . import ring, infinity
 from .integer cimport Integer
 
 from .complex_double cimport ComplexDoubleElement
 from .real_mpfr cimport RealNumber
+from sage.libs.gsl.complex cimport *
 
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.rings.integer_ring import ZZ
@@ -63,7 +65,6 @@ gmpy2.import_gmpy2()
 
 # Some objects that are note imported at startup in order to break
 # circular imports
-NumberField_quadratic = None
 NumberFieldElement_quadratic = None
 AlgebraicNumber_base = None
 AlgebraicNumber = None
@@ -80,7 +81,6 @@ def late_import():
 
         sage: sage.rings.complex_mpfr.late_import()
     """
-    global NumberField_quadratic
     global NumberFieldElement_quadratic
     global AlgebraicNumber_base
     global AlgebraicNumber
@@ -91,7 +91,6 @@ def late_import():
     if NumberFieldElement_quadratic is None:
         import sage.rings.number_field.number_field
         import sage.rings.number_field.number_field_element_quadratic as nfeq
-        NumberField_quadratic = sage.rings.number_field.number_field.NumberField_quadratic
         NumberFieldElement_quadratic = nfeq.NumberFieldElement_quadratic
         import sage.rings.qqbar
         AlgebraicNumber_base = sage.rings.qqbar.AlgebraicNumber_base
@@ -157,21 +156,32 @@ def is_ComplexNumber(x):
     """
     return isinstance(x, ComplexNumber)
 
+
 def is_ComplexField(x):
     """
     Check if ``x`` is a :class:`complex field <ComplexField_class>`.
+
+    This function is deprecated. Use :func:`isinstance` with
+    :class:`~sage.rings.abc.ComplexField` instead.
 
     EXAMPLES::
 
         sage: from sage.rings.complex_mpfr import is_ComplexField as is_CF
         sage: is_CF(ComplexField())
+        doctest:warning...
+        DeprecationWarning: is_ComplexField is deprecated;
+        use isinstance(..., sage.rings.abc.ComplexField) instead
+        See https://trac.sagemath.org/32610 for details.
         True
         sage: is_CF(ComplexField(12))
         True
         sage: is_CF(CC)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(32610, 'is_ComplexField is deprecated; use isinstance(..., sage.rings.abc.ComplexField) instead')
     return isinstance(x, ComplexField_class)
+
 
 cache = {}
 def ComplexField(prec=53, names=None):
@@ -202,7 +212,7 @@ def ComplexField(prec=53, names=None):
     return C
 
 
-class ComplexField_class(ring.Field):
+class ComplexField_class(sage.rings.abc.ComplexField):
     """
     An approximation to the field of complex numbers using floating
     point numbers with any specified precision. Answers derived from
@@ -488,19 +498,35 @@ class ComplexField_class(ring.Field):
             sage: CC(i)
             1.00000000000000*I
 
+        TESTS::
+
+            sage: CC('1.2+3.4*j')
+            1.20000000000000 + 3.40000000000000*I
+            sage: CC('hello')
+            Traceback (most recent call last):
+            ...
+            ValueError: given string 'hello' is not a complex number
         """
         if not isinstance(x, (RealNumber, tuple)):
             if isinstance(x, ComplexDoubleElement):
                 return ComplexNumber(self, x.real(), x.imag())
             elif isinstance(x, str):
+                x = x.replace(' ', '')
+                x = x.replace('i', 'I')
+                x = x.replace('j', 'I')
+                x = x.replace('E', 'e')
+                allowed = '+-.*0123456789Ie'
+                if not all(letter in allowed for letter in x):
+                    raise ValueError(f'given string {x!r} is not a complex number')
+                # This should rather use a proper parser to validate input.
                 # TODO: this is probably not the best and most
                 # efficient way to do this.  -- Martin Albrecht
                 return ComplexNumber(self,
-                            sage_eval(x.replace(' ',''), locals={"I":self.gen(),"i":self.gen()}))
+                                     sage_eval(x, locals={"I": self.gen()}))
 
             late_import()
             if isinstance(x, NumberFieldElement_quadratic):
-                if isinstance(x.parent(), NumberField_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
+                if isinstance(x.parent(), sage.rings.abc.NumberField_quadratic) and list(x.parent().polynomial()) == [1, 0, 1]:
                     (re, im) = list(x)
                     return ComplexNumber(self, re, im)
 
@@ -543,7 +569,7 @@ class ComplexField_class(ring.Field):
         RR = self._real_field()
         if RR.has_coerce_map_from(S):
             return RRtoCC(RR, self) * RR._internal_coerce_map_from(S)
-        if is_ComplexField(S):
+        if isinstance(S, ComplexField_class):
             if self._prec <= S._prec:
                 return self._generic_coerce_map(S)
             else:
@@ -960,7 +986,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: coerce(CN, 1+I)
             Traceback (most recent call last):
             ...
-            TypeError: __init__() takes at least 2 positional arguments (1 given)
+            TypeError: ...__init__() takes at least 2 positional arguments (1 given)
         """
         if self._prec != -1:
             mpfr_clear(self.__re)
@@ -1382,11 +1408,11 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             sage: pari(a).type()
             't_COMPLEX'
             sage: type(pari(a))
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
             sage: a.__pari__()
             2.00000000000000 + 1.00000000000000*I
             sage: type(a.__pari__())
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
             sage: a = CC(pi)
             sage: pari(a)
             3.14159265358979
@@ -3424,26 +3450,6 @@ cdef class RRtoCC(Map):
         mpfr_set_ui(z.__im, 0, rnd)
         return z
 
-
-cdef class CCtoCDF(Map):
-
-    cpdef Element _call_(self, x):
-        """
-        EXAMPLES::
-
-            sage: from sage.rings.complex_mpfr import CCtoCDF
-            sage: f = CCtoCDF(CC, CDF) # indirect doctest
-            sage: f(CC.0)
-            1.0*I
-            sage: f(exp(pi*CC.0/4))
-            0.7071067811865476 + 0.7071067811865475*I
-        """
-        z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
-        z._complex.real = mpfr_get_d((<ComplexNumber>x).__re, MPFR_RNDN)
-        z._complex.imag = mpfr_get_d((<ComplexNumber>x).__im, MPFR_RNDN)
-        return z
-
-
 cdef inline mp_exp_t min_exp_t(mp_exp_t a, mp_exp_t b):
     return a if a < b else b
 
@@ -3599,3 +3605,8 @@ def _format_complex_number(real, imag, format_spec):
                              "complex format specifier")
         result = format(result, align + width)
     return result
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Complex.register(ComplexNumber)

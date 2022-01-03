@@ -58,7 +58,7 @@ AUTHORS:
 # ****************************************************************************
 
 import sage.categories.all as cat
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 import sage.misc.prandom as random
 from sage.modules.free_module import FreeModule
 import sage.modules.free_module_element as free_module_element
@@ -68,8 +68,7 @@ from sage.libs.pari import pari
 
 from sage.categories.map import Map
 from sage.rings.rational_field import is_RationalField
-from sage.rings.complex_mpfr import is_ComplexField
-from sage.rings.qqbar import is_AlgebraicField
+import sage.rings.abc
 from sage.rings.ring import is_Ring
 
 from sage.misc.functional import round
@@ -751,8 +750,8 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: a = a.primitive_character()
             sage: L = a.lfunction(algorithm='lcalc'); L
             L-function with complex Dirichlet coefficients
-            sage: L.value(4)  # abs tol 1e-14
-            0.988944551741105 - 5.16608739123418e-18*I
+            sage: L.value(4)  # abs tol 1e-8
+            0.988944551741105 + 0.0*I
         """
         if algorithm is None:
             algorithm = 'pari'
@@ -787,7 +786,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
             sage: G.<a, b> = DirichletGroup(20)
             sage: type(G(1).conductor())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         if self.modulus() == 1 or self.is_trivial():
             return rings.Integer(1)
@@ -1153,7 +1152,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         # now compute the input for pari (list of exponents)
         P = self.parent()
-        if is_ComplexField(P.base_ring()):
+        if isinstance(P.base_ring(), sage.rings.abc.ComplexField):
             zeta = P.zeta()
             zeta_argument = zeta.argument()
             v = [int(x.argument() / zeta_argument) for x in values_on_gens]
@@ -1345,12 +1344,12 @@ class DirichletCharacter(MultiplicativeGroupElement):
         K = G.base_ring()
         chi = self
         m = G.modulus()
-        if is_ComplexField(K):
+        if isinstance(K, sage.rings.abc.ComplexField):
             return self.gauss_sum_numerical(a=a)
-        elif is_AlgebraicField(K):
+        elif isinstance(K, sage.rings.abc.AlgebraicField):
             L = K
             zeta = L.zeta(m)
-        elif number_field.is_CyclotomicField(K) or is_RationalField(K):
+        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K):
             chi = chi.minimize_base_ring()
             n = lcm(m, G.zeta_order())
             L = rings.CyclotomicField(n)
@@ -1422,16 +1421,16 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         G = self.parent()
         K = G.base_ring()
-        if is_ComplexField(K):
+        if isinstance(K, sage.rings.abc.ComplexField):
 
             def phi(t):
                 return t
             CC = K
-        elif is_AlgebraicField(K):
+        elif isinstance(K, sage.rings.abc.AlgebraicField):
             from sage.rings.complex_mpfr import ComplexField
             CC = ComplexField(prec)
             phi = CC.coerce_map_from(K)
-        elif number_field.is_CyclotomicField(K) or is_RationalField(K):
+        elif isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K):
             phi = K.complex_embedding(prec)
             CC = phi.codomain()
         else:
@@ -1650,7 +1649,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         G = self.parent()
         K = G.base_ring()
-        if not (number_field.is_CyclotomicField(K) or is_RationalField(K)):
+        if not (isinstance(K, sage.rings.abc.NumberField_cyclotomic) or is_RationalField(K)):
             raise NotImplementedError("Kloosterman sums only currently implemented when the base ring is a cyclotomic field or QQ.")
         phi = K.complex_embedding(prec)
         CC = phi.codomain()
@@ -2138,7 +2137,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         """
         P = self.parent()
         M = P._module
-        if is_ComplexField(P.base_ring()):
+        if isinstance(P.base_ring(), sage.rings.abc.ComplexField):
             zeta = P.zeta()
             zeta_argument = zeta.argument()
             v = M([int(round(x.argument() / zeta_argument))
@@ -2607,7 +2606,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
         w = [a]
         zeta = self.zeta()
         zeta_order = self.zeta_order()
-        if is_ComplexField(R):
+        if isinstance(R, sage.rings.abc.ComplexField):
             for i in range(1, zeta_order):
                 a = a * zeta
                 a._set_multiplicative_order(zeta_order / gcd(zeta_order, i))

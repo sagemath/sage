@@ -908,7 +908,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         from sage.categories.fields import Fields
         if self.parent() in Fields():
-            from sage.rings.all import Integer
+            from sage.rings.integer import Integer
             return Integer(0)
         return self.valuation()
 
@@ -997,7 +997,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         from sage.categories.all import Fields
         if self.parent() in Fields():
             v = self.valuation()
-            from sage.rings.all import infinity
+            from sage.rings.infinity import infinity
             if self.valuation() is not infinity:
                 shift = shift << v
 

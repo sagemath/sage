@@ -93,7 +93,7 @@ Sage example in ./mpoly.tex, line 459::
   sage: (x^10 + y^5).gcd(x^4 - y^2)
   x^2 + y
   sage: (x^10 + y^5).factor()
-  (x^2 + y) * (x^2 + (a^3)*y) * (x^2 + (a^2)*y) * (x^2 + (a)*y) * (x^2 + (-a^3 - a^2 - a - 1)*y)
+  (x^2 + y) * (x^2 + (a^3)*y) * (x^2 + (a^2)*y) * (x^2 + a*y) * (x^2 + (-a^3 - a^2 - a - 1)*y)
 
 Sage example in ./mpoly.tex, line 564::
 

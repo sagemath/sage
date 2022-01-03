@@ -22,7 +22,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.libs.symmetrica.all import hall_littlewood
 from . import sfa
 import sage.combinat.partition
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom
 from sage.rings.rational_field import QQ

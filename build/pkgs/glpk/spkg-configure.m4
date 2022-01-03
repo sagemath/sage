@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([glpk], [
     m4_pushdef([SAGE_GLPK_MINVER],["4.63"])
-    SAGE_SPKG_DEPCHECK([gmp mpir zlib], [
+    SAGE_SPKG_DEPCHECK([gmp zlib], [
         AC_PATH_PROG([GLPSOL], [glpsol])
         AS_IF([test x$GLPSOL = x], [
            AC_MSG_NOTICE([glpsol not found. Installing glpk])

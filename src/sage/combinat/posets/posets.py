@@ -127,7 +127,7 @@ List of Poset methods
     :meth:`~FinitePoset.canonical_label` | Return copy of the poset canonically (re)labelled to integers.
     :meth:`~FinitePoset.slant_sum` | Return the slant sum poset of two posets.
 
-**Chains & antichains**
+**Chains, antichains & linear intervals**
 
 .. csv-table::
     :class: contentstable
@@ -136,6 +136,7 @@ List of Poset methods
 
     :meth:`~FinitePoset.is_chain_of_poset` | Return ``True`` if elements in the given list are comparable.
     :meth:`~FinitePoset.is_antichain_of_poset` | Return ``True`` if elements in the given list are incomparable.
+    :meth:`~FinitePoset.is_linear_interval` | Return whether the given interval is a total order.
     :meth:`~FinitePoset.chains` | Return the chains of the poset.
     :meth:`~FinitePoset.antichains` | Return the antichains of the poset.
     :meth:`~FinitePoset.maximal_chains` | Return the maximal chains of the poset.
@@ -145,6 +146,7 @@ List of Poset methods
     :meth:`~FinitePoset.antichains_iterator` | Return an iterator over the antichains of the poset.
     :meth:`~FinitePoset.random_maximal_chain` | Return a random maximal chain.
     :meth:`~FinitePoset.random_maximal_antichain` | Return a random maximal antichain.
+    :meth:`~FinitePoset.linear_intervals_count` | Return the enumeration of linear intervals in the poset.
 
 **Drawing**
 
@@ -281,8 +283,10 @@ Classes and functions
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from __future__ import annotations
+from collections import defaultdict
 from copy import copy, deepcopy
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
@@ -2011,7 +2015,6 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.plot()
             Graphics object consisting of 0 graphics primitives
         """
-        from collections import defaultdict
         graph = self.hasse_diagram()
 
         rename = {'element_color': 'vertex_color',
@@ -2376,10 +2379,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         i, j = map(self._element_to_vertex, (x, y))
         jn = self._hasse_diagram._join
-        if jn[i,j] == -1:
+        if jn[i, j] == -1:
             return None
         else:
-            return self._vertex_to_element(jn[i,j])
+            return self._vertex_to_element(jn[i, j])
 
     def is_d_complete(self) -> bool:
         r"""
@@ -2648,6 +2651,76 @@ class FinitePoset(UniqueRepresentation, Parent):
 
     # Maybe this should also be deprecated.
     intervals_number = relations_number
+
+    def linear_intervals_count(self) -> list[int]:
+        """
+        Return the enumeration of linear intervals w.r.t. their cardinality.
+
+        An interval is linear if it is a total order.
+
+        OUTPUT: list of integers
+
+        .. SEEALSO:: :meth:`is_linear_interval`
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: P.linear_intervals_count()
+            [5, 5, 2]
+            sage: P = posets.TamariLattice(4)
+            sage: P.linear_intervals_count()
+            [14, 21, 12, 2]
+
+        TESTS::
+
+            sage: P = Poset()
+            sage: P.linear_intervals_count()
+            []
+        """
+        if not self.cardinality():
+            return []
+        H = self._hasse_diagram
+        stock = [(x, x, x) for x in H]
+        poly = [len(stock)]
+        exposant = 0
+        while True:
+            exposant += 1
+            next_stock = []
+            short_stock = [(ch[0], ch[2]) for ch in stock]
+            for xmin, cov_xmin, xmax in stock:
+                for y in H.neighbor_out_iterator(xmax):
+                    if exposant == 1:
+                        next_stock.append((xmin, y, y))
+                    else:
+                        if (cov_xmin, y) in short_stock:
+                            if H.is_linear_interval(xmin, y):
+                                next_stock.append((xmin, cov_xmin, y))
+            if next_stock:
+                poly.append(len(next_stock))
+                stock = next_stock
+            else:
+                break
+        return poly
+
+    def is_linear_interval(self, x, y) -> bool:
+        """
+        Return whether the interval ``[x, y]`` is linear.
+
+        This means that this interval is a total order.
+
+        EXAMPLES::
+
+            sage: P = posets.PentagonPoset()
+            sage: P.is_linear_interval(0, 4)
+            False
+            sage: P.is_linear_interval(0, 3)
+            True
+            sage: P.is_linear_interval(1, 3)
+            False
+        """
+        a = self._element_to_vertex(x)
+        b = self._element_to_vertex(y)
+        return self._hasse_diagram.is_linear_interval(a, b)
 
     def is_incomparable_chain_free(self, m, n=None) -> bool:
         r"""
@@ -5693,7 +5766,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             True
         """
         # P might be defaultdict, hence the test
-        if type(P) == type({}):
+        if isinstance(P, dict) and not isinstance(P, defaultdict):
             if set(P) != set(self):
                 raise ValueError("keys of dict P does not match to elements of the poset")
 
@@ -6159,9 +6232,9 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Poset().canonical_label()  # Test the empty poset
             Finite poset containing 0 elements
 
-            sage: D2 = posets.DiamondPoset(4).canonical_label(algorithm='bliss')  # optional: bliss
-            sage: B2 = posets.BooleanLattice(2).canonical_label(algorithm='bliss')  # optional: bliss
-            sage: D2 == B2  # optional: bliss
+            sage: D2 = posets.DiamondPoset(4).canonical_label(algorithm='bliss')  # optional - bliss
+            sage: B2 = posets.BooleanLattice(2).canonical_label(algorithm='bliss')  # optional - bliss
+            sage: D2 == B2  # optional - bliss
             True
         """
         canonical_label = self._hasse_diagram.canonical_label(certificate=True,
@@ -6492,7 +6565,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             result.append(new)
             down = list(H.depth_first_search(new, neighbors=H.neighbor_in_iterator))
             up = list(H.depth_first_search(new))
-            H.delete_vertices(down+up)
+            H.delete_vertices(down + up)
 
         return result
 
@@ -6524,10 +6597,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         mins = H.sources()
 
         for _ in range(H.order()):
-            new_index = randint(0, len(mins)-1)
+            new_index = randint(0, len(mins) - 1)
             new = mins[new_index]
             result.append(new)
-            mins = mins[:new_index]+mins[new_index+1:]
+            mins = mins[:new_index] + mins[new_index + 1:]
             for u in H.neighbor_out_iterator(new):
                 indegs[u] -= 1
                 if indegs[u] == 0:
@@ -6885,8 +6958,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``partial`` -- list (optional); if present, find all maximal
-          chains starting with the elements in partial
+        - ``partial`` -- list (optional); if given, the list
+          ``partial`` is assumed to be the start of a maximal chain,
+          and the function will find all maximal chains starting with
+          the elements in ``partial``
 
         This is used in constructing the order complex for the poset.
 
@@ -6913,8 +6988,10 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         INPUT:
 
-        - ``partial`` -- list (optional); if present, yield all maximal
-          chains starting with the elements in partial
+        - ``partial`` -- list (optional); if given, the list
+          ``partial`` is assumed to be the start of a maximal chain,
+          and the function will yield all maximal chains starting with
+          the elements in ``partial``
 
         EXAMPLES::
 
@@ -6922,6 +6999,13 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: it = P.maximal_chains_iterator()
             sage: next(it)
             [0, 1, 3, 7]
+
+        TESTS::
+
+            sage: P = posets.BooleanLattice(3)
+            sage: it = P.maximal_chains_iterator([0, 4])
+            sage: next(it)
+            [0, 4, 5, 7]
 
         .. SEEALSO::
 

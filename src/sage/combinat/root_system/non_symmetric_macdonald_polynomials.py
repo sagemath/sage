@@ -91,11 +91,11 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(["A",2,1], q=q, q1=t, q2=-1)
         sage: vars = K['x0,x1,x2'].gens()
         sage: E[L0([2,0,1])].expand(vars)
-        ((-t + 1)/(-q*t + 1))*x0^2*x1 + x0^2*x2 + ((-q*t + q)/(-q*t + 1))*x0*x1*x2
+        (t - 1)/(q*t - 1)*x0^2*x1 + x0^2*x2 + (q*t - q)/(q*t - 1)*x0*x1*x2
 
         sage: from sage.combinat.sf.ns_macdonald import E
         sage: E([2,0,1])
-        ((-t + 1)/(-q*t + 1))*x0^2*x1 + x0^2*x2 + ((-q*t + q)/(-q*t + 1))*x0*x1*x2
+        (t - 1)/(q*t - 1)*x0^2*x1 + x0^2*x2 + (q*t - q)/(q*t - 1)*x0*x1*x2
 
     Here is a type `G_2^{(1)}` nonsymmetric Macdonald polynomial::
 
@@ -431,14 +431,14 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: NS.E([1,0])
         x0
         sage: EE([0,1])
-        ((-t + 1)/(-q*t + 1))*x0 + x1
+        (t - 1)/(q*t - 1)*x0 + x1
         sage: NS.E([0,1])
-        ((-t + 1)/(-q*t + 1))*x0 + x1
+        (t - 1)/(q*t - 1)*x0 + x1
 
         sage: NS.E([2,0])
-        x0^2 + ((-q*t + q)/(-q*t + 1))*x0*x1
+        x0^2 + (q*t - q)/(q*t - 1)*x0*x1
         sage: EE([2,0])
-        x0^2 + ((-q*t + q)/(-q*t + 1))*x0*x1
+        x0^2 + (q*t - q)/(q*t - 1)*x0*x1
 
     The same, directly in the ambient lattice with several shifts::
 
@@ -940,28 +940,28 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         sage: E = NonSymmetricMacdonaldPolynomials(KL,q, t, -1)
         sage: L0 = E.keys()
         sage: omega = L0.fundamental_weights()
-        sage: P = K['x1,x2,x3']
+        sage: P = K['x0,x1,x2']
         sage: def EE(weight): return E[L0(weight)].expand(P.gens())
 
         sage: EE([0,0,0])
         1
         sage: EE([1,0,0])
-        x1
+        x0
         sage: EE([0,1,0])
-        ((-t + 1)/(-q*t^2 + 1))*x1 + x2
+        (t - 1)/(q*t^2 - 1)*x0 + x1
         sage: EE([0,0,1])
-        ((-t + 1)/(-q*t + 1))*x1 + ((-t + 1)/(-q*t + 1))*x2 + x3
+        (t - 1)/(q*t - 1)*x0 + (t - 1)/(q*t - 1)*x1 + x2
         sage: EE([1,1,0])
-        x1*x2
+        x0*x1
         sage: EE([1,0,1])
-        ((-t + 1)/(-q*t^2 + 1))*x1*x2 + x1*x3
+        (t - 1)/(q*t^2 - 1)*x0*x1 + x0*x2
         sage: EE([0,1,1])
-        ((-t + 1)/(-q*t + 1))*x1*x2 + ((-t + 1)/(-q*t + 1))*x1*x3 + x2*x3
+        (t - 1)/(q*t - 1)*x0*x1 + (t - 1)/(q*t - 1)*x0*x2 + x1*x2
         sage: EE([2,0,0])
-        x1^2 + ((-q*t + q)/(-q*t + 1))*x1*x2 + ((-q*t + q)/(-q*t + 1))*x1*x3
+        x0^2 + (q*t - q)/(q*t - 1)*x0*x1 + (q*t - q)/(q*t - 1)*x0*x2
 
         sage: EE([0,2,0])
-        ((-t + 1)/(-q^2*t^2 + 1))*x1^2 + ((-q^2*t^3 + q^2*t^2 - q*t^2 + 2*q*t - q + t - 1)/(-q^3*t^3 + q^2*t^2 + q*t - 1))*x1*x2 + x2^2 + ((q*t^2 - 2*q*t + q)/(q^3*t^3 - q^2*t^2 - q*t + 1))*x1*x3 + ((-q*t + q)/(-q*t + 1))*x2*x3
+        (t - 1)/(q^2*t^2 - 1)*x0^2 + (q^2*t^3 - q^2*t^2 + q*t^2 - 2*q*t + q - t + 1)/(q^3*t^3 - q^2*t^2 - q*t + 1)*x0*x1 + x1^2 + (q*t^2 - 2*q*t + q)/(q^3*t^3 - q^2*t^2 - q*t + 1)*x0*x2 + (q*t - q)/(q*t - 1)*x1*x2
 
     Systematic checks with Sage's implementation of [HHL06]_::
 
@@ -1781,9 +1781,9 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
 
             sage: P = SymmetricFunctions(K).macdonald().P()
             sage: g = P[2,1].expand(3); g
-            x0^2*x1 + x0*x1^2 + x0^2*x2 + ((-2*q*t^2 + q*t - t^2 + q - t + 2)/(-q*t^2 + 1))*x0*x1*x2 + x1^2*x2 + x0*x2^2 + x1*x2^2
+            x0^2*x1 + x0*x1^2 + x0^2*x2 + (2*q*t^2 - q*t - q  + t^2 + t - 2)/(q*t^2 - 1)*x0*x1*x2 + x1^2*x2 + x0*x2^2 + x1*x2^2
             sage: fe = f.expand(g.parent().gens()); fe
-            x0^2*x1 + x0*x1^2 + x0^2*x2 + ((2*q*v^4 + v^4 - q*v^2 + v^2 - q - 2)/(q*v^4 - 1))*x0*x1*x2 + x1^2*x2 + x0*x2^2 + x1*x2^2
+            x0^2*x1 + x0*x1^2 + x0^2*x2 + (2*q*v^4 - q*v^2 - q + v^4 + v^2 - 2)/(q*v^4 - 1)*x0*x1*x2 + x1^2*x2 + x0*x2^2 + x1*x2^2
             sage: g.map_coefficients(lambda x: x.subs(t=v*v)) == fe
             True
 

@@ -33,7 +33,7 @@ import os
 from subprocess import Popen, PIPE
 
 from sage.structure.sage_object import SageObject
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.interfaces.process import terminate
 
@@ -88,7 +88,7 @@ class PALPreader(SageObject):
         [-1, -1]
         in Ambient free module of rank 2 over the principal ideal domain Integer Ring
         sage: type(_)
-        <type 'sage.geometry.point_collection.PointCollection'>
+        <class 'sage.geometry.point_collection.PointCollection'>
     """
 
     def __init__(self, dim, data_basename=None, output='Polyhedron'):

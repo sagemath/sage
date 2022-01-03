@@ -120,9 +120,7 @@ class LoopCrystals(Category_singleton):
             G = Crystals().parent_class.digraph(self, subset, index_set)
             if have_dot2tex():
                 def eopt(u_v_label):
-                    if u_v_label[2] == 0:
-                        return {"dir": "back"}
-                    return {}
+                    return {"backward": u_v_label[2] == 0}
                 G.set_latex_options(edge_options=eopt)
             return G
 
@@ -855,7 +853,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                     True
                 """
                 if q is None:
-                    from sage.rings.all import QQ
+                    from sage.rings.rational_field import QQ
                     q = QQ['q'].gens()[0]
                 P0 = self.weight_lattice_realization().classical()
                 B = P0.algebra(q.parent())

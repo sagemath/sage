@@ -40,7 +40,7 @@ Thus the following works::
     sage: x^2
     x^2
     sage: type(x)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 More complicated expressions in Sage can be built up using ordinary
 arithmetic. The following are valid, and follow the rules of Python
@@ -408,9 +408,12 @@ To check that :trac:`27092` is fixed::
 """
 
 import re
-from sage.arith.all import algdep
-from sage.rings.all import RR, Integer, CC, QQ, RealDoubleElement
-from sage.rings.real_mpfr import create_RealNumber
+from sage.arith.misc import algdep
+from sage.rings.integer import Integer
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RealDoubleElement
+from sage.rings.real_mpfr import RR, create_RealNumber
+from sage.rings.cc import CC
 
 from sage.misc.latex import latex
 from sage.misc.parser import Parser, LookupNameMaker
@@ -1462,10 +1465,17 @@ def mma_free_limit(expression, v, a, dir=None):
     """
     Limit using Mathematica's online interface.
 
+    INPUT:
+
+    - ``expression`` -- symbolic expression
+    - ``v`` -- variable
+    - ``a`` -- value where the variable goes to
+    - ``dir`` -- ``'+'``, ``'-'`` or ``None`` (optional, default:``None``)
+
     EXAMPLES::
 
         sage: from sage.calculus.calculus import mma_free_limit
-        sage: mma_free_limit(sin(x)/x, x=0) # optional - internet
+        sage: mma_free_limit(sin(x)/x, x, a=0) # optional - internet
         1
 
     Another simple limit::
@@ -1628,8 +1638,11 @@ def laplace(ex, t, s, algorithm='maxima'):
 
         sage: laplace(dirac_delta(t), t, s)
         1
-        sage: laplace(dirac_delta(t), t, s, algorithm='sympy')
-        (-heaviside(0) + 1, -oo, True)
+        sage: F, a, cond = laplace(dirac_delta(t), t, s, algorithm='sympy')
+        sage: a, cond
+        (-oo, True)
+        sage: F       # random - sympy <1.9 includes undefined heaviside(0) in answer
+        1
         sage: laplace(dirac_delta(t), t, s, algorithm='giac')
         1
 
@@ -2188,7 +2201,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
         sage: sefms('?%at(f(x),x=2)#1')
         f(2) != 1
         sage: a = sage.calculus.calculus.maxima("x#0"); a
-        x#0
+        x # 0
         sage: a.sage()
         x != 0
 

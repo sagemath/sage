@@ -1066,7 +1066,7 @@ class Patch(SageObject):
             global cm
             if cm is None:
                 from matplotlib import cm
-
+            assert cm is not None
             if cmap not in cm.datad:
                 raise RuntimeError("Color map %s not known (type sorted(colors) for valid names)" % cmap)
             cmap = cm.__dict__[cmap]

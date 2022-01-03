@@ -31,7 +31,7 @@ from sage.categories.loop_crystals import KirillovReshetikhinCrystals
 from sage.categories.homset import Hom
 from sage.categories.map import Map
 from sage.rings.integer import Integer
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.combinat.crystals.affine import (AffineCrystalFromClassical,
                                            AffineCrystalFromClassicalElement,
                                            AffineCrystalFromClassicalAndPromotion,

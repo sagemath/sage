@@ -339,7 +339,7 @@ from sage.graphs.graph import Graph
 from sage.matrix.constructor import matrix
 
 from .utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.numerical.mip import MixedIntegerLinearProgram
 
 from sage.matroids.lean_matrix cimport BinaryMatrix, TernaryMatrix

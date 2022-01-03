@@ -248,7 +248,7 @@ cdef class PolynomialRealDense(Polynomial):
         TESTS::
 
             sage: type(f.degree())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return smallInteger(self._degree)
 

@@ -14,7 +14,7 @@ Randomized tests of GiNaC / PyNaC
 
 from sage.misc.prandom import randint, random
 import operator
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.symbolic.ring import SR
 from sage.symbolic.expression import symbol_table, mixed_order
 from sage.symbolic.constants import (pi, e, golden_ratio, log2, euler_gamma,

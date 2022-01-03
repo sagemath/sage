@@ -1338,21 +1338,21 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     if k == 1:
         return base
 
-    if isinstance(names, (list,tuple)):
+    if isinstance(names, (list, tuple)):
         if len(names) != 1:
             raise ValueError("must provide exactly one generator name")
         names = names[0]
     if names is None:
         raise TypeError("You must specify the name of the generator.")
     if not isinstance(names, str):
-       names = str(names)
+        names = str(names)
 
     if res_name is None:
         res_name = names + '0'
 
     if modulus is None:
         from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-        modulus = GF(p**k, res_name).modulus().change_ring(ZZ)
+        modulus = GF((p, k), res_name).modulus().change_ring(ZZ)
     return ExtensionFactory(base=base, modulus=modulus, prec=prec, print_mode=print_mode,
                             names=names, res_name=res_name, ram_name=ram_name, print_pos=print_pos,
                             print_sep=print_sep, print_max_ram_terms=print_max_ram_terms,
@@ -2534,8 +2534,8 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
             prec = Integer(prec)
         if isinstance(names, (list, tuple)):
             names = names[0]
-        from sage.symbolic.expression import is_Expression
-        if not (modulus is None or is_Polynomial(modulus) or is_Expression(modulus)):
+        from sage.structure.element import Expression
+        if not (modulus is None or is_Polynomial(modulus) or isinstance(modulus, Expression)):
             raise TypeError("modulus must be a polynomial")
         if names is not None and not isinstance(names, str):
             names = str(names)
@@ -3271,9 +3271,9 @@ class pAdicExtension_class(UniqueFactory):
         if print_max_terse_terms is None:
             print_max_terse_terms = base._printer._max_terse_terms()
         show_prec = _canonicalize_show_prec(base._prec_type(), print_mode, show_prec)
-        from sage.symbolic.expression import is_Expression
+        from sage.structure.element import Expression
         if check:
-            if is_Expression(modulus):
+            if isinstance(modulus, Expression):
                 if len(modulus.variables()) != 1:
                     raise ValueError("symbolic expression must be in only one variable")
                 exact_modulus = modulus.polynomial(base.exact_field())
@@ -3378,8 +3378,8 @@ class pAdicExtension_class(UniqueFactory):
         if version[0] < 8:
             (polytype, base, premodulus, approx_modulus, names, prec, halt, print_mode, print_pos, print_sep,
              print_alphabet, print_max_ram_terms, print_max_unram_terms, print_max_terse_terms, implementation) = key
-            from sage.symbolic.expression import is_Expression
-            if is_Expression(premodulus):
+            from sage.structure.element import Expression
+            if isinstance(premodulus, Expression):
                 exact_modulus = premodulus.polynomial(base.exact_field())
             elif is_Polynomial(premodulus):
                 exact_modulus = premodulus.change_ring(base.exact_field())

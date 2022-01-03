@@ -116,7 +116,7 @@ def data_to_list(out, n, time):
                 break
         if i < len(w):
             t = w[i].strip()
-            out = '\n'.join([w[j] for j in range(i)])
+            out = '\n'.join(w[j] for j in range(i))
         else:
             t = ''
     else:

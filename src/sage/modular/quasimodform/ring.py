@@ -75,8 +75,11 @@ from sage.modular.modform.element import GradedModularFormElement, ModularFormEl
 from sage.modular.modform.space import ModularFormsSpace
 from sage.modular.modform.ring import ModularFormsRing
 
-from sage.rings.all import Integer, QQ
+from sage.rings.all import Integer, QQ, ZZ
 from sage.rings.polynomial.polynomial_element import Polynomial
+from sage.rings.polynomial.multi_polynomial import MPolynomial
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.term_order import TermOrder
 from sage.rings.power_series_poly import PowerSeries_poly
 
 from sage.structure.parent import Parent
@@ -387,6 +390,18 @@ class QuasiModularForms(Parent, UniqueRepresentation):
 
     generators = gens # alias
 
+    def ngens(self):
+        r"""
+        Return the number of generators of the given graded quasimodular forms
+        ring.
+
+        EXAMPLES::
+
+            sage: QuasiModularForms(1).ngens()
+            3
+        """
+        return len(self.gens())
+
     def gen(self, n):
         r"""
         Return the `n`-th generator of the quasimodular forms ring.
@@ -475,3 +490,82 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             Univariate Polynomial Ring in E2 over Ring of Modular Forms for Modular Group SL(2,Z) over Rational Field
         """
         return self.__polynomial_subring.gen()
+
+    def polynomial_ring(self, names='E2, E4, E6'):
+        r"""
+        Return a multivariate polynomial ring isomorphic to the given graded
+        quasimodular forms ring.
+
+        In the case of the full modular group, this
+        ring is `R[E_2, E_4, E_6]` where `E_2`, `E_4` and `E_6` have degrees 2,
+        4 and 6 respectively.
+
+        INPUT:
+
+        - ``names`` (str, default: ``'E2, E4, E6'``) -- a list or tuple of names
+          (strings), or a comma separated string. Correspond to the names of the
+          variables.
+
+        OUTPUT: A multivariate polynomial ring in the variables ``names``
+
+        EXAMPLES:
+
+            sage: QM = QuasiModularForms(1)
+            sage: P.<E2, E4, E6> = QM.polynomial_ring(); P
+            Multivariate Polynomial Ring in E2, E4, E6 over Rational Field
+            sage: E2.degree()
+            2
+            sage: E4.degree()
+            4
+            sage: E6.degree()
+            6
+            sage: P.<x, y, z, w> = QQ[]
+            sage: QM.from_polynomial(x+y+z+w)
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of variables (4) of the given polynomial cannot exceed the number of generators (3) of the quasimodular forms ring
+        """
+        return PolynomialRing(self.base_ring(), 3, names, order=TermOrder('wdeglex', [ZZ(2), ZZ(4), ZZ(6)]))
+
+    def from_polynomial(self, polynomial):
+        r"""
+        Convert the given polynomial `P(X, Y, Z)` to the graded quasiform
+        `P(E_2, E_4, E_6)` where `E_2`, `E_4` and `E_6` are the generators given
+        by :meth:`~sage.modular.quasimodform.ring.QuasiModularForms.gens`.
+
+        INPUT:
+
+        - ``plynomial`` -- A multivariate polynomial
+
+        OUTPUT: the graded quasimodular forms `P(E_2, E_4, E_6)`
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: P.<x, y, z> = QQ[]
+            sage: QM.from_polynomial(x)
+            1 - 24*q - 72*q^2 - 96*q^3 - 168*q^4 - 144*q^5 + O(q^6)
+            sage: QM.from_polynomial(x) == QM.0
+            True
+            sage: QM.from_polynomial(y) == QM.1
+            True
+            sage: QM.from_polynomial(z) == QM.2
+            True
+            sage: QM.from_polynomial(x^2 + y + x*z + 1)
+            4 - 336*q - 2016*q^2 + 322368*q^3 + 3691392*q^4 + 21797280*q^5 + O(q^6)
+
+        TESTS::
+
+            sage: QuasiModularForms(1).from_polynomial('x')
+            Traceback (most recent call last):
+            ...
+            TypeError: the input must be a polynomial
+        """
+        if not isinstance(polynomial, (MPolynomial, Polynomial)):
+            raise TypeError('the input must be a polynomial')
+        poly_parent = polynomial.parent()
+        nb_var = poly_parent.ngens()
+        if nb_var > self.ngens():
+            raise ValueError("the number of variables (%s) of the given polynomial cannot exceed the number of generators (%s) of the quasimodular forms ring" % (nb_var, self.ngens()))
+        gens_dict = {poly_parent.gen(i):self.gen(i) for i in range(0, nb_var)}
+        return self(polynomial.subs(gens_dict))

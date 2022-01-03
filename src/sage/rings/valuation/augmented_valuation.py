@@ -157,7 +157,8 @@ from .inductive_valuation import _lift_to_maximal_precision
 from .inductive_valuation import FinalInductiveValuation, NonFinalInductiveValuation, FiniteInductiveValuation, InfiniteInductiveValuation, InductiveValuation
 
 from sage.misc.cachefunc import cached_method
-from sage.rings.all import infinity, QQ
+from sage.rings.infinity import infinity
+from sage.rings.rational_field import QQ
 from sage.structure.factory import UniqueFactory
 
 

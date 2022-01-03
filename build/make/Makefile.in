@@ -32,8 +32,8 @@ SPKG_INST_RELDIR = var/lib/sage/installed
 # Aliases for mutually exclusive standard packages selected at configure time
 TOOLCHAIN = @SAGE_TOOLCHAIN@
 PYTHON = python3
-MP_LIBRARY = @SAGE_MP_LIBRARY@
-BLAS = @SAGE_BLAS@
+MP_LIBRARY = gmp
+BLAS = openblas
 
 # pkgconfig files generated/installed at build time
 PCFILES = @SAGE_SYSTEM_FACADE_PC_FILES@
@@ -51,6 +51,10 @@ SAGE_SPKG = sage-spkg
 
 # These are added to SAGE_SPKG in the call
 SAGE_SPKG_OPTIONS = @SAGE_SPKG_OPTIONS@
+
+# Where the Sage distribution installs documentation.
+# set to empty if --disable-doc is used
+SAGE_DOCS = $(SAGE_LOCAL)
 
 # Where the Sage distribution installs Python packages.
 # This can be overridden by 'make SAGE_VENV=/some/venv'.
@@ -142,7 +146,7 @@ SCRIPT_PACKAGES = @SAGE_SCRIPT_PACKAGES@
 # inst_git = $(INST)/.dummy
 
 $(foreach pkgname,$(BUILT_PACKAGES),\
-	$(eval inst_$(pkgname) = $(foreach tree, $(trees_$(pkgname)), $($(tree))/$(SPKG_INST_RELDIR)/$(pkgname)-$(vers_$(pkgname)))))
+	$(eval inst_$(pkgname) = $(foreach tree, $(trees_$(pkgname)), $(and $($(tree)), $($(tree))/$(SPKG_INST_RELDIR)/$(pkgname)-$(vers_$(pkgname))))))
 $(foreach pkgname,$(DUMMY_PACKAGES),\
 	$(eval inst_$(pkgname) = $(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/.dummy))
 
@@ -157,7 +161,7 @@ $(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/.dummy:
 
 
 # Filtered by installation tree
-$(foreach tree,SAGE_LOCAL SAGE_VENV, \
+$(foreach tree,SAGE_LOCAL SAGE_VENV SAGE_DOCS, \
     $(eval $(tree)_INSTALLED_PACKAGE_INSTS = \
                $(foreach pkgname,$(INSTALLED_PACKAGES), \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
@@ -228,11 +232,11 @@ build-start: all-build
 base-toolchain: _clean-broken-gcc base
 	+$(MAKE_REC) toolchain
 
-# All targets except for the base packages
+# All targets except for the base packages and except the documentation
 all-sage: \
 		sagelib \
-		$(INSTALLED_PACKAGE_INSTS) \
-                $(UNINSTALLED_PACKAGES_CLEANS)
+		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_CLEANS) \
+		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_CLEANS)
 
 # Same but filtered by installation trees:
 all-build-local: toolchain-deps
@@ -244,6 +248,11 @@ all-build-venv: toolchain-deps
 	+$(MAKE_REC) all-sage-venv
 
 all-sage-venv:  $(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_CLEANS)
+
+all-build-docs: toolchain-deps
+	+$(MAKE_REC) all-sage-docs
+
+all-sage-docs:  $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_CLEANS)
 
 # Download all packages which should be inside an sdist tarball (the -B
 # option to make forces all targets to be built unconditionally)
@@ -288,8 +297,7 @@ python3-SAGE_VENV-no-deps: setuptools-clean
 
 # Everything needed to start up Sage using "./sage".  Of course, not
 # every part of Sage will work.  It does not include Maxima for example.
-SAGERUNTIME = sagelib $(inst_ipython) $(inst_pexpect) \
-		$(inst_psutil)
+SAGERUNTIME = sagelib $(inst_ipython) $(inst_pexpect)
 
 all-sageruntime: toolchain-deps
 	+$(MAKE_REC) $(SAGERUNTIME)
@@ -317,35 +325,27 @@ base: $(inst_patch) $(inst_pkgconf)
 #
 # $ ./sage --docbuild -H
 
-# Building the documentation has many dependencies, because all
-# documented modules are imported and because we use matplotlib to
-# produce plots.
-DOC_DEPENDENCIES = sagelib sage_docbuild $(inst_sphinx) \
-	| $(SAGERUNTIME) $(inst_maxima) $(inst_networkx) $(inst_scipy) $(inst_sympy) \
-	$(inst_matplotlib) $(inst_pillow) $(inst_mathjax) $(inst_mpmath) \
-	$(inst_ipykernel) $(inst_jupyter_client) $(inst_conway_polynomials) \
-	$(inst_tachyon) $(inst_jmol) $(inst_thebe) $(inst_ipywidgets)
+doc: $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_CLEANS)
 
-doc: doc-html
-
-doc-html: $(DOC_DEPENDENCIES)
-	$(AM_V_at)cd "$(SAGE_SRC)/doc" && sage-logger -p "$(MAKE) doc-html" $(SAGE_ROOT)/logs/dochtml.log
+# All doc-building is delegated to the script packages
+# sagemath_doc_html, sagemath_doc_pdf
+doc-html: sagemath_doc_html
 
 # 'doc-html-no-plot': build docs without building the graphics coming
 # from the '.. plot' directive, in case you want to save a few
 # megabytes of disk space. 'doc-clean' is a prerequisite because the
 # presence of graphics is cached in src/doc/output.
 doc-html-no-plot: doc-clean
-	$(AM_V_at)sage-logger -p "$(MAKE) SAGE_DOCBUILD_OPTS=\"$(SAGE_DOCBUILD_OPTS) --no-plot\" doc-html" $(SAGE_ROOT)/logs/dochtml.log
+	+$(MAKE_REC) SAGE_DOCBUILD_OPTS="$(SAGE_DOCBUILD_OPTS) --no-plot" doc-html
 
-doc-html-mathjax:
-	$(AM_V_at)sage-logger -p "$(MAKE) SAGE_DOCBUILD_OPTS=\"$(SAGE_DOCBUILD_OPTS) -j\" doc-html" $(SAGE_ROOT)/logs/dochtml.log
+# Using mathjax is actually the only options, but we keep
+# this target for backwards compatibility.
+doc-html-mathjax: doc-html
 
-# Keep target 'doc-html-jsmath' for backwards compatibility.
+# Also Keep target 'doc-html-jsmath' for backwards compatibility.
 doc-html-jsmath: doc-html-mathjax
 
-doc-pdf: $(DOC_DEPENDENCIES)
-	$(AM_V_at)cd "$(SAGE_SRC)/doc" && sage-logger -p "$(MAKE) doc-pdf" $(SAGE_ROOT)/logs/docpdf.log
+doc-pdf: sagemath_doc_pdf
 
 doc-clean: doc-src-clean doc-output-clean
 
@@ -535,8 +535,10 @@ $(1)-$(4)-no-deps:
 $(1)-no-deps: $(1)-$(4)-no-deps
 
 $(1)-$(4)-clean:
-	sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
-		$(1) '$$($(4))'
+	if [ -d '$$($(4))' ]; then \
+	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
+		$(1) '$$($(4))'; \
+	fi
 
 $(1)-clean: $(1)-$(4)-clean
 
@@ -630,7 +632,8 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
 $(1)-$(4)-no-deps:
-	$(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
+	@if [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
+	    $(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
@@ -638,8 +641,20 @@ $(1)-$(4)-no-deps:
 		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
 		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
 		SAGE_INST_LOCAL=$$($(4)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log'
-	touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"
+		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' '$$(SAGE_LOGS)/$(1)-$(2).log' && \
+	    touch "$$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)"; \
+	else \
+	    echo; \
+	    echo "Error: $(1) is a dummy script package that the Sage distribution uses"; \
+	    echo "to provide information about equivalent system packages."; \
+	    echo "It cannot be installed using the Sage distribution."; \
+	    echo "Please install it manually, for example using the system packages"; \
+	    echo "recommended at the end of a run of './configure'"; \
+	    echo "See below for package-specific information."; \
+	    echo; \
+	    $$(SAGE_ROOT)/build/bin/sage-spkg-info $(1); \
+	    exit 1; \
+	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps
 
@@ -657,7 +672,16 @@ $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
+# Recursive tox invocation (note - we do not set the environment here).
+# Setting SAGE_SPKG_WHEELS is for the benefit of sagelib's tox.ini
+$(1)-tox-%: FORCE
+	$(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)/src' && \
+		export PATH="$$(SAGE_ORIG_PATH)" && \
+		SAGE_SPKG_WHEELS=$$(SAGE_LOCAL)/var/lib/sage/wheels \
+		tox -v -v -v -e $$*
+
 .PHONY: $(1) $(1)-uninstall $(1)-build-deps $(1)-no-deps $(1)-clean
+
 endef
 
 $(foreach pkgname,$(SCRIPT_PACKAGES),\

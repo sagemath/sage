@@ -27,7 +27,7 @@ its output via LibGAP::
     sage: FooGroup()
     <pc group of size 3 with 1 generators>
     sage: type(FooGroup().gap())
-    <type 'sage.libs.gap.element.GapElement'>
+    <class 'sage.libs.gap.element.GapElement'>
 
 The element class is a subclass of
 :class:`~sage.structure.element.MultiplicativeGroupElement`. To use
@@ -285,7 +285,7 @@ class ParentLibGAP(SageObject):
             sage: G.gap().parent()
             C library interface to GAP
             sage: type(G.gap())
-            <type 'sage.libs.gap.element.GapElement'>
+            <class 'sage.libs.gap.element.GapElement'>
 
         This can be useful, for example, to call GAP functions that
         are not wrapped in Sage::
@@ -325,7 +325,7 @@ class ParentLibGAP(SageObject):
         TESTS::
 
             sage: type(G.ngens())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return Integer(len(self.gens()))
 
@@ -430,7 +430,7 @@ class ParentLibGAP(SageObject):
             sage: G._an_element_()
             a*b
         """
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         gens = self.gens()
         if gens:
             return prod(gens)
@@ -504,14 +504,14 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             sage: xg
             a*b*a^-1*b^-1
             sage: type(xg)
-            <type 'sage.libs.gap.element.GapElement'>
+            <class 'sage.libs.gap.element.GapElement'>
 
         TESTS::
 
             sage: libgap(FreeGroup('a, b').an_element())
             a*b
             sage: type(libgap(FreeGroup('a, b').an_element()))
-            <type 'sage.libs.gap.element.GapElement'>
+            <class 'sage.libs.gap.element.GapElement'>
         """
         return self._libgap
 

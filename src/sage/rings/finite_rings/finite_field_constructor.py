@@ -176,16 +176,17 @@ from sage.structure.category_object import normalize_names
 
 from sage.rings.integer import Integer
 
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
 # the import below is just a redirection
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
 assert is_FiniteField  # just to silent pyflakes
 
-# We don't late import this because this means trouble with the Givaro library
-# On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
-# TODO: figure out why
-from .finite_field_givaro import FiniteField_givaro
+try:
+    # We don't late import this because this means trouble with the Givaro library
+    # On a Macbook Pro OSX 10.5.8, this manifests as a Bus Error on exiting Sage.
+    # TODO: figure out why
+    from .finite_field_givaro import FiniteField_givaro
+except ImportError:
+    FiniteField_givaro = None
 
 from sage.structure.factory import UniqueFactory
 
@@ -284,7 +285,7 @@ class FiniteFieldFactory(UniqueFactory):
         sage: f = K.modulus(); f
         x^5 + 4*x + 1
         sage: type(f)
-         <type 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
+         <class 'sage.rings.polynomial.polynomial_zmod_flint.Polynomial_zmod_flint'>
 
     By default, the given generator is not guaranteed to be primitive
     (a generator of the multiplicative group), use
@@ -513,7 +514,7 @@ class FiniteFieldFactory(UniqueFactory):
             sage: GF.create_key_and_extra_args(9, 'a', foo='value')
             Traceback (most recent call last):
             ...
-            TypeError: create_key_and_extra_args() got an unexpected keyword argument 'foo'
+            TypeError: ...create_key_and_extra_args() got an unexpected keyword argument 'foo'
 
         Moreover, ``repr`` and ``elem_cache`` are ignored when not
         using givaro::
@@ -633,6 +634,7 @@ class FiniteFieldFactory(UniqueFactory):
             # optimization which we also need to avoid an infinite loop:
             # a modulus of None is a shorthand for x-1.
             if modulus is not None or impl != 'modn':
+                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 R = PolynomialRing(FiniteField(p), 'x')
                 if modulus is None:
                     modulus = R.irreducible_element(n)

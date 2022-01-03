@@ -545,14 +545,15 @@ def _missing_pair(n,l):
         sage: _missing_pair(6, [(0,1), (4,5)])
         (2, 3)
     """
-    l = [x for X in l for x in X]
+    l = set(x for X in l for x in X)
     for x in range(n):
-        if not x in l:
+        if x not in l:
             break
 
-    assert not x in l
-    assert not x+1 in l
-    return (x,x+1)
+    assert x not in l
+    assert x + 1 not in l
+    return (x, x + 1)
+
 
 def barP(eps, m):
     r"""

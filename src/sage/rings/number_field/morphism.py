@@ -130,7 +130,7 @@ class NumberFieldHomomorphism_im_gens(RingHomomorphism_im_gens):
             V,VtoK,KtoV = self.domain().absolute_vector_space()
             # construct the transformation matrix from K to L by making the columns be the image of the basis of V_K in V_L using the homomorphism
             from sage.matrix.constructor import matrix
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             M = matrix(QQ, [LtoV(self(VtoK(e))) for e in V.basis()]).transpose()
             self._transformation_data = (M,LtoV,VtoK)
 

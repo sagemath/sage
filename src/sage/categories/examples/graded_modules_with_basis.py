@@ -131,7 +131,7 @@ class GradedPartitionModule(CombinatorialFreeModule):
             sage: A.degree_on_basis(Partition((4,2,1,1,1,1)))
             10
             sage: type(A.degree_on_basis(Partition((1,1))))
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return t.size()
 

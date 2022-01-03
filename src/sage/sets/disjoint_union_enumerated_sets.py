@@ -21,7 +21,8 @@ from sage.sets.family import Family
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.infinity import Infinity
-from sage.misc.all import cached_method, lazy_attribute
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.unique_representation import UniqueRepresentation
 
 class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
@@ -467,12 +468,12 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=False)
             sage: U._element_constructor_
-            <bound method DisjointUnionEnumeratedSets_with_category._element_constructor_default
+            <bound method DisjointUnionEnumeratedSets._element_constructor_default
              of Disjoint union of Finite family {...}>
             sage: U = DisjointUnionEnumeratedSets(
             ....:          Family([1,2,3], Partitions), facade=True)
             sage: U._element_constructor_
-            <bound method DisjointUnionEnumeratedSets_with_category._element_constructor_facade
+            <bound method DisjointUnionEnumeratedSets._element_constructor_facade
              of Disjoint union of Finite family {...}>
         """
         if not self._facade:

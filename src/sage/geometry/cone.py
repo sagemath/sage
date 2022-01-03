@@ -216,15 +216,21 @@ from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
 from sage.geometry.toric_plotter import ToricPlotter, label_list
 from sage.geometry.relative_interior import RelativeInterior
 from sage.graphs.digraph import DiGraph
-from sage.matrix.all import column_matrix, matrix, MatrixSpace
+from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
+from sage.matrix.special import column_matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import flatten, latex
-from sage.modules.all import span, vector, VectorSpace
-from sage.rings.all import QQ, ZZ
+from sage.misc.flatten import flatten
+from sage.misc.latex import latex
+from sage.modules.free_module import span, VectorSpace
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.all import SageObject, parent
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.geometry.integral_points import parallelotope_points
 from sage.geometry.convex_set import ConvexSet_closed
+import sage.geometry.abc
 
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
@@ -591,8 +597,6 @@ def _ambient_space_point(body, data):
         (1.00000000000000, 3.14159265358979)
 
     """
-    from sage.rings.all import AA, RR
-
     L = body.lattice()
 
     def try_base_extend(ring):
@@ -617,6 +621,9 @@ def _ambient_space_point(body, data):
     # If we don't have a lattice element, try successively
     # less-desirable ambient spaces until (as a last resort) we
     # attempt a numerical representation.
+    from sage.rings.qqbar import AA
+    from sage.rings.real_mpfr import RR
+
     for ring in [QQ, AA, RR]:
         p = try_base_extend(ring)
         if p is not None:
@@ -722,7 +729,7 @@ def normalize_rays(rays, lattice):
             if lattice.is_ambient():
                 # Handle the most common case efficiently.
                 V = lattice.base_extend(QQ)
-                length = lambda ray: integral_length(ray)
+                length = integral_length
         except AttributeError:
             pass
         if V is None:
@@ -1091,7 +1098,7 @@ class IntegralRayCollection(SageObject, Hashable, Iterable):
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
-            sage: quadrant.plot()
+            sage: quadrant.plot()  # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
         """
         tp = ToricPlotter(options, self.lattice().degree(), self.rays())
@@ -1414,7 +1421,7 @@ def classify_cone_2d(ray0, ray1, check=True):
 # and ``ambient_ray_indices`` keyword parameters. See ``intersection`` method
 # for an example why this is needed.
 @richcmp_method
-class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_closed):
+class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_closed, sage.geometry.abc.ConvexRationalPolyhedralCone):
     r"""
     Create a convex rational polyhedral cone.
 
@@ -1513,7 +1520,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             self._ambient_ray_indices = tuple(ambient_ray_indices)
             superinit(ambient.rays(self._ambient_ray_indices),
                       ambient.lattice())
-        if not PPL is None:
+        if PPL is not None:
             self._PPL_C_Polyhedron = PPL
 
     def _sage_input_(self, sib, coerced):
@@ -3468,7 +3475,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         EXAMPLES::
 
             sage: quadrant = Cone([(1,0), (0,1)])
-            sage: quadrant.plot()
+            sage: quadrant.plot()  # optional - sage.plot
             Graphics object consisting of 9 graphics primitives
         """
         # What to do with 3-d cones in 5-d? Use some projection method?
@@ -5459,7 +5466,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: sum(K.random_element() for i in range(10)) in K.lattice()
             True
         """
-        if not ring in [ZZ, QQ]:
+        if ring not in [ZZ, QQ]:
             # This cone theoretically lives in a real vector space,
             # but in Sage, we work over the rationals to avoid
             # numerical issues. Thus ``ring`` must consist of

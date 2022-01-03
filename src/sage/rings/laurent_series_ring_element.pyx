@@ -1753,6 +1753,12 @@ cdef class LaurentSeries(AlgebraElement):
             Traceback (most recent call last):
             ...
             TypeError: self is not a power series
+
+        Test for :trac:`32440`::
+
+            sage: L.<x> = LaurentSeriesRing(QQ, implementation='pari')
+            sage: (x + O(x^3)).power_series()
+            x + O(x^3)
         """
         if self.__n < 0:
             if self.__u.is_zero() and self.__u.prec() >= - self.__n:

@@ -499,7 +499,7 @@ class LieAlgebraMorphism_from_generators(LieAlgebraHomomorphism_im_gens):
             sage: L.morphism({X: int(1)})
             Traceback (most recent call last):
             ...
-            TypeError: codomain <type 'int'> is not a Lie algebra
+            TypeError: codomain <class 'int'> is not a Lie algebra
 
             sage: from sage.algebras.lie_algebras.morphism import LieAlgebraMorphism_from_generators
             sage: LieAlgebraMorphism_from_generators({ZZ(1): X})

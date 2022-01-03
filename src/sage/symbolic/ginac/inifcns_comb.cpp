@@ -126,9 +126,9 @@ static ex binomial_imag_part(const ex & x, const ex & y)
 static void binomial_print_latex(const ex & x, const ex & y,
 		const print_context & c)
 {
-	c.s<<"{";
+	c.s<<"\\binom{";
 	x.print(c);
-	c.s<<" \\choose ";
+	c.s<<"}{";
 	y.print(c);
 	c.s<<"}";
 }

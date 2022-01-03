@@ -216,7 +216,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: from sage.matrix.matrix_integer_dense import Matrix_integer_dense
             sage: a = Matrix_integer_dense.__new__(Matrix_integer_dense, Mat(ZZ,3), 0,0,0)
             sage: type(a)
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
 
         TESTS::
 
@@ -963,7 +963,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 try:
                     n = Integer(n)
                 except TypeError:
-                    from sage.symbolic.expression import Expression
+                    from sage.structure.element import Expression
                     if isinstance(n, Expression):
                         from sage.matrix.matrix2 import _matrix_power_symbolic
                         return _matrix_power_symbolic(self, n)
@@ -1303,7 +1303,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: M = MatrixSpace(ZZ, 2)
             sage: A = M(range(0, 2^2))
             sage: type(A)
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: A.charpoly('x')
             x^2 - 3*x - 2
             sage: A.charpoly('y')
@@ -4873,7 +4873,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [  0   0 545], [0, 1, 2]
             )
         """
-        from sage.misc.getusage import get_memory_usage
         cdef Py_ssize_t i, j, piv, n = self._nrows, m = self._ncols
 
         from .constructor import matrix
@@ -5157,6 +5156,93 @@ cdef class Matrix_integer_dense(Matrix_dense):
     #################################################################
     # operations with matrices
     #################################################################
+
+    def row(self, Py_ssize_t i, from_list=False):
+        """
+        Return the i-th row of this matrix as a dense vector.
+
+        INPUT:
+
+        -  ``i`` - integer
+
+        -  ``from_list`` - ignored
+
+        EXAMPLES::
+
+            sage: m = matrix(ZZ, 2, [1, -2, 3, 4])
+            sage: m.row(0)
+            (1, -2)
+            sage: m.row(1)
+            (3, 4)
+            sage: m.row(1, from_list=True)
+            (3, 4)
+            sage: m.row(-2)
+            (1, -2)
+
+            sage: m.row(2)
+            Traceback (most recent call last):
+            ...
+            IndexError: row index out of range
+            sage: m.row(-3)
+            Traceback (most recent call last):
+            ...
+            IndexError: row index out of range
+        """
+        if i < 0:
+            i = i + self._nrows
+        if i < 0 or i >= self._nrows:
+            raise IndexError("row index out of range")
+
+        cdef Py_ssize_t j
+        parent = self._row_ambient_module()
+        cdef Vector_integer_dense v = parent.zero_vector()
+        for j in range(self._ncols):
+            fmpz_get_mpz(v._entries[j], fmpz_mat_entry(self._matrix, i, j))
+        return v
+
+    def column(self, Py_ssize_t i, from_list=False):
+        """
+        Return the i-th column of this matrix as a dense vector.
+
+        INPUT:
+
+        -  ``i`` - integer
+
+        -  ``from_list`` - ignored
+
+        EXAMPLES::
+
+            sage: m = matrix(ZZ, 3, 2, [1, -2, 3, 4, -1, 0])
+            sage: m.column(1)
+            (-2, 4, 0)
+            sage: m.column(1, from_list=True)
+            (-2, 4, 0)
+            sage: m.column(-1)
+            (-2, 4, 0)
+            sage: m.column(-2)
+            (1, 3, -1)
+
+            sage: m.column(2)
+            Traceback (most recent call last):
+            ...
+            IndexError: column index out of range
+            sage: m.column(-3)
+            Traceback (most recent call last):
+            ...
+            IndexError: column index out of range
+        """
+        if i < 0:
+            i += self._ncols
+        if i < 0 or i >= self._ncols:
+            raise IndexError("column index out of range")
+
+        cdef Py_ssize_t j
+        parent = self._column_ambient_module()
+        cdef Vector_integer_dense v = parent.zero_vector()
+        for j in range(self._nrows):
+            fmpz_get_mpz(v._entries[j], fmpz_mat_entry(self._matrix, j, i))
+        return v
+
     cdef _stack_impl(self, bottom):
         r"""
         Return the matrix ``self`` on top of ``bottom``::
@@ -5546,7 +5632,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = matrix(ZZ, 2, 3, range(6))
             sage: type(A)
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: B = A.transpose()
             sage: print(B)
             [0 3]
@@ -5592,7 +5678,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             sage: A = matrix(2,3,range(6))
             sage: type(A)
-            <type 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
+            <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'>
             sage: A.antitranspose()
             [5 2]
             [4 1]
@@ -5645,7 +5731,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: pari(a)
             [1, 2; 3, 4]
             sage: type(pari(a))
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
         """
         return integer_matrix(self._matrix, 0)
 

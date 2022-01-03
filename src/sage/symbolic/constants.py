@@ -46,8 +46,8 @@ type the following::
     3.14159265358979323846264338328
     sage: mathematica(pi)             # optional - mathematica
     Pi
-    sage: maple(pi)                   # optional - maple
-    Pi
+    sage: pi._maple_init_()
+    'Pi'
     sage: octave(pi)                  # optional - octave
     3.14159
 
@@ -556,8 +556,9 @@ class Pi(Constant):
             sage: mathml(pi)
             <mi>&pi;</mi>
         """
-        conversions = dict(axiom='%pi', fricas='%pi', maxima='%pi', giac='pi', gp='Pi', kash='PI',
-                           mathematica='Pi', matlab='pi', maple='pi',
+        conversions = dict(axiom='%pi', fricas='%pi', maxima='%pi', giac='pi',
+                           gp='Pi', kash='PI',
+                           mathematica='Pi', matlab='pi', maple='Pi',
                            octave='pi', pari='Pi', pynac='Pi')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r"\pi", mathml="<mi>&pi;</mi>",
@@ -717,7 +718,7 @@ class NotANumber(Constant):
             sage: NaN._mpfr_(RealField(53))
             NaN
             sage: type(_)
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
         """
         return R('NaN') #??? nan in mpfr: void mpfr_set_nan (mpfr_t x)
 
@@ -787,7 +788,7 @@ class GoldenRatio(Constant):
             sage: golden_ratio.minpoly()
             x^2 - x - 1
         """
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         x = QQ['x'].gen(0)
         return x**2 - x - 1
 

@@ -25,7 +25,7 @@ REFERENCES: [BM2012]_, [Mol2015]_
 from sage.functions.hyperbolic import cosh
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.rings.all import CC
+from sage.rings.cc import CC
 from sage.rings.complex_mpfr import ComplexField
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.integer_ring import ZZ

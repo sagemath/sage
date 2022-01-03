@@ -145,7 +145,7 @@ from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom, End
 
 from sage.interfaces.all import singular
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.all import add, sage_eval
 
 from sage.rings.all import degree_lowest_rational_function, IntegerRing
@@ -411,7 +411,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
             raise TypeError("this curve is already a plane curve")
         if self.base_ring() not in Fields():
             raise TypeError("this curve must be defined over a field")
-        if not PS is None:
+        if PS is not None:
             if not is_ProjectiveSpace(PS):
                 raise TypeError("(=%s) must be a projective space" % PS)
             if PS.dimension_relative() != n - 1:
@@ -455,7 +455,7 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
                 Q = self(P)
             except TypeError:
                 pass
-            if not Q is None:
+            if Q is not None:
                 raise TypeError("(=%s) must be a point not on this curve" % P)
             try:
                 Q = self.ambient_space()(P)
@@ -1699,7 +1699,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         f = self.affine_patch(2).defining_polynomial()
         if f.degree() == self.degree():
             return fundamental_group(f, projective=True)
-        else:  #in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
+        else:  # in this case, the line at infinity is part of the curve, so the complement lies in the affine patch
             return fundamental_group(f, projective=False)
 
     def rational_parameterization(self):
@@ -2628,11 +2628,11 @@ class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):
             [Point (x0, x1),
              Point (x0 + (-z2 - 1)*x2, x1),
              Point (x0 + (z2 + 1)*x2, x1),
-             Point (x0 + (z2)*x2, x1 + (z2 - 1)*x2),
+             Point (x0 + z2*x2, x1 + (z2 - 1)*x2),
              Point (x0 + (-z2)*x2, x1 + (-z2 + 1)*x2),
              Point (x0 + (-z2 - 1)*x2, x1 + (-z2 - 1)*x2),
              Point (x0 + (z2 + 1)*x2, x1 + (z2 + 1)*x2),
-             Point (x0 + (z2 - 1)*x2, x1 + (z2)*x2),
+             Point (x0 + (z2 - 1)*x2, x1 + z2*x2),
              Point (x0 + (-z2 + 1)*x2, x1 + (-z2)*x2),
              Point (x0 + x2, x1 - x2),
              Point (x0 - x2, x1 + x2)]

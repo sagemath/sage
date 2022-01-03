@@ -1070,6 +1070,27 @@ REFERENCES:
              *Reverse-Engineering the S-Box of Streebog, Kuznyechik and STRIBOBr1*; in
              EuroCrypt'16, pp. 372-402.
 
+.. [Br1910] Bruckner, "Uber die Ableitung der allgemeinen Polytope und
+            die nach Isomorphismus verschiedenen Typen der allgemeinen
+            Achtzelle (Oktatope)", Verhand. Konik. Akad. Wetenschap,
+            Erste Sectie, 10 (1910)
+
+.. [Br2000] Kenneth S. Brown, *Semigroups, rings, and Markov chains*,
+            :arxiv:`math/0006145v1`.
+
+
+.. [BR2000a] \P. Barreto and V. Rijmen,
+             *The ANUBIS Block Cipher*; in
+             First Open NESSIE Workshop, (2000).
+
+.. [BR2000b] \P. Barreto and V. Rijmen,
+             *The Khazad legacy-level Block Cipher*; in
+             First Open NESSIE Workshop, (2000).
+
+.. [BR2000c] \P. Barreto and V. Rijmen,
+             *The Whirlpool hashing function*; in
+             First Open NESSIE Workshop, (2000).
+
 .. [BR2010] Matthew Baker and Robert Rumely. Potential theory and dynamics on the
             Berkovich projective line. Mathematical Surveys and Monographs,
             Volumne 159. 2010.
@@ -1077,6 +1098,13 @@ REFERENCES:
 .. [BR2010a] Jean Berstel and Christophe Reutenauer,
              *Noncommutative Rational Series With Applications*.
              Cambridge, 2010.
+
+.. [BR2010b] Valérie Berthé and Michel Rigo, editors. Combinatorics, automata,
+             and number theory, volume 135. Cambridge: Cambridge University Press, 2010.
+
+.. [Br2016] *Bresenham's Line Algorithm*, Python, 26 December 2016.
+            http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
+
 
 .. [Brandes01] Ulrik Brandes,
                A faster algorithm for betweenness centrality,
@@ -1110,30 +1138,6 @@ REFERENCES:
 
 .. [Bro2016] \A.E. Brouwer,
              Personal communication, 2016.
-
-.. [Br1910] Bruckner, "Uber die Ableitung der allgemeinen Polytope und
-            die nach Isomorphismus verschiedenen Typen der allgemeinen
-            Achtzelle (Oktatope)", Verhand. Konik. Akad. Wetenschap,
-            Erste Sectie, 10 (1910)
-
-.. [Br2000] Kenneth S. Brown, *Semigroups, rings, and Markov chains*,
-            :arxiv:`math/0006145v1`.
-
-
-.. [BR2000a] \P. Barreto and V. Rijmen,
-             *The ANUBIS Block Cipher*; in
-             First Open NESSIE Workshop, (2000).
-
-.. [BR2000b] \P. Barreto and V. Rijmen,
-             *The Khazad legacy-level Block Cipher*; in
-             First Open NESSIE Workshop, (2000).
-
-.. [BR2000c] \P. Barreto and V. Rijmen,
-             *The Whirlpool hashing function*; in
-             First Open NESSIE Workshop, (2000).
-
-.. [Br2016] *Bresenham's Line Algorithm*, Python, 26 December 2016.
-            http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
 
 .. [Bro1982] \A. Brouwer,
              *Polarities of G. Higman's symmetric design and a strongly regular
@@ -1279,6 +1283,10 @@ REFERENCES:
 .. [Cha2005] \F. Chapoton, *Une Base Symétrique de l'algèbre des
              Coinvariants Quasi-Symétriques*, Electronic Journal of
              Combinatorics Vol 12(1) (2005) N16.
+
+.. [Che1944] \S. Chern, *A simple intrinsic proof of the Gauss-Bonnet formula
+             for closed Riemannian manifolds*, Ann. of Math. (2) 45 (1944),
+             747–752.
 
 .. [CQ2019] \A. Cassella and C. Quadrelli.
             *Right-angled Artin groups and enhanced Koszul properties*.
@@ -1708,6 +1716,9 @@ REFERENCES:
              C. R. Acad. Sci. Paris Sér. I Math. 296 (1983) 14
              781--784.
 
+.. [Cro2004] Peter R. Cromwell, *Knots and links*, Cambridge University Press (2004).
+             :doi:`10.1017/CBO9780511809767`
+
 .. [CRS2016] Dean Crnković, Sanja Rukavina, and Andrea Švob. *Strongly regular
              graphs from orthogonal groups* `O^+(6,2)` *and* `O^-(6,2)`.
              :arxiv:`1609.07133`
@@ -1899,6 +1910,11 @@ REFERENCES:
 .. [DG1994] \S. Dulucq and O. Guibert. Mots de piles, tableaux
             standards et permutations de Baxter, proceedings of
             Formal Power Series and Algebraic Combinatorics, 1994.
+
+.. [DG2006] Yon Dourisboure and Cyril Gavoille. *Tree-decompositions with bags
+            of small diameter*. Discrete Mathematics, 307 (16) (2007),
+            pp. 2008-2029.
+            :doi:`10.1016/j.disc.2005.12.060`
 
 .. [DGH2020] \C. Donnot, A. Genitrini and Y. Herida. Unranking Combinations
             Lexicographically: an efficient new strategy compared with others, 2020,
@@ -2858,6 +2874,9 @@ REFERENCES:
             for odd modular subgroups", LMS J. Comput. Math. 17
             (2014), no. 1, 206-208, :doi:`10.1112/S1461157013000338`.
 
+.. [HL2018] Mustafa Hajij and Jesse Levitt, "An Efficient Algorithm to Compute
+            the Colored Jones Polynomial" :arxiv:`1804.07910v2`.
+
 .. [Hli2006] Petr Hlineny, "Equivalence-free exhaustive generation of
              matroid representations", Discrete Applied Mathematics
              154 (2006), pp. 1210-1222.
@@ -3050,6 +3069,10 @@ REFERENCES:
 
 .. [Hutz2015] \B. Hutz. Determination of all rational preperiodic points
               for morphisms of PN. Mathematics of Computation, 84:291 (2015), 289-308.
+
+.. [Hutz2019] \B. Hutz. Multipliers and invariants of endomorphisms of projective
+              space in dimension greater than 1, Journal de Théorie des Nombres de
+              Bordeaux, Tome 32 (2020) no. 2, pp. 439-469.
 
 .. [Huy2005] \D. Huybrechts : *Complex Geometry*, Springer (Berlin)
              (2005).
@@ -3794,6 +3817,12 @@ REFERENCES:
              Algebra 207 (2006), no 1, pages 1-18.
              Preprint: :arxiv:`math/0504296v2`.
 
+.. [LKOL2002] Hyeong-Ok Lee, Jong-Seok Kim, Eunseuk Oh and Hyeong-Seok Lim,
+              *Hyper-Star Graph: A New Interconnection Network Improving the
+              Network Cost of the Hypercube*, Eurasian Conference on Information
+              and Communication Technology, LNCS 2510, pp 858-865, 2002.
+              :doi:`10.1007/3-540-36087-5_99`
+
 .. [LLM2003] \A. Lascoux, L. Lapointe, and J. Morse.  *Tableau atoms and a new
              Macdonald positivity conjecture.* Duke Math Journal, **116 (1)**,
              2003.  :arxiv:`math/0008073`
@@ -3871,6 +3900,11 @@ REFERENCES:
 .. [Loe2007] David Loeffler, *Spectral expansions of overconvergent
              modular functions*, Int. Math. Res. Not 2007 (050).
              :arxiv:`math/0701168`.
+
+.. [Lokshtanov2009] Daniel Lokshtanov. *On the complexity of computing
+                    treelength*. Discrete Applied
+                    Mathematics. 158(7):820-827, 2009.
+                    :doi:`10.1016/j.dam.2009.10.007`
 
 .. [Lom2019] Davide Lombardo, *Computing the geometric endomorphism ring
              of a genus 2 Jacobian*, Mathematics of Computation 88 (2019),
@@ -4928,6 +4962,11 @@ REFERENCES:
             *Algorithmic aspects of vertex elimination*,
             Proceedings of seventh annual ACM symposium on Theory of computing,
             Pages 245-254, ACM 1975. :doi:`10.1145/800116.803775`.
+
+.. [RT1985] James Roskind and Robert Endre Tarjan.
+            *A note on finding minimum-cost edge-disjoint spanning trees*.
+            Mathematics of Operations Research, 10(4):701-708, 1985.
+            :doi:`10.1287/moor.10.4.701`
 
 .. [RTL76] Donald J. Rose, Robert Endre Tarjan and George S. Lueker.
            *Algorithmic aspects of vertex elimination on graphs*.

@@ -617,7 +617,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
             # Skip this test if we exceeded our --short budget of walltime for
             # this doctest
-            if self.options.target_walltime is not None and self.total_walltime >= self.options.target_walltime:
+            if self.options.target_walltime != -1 and self.total_walltime >= self.options.target_walltime:
                 walltime_skips += 1
                 self.optionflags |= doctest.SKIP
 
@@ -766,7 +766,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
 
             # Report the outcome.
             if outcome is SUCCESS:
-                if self.options.warn_long and example.walltime > self.options.warn_long:
+                if self.options.warn_long > 0 and example.walltime > self.options.warn_long:
                     self.report_overtime(out, test, example, got)
                 elif not quiet:
                     self.report_success(out, test, example, got)
@@ -1475,7 +1475,7 @@ class SageDocTestRunner(doctest.DocTestRunner, object):
             sage: old_prompt = sage0._prompt
             sage: sage0._prompt = r"\(Pdb\) "
             sage: sage0.eval("DTR.run(DT, clear_globs=False)") # indirect doctest
-            '... ArithmeticError("invariants " + str(ainvs) + " define a singular curve")'
+            '... ArithmeticError(self._equation_string() + " defines a singular curve")'
             sage: sage0.eval("l")
             '...if self.discriminant() == 0:...raise ArithmeticError...'
             sage: sage0.eval("u")
@@ -1743,7 +1743,7 @@ class DocTestDispatcher(SageObject):
         # If we think that we can not finish running all tests until
         # target_endtime, we skip individual tests. (Only enabled with
         # --short.)
-        if opt.target_walltime is None:
+        if opt.target_walltime == -1:
             target_endtime = None
         else:
             target_endtime = time.time() + opt.target_walltime
@@ -1835,6 +1835,14 @@ class DocTestDispatcher(SageObject):
                             # report(), parallel testing can easily fail
                             # with a "Too many open files" error.
                             w.save_result_output()
+                            # In python3 multiprocessing.Process also
+                            # opens a pipe internally, which has to be
+                            # closed here, as well.
+                            # But afterwards, exitcode and pid are
+                            # no longer available.
+                            w.copied_exitcode = w.exitcode
+                            w.copied_pid = w.pid
+                            w.close()
                             finished.append(w)
                     workers = new_workers
 
@@ -1854,10 +1862,10 @@ class DocTestDispatcher(SageObject):
                         self.controller.reporter.report(
                             w.source,
                             w.killed,
-                            w.exitcode,
+                            w.copied_exitcode,
                             w.result,
                             w.output,
-                            pid=w.pid)
+                            pid=w.copied_pid)
 
                         pending_tests -= 1
 
@@ -2056,6 +2064,7 @@ class DocTestWorker(multiprocessing.Process):
             Total time for all tests: ... seconds
                 cpu time: ... seconds
                 cumulative wall time: ... seconds
+            Features detected...
         """
         multiprocessing.Process.__init__(self)
 
@@ -2101,6 +2110,7 @@ class DocTestWorker(multiprocessing.Process):
             Total time for all tests: ... seconds
                 cpu time: ... seconds
                 cumulative wall time: ... seconds
+            Features detected...
         """
         os.setpgid(os.getpid(), os.getpid())
 
@@ -2496,6 +2506,11 @@ class DocTestTask(object):
         from importlib import import_module
         sage_all = import_module(options.environment)
         dict_all = sage_all.__dict__
+        # When using global environments other than sage.all,
+        # make sure startup is finished so we don't get "Resolving lazy import"
+        # warnings.
+        from sage.misc.lazy_import import ensure_startup_finished
+        ensure_startup_finished()
         # Remove '__package__' item from the globals since it is not
         # always in the globals in an actual Sage session.
         dict_all.pop('__package__', None)

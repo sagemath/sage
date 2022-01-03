@@ -37,16 +37,18 @@ import time
 from itertools import islice
 from sage.structure.sage_object import SageObject
 from copy import copy
-from sage.rings.all import QQ, infinity
+from sage.rings.rational_field import QQ
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
-from sage.rings.all import FractionField, PolynomialRing
+from sage.rings.fraction_field import FractionField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.sets.all import Set
 from sage.graphs.digraph import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType_Irreducible, QuiverMutationType_Reducible
 from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 from random import randint
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.matrix.all import identity_matrix
 from sage.matrix.constructor import matrix
 from sage.combinat.cluster_algebra_quiver.quiver import ClusterQuiver
@@ -1545,7 +1547,7 @@ class ClusterSeed(SageObject):
             ValueError: Unable to calculate g-vectors. Need to use g vectors.
         """
 
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         if self._use_g_vec:
             return copy(self._G)
         elif self._use_fpolys and self._cluster: # This only calls g_vector when it will not create a loop.
@@ -1812,7 +1814,7 @@ class ClusterSeed(SageObject):
             sage: [ S.coefficient(k) for k in range(3) ]
             [y0, 1/y2, 1/y1]
         """
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
 
         if k in self._nlist:
             k = self._nlist.index(k)
@@ -3036,7 +3038,7 @@ class ClusterSeed(SageObject):
                              "for finite type cluster algebras at a "
                              "bipartite initial cluster")
 
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         from sage.combinat.root_system.cartan_matrix import CartanMatrix
 
         A = 2 - self.b_matrix().apply_map(abs).transpose()

@@ -219,6 +219,7 @@ from sage.libs.mpfr cimport MPFR_RNDN, MPFR_RNDU, MPFR_RNDD, MPFR_RNDZ
 
 from sage.structure.element cimport Element, ModuleElement, RingElement
 from sage.rings.ring cimport Field
+import sage.rings.abc
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.real_double cimport RealDoubleElement
@@ -320,7 +321,7 @@ cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -
         mpfr_clear(right)
 
 
-class RealBallField(UniqueRepresentation, Field):
+class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
     r"""
     An approximation of the field of real numbers using mid-rad intervals, also
     known as balls.
@@ -752,8 +753,8 @@ class RealBallField(UniqueRepresentation, Field):
 
         EXAMPLES::
 
-            sage: RBF.euler_constant()
-            [0.577215664901533 +/- ...e-16]
+            sage: RBF.euler_constant() # abs tol 1e-15
+            [0.5772156649015329 +/- 9.00e-17]
             sage: RealBallField(128).euler_constant()
             [0.57721566490153286060651209008240243104 +/- ...e-39]
         """
@@ -896,8 +897,8 @@ class RealBallField(UniqueRepresentation, Field):
 
         TESTS::
 
-            sage: RBF.gamma(RLF(pi))
-            [2.2880377953400 +/- ...e-14]
+            sage: RBF.gamma(RLF(pi)) # abs tol 1e-13
+            [2.28803779534003 +/- 4.12e-15]
         """
         cdef RealBall res
         cdef Integer x_as_Integer
@@ -1156,8 +1157,8 @@ cdef class RealBall(RingElement):
 
         sage: a = RealBallField()(RIF(1))                     # indirect doctest
         sage: b = a.psi()
-        sage: b
-        [-0.577215664901533 +/- ...e-16]
+        sage: b # abs tol 1e-15
+        [-0.5772156649015329 +/- 4.84e-17]
         sage: RIF(b)
         -0.577215664901533?
     """
@@ -1302,8 +1303,8 @@ cdef class RealBall(RingElement):
             [1.282427129100623 +/- ...e-16]
             sage: RealBall(RBF, sage.symbolic.constants.e)
             [2.718281828459045 +/- ...e-16]
-            sage: RealBall(RBF, sage.symbolic.constants.EulerGamma())
-            [0.577215664901533 +/- ...e-16]
+            sage: RealBall(RBF, sage.symbolic.constants.EulerGamma()) # abs tol 1e-15
+            [0.5772156649015329 +/- 9.00e-17]
             sage: RBF("1 +/- 0.001")
             [1.00 +/- ...e-3]
             sage: RBF("2.3e10000000000000000000000 +/- 0.00005e10000000000000000000000")
@@ -2548,7 +2549,7 @@ cdef class RealBall(RingElement):
             sage: RBF(sqrt(2)).contains_exact(sqrt(2))
             Traceback (most recent call last):
             ...
-            TypeError: unsupported type: <type 'sage.symbolic.expression.Expression'>
+            TypeError: unsupported type: <class 'sage.symbolic.expression.Expression'>
 
         TESTS::
 
@@ -3467,9 +3468,215 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    def gamma(self):
+    def erfi(self):
         """
-        Return the image of this ball by the Euler Gamma function.
+        Imaginary error function
+
+        EXAMPLES::
+
+            sage: RBF(1/2).erfi()
+            [0.614952094696511 +/- 2.22e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_hypgeom_erfi(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def Ei(self):
+        """
+        Exponential integral
+
+        EXAMPLES::
+
+            sage: RBF(1).Ei()  # abs tol 5e-16
+            [1.89511781635594 +/- 4.94e-15]
+
+        TESTS::
+
+            sage: RBF(Ei(1))  # abs tol 5e-16
+            [1.89511781635594 +/- 4.94e-15]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_hypgeom_ei(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def Si(self):
+        """
+        Sine integral
+
+        EXAMPLES::
+
+            sage: RBF(1).Si()
+            [0.946083070367183 +/- 9.22e-16]
+
+        TESTS::
+
+            sage: RBF(Si(1))
+            [0.946083070367183 +/- 9.22e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_hypgeom_si(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    sin_integral = Si
+
+    def Ci(self):
+        """
+        Cosine integral
+
+        EXAMPLES::
+
+            sage: RBF(1).Ci()  # abs tol 1e-16
+            [0.337403922900968 +/- 3.25e-16]
+
+        TESTS::
+
+            sage: RBF(Ci(1))  # abs tol 1e-16
+            [0.337403922900968 +/- 3.25e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_hypgeom_ci(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    cos_integral = Ci
+
+    def Shi(self):
+        """
+        Hyperbolic sine integral
+
+        EXAMPLES::
+
+            sage: RBF(1).Shi()
+            [1.05725087537573 +/- 2.77e-15]
+
+        TESTS::
+
+            sage: RBF(Shi(1))
+            [1.05725087537573 +/- 2.77e-15]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_hypgeom_shi(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    sinh_integral = Shi
+
+    def Chi(self):
+        """
+        Hyperbolic cosine integral
+
+        EXAMPLES::
+
+            sage: RBF(1).Chi()  # abs tol 1e-17
+            [0.837866940980208 +/- 4.72e-16]
+
+        TESTS::
+
+            sage: RBF(Chi(1))  # abs tol 1e-17
+            [0.837866940980208 +/- 4.72e-16]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_hypgeom_chi(res.value, self.value, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    cosh_integral = Chi
+
+    def li(self):
+        """
+        Logarithmic integral
+
+        EXAMPLES::
+
+            sage: RBF(3).li()  # abs tol 1e-15
+            [2.16358859466719 +/- 4.72e-15]
+
+        TESTS::
+
+            sage: RBF(li(0))
+            0
+            sage: RBF(Li(0))
+            [-1.04516378011749 +/- 4.23e-15]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_hypgeom_li(res.value, self.value, False, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    log_integral = li
+
+    def Li(self):
+        """
+        Offset logarithmic integral
+
+        EXAMPLES::
+
+            sage: RBF(3).Li()  # abs tol 1e-15
+            [1.11842481454970 +/- 7.61e-15]
+        """
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        arb_hypgeom_li(res.value, self.value, True, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    log_integral_offset = Li
+
+    def beta(self, a, z=1):
+        """
+        (Incomplete) beta function
+
+        INPUT:
+
+        - ``a``, ``z`` (optional) -- real balls
+
+        OUTPUT:
+
+        The lower incomplete beta function `B(self, a, z)`.
+
+        With the default value of ``z``, the complete beta function `B(self, a)`.
+
+        EXAMPLES::
+
+            sage: RBF(sin(3)).beta(RBF(2/3).sqrt())  # abs tol 1e-13
+            [7.407661629415 +/- 1.07e-13]
+            sage: RealBallField(100)(7/2).beta(1)  # abs tol 1e-30
+            [0.28571428571428571428571428571 +/- 5.23e-30]
+            sage: RealBallField(100)(7/2).beta(1, 1/2)
+            [0.025253813613805268728601584361 +/- 2.53e-31]
+
+        .. TODO::
+
+            At the moment RBF(beta(a,b)) does not work, one needs
+            RBF(a).beta(b) for this to work. See :trac:`32851`
+            and :trac:`24641`.
+        """
+        cdef RealBall a_ball, z_ball
+        cdef RealBall res = self._new()
+        if _do_sig(prec(self)): sig_on()
+        a_ball = self._parent.coerce(a)
+        z_ball = self._parent.coerce(z)
+        arb_hypgeom_beta_lower(res.value, self.value, a_ball.value,
+                               z_ball.value, False, prec(self))
+        if _do_sig(prec(self)): sig_off()
+        return res
+
+    def gamma(self, a=None):
+        """
+        Image of this ball by the (upper incomplete) Euler Gamma function
+
+        For `a` real, return the upper incomplete Gamma function
+        `\Gamma(self,a)`.
 
         For integer and rational arguments,
         :meth:`~sage.rings.real_arb.RealBallField.gamma` may be faster.
@@ -3478,13 +3685,53 @@ cdef class RealBall(RingElement):
 
             sage: RBF(1/2).gamma()
             [1.772453850905516 +/- ...e-16]
+            sage: RBF(gamma(3/2, RBF(2).sqrt()))  # abs tol 2e-17
+            [0.37118875695353 +/- 3.00e-15]
+            sage: RBF(3/2).gamma_inc(RBF(2).sqrt())  # abs tol 2e-17
+            [0.37118875695353 +/- 3.00e-15]
 
         .. SEEALSO::
             :meth:`~sage.rings.real_arb.RealBallField.gamma`
+
+        TESTS::
+
+            sage: RealBallField(100).gamma(1/2)
+            [1.77245385090551602729816748334 +/- 1.90e-30]
         """
+        cdef RealBall a_ball
+        cdef RealBall res = self._new()
+        if a is None:
+            if _do_sig(prec(self)): sig_on()
+            arb_gamma(res.value, self.value, prec(self))
+            if _do_sig(prec(self)): sig_off()
+        else:
+            if _do_sig(prec(self)): sig_on()
+            a_ball = self._parent.coerce(a)
+            arb_hypgeom_gamma_upper(res.value, self.value, a_ball.value, 0, prec(self))
+            if _do_sig(prec(self)): sig_off()
+        return res
+
+    gamma_inc = gamma
+
+    def gamma_inc_lower(self, a):
+        """
+        Image of this ball by the lower incomplete Euler Gamma function
+
+        For `a` real, return the lower incomplete Gamma function
+        of `\Gamma(self,a)`.
+
+        EXAMPLES::
+
+            sage: RBF(gamma_inc_lower(1/2, RBF(2).sqrt()))
+            [1.608308637729248 +/- 8.14e-16]
+            sage: RealBallField(100)(7/2).gamma_inc_lower(5)
+            [2.6966551541863035516887949614 +/- 8.91e-29]
+        """
+        cdef RealBall a_ball
         cdef RealBall res = self._new()
         if _do_sig(prec(self)): sig_on()
-        arb_gamma(res.value, self.value, prec(self))
+        a_ball = RBF(a)
+        arb_hypgeom_gamma_lower(res.value, self.value, a_ball.value, 0, prec(self))
         if _do_sig(prec(self)): sig_off()
         return res
 
@@ -3536,8 +3783,8 @@ cdef class RealBall(RingElement):
 
             sage: RBF(1).rising_factorial(5)
             120.0000000000000
-            sage: RBF(1/2).rising_factorial(1/3)
-            [0.63684988431797 +/- ...e-15]
+            sage: RBF(1/2).rising_factorial(1/3) # abs tol 1e-14
+            [0.636849884317974 +/- 8.98e-16]
         """
         cdef RealBall result = self._new()
         cdef RealBall my_n = self._parent.coerce(n)
@@ -3552,8 +3799,8 @@ cdef class RealBall(RingElement):
 
         EXAMPLES::
 
-            sage: RBF(1).psi()
-            [-0.577215664901533 +/- ...e-16]
+            sage: RBF(1).psi() # abs tol 1e-15
+            [-0.5772156649015329 +/- 4.84e-17]
         """
 
         cdef RealBall result = self._new()
@@ -3567,6 +3814,8 @@ cdef class RealBall(RingElement):
         Return the image of this ball by the Hurwitz zeta function.
 
         For ``a = 1`` (or ``a = None``), this computes the Riemann zeta function.
+
+        Otherwise, it computes the Hurwitz zeta function.
 
         Use :meth:`RealBallField.zeta` to compute the Riemann zeta function of
         a small integer without first converting it to a real ball.
@@ -3605,11 +3854,13 @@ cdef class RealBall(RingElement):
 
             sage: RBF(1/2).zetaderiv(1)
             [-3.92264613920915...]
+            sage: RBF(2).zetaderiv(3)
+            [-6.0001458028430...]
         """
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         Pol = PolynomialRing(self._parent.complex_field(), 'x')
         ser = Pol([self, 1])._zeta_series(k + 1)
-        return ser[k].real()
+        return ser[k].real()*ZZ.coerce(k).factorial()
 
     def lambert_w(self):
         r"""

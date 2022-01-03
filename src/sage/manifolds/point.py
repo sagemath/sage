@@ -692,28 +692,14 @@ class ManifoldPoint(Element):
             # raise ValueError("no common chart has been found to compare " +
             #                  "{} and {}".format(self, other))
         periods = common_chart.periods()
-        if periods:
-            # Special case of periodic coordinate(s):
-            ind = common_chart._sindex
-            for xs, xo in zip(self._coordinates[common_chart],
-                              other._coordinates[common_chart]):
-                diff = xs - xo
-                if ind in periods:
-                    period = periods[ind]
-                    if not (diff/period in ZZ):
-                        return False
-                else:
-                    if (isinstance(diff, Expression) and
-                        not diff.is_trivial_zero()):
-                        return False
-                    elif not (diff == 0):
-                        return False
-                ind += 1
-        else:
-            # Generic case:
-            for xs, xo in zip(self._coordinates[common_chart],
-                              other._coordinates[common_chart]):
-                diff = xs - xo
+        for ind, (xs, xo) in enumerate(zip(self._coordinates[common_chart],
+                                           other._coordinates[common_chart])):
+            diff = xs - xo
+            period = periods[ind]
+            if period is not None:
+                if not (diff/period in ZZ):
+                    return False
+            else:
                 if isinstance(diff, Expression) and not diff.is_trivial_zero():
                     return False
                 elif not (diff == 0):

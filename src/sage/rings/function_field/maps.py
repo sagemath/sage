@@ -269,7 +269,7 @@ class FunctionFieldDerivation_separable(FunctionFieldDerivation):
         x = self.domain().gen()
         f = L.polynomial()
         self._d = d
-        self._gen_image = - f.map_coefficients(lambda c: d(c))(x) / f.derivative()(x)
+        self._gen_image = - f.map_coefficients(d)(x) / f.derivative()(x)
 
     def _call_(self, x):
         r"""
@@ -1777,7 +1777,7 @@ class FunctionFieldCompletion(Map):
         self._gen_name = gen_name
 
         if prec == infinity:
-            from sage.rings.lazy_laurent_series_ring import LazyLaurentSeriesRing
+            from sage.rings.lazy_series_ring import LazyLaurentSeriesRing
             codomain = LazyLaurentSeriesRing(k, name)
             self._precision = infinity
         else: # prec < infinity:

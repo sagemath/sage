@@ -57,10 +57,10 @@ divisor representing a divisor class::
 
 from sage.libs.gmp.mpq cimport *
 
-from sage.misc.all import latex
-from sage.modules.all import vector
+from sage.misc.latex import latex
+from sage.modules.free_module_element import vector
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 from sage.rings.rational cimport Rational
 from sage.structure.element cimport Element, Vector
 from sage.structure.element import is_Vector

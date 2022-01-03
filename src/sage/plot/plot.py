@@ -580,7 +580,7 @@ from sage.misc.randstate import current_randstate #for plot adaptive refinement
 from math import sin, cos, pi, log, exp #for polar_plot and log scaling
 
 from sage.ext.fast_eval import fast_float, is_fast_float
-from sage.symbolic.expression import Expression
+from sage.structure.element import Expression
 from sage.misc.decorators import options
 
 from .graphics import Graphics
@@ -2390,7 +2390,7 @@ def _plot(funcs, xrange, parametric=False,
     if excluded_points or detect_poles:
         start_index = 0
         # setup for pole detection
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         epsilon = 0.0001
         pole_options = {}
         pole_options['linestyle'] = '--'
@@ -3023,7 +3023,7 @@ def list_plot(data, plotjoined=False, **kwargs):
             list_data = list(data.items())
         return list_plot(list_data, plotjoined=plotjoined, **kwargs)
     try:
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         RDF(data[0])
         data = list(enumerate(data))
     except TypeError: # we can get this TypeError if the element is a list
@@ -3047,8 +3047,7 @@ def list_plot(data, plotjoined=False, **kwargs):
         # Need to catch IndexError because if data is, say, [(0, 1), (1, I)],
         # point3d() throws an IndexError on the (0,1) before it ever
         # gets to (1, I).
-        from sage.rings.complex_mpfr import ComplexField
-        CC = ComplexField()
+        from sage.rings.cc import CC
         # if we get here, we already did "list(enumerate(data))",
         # so look at z[1] in inner list
         data = [(z.real(), z.imag()) for z in [CC(z[1]) for z in data]]

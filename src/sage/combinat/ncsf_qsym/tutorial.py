@@ -132,7 +132,7 @@ leads to an error (this is due to the semantics of python)::
     sage: M[]
     Traceback (most recent call last):
     ...
-    SyntaxError: invalid syntax
+    SyntaxError: invalid ...
 
 
 Working with symmetric functions

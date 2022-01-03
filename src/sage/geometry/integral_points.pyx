@@ -18,11 +18,13 @@ import copy
 import itertools
 
 from sage.matrix.constructor import matrix, column_matrix, vector, diagonal_matrix
-from sage.rings.all import QQ, RR, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
 from sage.rings.integer cimport Integer
 from sage.arith.all import gcd, lcm
 from sage.combinat.permutation import Permutation
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.modules.free_module import FreeModule
 from sage.modules.vector_integer_dense cimport Vector_integer_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
@@ -1194,8 +1196,8 @@ cdef class InequalityCollection:
         Check that :trac:`21037` is fixed::
 
             sage: P = Polyhedron(vertices=((0, 0), (17,3)))
-            sage: P += 1/1000*polytopes.regular_polygon(5)
-            sage: P.integral_points()
+            sage: P += 1/1000*polytopes.regular_polygon(5)  # optional - sage.rings.number_field
+            sage: P.integral_points()                       # optional - sage.rings.number_field
             ((0, 0), (17, 3))
         """
         cdef list A

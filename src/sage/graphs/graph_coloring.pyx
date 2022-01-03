@@ -1004,18 +1004,18 @@ def grundy_coloring(g, k, value_only=True, solver=None, verbose=0,
     p.set_objective(p.sum(is_used[i] for i in range(k)))
 
     try:
-        obj = p.solve(log=verbose, objective_only=value_only)
-        from sage.rings.integer import Integer
-        obj = Integer(obj)
-
+        p.solve(log=verbose)
     except MIPSolverException:
         raise ValueError("this graph cannot be colored with k colors")
+
+    from sage.rings.integer import Integer
+    is_used = p.get_values(is_used, convert=bool, tolerance=integrality_tolerance)
+    obj = Integer(sum(1 for i in range(k) if is_used[i]))
 
     if value_only:
         return obj
 
     # Building the dictionary associating its color to every vertex
-
     b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
     cdef dict coloring = {}
 
@@ -1197,19 +1197,18 @@ def b_coloring(g, k, value_only=True, solver=None, verbose=0,
 
 
     try:
-        obj = p.solve(log=verbose, objective_only=value_only)
-        from sage.rings.integer import Integer
-        obj = Integer(obj)
-
+        p.solve(log=verbose)
     except MIPSolverException:
         raise ValueError("this graph cannot be colored with k colors")
+
+    from sage.rings.integer import Integer
+    is_used = p.get_values(is_used, convert=bool, tolerance=integrality_tolerance)
+    obj = Integer(sum(1 for i in range(k) if is_used[i]))
 
     if value_only:
         return obj
 
-
     # Building the dictionary associating its color to every vertex
-
     c = p.get_values(color, convert=bool, tolerance=integrality_tolerance)
     cdef dict coloring = {}
 

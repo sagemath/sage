@@ -149,6 +149,9 @@ case $system:$command in
     pip:install)
         [ -n "$system_packages" ] && print_shell_command "sage -pip install $system_packages"
         ;;
+    cpan:install)
+        [ -n "$system_packages" ] && print_shell_command "cpan -i $system_packages"
+        ;;
     repology:install)
         if [ -n "$system_packages" ]; then
             links=""

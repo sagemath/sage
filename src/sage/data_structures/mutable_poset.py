@@ -1604,7 +1604,7 @@ class MutablePoset(SageObject):
             sage: e = P.element(42); e
             42
             sage: type(e)
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
 
         .. SEEALSO::
 
@@ -1850,9 +1850,9 @@ class MutablePoset(SageObject):
             sage: from sage.data_structures.mutable_poset import MutablePoset as MP
             sage: P = MP([3, 42, 7])
             sage: [(v, type(v)) for v in sorted(P.elements())]
-            [(3, <type 'sage.rings.integer.Integer'>),
-             (7, <type 'sage.rings.integer.Integer'>),
-             (42, <type 'sage.rings.integer.Integer'>)]
+            [(3, <class 'sage.rings.integer.Integer'>),
+             (7, <class 'sage.rings.integer.Integer'>),
+             (42, <class 'sage.rings.integer.Integer'>)]
 
         Note that
 
@@ -1937,14 +1937,14 @@ class MutablePoset(SageObject):
             sage: from sage.data_structures.mutable_poset import MutablePoset as MP
             sage: P = MP([3, 42, 7], key=lambda c: -c)
             sage: [(v, type(v)) for v in sorted(P.keys())]
-            [(-42, <type 'sage.rings.integer.Integer'>),
-             (-7, <type 'sage.rings.integer.Integer'>),
-             (-3, <type 'sage.rings.integer.Integer'>)]
+            [(-42, <class 'sage.rings.integer.Integer'>),
+             (-7, <class 'sage.rings.integer.Integer'>),
+             (-3, <class 'sage.rings.integer.Integer'>)]
 
             sage: [(v, type(v)) for v in sorted(P.elements())]
-            [(3, <type 'sage.rings.integer.Integer'>),
-             (7, <type 'sage.rings.integer.Integer'>),
-             (42, <type 'sage.rings.integer.Integer'>)]
+            [(3, <class 'sage.rings.integer.Integer'>),
+             (7, <class 'sage.rings.integer.Integer'>),
+             (42, <class 'sage.rings.integer.Integer'>)]
 
             sage: [(v, type(v)) for v in sorted(P.shells(),
             ....:                               key=lambda c: c.element)]
@@ -1984,9 +1984,9 @@ class MutablePoset(SageObject):
             sage: P = MP([(1, 1), (2, 1), (4, 4)],
             ....:        key=lambda c: c[0])
             sage: [(v, type(v)) for v in P.keys_topological(key=repr)]
-            [(1, <type 'sage.rings.integer.Integer'>),
-             (2, <type 'sage.rings.integer.Integer'>),
-             (4, <type 'sage.rings.integer.Integer'>)]
+            [(1, <class 'sage.rings.integer.Integer'>),
+             (2, <class 'sage.rings.integer.Integer'>),
+             (4, <class 'sage.rings.integer.Integer'>)]
             sage: [(v, type(v)) for v in P.elements_topological(key=repr)]
             [((1, 1), <... 'tuple'>),
              ((2, 1), <... 'tuple'>),

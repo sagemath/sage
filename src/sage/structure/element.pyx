@@ -47,6 +47,7 @@ abstract base classes.
                                     EuclideanDomainElement
                         FieldElement
                         CommutativeAlgebraElement
+                        Expression
                     AlgebraElement
                         Matrix
                     InfinityElement
@@ -473,7 +474,7 @@ cdef class Element(SageObject):
         category of ``CommutativeRings()``::
 
             sage: 1.is_idempotent
-            <bound method JoinCategory.element_class.is_idempotent of 1>
+            <bound method Magmas.ElementMethods.is_idempotent of 1>
             sage: 1.is_idempotent.__module__
             'sage.categories.magmas'
 
@@ -484,7 +485,7 @@ cdef class Element(SageObject):
             ...
             AttributeError: 'sage.rings.integer.Integer' object has no attribute 'blah_blah'
             sage: Semigroups().example().an_element().is_idempotent
-            <bound method LeftZeroSemigroup_with_category.element_class.is_idempotent of 42>
+            <bound method LeftZeroSemigroup.Element.is_idempotent of 42>
             sage: Semigroups().example().an_element().blah_blah
             Traceback (most recent call last):
             ...
@@ -2453,7 +2454,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
 
             sage: v = sage.modules.free_module_element.FreeModuleElement(QQ^3)
             sage: type(v)
-            <type 'sage.modules.free_module_element.FreeModuleElement'>
+            <class 'sage.modules.free_module_element.FreeModuleElement'>
         """
         self._parent = parent
         self._is_immutable = is_immutable
@@ -3251,6 +3252,16 @@ cdef class CommutativeRingElement(RingElement):
                 return [ sq_rt ]
             return [ sq_rt, -sq_rt ]
         return sq_rt
+
+    ##############################################
+
+cdef class Expression(CommutativeRingElement):
+
+    r"""
+    Abstract base class for :class:`~sage.symbolic.expression.Expression`.
+    """
+
+    pass
 
     ##############################################
 
@@ -4223,7 +4234,7 @@ def is_InfinityElement(x):
 
 cdef class InfinityElement(RingElement):
     def __invert__(self):
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         return ZZ(0)
 
 

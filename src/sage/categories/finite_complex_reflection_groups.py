@@ -12,7 +12,7 @@ Finite Complex Reflection Groups
 # ****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.categories.category_with_axiom import CategoryWithAxiom
 from sage.categories.coxeter_groups import CoxeterGroups

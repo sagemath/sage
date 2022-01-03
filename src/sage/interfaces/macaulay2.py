@@ -694,7 +694,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
                 gens2.append(self(g))
             else:
                 gens2.append(g)
-        return self('ideal {%s}'%(",".join([g.name() for g in gens2])))
+        return self('ideal {%s}' % (",".join(g.name() for g in gens2)))
 
     def ring(self, base_ring='ZZ', vars='[x]', order='Lex'):
         r"""
@@ -1540,10 +1540,10 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
         cls_cls_str = str(self.cls().cls())
 
         if repr_str == "ZZ":
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ
         elif repr_str == "QQ":
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             return QQ
 
         if cls_cls_str == "Type":
@@ -1562,7 +1562,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
                 #Handle the ZZ/n case
                 ambient = self.ambient()
                 if ambient.external_string() == 'ZZ':
-                    from sage.rings.all import ZZ, GF
+                    from sage.rings.integer_ring import ZZ
+                    from sage.rings.finite_rings.finite_field_constructor import GF
                     external_string = self.external_string()
                     zz, n = external_string.split("/")
 
@@ -1600,7 +1601,8 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
 
                 return PolynomialRing(base_ring, order=order, names=gens)
             elif cls_str == "GaloisField":
-                from sage.rings.all import ZZ, GF
+                from sage.rings.integer_ring import ZZ
+                from sage.rings.finite_rings.finite_field_constructor import GF
                 gf, n = repr_str.split(" ")
                 n = ZZ(n)
                 if n.is_prime():
@@ -1659,10 +1661,10 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
         else:
             #Handle the integers and rationals separately
             if cls_str == "ZZ":
-                from sage.rings.all import ZZ
+                from sage.rings.integer_ring import ZZ
                 return ZZ(repr_str)
             elif cls_str == "QQ":
-                from sage.rings.all import QQ
+                from sage.rings.rational_field import QQ
                 repr_str = self.external_string()
                 if "/" not in repr_str:
                     repr_str = repr_str + "/1"
@@ -1713,7 +1715,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             sage: matrix(ZZ, m.transpose()).dimensions()  # optional - macaulay2
             (0, 2)
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         m = matrix(R, self.entries()._sage_())
         if not m.nrows():
             return matrix(R, 0, self.numcols()._sage_())

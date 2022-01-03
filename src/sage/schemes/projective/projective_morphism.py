@@ -66,7 +66,7 @@ from sage.arith.all import gcd, lcm
 
 from sage.interfaces.all import singular
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 
@@ -74,10 +74,9 @@ from sage.ext.fast_callable import fast_callable
 
 from sage.calculus.functions import jacobian
 
-from sage.rings.all import Integer
+import sage.rings.abc
+from sage.rings.integer import Integer
 from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
-from sage.rings.complex_mpfr import ComplexField_class
-from sage.rings.complex_interval_field import ComplexIntervalField_class
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.finite_rings.finite_field_constructor import is_PrimeFiniteField
 from sage.rings.finite_rings.finite_field_constructor import GF
@@ -88,8 +87,6 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar import QQbar, number_field_elements_from_algebraics
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.rings.rational_field import QQ
-from sage.rings.real_mpfr import RealField_class
-from sage.rings.real_mpfi import RealIntervalField_class
 
 from sage.schemes.generic.morphism import SchemeMorphism_polynomial
 
@@ -601,7 +598,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: matrix([[i,0], [0,i]]) * f
             Scheme endomorphism of Projective Space of dimension 1 over Number Field in i with defining polynomial x^2 + 1
               Defn: Defined on coordinates by sending (x : y) to
-                    ((1/3*i)*x^2 + (1/2*i)*y^2 : (i)*y^2)
+                    ((1/3*i)*x^2 + (1/2*i)*y^2 : i*y^2)
         """
         from sage.modules.free_module_element import vector
         from sage.dynamics.arithmetic_dynamics.generic_ds import DynamicalSystem
@@ -987,14 +984,13 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             self.scale_by(R(1) / GCD)
 
         # scales by 1/gcd of the coefficients.
-        from sage.rings.padics.generic_nodes import is_pAdicField
         if R in _NumberFields:
             O = R.maximal_order()
         elif is_FiniteField(R):
             O = R
         elif isinstance(R, QuotientRing_generic):
             O = R.ring()
-        elif is_pAdicField(R):
+        elif isinstance(R, sage.rings.abc.pAdicField):
             O = R.integer_ring()
         else:
             O = R
@@ -1594,18 +1590,19 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
         k = ZZ(k)
         if k <= 0:
             raise ValueError("k (=%s) must be a positive integer" % k)
-        #first check if subscheme
+        # first check if subscheme
         from sage.schemes.projective.projective_subscheme import AlgebraicScheme_subscheme_projective
         if isinstance(Q, AlgebraicScheme_subscheme_projective):
             return Q.preimage(self, k)
 
-        #else assume a point
+        # else assume a point
         BR = self.base_ring()
         if k > 1 and not self.is_endomorphism():
             raise TypeError("must be an endomorphism of projective space")
-        if not Q in self.codomain():
+        if Q not in self.codomain():
             raise TypeError("point must be in codomain of self")
-        if isinstance(BR.base_ring(),(ComplexField_class, RealField_class,RealIntervalField_class, ComplexIntervalField_class)):
+        if isinstance(BR.base_ring(), (sage.rings.abc.ComplexField, sage.rings.abc.RealField,
+                                       sage.rings.abc.RealIntervalField, sage.rings.abc.ComplexIntervalField)):
             raise NotImplementedError("not implemented over precision fields")
         PS = self.domain().ambient_space()
         N = PS.dimension_relative()
@@ -1969,7 +1966,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f.reduce_base_field()
             Scheme endomorphism of Projective Space of dimension 1 over Finite Field in t2 of size 3^2
               Defn: Defined on coordinates by sending (x : y) to
-                    (x^2 + (t2)*y^2 : y^2)
+                    (x^2 + t2*y^2 : y^2)
             sage: f2 = H2([x^2 + 5*y^2,y^2, 2*x*y])
             sage: f2.reduce_base_field()
             Scheme morphism:
@@ -1983,7 +1980,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
               From: Projective Space of dimension 2 over Finite Field in t of size 3^4
               To:   Projective Space of dimension 1 over Finite Field in t of size 3^4
               Defn: Defined on coordinates by sending (a : b : c) to
-                    (a^2 + (t)*b^2 : c^2)
+                    (a^2 + t*b^2 : c^2)
 
         ::
 
@@ -2006,7 +2003,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             sage: f.reduce_base_field()
             Scheme endomorphism of Projective Space of dimension 1 over Finite Field in z4 of size 5^4
               Defn: Defined on coordinates by sending (x : y) to
-                    ((z4^3 + z4^2 + z4 - 2)*x^2 + (z4)*y^2 : x*y)
+                    ((z4^3 + z4^2 + z4 - 2)*x^2 + z4*y^2 : x*y)
             sage: f=DynamicalSystem_projective([L.gen(3)*x^2 + L.gen(2)*y^2, x*y])
             sage: f.reduce_base_field()
             Dynamical System of Projective Space of dimension 1 over Finite Field in z6 of size 5^6

@@ -23,6 +23,7 @@ gmpy2==esyscmd(`printf $(sed "s/[.]p.*//;" ../gmpy2/package-version.txt)')
 jinja2==esyscmd(`printf $(sed "s/[.]p.*//;" ../jinja2/package-version.txt)')
 dnl ... for sage_setup.autogen.interpreters
 jupyter_core==esyscmd(`printf $(sed "s/[.]p.*//;" ../jupyter_core/package-version.txt)')
+memory_allocator==esyscmd(`printf $(sed "s/[.]p.*//;" ../memory_allocator/package-version.txt)')
 numpy==esyscmd(`printf $(sed "s/[.]p.*//;" ../numpy/package-version.txt)')
 dnl ... already needed by sage.env
 pkgconfig==esyscmd(`printf $(sed "s/[.]p.*//;" ../pkgconfig/package-version.txt)')
@@ -34,7 +35,6 @@ dnl pynac       # after converting to a pip-installable package
 dnl From Makefile.in: SAGERUNTIME
 ipython==esyscmd(`printf $(sed "s/[.]p.*//;" ../ipython/package-version.txt)')
 pexpect==esyscmd(`printf $(sed "s/[.]p.*//;" ../pexpect/package-version.txt)')
-psutil==esyscmd(`printf $(sed "s/[.]p.*//;" ../psutil/package-version.txt)')
 
 dnl From Makefile.in: DOC_DEPENDENCIES
 sphinx==esyscmd(`printf $(sed "s/[.]p.*//;" ../sphinx/package-version.txt)')

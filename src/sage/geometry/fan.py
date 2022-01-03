@@ -251,11 +251,14 @@ from sage.geometry.point_collection import PointCollection
 from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
 from sage.geometry.toric_plotter import ToricPlotter
 from sage.graphs.digraph import DiGraph
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.all import walltime, prod
-from sage.modules.all import vector, span
-from sage.rings.all import QQ, ZZ
+from sage.misc.misc import walltime
+from sage.misc.misc_c import prod
+from sage.modules.free_module import span
+from sage.modules.free_module_element import vector
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 
 
 def is_Fan(x):
@@ -501,7 +504,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: fan = Fan([c1, c2], allow_arrangement=True)
         sage: fan.ngenerating_cones()
         7
-        sage: fan.plot()
+        sage: fan.plot()  # optional - sage.plot
         Graphics3d Object
 
     Cones of different dimension::
@@ -521,7 +524,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         sage: c3 = Cone([[0, 1, 1], [1, 0, 1], [0, -1, 1], [-1, 0, 1]])
         sage: c1 = Cone([[0, 0, 1]])
         sage: fan1 = Fan([c1, c3], allow_arrangement=True)
-        sage: fan1.plot()
+        sage: fan1.plot()  # optional - sage.plot
         Graphics3d Object
 
     A 3-d cone and two 2-d cones::
@@ -2967,7 +2970,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         EXAMPLES::
 
             sage: fan = toric_varieties.dP6().fan()
-            sage: fan.plot()
+            sage: fan.plot()  # optional - sage.plot
             Graphics object consisting of 31 graphics primitives
         """
         tp = ToricPlotter(options, self.lattice().degree(), self.rays())

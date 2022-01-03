@@ -96,7 +96,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             sage: from sage.matrix.matrix_cyclo_dense import Matrix_cyclo_dense
             sage: A = Matrix_cyclo_dense.__new__(Matrix_cyclo_dense, MatrixSpace(CyclotomicField(3),2), [0,1,2,3], True, True)
             sage: type(A)
-            <type 'sage.matrix.matrix_cyclo_dense.Matrix_cyclo_dense'>
+            <class 'sage.matrix.matrix_cyclo_dense.Matrix_cyclo_dense'>
 
         Note that the entries of A haven't even been set yet above; that doesn't
         happen until ``__init__`` is called::

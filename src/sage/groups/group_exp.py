@@ -257,7 +257,6 @@ class GroupExp_Class(UniqueRepresentation, Parent):
 
         sage: GroupExp()(QQ)
         Multiplicative form of Rational Field
-
     """
     def __init__(self, G):
         r"""
@@ -268,8 +267,7 @@ class GroupExp_Class(UniqueRepresentation, Parent):
             sage: TestSuite(EG).run(skip = "_test_elements")
 
         """
-
-        if not G in CommutativeAdditiveGroups():
+        if G not in CommutativeAdditiveGroups():
             raise TypeError("%s must be a commutative additive group" % G)
         self._G = G
         Parent.__init__(self, category=Groups())

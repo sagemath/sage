@@ -22,7 +22,7 @@ AUTHORS:
 
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.all import Integer, QQ, ZZ
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 from sage.modular.arithgroup.all import Gamma0, is_CongruenceSubgroup
@@ -698,6 +698,7 @@ class ModularFormsRing(Parent):
             3
             sage: [k for k, _ in v]
             [2, 2, 4]
+            sage: from sage.modular.dims import dimension_modular_forms
             sage: dimension_modular_forms(11,2)
             2
             sage: dimension_modular_forms(11,4)

@@ -131,7 +131,9 @@ fi
 
 
 # Don't execute the commands more than once for the same version of
-# sage-env.  Check this after checking the validity of SAGE_ROOT, but
+# sage-env... for the same combination of SAGE_LOCAL and SAGE_VENV.
+#
+# Check this after checking the validity of SAGE_ROOT, but
 # before modifying its value.
 #
 # The idea of versioning is that SAGE_ENV_SOURCED will be set to a
@@ -147,13 +149,14 @@ fi
 # - sage-5.4:   version 2 (#13395)
 # - sage-5.10:  version 3 (#14699)
 # - sage-6.0:   version 4 (#14715)
+# - sage-9.5:   version 5 (#32745)
 #
-SAGE_ENV_VERSION=4
+SAGE_ENV_VERSION="5:$SAGE_LOCAL:$SAGE_VENV"
 if [ "$SAGE_ENV_SOURCED" = "$SAGE_ENV_VERSION" ]; then
     # Already sourced, nothing to do.
     return 0
 fi
-export SAGE_ENV_SOURCED=$SAGE_ENV_VERSION
+export SAGE_ENV_SOURCED="$SAGE_ENV_VERSION"
 
 if [ -n "$NEW_SAGE_ROOT" ]; then
     export SAGE_ROOT="$NEW_SAGE_ROOT"
@@ -292,9 +295,6 @@ fi
 if [ -n "$SAGE_VENV" ]; then
     export PATH="$SAGE_VENV/bin:$PATH"
 fi
-if [ -n "$SAGE_SRC" ]; then
-    export PATH="$SAGE_SRC/bin:$PATH"
-fi
 if [ -n "$SAGE_ROOT" ]; then
     export PATH="$SAGE_ROOT/build/bin:$PATH"
 fi
@@ -334,8 +334,6 @@ if [ -n "$SAGE_LOCAL" ]; then
 fi
 
 if [ -n "$SAGE_LOCAL" ]; then
-    SINGULARPATH="$SAGE_LOCAL/share/singular" && export SINGULARPATH
-
     # Ensure that there is a colon at the end of $INFOPATH by
     # stripping the existing one (if it exists), and then adding a new
     # one. This forces the "info" program to check various default
@@ -634,19 +632,6 @@ fi
 export MAKE
 
 export PIP_FORMAT="columns"
-
-# When building documentation, use MathJax by default. To turn it off,
-# set SAGE_DOC_MATHJAX to be "no" or "False".
-if [ -z "$SAGE_DOC_MATHJAX" ]; then
-    # For backwards compatibility, we use the value of SAGE_DOC_JSMATH
-    # if it is set.
-    if [ -n "$SAGE_DOC_JSMATH" ]; then
-        SAGE_DOC_MATHJAX="$SAGE_DOC_JSMATH"
-    else
-        SAGE_DOC_MATHJAX="True"
-    fi
-    export SAGE_DOC_MATHJAX
-fi
 
 # Set the cysignals crash logs directory
 if [ -z "$CYSIGNALS_CRASH_LOGS" ]; then

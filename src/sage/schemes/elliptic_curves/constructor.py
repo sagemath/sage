@@ -25,7 +25,7 @@ AUTHORS:
 
 import sage.rings.all as rings
 
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
+import sage.rings.abc
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_constructor import is_FiniteField
 from sage.rings.number_field.number_field import is_NumberField
@@ -36,10 +36,8 @@ from sage.categories.fields import Fields
 _Fields = Fields()
 
 from sage.structure.sequence import Sequence
-from sage.structure.element import parent
+from sage.structure.element import parent, Expression
 from sage.structure.factory import UniqueFactory
-from sage.symbolic.ring import SR
-from sage.symbolic.expression import is_SymbolicEquation
 
 
 class EllipticCurveFactory(UniqueFactory):
@@ -385,6 +383,20 @@ class EllipticCurveFactory(UniqueFactory):
             incorrect data may lead to wrong results of computations
             instead of errors or warnings.
 
+        TESTS::
+
+            sage: var('x', 'y', 'v', 'w')
+            (x, y, v, w)
+            sage: EllipticCurve(y^2 + y > x^3 + x - 9)
+            Traceback (most recent call last):
+            ...
+            ValueError: no symbolic relations other than equalities are allowed
+            sage: E = EllipticCurve(y^2 + y == x^3 + x - 9)
+            sage: E is EllipticCurve(y^2 + y - ( x^3 + x - 9 ))
+            True
+            sage: R.<x,y> = QQ[]
+            sage: E is EllipticCurve(y^2 + y - ( x^3 + x - 9 ))
+            True
         """
         R = None
         if is_Ring(x):
@@ -400,10 +412,13 @@ class EllipticCurveFactory(UniqueFactory):
                 raise ValueError("First parameter (if present) must be a ring when j is specified")
             x = coefficients_from_j(j, minimal_twist)
 
-        if is_SymbolicEquation(x):
+        if isinstance(x, Expression) and x.is_relational():
+            import operator
+            if x.operator() != operator.eq:
+                raise ValueError("no symbolic relations other than equalities are allowed")
             x = x.lhs() - x.rhs()
 
-        if parent(x) is SR:
+        if isinstance(parent(x), sage.rings.abc.SymbolicRing):
             x = x._polynomial_(rings.QQ['x', 'y'])
 
         if is_MPolynomial(x):
@@ -461,10 +476,10 @@ class EllipticCurveFactory(UniqueFactory):
         elif is_NumberField(R):
             from .ell_number_field import EllipticCurve_number_field
             return EllipticCurve_number_field(R, x)
-        elif rings.is_pAdicField(R):
+        elif isinstance(R, sage.rings.abc.pAdicField):
             from .ell_padic_field import EllipticCurve_padic_field
             return EllipticCurve_padic_field(R, x)
-        elif is_FiniteField(R) or (is_IntegerModRing(R) and R.characteristic().is_prime()):
+        elif is_FiniteField(R) or (isinstance(R, sage.rings.abc.IntegerModRing) and R.characteristic().is_prime()):
             from .ell_finite_field import EllipticCurve_finite_field
             return EllipticCurve_finite_field(R, x)
         elif R in _Fields:

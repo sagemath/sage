@@ -34,8 +34,11 @@ The default domain of a symbolic variable is the complex plane::
 
 Here is the list of acceptable features::
 
-    sage: maxima('features')
-    [integer,noninteger,even,odd,rational,irrational,real,imaginary,complex,analytic,increasing,decreasing,oddfun,evenfun,posfun,constant,commutative,lassociative,rassociative,symmetric,antisymmetric,integervalued]
+    sage: ", ".join(map(str, maxima("features")._sage_()))
+    'integer, noninteger, even, odd, rational, irrational, real, imaginary,
+    complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
+    constant, commutative, lassociative, rassociative, symmetric,
+    antisymmetric, integervalued'
 
 Set positive domain using a relation::
 
@@ -68,7 +71,10 @@ Assumptions are added and in some cases checked for consistency::
     ValueError: Assumption is inconsistent
     sage: forget()
 """
-from sage.rings.all import ZZ, QQ, RR, CC
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.symbolic.ring import is_SymbolicVariable
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -79,6 +85,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 _assumptions = dict()
 
 _valid_feature_strings = set()
+
 
 class GenericDeclaration(UniqueRepresentation):
     """
@@ -110,8 +117,11 @@ class GenericDeclaration(UniqueRepresentation):
 
     Here is the list of acceptable features::
 
-        sage: maxima('features')
-        [integer,noninteger,even,odd,rational,irrational,real,imaginary,complex,analytic,increasing,decreasing,oddfun,evenfun,posfun,constant,commutative,lassociative,rassociative,symmetric,antisymmetric,integervalued]
+        sage: ", ".join(map(str, maxima("features")._sage_()))
+        'integer, noninteger, even, odd, rational, irrational, real, imaginary,
+        complex, analytic, increasing, decreasing, oddfun, evenfun, posfun,
+        constant, commutative, lassociative, rassociative, symmetric,
+        antisymmetric, integervalued'
 
     Test unique representation behavior::
 
@@ -148,8 +158,11 @@ class GenericDeclaration(UniqueRepresentation):
 
         Here is the list of acceptable features::
 
-            sage: maxima('features')
-            [integer,noninteger,even,odd,rational,irrational,real,imaginary,complex,analytic,increasing,decreasing,oddfun,evenfun,posfun,constant,commutative,lassociative,rassociative,symmetric,antisymmetric,integervalued]
+            sage: ", ".join(map(str, maxima("features")._sage_()))
+            'integer, noninteger, even, odd, rational, irrational, real,
+            imaginary, complex, analytic, increasing, decreasing, oddfun,
+            evenfun, posfun, constant, commutative, lassociative, rassociative,
+            symmetric, antisymmetric, integervalued'
         """
         self._var = var
         self._assumption = assumption
@@ -915,14 +928,13 @@ class assuming:
         Traceback (most recent call last):
         ...
         ValueError: Assumption is redundant
-        
+
         sage: with assuming(x < -1): "I won't see this"
         Traceback (most recent call last):
         ...
         ValueError: Assumption is inconsistent
-
     """
-    def __init__(self,*args, **kwds):
+    def __init__(self, *args, **kwds):
         r"""
         EXAMPLES::
 

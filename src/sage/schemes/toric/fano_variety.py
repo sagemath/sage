@@ -877,7 +877,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             sage: H
             Closed subscheme of 2-d CPR-Fano toric variety
             covered by 3 affine patches defined by:
-              t*z1^3 + (psi/(psi^2 + phi))*z0*z1*z2 + 1/t*z2^3
+              t*z1^3 + psi/(phi + psi^2)*z0*z1*z2 + 1/t*z2^3
             sage: R = H.ambient_space().base_ring()
             sage: R
             Fraction Field of
@@ -1149,7 +1149,7 @@ class CPRFanoToricVariety_field(ToricVariety_field):
             Closed subscheme of 3-d CPR-Fano toric variety
             covered by 10 affine patches defined by:
               a*z1*z4^2*z5^2*z7^3 + a/e*z2*z4*z5*z6*z7^2*z8^2
-              + c_i*z2*z3*z4*z7*z8 + a^2*z0*z2,
+              + (c_i)*z2*z3*z4*z7*z8 + (a^2)*z0*z2,
               4*z1*z4*z5^2*z6^2*z7^2*z8^2 + z2*z5*z6^3*z7*z8^4
               + 3*z2*z3*z6^2*z8^3 + 2*z1*z3^2*z4 + 5*z0*z1*z5*z6
 

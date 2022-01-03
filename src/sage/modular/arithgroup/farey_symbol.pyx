@@ -27,7 +27,8 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.gmpxx cimport *
 
-from sage.rings.all import CC, RR
+from sage.rings.real_mpfr import RR
+from sage.rings.cc import CC
 from sage.rings.integer cimport Integer
 from sage.rings.infinity import infinity
 from .congroup_gammaH import is_GammaH
@@ -571,7 +572,7 @@ cdef class Farey:
         Serialization for pickling::
 
             sage: FareySymbol(Gamma0(4)).__reduce__()
-            (<type 'sage.modular.arithgroup.farey_symbol.Farey'>, ...))
+            (<class 'sage.modular.arithgroup.farey_symbol.Farey'>, ...))
 
         """
         return Farey, (self.group, self.this_ptr.dumps())

@@ -383,6 +383,9 @@ class Link(SageObject):
             else:
                 raise ValueError("invalid input: data must be either a list or a braid")
 
+        self._mirror  = None  # set on invocation of :meth:`mirror_image`
+        self._reverse = None  # set on invocation of :meth:`reverse`
+
     def arcs(self, presentation='pd'):
         r"""
         Return the arcs of ``self``.
@@ -1923,19 +1926,23 @@ class Link(SageObject):
             sage: L = Link(B([1]*16 + [2,1,2,1,2,2,2,2,2,2,2,1,2,1,2,-1,2,-2]))
             sage: L.determinant()
             65
+            sage: B = BraidGroup(3)
+            sage: Link(B([1, 2, 1, 1, 2])).determinant()
+            4
 
         TESTS::
 
+            sage: B = BraidGroup(3)
             sage: Link(B([1, 2, 1, -2, -1])).determinant()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: determinant implemented only for knots
-        """
-        if self.is_knot():
-            a = self.alexander_polynomial()
-            return Integer(abs(a(-1)))
+            0
 
-        raise NotImplementedError("determinant implemented only for knots")
+        REFERENCES:
+
+        - Definition 6.6.3 in [Cro2004]_
+        """
+        V = self.seifert_matrix()
+        m = V + V.transpose()
+        return Integer(abs(m.det()))
 
     def is_alternating(self):
         r"""
@@ -2256,9 +2263,23 @@ class Link(SageObject):
             K = Link([[[1,-2,3,-1,2,-3]],[1,1,1]])
             K2 = K.mirror_image()
             sphinx_plot(K2.plot())
+
+        TESTS:
+
+        check that :trac:`30997` is fixed::
+
+            sage: L = Link([[6, 2, 7, 1], [5, 13, 6, 12], [8, 3, 9, 4],
+            ....:           [2, 13, 3, 14], [14, 8, 15, 7], [11, 17, 12, 16],
+            ....:           [9, 18, 10, 11], [17, 10, 18, 5], [4, 16, 1, 15]]) # L9n25{0}{0} from KnotInfo
+            sage: Lmm = L.mirror_image().mirror_image()
+            sage: L == Lmm
+            True
         """
         # Use the braid information if it is the shortest version
         #   of what we have already computed
+        if self._mirror:
+            return self._mirror
+
         if self._braid:
             lb = len(self._braid.Tietze())
 
@@ -2273,11 +2294,67 @@ class Link(SageObject):
                 logc = float('inf')
 
             if lb <= logc and lb <= lpd:
-                return type(self)(~self._braid)
+                self._mirror = type(self)(self._braid.mirror_image())
+                self._mirror._mirror = self
+                return self._mirror
 
         # Otherwise we fallback to the PD code
         pd = [[a[0], a[3], a[2], a[1]] for a in self.pd_code()]
-        return type(self)(pd)
+        self._mirror = type(self)(pd)
+        self._mirror._mirror = self
+        return self._mirror
+
+    def reverse(self):
+        r"""
+        Return the reverse of ``self``. This is the link obtained from ``self``
+        by reverting the orientation on all components.
+
+        EXAMPLES::
+
+           sage: K3 = Knot([[5, 2, 4, 1], [3, 6, 2, 5], [1, 4, 6, 3]])
+           sage: K3r = K3.reverse(); K3r.pd_code()
+           [[4, 1, 5, 2], [2, 5, 3, 6], [6, 3, 1, 4]]
+           sage: K3 == K3r
+           True
+
+        a non reversable knot::
+
+           sage: K8_17 = Knot([[6, 2, 7, 1], [14, 8, 15, 7], [8, 3, 9, 4],
+           ....:               [2, 13, 3, 14], [12, 5, 13, 6], [4, 9, 5, 10],
+           ....:               [16, 12, 1, 11], [10, 16, 11, 15]])
+           sage: K8_17r = K8_17.reverse()
+           sage: b = K8_17.braid(); b
+           s0^2*s1^-1*(s1^-1*s0)^2*s1^-1
+           sage: br = K8_17r.braid(); br
+           s0^-1*s1*s0^-2*s1^2*s0^-1*s1
+           sage: b.is_conjugated(br)
+           False
+           sage: b == br.reverse()
+           False
+           sage: b.is_conjugated(br.reverse())
+           True
+           sage: K8_17b = Link(b)
+           sage: K8_17br = K8_17b.reverse()
+           sage: bbr = K8_17br.braid(); bbr
+           (s1^-1*s0)^2*s1^-2*s0^2
+           sage: br == bbr
+           False
+           sage: br.is_conjugated(bbr)
+           True
+        """
+        if self._reverse:
+            return self._reverse
+
+        if self._braid:
+            self._reverse = type(self)(self._braid.reverse())
+            self._reverse._reverse = self
+            return self._reverse
+
+        # Otherwise we fallback to the PD code
+        pd = [[a[2], a[3], a[0], a[1]] for a in self.pd_code()]
+        self._reverse = type(self)(pd)
+        self._reverse._reverse = self
+        return self._reverse
 
     def writhe(self):
         r"""
@@ -3671,40 +3748,41 @@ class Link(SageObject):
 
             sage: k11  = KnotInfo.K11n_82.link()      # optional - database_knotinfo
             sage: k11m = k11.mirror_image()           # optional - database_knotinfo
-            sage: k11m.braid()                        # optional - database_knotinfo
-            s0*s1^-1*s0*s2^-1*s1*(s1*s2^-1)^2*s2^-2
-            sage: k11m.get_knotinfo()                 # optional - database_knotinfo
+            sage: k11mr = k11m.reverse()              # optional - database_knotinfo
+            sage: k11mr.get_knotinfo()                # optional - database_knotinfo
             Traceback (most recent call last):
             ...
             NotImplementedError: mirror type of this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
 
-            sage: k11m.get_knotinfo(unique=False)     # optional - database_knotinfo
+            sage: k11mr.get_knotinfo(unique=False)    # optional - database_knotinfo
             [(<KnotInfo.K11n_82: '11n_82'>, '?')]
 
-            sage: t = (-1, 2, -1, 2, -1, 3, -2, 3, -2)
-            sage: l9 = Link(BraidGroup(4)(t))
-            sage: l9.get_knotinfo()                   # optional - database_knotinfo
+            sage: t = (1, -2, 1, 1, -2, 1, -2, -2)
+            sage: l8 = Link(BraidGroup(3)(t))
+            sage: l8.get_knotinfo()                   # optional - database_knotinfo
             Traceback (most recent call last):
             ...
             NotImplementedError: this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
 
-            sage: l9.get_knotinfo(unique=False)       # optional - database_knotinfo
-            [(<KnotInfo.L9n25_0_0: 'L9n25{0,0}'>, False),
-             (<KnotInfo.L9n25_1_1: 'L9n25{1,1}'>, False)]
+            sage: l8.get_knotinfo(unique=False)       # optional - database_knotinfo
+            [(<KnotInfo.L8a19_0_0: 'L8a19{0,0}'>, None),
+             (<KnotInfo.L8a19_1_1: 'L8a19{1,1}'>, None)]
 
-            sage: t = (1, 2, 3, -4, 3, -2, -1, 3, -2, 3, -2, 3, -4, 3, -2)
-            sage: l15 = Link(BraidGroup(5)(t))
-            sage: l15.get_knotinfo()                  # optional - database_knotinfo
+            sage: t = (2, -3, -3, -2, 3, 3, -2, 3, 1, -2, -2, 1)
+            sage: l12 = Link(BraidGroup(5)(t))
+            sage: l12.get_knotinfo()                  # optional - database_knotinfo
             Traceback (most recent call last):
             ...
             NotImplementedError: this link having more than 11 crossings cannot be uniquely determined
             use keyword argument `unique` to obtain more details
 
-            sage:l15.get_knotinfo(unique=False)       # optional - database_knotinfo
-            [(<KnotInfo.L11a1_0: 'L11a1{0}'>, False),
-             (<KnotInfo.L11a1_1: 'L11a1{1}'>, False)]
+            sage: l12.get_knotinfo(unique=False)      # optional - database_knotinfo
+            [(<KnotInfo.L10n36_0: 'L10n36{0}'>, '?'),
+             (<KnotInfo.L10n36_1: 'L10n36{1}'>, None),
+             (<KnotInfo.L10n59_0: 'L10n59{0}'>, None),
+             (<KnotInfo.L10n59_1: 'L10n59{1}'>, None)]
 
         Furthermore, if the result is a complete  series of oriented links having
         the same unoriented name (according to the note above) the option can be

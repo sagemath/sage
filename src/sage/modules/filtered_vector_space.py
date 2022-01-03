@@ -113,7 +113,7 @@ from sage.rings.infinity import InfinityRing, infinity, minus_infinity
 from sage.categories.fields import Fields
 from sage.modules.free_module import FreeModule_ambient_field, VectorSpace
 from sage.matrix.constructor import matrix
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 
 
 def is_FilteredVectorSpace(X):
@@ -218,7 +218,7 @@ def normalize_degree(deg):
 
         sage: from sage.modules.filtered_vector_space import normalize_degree
         sage: type(normalize_degree(int(1)))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: normalize_degree(oo)
         +Infinity
     """

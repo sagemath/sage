@@ -4293,7 +4293,7 @@ class TensorField(ModuleElementWithMutability):
             sage: e[1] = cos(t-z)
             sage: e.display()  # plane wave propagating in the z direction
             e = cos(t - z) ∂/∂x
-            sage: De = e.dalembertian(); De
+            sage: De = e.dalembertian(); De # long time
             Vector field Box(e) on the 4-dimensional Lorentzian manifold M
 
         The function :func:`~sage.manifolds.operators.dalembertian` from the
@@ -4301,12 +4301,12 @@ class TensorField(ModuleElementWithMutability):
         method :meth:`dalembertian`::
 
             sage: from sage.manifolds.operators import dalembertian
-            sage: dalembertian(e) == De
+            sage: dalembertian(e) == De # long time
             True
 
         We check that the electric field obeys the wave equation::
 
-            sage: De.display()
+            sage: De.display() # long time
             Box(e) = 0
 
         """

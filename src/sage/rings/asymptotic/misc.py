@@ -840,6 +840,76 @@ class NotImplementedOZero(NotImplementedError):
         super(NotImplementedOZero, self).__init__(message)
 
 
+class NotImplementedBZero(NotImplementedError):
+    r"""
+    A special :python:`NotImplementedError<library/exceptions.html#exceptions.NotImplementedError>`
+    which is raised when the result is B(0) which means 0
+    for sufficiently large values of the variable.
+    """
+    def __init__(self, asymptotic_ring=None, var=None, exact_part=0):
+        r"""
+        INPUT:
+
+        - ``asymptotic_ring`` -- (default: ``None``) an :class:`AsymptoticRing` or ``None``.
+
+        - ``var`` -- (default: ``None``) a string.
+
+        Either ``asymptotic_ring`` or ``var`` has to be specified.
+
+        - ``exact_part`` -- (default: ``0``) asymptotic expansion
+
+        EXAMPLES::
+
+            sage: A = AsymptoticRing('n^ZZ', ZZ)
+            sage: from sage.rings.asymptotic.misc import NotImplementedBZero
+
+            sage: raise NotImplementedBZero(A)
+            Traceback (most recent call last):
+            ...
+            NotImplementedBZero: got B(0)
+            The error term B(0) means 0 for sufficiently large n.
+
+            sage: raise NotImplementedBZero(var='m')
+            Traceback (most recent call last):
+            ...
+            NotImplementedBZero: got B(0)
+            The error term B(0) means 0 for sufficiently large m.
+
+            sage: AR.<n> = AsymptoticRing('n^QQ', QQ)
+            sage: AR(0).B(42)
+            Traceback (most recent call last):
+            ...
+            NotImplementedBZero: got B(0)
+            The error term B(0) means 0 for sufficiently large n.
+
+        TESTS::
+
+            sage: raise NotImplementedBZero(A, var='m')
+            Traceback (most recent call last):
+            ...
+            ValueError: specify either 'asymptotic_ring' or 'var'
+            sage: raise NotImplementedBZero()
+            Traceback (most recent call last):
+            ...
+            ValueError: specify either 'asymptotic_ring' or 'var'
+        """
+        if (asymptotic_ring is None) == (var is None):
+            raise ValueError("specify either 'asymptotic_ring' or 'var'")
+
+        if var is None:
+            var = ', '.join(str(g) for g in asymptotic_ring.gens())
+        message = ('got {}\n'.format(('{} + '.format(exact_part) if exact_part else '')
+                                     + 'B(0)') +
+                   'The error term B(0) '
+                   'means 0 for sufficiently large {}.'.format(var))
+
+        if asymptotic_ring is not None and isinstance(exact_part, int) and exact_part == 0:
+            exact_part = asymptotic_ring.zero()
+        self.exact_part = exact_part
+
+        super(NotImplementedBZero, self).__init__(message)
+
+
 def transform_category(category,
                        subcategory_mapping, axiom_mapping,
                        initial_category=None):

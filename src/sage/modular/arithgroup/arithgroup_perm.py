@@ -100,7 +100,7 @@ AUTHORS:
 
 from .all import SL2Z
 from .arithgroup_generic import ArithmeticSubgroup
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 import sage.arith.all as arith
 
@@ -1819,7 +1819,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             else:
                 c2 = len(c) // 2
                 if exp:
-                    if not c2 in widths:
+                    if c2 not in widths:
                         widths[c2] = 0
                     widths[c2] += 1
                 else:

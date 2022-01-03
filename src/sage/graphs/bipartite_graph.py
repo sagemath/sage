@@ -310,26 +310,6 @@ class BipartiteGraph(Graph):
             sage: partition = [list(range(5)), list(range(5, 10))]
             sage: B = BipartiteGraph(P, partition, check=False)
 
-        TESTS:
-
-        Test that the memory leak in :trac:`31313` is fixed::
-
-            sage: A = Matrix(ZZ, 100, 125)
-            sage: for i in range(A.nrows()):
-            ....:     for j in Subsets(A.ncols()).random_element():
-            ....:         A[i, j - 1] = 1
-            sage: def make_bip_graph(A):
-            ....:     G = BipartiteGraph(A)
-            sage: for _ in range(10):
-            ....:     make_bip_graph(A)
-            sage: import gc
-            sage: _ = gc.collect()
-            sage: start_mem = get_memory_usage()
-            sage: for _ in range(10):
-            ....:     make_bip_graph(A)
-            sage: _ = gc.collect()
-            sage: print(round(get_memory_usage() - start_mem))
-            0.0
         """
         if kwds is None:
             kwds = {'loops': False}
@@ -1131,14 +1111,14 @@ class BipartiteGraph(Graph):
 
             sage: x = polygen(QQ)
             sage: g = BipartiteGraph(graphs.CompleteBipartiteGraph(16, 16))
-            sage: bool(factorial(16) * laguerre(16, x^2) == g.matching_polynomial(algorithm='rook'))
+            sage: bool(factorial(16) * laguerre(16, x^2) == g.matching_polynomial(algorithm='rook'))    # optional - sage.symbolic
             True
 
         Compute the matching polynomial of a line with `60` vertices::
 
-            sage: from sage.functions.orthogonal_polys import chebyshev_U
+            sage: from sage.functions.orthogonal_polys import chebyshev_U                               # optional - sage.symbolic
             sage: g = next(graphs.trees(60))
-            sage: chebyshev_U(60, x/2) == BipartiteGraph(g).matching_polynomial(algorithm='rook')
+            sage: chebyshev_U(60, x/2) == BipartiteGraph(g).matching_polynomial(algorithm='rook')       # optional - sage.symbolic
             True
 
         The matching polynomial of a tree is equal to its characteristic
@@ -1555,7 +1535,7 @@ class BipartiteGraph(Graph):
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Edmonds')
             4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='LP')
-            4.0
+            4
             sage: B.matching(use_edge_labels=True, value_only=True, algorithm='Eppstein')
             Traceback (most recent call last):
             ...
@@ -1777,7 +1757,7 @@ class BipartiteGraph(Graph):
             Y = set()
             for u in X:
                 for v in self.neighbors(u):
-                    if not v in Z and not M.has_edge(u, v):
+                    if v not in Z and not M.has_edge(u, v):
                         Y.add(v)
             Z.update(Y)
 
@@ -1785,7 +1765,7 @@ class BipartiteGraph(Graph):
             X = set()
             for u in Y:
                 for v in M.neighbor_iterator(u):
-                    if not v in Z:
+                    if v not in Z:
                         X.add(v)
             Z.update(X)
 

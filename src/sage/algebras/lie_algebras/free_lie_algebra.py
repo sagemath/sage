@@ -42,7 +42,7 @@ from sage.algebras.lie_algebras.lie_algebra_element import (LieGenerator,
 from sage.algebras.lie_algebras.morphism import LieAlgebraHomomorphism_im_gens
 from sage.misc.superseded import experimental_warning
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 class FreeLieBasis_abstract(FinitelyGeneratedLieAlgebra, IndexedGenerators, BindableClass):
     """

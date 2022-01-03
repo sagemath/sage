@@ -71,21 +71,21 @@ class NumericalEigenforms(SageObject):
         sage: n = numerical_eigenforms(23)
         sage: n == loads(dumps(n))
         True
-        sage: n.ap(2)  # rel tol 2e-14
+        sage: n.ap(2)  # abs tol 1e-12
         [3.0, -1.6180339887498947, 0.6180339887498968]
-        sage: n.systems_of_eigenvalues(7)  # rel tol 2e-14
+        sage: n.systems_of_eigenvalues(7)  # abs tol 2e-12
         [
         [-1.6180339887498947, 2.2360679774997894, -3.2360679774997894],
         [0.6180339887498968, -2.236067977499788, 1.2360679774997936],
         [3.0, 4.0, 6.0]
         ]
-        sage: n.systems_of_abs(7)
+        sage: n.systems_of_abs(7)  # abs tol 2e-12
         [
-        [0.6180339887..., 2.236067977..., 1.236067977...],
-        [1.6180339887..., 2.236067977..., 3.236067977...],
+        [0.6180339887498943, 2.2360679774997894, 1.2360679774997887],
+        [1.6180339887498947, 2.23606797749979, 3.2360679774997894],
         [3.0, 4.0, 6.0]
         ]
-        sage: n.eigenvalues([2,3,5])  # rel tol 2e-14
+        sage: n.eigenvalues([2,3,5])  # rel tol 2e-12
         [[3.0, -1.6180339887498947, 0.6180339887498968],
          [4.0, 2.2360679774997894, -2.236067977499788],
          [6.0, -3.2360679774997894, 1.2360679774997936]]
@@ -444,7 +444,7 @@ class NumericalEigenforms(SageObject):
 
         EXAMPLES::
 
-            sage: numerical_eigenforms(61).systems_of_eigenvalues(10)  # rel tol 1e-12
+            sage: numerical_eigenforms(61).systems_of_eigenvalues(10)  # rel tol 1e-11
             [
             [-1.4811943040920152, 0.8060634335253695, 3.1563251746586642, 0.6751308705666477],
             [-1.0, -2.0000000000000027, -3.000000000000003, 1.0000000000000044],
@@ -471,7 +471,7 @@ class NumericalEigenforms(SageObject):
 
         EXAMPLES::
 
-            sage: numerical_eigenforms(61).systems_of_abs(10)  # rel tol 1e-12
+            sage: numerical_eigenforms(61).systems_of_abs(10)  # rel tol 1e-11
             [
             [0.3111078174659775, 2.903211925911551, 2.525427560843529, 3.214319743377552],
             [1.0, 2.0000000000000027, 3.000000000000003, 1.0000000000000044],

@@ -34,11 +34,15 @@ cdef class MemoryAllocator:
             sage: cython(
             ....: '''
             ....: from sage.ext.memory_allocator cimport MemoryAllocator
-            ....: cdef MemoryAllocator mem = MemoryAllocator.__new__(MemoryAllocator)
-            ....: mem.malloc(10000)
-            ....: print(mem.n)
-            ....: print(mem.size)
+            ....: def foo():
+            ....:     cdef MemoryAllocator mem = MemoryAllocator.__new__(MemoryAllocator)
+            ....:     mem.malloc(10000)
+            ....:     print(mem.n)
+            ....:     print(mem.size)
             ....: ''')
+            sage: foo()
+            doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
+            See https://trac.sagemath.org/31591 for details.
             1
             16
         """
@@ -135,9 +139,8 @@ cdef class MemoryAllocator:
             ....:     ptr = mem.malloc(20)
             ....:     mem2.realloc(ptr, 21)
             ....: ''')
+            sage: test_realloc_good()  # random  # might raise deprecation warning
             sage: test_realloc_good()
-            doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
-            See https://trac.sagemath.org/31591 for details.
             sage: test_realloc_NULL()
             sage: test_realloc_bad()
             Traceback (most recent call last):

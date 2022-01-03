@@ -55,7 +55,7 @@ from sage.libs.mpmath import utils as mpmath_utils
 mpmath_utils_call = mpmath_utils.call # eliminate some overhead in _evalf_
 
 from sage.rings.real_mpfr import RealField
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.functions.log import exp, log
 from sage.functions.trig import sin, cos
 from sage.functions.hyperbolic import sinh, cosh
@@ -1497,7 +1497,7 @@ def exponential_integral_1(x, n=0):
         ....:     n = 2^ZZ.random_element(14)
         ....:     x = exponential_integral_1(a, n)
         ....:     y = exponential_integral_1(S(a), n)
-        ....:     c = RDF(2 * max(1.0, y[0]))
+        ....:     c = RDF(4 * max(1.0, y[0]))
         ....:     for i in range(n):
         ....:         e = float(abs(S(x[i]) - y[i]) << prec)
         ....:         if e >= c:

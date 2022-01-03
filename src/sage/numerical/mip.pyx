@@ -663,13 +663,13 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: p = MixedIntegerLinearProgram(solver='ppl')
             sage: p.base_ring()
             Rational Field
-            sage: from sage.rings.all import AA
-            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP', base_ring=AA)
-            sage: p.base_ring()
+            sage: from sage.rings.qqbar import AA                                      # optional - sage.rings.number_field
+            sage: p = MixedIntegerLinearProgram(solver='InteractiveLP', base_ring=AA)  # optional - sage.rings.number_field
+            sage: p.base_ring()                                                        # optional - sage.rings.number_field
             Algebraic Real Field
-            sage: d = polytopes.dodecahedron()
-            sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())
-            sage: p.base_ring()
+            sage: d = polytopes.dodecahedron()                                         # optional - sage.rings.number_field
+            sage: p = MixedIntegerLinearProgram(base_ring=d.base_ring())               # optional - sage.rings.number_field
+            sage: p.base_ring()                                                        # optional - sage.rings.number_field
             Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
         """
         return self._backend.base_ring()

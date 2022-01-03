@@ -13,8 +13,7 @@ This module defines the class ``EllipticCurve_field``, based on
 #*****************************************************************************
 
 import sage.rings.all as rings
-from sage.rings.complex_mpfr import is_ComplexField
-from sage.rings.real_mpfr import is_RealField
+import sage.rings.abc
 from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
 from sage.schemes.curves.projective_curve import ProjectivePlaneCurve_field
 
@@ -697,7 +696,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         # j-invariant is in the image, otherwise return an empty list:
 
         j = self.j_invariant()
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         if K == QQ:
             try:
                 jK = QQ(j)
@@ -1069,9 +1068,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             ValueError: 4 is not prime.
         """
         F = self.base_ring()
-        if is_RealField(F):
+        if isinstance(F, sage.rings.abc.RealField):
             raise NotImplementedError("This code could be implemented for general real fields, but has not been yet.")
-        if is_ComplexField(F):
+        if isinstance(F, sage.rings.abc.ComplexField):
             raise NotImplementedError("This code could be implemented for general complex fields, but has not been yet.")
         if F is rings.QQbar:
             raise NotImplementedError("This code could be implemented for QQbar, but has not been yet.")

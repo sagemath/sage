@@ -348,7 +348,7 @@ def plot_slope_field(f, xrange, yrange, **kwds):
                      'pivot': 'middle'}
     slope_options.update(kwds)
 
-    from sage.functions.all import sqrt
+    from sage.misc.functional import sqrt
     from sage.misc.sageinspect import is_function_or_cython_function
     if is_function_or_cython_function(f):
         norm_inverse = lambda x,y: 1/sqrt(f(x, y)**2+1)

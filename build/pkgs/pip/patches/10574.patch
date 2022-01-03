@@ -1,0 +1,544 @@
+Backported by deleting changes to file tests/unit/resolution_resolvelib/test_resolver.py
+
+From af383922b226f7caeac79f98d7a2991be86ab904 Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Tue, 12 Oct 2021 10:36:35 +0200
+Subject: [PATCH 01/13] Simplify graph in get_topological_weights.
+
+Fixes https://github.com/pypa/pip/issues/10557 where the resolver spends too much time calculating the weights.
+
+Also, do not let `get_installation_order` calculate these weights at all when there is nothing left to install.
+---
+ news/10557.bugfix.rst                         |  1 +
+ .../resolution/resolvelib/resolver.py         | 41 ++++++++++++++++++-
+ .../resolution_resolvelib/test_resolver.py    |  2 +-
+ 3 files changed, 42 insertions(+), 2 deletions(-)
+ create mode 100644 news/10557.bugfix.rst
+
+diff --git a/news/10557.bugfix.rst b/news/10557.bugfix.rst
+new file mode 100644
+index 00000000000..d902cea3c3d
+--- /dev/null
++++ b/news/10557.bugfix.rst
+@@ -0,0 +1 @@
++Simplify the graph when calculating weights for the installation order.
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index 12f96702024..8e35c3dc838 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -177,6 +177,10 @@ def get_installation_order(
+         """
+         assert self._result is not None, "must call resolve() first"
+ 
++        if not req_set.requirements:
++            # Nothing is left to install, so we do not need an order.
++            return []
++
+         graph = self._result.graph
+         weights = get_topological_weights(
+             graph,
+@@ -213,6 +217,35 @@ def get_topological_weights(
+     path: Set[Optional[str]] = set()
+     weights: Dict[Optional[str], int] = {}
+ 
++    # Make a copy of the graph and edit the copy,
++    # instead of changing the original.
++    cgraph: "DirectedGraph[Optional[str]]" = graph.copy()
++
++    def simplify_graph():
++        # In the first pass, we iterate over the original graph,
++        # looking for any keys that have no dependencies themselves.
++        # Use a large weight for them.
++        # Actually, maybe not.
++        leaves = set()
++        for key in cgraph:
++            if not cgraph._forwards[key] and key is not None:
++                leaves.add(key)
++        if not leaves:
++            # We are done simplifying.
++            return
++        # Calculate the weight for the leaves.
++        weight = len(cgraph) - 1
++        if weight == 0:
++            # Precaution against dividing by zero.  We are done.
++            return
++        for leave in leaves:
++            weights[leave] = weight
++        # Remove the leaves from the copy of the graph, making the copy simpler.
++        for leave in leaves:
++            cgraph.remove(leave)
++        # Now that we have a simpler graph, try to simplify it again.
++        simplify_graph()
++
+     def visit(node: Optional[str]) -> None:
+         if node in path:
+             # We hit a cycle, so we'll break it here.
+@@ -220,13 +253,19 @@ def visit(node: Optional[str]) -> None:
+ 
+         # Time to visit the children!
+         path.add(node)
+-        for child in graph.iter_children(node):
++        for child in cgraph.iter_children(node):
+             visit(child)
+         path.remove(node)
+ 
+         last_known_parent_count = weights.get(node, 0)
+         weights[node] = max(last_known_parent_count, len(path))
+ 
++    # Recursively simplify the graph, pruning leaves that have no dependencies.
++    # This is needed for large graphs (say over 200 packages) because the
++    # `visit` function is exponentially slower then, taking minutes.
++    # See https://github.com/pypa/pip/issues/10557
++    simplify_graph()
++    # Visit the remaining graph.
+     # `None` is guaranteed to be the root node by resolvelib.
+     visit(None)
+ 
+From 3983756b43dc321d6f6a1c8ab58acd8dcd16db23 Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Tue, 12 Oct 2021 13:11:53 +0200
+Subject: [PATCH 02/13] fix mypy
+
+---
+ src/pip/_internal/resolution/resolvelib/resolver.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index 8e35c3dc838..0ff54e677d7 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -221,7 +221,7 @@ def get_topological_weights(
+     # instead of changing the original.
+     cgraph: "DirectedGraph[Optional[str]]" = graph.copy()
+ 
+-    def simplify_graph():
++    def simplify_graph() -> None:
+         # In the first pass, we iterate over the original graph,
+         # looking for any keys that have no dependencies themselves.
+         # Use a large weight for them.
+
+From 9a973209149ea0ce6bf46a911cbc42ea21969e6c Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Tue, 12 Oct 2021 13:13:24 +0200
+Subject: [PATCH 03/13] Removed outdated comment and no longer needed code.
+
+---
+ src/pip/_internal/resolution/resolvelib/resolver.py | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index 0ff54e677d7..ebab591c639 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -222,10 +222,6 @@ def get_topological_weights(
+     cgraph: "DirectedGraph[Optional[str]]" = graph.copy()
+ 
+     def simplify_graph() -> None:
+-        # In the first pass, we iterate over the original graph,
+-        # looking for any keys that have no dependencies themselves.
+-        # Use a large weight for them.
+-        # Actually, maybe not.
+         leaves = set()
+         for key in cgraph:
+             if not cgraph._forwards[key] and key is not None:
+@@ -235,9 +231,6 @@ def simplify_graph() -> None:
+             return
+         # Calculate the weight for the leaves.
+         weight = len(cgraph) - 1
+-        if weight == 0:
+-            # Precaution against dividing by zero.  We are done.
+-            return
+         for leave in leaves:
+             weights[leave] = weight
+         # Remove the leaves from the copy of the graph, making the copy simpler.
+
+From 7e53097bb35cd284d52c0f6580e692ee5c91849a Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Tue, 12 Oct 2021 14:18:29 +0200
+Subject: [PATCH 04/13] Fixed another mypy warning, about DiGraph having no
+ attr _forwards.
+
+I am not used to mypy and did not have pre-commit installed yet.
+---
+ src/pip/_internal/resolution/resolvelib/resolver.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index ebab591c639..c68deb5562c 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -224,7 +224,7 @@ def get_topological_weights(
+     def simplify_graph() -> None:
+         leaves = set()
+         for key in cgraph:
+-            if not cgraph._forwards[key] and key is not None:
++            if not list(cgraph.iter_children(key)) and key is not None:
+                 leaves.add(key)
+         if not leaves:
+             # We are done simplifying.
+
+From a6b930b2263529940320c1909c60361f62f031ac Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Mon, 25 Oct 2021 09:58:46 +0200
+Subject: [PATCH 05/13] get_topological_weights: minor improvements from
+ reviews.
+
+---
+ .../resolution/resolvelib/resolver.py         | 22 +++++++++----------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index c68deb5562c..cda2ffc443c 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -217,25 +217,23 @@ def get_topological_weights(
+     path: Set[Optional[str]] = set()
+     weights: Dict[Optional[str], int] = {}
+ 
+-    # Make a copy of the graph and edit the copy,
+-    # instead of changing the original.
+-    cgraph: "DirectedGraph[Optional[str]]" = graph.copy()
+-
+     def simplify_graph() -> None:
+         leaves = set()
+-        for key in cgraph:
+-            if not list(cgraph.iter_children(key)) and key is not None:
++        for key in graph:
++            if key is None:
++                continue
++            if next(graph.iter_children(key), None) is not None:
+                 leaves.add(key)
+         if not leaves:
+             # We are done simplifying.
+             return
+         # Calculate the weight for the leaves.
+-        weight = len(cgraph) - 1
+-        for leave in leaves:
+-            weights[leave] = weight
++        weight = len(graph) - 1
++        for leaf in leaves:
++            weights[leaf] = weight
+         # Remove the leaves from the copy of the graph, making the copy simpler.
+-        for leave in leaves:
+-            cgraph.remove(leave)
++        for leaf in leaves:
++            graph.remove(leaf)
+         # Now that we have a simpler graph, try to simplify it again.
+         simplify_graph()
+ 
+@@ -246,7 +244,7 @@ def visit(node: Optional[str]) -> None:
+ 
+         # Time to visit the children!
+         path.add(node)
+-        for child in cgraph.iter_children(node):
++        for child in graph.iter_children(node):
+             visit(child)
+         path.remove(node)
+ 
+
+From 11ce17e84a59dcf3af32c48ca27b9d151caa0170 Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Mon, 25 Oct 2021 10:48:29 +0200
+Subject: [PATCH 06/13] get_topological_weights: fixed condition.
+
+After minor refactoring, the condition was the wrong way around.
+---
+ src/pip/_internal/resolution/resolvelib/resolver.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index cda2ffc443c..2f27badc069 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -222,7 +222,7 @@ def simplify_graph() -> None:
+         for key in graph:
+             if key is None:
+                 continue
+-            if next(graph.iter_children(key), None) is not None:
++            if next(graph.iter_children(key), None) is None:
+                 leaves.add(key)
+         if not leaves:
+             # We are done simplifying.
+
+From 6145342ba71d8e9521984a0fe4c0eed32166f205 Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Mon, 25 Oct 2021 11:56:45 +0200
+Subject: [PATCH 07/13] get_topological_weights: iterate instead of calling
+ next.
+
+'next' gives mypy errors.
+---
+ src/pip/_internal/resolution/resolvelib/resolver.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index 2f27badc069..bc99d5ad733 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -222,7 +222,11 @@ def simplify_graph() -> None:
+         for key in graph:
+             if key is None:
+                 continue
+-            if next(graph.iter_children(key), None) is None:
++            for _child in graph.iter_children(key):
++                # This means we have at least one child
++                break
++            else:
++                # No child.
+                 leaves.add(key)
+         if not leaves:
+             # We are done simplifying.
+
+From b5c0b82c8276c8e8262a87121ff0c6812339afa4 Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Tue, 16 Nov 2021 18:33:54 +0100
+Subject: [PATCH 08/13] Replace the recursive simplify_graph function with a
+ while loop.
+
+This is easier to wrap your head around.
+---
+ .../resolution/resolvelib/resolver.py         | 44 +++++++++----------
+ 1 file changed, 21 insertions(+), 23 deletions(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index bc99d5ad733..a0f9acaeca9 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -217,7 +217,26 @@ def get_topological_weights(
+     path: Set[Optional[str]] = set()
+     weights: Dict[Optional[str], int] = {}
+ 
+-    def simplify_graph() -> None:
++    def visit(node: Optional[str]) -> None:
++        if node in path:
++            # We hit a cycle, so we'll break it here.
++            return
++
++        # Time to visit the children!
++        path.add(node)
++        for child in graph.iter_children(node):
++            visit(child)
++        path.remove(node)
++
++        last_known_parent_count = weights.get(node, 0)
++        weights[node] = max(last_known_parent_count, len(path))
++
++    # Simplify the graph, pruning leaves that have no dependencies.
++    # This is needed for large graphs (say over 200 packages) because the
++    # `visit` function is exponentially slower then, taking minutes.
++    # See https://github.com/pypa/pip/issues/10557
++    # We will loop until we explicitly break the loop.
++    while True:
+         leaves = set()
+         for key in graph:
+             if key is None:
+@@ -230,7 +249,7 @@ def simplify_graph() -> None:
+                 leaves.add(key)
+         if not leaves:
+             # We are done simplifying.
+-            return
++            break
+         # Calculate the weight for the leaves.
+         weight = len(graph) - 1
+         for leaf in leaves:
+@@ -238,28 +257,7 @@ def simplify_graph() -> None:
+         # Remove the leaves from the copy of the graph, making the copy simpler.
+         for leaf in leaves:
+             graph.remove(leaf)
+-        # Now that we have a simpler graph, try to simplify it again.
+-        simplify_graph()
+ 
+-    def visit(node: Optional[str]) -> None:
+-        if node in path:
+-            # We hit a cycle, so we'll break it here.
+-            return
+-
+-        # Time to visit the children!
+-        path.add(node)
+-        for child in graph.iter_children(node):
+-            visit(child)
+-        path.remove(node)
+-
+-        last_known_parent_count = weights.get(node, 0)
+-        weights[node] = max(last_known_parent_count, len(path))
+-
+-    # Recursively simplify the graph, pruning leaves that have no dependencies.
+-    # This is needed for large graphs (say over 200 packages) because the
+-    # `visit` function is exponentially slower then, taking minutes.
+-    # See https://github.com/pypa/pip/issues/10557
+-    simplify_graph()
+     # Visit the remaining graph.
+     # `None` is guaranteed to be the root node by resolvelib.
+     visit(None)
+
+From 9408cad47390e60a18e56b041748e90defdb3d7e Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Wed, 17 Nov 2021 10:49:34 +0100
+Subject: [PATCH 09/13] Update news/10557.bugfix.rst
+
+Co-authored-by: Tzu-ping Chung <uranusjr@gmail.com>
+---
+ news/10557.bugfix.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/news/10557.bugfix.rst b/news/10557.bugfix.rst
+index d902cea3c3d..2381ea90310 100644
+--- a/news/10557.bugfix.rst
++++ b/news/10557.bugfix.rst
+@@ -1 +1 @@
+-Simplify the graph when calculating weights for the installation order.
++Optimize installation order calculation to improve performance when installing requirements that form a complex depedency graph with a large amount of edges.
+
+From d07cc8cbd762ef1e795bed3948802c6cc5bcd1d0 Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Wed, 17 Nov 2021 10:50:19 +0100
+Subject: [PATCH 10/13] Fixed typo in news snippet.
+
+---
+ news/10557.bugfix.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/news/10557.bugfix.rst b/news/10557.bugfix.rst
+index 2381ea90310..5a6a4ef26a9 100644
+--- a/news/10557.bugfix.rst
++++ b/news/10557.bugfix.rst
+@@ -1 +1 @@
+-Optimize installation order calculation to improve performance when installing requirements that form a complex depedency graph with a large amount of edges.
++Optimize installation order calculation to improve performance when installing requirements that form a complex dependency graph with a large amount of edges.
+
+From 43d94346b6363421ce8837be74bb81d71e5e2584 Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Wed, 17 Nov 2021 20:59:55 +0100
+Subject: [PATCH 11/13] Fixed comment that still talked about a copy of the
+ graph.
+
+---
+ src/pip/_internal/resolution/resolvelib/resolver.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index a0f9acaeca9..c84c697db4c 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -254,7 +254,7 @@ def visit(node: Optional[str]) -> None:
+         weight = len(graph) - 1
+         for leaf in leaves:
+             weights[leaf] = weight
+-        # Remove the leaves from the copy of the graph, making the copy simpler.
++        # Remove the leaves from the graph, making it simpler.
+         for leaf in leaves:
+             graph.remove(leaf)
+ 
+
+From 39ce7b5f241c7c6d0c2cebdb903bd9aacdd5abd4 Mon Sep 17 00:00:00 2001
+From: Maurits van Rees <maurits@vanrees.org>
+Date: Wed, 17 Nov 2021 22:36:11 +0100
+Subject: [PATCH 12/13] Updated docstring of get_installation_order and
+ get_topological_weights.
+
+---
+ .../resolution/resolvelib/resolver.py         | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index c84c697db4c..2877d7552e7 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -171,9 +171,11 @@ def get_installation_order(
+         get installed one-by-one.
+ 
+         The current implementation creates a topological ordering of the
+-        dependency graph, while breaking any cycles in the graph at arbitrary
+-        points. We make no guarantees about where the cycle would be broken,
+-        other than they would be broken.
++        dependency graph, giving more weight to packages with less
++        or no dependencies, while breaking any cycles in the graph at
++        arbitrary points.
++        We make no guarantees about where the cycle would be broken,
++        other than it *would* be broken.
+         """
+         assert self._result is not None, "must call resolve() first"
+ 
+@@ -203,13 +205,22 @@ def get_topological_weights(
+     This implementation may change at any point in the future without prior
+     notice.
+ 
++    We first simplify the dependency graph by pruning any leaves
++    and giving them the highest weight: a package without any dependencies
++    should be installed first.
++    We simplify again and again in the same way, giving ever less weight
++    to the newly found leaves.
++    This stops when no leaves are left: all remaining packages have at least
++    one dependency left in the graph.
++
++    Then we continue with the remaining graph.
+     We take the length for the longest path to any node from root, ignoring any
+     paths that contain a single node twice (i.e. cycles). This is done through
+     a depth-first search through the graph, while keeping track of the path to
+     the node.
+ 
+     Cycles in the graph result would result in node being revisited while also
+-    being it's own path. In this case, take no action. This helps ensure we
++    being on it's own path. In this case, take no action. This helps ensure we
+     don't get stuck in a cycle.
+ 
+     When assigning weight, the longer path (i.e. larger length) is preferred.
+
+From 69b71caea18e47db5f3491ae0b86d6cb37d09bdc Mon Sep 17 00:00:00 2001
+From: Tzu-ping Chung <uranusjr@gmail.com>
+Date: Thu, 18 Nov 2021 15:21:59 +0800
+Subject: [PATCH 13/13] Reflow and fix typo in docstrings
+
+---
+ .../resolution/resolvelib/resolver.py         | 28 ++++++++-----------
+ 1 file changed, 12 insertions(+), 16 deletions(-)
+
+diff --git a/src/pip/_internal/resolution/resolvelib/resolver.py b/src/pip/_internal/resolution/resolvelib/resolver.py
+index 2877d7552e7..8ee36d377d8 100644
+--- a/src/pip/_internal/resolution/resolvelib/resolver.py
++++ b/src/pip/_internal/resolution/resolvelib/resolver.py
+@@ -173,9 +173,8 @@ def get_installation_order(
+         The current implementation creates a topological ordering of the
+         dependency graph, giving more weight to packages with less
+         or no dependencies, while breaking any cycles in the graph at
+-        arbitrary points.
+-        We make no guarantees about where the cycle would be broken,
+-        other than it *would* be broken.
++        arbitrary points. We make no guarantees about where the cycle
++        would be broken, other than it *would* be broken.
+         """
+         assert self._result is not None, "must call resolve() first"
+ 
+@@ -205,22 +204,19 @@ def get_topological_weights(
+     This implementation may change at any point in the future without prior
+     notice.
+ 
+-    We first simplify the dependency graph by pruning any leaves
+-    and giving them the highest weight: a package without any dependencies
+-    should be installed first.
+-    We simplify again and again in the same way, giving ever less weight
+-    to the newly found leaves.
+-    This stops when no leaves are left: all remaining packages have at least
+-    one dependency left in the graph.
++    We first simplify the dependency graph by pruning any leaves and giving them
++    the highest weight: a package without any dependencies should be installed
++    first. This is done again and again in the same way, giving ever less weight
++    to the newly found leaves. The loop stops when no leaves are left: all
++    remaining packages have at least one dependency left in the graph.
+ 
+-    Then we continue with the remaining graph.
+-    We take the length for the longest path to any node from root, ignoring any
+-    paths that contain a single node twice (i.e. cycles). This is done through
+-    a depth-first search through the graph, while keeping track of the path to
+-    the node.
++    Then we continue with the remaining graph, by taking the length for the
++    longest path to any node from root, ignoring any paths that contain a single
++    node twice (i.e. cycles). This is done through a depth-first search through
++    the graph, while keeping track of the path to the node.
+ 
+     Cycles in the graph result would result in node being revisited while also
+-    being on it's own path. In this case, take no action. This helps ensure we
++    being on its own path. In this case, take no action. This helps ensure we
+     don't get stuck in a cycle.
+ 
+     When assigning weight, the longer path (i.e. larger length) is preferred.

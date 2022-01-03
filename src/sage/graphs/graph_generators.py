@@ -814,7 +814,7 @@ class GraphGenerators():
                     yield copyfun(gg) if copy else gg
         elif augment == 'edges':
             if vertices is None:
-                from sage.rings.all import Integer
+                from sage.rings.integer import Integer
                 vertices = Integer(0)
                 while True:
                     for g in self(vertices, loops=loops, sparse=sparse):
@@ -1060,14 +1060,14 @@ class GraphGenerators():
         Laplacian) on five vertices::
 
             sage: def DinverseA(g):
-            ....:   A=g.adjacency_matrix().change_ring(QQ)
+            ....:   A = g.adjacency_matrix().change_ring(QQ)
             ....:   for i in range(g.order()):
-            ....:       A.rescale_row(i, 1/len(A.nonzero_positions_in_row(i)))
+            ....:       A.rescale_row(i, 1 / len(A.nonzero_positions_in_row(i)))
             ....:   return A
-            sage: g=graphs.cospectral_graphs(5, matrix_function=DinverseA, graphs=lambda g: min(g.degree())>0)
+            sage: g = graphs.cospectral_graphs(5, matrix_function=DinverseA, graphs=lambda g: min(g.degree()) > 0)
             sage: sorted(sorted(g.graph6_string() for g in glist) for glist in g)
             [['Dlg', 'Ds_']]
-            sage: g[0][1].laplacian_matrix(normalized=True).charpoly()==g[0][1].laplacian_matrix(normalized=True).charpoly()
+            sage: g[0][1].laplacian_matrix(normalized=True).charpoly()==g[0][1].laplacian_matrix(normalized=True).charpoly()  # optional - sage.symbolic
             True
         """
         from sage.graphs.all import graphs as graph_gen

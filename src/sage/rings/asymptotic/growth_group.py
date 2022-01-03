@@ -240,6 +240,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import (CachedRepresentation,
                                                   UniqueRepresentation)
 from sage.structure.richcmp import richcmp_by_eq_and_lt
+import sage.rings.abc
 from .misc import WithLocals
 
 
@@ -730,7 +731,7 @@ class PartialConversionElement(SageObject):
             ....:     E((-2)^x)
             ....: except PartialConversionValueError as e:
             ....:     e.element.split()
-            (2^x, element with parameter -1 (<type 'int'>) in Growth Group ZZ^x)
+            (2^x, element with parameter -1 (<class 'int'>) in Growth Group ZZ^x)
 
         TESTS::
 
@@ -3622,13 +3623,12 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             from sage.symbolic.ring import SR
             return self._convert_(SR(data))
 
-        from sage.symbolic.ring import SymbolicRing
         from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
         from sage.rings.polynomial.multi_polynomial_ring_base import \
             MPolynomialRing_base
         from sage.rings.power_series_ring import PowerSeriesRing_generic
         import operator
-        if isinstance(P, SymbolicRing):
+        if isinstance(P, sage.rings.abc.SymbolicRing):
             if data.operator() == operator.pow:
                 base, exponent = data.operands()
                 if str(base) == var:
@@ -4419,10 +4419,9 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             sage: forget()
         """
         from warnings import warn
-        from sage.symbolic.ring import SymbolicRing
 
         super(ExponentialGrowthGroup, self).__init__(base, *args, **kwds)
-        if isinstance(base, SymbolicRing) and not self._an_element_base_() > 0:
+        if isinstance(base, sage.rings.abc.SymbolicRing) and not self._an_element_base_() > 0:
             warn("When using the Exponential {}, make "
                  "assumptions on the used symbolic elements.\n"
                  "In particular, use something like "
@@ -4552,9 +4551,8 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         import operator
         from sage.functions.log import Function_exp
         from sage.symbolic.operators import mul_vararg
-        from sage.symbolic.ring import SymbolicRing
 
-        if isinstance(P, SymbolicRing):
+        if isinstance(P, sage.rings.abc.SymbolicRing):
             op = data.operator()
             if op == operator.pow:
                 base, exponent = data.operands()
@@ -4654,20 +4652,13 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             (-x, -1)
             sage: forget()
         """
-        from sage.rings.complex_arb import ComplexBallField
-        from sage.rings.complex_mpfr import ComplexField_class
-        from sage.rings.complex_interval_field import ComplexIntervalField_class
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
-        from sage.rings.real_arb import RealBallField
-        from sage.rings.real_mpfr import RealField_class
-        from sage.rings.real_mpfi import RealIntervalField_class
         from sage.rings.qqbar import AA
         from sage.structure.element import parent
-        from sage.symbolic.ring import SymbolicRing
 
         P = base.parent()
-        if isinstance(P, SymbolicRing):
+        if isinstance(P, sage.rings.abc.SymbolicRing):
             try:
                 base = base.pyobject()
             except TypeError:
@@ -4675,17 +4666,17 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             else:
                 P = base.parent()
 
-        if P in (ZZ, QQ, AA) or isinstance(P, (SymbolicRing,
-                                               RealField_class,
-                                               RealIntervalField_class,
-                                               RealBallField)):
+        if P in (ZZ, QQ, AA) or isinstance(P, (sage.rings.abc.SymbolicRing,
+                                               sage.rings.abc.RealField,
+                                               sage.rings.abc.RealIntervalField,
+                                               sage.rings.abc.RealBallField)):
             if base > 0:
                 return base, None
             if base < 0:
                 return -base, -1
-        elif isinstance(P, (ComplexField_class,
-                            ComplexIntervalField_class,
-                            ComplexBallField)):
+        elif isinstance(P, (sage.rings.abc.ComplexField,
+                            sage.rings.abc.ComplexIntervalField,
+                            sage.rings.abc.ComplexBallField)):
             size = abs(base)
             direction = base / size
             return size, direction
@@ -4847,9 +4838,6 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from sage.categories.cartesian_product import cartesian_product
         from sage.groups.misc_gps.argument_groups import AbstractArgumentGroup
         from sage.groups.misc_gps.argument_groups import ArgumentGroup
-        from sage.rings.complex_arb import ComplexBallField
-        from sage.rings.complex_mpfr import ComplexField_class
-        from sage.rings.complex_interval_field import ComplexIntervalField_class
         from sage.rings.number_field.number_field import NumberField_cyclotomic
         from sage.rings.qqbar import QQbar, AA
 
@@ -4861,9 +4849,9 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
                 UU = cls._non_growth_group_class_(
                     ArgumentGroup(domain=base), var)
                 groups = (EE, UU)
-            elif isinstance(base, (ComplexField_class,
-                                   ComplexIntervalField_class,
-                                   ComplexBallField)):
+            elif isinstance(base, (sage.rings.abc.ComplexField,
+                                   sage.rings.abc.ComplexIntervalField,
+                                   sage.rings.abc.ComplexBallField)):
                 EE = cls(base._real_field(), var, **kwds)
                 UU = cls._non_growth_group_class_(
                     ArgumentGroup(exponents=base._real_field()), var)
@@ -5446,7 +5434,7 @@ class GrowthGroupFactory(UniqueFactory):
             describing a growth group.
             > *previous* ValueError: Cannot create a parent out of 'as'.
             >> *previous* ValueError: unknown specification as
-            >> *and* SyntaxError: unexpected EOF while parsing (<string>, line 1)
+            >> *and* SyntaxError: ... (<string>, line 1)
             > *and* ValueError: Cannot create a parent out of 'df'.
             >> *previous* ValueError: unknown specification df
             >> *and* NameError: name 'df' is not defined

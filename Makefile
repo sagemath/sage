@@ -109,6 +109,7 @@ distclean: build-clean
 	@echo "Deleting all remaining output from build system ..."
 	rm -rf local
 	rm -f src/bin/sage-env-config
+	rm -f prefix venv
 
 # Delete all auto-generated files which are distributed as part of the
 # source tarball

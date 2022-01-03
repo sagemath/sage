@@ -348,9 +348,9 @@ class Category(UniqueRepresentation, SageObject):
         sage: D.__class__.mro()
         [<class '__main__.myparent_with_category'>,
         <class '__main__.myparent'>,
-        <type 'sage.structure.parent.Parent'>,
-        <type 'sage.structure.category_object.CategoryObject'>,
-        <type 'sage.structure.sage_object.SageObject'>,
+        <class 'sage.structure.parent.Parent'>,
+        <class 'sage.structure.category_object.CategoryObject'>,
+        <class 'sage.structure.sage_object.SageObject'>,
         <class '__main__.Ds.parent_class'>,
         <class '__main__.Cs.parent_class'>,
         <class '__main__.Bs.parent_class'>,

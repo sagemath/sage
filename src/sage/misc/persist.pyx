@@ -531,19 +531,19 @@ def unpickle_global(module, name):
 
         sage: from sage.misc.persist import unpickle_override, register_unpickle_override
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Now we horribly break the pickling system::
 
         sage: register_unpickle_override('sage.rings.integer', 'Integer', Rational, call_name=('sage.rings.rational', 'Rational'))
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.rational.Rational'>
+        <class 'sage.rings.rational.Rational'>
 
     and we reach into the internals and put it back::
 
         sage: del unpickle_override[('sage.rings.integer', 'Integer')]
         sage: unpickle_global('sage.rings.integer', 'Integer')
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     A meaningful error message with resolution instructions is displayed for
     old pickles that accidentally got broken because a class or entire module
@@ -562,6 +562,14 @@ def unpickle_global(module, name):
         ImportError: cannot import some_old_class from sage.some_old_module, call
         register_unpickle_override('sage.some_old_module', 'some_old_class', ...)
         to fix this
+
+    TESTS:
+
+    Test that :func:`register_unpickle_override` calls in lazily imported modules
+    are respected::
+
+        sage: unpickle_global('sage.combinat.root_system.type_A', 'ambient_space')
+        <class 'sage.combinat.root_system.type_A.AmbientSpace'>
     """
     unpickler = unpickle_override.get((module, name))
     if unpickler is not None:
@@ -582,6 +590,12 @@ def unpickle_global(module, name):
         __import__(module)
     except ImportError:
         error()
+
+    # Importing the module may have run register_unpickle_override.
+    unpickler = unpickle_override.get((module, name))
+    if unpickler is not None:
+        return unpickler[0]
+
     mod = sys.modules[module]
     return getattr(mod, name)
 

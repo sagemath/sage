@@ -138,7 +138,8 @@ class CHomP:
         from sage.topology.simplicial_complex import SimplicialComplex, Simplex
         from sage.homology.chain_complex import HomologyGroup
         from subprocess import Popen, PIPE
-        from sage.rings.all import QQ, ZZ
+        from sage.rings.integer_ring import ZZ
+        from sage.rings.rational_field import QQ
         from sage.modules.all import VectorSpace, vector
         from sage.combinat.free_module import CombinatorialFreeModule
 
@@ -833,8 +834,8 @@ def process_generators_chain(gen_string, dim, base_ring=None):
         sage: process_generators_chain(s, 1, base_ring=GF(2))
         [(1, 1), (0, 0, 1)]
     """
-    from sage.modules.all import vector
-    from sage.rings.all import ZZ
+    from sage.modules.free_module_element import vector
+    from sage.rings.integer_ring import ZZ
     if base_ring is None:
         base_ring = ZZ
     # each dim in gens starts with a string like

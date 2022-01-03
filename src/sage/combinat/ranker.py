@@ -84,7 +84,7 @@ def rank_from_list(l):
     implementation detail::
 
         sage: type(r)
-        <... 'sage.misc.callable_dict.CallableDict'>
+        <class 'sage.misc.callable_dict.CallableDict'>
         sage: r
         {'a': 0, 'b': 1, 'c': 2}
 
@@ -157,7 +157,7 @@ def on_fly():
         i = 0
         while True:
             yield i
-            i+=1
+            i += 1
 
     counter = count()
 

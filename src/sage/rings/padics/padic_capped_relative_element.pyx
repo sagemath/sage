@@ -47,7 +47,7 @@ cdef class PowComputer_(PowComputer_base):
 
             sage: R = ZpCR(5)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.padic_capped_relative_element.PowComputer_'>
+            <class 'sage.rings.padics.padic_capped_relative_element.PowComputer_'>
             sage: R.prime_pow._prec_type
             'capped-rel'
         """
@@ -353,7 +353,7 @@ cdef class pAdicCappedRelativeElement(CRElement):
             # Need to do this better.
             mpz_mul(selfvalue.value, self.prime_pow.pow_mpz_t_tmp(self.ordp), self.unit)
         if field:
-            from sage.rings.finite_rings.all import GF
+            from sage.rings.finite_rings.finite_field_constructor import GF
             return GF(self.parent().prime())(selfvalue)
         else:
             return Mod(selfvalue, modulus)

@@ -320,7 +320,8 @@ def torsion_bound(E, number_of_places=20):
         sage: E.torsion_subgroup().invariants()
         (4, 4)
     """
-    from sage.rings.all import ZZ, GF
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
     from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
     K = E.base_field()
@@ -402,7 +403,7 @@ def torsion_bound(E, number_of_places=20):
         k += 1
         for fi, ei in f.factor_mod(p):
             di = fi.degree()
-            Fq = GF(p**di)
+            Fq = GF((p, di))
             ai = fi.roots(Fq, multiplicities=False)[0]
 
             def red(c):

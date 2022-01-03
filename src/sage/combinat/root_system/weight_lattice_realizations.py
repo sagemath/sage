@@ -21,9 +21,9 @@ Weight lattice realizations
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.categories.category_types import Category_over_base_ring
-from sage.combinat.family import Family
+from sage.sets.family import Family
 from .root_lattice_realizations import RootLatticeRealizations
 
 
@@ -215,7 +215,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 The embeddings are systematically tested in
                 :meth:`_test_weight_lattice_realization`.
             """
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             from .weight_space import WeightSpace
             K = self.base_ring()
             # If self is the root lattice or the root space, we don't want
@@ -247,9 +247,9 @@ class WeightLatticeRealizations(Category_over_base_ring):
 
                 sage: RootSystem(['A',3]).weight_lattice()._test_weight_lattice_realization()
             """
-            from sage.rings.all import ZZ
-            tester     = self._tester(**options)
-            Lambda     = self.fundamental_weights()
+            from sage.rings.integer_ring import ZZ
+            tester = self._tester(**options)
+            Lambda = self.fundamental_weights()
             alphacheck = self.simple_coroots()
             tester.assertEqual(tuple(Lambda.keys()), self.index_set())
 
@@ -868,7 +868,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 16
 
                 sage: type(RootSystem(['A',3]).ambient_lattice().weyl_dimension([2,1,0,0]))
-                <... 'sage.rings.integer.Integer'>
+                <class 'sage.rings.integer.Integer'>
             """
             highest_weight = self(highest_weight)
             if not highest_weight.is_dominant():
@@ -947,7 +947,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             M = M.inverse()
 
             if a[0] != 1:
-                from sage.rings.all import QQ
+                from sage.rings.rational_field import QQ
                 S = matrix([~a[0]]+[0]*(r-1))
                 A = cm.symmetrized_matrix().change_ring(QQ).stack(S)
             else:

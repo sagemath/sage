@@ -251,13 +251,13 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             sage: x,y,z = var('x,y,z')
             sage: R = QQ['x,y,z']
             sage: type(x)
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: type(R(x))
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: f = R(x^3 + y^3 - z^3); f
             x^3 + y^3 - z^3
             sage: type(f)
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: parent(f)
             Multivariate Polynomial Ring in x, y, z over Rational Field
 

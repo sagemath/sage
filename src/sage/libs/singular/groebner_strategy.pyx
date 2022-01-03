@@ -341,6 +341,17 @@ cdef class NCGroebnerStrategy(SageObject):
             ...
             TypeError:  First parameter must be an ideal in a g-algebra.
 
+        Check that tail reduction is applied too::
+
+            sage: F = PolynomialRing(QQ,'t').fraction_field()
+            sage: FA = FreeAlgebra(F, 6, 'x1,x2,x3,x4,x5,x6')
+            sage: N = FA.g_algebra({FA.gen(j)*FA.gen(i):-FA.gen(i)*FA.gen(j) for i in range(5) for j in range(i+1,6)})
+            sage: I = N.ideal([g^2 for g in N.gens()],side='twosided')
+            sage: N.inject_variables()
+            Defining x1, x2, x3, x4, x5, x6
+            sage: I.reduce(x1*x2*x3 + x2^2*x4)
+            x1*x2*x3
+
         """
         if not isinstance(L, NCPolynomialIdeal):
             raise TypeError("First parameter must be an ideal in a g-algebra.")
@@ -372,6 +383,7 @@ cdef class NCGroebnerStrategy(SageObject):
         self._strat.enterS = enterSBba
         #- set S
         self._strat.sl = -1
+        self._strat.noTailReduction = False
         #- init local data struct
         initS(i, NULL, self._strat)
 

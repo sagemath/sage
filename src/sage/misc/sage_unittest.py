@@ -610,7 +610,7 @@ class PythonObjectWithTests(object):
             :func:`dumps`, :func:`loads`
         """
         tester = instance_tester(self, **options)
-        from sage.misc.all import loads, dumps
+        from sage.misc.persist import loads, dumps
         tester.assertEqual(loads(dumps(self._instance)), self._instance)
 
     def _test_new(self, **options):

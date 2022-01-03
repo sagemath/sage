@@ -21,8 +21,8 @@ from sage.algebras.group_algebra import GroupAlgebra_class
 from sage.categories.weyl_groups import WeylGroups
 from sage.rings.all import QQ, PolynomialRing
 from sage.arith.all import factorial
-from sage.matrix.all import matrix
-from sage.modules.all import vector
+from sage.matrix.constructor import matrix
+from sage.modules.free_module_element import vector
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.persist import register_unpickle_override
 

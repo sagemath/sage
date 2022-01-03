@@ -1029,7 +1029,7 @@ def solve(f, *args, **kwds):
         or a list of symbolic expressions.
     """
     from sage.symbolic.ring import is_SymbolicVariable
-    from sage.symbolic.expression import Expression, is_Expression
+    from sage.structure.element import Expression
     explicit_solutions = kwds.get('explicit_solutions', None)
     multiplicities = kwds.get('multiplicities', None)
     to_poly_solve = kwds.get('to_poly_solve', None)
@@ -1058,14 +1058,14 @@ def solve(f, *args, **kwds):
 
     if isinstance(f, (list, tuple)) and len(f) == 1:
         # f is a list with a single element
-        if is_Expression(f[0]):
+        if isinstance(f[0], Expression):
             f = f[0]
         else:
             raise TypeError("The first argument to solve() should be a "
                             "symbolic expression or a list of symbolic "
                             "expressions.")
 
-    if is_Expression(f): # f is a single expression
+    if isinstance(f, Expression): # f is a single expression
         return _solve_expression(f, x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
 
     if not isinstance(f, (list, tuple)):
@@ -1095,7 +1095,7 @@ def solve(f, *args, **kwds):
     if algorithm == 'sympy':
         from sympy import solve as ssolve
         from sage.interfaces.sympy import sympy_set_to_list
-        if is_Expression(f): # f is a single expression
+        if isinstance(f, Expression): # f is a single expression
             sympy_f = f._sympy_()
         else:
             sympy_f = [s._sympy_() for s in f]
@@ -1103,7 +1103,7 @@ def solve(f, *args, **kwds):
             sympy_vars = (x._sympy_(),)
         else:
             sympy_vars = tuple([v._sympy_() for v in x])
-        if len(sympy_vars) > 1 or not is_Expression(f):
+        if len(sympy_vars) > 1 or not isinstance(f, Expression):
             ret = ssolve(sympy_f, sympy_vars, dict=True)
             if isinstance(ret, dict):
                 if solution_dict:
@@ -1569,14 +1569,14 @@ def solve_mod(eqns, modulus, solution_dict=False):
 
     """
     from sage.rings.all import Integer, Integers, crt_basis
-    from sage.symbolic.expression import is_Expression
+    from sage.structure.element import Expression
     from sage.misc.all import cartesian_product_iterator
-    from sage.modules.all import vector
-    from sage.matrix.all import matrix
+    from sage.modules.free_module_element import vector
+    from sage.matrix.constructor import matrix
 
     if not isinstance(eqns, (list, tuple)):
         eqns = [eqns]
-    eqns = [eq if is_Expression(eq) else (eq.lhs() - eq.rhs()) for eq in eqns]
+    eqns = [eq if isinstance(eq, Expression) else (eq.lhs() - eq.rhs()) for eq in eqns]
     modulus = Integer(modulus)
     if modulus < 1:
         raise ValueError("the modulus must be a positive integer")
@@ -1685,7 +1685,7 @@ def _solve_mod_prime_power(eqns, p, m, vars):
 
     """
     from sage.rings.all import Integers, PolynomialRing
-    from sage.modules.all import vector
+    from sage.modules.free_module_element import vector
     from sage.misc.all import cartesian_product_iterator
 
     mrunning = 1

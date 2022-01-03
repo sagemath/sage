@@ -236,9 +236,11 @@ cdef class AlgebraElement(RingElement):
 cdef class CommutativeAlgebraElement(CommutativeRingElement):
     pass
 
-cdef class InfinityElement(RingElement):
+cdef class Expression(CommutativeRingElement):
     pass
 
+cdef class InfinityElement(RingElement):
+    pass
 
 cdef class Vector(ModuleElementWithMutability):
     cdef Py_ssize_t _degree

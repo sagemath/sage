@@ -357,12 +357,12 @@ class Function_gamma_inc(BuiltinFunction):
         TESTS::
 
             sage: b = RBF(1, 1e-10)
-            sage: gamma(b)
-            [1.00000000 +/- 8.07e-10]
-            sage: gamma(CBF(b))
-            [1.00000000 +/- 8.07e-10]
-            sage: gamma(CBF(b), 4)
-            [0.01831564 +/- 2.65e-9]
+            sage: gamma(b) # abs tol 1e-9
+            [1.0000000000 +/- 5.78e-11]
+            sage: gamma(CBF(b)) # abs tol 1e-9
+            [1.0000000000 +/- 5.78e-11]
+            sage: gamma(CBF(b), 4) # abs tol 2e-9
+            [0.018315639 +/- 9.00e-10]
             sage: gamma(CBF(1), b)
             [0.3678794412 +/- 6.54e-11]
         """
@@ -796,6 +796,7 @@ class Function_psi1(GinacFunction):
         GinacFunction.__init__(self, "psi", nargs=1, latex_name=r'\psi',
                                conversions=dict(mathematica='PolyGamma',
                                                 maxima='psi[0]',
+                                                maple='Psi',
                                                 sympy='digamma',
                                                 fricas='digamma'))
 
@@ -847,10 +848,16 @@ class Function_psi2(GinacFunction):
             polygamma(2, x)
             sage: psi(2, x)._fricas_()  # optional - fricas
             polygamma(2,x)
+
+        Fixed conversion::
+
+            sage: psi(2,x)._maple_init_()
+            'Psi(2,x)'
         """
         GinacFunction.__init__(self, "psi", nargs=2, latex_name=r'\psi',
                                conversions=dict(mathematica='PolyGamma',
                                                 sympy='polygamma',
+                                                maple='Psi',
                                                 giac='Psi',
                                                 fricas='polygamma'))
 
@@ -1041,8 +1048,18 @@ class Function_beta(GinacFunction):
                                latex_name=r"\operatorname{B}",
                                conversions=dict(maxima='beta',
                                                 mathematica='Beta',
+                                                maple='Beta',
                                                 sympy='beta',
                                                 fricas='Beta',
                                                 giac='Beta'))
+
+    def _method_arguments(self, x, y):
+        r"""
+        TESTS::
+
+            sage: RBF(beta(sin(3),sqrt(RBF(2).add_error(1e-8)/3)))  # abs tol 6e-7
+            [7.407662 +/- 6.17e-7]
+        """
+        return [x, y]
 
 beta = Function_beta()

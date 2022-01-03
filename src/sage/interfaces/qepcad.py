@@ -1223,7 +1223,6 @@ class Qepcad:
 
         return cells
 
-
     def __getattr__(self, attrname):
         r"""
         Return a :class:`QepcadFunction` object for any QEPCAD command.
@@ -1236,7 +1235,7 @@ class Qepcad:
         """
         if attrname[:1] == "_":
             raise AttributeError
-        if not attrname in self._tab_completion():
+        if attrname not in self._tab_completion():
             raise AttributeError
         return QepcadFunction(self, attrname)
 
@@ -1924,11 +1923,9 @@ class qepcad_formula_factory:
         if isinstance(lhs, qformula):
             return lhs
 
-        from sage.symbolic.expression import is_SymbolicEquation
-        if is_SymbolicEquation(lhs):
-            rhs = lhs.rhs()
-            op = lhs.operator()
-            lhs = lhs.lhs()
+        from sage.structure.element import Expression
+        if isinstance(lhs, Expression) and lhs.is_relational():
+            lhs, op, rhs = lhs.lhs(), lhs.operator(), lhs.rhs()
 
         op = self._normalize_op(op)
 
@@ -2253,7 +2250,7 @@ class qepcad_formula_factory:
             sage: qf.exactly_k(0, b, a*b == 1)
             (A b)[~a b = 1]
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         k = ZZ(k)
         if k < 0:
             raise ValueError("negative k in exactly_k quantifier")

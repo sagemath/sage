@@ -20,7 +20,7 @@ AUTHORS:
 # ****************************************************************************
 
 import operator
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.categories.semigroups import Semigroups
 from sage.categories.sets_cat import Sets
 from sage.categories.monoids import Monoids
@@ -912,7 +912,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
                 sage: m.lift()
                 3
                 sage: type(m.lift())
-                <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+                <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             """
             return self.value
 

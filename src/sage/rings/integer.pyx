@@ -198,6 +198,15 @@ except ImportError:
     pari_gen = ()
 
 
+set_integer_from_gen = None
+pari_divisors_small = None
+n_factor_to_list = None
+pari_is_prime_power = None
+pari_is_prime = None
+objtogen = None
+new_gen_from_integer = None
+
+
 cdef extern from *:
     int unlikely(int) nogil  # Defined by Cython
 
@@ -637,7 +646,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
                     raise TypeError("Cannot convert non-integral float to integer")
 
             elif isinstance(x, pari_gen):
-                from sage.libs.pari.convert_sage import set_integer_from_gen
+                global set_integer_from_gen
+                if set_integer_from_gen is None:
+                    from sage.libs.pari.convert_sage import set_integer_from_gen
                 set_integer_from_gen(self, x)
 
             else:
@@ -1182,19 +1193,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             10
             sage: print(Integer(16938402384092843092843098243).hex())
             36bb1e3929d1a8fe2802f083
-
-            sage: hex(Integer(16))  # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .hex instead
-            See https://trac.sagemath.org/26756 for details.
-            '10'
         """
         return self.str(16)
-
-    def __hex__(self):
-        from sage.misc.superseded import deprecation_cython as deprecation
-        deprecation(26756, 'use the method .hex instead')
-        return self.hex()
 
     def oct(self):
         r"""
@@ -1222,33 +1222,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: print(Integer(16938402384092843092843098243).oct())
             15535436162247215217705000570203
 
-        Behavior of Sage integers vs. Python integers (Python 2 and Python 3)::
+        Behavior of Sage integers vs. Python integers::
 
             sage: Integer(10).oct()
             '12'
-            sage: oct(Integer(10)) # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .oct instead
-            See https://trac.sagemath.org/26756 for details.
-            '12'
-            sage: oct(int(10))  # py2
-            '012'
-            sage: oct(int(10))  # py3
+            sage: oct(int(10))
             '0o12'
 
             sage: Integer(-23).oct()
             '-27'
-            sage: oct(int(-23)) # py2
-            '-027'
-            sage: oct(int(-23)) # py3
+            sage: oct(int(-23))
             '-0o27'
         """
         return self.str(8)
-
-    def __oct__(self):
-        from sage.misc.superseded import deprecation_cython as deprecation
-        deprecation(26756, 'use the method .oct instead')
-        return self.oct()
 
     def binary(self):
         """
@@ -2132,7 +2118,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             2^I
             sage: r = 2 ^ int(-3); r; type(r)
             1/8
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: f = 2^(sin(x)-cos(x)); f
             2^(-cos(x) + sin(x))
             sage: f(x=3)
@@ -2814,7 +2800,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ValueError("log base must be positive")
         self_sgn = mpz_sgn(self.value)
         if self_sgn < 0 and prec is None:
-            from sage.symbolic.all import SR
+            from sage.symbolic.ring import SR
             return SR(self).log(m)
         if prec:
             if self_sgn >= 0:
@@ -3046,12 +3032,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ValueError("n must be nonzero")
 
         if (method is None or method == 'pari') and mpz_fits_slong_p(self.value):
-            try:
-                from sage.libs.pari.convert_sage import pari_divisors_small
-            except ImportError:
-                if method == 'pari':
-                    raise ImportError("method `pari` requested, but cypari2 not present")
-            else:
+            global pari_divisors_small
+            if pari_divisors_small is None:
+                try:
+                    from sage.libs.pari.convert_sage import pari_divisors_small
+                except ImportError:
+                    if method == 'pari':
+                        raise ImportError("method `pari` requested, but cypari2 not present")
+            if pari_divisors_small is not None:
                 if mpz_sgn(self.value) > 0:
                     return pari_divisors_small(self)
                 else:
@@ -3234,7 +3222,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             1
 
         """
-        from sage.rings.all import ZZ
+        from sage.rings.integer_ring import ZZ
         if self.parent() is ZZ:
             return abs(self)
         raise NotImplementedError
@@ -3516,8 +3504,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def __int__(self):
         """
-        Return the Python int (or long) corresponding to this Sage
-        integer.
+        Return the Python int corresponding to this Sage integer.
 
         EXAMPLES::
 
@@ -3530,9 +3517,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             <... 'int'>
             sage: n = 99028390823409823904823098490238409823490820938
             sage: int(n)
-            99028390823409823904823098490238409823490820938L
+            99028390823409823904823098490238409823490820938
             sage: int(-n)
-            -99028390823409823904823098490238409823490820938L
+            -99028390823409823904823098490238409823490820938
             sage: type(n.__int__())
             <class 'int'>
             sage: int(-1), int(0), int(1)
@@ -3909,11 +3896,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return factor_trial_division(self, limit)
 
         if mpz_fits_slong_p(n.value):
-            try:
-                from sage.libs.flint.ulong_extras import n_factor_to_list
-            except ImportError:
-                pass
-            else:
+            global n_factor_to_list
+            if n_factor_to_list is None:
+                try:
+                    from sage.libs.flint.ulong_extras import n_factor_to_list
+                except ImportError:
+                    pass
+            if n_factor_to_list is not None:
                 if proof is None:
                     from sage.structure.proof.proof import get_flag
                     proof = get_flag(proof, "arithmetic")
@@ -5108,11 +5097,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (self, zero) if get_data else False
 
         if mpz_fits_slong_p(self.value):
-            try:
-                from sage.libs.pari.convert_sage import pari_is_prime_power
-            except ImportError:
-                pass
-            else:
+            global pari_is_prime_power
+            if pari_is_prime_power is None:
+                try:
+                    from sage.libs.pari.convert_sage import pari_is_prime_power
+                except ImportError:
+                    pass
+            if pari_is_prime_power is not None:
                 return pari_is_prime_power(self, get_data)
 
         cdef long n
@@ -5194,11 +5185,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return False
 
         if mpz_fits_ulong_p(self.value):
-            try:
-                from sage.libs.pari.convert_sage import pari_is_prime
-            except ImportError:
-                pass
-            else:
+            global pari_is_prime
+            if pari_is_prime is None:
+                try:
+                    from sage.libs.pari.convert_sage import pari_is_prime
+                except ImportError:
+                    pass
+            if pari_is_prime is not None:
                 return pari_is_prime(self)
 
         if proof is None:
@@ -5550,7 +5543,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
 
         """
-        from cypari2.gen import objtogen
+        global objtogen
+        if objtogen is None:
+            from cypari2.gen import objtogen
         if self.is_square():
             raise ValueError("class_number not defined for square integers")
         if not self%4 in [0,1]:
@@ -5948,7 +5943,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: m = n.__pari__(); m
             9390823
             sage: type(m)
-            <type 'cypari2.gen.Gen'>
+            <class 'cypari2.gen.Gen'>
 
         TESTS::
 
@@ -5958,7 +5953,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             1041334
 
         """
-        from sage.libs.pari.convert_sage import new_gen_from_integer
+        global new_gen_from_integer
+        if new_gen_from_integer is None:
+            from sage.libs.pari.convert_sage import new_gen_from_integer
         return new_gen_from_integer(self)
 
     def _interface_init_(self, I=None):
@@ -6187,13 +6184,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS::
 
             sage: type(5.sqrt())
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: type(5.sqrt(prec=53))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
             sage: type((-5).sqrt(prec=53))
-            <type 'sage.rings.complex_mpfr.ComplexNumber'>
+            <class 'sage.rings.complex_mpfr.ComplexNumber'>
             sage: type(0.sqrt(prec=53))
-            <type 'sage.rings.real_mpfr.RealNumber'>
+            <class 'sage.rings.real_mpfr.RealNumber'>
 
         Check that :trac:`9466` and :trac:`26509` are fixed::
 
@@ -6203,7 +6200,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             []
         """
         if prec is not None:
-            from sage.functions.other import _do_sqrt
+            from sage.misc.functional import _do_sqrt
             return _do_sqrt(self, prec=prec, all=all)
 
         if mpz_sgn(self.value) == 0:
@@ -6225,7 +6222,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         if not is_square:
             if extend:
-                from sage.functions.other import _do_sqrt
+                from sage.misc.functional import _do_sqrt
                 return _do_sqrt(self, all=all)
             if all:
                 return []
@@ -6431,17 +6428,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS::
 
-            sage: 1 << (2^60)                                        # optional - mpir
-            Traceback (most recent call last):
-            ...
-            MemoryError: failed to allocate ... bytes                # 64-bit
-            OverflowError: Python int too large to convert to C long # 32-bit
-
-            sage: 1 << (2^60)                                        # optional - gmp
-            Traceback (most recent call last):
-            ...
-            RuntimeError: Aborted                                    # 64-bit
-            OverflowError: Python int too large to convert to C long # 32-bit
+            sage: try:
+            ....:     print('Possible error output from gmp', flush=True)
+            ....:     1 << (2^60)
+            ....: except (MemoryError, OverflowError, RuntimeError):
+            ....:     pass
+            ....: else:
+            ....:     print("Failed to raise exception")
+            Possible error output from gmp...
         """
         cdef long n
 
@@ -6794,7 +6788,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return self
 
-    def binomial(self, m, algorithm='mpir'):
+    def binomial(self, m, algorithm='gmp'):
         """
         Return the binomial coefficient "self choose m".
 
@@ -6802,9 +6796,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - ``m`` -- an integer
 
-        - ``algorithm`` -- ``'mpir'`` (default) or ``'pari'``; ``'mpir'`` is
-          faster for small ``m``, and ``'pari'`` tends to be faster for
-          large ``m``
+        - ``algorithm`` -- ``'gmp'`` (default), ``'mpir'`` (an alias for
+          ``gmp``), or ``'pari'``; ``'gmp'`` is faster for small ``m``,
+          and ``'pari'`` tends to be faster for large ``m``
 
         OUTPUT:
 
@@ -6885,7 +6879,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return self
 
         # now call the various backend
-        if algorithm == 'mpir':
+        if algorithm == 'gmp' or algorithm == 'mpir':
             x = PY_NEW(Integer)
             if mpz_fits_ulong_p(mm.value):
                 sig_on()
@@ -6897,7 +6891,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         elif algorithm == 'pari':
             return the_integer_ring(self.__pari__().binomial(mm))
         else:
-            raise ValueError("algorithm must be one of: 'pari', 'mpir'")
+            raise ValueError("algorithm must be one of: 'pari' or 'gmp' (alias: 'mpir')")
 
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
@@ -7058,7 +7052,7 @@ def GCD_list(v):
         sage: w = GCD_list([3,9,30]); w
         3
         sage: type(w)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Check that the bug reported in :trac:`3118` has been fixed::
 
@@ -7072,7 +7066,7 @@ def GCD_list(v):
         sage: w = GCD_list([int(3), int(9), '30']); w
         3
         sage: type(w)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     Check that the GCD of the empty list is zero (:trac:`17257`)::
 
@@ -7137,11 +7131,11 @@ cdef class int_to_Z(Morphism):
         sage: f(5r)
         5
         sage: type(f(5r))
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
         sage: 1 + 2r
         3
         sage: type(1 + 2r)
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
     This is intended for internal use by the coercion system,
     to facilitate fast expressions mixing ints and more complex
@@ -7567,3 +7561,8 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
     if resultsign < 0:
         d = -d
     return ldexp(d, shift)
+
+
+# Support Python's numbers abstract base class
+import numbers
+numbers.Integral.register(Integer)

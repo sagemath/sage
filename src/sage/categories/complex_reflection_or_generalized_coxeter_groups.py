@@ -2,15 +2,15 @@
 r"""
 Common category for Generalized Coxeter Groups or Complex Reflection Groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2016 Nicolas M. Thiéry <nthiery at users.sf.net>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import itertools
 from sage.misc.abstract_method import abstract_method
@@ -201,7 +201,7 @@ class ComplexReflectionOrGeneralizedCoxeterGroups(Category_singleton):
                 3 (1,4)(2,8)(3,5)(7,10)(9,11)
                 asdf (2,5)(3,9)(4,6)(8,11)(10,12)
             """
-            if not i in self.index_set():
+            if i not in self.index_set():
                 raise ValueError("%s is not in the Dynkin node set %s" % (i, self.index_set()))
             return self.one().apply_simple_reflection(i)  # don't care about left/right
 

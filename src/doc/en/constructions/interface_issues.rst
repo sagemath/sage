@@ -382,7 +382,7 @@ help interface to find the file name:
 
     sage: PermutationGroup.center?
     Type:           instancemethod
-    Base Class:     <type 'instancemethod'>
+    Base Class:     <class 'instancemethod'>
     String Form:    <unbound method PermutationGroup.center>
     Namespace:      Interactive
     File:           /home/wdj/sage/local/lib/python2.4/site-packages/sage/groups/permgroup.py

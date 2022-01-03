@@ -56,7 +56,7 @@ class AlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
         B[word: acb]
 
         sage: A.product
-        <bound method FreeAlgebra_with_category._product_from_product_on_basis_multiply of
+        <bound method MagmaticAlgebras.WithBasis.ParentMethods._product_from_product_on_basis_multiply of
          An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field>
         sage: A.product(a*b,b)
         B[word: abb]

@@ -112,7 +112,7 @@ on the Jacobian of this reduction and the order of the Jacobian is
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import latex
+from sage.misc.latex import latex
 
 from sage.structure.element import AdditiveGroupElement
 from sage.structure.richcmp import richcmp, op_NE

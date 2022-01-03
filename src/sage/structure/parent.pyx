@@ -1169,8 +1169,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             elif EQ:
                 return True
             else:
-                from sage.symbolic.expression import is_Expression
-                return is_Expression(EQ)
+                from sage.structure.element import Expression
+                return isinstance(EQ, Expression)
             # if comparing gives an Expression, then it must be an equation.
             # We return *true* here, even though the equation
             # EQ must have evaluated to False for us to get to
@@ -2642,8 +2642,8 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         elif self_on_left and op is operator.pow:
             S_is_int = parent_is_integers(S)
             if not S_is_int:
-                from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-                if is_IntegerModRing(S):
+                from sage.rings.abc import IntegerModRing
+                if isinstance(S, IntegerModRing):
                     # We allow powering by an IntegerMod by treating it
                     # as an integer.
                     #
@@ -2812,9 +2812,16 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: [R._is_numerical() for R in [RIF, RBF, CIF, CBF]]
             [False, False, False, False]
         """
-        from sage.rings.complex_mpfr import ComplexField
-        from sage.rings.real_mpfr import mpfr_prec_min
-        return ComplexField(mpfr_prec_min()).has_coerce_map_from(self)
+        try:
+            from sage.rings.complex_mpfr import ComplexField
+            from sage.rings.real_mpfr import mpfr_prec_min
+        except ImportError:
+            pass
+        else:
+            return ComplexField(mpfr_prec_min()).has_coerce_map_from(self)
+
+        from sage.rings.real_double import CDF
+        return CDF.has_coerce_map_from(self)
 
     @cached_method
     def _is_real_numerical(self):
@@ -2833,8 +2840,15 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: [R._is_real_numerical() for R in [RIF, RBF, CIF, CBF]]
             [False, False, False, False]
         """
-        from sage.rings.real_mpfr import RealField, mpfr_prec_min
-        return RealField(mpfr_prec_min()).has_coerce_map_from(self)
+        try:
+            from sage.rings.real_mpfr import RealField, mpfr_prec_min
+        except ImportError:
+            pass
+        else:
+            return RealField(mpfr_prec_min()).has_coerce_map_from(self)
+
+        from sage.rings.real_double import RDF
+        return RDF.has_coerce_map_from(self)
 
 ############################################################################
 # Set base class --

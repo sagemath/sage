@@ -1255,11 +1255,21 @@ cdef class RingHomomorphism(RingMap):
             Traceback (most recent call last):
             ...
             NotImplementedError: base map must be trivial
+
+        Non-commutative rings are not supported (:trac:`32824`)::
+
+            sage: A = GradedCommutativeAlgebra(QQ, 'x,y,z')
+            sage: A.hom(A.gens(), A).kernel()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: rings are not commutative
         """
         from .quotient_ring import is_QuotientRing
         from .ideal import Ideal_generic
         A = self.domain()
         B = self.codomain()
+        if not (A.is_commutative() and B.is_commutative()):
+            raise NotImplementedError("rings are not commutative")
         if A.base_ring() != B.base_ring():
             raise NotImplementedError("base rings must be equal")
         try:
@@ -1640,14 +1650,13 @@ cdef class RingHomomorphism_coercion(RingHomomorphism):
         sage: TestSuite(f).run()
 
     """
-    def __init__(self, parent, check = True):
+    def __init__(self, parent, check=True):
         r"""
         TESTS:
 
             sage: from sage.rings.morphism import RingHomomorphism_coercion
             sage: parent = Hom(ZZ,ZZ)
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent) # py2
-            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent) # py3
+            sage: f = parent.__make_element_class__(RingHomomorphism_coercion)(parent)
             doctest:warning
             ...
             DeprecationWarning: Set the category of your morphism to a subcategory of Rings instead.

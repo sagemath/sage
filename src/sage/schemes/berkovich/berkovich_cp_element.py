@@ -34,11 +34,11 @@ AUTHORS:
 # *****************************************************************************
 
 from sage.structure.element import Element
-from sage.symbolic.expression import is_Expression
+from sage.structure.element import Expression
+import sage.rings.abc
 from sage.rings.real_mpfr import RR, is_RealNumber
 from sage.rings.padics.padic_generic_element import pAdicGenericElement
 from sage.rings.padics.padic_base_generic import pAdicBaseGeneric
-from sage.rings.padics.generic_nodes import is_pAdicField
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.projective.projective_point import SchemeMorphism_point_projective_field
 from sage.rings.rational_field import QQ
@@ -118,16 +118,16 @@ class Berkovich_Element_Cp(Berkovich_Element):
 
             # check if the radius and the center are functions
             center_func_check = is_FunctionFieldElement(center) or is_Polynomial(center) or\
-                isinstance(center, FractionFieldElement_1poly_field) or is_Expression(center)
+                isinstance(center, FractionFieldElement_1poly_field) or isinstance(center, Expression)
             radius_func_check = is_FunctionFieldElement(radius) or is_Polynomial(radius) or\
-                isinstance(radius, FractionFieldElement_1poly_field) or is_Expression(radius)
+                isinstance(radius, FractionFieldElement_1poly_field) or isinstance(radius, Expression)
 
             if center_func_check:
                 # check that both center and radii are supported univariate function
                 center_expr_check = False
                 radius_expr_check = False
                 if error_check:
-                    if is_Expression(center):
+                    if isinstance(center, Expression):
                         if len(center.variables()) != 1:
                             raise ValueError("an expression with %s " % (len(center.variables())) +
                                              "variables cannot define the centers approximating a type IV point")
@@ -136,16 +136,16 @@ class Berkovich_Element_Cp(Berkovich_Element):
                             center_expr_check = True
                     if not radius_func_check:
                         raise TypeError("center was passed a function but radius was not a function")
-                    if is_Expression(radius):
+                    if isinstance(radius, Expression):
                         if len(radius.variables()) != 1:
                             raise ValueError("an expression with %s " % (len(radius.variables())) +
                                              "variables cannot define the radii approximating a type IV point")
                         else:
                             radius_expr_check = True
                 else:
-                    if is_Expression(center):
+                    if isinstance(center, Expression):
                         center_expr_check = True
-                    if is_Expression(radius):
+                    if isinstance(radius, Expression):
                         radius_expr_check = True
                 self._type = 4
                 self._prec = prec
@@ -187,7 +187,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                         except (TypeError, ValueError):
                             raise TypeError('could not convert %s to %s' % (center, self._base_space))
                     if self._base_type == 'padic field':
-                        if not is_pAdicField(center.scheme().base_ring()):
+                        if not isinstance(center.scheme().base_ring(), sage.rings.abc.pAdicField):
                             if not isinstance(center.scheme().base_ring(), pAdicBaseGeneric):
                                 try:
                                     center = (self._base_space)(center)
@@ -216,7 +216,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     center.normalize_coordinates()
                     # make sure the radius coerces into the reals
                     if not is_RealNumber(radius):
-                        if is_Expression(radius):
+                        if isinstance(radius, Expression):
                             radius = RR(radius)
                         elif RR.has_coerce_map_from(radius.parent()):
                             radius = RR(radius)
@@ -245,7 +245,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                                 center = (self._base_space)(center)
                             except (TypeError, ValueError):
                                 raise TypeError("could not convert %s to %s" % (center, self._base_space))
-                        elif not is_pAdicField(center.parent()):
+                        elif not isinstance(center.parent(), sage.rings.abc.pAdicField):
                             # center is padic, not but an element of a padic field. we convert to padic field
                             center = (center.parent().fraction_field())(center)
                         if (center.parent()).prime() != self._p:
@@ -259,7 +259,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                                 raise ValueError('could not convert %s to %s' % (center, self._base_space))
                     # make sure the radius coerces into the reals
                     if not is_RealNumber(radius):
-                        if is_Expression(radius):
+                        if isinstance(radius, Expression):
                             radius = RR(radius)
                         elif RR.has_coerce_map_from(radius.parent()):
                             radius = RR(radius)
@@ -291,7 +291,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                     except (ValueError, TypeError):
                         raise TypeError("could not convert %s to %s" % (center, self._base_space))
                 if self._base_type == 'padic field':
-                    if not is_pAdicField(center.scheme().base_ring()):
+                    if not isinstance(center.scheme().base_ring(), sage.rings.abc.pAdicField):
                         if not isinstance(center.scheme().base_ring(), pAdicBaseGeneric):
                             try:
                                 center = (self._base_space)(center)
@@ -327,7 +327,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                             center = (self._base_space)(center)
                         except (TypeError, ValueError):
                             raise TypeError("could not convert %s to %s" % (center, self._base_space))
-                    elif not is_pAdicField(center.parent()):
+                    elif not isinstance(center.parent(), sage.rings.abc.pAdicField):
                         # center is padic, not but an element of a padic field. we convert to padic field
                         center = (center.parent().fraction_field())(center)
                     if (center.parent()).prime() != self._p:
@@ -375,7 +375,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
             self._type = 2
             return
         if radius is not None:
-            if is_Expression(radius):
+            if isinstance(radius, Expression):
                 try:
                     power = QQ(radius.log(self._p).expand_log())
                 except TypeError:
@@ -659,7 +659,7 @@ class Berkovich_Element_Cp(Berkovich_Element):
                 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
                 R = PolynomialRing(QQ, names="x")
                 x = R.gens()[0]
-                if is_Expression(self._radius_func):
+                if isinstance(self._radius_func, Expression):
                     radius_func_variable = self._radius_func.variables()[0]
                     radius_expr = self._radius_func.subs({radius_func_variable: x})
                 else:

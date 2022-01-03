@@ -47,7 +47,7 @@ from sage.structure.richcmp import op_EQ, op_NE
 from sage.matrix.matrix_space import MatrixSpace
 from sage.structure.element import ModuleElement
 from sage.modules.module import Module
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 from sage.matrix.constructor import Matrix, zero_matrix
 from sage.rings.all import Qp, QQ, ZZ
 from copy import copy

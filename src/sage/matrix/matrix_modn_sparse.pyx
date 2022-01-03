@@ -16,7 +16,7 @@ EXAMPLES::
     [3 4 5]
     [6 7 8]
     sage: type(a)
-    <type 'sage.matrix.matrix_modn_sparse.Matrix_modn_sparse'>
+    <class 'sage.matrix.matrix_modn_sparse.Matrix_modn_sparse'>
     sage: parent(a)
     Full MatrixSpace of 3 by 3 sparse matrices over Ring of integers modulo 37
     sage: a^2
@@ -359,13 +359,13 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
             [ 9 12 15]
             [19 26 33]
             sage: type(c)
-            <type 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
+            <class 'sage.matrix.matrix_modn_dense_double.Matrix_modn_dense_double'>
 
             sage: a = matrix(GF(2), 20, 20, sparse=True)
             sage: a*a == a._matrix_times_matrix_dense(a)
             True
             sage: type(a._matrix_times_matrix_dense(a))
-            <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+            <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
         """
         cdef Matrix_modn_sparse right
         cdef matrix_dense.Matrix_dense ans

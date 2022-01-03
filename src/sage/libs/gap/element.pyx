@@ -1541,7 +1541,7 @@ cdef class GapElement_Integer(GapElement):
             <class 'int'>
 
             sage: int(libgap(2)**128)
-            340282366920938463463374607431768211456L
+            340282366920938463463374607431768211456
             sage: type(_)
             <class 'int'>
         """
@@ -3004,7 +3004,7 @@ cdef class GapElement_List(GapElement):
         """
         if not self.IsVector():
             raise ValueError('not a GAP vector')
-        from sage.modules.all import vector
+        from sage.modules.free_module_element import vector
         entries = self.Flat()
         n = self.Length().sage()
         if ring is None:
@@ -3183,9 +3183,9 @@ cdef class GapElement_Record(GapElement):
 
             sage: rec = libgap.eval('rec(first:=123, second:=456)')
             sage: rec.record_name_to_index('first')   # random output
-            1812L
+            1812
             sage: rec.record_name_to_index('no_such_name') # random output
-            3776L
+            3776
         """
         name = str_to_bytes(name)
         return RNamName(name)

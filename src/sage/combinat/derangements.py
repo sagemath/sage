@@ -26,10 +26,11 @@ AUTHORS:
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.misc.prandom import random, randrange
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.rings.integer import Integer
 from sage.combinat.combinat import CombinatorialElement
 from sage.combinat.permutation import Permutation, Permutations

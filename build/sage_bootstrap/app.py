@@ -50,7 +50,6 @@ class Application(object):
         $ sage --package list | sort
         4ti2
         arb
-        atlas
         autotools
         [...]
         zn_poly

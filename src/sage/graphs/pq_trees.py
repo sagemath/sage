@@ -220,7 +220,7 @@ class PQ:
             if isinstance(e, list):
                 e = Set(e)
 
-            if not e in self._children:
+            if e not in self._children:
                 self._children.append(e)
 
     def reverse(self):

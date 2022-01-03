@@ -521,6 +521,7 @@ void power::useries(flint_series_t& fp, int order) const
                 exponent.useries(fp, order);
                 fmpq_poly_mullow(fp.ft, fp.ft, fp1.ft, order+2);
                 check_poly_ccoeff_zero(fp);
+                normalize(fp);
                 fmpq_poly_exp_series(fp.ft, fp.ft, order);
                 return;
         }

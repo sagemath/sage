@@ -17,7 +17,7 @@ from sage.libs.flint.fmpz cimport fmpz_init, fmpz_one, fmpz_mul, fmpz_set, fmpz_
 from cpython.object cimport Py_EQ, Py_NE
 from sage.structure.richcmp cimport richcmp_not_equal
 from sage.rings.integer cimport Integer
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 
 
@@ -41,7 +41,7 @@ cdef class PowComputer_flint(PowComputer_class):
 
             sage: from sage.rings.padics.pow_computer_flint import PowComputer_flint
             sage: type(PowComputer_flint(5, 20, 20, 20, False))
-            <type 'sage.rings.padics.pow_computer_flint.PowComputer_flint'>
+            <class 'sage.rings.padics.pow_computer_flint.PowComputer_flint'>
 
         """
         # fmpz_init does not allocate memory
@@ -204,7 +204,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
             sage: R.<x> = ZZ[]; f = x^3 - 8*x - 2
             sage: A = PowComputer_flint_1step(5, 20, 20, 20, False, f)
             sage: type(A)
-            <type 'sage.rings.padics.pow_computer_flint.PowComputer_flint_1step'>
+            <class 'sage.rings.padics.pow_computer_flint.PowComputer_flint_1step'>
 
         """
         cdef Polynomial_integer_dense_flint poly = _poly
@@ -467,7 +467,7 @@ cdef class PowComputer_flint_unram(PowComputer_flint_1step):
             sage: R.<x> = ZZ[]; f = x^3 - 8*x - 2
             sage: A = PowComputer_flint_unram(5, 20, 20, 20, False, f)
             sage: type(A)
-            <type 'sage.rings.padics.pow_computer_flint.PowComputer_flint_unram'>
+            <class 'sage.rings.padics.pow_computer_flint.PowComputer_flint_unram'>
 
         """
         # fmpz_init does not allocate memory
@@ -579,7 +579,7 @@ cdef class PowComputer_flint_eis(PowComputer_flint_1step):
             sage: R.<x> = ZZ[]; f = x^3 - 25*x + 5
             sage: A = PowComputer_flint_eis(5, 20, 20, 60, False, f)
             sage: type(A)
-            <type 'sage.rings.padics.pow_computer_flint.PowComputer_flint_eis'>
+            <class 'sage.rings.padics.pow_computer_flint.PowComputer_flint_eis'>
 
         """
         PowComputer_flint_1step.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly)
@@ -633,11 +633,11 @@ def PowComputer_flint_maker(prime, cache_limit, prec_cap, ram_prec_cap, in_field
         sage: from sage.rings.padics.pow_computer_flint import PowComputer_flint_maker
         sage: R.<x> = ZZ[]
         sage: A = PowComputer_flint_maker(3, 20, 20, 20, False, x^3 + 2*x + 1, 'capped-rel'); type(A)
-        <type 'sage.rings.padics.qadic_flint_CR.PowComputer_'>
+        <class 'sage.rings.padics.qadic_flint_CR.PowComputer_'>
         sage: A = PowComputer_flint_maker(3, 20, 20, 20, False, x^3 + 2*x + 1, 'capped-abs'); type(A)
-        <type 'sage.rings.padics.qadic_flint_CA.PowComputer_'>
+        <class 'sage.rings.padics.qadic_flint_CA.PowComputer_'>
         sage: A = PowComputer_flint_maker(3, 20, 20, 20, False, x^3 + 2*x + 1, 'fixed-mod'); type(A)
-        <type 'sage.rings.padics.qadic_flint_FM.PowComputer_'>
+        <class 'sage.rings.padics.qadic_flint_FM.PowComputer_'>
 
     """
     if prec_type == 'capped-rel':

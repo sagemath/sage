@@ -59,7 +59,7 @@ type ``x, y, z = var('x y z')``; they are immediately available::
     sage: y is cartesian[2]
     True
     sage: type(y)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Each of the Cartesian coordinates spans the entire real line::
 

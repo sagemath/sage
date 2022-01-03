@@ -120,7 +120,7 @@ from .laurent_series_ring import LaurentSeriesRing
 from .laurent_series_ring_element import LaurentSeries
 
 # Lazy Laurent series ring
-lazy_import('sage.rings.lazy_laurent_series_ring', 'LazyLaurentSeriesRing')
+lazy_import('sage.rings.lazy_series_ring', ['LazyLaurentSeriesRing', 'LazyDirichletSeriesRing'])
 
 # Tate algebras
 from .tate_algebra import TateAlgebra
@@ -149,8 +149,8 @@ from .bernoulli_mod_p import bernoulli_mod_p, bernoulli_mod_p_single
 
 from .monomials import monomials
 
-CC = ComplexField()
-CIF = ComplexIntervalField()
+from .cc import CC
+from .cif import CIF
 
 # invariant theory
 from .invariants.all import *

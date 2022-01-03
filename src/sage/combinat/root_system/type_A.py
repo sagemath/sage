@@ -10,7 +10,7 @@ Root system data for type A
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.root_system.root_lattice_realizations import RootLatticeRealizations
 from . import ambient_space
 

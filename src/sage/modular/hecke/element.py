@@ -113,7 +113,7 @@ class HeckeModuleElement(ModuleElement):
             sage: z = BrandtModule(37)([0,1,-1]).element(); z
             (0, 1, -1)
             sage: type(z)
-            <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+            <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
         """
         try:
             return self.__element
@@ -130,11 +130,11 @@ class HeckeModuleElement(ModuleElement):
             sage: v = BrandtModule(37)([0,1,-1]); v
             (0, 1, -1)
             sage: type(v._vector_())
-            <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+            <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
             sage: type(vector(v))
-            <type 'sage.modules.vector_rational_dense.Vector_rational_dense'>
+            <class 'sage.modules.vector_rational_dense.Vector_rational_dense'>
             sage: type(vector(v, GF(2)))
-            <type 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
+            <class 'sage.modules.vector_mod2_dense.Vector_mod2_dense'>
         """
         if R is None:
             return self.__element

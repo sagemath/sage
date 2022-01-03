@@ -16,17 +16,3 @@ Upstream Contact
 ----------------
 
 https://gcc.gnu.org/
-
-Dependencies
-------------
-
--  zlib
--  MPIR
--  MPFR
--  MPC
-
-
-Special Update/Build Instructions
----------------------------------
-
-None.

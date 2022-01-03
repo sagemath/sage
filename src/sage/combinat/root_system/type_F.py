@@ -12,8 +12,8 @@ Root system data for type F
 # ****************************************************************************
 
 from . import ambient_space
-from sage.rings.all import ZZ
-from sage.combinat.family import Family
+from sage.rings.integer_ring import ZZ
+from sage.sets.family import Family
 
 # TODO: double check that this can't be defined over ZZ
 

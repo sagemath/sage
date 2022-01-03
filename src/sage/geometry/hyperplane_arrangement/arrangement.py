@@ -348,7 +348,8 @@ from sage.structure.parent import Parent
 from sage.structure.element import Element
 from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
 from sage.matrix.constructor import matrix, vector
 from sage.modules.free_module import VectorSpace
@@ -688,7 +689,7 @@ class HyperplaneArrangementElement(Element):
         EXAMPLES::
 
             sage: L.<x, y> = HyperplaneArrangements(QQ)
-            sage: L(x, y, x+y-2).plot()
+            sage: L(x, y, x+y-2).plot()  # optional - sage.plot
             Graphics object consisting of 3 graphics primitives
         """
         from sage.geometry.hyperplane_arrangement.plot import plot
@@ -1240,7 +1241,7 @@ class HyperplaneArrangementElement(Element):
             raise TypeError('arrangement must be defined over QQ')
         if not p.is_prime():
             raise TypeError('must reduce modulo a prime number')
-        from sage.rings.all import GF
+        from sage.rings.finite_rings.finite_field_constructor import GF
         a = self.change_ring(GF(p))
         p = self.intersection_poset()
         q = a.intersection_poset()
@@ -1689,7 +1690,7 @@ class HyperplaneArrangementElement(Element):
             (6, 21, 16)
             sage: A.vertices()
             ((-2/3, 1/3), (-1/3, -1/3), (0, -1), (0, 0), (1/3, -2/3), (2/3, -1/3))
-            sage: point2d(A.vertices(), size=20) + A.plot()
+            sage: point2d(A.vertices(), size=20) + A.plot()  # optional - sage.plot
             Graphics object consisting of 7 graphics primitives
 
             sage: H.<x,y> = HyperplaneArrangements(QQ)
@@ -2937,7 +2938,7 @@ class HyperplaneArrangementElement(Element):
             (h2 - 1) * (h2 + 1) * (h1 - 1) * (h1 + 1)
         """
         from sage.matrix.constructor import identity_matrix
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         k = len(self)
         R = PolynomialRing(QQ, names, k)
         h = R.gens()
@@ -3402,7 +3403,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
             sage: K = HyperplaneArrangements(QQ)
             sage: TestSuite(K).run()
         """
-        from sage.categories.all import Sets
+        from sage.categories.sets_cat import Sets
         from sage.rings.ring import _Fields
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')

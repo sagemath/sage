@@ -201,11 +201,11 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
         '__main__'
 
         sage: Foo.__bases__
-        (<type 'object'>,)
+        (<class 'object'>,)
         sage: FooBar.__bases__
         (<class '__main__.Bar'>,)
         sage: Foo.mro()
-        [<class '__main__.Foo'>, <type 'object'>]
+        [<class '__main__.Foo'>, <class 'object'>]
         sage: FooBar.mro()
         [<class '__main__.FooBar'>, <class '__main__.Bar'>, <class 'object'>]
 
@@ -238,7 +238,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
 
         sage: BarFoo = dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (3,)))
         sage: type(BarFoo).__reduce__(BarFoo)
-        (<type 'str'>, (3,))
+        (<class 'str'>, (3,))
         sage: loads(dumps(BarFoo))
         '3'
 
@@ -280,7 +280,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     first class::
 
         sage: dynamic_class("BarFoo", (Foo,), Bar, reduction = (str, (2,)), cache="ignore_reduction")._reduction
-        (<type 'str'>, (3,))
+        (<class 'str'>, (3,))
 
     .. WARNING::
 
@@ -502,7 +502,7 @@ class DynamicMetaclass(type):
             sage: C = sage.structure.dynamic_class.dynamic_class_internal("bla", (object,), Foo, doccls = DocClass)
             sage: type(C).__reduce__(C)
             (<function dynamic_class at ...>,
-             ('bla', (<type 'object'>,), <class '__main__.Foo'>, None, <class '__main__.DocClass'>))
+             ('bla', (<class 'object'>,), <class '__main__.Foo'>, None, <class '__main__.DocClass'>))
             sage: C = sage.structure.dynamic_class.dynamic_class_internal("bla", (object,), Foo, doccls = DocClass, reduction = "blah")
             sage: type(C).__reduce__(C)
             'blah'

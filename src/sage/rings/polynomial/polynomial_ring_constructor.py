@@ -27,9 +27,9 @@ from sage.structure.category_object import normalize_names
 import sage.rings.ring as ring
 import sage.rings.padics.padic_base_leaves as padic_base_leaves
 
+import sage.rings.abc
 from sage.rings.integer import Integer
 from sage.rings.finite_rings.finite_field_base import is_FiniteField
-from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
 
 from sage.misc.cachefunc import weak_cached_function
 
@@ -426,7 +426,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
         sage: S = PolynomialRing(ZZ, 'x,y'); type(S)
-        <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
+        <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
 
     Sparse univariate polynomials only support a generic
     implementation::
@@ -694,7 +694,7 @@ def _single_variate(base_ring, name, sparse=None, implementation=None, order=Non
 
     # Specialized implementations
     specialized = None
-    if is_IntegerModRing(base_ring):
+    if isinstance(base_ring, sage.rings.abc.IntegerModRing):
         n = base_ring.order()
         if n.is_prime():
             specialized = polynomial_ring.PolynomialRing_dense_mod_p
@@ -944,7 +944,7 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
 
     key = ("pbori", names, n, order)
     R = _get_from_cache(key)
-    if not R is None:
+    if R is not None:
         return R
 
     from sage.rings.polynomial.pbori.pbori import BooleanPolynomialRing
@@ -953,6 +953,6 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order="lex"):
     _save_in_cache(key, R)
     return R
 
-#########################################################################################
+############################################################################
 # END (Factory function for making polynomial rings)
-#########################################################################################
+############################################################################

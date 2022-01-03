@@ -17,7 +17,7 @@ EXAMPLES::
     sage: a.rank()
     2
     sage: type(a)
-    <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+    <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
     sage: a[0,0] = 1
     sage: a.rank()
     3
@@ -237,7 +237,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         EXAMPLES::
 
             sage: type(random_matrix(GF(2),2,2))
-            <type 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
+            <class 'sage.matrix.matrix_mod2_dense.Matrix_mod2_dense'>
 
             sage: Matrix(GF(2),3,3,1)
             [1 0 0]
@@ -1214,17 +1214,19 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         cdef m4ri_word mask = 0
 
         # Original code, before adding the ``nonzero`` option.
+        cdef m4ri_word *row
         if not nonzero:
             if density == 1:
                 assert(sizeof(m4ri_word) == 8)
                 mask = __M4RI_LEFT_BITMASK(self._entries.ncols % m4ri_radix)
                 for i from 0 <= i < self._nrows:
+                    row = mzd_row(self._entries, i)
                     for j from 0 <= j < self._entries.width:
                         # for portability we get 32-bit twice rather than 64-bit once
                         low = gmp_urandomb_ui(rstate.gmp_state, 32)
                         high = gmp_urandomb_ui(rstate.gmp_state, 32)
-                        self._entries.rows[i][j] = m4ri_swap_bits( ((<unsigned long long>high)<<32) | (<unsigned long long>low) )
-                    self._entries.rows[i][self._entries.width - 1] &= mask
+                        row[j] = m4ri_swap_bits( ((<unsigned long long>high)<<32) | (<unsigned long long>low) )
+                    row[self._entries.width - 1] &= mask
             else:
                 nc = self._ncols
                 num_per_row = int(density * nc)
@@ -1528,7 +1530,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             Traceback (most recent call last):
             ...
             TypeError: right must either be a matrix or a vector. Not
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         cdef Matrix_mod2_dense other
 
@@ -1963,17 +1965,17 @@ for i from 0 <= i < 256:
 # assembly instructions, could be faster
 cpdef inline unsigned long parity(m4ri_word a):
     """
-    Returns the parity of the number of bits in a.
+    Return the parity of the number of bits in a.
 
     EXAMPLES::
 
         sage: from sage.matrix.matrix_mod2_dense import parity
         sage: parity(1)
-        1L
+        1
         sage: parity(3)
-        0L
+        0
         sage: parity(0x10000101011)
-        1L
+        1
     """
     if sizeof(m4ri_word) == 8:
         a ^= a >> 32

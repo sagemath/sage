@@ -453,7 +453,7 @@ cdef class ntl_mat_ZZ(object):
             sage: M.charpoly()
             [-2 -5 1]
             sage: type(_)
-            <type 'sage.libs.ntl.ntl_ZZX.ntl_ZZX'>
+            <class 'sage.libs.ntl.ntl_ZZX.ntl_ZZX'>
             sage: M.determinant()
             -2
         """

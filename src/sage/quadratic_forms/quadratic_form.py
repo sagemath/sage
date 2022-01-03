@@ -1288,7 +1288,7 @@ class QuadraticForm(SageObject):
             2*a*y0^2 + 3*a*y0*y1 + (-a + 1)*y1^2 + (2*a + 4)*y2^2
             sage: Q = QuadraticForm(F,4,[a, 3*a, 0, 1 - a, a - 3, 0, 2*a + 4, 4 + a, 0, 1])
             sage: Q.polynomial(names='z')
-            (a)*z0^2 + (3*a)*z0*z1 + (a - 3)*z1^2 + (a + 4)*z2^2 + (-a + 1)*z0*z3 + (2*a + 4)*z1*z3 + z3^2
+            a*z0^2 + (3*a)*z0*z1 + (a - 3)*z1^2 + (a + 4)*z2^2 + (-a + 1)*z0*z3 + (2*a + 4)*z1*z3 + z3^2
             sage: B.<i,j,k> = QuaternionAlgebra(F,-1,-1)
             sage: Q = QuadraticForm(B, 3, [2*a, 3*a, i, 1 - a, 0, 2*a + 4])
             sage: Q.polynomial()

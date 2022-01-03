@@ -1788,7 +1788,7 @@ class SR_generic(MPolynomialSystemGenerator):
             reverse_variables = self._reverse_variables
 
         if reverse_variables:
-            process = lambda x: reversed(x)
+            process = reversed
         else:
             process = lambda x: x
 

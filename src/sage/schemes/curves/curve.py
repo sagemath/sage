@@ -29,7 +29,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import latex
+from sage.misc.latex import latex
 
 from sage.categories.finite_fields import FiniteFields
 from sage.categories.fields import Fields
@@ -320,8 +320,8 @@ class Curve_generic(AlgebraicScheme_subscheme):
             if not self.base_ring() in Fields():
                 raise TypeError("curve must be defined over a field")
             F = self.base_ring()
-        elif not F in Fields():
-            raise TypeError("(=%s) must be a field"%F)
+        elif F not in Fields():
+            raise TypeError("(=%s) must be a field" % F)
         X = self.singular_subscheme()
         return [self.point(p, check=False) for p in X.rational_points(F=F)]
 

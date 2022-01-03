@@ -173,7 +173,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: Q('49/7')
             7
             sage: type(Q('49/7'))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: a = Q('19/374'); a
             19/374
             sage: b = Q('17/371'); b
@@ -845,7 +845,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         for i in range(len(S)):
             if S[i] == self.places()[0]:
                 S[i] = -1
-        if not b in self:
+        if b not in self:
             raise TypeError("second argument must be a rational number")
         b = self(b)
         if b == 0:
@@ -1374,7 +1374,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         KSgens, ords = self.selmer_generators(S=S, m=m, proof=proof, orders=True)
         one = self.one()
-        from sage.misc.all import prod
+        from sage.misc.misc_c import prod
         from itertools import product
         for ev in product(*[range(o) for o in ords]):
             yield prod((p**e for p,e in zip(KSgens, ev)), one)
@@ -1488,7 +1488,7 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         from sage.rings.all import Infinity
         from sage.arith.misc import legendre_symbol
-        if not a in self:
+        if a not in self:
             raise TypeError(str(a) + " must be an element of " + str(self))
         if p.parent() == ZZ.ideal_monoid():
             p = p.gen()

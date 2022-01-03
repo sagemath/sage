@@ -574,7 +574,8 @@ class WordGenerator(object):
             return w
 
         elif construction_method == "function":
-            from sage.functions.other import sqrt, floor
+            from sage.functions.other import floor
+            from sage.misc.functional import sqrt
             phi = (1 + sqrt(5))/2 # the golden ratio
             f = lambda n:a if floor((n+2)*phi) - floor((n+1)*phi) == 2 else b
             return W(f)
@@ -1898,7 +1899,7 @@ class WordGenerator(object):
         from sage.combinat.words.word import FiniteWord_class
         if isinstance(sequence,(tuple,list,str,FiniteWord_class)) \
         and hasattr(letters, "__len__") and len(letters) == 1:
-            from sage.misc.all import prod
+            from sage.misc.misc_c import prod
             return prod(seq)(letters)
 
         from itertools import tee

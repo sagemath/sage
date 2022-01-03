@@ -45,11 +45,11 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.combinat.partition import Partitions
 from sage.combinat.tableau import Tableau, SemistandardTableaux
 from sage.combinat.combinatorial_map import combinatorial_map
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 
 class GelfandTsetlinPattern(ClonableArray,
@@ -150,7 +150,7 @@ class GelfandTsetlinPattern(ClonableArray,
         """
         return GelfandTsetlinPatterns()(gt)
 
-    def check(self) -> bool:
+    def check(self):
         """
         Check that this is a valid Gelfand-Tsetlin pattern.
 
@@ -159,8 +159,8 @@ class GelfandTsetlinPattern(ClonableArray,
             sage: G = GelfandTsetlinPatterns()
             sage: G([[3,2,1],[2,1],[1]]).check()
         """
-        assert all( self[i-1][j] >= self[i][j] >= self[i-1][j+1]
-                    for i in range(1, len(self)) for j in range(len(self[i])) )
+        assert all(self[i - 1][j] >= self[i][j] >= self[i - 1][j + 1]
+                   for i in range(1, len(self)) for j in range(len(self[i])))
 
     def _hash_(self) -> int:
         """
@@ -920,11 +920,11 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: len(L) == G.cardinality()
             True
             sage: type(L[0])
-            <... 'list'>
+            <class 'list'>
         """
         # Setup the first row
-        iters = [None]*n
-        ret = [None]*n
+        iters = [None] * n
+        ret = [None] * n
         iters[0] = self._top_row_iter(n)
         ret[0] = next(iters[0])
         min_pos = 0
@@ -959,7 +959,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
             sage: for x in G._top_row_iter(3): x
             [2, 1, 0]
         """
-        row = [-1]*n
+        row = [-1] * n
         pos = 0
         while pos >= 0:
             if pos == n:
@@ -967,7 +967,7 @@ class GelfandTsetlinPatterns(UniqueRepresentation, Parent):
                 pos -= 1
                 continue
             # If it would create an invalid entry, backstep
-            if ( pos > 0 and (row[pos] >= row[pos-1] \
+            if (pos > 0 and (row[pos] >= row[pos-1]
                     or (self._strict and row[pos] == row[pos-1]-1)) ) \
                     or (self._k is not None and row[pos] >= self._k):
                 row[pos] = -1
@@ -1415,6 +1415,5 @@ class GelfandTsetlinPatternsTopRow(GelfandTsetlinPatterns):
         """
         if self._strict:
             return self._cftp(1)
-        else:
-            l = [i for i in self._row if i > 0]
-            return SemistandardTableaux(l, max_entry=self._n).random_element().to_Gelfand_Tsetlin_pattern()
+        l = [i for i in self._row if i > 0]
+        return SemistandardTableaux(l, max_entry=self._n).random_element().to_Gelfand_Tsetlin_pattern()  # type:ignore

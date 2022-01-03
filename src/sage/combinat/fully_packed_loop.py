@@ -40,7 +40,7 @@ from sage.misc.decorators import options
 from sage.matrix.constructor import matrix
 from sage.arith.all import factorial
 from sage.rings.integer import Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 # edges of a fpl in terms of the six vertex possible configurations
 R = (1, 0)
@@ -88,10 +88,10 @@ def _make_color_list(n, colors=None,  color_map=None, randomize=False):
 
     elif color_map:
         from matplotlib import cm
-        if not color_map in cm.datad:
+        if color_map not in cm.datad:
             raise ValueError('unknown color map %s' % color_map)
         cmap = cm.__dict__[color_map]
-        colors = [cmap(i/float(n-1))[:3] for i in range(n)]
+        colors = [cmap(i / float(n - 1))[:3] for i in range(n)]
 
     if colors and randomize:
         from sage.misc.prandom import shuffle

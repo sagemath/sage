@@ -107,7 +107,7 @@ coordinates where the codomain is not implemented as a toric variety::
 
 
 from sage.categories.finite_fields import FiniteFields
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.structure.element import is_Matrix
 from sage.matrix.matrix_space import MatrixSpace
@@ -400,7 +400,7 @@ class SchemeHomset_points_toric_base(SchemeHomset_points):
         variety = self.codomain()
         if finite_field is None:
             finite_field = variety.base_ring()
-        if not finite_field in FiniteFields():
+        if finite_field not in FiniteFields():
             raise ValueError('not a finite field')
         return FiniteFieldPointEnumerator(variety.fan(), finite_field)
 

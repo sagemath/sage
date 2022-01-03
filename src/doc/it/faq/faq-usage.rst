@@ -156,25 +156,6 @@ Posso usare Sage con la versione 3.x di Python?
 Dalla versione 9.0 del Gennaio 2020, SageMath utilizza Python 3.
 
 
-Ho scaricato il binario di Sage e va in crash quando lo lancio, con il messaggio "illegal instruction" (istruzione non permessa). Cosa posso fare?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-Un modo di risolvere è compilare Sage interamente dal codice sorgente.
-Un'altra possibilità è correggere la tua installazione di Sage con la
-ricompilazione dei componenti MPIR e ATLAS (richiede da 15 a 20 minuti),
-da effettuarsi da riga di comando a partire dalla cartella
-``SAGE_ROOT`` della tua installazione con le 2 istruzioni::
-
-    rm spkg/installed/mpir* spkg/installed/atlas*
-    make
-
-È possibile che i binari siano stati compilati per un'architettura più
-recente di quella della tua macchina. Nessuno ha ancora trovato un
-modo di compilare Sage in maniera che MPIR ed ATLAS funzionino su
-qualunque hardware. Questo sarà prima o poi risolto.
-Qualunque aiuto in tal senso sarà apprezzato.
-
-
 Ho usato Debian/Ubuntu per installare la versione 3.0.5 di Sage ed essa sta dando un sacco di errori. Cosa posso fare?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -459,28 +440,6 @@ un'interfaccia grafica. Poi puoi compilare Sage da codice sorgente in
 tale sessione testuale. Dovresti assicurarti di essere in grado di
 riattivare successivamente l'interfaccia grafica, prima di tentare di
 accedere tramite un'interfaccia testuale.
-
-
-Sage 2.9 o superiore non riesce a compilare ATLAS su Linux. Come posso risolvere?
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-La causa più probabile è l'abilitazione della gestione
-dell'alimentazione. Disabilitala per risolvere il problema.
-In base al tuo tipo di distribuzione ciò si può fare da interfaccia
-grafica oppure no. Digita da riga di comando, come utente root,
-quanto segue, per ogni CPU presente sul tuo sistema::
-
-    /usr/bin/cpufreq-selector -g performance -c #number CPU
-
-Su Ubuntu, prova a disabilitare “Power Manager”
-(gestione alimentazione) via
-
-.. CODE-BLOCK:: text
-
-    System --> Preferences --> Sessions
-
-nel menu “Startup Programs” (programmi di avvio) o
-utilizzando ``cpufreq-set`` da riga di comando.
 
 
 Quando lancio Sage, SELinux segnala che "/path/to/libpari-gmp.so.2" richiede "text-relocation" (riallocazione del testo). Come posso risolvere?

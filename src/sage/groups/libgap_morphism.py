@@ -133,7 +133,7 @@ class GroupMorphism_libgap(Morphism):
         CompositionMapping( [ (6,7,8,10,9)(11,13,14,12,15)(16,19,20,18,17)(21,25,22,24,23) ]
         -> [ [ [ Z(5)^0, 0*Z(5) ], [ Z(5)^0, Z(5)^0 ] ] ], <action isomorphism> )
         sage: type(_)
-        <type 'sage.libs.gap.element.GapElement'>
+        <class 'sage.libs.gap.element.GapElement'>
 
         sage: F = GF(7); MS = MatrixSpace(F,2,2)
         sage: F.multiplicative_generator()
@@ -507,7 +507,7 @@ class GroupMorphism_libgap(Morphism):
             ValueError: f2 is not an element of the image of Group endomorphism
              of Abelian group with gap, generator orders (2, 4)
         """
-        if not h in self.codomain():
+        if h not in self.codomain():
             raise TypeError("h (={}) must be an element of the codomain".format(h))
         h = self.codomain()(h)
         phi = self.gap()
@@ -578,7 +578,7 @@ class GroupMorphism_libgap(Morphism):
         from sage.categories.homset import Hom
         from sage.categories.sets_cat import Sets
         H = Hom(self.codomain(), self.domain(), category=Sets())
-        return H(lambda x: self.lift(x))
+        return H(self.lift)
 
 
 class GroupHomset_libgap(HomsetWithBase):

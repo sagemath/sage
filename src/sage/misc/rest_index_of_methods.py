@@ -233,9 +233,7 @@ def list_of_subfunctions(root, only_local_functions=True):
 
         sage: class A:
         ....:     x = staticmethod(Graph.order)
-        sage: list_of_subfunctions(A)  # py2
-        ([<unbound method Graph.order>], {<unbound method Graph.order>: 'x'})
-        sage: list_of_subfunctions(A)  # py3
+        sage: list_of_subfunctions(A)
         ([<function GenericGraph.order at 0x...>],
          {<function GenericGraph.order at 0x...>: 'x'})
 

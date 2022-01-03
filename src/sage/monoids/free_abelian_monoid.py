@@ -60,7 +60,7 @@ from sage.structure.parent import Parent
 from sage.categories.monoids import Monoids
 from .free_abelian_monoid_element import FreeAbelianMonoidElement
 from sage.rings.integer import Integer
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 
 from sage.structure.factory import UniqueFactory
 
@@ -303,7 +303,7 @@ class FreeAbelianMonoid_class(Parent):
             +Infinity
         """
         if self.__ngens == 0:
-            from sage.rings.all import ZZ
+            from sage.rings.integer_ring import ZZ
             return ZZ.one()
         from sage.rings.infinity import infinity
         return infinity

@@ -31,7 +31,7 @@ For instance, we can create a number in :math:`\ZZ/11\ZZ`.  The
 
     sage: a = mod(2,11); a; type(a); a^10; a^1000000
     2
-    <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+    <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
     1
     1
 

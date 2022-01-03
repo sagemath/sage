@@ -15,7 +15,7 @@ from sage.structure.sequence import Sequence
 from .abvar import (ModularAbelianVariety_modsym_abstract,
                     simple_factorization_of_modsym_space, modsym_lattices,
                     ModularAbelianVariety_modsym)
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 
 from sage.modular.modsym.modsym import ModularSymbols
 from sage.modular.modform.constructor import Newforms

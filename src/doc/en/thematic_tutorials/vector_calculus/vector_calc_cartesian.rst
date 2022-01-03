@@ -38,7 +38,7 @@ Thanks to the notation ``<x,y,z>`` in the above declaration, the coordinates
     sage: z is E.cartesian_coordinates()[3]
     True
     sage: type(z)
-    <type 'sage.symbolic.expression.Expression'>
+    <class 'sage.symbolic.expression.Expression'>
 
 Besides, `\mathbb{E}^3` is endowed with the *orthonormal vector frame*
 `(e_x, e_y, e_z)` associated with Cartesian coordinates::

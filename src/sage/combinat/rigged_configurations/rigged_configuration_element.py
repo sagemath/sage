@@ -448,7 +448,7 @@ class RiggedConfigurationElement(ClonableArray):
         if Partitions.options.convention == "French":
             baseline = lambda s: 0
         else:
-            baseline = lambda s: len(s)
+            baseline = len
         from sage.typeset.ascii_art import AsciiArt
         s = repr(self[0]).splitlines()
         ret = AsciiArt(s, baseline=baseline(s))

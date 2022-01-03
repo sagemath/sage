@@ -346,7 +346,7 @@ class TableauTuple(CombinatorialElement):
         sage: TableauTuple([[1],[2,3]])
         Traceback (most recent call last):
         ...
-        ValueError: A tableau must be a list of iterables.
+        ValueError: a tableau must be a list of iterables
 
         sage: TestSuite( TableauTuple([ [[1,2],[3,4]], [[1,2],[3,4]] ]) ).run()
         sage: TestSuite( TableauTuple([ [[1,2],[3,4]], [], [[1,2],[3,4]] ]) ).run()
@@ -2243,8 +2243,8 @@ class TableauTuples(UniqueRepresentation, Parent):
             ...
             ValueError: [[1, 2]] is not an element of Tableau tuples of level 3
         """
-        if not t in self:
-            raise ValueError("%s is not an element of %s"%(t, self))
+        if t not in self:
+            raise ValueError("%s is not an element of %s" % (t, self))
 
         # one way or another these two cases need to be treated separately
         if t == [] or t == [[]]:

@@ -322,10 +322,10 @@ class Octave(Expect):
             except pexpect.ExceptionPexpect as msg:
                 raise RuntimeError( "THIS IS A BUG -- PLEASE REPORT. This should never happen.\n" + msg)
             self._start()
-            raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)"%self)
+            raise KeyboardInterrupt("Restarting %s (WARNING: all variables defined in previous session are now invalid)" % self)
         else:
-            self._expect.send('\003') # control-c
-            raise KeyboardInterrupt("Ctrl-c pressed while running %s"%self)
+            self._expect.send('\003')  # control-c
+            raise KeyboardInterrupt("Ctrl-c pressed while running %s" % self)
 
     def quit(self, verbose=False):
         """
@@ -339,7 +339,7 @@ class Octave(Expect):
         # Don't bother, since it just hangs in some cases, and it
         # isn't necessary, since octave behaves well with respect
         # to signals.
-        if not self._expect is None:
+        if self._expect is not None:
             if verbose:
                 print("Exiting spawned %s process." % self)
         return
@@ -503,7 +503,7 @@ class Octave(Expect):
         if m != len(b):
             raise ValueError("dimensions of A and b must be compatible")
         from sage.matrix.all import MatrixSpace
-        from sage.rings.all import QQ
+        from sage.rings.rational_field import QQ
         MS = MatrixSpace(QQ,m,1)
         b  = MS(list(b)) # converted b to a "column vector"
         sA = self.sage2octave_matrix_string(A)

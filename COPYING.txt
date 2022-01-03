@@ -32,7 +32,6 @@ the licenses of the components of Sage are included below as well.
 SOFTWARE                    LICENSE
 -----------------------------------------------------------------------
 arb                         GPLv2+
-atlas                       Modified BSD
 boehm_gc                    MIT-like license (see below)
 backports_ssl_match_hostname  Python License
 boost_cropped               Boost Software License (see below)
@@ -86,7 +85,6 @@ mistune                     Modified BSD
 mpc                         LGPLv3+
 mpfi                        COPYING is GPLv2, source files state LGPLv2.1+
 mpfr                        LGPLv3+
-mpir                        LGPLv3+
 mpmath                      Modified BSD
 networkx                    Modified BSD
 ntl                         GPLv2+

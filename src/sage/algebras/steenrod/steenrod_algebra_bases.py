@@ -163,7 +163,7 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
         [1 2 0]
     """
     from sage.matrix.constructor import matrix
-    from sage.rings.all import GF
+    from sage.rings.finite_rings.finite_field_constructor import GF
     from .steenrod_algebra import SteenrodAlgebra
     if generic == 'auto':
         generic = False if p==2 else True
@@ -479,7 +479,7 @@ def xi_degrees(n,p=2, reverse=True):
         sage: sage.algebras.steenrod.steenrod_algebra_bases.xi_degrees(400,p=17)
         [307, 18, 1]
     """
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     if n <= 0:
         return []
     N = Integer(n*(p-1) + 1)
@@ -1029,7 +1029,7 @@ def atomic_basis_odd(n, basis, p, **kwds):
         else:
             return (((), ()),)
 
-    from sage.rings.all import Integer
+    from sage.rings.integer import Integer
     from sage.rings.infinity import Infinity
     from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
     profile = kwds.get("profile", None)

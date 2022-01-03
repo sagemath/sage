@@ -154,17 +154,17 @@ class OptimalSolver:
         self.ready()
         self.child.sendline(self.format_cube(facets))
         self.child.expect(r"([LRUDBF'2 ]+)\s+\((\d+)q\*?, (\d+)f\*?\)")
-        self.child.sendline(chr(3)) # send ctrl-c
+        self.child.sendline(chr(3))  # send ctrl-c
         return bytes_to_str(self.child.match.groups()[0]).strip()
 
     def format_cube(self, facets):
         L = []
         optimal_solver_list = [SingNot(x) for x in optimal_solver_tokens]
         for f in optimal_solver_format.split(" "):
-            ix = facets[singmaster_list.index(SingNot(f))-1]
+            ix = facets[singmaster_list.index(SingNot(f)) - 1]
             facet = singmaster_list[ix]
             L.append(optimal_solver_list[optimal_solver_list.index(facet)])
-        return " ".join([str(f) for f in L])
+        return " ".join(str(f) for f in L)
 
 
 move_map = {
@@ -287,7 +287,8 @@ class DikSolver:
             # format the string into our notation
             child.close(True)
             sol = bytes_to_str(sol)
-            return ' '.join([self.rot_map[m[0]]+str(4-int(m[1])) for m in reversed(sol.split(' '))]).replace('1', '').replace('3',"'")
+            return ' '.join(self.rot_map[m[0]] + str(4 - int(m[1]))
+                            for m in reversed(sol.split(' '))).replace('1', '').replace('3', "'")
         elif ix == 1:
             # invalid format
             child.close(True)

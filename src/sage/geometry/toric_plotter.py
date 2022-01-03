@@ -15,7 +15,7 @@ EXAMPLES:
 In most cases, this module is used indirectly, e.g. ::
 
     sage: fan = toric_varieties.dP6().fan()
-    sage: fan.plot()
+    sage: fan.plot()  # optional - sage.plot
     Graphics object consisting of 31 graphics primitives
 
 You may change default plotting options as follows::
@@ -25,12 +25,12 @@ You may change default plotting options as follows::
     sage: toric_plotter.options(show_rays=False)
     sage: toric_plotter.options("show_rays")
     False
-    sage: fan.plot()
+    sage: fan.plot()  # optional - sage.plot
     Graphics object consisting of 19 graphics primitives
     sage: toric_plotter.reset_options()
     sage: toric_plotter.options("show_rays")
     True
-    sage: fan.plot()
+    sage: fan.plot()  # optional - sage.plot
     Graphics object consisting of 31 graphics primitives
 """
 
@@ -51,11 +51,11 @@ from math import pi
 
 from sage.functions.all import arccos, arctan2, ceil, floor
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.plot.all import (Color, Graphics,
                            arrow, disk, line, point, polygon, rainbow, text)
 from sage.plot.plot3d.all import text3d
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 from sage.structure.sage_object import SageObject
 
 
@@ -133,9 +133,9 @@ class ToricPlotter(SageObject):
     plot, e.g. ::
 
         sage: fan = toric_varieties.dP6().fan()
-        sage: fan.plot()
+        sage: fan.plot()  # optional - sage.plot
         Graphics object consisting of 31 graphics primitives
-        sage: print(fan.plot())
+        sage: print(fan.plot())  # optional - sage.plot
         Graphics object consisting of 31 graphics primitives
 
     If you do want to create your own plotting function for some toric

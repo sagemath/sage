@@ -9,6 +9,7 @@ AUTHORS:
 - Sébastien Labbé
 - Franco Saliola
 
+
 """
 #*****************************************************************************
 #       Copyright (C) 2008 Arnaud Bergeron <abergeron@gmail.com>,
@@ -34,6 +35,7 @@ from .word_infinite_datatypes import (
                             WordDatatype_iter,
                             WordDatatype_callable_with_caching,
                             WordDatatype_callable)
+from .morphic import WordDatatype_morphic
 from sage.monoids.free_monoid_element import FreeMonoidElement
 
 # TODO. Word needs to be replaced by Word. Consider renaming
@@ -687,3 +689,57 @@ class Word_iter(WordDatatype_iter, Word_class):
     """
     pass
 
+##### Morphic Words #####
+class FiniteWord_morphic(WordDatatype_morphic, FiniteWord_class):
+    r"""
+    Finite morphic word.
+
+    For such word `w`, type  ``w.`` and hit TAB key to see the list of
+    functions defined on `w`.
+
+    EXAMPLES::
+
+        sage: m = WordMorphism("a->ab,b->")
+        sage: w = m.fixed_point("a")
+        sage: w
+        word: ab
+
+
+    TESTS::
+
+        sage: m = WordMorphism("a->ab,b->")
+        sage: w = m.fixed_point("a")
+        sage: type(w)
+        <class 'sage.combinat.words.word.FiniteWord_morphic'>
+        sage: loads(dumps(w))
+        word: ab
+
+    """
+    pass
+
+class InfiniteWord_morphic(WordDatatype_morphic, InfiniteWord_class):
+    r"""
+    Morphic word of infinite length.
+
+    For such word `w`, type ``w.`` and hit TAB key to see the list of
+    functions defined on `w`.
+
+    Infinite words behave like a Python list : they can be sliced using
+    square braquets to define for example a prefix or a factor.
+
+    EXAMPLES::
+
+        sage: m = WordMorphism('a->ab,b->a')
+        sage: w = m.fixed_point('a')
+        sage: w
+        word: abaababaabaababaababaabaababaabaababaaba...
+
+    TESTS:
+
+    Pickle is supported::
+
+        sage: loads(dumps(w))
+        word: abaababaabaababaababaabaababaabaababaaba...
+
+    """
+    pass

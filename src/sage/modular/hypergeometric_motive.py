@@ -1409,14 +1409,14 @@ class HypergeometricData(object):
         if ring is None:
             ring = UniversalCyclotomicField()
         gamma = self.gamma_array()
-        q = p ** f
+        q = p**f
 
         m = {r: beta.count(QQ((r, q - 1))) for r in range(q - 1)}
         D = -min(self.zigzag(x, flip_beta=True) for x in alpha + beta)
         # also: D = (self.weight() + 1 - m[0]) // 2
         M = self.M_value()
 
-        Fq = GF(q)
+        Fq = GF((p, f))
         gen = Fq.multiplicative_generator()
         zeta_q = ring.zeta(q - 1)
 

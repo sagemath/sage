@@ -1055,7 +1055,7 @@ cdef class BasisExchangeMatroid(Matroid):
             i=i+1
 
         cdef bitset_t active_rows
-        bitset_init(active_rows,self.full_rank()+1)
+        bitset_init(active_rows, <mp_bitcnt_t> self.full_rank()+1)
         bitset_set_first_n(active_rows, <mp_bitcnt_t> self.full_rank())
         i=0
         while i>=0:

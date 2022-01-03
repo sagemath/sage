@@ -203,7 +203,7 @@ class PolyhedralComplex(GenericCellComplex):
          (A vertex at (0, 1/4),),
          (A vertex at (1/7, 2/7),),
          (A vertex at (1/3, 1/3),)]
-        sage: pc.plot()
+        sage: pc.plot()  # optional - sage.plot
         Graphics object consisting of 10 graphics primitives
         sage: pc.is_pure()
         True
@@ -728,7 +728,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: p1 = Polyhedron(vertices=[(1, 1), (0, 0), (1, 2)])
             sage: p2 = Polyhedron(vertices=[(1, 2), (0, 0), (0, 2)])
             sage: pc = PolyhedralComplex([p1, p2])
-            sage: pc.plot()
+            sage: pc.plot()  # optional - sage.plot
             Graphics object consisting of 10 graphics primitives
         """
         if self.dimension() > 3:
@@ -937,7 +937,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: poset
             Finite poset containing 11 elements
             sage: d = {i: i.vertices_matrix() for i in poset}
-            sage: poset.plot(element_labels=d)
+            sage: poset.plot(element_labels=d)  # optional - sage.plot
             Graphics object consisting of 28 graphics primitives
 
         For a nonbounded polyhedral complex::

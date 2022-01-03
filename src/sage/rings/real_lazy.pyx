@@ -50,7 +50,7 @@ cdef QQ, RR, CC, RealField, ComplexField
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR, RealField
 from sage.rings.complex_mpfr import ComplexField
-CC = ComplexField(53)
+from sage.rings.cc import CC
 
 cdef _QQx = None
 
@@ -411,10 +411,11 @@ class ComplexLazyField_class(LazyField):
             sage: CLF.interval_field() is CIF
             True
         """
-        from sage.rings.all import CIF, ComplexIntervalField
         if prec is None:
+            from sage.rings.cif import CIF
             return CIF
         else:
+            from sage.rings.complex_interval_field import ComplexIntervalField
             return ComplexIntervalField(prec)
 
     def gen(self, i=0):
@@ -1709,7 +1710,7 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: a = f(3); a
             3
             sage: type(a)
-            <type 'sage.rings.real_lazy.LazyWrapper'>
+            <class 'sage.rings.real_lazy.LazyWrapper'>
             sage: a._value
             3
             sage: a._value.parent()
@@ -1727,7 +1728,7 @@ cdef class LazyWrapperMorphism(Morphism):
             sage: a = f(1/3); a # indirect doctest
             0.3333333333333334?
             sage: type(a)
-            <type 'sage.rings.real_lazy.LazyWrapper'>
+            <class 'sage.rings.real_lazy.LazyWrapper'>
             sage: Reals(100)(a)
             0.33333333333333333333333333333
 

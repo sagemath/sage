@@ -859,11 +859,14 @@ class ConvexSet_base(SageObject, Set_base):
                 ext_space = self.ambient_vector_space(AA)
                 ext_space_point = ext_space(space_point)
                 tester.assertEqual(contains_space_point, self.contains(ext_space_point))
-            from sage.symbolic.ring import SR
-            symbolic_space = self.ambient_vector_space(SR)
-            symbolic_space_point = symbolic_space(space_point)
-            # Only test that it can accept SR vectors without error.
-            self.contains(symbolic_space_point)
+            try:
+                from sage.symbolic.ring import SR
+                symbolic_space = self.ambient_vector_space(SR)
+                symbolic_space_point = symbolic_space(space_point)
+                # Only test that it can accept SR vectors without error.
+                self.contains(symbolic_space_point)
+            except ImportError:
+                pass
             # Test that elements returned by some_elements are contained.
             try:
                 points = self.some_elements()

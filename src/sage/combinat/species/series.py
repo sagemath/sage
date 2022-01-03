@@ -33,14 +33,14 @@ import builtins
 
 from .stream import Stream, Stream_class
 from .series_order import  bounded_decrement, increment, inf, unk
-from sage.rings.all import Integer
-from sage.misc.all import prod
+from sage.rings.integer import Integer
+from sage.misc.misc_c import prod
 from functools import partial
 from sage.misc.misc import is_iterator
 from sage.misc.repr import repr_lincomb
 from sage.misc.cachefunc import cached_method
 
-from sage.algebras.algebra import Algebra
+from sage.rings.ring import Algebra
 from sage.structure.parent import Parent
 from sage.categories.all import Rings
 from sage.structure.element import Element, parent, AlgebraElement

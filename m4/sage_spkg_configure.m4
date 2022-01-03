@@ -29,8 +29,8 @@
 #
 #   - REQUIRED-CHECK - this checks whether or not the package is a required
 #     dependency of Sage at all, depending typically on the platform.  Some
-#     packages (e.g. yasm, among others) are only dependencies on certain
-#     platforms, and otherwise do not need to be checked for at all.  If
+#     packages (e.g. sqlite) are only dependencies in some circumstances
+#     and otherwise do not need to be checked for at all.  If
 #     a REQUIRED-CHECK determines that the package is not required it sets
 #     sage_require_<packagename>="no".
 #
@@ -85,7 +85,7 @@ $4
 dnl If a version of this package is already installed in local/ we have no
 dnl choice but to use it and we will actually also update it even if it is not
 dnl required.
-AS_IF([test -n "`ls "${SAGE_SPKG_INST}/${sage_spkg_name}"-* 2>/dev/null`"], [
+AS_IF([test -n "`ls "${SAGE_LOCAL}/var/lib/sage/installed/${sage_spkg_name}"-* 2>/dev/null`"], [
     AC_MSG_NOTICE(m4_normalize(SPKG_NAME[ has already been installed by SageMath]))
     AS_VAR_SET(SPKG_INSTALL, [yes])
     AS_VAR_SET(SPKG_USE_SYSTEM, [installed])

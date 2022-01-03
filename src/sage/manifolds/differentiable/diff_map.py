@@ -760,7 +760,7 @@ class DiffMap(ContinuousMap):
             sage: JJ[2,0]
             2*x
             sage: type(JJ[2,0])
-            <type 'sage.symbolic.expression.Expression'>
+            <class 'sage.symbolic.expression.Expression'>
             sage: bool( JJ[2,0] == J[2][0].expr() )
             True
 

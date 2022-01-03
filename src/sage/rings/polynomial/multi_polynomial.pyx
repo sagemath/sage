@@ -15,7 +15,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 def is_MPolynomial(x):
     return isinstance(x, MPolynomial)
@@ -254,65 +254,6 @@ cdef class MPolynomial(CommutativeRingElement):
         d = self.dict()
         return R(dict([(k, c) for k, c in d.iteritems() if k[ind] < n]))
 
-    def _fast_float_(self, *vars):
-        """
-        Returns a quickly-evaluating function on floats.
-
-        EXAMPLES::
-
-            sage: K.<x,y,z> = QQ[]
-            sage: f = (x+2*y+3*z^2)^2 + 42
-            sage: f(1, 10, 100)
-            901260483
-            sage: ff = f._fast_float_()
-            sage: ff(0, 0, 1)
-            51.0
-            sage: ff(0, 1, 0)
-            46.0
-            sage: ff(1, 10, 100)
-            901260483.0
-            sage: ff_swapped = f._fast_float_('z', 'y', 'x')
-            sage: ff_swapped(100, 10, 1)
-            901260483.0
-            sage: ff_extra = f._fast_float_('x', 'A', 'y', 'B', 'z', 'C')
-            sage: ff_extra(1, 7, 10, 13, 100, 19)
-            901260483.0
-
-        Currently, we use a fairly unoptimized method that evaluates one
-        monomial at a time, with no sharing of repeated computations and
-        with useless additions of 0 and multiplications by 1::
-
-            sage: g = (x*y**2*z)._fast_float_()
-            sage: list(g)
-            ['push 0.0', 'push 1.0', 'load 0', 'load 1', 'dup', 'mul',
-             'mul', 'load 2', 'mul', 'mul', 'add']
-
-        TESTS::
-
-            sage: from sage.ext.fast_eval import fast_float
-            sage: list(fast_float(K(0), old=True))
-            ['push 0.0']
-            sage: list(fast_float(K(17), old=True))
-            ['push 0.0', 'push 17.0', 'add']
-            sage: list(fast_float(y, old=True))
-            ['push 0.0', 'push 1.0', 'load 1', 'mul', 'add']
-        """
-        from sage.ext.fast_eval import fast_float_arg, fast_float_constant
-        my_vars = self.parent().variable_names()
-        vars = list(vars)
-        if len(vars) == 0:
-            indices = list(xrange(len(my_vars)))
-        else:
-            indices = [vars.index(v) for v in my_vars]
-        x = [fast_float_arg(i) for i in indices]
-
-        n = len(x)
-        expr = fast_float_constant(0)
-        for m, c in self.dict().iteritems():
-            monom = prod([ x[i]**m[i] for i in range(n) if m[i] != 0], fast_float_constant(c))
-            expr = expr + monom
-        return expr
-
     def _fast_callable_(self, etb):
         """
         Given an ExpressionTreeBuilder, return an Expression representing
@@ -332,9 +273,9 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: v = K(0)
             sage: vf = fast_callable(v)
             sage: type(v(0r, 0r, 0r))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: type(vf(0r, 0r, 0r))
-            <type 'sage.rings.rational.Rational'>
+            <class 'sage.rings.rational.Rational'>
             sage: K.<x,y,z> = QQ[]
             sage: from sage.ext.fast_eval import fast_float
             sage: fast_float(K(0)).op_list()
@@ -372,7 +313,7 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: R.<x, y> = PolynomialRing(FiniteField(5))
             sage: f = x^3*y^5 + x^7*y
             sage: type(f)
-            <type 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
+            <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
             sage: f.derivative(x)
             2*x^6*y - 2*x^2*y^5
             sage: f.derivative(y)
@@ -1835,9 +1776,9 @@ cdef class MPolynomial(CommutativeRingElement):
             sage: x.denominator()
             1
             sage: type(x.denominator())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: type(a.denominator())
-            <type 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int'>
             sage: from sage.rings.polynomial.multi_polynomial_element import MPolynomial
             sage: isinstance(a / b, MPolynomial)
             False

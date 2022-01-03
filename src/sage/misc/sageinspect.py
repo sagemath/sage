@@ -192,9 +192,9 @@ def loadable_module_extension():
 
 def isclassinstance(obj):
     r"""
-    Checks if argument is instance of non built-in class
+    Check if argument is instance of non built-in class
 
-    INPUT: ``obj`` - object
+    INPUT: ``obj`` -- object
 
     EXAMPLES::
 
@@ -207,12 +207,10 @@ def isclassinstance(obj):
         sage: isclassinstance(myclass)
         False
         sage: class mymetaclass(type): pass
-        sage: class myclass2:
-        ....:     __metaclass__ = mymetaclass
+        sage: class myclass2(metaclass=mymetaclass): pass
         sage: isclassinstance(myclass2)
         False
     """
-
     builtin_mods = set(['__builtin__', 'builtins', 'exceptions'])
 
     return (not inspect.isclass(obj) and
@@ -334,11 +332,8 @@ def _extract_embedded_signature(docstring, name):
         ...
         sage: _extract_embedded_signature(MainClass.NestedClass.NestedSubClass.dummy.__doc__, 'dummy')[1]
         ArgSpec(args=['self', 'x', 'r'], varargs='args', keywords='kwds', defaults=((1, 2, 3.4),))
-        sage: _extract_embedded_signature(range.__call__.__doc__, '__call__')  # py2
-        ('x.__call__(...) <==> x(...)', None)
-        sage: _extract_embedded_signature(range.__call__.__doc__, '__call__')  # py3
+        sage: _extract_embedded_signature(range.__call__.__doc__, '__call__')
         ('Call self as a function.', None)
-
     """
     # If there is an embedded signature, it is in the first line
     L = docstring.split(os.linesep, 1)
@@ -502,14 +497,10 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: import ast, sage.misc.sageinspect as sms
             sage: visitor = sms.SageArgSpecVisitor()
             sage: vis = lambda x: visitor.visit_Name(ast.parse(x).body[0].value)
-            sage: [vis(n) for n in ['True', 'False', 'None', 'foo', 'bar']]  # py2
-            [True, False, None, 'foo', 'bar']
-            sage: [type(vis(n)) for n in ['True', 'False', 'None', 'foo', 'bar']]  # py2
-            [<type 'bool'>, <type 'bool'>, <type 'NoneType'>, <type 'str'>, <type 'str'>]
-            sage: [vis(n) for n in ['foo', 'bar']]  # py3
+            sage: [vis(n) for n in ['foo', 'bar']]
             ['foo', 'bar']
-            sage: [type(vis(n)) for n in ['foo', 'bar']]  # py3
-            [<type 'str'>, <type 'str'>]
+            sage: [type(vis(n)) for n in ['foo', 'bar']]
+            [<class 'str'>, <class 'str'>]
         """
         return node.id
 
@@ -530,15 +521,14 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
         EXAMPLES::
 
-            sage: import ast, sage.misc.sageinspect as sms  # py3
-            sage: visitor = sms.SageArgSpecVisitor()  # py3
-            sage: vis = lambda x: visitor.visit_NameConstant(ast.parse(x).body[0].value)  # py3
-            sage: [vis(n) for n in ['True', 'False', 'None']]  # py3
+            sage: import ast, sage.misc.sageinspect as sms
+            sage: visitor = sms.SageArgSpecVisitor()
+            sage: vis = lambda x: visitor.visit_NameConstant(ast.parse(x).body[0].value)
+            sage: [vis(n) for n in ['True', 'False', 'None']]
             [True, False, None]
-            sage: [type(vis(n)) for n in ['True', 'False', 'None']]  # py3
-            [<type 'bool'>, <type 'bool'>, <type 'NoneType'>]
+            sage: [type(vis(n)) for n in ['True', 'False', 'None']]
+            [<class 'bool'>, <class 'bool'>, <class 'NoneType'>]
         """
-
         return node.value
 
     def visit_arg(self, node):
@@ -561,11 +551,11 @@ class SageArgSpecVisitor(ast.NodeVisitor):
 
         EXAMPLES::
 
-            sage: import ast, sage.misc.sageinspect as sms  # py3
-            sage: s = "def f(a, b=2, c={'a': [4, 5.5, False]}, d=(None, True)):\n    return"  # py3
-            sage: visitor = sms.SageArgSpecVisitor()  # py3
-            sage: args = ast.parse(s).body[0].args.args  # py3
-            sage: [visitor.visit_arg(n) for n in args]  # py3
+            sage: import ast, sage.misc.sageinspect as sms
+            sage: s = "def f(a, b=2, c={'a': [4, 5.5, False]}, d=(None, True)):\n    return"
+            sage: visitor = sms.SageArgSpecVisitor()
+            sage: args = ast.parse(s).body[0].args.args
+            sage: [visitor.visit_arg(n) for n in args]
             ['a', 'b', 'c', 'd']
         """
         return node.arg
@@ -587,9 +577,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: import ast, sage.misc.sageinspect as sms
             sage: visitor = sms.SageArgSpecVisitor()
             sage: vis = lambda x: visitor.visit_Num(ast.parse(x).body[0].value)
-            sage: [vis(n) for n in ['123', '0.0', str(-pi.n())]]  # py2
-            [123, 0.0, -3.14159265358979]
-            sage: [vis(n) for n in ['123', '0.0']]  # py3
+            sage: [vis(n) for n in ['123', '0.0']]
             [123, 0.0]
 
         .. NOTE::
@@ -809,9 +797,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: import ast, sage.misc.sageinspect as sms
             sage: visitor = sms.SageArgSpecVisitor()
             sage: vis = lambda x: visitor.visit(ast.parse(x).body[0].value)
-            sage: [vis(d) for d in ['(3+(2*4))', '7|8', '5^3', '7/3', '7//3', '3<<4']] #indirect doctest # py2
-            [11, 15, 6, 2, 2, 48]
-            sage: [vis(d) for d in ['(3+(2*4))', '7|8', '5^3', '7/3', '7//3', '3<<4']] #indirect doctest # py3
+            sage: [vis(d) for d in ['(3+(2*4))', '7|8', '5^3', '7/3', '7//3', '3<<4']] #indirect doctest
             [11, 15, 6, 2.3333333333333335, 2, 48]
         """
         op = node.op.__class__.__name__
@@ -1119,8 +1105,7 @@ def _sage_getargspec_from_ast(source):
         sage: from_ast(s)
         ArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, keywords=None, defaults=(2, {'a': [4, 5.5, False]}, (None, True)))
         sage: context = {}
-        sage: exec compile(s, '<string>', 'single') in context  # py2
-        sage: exec(compile(s, '<string>', 'single'), context)  # py3
+        sage: exec(compile(s, '<string>', 'single'), context)
         sage: inspect.getargspec(context['f'])
         ArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, keywords=None, defaults=(2, {'a': [4, 5.5, False]}, (None, True)))
         sage: from_ast(s) == inspect.getargspec(context['f'])
@@ -1188,7 +1173,7 @@ def _sage_getargspec_cython(source):
         sage: sgc('def f(*x = 5, z = {(1,2,3): True}): pass')
         Traceback (most recent call last):
         ...
-        SyntaxError: invalid syntax
+        SyntaxError: invalid ...
         sage: sgc('def f(int *x = 5, z = {(1,2,3): True}): pass')
         Traceback (most recent call last):
         ...
@@ -1200,19 +1185,15 @@ def _sage_getargspec_cython(source):
         sage: sgc('def f(int x = 5, , z = {(1,2,3): True}): pass')
         Traceback (most recent call last):
         ...
-        SyntaxError: invalid syntax
+        SyntaxError: invalid ...
 
     TESTS:
 
     Some input that is malformed in Python 2 but well formed in Cython or
     Python 3 is correctly parsed::
 
-        sage: def dummy_python(self, *args, x=1): pass  # py2
-        Traceback (most recent call last):
-        ...
-        SyntaxError: invalid syntax
-        sage: def dummy_python(self, *args, x=1): pass  # py3
-        sage: sgc("def dummy_python(self, *args, x=1): pass")  # py3
+        sage: def dummy_python(self, *args, x=1): pass
+        sage: sgc("def dummy_python(self, *args, x=1): pass")
         ArgSpec(args=['self', 'x'], varargs='args', keywords=None, defaults=(1,))
         sage: cython("def dummy_cython(self, *args, x=1): pass")
         sage: sgc("def dummy_cython(self, *args, x=1): pass")
@@ -1423,6 +1404,7 @@ def sage_getfile(obj):
         return sourcefile[:-len(loadable_module_extension())]+os.path.extsep+'pyx'
     return sourcefile
 
+
 def sage_getargspec(obj):
     r"""
     Return the names and default values of a function's arguments.
@@ -1587,10 +1569,6 @@ def sage_getargspec(obj):
     inspect module does)::
 
         sage: import inspect
-        sage: inspect.getargspec(range)  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: <built-in function range> is not a Python function
         sage: sage_getargspec(range)
         ArgSpec(args=[], varargs='args', keywords='kwds', defaults=None)
 
@@ -1602,6 +1580,8 @@ def sage_getargspec(obj):
         ....:     'class Foo:\n'
         ....:     '    def __call__(self):\n'
         ....:     '        return None\n'
+        ....:     '    def __module__(self):\n'
+        ....:     '        return "sage.misc.sageinspect"\n'
         ....:     '    def _sage_src_(self):\n'
         ....:     '        return "the source code string"')
         sage: shell.run_cell('f = Foo()')
@@ -1645,7 +1625,7 @@ def sage_getargspec(obj):
         except (TypeError, AttributeError):
             pass
     if isclassinstance(obj):
-        if hasattr(obj,'_sage_src_'): #it may be a decorator!
+        if hasattr(obj, '_sage_src_'): #it may be a decorator!
             source = sage_getsource(obj)
             try:
                 # we try to find the definition and parse it by
@@ -1701,6 +1681,7 @@ def sage_getargspec(obj):
         defaults = None
     return inspect.ArgSpec(args, varargs, varkw, defaults)
 
+
 def formatannotation(annotation, base_module=None):
     """
     This is taken from Python 3.7's inspect.py; the only change is to
@@ -1718,20 +1699,20 @@ def formatannotation(annotation, base_module=None):
 
         sage: from sage.misc.sageinspect import formatannotation
         sage: import inspect
-        sage: def foo(a, *, b:int, **kwargs): # py3
+        sage: def foo(a, *, b:int, **kwargs):
         ....:     pass
-        sage: s = inspect.signature(foo) # py3
+        sage: s = inspect.signature(foo)
 
-        sage: a = s.parameters['a'].annotation # py3
-        sage: a # py3
+        sage: a = s.parameters['a'].annotation
+        sage: a
         <class 'inspect._empty'>
-        sage: formatannotation(a) # py3
+        sage: formatannotation(a)
         'inspect._empty'
 
-        sage: b = s.parameters['b'].annotation # py3
-        sage: b # py3
+        sage: b = s.parameters['b'].annotation
+        sage: b
         <class 'int'>
-        sage: formatannotation(b) # py3
+        sage: formatannotation(b)
         'int'
     """
     if getattr(annotation, '__module__', None) == 'typing':
@@ -1739,8 +1720,9 @@ def formatannotation(annotation, base_module=None):
     if isinstance(annotation, type):
         if annotation.__module__ in ('builtins', base_module):
             return annotation.__qualname__
-        return annotation.__module__+'.'+annotation.__qualname__
+        return annotation.__module__ + '.' + annotation.__qualname__
     return repr(annotation)
+
 
 def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        kwonlyargs=(), kwonlydefaults={}, annotations={},
@@ -2061,6 +2043,15 @@ def sage_getdoc(obj, obj_name='', embedded=False):
         return ''
     r = sage_getdoc_original(obj)
     s = sage.misc.sagedoc.format(r, embedded=embedded)
+    f = sage_getfile(obj)
+    if f and os.path.exists(f):
+        from sage.doctest.control import skipfile
+        skip = skipfile(f)
+        if isinstance(skip, str):
+            warn = """WARNING: the enclosing module is marked '{}',
+so doctests may not pass.""".format(skip)
+            s = warn + "\n\n" + s
+        pass
 
     # Fix object naming
     if obj_name != '':
@@ -2308,7 +2299,7 @@ def sage_getsourcelines(obj):
         ...)
         sage: x = var('x')
         sage: lines, lineno = sage_getsourcelines(x); lines[0:5]
-        ['cdef class Expression(CommutativeRingElement):\n',
+        ['cdef class Expression(...):\n',
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
@@ -2388,7 +2379,7 @@ def sage_getsourcelines(obj):
 
     # Check if we deal with an instance
     if isclassinstance(obj):
-        if isinstance(obj,functools.partial):
+        if isinstance(obj, functools.partial):
             return sage_getsourcelines(obj.func)
         else:
             return sage_getsourcelines(obj.__class__)

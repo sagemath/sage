@@ -16,7 +16,7 @@ cdef class PowComputer_(PowComputer_flint_unram):
 
             sage: R.<a> = ZqFP(125)
             sage: type(R.prime_pow)
-            <type 'sage.rings.padics.qadic_flint_FP.PowComputer_'>
+            <class 'sage.rings.padics.qadic_flint_FP.PowComputer_'>
             sage: R.prime_pow._prec_type
             'floating-point'
         """
@@ -66,7 +66,7 @@ cdef class qAdicFloatingPointElement(FPElement):
         if self.ordp < 0:
             raise ValueError("self must be integral")
         if very_pos_val(self.ordp):
-            from sage.matrix.all import matrix
+            from sage.matrix.constructor import matrix
             return matrix(ZZ, self.prime_pow.deg, self.prime_pow.deg)
         else:
             return cmatrix_mod_pn(self.unit, self.ordp + self.prime_pow.prec_cap, self.ordp, self.prime_pow)

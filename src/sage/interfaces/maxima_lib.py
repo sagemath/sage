@@ -68,6 +68,15 @@ Maxima has some flags that affect how the result gets simplified (By default, be
     sage: maxima_calculus("besselexpand:true")
     true
 
+The output is parseable (i. e. :trac:`31796` is fixed)::
+
+    sage: foo = maxima_calculus('a and (b or c)') ; foo
+    a and (b or c)
+    sage: bar = maxima_calculus(foo) ; bar
+    a and (b or c)
+    sage: bar == foo
+    True
+
 """
 
 # ****************************************************************************
@@ -82,8 +91,8 @@ Maxima has some flags that affect how the result gets simplified (By default, be
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.symbolic.ring import SR
 
@@ -96,8 +105,8 @@ from sage.docs.instancedoc import instancedoc
 from sage.env import MAXIMA_FAS
 
 
-## We begin here by initializing Maxima in library mode
-## i.e. loading it into ECL
+# We begin here by initializing Maxima in library mode
+# i.e. loading it into ECL
 ecl_eval("(setf *load-verbose* NIL)")
 if MAXIMA_FAS:
     ecl_eval("(require 'maxima \"{}\")".format(MAXIMA_FAS))
@@ -110,48 +119,43 @@ ecl_eval("(set-locale-subdir)")
 ecl_eval("(set-pathnames)")
 ecl_eval("(defun add-lineinfo (x) x)")
 ecl_eval('(defun principal nil (cond ($noprincipal (diverg)) ((not pcprntd) (merror "Divergent Integral"))))')
-ecl_eval("(remprop 'mfactorial 'grind)") # don't use ! for factorials (#11539)
+ecl_eval("(remprop 'mfactorial 'grind)")  # don't use ! for factorials (#11539)
 ecl_eval("(setf $errormsg nil)")
 
-# the following is a direct adaptation of the definition of "retrieve"
-# in the Maxima file macsys.lisp. This routine is normally responsible
-# for displaying a question and returning the answer. We change it to
-# throw an error in which the text of the question is included. We do
-# this by running exactly the same code as in the original definition
-# of "retrieve", but with *standard-output* redirected to a string.
+# The following is an adaptation of the "retrieve" function in maxima
+# itself. This routine is normally responsible for displaying a
+# question and returning the answer. Our version throws an error in
+# which the text of the question is included. This is accomplished by
+# redirecting *standard-output* to a string.
+#
+# After an update in Trac 31553, this routine also preprocesses the
+# text to replace space symbols with strings. This prevents those
+# symbols from being turned into ugly newlines -- a problem that we
+# used to avoid with a custom patch.
 ecl_eval(r"""
 (defun retrieve (msg flag &aux (print? nil))
   (declare (special msg flag print?))
+  (setq msg (mapcar #'(lambda (x) (if (eq x '| |) " " x)) msg))
   (or (eq flag 'noprint) (setq print? t))
   (error
-      (concatenate 'string "Maxima asks: "
+    (concatenate 'string
+      "Maxima asks: "
       (string-trim '(#\Newline)
-      (with-output-to-string (*standard-output*)
-      (cond ((not print?)
-             (setq print? t)
-             (princ *prompt-prefix*)
-             (princ *prompt-suffix*)
-             )
-            ((null msg)
-             (princ *prompt-prefix*)
-             (princ *prompt-suffix*)
-             )
-            ((atom msg)
-             (format t "~a~a~a" *prompt-prefix* msg *prompt-suffix*)
-             )
-            ((eq flag t)
-             (princ *prompt-prefix*)
-             (mapc #'princ (cdr msg))
-             (princ *prompt-suffix*)
-             )
-            (t
-             (princ *prompt-prefix*)
-             (displa msg)
-             (princ *prompt-suffix*)
-             )
-      ))))
-  )
-)
+                   (with-output-to-string (*standard-output*)
+                     (cond ((not print?)
+                            (setq print? t)
+                            (format-prompt t ""))
+                           ((null msg)
+                            (format-prompt t ""))
+                           ((atom msg)
+                            (format-prompt t "~A" msg)
+                            (mterpri))
+                           ((eq flag t)
+                            (format-prompt t "~{~A~}" (cdr msg))
+                            (mterpri))
+                           (t
+                            (format-prompt t "~M" msg)
+                            (mterpri))))))))
 """)
 
 ## Redirection of ECL and Maxima stdout to /dev/null
@@ -458,7 +462,7 @@ class MaximaLib(MaximaAbstract):
                     maxima_eval("#$%s$" % statement)
         if not reformat:
             return result
-        return ''.join([x.strip() for x in result.split()])
+        return ' '.join(x.strip() for x in result.split())
 
     eval = _eval_line
 
@@ -1393,12 +1397,12 @@ def max_at_to_sage(expr):
         sage: from sage.interfaces.maxima_lib import maxima_lib, max_at_to_sage
         sage: a=maxima_lib("'at(f(x,y,z),[x=1,y=2,z=3])")
         sage: a
-        'at(f(x,y,z),[x=1,y=2,z=3])
+        'at(f(x,y,z),[x = 1,y = 2,z = 3])
         sage: max_at_to_sage(a.ecl())
         f(1, 2, 3)
         sage: a=maxima_lib("'at(f(x,y,z),x=1)")
         sage: a
-        'at(f(x,y,z),x=1)
+        'at(f(x,y,z),x = 1)
         sage: max_at_to_sage(a.ecl())
         f(1, y, z)
     """
@@ -1612,18 +1616,18 @@ def sr_to_max(expr):
             # This should be safe if we treated all special operators above
             #furthermore, this should already use any _maxima_ methods on op, so use any
             #conversion methods that are registered in pynac.
-            op_max=maxima(op).ecl()
+            op_max = maxima(op).ecl()
             if op_max in max_op_dict:
                 raise RuntimeError("Encountered operator mismatch in sr-to-maxima translation")
-            sage_op_dict[op]=op_max
-            max_op_dict[op_max]=op
+            sage_op_dict[op] = op_max
+            max_op_dict[op_max] = op
         return EclObject(([sage_op_dict[op]],
                      [sr_to_max(o) for o in expr.operands()]))
     elif expr.is_symbol() or expr._is_registered_constant_():
-        if not expr in sage_sym_dict:
-            sym_max=maxima(expr).ecl()
-            sage_sym_dict[expr]=sym_max
-            max_sym_dict[sym_max]=expr
+        if expr not in sage_sym_dict:
+            sym_max = maxima(expr).ecl()
+            sage_sym_dict[expr] = sym_max
+            max_sym_dict[sym_max] = expr
         return sage_sym_dict[expr]
     else:
         try:
@@ -1691,7 +1695,7 @@ def max_to_sr(expr):
             max_sym_dict[expr]=sage_symbol
         return max_sym_dict[expr]
     else:
-        e=expr.python()
-        if isinstance(e,float):
+        e = expr.python()
+        if isinstance(e, float):
             return sage.rings.real_double.RealDoubleElement(e)
         return e

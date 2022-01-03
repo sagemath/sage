@@ -126,11 +126,11 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: from sage.interfaces.interface import Interface
             sage: i = Interface("")
             sage: i.rand_seed() # random
-            318491487L
+            318491487
 
             sage: s = Singular()
             sage: s.rand_seed() # random
-            365260051L
+            365260051
         """
         import sage.doctest
         if sage.doctest.DOCTEST_MODE:
@@ -734,20 +734,20 @@ class InterfaceElement(Element):
                 raise TypeError(x)
 
     def _latex_(self):
-#        return "\\begin{verbatim}%s\\end{verbatim}"%self
+        #        return "\\begin{verbatim}%s\\end{verbatim}"%self
         string = str(self)
-        if not '|' in string:
+        if '|' not in string:
             delim = '|'
-        elif not '#' in string:
+        elif '#' not in string:
             delim = '#'
-        elif not '@' in string:
+        elif '@' not in string:
             delim = '@'
-        elif not '~' in string:
+        elif '~' not in string:
             delim = '~'
-        return "\\verb%s%s%s"%(delim, string, delim)
+        return "\\verb%s%s%s" % (delim, string, delim)
 
     def __iter__(self):
-        for i in range(1, len(self)+1):
+        for i in range(1, len(self) + 1):
             yield self[i]
 
     def __len__(self):

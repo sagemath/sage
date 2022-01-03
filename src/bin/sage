@@ -298,6 +298,12 @@ if [ -f "${SELF}-env" ]; then
     fi
 fi
 
+if [ -f "${SELF}-src-env-config.in" ]; then
+    # The sage script is being run out of SAGE_ROOT/src/bin.
+    # In this case, put this directory in the front of the PATH.
+    export PATH="$SAGE_SRC/bin:$PATH"
+fi
+
 if [ -z "$DOT_SAGE" ]; then
     export DOT_SAGE="$HOME/.sage"
 fi
@@ -466,7 +472,7 @@ usage_advanced() {
     echo "                         labeled \"# optional\" or labeled"
     echo "                         \"# optional tag\" for any of the tags given."
     echo "     --randorder[=seed] -- randomize order of tests"
-    echo "     --random-seed[=seed]  -- random seed for fuzzing doctests"
+    echo "     --random-seed[=seed]  -- random seed (integer) for fuzzing doctests"
     echo "     --new            -- only test files modified since last commit"
     echo "     --initial        -- only show the first failure per block"
     echo "     --debug          -- drop into PDB after an unexpected error"

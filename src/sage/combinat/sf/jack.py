@@ -35,7 +35,7 @@ import sage.categories.all
 from sage.rings.all import Integer, QQ
 from sage.arith.all import gcd, lcm
 from sage.rings.fraction_field import is_FractionField
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 from sage.categories.morphism import SetMorphism
 from sage.categories.homset import Hom, End
 from sage.rings.fraction_field import FractionField
@@ -1215,7 +1215,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
         to_cache_2 = self._h_to_self_cache[n]
         for mu in from_cache_1:
             for la in from_cache_1[mu]:
-                if not la in to_cache_1:
+                if la not in to_cache_1:
                     to_cache_1[la] = {}
                     to_cache_2[la] = {}
                 to_cache_2[la][mu] = from_cache_1[mu][la]

@@ -19,11 +19,9 @@ from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc import _stable_uniq
-from sage.symbolic.expression import is_Expression
-from sage.symbolic.callable import is_CallableSymbolicExpression
-from sage.symbolic.ring import SR
-
+from sage.structure.element import Expression
 from .set import Set, Set_base, Set_boolean_operators, Set_add_sub_operators
+
 
 class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_operators,
                    UniqueRepresentation):
@@ -157,7 +155,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
         other_predicates = []
 
         for predicate in predicates:
-            if is_CallableSymbolicExpression(predicate):
+            if isinstance(predicate, Expression) and predicate.is_callable():
                 if names is None:
                     names = tuple(str(var) for var in predicate.args())
                 elif len(names) != len(predicate.args()):
@@ -165,10 +163,11 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
                 if vars is None:
                     vars = predicate.args()
                 callable_symbolic_predicates.append(predicate)
-            elif is_Expression(predicate):
+            elif isinstance(predicate, Expression):
                 if names is None:
                     raise TypeError('use callable symbolic expressions or provide variable names')
                 if vars is None:
+                    from sage.symbolic.ring import SR
                     vars = tuple(SR.var(name) for name in names)
                 callable_symbolic_predicates.append(predicate.function(*vars))
             else:
@@ -267,7 +266,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             sage: ZeroDimButNotNullary._repr_condition(ZeroDimButNotNullary._predicates[0])
             't > 0'
         """
-        if is_CallableSymbolicExpression(predicate):
+        if isinstance(predicate, Expression) and predicate.is_callable():
             args = self.arguments()
             if len(args) == 1:
                 args = args[0]
@@ -291,6 +290,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             sage: args[0].parent()
             Symbolic Ring
         """
+        from sage.symbolic.ring import SR
         return SR.var(self.variable_names())
 
     def _element_constructor_(self, *args, **kwds):
@@ -359,7 +359,7 @@ class ConditionSet(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_ope
             sage: Nullary._call_predicate(predicate, element)
             t > 0
         """
-        if is_CallableSymbolicExpression(predicate):
+        if isinstance(predicate, Expression) and predicate.is_callable():
             if len(predicate.arguments()) != 1:
                 return predicate(*element)
         return predicate(element)

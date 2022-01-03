@@ -12,7 +12,7 @@ EXAMPLES::
     sage: a
     10
     sage: type(a)
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
     sage: a*a
     100
     sage: timeit('a*a')   # random output
@@ -35,7 +35,7 @@ objects to GAP objects, for example strings to strings::
     sage: libgap('List([1..10], i->i^2)')
     "List([1..10], i->i^2)"
     sage: type(_)
-    <type 'sage.libs.gap.element.GapElement_String'>
+    <class 'sage.libs.gap.element.GapElement_String'>
 
 You can usually use the :meth:`~sage.libs.gap.element.GapElement.sage`
 method to convert the resulting GAP element back to its Sage
@@ -44,7 +44,7 @@ equivalent::
     sage: a.sage()
     10
     sage: type(_)
-    <type 'sage.rings.integer.Integer'>
+    <class 'sage.rings.integer.Integer'>
 
     sage: libgap.eval('5/3 + 7*E(3)').sage()
     7*zeta3 + 5/3
@@ -93,7 +93,7 @@ can be used as follows::
     sage: lst = libgap([1,5,7]);  lst
     [ 1, 5, 7 ]
     sage: type(lst)
-    <type 'sage.libs.gap.element.GapElement_List'>
+    <class 'sage.libs.gap.element.GapElement_List'>
     sage: len(lst)
     3
     sage: lst[0]
@@ -101,7 +101,7 @@ can be used as follows::
     sage: [ x^2 for x in lst ]
     [1, 25, 49]
     sage: type(_[0])
-    <type 'sage.libs.gap.element.GapElement_Integer'>
+    <class 'sage.libs.gap.element.GapElement_Integer'>
 
 Note that you can access the elements of GAP ``List`` objects as you
 would expect from Python (with indexing starting at 0), but the
@@ -217,7 +217,7 @@ from .element cimport *
 
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Vector
-from sage.rings.all import ZZ
+from sage.rings.integer_ring import ZZ
 from sage.misc.cachefunc import cached_method
 from sage.misc.randstate cimport current_randstate
 
@@ -637,7 +637,7 @@ class Gap(Parent):
         EXAMPLES::
 
             sage: type(libgap)
-            <type 'sage.misc.lazy_import.LazyImport'>
+            <class 'sage.misc.lazy_import.LazyImport'>
             sage: type(libgap._get_object())
             <class 'sage.libs.gap.libgap.Gap'>
         """

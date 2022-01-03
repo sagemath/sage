@@ -267,8 +267,9 @@ sage: def crack_given_decrypt(n, m):
 ....:         if g != 1 and g != n:
 ....:             return g
 sage: n=32295194023343; e=29468811804857; d=11127763319273
-sage: crack_given_decrypt(n, e*d - 1)
-737531
+sage: p = crack_given_decrypt(n, e*d - 1)
+sage: p in (737531, n/737531)  # could be other prime divisor
+True
 sage: factor(n)
 737531 * 43788253
 sage: e = 22601762315966221465875845336488389513

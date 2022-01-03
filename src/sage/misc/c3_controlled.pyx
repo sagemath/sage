@@ -70,13 +70,7 @@ algorithm easily fails if the order of the bases is not chosen
 consistently (here for ``A2`` w.r.t. ``A1``)::
 
     sage: class B6(A1,A2): pass
-    sage: class B7(B6,A5): pass  # py2
-    Traceback (most recent call last):
-    ...
-    TypeError: Error when calling the metaclass bases
-        Cannot create a consistent method resolution
-    order (MRO) for bases ...
-    sage: class B7(B6,A5): pass  # py3
+    sage: class B7(B6,A5): pass
     Traceback (most recent call last):
     ...
     TypeError: Cannot create a consistent method resolution

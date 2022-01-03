@@ -34,7 +34,7 @@ from copy import copy
 cdef class GenericBackend:
 
     cpdef base_ring(self):
-        from sage.rings.all import RDF
+        from sage.rings.real_double import RDF
         return RDF
 
     cpdef zero(self):
@@ -532,7 +532,7 @@ cdef class GenericBackend:
         p = cls()                         # fresh instance of the backend
         if tester is None:
             tester = p._tester(**options)
-        from sage.modules.all import vector
+        from sage.modules.free_module_element import vector
         # Ensure there are at least 2 variables
         p.add_variables(2)
         coeffs = ([0, vector([1, 2])], [1, vector([2, 3])])
@@ -1691,18 +1691,18 @@ cpdef GenericBackend get_solver(constraint_generation = False, solver = None, ba
         <...sage.numerical.backends.ppl_backend.PPLBackend...>
         sage: p.base_ring()
         Rational Field
-        sage: p = get_solver(base_ring=AA); p
+        sage: p = get_solver(base_ring=AA); p                                         # optional - sage.rings.number_field
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()
+        sage: p.base_ring()                                                           # optional - sage.rings.number_field
         Algebraic Real Field
-        sage: d = polytopes.dodecahedron()
-        sage: p = get_solver(base_ring=d.base_ring()); p
+        sage: d = polytopes.dodecahedron()                                            # optional - sage.rings.number_field
+        sage: p = get_solver(base_ring=d.base_ring()); p                              # optional - sage.rings.number_field
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()
+        sage: p.base_ring()                                                           # optional - sage.rings.number_field
         Number Field in sqrt5 with defining polynomial x^2 - 5 with sqrt5 = 2.236067977499790?
-        sage: p = get_solver(solver='InteractiveLP', base_ring=QQ); p
+        sage: p = get_solver(solver='InteractiveLP', base_ring=QQ); p                 # optional - sage.rings.number_field
         <...sage.numerical.backends.interactivelp_backend.InteractiveLPBackend...>
-        sage: p.base_ring()
+        sage: p.base_ring()                                                           # optional - sage.rings.number_field
         Rational Field
 
     Passing a callable as the 'solver'::

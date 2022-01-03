@@ -1198,7 +1198,7 @@ If this all works, you can then make calls like:
         ::
 
             sage: singular._expect.before.decode('ascii')
-            u'...10\r\n> '
+            '...10\r\n> '
 
         We test interrupting ``_expect_expr`` using the GP interface,
         see :trac:`6661`.  Unfortunately, this test doesn't work reliably using
@@ -1308,12 +1308,12 @@ If this all works, you can then make calls like:
         if self._expect is None:
             return
         rnd = randrange(2147483647)
-        s = str(rnd+1)
-        cmd = cmd%rnd
+        s = str(rnd + 1)
+        cmd = cmd % rnd
         self._sendstr(cmd)
         try:
             self._expect_expr(timeout=0.5)
-            if not s in self._before():
+            if s not in self._before():
                 self._expect_expr(s, timeout=0.5)
                 self._expect_expr(timeout=0.5)
         except pexpect.TIMEOUT:

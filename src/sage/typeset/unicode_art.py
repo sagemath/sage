@@ -51,19 +51,6 @@ class UnicodeArt(CharacterArt):
     """
     _string_type = str
 
-    def __unicode__(self):
-        r"""
-        Return a unicode representation of ``self``.
-
-        EXAMPLES::
-
-            sage: i = var('i')
-            sage: ua = unicode_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))
-            sage: str(ua)
-            ' \u03c0\u22c5x\n\u212f   '
-        """
-        return repr(self).decode("utf-8")
-
 
 _unicode_art_factory = CharacterArtFactory(
     UnicodeArt, str, '_unicode_art_',
@@ -119,7 +106,7 @@ def unicode_art(*obj, **kwds):
     If specified, the ``sep_baseline`` overrides the baseline of
     an unicode art separator::
 
-        sage: sep_line = unicode_art('\n'.join(u' ⎟ ' for _ in range(5)), baseline=5)
+        sage: sep_line = unicode_art('\n'.join(' ⎟ ' for _ in range(5)), baseline=5)
         sage: unicode_art(*AlternatingSignMatrices(3),
         ....:             separator=sep_line, sep_baseline=1)
                 ⎟         ⎟         ⎟            ⎟         ⎟         ⎟
@@ -159,14 +146,14 @@ def unicode_art(*obj, **kwds):
                                             baseline=baseline)
 
 
-_subscript_dict = {'0': u'₀', '1': u'₁', '2': u'₂', '3': u'₃', '4': u'₄',
-                   '5': u'₅', '6': u'₆', '7': u'₇', '8': u'₈', '9': u'₉',
-                   '-': u'₋', '+': u'₊'}
+_subscript_dict = {'0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄',
+                   '5': '₅', '6': '₆', '7': '₇', '8': '₈', '9': '₉',
+                   '-': '₋', '+': '₊'}
 
 
-_superscript_dict = {'0': u'⁰', '1': u'¹', '2': u'²', '3': u'³', '4': u'⁴',
-                     '5': u'⁵', '6': u'⁶', '7': u'⁷', '8': u'⁸', '9': u'⁹',
-                     '-': u'⁻', '+': u'⁺', '/': u'ᐟ'}
+_superscript_dict = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+                     '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹',
+                     '-': '⁻', '+': '⁺', '/': 'ᐟ'}
 
 
 def unicode_superscript(x):
@@ -181,7 +168,7 @@ def unicode_superscript(x):
         sage: unicode_superscript(-712/5)
         '⁻⁷¹²ᐟ⁵'
     """
-    return u''.join(_superscript_dict[i] for i in str(x))
+    return ''.join(_superscript_dict[i] for i in str(x))
 
 
 def unicode_subscript(x):
@@ -196,4 +183,4 @@ def unicode_subscript(x):
         sage: unicode_subscript(-712)
         '₋₇₁₂'
     """
-    return u''.join(_subscript_dict[i] for i in str(x))
+    return ''.join(_subscript_dict[i] for i in str(x))

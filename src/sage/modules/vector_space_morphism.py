@@ -688,10 +688,12 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     from sage.modules.module import is_VectorSpace
     from sage.modules.free_module import VectorSpace
     from sage.categories.homset import Hom
-    from sage.symbolic.ring import SR
-    from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
+    try:
+        from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
+    except ImportError:
+        Vector_callable_symbolic_dense = ()
 
-    if not side in ['left', 'right']:
+    if side not in ['left', 'right']:
         raise ValueError("side must be 'left' or 'right', not {0}".format(side))
     if not (is_Matrix(arg0) or is_VectorSpace(arg0)):
         raise TypeError('first argument must be a matrix or a vector space, not {0}'.format(arg0))
@@ -734,6 +736,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     elif isinstance(arg2, (list, tuple)):
         pass
     elif isinstance(arg2, Vector_callable_symbolic_dense):
+        from sage.symbolic.ring import SR
         args = arg2.parent().base_ring()._arguments
         exprs = arg2.change_ring(SR)
         m = len(args)

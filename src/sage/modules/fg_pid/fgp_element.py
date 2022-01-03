@@ -440,7 +440,7 @@ class FGP_Element(ModuleElement):
             sage: Q.0.additive_order()
             12
             sage: type(Q.0.additive_order())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
             sage: Q.1.additive_order()
             +Infinity
         """
@@ -448,7 +448,9 @@ class FGP_Element(ModuleElement):
         I = Q.invariants()
         v = self.vector()
 
-        from sage.rings.all import infinity, Mod, Integer
+        from sage.rings.infinity import infinity
+        from sage.rings.finite_rings.integer_mod import Mod
+        from sage.rings.integer import Integer
         from sage.arith.all import lcm
         n = Integer(1)
         for i, a in enumerate(I):

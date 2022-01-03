@@ -1477,7 +1477,7 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
             Traceback (most recent call last):
             ...
             TypeError: [ [ 0, 1 ], [ 0, 2 ] ]
-            of type <type 'sage.libs.gap.element.GapElement_List'> not valid
+            of type <class 'sage.libs.gap.element.GapElement_List'> not valid
             to initialize an element of the universal cyclotomic field
 
         Some conversions from symbolic functions are possible::
@@ -1534,14 +1534,16 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
             return self.element_class(self, obj)
 
         # late import to avoid slowing down the above conversions
-        from sage.rings.number_field.number_field_element import NumberFieldElement
-        from sage.rings.number_field.number_field import NumberField_cyclotomic, CyclotomicField
+        import sage.rings.abc
         P = parent(elt)
-        if isinstance(elt, NumberFieldElement) and isinstance(P, NumberField_cyclotomic):
-            n = P.gen().multiplicative_order()
-            elt = CyclotomicField(n)(elt)
-            return sum(c * self.gen(n, i)
-                       for i, c in enumerate(elt._coefficients()))
+        if isinstance(P, sage.rings.abc.NumberField_cyclotomic):
+            from sage.rings.number_field.number_field_element import NumberFieldElement
+            if isinstance(elt, NumberFieldElement):
+                from sage.rings.number_field.number_field import CyclotomicField
+                n = P.gen().multiplicative_order()
+                elt = CyclotomicField(n)(elt)
+                return sum(c * self.gen(n, i)
+                           for i, c in enumerate(elt._coefficients()))
 
         if hasattr(elt, '_algebraic_'):
             return elt._algebraic_(self)
@@ -1568,8 +1570,8 @@ class UniversalCyclotomicField(UniqueRepresentation, Field):
         """
         if other is ZZ or other is QQ:
             return True
-        from sage.rings.number_field.number_field import NumberField_cyclotomic
-        if isinstance(other, NumberField_cyclotomic):
+        import sage.rings.abc
+        if isinstance(other, sage.rings.abc.NumberField_cyclotomic):
             return True
 
     def _factor_univariate_polynomial(self, f):

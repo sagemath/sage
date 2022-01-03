@@ -144,7 +144,36 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
     SPKG_NAME=$(basename $DIR)
     SPKG_VERSION=$(newest_version $SPKG_NAME)
 
-    in_sdist=no
+    in_sdist=yes
+
+    dnl Determine package source
+    dnl
+    if test -f "$DIR/requirements.txt"; then
+        SPKG_SOURCE=pip
+        # Since pip packages are downloaded and installed by pip, we don't
+        # include them in the source tarball. At the time of this writing,
+        # all pip packages are optional.
+        in_sdist=no
+    elif test ! -f "$DIR/checksums.ini"; then
+        if test -f "$DIR/spkg-install"; then
+            SPKG_SOURCE=script
+        else
+            dnl a dummy script package
+            SPKG_SOURCE=none
+        fi
+        # We assume that either (a) the sources for an optional script
+        # package will be downloaded by the script, or (b) that a
+        # standard script package's sources are already a part of the
+        # sage repository (and thus the release tarball). As a result,
+        # we don't need to download the sources, which is what
+        # "in_sdist" really means. At the time of this writing, the
+        # only standard script packages are sage_conf and sagelib.
+        # The sources of these packages are in subdirectories of
+        # $SAGE_ROOT/pkgs.
+        in_sdist=no
+    else
+        SPKG_SOURCE=normal
+    fi
 
     dnl Write out information about the installation tree, using the name of the tree prefix
     dnl variable (SAGE_LOCAL or SAGE_VENV).  The makefile variable of SPKG is called "trees_SPKG",
@@ -152,12 +181,49 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
     dnl trees.  For example, if we decide to create a separate tree for a venv with the
     dnl Jupyter notebook, then packages such as jupyter_core would have to be installed into
     dnl two trees.
-    SPKG_TREE_VAR=SAGE_LOCAL
-    if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt"; then
-        dnl A Python package
-        SPKG_TREE_VAR=SAGE_VENV
+    if test -f "$DIR/trees.txt"; then
+        SPKG_TREE_VAR="$(sed "s/#.*//;" "$DIR/trees.txt")"
+    else
+        SPKG_TREE_VAR=SAGE_LOCAL
+        if test -f "$DIR/requirements.txt" -o -f "$DIR/install-requires.txt"; then
+            dnl A Python package
+            SPKG_TREE_VAR=SAGE_VENV
+        fi
     fi
     SAGE_PACKAGE_TREES="${SAGE_PACKAGE_TREES}$(printf '\ntrees_')${SPKG_NAME} = ${SPKG_TREE_VAR}"
+
+    dnl Determine whether it is installed already
+    AS_VAR_SET([is_installed], [no])
+    for treevar in ${SPKG_TREE_VAR} SAGE_LOCAL; do
+        AS_VAR_COPY([t], [$treevar])
+        AS_IF([test -n "$t" -a -d "$t/var/lib/sage/installed/" ], [
+            for f in "$t/var/lib/sage/installed/$SPKG_NAME"-*; do
+                AS_IF([test -r "$f"], [
+                    AS_VAR_IF([SPKG_SOURCE], [normal], [
+                        dnl Only run the multiple installation record test for normal packages,
+                        dnl not for script packages. We actually do not clean up after those...
+                        AS_IF([test "$is_installed" = "yes"], [
+                            AC_MSG_ERROR(m4_normalize([
+                                multiple installation records for $SPKG_NAME:
+                                m4_newline($(ls -l "$t/var/lib/sage/installed/$SPKG_NAME"-*))
+                                m4_newline([only one should exist, so please delete some or all
+                                of these files and re-run "$srcdir/configure"])
+                            ]))
+                        ])
+                    ])
+                    AS_VAR_SET([is_installed], [yes])
+                ])
+            done
+            dnl Only check the first existing tree, so that we do not issue "multiple installation" warnings
+            dnl when SAGE_LOCAL = SAGE_VENV
+            break
+        ])
+    done
+
+    # Determine whether package is enabled
+    AS_VAR_IF([SAGE_ENABLE_${SPKG_NAME}], [if_installed],
+          [AS_VAR_SET([SAGE_ENABLE_${SPKG_NAME}], $is_installed)])
+    AS_VAR_COPY([want_spkg], [SAGE_ENABLE_${SPKG_NAME}])
 
     uninstall_message=""
     SAGE_NEED_SYSTEM_PACKAGES_VAR=SAGE_NEED_SYSTEM_PACKAGES
@@ -177,7 +243,11 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
         AS_VAR_IF([SAGE_ENABLE_]${SPKG_NAME}, [yes], [
             message="$SPKG_TYPE, will be installed as an SPKG"
         ], [
-            message="$SPKG_TYPE, use \"$srcdir/configure --enable-$SPKG_NAME\" to install"
+            message="$SPKG_TYPE"
+            AS_VAR_IF([SPKG_SOURCE], [none], [], [
+                dnl Non-dummy optional/experimental package, advertise how to install
+                message="$message, use \"$srcdir/configure --enable-$SPKG_NAME\" to install"
+            ])
             SAGE_NEED_SYSTEM_PACKAGES_VAR=SAGE_NEED_SYSTEM_PACKAGES_OPTIONAL
         ])
         ;;
@@ -188,24 +258,10 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
 
     case "$SPKG_TYPE" in
     standard)
-        in_sdist=yes
         ;;
     optional|experimental)
+        in_sdist=no
         uninstall_message=", use \"$srcdir/configure --disable-$SPKG_NAME\" to uninstall"
-        stampfile=""
-        for f in "$SAGE_SPKG_INST/$SPKG_NAME"-*; do
-            AS_IF([test -r "$f"], [
-                AS_IF([test -n "$stampfile"], [
-                    AC_MSG_ERROR(m4_normalize([
-                        multiple installation records for $SPKG_NAME:
-                        m4_newline($(ls -l "$SAGE_SPKG_INST/$SPKG_NAME"-*))
-                        m4_newline([only one should exist, so please delete some or all
-                        of these files and re-run "$srcdir/configure"])
-                    ]))
-                ])
-                stampfile=yes
-            ])
-        done
         ;;
     esac
 
@@ -228,8 +284,12 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
         AS_VAR_IF([sage_spkg_install], [no], [
             dnl We will use the system package (or not required for this platform.)
             SAGE_DUMMY_PACKAGES="${SAGE_DUMMY_PACKAGES} \\$(printf '\n    ')${SPKG_NAME}"
-            AS_VAR_IF([sage_require], [yes], [ message="using system package; SPKG will not be installed"
-            ],                               [ message="not required on your platform; SPKG will not be installed"
+            AS_VAR_IF([sage_require], [yes], [ message="using system package"
+            ],                               [ message="not required on your platform"
+            ])
+            dnl Trac #31163: Only talk about the SPKG if there is an SPKG
+            AS_VAR_IF([SPKG_SOURCE], [none], [], [
+                message="$message; SPKG will not be installed"
             ])
         ], [
             dnl We will not use the system package.
@@ -262,52 +322,9 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
         AS_VAR_POPDEF([sage_require])dnl
         AS_VAR_POPDEF([sage_spkg_install])dnl
 
-    # Packages that should be included in the source distribution
-    # This includes all standard packages and two special cases
-    case "$SPKG_NAME" in
-    mpir)
-        in_sdist=yes
-        ;;
-    esac
-
-    # Determine package source
-    #
-    if test -f "$DIR/requirements.txt"; then
-        SPKG_SOURCE=pip
-        # Since pip packages are downloaded and installed by pip, we don't
-        # include them in the source tarball. At the time of this writing,
-        # all pip packages are optional.
-        in_sdist=no
-    elif test ! -f "$DIR/checksums.ini"; then
-        SPKG_SOURCE=script
-        # We assume that either (a) the sources for an optional script
-        # package will be downloaded by the script, or (b) that a
-        # standard script package's sources are already a part of the
-        # sage repository (and thus the release tarball). As a result,
-        # we don't need to download the sources, which is what
-        # "in_sdist" really means. At the time of this writing, the
-        # only standard script packages are sage_conf and sagelib.
-        # The sources of these packages are in subdirectories of
-        # $SAGE_ROOT/pkgs.
-        in_sdist=no
-    else
-        SPKG_SOURCE=normal
-    fi
-
     if test "$in_sdist" = yes; then
         SAGE_SDIST_PACKAGES="${SAGE_SDIST_PACKAGES} \\$(printf '\n    ')${SPKG_NAME}"
     fi
-
-    # Determine whether package is enabled
-    AS_VAR_SET([is_installed], [no])
-    for f in "$SAGE_SPKG_INST/${SPKG_NAME}"-*; do
-        AS_IF([test -r "$f"],
-              [AS_VAR_SET([is_installed], [yes])])
-    done
-
-    AS_VAR_IF([SAGE_ENABLE_${SPKG_NAME}}], [if_installed],
-          [AS_VAR_SET([SAGE_ENABLE_${SPKG_NAME}], $is_installed)])
-    AS_VAR_COPY([want_spkg], [SAGE_ENABLE_${SPKG_NAME}])
 
     spkg_line=" \\$(printf '\n    ')$SPKG_NAME"
     AS_CASE([$is_installed-$want_spkg],
@@ -341,7 +358,7 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
     pip)
         SAGE_PIP_PACKAGES="${SAGE_PIP_PACKAGES} \\$(printf '\n    ')${SPKG_NAME}"
         ;;
-    script)
+    script|none)
         SAGE_SCRIPT_PACKAGES="${SAGE_SCRIPT_PACKAGES} \\$(printf '\n    ')${SPKG_NAME}"
         ;;
     normal)

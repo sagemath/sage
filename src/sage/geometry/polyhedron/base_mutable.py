@@ -128,7 +128,7 @@ class Polyhedron_mutable(Polyhedron_base):
             sage: r
             Relative interior of None
         """
-        if not ob._polyhedron is self:
+        if ob._polyhedron is not self:
             raise ValueError
         self._dependent_objects.append(ob)
 

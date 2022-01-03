@@ -41,7 +41,7 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
@@ -328,9 +328,9 @@ def complete_poly(n):
 
     Checking the numerical results up to 20::
 
-        sage: from sage.functions.orthogonal_polys import hermite
-        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))
-        sage: all(p(i) == complete_poly(i) for i in range(2, 20))
+        sage: from sage.functions.orthogonal_polys import hermite       # optional - sage.symbolic
+        sage: p = lambda n: 2^(-n/2)*hermite(n, x/sqrt(2))              # optional - sage.symbolic
+        sage: all(p(i) == complete_poly(i) for i in range(2, 20))       # optional - sage.symbolic
         True
     """
     # global complete_matching_polys # if we do eventually make it a C array...

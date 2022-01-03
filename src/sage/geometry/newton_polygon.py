@@ -464,7 +464,7 @@ class NewtonPolygon_element(Element):
 
             sage: from sage.geometry.newton_polygon import NewtonPolygon
             sage: NP = NewtonPolygon([ (0,0), (1,1), (2,6) ])
-            sage: polygon = NP.plot()
+            sage: polygon = NP.plot()  # optional - sage.plot
         """
         vertices = self.vertices()
         if len(vertices) == 0:
@@ -723,7 +723,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
             return self.element_class(polyhedron, parent=self)
         if arg == 1:
             polyhedron = Polyhedron(base_ring=self.base_ring(),
-                                    vertices=[(0,0)], rays=[(0,1)])
+                                    vertices=[(0, 0)], rays=[(0, 1)])
             return self.element_class(polyhedron, parent=self)
         if not isinstance(arg, list):
             try:
@@ -736,7 +736,7 @@ class ParentNewtonPolygon(Parent, UniqueRepresentation):
             x = y = 0
             vertices = [(x, y)]
             for slope in arg:
-                if not slope in self.base_ring():
+                if slope not in self.base_ring():
                     raise TypeError("argument must be a list of coordinates or a list of (rational) slopes")
                 x += 1
                 y += slope

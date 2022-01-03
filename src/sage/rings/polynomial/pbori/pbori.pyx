@@ -1378,9 +1378,7 @@ cdef class BooleanPolynomialRing(MPolynomialRing_base):
         EXAMPLES::
 
             sage: P.<x,y,z> = BooleanPolynomialRing(3)
-            sage: [P._random_monomial_dfirst(3, (0,1,2)) for _ in range(10)]  # py2
-            [x*y*z, x*y*z, x*y*z, y*z, x*z, z, z, y*z, x*y*z, 1]
-            sage: [P._random_monomial_dfirst(3, (0,1,2)) for _ in range(10)]  # py3 random
+            sage: [P._random_monomial_dfirst(3, (0,1,2)) for _ in range(10)]  # random
             [x*y*z, x*y*z, x*y*z, x*y, x*z, x, x, y*z, x*y*z, 1]
         """
         from sage.rings.integer_ring import ZZ
@@ -1901,7 +1899,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
         sage: M.gens()
         (x, y)
         sage: type(M.gen(0))
-        <type 'sage.rings.polynomial.pbori.pbori.BooleanMonomial'>
+        <class 'sage.rings.polynomial.pbori.pbori.BooleanMonomial'>
 
     Since :trac:`9138`, boolean monomial monoids are
     unique parents and are fit into the category framework::

@@ -1,0 +1,9 @@
+$(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/xz-$(vers_xz)
+
+----------
+All lines of this file are ignored except the first.
+It is copied by SAGE_ROOT/build/make/install into SAGE_ROOT/build/make/Makefile.
+
+Adding the above instead of "xz" makes sure that the dependency is not replaced
+by ".dummy".  In this way, liblzma delegates building to xz when
+liblzma appears as a dependency.

@@ -38,11 +38,11 @@ from sage.schemes.affine.affine_space import is_AffineSpace
 from sage.schemes.projective.projective_space import is_ProjectiveSpace, ProjectiveSpace
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.number_fields import NumberFields
+import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.factory import Qp
 from sage.rings.rational_field import QQ
 from sage.rings.number_field.number_field_ideal import NumberFieldFractionalIdeal
-from sage.rings.padics.generic_nodes import is_pAdicField
 from sage.categories.topological_spaces import TopologicalSpaces
 
 def is_Berkovich(space):
@@ -440,7 +440,7 @@ class Berkovich_Cp_Affine(Berkovich_Cp):
             if not ideal.is_prime():
                 raise ValueError('passed non prime ideal')
             self._base_type = 'number field'
-        elif is_pAdicField(base): # change base to Qpbar
+        elif isinstance(base, sage.rings.abc.pAdicField):  # change base to Qpbar
             prime = base.prime()
             ideal = None
             self._base_type = 'padic field'
@@ -614,14 +614,14 @@ class Berkovich_Cp_Projective(Berkovich_Cp):
                 base = ProjectiveSpace(Qp(base), 1)
             else:
                 raise ValueError("non-prime passed into Berkovich space")
-        if base in NumberFields() or is_pAdicField(base):
+        if base in NumberFields() or isinstance(base, sage.rings.abc.pAdicField):
             base = ProjectiveSpace(base, 1)
         if not is_ProjectiveSpace(base):
             try:
                 base = ProjectiveSpace(base)
             except:
                 raise ValueError("base of projective Berkovich space must be projective space")
-        if not (is_pAdicField(base.base_ring())):
+        if not isinstance(base.base_ring(), sage.rings.abc.pAdicField):
             if base.base_ring() not in NumberFields():
                 raise ValueError("base of projective Berkovich space must be " + \
                     "projective space over Qp or a number field")

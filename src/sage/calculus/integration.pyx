@@ -32,7 +32,6 @@ from memory_allocator cimport MemoryAllocator
 from sage.rings.real_double import RDF
 from sage.libs.gsl.all cimport *
 from sage.misc.sageinspect import sage_getargspec
-from sage.ext.fast_eval cimport FastDoubleFunc
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 from sage.ext.fast_callable import fast_callable
 
@@ -60,9 +59,6 @@ cdef double c_f(double t, void *params):
       return 0
 
    return value
-
-cdef double c_ff(double t, void *params):
-    return (<FastDoubleFunc>params)._call_c(&t)
 
 
 def numerical_integral(func, a, b=None,
@@ -249,6 +245,14 @@ def numerical_integral(func, a, b=None,
         Traceback (most recent call last):
         ...
         ValueError: integral does not converge at -infinity
+
+    Symbolic functions can be integrated as conveniently as symbolic
+    expressions, as in :trac:`15219`::
+
+        sage: h(x) = x
+        sage: numerical_integral(h,0,1)[0] # abs tol 1e-8
+        0.5
+
     """
     cdef double abs_err # step size
     cdef double result
@@ -273,7 +277,7 @@ def numerical_integral(func, a, b=None,
     cdef gsl_integration_workspace* W
     W = NULL
 
-    if not isinstance(func, FastDoubleFunc):
+    if True:
         from sage.rings.infinity import Infinity
         try:
             if hasattr(func, 'arguments'):
@@ -315,13 +319,10 @@ def numerical_integral(func, a, b=None,
                 else:
                    if ell.is_numeric() and not ell.is_zero():
                       raise ValueError('integral does not converge at infinity')
-            func = func._fast_float_(v)
+            func = fast_callable(func, vars=[v], domain=float)
 
-    if isinstance(func, FastDoubleFunc):
-        F.function = c_ff
-        F.params = <void *>func
 
-    elif not isinstance(func, compiled_integrand):
+    if not isinstance(func, compiled_integrand):
       wrapper = PyFunctionWrapper()
       if not func is None:
          wrapper.the_function = func
@@ -612,8 +613,8 @@ def monte_carlo_integral(func, xl, xu, size_t calls, algorithm='plain',
                               "more items in upper and lower limits"
                              ).format(len(vars), tuple(vars), target_dim))
 
-        from sage.symbolic.expression import is_Expression
-        if is_Expression(func):
+        from sage.structure.element import Expression
+        if isinstance(func, Expression):
             if params:
                 to_sub = dict(zip(vars[-len(params):], params))
                 func = func.subs(to_sub)

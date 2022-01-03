@@ -19,16 +19,6 @@ Upstream Contact
 -  Email: Michael.Stoll@uni-bayreuth.de
 -  Website: http://www.mathe2.uni-bayreuth.de/stoll/programs/
 
-Dependencies
-------------
-
--  GMP/MPIR
--  (GNU) patch
-
-
-Special Update/Build Instructions
----------------------------------
-
 
 Note on SSE2 instructions
 ~~~~~~~~~~~~~~~~~~~~~~~~~

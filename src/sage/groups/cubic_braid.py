@@ -76,7 +76,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
+from sage.categories.groups import Groups
 from sage.misc.cachefunc import cached_method
 from sage.libs.gap.element import GapElement
 from sage.groups.free_group import FreeGroup
@@ -102,12 +102,12 @@ def _reduce_tietze(tietze_list):
     easily possible using the second braid relation and degree reduction.
 
     EXAMPLES::
- 
+
         sage: from sage.groups.cubic_braid import _reduce_tietze
         sage: _reduce_tietze((2, 2, -3, 5, 3, 1, 1, 5))
         [-2, -5, -1]
     """
-    def eleminate_item(tietze_list):
+    def eliminate_item(tietze_list):
         """
         this sub method searches for an item in the Tietze expression such
         that it together with the first entry gives a pair which can be
@@ -118,14 +118,14 @@ def _reduce_tietze(tietze_list):
         l = len(tietze_list)
         if l < 2:
             return None
-        first  = tietze_list[0]
+        first = tietze_list[0]
         second = None
         for i in range(1,l):
             if tietze_list[i] in (first, -first):
                 if i == 1:
                     second = tietze_list[i]
                     break
-                if min(abs(abs(tietze_list[j])-abs(first)) for j in range(1, i)) > 1:
+                if all(abs(abs(tietze_list[j])-abs(first)) > 1 for j in range(1, i)):
                     # the entry on position i can be moved right to the first entry
                     # by the second braid relation
                     second = tietze_list[i]
@@ -143,7 +143,7 @@ def _reduce_tietze(tietze_list):
     l = len(tietze_list)
     for i in range(l):
         end = tietze_list[i:l]
-        tietze_list_red = eleminate_item(end)
+        tietze_list_red = eliminate_item(end)
         if tietze_list_red is not None:
             start = tietze_list[:i]
             return start + _reduce_tietze(tietze_list_red)
@@ -788,7 +788,11 @@ class CubicBraidGroup(FinitelyPresentedGroup):
                 elif cbg_type == CubicBraidGroup.type.AssionS:
                     rels.append(b[i+2]*b[i]*t[i+1]*b[i]*ti[i+1]*t[i+2]*t[i+1]*b[i]*ti[i+1]*ti[i+2])
 
-        FinitelyPresentedGroup.__init__(self, free_group, tuple(rels))
+        if self._nstrands <= 5 or cbg_type != CubicBraidGroup.type.Coxeter:
+            cat = Groups().Finite()
+        else:
+            cat = Groups().Infinite()
+        FinitelyPresentedGroup.__init__(self, free_group, tuple(rels), category=cat)
         self._free_group = free_group
 
         # ------------------------------------------------------------------------------------------------
@@ -1458,16 +1462,14 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             ...
             ValueError: Burau representation does not factor through the relations
         """
-        # -------------------------------------------------------------------------------
+        # ------------------------------------------------------------------
         # define matrix group by generators using the Burau representation
-        # -------------------------------------------------------------------------------
-
+        # ------------------------------------------------------------------
         unitary = False
         if isinstance(reduced, str):
             if reduced == 'unitary':
                 unitary = True
-
-        gen_list =[]
+        gen_list = []
         for braid_gen in self.gens():
             bur_mat = braid_gen.burau_matrix(root_bur=root_bur, domain=domain, characteristic=characteristic,
                      var=var, reduced=reduced)
@@ -1482,7 +1484,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         if unitary and herm_form.is_singular():
             unitary = False  # since a degenerated hermitian form doesn't define a unitary group
             if self._classical_invariant_form is None:
-                self._classical_invariant_form  = herm_form
+                self._classical_invariant_form = herm_form
 
         if unitary:
             from sage.rings.finite_rings.finite_field_base import is_FiniteField
@@ -1496,7 +1498,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             matrix_group = base_group.subgroup(gen_list)
         else:
             from sage.groups.matrix_gps.finitely_generated import MatrixGroup
-            matrix_group = MatrixGroup(gen_list)
+            matrix_group = MatrixGroup(gen_list, category=self.category())
 
         # -------------------------------------------------------------------------------
         # check if there is a well defined group homomorphism to matrix_group
@@ -1505,7 +1507,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         # here.
         # -------------------------------------------------------------------------------
         hom_to_mat = self.hom(matrix_group.gens(), check=False)
-        if not all( hom_to_mat(rel).is_one()  for rel in self.relations()):
+        if not all(hom_to_mat(rel).is_one() for rel in self.relations()):
             raise ValueError("Burau representation does not factor through the relations")
         matrix_group.register_conversion(hom_to_mat)
         return matrix_group
@@ -1539,7 +1541,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
             sage: C3 = CubicBraidGroup(3)
             sage: PC3 = C3.as_permutation_group()
             sage: C3.is_isomorphic(PC3)
-            #I  Forcing finiteness test
             True
             sage: PC3.degree()
             8
@@ -1936,7 +1937,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         """
         from sage.rings.infinity import infinity
         return not self.order() is infinity
-
 
     # ----------------------------------------------------------------------------------
     # creating a CubicBraidGroup as subgroup of self on less strands

@@ -39,7 +39,7 @@ from sage.combinat.rigged_configurations.bij_type_C import KRTToRCBijectionTypeC
 from sage.combinat.rigged_configurations.bij_type_C import RCToKRTBijectionTypeC
 from sage.combinat.rigged_configurations.bij_type_A import KRTToRCBijectionTypeA
 
-from sage.rings.all import QQ
+from sage.rings.rational_field import QQ
 
 class KRTToRCBijectionTypeA2Dual(KRTToRCBijectionTypeC):
     r"""

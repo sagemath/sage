@@ -257,7 +257,7 @@ cdef class ntl_ZZ(object):
             <... 'int'>
 
             sage: ntl.ZZ(10^30).__int__()
-            1000000000000000000000000000000L
+            1000000000000000000000000000000
             sage: type(ntl.ZZ(10^30).__int__())
             <class 'int'>
         """
@@ -293,7 +293,7 @@ cdef class ntl_ZZ(object):
 
         sage: n=ntl.ZZ(2983)
         sage: type(n._integer_())
-        <type 'sage.rings.integer.Integer'>
+        <class 'sage.rings.integer.Integer'>
 
         AUTHOR: Joel B. Mohler
         """
@@ -403,7 +403,7 @@ def unpickle_class_value(cls, x):
         sage: sage.libs.ntl.ntl_ZZ.unpickle_class_value(ntl.ZZ, 3)
         3
         sage: type(sage.libs.ntl.ntl_ZZ.unpickle_class_value(ntl.ZZ, 3))
-        <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+        <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
     """
     return cls(x)
 
@@ -416,7 +416,7 @@ def unpickle_class_args(cls, x):
         sage: sage.libs.ntl.ntl_ZZ.unpickle_class_args(ntl.ZZ, [3])
         3
         sage: type(sage.libs.ntl.ntl_ZZ.unpickle_class_args(ntl.ZZ, [3]))
-        <type 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
+        <class 'sage.libs.ntl.ntl_ZZ.ntl_ZZ'>
     """
     return cls(*x)
 

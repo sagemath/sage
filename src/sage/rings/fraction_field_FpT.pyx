@@ -13,7 +13,7 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.rings.finite_rings.stdint cimport INTEGER_MOD_INT32_LIMIT
 
 from sage.libs.gmp.mpz cimport *
-from sage.rings.all import GF
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.libs.flint.nmod_poly cimport *
 from sage.libs.flint.ulong_extras cimport n_jacobi
 from sage.structure.element cimport Element, ModuleElement, FieldElement
@@ -1033,7 +1033,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
           From: Univariate Polynomial Ring in t over Finite Field of size 5
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.Polyring_FpT_coerce'>
+        <class 'sage.rings.fraction_field_FpT.Polyring_FpT_coerce'>
 
     TESTS::
 
@@ -1222,7 +1222,7 @@ cdef class FpT_Polyring_section(Section):
           From: Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
           To:   Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.FpT_Polyring_section'>
+        <class 'sage.rings.fraction_field_FpT.FpT_Polyring_section'>
 
     .. WARNING::
 
@@ -1351,7 +1351,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
           From: Finite Field of size 5
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.Fp_FpT_coerce'>
+        <class 'sage.rings.fraction_field_FpT.Fp_FpT_coerce'>
 
     TESTS::
 
@@ -1524,7 +1524,7 @@ cdef class FpT_Fp_section(Section):
           From: Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 5
           To:   Finite Field of size 5
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.FpT_Fp_section'>
+        <class 'sage.rings.fraction_field_FpT.FpT_Fp_section'>
 
     .. WARNING::
 
@@ -1673,7 +1673,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
           From: Integer Ring
           To:   Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 17
         sage: type(f)
-        <type 'sage.rings.fraction_field_FpT.ZZ_FpT_coerce'>
+        <class 'sage.rings.fraction_field_FpT.ZZ_FpT_coerce'>
 
     TESTS::
 

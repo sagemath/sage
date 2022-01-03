@@ -148,7 +148,7 @@ Or you can create a homomorphism from one lattice to any other::
 from sage.geometry.toric_lattice_element import (ToricLatticeElement,
                                                  is_ToricLatticeElement)
 from sage.geometry.toric_plotter import ToricPlotter
-from sage.misc.all import latex
+from sage.misc.latex import latex
 from sage.structure.all import parent
 from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
                                     richcmp_not_equal)
@@ -158,7 +158,8 @@ from sage.modules.free_module import (FreeModule_ambient_pid,
                                       FreeModule_generic_pid,
                                       FreeModule_submodule_pid,
                                       FreeModule_submodule_with_basis_pid)
-from sage.rings.all import QQ, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.structure.factory import UniqueFactory
 
 
@@ -1047,7 +1048,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         EXAMPLES::
 
             sage: N = ToricLattice(3)
-            sage: N.plot()
+            sage: N.plot()  # optional - sage.plot
             Graphics3d Object
         """
         if "show_lattice" not in options:
@@ -1169,7 +1170,7 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
             2-d lattice, quotient of 3-d lattice M by Sublattice <M(1, -1, -1)>
         """
         if "_dual" not in self.__dict__:
-            if not self is self.saturation():
+            if self is not self.saturation():
                 raise ValueError("only dual lattices of saturated sublattices "
                                  "can be constructed! Got %s." % self)
             self._dual = (self.ambient_module().dual() /
@@ -1194,12 +1195,12 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
 
             sage: N = ToricLattice(3)
             sage: sublattice = N.submodule_with_basis([(1,1,0), (3,2,1)])
-            sage: sublattice.plot()
+            sage: sublattice.plot()  # optional - sage.plot
             Graphics3d Object
 
         Now we plot both the ambient lattice and its sublattice::
 
-            sage: N.plot() + sublattice.plot(point_color="red")
+            sage: N.plot() + sublattice.plot(point_color="red")  # optional - sage.plot
             Graphics3d Object
         """
         if "show_lattice" not in options:

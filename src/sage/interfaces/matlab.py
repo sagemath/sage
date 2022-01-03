@@ -343,7 +343,7 @@ class MatlabElement(ExpectElement):
             50 x 50 dense matrix over Real Field with 53 bits of precision
 
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         matlab = self.parent()
         entries = matlab.strip_answer(matlab.eval("mat2str({0})".format(self.name())))
         entries = entries.strip()[1:-1].replace(';', ' ')

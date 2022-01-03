@@ -98,7 +98,7 @@ import random
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
 
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 from sage.interfaces.all import gap
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.plot.polygon import polygon
@@ -735,7 +735,7 @@ class CubeGroup(PermutationGroup_generic):
             return mv if mv.parent() is self else PermutationGroup_generic.__call__(self, mv, check)
         elif isinstance(mv, str):
             # It is a string: may be in cycle notation or Rubik's notation
-            if '(' in mv and not '^' in mv:
+            if '(' in mv and '^' not in mv:
                 return PermutationGroup_generic.__call__(self, mv, check)
             else:
                 gens = self.gens()

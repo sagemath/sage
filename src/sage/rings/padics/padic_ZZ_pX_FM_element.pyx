@@ -718,7 +718,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: type(W(0))
-            <type 'sage.rings.padics.padic_ZZ_pX_FM_element.pAdicZZpXFMElement'>
+            <class 'sage.rings.padics.padic_ZZ_pX_FM_element.pAdicZZpXFMElement'>
             sage: W(0)^0
             1
             sage: W(0)^0 == W(1)
@@ -1032,7 +1032,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             [1590 1375 1695 1032 2358]
             [2415  590 2370 2970 1032]
         """
-        from sage.matrix.all import matrix
+        from sage.matrix.constructor import matrix
         R = IntegerModRing(self.prime_pow.pow_Integer(self.prime_pow.prec_cap))
         n = self.prime_pow.deg
         L = []

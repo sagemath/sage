@@ -973,7 +973,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             ...
             TypeError: fraction must have unit denominator
         """
-        from sage.symbolic.expression import Expression
+        from sage.structure.element import Expression
         from sage.rings.fraction_field_element import FractionFieldElement
         if isinstance(x, Expression):
             return x.laurent_polynomial(ring=self)
@@ -1169,7 +1169,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             sage: R(sum(P.gens()), (-1,-1,-1))
             y^-1*z^-1 + x^-1*z^-1 + x^-1*y^-1
         """
-        from sage.symbolic.expression import Expression
+        from sage.structure.element import Expression
 
         if mon is not None:
             return self.element_class(self, x, mon)

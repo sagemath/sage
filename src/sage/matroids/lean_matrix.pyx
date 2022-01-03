@@ -1745,6 +1745,7 @@ cdef class TernaryMatrix(LeanMatrix):
         Change number of rows to ``k``. Preserves data.
         """
         cdef long i
+        cdef mp_bitcnt_t c
         if k < self._nrows:
             for i from k <= i < self._nrows:
                 bitset_free(self._M0[i])
@@ -2346,6 +2347,7 @@ cdef class QuaternaryMatrix(LeanMatrix):
         """
         Change number of rows to ``k``. Preserves data.
         """
+        cdef mp_bitcnt_t c
         if k < self._nrows:
             for i from k <= i < self._nrows:
                 bitset_free(self._M0[i])

@@ -215,7 +215,7 @@ class PariRing(Singleton, ring.Ring):
             True
 
         """
-        from sage.all import ZZ
+        from sage.rings.integer_ring import ZZ
         return self(ZZ.random_element(x, y, distribution))
 
     def zeta(self):

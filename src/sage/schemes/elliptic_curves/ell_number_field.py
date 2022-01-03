@@ -85,6 +85,7 @@ REFERENCE:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import sage.rings.abc
 from .ell_field import EllipticCurve_field
 from .ell_generic import is_EllipticCurve
 from .ell_point import EllipticCurvePoint_number_field
@@ -984,7 +985,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         c4, c6 = self.c_invariants()
         c4s = [e(c4) for e in embs]
         c6s = [e(c6) for e in embs]
-        from sage.modules.all import vector
+        from sage.modules.free_module_element import vector
         v = vector([(x4.abs().nth_root(4)+x6.abs().nth_root(6)).log()*d for x4,x6,d in zip(c4s,c6s,degs)])
         es = [e.round() for e in -Ainv*U*v]
         u = prod([uj**ej for uj,ej in zip(fu,es)])
@@ -2612,11 +2613,10 @@ class EllipticCurve_number_field(EllipticCurve_field):
             ...
             ValueError: invalid embedding specified: should have domain ...
         """
-        from sage.rings.real_mpfr import is_RealField
         try:
             if not embedding.domain() is self.base_field():
                 raise ValueError("invalid embedding specified: should have domain {}".format(self.base_field()))
-            if not is_RealField(embedding.codomain()):
+            if not isinstance(embedding.codomain(), sage.rings.abc.RealField):
                 raise ValueError("invalid embedding specified: should be real")
         except AttributeError:
                 raise ValueError("invalid embedding")

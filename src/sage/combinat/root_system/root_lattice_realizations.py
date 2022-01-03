@@ -22,7 +22,8 @@ from sage.categories.category_types import Category_over_base_ring
 from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.element import Element
 from sage.sets.family import Family
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
@@ -722,7 +723,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             if index_set is None:
                 return []
             return [x for x in self.positive_roots()
-                    if not x in self.positive_roots(index_set)]
+                    if x not in self.positive_roots(index_set)]
 
         @cached_method
         def nonparabolic_positive_root_sum(self, index_set=None):

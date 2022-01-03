@@ -12,7 +12,8 @@ Base class for polyhedra over `\ZZ`
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.all import ZZ, QQ
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from .base_QQ import Polyhedron_QQ
@@ -79,7 +80,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
             sage: polytopes.cross_polytope(3).is_lattice_polytope()
             True
-            sage: polytopes.regular_polygon(5).is_lattice_polytope()
+            sage: polytopes.regular_polygon(5).is_lattice_polytope()  # optional - sage.rings.number_field
             False
 
         TESTS:

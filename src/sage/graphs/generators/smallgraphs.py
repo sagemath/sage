@@ -18,7 +18,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 # import from Sage library
 from sage.graphs.graph import Graph
 from sage.rings.rational_field import QQ
-from sage.functions.other import sqrt
+from sage.misc.functional import sqrt
 
 from math import sin, cos, pi
 
@@ -1044,7 +1044,9 @@ def BidiakisCube():
 
         sage: g.is_planar()
         True
-        sage: bool(g.characteristic_polynomial() == expand((x - 3) * (x - 2) * (x^4) * (x + 1) * (x + 2) * (x^2 + x - 4)^2))
+        sage: char_poly = g.characteristic_polynomial()
+        sage: x = char_poly.parent()('x')
+        sage: char_poly == (x - 3) * (x - 2) * (x^4) * (x + 1) * (x + 2) * (x^2 + x - 4)^2
         True
         sage: g.chromatic_number()
         3
@@ -1052,20 +1054,9 @@ def BidiakisCube():
     edge_dict = {
         0:[1,6,11], 1:[2,5], 2:[3,10], 3:[4,9], 4:[5,8],
         5:[6], 6:[7], 7:[8,11], 8:[9], 9:[10], 10:[11]}
-    pos_dict = {
-        0: [0, 1],
-        1: [0.5, 0.866025403784439],
-        2: [0.866025403784439, 0.500000000000000],
-        3: [1, 0],
-        4: [0.866025403784439, -0.5],
-        5: [0.5, -0.866025403784439],
-        6: [0, -1],
-        7: [-0.5, -0.866025403784439],
-        8: [-0.866025403784439, -0.5],
-        9: [-1, 0],
-        10: [-0.866025403784439, 0.5],
-        11: [-0.5, 0.866025403784439]}
-    return Graph(edge_dict, pos=pos_dict, name="Bidiakis cube")
+    g = Graph(edge_dict, format='dict_of_lists', name="Bidiakis cube")
+    g._circle_embedding(range(12), angle=pi/2)
+    return g
 
 def BiggsSmithGraph(embedding=1):
     r"""
@@ -1307,29 +1298,11 @@ def BrinkmannGraph():
         15: [18,19],
         16: [19,20],
         17: [20]}
-    pos_dict = {
-        0: [0, 4],
-        1: [3.12732592987212, 2.49395920743493],
-        2: [3.89971164872729, -0.890083735825258],
-        3: [1.73553495647023, -3.60387547160968],
-        4: [-1.73553495647023, -3.60387547160968],
-        5: [-3.89971164872729, -0.890083735825258],
-        6: [-3.12732592987212, 2.49395920743493],
-        7: [0.867767478235116, 1.80193773580484],
-        8: [1.94985582436365, 0.445041867912629],
-        9: [1.56366296493606, -1.24697960371747],
-        10: [0, -2],
-        11: [-1.56366296493606, -1.24697960371747],
-        12: [-1.94985582436365, 0.445041867912629],
-        13: [-0.867767478235116, 1.80193773580484],
-        14: [0.433883739117558, 0.900968867902419],
-        15: [0.974927912181824, 0.222520933956314],
-        16: [0.781831482468030, -0.623489801858733],
-        17: [0, -1],
-        18: [-0.781831482468030, -0.623489801858733],
-        19: [-0.974927912181824, 0.222520933956315],
-        20: [-0.433883739117558, 0.900968867902419]}
-    return Graph(edge_dict, pos=pos_dict, name="Brinkmann graph")
+    g = Graph(edge_dict, format='dict_of_lists', name="Brinkmann graph")
+    g._circle_embedding(range(7), radius=4, angle=pi/2)
+    g._circle_embedding(range(7, 14), radius=2, angle=pi/2 + pi/7)
+    g._circle_embedding(range(14, 21), radius=1, angle=pi/2 + pi/7)
+    return g
 
 def BrouwerHaemersGraph():
     r"""
@@ -1788,19 +1761,11 @@ def ChvatalGraph():
     """
     edges = {0:[1, 4, 6, 9], 1:[2, 5, 7], 2:[3, 6, 8], 3:[4, 7, 9], 4:[5, 8],
              5:[10, 11], 6:[10, 11], 7:[8, 11], 8:[10], 9:[10, 11]}
-    pos_dict = {}
-    for i in range(5, 10):
-        x = float(cos((pi / 2) + ((2 * pi) / 5) * i))
-        y = float(sin((pi / 2) + ((2 * pi) / 5) * i))
-        pos_dict[i] = (x, y)
-    for i in range(5):
-        x = float(2 * (cos((pi / 2) + ((2 * pi) / 5) * (i - 5))))
-        y = float(2 * (sin((pi / 2) + ((2 * pi) / 5) * (i - 5))))
-        pos_dict[i] = (x, y)
-    pos_dict[10] = (0.5, 0)
-    pos_dict[11] = (-0.5, 0)
-
-    return Graph(edges, pos=pos_dict, name="Chvatal graph")
+    g = Graph(edges, format='dict_of_lists', name="Chvatal graph")
+    g._circle_embedding(range(5), radius=4, angle=pi/2)
+    g._circle_embedding(range(5, 10), radius=2, angle=pi/2)
+    g._circle_embedding(range(10, 12), radius=1)
+    return g
 
 def ClebschGraph():
     r"""
@@ -1956,31 +1921,10 @@ def DurerGraph():
         sage: ag.is_isomorphic(DihedralGroup(6))
         True
     """
-    edge_dict = {
-        0: [1,5,6],
-        1: [2,7],
-        2: [3,8],
-        3: [4,9],
-        4: [5,10],
-        5: [11],
-        6: [8,10],
-        7: [9,11],
-        8: [10],
-        9: [11]}
-    pos_dict = {
-        0: [2, 0],
-        1: [1, 1.73205080756888],
-        2: [-1, 1.73205080756888],
-        3: [-2, 0],
-        4: [-1, -1.73205080756888],
-        5: [1, -1.73205080756888],
-        6: [1, 0],
-        7: [0.5, 0.866025403784439],
-        8: [-0.5, 0.866025403784439],
-        9: [-1, 0],
-        10: [-0.5, -0.866025403784439],
-        11: [0.5, -0.866025403784439]}
-    return Graph(edge_dict, pos=pos_dict, name="Durer graph")
+    from sage.graphs.generators.families import GeneralizedPetersenGraph
+    G = GeneralizedPetersenGraph(6, 2)
+    G.name("Durer graph")
+    return G
 
 def DyckGraph():
     """
@@ -2411,19 +2355,13 @@ def FlowerSnark():
 
         sage: F.show()  # long time
     """
-    pos_dict = {}
-    for i in range(15):
-        x = float(2.5*(cos((pi/2) + ((2*pi)/15)*i)))
-        y = float(2.5*(sin((pi/2) + ((2*pi)/15)*i)))
-        pos_dict[i] = (x,y)
-    for i in range(15,20):
-        x = float(cos((pi/2) + ((2*pi)/5)*i))
-        y = float(sin((pi/2) + ((2*pi)/5)*i))
-        pos_dict[i] = (x,y)
     d = {0: [1, 14, 15], 1: [2, 11], 2: [3, 7], 3: [2, 4, 16], 4: [5, 14],
          5: [6, 10], 6: [5, 7, 17], 8: [7, 9, 13], 9: [10, 18], 11: [10, 12],
          12: [13, 19], 13: [14], 15: [19], 16: [15, 17], 18: [17, 19]}
-    return Graph(d, format="dict_of_lists", pos=pos_dict, name="Flower Snark")
+    g = Graph(d, format="dict_of_lists", name="Flower Snark")
+    g._circle_embedding(range(15), radius=2.5, angle=pi/2)
+    g._circle_embedding(range(15, 20), radius=1, angle=pi/2)
+    return g
 
 def FolkmanGraph():
     """
@@ -2541,20 +2479,10 @@ def FranklinGraph():
         7: [10],
         8: [9,11],
         10: [11]}
-    pos_dict = {
-        0: [2, 0],
-        1: [1, 1.73205080756888],
-        2: [-1, 1.73205080756888],
-        3: [-2, 0],
-        4: [-1, -1.73205080756888],
-        5: [1, -1.73205080756888],
-        6: [1, 0],
-        7: [0.5, 0.866025403784439],
-        8: [-0.5, 0.866025403784439],
-        9: [-1, 0],
-        10: [-0.5, -0.866025403784439],
-        11: [0.5, -0.866025403784439]}
-    return Graph(edge_dict, pos=pos_dict, name="Franklin graph")
+    g = Graph(edge_dict, format='dict_of_lists', name="Franklin graph")
+    g._circle_embedding(range(6), radius=2)
+    g._circle_embedding(range(6, 12), radius=1)
+    return g
 
 def FruchtGraph():
     """
@@ -2586,17 +2514,11 @@ def FruchtGraph():
     """
     edges = {0:[1, 6, 7], 1:[2, 7], 2:[3, 8], 3:[4, 9], 4:[5, 9],
              5:[6, 10], 6:[10], 7:[11], 8:[9, 11], 10:[11]}
-    pos_dict = {}
-    for i in range(7):
-        x = float(2*(cos((pi/2) + ((2*pi)/7)*i)))
-        y = float(2*(sin((pi/2) + ((2*pi)/7)*i)))
-        pos_dict[i] = (x,y)
-    pos_dict[7] = (0,1)
-    pos_dict[8] = (-1,0)
-    pos_dict[9] = (0,-1)
-    pos_dict[10] = (1,0)
-    pos_dict[11] = (0,0)
-    return Graph(edges, pos=pos_dict, name="Frucht graph")
+    g = Graph(edges, format='dict_of_lists', name="Frucht graph")
+    g._circle_embedding(range(7), radius=2, angle=pi/2)
+    g._circle_embedding(range(7, 11), radius=1, angle=pi/2)
+    g._pos[11] = (0, 0)
+    return g
 
 def GoldnerHararyGraph():
     r"""
@@ -2808,14 +2730,12 @@ def GrotzschGraph():
     for u in range(7, 11):
         edges.append((u, u - 6))
 
-    pos = {}
-    pos[0] = (0,0)
-    for u in range(1, 6):
-        theta = (u - 1) * 2 * pi / 5
-        pos[u] = (float(5 * sin(theta)), float(5 * cos(theta)))
-        pos[u + 5] = (2 * pos[u][0], 2 * pos[u][1])
+    g = Graph(edges, format='list_of_edges', name="Grotzsch graph")
+    g._circle_embedding(range(1, 6), radius=1, angle=pi/2)
+    g._circle_embedding(range(6, 11), radius=2, angle=pi/2)
+    g._pos[0] = (0, 0)
 
-    return Graph(edges, format='list_of_edges', pos=pos, name="Grotzsch graph")
+    return g
 
 def HeawoodGraph():
     """
@@ -2850,12 +2770,9 @@ def HeawoodGraph():
     """
     edges = {0:[1, 5, 13], 1:[2, 10], 2:[3, 7], 3:[4, 12], 4:[5, 9], 5:[6],
              6:[7, 11], 7:[8], 8:[9, 13], 9:[10], 10:[11], 11:[12], 12:[13]}
-    pos_dict = {}
-    for i in range(14):
-        x = float(cos((pi/2) + (pi/7)*i))
-        y = float(sin((pi/2) + (pi/7)*i))
-        pos_dict[i] = (x,y)
-    return Graph(edges, pos=pos_dict, name="Heawood graph")
+    g = Graph(edges, format='dict_of_lists', name="Heawood graph")
+    g._circle_embedding(range(14), radius=1, angle=pi/2)
+    return g
 
 def HerschelGraph():
     r"""
@@ -2911,19 +2828,11 @@ def HerschelGraph():
         7: [8],
         8: [10],
         9: [10]}
-    pos_dict = {
-        0: [2, 0],
-        1: [0, 2],
-        2: [-2, 0],
-        3: [0, -2],
-        4: [1, 0],
-        5: [0.5, 0.866025403784439],
-        6: [-0.5, 0.866025403784439],
-        7: [-1, 0],
-        8: [-0.5, -0.866025403784439],
-        9: [0.5, -0.866025403784439],
-        10: [0, 0]}
-    return Graph(edge_dict, pos=pos_dict, name="Herschel graph")
+    g = Graph(edge_dict, format='dict_of_lists', name="Herschel graph")
+    g._circle_embedding(range(4), radius=2)
+    g._circle_embedding(range(4, 10), radius=1)
+    g._pos[10] = (0, 0)
+    return g
 
 def GritsenkoGraph():
     r"""
@@ -3083,21 +2992,10 @@ def HigmanSimsGraph(relabel=True):
                 c = (m*(m-a) + b - 2) % 5
                 HS.add_edge(('1%d%d'%(m, c), '3%d%d'%(a, b)))
 
-    # Rename to integer vertex labels, creating dictionary
-    # Or not, and create identity mapping
+    # Layout vertices in a circle, in the order given in vlist
+    HS._circle_embedding(vlist, radius=10, angle=pi/2)
     if relabel:
-        vmap = HS.relabel(range(100), return_map=True)
-    else:
-        vmap = {v: v for v in vlist}
-    # Layout vertices in a circle
-    # In the order given in vlist
-    # Using labels from vmap
-    pos_dict = {}
-    for i in range(100):
-        x = float(cos((pi/2) + ((2*pi)/100)*i))
-        y = float(sin((pi/2) + ((2*pi)/100)*i))
-        pos_dict[vmap[vlist[i]]] = (x, y)
-    HS.set_pos(pos_dict)
+        HS.relabel(range(100))
     return HS
 
 def HoffmanSingletonGraph():
@@ -3180,12 +3078,7 @@ def HoffmanSingletonGraph():
             s = int(v[0])
         l += 1
     map = H.relabel(range(50), return_map=True)
-    pos_dict = {}
-    for i in range(50):
-        x = float(cos((pi/2) + ((2*pi)/50)*i))
-        y = float(sin((pi/2) + ((2*pi)/50)*i))
-        pos_dict[map[D[i]]] = (x, y)
-    H.set_pos(pos_dict)
+    H._circle_embedding([map[d] for d in D], angle=pi/2)
     return H
 
 def HoffmanGraph():
@@ -3680,7 +3573,7 @@ def McLaughlinGraph():
     g = Graph()
     for b in B:
         for x in range(1, 23):
-            if not x in b:
+            if x not in b:
                 g.add_edge(b, x)
 
     for b in C:
@@ -3862,18 +3755,14 @@ def PappusGraph():
         sage: G.is_isomorphic(L)
         True
     """
-    pos_dict = {}
-    for i in range(6):
-        pos_dict[i] = [float(cos(pi/2 + ((2*pi)/6)*i)),
-                       float(sin(pi/2 + ((2*pi)/6)*i))]
-        pos_dict[6 + i] = [(2/3.0)*float(cos(pi/2 + ((2*pi)/6)*i)),
-                           (2/3.0)*float(sin(pi/2 + ((2*pi)/6)*i))]
-        pos_dict[12 + i] = [(1/3.0)*float(cos(pi/2 + ((2*pi)/6)*i)),
-                            (1/3.0)*float(sin(pi/2 + ((2*pi)/6)*i))]
     edges = {0: [1, 5, 6], 1: [2, 7], 2: [3, 8], 3: [4, 9], 4: [5, 10], 5: [11],
              6: [13, 17], 7: [12, 14], 8: [13, 15], 9: [14, 16], 10: [15, 17],
              11: [12, 16], 12: [15], 13: [16], 14: [17]}
-    return Graph(edges, pos=pos_dict, name="Pappus Graph")
+    g = Graph(edges, format='dict_of_lists', name="Pappus Graph")
+    g._circle_embedding(range(6), radius=3, angle=pi/2)
+    g._circle_embedding(range(6, 12), radius=2, angle=pi/2)
+    g._circle_embedding(range(12, 18), radius=1, angle=pi/2)
+    return g
 
 def PoussinGraph():
     r"""

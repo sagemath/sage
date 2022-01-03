@@ -162,12 +162,12 @@ class SpinorOperators(AbelianGroupGap):
         x = QQ(x)
         if x == 0:
             raise ValueError("x must be non zero")
-        if not p in self._primes:
+        if p not in self._primes:
             raise ValueError("not a coordinate prime")
         v, u = x.val_unit(p)
         v = v % 2
         if v != 0:
-            raise ValueError("x(=%s) must be a p-adic unit" %x)
+            raise ValueError("x(=%s) must be a p-adic unit" % x)
         y = self.one()
         if p == 2:
             u = u % 8

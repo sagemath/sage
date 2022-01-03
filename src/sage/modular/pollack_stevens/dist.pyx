@@ -37,9 +37,8 @@ from sage.arith.all import binomial, bernoulli
 from sage.modules.free_module_element import vector, zero_vector
 from sage.matrix.matrix cimport Matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.matrix.all import matrix
+from sage.matrix.constructor import matrix
 from sage.misc.prandom import random
-from sage.functions.other import floor
 from sage.structure.element cimport RingElement, Element
 import operator
 from sage.rings.padics.padic_generic import pAdicGeneric
@@ -815,7 +814,7 @@ cdef class Dist_vector(Dist):
             sage: D = sage.modular.pollack_stevens.distributions.Symk(2)
             sage: x = D([2,3,4])
             sage: x.__reduce__()
-            (<type 'sage.modular.pollack_stevens.dist.Dist_vector'>, ((2, 3, 4), Sym^2 Q^2, 0, False))
+            (<class 'sage.modular.pollack_stevens.dist.Dist_vector'>, ((2, 3, 4), Sym^2 Q^2, 0, False))
         """
         return (self.__class__, (self._moments, self.parent(), self.ordp, False))
 

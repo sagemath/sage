@@ -30,7 +30,7 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.calculus.riemann",["Riemann_Map"])
 lazy_import("sage.calculus.interpolators",["polygon_spline","complex_cubic_spline"])
 
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from sage.matrix.constructor import matrix
 
 
@@ -51,15 +51,15 @@ def symbolic_expression(x):
         sage: a = symbolic_expression(3/2); a
         3/2
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
+        <class 'sage.symbolic.expression.Expression'>
         sage: R.<x> = QQ[]; type(x)
-        <type 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>
+        <class 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>
         sage: a = symbolic_expression(2*x^2 + 3); a
         2*x^2 + 3
         sage: type(a)
-        <type 'sage.symbolic.expression.Expression'>
-        sage: from sage.symbolic.expression import is_Expression
-        sage: is_Expression(a)
+        <class 'sage.symbolic.expression.Expression'>
+        sage: from sage.structure.element import Expression
+        sage: isinstance(a, Expression)
         True
         sage: a in SR
         True

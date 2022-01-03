@@ -453,10 +453,14 @@ class MultiGraphics(WithEqualityById, SageObject):
             # depending on the file extension.
             # PGF is handled by a different backend
             if ext == '.pgf':
-                from sage.misc.sage_ostools import have_program
-                latex_implementations = [i for i in ["xelatex", "pdflatex",
-                                                     "lualatex"]
-                                         if have_program(i)]
+                from sage.features.latex import xelatex,pdflatex,lualatex
+                latex_implementations = []
+                if xelatex().is_present():
+                    latex_implementations.append('xelatex')
+                if pdflatex().is_present():
+                    latex_implementations.append('pdflatex')
+                if lualatex().is_present():
+                    latex_implementations.append('lualatex')
                 if not latex_implementations:
                     raise ValueError("Matplotlib requires either xelatex, "
                                      "lualatex, or pdflatex.")

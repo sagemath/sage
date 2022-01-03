@@ -11,7 +11,6 @@ TESTS::
 
 import sage.misc.prandom as random
 
-from sage.misc.all import get_memory_usage
 from sage.misc.random_testing import random_testing
 
 
@@ -29,7 +28,8 @@ def prime_finite_field():
         sage: K.cardinality().is_prime()
         True
     """
-    from sage.all import ZZ, GF
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
     return GF(ZZ.random_element(x=2, y=10**20 - 12).next_prime())
 
 
@@ -49,7 +49,8 @@ def finite_field():
         sage: while K.cardinality().is_prime():
         ....:     K = sage.rings.tests.finite_field()
     """
-    from sage.all import ZZ, GF
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
     p = ZZ.random_element(x=2, y=10**6 - 18).next_prime()
     d = ZZ.random_element(x=1, y=20)
     return GF(p**d, 'a')
@@ -72,7 +73,8 @@ def small_finite_field():
         sage: q <= 2^16
         True
     """
-    from sage.all import ZZ, GF
+    from sage.rings.integer_ring import ZZ
+    from sage.rings.finite_rings.finite_field_constructor import GF
     while True:
         q = ZZ.random_element(x=2, y=2**16)
         if q.is_prime_power():
@@ -182,7 +184,7 @@ def relative_number_field(n=2, maxdeg=2):
         sage: from sage.rings.tests import relative_number_field
         sage: _ = relative_number_field(3)
     """
-    from sage.all import ZZ
+    from sage.rings.integer_ring import ZZ
     K = absolute_number_field(maxdeg)
     n -= 1
     var = 'aa'
@@ -324,11 +326,11 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
 
         sage: import sage.rings.tests
         sage: sage.rings.tests.test_random_elements(trials=2, seed=0)
-        survived 0 tests (memory usage = ...)
+        survived 0 tests
         Rational Field
         -1/2
         ----
-        survived 1 tests (memory usage = ...)
+        survived 1 tests
         Number Field in a with defining polynomial x^2 - 61891 with a = 248.7790184079036?
         -12
         ----
@@ -341,8 +343,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
     r = random_rings(level)
     i = 0
     for R in r:
-        print("survived %s tests (memory usage = %s)" %
-              (i, get_memory_usage()))
+        print("survived %s tests" % i)
         i += 1
         print(R)
         print(R.random_element())
@@ -373,11 +374,11 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
         sage: import sage.rings.tests
         sage: sage.rings.tests.test_random_arith(trials=2, seed=0)
-        survived 0 tests (memory usage = ...)
+        survived 0 tests
         Rational Field
         -1/2 -1/95
         49/95
-        survived 1 tests (memory usage = ...)
+        survived 1 tests
         Number Field in a with defining polynomial x^2 - 15083 with a = 122.81286577553673?
         a -2*a - 1
         2*a - 30164
@@ -389,8 +390,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
     """
     i = 0
     for x in random_rings(level):
-        print("survived %s tests (memory usage = %s)" %
-              (i, get_memory_usage()))
+        print("survived %s tests" % i)
         i += 1
         print(x)
         a = x.random_element()

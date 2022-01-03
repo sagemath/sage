@@ -16,7 +16,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.all import prod
+from sage.misc.misc_c import prod
 
 
 cpdef julia(ff_j, z, int iterations):

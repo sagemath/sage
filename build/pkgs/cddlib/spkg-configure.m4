@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([cddlib], [
-  SAGE_SPKG_DEPCHECK([gmp mpir], [
+  SAGE_SPKG_DEPCHECK([gmp], [
     dnl The sage library uses BOTH cddexec and cddexec_gmp.
     dnl These two executables were introduced in cddlib-094j.
     AC_CHECK_PROGS([CDDEXEC], [cddexec])

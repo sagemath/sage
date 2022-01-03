@@ -3,10 +3,11 @@ r"""
 Testing for features of the environment at runtime
 
 A computation can require a certain package to be installed in the runtime
-environment. Abstractly such a package describes a :class`Feature` which can
+environment. Abstractly such a package describes a :class:`Feature` which can
 be tested for at runtime. It can be of various kinds, most prominently an
-:class:`Executable` in the PATH or an additional package for some installed
-system such as a :class:`GapPackage`.
+:class:`Executable` in the ``PATH``, a :class:`PythonModule`, or an additional
+package for some installed
+system such as a :class:`~sage.features.gap.GapPackage`.
 
 AUTHORS:
 
@@ -27,8 +28,8 @@ feature::
 Here we test whether the grape GAP package is available::
 
     sage: from sage.features.gap import GapPackage
-    sage: GapPackage("grape", spkg="gap_packages").is_present()  # optional: gap_packages
-    FeatureTestResult('GAP package grape', True)
+    sage: GapPackage("grape", spkg="gap_packages").is_present()  # optional - gap_packages
+    FeatureTestResult('gap_package_grape', True)
 
 Note that a :class:`FeatureTestResult` acts like a bool in most contexts::
 
@@ -52,15 +53,14 @@ As can be seen above, features try to produce helpful error messages.
 """
 
 import os
-from distutils.errors import CCompilerError
-from distutils.spawn import find_executable
+import shutil
 
 from sage.env import SAGE_SHARE
 from sage.misc.lazy_string import lazy_string
 
 class TrivialClasscallMetaClass(type):
     """
-    A trivial version of :class:`ClasscallMetaclass` without Cython dependencies.
+    A trivial version of :class:`sage.misc.classcall_metaclass.ClasscallMetaclass` without Cython dependencies.
     """
     def __call__(cls, *args, **kwds):
         r"""
@@ -93,20 +93,32 @@ class Feature(TrivialUniqueRepresentation):
     r"""
     A feature of the runtime environment
 
+    INPUT:
+
+    - ``name`` -- (string) name of the feature; this should be suitable as an optional tag
+      for the Sage doctester, i.e., lowercase alphanumeric with underscores (``_``) allowed;
+      features that correspond to Python modules/packages may use periods (``.``)
+
+    - ``spkg`` -- (string) name of the SPKG providing the feature
+
+    - ``description`` -- (string) optional; plain English description of the feature
+
+    - ``url`` -- a URL for the upstream package providing the feature
+
     Overwrite :meth:`_is_present` to add feature checks.
 
     EXAMPLES::
 
         sage: from sage.features.gap import GapPackage
         sage: GapPackage("grape", spkg="gap_packages")  # indirect doctest
-        Feature('GAP package grape')
+        Feature('gap_package_grape')
 
     For efficiency, features are unique::
 
         sage: GapPackage("grape") is GapPackage("grape")
         True
     """
-    def __init__(self, name, spkg=None, url=None):
+    def __init__(self, name, spkg=None, url=None, description=None):
         r"""
         TESTS::
 
@@ -118,6 +130,8 @@ class Feature(TrivialUniqueRepresentation):
         self.name = name
         self.spkg = spkg
         self.url = url
+        self.description = description
+
         self._cache_is_present = None
         self._cache_resolution = None
 
@@ -133,10 +147,10 @@ class Feature(TrivialUniqueRepresentation):
         EXAMPLES::
 
             sage: from sage.features.gap import GapPackage
-            sage: GapPackage("grape", spkg="gap_packages").is_present()  # optional: gap_packages
-            FeatureTestResult('GAP package grape', True)
+            sage: GapPackage("grape", spkg="gap_packages").is_present()  # optional - gap_packages
+            FeatureTestResult('gap_package_grape', True)
             sage: GapPackage("NOT_A_PACKAGE", spkg="gap_packages").is_present()
-            FeatureTestResult('GAP package NOT_A_PACKAGE', False)
+            FeatureTestResult('gap_package_NOT_A_PACKAGE', False)
 
         The result is cached::
 
@@ -184,7 +198,7 @@ class Feature(TrivialUniqueRepresentation):
             sage: GapPackage("ve1EeThu").require()
             Traceback (most recent call last):
             ...
-            FeatureNotPresentError: GAP package ve1EeThu is not available.
+            FeatureNotPresentError: gap_package_ve1EeThu is not available.
             `TestPackageAvailability("ve1EeThu")` evaluated to `fail` in GAP.
         """
         presence = self.is_present()
@@ -199,9 +213,14 @@ class Feature(TrivialUniqueRepresentation):
 
             sage: from sage.features.gap import GapPackage
             sage: GapPackage("grape")  # indirect doctest
-            Feature('GAP package grape')
+            Feature('gap_package_grape')
+
+            sage: from sage.features.databases import DatabaseConwayPolynomials
+            sage: DatabaseConwayPolynomials()  # indirect doctest
+            Feature('conway_polynomials': Frank Luebeck's database of Conway polynomials)
         """
-        return 'Feature({name!r})'.format(name=self.name)
+        description = f'{self.name!r}: {self.description}' if self.description else f'{self.name!r}'
+        return f'Feature({description})'
 
     def resolution(self):
         r"""
@@ -232,6 +251,7 @@ class Feature(TrivialUniqueRepresentation):
             return self._cache_resolution
 
         return lazy_string(find_resolution)
+
 
 class FeatureNotPresentError(RuntimeError):
     r"""
@@ -264,7 +284,7 @@ class FeatureNotPresentError(RuntimeError):
             sage: GapPackage("gapZuHoh8Uu").require()  # indirect doctest
             Traceback (most recent call last):
             ...
-            FeatureNotPresentError: GAP package gapZuHoh8Uu is not available.
+            FeatureNotPresentError: gap_package_gapZuHoh8Uu is not available.
             `TestPackageAvailability("gapZuHoh8Uu")` evaluated to `fail` in GAP.
         """
         lines = ["{feature} is not available.".format(feature=self.feature.name)]
@@ -286,7 +306,7 @@ class FeatureTestResult(object):
 
         sage: from sage.features.gap import GapPackage
         sage: presence = GapPackage("NOT_A_PACKAGE").is_present(); presence  # indirect doctest
-        FeatureTestResult('GAP package NOT_A_PACKAGE', False)
+        FeatureTestResult('gap_package_NOT_A_PACKAGE', False)
         sage: bool(presence)
         False
 
@@ -305,9 +325,9 @@ class FeatureTestResult(object):
         sage: from sage.features import FeatureTestResult
         sage: package = GapPackage("NOT_A_PACKAGE", spkg="no_package")
         sage: str(FeatureTestResult(package, True).resolution)  # optional - sage_spkg
-        '...To install GAP package NOT_A_PACKAGE...you can try to run...sage -i no_package...'
+        '...To install gap_package_NOT_A_PACKAGE...you can try to run...sage -i no_package...'
         sage: str(FeatureTestResult(package, False).resolution) # optional - sage_spkg
-        '...To install GAP package NOT_A_PACKAGE...you can try to run...sage -i no_package...'
+        '...To install gap_package_NOT_A_PACKAGE...you can try to run...sage -i no_package...'
         sage: FeatureTestResult(package, False, resolution="rtm").resolution
         'rtm'
     """
@@ -355,7 +375,8 @@ _cache_package_systems = None
 
 def package_systems():
     """
-    Return a list of ``PackageSystem`` objects representing the available package systems.
+    Return a list of :class:~sage.features.pkg_systems.PackageSystem` objects
+    representing the available package systems.
 
     The list is ordered by decreasing preference.
 
@@ -369,6 +390,7 @@ def package_systems():
     from subprocess import run, CalledProcessError, PIPE
     global _cache_package_systems
     if _cache_package_systems is None:
+        from .pkg_systems import PackageSystem, SagePackageSystem, PipPackageSystem
         _cache_package_systems = []
         # Try to use scripts from SAGE_ROOT (or an installation of sage_bootstrap)
         # to obtain system package advice.
@@ -384,178 +406,10 @@ def package_systems():
 
     return _cache_package_systems
 
-class PackageSystem(Feature):
-    r"""
-    A feature describing a system package manager.
-
-    EXAMPLES::
-
-        sage: from sage.features import PackageSystem
-        sage: PackageSystem('conda')
-        Feature('conda')
-    """
-    def _is_present(self):
-        r"""
-        Test whether ``self`` appears in the list of available package systems.
-
-        EXAMPLES::
-
-            sage: from sage.features import PackageSystem
-            sage: debian = PackageSystem('debian')
-            sage: debian.is_present()  # indirect doctest, random
-            True
-        """
-        return self in package_systems()
-
-    def spkg_installation_hint(self, spkgs, *, prompt="  !", feature=None):
-        r"""
-        Return a string that explains how to install ``feature``.
-
-        EXAMPLES::
-
-            sage: from sage.features import PackageSystem
-            sage: homebrew = PackageSystem('homebrew')
-            sage: homebrew.spkg_installation_hint('openblas')  # optional - SAGE_ROOT
-            'To install openblas using the homebrew package manager, you can try to run:\n!brew install openblas'
-        """
-        if isinstance(spkgs, (tuple, list)):
-            spkgs = ' '.join(spkgs)
-        if feature is None:
-            feature = spkgs
-        return self._spkg_installation_hint(spkgs, prompt, feature)
-
-    def _spkg_installation_hint(self, spkgs, prompt, feature):
-        r"""
-        Return a string that explains how to install ``feature``.
-
-        Override this method in derived classes.
-
-        EXAMPLES::
-
-            sage: from sage.features import PackageSystem
-            sage: fedora = PackageSystem('fedora')
-            sage: fedora.spkg_installation_hint('openblas')  # optional - SAGE_ROOT
-            'To install openblas using the fedora package manager, you can try to run:\n!sudo yum install openblas-devel'
-        """
-        from subprocess import run, CalledProcessError, PIPE
-        lines = []
-        system = self.name
-        try:
-            proc = run(f'sage-get-system-packages {system} {spkgs}',
-                       shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True, check=True)
-            system_packages = proc.stdout.strip()
-            print_sys = f'sage-print-system-package-command {system} --verbose --sudo --prompt="{prompt}"'
-            command = f'{print_sys} update && {print_sys} install {system_packages}'
-            proc = run(command, shell=True, stdout=PIPE, stderr=PIPE, universal_newlines=True, check=True)
-            command = proc.stdout.strip()
-            if command:
-                lines.append(f'To install {feature} using the {system} package manager, you can try to run:')
-                lines.append(command)
-                return '\n'.join(lines)
-        except CalledProcessError:
-            pass
-        return f'No equivalent system packages for {system} are known to Sage.'
-
-class SagePackageSystem(PackageSystem):
-    r"""
-    The feature describing the Sage package manager.
-
-    EXAMPLES::
-
-        sage: from sage.features import SagePackageSystem
-        sage: SagePackageSystem()
-        Feature('sage_spkg')
-    """
-    @staticmethod
-    def __classcall__(cls):
-        r"""
-        Normalize initargs.
-
-        TESTS::
-
-            sage: from sage.features import SagePackageSystem
-            sage: SagePackageSystem() is SagePackageSystem()  # indirect doctest
-            True
-        """
-        return PackageSystem.__classcall__(cls, "sage_spkg")
-
-    def _is_present(self):
-        r"""
-        Test whether ``sage-spkg`` is available.
-
-        EXAMPLES::
-
-            sage: from sage.features import SagePackageSystem
-            sage: bool(SagePackageSystem().is_present())  # indirect doctest, optional - sage_spkg
-            True
-        """
-        from subprocess import run, DEVNULL, CalledProcessError
-        try:
-            # "sage -p" is a fast way of checking whether sage-spkg is available.
-            run('sage -p', shell=True, stdout=DEVNULL, stderr=DEVNULL, check=True)
-            return True
-        except CalledProcessError:
-            return False
-
-    def _spkg_installation_hint(self, spkgs, prompt, feature):
-        r"""
-        Return a string that explains how to install ``feature``.
-
-        EXAMPLES::
-
-            sage: from sage.features import SagePackageSystem
-            sage: print(SagePackageSystem().spkg_installation_hint(['foo', 'bar'], prompt="### ", feature='foobarability'))  # indirect doctest
-            To install foobarability using the Sage package manager, you can try to run:
-            ### sage -i foo bar
-        """
-        lines = []
-        lines.append(f'To install {feature} using the Sage package manager, you can try to run:')
-        lines.append(f'{prompt}sage -i {spkgs}')
-        return '\n'.join(lines)
-
-class PipPackageSystem(PackageSystem):
-    r"""
-    The feature describing the Pip package manager.
-
-    EXAMPLES::
-
-        sage: from sage.features import PipPackageSystem
-        sage: PipPackageSystem()
-        Feature('pip')
-    """
-    @staticmethod
-    def __classcall__(cls):
-        r"""
-        Normalize initargs.
-
-        TESTS::
-
-            sage: from sage.features import PipPackageSystem
-            sage: PipPackageSystem() is PipPackageSystem()  # indirect doctest
-            True
-        """
-        return PackageSystem.__classcall__(cls, "pip")
-
-    def _is_present(self):
-        r"""
-        Test whether ``pip`` is available.
-
-        EXAMPLES::
-
-            sage: from sage.features import PipPackageSystem
-            sage: bool(PipPackageSystem().is_present())    # indirect doctest
-            True
-        """
-        from subprocess import run, DEVNULL, CalledProcessError
-        try:
-            run('sage -pip --version', shell=True, stdout=DEVNULL, stderr=DEVNULL, check=True)
-            return True
-        except CalledProcessError:
-            return False
 
 class Executable(Feature):
     r"""
-    A feature describing an executable in the PATH.
+    A feature describing an executable in the ``PATH``.
 
     .. NOTE::
 
@@ -571,6 +425,8 @@ class Executable(Feature):
         sage: from sage.features import Executable
         sage: Executable(name="sh", executable="sh").is_present()
         FeatureTestResult('sh', True)
+        sage: Executable(name="does-not-exist", executable="does-not-exist-xxxxyxyyxyy").is_present()
+        FeatureTestResult('does-not-exist', False)
     """
     def __init__(self, name, executable, **kwds):
         r"""
@@ -595,7 +451,7 @@ class Executable(Feature):
             sage: Executable(name="sh", executable="sh").is_present()
             FeatureTestResult('sh', True)
         """
-        if find_executable(self.executable) is None:
+        if shutil.which(self.executable) is None:
             return FeatureTestResult(self, False, "Executable {executable!r} not found on PATH.".format(executable=self.executable))
         return self.is_functional()
 
@@ -768,6 +624,7 @@ class CythonFeature(Feature):
             FeatureTestResult('empty', True)
         """
         from sage.misc.temporary_file import tmp_filename
+        from distutils.errors import CCompilerError
         with open(tmp_filename(ext=".pyx"), 'w') as pyx:
             pyx.write(self.test_code)
         from sage.misc.cython import cython_import
@@ -799,8 +656,8 @@ class PythonModule(Feature):
         TESTS::
 
             sage: from sage.features import PythonModule
-            sage: from sage.features.fes import LibFES
-            sage: isinstance(LibFES(), PythonModule)  # indirect doctest
+            sage: from sage.features.databases import DatabaseKnotInfo
+            sage: isinstance(DatabaseKnotInfo(), PythonModule)  # indirect doctest
             True
         """
         Feature.__init__(self, name, **kwds)
@@ -821,6 +678,6 @@ class PythonModule(Feature):
         import importlib
         try:
             importlib.import_module(self.name)
-        except ImportError:
-            return FeatureTestResult(self, False, reason="Failed to import `{name}`.".format(name=self.name))
-        return FeatureTestResult(self, True, reason="Successfully imported `{name}`.".format(name=self.name))
+        except ImportError as exception:
+            return FeatureTestResult(self, False, reason=f"Failed to import `{self.name}`: {exception}")
+        return FeatureTestResult(self, True, reason=f"Successfully imported `{self.name}`.")

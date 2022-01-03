@@ -58,9 +58,9 @@ def QuarticCurve(F, PP=None, check=False):
     if not(F.is_homogeneous() and F.degree()==4):
         raise ValueError("Argument F (=%s) must be a homogeneous polynomial of degree 4"%F)
 
-    if not PP is None:
+    if PP is not None:
         if not is_ProjectiveSpace(PP) and PP.dimension == 2:
-            raise ValueError("Argument PP (=%s) must be a projective plane"%PP)
+            raise ValueError(f"Argument PP (={PP}) must be a projective plane")
     else:
         PP = ProjectiveSpace(P)
 

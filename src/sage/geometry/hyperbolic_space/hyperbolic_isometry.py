@@ -50,8 +50,9 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
 from sage.misc.latex import latex
-from sage.rings.all import RDF
-from sage.functions.other import imag, sqrt
+from sage.rings.real_double import RDF
+from sage.functions.other import imag
+from sage.misc.functional import sqrt
 from sage.functions.all import arccosh, sign
 
 from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON

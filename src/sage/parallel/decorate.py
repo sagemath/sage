@@ -4,7 +4,7 @@ Decorate interface for parallel computation
 
 import types
 
-from sage.rings.all import Integer
+from sage.rings.integer import Integer
 
 from .reference import parallel_iter as p_iter_reference
 from .use_fork import p_iter_fork

@@ -21,7 +21,7 @@ import math
 
 from sage.plot.all import line
 from sage.modules.free_module_element import vector
-from sage.rings.all import RDF
+from sage.rings.real_double import RDF
 
 
 class SpikeFunction:

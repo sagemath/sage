@@ -21,7 +21,7 @@ AUTHORS:
 
 from sage.numerical.mip import MIPSolverException
 from sage.numerical.interactive_simplex_method import InteractiveLPProblem, default_variable_name
-from sage.modules.all import vector
+from sage.modules.free_module_element import vector
 from copy import copy
 
 
@@ -53,22 +53,22 @@ cdef class InteractiveLPBackend:
 
         This backend can work with irrational algebraic numbers::
 
-            sage: poly = polytopes.dodecahedron(base_ring=AA)
-            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)
-            sage: lp.set_objective(x[0] + x[1] + x[2])
-            sage: lp.solve()
+            sage: poly = polytopes.dodecahedron(base_ring=AA)                                   # optional - sage.rings.number_field
+            sage: lp, x = poly.to_linear_program(solver='InteractiveLP', return_variable=True)  # optional - sage.rings.number_field
+            sage: lp.set_objective(x[0] + x[1] + x[2])                                          # optional - sage.rings.number_field
+            sage: lp.solve()                                                                    # optional - sage.rings.number_field
             2.291796067500631?
-            sage: lp.get_values(x[0], x[1], x[2])
+            sage: lp.get_values(x[0], x[1], x[2])                                               # optional - sage.rings.number_field
             [0.763932022500211?, 0.763932022500211?, 0.763932022500211?]
-            sage: lp.set_objective(x[0] - x[1] - x[2])
-            sage: lp.solve()
+            sage: lp.set_objective(x[0] - x[1] - x[2])                                          # optional - sage.rings.number_field
+            sage: lp.solve()                                                                    # optional - sage.rings.number_field
             2.291796067500631?
-            sage: lp.get_values(x[0], x[1], x[2])
+            sage: lp.get_values(x[0], x[1], x[2])                                               # optional - sage.rings.number_field
             [0.763932022500211?, -0.763932022500211?, -0.763932022500211?]
         """
 
         if base_ring is None:
-            from sage.rings.all import QQ
+            from sage.rings.rational_field import QQ
             base_ring = QQ
 
         self.lp = InteractiveLPProblem([], [], [], base_ring=base_ring)

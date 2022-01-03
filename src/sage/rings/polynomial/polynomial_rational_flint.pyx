@@ -308,7 +308,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: R.<t> = QQ[]
             sage: f = 2/3 * t^2 + 1
             sage: r = f.__reduce__(); r
-            (<type 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>, (Univariate Polynomial Ring in t over Rational Field, [1, 0, 2/3], False, False))
+            (<class 'sage.rings.polynomial.polynomial_rational_flint.Polynomial_rational_flint'>, (Univariate Polynomial Ring in t over Rational Field, [1, 0, 2/3], False, False))
             sage: r[0](*r[1])
             2/3*t^2 + 1
             sage: loads(dumps(f)) == f
@@ -392,7 +392,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         TESTS::
 
             sage: type(f.degree())
-            <type 'sage.rings.integer.Integer'>
+            <class 'sage.rings.integer.Integer'>
         """
         return smallInteger(fmpq_poly_degree(self.__poly))
 
