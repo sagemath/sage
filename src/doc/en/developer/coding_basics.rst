@@ -92,11 +92,13 @@ In particular,
 Python Version
 =================
 
-Sage supports all minor versions of Python released 42 months prior to the next planned release date, and at minimum the two latest minor versions.
-Accordingly, Python 3.7 and newer are supported at the moment.
-On Dec 26, 2021 support for Python 3.7 is dropped (initially released on Jun 27, 2018).
-This is to reduce the technical debt of maintaining the project.
-The support policy follows Numpy's version support recommendations `NEP 29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_. 
+In order to reduce the technical debt of maintaining the project, Sage follows
+Numpy's time window-based support policy
+`NEP 29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_ for Python versions. 
+Accordingly, minor versions of Python that are older than 42 months 
+at the next planned release date are no longer supported.
+In December 2021 support for Python 3.7 (initially released in June 2018) is dropped and
+in April 2023 support for Python 3.8 is dropped (initially released in October 2019).
 
 .. _chapter-directory-structure:
 
