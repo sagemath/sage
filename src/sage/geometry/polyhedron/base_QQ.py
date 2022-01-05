@@ -3,7 +3,8 @@ Base class for polyhedra over `\QQ`
 """
 
 from sage.rings.all import QQ
-from sage.misc.all import cached_method, prod
+from sage.misc.cachefunc import cached_method
+from sage.misc.all import prod
 from .base import Polyhedron_base
 
 

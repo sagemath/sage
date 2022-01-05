@@ -596,11 +596,13 @@ def QuadraticResidueCodeEvenPair(n,F):
     n = Integer(n)
     if n <= 2 or not n.is_prime():
         raise ValueError("the argument n must be an odd prime")
-    Q = quadratic_residues(n); Q.remove(0)       # non-zero quad residues
-    N = [x for x in srange(1,n) if x not in Q]   # non-zero quad non-residues
+    Q = quadratic_residues(n)
+    Q.remove(0)       # non-zero quad residues
+    N = [x for x in srange(1, n) if x not in Q]   # non-zero quad non-residues
     if q not in Q:
         raise ValueError("the order of the finite field must be a quadratic residue modulo n")
     return DuadicCodeEvenPair(F,Q,N)
+
 
 def QuadraticResidueCodeOddPair(n,F):
     """
@@ -654,11 +656,13 @@ def QuadraticResidueCodeOddPair(n,F):
     n = Integer(n)
     if n <= 2 or not n.is_prime():
         raise ValueError("the argument n must be an odd prime")
-    Q = quadratic_residues(n); Q.remove(0)       # non-zero quad residues
-    N = [x for x in srange(1,n) if x not in Q]   # non-zero quad non-residues
+    Q = quadratic_residues(n)
+    Q.remove(0)       # non-zero quad residues
+    N = [x for x in srange(1, n) if x not in Q]   # non-zero quad non-residues
     if q not in Q:
         raise ValueError("the order of the finite field must be a quadratic residue modulo n")
     return DuadicCodeOddPair(F,Q,N)
+
 
 def random_linear_code(F, length, dimension):
     r"""

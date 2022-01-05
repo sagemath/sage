@@ -37,6 +37,8 @@ The code was tested afterwards by Liz Beazley and Ed Richmond.
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
+
 from sage.plot.graphics import Graphics
 from sage.plot.polygon import polygon
 from sage.plot.line import line
@@ -301,7 +303,7 @@ class NablaPiece(PuzzlePiece):
                               self['north'],
                               self['south_east'])
 
-    def clockwise_rotation(self) -> 'NablaPiece':
+    def clockwise_rotation(self) -> NablaPiece:
         r"""
         Rotate the Nabla piece by 120 degree clockwise.
 
@@ -320,7 +322,7 @@ class NablaPiece(PuzzlePiece):
                           south_east=self['north'],
                           south_west=self['south_east'])
 
-    def half_turn_rotation(self) -> 'DeltaPiece':
+    def half_turn_rotation(self) -> DeltaPiece:
         r"""
         Rotate the Nabla piece by 180 degree.
 
@@ -423,7 +425,7 @@ class DeltaPiece(PuzzlePiece):
                               self['south'],
                               self['north_east'])
 
-    def clockwise_rotation(self) -> 'DeltaPiece':
+    def clockwise_rotation(self) -> DeltaPiece:
         r"""
         Rotate the Delta piece by 120 degree clockwise.
 
@@ -442,7 +444,7 @@ class DeltaPiece(PuzzlePiece):
                           north_west=self['south'],
                           north_east=self['north_west'])
 
-    def half_turn_rotation(self) -> 'NablaPiece':
+    def half_turn_rotation(self) -> NablaPiece:
         r"""
         Rotate the Delta piece by 180 degree.
 
@@ -559,7 +561,7 @@ class RhombusPiece(PuzzlePiece):
         yield self._north_piece
         yield self._south_piece
 
-    def north_piece(self) -> 'DeltaPiece':
+    def north_piece(self) -> DeltaPiece:
         r"""
         Return the north piece.
 
@@ -574,7 +576,7 @@ class RhombusPiece(PuzzlePiece):
         """
         return self._north_piece
 
-    def south_piece(self) -> 'NablaPiece':
+    def south_piece(self) -> NablaPiece:
         r"""
         Return the south piece.
 

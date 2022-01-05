@@ -435,7 +435,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.gen(0)
             Traceback (most recent call last):
             ...
-            ValueError: only 0 generators known for Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(24) of weight 4 and over Rational Field
+            ValueError: only 0 generators known for Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(24) of weight 4 over Rational Field
             sage: B(Cusp(1/3))
             [1/3]
             sage: B.gen(0)
@@ -541,7 +541,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B(7)
             Traceback (most recent call last):
             ...
-            TypeError: Coercion of 7 (of type <type 'sage.rings.integer.Integer'>) into Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(15) of weight 2 and over Rational Field not (yet) defined.
+            TypeError: Coercion of 7 (of type <type 'sage.rings.integer.Integer'>) into Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(15) of weight 2 over Rational Field not (yet) defined.
         """
         from .ambient import ModularSymbolsAmbient
         if isinstance(x, int) and x == 0:
@@ -662,10 +662,10 @@ class BoundarySpace_wtk_g0(BoundarySpace):
 
             sage: B = ModularSymbols(Gamma0(97), 3).boundary_space()
             sage: B._repr_()
-            'Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(97) of weight 3 and over Rational Field'
+            'Space of Boundary Modular Symbols for Congruence Subgroup Gamma0(97) of weight 3 over Rational Field'
         """
-        return ("Space of Boundary Modular Symbols for %s of weight %s " + \
-                "and over %s") % (self.group(), self.weight(), self.base_ring())
+        return ("Space of Boundary Modular Symbols for %s of weight %s over %s"
+                % (self.group(), self.weight(), self.base_ring()))
 
     def _coerce_cusp(self, c):
         """

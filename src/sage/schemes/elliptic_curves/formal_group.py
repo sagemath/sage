@@ -732,33 +732,53 @@ class EllipticCurveFormalGroup(SageObject):
         return result
 
     def sigma(self, prec=10):
-        """
+        r"""
+        Return the Weierstrass sigma function as a formal power series
+        solution to the differential equation
+
+        .. MATH::
+
+            \frac{d^2 \log \sigma}{dz^2} = - \wp(z)
+
+        with initial conditions `\sigma(O)=0` and `\sigma'(O)=1`,
+        expressed in the variable `t=\log_E(z)` of the formal group.
+
+        INPUT:
+
+        -  ``prec`` - integer (default 10)
+
+        OUTPUT: a power series with given precision
+
+        Other solutions can be obtained by multiplication with
+        a function of the form `\exp(c z^2)`.
+        If the curve has good ordinary reduction at a prime `p`
+        then there is a canonical choice of `c` that produces
+        the canonical `p`-adic sigma function.
+        To obtain that,  please use ``E.padic_sigma(p)`` instead.
+        See :meth:`~sage.schemes.elliptic_curves.ell_rational_field.EllipticCurve_rational_field.padic_sigma`
+
         EXAMPLES::
 
             sage: E = EllipticCurve('14a')
             sage: F = E.formal_group()
             sage: F.sigma(5)
-            t + 1/2*t^2 + (1/2*c + 1/3)*t^3 + (3/4*c + 3/4)*t^4 + O(t^5)
+            t + 1/2*t^2 + 1/3*t^3 + 3/4*t^4 + O(t^5)
         """
         a1,a2,a3,a4,a6 = self.curve().ainvs()
 
         k = self.curve().base_ring()
         fl = self.log(prec)
-        R = rings.PolynomialRing(k, 'c')
-        c = R.gen()
         F = fl.reverse()
 
-        S = rings.LaurentSeriesRing(R,'z')
-        c = S(c)
+        S = rings.LaurentSeriesRing(k,'z')
         z = S.gen()
         F = F(z + O(z**prec))
-        wp = self.x()(F)
-        e2 = 12*c - a1**2 - 4*a2
-        g = (1/z**2 - wp + e2/12).power_series()
+        wp = self.x()(F) + (a1**2 + 4*a2)/12
+        g = (1/z**2 - wp).power_series()
         h = g.integral().integral()
         sigma_of_z = z.power_series() * h.exp()
 
-        T = rings.PowerSeriesRing(R,'t')
+        T = rings.PowerSeriesRing(k,'t')
         fl = fl(T.gen()+O(T.gen()**prec))
         sigma_of_t = sigma_of_z(fl)
         return sigma_of_t

@@ -251,7 +251,7 @@ Permutation groups
 
 A good portion of Sage's support for group theory is based on routines
 from GAP (Groups, Algorithms, and Programming at
-http://www.gap-system.org.  Groups can be described in many different
+https://www.gap-system.org.  Groups can be described in many different
 ways, such as sets of matrices or sets of symbols subject to a few
 defining relations.  A very concrete way to represent groups is via
 permutations (one-to-one and onto functions of the integers 1

@@ -1437,7 +1437,8 @@ class MiniCremonaDatabase(SQLDatabase):
             curve_data = []
             for L in open(ftpdata + "/" + F).readlines():
                 N, iso, num, ainvs, r, tor = L.split()
-                if largest_conductor and int(N) > largest_conductor: break
+                if largest_conductor and int(N) > largest_conductor:
+                    break
                 cls = N+iso
                 cur = cls+num
                 if num == "1":
@@ -1452,7 +1453,8 @@ class MiniCremonaDatabase(SQLDatabase):
             print("Committing...")
             print("num_iso_classes =", num_iso_classes)
             self.commit()
-            if largest_conductor and int(N) > largest_conductor: break
+            if largest_conductor and int(N) > largest_conductor:
+                break
         return num_curves, num_iso_classes
 
 
@@ -1586,13 +1588,15 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             class_data = []
             for L in open(ftpdata + "/" + F).readlines():
                 N, iso, num, degree, primes, curve = L.split()
-                if largest_conductor and int(N) > largest_conductor: break
+                if largest_conductor and int(N) > largest_conductor:
+                    break
                 class_data.append((degree,N+iso))
             con.executemany('UPDATE t_class SET deg=? WHERE class=?',
                 class_data)
             print("Committing...")
             self.commit()
-            if largest_conductor and int(N) > largest_conductor: break
+            if largest_conductor and int(N) > largest_conductor:
+                break
 
     def _init_allbsd(self, ftpdata, largest_conductor=0):
         """
@@ -1620,7 +1624,8 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             class_data = []
             for L in open(ftpdata + "/" + F).readlines():
                 N, iso, num, eqn, rank, tor, cp, om, L, reg, sha  = L.split()
-                if largest_conductor and int(N) > largest_conductor: break
+                if largest_conductor and int(N) > largest_conductor:
+                    break
                 cls = N+iso
                 if num == "1":
                     class_data.append((L,cls))
@@ -1630,7 +1635,8 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
                     + "curve=?", curve_data)
             print("Committing...")
             self.commit()
-            if largest_conductor and int(N) > largest_conductor: break
+            if largest_conductor and int(N) > largest_conductor:
+                break
 
     def _init_allgens(self, ftpdata, largest_conductor=0):
         """
@@ -1657,13 +1663,15 @@ class LargeCremonaDatabase(MiniCremonaDatabase):
             curve_data = []
             for L in open(ftpdata + "/" + F).readlines():
                 v = L.split()
-                if largest_conductor and int(v[0]) > largest_conductor: break
+                if largest_conductor and int(v[0]) > largest_conductor:
+                    break
                 gens = '['+','.join(v[6:6+int(v[4])]).replace(':',',')+']'
                 curve_data.append((gens,''.join(v[:3])))
             con.executemany("UPDATE t_curve SET gens=? WHERE curve=?",
                 curve_data)
             print("Committing...")
-            if largest_conductor and int(v[0]) > largest_conductor: break
+            if largest_conductor and int(v[0]) > largest_conductor:
+                break
 
 
 _db = None

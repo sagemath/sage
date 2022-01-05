@@ -1038,7 +1038,7 @@ if( DEBUGLEVEL_ell >= 1, print(" trivial points on E(K) = ");
   KS2gen = KS2gen[1];
   for( i = 1, #KS2gen,
     KS2gen[i] = nfbasistoalg(bnf, KS2gen[i]));
-  KS2gen = concat(Mod(lift(bnf.tufu),bnf.pol),KS2gen);
+  KS2gen = concat(Mod(lift(concat(bnf.tu[2], bnf.fu)),bnf.pol),KS2gen);
 if( DEBUGLEVEL_ell >= 2,
   print("  #K(b,2)gen          = ",#KS2gen);
   print("  K(b,2)gen = ",KS2gen));
@@ -1072,7 +1072,7 @@ if( DEBUGLEVEL_ell >= 1,
   KS2gen = KS2gen[1];
   for( i = 1, #KS2gen,
     KS2gen[i] = nfbasistoalg(bnf, KS2gen[i]));
-  KS2gen = concat(Mod(lift(bnf.tufu),bnf.pol),KS2gen);
+  KS2gen = concat(Mod(lift(concat(bnf.tu[2], bnf.fu)),bnf.pol),KS2gen);
 if( DEBUGLEVEL_ell >= 2,
   print("  #K(a^2-4b,2)gen     = ",#KS2gen);
   print("  K(a^2-4b,2)gen     = ",KS2gen));
@@ -1244,11 +1244,11 @@ if( DEBUGLEVEL_ell >= 4, print("    bbbnf.clgp = ",bbbnf.clgp));
   SL1 = idealmul(bbbnf,SL0,rnfeltup(rrrnf,bleg));
   SL = idealfactor(bbbnf,SL1)[,1]~;
   sunL = bnfsunit(bbbnf,SL);
-  fondsunL = concat(bbbnf.futu,vector(#sunL[1],i,nfbasistoalg(bbbnf,sunL[1][i])));
+  fondsunL = concat(concat(bbbnf.fu, bbbnf.tu[2]),vector(#sunL[1],i,nfbasistoalg(bbbnf,sunL[1][i])));
   normfondsunL = vector(#fondsunL, i, norm(rnfeltabstorel(rrrnf,fondsunL[i])));
   SK = idealfactor(bnf,idealnorm(bbbnf,SL1))[,1]~;
   sunK = bnfsunit(bnf,SK);
-  fondsunK = concat(bnf.futu,vector(#sunK[1],i,nfbasistoalg(bnf,sunK[1][i])));
+  fondsunK = concat(concat(bnf.fu, bnf.tu[2]),vector(#sunK[1],i,nfbasistoalg(bnf,sunK[1][i])));
   vecbleg = bnfissunit(bnf,sunK,bleg);
   matnorm = matrix(#fondsunK,#normfondsunL,i,j,0);
   for( i = 1, #normfondsunL,
@@ -1345,7 +1345,7 @@ if( DEBUGLEVEL_ell >= 4, print("on factorise bb = ",bb));
       sun = bnfsunit(bnf,idealfactor(bnf,bb)[,1]~);
       fact = lift(bnfissunit(bnf,sun,bb));
 if( DEBUGLEVEL_ell >= 4, print("fact = ",fact));
-      suni = concat(bnf.futu,vector(#sun[1],i,nfbasistoalg(bnf,sun[1][i])));
+      suni = concat(concat(bnf.fu, bnf.tu[2]),vector(#sun[1],i,nfbasistoalg(bnf,sun[1][i])));
       for( i = 1, #suni,
         if( (f = fact[i]>>1), 
           test =0;
@@ -1554,7 +1554,7 @@ if( DEBUGLEVEL_ell >= 3, print("    KS2gen = ",KS2gen[1]));
 
   LS2gen = LS2gen[1];
   LS2 = vector(#LS2gen,i,lift(nfbasistoalg(Lrnf,LS2gen[i])));
-  LS2 = concat(lift(Lrnf.futu),LS2);
+  LS2 = concat(lift(concat(Lrnf.fu, Lrnf.tu[2])),LS2);
 
   LS2 = subst(LS2,'x,ttheta);
   LS2 = LS2*Mod(1,polrel);
@@ -1992,7 +1992,7 @@ if( DEBUGLEVEL_ell >= 2, print("  Algorithm of complete 2-descent"));
   KS2gen = KS2gen[1];
   for( i = 1, #KS2gen,
     KS2gen[i] = nfbasistoalg(bnf, KS2gen[i]));
-  KS2gen = concat(Mod(lift(bnf.tufu),bnf.pol),KS2gen);
+  KS2gen = concat(Mod(lift(concat(bnf.tu[2], bnf.fu)),bnf.pol),KS2gen);
 if( DEBUGLEVEL_ell >= 2,
   print("  #K(S,2)gen = ",#KS2gen);
   print("   K(S,2)gen = ",KS2gen)

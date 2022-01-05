@@ -1,7 +1,7 @@
 r"""
 Graph editor
 """
-#*****************************************************************************
+# ****************************************************************************
 #      Copyright (C) 2009   Radoslav Kirov
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -13,14 +13,12 @@ Graph editor
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 import sys
 
 from .graph_generators import graphs
 from sage.misc.html import html
-
-from sage.server.support import EMBEDDED_MODE
 
 
 def graph_to_js(g):
@@ -108,10 +106,9 @@ def graph_editor(graph=None, graph_name=None,
     if graph is None:
         graph = graphs.CompleteGraph(2)
 
-    if not EMBEDDED_MODE:
-        return "This graph editor only runs in the Sage notebook."
+    return "This graph editor only runs in the deprecated Sage notebook."
 
-    graph.layout(save_pos = True, **layout_options)
+    graph.layout(save_pos=True, **layout_options)
 
     if graph_name is None:
         graph_name = ''

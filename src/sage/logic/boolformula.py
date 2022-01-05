@@ -1508,9 +1508,9 @@ class BooleanFormula(object):
             i += 1
         return str[i]
 
-    def __len__(self):
+    def length(self):
         r"""
-        Return the length of a Boolean formula.
+        Return the length of ``self``.
 
         OUTPUT:
 
@@ -1521,37 +1521,41 @@ class BooleanFormula(object):
 
             sage: import sage.logic.propcalc as propcalc
             sage: s = propcalc.formula("a")
-            sage: len(s)
+            sage: s.length()
             1
             sage: s = propcalc.formula("(a)")
-            sage: len(s)
+            sage: s.length()
             1
             sage: s = propcalc.formula("~a")
-            sage: len(s)
+            sage: s.length()
             2
             sage: s = propcalc.formula("a -> b")
-            sage: len(s)
+            sage: s.length()
             3
             sage: s = propcalc.formula("alpha -> beta")
-            sage: len(s)
+            sage: s.length()
             3
             sage: s = propcalc.formula("a -> a")
-            sage: len(s)
+            sage: s.length()
             3
             sage: s = propcalc.formula("~(a -> b)")
-            sage: len(s)
+            sage: s.length()
             4
             sage: s = propcalc.formula("((a&b)|(a&c))->~d")
-            sage: len(s)
+            sage: s.length()
             10
 
         TESTS::
 
             sage: s = propcalc.formula("(((alpha) -> ((beta))))")
-            sage: len(s)
+            sage: s.length()
             3
         """
         return len(flatten(self.full_tree()))
+
+    # For backward compatibility, we allow `self.length()` to be called as
+    # `len(self)`, but this may be deprecated in the future (see :trac:`32148`):
+    __len__ = length
 
 # allow is_consequence to be called as a function (not only as a method of BooleanFormula)
 is_consequence = BooleanFormula.is_consequence

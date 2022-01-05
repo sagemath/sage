@@ -1,6 +1,6 @@
 cimport cython
-from sage.ext.memory_allocator cimport MemoryAllocator
-from .face_list_data_structure cimport face_list_t
+from memory_allocator          cimport MemoryAllocator
+from .face_list_data_structure cimport face_list_t, face_t
 
 @cython.final
 cdef class ListOfFaces:
@@ -9,6 +9,8 @@ cdef class ListOfFaces:
     # ``data`` points to the raw data.
     # It will be of "type" ``uint64_t[n_faces][face_length]``
     cdef face_list_t data
+
+    cpdef ListOfFaces __copy__(self)
 
     cpdef int compute_dimension(self) except -2
 
@@ -20,3 +22,11 @@ cdef class ListOfFaces:
         return self.data.n_coatoms
 
     cpdef ListOfFaces pyramid(self)
+
+    cdef ListOfFaces delete_atoms_unsafe(self, bint* delete, face_t face)  # not in place
+    cdef void delete_faces_unsafe(self, bint* delete, face_t face)  # in place
+
+    cdef void get_not_inclusion_maximal_unsafe(self, bint *not_inclusion_maximal)
+    cdef void get_faces_all_set_unsafe(self, bint *all_set)
+
+cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual)

@@ -581,6 +581,25 @@ class FiniteFamily(AbstractFamily):
             return hash(frozenset(self.keys() +
                                   [repr(v) for v in self.values()]))
 
+    def __bool__(self):
+        r"""
+        Return if ``self`` is empty or not.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import TrivialFamily
+            sage: f = Family(["c", "a", "b"], lambda x: x+x)
+            sage: bool(f)
+            True
+            sage: g = Family({})
+            sage: bool(g)
+            False
+            sage: h = Family([], lambda x: x+x)
+            sage: bool(h)
+            False
+        """
+        return bool(self._dictionary)
+
     def keys(self):
         """
         Returns the index set of this family
@@ -909,6 +928,25 @@ class LazyFamily(AbstractFamily):
         self.function = function
         self.function_name = name
 
+    def __bool__(self):
+        r"""
+        Return if ``self`` is empty or not.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import LazyFamily
+            sage: f = LazyFamily([3,4,7], lambda i: 2*i)
+            sage: bool(f)
+            True
+            sage: g = LazyFamily([], lambda i: 2*i)
+            sage: bool(g)
+            False
+            sage: h = Family(ZZ, lambda x: x+x)
+            sage: bool(h)
+            True
+        """
+        return bool(self.set)
+
     @cached_method
     def __hash__(self):
         """
@@ -1164,6 +1202,22 @@ class TrivialFamily(AbstractFamily):
         """
         Parent.__init__(self, category = FiniteEnumeratedSets())
         self._enumeration = tuple(enumeration)
+
+    def __bool__(self):
+        r"""
+        Return if ``self`` is empty or not.
+
+        EXAMPLES::
+
+            sage: from sage.sets.family import TrivialFamily
+            sage: f = TrivialFamily((3,4,7))
+            sage: bool(f)
+            True
+            sage: g = Family([])
+            sage: bool(g)
+            False
+        """
+        return bool(self._enumeration)
 
     def __eq__(self, other):
         """

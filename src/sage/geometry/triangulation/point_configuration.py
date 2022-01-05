@@ -646,8 +646,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 if verbose:
                     print('# Still running ' + str(executable))
                 continue
-            if len(line)==0: # EOF
-                break;
+            if len(line) == 0:  # EOF
+                break
             if verbose:
                 print("# " + line)
                 sys.stdout.flush()
@@ -1110,8 +1110,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             pass
 
         from sage.geometry.polyhedron.constructor import Polyhedron
-        pts = [ p.reduced_affine() for p in self.points() ];
-        self._polyhedron = Polyhedron(vertices=pts);
+        pts = [p.reduced_affine() for p in self.points()]
+        self._polyhedron = Polyhedron(vertices=pts)
         return self._polyhedron
 
     @cached_method
@@ -1206,14 +1206,13 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
         try:
             p = vector(self.point(point).reduced_affine())
         except TypeError:
-            p = vector(point);
+            p = vector(point)
 
         inequalities = []
         for ieq in self.convex_hull().inequality_generator():
             if (ieq.A()*p + ieq.b() == 0):
-                inequalities += [ ieq.vector() ];
-        return matrix(inequalities).rank();
-
+                inequalities += [ ieq.vector() ]
+        return matrix(inequalities).rank()
 
     def face_interior(self, dim=None, codim=None):
         """

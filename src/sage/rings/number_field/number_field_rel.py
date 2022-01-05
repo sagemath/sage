@@ -396,18 +396,18 @@ class NumberField_relative(NumberField_generic):
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: K.subfields(2)
             [
-            (Number Field in c0 with defining polynomial x^2 - 24*x + 72, Ring morphism:
-              From: Number Field in c0 with defining polynomial x^2 - 24*x + 72
+            (Number Field in c0 with defining polynomial x^2 - 24*x + 96, Ring morphism:
+              From: Number Field in c0 with defining polynomial x^2 - 24*x + 96
               To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              Defn: c0 |--> -6*a + 12, None),
+              Defn: c0 |--> -4*b + 12, None),
             (Number Field in c1 with defining polynomial x^2 - 24*x + 120, Ring morphism:
               From: Number Field in c1 with defining polynomial x^2 - 24*x + 120
               To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
               Defn: c1 |--> 2*b*a + 12, None),
-            (Number Field in c2 with defining polynomial x^2 - 24*x + 96, Ring morphism:
-              From: Number Field in c2 with defining polynomial x^2 - 24*x + 96
+            (Number Field in c2 with defining polynomial x^2 - 24*x + 72, Ring morphism:
+              From: Number Field in c2 with defining polynomial x^2 - 24*x + 72
               To:   Number Field in c with defining polynomial Y^2 + (-2*b - 3)*a - 2*b - 6 over its base field
-              Defn: c2 |--> -4*b + 12, None)
+              Defn: c2 |--> -6*a + 12, None)
             ]
             sage: K.subfields(8, 'w')
             [

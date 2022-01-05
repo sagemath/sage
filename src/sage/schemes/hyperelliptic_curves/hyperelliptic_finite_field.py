@@ -1501,14 +1501,13 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             ...
             ValueError: curve is not smooth
         """
-        #Compute the finite field and prime p.
-        Fq=self.base_ring();
-        p=Fq.characteristic()
+        # Compute the finite field and prime p.
+        Fq = self.base_ring()
+        p = Fq.characteristic()
         #checks
 
         if p == 2:
-            raise ValueError("p must be odd");
-
+            raise ValueError("p must be odd")
 
         g = self.genus()
 
@@ -1850,8 +1849,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         if E != self:
             self._Cartier_matrix_cached.clear_cache()
             M,Coeffs,g, Fq, p,E= self._Cartier_matrix_cached()
-        a=g-rank(M);
-        return a;
+        return g - rank(M)
 
     def p_rank(self):
         r"""
@@ -1888,9 +1886,8 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         #the last entry in A. If it does not match, clear A and compute Hasse Witt.
         # However, it seems a waste of time to manually analyse the cache
         # -- See Trac Ticket #11115
-        N,E= self._Hasse_Witt_cached()
-        if E!=self:
+        N, E = self._Hasse_Witt_cached()
+        if E != self:
             self._Hasse_Witt_cached.clear_cache()
-            N,E= self._Hasse_Witt_cached()
-        pr=rank(N);
-        return pr
+            N, E = self._Hasse_Witt_cached()
+        return rank(N)

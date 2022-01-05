@@ -549,8 +549,8 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         sage: [L, phi] = IntegralLatticeGluing([L1, L2], [[f1, g1], [f2, 2 * g2]], True)
         sage: phi[0]
         Free module morphism defined by the matrix
-        [ 2  2 -1 -2]
-        [ 0  2  0 -1]
+        [ 2  2 -2 -1]
+        [ 0  2 -1  0]
         Domain: Lattice of degree 4 and rank 2 over Integer Ring
         Basis matrix:
         [1 1 0 0]
@@ -563,7 +563,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         Codomain: Lattice of degree 10 and rank 4 over Integer Ring
         Basis matrix:
         [ 1/2    0 -1/2    0    0  1/2    0    0  1/2  1/2]
-        [   0  1/2  1/2    0    0    0    0    0  1/2  1/2]
+        [   0  1/2  1/2    0    0  1/2    0    0    0    0]
         [   0    0    0    0    0    1    0    0    0    0]
         [   0    0    0    0    0    0    0    0    1    1]
         Inner product matrix:
@@ -784,7 +784,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             Finite quadratic module over Integer Ring with invariants (2, 10)
             Gram matrix of the quadratic form with values in Q/2Z:
             [  1 1/2]
-            [1/2 9/5]
+            [1/2 1/5]
             sage: L.discriminant_group(2)
             Finite quadratic module over Integer Ring with invariants (2, 2)
             Gram matrix of the quadratic form with values in Q/2Z:
@@ -793,7 +793,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L.discriminant_group(5)
             Finite quadratic module over Integer Ring with invariants (5,)
             Gram matrix of the quadratic form with values in Q/2Z:
-            [6/5]
+            [4/5]
 
         TESTS::
 
@@ -1463,8 +1463,8 @@ def local_modification(M, G, p, check=True):
         sage: local_modification(M, L.gram_matrix(), 2)
         Lattice of degree 4 and rank 4 over Integer Ring
         Basis matrix:
-        [1/3   0 1/3 2/3]
-        [  0 1/3 1/3 2/3]
+        [1/3   0 2/3 2/3]
+        [  0 1/3   0 2/3]
         [  0   0   1   0]
         [  0   0   0   1]
         Inner product matrix:

@@ -514,7 +514,7 @@ class RealBallField(UniqueRepresentation, Field):
         Symbolic expressions are parsed ::
 
             sage: RBF(4*zeta(3))
-            [4.808227612638377 +/- ...e-16]
+            [4.8082276126383...]
             sage: RBF(exp(1), 0.01)
             [2.7 +/- ...]
 
@@ -523,9 +523,7 @@ class RealBallField(UniqueRepresentation, Field):
         The following conversions used to yield incorrect results::
 
             sage: RBF(airy_ai(1))
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert airy_ai(1) to a RealBall
+            [0.135292416312881...]
             sage: v = RBF(zetaderiv(1, 3/2)); v
             [-3.932239737431101 +/- 5.58e-16]
             sage: v.overlaps(RealBallField(100)(3/2).zetaderiv(1))
@@ -3742,7 +3740,7 @@ cdef class RealBall(RingElement):
             sage: RBF(1).agm(1)
             1.000000000000000
             sage: RBF(sqrt(2)).agm(1)^(-1)
-            [0.83462684167407 +/- 3.9...e-15]
+            [0.8346268416740...]
         """
         cdef RealBall other_as_ball
         cdef RealBall res = self._new()

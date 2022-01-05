@@ -728,7 +728,7 @@ class GaloisRepresentation(SageObject):
 
         - a string.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: E = EllipticCurve('14a1')
             sage: rho = E.galois_representation()

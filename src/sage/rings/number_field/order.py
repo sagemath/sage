@@ -2180,7 +2180,7 @@ def EisensteinIntegers(names="omega"):
         sage: R
         Eisenstein Integers in Number Field in omega with defining polynomial x^2 + x + 1 with omega = -0.50000000000000000? + 0.866025403784439?*I
         sage: factor(3 + omega)
-        (omega) * (-3*omega - 2)
+        (-1) * (-omega - 3)
         sage: CC(omega)
         -0.500000000000000 + 0.866025403784439*I
         sage: omega.minpoly()

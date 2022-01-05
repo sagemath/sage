@@ -62,7 +62,7 @@ def TorsionQuadraticForm(q):
 
     TESTS::
 
-        sage: TorsionQuadraticForm(matrix.diagonal([3/8,3/8,3/4]))
+        sage: TorsionQuadraticForm(matrix.diagonal([3/4,3/8,3/8]))
         Finite quadratic module over Integer Ring with invariants (4, 8, 8)
         Gram matrix of the quadratic form with values in Q/2Z:
         [3/4   0   0]
@@ -1030,10 +1030,10 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             sage: T
             Finite quadratic module over Integer Ring with invariants (6, 6, 12, 12)
             Gram matrix of the quadratic form with values in Q/(1/3)Z:
-            [1/18 5/36    0    0]
-            [5/36 1/18 5/36 5/36]
-            [   0 5/36 1/36 1/72]
-            [   0 5/36 1/72 1/36]
+            [ 1/18  1/12  5/36  1/36]
+            [ 1/12   1/6  1/36   1/9]
+            [ 5/36  1/36  1/36 11/72]
+            [ 1/36   1/9 11/72  1/36]
             sage: T.normal_form()
             Finite quadratic module over Integer Ring with invariants (6, 6, 12, 12)
             Gram matrix of the quadratic form with values in Q/(1/3)Z:

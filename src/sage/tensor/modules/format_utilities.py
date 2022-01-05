@@ -75,9 +75,11 @@ def is_atomic(expr, sep=['+', '-']):
     level = 0
     for n, c in enumerate(expr):
         if c == '(':
-            level += 1; continue
+            level += 1
+            continue
         elif c == ')':
-            level -= 1; continue
+            level -= 1
+            continue
         if any(expr[n:n + len(s)] == s for s in sep):
             if level == 0 and n > 0:
                 return False
@@ -109,17 +111,17 @@ def is_atomic_wedge_txt(expression):
         sage: from sage.tensor.modules.format_utilities import is_atomic_wedge_txt
         sage: is_atomic_wedge_txt("a")
         True
-        sage: is_atomic_wedge_txt(r"a/\b")
+        sage: is_atomic_wedge_txt(r"a∧b")
         False
-        sage: is_atomic_wedge_txt(r"(a/\b)")
+        sage: is_atomic_wedge_txt(r"(a∧b)")
         True
-        sage: is_atomic_wedge_txt(r"(a/\b)/\c")
+        sage: is_atomic_wedge_txt(r"(a∧b)∧c")
         False
-        sage: is_atomic_wedge_txt(r"(a/\b/\c)")
+        sage: is_atomic_wedge_txt(r"(a∧b∧c)")
         True
 
     """
-    return is_atomic(expression, sep=['/\\'])
+    return is_atomic(expression, sep=['∧'])
 
 
 def is_atomic_wedge_latex(expression):

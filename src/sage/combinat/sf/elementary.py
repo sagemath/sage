@@ -91,7 +91,8 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             sage: e.coproduct_on_generators(0)
             e[] # e[]
         """
-        def P(i): return Partition([i]) if i else Partition([])
+        def P(i):
+            return Partition([i]) if i else Partition([])
         T = self.tensor_square()
         return T.sum_of_monomials( (P(j), P(i-j)) for j in range(i+1) )
 

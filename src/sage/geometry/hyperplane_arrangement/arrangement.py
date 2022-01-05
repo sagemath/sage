@@ -741,50 +741,145 @@ class HyperplaneArrangementElement(Element):
         return H(*hyperplanes, backend=self._backend)
 
     @cached_method
-    def intersection_poset(self):
+    def intersection_poset(self, element_label="int"):
         r"""
         Return the intersection poset of the hyperplane arrangement.
 
+        INPUT:
+
+        - ``element_label`` -- (default: ``"int"``) specify how an
+          intersection should be represented; must be one of the following:
+
+          * ``"subspace"`` - as a subspace
+          * ``"subset"`` - as a subset of the defining hyperplanes
+          * ``"int"`` - as an integer
+
         OUTPUT:
 
-        The poset of non-empty intersections of hyperplanes.
+        The poset of non-empty intersections of hyperplanes, with intersections
+        represented by integers, subsets of integers or subspaces (see the
+        examples for more details).
 
-        EXAMPLES::
+        EXAMPLES:
 
-            sage: a = hyperplane_arrangements.coordinate(2)
-            sage: a.intersection_poset()
+        By default, the elements of the poset are the integers from `0` through
+        the cardinality of the poset *minus one*. The element labelled `0`
+        always corresponds to the ambient vector space, and the hyperplanes
+        themselves are labelled `1, 2, \ldots, n`, where `n` is the number
+        of hyperplanes of the arrangement. ::
+
+            sage: A = hyperplane_arrangements.coordinate(2)
+            sage: L = A.intersection_poset(); L
             Finite poset containing 4 elements
+            sage: sorted(L)
+            [0, 1, 2, 3]
+            sage: L.level_sets()
+            [[0], [1, 2], [3]]
+
+        ::
 
             sage: A = hyperplane_arrangements.semiorder(3)
-            sage: A.intersection_poset()
+            sage: L = A.intersection_poset(); L
             Finite poset containing 19 elements
+            sage: sorted(L)
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+            sage: [sorted(level_set) for level_set in L.level_sets()]
+            [[0], [1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]]
+
+        By passing the argument ``element_label="subset"``, each element of the
+        intesection poset is labelled by the set of indices of the hyperplanes
+        whose intersection is said element. The index of a hyperplane is its
+        index in ``self.hyperplanes()``. ::
+
+            sage: A = hyperplane_arrangements.semiorder(3)
+            sage: L = A.intersection_poset(element_label='subset')
+            sage: [sorted(level, key=sorted) for level in L.level_sets()]
+            [[{}],
+             [{0}, {1}, {2}, {3}, {4}, {5}],
+             [{0, 2}, {0, 3}, {0, 4}, {0, 5}, {1, 2}, {1, 3}, {1, 4}, {1, 5}, {2, 4}, {2, 5}, {3, 4}, {3, 5}]]
+
+        ::
+
+            sage: H.<x,y> = HyperplaneArrangements(QQ)
+            sage: A = H((y , (y-1) , (y+1) , (x - y) , (x + y)))
+            sage: L = A.intersection_poset(element_label='subset')
+            sage: sorted(L, key=sorted)
+            [{}, {0}, {0, 3}, {0, 4}, {1}, {1, 3, 4}, {2}, {2, 3}, {2, 4}, {3}, {4}]
+
+        One can instead use affine subspaces as elements,
+        which is what is used to compute the poset in the first place::
+
+            sage: A = hyperplane_arrangements.coordinate(2)
+            sage: L = A.intersection_poset(element_label='subspace'); L
+            Finite poset containing 4 elements
+            sage: sorted(L, key=lambda S: (S.dimension(), S.linear_part().basis_matrix()))
+            [Affine space p + W where:
+               p = (0, 0)
+               W = Vector space of degree 2 and dimension 0 over Rational Field
+             Basis matrix:
+             [], Affine space p + W where:
+               p = (0, 0)
+               W = Vector space of degree 2 and dimension 1 over Rational Field
+             Basis matrix:
+             [0 1], Affine space p + W where:
+               p = (0, 0)
+               W = Vector space of degree 2 and dimension 1 over Rational Field
+             Basis matrix:
+             [1 0], Affine space p + W where:
+               p = (0, 0)
+               W = Vector space of dimension 2 over Rational Field]
         """
+        if element_label == "int":
+            def update(mapping, val, I):
+                mapping[val] = len(mapping)
+        elif element_label == "subset":
+            from sage.sets.set import Set
+            def update(mapping, val, I):
+                mapping[val] =  Set(val)
+        elif element_label == "subspace":
+            def update(mapping, val, I):
+                mapping[val] = I
+        else:
+            raise ValueError("invalid element label type")
+
         K = self.base_ring()
         from sage.geometry.hyperplane_arrangement.affine_subspace import AffineSubspace
+
         whole_space = AffineSubspace(0, VectorSpace(K, self.dimension()))
-        L = [[whole_space]]
-        active = True
-        codim = 0
-        while active:
-            active = False
-            new_level = []
-            for T in L[codim]:
-                for H in self:
-                    I = H._affine_subspace().intersection(T)
-                    if I is not None and I != T and I not in new_level:
-                        new_level.append(I)
-                        active = True
-            if active:
-                L.append(new_level)
-            codim += 1
-        from sage.misc.flatten import flatten
-        L = flatten(L)
-        t = {}
-        for i in range(len(L)):
-            t[i] = L[i]
-        cmp_fn = lambda p, q: t[q] < t[p]
+        hyperplanes = [H._affine_subspace() for H in self.hyperplanes()]
+
+        mapping = {}
+        update(mapping, frozenset(), whole_space)
+        for i, H in enumerate(hyperplanes):
+            update(mapping, frozenset([i]), H)
+
+        hasse = {frozenset(): [frozenset([i]) for i in range(len(hyperplanes))]}
+        cur_level = [(frozenset([i]), H) for i, H in enumerate(hyperplanes)]
+
+        while cur_level:
+            new_level = {}
+            for label, T in cur_level:
+                edges = []
+                for i, H in enumerate(hyperplanes):
+                    I = H.intersection(T)
+                    if I is not None and I != T:
+                        try:
+                            target = new_level[I]
+                        except KeyError:
+                            target = set(label)
+                            new_level[I] = target
+                        target.add(i)
+                        edges.append(target)
+                hasse[label] = edges
+            for label, T in cur_level:
+                # Freeze them in place now
+                hasse[label] = [frozenset(X) for X in hasse[label]]
+            cur_level = [(frozenset(X), T) for T, X in new_level.items()]
+            for label, T in cur_level:
+                update(mapping, label, T)
+
         from sage.combinat.posets.posets import Poset
-        return Poset((t, cmp_fn))
+        return Poset({mapping[i]: [mapping[j] for j in val] for i, val in hasse.items()})
 
     def _slow_characteristic_polynomial(self):
         """

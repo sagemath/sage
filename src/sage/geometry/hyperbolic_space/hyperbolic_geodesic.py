@@ -140,13 +140,11 @@ class HyperbolicGeodesic(SageObject):
         r"""
         See :class:`HyperbolicGeodesic` for full documentation.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: HyperbolicPlane().UHP().get_geodesic(I, 2 + I)
             Geodesic in UHP from I to I + 2
-
         """
-
         self._model = model
         self._start = start
         self._end = end
@@ -1397,15 +1395,36 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             ...
             ValueError: the length must be finite
 
-        """
+        TESTS:
 
+        Check the result is independent of the order (:trac:`29936`)::
+
+            sage: def bisector_gets_midpoint(a, b):
+            ....:     UHP = HyperbolicPlane().UHP()
+            ....:     g = UHP.get_geodesic(a, b)
+            ....:     p = g.perpendicular_bisector()
+            ....:     x = g.intersection(p)[0]
+            ....:     m = g.midpoint()
+            ....:     return bool(x.dist(m) < 1e-9)
+            sage: c, d, e = CC(1, 1), CC(2, 1), CC(2, 0.5)
+            sage: pairs = [(c, d), (d, c), (c, e), (e, c), (d, e), (e, d)]
+            sage: all(bisector_gets_midpoint(a, b) for a, b in pairs)
+            True
+        """
         if self.length() == infinity:
             raise ValueError("the length must be finite")
         start = self._start.coordinates()
-        d = self._model._dist_points(start, self._end.coordinates()) / 2
+        end = self._end.coordinates()
+        # The complete geodesic p1 -> p2 always returns p1 < p2,
+        #   so we might need to swap start and end
+        if ((real(start - end) > EPSILON) or
+            (abs(real(start - end)) < EPSILON and
+                imag(start - end) > 0)):
+            start, end = end, start
         S = self.complete()._to_std_geod(start)
+        d = self._model._dist_points(start, end) / 2
         T1 = matrix([[exp(d/2), 0], [0, exp(-d/2)]])
-        s2 = sqrt(2) * 0.5
+        s2 = sqrt(2) / 2
         T2 = matrix([[s2, -s2], [s2, s2]])
         isom_mtrx = S.inverse() * (T1 * T2) * S
         # We need to clean this matrix up.
@@ -1413,7 +1432,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             # Imaginary part is small.
             isom_mtrx = (isom_mtrx + isom_mtrx.conjugate()) / 2
             # Set it to its real part.
-        H = self._model.get_isometry(isom_mtrx)
+        H = self._model._Isometry(self._model, isom_mtrx, check=False)
         return self._model.get_geodesic(H(self._start), H(self._end))
 
     def midpoint(self):  # UHP
@@ -1445,11 +1464,11 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: g=HyperbolicPlane().UHP().get_geodesic(-1+I,1+I)
             sage: point = g.midpoint(); point
             Point in UHP -1/2*(sqrt(2)*...
-            sage: QQbar(point.coordinates()).radical_expression()
+            sage: QQbar(point.coordinates()).radical_expression()  # long time
             I*sqrt(2)
 
         Check that floating points remain floating points
-        in :meth:`midpoint` ::
+        in :meth:`midpoint`::
 
             sage: UHP = HyperbolicPlane().UHP()
             sage: g = UHP.get_geodesic(CC(0,1), CC(2,2))
@@ -1458,8 +1477,18 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: parent(g.midpoint().coordinates())
             Complex Field with 53 bits of precision
 
-        """
+        Check that the midpoint is independent of the order (:trac:`29936`)::
 
+            sage: g = UHP.get_geodesic(1+I, 2+0.5*I)
+            sage: h = UHP.get_geodesic(2+0.5*I, 1+I)
+            sage: abs(g.midpoint().coordinates() - h.midpoint().coordinates()) < 1e-9
+            True
+
+            sage: g = UHP.get_geodesic(2+I, 2+0.5*I)
+            sage: h = UHP.get_geodesic(2+0.5*I, 2+I)
+            sage: abs(g.midpoint().coordinates() - h.midpoint().coordinates()) < 1e-9
+            True
+        """
         from sage.matrix.matrix_symbolic_dense import Matrix_symbolic_dense
         if self.length() == infinity:
             raise ValueError("the length must be finite")
@@ -1467,6 +1496,12 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         start = self._start.coordinates()
         end = self._end.coordinates()
         d = self._model._dist_points(start, end) / 2
+        # The complete geodesic p1 -> p2 always returns p1 < p2,
+        #   so we might need to swap start and end
+        if ((real(start - end) > EPSILON) or
+            (abs(real(start - end)) < EPSILON and
+                imag(start - end) > 0)):
+            start, end = end, start
         S = self.complete()._to_std_geod(start)
 
         # If the matrix is symbolic then needs to be simplified in order to
@@ -1476,13 +1511,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         S_1 = S.inverse()
         T = matrix([[exp(d), 0], [0, 1]])
         M = S_1 * T * S
-        if ((real(start - end) < EPSILON) or
-            (abs(real(start - end)) < EPSILON and
-                imag(start - end) < EPSILON)):
-            end_p = start
-        else:
-            end_p = end
-        P_3 = moebius_transform(M, end_p)
+        P_3 = moebius_transform(M, start)
         return self._model.get_point(P_3)
 
     def angle(self, other):  # UHP

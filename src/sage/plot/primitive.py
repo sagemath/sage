@@ -158,7 +158,8 @@ class GraphicPrimitive(WithEqualityById, SageObject):
             sage: c.options()
             {'thickness': 0.6...}
         """
-        if new_options is not None: self._options = new_options
+        if new_options is not None:
+            self._options = new_options
 
     def options(self):
         """

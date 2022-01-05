@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Piecewise-defined Functions
 
@@ -527,7 +528,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([((-oo, oo), x)]);  f
                 piecewise(x|-->x on (-oo, +oo); x)
                 sage: f.restriction([[-1,1], [3,3]])
-                piecewise(x|-->x on [-1, 1] + {3}; x)
+                piecewise(x|-->x on [-1, 1] ∪ {3}; x)
             """
             restricted_domain = RealSet(*restricted_domain)
             new_param = []
@@ -559,7 +560,7 @@ class PiecewiseFunction(BuiltinFunction):
                 ValueError: point 3 is not in the domain
 
                 sage: g = f.extension(0);  g
-                piecewise(x|-->x on (-1, 1), x|-->0 on (-oo, -1] + [1, +oo); x)
+                piecewise(x|-->x on (-1, 1), x|-->0 on (-oo, -1] ∪ [1, +oo); x)
                 sage: g(3)
                 0
 
@@ -583,7 +584,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([((-1,1), x)]);  f
                 piecewise(x|-->x on (-1, 1); x)
                 sage: g = f.extension(0);  g
-                piecewise(x|-->x on (-1, 1), x|-->0 on (-oo, -1] + [1, +oo); x)
+                piecewise(x|-->x on (-1, 1), x|-->0 on (-oo, -1] ∪ [1, +oo); x)
                 sage: g(3)
                 0
                 sage: h = g.unextend_zero()
@@ -652,7 +653,7 @@ class PiecewiseFunction(BuiltinFunction):
                 sage: f = piecewise([([0,1], 1), ((2,3), x)])
                 sage: g = piecewise([((1/2, 2), x)])
                 sage: f.piecewise_add(g).unextend_zero()
-                piecewise(x|-->1 on (0, 1/2], x|-->x + 1 on (1/2, 1], x|-->x on (1, 2) + (2, 3); x)
+                piecewise(x|-->1 on (0, 1/2], x|-->x + 1 on (1/2, 1], x|-->x on (1, 2) ∪ (2, 3); x)
             """
             points = ([minus_infinity] +
                       sorted(set(self.end_points() + other.end_points())) +
@@ -946,8 +947,6 @@ class PiecewiseFunction(BuiltinFunction):
             g = other
             if len(f.end_points())*len(g.end_points()) == 0:
                 raise ValueError('one of the piecewise functions is nowhere defined')
-            tt = SR.var('tt')
-            uu = SR.var('uu')
             fd, f0 = parameters[0]
             gd, g0 = next(other.items())
             if len(f)==1 and len(g)==1:
@@ -957,12 +956,14 @@ class PiecewiseFunction(BuiltinFunction):
                 a2 = fd[0].upper()
                 b1 = gd[0].lower()
                 b2 = gd[0].upper()
-                i1 = f0.subs({variable: uu})
-                i2 = g0.subs({variable: tt-uu})
-                fg1 = definite_integral(i1*i2, uu, a1, tt-b1).subs(tt = variable)
-                fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs(tt = variable)
-                fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs(tt = variable)
-                fg4 = definite_integral(i1*i2, uu, a1, a2).subs(tt = variable)
+                with SR.temp_var() as tt:
+                    with SR.temp_var() as uu:
+                        i1 = f0.subs({variable: uu})
+                        i2 = g0.subs({variable: tt-uu})
+                        fg1 = definite_integral(i1*i2, uu, a1, tt-b1).subs({tt:variable})
+                        fg2 = definite_integral(i1*i2, uu, tt-b2, tt-b1).subs({tt:variable})
+                        fg3 = definite_integral(i1*i2, uu, tt-b2, a2).subs({tt:variable})
+                        fg4 = definite_integral(i1*i2, uu, a1, a2).subs({tt:variable})
                 if a1-b1<a2-b2:
                     if a2+b1!=a1+b2:
                         h = piecewise([[(a1+b1,a1+b2),fg1],[(a1+b2,a2+b1),fg2],[(a2+b1,a2+b2),fg3]])
@@ -1169,13 +1170,12 @@ class PiecewiseFunction(BuiltinFunction):
                     raise ValueError("the width of the domain of " +
                                      "{} is not a multiple ".format(self) +
                                      "of the given period")
-            x = SR.var('x')
             result = 0
             for domain, f in parameters:
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    result += (f*cos(pi*x*n/L)).integrate(x, a, b)
+                    result += (f*cos(pi*variable*n/L)).integrate(variable, a, b)
             return SR(result/L0).simplify_trig()
 
         def fourier_series_sine_coefficient(self, parameters, variable,
@@ -1260,13 +1260,12 @@ class PiecewiseFunction(BuiltinFunction):
                     raise ValueError("the width of the domain of " +
                                      "{} is not a multiple ".format(self) +
                                      "of the given period")
-            x = SR.var('x')
             result = 0
             for domain, f in parameters:
                 for interval in domain:
                     a = interval.lower()
                     b = interval.upper()
-                    result += (f*sin(pi*x*n/L)).integrate(x, a, b)
+                    result += (f*sin(pi*variable*n/L)).integrate(variable, a, b)
             return SR(result/L0).simplify_trig()
 
         def fourier_series_partial_sum(self, parameters, variable, N,

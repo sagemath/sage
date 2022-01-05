@@ -222,9 +222,12 @@ class IntegerRange(UniqueRepresentation, Parent):
             ...
             TypeError: end must be Integer or Infinity, not <... 'sage.rings.real_mpfr.RealLiteral'>
         """
-        if isinstance(begin, int): begin = Integer(begin)
-        if isinstance(end, int): end = Integer(end)
-        if isinstance(step,int): step = Integer(step)
+        if isinstance(begin, int):
+            begin = Integer(begin)
+        if isinstance(end, int):
+            end = Integer(end)
+        if isinstance(step, int):
+            step = Integer(step)
 
         if end is None:
             end = begin

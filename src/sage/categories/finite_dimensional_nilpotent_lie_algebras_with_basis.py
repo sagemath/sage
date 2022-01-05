@@ -120,9 +120,9 @@ class FiniteDimensionalNilpotentLieAlgebrasWithBasis(CategoryWithAxiom_over_base
                 sage: X = G.left_invariant_extension(2*p + 3*q, name='X'); X
                 Vector field X on the Lie group G of Heisenberg algebra of rank 1 over Rational Field
                 sage: X.at(G.one()).display()
-                X = 2 d/dx_0 + 3 d/dx_1
+                X = 2 ∂/∂x_0 + 3 ∂/∂x_1
                 sage: X.display()
-                X = 2 d/dx_0 + 3 d/dx_1 + (3/2*x_0 - x_1) d/dx_2
+                X = 2 ∂/∂x_0 + 3 ∂/∂x_1 + (3/2*x_0 - x_1) ∂/∂x_2
 
             .. SEEALSO::
 

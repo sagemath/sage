@@ -22,12 +22,8 @@ EXAMPLES: We illustrate each of the calculus functional functions.
     a
     sage: taylor(a*sin(x)/x, x, 0, 4)
     1/120*a*x^4 - 1/6*a*x^2 + a
-    sage: expand( (x-a)^3 )
+    sage: expand((x - a)^3)
     -a^3 + 3*a^2*x - 3*a*x^2 + x^3
-    sage: laplace( e^(x+a), x, a)
-    e^a/(a - 1)
-    sage: inverse_laplace( e^a/(a-1), x, a)
-    ilt(e^a/(a - 1), x, a)
 """
 
 from .calculus import SR
@@ -143,7 +139,7 @@ def derivative(f, *args, **kwds):
         sage: derivative(a)
         2-form da on the 2-dimensional differentiable manifold M
         sage: derivative(a).display()
-        da = 2 dx/\dy
+        da = 2 dx∧dy
 
     """
     try:

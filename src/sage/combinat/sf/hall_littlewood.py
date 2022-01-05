@@ -66,7 +66,7 @@ class HallLittlewood(UniqueRepresentation):
 
         - a string representing the class
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: SymmetricFunctions(QQ).hall_littlewood(1)
             Hall-Littlewood polynomials with t=1 over Rational Field
@@ -102,7 +102,7 @@ class HallLittlewood(UniqueRepresentation):
 
         - returns the ring of symmetric functions
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: HL = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood()
             sage: HL.symmetric_function_ring()
@@ -123,7 +123,7 @@ class HallLittlewood(UniqueRepresentation):
 
         The base ring of the symmetric functions.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: HL = SymmetricFunctions(QQ['t'].fraction_field()).hall_littlewood(t=1)
             sage: HL.base_ring()
@@ -532,7 +532,7 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         - returns the class of Hall-Littlewood bases
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: HLP = SymmetricFunctions(FractionField(QQ['t'])).hall_littlewood(1).P()
             sage: HLP.hall_littlewood_family()

@@ -38,16 +38,16 @@ Methods
 from collections import deque
 
 from libc.string cimport memset
-from sage.ext.memory_allocator cimport MemoryAllocator
-from sage.graphs.base.static_sparse_graph cimport init_short_digraph
-from sage.graphs.base.static_sparse_graph cimport free_short_digraph
-from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
 from libc.stdint cimport uint32_t
-from cysignals.signals cimport sig_on, sig_off, sig_check
-
 from libcpp.queue cimport priority_queue
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
+from cysignals.signals cimport sig_on, sig_off, sig_check
+from memory_allocator cimport MemoryAllocator
+
+from sage.graphs.base.static_sparse_graph cimport init_short_digraph
+from sage.graphs.base.static_sparse_graph cimport free_short_digraph
+from sage.graphs.base.static_sparse_graph cimport out_degree, has_edge
 
 
 def _is_valid_lex_BFS_order(G, L):

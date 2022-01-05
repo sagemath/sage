@@ -46,7 +46,7 @@ AUTHORS:
 
 - Thomas Gagne (2015-06): initial version
 
-EXAMPLES
+EXAMPLES:
 
 We build Rijndael-GF with a block length of 4 and a key length of 6::
 
@@ -1020,7 +1020,7 @@ class RijndaelGF(SageObject):
         - A string in the format ``format`` of ``ciphertext`` decrypted with
           key ``key``.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: from sage.crypto.mq.rijndael_gf import RijndaelGF
             sage: rgf = RijndaelGF(4, 4)
@@ -1473,7 +1473,7 @@ class RijndaelGF(SageObject):
           then ``compose`` returns `g(f(A))_{i,j}`, where `A` is an
           arbitrary input state matrix.
 
-        EXAMPLES
+        EXAMPLES:
 
         This function allows us to determine the polynomial representations
         of entries across multiple round functions. For example, if we

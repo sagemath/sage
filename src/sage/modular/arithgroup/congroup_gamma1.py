@@ -270,8 +270,10 @@ class Gamma1_class(GammaH_class):
             [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         """
         N = self.level()
-        if N > 2: return 0
-        elif N == 2 or N == 1: return 1
+        if N > 2:
+            return 0
+        elif N == 2 or N == 1:
+            return 1
 
     def nu3(self):
         r"""
@@ -290,8 +292,10 @@ class Gamma1_class(GammaH_class):
             [1, 0, 1, 0, 0, 0, 0, 0, 0, 0]
         """
         N = self.level()
-        if N > 3 or N == 2: return 0
-        else: return 1
+        if N > 3 or N == 2:
+            return 0
+        else:
+            return 1
 
     def ncusps(self):
         r"""

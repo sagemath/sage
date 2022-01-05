@@ -325,14 +325,14 @@ def construction_3_6(k,n,m,i,explain_construction=False):
     assert is_orthogonal_array(OA,k,n*m+i)
     return OA
 
-def OA_and_oval(q):
+def OA_and_oval(q, *, solver=None, integrality_tolerance=1e-3):
     r"""
     Return a `OA(q+1,q)` whose blocks contains `\leq 2` zeroes in the last `q`
     columns.
 
     This `OA` is build from a projective plane of order `q`, in which there
-    exists an oval `O` of size `q+1` (i.e. a set of `q+1` points no three of which
-    are [colinear/contained in a common set of the projective plane]).
+    exists an oval `O` of size `q+1` (i.e. a set of `q+1` points no three of
+    which are [colinear/contained in a common set of the projective plane]).
 
     Removing an element `x\in O` and all sets that contain it, we obtain a
     `TD(q+1,q)` in which `O` intersects all columns except one. As `O` is an
@@ -341,6 +341,17 @@ def OA_and_oval(q):
     INPUT:
 
     - ``q`` -- a prime power
+
+    - ``solver`` -- (default: ``None``) Specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``integrality_tolerance`` -- parameter for use with MILP solvers over an
+      inexact base ring; see :meth:`MixedIntegerLinearProgram.get_values`.
 
     .. NOTE::
 
@@ -362,14 +373,14 @@ def OA_and_oval(q):
 
     # We compute the oval with a linear program
     from sage.numerical.mip import MixedIntegerLinearProgram
-    p = MixedIntegerLinearProgram()
+    p = MixedIntegerLinearProgram(solver=solver)
     b = p.new_variable(binary=True)
     V = B.ground_set()
     p.add_constraint(p.sum([b[i] for i in V]) == q+1)
     for bl in B:
         p.add_constraint(p.sum([b[i] for i in bl]) <= 2)
     p.solve()
-    b = p.get_values(b)
+    b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
     oval = [x for x,i in b.items() if i]
     assert len(oval) == q+1
 
@@ -783,7 +794,6 @@ def thwart_lemma_4_1(k,n,m,explain_construction=False):
       T. G. Ostrom and F. A. Sherk.
       Canad. Math. Bull vol7 num.4 (1964)
     """
-    from sage.combinat.designs.designs_pyx import is_orthogonal_array
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
     from sage.arith.all import is_prime_power
     from .block_design import DesarguesianProjectivePlaneDesign
@@ -1075,12 +1085,10 @@ def three_factor_product(k,n1,n2,n3,check=False,explain_construction=False):
 
         # Check our stuff before we return it
         if check:
-            profile = [i for i in range(g2*g1) for _ in range(g1)]
             for classs in new_g1_parallel_classes:
-                assert_c_partition(classs,k,g2*g1,g1)
-            profile = list(range(g2*g1))
+                assert_c_partition(classs, k, g2 * g1, g1)
             for classs in new_parallel_classes:
-                assert_c_partition(classs,k,g2*g1,1)
+                assert_c_partition(classs, k, g2 * g1, 1)
 
         return new_g1_parallel_classes, new_parallel_classes
 

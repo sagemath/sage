@@ -1199,7 +1199,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
         b = ~dera
         while(True):
             na = a - selfa * b
-            if na == a: return a
+            if na == a:
+                return a
             a = na
             selfa = self(a)
             dera = der(a)
@@ -1477,7 +1478,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
                 continue
             if hint is not None and slope == minval:
                 rootsbar = hint
-                if not rootsbar: continue
+                if not rootsbar:
+                    continue
             if i < len(vertices) - 1:
                 F = P._factor_of_degree(deg_right - deg)
                 P = P // F
@@ -1491,7 +1493,8 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
             if hint is None or slope != minval:
                 Fbar = Pk([ F[j] >> (val - j*slope) for j in range(F.degree()+1) ])
                 rootsbar = [ r for (r, _) in Fbar.roots() ]
-                if not rootsbar: continue
+                if not rootsbar:
+                    continue
             rbar = rootsbar.pop()
             shift = K(rbar).lift_to_precision() << slope  # probably we should choose a better lift
             roots += [(r+shift, m) for (r, m) in F(x+shift)._roots(secure, slope, [r-rbar for r in rootsbar])]  # recursive call

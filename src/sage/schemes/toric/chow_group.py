@@ -62,7 +62,7 @@ EXAMPLES::
     7
     sage: a = sum( A.gen(i) * (i+1) for i in range(A.ngens()) )   # an element of A
     sage: a  # long time (2s on sage.math, 2011)
-    ( 3 | 1 mod 7 | 0 mod 2, 1 mod 2, 4, 5, 6, 7, 8 | 9 )
+    ( 9 | 1 mod 7 | 1 mod 2, 0 mod 2, 4, 5, 6, 7, 8 | 3 )
 
 The Chow group elements are printed as ``( a0 | a1 mod 7 | a2 mod 2,
 a3 mod 2, a4, a5, a6, a7, a8 | a9 )``, which denotes the element of
@@ -93,13 +93,13 @@ Cones of toric varieties can determine their own Chow cycle::
     sage: cone = X.fan(dim=2)[3]; cone
     2-d cone of Rational polyhedral fan in 3-d lattice N
     sage: A_cone = A(cone); A_cone
-    ( 0 | 1 mod 7 | 0 mod 2, 0 mod 2, 0, 0, 0, 0, 0 | 0 )
+    ( 0 | 6 mod 7 | 0 mod 2, 0 mod 2, 0, 0, 0, 0, 0 | 0 )
     sage: A_cone.degree()
     1
     sage: 2 * A_cone
-    ( 0 | 2 mod 7 | 0 mod 2, 0 mod 2, 0, 0, 0, 0, 0 | 0 )
+    ( 0 | 5 mod 7 | 0 mod 2, 0 mod 2, 0, 0, 0, 0, 0 | 0 )
     sage: A_cone + A.gen(0)
-    ( 0 | 1 mod 7 | 0 mod 2, 1 mod 2, 0, 0, 0, 0, 0 | 0 )
+    ( 0 | 6 mod 7 | 1 mod 2, 0 mod 2, 0, 0, 0, 0, 0 | 0 )
 
 Chow cycles can be of mixed degrees::
 
@@ -151,7 +151,7 @@ class ChowCycle(FGP_Element):
         sage: P2 = toric_varieties.P2()
         sage: A = P2.Chow_group()
         sage: A.gens()
-        (( 1 | 0 | 0 ), ( 0 | 1 | 0 ), ( 0 | 0 | 1 ))
+        (( 0 | 0 | 1 ), ( 0 | 1 | 0 ), ( 1 | 0 | 0 ))
         sage: cone = P2.fan(1)[0]
         sage: A(cone)
         ( 0 | 1 | 0 )
@@ -199,7 +199,7 @@ class ChowCycle(FGP_Element):
             sage: A.degree()
             (Z, Z, Z)
             sage: A.an_element()._repr_()
-            '( 1 | 0 | 0 )'
+            '( 0 | 0 | 1 )'
 
         A more complicated example with torsion::
 
@@ -208,7 +208,7 @@ class ChowCycle(FGP_Element):
             sage: A.degree()
             (Z, 0, C2 x Z^5, Z)
             sage: sum( A.gen(i) * (i+1) for i in range(A.ngens()) )
-            ( 2 || 1 mod 2, 3, 4, 5, 6, 7 | 8 )
+            ( 8 || 1 mod 2, 3, 4, 5, 6, 7 | 2 )
         """
         A = self.parent()
         s = '('
@@ -245,7 +245,7 @@ class ChowCycle(FGP_Element):
             sage: P2 = toric_varieties.P2()
             sage: A = P2.Chow_group()
             sage: [ a.degree() for a in A.gens() ]
-            [0, 1, 2]
+            [2, 1, 0]
         """
         if '_dim' in self.__dict__:
             return self._dim
@@ -279,9 +279,9 @@ class ChowCycle(FGP_Element):
             sage: A = toric_varieties.P2().Chow_group()
             sage: cycle = 10*A.gen(0) + 11*A.gen(1) + 12*A.gen(2)
             sage: cycle
-            ( 10 | 11 | 12 )
+            ( 12 | 11 | 10 )
             sage: cycle.project_to_degree(2)
-            ( 0 | 0 | 12 )
+            ( 0 | 0 | 10 )
         """
         ambient_dim = self.parent()._variety.dimension()
         v = list(self.lift())
@@ -307,7 +307,7 @@ class ChowCycle(FGP_Element):
 
             sage: P2 = toric_varieties.P2()
             sage: A = P2.Chow_group()
-            sage: a = 5*A.gen(0) + 7*A.gen(1); a
+            sage: a = 5*A.gen(2) + 7*A.gen(1); a
             ( 5 | 7 | 0 )
             sage: a.count_points()
             5
@@ -373,7 +373,7 @@ class ChowCycle(FGP_Element):
             V(y)
             sage: A = dP6.Chow_group()
             sage: A(cone)
-            ( 0 | 0, 0, 0, 1 | 0 )
+            ( 0 | 0, 0, 1, 0 | 0 )
             sage: intersection = A(cone).intersection_with_divisor(D); intersection
             ( -1 | 0, 0, 0, 0 | 0 )
             sage: intersection.count_points()
@@ -405,8 +405,8 @@ class ChowCycle(FGP_Element):
              ( 0 | 0, 0, 0, 0 | 0 ), ( 0 | 0, 0, 0, 0 | 0 ),
              ( 0 | 0, 0, 0, 0 | 0 )]
             sage: [ r.intersection_with_divisor(D).lift() for r in dP6.Chow_group().relation_gens() ]
-            [(0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0),
-             (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+            [(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+             (0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0),
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
              (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -504,13 +504,13 @@ class ChowCycle(FGP_Element):
             sage: HH = WP4.cohomology_ring()
             sage: cone3d = Cone([(0,0,1,0), (0,0,0,1), (-9,-6,-1,-1)])
             sage: A(cone3d)
-            ( 0 | 1 | 0 | 0 | 0 )
+            ( 0 | -1 | 0 | 0 | 0 )
             sage: HH(cone3d)
             [3*z4^3]
 
             sage: D = -WP4.K()  # the anticanonical divisor
             sage: A(D)
-            ( 0 | 0 | 0 | 18 | 0 )
+            ( 0 | 0 | 0 | -18 | 0 )
             sage: HH(D)
             [18*z4]
 
@@ -605,7 +605,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
         sage: A = ChowGroup_class(P2,ZZ,True);  A
         Chow group of 2-d CPR-Fano toric variety covered by 3 affine patches
         sage: A.an_element()
-        ( 1 | 0 | 0 )
+        ( 0 | 0 | 1 )
     """
 
     Element = ChowCycle
@@ -627,7 +627,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
             sage: A_ZZ = P2.Chow_group()
             sage: 2 * A_ZZ.an_element() * 3
-            ( 6 | 0 | 0 )
+            ( 0 | 0 | 6 )
             sage: 1/2 * A_ZZ.an_element() * 1/3
             Traceback (most recent call last):
             ...
@@ -705,9 +705,9 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
             sage: A = dP6.Chow_group()
             sage: cone = dP6.fan(dim=1)[4]
             sage: A(cone)
-            ( 0 | 0, 1, 0, 0 | 0 )
+            ( 0 | 1, 1, 0, -1 | 0 )
             sage: A(Cone(cone))        # isomorphic but not identical to a cone of the fan!
-            ( 0 | 0, 1, 0, 0 | 0 )
+            ( 0 | 1, 1, 0, -1 | 0 )
             sage: A( dP6.K() )
             ( 0 | -1, -2, -2, -1 | 0 )
         """
@@ -1003,7 +1003,7 @@ class ChowGroup_class(FGP_Module_class, WithEqualityById):
 
             sage: A = toric_varieties.P2().Chow_group()
             sage: A.gens()
-            (( 1 | 0 | 0 ), ( 0 | 1 | 0 ), ( 0 | 0 | 1 ))
+            (( 0 | 0 | 1 ), ( 0 | 1 | 0 ), ( 1 | 0 | 0 ))
             sage: A.gens(degree=1)
             (( 0 | 1 | 0 ),)
         """

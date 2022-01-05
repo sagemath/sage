@@ -957,7 +957,7 @@ class P1NFList(SageObject):
             sage: N = k.ideal(a + 1)
             sage: P = P1NFList(N)
             sage: u = k.unit_group().gens_values(); u
-            [-1, a^3 + a^2 + a + 12, a^3 + 3*a^2 - 1]
+            [-1, -a^3 - a^2 - a - 12, -a^3 - 3*a^2 + 1]
             sage: P.apply_J_epsilon(3, u[2]^2)==P.apply_J_epsilon(P.apply_J_epsilon(3, u[2]),u[2])
             True
         """

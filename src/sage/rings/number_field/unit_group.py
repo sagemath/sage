@@ -15,12 +15,12 @@ The first generator is a primitive root of unity in the field::
     sage: UK.gens_values()  # random
     [-1/12*a^3 + 1/6*a, 1/24*a^3 + 1/4*a^2 - 1/12*a - 1]
     sage: UK.gen(0).value()
-    -1/12*a^3 + 1/6*a
+    1/12*a^3 - 1/6*a
 
     sage: UK.gen(0)
     u0
     sage: UK.gen(0) + K.one()   # coerce abstract generator into number field
-    -1/12*a^3 + 1/6*a + 1
+    1/12*a^3 - 1/6*a + 1
 
     sage: [u.multiplicative_order() for u in UK.gens()]
     [4, +Infinity]
@@ -37,18 +37,18 @@ as elements of an abstract multiplicative group::
     sage: UK(-1)
     u0^2
     sage: [UK(u) for u in (x^4-1).roots(K, multiplicities=False)]
-    [1, u0^2, u0^3, u0]
+    [1, u0^2, u0, u0^3]
 
     sage: UK.fundamental_units() # random
     [1/24*a^3 + 1/4*a^2 - 1/12*a - 1]
     sage: torsion_gen = UK.torsion_generator();  torsion_gen
     u0
     sage: torsion_gen.value()
-    -1/12*a^3 + 1/6*a
+    1/12*a^3 - 1/6*a
     sage: UK.zeta_order()
     4
     sage: UK.roots_of_unity()
-    [-1/12*a^3 + 1/6*a, -1, 1/12*a^3 - 1/6*a, 1]
+    [1/12*a^3 - 1/6*a, -1, -1/12*a^3 + 1/6*a, 1]
 
 Exp and log functions provide maps between units as field elements and exponent
 vectors with respect to the generators::
@@ -82,7 +82,7 @@ S-unit groups may be constructed, where S is a set of primes::
     sage: SUK.rank()
     4
     sage: SUK.gens_values()
-    [-1, a^2 + 1, a^5 + a^4 - a^2 - a - 1, a + 1, -a + 1]
+    [-1, a^2 + 1, -a^5 - a^4 + a^2 + a + 1, a + 1, a - 1]
     sage: u = 9*prod(SUK.gens_values()); u
     -18*a^5 - 18*a^4 - 18*a^3 - 9*a^2 + 9*a + 27
     sage: SUK.log(u)
@@ -100,29 +100,29 @@ A relative number field example::
     sage: UL.zeta_order()
     24
     sage: UL.roots_of_unity()
-    [-b*a - b,
-     b^2*a,
-     b^3,
-     a + 1,
-     -b*a,
-     -b^2,
-     b^3*a + b^3,
-     a,
-     b,
+    [-b*a,
      -b^2*a - b^2,
-     b^3*a,
-     -1,
-     b*a + b,
-     -b^2*a,
      -b^3,
-     -a - 1,
-     b*a,
-     b^2,
-     -b^3*a - b^3,
      -a,
+     -b*a - b,
+     -b^2,
+     b^3*a,
+     -a - 1,
      -b,
+     b^2*a,
+     b^3*a + b^3,
+     -1,
+     b*a,
      b^2*a + b^2,
+     b^3,
+     a,
+     b*a + b,
+     b^2,
      -b^3*a,
+     a + 1,
+     b,
+     -b^2*a,
+     -b^3*a - b^3,
      1]
 
 A relative extension example, which worked thanks to the code review by F.W.Clarke::
@@ -145,7 +145,7 @@ AUTHOR:
 
 - John Cremona
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2009 William Stein, John Cremona
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -157,15 +157,15 @@ AUTHOR:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.groups.abelian_gps.values import AbelianGroupWithValues_class
-from sage.structure.sequence import Sequence
 from sage.structure.proof.proof import get_flag
 from sage.libs.pari.all import pari
 from sage.misc.all import prod
 from sage.rings.integer_ring import ZZ
+
 
 class UnitGroup(AbelianGroupWithValues_class):
     """
@@ -199,7 +199,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         sage: UK.gen(5)
         u5
         sage: UK.gen(5).value()
-        z^7 + z
+        -z^7 - z
 
     An S-unit group::
 
@@ -216,7 +216,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         sage: SUK.zeta_order()
         26
         sage: SUK.log(21*z)
-        (12, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1)
+        (25, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1)
     """
     # This structure is not a parent in the usual sense. The
     # "elements" are NumberFieldElement_absolute. Instead, they should
@@ -250,7 +250,7 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: UK.gens()
             (u0, u1)
             sage: UK.gens_values()
-            [-1, 6*a - 37]
+            [-1, -6*a + 37]
 
             sage: K.<a> = QuadraticField(-3)
             sage: UK = K.unit_group(); UK
@@ -258,7 +258,7 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: UK.gens()
             (u,)
             sage: UK.gens_values()
-            [1/2*a + 1/2]
+            [-1/2*a + 1/2]
 
             sage: K.<z> = CyclotomicField(13)
             sage: UK = K.unit_group(); UK
@@ -329,28 +329,25 @@ class UnitGroup(AbelianGroupWithValues_class):
 
         # compute the additional S-unit generators:
         if S:
-            self.__S_unit_data = pK.bnfsunit(pS)
-            su = [K(u, check=False) for u in self.__S_unit_data[0]]
+            self.__S_unit_data = pK.bnfunits(pS)
         else:
-            su = []
-        self.__nsu = len(su)
+            self.__S_unit_data = pK.bnfunits()
+        # TODO: converting the factored matrix representation of bnfunits into polynomial
+        # form is a *big* waste of time
+        su_fu_tu = [pK.nfbasistoalg(pK.nffactorback(z)) for z in self.__S_unit_data[0]]
+
+        self.__nfu = len(pK.bnf_get_fu())           # number of fundamental units
+        self.__nsu = len(su_fu_tu) - self.__nfu - 1 # number of S-units
+        self.__ntu = pK.bnf_get_tu()[0]             # order of torsion
         self.__rank = self.__nfu + self.__nsu
 
-        # compute a torsion generator and pick the 'simplest' one:
-        n, z = pK[7][3] # number of roots of unity and bnf.tu as in pari documentation
-        n = ZZ(n)
-        self.__ntu = n
-        z = K(z, check=False)
+        # Move the torsion unit first, then fundamental units then S-units
+        gens = [K(u, check=False) for u in su_fu_tu]
+        gens = [gens[-1]] + gens[self.__nsu:-1] + gens[:self.__nsu]
 
-        # If we replaced z by another torsion generator we would need
-        # to allow for this in the dlog function!  So we do not.
-
-        # Store the actual generators (torsion first):
-        gens = [z] + fu + su
-        values = Sequence(gens, immutable=True, universe=self, check=False)
         # Construct the abstract group:
-        gens_orders = tuple([ZZ(n)]+[ZZ(0)]*(self.__rank))
-        AbelianGroupWithValues_class.__init__(self, gens_orders, 'u', values, number_field)
+        gens_orders = tuple([ZZ(self.__ntu)]+[ZZ(0)]*(self.__rank))
+        AbelianGroupWithValues_class.__init__(self, gens_orders, 'u', gens, number_field)
 
     def _element_constructor_(self, u):
         """
@@ -375,7 +372,7 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: UK.gens()
             (u0, u1)
             sage: UK.gens_values()
-            [-1, 6*a - 37]
+            [-1, -6*a + 37]
             sage: UK.ngens()
             2
             sage: [UK(u) for u in UK.gens()]
@@ -394,8 +391,8 @@ class UnitGroup(AbelianGroupWithValues_class):
         except TypeError:
             raise ValueError("%s is not an element of %s"%(u,K))
         if self.__S:
-            m = pK.bnfissunit(self.__S_unit_data, pari(u)).mattranspose()
-            if m.ncols()==0:
+            m = pK.bnfisunit(pari(u), self.__S_unit_data).mattranspose()
+            if m.ncols() == 0:
                 raise ValueError("%s is not an S-unit"%u)
         else:
             if not u.is_integral() or u.norm().abs() != 1:
@@ -405,9 +402,8 @@ class UnitGroup(AbelianGroupWithValues_class):
         # convert column matrix to a list:
         m = [ZZ(m[0,i].sage()) for i in range(m.ncols())]
 
-        # NB pari puts the torsion after the fundamental units, before
-        # the extra S-units but we have the torsion first:
-        m = [m[self.__nfu]] + m[:self.__nfu] + m[self.__nfu+1:]
+        # NOTE: pari ordering for the units is (S-units, fundamental units, torsion unit)
+        m = [m[-1]] + m[self.__nsu:-1] + m[:self.__nsu]
 
         return self.element_class(self, m)
 
@@ -479,7 +475,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         """
         z = self.gen(0).value()
         n = self.__ntu
-        return [ z**k for k in range(1, n+1) ]
+        return [z**k for k in range(1, n + 1)]
 
     def torsion_generator(self):
         """
@@ -527,9 +523,9 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: U.zeta(2, all=True)
             [-1]
             sage: U.zeta(3)
-            1/2*z - 1/2
+            -1/2*z - 1/2
             sage: U.zeta(3, all=True)
-            [1/2*z - 1/2, -1/2*z - 1/2]
+            [-1/2*z - 1/2, 1/2*z - 1/2]
             sage: U.zeta(4)
             Traceback (most recent call last):
             ...
@@ -590,7 +586,6 @@ class UnitGroup(AbelianGroupWithValues_class):
         """
         return self.__number_field
 
-
     def primes(self):
         """
         Return the (possibly empty) list of primes associated with this S-unit group.
@@ -606,7 +601,6 @@ class UnitGroup(AbelianGroupWithValues_class):
             True
         """
         return self.__S
-
 
     def log(self, u):
         r"""
@@ -645,7 +639,7 @@ class UnitGroup(AbelianGroupWithValues_class):
            sage: SUK = UnitGroup(K,S=2)
            sage: v = (3,1,4,1,5,9,2)
            sage: u = SUK.exp(v); u
-           -8732*z^11 + 15496*z^10 + 51840*z^9 + 68804*z^8 + 51840*z^7 + 15496*z^6 - 8732*z^5 + 34216*z^3 + 64312*z^2 + 64312*z + 34216
+           8732*z^11 - 15496*z^10 - 51840*z^9 - 68804*z^8 - 51840*z^7 - 15496*z^6 + 8732*z^5 - 34216*z^3 - 64312*z^2 - 64312*z - 34216
            sage: SUK.log(u)
            (3, 1, 4, 1, 5, 9, 2)
            sage: SUK.log(u) == v
@@ -692,12 +686,11 @@ class UnitGroup(AbelianGroupWithValues_class):
            sage: SUK = UnitGroup(K,S=2)
            sage: v = (3,1,4,1,5,9,2)
            sage: u = SUK.exp(v); u
-           -8732*z^11 + 15496*z^10 + 51840*z^9 + 68804*z^8 + 51840*z^7 + 15496*z^6 - 8732*z^5 + 34216*z^3 + 64312*z^2 + 64312*z + 34216
+           8732*z^11 - 15496*z^10 - 51840*z^9 - 68804*z^8 - 51840*z^7 - 15496*z^6 + 8732*z^5 - 34216*z^3 - 64312*z^2 - 64312*z - 34216
            sage: SUK.log(u)
            (3, 1, 4, 1, 5, 9, 2)
            sage: SUK.log(u) == v
            True
         """
-        return prod((u**e for u,e in zip(self.gens_values(),exponents)), self.number_field().one())
-
-
+        return prod((u**e for u, e in zip(self.gens_values(), exponents)),
+                    self.number_field().one())

@@ -311,7 +311,8 @@ def _find_pow_of_frobenius(p, n, x, y):
     """
     from .integer_mod import mod
     for i in range(n):
-        if x == y: break
+        if x == y:
+            break
         y = y**p
     else:
         raise RuntimeError("No appropriate power of Frobenius found")
@@ -453,7 +454,8 @@ def _frobenius_shift(K, generators, check_only=False):
         searched[i] = True
         crt_possibles = []
         for j in range(1,len(qlist)):
-            if i==j: continue
+            if i==j:
+                continue
             if crt[(i,j)][qindex][1] >= level:
                 if xleveled[j]:
                     return [j]
@@ -468,7 +470,8 @@ def _frobenius_shift(K, generators, check_only=False):
 
     def propagate_levelling(qindex, level, x, xleveled, i):
         for j in range(1, len(qlist)):
-            if i==j: continue
+            if i==j:
+                continue
             if not xleveled[j] and crt[(i,j)][qindex][1] >= level:
                 newxj = x[i][0] + crt[(i,j)][qindex][0]
                 x[j] = (newxj, min(x[i][1], crt[(i,j)][qindex][1]))

@@ -38,7 +38,7 @@ from sage.libs.pari.all import pari
 from sage.libs.gmp.all cimport *
 
 from sage.cpython.string import FS_ENCODING
-from sage.cpython.string cimport str_to_bytes, char_to_str
+from sage.cpython.string cimport str_to_bytes, char_to_str, bytes_to_str
 
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomial_libsingular
 
@@ -255,7 +255,7 @@ cdef object si2sa_NF(number *n, ring *_ring, object base):
         sage: f.lc()
         1024*a
         sage: type(f.lc())
-        <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic'>
+        <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic_sqrt'>
     """
     cdef poly *z
     cdef number *c
@@ -807,3 +807,31 @@ init_libsingular()
 cdef void libsingular_error_callback(const_char_ptr s):
     _s = char_to_str(s)
     error_messages.append(_s)
+
+def get_resource(id):
+    """
+    Return a Singular "resource".
+
+    INPUT:
+
+    - ``id`` -- a single-character string; see
+      https://github.com/Singular/Singular/blob/spielwiese/resources/feResource.cc
+
+    OUTPUT:
+
+    A string, or ``None``.
+
+    EXAMPLES::
+
+        sage: from sage.libs.singular.singular import get_resource
+        sage: get_resource('D')            # SINGULAR_DATA_DIR
+        '...'
+        sage: get_resource('i')            # SINGULAR_INFO_FILE
+        '.../singular...'
+        sage: get_resource('7') is None    # not defined
+        True
+    """
+    cdef char *result = feGetResource(<char>ord(id))
+    if result == NULL:
+        return None
+    return bytes_to_str(result)

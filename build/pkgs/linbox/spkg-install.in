@@ -31,8 +31,10 @@ fi
 
 # We disable openmp because of build failures, see
 # http://trac.sagemath.org/ticket/17635#comment:67
+# We disable ocl because of build failures, see
+# https://trac.sagemath.org/ticket/32076
 sdh_configure --with-default="$SAGE_LOCAL" \
-              --disable-static --disable-openmp \
+              --disable-static --disable-openmp --without-ocl \
               $LINBOX_CONFIGURE
 sdh_make
 sdh_make_install

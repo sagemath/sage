@@ -404,7 +404,7 @@ Sage может выполнять вычисления, связанные с �
      0 over Rational Field
     sage: ModularSymbols(Gamma1(11),2)
     Modular Symbols space of dimension 11 for Gamma_1(11) of weight 2 with
-    sign 0 and over Rational Field
+    sign 0 over Rational Field
 
 Вычислим некоторые характеристические полиномы и :math:`q`-разложения.
 

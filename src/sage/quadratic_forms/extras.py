@@ -94,12 +94,12 @@ def extend_to_primitive(A_input):
 
         sage: A = Matrix(ZZ, 3, 2, range(6))
         sage: extend_to_primitive(A)
-        [ 0  1  0]
+        [ 0  1 -1]
         [ 2  3  0]
-        [ 4  5 -1]
+        [ 4  5  0]
 
         sage: extend_to_primitive([vector([1,2,3])])
-        [(1, 2, 3), (0, 1, 0), (0, 0, 1)]
+        [(1, 2, 3), (0, 1, 1), (-1, 0, 0)]
 
     """
     ## Deal with a list of vectors

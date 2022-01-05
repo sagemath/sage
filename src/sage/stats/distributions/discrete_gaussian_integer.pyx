@@ -26,7 +26,16 @@ We construct a sampler for the distribution `D_{3,c}` with width `σ=3` and cent
 
 We ask for 100000 samples::
 
-    sage: n=100000; l = [D() for _ in range(n)]
+    sage: from collections import defaultdict
+    sage: counter = defaultdict(Integer)
+    sage: n = 0
+    sage: def add_samples(i):
+    ....:     global counter, n
+    ....:     for _ in range(i):
+    ....:         counter[D()] += 1
+    ....:         n += 1
+
+    sage: add_samples(100000)
 
 These are sampled with a probability proportional to `\exp(-x^2/18)`. More
 precisely we have to normalise by dividing by the overall probability over all
@@ -41,12 +50,13 @@ away is very unlikely and compute::
 With this normalisation factor, we can now test if our samples follow the
 expected distribution::
 
-    sage: x=0; l.count(x), ZZ(round(n*exp(-x^2/(2*sigma^2))/norm_factor))
-    (13355, 13298)
-    sage: x=4; l.count(x), ZZ(round(n*exp(-x^2/(2*sigma^2))/norm_factor))
-    (5479, 5467)
-    sage: x=-10; l.count(x), ZZ(round(n*exp(-x^2/(2*sigma^2))/norm_factor))
-    (53, 51)
+    sage: expected = lambda x : ZZ(round(n*exp(-x^2/(2*sigma^2))/norm_factor))
+    sage: observed = lambda x : counter[x]
+
+    sage: add_samples(10000)
+    sage: while abs(observed(0)*1.0/expected(0)   - 1.0) > 5e-2: add_samples(10000)
+    sage: while abs(observed(4)*1.0/expected(4)   - 1.0) > 5e-2: add_samples(10000)
+    sage: while abs(observed(-10)*1.0/expected(-10) - 1.0) > 5e-2: add_samples(10000)  # long time
 
 We construct an instance with a larger width::
 
@@ -56,23 +66,43 @@ We construct an instance with a larger width::
 
 ask for 100000 samples::
 
-    sage: n=100000; l = [D() for _ in range(n)] # long time
+    sage: from collections import defaultdict
+    sage: counter = defaultdict(Integer)
+    sage: n = 0
+    sage: def add_samples(i):
+    ....:     global counter, n
+    ....:     for _ in range(i):
+    ....:         counter[D()] += 1
+    ....:         n += 1
+
+    sage: add_samples(100000)
 
 and check if the proportions fit::
 
-    sage: x=0;   y=1; float(l.count(x))/l.count(y), exp(-x^2/(2*sigma^2))/exp(-y^2/(2*sigma^2)).n() # long time
-    (1.0, 1.00...)
-    sage: x=0; y=-100; float(l.count(x))/l.count(y), exp(-x^2/(2*sigma^2))/exp(-y^2/(2*sigma^2)).n() # long time
-    (1.32..., 1.36...)
+    sage: expected = lambda x, y: (
+    ....:     exp(-x^2/(2*sigma^2))/exp(-y^2/(2*sigma^2)).n())
+    sage: observed = lambda x, y: float(counter[x])/counter[y]
+
+    sage: while not all(v in counter for v in (0, 1, -100)): add_samples(10000)
+
+    sage: while abs(expected(0, 1) - observed(0, 1)) > 2e-1: add_samples(10000)
+    sage: while abs(expected(0, -100) - observed(0, -100)) > 2e-1: add_samples(10000)
 
 We construct a sampler with `c\%1 != 0`::
 
     sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
     sage: sigma = 3
     sage: D = DiscreteGaussianDistributionIntegerSampler(sigma=sigma, c=1/2)
-    sage: n=100000; l = [D() for _ in range(n)] # long time
-    sage: mean(l).n() # long time
-    0.486650000000000
+    sage: s = 0
+    sage: n = 0
+    sage: def add_samples(i):
+    ....:     global s, n
+    ....:     for _ in range(i):
+    ....:         s += D()
+    ....:         n += 1
+    ....:
+    sage: add_samples(100000)
+    sage: while abs(float(s)/n - 0.5) > 5e-2: add_samples(10000)
 
 REFERENCES:
 
@@ -227,52 +257,70 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
 
         We are testing correctness for multi-precision::
 
+            sage: def add_samples(i):
+            ....:     global mini, maxi, s, n
+            ....:     for _ in range(i):
+            ....:         x = D()
+            ....:         s += x
+            ....:         maxi = max(maxi, x)
+            ....:         mini = min(mini, x)
+            ....:         n += 1
+
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=0, tau=2)
-            sage: l = [D() for _ in range(2^16)]
-            sage: min(l) == 0-2*1.0, max(l) == 0+2*1.0, abs(mean(l)) < 0.01
-            (True, True, True)
+            sage: mini = 1000; maxi = -1000; s = 0; n = 0
+            sage: add_samples(2^16)
+            sage: while mini != 0 - 2*1.0 or maxi != 0 + 2*1.0 or abs(float(s)/n) >= 0.01:
+            ....:     add_samples(2^16)
 
-            sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=2.5, tau=2)
-            sage: l = [D() for _ in range(2^18)]
-            sage: min(l)==2-2*1.0, max(l)==2+2*1.0, mean(l).n()
-            (True, True, 2.45...)
+            sage: mini = 1000; maxi = -1000; s = 0; n = 0
+            sage: add_samples(2^16)
+            sage: while mini != 2 - 2*1.0 or maxi != 2 + 2*1.0 or abs(float(s)/n - 2.45) >= 0.01:
+            ....:     add_samples(2^16)
 
-            sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=2.5, tau=6)
-            sage: l = [D() for _ in range(2^18)]
-            sage: min(l), max(l), abs(mean(l)-2.5) < 0.01
-            (-2, 7, True)
+            sage: mini = 1000; maxi = -1000; s = 0; n = 0
+            sage: add_samples(2^18)
+            sage: while mini > 2 - 4*1.0 or maxi < 2 + 5*1.0 or abs(float(s)/n - 2.5) >= 0.01:  # long time
+            ....:     add_samples(2^18)
 
         We are testing correctness for double precision::
 
+            sage: def add_samples(i):
+            ....:     global mini, maxi, s, n
+            ....:     for _ in range(i):
+            ....:         x = D()
+            ....:         s += x
+            ....:         maxi = max(maxi, x)
+            ....:         mini = min(mini, x)
+            ....:         n += 1
+
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=0, tau=2, precision="dp")
-            sage: l = [D() for _ in range(2^16)]
-            sage: min(l) == 0-2*1.0, max(l) == 0+2*1.0, abs(mean(l)) < 0.05
-            (True, True, True)
+            sage: mini = 1000; maxi = -1000; s = 0; n = 0
+            sage: add_samples(2^16)
+            sage: while mini != 0 - 2*1.0 or maxi != 0 + 2*1.0 or abs(float(s)/n) >= 0.05:
+            ....:     add_samples(2^16)
 
-            sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=2.5, tau=2, precision="dp")
-            sage: l = [D() for _ in range(2^18)]
-            sage: min(l)==2-2*1.0, max(l)==2+2*1.0, mean(l).n()
-            (True, True, 2.4...)
+            sage: mini = 1000; maxi = -1000; s = 0; n = 0
+            sage: add_samples(2^16)
+            sage: while mini != 2 - 2*1.0 or maxi != 2 + 2*1.0 or abs(float(s)/n - 2.45) >= 0.01:
+            ....:     add_samples(2^16)
 
-            sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(1.0, c=2.5, tau=6, precision="dp")
-            sage: l = [D() for _ in range(2^18)]
-            sage: min(l)<=-1, max(l)>=6, abs(mean(l)-2.5) < 0.1
-            (True, True, True)
-            sage: tuple(l.count(i) for i in range(-2,8)) # output random
-            (7, 242, 4519, 34120, 92714, 91700, 33925, 4666, 246, 5)
+            sage: mini = 1000; maxi = -1000; s = 0; n = 0
+            sage: add_samples(2^16)
+            sage: while mini > -1 or maxi < 6 or abs(float(s)/n - 2.5) >= 0.1:
+            ....:     add_samples(2^16)
 
         We plot a histogram::
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
             sage: D = DiscreteGaussianDistributionIntegerSampler(17.0)
             sage: S = [D() for _ in range(2^16)]
-            sage: list_plot([(v,S.count(v)) for v in set(S)]) # long time
+            sage: list_plot([(v,S.count(v)) for v in set(S)])  # long time
             Graphics object consisting of 1 graphics primitive
 
         These generators cache random bits for performance reasons. Hence, resetting
@@ -411,9 +459,9 @@ cdef class DiscreteGaussianDistributionIntegerSampler(SageObject):
         EXAMPLES::
 
             sage: from sage.stats.distributions.discrete_gaussian_integer import DiscreteGaussianDistributionIntegerSampler
-            sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm="uniform+online")()
+            sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm="uniform+online")()  # random
             -3
-            sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm="uniform+table")()
+            sage: DiscreteGaussianDistributionIntegerSampler(3.0, algorithm="uniform+table")()  # random
             3
 
         TESTS::

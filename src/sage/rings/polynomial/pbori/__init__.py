@@ -10,7 +10,8 @@ as well as sophisticated and extendable strategies for Groebner base computation
 PolyBoRi features a powerful reference implementation for Groebner basis computation.
 
 AUTHOR:
-    The PolyBoRi Team, 2007-2011
+
+The PolyBoRi Team, 2007-2011
 
 REFERENCES:
 M. Brickenstein, A. Dreyer, G. Greuel, M. Wedler, O. Wienand,

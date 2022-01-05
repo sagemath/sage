@@ -1,0 +1,13 @@
+diff --git a/configure b/configure
+index a49f75a..960d412 100755
+--- a/configure
++++ b/configure
+@@ -2470,7 +2470,7 @@ fi
+
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for in-tree build on case insensitive file system" >&5
+ $as_echo_n "checking for in-tree build on case insensitive file system... " >&6; }
+-if test "$fricas_top_srcdir" = "$fricas_pwd"; then
++if test "$fricas_top_srcdir" = xfoobla; then
+    rm -f ac_TEST_filenames_CASE_sensitive ac_test_filenames_case_sensitive
+    echo foo > ac_test_filenames_case_sensitive
+    if test -f ac_TEST_filenames_CASE_sensitive; then

@@ -62,5 +62,6 @@ database engine.
    sage/databases/cunningham_tables
    sage/databases/db_class_polynomials
    sage/databases/db_modular_polynomials
+   sage/databases/knotinfo_db
 
 .. include:: ../footer.txt

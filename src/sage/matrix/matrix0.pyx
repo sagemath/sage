@@ -1589,7 +1589,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     ###########################################################
     def base_ring(self):
         """
-        Returns the base ring of the matrix.
+        Return the base ring of the matrix.
 
         EXAMPLES::
 
@@ -1875,6 +1875,25 @@ cdef class Matrix(sage.structure.element.Matrix):
               -0.35104242112828943    0.5084492941557279⎟
                -0.9541798283979341   -0.8948790563276592⎠
 
+        The number of floating point digits to display is controlled by
+        :obj:`matrix.options.precision <.constructor.options>` and can also be
+        set by the `IPython magic
+        <https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-precision>`_
+        ``%precision``. This does not affect the internal precision of the
+        represented data, but only the textual display of matrices::
+
+            sage: matrix.options.precision = 4
+            sage: A = matrix(RR, [[1/3, 200/3], [-3, 1e6]]); A
+            [  0.3333    66.67]
+            [  -3.000 1.000E+6]
+            sage: unicode_art(A)
+            ⎛  0.3333    66.67⎞
+            ⎝  -3.000 1.000E+6⎠
+            sage: matrix.options.precision = None
+            sage: A
+            [ 0.333333333333333   66.6666666666667]
+            [ -3.00000000000000 1.00000000000000e6]
+
         TESTS:
 
         Prior to :trac:`11544` this could take a full minute to run (2011). ::
@@ -1898,6 +1917,19 @@ cdef class Matrix(sage.structure.element.Matrix):
             ⎛─⎞
             ⎜1⎟
             ⎝─⎠
+
+        Check that exact number types are not affected by the precision
+        option::
+
+            sage: matrix.options.precision = 4
+            sage: matrix(ZZ, [[10^10]])
+            [10000000000]
+            sage: matrix(QQ, [[2/3, 10^6]])
+            [    2/3 1000000]
+            sage: R.<x,y> = QQ[[]]
+            sage: matrix(R, [[2/3 - 10^6 * x^3 + 3 * y + O(x, y)^4]])
+            [2/3 + 3*y - 1000000*x^3 + O(x, y)^4]
+            sage: matrix.options._reset()
         """
         cdef Py_ssize_t nr, nc, r, c
         nr = self._nrows
@@ -1988,15 +2020,30 @@ cdef class Matrix(sage.structure.element.Matrix):
             if minus_one is not None:
                 rep_mapping[-self.base_ring().one()] = minus_one
 
+        entries = self.list()
+
+        # only use floating point formatting for inexact types that have
+        # custom implementation of __format__
+        from .constructor import options
+        prec = options.precision()
+        if prec is None or callable(rep_mapping) or not entries \
+                or type(entries[0]).__format__ is Element.__format__ \
+                or self._base_ring.is_exact():
+            fmt_numeric = None
+        else:
+            fmt_numeric = options.format_numeric()
+
         # compute column widths
         S = []
-        for x in self.list():
+        for x in entries:
             # Override the usual representations with those specified
             if callable(rep_mapping):
                 rep = rep_mapping(x)
             # avoid hashing entries, especially algebraic numbers
             elif rep_mapping and x in rep_mapping:
                 rep = rep_mapping.get(x)
+            elif fmt_numeric is not None:
+                rep = fmt_numeric.format(x, prec=prec)
             else:
                 rep = repr(x)
             S.append(rep)
@@ -2223,7 +2270,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def dimensions(self):
         r"""
-        Returns the dimensions of this matrix as the tuple (nrows, ncols).
+        Return the dimensions of this matrix as the tuple (nrows, ncols).
 
         EXAMPLES::
 
@@ -2246,7 +2293,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     ###################################################
     def act_on_polynomial(self, f):
         """
-        Returns the polynomial f(self\*x).
+        Return the polynomial f(self\*x).
 
         INPUT:
 
@@ -3552,8 +3599,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         REFERENCES:
 
-        - [FZ2001] S. Fomin, A. Zelevinsky. *Cluster Algebras 1: Foundations*,
-          :arxiv:`math/0104151` (2001).
+        - [FZ2001]_
         """
         cdef Py_ssize_t i, j, _
         cdef list pairs, k0_pairs, k1_pairs
@@ -3660,8 +3706,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         REFERENCES:
 
-        - [FZ2001] S. Fomin, A. Zelevinsky. *Cluster Algebras 1: Foundations*,
-          :arxiv:`math/0104151` (2001).
+        - [FZ2001]_
         """
         cdef dict d = {}
         cdef list queue = list(xrange(self._ncols))
@@ -3858,7 +3903,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_symmetric(self):
         """
-        Returns True if this is a symmetric matrix.
+        Return True if this is a symmetric matrix.
 
         A symmetric matrix is necessarily square.
 
@@ -4264,8 +4309,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         REFERENCES:
 
-        - [FZ2001] S. Fomin, A. Zelevinsky. *Cluster Algebras 1: Foundations*,
-          :arxiv:`math/0104151` (2001).
+        - [FZ2001]_
         """
         if self._ncols != self._nrows:
             raise ValueError("The matrix is not a square matrix")
@@ -4316,8 +4360,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         REFERENCES:
 
-        - [FZ2001] S. Fomin, A. Zelevinsky. *Cluster Algebras 1: Foundations*,
-          :arxiv:`math/0104151` (2001).
+        - [FZ2001]_
         """
         if self._ncols != self._nrows:
             raise ValueError("The matrix is not a square matrix")
@@ -4325,7 +4368,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_dense(self):
         """
-        Returns True if this is a dense matrix.
+        Return True if this is a dense matrix.
 
         In Sage, being dense is a property of the underlying
         representation, not the number of nonzero entries.
@@ -4423,7 +4466,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def is_singular(self):
         r"""
-        Returns ``True`` if ``self`` is singular.
+        Return ``True`` if ``self`` is singular.
 
         OUTPUT:
 
@@ -4632,7 +4675,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def _nonzero_positions_by_row(self, copy=True):
         """
-        Returns the list of pairs ``(i,j)`` such that ``self[i,j] != 0``.
+        Return the list of pairs ``(i,j)`` such that ``self[i,j] != 0``.
 
         It is safe to change the resulting list (unless you give the
         option ``copy=False``).
@@ -4661,7 +4704,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
     def _nonzero_positions_by_column(self, copy=True):
         """
-        Returns the list of pairs ``(i,j)`` such that ``self[i,j] != 0``, but
+        Return the list of pairs ``(i,j)`` such that ``self[i,j] != 0``, but
         sorted by columns, i.e., column ``j=0`` entries occur first, then
         column ``j=1`` entries, etc.
 
@@ -4916,13 +4959,11 @@ cdef class Matrix(sage.structure.element.Matrix):
     ###################################################
     cdef _vector_times_matrix_(self, Vector v):
         """
-        Returns the vector times matrix product.
+        Return the vector times matrix product.
 
         INPUT:
 
-
         -  ``v`` - a free module element.
-
 
         OUTPUT: The vector times matrix product v\*A.
 

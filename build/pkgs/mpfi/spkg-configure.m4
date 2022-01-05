@@ -28,7 +28,8 @@ SAGE_SPKG_CONFIGURE([mpfi], [
               else return 1;
             ]])], [AC_MSG_RESULT([yes])], [
                    AC_MSG_RESULT([no])
-                   sage_spkg_install_mpfi=yes])
+                   sage_spkg_install_mpfi=yes],
+                  [AC_MSG_RESULT([cross compiling. assume yes])])
         AC_LANG_POP(C)], [sage_spkg_install_mpfi=yes])
     fi
 

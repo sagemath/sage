@@ -7,15 +7,15 @@ AUTHORS:
         * Zeroth attempt.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein and John Voight
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import sage.misc.misc
@@ -36,9 +36,9 @@ def coefficients_to_power_sums(n, m, a):
 
     list of integers.
 
-    NOTES:
+    .. NOTE::
 
-    Uses Newton's relations, which are classical.
+        This uses Newton's relations, which are classical.
 
     AUTHORS:
 
@@ -62,6 +62,7 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
     r"""
     This function determines the bounds on the roots in
     the enumeration of totally real fields via Lagrange multipliers.
+
     It is used internally by the main function
     enumerate_totallyreal_fields_prim(), which should be consulted for
     further information.
@@ -75,10 +76,10 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
 
     the lower and upper bounds as real numbers.
 
-    NOTES:
+    .. NOTE::
 
-    See Cohen [Coh2000]_ for the general idea and unpublished work of the
-    author for more detail.
+        See Cohen [Coh2000]_ for the general idea and unpublished work of the
+        author for more detail.
 
     AUTHORS:
 

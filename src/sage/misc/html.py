@@ -64,10 +64,8 @@ class HtmlFragment(str, SageObject):
 
 def math_parse(s):
     r"""
-    Replace TeX-``$`` with Mathjax equations.
-
-    Turn the HTML-ish string s that can have \$\$ and \$'s in it into
-    pure HTML.  See below for a precise definition of what this means.
+    Transform the string ``s`` with TeX maths to an HTML string renderable by
+    MathJax.
 
     INPUT:
 
@@ -77,48 +75,25 @@ def math_parse(s):
 
     A :class:`HtmlFragment` instance.
 
-    Do the following:
+    Specifically this method does the following:
 
-    * Replace all ``\$ text \$``\'s by
-      ``<script type="math/tex"> text </script>``
-    * Replace all ``\$\$ text \$\$``\'s by
-      ``<script type="math/tex; mode=display"> text </script>``
-    * Replace all ``\ \$``\'s by ``\$``\'s.  Note that in
-      the above two cases nothing is done if the ``\$``
-      is preceeded by a backslash.
-    * Replace all ``\[ text \]``\'s by
-      ``<script type="math/tex; mode=display"> text </script>``
+    * Replace all ``\$text\$``\'s by ``\(text\)``
+    * Replace all ``\$\$text\$\$``\'s by ``\[text\]``
+    * Replace all ``\\\$``\'s by ``\$``\'s. Note that this has precedence over
+      the above two cases.
 
     EXAMPLES::
 
-        sage: pretty_print(sage.misc.html.math_parse('This is $2+2$.'))
-        This is <script type="math/tex">2+2</script>.
-        sage: pretty_print(sage.misc.html.math_parse('This is $$2+2$$.'))
-        This is <script type="math/tex; mode=display">2+2</script>.
-        sage: pretty_print(sage.misc.html.math_parse('This is \\[2+2\\].'))
-        This is <script type="math/tex; mode=display">2+2</script>.
-        sage: pretty_print(sage.misc.html.math_parse(r'This is \[2+2\].'))
-        This is <script type="math/tex; mode=display">2+2</script>.
+        sage: print(sage.misc.html.math_parse('This is $2+2$.'))
+        This is \(2+2\).
+        sage: print(sage.misc.html.math_parse('This is $$2+2$$.'))
+        This is \[2+2\].
+        sage: print(sage.misc.html.math_parse('This is \\[2+2\\].'))
+        This is \[2+2\].
+        sage: print(sage.misc.html.math_parse(r'\$2+2\$ is rendered to $2+2$.'))
+        <span>$</span>2+2<span>$</span> is rendered to \(2+2\).
 
-    TESTS::
-
-        sage: sage.misc.html.math_parse(r'This \$\$is $2+2$.')
-        This $$is <script type="math/tex">2+2</script>.
     """
-    # first replace \\[ and \\] by <script type="math/tex; mode=display">
-    # and </script>, respectively.
-    while True:
-        i = s.find('\\[')
-        if i == -1:
-            break
-        else:
-            s = s[:i] + '<script type="math/tex; mode=display">' + s[i+2:]
-            j = s.find('\\]')
-            if j == -1:  # missing right-hand delimiter, so add one
-                s = s + '</script>'
-            else:
-                s = s[:j] + '</script>' + s[j+2:]
-
     # Below t always has the "parsed so far" version of s, and s is
     # just the part of the original input s that hasn't been parsed.
     t = ''
@@ -128,18 +103,19 @@ def math_parse(s):
             # No dollar signs -- definitely done.
             return HtmlFragment(t + s)
         elif i > 0 and s[i-1] == '\\':
-            # A dollar sign with a backslash right before it, so
-            # we ignore it by sticking it in the parsed string t
-            # and skip to the next iteration.
-            t += s[:i-1] + '$'
+            # A dollar sign with a backslash right before it, so this is a
+            # normal dollar sign. If processEscapes is enabled in MathJax, "\$"
+            # will do the job. But as we do not assume that, we use the span
+            # tag safely.
+            t += s[:i-1] + '<span>$</span>'
             s = s[i+1:]
             continue
         elif i+1 < len(s) and s[i+1] == '$':
             # Found a math environment. Double dollar sign so display mode.
-            disp = '; mode=display'
+            disp = True
         else:
             # Found math environment. Single dollar sign so default mode.
-            disp = ''
+            disp = False
 
         # Now find the matching $ sign and form the html string.
 
@@ -160,8 +136,10 @@ def math_parse(s):
                 j += i + 2
             txt = s[i+1:j]
 
-        t += s[:i] + '<script type="math/tex%s">%s</script>' % (disp,
-                      ' '.join(txt.splitlines()))
+        if disp:
+            t += s[:i] + r'\[{0}\]'.format(' '.join(txt.splitlines()))
+        else:
+            t += s[:i] + r'\({0}\)'.format(' '.join(txt.splitlines()))
         s = s[j+1:]
         if disp:
             s = s[1:]
@@ -249,9 +227,9 @@ class MathJax:
 
         sage: from sage.misc.html import MathJax
         sage: MathJax()(3)
-        <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
+        <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}3\]</html>
         sage: MathJax()(ZZ)
-        <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}</script></html>
+        <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\Bold{Z}\]</html>
     """
 
     def __call__(self, x, combine_all=False):
@@ -275,7 +253,7 @@ class MathJax:
 
             sage: from sage.misc.html import MathJax
             sage: MathJax()(3)
-            <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
+            <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}3\]</html>
             sage: str(MathJax().eval(ZZ['x'], mode='display')) == str(MathJax()(ZZ['x']))
             True
         """
@@ -312,13 +290,11 @@ class MathJax:
 
             sage: from sage.misc.html import MathJax
             sage: MathJax().eval(3, mode='display')
-            <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
+            <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}3\]</html>
             sage: MathJax().eval(3, mode='inline')
-            <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}3</script></html>
-            sage: MathJax().eval(type(3), mode='inline')  # py2
-            <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<type|\phantom{\verb!x!}\verb|'sage.rings.integer.Integer'>|</script></html>
-            sage: MathJax().eval(type(3), mode='inline')  # py3
-            <html><script type="math/tex">\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<class|\phantom{\verb!x!}\verb|'sage.rings.integer.Integer'>|</script></html>
+            <html>\(\newcommand{\Bold}[1]{\mathbf{#1}}3\)</html>
+            sage: MathJax().eval(type(3), mode='inline')
+            <html>\(\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<class|\phantom{\verb!x!}\verb|'sage.rings.integer.Integer'>|\)</html>
         """
         # Get a regular LaTeX representation of x
         x = latex(x, combine_all=combine_all)
@@ -376,9 +352,9 @@ class MathJax:
             parts
         )
         if mode == 'display':
-            html = '<html><script type="math/tex; mode=display">{0}</script></html>'
+            html = r'<html>\[{0}\]</html>'
         elif mode == 'inline':
-            html = '<html><script type="math/tex">{0}</script></html>'
+            html = r'<html>\({0}\)</html>'
         elif mode == 'plain':
             return latex_string
         else:
@@ -403,17 +379,20 @@ class HTMLFragmentFactory(SageObject):
         """
         return 'Create HTML output (see html? for details)'
 
-    def __call__(self, obj, concatenate=True):
+    def __call__(self, obj, concatenate=True, strict=False):
         r"""
         Construct a HTML fragment
 
         INPUT:
 
-        - ``obj`` -- anything. An object for which you want a HTML
+        - ``obj`` -- anything. An object for which you want an HTML
           representation.
 
         - ``concatenate`` -- if ``True``, combine HTML representations of
           elements of the container ``obj``
+
+        - ``strict`` -- if ``True``, construct an HTML representation of
+          ``obj`` even if ``obj`` is a string
 
         OUTPUT:
 
@@ -427,12 +406,16 @@ class HTMLFragmentFactory(SageObject):
             <class 'sage.misc.html.HtmlFragment'>
 
             sage: html(1/2)
-            <html><script type="math/tex; mode=display">\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{2}</script></html>
+            <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\frac{1}{2}\]</html>
 
             sage: html('<a href="http://sagemath.org">sagemath</a>')
             <a href="http://sagemath.org">sagemath</a>
+
+            sage: html('<a href="http://sagemath.org">sagemath</a>', strict=True)
+            <html>\[\newcommand{\Bold}[1]{\mathbf{#1}}\verb|<a|\phantom{\verb!x!}\verb|href="http://sagemath.org">sagemath</a>|\]</html>
         """
-        if isinstance(obj, str):
+        # string obj is interpreted as an HTML in not strict mode
+        if isinstance(obj, str) and not strict:
             return HtmlFragment(math_parse(obj))
 
         # prefer dedicated _html_() method
@@ -470,9 +453,9 @@ class HTMLFragmentFactory(SageObject):
 
             sage: a = 123
             sage: html.eval('<sage>a</sage>')
-            <script type="math/tex">123</script>
+            \(123\)
             sage: html.eval('<sage>a</sage>', locals={'a': 456})
-            <script type="math/tex">456</script>
+            \(456\)
         """
         if locals is None:
             from sage.repl.user_globals import get_globals
@@ -489,8 +472,7 @@ class HTMLFragmentFactory(SageObject):
             if j == -1:
                  t += s
                  break
-            t += s[:i] + '<script type="math/tex">%s</script>'%\
-                     latex(sage_eval(s[6+i:j], locals=locals))
+            t += s[:i] + r'\({}\)'.format(latex(sage_eval(s[6+i:j], locals=locals)))
             s = s[j+7:]
         return HtmlFragment(t)
 

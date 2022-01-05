@@ -11,7 +11,7 @@ provides a graph on it that contains a homology basis.
 
 The class provides methods for computing the Riemann period matrix of the
 surface numerically, using a certified homotopy continuation method due to
-[Kr2016].
+[Kr2016]_.
 
 The class also provides facilities for computing the endomorphism ring of the
 period lattice numerically, by determining integer (near) solutions to the
@@ -53,6 +53,10 @@ In fact it is an order in a number field::
     sage: K.<a> = NumberField(t^6 - t^5 + 2*t^4 + 8*t^3 - t^2 - 5*t + 7)
     sage: all(len(a.minpoly().roots(K)) == a.minpoly().degree() for a in A)
     True
+
+REFERENCES:
+
+The initial version of this code was developed alongside [BSZ2019]_.
 """
 # ****************************************************************************
 #       Copyright (C) 2017 Alexandre Zotine, Nils Bruin

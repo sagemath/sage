@@ -396,6 +396,6 @@ el siguiente ejemplo:
     sage: maxima.eval("diff(f,w)")
     '(bessel_y(v-1,w)-bessel_y(v+1,w))/2'
 
-.. [GAP] El Grupo GAP, ``GAP - Grupos, Algorítmos y Programación``, http://www.gap-system.org
+.. [GAP] El Grupo GAP, ``GAP - Grupos, Algorítmos y Programación``, https://www.gap-system.org
 
 .. [Max] Maxima, http://maxima.sf.net/

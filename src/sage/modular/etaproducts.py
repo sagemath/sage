@@ -30,12 +30,11 @@ AUTHOR:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-
+from __future__ import annotations
 
 from sage.arith.misc import divisors, prime_divisors, euler_phi, is_square, gcd
 from sage.categories.groups import Groups
 from sage.matrix.constructor import matrix
-from sage.misc.misc import union
 from sage.modules.free_module import FreeModule
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
@@ -146,10 +145,10 @@ class EtaGroupElement(Element):
 
             sage: eta1, eta2 = EtaGroup(4).basis() # indirect doctest
             sage: eta1 * eta2
-            Eta product of level 4 : (eta_1)^8 (eta_4)^-8
+            Eta product of level 4 : (eta_1)^24 (eta_2)^-48 (eta_4)^24
         """
         newdict = {d: self._rdict.get(d, 0) + other._rdict.get(d, 0)
-                   for d in union(self._rdict, other._rdict)}
+                   for d in set(self._rdict).union(other._rdict)}
         P = self.parent()
         return P.element_class(P, newdict)
 
@@ -161,12 +160,12 @@ class EtaGroupElement(Element):
 
             sage: eta1, eta2 = EtaGroup(4).basis()
             sage: eta1 / eta2 # indirect doctest
-            Eta product of level 4 : (eta_1)^-24 (eta_2)^48 (eta_4)^-24
+            Eta product of level 4 : (eta_1)^-8 (eta_4)^8
             sage: (eta1 / eta2) * eta2 == eta1
             True
         """
         newdict = {d: self._rdict.get(d, 0) - other._rdict.get(d, 0)
-                   for d in union(self._rdict, other._rdict)}
+                   for d in set(self._rdict).union(other._rdict)}
         P = self.parent()
         return P.element_class(P, newdict)
 
@@ -453,7 +452,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         """
         return "Group of eta products on X_0(%s)" % self.level()
 
-    def one(self) -> 'EtaGroupElement':
+    def one(self) -> EtaGroupElement:
         r"""
         Return the identity element of ``self``.
 
@@ -509,16 +508,16 @@ class EtaGroup_class(UniqueRepresentation, Parent):
             sage: EtaGroup(5).basis()
             [Eta product of level 5 : (eta_1)^6 (eta_5)^-6]
             sage: EtaGroup(12).basis()
-            [Eta product of level 12 : (eta_1)^2 (eta_2)^1 (eta_3)^2 (eta_4)^-1 (eta_6)^-7 (eta_12)^3,
+            [Eta product of level 12 : (eta_1)^-3 (eta_2)^2 (eta_3)^1 (eta_4)^-1 (eta_6)^-2 (eta_12)^3,
              Eta product of level 12 : (eta_1)^-4 (eta_2)^2 (eta_3)^4 (eta_6)^-2,
+             Eta product of level 12 : (eta_1)^6 (eta_2)^-9 (eta_3)^-2 (eta_4)^3 (eta_6)^3 (eta_12)^-1,
              Eta product of level 12 : (eta_1)^-1 (eta_2)^3 (eta_3)^3 (eta_4)^-2 (eta_6)^-9 (eta_12)^6,
-             Eta product of level 12 : (eta_1)^1 (eta_2)^-1 (eta_3)^-3 (eta_4)^-2 (eta_6)^7 (eta_12)^-2,
-             Eta product of level 12 : (eta_1)^-6 (eta_2)^9 (eta_3)^2 (eta_4)^-3 (eta_6)^-3 (eta_12)^1]
+             Eta product of level 12 : (eta_1)^3 (eta_3)^-1 (eta_4)^-3 (eta_12)^1]
             sage: EtaGroup(12).basis(reduce=False) # much bigger coefficients
-            [Eta product of level 12 : (eta_2)^24 (eta_12)^-24,
-             Eta product of level 12 : (eta_1)^-336 (eta_2)^576 (eta_3)^696 (eta_4)^-216 (eta_6)^-576 (eta_12)^-144,
-             Eta product of level 12 : (eta_1)^-8 (eta_2)^-2 (eta_6)^2 (eta_12)^8,
-             Eta product of level 12 : (eta_1)^1 (eta_2)^9 (eta_3)^13 (eta_4)^-4 (eta_6)^-15 (eta_12)^-4,
+            [Eta product of level 12 : (eta_1)^384 (eta_2)^-576 (eta_3)^-696 (eta_4)^216 (eta_6)^576 (eta_12)^96,
+             Eta product of level 12 : (eta_2)^24 (eta_12)^-24,
+             Eta product of level 12 : (eta_1)^-40 (eta_2)^116 (eta_3)^96 (eta_4)^-30 (eta_6)^-80 (eta_12)^-62,
+             Eta product of level 12 : (eta_1)^-4 (eta_2)^-33 (eta_3)^-4 (eta_4)^1 (eta_6)^3 (eta_12)^37,
              Eta product of level 12 : (eta_1)^15 (eta_2)^-24 (eta_3)^-29 (eta_4)^9 (eta_6)^24 (eta_12)^5]
 
         ALGORITHM: An eta product of level `N` is uniquely
@@ -618,7 +617,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
     Element = EtaGroupElement
 
 
-def EtaProduct(level, dic) -> 'EtaGroupElement':
+def EtaProduct(level, dic) -> EtaGroupElement:
     r"""
     Create an :class:`EtaGroupElement` object representing the function
     `\prod_{d | N} \eta(q^d)^{r_d}`.
@@ -1030,7 +1029,7 @@ def _eta_relations_helper(eta1, eta2, degree, qexp_terms, labels, verbose):
         sage: from sage.modular.etaproducts import _eta_relations_helper
         sage: r,s = EtaGroup(4).basis()
         sage: _eta_relations_helper(r,s,4,100,['a','b'],False)
-        [a*b - a + 16]
+        [a + 1/16*b - 1/16]
         sage: _eta_relations_helper(EtaProduct(26, {2:2,13:2,26:-2,1:-2}),EtaProduct(26, {2:4,13:2,26:-4,1:-2}),3,12,['a','b'],False) # not enough terms, will return rubbish
         [1]
     """

@@ -1262,13 +1262,14 @@ class RootLatticeRealizations(Category_over_base_ring):
                 # break some doctests
             return self.cache_simple_coroots
 
+        @cached_method
         def alphacheck(self):
             r"""
-            Returns the family `( \alpha^\vee_i)_{i\in I}` of the simple
-            coroots, with the extra feature that,  for simple irreducible
+            Return the family `(\alpha^\vee_i)_{i \in I}` of the simple
+            coroots, with the extra feature that, for simple irreducible
             root systems, `\alpha^\vee_0` yields the coroot associated to
-            the opposite of the highest root (caveat: for non simply laced
-            root systems, this is not the opposite of the highest coroot!)
+            the opposite of the highest root (caveat: for non-simply-laced
+            root systems, this is not the opposite of the highest coroot!).
 
             EXAMPLES::
 
@@ -1292,8 +1293,8 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             """
             if self.root_system.is_finite() and self.root_system.is_irreducible():
-                return Family(self.index_set(), self.simple_coroot, \
-                              hidden_keys = [0], hidden_function = lambda i: - self.cohighest_root())
+                return Family(self.index_set(), self.simple_coroot,
+                              hidden_keys=[0], hidden_function=lambda i: - self.cohighest_root())
             else:
                 return self.simple_coroots()
 

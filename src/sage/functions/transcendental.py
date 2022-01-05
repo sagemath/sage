@@ -228,12 +228,14 @@ class Function_HurwitzZeta(BuiltinFunction):
             -1/5*x^5 + 1/2*x^4 - 1/3*x^3 + 1/30*x
             sage: hurwitz_zeta(3, 0.5)
             8.41439832211716
+            sage: hurwitz_zeta(0, x)
+            -x + 1/2
         """
         if x == 1:
             return zeta(s)
         if s in ZZ and s > 1:
             return ((-1) ** s) * psi(s - 1, x) / factorial(s - 1)
-        elif s in ZZ and s < 0:
+        elif s in ZZ and s <= 0:
             return -bernoulli_polynomial(x, -s + 1) / (-s + 1)
         else:
             return
@@ -517,7 +519,7 @@ class DickmanRho(BuiltinFunction):
             try:
                 x = RR(x)
             except (TypeError, ValueError):
-                return None #PrimitiveFunction.__call__(self, SR(x))
+                return None
         if x < 0:
             return x.parent()(0)
         elif x <= 1:

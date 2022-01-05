@@ -160,8 +160,8 @@ def local_normal_form(self, p):
 
             # 1x1 => make upper left the smallest
             if (p != 2):
-                block_size = 1;
-                Q.add_symmetric(1, 0, 1, in_place = True)
+                block_size = 1
+                Q.add_symmetric(1, 0, 1, in_place=True)
             # 2x2 => replace it with the appropriate 2x2 matrix
             else:
                 block_size = 2

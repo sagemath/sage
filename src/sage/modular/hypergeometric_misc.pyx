@@ -24,12 +24,20 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
         sage: D = 1
         sage: hgm_coeffs(7, 1, 2, gamma, [0]*6, D, gtable, prec, False)
         [7, 2*7, 6*7, 7, 6, 4*7]
+        
+    Check issue from :trac:`28404`::
+    
+        sage: H = Hyp(cyclotomic=[[10,2],[1,1,1,1,1]])
+        sage: u = H.euler_factor(2,79) # indirect doctest
+        sage: u.reverse().is_weil_polynomial()
+        True          
+
     """
     from sage.rings.padics.factory import Zp
 
     cdef int gl, j, k, l, v, gv
     cdef long long i, q1, w, w1, w2, q2, r, r1
-    cdef bint flip
+    cdef bint flip, need_lift
 
     q1 = p ** f - 1
     gl = len(gamma)
@@ -55,6 +63,14 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
             gtab2 = array.array('l', [0]) * q1
             for r in range(q1):
                 gtab2[r] = gtable[r].lift() % q2
+    else:
+        gtab2 = array.array('q', [0]) * q1
+        try:
+            for r in range(q1):
+                gtab2[r] = gtable[r]
+        except TypeError:
+            for r in range(q1):
+                gtab2[r] = gtable[r].lift()
     if f == 1:
         for r in range(q1):
             digit_count[r] = r
@@ -108,7 +124,7 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
                         for j in range(-gv):
                             w1 = w1 * w2 % q2
                 else:
-                    w2 = gtable[r1]
+                    w2 = gtab2[r1]
                     if gv > 0:
                         for j in range(gv):
                             u *= w2

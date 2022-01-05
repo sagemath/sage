@@ -282,68 +282,102 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     Random integer matrices.  With no arguments, the majority of the entries
     are zero, -1, and 1, and rarely "large." ::
 
-        sage: random_matrix(ZZ, 5, 5)
-        [ -8   2   0   0   1]
-        [ -1   2   1 -95  -1]
-        [ -2 -12   0   0   1]
-        [ -1   1  -1  -2  -1]
-        [  4  -4  -6   5   0]
+        sage: from collections import defaultdict
+        sage: total_count = 0
+        sage: dic = defaultdict(Integer)
+        sage: def add_samples(*args, **kwds):
+        ....:     global dic, total_count
+        ....:     for _ in range(100):
+        ....:         A = random_matrix(*args, **kwds)
+        ....:         for a in A.list():
+        ....:             dic[a] += 1
+        ....:             total_count += 1.0
+
+        sage: expected = lambda n : 2 / (5*abs(n)*(abs(n) + 1)) if n != 0 else 1/5
+        sage: expected(0)
+        1/5
+        sage: expected(0) == expected(1) == expected(-1)
+        True
+        sage: expected(100)
+        1/25250
+        sage: add_samples(ZZ, 5, 5)
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        ....:     add_samples(ZZ, 5, 5)
 
     The ``distribution`` keyword  set to ``uniform`` will limit values
     between -2 and 2. ::
 
-        sage: random_matrix(ZZ, 5, 5, distribution='uniform')
-        [ 1  0 -2  1  1]
-        [ 1  0  0  0  2]
-        [-1 -2  0  2 -2]
-        [-1 -1  1  1  2]
-        [ 0 -2 -1  0  0]
+        sage: expected = lambda n : 1/5 if n in range(-2, 3) else 0
+        sage: total_count = 0
+        sage: dic = defaultdict(Integer)
+        sage: add_samples(ZZ, 5, 5, distribution='uniform')
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        ....:     add_samples(ZZ, 5, 5, distribution='uniform')
 
     The ``x`` and ``y`` keywords can be used to distribute entries uniformly.
     When both are used ``x`` is the minimum and ``y`` is one greater than
     the maximum. ::
 
-        sage: random_matrix(ZZ, 4, 8, x=70, y=100)
-        [81 82 70 81 78 71 79 94]
-        [80 98 89 87 91 94 94 77]
-        [86 89 85 92 95 94 72 89]
-        [78 80 89 82 94 72 90 92]
+        sage: expected = lambda n : 1/30 if n in range(70, 100) else 0
+        sage: total_count = 0
+        sage: dic = defaultdict(Integer)
+        sage: add_samples(ZZ, 4, 8, x=70, y=100)
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        ....:     add_samples(ZZ, 4, 8, x=70, y=100)
 
-        sage: random_matrix(ZZ, 3, 7, x=-5, y=5)
-        [-3  3  1 -5  3  1  2]
-        [ 3  3  0  3 -5 -2  1]
-        [ 0 -2 -2  2 -3 -4 -2]
+        sage: expected = lambda n : 1/10 if n in range(-5, 5) else 0
+        sage: total_count = 0
+        sage: dic = defaultdict(Integer)
+        sage: add_samples(ZZ, 3, 7, x=-5, y=5)
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        ....:     add_samples(ZZ, 3, 7, x=-5, y=5)
 
     If only ``x`` is given, then it is used as the upper bound of a range
     starting at 0. ::
 
-        sage: random_matrix(ZZ, 5, 5, x=25)
-        [20 16  8  3  8]
-        [ 8  2  2 14  5]
-        [18 18 10 20 11]
-        [19 16 17 15  7]
-        [ 0 24  3 17 24]
+        sage: expected = lambda n : 1/25 if n in range(25) else 0
+        sage: total_count = 0
+        sage: dic = defaultdict(Integer)
+        sage: add_samples(ZZ, 5, 5, x=25)
+        sage: while not all(abs(dic[a]/total_count - expected(a)) < 0.001 for a in dic):
+        ....:     add_samples(ZZ, 5, 5, x=25)
 
     To control the number of nonzero entries, use the ``density`` keyword
     at a value strictly below the default of 1.0.  The ``density`` keyword
-    is used to compute the number of entries that will be nonzero, but the
+    is used to compute the number of entries per row that will be nonzero, but the
     same entry may be selected more than once.  So the value provided will
     be an upper bound for the density of the created matrix.  Note that for
     a square matrix it is only necessary to set a single dimension. ::
 
-        sage: random_matrix(ZZ, 5, x=-10, y=10, density=0.75)
-        [-6  1  0  0  0]
-        [ 9  0  0  4  1]
-        [-6  0  0 -8  0]
-        [ 0  4  0  6  0]
-        [ 1 -9  0  0 -8]
+        sage: def add_sample(*args, **kwds):
+        ....:     global density_sum, total_count
+        ....:     total_count += 1.0
+        ....:     A = random_matrix(*args, **kwds)
+        ....:     density_sum += float(A.density())
 
-        sage: random_matrix(ZZ, 5, x=20, y=30, density=0.75)
-        [ 0 28  0 27  0]
-        [25 28 20  0  0]
-        [ 0 21  0 21  0]
-        [ 0 28 22  0  0]
-        [ 0  0  0 26 24]
+        sage: density_sum = 0.0
+        sage: total_count = 0.0
+        sage: add_sample(ZZ, 5, x=-10, y=10, density=0.75)
+        sage: expected_density = (1 - (4/5)^3)
+        sage: float(expected_density)
+        0.488
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:
+        ....:     add_sample(ZZ, 5, x=-10, y=10, density=0.75)
+
+        sage: density_sum = 0.0
+        sage: total_count = 0.0
+        sage: add_sample(ZZ, 5, x=20, y=30, density=0.75)
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:
+        ....:     add_sample(ZZ, 5, x=20, y=30, density=0.75)
+
+        sage: density_sum = 0.0
+        sage: total_count = 0.0
+        sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)
+        sage: expected_density = (1 - (99/100)^75)
+        sage: float(expected_density)
+        0.529...
+        sage: while abs(density_sum/total_count - expected_density) > 0.001:
+        ....:     add_sample(ZZ, 100, x=20, y=30, density=0.75)
 
     For a matrix with low density it may be advisable to insist on a sparse
     representation, as this representation is not selected automatically. ::
@@ -354,13 +388,6 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: A = random_matrix(ZZ, 5, 5, sparse=True)
         sage: A.is_sparse()
         True
-
-        sage: random_matrix(ZZ, 5, 5, density=0.3, sparse=True)
-        [ 4  0  0  0 -1]
-        [ 0  0  0  0 -7]
-        [ 0  0  2  0  0]
-        [ 0  0  1  0 -4]
-        [ 0  0  0  0  0]
 
     For algorithm testing you might want to control the number of bits,
     say 10,000 entries, each limited to 16 bits.  ::
@@ -381,31 +408,45 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     numerators and denominators (respectively).  Entries will be positive and
     negative (map the absolute value function through the entries to get all
     positive values).  If either the numerator or denominator bound (or both)
-    is not used, then the values default to the distribution for ``ZZ``
-    described above. ::
+    is not used, then the values default to ``2``::
 
-        sage: random_matrix(QQ, 2, 8, num_bound=20, den_bound=4)
-        [ -1/4     5     5  -9/2   5/3    19  15/2  19/2]
-        [ 20/3 -13/4     0    16    -5   -20   -11  -7/3]
+        sage: A = random_matrix(QQ, 2, 8, num_bound=20, den_bound=4)
+        sage: A.dimensions()
+        (2, 8)
+        sage: type(A)
+        <class 'sage.matrix.matrix_rational_dense.Matrix_rational_dense'>
+        sage: all(a.numerator() in range(-20, 21) and
+        ....:     a.denominator() in range(1, 5)
+        ....:     for a in A.list())
+        True
 
-        sage: random_matrix(QQ, 4, density = 0.5, sparse=True)
-        [  0   1   0  -1]
-        [  0   0   0   0]
-        [  6   0   3   0]
-        [  1 1/3   0   0]
+        sage: A = random_matrix(QQ, 4, density = 0.5, sparse=True)
+        sage: type(A)
+        <class 'sage.matrix.matrix_rational_sparse.Matrix_rational_sparse'>
+        sage: A.density() <= 0.5
+        True
 
         sage: A = random_matrix(QQ, 3, 10, num_bound = 99, den_bound = 99)
         sage: positives = list(map(abs, A.list()))
-        sage: matrix(QQ, 3, 10, positives)
-        [ 2/45 40/21 45/46 17/22     1 70/79 97/71  7/24  12/5  13/8]
-        [ 8/25   1/3 61/14 92/45  4/85  3/38 95/16 82/71   1/5 41/16]
-        [55/76    19 28/41 52/51  14/3    43 76/13  8/77 13/38 37/21]
+        sage: A1 = matrix(QQ, 3, 10, positives)
+        sage: all(abs(A.list()[i]) == A1.list()[i] for i in range(30))
+        True
+        sage: all(a.numerator() in range(100) and
+        ....:     a.denominator() in range(1, 100)
+        ....:     for a in A1.list())
+        True
 
-        sage: random_matrix(QQ, 4, 10, den_bound = 10)
-        [ 1/9  1/5   -1  2/9  1/4 -1/7  1/8 -1/9    0    2]
-        [ 2/3    2  1/8   -2    0    0   -2    2    0 -1/2]
-        [   0    2    1 -2/3    0    0  1/6    0 -1/3 -2/9]
-        [   0    0  2/5  1/9    0    0  1/6 1/10    0    1]
+        sage: A = random_matrix(QQ, 4, 10, den_bound = 10)
+        sage: all(a.numerator() in range(-2, 3) and
+        ....:     a.denominator() in range(1, 11)
+        ....:     for a in A.list())
+        True
+
+        sage: A = random_matrix(QQ, 4, 10)
+        sage: all(a.numerator() in range(-2, 3) and
+        ....:     a.denominator() in range(1, 3)
+        ....:     for a in A.list())
+        True
 
     Random matrices over other rings.  Several classes of matrices have specialized
     ``randomize()`` methods.  You can locate these with the Sage command::
@@ -419,32 +460,35 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     that we use the default implementation in this test::
 
         sage: K.<a>=FiniteField(3^2)
-        sage: random_matrix(K, 2, 5, implementation='generic')
-        [  a + 1   a + 1       0 2*a + 2   a + 1]
-        [  a + 2   a + 1       2       0       0]
+        sage: A = random_matrix(K, 2, 5, implementation='generic')
+        sage: type(A)
+        <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+        sage: A.base_ring() is K
+        True
+        sage: TestSuite(A).run()
 
-        sage: random_matrix(RR, 3, 4, density=0.66)
-        [ 0.000000000000000 0.0869697644118808 -0.232952499486647  0.000000000000000]
-        [-0.793158962467820  0.000000000000000  0.318853016385637  0.000000000000000]
-        [-0.220342454156035  0.000000000000000  0.000000000000000  0.914890766754157]
+        sage: A = random_matrix(RR, 3, 4, density=0.66)
+        sage: type(A)
+        <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
+        sage: A.base_ring() is RR
+        True
+        sage: TestSuite(A).run()
 
-        sage: A = random_matrix(ComplexField(32), 3, density=0.8, sparse=True); A
-        [                 0.000000000 -0.443499553 - 0.406854867*I                  0.000000000]
-        [ 0.171578609 + 0.644048756*I  0.518523841 + 0.794429291*I -0.341030168 - 0.507791873*I]
-        [                 0.000000000                  0.000000000  0.782759943 + 0.236288982*I]
+        sage: A = random_matrix(ComplexField(32), 3, density=0.8, sparse=True)
         sage: A.is_sparse()
         True
+        sage: type(A)
+        <class 'sage.matrix.matrix_generic_sparse.Matrix_generic_sparse'>
+        sage: A.base_ring() is ComplexField(32)
+        True
+        sage: TestSuite(A).run()
 
     Random matrices in echelon form.  The ``algorithm='echelon_form'`` keyword,
     along with a requested number of non-zero rows (``num_pivots``) will return
     a random matrix in echelon form.  When the base ring is ``QQ`` the result has integer
     entries.  Other exact rings may be also specified. ::
 
-        sage: A = random_matrix(QQ, 4, 8, algorithm='echelon_form', num_pivots=3); A # random
-        [ 1 -5  0 -2  0  1  1 -2]
-        [ 0  0  1 -5  0 -3 -1  0]
-        [ 0  0  0  0  1  2 -2  1]
-        [ 0  0  0  0  0  0  0  0]
+        sage: A = random_matrix(QQ, 4, 8, algorithm='echelon_form', num_pivots=3)
         sage: A.base_ring()
         Rational Field
         sage: (A.nrows(), A.ncols())
@@ -472,7 +516,7 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     of full rank generated by this function always have determinant one, and
     can be constructed with the ``unimodular`` keyword. ::
 
-        sage: A = random_matrix(QQ, 4, 8, algorithm='echelonizable', rank=3, upper_bound=60); A # random
+        sage: A = random_matrix(QQ, 4, 8, algorithm='echelonizable', rank=3, upper_bound=60)
         sage: A.base_ring()
         Rational Field
         sage: (A.nrows(), A.ncols())
@@ -2546,12 +2590,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
         sage: from sage.matrix.constructor import random_echelonizable_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5, 6)
-        sage: A = random_echelonizable_matrix(matrix_space, rank=4, upper_bound=40); A
-        [  3   4  12  39  18  22]
-        [ -1  -3  -9 -27 -16 -19]
-        [  1   3  10  31  18  21]
-        [ -1   0   0  -2   2   2]
-        [  0   1   2   8   4   5]
+        sage: A = random_echelonizable_matrix(matrix_space, rank=4, upper_bound=40)
         sage: A.rank()
         4
         sage: max(map(abs,A.list()))<40
@@ -2561,13 +2600,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     An example with default settings (i.e. no entry size control). ::
 
-        sage: C=random_matrix(QQ, 6, 7, algorithm='echelonizable', rank=5); C
-        [   1   -5   -8   16    6   65   30]
-        [   3  -14  -22   42   17  178   84]
-        [  -5   24   39  -79  -31 -320 -148]
-        [   4  -15  -26   55   27  224  106]
-        [  -1    0   -6   29    8   65   17]
-        [   3  -20  -32   72   14  250  107]
+        sage: C=random_matrix(QQ, 6, 7, algorithm='echelonizable', rank=5)
         sage: C.rank()
         5
         sage: C.rref() == C.rref().change_ring(ZZ)
@@ -2575,7 +2608,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     A matrix without size control may have very large entry sizes. ::
 
-        sage: D=random_matrix(ZZ, 7, 8, algorithm='echelonizable', rank=6); D
+        sage: D=random_matrix(ZZ, 7, 8, algorithm='echelonizable', rank=6); D  # random
         [    1     2     8   -35  -178  -239  -284   778]
         [    4     9    37  -163  -827 -1111 -1324  3624]
         [    5     6    21   -88  -454  -607  -708  1951]
@@ -2587,24 +2620,18 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
     Matrices can be generated over any exact ring. ::
 
         sage: F.<a>=GF(2^3)
-        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4, upper_bound=None); B
-        [          1       a + 1           0 a^2 + a + 1           1]
-        [          a a^2 + a + 1     a^2 + 1     a^2 + a           0]
-        [    a^2 + a           1           1     a^2 + a       a + 1]
-        [a^2 + a + 1 a^2 + a + 1         a^2           0     a^2 + a]
+        sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4, upper_bound=None)
         sage: B.rank()
         4
+        sage: B.base_ring() is F
+        True
 
     Square matrices over ZZ or QQ with full rank are always unimodular. ::
 
-        sage: E=random_matrix(QQ, 7, 7, algorithm='echelonizable', rank=7); E
-        [    1     1     7   -29   139   206   413]
-        [   -2    -1   -10    41  -197  -292  -584]
-        [    2     5    27  -113   541   803  1618]
-        [    4     0    14   -55   268   399   798]
-        [    3     1     8   -32   152   218   412]
-        [   -3    -2   -18    70  -343  -506 -1001]
-        [    1    -2    -1     1    -2     9    52]
+        sage: E = random_matrix(QQ, 7, 7, algorithm='echelonizable', rank=7)
+        sage: det(E)
+        1
+        sage: E = random_matrix(ZZ, 7, 7, algorithm='echelonizable', rank=7)
         sage: det(E)
         1
 
@@ -2765,13 +2792,7 @@ def random_subspaces_matrix(parent, rank=None):
 
         sage: from sage.matrix.constructor import random_subspaces_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 6, 8)
-        sage: B = random_subspaces_matrix(matrix_space, rank=3); B
-        [ -15   -4   83   35  -24   47  -74   50]
-        [ -16   -7   94   34  -25   38  -75   50]
-        [  89   34 -513 -196  141 -235  426 -285]
-        [  17    6  -97  -38   27  -47   82  -55]
-        [   7    3  -41  -15   11  -17   33  -22]
-        [  -5   -2   29   11   -8   13  -24   16]
+        sage: B = random_subspaces_matrix(matrix_space, rank=3)
         sage: B.rank()
         3
         sage: B.nullity()
@@ -2783,13 +2804,6 @@ def random_subspaces_matrix(parent, rank=None):
         sage: B_expanded = B.augment(identity_matrix(6)).rref()
         sage: all(x in ZZ for x in B_expanded.list())
         True
-        sage: B_expanded
-        [  1   0  -5   0  -1   1   0  -1   0   0   0   3  10  24]
-        [  0   1  -2   0   1   2   1   0   0   0   0  -2  -3 -11]
-        [  0   0   0   1  -1   2  -2   1   0   0   0   1   4   9]
-        [  0   0   0   0   0   0   0   0   1   0   0   2  -2   1]
-        [  0   0   0   0   0   0   0   0   0   1   0   0   3   1]
-        [  0   0   0   0   0   0   0   0   0   0   1  -3  -4   2]
 
     Check that we fixed :trac:`10543` (echelon forms should be immutable)::
 
@@ -2799,24 +2813,9 @@ def random_subspaces_matrix(parent, rank=None):
     We want to modify B_expanded, so replace it with a copy::
 
         sage: B_expanded = copy(B_expanded)
-        sage: B_expanded.subdivide(B.nrows()-B.nullity(),B.ncols());B_expanded
-        [  1   0  -5   0  -1   1   0  -1|  0   0   0   3  10  24]
-        [  0   1  -2   0   1   2   1   0|  0   0   0  -2  -3 -11]
-        [  0   0   0   1  -1   2  -2   1|  0   0   0   1   4   9]
-        [-------------------------------+-----------------------]
-        [  0   0   0   0   0   0   0   0|  1   0   0   2  -2   1]
-        [  0   0   0   0   0   0   0   0|  0   1   0   0   3   1]
-        [  0   0   0   0   0   0   0   0|  0   0   1  -3  -4   2]
-        sage: C=B_expanded.subdivision(0,0)
-        sage: C
-        [ 1  0 -5  0 -1  1  0 -1]
-        [ 0  1 -2  0  1  2  1  0]
-        [ 0  0  0  1 -1  2 -2  1]
-        sage: L=B_expanded.subdivision(1,1)
-        sage: L
-        [ 1  0  0  2 -2  1]
-        [ 0  1  0  0  3  1]
-        [ 0  0  1 -3 -4  2]
+        sage: B_expanded.subdivide(B.nrows()-B.nullity(), B.ncols())
+        sage: C = B_expanded.subdivision(0, 0)
+        sage: L = B_expanded.subdivision(1, 1)
         sage: B.right_kernel() == C.right_kernel()
         True
         sage: B.row_space() == C.row_space()
@@ -2828,29 +2827,16 @@ def random_subspaces_matrix(parent, rank=None):
 
     A matrix to show that the null space of the L matrix is the column space of the starting matrix. ::
 
-        sage: A = random_matrix(QQ, 5, 7, algorithm='subspaces', rank=None); A
-        [ -63   13  -71   29 -163  150 -268]
-        [  24   -5   27  -11   62  -57  102]
-        [  14   -3   16   -7   37  -34   60]
-        [  -4    1   -4    1   -9    8  -16]
-        [   9   -2   10   -4   23  -21   38]
+        sage: A = random_matrix(QQ, 5, 7, algorithm='subspaces', rank=None)
         sage: (A.nrows(), A.ncols())
         (5, 7)
         sage: all(x in ZZ for x in A.list())
         True
-        sage: A.nullity()
-        2
         sage: A_expanded=A.augment(identity_matrix(5)).rref()
-        sage: A_expanded
-        [  1   0   0   2  -1   1   2   0   2   0  -4  -7]
-        [  0   1   0   1  -1   0   0   0   4   0  -3 -12]
-        [  0   0   1  -2   3  -3   2   0  -1   0   3   4]
-        [  0   0   0   0   0   0   0   1   3   0   0  -1]
-        [  0   0   0   0   0   0   0   0   0   1  -1  -2]
         sage: all(x in ZZ for x in A_expanded.list())
         True
-        sage: C=A_expanded.submatrix(0,0,A.nrows()-A.nullity(),A.ncols())
-        sage: L=A_expanded.submatrix(A.nrows()-A.nullity(),A.ncols())
+        sage: C = A_expanded.submatrix(0,0,A.nrows()-A.nullity(), A.ncols())
+        sage: L = A_expanded.submatrix(A.nrows()-A.nullity(), A.ncols())
         sage: A.right_kernel() == C.right_kernel()
         True
         sage: A.row_space() == C.row_space()
@@ -2963,38 +2949,27 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
         sage: from sage.matrix.constructor import random_unimodular_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
-        sage: A = random_unimodular_matrix(matrix_space); A
-        [   0    3    8  -30  -30]
-        [   0    1    4  -18  -13]
-        [  -1    0    0    3    0]
-        [   4   16   71 -334 -222]
-        [  -1   -1   -9   50   24]
+        sage: A = random_unimodular_matrix(matrix_space)
         sage: det(A)
         1
 
     A matrix size 6 with entries no larger than 50. ::
 
-        sage: B = random_matrix(ZZ, 7, algorithm='unimodular', upper_bound=50);B
-        [-14  17  14 -31  43  24  46]
-        [ -5   6   5 -11  15   9  18]
-        [ -2   5   3  -7  15  -3 -16]
-        [  1  -2  -3   4  -3  -7 -21]
-        [ -1   4   1  -4  14 -10 -37]
-        [  3  -3  -1   6 -12   4  25]
-        [  4  -4  -2   7 -13  -2   1]
+        sage: B = random_matrix(ZZ, 7, algorithm='unimodular', upper_bound=50)
         sage: det(B)
         1
+        sage: all(abs(b) < 50 for b in B.list())
+        True
 
     A matrix over the number Field in `y` with defining polynomial `y^2-2y-2`. ::
 
         sage: y = var('y')
-        sage: K=NumberField(y^2-2*y-2,'y')
-        sage: C=random_matrix(K, 3, algorithm='unimodular');C
-        [    -5*y + 11     10*y - 30 -695*y + 2366]
-        [            5       5*y - 9  -535*y + 588]
-        [        y - 1       3*y - 1   -35*y - 273]
+        sage: K = NumberField(y^2-2*y-2, 'y')
+        sage: C = random_matrix(K, 3, algorithm='unimodular')
         sage: det(C)
         1
+        sage: C.base_ring() is K
+        True
 
     TESTS:
 
@@ -3071,57 +3046,29 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
 
         sage: from sage.matrix.constructor import random_diagonalizable_matrix
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
-        sage: A = random_diagonalizable_matrix(matrix_space); A
-        [  90  -80   56 -448 -588]
-        [  60    0   28 -324 -204]
-        [  60  -72   32 -264 -432]
-        [  30  -16   16 -152 -156]
-        [ -10   -8   -4   60    8]
-        sage: sorted(A.eigenvalues())
-        [-10, -8, -4, 0, 0]
-        sage: S=A.right_eigenmatrix()[1]; S
-        [    1     1     1     1     0]
-        [  1/2     0   2/3     0     1]
-        [  4/7  9/10   2/3   6/7  -3/7]
-        [  2/7   1/5   1/3  3/14   1/7]
-        [-1/14  1/10  -1/9  1/14  -2/7]
-        sage: S_inverse=S.inverse(); S_inverse
-        [  0   0 -14  42  42]
-        [  0  10   0 -10  30]
-        [ -9   0   0  36  18]
-        [ 10 -10  14 -68 -90]
-        [  6   1   7 -45 -33]
-        sage: S_inverse*A*S
-        [ -4   0   0   0   0]
-        [  0  -8   0   0   0]
-        [  0   0 -10   0   0]
-        [  0   0   0   0   0]
-        [  0   0   0   0   0]
+        sage: A = random_diagonalizable_matrix(matrix_space)
+        sage: eigenvalues = A.eigenvalues()
+        sage: S = A.right_eigenmatrix()[1]
+        sage: eigenvalues2 = (S.inverse()*A*S).diagonal()
+        sage: sorted(eigenvalues) == sorted(eigenvalues2)
+        True
 
     A diagonalizable matrix with eigenvalues and dimensions designated,
     with a check that if eigenvectors were calculated by hand
     entries would all be integers. ::
 
-        sage: B = random_matrix(QQ, 6, algorithm='diagonalizable', eigenvalues=[-12,4,6],dimensions=[2,3,1]); B
-        [   2  -64   16  206   56 -142]
-        [  14  -28  -64   46   40  -14]
-        [  -4  -16    4   44   32  -28]
-        [   6    0  -32  -22    8   26]
-        [   0  -16    0   48   20  -32]
-        [   2    0  -16  -14    8   18]
+        sage: eigenvalues = [ZZ.random_element() for _ in range(3)]
+        sage: B = random_matrix(QQ, 6, algorithm='diagonalizable', eigenvalues=eigenvalues, dimensions=[2,3,1])
         sage: all(x in ZZ for x in (B-(-12*identity_matrix(6))).rref().list())
         True
         sage: all(x in ZZ for x in (B-(4*identity_matrix(6))).rref().list())
         True
         sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
         True
-        sage: S=B.right_eigenmatrix()[1]; S_inverse=S.inverse(); S_inverse*B*S
-        [  6   0   0   0   0   0]
-        [  0 -12   0   0   0   0]
-        [  0   0 -12   0   0   0]
-        [  0   0   0   4   0   0]
-        [  0   0   0   0   4   0]
-        [  0   0   0   0   0   4]
+        sage: S = B.right_eigenmatrix()[1]
+        sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
+        sage: all(e in eigenvalues for e in eigenvalues2)
+        True
 
     TESTS:
 

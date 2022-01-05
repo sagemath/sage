@@ -810,7 +810,7 @@ class Function_sin_integral(BuiltinFunction):
             sage: sin_integral(x)._fricas_init_()
             'Si(x)'
             sage: sin_integral(x)._giac_()
-            Si(x)
+            Si(sageVARx)
         """
         BuiltinFunction.__init__(self, "sin_integral", nargs=1,
                                  latex_name=r'\operatorname{Si}',
@@ -986,7 +986,7 @@ class Function_cos_integral(BuiltinFunction):
             sage: cos_integral(x)._fricas_init_()
             'Ci(x)'
             sage: cos_integral(x)._giac_()
-            Ci(x)
+            Ci(sageVARx)
         """
         BuiltinFunction.__init__(self, "cos_integral", nargs=1,
                                  latex_name=r'\operatorname{Ci}',

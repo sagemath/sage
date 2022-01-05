@@ -35,11 +35,10 @@ from sage.groups.additive_abelian.additive_abelian_group import AdditiveAbelianG
 
 from sage.matrix.all import matrix
 from sage.homology.chain_complex import ChainComplex
-from sage.homology.simplicial_set import AbstractSimplex, SimplicialSet
+from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
 
 from sage.libs.ecl import EclObject, ecl_eval, EclListIterator
 from sage.features.kenzo import Kenzo
-
 
 # defining the auxiliary functions as wrappers over the kenzo ones
 kenzo_names = ['add',
@@ -107,7 +106,12 @@ kenzo_names = ['add',
 # example __sphere__ is defined as EclObject("sphere"). Hyphens
 # are replaced with underscores to get valid Python identifiers.
 if Kenzo().is_present():
-    ecl_eval("(require :kenzo)")
+    from sage.env import KENZO_FAS
+    if KENZO_FAS:
+        ecl_eval("(require :kenzo \"{}\")".format(KENZO_FAS))
+    else:
+        ecl_eval("(require :kenzo)")
+
     ecl_eval("(in-package :cat)")
     ecl_eval("(setf *HOMOLOGY-VERBOSE* nil)")
     for s in kenzo_names:
@@ -1190,7 +1194,7 @@ def KAbstractSimplex(simplex):
 
     EXAMPLES::
 
-        sage: from sage.homology.simplicial_set import AbstractSimplex
+        sage: from sage.topology.simplicial_set import AbstractSimplex
         sage: from sage.interfaces.kenzo import KAbstractSimplex,\
         ....: SAbstractSimplex                                          # optional - kenzo
         sage: SAbSm = AbstractSimplex(1, (2,0,3,2,1), name = 'SAbSm')   # optional - kenzo
@@ -1219,7 +1223,7 @@ def KFiniteSimplicialSet(sset):
 
     EXAMPLES::
 
-        sage: from sage.homology.simplicial_set import AbstractSimplex, SimplicialSet
+        sage: from sage.topology.simplicial_set import AbstractSimplex, SimplicialSet
         sage: from sage.interfaces.kenzo import KFiniteSimplicialSet    # optional - kenzo
         sage: s0 = AbstractSimplex(0, name='s0')
         sage: s1 = AbstractSimplex(0, name='s1')
@@ -1241,7 +1245,7 @@ def KFiniteSimplicialSet(sset):
         sage: KS1vS3.homology(3)                                        # optional - kenzo
         Z
     """
-    from sage.homology.simplicial_set_constructions import ProductOfSimplicialSets
+    from sage.topology.simplicial_set_constructions import ProductOfSimplicialSets
     if isinstance(sset, ProductOfSimplicialSets):
         f0 = KFiniteSimplicialSet(sset.factor(0))
         for f1 in sset.factors()[1:]:
@@ -1287,7 +1291,7 @@ def SFiniteSimplicialSet(ksimpset, limit):
 
     EXAMPLES::
 
-        sage: from sage.homology.simplicial_set import SimplicialSet
+        sage: from sage.topology.simplicial_set import SimplicialSet
         sage: from sage.interfaces.kenzo import AbstractSimplex,\
         ....:  KFiniteSimplicialSet, SFiniteSimplicialSet, Sphere   # optional - kenzo
         sage: s0 = AbstractSimplex(0, name='s0')                    # optional - kenzo

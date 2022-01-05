@@ -2897,18 +2897,18 @@ class GenusSymbol_global_ring(object):
             sage: GS.discriminant_form()
             Finite quadratic module over Integer Ring with invariants (2, 2, 4, 24)
             Gram matrix of the quadratic form with values in Q/2Z:
-            [ 1/2    0    0    0]
-            [   0  3/2    0    0]
-            [   0    0  7/4    0]
-            [   0    0    0 7/24]
+            [  1/2     0   1/2     0]
+            [    0   3/2     0     0]
+            [  1/2     0   3/4     0]
+            [    0     0     0 25/24]
             sage: A = matrix.diagonal(ZZ, [1, -4, 6, 8])
             sage: GS = Genus(A)
             sage: GS.discriminant_form()
             Finite quadratic module over Integer Ring with invariants (2, 4, 24)
             Gram matrix of the quadratic form with values in Q/Z:
-            [ 1/2    0    0]
-            [   0  3/4    0]
-            [   0    0 7/24]
+            [ 1/2  1/2    0]
+            [ 1/2  3/4    0]
+            [   0    0 1/24]
         """
         from sage.modules.torsion_quadratic_module import TorsionQuadraticForm
         qL = []

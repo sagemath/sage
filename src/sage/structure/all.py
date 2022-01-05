@@ -1,4 +1,3 @@
-
 from .factorization import Factorization
 
 from .sequence      import Sequence, seq
@@ -16,8 +15,6 @@ from .element import (
     )
 
 from .parent      import Parent
-
-from .parent_base import ParentWithBase
 
 from .parent_gens import ParentWithGens, localvars
 

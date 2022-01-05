@@ -2,7 +2,7 @@
 H(yperplane) and V(ertex) representation objects for polyhedra
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Marshall Hampton <hamptonio@gmail.com>
 #       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #
@@ -10,8 +10,8 @@ H(yperplane) and V(ertex) representation objects for polyhedra
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from sage.structure.sage_object import SageObject
@@ -20,7 +20,6 @@ from sage.structure.richcmp import richcmp_method, richcmp
 from sage.rings.all import ZZ
 from sage.modules.free_module_element import vector
 from copy import copy
-
 
 
 #########################################################################
@@ -103,8 +102,14 @@ class PolyhedronRepresentation(SageObject):
         """
         Compare two representation objects
 
-        They are equal if and only if they define the same
-        vertex/ray/line or inequality/equation in the ambient space,
+        This method defines a linear order on the H/V-representation objects.
+        The order is first determined by the types of the objects,
+        such that inequality < equation < vertex < ray < line.
+        Then, representation objects with the same type are ordered
+        lexicographically according to their canonical vectors.
+
+        Thus, two representation objects are equal if and only if they define
+        the same vertex/ray/line or inequality/equation in the ambient space,
         regardless of the polyhedron that they belong to.
 
         INPUT:
@@ -132,6 +137,10 @@ class PolyhedronRepresentation(SageObject):
             sage: ieq != Polyhedron([(0,1,0)]).Vrepresentation(0)
             True
 
+            sage: H = Polyhedron(vertices=[(4,0)], rays=[(1,1)], lines=[(-1,1)])
+            sage: H.vertices()[0] < H.rays()[0] < H.lines()[0]
+            True
+
         TESTS:
 
         Check :trac:`30954`::
@@ -143,9 +152,8 @@ class PolyhedronRepresentation(SageObject):
         """
         if not isinstance(other, PolyhedronRepresentation):
             return NotImplemented
-        if type(self) != type(other):
-            return NotImplemented
-        return richcmp(self._vector*self._comparison_scalar(), other._vector*other._comparison_scalar(), op)
+        return richcmp((self.type(), self._vector*self._comparison_scalar()),
+                (other.type(), other._vector*other._comparison_scalar()), op)
 
     def _comparison_scalar(self):
         r"""
@@ -280,13 +288,13 @@ class PolyhedronRepresentation(SageObject):
         Return an arbitrary but fixed number according to the internal
         storage order.
 
-        NOTES:
+        .. NOTE::
 
-        H-representation and V-representation objects are enumerated
-        independently. That is, amongst all vertices/rays/lines there
-        will be one with ``index()==0``, and amongst all
-        inequalities/equations there will be one with ``index()==0``,
-        unless the polyhedron is empty or spans the whole space.
+            H-representation and V-representation objects are enumerated
+            independently. That is, amongst all vertices/rays/lines there
+            will be one with ``index()==0``, and amongst all
+            inequalities/equations there will be one with ``index()==0``,
+            unless the polyhedron is empty or spans the whole space.
 
         EXAMPLES::
 
@@ -427,6 +435,8 @@ class Hrepresentation(PolyhedronRepresentation):
         self._index = len(polyhedron._Hrepresentation)
         polyhedron._Hrepresentation.append(self)
         self._polyhedron = polyhedron
+        if polyhedron.is_mutable():
+            polyhedron._add_dependent_object(self)
 
     def is_H(self):
         """
@@ -598,14 +608,16 @@ class Hrepresentation(PolyhedronRepresentation):
 
     def eval(self, Vobj):
         r"""
-        Evaluates the left hand side `A\vec{x}+b` on the given
+        Evaluate the left hand side `A\vec{x}+b` on the given
         vertex/ray/line.
 
-        NOTES:
+        .. NOTE:
 
           * Evaluating on a vertex returns `A\vec{x}+b`
+
           * Evaluating on a ray returns `A\vec{r}`. Only the sign or
             whether it is zero is meaningful.
+
           * Evaluating on a line returns `A\vec{l}`. Only whether it
             is zero or not is meaningful.
 
@@ -739,7 +751,6 @@ class Inequality(Hrepresentation):
             False
         """
         return self.INEQUALITY
-
 
     def is_inequality(self):
         """
@@ -918,7 +929,7 @@ class Inequality(Hrepresentation):
             [True, True, False, True, False, True, False, False]
         """
         try:
-            if Vobj.is_vector(): # assume we were passed a point
+            if Vobj.is_vector():  # assume we were passed a point
                 return self.polyhedron()._is_nonneg( self.eval(Vobj) )
         except AttributeError:
             pass
@@ -1084,9 +1095,9 @@ class Equation(Hrepresentation):
         boundary) defined by the inequality contains the given
         vertex/ray/line.
 
-        NOTE:
+        .. NOTE::
 
-        Return False for any equation.
+            Return False for any equation.
 
         EXAMPLES::
 
@@ -1157,6 +1168,8 @@ class Vrepresentation(PolyhedronRepresentation):
         self._index = len(polyhedron._Vrepresentation)
         polyhedron._Vrepresentation.append(self)
         self._polyhedron = polyhedron
+        if polyhedron.is_mutable():
+            polyhedron._add_dependent_object(self)
 
     def is_V(self):
         """
@@ -1382,7 +1395,7 @@ class Vertex(Vrepresentation):
             sage: v.__repr__()
             'A vertex at (1, 0)'
         """
-        return 'A vertex at ' + repr(self.vector());
+        return 'A vertex at ' + repr(self.vector())
 
     def homogeneous_vector(self, base_ring=None):
         """
@@ -1499,7 +1512,7 @@ class Ray(Vrepresentation):
             sage: a._repr_()
             'A ray in the direction (0, 1)'
         """
-        return 'A ray in the direction ' + repr(self.vector());
+        return 'A ray in the direction ' + repr(self.vector())
 
     def homogeneous_vector(self, base_ring=None):
         """
@@ -1597,7 +1610,7 @@ class Line(Vrepresentation):
             sage: a.__repr__()
             'A line in the direction (0, 1, 0)'
         """
-        return 'A line in the direction ' + repr(self.vector());
+        return 'A line in the direction ' + repr(self.vector())
 
     def homogeneous_vector(self, base_ring=None):
         """

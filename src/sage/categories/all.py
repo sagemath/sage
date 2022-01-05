@@ -4,7 +4,7 @@ from .category import Category
 
 from .category_types import Elements
 
-from .chain_complexes import ChainComplexes
+from .chain_complexes import ChainComplexes, HomologyFunctor
 
 from .simplicial_complexes import SimplicialComplexes
 

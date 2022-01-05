@@ -3140,7 +3140,7 @@ cdef class TateAlgebraElement(CommutativeAlgebraElement):
             sage: g.residue()
             Traceback (most recent call last):
             ...
-            ValueError: element must have non-negative valuation in order to compute residue.
+            ValueError: element must have non-negative valuation in order to compute residue
 
         The residue is not implemented for series with convergence radius different from 1.
 

@@ -35,9 +35,6 @@ Dependencies
 Special Update/Build Instructions
 ---------------------------------
 
-The current upstream tarball is made from the branch at
-https://github.com/mkoeppe/Singular/tree/Release-4-2-0-p1%2Bsage
-
 Other notes:
 
 -  If the environment variable SAGE_DEBUG is set to "yes", then

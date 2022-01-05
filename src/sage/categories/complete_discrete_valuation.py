@@ -154,7 +154,7 @@ class CompleteDiscreteValuationRings(Category_singleton):
                 sage: R(1,15).lift_to_precision(30)
                 Traceback (most recent call last):
                 ...
-                PrecisionError: Precision higher than allowed by the precision cap.
+                PrecisionError: precision higher than allowed by the precision cap
                 sage: R(-1,2).lift_to_precision().precision_absolute() == R.precision_cap()
                 True
 

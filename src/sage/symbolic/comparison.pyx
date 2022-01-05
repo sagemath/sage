@@ -258,6 +258,16 @@ cpdef int mixed_order(lhs, rhs) except -2:
 
         sage: mixed_order(SR(oo), sqrt(2))
         1
+
+    Ensure that :trac:`32185` is fixed::
+
+        sage: mixed_order(pi, 0)
+        1
+        sage: mixed_order(golden_ratio, 0)
+        1
+        sage: mixed_order(log2, 0)
+        1
+
     """
     if lhs is rhs:
         return 0
@@ -345,7 +355,7 @@ class _mixed_key(object):
             return pynac_result == relational_true
 
         det_ex = self.ex - other.ex
-        if not has_symbol_or_function((<Expression>rel)._gobj):
+        if not has_symbol_or_function((<Expression>rel)._gobj) and not det_ex.is_constant():
             while hasattr(det_ex, 'pyobject') and isinstance(det_ex, Expression):
                 try:
                     det_ex = det_ex.pyobject()

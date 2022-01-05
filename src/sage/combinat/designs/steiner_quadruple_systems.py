@@ -637,7 +637,7 @@ def barP_system(m):
         # pairs. Those are added to 'last', a new list of pairs
 
         last = []
-        for n in range(0, (m-3)//2+1):
+        for n in range((m - 3) // 2 + 1):
             pairs.append([p for p in P(2*n,m) if not isequal(p,(2*n,(4*n+1)%(2*m)))])
             last.append((2*n,(4*n+1)%(2*m)))
             pairs.append([p for p in P(2*n+1,m) if not isequal(p,(2*m-2-2*n,2*m-3-4*n))])
@@ -659,7 +659,7 @@ def barP_system(m):
 
         # Now the points must be relabeled
         relabel = {}
-        for n in range(0, (m-3)//2+1):
+        for n in range((m - 3) // 2 + 1):
             relabel[2*n] = (4*n)%(2*m)
             relabel[4*n+1] = (4*n+1)%(2*m)
             relabel[2*m-2-2*n] = (4*n+2)%(2*m)

@@ -33,13 +33,13 @@ AUTHORS:
 
 from libc.string cimport strlen
 from cysignals.memory cimport check_calloc, check_reallocarray, sig_malloc, sig_free
+from memory_allocator  cimport MemoryAllocator
+from cython.operator import preincrement as preinc
 
 from sage.cpython.string cimport char_to_str, str_to_bytes, bytes_to_str
 from sage.libs.gmp.mpn cimport *
 from sage.libs.gmp.types cimport *
 from sage.data_structures.sparse_bitset cimport sparse_bitset_t
-from cython.operator import preincrement as preinc
-from sage.ext.memory_allocator  cimport MemoryAllocator
 
 
 cdef extern from *:

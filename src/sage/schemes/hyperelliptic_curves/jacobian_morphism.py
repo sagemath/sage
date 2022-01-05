@@ -147,15 +147,16 @@ def cantor_reduction_simple(a, b, f, genus):
     """
     a2 = (f - b**2) // a
     a2 = a2.monic()
-    b2 = -b % (a2);
+    b2 = -b % (a2)
     if a2.degree() == a.degree():
         # XXX
-        assert a2.degree() == genus+1
+        assert a2.degree() == genus + 1
         print("Returning ambiguous form of degree genus+1.")
         return (a2, b2)
     elif a2.degree() > genus:
         return cantor_reduction_simple(a2, b2, f, genus)
     return (a2, b2)
+
 
 def cantor_reduction(a, b, f, h, genus):
     r"""

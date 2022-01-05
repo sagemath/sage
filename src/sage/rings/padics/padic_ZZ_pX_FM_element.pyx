@@ -4,7 +4,7 @@
 # distutils: library_dirs = NTL_LIBDIR
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: language = c++
-"""
+r"""
 `p`-Adic ``ZZ_pX`` FM Element
 
 This file implements elements of Eisenstein and unramified extensions
@@ -24,37 +24,37 @@ element contains the following data:
   identical among all elements with the same parent, holding common
   data.
 
-  + ``prime_pow.deg`` -- The degree of the extension
+  * ``prime_pow.deg`` -- the degree of the extension
 
-  + ``prime_pow.e``   -- The ramification index
+  * ``prime_pow.e``   -- the ramification index
 
-  + ``prime_pow.f``   -- The inertia degree
+  * ``prime_pow.f``   -- the inertia degree
 
-  + ``prime_pow.prec_cap`` -- the unramified precision cap.  For
-    Eisenstein extensions this is the smallest power of p that is
-    zero.
+  * ``prime_pow.prec_cap`` -- the unramified precision cap: for
+    Eisenstein extensions this is the smallest power of `p` that is
+    zero
 
-  + ``prime_pow.ram_prec_cap`` -- the ramified precision cap.  For
+  * ``prime_pow.ram_prec_cap`` -- the ramified precision cap: for
     Eisenstein extensions this will be the smallest power of `x` that
-    is indistinguishable from zero.
+    is indistinguishable from zero
 
-  + ``prime_pow.pow_ZZ_tmp``, prime_pow.pow_mpz_t_tmp``,
+  * ``prime_pow.pow_ZZ_tmp``, prime_pow.pow_mpz_t_tmp``,
     ``prime_pow.pow_Integer`` -- functions for accessing powers of
     `p`.  The first two return pointers.  See
     ``sage/rings/padics/pow_computer_ext`` for examples and important
     warnings.
 
-  + ``prime_pow.get_context``, ``prime_pow.get_context_capdiv``,
+  * ``prime_pow.get_context``, ``prime_pow.get_context_capdiv``,
     ``prime_pow.get_top_context`` -- obtain an
     ``ntl_ZZ_pContext_class`` corresponding to `p^n`.  The capdiv
     version divides by ``prime_pow.e`` as appropriate.
     ``top_context`` corresponds to `p^{prec_cap}`.
 
-  + ``prime_pow.restore_context``,
+  * ``prime_pow.restore_context``,
     ``prime_pow.restore_context_capdiv``,
-    ``prime_pow.restore_top_context`` -- restores the given context.
+    ``prime_pow.restore_top_context`` -- restores the given context
 
-  + ``prime_pow.get_modulus``, ``get_modulus_capdiv``,
+  * ``prime_pow.get_modulus``, ``get_modulus_capdiv``,
     ``get_top_modulus`` -- Returns a ``ZZ_pX_Modulus_c*`` pointing to
     a polynomial modulus defined modulo `p^n` (appropriately divided
     by ``prime_pow.e`` in the capdiv case).
@@ -155,7 +155,7 @@ from sage.rings.padics.pow_computer_ext cimport PowComputer_ZZ_pX_FM_Eis
 
 cdef class pAdicZZpXFMElement(pAdicZZpXElement):
     def __init__(self, parent, x, absprec=None, relprec=None, empty=False):
-        """
+        r"""
         Creates an element of a fixed modulus, unramified or
         eisenstein extension of `\ZZ_p` or `\QQ_p`.
 
@@ -174,7 +174,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         - ``relprec`` -- not used
 
         - ``empty`` -- whether to return after initializing to zero
-          (without setting anything).
+          (without setting anything)
 
         EXAMPLES::
 
@@ -320,7 +320,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = W(70/3); z # indirect doctest
-            3*w^5 + w^7 + 2*w^9 + 2*w^10 + 4*w^11 + w^12 + 2*w^13 + 3*w^15 + 2*w^16 + 3*w^17 + w^18 + 3*w^19 + 3*w^20 + 2*w^21 + 2*w^22 + 3*w^23 + 4*w^24
+            3*w^5 + w^7 + 2*w^9 + 2*w^10 + 4*w^11 + w^12 + 2*w^13 + 3*w^15 + 2*w^16
+             + 3*w^17 + w^18 + 3*w^19 + 3*w^20 + 2*w^21 + 2*w^22 + 3*w^23 + 4*w^24
             sage: z * 3
             4*w^5 + 3*w^7 + w^9 + 2*w^10 + 2*w^11 + w^13 + 3*w^16 + w^17 + w^18 + 4*w^20 + 4*w^21 + w^22 + 2*w^23
             sage: W(70)
@@ -353,7 +354,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = W(ntl.ZZ_pX([4,1,16],5^2)); z # indirect doctest
-            4 + w + w^2 + 3*w^7 + w^9 + 2*w^11 + 4*w^13 + 3*w^14 + 2*w^15 + w^16 + 3*w^18 + 2*w^19 + 4*w^20 + 4*w^21 + 2*w^22 + 2*w^23 + 4*w^24
+            4 + w + w^2 + 3*w^7 + w^9 + 2*w^11 + 4*w^13 + 3*w^14 + 2*w^15 + w^16
+             + 3*w^18 + 2*w^19 + 4*w^20 + 4*w^21 + 2*w^22 + 2*w^23 + 4*w^24
             sage: z._ntl_rep()
             [4 1 16]
         """
@@ -373,7 +375,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = W(ntl.ZZX([4,1,16])); z # indirect doctest
-            4 + w + w^2 + 3*w^7 + w^9 + 2*w^11 + 4*w^13 + 3*w^14 + 2*w^15 + w^16 + 3*w^18 + 2*w^19 + 4*w^20 + 4*w^21 + 2*w^22 + 2*w^23 + 4*w^24
+            4 + w + w^2 + 3*w^7 + w^9 + 2*w^11 + 4*w^13 + 3*w^14 + 2*w^15 + w^16
+             + 3*w^18 + 2*w^19 + 4*w^20 + 4*w^21 + 2*w^22 + 2*w^23 + 4*w^24
             sage: z._ntl_rep()
             [4 1 16]
         """
@@ -397,11 +400,12 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: z._is_inexact_zero()
             True
         """
-        return ZZ_pX_IsZero(self.value) or (self.prime_pow.e * self.prime_pow.prec_cap != self.prime_pow.ram_prec_cap and self.valuation_c() >= self.prime_pow.ram_prec_cap)
+        return ZZ_pX_IsZero(self.value) or (self.prime_pow.e * self.prime_pow.prec_cap != self.prime_pow.ram_prec_cap
+                                            and self.valuation_c() >= self.prime_pow.ram_prec_cap)
 
     def __reduce__(self):
         """
-        Pickles ``self``.
+        Pickle ``self``.
 
         EXAMPLES::
 
@@ -421,7 +425,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef pAdicZZpXFMElement _new_c(self):
         """
-        Returns a new element with the same parent as ``self``.
+        Return a new element with the same parent as ``self``.
 
         EXAMPLES::
 
@@ -475,8 +479,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def __invert__(self):
         """
-        Returns the inverse of ``self``, as long as ``self`` is a
-        unit.
+        Return the inverse of ``self``, as long as ``self`` is a unit.
 
         If ``self`` is not a unit, raises a ``ValueError``.
 
@@ -488,7 +491,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5
             sage: y = ~z; y # indirect doctest
-            1 + 4*w^5 + 4*w^6 + 3*w^7 + w^8 + 2*w^10 + w^11 + w^12 + 2*w^14 + 3*w^16 + 3*w^17 + 4*w^18 + 4*w^19 + 2*w^20 + 2*w^21 + 4*w^22 + 3*w^23 + 3*w^24
+            1 + 4*w^5 + 4*w^6 + 3*w^7 + w^8 + 2*w^10 + w^11 + w^12 + 2*w^14 + 3*w^16
+             + 3*w^17 + 4*w^18 + 4*w^19 + 2*w^20 + 2*w^21 + 4*w^22 + 3*w^23 + 3*w^24
             sage: y.parent()
             5-adic Eisenstein Extension Ring in w defined by x^5 + 75*x^3 - 15*x^2 + 125*x - 5
             sage: z = z - 1
@@ -510,8 +514,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef pAdicZZpXFMElement _lshift_c(self, long n):
         """
-        Multiplies ``self`` by the uniformizer raised to the power
-        ``n``.  If ``n`` is negative, right shifts by ``-n``.
+        Multiply ``self`` by the uniformizer raised to the power ``n``.
+
+        If ``n`` is negative, right shifts by ``-n``.
 
         EXAMPLES::
 
@@ -541,8 +546,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def __lshift__(pAdicZZpXFMElement self, shift):
         """
-        Multiplies ``self`` by the uniformizer raised to the power
-        ``n``.  If ``n`` is negative, right shifts by ``-n``.
+        Multiply ``self`` by the uniformizer raised to the power ``n``.
+
+        If ``n`` is negative, right shifts by ``-n``.
 
         EXAMPLES::
 
@@ -569,7 +575,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef pAdicZZpXFMElement _rshift_c(self, long n):
         """
-        Divides ``self`` by the uniformizer raised to the power ``n``.
+        Divide ``self`` by the uniformizer raised to the power ``n``.
+
         Throws away the non-positive part of the series expansion.
         The top digits will be garbage.  If ``n`` is negative, left
         shifts by ``-n``.
@@ -629,7 +636,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def __rshift__(pAdicZZpXFMElement self, shift):
         """
-        Divides ``self`` by the uniformizer raised to the power ``n``.
+        Divide ``self`` by the uniformizer raised to the power ``n``.
+
         Throws away the non-positive part of the series expansion.
         The top digits will be garbage.  If ``n`` is negative, left
         shifts by ``-n``.
@@ -642,11 +650,14 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5
             sage: z
-            1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
+            1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14
+             + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
             sage: z >> (6) # indirect doctest
-            1 + 2*w + 4*w^2 + 3*w^4 + w^6 + 4*w^7 + 4*w^8 + 4*w^9 + 4*w^10 + 4*w^11 + 4*w^14 + w^15 + 4*w^18 + 4*w^19 + 2*w^20 + 3*w^21 + 2*w^22 + 3*w^24
+            1 + 2*w + 4*w^2 + 3*w^4 + w^6 + 4*w^7 + 4*w^8 + 4*w^9 + 4*w^10 + 4*w^11
+             + 4*w^14 + w^15 + 4*w^18 + 4*w^19 + 2*w^20 + 3*w^21 + 2*w^22 + 3*w^24
             sage: z >> (-4)
-            w^4 + w^9 + w^10 + 2*w^11 + 4*w^12 + 3*w^14 + w^16 + 4*w^17 + 4*w^18 + 4*w^19 + 4*w^20 + 4*w^21 + 4*w^24
+            w^4 + w^9 + w^10 + 2*w^11 + 4*w^12 + 3*w^14 + w^16 + 4*w^17
+             + 4*w^18 + 4*w^19 + 4*w^20 + 4*w^21 + 4*w^24
         """
         cdef pAdicZZpXFMElement ans
         if not isinstance(shift, Integer):
@@ -667,9 +678,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: z = (1 + w)^5; z
-            1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
+            1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14
+             + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
             sage: -z # indirect doctest
-            4 + 3*w^5 + 4*w^6 + w^7 + w^8 + w^9 + w^10 + w^11 + 2*w^12 + 4*w^13 + 4*w^15 + 3*w^16 + w^17 + 2*w^18 + 3*w^19 + 2*w^21 + 4*w^23 + 4*w^24
+            4 + 3*w^5 + 4*w^6 + w^7 + w^8 + w^9 + w^10 + w^11 + 2*w^12 + 4*w^13
+             + 4*w^15 + 3*w^16 + w^17 + 2*w^18 + 3*w^19 + 2*w^21 + 4*w^23 + 4*w^24
             sage: y = z + (-z); y
             0
             sage: -y
@@ -690,9 +703,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: (1 + w)^5 # indirect doctest
-            1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14 + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
+            1 + w^5 + w^6 + 2*w^7 + 4*w^8 + 3*w^10 + w^12 + 4*w^13 + 4*w^14
+             + 4*w^15 + 4*w^16 + 4*w^17 + 4*w^20 + w^21 + 4*w^24
             sage: (1 + w)^-5
-            1 + 4*w^5 + 4*w^6 + 3*w^7 + w^8 + 2*w^10 + w^11 + w^12 + 2*w^14 + 3*w^16 + 3*w^17 + 4*w^18 + 4*w^19 + 2*w^20 + 2*w^21 + 4*w^22 + 3*w^23 + 3*w^24
+            1 + 4*w^5 + 4*w^6 + 3*w^7 + w^8 + 2*w^10 + w^11 + w^12 + 2*w^14
+             + 3*w^16 + 3*w^17 + 4*w^18 + 4*w^19 + 2*w^20 + 2*w^21 + 4*w^22 + 3*w^23 + 3*w^24
 
         TESTS:
 
@@ -745,7 +760,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef _add_(self, right):
         """
-        Returns ``self`` + ``right``.
+        Return ``self`` + ``right``.
 
         EXAMPLES::
 
@@ -764,7 +779,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef _mul_(self, right):
         """
-        Returns the product of ``self`` and ``right``.
+        Return the product of ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -775,7 +790,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: a = W(329)
             sage: b = W(111)
             sage: a*b #indirect doctest
-            4 + 3*w^5 + w^7 + 2*w^9 + 4*w^11 + 3*w^12 + 2*w^13 + w^14 + 2*w^15 + 3*w^16 + 4*w^17 + 4*w^18 + 2*w^19 + 2*w^21 + 4*w^22 + 2*w^23 + w^24
+            4 + 3*w^5 + w^7 + 2*w^9 + 4*w^11 + 3*w^12 + 2*w^13 + w^14 + 2*w^15
+             + 3*w^16 + 4*w^17 + 4*w^18 + 2*w^19 + 2*w^21 + 4*w^22 + 2*w^23 + w^24
             sage: a * 0
             0
             sage: W(125) * W(375)
@@ -787,7 +803,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef _sub_(self, right):
         """
-        Returns the difference of ``self`` and ``right``.
+        Return the difference of ``self`` and ``right``.
 
         EXAMPLES::
 
@@ -798,9 +814,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: a = W(329)
             sage: b = W(111)
             sage: a - b #indirect doctest
-            3 + 3*w^5 + w^7 + 2*w^9 + 3*w^10 + 4*w^11 + 2*w^13 + 2*w^14 + w^15 + 4*w^16 + 2*w^18 + 3*w^19 + 2*w^20 + 3*w^21 + w^22 + w^24
+            3 + 3*w^5 + w^7 + 2*w^9 + 3*w^10 + 4*w^11 + 2*w^13 + 2*w^14 + w^15
+             + 4*w^16 + 2*w^18 + 3*w^19 + 2*w^20 + 3*w^21 + w^22 + w^24
             sage: W(218)
-            3 + 3*w^5 + w^7 + 2*w^9 + 3*w^10 + 4*w^11 + 2*w^13 + 2*w^14 + w^15 + 4*w^16 + 2*w^18 + 3*w^19 + 2*w^20 + 3*w^21 + w^22 + w^24
+            3 + 3*w^5 + w^7 + 2*w^9 + 3*w^10 + 4*w^11 + 2*w^13 + 2*w^14 + w^15
+             + 4*w^16 + 2*w^18 + 3*w^19 + 2*w^20 + 3*w^21 + w^22 + w^24
         """
         cdef pAdicZZpXFMElement ans = self._new_c()
         ZZ_pX_sub(ans.value, self.value, (<pAdicZZpXFMElement>right).value)
@@ -840,7 +858,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         cdef pAdicZZpXFMElement ans = self._new_c()
         sig_on()
         if self.prime_pow.e == 1:
-            ZZ_pX_InvMod_newton_unram(ans.value, right.value, self.prime_pow.get_top_modulus()[0], self.prime_pow.get_top_context().x, self.prime_pow.get_context(1).x)
+            ZZ_pX_InvMod_newton_unram(ans.value, right.value, self.prime_pow.get_top_modulus()[0],
+                                      self.prime_pow.get_top_context().x, self.prime_pow.get_context(1).x)
         else:
             ZZ_pX_InvMod_newton_ram(ans.value, right.value, self.prime_pow.get_top_modulus()[0], self.prime_pow.get_top_context().x)
         ZZ_pX_MulMod_pre(ans.value, self.value, ans.value, self.prime_pow.get_top_modulus()[0])
@@ -849,7 +868,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def __copy__(self):
         """
-        Returns a copy of ``self``.
+        Return a copy of ``self``.
 
         EXAMPLES::
 
@@ -858,9 +877,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: b = W(45); b
-            4*w^5 + 3*w^7 + w^9 + w^10 + 2*w^11 + w^12 + w^13 + 3*w^14 + w^16 + 2*w^17 + w^19 + 4*w^20 + w^21 + 3*w^22 + 3*w^23 + 4*w^24
+            4*w^5 + 3*w^7 + w^9 + w^10 + 2*w^11 + w^12 + w^13 + 3*w^14 + w^16
+             + 2*w^17 + w^19 + 4*w^20 + w^21 + 3*w^22 + 3*w^23 + 4*w^24
             sage: c = copy(b); c
-            4*w^5 + 3*w^7 + w^9 + w^10 + 2*w^11 + w^12 + w^13 + 3*w^14 + w^16 + 2*w^17 + w^19 + 4*w^20 + w^21 + 3*w^22 + 3*w^23 + 4*w^24
+            4*w^5 + 3*w^7 + w^9 + w^10 + 2*w^11 + w^12 + w^13 + 3*w^14 + w^16
+             + 2*w^17 + w^19 + 4*w^20 + w^21 + 3*w^22 + 3*w^23 + 4*w^24
             sage: c is b
             False
         """
@@ -870,8 +891,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def is_zero(self, absprec = None):
         """
-        Returns whether the valuation of ``self`` is at least
-        ``absprec``.  If ``absprec`` is ``None``, returns whether
+        Return whether the valuation of ``self`` is at least
+        ``absprec``; if ``absprec`` is ``None``, return whether
         ``self`` is indistinguishable from zero.
 
         EXAMPLES::
@@ -908,8 +929,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         return ans
 
     def add_bigoh(self, absprec):
-        """
-        Return a new element truncated modulo \pi^absprec.
+        r"""
+        Return a new element truncated modulo `\pi^{\text{absprec}}`.
 
         This is only implemented for unramified extension at
         this point.
@@ -920,7 +941,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         OUTPUT:
 
-        a new element truncated modulo `\pi^{\mbox{absprec}}`.
+        A new element truncated modulo `\pi^{\mbox{absprec}}`.
 
         EXAMPLES::
 
@@ -955,9 +976,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         return ans
 
     def _integer_(self, Z=None):
-        """
-        Returns an integer congruent to this element modulo
-        `\pi` ^ ``self.absolute_precision()``, if possible.
+        r"""
+        Return an integer congruent to this element modulo
+        `\pi^a`, where `a` is ``self.absolute_precision()``, if possible.
 
         EXAMPLES::
 
@@ -986,15 +1007,16 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         return ans
 
     def matrix_mod_pn(self):
-        """
-        Returns the matrix of right multiplication by the element on
+        r"""
+        Return the matrix of right multiplication by the element on
         the power basis `1, x, x^2, \ldots, x^{d-1}` for this
-        extension field.  Thus the \emph{rows} of this matrix give the
-        images of each of the `x^i`.  The entries of the matrices are
-        ``IntegerMod`` elements, defined modulo ``p^(self.absprec() /
-        e)``.
+        extension field.
 
-        Raises an error if self has negative valuation.
+        The **rows** of this matrix give the images of each of the `x^i`.
+        The entries of the matrices are ``IntegerMod`` elements,
+        defined modulo ``p^(self.absprec() / e)``.
+
+        Raises an error if ``self`` has negative valuation.
 
         EXAMPLES::
 
@@ -1046,14 +1068,17 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 #         """
 #         raise NotImplementedError
 
-    def norm(self, base = None):
-        """
+    def norm(self, base=None):
+        r"""
         Return the absolute or relative norm of this element.
 
-        NOTE!  This is not the `p`-adic absolute value.  This is a
-        field theoretic norm down to a ground ring.
+        .. NOTE::
 
-        If you want the `p`-adic absolute value, use the ``abs()`` function instead.
+            This is not the `p`-adic absolute value.  This is a
+            field theoretic norm down to a ground ring.
+
+        If you want the `p`-adic absolute value, use the :func:`abs()`
+        function instead.
 
         If `K` is given then `K` must be a subfield of the parent `L` of
         ``self``, in which case the norm is the relative norm from `L` to `K`.
@@ -1083,8 +1108,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         norm_of_uniformizer = (-1)**self.parent().degree() * self.parent().defining_polynomial()[0]
         return self.parent().ground_ring()(self.unit_part().matrix_mod_pn().det()) * norm_of_uniformizer**self.valuation()
 
-    def trace(self, base = None):
-        """
+    def trace(self, base=None):
+        r"""
         Return the absolute or relative trace of this element.
 
         If `K` is given then `K` must be a subfield of the parent `L` of
@@ -1124,7 +1149,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def _ntl_rep(self):
         """
-        Returns an ``ntl_ZZ_pX`` holding ``self.value``.
+        Return an ``ntl_ZZ_pX`` holding ``self.value``.
 
         EXAMPLES::
 
@@ -1149,7 +1174,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``pad`` -- whether to pad the result with zeros of the appropriate precision
+        - ``pad`` -- whether to pad the result with zeros of the
+          appropriate precision
 
         EXAMPLES::
 
@@ -1192,10 +1218,11 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef ZZ_p_c _const_term(self):
         """
-        Returns the constant term of ``self.unit``.
+        Return the constant term of ``self.unit``.
 
-        Note: this may be divisible by `p` if ``self`` is not
-        normalized.
+        .. NOTE::
+
+            This may be divisible by `p` if ``self`` is not normalized.
 
         EXAMPLES::
 
@@ -1209,9 +1236,9 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         return ZZ_pX_ConstTerm(self.value)
 
-    def is_equal_to(self, right, absprec = None):
+    def is_equal_to(self, right, absprec=None):
         """
-        Returns whether ``self`` is equal to ``right`` modulo
+        Return whether ``self`` is equal to ``right`` modulo
         ``self.uniformizer()^absprec``.
 
         If ``absprec`` is ``None``, returns if ``self`` is equal to
@@ -1242,7 +1269,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def lift_to_precision(self, absprec=None):
         """
-        Returns ``self``.
+        Return ``self``.
 
         EXAMPLES::
 
@@ -1255,23 +1282,23 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         """
         return self
 
-    def expansion(self, n = None, lift_mode = 'simple'):
-        """
-        Returns a list giving a series representation of this element.
+    def expansion(self, n=None, lift_mode='simple'):
+        r"""
+        Return a list giving a series representation of this element.
 
         - If ``lift_mode == 'simple' or 'smallest'``, the returned list will
           consist of
 
-          + integers (in the eisenstein case) or
+          * integers (in the eisenstein case) or
 
-          + lists of integers (in the unramified case).
+          * lists of integers (in the unramified case).
 
         - this element can be reconstructed as
 
-          + a sum of elements of the list times powers of the
+          * a sum of elements of the list times powers of the
             uniformiser (in the eisenstein case), or
 
-          + as a sum of powers of the `p` times polynomials in the
+          * as a sum of powers of the `p` times polynomials in the
             generator (in the unramified case).
 
         - If ``lift_mode == 'simple'``, all integers will be in the range
@@ -1287,8 +1314,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``).  If given, returns the corresponding
-          entry in the expansion.
+        - ``n`` -- integer (default ``None``); if given, returns the
+          corresponding entry in the expansion
 
         EXAMPLES::
 
@@ -1364,16 +1391,16 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def teichmuller_expansion(self, n = None):
         r"""
-        Returns a list [`a_0`, `a_1`,..., `a_n`] such that
+        Return a list `[a_0, a_1, \ldots, a_n]` such that
 
         - `a_i^q = a_i`
         - ``self.unit_part()`` = `\sum_{i = 0}^n a_i \pi^i`, where `\pi` is a
-          uniformizer of self.parent()
+          uniformizer of ``self.parent()``
 
         INPUT:
 
-        - ``n`` -- integer (default ``None``).  If given, returns the corresponding
-          entry in the expansion.
+        - ``n`` -- integer (default ``None``); f given, returns the corresponding
+          entry in the expansion
 
         EXAMPLES::
 
@@ -1381,7 +1408,10 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: E = a.teichmuller_expansion(); E
             5-adic expansion of a (teichmuller)
             sage: list(E)
-            [a + (2*a^3 + 2*a^2 + 3*a + 4)*5 + (4*a^3 + 3*a^2 + 3*a + 2)*5^2 + (4*a^2 + 2*a + 2)*5^3, (3*a^3 + 3*a^2 + 2*a + 1) + (a^3 + 4*a^2 + 1)*5 + (a^2 + 4*a + 4)*5^2 + (4*a^2 + a + 3)*5^3, (4*a^3 + 2*a^2 + a + 1) + (2*a^3 + 2*a^2 + 2*a + 4)*5 + (3*a^3 + 2*a^2 + a + 1)*5^2 + (a^3 + a^2 + 2)*5^3, (a^3 + a^2 + a + 4) + (3*a^3 + 1)*5 + (3*a^3 + a + 2)*5^2 + (3*a^3 + 3*a^2 + 3*a + 1)*5^3]
+            [a + (2*a^3 + 2*a^2 + 3*a + 4)*5 + (4*a^3 + 3*a^2 + 3*a + 2)*5^2 + (4*a^2 + 2*a + 2)*5^3,
+             (3*a^3 + 3*a^2 + 2*a + 1) + (a^3 + 4*a^2 + 1)*5 + (a^2 + 4*a + 4)*5^2 + (4*a^2 + a + 3)*5^3,
+             (4*a^3 + 2*a^2 + a + 1) + (2*a^3 + 2*a^2 + 2*a + 4)*5 + (3*a^3 + 2*a^2 + a + 1)*5^2 + (a^3 + a^2 + 2)*5^3,
+             (a^3 + a^2 + a + 4) + (3*a^3 + 1)*5 + (3*a^3 + a + 2)*5^2 + (3*a^3 + 3*a^2 + 3*a + 1)*5^3]
             sage: sum([c * 5^i for i, c in enumerate(E)])
             a
             sage: all(c^625 == c for c in E)
@@ -1453,7 +1483,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def _teichmuller_set_unsafe(self):
         """
-        Sets this element to the Teichmuller representative with the
+        Set this element to the Teichmuller representative with the
         same residue.
 
         .. WARNING::
@@ -1468,7 +1498,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
             sage: W.<w> = R.ext(f)
             sage: y = W.teichmuller(3); y #indirect doctest
-            3 + 3*w^5 + w^7 + 2*w^9 + 2*w^10 + 4*w^11 + w^12 + 2*w^13 + 3*w^15 + 2*w^16 + 3*w^17 + w^18 + 3*w^19 + 3*w^20 + 2*w^21 + 2*w^22 + 3*w^23 + 4*w^24
+            3 + 3*w^5 + w^7 + 2*w^9 + 2*w^10 + 4*w^11 + w^12 + 2*w^13 + 3*w^15
+             + 2*w^16 + 3*w^17 + w^18 + 3*w^19 + 3*w^20 + 2*w^21 + 2*w^22 + 3*w^23 + 4*w^24
             sage: y^5 == y
             True
             sage: g = x^3 + 3*x + 3
@@ -1515,7 +1546,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def precision_absolute(self):
         """
-        Returns the absolute precision of ``self``, ie the precision cap
+        Return the absolute precision of ``self``, ie the precision cap
         of ``self.parent()``.
 
         EXAMPLES::
@@ -1533,7 +1564,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: a.precision_relative()
             15
             sage: a.unit_part()
-            3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12 + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
+            3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12
+             + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
         """
         cdef Integer ans = Integer.__new__(Integer)
         mpz_set_ui(ans.value, self.prime_pow.ram_prec_cap)
@@ -1541,7 +1573,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     def precision_relative(self):
         """
-        Returns the relative precision of ``self``, ie the precision cap
+        Return the relative precision of ``self``, ie the precision cap
         of ``self.parent()`` minus the ``valuation of self``.
 
         EXAMPLES::
@@ -1559,7 +1591,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: a.precision_relative()
             15
             sage: a.unit_part()
-            3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12 + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
+            3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12
+             + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
         """
         cdef Integer ans = Integer.__new__(Integer)
         mpz_set_ui(ans.value, self.prime_pow.ram_prec_cap - self.valuation_c())
@@ -1567,14 +1600,14 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cpdef pAdicZZpXFMElement unit_part(self):
         """
-        Returns the unit part of ``self``, ie
+        Return the unit part of ``self``, ie
         ``self / uniformizer^(self.valuation())``
 
         .. WARNING::
 
             If this element has positive valuation then the unit part
             is not defined to the full precision of the ring.  Asking
-            for the unit part of ZpFM(5)(0) will not raise an error,
+            for the unit part of ``ZpFM(5)(0)`` will not raise an error,
             but rather return itself.
 
         EXAMPLES::
@@ -1592,7 +1625,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: a.precision_relative()
             15
             sage: a.unit_part()
-            3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12 + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
+            3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12
+             + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
 
         The unit part inserts nonsense digits if this element has
         positive valuation::
@@ -1604,7 +1638,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
     cdef long valuation_c(self):
         """
-        Returns the valuation of ``self``.
+        Return the valuation of ``self``.
 
         EXAMPLES::
 
@@ -1621,7 +1655,8 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: a.precision_relative()
             15
             sage: a.unit_part()
-            3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12 + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
+            3 + 2*w^2 + w^4 + w^6 + w^7 + 3*w^8 + 3*w^9 + 2*w^11 + 3*w^12
+             + 3*w^13 + w^15 + 4*w^16 + 2*w^17 + w^18 + 3*w^21 + w^22 + 3*w^24
         """
         cdef long valuation, index
         ZZ_pX_min_val_coeff(valuation, index, self.value, self.prime_pow.pow_ZZ_tmp(1)[0])
@@ -1636,21 +1671,21 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
                 return index + valuation * self.prime_pow.e
 
     cdef ext_p_list(self, bint pos):
-        """
-        Returns a list giving a series representation of ``self``.
+        r"""
+        Return a list giving a series representation of ``self``.
 
         - The returned list will consist of
 
-          + integers (in the eisenstein case) or
+          * integers (in the eisenstein case) or
 
-          + a lists of integers (in the unramified case).
+          * a lists of integers (in the unramified case).
 
         - ``self`` can be reconstructed
 
-          + as a sum of elements of the list times powers of the
+          * as a sum of elements of the list times powers of the
             uniformiser (in the eisenstein case), or
 
-          + as a sum of powers of `p` times polynomials in the
+          * as a sum of powers of `p` times polynomials in the
             generator (in the unramified case).
 
         - If ``pos`` is ``True``, all integers will be in the range `[0,p-1]`,
@@ -1688,7 +1723,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
 def make_ZZpXFMElement(parent, f):
     """
-    Creates a new ``pAdicZZpXFMElement`` out of an ``ntl_ZZ_pX`` f, with
+    Create a new ``pAdicZZpXFMElement`` out of an ``ntl_ZZ_pX`` ``f``, with
     parent ``parent``.  For use with pickling.
 
     EXAMPLES::
@@ -1702,3 +1737,4 @@ def make_ZZpXFMElement(parent, f):
         True
     """
     return pAdicZZpXFMElement(parent, f)
+

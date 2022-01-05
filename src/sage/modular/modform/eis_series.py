@@ -348,7 +348,8 @@ def __find_eisen_chars_gamma1(N, k):
                 chi, psi = __common_minimal_basering(E[i], E[j])
                 if k != 1:
                     pairs.append((chi, psi))
-                    if i!=j: pairs.append((psi,chi))
+                    if i != j:
+                        pairs.append((psi, chi))
                 else:
                     # if weight is 1 then (chi, psi) and (chi, psi) are the
                     # same form

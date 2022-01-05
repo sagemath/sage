@@ -247,7 +247,7 @@ class AlgebraicScheme(scheme.Scheme):
         scheme.Scheme.__init__(self, A.base_scheme())
 
     def _latex_(self):
-        """
+        r"""
         Return a LaTeX representation of this algebraic scheme.
 
         TESTS::
@@ -257,9 +257,9 @@ class AlgebraicScheme(scheme.Scheme):
             sage: S = AlgebraicScheme(P); S
             Subscheme of Projective Space of dimension 3 over Integer Ring
             sage: S._latex_()
-            '\text{Subscheme of } {\\mathbf P}_{\\Bold{Z}}^3'
+            '\\text{Subscheme of ${\\mathbf P}_{\\Bold{Z}}^3$}'
         """
-        return "\text{Subscheme of } %s" % latex(self.__A)
+        return r"\text{{Subscheme of ${}$}}".format(latex(self.__A))
 
     def is_projective(self):
         """

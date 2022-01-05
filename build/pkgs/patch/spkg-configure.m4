@@ -7,6 +7,7 @@ SAGE_SPKG_CONFIGURE(
             AS_IF([test -n "$patch_version"], [
                 AX_COMPARE_VERSION([$patch_version], [ge], [2.7.0], [
                     ac_cv_path_PATCH="$ac_path_PATCH"
+                    ac_path_PATCH_found=:
                 ])
             ])
         ])

@@ -72,7 +72,6 @@ from sage.rings.real_mpfr import create_RealNumber as RealNumber
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.number_field.number_field import NumberField_quadratic
 from sage.rings.number_field.number_field_element cimport NumberFieldElement
 from sage.rings.number_field.number_field_element_quadratic cimport NumberFieldElement_quadratic
 
@@ -201,74 +200,76 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         # cyclotomic field is implemented.
         cdef Py_ssize_t k, c
         cdef NumberFieldElement v
+        cdef NumberFieldElement_quadratic qv
         cdef mpz_t numer, denom
         cdef fmpz_t ftmp
 
         # The i,j entry is the (i * self._ncols + j)'th column.
         c = i * self._ncols + j
 
-        if type(value) is NumberFieldElement_quadratic:
+        if self._degree == 2:
             # Must be coded differently, since elements of
             # quadratic number fields are stored differently.
+            qv = <NumberFieldElement_quadratic> value
             if self._n == 4:
                 fmpz_set_mpz(fmpq_mat_entry_num(self._matrix._matrix, 0, c),
-                        (<NumberFieldElement_quadratic>value).a)
+                             qv.a)
                 fmpz_set_mpz(fmpq_mat_entry_den(self._matrix._matrix, 0, c),
-                        (<NumberFieldElement_quadratic>value).denom)
+                             qv.denom)
                 fmpq_canonicalise(fmpq_mat_entry(self._matrix._matrix, 0, c))
 
                 fmpz_set_mpz(fmpq_mat_entry_num(self._matrix._matrix, 1, c),
-                        (<NumberFieldElement_quadratic>value).b)
+                             qv.b)
                 fmpz_set_mpz(fmpq_mat_entry_den(self._matrix._matrix, 1, c),
-                        (<NumberFieldElement_quadratic>value).denom)
+                             qv.denom)
                 fmpq_canonicalise(fmpq_mat_entry(self._matrix._matrix, 1, c))
             elif self._n == 3:
                 # mat[0,c] = (x.a + x.b) / x.denom
                 fmpz_set_mpz(fmpq_mat_entry_num(self._matrix._matrix, 0, c),
-                        (<NumberFieldElement_quadratic>value).a)
+                        qv.a)
 
                 # NOTE: it would be convenient here to have fmpz_add_mpz
                 fmpz_init(ftmp)
-                fmpz_set_mpz(ftmp, (<NumberFieldElement_quadratic>value).b)
+                fmpz_set_mpz(ftmp, qv.b)
                 fmpz_add(fmpq_mat_entry_num(self._matrix._matrix, 0, c),
                          fmpq_mat_entry_num(self._matrix._matrix, 0, c),
                          ftmp)
                 fmpz_clear(ftmp)
 
                 fmpz_set_mpz(fmpq_mat_entry_den(self._matrix._matrix, 0, c),
-                        (<NumberFieldElement_quadratic>value).denom)
+                             qv.denom)
                 fmpq_canonicalise(fmpq_mat_entry(self._matrix._matrix, 0, c))
 
                 # mat[1,c] = (2 x.b) / x.denom
                 fmpz_set_mpz(fmpq_mat_entry_num(self._matrix._matrix, 1, c),
-                        (<NumberFieldElement_quadratic>value).b)
+                             qv.b)
                 fmpz_mul_si(fmpq_mat_entry_num(self._matrix._matrix, 1, c),
                             fmpq_mat_entry_num(self._matrix._matrix, 1, c), 2)
                 fmpz_set_mpz(fmpq_mat_entry_den(self._matrix._matrix, 1, c),
-                        (<NumberFieldElement_quadratic>value).denom)
+                             qv.denom)
                 fmpq_canonicalise(fmpq_mat_entry(self._matrix._matrix, 1, c))
             else: # self._n is 6
                 fmpz_set_mpz(fmpq_mat_entry_num(self._matrix._matrix, 0, c),
-                        (<NumberFieldElement_quadratic>value).a)
+                             qv.a)
 
                 # NOTE: it would be convenient here to have fmpz_add_mpz
                 fmpz_init(ftmp)
-                fmpz_set_mpz(ftmp, (<NumberFieldElement_quadratic>value).b)
+                fmpz_set_mpz(ftmp, qv.b)
                 fmpz_sub(fmpq_mat_entry_num(self._matrix._matrix, 0, c),
                          fmpq_mat_entry_num(self._matrix._matrix, 0, c),
                          ftmp)
                 fmpz_clear(ftmp)
 
                 fmpz_set_mpz(fmpq_mat_entry_den(self._matrix._matrix, 0, c),
-                        (<NumberFieldElement_quadratic>value).denom)
+                             qv.denom)
                 fmpq_canonicalise(fmpq_mat_entry(self._matrix._matrix, 0, c))
 
                 fmpz_set_mpz(fmpq_mat_entry_num(self._matrix._matrix, 1, c),
-                        (<NumberFieldElement_quadratic>value).b)
+                             qv.b)
                 fmpz_mul_si(fmpq_mat_entry_num(self._matrix._matrix, 1, c),
                             fmpq_mat_entry_num(self._matrix._matrix, 1, c), 2)
                 fmpz_set_mpz(fmpq_mat_entry_den(self._matrix._matrix, 1, c),
-                        (<NumberFieldElement_quadratic>value).denom)
+                             qv.denom)
                 fmpq_canonicalise(fmpq_mat_entry(self._matrix._matrix, 1, c))
             return
 
@@ -1010,23 +1011,30 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         The following doctests are all indirect::
 
             sage: MS = MatrixSpace(CyclotomicField(10), 4, 4)
-            sage: A = MS.random_element(); A
+            sage: A = MS.random_element(); A  # random
             [    -2*zeta10^3 + 2*zeta10^2 - zeta10    zeta10^3 + 2*zeta10^2 - zeta10 + 1                                     0 -2*zeta10^3 + zeta10^2 - 2*zeta10 + 2]
             [                                    0       -zeta10^3 + 2*zeta10^2 - zeta10                         -zeta10^3 + 1                     zeta10^3 + zeta10]
             [                         1/2*zeta10^2                       -2*zeta10^2 + 2      -1/2*zeta10^3 + 1/2*zeta10^2 + 2             2*zeta10^3 - zeta10^2 - 2]
             [                                    1                          zeta10^2 + 2                            2*zeta10^2                          2*zeta10 - 2]
+            sage: A.parent() is MS
+            True
+
+        ::
+
             sage: B = MS.random_element(density=0.5)
-            sage: B._rational_matrix()
-            [   0    0    0    0    1    0    0    2    0    2    0    0    0    0    0    0]
-            [   0    0    0    0    0    0    0    0   -1   -2    0    0    0    0    0    2]
-            [   0   -1    0    0   -1    0    0    0    0    0    0    0    0    0   -2   -1]
-            [   0    0    0    0    0    0    0    2 -1/2  1/2    0    0    0    0   -1    0]
+            sage: all(a in (-2, -1, -1/2, 0, 1/2, 1, 2) for a in B._rational_matrix().list())
+            True
+            sage: while set(B._rational_matrix().list()) != set((-2, -1, -1/2, 0, 1/2, 1, 2)):
+            ....:     B = MS.random_element(density=0.5)
+
+        ::
+
             sage: C = MS.random_element(density=0.5, num_bound=20, den_bound=20)
-            sage: C._rational_matrix()
-            [     0      0   8/11  -10/3  -11/7      8      1     -3      0      0      1      0      0      0      0      0]
-            [     0      0 -11/17  -3/13   -5/6   17/3 -19/17   -4/5      0      0      9      0      0      0      0      0]
-            [     0      0    -11   -3/2  -5/12   8/11      0  -3/19      0      0   -5/6      0      0      0      0      0]
-            [     0      0      0    5/8  -5/11   -5/4   6/11    2/3      0      0 -16/11      0      0      0      0      0]
+            sage: all(abs(a.denominator()) <= 20 and abs(a.numerator()) <= 20 for a in C._rational_matrix().list())
+            True
+            sage: while not (any(abs(a.denominator()) == 20 for a in C._rational_matrix().list())
+            ....:         and any(abs(a.numerator()) == 20 for a in C._rational_matrix().list())):
+            ....:     C = MS.random_element(density=0.5, num_bound=20, den_bound=20)
         """
         cdef Py_ssize_t i
         cdef Matrix_rational_dense mat = self._matrix
@@ -1671,7 +1679,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         cdef int i
         cdef Matrix_cyclo_dense res
         cdef bint is_square
-        
+
         verbose("entering _echelon_form_multimodular",
                 level=echelon_verbose_level)
 

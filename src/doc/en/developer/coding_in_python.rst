@@ -8,6 +8,39 @@ This chapter discusses some issues with, and advice for, coding in
 Sage.
 
 
+Python Language Standard
+========================
+
+Sage library code needs to be compatible with all versions of Python
+that Sage supports.  The information regarding the supported versions
+can be found in the files ``build/pkgs/python3/spkg-configure.m4`` and
+``src/setup.cfg.m4``.
+
+As of Sage 9.4, Python 3.7 is the oldest supported version.  Hence,
+all language and library features that are available in Python 3.7 can
+be used; but features introduced in Python 3.8 cannot be used.  If a
+feature is deprecated in a newer supported version, it must be ensured
+that deprecation warnings issued by Python do not lead to failures in
+doctests.
+
+Some key language and library features have been backported to Python 3.7
+using one of two mechanisms:
+
+- ``from __future__ import annotations`` (see
+  https://docs.python.org/3.7/library/__future__.html) modernizes type
+  annotations according to PEP 563 (Postponed evaluation of
+  annotations, see https://www.python.org/dev/peps/pep-0563).  All
+  Sage library code that uses type annotations should include this
+  ``__future__`` import and follow PEP 563.
+
+- The Sage distribution includes the backport packages ``importlib_metadata``
+  and ``importlib_resources``.
+
+Meta-ticket :trac:`29756` keeps track of newer Python features and serves
+as a starting point for discussions on how to make use of them in the
+Sage library.
+
+
 Design
 ======
 

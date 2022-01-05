@@ -282,6 +282,8 @@ class HochschildComplex(UniqueRepresentation, Parent):
             return ret
         return Fd1.module_morphism(on_basis, codomain=Fd)
 
+    differential = boundary
+
     def coboundary(self, d):
         """
         Return the coboundary morphism of degree ``d``.

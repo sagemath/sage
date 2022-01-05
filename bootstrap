@@ -24,6 +24,7 @@
 
 # Set SAGE_ROOT to the path to this file and then cd into it
 SAGE_ROOT="$(cd "$(dirname "$0")" && pwd -P)"
+export SAGE_ROOT
 cd "$SAGE_ROOT"
 
 export PATH="$SAGE_ROOT/build/bin:$PATH"
@@ -108,6 +109,10 @@ SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
     done
     echo "$spkg_configures" >> m4/sage_spkg_configures.m4
 
+    for pkgname in $(./sage --package list --has-file bootstrap); do
+        (cd build/pkgs/$pkgname && ./bootstrap) || exit 1
+    done
+
     # Default to no filter if "-q" was not passed.
     QUIET_SED_FILTER=""
     if [ "${BOOTSTRAP_QUIET}" = "yes" ]; then
@@ -119,8 +124,6 @@ SAGE_SPKG_CONFIGURE_$(echo ${pkgname} | tr '[a-z]' '[A-Z]')"
     # ONLY stderr, and to re-output the results back to stderr leaving
     # stdout alone. Basically we swap the two descriptors using a
     # third, filter, and then swap them back.
-    BOOTSTRAP_QUIET="${BOOTSTRAP_QUIET}" \
-    SAGE_ROOT="$SAGE_ROOT" \
     src/doc/bootstrap && \
     install_config_rpath && \
     aclocal -I m4 && \
@@ -262,6 +265,7 @@ do
          ?) usage; exit 2;;
      esac
 done
+export BOOTSTRAP_QUIET
 CONFBALL="upstream/configure-$CONFVERSION.tar.gz"
 
 if [ $DOWNLOAD$SAVE = yesyes ]; then

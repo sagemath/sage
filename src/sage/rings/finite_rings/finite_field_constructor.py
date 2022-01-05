@@ -166,6 +166,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from collections import defaultdict
 from sage.structure.category_object import normalize_names
 
 from sage.rings.integer import Integer
@@ -284,14 +285,14 @@ class FiniteFieldFactory(UniqueFactory):
     (a generator of the multiplicative group), use
     ``modulus="primitive"`` if you need this::
 
-        sage: K.<a> = GF(5^40)
+        sage: K.<a> = GF(5^45)
         sage: a.multiplicative_order()
-        189478062869360049565633138
+        7105427357601001858711242675781
         sage: a.is_square()
         True
-        sage: K.<b> = GF(5^40, modulus="primitive")
+        sage: K.<b> = GF(5^45, modulus="primitive")
         sage: b.multiplicative_order()
-        9094947017729282379150390624
+        28421709430404007434844970703124
 
     The modulus must be irreducible::
 
@@ -467,7 +468,23 @@ class FiniteFieldFactory(UniqueFactory):
         sage: GF(next_prime(2^63)^6)
         Finite Field in z6 of size 9223372036854775837^6
 
+    Check that :trac:`31547` has been fixed::
+
+        sage: q=2**152
+        sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
+        True
     """
+    def __init__(self, *args, **kwds):
+        """
+        Initialization.
+
+        EXAMPLES::
+
+            sage: TestSuite(GF).run()
+        """
+        self._modulus_cache = defaultdict(dict)
+        super().__init__(*args, **kwds)
+
     def create_key_and_extra_args(self, order, name=None, modulus=None, names=None,
                                   impl=None, proof=None, check_irreducible=True,
                                   prefix=None, repr=None, elem_cache=None,
@@ -575,7 +592,10 @@ class FiniteFieldFactory(UniqueFactory):
                     modulus = R.irreducible_element(n)
                 if isinstance(modulus, str):
                     # A string specifies an algorithm to find a suitable modulus.
-                    modulus = R.irreducible_element(n, algorithm=modulus)
+                    if modulus != "random" and modulus in self._modulus_cache[order]:
+                        modulus = self._modulus_cache[order][modulus]
+                    else:
+                        self._modulus_cache[order][modulus] = modulus = R.irreducible_element(n, algorithm=modulus)
                 else:
                     if sage.rings.polynomial.polynomial_element.is_Polynomial(modulus):
                         modulus = modulus.change_variable_name('x')

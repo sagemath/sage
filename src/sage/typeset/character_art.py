@@ -167,9 +167,7 @@ class CharacterArt(SageObject):
             sage: M = matrix([[1,2],[3,4]])
             sage: format(ascii_art(M))
             '[1 2]\n[3 4]'
-            sage: format(unicode_art(M))  # py2
-            u'\u239b1 2\u239e\n\u239d3 4\u23a0'
-            sage: format(unicode_art(M))  # py3
+            sage: format(unicode_art(M))
             '\u239b1 2\u239e\n\u239d3 4\u23a0'
         """
         return format(self._string_type(self), fmt)
@@ -315,10 +313,13 @@ class CharacterArt(SageObject):
             """
             def __init__(self, stack):
                 self._stack = [iter(elems) for elems in stack]
+
             def prepend(self, elems):
                 self._stack.append(iter(elems))
+
             def __iter__(self):
                 return self
+
             def __next__(self):
                 while self._stack:
                     try:

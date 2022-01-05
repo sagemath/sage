@@ -129,6 +129,7 @@ from sage.libs.pynac.pynac cimport *
 from sage.rings.integer cimport smallInteger
 from sage.structure.sage_object cimport SageObject
 from sage.structure.element cimport Element, parent
+from sage.misc.lazy_attribute import lazy_attribute
 from .expression cimport new_Expression_from_GEx, Expression
 from .ring import SR
 
@@ -613,7 +614,7 @@ cdef class Function(SageObject):
 
     def name(self):
         """
-        Returns the name of this function.
+        Return the name of this function.
 
         EXAMPLES::
 
@@ -625,7 +626,7 @@ cdef class Function(SageObject):
 
     def number_of_arguments(self):
         """
-        Returns the number of arguments that this function takes.
+        Return the number of arguments that this function takes.
 
         EXAMPLES::
 
@@ -644,8 +645,7 @@ cdef class Function(SageObject):
 
     def variables(self):
         """
-        Returns the variables (of which there are none) present in
-        this SFunction.
+        Return the variables (of which there are none) present in this function.
 
         EXAMPLES::
 
@@ -656,7 +656,7 @@ cdef class Function(SageObject):
 
     def default_variable(self):
         """
-        Returns a default variable.
+        Return a default variable.
 
         EXAMPLES::
 
@@ -749,6 +749,24 @@ cdef class Function(SageObject):
             gg(x)
         """
         return self._conversions.get('sympy', self._name)
+
+    @lazy_attribute
+    def _sympy_(self):
+        """
+        EXAMPLES::
+
+            sage: cos._sympy_()
+            cos
+            sage: _(0)
+            1
+        """
+        f = self._sympy_init_()
+        import sympy
+        if getattr(sympy, f, None):
+            def return_sympy():
+                return getattr(sympy, f)
+            return return_sympy
+        return NotImplemented
 
     def _maxima_init_(self, I=None):
         """
@@ -1318,7 +1336,7 @@ cdef class SymbolicFunction(Function):
 
 
     cdef _is_registered(SymbolicFunction self):
-        # see if there is already an SFunction with the same state
+        # see if there is already a SymbolicFunction with the same state
         cdef Function sfunc
         cdef long myhash = self._hash_()
         for sfunc in sfunction_serial_dict.itervalues():
@@ -1335,7 +1353,7 @@ cdef class SymbolicFunction(Function):
     # a function with the same properties
     cdef long _hash_(self) except -1:
         if not self.__hinit:
-            # create a string representation of this SFunction
+            # create a string representation of this SymbolicFunction
             slist = [self._nargs, self._name, str(self._latex_name),
                     self._evalf_params_first]
             for fname in sfunctions_funcs:
@@ -1365,18 +1383,18 @@ cdef class SymbolicFunction(Function):
 
     def __getstate__(self):
         """
-        Returns a tuple describing the state of this object for pickling.
+        Return a tuple describing the state of this object for pickling.
 
-        Pickling SFunction objects is limited by the ability to pickle
-        functions in python. We use sage.misc.fpickle.pickle_function for
+        Pickling :class:`SymbolicFunction` objects is limited by the ability to pickle
+        functions in python. We use :func:`~sage.misc.fpickle.pickle_function` for
         this purpose, which only works if there are no nested functions.
 
 
         This should return all information that will be required to unpickle
         the object. The functionality for unpickling is implemented in
-        __setstate__().
+        :meth:`__setstate__`.
 
-        In order to pickle SFunction objects, we return a tuple containing
+        In order to pickle :class:`SymbolicFunction` objects, we return a tuple containing
 
          * 0  - as pickle version number
                 in case we decide to change the pickle format in the feature
@@ -1385,16 +1403,16 @@ cdef class SymbolicFunction(Function):
          * latex_name
          * a tuple containing attempts to pickle the following optional
            functions, in the order below
-           * eval_f
-           * evalf_f
-           * conjugate_f
-           * real_part_f
-           * imag_part_f
-           * derivative_f
-           * power_f
-           * series_f
-           * print_f
-           * print_latex_f
+           * ``eval_f``
+           * ``evalf_f``
+           * ``conjugate_f``
+           * ``real_part_f``
+           * ``imag_part_f``
+           * ``derivative_f``
+           * ``power_f``
+           * ``series_f``
+           * ``print_f``
+           * ``print_latex_f``
 
         EXAMPLES::
 
@@ -1453,9 +1471,9 @@ cdef class SymbolicFunction(Function):
 
     def __setstate__(self, state):
         """
-        Initializes the state of the object from data saved in a pickle.
+        Initialize the state of the object from data saved in a pickle.
 
-        During unpickling __init__ methods of classes are not called, the saved
+        During unpickling ``__init__`` methods of classes are not called, the saved
         data is passed to the class via this function instead.
 
         TESTS::
@@ -1479,7 +1497,7 @@ cdef class SymbolicFunction(Function):
             sage: f(x+1).conjugate() # now there is a special method
             2*x + 2
 
-        Note that the other direction doesn't work here, since foo._hash_()
+        Note that the other direction doesn't work here, since ``foo._hash_()``
         hash already been initialized.::
 
             sage: bar
@@ -1513,120 +1531,11 @@ cdef class SymbolicFunction(Function):
                 conversions, evalf_params_first)
 
 
-cdef class DeprecatedSFunction(SymbolicFunction):
-    cdef dict __dict__
-    def __init__(self, name, nargs=0, latex_name=None):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.function import DeprecatedSFunction
-            sage: foo = DeprecatedSFunction("foo", 2)
-            sage: foo
-            foo
-            sage: foo(x,2)
-            foo(x, 2)
-            sage: foo(2)
-            Traceback (most recent call last):
-            ...
-            TypeError: Symbolic function foo takes exactly 2 arguments (1 given)
-        """
-        self.__dict__ = {}
-        SymbolicFunction.__init__(self, name, nargs, latex_name)
-
-    def __getattr__(self, attr):
-        """
-        This method allows us to access attributes set by
-        :meth:`__setattr__`.
-
-        EXAMPLES::
-
-            sage: from sage.symbolic.function import DeprecatedSFunction
-            sage: foo = DeprecatedSFunction("foo", 2)
-            sage: foo.bar = 4
-            sage: foo.bar
-            4
-        """
-        try:
-            return self.__dict__[attr]
-        except KeyError:
-            raise AttributeError(attr)
-
-    def __setattr__(self, attr, value):
-        """
-        This method allows us to store arbitrary Python attributes
-        on symbolic functions which is normally not possible with
-        Cython extension types.
-
-        EXAMPLES::
-
-            sage: from sage.symbolic.function import DeprecatedSFunction
-            sage: foo = DeprecatedSFunction("foo", 2)
-            sage: foo.bar = 4
-            sage: foo.bar
-            4
-        """
-        self.__dict__[attr] = value
-
-    def __reduce__(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.function import DeprecatedSFunction
-            sage: foo = DeprecatedSFunction("foo", 2)
-            sage: foo.__reduce__()
-            (<function unpickle_function at ...>, ('foo', 2, None, {}, True, [None, None, None, None, None, None, None, None, None, None, None]))
-        """
-        from sage.symbolic.function_factory import unpickle_function
-        state = self.__getstate__()
-        name = state[1]
-        nargs = state[2]
-        latex_name = state[3]
-        conversions = state[4]
-        evalf_params_first = state[5]
-        pickled_functions = state[6]
-        return (unpickle_function, (name, nargs, latex_name, conversions,
-            evalf_params_first, pickled_functions))
-
-    def __setstate__(self, state):
-        """
-        EXAMPLES::
-
-            sage: from sage.symbolic.function import DeprecatedSFunction
-            sage: foo = DeprecatedSFunction("foo", 2)
-            sage: foo.__setstate__([0, 'bar', 1, '\\bar', [None]*10])
-            sage: foo
-            bar
-            sage: foo(x)
-            bar(x)
-            sage: latex(foo(x))
-            \bar\left(x\right)
-        """
-        name = state[1]
-        nargs = state[2]
-        latex_name = state[3]
-        self.__dict__ = {}
-        for pickle, fname in zip(state[4], sfunctions_funcs):
-            if pickle:
-                if fname == 'evalf':
-                    from sage.symbolic.function_factory import \
-                            deprecated_custom_evalf_wrapper
-                    setattr(self, '_evalf_',
-                            deprecated_custom_evalf_wrapper(
-                                unpickle_function(pickle)))
-                    continue
-                real_fname = '_%s_'%fname
-                setattr(self, real_fname, unpickle_function(pickle))
-
-        SymbolicFunction.__init__(self, name, nargs, latex_name, None)
-
-SFunction = DeprecatedSFunction
-PrimitiveFunction = DeprecatedSFunction
-
-
 def get_sfunction_from_serial(serial):
     """
-    Return an already created SFunction given the serial. These are stored in
-    the dictionary ``sage.symbolic.function.sfunction_serial_dict``.
+    Return an already created :class:`SymbolicFunction` given the serial.
+
+    These are stored in the dictionary ``sage.symbolic.function.sfunction_serial_dict``.
 
     EXAMPLES::
 
@@ -1639,9 +1548,11 @@ def get_sfunction_from_serial(serial):
 
 def pickle_wrapper(f):
     """
-    Returns a pickled version of the function f if f is not None;
-    otherwise, it returns None.  This is a wrapper around
-    :func:`pickle_function`.
+    Return a pickled version of the function ``f``.
+
+    If ``f`` is ``None``, just return ``None``.
+
+    This is a wrapper around :func:`pickle_function`.
 
     EXAMPLES::
 
@@ -1658,9 +1569,11 @@ def pickle_wrapper(f):
 
 def unpickle_wrapper(p):
     """
-    Returns a unpickled version of the function defined by *p* if *p*
-    is not None; otherwise, it returns None.  This is a wrapper around
-    :func:`unpickle_function`.
+    Return a unpickled version of the function defined by ``p``.
+
+    If ``p`` is ``None``, just return ``None``.
+
+    This is a wrapper around :func:`unpickle_function`.
 
     EXAMPLES::
 

@@ -24,6 +24,8 @@ Differentiable Manifolds
 
    mixed_form
 
+   sage/manifolds/differentiable/de_rham_cohomology
+
    multivector
 
    sage/manifolds/differentiable/affine_connection

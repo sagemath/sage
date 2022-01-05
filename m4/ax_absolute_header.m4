@@ -27,7 +27,7 @@
 #   and this notice are preserved. This file is offered as-is, without any
 #   warranty.
 
-#serial 7
+#serial 8
 
 dnl Copyright (C) 2006, 2007 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
@@ -40,7 +40,7 @@ dnl Modified by Rhys Ulerich to use AC_CHECK_HEADERS instead of _ONCE
 AU_ALIAS([GL_TRILINOS_ABSOLUTE_HEADER], [AX_ABSOLUTE_HEADER])
 AC_DEFUN([AX_ABSOLUTE_HEADER],
 [AC_LANG_PREPROC_REQUIRE()dnl
-AC_FOREACH([gl_HEADER_NAME], [$1],
+m4_foreach_w([gl_HEADER_NAME], [$1],
   [AS_VAR_PUSHDEF([gl_absolute_header],
                   [gl_cv_absolute_]m4_quote(m4_defn([gl_HEADER_NAME])))dnl
   AC_CACHE_CHECK([absolute name of <]m4_quote(m4_defn([gl_HEADER_NAME]))[>],

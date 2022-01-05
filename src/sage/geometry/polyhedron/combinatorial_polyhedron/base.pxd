@@ -1,5 +1,5 @@
 cimport cython
-from sage.ext.memory_allocator  cimport MemoryAllocator
+from memory_allocator           cimport MemoryAllocator
 from sage.structure.sage_object cimport SageObject
 from .face_iterator             cimport FaceIterator, CombinatorialFace
 from .list_of_faces             cimport ListOfFaces
@@ -12,12 +12,12 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     # Do not assume any of those attributes to be initialized, use the corresponding methods instead.
     cdef tuple _Vrep                       # the names of VRep, if they exist
-    cdef tuple _facet_names                # the names of HRep without equalities, if they exist
-    cdef tuple _equalities                 # stores equalities, given on input (might belong to Hrep)
+    cdef tuple _facet_names                # the names of HRep without equations, if they exist
+    cdef tuple _equations                  # stores equations, given on input (might belong to Hrep)
     cdef int _dimension                    # stores dimension, -2 on init
-    cdef unsigned int _n_Hrepresentation   # Hrep might include equalities
+    cdef unsigned int _n_Hrepresentation   # Hrep might include equations
     cdef unsigned int _n_Vrepresentation   # Vrep might include rays/lines
-    cdef size_t _n_facets                  # length Hrep without equalities
+    cdef size_t _n_facets                  # length Hrep without equations
     cdef bint _bounded                     # ``True`` iff Polyhedron is bounded
     cdef ListOfFaces _bitrep_facets        # facets in bit representation
     cdef ListOfFaces _bitrep_Vrep          # vertices in bit representation
@@ -44,6 +44,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     cdef tuple Vrep(self)
     cdef tuple facet_names(self)
+    cdef tuple equations(self)
     cdef tuple equalities(self)
     cdef unsigned int n_Vrepresentation(self)
     cdef unsigned int n_Hrepresentation(self)
@@ -62,7 +63,7 @@ cdef class CombinatorialPolyhedron(SageObject):
     cdef tuple _mem_tuple
 
     cdef FaceIterator _face_iter(self, bint dual, int dimension)
-    cdef int _compute_f_vector(self, bint compute_edges=*, given_dual=*) except -1
+    cdef int _compute_f_vector(self, size_t num_threads, size_t parallelization_depth) except -1
 
     cdef inline int _compute_edges(self, dual) except -1:
         return self._compute_edges_or_ridges(dual, True)
@@ -71,7 +72,10 @@ cdef class CombinatorialPolyhedron(SageObject):
         return self._compute_edges_or_ridges(dual, False)
 
     cdef int _compute_edges_or_ridges(self, bint dual, bint do_edges) except -1
-    cdef size_t _compute_edges_or_ridges_with_iterator(self, FaceIterator face_iter, bint do_atom_rep, size_t ***edges_pt, size_t *counter_pt, size_t *current_length_pt, MemoryAllocator mem) except -1
+    cdef size_t _compute_edges_or_ridges_with_iterator(
+            self, FaceIterator face_iter, const bint do_atom_rep, const bint do_f_vector,
+            size_t ***edges_pt, size_t *counter_pt, size_t *current_length_pt,
+            size_t* f_vector, MemoryAllocator mem) except -1
     cdef int _compute_face_lattice_incidences(self) except -1
 
     cdef inline int _set_edge(self, size_t a, size_t b, size_t ***edges_pt, size_t *counter_pt, size_t *current_length_pt, MemoryAllocator mem) except -1

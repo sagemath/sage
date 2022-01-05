@@ -206,7 +206,8 @@ def precprint(prec_type, prec_cap, p):
              'floating-point':'with floating precision %s'%prec_cap,
              'fixed-mod':'of fixed modulus %s^%s'%(p, prec_cap),
              'lattice-cap':'with lattice-cap precision',
-             'lattice-float':'with lattice-float precision'}
+             'lattice-float':'with lattice-float precision',
+             'relaxed':'handled with relaxed arithmetics'}
     return precD[prec_type]
 
 def trim_zeros(L):

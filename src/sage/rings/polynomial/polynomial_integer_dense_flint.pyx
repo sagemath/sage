@@ -846,10 +846,20 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             126*x^6 + 951*x^5 + 486*x^4 + 6034*x^3 + 585*x^2 + 3706*x + 1786
             sage: h == (6*x + 47)*(7*x^2 - 2*x + 38)*(3*x^3 + 2*x + 1)
             True
+
+        TESTS:
+
+        Check that :trac:`32033` has been fixed::
+
+            sage: R.<t> = ZZ[]
+            sage: lcm(R(0), R(0))
+            0
         """
+        if self.is_zero() or right.is_zero():
+            P = self.parent()
+            return P.zero()
         g = self.gcd(right)
         return (self//g)*right
-
 
     @coerce_binop
     def xgcd(self, right):

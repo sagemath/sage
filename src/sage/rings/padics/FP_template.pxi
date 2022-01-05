@@ -600,6 +600,16 @@ cdef class FPElement(pAdicTemplateElement):
             1 + 4*11^2 + 3*11^3 + 7*11^4
             sage: R(11)^-1
             11^-1
+
+        TESTS:
+
+        Check that :trac:`31875` is fixed::
+
+            sage: R(1)^R(0)
+            1
+            sage: S.<a> = ZqFP(4)
+            sage: S(1)^S(0)
+            1
         """
         cdef long dummyL
         cdef mpz_t tmp
@@ -614,7 +624,7 @@ cdef class FPElement(pAdicTemplateElement):
         elif self.parent() is _right.parent():
             ## For extension elements, we need to switch to the
             ## fraction field sometimes in highly ramified extensions.
-            exact_exp = False
+            exact_exp = (<FPElement>_right)._is_exact_zero()
             pright = _right
         else:
             self, _right = canonical_coercion(self, _right)

@@ -1001,6 +1001,15 @@ def solve(f, *args, **kwds):
 
         sage: solve([x-4], [x])
         [x == 4]
+
+    Test for a list of non-symbolic expressions as first argument
+    (:trac:`31714`)::
+
+        sage: solve([1], x)
+        Traceback (most recent call last):
+        ...
+        TypeError: The first argument to solve() should be a symbolic expression
+        or a list of symbolic expressions.
     """
     from sage.symbolic.ring import is_SymbolicVariable
     from sage.symbolic.expression import Expression, is_Expression
@@ -1035,9 +1044,9 @@ def solve(f, *args, **kwds):
         if is_Expression(f[0]):
             f = f[0]
         else:
-            raise TypeError("The first argument to solve() should be a"
-                    "symbolic expression or a list of symbolic expressions, "
-                    "cannot handle %s"%repr(type(f)))
+            raise TypeError("The first argument to solve() should be a "
+                            "symbolic expression or a list of symbolic "
+                            "expressions.")
 
     if is_Expression(f): # f is a single expression
         return _solve_expression(f, x, explicit_solutions, multiplicities, to_poly_solve, solution_dict, algorithm, domain)
@@ -1226,6 +1235,13 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
          x == (-0.809857800594 + 0.262869645851*I),
          x == (0.617093477784 + 0.900864951949*I),
          x == (-0.363623519329 + 0.952561195261*I)]
+
+    :trac:`31452` fixed::
+
+        sage: solve([x==3], [x], solution_dict=True)
+        [{x: 3}]
+        sage: solve([x==3], [x], solution_dict=True, algorithm='sympy')
+        [{x: 3}]
     """
     from sage.symbolic.ring import is_SymbolicVariable
     if f.is_relational():
@@ -1276,7 +1292,10 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
             ret = solveset(ex._sympy_(), sympy_vars[0], S.Reals)
         else:
             ret = solveset(ex._sympy_(), sympy_vars[0])
-        return sympy_set_to_list(ret, sympy_vars)
+        ret = sympy_set_to_list(ret, sympy_vars)
+        if solution_dict:
+            ret = [{sol.left(): sol.right()} for sol in ret]
+        return ret
 
     # from here on, maxima is used for solution
     m = ex._maxima_()
@@ -1364,10 +1383,10 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                     continue
 
     if solution_dict:
-        if isinstance(x, (list, tuple)):
-            X = [{sol.left():sol.right() for sol in b} for b in X]
+        if isinstance(x, (list, tuple)) and len(x) > 1:
+            X = [{sol.left(): sol.right() for sol in b} for b in X]
         else:
-            X = [dict([[sol.left(),sol.right()]]) for sol in X]
+            X = [{sol.left(): sol.right()} for sol in X]
 
     if multiplicities:
         return X, ret_multiplicities
@@ -1611,9 +1630,11 @@ def _solve_mod_prime_power(eqns, p, m, vars):
             pairs = cartesian_product_iterator([shifts, ans])
             possibles = (tuple(vector(t)+vector(shift)*(mrunning//p)) for shift, t in pairs)
         ans = list(t for t in possibles if all(e(*t) == 0 for e in eqns_mod))
-        if not ans: return ans
+        if not ans:
+            return ans
 
     return ans
+
 
 def solve_ineq_univar(ineq):
     """

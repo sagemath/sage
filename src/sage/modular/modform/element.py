@@ -8,9 +8,9 @@ Class hierarchy:
 
   - :class:`Newform`
 
-  - :class:`ModularFormElement`
-
     - :class:`ModularFormElement_elliptic_curve`
+
+  - :class:`ModularFormElement`
 
     - :class:`EisensteinSeries`
 
@@ -1260,6 +1260,9 @@ class ModularForm_abstract(ModuleElement):
         return -self.__cm_char.conductor()
 
 class Newform(ModularForm_abstract):
+    # The reasons why Newform does not inherit from ModularFormElement
+    # should really be documented somewhere.
+
     def __init__(self, parent, component, names, check=True):
         r"""
         Initialize a Newform object.
@@ -2077,14 +2080,19 @@ class Newform(ModularForm_abstract):
           determine a common base field into which both the Hecke eigenvalue
           field of self, and the field of values of ``chi``, can be embedded.
 
-        - ``level`` -- (optional) the level `N` of the twisted form.
-          By default, the algorithm tries to compute `N` using
-          [AL1978]_, Theorem 3.1.
+        - ``level`` -- (optional) the level `N` of the twisted form. If `N` is
+          not given, the algorithm tries to compute `N` using [AL1978]_,
+          Theorem 3.1; if this is not possible, it returns an error. If `N` is
+          given but incorrect, i.e. the twisted form does not have level `N`,
+          then this function will attempt to detect this and return an error,
+          but it may sometimes return an incorrect answer (a newform of level
+          `N` whose first few coefficients agree with those of `f \otimes
+          \chi`).
 
         - ``check`` -- (optional) boolean; if ``True`` (default), ensure that
           the space of modular symbols that is computed is genuinely simple and
-          new. This makes it less likely that a wrong result is returned if an
-          incorrect ``level`` is specified.
+          new. This makes it less likely, but not impossible, that a wrong
+          result is returned if an incorrect ``level`` is specified.
 
         OUTPUT:
 
@@ -2173,7 +2181,7 @@ class Newform(ModularForm_abstract):
 
         # pull out the eigenspace
         for p in prime_range(500):
-            if p.divides(N) or p.divides(chi.level()):
+            if p.divides(chi.level()):
                 continue
             D = (D.hecke_operator(p) - self[p]*chi(p)).kernel()
             if D.rank() == 1:
@@ -2183,6 +2191,115 @@ class Newform(ModularForm_abstract):
         else:
             raise RuntimeError('unable to identify modular symbols for twist of %s by %s' % (self, chi))
         return Newform(S, D, names='_', check=check)
+
+    def minimal_twist(self, p=None):
+        r"""
+        Compute a pair `(g, chi)` such that `g = f \otimes \chi`, where `f` is
+        this newform and `\chi` is a Dirichlet character, such that `g` has
+        level as small as possible. If the optional argument `p` is given,
+        consider only twists by Dirichlet characters of `p`-power conductor.
+
+        EXAMPLES::
+
+            sage: f = Newforms(575, 2, names='a')[4]
+            sage: g, chi = f.minimal_twist(5)
+            sage: g
+            q + a*q^2 - a*q^3 - 2*q^4 + (1/2*a + 2)*q^5 + O(q^6)
+            sage: chi
+            Dirichlet character modulo 5 of conductor 5 mapping 2 |--> 1/2*a
+            sage: f.twist(chi, level=g.level()) == g
+            True
+        """
+        if p is None:
+            # test local minimality at all primes
+            for p in self.level().prime_divisors():
+                (g, chi) = self.minimal_twist(p)
+                if g.level() < self.level():
+                    h, tau = g.minimal_twist(p=None)
+                    M = chi.modulus().lcm(tau.modulus())
+                    return (h, chi.extend(M)*tau.extend(M))
+            else:
+                # f locally minimal at all p, hence globally minimal
+                return (self, DirichletGroup(1, self.base_ring())(1))
+
+        p = ZZ(p)
+        N = self.level()
+        r = N.valuation(p)
+        c = self.character().conductor().valuation(p)
+        if not (p.is_prime() and p.divides(N)):
+            raise ValueError("p should be prime factor of N")
+
+        if (r == c) or (r == 1 and c == 0):
+            # easy cases
+            return (self, DirichletGroup(1, self.base_ring())(1))
+        elif r < 2*c:
+            # In this case we know that there is a unique chi of conductor p^u
+            # such that self x chi has level N/p^u, where u = r-c, and this
+            # twist is minimal.
+            candidates = []
+            for chi in DirichletGroup(p**(r-c), self.base_ring()):
+                if not chi.is_primitive():
+                    continue
+                try:
+                    g = self.twist(chi, level=N//p**(r-c))
+                    candidates.append( (g, chi) )
+                except ValueError:
+                    continue
+
+            l = ZZ(1)
+            while len(candidates) > 1:
+                l = l.next_prime()
+                if l == p:
+                    continue
+                candidates = [(h, chi) for (h, chi) in candidates if h[l] == chi(l)*self[l] ]
+                if l > 10000 or len(candidates) == 0:
+                    raise RuntimeError("bug finding minimal twist")
+            return candidates[0]
+        else:
+            # The hard case. Now f might be ramified principal series, twist of
+            # Steinberg, or supercuspidal, and the minimal twist is not unique
+            # any more. So we use the slow, but very general, type-space
+            # algorithm.
+            from sage.modular.local_comp.type_space import TypeSpace
+            T = TypeSpace(self, p)
+            if T.is_minimal():
+                return (self, DirichletGroup(1, self.base_ring())(1))
+            else:
+                g = T.minimal_twist()
+                epsg = g.character().extend(N)
+                chisq = (epsg / self.character()).restrict(p**(r//2))
+                K = coercion_model.common_parent(self.base_ring(), g.base_ring())
+                chis = [chi for chi in DirichletGroup(p**(r//2), K) if chi**2 == chisq]
+
+                if g.has_cm() and g.cm_discriminant().prime_divisors() == [p]:
+                    # Quicker to test g than self, because g has smaller level.
+                    t = 2
+                else:
+                    t = 1
+                l = ZZ(1)
+                while len(chis) > t:
+                    l = l.next_prime()
+                    if l == p:
+                        continue
+                    chis = [chi for chi in chis if g[l] == chi(l) * self[l] ]
+                    if l > 10000 or len(chis) == 0:
+                        raise RuntimeError("bug finding minimal twist")
+                return (g, chis[0])
+
+    def local_component(self, p, twist_factor=None):
+        """
+        Calculate the local component at the prime `p` of the automorphic
+        representation attached to this newform. For more information, see the
+        documentation of the :func:`LocalComponent` function.
+
+        EXAMPLES::
+
+            sage: f = Newform("49a")
+            sage: f.local_component(7)
+            Smooth representation of GL_2(Q_7) with conductor 7^2
+        """
+        from sage.modular.local_comp.local_comp import LocalComponent
+        return LocalComponent(self, p, twist_factor)
 
 class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
     def __init__(self, parent, x, check=True):
@@ -2497,7 +2614,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         return M(f_twist)
 
 
-class ModularFormElement_elliptic_curve(ModularFormElement):
+class ModularFormElement_elliptic_curve(Newform):
     r"""
     A modular form attached to an elliptic curve over `\QQ`.
     """
@@ -2523,10 +2640,8 @@ class ModularFormElement_elliptic_curve(ModularFormElement):
             sage: f == loads(dumps(f))
             True
         """
-        ModularFormElement.__init__(self, parent, None)
-##                                    parent.find_in_space( E.q_expansion(parent.hecke_bound()) ))
+        Newform.__init__(self, parent, E.modular_symbol_space(), names=None)
         self.__E = E
-
 
     def elliptic_curve(self):
         """

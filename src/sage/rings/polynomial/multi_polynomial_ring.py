@@ -115,12 +115,12 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
         self._base = base_ring
         # Construct the generators
         v = [0] * n
-        one = base_ring(1);
+        one = base_ring(1)
         self._gens = []
         C = self._poly_class()
         for i in range(n):
             v[i] = 1  # int's!
-            self._gens.append(C(self, {tuple(v):one}))
+            self._gens.append(C(self, {tuple(v): one}))
             v[i] = 0
         self._gens = tuple(self._gens)
         self._zero_tuple = tuple(v)
@@ -174,7 +174,7 @@ class MPolynomialRing_polydict( MPolynomialRing_macaulay2_repr, PolynomialRing_s
         return hash((self.base_ring(), self.ngens(),
                      self.variable_names(), self.term_order()))
 
-    def __call__(self, x, check=True):
+    def __call__(self, x=0, check=True):
         """
         Convert ``x`` to an element of this multivariate polynomial ring,
         possibly non-canonically.

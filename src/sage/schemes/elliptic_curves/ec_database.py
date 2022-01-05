@@ -74,7 +74,7 @@ from .constructor import EllipticCurve
 class EllipticCurves:
     def rank(self, rank, tors=0, n=10, labels=False):
         r"""
-        Return a list of at most `n` non-isogenous curves with given
+        Return a list of at most `n` curves with given
         rank and torsion order.
 
         INPUT:

@@ -10,6 +10,8 @@ from .misc import (BackslashOperator,
                   SAGE_DB, SAGE_TMP,
                    newton_method_sizes, compose,
                   nest)
+lazy_import('sage.misc.misc', 'union',
+            deprecation=32096)
 
 from .verbose import (set_verbose, set_verbose_files,
                       get_verbose_files, unset_verbose_files, get_verbose)
@@ -62,7 +64,8 @@ lazy_import('sage.misc.pager', 'pager')
 lazy_import('sage.misc.sagedoc', ['browse_sage_doc',
         'search_src', 'search_def', 'search_doc',
         'tutorial', 'reference', 'manual', 'developer',
-        'constructions', 'python_help', 'help'])
+        'constructions', 'help'])
+lazy_import('pydoc', 'help', 'python_help')
 
 from .classgraph import class_graph
 

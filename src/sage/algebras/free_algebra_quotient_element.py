@@ -244,7 +244,8 @@ class FreeAlgebraQuotientElement(AlgebraElement):
             mats = X._FreeAlgebraQuotient__matrix_action
             for (j,k) in m._element_list:
                 M = mats[int(j)]
-                for l in range(k): w *= M
+                for l in range(k):
+                    w *= M
             return w
         u = self.__vector.__copy__()
         v = y.__vector
@@ -252,7 +253,8 @@ class FreeAlgebraQuotientElement(AlgebraElement):
         B = A.monomial_basis()
         for i in range(A.dimension()):
             c = v[i]
-            if c != 0: z.__vector += monomial_product(A,c*u,B[i])
+            if c != 0:
+                z.__vector += monomial_product(A,c*u,B[i])
         return z
 
     def _rmul_(self, c):

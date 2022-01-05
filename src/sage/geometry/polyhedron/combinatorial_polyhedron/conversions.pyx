@@ -67,16 +67,19 @@ AUTHOR:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from memory_allocator                 cimport MemoryAllocator
+
 from sage.structure.element import is_Matrix
+from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 
 from .list_of_faces                   cimport ListOfFaces
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
-from sage.ext.memory_allocator        cimport MemoryAllocator
 from .face_data_structure             cimport face_next_atom, face_add_atom_safe, facet_set_coatom, face_clear
 from .face_list_data_structure        cimport face_list_t
 
+
 cdef extern from "Python.h":
     int unlikely(int) nogil  # Defined by Cython
+
 
 def _Vrep_list_to_bit_rep_wrapper(tup):
     r"""

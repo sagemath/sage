@@ -222,9 +222,9 @@ def lift_for_SL(A, N=None):
     TESTS::
 
         sage: lift_for_SL(matrix(3,3,[1,2,0,3,4,0,0,0,1]),3)
-        [10 14  3]
-        [ 9 10  3]
-        [ 3  3  1]
+        [-2 -1  0]
+        [ 0  1 -3]
+        [ 3  0  4]
 
         sage: A = matrix(Zmod(7), 2, [1,0,0,1])
         sage: L = lift_for_SL(A)

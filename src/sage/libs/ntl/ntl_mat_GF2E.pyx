@@ -678,21 +678,39 @@ cdef class ntl_mat_GF2E(object):
             sage: k.<a> = GF(2^4)
             sage: ctx = ntl.GF2EContext(k)
             sage: ntl.GF2XHexOutput(1)
-            sage: A = ntl.mat_GF2E(ctx, 100,100)
-            sage: A.randomize()
-            sage: len([e for e in A.list() if e!=0])  # rel tol 1e-1
-            9346
+            sage: A = ntl.mat_GF2E(ctx, 100, 100)
+            sage: expected_non_zeros = 100 * 100 * (1 - 1.0/2^4)
+            sage: observed = lambda : len([e for e in A.list() if e!=0])
+            sage: n = 0; s = 0
+            sage: def add_samples():
+            ....:     global n, s, A
+            ....:     for i in range(10):
+            ....:         A.randomize()
+            ....:         n += 1
+            ....:         s += observed() - expected_non_zeros
+
+            sage: add_samples()
+            sage: while abs(s*1.0/n) > 10: add_samples()
+            sage: while abs(s*1.0/n) > 5: add_samples()  # long time
 
             sage: A = ntl.mat_GF2E(ctx, 100,100)
             sage: A.randomize(nonzero=True)
             sage: len([e for e in A.list() if e!=0])
             10000
 
-            sage: A = ntl.mat_GF2E(ctx, 100,100)
-            sage: A.randomize(nonzero=True, density=0.1)
-            sage: len([e for e in A.list() if e!=0])  # rel tol 2e-1
-            1000
+            sage: expected_non_zeros = 1000
+            sage: n = 0; s = 0
+            sage: def add_samples():
+            ....:     global n, s, A
+            ....:     for i in range(10):
+            ....:         A = ntl.mat_GF2E(ctx, 100,100)
+            ....:         A.randomize(nonzero=True, density=0.1)
+            ....:         n += 1
+            ....:         s += observed() - expected_non_zeros
 
+            sage: add_samples()
+            sage: while abs(s*1.0/n) > 10: add_samples()
+            sage: while abs(s*1.0/n) > 5: add_samples()  # long time
         """
         cdef long i,j
         cdef GF2E_c tmp

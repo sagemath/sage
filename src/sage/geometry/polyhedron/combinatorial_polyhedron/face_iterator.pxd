@@ -1,5 +1,5 @@
 cimport cython
-from sage.ext.memory_allocator  cimport MemoryAllocator
+from memory_allocator           cimport MemoryAllocator
 from sage.structure.sage_object cimport SageObject
 from .list_of_faces             cimport ListOfFaces
 from .face_data_structure       cimport face_t
@@ -9,13 +9,14 @@ from .combinatorial_face        cimport CombinatorialFace
 cdef struct iter_s:
     bint dual                  # if 1, then iterate over dual Polyhedron
     face_t face                # the current face of the iterator
-    int face_status            # 0 not initialized, 1 initialized, 2 added to visited_all
+    int face_status            # 0 not initialized, 1 initialized, 2 added to visited_all, 3 only visit subsets
     size_t *atom_rep           # a place where atom-representaion of face will be stored
     size_t *coatom_rep         # a place where coatom-representaion of face will be stored
     int current_dimension      # dimension of current face, dual dimension if ``dual``
     int dimension              # dimension of the polyhedron
     int output_dimension       # only faces of this (dual?) dimension are considered
     int lowest_dimension       # don't consider faces below this (dual?) dimension
+    int highest_dimension      # don't consider faces above this (dual?) dimension
     size_t _index              # this counts the number of seen faces, useful for hasing the faces
 
     # ``visited_all`` points to faces, of which we have visited all faces already.
@@ -35,7 +36,7 @@ cdef struct iter_s:
     face_list_t* new_faces
 
     # After having visited a face completely, we want to add it to ``visited_all``.
-    # ``first_dim[i]`` will indicate, whether there is one more face in
+    # ``first_time[i]`` will indicate, whether there is one more face in
     # ``newfaces[i]`` then ``n_newfaces[i]`` suggests
     # that has to be added to ``visited_all``.
     # If ``first_time[i] == False``, we still need to
@@ -45,6 +46,7 @@ cdef struct iter_s:
     # The number of elements in newfaces[current_dimension],
     # that have not been visited yet.
     size_t yet_to_visit
+    size_t n_coatoms
 
 ctypedef iter_s iter_t[1]
 
@@ -55,8 +57,10 @@ cdef class FaceIterator_base(SageObject):
     cdef MemoryAllocator _mem
 
     # some copies from ``CombinatorialPolyhedron``
-    cdef tuple _Vrep, _facet_names, _equalities
+    cdef tuple _Vrep, _facet_names, _equations
+    cdef size_t _n_equations, _n_facets
     cdef bint _bounded
+    cdef face_t _far_face
 
     # Atoms and coatoms are the vertices/facets of the Polyedron.
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
@@ -69,6 +73,8 @@ cdef class FaceIterator_base(SageObject):
     cdef size_t set_coatom_rep(self) except -1
     cdef size_t set_atom_rep(self) except -1
     cdef int ignore_subsets(self) except -1
+    cdef int only_subsets(self) except -1
+    cdef int find_face(self, face_t face) except -1
 
 @cython.final
 cdef class FaceIterator(FaceIterator_base):
@@ -80,8 +86,10 @@ cdef class FaceIterator_geom(FaceIterator_base):
     cdef object _requested_dim  # Dimension requested on init.
     cdef readonly object P      # The original polyhedron.
 
+cdef int parallel_f_vector(iter_t* structures, size_t num_threads, size_t parallelization_depth, size_t *f_vector) except -1
+
 # Nogil definitions of crucial functions.
 
-cdef int next_dimension(iter_t structure) nogil except -1
+cdef int next_dimension(iter_t structure, size_t parallelization_depth=?) nogil except -1
 cdef int next_face_loop(iter_t structure) nogil except -1
 cdef size_t n_atom_rep(iter_t structure) nogil except -1

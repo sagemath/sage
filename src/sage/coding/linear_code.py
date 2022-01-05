@@ -2115,7 +2115,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         for v in C_basis:
             i = v.support()[0]
             U_basis.remove(i)  # swap e_{i+1} with v
-        U_basis = [e(i+1) for i in U_basis]
+        U_basis = [e(i + 1) for i in U_basis]
 
         V = VectorSpace(F, self.length())
         U = V.span(U_basis)
@@ -2128,16 +2128,16 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         Ainv = A.inverse()
 
         Pei = []  # projection of e_i on U
-        for i in range(1, self.length()+1):
+        for i in range(1, self.length() + 1):
             ei = e(i)
             if ei in U:
                 Pei.append(ei)
             else:
                 a = Ainv * ei
                 # get zero vector and sum a[i]u_i to it
-                v = vector(F, [0]*self.length())
-                for i in range(len(U_basis)):
-                    v += a[i]*U_basis[i]
+                v = vector(F, [0] * self.length())
+                for ai, Ui in zip(a, U_basis):
+                    v += ai * Ui
                 if not v.is_zero():  # don't care about 0 vectors
                     v.set_immutable()
                     Pei.append(v)

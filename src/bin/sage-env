@@ -262,7 +262,6 @@ fi
 # Setting Sage-related location environment variables,
 # depending on SAGE_ROOT and SAGE_LOCAL which are already defined.
 if [ -n "$SAGE_LOCAL" ]; then
-    export SAGE_ETC="$SAGE_LOCAL/etc"
     export SAGE_SHARE="$SAGE_LOCAL/share"
     export SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 fi
@@ -315,30 +314,7 @@ export UNAME=`uname | sed 's/CYGWIN.*/CYGWIN/' `
 
 # Mac OS X-specific setup
 if [ "$UNAME" = "Darwin" ]; then
-  export MACOSX_VERSION=`uname -r | awk -F. '{print $1}'`
-  case "$SAGE_MACOSX_DEPLOYMENT_TARGET" in
-  legacy)
-    # legacy behavior of the Sage distribution.
-    # set MACOSX_DEPLOYMENT_TARGET -- if set incorrectly, this can
-    # cause lots of random "Abort trap" issues on OSX. see trac
-    # #7095 for an example.
-    if [ $MACOSX_VERSION -ge 14 ]; then
-        # various packages have still have issues with
-        # two digit OS X versions
-        MACOSX_DEPLOYMENT_TARGET=10.9
-    else
-        MACOSX_DEPLOYMENT_TARGET=10.$[$MACOSX_VERSION-4]
-    fi
-    export MACOSX_DEPLOYMENT_TARGET
-    ;;
-  "")
-    # Do nothing
-    ;;
-  *)
-    # A fixed version set at configure time.
-    export MACOSX_DEPLOYMENT_TARGET=$SAGE_MACOSX_DEPLOYMENT_TARGET
-    ;;
-  esac
+    export MACOSX_VERSION=`uname -r | awk -F. '{print $1}'`
     # Work around problems on recent OS X crashing with an error message
     # "... may have been in progress in another thread when fork() was called"
     # when objective-C functions are called after fork(). See Trac #25921.
@@ -608,12 +584,6 @@ if [ "$UNAME" = "CYGWIN" -a -n "$SAGE_LOCAL" ]; then
     # and not in "lib"
     LD_LIBRARY_PATH="$SAGE_LOCAL/bin:$LD_LIBRARY_PATH" && export LD_LIBRARY_PATH
 fi
-
-# See trac 7186 -- this is needed if ecl is moved
-if [ -n "$SAGE_LOCAL" ]; then
-    ECLDIR="$SAGE_LOCAL/lib/ecl/" && export ECLDIR
-fi
-
 
 # Handle parallel building/testing/...
 case "$SAGE_NUM_THREADS,$SAGE_NUM_THREADS_PARALLEL" in

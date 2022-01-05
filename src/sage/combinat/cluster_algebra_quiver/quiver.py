@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Quiver
 
@@ -41,6 +42,13 @@ from copy import copy
 from sage.rings.all import ZZ, CC, infinity
 from sage.graphs.all import Graph, DiGraph
 from sage.graphs.views import EdgesView
+from sage.arith.misc import gcd
+from sage.modules.free_module_element import vector
+from sage.matrix.constructor import matrix
+from sage.categories.cartesian_product import cartesian_product
+from sage.misc.misc_c import prod
+from sage.rings.rational_field import QQ
+from sage.rings.polynomial.polynomial_ring import polygen
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType, QuiverMutationType_Irreducible, QuiverMutationType_Reducible, _edge_list_to_matrix
 from sage.combinat.cluster_algebra_quiver.mutation_class import _principal_part, _digraph_mutate, _matrix_to_digraph, _dg_canonical_form, _mutation_class_iter, _digraph_to_dig6, _dig6_to_matrix
 from sage.combinat.cluster_algebra_quiver.mutation_type import _connected_mutation_type, _mutation_type_from_data, is_mutation_finite
@@ -1919,7 +1927,7 @@ class ClusterQuiver(SageObject):
             # and getting the corresponding matrix
             M = _dig6_to_matrix(dig6)
 
-            is_finite, path = is_mutation_finite(M,nr_of_checks=nr_of_checks)
+            is_finite, path = is_mutation_finite(M, nr_of_checks=nr_of_checks)
         if return_path:
             return is_finite, path
         else:
@@ -1992,7 +2000,8 @@ class ClusterQuiver(SageObject):
                     # If the key is in the old vertices, use that mapping
                     digraph_labels[key] = val
                     # And place it in the right order for our dictionary
-                    loc = [i for i,x in enumerate(old_vertices) if x == key][0]
+                    loc = [i for i, x in enumerate(old_vertices)
+                           if x == key][0]
                     dict_labels[loc] = val
                 elif isinstance(key, int) and len(old_vertices) > key:
                     # If the key is an integer, grab that particular vertex
@@ -2003,6 +2012,113 @@ class ClusterQuiver(SageObject):
         quiver._digraph.relabel(digraph_labels)
         quiver._vertex_dictionary = dict_labels
         return quiver
+
+    def poincare_semistable(self, theta, d):
+        r"""
+        Return the Poincaré polynomial of the moduli space of semi-stable
+        representations of dimension vector `d`.
+
+        INPUT:
+
+        - ``theta`` -- stability weight, as list or vector of rationals
+        - ``d`` -- dimension vector, as list or vector of coprime integers
+
+        The semi-stability is taken with respect to the slope function
+
+        .. MATH::
+
+             \mu(d) = \theta(d) / \operatorname{dim}(d)
+
+        where `d` is a dimension vector.
+
+        This uses the matrix-inversion algorithm from [Rei2002]_.
+
+        EXAMPLES::
+
+            sage: Q = ClusterQuiver(['A',2])
+            sage: Q.poincare_semistable([1,0],[1,0])
+            1
+            sage: Q.poincare_semistable([1,0],[1,1])
+            1
+
+            sage: K2 = ClusterQuiver(matrix([[0,2],[-2,0]]))
+            sage: theta = (1, 0)
+            sage: K2.poincare_semistable(theta, [1,0])
+            1
+            sage: K2.poincare_semistable(theta, [1,1])
+            v^2 + 1
+            sage: K2.poincare_semistable(theta, [1,2])
+            1
+            sage: K2.poincare_semistable(theta, [1,3])
+            0
+
+            sage: K3 = ClusterQuiver(matrix([[0,3],[-3,0]]))
+            sage: theta = (1, 0)
+            sage: K3.poincare_semistable(theta, (2,3))
+            v^12 + v^10 + 3*v^8 + 3*v^6 + 3*v^4 + v^2 + 1
+            sage: K3.poincare_semistable(theta, (3,4))(1)
+            68
+
+        TESTS::
+
+            sage: Q = ClusterQuiver(['A',2])
+            sage: Q.poincare_semistable([1,0],[2,2])
+            Traceback (most recent call last):
+            ...
+            ValueError: dimension vector d is not coprime
+
+            sage: Q = ClusterQuiver(['A',3])
+            sage: Q.poincare_semistable([1,1,0],[2,3,4])
+            0
+
+        REFERENCES:
+
+        .. [Rei2002] Markus Reineke, *The Harder-Narasimhan system in quantum
+           groups and cohomology of quiver moduli*, :arxiv:`math/0204059`
+        """
+        if gcd([x for x in d if x]) != 1:
+            raise ValueError("dimension vector d is not coprime")
+        d = vector(ZZ, d)
+        theta = vector(theta)
+
+        n = self.n()
+        b_mat = self.b_matrix()
+        Eu = matrix(ZZ, n, n,
+                    lambda i, j: -b_mat[i, j] if b_mat[i, j] > 0 else 0)
+        Eu = 1 + Eu
+        edges = list(self.digraph().edges(labels=False))
+
+        mu_d = theta.dot_product(d) / sum(d)
+
+        Li = [0 * d]
+        it = (vector(e) for e in cartesian_product([range(d_i + 1)
+                                                    for d_i in d]))
+        Li += [e for e in it if e.dot_product(theta) > mu_d * sum(e)]
+        Li.append(d)
+        N = len(Li) - 1
+
+        q = polygen(QQ, 'v')  # q stands for v**2 until the last line
+
+        def cardinal_RG(d):
+            cardinal_G = prod(q**d_i - q**k for d_i in d for k in range(d_i))
+            cardinal_R = prod(q**(b_mat[i, j] * d[i] * d[j])
+                              for i, j in edges)
+            return cardinal_R / cardinal_G
+
+        Reineke_submat = matrix(q.parent().fraction_field(), N, N)
+
+        for i, e in enumerate(Li[:-1]):
+            for j, f in enumerate(Li[1:]):
+                if e == f:
+                    Reineke_submat[i, j] = 1
+                    continue
+                f_e = f - e
+                if all(x >= 0 for x in f_e):
+                    power = (-f_e) * Eu * e
+                    Reineke_submat[i, j] = q**power * cardinal_RG(f_e)
+
+        poly = (-1)**N * ((1 - q) * Reineke_submat.det()).numerator()
+        return poly(q**2)  # replacing q by v**2
 
     def d_vector_fan(self):
         r"""

@@ -1,11 +1,23 @@
 """
 Base class for finite field elements
 
-AUTHORS::
+AUTHORS:
 
-- David Roe (2010-1-14) -- factored out of sage.structure.element
-- Sebastian Oehms (2018-7-19) -- add :meth:`conjugate` (see :trac:`26761`)
+- David Roe (2010-1-14): factored out of sage.structure.element
+
+- Sebastian Oehms (2018-7-19): added :meth:`conjugate` (see :trac:`26761`)
+
 """
+
+# ****************************************************************************
+#       Copyright (C) 2010 David Roe <roed@math.harvard.edu>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent

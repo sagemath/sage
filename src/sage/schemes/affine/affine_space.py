@@ -1064,7 +1064,8 @@ class AffineSpace_field(AffineSpace_generic):
             tol = kwds.pop('tolerance', 1e-2)
             prec = kwds.pop('precision', 53)
             iters = [ R.elements_of_bounded_height(bound=B, tolerance=tol, precision=prec) for _ in range(n) ]
-        for x in iters: next(x) # put at zero
+        for x in iters:
+            next(x) # put at zero
         i = 0
         while i < n:
             try:

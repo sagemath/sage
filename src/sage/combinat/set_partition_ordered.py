@@ -73,9 +73,9 @@ class OrderedSetPartition(ClonableArray,
 
     .. MATH::
 
-        \sum_n {T_n \over n!} x^n = {1 \over 2-e^x}.
+        \sum_n \frac{T_n}{n!} x^n = \frac{1}{2-e^x}.
 
-    (See sequence A000670 in OEIS.)
+    (See sequence :oeis:`A000670` in OEIS.)
 
     INPUT:
 
@@ -882,9 +882,7 @@ class OrderedSetPartitions(UniqueRepresentation, Parent):
     ::
 
         sage: OS = OrderedSetPartitions("cat")
-        sage: OS # py2
-        Ordered set partitions of {'a', 'c', 't'}
-        sage: OS # py3 random
+        sage: OS  # random
         Ordered set partitions of {'a', 't', 'c'}
         sage: sorted(OS.list(), key=str)
         [[{'a', 'c', 't'}],
@@ -1296,6 +1294,21 @@ class OrderedSetPartitions_all(OrderedSetPartitions):
             sage: TestSuite(OS).run()  # long time
         """
         Parent.__init__(self, category=InfiniteEnumeratedSets())
+
+    def subset(self, size=None, **kwargs):
+        """
+        Return the subset of ordered set partitions of a given
+        size and additional keyword arguments.
+
+        EXAMPLES::
+
+            sage: P = OrderedSetPartitions()
+            sage: P.subset(4)
+            Ordered set partitions of {1, 2, 3, 4}
+        """
+        if size is None:
+            return self
+        return OrderedSetPartitions(size, **kwargs)
 
     def __iter__(self):
         """

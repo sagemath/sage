@@ -78,6 +78,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.functional import is_odd, is_even
 from sage.misc.misc_c import prod
+from sage.categories.chain_complexes import ChainComplexes
 from sage.categories.algebras import Algebras
 from sage.categories.morphism import Morphism
 from sage.categories.modules import Modules
@@ -545,6 +546,8 @@ class Differential(UniqueRepresentation, Morphism,
                                        sorting_key=sorting_keys,
                                        monomial_reverse=True)
 
+    homology = cohomology
+
     def _is_nonzero(self):
         """
         Return ``True`` iff this morphism is nonzero.
@@ -837,6 +840,8 @@ class Differential_multigraded(Differential):
                                        sorting_key=sorting_keys,
                                        monomial_reverse=True)
 
+    homology = cohomology
+
 
 ###########################################################
 #  Commutative graded algebras
@@ -896,7 +901,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
     """
     # TODO: This should be a __classcall_private__?
     @staticmethod
-    def __classcall__(cls, base, names=None, degrees=None, R=None, I=None):
+    def __classcall__(cls, base, names=None, degrees=None, R=None, I=None, category=None):
         r"""
         Normalize the input for the :meth:`__init__` method and the
         unique representation.
@@ -995,9 +1000,10 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                             side='twosided')
 
         return super(GCAlgebra, cls).__classcall__(cls, base=base, names=names,
-                                                   degrees=degrees, R=R, I=I)
+                                                   degrees=degrees, R=R, I=I,
+                                                   category=category)
 
-    def __init__(self, base, R=None, I=None, names=None, degrees=None):
+    def __init__(self, base, R=None, I=None, names=None, degrees=None, category=None):
         """
         Initialize ``self``.
 
@@ -1027,8 +1033,8 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             sage: TestSuite(A).run()
         """
         self._degrees = tuple(degrees)
-        cat = Algebras(R.base_ring()).Graded()
-        QuotientRing_nc.__init__(self, R, I, names, category=cat)
+        category = Algebras(R.base_ring()).Graded().or_subcategory(category)
+        QuotientRing_nc.__init__(self, R, I, names, category=category)
 
     def _repr_(self):
         """
@@ -1660,7 +1666,7 @@ class GCAlgebra_multigraded(GCAlgebra):
         sage: c.degree(total=True)
         2
     """
-    def __init__(self, base, degrees, names=None, R=None, I=None):
+    def __init__(self, base, degrees, names=None, R=None, I=None, category=None):
         """
         Initialize ``self``.
 
@@ -1674,7 +1680,8 @@ class GCAlgebra_multigraded(GCAlgebra):
             sage: TestSuite(C).run()
         """
         total_degs = [total_degree(d) for d in degrees]
-        GCAlgebra.__init__(self, base, R=R, I=I, names=names, degrees=total_degs)
+        GCAlgebra.__init__(self, base, R=R, I=I, names=names,
+                           degrees=total_degs, category=category)
         self._degrees_multi = degrees
         self._grading_rank = len(list(degrees[0]))
 
@@ -2001,10 +2008,10 @@ class DifferentialGCAlgebra(GCAlgebra):
             ...
             ValueError: The given dictionary does not determine a valid differential
         """
+        cat = Algebras(A.base()).Graded() & ChainComplexes(A.base())
         GCAlgebra.__init__(self, A.base(), names=A._names,
-                           degrees=A._degrees,
-                           R=A.cover_ring(),
-                           I=A.defining_ideal())
+                           degrees=A._degrees, R=A.cover_ring(),
+                           I=A.defining_ideal(), category=cat)
         self._differential = Differential(self, differential._dic_)
         self._minimalmodels = {}
         self._numerical_invariants = {}
@@ -2254,6 +2261,8 @@ class DifferentialGCAlgebra(GCAlgebra):
             True
         """
         return self._differential.cohomology(n)
+
+    homology = cohomology
 
     def cohomology_generators(self, max_degree):
         """
@@ -3069,10 +3078,11 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
             ...
             ValueError: The differential does not have a well-defined degree
         """
+        cat = Algebras(A.base()).Graded() & ChainComplexes(A.base())
         GCAlgebra_multigraded.__init__(self, A.base(), names=A._names,
                                        degrees=A._degrees_multi,
-                                       R=A.cover_ring(),
-                                       I=A.defining_ideal())
+                                       R=A.cover_ring(), I=A.defining_ideal(),
+                                       category=cat)
         self._differential = Differential_multigraded(self, differential._dic_)
 
     def _base_repr(self):
@@ -3228,6 +3238,8 @@ class DifferentialGCAlgebra_multigraded(DifferentialGCAlgebra,
         """
         return self._differential.cohomology(n, total)
 
+    homology = cohomology
+
     class Element(GCAlgebra_multigraded.Element, DifferentialGCAlgebra.Element):
         """
         Element class of a commutative differential multi-graded algebra.
@@ -3305,11 +3317,7 @@ def GradedCommutativeAlgebra(ring, names=None, degrees=None, relations=None):
     algebra" -- the word "differential" is missing. Also, it has no
     default ``differential``::
 
-        sage: AQ.differential()  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: differential() takes exactly 2 arguments (1 given)
-        sage: AQ.differential()  # py3
+        sage: AQ.differential()
         Traceback (most recent call last):
         ...
         TypeError: differential() missing 1 required positional argument:

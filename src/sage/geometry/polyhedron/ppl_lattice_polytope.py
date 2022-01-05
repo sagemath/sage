@@ -68,7 +68,7 @@ AUTHORS:
 import copy
 from sage.rings.integer import GCD_list, Integer
 from sage.rings.integer_ring import ZZ
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.modules.all import vector
 from sage.matrix.constructor import matrix
 from ppl import (
@@ -863,7 +863,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: proj = poly.base_projection(fiber)
             sage: proj_matrix = poly.base_projection_matrix(fiber)
             sage: [ proj(p) for p in poly.integral_points() ]
-            [(-1, -1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (1, 0), (0, 1)]
+            [(-1, -1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 1), (1, 0)]
             sage: [ proj_matrix*p for p in poly.integral_points() ]
             [(-1, -1), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 0), (0, 1), (1, 0)]
         """

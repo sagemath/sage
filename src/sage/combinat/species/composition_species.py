@@ -62,7 +62,7 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
         f, gs = self._list
         pi = self._partition.transport(perm)
         f = f.change_labels(pi._list)
-        g = [g.change_labels(part) for g,part in zip(gs, pi)]
+        g = [g.change_labels(part) for g, part in zip(gs, pi)]  # BUG HERE ?
         return self.__class__(self, self._labels, pi, f, gs)
 
     def change_labels(self, labels):
@@ -80,7 +80,6 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
 
         EXAMPLES::
 
-            sage: p = PermutationGroupElement((2,3))
             sage: E = species.SetSpecies(); C = species.CycleSpecies()
             sage: L = E(C)
             sage: S = L.structures(['a','b','c']).list()
@@ -92,7 +91,7 @@ class CompositionSpeciesStructure(GenericSpeciesStructure):
         f, gs = self._list
         pi = self._partition.change_labels(labels)
         f = f.change_labels(list(pi))
-        g = [g.change_labels(part) for g,part in zip(gs, pi)]
+        g = [g.change_labels(part) for g, part in zip(gs, pi)]
         return self.__class__(self, labels, pi, f, g)
 
 

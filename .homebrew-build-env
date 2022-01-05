@@ -31,7 +31,7 @@ for l in readline bzip2 ntl; do
         CPATH="$HOMEBREW/opt/$l/include:$CPATH"
     fi
 done
-for l in "gcc/lib/gcc/10 gcc/lib/gcc/9"; do
+for l in "gcc/lib/gcc/11 gcc/lib/gcc/10 gcc/lib/gcc/9"; do
     if [ -d "$HOMEBREW/opt/$l" ]; then
         LIBRARY_PATH="$HOMEBREW/opt/$l:$LIBRARY_PATH"
         break

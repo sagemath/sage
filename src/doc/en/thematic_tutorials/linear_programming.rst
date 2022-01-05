@@ -114,7 +114,7 @@ the objective function
     sage: round(p.solve(), 2)
     8.8
 
-We can read the optimal assignation found by the solver for `x`, `y` and
+We can read the optimal assignment found by the solver for `x`, `y` and
 `z` through the ``get_values`` method
 
 .. link
@@ -352,10 +352,11 @@ Let us write the Sage code of this MILP::
 
 ::
 
-    sage: matching = p.get_values(matching)
-    sage: [e for e, b in matching.items() if b == 1]  # not tested
-    [(0, 1), (6, 9), (2, 7), (3, 4), (5, 8)]
-
+    sage: matching = p.get_values(matching, convert=bool, tolerance=1e-3)
+    sage: sorted(e for e, b in matching.items() if b)   # random
+    [(0, 4), (1, 6), (2, 3), (5, 8), (7, 9)]
+    sage: len(_)
+    5
 
 Flows
 -----

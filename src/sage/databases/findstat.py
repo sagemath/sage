@@ -251,7 +251,7 @@ from sage.graphs.graph import Graph
 from sage.combinat.composition import Composition, Compositions
 from sage.combinat.partition import Partition, Partitions
 from sage.combinat.ordered_tree import OrderedTree, OrderedTrees
-from sage.combinat.parking_functions import ParkingFunction, ParkingFunction_class, ParkingFunctions
+from sage.combinat.parking_functions import ParkingFunction, ParkingFunctions
 from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 from sage.combinat.permutation import Permutation, Permutations
 from sage.combinat.posets.posets import Poset, FinitePoset
@@ -4452,7 +4452,7 @@ _SupportedFindStatCollections = {
                                  str,
                                  ParkingFunctions,
                                  len,
-                                 lambda x: isinstance(x, ParkingFunction_class)),
+                                 lambda x: isinstance(x, ParkingFunction)),
     "PerfectMatchings":
     _SupportedFindStatCollection(lambda x: PerfectMatching(literal_eval(x)),
                                  str,

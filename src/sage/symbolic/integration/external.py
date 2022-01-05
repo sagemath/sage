@@ -112,6 +112,7 @@ def mma_free_integrator(expression, v, a=None, b=None):
 
 
     """
+    from sage.interfaces.mathematica import request_wolfram_alpha, parse_moutput_from_json, symbolic_expression_from_mathematica_string
     math_expr = expression._mathematica_init_()
     variable = v._mathematica_init_()
     if a is None and b is None:
@@ -130,238 +131,6 @@ def mma_free_integrator(expression, v, a=None, b=None):
     return symbolic_expression_from_mathematica_string(first_output)
 
 
-def request_wolfram_alpha(input, verbose=False):
-    r"""
-    Request Wolfram Alpha website.
-
-    INPUT:
-
-    - ``input`` -- string
-    - ``verbose`` -- bool (default: ``False``)
-
-    OUTPUT:
-
-    json
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.integration.external import request_wolfram_alpha
-        sage: page_data = request_wolfram_alpha('integrate Sin[x]')      # optional internet
-        sage: [str(a) for a in sorted(page_data.keys())]                 # optional internet
-        ['queryresult']
-        sage: [str(a) for a in sorted(page_data['queryresult'].keys())]  # optional internet
-        ['datatypes',
-         'encryptedEvaluatedExpression',
-         'encryptedParsedExpression',
-         'error',
-         'host',
-         'id',
-         'numpods',
-         'parsetimedout',
-         'parsetiming',
-         'pods',
-         'recalculate',
-         'related',
-         'server',
-         'sponsorCategories',
-         'success',
-         'timedout',
-         'timedoutpods',
-         'timing',
-         'version']
-
-    """
-    # import compatible with py2 and py3
-    from urllib.parse import urlencode
-    from urllib.request import Request, build_opener, HTTPCookieProcessor
-    import json
-    from http.cookiejar import CookieJar
-
-    # we need cookies for this...
-    cj = CookieJar()
-    opener = build_opener(HTTPCookieProcessor(cj))
-    # build initial query for code
-    req = Request("http://www.wolframalpha.com/input/api/v1/code")
-    resp = opener.open(req)
-    # the website returns JSON containing the code
-    page_data = json.loads(resp.read().decode("utf-8"))
-    if not ("code" in page_data.keys()):
-        raise ValueError("Wolfram did not return a code")
-    proxy_code = page_data['code']
-    if verbose:
-        print("Code: {}".format(proxy_code))
-        print("Cookies: {}".format(cj))
-    # now we can make a request
-    # some parameters documented here:
-    #   https://products.wolframalpha.com/api/documentation/#parameter-reference
-    # the following are the parameters used by the website
-    params = {
-        'assumptionsversion': '2',
-        'async': 'true',
-        'banners': 'raw',
-        'debuggingdata': 'false',
-        'format': 'image,plaintext,imagemap,sound,minput,moutput',
-        'formattimeout': '8',
-        'input': input,
-        'output': 'JSON',
-        'parsetimeout': '5',
-        'podinfosasync': 'true',
-        'proxycode': proxy_code,
-        'recalcscheme': 'parallel',
-        'sbsdetails': 'true',
-        'scantimeout': '0.5',
-        'sponsorcategories': 'true',
-        'statemethod': 'deploybutton',
-        'storesubpodexprs': 'true'}
-    # # we can also change some parameters
-    # params = {
-    #     'assumptionsversion': '2',
-    #     'banners': 'raw',
-    #     'format': 'minput,moutput',
-    #     'formattimeout': '8',
-    #     'input': input,
-    #     'output': 'JSON',
-    #     'parsetimeout': '5',
-    #     'proxycode': proxy_code,
-    #     'scantimeout': '0.5',
-    #     'storesubpodexprs': 'true'
-    # }
-    params = urlencode(params)
-    url = "https://www.wolframalpha.com/input/json.jsp?%s" % params
-    req = Request(url)
-    req.add_header('Referer', "https://www.wolframalpha.com/input/")  # seems important
-    resp = opener.open(req)
-    # the website returns JSON containing the code
-    return json.loads(resp.read().decode("utf-8"))
-
-
-def parse_moutput_from_json(page_data, verbose=False):
-    r"""
-    Return the list of outputs found in the json (with key ``'moutput'``)
-
-    INPUT:
-
-    - ``page_data`` -- json obtained from Wolfram Alpha
-    - ``verbose`` -- bool (default: ``False``)
-
-    OUTPUT:
-
-    list of unicode strings
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.integration.external import request_wolfram_alpha
-        sage: from sage.symbolic.integration.external import parse_moutput_from_json
-        sage: page_data = request_wolfram_alpha('integrate Sin[x]') # optional internet
-        sage: parse_moutput_from_json(page_data)                    # optional internet
-        [u'-Cos[x]']
-
-    ::
-
-        sage: page_data = request_wolfram_alpha('Sin[x]')           # optional internet
-        sage: L = parse_moutput_from_json(page_data)                # optional internet
-        sage: sorted(L)                                             # optional internet
-        ['-Cos[x]', '{{x == 0}}', '{{x == Pi C[1], Element[C[1], Integers]}}']
-
-    TESTS::
-
-        sage: page_data = request_wolfram_alpha('Integrate(Sin[z], y)')  # optional internet
-        sage: parse_moutput_from_json(page_data)                         # optional internet
-        Traceback (most recent call last):
-        ...
-        ValueError: asking wolframalpha.com was not successful
-
-    """
-    queryresult = page_data['queryresult']
-    if not queryresult['success']:
-        raise ValueError('asking wolframalpha.com was not successful')
-    if 'pods' not in queryresult:
-        raise ValueError('json object contains no pods')
-    pods = queryresult['pods']
-    if verbose:
-        print("  Query successful: {}".format(queryresult['success']))
-        print("  Number of results: {}".format(len(pods)))
-    L = []
-    for i, result in enumerate(pods):
-        if verbose:
-            print("  Result #{}".format(i))
-            print("    Title: {}".format(result['title']))
-        if 'subpods' not in result:
-            continue
-        subpods = result[u'subpods']
-        for j, subpod in enumerate(subpods):
-            if verbose:
-                print("    Subpod #{}".format(j))
-                if 'minput' in subpod.keys():
-                    print("      MInput: {}".format(subpod['minput']))
-                if 'moutput' in subpod.keys():
-                    print("      MOutput: {}".format(subpod['moutput']))
-            if 'moutput' in subpod.keys():
-                L.append(subpod['moutput'])
-    return L
-
-
-def symbolic_expression_from_mathematica_string(mexpr):
-    r"""
-    Translate a mathematica string into a symbolic expression
-
-    INPUT:
-
-    - ``mexpr`` -- string
-
-    OUTPUT:
-
-    symbolic expression
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.integration.external import symbolic_expression_from_mathematica_string
-        sage: symbolic_expression_from_mathematica_string(u'-Cos[x]')
-        -cos(x)
-
-    """
-    import re
-    from sage.libs.pynac.pynac import symbol_table
-    from sage.interfaces.mathematica import _un_camel as un_camel
-    from sage.symbolic.constants import constants_name_table as constants
-    from sage.calculus.calculus import symbolic_expression_from_string
-    from sage.calculus.calculus import _find_func as find_func
-
-    expr = mexpr.replace('\n', ' ').replace('\r', '')
-    expr = expr.replace('[', '(').replace(']', ')')
-    expr = expr.replace('{', '[').replace('}', ']')
-    lsymbols = symbol_table['mathematica'].copy()
-    autotrans = [lambda x:x.lower(),      # Try it in lower case
-                 un_camel,      # Convert `CamelCase` to `camel_case`
-                 lambda x: x]     # Try the original name
-    # Find the MMA funcs/vars/constants - they start with a letter.
-    # Exclude exponents (e.g. 'e8' from 4.e8)
-    p = re.compile(r'(?<!\.)[a-zA-Z]\w*')
-
-    for m in p.finditer(expr):
-        # If the function, variable or constant is already in the
-        # translation dictionary, then just move on.
-        if m.group() in lsymbols:
-            pass
-        # Now try to translate all other functions -- try each strategy
-        # in `autotrans` and check if the function exists in Sage
-        elif m.end() < len(expr) and expr[m.end()] == '(':
-            for t in autotrans:
-                f = find_func(t(m.group()), create_when_missing=False)
-                if f is not None:
-                    lsymbols[m.group()] = f
-                    break
-            else:
-                raise NotImplementedError("Don't know a Sage equivalent for Mathematica function '%s'." % m.group())
-        # Check if Sage has an equivalent constant
-        else:
-            for t in autotrans:
-                if t(m.group()) in constants:
-                    lsymbols[m.group()] = constants[t(m.group())]
-                    break
-    return symbolic_expression_from_string(expr, lsymbols, accept_sequence=True)
-
-
 def fricas_integrator(expression, v, a=None, b=None, noPole=True):
     """
     Integration using FriCAS
@@ -374,7 +143,7 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
         sage: fricas_integrator(cos(x), x)                                      # optional - fricas
         sin(x)
         sage: fricas_integrator(1/(x^2-2), x, 0, 1)                             # optional - fricas
-        1/4*sqrt(2)*(log(3*sqrt(2) - 4) - log(sqrt(2)))
+        -1/8*sqrt(2)*(log(2) - log(-24*sqrt(2) + 34))
         sage: fricas_integrator(1/(x^2+6), x, -oo, oo)                          # optional - fricas
         1/6*sqrt(6)*pi
 
@@ -387,33 +156,60 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
     Check that in case of failure one gets unevaluated integral::
 
-        sage: integral(cos(ln(cos(x))), x, 0, pi/8, algorithm='fricas')   # optional - fricas
+        sage: integral(cos(ln(cos(x))), x, 0, pi/8, algorithm='fricas')         # optional - fricas
         integrate(cos(log(cos(x))), x, 0, 1/8*pi)
-        sage: integral(cos(ln(cos(x))), x, algorithm='fricas')   # optional - fricas
+
+        sage: integral(cos(ln(cos(x))), x, algorithm='fricas')                  # optional - fricas
         integral(cos(log(cos(x))), x)
+
+    Check that :trac:`28641` is fixed::
+
+        sage: integrate(sqrt(2)*x^2 + 2*x, x, algorithm="fricas")               # optional - fricas
+        1/3*sqrt(2)*x^3 + x^2
+
+        sage: integrate(sqrt(2), x, algorithm="fricas")                         # optional - fricas
+        sqrt(2)*x
+
+        sage: integrate(1, x, algorithm="fricas")                               # optional - fricas
+        x
+
+    Check that :trac:`28630` is fixed::
+
+        sage: f = polylog(3, x)
+        sage: f.integral(x, algorithm='fricas')                                 # optional - fricas
+        -x*dilog(x) - (x - 1)*log(-x + 1) + x*polylog(3, x) + x
+
+    Check that :trac:`29043` is fixed::
+
+        sage: var("a c d"); f = (I*a*tan(d*x + c) + a)*sec(d*x + c)^10
+        (a, c, d)
+        sage: ii = integrate(f, x, algorithm="fricas")                               # optional - fricas
+        sage: 1/315*(64512*I*a*e^(10*I*d*x + 10*I*c) + 53760*I*a*e^(8*I*d*x + 8*I*c) + 30720*I*a*e^(6*I*d*x + 6*I*c) + 11520*I*a*e^(4*I*d*x + 4*I*c) + 2560*I*a*e^(2*I*d*x + 2*I*c) + 256*I*a)/(d*e^(20*I*d*x + 20*I*c) + 10*d*e^(18*I*d*x + 18*I*c) + 45*d*e^(16*I*d*x + 16*I*c) + 120*d*e^(14*I*d*x + 14*I*c) + 210*d*e^(12*I*d*x + 12*I*c) + 252*d*e^(10*I*d*x + 10*I*c) + 210*d*e^(8*I*d*x + 8*I*c) + 120*d*e^(6*I*d*x + 6*I*c) + 45*d*e^(4*I*d*x + 4*I*c) + 10*d*e^(2*I*d*x + 2*I*c) + d) - ii                        # optional - fricas
+        0
     """
     if not isinstance(expression, Expression):
         expression = SR(expression)
 
     from sage.interfaces.fricas import fricas
-    ex = fricas(expression)
+    e_fricas = fricas(expression)
+    v_fricas = fricas(v)
 
     if a is None:
-        result = ex.integrate(v)
+        result = e_fricas.integrate(v_fricas)
     else:
-        seg = fricas.equation(v, fricas.segment(a, b))
+        seg = fricas.equation(v_fricas, fricas.segment(a, b))
 
         if noPole:
-            result = ex.integrate(seg, '"noPole"')
+            result = e_fricas.integrate(seg, '"noPole"')
         else:
-            result = ex.integrate(seg)
+            result = e_fricas.integrate(seg)
 
     result = result.sage()
 
     if result == "failed":
-        return expression.integrate(v, a, b, hold=True)
+        result = expression.integrate(v, a, b, hold=True)
 
-    if result == "potentialPole":
+    elif result == "potentialPole":
         raise ValueError("The integrand has a potential pole"
                          " in the integration interval")
 
@@ -421,7 +217,7 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
 
 def giac_integrator(expression, v, a=None, b=None):
-    """
+    r"""
     Integration using Giac
 
     EXAMPLES::
@@ -436,6 +232,15 @@ def giac_integrator(expression, v, a=None, b=None):
 
         sage: giac_integrator(e^(-x^2)*log(x), x)
         integrate(e^(-x^2)*log(x), x)
+
+    Check that :trac:`30133` is fixed::
+
+        sage: ee = SR.var('e')
+        sage: giac_integrator(ee^x, x)
+        e^x/log(e)
+        sage: y = SR.var('π')
+        sage: giac_integrator(cos(y), y)
+        sin(π)
     """
     ex = expression._giac_()
     if a is None:

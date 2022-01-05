@@ -84,7 +84,7 @@ AUTHORS:
 # 1. Add a new class to Section II below, which you should
 #    do by copying an existing class and modifying it.
 #    Make sure to at least define _eval and _repr_.
-#    NOTES:  (a) define the _eval method only, which you may
+#    NOTE:   (a) define the _eval method only, which you may
 #                assume has as input a *positive* Sage integer (offset > 0).
 #                Each sequence in the OEIS has an offset >= 0, indicating the
 #                value of the first index. The default offset = 1.

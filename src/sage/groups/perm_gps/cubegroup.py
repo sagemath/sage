@@ -429,30 +429,54 @@ def cubie_colors(label, state0):
     #  colors of the cubies on the F,U, R faces
     clr_any = named_colors['white']
     state = inv_list(state0)
-    if label == 1: return  [clr_any, named_colors[color_of_square(state[1-1])], clr_any] #ulb,
-    if label == 2: return  [clr_any,named_colors[color_of_square(state[2-1])],clr_any] # ub,
-    if label == 3: return  [clr_any, named_colors[color_of_square(state[3-1])], named_colors[color_of_square(state[27-1])]] # ubr,
-    if label == 4: return  [clr_any, named_colors[color_of_square(state[4-1])], clr_any] # ul,
-    if label == 5: return  [clr_any, named_colors[color_of_square(state[5-1])], named_colors[color_of_square(state[26-1])]] # ur,
-    if label == 6: return  [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # ufl,
-    if label == 7: return  [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # uf,
-    if label == 8: return  [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # urf,
-    if label == 17: return [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # flu
-    if label == 18: return [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # fu
-    if label == 19: return [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # fur
-    if label == 20: return [named_colors[color_of_square(state[20-1])], clr_any, clr_any] # fl
-    if label == 21: return [named_colors[color_of_square(state[21-1])], clr_any, named_colors[color_of_square(state[28-1])]] # fr
-    if label == 22: return [named_colors[color_of_square(state[22-1])], clr_any, clr_any] # fdl
-    if label == 23: return [named_colors[color_of_square(state[23-1])], clr_any, clr_any] # fd
-    if label == 24: return [named_colors[color_of_square(state[24-1])], clr_any, named_colors[color_of_square(state[30-1])]] # frd
-    if label == 25: return [named_colors[color_of_square(state[19-1])],named_colors[color_of_square(state[8-1])],named_colors[color_of_square(state[25-1])]]  #rfu,
-    if label == 26: return [clr_any,named_colors[color_of_square(state[5-1])],named_colors[color_of_square(state[26-1])]] # ru,
-    if label == 27: return [clr_any,named_colors[color_of_square(state[3-1])],named_colors[color_of_square(state[27-1])]] # rub,
-    if label == 28: return [named_colors[color_of_square(state[21-1])],clr_any,named_colors[color_of_square(state[28-1])]] # rf,
-    if label == 29: return [clr_any,clr_any,named_colors[color_of_square(state[29-1])]] # rb,
-    if label == 30: return [named_colors[color_of_square(state[24-1])],clr_any,named_colors[color_of_square(state[30-1])]] # rdf,
-    if label == 31: return [clr_any,clr_any,named_colors[color_of_square(state[31-1])]] # rd,
-    if label == 32: return [clr_any,clr_any,named_colors[color_of_square(state[32-1])]] #rbd,
+    if label == 1:
+        return  [clr_any, named_colors[color_of_square(state[1-1])], clr_any] #ulb,
+    if label == 2:
+        return  [clr_any,named_colors[color_of_square(state[2-1])],clr_any] # ub,
+    if label == 3:
+        return  [clr_any, named_colors[color_of_square(state[3-1])], named_colors[color_of_square(state[27-1])]] # ubr,
+    if label == 4:
+        return  [clr_any, named_colors[color_of_square(state[4-1])], clr_any] # ul,
+    if label == 5:
+        return  [clr_any, named_colors[color_of_square(state[5-1])], named_colors[color_of_square(state[26-1])]] # ur,
+    if label == 6:
+        return  [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # ufl,
+    if label == 7:
+        return  [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # uf,
+    if label == 8:
+        return  [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # urf,
+    if label == 17:
+        return [named_colors[color_of_square(state[17-1])], named_colors[color_of_square(state[6-1])], clr_any] # flu
+    if label == 18:
+        return [named_colors[color_of_square(state[18-1])], named_colors[color_of_square(state[7-1])], clr_any] # fu
+    if label == 19:
+        return [named_colors[color_of_square(state[19-1])], named_colors[color_of_square(state[8-1])], named_colors[color_of_square(state[25-1])]] # fur
+    if label == 20:
+        return [named_colors[color_of_square(state[20-1])], clr_any, clr_any] # fl
+    if label == 21:
+        return [named_colors[color_of_square(state[21-1])], clr_any, named_colors[color_of_square(state[28-1])]] # fr
+    if label == 22:
+        return [named_colors[color_of_square(state[22-1])], clr_any, clr_any] # fdl
+    if label == 23:
+        return [named_colors[color_of_square(state[23-1])], clr_any, clr_any] # fd
+    if label == 24:
+        return [named_colors[color_of_square(state[24-1])], clr_any, named_colors[color_of_square(state[30-1])]] # frd
+    if label == 25:
+        return [named_colors[color_of_square(state[19-1])],named_colors[color_of_square(state[8-1])],named_colors[color_of_square(state[25-1])]]  #rfu,
+    if label == 26:
+        return [clr_any,named_colors[color_of_square(state[5-1])],named_colors[color_of_square(state[26-1])]] # ru,
+    if label == 27:
+        return [clr_any,named_colors[color_of_square(state[3-1])],named_colors[color_of_square(state[27-1])]] # rub,
+    if label == 28:
+        return [named_colors[color_of_square(state[21-1])],clr_any,named_colors[color_of_square(state[28-1])]] # rf,
+    if label == 29:
+        return [clr_any,clr_any,named_colors[color_of_square(state[29-1])]] # rb,
+    if label == 30:
+        return [named_colors[color_of_square(state[24-1])],clr_any,named_colors[color_of_square(state[30-1])]] # rdf,
+    if label == 31:
+        return [clr_any,clr_any,named_colors[color_of_square(state[31-1])]] # rd,
+    if label == 32:
+        return [clr_any,clr_any,named_colors[color_of_square(state[32-1])]] #rbd,
 
 
 def plot3d_cubie(cnt, clrs):
@@ -1052,7 +1076,7 @@ class CubeGroup(PermutationGroup_generic):
 
         The Rubik's cube group has about `4.3 \times 10^{19}`
         elements, so this process is time-consuming. See
-        http://www.gap-system.org/Doc/Examples/rubik.html for an
+        https://www.gap-system.org/Doc/Examples/rubik.html for an
         interesting discussion of some GAP code analyzing the Rubik's
         cube.
 

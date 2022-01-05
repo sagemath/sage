@@ -54,9 +54,10 @@ Named associative algebras
    sage/combinat/posets/moebius_algebra
    sage/algebras/orlik_terao
    sage/algebras/orlik_solomon
-   sage/algebras/quantum_matrix_coordinate_algebra
    sage/combinat/partition_algebra
+   sage/algebras/quantum_clifford
    sage/algebras/quantum_groups/quantum_group_gap
+   sage/algebras/quantum_matrix_coordinate_algebra
    sage/algebras/quatalg/quaternion_algebra
    sage/algebras/rational_cherednik_algebra
    sage/algebras/schur_algebra

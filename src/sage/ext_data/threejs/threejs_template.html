@@ -540,6 +540,28 @@ SAGE_SCRIPTS
 
     }
 
+    function getCamera() {
+
+        function roundTo( x, n ) { return +x.toFixed(n); }
+
+        var pos = camera.position;
+        var pos_r = [ roundTo( pos.x, 4 ), roundTo( pos.y, 4 ), roundTo( pos.z, 4 ) ];
+   //     var up = camera.up; // up is always (0,0,1)
+        var textArea = document.createElement('textarea');
+        var cam_position = JSON.stringify(pos_r);
+        textArea.textContent = ',camera_position=' + cam_position;
+        textArea.style.csstext = 'position: absolute; top: -100%';
+        document.body.append( textArea );
+        textArea.select();
+        document.execCommand( 'copy' );
+
+        var m = document.getElementById( 'menu-message' );
+        m.innerHTML = 'Camera position '+ cam_position+' copied to clipboard';
+        m.style.display = 'block';
+        setTimeout( function() { m.style.display = 'none'; }, 2000 );
+
+    }
+                                       
 </script>
 
 <div id="menu-container" onclick="toggleMenu()">&#x24d8;
@@ -547,7 +569,8 @@ SAGE_SCRIPTS
 <div id="menu-content">
 <div onclick="saveAsPNG()">Save as PNG</div>
 <div onclick="saveAsHTML()">Save as HTML</div>
-<div onclick="getViewpoint()">Get Viewpoint</div>
+<div onclick="getCamera()">Get camera</div>
+<div onclick="getViewpoint()">Get viewpoint</div>
 <div>Close Menu</div>
 </div></div>
 

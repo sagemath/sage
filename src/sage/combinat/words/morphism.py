@@ -106,46 +106,45 @@ from sage.combinat.words.word import FiniteWord_class
 from sage.combinat.words.words import FiniteWords, FiniteOrInfiniteWords
 
 
-def get_cycles(f, domain=None):
+def get_cycles(f, domain):
     r"""
-    Return the cycle of the function ``f`` on the finite set domain. It is
-    assumed that f is an endomorphism.
+    Return the list of cycles of the function ``f`` contained in ``domain``.
 
     INPUT:
 
     - ``f`` - function.
 
-    - ``domain`` - set (default: None) - the domain of ``f``. If none, then
-      tries to use ``f.domain()``.
+    - ``domain`` - iterable, a subdomain of the domain of definition of ``f``.
 
     EXAMPLES::
 
         sage: from sage.combinat.words.morphism import get_cycles
-        sage: get_cycles(lambda i: (i+1)%3, domain=[0,1,2])
+        sage: get_cycles(lambda i: (i+1)%3, [0,1,2])
         [(0, 1, 2)]
-        sage: get_cycles(lambda i: [0,0,0][i], domain=[0,1,2])
+        sage: get_cycles(lambda i: [0,0,0][i], [0,1,2])
         [(0,)]
-        sage: get_cycles(lambda i: [1,1,1][i], domain=[0,1,2])
+        sage: get_cycles(lambda i: [1,1,1][i], [0,1,2])
         [(1,)]
+        sage: get_cycles(lambda i: [2,3,0][i], [0,1,2])
+        [(0, 2)]
+        sage: d = {'a': 'a', 'b': 'b'}
+        sage: get_cycles(d.__getitem__, 'ba')
+        [('b',), ('a',)]
     """
-    if domain is None:
-        try:
-            domain = f.domain()
-        except AttributeError:
-            raise ValueError("you should specify the domain of the function f")
     cycles = []
-    not_seen = dict((letter,True) for letter in domain)
-    for a in not_seen:
-        if not_seen[a]:
-            not_seen[a] = False
-            cycle = [a]
-            b = f(a)
-            while not_seen[b]:
-                not_seen[b] = False
-                cycle.append(b)
-                b = f(b)
-            if b in cycle:
-                cycles.append(tuple(cycle[cycle.index(b):]))
+    not_seen = set(domain)
+    for a in domain:
+        if a not in not_seen:
+            continue
+        cycle = [a]
+        b = f(a)
+        not_seen.remove(a)
+        while b in not_seen:
+            not_seen.remove(b)
+            cycle.append(b)
+            b = f(b)
+        if b in cycle:
+            cycles.append(tuple(cycle[cycle.index(b):]))
 
     return cycles
 
@@ -1947,12 +1946,18 @@ class WordMorphism(SageObject):
             Traceback (most recent call last):
             ...
             TypeError: self must be prolongable on a
+
+        Make sure that :trac:`31759` is fixed::
+
+            sage: WordMorphism('a->b,b->a').periodic_point('a')
+            word: a
         """
         if not self.is_growing(letter):
-            w = self(letter)
-            w2 = self(w)
-            while w2 != w:
-                w,w2 = w2, self(w2)
+            w = self.domain()(letter)
+            prev = set()
+            while w not in prev:
+                prev.add(w)
+                w = self(w)
             return w
 
         elif self.is_erasing():
@@ -2024,7 +2029,7 @@ class WordMorphism(SageObject):
 
         res = []
         parent = self.codomain().shift()
-        for cycle in get_cycles(CallableDict(d),A):
+        for cycle in get_cycles(CallableDict(d), A):
             if cycle[0] in G:
                 P = PeriodicPointIterator(self, cycle)
                 res.append([parent(P._cache[i]) for i in range(len(cycle))])
@@ -2037,6 +2042,8 @@ class WordMorphism(SageObject):
 
         The language of the substitution is the DOL language which consist
         of factors of `s^n(u)`.
+
+        This method assumes this substitution is non-erasing.
 
         INPUT:
 
@@ -2057,19 +2064,38 @@ class WordMorphism(SageObject):
 
             sage: s._language_naive(3, W())
             set()
+            sage: W([1, 1]) in s._language_naive(3, W([1, 1]))
+            True
         """
-        L = set(u.parent()())
-        todo = [u]
+        L = set()
+        todo = []
+        for i in range(len(u)):
+            for j in range(i+1, min(len(u)+1, i+n)):
+                f = u[i:j]
+                if f not in L:
+                    todo.append(f)
+                    L.add(f)
         while todo:
             u = todo.pop()
             v = self(u)
-            for i in range(len(v)):
-                for j in range(i+1, min(len(v)+1, i+n)):
-                    f = v[i:j]
-                    if f not in L:
-                        todo.append(f)
-                        L.add(f)
-
+            if u.length() == 1:
+                for i in range(len(v)):
+                    for j in range(i+1, min(len(v)+1, i+n)):
+                        f = v[i:j]
+                        if f not in L:
+                            todo.append(f)
+                            L.add(f)
+            else:
+                l = self._morph[u[0]].length()
+                r = self._morph[u[-1]].length()
+                m = v.length() - l - r
+                x = n - 1 - m
+                for i in range(l - min(x - 1, l), l):
+                    for j in range(l + m + 1, l + m + 1 + min(x - l + i, r)):
+                        f = v[i:j]
+                        if f not in L:
+                            todo.append(f)
+                            L.add(f)
         return L
 
     def language(self, n, u=None):
@@ -3080,27 +3106,14 @@ class WordMorphism(SageObject):
             Combinatorics, automata and number theory, 163--247, Encyclopedia
             Math. Appl., 135, Cambridge Univ. Press, Cambridge, 2010.
         """
-        if self.is_primitive() and len(self._morph) > 1:
-            return True
-        if letter is None:
-            I = range(self.domain().alphabet().cardinality())
+        if not letter:
+            return self.domain().alphabet().cardinality() == len(self.growing_letters())
         else:
-            if letter not in self.domain().alphabet():
-                raise TypeError("letter (=%s) is not in the domain of self" % letter)
-            I = [self.domain().alphabet().rank(letter)]
-
-        last_coef = 0
-        coefs = self.incidence_matrix().charpoly().coefficients(sparse=False)
-        while coefs[last_coef] == 0:
-            last_coef += 1
-        V = self.abelian_rotation_subspace() + (self.incidence_matrix()**last_coef).right_kernel().change_ring(QQ)
-        basis = V.ambient_vector_space().basis()
-
-        return not any(basis[i] in V for i in I)
+            return letter in self.growing_letters()
 
     def growing_letters(self):
         r"""
-        Returns the list of growing letters.
+        Return the list of growing letters.
 
         See :meth:`.is_growing` for more information.
 
@@ -3112,6 +3125,10 @@ class WordMorphism(SageObject):
             ['0']
             sage: WordMorphism('0->01,1->0,2->1',codomain=Words('012')).growing_letters()
             ['0', '1', '2']
+            sage: WordMorphism('a->b,b->a').growing_letters()
+            []
+            sage: WordMorphism('a->b,b->c,c->d,d->c', codomain=Words('abcd')).growing_letters()
+            []
 
         TESTS:
 
@@ -3120,17 +3137,73 @@ class WordMorphism(SageObject):
             sage: WordMorphism('a->a').growing_letters()
             []
         """
-        if self.is_primitive() and len(self._morph) > 1:
-            return self.domain().alphabet().list()
-        last_coef = 0
-        coefs = self.incidence_matrix().charpoly().coefficients(sparse=False)
-        while coefs[last_coef] == 0:
-            last_coef += 1
-        V = self.abelian_rotation_subspace() + (self.incidence_matrix()**last_coef).right_kernel().change_ring(QQ)
-        basis = V.ambient_vector_space().basis()
-        A = self.domain().alphabet()
+        # Remove letters that vanish, ie sigma^n(letter) is ultimately empty
+        immortal = set(self.immortal_letters())
+        new_morph = {x: [z for z in self._morph[x] if z in immortal] for x in immortal}
 
-        return list(A.unrank(i) for i in range(A.cardinality()) if basis[i] not in V)
+        # Remove cycles of letters
+        graph_one = {x : y[0] for x, y in new_morph.items() if len(y) == 1}
+        no_loops = set(new_morph)
+        for cycle in get_cycles(graph_one.__getitem__, graph_one):
+            no_loops.difference_update(cycle)
+        new_morph = {x: [z for z in new_morph[x] if z in no_loops] for x in no_loops}
+
+        # Remove letters ending in a cycle
+        # NOTE: here we should actually be using the domain made of the
+        # remaining letters in new_morph. However, building the corresponding
+        # alphabet and finite words cost much more time than using the same
+        # domain.
+        new_morph = WordMorphism(new_morph, domain=self.domain(), codomain=self.codomain())
+        return new_morph.immortal_letters()
+
+    def immortal_letters(self):
+        r"""
+        Return the list of immortal letters.
+
+        A letter `a` is *immortal* for the morphism `s` if the length of the
+        iterates of `| s^n(a) |` is larger than zero as `n` goes to infinity.
+
+        Requires this morphism to be an endomorphism.
+
+        EXAMPLES::
+
+            sage: WordMorphism('a->a').immortal_letters()
+            ['a']
+            sage: WordMorphism('a->b,b->a').immortal_letters()
+            ['a', 'b']
+            sage: WordMorphism('a->abcd,b->cd,c->dd,d->').immortal_letters()
+            ['a']
+            sage: WordMorphism('a->bc,b->cac,c->de,d->,e->').immortal_letters()
+            ['a', 'b']
+            sage: WordMorphism('a->', domain=Words('a'), codomain=Words('a')).immortal_letters()
+            []
+        """
+        if not self.is_endomorphism():
+            raise TypeError(f'self ({self}) is not an endomorphism')
+
+        forward = {}
+        backward = {letter: set() for letter in self._morph}
+        stack = []
+        for letter, image in self._morph.items():
+            if not image:
+                stack.append(letter)
+                forward[letter] = set()
+            else:
+                simage = set(image)
+                forward[letter] = simage
+                for occurrence in simage:
+                    backward[occurrence].add(letter)
+
+        while stack:
+            letter = stack.pop()
+            for preimage in backward[letter]:
+                forward[preimage].remove(letter)
+                if not forward[preimage]:
+                    stack.append(preimage)
+            del forward[letter]
+            del backward[letter]
+
+        return sorted(forward, key=self.domain().alphabet().rank)
 
     def abelian_rotation_subspace(self):
         r"""
@@ -3184,3 +3257,517 @@ class WordMorphism(SageObject):
                 basis.extend((factor[0])(M).right_kernel().basis())
 
         return M._column_ambient_module().change_ring(QQ).subspace(basis)
+
+    def is_injective(self):
+        """
+        Return whether this morphism is injective.
+
+        ALGORITHM:
+
+        Uses a version of :wikipedia:`Sardinas–Patterson_algorithm`.
+        Time complexity is on average quadratic with regards to the size of the
+        morphism.
+
+        EXAMPLES::
+
+            sage: WordMorphism('a->0,b->10,c->110,d->111').is_injective()
+            True
+            sage: WordMorphism('a->00,b->01,c->012,d->20001').is_injective()
+            False
+        """
+        def check(u, v):
+            if u.is_prefix(v):
+                tail = v[u.length():]
+                if tail not in tails:
+                    tails.add(tail)
+                    todo.append(tail)
+
+        if self.is_erasing():
+            return False
+        images = self.images()
+        tails = set()
+        todo = []
+
+        for i in range(len(images)):
+            for j in range(i + 1, len(images)):
+                if images[i] == images[j]:
+                    return False
+                check(images[i], images[j])
+                check(images[j], images[i])
+        while todo:
+            u = todo.pop()
+            for v in images:
+                if u == v:
+                    return False
+                check(u, v)
+                check(v, u)
+
+        return True
+
+    def is_pushy(self, w=None):
+        r"""
+        Return whether the language `\{m^n(w) | n \ge 0\}` is pushy,
+        where `m` is this morphism and `w` is a word inputted as a parameter.
+
+        Requires this morphism to be an endomorphism.
+
+        A language created by iterating a morphism is pushy, if its words
+        contain an infinite number of factors containing no growing letters. It
+        turns out that this is equivalent to having at least one infinite
+        repetition containing no growing letters.
+
+        See :meth:`infinite_repetitions_primitive_roots` and :meth:`is_growing`.
+
+        INPUT:
+
+        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``).
+          Represents a word used to start the language.
+
+        EXAMPLES::
+
+            sage: WordMorphism('a->abca,b->bc,c->').is_pushy()
+            False
+            sage: WordMorphism('a->abc,b->,c->bcb').is_pushy()
+            True
+        """
+        return bool(self.infinite_repetitions_primitive_roots(w, False))
+
+    def is_unboundedly_repetitive(self, w=None):
+        r"""
+        Return whether the language `\{m^n(w) | n \ge 0\}` is unboundedly repetitive,
+        where `m` is this morphism and `w` is a word inputted as a parameter.
+
+        Requires this morphism to be an endomorphism.
+
+        A language created by iterating a morphism is unboundedly repetitive, if
+        it has at least one infinite repetition containing at least one growing
+        letter.
+
+        See :meth:`infinite_repetitions_primitive_roots` and :meth:`is_growing`.
+
+        INPUT:
+
+        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``).
+          Represents a word used to start the language.
+
+        EXAMPLES::
+
+            sage: WordMorphism('a->abca,b->bc,c->').is_unboundedly_repetitive()
+            True
+            sage: WordMorphism('a->abc,b->,c->bcb').is_unboundedly_repetitive()
+            False
+        """
+        return bool(self.infinite_repetitions_primitive_roots(w, True))
+
+    def is_repetitive(self, w=None):
+        r"""
+        Return whether the language `\{m^n(w) | n \ge 0\}` is repetitive,
+        where `m` is this morphism and `w` is a word inputted as a parameter.
+
+        Requires this morphism to be an endomorphism.
+
+        A language is repetitive, if for each positive integer `k` there exists
+        a word `u` such that `u^k` is a factor of some word of the language.
+
+        It turns out that for languages created by iterating a morphism this is
+        equivalent to having at least one infinite repetition (this property is
+        also known as strong repetitiveness).
+
+        See :meth:`infinite_repetitions_primitive_roots`.
+
+        INPUT:
+
+        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``).
+          Represents a word used to start the language.
+
+        EXAMPLES:
+
+        This method can be used to check whether a purely morphic word is not
+        k-power free for all positive integers k. For example, the language
+        containing just the Thue-Morse word and its prefixes is not repetitive,
+        since the Thue-Morse word is cube-free::
+
+            sage: WordMorphism('a->ab,b->ba').is_repetitive('a')
+            False
+
+        Similarly, the Hanoi word is square-free::
+
+            sage: WordMorphism('a->aC,A->ac,b->cB,B->cb,c->bA,C->ba').is_repetitive('a')
+            False
+
+        However, this method solves a more general problem, as it can be called
+        on any morphism `m` and with any word `w`::
+
+            sage: WordMorphism('a->c,b->cda,c->a,d->abc').is_repetitive('bd')
+            True
+        """
+        return self.is_pushy(w) or self.is_unboundedly_repetitive(w)
+
+    def infinite_repetitions_primitive_roots(self, w=None, allow_growing=None):
+        r"""
+        Return the set of primitive roots (up to conjugacy) of infinite
+        repetitions from the language `\{m^n(w) | n \ge 0\}`, where `m` is this
+        morphism and `w` is a word inputted as a parameter.
+
+        Requires this morphism to be an endomorphism.
+
+        The word `v^\omega` is an infinite repetition (in other words, an
+        infinite periodic factor) of a language, if `v` is a non-empty word and
+        for each positive integer `k` the word `v^k` is a factor of some word
+        from the language. It turns out that a language created by iterating a
+        morphism has a finite number of primitive roots of infinite repetitions.
+
+        If `v` is a primitive root of an infinite repetition, then all its
+        conjugations are also primitive roots of an infinite repetition. For
+        simplicity's sake this method returns only the lexicographically minimal
+        one from each conjugacy class.
+
+        INPUT:
+
+        - ``w`` -- finite iterable (default: ``self.domain().alphabet()``).
+          Represents a word used to start the language.
+
+        - ``allow_growing`` -- boolean or ``None`` (default: ``None``). If
+          ``False``, return only the primitive roots that contain no growing
+          letters. If ``True``, return only the primitive roots that contain at
+          least one growing letter. If ``None``, return both.
+
+        ALGORITHM:
+
+        The algorithm used is described in detail in [KS2015]_.
+
+        EXAMPLES::
+
+            sage: m = WordMorphism('a->aba,b->aba,c->cd,d->e,e->d')
+            sage: inf_reps = m.infinite_repetitions_primitive_roots('ac')
+            sage: sorted(inf_reps)
+            [word: aab, word: de]
+
+        ``allow_growing`` parameter::
+
+            sage: sorted(m.infinite_repetitions_primitive_roots('ac', True))
+            [word: aab]
+            sage: sorted(m.infinite_repetitions_primitive_roots('ac', False))
+            [word: de]
+
+        Incomplete check that these words are indeed the primitive roots of
+        infinite repetitions::
+
+            sage: SL = m._language_naive(10, Word('ac'))
+            sage: all(x in SL for x in inf_reps)
+            True
+            sage: all(x^2 in SL for x in inf_reps)
+            True
+            sage: all(x^3 in SL for x in inf_reps)
+            True
+
+        Large example::
+
+            sage: m = WordMorphism('a->1b5,b->fcg,c->dae,d->432,e->678,f->f,g->g,1->2,2->3,3->4,4->1,5->6,6->7,7->8,8->5')
+            sage: sorted(m.infinite_repetitions_primitive_roots('a'))
+            [word: 1432f2143f3214f4321f, word: 5678g8567g7856g6785g]
+
+        TESTS::
+
+            sage: m = WordMorphism('a->Cab,b->1c1,c->E2bd5,d->BbaA,5->6,6->7,7->8,8->9,9->5,1->2,2->1,A->B,B->C,C->D,D->E,E->')
+            sage: sorted(m.infinite_repetitions_primitive_roots())
+            [word: 1, word: 1519181716, word: 2, word: 2529282726]
+
+            sage: m = WordMorphism('a->b,b->b', codomain=FiniteWords('ab'))
+            sage: m.infinite_repetitions_primitive_roots()
+            set()
+
+            sage: m = WordMorphism('c->d,d->c,e->fc,f->ed')
+            sage: sorted(m.infinite_repetitions_primitive_roots())
+            [word: c, word: d]
+
+            sage: m = WordMorphism('a->bcb,b->ada,c->d,d->c')
+            sage: sorted(m.infinite_repetitions_primitive_roots())
+            [word: ad, word: bc]
+
+            sage: m = WordMorphism('b->c,c->bcb')
+            sage: sorted(m.infinite_repetitions_primitive_roots())
+            [word: bc]
+
+            sage: m = WordMorphism('a->abc,b->dab,c->abc,d->dab')
+            sage: sorted(m.infinite_repetitions_primitive_roots())
+            [word: ababcd]
+        """
+        def impl_no_growing(g, k):
+            U = {}
+            for x in unbounded:
+                xg = g.image(x)
+                for i, y in enumerate(reversed(xg)):
+                    if y in unbounded:
+                        break
+                U[x] = y, xg[xg.length() - i:]
+            for cycle in get_cycles(lambda x: U[x][0], domain=unbounded):
+                if all(not U[x][1] for x in cycle):
+                    continue
+                gq = gb ** len(cycle)
+                for cycle in g.domain()(cycle).conjugates_iterator():
+                    u = g.domain()()
+                    for x in cycle:
+                        u = U[x][1] + gb(u)
+                    inf_rep = g.domain()()
+                    history = set()
+                    while u not in history:
+                        history.add(u)
+                        inf_rep += u
+                        u = gq(u)
+                    yield k(inf_rep.primitive()).primitive()
+
+        if w is None:
+            w = self._morph
+        reach = self._language_naive(2, self._domain(w))
+        f = self.restrict_domain([x[0] for x in reach])
+        f._codomain = f._domain
+        g, _, k, _ = f.simplify_until_injective()
+        g._codomain = g._domain
+        unbounded = set(g.growing_letters())
+        result = set()
+
+        if allow_growing is not True:
+            gb = g.restrict_domain(set(g._morph) - unbounded)
+            for x in impl_no_growing(g, k):  # UR.
+                result.add(x.minimal_conjugate())
+            for x in impl_no_growing(g.reversal(), k.reversal()):  # UL.
+                result.add(self.domain()(reversed(x)).minimal_conjugate())
+
+        if allow_growing is not False:
+            for periodic_orbit in g.periodic_points():
+                gq = g ** len(periodic_orbit)
+                for periodic_point in periodic_orbit:
+                    # Check if this periodic point is a periodic infinite word.
+                    periodic_point = periodic_point[:1]
+                    occurred = set(periodic_point)
+                    one_unbounded_twice = False
+                    for _ in g.domain().alphabet():
+                        previous_length = periodic_point.length()
+                        periodic_point = gq(periodic_point)
+                        for i, letter in enumerate(periodic_point[previous_length:]):
+                            if letter in unbounded:
+                                if letter in occurred:
+                                    one_unbounded_twice = True
+                                    break
+                                occurred.add(letter)
+                        if one_unbounded_twice:
+                            break
+                    if not one_unbounded_twice or letter != periodic_point[0]:
+                        break
+                    v = periodic_point[:previous_length + i]
+                    vq = gq(v)
+                    m = 0
+                    while vq[m * v.length() : (m + 1) * v.length()] == v:
+                        m += 1
+                    if m * v.length() != vq.length():
+                        break
+                    result.add(k(v).primitive().minimal_conjugate())
+
+        return result
+
+    def simplify_alphabet_size(self, Z=None):
+        r"""
+        If this morphism is simplifiable, return morphisms `h` and `k` such that
+        this morphism is simplifiable with respect to `h` and `k`, otherwise
+        raise  ``ValueError``.
+
+        This method is quite fast if this morphism is non-injective, but very
+        slow if it is injective.
+
+        Let `f: X^* \rightarrow Y^*` be a morphism. Then `f` is simplifiable
+        with respect to morphisms `h: X^* \rightarrow Z^*` and
+        `k: Z^* \rightarrow Y^*`, if `f = k \circ h` and `|Z| < |X|`. If also
+        `Y \subseteq X`, then the morphism `g: Z^* \rightarrow Z^* = h \circ k`
+        is a simplification of `f` (with respect to `h` and `k`).
+
+        Loosely speaking, a morphism is simplifiable if it contains "more letters
+        than is needed". Non-injectivity implies simplifiability. Simplification
+        preserves some properties of the original morphism (e.g. repetitiveness).
+
+        For more information see Section 3 in [KO2000]_.
+
+        INPUT:
+
+        - ``Z`` -- iterable (default: ``self.domain().alphabet()``), whose
+          elements are used as an alphabet for the simplification.
+
+        EXAMPLES:
+
+        Example of a simplifiable (non-injective) morphism::
+
+            sage: f = WordMorphism('a->aca,b->badc,c->acab,d->adc')
+            sage: h, k = f.simplify_alphabet_size('xyz'); h, k
+            (WordMorphism: a->x, b->zy, c->xz, d->y, WordMorphism: x->aca, y->adc, z->b)
+            sage: k * h == f
+            True
+            sage: g = h * k; g
+            WordMorphism: x->xxzx, y->xyxz, z->zy
+
+        Example of a simplifiable (injective) morphism::
+
+            sage: f = WordMorphism('a->abcc,b->abcd,c->abdc,d->abdd')
+            sage: h, k = f.simplify_alphabet_size('xyz'); h, k
+            (WordMorphism: a->xyy, b->xyz, c->xzy, d->xzz, WordMorphism: x->ab, y->c, z->d)
+            sage: k * h == f
+            True
+            sage: g = h * k; g
+            WordMorphism: x->xyyxyz, y->xzy, z->xzz
+
+        Example of a non-simplifiable morphism::
+
+            sage: WordMorphism('a->aa').simplify_alphabet_size()
+            Traceback (most recent call last):
+            ...
+            ValueError: self (a->aa) is not simplifiable
+
+        Example of an erasing morphism::
+
+            sage: f = WordMorphism('a->abc,b->cc,c->')
+            sage: h, k = f.simplify_alphabet_size(); h, k
+            (WordMorphism: a->a, b->b, c->, WordMorphism: a->abc, b->cc)
+            sage: k * h == f
+            True
+            sage: g = h * k; g
+            WordMorphism: a->ab, b->
+
+        Example of a morphism, that is not an endomorphism::
+
+            sage: f = WordMorphism('a->xx,b->xy,c->yx,d->yy')
+            sage: h, k = f.simplify_alphabet_size(NN); h, k
+            (WordMorphism: a->00, b->01, c->10, d->11, WordMorphism: 0->x, 1->y)
+            sage: k * h == f
+            True
+            sage: len(k.domain().alphabet()) < len(f.domain().alphabet())
+            True
+        """
+        def try_create_h(f, k):
+            h = {}
+            for letter1, image1 in f.items():
+                image3 = []
+                while image1:
+                    for letter2, image2 in k.items():
+                        if image2.is_prefix(image1):
+                            image1 = image1[image2.length():]
+                            image3.append(letter2)
+                            break
+                    else:  # nobreak
+                        return None
+                h[letter1] = image3
+            return h
+
+        X = self.domain().alphabet()
+        Y = self.codomain().alphabet()
+        f = self._morph
+
+        if self.is_erasing():  # Trivial case #1.
+            k = {letter: image for letter, image in f.items() if image}
+            h = {letter: [letter] if image else [] for letter, image in f.items()}
+        elif len(Y) < len(X):  # Trivial case #2.
+            k = {x: [y] for x, y in zip(X, Y)}
+            k_inverse = {y: x for y, x in zip(Y, X)}
+            h = {x: [k_inverse[y] for y in image] for x, image in f.items()}
+        elif not self.is_injective():  # Non-trivial but a fast case.
+            k = dict(f)
+            to_do = set(k)
+            while to_do:
+                to_remove = []
+                # min() and remove() instead of pop() to have deterministic output.
+                letter1 = min(to_do)
+                to_do.remove(letter1)
+                image1 = k[letter1]
+                for letter2, image2 in k.items():
+                    if letter1 == letter2:
+                        continue
+                    if image1 == image2:
+                        to_remove.append(letter2)
+                        to_do.discard(letter2)
+                    elif image1.is_prefix(image2):
+                        k[letter2] = image2[image1.length():]
+                        to_do.add(letter2)
+                    elif image2.is_prefix(image1):
+                        k[letter1] = image1[image2.length():]
+                        to_do.add(letter1)
+                        break
+                for letter in to_remove:
+                    del k[letter]
+            h = try_create_h(f, k)
+        else:  # Non-trivial and a slow case.
+            factors = set()
+            for image in f.values():
+                factors.update(x.primitive() for x in image.factor_iterator())
+            factors.remove(self.codomain()())
+            factors = sorted(factors)  # For deterministic output.
+            from itertools import combinations
+            for comb in combinations(factors, len(X) - 1):
+                if any(x.is_proper_prefix(y) for x in comb for y in comb):
+                    continue
+                k = {x: image for x, image in zip(X, comb)}
+                h = try_create_h(f, k)
+                if h:
+                    break
+            else:  # nobreak
+                raise ValueError(f'self ({self}) is not simplifiable')
+
+        k = WordMorphism(k, codomain=self.codomain())
+        h = WordMorphism(h, domain=self.domain(), codomain=k.domain())
+
+        if Z is not None:  # Custom alphabet.
+            old_Z_star = k.domain()
+            old_Z = old_Z_star.alphabet()
+            Z = [z for z, _ in zip(Z, old_Z)]
+            if len(Z) < len(old_Z):
+                raise ValueError(f'Z should have length at least {len(old_Z)}, is {len(Z)}')
+            Z_star = FiniteWords(Z)
+            h_new = {old: [new] for old, new in zip(old_Z, Z)}
+            k_new = {new: [old] for new, old in zip(Z, old_Z)}
+            h_new = WordMorphism(h_new, domain=old_Z_star, codomain=Z_star)
+            k_new = WordMorphism(k_new, domain=Z_star, codomain=old_Z_star)
+            h = h_new * h
+            k = k * k_new
+
+        return h, k
+
+    def simplify_until_injective(self):
+        r"""
+        Return a quadruplet `(g, h, k, i)`, where `g` is an injective
+        simplification of this morphism with respect to `h`, `k` and `i`.
+
+        Requires this morphism to be an endomorphism.
+
+        This methods basically calls :meth:`simplify_alphabet_size` until the
+        returned simplification is injective. If this morphism is already
+        injective, a quadruplet `(g, h, k, i)` is still returned, where `g`
+        is this morphism, `h` and `k` are the identity morphisms and `i` is 0.
+
+        Let `f: X^* \rightarrow Y^*` be a morphism and `Y \subseteq X`. Then
+        `g: Z^* \rightarrow Z^*` is an injective simplification of `f` with
+        respect to morphisms `h: X^* \rightarrow Z^*` and
+        `k: Z^* \rightarrow Y^*` and a positive integer `i`, if `g` is
+        injective, `|Z| < |X|`, `g^i = h \circ k` and `f^i = k \circ h`.
+
+        For more information see Section 4 in [KO2000]_.
+
+        EXAMPLES::
+
+            sage: f = WordMorphism('a->abc,b->a,c->bc')
+            sage: g, h, k, i = f.simplify_until_injective(); g, h, k, i
+            (WordMorphism: a->aa, WordMorphism: a->aa, b->a, c->a, WordMorphism: a->abc, 2)
+            sage: g.is_injective()
+            True
+            sage: g ** i == h * k
+            True
+            sage: f ** i == k * h
+            True
+        """
+        if not self.is_endomorphism():
+            raise TypeError(f'self ({self}) is not an endomorphism')
+
+        g = self
+        h = self.domain().identity_morphism()
+        k = self.codomain().identity_morphism()
+        i = 0
+        while not g.is_injective():
+            h_new, k_new = g.simplify_alphabet_size()
+            g, h, k, i = h_new * k_new, h_new * h, k * k_new, i + 1
+        return g, h, k, i

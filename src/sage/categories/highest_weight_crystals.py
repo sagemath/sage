@@ -148,7 +148,7 @@ class HighestWeightCrystals(Category_singleton):
                 sage: C.highest_weight_vector()
                 1
             """
-            hw = self.highest_weight_vectors();
+            hw = self.highest_weight_vectors()
             if len(hw) == 1:
                 return hw[0]
             else:

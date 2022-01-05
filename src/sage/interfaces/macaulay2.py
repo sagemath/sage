@@ -40,7 +40,7 @@ EXAMPLES::
     sage: R = macaulay2('ZZ/5[x,y,z]')  # optional - macaulay2
     sage: R                             # optional - macaulay2
     ZZ
-    --[x, y, z]
+    --[x...z]
      5
     sage: x = macaulay2('x')            # optional - macaulay2
     sage: y = macaulay2('y')            # optional - macaulay2
@@ -435,7 +435,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
 
             sage: R = macaulay2('QQ[x, y]')  # indirect doctest, optional - macaulay2
             sage: R.net()                    # optional - macaulay2
-            QQ[x, y]
+            QQ[x...y]
             sage: S = R / macaulay2('ideal {x^2 - y}')         # optional - macaulay2
             sage: macaulay2.eval('class x === %s' % S.name())  # optional - macaulay2
             true
@@ -675,7 +675,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         EXAMPLES::
 
             sage: R2 = macaulay2.ring('QQ', '[x, y]'); R2            # optional - macaulay2
-            QQ[x, y]
+            QQ[x...y]
             sage: I = macaulay2.ideal( ('y^2 - x^3', 'x - y') ); I   # optional - macaulay2
                       3    2
             ideal (- x  + y , x - y)
@@ -752,7 +752,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
             ****...
             ...
               * "input" -- read Macaulay2 commands and echo
-              * "notify" -- whether to notify the user when a file is loaded
+              * "notify" -- whether to notify the user when a file is loaded...
 
         TESTS:
 
@@ -912,11 +912,11 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement):
             sage: str(x+y)                                 # optional - macaulay2
             x + y
             sage: str(macaulay2("QQ[x,y,z]"))              # optional - macaulay2
-            QQ[x, y, z]
+            QQ[x...z]
             sage: str(macaulay2("QQ[x,y,z]/(x+y+z)"))      # optional - macaulay2
-            QQ[x, y, z]
-            -----------
-             x + y + z
+             QQ[x...z]
+            -------...
+            x + y + z
         """
         P = self._check_valid()
         return P.get(self._name)
@@ -1742,7 +1742,7 @@ class Macaulay2Function(ExpectFunction):
             ****...
             ...
               * "input" -- read Macaulay2 commands and echo
-              * "notify" -- whether to notify the user when a file is loaded
+              * "notify" -- whether to notify the user when a file is loaded...
 
         TESTS:
 

@@ -15,7 +15,7 @@ set -e
 
 VERSION="1.6.0"
 VERSIONREV="47"
-PATCHSUFFIX="p2"
+PATCHSUFFIX="p3"
 
 # The upstream tarball name is: giac"$SOURCEORIG".tar.gz
 SOURCEORIG=_"$VERSION"-"$VERSIONREV"

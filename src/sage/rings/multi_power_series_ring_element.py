@@ -1951,7 +1951,8 @@ class MPowerSeries(PowerSeries):
         c = self.constant_coefficient()
         exp_c = exp(c)
         x = self._bg_value - c
-        if x.is_zero(): return exp_c
+        if x.is_zero():
+            return exp_c
         val = x.valuation()
         assert(val >= 1)
 
@@ -2044,7 +2045,8 @@ class MPowerSeries(PowerSeries):
             raise ValueError('Can only take formal power series for non-zero constant term.')
         log_c = log(c)
         x = 1 - self._bg_value/c
-        if x.is_zero(): return log_c
+        if x.is_zero():
+            return log_c
         val = x.valuation()
         assert(val >= 1)
 

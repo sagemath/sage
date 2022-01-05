@@ -289,7 +289,7 @@ AUTHORS:
 from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 from sage.interfaces.interface import AsciiArtString
 from sage.misc.misc_c import prod
-from sage.env import DOT_SAGE, SAGE_LOCAL
+from sage.env import DOT_SAGE, LIE_INFO_DIR
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.docs.instancedoc import instancedoc
 import os
@@ -331,7 +331,7 @@ class LiE(ExtraTabCompletion, Expect):
                         prompt = '> ',
 
                         # This is the command that starts up your program
-                        command = "bash "+ SAGE_LOCAL + "/bin/lie",
+                        command = "bash lie",
 
                         server=server,
                         script_subdirectory = script_subdirectory,
@@ -401,8 +401,7 @@ class LiE(ExtraTabCompletion, Expect):
 
 
         for f in filenames:
-            filename = SAGE_LOCAL + "/lib/LiE/" + f
-            info = open(filename)
+            info = open(os.path.join(LIE_INFO_DIR, f))
             prev_command = ""
             help_text = ""
             for line in info:
@@ -953,7 +952,7 @@ def lie_version():
         sage: lie_version() # optional - lie
         '2.1'
     """
-    f = open(os.path.join(SAGE_LOCAL, 'lib', 'LiE', 'INFO.0'))
+    f = open(os.path.join(LIE_INFO_DIR, 'INFO.0'))
     lines = f.readlines()
     f.close()
     i = lines.index('@version()\n')

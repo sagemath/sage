@@ -22,6 +22,7 @@ import random
 from sage.structure.parent cimport Parent
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.misc.lazy_attribute import lazy_attribute
 
 
 def is_Group(x):

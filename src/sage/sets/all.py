@@ -11,4 +11,5 @@ from .disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from .primes import Primes
 from .family import Family
 from .disjoint_set import DisjointSet
+from .condition_set import ConditionSet
 from .finite_set_maps import FiniteSetMaps

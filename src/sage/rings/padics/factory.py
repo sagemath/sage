@@ -42,9 +42,11 @@ from .padic_base_leaves import (pAdicRingCappedRelative,
                                 pAdicRingFixedMod,
                                 pAdicRingFloatingPoint,
                                 pAdicRingLattice,
+                                pAdicRingRelaxed,
                                 pAdicFieldCappedRelative,
                                 pAdicFieldFloatingPoint,
-                                pAdicFieldLattice)
+                                pAdicFieldLattice,
+                                pAdicFieldRelaxed)
 from . import padic_printing
 
 ######################################################
@@ -214,6 +216,26 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
             elif absolute_cap is None:
                 absolute_cap = 2 * relative_cap
             prec = (relative_cap, absolute_cap)
+        elif type == 'relaxed':
+            default_prec = halting_prec = None
+            secure = False
+            if isinstance(prec, (list, tuple)):
+                if len(prec) == 1:
+                    default_prec = prec
+                elif len(prec) == 2:
+                    default_prec, halting_prec = prec
+                else:
+                    default_prec = prec[0]
+                    halting_prec = prec[1]
+                    secure = prec[2]
+            else:
+                default_prec = prec
+            if default_prec is None:
+                default_prec = DEFAULT_PREC
+            if halting_prec is None:
+                halting_prec = 2 * default_prec
+            halting_prec = max(default_prec, halting_prec)
+            prec = (default_prec, halting_prec, secure)
         else:
             if prec is not None:
                 prec = Integer(prec)
@@ -306,6 +328,7 @@ def get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_se
 
 padic_field_cache = {}
 DEFAULT_PREC = Integer(20)
+
 class Qp_class(UniqueFactory):
     r"""
     A creation function for `p`-adic fields.
@@ -318,6 +341,9 @@ class Qp_class(UniqueFactory):
       In the lattice capped case, ``prec`` can either be a
       pair (``relative_cap``, ``absolute_cap``) or an integer
       (understood at relative cap).
+      In the relaxed case, ``prec`` can be either a
+      pair (``default_prec``, ``halting_prec``) or an integer
+      (understood at default precision).
       Except in the floating point case, individual elements keep track of
       their own precision.  See TYPES and PRECISION below.
 
@@ -346,7 +372,7 @@ class Qp_class(UniqueFactory):
     - ``print_max_terms`` -- integer (default ``None``) The maximum number of
       terms shown.  See PRINTING below.
 
-    - ``show_prec`` -- a boolean or a string (default ``None``) Specify how 
+    - ``show_prec`` -- a boolean or a string (default ``None``) Specify how
       the precision is printed. See PRINTING below.
 
     - ``check`` -- bool (default ``True``) whether to check if `p` is prime.
@@ -362,9 +388,9 @@ class Qp_class(UniqueFactory):
 
     TYPES AND PRECISION:
 
-    There are two types of precision for a `p`-adic element.  The first
-    is relative precision, which gives the number of known `p`-adic
-    digits::
+    There are two main types of precision for a `p`-adic element.
+    The first is relative precision, which gives the number of known
+    `p`-adic digits::
 
         sage: R = Qp(5, 20, 'capped-rel', 'series'); a = R(675); a
         2*5^2 + 5^4 + O(5^22)
@@ -377,8 +403,20 @@ class Qp_class(UniqueFactory):
         sage: a.precision_absolute()
         22
 
-    There are three types of `p`-adic fields: capped relative fields,
-    floating point fields and lattice precision fields.
+    There are several types of `p`-adic fields, depending on the methods
+    used for tracking precision. Namely, we have:
+
+    - capped relative fields (``type='capped-rel'``)
+
+    - capped absolute fields (``type='capped-abs'``)
+
+    - fixed modulus fields (``type='fixed-mod'``)
+
+    - floating point fields (``type='floating-point'``)
+
+    - lattice precision fields (``type='lattice-cap'`` or ``type='lattice-float'``)
+
+    - exact fields with relaxed arithmetics (``type='relaxed'``)
 
     In the capped relative case, the relative precision of an element
     is restricted to be at most a certain value, specified at the
@@ -402,6 +440,17 @@ class Qp_class(UniqueFactory):
     In the lattice case, precision on elements is tracked by a global
     lattice that is updated after every operation, yielding better
     precision behavior at the cost of higher memory and runtime usage.
+    We refer to the documentation of the function :func:`ZpLC` for a
+    small demonstration of the capabilities of this precision model.
+
+    Finally, the model for relaxed `p`-adics is quite different from any of
+    the other types. In addition to storing a finite approximation, one
+    also stores a method for increasing the precision.
+    A quite interesting feature with relaxed `p`-adics is the possibility to
+    create (in some cases) self-referent numbers, that are numbers whose
+    `n`-th digit is defined by the previous ones.
+    We refer to the documentation of the function :func:`ZpL` for a
+    small demonstration of the capabilities of this precision model.
 
     PRINTING:
 
@@ -696,7 +745,7 @@ class Qp_class(UniqueFactory):
             check = True
         if label is not None and type not in ['lattice-cap','lattice-float']:
             raise ValueError("label keyword only supported for lattice precision")
-        return get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, check, ['capped-rel', 'floating-point', 'lattice-cap', 'lattice-float'], label)
+        return get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet, print_max_terms, show_prec, check, ['capped-rel', 'floating-point', 'lattice-cap', 'lattice-float', 'relaxed'], label)
 
     def create_object(self, version, key):
         r"""
@@ -746,6 +795,13 @@ class Qp_class(UniqueFactory):
             else:
                 return pAdicFieldFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                          'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+        elif type == 'relaxed':
+            if print_mode == 'terse':
+                return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                                'ram_name': name, 'max_terse_terms': print_max_terms, 'show_prec': show_prec}, name)
+            else:
+                return pAdicFieldRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                                'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
         elif type[:8] == 'lattice-':
             subtype = type[8:]
             if print_mode == 'terse':
@@ -1264,8 +1320,10 @@ def Qq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
         q = tuple(q)
 
     p,k = q
-    if not isinstance(p, Integer): p = Integer(p)
-    if not isinstance(k, Integer): k = Integer(k)
+    if not isinstance(p, Integer):
+        p = Integer(p)
+    if not isinstance(k, Integer):
+        k = Integer(k)
 
     if check:
         if not p.is_prime() or k <=0:
@@ -1376,7 +1434,6 @@ def QpLC(p, prec = None, *args, **kwds):
         sage: R = QpLC(2)
         sage: R
         2-adic Field with lattice-cap precision
-
     """
     return Qp(p, prec, 'lattice-cap', *args, **kwds)
 
@@ -1395,6 +1452,19 @@ def QpLF(p, prec = None, *args, **kwds):
     """
     return Qp(p, prec, 'lattice-float', *args, **kwds)
 
+def QpER(p, prec=None, halt=None, secure=False, *args, **kwds):
+    r"""
+    A shortcut function to create relaxed `p`-adic fields.
+
+    See :func:`ZpER` for more information about this model of precision.
+
+    EXAMPLES::
+
+        sage: R = QpER(2)
+        sage: R
+        2-adic Field handled with relaxed arithmetics
+    """
+    return Qp(p, (prec, halt, secure), 'relaxed', *args, **kwds)
 
 #######################################################################################################
 #
@@ -1417,13 +1487,16 @@ class Zp_class(UniqueFactory):
       ring.  In the lattice capped case, ``prec`` can either be a
       pair (``relative_cap``, ``absolute_cap``) or an integer
       (understood at relative cap).
+      In the relaxed case, ``prec`` can be either a
+      pair (``default_prec``, ``halting_prec``) or an integer
+      (understood at default precision).
       Except for the fixed modulus and floating point cases, individual elements
       keep track of their own precision.  See TYPES and PRECISION
       below.
 
     - ``type`` -- string (default: ``'capped-rel'``) Valid types are
       ``'capped-rel'``, ``'capped-abs'``, ``'fixed-mod'``,
-      ``'floating-point'``, ``'lattice-cap'``, ``'lattice-float'``
+      ``'floating-point'``, ``'lattice-cap'``, ``'lattice-float'``, ``'relaxed'``
       See TYPES and PRECISION below
 
     - ``print_mode`` -- string (default: ``None``).  Valid modes are
@@ -1462,7 +1535,7 @@ class Zp_class(UniqueFactory):
 
     TYPES AND PRECISION:
 
-    There are three types of precision.
+    There are two main types of precision.
     The first is relative precision; it gives the number of known
     `p`-adic digits::
 
@@ -1477,27 +1550,20 @@ class Zp_class(UniqueFactory):
         sage: a.precision_absolute()
         22
 
-    The third one is lattice precision.
-    It is not attached to a single `p`-adic number but is a unique
-    object modeling the precision on a set of `p`-adics, which is
-    typically the set of all elements within the same parent::
+    There are several types of `p`-adic rings, depending on the methods
+    used for tracking precision. Namely, we have:
 
-        sage: R = ZpLC(17)
-        sage: x = R(1,10); y = R(1,5)
-        sage: R.precision()
-        Precision lattice on 2 objects
-        sage: R.precision().precision_lattice()
-        [2015993900449             0]
-        [            0       1419857]
+    - capped relative rings (``type='capped-rel'``)
 
-    We refer to the documentation of the function :func:`ZpLC` for
-    more information about this precision model.
+    - capped absolute rings (``type='capped-abs'``)
 
-    There are many types of `p`-adic rings: capped relative rings
-    (``type='capped-rel'``), capped absolute rings
-    (``type='capped-abs'``), fixed modulus rings (``type='fixed-mod'``),
-    floating point rings (``type='floating-point'``), lattice capped rings
-    (``type='lattice-cap'``) and lattice float rings (``type='lattice-float'``).
+    - fixed modulus rings (``type='fixed-mod'``)
+
+    - floating point rings (``type='floating-point'``)
+
+    - lattice precision rings (``type='lattice-cap'`` or ``type='lattice-float'``)
+
+    - exact fields with relaxed arithmetics (``type='relaxed'``)
 
     In the capped relative case, the relative precision of an element
     is restricted to be at most a certain value, specified at the
@@ -1548,6 +1614,15 @@ class Zp_class(UniqueFactory):
     and automatic differentiation. It is rather slow but provides sharp
     (often optimal) results regarding precision.
     We refer to the documentation of the function :func:`ZpLC` for a
+    small demonstration of the capabilities of this precision model.
+
+    Finally, the model for relaxed `p`-adics is quite different from any of
+    the other types. In addition to storing a finite approximation, one
+    also stores a method for increasing the precision.
+    A quite interesting feature with relaxed `p`-adics is the possibility to
+    create (in some cases) self-referent numbers, that are numbers whose
+    `n`-th digit is defined by the previous ones.
+    We refer to the documentation of the function :func:`ZpL` for a
     small demonstration of the capabilities of this precision model.
 
     PRINTING:
@@ -1873,7 +1948,7 @@ class Zp_class(UniqueFactory):
             raise ValueError("label keyword only supported for lattice precision")
         return get_key_base(p, prec, type, print_mode, names, ram_name, print_pos, print_sep, print_alphabet,
                             print_max_terms, show_prec, check,
-                            ['capped-rel', 'fixed-mod', 'capped-abs', 'floating-point', 'lattice-cap', 'lattice-float'],
+                            ['capped-rel', 'fixed-mod', 'capped-abs', 'floating-point', 'lattice-cap', 'lattice-float', 'relaxed'],
                             label=label)
 
     def create_object(self, version, key):
@@ -1902,7 +1977,7 @@ class Zp_class(UniqueFactory):
             # keys changed in order to reduce irrelevant duplications: e.g. two Zps with print_mode 'series'
             # that are identical except for different 'print_alphabet' now return the same object.
             key = get_key_base(p, prec, type, print_mode, name, None, print_pos, print_sep, print_alphabet,
-                               print_max_terms, None, False, ['capped-rel', 'fixed-mod', 'capped-abs', 'lattice-cap', 'lattice-float'])
+                               print_max_terms, None, False, ['capped-rel', 'fixed-mod', 'capped-abs', 'lattice-cap', 'lattice-float', 'relaxed'])
             try:
                 obj = self._cache[version, key]()
                 if obj is not None:
@@ -1922,6 +1997,9 @@ class Zp_class(UniqueFactory):
         elif type == 'floating-point':
             return pAdicRingFloatingPoint(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
                                                      'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
+        elif type == 'relaxed':
+            return pAdicRingRelaxed(p, prec, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
+                                           'ram_name': name, 'max_ram_terms': print_max_terms, 'show_prec': show_prec}, name)
         elif type[:8] == 'lattice-':
             subtype = type[8:]
             return pAdicRingLattice(p, prec, subtype, {'mode': print_mode, 'pos': print_pos, 'sep': print_sep, 'alphabet': print_alphabet,
@@ -2007,6 +2085,7 @@ def Zq(q, prec = None, type = 'capped-rel', modulus = None, names=None,
     - The corresponding unramified `p`-adic ring.
 
     TYPES AND PRECISION:
+
 
     There are two types of precision for a `p`-adic element.  The first
     is relative precision (default), which gives the number of known `p`-adic
@@ -2888,6 +2967,225 @@ def ZpLF(p, prec=None, *args, **kwds):
         :func:`ZpLC`
     """
     return Zp(p, prec, 'lattice-float', *args, **kwds)
+
+def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
+    r"""
+    A shortcut function to create relaxed `p`-adic rings.
+
+    INPUT:
+
+    - ``prec`` -- an integer (default: ``20``), the default
+      precision
+
+    - ``halt`` -- an integer (default: twice ``prec``), the
+      halting precision
+
+    - ``secure`` -- a boolean (default: ``False``); if ``False``,
+      consider indistinguishable elements at the working precision
+      as equal; otherwise, raise an error.
+
+    See documentation for :func:`Zp` for a description of the other
+    input parameters.
+
+    A SHORT INTRODUCTION TO RELAXED `p`-ADICS:
+
+    The model for relaxed `p`-adics is quite different from any of the
+    other types of `p`-adics. In addition to storing a finite
+    approximation, one also stores a method for increasing the
+    precision.
+
+    Relaxed `p`-adic rings are created by the constructor :func:`ZpER`::
+
+        sage: R = ZpER(5, print_mode="digits")
+        sage: R
+        5-adic Ring handled with relaxed arithmetics
+
+    The precision is not capped in `R`::
+
+        sage: R.precision_cap()
+        +Infinity
+
+    However, a default precision is fixed. This is the precision
+    at which the elements will be printed::
+
+        sage: R.default_prec()
+        20
+
+    A default halting precision is also set. It is the default absolute
+    precision at which the elements will be compared. By default, it is
+    twice the default precision::
+
+        sage: R.halting_prec()
+        40
+
+    However, both the default precision and the halting precision can be
+    customized at the creation of the parent as follows:
+
+        sage: S = ZpER(5, prec=10, halt=100)
+        sage: S.default_prec()
+        10
+        sage: S.halting_prec()
+        100
+
+    One creates elements as usual::
+
+        sage: a = R(17/42)
+        sage: a
+        ...00244200244200244201
+
+        sage: R.random_element()  # random
+        ...21013213133412431402
+
+    Here we notice that 20 digits (that is the default precision) are printed.
+    However, the computation model is designed in order to guarantee that more
+    digits of `a` will be available on demand.
+    This feature is reflected by the fact that, when we ask for the precision
+    of `a`, the software answers `+\infty`::
+
+        sage: a.precision_absolute()
+        +Infinity
+
+    Asking for more digits is achieved by the methods :meth:`at_precision_absolute`
+    and :meth:`at_precision_relative`::
+
+        sage: a.at_precision_absolute(30)
+        ...?244200244200244200244200244201
+
+    As a shortcut, one can use the bracket operator::
+
+        sage: a[:30]
+        ...?244200244200244200244200244201
+
+    Of course, standard operations are supported::
+
+        sage: b = R(42/17)
+        sage: a + b
+        ...03232011214322140002
+        sage: a - b
+        ...42311334324023403400
+        sage: a * b
+        ...00000000000000000001
+        sage: a / b
+        ...12442142113021233401
+        sage: sqrt(a)
+        ...20042333114021142101
+
+    We observe again that only 20 digits are printed but, as before,
+    more digits are available on demand::
+
+        sage: sqrt(a)[:30]
+        ...?142443342120042333114021142101
+
+    .. RUBRIC:: Equality tests
+
+    Checking equalities between relaxed `p`-adics is a bit subtle and can
+    sometimes be puzzling at first glance.
+
+    When the parent is created with ``secure=False`` (which is the
+    default), elements are compared at the current precision, or at the
+    default halting precision if it is higher::
+
+        sage: a == b
+        False
+
+        sage: a == sqrt(a)^2
+        True
+        sage: a == sqrt(a)^2 + 5^50
+        True
+
+    In the above example, the halting precision is `40`; it is the
+    reason why a congruence modulo `5^50` is considered as an equality.
+    However, if both sides of the equalities have been previously
+    computed with more digits, those digits are taken into account.
+    Hence comparing two elements at different times can produce
+    different results::
+
+        sage: aa = sqrt(a)^2 + 5^50
+        sage: a == aa
+        True
+        sage: a[:60]
+        ...?244200244200244200244200244200244200244200244200244200244201
+        sage: aa[:60]
+        ...?244200244300244200244200244200244200244200244200244200244201
+        sage: a == aa
+        False
+
+    This annoying situation, where the output of `a == aa` may change
+    depending on previous computations, cannot occur when the parent is
+    created with ``secure=True``.
+    Indeed, in this case, if the equality cannot be decided, an error
+    is raised::
+
+        sage: S = ZpER(5, secure=True)
+        sage: u = S.random_element()
+        sage: uu = u + 5^50
+        sage: u == uu
+        Traceback (most recent call last):
+        ...
+        PrecisionError: unable to decide equality; try to bound precision
+
+        sage: u[:60] == uu
+        False
+
+    .. RUBRIC:: Self-referent numbers
+
+    A quite interesting feature with relaxed `p`-adics is the possibility to
+    create (in some cases) self-referent numbers. Here is an example.
+    We first declare a new variable as follows::
+
+        sage: x = R.unknown()
+        sage: x
+        ...?.0
+
+    We then use the method :meth:`set` to define `x` by writing down an equation
+    it satisfies::
+
+        sage: x.set(1 + 5*x^2)
+        True
+
+    The variable `x` now contains the unique solution of the equation
+    `x = 1 + 5 x^2`::
+
+        sage: x
+        ...04222412141121000211
+
+    This works because the `n`-th digit of the right hand size of the
+    defining equation only involves the `i`-th digits of `x` with `i < n`
+    (this is due to the factor `5`).
+
+    As a comparison, the following does not work::
+
+        sage: y = R.unknown()
+        sage: y.set(1 + 3*y^2)
+        True
+        sage: y
+        ...?.0
+        sage: y[:20]
+        Traceback (most recent call last):
+        ...
+        RecursionError: definition looks circular
+
+    Self-referent definitions also work with systems of equations::
+
+        sage: u = R.unknown()
+        sage: v = R.unknown()
+        sage: w = R.unknown()
+
+        sage: u.set(1 + 2*v + 3*w^2 + 5*u*v*w)
+        True
+        sage: v.set(2 + 4*w + sqrt(1 + 5*u + 10*v + 15*w))
+        True
+        sage: w.set(3 + 25*(u*v + v*w + u*w))
+        True
+
+        sage: u
+        ...31203130103131131433
+        sage: v
+        ...33441043031103114240
+        sage: w
+        ...30212422041102444403
+    """
+    return Zp(p, (prec, halt, secure), 'relaxed', *args, **kwds)
 
 
 #######################################################################################################

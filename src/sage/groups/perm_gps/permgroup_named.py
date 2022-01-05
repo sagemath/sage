@@ -1804,7 +1804,7 @@ class TransitiveGroup(PermutationGroup_unique):
             sage: TransitiveGroup(32,1)
             Traceback (most recent call last):
             ...
-            NotImplementedError: Only the transitive groups of degree at most 31 are available in GAP's database
+            NotImplementedError: only the transitive groups of degree at most 31 are available in GAP's database
 
         TESTS::
 
@@ -1894,7 +1894,7 @@ def TransitiveGroups(d=None):
         sage: TransitiveGroups(32).cardinality()
         Traceback (most recent call last):
         ...
-        NotImplementedError: Only the transitive groups of degree at most 31 are available in GAP's database
+        NotImplementedError: only the transitive groups of degree at most 31 are available in GAP's database
 
     """
     if d is None:
@@ -1920,13 +1920,10 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
 
         sage: p = L.__iter__()
         sage: (next(p), next(p), next(p), next(p), next(p), next(p), next(p), next(p))
-        (Transitive group number 1 of degree 0, Transitive group number 1 of degree 1, Transitive group number 1 of degree 2, Transitive group number 1 of degree 3, Transitive group number 2 of degree 3, Transitive group number 1 of degree 4, Transitive group number 2 of degree 4, Transitive group number 3 of degree 4)
-
-    TESTS:
-
-    The following test is broken, see :trac:`22576`::
-
-        sage: TestSuite(TransitiveGroups()).run() # known bug # long time
+        (Transitive group number 1 of degree 0, Transitive group number 1 of degree 1,
+         Transitive group number 1 of degree 2, Transitive group number 1 of degree 3,
+         Transitive group number 2 of degree 3, Transitive group number 1 of degree 4,
+         Transitive group number 2 of degree 4, Transitive group number 3 of degree 4)
     """
     def __init__(self):
         """
@@ -1935,8 +1932,12 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
             sage: S = TransitiveGroups()
             sage: S.category()
             Category of facade infinite enumerated sets
+            sage: TestSuite(TransitiveGroups()).run()
         """
         DisjointUnionEnumeratedSets.__init__(self, Family(NonNegativeIntegers(), lambda i: TransitiveGroups(i)) )
+
+    # We override the __call__ as the elements are not instances of Element
+    __call__ = DisjointUnionEnumeratedSets._element_constructor_facade
 
     def _repr_(self):
         """
@@ -1961,15 +1962,20 @@ class TransitiveGroupsAll(DisjointUnionEnumeratedSets):
         return isinstance(G,TransitiveGroup)
 
 class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
-    """
-    The set of all transitive groups of a given (small) degree up to isomorphisms.
+    r"""
+    The set of all transitive groups of a given (small) degree up
+    to isomorphism.
 
     EXAMPLES::
 
         sage: S = TransitiveGroups(4); S
         Transitive Groups of degree 4
         sage: list(S)
-        [Transitive group number 1 of degree 4, Transitive group number 2 of degree 4, Transitive group number 3 of degree 4, Transitive group number 4 of degree 4, Transitive group number 5 of degree 4]
+        [Transitive group number 1 of degree 4,
+         Transitive group number 2 of degree 4,
+         Transitive group number 3 of degree 4,
+         Transitive group number 4 of degree 4,
+         Transitive group number 5 of degree 4]
 
         sage: TransitiveGroups(5).an_element()
         Transitive group number 1 of degree 5
@@ -1987,8 +1993,6 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
     TESTS::
 
         sage: TestSuite(TransitiveGroups(3)).run()
-
-
     """
     def __init__(self, n):
         """
@@ -1999,7 +2003,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
             Category of finite enumerated sets
         """
         self._degree = n
-        Parent.__init__(self, category = FiniteEnumeratedSets())
+        Parent.__init__(self, category=FiniteEnumeratedSets())
 
     def _repr_(self):
         """
@@ -2008,7 +2012,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: TransitiveGroups(6)
             Transitive Groups of degree 6
         """
-        return "Transitive Groups of degree %s"%(self._degree)
+        return "Transitive Groups of degree %s" % (self._degree,)
 
     def __contains__(self, G):
         r"""
@@ -2021,27 +2025,24 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: 1 in TransitiveGroups(4)
             False
         """
-        if isinstance(G,TransitiveGroup):
-            return G._d == self._degree
-        else:
-            False
+        return isinstance(G, TransitiveGroup) and G._d == self._degree
 
     def __getitem__(self, n):
         r"""
+        Return the `n`-th transitive group of a given degree.
+
         INPUT:
 
         - ``n`` -- a positive integer
-
-        Returns the `n`-th transitive group of a given degree.
 
         EXAMPLES::
 
             sage: TransitiveGroups(5)[3]
             Transitive group number 3 of degree 5
 
-        .. warning::
+        .. WARNING::
 
-            this follows GAP's naming convention of indexing
+            This follows GAP's naming convention of indexing
             the transitive groups starting from ``1``::
 
                 sage: TransitiveGroups(5)[0]
@@ -2056,15 +2057,46 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         EXAMPLES::
 
             sage: list(TransitiveGroups(5)) # indirect doctest
-            [Transitive group number 1 of degree 5, Transitive group number 2 of degree 5, Transitive group number 3 of degree 5, Transitive group number 4 of degree 5, Transitive group number 5 of degree 5]
+            [Transitive group number 1 of degree 5,
+             Transitive group number 2 of degree 5,
+             Transitive group number 3 of degree 5,
+             Transitive group number 4 of degree 5,
+             Transitive group number 5 of degree 5]
         """
         for n in range(1, self.cardinality() + 1):
             yield self[n]
 
+    def __call__(self, G):
+        r"""
+        Convert ``G`` to an element of ``self`` if possible.
+
+        We override ``Parent.__call__`` as this is not a proper parent.
+
+        EXAMPLES::
+
+            sage: T2 = TransitiveGroups(2)
+            sage: all(T2(H) is H for H in T2)
+            True
+
+            sage: T2(SymmetricGroup(2))
+            Transitive group number 1 of degree 2
+
+            sage: T2(SymmetricGroup(3))
+            Traceback (most recent call last):
+            ...
+            ValueError: Symmetric group of order 3! as a permutation group is not a transitive group of degree 2
+        """
+        if G in self:
+            return G
+        for H in self:
+            if H.is_isomorphic(G):
+                return H
+        raise ValueError("{} is not a transitive group of degree {}".format(G, self._degree))
+
     @cached_method
     def cardinality(self):
         r"""
-        Returns the cardinality of ``self``, that is the number of
+        Return the cardinality of ``self``, that is the number of
         transitive groups of a given degree.
 
         EXAMPLES::
@@ -2080,7 +2112,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: [TransitiveGroups(i).cardinality() for i in range(11)]
             [1, 1, 1, 2, 5, 5, 16, 7, 50, 34, 45]
 
-        .. warning::
+        .. WARNING::
 
             GAP comes with a database containing all transitive groups
             up to degree 31::
@@ -2088,7 +2120,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
                 sage: TransitiveGroups(32).cardinality()
                 Traceback (most recent call last):
                 ...
-                NotImplementedError: Only the transitive groups of degree at most 31 are available in GAP's database
+                NotImplementedError: only the transitive groups of degree at most 31 are available in GAP's database
 
         TESTS::
 
@@ -2110,7 +2142,7 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
                 from sage.misc.verbose import verbose
                 verbose("Error: TransitiveGroups should come with GAP.", level=0)
             except TypeError:
-                raise NotImplementedError("Only the transitive groups of degree at most 31 are available in GAP's database")
+                raise NotImplementedError("only the transitive groups of degree at most 31 are available in GAP's database")
 
 class PrimitiveGroup(PermutationGroup_unique):
     """
@@ -2153,11 +2185,10 @@ class PrimitiveGroup(PermutationGroup_unique):
     Only primitive groups of "small" degree are available in GAP's
     database::
 
-        sage: PrimitiveGroup(2500,1)
+        sage: PrimitiveGroup(2^12,1)
         Traceback (most recent call last):
         ...
-        NotImplementedError: Only the primitive groups of degree less
-        than 2500 are available in GAP's database
+        GAPError: Error, Primitive groups of degree 4096 are not known!
     """
 
     def __init__(self, d, n):
@@ -2252,14 +2283,12 @@ def PrimitiveGroups(d=None):
         sage: PrimitiveGroups()
         Primitive Groups
 
-    The database currently only contains primitive groups up to degree
-    2499::
+    The database is currently limited::
 
-         sage: PrimitiveGroups(2500).cardinality()
+         sage: PrimitiveGroups(2^12).cardinality()
          Traceback (most recent call last):
          ...
-         NotImplementedError: Only the primitive groups of degree less
-         than 2500 are available in GAP's database
+         GAPError: Error, Primitive groups of degree 4096 are not known!
 
     .. TODO::
 
@@ -2423,10 +2452,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: 1 in PrimitiveGroups(4)
             False
         """
-        if isinstance(G,PrimitiveGroup):
-            return G._d == self._degree
-        else:
-            False
+        return isinstance(G, PrimitiveGroup) and G._d == self._degree
 
     def __getitem__(self, n):
         r"""
@@ -2486,35 +2512,29 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: [PrimitiveGroups(i).cardinality() for i in range(11)]
             [1, 1, 1, 2, 2, 5, 4, 7, 7, 11, 9]
 
-        GAP contains all primitive groups up to degree 2499::
-
-            sage: PrimitiveGroups(2500).cardinality()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Only the primitive groups of degree less than
-            2500 are available in GAP's database
-
         TESTS::
 
             sage: type(PrimitiveGroups(12).cardinality())
             <type 'sage.rings.integer.Integer'>
             sage: type(PrimitiveGroups(0).cardinality())
             <type 'sage.rings.integer.Integer'>
-        """
-        # gap.NrPrimitiveGroups(0) fails, so Sage needs to handle this
-        # While we are at it, and since Sage also handles the
-        # primitive group of degree 1, we may as well handle 1
-        if self._degree <= 1:
-            return Integer(1)
-        elif self._degree >= 2500:
-            raise NotImplementedError("Only the primitive groups of degree less than 2500 are available in GAP's database")
-        else:
-            try:
-                return Integer(libgap.NrPrimitiveGroups(self._degree))
-            except RuntimeError:
-                from sage.misc.verbose import verbose
-                verbose("Error: PrimitiveGroups should be in GAP already.", level=0)
 
+        Check for :trac:`31774`::
+
+            sage: PrimitiveGroups(2500).cardinality()
+            34
+            sage: PrimitiveGroups(2^12).cardinality()
+            Traceback (most recent call last):
+            ...
+            GAPError: Error, Primitive groups of degree 4096 are not known!
+        """
+        if self._degree <= 1:
+            # gap.NrPrimitiveGroups(0) fails, so Sage needs to handle this
+            # While we are at it, and since Sage also handles the
+            # primitive group of degree 1, we may as well handle 1
+            return Integer(1)
+        else:
+            return Integer(libgap.NrPrimitiveGroups(self._degree))
 
 class PermutationGroup_plg(PermutationGroup_unique):
     def base_ring(self):

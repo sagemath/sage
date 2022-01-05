@@ -1664,7 +1664,8 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
             a4 = 4*a
             s = D + a*a4
             w = 1+(s-1).isqrt() if s > 0 else 0
-            if w%2 != D%2: w += 1
+            if w%2 != D%2:
+                w += 1
             for b in xsrange(w, a+1, 2):
                 t = b*b-D
                 if t % a4 == 0:

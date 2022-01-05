@@ -1190,7 +1190,7 @@ cdef bint py_is_real(a):
             return False
     except NotImplementedError:
         return False
-    except AttributeError:
+    except (TypeError, AttributeError):
         pass
     return py_imag(a) == 0
 
@@ -2427,6 +2427,11 @@ def init_pynac_I():
         False
         sage: bool(z == y)
         True
+
+    Check that :trac:`31869` is fixed::
+
+        sage: x * ((3*I + 4)*x - 5)
+        ((3*I + 4)*x - 5)*x
     """
     global pynac_I, I
     from sage.rings.number_field.number_field import GaussianField

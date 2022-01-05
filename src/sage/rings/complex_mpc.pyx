@@ -89,10 +89,6 @@ from sage.misc.superseded import deprecated_function_alias
 cimport gmpy2
 gmpy2.import_gmpy2()
 
-NumberFieldElement_quadratic = None
-AlgebraicNumber_base = None
-AlgebraicNumber = None
-AlgebraicReal = None
 AA = None
 QQbar = None
 CDF = CLF = RLF = None
@@ -105,19 +101,10 @@ def late_import():
 
         sage: sage.rings.complex_mpc.late_import()
     """
-    global NumberFieldElement_quadratic
-    global AlgebraicNumber_base
-    global AlgebraicNumber
-    global AlgebraicReal
     global AA, QQbar
     global CLF, RLF, CDF
-    if NumberFieldElement_quadratic is None:
-        import sage.rings.number_field.number_field_element_quadratic as nfeq
-        NumberFieldElement_quadratic = nfeq.NumberFieldElement_quadratic
+    if AA is None:
         import sage.rings.qqbar
-        AlgebraicNumber_base = sage.rings.qqbar.AlgebraicNumber_base
-        AlgebraicNumber = sage.rings.qqbar.AlgebraicNumber
-        AlgebraicReal = sage.rings.qqbar.AlgebraicReal
         AA = sage.rings.qqbar.AA
         QQbar = sage.rings.qqbar.QQbar
         from .real_lazy import CLF, RLF

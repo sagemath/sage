@@ -357,7 +357,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: cf4(one)
             1
             sage: type(cf4(1))
-            <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic'>
+            <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
             sage: cf33 = CyclotomicField(33) ; z33 = cf33.0
             sage: cf66 = CyclotomicField(66) ; z66 = cf66.0
             sage: z33._lift_cyclotomic_element(cf66)
@@ -756,11 +756,11 @@ cdef class NumberFieldElement(FieldElement):
         return repr(self.__pari__(name=name))
 
     def __getitem__(self, n):
-        """
-        Return the n-th coefficient of this number field element, written
+        r"""
+        Return the ``n``-th coefficient of this number field element, written
         as a polynomial in the generator.
 
-        Note that `n` must be between 0 and `d-1`, where
+        Note that ``n`` must be between `0` and `d-1`, where
         `d` is the degree of the number field.
 
         EXAMPLES::
@@ -780,11 +780,11 @@ cdef class NumberFieldElement(FieldElement):
             sage: c[-1]
             Traceback (most recent call last):
             ...
-            IndexError: index must be between 0 and degree minus 1.
+            IndexError: index must be between 0 and degree minus 1
             sage: c[4]
             Traceback (most recent call last):
             ...
-            IndexError: index must be between 0 and degree minus 1.
+            IndexError: index must be between 0 and degree minus 1
 
         The list method implicitly calls ``__getitem__``::
 
@@ -794,8 +794,11 @@ cdef class NumberFieldElement(FieldElement):
             True
         """
         if n < 0 or n >= self.number_field().degree():     # make this faster.
-            raise IndexError("index must be between 0 and degree minus 1.")
-        return self.polynomial()[n]
+            raise IndexError("index must be between 0 and degree minus 1")
+        cdef list coeffs = self._coefficients()
+        if n >= len(coeffs):
+            return QQ.zero()
+        return coeffs[n]
 
     cpdef _richcmp_(left, right, int op):
         r"""
@@ -1632,7 +1635,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: Q.<X> = K[]
             sage: L.<b> = NumberField(X^4 + a)
             sage: t = (-a).is_norm(L, element=True); t
-            (True, b^3 + 1)
+            (True, -b^3 - 1)
             sage: t[1].norm(K)
             -a
 
@@ -1747,11 +1750,11 @@ cdef class NumberFieldElement(FieldElement):
             sage: Q.<X> = K[]
             sage: L.<b> = NumberField(X^4 + a)
             sage: t = (-a)._rnfisnorm(L); t
-            (b^3 + 1, 1)
+            (-b^3 - 1, 1)
             sage: t[0].norm(K)
             -a
             sage: t = K(3)._rnfisnorm(L); t
-            (-b^3 - a*b^2 - a^2*b + 1, 3*a^2 - 3*a + 6)
+            (b^3 + a*b^2 + a^2*b - 1, 3*a^2 - 3*a + 6)
             sage: t[0].norm(K)*t[1]
             3
 
@@ -2494,9 +2497,9 @@ cdef class NumberFieldElement(FieldElement):
         x._reduce_c_()
         return x
 
-        #NOTES: In LiDIA, they build a multiplication table for the
-        #number field, so it's not necessary to reduce modulo the
-        #defining polynomial every time:
+        # NOTE: In LiDIA, they build a multiplication table for the
+        # number field, so it's not necessary to reduce modulo the
+        # defining polynomial every time:
         #     src/number_fields/algebraic_num/order.cc: compute_table
         # but asymptotically fast poly multiplication means it's
         # actually faster to *not* build a table!?!
@@ -4492,7 +4495,7 @@ cdef class NumberFieldElement(FieldElement):
 
         This means the different with respect to the base field `\QQ`.
 
-        EXAMPLE::
+        EXAMPLES::
 
             sage: K.<a> = NumberFieldTower([x^2 - 17, x^3 - 2])
             sage: a.absolute_different()
@@ -4503,6 +4506,7 @@ cdef class NumberFieldElement(FieldElement):
             :meth:`different`
         """
         return self.different(K=QQ)
+
 
 cdef class NumberFieldElement_absolute(NumberFieldElement):
 
@@ -5524,5 +5528,3 @@ cdef void _ntl_poly(f, ZZX_c *num, ZZ_c *den):
     for i from 0 <= i <= __num.degree():
         mpz_to_ZZ(&coeff, (<Integer>ZZ(__num[i])).value)
         ZZX_SetCoeff( num[0], i, coeff )
-
-
