@@ -97,9 +97,9 @@ class Trivialization(UniqueRepresentation, SageObject):
          the Open subset W of the 2-dimensional topological manifold S^2 with
          values in the real vector bundle E of rank 2
         sage: aut.display(fU.restrict(W))
-        phi_U^(-1)*phi_V = (phi_U^*e_1)*(phi_U^*e^2) + (phi_U^*e_2)*(phi_U^*e^1)
+        phi_U^(-1)*phi_V = (phi_U^*e_1)⊗(phi_U^*e^2) + (phi_U^*e_2)⊗(phi_U^*e^1)
         sage: aut.display(fV.restrict(W))
-        phi_U^(-1)*phi_V = (phi_V^*e_1)*(phi_V^*e^2) + (phi_V^*e_2)*(phi_V^*e^1)
+        phi_U^(-1)*phi_V = (phi_V^*e_1)⊗(phi_V^*e^2) + (phi_V^*e_2)⊗(phi_V^*e^1)
 
     The automorphisms are listed in the frame changes of the vector bundle::
 
@@ -551,8 +551,8 @@ class TransitionMap(SageObject):
              sections on the Open subset W of the 2-dimensional topological
              manifold S^2 with values in the real vector bundle E of rank 2
             sage: aut.display(phi_U.frame().restrict(W))
-            phi_U^(-1)*phi_V = (phi_U^*e_1)*(phi_U^*e^2) +
-             (phi_U^*e_2)*(phi_U^*e^1)
+            phi_U^(-1)*phi_V = (phi_U^*e_1)⊗(phi_U^*e^2) +
+             (phi_U^*e_2)⊗(phi_U^*e^1)
 
         """
         return self._automorphism
@@ -621,9 +621,9 @@ class TransitionMap(SageObject):
             Scalar field det(phi_U^(-1)*phi_V) on the Open subset W of the
              2-dimensional topological manifold S^2
             sage: det.display()
-            det(phi_U^(-1)*phi_V): W --> R
-                 (x, y) |--> -1
-                 (u, v) |--> -1
+            det(phi_U^(-1)*phi_V): W → ℝ
+                 (x, y) ↦ -1
+                 (u, v) ↦ -1
 
         """
         aut = self._automorphism
@@ -674,21 +674,21 @@ class TransitionMap(SageObject):
         Let us check the matrix components::
 
             sage: matrix[0,0].display()
-            zero: W --> R
-                (x, y) |--> 0
-                (u, v) |--> 0
+            zero: W → ℝ
+                (x, y) ↦ 0
+                (u, v) ↦ 0
             sage: matrix[0,1].display()
-            1: W --> R
-             (x, y) |--> 1
-             (u, v) |--> 1
+            1: W → ℝ
+             (x, y) ↦ 1
+             (u, v) ↦ 1
             sage: matrix[1,0].display()
-            1: W --> R
-             (x, y) |--> 1
-             (u, v) |--> 1
+            1: W → ℝ
+             (x, y) ↦ 1
+             (u, v) ↦ 1
             sage: matrix[1,1].display()
-            zero: W --> R
-                (x, y) |--> 0
-                (u, v) |--> 0
+            zero: W → ℝ
+                (x, y) ↦ 0
+                (u, v) ↦ 0
 
         """
         return self._automorphism.matrix(self._frame1)

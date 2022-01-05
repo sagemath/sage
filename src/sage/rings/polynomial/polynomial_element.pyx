@@ -1347,6 +1347,11 @@ cdef class Polynomial(CommutativeAlgebraElement):
             Traceback (most recent call last):
             ...
             TypeError: cannot convert nonconstant polynomial
+
+            sage: x = polygen(QQ)
+            sage: A.<u> = NumberField(x^3 - 2)
+            sage: A(A['x'](u))
+            u
         """
         if self.degree() > 0:
             raise TypeError("cannot convert nonconstant polynomial")
@@ -4880,7 +4885,24 @@ cdef class Polynomial(CommutativeAlgebraElement):
         """
         Let f and g be two polynomials. Then this function returns the
         monic least common multiple of f and g.
+
+        TESTS:
+
+        Check that :trac:`32033` has been fixed::
+
+            sage: R.<t> = GF(3)[]
+            sage: lcm(R(0), R(0))
+            0
+
+        ::
+
+            sage: R.<t> = RR[]
+            sage: lcm(R(0), R(0))
+            0
         """
+        if self.is_zero() or other.is_zero():
+            P = self.parent()
+            return P.zero()
         f = self*other
         g = self.gcd(other)
         q = f//g
@@ -4891,6 +4913,9 @@ cdef class Polynomial(CommutativeAlgebraElement):
         Let f and g be two polynomials. Then this function returns the
         monic least common multiple of f and g.
         """
+        if self.is_zero() or other.is_zero():
+            P = self.parent()
+            return P.zero()
         f = self*other
         g = self.gcd(other)
         q = f//g
@@ -6352,6 +6377,26 @@ cdef class Polynomial(CommutativeAlgebraElement):
         from sage.libs.gap.libgap import libgap
         return self._gap_(libgap)
 
+    def _giac_init_(self):
+        r"""
+        Return a Giac string representation of this polynomial.
+
+        TESTS::
+
+            sage: R.<x> = GF(101)['e,i'][]
+            sage: f = R('e*i') * x + x^2
+            sage: f._giac_init_()
+            '((1)*1)*sageVARx^2+((1)*sageVARe*sageVARi)*sageVARx'
+            sage: giac(f)
+            sageVARx^2+sageVARe*sageVARi*sageVARx
+            sage: giac(R.zero())
+            0
+        """
+        g = 'sageVAR' + self.variable_name()
+        s = '+'.join('(%s)*%s' % (self.monomial_coefficient(m)._giac_init_(),
+                                  m._repr(g)) for m in self.monomials())
+        return s if s else '0'
+
     ######################################################################
 
     @coerce_binop
@@ -7619,7 +7664,7 @@ cdef class Polynomial(CommutativeAlgebraElement):
             [(-3.5074662110434039?e451, 1)]
             sage: p = bigc*x + 1
             sage: p.roots(ring=RR)
-            [(0.000000000000000, 1)]
+            [(-2.85106096489671e-452, 1)]
             sage: p.roots(ring=AA)
             [(-2.8510609648967059?e-452, 1)]
             sage: p.roots(ring=QQbar)
@@ -7830,10 +7875,16 @@ cdef class Polynomial(CommutativeAlgebraElement):
             [(a + O(3^20), 1),
              (2*a + 2*a*3 + 2*a*3^2 + 2*a*3^3 + 2*a*3^4 + 2*a*3^5 + 2*a*3^6 + 2*a*3^7 + 2*a*3^8 + 2*a*3^9 + 2*a*3^10 + 2*a*3^11 + 2*a*3^12 + 2*a*3^13 + 2*a*3^14 + 2*a*3^15 + 2*a*3^16 + 2*a*3^17 + 2*a*3^18 + 2*a*3^19 + O(3^20),
               1)]
+
+        Check that :trac:`31710` is fixed::
+
+            sage: CBF['x'].zero().roots(multiplicities=False)
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: taking the roots of the zero polynomial
         """
         from sage.rings.finite_rings.finite_field_constructor import GF
         K = self._parent.base_ring()
-
 
         # If the base ring has a method _roots_univariate_polynomial,
         # try to use it. An exception is raised if the method does not

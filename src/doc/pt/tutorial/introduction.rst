@@ -11,9 +11,9 @@ Embora grande parte do Sage seja implementado em Python, nenhum
 conhecimento de Python é necessário para a leitura deste tutorial.
 Você vai querer aprender Python (uma linguagem muito divertida!) em
 algum momento, e existem diversas opções gratuitas disponíveis para
-isso, entre elas [PyT]_ e [Dive]_ (em inglês). Se você quiser
-experimentar o Sage rapidamente, este tutorial é o lugar certo para
-começar. Por exemplo:
+isso, Guia do Iniciante em Python [PyB]_ (em inglês) lista muitas opções.
+Se você quiser experimentar o Sage rapidamente, este tutorial é o lugar
+certo para começar. Por exemplo:
 
 ::
 

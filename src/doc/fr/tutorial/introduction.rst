@@ -11,8 +11,9 @@ vous tombiez sur la version en anglais).
 Sage est écrit en grande partie en Python, mais aucune connaissance de
 Python n'est nécessaire pour lire ce tutoriel. Par la suite, vous
 souhaiterez sans doute apprendre Python, et il existe pour cela de
-nombreuses ressources libres d'excellente qualité, dont [PyT]_ et
-[Dive]_. Mais si ce que vous voulez est découvrir rapidement Sage, ce
+nombreuses ressources libres d'excellente qualité: le Python Beginner's Guide
+[PyB]_ répertorie de nombreuses options.
+Mais si ce que vous voulez est découvrir rapidement Sage, ce
 tutoriel est le bon endroit où commencer. Voici quelques exemples :
 
 ::

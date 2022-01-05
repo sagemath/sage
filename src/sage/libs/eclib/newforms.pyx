@@ -140,6 +140,7 @@ cdef class ECModularSymbol:
 
         - ``nap`` - (int, default 1000): the number of ap of E to use
          in determining the normalisation of the modular symbols.
+         Note that eclib will increase this to 100*sqrt(N) if necessary.
 
         EXAMPLES::
 

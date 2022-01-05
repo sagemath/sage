@@ -19,30 +19,23 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from libc.float cimport DBL_MAX
+from libc.limits cimport INT_MAX
 from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
 
 from sage.cpython.string cimport char_to_str, str_to_bytes
 from sage.cpython.string import FS_ENCODING
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.numerical.mip import MIPSolverException
 from sage.libs.glpk.constants cimport *
 from sage.libs.glpk.lp cimport *
-from libc.float cimport DBL_MAX
-from libc.limits cimport INT_MAX
 
 
 cdef class GLPKBackend(GenericBackend):
 
     """
     MIP Backend that uses the GLPK solver.
-
-    TESTS:
-
-    General backend testsuite::
-
-        sage: p = MixedIntegerLinearProgram(solver="GLPK")
-        sage: TestSuite(p.get_backend()).run(skip="_test_pickling")
     """
 
     def __cinit__(self, maximization = True):
@@ -2797,7 +2790,7 @@ cdef class GLPKBackend(GenericBackend):
             raise ValueError("The variable's index j must satisfy 0 <= j < number_of_variables")
 
         glp_set_col_stat(self.lp, j+1, stat)
- 
+
     cpdef int warm_up(self):
         r"""
         Warm up the basis using current statuses assigned to rows and cols.
@@ -2807,7 +2800,7 @@ cdef class GLPKBackend(GenericBackend):
         - Returns the warming up status
 
             * 0             The operation has been successfully performed.
-            * GLP_EBADB     The basis matrix is invalid. 
+            * GLP_EBADB     The basis matrix is invalid.
             * GLP_ESING     The basis matrix is singular within the working precision.
             * GLP_ECOND     The basis matrix is ill-conditioned.
 

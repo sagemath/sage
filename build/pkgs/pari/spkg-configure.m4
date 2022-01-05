@@ -1,6 +1,6 @@
 SAGE_SPKG_CONFIGURE([pari], [
   dnl See gp_version below on how the version is computed from MAJV.MINV.PATCHV
-  m4_pushdef([SAGE_PARI_MINVER],["133889"])
+  m4_pushdef([SAGE_PARI_MINVER],["134401"])
   SAGE_SPKG_DEPCHECK([gmp mpir readline], [
     AC_PATH_PROG([GP], [gp])
     if test x$GP = x; then dnl GP test
@@ -66,33 +66,11 @@ SAGE_SPKG_CONFIGURE([pari], [
             AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
             sage_spkg_install_pari=yes
         fi
-        AC_MSG_CHECKING([whether hyperellcharpoly bug is fixed])
-        bug_check=`echo "hyperellcharpoly(Mod(1,3)*(x^10 + x^9 + x^8 + x))" | $GP -qf 2>> config.log`
-        expected="x^8 + 2*x^7 + 6*x^6 + 9*x^5 + 18*x^4 + 27*x^3 + 54*x^2 + 54*x + 81"
+        AC_MSG_CHECKING([whether rnfdisc bug of pari 2.13.1 is fixed])
+        bug_check=`echo "K = nfinit(y^4-10*y^2+1); disc = rnfdisc(K,x^2-(y^3/2+y^2-5*y/2+1)); idealnorm(K,disc)" | $GP -qf 2>> config.log`
+        expected="2304"
         if test x"$bug_check" = x"$expected"; then
-           AC_MSG_RESULT([yes])
-        else
-           AC_MSG_RESULT([no; cannot use system pari/GP with known bug])
-           AC_MSG_NOTICE([Upgrade your system package and reconfigure.])
-           AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
-           sage_spkg_install_pari=yes
-        fi
-        AC_MSG_CHECKING([whether bnfisunit bug of pari 2.11.3 is fixed])
-        bug_check=`echo "bnf = bnfinit(y^4-y-1); bnfisunit(bnf,-y^3+2*y^2-1)" | $GP -qf 2>> config.log`
-        expected="[[0, 2, Mod(0, 2)]]~"
-        if test x"$bug_check" = x"$expected"; then
-           AC_MSG_RESULT([yes])
-        else
-           AC_MSG_RESULT([no; cannot use system pari/GP with known bug])
-           AC_MSG_NOTICE([Upgrade your system package and reconfigure.])
-           AC_MSG_NOTICE([Otherwise Sage will build its own pari/GP.])
-           sage_spkg_install_pari=yes
-        fi
-        AC_MSG_CHECKING([whether qfisom bug of pari 2.11.2 is fixed])
-        bug_check=`echo "qfisom([[16,6;6,10]],[[4,3;3,10]])" | $GP -qf 2>> config.log`
-        expected="0"
-        if test x"$bug_check" = x"$expected"; then
-           AC_MSG_RESULT([yes])
+          AC_MSG_RESULT([yes])
         else
            AC_MSG_RESULT([no; cannot use system pari/GP with known bug])
            AC_MSG_NOTICE([Upgrade your system package and reconfigure.])
@@ -119,7 +97,8 @@ SAGE_SPKG_CONFIGURE([pari], [
                   [return vers!=$gp_version;]])],
                 [AC_MSG_RESULT([libpari's and GP's versions match. Good])],
 	        [AC_MSG_RESULT([libpari's version does not match GP's version. Not good])
-		         sage_spkg_install_pari=yes])
+		         sage_spkg_install_pari=yes],
+                 [AC_MSG_RESULT([cross compiling. Assume they match])])
               AC_MSG_CHECKING([is GP's version good enough? ])
               AX_COMPARE_VERSION([$gp_version], [ge], [$SAGE_PARI_MINVER], [
                   AC_MSG_RESULT([yes])
@@ -142,13 +121,15 @@ SAGE_SPKG_CONFIGURE([pari], [
                         [[return strcmp(PARI_MT_ENGINE, "pthread") != 0]])],
                        [AC_MSG_RESULT([yes. Good])],
                        [AC_MSG_RESULT([no. Not good])
-                        sage_spkg_install_pari=yes])
+                        sage_spkg_install_pari=yes],
+                       [AC_MSG_RESULT([cross compiling. Assume yes])])
                     ],
                     [AC_MSG_RESULT([libpari's datadir does not match GP's datadir. Not good])
-                     sage_spkg_install_pari=yes])
+                    sage_spkg_install_pari=yes],
+                    [AC_MSG_RESULT([cross compiling. Assume yes])])
                  ], [
                   AC_MSG_RESULT([no])
-                  sage_spkg_install_pari=yes])
+                  sage_spkg_install_pari=yes], [AC_MSG_RESULT([cross compiling. Assume yes])])
               AC_LANG_POP()
         ], [sage_spkg_install_pari=yes])
       fi dnl end main PARI test

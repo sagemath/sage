@@ -692,6 +692,26 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
     """
     TESTS:
 
+    Test operations on quaternions over a base ring that is not a field::
+
+        sage: A.<t> = LaurentPolynomialRing(GF(3))
+        sage: B = QuaternionAlgebra(A, -1, t)
+        sage: i, j, k = B.gens()
+        sage: i*j
+        k
+        sage: (j + k).reduced_norm()
+        t
+
+    Inverting an element is currently only possible if its reduced
+    norm is a unit::
+
+        sage: ~k
+        (t^-1)*k
+        sage: ~(i + j)
+        Traceback (most recent call last):
+        ...
+        TypeError: unsupported operand parent(s) for *: 'Fraction Field of Univariate Polynomial Ring in t over Finite Field of size 3' and 'Quaternion Algebra (2, t) with base ring Univariate Laurent Polynomial Ring in t over Finite Field of size 3'
+
     We test pickling::
 
         sage: R.<x> = Frac(QQ['x']); Q.<i,j,k> = QuaternionAlgebra(R,-5*x,-2)
@@ -701,7 +721,7 @@ cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
     """
     def __init__(self, parent, v, bint check=True):
         """
-        Create a quaternion over some general base field.
+        Create a quaternion over a general base ring.
 
         EXAMPLES::
 

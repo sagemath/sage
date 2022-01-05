@@ -1,0 +1,3 @@
+# Until https://trac.sagemath.org/ticket/29413 is done, we cannot use homebrew's cddlib,
+# which already uses the new upstream include header locations.
+#cddlib

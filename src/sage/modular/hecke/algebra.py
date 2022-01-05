@@ -402,16 +402,20 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
         EXAMPLES::
 
             sage: ModularSymbols(Gamma1(3), 3).hecke_algebra().basis()
-            (Hecke operator on Modular Symbols space of dimension 2 for Gamma_1(3) of weight 3 with sign 0 and over Rational Field defined by:
+            (Hecke operator on Modular Symbols space of dimension 2 for Gamma_1(3) of weight 3 with sign 0 over Rational Field defined by:
             [1 0]
             [0 1],
-            Hecke operator on Modular Symbols space of dimension 2 for Gamma_1(3) of weight 3 with sign 0 and over Rational Field defined by:
+            Hecke operator on Modular Symbols space of dimension 2 for Gamma_1(3) of weight 3 with sign 0 over Rational Field defined by:
             [0 0]
             [0 2])
 
             sage: M = ModularSymbols(Gamma0(22), sign=1)
-            sage: [B[0,0] for B in M.hecke_algebra().basis()]
-            [-955, -994, -706, -490, -1070]
+            sage: H = M.hecke_algebra()
+            sage: B = H.basis()
+            sage: len(B)
+            5
+            sage: all(b in H for b in B)
+            True
             sage: [B[0, 0] for B in M.anemic_hecke_algebra().basis()]
             Traceback (most recent call last):
             ...
@@ -554,7 +558,7 @@ class HeckeAlgebra_base(CachedRepresentation, sage.rings.commutative_algebra.Com
 
             sage: T = ModularSymbols(Gamma1(7), 4).hecke_algebra()
             sage: T.diamond_bracket_operator(3)
-            Diamond bracket operator <3> on Modular Symbols space of dimension 12 for Gamma_1(7) of weight 4 with sign 0 and over Rational Field
+            Diamond bracket operator <3> on Modular Symbols space of dimension 12 for Gamma_1(7) of weight 4 with sign 0 over Rational Field
         """
         return self.__M._diamond_operator_class()(self, d)
 
@@ -662,7 +666,7 @@ class HeckeAlgebra_anemic(HeckeAlgebra_base):
 
             sage: T = ModularSymbols(Gamma1(5),3).anemic_hecke_algebra()
             sage: T.hecke_operator(2)
-            Hecke operator T_2 on Modular Symbols space of dimension 4 for Gamma_1(5) of weight 3 with sign 0 and over Rational Field
+            Hecke operator T_2 on Modular Symbols space of dimension 4 for Gamma_1(5) of weight 3 with sign 0 over Rational Field
             sage: T.hecke_operator(5)
             Traceback (most recent call last):
             ...

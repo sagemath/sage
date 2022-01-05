@@ -461,7 +461,7 @@ Quand quelque chose ne marche pas, cela se manifeste habituellement par
 une « exception » Python. Python essaie de plus de donner une idée de ce
 qui a pu déclencher l'exception. Bien souvent, il affiche le nom de
 l'exception (par exemple ``NameError`` ou ``ValueError``, voir le manuel
-de référence de Python [Py]_ pour une liste complète). Par exemple :
+de référence de la bibliothèque de Python [PyLR]_ pour une liste complète). Par exemple :
 
 .. skip
 

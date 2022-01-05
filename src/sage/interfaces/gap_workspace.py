@@ -16,7 +16,7 @@ Support for (lib)GAP workspace files
 import os
 import time
 import hashlib
-from sage.env import DOT_SAGE, SAGE_LOCAL
+from sage.env import DOT_SAGE, GAP_SO
 
 
 def gap_workspace_file(system="gap", name="workspace", dir=None):
@@ -59,7 +59,10 @@ def gap_workspace_file(system="gap", name="workspace", dir=None):
     if dir is None:
         dir = os.path.join(DOT_SAGE, 'gap')
 
-    h = hashlib.sha1(SAGE_LOCAL.encode('utf-8')).hexdigest()
+    if GAP_SO:
+        h = hashlib.sha1(GAP_SO.encode('utf-8')).hexdigest()
+    else:
+        h = 'unknown'
     return os.path.join(dir, '%s-%s-%s' % (system, name, h))
 
 

@@ -21,7 +21,7 @@ Sage example in ./sol/lp.tex, line 28::
   sage: p.add_constraint(p.sum([ b[v] for v in l ]) >= 1)
   sage: p.solve()
   0.0
-  sage: b = p.get_values(b)
+  sage: b = p.get_values(b, convert=ZZ, tolerance=1e-3)
   sage: len([v for v in b if b[v] == 1])
   5
   sage: sum([v for v in b if b[v] == 1])
@@ -38,7 +38,7 @@ Sage example in ./sol/lp.tex, line 64::
   sage: p.set_objective( p.sum([ b[v] for v in g ]) )
   sage: p.solve()
   3.0
-  sage: b = p.get_values(b)
+  sage: b = p.get_values(b, convert=ZZ, tolerance=1e-3)
   sage: dom = [v for v in b if b[v] == 1]
   sage: len(dom)
   3

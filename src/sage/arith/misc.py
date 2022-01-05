@@ -328,16 +328,16 @@ def bernoulli(n, algorithm='default', num_threads=1):
 
     TESTS::
 
-        sage: algs = ['arb','gap','gp','pari','bernmm','flint']
+        sage: algs = ['arb', 'gap', 'gp', 'pari', 'bernmm', 'flint']
         sage: test_list = [ZZ.random_element(2, 2255) for _ in range(500)]
-        sage: vals = [[bernoulli(i,algorithm = j) for j in algs] for i in test_list]  # long time (up to 21s on sage.math, 2011)
-        sage: union([len(union(x))==1 for x in vals])  # long time (depends on previous line)
-        [True]
-        sage: algs = ['gp','pari','bernmm']
+        sage: vals = [[bernoulli(i, algorithm=j) for j in algs] for i in test_list]  # long time (up to 21s on sage.math, 2011)
+        sage: all(len(set(x))==1 for x in vals)  # long time (depends on previous line)
+        True
+        sage: algs = ['gp', 'pari', 'bernmm']
         sage: test_list = [ZZ.random_element(2256, 5000) for _ in range(500)]
-        sage: vals = [[bernoulli(i,algorithm = j) for j in algs] for i in test_list]  # long time (up to 30s on sage.math, 2011)
-        sage: union([len(union(x))==1 for x in vals])  # long time (depends on previous line)
-        [True]
+        sage: vals = [[bernoulli(i, algorithm=j) for j in algs] for i in test_list]  # long time (up to 30s on sage.math, 2011)
+        sage: all(len(set(x))==1 for x in vals)  # long time (depends on previous line)
+        True
         sage: from numpy import int8
         sage: bernoulli(int8(12))
         -691/2730
@@ -1337,21 +1337,30 @@ def random_prime(n, proof=None, lbound=2):
 
     EXAMPLES::
 
-        sage: random_prime(100000)
-        30029
+        sage: p = random_prime(100000)
+        sage: p.is_prime()
+        True
+        sage: p <= 100000
+        True
         sage: random_prime(2)
         2
 
     Here we generate a random prime between 100 and 200::
 
-        sage: random_prime(200, lbound=100)
-        167
+        sage: p = random_prime(200, lbound=100)
+        sage: p.is_prime()
+        True
+        sage: 100 <= p <= 200
+        True
 
     If all we care about is finding a pseudo prime, then we can pass
     in ``proof=False`` ::
 
-        sage: random_prime(200, proof=False, lbound=100)
-        197
+        sage: p = random_prime(200, proof=False, lbound=100)
+        sage: p.is_pseudoprime()
+        True
+        sage: 100 <= p <= 200
+        True
 
     TESTS::
 
@@ -1458,13 +1467,13 @@ def divisors(n):
 
         sage: K.<a> = QuadraticField(7)
         sage: divisors(K.ideal(7))
-        [Fractional ideal (1), Fractional ideal (a), Fractional ideal (7)]
+        [Fractional ideal (1), Fractional ideal (-a), Fractional ideal (7)]
         sage: divisors(K.ideal(3))
         [Fractional ideal (1), Fractional ideal (3),
         Fractional ideal (-a + 2), Fractional ideal (-a - 2)]
         sage: divisors(K.ideal(35))
-        [Fractional ideal (1), Fractional ideal (5), Fractional ideal (a),
-        Fractional ideal (7), Fractional ideal (5*a), Fractional ideal (35)]
+        [Fractional ideal (1), Fractional ideal (5), Fractional ideal (-a),
+        Fractional ideal (7), Fractional ideal (-5*a), Fractional ideal (35)]
 
     TESTS::
 
@@ -2810,7 +2819,8 @@ def is_square(n, root=False):
         sage: is_square((x-1)^2)
         Traceback (most recent call last):
         ...
-        NotImplementedError: is_square() not implemented for non numeric elements of Symbolic Ring
+        NotImplementedError: is_square() not implemented for
+        non-constant or relational elements of Symbolic Ring
 
     ::
 
@@ -5613,11 +5623,12 @@ def sort_complex_numbers_for_display(nums):
     r"""
     Given a list of complex numbers (or a list of tuples, where the
     first element of each tuple is a complex number), we sort the list
-    in a "pretty" order.  First come the real numbers (with zero
-    imaginary part), then the complex numbers sorted according to
-    their real part.  If two complex numbers have the same real part,
-    then they are sorted according to their
-    imaginary part.
+    in a "pretty" order.
+
+    Real numbers (with a zero imaginary part) come before complex numbers,
+    and are sorted. Complex numbers are sorted by their real part
+    unless their real parts are quite close, in which case they are
+    sorted by their imaginary part.
 
     This is not a useful function mathematically (not least because
     there is no principled way to determine whether the real components
@@ -5639,8 +5650,13 @@ def sort_complex_numbers_for_display(nums):
         ....:     nums.append(CDF(i + RDF.random_element(-3e-11, 3e-11),
         ....:                     RDF.random_element()))
         sage: shuffle(nums)
-        sage: sort_c(nums)
-        [0.0, 1.0, 2.0, -2.862406201002009e-11 - 0.7088740263015161*I, 2.2108362706985576e-11 - 0.43681052967509904*I, 1.0000000000138833 - 0.7587654737635712*I, 0.9999999999760288 - 0.7238965893336062*I, 1.9999999999874383 - 0.4560801012073723*I, 1.9999999999869107 + 0.6090836283134269*I]
+        sage: nums = sort_c(nums)
+        sage: nums[:3]
+        [0.0, 1.0, 2.0]
+        sage: for i in range(3, len(nums)-1):
+        ....:     assert nums[i].real() <= nums[i+1].real() + 1e-10
+        ....:     if abs(nums[i].real() - nums[i+1].real()) < 1e-10:
+        ....:         assert nums[i].imag() <= nums[i+1].imag() + 1e-10
     """
     if not nums:
         return nums

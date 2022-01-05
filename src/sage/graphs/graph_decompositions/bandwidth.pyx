@@ -113,10 +113,10 @@ Functions
 
 from libc.stdint cimport uint16_t
 from cysignals.signals cimport sig_check
+from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.distances_all_pairs cimport all_pairs_shortest_path_BFS
 from sage.graphs.base.boost_graph import bandwidth_heuristics
-from sage.ext.memory_allocator cimport MemoryAllocator
 
 ctypedef uint16_t index_t
 

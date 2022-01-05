@@ -795,7 +795,8 @@ class ModularFormsAmbient(space.ModularFormsSpace,
         if self.level() == 1:
             k = self.weight()
             d = self.dimension()
-            if d == 0: return matrix(self.base_ring(), 0, 0, [])
+            if d == 0:
+                return matrix(self.base_ring(), 0, 0, [])
             from sage.modular.all import victor_miller_basis, hecke_operator_on_basis
             vmb = victor_miller_basis(k, prec=d*n+1)[1:]
             Tcusp = hecke_operator_on_basis(vmb, n, k)

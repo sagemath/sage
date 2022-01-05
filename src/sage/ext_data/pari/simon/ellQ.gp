@@ -1162,7 +1162,7 @@ if( DEBUGLEVEL_ell >= 4, print("    kerval = ",kerval));
       LS2gen[j]^kerval[j,i]));
 
 \\ Add the units
-  LS2gen = concat(Mod(bnf[8][5],bnf.pol),LS2gen); \\ LS2gen = concat(bnf.fu,LS2gen);
+  LS2gen = concat(bnf.fu,LS2gen); \\ LS2gen = concat(bnf.fu,LS2gen);
 \\ Add also the torsion unit if its order is divisible by p.
   if( bnf[8][4][1]%p == 0, \\ if( bnf.tu[1]%p == 0,
     LS2gen = concat( [Mod(bnf[8][4][2],bnf.pol)], LS2gen)); \\ LS2gen = concat( [Mod(bnf.tu[2],bnf.pol)], LS2gen));

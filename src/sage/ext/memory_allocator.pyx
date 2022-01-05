@@ -1,4 +1,5 @@
 from cysignals.memory cimport *
+from sage.misc.superseded import deprecation
 
 
 cdef class MemoryAllocator:
@@ -23,6 +24,8 @@ cdef class MemoryAllocator:
         ....:     mem.aligned_calloc(16, n, 16)
         ....:     mem.aligned_allocarray(8, n, 8)
         ....: ''')
+        doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
+        See https://trac.sagemath.org/31591 for details.
     """
     def __cinit__(self):
         """
@@ -39,6 +42,7 @@ cdef class MemoryAllocator:
             1
             16
         """
+        deprecation(31591, "this class is deprecated; use the class from the python package `memory_allocator`")
         self.n = 0
         self.size = 16
         self.pointers = self.static_pointers
@@ -132,6 +136,8 @@ cdef class MemoryAllocator:
             ....:     mem2.realloc(ptr, 21)
             ....: ''')
             sage: test_realloc_good()
+            doctest:...: DeprecationWarning: this class is deprecated; use the class from the python package `memory_allocator`
+            See https://trac.sagemath.org/31591 for details.
             sage: test_realloc_NULL()
             sage: test_realloc_bad()
             Traceback (most recent call last):

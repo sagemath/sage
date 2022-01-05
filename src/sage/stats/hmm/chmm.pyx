@@ -104,31 +104,45 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         [0.5000, 0.5000]
 
     We obtain a sample sequence with 10 entries in it, and compute the
-    logarithm of the probability of obtaining his sequence, given the
+    logarithm of the probability of obtaining this sequence, given the
     model::
 
-        sage: obs = m.sample(10); obs
-        [-1.6835, 0.0635, -2.1688, 0.3043, -0.3188, -0.7835, 1.0398, -1.3558, 1.0882, 0.4050]
-        sage: m.log_likelihood(obs)
-        -15.2262338077988...
+        sage: obs = m.sample(5); obs  # random
+        [-1.6835, 0.0635, -2.1688, 0.3043, -0.3188]
+        sage: log_likelihood = m.log_likelihood(obs)
+        sage: counter = 0
+        sage: n = 0
+        sage: def add_samples(i):
+        ....:     global counter, n
+        ....:     for _ in range(i):
+        ....:         n += 1
+        ....:         obs2 = m.sample(5)
+        ....:         if all(abs(obs2[i] - obs[i]) < 0.25 for i in range(5)):
+        ....:             counter += 1
+
+        sage: add_samples(10000)
+        sage: while abs(log_likelihood - log(counter*1.0/n/0.5^5)) < 0.1:
+        ....:     add_samples(10000)
 
     We compute the Viterbi path, and probability that the given path
     of states produced obs::
 
-        sage: m.viterbi(obs)
-        ([1, 0, 1, 0, 1, 1, 0, 1, 0, 1], -16.67738270170788)
+        sage: m.viterbi(obs)  # random
+        ([1, 0, 1, 0, 1], -8.714092684611794)
 
     We use the Baum-Welch iterative algorithm to find another model
     for which our observation sequence is more likely::
 
-        sage: m.baum_welch(obs)
-        (-10.6103334957397..., 14)
-        sage: m.log_likelihood(obs)
-        -10.6103334957397...
+        sage: try:
+        ....:     p, s = m.baum_welch(obs)
+        ....:     assert p > log_likelihood
+        ....:     assert (4 <= s < 200)
+        ....: except RuntimeError:
+        ....:     pass
 
     Notice that running Baum-Welch changed our model::
 
-        sage: m  # rel tol 3e-14
+        sage: m  # random
         Gaussian Hidden Markov Model with 2 States
         Transition matrix:
         [   0.4154981366185841     0.584501863381416]
@@ -340,7 +354,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         EXAMPLES::
 
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
-            sage: m.generate_sequence(5)
+            sage: m.generate_sequence(5)  # random
             ([-3.0505, 0.5317, -4.5065, 0.6521, 1.0435], [1, 0, 1, 0, 1])
             sage: m.generate_sequence(0)
             ([], [])
@@ -348,6 +362,20 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             Traceback (most recent call last):
             ...
             ValueError: length must be nonnegative
+
+        Verify numerically that the starting state is 0 with probability about 0.1::
+
+            sage: counter = 0
+            sage: n = 0
+            sage: def add_samples(i):
+            ....:     global counter, n
+            ....:     for i in range(i):
+            ....:         n += 1
+            ....:         if m.generate_sequence(1)[1][0] == 0:
+            ....:             counter += 1
+
+            sage: add_samples(10^5)
+            sage: while abs(counter*1.0 / n - 0.1) > 0.01: add_samples(10^5)
 
         Example in which the starting state is 0 (see :trac:`11452`)::
 
@@ -358,13 +386,6 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
             sage: set_random_seed(23);  m.generate_sequence(2, starting_state=1)
             ([-3.1491, -1.0244], [1, 1])
-
-        Verify numerically that the starting state is 0 with probability about 0.1::
-
-            sage: set_random_seed(0)
-            sage: v = [m.generate_sequence(1)[1][0] for i in range(10^5)]
-            sage: 1.0 * v.count(int(0)) / len(v)
-            0.0998200000000000
         """
         if length < 0:
             raise ValueError("length must be nonnegative")
@@ -518,9 +539,9 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
             sage: m.log_likelihood([1,1,1])
             -4.297880766072486
-            sage: set_random_seed(0); s = m.sample(20)
-            sage: m.log_likelihood(s)
-            -40.115714129484...
+            sage: s = m.sample(20)
+            sage: -80 < m.log_likelihood(s) < -20
+            True
         """
         if len(obs) == 0:
             return 1.0
@@ -881,7 +902,10 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]], [(1,.5), (-1,3)], [.1,.9])
             sage: v = m.sample(10)
-            sage: stats.TimeSeries([m.baum_welch(v,max_iter=1)[0] for _ in range(len(v))])
+            sage: l = stats.TimeSeries([m.baum_welch(v,max_iter=1)[0] for _ in range(len(v))])
+            sage: all(l[i] < l[i+1] for i in range(9))
+            True
+            sage: l  # random
             [-20.1167, -17.7611, -16.9814, -16.9364, -16.9314, -16.9309, -16.9309, -16.9309, -16.9309, -16.9309]
 
         We illustrate fixing emissions::

@@ -612,9 +612,13 @@ cdef class LocalGenericElement(CommutativeRingElement):
 
         - boolean -- whether ``self`` is a unit
 
-        NOTES:
+        .. NOTE::
 
-        For fields all nonzero elements are units. For DVR's, only those elements of valuation 0 are. An older implementation ignored the case of fields, and returned always the negation of self.valuation()==0. This behavior is now supported with self.is_padic_unit().
+            For fields all nonzero elements are units. For DVR's, only
+            those elements of valuation 0 are. An older implementation
+            ignored the case of fields, and returned always the
+            negation of self.valuation()==0. This behavior is now
+            supported with self.is_padic_unit().
 
         EXAMPLES::
 
@@ -849,7 +853,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
         r"""
         Returns the valuation of this local ring element.
 
-        This function only differs from valuation for lazy elements.
+        This function only differs from valuation for relaxed elements.
 
         INPUT:
 
@@ -997,7 +1001,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             if self.valuation() is not infinity:
                 shift = shift << v
 
-        if self.parent().is_lattice_prec():
+        if self.parent().is_lattice_prec() or self.parent().is_relaxed():
             modes = ['simple']
         else:
             modes = ['simple', 'smallest', 'teichmuller']

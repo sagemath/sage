@@ -24,6 +24,8 @@ The *dimension* of the foliation is defined as the number of parameters.
 AUTHORS:
 
 - Florentin Jaffredo (2018): initial version
+- Eric Gourgoulhon (2018-2019): add documentation
+- Matthias Koeppe (2021): open subsets of submanifolds
 
 REFERENCES:
 
@@ -33,7 +35,9 @@ REFERENCES:
 
 
 # *****************************************************************************
-#  Copyright (C) 2018 Florentin Jaffredo <florentin.jaffredo@polytechnique.edu>
+#  Copyright (C) 2018      Florentin Jaffredo <florentin.jaffredo@polytechnique.edu>
+#  Copyright (C) 2018-2019 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#  Copyright (C) 2021      Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -132,20 +136,20 @@ class TopologicalSubmanifold(TopologicalManifold):
         sage: t = var('t')
         sage: phi = N.continuous_map(M, {(CN,CM): [u, v, t+u^2+v^2]})
         sage: phi.display()
-        N --> M
-           (u, v) |--> (x, y, z) = (u, v, u^2 + v^2 + t)
+        N → M
+           (u, v) ↦ (x, y, z) = (u, v, u^2 + v^2 + t)
 
     The foliation inverse maps are needed for computing the adapted chart on
     the ambient manifold::
 
         sage: phi_inv = M.continuous_map(N, {(CM, CN): [x, y]})
         sage: phi_inv.display()
-        M --> N
-           (x, y, z) |--> (u, v) = (x, y)
+        M → N
+           (x, y, z) ↦ (u, v) = (x, y)
         sage: phi_inv_t = M.scalar_field({CM: z-x^2-y^2})
         sage: phi_inv_t.display()
-        M --> R
-        (x, y, z) |--> -x^2 - y^2 + z
+        M → ℝ
+        (x, y, z) ↦ -x^2 - y^2 + z
 
     `\phi` can then be declared as an embedding `N\to M`::
 
@@ -246,6 +250,8 @@ class TopologicalSubmanifold(TopologicalManifold):
              3-dimensional topological manifold M
 
         """
+        if self is not self._manifold:
+            return "Open subset {} of the {}".format(self._name, self._manifold)
         if self._ambient is self:
             return super(TopologicalManifold, self).__repr__()
         if self._embedded:
@@ -253,6 +259,122 @@ class TopologicalSubmanifold(TopologicalManifold):
                 self._dim, self._structure.name, self._name, self._ambient)
         return "{}-dimensional {} submanifold {} immersed in the {}".format(
                 self._dim, self._structure.name, self._name, self._ambient)
+
+    def open_subset(self, name, latex_name=None, coord_def={}, supersets=None):
+        r"""
+        Create an open subset of the manifold.
+
+        An open subset is a set that is (i) included in the manifold and (ii)
+        open with respect to the manifold's topology. It is a topological
+        manifold by itself.
+
+        As ``self`` is a submanifold of its ambient manifold,
+        the new open subset is also considered a submanifold of that.
+        Hence the returned object is an instance of
+        :class:`TopologicalSubmanifold`.
+
+        INPUT:
+
+        - ``name`` -- name given to the open subset
+        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote
+          the subset; if none are provided, it is set to ``name``
+        - ``coord_def`` -- (default: {}) definition of the subset in
+          terms of coordinates; ``coord_def`` must a be dictionary with keys
+          charts on the manifold and values the symbolic expressions formed
+          by the coordinates to define the subset
+        - ``supersets`` -- (default: only ``self``) list of sets that the
+          new open subset is a subset of
+
+        OUTPUT:
+
+        - the open subset, as an instance of
+          :class:`~sage.manifolds.manifold.topological_submanifold.TopologicalSubmanifold`
+
+        EXAMPLES::
+
+            sage: M = Manifold(3, 'M', structure="topological")
+            sage: N = Manifold(2, 'N', ambient=M, structure="topological"); N
+            2-dimensional topological submanifold N immersed in the
+             3-dimensional topological manifold M
+            sage: S = N.subset('S'); S
+            Subset S of the
+             2-dimensional topological submanifold N immersed in the
+              3-dimensional topological manifold M
+            sage: O = N.subset('O', is_open=True); O  # indirect doctest
+            Open subset O of the
+             2-dimensional topological submanifold N immersed in the
+              3-dimensional topological manifold M
+
+            sage: phi = N.continuous_map(M)
+            sage: N.set_embedding(phi)
+            sage: N
+            2-dimensional topological submanifold N embedded in the
+             3-dimensional topological manifold M
+            sage: S = N.subset('S'); S
+            Subset S of the
+             2-dimensional topological submanifold N embedded in the
+              3-dimensional topological manifold M
+            sage: O = N.subset('O', is_open=True); O  # indirect doctest
+            Open subset O of the
+             2-dimensional topological submanifold N embedded in the
+              3-dimensional topological manifold M
+
+        """
+        resu = TopologicalSubmanifold(self._dim, name, self._field,
+                                      self._structure, self._ambient,
+                                      base_manifold=self._manifold,
+                                      latex_name=latex_name,
+                                      start_index=self._sindex)
+        if supersets is None:
+            supersets = [self]
+        for superset in supersets:
+            superset._init_open_subset(resu, coord_def=coord_def)
+        return resu
+
+    def _init_open_subset(self, resu, coord_def):
+        r"""
+        Initialize ``resu`` as an open subset of ``self``.
+
+        INPUT:
+
+        - ``resu`` -- an instance of ``:class:`TopologicalManifold` or
+          a subclass.
+
+        - ``coord_def`` -- (default: {}) definition of the subset in
+          terms of coordinates; ``coord_def`` must a be dictionary with keys
+          charts on the manifold and values the symbolic expressions formed
+          by the coordinates to define the subset
+
+        EXAMPLES:
+
+            sage: M = Manifold(3, 'M', structure="topological")
+            sage: N = Manifold(2, 'N', ambient=M, structure="topological")
+            sage: phi = N.continuous_map(M)
+            sage: N.set_embedding(phi)
+            sage: N
+            2-dimensional topological submanifold N embedded in the
+             3-dimensional topological manifold M
+            sage: from sage.manifolds.topological_submanifold import TopologicalSubmanifold
+            sage: O = TopologicalSubmanifold(3, 'O', field=M._field, structure=M._structure,
+            ....:                            ambient=M, base_manifold=N)
+            sage: N._init_open_subset(O, {})
+            sage: O
+            Open subset O of the
+             2-dimensional topological submanifold N embedded in the
+              3-dimensional topological manifold M
+            sage: O.embedding()
+            Continuous map
+             from the Open subset O of the 2-dimensional topological submanifold N
+              embedded in the 3-dimensional topological manifold M
+             to the 3-dimensional topological manifold M
+        """
+        super()._init_open_subset(resu, coord_def=coord_def)
+        ## Extras for Submanifold
+        if self._immersed:
+            resu.set_immersion(self._immersion.restrict(resu),
+                               var=self._var, t_inverse=self._t_inverse)
+        if self._embedded:
+            resu.declare_embedding()
 
     def set_immersion(self, phi, inverse=None, var=None,
                       t_inverse=None):
@@ -296,16 +418,16 @@ class TopologicalSubmanifold(TopologicalManifold):
             sage: t = var('t')
             sage: phi = N.continuous_map(M, {(CN,CM): [u,v,t+u^2+v^2]})
             sage: phi.display()
-            N --> M
-               (u, v) |--> (x, y, z) = (u, v, u^2 + v^2 + t)
+            N → M
+               (u, v) ↦ (x, y, z) = (u, v, u^2 + v^2 + t)
             sage: phi_inv = M.continuous_map(N, {(CM,CN): [x,y]})
             sage: phi_inv.display()
-            M --> N
-                (x, y, z) |--> (u, v) = (x, y)
+            M → N
+                (x, y, z) ↦ (u, v) = (x, y)
             sage: phi_inv_t = M.scalar_field({CM: z-x^2-y^2})
             sage: phi_inv_t.display()
-            M --> R
-            (x, y, z) |--> -x^2 - y^2 + z
+            M → ℝ
+            (x, y, z) ↦ -x^2 - y^2 + z
             sage: N.set_immersion(phi, inverse=phi_inv, var=t,
             ....:                 t_inverse={t: phi_inv_t})
 
@@ -421,16 +543,16 @@ class TopologicalSubmanifold(TopologicalManifold):
             sage: t = var('t')
             sage: phi = N.continuous_map(M, {(CN,CM): [u,v,t+u^2+v^2]})
             sage: phi.display()
-            N --> M
-               (u, v) |--> (x, y, z) = (u, v, u^2 + v^2 + t)
+            N → M
+               (u, v) ↦ (x, y, z) = (u, v, u^2 + v^2 + t)
             sage: phi_inv = M.continuous_map(N, {(CM,CN): [x,y]})
             sage: phi_inv.display()
-            M --> N
-                (x, y, z) |--> (u, v) = (x, y)
+            M → N
+                (x, y, z) ↦ (u, v) = (x, y)
             sage: phi_inv_t = M.scalar_field({CM: z-x^2-y^2})
             sage: phi_inv_t.display()
-            M --> R
-            (x, y, z) |--> -x^2 - y^2 + z
+            M → ℝ
+            (x, y, z) ↦ -x^2 - y^2 + z
             sage: N.set_embedding(phi, inverse=phi_inv, var=t,
             ....:                 t_inverse={t: phi_inv_t})
 
@@ -747,3 +869,29 @@ class TopologicalSubmanifold(TopologicalManifold):
         if not self._embedded:
             raise ValueError("the submanifold is not embedded")
         return self._immersion
+
+    def as_subset(self):
+        r"""
+        Return ``self`` as a subset of the ambient manifold.
+
+        ``self`` must be an embedded submanifold.
+
+        EXAMPLES::
+
+            sage: M = Manifold(2, 'M', structure="topological")
+            sage: N = Manifold(1, 'N', ambient=M, structure="topological")
+            sage: CM.<x,y> = M.chart()
+            sage: CN.<u> = N.chart(coord_restrictions=lambda u: [u > -1, u < 1])
+            sage: phi = N.continuous_map(M, {(CN,CM): [u, u^2]})
+            sage: N.set_embedding(phi)
+            sage: N
+            1-dimensional topological submanifold N
+              embedded in the 2-dimensional topological manifold M
+            sage: N.as_subset()
+            Image of the Continuous map
+              from the 1-dimensional topological submanifold N
+                embedded in the 2-dimensional topological manifold M
+              to the 2-dimensional topological manifold M
+
+        """
+        return self.embedding().image()

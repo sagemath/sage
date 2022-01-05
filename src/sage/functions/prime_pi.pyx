@@ -1,4 +1,4 @@
-"""
+r"""
 Counting Primes
 
 AUTHORS:
@@ -121,10 +121,10 @@ cdef class PrimePi(BuiltinFunction):
 
             sage: P = plot(prime_pi, 50, 100)
 
-        NOTES:
+        .. NOTE::
 
-        Uses a recursive implementation, using the optimizations described in
-        [Oha2011]_.
+            This uses a recursive implementation, using the optimizations
+            described in [Oha2011]_.
 
         AUTHOR:
 
@@ -504,10 +504,10 @@ cpdef Integer legendre_phi(x, a):
         sage: legendre_phi(4215701455, 6450023226)
         1
 
-    NOTES:
+    .. NOTE::
 
-    Uses a recursive implementation, using the optimizations described in
-    [Oha2011]_.
+        This uses a recursive implementation, using the optimizations
+        described in [Oha2011]_.
 
     AUTHOR:
 

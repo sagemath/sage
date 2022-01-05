@@ -281,6 +281,7 @@ We use the lexicographic ordering::
 # ****************************************************************************
 
 from copy import copy
+from itertools import accumulate
 
 from sage.libs.all import pari
 from sage.libs.flint.arith import number_of_partitions as flint_number_of_partitions
@@ -1032,7 +1033,7 @@ class Partition(CombinatorialElement):
 
     def __truediv__(self, p):
         """
-        Returns the skew partition ``self / p``.
+        Return the skew partition ``self / p``.
 
         EXAMPLES::
 
@@ -1704,6 +1705,7 @@ class Partition(CombinatorialElement):
         min = min + [0] * (len(max) - len(min))
         # finally, run the algo to find next_p
         next_p = copy(p)
+
         def condition(a, b):
             if partition_type in ('strict', 'strictly decreasing'):
                 return a < b - 1
@@ -2645,10 +2647,9 @@ class Partition(CombinatorialElement):
             sage: Partition([3,2,2]).initial_tableau()
             [[1, 2, 3], [4, 5], [6, 7]]
         """
-        mu = self._list
-        # In Python 3, improve this using itertools.accumulate
-        tab = [list(range(1+sum(mu[:i]), 1+sum(mu[:(i+1)])))
-               for i in range(len(mu))]
+        sigma = list(accumulate([1] + self._list))
+        tab = [list(range(sigma[i], sigma[i + 1]))
+               for i in range(len(sigma) - 1)]
         return tableau.StandardTableau(tab)
 
     def initial_column_tableau(self):
@@ -5281,6 +5282,7 @@ class Partition(CombinatorialElement):
                 if coloring is None:
                     d = {2: 'red', 3: 'blue', 4: 'green', 5: 'purple',
                          6: 'brown', 7: 'orange', 8: 'yellow'}
+
                     def coloring(i):
                         if i in d:
                             return d[i]
@@ -5999,7 +6001,7 @@ class Partitions_all(Partitions):
 
     def subset(self, size=None, **kwargs):
         """
-        Returns the subset of partitions of a given size and additional
+        Return the subset of partitions of a given size and additional
         keyword arguments.
 
         EXAMPLES::
@@ -6060,10 +6062,9 @@ class Partitions_all(Partitions):
                 yield self.element_class(self, p)
             n += 1
 
-
     def from_frobenius_coordinates(self, frobenius_coordinates):
         """
-        Returns a partition from a pair of sequences of Frobenius coordinates.
+        Return a partition from a pair of sequences of Frobenius coordinates.
 
         EXAMPLES::
 
@@ -6131,7 +6132,7 @@ class Partitions_all(Partitions):
 
     def from_exp(self, exp):
         """
-        Returns a partition from its list of multiplicities.
+        Return a partition from its list of multiplicities.
 
         EXAMPLES::
 
@@ -6189,7 +6190,7 @@ class Partitions_all(Partitions):
 
     def from_core_and_quotient(self, core, quotient):
         """
-        Returns a partition from its core and quotient.
+        Return a partition from its core and quotient.
 
         Algorithm from mupad-combinat.
 
@@ -6355,7 +6356,7 @@ class Partitions_n(Partitions):
 
     def _an_element_(self):
         """
-        Returns a partition in ``self``.
+        Return a partition in ``self``.
 
         EXAMPLES::
 
@@ -6605,7 +6606,7 @@ class Partitions_n(Partitions):
 
     def first(self):
         """
-        Returns the lexicographically first partition of a positive integer
+        Return the lexicographically first partition of a positive integer
         `n`. This is the partition ``[n]``.
 
         EXAMPLES::
@@ -6730,7 +6731,7 @@ class Partitions_nk(Partitions):
 
     def _an_element_(self):
         """
-        Returns a partition in ``self``.
+        Return a partition in ``self``.
 
         EXAMPLES::
 
@@ -7520,10 +7521,11 @@ class Partitions_constraints(IntegerListsLex):
         """
         n = data['n']
         self.__class__ = Partitions_with_constraints
-        constraints = {'max_slope' : 0,
-                       'min_part' : 1}
+        constraints = {'max_slope': 0,
+                       'min_part': 1}
         constraints.update(data['constraints'])
         self.__init__(n, **constraints)
+
 
 class Partitions_with_constraints(IntegerListsLex):
     """
@@ -8026,7 +8028,7 @@ class RegularPartitions_n(RegularPartitions, Partitions_n):
 
     def _an_element_(self):
         """
-        Returns a partition in ``self``.
+        Return a partition in ``self``.
 
         EXAMPLES::
 
@@ -8639,7 +8641,7 @@ class RestrictedPartitions_n(RestrictedPartitions_generic, Partitions_n):
 
 def number_of_partitions(n, algorithm='default'):
     r"""
-    Returns the number of partitions of `n` with, optionally, at most `k`
+    Return the number of partitions of `n` with, optionally, at most `k`
     parts.
 
     The options of :meth:`number_of_partitions()` are being deprecated

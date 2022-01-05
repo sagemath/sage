@@ -12,7 +12,10 @@ if [ "$UNAME" = CYGWIN ]; then
     # We want to install shared objects
     sed -i 's/SHARED_MODE=0/SHARED_MODE=1/' Makefile
 else
-    sdh_configure --shared
+    # Trac #28890: zlib does not use a standard autoconf-generated configure
+    # script, so don't use the sdh_configure helper as it may have minor
+    # incompatibilities
+    ./configure --shared --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib" || sdh_die "Error configuring $PKG_NAME"
 fi
 
 sdh_make

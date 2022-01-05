@@ -1,0 +1,9 @@
+cd src
+sdh_pip_install .
+
+FILECACHE="${SAGE_SHARE}/knotinfo"
+if [ -d $FILECACHE ]
+then
+    echo "Clearing former filecache of knotinfo"
+    rm -rf $FILECACHE
+fi

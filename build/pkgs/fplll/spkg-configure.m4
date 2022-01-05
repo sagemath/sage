@@ -8,7 +8,7 @@ SAGE_SPKG_CONFIGURE([fplll], [
     dnl Trac #31025: FPLLL/FPyLLL make no guarantee regarding compatibility
     dnl other than "whatever versions were released at the same time should work together"
     PKG_CHECK_MODULES([FPLLL],
-                      [fplll = 5.4.0],
+                      [fplll >= 5.4.0 fplll <= 5.4.1],
                       [sage_spkg_install_fplll=no],
                       [sage_spkg_install_fplll=yes])
   ])

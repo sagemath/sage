@@ -1209,6 +1209,6 @@ class IntegerListsLex(Parent):
             sage: all(v in C for v in C)
             True
         """
-        if isinstance(v, self.element_class) or isinstance(v, list):
+        if isinstance(v, (self.element_class, list)):
             return is_a(v, *(self.build_args())) and sum(v) in self.n_range
         return False

@@ -20,12 +20,12 @@ from libc.string cimport memset
 from libc.stdint cimport uint32_t
 from cysignals.memory cimport check_allocarray, sig_free
 from cysignals.signals cimport sig_check
+from memory_allocator cimport MemoryAllocator
 
 from sage.data_structures.bitset_base cimport *
 from sage.graphs.base.static_sparse_graph cimport *
 from sage.libs.gmp.mpq cimport *
 from sage.rings.rational cimport Rational
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.graphs.base.boost_graph import shortest_paths as boost_shortest_paths
 import random
 

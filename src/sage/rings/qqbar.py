@@ -573,7 +573,7 @@ from sage.rings.polynomial.polynomial_element import is_Polynomial
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.number_field.number_field import NumberField, GaussianField, CyclotomicField
-from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic, NumberFieldElement_gaussian
+from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_gaussian
 from sage.arith.all import factor
 from . import infinity
 from sage.categories.action import Action
@@ -2537,6 +2537,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
           To:   Algebraic Real Field
           Defn: a |--> 1.259921049894873?
 
+    ::
+
         sage: nf,nums,hom = number_field_elements_from_algebraics([2^(1/3),3^(1/5)],embedded=True)
         sage: nf
         Number Field in a with defining polynomial y^15 - 9*y^10 + 21*y^5 - 3 with a = 0.6866813218928813?
@@ -2547,6 +2549,16 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
           From: Number Field in a with defining polynomial y^15 - 9*y^10 + 21*y^5 - 3 with a = 0.6866813218928813?
           To:   Algebraic Real Field
           Defn: a |--> 0.6866813218928813?
+
+    Complex embeddings are possible as well::
+
+        sage: elems = [sqrt(5), 2^(1/3)+sqrt(3)*I, 3/4]
+        sage: nf, nums, hom = number_field_elements_from_algebraics(elems, embedded=True)
+        sage: nf
+        Number Field in a with defining polynomial y^24 - 6*y^23 ...- 9*y^2 + 1
+          with a = 0.2598678911433438? + 0.0572892247058457?*I
+        sage: list(map(QQbar, nums)) == elems == list(map(hom, nums))
+        True
 
     TESTS::
 
@@ -2640,8 +2652,6 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
         real_case = True
     except:
         real_case = False
-        if embedded:
-            raise NotImplementedError
     # Make the numbers algebraic
     numbers = [mk_algebraic(_) for _ in numbers]
 
@@ -2668,12 +2678,11 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
     fld = gen._field
     nums = [gen(v._exact_value()) for v in numbers]
 
-    hom = fld.hom([gen.root_as_algebraic()])
+    exact_generator = gen.root_as_algebraic()
+    hom = fld.hom([exact_generator])
 
     if fld is not QQ and embedded:
         # creates the embedded field
-        assert real_case
-        exact_generator = hom(fld.gen(0))
         embedded_field = NumberField(fld.defining_polynomial(),fld.variable_name(),embedding=exact_generator)
 
         # embeds the numbers
@@ -2681,14 +2690,14 @@ def number_field_elements_from_algebraics(numbers, minimal=False, same_field=Fal
         nums = [inter_hom(n) for n in nums]
 
         # get the field and homomorphism
-        hom = embedded_field.hom([gen.root_as_algebraic()])
+        hom = embedded_field.hom([exact_generator])
         fld = embedded_field
 
     if single_number:
         nums = nums[0]
 
     if same_field:
-        hom = fld.hom([gen.root_as_algebraic()], codomain=algebraic_field)
+        hom = fld.hom([exact_generator], codomain=algebraic_field)
 
     return (fld, nums, hom)
 
@@ -4208,6 +4217,17 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: RR(elt)
             -2.80464272693274
 
+        A complex algebraic number as an element of an embedded number field::
+
+            sage: num = QQbar(sqrt(2) + 3^(1/3)*I)
+            sage: nf, elt, hom = num.as_number_field_element(embedded=True)
+            sage: hom(elt).parent() is QQbar
+            True
+            sage: nf.coerce_embedding() is not None
+            True
+            sage: QQbar(elt) == num == hom(elt)
+            True
+
         We see an example where we do not get the minimal number field unless
         we specify ``minimal=True``::
 
@@ -4649,8 +4669,8 @@ class AlgebraicNumber(AlgebraicNumber_base):
             [-0.0221204634374361? - 1.090991904211621?*I,
              -0.0221204634374361? + 1.090991904211621?*I,
              -0.8088604911480535?*I,
-             0.?e-79 - 0.7598602580415435?*I,
-             0.?e-79 + 0.7598602580415435?*I,
+             0.?e-215 - 0.7598602580415435?*I,
+             0.?e-229 + 0.7598602580415435?*I,
              0.8088604911480535?*I,
              0.0221204634374361? - 1.090991904211621?*I,
              0.0221204634374361? + 1.090991904211621?*I]
@@ -4741,18 +4761,28 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: a > r
             True
         """
-        # note: we can assume that self is not other here
+        if self is other:
+            return rich_to_bool(op, 0)
+
+        # case 0: rationals
         sd = self._descr
         od = other._descr
-
         if isinstance(sd, ANRational) and isinstance(od, ANRational):
             return richcmp(sd._value, od._value, op)
+
+        # case 1: real parts are clearly distinct
+        ri1 = self._value.real()
+        ri2 = other._value.real()
+        if not ri1.overlaps(ri2):
+            # NOTE: do not call richcmp here as self._value and other._value
+            # might have different precisions. See
+            # https://trac.sagemath.org/ticket/29220
+            return ri1._richcmp_(ri2, op)
 
         if op == op_EQ or op == op_NE:
             # some cheap and quite common tests where we can decide
             # equality or difference
-            if not (self._value.real().overlaps(other._value.real()) and
-                    self._value.imag().overlaps(other._value.imag())):
+            if not self._value.imag().overlaps(other._value.imag()):
                 return op == op_NE
             if isinstance(sd, ANRational) and not sd._value:
                 return bool(other) == (op == op_NE)
@@ -4762,21 +4792,6 @@ class AlgebraicNumber(AlgebraicNumber_base):
                   isinstance(od, ANExtensionElement) and
                   sd._generator is od._generator):
                 return sd._value == od._value if op == op_EQ else sd._value != od._value
-
-        # case 0: real parts are clearly distinct
-        ri1 = self._value.real()
-        ri2 = other._value.real()
-        if not ri1.overlaps(ri2):
-            # NOTE: do not call richcmp here as self._value and other._value
-            # might have different precisions. See
-            # https://trac.sagemath.org/ticket/29220
-            return ri1._richcmp_(ri2, op)
-
-        # case 1: rationals
-        sd = self._descr
-        od = other._descr
-        if isinstance(sd, ANRational) and isinstance(od, ANRational):
-            return richcmp(sd._value, od._value, op)
 
         # case 2: possibly equal or conjugate values
         # (this case happen a lot when sorting the roots of a real polynomial)
@@ -5110,7 +5125,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             -1/3
             sage: QQbar(3+4*I).rational_argument() is None
             True
-            sage: (QQbar(2)**(1/5) * QQbar.zeta(7)**2).rational_argument()
+            sage: (QQbar(2)**(1/5) * QQbar.zeta(7)**2).rational_argument()  # long time
             2/7
             sage: (QQbar.zeta(73)**5).rational_argument()
             5/73
@@ -5260,18 +5275,48 @@ class AlgebraicReal(AlgebraicNumber_base):
             True
             sage: AA(7) >= AA(50/7)
             False
+
+        Check for trivial equality with identical elements::
+
+            sage: x1 = AA(2^(1/50))
+            sage: x2 = AA(2^(1/50))
+            sage: y = x1 - x2
+            sage: y == y
+            True
+            sage: y >= y
+            True
+            sage: y < y
+            False
+
+            sage: z = x1 - x2
+            sage: z == 0
+            True
+
+            sage: a = x1 - x2
+            sage: b = x1 - x2
+            sage: a == b
+            True
         """
+        if self is other:
+            return rich_to_bool(op, 0)
+
         # note: we can assume that self is not other here
         sd = self._descr
         od = other._descr
 
+        # case 0: rationals
         if type(sd) is ANRational and type(od) is ANRational:
             return richcmp(sd._value, od._value, op)
 
+        # case 1: real parts are clearly distinct
+        if not self._value.overlaps(other._value):
+            # NOTE: do not call richcmp here as self._value and other._value
+            # might have different precisions. See
+            # https://trac.sagemath.org/ticket/29220
+            return self._value._richcmp_(other._value, op)
+
         if op == op_EQ or op == op_NE:
             # some cheap and quite common tests where we can decide equality or difference
-            if not self._value.real().overlaps(other._value.real()):
-                return op == op_NE
             if type(sd) is ANRational and not sd._value:
                 return bool(other) == (op == op_NE)
             elif type(od) is ANRational and not od._value:
@@ -5280,28 +5325,26 @@ class AlgebraicReal(AlgebraicNumber_base):
                   type(od) is ANExtensionElement and
                   sd._generator is od._generator):
                 return sd._value == od._value if op == op_EQ else sd._value != od._value
-            elif self.minpoly() != other.minpoly():
-                return op == op_NE
-
-        # case 0: real parts are clearly distinct
-        if not self._value.overlaps(other._value):
-            # NOTE: do not call richcmp here as self._value and other._value
-            # might have different precisions. See
-            # https://trac.sagemath.org/ticket/29220
-            return self._value._richcmp_(other._value, op)
-
-        # case 1: rationals
-        sd = self._descr
-        od = other._descr
-        if type(sd) is ANRational and type(od) is ANRational:
-            return richcmp(sd._value, od._value, op)
+            else:
+                # Only compare the minimal polynomials if they have been computed
+                #   as otherwise it calls exactify().
+                try:
+                    if self._minimal_polynomial != other._minimal_polynomial:
+                        return op == op_NE
+                except AttributeError:
+                    pass
 
         # case 2: possibly equal values
         # (this case happen a lot when sorting the roots of a real polynomial)
-        if self.minpoly() == other.minpoly():
-            c = cmp_elements_with_same_minpoly(self, other, self.minpoly())
-            if c is not None:
-                return rich_to_bool(op, c)
+        # Only compare the minimal polynomials if they have been computed
+        #   as otherwise it calls exactify().
+        try:
+            if self._minimal_polynomial != other._minimal_polynomial:
+                c = cmp_elements_with_same_minpoly(self, other, self.minpoly())
+                if c is not None:
+                    return rich_to_bool(op, c)
+        except AttributeError:
+            pass
 
         if self._value.prec() < 128:
             self._more_precision()
@@ -5589,6 +5632,30 @@ class AlgebraicReal(AlgebraicNumber_base):
             1
             sage: (a*b - b*a).sign()
             0
+
+            sage: a = AA(sqrt(1/2))
+            sage: b = AA(-sqrt(1/2))
+            sage: (a + b).sign()
+            0
+
+        TESTS:
+
+        We avoid calling :meth:`exactify()` for trivial differences. The
+        following example will take a long time (more than 5 seconds)
+        when calling ``y.exactify()``::
+
+            sage: x1 = AA(2^(1/50))
+            sage: x2 = AA(2^(1/50))
+            sage: y = x1 - x2
+            sage: y.sign()
+            0
+
+        Simplify to rationals for binary operations when computing the sign::
+
+            sage: a = AA(2^(1/60))
+            sage: b = a - (a + 1)
+            sage: (b + 1).sign()
+            0
         """
         if not self._value.contains_zero():
             return self._value.unique_sign()
@@ -5608,7 +5675,7 @@ class AlgebraicReal(AlgebraicNumber_base):
             ls = sd._left.sign()
             rs = sd._right.sign()
             if sd._op is operator.mul or sd._op is operator.truediv:
-                return sd._left.sign() * sd._right.sign()
+                return ls * rs
             elif sd._op is operator.add:
                 if ls == rs:
                     return ls
@@ -5621,6 +5688,9 @@ class AlgebraicReal(AlgebraicNumber_base):
                 elif not rs:
                     self._set_descr(sd._left._descr)
                     return ls
+                elif sd._left is sd._right:
+                    self._set_descr(ANRational(QQ.zero()))
+                    return 0
         elif type(sd) is ANUnaryExpr:
             if sd._op == 'abs':
                 c = 1 if bool(sd._arg) else 0
@@ -5637,6 +5707,38 @@ class AlgebraicReal(AlgebraicNumber_base):
             self._more_precision()
             if not self._value.contains_zero():
                 return self._value.unique_sign()
+
+        if type(sd) is ANBinaryExpr:
+            # We will now exactify both sides and do another sign comparison.
+            # We try to avoid making ourself exact if possible.
+            # It will only reach this block if the operation is addition or subtraction.
+            sd._left.exactify()
+            sd._right.exactify()
+
+            # Rationals
+            if type(sd._left._descr) is ANRational and type(sd._right._descr) is ANRational:
+                ret = sd._op(sd._left._descr._value, sd._right._descr._value)
+                if ret == 0:
+                    self._set_descr(ANRational(QQ.zero()))
+                    return 0
+                return ret.sign()
+
+            if sd._left.minpoly() == sd._right.minpoly():
+                # Negating the element does not change the minpoly
+                right = sd._right if sd._op is operator.sub else -sd._right
+                c = cmp_elements_with_same_minpoly(sd._left, right, sd._left.minpoly())
+                if c == 0:
+                    self._set_descr(ANRational(QQ.zero()))
+                    return 0
+                elif c is not None:
+                    return c
+
+            ret = sd._op(sd._left._value, sd._right._value)
+            if not ret.contains_zero():
+                return ret.unique_sign()
+            if not ret:  # Known to be exactly 0
+                self._set_descr(ANRational(QQ.zero()))
+                return 0
 
         # Sigh...
         self.exactify()

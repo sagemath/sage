@@ -201,7 +201,8 @@ class SymbolicData:
              'Curves__curve10_20',
              'Curves__curve10_30']
         """
-        if hasattr(self,"__ideals"): return self.__ideals
+        if hasattr(self,"__ideals"):
+            return self.__ideals
         try:
             __ideals = [s.replace('.xml','') for s in  os.listdir(self.__intpath)]
             __ideals += [s.replace('.xml','') for s in  os.listdir(self.__genpath)]

@@ -7,10 +7,15 @@ from sage.misc.lazy_import import lazy_import
 from .combinat import bell_number, catalan_number, euler_number, fibonacci, \
         lucas_number1, lucas_number2, stirling_number1, stirling_number2, \
         polygonal_number, CombinatorialObject, CombinatorialClass, \
-        FilteredCombinatorialClass, UnionCombinatorialClass, \
-        MapCombinatorialClass, InfiniteAbstractCombinatorialClass, \
+        MapCombinatorialClass, \
         tuples, number_of_tuples, unordered_tuples, number_of_unordered_tuples, \
         bell_polynomial, fibonacci_sequence, fibonacci_xrange, bernoulli_polynomial
+
+lazy_import('sage.combinat.combinat',
+            ('InfiniteAbstractCombinatorialClass', 'UnionCombinatorialClass',
+             'FilteredCombinatorialClass'),
+            deprecation=(31545, 'this class is deprecated, do not use'))
+
 
 from .expnums import expnums
 

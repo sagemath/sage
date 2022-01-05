@@ -211,9 +211,10 @@ class NumericalEigenforms(SageObject):
 
             sage: n = numerical_eigenforms(61, eps=2.0)
             sage: evectors = n._eigenvectors()
-            sage: evalues = diagonal_matrix(CDF, [-283.0, 142.0, 108.522012456])
-            sage: diff = n._hecke_matrix*evectors - evectors*evalues
-            sage: sum([abs(diff[i,j]) for i in range(5) for j in range(3)]) < 1.0e-9
+            sage: evalues = [(matrix((n._hecke_matrix*evectors).column(i))/matrix(evectors.column(i)))[0, 0]
+            ....:            for i in range(evectors.ncols())]
+            sage: diff = n._hecke_matrix*evectors - evectors*diagonal_matrix(evalues)
+            sage: sum(abs(a) for a in diff.list()) < 1.0e-9
             True
         """
         verbose('Finding eigenvector basis')
@@ -443,7 +444,7 @@ class NumericalEigenforms(SageObject):
 
         EXAMPLES::
 
-            sage: numerical_eigenforms(61).systems_of_eigenvalues(10)  # rel tol 6e-14
+            sage: numerical_eigenforms(61).systems_of_eigenvalues(10)  # rel tol 1e-12
             [
             [-1.4811943040920152, 0.8060634335253695, 3.1563251746586642, 0.6751308705666477],
             [-1.0, -2.0000000000000027, -3.000000000000003, 1.0000000000000044],
@@ -470,7 +471,7 @@ class NumericalEigenforms(SageObject):
 
         EXAMPLES::
 
-            sage: numerical_eigenforms(61).systems_of_abs(10)  # rel tol 6e-14
+            sage: numerical_eigenforms(61).systems_of_abs(10)  # rel tol 1e-12
             [
             [0.3111078174659775, 2.903211925911551, 2.525427560843529, 3.214319743377552],
             [1.0, 2.0000000000000027, 3.000000000000003, 1.0000000000000044],

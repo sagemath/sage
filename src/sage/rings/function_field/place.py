@@ -947,7 +947,8 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
             pos = 0
             e = F(0)
             for i in reversed(range(n)):
-                if degs[i] == 0: continue
+                if degs[i] == 0:
+                    continue
                 else:
                     end = pos + degs[i]
                     e += R(vec[pos:end]) * Obasis[i]
@@ -995,10 +996,13 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
                 G = itertools.product(R.polynomials(max_degree=d), repeat=n)
                 for g in G:
                     # discard duplicate cases
-                    if max(c.degree() for c in g) != d: continue
+                    if max(c.degree() for c in g) != d:
+                        continue
                     for j in range(n):
-                        if g[j] != 0: break
-                    if g[j].leading_coefficient() != 1: continue
+                        if g[j] != 0:
+                            break
+                    if g[j].leading_coefficient() != 1:
+                        continue
 
                     gen = sum([c1*c2 for c1,c2 in zip(g, Obasis)])
                     yield gen

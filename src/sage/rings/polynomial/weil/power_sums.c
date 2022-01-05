@@ -52,8 +52,11 @@ int _fmpz_poly_all_real_roots(fmpz *poly, long n, fmpz *w, int force_squarefree,
   fmpz *d      = w + 2*n+1;
   fmpz *t;
 
-  if (n <= 2) return(1);
   _fmpz_vec_set(f0, poly, n);
+  /* Sanitize input so that n = deg(f0). */
+  while ((n > 2) && fmpz_is_zero(f0+n-1))
+    n--;
+  if (n <= 2) return(1);
   if (a != NULL && b != NULL) fmpz_addmul(f0, a, b);
   _fmpz_poly_derivative(f1, f0, n);
   n--;
@@ -74,6 +77,7 @@ int _fmpz_poly_all_real_roots(fmpz *poly, long n, fmpz *w, int force_squarefree,
     _fmpz_vec_scalar_mul_fmpz(f0, f0, n, d);
     _fmpz_vec_scalar_addmul_fmpz(f0, f1, n, c);
 
+    /* If f0 = 0, we win unless we are insisting on squarefree. */
     if (!force_squarefree && _fmpz_vec_is_zero(f0, n)) return(1);
 
     /* If we miss any one sign change, we cannot have enough. */

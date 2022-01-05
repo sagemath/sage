@@ -2049,8 +2049,14 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             s3,s3
             s3,s3,s2
 
-            sage: gens
-            [(0, 1, 's2'), (3, 3, 's3')]
+            sage: edges = G.coset_graph().edges(); edges
+            [(0, 1, 's2'), (0, 1, 's3'), (1, 0, 's2'), (1, 2, 's3'), (2, 0, 's3'), (2, 3, 's2'), (3, 2, 's2'), (3, 3, 's3')]
+            sage: len(gens)
+            2
+            sage: (3, 3, 's3') in gens
+            True
+            sage: any(e in gens for e in edges[:5])
+            True
         """
         from sage.graphs.digraph import DiGraph
         from sage.misc.prandom import randint
@@ -2178,8 +2184,14 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             ****
             sage: wreps
             ['', 's', 'll', 'l']
-            sage: gens
-            [(2, 0, 'l'), (1, 1, 'l'), (2, 3, 's')]
+            sage: len(gens)
+            3
+            sage: (1, 1, 'l') in gens
+            True
+            sage: (2, 3, 's') in gens or (3, 2, 's') in gens
+            True
+            sage: (2, 0, 'l') in gens
+            True
 
         .. TODO::
 
@@ -2279,12 +2291,10 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             sage: g1,g2 = gens
             sage: g1 in G and g2 in G
             True
-            sage: g1
-            [-1  0]
-            [ 1 -1]
-            sage: g2
-            [-1  3]
-            [-1  2]
+            sage: Matrix(2, 2, [-1, 3, -1, 2]) in gens
+            True
+            sage: Matrix(2, 2, [-1, 0, 1, -1]) in gens or Matrix(2, 2, [1, 0, 1, 1]) in gens
+            True
             sage: S2 = SL2Z([0,-1,1,0])
             sage: S3 = SL2Z([0,1,-1,1])
             sage: reps[0] == SL2Z([1,0,0,1])
@@ -2323,11 +2333,14 @@ class EvenArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
             [1 0]  [ 0 -1]  [1 2]  [1 1]
             [0 1], [ 1  0], [0 1], [0 1]
             ]
-            sage: gens
-            [
-            [1 3]  [ 1  0]  [ 2 -3]
-            [0 1], [-1  1], [ 1 -1]
-            ]
+            sage: len(gens)
+            3
+            sage: Matrix(2, 2, [1, 3, 0, 1]) in gens
+            True
+            sage: Matrix(2, 2, [1, 0, -1, 1]) in gens
+            True
+            sage: Matrix(2, 2, [1, -3, 1, -2]) in gens or Matrix(2, 2, [2, -3, 1, -1]) in gens
+            True
             sage: l
             [3, 1, 0, 2]
             sage: s

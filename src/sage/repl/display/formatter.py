@@ -104,6 +104,10 @@ class SageDisplayFormatter(DisplayFormatter):
         from sage.repl.rich_output.backend_ipython import BackendIPython
         self.dm.check_backend_class(BackendIPython)
 
+        pt_formatter = self.formatters[PLAIN_TEXT]
+        pt_formatter.observe(self._ipython_float_precision_changed,
+                             names=['float_precision'])
+
     def format(self, obj, include=None, exclude=None):
         r"""
         Use the Sage rich output instead of IPython
@@ -194,6 +198,41 @@ class SageDisplayFormatter(DisplayFormatter):
         if PLAIN_TEXT in sage_metadata:
             ipy_metadata[PLAIN_TEXT] = sage_metadata[PLAIN_TEXT]
         return ipy_format, ipy_metadata
+
+    @staticmethod
+    def _ipython_float_precision_changed(change):
+        """
+        Update the current float precision for the display of matrices in Sage.
+
+        This function is called when the IPython ``%precision`` magic is
+        invoked.
+
+        TESTS::
+
+            sage: from sage.repl.interpreter import get_test_shell
+            sage: shell = get_test_shell()
+            sage: shell.run_cell('%precision 4')
+            '%.4f'
+            sage: shell.run_cell('matrix.options.precision')  # indirect doctest
+            4
+            sage: shell.run_cell('%precision')
+            '%r'
+            sage: shell.run_cell('matrix.options.precision')  # indirect doctest
+            None
+        """
+        from sage.matrix.constructor import options
+        s = change.new
+        if not s:
+            # unset the precision
+            options.precision = None
+        else:
+            try:
+                prec = int(s)
+                if prec >= 0:
+                    options.precision = prec
+                # otherwise ignore the change
+            except ValueError:
+                pass
 
 
 class SagePlainTextFormatter(PlainTextFormatter):

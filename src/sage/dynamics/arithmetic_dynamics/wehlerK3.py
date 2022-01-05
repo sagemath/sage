@@ -97,13 +97,9 @@ def random_WehlerK3Surface(PP):
     EXAMPLES::
 
         sage: PP.<x0, x1, x2, y0, y1, y2> = ProductProjectiveSpaces([2, 2], GF(3))
-        sage: random_WehlerK3Surface(PP)
-        Closed subscheme of Product of projective spaces P^2 x P^2 over Finite Field of size 3 defined by:
-        x0*y0 + x1*y1 + x2*y2,
-        -x1^2*y0^2 - x2^2*y0^2 + x0^2*y0*y1 - x0*x1*y0*y1 - x1^2*y0*y1
-        + x1*x2*y0*y1 + x0^2*y1^2 + x0*x1*y1^2 - x1^2*y1^2 + x0*x2*y1^2
-        - x0^2*y0*y2 - x0*x1*y0*y2 + x0*x2*y0*y2 + x1*x2*y0*y2 + x0*x1*y1*y2
-        - x1^2*y1*y2 - x1*x2*y1*y2 - x0^2*y2^2 + x0*x1*y2^2 - x1^2*y2^2 - x0*x2*y2^2
+        sage: w = random_WehlerK3Surface(PP)
+        sage: type(w)
+        <class 'sage.dynamics.arithmetic_dynamics.wehlerK3.WehlerK3Surface_finite_field_with_category'>
     """
 
     CR = PP.coordinate_ring()

@@ -301,8 +301,8 @@ class Giac(Expect):
     ::
 
       sage: R.<a,b> = QQ[]; f = (2+a+b)
-      sage: p = giac.gcd(f^3+5*f^5,f^2+f^5); p; R(p)
-      a^2+2*a*b+4*a+b^2+4*b+4
+      sage: p = giac.gcd(f^3+5*f^5,f^2+f^5); p; R(p.sage())
+      sageVARa^2+2*sageVARa*sageVARb+4*sageVARa+sageVARb^2+4*sageVARb+4
       a^2 + 2*a*b + b^2 + 4*a + 4*b + 4
 
     Variable names in python and giac are independent::
@@ -605,9 +605,12 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
 
         TESTS::
 
-            sage: h='int(1/x*((-2*x^(1/3)+1)^(1/4))^3,x)'
-            sage: giac(h)
-            12*(...)
+            sage: h1 = 'int(sin(x)^2, x)'
+            sage: h2 = 'int(cos(x)^2, x)'
+            sage: giac_result = giac(h1) + giac(h2)
+            sage: bool(giac_result.sage() == x)
+            True
+
         """
         with gc_disabled():
             z = Expect._eval_line(self, line, allow_use_file=allow_use_file,
@@ -1115,9 +1118,17 @@ class GiacElement(ExpectElement):
 
             sage: giac('true')._sage_(), giac('false')._sage_()
             (True, False)
+
+        Check that variables and constants are not mixed up (:trac:`30133`)::
+
+            sage: ee, ii, pp = SR.var('e,i,pi')
+            sage: giac(ee * ii * pp).sage().variables()
+            (e, i, pi)
+            sage: giac(e * i * pi).sage().variables()
+            ()
         """
         from sage.libs.pynac.pynac import symbol_table
-        from sage.calculus.calculus import symbolic_expression_from_string
+        from sage.calculus.calculus import symbolic_expression_from_string, SR_parser_giac
 
         result = repr(self) # string representation
 
@@ -1130,7 +1141,7 @@ class GiacElement(ExpectElement):
 
             try:
                 return symbolic_expression_from_string(result, lsymbols,
-                    accept_sequence=True)
+                    accept_sequence=True, parser=SR_parser_giac)
 
             except Exception:
                 raise NotImplementedError("Unable to parse Giac output: %s" % result)

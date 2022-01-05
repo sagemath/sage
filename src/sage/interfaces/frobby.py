@@ -396,7 +396,7 @@ class Frobby:
         for i in range(term_count):
             exponents.append(ints[:var_count])
             ints = ints[var_count:]
-        return exponents;
+        return exponents
 
     def _ideal_to_string(self, monomial_ideal):
         r"""
@@ -424,10 +424,10 @@ class Frobby:
         if monomial_ideal.is_zero():
             gens = []
         else:
-            gens = monomial_ideal.gens();
-        var_count = monomial_ideal.ring().ngens();
+            gens = monomial_ideal.gens()
+        var_count = monomial_ideal.ring().ngens()
         first_row = str(len(gens)) + ' ' + str(var_count) + '\n'
-        rows = [self._monomial_to_string(_) for _ in gens];
+        rows = [self._monomial_to_string(_) for _ in gens]
         return first_row + "".join(rows)
 
     def _monomial_to_string(self, monomial):

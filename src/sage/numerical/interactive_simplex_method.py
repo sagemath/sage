@@ -2015,6 +2015,44 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
                 "primal objective" if is_primal else "dual objective")
         self._objective_name = SR(objective_name)
 
+    @staticmethod
+    def random_element(m, n, bound=5, special_probability=0.2,
+                       **kwds):
+        r"""
+        Construct a random ``InteractiveLPProblemStandardForm``.
+
+        INPUT:
+
+        - ``m`` -- the number of constraints/basic variables
+
+        - ``n`` -- the number of decision/non-basic variables
+
+        - ``bound`` -- (default: 5) a bound on coefficients
+
+        - ``special_probability`` -- (default: 0.2) probability of
+          constructing a problem whose initial dictionary is allowed
+          to be primal infeasible or dual feasible
+
+        All other keyword arguments are passed to the constructor.
+
+        EXAMPLES::
+
+            sage: InteractiveLPProblemStandardForm.random_element(3, 4)
+            LP problem (use 'view(...)' or '%display typeset' for details)
+        """
+        if not kwds.pop('is_primal', True):
+            raise NotImplementedError('only random primal problems are implemented')
+        A = random_matrix(ZZ, m, n, x=-bound, y=bound).change_ring(QQ)
+        if special_probability < random():
+            b = random_vector(ZZ, m, x=0, y=bound).change_ring(QQ)
+        else:   # Allow infeasible dictionary
+            b = random_vector(ZZ, m, x=-bound, y=bound).change_ring(QQ)
+        if special_probability < random():
+            c = random_vector(ZZ, n, x=-bound, y=bound).change_ring(QQ)
+        else:   # Make dual feasible dictionary
+            c = random_vector(ZZ, n, x=-bound, y=0).change_ring(QQ)
+        return InteractiveLPProblemStandardForm(A, b, c, **kwds)
+
     def add_constraint(self, coefficients, constant_term, slack_variable=None):
         r"""
         Return a new LP problem by adding a constraint to``self``.
@@ -3865,6 +3903,49 @@ class LPDictionary(LPAbstractDictionary):
         N = vector(nonbasic_variables)
         self._AbcvBNz = [A, b, c, objective_value, B, N, SR(objective_name)]
 
+    @staticmethod
+    def random_element(m, n, bound=5, special_probability=0.2):
+        r"""
+        Construct a random dictionary.
+
+        INPUT:
+
+        - ``m`` -- the number of constraints/basic variables
+
+        - ``n`` -- the number of decision/non-basic variables
+
+        - ``bound`` -- (default: 5) a bound on dictionary entries
+
+        - ``special_probability`` -- (default: 0.2) probability of constructing a
+          potentially infeasible or potentially optimal dictionary
+
+        OUTPUT:
+
+        - an :class:`LP problem dictionary <LPDictionary>`
+
+        EXAMPLES::
+
+            sage: from sage.numerical.interactive_simplex_method \
+            ....:     import random_dictionary
+            sage: random_dictionary(3, 4)  # indirect doctest
+            LP problem dictionary (use 'view(...)' or '%display typeset' for details)
+        """
+        A = random_matrix(ZZ, m, n, x=-bound, y=bound).change_ring(QQ)
+        if special_probability < random():
+            b = random_vector(ZZ, m, x=0, y=bound).change_ring(QQ)
+        else:   # Allow infeasible dictionary
+            b = random_vector(ZZ, m, x=-bound, y=bound).change_ring(QQ)
+        if special_probability < random():
+            c = random_vector(ZZ, n, x=-bound, y=bound).change_ring(QQ)
+        else:   # Make dual feasible dictionary
+            c = random_vector(ZZ, n, x=-bound, y=0).change_ring(QQ)
+        x_N = list(PolynomialRing(QQ, "x", m + n + 1, order="neglex").gens())
+        x_N.pop(0)
+        x_B = []
+        for i in range(m):
+            x_B.append(x_N.pop(randint(0, n + m - i - 1)))
+        return LPDictionary(A, b, c, randint(-bound, bound), x_B, x_N, "z")
+
     def __eq__(self, other):
         r"""
         Check if two LP problem dictionaries are equal.
@@ -4286,48 +4367,7 @@ class LPDictionary(LPAbstractDictionary):
         self._leaving = None
 
 
-def random_dictionary(m, n, bound=5, special_probability=0.2):
-    r"""
-    Construct a random dictionary.
-
-    INPUT:
-
-    - ``m`` -- the number of constraints/basic variables
-
-    - ``n`` -- the number of decision/non-basic variables
-
-    - ``bound`` -- (default: 5) a bound on dictionary entries
-
-    - ``special_probability`` -- (default: 0.2) probability of constructing a
-      potentially infeasible or potentially optimal dictionary
-
-    OUTPUT:
-
-    - an :class:`LP problem dictionary <LPDictionary>`
-
-    EXAMPLES::
-
-        sage: from sage.numerical.interactive_simplex_method \
-        ....:     import random_dictionary
-        sage: random_dictionary(3, 4)
-        LP problem dictionary (use ...)
-    """
-    A = random_matrix(ZZ, m, n, x=-bound, y=bound).change_ring(QQ)
-    if special_probability < random():
-        b = random_vector(ZZ, m, x=0, y=bound).change_ring(QQ)
-    else:   # Allow infeasible dictionary
-        b = random_vector(ZZ, m, x=-bound, y=bound).change_ring(QQ)
-    if special_probability < random():
-        c = random_vector(ZZ, n, x=-bound, y=bound).change_ring(QQ)
-    else:   # Make dual feasible dictionary
-        c = random_vector(ZZ, n, x=-bound, y=0).change_ring(QQ)
-    x_N = list(PolynomialRing(QQ, "x", m + n + 1, order="neglex").gens())
-    x_N.pop(0)
-    x_B = []
-    for i in range(m):
-        x_B.append(x_N.pop(randint(0, n + m - i - 1)))
-    return LPDictionary(A, b, c, randint(-bound, bound), x_B, x_N, "z")
-
+random_dictionary = LPDictionary.random_element
 
 class LPRevisedDictionary(LPAbstractDictionary):
     r"""

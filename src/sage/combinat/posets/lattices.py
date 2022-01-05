@@ -300,12 +300,13 @@ class FiniteMeetSemilattice(FinitePoset):
 
             - Dual function: :meth:`~sage.combinat.posets.lattices.FiniteJoinSemilattice.join`
         """
+        mt = self._hasse_diagram.meet_matrix()
         if y is not None:  # Handle basic case fast
             i, j = map(self._element_to_vertex, (x, y))
-            return self._vertex_to_element(self._hasse_diagram._meet[i, j])
+            return self._vertex_to_element(mt[i, j])
         m = self.cardinality() - 1  # m = top element
         for i in (self._element_to_vertex(_) for _ in x):
-            m = self._hasse_diagram._meet[i, m]
+            m = mt[i, m]
         return self._vertex_to_element(m)
 
     def atoms(self):
@@ -625,12 +626,13 @@ class FiniteJoinSemilattice(FinitePoset):
 
             - Dual function: :meth:`~sage.combinat.posets.lattices.FiniteMeetSemilattice.meet`
         """
+        jn = self._hasse_diagram.join_matrix()
         if y is not None:  # Handle basic case fast
             i, j = map(self._element_to_vertex, (x, y))
-            return self._vertex_to_element(self._hasse_diagram._join[i, j])
+            return self._vertex_to_element(jn[i, j])
         j = 0  # j = bottom element
         for i in (self._element_to_vertex(_) for _ in x):
-            j = self._hasse_diagram._join[i, j]
+            j = jn[i, j]
         return self._vertex_to_element(j)
 
     def coatoms(self):
@@ -1689,7 +1691,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return False
 
         H = self._hasse_diagram
-        jn = H._join
+        jn = H.join_matrix()
         n = H.order()
         for e in range(n-2, -1, -1):
             t = 0
@@ -1879,7 +1881,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return False
 
         H = self._hasse_diagram
-        mt = H._meet
+        mt = H.meet_matrix()
         n = H.order()-1
         for e in range(2, n+1):
             t = n
@@ -1968,7 +1970,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         H = self._hasse_diagram
 
         # Helper function: Join of elements in the list L.
-        jn = H._join
+        jn = H.join_matrix()
 
         def join(L):
             j = 0
@@ -2904,6 +2906,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             return True
 
         H = self._hasse_diagram
+        mt = H.meet_matrix()
+        jn = H.join_matrix()
         height = self.height()
         n = H.order()
         cur = H.maximal_elements()[0]
@@ -2913,7 +2917,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         @cached_function
         def is_modular_elt(a):
             return all(H._rank[a] + H._rank[b] ==
-                       H._rank[H._meet[a, b]] + H._rank[H._join[a, b]]
+                       H._rank[mt[a, b]] + H._rank[jn[a, b]]
                        for b in range(n))
 
         if not is_modular_elt(cur):
@@ -3235,14 +3239,13 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
 
             sage: P = MeetSemilattice({0: [1]})
             sage: E.is_sublattice(P)
-            Traceback (most recent call last):
-            ...
-            TypeError: other is not a lattice
+            True
             sage: P = JoinSemilattice({0: [1]})
             sage: E.is_sublattice(P)
-            Traceback (most recent call last):
-            ...
-            TypeError: other is not a lattice
+            True
+            sage: P = Poset({0: [1]})
+            sage: E.is_sublattice(P)
+            True
         """
         try:
             o_meet = other.meet
@@ -3402,10 +3405,12 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if not isinstance(other, FiniteLatticePoset):
             raise TypeError('the input is not a finite lattice')
         H = self._hasse_diagram
+        mt = H.meet_matrix()
+        jn = H.join_matrix()
         self_closure = H.transitive_closure()
         other_closure = other._hasse_diagram.transitive_closure()
         for g in self_closure.subgraph_search_iterator(other_closure, induced=True):
-            if all(H._meet[a, b] in g and H._join[a, b] in g for a, b in combinations(g, 2)):
+            if all(mt[a, b] in g and jn[a, b] in g for a, b in combinations(g, 2)):
                 yield self.sublattice([self._vertex_to_element(v) for v in g])
 
     def maximal_sublattices(self):

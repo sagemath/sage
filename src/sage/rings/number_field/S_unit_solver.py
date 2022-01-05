@@ -24,10 +24,10 @@ EXAMPLES::
     sage: from sage.rings.number_field.S_unit_solver import solve_S_unit_equation, eq_up_to_order
     sage: K.<xi> = NumberField(x^2+x+1)
     sage: S = K.primes_above(3)
-    sage: expected = [((2, 1), (4, 0), xi + 2, -xi - 1),
-    ....:             ((5, -1), (4, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
-    ....:             ((5, 0), (1, 0), -xi, xi + 1),
-    ....:             ((1, 1), (2, 0), -xi + 1, xi)]
+    sage: expected = [((0, 1), (4, 0), xi + 2, -xi - 1),
+    ....:             ((1, -1), (0, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
+    ....:             ((1, 0), (5, 0), xi + 1, -xi),
+    ....:             ((2, 0), (5, 1), xi, -xi + 1)]
     sage: sols = solve_S_unit_equation(K, S, 200)
     sage: eq_up_to_order(sols, expected)
     True
@@ -55,7 +55,7 @@ EXAMPLES::
 
 
 from sage.rings.all import Infinity
-from sage.calculus.var import var
+from sage.symbolic.ring import SR
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RealField, RR
@@ -675,7 +675,7 @@ def Yu_bound(SUK, v, prec=106):
     else:
         # K and v don't satisfy the theorem hypotheses, and we must move to a quadratic extension L.
         # For justification of this next bound, see [AKMRVW].
-        x = var('x')
+        x = SR.var('x')
         if p == 2:
             L_over_K = K.extension(x**2 + x + 1, 'xi0')
         else:
@@ -1422,11 +1422,11 @@ def defining_polynomial_for_Kp(prime, prec=106):
         # We are going to find which factor of f is related to the prime ideal 'prime'
 
         L = [g.change_ring(ZZ) for g, _ in factors]
-        A = [g for g in L if (g(theta)).valuation(prime) >= e*N/2];
+        A = [g for g in L if (g(theta)).valuation(prime) >= e*N/2]
 
         # We narrow down the list unitl only one value remains
 
-        if len(A) == 1: 
+        if len(A) == 1:
             return A[0].change_ring(Integers(p**prec)).change_ring(ZZ)
         else:
             N += 1
@@ -1780,20 +1780,20 @@ def sieve_ordering(SUK, q):
         sage: SUK = K.S_unit_group(S=3)
         sage: sieve_data = list(sieve_ordering(SUK, 19))
         sage: sieve_data[0]
-        (Fractional ideal (-2*xi^2 + 3),
-        Fractional ideal (xi - 3),
-        Fractional ideal (2*xi + 1))
+        (Fractional ideal (xi - 3),
+         Fractional ideal (-2*xi^2 + 3),
+         Fractional ideal (2*xi + 1))
 
         sage: sieve_data[1]
-        (Residue field of Fractional ideal (-2*xi^2 + 3),
-        Residue field of Fractional ideal (xi - 3),
-        Residue field of Fractional ideal (2*xi + 1))
+        (Residue field of Fractional ideal (xi - 3),
+         Residue field of Fractional ideal (-2*xi^2 + 3),
+         Residue field of Fractional ideal (2*xi + 1))
 
         sage: sieve_data[2]
-        ([18, 9, 16, 8], [18, 7, 10, 4], [18, 3, 12, 10])
+        ([18, 7, 16, 4], [18, 9, 12, 8], [18, 3, 10, 10])
 
         sage: sieve_data[3]
-        (972, 972, 3888)
+        (486, 648, 11664)
     """
 
     K = SUK.number_field()
@@ -2654,10 +2654,10 @@ def sieve_below_bound(K, S, bound=10, bump=10, split_primes_list=[], verbose=Fal
         sage: S = SUK.primes()
         sage: sols = sieve_below_bound(K, S, 10)
         sage: expected = [
-        ....: ((5, -1), (4, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
-        ....: ((2, 1), (4, 0), xi + 2, -xi - 1),
-        ....: ((2, 0), (1, 1), xi, -xi + 1),
-        ....: ((5, 0), (1, 0), -xi, xi + 1)]
+        ....: ((1, -1), (0, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
+        ....: ((0, 1), (4, 0), xi + 2, -xi - 1),
+        ....: ((2, 0), (5, 1), xi, -xi + 1),
+        ....: ((1, 0), (5, 0), xi + 1, -xi)]
         sage: eq_up_to_order(sols, expected)
         True
     """
@@ -2715,10 +2715,10 @@ def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=
         sage: S = K.primes_above(3)
         sage: sols = solve_S_unit_equation(K, S, 200)
         sage: expected = [
-        ....: ((2, 1), (4, 0), xi + 2, -xi - 1),
-        ....: ((5, -1), (4, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
-        ....: ((5, 0), (1, 0), -xi, xi + 1),
-        ....: ((1, 1), (2, 0), -xi + 1, xi)]
+        ....: ((0, 1), (4, 0), xi + 2, -xi - 1),
+        ....: ((1, -1), (0, -1), 1/3*xi + 2/3, -1/3*xi + 1/3),
+        ....: ((1, 0), (5, 0), xi + 1, -xi),
+        ....: ((2, 0), (5, 1), xi, -xi + 1)]
         sage: eq_up_to_order(sols, expected)
         True
 
@@ -2726,7 +2726,7 @@ def solve_S_unit_equation(K, S, prec=106, include_exponents=True, include_bound=
 
         sage: solutions, bound = solve_S_unit_equation(K, S, 100, include_bound=True)
         sage: bound
-        6
+        7
 
     You can omit the exponent vectors::
 

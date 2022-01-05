@@ -453,7 +453,7 @@ Errors and Exceptions
 When something goes wrong, you will usually see a Python
 "exception". Python even tries to suggest what raised the
 exception. Often you see the name of the exception, e.g.,
-``NameError`` or ``ValueError`` (see the Python Reference Manual [Py]_
+``NameError`` or ``ValueError`` (see the Python Library Reference [PyLR]_
 for a complete list of exceptions). For example,
 
 .. skip

@@ -252,8 +252,8 @@ class Polyhedron_cdd(Polyhedron_base):
          An inequality (1, 0) x - 1 >= 0,
          An equation (1, 1) x - 3 == 0)
         sage: [x.ambient_Hrepresentation() for x in P.facets()]
-        [(An equation (1, 1) x - 3 == 0, An inequality (1, 0) x - 1 >= 0),
-         (An equation (1, 1) x - 3 == 0, An inequality (0, 1) x - 1 >= 0)]
+        [(An inequality (1, 0) x - 1 >= 0, An equation (1, 1) x - 3 == 0),
+         (An inequality (0, 1) x - 1 >= 0, An equation (1, 1) x - 3 == 0)]
         """
         cddout = cddout.splitlines()
 

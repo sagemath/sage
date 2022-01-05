@@ -40,7 +40,11 @@ class pAdicBaseGeneric(pAdicGeneric):
 
             sage: R = Zp(5) #indirect doctest
         """
-        self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
+        if self.is_relaxed():
+            from sage.rings.padics.pow_computer_flint import PowComputer_flint
+            self.prime_pow = PowComputer_flint(p, 1, 1, 1, self.is_field())
+        else:
+            self.prime_pow = PowComputer(p, max(min(prec - 1, 30), 1), prec, self.is_field(), self._prec_type())
         pAdicGeneric.__init__(self, self, p, prec, print_mode, names, element_class)
         if self.is_field():
             if self.is_capped_relative():
@@ -50,6 +54,9 @@ class pAdicBaseGeneric(pAdicGeneric):
                 coerce_list = [pAdicCoercion_ZZ_FP(self), pAdicCoercion_QQ_FP(self)]
                 convert_list = []
             elif self.is_lattice_prec():
+                coerce_list = [QQ]
+                convert_list = []
+            elif self.is_relaxed():
                 coerce_list = [QQ]
                 convert_list = []
             else:
@@ -67,6 +74,9 @@ class pAdicBaseGeneric(pAdicGeneric):
             coerce_list = [pAdicCoercion_ZZ_FP(self)]
             convert_list = [pAdicConvert_QQ_FP(self)]
         elif self.is_lattice_prec():
+            coerce_list = [ZZ]
+            convert_list = [QQ]
+        elif self.is_relaxed():
             coerce_list = [ZZ]
             convert_list = [QQ]
         else:

@@ -184,11 +184,11 @@ class RationalCherednikAlgebra(CombinatorialFreeModule):
             d[s] = (r, r.associated_coroot(), c)
         return d
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: RationalCherednikAlgebra(['A',4], 2, 1, QQ)
             Rational Cherednik Algebra of type ['A', 4] with c=2 and t=1

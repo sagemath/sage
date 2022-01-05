@@ -231,7 +231,11 @@ def init_sage(controller=None):
 
     # We import readline before forking, otherwise Pdb doesn't work
     # on OS X: http://trac.sagemath.org/14289
-    import readline
+    try:
+        import readline
+    except ModuleNotFoundError:
+        # Do not require readline for running doctests (Trac #31160).
+        pass
 
     try:
         import sympy

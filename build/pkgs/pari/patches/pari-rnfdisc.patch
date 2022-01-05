@@ -1,0 +1,35 @@
+From 3edb98db78dd49bb8b4137b46781a7cd570c2556 Mon Sep 17 00:00:00 2001
+From: Bill Allombert <Bill.Allombert@math.u-bordeaux.fr>
+Date: Sun, 28 Mar 2021 13:27:24 +0200
+Subject: [PATCH] rnfdisc_factored: remove spurious Q_primpart [#2284]
+
+diff --git a/src/basemath/base2.c b/src/basemath/base2.c
+index b2b63ada5..531f5c558 100644
+--- a/src/basemath/base2.c
++++ b/src/basemath/base2.c
+@@ -3582,7 +3582,7 @@ rnfdisc_factored(GEN nf, GEN pol, GEN *pd)
+ 
+   nf = checknf(nf);
+   pol = rnfdisc_get_T(nf, pol, &lim);
+-  disc = nf_to_scalar_or_basis(nf, nfX_disc(nf, Q_primpart(pol)));
++  disc = nf_to_scalar_or_basis(nf, nfX_disc(nf, pol));
+   pol = nfX_to_monic(nf, pol, NULL);
+   fa = idealfactor_partial(nf, disc, lim);
+   P = gel(fa,1); l = lg(P);
+diff --git a/src/test/32/rnf b/src/test/32/rnf
+index 6bd4585..d24e1ce 100644 (file)
+--- a/src/test/32/rnf
++++ b/src/test/32/rnf
+@@ -832,9 +832,9 @@ error("inconsistent dimensions in idealtwoelt.")
+ 0
+ 0
+ 1
+-[[7361, 3786, 318, 5823; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, 1], [-3, 6, -2, 0]
+-~]
+-[2, -1]
++[[433, 322, 318, 1318/17; 0, 1, 0, 12/17; 0, 0, 1, 5/17; 0, 0, 0, 1/17], [25
++/17, -12/17, 12/17, 16/17]~]
++[1, -1]
+   ***   at top-level: rnfdedekind(nf,P,pr2,1)
+   ***                 ^-----------------------
+   *** rnfdedekind: sorry, Dedekind in the difficult case is not yet implemented.

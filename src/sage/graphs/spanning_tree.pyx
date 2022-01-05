@@ -37,7 +37,7 @@ Methods
 # ****************************************************************************
 
 cimport cython
-from sage.ext.memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
 
 

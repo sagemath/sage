@@ -153,13 +153,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
     The elements ``el`` of the disjoint union are simple wrapped elements.
     So to access the methods, you need to do ``el.value``::
 
-        sage: el[0]  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: 'sage.structure.element_wrapper.ElementWrapper' object
-         has no attribute '__getitem__'
-
-        sage: el[0]  # py3
+        sage: el[0]
         Traceback (most recent call last):
         ...
         TypeError: 'sage.structure.element_wrapper.ElementWrapper' object is not subscriptable

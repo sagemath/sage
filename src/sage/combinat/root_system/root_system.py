@@ -329,7 +329,8 @@ class RootSystem(UniqueRepresentation, SageObject):
             self.dual_side = False
             # still fails for CartanType G2xA1
             try:
-                self.dual = RootSystem(self._cartan_type.dual(), as_dual_of=self);
+                self.dual = RootSystem(self._cartan_type.dual(),
+                                       as_dual_of=self)
             except Exception:
                 pass
         else:

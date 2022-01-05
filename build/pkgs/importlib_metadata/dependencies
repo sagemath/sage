@@ -1,4 +1,4 @@
-$(PYTHON) vcversioner zipp | $(PYTHON_TOOLCHAIN)
+$(PYTHON) zipp typing_extensions | $(PYTHON_TOOLCHAIN) toml
 
 ----------
 All lines of this file are ignored except the first.

@@ -1185,24 +1185,86 @@ class ParallelogramPolyomino(ClonableList,
             self.check()
         self._options = None
 
+    def reflect(self):
+        r"""
+        Return the parallelogram polyomino obtained by switching rows and
+        columns.
+
+        EXAMPLES::
+
+            sage: pp = ParallelogramPolyomino([[0,0,0,0,1,1,0,1,0,1], [1,0,1,0,0,1,1,0,0,0]])
+            sage: pp.heights(), pp.upper_heights()
+            ([4, 3, 2, 3], [0, 1, 3, 3])
+            sage: pp = pp.reflect()
+            sage: pp.widths(), pp.lower_widths()
+            ([4, 3, 2, 3], [0, 1, 3, 3])
+
+            sage: pp = ParallelogramPolyomino([[0,0,0,1,1], [1,0,0,1,0]])
+            sage: ascii_art(pp)
+            *
+            *
+            **
+            sage: ascii_art(pp.reflect())
+            ***
+              *
+
+        TESTS::
+
+           sage: pp = ParallelogramPolyomino([[1], [1]])
+           sage: pp.reflect()
+           [[1], [1]]
+        """
+        if self.size() == 1:
+            return self
+        a, b = self
+        return ParallelogramPolyomino([[1-v for v in b], [1-v for v in a]])
+
+    def rotate(self):
+        r"""
+        Return the parallelogram polyomino obtained by rotation of 180 degrees.
+
+        EXAMPLES::
+
+            sage: pp = ParallelogramPolyomino([[0,0,0,1,1], [1,0,0,1,0]])
+            sage: ascii_art(pp)
+            *
+            *
+            **
+            sage: ascii_art(pp.rotate())
+            **
+             *
+             *
+        """
+        a, b = self
+        return ParallelogramPolyomino([b[::-1], a[::-1]])
+
+
     def _to_dyck_delest_viennot(self):
         r"""
         Convert to a Dyck word using the Delest-Viennot bijection.
 
-        This bijection is described page 179 and page 180 Figure 6 in
-        the article [DeVi1984]_.
+        This bijection is described on page 179 and page 180 Figure 6
+        in the article [DeVi1984]_, where it is called the classical
+        bijection `\gamma`.
 
         EXAMPLES::
 
-            sage: pp = ParallelogramPolyomino(
-            ....:     [[0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0]]
-            ....: )
+            sage: pp = ParallelogramPolyomino([[0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0]])
             sage: pp._to_dyck_delest_viennot()
             [1, 1, 0, 1, 1, 0, 1, 0, 0, 0]
+
+        TESTS::
+
+            sage: pp = ParallelogramPolyomino([[1], [1]])
+            sage: pp._to_dyck_delest_viennot()
+            []
+
         """
         from sage.combinat.dyck_word import DyckWord
         dyck = []
         dick_size = self.size()-1
+        if not dick_size:
+            return DyckWord([])
         upper_path = self.upper_path()
         lower_path = self.lower_path()
         dyck.append(1 - lower_path[0])
@@ -1212,20 +1274,53 @@ class ParallelogramPolyomino(ClonableList,
         dyck.append(upper_path[dick_size])
         return DyckWord(dyck)
 
+    def _to_dyck_delest_viennot_peaks_valleys(self):
+        r"""
+        Convert to a Dyck word using the Delest-Viennot bijection `\beta`.
+
+        This bijection is described on page 182 and Figure 8 in the
+        article [DeVi1984]_.  It returns the unique Dyck path whose
+        peak heights are the column heights and whose valley heights
+        are the overlaps between adjacent columns.
+
+
+
+        EXAMPLES:
+
+        This is the example in Figure 8 of [DeVi1984]_::
+
+            sage: pp = ParallelogramPolyomino([[0,0,0,0,1,1,0,1,0,1], [1,0,1,0,0,1,1,0,0,0]])
+            sage: pp._to_dyck_delest_viennot_peaks_valleys()
+            [1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0]
+
+        TESTS::
+
+            sage: pp = ParallelogramPolyomino([[1], [1]])
+            sage: pp._to_dyck_delest_viennot_peaks_valleys()
+            []
+
+        """
+        from sage.combinat.dyck_word import DyckWord
+        a = self.heights()
+        u = self.upper_heights()
+        b = [0] + [a[i]-u[i+1]+u[i]-1 for i in range(len(a)-1)] + [0]
+        dyck = []
+        for i in range(len(a)):
+            dyck.extend([1]*(a[i]-b[i]))
+            dyck.extend([0]*(a[i]-b[i+1]))
+        return DyckWord(dyck)
+
     @combinatorial_map(name="To Dyck word")
     def to_dyck_word(self, bijection=None):
         r"""
         Convert to a Dyck word.
-
-        This bijection is described page 179 and page 180 Figure 6 in
-        the article [DeVi1984]_.
 
         INPUT:
 
         - ``bijection`` -- string or ``None`` (default:``None``) The name of
           the bijection. If it is set to ``None`` then the ``'Delest-Viennot'``
           bijection is used.
-          Expected values are ``None`` or ``'Delest-Viennot'``.
+          Expected values are ``None``, ``'Delest-Viennot'``, or ``'Delest-Viennot-beta'``.
 
         OUTPUT:
 
@@ -1233,24 +1328,30 @@ class ParallelogramPolyomino(ClonableList,
 
         EXAMPLES::
 
-            sage: pp = ParallelogramPolyomino(
-            ....:     [[0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0]]
-            ....: )
+            sage: pp = ParallelogramPolyomino([[0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0]])
             sage: pp.to_dyck_word()
             [1, 1, 0, 1, 1, 0, 1, 0, 0, 0]
             sage: pp.to_dyck_word(bijection='Delest-Viennot')
             [1, 1, 0, 1, 1, 0, 1, 0, 0, 0]
+
+            sage: pp.to_dyck_word(bijection='Delest-Viennot-beta')
+            [1, 0, 1, 1, 1, 0, 1, 0, 0, 0]
         """
         if bijection is None or bijection == 'Delest-Viennot':
             return self._to_dyck_delest_viennot()
+        if bijection == 'Delest-Viennot-beta':
+            return self._to_dyck_delest_viennot_peaks_valleys()
+        raise ValueError("The given bijection is not valid.")
 
     @staticmethod
     def _from_dyck_word_delest_viennot(dyck):
         r"""
-        Convert Dyck word to parallelogram polyomino using the Delest Viennot
-        bijection.
+        Convert a Dyck word to a parallelogram polyomino using the Delest
+        Viennot bijection.
 
-        This bijection come from the article [DeVi1984]_.
+        This bijection is described on page 179 and page 180 Figure 6 in
+        the article [DeVi1984]_, where it is called the classical
+        bijection `\gamma`.
 
         INPUT:
 
@@ -1265,6 +1366,14 @@ class ParallelogramPolyomino(ClonableList,
             sage: dyck = DyckWord([1, 1, 0, 1, 1, 0, 1, 0, 0, 0])
             sage: ParallelogramPolyomino._from_dyck_word_delest_viennot(dyck)
             [[0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0]]
+
+        TESTS::
+
+            sage: gamma = ParallelogramPolyomino._to_dyck_delest_viennot
+            sage: gamma_inv = ParallelogramPolyomino._from_dyck_word_delest_viennot
+            sage: all(all(D == gamma(gamma_inv(D)) for D in DyckWords(n)) for n in range(7))
+            True
+
         """
         l = [1] + list(dyck) + [0]
         word_up = []
@@ -1272,6 +1381,62 @@ class ParallelogramPolyomino(ClonableList,
         for i in range(0, len(l), 2):
             word_up.append(l[i])
             word_down.append(1 - l[i+1])
+        return ParallelogramPolyomino([word_down, word_up])
+
+    @staticmethod
+    def _from_dyck_word_delest_viennot_peaks_valleys(dyck):
+        r"""
+        Convert a Dyck word to a parallelogram polyomino using the Delest
+        Viennot bijection `\beta`.
+
+        This bijection is described on page 182 and Figure 8 in
+        the article [DeVi1984]_.
+
+        INPUT:
+
+        - ``dyck`` -- a Dyck word
+
+        OUTPUT:
+
+        A parallelogram polyomino.
+
+        EXAMPLES::
+
+            sage: dyck = DyckWord([1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0])
+            sage: ParallelogramPolyomino._from_dyck_word_delest_viennot_peaks_valleys(dyck)
+            [[0, 0, 0, 0, 1, 1, 0, 1, 0, 1], [1, 0, 1, 0, 0, 1, 1, 0, 0, 0]]
+
+            sage: dyck = DyckWord([1,1,0,1,1,1,1,1,0,0,1,0,0,0,0,0,1,1,1,0,0,1,0,0])
+            sage: ParallelogramPolyomino._from_dyck_word_delest_viennot_peaks_valleys(dyck)
+            [[0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1], [1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0]]
+
+        TESTS::
+
+            sage: beta = ParallelogramPolyomino._to_dyck_delest_viennot_peaks_valleys
+            sage: beta_inv = ParallelogramPolyomino._from_dyck_word_delest_viennot_peaks_valleys
+            sage: all(all(D == beta(beta_inv(D)) for D in DyckWords(n)) for n in range(7))
+            True
+        """
+        if not dyck:
+            return ParallelogramPolyomino([[1], [1]])
+        a = []
+        b = [0]
+        h = 0
+        for i in range(len(dyck)-1):
+            if dyck[i] == 1:
+                h += 1
+                if dyck[i+1] == 0:
+                    a.append(h)
+            else:
+                if dyck[i+1] == 1:
+                    b.append(h)
+                h -= 1
+        b.append(0)
+        word_down = []
+        word_up = []
+        for i in range(len(a)):
+            word_down.extend([0]*(a[i]-b[i]) + [1])
+            word_up.extend([1]+[0]*(a[i]-b[i+1]))
         return ParallelogramPolyomino([word_down, word_up])
 
     @staticmethod
@@ -1293,17 +1458,18 @@ class ParallelogramPolyomino(ClonableList,
         EXAMPLES::
 
             sage: dyck = DyckWord([1, 1, 0, 1, 1, 0, 1, 0, 0, 0])
-            sage: pp = ParallelogramPolyomino.from_dyck_word(dyck)
-            sage: pp
+            sage: ParallelogramPolyomino.from_dyck_word(dyck)
             [[0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0]]
-            sage: pp = ParallelogramPolyomino.from_dyck_word(
-            ....:     dyck, bijection='Delest-Viennot'
-            ....: )
-            sage: pp
+            sage: ParallelogramPolyomino.from_dyck_word(dyck, bijection='Delest-Viennot')
             [[0, 1, 0, 0, 1, 1], [1, 1, 1, 0, 0, 0]]
+            sage: ParallelogramPolyomino.from_dyck_word(dyck, bijection='Delest-Viennot-beta')
+            [[0, 0, 1, 0, 1, 1], [1, 1, 1, 0, 0, 0]]
         """
         if bijection is None or bijection == 'Delest-Viennot':
             return ParallelogramPolyomino._from_dyck_word_delest_viennot(dyck)
+        if bijection == 'Delest-Viennot-beta':
+            return ParallelogramPolyomino._from_dyck_word_delest_viennot_peaks_valleys(dyck)
+        raise ValueError("The given bijection is not valid.")
 
     def _to_binary_tree_Aval_Boussicault(self, position=[0, 0]):
         r"""

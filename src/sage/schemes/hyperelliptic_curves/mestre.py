@@ -77,8 +77,10 @@ def HyperellipticCurve_from_invariants(i, reduced=True, precision=None,
 
     An example over a finite field::
 
-        sage: HyperellipticCurve_from_invariants([GF(13)(1),3,7,5])
-        Hyperelliptic Curve over Finite Field of size 13 defined by y^2 = 8*x^5 + 5*x^4 + 5*x^2 + 9*x + 3
+        sage: H = HyperellipticCurve_from_invariants([GF(13)(1),3,7,5]); H
+        Hyperelliptic Curve over Finite Field of size 13 defined by ...
+        sage: H.igusa_clebsch_invariants()
+        (4, 9, 6, 11)
 
     An example over a number field::
 

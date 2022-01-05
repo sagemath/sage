@@ -1971,7 +1971,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
             sage: 1 in PartitionTuples()
             False
         """
-        if isinstance(mu, PartitionTuple) or isinstance(mu, Partition):
+        if isinstance(mu, (PartitionTuple, Partition)):
             return True
         if isinstance(mu, (tuple, list)):
             if not mu:

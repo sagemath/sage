@@ -154,11 +154,11 @@ class CompoundSymbol(SageObject):
             return [self.top_2, self.bottom_2]
         elif num_lines == 3:
             return [self.top, self.middle, self.bottom]
-        elif num_lines %2 == 0:
-            ext = [self.extension] * ((num_lines-4) // 2)
+        elif num_lines % 2 == 0:
+            ext = [self.extension] * ((num_lines - 4) // 2)
             return [self.top] + ext + [self.middle_top, self.middle_bottom] + ext + [self.bottom]
-        else: # num_lines %2 == 1
-            ext = [self.extension] * ((num_lines-3) // 2)
+        else:  # num_lines %2 == 1
+            ext = [self.extension] * ((num_lines - 3) // 2)
             return [self.top] + ext + [self.middle] + ext + [self.bottom]
 
     def print_to_stdout(self, num_lines):
@@ -335,6 +335,3 @@ unicode_right_curly_brace = CompoundUnicodeSymbol(
     unicodedata.lookup('UPPER RIGHT OR LOWER LEFT CURLY BRACKET SECTION'),
     unicodedata.lookup('UPPER LEFT OR LOWER RIGHT CURLY BRACKET SECTION'),
 )
-
-
-

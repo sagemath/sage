@@ -9,7 +9,7 @@ the face lattice of a polyhedron.
 Terminology in this module:
 
 - Vrep                  -- ``[vertices, rays, lines]`` of the polyhedron.
-- Hrep                  -- inequalities and equalities of the polyhedron.
+- Hrep                  -- inequalities and equations of the polyhedron.
 - Facets                -- facets of the polyhedron.
 - Coatoms               -- the faces from which all others are constructed in
                            the face iterator. This will be facets or Vrep.
@@ -138,7 +138,8 @@ cdef class PolyhedronFaceLattice:
         cdef FaceIterator face_iter = C._face_iter(self.dual, -2)
         self._Vrep = C.Vrep()
         self._facet_names = C.facet_names()
-        self._equalities = C.equalities()
+        self._equations = C.equations()
+        self._bounded = C.is_bounded()
 
         # copy f_vector for later use
         f_vector = C.f_vector()

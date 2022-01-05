@@ -41,18 +41,20 @@ Characters are themselves group elements, and basic arithmetic on them works::
     +Infinity
 """
 import operator
-
 from sage.structure.element import MultiplicativeGroupElement, parent
-from sage.structure.parent_base import ParentWithBase
+from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp_not_equal, richcmp
 from sage.rings.all import QQ, ZZ, Zmod, NumberField
 from sage.misc.cachefunc import cached_method
 from sage.misc.abstract_method import abstract_method
 from sage.misc.misc_c import prod
+from sage.arith.misc import crt
 from sage.categories.groups import Groups
 from sage.categories.rings import Rings
 from sage.misc.mrange import xmrange
+from sage.misc.verbose import verbose
+from sage.modular.dirichlet import DirichletGroup
 
 
 class SmoothCharacterGeneric(MultiplicativeGroupElement):
@@ -79,13 +81,13 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
         """
         MultiplicativeGroupElement.__init__(self, parent)
         self._c = c
-        self._values_on_gens = values_on_gens
+        self._values_on_gens = Sequence(values_on_gens, universe=self.base_ring(), immutable=True)
         self._check_level()
 
     def _check_level(self):
         r"""
         Checks that this character has the level it claims to have, and if not,
-        decrement the level by 1. This is called by :meth:`__init__`.
+        decrement the level appropriately. This is called by :meth:`__init__`.
 
         EXAMPLES::
 
@@ -102,6 +104,17 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
             self._values_on_gens = Sequence(new_values, universe=self.base_ring(), immutable=True)
             self._c = self._c - 1
             self._check_level()
+
+    def __hash__(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupQp
+            sage: chi = SmoothCharacterGroupQp(5, QQ).character(5, [-1, 7])
+            sage: D = {chi: 7}; D[chi] # indirect doctest
+            7
+        """
+        return hash( (self._c, self._values_on_gens) )
 
     def _richcmp_(self, other, op):
         r"""
@@ -324,7 +337,7 @@ class SmoothCharacterGeneric(MultiplicativeGroupElement):
         return self.parent().character(self.level(), [self(sig(x)) for x in self.parent().unit_gens(self.level())])
 
 
-class SmoothCharacterGroupGeneric(ParentWithBase):
+class SmoothCharacterGroupGeneric(Parent):
     r"""
     The group of smooth (i.e. locally constant) characters of a `p`-adic field,
     with values in some ring `R`. This is an abstract base class and should not
@@ -346,10 +359,10 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
         """
         if base_ring not in Rings():
             raise TypeError("base ring (=%s) must be a ring" % base_ring)
-        ParentWithBase.__init__(self, base=base_ring,
-                                category=Groups().Commutative())
+        Parent.__init__(self, base=base_ring,
+                        category=Groups().Commutative())
         if not (p in ZZ and ZZ(p).is_prime()):
-            raise ValueError( "p (=%s) must be a prime integer" % p )
+            raise ValueError("p (=%s) must be a prime integer" % p)
         self._p = ZZ.coerce(p)
 
     def _element_constructor_(self, x):
@@ -720,6 +733,21 @@ class SmoothCharacterGroupGeneric(ParentWithBase):
                 raise ValueError( "value on uniformiser %s (=%s) should be a unit" % (self.unit_gens(level)[i], S[i]) )
         return self.element_class(self, level, S)
 
+    def norm_character(self):
+        r"""
+        Return the normalised absolute value character in this group (mapping a
+        uniformiser to `1/q` where `q` is the order of the residue field).
+
+        EXAMPLES::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic
+            sage: SmoothCharacterGroupQp(5, QQ).norm_character()
+            Character of Q_5*, of level 0, mapping 5 |--> 1/5
+            sage: SmoothCharacterGroupUnramifiedQuadratic(2, QQ).norm_character()
+            Character of unramified extension Q_2(s)* (s^2 + s + 1 = 0), of level 0, mapping 2 |--> 1/4
+        """
+        return self.character(0, [1/self.ideal(1).residue_field().cardinality()])
+
     def _an_element_(self):
         r"""
         Return an element of this group. Required by the coercion machinery.
@@ -1012,8 +1040,350 @@ class SmoothCharacterGroupQp(SmoothCharacterGroupGeneric):
         else:
             return [1 + self.prime()**(level - 1)]
 
+    def from_dirichlet(self, chi):
+        r"""
+        Given a Dirichlet character `\chi`, return the factor at p of the
+        adelic character `\phi` which satisfies `\phi(\varpi_\ell) =
+        \chi(\ell)` for almost all `\ell`, where `\varpi_\ell` is a uniformizer
+        at `\ell`.
 
-class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupGeneric):
+        More concretely, if we write `\chi = \chi_p \chi_M` as a product of
+        characters of p-power, resp prime-to-p, conductor, then this function
+        returns the character of `\QQ_p^\times` sending `p` to `\chi_M(p)` and
+        agreeing with `\chi_p^{-1}` on integers that are 1 modulo M and coprime
+        to `p`.
+
+        EXAMPLES::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupQp
+            sage: G = SmoothCharacterGroupQp(3, CyclotomicField(6))
+            sage: G.from_dirichlet(DirichletGroup(9).0)
+            Character of Q_3*, of level 2, mapping 2 |--> -zeta6 + 1, 3 |--> 1
+        """
+        p = self.prime()
+        chi = chi.primitive_character()
+        c = chi.level().valuation(p)
+        M = chi.level().prime_to_m_part(p)
+        return self.character(chi.conductor().valuation(p), [~chi(crt(1, x, M, p**c)) for x in self.unit_gens(c)[:-1]] + [chi(crt(p, 1, M, p**c))])
+
+    def quadratic_chars(self):
+        r"""
+        Return a list of the (non-trivial) quadratic characters in this group.
+        This will be a list of 3 characters, unless `p = 2` when there are 7.
+
+        EXAMPLES::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupQp
+            sage: SmoothCharacterGroupQp(7, QQ).quadratic_chars()
+            [Character of Q_7*, of level 0, mapping 7 |--> -1,
+             Character of Q_7*, of level 1, mapping 3 |--> -1, 7 |--> -1,
+             Character of Q_7*, of level 1, mapping 3 |--> -1, 7 |--> 1]
+            sage: SmoothCharacterGroupQp(2, QQ).quadratic_chars()
+            [Character of Q_2*, of level 0, mapping 2 |--> -1,
+             Character of Q_2*, of level 2, mapping 3 |--> -1, 2 |--> -1,
+             Character of Q_2*, of level 2, mapping 3 |--> -1, 2 |--> 1,
+             Character of Q_2*, of level 3, mapping 7 |--> -1, 5 |--> -1, 2 |--> -1,
+             Character of Q_2*, of level 3, mapping 7 |--> -1, 5 |--> -1, 2 |--> 1,
+             Character of Q_2*, of level 3, mapping 7 |--> 1, 5 |--> -1, 2 |--> -1,
+             Character of Q_2*, of level 3, mapping 7 |--> 1, 5 |--> -1, 2 |--> 1]
+        """
+        if self.prime() == 2:
+            q = 3
+        else:
+            q = 1
+        ram = [self.from_dirichlet(chi) for chi in DirichletGroup(self.prime() ** q, QQ) if not chi.is_trivial()]
+        nr = self.character(0, [-1])
+        return sorted([nr] + [f for f in ram] + [f*nr for f in ram])
+
+class SmoothCharacterGroupQuadratic(SmoothCharacterGroupGeneric):
+    r"""
+    The group of smooth characters of `E^\times`, where `E` is a quadratic extension of `\QQ_p`.
+    """
+
+    def discrete_log(self, level, x, gens=None):
+        r"""
+        Express the class of `x` in `F^\times / (1 + \mathfrak{p}^c)^\times` in
+        terms of the generators returned by ``self.unit_gens(level)``, or a
+        custom set of generators if given.
+
+        EXAMPLES::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupUnramifiedQuadratic
+            sage: G = SmoothCharacterGroupUnramifiedQuadratic(2, QQ)
+            sage: G.discrete_log(0, 12)
+            [2]
+            sage: G.discrete_log(1, 12)
+            [0, 2]
+            sage: v = G.discrete_log(5, 12); v
+            [0, 2, 0, 1, 2]
+            sage: g = G.unit_gens(5); prod([g[i]**v[i] for i in [0..4]])/12 - 1 in G.ideal(5)
+            True
+            sage: G.discrete_log(3,G.number_field()([1,1]))
+            [2, 0, 0, 1, 0]
+            sage: H = SmoothCharacterGroupUnramifiedQuadratic(5, QQ)
+            sage: x = H.number_field()([1,1]); x
+            s + 1
+            sage: v = H.discrete_log(5, x); v
+            [22, 263, 379, 0]
+            sage: h = H.unit_gens(5); prod([h[i]**v[i] for i in [0..3]])/x - 1 in H.ideal(5)
+            True
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupRamifiedQuadratic
+            sage: G = SmoothCharacterGroupRamifiedQuadratic(3, 1, QQ)
+            sage: s = G.number_field().gen()
+            sage: dl = G.discrete_log(4, 3 + 2*s)
+            sage: gs = G.unit_gens(4); gs[0]^dl[0] * gs[1]^dl[1] * gs[2]^dl[2] * gs[3]^dl[3] - (3 + 2*s) in G.ideal(4)
+            True
+
+        An example with a custom generating set::
+
+            sage: G.discrete_log(2, s+3, gens=[s, s+1, 2])
+            [1, 2, 0]
+        """
+        x = self.number_field().coerce(x)
+        if x == 0:
+            raise ValueError( "cannot evaluate at zero" )
+        if gens is None:
+            n1 = x.valuation(self.ideal(1))
+            x1 = x / self.unit_gens(0)[-1] ** n1
+            if level == 0:
+                return [n1]
+            else:
+                return self.ideal(level).ideallog(x1, self.unit_gens(level)[:-1]) + [n1]
+        else:
+            P = self.ideal(1)
+            I = self.ideal(level)
+            gens = [self.number_field().coerce(g) for g in gens]
+            i = min(i for i in range(len(gens)) if gens[i].valuation(P) == 1) # lazy!
+            pi = gens[i]
+            genvals = []
+            genunits = []
+            for g in gens:
+                genvals.append(g.valuation(P))
+                gu = g / pi**genvals[-1]
+                gu *= gu.denominator_ideal().element_1_mod(I)
+                genunits.append(I.reduce(gu))
+            xunit = x / pi**x.valuation(P)
+            xunit = I.reduce(xunit * xunit.denominator_ideal().element_1_mod(I))
+            verbose("computing log of %s in basis %s" % (xunit, genunits), level=1)
+            dl = I.ideallog(xunit, genunits)
+            pi_term = x.valuation(P) - sum(dl[j] * genvals[j] for j in range(len(gens)))
+            dl[i] += pi_term
+            X = prod(gens[j] ** dl[j] for j in range(len(gens)))
+            assert (X/x - 1).valuation(P) >= level
+            return dl
+
+    @cached_method
+    def quotient_gens(self, n):
+        r"""
+        Return a list of elements of `E` which are a generating set for the
+        quotient `E^\times / \QQ_p^\times`, consisting of elements which are
+        "minimal" in the sense of [LW12].
+
+        In the examples we implement here, this quotient is almost always
+        cyclic: the exceptions are the unramified quadratic extension of
+        `\QQ_2` for `n \ge 3`, and the extension `\QQ_3(\sqrt{-3})` for `n \ge
+        4`.
+
+        EXAMPLES::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupUnramifiedQuadratic
+            sage: G = SmoothCharacterGroupUnramifiedQuadratic(7,QQ)
+            sage: G.quotient_gens(1)
+            [2*s - 2]
+            sage: G.quotient_gens(2)
+            [15*s + 21]
+            sage: G.quotient_gens(3)
+            [-75*s + 33]
+
+        A ramified case::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupRamifiedQuadratic
+            sage: G = SmoothCharacterGroupRamifiedQuadratic(7, 0, QQ)
+            sage: G.quotient_gens(3)
+            [22*s + 21]
+
+        An example where the quotient group is not cyclic::
+
+            sage: G = SmoothCharacterGroupUnramifiedQuadratic(2,QQ)
+            sage: G.quotient_gens(1)
+            [s + 1]
+            sage: G.quotient_gens(2)
+            [-s + 2]
+            sage: G.quotient_gens(3)
+            [-17*s - 14, 3*s - 2]
+        """
+
+        # silly special case
+        if n == 0:
+            if self.ideal(1).norm().is_prime():
+                return [self.unit_gens(0), [2]]
+            else:
+                return [[], []]
+
+        p = self.prime()
+        I = self.ideal(n)
+        gs = self.unit_gens(n)
+        es = self.exponents(n)
+        d = len(es)
+
+        A = ZZ**d
+        R = [A.gen(i)*es[i] for i in range(d)]
+        r = I.smallest_integer()
+        S = [self.discrete_log(n, ZZ(s)) for s in Zmod(r).unit_gens() + (p,)]
+        Q = A / A.span(R + S)
+        t = None
+        qgs = []
+        for v in Q.gens():
+            # choose a "nice" representative
+            vv = v.lift()
+            if vv[-1] < 0:
+                vv *= -1
+            while vv[-1] not in [0, 1]:
+                if t is None:
+                    t = self.discrete_log(n, p)
+                vv = [vv[i] - t[i] for i in range(d)]
+            assert (Q(A(vv)) == v or Q(A(vv)) == -v)
+            qgs.append( I.reduce(prod(gs[i] ** (vv[i] % es[i]) for i in range(d-1))) * gs[-1]**vv[-1] )
+
+        if len(qgs) == 2:
+            x, y = qgs
+            return [x * y, y]
+        else:
+            return qgs
+
+    def _reduce_Qp(self, level, x):
+        r"""
+        Utility function: given an element `x` of the number field of self,
+        return an element of `\QQ_p^\times` which is congruent to `x` modulo a
+        given power of the maximal ideal. An error will be raised if no such
+        element exists.
+
+        EXAMPLES::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupUnramifiedQuadratic
+            sage: G = SmoothCharacterGroupUnramifiedQuadratic(2, QQ)
+            sage: s = G.number_field().gen()
+            sage: G._reduce_Qp(3, -2520*s-1007)
+            9
+            sage: G._reduce_Qp(3, s)
+            Traceback (most recent call last):
+            ...
+            ValueError: s not congruent mod Fractional ideal (8) to an elt of Qp
+        """
+        p = self.prime()
+        r = ZZ(x.norm().valuation(p) / 2)
+        y = x / p**r
+        if p==2 and y.trace().valuation(2) < 1:
+            raise ValueError("%s not congruent mod %s to an elt of Qp" % (x, self.ideal(level)))
+        Y = (y.trace() / 2) % self.ideal(level).smallest_integer()
+        X = p**r * Y
+        if not (X/x - 1).valuation(self.ideal(1)) >= level:
+            if p != 2:
+                raise ValueError("%s not congruent mod %s to an elt of Qp" % (x, self.ideal(level)))
+            else:
+                X += ZZ(2)**(r + level - 1)
+                if not (X/x - 1).valuation(self.ideal(1)) >= level:
+                    raise ValueError("%s not congruent mod %s to an elt of Qp" % (x, self.ideal(level)))
+        return X
+
+    def extend_character(self, level, chi, vals, check=True):
+        r"""
+        Return the unique character of `F^\times` which coincides with `\chi`
+        on `\QQ_p^\times` and maps the generators of the quotient returned by
+        :meth:`quotient_gens` to ``vals``.
+
+        INPUT:
+
+        - ``chi``: a smooth character of `\QQ_p`, where `p` is the residue
+          characteristic of `F`, with values in the base ring of self (or some
+          other ring coercible to it)
+        - ``level``: the level of the new character (which should be at least
+          the level of ``chi``)
+        - ``vals``: a list of elements of the base ring of self (or some other
+          ring coercible to it), specifying values on the quotients returned by
+          :meth:`quotient_gens`.
+
+        A ``ValueError`` will be raised if `x^t \ne \chi(\alpha^t)`, where `t`
+        is the smallest integer such that `\alpha^t` is congruent modulo
+        `p^{\rm level}` to an element of `\QQ_p`.
+
+        EXAMPLES:
+
+        We extend an unramified character of `\QQ_3^\times` to the unramified
+        quadratic extension in various ways.
+
+        ::
+
+            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic
+            sage: chi = SmoothCharacterGroupQp(5, QQ).character(0, [7]); chi
+            Character of Q_5*, of level 0, mapping 5 |--> 7
+            sage: G = SmoothCharacterGroupUnramifiedQuadratic(5, QQ)
+            sage: G.extend_character(1, chi, [-1])
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -1, 5 |--> 7
+            sage: G.extend_character(2, chi, [-1])
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -1, 5 |--> 7
+            sage: G.extend_character(3, chi, [1])
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 0, mapping 5 |--> 7
+            sage: K.<z> = CyclotomicField(6); G.base_extend(K).extend_character(1, chi, [z])
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -z + 1, 5 |--> 7
+
+        We extend the nontrivial quadratic character::
+
+            sage: chi = SmoothCharacterGroupQp(5, QQ).character(1, [-1, 7])
+            sage: K.<z> = CyclotomicField(24); G.base_extend(K).extend_character(1, chi, [z^6])
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -z^6, 5 |--> 7
+
+        Extensions of higher level::
+
+            sage: K.<z> = CyclotomicField(20); rho = G.base_extend(K).extend_character(2, chi, [z]); rho
+            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 2, mapping 11*s - 10 |--> z^5, 6 |--> 1, 5*s + 1 |--> z^4, 5 |--> 7
+            sage: rho(3)
+            -1
+
+        Examples where it doesn't work::
+
+            sage: G.extend_character(1, chi, [1])
+            Traceback (most recent call last):
+            ...
+            ValueError: Invalid values for extension
+
+            sage: G = SmoothCharacterGroupQp(2, QQ); H = SmoothCharacterGroupUnramifiedQuadratic(2, QQ)
+            sage: chi = G.character(3, [1, -1, 7])
+            sage: H.extend_character(2, chi, [-1])
+            Traceback (most recent call last):
+            ...
+            ValueError: Level of extended character cannot be smaller than level of character of Qp
+        """
+        chi = chi.base_extend(self.base_ring())
+
+        qs = self.quotient_gens(level)
+        assert len(vals) == len(qs)
+
+        # initial sanity checks
+        r = self.ideal(level).smallest_integer().valuation(self.prime())
+        if chi.level() > r:
+            raise ValueError("Level of extended character cannot be smaller than level of character of Qp")
+
+        # now do the calculation
+        standard_gens = self.unit_gens(level)
+        values_on_standard_gens = []
+
+        custom_gens = qs + chi.parent().unit_gens(r)
+        values_on_custom_gens = vals + [chi(x) for x in chi.parent().unit_gens(r)]
+        verbose("want to send %s to %s" % (custom_gens, values_on_custom_gens), level=1)
+
+        for x in standard_gens:
+            d = self.discrete_log(level, x, custom_gens)
+            chix = prod(values_on_custom_gens[i]**d[i] for i in range(len(d)))
+            values_on_standard_gens.append(chix)
+
+        chiE = self.character(level, values_on_standard_gens)
+        if not all( chiE(qs[i]) == vals[i] for i in range(len(qs)) ) or chiE.restrict_to_Qp() != chi:
+            raise ValueError("Invalid values for extension")
+        return chiE
+
+class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupQuadratic):
     r"""
     The group of smooth characters of `\QQ_{p^2}^\times`, where `\QQ_{p^2}` is
     the unique unramified quadratic extension of `\QQ_p`. We represent
@@ -1230,183 +1600,8 @@ class SmoothCharacterGroupUnramifiedQuadratic(SmoothCharacterGroupGeneric):
         else:
             return [1 + self.prime()**(level - 1), 1 + self.prime()**(level - 1) * self.number_field().gen()]
 
-    def quotient_gen(self, level):
-        r"""
-        Find an element generating the quotient
 
-        .. MATH::
-
-            \mathcal{O}_F^\times / \ZZ_p^\times \cdot (1 + p^c \mathcal{O}_F),
-
-        where `c` is the given level.
-
-        EXAMPLES::
-
-            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupUnramifiedQuadratic
-            sage: G = SmoothCharacterGroupUnramifiedQuadratic(7,QQ)
-            sage: G.quotient_gen(1)
-            s
-            sage: G.quotient_gen(2)
-            -20*s - 21
-            sage: G.quotient_gen(3)
-            -69*s - 70
-
-        For `p = 2` an error will be raised for level `\ge 3`, as the quotient is not cyclic::
-
-            sage: G = SmoothCharacterGroupUnramifiedQuadratic(2,QQ)
-            sage: G.quotient_gen(1)
-            s
-            sage: G.quotient_gen(2)
-            -s + 2
-            sage: G.quotient_gen(3)
-            Traceback (most recent call last):
-            ...
-            ValueError: Quotient group not cyclic
-        """
-        if level == 0:
-            raise ValueError( "Quotient group is trivial" )
-        elif self.prime() == 2 and level >= 3:
-            raise ValueError( "Quotient group not cyclic" )
-        elif level == 1:
-            return self.unit_gens(level)[0]
-        else:
-            return self.ideal(level).reduce(self.unit_gens(level)[0] * (1 + self.prime() * self.number_field().gen()))
-
-    def extend_character(self, level, chi, x, check=True):
-        r"""
-        Return the unique character of `F^\times` which coincides with `\chi`
-        on `\QQ_p^\times` and maps the generator `\alpha` returned by
-        :meth:`quotient_gen` to `x`.
-
-        INPUT:
-
-        - ``chi``: a smooth character of `\QQ_p`, where `p` is the residue
-          characteristic of `F`, with values in the base ring of self (or some
-          other ring coercible to it)
-        - ``level``: the level of the new character (which should be at least
-          the level of ``chi``)
-        - ``x``: an element of the base ring of self (or some other ring
-          coercible to it).
-
-        A ``ValueError`` will be raised if `x^t \ne \chi(\alpha^t)`, where `t`
-        is the smallest integer such that `\alpha^t` is congruent modulo
-        `p^{\rm level}` to an element of `\QQ_p`.
-
-        EXAMPLES:
-
-        We extend an unramified character of `\QQ_3^\times` to the unramified
-        quadratic extension in various ways.
-
-        ::
-
-            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupQp, SmoothCharacterGroupUnramifiedQuadratic
-            sage: chi = SmoothCharacterGroupQp(5, QQ).character(0, [7]); chi
-            Character of Q_5*, of level 0, mapping 5 |--> 7
-            sage: G = SmoothCharacterGroupUnramifiedQuadratic(5, QQ)
-            sage: G.extend_character(1, chi, -1)
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -1, 5 |--> 7
-            sage: G.extend_character(2, chi, -1)
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> -1, 5 |--> 7
-            sage: G.extend_character(3, chi, 1)
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 0, mapping 5 |--> 7
-            sage: K.<z> = CyclotomicField(6); G.base_extend(K).extend_character(1, chi, z)
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> z, 5 |--> 7
-
-        We extend the nontrivial quadratic character::
-
-            sage: chi = SmoothCharacterGroupQp(5, QQ).character(1, [-1, 7])
-            sage: K.<z> = CyclotomicField(24); G.base_extend(K).extend_character(1, chi, z^6)
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 1, mapping s |--> z^6, 5 |--> 7
-
-        Extensions of higher level::
-
-            sage: K.<z> = CyclotomicField(20); rho = G.base_extend(K).extend_character(2, chi, z); rho
-            Character of unramified extension Q_5(s)* (s^2 + 4*s + 2 = 0), of level 2, mapping 11*s - 10 |--> z^5, 6 |--> 1, 5*s + 1 |--> -z^6, 5 |--> 7
-            sage: rho(3)
-            -1
-
-        Examples where it doesn't work::
-
-            sage: G.extend_character(1, chi, 1)
-            Traceback (most recent call last):
-            ...
-            ValueError: Value at s must satisfy x^6 = chi(2) = -1, but it does not
-
-            sage: G = SmoothCharacterGroupQp(2, QQ); H = SmoothCharacterGroupUnramifiedQuadratic(2, QQ)
-            sage: chi = G.character(3, [1, -1, 7])
-            sage: H.extend_character(2, chi, -1)
-            Traceback (most recent call last):
-            ...
-            ValueError: Level of extended character cannot be smaller than level of character of Qp
-        """
-        chi = chi.base_extend(self.base_ring())
-        if chi.level() > level:
-            raise ValueError("Level of extended character cannot be smaller than level of character of Qp")
-
-        # check it makes sense
-        e = (self.prime() + 1) * (self.prime()**(level - 1))
-        v = self.ideal(level).reduce(self.quotient_gen(level) ** e)
-
-        v = QQ(v)
-        if x**e != chi(v):
-            raise ValueError( "Value at %s must satisfy x^%s = chi(%s) = %s, but it does not" % (self.quotient_gen(level), e, v, chi(v)) )
-
-        # now do the calculation
-        values_on_standard_gens = []
-        other_gens = [self.quotient_gen(level)] + [ZZ(z) for z in Zmod(self.prime()**level).unit_gens()]
-        values_on_other_gens = [x] + [chi(u) for u in other_gens[1:]]
-        for s in self.unit_gens(level)[:-1]:
-            t = self.ideal(level).ideallog(s, other_gens)
-            values_on_standard_gens.append( prod([values_on_other_gens[i] ** t[i] for i in range(len(t))]) )
-        values_on_standard_gens.append(chi(self.prime()))
-        chiE = self.character(level, values_on_standard_gens)
-
-        # check it makes sense (optional but on by default)
-        if check:
-            assert chiE(self.quotient_gen(level)) == x
-            assert chiE.restrict_to_Qp() == chi
-
-        return chiE
-
-    def discrete_log(self, level, x):
-        r"""
-        Express the class of `x` in `F^\times / (1 + \mathfrak{p}^c)^\times` in
-        terms of the generators returned by ``self.unit_gens(level)``.
-
-        EXAMPLES::
-
-            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupUnramifiedQuadratic
-            sage: G = SmoothCharacterGroupUnramifiedQuadratic(2, QQ)
-            sage: G.discrete_log(0, 12)
-            [2]
-            sage: G.discrete_log(1, 12)
-            [0, 2]
-            sage: v = G.discrete_log(5, 12); v
-            [0, 2, 0, 1, 2]
-            sage: g = G.unit_gens(5); prod([g[i]**v[i] for i in [0..4]])/12 - 1 in G.ideal(5)
-            True
-            sage: G.discrete_log(3,G.number_field()([1,1]))
-            [2, 0, 0, 1, 0]
-            sage: H = SmoothCharacterGroupUnramifiedQuadratic(5, QQ)
-            sage: x = H.number_field()([1,1]); x
-            s + 1
-            sage: v = H.discrete_log(5, x); v
-            [22, 263, 379, 0]
-            sage: h = H.unit_gens(5); prod([h[i]**v[i] for i in [0..3]])/x - 1 in H.ideal(5)
-            True
-        """
-        x = self.number_field().coerce(x)
-        if x == 0:
-            raise ValueError("cannot evaluate at zero")
-        n1 = x.valuation(self.number_field().ideal(self.prime()))
-        x1 = x / self.prime() ** n1
-        if level == 0:
-            return [n1]
-        else:
-            return self.ideal(level).ideallog(x1, self.unit_gens(level)[:-1]) + [n1]
-
-
-class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupGeneric):
+class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupQuadratic):
     r"""
     The group of smooth characters of `K^\times`, where `K` is a ramified
     quadratic extension of `\QQ_p`, and `p \ne 2`.
@@ -1433,7 +1628,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupGeneric):
             sage: G1 = SmoothCharacterGroupRamifiedQuadratic(3, 0, QQ); G1
             Group of smooth characters of ramified extension Q_3(s)* (s^2 - 3 = 0) with values in Rational Field
             sage: G2 = SmoothCharacterGroupRamifiedQuadratic(3, 1, QQ); G2
-            Group of smooth characters of ramified extension Q_3(s)* (s^2 + 3 = 0) with values in Rational Field
+            Group of smooth characters of ramified extension Q_3(s)* (s^2 - 6 = 0) with values in Rational Field
             sage: G3 = SmoothCharacterGroupRamifiedQuadratic(5, 1, QQ); G3
             Group of smooth characters of ramified extension Q_5(s)* (s^2 - 10 = 0) with values in Rational Field
 
@@ -1447,20 +1642,25 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupGeneric):
             sage: TestSuite(G2).run()
             sage: TestSuite(G3).run()
         """
+        prime = ZZ(prime)
         if prime == 2:
-            raise NotImplementedError("Wildly ramified extensions not supported")
+            raise NotImplementedError( "Wildly ramified extensions not supported" )
         SmoothCharacterGroupGeneric.__init__(self, prime, base_ring)
         self._name = names
         if flag not in [0, 1]:
             raise ValueError("Flag must be 0 (for Qp(sqrt(p)) ) or 1 (for the other ramified extension)")
         self._flag = flag
-        if flag == 0:
-            self._unif_sqr = self.prime()
+
+        # Find an integer a such that sqrt(a*p) generates the right field and ZZ(sqrt(a*p)) is integrally closed
+        for a in range(4 * prime):
+            if (not a % prime) or (not ZZ(a).is_squarefree()) or ((a * prime) % 4 == 1):
+                continue
+            if (flag == 0 and Zmod(prime)(a).is_square()) or \
+                (flag == 1 and not Zmod(prime)(a).is_square()):
+                self._unif_sqr = a * prime
+                break
         else:
-            if self.prime() % 4 == 3:
-                self._unif_sqr = -self.prime()
-            else:
-                self._unif_sqr = ZZ(Zmod(self.prime()).quadratic_nonresidue()) * self.prime()
+            raise ValueError("Can't get here")
 
     def change_ring(self, ring):
         r"""
@@ -1474,7 +1674,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupGeneric):
 
             sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupRamifiedQuadratic
             sage: SmoothCharacterGroupRamifiedQuadratic(7, 1, Zmod(3), names='foo').change_ring(CC)
-            Group of smooth characters of ramified extension Q_7(foo)* (foo^2 + 7 = 0) with values in Complex Field with 53 bits of precision
+            Group of smooth characters of ramified extension Q_7(foo)* (foo^2 - 35 = 0) with values in Complex Field with 53 bits of precision
         """
         return SmoothCharacterGroupRamifiedQuadratic(self.prime(), self._flag, ring, self._name)
 
@@ -1502,7 +1702,7 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupGeneric):
             sage: SmoothCharacterGroupRamifiedQuadratic(5, 1, QQ, 'b').number_field()
             Number Field in b with defining polynomial x^2 - 10
             sage: SmoothCharacterGroupRamifiedQuadratic(7, 1, Zmod(6), 'c').number_field()
-            Number Field in c with defining polynomial x^2 + 7
+            Number Field in c with defining polynomial x^2 - 35
         """
         from sage.rings.all import PolynomialRing
         R, x = PolynomialRing(QQ, 'x').objgen()
@@ -1613,27 +1813,3 @@ class SmoothCharacterGroupRamifiedQuadratic(SmoothCharacterGroupGeneric):
             return self.unit_gens(level)[:-1]
         else:
             return [1 + self.number_field().gen()**(level - 1)]
-
-    def discrete_log(self, level, x):
-        r"""
-        Solve the discrete log problem in the unit group.
-
-        EXAMPLES::
-
-            sage: from sage.modular.local_comp.smoothchar import SmoothCharacterGroupRamifiedQuadratic
-            sage: G = SmoothCharacterGroupRamifiedQuadratic(3, 1, QQ)
-            sage: s = G.number_field().gen()
-            sage: G.discrete_log(4, 3 + 2*s)
-            [5, 1, 1, 1]
-            sage: gs = G.unit_gens(4); gs[0]^5 * gs[1] * gs[2] * gs[3] - (3 + 2*s) in G.ideal(4)
-            True
-        """
-        x = self.number_field().coerce(x)
-        if x == 0:
-            raise ValueError("cannot evaluate at zero")
-        n1 = x.valuation(self.ideal(1))
-        x1 = x / self.number_field().gen()**n1
-        if level == 0:
-            return [n1]
-        else:
-            return self.ideal(level).ideallog(x1, self.unit_gens(level)[:-1]) + [n1]

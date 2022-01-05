@@ -1145,26 +1145,42 @@ def CirculantGraph(n, adjacency):
 
     return G
 
-def CubeGraph(n):
+def CubeGraph(n, embedding=1):
     r"""
-    Returns the hypercube in `n` dimensions.
+    Return the `n`-cube graph, also called the hypercube in `n` dimensions.
 
-    The hypercube in `n` dimension is build upon the binary
-    strings on `n` bits, two of them being adjacent if
-    they differ in exactly one bit. Hence, the distance
-    between two vertices in the hypercube is the Hamming
-    distance.
+    The hypercube in `n` dimension is build upon the binary strings on `n` bits,
+    two of them being adjacent if they differ in exactly one bit. Hence, the
+    distance between two vertices in the hypercube is the Hamming distance.
+
+    INPUT:
+
+    - ``n`` -- integer; the dimension of the cube graph
+
+    - ``embedding`` -- integer (default: ``1``); two embeddings of the `n`-cube
+      are available:
+
+      - ``1``: the `n`-cube is projected inside a regular `2n`-gonal polygon by
+        a skew orthogonal projection. See the :wikipedia:`Hypercube` for more
+        details.
+
+      - ``2``: orthogonal projection of the `n`-cube. This orientation shows
+        columns of independent vertices such that the neighbors of a vertex are
+        located in the columns on the left and on the right. The number of
+        vertices in each column represents rows in Pascal's triangle. See for
+        instance the :wikipedia:`10-cube` for more details.
+
+      - ``None`` or ``O``: no embedding is provided 
 
     EXAMPLES:
 
-    The distance between `0100110` and `1011010` is
-    `5`, as expected ::
+    The distance between `0100110` and `1011010` is `5`, as expected::
 
         sage: g = graphs.CubeGraph(7)
         sage: g.distance('0100110','1011010')
         5
 
-    Plot several `n`-cubes in a Sage Graphics Array ::
+    Plot several `n`-cubes in a Sage Graphics Array::
 
         sage: g = []
         sage: j = []
@@ -1179,55 +1195,84 @@ def CubeGraph(n):
         ....:  j.append(n)
         ...
         sage: G = graphics_array(j)
-        sage: G.show(figsize=[6,4]) # long time
+        sage: G.show(figsize=[6,4])  # long time
 
-    Use the plot options to display larger `n`-cubes
+    Use the plot options to display larger `n`-cubes::
 
-    ::
-
-        sage: g = graphs.CubeGraph(9)
-        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20) # long time
+        sage: g = graphs.CubeGraph(9, embedding=1)
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time
+        sage: g = graphs.CubeGraph(9, embedding=2)
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)  # long time
 
     AUTHORS:
 
     - Robert Miller
+    - David Coudert
     """
-    theta = float(pi/n)
+    if embedding == 1:
+        # construct recursively the adjacency dict and the embedding
+        theta = float(pi/n)
+        d = {'': []}
+        dn = {}
+        p = {'': (float(0), float(0))}
+        pn = {}
 
-    d = {'':[]}
-    dn={}
-    p = {'':(float(0),float(0))}
-    pn={}
+        for i in range(n):
+            ci = float(cos(i*theta))
+            si = float(sin(i*theta))
+            for v, e in d.items():
+                v0 = v + '0'
+                v1 = v + '1'
+                l0 = [v1]
+                l1 = [v0]
+                for m in e:
+                    l0.append(m + '0')
+                    l1.append(m + '1')
+                dn[v0] = l0
+                dn[v1] = l1
+                x,y = p[v]
+                pn[v0] = (x, y)
+                pn[v1] = (x + ci, y + si)
+            d, dn = dn, {}
+            p, pn = pn, {}
 
-    # construct recursively the adjacency dict and the positions
-    for i in range(n):
-        ci = float(cos(i*theta))
-        si = float(sin(i*theta))
-        for v,e in d.items():
-            v0 = v+'0'
-            v1 = v+'1'
-            l0 = [v1]
-            l1 = [v0]
-            for m in e:
-                l0.append(m+'0')
-                l1.append(m+'1')
-            dn[v0] = l0
-            dn[v1] = l1
-            x,y = p[v]
-            pn[v0] = (x, y)
-            pn[v1] = (x+ci, y+si)
-        d,dn = dn,{}
-        p,pn = pn,{}
+        # construct the graph
+        G = Graph(d, format='dict_of_lists', pos=p, name="%d-Cube"%n)
 
-    # construct the graph
-    r = Graph(name="%d-Cube"%n)
-    r.add_vertices(d.keys())
-    for u,L in d.items():
-        for v in L:
-            r.add_edge(u,v)
-    r.set_pos(p)
+    else:
+        # construct recursively the adjacency dict
+        d = {'': []}
+        dn = {}
 
-    return r
+        for i in range(n):
+            for v, e in d.items():
+                v0 = v + '0'
+                v1 = v + '1'
+                l0 = [v1]
+                l1 = [v0]
+                for m in e:
+                    l0.append(m + '0')
+                    l1.append(m + '1')
+                dn[v0] = l0
+                dn[v1] = l1
+            d, dn = dn, {}
+
+        # construct the graph
+        G = Graph(d, name="%d-Cube"%n, format='dict_of_lists')
+
+        if embedding == 2:
+            # Orthogonal projection
+            s = '0'*n
+            L = [[] for _ in range(n + 1)]
+            for u, d in G.breadth_first_search(s, report_distance=True):
+                L[d].append(u)
+
+            p = G._circle_embedding(list(range(2*n)), radius=(n + 1)//2, angle=pi, return_dict=True)        
+            for i in range(n + 1):
+                y = p[i][1] / 1.5
+                G._line_embedding(L[i], first=(i, y), last=(i, -y), return_dict=False)
+
+    return G
 
 def GoethalsSeidelGraph(k,r):
     r"""

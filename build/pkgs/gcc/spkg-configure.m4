@@ -108,21 +108,14 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
     fi
     AC_SUBST(CXX)
 
-    AC_LANG_PUSH(C)
     if test -z "$CC"; then
         SAGE_MUST_INSTALL_GCC([a C compiler is missing])
     fi
 
-    # Save compiler before checking for C99 support
-    save_CC=$CC
-    # Check that we can compile C99 code
-    AC_PROG_CC_C99()
+    # Check for C99 support detected by the AC_PROG_CC macro.
     if test "x$ac_cv_prog_cc_c99" = xno; then
         SAGE_MUST_INSTALL_GCC([your C compiler cannot compile C99 code])
     fi
-    # restore original CC
-    CC=$save_CC
-    AC_LANG_POP()
 
     if test x$GXX != xyes; then
         SAGE_SHOULD_INSTALL_GCC([your C++ compiler isn't GCC (GNU C++)])
@@ -149,8 +142,8 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
                     # Install our own GCC if the system-provided one is older than gcc-4.8.
                     SAGE_SHOULD_INSTALL_GCC([you have $CXX version $GXX_VERSION, which is quite old])
                 ],
-                [1[[1-9]].*], [
-                    # Install our own GCC if the system-provided one is newer than 10.x.
+                [1[[2-9]].*], [
+                    # Install our own GCC if the system-provided one is newer than 11.x.
                     # See https://trac.sagemath.org/ticket/29456
                     SAGE_SHOULD_INSTALL_GCC([$CXX is g++ version $GXX_VERSION, which is too recent for this version of Sage])
                 ],
@@ -219,6 +212,20 @@ SAGE_SPKG_CONFIGURE_BASE([gcc], [
         AX_CHECK_COMPILE_FLAG("-march=native", [CFLAGS_MARCH="-march=native"], [CFLAGS_MARCH=""], [], [])
     fi
     AC_SUBST(CFLAGS_MARCH)
+
+    # Determine wether compiler supports OpenMP.
+    AC_LANG_PUSH([C])
+    AX_OPENMP([
+        AC_SUBST(OPENMP_CFLAGS)
+    ])
+    AC_LANG_POP()
+
+    AC_LANG_PUSH([C++])
+    AX_OPENMP([
+        AC_SUBST(OPENMP_CXXFLAGS)
+    ])
+    AC_LANG_POP()
+
 
 ], , , [
     # Trac #27907: Find location of crti.o from the system CC, in case we build our own gcc

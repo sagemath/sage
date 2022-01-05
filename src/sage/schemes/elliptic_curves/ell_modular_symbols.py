@@ -298,17 +298,25 @@ class ModularSymbolECLIB(ModularSymbol):
             sage: m(0)
             1/5
 
-        If ``nap`` is too small, the normalization in eclib may be incorrect.  See :trac:`31317`::
+        If ``nap`` is too small, the normalization in eclib used to be
+        incorrect (see :trac:`31317`), but since ``eclib`` version
+        v20210310 the value of ``nap`` is increased automatically by
+        ``eclib``::
 
             sage: from sage.schemes.elliptic_curves.ell_modular_symbols import ModularSymbolECLIB
             sage: E = EllipticCurve('1590g1')
             sage: m = ModularSymbolECLIB(E, sign=+1, nap=300)
             sage: [m(a/5) for a in [1..4]]
-            [1001/153, -1001/153, -1001/153, 1001/153]
+            [13/2, -13/2, -13/2, 13/2]
 
-        Those values are incorrect.  The correct values are::
+        These values are correct, and increasing ``nap`` has no
+        effect.  The correct values may verified by the numerical
+        implementation::
 
             sage: m = ModularSymbolECLIB(E, sign=+1, nap=400)
+            sage: [m(a/5) for a in [1..4]]
+            [13/2, -13/2, -13/2, 13/2]
+            sage: m = E.modular_symbol(implementation='num')
             sage: [m(a/5) for a in [1..4]]
             [13/2, -13/2, -13/2, 13/2]
 

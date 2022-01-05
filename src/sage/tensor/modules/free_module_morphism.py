@@ -488,8 +488,6 @@ class FiniteRankFreeModuleMorphism(Morphism):
         matrix_rep = next(iter(self._matrices.values()))
         return not matrix_rep.is_zero()
 
-    __nonzero__ = __bool__
-
     def _add_(self, other):
         r"""
         Homomorphism addition.

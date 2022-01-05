@@ -29,6 +29,7 @@ from sage.misc.latex import latex
 from sage.rings.infinity import infinity, minus_infinity
 from sage.symbolic.ring import SR
 from sage.rings.real_mpfr import RR
+from sage.typeset.unicode_characters import unicode_mathbbR
 from sage.manifolds.differentiable.manifold import DifferentiableManifold
 from sage.manifolds.structure import RealDifferentialStructure
 from sage.categories.manifolds import Manifolds
@@ -63,7 +64,7 @@ class OpenInterval(DifferentiableManifold):
 
     The interval `(0,\pi)`::
 
-        sage: I = OpenInterval(0, pi); I
+        sage: I = manifolds.OpenInterval(0, pi); I
         Real interval (0, pi)
         sage: latex(I)
         \left(0, \pi\right)
@@ -86,9 +87,9 @@ class OpenInterval(DifferentiableManifold):
     The instance is unique (as long as the constructor arguments
     are the same)::
 
-        sage: I is OpenInterval(0, pi)
+        sage: I is manifolds.OpenInterval(0, pi)
         True
-        sage: I is OpenInterval(0, pi, name='I')
+        sage: I is manifolds.OpenInterval(0, pi, name='I')
         False
 
     The display of the interval can be customized::
@@ -97,11 +98,11 @@ class OpenInterval(DifferentiableManifold):
         Real interval (0, pi)
         sage: latex(I)  # default LaTeX display
         \left(0, \pi\right)
-        sage: I1 = OpenInterval(0, pi, name='I'); I1
+        sage: I1 = manifolds.OpenInterval(0, pi, name='I'); I1
         Real interval I
         sage: latex(I1)
         I
-        sage: I2 = OpenInterval(0, pi, name='I', latex_name=r'\mathcal{I}'); I2
+        sage: I2 = manifolds.OpenInterval(0, pi, name='I', latex_name=r'\mathcal{I}'); I2
         Real interval I
         sage: latex(I2)
         \mathcal{I}
@@ -127,7 +128,7 @@ class OpenInterval(DifferentiableManifold):
     However, it can be obtained in the same step as the interval construction
     by means of the shortcut ``I.<names>``::
 
-        sage: I.<t> = OpenInterval(0, pi)
+        sage: I.<t> = manifolds.OpenInterval(0, pi)
         sage: t
         t
         sage: type(t)
@@ -135,13 +136,13 @@ class OpenInterval(DifferentiableManifold):
 
     The trick is performed by the Sage preparser::
 
-        sage: preparse("I.<t> = OpenInterval(0, pi)")
-        "I = OpenInterval(Integer(0), pi, names=('t',)); (t,) = I._first_ngens(1)"
+        sage: preparse("I.<t> = manifolds.OpenInterval(0, pi)")
+        "I = manifolds.OpenInterval(Integer(0), pi, names=('t',)); (t,) = I._first_ngens(1)"
 
     In particular the shortcut can be used to set a canonical
     coordinate symbol different from ``'t'``::
 
-        sage: J.<x> = OpenInterval(0, pi)
+        sage: J.<x> = manifolds.OpenInterval(0, pi)
         sage: J.canonical_chart()
         Chart ((0, pi), (x,))
         sage: J.canonical_coordinate()
@@ -151,7 +152,7 @@ class OpenInterval(DifferentiableManifold):
     the same syntax as a chart declaration (see
     :class:`~sage.manifolds.chart.RealChart`)::
 
-        sage: J.<x> = OpenInterval(0, pi, coordinate=r'x:\xi')
+        sage: J.<x> = manifolds.OpenInterval(0, pi, coordinate=r'x:\xi')
         sage: latex(x)
         {\xi}
         sage: latex(J.canonical_chart())
@@ -195,7 +196,7 @@ class OpenInterval(DifferentiableManifold):
 
     One of the endpoint can be infinite::
 
-        sage: J = OpenInterval(1, +oo); J
+        sage: J = manifolds.OpenInterval(1, +oo); J
         Real interval (1, +Infinity)
         sage: J.an_element().coord()
         (2,)
@@ -203,7 +204,7 @@ class OpenInterval(DifferentiableManifold):
     The construction of a subinterval can be performed via the argument
     ``ambient_interval`` of ``OpenInterval``::
 
-        sage: J = OpenInterval(0, 1, ambient_interval=I); J
+        sage: J = manifolds.OpenInterval(0, 1, ambient_interval=I); J
         Real interval (0, 1)
 
     However, it is recommended to use the method :meth:`open_interval`
@@ -229,11 +230,11 @@ class OpenInterval(DifferentiableManifold):
 
     We have::
 
-        sage: I.list_of_subsets()
+        sage: list(I.subset_family())
         [Real interval (0, 1), Real interval (0, pi), Real interval (1/2, 1)]
-        sage: J.list_of_subsets()
+        sage: list(J.subset_family())
         [Real interval (0, 1), Real interval (1/2, 1)]
-        sage: K.list_of_subsets()
+        sage: list(K.subset_family())
         [Real interval (1/2, 1)]
 
     As any open subset of a manifold, open subintervals are created in a
@@ -307,8 +308,8 @@ class OpenInterval(DifferentiableManifold):
 
         Check whether :trac:`30830` is fixed::
 
-            sage: I = OpenInterval(0,2)
-            sage: J = OpenInterval(0,1, ambient_interval=I, coordinate='t')
+            sage: I = manifolds.OpenInterval(0,2)
+            sage: J = manifolds.OpenInterval(0,1, ambient_interval=I, coordinate='t')
             sage: I.open_interval(0,1)
             Real interval (0, 1)
 
@@ -332,10 +333,10 @@ class OpenInterval(DifferentiableManifold):
 
         TESTS::
 
-            sage: I = OpenInterval(-1,1); I
+            sage: I = manifolds.OpenInterval(-1,1); I
             Real interval (-1, 1)
             sage: TestSuite(I).run(skip='_test_elements')  # pickling of elements fails
-            sage: J = OpenInterval(-oo, 2); J
+            sage: J = manifolds.OpenInterval(-oo, 2); J
             Real interval (-Infinity, 2)
             sage: TestSuite(J).run(skip='_test_elements')  # pickling of elements fails
 
@@ -367,8 +368,6 @@ class OpenInterval(DifferentiableManifold):
                     coordinate = 't'
                 else:
                     coordinate = names[0]
-            self._canon_chart = self.chart(coordinates=coordinate)
-            t = self._canon_chart[start_index]
         else:
             if lower < ambient_interval.lower_bound():
                 raise ValueError("the lower bound is smaller than that of "
@@ -376,24 +375,21 @@ class OpenInterval(DifferentiableManifold):
             if upper > ambient_interval.upper_bound():
                 raise ValueError("the upper bound is larger than that of "
                                  + "the containing interval")
-            self._supersets.update(ambient_interval._supersets)
-            for sd in ambient_interval._supersets:
-                sd._subsets.add(self)
+            self.declare_subset(ambient_interval)
             ambient_interval._top_subsets.add(self)
-            t = ambient_interval.canonical_coordinate()
         if lower != minus_infinity:
             if upper != infinity:
-                restrictions = [t > lower, t < upper]
+                restrictions = lambda t: [t > lower, t < upper]
             else:
-                restrictions = t > lower
+                restrictions = lambda t: t > lower
         else:
             if upper != infinity:
-                restrictions = t < upper
+                restrictions = lambda t: t < upper
             else:
                 restrictions = None
         if ambient_interval is None:
-            if restrictions is not None:
-                self._canon_chart.add_restrictions(restrictions)
+            self._canon_chart = self.chart(coordinates=coordinate,
+                                           coord_restrictions=restrictions)
         else:
             self._canon_chart = ambient_interval.canonical_chart().restrict(self,
                                                                             restrictions=restrictions)
@@ -406,13 +402,13 @@ class OpenInterval(DifferentiableManifold):
 
         TESTS::
 
-            sage: I = OpenInterval(-1, pi)
+            sage: I = manifolds.OpenInterval(-1, pi)
             sage: I
             Real interval (-1, pi)
-            sage: I = OpenInterval(-1, +oo)
+            sage: I = manifolds.OpenInterval(-1, +oo)
             sage: I
             Real interval (-1, +Infinity)
-            sage: I = OpenInterval(-oo,0)
+            sage: I = manifolds.OpenInterval(-oo,0)
             sage: I
             Real interval (-Infinity, 0)
 
@@ -431,13 +427,13 @@ class OpenInterval(DifferentiableManifold):
 
         TESTS::
 
-            sage: I = OpenInterval(-1, 1)
+            sage: I = manifolds.OpenInterval(-1, 1)
             sage: I._first_ngens(1)
             (t,)
-            sage: I = OpenInterval(-1, 1, coordinate='x')
+            sage: I = manifolds.OpenInterval(-1, 1, coordinate='x')
             sage: I._first_ngens(1)
             (x,)
-            sage: I = OpenInterval(-1, 1, names=('x',))
+            sage: I = manifolds.OpenInterval(-1, 1, names=('x',))
             sage: I._first_ngens(1)
             (x,)
 
@@ -477,7 +473,7 @@ class OpenInterval(DifferentiableManifold):
 
         EXAMPLES::
 
-            sage: I = OpenInterval(-1, 4)
+            sage: I = manifolds.OpenInterval(-1, 4)
             sage: I((2,))  # standard used of TopologicalManifoldSubset._element_constructor_
             Point on the Real interval (-1, 4)
             sage: I(2)  # specific use with a single coordinate
@@ -524,7 +520,7 @@ class OpenInterval(DifferentiableManifold):
 
         TESTS::
 
-            sage: I = OpenInterval(-1,1)
+            sage: I = manifolds.OpenInterval(-1,1)
             sage: M = Manifold(3, 'M')
             sage: H = I._Hom_(M); H
             Set of Morphisms from Real interval (-1, 1) to 3-dimensional
@@ -549,7 +545,7 @@ class OpenInterval(DifferentiableManifold):
 
         Canonical chart on the interval `(0, \pi)`::
 
-            sage: I = OpenInterval(0, pi)
+            sage: I = manifolds.OpenInterval(0, pi)
             sage: I.canonical_chart()
             Chart ((0, pi), (t,))
             sage: I.canonical_chart().coord_range()
@@ -558,7 +554,7 @@ class OpenInterval(DifferentiableManifold):
         The symbol used for the coordinate of the canonical chart is that
         defined during the construction of the interval::
 
-            sage: I.<x> = OpenInterval(0, pi)
+            sage: I.<x> = manifolds.OpenInterval(0, pi)
             sage: I.canonical_chart()
             Chart ((0, pi), (x,))
 
@@ -577,7 +573,7 @@ class OpenInterval(DifferentiableManifold):
 
         Canonical coordinate on the interval `(0, \pi)`::
 
-            sage: I = OpenInterval(0, pi)
+            sage: I = manifolds.OpenInterval(0, pi)
             sage: I.canonical_coordinate()
             t
             sage: type(I.canonical_coordinate())
@@ -594,10 +590,10 @@ class OpenInterval(DifferentiableManifold):
         Its default symbol is `t`; but it can be customized during the
         creation of the interval::
 
-            sage: I = OpenInterval(0, pi, coordinate='x')
+            sage: I = manifolds.OpenInterval(0, pi, coordinate='x')
             sage: I.canonical_coordinate()
             x
-            sage: I.<x> = OpenInterval(0, pi)
+            sage: I.<x> = manifolds.OpenInterval(0, pi)
             sage: I.canonical_coordinate()
             x
 
@@ -610,10 +606,10 @@ class OpenInterval(DifferentiableManifold):
 
         EXAMPLES::
 
-            sage: I = OpenInterval(1/4, 3)
+            sage: I = manifolds.OpenInterval(1/4, 3)
             sage: I.lower_bound()
             1/4
-            sage: J = OpenInterval(-oo, 2)
+            sage: J = manifolds.OpenInterval(-oo, 2)
             sage: J.lower_bound()
             -Infinity
 
@@ -635,10 +631,10 @@ class OpenInterval(DifferentiableManifold):
 
         EXAMPLES::
 
-            sage: I = OpenInterval(1/4, 3)
+            sage: I = manifolds.OpenInterval(1/4, 3)
             sage: I.upper_bound()
             3
-            sage: J = OpenInterval(1, +oo)
+            sage: J = manifolds.OpenInterval(1, +oo)
             sage: J.upper_bound()
             +Infinity
 
@@ -679,12 +675,12 @@ class OpenInterval(DifferentiableManifold):
 
         The interval `(0, \pi)` as a subinterval of `(-4, 4)`::
 
-            sage: I = OpenInterval(-4, 4)
+            sage: I = manifolds.OpenInterval(-4, 4)
             sage: J = I.open_interval(0, pi); J
             Real interval (0, pi)
             sage: J.is_subset(I)
             True
-            sage: I.list_of_subsets()
+            sage: list(I.subset_family())
             [Real interval (-4, 4), Real interval (0, pi)]
 
         ``J`` is considered as an open submanifold of ``I``::
@@ -742,8 +738,8 @@ class RealLine(OpenInterval):
 
     Constructing the real line without any argument::
 
-        sage: R = RealLine() ; R
-        Real number line R
+        sage: R = manifolds.RealLine() ; R
+        Real number line ℝ
         sage: latex(R)
         \Bold{R}
 
@@ -760,18 +756,18 @@ class RealLine(OpenInterval):
     It is endowed with a canonical chart::
 
         sage: R.canonical_chart()
-        Chart (R, (t,))
+        Chart (ℝ, (t,))
         sage: R.canonical_chart() is R.default_chart()
         True
         sage: R.atlas()
-        [Chart (R, (t,))]
+        [Chart (ℝ, (t,))]
 
     The instance is unique (as long as the constructor arguments are the
     same)::
 
-        sage: R is RealLine()
+        sage: R is manifolds.RealLine()
         True
-        sage: R is RealLine(latex_name='R')
+        sage: R is manifolds.RealLine(latex_name='R')
         False
 
     The canonical coordinate is returned by the method
@@ -786,7 +782,7 @@ class RealLine(OpenInterval):
     However, it can be obtained in the same step as the real line construction
     by means of the shortcut ``R.<names>``::
 
-        sage: R.<t> = RealLine()
+        sage: R.<t> = manifolds.RealLine()
         sage: t
         t
         sage: type(t)
@@ -794,17 +790,17 @@ class RealLine(OpenInterval):
 
     The trick is performed by Sage preparser::
 
-        sage: preparse("R.<t> = RealLine()")
-        "R = RealLine(names=('t',)); (t,) = R._first_ngens(1)"
+        sage: preparse("R.<t> = manifolds.RealLine()")
+        "R = manifolds.RealLine(names=('t',)); (t,) = R._first_ngens(1)"
 
     In particular the shortcut is to be used to set a canonical
     coordinate symbol different from 't'::
 
-        sage: R.<x> = RealLine()
+        sage: R.<x> = manifolds.RealLine()
         sage: R.canonical_chart()
-        Chart (R, (x,))
+        Chart (ℝ, (x,))
         sage: R.atlas()
-        [Chart (R, (x,))]
+        [Chart (ℝ, (x,))]
         sage: R.canonical_coordinate()
         x
 
@@ -812,7 +808,7 @@ class RealLine(OpenInterval):
     syntax as a chart declaration (see
     :class:`~sage.manifolds.chart.RealChart`)::
 
-        sage: R.<x> = RealLine(coordinate=r'x:\xi')
+        sage: R.<x> = manifolds.RealLine(coordinate=r'x:\xi')
         sage: latex(x)
         {\xi}
         sage: latex(R.canonical_chart())
@@ -820,30 +816,30 @@ class RealLine(OpenInterval):
 
     The LaTeX symbol of the real line itself can also be customized::
 
-        sage: R.<x> = RealLine(latex_name=r'\mathbb{R}')
+        sage: R.<x> = manifolds.RealLine(latex_name=r'\mathbb{R}')
         sage: latex(R)
         \mathbb{R}
 
     Elements of the real line can be constructed directly from a number::
 
         sage: p = R(2) ; p
-        Point on the Real number line R
+        Point on the Real number line ℝ
         sage: p.coord()
         (2,)
         sage: p = R(1.742) ; p
-        Point on the Real number line R
+        Point on the Real number line ℝ
         sage: p.coord()
         (1.74200000000000,)
 
     Symbolic variables can also be used::
 
         sage: p = R(pi, name='pi') ; p
-        Point pi on the Real number line R
+        Point pi on the Real number line ℝ
         sage: p.coord()
         (pi,)
         sage: a = var('a')
         sage: p = R(a) ; p
-        Point on the Real number line R
+        Point on the Real number line ℝ
         sage: p.coord()
         (a,)
 
@@ -862,23 +858,23 @@ class RealLine(OpenInterval):
         sage: I = R.open_interval(0, 1); I
         Real interval (0, 1)
         sage: I.manifold()
-        Real number line R
-        sage: R.list_of_subsets()
-        [Real interval (0, 1), Real number line R]
+        Real number line ℝ
+        sage: list(R.subset_family())
+        [Real interval (0, 1), Real number line ℝ]
 
     """
     @staticmethod
-    def __classcall__(cls, name='R', latex_name=r'\Bold{R}', coordinate=None,
-                      names=None, start_index=0):
+    def __classcall__(cls, name=unicode_mathbbR, latex_name=r'\Bold{R}',
+                      coordinate=None, names=None, start_index=0):
         r"""
         Determine the correct interval to return based upon the input.
 
         TESTS::
 
-            sage: R = RealLine(); R
-            Real number line R
-            sage: R1 = RealLine('R'); R1
-            Real number line R
+            sage: R = manifolds.RealLine(); R
+            Real number line ℝ
+            sage: R1 = manifolds.RealLine('ℝ'); R1
+            Real number line ℝ
             sage: R is R1
             True
 
@@ -888,15 +884,15 @@ class RealLine(OpenInterval):
                                            coordinate=coordinate,
                                            names=names, start_index=start_index)
 
-    def __init__(self, name='R', latex_name=r'\Bold{R}', coordinate=None,
-                 names=None, start_index=0):
+    def __init__(self, name=unicode_mathbbR, latex_name=r'\Bold{R}',
+                 coordinate=None, names=None, start_index=0):
         r"""
         Construct the real line manifold.
 
         TESTS::
 
-            sage: R = RealLine() ; R
-            Real number line R
+            sage: R = manifolds.RealLine() ; R
+            Real number line ℝ
             sage: R.category()
             Category of smooth connected manifolds over Real Field with 53 bits
              of precision
@@ -913,10 +909,10 @@ class RealLine(OpenInterval):
 
         TESTS::
 
-            sage: R = RealLine()
+            sage: R = manifolds.RealLine()
             sage: R._repr_()
-            'Real number line R'
-            sage: R = RealLine(name='r')
+            'Real number line ℝ'
+            sage: R = manifolds.RealLine(name='r')
             sage: R._repr_()
             'Real number line r'
 

@@ -46,7 +46,12 @@ class Kenzo(Feature):
         ecl_eval("(setf *standard-output* *dev-null*)")
 
         try:
-            ecl_eval("(require :kenzo)")
+            from sage.env import KENZO_FAS
+            if KENZO_FAS:
+                ecl_eval("(require :kenzo \"{}\")".format(KENZO_FAS))
+            else:
+                ecl_eval("(require :kenzo)")
+
         except RuntimeError:
             return FeatureTestResult(self, False, reason="Unable to make ECL require kenzo")
         return FeatureTestResult(self, True)

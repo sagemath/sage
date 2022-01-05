@@ -1356,7 +1356,7 @@ def structure_description(G, latex=False):
 
     For full details, including the form of the returned string and the
     algorithm to build it, see `GAP's documentation
-    <http://www.gap-system.org/Manuals/doc/ref/chap39.html>`_.
+    <https://www.gap-system.org/Manuals/doc/ref/chap39.html>`_.
 
     INPUT:
 

@@ -289,7 +289,7 @@ cdef class pAdicFixedModElement(FMElement):
             sage: a.residue(-1)
             Traceback (most recent call last):
             ...
-            ValueError: Cannot reduce modulo a negative power of p.
+            ValueError: cannot reduce modulo a negative power of p
             sage: a.residue(5)
             8
 
@@ -306,7 +306,7 @@ cdef class pAdicFixedModElement(FMElement):
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if absprec < 0:
-            raise ValueError("Cannot reduce modulo a negative power of p.")
+            raise ValueError("cannot reduce modulo a negative power of p")
         if field is None:
             field = (absprec == 1)
         elif field and absprec != 1:
@@ -439,7 +439,7 @@ cdef class pAdicFixedModElement(FMElement):
         cdef pAdicFixedModElement ans
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()
@@ -497,7 +497,7 @@ cdef class pAdicFixedModElement(FMElement):
         cdef pAdicFixedModElement ans
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()
@@ -552,7 +552,7 @@ cdef class pAdicFixedModElement(FMElement):
         cdef pAdicFixedModElement ans
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()

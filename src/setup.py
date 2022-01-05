@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+## This version of setup.py is used by the Sage distribution
+## only when configure --enable-editable has been used.
+##
+## Distribution packaging should use build/pkgs/sagelib/src/setup.py
+## instead.
+
 from __future__ import print_function
 
 import os
@@ -39,6 +45,9 @@ from sage.env import *
 
 sys.excepthook = excepthook
 
+from sage_setup.setenv import setenv
+setenv()
+
 # ########################################################
 # ## Configuration
 # ########################################################
@@ -76,7 +85,7 @@ files_to_exclude = filter_cython_sources(SAGE_SRC, distributions_to_exclude)
 
 log.debug(f"files_to_exclude = {files_to_exclude}")
 
-python_packages = find_namespace_packages(where=SAGE_SRC, include=['sage', 'sage_setup'])
+python_packages = find_namespace_packages(where=SAGE_SRC, include=['sage', 'sage_setup', 'sage.*', 'sage_setup.*'])
 log.debug(f"python_packages = {python_packages}")
 
 log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
@@ -105,7 +114,7 @@ try:
         nthreads=4)
 except Exception as exception:
     log.warn(f"Exception while generating and cythonizing source files: {exception}")
-    extensions = None
+    raise
 
 # ########################################################
 # ## Distutils
@@ -184,7 +193,6 @@ code = setup(
         'bin/sage-rebase.sh',
         'bin/sage-rebaseall.bat',
         'bin/sage-rebaseall.sh',
-        'bin/sage-rst2txt',
         'bin/sage-run',
         'bin/sage-run-cython',
         'bin/sage-startuptime.py',

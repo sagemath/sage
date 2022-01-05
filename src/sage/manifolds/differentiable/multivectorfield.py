@@ -115,9 +115,9 @@ class MultivectorField(TensorField):
         sage: a[eU,0,1] = x*y^2 + 2*x
         sage: a.add_comp_by_continuation(eV, W, c_uv)
         sage: a.display(eU)
-        a = (x*y^2 + 2*x) d/dx/\d/dy
+        a = (x*y^2 + 2*x) ∂/∂x∧∂/∂y
         sage: a.display(eV)
-        a = (-1/4*u^3 + 1/4*u*v^2 - 1/4*v^3 + 1/4*(u^2 - 8)*v - 2*u) d/du/\d/dv
+        a = (-1/4*u^3 + 1/4*u*v^2 - 1/4*v^3 + 1/4*(u^2 - 8)*v - 2*u) ∂/∂u∧∂/∂v
 
 
     It is also possible to set the components while defining the 2-vector field
@@ -136,23 +136,23 @@ class MultivectorField(TensorField):
         sage: b = M.vector_field({eU: [1+x*y, x^2]}, name='b')
         sage: b.add_comp_by_continuation(eV, W, c_uv)
         sage: s = a.wedge(b) ; s
-        2-vector field a/\b on the 2-dimensional differentiable manifold M
+        2-vector field a∧b on the 2-dimensional differentiable manifold M
         sage: s.display(eU)
-        a/\b = (-2*x^2*y - x) d/dx/\d/dy
+        a∧b = (-2*x^2*y - x) ∂/∂x∧∂/∂y
         sage: s.display(eV)
-        a/\b = (1/2*u^3 - 1/2*u*v^2 - 1/2*v^3 + 1/2*(u^2 + 2)*v + u) d/du/\d/dv
+        a∧b = (1/2*u^3 - 1/2*u*v^2 - 1/2*v^3 + 1/2*(u^2 + 2)*v + u) ∂/∂u∧∂/∂v
 
     Multiplying a 2-vector field by a scalar field results in another
     2-vector field::
 
         sage: f = M.scalar_field({c_xy: (x+y)^2, c_uv: u^2}, name='f')
         sage: s = f*s ; s
-        2-vector field f*(a/\b) on the 2-dimensional differentiable manifold M
+        2-vector field f*(a∧b) on the 2-dimensional differentiable manifold M
         sage: s.display(eU)
-        f*(a/\b) = (-2*x^2*y^3 - x^3 - (4*x^3 + x)*y^2 - 2*(x^4 + x^2)*y) d/dx/\d/dy
+        f*(a∧b) = (-2*x^2*y^3 - x^3 - (4*x^3 + x)*y^2 - 2*(x^4 + x^2)*y) ∂/∂x∧∂/∂y
         sage: s.display(eV)
-        f*(a/\b) = (1/2*u^5 - 1/2*u^3*v^2 - 1/2*u^2*v^3 + u^3 + 1/2*(u^4 + 2*u^2)*v)
-          d/du/\d/dv
+        f*(a∧b) = (1/2*u^5 - 1/2*u^3*v^2 - 1/2*u^2*v^3 + u^3 + 1/2*(u^4 + 2*u^2)*v)
+          ∂/∂u∧∂/∂v
 
     """
     def __init__(self, vector_field_module, degree, name=None, latex_name=None):
@@ -278,7 +278,7 @@ class MultivectorField(TensorField):
         OUTPUT:
 
         - instance of :class:`MultivectorField` representing the exterior
-          product ``self/\other``
+          product ``self ∧ other``
 
         EXAMPLES:
 
@@ -300,14 +300,15 @@ class MultivectorField(TensorField):
             sage: b = M.vector_field({e_xy: [x^2 + y^2, y]}, name='b')
             sage: b.add_comp_by_continuation(e_uv, W, c_uv)
             sage: c = a.wedge(b); c
-            2-vector field a/\b on the 2-dimensional differentiable
+            2-vector field a∧b on the 2-dimensional differentiable
              manifold S^2
             sage: c.display(e_xy)
-            a/\b = (-x^3 - (x - 1)*y^2) d/dx/\d/dy
+            a∧b = (-x^3 - (x - 1)*y^2) ∂/∂x∧∂/∂y
             sage: c.display(e_uv)
-            a/\b = (-v^2 + u) d/du/\d/dv
+            a∧b = (-v^2 + u) ∂/∂u∧∂/∂v
 
         """
+        from sage.typeset.unicode_characters import unicode_wedge
         from sage.tensor.modules.format_utilities import is_atomic
         if self._domain.is_subset(other._domain):
             if not self._ambient_domain.is_subset(other._ambient_domain):
@@ -333,7 +334,7 @@ class MultivectorField(TensorField):
                 sname = '(' + sname + ')'
             if not is_atomic(oname):
                 oname = '(' + oname + ')'
-            resu_name = sname + '/\\' + oname
+            resu_name = sname + unicode_wedge + oname
         resu_latex_name = None
         if self._latex_name is not None and other._latex_name is not None:
             slname = self._latex_name
@@ -420,9 +421,9 @@ class MultivectorField(TensorField):
             sage: b[e_xy,1,2] = 4/(x^2+y^2+1)^2   # the standard area 2-form
             sage: b.add_comp_by_continuation(e_uv, W, c_uv)
             sage: b.display(e_xy)
-            b = 4/(x^2 + y^2 + 1)^2 dx/\dy
+            b = 4/(x^2 + y^2 + 1)^2 dx∧dy
             sage: b.display(e_uv)
-            b = -4/(u^4 + v^4 + 2*(u^2 + 1)*v^2 + 2*u^2 + 1) du/\dv
+            b = -4/(u^4 + v^4 + 2*(u^2 + 1)*v^2 + 2*u^2 + 1) du∧dv
             sage: s = a.interior_product(b); s
             1-form i_a b on the 2-dimensional differentiable manifold S^2
             sage: s.display(e_xy)
@@ -440,15 +441,15 @@ class MultivectorField(TensorField):
             sage: a[e_xy,1,2] = x*y
             sage: a.add_comp_by_continuation(e_uv, W, c_uv)
             sage: a.display(e_xy)
-            a = x*y d/dx/\d/dy
+            a = x*y ∂/∂x∧∂/∂y
             sage: a.display(e_uv)
-            a = -u*v d/du/\d/dv
+            a = -u*v ∂/∂u∧∂/∂v
             sage: s = a.interior_product(b); s
             Scalar field i_a b on the 2-dimensional differentiable manifold S^2
             sage: s.display()
-            i_a b: S^2 --> R
-            on U: (x, y) |--> 8*x*y/(x^4 + y^4 + 2*(x^2 + 1)*y^2 + 2*x^2 + 1)
-            on V: (u, v) |--> 8*u*v/(u^4 + v^4 + 2*(u^2 + 1)*v^2 + 2*u^2 + 1)
+            i_a b: S^2 → ℝ
+            on U: (x, y) ↦ 8*x*y/(x^4 + y^4 + 2*(x^2 + 1)*y^2 + 2*x^2 + 1)
+            on V: (u, v) ↦ 8*u*v/(u^4 + v^4 + 2*(u^2 + 1)*v^2 + 2*u^2 + 1)
 
         Some checks::
 
@@ -604,7 +605,7 @@ class MultivectorField(TensorField):
             sage: s = a.bracket(b); s
             Vector field [a,b] on the 2-dimensional differentiable manifold S^2
             sage: s.display(e_xy)
-            [a,b] = (x^2 + y^2 - x + y) d/dx + (-(x - 1)*y - x) d/dy
+            [a,b] = (x^2 + y^2 - x + y) ∂/∂x + (-(x - 1)*y - x) ∂/∂y
 
         For two vector fields, the bracket coincides with the Lie derivative::
 
@@ -614,13 +615,13 @@ class MultivectorField(TensorField):
         Schouten-Nijenhuis bracket of a 2-vector field and a 1-vector field::
 
             sage: c = a.wedge(b); c
-            2-vector field a/\b on the 2-dimensional differentiable
+            2-vector field a∧b on the 2-dimensional differentiable
              manifold S^2
             sage: s = c.bracket(a); s
-            2-vector field [a/\b,a] on the 2-dimensional differentiable
+            2-vector field [a∧b,a] on the 2-dimensional differentiable
              manifold S^2
             sage: s.display(e_xy)
-            [a/\b,a] = (x^3 + (2*x - 1)*y^2 - x^2 + 2*x*y) d/dx/\d/dy
+            [a∧b,a] = (x^3 + (2*x - 1)*y^2 - x^2 + 2*x*y) ∂/∂x∧∂/∂y
 
         Since `a` is a vector field, we have in this case::
 
@@ -750,7 +751,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         -2*x
         sage: a.comp()
         Fully antisymmetric 2-indices components w.r.t. Coordinate frame
-         (M, (d/dt,d/dx,d/dy,d/dz))
+         (M, (∂/∂t,∂/∂x,∂/∂y,∂/∂z))
         sage: type(a.comp())
         <class 'sage.tensor.modules.comp.CompFullyAntiSym'>
 
@@ -770,7 +771,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
     :meth:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor.display`::
 
         sage: a.display() # expansion w.r.t. the default frame
-        a = 2*x d/dt/\d/dx + 3 d/dx/\d/dy
+        a = 2*x ∂/∂t∧∂/∂x + 3 ∂/∂x∧∂/∂y
         sage: latex(a.display()) # output for the notebook
         a = 2 \, x \frac{\partial}{\partial t }\wedge \frac{\partial}{\partial x }
          + 3 \frac{\partial}{\partial x }\wedge \frac{\partial}{\partial y }
@@ -782,11 +783,11 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         sage: s = a + b ; s
         2-vector field on the 4-dimensional differentiable manifold M
         sage: s.display()
-        (2*x + y) d/dt/\d/dx + 2 d/dt/\d/dy + (x + z) d/dt/\d/dz + 3 d/dx/\d/dy
+        (2*x + y) ∂/∂t∧∂/∂x + 2 ∂/∂t∧∂/∂y + (x + z) ∂/∂t∧∂/∂z + 3 ∂/∂x∧∂/∂y
         sage: s = a - b ; s
         2-vector field on the 4-dimensional differentiable manifold M
         sage: s.display()
-        (2*x - y) d/dt/\d/dx - 2 d/dt/\d/dy + (-x - z) d/dt/\d/dz + 3 d/dx/\d/dy
+        (2*x - y) ∂/∂t∧∂/∂x - 2 ∂/∂t∧∂/∂y + (-x - z) ∂/∂t∧∂/∂z + 3 ∂/∂x∧∂/∂y
 
     An example of 3-vector field in `\RR^3` with Cartesian coordinates::
 
@@ -799,7 +800,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
          [[0, 0, -x^2 - y^2 - z^2], [0, 0, 0], [x^2 + y^2 + z^2, 0, 0]],
          [[0, x^2 + y^2 + z^2, 0], [-x^2 - y^2 - z^2, 0, 0], [0, 0, 0]]]
         sage: a.display()
-        a = (x^2 + y^2 + z^2) d/dx/\d/dy/\d/dz
+        a = (x^2 + y^2 + z^2) ∂/∂x∧∂/∂y∧∂/∂z
 
     Spherical components from the tensorial change-of-frame formula::
 
@@ -818,20 +819,20 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         NB: a failed report can reflect a mere lack of simplification.
         sage: a.comp(c_spher.frame()) # computation of components w.r.t. spherical frame
         Fully antisymmetric 3-indices components w.r.t. Coordinate frame
-         (R3, (d/dr,d/dth,d/dph))
+         (R3, (∂/∂r,∂/∂th,∂/∂ph))
         sage: a.comp(c_spher.frame())[1,2,3, c_spher]
         1/sin(th)
         sage: a.display(c_spher.frame())
-        a = sqrt(x^2 + y^2 + z^2)/sqrt(x^2 + y^2) d/dr/\d/dth/\d/dph
+        a = sqrt(x^2 + y^2 + z^2)/sqrt(x^2 + y^2) ∂/∂r∧∂/∂th∧∂/∂ph
         sage: a.display(c_spher.frame(), c_spher)
-        a = 1/sin(th) d/dr/\d/dth/\d/dph
+        a = 1/sin(th) ∂/∂r∧∂/∂th∧∂/∂ph
 
     As a shortcut of the above command, on can pass just the chart ``c_spher``
     to ``display``, the vector frame being then assumed to be the coordinate
     frame associated with the chart::
 
         sage: a.display(c_spher)
-        a = 1/sin(th) d/dr/\d/dth/\d/dph
+        a = 1/sin(th) ∂/∂r∧∂/∂th∧∂/∂ph
 
     The exterior product of two multivector fields is performed via the method
     :meth:`~sage.tensor.modules.alternating_contr_tensor.AlternatingContrTensor.wedge`::
@@ -839,10 +840,10 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         sage: a = M.vector_field([x*y, -z*x, y], name='A')
         sage: b = M.vector_field([y, z+y, x^2-z^2], name='B')
         sage: ab = a.wedge(b) ; ab
-        2-vector field A/\B on the 3-dimensional differentiable manifold R3
+        2-vector field A∧B on the 3-dimensional differentiable manifold R3
         sage: ab.display()
-        A/\B = (x*y^2 + 2*x*y*z) d/dx/\d/dy + (x^3*y - x*y*z^2 - y^2) d/dx/\d/dz
-         + (x*z^3 - y^2 - (x^3 + y)*z) d/dy/\d/dz
+        A∧B = (x*y^2 + 2*x*y*z) ∂/∂x∧∂/∂y + (x^3*y - x*y*z^2 - y^2) ∂/∂x∧∂/∂z
+         + (x*z^3 - y^2 - (x^3 + y)*z) ∂/∂y∧∂/∂z
 
     Let us check the formula relating the exterior product to the tensor
     product for vector fields::
@@ -854,7 +855,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
     field but a tensor field of type `(3,0)` with less symmetries::
 
         sage: c = a*ab ; c
-        Tensor field A*(A/\B) of type (3,0) on the 3-dimensional differentiable
+        Tensor field A⊗(A∧B) of type (3,0) on the 3-dimensional differentiable
          manifold R3
         sage: c.symmetries()  # the antisymmetry is only w.r.t. the last 2 arguments:
         no symmetry;  antisymmetry: (1, 2)
@@ -995,14 +996,14 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: a = M.multivector_field(2, name='a')
             sage: a[0,1] = x*y
             sage: a.display()
-            a = x*y d/dx/\d/dy
+            a = x*y ∂/∂x∧∂/∂y
             sage: b = M.one_form([1+x, 2-y], name='b')
             sage: c = M.one_form([-y, x], name='c')
             sage: s = a.__call__(b,c); s
             Scalar field a(b,c) on the 2-dimensional differentiable manifold M
             sage: s.display()
-            a(b,c): M --> R
-               (x, y) |--> -x*y^3 + 2*x*y^2 + (x^3 + x^2)*y
+            a(b,c): M → ℝ
+               (x, y) ↦ -x*y^3 + 2*x*y^2 + (x^3 + x^2)*y
             sage: s == a[[0,1]]*(b[[0]]*c[[1]] - b[[1]]*c[[0]])
             True
             sage: s == a(b,c)  # indirect doctest
@@ -1022,7 +1023,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
         OUTPUT:
 
         - instance of :class:`MultivectorFieldParal` representing the
-          exterior product ``self/\other``
+          exterior product ``self ∧ other``
 
         EXAMPLES:
 
@@ -1035,14 +1036,14 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: b = M.multivector_field(2, name='b')
             sage: b[1,2], b[1,3], b[2,3] = y^2, z+x, z^2
             sage: a.display()
-            a = 2 d/dx + (x + 1) d/dy + y*z d/dz
+            a = 2 ∂/∂x + (x + 1) ∂/∂y + y*z ∂/∂z
             sage: b.display()
-            b = y^2 d/dx/\d/dy + (x + z) d/dx/\d/dz + z^2 d/dy/\d/dz
+            b = y^2 ∂/∂x∧∂/∂y + (x + z) ∂/∂x∧∂/∂z + z^2 ∂/∂y∧∂/∂z
             sage: s = a.wedge(b); s
-            3-vector field a/\b on the 3-dimensional differentiable
+            3-vector field a∧b on the 3-dimensional differentiable
              manifold M
             sage: s.display()
-            a/\b = (-x^2 + (y^3 - x - 1)*z + 2*z^2 - x) d/dx/\d/dy/\d/dz
+            a∧b = (-x^2 + (y^3 - x - 1)*z + 2*z^2 - x) ∂/∂x∧∂/∂y∧∂/∂z
 
         Check::
 
@@ -1055,7 +1056,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s = b.wedge(f); s
             2-vector field f*b on the 3-dimensional differentiable manifold M
             sage: s.display()
-            f*b = x*y^2 d/dx/\d/dy + (x^2 + x*z) d/dx/\d/dz + x*z^2 d/dy/\d/dz
+            f*b = x*y^2 ∂/∂x∧∂/∂y + (x^2 + x*z) ∂/∂x∧∂/∂z + x*z^2 ∂/∂y∧∂/∂z
             sage: s == f*b
             True
             sage: s == f.wedge(b)
@@ -1130,8 +1131,8 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s = a.interior_product(b); s
             Scalar field i_a b on the 4-dimensional differentiable manifold M
             sage: s.display()
-            i_a b: M --> R
-               (t, x, y, z) |--> x^2*z - x*z^2 + 2*t^2 + (x + 3)*y - y^2
+            i_a b: M → ℝ
+               (t, x, y, z) ↦ x^2*z - x*z^2 + 2*t^2 + (x + 3)*y - y^2
                 - 3*x + 2
 
         In this case, we have `\iota_a b = a^i b_i = a(b) = b(a)`::
@@ -1147,11 +1148,11 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s = a.interior_product(c); s
             2-form i_a c on the 4-dimensional differentiable manifold M
             sage: s.display()
-            i_a c = (x^2*y*z - x*z^2 - 3*t*y + 9*t) dt/\dx
-             + (-(t^2*x - t)*y + (t^2 + 1)*z - 3*t - 3*x) dt/\dy
-             + (3*t^3 - (t*x + x^2)*z + 3*t) dt/\dz
-             + ((x^2 - 3)*y + y^2 - x*z) dx/\dy
-             + (-x*y*z - 3*t*x) dx/\dz + (t*x + x^2 + (t^2 + 1)*y) dy/\dz
+            i_a c = (x^2*y*z - x*z^2 - 3*t*y + 9*t) dt∧dx
+             + (-(t^2*x - t)*y + (t^2 + 1)*z - 3*t - 3*x) dt∧dy
+             + (3*t^3 - (t*x + x^2)*z + 3*t) dt∧dz
+             + ((x^2 - 3)*y + y^2 - x*z) dx∧dy
+             + (-x*y*z - 3*t*x) dx∧dz + (t*x + x^2 + (t^2 + 1)*y) dy∧dz
             sage: s == a.contract(c)
             True
 
@@ -1265,9 +1266,9 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s = a.bracket(b); s
             Vector field [a,b] on the 3-dimensional differentiable manifold M
             sage: s.display()
-            [a,b] = (-x^3 + (x + 3)*y - y^2 - (x + 2*y + 1)*z - 2*x) d/dx
-             + (2*x^2*y - x^2 + 2*x*z - 3*x) d/dy
-             + (-x^2 - (x - 4)*y - 3*x + 2*z) d/dz
+            [a,b] = (-x^3 + (x + 3)*y - y^2 - (x + 2*y + 1)*z - 2*x) ∂/∂x
+             + (2*x^2*y - x^2 + 2*x*z - 3*x) ∂/∂y
+             + (-x^2 - (x - 4)*y - 3*x + 2*z) ∂/∂z
 
         Check that `[a,b]` is actually the Lie bracket::
 
@@ -1285,8 +1286,8 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s = f.bracket(a); s
             Scalar field -i_df a on the 3-dimensional differentiable manifold M
             sage: s.display()
-            -i_df a: M --> R
-               (x, y, z) |--> x*y - y^2 - (x + 2*y + 1)*z + z^2
+            -i_df a: M → ℝ
+               (x, y, z) ↦ x*y - y^2 - (x + 2*y + 1)*z + z^2
 
         Check that `[f,a] = - \iota_{\mathrm{d}f} a = - \mathrm{d}f(a)`::
 
@@ -1300,8 +1301,8 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s = f.bracket(c); s
             Vector field -i_df c on the 3-dimensional differentiable manifold M
             sage: s.display()
-            -i_df c = (x*y^2 + (x + y + 1)*z + z^2) d/dx
-             + (x*y - y^2 - x - z - 1) d/dy + (-x*y - (x - y + 1)*z) d/dz
+            -i_df c = (x*y^2 + (x + y + 1)*z + z^2) ∂/∂x
+             + (x*y - y^2 - x - z - 1) ∂/∂y + (-x*y - (x - y + 1)*z) ∂/∂z
 
         Check that `[f,c] = - \iota_{\mathrm{d}f} c`::
 
@@ -1313,9 +1314,9 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s = a.bracket(c); s
             2-vector field [a,c] on the 3-dimensional differentiable manifold M
             sage: s.display()
-            [a,c] = ((x - 1)*y - (y - 2)*z - 2*x - 1) d/dx/\d/dy
-             + ((x + 1)*y - (x + 1)*z - 3*x - 1) d/dx/\d/dz
-             + (-5*x + y - z - 2) d/dy/\d/dz
+            [a,c] = ((x - 1)*y - (y - 2)*z - 2*x - 1) ∂/∂x∧∂/∂y
+             + ((x + 1)*y - (x + 1)*z - 3*x - 1) ∂/∂x∧∂/∂z
+             + (-5*x + y - z - 2) ∂/∂y∧∂/∂z
 
         Again, since `a` is a vector field, the Schouten-Nijenhuis bracket
         coincides with the Lie derivative::
@@ -1330,7 +1331,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             sage: s = c.bracket(d); s
             3-vector field [c,d] on the 3-dimensional differentiable manifold M
             sage: s.display()
-            [c,d] = (-y^3 + (3*x + 1)*y - y^2 - x - z + 2) d/dx/\d/dy/\d/dz
+            [c,d] = (-y^3 + (3*x + 1)*y - y^2 - x - z + 2) ∂/∂x∧∂/∂y∧∂/∂z
 
         Let us check the component formula (with respect to the manifold's
         default coordinate chart, i.e. ``X``) for `p=q=2`, taking into
@@ -1350,7 +1351,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
             3-vector field [a,e] on the 3-dimensional differentiable manifold M
             sage: s.display()
             [a,e] = (-(2*x + 1)*y + y^2 - (y^2 - x - 1)*z - z^2
-             - 2*x - 2) d/dx/\d/dy/\d/dz
+             - 2*x - 2) ∂/∂x∧∂/∂y∧∂/∂z
 
         Again, since `p=1`, the bracket coincides with the Lie derivative::
 

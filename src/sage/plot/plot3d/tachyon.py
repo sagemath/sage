@@ -1,8 +1,8 @@
 r"""
 The Tachyon 3D Ray Tracer
 
-Given any 3D graphics object one can compute a raytraced
-representation by typing ``show(viewer='tachyon')``.
+Given any 3D graphics object ``M`` one can compute a raytraced
+representation by typing ``M.show(viewer='tachyon')``.
 For example, we draw two translucent spheres that contain a red
 tube, and render the result using Tachyon.
 
@@ -13,11 +13,28 @@ tube, and render the result using Tachyon.
     sage: M = S + S.translate((2,0,0)) + L
     sage: M.show(viewer='tachyon')
 
-One can also directly control Tachyon, which gives a huge amount of
+A number of options can be given to the 
+:meth:`~sage.plot.plot3d.base.Graphics3d.show` method and
+correspondingly to the
+:meth:`~sage.plot.plot3d.base.Graphics3d.save` method for saving
+the generated image to a file::
+
+    sage: M.show(viewer='tachyon',
+    ....:    antialiasing=True, raydepth=3,
+    ....:    figsize=[12,8], # the image resolution is 100*figsize
+    ....:    camera_position=[4, 4.4, 1], # a distant camera position combined with 
+    ....:    zoom=3, # a large zoom factor will decrease perspective distortion.
+    ....:    updir=(0, -0.1, 1), # the camera is slightly tilted
+    ....:    viewdir=(-2.,-2.,-0.5), # slightly off-center
+    ....:    light_position=(4.0, -3.0, 2.0),
+    ....:   ) 
+
+One can also directly control Tachyon by creating a ``Tachyon`` object
+and adding elements of the scene one by one, which gives a huge amount of
 flexibility. For example, here we directly use Tachyon to draw 3
 spheres on the coordinate axes::
 
-    sage: t = Tachyon(xres=500,yres=500, camera_center=(2,0,0))
+    sage: t = Tachyon(xres=500,yres=500, camera_position=(2,0,0))
     sage: t.light((4,3,2), 0.2, (1,1,1))
     sage: t.texture('t2', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
     sage: t.texture('t3', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
@@ -29,7 +46,7 @@ spheres on the coordinate axes::
 
 For scenes with many reflections it is helpful to increase the raydepth option, and turn on antialiasing.  The following scene is an extreme case with many reflections between four cotangent spheres::
 
-    sage: t = Tachyon(camera_center=(0,-4,1), xres = 800, yres = 600, raydepth = 12, aspectratio=.75, antialiasing = 4)
+    sage: t = Tachyon(camera_position=(0,-4,1), xres = 800, yres = 600, raydepth = 12, aspectratio=.75, antialiasing = 4)
     sage: t.light((0.02,0.012,0.001), 0.01, (1,0,0))
     sage: t.light((0,0,10), 0.01, (0,0,1))
     sage: t.texture('s', color = (.8,1,1), opacity = .9, specular = .95, diffuse = .3, ambient = 0.05)
@@ -53,7 +70,7 @@ use a sphere and cube::
 
 The default projection is ``'perspective'``::
 
-    sage: t = Tachyon(xres=800, yres=600, camera_center=(-1.5,0.0,0.0), zoom=.2)
+    sage: t = Tachyon(xres=800, yres=600, camera_position=(-1.5,0.0,0.0), zoom=.2)
     sage: t.texture('t1', color=(0,0,1))
     sage: for ed in cedges:
     ....:     t.fcylinder(ed[0], ed[1], .05, 't1')
@@ -64,7 +81,7 @@ Another option is ``projection='fisheye'``, which requires frustum
 information. The frustum data is (bottom angle, top angle, left
 angle, right angle)::
 
-    sage: t = Tachyon(xres=800, yres=600, camera_center=(-1.5,0.0,0.0),
+    sage: t = Tachyon(xres=800, yres=600, camera_position=(-1.5,0.0,0.0),
     ....: projection='fisheye', frustum=(-1.2, 1.2, -1.2, 1.2))
     sage: t.texture('t1', color=(0,0,1))
     sage: for ed in cedges:
@@ -96,7 +113,7 @@ Image files in the ``ppm`` format can be used to tile planes or cover
 cylinders or spheres. In this example an image is created and then
 used to tile the plane::
 
-    sage: T = Tachyon(xres=800, yres=600, camera_center=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
+    sage: T = Tachyon(xres=800, yres=600, camera_position=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
     sage: T.texture('t1',color=(0,0,1))
     sage: for ed in cedges:
     ....:     T.fcylinder(ed[0], ed[1], .05, 't1')
@@ -106,7 +123,7 @@ used to tile the plane::
     sage: T.save(fname_png)
     sage: r2 = os.system('convert '+fname_png+' '+fname_ppm)  # optional -- ImageMagick
 
-    sage: T = Tachyon(xres=800, yres=600, camera_center=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))  # optional -- ImageMagick
+    sage: T = Tachyon(xres=800, yres=600, camera_position=(-2.0,-.1,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))  # optional -- ImageMagick
     sage: T.texture('t1', color=(1,0,0), specular=.9)  # optional -- ImageMagick
     sage: T.texture('p1', color=(1,1,1), opacity=.1, imagefile=fname_ppm, texfunc=9)  # optional -- ImageMagick
     sage: T.sphere((0,0,0), .5, 't1')  # optional -- ImageMagick
@@ -160,8 +177,8 @@ class Tachyon(WithEqualityById, SageObject):
     - ``zoom`` - (default 1.0)
     - ``antialiasing`` - (default ``False``)
     - ``aspectratio``  - (default 1.0)
-    - ``raydepth`` - (default 5)
-    - ``camera_center`` - (default (-3, 0, 0))
+    - ``raydepth`` - (default 8)
+    - ``camera_position`` - (default (-3, 0, 0))
     - ``updir`` - (default (0, 0, 1))
     - ``look_at`` - (default (0,0,0))
     - ``viewdir`` - (default ``None``), otherwise list of three numbers
@@ -184,7 +201,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     ::
 
-        sage: t = Tachyon(xres=512,yres=512, camera_center=(3,0.3,0))
+        sage: t = Tachyon(xres=512,yres=512, camera_position=(3,0.3,0))
         sage: t.light((4,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1.0,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.3, opacity=1.0, color=(0,1.0,0))
@@ -200,7 +217,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     ::
 
-        sage: t = Tachyon(xres=512,yres=512, camera_center=(3,0.3,0), raydepth=8)
+        sage: t = Tachyon(xres=512,yres=512, camera_position=(3,0.3,0), raydepth=8)
         sage: t.light((4,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1.0,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.3, opacity=1.0, color=(0,1.0,0))
@@ -221,7 +238,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     Many random spheres::
 
-        sage: t = Tachyon(xres=512,yres=512, camera_center=(2,0.5,0.5), look_at=(0.5,0.5,0.5), raydepth=4)
+        sage: t = Tachyon(xres=512,yres=512, camera_position=(2,0.5,0.5), look_at=(0.5,0.5,0.5), raydepth=4)
         sage: t.light((4,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1.0,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.3, opacity=1.0, color=(0,1.0,0))
@@ -235,7 +252,7 @@ class Tachyon(WithEqualityById, SageObject):
     Points on an elliptic curve, their height indicated by their height
     above the axis::
 
-        sage: t = Tachyon(camera_center=(5,2,2), look_at=(0,1,0))
+        sage: t = Tachyon(camera_position=(5,2,2), look_at=(0,1,0))
         sage: t.light((10,3,2), 0.2, (1,1,1))
         sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
         sage: t.texture('t1', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
@@ -253,7 +270,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     ::
 
-        sage: t = Tachyon(xres=1000, yres=800, camera_center=(2,7,4), look_at=(2,0,0), raydepth=4)
+        sage: t = Tachyon(xres=1000, yres=800, camera_position=(2,7,4), look_at=(2,0,0), raydepth=4)
         sage: t.light((10,3,2), 1, (1,1,1))
         sage: t.light((10,-3,2), 1, (1,1,1))
         sage: t.texture('black', color=(0,0,0))
@@ -277,7 +294,7 @@ class Tachyon(WithEqualityById, SageObject):
 
     ::
 
-        sage: t = Tachyon(xres=800,yres=800, camera_center=(2,5,2), look_at=(2.5,0,0))
+        sage: t = Tachyon(xres=800,yres=800, camera_position=(2,5,2), look_at=(2.5,0,0))
         sage: t.light((0,0,100), 1, (1,1,1))
         sage: t.texture('r', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
         sage: for i in srange(0,50,0.1):
@@ -290,14 +307,14 @@ class Tachyon(WithEqualityById, SageObject):
     center should not coincide with the point which
     is looked at (see :trac:`7232`)::
 
-        sage: t = Tachyon(xres=80,yres=80, camera_center=(2,5,2), look_at=(2,5,2))
+        sage: t = Tachyon(xres=80,yres=80, camera_position=(2,5,2), look_at=(2,5,2))
         Traceback (most recent call last):
         ...
-        ValueError: camera_center and look_at coincide
+        ValueError: camera_position and look_at coincide
 
     Use of a fisheye lens perspective. ::
 
-        sage: T = Tachyon(xres=800, yres=600, camera_center=(-1.5,-1.5,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
+        sage: T = Tachyon(xres=800, yres=600, camera_position=(-1.5,-1.5,.3), projection='fisheye', frustum=(-1.0, 1.0, -1.0, 1.0))
         sage: T.texture('t1', color=(0,0,1))
         sage: cedges = [[[1, 1, 1], [-1, 1, 1]], [[1, 1, 1], [1, -1, 1]],
         ....: [[1, 1, 1], [1, 1, -1]], [[-1, 1, 1], [-1, -1, 1]], [[-1, 1, 1],
@@ -342,9 +359,10 @@ class Tachyon(WithEqualityById, SageObject):
                  antialiasing=False,
                  aspectratio=1.0,
                  raydepth=8,
-                 camera_center=(-3, 0, 0),
-                 updir=(0, 0, 1),
-                 look_at=(0, 0, 0),
+                 camera_position=None, # default value (-3, 0, 0),
+                 camera_center=None, # alternative equivalent name
+                 updir=[0, 0, 1],
+                 look_at=[0, 0, 0],
                  viewdir=None,
                  projection='PERSPECTIVE',
                  focallength='',
@@ -365,7 +383,12 @@ class Tachyon(WithEqualityById, SageObject):
         self._aspectratio = aspectratio
         self._antialiasing = antialiasing
         self._raydepth = raydepth
-        self._camera_center = camera_center
+        if camera_position is not None:
+            self._camera_position = camera_position
+        elif camera_center is not None: # make sure that old programs continue to work
+            self._camera_position = camera_center
+        else:        
+            self._camera_position = (-3, 0, 0) # default value
         self._updir = updir
         self._projection = projection
         self._focallength = focallength
@@ -373,11 +396,11 @@ class Tachyon(WithEqualityById, SageObject):
         self._frustum = frustum
         self._objects = []
         if viewdir is None:
-            if look_at != camera_center:
-                self._viewdir = [look_at[i] - camera_center[i]
+            if look_at != self._camera_position:
+                self._viewdir = [look_at[i] - self._camera_position[i]
                                  for i in range(3)]
             else:
-                raise ValueError('camera_center and look_at coincide')
+                raise ValueError('camera_position and look_at coincide')
         else:
             self._viewdir = viewdir
 
@@ -521,7 +544,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         ::
 
-            sage: h = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: h = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: h.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: h.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
@@ -536,7 +559,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         ::
 
-            sage: s = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: s = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: s.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: s.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
@@ -556,7 +579,7 @@ class Tachyon(WithEqualityById, SageObject):
         ::
 
             sage: set_verbose(0)
-            sage: d = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: d = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: d.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: d.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
@@ -618,7 +641,7 @@ class Tachyon(WithEqualityById, SageObject):
                              float(self._aspectratio),
                              int(self._antialiasing),
                              int(self._raydepth),
-                             tostr(self._camera_center),
+                             tostr(self._camera_position),
                              tostr(self._viewdir),
                              tostr(self._updir))
         if self._frustum != '':
@@ -634,7 +657,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         EXAMPLES::
 
-            sage: t = Tachyon(xres=500,yres=500, camera_center=(2,0,0))
+            sage: t = Tachyon(xres=500,yres=500, camera_position=(2,0,0))
             sage: t.light((4,3,2), 0.2, (1,1,1))
             sage: t.texture('t2', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(1,0,0))
             sage: t.texture('t3', ambient=0.1, diffuse=0.9, specular=0.5, opacity=1.0, color=(0,1,0))
@@ -694,7 +717,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         EXAMPLES: We draw an infinite checkerboard::
 
-            sage: t = Tachyon(camera_center=(2,7,4), look_at=(2,0,0))
+            sage: t = Tachyon(camera_position=(2,7,4), look_at=(2,0,0))
             sage: t.texture('black', color=(0,0,0), texfunc=1)
             sage: t.plane((0,0,0),(0,0,1),'black')
             sage: t.show()
@@ -739,7 +762,7 @@ class Tachyon(WithEqualityById, SageObject):
         We draw a scene with 4 spheres that illustrates various uses of
         the texture command::
 
-            sage: t = Tachyon(camera_center=(2,5,4), look_at=(2,0,0), raydepth=6)
+            sage: t = Tachyon(camera_position=(2,5,4), look_at=(2,0,0), raydepth=6)
             sage: t.light((10,3,4), 1, (1,1,1))
             sage: t.texture('mirror', ambient=0.05, diffuse=0.05, specular=.9, opacity=0.9, color=(.8,.8,.8))
             sage: t.texture('grey', color=(.8,.8,.8), texfunc=3)
@@ -964,7 +987,7 @@ class Tachyon(WithEqualityById, SageObject):
 
         Flat Triangles::
 
-            sage: t = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: t = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: t.texture('t0', ambient=0.1, diffuse=0.9, specular=0.1,  opacity=1.0, color=(1.0,0,0))
@@ -977,7 +1000,7 @@ class Tachyon(WithEqualityById, SageObject):
         Plotting with Smooth Triangles (requires explicit gradient
         function)::
 
-            sage: t = Tachyon(xres=512,yres=512, camera_center=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
+            sage: t = Tachyon(xres=512,yres=512, camera_position=(4,-4,3),viewdir=(-4,4,-3), raydepth=4)
             sage: t.light((4.4,-4.4,4.4), 0.2, (1,1,1))
             sage: def f(x,y): return float(sin(x*y))
             sage: def g(x,y): return ( float(y*cos(x*y)), float(x*cos(x*y)), 1 )
@@ -1017,7 +1040,7 @@ class Tachyon(WithEqualityById, SageObject):
         Example (twisted cubic) ::
 
             sage: f = lambda t: (t,t^2,t^3)
-            sage: t = Tachyon(camera_center=(5,0,4))
+            sage: t = Tachyon(camera_position=(5,0,4))
             sage: t.texture('t')
             sage: t.light((-20,-20,40), 0.2, (1,1,1))
             sage: t.parametric_plot(f,-5,5,'t',min_depth=6)
@@ -1051,8 +1074,8 @@ class Light(object):
 
             sage: from sage.plot.plot3d.tachyon import Light
             sage: q = Light((1,1,1), 1, (1,1,1))
-            sage: q._color
-            (1.0, 1.0, 1.0)
+            sage: print(q._center, q._color, q._radius)
+            (1.0, 1.0, 1.0) (1.0, 1.0, 1.0) 1.0
         """
         x, y, z = center
         self._center = (float(x), float(y), float(z))
@@ -1068,8 +1091,11 @@ class Light(object):
 
             sage: from sage.plot.plot3d.tachyon import Light
             sage: q = Light((1,1,1), 1, (1,1,1))
-            sage: q._radius
-            1.0
+            sage: print(q.str())
+                    light center  1.0 1.0 1.0
+                          rad 1.0
+                          color  1.0 1.0 1.0
+ 
         """
         return r"""
         light center %s

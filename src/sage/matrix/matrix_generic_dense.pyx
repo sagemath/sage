@@ -25,21 +25,19 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
     EXAMPLES::
 
-        sage: A = random_matrix(Integers(25)['x'],2); A
-        [       0  8*x + 1]
-        [17*x + 4        0]
+        sage: A = random_matrix(Integers(25)['x'], 2)
         sage: type(A)
         <type 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
         sage: TestSuite(A).run()
 
     Test comparisons::
 
-        sage: A = random_matrix(Integers(25)['x'],2)
+        sage: A = random_matrix(Integers(25)['x'], 2)
         sage: A == A
         True
-        sage: A < A + 1
+        sage: A < A + 1 or A[0, 0].coefficients()[0] == 24
         True
-        sage: A+1 < A
+        sage: A+1 < A and A[0, 0].coefficients()[0] != 24
         False
 
     Test hashing::

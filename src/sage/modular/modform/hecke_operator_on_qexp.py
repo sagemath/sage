@@ -95,7 +95,8 @@ def hecke_operator_on_qexp(f, n, k, eps = None,
             prec = pr // n + 1
         else:
             prec = (f.prec() / ZZ(n)).ceil()
-            if prec == Infinity: prec = f.parent().default_prec() // n + 1
+            if prec == Infinity:
+                prec = f.parent().default_prec() // n + 1
 
     if f.prec() < prec:
         f._compute_q_expansion(prec)

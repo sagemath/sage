@@ -41,6 +41,7 @@ AUTHORS:
 - Travis Scrimshaw (2016): category set to Modules(ring).FiniteDimensional()
   (:trac:`20770`)
 - Michael Jung (2019): improve treatment of the zero element
+- Eric Gourgoulhon (2021): unicode symbols for tensor and exterior products
 
 REFERENCES:
 
@@ -154,14 +155,14 @@ We can display the result in either basis::
 Tensor products of elements are implemented::
 
     sage: t = u*v ; t
-    Type-(2,0) tensor u*v on the Rank-2 free module M over the Integer Ring
+    Type-(2,0) tensor u⊗v on the Rank-2 free module M over the Integer Ring
     sage: t.parent()
     Free module of type-(2,0) tensors on the
      Rank-2 free module M over the Integer Ring
     sage: t.display(e)
-    u*v = -12 e_0*e_0 + 20 e_0*e_1 + 18 e_1*e_0 - 30 e_1*e_1
+    u⊗v = -12 e_0⊗e_0 + 20 e_0⊗e_1 + 18 e_1⊗e_0 - 30 e_1⊗e_1
     sage: t.display(f)
-    u*v = -2 f_1*f_0 - 4 f_1*f_1
+    u⊗v = -2 f_1⊗f_0 - 4 f_1⊗f_1
 
 We can access to tensor components w.r.t. to a given basis via the square
 bracket operator::
@@ -185,9 +186,9 @@ The parent of the automorphism ``a`` is the group `\mathrm{GL}(M)`, but
     sage: a.tensor_type()
     (1, 1)
     sage: a.display(e)
-    e_0*e^0 - 2 e_0*e^1 - e_1*e^0 + 3 e_1*e^1
+    e_0⊗e^0 - 2 e_0⊗e^1 - e_1⊗e^0 + 3 e_1⊗e^1
     sage: a.display(f)
-    f_0*f^0 - 2 f_0*f^1 - f_1*f^0 + 3 f_1*f^1
+    f_0⊗f^0 - 2 f_0⊗f^1 - f_1⊗f^0 + 3 f_1⊗f^1
 
 As such, we can form its tensor product with ``t``, yielding a tensor of
 type `(3,1)`::
@@ -195,12 +196,12 @@ type `(3,1)`::
     sage: t*a
     Type-(3,1) tensor on the Rank-2 free module M over the Integer Ring
     sage: (t*a).display(e)
-    -12 e_0*e_0*e_0*e^0 + 24 e_0*e_0*e_0*e^1 + 12 e_0*e_0*e_1*e^0
-     - 36 e_0*e_0*e_1*e^1 + 20 e_0*e_1*e_0*e^0 - 40 e_0*e_1*e_0*e^1
-     - 20 e_0*e_1*e_1*e^0 + 60 e_0*e_1*e_1*e^1 + 18 e_1*e_0*e_0*e^0
-     - 36 e_1*e_0*e_0*e^1 - 18 e_1*e_0*e_1*e^0 + 54 e_1*e_0*e_1*e^1
-     - 30 e_1*e_1*e_0*e^0 + 60 e_1*e_1*e_0*e^1 + 30 e_1*e_1*e_1*e^0
-     - 90 e_1*e_1*e_1*e^1
+    -12 e_0⊗e_0⊗e_0⊗e^0 + 24 e_0⊗e_0⊗e_0⊗e^1 + 12 e_0⊗e_0⊗e_1⊗e^0
+     - 36 e_0⊗e_0⊗e_1⊗e^1 + 20 e_0⊗e_1⊗e_0⊗e^0 - 40 e_0⊗e_1⊗e_0⊗e^1
+     - 20 e_0⊗e_1⊗e_1⊗e^0 + 60 e_0⊗e_1⊗e_1⊗e^1 + 18 e_1⊗e_0⊗e_0⊗e^0
+     - 36 e_1⊗e_0⊗e_0⊗e^1 - 18 e_1⊗e_0⊗e_1⊗e^0 + 54 e_1⊗e_0⊗e_1⊗e^1
+     - 30 e_1⊗e_1⊗e_0⊗e^0 + 60 e_1⊗e_1⊗e_0⊗e^1 + 30 e_1⊗e_1⊗e_1⊗e^0
+     - 90 e_1⊗e_1⊗e_1⊗e^1
 
 The parent of `t\otimes a` is itself a free module of finite rank over `\ZZ`::
 
@@ -519,14 +520,14 @@ The components on the basis are returned by the square bracket operator for
 
 """
 #******************************************************************************
-#       Copyright (C) 2015 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#       Copyright (C) 2015-2021 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
 #       Copyright (C) 2015 Michal Bejger <bejger@camk.edu.pl>
 #       Copyright (C) 2016 Travis Scrimshaw <tscrimsh@umn.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #******************************************************************************
 
 from sage.misc.cachefunc import cached_method
@@ -1043,14 +1044,14 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             Alternating contravariant tensor of degree 2 on the Rank-3
              free module M over the Integer Ring
             sage: M.exterior_power(2).an_element().display()
-            e_0/\e_1
+            e_0∧e_1
             sage: M.exterior_power(3)
             3rd exterior power of the Rank-3 free module M over the Integer Ring
             sage: M.exterior_power(3).an_element()
             Alternating contravariant tensor of degree 3 on the Rank-3
              free module M over the Integer Ring
             sage: M.exterior_power(3).an_element().display()
-            e_0/\e_1/\e_2
+            e_0∧e_1∧e_2
 
         See
         :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerFreeModule`
@@ -1116,13 +1117,13 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: M.dual_exterior_power(2).an_element()
             Alternating form of degree 2 on the Rank-3 free module M over the Integer Ring
             sage: M.dual_exterior_power(2).an_element().display()
-            e^0/\e^1
+            e^0∧e^1
             sage: M.dual_exterior_power(3)
             3rd exterior power of the dual of the Rank-3 free module M over the Integer Ring
             sage: M.dual_exterior_power(3).an_element()
             Alternating form of degree 3 on the Rank-3 free module M over the Integer Ring
             sage: M.dual_exterior_power(3).an_element().display()
-            e^0/\e^1/\e^2
+            e^0∧e^1∧e^2
 
         See
         :class:`~sage.tensor.modules.ext_pow_free_module.ExtPowerDualFreeModule`
@@ -1523,14 +1524,14 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: t.symmetries()
             symmetry: (0, 1);  no antisymmetry
             sage: t.display(e)
-            4 e^0*e^0 + 5 e^1*e^2 + 5 e^2*e^1
+            4 e^0⊗e^0 + 5 e^1⊗e^2 + 5 e^2⊗e^1
             sage: c = CompFullyAntiSym(ZZ, e, 2)
             sage: c[0,1], c[1,2] = 4, 5
             sage: t = M.tensor_from_comp((0,2), c) ; t
             Alternating form of degree 2 on the
              Rank-3 free module M over the Integer Ring
             sage: t.display(e)
-            4 e^0/\e^1 + 5 e^1/\e^2
+            4 e^0∧e^1 + 5 e^1∧e^2
 
         """
         from .comp import CompWithSym, CompFullyAntiSym
@@ -1610,7 +1611,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: a.set_comp(e)[0,1] = 2
             sage: a.set_comp(e)[1,2] = -3
             sage: a.display(e)
-            a = 2 e_0/\e_1 - 3 e_1/\e_2
+            a = 2 e_0∧e_1 - 3 e_1∧e_2
 
         An alternating contravariant tensor of degree 1 is simply
         an element of the module::
@@ -1665,7 +1666,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: a.set_comp(e)[0,1] = 2
             sage: a.set_comp(e)[1,2] = -3
             sage: a.display(e)
-            a = 2 e^0/\e^1 - 3 e^1/\e^2
+            a = 2 e^0∧e^1 - 3 e^1∧e^2
 
         An alternating form of degree 1 is a linear form::
 
@@ -1798,7 +1799,7 @@ class FiniteRankFreeModule(UniqueRepresentation, Parent):
             sage: a.tensor_type()
             (1, 1)
             sage: a.display(e)
-            a = e_0*e^0 + 2 e_0*e^1 + e_1*e^0 + 3 e_1*e^1
+            a = e_0⊗e^0 + 2 e_0⊗e^1 + e_1⊗e^0 + 3 e_1⊗e^1
 
         The automorphism components can be specified in a second step, as
         components of a type-`(1,1)` tensor::

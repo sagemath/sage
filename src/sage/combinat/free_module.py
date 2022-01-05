@@ -29,7 +29,6 @@ from sage.categories.tensor import tensor
 import sage.data_structures.blas_dict as blas
 from sage.typeset.ascii_art import AsciiArt, ascii_art
 from sage.typeset.unicode_art import UnicodeArt, unicode_art
-from sage.misc.superseded import deprecation
 
 
 class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
@@ -413,7 +412,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             ...
             ValueError: keyy is not a valid print option.
         """
-        #Make sure R is a ring with unit element
+        # Make sure R is a ring with unit element
         from sage.categories.all import Rings
         if R not in Rings():
             raise TypeError("Argument R must be a ring.")
@@ -529,7 +528,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             pass
         try:
             g = iter(self.basis().keys())
-            for c in range(1,4):
+            for c in range(1, 4):
                 x = x + self.term(next(g), R(c))
         except Exception:
             pass
@@ -556,7 +555,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: 5/3 in F
             False
         """
-        return parent(x) == self # is self?
+        return parent(x) == self  # is self?
 
     def _element_constructor_(self, x):
         """
@@ -661,7 +660,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         """
         R = self.base_ring()
 
-        #Coerce ints to Integers
+        # Coerce ints to Integers
         if isinstance(x, int):
             x = Integer(x)
 
@@ -670,12 +669,12 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                 return self.zero()
             else:
                 raise TypeError("do not know how to make x (= %s) an element of %s" % (x, self))
-        #x is an element of the basis enumerated set;
+        # x is an element of the basis enumerated set;
         # This is a very ugly way of testing this
         elif ((hasattr(self._indices, 'element_class') and
                isinstance(self._indices.element_class, type) and
-               isinstance(x, self._indices.element_class))
-              or (parent(x) == self._indices)):
+               isinstance(x, self._indices.element_class)) or
+              parent(x) == self._indices):
             return self.monomial(x)
         elif x in self._indices:
             return self.monomial(self._indices(x))
@@ -710,9 +709,10 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         if isinstance(S, FormalSums) and K.has_coerce_map_from(S.base_ring()):
             G = self.basis().keys()
             return SetMorphism(S.Hom(self, category=self.category() | S.category()),
-                               lambda x: self.sum_of_terms( (G(g), K(c)) for c,g in x ))
+                               lambda x: self.sum_of_terms((G(g), K(c))
+                                                           for c, g in x))
 
-    def _an_element_impl(self): # TODO: REMOVE?
+    def _an_element_impl(self):  # TODO: REMOVE?
         """
         Return an element of ``self``, namely the zero element.
 
@@ -848,71 +848,6 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             self.set_order(self.basis().keys().list())
         return self._order
 
-    def get_order_cmp(self):
-        """
-        Return a comparison function on the basis indices that is
-        compatible with the current term order.
-
-        DEPRECATED by :trac:`24548`.
-
-        EXAMPLES::
-
-            sage: A = FiniteDimensionalAlgebrasWithBasis(QQ).example()
-            sage: Acmp = A.get_order_cmp()
-            doctest:warning...:
-            DeprecationWarning: comparison should use keys
-            See http://trac.sagemath.org/24548 for details.
-
-            sage: sorted(A.basis().keys(), Acmp) # py2
-            ['x', 'y', 'a', 'b']
-            sage: A.set_order(list(reversed(A.basis().keys())))
-            sage: Acmp = A.get_order_cmp()
-            sage: sorted(A.basis().keys(), Acmp) # py2
-            ['b', 'a', 'y', 'x']
-        """
-        deprecation(24548, 'comparison should use keys')
-        self.get_order()
-        return self._order_cmp
-
-    def _order_cmp(self, x, y):
-        """
-        Compare `x` and `y` w.r.t. the term order.
-
-        DEPRECATED by :trac:`24548`.
-
-        INPUT:
-
-        - ``x``, ``y`` -- indices of the basis of ``self``
-
-        OUTPUT:
-
-        `-1`, `0`, or `1` depending on whether `x<y`, `x==y`, or `x>y`
-        w.r.t. the term order.
-
-        EXAMPLES::
-
-            sage: A = CombinatorialFreeModule(QQ, ['x','y','a','b'])
-            sage: A.set_order(['x', 'y', 'a', 'b'])
-            sage: A._order_cmp('x', 'y')
-            doctest:warning...:
-            DeprecationWarning: comparison should use keys
-            See http://trac.sagemath.org/24548 for details.
-            -1
-            sage: A._order_cmp('y', 'y')
-            0
-            sage: A._order_cmp('a', 'y')
-            1
-        """
-        deprecation(24548, 'comparison should use keys')
-        ix = self._rank_basis(x)
-        iy = self._rank_basis(y)
-        if ix < iy:
-            return -1
-        elif ix > iy:
-            return 1
-        else:
-            return 0
-
     def get_order_key(self):
         """
         Return a comparison key on the basis indices that is
@@ -971,7 +906,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
         """
         if order is None:
             order = self.get_order()
-        return self._from_dict({order[index]: coeff for (index,coeff) in vector.items()})
+        return self._from_dict({order[index]: coeff
+                                for (index, coeff) in vector.items()})
 
     def sum(self, iter_of_elements):
         """
@@ -1019,9 +955,9 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             sage: F.linear_combination( (f,i) for i in range(5) )
             20*B[1] + 20*B[2]
         """
-        return self._from_dict(blas.linear_combination( ((element._monomial_coefficients, coeff)
+        return self._from_dict(blas.linear_combination(((element._monomial_coefficients, coeff)
                                                         for element, coeff in iter_of_elements_coeff),
-                                                        factor_on_left=factor_on_left ),
+                                                       factor_on_left=factor_on_left),
                                remove_zeros=False)
 
     def term(self, index, coeff=None):
@@ -1380,7 +1316,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: R = NonCommutativeSymmetricFunctions(QQ).R()
                 sage: Partitions.options(diagram_str="#", convention="french")
                 sage: s = unicode_art(tensor((R[1,2], R[3,1,2]))); s
-                R    ⨂ R
+                R    ⊗ R
                  ┌┐     ┌┬┬┐
                  ├┼┐    └┴┼┤
                  └┴┘      ├┼┐
@@ -1577,19 +1513,18 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: T(tensor((p,p)))
                 4*B[2] # B[2] + 4*B[2] # B[4] + 4*B[4] # B[2] + 4*B[4] # B[4]
             """
-            if ((R in ModulesWithBasis(self.base_ring()).TensorProducts()
-                 or R in GradedAlgebrasWithBasis(self.base_ring()).SignedTensorProducts())
+            if ((R in ModulesWithBasis(self.base_ring()).TensorProducts() or
+                 R in GradedAlgebrasWithBasis(self.base_ring()).SignedTensorProducts())
                 and isinstance(R, CombinatorialFreeModule_Tensor)
                 and len(R._sets) == len(self._sets)
                 and all(self._sets[i].has_coerce_map_from(M)
-                        for i,M in enumerate(R._sets))):
+                        for i, M in enumerate(R._sets))):
                 modules = R._sets
                 vector_map = [self._sets[i]._internal_coerce_map_from(M)
-                              for i,M in enumerate(modules)]
+                              for i, M in enumerate(modules)]
                 return R.module_morphism(lambda x: self._tensor_of_elements(
-                        [vector_map[i](M.monomial(x[i]))
-                         for i,M in enumerate(modules)]),
-                                         codomain=self)
+                    [vector_map[i](M.monomial(x[i]))
+                     for i, M in enumerate(modules)]), codomain=self)
 
             return super(CombinatorialFreeModule_Tensor, self)._coerce_map_from_(R)
 
@@ -1628,7 +1563,8 @@ class CartesianProductWithFlattening(object):
             (1, 2, 3, 4, 5, 6, 7, 8)
 
         """
-        return sum( (i if flatten else (i,) for (i,flatten) in zip(indices, self._flatten) ), ())
+        return sum((i if flatten else (i,)
+                    for (i, flatten) in zip(indices, self._flatten)), ())
 
 
 # TODO: find a way to avoid this hack to allow for cross references
@@ -1686,7 +1622,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             Free module generated by {2, 4, 5} over Integer Ring (+) Free module generated by {2, 4, 7} over Integer Ring
             sage: TestSuite(C).run()
         """
-        assert(len(modules) > 0) # TODO: generalize to a family or tuple
+        assert(len(modules))  # TODO: generalize to a family or tuple
         R = modules[0].base_ring()
         assert(all(module in ModulesWithBasis(R)) for module in modules)
         # should check the base ring
@@ -1834,9 +1770,9 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
             B[(0, 0)] + B[(1, 0)]
 
         """
-        return self.sum( self.summand_embedding(i)(element_i)
-                         for (i, element_i) in zip(self._sets_keys(),
-                                                   elements) )
+        return self.sum(self.summand_embedding(i)(element_i)
+                        for (i, element_i) in zip(self._sets_keys(),
+                                                  elements))
 
     def cartesian_factors(self):
         """
@@ -1853,7 +1789,7 @@ class CombinatorialFreeModule_CartesianProduct(CombinatorialFreeModule):
         """
         return self._sets
 
-    class Element(CombinatorialFreeModule.Element): # TODO: get rid of this inheritance
+    class Element(CombinatorialFreeModule.Element):  # TODO: get rid of this inheritance
         pass
 
 

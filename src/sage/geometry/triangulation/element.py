@@ -576,7 +576,7 @@ class Triangulation(Element):
 
         OUTPUT:
 
-        A :class:`~sage.homology.simplicial_complex.SimplicialComplex`.
+        A :class:`~sage.topology.simplicial_complex.SimplicialComplex`.
 
         EXAMPLES::
 
@@ -590,7 +590,7 @@ class Triangulation(Element):
             sage: sc.homology()
             {0: 0, 1: 0, 2: 0, 3: 0}
         """
-        from sage.homology.simplicial_complex import SimplicialComplex
+        from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self)
 
 

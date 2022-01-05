@@ -17,7 +17,10 @@ fi
 
 # We explicitly disable X and fontconfig support, since (1) X is not a SAGE dependency,
 # and (2) the gd build fails on a lot of OS X PPC machines when X is enabled.
+# Also, libgd will try to link against system libavif/libvmaf and fail
+# on Fedora 34
 sdh_configure --without-jpeg --without-xpm --without-x --without-fontconfig \
+              --without-avif \
               --with-zlib="$SAGE_LOCAL" $LIBGD_CONFIGURE
 sdh_make
 sdh_make_install

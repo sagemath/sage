@@ -3,8 +3,9 @@ from itertools import chain
 from inspect import getfullargspec as getargspec
 
 from .nf import GeneratorLimitExceeded, symmGB_F2_C, symmGB_F2_python
+from .pbori import GroebnerStrategy, ll_red_nf_redsb
 from .PyPolyBoRi import (Monomial, Polynomial,
-                         GroebnerStrategy, OrderCode, ll_red_nf_redsb)
+                         OrderCode)
 from .ll import eliminate, ll_encode
 from .statistics import used_vars_set
 from .heuristics import dense_system, gauss_on_linear

@@ -119,7 +119,8 @@ class ModularFormsAmbient_eps(ModularFormsAmbient):
         """
         if not dirichlet.is_DirichletCharacter(character):
             raise TypeError("character (=%s) must be a Dirichlet character"%character)
-        if base_ring is None: base_ring=character.base_ring()
+        if base_ring is None:
+            base_ring=character.base_ring()
         if character.base_ring() != base_ring:
             character = character.change_ring(base_ring)
         if base_ring.characteristic() != 0:

@@ -871,7 +871,7 @@ class Lseries_ell(SageObject):
         # and is a multiple of the degree of an isogeny between E
         # and the optimal curve.
         #
-        # NOTES: We *do* have to worry about the Manin constant, since
+        # NOTE: We *do* have to worry about the Manin constant, since
         # we are using the Neron model to compute omega, not the
         # newform.  My theorem replaces the omega above by omega/c,
         # where c is the Manin constant, and the bound must be

@@ -61,7 +61,7 @@ sdh_install \
     pkg/autpgrp-* \
     pkg/alnuth-* \
     pkg/crisp-* \
-    pkg/ctbllib \
+    pkg/ctbllib-* \
     pkg/FactInt-* \
     pkg/fga \
     pkg/irredsol-* \

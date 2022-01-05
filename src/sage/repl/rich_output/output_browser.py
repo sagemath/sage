@@ -8,8 +8,9 @@ import re
 from sage.repl.rich_output.output_basic import OutputBase
 from sage.repl.rich_output.buffer import OutputBuffer
 
-latex_re = re.compile(r'<html><script type="math/tex; mode=(?P<mode>[^"]+)">(?P<latex>.*)</script></html>',
-                     flags=re.DOTALL)
+# regex to match "<html>\[...\]</html>" or "<html>\(...\)</html>"
+latex_re = re.compile(r'<html>(?P<mathstart>\\\[|\\\()(?P<latex>.*)(?P<mathend>\\\]|\\\))</html>',
+                      flags=re.DOTALL)
 
 class OutputHtml(OutputBase):
 
@@ -20,10 +21,9 @@ class OutputHtml(OutputBase):
         INPUT:
 
         - ``html`` --
-          :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively,
-          a string (bytes) can be passed directly which will then be
-          converted into an
-          :class:`~sage.repl.rich_output.buffer.OutputBuffer`. String
+          :class:`~sage.repl.rich_output.buffer.OutputBuffer`. Alternatively, a
+          string (bytes) can be passed directly which will then be converted
+          into an :class:`~sage.repl.rich_output.buffer.OutputBuffer`. String
           containing the html fragment code. Excludes the surrounding
           ``<body>`` and ``<html>`` tag.
 
@@ -40,7 +40,7 @@ class OutputHtml(OutputBase):
         # pdf export of a notebook
         m = latex_re.match(html)
         if m:
-            if m.group('mode') == 'display':
+            if m.group('mathstart') == r'\[' and m.group('mathend') == r'\]':
                 self.latex = OutputBuffer('$$' + m.group('latex') + '$$')
             else:
                 self.latex = OutputBuffer('$' + m.group('latex') + '$')

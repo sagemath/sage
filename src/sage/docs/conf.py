@@ -20,8 +20,6 @@ from IPython.lib.lexers import IPythonConsoleLexer, IPyLexer
 extensions = ['sage_docbuild.ext.inventory_builder',
               'sage_docbuild.ext.multidocs',
               'sage_docbuild.ext.sage_autodoc',
-              'sphinx.ext.graphviz',
-              'sphinx.ext.inheritance_diagram',
               'sphinx.ext.todo',
               'sphinx.ext.extlinks',
               'IPython.sphinxext.ipython_directive',
@@ -156,12 +154,6 @@ pygments_style = 'sphinx'
 highlighting.lexers['ipycon'] = IPythonConsoleLexer(in1_regex=r'sage: ', in2_regex=r'[.][.][.][.]: ')
 highlighting.lexers['ipython'] = IPyLexer()
 highlight_language = 'ipycon'
-
-# GraphViz includes dot, neato, twopi, circo, fdp.
-graphviz_dot = 'dot'
-inheritance_graph_attrs = { 'rankdir' : 'BT' }
-inheritance_node_attrs = { 'height' : 0.5, 'fontsize' : 12, 'shape' : 'oval' }
-inheritance_edge_attrs = {}
 
 # Extension configuration
 # -----------------------
@@ -400,29 +392,50 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{03A5}{\ensuremath{\Upsilon}}
     \DeclareUnicodeCharacter{2113}{\ell}
 
+    \DeclareUnicodeCharacter{2148}{\ensuremath{\id}}
+    \DeclareUnicodeCharacter{2202}{\ensuremath{\partial}}
+    \DeclareUnicodeCharacter{2205}{\ensuremath{\emptyset}}
+    \DeclareUnicodeCharacter{2208}{\ensuremath{\in}}
+    \DeclareUnicodeCharacter{2209}{\ensuremath{\notin}}
+    \DeclareUnicodeCharacter{2211}{\ensuremath{\sum}}
     \DeclareUnicodeCharacter{221A}{\ensuremath{\sqrt{}}}
-    \DeclareUnicodeCharacter{2264}{\leq}
-    \DeclareUnicodeCharacter{2265}{\geq}
-    \DeclareUnicodeCharacter{221E}{\infty}
-    \DeclareUnicodeCharacter{2211}{\sum}
-    \DeclareUnicodeCharacter{2208}{\in}
-    \DeclareUnicodeCharacter{2209}{\notin}
-    \DeclareUnicodeCharacter{2202}{\partial}
+    \DeclareUnicodeCharacter{221E}{\ensuremath{\infty}}
+    \DeclareUnicodeCharacter{2227}{\ensuremath{\wedge}}
+    \DeclareUnicodeCharacter{2228}{\ensuremath{\vee}}
+    \DeclareUnicodeCharacter{2229}{\ensuremath{\cap}}
+    \DeclareUnicodeCharacter{222A}{\ensuremath{\cup}}
     \DeclareUnicodeCharacter{222B}{\ensuremath{\int}}
-    \DeclareUnicodeCharacter{2148}{\id}
-    \DeclareUnicodeCharacter{2248}{\approx}
-    \DeclareUnicodeCharacter{2260}{\neq}
-    \DeclareUnicodeCharacter{00B1}{\pm}
-    \DeclareUnicodeCharacter{2A02}{\otimes}
-    \DeclareUnicodeCharacter{2A01}{\oplus}
-    \DeclareUnicodeCharacter{00BD}{\nicefrac{1}{2}}
-    \DeclareUnicodeCharacter{00D7}{\times}
-    \DeclareUnicodeCharacter{00B7}{\cdot}
-    \DeclareUnicodeCharacter{230A}{\lfloor}
-    \DeclareUnicodeCharacter{230B}{\rfloor}
-    \DeclareUnicodeCharacter{2308}{\lceil}
-    \DeclareUnicodeCharacter{2309}{\rceil}
+    \DeclareUnicodeCharacter{2248}{\ensuremath{\approx}}
+    \DeclareUnicodeCharacter{2260}{\ensuremath{\neq}}
+    \DeclareUnicodeCharacter{2264}{\ensuremath{\leq}}
+    \DeclareUnicodeCharacter{2265}{\ensuremath{\geq}}
+    \DeclareUnicodeCharacter{2293}{\ensuremath{\sqcap}}
+    \DeclareUnicodeCharacter{2294}{\ensuremath{\sqcup}}
+    \DeclareUnicodeCharacter{22C0}{\ensuremath{\bigwedge}}
+    \DeclareUnicodeCharacter{22C1}{\ensuremath{\bigvee}}
+    \DeclareUnicodeCharacter{22C2}{\ensuremath{\bigcap}}
+    \DeclareUnicodeCharacter{22C3}{\ensuremath{\bigcup}}
+    \DeclareUnicodeCharacter{00B1}{\ensuremath{\pm}}
+    \DeclareUnicodeCharacter{2A02}{\ensuremath{\bigotimes}}
+    \DeclareUnicodeCharacter{2297}{\ensuremath{\otimes}}
+    \DeclareUnicodeCharacter{2A01}{\ensuremath{\oplus}}
+    \DeclareUnicodeCharacter{00BD}{\ensuremath{\nicefrac{1}{2}}}
+    \DeclareUnicodeCharacter{00D7}{\ensuremath{\times}}
+    \DeclareUnicodeCharacter{00B7}{\ensuremath{\cdot}}
+    \DeclareUnicodeCharacter{230A}{\ensuremath{\lfloor}}
+    \DeclareUnicodeCharacter{230B}{\ensuremath{\rfloor}}
+    \DeclareUnicodeCharacter{2308}{\ensuremath{\lceil}}
+    \DeclareUnicodeCharacter{2309}{\ensuremath{\rceil}}
     \DeclareUnicodeCharacter{22C5}{\ensuremath{\cdot}}
+    \DeclareUnicodeCharacter{2227}{\ensuremath{\wedge}}
+    \DeclareUnicodeCharacter{22C0}{\ensuremath{\bigwedge}}
+    \DeclareUnicodeCharacter{2192}{\ensuremath{\to}}
+    \DeclareUnicodeCharacter{21A6}{\ensuremath{\mapsto}}
+    \DeclareUnicodeCharacter{2102}{\ensuremath{\mathbb{C}}}
+    \DeclareUnicodeCharacter{211A}{\ensuremath{\mathbb{Q}}}
+    \DeclareUnicodeCharacter{211D}{\ensuremath{\mathbb{R}}}
+    \DeclareUnicodeCharacter{2124}{\ensuremath{\mathbb{Z}}}
+    \DeclareUnicodeCharacter{2202}{\ensuremath{\partial}}
 
     \DeclareUnicodeCharacter{2070}{\ensuremath{{}^0}}
     \DeclareUnicodeCharacter{00B9}{\ensuremath{{}^1}}
@@ -449,6 +462,8 @@ latex_elements['preamble'] = r"""
     \DeclareUnicodeCharacter{2089}{\ensuremath{{}_9}}
     \DeclareUnicodeCharacter{208A}{\ensuremath{{}_+}}
     \DeclareUnicodeCharacter{208B}{\ensuremath{{}_-}}
+    \DeclareUnicodeCharacter{1D62}{\ensuremath{{}_i}}
+    \DeclareUnicodeCharacter{2C7C}{\ensuremath{{}_j}}
 
     \newcommand{\sageMexSymbol}[1]
     {{\fontencoding{OMX}\fontfamily{cmex}\selectfont\raisebox{0.75em}{\symbol{#1}}}}
@@ -704,7 +719,8 @@ def process_inherited(app, what, name, obj, options, docstringlines):
 dangling_debug = False
 
 def debug_inf(app, message):
-    if dangling_debug: app.info(message)
+    if dangling_debug:
+        app.info(message)
 
 def call_intersphinx(app, env, node, contnode):
     r"""

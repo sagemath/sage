@@ -35,6 +35,7 @@ from sage.algebras.lie_algebras.virasoro import VirasoroAlgebra
 from sage.algebras.lie_algebras.rank_two_heisenberg_virasoro import RankTwoHeisenbergVirasoro
 from sage.algebras.lie_algebras.symplectic_derivation import SymplecticDerivationLieAlgebra as SymplecticDerivation
 from sage.algebras.lie_algebras.onsager import OnsagerAlgebra
+from sage.algebras.lie_algebras.onsager import OnsagerAlgebraACE as AlternatingCentralExtensionOnsagerAlgebra
 from sage.algebras.lie_algebras.affine_lie_algebra import AffineLieAlgebra as Affine
 from sage.algebras.lie_algebras.classical_lie_algebra import gl
 from sage.algebras.lie_algebras.classical_lie_algebra import ClassicalMatrixLieAlgebra as ClassicalMatrix

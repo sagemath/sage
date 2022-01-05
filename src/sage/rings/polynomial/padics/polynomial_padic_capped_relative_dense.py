@@ -1245,13 +1245,16 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
         valaddeds = self._valaddeds
         relprecs = self._relprecs
         if relprecs[0] <= compval:   # not enough precision
-            if valaddeds[0] < relprecs[0]: return False
+            if valaddeds[0] < relprecs[0]:
+                return False
             raise PrecisionError("Not enough precision on the constant coefficient")
         else:
-            if valaddeds[0] != compval: return False
+            if valaddeds[0] != compval:
+                return False
         for i in range(1, deg):
             if relprecs[i] < compval:   # not enough precision
-                if valaddeds[i] < relprecs[i]: return False
+                if valaddeds[i] < relprecs[i]:
+                    return False
                 if secure:
                     if i == 1:
                         raise PrecisionError("Not enough precision on the coefficient of %s" % self.variable_name())

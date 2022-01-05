@@ -23,7 +23,6 @@ Module List
    sage/modular/modform/hecke_operator_on_qexp
    sage/modular/modform/numerical
    sage/modular/modform/vm_basis
-   sage/modular/modform/ambient
    sage/modular/modform/half_integral
    sage/modular/modform/find_generators
    sage/modular/modform/j_invariant

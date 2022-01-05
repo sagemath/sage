@@ -13,7 +13,6 @@ Elements of Laurent polynomial rings
 from sage.rings.integer cimport Integer
 from sage.categories.map cimport Map
 from sage.structure.element import is_Element, coerce_binop
-from sage.misc.misc import union
 from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -2661,9 +2660,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         cdef dict d = self.dict()
         cdef tuple g = self._parent.gens()
         cdef Py_ssize_t nvars = len(g)
-        cdef list vars = []
+        cdef set vars = set()
         for k in d:
-            vars = union(vars, k.nonzero_positions())
+            vars.update(k.nonzero_positions())
             if len(vars) == nvars:
                 break
         cdef list v = [g[i] for i in vars]

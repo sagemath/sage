@@ -604,7 +604,7 @@ class AlternatingSignMatrix(Element,
             [0 0 1 0]
 
             sage: a0 = a = AlternatingSignMatrices(5).random_element()
-            sage: for i in range(10):
+            sage: for i in range(20):
             ....:     a = a.gyration()
             sage: a == a0
             True

@@ -501,7 +501,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
             ...
             TypeError: Error evaluating Macaulay2 code.
             IN:...
-            OUT:...error: ZZ/n not implemented yet for composite n
+            OUT:...error: ZZ/n not implemented yet for composite n...
         """
         return "ZZ/{}".format(self.order())
 
@@ -626,7 +626,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic):
             sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
             sage: Integers(15).multiplicative_subgroups()
-            ((11, 7), (4, 11), (8,), (11,), (14,), (7,), (4,), ())
+            ((11, 7), (11, 4), (2,), (11,), (14,), (7,), (4,), ())
             sage: Integers(2).multiplicative_subgroups()
             ((),)
             sage: len(Integers(341).multiplicative_subgroups())

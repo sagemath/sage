@@ -458,7 +458,7 @@ class MultizetaValues(UniqueRepresentation):
         """
         self.prec = int(prec)
         self.max_weight = int(max_weight)
-        self._data = pari.zetamultall(self.max_weight, self.prec)
+        self._data = pari.zetamultall(self.max_weight, precision=self.prec)
 
     def update(self, max_weight, prec):
         """
@@ -968,7 +968,7 @@ class Multizetas(CombinatorialFreeModule):
         r"""
         Convert ``x`` into ``self``.
 
-        INPUT
+        INPUT:
 
         - ``x`` -- either a list, tuple, word or a multiple zeta value
 
@@ -1884,7 +1884,7 @@ class Multizetas_iterated(CombinatorialFreeModule):
         r"""
         Convert ``x`` into ``self``.
 
-        INPUT
+        INPUT:
 
         - ``x`` -- either a list, tuple, word or a multiple zeta value
 
@@ -2151,7 +2151,7 @@ class All_iterated(CombinatorialFreeModule):
         r"""
         Convert ``x`` into ``self``.
 
-        INPUT
+        INPUT:
 
         - ``x`` -- either a list, tuple, word
 

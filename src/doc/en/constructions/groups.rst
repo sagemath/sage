@@ -185,7 +185,7 @@ Here's another way, working more directly with GAP::
     sage: print(gap.eval("G := SymmetricGroup( 4 )"))
     Sym( [ 1 .. 4 ] )
     sage: print(gap.eval("normal := NormalSubgroups( G );"))
-    [ Sym( [ 1 .. 4 ] ), Alt( [ 1 .. 4 ] ), Group([ (1,4)(2,3), (1,2)(3,4) ]),
+    [ Sym( [ 1 .. 4 ] ), Alt( [ 1 .. 4 ] ), Group([ (1,4)(2,3),  ... ]),
           Group(()) ]
 
 .. index::
@@ -252,7 +252,7 @@ Another example of using the small groups database: ``group_id``
     gap> G:=Group((4,6,5)(7,8,9),(1,7,2,4,6,9,5,3));
     Group([ (4,6,5)(7,8,9), (1,7,2,4,6,9,5,3) ])
     gap> StructureDescription(G);
-    "(C3 x C3) : GL(2,3)" 
+    "(C3 x C3) : GL(2,3)"
 
 Construction instructions for every group of order less than 32
 ===============================================================

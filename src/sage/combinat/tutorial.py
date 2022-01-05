@@ -673,12 +673,7 @@ result of ``len`` be an integer of type ``int``; this could cause
 overflows, and would not permit the return of {Infinity} for infinite
 sets::
 
-    sage: len(S)  #py2
-    Traceback (most recent call last):
-    ...
-    OverflowError: Python int too large to convert to C long
-
-    sage: len(S)  #py3
+    sage: len(S)
     Traceback (most recent call last):
     ...
     OverflowError: cannot fit 'int' into an index-sized integer

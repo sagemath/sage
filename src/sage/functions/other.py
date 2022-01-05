@@ -1936,8 +1936,8 @@ class Function_prod(BuiltinFunction):
             sage: isinstance(r.operator(),
             ....:     sage.functions.other.Function_prod) # known bug
             True
-            sage: giac(sprod(m, m, 1, n))
-            n!
+            sage: giac(sprod(m, m, 1, n)).sage()
+            factorial(n)
         """
         BuiltinFunction.__init__(self, "product", nargs=4,
                                conversions=dict(maxima='product',
@@ -2285,3 +2285,75 @@ class Function_crootof(BuiltinFunction):
 
 complex_root_of = Function_crootof()
 
+
+class Function_elementof(BuiltinFunction):
+    """
+    Formal set membership function that is only accessible internally.
+
+    This function is called to express a set membership statement,
+    usually as part of a solution set returned by ``solve()``.
+    See :class:`sage.sets.set.Set` and :class:`sage.sets.real_set.RealSet`
+    for possible set arguments.
+
+    EXAMPLES::
+
+        sage: from sage.functions.other import element_of
+        sage: element_of(x, SR(ZZ))
+        element_of(x, Integer Ring)
+        sage: element_of(sin(x), SR(QQ))
+        element_of(sin(x), Rational Field)
+        sage: element_of(x, SR(RealSet.open_closed(0,1)))
+        element_of(x, (0, 1])
+        sage: element_of(x, SR(Set([4,6,8])))
+        element_of(x, {8, 4, 6})
+    """
+    def __init__(self):
+        """
+        EXAMPLES::
+
+            sage: from sage.functions.other import element_of
+            sage: loads(dumps(element_of))
+            element_of
+        """
+        BuiltinFunction.__init__(self, "element_of", nargs=2,
+                                 conversions=dict(sympy='Contains'))
+
+    def _eval_(self, x, s):
+        """
+        EXAMPLES::
+
+            sage: from sage.functions.other import element_of
+            sage: element_of(x, SR(RealSet(-oo, oo)))
+            element_of(x, (-oo, +oo))
+            sage: element_of(x, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: not a set: 0
+        """
+        from sage.categories.sets_cat import Sets
+        if not s in Sets():
+            raise ValueError("not a set: {}".format(s))
+
+    def _latex_(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.functions.other import element_of
+            sage: latex(element_of)
+            \in
+        """
+        return r'\in'
+
+    def _print_latex_(self, ex, s):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.functions.other import element_of
+            sage: latex(element_of(x, SR(ZZ)))
+            x \in \Bold{Z}
+            sage: latex(element_of(x, SR(Set([4,6,8]))))
+            x \in \left\{8, 4, 6\right\}
+        """
+        return r"{} \in {}".format(latex(ex), latex(s))
+
+element_of = Function_elementof()

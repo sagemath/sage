@@ -54,7 +54,7 @@ class HyperbolicArc(BezierPath):
         if B.imag()<0:
             raise ValueError("%s is not a valid point in the UHP model"%(B))
         self.path = []
-        self._hyperbolic_arc(A, B, True);
+        self._hyperbolic_arc(A, B, True)
         BezierPath.__init__(self, self.path, options)
         self.A, self.B = (A, B)
 
@@ -100,12 +100,13 @@ class HyperbolicArc(BezierPath):
             self.path.append([(z0.real(), z0.imag()),
                               (z1.real(), z1.imag()),
                               (z2.real(), z2.imag()),
-                              (z3.real(), z3.imag())]);
+                              (z3.real(), z3.imag())])
             first = False
         else:
             self.path.append([(z1.real(), z1.imag()),
                               (z2.real(), z2.imag()),
-                              (z3.real(), z3.imag())]);
+                              (z3.real(), z3.imag())])
+
 
 @rename_keyword(color='rgbcolor')
 @options(alpha=1, fill=False, thickness=1, rgbcolor="blue", zorder=2, linestyle='solid')

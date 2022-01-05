@@ -873,7 +873,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
         total = binomial(n+d-1, d)
 
         #Select random monomial of degree d
-        random_index = ZZ.random_element(0, total-1)
+        random_index = ZZ.random_element(0, total)
         #Generate the corresponding monomial
         return self._to_monomial(random_index, n, d)
 

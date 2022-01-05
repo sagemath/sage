@@ -509,11 +509,13 @@ def evalunitdict():
     # Format the table for easier use.
     #
     for k, v in unitdict.items():
-        for a in v: unit_to_type[a] = k
+        for a in v:
+            unit_to_type[a] = k
 
     for w in unitdict:
         for j in unitdict[w]:
-            if isinstance(unitdict[w][j], tuple): unitdict[w][j] = unitdict[w][j][0]
+            if isinstance(unitdict[w][j], tuple):
+                unitdict[w][j] = unitdict[w][j][0]
         value_to_unit[w] = {b: a for a, b in unitdict[w].items()}
 
 

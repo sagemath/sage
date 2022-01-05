@@ -13,4 +13,4 @@ diff -ru a/sphinx/environment/__init__.py b/sphinx/environment/__init__.py
 +                    continue
                  if self.config[item.name] != item.value:
                      self.config_status = CONFIG_CHANGED
-                     break
+                     self.config_status_extra = ' (%r)' % (item.name,)

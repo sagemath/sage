@@ -19,7 +19,7 @@ is in general not possible in higher dimensions.
 ########################################################################
 
 from sage.rings.integer_ring import ZZ
-from sage.misc.all import cached_method, cached_function
+from sage.misc.cachefunc import cached_method, cached_function
 from sage.modules.all import (vector, zero_vector)
 from sage.matrix.constructor import (matrix, zero_matrix, block_matrix)
 from ppl import C_Polyhedron, Poly_Con_Relation

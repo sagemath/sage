@@ -7,6 +7,7 @@ SAGE_SPKG_CONFIGURE(
             AS_IF([test -n "$cmake_version"], [
                 AX_COMPARE_VERSION([$cmake_version], [ge], [3.4], [
                     ac_cv_path_CMAKE="$ac_path_CMAKE"
+                    ac_path_CMAKE_found=:
                 ])
             ])
         ])

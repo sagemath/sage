@@ -439,8 +439,8 @@ Erros e Exceções
 
 Quando algo errado ocorre, você usualmente verá uma "exceção" do
 Python. O Python até mesmo tenta sugerir o que ocasionou a exceção,
-por exemplo, ``NameError`` ou ``ValueError`` (veja o Manual de
-Referência do Python [Py]_ para uma lista completa de exceções). Por
+por exemplo, ``NameError`` ou ``ValueError`` (veja o Referência da
+Biblioteca Python [PyLR]_ para uma lista completa de exceções). Por
 exemplo,
 
 .. skip

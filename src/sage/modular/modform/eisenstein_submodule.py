@@ -167,7 +167,8 @@ class EisensteinSubmodule_params(EisensteinSubmodule):
             ]
         """
 
-        if p is not None: raise NotImplementedError
+        if p is not None:
+            raise NotImplementedError
         return self.submodule([self(x) for x in self._compute_q_expansion_basis(self.sturm_bound(), new=True)], check=False)
 
     def _parameters_character(self):

@@ -77,10 +77,10 @@ change-of-coordinate formulas::
 At this stage, the metric `g` is well defined in all `S^2`::
 
     sage: g.display(eU)
-    g = 4/(x^2 + y^2 + 1)^2 dx*dx + 4/(x^2 + y^2 + 1)^2 dy*dy
+    g = 4/(x^2 + y^2 + 1)^2 dx⊗dx + 4/(x^2 + y^2 + 1)^2 dy⊗dy
     sage: g.display(eV)
-    g = 4/(u^4 + v^4 + 2*(u^2 + 1)*v^2 + 2*u^2 + 1) du*du
-     + 4/(u^4 + v^4 + 2*(u^2 + 1)*v^2 + 2*u^2 + 1) dv*dv
+    g = 4/(u^4 + v^4 + 2*(u^2 + 1)*v^2 + 2*u^2 + 1) du⊗du
+     + 4/(u^4 + v^4 + 2*(u^2 + 1)*v^2 + 2*u^2 + 1) dv⊗dv
 
 The expression in frame ``eV`` can be given a shape similar to that in frame
 ``eU``, by factorizing the components::
@@ -90,16 +90,16 @@ The expression in frame ``eV`` can be given a shape similar to that in frame
     sage: g[eV, 1, 1].factor()
     4/(u^2 + v^2 + 1)^2
     sage: g.display(eV)
-    g = 4/(u^2 + v^2 + 1)^2 du*du + 4/(u^2 + v^2 + 1)^2 dv*dv
+    g = 4/(u^2 + v^2 + 1)^2 du⊗du + 4/(u^2 + v^2 + 1)^2 dv⊗dv
 
 Let us consider a scalar field `f` on `S^2`::
 
     sage: f = M.scalar_field({stereoN: 1/(1+x^2+y^2)}, name='f')
     sage: f.add_expr_by_continuation(stereoS, W)
     sage: f.display()
-    f: S^2 --> R
-    on U: (x, y) |--> 1/(x^2 + y^2 + 1)
-    on V: (u, v) |--> (u^2 + v^2)/(u^2 + v^2 + 1)
+    f: S^2 → ℝ
+    on U: (x, y) ↦ 1/(x^2 + y^2 + 1)
+    on V: (u, v) ↦ (u^2 + v^2)/(u^2 + v^2 + 1)
 
 The gradient of `f` (with respect to the metric `g`) is::
 
@@ -107,9 +107,9 @@ The gradient of `f` (with respect to the metric `g`) is::
     sage: gradf
     Vector field grad(f) on the 2-dimensional Riemannian manifold S^2
     sage: gradf.display(eU)
-    grad(f) = -1/2*x d/dx - 1/2*y d/dy
+    grad(f) = -1/2*x ∂/∂x - 1/2*y ∂/∂y
     sage: gradf.display(eV)
-    grad(f) = 1/2*u d/du + 1/2*v d/dv
+    grad(f) = 1/2*u ∂/∂u + 1/2*v ∂/∂v
 
 It is possible to write ``grad(f)`` instead of ``f.gradient()``, by importing
 the standard differential operators of vector calculus::
@@ -125,9 +125,9 @@ as ``f.laplacian()`` or, thanks to the above import, as ``laplacian(f)``::
     sage: Df
     Scalar field Delta(f) on the 2-dimensional Riemannian manifold S^2
     sage: Df.display()
-    Delta(f): S^2 --> R
-    on U: (x, y) |--> (x^2 + y^2 - 1)/(x^2 + y^2 + 1)
-    on V: (u, v) |--> -(u^2 + v^2 - 1)/(u^2 + v^2 + 1)
+    Delta(f): S^2 → ℝ
+    on U: (x, y) ↦ (x^2 + y^2 - 1)/(x^2 + y^2 + 1)
+    on V: (u, v) ↦ -(u^2 + v^2 - 1)/(u^2 + v^2 + 1)
 
 Let us check the standard formula
 `\Delta f = \mathrm{div}( \mathrm{grad}\,  f )`::
@@ -143,7 +143,7 @@ manifold, we can get the metric on it via the method ``metric()``::
     Riemannian metric g on the Open subset U of the 2-dimensional Riemannian
      manifold S^2
     sage: gU.display()
-    g = 4/(x^2 + y^2 + 1)^2 dx*dx + 4/(x^2 + y^2 + 1)^2 dy*dy
+    g = 4/(x^2 + y^2 + 1)^2 dx⊗dx + 4/(x^2 + y^2 + 1)^2 dy⊗dy
 
 Of course, ``gU`` is nothing but the restriction of `g` to `U`::
 
@@ -173,7 +173,7 @@ and initialize it to the Minkowskian value::
 
     sage: g[0,0], g[1,1], g[2,2], g[3,3] = -1, 1, 1, 1
     sage: g.display()
-    g = -dt*dt + dx*dx + dy*dy + dz*dz
+    g = -dt⊗dt + dx⊗dx + dy⊗dy + dz⊗dz
     sage: g[:]
     [-1  0  0  0]
     [ 0  1  0  0]
@@ -192,7 +192,7 @@ A vector field on `M`::
     sage: u[0] = cosh(t)
     sage: u[1] = sinh(t)
     sage: u.display()
-    u = cosh(t) d/dt + sinh(t) d/dx
+    u = cosh(t) ∂/∂t + sinh(t) ∂/∂x
 
 The scalar square of `u` is::
 
@@ -207,8 +207,8 @@ Scalar products are taken with respect to the metric tensor::
 `u` is a unit timelike vector, i.e. its scalar square is identically `-1`::
 
     sage: s.display()
-    u.u: M --> R
-       (t, x, y, z) |--> -1
+    u.u: M → ℝ
+       (t, x, y, z) ↦ -1
     sage: s.expr()
     -1
 
@@ -218,18 +218,18 @@ Let us consider a unit spacelike vector::
     sage: v[0] = sinh(t)
     sage: v[1] = cosh(t)
     sage: v.display()
-    v = sinh(t) d/dt + cosh(t) d/dx
+    v = sinh(t) ∂/∂t + cosh(t) ∂/∂x
     sage: v.dot(v).display()
-    v.v: M --> R
-       (t, x, y, z) |--> 1
+    v.v: M → ℝ
+       (t, x, y, z) ↦ 1
     sage: v.dot(v).expr()
     1
 
 `u` and `v` are orthogonal vectors with respect to Minkowski metric::
 
     sage: u.dot(v).display()
-        u.v: M --> R
-       (t, x, y, z) |--> 0
+        u.v: M → ℝ
+       (t, x, y, z) ↦ 0
     sage: u.dot(v).expr()
     0
 
@@ -238,15 +238,15 @@ The divergence of `u` is::
     sage: s = u.div(); s
     Scalar field div(u) on the 4-dimensional Lorentzian manifold M
     sage: s.display()
-    div(u): M --> R
-       (t, x, y, z) |--> sinh(t)
+    div(u): M → ℝ
+       (t, x, y, z) ↦ sinh(t)
 
 while its d'Alembertian is::
 
     sage: Du = u.dalembertian(); Du
     Vector field Box(u) on the 4-dimensional Lorentzian manifold M
     sage: Du.display()
-    Box(u) = -cosh(t) d/dt - sinh(t) d/dx
+    Box(u) = -cosh(t) ∂/∂t - sinh(t) ∂/∂x
 
 AUTHORS:
 
@@ -507,7 +507,7 @@ class PseudoRiemannianManifold(DifferentiableManifold):
 
             sage: g[1,1], g[2,2], g[3,3] = 1, 1, 1
             sage: g.display()
-            g = dx*dx + dy*dy + dz*dz
+            g = dx⊗dx + dy⊗dy + dz⊗dz
 
         Alternatively, the metric can be initialized from a given field of
         nondegenerate symmetric bilinear forms; we may create the former
@@ -518,7 +518,7 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             sage: dx, dy, dz = X.coframe()[1], X.coframe()[2], X.coframe()[3]
             sage: b = dx*dx + dy*dy + dz*dz
             sage: b
-            Field of symmetric bilinear forms dx*dx+dy*dy+dz*dz on the
+            Field of symmetric bilinear forms dx⊗dx+dy⊗dy+dz⊗dz on the
              3-dimensional Riemannian manifold M
 
         We then use the metric method
@@ -528,7 +528,7 @@ class PseudoRiemannianManifold(DifferentiableManifold):
 
             sage: g.set(b)
             sage: g.display()
-            g = dx*dx + dy*dy + dz*dz
+            g = dx⊗dx + dy⊗dy + dz⊗dz
 
         Another metric can be defined on ``M`` by specifying a metric name
         distinct from that chosen at the creation of the manifold (which
@@ -539,7 +539,7 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             Riemannian metric h on the 3-dimensional Riemannian manifold M
             sage: h[1,1], h[2,2], h[3,3] = 1+y^2, 1+z^2, 1+x^2
             sage: h.display()
-            h = (y^2 + 1) dx*dx + (z^2 + 1) dy*dy + (x^2 + 1) dz*dz
+            h = (y^2 + 1) dx⊗dx + (z^2 + 1) dy⊗dy + (x^2 + 1) dz⊗dz
 
         The metric tensor ``h`` is distinct from the metric entering in the
         definition of the Riemannian manifold ``M``::
@@ -638,7 +638,7 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             sage: eps = M.volume_form(); eps
             3-form eps_g on the 3-dimensional Riemannian manifold M
             sage: eps.display()
-            eps_g = dx/\dy/\dz
+            eps_g = dx∧dy∧dz
 
         Raising the first index::
 
@@ -646,8 +646,8 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             Tensor field of type (1,2) on the 3-dimensional Riemannian
              manifold M
             sage: eps1.display()
-            d/dx*dy*dz - d/dx*dz*dy - d/dy*dx*dz + d/dy*dz*dx + d/dz*dx*dy
-             - d/dz*dy*dx
+            ∂/∂x⊗dy⊗dz - ∂/∂x⊗dz⊗dy - ∂/∂y⊗dx⊗dz + ∂/∂y⊗dz⊗dx + ∂/∂z⊗dx⊗dy
+             - ∂/∂z⊗dy⊗dx
             sage: eps1.symmetries()
             no symmetry; antisymmetry: (1, 2)
 
@@ -657,8 +657,8 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             Tensor field of type (2,1) on the 3-dimensional Riemannian
              manifold M
             sage: eps2.display()
-            d/dx*d/dy*dz - d/dx*d/dz*dy - d/dy*d/dx*dz + d/dy*d/dz*dx
-             + d/dz*d/dx*dy - d/dz*d/dy*dx
+            ∂/∂x⊗∂/∂y⊗dz - ∂/∂x⊗∂/∂z⊗dy - ∂/∂y⊗∂/∂x⊗dz + ∂/∂y⊗∂/∂z⊗dx
+             + ∂/∂z⊗∂/∂x⊗dy - ∂/∂z⊗∂/∂y⊗dx
             sage: eps2.symmetries()
             no symmetry; antisymmetry: (0, 1)
 
@@ -667,12 +667,12 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             sage: eps3 = M.volume_form(3); eps3
             3-vector field on the 3-dimensional Riemannian manifold M
             sage: eps3.display()
-            d/dx/\d/dy/\d/dz
+            ∂/∂x∧∂/∂y∧∂/∂z
 
         """
         return self.metric().volume_form(contra=contra)
 
-    def open_subset(self, name, latex_name=None, coord_def={}):
+    def open_subset(self, name, latex_name=None, coord_def={}, supersets=None):
         r"""
         Create an open subset of ``self``.
 
@@ -692,6 +692,8 @@ class PseudoRiemannianManifold(DifferentiableManifold):
           terms of coordinates; ``coord_def`` must a be dictionary with keys
           charts in the manifold's atlas and values the symbolic expressions
           formed by the coordinates to define the subset.
+        - ``supersets`` -- (default: only ``self``) list of sets that the
+          new open subset is a subset of
 
         OUTPUT:
 
@@ -720,7 +722,7 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             sage: gU = U.metric(); gU
             Riemannian metric g on the Open subset U of the 2-dimensional Riemannian manifold M
             sage: gU.display()
-            g = dx*dx + dy*dy
+            g = dx⊗dx + dy⊗dy
             sage: gU is g.restrict(U)
             True
 
@@ -732,7 +734,7 @@ class PseudoRiemannianManifold(DifferentiableManifold):
             Open subset V of the 2-dimensional Riemannian manifold M
             sage: gV = V.metric()
             sage: gV.display()
-            g = dx*dx + dy*dy
+            g = dx⊗dx + dy⊗dy
             sage: gV is g.restrict(V)
             True
 
@@ -745,22 +747,8 @@ class PseudoRiemannianManifold(DifferentiableManifold):
                                         latex_name=latex_name,
                                         metric_latex_name=self._metric_latex_name,
                                         start_index=self._sindex)
-        resu._calculus_method = self._calculus_method
-        resu._supersets.update(self._supersets)
-        for sd in self._supersets:
-            sd._subsets.add(resu)
-        self._top_subsets.add(resu)
-        # Charts on the result from the coordinate definition:
-        for chart, restrictions in coord_def.items():
-            if chart not in self._atlas:
-                raise ValueError("the {} does not belong to ".format(chart) +
-                                 "the atlas of {}".format(self))
-            chart.restrict(resu, restrictions)
-        # Transition maps on the result inferred from those of self:
-        for chart1 in coord_def:
-            for chart2 in coord_def:
-                if chart2 != chart1 and (chart1, chart2) in self._coord_changes:
-                    self._coord_changes[(chart1, chart2)].restrict(resu)
-        #!# update non-coordinate vector frames and change of frames
-        #
+        if supersets is None:
+            supersets = [self]
+        for superset in supersets:
+            superset._init_open_subset(resu, coord_def=coord_def)
         return resu

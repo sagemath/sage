@@ -73,27 +73,21 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: A = random_matrix(GF(7), 4, 4); A
-            [3 1 6 6]
-            [4 4 2 2]
-            [3 5 4 5]
-            [6 2 2 1]
-            sage: A[0,0] = 12; A
-            [5 1 6 6]
-            [4 4 2 2]
-            [3 5 4 5]
-            [6 2 2 1]
+            sage: A = random_matrix(GF(7), 4, 4)
+            sage: l = A.list()
+            sage: A[0,0] = 12
+            sage: A.list()[0] == 12
+            True
+            sage: l[1:] == A.list()[1:]
+            True
 
-            sage: B = random_matrix(Integers(100), 4, 4); B
-            [13 95  1 16]
-            [18 33  7 31]
-            [92 19 18 93]
-            [82 42 15 38]
-            sage: B[0,0] = 422; B
-            [22 95  1 16]
-            [18 33  7 31]
-            [92 19 18 93]
-            [82 42 15 38]
+            sage: B = random_matrix(Integers(100), 4, 4)
+            sage: l = B.list()
+            sage: B[0,0] = 422
+            sage: B.list()[0] == 22
+            True
+            sage: l[1:] == B.list()[1:]
+            True
         """
         self._matrix[i][j] = <float>value
 
@@ -105,31 +99,25 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: A = random_matrix(GF(13), 4, 4); A
-            [ 0  0  2  9]
-            [10  6 11  8]
-            [10 12  8  8]
-            [ 3  6  8  0]
+            sage: A = random_matrix(GF(13), 4, 4)
+            sage: l = A.list()
             sage: K = A.base_ring()
             sage: x = K(27)
-            sage: A[0,0] = x; A
-            [ 1  0  2  9]
-            [10  6 11  8]
-            [10 12  8  8]
-            [ 3  6  8  0]
+            sage: A[0,0] = x
+            sage: A[0,0] == x
+            True
+            sage: l[1:] == A.list()[1:]
+            True
 
-            sage: B = random_matrix(Integers(200), 4, 4); B
-            [ 13  95 101 116]
-            [118 133   7 131]
-            [192  19 118 193]
-            [ 82 142 115  38]
+            sage: B = random_matrix(Integers(200), 4, 4)
+            sage: l = B.list()
             sage: R = B.base_ring()
             sage: x = R(311)
-            sage: B[0,0] = x; B
-            [111  95 101 116]
-            [118 133   7 131]
-            [192  19 118 193]
-            [ 82 142 115  38]
+            sage: B[0,0] = x
+            sage: B.list()[0] == x
+            True
+            sage: l[1:] == B.list()[1:]
+            True
         """
         self._matrix[i][j] = <float>(<IntegerMod_int>x).ivalue
 
@@ -144,24 +132,21 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
 
         EXAMPLES::
 
-            sage: A = random_matrix(Integers(100), 4, 4); A
-            [ 4 95 83 47]
-            [44 57 91 53]
-            [75 53 15 39]
-            [26 25 10 74]
-            sage: a = A[0,0]; a
-            4
-            sage: a in A.base_ring()
+            sage: R = Integers(100)
+            sage: l = [R.random_element() for _ in range(4*4)]
+            sage: A = matrix(Integers(100), 4, 4, l)
+            sage: a = A[0,0]
+            sage: a == l[0]
+            True
+            sage: a in R
             True
 
-            sage: B = random_matrix(Integers(100), 4, 4); B
-            [13 95  1 16]
-            [18 33  7 31]
-            [92 19 18 93]
-            [82 42 15 38]
-            sage: b = B[0,0]; b
-            13
-            sage: b in B.base_ring()
+            sage: l = [R.random_element() for _ in range(4*4)]
+            sage: B = matrix(Integers(100), 4, 4, l)
+            sage: b = B[0,0]
+            sage: b == l[0]
+            True
+            sage: b in R
             True
         """
         cdef float result = (<Matrix_modn_dense_template>self)._matrix[i][j]

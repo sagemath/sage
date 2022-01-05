@@ -38,7 +38,7 @@ described throughout the file.
 #*****************************************************************************
 
 from libc.string cimport memcpy
-from sage.ext.memory_allocator cimport MemoryAllocator
+from memory_allocator cimport MemoryAllocator
 from cysignals.signals cimport sig_on, sig_off
 
 cimport sage.combinat.permutation_cython

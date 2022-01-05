@@ -527,7 +527,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: E = EllipticCurve([0,0,0,-49,0])
             sage: T = E.torsion_subgroup()
             sage: [E(t) for t in T]
-            [(0 : 1 : 0), (-7 : 0 : 1), (0 : 0 : 1), (7 : 0 : 1)]
+            [(0 : 1 : 0), (0 : 0 : 1), (-7 : 0 : 1), (7 : 0 : 1)]
 
         ::
 
@@ -2951,8 +2951,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             Mod(-928, y^2 - 2), Mod(3456/29, y^2 - 2), Vecsmall([5]),
             [[y^2 - 2, [2, 0], 8, 1, [[1, -1.41421356237310;
             1, 1.41421356237310], [1, -1.41421356237310; 1, 1.41421356237310],
-            [1, -1; 1, 1], [2, 0; 0, 4], [4, 0; 0, 2], [2, 0; 0, 1],
-            [2, [0, 2; 1, 0]], []], [-1.41421356237310, 1.41421356237310],
+            [16, -23; 16, 23], [2, 0; 0, 4], [4, 0; 0, 2], [2, 0; 0, 1],
+            [2, [0, 2; 1, 0]], [2]], [-1.41421356237310, 1.41421356237310],
             [1, y], [1, 0; 0, 1], [1, 0, 0, 2; 0, 1, 1, 0]]], [0, 0, 0, 0, 0]]
 
         PARI no longer requires that the `j`-invariant has negative `p`-adic valuation::

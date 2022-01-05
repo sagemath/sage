@@ -103,14 +103,6 @@ unset with_gmp_include with_gmp_lib without_gmp
 unset dfltbindir dfltdatadir dfltemacsdir dfltincludedir
 unset dfltlibdir dfltmandir dfltsysdatadir dfltobjdir
 
-# Avoid segmentation fault on macOS Catalina with XCode 11.4
-# #29451
-if [ $MACOSX_VERSION -ge 14 ]; then
-    # various packages have still have issues with
-    # two digit OS X versions
-    export MACOSX_DEPLOYMENT_TARGET=10.9
-fi
-
 export CFLAGS=$CFLAGS_O3
 
 if [ "$SAGE_DEBUG" = yes ]; then
@@ -143,4 +135,4 @@ sdh_make $PARI_MAKEFLAGS gp
 
 
 # install non-parallel (-j1) because of race conditions
-sdh_make_install -j1 install-lib-sta
+sdh_make_install -j1

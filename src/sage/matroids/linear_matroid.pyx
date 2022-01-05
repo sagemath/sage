@@ -117,7 +117,9 @@ from sage.data_structures.bitset_base cimport *
 from sage.structure.richcmp cimport rich_to_bool
 from sage.matroids.matroid cimport Matroid
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
-from .lean_matrix cimport LeanMatrix, GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, generic_identity
+from .lean_matrix cimport (LeanMatrix, GenericMatrix, BinaryMatrix,
+                           TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix,
+                           RationalMatrix, generic_identity)
 from .set_system cimport SetSystem
 from .utilities import newlabel, spanning_stars, spanning_forest, lift_cross_ratios
 from sage.graphs.spanning_tree import kruskal
@@ -310,7 +312,10 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         if matrix is not None:
             reduced = False
             if not isinstance(matrix, LeanMatrix):
-                A = GenericMatrix(matrix.nrows(), matrix.ncols(), M=matrix, ring=ring)
+                if matrix.base_ring() is QQ:
+                    A = RationalMatrix(matrix.nrows(), matrix.ncols(), M=matrix)
+                else:
+                    A = GenericMatrix(matrix.nrows(), matrix.ncols(), M=matrix, ring=ring)
             else:
                 A = (<LeanMatrix>matrix).copy()   # Deprecated Sage matrix operation
             if keep_initial_representation:
@@ -320,7 +325,10 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         else:
             reduced = True
             if not isinstance(reduced_matrix, LeanMatrix):
-                self._A = GenericMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix, ring=ring)
+                if reduced_matrix.base_ring() is QQ:
+                    self._A = RationalMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix)
+                else:
+                    self._A = GenericMatrix(reduced_matrix.nrows(), reduced_matrix.ncols(), M=reduced_matrix, ring=ring)
             else:
                 self._A = (<LeanMatrix>reduced_matrix).copy()   # Deprecated Sage matrix operation
             P = list(xrange(self._A.nrows()))

@@ -7,6 +7,7 @@ SAGE_SPKG_CONFIGURE(
             AS_IF([test -n "$ninja_version"], [
                 AX_COMPARE_VERSION([$ninja_version], [ge], [1.7.2], [
                     ac_cv_path_NINJA="$ac_path_NINJA"
+                    ac_path_NINJA_found=:
                 ])
             ])
         ])

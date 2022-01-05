@@ -21,7 +21,8 @@ dnl check for one of its many functions
           [ende();]])],
          [AC_MSG_RESULT([appears to be a well-patched version.])],
 	 [AC_MSG_RESULT([buggy version. Sage will build its own.])
-		         sage_spkg_install_symmetrica=yes])
+		         sage_spkg_install_symmetrica=yes],
+	 [AC_MSG_RESULT([cross compiling. Assume not buggy.])])
      ], [sage_spkg_install_symmetrica=yes])
     ], [sage_spkg_install_symmetrica=yes])
     AC_LANG_POP(C)

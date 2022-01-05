@@ -138,7 +138,7 @@ REFERENCES:
 .. [EG1987] Paul Edelman, Curtis Greene.
    *Balanced Tableaux*.
    Advances in Mathematics 63 (1987), pp. 42-99.
-   https://doi.org/10.1016/0001-8708(87)90063-6
+   :doi:`10.1016/0001-8708(87)90063-6`
 
 .. [BKSTY06] \A. Buch, A. Kresch, M. Shimozono, H. Tamvakis, and A. Yong.
    *Stable Grothendieck polynomials and* `K`-*theoretic factor sequences*.
@@ -147,7 +147,7 @@ REFERENCES:
 
 .. [GR2018v5sol] Darij Grinberg, Victor Reiner.
    *Hopf Algebras In Combinatorics*,
-   :arXiv:`1409.8356v5`, available with solutions at
+   :arxiv:`1409.8356v5`, available with solutions at
    https://arxiv.org/src/1409.8356v5/anc/HopfComb-v73-with-solutions.pdf
 """
 
@@ -514,6 +514,7 @@ class Rule(UniqueRepresentation):
                 raise TypeError(
                     "q must be standard to have a %s as valid output" %output)
             raise ValueError("invalid output option")
+
 
 class RuleRSK(Rule):
     r"""

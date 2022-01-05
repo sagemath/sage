@@ -1387,6 +1387,11 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: mod(-1, 4489).nth_root(2, all=True)
             []
 
+        We check that :trac:`32084` is fixed::
+
+            sage: mod(24, 25).nth_root(50)^50
+            24
+
         Check that the code path cunningham might be used::
 
             sage: a = Mod(9,11)
@@ -1504,7 +1509,8 @@ cdef class IntegerMod_abstract(FiniteRingElement):
                 if self == 1:
                     if all:
                         return [s*K(p*k+m.lift()) for k in range(p**(k-(2 if p==2 else 1))) for m in modp for s in sign]
-                    else: return self_orig
+                    else:
+                        return K(modp.lift())
                 else:
                     if all: return []
                     else: raise ValueError("no nth root")

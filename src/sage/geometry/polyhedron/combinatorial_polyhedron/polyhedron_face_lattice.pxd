@@ -1,5 +1,5 @@
 cimport cython
-from sage.ext.memory_allocator  cimport MemoryAllocator
+from memory_allocator           cimport MemoryAllocator
 from .list_of_faces             cimport ListOfFaces
 from .face_data_structure       cimport face_t
 from .face_list_data_structure  cimport face_list_t
@@ -15,7 +15,8 @@ cdef class PolyhedronFaceLattice:
     cdef size_t *coatom_rep         # a place where coatom-representation of face will be stored
 
     # some copies from CombinatorialPolyhedron
-    cdef tuple _Vrep, _facet_names, _equalities
+    cdef tuple _Vrep, _facet_names, _equations
+    cdef bint _bounded
 
     # Atoms and coatoms are the Vrep/facets of the Polyedron.
     # If ``dual == 0``, then coatoms are facets, atoms Vrepresentatives and vice versa.

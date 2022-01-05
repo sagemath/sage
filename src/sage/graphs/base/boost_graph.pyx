@@ -2381,8 +2381,8 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     # distances respectively.
     # Now order_1 and order_2 will contain order of vertices in which
     # further distance computations will be done.
-    sorted(order_1, reverse=True)
-    sorted(order_2, reverse=True)
+    order_1 = sorted(order_1, reverse=True)
+    order_2 = sorted(order_2, reverse=True)
 
     LB = max(LB, LB_1, LB_2)
     if LB == sys.float_info.max:

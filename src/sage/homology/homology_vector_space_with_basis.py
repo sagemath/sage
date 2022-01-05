@@ -31,8 +31,8 @@ from sage.categories.algebras import Algebras
 from sage.categories.modules import Modules
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.sets.family import Family
-from .simplicial_complex import SimplicialComplex
-from .simplicial_set import SimplicialSet_arbitrary
+from sage.topology.simplicial_complex import SimplicialComplex
+from sage.topology.simplicial_set import SimplicialSet_arbitrary
 
 class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
     r"""
@@ -49,10 +49,10 @@ class HomologyVectorSpaceWithBasis(CombinatorialFreeModule):
 
         This is not intended to be created directly by the user, but
         instead via the methods
-        :meth:`~sage.homology.cell_complex.GenericCellComplex.homology_with_basis` and
-        :meth:`~sage.homology.cell_complex.GenericCellComplex.cohomology_ring`
+        :meth:`~sage.topology.cell_complex.GenericCellComplex.homology_with_basis` and
+        :meth:`~sage.topology.cell_complex.GenericCellComplex.cohomology_ring`
         for the class of :class:`cell
-        complexes<sage.homology.cell_complex.GenericCellComplex>`.
+        complexes<sage.topology.cell_complex.GenericCellComplex>`.
 
     INPUT:
 
@@ -414,9 +414,9 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 
         This is not intended to be created directly by the user, but
         instead via the
-        :meth:`cohomology ring<sage.homology.cell_complex.GenericCellComplex.cohomology_ring>`
+        :meth:`cohomology ring<sage.topology.cell_complex.GenericCellComplex.cohomology_ring>`
         of a :class:`cell
-        complex<sage.homology.cell_complex.GenericCellComplex>`.
+        complex<sage.topology.cell_complex.GenericCellComplex>`.
 
     INPUT:
 
@@ -570,7 +570,7 @@ class CohomologyRing(HomologyVectorSpaceWithBasis):
 
         and simplicial sets::
 
-            sage: from sage.homology.simplicial_set_examples import RealProjectiveSpace
+            sage: from sage.topology.simplicial_set_examples import RealProjectiveSpace
             sage: RP5 = RealProjectiveSpace(5)
             sage: x = RP5.cohomology_ring(GF(2)).basis()[1,0]
             sage: x**4

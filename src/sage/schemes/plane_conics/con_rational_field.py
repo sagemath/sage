@@ -259,7 +259,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
         Local obstructions are cached. The parameter ``read_cache`` specifies
         whether to look at the cache before computing anything.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: Conic(QQ, [1, 1, 1]).local_obstructions()
             [2, -1]
@@ -318,7 +318,7 @@ class ProjectiveConic_rational_field(ProjectiveConic_number_field):
 
         Uses the PARI/GP function ``qfparam``.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: c = Conic([1,1,-1])
             sage: c.parametrization()

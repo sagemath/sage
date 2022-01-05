@@ -215,13 +215,19 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
         EXAMPLES::
 
             sage: MS = MatrixSpace(GF(13), 50, 50, sparse=True)
-            sage: m = MS.random_element(density=0.002)
-            sage: m._dict()
-            {(4, 44): 7, (5, 25): 4, (26, 9): 9, (43, 43): 6, (44, 38): 1}
+            sage: m = MS._random_nonzero_element(density=0.002)
+            sage: d = m._dict()
+            sage: for i in range(50):
+            ....:     for j in range(50):
+            ....:         if m[i, j] != 0:
+            ....:             assert m[i, j] == d[i, j]
+            ....:         else:
+            ....:             assert (i, j) not in d
 
         TESTS::
 
-            sage: parent(m._dict()[26,9])
+            sage: [i, j] = list(d.keys())[0]
+            sage: parent(m._dict()[i, j])
             Finite Field of size 13
         """
         d = self.fetch('dict')
@@ -526,9 +532,16 @@ cdef class Matrix_modn_sparse(matrix_sparse.Matrix_sparse):
 
         ::
 
-            sage: A = random_matrix(GF(127),200,200,density=0.3, sparse=True)
-            sage: A.density()
-            2073/8000
+            sage: A = random_matrix(GF(127), 200, 200, density=0.3, sparse=True)
+            sage: density_sum = float(A.density())
+            sage: total = 1
+            sage: expected_density = 1.0 - (199/200)^60
+            sage: expected_density
+            0.2597...
+            sage: while abs(density_sum/total - expected_density) > 0.001:
+            ....:     A = random_matrix(GF(127), 200, 200, density=0.3, sparse=True)
+            ....:     density_sum += float(A.density())
+            ....:     total += 1
         """
         cdef Py_ssize_t i, nonzero_entries
 

@@ -12,7 +12,8 @@ Obwohl große Teile von Sage mithilfe von Python implementiert sind,
 ist kein tieferes Verständnis von Python notwendig um dieses Tutorial
 lesen zu können. Sie werden Python zu einem gewissen Zeitpunkt lernen
 wollen (Python kann sehr viel Spass bereiten) und es gibt viele
-ausgezeichnete freie Quellen, wozu auch [PyT]_ und [Dive]_ gehören.
+ausgezeichnete freie Quellen: das Python-Anfängerhandbuch [PyB]_
+listet viele Optionen auf.
 Wenn Sie nur kurz etwas in Sage ausprobieren möchten, ist dieses
 Tutorial der richtige Ort um damit anzufangen. Zum Beispiel:
 

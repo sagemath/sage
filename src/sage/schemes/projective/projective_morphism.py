@@ -2012,6 +2012,17 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             Dynamical System of Projective Space of dimension 1 over Finite Field in z6 of size 5^6
               Defn: Defined on coordinates by sending (x : y) to
                     ((-z6^5 + z6^4 - z6^3 - z6^2 - 2*z6 - 2)*x^2 + (z6^5 - 2*z6^4 + z6^2 - z6 + 1)*y^2 : x*y)
+
+        TESTS::
+
+            sage: F = GF(3).algebraic_closure()
+            sage: P.<x,y> = ProjectiveSpace(F, 1)
+            sage: H = Hom(P, P)
+            sage: f = H([x^2 + y^2, y^2])
+            sage: f.reduce_base_field()
+            Scheme endomorphism of Projective Space of dimension 1 over Finite Field of size 3
+              Defn: Defined on coordinates by sending (x : y) to
+                    (x^2 + y^2 : y^2)
         """
         K = self.base_ring()
         if K in NumberFields() or K is QQbar:
@@ -2073,9 +2084,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
             #find the degree of the extension containing the coefficients
             c = [v for g in self for v in g.coefficients()]
             d = lcm([a.minpoly().degree() for a in c])
-            if d == 1:
-                return self.change_ring(GF(K.characteristic()))
-            #else get the appropriate subfield
+            #get the appropriate subfield
             L, L_to_K = K.subfield(d)
             from sage.schemes.projective.projective_space import ProjectiveSpace
             new_domain = ProjectiveSpace(L, self.domain().dimension_relative(),\
@@ -2282,7 +2291,8 @@ class SchemeMorphism_polynomial_projective_subscheme_field(SchemeMorphism_polyno
 
         # prepare homogeneous coordinate ring of X in Singular
         from sage.rings.polynomial.term_order import TermOrder
-        T = TermOrder('degrevlex'); T._singular_ringorder_column = 1  # (c,dp) in Singular
+        T = TermOrder('degrevlex')
+        T._singular_ringorder_column = 1  # (c,dp) in Singular
         S = X.ambient_space().coordinate_ring().change_ring(order=T)
         R = S.quotient_ring(X.defining_ideal().change_ring(S))
 

@@ -986,7 +986,7 @@ class FiniteFieldSubschemePointEnumerator(NaiveSubschemePointEnumerator):
             sage: point_set = X.point_set()
             sage: ffe = point_set._enumerator()
             sage: list(ffe)   # indirect doctest
-            [(1, 4, 3), (1, 1, 6), (1, 2, 5)]
+            [(1, 1, 6), (1, 2, 5), (1, 4, 3)]
         """
         for cone, nonzero_coordinates, cokernel in self.ambient.cone_points_iter():
             R = PolynomialRing(self.ambient.ring, cokernel.ngens(), 't')

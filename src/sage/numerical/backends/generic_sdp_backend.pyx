@@ -663,6 +663,10 @@ def default_sdp_solver(solver=None):
                 except ValueError:
                     pass
 
+            from warnings import warn
+            warn("default_sdp_solver set to 'Matrix' (MatrixSDPBackend), which can construct but not solve problems. Install cvxopt for actual solver functionality")
+            default_sdp_solver("Matrix")
+
     if callable(solver):
         default_solver = solver
         return
@@ -675,9 +679,12 @@ def default_sdp_solver(solver=None):
             default_solver = solver
         except ImportError:
             raise ValueError("CVXOPT is not available. Please refer to the documentation to install it.")
+    elif solver == "Matrix":
+        default_solver = solver
 
     else:
-        raise ValueError("'solver' should be set to 'CVXOPT', a class, or None.")
+        raise ValueError("'solver' should be set to 'CVXOPT', 'Matrix', a class, or None.")
+
 
 cpdef GenericSDPBackend get_solver(solver=None, base_ring=None):
     """
@@ -729,6 +736,8 @@ cpdef GenericSDPBackend get_solver(solver=None, base_ring=None):
     if solver == "Cvxopt":
         from sage.numerical.backends.cvxopt_sdp_backend import CVXOPTSDPBackend
         return CVXOPTSDPBackend(base_ring=base_ring)
-
+    elif solver == "Matrix":
+        from sage.numerical.backends.matrix_sdp_backend import MatrixSDPBackend
+        return MatrixSDPBackend(base_ring=base_ring)
     else:
-        raise ValueError("'solver' should be set to 'CVXOPT', a class, or None (in which case the default one is used).")
+        raise ValueError("'solver' should be set to 'CVXOPT', 'Matrix', a class, or None (in which case the default one is used).")

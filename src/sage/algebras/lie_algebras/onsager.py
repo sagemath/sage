@@ -23,7 +23,7 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.structure.indexed_generators import IndexedGenerators
 from sage.sets.family import Family
 from sage.algebras.lie_algebras.lie_algebra_element import LieAlgebraElement
-from sage.algebras.lie_algebras.lie_algebra import LieAlgebraWithGenerators
+from sage.algebras.lie_algebras.lie_algebra import LieAlgebraWithGenerators, InfinitelyGeneratedLieAlgebra
 
 class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
     r"""
@@ -300,6 +300,19 @@ class OnsagerAlgebra(LieAlgebraWithGenerators, IndexedGenerators):
         else:
             c = q.parent()(c)
         return QuantumOnsagerAlgebra(self, q, c)
+
+    def alternating_central_extension(self):
+        r"""
+        Return the alternating central extension of ``self``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ)
+            sage: ACE = O.alternating_central_extension()
+            sage: ACE
+            Alternating central extension of the Onsager algebra over Rational Field
+        """
+        return OnsagerAlgebraACE(self.base_ring())
 
     Element = LieAlgebraElement
 
@@ -906,4 +919,402 @@ class QuantumOnsagerAlgebra(CombinatorialFreeModule):
                          for ell in range(1, kr[1]))
 
         return self.monomial(lhs // B[kl]) * terms * self.monomial(rhs // B[kr])
+
+#####################################################################
+## ACE of the Onsager algebra
+
+class OnsagerAlgebraACE(InfinitelyGeneratedLieAlgebra, IndexedGenerators):
+    r"""
+    The alternating central extension of the Onsager algebra.
+
+    The *alternating central extension* of the :class:`Onsager algebra
+    <sage.algebras.lie_algebras.onsager.OnsagerAlgebra>` is the Lie algebra
+    with basis elements `\{\mathcal{A}_k, \mathcal{B}_k\}_{k \in \ZZ}`
+    that satisfy the relations
+
+    .. MATH::
+
+        \begin{aligned}
+        [\mathcal{A}_k, \mathcal{A}_m] & = \mathcal{B}_{k-m} - \mathcal{B}_{m-k},
+        \\ [\mathcal{A}_k, \mathcal{B}_m] & = \mathcal{A}_{k+m} - \mathcal{A}_{k-m},
+        \\ [\mathcal{B}_k, \mathcal{B}_m] & = 0.
+        \end{aligned}
+
+    This has a natural injection from the Onsager algebra by the map `\iota`
+    defined by
+
+    .. MATH::
+
+        \iota(A_k) = \mathcal{A}_k,
+        \qquad\qquad
+        \iota(B_k) = \mathcal{B}_k - \mathcal{B}_{-k}.
+
+    Note that the map `\iota` differs slightly from Lemma 4.18 in [Ter2021b]_
+    due to our choice of basis of the Onsager algebra.
+
+    .. WARNING::
+
+        We have added an extra basis vector `\mathcal{B}_0`, which would
+        be `0` in the definition given in [Ter2021b]_.
+
+    EXAMPLES:
+
+    We begin by constructing the ACE and doing some sample computations::
+
+        sage: O = lie_algebras.OnsagerAlgebra(QQ)
+        sage: ACE = O.alternating_central_extension()
+        sage: ACE
+        Alternating central extension of the Onsager algebra over Rational Field
+
+        sage: B = ACE.basis()
+        sage: A1, A2, Am2 = B[0,1], B[0,2], B[0,-2]
+        sage: B1, B2, Bm2 = B[1,1], B[1,2], B[1,-2]
+        sage: A1.bracket(Am2)
+        -B[-3] + B[3]
+        sage: A1.bracket(A2)
+        B[-1] - B[1]
+        sage: A1.bracket(B2)
+        -A[-1] + A[3]
+        sage: A1.bracket(Bm2)
+        A[-1] - A[3]
+        sage: B2.bracket(B1)
+        0
+        sage: Bm2.bracket(B2)
+        0
+        sage: (A2 + Am2).bracket(B1 + A2 + B2 + Bm2)
+        -A[-3] + A[-1] - A[1] + A[3] + B[-4] - B[4]
+
+    The natural inclusion map `\iota` is implemented as a coercion map::
+
+        sage: iota = ACE.coerce_map_from(O)
+        sage: b = O.basis()
+        sage: am1, a2, b4 = b[0,-1], b[0,2], b[1,4]
+        sage: iota(am1.bracket(a2)) == iota(am1).bracket(iota(a2))
+        True
+        sage: iota(am1.bracket(b4)) == iota(am1).bracket(iota(b4))
+        True
+        sage: iota(b4.bracket(a2)) == iota(b4).bracket(iota(a2))
+        True
+
+        sage: am1 + B2
+        A[-1] + B[2]
+        sage: am1.bracket(B2)
+        -A[-3] + A[1]
+        sage: Bm2.bracket(a2)
+        -A[0] + A[4]
+
+    We have the projection map `\rho` from Lemma 4.19 in [Ter2021b]_:
+
+    .. MATH::
+
+        \rho(\mathcal{A}_k) = A_k,
+        \qquad\qquad
+        \rho(\mathcal{B}_k) = \mathrm{sgn}(k) B_{|k|}.
+
+    The kernel of `\rho` is the center `\mathcal{Z}`, which has a basis
+    `\{B_k + B_{-k}\}_{k \in \ZZ}`::
+
+        sage: rho = ACE.projection()
+        sage: rho(A1)
+        A[1]
+        sage: rho(Am2)
+        A[-2]
+        sage: rho(B1)
+        1/2*G[1]
+        sage: rho(Bm2)
+        -1/2*G[2]
+        sage: all(rho(B[1,k] + B[1,-k]) == 0 for k in range(-6,6))
+        True
+        sage: all(B[0,m].bracket(B[1,k] + B[1,-k]) == 0
+        ....:     for k in range(-4,4) for m in range(-4,4))
+        True
+    """
+    def __init__(self, R):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: ACE = lie_algebras.AlternatingCentralExtensionOnsagerAlgebra(QQ)
+            sage: TestSuite(ACE).run()
+
+            sage: B = ACE.basis()
+            sage: A1, A2, Am2 = B[0,1], B[0,2], B[0,-2]
+            sage: B1, B2, Bm2 = B[1,1], B[1,2], B[1,-2]
+            sage: TestSuite(ACE).run(elements=[A1,A2,Am2,B1,B2,Bm2,ACE.an_element()])
+        """
+        cat = LieAlgebras(R).WithBasis()
+        from sage.rings.integer_ring import ZZ
+        from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+        I = DisjointUnionEnumeratedSets([ZZ, ZZ], keepkey=True, facade=True)
+        IndexedGenerators.__init__(self, I)
+        InfinitelyGeneratedLieAlgebra.__init__(self, R, index_set=I, category=cat)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            Alternating central extension of the Onsager algebra over Rational Field
+        """
+        return "Alternating central extension of the Onsager algebra over {}".format(self.base_ring())
+
+    def _latex_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            sage: latex(O)
+            \mathcal{O}_{\Bold{Q}}
+        """
+        from sage.misc.latex import latex
+        return "\\mathcal{{O}}_{{{}}}".format(latex(self.base_ring()))
+
+    def _repr_generator(self, m):
+        """
+        Return a string representation of the generator indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            sage: O._repr_generator((0,-2))
+            'A[-2]'
+            sage: O._repr_generator((1,4))
+            'B[4]'
+        """
+        if m[0] == 0:
+            return 'A[{}]'.format(m[1])
+        return 'B[{}]'.format(m[1])
+
+    def _latex_generator(self, m):
+        r"""
+        Return a LaTeX representation of the generator indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            sage: O._latex_generator((0,-2))
+            '\\mathcal{A}_{-2}'
+            sage: O._latex_generator((1,4))
+            '\\mathcal{B}_{4}'
+        """
+        if m[0] == 0:
+            return '\\mathcal{{A}}_{{{}}}'.format(m[1])
+        return '\\mathcal{{B}}_{{{}}}'.format(m[1])
+
+    # For compatibility with CombinatorialFreeModuleElement
+    _repr_term = _repr_generator
+    _latex_term = _latex_generator
+
+    @cached_method
+    def basis(self):
+        r"""
+        Return the basis of ``self``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            sage: O.basis()
+            Lazy family (Onsager ACE monomial(i))_{i in
+             Disjoint union of Family (Integer Ring, Integer Ring)}
+        """
+        return Family(self._indices, self.monomial, name='Onsager ACE monomial')
+
+    @cached_method
+    def lie_algebra_generators(self):
+        r"""
+        Return the generators of ``self`` as a Lie algebra.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            sage: O.lie_algebra_generators()
+            Lazy family (Onsager ACE monomial(i))_{i in
+             Disjoint union of Family (Integer Ring, Integer Ring)}
+        """
+        return self.basis()
+
+    def _an_element_(self):
+        r"""
+        Return an element of ``self``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            sage: O.an_element()
+            -2*A[-3] + A[2] + B[-1] + 3*B[2]
+        """
+        B = self.basis()
+        return B[0,2] - 2*B[0,-3] + 3*B[1,2] + B[1,-1]
+
+    def some_elements(self):
+        r"""
+        Return some elements of ``self``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            sage: O.some_elements()
+            [A[0], A[2], A[-1], B[4], B[-3], -2*A[-3] + A[2] + B[-1] + 3*B[2]]
+        """
+        B = self.basis()
+        return [B[0,0], B[0,2], B[0,-1], B[1,4], B[1,-3], self.an_element()]
+
+    def bracket_on_basis(self, x, y):
+        r"""
+        Return the bracket of basis elements indexed by ``x`` and ``y``
+        where ``x < y``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ).alternating_central_extension()
+            sage: O.bracket_on_basis((1,3), (1,9))  # [B, B]
+            0
+            sage: O.bracket_on_basis((0,8), (1,13))  # [A, B]
+            -A[-5] + A[21]
+            sage: O.bracket_on_basis((0,-9), (0, 7))  # [A, A]
+            B[-16] - B[16]
+        """
+        if x[0] == 1:
+            # From < property, we have y[0] == 1
+            # Therefore, we have [B_k, B_m] = 0
+            return self.zero()
+        R = self.base_ring()
+        one = R.one()
+        if y[0] == 1: # [A_k, B_m] = A_{k+m} - A_{k-m}
+            if y[1] == 0:  # special case for m = 0, as A_k - A_k = 0
+                return self.zero()
+            d = {(0, x[1]-y[1]): -one, (0, y[1]+x[1]): one}
+        else:
+            # [A_k, A_m] = B_{k-m} - B_{m-k}
+            d = {(1, x[1]-y[1]): one, (1, y[1]-x[1]): -one}
+        return self.element_class(self, d)
+
+    def _coerce_map_from_(self, R):
+        r"""
+        Return if there is a coercion map from ``R``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ)
+            sage: ACE = O.alternating_central_extension()
+            sage: ACE.has_coerce_map_from(O)  # indirect doctest
+            True
+        """
+        if isinstance(R, OnsagerAlgebra):
+            if R.base_ring().has_coerce_map_from(self.base_ring()):
+                return R.module_morphism(self._from_onsager_on_basis, codomain=self)
+        return super()._coerce_map_from_(R)
+
+    def _from_onsager_on_basis(self, x):
+        r"""
+        Map the basis element indexed by ``x`` from the corresponding
+        Onsager algebra to ``self``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ)
+            sage: ACE = O.alternating_central_extension()
+            sage: ACE._from_onsager_on_basis((0, 2))
+            A[2]
+            sage: ACE._from_onsager_on_basis((1, 4))
+            -B[-4] + B[4]
+
+            sage: phi = ACE.coerce_map_from(O)
+            sage: a1 = O.basis()[0,1]
+            sage: a3 = O.basis()[0,3]
+            sage: b2 = O.basis()[1,2]
+            sage: phi(a3)
+            A[3]
+            sage: phi(b2)
+            -B[-2] + B[2]
+            sage: b2.bracket(a3)
+            2*A[1] - 2*A[5]
+            sage: phi(b2).bracket(phi(a3))
+            2*A[1] - 2*A[5]
+            sage: phi(b2.bracket(a3))
+            2*A[1] - 2*A[5]
+
+            sage: a1.bracket(a3)
+            -G[2]
+            sage: phi(a1).bracket(phi(a3))
+            B[-2] - B[2]
+            sage: phi(a1.bracket(a3))
+            B[-2] - B[2]
+        """
+        one = self.base_ring().one()
+        if x[0] == 0:
+            return self._from_dict({x: one}, remove_zeros=False)
+        return self._from_dict({(1, x[1]): one, (1, -x[1]): -one}, remove_zeros=False)
+
+    def projection(self):
+        r"""
+        Return the projection map `\rho` from Lemma 4.19 in [Ter2021b]_
+        to the Onsager algebra.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ)
+            sage: ACE = O.alternating_central_extension()
+            sage: rho = ACE.projection()
+            sage: B = ACE.basis()
+            sage: A1, A2, Am2 = B[0,1], B[0,2], B[0,-2]
+            sage: B1, B2, Bm2 = B[1,1], B[1,2], B[1,-2]
+
+            sage: rho(A1)
+            A[1]
+            sage: rho(Am2)
+            A[-2]
+            sage: rho(B1)
+            1/2*G[1]
+            sage: rho(B2)
+            1/2*G[2]
+            sage: rho(Bm2)
+            -1/2*G[2]
+
+            sage: rho(A1.bracket(A2))
+            -G[1]
+            sage: rho(A1).bracket(rho(A2))
+            -G[1]
+            sage: rho(B1.bracket(Am2))
+            A[-3] - A[-1]
+            sage: rho(B1).bracket(rho(Am2))
+            A[-3] - A[-1]
+        """
+        O = OnsagerAlgebra(self.base_ring())
+        return self.module_morphism(self._projection_on_basis, codomain=O)
+
+    def _projection_on_basis(self, x):
+        r"""
+        Compute the projection map `\rho` on the basis element ``x``.
+
+        EXAMPLES::
+
+            sage: O = lie_algebras.OnsagerAlgebra(QQ)
+            sage: ACE = O.alternating_central_extension()
+            sage: ACE._projection_on_basis((0,2))
+            A[2]
+            sage: ACE._projection_on_basis((1,4))
+            1/2*G[4]
+            sage: ACE._projection_on_basis((1,-4))
+            -1/2*G[4]
+        """
+        R = self.base_ring()
+        O = OnsagerAlgebra(R)
+        if x[0] == 0: # A_k
+            return O._from_dict({x: R.one()}, remove_zeros=False)
+        # Otherwise B_k
+        c = R.one() / 2
+        if x[1] < 0:
+            return O._from_dict({(1, -x[1]): -c}, remove_zeros=False)
+        elif x[1] == 0:
+            return O.zero()
+        else:
+            return O._from_dict({x: c}, remove_zeros=False)
+
+    Element = LieAlgebraElement
 

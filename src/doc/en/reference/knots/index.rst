@@ -6,5 +6,6 @@ Knot Theory
 
    sage/knots/knot
    sage/knots/link
+   sage/knots/knotinfo
 
 .. include:: ../footer.txt

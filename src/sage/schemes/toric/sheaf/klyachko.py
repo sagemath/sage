@@ -168,7 +168,8 @@ class KlyachkoBundle_class(SageObject):
         """
         self._variety = toric_variety
         self._filt = multi_filtration
-        if not check: return
+        if not check:
+            return
         from sage.sets.set import Set
         if multi_filtration.index_set() != Set(list(toric_variety.fan().rays())):
             raise ValueError('the index set of the multi-filtration must be'
@@ -946,8 +947,8 @@ class KlyachkoBundle_class(SageObject):
            sage: V = P1.sheaves.line_bundle(H) + P1.sheaves.line_bundle(-H)
            sage: V.cohomology(dim=True, weight=(0,))
            (1, 0)
-           sage: Vtilde = V.random_deformation()
-           sage: Vtilde.cohomology(dim=True, weight=(0,))
+           sage: Vtilde = V.random_deformation()  # not tested, known bug
+           sage: Vtilde.cohomology(dim=True, weight=(0,))  # not tested, known bug
            (1, 0)
         """
         filt = self._filt.random_deformation(epsilon)

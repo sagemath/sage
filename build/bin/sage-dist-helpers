@@ -39,10 +39,10 @@
 #
 # - sdh_configure [...]
 #
-#    Runs `./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"`,
-#    (for autoconf'd projects with extra
-#        --disable-maintainer-mode --disable-dependency-tracking)
-#    Additional arguments to `./configure` may be given as arguments.
+#    Runs `./configure --prefix="$SAGE_LOCAL" --libdir="$SAGE_LOCAL/lib"`
+#    --disable-static, (for autoconf'd projects with extra
+#    --disable-maintainer-mode --disable-dependency-tracking) Additional
+#    arguments to `./configure` may be given as arguments.
 #
 # - sdh_make [...]
 #
@@ -63,6 +63,10 @@
 #    Currently this is just a wrapper around the `sage-pip-install` command.
 #    If $SAGE_DESTDIR is not set then the command is run with $SAGE_SUDO, if
 #    set.
+#
+# - sdh_pip_uninstall [...]
+#
+#    Runs `pip uninstall` with the given arguments.  If unsuccessful, it displays a warning.
 #
 # - sdh_cmake [...]
 #
@@ -160,9 +164,16 @@ sdh_configure() {
     if [ -z "$CONFIG_SHELL" ]; then
         export CONFIG_SHELL=`command -v bash`
     fi
-    ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" --disable-maintainer-mode --disable-dependency-tracking "$@"
+    if [ "$UNAME" = "CYGWIN" ]; then
+        # TODO: To use --disable-static for all packages on Cygwin, need
+        # #30814: Cygwin: Fix remaining packages to build shared libraries, using AM_LDFLAGS=-no-undefined
+        DISABLE_STATIC=
+    else
+        DISABLE_STATIC=--disable-static
+    fi
+    ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" $DISABLE_STATIC --disable-maintainer-mode --disable-dependency-tracking "$@"
     if [ $? -ne 0 ]; then # perhaps it is a non-autoconf'd project
-      ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" "$@"
+      ./configure --prefix="$SAGE_INST_LOCAL" --libdir="$SAGE_INST_LOCAL/lib" $DISABLE_STATIC "$@"
       if [ $? -ne 0 ]; then
         if [ -f "$(pwd)/config.log" ]; then
             sdh_die <<_EOF_
@@ -211,14 +222,6 @@ sdh_setup_bdist_wheel() {
 
 sdh_pip_install() {
     echo "Installing $PKG_NAME"
-    if [ -n "$SAGE_DESTDIR" ]; then
-        local sudo=""
-    else
-        local sudo="$SAGE_SUDO"
-    fi
-    $sudo sage-pip-uninstall "$@" || \
-        echo 2>&1 "Warning: Failure trying to uninstall a previous version of $PKG_NAME"
-
     mkdir -p dist
     rm -f dist/*.whl
     python3 -m pip wheel --wheel-dir=dist --no-binary :all: --verbose --no-deps --no-index --isolated --no-build-isolation "$@" || \
@@ -267,6 +270,22 @@ sdh_store_and_pip_install_wheel() {
     fi
     $sudo sage-pip-install $root "$wheel" || \
         sdh_die "Error installing ${wheel##*/}"
+    if [ -n "${SAGE_PKG_DIR}" ]; then
+        # Record name of installed distribution name for uninstallation.
+        wheel=${wheel##*/}
+        echo "${wheel%%-*}" >> ${SAGE_PKG_DIR}/spkg-piprm-requirements.txt
+    fi
+}
+
+sdh_pip_uninstall() {
+    # --disable-pip-version-check: Don't periodically check PyPI to determine whether a new version of pip is available
+    # --no-input: Disable prompting for input.
+    # --yes: Don't ask for confirmation of uninstall deletions
+    # See sage-pip-install for a discussion of the other flags.
+    python3 -m pip uninstall --isolated --disable-pip-version-check --yes --no-input "$@"
+    if [ $? -ne 0 ]; then
+        echo "Warning: pip exited with status $?" >&2
+    fi
 }
 
 sdh_cmake() {

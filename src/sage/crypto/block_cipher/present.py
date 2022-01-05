@@ -186,7 +186,7 @@ class PRESENT(SageObject):
           ``None`` the number of rounds of the key schedule is used.
 
         - ``doFinalRound`` -- boolean (default: ``False``); flag to
-          control wether the linear layer in the last round should take place
+          control whether the linear layer in the last round should take place
           or not. Since the last linear layer does not add any security, it
           usually does not take place in real world implementations for
           performance reasons.

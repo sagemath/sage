@@ -66,7 +66,7 @@ The metric tensor of ``E`` is predefined::
     sage: g = E.metric(); g
     Riemannian metric g on the Euclidean plane E^2
     sage: g.display()
-    g = dx*dx + dy*dy
+    g = dx⊗dx + dy⊗dy
     sage: g[:]
     [1 0]
     [0 1]
@@ -128,7 +128,7 @@ At this stage, ``E`` is endowed with three vector frames::
 
     sage: E.frames()
     [Coordinate frame (E^2, (e_x,e_y)),
-     Coordinate frame (E^2, (d/dr,d/dph)),
+     Coordinate frame (E^2, (∂/∂r,∂/∂ph)),
      Vector frame (E^2, (e_r,e_ph))]
 
 The third one is the standard orthonormal frame associated with polar
@@ -143,7 +143,7 @@ coordinates, as we can check from the metric components in it::
 The expression of the metric tensor in terms of polar coordinates is::
 
     sage: g.display(polar)
-    g = dr*dr + r^2 dph*dph
+    g = dr⊗dr + r^2 dph⊗dph
 
 A vector field on ``E``::
 
@@ -259,9 +259,9 @@ A scalar field on ``E``::
     sage: f = E.scalar_field(x*y, name='f'); f
     Scalar field f on the Euclidean plane E^2
     sage: f.display()
-    f: E^2 --> R
-       (x, y) |--> x*y
-       (r, ph) |--> r^2*cos(ph)*sin(ph)
+    f: E^2 → ℝ
+       (x, y) ↦ x*y
+       (r, ph) ↦ r^2*cos(ph)*sin(ph)
 
 The value of ``f`` at point ``p``::
 
@@ -283,9 +283,9 @@ The dot product of two vector fields::
     sage: s = v.dot(w); s
     Scalar field v.grad(f) on the Euclidean plane E^2
     sage: s.display()
-    v.grad(f): E^2 --> R
-       (x, y) |--> x^2 - y^2
-       (r, ph) |--> (2*cos(ph)^2 - 1)*r^2
+    v.grad(f): E^2 → ℝ
+       (x, y) ↦ x^2 - y^2
+       (r, ph) ↦ (2*cos(ph)^2 - 1)*r^2
     sage: s.expr()
     x^2 - y^2
 
@@ -299,9 +299,9 @@ The divergence of the vector field ``v``::
     sage: s = div(v); s
     Scalar field div(v) on the Euclidean plane E^2
     sage: s.display()
-    div(v): E^2 --> R
-       (x, y) |--> 0
-       (r, ph) |--> 0
+    div(v): E^2 → ℝ
+       (x, y) ↦ 0
+       (r, ph) ↦ 0
 
 .. _EuclideanSpace_example2:
 
@@ -327,8 +327,8 @@ The Euclidean norm of ``v``::
     sage: s = norm(v); s
     Scalar field |v| on the Euclidean space E^3
     sage: s.display()
-    |v|: E^3 --> R
-       (x, y, z) |--> sqrt(x^2 + y^2)
+    |v|: E^3 → ℝ
+       (x, y, z) ↦ sqrt(x^2 + y^2)
     sage: s.expr()
     sqrt(x^2 + y^2)
 
@@ -338,8 +338,8 @@ The divergence of ``v`` is zero::
     sage: div(v)
     Scalar field div(v) on the Euclidean space E^3
     sage: div(v).display()
-    div(v): E^3 --> R
-       (x, y, z) |--> 0
+    div(v): E^3 → ℝ
+       (x, y, z) ↦ 0
 
 while its curl is a constant vector field along `e_z`::
 
@@ -641,7 +641,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
         sage: g = E.metric(); g
         Riemannian metric g on the 4-dimensional Euclidean space E^4
         sage: g.display()
-        g = dx1*dx1 + dx2*dx2 + dx3*dx3 + dx4*dx4
+        g = dx1⊗dx1 + dx2⊗dx2 + dx3⊗dx3 + dx4⊗dx4
 
     """
     @staticmethod
@@ -675,10 +675,6 @@ class EuclideanSpace(PseudoRiemannianManifold):
         if names is not None and symbols is None:
             if n == 2:
                 names = list(names)
-                symbols = ''
-                for x in names:
-                    symbols += x + ' '
-                symbols = symbols[:-1]
                 if coordinates == 'polar':
                     if names[1] in ['p', 'ph', 'phi']:
                         names[1] += ':\\phi'
@@ -698,16 +694,13 @@ class EuclideanSpace(PseudoRiemannianManifold):
                     if names[1] in ['p', 'ph', 'phi']:
                         names[1] = names[1] + ':\\phi'
 
-            symbols = ''
-            for x in names:
-                symbols += x + ' '
-            symbols = symbols[:-1]
+            symbols = ' '.join(x for x in names)
 
         # Technical bit for UniqueRepresentation
         from sage.misc.prandom import getrandbits
         from time import time
         if unique_tag is None:
-            unique_tag = getrandbits(128)*time()
+            unique_tag = getrandbits(128) * time()
 
         if n == 2:
             return EuclideanPlane(name=name, latex_name=latex_name,
@@ -860,7 +853,7 @@ class EuclideanSpace(PseudoRiemannianManifold):
         chart = self.chart(coordinates=symbols)
         self._cartesian_chart = chart
         frame = chart.frame()
-        # Renaming (d/dx, d/dy, ...) to (e_x, e_y, ...):
+        # Renaming (∂/∂x, ∂/∂y, ...) to (e_x, e_y, ...):
         coords = chart[:]
         frame.set_name('e',
                        indices=tuple(str(x) for x in coords),
@@ -1041,8 +1034,8 @@ class EuclideanSpace(PseudoRiemannianManifold):
         The embedding into Euclidean space::
 
             sage: S2_2.embedding().display()
-            iota: S^2_2(c) --> E^3
-            on A: (theta, phi) |--> (x, y, z) = (2*cos(phi)*sin(theta) + 1,
+            iota: S^2_2(c) → E^3
+            on A: (theta, phi) ↦ (x, y, z) = (2*cos(phi)*sin(theta) + 1,
                                                  2*sin(phi)*sin(theta) + 2,
                                                  2*cos(theta) + 3)
 
@@ -1171,7 +1164,7 @@ class EuclideanPlane(EuclideanSpace):
         sage: g = E.metric(); g
         Riemannian metric g on the Euclidean plane E^2
         sage: g.display()
-        g = dx*dx + dy*dy
+        g = dx⊗dx + dy⊗dy
 
     Curvilinear coordinates can be introduced on ``E``: see
     :meth:`polar_coordinates`.
@@ -1317,7 +1310,7 @@ class EuclideanPlane(EuclideanSpace):
         pol_to_cart = chart_pol.transition_map(chart_cart,
                                                [r*cos(ph), r*sin(ph)])
         pol_to_cart.set_inverse(sqrt(x**2+y**2), atan2(y,x), check=False)
-        # Automorphism Cartesian frame --> orthonormal polar frame:
+        # Automorphism Cartesian frame → orthonormal polar frame:
         oframe = self._polar_frame
         cframe = chart_cart.frame()
         sframe = chart_pol.frame()
@@ -1332,7 +1325,7 @@ class EuclideanPlane(EuclideanSpace):
         for i in self.irange():
             for j in self.irange():
                 cmp_cf[[i,j]] = cmp_of[[i,j]]
-        # Automorphism orthonormal polar frame --> Cartesian frame:
+        # Automorphism orthonormal polar frame → Cartesian frame:
         oframe_to_cframe = chg[(sframe, cframe)] * chg[(oframe, sframe)]
         # oframe_to_cframe has been computed only in sframe;
         # its components in oframe are computed by
@@ -1567,8 +1560,8 @@ class EuclideanPlane(EuclideanSpace):
 
             sage: for e in E.polar_frame():
             ....:     e.display(E.polar_coordinates())
-            e_r = d/dr
-            e_ph = 1/r d/dph
+            e_r = ∂/∂r
+            e_ph = 1/r ∂/∂ph
 
         """
         if self._polar_frame is None:
@@ -1700,7 +1693,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         sage: g = E.metric(); g
         Riemannian metric g on the Euclidean space E^3
         sage: g.display()
-        g = dx*dx + dy*dy + dz*dz
+        g = dx⊗dx + dy⊗dy + dz⊗dz
 
     Curvilinear coordinates can be introduced on ``E``: see
     :meth:`spherical_coordinates` and :meth:`cylindrical_coordinates`.
@@ -1909,7 +1902,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         spher_to_cart.set_inverse(sqrt(x**2+y**2+z**2),
                                   atan2(sqrt(x**2+y**2),z), atan2(y, x),
                                   check=False)
-        # Automorphism Cartesian frame --> orthonormal spherical frame:
+        # Automorphism Cartesian frame → orthonormal spherical frame:
         oframe = self._spherical_frame
         cframe = chart_cart.frame()
         sframe = chart_spher.frame()
@@ -1924,7 +1917,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         for i in self.irange():
             for j in self.irange():
                 cmp_cf[[i,j]] = cmp_of[[i,j]]
-        # Automorphism orthonormal spherical frame --> Cartesian frame:
+        # Automorphism orthonormal spherical frame → Cartesian frame:
         oframe_to_cframe = chg[(sframe, cframe)] * chg[(oframe, sframe)]
         # oframe_to_cframe has been computed only in sframe;
         # its components in oframe are computed by
@@ -1986,7 +1979,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         cylind_to_cart = chart_cylind.transition_map(chart_cart,
                                                      [rh*cos(ph), rh*sin(ph), z])
         cylind_to_cart.set_inverse(sqrt(x**2+y**2), atan2(y, x), z, check=False)
-        # Automorphism Cartesian frame --> orthonormal cylindrical frame:
+        # Automorphism Cartesian frame → orthonormal cylindrical frame:
         oframe = self._cylindrical_frame
         cframe = chart_cart.frame()
         sframe = chart_cylind.frame()
@@ -2001,7 +1994,7 @@ class Euclidean3dimSpace(EuclideanSpace):
         for i in self.irange():
             for j in self.irange():
                 cmp_cf[[i,j]] = cmp_of[[i,j]]
-        # Automorphism orthonormal cylindrical frame --> Cartesian frame:
+        # Automorphism orthonormal cylindrical frame → Cartesian frame:
         oframe_to_cframe = chg[(sframe, cframe)] * chg[(oframe, sframe)]
         # oframe_to_cframe has been computed only in sframe;
         # its components in oframe are computed by
@@ -2317,9 +2310,9 @@ class Euclidean3dimSpace(EuclideanSpace):
 
             sage: for e in E.spherical_frame():
             ....:     e.display(E.spherical_coordinates())
-            e_r = d/dr
-            e_th = 1/r d/dth
-            e_ph = 1/(r*sin(th)) d/dph
+            e_r = ∂/∂r
+            e_th = 1/r ∂/∂th
+            e_ph = 1/(r*sin(th)) ∂/∂ph
 
         """
         if self._spherical_frame is None:
@@ -2465,9 +2458,9 @@ class Euclidean3dimSpace(EuclideanSpace):
 
             sage: for e in E.cylindrical_frame():
             ....:     e.display(E.cylindrical_coordinates())
-            e_rh = d/drh
-            e_ph = 1/rh d/dph
-            e_z = d/dz
+            e_rh = ∂/∂rh
+            e_ph = 1/rh ∂/∂ph
+            e_z = ∂/∂z
 
         """
         if self._cylindrical_frame is None:
@@ -2518,8 +2511,8 @@ class Euclidean3dimSpace(EuclideanSpace):
             sage: s = triple_product(u, v, w); s
             Scalar field epsilon(u,v,w) on the Euclidean space E^3
             sage: s.display()
-            epsilon(u,v,w): E^3 --> R
-               (x, y, z) |--> x^3*y + x*y^3 - 2*x*y*z^2
+            epsilon(u,v,w): E^3 → ℝ
+               (x, y, z) ↦ x^3*y + x*y^3 - 2*x*y*z^2
             sage: s.expr()
             x^3*y + x*y^3 - 2*x*y*z^2
             sage: latex(s)

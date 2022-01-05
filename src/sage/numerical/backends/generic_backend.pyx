@@ -872,6 +872,9 @@ cdef class GenericBackend:
         raise NotImplementedError()
 
     def _test_ncols_nonnegative(self, **options):
+        # Trac #31103: This method has already been migrated to pytest (generic_backend_test)
+        # and should be removed as soon as the external sage_numerical_backends packages
+        # are updated to invoke pytest as part of their testsuite.
         tester = self._tester(**options)
         p = self
         tester.assertGreaterEqual(self.ncols(), 0)

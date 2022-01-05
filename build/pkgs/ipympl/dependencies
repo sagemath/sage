@@ -1,0 +1,6 @@
+$(PYTHON) | $(PYTHON_TOOLCHAIN) ipywidgets matplotlib ipykernel jupyter_packaging $(findstring jupyterlab,$(OPTIONAL_INSTALLED_PACKAGES))
+
+----------
+All lines of this file are ignored except the first.
+
+jupyterlab is listed as a "build-system requires", but the package installs correctly without it.

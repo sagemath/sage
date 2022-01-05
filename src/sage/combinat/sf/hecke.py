@@ -289,10 +289,10 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             sage: qbar[2].coproduct()
             qbar[] # qbar[2] + (q-1)*qbar[1] # qbar[1] + qbar[2] # qbar[]
         """
-        def P(i): return _Partitions([i]) if i else _Partitions([])
+        def P(i):
+            return _Partitions([i]) if i else _Partitions([])
         T = self.tensor_square()
         one = self.base_ring().one()
         q = self.q
         return T.sum_of_terms(((P(j), P(r-j)), one if j in [0,r] else q-one)
                               for j in range(r+1))
-

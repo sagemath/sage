@@ -110,6 +110,8 @@ from sage.matrix.constructor import matrix
 
 from .divisor import divisor
 
+from .hermite_form_polynomial import reversed_hermite_form
+
 
 class FunctionFieldIdeal(Element):
     """
@@ -1591,10 +1593,7 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
         M = block_matrix([[I,I],[A,O],[O,B]])
 
         # reversed Hermite form
-        M.reverse_rows_and_columns()
-        U = M._hermite_form_euclidean(transformation=True,
-                                      normalization=lambda p: ~p.lc())
-        U.reverse_rows_and_columns()
+        U = reversed_hermite_form(M, transformation=True)
 
         vecs = [U[i][:n] for i in range(n)]
 
@@ -1995,7 +1994,8 @@ class FunctionFieldIdeal_polymod(FunctionFieldIdeal):
 
         The method closely follows Algorithm 4.8.17 of [Coh1993]_.
         """
-        if ideal.is_zero(): return infinity
+        if ideal.is_zero():
+            return infinity
 
         O = self.ring()
         F = O.fraction_field()
@@ -2302,10 +2302,13 @@ class FunctionFieldIdeal_global(FunctionFieldIdeal_polymod):
             G = itertools.product(R.polynomials(max_degree=d), repeat=n)
             for g in G:
                 # discard duplicate cases
-                if max(c.degree() for c in g) != d: continue
+                if max(c.degree() for c in g) != d:
+                    continue
                 for j in range(n):
-                    if g[j] != 0: break
-                if g[j].leading_coefficient() != 1: continue
+                    if g[j] != 0:
+                        break
+                if g[j].leading_coefficient() != 1:
+                    continue
 
                 alpha = sum([c1*c2 for c1,c2 in zip(g, basis)])
                 if check(alpha):

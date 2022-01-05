@@ -955,7 +955,8 @@ class EulerGamma(Constant):
         """
         conversions = dict(kash='EulerGamma(R)', maple='gamma',
                            mathematica='EulerGamma', pari='Euler',
-                           maxima='%gamma', pynac='Euler', giac='euler_gamma')
+                           maxima='%gamma', pynac='Euler', giac='euler_gamma',
+                           fricas='-digamma(1)')
         Constant.__init__(self, name, conversions=conversions,
                           latex=r'\gamma', domain='positive')
 

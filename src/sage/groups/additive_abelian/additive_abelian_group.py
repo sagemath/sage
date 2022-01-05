@@ -43,7 +43,7 @@ def AdditiveAbelianGroup(invs, remember_generators = True):
         sage: H = AdditiveAbelianGroup([0, 2, 3], remember_generators = False); H
         Additive abelian group isomorphic to Z/6 + Z
         sage: H.gens()
-        ((0, 1, 2), (1, 0, 0))
+        ((0, 1, 1), (1, 0, 0))
 
     There are several ways to create elements of an additive abelian group.
     Realize that there are two sets of generators:  the "obvious" ones composed

@@ -1748,14 +1748,14 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Px.weil_pairing(Qx, 41)^e == num/den
             True
 
-        NOTES:
+        .. NOTE::
 
-        This function uses Miller's algorithm, followed by a naive
-        exponentiation. It does not do anything fancy. In the case
-        that there is an issue with `Q` being on one of the lines
-        generated in the `r*P` calculation, `Q` is offset by a random
-        point `R` and P.tate_pairing(Q+R,n,k)/P.tate_pairing(R,n,k)
-        is returned.
+            This function uses Miller's algorithm, followed by a naive
+            exponentiation. It does not do anything fancy. In the case
+            that there is an issue with `Q` being on one of the lines
+            generated in the `r*P` calculation, `Q` is offset by a random
+            point `R` and P.tate_pairing(Q+R,n,k)/P.tate_pairing(R,n,k)
+            is returned.
 
         AUTHORS:
 
@@ -1945,13 +1945,14 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             ...
             ValueError: This point (14 : 10*a : 1) is not in Ker(pi - 1)
 
-        NOTES:
+        .. NOTE::
 
-        First defined in the paper of [HSV2006]_, the ate pairing can be
-        computationally effective in those cases when the trace of the curve
-        over the base field is significantly smaller than the expected
-        value. This implementation is simply Miller's algorithm followed by a
-        naive exponentiation, and makes no claims towards efficiency.
+            First defined in the paper of [HSV2006]_, the ate pairing
+            can be computationally effective in those cases when the
+            trace of the curve over the base field is significantly
+            smaller than the expected value. This implementation is
+            simply Miller's algorithm followed by a naive
+            exponentiation, and makes no claims towards efficiency.
 
         AUTHORS:
 

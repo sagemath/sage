@@ -373,8 +373,8 @@ Fehlerbehandlung
 Wenn irgendetwas schief geht, werden Sie normalerweise eine
 Python-Fehlermeldung sehen. Python macht sogar einen Vorschlag, was den
 Fehler ausgelöst hat. Oft sehen Sie den Namen der Fehlermeldung,
-z.B. ``NameError`` oder ``ValueError`` (vgl. Python Reference Manual
-[Py]_ für eine komplette Liste der Fehlermeldungen). Zum Beispiel:
+z.B. ``NameError`` oder ``ValueError`` (vgl. Python Library Reference
+[PyLR]_ für eine komplette Liste der Fehlermeldungen). Zum Beispiel:
 
 .. skip
 

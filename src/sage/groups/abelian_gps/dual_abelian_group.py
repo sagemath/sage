@@ -217,8 +217,8 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
             sage: G = AbelianGroup([2,3,9])
             sage: Gd = G.dual_group(base_ring=CC)
-            sage: Gd.random_element()
-            X1^2
+            sage: Gd.random_element().parent() is Gd
+            True
 
             sage: N = 43^2-1
             sage: G = AbelianGroup([N],names="a")
@@ -226,10 +226,10 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: a, = G.gens()
             sage: A, = Gd.gens()
             sage: x = a^(N/4); y = a^(N/3); z = a^(N/14)
-            sage: X = A*Gd.random_element(); X
-            A^615
-            sage: len([a for a in [x,y,z] if abs(X(a)-1)>10^(-8)])
-            2
+            sage: found = [False]*4
+            sage: while not all(found):
+            ....:     X = A*Gd.random_element()
+            ....:     found[len([b for b in [x,y,z] if abs(X(b)-1)>10^(-8)])] = True
         """
         from sage.misc.prandom import randint
         result = self.one()

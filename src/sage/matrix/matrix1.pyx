@@ -222,12 +222,12 @@ cdef class Matrix(Matrix0):
             sage: P.<x> = ZZ[]
             sage: M = matrix(P, 2, [-9*x^2-2*x+2, x-1, x^2+8*x, -3*x^2+5])
             sage: giac(M)
-            [[-9*x^2-2*x+2,x-1],[x^2+8*x,-3*x^2+5]]
+            [[-9*sageVARx^2-2*sageVARx+2,sageVARx-1],[sageVARx^2+8*sageVARx,-3*sageVARx^2+5]]
 
             sage: y = var('y')
             sage: M = matrix(SR, 2, [y+sin(y), y - 4, 1/y, dilog(y)])
-            sage: giac(M).det()
-            (y^2*dilog(y)+y*sin(y)*dilog(y)-y+4)/y
+            sage: giac(M).det().sage()
+            (y^2*dilog(y) + y*dilog(y)*sin(y) - y + 4)/y
         """
         s = ','.join('[' + ','.join(cf._giac_init_() for cf in row) + ']'
                      for row in self.rows())
@@ -524,6 +524,97 @@ cdef class Matrix(Matrix0):
         """
         return scilab(self._scilab_init_())
 
+    def _sympy_(self):
+        r"""
+        Return a SymPy matrix corresponding to ``self``.
+
+        OUTPUT:
+
+        - An instance of either an ``ImmutableMatrix`` or ``ImmutableSparseMatrix``,
+          regardless of whether ``self`` is mutable or not.
+
+        EXAMPLES::
+
+            sage: A = matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]]); A
+            [1 2 3]
+            [4 5 6]
+            [7 8 9]
+            sage: sA = A._sympy_(); sA
+            Matrix([
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]])
+            sage: type(sA)
+            <class 'sympy.matrices.immutable.ImmutableDenseMatrix'>
+
+            sage: I = MatrixSpace(QQ, 5, 5, sparse=True).identity_matrix()
+            sage: sI = I._sympy_(); sI
+            Matrix([
+            [1, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0],
+            [0, 0, 1, 0, 0],
+            [0, 0, 0, 1, 0],
+            [0, 0, 0, 0, 1]])
+            sage: type(sI)
+            <class 'sympy.matrices.immutable.ImmutableSparseMatrix'>
+
+        If ``self`` was immutable, then converting the result to Sage gives
+        back ``self``::
+
+            sage: immA = matrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]], immutable=True)
+            sage: immA._sympy_()._sage_() is immA
+            True
+
+        If ``self`` was mutable, then converting back to Sage creates a new matrix::
+
+            sage: sA._sage_() is A
+            False
+            sage: sA._sage_() == A
+            True
+
+        Symbolic matrices are supported::
+
+            sage: M = matrix([[sin(x), cos(x)], [-cos(x), sin(x)]]); M
+            [ sin(x)  cos(x)]
+            [-cos(x)  sin(x)]
+            sage: sM = M._sympy_(); sM
+            Matrix([
+            [ sin(x), cos(x)],
+            [-cos(x), sin(x)]])
+            sage: sM.subs(x, pi/4)
+            Matrix([
+            [ sqrt(2)/2, sqrt(2)/2],
+            [-sqrt(2)/2, sqrt(2)/2]])
+
+        TESTS:
+
+        Dense 0-column/0-row matrices::
+
+            sage: ZeroCol = matrix(QQ, 3, 0, sparse=False); ZeroCol
+            []
+            sage: sZeroCol = ZeroCol._sympy_(); sZeroCol
+            Matrix(3, 0, [])
+
+            sage: ZeroRow = matrix(QQ, 0, 2, sparse=False); ZeroRow
+            []
+            sage: sZeroRow = ZeroRow._sympy_(); sZeroRow
+            Matrix(0, 2, [])
+
+        """
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        from sympy.matrices import ImmutableMatrix, ImmutableSparseMatrix
+        if self.is_sparse():
+            matrix = ImmutableSparseMatrix(self.nrows(), self.ncols(),
+                                           self.dict(copy=False))
+        else:
+            if not self.nrows() or not self.ncols():
+                matrix = ImmutableMatrix(self.nrows(), self.ncols(), ())
+            else:
+                matrix = ImmutableMatrix(self.rows())
+        if self.is_immutable():
+            matrix._sage_object = self
+        return matrix
 
     def _sage_input_(self, sib, coerce):
         r"""
@@ -534,9 +625,10 @@ cdef class Matrix(Matrix0):
             sage: sage_input(matrix(QQ, 3, 3, [5..13])/7, verify=True)
             # Verified
             matrix(QQ, [[5/7, 6/7, 1], [8/7, 9/7, 10/7], [11/7, 12/7, 13/7]])
-            sage: sage_input(MatrixSpace(GF(5), 50, 50, sparse=True).random_element(density=0.002), verify=True)
-            # Verified
-            matrix(GF(5), 50, 50, {(4,44):2, (5,25):1, (26,9):3, (43,24):3, (44,38):4})
+            sage: M = MatrixSpace(GF(5), 50, 50, sparse=True).random_element(density=0.002)
+            sage: input = sage_input(M, verify=True)
+            sage: sage_eval(input) == M
+            True
             sage: from sage.misc.sage_input import SageInputBuilder
             sage: matrix(RDF, [[3, 1], [4, 1]])._sage_input_(SageInputBuilder(), False)
             {call: {atomic:matrix}({atomic:RDF}, {list: ({list: ({atomic:3}, {atomic:1})}, {list: ({atomic:4}, {atomic:1})})})}

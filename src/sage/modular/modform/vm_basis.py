@@ -128,7 +128,8 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     elif k == 0:
         return Sequence([PowerSeriesRing(ZZ,var)(1).add_bigoh(prec)], cr=True)
     e = k.mod(12)
-    if e == 2: e += 12
+    if e == 2:
+        e += 12
     n = (k-e) // 12
 
     if n == 0 and cusp_only:

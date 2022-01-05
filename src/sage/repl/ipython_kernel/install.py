@@ -123,12 +123,12 @@ class SageKernelSpec(object):
             sage: from sage.repl.ipython_kernel.install import SageKernelSpec
             sage: spec = SageKernelSpec(prefix=tmp_dir())
             sage: spec.use_local_threejs()
-            sage: threejs = os.path.join(spec.nbextensions_dir, 'threejs')
+            sage: threejs = os.path.join(spec.nbextensions_dir, 'threejs-sage')
             sage: os.path.isdir(threejs)
             True
         """
         src = THREEJS_DIR
-        dst = os.path.join(self.nbextensions_dir, 'threejs')
+        dst = os.path.join(self.nbextensions_dir, 'threejs-sage')
         self.symlink(src, dst)
 
     def _kernel_cmd(self):

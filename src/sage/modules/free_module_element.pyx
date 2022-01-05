@@ -776,58 +776,66 @@ def random_vector(ring, degree=None, *args, **kwds):
     :meth:`sage.rings.integer_ring.IntegerRing_class.random_element`
     for several other variants. ::
 
-        sage: random_vector(10)
-        (-8, 2, 0, 0, 1, -1, 2, 1, -95, -1)
+        sage: random_vector(10).parent()
+        Ambient free module of rank 10 over the principal ideal domain Integer Ring
+        sage: random_vector(20).parent()
+        Ambient free module of rank 20 over the principal ideal domain Integer Ring
 
-        sage: sorted(random_vector(20))
-        [-12, -6, -4, -4, -2, -2, -2, -1, -1, -1, 0, 0, 0, 0, 0, 1, 1, 1, 4, 5]
+        sage: v = random_vector(ZZ, 20, x=4)
+        sage: all(i in range(4) for i in v)
+        True
 
-        sage: random_vector(ZZ, 20, x=4)
-        (2, 0, 3, 0, 1, 0, 2, 0, 2, 3, 0, 3, 1, 2, 2, 2, 1, 3, 2, 3)
-
-        sage: random_vector(ZZ, 20, x=-20, y=100)
-        (43, 47, 89, 31, 56, -20, 23, 52, 13, 53, 49, -12, -2, 94, -1, 95, 60, 83, 28, 63)
-
-        sage: random_vector(ZZ, 20, distribution="1/n")
-        (0, -1, -2, 0, -1, -2, 0, 0, 27, -1, 1, 1, 0, 2, -1, 1, -1, -2, -1, 3)
+        sage: v = random_vector(ZZ, 20, x=-20, y=100)
+        sage: all(i in range(-20, 100) for i in v)
+        True
 
     If the ring is not specified, the default is the integers, and
     parameters for the random distribution may be passed without using
     keywords.  This is a random vector with 20 entries uniformly distributed
     between -20 and 100.  ::
 
-        sage: random_vector(20, -20, 100)
-        (70, 19, 98, 2, -18, 88, 36, 66, 76, 52, 82, 99, 55, -17, 82, -15, 36, 28, 79, 18)
+        sage: random_vector(20, -20, 100).parent()
+        Ambient free module of rank 20 over the principal ideal domain Integer Ring
 
     Now over the rationals.  Note that bounds on the numerator and
     denominator may be specified.  See
     :meth:`sage.rings.rational_field.RationalField.random_element`
     for documentation. ::
 
-        sage: random_vector(QQ, 10)
-        (0, -1, -4/3, 2, 0, -13, 2/3, 0, -4/5, -1)
+        sage: random_vector(QQ, 10).parent()
+        Vector space of dimension 10 over Rational Field
 
-        sage: random_vector(QQ, 10, num_bound = 15, den_bound = 5)
-        (-12/5, 9/4, -13/3, -1/3, 1, 5/4, 4, 1, -15, 10/3)
+        sage: v = random_vector(QQ, 10, num_bound=15, den_bound=5)
+        sage: v.parent()
+        Vector space of dimension 10 over Rational Field
+        sage: all(q.numerator() <= 15 and q.denominator() <= 5 for q in v)
+        True
 
     Inexact rings may be used as well.  The reals have
     uniform distributions, with the range `(-1,1)` as
     the default.  More at:
     :meth:`sage.rings.real_mpfr.RealField_class.random_element` ::
 
-        sage: random_vector(RR, 5)
-        (0.248997268533725, -0.112200126330480, 0.776829203293064, -0.899146461031406, 0.534465018743125)
+        sage: v = random_vector(RR, 5)
+        sage: v.parent()
+        Vector space of dimension 5 over Real Field with 53 bits of precision
+        sage: all(-1 <= r <= 1 for r in v)
+        True
 
-        sage: random_vector(RR, 5, min = 8, max = 14)
-        (8.43260944052606, 8.34129413391087, 8.92391495103829, 11.5784799413416, 11.0973561568002)
+        sage: v = random_vector(RR, 5, min=8, max=14)
+        sage: v.parent()
+        Vector space of dimension 5 over Real Field with 53 bits of precision
+        sage: all(8 <= r <= 14 for r in v)
+        True
 
     Any ring with a ``random_element()`` method may be used. ::
 
         sage: F = FiniteField(23)
         sage: hasattr(F, 'random_element')
         True
-        sage: random_vector(F, 10)
-        (21, 6, 5, 2, 6, 2, 18, 9, 9, 7)
+        sage: v = random_vector(F, 10)
+        sage: v.parent()
+        Vector space of dimension 10 over Finite Field of size 23
 
     The default implementation is a dense representation, equivalent to
     setting ``sparse=False``. ::
@@ -838,6 +846,25 @@ def random_vector(ring, degree=None, *args, **kwds):
 
         sage: w = random_vector(ZZ, 20, sparse=True)
         sage: w.is_sparse()
+        True
+
+    The elements are chosen using the ring's ``random_element`` method::
+
+        sage: from sage.misc.randstate import current_randstate
+        sage: seed = current_randstate().seed()
+        sage: set_random_seed(seed)
+        sage: v1 = random_vector(ZZ, 20, distribution="1/n")
+        sage: v2 = random_vector(ZZ, 15, x=-1000, y=1000)
+        sage: v3 = random_vector(QQ, 10)
+        sage: v4 = random_vector(FiniteField(17), 10)
+        sage: v5 = random_vector(RR, 10)
+        sage: set_random_seed(seed)
+        sage: w1 = vector(ZZ.random_element(distribution="1/n") for _ in range(20))
+        sage: w2 = vector(ZZ.random_element(x=-1000, y=1000) for _ in range(15))
+        sage: w3 = vector(QQ.random_element() for _ in range(10))
+        sage: w4 = vector(FiniteField(17).random_element() for _ in range(10))
+        sage: w5 = vector(RR.random_element() for _ in range(10))
+        sage: [v1, v2, v3, v4, v5] == [w1, w2, w3, w4, w5]
         True
 
     Inputs get checked before constructing the vector. ::
@@ -912,7 +939,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: P.<x> = ZZ[]
             sage: v = vector(P, 3, [x^2 + 2, 2*x + 1, -2*x^2 + 4*x])
             sage: giac(v)
-            [x^2+2,2*x+1,-2*x^2+4*x]
+            [sageVARx^2+2,2*sageVARx+1,-2*sageVARx^2+4*sageVARx]
         """
         return self.list()
 
@@ -2570,7 +2597,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: u.dot_product(w)
             0
 
-        The cross product is defined for degree seven vectors as well: 
+        The cross product is defined for degree seven vectors as well:
         see :wikipedia:`Cross_product`.
         The 3-D cross product is achieved using the quaternions,
         whereas the 7-D cross product is achieved using the octonions. ::
@@ -3542,6 +3569,72 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             '{1, x, (x)^(2), Sin[x], Pi}'
         """
         return '{' + ', '.join(x._mathematica_init_() for x in self.list()) + '}'
+
+    def _sympy_(self):
+        """
+        Return a SymPy column vector (matrix) corresponding to ``self``.
+
+        OUTPUT:
+
+        - An instance of either an ``ImmutableMatrix`` or ``ImmutableSparseMatrix``,
+          regardless of whether ``self`` is mutable or not.
+
+        EXAMPLES::
+
+            sage: v = vector([1, 2, 3]); v
+            (1, 2, 3)
+            sage: sv = v._sympy_(); sv
+            Matrix([
+            [1],
+            [2],
+            [3]])
+            sage: type(sv)
+            <class 'sympy.matrices.immutable.ImmutableDenseMatrix'>
+
+            sage: w = vector({1: 1, 5: -1}, sparse=True)
+            sage: sw = w._sympy_(); sw
+            Matrix([
+            [ 0],
+            [ 1],
+            [ 0],
+            [ 0],
+            [ 0],
+            [-1]])
+            sage: type(sw)
+            <class 'sympy.matrices.immutable.ImmutableSparseMatrix'>
+
+        If ``self`` was immutable, then converting the result to Sage gives
+        back ``self``::
+
+            sage: immv = vector([1, 2, 3], immutable=True)
+            sage: immv._sympy_()._sage_() is immv
+            True
+
+        If ``self`` was mutable, then converting back to Sage creates a new
+        matrix (column vector)::
+
+            sage: sv._sage_()
+            [1]
+            [2]
+            [3]
+            sage: sv._sage_() is v
+            False
+            sage: sv._sage_() == v
+            False
+        """
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        from sympy.matrices import ImmutableMatrix, ImmutableSparseMatrix
+        if self.is_sparse():
+            matrix = ImmutableSparseMatrix(self._degree, 1,
+                                           {(i, 0): v
+                                            for i, v in self.dict(copy=False).items()})
+        else:
+            matrix = ImmutableMatrix(self._degree, 1,
+                                     self.list(copy=False))
+        if self.is_immutable():
+            matrix._sage_object = self
+        return matrix
 
     def nonzero_positions(self):
         """

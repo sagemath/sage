@@ -67,15 +67,15 @@ def gamma__exact(n):
     if denominator(n) == 1:
         if n <= 0:
             return infinity
-        if n > 0:
-            return factorial(n-1)
+        return factorial(n - 1)
     elif denominator(n) == 2:
+        # now n = 1/2 + an integer
         ans = QQ.one()
         while n != QQ((1, 2)):
             if n < 0:
                 ans /= n
                 n += 1
-            elif n > 0:
+            else:
                 n += -1
                 ans *= n
 
@@ -242,6 +242,7 @@ def quadratic_L_function__exact(n, d):
                 raise TypeError("n must be a critical value (i.e. even > 0 or odd < 0)")
             if delta == 1:
                 raise TypeError("n must be a critical value (i.e. odd > 0 or even <= 0)")
+
 
 def quadratic_L_function__numerical(n, d, num_terms=1000):
     """

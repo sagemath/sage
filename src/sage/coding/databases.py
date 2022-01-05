@@ -297,17 +297,20 @@ def self_orthogonal_binary_codes(n, k, b=2, parent=None, BC=None, equal=False,
             M = Matrix(FiniteField(2), [[1]*j])
             if in_test(M):
                 for N in self_orthogonal_binary_codes(n, k, d, M, BC, in_test=in_test):
-                    if out_test(N): yield N
+                    if out_test(N):
+                        yield N
     else:
         C = LinearCode(parent)
-        if out_test(C): yield C
+        if out_test(C):
+            yield C
         if k == parent.nrows():
             return
         for nn in range(parent.ncols()+1, n+1):
             if in_test(parent):
                 for child in BC.generate_children(BinaryCode(parent), nn, d):
                     for N in self_orthogonal_binary_codes(n, k, d, child, BC, in_test=in_test):
-                        if out_test(N): yield N
+                        if out_test(N):
+                            yield N
 
 # Import the following function so that it is available as
 # sage.codes.databases.self_dual_binary_codes sage.codes.databases functions
