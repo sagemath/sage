@@ -1,18 +1,20 @@
-"""
+r"""
 Capped absolute template for complete discrete valuation rings
 
 In order to use this template you need to write a linkage file and gluing file.
-For an example see mpz_linkage.pxi (linkage file) and padic_capped_absolute_element.pyx (gluing file).
+For an example see ``mpz_linkage.pxi`` (linkage file) and
+``padic_capped_absolute_element.pyx`` (gluing file).
 
-The linkage file implements a common API that is then used in the class CAElement defined here.
-See the documentation of mpz_linkage.pxi for the functions needed.
+The linkage file implements a common API that is then used in the class
+:class:`CAElement` defined here.
+See the documentation of ``mpz_linkage.pxi`` for the functions needed.
 
 The gluing file does the following:
 
-- ctypedef's celement to be the appropriate type (e.g. mpz_t)
+- ctypedef's celement to be the appropriate type (e.g. ``mpz_t``)
 - includes the linkage file
 - includes this template
-- defines a concrete class inheriting from CAElement, and implements
+- defines a concrete class inheriting from :class:`CAElement`, and implements
   any desired extra methods
 
 AUTHORS:
@@ -93,7 +95,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef CAElement _new_c(self):
         """
-        Creates a new element with the same basic info.
+        Create a new element with the same basic info.
 
         TESTS::
 
@@ -118,7 +120,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec):
         """
-        Creates a new element with a given value and absolute precision.
+        Create a new element with a given value and absolute precision.
 
         Used by code that doesn't know the precision type.
         """
@@ -130,13 +132,13 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef int _get_unit(self, celement value) except -1:
         """
-        Sets ``value`` to the unit of this p-adic element.
+        Set ``value`` to the unit of this p-adic element.
         """
         cremove(value, self.value, self.absprec, self.prime_pow, True)
 
     cdef int check_preccap(self) except -1:
         """
-        Checks that this element doesn't have precision higher than
+        Check that this element doesn't have precision higher than
         allowed by the precision cap.
 
         TESTS::
@@ -144,10 +146,10 @@ cdef class CAElement(pAdicTemplateElement):
             sage: ZpCA(5)(1).lift_to_precision(30) # indirect doctest
             Traceback (most recent call last):
             ...
-            PrecisionError: Precision higher than allowed by the precision cap.
+            PrecisionError: precision higher than allowed by the precision cap
         """
         if self.absprec > self.prime_pow.ram_prec_cap:
-            raise PrecisionError("Precision higher than allowed by the precision cap.")
+            raise PrecisionError("precision higher than allowed by the precision cap")
 
     def __copy__(self):
         """
@@ -270,7 +272,9 @@ cdef class CAElement(pAdicTemplateElement):
             sage: ~R(5) * 5
             1 + O(17^20)
             sage: ~R(5)
-            7 + 3*17 + 10*17^2 + 13*17^3 + 6*17^4 + 3*17^5 + 10*17^6 + 13*17^7 + 6*17^8 + 3*17^9 + 10*17^10 + 13*17^11 + 6*17^12 + 3*17^13 + 10*17^14 + 13*17^15 + 6*17^16 + 3*17^17 + 10*17^18 + 13*17^19 + O(17^20)
+            7 + 3*17 + 10*17^2 + 13*17^3 + 6*17^4 + 3*17^5 + 10*17^6 + 13*17^7
+             + 6*17^8 + 3*17^9 + 10*17^10 + 13*17^11 + 6*17^12 + 3*17^13
+             + 10*17^14 + 13*17^15 + 6*17^16 + 3*17^17 + 10*17^18 + 13*17^19 + O(17^20)
             sage: ~R(-1) == R(-1) #indirect doctest
             True
         """
@@ -449,6 +453,14 @@ cdef class CAElement(pAdicTemplateElement):
             1 + 14*19^2 + 11*19^3 + 13*19^4 + O(19^5)
             sage: (a.log() * 19/7).exp()
             1 + 14*19^2 + 11*19^3 + 13*19^4 + O(19^5)
+
+        Check that :trac:`31875` is fixed::
+
+            sage: R(1)^R(0)
+            1 + O(19^5)
+            sage: S.<a> = ZqCA(4)
+            sage: S(1)^S(0)
+            1 + O(2^20)
         """
         cdef long relprec, val, rval
         cdef mpz_t tmp
@@ -464,7 +476,7 @@ cdef class CAElement(pAdicTemplateElement):
         elif self.parent() is _right.parent():
             ## For extension elements, we need to switch to the
             ## fraction field sometimes in highly ramified extensions.
-            exact_exp = False
+            exact_exp = (<CAElement>_right)._is_exact_zero()
             pright = _right
         else:
             self, _right = canonical_coercion(self, _right)
@@ -495,7 +507,7 @@ cdef class CAElement(pAdicTemplateElement):
             else:
                 if not exact_exp and self.absprec > 0:
                     raise ValueError("in order to raise to a p-adic exponent, base must be a unit")
-                raise PrecisionError("Need more precision")
+                raise PrecisionError("need more precision")
         else:
             val = self.valuation_c()
             if exact_exp:
@@ -521,7 +533,7 @@ cdef class CAElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _lshift_c(self, long shift):
-        """
+        r"""
         Multiplies by `\pi^{\mbox{shift}}`.
 
         Negative shifts may truncate the result.
@@ -553,7 +565,7 @@ cdef class CAElement(pAdicTemplateElement):
         return ans
 
     cdef pAdicTemplateElement _rshift_c(self, long shift):
-        """
+        r"""
         Divides by ``π^{\mbox{shift}}``.
 
         Positive shifts may truncate the result.
@@ -586,7 +598,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     def add_bigoh(self, absprec):
         """
-        Returns a new element with absolute precision decreased to
+        Return a new element with absolute precision decreased to
         ``absprec``.  The precision never increases.
 
         INPUT:
@@ -644,8 +656,8 @@ cdef class CAElement(pAdicTemplateElement):
 
     cpdef bint _is_exact_zero(self) except -1:
         """
-        Tests whether this element is an exact zero, which is always
-        False for capped absolute elements.
+        Test whether this element is an exact zero, which is always
+        ``False`` for capped absolute elements.
 
         This function exists for compatibility with capped relative
         elements.
@@ -659,7 +671,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cpdef bint _is_inexact_zero(self) except -1:
         """
-        Determines whether this element is indistinguishable from
+        Determine whether this element is indistinguishable from
         zero.
 
         EXAMPLES::
@@ -676,7 +688,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     def is_zero(self, absprec = None):
         r"""
-        Determines whether this element is zero modulo
+        Determine whether this element is zero modulo
         `\pi^{\mbox{absprec}}`.
 
         If ``absprec is None``, returns ``True`` if this element is
@@ -698,23 +710,23 @@ cdef class CAElement(pAdicTemplateElement):
             sage: R(17^6).is_zero(absprec=10)
             Traceback (most recent call last):
             ...
-            PrecisionError: Not enough precision to determine if element is zero
+            PrecisionError: not enough precision to determine if element is zero
         """
         if absprec is infinity:
-            raise PrecisionError("Not enough precision to determine if element is zero")
+            raise PrecisionError("not enough precision to determine if element is zero")
         cdef bint iszero = ciszero(self.value, self.prime_pow)
         if absprec is None:
             return iszero
         cdef long val = self.valuation_c()
         if isinstance(absprec, int):
             if iszero and absprec > self.absprec:
-                raise PrecisionError("Not enough precision to determine if element is zero")
+                raise PrecisionError("not enough precision to determine if element is zero")
             return val >= absprec
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if iszero:
             if mpz_cmp_si((<Integer>absprec).value, val) > 0:
-                raise PrecisionError("Not enough precision to determine if element is zero")
+                raise PrecisionError("not enough precision to determine if element is zero")
             else:
                 return True
         return mpz_cmp_si((<Integer>absprec).value, val) <= 0
@@ -737,7 +749,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     def is_equal_to(self, _right, absprec=None):
         r"""
-        Determines whether the inputs are equal modulo
+        Determine whether the inputs are equal modulo
         `\pi^{\mbox{absprec}}`.
 
         INPUT:
@@ -760,10 +772,10 @@ cdef class CAElement(pAdicTemplateElement):
             sage: R(13).is_equal_to(R(13+2^10),absprec=10)
             Traceback (most recent call last):
             ...
-            PrecisionError: Elements not known to enough precision
+            PrecisionError: elements not known to enough precision
         """
         if absprec is infinity:
-            raise PrecisionError("Elements not known to enough precision")
+            raise PrecisionError("elements not known to enough precision")
         cdef CAElement right
         cdef long aprec, rprec, sval, rval
         if self.parent() is _right.parent():
@@ -779,10 +791,10 @@ cdef class CAElement(pAdicTemplateElement):
                 if mpz_sgn((<Integer>absprec).value) < 0:
                     return True
                 else:
-                    raise PrecisionError("Elements not known to enough precision")
+                    raise PrecisionError("elements not known to enough precision")
             aprec = mpz_get_si((<Integer>absprec).value)
             if aprec > self.absprec or aprec > right.absprec:
-                raise PrecisionError("Elements not known to enough precision")
+                raise PrecisionError("elements not known to enough precision")
         return ccmp(self.value, right.value, aprec, aprec < self.absprec, aprec < right.absprec, self.prime_pow) == 0
 
     cdef int _cmp_units(self, pAdicGenericElement _right) except -2:
@@ -803,7 +815,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef pAdicTemplateElement lift_to_precision_c(self, long absprec):
         """
-        Returns an arbitrary lift of this element to higher precision.
+        Return an arbitrary lift of this element to higher precision.
 
         If ``absprec`` is less than the absolute precision of this
         element this function will return the input element.
@@ -811,7 +823,7 @@ cdef class CAElement(pAdicTemplateElement):
         INPUT:
 
         - ``absprec`` -- an integer, at most the precision cap of the
-          parent.
+          parent
 
         EXAMPLES::
 
@@ -852,7 +864,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     def _teichmuller_set_unsafe(self):
         """
-        Sets this element to the Teichmuller representative with the
+        Set this element to the Teichmuller representative with the
         same residue.
 
         .. WARNING::
@@ -934,7 +946,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         INPUT:
 
-        - ``var`` -- string, the variable name for the polynomial
+        - ``var`` -- string; the variable name for the polynomial
 
         EXAMPLES::
 
@@ -984,7 +996,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cpdef pAdicTemplateElement unit_part(CAElement self):
         r"""
-        Returns the unit part of this element.
+        Return the unit part of this element.
 
         EXAMPLES::
 
@@ -1004,7 +1016,7 @@ cdef class CAElement(pAdicTemplateElement):
 
     cdef long valuation_c(self):
         """
-        Returns the valuation of this element.
+        Return the valuation of this element.
 
         TESTS::
 
@@ -1031,8 +1043,8 @@ cdef class CAElement(pAdicTemplateElement):
         return cvaluation(self.value, self.absprec, self.prime_pow)
 
     cpdef val_unit(self):
-        """
-        Returns a 2-tuple, the first element set to the valuation of this
+        r"""
+        Return a 2-tuple, the first element set to the valuation of this
         element, and the second to the unit part of this element.
 
         For a zero element, the unit part is ``O(p^0)``.
@@ -1205,7 +1217,7 @@ cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
 
     def section(self):
         """
-        Returns a map back to the ring of integers that approximates an element
+        Return a map back to the ring of integers that approximates an element
         by an integer.
 
         EXAMPLES::
@@ -1509,7 +1521,7 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
     def section(self):
         """
-        Returns a map back to the ring that converts elements of
+        Return a map back to the ring that converts elements of
         non-negative valuation.
 
         EXAMPLES::
@@ -1619,8 +1631,8 @@ cdef class pAdicCoercion_CA_frac_field(RingHomomorphism):
 
 
 cdef class pAdicConvert_CA_frac_field(Morphism):
-    """
-    The section of the inclusion from `\ZZ_q`` to its fraction field.
+    r"""
+    The section of the inclusion from `\ZZ_q` to its fraction field.
 
     EXAMPLES::
 
@@ -1786,19 +1798,19 @@ cdef class pAdicConvert_CA_frac_field(Morphism):
         Morphism._update_slots(self, _slots)
 
 def unpickle_cae_v2(cls, parent, value, absprec):
-    """
+    r"""
     Unpickle capped absolute elements.
 
     INPUT:
 
-    - ``cls`` -- the class of the capped absolute element.
+    - ``cls`` -- the class of the capped absolute element
 
-    - ``parent`` -- the parent, a `p`-adic ring
+    - ``parent`` -- a `p`-adic ring
 
     - ``value`` -- a Python object wrapping a celement, of the kind
-      accepted by the cunpickle function.
+      accepted by the cunpickle function
 
-    - ``absprec`` -- a Python int or Sage integer.
+    - ``absprec`` -- a Python int or Sage integer
 
     EXAMPLES::
 
@@ -1819,3 +1831,4 @@ def unpickle_cae_v2(cls, parent, value, absprec):
     cunpickle(ans.value, value, ans.prime_pow)
     ans.absprec = absprec
     return ans
+

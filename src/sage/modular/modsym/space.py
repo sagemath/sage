@@ -1545,8 +1545,8 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
 
             sage: ModularSymbols(Gamma1(19), 2).cuspidal_submodule().star_decomposition()
             [
-            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 and over Rational Field,
-            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 and over Rational Field
+            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 over Rational Field,
+            Modular Symbols subspace of dimension 7 of Modular Symbols space of dimension 31 for Gamma_1(19) of weight 2 with sign 0 over Rational Field
             ]
         """
         S = self.star_involution()
@@ -1812,7 +1812,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
         EXAMPLES::
 
             sage: ModularSymbols(Gamma1(11), 3)._compute_sign_submodule(-1)
-            Modular Symbols subspace of dimension 10 of Modular Symbols space of dimension 20 for Gamma_1(11) of weight 3 with sign 0 and over Rational Field
+            Modular Symbols subspace of dimension 10 of Modular Symbols space of dimension 20 for Gamma_1(11) of weight 3 with sign 0 over Rational Field
         """
         A = self.ambient()
         S = A.sign_submodule(sign, compute_dual=compute_dual)

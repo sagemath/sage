@@ -1,4 +1,4 @@
-$(INST)/nauty-$(vers_nauty)
+$(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/nauty-$(vers_nauty)
 
 ----------
 All lines of this file are ignored except the first.

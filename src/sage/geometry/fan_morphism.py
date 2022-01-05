@@ -82,7 +82,8 @@ from sage.geometry.cone import Cone
 from sage.geometry.fan import Fan, is_Fan
 from sage.matrix.all import identity_matrix, matrix
 from sage.structure.element import is_Matrix
-from sage.misc.all import cached_method, latex, prod, walltime
+from sage.misc.cachefunc import cached_method
+from sage.misc.all import latex, prod, walltime
 from sage.modules.free_module_morphism import (FreeModuleMorphism,
                                                is_FreeModuleMorphism)
 from sage.rings.all import Infinity, ZZ

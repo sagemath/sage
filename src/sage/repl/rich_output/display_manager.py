@@ -45,6 +45,20 @@ from sage.repl.rich_output.output_browser import (
 )
 from sage.repl.rich_output.preferences import DisplayPreferences
 
+def _required_threejs_version():
+    """
+    Return the version of threejs that Sage requires.
+
+    EXAMPLES::
+
+        sage: from sage.repl.rich_output.display_manager import _required_threejs_version
+        sage: _required_threejs_version()
+        'r...'
+    """
+    import os
+    import sage.env
+    with open(os.path.join(sage.env.SAGE_EXTCODE, 'threejs', 'threejs-version.txt')) as f:
+        return f.read().strip()
 
 class DisplayException(Exception):
     """
@@ -749,10 +763,7 @@ class DisplayManager(SageObject):
             offline threejs graphics
         """
         if online:
-            import sage.env
-            import os
-            with open(os.path.join(sage.env.THREEJS_DIR, 'version')) as f:
-                version = f.read().strip()
+            version = _required_threejs_version()
             return """
 <script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@{0}/build/three.min.js"></script>
             """.format(version)

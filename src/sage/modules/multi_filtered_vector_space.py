@@ -717,10 +717,16 @@ class MultiFilteredVectorSpace_class(FreeModule_ambient_field):
             Vector space of degree 2 and dimension 1 over Rational Field
             Basis matrix:
             [1 0]
-            sage: V.random_deformation(1/100).get_degree('b',1)
-            Vector space of degree 2 and dimension 1 over Rational Field
-            Basis matrix:
-            [     1 8/1197]
+            sage: D = V.random_deformation(1/100).get_degree('b',1)
+            sage: D.degree()
+            2
+            sage: D.dimension()
+            1
+            sage: D.matrix()[0, 0]
+            1
+
+            sage: while V.random_deformation(1/100).get_degree('b',1).matrix() == matrix([1, 0]):
+            ....:     pass
         """
         filtrations = {key: value.random_deformation(epsilon)
                        for key, value in self._filt.items()}

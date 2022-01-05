@@ -52,10 +52,16 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H):
         sage: M = random_matrix(K, 6, 6)
         sage: M.charpoly()[0] == M.determinant()
         True
+
+    We check that :trac:`31753` is resolved::
+
+        sage: R.<t> = GF(5)[[]]
+        sage: M = matrix(3, 3, [ 1, t + O(t^3), t^2, 1 + t + O(t^3), 2 + t^2, 3 + 2*t + O(t^3), t - t^2, 2*t, 1 + t ])
+        sage: M.charpoly()
+        x^3 + (1 + 4*t + 4*t^2 + O(t^3))*x^2 + (t + 2*t^2 + O(t^3))*x + 3 + 2*t^2 + O(t^3)
     """
-    cdef Py_ssize_t n, m, i, j, k
-    cdef Matrix_generic_dense c
-    cdef RingElement pivot, inv, scalar
+    cdef Py_ssize_t n, i, j, k
+    cdef RingElement entry, pivot, inv, scalar
 
     n = H.nrows()
     for j in range(n-1):

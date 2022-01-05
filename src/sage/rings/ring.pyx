@@ -1365,29 +1365,6 @@ cdef class CommutativeRing(Ring):
         except (NotImplementedError,TypeError):
             return coercion_model.division_parent(self)
 
-    def __pow__(self, n, _):
-        """
-        Return the free module of rank `n` over this ring.  If n is a tuple of
-        two elements, creates a matrix space.
-
-        EXAMPLES::
-
-            sage: QQ^5
-            Vector space of dimension 5 over Rational Field
-            sage: Integers(20)^1000
-            Ambient free module of rank 1000 over Ring of integers modulo 20
-
-            sage: QQ^(2,3)
-            Full MatrixSpace of 2 by 3 dense matrices over Rational Field
-        """
-        if isinstance(n, tuple):
-            m, n = n
-            from sage.matrix.matrix_space import MatrixSpace
-            return MatrixSpace(self, m, n)
-        else:
-            import sage.modules.all
-            return sage.modules.all.FreeModule(self, n)
-
     def is_commutative(self):
         """
         Return ``True``, since this ring is commutative.
@@ -1515,9 +1492,9 @@ cdef class CommutativeRing(Ring):
             name = str(poly.parent().gen(0))
         for key, val in kwds.items():
             if key not in ['structure', 'implementation', 'prec', 'embedding', 'latex_name', 'latex_names']:
-                raise TypeError("extension() got an unexpected keyword argument '%s'"%key)
+                raise TypeError("extension() got an unexpected keyword argument '%s'" % key)
             if not (val is None or isinstance(val, list) and all(c is None for c in val)):
-                raise NotImplementedError("ring extension with prescripted %s is not implemented"%key)
+                raise NotImplementedError("ring extension with prescribed %s is not implemented" % key)
         R = self[name]
         I = R.ideal(R(poly.list()))
         return R.quotient(I, name)

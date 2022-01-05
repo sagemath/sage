@@ -263,7 +263,7 @@ class VectorFieldModule(UniqueRepresentation, Parent):
             sage: v = XM([-x,y], frame=c_xy.frame(), name='v'); v
             Vector field v on the 2-dimensional differentiable manifold M
             sage: v.display()
-            v = -x d/dx + y d/dy
+            v = -x ∂/∂x + y ∂/∂y
             sage: XM(0) is XM.zero()
             True
 
@@ -306,15 +306,13 @@ class VectorFieldModule(UniqueRepresentation, Parent):
 
         """
         resu = self.element_class(self)
-        # Non-trivial open covers of the domain:
-        open_covers = self._domain.open_covers()[1:]  # the open cover 0
-                                                      # is trivial
-        if open_covers != []:
-            oc = open_covers[0]  # the first non-trivial open cover is selected
+        for oc in self._domain.open_covers(trivial=False):
+            # the first non-trivial open cover is selected
             for dom in oc:
                 vmodule_dom = dom.vector_field_module(
                                          dest_map=self._dest_map.restrict(dom))
                 resu.set_restriction(vmodule_dom._an_element_())
+            return resu
         return resu
 
     def _coerce_map_from_(self, other):
@@ -1206,13 +1204,13 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     Some elements::
 
         sage: XM.an_element().display()
-        2 d/dx + 2 d/dy
+        2 ∂/∂x + 2 ∂/∂y
         sage: XM.zero().display()
         zero = 0
         sage: v = XM([-y,x]) ; v
         Vector field on the 2-dimensional differentiable manifold R^2
         sage: v.display()
-        -y d/dx + x d/dy
+        -y ∂/∂x + x ∂/∂y
 
     An example of module of vector fields with a destination map `\Phi`
     different from the identity map, namely a mapping
@@ -1225,8 +1223,8 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         Differentiable map Phi from the 1-dimensional differentiable manifold
          I to the 2-dimensional differentiable manifold R^2
         sage: Phi.display()
-        Phi: I --> R^2
-           t |--> (x, y) = (cos(t), sin(t))
+        Phi: I → R^2
+           t ↦ (x, y) = (cos(t), sin(t))
         sage: XIM = I.vector_field_module(dest_map=Phi) ; XIM
         Free module X(I,Phi) of vector fields along the 1-dimensional
          differentiable manifold I mapped into the 2-dimensional differentiable
@@ -1245,18 +1243,18 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     A basis of it is induced by the coordinate vector frame of `\RR^2`::
 
         sage: XIM.bases()
-        [Vector frame (I, (d/dx,d/dy)) with values on the 2-dimensional
+        [Vector frame (I, (∂/∂x,∂/∂y)) with values on the 2-dimensional
          differentiable manifold R^2]
 
     Some elements of this module::
 
         sage: XIM.an_element().display()
-        2 d/dx + 2 d/dy
+        2 ∂/∂x + 2 ∂/∂y
         sage: v = XIM([t, t^2]) ; v
         Vector field along the 1-dimensional differentiable manifold I with
          values on the 2-dimensional differentiable manifold R^2
         sage: v.display()
-        t d/dx + t^2 d/dy
+        t ∂/∂x + t^2 ∂/∂y
 
     The test suite is passed::
 
@@ -1274,7 +1272,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     We have then::
 
         sage: XJM.default_basis()
-        Vector frame (J, (d/dx,d/dy)) with values on the 2-dimensional
+        Vector frame (J, (∂/∂x,∂/∂y)) with values on the 2-dimensional
          differentiable manifold R^2
         sage: XJM.default_basis() is XIM.default_basis().restrict(J)
         True
@@ -1283,7 +1281,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
          differentiable manifold I with values on the 2-dimensional
          differentiable manifold R^2
         sage: v.restrict(J).display()
-        t d/dx + t^2 d/dy
+        t ∂/∂x + t^2 ∂/∂y
 
     Let us now consider the module of vector fields on the circle `S^1`; we
     start by constructing the `S^1` manifold::
@@ -1306,7 +1304,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
     coincide, as we can check explicitly::
 
         sage: c_t.frame()[0].display(c_u.frame().restrict(W))
-        d/dt = d/du
+        ∂/∂t = ∂/∂u
 
     Therefore, we can extend `\partial/\partial t` to all `V` and hence to all
     `S^1`, to form a vector field on `S^1` whose components w.r.t. both
@@ -1318,9 +1316,9 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         sage: V.set_change_of_frame(e.restrict(V), c_u.frame(),
         ....:                       V.tangent_identity_field())
         sage: e[0].display(c_t.frame())
-        e_0 = d/dt
+        e_0 = ∂/∂t
         sage: e[0].display(c_u.frame())
-        e_0 = d/du
+        e_0 = ∂/∂u
 
     Equipped with the frame `e`, the manifold `S^1` is manifestly
     parallelizable::
@@ -1436,7 +1434,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
 
                     # basis is added to the restrictions of bases on a larger
                     # domain
-                    for dom in domain._supersets:
+                    for dom in domain.open_supersets():
                         if dom is not domain:
                             for supbase in dom._frames:
                                 if (supbase.domain() is dom and
@@ -1472,7 +1470,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             sage: v = XM([-y,x], name='v'); v
             Vector field v on the 2-dimensional differentiable manifold M
             sage: v.display()
-            v = -y d/dx + x d/dy
+            v = -y ∂/∂x + x ∂/∂y
             sage: XM(0) is XM.zero()
             True
 
@@ -2117,7 +2115,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             Tensor field t of type (1,1) on the 2-dimensional differentiable
              manifold M
             sage: t.display()
-            t = (x + 1) d/dx*dx - y d/dx*dy + x*y d/dy*dx + (-y^2 + 2) d/dy*dy
+            t = (x + 1) ∂/∂x⊗dx - y ∂/∂x⊗dy + x*y ∂/∂y⊗dx + (-y^2 + 2) ∂/∂y⊗dy
 
         The same set of components transformed into a type-`(0,2)`
         tensor field::
@@ -2126,7 +2124,7 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
             Tensor field t of type (0,2) on the 2-dimensional differentiable
              manifold M
             sage: t.display()
-            t = (x + 1) dx*dx - y dx*dy + x*y dy*dx + (-y^2 + 2) dy*dy
+            t = (x + 1) dx⊗dx - y dx⊗dy + x*y dy⊗dx + (-y^2 + 2) dy⊗dy
 
         """
         from sage.tensor.modules.comp import (CompWithSym, CompFullyAntiSym)

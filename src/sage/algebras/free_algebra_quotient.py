@@ -145,15 +145,15 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra, object):
             raise TypeError("Argument A must be an algebra.")
         R = A.base_ring()
 #        if not R.is_field():  # TODO: why?
-#            raise TypeError, "Base ring of argument A must be a field."
+#            raise TypeError("Base ring of argument A must be a field.")
         n = A.ngens()
         assert n == len(mats)
         self.__free_algebra = A
         self.__ngens = n
         self.__dim = len(mons)
-        self.__module = FreeModule(R,self.__dim)
+        self.__module = FreeModule(R, self.__dim)
         self.__matrix_action = mats
-        self.__monomial_basis = mons # elements of free monoid
+        self.__monomial_basis = mons  # elements of free monoid
         Algebra.__init__(self, R, names, normalize=True)
 
     def _element_constructor_(self, x):

@@ -1018,7 +1018,7 @@ cdef class dancing_linksWrapper:
         OUTPUT:
 
         - MixedIntegerLinearProgram instance
-        - MIPVariable of dimension 1
+        - MIPVariable with binary components
 
         EXAMPLES::
 
@@ -1029,7 +1029,7 @@ cdef class dancing_linksWrapper:
             sage: p
             Boolean Program (no objective, 4 variables, 4 constraints)
             sage: x
-            MIPVariable of dimension 1
+            MIPVariable with 4 binary components
 
         In the reduction, the boolean variable x_i is True if and only if
         the i-th row is in the solution::
@@ -1053,7 +1053,7 @@ cdef class dancing_linksWrapper:
 
             sage: d.to_milp('gurobi')   # optional - gurobi sage_numerical_backends_gurobi
             (Boolean Program (no objective, 4 variables, 4 constraints),
-             MIPVariable of dimension 1)
+             MIPVariable with 4 binary components)
 
         """
         from sage.numerical.mip import MixedIntegerLinearProgram
@@ -1076,7 +1076,7 @@ cdef class dancing_linksWrapper:
 
         return p,x
 
-    def one_solution_using_milp_solver(self, solver=None):
+    def one_solution_using_milp_solver(self, solver=None, integrality_tolerance=1e-3):
         r"""
         Return a solution found using a MILP solver.
 
@@ -1129,7 +1129,7 @@ cdef class dancing_linksWrapper:
         except MIPSolverException:
             return None
         else:
-            soln = p.get_values(x)
+            soln = p.get_values(x, convert=bool, tolerance=integrality_tolerance)
             support = sorted(key for key in soln if soln[key])
             return support
 

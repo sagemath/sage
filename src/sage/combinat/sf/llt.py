@@ -168,7 +168,7 @@ class LLT_class(UniqueRepresentation):
 
         - returns the symmetric function ring associated to ``self``.
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: L3 = SymmetricFunctions(FractionField(QQ['t'])).llt(3)
             sage: L3.symmetric_function_ring()

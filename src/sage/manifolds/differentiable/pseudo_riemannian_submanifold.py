@@ -39,8 +39,8 @@ One can then define the embedding `\phi_t`::
     ....:                              b*sinh(rh)*cos(th),
     ....:                              b*sinh(rh)*sin(th)]})
     sage: phi.display()
-    N --> M
-       (rh, th) |--> (w, x, y) = (b*cosh(rh) + t, b*cos(th)*sinh(rh),
+    N → M
+       (rh, th) ↦ (w, x, y) = (b*cosh(rh) + t, b*cos(th)*sinh(rh),
                                   b*sin(th)*sinh(rh))
 
 as well as its inverse (when considered as a diffeomorphism onto its image)::
@@ -49,8 +49,8 @@ as well as its inverse (when considered as a diffeomorphism onto its image)::
     ....:                                  sqrt((x^2+y^2+b^2)/b^2-1)),
     ....:                                  atan2(y,x)]})
     sage: phi_inv.display()
-    M --> N
-       (w, x, y) |--> (rh, th) = (log(sqrt((b^2 + x^2 + y^2)/b^2 - 1)
+    M → N
+       (w, x, y) ↦ (rh, th) = (log(sqrt((b^2 + x^2 + y^2)/b^2 - 1)
                                   + sqrt(b^2 + x^2 + y^2)/b), arctan2(y, x))
 
 and the partial inverse expressing the foliation parameter `t` as a scalar
@@ -58,14 +58,14 @@ field on `M`::
 
     sage: phi_inv_t = M.scalar_field({E: w-sqrt(x^2+y^2+b^2)})
     sage: phi_inv_t.display()
-    M --> R
-    (w, x, y) |--> w - sqrt(b^2 + x^2 + y^2)
+    M → ℝ
+    (w, x, y) ↦ w - sqrt(b^2 + x^2 + y^2)
 
 One can check that the inverse is correct with::
 
     sage: (phi*phi_inv).display()
-    M --> M
-       (w, x, y) |--> ((b^2 + x^2 + y^2 + sqrt(b^2 + x^2 + y^2)*(t + sqrt(x^2 +
+    M → M
+       (w, x, y) ↦ ((b^2 + x^2 + y^2 + sqrt(b^2 + x^2 + y^2)*(t + sqrt(x^2 +
      y^2)) + sqrt(x^2 + y^2)*t)/(sqrt(b^2 + x^2 + y^2) + sqrt(x^2 + y^2)), x, y)
 
 The first item of the 3-uple in the right-hand does not appear as `w` because
@@ -88,7 +88,7 @@ Finally, we initialize the metric of `M` to be that of Minkowski space::
     sage: g = M.metric()
     sage: g[0,0], g[1,1], g[2,2] = -1, 1, 1
     sage: g.display()
-    g = -dw*dw + dx*dx + dy*dy
+    g = -dw⊗dw + dx⊗dx + dy⊗dy
 
 With this, the declaration the ambient manifold and its foliation parametrized
 by `t` is finished, and calculations can be performed.
@@ -117,7 +117,7 @@ Let us compute the induced metric (or first fundamental form)::
 
     sage: gamma = N.induced_metric()  # long time
     sage: gamma.display()  # long time
-    gamma = b^2 drh*drh + b^2*sinh(rh)^2 dth*dth
+    gamma = b^2 drh⊗drh + b^2*sinh(rh)^2 dth⊗dth
     sage: gamma[:]  # long time
     [           b^2              0]
     [             0 b^2*sinh(rh)^2]
@@ -127,28 +127,28 @@ Let us compute the induced metric (or first fundamental form)::
 the normal vector::
 
     sage: N.normal().display()  # long time
-    n = sqrt(b^2 + x^2 + y^2)/b d/dw + x/b d/dx + y/b d/dy
+    n = sqrt(b^2 + x^2 + y^2)/b ∂/∂w + x/b ∂/∂x + y/b ∂/∂y
 
 Check that the hypersurface is indeed spacelike, i.e. that its normal is
 timelike::
 
     sage: N.ambient_metric()(N.normal(), N.normal()).display()  # long time
-    g(n,n): M --> R
-       (w, x, y) |--> -1
-       (rh_M, th_M, t_M) |--> -1
+    g(n,n): M → ℝ
+       (w, x, y) ↦ -1
+       (rh_M, th_M, t_M) ↦ -1
 
 The lapse function is::
 
     sage: N.lapse().display()  # long time
-    N: M --> R
-       (w, x, y) |--> sqrt(b^2 + x^2 + y^2)/b
-       (rh_M, th_M, t_M) |--> cosh(rh_M)
+    N: M → ℝ
+       (w, x, y) ↦ sqrt(b^2 + x^2 + y^2)/b
+       (rh_M, th_M, t_M) ↦ cosh(rh_M)
 
 while the shift vector is::
 
     sage: N.shift().display()  # long time
-    beta = -(x^2 + y^2)/b^2 d/dw - sqrt(b^2 + x^2 + y^2)*x/b^2 d/dx
-     - sqrt(b^2 + x^2 + y^2)*y/b^2 d/dy
+    beta = -(x^2 + y^2)/b^2 ∂/∂w - sqrt(b^2 + x^2 + y^2)*x/b^2 ∂/∂x
+     - sqrt(b^2 + x^2 + y^2)*y/b^2 ∂/∂y
 
 The extrinsic curvature (or second fundamental form) as a tensor field on the
 ambient manifold::
@@ -168,6 +168,8 @@ The extrinsic curvature as a tensor field on the submanifold::
 AUTHORS:
 
 - Florentin Jaffredo (2018): initial version
+- Eric Gourgoulhon (2018-2019): add documentation
+- Matthias Koeppe (2021): open subsets of submanifolds
 
 REFERENCES:
 
@@ -177,7 +179,9 @@ REFERENCES:
 """
 
 # *****************************************************************************
-#  Copyright (C) 2018 Florentin Jaffredo <florentin.jaffredo@polytechnique.edu>
+#  Copyright (C) 2018      Florentin Jaffredo <florentin.jaffredo@polytechnique.edu>
+#  Copyright (C) 2018-2019 Eric Gourgoulhon <eric.gourgoulhon@obspm.fr>
+#  Copyright (C) 2021      Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -382,6 +386,8 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
              3-dimensional Lorentzian manifold M
 
         """
+        if self is not self._manifold:
+            return "Open subset {} of the {}".format(self._name, self._manifold)
         if self._ambient is None:
             return super(PseudoRiemannianManifold, self).__repr__()
         if self._embedded:
@@ -389,6 +395,82 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
                 self._dim, self._structure.name, self._name, self._ambient)
         return "{}-dimensional {} submanifold {} immersed in the {}".format(
                 self._dim, self._structure.name, self._name, self._ambient)
+
+    def open_subset(self, name, latex_name=None, coord_def={}, supersets=None):
+        r"""
+        Create an open subset of ``self``.
+
+        An open subset is a set that is (i) included in the manifold and (ii)
+        open with respect to the manifold's topology. It is a differentiable
+        manifold by itself. Moreover, equipped with the restriction of the
+        manifold metric to itself, it is a pseudo-Riemannian manifold.
+
+        As ``self`` is a submanifold of its ambient manifold,
+        the new open subset is also considered a submanifold of that.
+        Hence the returned object is an instance of
+        :class:`PseudoRiemannianSubmanifold`.
+
+        INPUT:
+
+        - ``name`` -- name given to the open subset
+        - ``latex_name`` --  (default: ``None``) LaTeX symbol to denote the
+          subset; if none is provided, it is set to ``name``
+        - ``coord_def`` -- (default: {}) definition of the subset in
+          terms of coordinates; ``coord_def`` must a be dictionary with keys
+          charts in the manifold's atlas and values the symbolic expressions
+          formed by the coordinates to define the subset.
+        - ``supersets`` -- (default: only ``self``) list of sets that the
+          new open subset is a subset of
+
+        OUTPUT:
+
+        - instance of :class:`PseudoRiemannianSubmanifold` representing the
+          created open subset
+
+        EXAMPLES::
+
+            sage: M = Manifold(3, 'M', structure="Riemannian")
+            sage: N = Manifold(2, 'N', ambient=M, structure="Riemannian"); N
+            2-dimensional Riemannian submanifold N immersed in the
+             3-dimensional Riemannian manifold M
+            sage: S = N.subset('S'); S
+            Subset S of the
+             2-dimensional Riemannian submanifold N immersed in the
+              3-dimensional Riemannian manifold M
+            sage: O = N.subset('O', is_open=True); O  # indirect doctest
+            Open subset O of the
+             2-dimensional Riemannian submanifold N immersed in the
+              3-dimensional Riemannian manifold M
+
+            sage: phi = N.diff_map(M)
+            sage: N.set_embedding(phi)
+            sage: N
+            2-dimensional Riemannian submanifold N embedded in the
+             3-dimensional Riemannian manifold M
+            sage: S = N.subset('S'); S
+            Subset S of the
+             2-dimensional Riemannian submanifold N embedded in the
+              3-dimensional Riemannian manifold M
+            sage: O = N.subset('O', is_open=True); O  # indirect doctest
+            Open subset O of the
+             2-dimensional Riemannian submanifold N embedded in the
+              3-dimensional Riemannian manifold M
+
+        """
+        resu = PseudoRiemannianSubmanifold(self._dim, name,
+                                           ambient=self._ambient,
+                                           metric_name=self._metric_name,
+                                           signature=self._metric_signature,
+                                           base_manifold=self._manifold,
+                                           diff_degree=self._diff_degree,
+                                           latex_name=latex_name,
+                                           metric_latex_name=self._metric_latex_name,
+                                           start_index=self._sindex)
+        if supersets is None:
+            supersets = [self]
+        for superset in supersets:
+            superset._init_open_subset(resu, coord_def=coord_def)
+        return resu
 
     def ambient_metric(self):
         r"""
@@ -405,7 +487,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N.ambient_metric()
             Riemannian metric g on the Euclidean space E^3
             sage: N.ambient_metric().display()
-            g = dx*dx + dy*dy + dz*dz
+            g = dx⊗dx + dy⊗dy + dz⊗dz
             sage: N.ambient_metric() is M.metric()
             True
 
@@ -622,7 +704,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         Or in spherical coordinates::
 
             sage: N.normal().display(T[0].frame(),T[0])  # long time
-            n = d/dr_E3
+            n = ∂/∂r_E3
 
         Let us now consider a sphere of constant radius, i.e. not assumed to be
         part of a foliation, in stereographic coordinates::
@@ -865,9 +947,9 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             sage: N.lapse()
             Scalar field N on the Euclidean space E^3
             sage: N.lapse().display()
-            N: E^3 --> R
-               (x, y, z) |--> 1
-               (th_E3, ph_E3, r_E3) |--> 1
+            N: E^3 → ℝ
+               (x, y, z) ↦ 1
+               (th_E3, ph_E3, r_E3) ↦ 1
 
         """
         if self._dim_foliation == 0:
@@ -1050,12 +1132,12 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             Field of symmetric bilinear forms K on the 1-dimensional Riemannian
              submanifold N embedded in the Euclidean plane E^2
             sage: N.second_fundamental_form().display()  # long time
-            K = -4/(x^4 + 8*x^2 + 16) dx*dx
+            K = -4/(x^4 + 8*x^2 + 16) dx⊗dx
 
         An alias is ``extrinsic_curvature``::
 
             sage: N.extrinsic_curvature().display()  # long time
-            K = -4/(x^4 + 8*x^2 + 16) dx*dx
+            K = -4/(x^4 + 8*x^2 + 16) dx⊗dx
 
         An example with a non-Euclidean ambient metric::
 
@@ -1072,7 +1154,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             Field of symmetric bilinear forms K on the 1-dimensional Riemannian
              submanifold N embedded in the 2-dimensional Riemannian manifold M
             sage: N.second_fundamental_form().display()
-            K = 2*sqrt(u^4 + 2*u^2 + 2)*u/(u^6 + 3*u^4 + 4*u^2 + 2) du*du
+            K = 2*sqrt(u^4 + 2*u^2 + 2)*u/(u^6 + 3*u^4 + 4*u^2 + 2) du⊗du
 
         """
         if self._ambient._dim - self._dim != 1:
@@ -1313,9 +1395,9 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
         which is constant and equal to 1 (the norm of the unit normal vector)::
 
             sage: gnn.display()
-            E^3 --> R
-            (x, y, z) |--> 1
-            (th_E3, ph_E3, r_E3) |--> 1
+            E^3 → ℝ
+            (x, y, z) ↦ 1
+            (th_E3, ph_E3, r_E3) ↦ 1
 
         """
         if self._ambient._dim - self._dim != 1:
@@ -1387,9 +1469,9 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             Scalar field on the 1-dimensional Riemannian submanifold N embedded
              in the Euclidean plane E^2
             sage: N.gauss_curvature().display()  # long time
-            N --> R
-            on U: x |--> -1
-            on V: y |--> -1
+            N → ℝ
+            on U: x ↦ -1
+            on V: y ↦ -1
 
         """
         if self._ambient._dim - self._dim != 1:
@@ -1447,7 +1529,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             [(Vector field e_0 on the 1-dimensional Riemannian submanifold N
               embedded in the Euclidean plane E^2, -1)]
             sage: N.principal_directions(stereoN)[0][0].display()  # long time
-            e_0 = d/dx
+            e_0 = ∂/∂x
 
         """
         if self._ambient._dim - self._dim != 1:
@@ -1514,9 +1596,9 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             [Scalar field k_0 on the 1-dimensional Riemannian submanifold N
              embedded in the Euclidean plane E^2]
             sage: N.principal_curvatures(stereoN)[0].display()  # long time
-            k_0: N --> R
-            on U: x |--> -1
-            on W: y |--> -1
+            k_0: N → ℝ
+            on U: x ↦ -1
+            on W: y ↦ -1
 
         """
         if self._ambient._dim - self._dim != 1:
@@ -1572,9 +1654,9 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             Scalar field on the 1-dimensional Riemannian submanifold N
              embedded in the Euclidean plane E^2
             sage: N.mean_curvature().display()  # long time
-            N --> R
-            on U: x |--> -1
-            on V: y |--> -1
+            N → ℝ
+            on U: x ↦ -1
+            on V: y ↦ -1
 
         """
         if self._ambient._dim - self._dim != 1:
@@ -1626,7 +1708,7 @@ class PseudoRiemannianSubmanifold(PseudoRiemannianManifold,
             Tensor field of type (1,1) on the 1-dimensional Riemannian
              submanifold N embedded in the Euclidean plane E^2
             sage: N.shape_operator().display()  # long time
-            -d/dx*dx
+            -∂/∂x⊗dx
 
         """
         if self._ambient._dim - self._dim != 1:

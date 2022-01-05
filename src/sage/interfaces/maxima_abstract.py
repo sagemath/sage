@@ -62,7 +62,6 @@ from sage.cpython.string import bytes_to_str
 from sage.misc.misc import ECL_TMP
 from sage.misc.multireplace import multiple_replace
 from sage.structure.richcmp import richcmp, rich_to_bool
-import sage.server.support
 
 from .interface import (Interface, InterfaceElement, InterfaceFunctionElement,
                         InterfaceFunction, AsciiArtString)
@@ -166,9 +165,6 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             ...
         """
         cmd = '{} --very-quiet --batch-string="{}({});" '.format(MAXIMA, command, s)
-        if sage.server.support.EMBEDDED_MODE:
-            cmd += '< /dev/null'
-
         env = os.environ.copy()
         env['TMPDIR'] = str(ECL_TMP)
 
@@ -674,9 +670,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 ##         represented in 2-d.
 
 ##         INPUT:
-##             flag -- bool (default: True)
 
-##         EXAMPLES
+##         flag -- bool (default: True)
+
+##         EXAMPLES::
+
 ##             sage: maxima('1/2')
 ##             1/2
 ##             sage: maxima.display2d(True)
@@ -994,9 +992,9 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             raise ValueError("n (=%s) must be >= 1" % n)
         s = repr(self('qunit(%s)' % n)).lower()
         r = re.compile(r'sqrt\(.*\)')
-        a = QuadraticField(n, 'a').gen()
+        Qa = QuadraticField(n, 'a')
         s = r.sub('a', s)
-        return eval(s)
+        return Qa(s)
 
     def plot_list(self, ptsx, ptsy, options=None):
         r"""
@@ -1766,7 +1764,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             sage: y,d = var('y,d')
             sage: f = function('f')
             sage: latex(maxima(derivative(f(x*y), x)))
-            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it t}_{0}}}\,f\left({\it t}_{0}\right)  \right|_{{\it t}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
+            \left(\left.{{{\it \partial}}\over{{\it \partial}\,  {\it \_symbol}_{0}}}\,f\left(  {\it \_symbol}_{0}\right)\right|_{  {\it \_symbol}_{0}={\it x}\,  {\it y}}\right)\,{\it y}
             sage: latex(maxima(derivative(f(x,y,d), d,x,x,y)))
             {{{\it \partial}^4}\over{{\it \partial}\,{\it d}\,  {\it \partial}\,{\it x}^2\,{\it \partial}\,  {\it y}}}\,f\left({\it x} ,  {\it y} , {\it d}\right)
             sage: latex(maxima(d/(d-2)))
@@ -1774,8 +1772,8 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         self._check_valid()
         P = self.parent()
-        s = P._eval_line('tex(%s);'%self.name(), reformat=False)
-        if not '$$' in s:
+        s = P._eval_line('tex(%s);' % self.name(), reformat=False)
+        if '$$' not in s:
             raise RuntimeError("Error texing Maxima object.")
         i = s.find('$$')
         j = s.rfind('$$')

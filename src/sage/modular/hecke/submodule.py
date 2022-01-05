@@ -364,7 +364,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             bound = A.hecke_bound()
         while True:
             if anemic:
-                while N % p == 0: p = arith.next_prime(p)
+                while N % p == 0:
+                    p = arith.next_prime(p)
             verbose("using T_%s"%p)
             f = self.hecke_polynomial(p)
             T = A.hecke_matrix(p)
@@ -568,7 +569,8 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             bound = A.hecke_bound()
         while True:
             if anemic:
-                while N % p == 0: p = arith.next_prime(p)
+                while N % p == 0:
+                    p = arith.next_prime(p)
             verbose("using T_%s"%p)
             f = self.hecke_polynomial(p)
             T = A.dual_hecke_matrix(p)

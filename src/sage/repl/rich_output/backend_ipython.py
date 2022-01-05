@@ -413,8 +413,9 @@ class BackendIPythonCommandline(BackendIPython):
             '...<script ...</script>...'
         """
         from sage.env import THREEJS_DIR
+        from sage.repl.rich_output.display_manager import _required_threejs_version
 
-        script = os.path.join(THREEJS_DIR, 'build/three.min.js')
+        script = os.path.join(THREEJS_DIR, '{}/three.min.js'.format(_required_threejs_version()))
 
         if sys.platform == 'cygwin':
             import cygwin
@@ -597,13 +598,15 @@ class BackendIPythonNotebook(BackendIPython):
             sage: from sage.repl.rich_output.backend_ipython import BackendIPythonNotebook
             sage: backend = BackendIPythonNotebook()
             sage: backend.threejs_offline_scripts()
-            '...<script src="/nbextensions/threejs/build/three.min...<\\/script>...'
+            '...<script src="/nbextensions/threejs-sage/r.../three.min.js...<\\/script>...'
         """
         from sage.repl.rich_output import get_display_manager
+        from sage.repl.rich_output.display_manager import _required_threejs_version
         CDN_script = get_display_manager().threejs_scripts(online=True)
+        CDN_script = CDN_script.replace('</script>', r'<\/script>').replace('\n', ' \\\n')
         return """
-<script src="/nbextensions/threejs/build/three.min.js"></script>
+<script src="/nbextensions/threejs-sage/{}/three.min.js"></script>
 <script>
   if ( !window.THREE ) document.write('{}');
 </script>
-        """.format(CDN_script.replace('</script>', r'<\/script>').replace('\n', ' \\\n'))
+        """.format(_required_threejs_version(), CDN_script)

@@ -45,6 +45,10 @@ sdh_make_install PREFIX="$SAGE_LOCAL" NO_STATIC=1 $OPENBLAS_CONFIGURE
 cd ..
 ./write_pc_file.py
 
+# Save configuration for spkg-check
+echo >&2 "Writing configuration to $(pwd)/set_openblas_configure"
+echo OPENBLAS_CONFIGURE=\'"$OPENBLAS_CONFIGURE"\' > set_openblas_configure
+
 # OpenBLAS's Makefile has a bug w.r.t. calling install_name_tool when
 # DESTDIR is set.  It should *not* include the DESTDIR in the library's
 # install_name; we set the correct install_name here

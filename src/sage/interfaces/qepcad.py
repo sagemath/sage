@@ -1214,7 +1214,8 @@ class Qepcad:
         for line in lines:
             if 'Information about the cell' in line:
                 in_cell = True
-            if in_cell: cell_lines.append(line)
+            if in_cell:
+                cell_lines.append(line)
             if line == '----------------------------------------------------':
                 cells.append(QepcadCell(self, cell_lines))
                 cell_lines = []
@@ -1285,10 +1286,12 @@ class Qepcad:
         result = self._qex._eval_line(cmd + ' &')
 
         nl = result.find('\n')
-        if nl < 0: nl = len(result)
+        if nl < 0:
+            nl = len(result)
 
         amp = result.find('&', 0, nl)
-        if amp > 0: result = result[amp+1:]
+        if amp > 0:
+            result = result[amp+1:]
 
         result = result.strip()
 
@@ -1802,15 +1805,23 @@ class qepcad_formula_factory:
             '='
         """
         import operator
-        if op == operator.eq: return '='
-        if op == operator.ne: return '/='
-        if op == operator.lt: return '<'
-        if op == operator.gt: return '>'
-        if op == operator.le: return '<='
-        if op == operator.ge: return '>='
+        if op == operator.eq:
+            return '='
+        if op == operator.ne:
+            return '/='
+        if op == operator.lt:
+            return '<'
+        if op == operator.gt:
+            return '>'
+        if op == operator.le:
+            return '<='
+        if op == operator.ge:
+            return '>='
 
-        if op == '==': return '='
-        if op == '!=': return '/='
+        if op == '==':
+            return '='
+        if op == '!=':
+            return '/='
 
         return op
 

@@ -37,7 +37,6 @@ test.spyx
 --root
 --rst2ipynb
 --ipynb2rst
---rst2txt
 --sh
 --singular
 --sqlite3
@@ -732,53 +731,6 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         sage: _ = test_executable(L)                        # optional - pandoc
         sage: print(open(output, 'r').read() == t)          # optional - pandoc
         True
-
-    Test ``sage --rst2txt file.rst`` on a ReST file::
-
-        sage: s = "::\n\n    sage: 2^10\n    1024\n    sage: 2 + 2\n    4"
-        sage: input = tmp_filename(ext='.rst')
-        sage: with open(input, 'w') as F:
-        ....:     _ = F.write(s)
-        sage: (out, err, ret) = test_executable(["sage", "--rst2txt", input]) # py2 # optional -- sagenb
-        sage: print(out) # py2 # optional -- sagenb
-        {{{id=0|
-        2^10
-        ///
-        1024
-        }}}
-        <BLANKLINE>
-        {{{id=1|
-        2 + 2
-        ///
-        4
-        }}}
-        sage: err # py2 # optional -- sagenb
-        ''
-        sage: ret # py2 # optional -- sagenb
-        0
-
-    Test ``sage --rst2txt file.rst file.txt`` on a ReST file::
-
-        sage: s = "::\n\n    sage: 2^10\n    1024\n    sage: 2 + 2\n    4"
-        sage: input = tmp_filename(ext='.rst')
-        sage: output = tmp_filename(ext='.txt')
-        sage: with open(input, 'w') as F:
-        ....:     _ = F.write(s)
-        sage: test_executable(["sage", "--rst2txt", input, output]) # py2 # optional -- sagenb
-        ('', ..., 0)
-        sage: print(open(output, 'r').read()) # py2 # optional -- sagenb
-        {{{id=0|
-        2^10
-        ///
-        1024
-        }}}
-        <BLANKLINE>
-        {{{id=1|
-        2 + 2
-        ///
-        4
-        }}}
-
     """
     pexpect_env = dict(os.environ)
     try:

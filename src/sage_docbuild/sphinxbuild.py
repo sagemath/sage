@@ -110,6 +110,7 @@ class SageSphinxLogger(object):
             re.compile('WARNING: Any IDs not assiend for figure node'),
             re.compile('WARNING: .* is not referenced'),
             re.compile('WARNING: Build finished'),
+            re.compile('WARNING: rST localisation for language .* not found')
         )
         # The warning "unknown config value 'multidoc_first_pass'..."
         # should only appear when building the documentation for a

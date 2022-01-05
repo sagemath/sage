@@ -96,9 +96,9 @@ def fan_isomorphism_generator(fan1, fan2):
         ....:             Cone([m2*vector([-1,-14]), m2*vector([-100, -5])])])
         sage: sorted(fan_isomorphism_generator(fan1, fan2))
         [
-        [18  1 -5]
-        [ 4  0 -1]
-        [ 5  0 -1]
+        [-12  1 -5]
+        [ -4  0 -1]
+        [ -5  0 -1]
         ]
 
         sage: m0 = identity_matrix(ZZ, 2)
@@ -125,15 +125,15 @@ def fan_isomorphism_generator(fan1, fan2):
         ]
         sage: sorted(fan_isomorphism_generator(fan1, fan2))
         [
-        [ 6 -3  7]  [18  1 -5]
-        [ 1 -1  2]  [ 4  0 -1]
-        [ 2 -1  2], [ 5  0 -1]
+        [-24  -3   7]  [-12   1  -5]
+        [ -7  -1   2]  [ -4   0  -1]
+        [ -8  -1   2], [ -5   0  -1]
         ]
         sage: sorted(fan_isomorphism_generator(fan2, fan1))
         [
-        [ 0 -1  1]  [ 0 -1  1]
-        [ 1 -7  2]  [ 2 -2 -5]
-        [ 0 -5  4], [ 1  0 -3]
+        [  0   1  -1]  [ 0  1 -1]
+        [  1 -13   8]  [ 2 -8  1]
+        [  0  -5   4], [ 1  0 -3]
         ]
     """
     if not fan_isomorphic_necessary_conditions(fan1, fan2):

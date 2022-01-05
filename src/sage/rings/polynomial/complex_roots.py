@@ -124,22 +124,26 @@ def intervals_disjoint(intvs):
 
         for (y_imag, y) in column:
             if prev_imag is not None and y_imag > prev_imag:
-                if not row_disjoint(): return False
+                if not row_disjoint():
+                    return False
                 row = []
             prev_imag = y_imag
             row.append(y)
-        if not row_disjoint(): return False
+        if not row_disjoint():
+            return False
         return True
 
     for x in intvs:
         x_real = x.real()
         if prev_real is not None and x_real > prev_real:
-            if not column_disjoint(): return False
+            if not column_disjoint():
+                return False
             column = []
         prev_real = x_real
         column.append((x.imag(), x))
 
-    if not column_disjoint(): return False
+    if not column_disjoint():
+        return False
     return True
 
 

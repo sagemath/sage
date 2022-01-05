@@ -30,7 +30,7 @@ jobs:
     - name: Install relint
       run: pip install tox relint
     - name: Lint using relint
-      run: tox -e relint src/
+      run: tox -e relint src/sage/
   lint-pyright:
     name: Static type check with pyright
     runs-on: ubuntu-latest

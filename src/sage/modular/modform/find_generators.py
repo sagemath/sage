@@ -400,8 +400,7 @@ class ModularFormsRing(SageObject):
             sage: ModularFormsRing(Gamma0(13)).generators(maxweight=12, prec=4)
             [(2, 1 + 2*q + 6*q^2 + 8*q^3 + O(q^4)), (4, 1 + O(q^4)), (4, q + O(q^4)), (4, q^2 + O(q^4)), (4, q^3 + O(q^4)), (6, 1 + O(q^4)), (6, q + O(q^4))]
             sage: ModularFormsRing(Gamma0(13),base_ring=ZZ).generators(maxweight=12, prec=4)
-            [(2, 1 + 2*q + 6*q^2 + 8*q^3 + O(q^4)), (4, O(q^4)), (4, q^3 + O(q^4)), (4, q^2 + O(q^4)), (4, q + O(q^4)), (6, O(q^4)), (6, O(q^4)), (12, O(q^4))]
-
+            [(2, 1 + 2*q + 6*q^2 + 8*q^3 + O(q^4)), (4, q + 4*q^2 + 10*q^3 + O(q^4)), (4, 2*q^2 + 5*q^3 + O(q^4)), (4, q^2 + O(q^4)), (4, -2*q^3 + O(q^4)), (6, O(q^4)), (6, O(q^4)), (12, O(q^4))]
             sage: [k for k,f in ModularFormsRing(1, QQ).generators(maxweight=12)]
             [4, 6]
             sage: [k for k,f in ModularFormsRing(1, ZZ).generators(maxweight=12)]

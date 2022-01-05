@@ -9,10 +9,11 @@
 
    https://www.sagemath.org
 
-The Sage Library is GPLv2+, and included packages have [compatible OSS
-licenses](./COPYING.txt). [Over 400 people](https://www.sagemath.org/development-map.html)
-have contributed code to Sage. In many cases, documentation for modules
-and functions list the authors.
+The Sage Library is GPLv2+, and included packages have
+[compatible OSS licenses](./COPYING.txt).
+[Over 400 people](https://www.sagemath.org/development-map.html)
+have contributed code to Sage. In many cases, documentation
+for modules and functions list the authors.
 
 Getting Started
 ---------------
@@ -22,7 +23,7 @@ If you downloaded a [binary](https://www.sagemath.org/download.html)
 Sage is ready to start -- just open a terminal in the directory where
 you extracted the binary archive and type:
 
-    ./sage
+    $ ./sage
 
 (Note that the first run will take more time, as Sage needs to get itself ready.)
 
@@ -118,9 +119,9 @@ virtual appliance](https://wiki.sagemath.org/SageAppliance).
 ------------------------------
 
 Make sure you have installed the most current version of Xcode
-supported on your version of macOS.  If you don't, go to
+supported on your version of macOS.  If you don't, either go to
 https://developer.apple.com/, sign up, and download the free Xcode
-package.
+package, or get it from Apple's app store.
 
 You also need to install the "command line tools": After installing
 Xcode, run `xcode-select --install` from a terminal window; then click
@@ -131,7 +132,7 @@ and then "Install" the Command Line Tools.)
 
 Optionally, you can consider installing Homebrew ("the missing package
 manager for macOS") from https://brew.sh/, which can provide libraries
-such gfortran, gmp, etc.
+such as gfortran, gmp, etc.
 
 Instructions to Build from Source
 ---------------------------------
@@ -173,11 +174,12 @@ Guide](https://doc.sagemath.org/html/en/installation).
 
     - [Git] Alternatively, clone the Sage git repository:
 
-            $ git clone -c core.symlinks=true --branch master https://github.com/sagemath/sage.git
+            $ ORIG=https://github.com/sagemath/sage.git
+            $ git clone -c core.symlinks=true --branch master $ORIG
 
-      This will create the subdirectory `sage`. `cd sage/` and pick the branch you need
-      by doing `git checkout` - typically you want the latest development branch, thus do
-      `git checkout develop`.
+      This will create the subdirectory `sage`. `cd sage/` and pick
+      the branch you need by doing `git checkout` - typically you want
+      the latest development branch, thus do `git checkout develop`.
 
     - [Windows] The Sage source tree contains symbolic links, and the
       build will not work if Windows line endings rather than UNIX
@@ -186,8 +188,8 @@ Guide](https://doc.sagemath.org/html/en/installation).
       Therefore it is crucial that you unpack the source tree from the
       Cygwin (or WSL) `bash` using the Cygwin (or WSL) `tar` utility
       and not using other Windows tools (including mingw). Likewise,
-      when using `git`, it is recommended (but not necessary) to use the Cygwin (or WSL)
-      version of `git`.
+      when using `git`, it is recommended (but not necessary) to use
+      the Cygwin (or WSL) version of `git`.
 
 3. `cd` into the source/build directory:
 
@@ -224,11 +226,16 @@ Guide](https://doc.sagemath.org/html/en/installation).
      avoid having to build Sage's own copy of Python 3.
 
    We have collected lists of system packages that provide these build
-   prerequisites. See [build/pkgs/arch.txt](build/pkgs/arch.txt),
-   [cygwin.txt](build/pkgs/cygwin.txt),
-   [debian.txt](build/pkgs/debian.txt) (also for Ubuntu, Linux Mint,
-   etc.), [fedora.txt](build/pkgs/fedora.txt) (also for Red Hat,
-   CentOS), and [slackware.txt](build/pkgs/slackware.txt).
+   prerequisites. See, in the folder
+   [build/pkgs/_prereq/distros](build/pkgs/_prereq/distros),
+   the files
+   [arch.txt](build/pkgs/_prereq/distros/arch.txt),
+   [cygwin.txt](build/pkgs/_prereq/distros/cygwin.txt),
+   [debian.txt](build/pkgs/_prereq/distros/debian.txt)
+   (also for Ubuntu, Linux Mint, etc.),
+   [fedora.txt](build/pkgs/_prereq/distros/fedora.txt)
+   (also for Red Hat, CentOS), and
+   [slackware.txt](build/pkgs/_prereq/distros/slackware.txt).
 
 7. Optional, but highly recommended: Make sure your system has an SSL
    library and its development files installed.
@@ -245,7 +252,7 @@ Guide](https://doc.sagemath.org/html/en/installation).
 9. Optionally, review the configuration options, which includes
    many optional packages:
 
-        ./configure --help
+        $ ./configure --help
 
 10. Optional, but highly recommended: Set some environment variables to
    customize the build.
@@ -353,16 +360,31 @@ SAGE_ROOT                 Root directory (sage-x.y.z in Sage tarball)
 │       ├── atlas
 │       …
 │       └── zn_poly
+├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
-├── local                 Compiled packages are installed here
+├── pkgs                  Source trees of Python distribution packages
+│   ├── sage-conf
+│   │   ├── sage_conf.py
+│   │   └── setup.py
+│   ├── sage-docbuild
+│   │   ├── sage_docbuild
+│   │   └── setup.py
+│   ├── sage-sws2rst
+│   │   ├── sage_sws2rst
+│   │   └── setup.py
+│   └── sagemath-standard
+│       ├── bin
+│       ├── sage
+│       └── setup.py
+├── local  (SAGE_LOCAL)   Compiled packages are installed here
 │   ├── bin               Executables
 │   ├── include           C/C++ headers
 │   ├── lib               Shared libraries
 │   ├── share             Databases, architecture-independent data, docs
-│       └── doc           Viewable docs of Sage and of some components
+│   │   └── doc           Viewable docs of Sage and of some components
 │   └── var
-│       ├── sage          List of installed packages
-│       └── tmp           Temporary files when building Sage
+│       ├── lib/sage      List of installed packages
+│       └── tmp/sage      Temporary files when building Sage
 ├── logs
 │   ├── dochtml.log       Log of the documentation build
 │   ├── install.log       Full install log
@@ -375,7 +397,7 @@ SAGE_ROOT                 Root directory (sage-x.y.z in Sage tarball)
 ├── Makefile              Running "make" uses this file
 ├── README.md             This file
 ├── sage                  Script to start Sage
-├── src                   All of Sage source (not third-party packages)
+├── src                   Monolithic Sage library source tree
 │   ├── bin               Scripts that Sage uses internally
 │   ├── doc               Sage documentation sources
 │   └── sage              The Sage library source code
@@ -470,7 +492,7 @@ do.
 
 2. (**Obsolete, probably broken**) To make your own source tarball of Sage, type:
 
-       sage --sdist
+        $ sage --sdist
 
    The result is placed in the directory `dist/`.
 

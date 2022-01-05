@@ -385,9 +385,9 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
 
 - ``sdh_configure [...]``: Runs ``./configure`` with arguments
   ``--prefix="$SAGE_LOCAL"``, ``--libdir="$SAGE_LOCAL/lib"``,
-  ``--disable-maintainer-mode``, and
-  ``--disable-dependency-tracking``. Additional arguments to
-  ``./configure`` may be given as arguments.
+  ``--disable-static``, ``--disable-maintainer-mode``, and
+  ``--disable-dependency-tracking``. Additional arguments to ``./configure``
+  may be given as arguments.
 
 - ``sdh_make [...]``: Runs ``$MAKE`` with the default target.
    Additional arguments to ``$MAKE`` may be given as arguments.
@@ -410,6 +410,9 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
    ``sdh_pip_install`` actually does the installation via ``pip wheel``,
    creating a wheel file in ``dist/``, followed by
    ``sdh_store_and_pip_install_wheel`` (see below).
+
+- ``sdh_pip_uninstall [...]``: Runs ``pip uninstall`` with the given arguments.
+   If unsuccessful, it displays a warning.
 
 - ``sdh_store_and_pip_install_wheel .``: The current directory,
    indicated by the required argument ``.``, must have a subdirectory

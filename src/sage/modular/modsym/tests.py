@@ -172,7 +172,7 @@ class Test:
             sage: from sage.modular.modsym.tests import Test
             sage: Test()._modular_symbols_space_gamma1() # random
             level = 3, weight = 4, sign = 0
-            Modular Symbols space of dimension 2 for Gamma_1(3) of weight 4 with sign 0 and over Rational Field
+            Modular Symbols space of dimension 2 for Gamma_1(3) of weight 4 with sign 0 over Rational Field
         """
         level, weight, sign = self._level_weight_sign()
         M = modsym.ModularSymbols(arithgroup.Gamma1(level), weight, sign)
@@ -329,7 +329,7 @@ class Test:
             sage: Test().test_decomposition() # random
             gamma1
             level = 10, weight = 4, sign = 0
-            Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 and over Rational Field
+            Modular Symbols space of dimension 18 for Gamma_1(10) of weight 4 with sign 0 over Rational Field
         """
         M = self._modular_symbols_space()
         D = M.decomposition()
@@ -345,7 +345,7 @@ class Test:
             sage: Test().test_dimension() # random
             gamma1
             level = 14, weight = 2, sign = -1
-            Modular Symbols space of dimension 1 for Gamma_1(14) of weight 2 with sign -1 and over Rational Field
+            Modular Symbols space of dimension 1 for Gamma_1(14) of weight 2 with sign -1 over Rational Field
         """
         self._modular_symbols_space().dimension()
 

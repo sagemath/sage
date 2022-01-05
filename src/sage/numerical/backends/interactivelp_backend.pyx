@@ -40,14 +40,6 @@ cdef class InteractiveLPBackend:
 
         sage: from sage.numerical.backends.generic_backend import get_solver
         sage: p = get_solver(solver = "InteractiveLP")
-
-    TESTS:
-
-    General backend testsuite::
-
-        sage: p = MixedIntegerLinearProgram(solver="InteractiveLP")
-        sage: TestSuite(p.get_backend()).run(skip="_test_pickling")
-
     """
 
     def __cinit__(self, maximization = True, base_ring = None):

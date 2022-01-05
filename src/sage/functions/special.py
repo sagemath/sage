@@ -594,7 +594,7 @@ class EllipticEU(BuiltinFunction):
 
         E(u,m)=
         \int_0^u \mathrm{dn}(x,m)^2\, dx = \int_0^\tau
-        {\sqrt{1-m x^2}\over\sqrt{1-x^2}}\, dx.
+        \frac{\sqrt{1-m x^2}}{\sqrt{1-x^2}}\, dx.
 
     where `\tau = \mathrm{sn}(u, m)`.
 

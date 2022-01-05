@@ -23,18 +23,16 @@ Methods
 
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
+from libc.stdint cimport uint32_t
+from cysignals.signals cimport sig_on, sig_off, sig_check
+from memory_allocator cimport MemoryAllocator
 
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph
 from sage.graphs.base.static_sparse_graph cimport has_edge
-from libc.stdint cimport uint32_t
-
-from cysignals.signals cimport sig_on, sig_off, sig_check
 
 from sage.sets.set import Set
-
 from sage.graphs.traversals cimport maximum_cardinality_search_M_short_digraph
 
 def make_tree(atoms, cliques):

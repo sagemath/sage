@@ -154,20 +154,6 @@ from IPython.terminal.ipapp import TerminalIPythonApp, IPAppCrashHandler
 from IPython.core.crashhandler import CrashHandler
 
 
-def embedded():
-    """
-    Return True if Sage is being run from the notebook.
-
-    EXAMPLES::
-
-        sage: from sage.repl.interpreter import embedded
-        sage: embedded()
-        False
-    """
-    import sage.server.support
-    return sage.server.support.EMBEDDED_MODE
-
-
 # TODO: This global variable _do_preparse should be associated with an
 # IPython InteractiveShell as opposed to a global variable in this
 # module.

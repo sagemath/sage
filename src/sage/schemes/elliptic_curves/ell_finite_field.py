@@ -294,7 +294,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: k = GF(next_prime(7^5))
             sage: E = EllipticCurve(k,[2,4])
-            sage: P = E.random_element(); P # random
+            sage: P = E.random_element(); P  # random
             (16740 : 12486 : 1)
             sage: type(P)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
@@ -305,7 +305,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: k.<a> = GF(7^5)
             sage: E = EllipticCurve(k,[2,4])
-            sage: P = E.random_element(); P
+            sage: P = E.random_element(); P  # random
             (5*a^4 + 3*a^3 + 2*a^2 + a + 4 : 2*a^4 + 3*a^3 + 4*a^2 + a + 5 : 1)
             sage: type(P)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
@@ -316,7 +316,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: k.<a> = GF(2^5)
             sage: E = EllipticCurve(k,[a^2,a,1,a+1,1])
-            sage: P = E.random_element(); P
+            sage: P = E.random_element();P  # random
             (a^4 + a : a^4 + a^3 + a^2 : 1)
             sage: type(P)
             <class 'sage.schemes.elliptic_curves.ell_point.EllipticCurvePoint_finite_field'>
@@ -326,10 +326,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         Ensure that the entire point set is reachable::
 
             sage: E = EllipticCurve(GF(11), [2,1])
-            sage: len(set(E.random_element() for _ in range(100)))
-            16
-            sage: E.cardinality()
-            16
+            sage: S = set()
+            sage: while len(S) < E.cardinality():
+            ....:     S.add(E.random_element())
 
         TESTS:
 
@@ -755,10 +754,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: E.abelian_group()
             Additive abelian group isomorphic to Z/22 + Z/2 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 2*x + 5 over Finite Field of size 41
-            sage: E.abelian_group().gens()
-            ((30 : 13 : 1), (23 : 0 : 1))
-            sage: E.gens()
-            ((30 : 13 : 1), (23 : 0 : 1))
+            sage: ab_gens = E.abelian_group().gens()
+            sage: ab_gens == E.gens()
+            True
             sage: E.gens()[0].order()
             22
             sage: E.gens()[1].order()
@@ -785,11 +783,13 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: len(E.gens())
             2
             sage: E.cardinality()
-            867361737988403547207212930746733987710588
-            sage: E.gens()[0].order()
-            433680868994201773603606465373366993855294
-            sage: E.gens()[1].order()
-            433680868994201773603606465373366993855294
+            867361737988403547206134229616487867594472
+            sage: a = E.gens()[0].order(); a # random
+            433680868994201773603067114808243933797236
+            sage: b = E.gens()[1].order(); b # random
+            30977204928157269543076222486303138128374
+            sage: lcm(a,b)
+            433680868994201773603067114808243933797236
         """
         G = self.__pari__().ellgroup(flag=1)
         return tuple(self.point(list(pt)) for pt in G[2])

@@ -248,7 +248,7 @@ class FunctionHeaviside(GinacFunction):
             sage: heaviside(x)._sympy_()
             Heaviside(x)
             sage: heaviside(x)._giac_()
-            Heaviside(x)
+            Heaviside(sageVARx)
             sage: h(x) = heaviside(x)
             sage: h(pi).numerical_approx()
             1.00000000000000
@@ -405,7 +405,7 @@ class FunctionSignum(BuiltinFunction):
         sage: sgn(x)._fricas_init_()
         '(x+->abs(x)/x)(x)'
         sage: sgn(x)._giac_()
-        sign(x)
+        sign(sageVARx)
 
     Test for :trac:`31085`::
 

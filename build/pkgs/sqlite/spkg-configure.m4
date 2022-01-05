@@ -26,7 +26,8 @@ SAGE_SPKG_CONFIGURE([sqlite], [
                        [AC_MSG_RESULT([yes])],
                        [AC_MSG_RESULT([no])
                         LIBS="$SQLITE_SAVED_LIBS"
-                        sage_spkg_install_sqlite=yes])
+                        sage_spkg_install_sqlite=yes],
+                       [AC_MSG_RESULT([cross compiling. assume yes])])
   m4_popdef([SAGE_SQLITE3_MIN_VERSION_MAJOR])
   m4_popdef([SAGE_SQLITE3_MIN_VERSION_MINOR])
   m4_popdef([SAGE_SQLITE3_MIN_VERSION_MICRO])

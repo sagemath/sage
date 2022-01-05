@@ -1818,7 +1818,7 @@ class WeakTableau_factorized_permutation(WeakTableau_abstract):
         """
         W = WeylGroup(['A', k, 1], prefix='s')
         if len(t) > 0:
-            if isinstance(t[0], list) or isinstance(t[0], tuple):
+            if isinstance(t[0], (list, tuple)):
                 w_tuple = tuple(W.from_reduced_word(p) for p in t)
             else:
                 w_tuple = tuple(W(r) for r in t)

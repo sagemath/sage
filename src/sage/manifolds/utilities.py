@@ -1323,7 +1323,7 @@ def exterior_derivative(form):
         sage: da = xder(a); da
         2-form da on the 3-dimensional differentiable manifold M
         sage: da.display()
-        da = (-z + 1) dx/\dy + (y*z - y) dx/\dz + (x*z + y) dy/\dz
+        da = (-z + 1) dx∧dy + (y*z - y) dx∧dz + (x*z + y) dy∧dz
         sage: dda = xder(da); dda
         3-form dda on the 3-dimensional differentiable manifold M
         sage: dda.display()

@@ -1369,7 +1369,8 @@ class FinitePosets(CategoryWithAxiom):
                 orbit = [ A ]
                 while True:
                     A = frozenset(self.order_ideal_complement_generators(A))
-                    if A not in AC: break
+                    if A not in AC:
+                        break
                     orbit.append( A )
                     AC.remove( A )
                 orbits.append([element_constructor(_) for _ in orbit])
@@ -1496,7 +1497,8 @@ class FinitePosets(CategoryWithAxiom):
                 orbit = [ A ]
                 while True:
                     A = self.order_ideal_toggles(A, vs)
-                    if A not in OI: break
+                    if A not in OI:
+                        break
                     orbit.append( A )
                     OI.remove( A )
                 orbits.append([element_constructor(_) for _ in orbit])

@@ -8,6 +8,7 @@ SAGE_SPKG_CONFIGURE([xz], [
               AS_IF([test -n "$xz_version"], [
                   AX_COMPARE_VERSION([$xz_version], [ge], [4.999.0], [
                       ac_cv_path_XZ="$ac_path_XZ"
+                      ac_path_XZ_found=:
                   ])
               ])
             ])

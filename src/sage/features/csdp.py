@@ -31,7 +31,7 @@ class CSDP(Executable):
             True
         """
         Executable.__init__(self, name="CSDP", spkg="csdp", executable="theta",
-                                url="http://github.org/dimpase/csdp")
+                                url="https://github.com/dimpase/csdp")
 
     def is_functional(self):
         r"""

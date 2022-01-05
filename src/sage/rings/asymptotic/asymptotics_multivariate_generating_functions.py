@@ -3681,6 +3681,7 @@ def diff_prod(f_derivs, u, g, X, interval, end, uderivs, atc):
         D = {}
         rhs = []
         lhs = []
+        new_vars = []
         for t in combinations_with_replacement(X, l):
             t = list(t)
             s = t + end
@@ -3689,13 +3690,15 @@ def diff_prod(f_derivs, u, g, X, interval, end, uderivs, atc):
             # Since Sage's solve command can't take derivatives as variable
             # names, make new variables based on t to stand in for
             # diff(u, t) and store them in D.
-            D[diff(u, t).subs(atc)] = var('zing' +
-                                          ''.join(str(x) for x in t))
+            new_var = SR.temp_var()
+            new_vars.append(new_var)
+            D[diff(u, t).subs(atc)] = new_var
         eqns = [lhs[i] == rhs[i].subs(uderivs).subs(D)
                 for i in range(len(lhs))]
         variables = D.values()
         sol = solve(eqns, *variables, solution_dict=True)
         uderivs.update(subs_all(D, sol[ZZ.zero()]))
+        SR.cleanup_var(new_vars)
     return uderivs
 
 
@@ -4027,7 +4030,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
         sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)
         sage: sorted(DD)
         [(0, 0, 0), (0, 1, 0), (0, 1, 1), (0, 1, 2)]
-        sage: len(DD[(0, 1, 2)])
+        sage: DD[(0, 1, 2)].number_of_operands()
         246
     """
     from itertools import product

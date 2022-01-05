@@ -1,13 +1,30 @@
 """
 Morphisms
 
+This module defines the base classes of morphisms between objects of a given
+category.
+
+EXAMPLES:
+
+Typically, a morphism is defined by the images of the generators of the domain. ::
+
+    sage: X.<a, b> = ZZ[]
+    sage: Y.<c> = ZZ[]
+    sage: X.hom([c, c^2])
+    Ring morphism:
+      From: Multivariate Polynomial Ring in a, b over Integer Ring
+      To:   Univariate Polynomial Ring in c over Integer Ring
+      Defn: a |--> c
+            b |--> c^2
+
 AUTHORS:
 
-- William Stein: initial version
+- William Stein (2005): initial version
 
-- David Joyner (12-17-2005): added examples
+- David Joyner (2005-12-17): added examples
 
-- Robert Bradshaw (2007-06-25) Pyrexification
+- Robert Bradshaw (2007-06-25): Pyrexification
+
 """
 
 #*****************************************************************************
@@ -20,12 +37,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from cpython.object cimport *
-from sage.misc.constant_function import ConstantFunction
-
 import operator
 
+from cpython.object cimport *
 
+from sage.misc.constant_function import ConstantFunction
 
 from sage.structure.element cimport Element, ModuleElement
 from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
@@ -340,7 +356,14 @@ cdef class Morphism(Map):
             ...
             NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'> and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
 
-        Check that :trac:`29632` is fixed::
+        We check that :trac:`28617` is fixed::
+
+            sage: FF = GF(2^20)
+            sage: f = FF.frobenius_endomorphism()
+            sage: f == FF.frobenius_endomorphism()
+            True
+
+        and that :trac:`29632` is fixed::
 
             sage: R.<x,y> = QuadraticField(-1)[]
             sage: f = R.hom(R.gens(), R)
@@ -368,14 +391,19 @@ cdef class Morphism(Map):
             # If so, we see the base as a ring of scalars and create new
             # gens by picking an element of the initial domain (e) and
             # multiplying it with the gens of the scalar ring.
+            #
+            # It is known that this way of comparing morphisms may give
+            # a mathematically wrong answer. See Trac #28617 and #31783.
             if e is not None and isinstance(e, ModuleElement):
                 B = (<ModuleElement>e)._parent._base
-                gens = [(<ModuleElement>e)._lmul_(B.coerce(x)) for x in gens]
-            for e in gens:
-                x = self(e)
-                y = other(e)
+                gens = [e * B.coerce(x) for x in gens]
+            for g in gens:
+                x = self(g)
+                y = other(g)
                 if x != y:
                     return richcmp_not_equal(x, y, op)
+                if e is None and g:
+                    e = g
             # Check base
             base = domain._base
             if base is None or base is domain:
@@ -442,7 +470,7 @@ cdef class IdentityMorphism(Morphism):
     cpdef Element _call_(self, x):
         return x
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}): 
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         if not args and not kwds:
             return x
         cdef Parent C = self._codomain

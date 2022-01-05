@@ -76,14 +76,14 @@ def algebraic_topological_model(K, base_ring=None):
     of `K`, as described in [GDR2003]_ and [PR2015]_.
 
     Implementation details: the cell complex `K` must have an
-    :meth:`~sage.homology.cell_complex.GenericCellComplex.n_cells`
+    :meth:`~sage.topology.cell_complex.GenericCellComplex.n_cells`
     method from which we can extract a list of cells in each
     dimension. Combining the lists in increasing order of dimension
     then defines a filtration of the complex: a list of cells in which
     the boundary of each cell consists of cells earlier in the
     list. This is required by Pilarczyk and Réal's algorithm.  There
     must also be a
-    :meth:`~sage.homology.cell_complex.GenericCellComplex.chain_complex`
+    :meth:`~sage.topology.cell_complex.GenericCellComplex.chain_complex`
     method, to construct the chain complex `C` associated to this
     chain complex.
 

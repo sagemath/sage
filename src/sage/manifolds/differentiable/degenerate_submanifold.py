@@ -12,7 +12,7 @@ for instance in Differential Geometry (especially in geometry of
 lightlike submanifold) and in General Relativity. In geometry of lightlike
 submanifolds, according to the dimension `r` of the radical distribution
 (see below for definition of radical distribution), degenerate submanifolds
-have been classify into 4 subgroups: `r`-lightlike submanifolds, Coisotropic
+have been classified into 4 subgroups: `r`-lightlike submanifolds, Coisotropic
 submanifolds, Isotropic submanifolds and Totally lightlike submanifolds.
 (See the book of Krishan L. Duggal and Aurel Bejancu [DS2010]_.)
 
@@ -1243,8 +1243,8 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             sage: Sc = S.screen('Sc', (U,V), xi);  # long time
             sage: K = S.gauss_curvature();         # long time
             sage: K.display()                      # long time
-            S --> R
-            (u, v, w) |--> 0
+            S → ℝ
+            (u, v, w) ↦ 0
 
         """
         if self._ambient._dim-self._dim != 1:
@@ -1366,8 +1366,8 @@ class DegenerateSubmanifold(DegenerateManifold, DifferentiableSubmanifold):
             Scalar field on the degenerate hypersurface S embedded in 4-dimensional
             differentiable manifold M
             sage: m.display()                      # long time
-            S --> R
-            (u, v, w) |--> 0
+            S → ℝ
+            (u, v, w) ↦ 0
 
         """
         if self._codim != 1:
@@ -1497,15 +1497,15 @@ class Screen(VectorFieldModule):
     transversal vector field::
 
         sage: xi = S.normal_tangent_vector(); xi.display()  # long time
-        xi = -d/dt
+        xi = -∂/∂t
         sage: N = S.rigging(); N.display()  # long time
-        N = d/dt - d/dr
+        N = ∂/∂t - ∂/∂r
 
     Those vector fields are normalized by `g(\xi,N)=1`::
 
         sage: g.along(Phi)(xi, N).display()  # long time
-        g(xi,N): H --> R
-        (ht, hth, hph) |--> 1
+        g(xi,N): H → ℝ
+        (ht, hth, hph) ↦ 1
 
     """
 
@@ -1650,7 +1650,7 @@ class Screen(VectorFieldModule):
             sage: U = M.vector_field(); U[2] = 1; V = M.vector_field(); V[3] = 1
             sage: Sc = S.screen('Sc', (U,V), xi);                  # long time
             sage: Rad = Sc.normal_tangent_vector(); Rad.display()  # long time
-            xi = d/dt + d/dx
+            xi = ∂/∂t + ∂/∂x
 
         """
         rad = [elt.along(self._domain.immersion()) for elt in self._rad]
@@ -1694,7 +1694,7 @@ class Screen(VectorFieldModule):
             sage: U = M.vector_field(); U[2] = 1; V = M.vector_field(); V[3] = 1
             sage: Sc = S.screen('Sc', (U,V), xi);    # long time
             sage: rig = Sc.rigging(); rig.display()  # long time
-            N = -1/2 d/dt + 1/2 d/dx
+            N = -1/2 ∂/∂t + 1/2 ∂/∂x
 
         """
         im = self._domain.immersion()

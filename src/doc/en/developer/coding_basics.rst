@@ -961,13 +961,33 @@ framework. Here is a comprehensive list:
       sage: hash(c)  # random
       This doctest passes too, as the output is not checked
 
-  However, most functions generating pseudorandom output do not need this tag
-  since the doctesting framework guarantees the state of the pseudorandom
-  number generators (PRNGs) used in Sage for a given doctest.
-
+  Doctests are expected to pass with any state of the pseudorandom number
+  generators (PRNGs).
   When possible, avoid the problem, e.g.: rather than checking the value of the
   hash in a doctest, one could illustrate successfully using it as a key in a
   dict.
+
+  One can also avoid the ``random``-tag by checking basic properties::
+
+      sage: QQ.random_element().parent() is QQ
+      True
+      sage: QQ.random_element() in QQ
+      True
+      sage: a = QQ.random_element()
+      sage: b = QQ._random_nonzero_element()
+      sage: c = QQ._random_nonzero_element()
+      sage: (a/c) / (b/c) == a/b
+      True
+
+  Distribution can be checked with loops::
+
+      sage: found = {i: False for i in range(-2, 3)}
+      sage: while not all(found.values()):
+      ....:     found[ZZ.random_element(-2, 3)] = True
+
+  This is mathematically correct, as it is
+  guaranteed to terminate. However, there is a
+  nonzero probability of a timout.
 
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.

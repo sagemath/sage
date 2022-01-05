@@ -108,8 +108,6 @@ This base class provides a lot more methods than a general parent::
      '__ideal_monoid',
      '__iter__',
      '__len__',
-     '__pow__',
-     '__rpow__',
      '__rtruediv__',
      '__rxor__',
      '__truediv__',

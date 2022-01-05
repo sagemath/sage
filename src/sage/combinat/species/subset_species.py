@@ -19,10 +19,12 @@ Subset Species
 
 from .species import GenericCombinatorialSpecies
 from .set_species import SetSpecies
-from .generating_series import _integers_from, factorial_stream
+from .generating_series import _integers_from
 from .structure import GenericSpeciesStructure
 from sage.combinat.species.misc import accept_size
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.functions.other import factorial
+
 
 class SubsetSpeciesStructure(GenericSpeciesStructure):
     def __repr__(self):
@@ -197,7 +199,7 @@ class SubsetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             [1, 2, 2, 4/3, 2/3]
         """
         for n in _integers_from(0):
-            yield  base_ring(2)**n/base_ring(factorial_stream[n])
+            yield base_ring(2)**n / base_ring(factorial(n))
 
     def _itgs_iterator(self, base_ring):
         r"""

@@ -58,9 +58,9 @@ while there are five vector frames defined on `\mathbb{E}^3`::
 
     sage: E.frames()
     [Coordinate frame (E^3, (e_x,e_y,e_z)),
-     Coordinate frame (E^3, (d/dr,d/dth,d/dph)),
+     Coordinate frame (E^3, (∂/∂r,∂/∂th,∂/∂ph)),
      Vector frame (E^3, (e_r,e_th,e_ph)),
-     Coordinate frame (E^3, (d/drh,d/dph,d/dz)),
+     Coordinate frame (E^3, (∂/∂rh,∂/∂ph,∂/∂z)),
      Vector frame (E^3, (e_rh,e_ph,e_z))]
 
 Indeed, there are two frames associated with each of the three coordinate
@@ -85,9 +85,9 @@ On the other side, the coordinate frames `\left(\frac{\partial}{\partial r},
 coordinate charts::
 
     sage: spherical.frame()
-    Coordinate frame (E^3, (d/dr,d/dth,d/dph))
+    Coordinate frame (E^3, (∂/∂r,∂/∂th,∂/∂ph))
     sage: cylindrical.frame()
-    Coordinate frame (E^3, (d/drh,d/dph,d/dz))
+    Coordinate frame (E^3, (∂/∂rh,∂/∂ph,∂/∂z))
 
 
 Charts as maps `\mathbb{E}^3 \rightarrow \mathbb{R}^3`
@@ -128,7 +128,7 @@ The default metric tensor of `\mathbb{E}^3` is::
     sage: g
     Riemannian metric g on the Euclidean space E^3
     sage: g.display()
-    g = dx*dx + dy*dy + dz*dz
+    g = dx⊗dx + dy⊗dy + dz⊗dz
     sage: g[:]
     [1 0 0]
     [0 1 0]
@@ -139,7 +139,7 @@ Cartesian one. Of course, we may ask for display with respect to other
 frames::
 
     sage: g.display(spherical_frame)
-    g = e^r*e^r + e^th*e^th + e^ph*e^ph
+    g = e^r⊗e^r + e^th⊗e^th + e^ph⊗e^ph
     sage: g[spherical_frame, :]
     [1 0 0]
     [0 1 0]
@@ -159,7 +159,7 @@ contrary, in the coordinate frame
 which is not orthonormal, some components differ from 0 or 1::
 
     sage: g.display(spherical.frame())
-    g = dr*dr + (x^2 + y^2 + z^2) dth*dth + (x^2 + y^2) dph*dph
+    g = dr⊗dr + (x^2 + y^2 + z^2) dth⊗dth + (x^2 + y^2) dph⊗dph
 
 Note that the components are expressed in terms of the default chart, namely
 the Cartesian one. To have them displayed in terms of the spherical chart, we
@@ -167,12 +167,12 @@ have to provide the latter as the second argument of the method
 ``display()``::
 
     sage: g.display(spherical.frame(), spherical)
-    g = dr*dr + r^2 dth*dth + r^2*sin(th)^2 dph*dph
+    g = dr⊗dr + r^2 dth⊗dth + r^2*sin(th)^2 dph⊗dph
 
 Since SageMath 8.8, a shortcut is::
 
     sage: g.display(spherical)
-    g = dr*dr + r^2 dth*dth + r^2*sin(th)^2 dph*dph
+    g = dr⊗dr + r^2 dth⊗dth + r^2*sin(th)^2 dph⊗dph
 
 The matrix view of the components is obtained via the square bracket operator::
 
@@ -184,9 +184,9 @@ The matrix view of the components is obtained via the square bracket operator::
 Similarly, for cylindrical coordinates, we have::
 
     sage: g.display(cylindrical_frame)
-    g = e^rh*e^rh + e^ph*e^ph + e^z*e^z
+    g = e^rh⊗e^rh + e^ph⊗e^ph + e^z⊗e^z
     sage: g.display(cylindrical)
-    g = drh*drh + rh^2 dph*dph + dz*dz
+    g = drh⊗drh + rh^2 dph⊗dph + dz⊗dz
     sage: g[cylindrical.frame(), :, cylindrical]
     [   1    0    0]
     [   0 rh^2    0]
@@ -232,38 +232,38 @@ Levi-Civita tensor (also called *volume form*) associated with `g`
     sage: epsilon is E.volume_form()
     True
     sage: epsilon.display()
-    epsilon = dx/\dy/\dz
+    epsilon = dx∧dy∧dz
     sage: epsilon.display(spherical)
-    epsilon = r^2*sin(th) dr/\dth/\dph
+    epsilon = r^2*sin(th) dr∧dth∧dph
     sage: epsilon.display(cylindrical)
-    epsilon = rh drh/\dph/\dz
+    epsilon = rh drh∧dph∧dz
 
 Checking that all orthonormal frames introduced above are right-handed::
 
     sage: ex, ey, ez = E.cartesian_frame()[:]
     sage: epsilon(ex, ey, ez).display()
-    epsilon(e_x,e_y,e_z): E^3 --> R
-       (x, y, z) |--> 1
-       (r, th, ph) |--> 1
-       (rh, ph, z) |--> 1
+    epsilon(e_x,e_y,e_z): E^3 → ℝ
+       (x, y, z) ↦ 1
+       (r, th, ph) ↦ 1
+       (rh, ph, z) ↦ 1
 
 ::
 
     sage: epsilon(*spherical_frame)
     Scalar field epsilon(e_r,e_th,e_ph) on the Euclidean space E^3
     sage: epsilon(*spherical_frame).display()
-    epsilon(e_r,e_th,e_ph): E^3 --> R
-       (x, y, z) |--> 1
-       (r, th, ph) |--> 1
-       (rh, ph, z) |--> 1
+    epsilon(e_r,e_th,e_ph): E^3 → ℝ
+       (x, y, z) ↦ 1
+       (r, th, ph) ↦ 1
+       (rh, ph, z) ↦ 1
 
 ::
 
     sage: epsilon(*cylindrical_frame).display()
-    epsilon(e_rh,e_ph,e_z): E^3 --> R
-       (x, y, z) |--> 1
-       (r, th, ph) |--> 1
-       (rh, ph, z) |--> 1
+    epsilon(e_rh,e_ph,e_z): E^3 → ℝ
+       (x, y, z) ↦ 1
+       (r, th, ph) ↦ 1
+       (rh, ph, z) ↦ 1
 
 
 Vector fields as derivations
@@ -273,20 +273,20 @@ Let `f` be a scalar field on `\mathbb{E}^3`::
 
     sage: f = E.scalar_field(x^2+y^2 - z^2, name='f')
     sage: f.display()
-    f: E^3 --> R
-       (x, y, z) |--> x^2 + y^2 - z^2
-       (r, th, ph) |--> -2*r^2*cos(th)^2 + r^2
-       (rh, ph, z) |--> rh^2 - z^2
+    f: E^3 → ℝ
+       (x, y, z) ↦ x^2 + y^2 - z^2
+       (r, th, ph) ↦ -2*r^2*cos(th)^2 + r^2
+       (rh, ph, z) ↦ rh^2 - z^2
 
 Vector fields act as derivations on scalar fields::
 
     sage: v(f)
     Scalar field v(f) on the Euclidean space E^3
     sage: v(f).display()
-    v(f): E^3 --> R
-       (x, y, z) |--> -2*z^3
-       (r, th, ph) |--> -2*r^3*cos(th)^3
-       (rh, ph, z) |--> -2*z^3
+    v(f): E^3 → ℝ
+       (x, y, z) ↦ -2*z^3
+       (r, th, ph) ↦ -2*r^3*cos(th)^3
+       (rh, ph, z) ↦ -2*z^3
     sage: v(f) == v.dot(f.gradient())
     True
 
@@ -311,7 +311,7 @@ The set `C^\infty(\mathbb{E}^3)` of all smooth scalar fields on
     sage: CE
     Algebra of differentiable scalar fields on the Euclidean space E^3
     sage: CE.category()
-    Category of commutative algebras over Symbolic Ring
+    Join of Category of commutative algebras over Symbolic Ring and Category of homsets of topological spaces
     sage: f in CE
     True
 
@@ -346,9 +346,9 @@ vector frames defined on `\mathbb{E}^3`::
 
     sage: XE.bases()
     [Coordinate frame (E^3, (e_x,e_y,e_z)),
-     Coordinate frame (E^3, (d/dr,d/dth,d/dph)),
+     Coordinate frame (E^3, (∂/∂r,∂/∂th,∂/∂ph)),
      Vector frame (E^3, (e_r,e_th,e_ph)),
-     Coordinate frame (E^3, (d/drh,d/dph,d/dz)),
+     Coordinate frame (E^3, (∂/∂rh,∂/∂ph,∂/∂z)),
      Vector frame (E^3, (e_rh,e_ph,e_z))]
 
 
@@ -385,9 +385,9 @@ The bases on `T_p\mathbb{E}^3` are inherited from the vector frames of
 
     sage: Tp.bases()
     [Basis (e_x,e_y,e_z) on the Tangent space at Point p on the Euclidean space E^3,
-     Basis (d/dr,d/dth,d/dph) on the Tangent space at Point p on the Euclidean space E^3,
+     Basis (∂/∂r,∂/∂th,∂/∂ph) on the Tangent space at Point p on the Euclidean space E^3,
      Basis (e_r,e_th,e_ph) on the Tangent space at Point p on the Euclidean space E^3,
-     Basis (d/drh,d/dph,d/dz) on the Tangent space at Point p on the Euclidean space E^3,
+     Basis (∂/∂rh,∂/∂ph,∂/∂z) on the Tangent space at Point p on the Euclidean space E^3,
      Basis (e_rh,e_ph,e_z) on the Tangent space at Point p on the Euclidean space E^3]
 
 For instance, we have::

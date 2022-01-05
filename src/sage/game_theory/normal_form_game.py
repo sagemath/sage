@@ -564,7 +564,7 @@ is evidenced by the various algorithms returning different solutions::
     sage: A = matrix([[3,3],[2,5],[0,6]])
     sage: B = matrix([[3,3],[2,6],[3,1]])
     sage: degenerate_game = NormalFormGame([A,B])
-    sage: degenerate_game.obtain_nash(algorithm='lrs') # optional - lrslib
+    sage: degenerate_game.obtain_nash(algorithm='lrs') # random, optional - lrslib
     [[(0, 1/3, 2/3), (1/3, 2/3)], [(1, 0, 0), (1/2, 3)], [(1, 0, 0), (1, 3)]]
     sage: degenerate_game.obtain_nash(algorithm='LCP') # optional - gambit
     [[(0.0, 0.3333333333, 0.6666666667), (0.3333333333, 0.6666666667)],
@@ -741,11 +741,7 @@ class NormalFormGame(SageObject, MutableMapping):
 
             sage: p1 = matrix([[1, 2], [3, 4]])
             sage: p2 = matrix([[3, 3], [1, 4], [6, 6]])
-            sage: error = NormalFormGame(p1, p2)  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: __init__() takes at most 2 arguments (3 given)
-            sage: error = NormalFormGame(p1, p2)  # py3
+            sage: error = NormalFormGame(p1, p2)
             Traceback (most recent call last):
             ...
             TypeError: __init__() takes from 1 to 2 positional arguments but 3 were given
@@ -1752,17 +1748,14 @@ class NormalFormGame(SageObject, MutableMapping):
         if maximization is False:
             m1 = - m1
             m2 = - m2
-        game1_str, game2_str = self._Hrepresentation(m1, m2)
 
-        g1_name = tmp_filename()
-        with open(g1_name, 'w') as g1_file:
-            g1_file.write(game1_str)
-        g2_name = tmp_filename()
-        with open(g2_name, 'w') as g2_file:
-            g2_file.write(game2_str)
+        game_str = self._lrs_nash_format(m1, m2)
+        game_name = tmp_filename()
+        with open(game_name, 'w') as game_file:
+            game_file.write(game_str)
 
         try:
-            process = Popen(['lrsnash', g1_name, g2_name],
+            process = Popen(['lrsnash', game_name],
                     stdout=PIPE,
                     stderr=PIPE)
         except OSError as e:
@@ -2243,7 +2236,11 @@ class NormalFormGame(SageObject, MutableMapping):
 
     def _Hrepresentation(self, m1, m2):
         r"""
-        Create the H-representation strings required to use lrs nash.
+        Create the H-representation strings required to use ``lrsnash``.
+
+        Since lrslib 6.1, this format is referred to as "legacy format".
+
+        This method is deprecated.
 
         EXAMPLES::
 
@@ -2251,6 +2248,10 @@ class NormalFormGame(SageObject, MutableMapping):
             sage: B = matrix([[3, 3], [1, 4]])
             sage: C = NormalFormGame([A, B])
             sage: print(C._Hrepresentation(A, B)[0])
+            doctest:warning...
+            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
+            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
+            See https://trac.sagemath.org/27745 for details.
             H-representation
             linearity 1 5
             begin
@@ -2276,6 +2277,12 @@ class NormalFormGame(SageObject, MutableMapping):
             <BLANKLINE>
 
         """
+        from sage.misc.superseded import deprecation
+        deprecation(27745,
+                    "NormalFormGame._Hrepresentation is deprecated as it "
+                    "creates the legacy input format. "
+                    "Use NormalFormGame._lrs_nash_format instead")
+
         from sage.geometry.polyhedron.misc import _to_space_separated_string
         m = self.players[0].num_strategies
         n = self.players[1].num_strategies
@@ -2310,6 +2317,73 @@ class NormalFormGame(SageObject, MutableMapping):
         t += '0 \n'
         t += 'end\n'
         return s, t
+
+    def _lrs_nash_format(self, m1, m2):
+        """
+        Create the input format for ``lrsnash``, version 6.1 or newer.
+
+        EXAMPLES:
+
+        An example from the ``lrsnash`` manual in the old and the format::
+
+            sage: A = matrix([[0, 6], [2, 5], [3, 3]])
+            sage: B = matrix([[1, 0], [0, 2], [4, 3]])
+            sage: C = NormalFormGame([A, B])
+            sage: print(C._lrs_nash_format(A, B))
+            3 2
+            <BLANKLINE>
+            0 6
+            2 5
+            3 3
+            <BLANKLINE>
+            1 0
+            0 2
+            4 3
+            <BLANKLINE>
+
+            sage: legacy_format = C._Hrepresentation(A, B)
+            doctest:warning...
+            DeprecationWarning: NormalFormGame._Hrepresentation is deprecated as it
+            creates the legacy input format. Use NormalFormGame._lrs_nash_format instead
+            See https://trac.sagemath.org/27745 for details.
+            sage: print('*game: player 1\n', legacy_format[0])
+            *game: player 1
+            H-representation
+            linearity 1 6
+            begin
+            6 5 rational
+            0 1 0 0 0
+            0 0 1 0 0
+            0 0 0 1 0
+            0 -1 0 -4  1
+            0 0 -2 -3  1
+            -1 1 1 1 0
+            end
+            <BLANKLINE>
+            sage: print('*game: player 2\n', legacy_format[1])
+            *game: player 2
+            H-representation
+            linearity 1 6
+            begin
+            6 4 rational
+            0 0 -6  1
+            0 -2 -5  1
+            0 -3 -3  1
+            0 1 0 0
+            0 0 1 0
+            -1 1 1 0
+            end
+        """
+        from sage.geometry.polyhedron.misc import _to_space_separated_string
+        m = self.players[0].num_strategies
+        n = self.players[1].num_strategies
+        s = f'{m} {n}\n\n'
+        for r in m1.rows():
+            s += _to_space_separated_string(r) + '\n'
+        s += '\n'
+        for r in m2.rows():
+            s += _to_space_separated_string(r) + '\n'
+        return s
 
     def is_degenerate(self, certificate=False):
         """

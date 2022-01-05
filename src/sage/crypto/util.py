@@ -314,7 +314,7 @@ def carmichael_lambda(n):
 
     A case where `\lambda(n) \neq \varphi(n)`::
 
-        sage: k = randint(1, 1000)
+        sage: k = randint(3, 1000)
         sage: carmichael_lambda(2^k) == 2^(k - 2)
         True
         sage: carmichael_lambda(2^k) == 2^(k - 2) == euler_phi(2^k)

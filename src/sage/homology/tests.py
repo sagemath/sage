@@ -22,7 +22,7 @@ from sage.misc.prandom import randint
 from sage.matrix.constructor import random_matrix
 from sage.homology.chain_complex import ChainComplex
 from sage.rings.integer_ring import ZZ
-from sage.homology.examples import RandomComplex
+from sage.topology.simplicial_complex_examples import RandomComplex
 
 def random_chain_complex(level=1):
     """

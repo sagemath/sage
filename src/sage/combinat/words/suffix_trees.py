@@ -1759,7 +1759,7 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
             if final_state[0] == 'explicit':
                 parent = final_state[1]
                 transition = self._find_transition(parent,self._letters[start])
-                if transition != None:
+                if transition is not None:
                     child = transition[1]
                     successful = True
                     depth = 1

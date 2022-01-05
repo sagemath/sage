@@ -28,11 +28,11 @@ import cython
 from sage.data_structures.binary_matrix cimport *
 from libc.math cimport sqrt, fabs
 from libc.string cimport memset
+from memory_allocator cimport MemoryAllocator
 
 from sage.cpython.string cimport char_to_str
 from sage.libs.gmp.mpz cimport *
 from sage.misc.prandom import random
-from sage.ext.memory_allocator cimport MemoryAllocator
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 from sage.graphs.base.static_sparse_graph cimport init_short_digraph
 from sage.graphs.base.static_sparse_graph cimport free_short_digraph

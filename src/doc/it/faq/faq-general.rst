@@ -176,7 +176,7 @@ realizzate attraverso progetti FOSS come
 
 * `FLINT <http://www.flintlib.org>`_ --- libreria C per Teoria dei Numeri.
 
-* `GAP <http://www.gap-system.org>`_ --- sistema di calcolo per algebra discreta,
+* `GAP <https://www.gap-system.org>`_ --- sistema di calcolo per algebra discreta,
   con particolare enfasi sulla teoria dei gruppi.
 
 * `Maxima <http://maxima.sourceforge.net>`_ --- sistema di calcolo

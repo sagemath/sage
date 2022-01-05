@@ -358,6 +358,25 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
         Traceback (most recent call last):
         ...
         ValueError: the specified cut off parameter must be an integer
+
+    Cutwidth of a graph with one edge (:trac:`32131`)::
+
+        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
+        sage: G = Graph([(0, 1)])
+        sage: cutwidth(G, algorithm="exponential")
+        (1, [0, 1])
+        sage: cutwidth(G, algorithm="MILP", solver='GLPK')
+        (1, [0, 1])
+
+    Cutwidth of a disconnected graph::
+
+        sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
+        sage: G = Graph(5)
+        sage: G.add_edge(2, 3)
+        sage: cutwidth(G, algorithm="exponential")
+        (1, [2, 3, 0, 1, 4])
+        sage: cutwidth(G, algorithm="MILP", solver='GLPK')
+        (1, [2, 3, 0, 1, 4])
     """
     from sage.graphs.graph import Graph
 
@@ -394,10 +413,10 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False):
         else:
             # We have a connected graph and we call the desired algorithm
             if algorithm == "exponential":
-                cwH, LH = cutwidth_dyn(G, lower_bound=this_cut_off)
+                cwH, LH = cutwidth_dyn(H, lower_bound=this_cut_off)
 
             elif algorithm == "MILP":
-                cwH, LH = cutwidth_MILP(G, lower_bound=this_cut_off, solver=solver, verbose=verbose)
+                cwH, LH = cutwidth_MILP(H, lower_bound=this_cut_off, solver=solver, verbose=verbose)
 
             else:
                 raise ValueError('algorithm "{}" has not been implemented yet, please contribute'.format(algorithm))
@@ -491,7 +510,7 @@ def cutwidth_dyn(G, lower_bound=0):
     cdef list order
 
     try:
-        for k in range(lower_bound, G.size()):
+        for k in range(lower_bound, G.size() + 1):
             for i in range(g.n):
                 sig_check()
                 if exists(g, neighborhoods, 0, 0, i, k) <= k:

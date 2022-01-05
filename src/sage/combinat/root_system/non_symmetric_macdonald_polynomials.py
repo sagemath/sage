@@ -3,7 +3,7 @@ Nonsymmetric Macdonald polynomials
 
 AUTHORS:
 
-- Anne Schilling and Nicolas M. Thiery (2013): initial version
+- Anne Schilling and Nicolas M. Thiéry (2013): initial version
 
 ACKNOWLEDGEMENTS:
 
@@ -218,19 +218,7 @@ class NonSymmetricMacdonaldPolynomials(CherednikOperatorsEigenvectors):
         Lazy family (...)_{i in Coroot lattice of the Root system of type ['C', 2, 1]}
         sage: alphacheck = Y.keys().simple_roots()
         sage: Y1 = Y[alphacheck[1]]
-        sage: Y1(x) # py2
-        ((q1^3+q1^2*q2)/(-q2^3))*B[-e[0] - 2*e[1] - e['delta'] + e['deltacheck']]
-        + ((q1^3+2*q1^2*q2+q1*q2^2)/(-q2^3))*B[-e[0] - e['delta'] + e['deltacheck']]
-        + ((q1^3+q1^2*q2)/(-q2^3))*B[e[0] - 2*e[1] - 2*e['delta'] + e['deltacheck']]
-        + ((q1^3+q1^2*q2)/(-q2^3))*B[e[0] - 2*e[1] - e['delta'] + e['deltacheck']]
-        + ((q1^3+2*q1^2*q2+q1*q2^2)/(-q2^3))*B[e[0] - 2*e['delta'] + e['deltacheck']]
-        + ((q1^3+q1^2*q2)/(-q2^3))*B[e[0] - e['delta'] + e['deltacheck']] + ((q1^2+2*q1*q2+q2^2)/(-q1*q2))*B[e[0] + e['deltacheck']]
-        + ((q1^3+q1^2*q2)/(-q2^3))*B[2*e[0] - e[1] - 2*e['delta'] + e['deltacheck']]
-        + ((-q1^2-q1*q2)/(-q2^2))*B[2*e[0] - e[1] - e['delta'] + e['deltacheck']] + (q1^3/(-q2^3))*B[3*e[0] - 2*e[1] - 3*e['delta'] + e['deltacheck']]
-        + ((q1^3+q1^2*q2)/(-q2^3))*B[3*e[0] - 3*e['delta'] + e['deltacheck']]
-        + ((q1^3+2*q1^2*q2+q1*q2^2)/(-q2^3))*B[-e[1] - e['delta'] + e['deltacheck']]
-        + ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*B[-e[1] + e['deltacheck']] + ((q1+q2)/(-q2))*B[e[1] + e['deltacheck']]
-        sage: Y1(x) # py3
+        sage: Y1(x)
         ((q1^2+2*q1*q2+q2^2)/(-q1*q2))*B[e[0] + e['deltacheck']]
         + ((-q1^2-2*q1*q2-q2^2)/(-q2^2))*B[-e[1] + e['deltacheck']]
         + ((-q1^2-q1*q2)/(-q2^2))*B[2*e[0] - e[1] - e['delta']

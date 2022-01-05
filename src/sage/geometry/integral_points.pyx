@@ -108,13 +108,13 @@ cpdef tuple parallelotope_points(spanning_points, lattice):
         sage: from sage.geometry.integral_points import parallelotope_points
         sage: rays = list(map(vector, [(2,0), (0,2)]))
         sage: parallelotope_points(rays, ZZ^2)
-        ((0, 0), (1, 0), (0, 1), (1, 1))
+        ((0, 0), (0, 1), (1, 0), (1, 1))
 
     The rays can also be toric lattice points::
 
         sage: rays = list(map(ToricLattice(2), [(2,0), (0,2)]))
         sage: parallelotope_points(rays, ToricLattice(2))
-        (N(0, 0), N(1, 0), N(0, 1), N(1, 1))
+        (N(0, 0), N(0, 1), N(1, 0), N(1, 1))
 
     A non-smooth cone::
 

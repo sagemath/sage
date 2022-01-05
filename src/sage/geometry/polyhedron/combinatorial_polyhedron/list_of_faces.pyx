@@ -91,7 +91,6 @@ AUTHOR:
 # ****************************************************************************
 
 from sage.structure.element import is_Matrix
-
 from sage.matrix.matrix_integer_dense  cimport Matrix_integer_dense
 
 from .face_list_data_structure cimport *
@@ -154,7 +153,7 @@ cdef class ListOfFaces:
         """
         assert face_list_check_alignment(self.data)
 
-    def __copy__(self):
+    cpdef ListOfFaces __copy__(self):
         r"""
         Return a copy of self.
 
@@ -357,6 +356,101 @@ cdef class ListOfFaces:
 
         return copy
 
+    cdef ListOfFaces delete_atoms_unsafe(self, bint *delete, face_t face):
+        r"""
+        Return a copy of ``self`` where bits in ``delete`` have been
+        removed/contracted.
+
+        The the remaining bits will be shifted to the left.
+
+        If ``delete`` is ``NULL``, keep exactly the bits set in ``face``.
+
+        .. WARNING::
+
+            ``delete`` is assumed to be of length ``self.n_atoms`` or NULL.
+            ``face`` is assumed to be of length ``self.face_length`` if ``delete`` is not ``NULL``.
+        """
+
+        cdef output_n_atoms
+        cdef size_t i, j
+        if delete is NULL:
+            output_n_atoms = face_len_atoms(face)
+        else:
+            output_n_atoms = self.n_atoms()
+            for i in range(self.n_atoms()):
+                if delete[i]:
+                    output_n_atoms -= 1
+
+        cdef ListOfFaces output = ListOfFaces(self.n_faces(), output_n_atoms, self.n_coatoms())
+        cdef size_t counter = 0
+        cdef size_t n_atoms = self.n_atoms()
+        cdef size_t n_faces = self.n_faces()
+        for i in range(n_atoms):
+            if ((delete is NULL and face_atom_in(face, i)) or
+                    (delete is not NULL and not delete[i])):
+                # The atom will be kept.
+                for j in range(n_faces):
+                    if face_atom_in(self.data.faces[j], i):
+                        face_add_atom(output.data.faces[j], counter)
+                counter += 1
+
+        return output
+
+    cdef void delete_faces_unsafe(self, bint *delete, face_t face):
+        r"""
+        Deletes face ``i`` if and only if ``delete[i]``.
+
+        Alternatively, deletes all faces such that the ``i``-th bit in ``face`` is not set.
+
+        This will modify ``self``.
+
+        .. WARNING::
+
+            ``delete`` is assumed to be of length ``self.n_faces()`` or NULL.
+            ``face`` is assumed to contain ``self.n_faces()`` atoms if ``delete`` is not ``NULL``.
+        """
+        if delete is not NULL:
+            face_list_delete_faces_by_array(self.data, delete)
+        else:
+            face_list_delete_faces_by_face(self.data, face)
+
+    cdef void get_not_inclusion_maximal_unsafe(self, bint *not_inclusion_maximal):
+        r"""
+        Get all faces that are not inclusion maximal.
+
+        Set ``not_inclusion_maximal[i]`` to one if ``self.data[i]`` is not
+        an inclusion-maximal face, otherwise to zero.
+
+        If there are duplicates, all but the last duplicate will be marked as
+        not inclusion maximal.
+
+        .. WARNING::
+
+            ``not_inclusion_maximal`` is assumed to be at least of length ``self.n_atoms`` or NULL.
+        """
+        cdef size_t i
+        memset(not_inclusion_maximal, 0, sizeof(bint)*self.n_faces())
+        for i in range(self.n_faces()):
+            not_inclusion_maximal[i] = is_not_maximal_fused(self.data, i, <standard> 0, not_inclusion_maximal)
+
+    cdef void get_faces_all_set_unsafe(self, bint *all_set):
+        r"""
+        Get the faces that have all ``bits`` set.
+
+        Set ``all_set[i]`` to one if ``self.data[i]``
+        has all bits set, otherwise to zero.
+
+        .. WARNING::
+
+            ``all_set`` is assumed to be at least of length ``self.n_atoms`` or NULL.
+        """
+        cdef size_t i
+        for i in range(self.n_faces()):
+            if face_first_missing_atom(self.data.faces[i]) == -1:
+                all_set[i] = 1
+            else:
+                all_set[i] = 0
+
     def matrix(self):
         r"""
         Obtain the matrix of self.
@@ -398,3 +492,62 @@ cdef class ListOfFaces:
 
         M.set_immutable()
         return M
+
+cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual):
+    r"""
+    Obtain facets and Vrepresentation of ``face`` as new combinatorial polyhedron.
+
+    INPUT:
+
+    - ``facets`` -- facets of the polyhedron
+    - ``Vrep`` -- Vrepresentation of the polyhedron
+    - ``face`` -- face in Vrepresentation or ``NULL``
+    - ``dual`` -- boolean
+
+    OUTPUT: A tuple of new facets and new Vrepresentation as :class:`ListOfFaces`.
+    """
+    cdef ListOfFaces new_facets, new_Vrep
+    cdef bint* delete
+    cdef MemoryAllocator mem = MemoryAllocator()
+    cdef size_t i
+    cdef face_t null_face
+
+    # Delete all atoms not in the face.
+    if not dual:
+        new_facets = facets.delete_atoms_unsafe(NULL, face)
+        new_Vrep = Vrep.__copy__()
+        new_Vrep.delete_faces_unsafe(NULL, face)
+
+        delete = <bint*> mem.allocarray(new_facets.n_faces(), sizeof(bint))
+    else:
+        delete = <bint*> mem.allocarray(max(facets.n_faces(), facets.n_atoms()), sizeof(bint))
+
+        # Set ``delete[i]`` to one if ``i`` is not an vertex of ``face``.
+        for i in range(Vrep.n_faces()):
+            if face_issubset(face, Vrep.data.faces[i]):
+                delete[i] = 0
+            else:
+                delete[i] = 1
+
+        new_facets = facets.delete_atoms_unsafe(delete, null_face)
+        new_Vrep = Vrep.__copy__()
+        new_Vrep.delete_faces_unsafe(delete, null_face)
+
+    # Delete all facets that define the face.
+    new_facets.get_faces_all_set_unsafe(delete)
+    new_facets.delete_faces_unsafe(delete, null_face)
+    new_Vrep = new_Vrep.delete_atoms_unsafe(delete, null_face)
+
+    # Now delete all facets that are not inclusion maximal.
+    # the last copy of each duplicate will remain.
+    new_facets.get_not_inclusion_maximal_unsafe(delete)
+    new_facets.delete_faces_unsafe(delete, null_face)
+    new_Vrep = new_Vrep.delete_atoms_unsafe(delete, null_face)
+
+    # Finally set coatoms of the output.
+    for i in range(new_facets.n_faces()):
+        facet_set_coatom(new_facets.data.faces[i], i)
+    for i in range(new_Vrep.n_faces()):
+        facet_set_coatom(new_Vrep.data.faces[i], i)
+
+    return (new_facets, new_Vrep)

@@ -72,15 +72,11 @@ rm -f "$SAGE_LOCAL/lib/python"
 rm -f "$SAGE_LOCAL"/lib/lib"$PKG_BASE"*
 
 
-if [ "$PKG_BASE" = "python2" ]; then
-    PYTHON_CONFIGURE="$PYTHON_CONFIGURE --enable-unicode=ucs4"
-else
     # Note: --without-ensurepip ensures that setuptools+pip are *not* installed
     # automatically when installing python3. They will be installed instead by
     # the separate setuptools and pip packages; see
     # https://trac.sagemath.org/ticket/23398
     PYTHON_CONFIGURE="$PYTHON_CONFIGURE --without-ensurepip"
-fi
 
 sdh_configure --enable-shared $PYTHON_CONFIGURE
 
@@ -110,7 +106,8 @@ fi
 
 echo "Testing importing of various modules..."
 import_errors=false
-test_modules="ctypes math hashlib crypt readline socket zlib sqlite3"
+# Trac #31160: We no longer check for readline here.
+test_modules="ctypes math hashlib crypt socket zlib sqlite3"
 if [ "$UNAME" = "Darwin" ]; then
     test_modules="$test_modules _scproxy"
 fi

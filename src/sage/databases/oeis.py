@@ -48,12 +48,13 @@ What about a sequence starting with `3, 7, 15, 1` ?
     sage: c.examples()                                  # optional -- internet
     0: Pi = 3.1415926535897932384...
     1:    = 3 + 1/(7 + 1/(15 + 1/(1 + 1/(292 + ...))))
-    2:    = [a_0; a_1, a_2, a_3, ...] = [3; 7, 15, 1, 292, ...]
+    2:    = [a_0; a_1, a_2, a_3, ...] = [3; 7, 15, 1, 292, ...].
 
     sage: c.comments()                                  # optional -- internet
     0: The first 5821569425 terms were computed by _Eric W. Weisstein_ on Sep 18 2011.
     1: The first 10672905501 terms were computed by _Eric W. Weisstein_ on Jul 17 2013.
     2: The first 15000000000 terms were computed by _Eric W. Weisstein_ on Jul 27 2013.
+    3: The first 30113021586 terms were computed by _Syed Fahad_ on Apr 27 2021.
 
 ::
 
@@ -169,7 +170,6 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.flatten import flatten
 from sage.misc.temporary_file import tmp_filename
 from sage.misc.unknown import Unknown
-from sage.misc.misc import embedded
 from sage.misc.html import HtmlFragment
 from sage.repl.preparse import preparse
 
@@ -1574,10 +1574,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             return re.sub(r'\"\/', '\"' + oeis_url, s)
         if browse is None:
             if format == 'guess':
-                if embedded():
-                    return self.links(format='html')
-                else:
-                    return self.links(format='url')
+                return self.links(format='url')
             elif format == 'raw':
                 return FancyTuple(self._field('H'))
             elif format == 'html':
@@ -1706,7 +1703,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: c.examples()                          # optional -- internet
             0: Pi = 3.1415926535897932384...
             1:    = 3 + 1/(7 + 1/(15 + 1/(1 + 1/(292 + ...))))
-            2:    = [a_0; a_1, a_2, a_3, ...] = [3; 7, 15, 1, 292, ...]
+            2:    = [a_0; a_1, a_2, a_3, ...] = [3; 7, 15, 1, 292, ...].
 
         TESTS::
 
@@ -1839,15 +1836,10 @@ class OEISSequence(SageObject, UniqueRepresentation):
                   'links', 'formulas', 'examples', 'cross_references',
                   'programs', 'keywords', 'offsets', 'url', 'old_IDs',
                   'author', 'extensions_or_errors']:
-            if embedded() and s == 'links':
+            result = getattr(self, s)()
+            if result != '' and result != ('',) and result != ():
                 print(re.sub('_', ' ', s).upper())
-                getattr(self, s)()
-                print('\n')
-            else:
-                result = getattr(self, s)()
-                if result != '' and result != ('',) and result != ():
-                    print(re.sub('_', ' ', s).upper())
-                    print(str(result) + '\n')
+                print(str(result) + '\n')
 
     def programs(self, language='all', preparsing=True, keep_comments=False):
         r"""

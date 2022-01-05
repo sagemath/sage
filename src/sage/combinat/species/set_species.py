@@ -17,10 +17,12 @@ Set Species
 #*****************************************************************************
 
 from .species import GenericCombinatorialSpecies
-from .generating_series import factorial_stream, _integers_from
+from .generating_series import _integers_from
 from sage.combinat.species.structure import GenericSpeciesStructure
 from sage.combinat.species.misc import accept_size
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.functions.other import factorial
+
 
 class SetSpeciesStructure(GenericSpeciesStructure):
     def __repr__(self):
@@ -143,7 +145,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         """
         for n in _integers_from(0):
-            yield base_ring(self._weight/factorial_stream[n])
+            yield base_ring(self._weight / factorial(n))
 
     def _itgs_list(self, base_ring):
         r"""

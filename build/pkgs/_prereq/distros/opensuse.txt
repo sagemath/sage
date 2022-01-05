@@ -15,7 +15,10 @@ perl
 python3
 tar
 bc
+which
+glibc-locale-base
 gcc
+gcc-c++
 # Needed if we download some packages from a https upstream URL
 ca-certificates
 # gunzip needed for ppl spkg

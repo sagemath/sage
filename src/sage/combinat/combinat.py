@@ -2501,6 +2501,10 @@ class InfiniteAbstractCombinatorialClass(CombinatorialClass):
         EXAMPLES::
 
             sage: R = InfiniteAbstractCombinatorialClass()
+            doctest:warning...
+            DeprecationWarning: this class is deprecated, do not use
+            See https://trac.sagemath.org/31545 for details.
+
             sage: R.cardinality()
             +Infinity
         """

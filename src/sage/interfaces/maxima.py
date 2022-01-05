@@ -484,7 +484,7 @@ import shlex
 
 from random import randrange
 
-from sage.env import DOT_SAGE, SAGE_LOCAL, MAXIMA
+from sage.env import MAXIMA
 from sage.misc.misc import ECL_TMP
 
 from .expect import (Expect, ExpectElement, gc_disabled)
@@ -839,7 +839,8 @@ class Maxima(MaximaAbstract, Expect):
             4
         """
         marker = '__SAGE_SYNCHRO_MARKER_'
-        if self._expect is None: return
+        if self._expect is None:
+            return
         r = randrange(2147483647)
         s = marker + str(r+1)
 

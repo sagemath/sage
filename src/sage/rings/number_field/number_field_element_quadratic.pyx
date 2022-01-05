@@ -112,6 +112,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
     TESTS::
 
         sage: from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
+        sage: from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic_sqrt
 
     We set up some fields::
 
@@ -125,14 +126,14 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
     We construct elements of these fields in various ways - firstly, from
     polynomials::
 
-        sage: NumberFieldElement_quadratic(K, x-1)
+        sage: NumberFieldElement_quadratic_sqrt(K, x-1)
         a - 1
         sage: NumberFieldElement_quadratic(F, x-1)
         b - 1
 
     From triples of Integers::
 
-        sage: NumberFieldElement_quadratic(K, (1,2,3))
+        sage: NumberFieldElement_quadratic_sqrt(K, (1,2,3))
         2/3*a + 1/3
         sage: NumberFieldElement_quadratic(F, (1,2,3))
         4/9*b + 1/9
@@ -141,7 +142,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     From pairs of Rationals::
 
-        sage: NumberFieldElement_quadratic(K, (1/2,1/3))
+        sage: NumberFieldElement_quadratic_sqrt(K, (1/2,1/3))
         1/3*a + 1/2
         sage: NumberFieldElement_quadratic(F, (1/2,1/3))
         2/9*b + 7/18
@@ -150,7 +151,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     Direct from Rationals::
 
-        sage: NumberFieldElement_quadratic(K, 2/3)
+        sage: NumberFieldElement_quadratic_sqrt(K, 2/3)
         2/3
         sage: NumberFieldElement_quadratic(F, 2/3)
         2/3
@@ -171,7 +172,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: F.<a> = QuadraticField(-7)
             sage: c = a + 7
             sage: type(c) # indirect doctest
-            <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic'>
+            <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_quadratic_sqrt'>
         """
         self.D = parent._D
         cdef Integer a, b, denom
@@ -602,7 +603,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def _real_mpfi_(self, R):
         r"""
-        Conversion to a real interval field
+        Conversion to a real interval field.
 
         TESTS::
 
@@ -661,7 +662,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def _complex_mpfi_(self, R):
         r"""
-        Conversion to a complex interval field
+        Conversion to a complex interval field.
 
         TESTS::
 
@@ -867,8 +868,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         self.arb_set_imag(acb_imagref(res.value), R._prec)
         return res
 
-    def parts(self):
-        """
+    cpdef tuple parts(self):
+        r"""
         This function returns a pair of rationals `a` and `b` such that self `=
         a+b\sqrt{D}`.
 
@@ -912,19 +913,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             mpz_set(mpq_denref(bd.value), self.denom)
             mpq_canonicalize(bd.value)
 
-        return ad, bd
-
-    cdef bint is_sqrt_disc(self):
-        r"""
-        Returns true if self is `\sqrt{D}`.
-
-        EXAMPLES::
-
-            sage: F.<b> = NumberField(x^2 - x + 7)
-            sage: b.denominator() # indirect doctest
-            1
-        """
-        return mpz_cmp_ui(self.denom, 1)==0 and mpz_cmp_ui(self.a, 0)==0 and mpz_cmp_ui(self.b, 1)==0
+        return (ad, bd)
 
 #########################################################
 # Comparisons
@@ -1726,9 +1715,9 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: K.gen().is_one()
             False
         """
-        return mpz_cmp_ui(self.a, 1) == 0 and \
-               mpz_cmp_ui(self.b, 0) == 0 and \
-               mpz_cmp_ui(self.denom, 1) == 0
+        return (mpz_cmp_ui(self.a, 1) == 0 and
+                mpz_cmp_ui(self.b, 0) == 0 and
+                mpz_cmp_ui(self.denom, 1) == 0)
 
     cpdef bint is_rational(self):
         r"""
@@ -1782,8 +1771,8 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def real(self):
         r"""
-        Returns the real part of self, which is either self (if self lives
-        it a totally real field) or a rational number.
+        Return the real part of ``self``, which is either ``self`` (if
+        ``self`` lives in a totally real field) or a rational number.
 
         EXAMPLES::
 
@@ -1816,7 +1805,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
     def imag(self):
         r"""
-        Returns the imaginary part of self.
+        Return the imaginary part of ``self``.
 
         EXAMPLES::
 
@@ -1905,52 +1894,32 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         """
         EXAMPLES::
 
-            sage: K.<a> = NumberField(x^2+41)
-            sage: a._coefficients()
-            [0, 1]
-            sage: K.<a> = NumberField(x^2+x+41)
-            sage: a._coefficients()
-            [0, 1]
-            sage: b = 3*a+1/5
+            sage: F.<b> = NumberField(x^2 - x + 7)
             sage: b._coefficients()
-            [1/5, 3]
+            [0, 1]
         """
         # In terms of the generator...
-        cdef NumberFieldElement_quadratic gen = self.number_field().gen()  # should this be cached?
         cdef Rational const = <Rational>Rational.__new__(Rational)
         cdef Rational lin = <Rational>Rational.__new__(Rational)
-        ad, bd = self.parts()
         if not self:
             return []
+        ad, bd = self.parts()
         if not bd:
             return [ad]
-        if gen.is_sqrt_disc():
-            return [ad,bd]
-        else:
-            alpha, beta = gen.parts()
-            scale = bd/beta
-            return [ad - scale*alpha, scale]
+
+        cdef NumberFieldElement_quadratic gen = self.number_field().gen()  # should this be cached?
+        alpha, beta = gen.parts()
+        scale = bd/beta
+        return [ad - scale*alpha, scale]
 
     def denominator(self):
-        """
-        Return the denominator of self. This is the LCM of the denominators of
-        the coefficients of self, and thus it may well be `> 1` even when the
-        element is an algebraic integer.
+        r"""
+        Return the denominator of ``self``.
+
+        This is the LCM of the denominators of the coefficients of `self``, and
+        thus it may well be `> 1` even when the element is an algebraic integer.
 
         EXAMPLES::
-
-            sage: K.<a> = NumberField(x^2+x+41)
-            sage: a.denominator()
-            1
-            sage: b = (2*a+1)/6
-            sage: b.denominator()
-            6
-            sage: K(1).denominator()
-            1
-            sage: K(1/2).denominator()
-            2
-            sage: K(0).denominator()
-            1
 
             sage: K.<a> = NumberField(x^2 - 5)
             sage: b = (a + 1)/2
@@ -1958,28 +1927,24 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             2
             sage: b.is_integral()
             True
+
+            sage: K.<c> = NumberField(x^2-x+7)
+            sage: c.denominator()
+            1
         """
-        # In terms of the generator...
-        cdef NumberFieldElement_quadratic gen = self.number_field().gen()  # should this be cached?
-        cdef Integer denom
-        if gen.is_sqrt_disc():
-            denom = Integer.__new__(Integer)
-            mpz_set(denom.value, self.denom)
-            return denom
+        c = self._coefficients()
+        if len(c) == 2:
+            const, lin = c
+        elif len(c) == 1:
+            const = c[0]
+            lin = Rational(0)
         else:
-            c = self._coefficients()
-            if len(c) == 2:
-                const, lin = c
-            elif len(c) == 1:
-                const = c[0]
-                lin = Rational(0)
-            else:
-                const = lin = Rational(0)
-            return const.denominator().lcm(lin.denominator())
+            const = lin = Rational(0)
+        return const.denominator().lcm(lin.denominator())
 
     def numerator(self):
-        """
-        Return self*self.denominator().
+        r"""
+        Return ``self * self.denominator()``.
 
         EXAMPLES::
 
@@ -1990,7 +1955,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: b.numerator()
             2*a + 1
         """
-        return self*self.denominator()
+        return self * self.denominator()
 
 
 #########################################################
@@ -2355,7 +2320,109 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
         else:
             return n
 
-cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic):
+
+cdef class NumberFieldElement_quadratic_sqrt(NumberFieldElement_quadratic):
+    r"""
+    A NumberFieldElement_quadratic object gives an efficient representation of
+    an element of a quadratic extension of `\QQ` for the case when
+    :func:`is_sqrt_disc()` is ``True``.
+    """
+    def denominator(self):
+        r"""
+        Return the denominator of ``self``.
+
+        This is the LCM of the denominators of the coefficients of `self``, and
+        thus it may well be `> 1` even when the element is an algebraic integer.
+
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^2+x+41)
+            sage: a.denominator()
+            1
+            sage: b = (2*a+1)/6
+            sage: b.denominator()
+            6
+            sage: K(1).denominator()
+            1
+            sage: K(1/2).denominator()
+            2
+            sage: K(0).denominator()
+            1
+
+            sage: K.<a> = NumberField(x^2 - 5)
+            sage: b = (a + 1)/2
+            sage: b.denominator()
+            2
+            sage: b.is_integral()
+            True
+        """
+        cdef Integer denom
+        denom = Integer.__new__(Integer)
+        mpz_set(denom.value, self.denom)
+        return denom
+
+    cpdef list _coefficients(self):
+        """
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^2+41)
+            sage: a._coefficients()
+            [0, 1]
+            sage: K.zero()._coefficients()
+            []
+            sage: (3/2*K.one())._coefficients()
+            [3/2]
+        """
+        # In terms of the generator... Rational const = <Rational>Rational.__new__(Rational)
+        cdef Rational lin = <Rational>Rational.__new__(Rational)
+        if not self:
+            return []
+        cdef tuple parts = self.parts()
+        if not <Rational> (parts[1]):
+            return [parts[0]]
+        return list(parts)
+
+    def __getitem__(self, n):
+        """
+        Return the ``n``-th coefficient of this number field element,
+        written as a polynomial in the generator.
+
+        Note that ``n`` must be either ``0`` or ``1``.
+
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^2-13)
+            sage: elt = a/4 + 1/3
+            sage: elt[0]
+            1/3
+            sage: elt[1]
+            1/4
+
+            sage: K.zero()[0]
+            0
+            sage: K.zero()[1]
+            0
+
+            sage: K.one()[0]
+            1
+            sage: K.one()[1]
+            0
+
+            sage: elt[2]
+            Traceback (most recent call last):
+            ...
+            IndexError: index must be either 0 or 1
+
+            sage: C.<z3> = CyclotomicField(3)
+            sage: list(z3)
+            [0, 1]
+        """
+        try:
+            return self.parts()[n]
+        except IndexError:  # So we have a better error message
+            raise IndexError("index must be either 0 or 1")
+
+cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic_sqrt):
     r"""
     An element of `\QQ[i]`.
 
@@ -2410,17 +2477,29 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic):
             Traceback (most recent call last):
             ...
             ValueError: unable to convert i to an element of Algebraic Real Field
+
+        TESTS:
+
+        Check that :trac:`31808` is fixed::
+
+            sage: C.<I> = QuadraticField(-1)
+            sage: AA(C.one())
+            1
+            sage: AA(C.zero())
+            0
         """
         import sage.rings.qqbar as qqbar
+        cdef tuple coeffs
         if parent is qqbar.QQbar:
             # AlgebraicNumber.__init__ does a better job than
             # NumberFieldElement._algebraic_ in this case, but
             # QQbar._element_constructor_ calls the latter first.
             return qqbar.AlgebraicNumber(self)
-        elif parent is qqbar.AA and self[1].is_zero():
-            return qqbar.AlgebraicReal(self)
-        else:
-            raise ValueError(f"unable to convert {self!r} to an element of {parent!r}")
+        if parent is qqbar.AA:
+            coeffs = self.parts()
+            if coeffs[1].is_zero():
+                return qqbar.AlgebraicReal(coeffs[0])
+        raise ValueError(f"unable to convert {self!r} to an element of {parent!r}")
 
     cpdef real_part(self):
         r"""
@@ -2433,7 +2512,14 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic):
             sage: (1 + 2*I).real().parent()
             Rational Field
         """
-        return self[0]
+        cdef Rational ad = <Rational> Rational.__new__(Rational)
+        if mpz_cmp_ui(self.a, 0) == 0:
+            mpq_set_ui(ad.value, 0, 1)
+        else:
+            mpz_set(mpq_numref(ad.value), self.a)
+            mpz_set(mpq_denref(ad.value), self.denom)
+            mpq_canonicalize(ad.value)
+        return ad
 
     real = real_part
 
@@ -2452,10 +2538,18 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic):
             sage: (1 - mi).imag()
             1
         """
-        if self.standard_embedding:
-            return self[1]
-        else:
-            return -self[1]
+        cdef Rational bd = <Rational> Rational.__new__(Rational)
+        if mpz_cmp_ui(self.b, 0) == 0:
+            # It is 0, so all we need to do is initialize the result
+            mpq_set_ui(bd.value, 0, 1)
+            return bd
+
+        mpz_set(mpq_numref(bd.value), self.b)
+        mpz_set(mpq_denref(bd.value), self.denom)
+        mpq_canonicalize(bd.value)
+        if not self.standard_embedding:
+            mpq_neg(bd.value, bd.value)
+        return bd
 
     imag = imag_part
 
@@ -2669,6 +2763,66 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
         R = self.parent()
         return R(_inverse_mod_generic(self, I))
 
+    cpdef list _coefficients(self):
+        """
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^2-27)
+            sage: R = K.ring_of_integers()
+            sage: aa = R.gen(1)
+            sage: aa._coefficients()
+            [0, 1/3]
+        """
+        # In terms of the generator...
+        cdef Rational const = <Rational>Rational.__new__(Rational)
+        cdef Rational lin = <Rational>Rational.__new__(Rational)
+        if not self:
+            return []
+        ad, bd = self.parts()
+        if not bd:
+            return [ad]
+
+        cdef NumberFieldElement_quadratic gen = self.number_field().gen()
+        alpha, beta = gen.parts()
+        if is_sqrt_disc(alpha, beta):
+            return [ad, bd]
+        else:
+            scale = bd / beta
+            return [ad - scale*alpha, scale]
+
+    def denominator(self):
+        r"""
+        Return the denominator of ``self``.
+
+        This is the LCM of the denominators of the coefficients of `self``, and
+        thus it may well be `> 1` even when the element is an algebraic integer.
+
+        EXAMPLES::
+
+            sage: K.<a> = NumberField(x^2-27)
+            sage: R = K.ring_of_integers()
+            sage: aa = R.gen(1)
+            sage: aa.denominator()
+            3
+        """
+        # In terms of the generator...
+        cdef NumberFieldElement_quadratic gen = self.number_field().gen()  # should this be cached?
+        cdef Integer denom
+        cdef tuple parts = gen.parts()
+        cdef Rational alpha, beta, const, lin
+        alpha = <Rational> (parts[0])
+        beta = <Rational> (parts[1])
+        if is_sqrt_disc(alpha, beta):
+            denom = Integer.__new__(Integer)
+            mpz_set(denom.value, self.denom)
+            return denom
+        else:
+            parts = self.parts()
+            const = <Rational> (parts[0])
+            lin = <Rational> (parts[1])
+            scale = lin / beta
+            const = const - scale * alpha
+            return const.denominator().lcm(scale.denominator())
 
 cdef class Z_to_quadratic_field_element(Morphism):
     """
@@ -2865,3 +3019,36 @@ cdef class Q_to_quadratic_field_element(Morphism):
               To:   Cyclotomic Field of order 6 and degree 2
         """
         return "Natural"
+
+#####################################################################
+## Helper function
+
+cpdef bint is_sqrt_disc(Rational ad, Rational bd):
+    r"""
+    Return ``True`` if the pair ``(ad, bd)`` is `\sqrt{D}`.
+
+    EXAMPLES::
+
+        sage: F.<b> = NumberField(x^2 - x + 7)
+        sage: b.denominator()  # indirect doctest
+        1
+    """
+    cdef mpz_t a, b, denom
+    mpz_init(a)
+    mpz_init(b)
+    mpz_init(denom)
+
+    mpz_lcm(denom, mpq_denref(ad.value), mpq_denref(bd.value))
+    mpz_divexact(a, denom, mpq_denref(ad.value))
+    mpz_mul(a, a, mpq_numref(ad.value))
+    mpz_divexact(b, denom, mpq_denref(bd.value))
+    mpz_mul(b, b, mpq_numref(bd.value))
+
+    cdef bint ret = mpz_cmp_ui(denom, 1) == 0 and mpz_cmp_ui(a, 0) == 0 and mpz_cmp_ui(b, 1) == 0
+
+    mpz_clear(a)
+    mpz_clear(b)
+    mpz_clear(denom)
+
+    return ret
+

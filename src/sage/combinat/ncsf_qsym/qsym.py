@@ -1806,7 +1806,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             return self.tensor_square().sum_of_monomials((self._indices(compo[:i]),
                                                           self._indices(compo[i:]))
-                                                         for i in range(0,len(compo)+1))
+                                                         for i in range(len(compo)+1))
 
         def lambda_of_monomial(self, I, n):
             r"""
@@ -2758,7 +2758,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             return self.tensor_square().sum_of_monomials((self._indices(compo[:i]),
                                                           self._indices(compo[i:]))
-                                                         for i in range(0,len(compo)+1))
+                                                         for i in range(len(compo)+1))
 
         def product_on_basis(self, I, J):
             r"""
@@ -3906,7 +3906,9 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             R = self.base_ring()
             minus_one = -R.one()
-            def z(J): return R(J.to_partition().centralizer_size())
+
+            def z(J):
+                return R(J.to_partition().centralizer_size())
             return self._from_dict({J: minus_one**(len(I)-len(J)) / z(J) * coeff_lp(I, J)
                                     for J in I.fatter()})
 
@@ -4046,7 +4048,9 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             """
             R = self.base_ring()
             minus_one = -R.one()
-            def z(J): return R(J.to_partition().centralizer_size())
+
+            def z(J):
+                return R(J.to_partition().centralizer_size())
             return self._from_dict({J: minus_one**(len(I)-len(J)) * R.prod(J) / (coeff_ell(I, J) * z(J))
                                     for J in I.fatter()})
 

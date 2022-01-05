@@ -180,7 +180,7 @@ class FQSymBasis_abstract(CombinatorialFreeModule, BindableClass):
             sage: M.an_element()
             M[1] + 2*M[1, 2] + 4*M[2, 1]
         """
-        o = self([1])
+        o = self.monomial(Permutation([1]))
         return o + 2 * o * o
 
 
@@ -642,8 +642,8 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
             if not len(x):
                 return self.one().tensor(self.one())
             return sum(self(Word(x[:i]).standard_permutation()).tensor(
-                           self(Word(x[i:]).standard_permutation()))
-                       for i in range(len(x) + 1))
+                self(Word(x[i:]).standard_permutation()))
+                for i in range(len(x) + 1))
 
         class Element(FQSymBasis_abstract.Element):
             def to_symmetric_group_algebra(self, n=None):
@@ -1187,9 +1187,9 @@ class FreeQuasisymmetricFunctions(UniqueRepresentation, Parent):
             if not n:
                 return self.one().tensor(self.one())
             return sum(self(Word(x[:i]).standard_permutation()).tensor(
-                                self(Word(x[i:]).standard_permutation()))
-                       for i in range(n + 1)
-                       if (i == 0 or i == n or min(x[:i]) > max(x[i:])))
+                self(Word(x[i:]).standard_permutation()))
+                for i in range(n + 1)
+                if (i == 0 or i == n or min(x[:i]) > max(x[i:])))
 
         class Element(FQSymBasis_abstract.Element):
             def star_involution(self):
@@ -1385,7 +1385,7 @@ class FQSymBases(Category_realization_of_parent):
                 [M[], M[1], M[1, 2] + 2*M[2, 1], M[] + M[1, 2] + 2*M[2, 1]]
             """
             u = self.one()
-            o = self([1])
+            o = self.monomial(Permutation([1]))
             x = o * o
             y = u + x
             return [u, o, x, y]

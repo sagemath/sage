@@ -23,14 +23,14 @@ Then set the metric to be the hyperbolic one::
     sage: g = M.metric()
     sage: g[0,0], g[1,1] = 1/y^2, 1/y^2
     sage: g.display()
-    g = y^(-2) dx*dx + y^(-2) dy*dy
+    g = y^(-2) dx⊗dx + y^(-2) dy⊗dy
 
 Pick an initial point and an initial tangent vector::
 
     sage: p = M((0,1), name='p')
     sage: v = M.tangent_space(p)((1,3/2), name='v')
     sage: v.display()
-    v = d/dx + 3/2 d/dy
+    v = ∂/∂x + 3/2 ∂/∂y
 
 Declare a geodesic with such initial conditions, denoting by `t` the
 corresponding affine parameter::
@@ -77,7 +77,7 @@ Plot the geodesic after interpolating the solution ``sol``::
     sage: c.codomain()
     2-dimensional Riemannian manifold M
     sage: c.display()
-    c: (0, 10) --> M
+    c: (0, 10) → M
 
 In particular, its value at `t=1` is::
 
@@ -1469,17 +1469,13 @@ class IntegratedCurve(DifferentiableCurve):
         maps::
 
             sage: M = Manifold(2, 'M', structure="Riemannian")
-            sage: C.<x,y> = M.chart()
-            sage: P.<r,th> = M.chart()
+            sage: C.<x,y> = M.chart(coord_restrictions=lambda x,y: x**2+y**2 < 3**2)
+            sage: P.<r,th> = M.chart(coord_restrictions=lambda r, th: r > 2)
             sage: P_to_C = P.transition_map(C,(r*cos(th), r*sin(th)))
             sage: C_to_P = C.transition_map(P,(sqrt(x**2+y**2), atan2(y,x)))
 
-        Let us also add restrictions on those charts, to avoid any
-        singularity. We have to make sure that the charts still intersect.
-        Here the intersection is the donut region `2 < r < 3`::
-
-            sage: P.add_restrictions(r > 2)
-            sage: C.add_restrictions(x**2+y**2 < 3**2)
+        Here we added restrictions on those charts, to avoid any
+        singularity.  The intersection is the donut region `2 < r < 3`.
 
         We still have to define the metric. This is done in the Cartesian
         frame. The metric in the polar frame is computed automatically::
@@ -1574,14 +1570,12 @@ class IntegratedCurve(DifferentiableCurve):
         .. PLOT::
 
             M = Manifold(2, 'M', structure="Riemannian")
-            C= M.chart(names = ("x", "y"))
+            C= M.chart(names = ("x", "y"), coord_restrictions=lambda x,y: x**2+y**2 < 3**2)
             x, y = C[:]
-            P = M.chart(names = ("r", "ph"))
+            P = M.chart(names = ("r", "th"), coord_restrictions=lambda r,th: r > 2)
             r, th = P[:]
             P_to_C = P.transition_map(C,(r*cos(th), r*sin(th)))
             C_to_P = C.transition_map(P,(sqrt(x**2+y**2), atan2(y,x)))
-            P.add_restrictions(r > 2)
-            C.add_restrictions(x**2+y**2 < 3**2)
             g = M.metric()
             g[0,0,C] = 1
             g[1,1,C] = 1

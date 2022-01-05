@@ -1,0 +1,20 @@
+Patch by John Cremona in https://trac.sagemath.org/ticket/31443#comment:126
+
+
+diff --git a/libsrc/points.cc b/libsrc/points.cc
+index 1c612f4..714b73d 100644
+--- a/libsrc/points.cc
++++ b/libsrc/points.cc
+@@ -305,8 +305,9 @@ vector<Point> points_from_x(Curvedata &E, const bigrational& x)
+ // (4) y-coordinate
+ 
+ struct Point_comparer {
+-  bool operator()(Point& P, Point& Q)
++  bool operator()(const Point& P0, const Point& Q0)
+   {
++    Point P(P0), Q(Q0); // take copies as args must be const but order() requires non-const
+     int s = order(P)-order(Q);
+     if(s) return (s<0); // true if P has smaller order
+     bigint t = P.getZ()-Q.getZ();
+}}}
+

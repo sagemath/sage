@@ -75,7 +75,8 @@ SAGE_SPKG_CONFIGURE([openblas], [
                                                    + 100 * ]]SAGE_OPENBLAS_MIN_VERSION_MINOR[[
                                                          + ]]SAGE_OPENBLAS_MIN_VERSION_MICRO[[)
                                                return 1;]])
-                         ], [AS_VAR_SET([HAVE_OPENBLAS], [yes])], [AS_VAR_SET([HAVE_OPENBLAS], [no])])
+                         ], [AS_VAR_SET([HAVE_OPENBLAS], [yes])], [AS_VAR_SET([HAVE_OPENBLAS], [no])],
+                            [AS_VAR_SET([HAVE_OPENBLAS], [yes])])
                          AC_LANG_POP([C])
                          AC_MSG_RESULT([$HAVE_OPENBLAS])
                        ])

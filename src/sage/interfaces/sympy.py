@@ -748,6 +748,99 @@ def _sympysage_crootof(self):
     from sage.symbolic.ring import SR
     return complex_root_of(self.args[0]._sage_(), SR(self.args[1]))
 
+def _sympysage_matrix(self):
+    """
+    Convert SymPy matrix ``self`` to Sage.
+
+    EXAMPLES::
+
+        sage: from sympy.matrices import Matrix, SparseMatrix, ImmutableMatrix
+        sage: from sage.interfaces.sympy import sympy_init
+        sage: from sympy.abc import x
+        sage: sympy_init()
+        sage: sM = Matrix([[1, x + 1], [x - 1, 1]]); sM
+        Matrix([
+        [    1, x + 1],
+        [x - 1,     1]])
+        sage: M = sM._sage_(); M
+        [    1 x + 1]
+        [x - 1     1]
+        sage: M.parent()
+        Full MatrixSpace of 2 by 2 dense matrices over Symbolic Ring
+
+        sage: sN = SparseMatrix.eye(3); sN
+        Matrix([
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1]])
+        sage: N = sN._sage_(); N
+        [1 0 0]
+        [0 1 0]
+        [0 0 1]
+        sage: N.parent()
+        Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
+
+        sage: sO = SparseMatrix.zeros(3); sO
+        Matrix([
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]])
+        sage: O = sO._sage_(); O
+        [0 0 0]
+        [0 0 0]
+        [0 0 0]
+        sage: O.parent()
+        Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
+
+    If ``self`` is immutable, the result is cached::
+
+        sage: sImmM = ImmutableMatrix([[1, x + 1], [x - 1, 1]]); sImmM
+        Matrix([
+        [    1, x + 1],
+        [x - 1,     1]])
+        sage: ImmM = sImmM._sage_(); ImmM
+        [    1 x + 1]
+        [x - 1     1]
+        sage: ImmM is sImmM._sage_()
+        True
+
+    If ``self`` is mutable, the conversion is redone every time::
+
+        sage: sM[0, 0] = 1000
+        sage: MutatedM = sM._sage_(); MutatedM
+        [ 1000 x + 1]
+        [x - 1     1]
+        sage: M == MutatedM
+        False
+
+    """
+    try:
+        return self._sage_object
+    except AttributeError:
+        from sympy.matrices import SparseMatrix, ImmutableMatrix
+        from sage.matrix.constructor import matrix
+
+        rows, cols = self.shape
+        d = {row_col: value._sage_()
+             for row_col, value in self.todok().items()}
+        if not d:
+            from sage.rings.integer_ring import ZZ
+            base_ring = ZZ
+        else:
+            from sage.structure.element import get_coercion_model
+            from sage.symbolic.ring import SR
+            coercion_model = get_coercion_model()
+            try:
+                base_ring = coercion_model.common_parent(*d.values())
+            except TypeError: # no common canonical parent
+                base_ring = SR
+        result = matrix(base_ring, rows, cols, d,
+                        sparse=isinstance(self, SparseMatrix),
+                        immutable=True)
+        if isinstance(self, ImmutableMatrix):
+            self._sage_object = result
+        return result
+
 def _sympysage_relational(self):
     """
     EXAMPLES::
@@ -846,6 +939,7 @@ def sympy_init():
     from sympy.integrals.integrals import Integral
     from sympy.polys.rootoftools import CRootOf
     from sympy.series.order import Order
+    from sympy.matrices import ImmutableMatrix, ImmutableSparseMatrix, Matrix, SparseMatrix
 
     Float._sage_ = _sympysage_float
     Integer._sage_ = _sympysage_integer
@@ -854,6 +948,10 @@ def sympy_init():
     NegativeInfinity._sage_ = _sympysage_ninfty
     ComplexInfinity._sage_ = _sympysage_uinfty
     sympy_nan._sage_ = _sympysage_nan
+    ImmutableMatrix._sage_ = _sympysage_matrix
+    ImmutableSparseMatrix._sage_ = _sympysage_matrix
+    Matrix._sage_ = _sympysage_matrix
+    SparseMatrix._sage_ = _sympysage_matrix
     Relational._sage_ = _sympysage_relational
     Exp1._sage_ = _sympysage_e
     Pi._sage_ = _sympysage_pi

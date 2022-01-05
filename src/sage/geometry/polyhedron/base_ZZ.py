@@ -13,7 +13,7 @@ Base class for polyhedra over `\ZZ`
 # ****************************************************************************
 
 from sage.rings.all import ZZ, QQ
-from sage.misc.all import cached_method
+from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from .base_QQ import Polyhedron_QQ
 from sage.arith.all import gcd
@@ -28,7 +28,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         sage: p = Polyhedron([(0,0)], base_ring=ZZ);  p
         A 0-dimensional polyhedron in ZZ^2 defined as the convex hull of 1 vertex
-        sage: TestSuite(p).run(skip='_test_pickling')
+        sage: TestSuite(p).run()
     """
     _base_ring = ZZ
 

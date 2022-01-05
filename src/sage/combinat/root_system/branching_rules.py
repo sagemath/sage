@@ -979,7 +979,7 @@ def branch_weyl_character(chi, R, S, rule="default"):
         sage: A3(0,1,0).branch(C2,rule=br)
         C2(0,0) + C2(0,1)
     """
-    if isinstance(rule, str) or isinstance(rule, list):
+    if isinstance(rule, (str, list)):
         rule = branching_rule(R._cartan_type, S._cartan_type, rule)
     if hasattr(rule, "_S"):
         if rule._S != S.cartan_type():

@@ -89,7 +89,7 @@ class Macdonald(UniqueRepresentation):
 
         - a string representing the Macdonald symmetric function family
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: t = QQ['t'].gen(); SymmetricFunctions(QQ['t'].fraction_field()).macdonald(q=t,t=1)
             Macdonald polynomials with q=t and t=1 over Fraction Field of Univariate Polynomial Ring in t over Rational Field
@@ -107,7 +107,7 @@ class Macdonald(UniqueRepresentation):
 
         - ``self`` -- a family of Macdonald symmetric function bases
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: t = QQ['t'].gen(); SymmetricFunctions(QQ['t'].fraction_field()).macdonald(q=t,t=1)
             Macdonald polynomials with q=t and t=1 over Fraction Field of Univariate Polynomial Ring in t over Rational Field
@@ -144,7 +144,7 @@ class Macdonald(UniqueRepresentation):
 
         - the base ring associated to the corresponding symmetric function ring
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ['q'].fraction_field())
             sage: Mac = Sym.macdonald(t=0)
@@ -166,7 +166,7 @@ class Macdonald(UniqueRepresentation):
 
         - the symmetric function ring associated to the Macdonald bases
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: Mac = SymmetricFunctions(QQ['q'].fraction_field()).macdonald(t=0)
             sage: Mac.symmetric_function_ring()
@@ -187,7 +187,7 @@ class Macdonald(UniqueRepresentation):
 
         - returns the `P` Macdonald basis of symmetric functions
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: Sym = SymmetricFunctions(FractionField(QQ['q','t']))
             sage: P = Sym.macdonald().P(); P
@@ -914,7 +914,7 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
 
         - the family of Macdonald symmetric functions associated to ``self``
 
-        EXAMPLES ::
+        EXAMPLES::
 
             sage: MacP = SymmetricFunctions(QQ['q'].fraction_field()).macdonald(t=0).P()
             sage: MacP.macdonald_family()

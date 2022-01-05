@@ -1516,7 +1516,7 @@ class SkewPartitions(UniqueRepresentation, Parent):
             resIn.append(inP)
             resOut.append(len(colL_new))
             for iCol in range(inP, len(colL_new)):
-                colL_new[iCol] -= 1;
+                colL_new[iCol] -= 1
                 if colL_new[iCol] < 0:
                     raise ValueError("Incompatible row and column length : %s and %s"%(rowL, colL))
             while colL_new and colL_new[-1] == 0:

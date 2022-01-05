@@ -767,6 +767,29 @@ cdef class Expression(CommutativeRingElement):
         """
         return new_Expression_from_GEx(self._parent, self._gobj)
 
+    def __enter__(self):
+        """
+        Method used by temporary variables with Python `with` to
+        automatically clean up after themselves.
+        """
+        return self
+
+    def __exit__(self, *args):
+        """
+        Method used by temporary variables with Python `with` to
+        automatically clean up after themselves.
+
+        TESTS::
+
+            sage: symbols_copy = SR.symbols.copy()
+            sage: with SR.temp_var() as t: pass
+            sage: symbols_copy == SR.symbols
+            True
+
+        """
+        SR.cleanup_var(self)
+        return False
+
     def _repr_(self):
         r"""
         Return string representation of this symbolic expression.
@@ -1549,6 +1572,13 @@ cdef class Expression(CommutativeRingElement):
 
         (In spite of its name, this method also works in the complex case.)
 
+        .. WARNING::
+
+            The generic conversion mechanism is fragile. When rigorous results
+            are essential, it is recommended to call suitable methods of real
+            or complex balls instead. For example, `RBF(real(i + 1))` is better
+            expressed as `(CBF(i) + 1).real()`.
+
         EXAMPLES::
 
             sage: RBF(pi, 1/1000)
@@ -1566,6 +1596,18 @@ cdef class Expression(CommutativeRingElement):
 
             sage: CBF(gamma(15/2, 1)).identical(CBF(15/2).gamma(1))
             True
+            sage: a = RBF(abs(e+i)); (a, a.parent())
+            ([2.89638673159001 +/- 3.07e-15], Real ball field with 53 bits of precision)
+            sage: a = CBF(abs(e+i)); (a, a.parent())
+            ([2.89638673159001 +/- 3.07e-15], Complex ball field with 53 bits of precision)
+            sage: RBF(sin(7/12)^2 + real(exp(i*7/12))^2)
+            [1.0000000000000 +/- 1.12e-15]
+            sage: RBF(arg(sin(i+1)))
+            [0.454820233309950 +/- 7.08e-16]
+            sage: RBF(abs(i) + i)
+            Traceback (most recent call last):
+            ...
+            ValueError: nonzero imaginary part
         """
         # Note that we deliberately don't use _eval_self and don't try going
         # through RIF/CIF in order to avoid unsafe conversions.
@@ -1577,25 +1619,34 @@ cdef class Expression(CommutativeRingElement):
             except (TypeError, ValueError):
                 pass
         else:
+            C = R.complex_field()
             # Intended for BuiltinFunctions with a well-defined main argument
             args = [a.pyobject() if a.is_numeric() else a
                     for a in self.operands()]
             try:
                 args = operator._method_arguments(*args)
-                method = getattr(R(args[0]), operator.name())
-            except (AttributeError, TypeError):
+            except AttributeError:
                 pass
             else:
-                if callable(method):
-                    return method(*args[1:])
-            # Generic case: walk through the expression
+                # If R is a real field, prefer the method of real balls if it
+                # exists (sometimes leads to tighter bounds, and avoids
+                # confusing inconsistencies).
+                for T in ([R] if C is R else [R, C]):
+                    try:
+                        method = getattr(T(args[0]), operator.name())
+                    except (AttributeError, TypeError, ValueError):
+                        pass
+                    else:
+                        if callable(method):
+                            return method(*args[1:])
+            # Generic case: walk through the expression. In this case, we do
+            # not bother trying to stay in the real field.
             try:
-                res = self.operator()(*[R(a) for a in args])
+                res = self.operator()(*[C(a) for a in args])
             except (TypeError, ValueError):
                 pass
             else:
-                if res.parent() is R:
-                    return res
+                return R(res)
         # Typically more informative and consistent than the exceptions that
         # would propagate
         raise TypeError("unable to convert {!r} to a {!s}".format(
@@ -2849,28 +2900,42 @@ cdef class Expression(CommutativeRingElement):
 
     def is_square(self):
         """
-        Return ``True`` if ``self`` is a perfect square.
+        Return ``True`` if ``self`` is the square of another symbolic expression.
+
+        This is ``True`` for all constant, non-relational expressions
+        (containing no variables or comparison), and not implemented
+        otherwise.
 
         EXAMPLES::
 
-            sage: f(n,m) = n*2 + m
-            sage: f(2,1).is_square()
-            False
-            sage: f(3,3).is_square()
-            True
-            sage: f(n,m).is_square()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: is_square() not implemented for non numeric elements of Symbolic Ring
-            sage: SR(42).is_square()
-            False
             sage: SR(4).is_square()
             True
+            sage: SR(5).is_square()
+            True
+            sage: pi.is_square()
+            True
+            sage: x.is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for non-constant
+            or relational elements of Symbolic Ring
+            sage: r = SR(4) == SR(5)
+            sage: r.is_square()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: is_square() not implemented for non-constant
+            or relational elements of Symbolic Ring
+
         """
+        if self.is_constant() and not self.is_relational():
+            # The square root of any "number" is in SR... just call
+            # sqrt() on it.
+            return True
+
         try:
             obj = self.pyobject()
         except TypeError as e:
-            raise NotImplementedError("is_square() not implemented for non numeric elements of Symbolic Ring")
+            raise NotImplementedError("is_square() not implemented for non-constant or relational elements of Symbolic Ring")
 
         return obj.is_square()
 
@@ -4562,6 +4627,11 @@ cdef class Expression(CommutativeRingElement):
 
             sage: (x^(-1) + 1).series(x,1)
             1*x^(-1) + 1 + Order(x)
+
+        Check that :trac:`32115` is fixed::
+
+            sage: exp(log(1+x)*(1/x)).series(x)
+            (e) + (-1/2*e)*x + (11/24*e)*x^2 + (-7/16*e)*x^3 + (2447/5760*e)*x^4 + ...
         """
         cdef Expression symbol0 = self.coerce_in(symbol)
         cdef GEx x
@@ -4874,11 +4944,10 @@ cdef class Expression(CommutativeRingElement):
             (-x)^(3/4)
             sage: forget()
 
-        Check that :trac:`31077` is fixed (also see :trac:`31679`)::
+        Check that :trac:`31077` and :trac:`31585` are fixed (also see :trac:`31679`)::
 
             sage: a,b,c,d = var("a b c d")
-            sage: f = ((a + b + c)^30 * (3*b + d - 5/d)^3).expand().subs(a=0,b=2,c=-1)
-            sage: sum(sign(s) * (abs(ZZ(s)) % ZZ(2^30)) * d^i for s,i in f.coefficients())
+            sage: ((a + b + c)^30 * (3*b + d - 5/d)^3).expand().subs(a=0,b=2,c=-1)
             d^3 + 18*d^2 + 93*d - 465/d + 450/d^2 - 125/d^3 + 36
 
         Check that :trac:`31411` is fixed::
@@ -4887,8 +4956,7 @@ cdef class Expression(CommutativeRingElement):
             sage: A = q^(2/3) + q^(2/5)
             sage: B = product(1 - q^j, j, 1, 31) * q^(1/24)
             sage: bool((A * B).expand() == (A * B.expand()).expand())
-            True  # 64-bit
-            True  # 32-bit # known bug (#31585)
+            True
         """
         if side is not None:
             if not is_a_relational(self._gobj):
@@ -5517,6 +5585,26 @@ cdef class Expression(CommutativeRingElement):
             sage: (a + b*x).series(x, 2).subs(a=a, b=b)
             (a) + (b)*x + Order(x^2)
 
+        Check that :trac:`31585` is fixed::
+
+            sage: m = -2^31
+            sage: (-x).subs(x=m)
+            2147483648
+            sage: abs(x).subs(x=m)
+            2147483648
+            sage: (2*x).subs(x=m)
+            -4294967296
+            sage: (m*x + 1)*x
+            -(2147483648*x - 1)*x
+            sage: m = -2^63
+            sage: (-x).subs(x=m)
+            9223372036854775808
+            sage: abs(x).subs(x=m)
+            9223372036854775808
+            sage: (2*x).subs(x=m)
+            -18446744073709551616
+            sage: (m*x + 1)*x
+            -(9223372036854775808*x - 1)*x
         """
         cdef dict sdict = {}
         cdef GEx res
@@ -5808,7 +5896,7 @@ cdef class Expression(CommutativeRingElement):
 
     def number_of_operands(self):
         """
-        Return the number of arguments of this expression.
+        Return the number of operands of this expression.
 
         EXAMPLES::
 
@@ -5829,13 +5917,18 @@ cdef class Expression(CommutativeRingElement):
 
     def __len__(self):
         """
-        Return the number of arguments of this expression.
+        Return the number of operands of this expression.
+
+        This is deprecated; use :meth:`number_of_operands` instead.
 
         EXAMPLES::
 
             sage: var('a,b,c,x,y')
             (a, b, c, x, y)
             sage: len(a)
+            doctest:warning...
+            DeprecationWarning: using len on a symbolic expression is deprecated; use method number_of_operands instead
+            See https://trac.sagemath.org/29738 for details.
             0
             sage: len((a^2 + b^2 + (x+y)^2))
             3
@@ -5844,6 +5937,8 @@ cdef class Expression(CommutativeRingElement):
             sage: len(a*b^2*c)
             3
         """
+        from sage.misc.superseded import deprecation
+        deprecation(29738, "using len on a symbolic expression is deprecated; use method number_of_operands instead")
         return self.number_of_operands()
 
     def _unpack_operands(self):
@@ -5982,7 +6077,7 @@ cdef class Expression(CommutativeRingElement):
             # find the python equivalent and return it
             res = get_sfunction_from_serial(serial)
             if res is None:
-                raise RuntimeError("cannot find SFunction in table")
+                raise RuntimeError("cannot find SymbolicFunction in table")
 
             if is_a_fderivative(self._gobj):
                 from sage.libs.pynac.pynac import paramset_from_Expression
@@ -8139,6 +8234,16 @@ cdef class Expression(CommutativeRingElement):
 
             sage: (6*exp(i*pi/3)-6*exp(i*2*pi/3)).real_part()
             6
+
+        Check that :trac:`28357` is fixed::
+
+            sage: m = var('m')
+            sage: assume(m, 'integer')
+            sage: (I^m).real_part()
+            cos(1/2*pi*m)
+            sage: (I^m).imag_part()
+            sin(1/2*pi*m)
+            sage: forget()
         """
         return new_Expression_from_GEx(self._parent,
                 g_hold_wrapper(g_real_part, self._gobj, hold))
@@ -10013,8 +10118,8 @@ cdef class Expression(CommutativeRingElement):
             sage: a = RR.random_element()
             sage: b = RR.random_element()
             sage: f = SR(a + b*I)
-            sage: bool(f.rectform() == a + b*I)
-            True
+            sage: abs(f.rectform() - (a + b*I))  # abs tol 1e-16
+            0.0
 
         If we decompose a complex number into its real and imaginary
         parts, they should correspond to the real and imaginary terms
@@ -10023,9 +10128,8 @@ cdef class Expression(CommutativeRingElement):
             sage: z = CC.random_element()
             sage: a = z.real_part()
             sage: b = z.imag_part()
-            sage: bool(SR(z).rectform() == a + b*I)
-            True
-
+            sage: abs(SR(z).rectform() - (a + b*I))  # abs tol 1e-16
+            0.0
         """
         return self.maxima_methods().rectform()
 
@@ -10227,10 +10331,10 @@ cdef class Expression(CommutativeRingElement):
             1/3*x*hypergeometric((), (2, 3), x) + hypergeometric((), (1, 2), x)
             sage: (2*hypergeometric((), (), x)).simplify_hypergeometric()
             2*e^x
-            sage: (nest(lambda y: hypergeometric([y], [1], x), 3, 1)
+            sage: (nest(lambda y: hypergeometric([y], [1], x), 3, 1)  # not tested, unstable
             ....:  .simplify_hypergeometric())
             laguerre(-laguerre(-e^x, x), x)
-            sage: (nest(lambda y: hypergeometric([y], [1], x), 3, 1)
+            sage: (nest(lambda y: hypergeometric([y], [1], x), 3, 1)  # not tested, unstable
             ....:  .simplify_hypergeometric(algorithm='sage'))
             hypergeometric((hypergeometric((e^x,), (1,), x),), (1,), x)
             sage: hypergeometric_M(1, 3, x).simplify_hypergeometric()
@@ -12885,25 +12989,25 @@ cdef class Expression(CommutativeRingElement):
 
         if not self.has(Y):
             raise ValueError("Expression {} contains no {} terms".format(self, Y))
-        x = SR.symbol()
-        yy = SR.symbol()
-        y = SymbolicFunction('y', 1)(x)
-        f = SymbolicFunction('f', 2)(x, yy)
-        Fx = f.diff(x)
-        Fy = f.diff(yy)
-        G = -(Fx/Fy)
-        G = G.subs({yy: y})
-        di = {y.diff(x): -self.diff(X)/self.diff(Y)}
-        R = G
-        S = G.diff(x, n - 1)
-        for i in range(n + 1):
-            di[y.diff(x, i + 1).subs({x: x})] = R
-            S = S.subs(di)
-            R = G.diff(x, i)
-            for j in range(n + 1 - i):
-                di[f.diff(x, i, yy, j).subs({x: x, yy: y})] = self.diff(X, i, Y, j)
-                S = S.subs(di)
-        return S
+        with SR.temp_var() as x:
+            with SR.temp_var() as yy:
+                y = SymbolicFunction('y', 1)(x)
+                f = SymbolicFunction('f', 2)(x, yy)
+                Fx = f.diff(x)
+                Fy = f.diff(yy)
+                G = -(Fx/Fy)
+                G = G.subs({yy: y})
+                di = {y.diff(x): -self.diff(X)/self.diff(Y)}
+                R = G
+                S = G.diff(x, n - 1)
+                for i in range(n + 1):
+                    di[y.diff(x, i + 1).subs({x: x})] = R
+                    S = S.subs(di)
+                    R = G.diff(x, i)
+                    for j in range(n + 1 - i):
+                        di[f.diff(x, i, yy, j).subs({x: x, yy: y})] = self.diff(X, i, Y, j)
+                        S = S.subs(di)
+                return S
 
 def solve_diophantine(f,  *args, **kwds):
     """

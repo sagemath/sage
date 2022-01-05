@@ -214,7 +214,8 @@ def private_neighbors(G, vertex, dom):
 # Computation of minimum dominating
 # ==============================================================================
 
-def dominating_set(g, independent=False, total=False, value_only=False, solver=None, verbose=0):
+def dominating_set(g, independent=False, total=False, value_only=False,
+                   solver=None, verbose=0, *, integrality_tolerance=1e-3):
     r"""
     Return a minimum dominating set of the graph.
 
@@ -244,15 +245,20 @@ def dominating_set(g, independent=False, total=False, value_only=False, solver=N
       cardinality of the computed dominating set, or to return its list of
       vertices (default)
 
-    - ``solver`` -- (default: ``None``); specifies a Linear Program (LP) solver
-      to be used. If set to ``None``, the default one is used. For more
-      information on LP solvers and which default solver is used, see the method
-      :meth:`solve <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the
-      class :class:`MixedIntegerLinearProgram
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
       <sage.numerical.mip.MixedIntegerLinearProgram>`.
 
     - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
       to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
 
     EXAMPLES:
 
@@ -321,8 +327,8 @@ def dominating_set(g, independent=False, total=False, value_only=False, solver=N
         return Integer(round(p.solve(objective_only=True, log=verbose)))
     else:
         p.solve(log=verbose)
-        b = p.get_values(b)
-        return [v for v in g if b[v] == 1]
+        b = p.get_values(b, convert=bool, tolerance=integrality_tolerance)
+        return [v for v in g if b[v]]
 
 
 # ==============================================================================

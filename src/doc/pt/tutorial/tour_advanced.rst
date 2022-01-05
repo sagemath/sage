@@ -443,7 +443,7 @@ Podemos também criar espaços para :math:`\Gamma_0(N)` e
      0 over Rational Field
     sage: ModularSymbols(Gamma1(11),2)
     Modular Symbols space of dimension 11 for Gamma_1(11) of weight 2 with
-    sign 0 and over Rational Field
+    sign 0 over Rational Field
 
 Vamos calcular alguns polinômios característicos e expansões
 :math:`q`.

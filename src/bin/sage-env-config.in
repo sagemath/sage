@@ -20,7 +20,7 @@
 #    or build/bin/sage-build-env instead.
 #  - Configuration variables that are only needed by the Sage runtime,
 #    but not as environment variables, should instead be set in
-#    build/pkgs/sage_conf/src/sage_conf.py
+#    pkgs/sage-conf/sage_conf.py
 #
 ##########################################################################
 
@@ -52,4 +52,3 @@ CONFIGURED_OBJCXX="@OBJCXX@"
 #######################################
 SAGE_ARCHFLAGS="@SAGE_ARCHFLAGS@"
 SAGE_PKG_CONFIG_PATH="@SAGE_PKG_CONFIG_PATH@"
-SAGE_MACOSX_DEPLOYMENT_TARGET="@SAGE_MACOSX_DEPLOYMENT_TARGET@"

@@ -14,6 +14,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
+from sage.typeset.unicode_characters import unicode_otimes
 
 
 class SignedTensorProductFunctor(CovariantFunctorialConstruction):
@@ -55,7 +56,7 @@ class SignedTensorProductFunctor(CovariantFunctorialConstruction):
     _functor_name = "tensor"
     _functor_category = "SignedTensorProducts"
     symbol = " # "
-    unicode_symbol = " ⨂ "
+    unicode_symbol = f" {unicode_otimes} "
 
     def _repr_(self):
         """

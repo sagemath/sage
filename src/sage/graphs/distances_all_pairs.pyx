@@ -128,10 +128,10 @@ from libc.stdint cimport uint64_t, UINT64_MAX
 from libc.stdint cimport uint32_t, INT32_MAX, UINT32_MAX
 from cysignals.memory cimport sig_malloc, sig_calloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
+from memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.c_graph cimport CGraphBackend
 from sage.graphs.base.c_graph cimport CGraph
-from sage.ext.memory_allocator cimport MemoryAllocator
 
 from sage.graphs.base.static_sparse_graph cimport (short_digraph,
                                                    init_short_digraph,

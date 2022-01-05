@@ -88,8 +88,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         Continuous map from the 2-dimensional topological manifold M to the
          3-dimensional topological manifold N
         sage: f.display()
-        M --> N
-           (x, y) |--> (u, v, w) = (0, 0, 0)
+        M → N
+           (x, y) ↦ (u, v, w) = (0, 0, 0)
 
     The test suite is passed::
 
@@ -126,8 +126,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
         sage: E.one() is M.identity_map()
         True
         sage: E.one().display()
-        Id_M: M --> M
-           (x, y) |--> (x, y)
+        Id_M: M → M
+           (x, y) ↦ (x, y)
 
     The test suite is passed by ``E``::
 
@@ -260,14 +260,14 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             Continuous map f from the 2-dimensional topological manifold M to
              the 3-dimensional topological manifold N
             sage: f.display()
-            f: M --> N
-               (x, y) |--> (u, v, w) = (x + y, x - y, x*y)
+            f: M → N
+               (x, y) ↦ (u, v, w) = (x + y, x - y, x*y)
             sage: id = Hom(M, M)({}, is_identity=True)
             sage: id
             Identity map Id_M of the 2-dimensional topological manifold M
             sage: id.display()
-            Id_M: M --> M
-               (x, y) |--> (x, y)
+            Id_M: M → M
+               (x, y) ↦ (x, y)
 
         """
         # Standard construction
@@ -295,8 +295,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             Continuous map from the 2-dimensional topological manifold M to the
              3-dimensional topological manifold N
             sage: f.display()
-            M --> N
-               (x, y) |--> (u, v, w) = (0, 0, 0)
+            M → N
+               (x, y) ↦ (u, v, w) = (0, 0, 0)
             sage: p = M((-2,3)) ; p
             Point on the 2-dimensional topological manifold M
             sage: f(p)
@@ -359,8 +359,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             Continuous map f from the 2-dimensional topological manifold M to
              the 3-dimensional topological manifold N
             sage: f.display()
-            f: M --> N
-               (x, y) |--> (u, v, w) = (x + y, x - y, x*y)
+            f: M → N
+               (x, y) ↦ (u, v, w) = (x + y, x - y, x*y)
 
         There is also the following shortcut for :meth:`one`::
 
@@ -414,8 +414,8 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
             sage: H.one().parent() is H
             True
             sage: H.one().display()
-            Id_M: M --> M
-               (x, y) |--> (x, y)
+            Id_M: M → M
+               (x, y) ↦ (x, y)
 
         The identity map is cached::
 

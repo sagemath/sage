@@ -102,6 +102,10 @@ class IndefiniteIntegral(BuiltinFunction):
             sage: integrate(1/(x^4 + x^3 + 1), x)
             integrate(1/(x^4 + x^3 + 1), x)
 
+        Check that :trac:`32002` is fixed::
+
+            sage: integral(2*min_symbolic(x,2*x),x)
+            -1/2*x^2*sgn(x) + 3/2*x^2
         """
         # Check for x
         if not is_SymbolicVariable(x):
@@ -126,8 +130,10 @@ class IndefiniteIntegral(BuiltinFunction):
             else:
                 if not hasattr(A, 'operator'):
                     return A
-                elif not isinstance(A.operator(), IndefiniteIntegral):
-                    return A
+                else:
+                    uneval = integral(SR.wild(0), x, hold=True)
+                    if not A.has(uneval):
+                        return A
         return A
 
     def _tderivative_(self, f, x, diff_param=None):
@@ -204,6 +210,13 @@ class DefiniteIntegral(BuiltinFunction):
             sage: from sage.symbolic.integration.integral import definite_integral
             sage: definite_integral(exp(x),x,0,1) # indirect doctest
             e - 1
+
+        TESTS:
+
+        Check that :trac:`32002` is fixed::
+
+            sage: integral(2*min_symbolic(x,2*x),x,-1,1)
+            -1
         """
         # Check for x
         if not is_SymbolicVariable(x):
@@ -230,8 +243,10 @@ class DefiniteIntegral(BuiltinFunction):
             else:
                 if not hasattr(A, 'operator'):
                     return A
-                elif not isinstance(A.operator(), DefiniteIntegral):
-                    return A
+                else:
+                    uneval = integral(SR.wild(0), x, a, b, hold=True)
+                    if not A.has(uneval):
+                        return A
         return A
 
     def _evalf_(self, f, x, a, b, parent=None, algorithm=None):
@@ -600,12 +615,16 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     We next integrate a function with no closed form integral. Notice
     that the answer comes back as an expression that contains an
-    integral itself.
-
-    ::
+    integral itself. ::
 
         sage: A = integral(1/ ((x-4) * (x^3+2*x+1)), x); A
-        -1/73*integrate((x^2 + 4*x + 18)/(x^3 + 2*x + 1), x) + 1/73*log(x - 4)
+        integrate(1/((x^3 + 2*x + 1)*(x - 4)), x)
+
+    Sometimes, in this situation, using the algorithm "maxima"
+    gives instead a partially integrated answer::
+
+        sage: integral(1/(x**7-1),x,algorithm='maxima')
+        -1/7*integrate((x^5 + 2*x^4 + 3*x^3 + 4*x^2 + 5*x + 6)/(x^6 + x^5 + x^4 + x^3 + x^2 + x + 1), x) + 1/7*log(x - 1)
 
     We now show that floats are not converted to rationals
     automatically since we by default have keepfloat: true in maxima.
@@ -901,8 +920,11 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         4
 
         sage: f = sqrt(x + 1/x^2)
-        sage: integrate(f, x)
-        1/3*(2*sqrt(x^3 + 1) - log(sqrt(x^3 + 1) + 1) + log(abs(sqrt(x^3 + 1) - 1)))*sgn(x)
+        sage: actual = integrate(f, x)
+        sage: expected = (1/3*(2*sqrt(x^3 + 1) - log(sqrt(x^3 + 1) + 1)
+        ....:             + log(abs(sqrt(x^3 + 1) - 1)))*sgn(x))
+        sage: bool(actual == expected)
+        True
 
         sage: g = abs(sin(x)*cos(x))
         sage: g.integrate(x, 0, 2*pi)
@@ -912,7 +934,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         2*sqrt(x*sgn(x))/sgn(x)
 
         sage: integrate(sgn(x) - sgn(1-x), x)
-        x*(sgn(x) - sgn(-x + 1)) + sgn(-x + 1)
+        abs(x - 1) + abs(x)
 
         sage: integrate(1 / (1 + abs(x-5)), x, -5, 6)
         log(11) + log(2)
@@ -979,8 +1001,6 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
         sage: x,m = SR.var('x,m', domain='real')    # long time
         sage: integrate(elliptic_e(x,m).diff(x), x) # long time
         elliptic_e(x, m)
-
-
     """
     expression, v, a, b = _normalize_integral_input(expression, v, a, b)
     if algorithm is not None:

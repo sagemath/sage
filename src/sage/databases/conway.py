@@ -5,8 +5,9 @@ Frank Luebeck's tables of Conway polynomials over finite fields
 
 # ****************************************************************************
 #
-#       Sage: Copyright (C) 2005 William Stein <wstein@gmail.com>
-#             Copyright (C) 2013 R. Andrew Ohana <andrew.ohana@gmail.com>
+#       Copyright (C) 2005-2006 William Stein <wstein@gmail.com>
+#       Copyright (C) 2010      Alexandru Ghitza
+#       Copyright (C) 2013      R. Andrew Ohana <andrew.ohana@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,9 +20,8 @@ from collections.abc import Mapping
 import os
 import pickle
 
-from sage.env import CONWAY_POLYNOMIALS_DATA_DIR
+from sage.features.databases import DatabaseConwayPolynomials
 
-_CONWAYDATA = os.path.join(CONWAY_POLYNOMIALS_DATA_DIR, 'conway_polynomials.p')
 _conwaydict = None
 
 class DictInMapping(Mapping):
@@ -101,9 +101,7 @@ class ConwayPolynomials(Mapping):
         """
         global _conwaydict
         if _conwaydict is None:
-            if not os.path.exists(_CONWAYDATA):
-                raise RuntimeError('In order to initialize the database, '
-                        + '%s must exist.' % _CONWAYDATA)
+            _CONWAYDATA = DatabaseConwayPolynomials().absolute_path()
             with open(_CONWAYDATA, 'rb') as f:
                 _conwaydict = pickle.load(f)
         self._store = _conwaydict

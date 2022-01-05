@@ -6,7 +6,6 @@ TESTS::
     sage: from sage.tests.gap_packages import all_installed_packages, test_packages
     sage: pkgs = all_installed_packages(ignore_dot_gap=True)
     sage: test_packages(pkgs, only_failures=True)    # optional - gap_packages
-    ...
       Status   Package   GAP Output
     +--------+---------+------------+
 
@@ -55,36 +54,6 @@ def test_packages(packages, only_failures=False):
         +---------+------------+------------+
                    Alnuth       true
                    GAPDoc       true
-                   HAPcryst     true
-                   Hap          true
-                   QPA          true
-                   aclib        true
-                   atlasrep     true
-                   autpgrp      true
-                   cohomolo     true
-                   corelg       true
-                   crime        true
-                   cryst        true
-                   crystcat     true
-                   ctbllib      true
-                   design       true
-                   factint      true
-                   gbnp         true
-                   grape        true
-                   guava        true
-                   happrime     true
-                   hecke        true
-                   laguna       true
-                   liealgdb     true
-                   liepring     true
-                   liering      true
-                   loops        true
-                   mapclass     true
-                   polycyclic   true
-                   polymaking   true
-                   quagroup     true
-                   repsn        true
-                   sla          true
                    sonata       true
                    tomlib       true
                    toric        true

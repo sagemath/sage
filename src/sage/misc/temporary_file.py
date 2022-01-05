@@ -335,7 +335,8 @@ class atomic_write(object):
         self.tmpdir = os.path.dirname(self.target)
         self.append = append
         # Remove umask bits from mode
-        umask = os.umask(0); os.umask(umask)
+        umask = os.umask(0)
+        os.umask(umask)
         self.mode = mode & (~umask)
 
         # 'binary' mode is the default on Python 2, whereas 'text' mode is the

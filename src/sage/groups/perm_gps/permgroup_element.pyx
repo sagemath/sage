@@ -963,7 +963,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         EXAMPLES::
 
-            sage: G = PermutationGroup([[(1,2,3),(4,5)]],5)
+            sage: G = PermutationGroup([[(1,2,3),(4,5)]])
             sage: g = G.gen(0)
             sage: g[0]
             (1,2,3)

@@ -47,6 +47,7 @@ import json
 import os
 import subprocess
 import sys
+from pathlib import Path
 from urllib.request import urlopen
 from urllib.error import URLError
 
@@ -317,6 +318,28 @@ def list_packages(*pkg_types, **opts):
 
     return pkgs
 
+def _spkg_inst_dirs():
+    """
+    Generator for the installation manifest directories as resolved paths.
+
+    It yields first ``SAGE_SPKG_INST``, then ``SAGE_VENV_SPKG_INST``,
+    if defined; but it both resolve to the same directory, it only yields
+    one element.
+
+    EXAMPLES::
+
+        sage: from sage.misc.package import _spkg_inst_dirs
+        sage: list(_spkg_inst_dirs())
+        [...]
+
+    """
+    last_inst_dir = None
+    for inst_dir in (sage.env.SAGE_SPKG_INST, sage.env.SAGE_VENV_SPKG_INST):
+        if inst_dir:
+            inst_dir = Path(inst_dir).resolve()
+            if inst_dir.is_dir() and inst_dir != last_inst_dir:
+                yield inst_dir
+                last_inst_dir = inst_dir
 
 def installed_packages(exclude_pip=True):
     """
@@ -333,8 +356,6 @@ def installed_packages(exclude_pip=True):
         [...'alabaster', ...'sage_conf', ...]
         sage: installed_packages()['alabaster']  # optional - build, random
         '0.7.12'
-        sage: installed_packages()['sage_conf']  # optional - build
-        'none'
 
     .. SEEALSO::
 
@@ -344,10 +365,10 @@ def installed_packages(exclude_pip=True):
     if not exclude_pip:
         installed.update(pip_installed_packages(normalization='spkg'))
     # Sage packages should override pip packages (Trac #23997)
-    SAGE_SPKG_INST = sage.env.SAGE_SPKG_INST
-    if SAGE_SPKG_INST:
+
+    for inst_dir in _spkg_inst_dirs():
         try:
-            lp = os.listdir(SAGE_SPKG_INST)
+            lp = os.listdir(inst_dir)
             installed.update(pkgname_split(pkgname) for pkgname in lp
                              if not pkgname.startswith('.'))
         except FileNotFoundError:
@@ -558,12 +579,15 @@ def package_manifest(package):
         KeyError: 'dummy-package'
     """
     version = installed_packages()[package]
-    stamp_file = os.path.join(sage.env.SAGE_SPKG_INST,
-                              '{}-{}'.format(package, version))
-    with open(stamp_file) as f:
-        spkg_meta = json.load(f)
-    return spkg_meta
-
+    for inst_dir in _spkg_inst_dirs():
+        stamp_file = os.path.join(inst_dir,
+                                  '{}-{}'.format(package, version))
+        try:
+            with open(stamp_file) as f:
+                return json.load(f)
+        except FileNotFoundError:
+            pass
+    raise RuntimeError('package manifest directory changed at runtime')
 
 class PackageNotFoundError(RuntimeError):
     """

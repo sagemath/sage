@@ -630,15 +630,15 @@ class Gap_generic(ExtraTabCompletion, Expect):
                 elif x == 5: # @c completion, doesn't seem to happen when -p is in use
                     warnings.warn("I didn't think GAP could do this")
                 elif x == 6: # @f GAP error message
-                    current_outputs = error_outputs;
+                    current_outputs = error_outputs
                 elif x == 7: # @h help text, but this stopped happening with new help
                     warnings.warn("I didn't think GAP could do this")
                 elif x == 8: # @i awaiting normal input
-                    break;
+                    break
                 elif x == 9: # @m finished running a child
                     pass   # there is no need to do anything
                 elif x==10: #@n normal output line
-                    current_outputs = normal_outputs;
+                    current_outputs = normal_outputs
                 elif x==11: #@r echoing input
                     current_outputs = terminal_echo
                 elif x==12: #@sN shouldn't happen
@@ -1340,7 +1340,7 @@ class Gap(Gap_generic):
         prepare_workspace_dir()
 
         # According to the GAP Reference Manual,
-        # [http://www.gap-system.org/Manuals/doc/htm/ref/CHAP003.htm#SSEC011.1]
+        # [https://www.gap-system.org/Manuals/doc/htm/ref/CHAP003.htm#SSEC011.1]
         # SaveWorkspace can only be used at the main gap> prompt. It cannot
         # be included in the body of a loop or function, or called from a
         # break loop.
@@ -1483,7 +1483,7 @@ class Gap(Gap_generic):
 
             sage: gap.console()  # not tested
             *********   GAP, Version 4.5.7 of 14-Dec-2012 (free software, GPL)
-            *  GAP  *   http://www.gap-system.org
+            *  GAP  *   https://www.gap-system.org
             *********   Architecture: x86_64-unknown-linux-gnu-gcc-default64
             Libs used:  gmp, readline
             Loading the library and packages ...
@@ -1857,7 +1857,7 @@ def gap_console():
 
         sage: gap_console()  # not tested
         *********   GAP, Version 4.5.7 of 14-Dec-2012 (free software, GPL)
-        *  GAP  *   http://www.gap-system.org
+        *  GAP  *   https://www.gap-system.org
         *********   Architecture: x86_64-unknown-linux-gnu-gcc-default64
         Libs used:  gmp, readline
         Loading the library and packages ...
@@ -1870,9 +1870,7 @@ def gap_console():
         sage: import subprocess as sp
         sage: from sage.interfaces.gap import gap_command
         sage: cmd = 'echo "quit;" | ' + gap_command(use_workspace_cache=False)[0]
-        sage: gap_startup = sp.check_output(cmd, shell=True,  # py2
-        ....:                               stderr=sp.STDOUT)
-        sage: gap_startup = sp.check_output(cmd, shell=True,  # py3
+        sage: gap_startup = sp.check_output(cmd, shell=True,
         ....:                               stderr=sp.STDOUT,
         ....:                               encoding='latin1')
         sage: 'www.gap-system.org' in gap_startup

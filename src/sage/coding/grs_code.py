@@ -65,7 +65,7 @@ from sage.misc.misc_c import prod
 
 from copy import copy
 from sage.functions.other import binomial, floor
-from sage.calculus.var import var
+from sage.symbolic.ring import SR
 
 from .linear_code import AbstractLinearCode
 from .encoder import Encoder
@@ -215,7 +215,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         """
         if column_multipliers:
             if len(evaluation_points) != len(column_multipliers):
-                raise ValueError("There must be the same number of evaluation points as column multipliers");
+                raise ValueError("There must be the same number of evaluation points as column multipliers")
             try:
                 common_points = vector(list(evaluation_points) + list(column_multipliers))
                 F = common_points.base_ring()
@@ -534,7 +534,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         d = self.minimum_distance()
         n = self.length()
         q = self.base_ring().order()
-        s = var('s')
+        s = SR.var('s')
         wd = [1] + [0] * (d - 1)
         for i in range(d, n+1):
             tmp = binomial(n, i) * (q - 1)

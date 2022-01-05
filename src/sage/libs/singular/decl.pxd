@@ -436,6 +436,10 @@ cdef extern from "singular/Singular/libsingular.h":
 
     void feInitResources(char *name)
 
+    # external resource query
+
+    char* feGetResource(const char id)
+
     void *omAlloc(size_t size)
 
     # calloc

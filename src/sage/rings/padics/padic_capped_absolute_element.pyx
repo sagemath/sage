@@ -217,11 +217,11 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
             sage: a.residue(-1)
             Traceback (most recent call last):
             ...
-            ValueError: cannot reduce modulo a negative power of p.
+            ValueError: cannot reduce modulo a negative power of p
             sage: a.residue(11)
             Traceback (most recent call last):
             ...
-            PrecisionError: not enough precision known in order to compute residue.
+            PrecisionError: not enough precision known in order to compute residue
             sage: a.residue(5, check_prec=False)
             8
 
@@ -236,9 +236,9 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         if not isinstance(absprec, Integer):
             absprec = Integer(absprec)
         if check_prec and mpz_cmp_si((<Integer>absprec).value, self.absprec) > 0:
-            raise PrecisionError("not enough precision known in order to compute residue.")
+            raise PrecisionError("not enough precision known in order to compute residue")
         elif mpz_sgn((<Integer>absprec).value) < 0:
-            raise ValueError("cannot reduce modulo a negative power of p.")
+            raise ValueError("cannot reduce modulo a negative power of p")
         if field is None:
             field = (absprec == 1)
         elif field and absprec != 1:
@@ -370,7 +370,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         cdef pAdicCappedAbsoluteElement ans, unit
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime      
 
         ans = self._new_c()
@@ -431,7 +431,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         cdef pAdicCappedAbsoluteElement ans
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()
@@ -487,7 +487,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         cdef pAdicCappedAbsoluteElement ans
 
         if mpz_fits_slong_p(self.prime_pow.prime.value) == 0:
-            raise NotImplementedError("The prime %s does not fit in a long" % self.prime_pow.prime)
+            raise NotImplementedError("the prime %s does not fit in a long" % self.prime_pow.prime)
         p = self.prime_pow.prime
 
         ans = self._new_c()

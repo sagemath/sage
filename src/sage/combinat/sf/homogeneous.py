@@ -120,10 +120,10 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             sage: h.coproduct_on_generators(0)
             h[] # h[]
         """
-        def P(i): return Partition([i]) if i else Partition([])
+        def P(i):
+            return Partition([i]) if i else Partition([])
         T = self.tensor_square()
         return T.sum_of_monomials( (P(j), P(i-j)) for j in range(i+1) )
-
 
     class Element(classical.SymmetricFunctionAlgebra_classical.Element):
         def omega(self):

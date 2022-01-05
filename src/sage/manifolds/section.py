@@ -140,9 +140,9 @@ class Section(ModuleElementWithMutability):
         sage: f = M.scalar_field(y^2-x^2, name='f')
         sage: f.add_expr_by_continuation(c_uv, W)
         sage: f.display()
-        f: M --> R
-        on U: (x, y) |--> -x^2 + y^2
-        on V: (u, v) |--> -u*v
+        f: M → ℝ
+        on U: (x, y) ↦ -x^2 + y^2
+        on V: (u, v) ↦ -u*v
         sage: b = f*s; b
         Section f*s on the 2-dimensional topological manifold M with values
          in the real vector bundle E of rank 2
@@ -297,8 +297,6 @@ class Section(ModuleElementWithMutability):
             return True
         self._is_zero = True
         return False
-
-    __nonzero__ = __bool__  # For Python2 compatibility
 
     ##### End of required methods for ModuleElement (beside arithmetic) #####
 
@@ -627,9 +625,8 @@ class Section(ModuleElementWithMutability):
         if self.is_immutable():
             raise ValueError("the restrictions of an immutable element "
                              "cannot be changed")
-        self._restrictions[rst._domain] = rst.copy()
-        self._restrictions[rst._domain].set_name(name=self._name,
-                                                 latex_name=self._latex_name)
+        self._restrictions[rst._domain] = rst.copy(name=self._name,
+                                                   latex_name=self._latex_name)
         self._is_zero = False  # a priori
 
     def restrict(self, subdomain):
@@ -1198,9 +1195,9 @@ class Section(ModuleElementWithMutability):
         (scalar fields) do not have values on the whole manifold::
 
             sage: sorted(s._components.values())[0]._comp[(1,)].display()
-            S^2 --> R
-            on U: (x, y) |--> x
-            on W: (u, v) |--> u/(u^2 + v^2)
+            S^2 → ℝ
+            on U: (x, y) ↦ x
+            on W: (u, v) ↦ u/(u^2 + v^2)
 
         To fix that, we extend the components from ``W`` to ``V`` first, using
         :meth:`add_comp_by_continuation`::
@@ -1215,9 +1212,9 @@ class Section(ModuleElementWithMutability):
         The definition of ``s`` is now complete::
 
             sage: sorted(s._components.values())[0]._comp[(2,)].display()
-            S^2 --> R
-            on U: (x, y) |--> y
-            on V: (u, v) |--> v/(u^2 + v^2)
+            S^2 → ℝ
+            on U: (x, y) ↦ y
+            on V: (u, v) ↦ v/(u^2 + v^2)
 
         """
         if self.is_immutable():
@@ -1646,12 +1643,11 @@ class Section(ModuleElementWithMutability):
 
     def copy_from(self, other):
         r"""
-        Make ``self`` to a copy from ``other``.
+        Make ``self`` a copy of ``other``.
 
         INPUT:
 
-        - ``other`` -- other section in the very same module from which
-          ``self`` should be a copy of
+        - ``other`` -- other section, in the same module as ``self``
 
         .. NOTE::
 
@@ -1702,14 +1698,13 @@ class Section(ModuleElementWithMutability):
             raise ValueError("the components of an immutable element "
                              "cannot be changed")
         if other not in self.parent():
-            raise TypeError("the original must be an element "
-                            + "of {}".format(self.parent()))
+            raise TypeError("the original must be an element of "
+                            f"{self.parent()}")
         self._del_derived()
         self._del_restrictions() # delete restrictions
-        name, latex_name = self._name, self._latex_name # keep names
         for dom, rst in other._restrictions.items():
-            self._restrictions[dom] = rst.copy()
-        self.set_name(name=name, latex_name=latex_name)
+            self._restrictions[dom] = rst.copy(name=self._name,
+                                               latex_name=self._latex_name)
         self._is_zero = other._is_zero
 
     def copy(self, name=None, latex_name=None):
@@ -1768,10 +1763,17 @@ class Section(ModuleElementWithMutability):
 
         """
         resu = self._new_instance()
+        # set resu name
+        if name is not None:
+            resu._name = name
+            if latex_name is None:
+                resu._latex_name = name
+        if latex_name is not None:
+            resu._latex_name = latex_name
+        # set restrictions
         for dom, rst in self._restrictions.items():
-            resu._restrictions[dom] = rst.copy()
-        # Propagate names to all restrictions
-        resu.set_name(name=name, latex_name=latex_name)
+            resu._restrictions[dom] = rst.copy(name=name,
+                                               latex_name=latex_name)
         resu._is_zero = self._is_zero
         return resu
 
@@ -1882,9 +1884,7 @@ class Section(ModuleElementWithMutability):
             if other._smodule != self._smodule:
                 return False
             # Non-trivial open covers of the domain:
-            open_covers = self._domain.open_covers()[1:]  # the open cover 0
-                                                          # is trivial
-            for oc in open_covers:
+            for oc in self._domain.open_covers(trivial=False):
                 resu = True
                 for dom in oc:
                     try:
@@ -2228,9 +2228,9 @@ class Section(ModuleElementWithMutability):
             sage: g = M.scalar_field({c_xy: 1/(1+x^2+y^2)}, name='g')
             sage: g.add_expr_by_continuation(c_uv, U.intersection(V))
             sage: g.display()
-            g: M --> R
-            on U: (x, y) |--> 1/(x^2 + y^2 + 1)
-            on V: (u, v) |--> 2/(u^2 + v^2 + 2)
+            g: M → ℝ
+            on U: (x, y) ↦ 1/(x^2 + y^2 + 1)
+            on V: (u, v) ↦ 2/(u^2 + v^2 + 2)
             sage: t = s._rmul_(g); t
             Section g*s on the 2-dimensional topological manifold M with values
              in the real vector bundle E of rank 2

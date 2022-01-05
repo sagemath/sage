@@ -134,8 +134,8 @@ class CHomP:
             {0: 0, 1: Z x Z, 2: Z}
         """
         from sage.misc.temporary_file import tmp_filename
-        from sage.homology.all import CubicalComplex, cubical_complexes
-        from sage.homology.all import SimplicialComplex, Simplex
+        from sage.topology.cubical_complex import CubicalComplex, cubical_complexes
+        from sage.topology.simplicial_complex import SimplicialComplex, Simplex
         from sage.homology.chain_complex import HomologyGroup
         from subprocess import Popen, PIPE
         from sage.rings.all import QQ, ZZ
@@ -476,7 +476,7 @@ def homsimpl(complex=None, subcomplex=None, **kwds):
         sage: homsimpl(S1.join(S1), generators=True, base_ring=GF(2))[3][1]  # optional - CHomP
         [('L0', 'L1', 'R0', 'R1') + ('L0', 'L1', 'R0', 'R2') + ('L0', 'L1', 'R1', 'R2') + ('L0', 'L2', 'R0', 'R1') + ('L0', 'L2', 'R0', 'R2') + ('L0', 'L2', 'R1', 'R2') + ('L1', 'L2', 'R0', 'R1') + ('L1', 'L2', 'R0', 'R2') + ('L1', 'L2', 'R1', 'R2')]
     """
-    from sage.homology.all import SimplicialComplex
+    from sage.topology.simplicial_complex import SimplicialComplex
     help = kwds.get('help', False)
     if help:
         return CHomP().help('homsimpl')
@@ -529,7 +529,7 @@ def homcubes(complex=None, subcomplex=None, **kwds):
         sage: homcubes(cubical_complexes.Sphere(1), generators=True, base_ring=GF(2))[1][1]   # optional - CHomP
         [[[1,1] x [0,1]] + [[0,1] x [1,1]] + [[0,1] x [0,0]] + [[0,0] x [0,1]]]
     """
-    from sage.homology.all import CubicalComplex
+    from sage.topology.cubical_complex import CubicalComplex
     help = kwds.get('help', False)
     if help:
         return CHomP().help('homcubes')
@@ -648,7 +648,7 @@ def process_generators_cubical(gen_string, dim):
         sage: len(process_generators_cubical(s, 1))  # only one generator
         1
     """
-    from sage.homology.cubical_complex import Cube
+    from sage.topology.cubical_complex import Cube
     # each dim in gen_string starts with "The generator for
     # H_3 follows:".  So search for "T" to find the
     # end of the current list of generators.
@@ -751,7 +751,7 @@ def process_generators_simplicial(gen_string, dim, complex):
         sage: process_generators_simplicial(s, 1, simplicial_complexes.Torus())
         [[(-1, (1, 6)), (1, (1, 4))]]
     """
-    from sage.homology.all import Simplex
+    from sage.topology.simplicial_complex import Simplex
     # each dim in gen_string starts with "The generator for H_3
     # follows:".  So search for "T" to find the end of the current
     # list of generators.

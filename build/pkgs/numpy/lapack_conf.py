@@ -1,4 +1,4 @@
-#!/usr/bin/env sage-bootstrap-python
+#!/usr/bin/env python3
 
 import pkgconfig, os
 

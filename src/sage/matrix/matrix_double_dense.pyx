@@ -371,14 +371,25 @@ cdef class Matrix_double_dense(Matrix_dense):
 
             sage: matrix.identity(QQ, 4) * matrix(RDF, 4, 0)
             []
+
+        Check that an empty matrix is initialized correctly; see :trac:`27366`:
+
+            sage: A = matrix(RDF, 3, 0)
+            sage: A*A.transpose()
+            [0.0 0.0 0.0]
+            [0.0 0.0 0.0]
+            [0.0 0.0 0.0]
         """
         if self._ncols != right._nrows:
             raise IndexError("Number of columns of self must equal number of rows of right")
 
-        if self._nrows == 0 or self._ncols == 0 or right._nrows == 0 or right._ncols == 0:
-            return self._new(self._nrows, right._ncols)
-
         cdef Matrix_double_dense M, _right, _left
+
+        if self._nrows == 0 or self._ncols == 0 or right._nrows == 0 or right._ncols == 0:
+            M = self._new(self._nrows, right._ncols)
+            M._matrix_numpy.fill(0)
+            return M
+
         M = self._new(self._nrows, right._ncols)
         _right = right
         _left = self

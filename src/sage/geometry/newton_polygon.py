@@ -53,6 +53,8 @@ class NewtonPolygon_element(Element):
         Element.__init__(self, parent)
         self._polyhedron = polyhedron
         self._vertices = None
+        if polyhedron.is_mutable():
+            polyhedron._add_dependent_object(self)
 
     def _repr_(self):
         """

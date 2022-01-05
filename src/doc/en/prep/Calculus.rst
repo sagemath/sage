@@ -103,7 +103,7 @@ The syntax uses the extra  *keyword*  ``dir``.
  - This is basically because otherwise we might have done something
    like let ``right=55`` earlier, so instead Sage \- and Python \-
    requires us to put ``'right'`` and ``'-'`` in quotes to make it
-   clear they aren't variables.
+   clear they are not variables.
 
 ::
 
@@ -140,7 +140,7 @@ Naturally, Sage knows all of the derivatives you want.
     sage: derivative(sinh(x^2+sqrt(x-1)),x)
     1/2*(4*x + 1/sqrt(x - 1))*cosh(x^2 + sqrt(x - 1))
 
-And maybe even knows those you don't want.  In this case, we put the
+And maybe even knows those you do not want.  In this case, we put the
 computation inside ``show()`` since the output is so long.
 
 .. skip
@@ -156,7 +156,7 @@ computation inside ``show()`` since the output is so long.
 A common question is why Sage might not check automatically if there is
 some "simpler" version.  But simplifying an expression, or indeed, even
 defining what a 'simple' expression is, turns out to be a very hard
-technical and mathematical problem in general.  Computers won't solve
+technical and mathematical problem in general.  Computers will not solve
 every problem!
 
 As a brief interlude, let's consider an application of our ability to do
@@ -256,7 +256,7 @@ for indefinite integration is similar to that for differentiation.
     sage: integral(cos(x),x)
     sin(x)
 
-We don't get the whole indefinite integral, just a convenient
+We do not get the whole indefinite integral, just a convenient
 antiderivative.
 
 - (If you were to get a different answer 'by hand', remember that being
@@ -310,18 +310,32 @@ help it look nicer in the browser?
 ::
 
     sage: integrate(1/(1+x^5),x)
-    1/5*sqrt(5)*(sqrt(5) + 1)*arctan((4*x + sqrt(5) - 1)/sqrt(2*sqrt(5) + 10))/sqrt(2*sqrt(5) + 10) + 1/5*sqrt(5)*(sqrt(5) - 1)*arctan((4*x - sqrt(5) - 1)/sqrt(-2*sqrt(5) + 10))/sqrt(-2*sqrt(5) + 10) - 1/10*(sqrt(5) + 3)*log(2*x^2 - x*(sqrt(5) + 1) + 2)/(sqrt(5) + 1) - 1/10*(sqrt(5) - 3)*log(2*x^2 + x*(sqrt(5) - 1) + 2)/(sqrt(5) - 1) + 1/5*log(x + 1)
+    1/5*sqrt(5)*(sqrt(5) + 1)*arctan((4*x + sqrt(5) - 1)/sqrt(2*sqrt(5) + 10))/sqrt(2*sqrt(5) + 10)
+    + 1/5*sqrt(5)*(sqrt(5) - 1)*arctan((4*x - sqrt(5) - 1)/sqrt(-2*sqrt(5) + 10))/sqrt(-2*sqrt(5) + 10)
+    - 1/10*(sqrt(5) + 3)*log(2*x^2 - x*(sqrt(5) + 1) + 2)/(sqrt(5) + 1)
+    - 1/10*(sqrt(5) - 3)*log(2*x^2 + x*(sqrt(5) - 1) + 2)/(sqrt(5) - 1)
+    + 1/5*log(x + 1)
 
-Some integrals are a little tricky, of course.  If Sage doesn't know the
-whole antiderivative, it returns as much of it as it (more properly, as
-Maxima) could do.
-
-::
+Some integrals are a little tricky, of course. Sage tries hard to integrate using Maxima, Giac and Sympy::
 
     sage: integral(1/(1+x^10),x)
-    1/5*arctan(x) - 1/5*integrate((x^6 - 2*x^4 + 3*x^2 - 4)/(x^8 - x^6 + x^4 - x^2 + 1), x)
+    1/20*(sqrt(5) + 1)*arctan((4*x + sqrt(-2*sqrt(5) + 10))/(sqrt(5) + 1))
+    + 1/20*(sqrt(5) + 1)*arctan((4*x - sqrt(-2*sqrt(5) + 10))/(sqrt(5) + 1))
+    + 1/20*(sqrt(5) - 1)*arctan((4*x + sqrt(2*sqrt(5) + 10))/(sqrt(5) - 1))
+    + 1/20*(sqrt(5) - 1)*arctan((4*x - sqrt(2*sqrt(5) + 10))/(sqrt(5) - 1))
+    + 1/40*sqrt(2*sqrt(5) + 10)*log(x^2 + 1/2*x*sqrt(2*sqrt(5) + 10) + 1)
+    - 1/40*sqrt(2*sqrt(5) + 10)*log(x^2 - 1/2*x*sqrt(2*sqrt(5) + 10) + 1)
+    + 1/40*sqrt(-2*sqrt(5) + 10)*log(x^2 + 1/2*x*sqrt(-2*sqrt(5) + 10) + 1)
+    - 1/40*sqrt(-2*sqrt(5) + 10)*log(x^2 - 1/2*x*sqrt(-2*sqrt(5) + 10) + 1)
+    + 1/5*arctan(x)
 
-::
+If you ask for Maxima specifically, the result can be partial::
+
+    sage: integral(1/(1+x^10),x, algorithm='maxima')
+    1/5*arctan(x)
+    - 1/5*integrate((x^6 - 2*x^4 + 3*x^2 - 4)/(x^8 - x^6 + x^4 - x^2 + 1), x)
+
+If no antiderivative is found, the result is just the input::
 
     sage: integral(sinh(x^2+sqrt(x-1)),x)  # long time (15s on sage.math, 2012)
     integrate(sinh(x^2 + sqrt(x - 1)), x)
@@ -337,7 +351,7 @@ elementary antiderivative, but the ``erf`` function helps us out.
     sage: integral(e^(-x^2),x)
     1/2*sqrt(pi)*erf(x)
 
-Don't forget, if this function is unfamiliar to you (as it might be to
+Do not forget, if this function is unfamiliar to you (as it might be to
 students trying this integral), Sage's contextual help system comes to
 the rescue.
 
@@ -468,7 +482,7 @@ to plotting and integration.
 
 ::
 
-    sage: var('n') # Don't forget to declare your variables
+    sage: var('n') # Do not forget to declare your variables
     n
     sage: sum((1/3)^n,n,0,oo)
     3/2
@@ -727,7 +741,7 @@ their syntax is?  How would you look for help to find out more?
 
     5 \, e^{\left(-x\right)} + 2
 
-Ready to see the answers?  Don't peek until you've really tried it.
+Ready to see the answers?  Do not peek until you have really tried it.
 
 In this cell we do the following:
 
@@ -750,7 +764,7 @@ In this cell we do the following:
 - Plot the solution and give it the name ``Plot2``.
 
 - Show a simplification of the symbolic version of the solution (which
-  we didn't know ahead of time!) as well as the sum of the two graphs \-
+  we did not know ahead of time!) as well as the sum of the two graphs \-
   the solution against the slope field.
 
 As you gain experience, you will see how to glean what *you* are looking
@@ -759,4 +773,3 @@ real goals of these tutorials.
 
 Congratulations!  You are now armed with the basics of deploying Sage in
 the calculus sequence.
-

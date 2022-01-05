@@ -171,7 +171,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
 
     def __nonzero__(self):
         r"""
-        Test wether this matrix is non-zero.
+        Test whether this matrix is non-zero.
 
         TESTS::
 

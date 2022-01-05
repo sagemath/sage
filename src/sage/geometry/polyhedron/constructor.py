@@ -301,7 +301,7 @@ from .misc import _make_listlist, _common_length_of
 def Polyhedron(vertices=None, rays=None, lines=None,
                ieqs=None, eqns=None,
                ambient_dim=None, base_ring=None, minimize=True, verbose=False,
-               backend=None):
+               backend=None, mutable=False):
     r"""
     Construct a polyhedron object.
 
@@ -346,32 +346,35 @@ def Polyhedron(vertices=None, rays=None, lines=None,
 
       * ``'cdd'``: use cdd
         (:mod:`~sage.geometry.polyhedron.backend_cdd`) with `\QQ` or
-        `\RDF` coefficients depending on ``base_ring``.
+        `\RDF` coefficients depending on ``base_ring``
 
       * ``'normaliz'``: use normaliz
         (:mod:`~sage.geometry.polyhedron.backend_normaliz`) with `\ZZ` or
-        `\QQ` coefficients depending on ``base_ring``.
+        `\QQ` coefficients depending on ``base_ring``
 
       * ``'polymake'``: use polymake
         (:mod:`~sage.geometry.polyhedron.backend_polymake`) with `\QQ`, `\RDF` or
-        ``QuadraticField`` coefficients depending on ``base_ring``.
+        ``QuadraticField`` coefficients depending on ``base_ring``
 
       * ``'ppl'``: use ppl
         (:mod:`~sage.geometry.polyhedron.backend_ppl`) with `\ZZ` or
-        `\QQ` coefficients depending on ``base_ring``.
+        `\QQ` coefficients depending on ``base_ring``
 
       * ``'field'``: use python implementation
         (:mod:`~sage.geometry.polyhedron.backend_field`) for any field
 
     Some backends support further optional arguments:
 
-    - ``minimize`` -- boolean (default: ``True``). Whether to
-      immediately remove redundant H/V-representation data. Currently
+    - ``minimize`` -- boolean (default: ``True``); whether to
+      immediately remove redundant H/V-representation data; currently
       not used.
 
-    - ``verbose`` -- boolean (default: ``False``). Whether to print
-      verbose output for debugging purposes. Only supported by the cdd and
-      normaliz backends.
+    - ``verbose`` -- boolean (default: ``False``); whether to print
+      verbose output for debugging purposes; only supported by the cdd and
+      normaliz backends
+
+    - ``mutable`` -- boolean (default: ``False``); whether the polyhedron
+      is mutable
 
     OUTPUT:
 
@@ -459,6 +462,18 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         Traceback (most recent call last):
         ...
         ValueError: invalid base ring
+
+    Create a mutable polyhedron::
+
+        sage: P = Polyhedron(vertices=[[0, 1], [1, 0]], mutable=True)
+        sage: P.is_mutable()
+        True
+        sage: hasattr(P, "_Vrepresentation")
+        False
+        sage: P.Vrepresentation()
+        (A vertex at (0, 1), A vertex at (1, 0))
+        sage: hasattr(P, "_Vrepresentation")
+        True
 
     .. NOTE::
 
@@ -658,4 +673,4 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         Hrep = [ieqs, eqns]
     if got_Vrep:
         Vrep = [vertices, rays, lines]
-    return parent(Vrep, Hrep, convert=convert, verbose=verbose)
+    return parent(Vrep, Hrep, convert=convert, verbose=verbose, mutable=mutable)

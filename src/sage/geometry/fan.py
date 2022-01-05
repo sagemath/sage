@@ -252,8 +252,9 @@ from sage.geometry.toric_lattice import ToricLattice, is_ToricLattice
 from sage.geometry.toric_plotter import ToricPlotter
 from sage.graphs.digraph import DiGraph
 from sage.matrix.all import matrix
-from sage.misc.all import cached_method, walltime, prod
-from sage.modules.all import vector
+from sage.misc.cachefunc import cached_method
+from sage.misc.all import walltime, prod
+from sage.modules.all import vector, span
 from sage.rings.all import QQ, ZZ
 
 
@@ -284,7 +285,8 @@ def is_Fan(x):
 
 
 def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
-        is_complete=None, virtual_rays=None, discard_faces=False):
+        is_complete=None, virtual_rays=None, discard_faces=False,
+        allow_arrangement=False):
     r"""
     Construct a rational polyhedral fan.
 
@@ -303,7 +305,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
       :class:`Cone<sage.geometry.cone.ConvexRationalPolyhedralCone>` objects
       or lists of integers interpreted as indices of generating rays in
       ``rays``. These must be only **maximal** cones of the fan, unless
-      ``discard_faces=True`` option is specified;
+      ``discard_faces=True`` or ``allow_arrangement=True`` option is specified;
 
     - ``rays`` -- list of rays given as list or vectors convertible to the
       rational extension of ``lattice``. If ``cones`` are given by
@@ -320,7 +322,8 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
       be made to determine an appropriate toric lattice automatically;
 
     - ``check`` -- by default the input data will be checked for correctness
-      (e.g. that intersection of any two given cones is a face of each). If you
+      (e.g. that intersection of any two given cones is a face of each),
+      unless ``allow_arrangement=True`` option is specified. If you
       know for sure that the input is correct, you may significantly decrease
       construction time using ``check=False`` option;
 
@@ -345,13 +348,22 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
       ray generators to be used for :meth:`virtual_rays`;
 
     - ``discard_faces`` -- by default, the fan constructor expects the list of
-      **maximal** cones. If you provide "extra" ones and leave ``check=True``
-      (default), an exception will be raised. If you provide "extra" cones and
-      set ``check=False``, you may get wrong results as assumptions on internal
+      **maximal** cones, unless ``allow_arrangement=True`` option is specified.
+      If you provide "extra" ones and leave ``allow_arrangement=False`` (default)
+      and ``check=True`` (default), an exception will be raised.
+      If you provide "extra" cones and set ``allow_arrangement=False`` (default)
+      and ``check=False``, you may get wrong results as assumptions on internal
       data structures will be invalid. If you want the fan constructor to
       select the maximal cones from the given input, you may provide
       ``discard_faces=True`` option (it works both for ``check=True`` and
       ``check=False``).
+
+    - ``allow_arrangement`` -- by default (``allow_arrangement=False``),
+      the fan constructor expects that the intersection of any two given cones is
+      a face of each. If ``allow_arrangement=True`` option is specified, then
+      construct a rational polyhedralfan from the cone arrangement, so that the
+      union of the cones in the polyhedral fan equals to the union of the given
+      cones, and each given cone is the union of some cones in the polyhedral fan.
 
     OUTPUT:
 
@@ -457,6 +469,70 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         2
         sage: F.dim()
         0
+
+    In the following examples, we test the ``allow_arrangement=True`` option.
+    See :trac:`25122`.
+
+    The intersection of the two cones is not a face of each. Therefore,
+    they do not belong to the same rational polyhedral fan::
+
+        sage: c1 = Cone([(-2,-1,1), (-2,1,1), (2,1,1), (2,-1,1)])
+        sage: c2 = Cone([(-1,-2,1), (-1,2,1), (1,2,1), (1,-2,1)])
+        sage: c1.intersection(c2).is_face_of(c1)
+        False
+        sage: c1.intersection(c2).is_face_of(c2)
+        False
+        sage: Fan([c1, c2])
+        Traceback (most recent call last):
+        ...
+        ValueError: these cones cannot belong to the same fan!
+        ...
+
+    Let's construct the fan using ``allow_arrangement=True`` option::
+
+        sage: fan = Fan([c1, c2], allow_arrangement=True)
+        sage: fan.ngenerating_cones()
+        5
+
+    Another example where cone c2 is inside cone c1::
+
+        sage: c1 = Cone([(4, 0, 0), (0, 4, 0), (0, 0, 4)])
+        sage: c2 = Cone([(2, 1, 1), (1, 2, 1), (1, 1, 2)])
+        sage: fan = Fan([c1, c2], allow_arrangement=True)
+        sage: fan.ngenerating_cones()
+        7
+        sage: fan.plot()
+        Graphics3d Object
+
+    Cones of different dimension::
+
+        sage: c1 = Cone([(1,0),(0,1)])
+        sage: c2 = Cone([(2,1)])
+        sage: c3 = Cone([(-1,-2)])
+        sage: fan = Fan([c1, c2, c3], allow_arrangement=True)
+        sage: for cone in sorted(fan.generating_cones()): print(sorted(cone.rays()))
+        [N(-1, -2)]
+        [N(0, 1), N(1, 2)]
+        [N(1, 0), N(2, 1)]
+        [N(1, 2), N(2, 1)]
+
+    A 3-d cone and a 1-d cone::
+
+        sage: c3 = Cone([[0, 1, 1], [1, 0, 1], [0, -1, 1], [-1, 0, 1]])
+        sage: c1 = Cone([[0, 0, 1]])
+        sage: fan1 = Fan([c1, c3], allow_arrangement=True)
+        sage: fan1.plot()
+        Graphics3d Object
+
+    A 3-d cone and two 2-d cones::
+
+        sage: c2v = Cone([[0, 1, 1], [0, -1, 1]])
+        sage: c2h = Cone([[1, 0, 1], [-1, 0, 1]])
+        sage: fan2 = Fan([c2v, c2h, c3], allow_arrangement=True)
+        sage: fan2.is_simplicial()
+        True
+        sage: fan2.is_equivalent(fan1)
+        True
     """
     def result():
         # "global" does not work here...
@@ -473,7 +549,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
                     "independent and with other rays span the ambient space.")
         return RationalPolyhedralFan(cones, R, lattice, is_complete, V)
 
-    if not check and not normalize and not discard_faces:
+    if not check and not normalize and not discard_faces and not allow_arrangement:
         return result()
     if not isinstance(cones, list):
         try:
@@ -520,22 +596,10 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
             rays = cone.rays()
             is_complete = lattice.dimension() == 0
             return result()
-        ray_set = set([])
-        for cone in cones:
-            ray_set.update(cone.rays())
-        if rays:    # Preserve the initial order of rays, if they were given
-            rays = normalize_rays(rays, lattice)
-            new_rays = []
-            for ray in rays:
-                if ray in ray_set and ray not in new_rays:
-                    new_rays.append(ray)
-            if len(new_rays) != len(ray_set):
-                raise ValueError(
-                  "if rays are given, they must include all rays of the fan!")
-            rays = new_rays
-        else:
-            rays = tuple(sorted(ray_set))
-        if check:
+        if allow_arrangement:
+            cones = _refine_arrangement_to_fan(cones)
+            cones = _discard_faces(cones)
+        elif check:
             # Maybe we should compute all faces of all cones and save them for
             # later if we are doing this check?
             generating_cones = []
@@ -565,6 +629,21 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
                         (len(cones), len(generating_cones)))
         elif discard_faces:
             cones = _discard_faces(cones)
+        ray_set = set([])
+        for cone in cones:
+            ray_set.update(cone.rays())
+        if rays:    # Preserve the initial order of rays, if they were given
+            rays = normalize_rays(rays, lattice)
+            new_rays = []
+            for ray in rays:
+                if ray in ray_set and ray not in new_rays:
+                    new_rays.append(ray)
+            if len(new_rays) != len(ray_set):
+                raise ValueError(
+                  "if rays are given, they must include all rays of the fan!")
+            rays = new_rays
+        else:
+            rays = tuple(sorted(ray_set))
         cones = (tuple(sorted(rays.index(ray) for ray in cone.rays()))
                  for cone in cones)
         return result()
@@ -575,12 +654,13 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
             cones[n] = sorted(cone)
         except TypeError:
             raise TypeError("cannot interpret %s as a cone!" % cone)
-    if not check and not discard_faces:
+    if not check and not discard_faces and not allow_arrangement:
         return result()
     # If we do need to make all the check, build explicit cone objects first
     return Fan((Cone([rays[n] for n in cone], lattice) for cone in cones),
                rays, lattice, is_complete=is_complete,
-               virtual_rays=virtual_rays, discard_faces=discard_faces)
+               virtual_rays=virtual_rays, discard_faces=discard_faces,
+               allow_arrangement=allow_arrangement)
 
 
 def FaceFan(polytope, lattice=None):
@@ -3008,8 +3088,8 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
             sage: f = Fan([Cone([(1,0,1,0), (0,1,1,0)])])
             sage: f.virtual_rays()
-            N(0, 0, 0, 1),
-            N(0, 0, 1, 0)
+            N(1, 0, 0, 0),
+            N(0, 0, 0, 1)
             in 4-d lattice N
 
             sage: f.rays()
@@ -3018,14 +3098,14 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             in 4-d lattice N
 
             sage: f.virtual_rays([0])
-            N(0, 0, 0, 1)
+            N(1, 0, 0, 0)
             in 4-d lattice N
 
         You can also give virtual ray indices directly, without
         packing them into a list::
 
             sage: f.virtual_rays(0)
-            N(0, 0, 0, 1)
+            N(1, 0, 0, 0)
             in 4-d lattice N
 
         Make sure that :trac:`16344` is fixed and one can compute
@@ -3069,7 +3149,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         OUTPUT:
 
-        Returns the subsets `\{i_1,\dots,i_k\} \subset \{ 1,\dots,n\}`
+        Return the subsets `\{i_1,\dots,i_k\} \subset \{ 1,\dots,n\}`
         such that
 
         * The points `\{p_{i_1},\dots,p_{i_k}\}` do not span a cone of
@@ -3169,7 +3249,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         OUTPUT:
 
-        Returns the ideal, in the given ``ring``, generated by the
+        Return the ideal, in the given ``ring``, generated by the
         linear relations of the rays. In toric geometry, this
         corresponds to rational equivalence of divisors.
 
@@ -3523,3 +3603,93 @@ def discard_faces(cones):
 
 
 _discard_faces = discard_faces  # Due to a name conflict in Fan constructor
+
+
+def _refine_arrangement_to_fan(cones):
+    """
+    Refine the cones of the given list so that they can belong to the same fan.
+
+    INPUT:
+
+    - ``cones`` -- a list of rational cones that are possibly overlapping.
+
+    OUTPUT:
+
+    - a list of refined cones.
+
+    EXAMPLES::
+
+        sage: from sage.geometry.fan import _refine_arrangement_to_fan
+        sage: c1 = Cone([(-2,-1,1), (-2,1,1), (2,1,1), (2,-1,1)])
+        sage: c2 = Cone([(-1,-2,1), (-1,2,1), (1,2,1), (1,-2,1)])
+        sage: refined_cones = _refine_arrangement_to_fan([c1, c2])
+        sage: for cone in refined_cones: print(cone.rays())
+        N(-1,  1, 1),
+        N(-1, -1, 1),
+        N( 1, -1, 1),
+        N( 1,  1, 1)
+        in 3-d lattice N
+        N(1, -1, 1),
+        N(1,  1, 1),
+        N(2, -1, 1),
+        N(2,  1, 1)
+        in 3-d lattice N
+        N(-2,  1, 1),
+        N(-1, -1, 1),
+        N(-1,  1, 1),
+        N(-2, -1, 1)
+        in 3-d lattice N
+        N(-1, 1, 1),
+        N(-1, 2, 1),
+        N( 1, 1, 1),
+        N( 1, 2, 1)
+        in 3-d lattice N
+        N(-1, -1, 1),
+        N(-1, -2, 1),
+        N( 1, -2, 1),
+        N( 1, -1, 1)
+        in 3-d lattice N
+    """
+    dual_lattice = cones[0].dual_lattice()
+    is_face_to_face = True
+    for i in range(len(cones)):
+        ci = cones[i]
+        for j in range(i):
+            cj = cones[j]
+            c = ci.intersection(cj)
+            if not (c.is_face_of(ci)) or not (c.is_face_of(cj)):
+                is_face_to_face = False
+                break
+        if not is_face_to_face:
+            break
+    if is_face_to_face:
+        return cones
+    facet_normal_vectors = []
+    for c in cones:
+        for l in c.polyhedron().Hrepresentation():
+            v = l[1::]
+            is_new = True
+            for fnv in facet_normal_vectors:
+                if span([v, fnv]).dimension() < 2:
+                    is_new = False
+                    break
+            if is_new:
+                facet_normal_vectors.append(v)
+    for v in facet_normal_vectors:
+        halfspace1 = Cone([v], lattice=dual_lattice).dual()
+        halfspace2 = Cone([-v], lattice=dual_lattice).dual()
+        subcones = []
+        for c in cones:
+            subc1 = c.intersection(halfspace1)
+            subc2 = c.intersection(halfspace2)
+            for subc in [subc1, subc2]:
+                if subc.dim() == c.dim():
+                    is_new = True
+                    for subcone in subcones:
+                        if subc.dim() == subcone.dim() and subc.is_equivalent(subcone):
+                            is_new = False
+                            break
+                    if is_new:
+                        subcones.append(subc)
+        cones = subcones
+    return cones

@@ -650,24 +650,16 @@ class TriangularModuleMorphism(ModuleMorphism):
             ....:                         inverse_on_support="compute")
             sage: TestSuite(phi).run(skip=["_test_pickling"])
 
-        Pickling fails (:trac:`17957`) because the attribute
-        ``phi._inverse_on_support`` is a ``dict.get`` method which is
-        not picklable in Python 2::
+        Pickling works in Python3 (:trac:`17957`)::
 
             sage: phi = X.module_morphism(lt, triangular="lower", codomain=X,
             ....:                         inverse_on_support="compute")
-            sage: dumps(phi) # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: expected string or Unicode object, NoneType found
+            sage: loads(dumps(phi))
+            Generic endomorphism of X
             sage: phi._inverse_on_support
             <built-in method get of dict object at ...>
-            sage: dumps(phi._inverse_on_support) # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: expected string or Unicode object, NoneType found
-            sage: ldp = loads(dumps(phi._inverse_on_support)) # py3
-            sage: [ldp(i) == phi._inverse_on_support(i) for i in range(1, 4)] # py3
+            sage: ldp = loads(dumps(phi._inverse_on_support))
+            sage: [ldp(i) == phi._inverse_on_support(i) for i in range(1, 4)]
             [True, True, True]
         """
         if key is not None:

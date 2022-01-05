@@ -145,13 +145,6 @@ ratpoints
 
    sage/libs/ratpoints
 
-Readline
---------
-.. toctree::
-   :maxdepth: 2
-
-   sage/libs/readline
-
 Symmetrica
 ----------
 .. toctree::

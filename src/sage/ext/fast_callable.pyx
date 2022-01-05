@@ -439,9 +439,8 @@ def fast_callable(x, domain=None, vars=None,
             if x.parent() is SR and x.number_of_arguments() > len(vars):
                 vars = list(vars) + ['EXTRA_VAR%d' % n for n in range(len(vars), x.number_of_arguments())]
 
-            # Failing to specify the variables is deprecated for any
-            # symbolic expression, except for PrimitiveFunction and
-            # CallableSymbolicExpression.
+            # Failing to specify the variables is an error for any
+            # symbolic expression, except for CallableSymbolicExpression.
             if is_Expression(x) and not is_CallableSymbolicExpressionRing(x.parent()):
                 if expect_one_var and len(vars) <= 1:
                     if len(vars) == 0:

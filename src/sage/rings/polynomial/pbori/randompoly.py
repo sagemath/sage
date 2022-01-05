@@ -1,8 +1,9 @@
-from .PyPolyBoRi import (Monomial, random_set, Polynomial,
-                         set_random_seed, ll_red_nf_redsb, Variable)
-from .ll import ll_encode
 from random import Random
 from pprint import pformat
+
+from .PyPolyBoRi import (Monomial, Polynomial, Variable)
+from .pbori import random_set, set_random_seed, ll_red_nf_redsb
+from .ll import ll_encode
 from .blocks import declare_ring
 
 
@@ -85,8 +86,6 @@ def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
             res.append(p)
     # evaluate it to guarantee a solution
     return [p + ll_red_nf_redsb(p, solutions) for p in res]
-
-
 
 
 def sparse_random_system_data_file_content(number_of_variables, **kwds):

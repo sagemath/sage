@@ -221,3 +221,18 @@ class NonNegativeIntegers(UniqueRepresentation, Parent):
             100
         """
         return self.from_integer(rnk)
+
+    def _sympy_(self):
+        r"""
+        Return the SymPy set ``Naturals0``.
+
+        EXAMPLES::
+
+            sage: NN = NonNegativeIntegers()
+            sage: NN._sympy_()
+            Naturals0
+        """
+        from sympy import Naturals0
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return Naturals0

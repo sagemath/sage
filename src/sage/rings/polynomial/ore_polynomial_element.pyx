@@ -1640,7 +1640,7 @@ cdef class OrePolynomial(AlgebraElement):
         for n in reversed(range(m)):
             x = coeffs[n]
             if x:
-                if n != m-1:
+                if n < m - 1:
                     s += " + "
                 x = y = repr(x)
                 if y.find("-") == 0:
@@ -1655,8 +1655,8 @@ cdef class OrePolynomial(AlgebraElement):
                     var = ""
                 s += "%s%s"%(x,var)
         s = s.replace(" + -", " - ")
-        s = re.sub(r' 1(\.0+)?\*',' ', s)
-        s = re.sub(r' -1(\.0+)?\*',' -', s)
+        s = re.sub(r' 1(\.0+)?\*', ' ', s)
+        s = re.sub(r' -1(\.0+)?\*', ' -', s)
         if s == " ":
             return "0"
         return s[1:]
@@ -2698,8 +2698,18 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
             sage: A.<d> = R['d', der]
             sage: t*(d + 1)  # indirect doctest
             t*d + t
+
+        TESTS:
+
+        We check that :trac:`32210` is fixed::
+
+            sage: A.<t> = GF(5)[]
+            sage: S.<X> = A['X', A.derivation()]
+            sage: f = 0*X
+            sage: f.degree()
+            -1
         """
-        return self._new_c([ s*c for c in self._coeffs ], self._parent)
+        return self._new_c([ s*c for c in self._coeffs ], self._parent, 1)
 
     cpdef _mul_(self, other):
         r"""

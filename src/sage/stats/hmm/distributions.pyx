@@ -397,14 +397,23 @@ cdef class GaussianMixtureDistribution(Distribution):
         EXAMPLES::
 
             sage: P = hmm.GaussianMixtureDistribution([(.2,-10,.5),(.6,1,1),(.2,20,.5)])
-            sage: P.sample()
-            19.65824361087513
-            sage: P.sample(1)
-            [-10.4683]
-            sage: P.sample(5)
-            [-0.1688, -10.3479, 1.6812, 20.1083, -9.9801]
-            sage: P.sample(0)
-            []
+            sage: type(P.sample())
+            <class 'float'>
+            sage: l = P.sample(1)
+            sage: len(l)
+            1
+            sage: type(l)
+            <class 'sage.finance.time_series.TimeSeries'>
+            sage: l = P.sample(5)
+            sage: len(l)
+            5
+            sage: type(l)
+            <class 'sage.finance.time_series.TimeSeries'>
+            sage: l = P.sample(0)
+            sage: len(l)
+            0
+            sage: type(l)
+            <class 'sage.finance.time_series.TimeSeries'>
             sage: P.sample(-3)
             Traceback (most recent call last):
             ...

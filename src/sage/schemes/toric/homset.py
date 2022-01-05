@@ -641,7 +641,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
             sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
             sage: list(cubic.point_set())
-            [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 2 : 1], [1 : 1 : 2], [1 : 3 : 3]]
+            [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 1 : 2], [1 : 2 : 1], [1 : 3 : 3]]
             sage: cubic.point_set().cardinality()
             6
         """
@@ -661,7 +661,7 @@ class SchemeHomset_points_subscheme_toric_field(SchemeHomset_points_toric_base):
             sage: P2.<x,y,z> = toric_varieties.P2(base_ring=GF(5))
             sage: cubic = P2.subscheme([x^3 + y^3 + z^3])
             sage: list(cubic.point_set())
-            [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 2 : 1], [1 : 1 : 2], [1 : 3 : 3]]
+            [[0 : 1 : 4], [1 : 0 : 4], [1 : 4 : 0], [1 : 1 : 2], [1 : 2 : 1], [1 : 3 : 3]]
             sage: cubic.point_set().cardinality()
             6
         """

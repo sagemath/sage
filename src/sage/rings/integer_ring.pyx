@@ -709,8 +709,43 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
              sage: ZZ.random_element(11.0, distribution="gaussian")
              5
 
+        TESTS:
+
+        Check that :trac:`32124` is fixed::
+
+            sage: ZZ.random_element(5, -5, distribution="1/n").parent() is ZZ
+            True
+            sage: ZZ.random_element(5, -5, distribution="gaussian").parent() is ZZ
+            True
+            sage: ZZ.random_element(5, -5, distribution="mpz_rrandomb").parent() is ZZ
+            True
+
+            sage: ZZ.random_element(-10, -5, distribution="mpz_rrandomb")
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be > 0
+            sage: ZZ.random_element(-10, -5, distribution="gaussian")
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be > 0
+
+        Checking error messages::
+
+            sage: ZZ.random_element(-3)
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be > 0
+            sage: ZZ.random_element(4, 2)
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be < y
         """
         cdef Integer z = Integer.__new__(Integer)
+        if distribution == "1/n":
+            x = None
+            y = None
+        elif distribution == "mpz_rrandomb" or distribution == "gaussian":
+            y = None
         if x is not None and y is None and x <= 0:
             raise TypeError("x must be > 0")
         if x is not None and y is not None and x >= y:
@@ -1466,6 +1501,20 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         """
         return '"Integer"'
+
+    def _sympy_(self):
+        r"""
+        Return the SymPy set ``Integers``.
+
+        EXAMPLES::
+
+            sage: ZZ._sympy_()
+            Integers
+        """
+        from sympy import Integers
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return Integers
 
     def _sage_input_(self, sib, coerced):
         r"""

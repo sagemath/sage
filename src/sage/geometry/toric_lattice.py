@@ -425,7 +425,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             sage: N3 = ToricLattice(3, 'N3')
             sage: Q = N3 / N3.span([ N3(1,2,3) ])
             sage: Q.an_element()
-            N3[0, 0, 1]
+            N3[1, 0, 0]
             sage: N2 = ToricLattice(2, 'N2')
             sage: N2( Q.an_element() )
             N2(1, 0)
@@ -1297,9 +1297,9 @@ class ToricLattice_quotient_element(FGP_Element):
         sage: e == e2
         True
         sage: e.vector()
-        (4)
+        (-4)
         sage: e2.vector()
-        (4)
+        (-4)
     """
 
     def _latex_(self):
@@ -1407,7 +1407,7 @@ class ToricLattice_quotient(FGP_Module_class):
         sage: Q
         1-d lattice, quotient of 3-d lattice N by Sublattice <N(1, 0, 1), N(0, 1, -1)>
         sage: Q.gens()
-        (N[0, 0, 1],)
+        (N[1, 0, 0],)
 
     Here, ``sublattice`` happens to be of codimension one in ``N``. If
     you want to prescribe the sign of the quotient generator, you can
@@ -1416,15 +1416,15 @@ class ToricLattice_quotient(FGP_Module_class):
         sage: Q = N.quotient(sublattice, positive_point=N(0,0,-1)); Q
         1-d lattice, quotient of 3-d lattice N by Sublattice <N(1, 0, 1), N(0, 1, -1)>
         sage: Q.gens()
-        (N[0, 0, -1],)
+        (N[1, 0, 0],)
 
     or::
 
         sage: M = N.dual()
-        sage: Q = N.quotient(sublattice, positive_dual_point=M(0,0,-1)); Q
+        sage: Q = N.quotient(sublattice, positive_dual_point=M(1,0,0)); Q
         1-d lattice, quotient of 3-d lattice N by Sublattice <N(1, 0, 1), N(0, 1, -1)>
         sage: Q.gens()
-        (N[0, 0, -1],)
+        (N[1, 0, 0],)
 
     TESTS::
 

@@ -70,10 +70,10 @@ class TangentSpace(FiniteRankFreeModule):
     vector frames around the point::
 
         sage: Tp.bases()
-        [Basis (d/dx,d/dy) on the Tangent space at Point p on the 2-dimensional
+        [Basis (∂/∂x,∂/∂y) on the Tangent space at Point p on the 2-dimensional
          differentiable manifold M]
         sage: M.frames()
-        [Coordinate frame (M, (d/dx,d/dy))]
+        [Coordinate frame (M, (∂/∂x,∂/∂y))]
 
     At this stage, only one basis has been defined in the tangent space, but
     new bases can be added from vector frames on the manifold by means of the
@@ -82,12 +82,12 @@ class TangentSpace(FiniteRankFreeModule):
 
         sage: c_uv.<u,v> = M.chart()
         sage: c_uv.frame().at(p)
-        Basis (d/du,d/dv) on the Tangent space at Point p on the 2-dimensional
+        Basis (∂/∂u,∂/∂v) on the Tangent space at Point p on the 2-dimensional
          differentiable manifold M
         sage: Tp.bases()
-        [Basis (d/dx,d/dy) on the Tangent space at Point p on the 2-dimensional
+        [Basis (∂/∂x,∂/∂y) on the Tangent space at Point p on the 2-dimensional
          differentiable manifold M,
-         Basis (d/du,d/dv) on the Tangent space at Point p on the 2-dimensional
+         Basis (∂/∂u,∂/∂v) on the Tangent space at Point p on the 2-dimensional
          differentiable manifold M]
 
     All the bases defined on ``Tp`` are on the same footing. Accordingly the
@@ -114,7 +114,7 @@ class TangentSpace(FiniteRankFreeModule):
         Tangent vector at Point p on the
          2-dimensional differentiable manifold M
         sage: v.display()
-        d/dx + 2 d/dy
+        ∂/∂x + 2 ∂/∂y
         sage: v.parent()
         Tangent space at Point p on the
          2-dimensional differentiable manifold M
@@ -283,7 +283,7 @@ class TangentSpace(FiniteRankFreeModule):
             Tangent vector at Point p on the 2-dimensional differentiable
              manifold M
             sage: Tp._an_element_().display()
-            d/dx + 2 d/dy
+            ∂/∂x + 2 ∂/∂y
 
         """
         resu = self.element_class(self)

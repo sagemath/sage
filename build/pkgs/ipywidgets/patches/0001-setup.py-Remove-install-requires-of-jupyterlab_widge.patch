@@ -1,0 +1,35 @@
+From e64096431a7099f8db46748ef7d1021939f1a624 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Wed, 24 Mar 2021 12:59:13 -0700
+Subject: [PATCH] setup.py: Remove install-requires of jupyterlab_widgets,
+ nbformat
+
+---
+ setup.py | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index e544267a..bff154af 100644
+--- a/setup.py
++++ b/setup.py
+@@ -112,9 +112,6 @@ setuptools_args = {}
+ install_requires = setuptools_args['install_requires'] = [
+     'ipykernel>=4.5.1',
+     'traitlets>=4.3.1',
+-    # Requiring nbformat to specify bugfix version which is not required by
+-    # notebook.
+-    'nbformat>=4.2.0',
+     # TODO: Dynamically add this dependency
+     # only if notebook 4.x is installed in this
+     # interpreter, to allow ipywidgets to be
+@@ -125,7 +122,6 @@ install_requires = setuptools_args['install_requires'] = [
+ extras_require = setuptools_args['extras_require'] = {
+     ':python_version<"3.3"' : ['ipython>=4.0.0,<6.0.0'],
+     ':python_version>="3.3"': ['ipython>=4.0.0'],
+-    ':python_version>="3.6"': ['jupyterlab_widgets>=1.0.0'],
+     'test:python_version=="2.7"': ['mock'],
+     'test': ['pytest>=3.6.0', 'pytest-cov'],
+ }
+-- 
+2.28.0
+

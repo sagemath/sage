@@ -147,6 +147,7 @@ if [ -x "${SELF}-config" ]; then
 fi
 if [ -f "${SELF}-src-env-config" ]; then
     # Not installed script, present only in src/bin/
+    SAGE_SRC_ENV_CONFIG=1
     . "${SELF}-src-env-config" >&2
 fi
 if [ -z "$SAGE_VENV" -a -x "${SELF}-venv-config" ]; then
@@ -309,7 +310,7 @@ fi
 # Prepare for running Sage, either interactively or non-interactively.
 sage_setup() {
     # Check that we're not in a source tarball which hasn't been built yet (#13561).
-    if [ ! -z "$SAGE_LOCAL" ] && [ ! -x "$SAGE_LOCAL/bin/sage" ]; then
+    if [ "$SAGE_SRC_ENV_CONFIG" = 1 ] && [ ! -z "$SAGE_VENV" ] && [ ! -x "$SAGE_VENV/bin/sage" ]; then
         echo >&2 '************************************************************************'
         echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
         echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
@@ -339,7 +340,7 @@ sage_setup() {
 maybe_sage_location()
 {
     if [ -n "$SAGE_LOCAL" -a -w "$SAGE_LOCAL" ]; then
-        if [ -x "$SAGE_LOCAL/bin/python" ] && [ -x "$SAGE_LOCAL/bin/sage-location" ]; then
+        if [ -x "$SAGE_VENV/bin/python" ] && [ -x "$SAGE_VENV/bin/sage-location" ]; then
             sage-location || exit $?
         fi
     fi
@@ -523,8 +524,6 @@ usage_advanced() {
     echo "                         (not installed currently, run sage -i rst2ipynb)"
     echo "  --ipynb2rst [...]   -- Generates a reStructuredText source file from"
     echo "                         a Jupyter notebook (.ipynb)."
-    echo "  --rst2txt [...]     -- Generates Sage worksheet text file from standalone"
-    echo "                         reStructuredText source."
     echo "  --sws2rst <sws doc> -- Generates a reStructuredText source file from"
     echo "                         a Sage worksheet (.sws) document."
     command -v sage-sws2rst >&/dev/null || \
@@ -866,11 +865,6 @@ if [ "$1" = '-ipynb2rst' -o "$1" = '--ipynb2rst' ]; then
     exec sage-ipynb2rst "$@"
 fi
 
-if [ "$1" = '-rst2txt' -o "$1" = '--rst2txt' ]; then
-    shift
-    exec sage-rst2txt "$@"
-fi
-
 if [ "$1" = '-sws2rst' -o "$1" = '--sws2rst' ]; then
     shift
     exec sage-sws2rst "$@"
@@ -954,16 +948,6 @@ fi
 exec-runtests() {
     sage_setup
     export PYTHONIOENCODING="utf-8"  # Fix encoding for doctests
-    # Trac #31191: Some versions of Python 3.6 disable utf-8 even if
-    # the locale is just "POSIX".  This leads to errors in both the
-    # doctest framework and in various individual doctests.
-    if locale | grep -q -E -i '^LC_CTYPE="(C|POSIX)"$'; then
-        # Get an UTF-8 locale if possible.
-        LC_ALL=$(locale -a | grep -E -i '^(c|en_us)[-.]utf-?8$' | head -n 1)
-        LANG=$LC_ALL
-        export LC_ALL
-        export LANG
-    fi
     exec sage-runtests "$@"
 }
 

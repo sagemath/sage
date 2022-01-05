@@ -442,10 +442,12 @@ class SageInputBuilder:
 
         if type(x) in self._cached_types:
             v = self._cache.get((parent(x), x))
-            if v is not None: return v
+            if v is not None:
+                return v
 
         v = self._id_cache.get(id(x))
-        if v is not None: return v[1]
+        if v is not None:
+            return v[1]
 
         if isinstance(x, SageInputExpression):
             return x
@@ -2605,7 +2607,8 @@ class SIE_unary(SageInputExpression):
         else:
             raise ValueError('Unhandled op {} in SIE_unary'.format(op))
 
-        if rprec is None: rprec = prec
+        if rprec is None:
+            rprec = prec
 
         return '%s%s' % (fop, sif.format(self._sie_operand, prec)), rprec
 
@@ -3382,7 +3385,8 @@ class SageInputFormatter:
             sage: sif._names, sif._dup_names
             ({'x', 'y'}, {'x': 0})
         """
-        if name is None: name = 'si'
+        if name is None:
+            name = 'si'
 
         if name in self._names:
             self._dup_names[name] = 0
@@ -3412,7 +3416,8 @@ class SageInputFormatter:
             'y'
             'z'
         """
-        if name is None: name = 'si'
+        if name is None:
+            name = 'si'
 
         if name in self._dup_names:
             next = self._dup_names[name] + 1

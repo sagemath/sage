@@ -74,6 +74,13 @@ fi
 SAGE_SRC="$SAGE_ROOT/src"
 SAGE_SPKG_INST="$SAGE_LOCAL/var/lib/sage/installed"
 
+AC_ARG_WITH([sage-venv],
+            [AS_HELP_STRING([--with-sage-venv=SAGE_VENV],
+                            [put Python packages into an installation hierarchy separate from prefix])],
+            [SAGE_VENV="$withval"],
+            [SAGE_VENV='${SAGE_LOCAL}'])dnl Quoted so that it is resolved at build time by shell/Makefile
+AC_SUBST([SAGE_VENV])
+
 #---------------------------------------------------------
 
 AC_ARG_ENABLE([build-as-root],
@@ -421,6 +428,14 @@ AS_IF([test "x$enable_download_from_upstream_url" = "xyes"], [
 ])
 AC_SUBST([SAGE_SPKG_OPTIONS])
 
+AC_ARG_ENABLE([cvxopt],
+  AS_HELP_STRING([--disable-cvxopt],
+                 [disable build of the cvxopt package and its prerequisite suitesparse]), [
+    for pkg in cvxopt suitesparse; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+  ])
+
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
@@ -443,7 +458,7 @@ dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
-AC_CONFIG_FILES([build/pkgs/sage_conf/src/sage_conf.py build/pkgs/sage_conf/src/setup.cfg])
+AC_CONFIG_FILES([pkgs/sage-conf/sage_conf.py pkgs/sage-conf/setup.cfg])
 
 dnl Create basic directories needed for Sage
 AC_CONFIG_COMMANDS(mkdirs,

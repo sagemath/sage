@@ -27,15 +27,15 @@ AUTHORS:
 # ****************************************************************************
 
 from cysignals.signals cimport sig_on, sig_off
-from sage.rings.real_double import RDF
+from memory_allocator cimport MemoryAllocator
+import inspect
 
+from sage.rings.real_double import RDF
 from sage.libs.gsl.all cimport *
 from sage.misc.sageinspect import sage_getargspec
 from sage.ext.fast_eval cimport FastDoubleFunc
 from sage.ext.interpreters.wrapper_rdf cimport Wrapper_rdf
 from sage.ext.fast_callable import fast_callable
-from sage.ext.memory_allocator cimport MemoryAllocator
-import inspect
 
 
 cdef class PyFunctionWrapper:

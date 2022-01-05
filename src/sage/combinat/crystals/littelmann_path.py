@@ -308,12 +308,12 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 return self
             q = []
             curr = self.value[0]
-            for i in range(1,len(self.value)):
-                if positively_parallel_weights(curr,self.value[i]):
-                    curr = curr + self.value[i]
+            for v in self.value[1:]:
+                if positively_parallel_weights(curr, v):
+                    curr = curr + v
                 else:
                     q.append(curr)
-                    curr = self.value[i]
+                    curr = v
             q.append(curr)
             return self.parent()(tuple(q))
 
@@ -333,9 +333,9 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: b.split_step(0,1/3)
                 (1/3*Lambda[1] + 1/3*Lambda[2], 2/3*Lambda[1] + 2/3*Lambda[2])
             """
-            assert which_step in range(len(self.value))
+            assert 0 <= which_step and which_step <= len(self.value)
             v = self.value[which_step]
-            return self.parent()(self.value[:which_step]+tuple([r*v,(1-r)*v])+self.value[which_step+1:])
+            return self.parent()(self.value[:which_step] + (r*v,(1-r)*v) + self.value[which_step+1:])
 
         def reflect_step(self, which_step, i):
             r"""
@@ -351,7 +351,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 (2*Lambda[1] - Lambda[2],)
             """
             assert i in self.index_set()
-            assert which_step in range(len(self.value))
+            assert 0 <= which_step and which_step <= len(self.value)
             return self.parent()(self.value[:which_step]+tuple([self.value[which_step].simple_reflection(i)])+self.value[which_step+1:])
 
         def _string_data(self, i):
@@ -371,7 +371,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: b.f(1).f(2)._string_data(2)
                 ((0, -1, -1),)
             """
-            if len(self.value) == 0:
+            if not self.value:
                 return ()
             # get the i-th simple coroot
             alv = self.value[0].parent().alphacheck()[i]
@@ -381,10 +381,10 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             minima_pos = []
             ps = 0
             psmin = 0
-            for ix in range(len(steps)):
-                ps = ps + steps[ix]
+            for ix, step in enumerate(steps):
+                ps = ps + step
                 if ps < psmin:
-                    minima_pos.append((ix,ps,steps[ix]))
+                    minima_pos.append((ix,ps,step))
                     psmin = ps
             return tuple(minima_pos)
 
@@ -454,7 +454,7 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
             assert i in self.index_set()
             data = self._string_data(i)
             # compute the minimum i-height M on the path
-            if len(data) == 0:
+            if not data:
                 M = 0
             else:
                 M = data[-1][1]
@@ -512,10 +512,9 @@ class CrystalOfLSPaths(UniqueRepresentation, Parent):
                 (-Lambda[1] + 1/2*Lambda[2], Lambda[1] - 1/2*Lambda[2]) (-Lambda[1] + 1/2*Lambda[2], Lambda[1] - 1/2*Lambda[2])
                 (-2*Lambda[1] + Lambda[2],) (2*Lambda[1] - Lambda[2],)
             """
-            if len(self.value) == 0:
+            if not self.value:
                 return self
-            dual_path = [-v for v in self.value]
-            dual_path.reverse()
+            dual_path = [-v for v in reversed(self.value)]
             return self.parent()(tuple(dual_path))
 
         def f(self, i, power=1, to_string_end=False, length_only=False):

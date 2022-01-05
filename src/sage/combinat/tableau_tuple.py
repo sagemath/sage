@@ -1080,16 +1080,15 @@ class TableauTuple(CombinatorialElement):
             sage: rs.one().domain()
             [1, 2, 3, 4, 5, 6, 7, 8, 9]
         """
-
         # Ensure that the permutations involve all elements of the
         # tableau, by including the identity permutation on the set [1..n].
         n = max(self.entries())
         gens = [list(range(1, n + 1))]
         for t in self:
             for i in range(len(t)):
-                for j in range(0, len(t[i])-1):
-                    gens.append( (t[i][j], t[i][j+1]) )
-        return PermutationGroup( gens )
+                for j in range(len(t[i]) - 1):
+                    gens.append((t[i][j], t[i][j + 1]))
+        return PermutationGroup(gens)
 
     def column_stabilizer(self):
         """

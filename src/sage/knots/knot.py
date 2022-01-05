@@ -386,9 +386,9 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
         ::
 
             sage: rev_trefoil = Knot(B([-1,-1,-1]))
-            sage: K = trefoil.connected_sum(rev_trefoil); K
+            sage: K2 = trefoil.connected_sum(rev_trefoil); K2
             Knot represented by 6 crossings
-            sage: K.braid()
+            sage: K2.braid()
             s0^3*s1^-1*s0^-3*s1
 
         .. PLOT::
@@ -397,8 +397,19 @@ class Knot(Link, Element, metaclass=InheritComparisonClasscallMetaclass):
             B = BraidGroup(2)
             t = Knot(B([1,1,1]))
             tr = Knot(B([-1,-1,-1]))
-            K = t.connected_sum(tr)
-            sphinx_plot(K.plot())
+            K2 = t.connected_sum(tr)
+            sphinx_plot(K2.plot())
+
+        Observe that both knots have according ``dowker_notation`` (showing that
+        the constructing from DT-code may not be unique for non prime knots, see
+        :meth:`from_dowker_code`)::
+
+            sage: K.dowker_notation()
+            [(4, 1), (2, 5), (6, 3), (10, 7), (8, 11), (12, 9)]
+            sage: K2.dowker_notation()
+            [(4, 1), (2, 5), (6, 3), (7, 10), (11, 8), (9, 12)]
+            sage: K.homfly_polynomial() == K2.homfly_polynomial()
+            False
 
         TESTS::
 
@@ -533,6 +544,15 @@ class Knots(Singleton, Parent):
         OUTPUT:
 
         a knot
+
+        .. WARNING::
+
+            In general the Dowker-Thistlethwaite code does not describe a knot
+            uniquely. It is not only insensitive on mirror images, but may also
+            mix up non prime knots. For example ``[4, 6, 2, 10, 12, 8]`` describes
+            the connected sum of two trefoil knots, as well as the connected sum
+            of a trefoil with its mirror (see the corresponding example in the
+            documentation of :meth:`connected_sum`).
 
         EXAMPLES::
 

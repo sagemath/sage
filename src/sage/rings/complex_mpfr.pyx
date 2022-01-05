@@ -1227,6 +1227,13 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
             5
             sage: a^5
             -38.0000000000000 + 41.0000000000000*I
+
+        TESTS:
+
+        Check that :trac:`11323` is fixed::
+
+            sage: float(5)^(0.5 + 14.1347251*i)
+            -1.62414637645790 - 1.53692828324508*I
         """
         self._multiplicative_order = Integer(n)
 
@@ -1690,7 +1697,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         try:
             return (self.log()*right).exp()
-        except TypeError:
+        except (AttributeError, TypeError):
             pass
 
         try:

@@ -1,23 +1,19 @@
 SAGE_SPKG_CONFIGURE([eclib], [
-    SAGE_SPKG_DEPCHECK([ntl pari flint], [
-        dnl header types.h appeared in v20180710
-        AC_CHECK_HEADER([eclib/types.h], [
-          AC_MSG_CHECKING([whether we can link and run a program using eclib])
-          ECLIB_SAVED_LIBS="$LIBS"
-          LIBS="$LIBS -lec"
-          AC_RUN_IFELSE([
-            AC_LANG_PROGRAM([[#include <eclib/version.h>]
-                             [#include <eclib/interface.h>]],
-                      [[set_bit_precision(42); /* test for versions >= v20190226 */
-                        show_version();
-                        return 0;]]
-            )], [AC_MSG_RESULT([yes; use eclib from the system])], [
-            AC_MSG_RESULT([no; install eclib])
-            sage_spkg_install_eclib=yes
-            LIBS="$ECLIB_SAVED_LIBS"
-          ])
-        ], [sage_spkg_install_eclib=yes])
-      AC_PATH_PROG([MWRANK], [mwrank])
+  SAGE_SPKG_DEPCHECK([ntl pari flint], [
+    dnl Trac #31443: use existing eclib only if the version reported by pkg-config is correct
+    m4_pushdef([SAGE_ECLIB_VER],["20210625"])
+    PKG_CHECK_MODULES([ECLIB], [eclib = SAGE_ECLIB_VER], [
+      AC_CACHE_CHECK([for mwrank version == SAGE_ECLIB_VER], [ac_cv_path_MWRANK], [
+        AC_PATH_PROGS_FEATURE_CHECK([MWRANK], [mwrank], [
+            mwrank_version=`$ac_path_MWRANK -V 2>&1`
+            AX_COMPARE_VERSION([$mwrank_version], [eq], [SAGE_ECLIB_VER], [
+                ac_cv_path_MWRANK="$ac_path_MWRANK"
+            ])
+        ])
+      ])
       AS_IF([test -z "$ac_cv_path_MWRANK"], [sage_spkg_install_eclib=yes])
-    ])
+    ], [
+    sage_spkg_install_eclib=yes])
+  ])
+  m4_popdef([SAGE_ECLIB_VER])
 ])

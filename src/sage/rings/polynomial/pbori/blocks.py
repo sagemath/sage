@@ -1,8 +1,8 @@
 import sys
-
-from .PyPolyBoRi import Ring, VariableBlock, Polynomial
-from .PyPolyBoRi import VariableFactory, Variable
 from itertools import chain, islice
+
+from .pbori import VariableBlock
+from .PyPolyBoRi import (Ring, Polynomial, VariableFactory, Variable)
 
 
 class Block(object):

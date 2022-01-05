@@ -9,6 +9,7 @@ SAGE_SPKG_CONFIGURE([tox], [
             AS_IF([test -n "$tox_version"], [
                 AX_COMPARE_VERSION([$tox_version], [ge], TOX_MIN_VERSION, [
                     ac_cv_path_TOX="$ac_path_TOX"
+                    ac_path_TOX_found=:
                 ])
             ])
          ])

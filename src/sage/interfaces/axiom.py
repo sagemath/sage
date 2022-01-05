@@ -470,9 +470,8 @@ class PanAxiom(ExtraTabCompletion, Expect):
                 if line[i:] == "":
                     i = 0
                     outs = outs[1:]
-                break;
-        out = "\n".join(line[i:] for line in outs[1:])
-        return out
+                break
+        return "\n".join(line[i:] for line in outs[1:])
 
     # define relational operators
     def _equality_symbol(self):

@@ -1,4 +1,4 @@
-"""
+r"""
 Enumeration of Primitive Totally Real Fields
 
 This module contains functions for enumerating all primitive
@@ -138,8 +138,9 @@ cpdef double odlyzko_bound_totallyreal(int n):
 
     - John Voight (2007-09-03)
 
-    NOTES:
-    The values are calculated by Martinet [Mar1980]_.
+    .. NOTE::
+
+        The values are calculated by Martinet [Mar1980]_.
     """
 
     if n <= 10:

@@ -38,11 +38,13 @@ AUTHORS:
 
 from sage.misc.latex import latex
 from sage.misc.prandom import choice
+from sage.misc.cachefunc import cached_method
 
 from sage.structure.category_object import CategoryObject
 from sage.structure.element import Element
 from sage.structure.parent import Parent, Set_generic
 from sage.structure.richcmp import richcmp_method, richcmp, rich_to_bool
+from sage.misc.classcall_metaclass import ClasscallMetaclass
 
 from sage.categories.sets_cat import Sets
 from sage.categories.enumerated_sets import EnumeratedSets
@@ -192,7 +194,7 @@ def Set(X=None):
         else:
             return Set_object(X)
 
-    if isinstance(X, Element):
+    if isinstance(X, Element) and not isinstance(X, Set_base):
         raise TypeError("Element has no defined underlying set")
 
     try:
@@ -203,8 +205,236 @@ def Set(X=None):
         return Set_object_enumerated(X)
 
 
+class Set_base():
+    r"""
+    Abstract base class for sets, not necessarily parents.
+    """
+
+    def union(self, X):
+        """
+        Return the union of ``self`` and ``X``.
+
+        EXAMPLES::
+
+            sage: Set(QQ).union(Set(ZZ))
+            Set-theoretic union of Set of elements of Rational Field and Set of elements of Integer Ring
+            sage: Set(QQ) + Set(ZZ)
+            Set-theoretic union of Set of elements of Rational Field and Set of elements of Integer Ring
+            sage: X = Set(QQ).union(Set(GF(3))); X
+            Set-theoretic union of Set of elements of Rational Field and {0, 1, 2}
+            sage: 2/3 in X
+            True
+            sage: GF(3)(2) in X
+            True
+            sage: GF(5)(2) in X
+            False
+            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)
+            [0, 0, 1, 1, 2, 2, 3, 4, 5, 6]
+        """
+        if isinstance(X, (Set_generic, Set_base)):
+            if self is X:
+                return self
+            return Set_object_union(self, X)
+        raise TypeError("X (=%s) must be a Set" % X)
+
+    def intersection(self, X):
+        r"""
+        Return the intersection of ``self`` and ``X``.
+
+        EXAMPLES::
+
+            sage: X = Set(ZZ).intersection(Primes())
+            sage: 4 in X
+            False
+            sage: 3 in X
+            True
+
+            sage: 2/1 in X
+            True
+
+            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'c')))
+            sage: X
+            {}
+
+            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'b')))
+            sage: X
+            {}
+        """
+        if isinstance(X, (Set_generic, Set_base)):
+            if self is X:
+                return self
+            return Set_object_intersection(self, X)
+        raise TypeError("X (=%s) must be a Set" % X)
+
+    def difference(self, X):
+        r"""
+        Return the set difference ``self - X``.
+
+        EXAMPLES::
+
+            sage: X = Set(ZZ).difference(Primes())
+            sage: 4 in X
+            True
+            sage: 3 in X
+            False
+
+            sage: 4/1 in X
+            True
+
+            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'c')))
+            sage: X
+            {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
+
+            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'b')))
+            sage: X
+            {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
+        """
+        if isinstance(X, (Set_generic, Set_base)):
+            if self is X:
+                return Set([])
+            return Set_object_difference(self, X)
+        raise TypeError("X (=%s) must be a Set" % X)
+
+    def symmetric_difference(self, X):
+        r"""
+        Returns the symmetric difference of ``self`` and ``X``.
+
+        EXAMPLES::
+
+            sage: X = Set([1,2,3]).symmetric_difference(Set([3,4]))
+            sage: X
+            {1, 2, 4}
+        """
+        if isinstance(X, (Set_generic, Set_base)):
+            if self is X:
+                return Set([])
+            return Set_object_symmetric_difference(self, X)
+        raise TypeError("X (=%s) must be a Set" % X)
+
+    def _test_as_set_object(self, tester=None, **options):
+        r"""
+        Run the test suite of ``Set(self)`` unless it is identical to ``self``.
+
+        EXAMPLES:
+
+        Nothing is tested for instances of :class`Set_generic` (constructed
+        with the :func:`Set` constructor)::
+
+            sage: Set(ZZ)._test_as_set_object(verbose=True)
+
+        Instances of other subclasses of :class:`Set_base` run this method::
+
+            sage: Polyhedron()._test_as_set_object(verbose=True)
+            Running the test suite of Set(self)
+            running ._test_an_element() . . . pass
+            ...
+            running ._test_some_elements() . . . pass
+        """
+        if tester is None:
+            tester = self._tester(**options)
+        set_self = Set(self)
+        if set_self is not self:
+            from sage.misc.sage_unittest import TestSuite
+            tester.info("\n  Running the test suite of Set(self)")
+            TestSuite(set_self).run(skip="_test_pickling",  # see Trac #32025
+                                    verbose=tester._verbose,
+                                    prefix=tester._prefix + "  ")
+            tester.info(tester._prefix + " ", newline=False)
+
+
+class Set_boolean_operators:
+    r"""
+    Mix-in class providing the Boolean operators ``__or__``, ``__and__``, ``__xor__``.
+
+    The operators delegate to the methods ``union``, ``intersection``, and
+    ``symmetric_difference``, which need to be implemented by the class.
+    """
+
+    def __or__(self, X):
+        """
+        Return the union of ``self`` and ``X``.
+
+        EXAMPLES::
+
+            sage: Set([2,3]) | Set([3,4])
+            {2, 3, 4}
+            sage: Set(ZZ) | Set(QQ)
+            Set-theoretic union of Set of elements of Integer Ring and Set of elements of Rational Field
+        """
+        return self.union(X)
+
+    def __and__(self, X):
+        """
+        Returns the intersection of ``self`` and ``X``.
+
+        EXAMPLES::
+
+            sage: Set([2,3]) & Set([3,4])
+            {3}
+            sage: Set(ZZ) & Set(QQ)
+            Set-theoretic intersection of Set of elements of Integer Ring and Set of elements of Rational Field
+        """
+        return self.intersection(X)
+
+    def __xor__(self, X):
+        """
+        Returns the symmetric difference of ``self`` and ``X``.
+
+        EXAMPLES::
+
+            sage: X = Set([1,2,3,4])
+            sage: Y = Set([1,2])
+            sage: X.symmetric_difference(Y)
+            {3, 4}
+            sage: X.__xor__(Y)
+            {3, 4}
+        """
+        return self.symmetric_difference(X)
+
+
+class Set_add_sub_operators:
+    r"""
+    Mix-in class providing the operators ``__add__`` and ``__sub__``.
+
+    The operators delegate to the methods ``union`` and ``intersection``,
+    which need to be implemented by the class.
+    """
+
+    def __add__(self, X):
+        """
+        Return the union of ``self`` and ``X``.
+
+        EXAMPLES::
+
+            sage: Set(RealField()) + Set(QQ^5)
+             Set-theoretic union of
+              Set of elements of Real Field with 53 bits of precision and
+              Set of elements of Vector space of dimension 5 over Rational Field
+            sage: Set(GF(3)) + Set(GF(2))
+            {0, 1, 2, 0, 1}
+            sage: Set(GF(2)) + Set(GF(4,'a'))
+            {0, 1, a, a + 1}
+            sage: sorted(Set(GF(8,'b')) + Set(GF(4,'a')), key=str)
+            [0, 0, 1, 1, a, a + 1, b, b + 1, b^2, b^2 + 1, b^2 + b, b^2 + b + 1]
+        """
+        return self.union(X)
+
+    def __sub__(self, X):
+        """
+        Return the difference of ``self`` and ``X``.
+
+        EXAMPLES::
+
+            sage: X = Set(ZZ).difference(Primes())
+            sage: Y = Set(ZZ) - Primes()
+            sage: X == Y
+            True
+        """
+        return self.difference(X)
+
+
 @richcmp_method
-class Set_object(Set_generic):
+class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_operators):
     r"""
     A set attached to an almost arbitrary object.
 
@@ -231,6 +461,7 @@ class Set_object(Set_generic):
         sage: 1 == Set([0]), Set([0]) == 1
         (False, False)
     """
+
     def __init__(self, X, category=None):
         """
         Create a Set_object
@@ -333,7 +564,28 @@ class Set_object(Set_generic):
         """
         return iter(self.__object)
 
-    an_element = EnumeratedSets.ParentMethods.__dict__['_an_element_from_iterator']
+    _an_element_from_iterator = EnumeratedSets.ParentMethods.__dict__['_an_element_from_iterator']
+
+    def _an_element_(self):
+        """
+        Return an element of ``self``.
+
+        EXAMPLES::
+
+            sage: R = Set(RR)
+            sage: R.an_element()  # indirect doctest
+            1.00000000000000
+
+            sage: F = Set([1, 2, 3])
+            sage: F.an_element()
+            1
+        """
+        if self.__object is not self:
+            try:
+                return self.__object.an_element()
+            except (AttributeError, NotImplementedError):
+                pass
+        return self._an_element_from_iterator()
 
     def __contains__(self, x):
         """
@@ -404,183 +656,6 @@ class Set_object(Set_generic):
             return NotImplemented
         return richcmp(self.__object, right.__object, op)
 
-    def union(self, X):
-        """
-        Return the union of ``self`` and ``X``.
-
-        EXAMPLES::
-
-            sage: Set(QQ).union(Set(ZZ))
-            Set-theoretic union of Set of elements of Rational Field and Set of elements of Integer Ring
-            sage: Set(QQ) + Set(ZZ)
-            Set-theoretic union of Set of elements of Rational Field and Set of elements of Integer Ring
-            sage: X = Set(QQ).union(Set(GF(3))); X
-            Set-theoretic union of Set of elements of Rational Field and {0, 1, 2}
-            sage: 2/3 in X
-            True
-            sage: GF(3)(2) in X
-            True
-            sage: GF(5)(2) in X
-            False
-            sage: sorted(Set(GF(7)) + Set(GF(3)), key=int)
-            [0, 0, 1, 1, 2, 2, 3, 4, 5, 6]
-        """
-        if isinstance(X, Set_generic):
-            if self is X:
-                return self
-            return Set_object_union(self, X)
-        raise TypeError("X (=%s) must be a Set"%X)
-
-    def __add__(self, X):
-        """
-        Return the union of ``self`` and ``X``.
-
-        EXAMPLES::
-
-            sage: Set(RealField()) + Set(QQ^5)
-             Set-theoretic union of Set of elements of Real Field with 53 bits of precision and Set of elements of Vector space of dimension 5 over Rational Field
-            sage: Set(GF(3)) + Set(GF(2))
-            {0, 1, 2, 0, 1}
-            sage: Set(GF(2)) + Set(GF(4,'a'))
-            {0, 1, a, a + 1}
-            sage: sorted(Set(GF(8,'b')) + Set(GF(4,'a')), key=str)
-            [0, 0, 1, 1, a, a + 1, b, b + 1, b^2, b^2 + 1, b^2 + b, b^2 + b + 1]
-        """
-        return self.union(X)
-
-    def __or__(self, X):
-        """
-        Return the union of ``self`` and ``X``.
-
-        EXAMPLES::
-
-            sage: Set([2,3]) | Set([3,4])
-            {2, 3, 4}
-            sage: Set(ZZ) | Set(QQ)
-            Set-theoretic union of Set of elements of Integer Ring and Set of elements of Rational Field
-        """
-
-        return self.union(X)
-
-    def intersection(self, X):
-        r"""
-        Return the intersection of ``self`` and ``X``.
-
-        EXAMPLES::
-
-            sage: X = Set(ZZ).intersection(Primes())
-            sage: 4 in X
-            False
-            sage: 3 in X
-            True
-
-            sage: 2/1 in X
-            True
-
-            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'c')))
-            sage: X
-            {}
-
-            sage: X = Set(GF(9,'b')).intersection(Set(GF(27,'b')))
-            sage: X
-            {}
-        """
-        if isinstance(X, Set_generic):
-            if self is X:
-                return self
-            return Set_object_intersection(self, X)
-        raise TypeError("X (=%s) must be a Set"%X)
-
-
-    def difference(self, X):
-        r"""
-        Return the set difference ``self - X``.
-
-        EXAMPLES::
-
-            sage: X = Set(ZZ).difference(Primes())
-            sage: 4 in X
-            True
-            sage: 3 in X
-            False
-
-            sage: 4/1 in X
-            True
-
-            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'c')))
-            sage: X
-            {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
-
-            sage: X = Set(GF(9,'b')).difference(Set(GF(27,'b')))
-            sage: X
-            {0, 1, 2, b, b + 1, b + 2, 2*b, 2*b + 1, 2*b + 2}
-        """
-        if isinstance(X, Set_generic):
-            if self is X:
-                return Set([])
-            return Set_object_difference(self, X)
-        raise TypeError("X (=%s) must be a Set"%X)
-
-    def symmetric_difference(self, X):
-        r"""
-        Returns the symmetric difference of ``self`` and ``X``.
-
-        EXAMPLES::
-
-            sage: X = Set([1,2,3]).symmetric_difference(Set([3,4]))
-            sage: X
-            {1, 2, 4}
-        """
-
-        if isinstance(X, Set_generic):
-            if self is X:
-                return Set([])
-            return Set_object_symmetric_difference(self, X)
-        raise TypeError("X (=%s) must be a Set"%X)
-
-
-    def __sub__(self, X):
-        """
-        Return the difference of ``self`` and ``X``.
-
-        EXAMPLES::
-
-            sage: X = Set(ZZ).difference(Primes())
-            sage: Y = Set(ZZ) - Primes()
-            sage: X == Y
-            True
-        """
-        return self.difference(X)
-
-    def __and__(self, X):
-        """
-        Returns the intersection of ``self`` and ``X``.
-
-        EXAMPLES::
-
-            sage: Set([2,3]) & Set([3,4])
-            {3}
-            sage: Set(ZZ) & Set(QQ)
-            Set-theoretic intersection of Set of elements of Integer Ring and Set of elements of Rational Field
-        """
-
-        return self.intersection(X)
-
-    def __xor__(self, X):
-        """
-        Returns the symmetric difference of ``self`` and ``X``.
-
-        EXAMPLES::
-
-            sage: X = Set([1,2,3,4])
-            sage: Y = Set([1,2])
-            sage: X.symmetric_difference(Y)
-            {3, 4}
-            sage: X.__xor__(Y)
-            {3, 4}
-        """
-        return self.symmetric_difference(X)
-
     def cardinality(self):
         """
         Return the cardinality of this set, which is either an integer or
@@ -611,7 +686,7 @@ class Set_object(Set_generic):
             except TypeError:
                 pass
 
-        raise NotImplementedError("computation of cardinality of %s not yet implemented"%self.__object)
+        raise NotImplementedError("computation of cardinality of %s not yet implemented" % self.__object)
 
     def is_empty(self):
         """
@@ -687,22 +762,21 @@ class Set_object(Set_generic):
         """
         return self.__object
 
-    def subsets(self,size=None):
+    def subsets(self, size=None):
         """
         Return the :class:`Subsets` object representing the subsets of a set.
         If size is specified, return the subsets of that size.
 
         EXAMPLES::
 
-            sage: X = Set([1,2,3])
+            sage: X = Set([1, 2, 3])
             sage: list(X.subsets())
             [{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}]
             sage: list(X.subsets(2))
             [{1, 2}, {1, 3}, {2, 3}]
-
         """
         from sage.combinat.subset import Subsets
-        return Subsets(self,size)
+        return Subsets(self, size)
 
     def subsets_lattice(self):
         """
@@ -725,21 +799,38 @@ class Set_object(Set_generic):
         from sage.graphs.graph import DiGraph
         from sage.rings.integer import Integer
         n = self.cardinality()
-        # list, contains at position 0 <= i < 2^n 
+        # list, contains at position 0 <= i < 2^n
         # the i-th subset of self
-        subset_of_index = [Set([self[i] for i in range(n) if v&(1<<i)])
+        subset_of_index = [Set([self[i] for i in range(n) if v & (1 << i)])
                            for v in range(2**n)]
         # list, contains at position 0 <= i < 2^n
         # the list of indices of all immediate supersets
-        upper_covers = [[Integer(x|(1<<y)) for y in range(n) if not x&(1<<y)]
+        upper_covers = [[Integer(x | (1 << y)) for y in range(n) if not x & (1 << y)]
                         for x in range(2**n)]
         # DiGraph, every subset points to all immediate supersets
-        D = DiGraph({subset_of_index[v] : 
+        D = DiGraph({subset_of_index[v]:
                      [subset_of_index[w] for w in upper_covers[v]]
                      for v in range(2**n)})
         # Lattice poset, defined by hasse diagram D
         L = FiniteLatticePoset(hasse_diagram=D)
         return L
+
+    @cached_method
+    def _sympy_(self):
+        """
+        Return an instance of a subclass of SymPy ``Set`` corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: X = Set(ZZ); X
+            Set of elements of Integer Ring
+            sage: X._sympy_()
+            Integers
+        """
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return self.__object._sympy_()
+
 
 class Set_object_enumerated(Set_object):
     """
@@ -837,7 +928,7 @@ class Set_object_enumerated(Set_object):
             sage: latex(S)
             \left\{0, 1\right\}
         """
-        return '\\left\\{' + ', '.join(latex(x) for x in self.set())  + '\\right\\}'
+        return '\\left\\{' + ', '.join(latex(x) for x in self.set()) + '\\right\\}'
 
     def _repr_(self):
         r"""
@@ -1106,7 +1197,36 @@ class Set_object_enumerated(Set_object):
             return Set_object.symmetric_difference(self, other)
         return Set_object_enumerated(self.set().symmetric_difference(other.set()))
 
-class Set_object_binary(Set_object):
+    @cached_method
+    def _sympy_(self):
+        """
+        Return an instance of a subclass of SymPy ``Set`` corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: X = Set({1, 2, 3}); X
+            {1, 2, 3}
+            sage: sX = X._sympy_(); sX
+            Set(1, 2, 3)
+            sage: sX.is_empty is None
+            True
+
+            sage: Empty = Set([]); Empty
+            {}
+            sage: sEmpty = Empty._sympy_(); sEmpty
+            EmptySet
+            sage: sEmpty.is_empty
+            True
+        """
+        from sympy import Set, EmptySet
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        if self.is_empty():
+            return EmptySet
+        return Set(*[x._sympy_() for x in self])
+
+
+class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
     r"""
     An abstract common base class for sets defined by a binary operation (ex.
     :class:`Set_object_union`, :class:`Set_object_intersection`,
@@ -1127,9 +1247,32 @@ class Set_object_binary(Set_object):
         sage: Y = Set(ZZ)
         sage: from sage.sets.set import Set_object_binary
         sage: S = Set_object_binary(X, Y, "union", "\\cup"); S
-        Set-theoretic union of Set of elements of Vector space of dimension 2
-         over Rational Field and Set of elements of Integer Ring
+        Set-theoretic union of
+         Set of elements of Vector space of dimension 2 over Rational Field and
+         Set of elements of Integer Ring
     """
+
+    @staticmethod
+    def __classcall__(cls, X, Y, *args, **kwds):
+        r"""
+        Convert the operands to instances of :class:`Set_object` if necessary.
+
+        TESTS::
+
+            sage: from sage.sets.set import Set_object_binary
+            sage: X = QQ^2
+            sage: Y = ZZ
+            sage: Set_object_binary(X, Y, "union", "\\cup")
+            Set-theoretic union of
+             Set of elements of Vector space of dimension 2 over Rational Field and
+             Set of elements of Integer Ring
+        """
+        if not isinstance(X, Set_object):
+            X = Set(X)
+        if not isinstance(Y, Set_object):
+            Y = Set(Y)
+        return type.__call__(cls, X, Y, *args, **kwds)
+
     def __init__(self, X, Y, op, latex_op):
         r"""
         Initialization.
@@ -1195,6 +1338,7 @@ class Set_object_binary(Set_object):
             True
         """
         return hash((self._X, self._Y, self._op))
+
 
 class Set_object_union(Set_object_binary):
     """
@@ -1321,6 +1465,24 @@ class Set_object_union(Set_object_binary):
         """
         return self._X.cardinality() + self._Y.cardinality()
 
+    @cached_method
+    def _sympy_(self):
+        """
+        Return an instance of a subclass of SymPy ``Set`` corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: X = Set(ZZ).union(Set([1/2])); X
+            Set-theoretic union of Set of elements of Integer Ring and {1/2}
+            sage: X._sympy_()
+            Union(Integers, Set(1/2))
+        """
+        from sympy import Union
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return Union(self._X._sympy_(), self._Y._sympy_())
+
+
 class Set_object_intersection(Set_object_binary):
     """
     Formal intersection of two sets.
@@ -1430,7 +1592,7 @@ class Set_object_intersection(Set_object_binary):
         X = self._X
         Y = self._Y
         if not self._X.is_finite() and self._Y.is_finite():
-            X,Y = Y,X
+            X, Y = Y, X
         for x in X:
             if x in Y:
                 yield x
@@ -1462,6 +1624,26 @@ class Set_object_intersection(Set_object_binary):
             False
         """
         return x in self._X and x in self._Y
+
+    @cached_method
+    def _sympy_(self):
+        """
+        Return an instance of a subclass of SymPy ``Set`` corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: X = Set(ZZ).intersection(RealSet([3/2, 11/2])); X
+            Set-theoretic intersection of
+             Set of elements of Integer Ring and
+             Set of elements of [3/2, 11/2]
+            sage: X._sympy_()
+            Range(2, 6, 1)
+        """
+        from sympy import Intersection
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return Intersection(self._X._sympy_(), self._Y._sympy_())
+
 
 class Set_object_difference(Set_object_binary):
     """
@@ -1600,6 +1782,33 @@ class Set_object_difference(Set_object_binary):
         """
         return x in self._X and x not in self._Y
 
+    @cached_method
+    def _sympy_(self):
+        """
+        Return an instance of a subclass of SymPy ``Set`` corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: X = Set(QQ).difference(Set(ZZ)); X
+            Set-theoretic difference of
+             Set of elements of Rational Field and
+             Set of elements of Integer Ring
+            sage: X._sympy_()
+            Complement(Rationals, Integers)
+
+            sage: X = Set(ZZ).difference(Set(QQ)); X
+            Set-theoretic difference of
+             Set of elements of Integer Ring and
+             Set of elements of Rational Field
+            sage: X._sympy_()
+            EmptySet
+        """
+        from sympy import Complement
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return Complement(self._X._sympy_(), self._Y._sympy_())
+
+
 class Set_object_symmetric_difference(Set_object_binary):
     """
     Formal symmetric difference of two sets.
@@ -1736,5 +1945,25 @@ class Set_object_symmetric_difference(Set_object_binary):
             sage: 3 in X
             False
         """
-        return (x in self._X and x not in self._Y) \
-               or (x in self._Y and x not in self._X)
+        return ((x in self._X and x not in self._Y)
+                or (x in self._Y and x not in self._X))
+
+    @cached_method
+    def _sympy_(self):
+        """
+        Return an instance of a subclass of SymPy ``Set`` corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: X = Set(ZZ).symmetric_difference(Set(srange(0, 3, 1/3))); X
+            Set-theoretic symmetric difference of
+             Set of elements of Integer Ring and
+             {0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3}
+            sage: X._sympy_()
+            Union(Complement(Integers, Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3)),
+                  Complement(Set(0, 1, 2, 1/3, 2/3, 4/3, 5/3, 7/3, 8/3), Integers))
+        """
+        from sympy import SymmetricDifference
+        from sage.interfaces.sympy import sympy_init
+        sympy_init()
+        return SymmetricDifference(self._X._sympy_(), self._Y._sympy_())

@@ -120,7 +120,7 @@ class FreeModuleLinearGroup(UniqueRepresentation, Parent):
         sage: a.tensor_type()
         (1, 1)
         sage: a.display(e)
-        e_0*e^0 - e_1*e^1 + e_2*e^2
+        e_0⊗e^0 - e_1⊗e^1 + e_2⊗e^2
         sage: type(a)
         <class 'sage.tensor.modules.free_module_linear_group.FreeModuleLinearGroup_with_category.element_class'>
 

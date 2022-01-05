@@ -3143,12 +3143,35 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
         EXAMPLES::
 
-            sage: DirichletGroup(37).random_element()
-            Dirichlet character modulo 37 of conductor 37 mapping 2 |--> zeta36^4
-            sage: DirichletGroup(20).random_element()
-            Dirichlet character modulo 20 of conductor 4 mapping 11 |--> -1, 17 |--> 1
-            sage: DirichletGroup(60).random_element()
-            Dirichlet character modulo 60 of conductor 3 mapping 31 |--> 1, 41 |--> -1, 37 |--> 1
+            sage: D = DirichletGroup(37)
+            sage: g = D.random_element()
+            sage: g.parent() is D
+            True
+            sage: g**36
+            Dirichlet character modulo 37 of conductor 1 mapping 2 |--> 1
+            sage: S = set(D.random_element().conductor() for _ in range(100))
+            sage: while S != {1, 37}:
+            ....:     S.add(D.random_element().conductor())
+
+            sage: D = DirichletGroup(20)
+            sage: g = D.random_element()
+            sage: g.parent() is D
+            True
+            sage: g**4
+            Dirichlet character modulo 20 of conductor 1 mapping 11 |--> 1, 17 |--> 1
+            sage: S = set(D.random_element().conductor() for _ in range(100))
+            sage: while S != {1, 4, 5, 20}:
+            ....:     S.add(D.random_element().conductor())
+
+            sage: D = DirichletGroup(60)
+            sage: g = D.random_element()
+            sage: g.parent() is D
+            True
+            sage: g**4
+            Dirichlet character modulo 60 of conductor 1 mapping 31 |--> 1, 41 |--> 1, 37 |--> 1
+            sage: S = set(D.random_element().conductor() for _ in range(100))
+            sage: while S != {1, 3, 4, 5, 12, 15, 20, 60}:
+            ....:     S.add(D.random_element().conductor())
         """
         e = self(1)
         for i in range(self.ngens()):

@@ -91,7 +91,7 @@ For GAP, you may use
 .. CODE-BLOCK:: text
 
     [GAP04] The GAP Group, GAP -- Groups, Algorithms, and Programming,
-    Version 4.4; 2005. (http://www.gap-system.org)
+    Version 4.4; 2005. (https://www.gap-system.org)
 
 or
 
@@ -103,7 +103,7 @@ or
         title        = "{GAP -- Groups, Algorithms, and Programming,
                         Version 4.4}",
         year         = 2005,
-        note         = "{\tt http://www.gap-system.org}",
+        note         = "{\tt https://www.gap-system.org}",
         keywords     = "groups; *; gap; manual"}
 
 or
@@ -112,7 +112,7 @@ or
 
     \bibitem[GAP]{GAP4}
       The GAP~Group, \emph{GAP -- Groups, Algorithms, and Programming, Version 4.4}; 2005,
-      {\tt http://www.gap-system.org}.
+      {\tt https://www.gap-system.org}.
 
 .. index::
    pair: referencing; Singular

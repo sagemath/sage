@@ -17,12 +17,14 @@ Partition Species
 #*****************************************************************************
 
 from .species import GenericCombinatorialSpecies
-from .generating_series import _integers_from, factorial_stream
+from .generating_series import _integers_from
+from sage.functions.other import factorial
 from .subset_species import SubsetSpeciesStructure
 from .set_species import SetSpecies
 from .structure import GenericSpeciesStructure
 from sage.combinat.species.misc import accept_size
 from functools import reduce
+
 
 class PartitionSpeciesStructure(GenericSpeciesStructure):
     def __init__(self, parent, labels, list):
@@ -242,7 +244,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
         """
         from sage.combinat.combinat import bell_number
         for n in _integers_from(0):
-            yield self._weight*base_ring(bell_number(n)/factorial_stream[n])
+            yield self._weight * base_ring(bell_number(n) / factorial(n))
 
     def _itgs_iterator(self, base_ring):
         r"""

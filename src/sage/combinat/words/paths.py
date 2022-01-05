@@ -1203,8 +1203,7 @@ class FiniteWordPath_all(SageObject):
             n += 1
             if len(s) != n:
                 return False
-        else:
-            return True
+        return True
 
     def tikz_trajectory(self):
         r"""

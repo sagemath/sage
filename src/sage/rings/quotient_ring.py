@@ -1321,7 +1321,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
             sage: Q = R.quotient_ring(I); Q
             Quotient of Multivariate Polynomial Ring in x, y over Rational Field by the ideal (x^2 - y)
             sage: Q._macaulay2_init_()                      # optional - macaulay2
-            QQ[x, y]
+            QQ[x...y]
             --------
               2
              x  - y
@@ -1331,7 +1331,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
             sage: Q = R.quotient(I); Q
             Quotient of Multivariate Polynomial Ring in x, y, z, w over Integer Ring by the ideal (x*y - z^2, y^2 - w^2)
             sage: Q._macaulay2_init_()                      # optional - macaulay2
-               ZZ[x, y, z, w]
+               ZZ[x...z, w]
             -------------------
                     2   2    2
             (x*y - z , y  - w )
@@ -1342,7 +1342,7 @@ class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
             Quotient of Multivariate Polynomial Ring in x, y over Finite Field of size 101 by the ideal (x^2 + x, y^2 + y)
             sage: Q._macaulay2_init_()                      # optional - macaulay2
                  ZZ
-                ---[x, y]
+                ---[x...y]
                 101
             ----------------
               2       2

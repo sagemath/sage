@@ -1,12 +1,8 @@
-Cell complexes and their homology
-=================================
+Chain complexes and homology
+============================
 
-Sage includes some tools for algebraic topology: from the algebraic
-side, chain complexes and their homology, and from the topological
-side, simplicial complexes, `\Delta`-complexes, cubical complexes, and
-simplicial sets.  A class of generic cell complexes is also available,
-mainly for developers who want to use it as a base for other types of
-cell complexes.
+Sage includes some tools for algebraic topology, and in particular
+computing homology groups.
 
 .. toctree::
    :maxdepth: 2
@@ -16,18 +12,6 @@ cell complexes.
    sage/homology/chain_complex_morphism
    sage/homology/chain_homotopy
    sage/homology/chain_complex_homspace
-   sage/homology/simplicial_complex
-   sage/homology/simplicial_complex_morphism
-   sage/homology/simplicial_complex_homset
-   sage/homology/examples
-   sage/homology/delta_complex
-   sage/homology/cubical_complex
-   sage/homology/simplicial_set
-   sage/homology/simplicial_set_constructions
-   sage/homology/simplicial_set_examples
-   sage/homology/simplicial_set_catalog
-   sage/homology/simplicial_set_morphism
-   sage/homology/cell_complex
    sage/homology/koszul_complex
    sage/homology/hochschild_complex
    sage/homology/homology_group

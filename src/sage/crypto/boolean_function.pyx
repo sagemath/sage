@@ -1439,9 +1439,8 @@ def random_boolean_function(n):
         sage: B = random_boolean_function(9)
         sage: B.nvariables()
         9
-        sage: B.nonlinearity()
-        217                     # 32-bit
-        222                     # 64-bit
+        sage: while not (210 < B.nonlinearity() < 220):
+        ....:     B = random_boolean_function(9)
     """
     from sage.misc.randstate import current_randstate
     r = current_randstate().python_random()

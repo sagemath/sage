@@ -136,10 +136,14 @@ class CurveArrow(GraphicPrimitive):
         options = self.options()
         width = float(options['width'])
         head = options.pop('head')
-        if head == 0: style = '<|-'
-        elif head == 1: style = '-|>'
-        elif head == 2: style = '<|-|>'
-        else: raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
+        if head == 0:
+            style = '<|-'
+        elif head == 1:
+            style = '-|>'
+        elif head == 2:
+            style = '<|-|>'
+        else:
+            raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
         arrowsize = float(options.get('arrowsize', 5))
         head_width = arrowsize
         head_length = arrowsize * 2.0
@@ -357,10 +361,14 @@ class Arrow(GraphicPrimitive):
 
         options = self.options()
         head = options.pop('head')
-        if head == 0: style = '<|-'
-        elif head == 1: style = '-|>'
-        elif head == 2: style = '<|-|>'
-        else: raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
+        if head == 0:
+            style = '<|-'
+        elif head == 1:
+            style = '-|>'
+        elif head == 2:
+            style = '<|-|>'
+        else:
+            raise KeyError('head parameter must be one of 0 (start), 1 (end) or 2 (both).')
         width = float(options['width'])
         arrowshorten_end = float(options.get('arrowshorten', 0)) / 2.0
         arrowsize = float(options.get('arrowsize', 5))
@@ -397,7 +405,6 @@ class Arrow(GraphicPrimitive):
                     self._n = n
 
                 def get_paths(self, renderer):
-                    self._patch.set_dpi_cor(renderer.points_to_pixels(1.))
                     paths, fillables = self._patch.get_path_in_displaycoord()
                     return paths
 

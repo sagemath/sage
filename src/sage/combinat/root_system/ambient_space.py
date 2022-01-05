@@ -85,11 +85,11 @@ class AmbientSpace(CombinatorialFreeModule):
         """
         self.root_system = root_system
         if index_set is None:
-            index_set = tuple(range(0, self.dimension()))
+            index_set = tuple(range(self.dimension()))
         CombinatorialFreeModule.__init__(self, base_ring,
                                          index_set,
                                          prefix='e',
-                                         category = WeightLatticeRealizations(base_ring))
+                                         category=WeightLatticeRealizations(base_ring))
         coroot_lattice = self.root_system.coroot_lattice()
         coroot_lattice.module_morphism(self.simple_coroot, codomain=self).register_as_coercion()
 

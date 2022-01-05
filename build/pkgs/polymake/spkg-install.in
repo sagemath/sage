@@ -26,5 +26,5 @@ esac
             --bindir="$SAGE_LOCAL"/bin \
             --libdir="$SAGE_LOCAL"/lib \
             $more_configure_options || sdh_die "Error configuring Polymake"
-sdh_make
+ninja -C build/Opt -j${SAGE_NUM_THREADS}
 sdh_make_install

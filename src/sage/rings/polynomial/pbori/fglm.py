@@ -1,5 +1,5 @@
-from .PyPolyBoRi import (BooleSet, Polynomial, BoolePolynomialVector,
-                         FGLMStrategy)
+from .PyPolyBoRi import Polynomial, BoolePolynomialVector
+from .pbori import FGLMStrategy, BooleSet
 
 
 def _fglm(I, from_ring, to_ring):

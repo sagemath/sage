@@ -122,19 +122,19 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         sage: K.atlas()
         [Chart (M, (t, r, th, ph))]
         sage: K.metric().display()
-        g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt*dt
-         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt*dph
-         + (a^2*cos(th)^2 + r^2)/(a^2 - 2*m*r + r^2) dr*dr
-         + (a^2*cos(th)^2 + r^2) dth*dth
-         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph*dt
-         + (2*a^2*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) + a^2 + r^2)*sin(th)^2 dph*dph
+        g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt⊗dt
+         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt⊗dph
+         + (a^2*cos(th)^2 + r^2)/(a^2 - 2*m*r + r^2) dr⊗dr
+         + (a^2*cos(th)^2 + r^2) dth⊗dth
+         + 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph⊗dt
+         + (2*a^2*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) + a^2 + r^2)*sin(th)^2 dph⊗dph
 
         sage: K.<t, r, th, ph> = manifolds.Kerr()
         sage: K
         4-dimensional Lorentzian manifold M
         sage: K.metric().display()
-        g = (2/r - 1) dt*dt + r^2/(r^2 - 2*r) dr*dr
-         + r^2 dth*dth + r^2*sin(th)^2 dph*dph
+        g = (2/r - 1) dt⊗dt + r^2/(r^2 - 2*r) dr⊗dr
+         + r^2 dth⊗dth + r^2*sin(th)^2 dph⊗dph
         sage: K.default_chart().coord_range()
         t: (-oo, +oo); r: (0, +oo); th: (0, pi); ph: [-pi, pi] (periodic)
 
@@ -145,17 +145,17 @@ def Kerr(m=1, a=0, coordinates="BL", names=None):
         sage: K.atlas()
         [Chart (M, (t, r, th, ph))]
         sage: K.metric().display()
-        g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt*dt
-         + 2*m*r/(a^2*cos(th)^2 + r^2) dt*dr
-         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt*dph
-         + 2*m*r/(a^2*cos(th)^2 + r^2) dr*dt
-         + (2*m*r/(a^2*cos(th)^2 + r^2) + 1) dr*dr
-         - a*(2*m*r/(a^2*cos(th)^2 + r^2) + 1)*sin(th)^2 dr*dph
-         + (a^2*cos(th)^2 + r^2) dth*dth
-         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph*dt
-         - a*(2*m*r/(a^2*cos(th)^2 + r^2) + 1)*sin(th)^2 dph*dr
+        g = (2*m*r/(a^2*cos(th)^2 + r^2) - 1) dt⊗dt
+         + 2*m*r/(a^2*cos(th)^2 + r^2) dt⊗dr
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dt⊗dph
+         + 2*m*r/(a^2*cos(th)^2 + r^2) dr⊗dt
+         + (2*m*r/(a^2*cos(th)^2 + r^2) + 1) dr⊗dr
+         - a*(2*m*r/(a^2*cos(th)^2 + r^2) + 1)*sin(th)^2 dr⊗dph
+         + (a^2*cos(th)^2 + r^2) dth⊗dth
+         - 2*a*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2) dph⊗dt
+         - a*(2*m*r/(a^2*cos(th)^2 + r^2) + 1)*sin(th)^2 dph⊗dr
          + (2*a^2*m*r*sin(th)^2/(a^2*cos(th)^2 + r^2)
-         + a^2 + r^2)*sin(th)^2 dph*dph
+         + a^2 + r^2)*sin(th)^2 dph⊗dph
         sage: K.default_chart().coord_range()
         t: (-oo, +oo); r: (0, +oo); th: (0, pi); ph: [-pi, pi] (periodic)
     """
@@ -232,12 +232,12 @@ def Torus(R=2, r=1, names=None):
         sage: T.atlas()
         [Chart (T, (theta, phi))]
         sage: T.embedding().display()
-        T --> E^3
-           (theta, phi) |--> (X, Y, Z) = ((cos(theta) + 3)*cos(phi),
+        T → E^3
+           (theta, phi) ↦ (X, Y, Z) = ((cos(theta) + 3)*cos(phi),
                                           (cos(theta) + 3)*sin(phi),
                                           sin(theta))
         sage: T.metric().display()
-        gamma = dtheta*dtheta + (cos(theta)^2 + 6*cos(theta) + 9) dphi*dphi
+        gamma = dtheta⊗dtheta + (cos(theta)^2 + 6*cos(theta) + 9) dphi⊗dphi
     """
     from sage.functions.trig import cos, sin
     from sage.manifolds.manifold import Manifold

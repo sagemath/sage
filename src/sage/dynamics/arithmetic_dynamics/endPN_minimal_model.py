@@ -213,7 +213,7 @@ def affine_minimal(vp, return_transformation=False, D=None, quick=False):
     Given vp a scheme morphism on the projective line over the rationals,
     this procedure determines if `\phi` is minimal. In particular, it determines
     if the map is affine minimal, which is enough to decide if it is minimal
-    or not. See Proposition 2.10 in [Bruin-Molnar]_.
+    or not. See Proposition 2.10 in [BM2012]_.
 
     INPUT:
 

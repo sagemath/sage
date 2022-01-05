@@ -200,7 +200,7 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
                         multiple installation records for $SPKG_NAME:
                         m4_newline($(ls -l "$SAGE_SPKG_INST/$SPKG_NAME"-*))
                         m4_newline([only one should exist, so please delete some or all
-                        of these files and re-run \"$srcdir/configure\"])
+                        of these files and re-run "$srcdir/configure"])
                     ]))
                 ])
                 stampfile=yes
@@ -284,9 +284,8 @@ for DIR in $SAGE_ROOT/build/pkgs/*; do
         # we don't need to download the sources, which is what
         # "in_sdist" really means. At the time of this writing, the
         # only standard script packages are sage_conf and sagelib.
-        # The source of sage_conf is included under build/pkgs/sage_conf/src,
-        # and the source of sagelib is provided by symlinks in
-        # build/pkgs/sagelib/src.
+        # The sources of these packages are in subdirectories of
+        # $SAGE_ROOT/pkgs.
         in_sdist=no
     else
         SPKG_SOURCE=normal

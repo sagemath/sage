@@ -254,11 +254,7 @@ class NFCuspsSpace(UniqueRepresentation, Parent):
 
             sage: k.<a> = NumberField(x^2 + 5)
             sage: kCusps = NFCusps(k)
-            sage: c = kCusps(a,2)  # py2
-            Traceback (most recent call last):
-            ...
-            TypeError: __call__() takes exactly 2 arguments (3 given)
-            sage: c = kCusps(a,2)  # py3
+            sage: c = kCusps(a,2)
             Traceback (most recent call last):
             ...
             TypeError: __call__() takes 2 positional arguments but 3 were given

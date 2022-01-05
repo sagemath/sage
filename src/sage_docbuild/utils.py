@@ -112,7 +112,6 @@ def build_many(target, args, processes=None):
         ...
         WorkerDiedException: worker for 4 died with non-zero exit code -9
     """
-    import multiprocessing
     from multiprocessing import Process, Queue, cpu_count, set_start_method
     # With OS X, Python 3.8 defaults to use 'spawn' instead of 'fork'
     # in multiprocessing, and Sage docbuilding doesn't work with
@@ -122,14 +121,14 @@ def build_many(target, args, processes=None):
     from queue import Empty
 
     if processes is None:
-        processes = multiprocessing.cpu_count()
+        processes = cpu_count()
 
     workers = [None] * processes
     tasks = enumerate(args)
     results = []
-    result_queue = multiprocessing.Queue()
+    result_queue = Queue()
 
-    ### Utility functions ###
+    # Utility functions #
     def run_worker(target, queue, idx, task):
         try:
             result = target(task)
@@ -228,7 +227,7 @@ def build_many(target, args, processes=None):
                 except StopIteration:
                     pass
                 else:
-                    w = multiprocessing.Process(target=run_worker,
+                    w = Process(target=run_worker,
                                 args=((target, result_queue) + task))
                     w.start()
                     # Pair the new worker with the task it's performing (mostly
@@ -244,10 +243,11 @@ def build_many(target, args, processes=None):
         # process in the queue then we are done
         return all_done
 
-    ### Main loop ###
+    # Main loop #
 
-    waited_pid = None  # Set along with waited_exitcode by calls to
-                       # wait_for_one()
+    waited_pid = None
+    # Set along with waited_exitcode by calls to wait_for_one()
+
     waited_exitcode = None
     worker_exc = None  # Set to a WorkerDiedException if one occurs
 

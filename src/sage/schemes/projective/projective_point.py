@@ -851,7 +851,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         kwds:
 
-        - ``error_bound`` -- a positive real number (optional - default: 0.1).
+        - ``err`` -- a positive real number (optional - default: 0.1).
 
         - ``return_period`` -- boolean (optional - default: ``False``).
 
@@ -942,6 +942,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
         ::
 
+            sage: P.<x,y,z> =ProjectiveSpace(GF(3), 2)
+            sage: F = DynamicalSystem([x^2 - 2*y^2, y^2, z^2])
+            sage: Q = P(1, 1, 1)
+            sage: Q.is_preperiodic(F, return_period=True)
+            (1, 1)
+
+        TESTS::
+
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: H = End(P)
             sage: f = H([16*x^2-29*y^2, 16*y^2])
@@ -950,6 +958,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             Traceback (most recent call last):
             ...
             TypeError: map must be a dynamical system
+
+        ::
+
+            sage: P.<x,y> = ProjectiveSpace(QQ, 1)
+            sage: f = DynamicalSystem_projective([16*x^2-29*y^2, 16*y^2])
+            sage: Q = P(11,4)
+            sage: Q.is_preperiodic(f, err=2)
+            False
         """
         try:
             return f._is_preperiodic(self, err=err, return_period=return_period)

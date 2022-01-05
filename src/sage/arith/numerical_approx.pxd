@@ -14,11 +14,7 @@ cpdef inline long digits_to_bits(d) except -1:
 
     TESTS::
 
-        sage: digits_to_bits("10")  # py2
-        Traceback (most recent call last):
-        ...
-        TypeError: a float is required
-        sage: digits_to_bits("10")  # py3
+        sage: digits_to_bits("10")
         Traceback (most recent call last):
         ...
         TypeError: must be real number, not str

@@ -1088,12 +1088,12 @@ class LocalFrame(FreeModuleBasis):
             Automorphism of the Fiber of E at Point p on the 2-dimensional
              topological manifold M
             sage: Ep.change_of_basis(ep, fp).display()
-            5 e_0*e^0 + 2 e_1*e^1
+            5 e_0⊗e^0 + 2 e_1⊗e^1
             sage: Ep.change_of_basis(fp, ep)
             Automorphism of the Fiber of E at Point p on the 2-dimensional
              topological manifold M
             sage: Ep.change_of_basis(fp, ep).display()
-            1/5 e_0*e^0 + 1/2 e_1*e^1
+            1/5 e_0⊗e^0 + 1/2 e_1⊗e^1
 
         The dual bases::
 

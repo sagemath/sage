@@ -53,6 +53,7 @@ from . import additive_abelian_group as addgp
 from sage.rings.all import ZZ
 from sage.categories.morphism import Morphism
 from sage.structure.element import parent
+from sage.modules.free_module_element import vector
 
 
 class UnwrappingMorphism(Morphism):
@@ -228,13 +229,102 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         # DUMB IMPLEMENTATION!
         return sum([self._gen_elements[i] * ZZ(v[i]) for i in range(len(v))], self.universe()(0))
 
-    def _discrete_log(self,x):
+    def _discrete_log_pgroup(self, p, aa, b):
         r"""
-        Given an element of the ambient group, attempt to express it in terms of the
-        generators of self.
+        Attempt to express an element of p-power order in terms of
+        generators of a p-subgroup of this group.
+
+        Used as a subroutine in the _discrete_log() method.
+
+        ALGORITHM:
+
+        This implements a basic version of the recursive algorithm
+        from [Suth2008]_.
+        The base cases are handled using a variant of Shanks'
+        baby-step giant-step algorithm for products of cyclic groups.
 
         EXAMPLES::
 
+            sage: G = AdditiveAbelianGroup([5, 5**2, 5**4, 5**4])
+            sage: (a, b, c, d) = gs = G.gens()
+            sage: A = AdditiveAbelianGroupWrapper(a.parent(), gs, [g.order() for g in gs])
+            sage: A._discrete_log_pgroup(5, gs, a + 17 * b + 123 * c + 456 * d)
+            (1, 17, 123, 456)
+        """
+        from sage.arith.misc import valuation
+        from sage.functions.other import ceil, sqrt
+        from itertools import product as iproduct
+
+        vals = [valuation(a.order(), p) for a in aa]
+        qq = lambda j, k: vector(p ** (j + max(0, v - k)) for a, v in zip(aa, vals))
+        subbasis = lambda j, k: [q * a for q, a in zip(qq(j, k), aa)]
+        dotprod = lambda xs, ys: sum(x * y for x, y in zip(xs, ys))
+
+        def _base(j, k, c):
+
+            assert k - j == 1
+            aajk = subbasis(j, k)
+            assert all(a.order() in (1, p) for a in aajk)
+            idxs = [i for i, a in enumerate(aajk) if a.order() == p]
+
+            rs = [([0], [0]) for i in range(len(aajk))]
+            for i in range(len(idxs)):
+                rs[idxs[i]] = (range(p), [0]) if i % 2 else ([0], range(p))
+            if len(idxs) % 2:
+                m = ceil(sqrt(p))
+                rs[idxs[-1]] = range(0, p, m), range(m)
+
+            tab = {}
+            for x in iproduct(*(r for r, _ in rs)):
+                key = dotprod(x, aajk)
+                if hasattr(key, 'set_immutable'):
+                    key.set_immutable()
+                tab[key] = vector(x)
+            for y in iproduct(*(r for _, r in rs)):
+                key = c - dotprod(y, aajk)
+                if hasattr(key, 'set_immutable'):
+                    key.set_immutable()
+                if key in tab:
+                    return tab[key] + vector(y)
+
+            raise TypeError('Not in group')
+
+        def _rec(j, k, c):
+
+            assert 0 <= j < k
+
+            if k - j <= 1: # base case
+                return _base(j, k, c)
+
+            w = 2
+            js = list(range(j, k, (k-j+w-1) // w)) + [k]
+            assert len(js) == w + 1
+
+            x = vector([0] * len(aa))
+            for i in reversed(range(w)):
+
+                gamma = p ** (js[i] - j) * c - dotprod(x, subbasis(js[i], k))
+
+                v = _rec(js[i], js[i+1], gamma)
+
+                assert not any(q1 % q2 for q1, q2 in zip(qq(js[i], js[i+1]), qq(js[i], k)))
+                x += vector(q1 // q2 * r for q1, q2, r in zip(qq(js[i], js[i+1]), qq(js[i], k), v))
+
+            return x
+
+        return _rec(0, max(vals), b)
+
+    def _discrete_log(self, x, gens=None):
+        r"""
+        Given an element of the ambient group, attempt to express it in terms
+        of the generators of this group or the given generators of a subgroup.
+
+        EXAMPLES::
+
+            sage: G = AdditiveAbelianGroup([2, 2*3, 2*3*5, 2*3*5*7, 2*3*5*7*11])
+            sage: A = AdditiveAbelianGroupWrapper(G.0.parent(), G.gens(), [g.order() for g in G.gens()])
+            sage: A._discrete_log(G.0 + 5 * G.1 + 23 * G.2 + 127 * G.3 + 539 * G.4)
+            (1, 5, 23, 127, 539)
             sage: V = Zmod(8)**2; G = AdditiveAbelianGroupWrapper(V, [[2,2],[4,0]], [4, 2])
             sage: G._discrete_log(V([6, 2]))
             (1, 1)
@@ -242,20 +332,42 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             Traceback (most recent call last):
             ...
             TypeError: Not in group
+            sage: F.<t> = GF(1009**2, modulus=x**2+11); E = EllipticCurve(j=F(940))
+            sage: P, Q = E(900*t + 228, 974*t + 185), E(1007*t + 214, 865*t + 802)
+            sage: E.abelian_group()._discrete_log(123 * P + 777 * Q, [P, Q])
+            (123, 777)
             sage: G = AdditiveAbelianGroupWrapper(QQbar, [sqrt(2)], [0])
             sage: G._discrete_log(QQbar(2*sqrt(2)))
             Traceback (most recent call last):
             ...
             NotImplementedError: No black-box discrete log for infinite abelian groups
         """
-        # EVEN DUMBER IMPLEMENTATION!
+        from sage.arith.misc import CRT_list
         from sage.rings.infinity import Infinity
+
         if self.order() == Infinity:
             raise NotImplementedError("No black-box discrete log for infinite abelian groups")
-        u = [y for y in self.list() if y.element() == x]
-        if len(u) == 0: raise TypeError("Not in group")
-        if len(u) > 1: raise NotImplementedError
-        return u[0].vector()
+
+        if gens is None:
+            gens = self.gens()
+
+        gens = [g if parent(g) is self.universe() else g.element() for g in gens]
+        x = x if parent(x) is self.universe() else x.element()
+
+        crt_data = [[] for _ in gens]
+        for p, e in self.order().factor():
+            cofactor = self.order() // p ** e
+            pgens = [cofactor * g for g in gens]
+            y = cofactor * x
+
+            plog = self._discrete_log_pgroup(p, pgens, y)
+
+            for i, (r, g) in enumerate(zip(plog, pgens)):
+                crt_data[i].append((r, ZZ(g.order())))
+
+        res = vector(CRT_list(*map(list, zip(*l))) for l in crt_data)
+        assert x == sum(r * g for r, g in zip(res, gens))
+        return res
 
     def _element_constructor_(self, x, check=False):
         r"""
