@@ -198,21 +198,21 @@ class LCAStructureCoefficientsElement(LCAWithGeneratorsElement):
             sage: V = lie_conformal_algebras.Virasoro(QQ); V.inject_variables()
             Defining L, C
             sage: latex(L.T(2))
-            2T^{(2)}L
+            2 T^{(2)}L
 
             sage: R = lie_conformal_algebras.Affine(QQbar, 'A1', names=('e','h','f')); R.inject_variables()
             Defining e, h, f, K
             sage: latex(e.bracket(f))
             \left\{0 : h, 1 : K\right\}
             sage: latex(e.T(3))
-            6T^{(3)}e
+            6 T^{(3)}e
 
             sage: R = lie_conformal_algebras.Affine(QQbar, 'A1')
             sage: latex(R.0.bracket(R.2))
             \left\{0 : \alpha^\vee_{1}, 1 : \text{\texttt{K}}\right\}
 
             sage: R = lie_conformal_algebras.Affine(QQ, 'A1'); latex(R.0.T(3))
-            6T^{(3)}\alpha_{1}
+            6 T^{(3)}\alpha_{1}
         """
         if self.is_zero():
             return "0"

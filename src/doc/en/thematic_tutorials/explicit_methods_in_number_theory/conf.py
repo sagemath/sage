@@ -1,3 +1,4 @@
+# nodoctest
 # Numerical Sage documentation build configuration file, created by
 # sphinx-quickstart on Sat Dec  6 11:08:04 2008.
 #

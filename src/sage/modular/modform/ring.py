@@ -349,10 +349,9 @@ class ModularFormsRing(Parent):
         degs = [f.weight() for f in gens]
         return PolynomialRing(self.base_ring(), len(gens), names, order=TermOrder('wdeglex', degs)) # Should we remove the deg lexicographic ordering here?
 
-
     def _generators_variables_dictionnary(self, poly_parent, gens):
         r"""
-        Utility function that returns a dictionnary giving an association between
+        Utility function that returns a dictionary giving an association between
         polynomial ring generators and generators of modular forms ring.
 
         INPUT:

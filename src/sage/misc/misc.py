@@ -152,13 +152,13 @@ def try_read(obj, splitlines=False):
 
     I/O buffers::
 
-        sage: buf = io.StringIO(u'a\nb\nc')
+        sage: buf = io.StringIO('a\nb\nc')
         sage: print(try_read(buf))
         a
         b
         c
         sage: _ = buf.seek(0); try_read(buf, splitlines=True)
-        [u'a\n', u'b\n', u'c']
+        ['a\n', 'b\n', 'c']
         sage: buf = io.BytesIO(b'a\nb\nc')
         sage: try_read(buf) == b'a\nb\nc'
         True

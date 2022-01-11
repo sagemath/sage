@@ -15,7 +15,5 @@ fi
 # Exit on failure
 set -e
 
-cd build/pkgs/sage_conf
-
-cd src
+cd pkgs/sage-conf_pypi
 python3 -u setup.py --no-user-cfg sdist --dist-dir "$SAGE_DISTFILES"

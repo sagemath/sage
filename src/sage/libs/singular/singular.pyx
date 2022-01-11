@@ -1399,7 +1399,7 @@ cdef number *sa2si(Element elem, ring * _ring):
     """
     cdef int i = 0
     if isinstance(elem._parent, FiniteField_prime_modn):
-        return n_Init(int(elem),_ring)
+        return n_Init(int(elem),_ring.cf)
 
     elif isinstance(elem._parent, RationalField):
         return sa2si_QQ(elem, _ring)
@@ -1420,7 +1420,7 @@ cdef number *sa2si(Element elem, ring * _ring):
         return sa2si_NF(elem, _ring)
     elif isinstance(elem._parent, IntegerModRing_generic):
         if _ring.cf.type == n_unknown:
-            return n_Init(int(elem),_ring)
+            return n_Init(int(elem),_ring.cf)
         return sa2si_ZZmod(elem, _ring)
     elif isinstance(elem._parent, FractionField_generic) and isinstance(elem._parent.base(), (MPolynomialRing_libsingular, PolynomialRing_field)):
         if isinstance(elem._parent.base().base_ring(), RationalField):

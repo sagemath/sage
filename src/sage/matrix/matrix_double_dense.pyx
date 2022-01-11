@@ -2684,7 +2684,7 @@ cdef class Matrix_double_dense(Matrix_dense):
                     return False
         return True
 
-    def _is_hermitian(self, tol = 1e-12, algorithm='orthonormal', skew=False):
+    def _is_hermitian_orthonormal(self, tol = 1e-12, skew=False):
         r"""
         Return ``True`` if the matrix is (skew-)Hermitian.
 
@@ -2696,10 +2696,6 @@ cdef class Matrix_double_dense(Matrix_dense):
         - ``tol`` - default: ``1e-12`` - the largest value of the
           absolute value of the difference between two matrix entries
           for which they will still be considered equal.
-
-        - ``algorithm`` - default: 'orthonormal' - set to 'orthonormal'
-          for a stable procedure and set to 'naive' for a fast
-          procedure.
 
         - ``skew`` - default: ``False`` - Specifies the type of the
           test. Set to ``True`` to check whether the matrix is
@@ -2719,107 +2715,65 @@ cdef class Matrix_double_dense(Matrix_dense):
         to be equal if there is a slight difference due to round-off
         and other imprecisions.
 
-        The result is cached, on a per-tolerance and per-algorithm basis.
+        The result is cached, on a per-tolerance basis.
 
         ALGORITHMS:
-
-        The naive algorithm simply compares corresponding entries on either
-        side of the diagonal (and on the diagonal itself) to see if they are
-        (skew-)conjugates, with equality controlled by the tolerance parameter.
 
         The orthonormal algorithm first computes a Schur decomposition
         (via the :meth:`schur` method) and checks that the result is a
         diagonal matrix with real entries.
-
-        So the naive algorithm can finish quickly for a matrix that is not
-        skew-Hermitian, while the orthonormal algorithm will always compute a
-        Schur decomposition before going through a similar check of the matrix
-        entry-by-entry.
 
         EXAMPLES::
 
             sage: A = matrix(CDF, [[ 1 + I,  1 - 6*I, -1 - I],
             ....:                  [-3 - I,     -4*I,     -2],
             ....:                  [-1 + I, -2 - 8*I,  2 + I]])
-            sage: A._is_hermitian(algorithm='orthonormal')
-            False
-            sage: A._is_hermitian(algorithm='naive')
+            sage: A._is_hermitian_orthonormal()
             False
             sage: B = A*A.conjugate_transpose()
-            sage: B._is_hermitian(algorithm='orthonormal')
-            True
-            sage: B._is_hermitian(algorithm='naive')
+            sage: B._is_hermitian_orthonormal()
             True
 
         A matrix that is nearly Hermitian, but for one non-real
-        diagonal entry. ::
+        diagonal entry::
 
             sage: A = matrix(CDF, [[    2,   2-I, 1+4*I],
             ....:                  [  2+I,   3+I, 2-6*I],
             ....:                  [1-4*I, 2+6*I,     5]])
-            sage: A._is_hermitian(algorithm='orthonormal')
+            sage: A._is_hermitian_orthonormal()
             False
             sage: A[1,1] = 132
-            sage: A._is_hermitian(algorithm='orthonormal')
+            sage: A._is_hermitian_orthonormal()
             True
 
-        We get a unitary matrix from the SVD routine and use this
-        numerical matrix to create a matrix that should be Hermitian
-        (indeed it should be the identity matrix), but with some
-        imprecision.  We use this to illustrate that if the tolerance
-        is set too small, then we can be too strict about the equality
-        of entries and may achieve the wrong result (depending on
-        the system)::
-
-            sage: A = matrix(CDF, [[ 1 + I,  1 - 6*I, -1 - I],
-            ....:                  [-3 - I,     -4*I,     -2],
-            ....:                  [-1 + I, -2 - 8*I,  2 + I]])
-            sage: U, _, _ = A.SVD()
-            sage: B=U*U.conjugate_transpose()
-            sage: B._is_hermitian(algorithm='naive')
-            True
-            sage: B._is_hermitian(algorithm='naive', tol=1.0e-17)  # random
-            False
-            sage: B._is_hermitian(algorithm='naive', tol=1.0e-15)
-            True
-
-        A square, empty matrix is trivially Hermitian.  ::
+        A square, empty matrix is trivially Hermitian::
 
             sage: A = matrix(RDF, 0, 0)
-            sage: A._is_hermitian()
+            sage: A._is_hermitian_orthonormal()
             True
 
-        Rectangular matrices are never Hermitian, no matter which
-        algorithm is requested.  ::
+        Rectangular matrices are never Hermitian::
 
             sage: A = matrix(CDF, 3, 4)
-            sage: A._is_hermitian()
+            sage: A._is_hermitian_orthonormal()
             False
 
-        A matrix that is skew-Hermitian. ::
+        A matrix that is skew-Hermitian::
             sage: A = matrix(CDF, [[-I, 2.0+I], [-2.0+I, 0.0]])
-            sage: A._is_hermitian()
+            sage: A._is_hermitian_orthonormal()
             False
-            sage: A._is_hermitian(skew = True)
+            sage: A._is_hermitian_orthonormal(skew=True)
             True
 
         TESTS:
 
-        The tolerance must be strictly positive.  ::
+        The tolerance must be strictly positive::
 
             sage: A = matrix(RDF, 2, range(4))
-            sage: A._is_hermitian(tol = -3.1)
+            sage: A._is_hermitian_orthonormal(tol = -3.1)
             Traceback (most recent call last):
             ...
             ValueError: tolerance must be positive, not -3.1
-
-        The ``algorithm`` keyword gets checked.  ::
-
-            sage: A = matrix(RDF, 2, range(4))
-            sage: A._is_hermitian(algorithm='junk')
-            Traceback (most recent call last):
-            ...
-            ValueError: algorithm must be 'naive' or 'orthonormal', not junk
 
         AUTHOR:
 
@@ -2831,11 +2785,8 @@ cdef class Matrix_double_dense(Matrix_dense):
         tol = float(tol)
         if tol <= 0:
             raise ValueError('tolerance must be positive, not {0}'.format(tol))
-        if not algorithm in ['naive', 'orthonormal']:
-            raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
-        k = 'skew_hermitian' if skew else 'hermitian'
-        key = '{0}_{1}_{2}'.format(k, algorithm, tol)
+        key = ("_is_hermitian_orthonormal", tol, skew)
         h = self.fetch(key)
         if not h is None:
             return h
@@ -2851,23 +2802,14 @@ cdef class Matrix_double_dense(Matrix_dense):
         cdef Matrix_double_dense T
         # A matrix M is skew-hermitian iff I*M is hermitian
         T = self.__mul__(1j) if skew else self.__copy__()
-        if algorithm == 'orthonormal':
-            # Schur decomposition over CDF will be diagonal and real iff Hermitian
-            _, T = T.schur(base_ring=sage.rings.complex_double.CDF)
-            hermitian = T._is_lower_triangular(tol)
-            if hermitian:
-                for i in range(T._nrows):
-                    if abs(T.get_unsafe(i,i).imag()) > tol:
-                        hermitian = False
-                        break
-        elif algorithm == 'naive':
-            hermitian = True
+
+        # Schur decomposition over CDF will be diagonal and real iff Hermitian
+        _, T = T.schur(base_ring=sage.rings.complex_double.CDF)
+        hermitian = T._is_lower_triangular(tol)
+        if hermitian:
             for i in range(T._nrows):
-                for j in range(i+1):
-                    if abs(T.get_unsafe(i,j) - T.get_unsafe(j,i).conjugate()) > tol:
-                        hermitian = False
-                        break
-                if not hermitian:
+                if abs(T.get_unsafe(i,i).imag()) > tol:
+                    hermitian = False
                     break
         self.cache(key, hermitian)
         return hermitian
@@ -2998,7 +2940,12 @@ cdef class Matrix_double_dense(Matrix_dense):
 
         - Rob Beezer (2011-03-30)
         """
-        return self._is_hermitian(tol=tol, algorithm=algorithm, skew=False)
+        if algorithm == "naive":
+            return super()._is_hermitian(skew=False, tolerance=tol)
+        elif algorithm == "orthonormal":
+            return self._is_hermitian_orthonormal(tol=tol, skew=False)
+        else:
+            raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
     def is_skew_hermitian(self, tol = 1e-12, algorithm = 'orthonormal'):
         r"""
@@ -3122,7 +3069,12 @@ cdef class Matrix_double_dense(Matrix_dense):
         - Rob Beezer (2011-03-30)
 
         """
-        return self._is_hermitian(tol=tol, algorithm=algorithm, skew=True)
+        if algorithm == "naive":
+            return super()._is_hermitian(skew=True, tolerance=tol)
+        elif algorithm == "orthonormal":
+            return self._is_hermitian_orthonormal(tol=tol, skew=True)
+        else:
+            raise ValueError("algorithm must be 'naive' or 'orthonormal', not {0}".format(algorithm))
 
     def is_normal(self, tol=1e-12, algorithm='orthonormal'):
         r"""

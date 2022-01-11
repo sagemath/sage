@@ -7236,19 +7236,16 @@ class GenericGraph(GenericGraph_pyx):
             g = graphs.PetersenGraph()
             sphinx_plot(g.plot(edge_colors={"red": g.longest_path().edges(sort=False)}))
 
-        Let us compute longest paths on random graphs with random weights. Each
-        time, we ensure the resulting graph is indeed a path::
+        Let us compute the longest path on a random graph with random
+        weights, and ensure the resulting graph is indeed a path::
 
-            sage: for i in range(20):
-            ....:     g = graphs.RandomGNP(15, 0.3)
-            ....:     for u, v in g.edge_iterator(labels=False):
-            ....:         g.set_edge_label(u, v, random())
-            ....:     lp = g.longest_path()
-            ....:     if (not lp.is_forest() or
-            ....:         not max(lp.degree()) <= 2 or
-            ....:         not lp.is_connected()):
-            ....:         print("Error!")
-            ....:         break
+            sage: g = graphs.RandomGNP(15, 0.3)
+            sage: for u, v in g.edge_iterator(labels=False):
+            ....:     g.set_edge_label(u, v, random())
+            sage: lp = g.longest_path()
+            sage: (not lp.is_forest() or not max(lp.degree()) <= 2
+            ....:  or not lp.is_connected())
+            False
 
         TESTS:
 
@@ -7306,18 +7303,15 @@ class GenericGraph(GenericGraph_pyx):
 
         Random test for digraphs::
 
-            sage: for i in range(20):
-            ....:     g = digraphs.RandomDirectedGNP(15, 0.3)
-            ....:     for u, v in g.edge_iterator(labels=False):
-            ....:         g.set_edge_label(u, v, random())
-            ....:     lp = g.longest_path()
-            ....:     if (not lp.is_directed_acyclic() or
-            ....:         not max(lp.out_degree()) <= 1 or
-            ....:         not max(lp.in_degree()) <= 1 or
-            ....:         not lp.is_connected()):
-            ....:         print("Error!")
-            ....:         print(g.edges())
-            ....:         break
+            sage: g = digraphs.RandomDirectedGNP(15, 0.3)
+            sage: for u, v in g.edge_iterator(labels=False):
+            ....:     g.set_edge_label(u, v, random())
+            sage: lp = g.longest_path()
+            sage: (not lp.is_directed_acyclic() or
+            ....:  not max(lp.out_degree()) <= 1 or
+            ....:  not max(lp.in_degree()) <= 1 or
+            ....:  not lp.is_connected())
+            False
 
         :trac:`13019`::
 
@@ -7943,44 +7937,33 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: from operator import itemgetter
             sage: n = 20
-            sage: for i in range(20):
-            ....:     g = Graph()
-            ....:     g.allow_multiple_edges(False)
-            ....:     for u, v in graphs.RandomGNP(n,.2).edges(labels=False, sort=False):
-            ....:          g.add_edge(u, v, round(random(), 5))
-            ....:     for u, v in graphs.CycleGraph(n).edges(labels=False, sort=False):
-            ....:          if not g.has_edge(u, v):
-            ....:              g.add_edge(u, v, round(random(),5))
-            ....:     v1 = g.traveling_salesman_problem(constraint_generation=False, use_edge_labels=True)
-            ....:     v2 = g.traveling_salesman_problem(use_edge_labels=True)
-            ....:     c1 = sum(v1.edge_labels())
-            ....:     c2 = sum(v2.edge_labels())
-            ....:     if c1 != c2:
-            ....:         print("Error !", c1, c2)
-            ....:         break
+            sage: g = Graph()
+            sage: g.allow_multiple_edges(False)
+            sage: for u, v in graphs.RandomGNP(n,.2).edges(labels=False, sort=False):
+            ....:      g.add_edge(u, v, ZZ.random_element(1,100000))
+            sage: for u, v in graphs.CycleGraph(n).edges(labels=False, sort=False):
+            ....:      if not g.has_edge(u, v):
+            ....:          g.add_edge(u, v, ZZ.random_element(1,100000))
+            sage: v1 = g.traveling_salesman_problem(constraint_generation=False, use_edge_labels=True)
+            sage: v2 = g.traveling_salesman_problem(use_edge_labels=True)
+            sage: sum(v1.edge_labels()) == sum(v2.edge_labels())
+            True
 
         Then for digraphs::
 
             sage: from operator import itemgetter
-            sage: set_random_seed(0)
             sage: n = 20
-            sage: for i in range(20):
-            ....:     g = DiGraph()
-            ....:     g.allow_multiple_edges(False)
-            ....:     for u, v in digraphs.RandomDirectedGNP(n, .2).edges(labels=False, sort=False):
-            ....:          g.add_edge(u, v, round(random(), 5))
-            ....:     for u, v in digraphs.Circuit(n).edges(labels=False, sort=False):
-            ....:          if not g.has_edge(u, v):
-            ....:              g.add_edge(u, v, round(random(), 5))
-            ....:     v2 = g.traveling_salesman_problem(use_edge_labels=True)
-            ....:     v1 = g.traveling_salesman_problem(constraint_generation=False, use_edge_labels=True)
-            ....:     c1 = sum(v1.edge_labels())
-            ....:     c2 = sum(v2.edge_labels())
-            ....:     if c1 != c2:
-            ....:         print("Error !", c1, c2)
-            ....:         print("With constraint generation :", c2)
-            ....:         print("Without constraint generation :", c1)
-            ....:         break
+            sage: g = DiGraph()
+            sage: g.allow_multiple_edges(False)
+            sage: for u, v in digraphs.RandomDirectedGNP(n, .2).edges(labels=False, sort=False):
+            ....:      g.add_edge(u, v, ZZ.random_element(1,100000))
+            sage: for u, v in digraphs.Circuit(n).edges(labels=False, sort=False):
+            ....:      if not g.has_edge(u, v):
+            ....:          g.add_edge(u, v, ZZ.random_element(1,100000))
+            sage: v2 = g.traveling_salesman_problem(use_edge_labels=True)
+            sage: v1 = g.traveling_salesman_problem(constraint_generation=False, use_edge_labels=True)
+            sage: sum(v1.edge_labels()) == sum(v2.edge_labels())
+            True
 
         Simple tests for multiple edges and loops::
 
@@ -15506,58 +15489,62 @@ class GenericGraph(GenericGraph_pyx):
 
             sage: import random
             sage: import itertools
-            sage: for i in range(10):                           # long time
-            ....:     n = random.randint(2,20)
-            ....:     m = random.randint(0, n*(n-1)/2)
-            ....:     g = graphs.RandomGNM(n,m)
-            ....:     c1 = g.centrality_closeness(algorithm='BFS')
-            ....:     c2 = g.centrality_closeness(algorithm='NetworkX')
-            ....:     c3 = g.centrality_closeness(algorithm='Dijkstra_Boost')
-            ....:     c4 = g.centrality_closeness(algorithm='Floyd-Warshall-Cython')
-            ....:     c5 = g.centrality_closeness(algorithm='Floyd-Warshall-Python')
-            ....:     c6 = g.centrality_closeness(algorithm='Johnson_Boost')
-            ....:     assert(len(c1)==len(c2)==len(c3)==len(c4)==len(c5)==len(c6))
-            ....:     c = [c1,c2,c3,c4,c5,c6]
-            ....:     for ci, cj in itertools.combinations(c, 2):
-            ....:         assert(sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12)
+            sage: n = random.randint(2,20)
+            sage: m = random.randint(0, n*(n-1)/2)
+            sage: g = graphs.RandomGNM(n,m)
+            sage: c1 = g.centrality_closeness(algorithm='BFS')
+            sage: c2 = g.centrality_closeness(algorithm='NetworkX')
+            sage: c3 = g.centrality_closeness(algorithm='Dijkstra_Boost')
+            sage: c4 = g.centrality_closeness(algorithm='Floyd-Warshall-Cython')
+            sage: c5 = g.centrality_closeness(algorithm='Floyd-Warshall-Python')
+            sage: c6 = g.centrality_closeness(algorithm='Johnson_Boost')
+            sage: len(c1)==len(c2)==len(c3)==len(c4)==len(c5)==len(c6)
+            True
+            sage: c = [c1,c2,c3,c4,c5,c6]
+            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12
+            ....:      for ci, cj in itertools.combinations(c, 2) )
+            True
 
         Directed graphs::
 
             sage: import random
             sage: import itertools
-            sage: for i in range(10):                           # long time
-            ....:     n = random.randint(2,20)
-            ....:     m = random.randint(0, n*(n-1)/2)
-            ....:     g = digraphs.RandomDirectedGNM(n,m)
-            ....:     c1 = g.centrality_closeness(algorithm='BFS')
-            ....:     c2 = g.centrality_closeness(algorithm='NetworkX')
-            ....:     c3 = g.centrality_closeness(algorithm='Dijkstra_Boost')
-            ....:     c4 = g.centrality_closeness(algorithm='Floyd-Warshall-Cython')
-            ....:     c5 = g.centrality_closeness(algorithm='Floyd-Warshall-Python')
-            ....:     c6 = g.centrality_closeness(algorithm='Johnson_Boost')
-            ....:     assert(len(c1)==len(c2)==len(c3)==len(c4)==len(c5)==len(c6))
-            ....:     c = [c1,c2,c3,c4,c5,c6]
-            ....:     for ci, cj in itertools.combinations(c, 2):
-            ....:         assert(sum(abs(ci[v] - cj[v]) for v in g if g.out_degree(v)) < 1e-12)
+            sage: n = random.randint(2,20)
+            sage: m = random.randint(0, n*(n-1)/2)
+            sage: g = digraphs.RandomDirectedGNM(n,m)
+            sage: c1 = g.centrality_closeness(algorithm='BFS')
+            sage: c2 = g.centrality_closeness(algorithm='NetworkX')
+            sage: c3 = g.centrality_closeness(algorithm='Dijkstra_Boost')
+            sage: c4 = g.centrality_closeness(algorithm='Floyd-Warshall-Cython')
+            sage: c5 = g.centrality_closeness(algorithm='Floyd-Warshall-Python')
+            sage: c6 = g.centrality_closeness(algorithm='Johnson_Boost')
+            sage: len(c1)==len(c2)==len(c3)==len(c4)==len(c5)==len(c6)
+            True
+            sage: c = [c1,c2,c3,c4,c5,c6]
+            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.out_degree(v)) < 1e-12
+            ....:      for ci, cj in itertools.combinations(c, 2) )
+            True
 
         Weighted graphs::
 
             sage: import random
             sage: import itertools
-            sage: for i in range(10):                           # long time
-            ....:     n = random.randint(2,20)
-            ....:     m = random.randint(0, n*(n-1)/2)
-            ....:     g = graphs.RandomGNM(n,m)
-            ....:     for v,w in g.edges(labels=False):
-            ....:         g.set_edge_label(v,w,float(random.uniform(1,100)))
-            ....:     c1 = g.centrality_closeness(by_weight=True, algorithm='NetworkX')
-            ....:     c2 = g.centrality_closeness(by_weight=True, algorithm='Dijkstra_Boost')
-            ....:     c3 = g.centrality_closeness(by_weight=True, algorithm='Floyd-Warshall-Python')
-            ....:     c4 = g.centrality_closeness(by_weight=True, algorithm='Johnson_Boost')
-            ....:     assert(len(c1)==len(c2)==len(c3)==len(c4))
-            ....:     c = [c1,c2,c3,c4]
-            ....:     for ci, cj in itertools.combinations(c, 2):
-            ....:         assert(sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12)
+            sage: n = random.randint(2,20)
+            sage: m = random.randint(0, n*(n-1)/2)
+            sage: g = graphs.RandomGNM(n,m)
+            sage: for v,w in g.edges(labels=False):
+            ....:     g.set_edge_label(v,w,float(random.uniform(1,100)))
+            sage: c1 = g.centrality_closeness(by_weight=True, algorithm='NetworkX')
+            sage: c2 = g.centrality_closeness(by_weight=True, algorithm='Dijkstra_Boost')
+            sage: c3 = g.centrality_closeness(by_weight=True, algorithm='Floyd-Warshall-Python')
+            sage: c4 = g.centrality_closeness(by_weight=True, algorithm='Johnson_Boost')
+            sage: len(c1)==len(c2)==len(c3)==len(c4)
+            True
+            sage: c = [c1,c2,c3,c4]
+            sage: all( sum(abs(ci[v] - cj[v]) for v in g if g.degree(v)) < 1e-12
+            ....:      for ci, cj in itertools.combinations(c, 2) )
+            True
+
         """
         if weight_function is not None:
             by_weight=True
@@ -15711,15 +15698,14 @@ class GenericGraph(GenericGraph_pyx):
 
         Comparison of algorithms::
 
-            sage: for i in range(10): # long time
-            ....:     G = graphs.RandomBarabasiAlbert(50,2)
-            ....:     results = []
-            ....:     results.append(G.triangles_count(algorithm='matrix'))
-            ....:     results.append(G.triangles_count(algorithm='iter'))
-            ....:     results.append(G.triangles_count(algorithm='sparse_copy'))
-            ....:     results.append(G.triangles_count(algorithm='dense_copy'))
-            ....:     if any(x != results[0] for x in results):
-            ....:        raise ValueError("something goes wrong, {}".format(results))
+            sage: G = graphs.RandomBarabasiAlbert(50,2)
+            sage: results = []
+            sage: results.append(G.triangles_count(algorithm='matrix'))
+            sage: results.append(G.triangles_count(algorithm='iter'))
+            sage: results.append(G.triangles_count(algorithm='sparse_copy'))
+            sage: results.append(G.triangles_count(algorithm='dense_copy'))
+            sage: any(x != results[0] for x in results)
+            False
 
         Asking for an unknown algorithm::
 

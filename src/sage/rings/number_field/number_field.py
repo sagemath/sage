@@ -104,7 +104,7 @@ Check that :trac:`23459` is fixed::
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from __future__ import annotations
 from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import (deprecation,
                                   deprecated_function_alias)
@@ -5726,13 +5726,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             raise ValueError('Not a basis of the number field.')
         return [sum([v[i]*b[i] for i in range(len(b))]) for v in M.inverse()]
 
-    def elements_of_norm(self, n, proof=None):
+    def elements_of_norm(self, n, proof=None) -> list:
         """
-        Return a list of elements of norm ``n``.
+        Return a list of elements of norm `n`.
 
         INPUT:
 
-        - ``n`` -- integer in this number field
+        - `n` -- integer
 
         - ``proof`` -- boolean (default: ``True``, unless you called
           :meth:`proof.number_field` and set it otherwise)
@@ -5761,6 +5761,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: x in (7/225*a^2 - 7/75*a - 42/25, 28/225*a^2 + 77/75*a - 133/25)
             True
         """
+        n = ZZ(n)
         proof = proof_flag(proof)
         B = self.pari_bnf(proof).bnfisintnorm(n)
         return [self(x, check=False) for x in B]

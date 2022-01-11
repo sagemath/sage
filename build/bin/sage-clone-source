@@ -31,11 +31,11 @@ CONFBALL="$SRC/upstream/configure-$CONFVERSION.tar.gz"
 rm -rf "$DST"
 mkdir -p "$DST"
 
-git clone "$SRC" "$DST"
+git clone --origin trac "$SRC" "$DST"
 
 cd "$DST"
-git remote set-url origin "$SAGE_REPO_ANONYMOUS"
-git remote set-url --push origin "$SAGE_REPO_AUTHENTICATED"
+git remote set-url trac "$SAGE_REPO_ANONYMOUS"
+git remote set-url --push trac "$SAGE_REPO_AUTHENTICATED"
 
 # Save space
 git gc --aggressive --prune=now

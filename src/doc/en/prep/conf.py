@@ -1,3 +1,4 @@
+# nodoctest
 # PREP Tutorials documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul  3 10:54:56 2012.
 #

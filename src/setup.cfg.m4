@@ -26,10 +26,10 @@ classifiers =
     Topic :: Scientific/Engineering :: Mathematics
 
 [options]
-python_requires = >=3.7, <3.10
+python_requires = >=3.7, <3.11
 install_requires =
-    sage_conf
     esyscmd(`sage-get-system-packages install-requires \
+        sage_conf \
         six \
         | sed "2,\$s/^/    /;"')dnl'
 dnl From build/pkgs/sagelib/dependencies
@@ -44,6 +44,7 @@ dnl From build/pkgs/sagelib/dependencies
         pkgconfig      \
         pplpy          \
         memory_allocator \
+        requests       \
         | sed "2,\$s/^/    /;"')dnl'
 dnl From Makefile.in: SAGERUNTIME
     esyscmd(`sage-get-system-packages install-requires \

@@ -42,6 +42,9 @@ cdef extern from "arb_wrap.h":
     void arb_printd(const arb_t x, long digits)
     void arb_printn(const arb_t x, long digits, unsigned long flags)
 
+    char *arb_dump_str(const arb_t x)
+    bint arb_load_str(arb_t x, const char *str)
+
     # void arb_randtest(arb_t x, flint_rand_t state, long prec, long mag_bits)
     # void arb_randtest_exact(arb_t x, flint_rand_t state, long prec, long mag_bits)
     # void arb_randtest_precise(arb_t x, flint_rand_t state, long prec, long mag_bits)

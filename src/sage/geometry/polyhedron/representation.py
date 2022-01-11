@@ -712,7 +712,7 @@ class Hrepresentation(PolyhedronRepresentation):
             ....:     print(latex(h))
             x_{0} + x_{1} - x_{2} = 1
             x_{0} \geq 0
-            2x_{0} + x_{1} \geq -1
+            2 x_{0} + x_{1} \geq -1
         """
         return self.repr_pretty(latex=True)
 

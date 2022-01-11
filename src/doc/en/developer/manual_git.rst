@@ -6,49 +6,46 @@
 Git the Hard Way
 ================
 
-If you have no git experience, we recommend you to read the
+If you have no ``git`` experience, we recommend you to read the
 :ref:`chapter-git_trac` chapter instead. The ``git-trac`` simplifies the
 interaction with our git and trac servers.
 
-If you want to contribute using git only, you are at the right place. This
-chapter will tell you how to do so, assuming some basic familiarity with git. In
+If you want to contribute using ``git`` only, you are at the right place. This
+chapter will tell you how to do so, assuming some basic familiarity with ``git``. In
 particular, you should have read :ref:`chapter-walkthrough` first.
 
 Randall Munroe has provided a `basic overview <http://xkcd.com/1597/>`_.
 
-We assume that you have a copy of the Sage git repository, for example
-by running::
+In the following, we assume that you are in the source directory of Sage (``SAGE_ROOT``),
+obtained either from a source tarball or by cloning a Sage git repository
+such as https://github.com/sagemath/sage.git, as described in the
+`README <https://github.com/sagemath/sage/#readme>`_.
+In either case, this source directory is actually the main worktree of
+a local git repository.
 
-    [user@localhost ~]$ git clone https://gitlab.com/sagemath/dev/tracmirror.git
-    [user@localhost ~]$ cd sage
-    [user@localhost sage]$ git checkout develop
-    [user@localhost sage]$ make
+Using the following command, we can see which remote repository or repositories
+are associated with this local repository::
 
-.. NOTE::
+    [user@localhost sage]$ git remote -v
+    origin      https://github.com/sagemath/sage.git (fetch)
+    origin      https://github.com/sagemath/sage.git (push)
 
-    If your system supports multiprocessing and you want to use multiple
-    processors to build Sage, replace the last line above by::
-
-    [user@localhost sage]$ MAKE='make -jNUM' make
-
-    to tell the ``make`` program to run ``NUM`` jobs in parallel when
-    building Sage.
 
 .. _section-git-trac:
 
 The Trac Server
 ===============
 
-The Sage trac server also holds a copy of the Sage repository, it is
-served via the ssh and git protocols. To add it as a remote repository
-to your local git repository, use these commands::
+The Sage trac server is another git repository for the Sage source tree, it is
+served via the ssh protocol. To add it as a remote repository to your local git
+repository, use these commands::
 
-    [user@localhost sage]$ git remote add trac git@trac.sagemath.org:sage.git -t master
+    [user@localhost sage]$ git remote add trac https://github.com/sagemath/sagetrac-mirror.git -t master
     [user@localhost sage]$ git remote set-url --push trac git@trac.sagemath.org:sage.git
     [user@localhost sage]$ git remote -v
-    origin      https://gitlab.com/sagemath/dev/tracmirror.git (fetch)
-    origin      https://gitlab.com/sagemath/dev/tracmirror.git (push)
-    trac        git@trac.sagemath.org:sage.git (fetch)
+    origin      https://github.com/sagemath/sage.git (fetch)
+    origin      https://github.com/sagemath/sage.git (push)
+    trac        https://github.com/sagemath/sagetrac-mirror.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 
 Instead of ``trac`` you can use any local name you want, of course. It
@@ -68,21 +65,24 @@ of them as bookmarks. You can then use ``git pull`` to get changes and
     tell git which branch you want to get from trac. See the
     :ref:`section-git-checkout` section for examples.
 
-We set up the remote here to perform read-only operations (fetch)
-using the git protocol and write operations (push) using the ssh
-protocol (specified by the ``git@`` part). To use the ssh protocol you
+We set up the remote here to perform read-only operations (``fetch``)
+using HTTPS from a mirror of the trac repository and write
+operations (``push``) using the ssh protocol (specified by the ``git@``
+part).
+
+Note that to use the ssh protocol, you
 need to have a trac account and to set up your ssh public key as
 described in `Trac authentication through ssh
 <http://doc.sagemath.org/html/en/developer/trac.html#trac-authentication-through-ssh>`_.
 Authentication is necessary if you want to upload anything to ensure
 that it really is from you.
 
-If you want to use ssh only, use these commands::
+If you want to use ssh only, use the following commands instead::
 
     [user@localhost sage]$ git remote add trac git@trac.sagemath.org:sage.git -t master
     [user@localhost sage]$ git remote -v
-    origin      https://gitlab.com/sagemath/dev/tracmirror.git (fetch)
-    origin      https://gitlab.com/sagemath/dev/tracmirror.git (push)
+    origin      https://github.com/sagemath/sage.git (fetch)
+    origin      https://github.com/sagemath/sage.git (push)
     trac        git@trac.sagemath.org:sage.git (fetch)
     trac        git@trac.sagemath.org:sage.git (push)
 

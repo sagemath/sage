@@ -1,1 +1,1 @@
-sage-conf
+sage-conf ~= 9.5.b6

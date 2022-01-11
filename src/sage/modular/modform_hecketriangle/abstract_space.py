@@ -1161,8 +1161,8 @@ class FormsSpace_abstract(FormsRing_abstract):
 
             sage: MF.F_basis_pol(2)
             x^13*y*d^2 - 2*x^8*y^3*d^2 + x^3*y^5*d^2
-            sage: MF.F_basis_pol(1)
-            (-81*x^13*y*d + 62*x^8*y^3*d + 19*x^3*y^5*d)/(-100)
+            sage: MF.F_basis_pol(1) * 100
+            81*x^13*y*d - 62*x^8*y^3*d - 19*x^3*y^5*d
             sage: MF.F_basis_pol(0)
             (141913*x^13*y + 168974*x^8*y^3 + 9113*x^3*y^5)/320000
 

@@ -79,7 +79,7 @@ def build_many(target, args, processes=None):
         ....:         # Task 4 is a poison pill
         ....:         1 / 0
         ....:     else:
-        ....:         time.sleep(0.5)
+        ....:         time.sleep(float(0.5))
         ....:         print('Processed task %s' % N)
         ....:
 
@@ -104,7 +104,7 @@ def build_many(target, args, processes=None):
         ....:         # Task 4 is a poison pill
         ....:         os.kill(os.getpid(), signal.SIGKILL)
         ....:     else:
-        ....:         time.sleep(0.5)
+        ....:         time.sleep(float(0.5))
         ....:         print('Processed task %s' % N)
         ....:
         sage: build_many(target, range(8), processes=8)

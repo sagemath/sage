@@ -1,7 +1,8 @@
 SAGE_SPKG_CONFIGURE([python3], [
    m4_pushdef([MIN_VERSION],               [3.7.0])
    m4_pushdef([MIN_NONDEPRECATED_VERSION], [3.7.0])
-   m4_pushdef([LT_VERSION],                [3.10.0])
+   m4_pushdef([LT_STABLE_VERSION],         [3.10.0])
+   m4_pushdef([LT_VERSION],                [3.11.0])
    AC_ARG_WITH([python],
                [AS_HELP_STRING([--with-python=PYTHON3],
                                [Python 3 executable to use for the Sage venv; default: python3])])
@@ -114,6 +115,10 @@ SAGE_SPKG_CONFIGURE([python3], [
             AC_MSG_NOTICE([deprecation notice: Support for system python < MIN_NONDEPRECATED_VERSION is deprecated
 and will be removed in the next development cycle.  Consider using a newer version of Python
 that may be available on your system or can be installed using the system package manager.
+To build Sage with a different system python, use ./configure --with-python=/path/to/python])
+        ])
+        AX_COMPARE_VERSION([$python3_version], [ge], LT_STABLE_VERSION, [
+            AC_MSG_WARN([Support for system python >= LT_STABLE_VERSION is experimental.
 To build Sage with a different system python, use ./configure --with-python=/path/to/python])
         ])
     ])

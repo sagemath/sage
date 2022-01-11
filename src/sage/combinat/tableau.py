@@ -3699,7 +3699,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         """
         for i in range(len(self)-1):
             if len(self[i]) <= len(self[i+1]):
-                raise ValueError('only defined for tableaux with stricly decreasing parts')
+                raise ValueError('only defined for tableaux with strictly decreasing parts')
         f = 0
         S = self._segments().items()
         for s in S:

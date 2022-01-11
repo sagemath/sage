@@ -172,7 +172,7 @@ class CyclicRepresentation(QuantumGroupRepresentation):
             sage: K = crystals.ProjectedLevelZeroLSPaths(La[1])
             sage: A = AdjointRepresentation(R, K)
             sage: latex(A)
-            V\left( -2\Lambda_{0} + \Lambda_{1} \right)
+            V\left( -2 \Lambda_{0} + \Lambda_{1} \right)
         """
         try:
             mg = self.basis().keys().module_generator()

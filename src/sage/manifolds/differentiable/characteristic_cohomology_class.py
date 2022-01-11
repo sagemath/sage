@@ -247,21 +247,23 @@ We consider the **Euler class** of `S^2`::
 To compute a particular representative of the Euler class, we need to determine
 a connection, which is in this case given by the standard metric::
 
-    sage: g = M.metric('g') # standard metric on S2
-    sage: nab = g.connection()
-    sage: nab.set_immutable()
+    sage: g = M.metric('g') # standard metric on S2, long time
+    sage: nab = g.connection() # long time
+    sage: nab.set_immutable() # long time
 
 Now the representative of the Euler class with respect to the connection
 `\nabla_g` induced by the standard metric can be computed::
 
-    sage: e_class_form = e_class.get_form(nab)
-    sage: e_class_form.display_expansion()
+    sage: e_class_form = e_class.get_form(nab) # long time
+    sage: e_class_form.display_expansion() # long time
     e(TS^2, nabla_g) = 2/(pi + pi*x^4 + pi*y^4 + 2*pi*x^2 + 2*(pi + pi*x^2)*y^2) dx∧dy
 
 Let us check whether this form represents the Euler class correctly::
 
-    sage: integrate(integrate(e_class_form[2][[1,2]].expr(), x, -infinity, infinity).simplify_full(),
-    ....:           y, -infinity, infinity)
+    sage: expr = e_class_form[2][[1,2]].expr() # long time
+    sage: expr = integrate(expr, x, -infinity, infinity) # long time
+    sage: expr = expr.simplify_full() # long time
+    sage: integrate(expr, y, -infinity, infinity) # long time
     2
 
 As we can see, the integral coincides with the Euler characteristic of `S^2` so
@@ -400,9 +402,9 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
             sage: x = var('x')
             sage: k = TM.characteristic_cohomology_class(1+x^2, class_type='multiplicative')
             sage: k._latex_()
-            '\\left(1 + p_1^{2} - 2p_2\\right)\\left(TM\\right)'
+            '\\left(1 + p_1^{2} - 2 p_2\\right)\\left(TM\\right)'
             sage: latex(k)
-            \left(1 + p_1^{2} - 2p_2\right)\left(TM\right)
+            \left(1 + p_1^{2} - 2 p_2\right)\left(TM\right)
         """
         if self._latex_name is None:
             latex = r'\left(' + super()._latex_() + r'\right)'
@@ -447,13 +449,13 @@ class CharacteristicCohomologyClassRingElement(IndexedFreeModuleElement):
             Characteristic cohomology class p(TS^4) of the Tangent bundle TS^4
              over the 4-sphere S^4 of radius 1 smoothly embedded in the
              5-dimensional Euclidean space E^5
-            sage: g = M.metric()
-            sage: nab = g.connection()
-            sage: nab.set_immutable()
-            sage: p_form = p.get_form(nab); p_form
+            sage: g = M.metric() # long time
+            sage: nab = g.connection() # long time
+            sage: nab.set_immutable() # long time
+            sage: p_form = p.get_form(nab); p_form # long time
             Mixed differential form p(TS^4, nabla_g) on the 4-sphere S^4 of
              radius 1 smoothly embedded in the 5-dimensional Euclidean space E^5
-            sage: p_form.display_expansion()
+            sage: p_form.display_expansion() # long time
             p(TS^4, nabla_g) = 1
         """
         if nab not in self._mixed_forms:
@@ -1247,10 +1249,10 @@ class Algorithm_generic(SageObject):
         ::
 
             sage: p = TM.characteristic_cohomology_class('Pontryagin')
-            sage: p_form = p.get_form(nab); p_form
+            sage: p_form = p.get_form(nab); p_form # long time
             Mixed differential form p(TE^4, nabla_g) on the 4-dimensional
              Euclidean space E^4
-            sage: p_form.display_expansion()
+            sage: p_form.display_expansion() # long time
             p(TE^4, nabla_g) = 1
         """
         if isinstance(nab, AffineConnection):
@@ -1297,15 +1299,16 @@ class Algorithm_generic(SageObject):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select standard frame
-            sage: cmat = [[nab.curvature_form(i, j, e) for j in TM.irange()]
-            ....:         for i in TM.irange()]
+            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
+            ....:           for j in TM.irange()]       # long time
+            ....:         for i in TM.irange()]         # long time
 
         Import the algorithm::
 
             sage: from sage.manifolds.differentiable.characteristic_cohomology_class import PontryaginAlgorithm
             sage: algorithm = PontryaginAlgorithm()
-            sage: [p1] = algorithm.get_local(cmat)
-            sage: p1.display()
+            sage: [p1] = algorithm.get_local(cmat) # long time
+            sage: p1.display() # long time
             0
 
         A concrete implementation is given by a
@@ -1468,8 +1471,8 @@ class PontryaginAlgorithm(Singleton, Algorithm_generic):
 
         sage: from sage.manifolds.differentiable.characteristic_cohomology_class import PontryaginAlgorithm
         sage: algorithm = PontryaginAlgorithm()
-        sage: [p1] = algorithm.get(nab)
-        sage: p1.display()
+        sage: [p1] = algorithm.get(nab) # long time
+        sage: p1.display() # long time
         0
     """
     def get_local(self, cmat):
@@ -1494,15 +1497,16 @@ class PontryaginAlgorithm(Singleton, Algorithm_generic):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select standard frame
-            sage: cmat = [[nab.curvature_form(i, j, e) for j in TM.irange()]
-            ....:         for i in TM.irange()]
+            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
+            ....:           for j in TM.irange()]       # long time
+            ....:         for i in TM.irange()]         # long time
 
         Import the algorithm::
 
             sage: from sage.manifolds.differentiable.characteristic_cohomology_class import PontryaginAlgorithm
             sage: algorithm = PontryaginAlgorithm()
-            sage: [p1] = algorithm.get_local(cmat)
-            sage: p1.display()
+            sage: [p1] = algorithm.get_local(cmat) # long time
+            sage: p1.display() # long time
             0
         """
         from sage.symbolic.constants import pi
@@ -1592,18 +1596,18 @@ class EulerAlgorithm(Singleton, Algorithm_generic):
         Consider the 2-sphere::
 
             sage: M.<x,y> = manifolds.Sphere(2, coordinates='stereographic')
-            sage: g = M.metric()
-            sage: nab = g.connection()
-            sage: nab.set_immutable()
+            sage: g = M.metric() # long time
+            sage: nab = g.connection() # long time
+            sage: nab.set_immutable() # long time
 
         Import the algorithm and apply ``nab`` to it::
 
             sage: from sage.manifolds.differentiable.characteristic_cohomology_class import EulerAlgorithm
             sage: algorithm = EulerAlgorithm()
-            sage: algorithm.get(nab)
+            sage: algorithm.get(nab) # long time
             [2-form on the 2-sphere S^2 of radius 1 smoothly embedded in the
              Euclidean space E^3]
-            sage: algorithm.get(nab)[0].display()
+            sage: algorithm.get(nab)[0].display() # long time
             2/(pi + pi*x^4 + pi*y^4 + 2*pi*x^2 + 2*(pi + pi*x^2)*y^2) dx∧dy
 
         REFERENCES:
@@ -1759,7 +1763,7 @@ class PontryaginEulerAlgorithm(Singleton, Algorithm_generic):
 
             sage: from sage.manifolds.differentiable.characteristic_cohomology_class import PontryaginEulerAlgorithm
             sage: algorithm = PontryaginEulerAlgorithm()
-            sage: algorithm.get(nab)
+            sage: algorithm.get(nab) # long time
             [4-form on the 4-dimensional Euclidean space E^4,
              4-form on the 4-dimensional Euclidean space E^4]
         """
@@ -1791,8 +1795,9 @@ class PontryaginEulerAlgorithm(Singleton, Algorithm_generic):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select the standard frame
-            sage: cmat = [[nab.curvature_form(i, j, e) for j in TM.irange()]
-            ....:         for i in TM.irange()]  # long time
+            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
+            ....:           for j in TM.irange()]       # long time
+            ....:         for i in TM.irange()]         # long time
 
         Import the algorithm::
 
@@ -1829,11 +1834,11 @@ class PontryaginEulerAlgorithm(Singleton, Algorithm_generic):
 
             sage: from sage.manifolds.differentiable.characteristic_cohomology_class import PontryaginEulerAlgorithm
             sage: algorithm = PontryaginEulerAlgorithm()
-            sage: e = algorithm.get_gen_pow(nab, 0, 1)  # Euler
-            sage: e.display()
+            sage: e = algorithm.get_gen_pow(nab, 0, 1)  # Euler, long time
+            sage: e.display() # long time
             0
-            sage: p1_pow2 = algorithm.get_gen_pow(nab, 1, 2)  # 1st Pontryagin squared
-            sage: p1_pow2
+            sage: p1_pow2 = algorithm.get_gen_pow(nab, 1, 2)  # 1st Pontryagin squared, long time
+            sage: p1_pow2 # long time
             8-form zero on the 4-dimensional Euclidean space E^4
         """
         if n == 0:

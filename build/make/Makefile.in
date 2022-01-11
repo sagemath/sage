@@ -54,7 +54,8 @@ SAGE_SPKG_OPTIONS = @SAGE_SPKG_OPTIONS@
 
 # Where the Sage distribution installs documentation.
 # set to empty if --disable-doc is used
-SAGE_DOCS = $(SAGE_LOCAL)
+SAGE_DOCS = @SAGE_DOCS@
+SAGE_DOCS_DISABLED_MESSAGE = This Sage build is configured with "configure --disable-doc", so building the documentation will not work.
 
 # Where the Sage distribution installs Python packages.
 # This can be overridden by 'make SAGE_VENV=/some/venv'.
@@ -192,8 +193,8 @@ SAGE_I_TARGETS = sagelib doc
 	all-start build-start base toolchain toolchain-deps base-toolchain \
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
-	doc-clean doc-src-clean doc-output-clean \
-	clean sagelib-clean build-clean python3_venv _clean-broken-gcc
+	doc-uninstall \
+	python3_venv _clean-broken-gcc
 
 PYTHON_FOR_VENV = @PYTHON_FOR_VENV@
 
@@ -219,7 +220,7 @@ endif
 # the doc build takes the most time and should be started as soon as
 # possible.
 all-start: toolchain-deps
-	+$(MAKE_REC) doc all-sage
+	+$(MAKE_REC) all-sage-docs all-sage
 
 # Build everything except the documentation
 all-build: toolchain-deps
@@ -234,7 +235,6 @@ base-toolchain: _clean-broken-gcc base
 
 # All targets except for the base packages and except the documentation
 all-sage: \
-		sagelib \
 		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_CLEANS) \
 		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_CLEANS)
 
@@ -325,7 +325,7 @@ base: $(inst_patch) $(inst_pkgconf)
 #
 # $ ./sage --docbuild -H
 
-doc: $(SAGE_DOCS_INSTALLED_PACKAGE_INSTS) $(SAGE_DOCS_UNINSTALLED_PACKAGES_CLEANS)
+doc: doc-html
 
 # All doc-building is delegated to the script packages
 # sagemath_doc_html, sagemath_doc_pdf
@@ -347,42 +347,8 @@ doc-html-jsmath: doc-html-mathjax
 
 doc-pdf: sagemath_doc_pdf
 
-doc-clean: doc-src-clean doc-output-clean
-
-doc-src-clean:
-	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
-
-doc-output-clean:
+doc-uninstall:
 	rm -rf "$(SAGE_SHARE)/doc/sage"
-
-
-###############################################################################
-# Cleaning up
-###############################################################################
-
-clean:
-	@echo "Deleting package build directories..."
-	rm -rf "$(SAGE_LOCAL)/var/tmp/sage/build"
-
-# "c_lib", ".cython_version", "build" in $(SAGE_SRC) are from old sage versions
-# Cleaning .so files (and .c and .cpp files associated with .pyx files) is for editable installs.
-# Also cython_debug is for editable installs.
-sagelib-clean:
-	@echo "Deleting Sage library build artifacts..."
-	(cd "$(SAGE_SRC)" && \
-	 rm -rf c_lib .cython_version cython_debug; \
-	 rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
-	 rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
-	 rm -rf sage/ext/interpreters) \
-	&& (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build)
-
-sage_docbuild-clean:
-	(cd "$(SAGE_ROOT)/build/pkgs/sage_docbuild/src" && rm -rf build)
-
-sage_setup-clean:
-	(cd "$(SAGE_ROOT)/build/pkgs/sage_setup/src" && rm -rf build)
-
-build-clean: clean doc-clean sagelib-clean sage_docbuild-clean
 
 # Special target for cleaning up a broken GCC install detected by configure
 # This should check for the .clean-broken-gcc stamp, and if found clean
@@ -397,7 +363,6 @@ _clean-broken-gcc:
 	   rm -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc"; \
 	   echo "Cleaned up old broken GCC install"; \
 	fi
-
 #==============================================================================
 # Setting SAGE_CHECK... variables
 #==============================================================================
@@ -528,9 +493,15 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
 $(1)-$(4)-no-deps:
-	+$(AM_V_at)sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
+	+@if [ -z '$$($(4))' ]; then \
+	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
+	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
+	    exit 1; \
+	else \
+	    $(AM_V_at)sage-logger -p 'SAGE_CHECK=$$(SAGE_CHECK_$(1)) PATH=$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) $$(SAGE_SPKG_OPTIONS) \
 		$(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-existing) \
-		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
+		$(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
+	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps
 
@@ -632,7 +603,11 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
 $(1)-$(4)-no-deps:
-	@if [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
+	+@if [ -z '$$($(4))' ]; then \
+	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
+	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
+	    exit 1; \
+	elif [ -x '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-install' ]; then \
 	    $(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \

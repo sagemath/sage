@@ -394,11 +394,11 @@ class WeightSpace(CombinatorialFreeModule):
 
             sage: L = RootSystem(["C",4,1]).weight_lattice(extended=True)
             sage: latex(L.simple_root(0))             # indirect doctest
-            2\Lambda_{0} - 2\Lambda_{1} + \delta
+            2 \Lambda_{0} - 2 \Lambda_{1} + \delta
 
             sage: L = RootSystem(["C",4,1]).coweight_lattice(extended=True)
             sage: latex(L.simple_root(0))             # indirect doctest
-            2\Lambda^\vee_{0} - \Lambda^\vee_{1} + \delta^\vee
+            2 \Lambda^\vee_{0} - \Lambda^\vee_{1} + \delta^\vee
         """
         if m == "delta":
             return "\\delta^\\vee" if self.root_system.dual_side else "\\delta"

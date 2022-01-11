@@ -329,7 +329,7 @@ def interred_libsingular(I):
                 n = r.cf.cfInvers(n,r.cf)
             result.m[j] = pp_Mult_nn(p, n, r)
             p_Delete(&p,r)
-            n_Delete(&n,r)
+            n_Delete(&n,r.cf)
 
     id_Delete(&i,r)
 

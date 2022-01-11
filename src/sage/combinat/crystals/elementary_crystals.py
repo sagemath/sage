@@ -374,7 +374,7 @@ class TCrystal(UniqueRepresentation, Parent):
                 sage: T = crystals.elementary.T(ct, 2*la[1]-3*la[3]+la[0])
                 sage: t = T.highest_weight_vector()
                 sage: latex(t)
-                {t_{-e_{0} - 3e_{1} - 3e_{2} - 3e_{deltacheck}}}
+                {t_{-e_{0} - 3 e_{1} - 3 e_{2} - 3 e_{deltacheck}}}
             """
             return "{t_{" + self.parent()._weight._latex_() + "}}"
 

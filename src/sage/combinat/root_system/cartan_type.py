@@ -924,7 +924,7 @@ class CartanTypeFactory(SageObject):
             D_{5}^{(2)}
 
         For type `A_{2n}^{(2)\dagger}`, the dual string/latex options are
-        automatically overriden::
+        automatically overridden::
 
             sage: dct = CartanType(['A',8,2]).dual(); dct
             ['A', 8, 2]^+

@@ -144,43 +144,63 @@ cdef class restore_atexit:
 
 from cpython.ref cimport PyObject
 
-# Internal structures defined in the CPython source in
-# Modules/atexitmodule.c and subject to (but unlikely to) change.  Watch
-# https://bugs.python.org/issue32082 for a request to (eventually)
-# re-expose more of the atexit module's internals to Python
-ctypedef struct atexit_callback:
-    PyObject* func
-    PyObject* args
-    PyObject* kwargs
-
-
-ctypedef struct atexitmodule_state:
-    atexit_callback** atexit_callbacks
-    int ncallbacks
-    int callback_len
-
-
-cdef extern from "Python.h":
-    void* PyModule_GetState(object module)
-
+# Implement "_atexit_callbacks()" for each supported python version
+cdef extern from *:
+    """
+    #if PY_VERSION_HEX >= 0x030a0000
+    /********** Python 3.10 **********/
+    #define Py_BUILD_CORE
+    #undef _PyGC_FINALIZED
+    #include "internal/pycore_interp.h"
+    #include "internal/pycore_pystate.h"
+    static atexit_callback ** _atexit_callbacks(PyObject *self) {
+        PyInterpreterState *interp = _PyInterpreterState_GET();
+        struct atexit_state state = interp->atexit;
+        return state.callbacks;
+    }
+    #else
+    /********** Python < 3.10 **********/
+    /* Internal structures defined in the CPython source in
+     * Modules/atexitmodule.c and subject to (but unlikely to) change.  Watch
+     * https://bugs.python.org/issue32082 for a request to (eventually)
+     * re-expose more of the atexit module's internals to Python
+     * typedef struct
+     */
+    typedef struct {
+        PyObject *func;
+        PyObject *args;
+        PyObject *kwargs;
+    } atexit_callback;
+    typedef struct {
+        atexit_callback **atexit_callbacks;
+        int ncallbacks;
+        int callback_len;
+    } atexitmodule_state;
+    static atexit_callback ** _atexit_callbacks(PyObject *self) {
+        atexitmodule_state *state = PyModule_GetState(self);
+        return state->atexit_callbacks;
+    }
+    #endif
+    """
+    ctypedef struct atexit_callback:
+        PyObject* func
+        PyObject* args
+        PyObject* kwargs
+    atexit_callback** _atexit_callbacks(object module)
 
 def _get_exithandlers():
     """Return list of exit handlers registered with the atexit module."""
-    cdef atexitmodule_state* state
+    cdef atexit_callback ** callbacks
     cdef atexit_callback callback
     cdef list exithandlers
     cdef int idx
     cdef object kwargs
 
-    state = <atexitmodule_state*>PyModule_GetState(atexit)
-
-    if not state:
-        raise RuntimeError("atexit module state missing or corrupt")
-
     exithandlers = []
+    callbacks = _atexit_callbacks(atexit)
 
-    for idx in range(state.ncallbacks):
-        callback = state.atexit_callbacks[idx][0]
+    for idx in range(atexit._ncallbacks()):
+        callback = callbacks[idx][0]
         if callback.kwargs:
             kwargs = <object>callback.kwargs
         else:
@@ -207,4 +227,5 @@ def _set_exithandlers(exithandlers):
 
 def _clear_exithandlers():
     """Clear the atexit module of all registered exit handlers."""
+
     atexit._clear()

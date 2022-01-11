@@ -58,7 +58,7 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
     - ``is_latex`` -- whether to produce latex (default: ``False``)
     - ``scalar_mult`` -- string representing the multiplication (default:``'*'``)
     - ``latex_scalar_mult`` -- latex string representing the multiplication
-      (default: ``''`` if ``scalar_mult`` is ``'*'``; otherwise ``scalar_mult``)
+      (default: a space if ``scalar_mult`` is ``'*'``; otherwise ``scalar_mult``)
     - ``coeffs`` -- for backward compatibility
 
     OUTPUT:
@@ -99,13 +99,15 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
     Examples for ``scalar_mult`` and ``is_latex``::
 
         sage: repr_lincomb([('a',-1), ('b',2), ('c',3)], is_latex=True)
-        '-a + 2b + 3c'
+        '-a + 2 b + 3 c'
         sage: repr_lincomb([('a',-1), ('b',-1), ('c',3)], is_latex=True, scalar_mult='*')
-        '-a - b + 3c'
+        '-a - b + 3 c'
         sage: repr_lincomb([('a',-1), ('b',2), ('c',-3)], is_latex=True, scalar_mult='**')
         '-a + 2**b - 3**c'
         sage: repr_lincomb([('a',-2), ('b',-1), ('c',-3)], is_latex=True, latex_scalar_mult='*')
         '-2*a - b - 3*c'
+        sage: repr_lincomb([('a',-2), ('b',-1), ('c',-3)], is_latex=True, latex_scalar_mult='')
+        '-2a - b - 3c'
 
     Examples for ``strip_one``::
 
@@ -124,13 +126,25 @@ def repr_lincomb(terms, is_latex=False, scalar_mult="*", strip_one=False,
 
         sage: repr_lincomb([('a',1), ('b',2), ('c',3)], repr_monomial = lambda s: s+"1")
         'a1 + 2*b1 + 3*c1'
+
+    TESTS:
+
+    Verify that :trac:`31672` is fixed::
+
+        sage: alpha = var("alpha")
+        sage: repr_lincomb([(x, alpha)], is_latex=True)
+        '\\alpha x'
+        sage: A.<psi> = PolynomialRing(QQ)
+        sage: B.<t> = FreeAlgebra(A)
+        sage: (psi * t)._latex_()
+        '\\psi t'
     """
     # Setting scalar_mult: symbol used for scalar multiplication
     if is_latex:
         if latex_scalar_mult is not None:
             scalar_mult = latex_scalar_mult
         elif scalar_mult == "*":
-            scalar_mult = ""
+            scalar_mult = " "
 
     if repr_monomial is None:
         if is_latex:

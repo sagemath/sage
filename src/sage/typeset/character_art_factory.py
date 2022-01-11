@@ -201,12 +201,10 @@ class CharacterArtFactory(SageObject):
         TESTS::
 
             sage: from sage.typeset.ascii_art import _ascii_art_factory as factory
-            sage: factory.build_from_string(u'a\nbb\nccc')  # same with unicode
-            a
+            sage: factory.build_from_string('à\nbb\nccc')  # same with unicode
+            à
             bb
             ccc
-
-        ::
 
             sage: a = factory.build_from_string('a\nbb\nccc', baseline=2)
             sage: a + ascii_art('<-')

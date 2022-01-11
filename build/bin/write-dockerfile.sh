@@ -187,18 +187,18 @@ FROM with-system-packages as bootstrapped
 #:bootstrapping:
 RUN mkdir -p /sage
 WORKDIR /sage
-ADD Makefile VERSION.txt README.md bootstrap configure.ac sage ./
+ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
 ADD src/doc/bootstrap src/doc/bootstrap
 ADD src/bin src/bin
+ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.m4 src/
 ADD m4 ./m4
+ADD pkgs pkgs
 ADD build ./build
 ARG BOOTSTRAP=./bootstrap
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
 
 FROM bootstrapped as configured
 #:configuring:
-# config.status needs to write in pkgs/sage-conf/
-ADD pkgs pkgs
 RUN mkdir -p logs/pkgs; ln -s logs/pkgs/config.log config.log
 ARG EXTRA_CONFIGURE_ARGS=""
 EOF

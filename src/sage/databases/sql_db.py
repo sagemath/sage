@@ -577,12 +577,12 @@ class SQLQuery(SageObject):
             sage: Q = SQLQuery(G,q,param)
             sage: it = Q.__iter__()
             sage: next(it)
-            (18, u'D??')
+            (18, 'D??')
             sage: next(it)
-            (19, u'D?C')
+            (19, 'D?C')
             sage: skip = [next(it) for _ in range(15)]
             sage: next(it)
-            (35, u'DBk')
+            (35, 'DBk')
         """
         try:
             cur = self.__database__.__connection__.cursor()
@@ -602,12 +602,12 @@ class SQLQuery(SageObject):
             sage: param = (22,5)
             sage: Q = SQLQuery(G,q,param)
             sage: Q.query_results()
-            [(18, u'D??', 5, 0), (19, u'D?C', 5, 1), (20, u'D?K', 5, 2),
-             (21, u'D@O', 5, 2), (22, u'D?[', 5, 3)]
+            [(18, 'D??', 5, 0), (19, 'D?C', 5, 1), (20, 'D?K', 5, 2),
+             (21, 'D@O', 5, 2), (22, 'D?[', 5, 3)]
             sage: R = SQLQuery(G,{'table_name':'graph_data', 'display_cols':['graph6'], 'expression':['num_vertices','=',4]})
             sage: R.query_results()
-            [(u'C?',), (u'C@',), (u'CB',), (u'CK',), (u'CF',), (u'CJ',),
-             (u'CL',), (u'CN',), (u'C]',), (u'C^',), (u'C~',)]
+            [('C?',), ('C@',), ('CB',), ('CK',), ('CF',), ('CJ',),
+             ('CL',), ('CN',), ('C]',), ('C^',), ('C~',)]
         """
         return list(self)
 
@@ -1017,7 +1017,7 @@ class SQLDatabase(SageObject):
             sage: len(Q.query_results())
             3
             sage: Q.query_results() # random
-            [(u'CF', u'CF'), (u'CJ', u'CJ'), (u'CL', u'CL')]
+            [('CF', 'CF'), ('CJ', 'CJ'), ('CL', 'CL')]
 
         NOTE: The values of ``display_cols`` are always concatenated in
         intersections and unions.
@@ -1238,15 +1238,15 @@ class SQLDatabase(SageObject):
 
             sage: GDB = GraphDatabase()
             sage: GDB.get_skeleton()             # slightly random output
-            {u'aut_grp': {u'aut_grp_size': {'index': True,
-                                            'unique': False,
-                                            'primary_key': False,
-                                            'sql': u'INTEGER'},
-                          ...
-                          u'num_vertices': {'index': True,
-                                            'unique': False,
-                                            'primary_key': False,
-                                            'sql': u'INTEGER'}}}
+            {'aut_grp': {'aut_grp_size': {'index': True,
+                                           'unique': False,
+                                           'primary_key': False,
+                                           'sql': 'INTEGER'},
+                         ...
+                         'num_vertices': {'index': True,
+                                          'unique': False,
+                                          'primary_key': False,
+                                          'sql': 'INTEGER'}}}
         """
         if check:
             d = construct_skeleton(self)

@@ -778,7 +778,7 @@ class Multizetas(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: latex(Multizeta(2,3) - 3/5 * Multizeta(1,1,2))  # indirect doctest
-            -\frac{3}{5}\zeta(1,1,2) + \zeta(2,3)
+            -\frac{3}{5} \zeta(1,1,2) + \zeta(2,3)
         """
         return "\\zeta(" + ','.join(str(letter) for letter in m) + ")"
 

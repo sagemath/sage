@@ -1,0 +1,3 @@
+cd src
+export FONTTOOLS_WITH_CYTHON=1
+sdh_pip_install .

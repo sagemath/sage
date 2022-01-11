@@ -15,7 +15,7 @@ EXAMPLES::
 
     sage: from sage.repl.ipython_kernel.widgets_sagenb import text_control
     sage: text_control("Hello World!")
-    HTMLText(value=u'Hello World!')
+    HTMLText(value='Hello World!')
 """
 
 # ****************************************************************************
@@ -78,7 +78,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5", type=str, label="enter a string")
         sage: w
-        TransformText(value=u'4+5', description=u'enter a string', layout=Layout(max_width=u'81em'))
+        TransformText(value='4+5', description='enter a string', layout=Layout(max_width='81em'))
         sage: w.get_interact_value()
         '4+5'
 
@@ -86,7 +86,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5")
         sage: w
-        EvalText(value=u'4+5', layout=Layout(max_width=u'81em'))
+        EvalText(value='4+5', layout=Layout(max_width='81em'))
         sage: w.get_interact_value()
         9
 
@@ -95,7 +95,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5", type=float)
         sage: w
-        EvalText(value=u'4+5', layout=Layout(max_width=u'81em'))
+        EvalText(value='4+5', layout=Layout(max_width='81em'))
         sage: w.get_interact_value()
         9.0
 
@@ -103,7 +103,7 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5", type=sqrt)
         sage: w
-        EvalText(value=u'4+5', layout=Layout(max_width=u'81em'))
+        EvalText(value='4+5', layout=Layout(max_width='81em'))
         sage: w.get_interact_value()
         3
 
@@ -111,10 +111,10 @@ def input_box(default=None, label=None, type=None, width=80, height=1):
 
         sage: w = input_box("4+5", width=100, height=1)
         sage: w
-        EvalText(value=u'4+5', layout=Layout(max_width=u'101em'))
+        EvalText(value='4+5', layout=Layout(max_width='101em'))
         sage: w = input_box("4+5", width=100, height=5)
         sage: w
-        EvalTextarea(value=u'4+5', layout=Layout(max_width=u'101em'))
+        EvalTextarea(value='4+5', layout=Layout(max_width='101em'))
 
     TESTS::
 
@@ -179,7 +179,7 @@ def slider(vmin, vmax=None, step_size=None, default=None, label=None, display_va
 
         sage: from sage.repl.ipython_kernel.all_jupyter import slider
         sage: slider(5, label="slide me")
-        TransformIntSlider(value=5, description=u'slide me', min=5)
+        TransformIntSlider(value=5, description='slide me', min=5)
         sage: slider(5, 20)
         TransformIntSlider(value=5, max=20, min=5)
         sage: slider(5, 20, 0.5)
@@ -362,7 +362,7 @@ def range_slider(*args, **kwds):
 
         sage: from sage.repl.ipython_kernel.all_jupyter import range_slider
         sage: range_slider(5, label="slide me")
-        TransformIntRangeSlider(value=(28, 76), description=u'slide me', min=5)
+        TransformIntRangeSlider(value=(28, 76), description='slide me', min=5)
         sage: range_slider(5, 20)
         TransformIntRangeSlider(value=(8, 16), max=20, min=5)
         sage: range_slider(5, 20, 0.5)
@@ -417,7 +417,7 @@ def checkbox(default=True, label=None):
 
         sage: from sage.repl.ipython_kernel.all_jupyter import checkbox
         sage: checkbox(label="toggle me")
-        Checkbox(value=True, description=u'toggle me')
+        Checkbox(value=True, description='toggle me')
         sage: checkbox(default=0)
         Checkbox(value=False)
     """
@@ -450,7 +450,7 @@ def selector(values, label=None, default=None, nrows=None, ncols=None, width=Non
 
         sage: from sage.repl.ipython_kernel.all_jupyter import selector
         sage: selector(range(5), label="choose one")
-        Dropdown(description=u'choose one', options=(0, 1, 2, 3, 4), value=0)
+        Dropdown(description='choose one', options=(0, 1, 2, 3, 4), value=0)
         sage: selector(range(5), buttons=True, default=4)
         ToggleButtons(index=4, options=(0, 1, 2, 3, 4), value=4)
 
@@ -527,14 +527,14 @@ def input_grid(nrows, ncols, default=None, label=None, to_value=None, width=4):
 
         sage: from sage.repl.ipython_kernel.all_jupyter import input_grid
         sage: input_grid(2, 2, default=42, label="answers")
-        Grid(value=[[42, 42], [42, 42]], children=(Label(value=u'answers'), VBox(children=(EvalText(value=u'42', layout=Layout(max_width=u'5em')), EvalText(value=u'42', layout=Layout(max_width=u'5em')))), VBox(children=(EvalText(value=u'42', layout=Layout(max_width=u'5em')), EvalText(value=u'42', layout=Layout(max_width=u'5em'))))))
+        Grid(value=[[42, 42], [42, 42]], children=(Label(value='answers'), VBox(children=(EvalText(value='42', layout=Layout(max_width='5em')), EvalText(value='42', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='42', layout=Layout(max_width='5em')), EvalText(value='42', layout=Layout(max_width='5em'))))))
         sage: w = input_grid(2, 2, default=[[cos(x), sin(x)], [-sin(x), cos(x)]], to_value=matrix); w
-        Grid(value=[[cos(x), sin(x)], [-sin(x), cos(x)]], children=(Label(value=u''), VBox(children=(EvalText(value=u'cos(x)', layout=Layout(max_width=u'5em')), EvalText(value=u'-sin(x)', layout=Layout(max_width=u'5em')))), VBox(children=(EvalText(value=u'sin(x)', layout=Layout(max_width=u'5em')), EvalText(value=u'cos(x)', layout=Layout(max_width=u'5em'))))))
+        Grid(value=[[cos(x), sin(x)], [-sin(x), cos(x)]], children=(Label(value=''), VBox(children=(EvalText(value='cos(x)', layout=Layout(max_width='5em')), EvalText(value='-sin(x)', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='sin(x)', layout=Layout(max_width='5em')), EvalText(value='cos(x)', layout=Layout(max_width='5em'))))))
         sage: w.get_interact_value()
         [ cos(x)  sin(x)]
         [-sin(x)  cos(x)]
         sage: w = input_grid(2, 2, default=[1, x, x^2, x^3], to_value=lambda x: x[1][1]); w
-        Grid(value=[[1, x], [x^2, x^3]], children=(Label(value=u''), VBox(children=(EvalText(value=u'1', layout=Layout(max_width=u'5em')), EvalText(value=u'x^2', layout=Layout(max_width=u'5em')))), VBox(children=(EvalText(value=u'x', layout=Layout(max_width=u'5em')), EvalText(value=u'x^3', layout=Layout(max_width=u'5em'))))))
+        Grid(value=[[1, x], [x^2, x^3]], children=(Label(value=''), VBox(children=(EvalText(value='1', layout=Layout(max_width='5em')), EvalText(value='x^2', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='x', layout=Layout(max_width='5em')), EvalText(value='x^3', layout=Layout(max_width='5em'))))))
         sage: w.get_interact_value()
         x^3
     """
@@ -576,7 +576,7 @@ def color_selector(default=(0, 0, 1), label=None, widget=None, hide_box=False):
 
         sage: from sage.repl.ipython_kernel.all_jupyter import color_selector
         sage: w = color_selector("orange", label="color me"); w
-        SageColorPicker(value='#ffa500', description=u'color me')
+        SageColorPicker(value='#ffa500', description='color me')
         sage: w.get_interact_value()
         RGB color (1.0, 0.6470588235294118, 0.0)
         sage: color_selector(Color(0.1, 0.2, 0.3))

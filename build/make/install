@@ -107,7 +107,6 @@ during this run of 'make $@'):
 EOF
 
     look_for_errors "$SAGE_LOGS/*.log" 20 "^Error" package >&2
-    look_for_errors "$SAGE_LOGS/../doc*.log" 100 "^Error" documentation >&2
 
     cat >&2 <<EOF
 

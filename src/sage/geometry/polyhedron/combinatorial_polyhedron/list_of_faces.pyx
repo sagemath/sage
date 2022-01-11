@@ -156,10 +156,11 @@ cdef class ListOfFaces:
             sage: from memory_allocator.test import TestMemoryAllocator
             sage: t = TestMemoryAllocator()
             sage: m = t.size_t_max()
+            # The following is only certain to fail on 64-bit
             sage: ListOfFaces(1, m, 1)
-            Traceback (most recent call last):
+            Traceback (most recent call last):          # 64-bit
             ...
-            MemoryError: failed to allocate ...
+            MemoryError: failed to allocate ...         # 64-bit
         """
         face_list_free(self.data)
 
