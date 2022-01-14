@@ -183,6 +183,13 @@ else
 AM_V_at =
 endif
 
+# Trac #33125: Handle make options -n, -t, -q
+ifeq ($(foreach flag, n t q, $(findstring $(flag),$(filter-out --%,$(MAKEFLAGS)))),)
+PLUS = +
+else
+PLUS =
+endif
+
 # List of targets that can be run using `sage -i` or `sage -f`
 # These should generally have an associated -clean target for `sage -f` to
 # work correctly
@@ -603,7 +610,7 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
 $(1)-$(4)-no-deps:
-	+@if [ -z '$$($(4))' ]; then \
+	$(PLUS)@if [ -z '$$($(4))' ]; then \
 	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
 	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \

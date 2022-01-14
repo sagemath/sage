@@ -96,6 +96,10 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         module='pythran')
 
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='The distutils(.sysconfig module| package) is deprecated',
+                        module='Cython|distutils|numpy|sage.env|sage.features')
+
 ################ end setup warnings ###############################
 
 
