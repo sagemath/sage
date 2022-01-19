@@ -614,7 +614,7 @@ class GenericGraph(GenericGraph_pyx):
         # inputs must be (di)graphs:
         if not isinstance(other, GenericGraph):
             return False
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         g1_is_graph = isinstance(self, Graph) # otherwise, DiGraph
         g2_is_graph = isinstance(other, Graph) # otherwise, DiGraph
         # Fast checks
@@ -6227,7 +6227,7 @@ class GenericGraph(GenericGraph_pyx):
         self._scream_if_not_simple(allow_loops=True)
 
         if self.is_directed():
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             g = Graph(self)
         else:
             g = self
@@ -8119,7 +8119,7 @@ class GenericGraph(GenericGraph_pyx):
             #################
             if g.is_directed():
 
-                from sage.graphs.all import DiGraph
+                from sage.graphs.digraph import DiGraph
                 b = p.new_variable(binary=True)
 
                 # Objective function
@@ -8169,7 +8169,7 @@ class GenericGraph(GenericGraph_pyx):
             ###################
             else:
 
-                from sage.graphs.all import Graph
+                from sage.graphs.graph import Graph
                 b = p.new_variable(binary=True)
 
                 # Objective function
@@ -8254,7 +8254,7 @@ class GenericGraph(GenericGraph_pyx):
                 p.set_objective(p.sum(weight(l) * f[u,v] for u,v,l in g.edge_iterator()))
 
             # defining the answer when g is directed
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             tsp = DiGraph()
 
         else:
@@ -8270,7 +8270,7 @@ class GenericGraph(GenericGraph_pyx):
             if use_edge_labels:
                 p.set_objective(p.sum(weight(l) * f[frozenset((u,v))] for u,v,l in g.edge_iterator()))
 
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
 
             # defining the answer when g is not directed
             tsp = Graph()
@@ -14913,7 +14913,7 @@ class GenericGraph(GenericGraph_pyx):
             looped = True
         else:
             looped = False
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         D = Graph(vertices, pos=positions, multiedges=False, loops=looped)
         if len(distances) == 1:
             dstring = "distance " + str(distances[0])
@@ -18146,10 +18146,10 @@ class GenericGraph(GenericGraph_pyx):
         weighted   = self.weighted()              and other.weighted()
 
         if self._directed:
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             G = DiGraph(multiedges=multiedges, loops=loops, weighted=weighted)
         else:
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             G = Graph(multiedges=multiedges, loops=loops, weighted=weighted)
         G.add_vertices(self)
         G.add_vertices(other)
@@ -18216,10 +18216,10 @@ class GenericGraph(GenericGraph_pyx):
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             G = DiGraph(loops=(self.has_loops() or other.has_loops()))
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             G = Graph(loops=(self.has_loops() or other.has_loops()))
         else:
             raise TypeError('the graphs should be both directed or both undirected')
@@ -18300,10 +18300,10 @@ class GenericGraph(GenericGraph_pyx):
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             G = DiGraph(loops=(self.has_loops() or other.has_loops()))
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             G = Graph(loops=(self.has_loops() or other.has_loops()))
         else:
             raise TypeError('the graphs should be both directed or both undirected')
@@ -18370,10 +18370,10 @@ class GenericGraph(GenericGraph_pyx):
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             G = DiGraph(loops=(self.has_loops() or other.has_loops()))
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             G = Graph(loops=(self.has_loops() or other.has_loops()))
         else:
             raise TypeError('the graphs should be both directed or both undirected')
@@ -18451,10 +18451,10 @@ class GenericGraph(GenericGraph_pyx):
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             G = DiGraph(loops=(self.has_loops() or other.has_loops()))
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             G = Graph(loops=(self.has_loops() or other.has_loops()))
         else:
             raise TypeError('the graphs should be both directed or both undirected')
@@ -18522,10 +18522,10 @@ class GenericGraph(GenericGraph_pyx):
         """
         self._scream_if_not_simple(allow_loops=True)
         if self._directed and other._directed:
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             G = DiGraph(loops=(self.has_loops() or other.has_loops()))
         elif (not self._directed) and (not other._directed):
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             G = Graph(loops=(self.has_loops() or other.has_loops()))
         else:
             raise TypeError('the graphs should be both directed or both undirected')
@@ -19355,7 +19355,7 @@ class GenericGraph(GenericGraph_pyx):
         if not self:
             return dict()
 
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         if not Graph(self).is_tree():
             raise RuntimeError("cannot use tree layout on this graph: "
                                "self.is_tree() returns False")
@@ -22347,7 +22347,8 @@ class GenericGraph(GenericGraph_pyx):
 
         from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree
         from sage.groups.perm_gps.permgroup import PermutationGroup
-        from sage.graphs.all import Graph, DiGraph
+        from sage.graphs.graph import Graph
+        from sage.graphs.digraph import DiGraph
         from itertools import chain
         dig = (self._directed or self.has_loops())
 
@@ -22848,7 +22849,8 @@ class GenericGraph(GenericGraph_pyx):
             G2 = other
             partition2 = other_vertices
         G_to = {u: i for i,u in enumerate(self_vertices)}
-        from sage.graphs.all import Graph, DiGraph
+        from sage.graphs.graph import Graph
+        from sage.graphs.digraph import DiGraph
         DoDG = DiGraph if self._directed else Graph
         H = DoDG(len(self_vertices), loops=G.allows_loops())
         HB = H._backend
@@ -23098,7 +23100,8 @@ class GenericGraph(GenericGraph_pyx):
 
         # algorithm == 'sage':
         from sage.groups.perm_gps.partn_ref.refinement_graphs import search_tree
-        from sage.graphs.all import Graph, DiGraph
+        from sage.graphs.graph import Graph
+        from sage.graphs.digraph import DiGraph
         from itertools import chain
 
         dig = (self.has_loops() or self._directed)
@@ -24096,7 +24099,8 @@ def graph_isom_equivalent_non_edge_labeled_graph(g, partition=None, standard_lab
         sage: g[0].is_bipartite()
         False
     """
-    from sage.graphs.all import Graph, DiGraph
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
     from itertools import chain
 
     g_has_multiple_edges = g.has_multiple_edges()

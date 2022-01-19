@@ -2950,7 +2950,7 @@ def line_graph_forbidden_subgraphs():
         Graph on 5 vertices]
 
     """
-    from sage.graphs.all import Graph
+    from sage.graphs.graph import Graph
     from sage.graphs.generators.basic import ClawGraph
     graphs = [ClawGraph()]
 

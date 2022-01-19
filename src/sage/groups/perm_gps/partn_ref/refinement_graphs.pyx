@@ -70,7 +70,8 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
     cdef list partition, cell
     cdef bint loops = 0
 
-    from sage.graphs.all import Graph, DiGraph
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
     from sage.graphs.generic_graph import GenericGraph
     from copy import copy
     which_G = 1
@@ -379,7 +380,8 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     cdef bint loops
     cdef aut_gp_and_can_lab *output
     cdef PartitionStack *part
-    from sage.graphs.all import Graph, DiGraph
+    from sage.graphs.graph import Graph
+    from sage.graphs.digraph import DiGraph
     from sage.graphs.generic_graph import GenericGraph
     from copy import copy
     if isinstance(G_in, GenericGraph):
@@ -775,7 +777,7 @@ def all_labeled_graphs(n):
         5 34
 
     """
-    from sage.graphs.all import Graph
+    from sage.graphs.graph import Graph
     TE = []
     for i in range(n):
         for j in range(i):
@@ -1291,7 +1293,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G = None, depth = Non
         12346
 
     """
-    from sage.graphs.all import Graph
+    from sage.graphs.graph import Graph
     cdef iterator *graph_iterator
     cdef DenseGraph DG, ODG
     cdef GraphStruct GS
@@ -1561,7 +1563,7 @@ def generate_dense_graphs_vert_addition(int n, base_G = None, bint construct = F
         11
 
     """
-    from sage.graphs.all import Graph
+    from sage.graphs.graph import Graph
     cdef iterator *graph_iterator
     cdef DenseGraph DG, ODG
     cdef GraphStruct GS

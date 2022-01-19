@@ -670,7 +670,7 @@ class DiGraph(GenericGraph):
                 msg += "Non-symmetric or non-square matrix assumed to be an incidence matrix: "
         if format is None and isinstance(data, DiGraph):
             format = 'DiGraph'
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         if format is None and isinstance(data, Graph):
             data = data.to_directed()
             format = 'DiGraph'
@@ -1062,7 +1062,7 @@ class DiGraph(GenericGraph):
                 data_structure = "sparse"
             else:
                 data_structure = "static_sparse"
-        from sage.graphs.all import Graph
+        from sage.graphs.graph import Graph
         G = Graph(name           = self.name(),
                   pos            = self._pos,
                   multiedges     = self.allows_multiple_edges(),

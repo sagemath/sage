@@ -1067,7 +1067,7 @@ class Graph(GenericGraph):
                 format = 'incidence_matrix'
         if format is None and isinstance(data, Graph):
             format = 'Graph'
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         if format is None and isinstance(data, DiGraph):
             data = data.to_undirected()
             format = 'Graph'
@@ -3312,7 +3312,7 @@ class Graph(GenericGraph):
 
         """
         self._scream_if_not_simple()
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         n = self.order()
 
         if not n:
@@ -5541,7 +5541,7 @@ class Graph(GenericGraph):
                 data_structure = "sparse"
             else:
                 data_structure = "static_sparse"
-        from sage.graphs.all import DiGraph
+        from sage.graphs.digraph import DiGraph
         D = DiGraph(name           = self.name(),
                     pos            = self.get_pos(),
                     multiedges     = self.allows_multiple_edges(),
