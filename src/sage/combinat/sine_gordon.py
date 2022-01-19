@@ -31,23 +31,24 @@ REFERENCES:
 .. [NS] \T. Nakanishi, S. Stella, Wonder of sine-Gordon Y-systems,
    to appear in Trans. Amer. Math. Soc., :arxiv:`1212.6853`
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 Salvatore Stella <sstella@ncsu.edu>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.real_mpfr import RR
-from sage.rings.all import NN
+from sage.rings.semirings.all import NN
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.trig", "cos", "sin")
+from sage.functions.trig import cos, sin
 from sage.plot.plot import parametric_plot
 from sage.plot.graphics import Graphics
 from sage.plot.polygon import polygon2d
@@ -55,16 +56,11 @@ from sage.plot.circle import circle
 from sage.plot.bezier_path import bezier_path
 from sage.plot.point import point
 from sage.plot.line import line
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.constants", "pi", "I")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.log", "exp")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "ceil")
 from sage.misc.flatten import flatten
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.symbolic.ring", "SR")
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.functions.other", "real_part", "imag_part")
 from sage.misc.cachefunc import cached_method
 

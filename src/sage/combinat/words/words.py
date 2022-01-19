@@ -54,7 +54,7 @@ from sage.combinat.combinat import CombinatorialObject
 from sage.structure.list_clone import ClonableElement
 from sage.combinat.words.alphabet import build_alphabet
 
-from sage.rings.all import Infinity
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 

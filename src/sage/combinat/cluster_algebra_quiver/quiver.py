@@ -42,7 +42,8 @@ from copy import copy
 from sage.rings.integer_ring import ZZ
 from sage.rings.cc import CC
 from sage.rings.infinity import infinity
-from sage.graphs.all import Graph, DiGraph
+from sage.graphs.digraph import DiGraph
+from sage.graphs.graph import Graph
 from sage.graphs.views import EdgesView
 from sage.arith.misc import gcd
 from sage.modules.free_module_element import vector

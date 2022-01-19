@@ -417,7 +417,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
                 break
             b += v
             k += si
-        from sage.rings.all import RealField
+        from sage.rings.real_mpfr import RealField
         R = RealField(b.exact_log(2) + 1, rnd='RNDD')
         return ((R(-1).exp() / q) * b).ceil()
 
