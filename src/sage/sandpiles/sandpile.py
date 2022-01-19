@@ -336,13 +336,20 @@ from sage.probability.probability_distribution import GeneralDiscreteDistributio
 from sage.topology.simplicial_complex import SimplicialComplex
 from sage.interfaces.singular import singular
 from sage.matrix.constructor import matrix, identity_matrix
-from sage.misc.all import prod, det, tmp_filename, exists, denominator
+from sage.misc.functional import det, denominator
+from sage.misc.misc import exists
+from sage.misc.misc_c import prod
+from sage.misc.temporary_file import tmp_filename
 from sage.arith.srange import xsrange
 from sage.modules.free_module_element import vector
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.colors", "rainbow")
-from sage.arith.all import falling_factorial, lcm
-from sage.rings.all import Integer, PolynomialRing, QQ, ZZ
+from sage.arith.functions import lcm
+from sage.arith.misc import falling_factorial
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.rational_field import QQ
 from sage.symbolic.constants import I, pi
 from sage.symbolic.ring import SR
 from sage.features.four_ti_2 import FourTi2Executable

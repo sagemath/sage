@@ -6579,7 +6579,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                 return set(xs)
     #<-------------------------------------------------------------------------
         #End internal functions ###############################################
-        from sage.misc.all import cartesian_product_iterator
+        from sage.misc.mrange import cartesian_product_iterator
 
         E = self
         tors_points = E.torsion_points()

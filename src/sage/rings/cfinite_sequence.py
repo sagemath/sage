@@ -103,7 +103,7 @@ from sage.structure.element import FieldElement, parent
 from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.interfaces.gp import Gp
-from sage.misc.all import sage_eval
+from sage.misc.sage_eval import sage_eval
 
 _gp = None
 

@@ -80,7 +80,7 @@ AUTHORS:
 import sqlite3 as sqlite
 import os
 import re
-from sage.misc.all import tmp_filename
+from sage.misc.temporary_file import tmp_filename
 from sage.structure.sage_object import SageObject
 
 sqlite_keywords = ['ABORT','ACTION','ADD','AFTER','ALL','ALTER','ANALYZE',

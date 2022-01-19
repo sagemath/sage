@@ -1110,7 +1110,7 @@ def unpickle_all(dir, debug=False, run_test_suite=False):
     # This could use instead Python's tarfile module
     if dir.endswith('.tar.bz2'):
         # create a temporary directory
-        from sage.misc.all import tmp_dir
+        from sage.misc.temporary_file import tmp_dir
         T = tmp_dir()
         # extract tarball to it
         os.system('cd "%s"; bunzip2 -c "%s" | tar fx - '%(T, os.path.abspath(dir)))

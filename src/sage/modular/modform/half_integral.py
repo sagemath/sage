@@ -128,7 +128,7 @@ def half_integral_weight_modform_basis(chi, k, prec):
     B   = C.basis()
 
     # This computation of S below -- of course --dominates the whole function.
-    #from sage.misc.all import cputime
+    #from sage.misc.misc import cputime
     #tm  = cputime()
     #print "Computing basis..."
     S   = [f.q_expansion(prec) for f in B]

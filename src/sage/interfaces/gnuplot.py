@@ -179,7 +179,7 @@ class Gnuplot(SageObject):
             self(cmd)
 
     def interact(self, cmd):
-        from sage.misc.all import SAGE_TMP
+        from sage.misc.misc import SAGE_TMP
         file = os.path.join(SAGE_TMP, 'gnuplot')
         with open(file, 'w') as f:
             f.write(cmd + '\n pause -1 "Press return to continue (no further rotation possible)"')

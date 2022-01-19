@@ -80,9 +80,9 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.all import gcd, binomial, srange
-from sage.rings.all import (PolynomialRing,
-                            Integer,
-                            ZZ)
+from sage.rings.all import PolynomialRing
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 
 from sage.rings.ring import CommutativeRing
 from sage.rings.rational_field import is_RationalField
@@ -94,9 +94,9 @@ from sage.categories.fields import Fields
 from sage.categories.number_fields import NumberFields
 from sage.categories.homset import Hom
 from sage.categories.map import Map
-from sage.misc.all import (latex,
-                           prod)
-from sage.misc.all import cartesian_product_iterator
+from sage.misc.latex import latex
+from sage.misc.misc_c import prod
+from sage.misc.mrange import cartesian_product_iterator
 from sage.misc.persist import register_unpickle_override
 
 from sage.structure.category_object import normalize_names
