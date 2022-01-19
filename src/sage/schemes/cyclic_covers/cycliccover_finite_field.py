@@ -1207,7 +1207,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             ....:     fail = False
             ....:     p = random_prime(500, lbound=5)
             ....:     for i in range(1, 4):
-            ....:         F = GF(p**i)
+            ....:         F = GF((p, i))
             ....:         Fx = PolynomialRing(F, 'x')
             ....:         b = F.random_element()
             ....:         while b == 0:

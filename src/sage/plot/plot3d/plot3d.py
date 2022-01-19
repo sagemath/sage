@@ -1008,7 +1008,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         ....: def _(which_plot=[A,B,C,D,E]):
         ....:     show(which_plot)
         Interactive function <function _ at ...> with 1 widget
-          which_plot: Dropdown(description=u'which_plot', options=(Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object), value=Graphics3d Object)
+          which_plot: Dropdown(description='which_plot', options=(Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object), value=Graphics3d Object)
 
     Now plot a function::
 
@@ -1022,7 +1022,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         ....: def _(which_plot=[F, G, H, I, J]):
         ....:     show(which_plot)
         Interactive function <function _ at ...> with 1 widget
-          which_plot: Dropdown(description=u'which_plot', options=(Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object), value=Graphics3d Object)
+          which_plot: Dropdown(description='which_plot', options=(Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object, Graphics3d Object), value=Graphics3d Object)
 
     TESTS:
 

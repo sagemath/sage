@@ -1084,7 +1084,7 @@ class Latex(LatexCall):
             sage: fn = tmp_filename()
             sage: latex.eval("$\\ZZ[x]$", locals(), filename=fn) # not tested
             ''
-            sage: latex.eval(r"\ThisIsAnInvalidCommand", {}) # optional -- ImageMagick
+            sage: latex.eval(r"\ThisIsAnInvalidCommand", {}) # optional -- latex ImageMagick
             An error occurred...
             No pages of output...
         """

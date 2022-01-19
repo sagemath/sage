@@ -1495,7 +1495,7 @@ class BinaryQF(SageObject):
             sage: Q = BinaryQF([randrange(-10^3, 10^3) for _ in 'abc'])
             sage: n = randrange(-10^9, 10^9)
             sage: xy = Q.solve_integer(n)
-            sage: xy is None or Q(*xy) == 0
+            sage: xy is None or Q(*xy) == n
             True
         """
         n = ZZ(n)

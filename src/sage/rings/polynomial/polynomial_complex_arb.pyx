@@ -184,6 +184,23 @@ cdef class Polynomial_complex_arb(Polynomial):
                 ball = Coeff(x)
                 acb_poly_set_coeff_acb(self.__poly, 0, ball.value)
 
+    def __reduce__(self):
+        r"""
+        Serialize a polynomial for pickling.
+
+        TESTS::
+
+            sage: Pol.<x> = ComplexBallField(42)[]
+            sage: pol = (x + i)/3
+            sage: pol2 = loads(dumps(pol))
+            sage: pol.degree() == pol2.degree()
+            True
+            sage: all(a.identical(b) for (a, b) in zip(pol, pol2))
+            True
+        """
+        return (self.__class__,
+               (self.parent(), self.list(), False, self.is_gen()))
+
     # Access
 
     def degree(self):

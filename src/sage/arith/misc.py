@@ -2034,7 +2034,6 @@ def xkcd(n=""):
     from sage.misc.html import html
     from ssl import SSLContext
 
-    # import compatible with py2 and py3
     from urllib.request import urlopen
     from urllib.error import HTTPError, URLError
 

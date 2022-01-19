@@ -2889,8 +2889,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             raise IndexError("row index out of range")
 
         cdef Py_ssize_t j
-        from sage.modules.free_module import FreeModule
-        parent = FreeModule(self._base_ring, self._ncols)
+        parent = self._row_ambient_module()
         cdef Vector_rational_dense v = Vector_rational_dense.__new__(Vector_rational_dense)
         v._init(self._ncols, parent)
         for j in range(self._ncols):
@@ -2934,8 +2933,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             raise IndexError("column index out of range")
 
         cdef Py_ssize_t j
-        from sage.modules.free_module import FreeModule
-        parent = FreeModule(self._base_ring, self._nrows)
+        parent = self._column_ambient_module()
         cdef Vector_rational_dense v = Vector_rational_dense.__new__(Vector_rational_dense)
         v._init(self._nrows, parent)
         for j in range(self._nrows):

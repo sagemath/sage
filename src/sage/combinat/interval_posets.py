@@ -365,7 +365,7 @@ class TamariIntervalPoset(Element,
             d["vspace"] = self.parent().options["latex_vspace"]
         return d
 
-    def _find_node_positions(self, hspace=1, vspace=1) -> dict:
+    def _find_node_positions(self, hspace=1, vspace=1) -> dict[int, list]:
         """
         Compute a nice embedding.
 
@@ -677,7 +677,7 @@ class TamariIntervalPoset(Element,
                     break
         return relations
 
-    def increasing_roots(self) -> list:
+    def increasing_roots(self) -> list[int]:
         r"""
         Return the root vertices of the initial forest of ``self``.
 
@@ -714,7 +714,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return roots
 
-    def increasing_children(self, v) -> list:
+    def increasing_children(self, v) -> list[int]:
         r"""
         Return the children of ``v`` in the initial forest of ``self``.
 
@@ -819,7 +819,7 @@ class TamariIntervalPoset(Element,
                     break
         return relations
 
-    def decreasing_roots(self) -> list:
+    def decreasing_roots(self) -> list[int]:
         r"""
         Return the root vertices of the final forest of ``self``.
 
@@ -850,7 +850,7 @@ class TamariIntervalPoset(Element,
                 root = i
         return roots
 
-    def decreasing_children(self, v) -> list:
+    def decreasing_children(self, v) -> list[int]:
         r"""
         Return the children of ``v`` in the final forest of ``self``.
 
@@ -1388,7 +1388,7 @@ class TamariIntervalPoset(Element,
             [[3, 4], [3, 2], [4, 5], [2, 5], [1, 5]]
         """
         n = self.size()
-        M = [[u'o' if i == j else u' ' for i in range(n)] for j in range(n)]
+        M = [['o' if i == j else ' ' for i in range(n)] for j in range(n)]
 
         def superpose(x, y, b):
             # put symbol b at position x, y
@@ -1398,46 +1398,46 @@ class TamariIntervalPoset(Element,
             a = M[i][j]
             if a == ' ':
                 M[i][j] = b
-            elif a == u'╮':
+            elif a == '╮':
                 if b == a:
                     pass
-                elif b == u'─':
-                    M[i][j] = u'┬'
-                elif b == u'│':
-                    M[i][j] = u'┤'
-            elif a == u'╰':
+                elif b == '─':
+                    M[i][j] = '┬'
+                elif b == '│':
+                    M[i][j] = '┤'
+            elif a == '╰':
                 if b == a:
                     pass
-                elif b == u'─':
-                    M[i][j] = u'┴'
-                elif b == u'│':
-                    M[i][j] = u'├'
-            elif a == u'─':
+                elif b == '─':
+                    M[i][j] = '┴'
+                elif b == '│':
+                    M[i][j] = '├'
+            elif a == '─':
                 if b == a:
                     pass
-                elif b == u'╮':
-                    M[i][j] = u'┬'
-                elif b == u'╰':
-                    M[i][j] = u'┴'
-            elif a == u'│':
+                elif b == '╮':
+                    M[i][j] = '┬'
+                elif b == '╰':
+                    M[i][j] = '┴'
+            elif a == '│':
                 if b == a:
                     pass
-                elif b == u'╮':
-                    M[i][j] = u'┤'
-                elif b == u'╰':
-                    M[i][j] = u'├'
+                elif b == '╮':
+                    M[i][j] = '┤'
+                elif b == '╰':
+                    M[i][j] = '├'
 
         for i, j in self.poset().hasse_diagram().edges(labels=False):
             if i > j:
-                superpose(i, j, u'╰')
+                superpose(i, j, '╰')
                 for k in range(j + 1, i):
-                    superpose(k, j, u'│')
-                    superpose(i, k, u'─')
+                    superpose(k, j, '│')
+                    superpose(i, k, '─')
             else:
-                superpose(i, j, u'╮')
+                superpose(i, j, '╮')
                 for k in range(i + 1, j):
-                    superpose(i, k, u'─')
-                    superpose(k, j, u'│')
+                    superpose(i, k, '─')
+                    superpose(k, j, '│')
 
         from sage.typeset.unicode_art import UnicodeArt
         return UnicodeArt([''.join(ligne) for ligne in M])
@@ -1487,7 +1487,7 @@ class TamariIntervalPoset(Element,
         return richcmp((self.size(), self.cubical_coordinates()),
                        (other.size(), other.cubical_coordinates()), op)
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[int]:
         r"""
         Iterate through the vertices of ``self``.
 
@@ -1689,7 +1689,7 @@ class TamariIntervalPoset(Element,
         """
         return self.contains_binary_tree(dyck_word.to_binary_tree_tamari())
 
-    def intersection(self, other):
+    def intersection(self, other: TIP) -> TIP:
         r"""
         Return the interval-poset formed by combining the relations from
         both ``self`` and ``other``. It corresponds to the intersection
@@ -2062,7 +2062,7 @@ class TamariIntervalPoset(Element,
             add(perm, i)
         return Permutation(perm)  # type:ignore
 
-    def linear_extensions(self) -> Iterator:
+    def linear_extensions(self) -> Iterator[Permutation]:
         r"""
         Return an iterator on the permutations which are linear
         extensions of ``self``.
@@ -2084,7 +2084,7 @@ class TamariIntervalPoset(Element,
         for ext in self._poset.linear_extensions():
             yield Permutation(ext)  # type:ignore
 
-    def lower_contained_intervals(self) -> Iterator:
+    def lower_contained_intervals(self) -> Iterator[TIP]:
         r"""
         If ``self`` represents the interval `[t_1, t_2]` of the Tamari
         lattice, return an iterator on all intervals `[t_1,t]` with
@@ -2231,7 +2231,7 @@ class TamariIntervalPoset(Element,
         for ip in self.lower_contained_intervals():
             yield ip.upper_dyck_word()
 
-    def maximal_chain_tamari_intervals(self) -> Iterator:
+    def maximal_chain_tamari_intervals(self) -> Iterator[TIP]:
         r"""
         Return an iterator on the upper contained intervals of one
         longest chain of the Tamari interval represented by ``self``.
@@ -2378,7 +2378,7 @@ class TamariIntervalPoset(Element,
         """
         return list(self.tamari_inversions_iter())
 
-    def tamari_inversions_iter(self) -> Iterator:
+    def tamari_inversions_iter(self) -> Iterator[tuple[int, int]]:
         r"""
         Iterate over the Tamari inversions of ``self``, in
         lexicographic order.
@@ -2577,7 +2577,7 @@ class TamariIntervalPoset(Element,
         right = self.subposet(root + 1, n + 1)
         return left, right, r
 
-    def grafting_tree(self):
+    def grafting_tree(self) -> LabelledBinaryTree:
         """
         Return the grafting tree of the interval-poset.
 
@@ -2973,7 +2973,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         return True
 
     @staticmethod
-    def final_forest(element):
+    def final_forest(element) -> TIP:
         r"""
         Return the final forest of a binary tree, an interval-poset or a
         Dyck word.
@@ -3080,7 +3080,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         return TamariIntervalPoset(P, check=False)  # type:ignore
 
     @staticmethod
-    def initial_forest(element):
+    def initial_forest(element) -> TIP:
         r"""
         Return the initial forest of a binary tree, an interval-poset or
         a Dyck word.
@@ -3718,7 +3718,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
         return (2 * binomial(4 * n + 1, n - 1)) // (n * (n + 1))
         # return Integer(2 * factorial(4*n+1)/(factorial(n+1)*factorial(3*n+2)))
 
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[TIP]:
         r"""
         Recursive generation: we iterate through all interval-posets of
         size ``size - 1`` and add all possible relations to the last

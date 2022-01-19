@@ -1,5 +1,5 @@
 r"""
-Check for working interpreter interfaces
+Features for testing whether interpreter interfaces are functional
 """
 import importlib
 
@@ -8,7 +8,7 @@ from . import Feature, FeatureTestResult, PythonModule
 
 class InterfaceFeature(Feature):
     r"""
-    A :class:`Feature` describing whether an :class:`~sage.interfaces.interface.Interface` is present and functional.
+    A :class:`~sage.features.Feature` describing whether an :class:`~sage.interfaces.interface.Interface` is present and functional.
 
     TESTS::
 
@@ -83,7 +83,7 @@ class InterfaceFeature(Feature):
 
 class Magma(InterfaceFeature):
     r"""
-    A :class:`sage.features.Feature` describing whether :class:`sage.interfaces.magma.Magma`
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.magma.Magma`
     is present and functional.
 
     EXAMPLES::
@@ -100,7 +100,7 @@ class Magma(InterfaceFeature):
 
 class Matlab(InterfaceFeature):
     r"""
-    A :class:`sage.features.Feature` describing whether :class:`sage.interfaces.matlab.Matlab`
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.matlab.Matlab`
     is present and functional.
 
     EXAMPLES::
@@ -117,7 +117,7 @@ class Matlab(InterfaceFeature):
 
 class Mathematica(InterfaceFeature):
     r"""
-    A :class:`sage.features.Feature` describing whether :class:`sage.interfaces.mathematica.Mathematica`
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.mathematica.Mathematica`
     is present and functional.
 
     EXAMPLES::
@@ -134,7 +134,7 @@ class Mathematica(InterfaceFeature):
 
 class Maple(InterfaceFeature):
     r"""
-    A :class:`sage.features.Feature` describing whether :class:`sage.interfaces.maple.Maple`
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.maple.Maple`
     is present and functional.
 
     EXAMPLES::
@@ -151,7 +151,7 @@ class Maple(InterfaceFeature):
 
 class Macaulay2(InterfaceFeature):
     r"""
-    A :class:`sage.features.Feature` describing whether :class:`sage.interfaces.macaulay2.Macaulay2`
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.macaulay2.Macaulay2`
     is present and functional.
 
     EXAMPLES::
@@ -168,7 +168,7 @@ class Macaulay2(InterfaceFeature):
 
 class Octave(InterfaceFeature):
     r"""
-    A :class:`sage.features.Feature` describing whether :class:`sage.interfaces.octave.Octave`
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.octave.Octave`
     is present and functional.
 
     EXAMPLES::
@@ -185,7 +185,7 @@ class Octave(InterfaceFeature):
 
 class Scilab(InterfaceFeature):
     r"""
-    A :class:`sage.features.Feature` describing whether :class:`sage.interfaces.scilab.Scilab`
+    A :class:`~sage.features.Feature` describing whether :class:`sage.interfaces.scilab.Scilab`
     is present and functional.
 
     EXAMPLES::

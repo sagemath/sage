@@ -332,7 +332,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             sage: Lambda = RootSystem(['C',3,1]).weight_lattice(extended=true).fundamental_weights()
             sage: V = IntegrableRepresentation(Lambda[0]+2*Lambda[3])
             sage: latex(V)
-            V_{\Lambda_{0} + 2\Lambda_{3}}
+            V_{\Lambda_{0} + 2 \Lambda_{3}}
         """
         return "V_{{{}}}".format(self._Lam._latex_())
 

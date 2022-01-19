@@ -174,9 +174,7 @@ cdef class PolyDict:
             sage: p2 = PolyDict({(0,): 2})
             sage: p1 == p2
             False
-            sage: p1 < p2  # py2 - random
-            False
-            sage: p1 < p2  # py3
+            sage: p1 < p2
             Traceback (most recent call last):
             ...
             TypeError: '<' not supported between instances of

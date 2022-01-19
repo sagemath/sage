@@ -936,12 +936,12 @@ class MapleElement(ExtraTabCompletion, ExpectElement):
 
             sage: m = maple('x^2+y^2')                      # optional - maple
             sage: m.__hash__()                              # optional - maple
-            188724254834261060184983038723355865733L
+            188724254834261060184983038723355865733
             sage: hash(m)               # random            # optional - maple
             5035731711831192733
             sage: m = maple('x^2+y^3')                      # optional - maple
             sage: m.__hash__()          # random            # optional - maple
-            264835029579301191531663246434344770556L
+            264835029579301191531663246434344770556
             sage: hash(m)               # random            # optional - maple
             -2187277978252104690
         """

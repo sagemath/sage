@@ -5500,8 +5500,7 @@ cdef class Matrix(Matrix1):
             Edual = decomp_seq([])
         F = f.factor()
         if len(F) == 1:
-            V = sage.modules.free_module.FreeModule(
-                              self.base_ring(), self.nrows(), sparse=self.is_sparse())
+            V = self._column_ambient_module()
             m = F[0][1]
             if dual:
                 return decomp_seq([(V, m==1)]), decomp_seq([(V, m==1)])

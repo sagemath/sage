@@ -183,6 +183,13 @@ else
 AM_V_at =
 endif
 
+# Trac #33125: Handle make options -n, -t, -q
+ifeq ($(foreach flag, n t q, $(findstring $(flag),$(filter-out --%,$(MAKEFLAGS)))),)
+PLUS = +
+else
+PLUS =
+endif
+
 # List of targets that can be run using `sage -i` or `sage -f`
 # These should generally have an associated -clean target for `sage -f` to
 # work correctly
@@ -193,8 +200,8 @@ SAGE_I_TARGETS = sagelib doc
 	all-start build-start base toolchain toolchain-deps base-toolchain \
 	sagelib \
 	doc doc-html doc-html-jsmath doc-html-mathjax doc-pdf \
-	doc-clean doc-src-clean doc-output-clean \
-	clean sagelib-clean build-clean python3_venv _clean-broken-gcc
+	doc-uninstall \
+	python3_venv _clean-broken-gcc
 
 PYTHON_FOR_VENV = @PYTHON_FOR_VENV@
 
@@ -347,42 +354,8 @@ doc-html-jsmath: doc-html-mathjax
 
 doc-pdf: sagemath_doc_pdf
 
-doc-clean: doc-src-clean doc-output-clean
-
-doc-src-clean:
-	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
-
-doc-output-clean:
+doc-uninstall:
 	rm -rf "$(SAGE_SHARE)/doc/sage"
-
-
-###############################################################################
-# Cleaning up
-###############################################################################
-
-clean:
-	@echo "Deleting package build directories..."
-	rm -rf "$(SAGE_LOCAL)/var/tmp/sage/build"
-
-# "c_lib", ".cython_version", "build" in $(SAGE_SRC) are from old sage versions
-# Cleaning .so files (and .c and .cpp files associated with .pyx files) is for editable installs.
-# Also cython_debug is for editable installs.
-sagelib-clean:
-	@echo "Deleting Sage library build artifacts..."
-	(cd "$(SAGE_SRC)" && \
-	 rm -rf c_lib .cython_version cython_debug; \
-	 rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
-	 rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
-	 rm -rf sage/ext/interpreters) \
-	&& (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build)
-
-sage_docbuild-clean:
-	(cd "$(SAGE_ROOT)/build/pkgs/sage_docbuild/src" && rm -rf build)
-
-sage_setup-clean:
-	(cd "$(SAGE_ROOT)/build/pkgs/sage_setup/src" && rm -rf build)
-
-build-clean: clean doc-clean sagelib-clean sage_docbuild-clean
 
 # Special target for cleaning up a broken GCC install detected by configure
 # This should check for the .clean-broken-gcc stamp, and if found clean
@@ -397,7 +370,6 @@ _clean-broken-gcc:
 	   rm -f "$(SAGE_ROOT)/build/make/.clean-broken-gcc"; \
 	   echo "Cleaned up old broken GCC install"; \
 	fi
-
 #==============================================================================
 # Setting SAGE_CHECK... variables
 #==============================================================================
@@ -638,7 +610,7 @@ $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2): $(3)
 $(1): $$($(4))/$(SPKG_INST_RELDIR)/$(1)-$(2)
 
 $(1)-$(4)-no-deps:
-	+@if [ -z '$$($(4))' ]; then \
+	$(PLUS)@if [ -z '$$($(4))' ]; then \
 	    echo "Error: The installation tree $(4) has been disabled" 2>&1; \
 	    echo "$$($(4)_DISABLED_MESSAGE)" 2>&1; \
 	    exit 1; \
@@ -682,7 +654,16 @@ $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
+# Recursive tox invocation (note - we do not set the environment here).
+# Setting SAGE_SPKG_WHEELS is for the benefit of sagelib's tox.ini
+$(1)-tox-%: FORCE
+	$(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)/src' && \
+		export PATH="$$(SAGE_ORIG_PATH)" && \
+		SAGE_SPKG_WHEELS=$$(SAGE_LOCAL)/var/lib/sage/wheels \
+		tox -v -v -v -e $$*
+
 .PHONY: $(1) $(1)-uninstall $(1)-build-deps $(1)-no-deps $(1)-clean
+
 endef
 
 $(foreach pkgname,$(SCRIPT_PACKAGES),\

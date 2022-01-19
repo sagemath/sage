@@ -528,9 +528,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         ::
 
-            sage: Integer(u'0')
+            sage: Integer('0')
             0
-            sage: Integer(u'0X2AEEF')
+            sage: Integer('0X2AEEF')
             175855
 
         Test conversion from PARI (:trac:`11685`)::
@@ -1193,19 +1193,8 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             10
             sage: print(Integer(16938402384092843092843098243).hex())
             36bb1e3929d1a8fe2802f083
-
-            sage: hex(Integer(16))  # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .hex instead
-            See https://trac.sagemath.org/26756 for details.
-            '10'
         """
         return self.str(16)
-
-    def __hex__(self):
-        from sage.misc.superseded import deprecation_cython as deprecation
-        deprecation(26756, 'use the method .hex instead')
-        return self.hex()
 
     def oct(self):
         r"""
@@ -1233,33 +1222,19 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: print(Integer(16938402384092843092843098243).oct())
             15535436162247215217705000570203
 
-        Behavior of Sage integers vs. Python integers (Python 2 and Python 3)::
+        Behavior of Sage integers vs. Python integers::
 
             sage: Integer(10).oct()
             '12'
-            sage: oct(Integer(10)) # py2
-            doctest:warning...:
-            DeprecationWarning: use the method .oct instead
-            See https://trac.sagemath.org/26756 for details.
-            '12'
-            sage: oct(int(10))  # py2
-            '012'
-            sage: oct(int(10))  # py3
+            sage: oct(int(10))
             '0o12'
 
             sage: Integer(-23).oct()
             '-27'
-            sage: oct(int(-23)) # py2
-            '-027'
-            sage: oct(int(-23)) # py3
+            sage: oct(int(-23))
             '-0o27'
         """
         return self.str(8)
-
-    def __oct__(self):
-        from sage.misc.superseded import deprecation_cython as deprecation
-        deprecation(26756, 'use the method .oct instead')
-        return self.oct()
 
     def binary(self):
         """
@@ -3529,8 +3504,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def __int__(self):
         """
-        Return the Python int (or long) corresponding to this Sage
-        integer.
+        Return the Python int corresponding to this Sage integer.
 
         EXAMPLES::
 
@@ -3543,9 +3517,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             <... 'int'>
             sage: n = 99028390823409823904823098490238409823490820938
             sage: int(n)
-            99028390823409823904823098490238409823490820938L
+            99028390823409823904823098490238409823490820938
             sage: int(-n)
-            -99028390823409823904823098490238409823490820938L
+            -99028390823409823904823098490238409823490820938
             sage: type(n.__int__())
             <class 'int'>
             sage: int(-1), int(0), int(1)
@@ -6943,7 +6917,7 @@ cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
         12345
         sage: Integer('   -      1  2   3  4   5  ')
         -12345
-        sage: Integer(u'  -  0x  1  2   3  4   5  ')
+        sage: Integer('  -  0x  1  2   3  4   5  ')
         -74565
         sage: Integer('-0012345', 16)
         -74565

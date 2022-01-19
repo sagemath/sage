@@ -331,7 +331,8 @@ from sage.combinat.vector_partition import IntegerVectorsIterator
 lazy_import("sage.functions.log", "exp")
 lazy_import("sage.functions.other", "binomial")
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.graphs.all import DiGraph, Graph
+from sage.graphs.graph import Graph
+from sage.graphs.digraph import DiGraph
 from sage.graphs.digraph_generators import digraphs
 from sage.probability.probability_distribution import GeneralDiscreteDistribution
 from sage.topology.simplicial_complex import SimplicialComplex

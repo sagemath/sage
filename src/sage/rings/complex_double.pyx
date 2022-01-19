@@ -443,8 +443,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
         from .rational_field import QQ
         from .real_lazy import RLF
         from .real_mpfr import RR
-        from .complex_mpfr import ComplexField
-        CC = ComplexField()
+        from .cc import CC
 
         if S is ZZ or S is QQ or S is RDF or S is RLF:
             return FloatToCDF(S)

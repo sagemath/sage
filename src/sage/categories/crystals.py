@@ -889,7 +889,7 @@ class Crystals(Category_singleton):
 
             .. TODO:: Add more tests.
             """
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             d = {}
 
             # Parse optional arguments

@@ -424,10 +424,11 @@ class DecreasingHeckeFactorizations(UniqueRepresentation, Parent):
         """
         return _generate_decreasing_hecke_factorizations(self.w, self.factors, self.excess, parent=self)
 
-    # temporary workaround while an_element is overriden by Parent
+    # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     Element = DecreasingHeckeFactorization
+
 
 class FullyCommutativeStableGrothendieckCrystal(UniqueRepresentation, Parent):
     """

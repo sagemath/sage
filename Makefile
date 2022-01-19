@@ -81,7 +81,6 @@ dist: build/make/Makefile
 
 pypi-sdists: sage_setup
 	./sage --sh build/pkgs/sage_conf/spkg-src
-	./sage --sh build/pkgs/sage_setup/spkg-src
 	./sage --sh build/pkgs/sage_sws2rst/spkg-src
 	./sage --sh build/pkgs/sage_docbuild/spkg-src
 	./sage --sh build/pkgs/sage_setup/spkg-src
@@ -97,6 +96,47 @@ pypi-sdists: sage_setup
 # information.
 ssl: all
 	./sage -i pyopenssl
+
+###############################################################################
+# Cleaning up
+###############################################################################
+
+SAGE_ROOT = $(CURDIR)
+SAGE_SRC = $(SAGE_ROOT)/src
+
+clean:
+	@echo "Deleting package build directories..."
+	if [ -f "$(SAGE_SRC)"/bin/sage-env-config ]; then \
+	    . "$(SAGE_SRC)"/bin/sage-env-config; \
+	    if [ -n "$$SAGE_LOCAL" ]; then \
+	        rm -rf "$$SAGE_LOCAL/var/tmp/sage/build"; \
+	    fi; \
+	fi
+
+# "c_lib", ".cython_version", "build" in $(SAGE_SRC) are from old sage versions
+# Cleaning .so files (and .c and .cpp files associated with .pyx files) is for editable installs.
+# Also cython_debug is for editable installs.
+sagelib-clean:
+	@echo "Deleting Sage library build artifacts..."
+	if [ -d "$(SAGE_SRC)" ]; then \
+	    (cd "$(SAGE_SRC)" && \
+	     rm -rf c_lib .cython_version cython_debug; \
+	     rm -rf build; find . -name '*.pyc' -o -name "*.so" | xargs rm -f; \
+	     rm -f $$(find . -name "*.pyx" | sed 's/\(.*\)[.]pyx$$/\1.c \1.cpp/'); \
+	     rm -rf sage/ext/interpreters) \
+	    && (cd "$(SAGE_ROOT)/build/pkgs/sagelib/src/" && rm -rf build); \
+	fi
+
+sage_docbuild-clean:
+	(cd "$(SAGE_ROOT)/build/pkgs/sage_docbuild/src" && rm -rf build)
+
+sage_setup-clean:
+	(cd "$(SAGE_ROOT)/build/pkgs/sage_setup/src" && rm -rf build)
+
+build-clean: clean doc-clean sagelib-clean sage_docbuild-clean
+
+doc-clean:
+	cd "$(SAGE_SRC)/doc" && $(MAKE) clean
 
 # Deleting src/lib is to get rid of src/lib/pkgconfig
 # that was forgotten to clean in #29082.
@@ -133,6 +173,10 @@ bootstrap-clean:
 	rm -f src/environment.yml
 	rm -f environment-optional.yml
 	rm -f src/environment-optional.yml
+	rm -f src/Pipfile
+	rm -f src/pyproject.toml
+	rm -f src/requirements.txt
+	rm -f src/setup.cfg
 
 # Remove absolutely everything which isn't part of the git repo
 maintainer-clean: distclean bootstrap-clean
@@ -286,4 +330,5 @@ list:
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \
-	buildbot-python3 list
+	buildbot-python3 list \
+	doc-clean clean sagelib-clean build-clean

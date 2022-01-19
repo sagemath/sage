@@ -26,12 +26,13 @@ from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
 from sage.sets.family import Family
 from sage.rings.integer_ring import ZZ
 
+
 class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
     r"""
     The alternating central extension of the `q`-Onsager algebra.
 
     The *alternating central extension* `\mathcal{A}_q` of the `q`-Onsager
-    alegbra `O_q` is a current algebra of `O_q` introduced by Baseilhac
+    algebra `O_q` is a current algebra of `O_q` introduced by Baseilhac
     and Koizumi [BK2005]_. A presentation was given by Baseilhac
     and Shigechi [BS2010]_, which was then reformulated in terms of currents
     in [Ter2021]_ and then used to prove that the generators form a PBW basis.
@@ -163,7 +164,7 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
 
             sage: A = algebras.AlternatingCentralExtensionQuantumOnsager(QQ)
             sage: AG = A.algebra_generators()
-            sage: AG[1,1] * AG[1,0] * AG[0,1]               # indirect doctest                                                                    
+            sage: AG[1,1] * AG[1,0] * AG[0,1]               # indirect doctest
             G[1]*W[0]*W[1] + (q/(q^2+1))*G[1]^2 + (-q/(q^2+1))*G[1]*Gt[1]
              + ((-q^8+2*q^4-1)/q^5)*W[-1]*W[1] + ((-q^8+2*q^4-1)/q^5)*W[0]^2
              + ((q^8-2*q^4+1)/q^5)*W[0]*W[2] + ((q^8-2*q^4+1)/q^5)*W[1]^2
@@ -276,6 +277,7 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
         """
         G = self._indices.gens()
         q = self._q
+
         def monomial_map(x):
             if x[0] != 1 and x[1] == 0:
                 return self.term(self.one_basis(), -(q-~q)*(q+~q)**2)
@@ -658,7 +660,7 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
             sage: A = algebras.AlternatingCentralExtensionQuantumOnsager(QQ)
             sage: G = A.algebra_generators()
             sage: x = A.an_element()^2
-            sage: A.sigma(A.sigma(x)) == x                                                                                    
+            sage: A.sigma(A.sigma(x)) == x
             True
             sage: A.sigma(G[1,-1] * G[1,1]) == A.sigma(G[1,-1]) * A.sigma(G[1,1])
             True
@@ -677,7 +679,7 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
             sage: A = algebras.AlternatingCentralExtensionQuantumOnsager(QQ)
             sage: G = A.algebra_generators()
             sage: x = A.an_element()^2
-            sage: A.dagger(A.dagger(x)) == x                                                                                    
+            sage: A.dagger(A.dagger(x)) == x
             True
             sage: A.dagger(G[1,-1] * G[1,1]) == A.dagger(G[1,1]) * A.dagger(G[1,-1])
             True
@@ -687,4 +689,3 @@ class ACEQuantumOnsagerAlgebra(CombinatorialFreeModule):
             True
         """
         return self.module_morphism(self._dagger_on_basis, codomain=self)
-

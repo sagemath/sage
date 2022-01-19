@@ -32,8 +32,9 @@ AUTHORS:
 # The python wrapper and all the doctests are in bitset.pyx/bitset.pxd.
 
 from libc.string cimport strlen
-from cysignals.memory cimport check_calloc, check_reallocarray, sig_malloc, sig_free
+from cysignals.memory cimport check_calloc, check_allocarray, check_reallocarray, sig_malloc, sig_free
 from memory_allocator  cimport MemoryAllocator
+from memory_allocator.memory_allocator cimport align
 from cython.operator import preincrement as preinc
 
 from sage.cpython.string cimport char_to_str, str_to_bytes, bytes_to_str
@@ -160,7 +161,7 @@ cdef inline mp_limb_t limb_lower_bits_up(mp_bitcnt_t n):
 #############################################################################
 # Bitset Initalization
 #############################################################################
-cdef inline bint bitset_init(bitset_t bits, mp_bitcnt_t size) except -1:
+cdef inline bint bitset_init(fused_bitset_t bits, mp_bitcnt_t size) except -1:
     """
     Allocate an empty bitset of size ``size``.
 
@@ -169,27 +170,19 @@ cdef inline bint bitset_init(bitset_t bits, mp_bitcnt_t size) except -1:
     if size <= 0:
         raise ValueError("bitset capacity must be greater than 0")
 
-    bits.size = size
-    bits.limbs = (size - 1) / (8 * LIMB_SIZE) + 1
-    bits.bits = <mp_limb_t*>check_calloc(bits.limbs, LIMB_SIZE)
-
-cdef inline bint bitset_init_with_allocator(fused_bitset_t bits, mp_bitcnt_t size, MemoryAllocator mem) except -1:
-    """
-    Allocate an empty bitset of size ``size``.
-
-    Size must be at least 1.
-
-    Note that ``sparse_bitset_t`` is assumed to be allocated over-aligned.
-    """
-    if size <= 0:
-        raise ValueError("bitset capacity must be greater than 0")
+    cdef mp_bitcnt_t extra
 
     bits.size = size
-    bits.limbs = ((size - 1) / (8*ALIGNMENT) + 1) * (ALIGNMENT/LIMB_SIZE)
-    bits.bits = <mp_limb_t*> mem.aligned_calloc(ALIGNMENT, bits.limbs, LIMB_SIZE)
-    if fused_bitset_t is sparse_bitset_t:
+    if fused_bitset_t is bitset_t:
+        bits.limbs = (size - 1) / (8 * LIMB_SIZE) + 1
+        bits.bits = <mp_limb_t*>check_calloc(bits.limbs, LIMB_SIZE)
+    else:
+        bits.limbs = ((size - 1) / (8*ALIGNMENT) + 1) * (ALIGNMENT/LIMB_SIZE)
+        extra = (ALIGNMENT + LIMB_SIZE - 2) // LIMB_SIZE
+        bits.mem = check_calloc(bits.limbs + extra, LIMB_SIZE)
+        bits.bits = <mp_limb_t*> align(bits.mem, ALIGNMENT)
         bits.non_zero_chunks_are_initialized = False
-        bits.non_zero_chunks = <mp_bitcnt_t*> mem.allocarray((bits.limbs*LIMB_SIZE)/ALIGNMENT, sizeof(mp_bitcnt_t))
+        bits.non_zero_chunks = <mp_bitcnt_t*> check_allocarray((bits.limbs*LIMB_SIZE) / ALIGNMENT, sizeof(mp_bitcnt_t))
 
 cdef inline bint bitset_check_alignment(fused_bitset_t bits):
     """
@@ -222,11 +215,15 @@ cdef inline int bitset_realloc(bitset_t bits, mp_bitcnt_t size) except -1:
         # Zero removed bits
         bitset_fix(bits)
 
-cdef inline void bitset_free(bitset_t bits):
+cdef inline void bitset_free(fused_bitset_t bits):
     """
     Deallocate the memory in bits.
     """
-    sig_free(bits.bits)
+    if fused_bitset_t is bitset_t:
+        sig_free(bits.bits)
+    else:
+        sig_free(bits.mem)
+        sig_free(bits.non_zero_chunks)
 
 cdef inline void bitset_clear(fused_bitset_t bits):
     """
@@ -265,7 +262,7 @@ cdef inline void bitset_copy_flex(fused_bitset_t dst, fused_bitset_t src):
     We assume ``dst.limbs >= src.limbs``.
     """
     mpn_copyi(dst.bits, src.bits, src.limbs)
-    mpn_zero(dst.bits+src.limbs, src.limbs-dst.limbs)
+    mpn_zero(dst.bits + src.limbs, dst.limbs - src.limbs)
     if fused_bitset_t is sparse_bitset_t:
         dst.non_zero_chunks_are_initialized = False
 

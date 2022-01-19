@@ -298,6 +298,12 @@ if [ -f "${SELF}-env" ]; then
     fi
 fi
 
+if [ -f "${SELF}-src-env-config.in" ]; then
+    # The sage script is being run out of SAGE_ROOT/src/bin.
+    # In this case, put this directory in the front of the PATH.
+    export PATH="$SAGE_SRC/bin:$PATH"
+fi
+
 if [ -z "$DOT_SAGE" ]; then
     export DOT_SAGE="$HOME/.sage"
 fi

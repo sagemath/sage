@@ -1835,6 +1835,14 @@ class DocTestDispatcher(SageObject):
                             # report(), parallel testing can easily fail
                             # with a "Too many open files" error.
                             w.save_result_output()
+                            # In python3 multiprocessing.Process also
+                            # opens a pipe internally, which has to be
+                            # closed here, as well.
+                            # But afterwards, exitcode and pid are
+                            # no longer available.
+                            w.copied_exitcode = w.exitcode
+                            w.copied_pid = w.pid
+                            w.close()
                             finished.append(w)
                     workers = new_workers
 
@@ -1854,10 +1862,10 @@ class DocTestDispatcher(SageObject):
                         self.controller.reporter.report(
                             w.source,
                             w.killed,
-                            w.exitcode,
+                            w.copied_exitcode,
                             w.result,
                             w.output,
-                            pid=w.pid)
+                            pid=w.copied_pid)
 
                         pending_tests -= 1
 

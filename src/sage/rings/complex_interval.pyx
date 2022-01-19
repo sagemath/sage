@@ -72,6 +72,7 @@ from sage.rings.integer cimport Integer
 cimport sage.rings.real_mpfi as real_mpfi
 from .real_mpfr cimport RealNumber, RealField
 from .convert.mpfi cimport mpfi_set_sage
+from .infinity import infinity
 
 
 def is_ComplexIntervalFieldElement(x):
@@ -113,6 +114,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
         """
         self._parent = <Parent?>parent
         self._prec = parent._prec
+        self._multiplicative_order = None
         mpfi_init2(self.__re, self._prec)
         mpfi_init2(self.__im, self._prec)
 
@@ -129,6 +131,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             sage: CIF(1.5 + 2.5*I)
             1.5000000000000000? + 2.5000000000000000?*I
         """
+        self._multiplicative_order = None
         if real is None:
             mpfi_set_ui(self.__re, 0)
             mpfi_set_ui(self.__im, 0)
@@ -1649,6 +1652,47 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
     ########################################################################
     # Transcendental (and other) functions
     ########################################################################
+
+    def multiplicative_order(self):
+        """
+        Return the multiplicative order of this complex number, if known,
+        or raise a ``NotImplementedError``.
+
+        EXAMPLES::
+
+            sage: C = CIF
+            sage: i = C.0
+            sage: i.multiplicative_order()
+            4
+            sage: C(1).multiplicative_order()
+            1
+            sage: C(-1).multiplicative_order()
+            2
+            sage: (i^2).multiplicative_order()
+            2
+            sage: (-i).multiplicative_order()
+            4
+            sage: C(2).multiplicative_order()
+            +Infinity
+            sage: w = (1 + C(-3).sqrt())/2 ; w
+            0.50000000000000000? + 0.866025403784439?*I
+            sage: w.multiplicative_order()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: order of element not known
+        """
+        if self._multiplicative_order is not None:
+            return Integer(self._multiplicative_order)
+        ring = self._parent
+        if self == ring.one():
+            return Integer(1)
+        if self == -ring.one():
+            return Integer(2)
+        if self == ring.gen() or self == -ring.gen():
+            return Integer(4)
+        if 1 not in abs(self):  # clearly not a root of unity
+            return infinity
+        raise NotImplementedError("order of element not known")
 
     def argument(self):
         r"""

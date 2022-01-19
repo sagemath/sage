@@ -545,7 +545,12 @@ would simply contain:
 Python-based packages
 ---------------------
 
-The best way to install a Python-based package is to use pip, in which
+Python-based packages should declare ``$(PYTHON)`` as a dependency,
+and most Python-based packages will also have ``$(PYTHON_TOOLCHAIN)`` as
+an order-only dependency, which will ensure that fundamental packages such
+as ``pip`` and ``setuptools`` are available at the time of building the package.
+
+The best way to install a Python-based package is to use ``pip``, in which
 case the ``spkg-install.in`` script template might just consist of
 
 .. CODE-BLOCK:: bash
@@ -556,19 +561,18 @@ Where ``sdh_pip_install`` is a function provided by ``sage-dist-helpers`` that
 points to the correct ``pip`` for the Python used by Sage, and includes some
 default flags needed for correct installation into Sage.
 
-If pip will not work but a command like ``python3 setup.py install``
+If ``pip`` will not work for a package but a command like ``python3 setup.py install``
 will, you may use ``sdh_setup_bdist_wheel``, followed by
 ``sdh_store_and_pip_install_wheel .``.
 
-For ``spkg-check.in`` script templates, make sure to call
-``sage-python23`` rather than ``python``. This will ensure that the
-correct version of Python is used to check the package.
-The same holds for ; for example, the ``scipy`` ``spkg-check.in``
-file contains the line
+For ``spkg-check.in`` script templates, use ``python3`` rather
+than just ``python``.  The paths are set by the Sage build system
+so that this runs the correct version of Python.
+For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
 .. CODE-BLOCK:: bash
 
-    exec sage-python23 spkg-check.py
+    exec python3 spkg-check.py
 
 All normal Python packages must have a file ``install-requires.txt``.
 If a Python package is available on PyPI, this file must contain the

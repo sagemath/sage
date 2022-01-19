@@ -381,6 +381,7 @@ class AvailableSoftware(object):
          'gurobi',
          'internet',
          'latex',
+         'latex_package_tkz_graph',
          'lualatex',
          'macaulay2',
          'magma',

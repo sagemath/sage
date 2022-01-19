@@ -26,3 +26,7 @@ class Sphinx(PythonModule):
             True
         """
         PythonModule.__init__(self, 'sphinx', spkg='sphinx')
+
+
+def all_features():
+    return [Sphinx()]

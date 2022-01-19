@@ -126,11 +126,11 @@ class Interface(WithEqualityById, ParentWithBase):
             sage: from sage.interfaces.interface import Interface
             sage: i = Interface("")
             sage: i.rand_seed() # random
-            318491487L
+            318491487
 
             sage: s = Singular()
             sage: s.rand_seed() # random
-            365260051L
+            365260051
         """
         import sage.doctest
         if sage.doctest.DOCTEST_MODE:

@@ -142,8 +142,15 @@ class Function_zeta(GinacFunction):
             +infinity
             sage: zeta(SR(1.0))
             Infinity
+
+        Fixed conversion::
+
+            sage: zeta(3)._maple_init_()
+            'Zeta(3)'
         """
-        GinacFunction.__init__(self, 'zeta', conversions={'giac':'Zeta'})
+        GinacFunction.__init__(self, 'zeta', conversions={'giac': 'Zeta',
+                                                    'maple': 'Zeta',
+                                                    'mathematica': 'Zeta'})
 
 zeta = Function_zeta()
 
@@ -215,6 +222,7 @@ class Function_HurwitzZeta(BuiltinFunction):
         """
         BuiltinFunction.__init__(self, 'hurwitz_zeta', nargs=2,
                                  conversions=dict(mathematica='HurwitzZeta',
+                                                  maple='Zeta',
                                                   sympy='zeta'),
                                  latex_name=r'\zeta')
 

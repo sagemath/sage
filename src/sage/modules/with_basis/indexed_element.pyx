@@ -435,14 +435,14 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: B = F.basis()
             sage: f = B['a'] + 3*B['c']
             sage: latex(f)
-            B_{a} + 3B_{c}
+            B_{a} + 3 B_{c}
 
         ::
 
             sage: QS3 = SymmetricGroupAlgebra(QQ,3)
             sage: a = 2 + QS3([2,1,3])
             sage: latex(a) #indirect doctest
-            2[1, 2, 3] + [2, 1, 3]
+            2 [1, 2, 3] + [2, 1, 3]
 
        ::
 
@@ -451,7 +451,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: x
             2*beta['a'] + 2*beta['b']
             sage: latex(x)
-            2\beta_{a} + 2\beta_{b}
+            2 \beta_{a} + 2 \beta_{b}
 
         Controling the order of terms by providing a comparison
         function on elements of the support::
@@ -460,13 +460,13 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             ....:                             sorting_reverse=True)
             sage: e = F.basis()
             sage: latex(e['a'] + 3*e['b'] + 2*e['c'])
-            2B_{c} + 3B_{b} + B_{a}
+            2 B_{c} + 3 B_{b} + B_{a}
 
             sage: F = CombinatorialFreeModule(QQ, ['ac', 'ba', 'cb'],
             ....:                             sorting_key=lambda x: x[1])
             sage: e = F.basis()
             sage: latex(e['ac'] + 3*e['ba'] + 2*e['cb'])
-            3B_{ba} + 2B_{cb} + B_{ac}
+            3 B_{ba} + 2 B_{cb} + B_{ac}
         """
         return repr_lincomb(self._sorted_items_for_printing(),
                             scalar_mult       = self._parent._print_options['scalar_mult'],

@@ -260,6 +260,75 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
         self._Vrepresentation = tuple(self._Vrepresentation)
         self._Hrepresentation = tuple(self._Hrepresentation)
 
+    def _delete(self):
+        """
+        Delete this polyhedron.
+
+        This speeds up creation of new polyhedra by reusing
+        objects. After recycling a polyhedron object, it is not in a
+        consistent state any more and neither the polyhedron nor its
+        H/V-representation objects may be used any more.
+
+        .. SEEALSO::
+
+            :meth:`~sage.geometry.polyhedron.parent.Polyhedra_base.recycle`
+
+        EXAMPLES::
+
+            sage: p = Polyhedron([(0,0),(1,0),(0,1)])
+            sage: p._delete()
+
+            sage: vertices = [(0,0,0,0),(1,0,0,0),(0,1,0,0),(1,1,0,0),(0,0,1,0),(0,0,0,1)]
+            sage: def loop_polyhedra():
+            ....:     for i in range(100):
+            ....:         p = Polyhedron(vertices)
+
+            sage: timeit('loop_polyhedra()')                   # not tested - random
+            5 loops, best of 3: 79.5 ms per loop
+
+            sage: def loop_polyhedra_with_recycling():
+            ....:     for i in range(100):
+            ....:         p = Polyhedron(vertices)
+            ....:         p._delete()
+
+            sage: timeit('loop_polyhedra_with_recycling()')    # not tested - random
+            5 loops, best of 3: 57.3 ms per loop
+        """
+        self.parent().recycle(self)
+
+    def _sage_input_(self, sib, coerced):
+        """
+        Return Sage command to reconstruct ``self``.
+
+        See :mod:`sage.misc.sage_input` for details.
+
+        .. TODO::
+
+            Add the option ``preparse`` to the method.
+
+        EXAMPLES::
+
+            sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='ppl')
+            sage: sage_input(P)
+            Polyhedron(backend='ppl', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(0), QQ(1)), (QQ(1), QQ(0))])
+            sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='normaliz') # optional - pynormaliz
+            sage: sage_input(P)                                                                    # optional - pynormaliz
+            Polyhedron(backend='normaliz', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(0), QQ(1)), (QQ(1), QQ(0))])
+            sage: P = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]], backend='polymake') # optional - polymake
+            sage: sage_input(P)                                                                    # optional - polymake
+            Polyhedron(backend='polymake', base_ring=QQ, rays=[(QQ(1), QQ(1))], vertices=[(QQ(1), QQ(0)), (QQ(0), QQ(1))])
+       """
+        kwds = dict()
+        kwds['base_ring'] = sib(self.base_ring())
+        kwds['backend'] = sib(self.backend())
+        if self.n_vertices() > 0:
+            kwds['vertices'] = [sib(tuple(v)) for v in self.vertices()]
+        if self.n_rays() > 0:
+            kwds['rays'] = [sib(tuple(r)) for r in self.rays()]
+        if self.n_lines() > 0:
+            kwds['lines'] = [sib(tuple(l)) for l in self.lines()]
+        return sib.name('Polyhedron')(**kwds)
+
     def base_extend(self, base_ring, backend=None):
         """
         Return a new polyhedron over a larger base ring.
@@ -1024,6 +1093,69 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
              A vertex at (0, 0, 1, 0), A vertex at (0, 0, 0, 1))
         """
         return tuple(self.vertex_generator())
+
+    @cached_method
+    def vertices_matrix(self, base_ring=None):
+        """
+        Return the coordinates of the vertices as the columns of a matrix.
+
+        INPUT:
+
+        - ``base_ring`` -- A ring or ``None`` (default). The base ring
+          of the returned matrix. If not specified, the base ring of
+          the polyhedron is used.
+
+        OUTPUT:
+
+        A matrix over ``base_ring`` whose columns are the coordinates
+        of the vertices. A ``TypeError`` is raised if the coordinates
+        cannot be converted to ``base_ring``.
+
+        .. WARNING::
+
+            If the polyhedron has lines, return the coordinates of the vertices
+            of the ``Vrepresentation``. However, the represented polyhedron
+            has no 0-dimensional faces (i.e. vertices)::
+
+                sage: P = Polyhedron(rays=[[1,0,0]],lines=[[0,1,0]])
+                sage: P.vertices_matrix()
+                [0]
+                [0]
+                [0]
+                sage: P.faces(0)
+                ()
+
+        EXAMPLES::
+
+            sage: triangle = Polyhedron(vertices=[[1,0],[0,1],[1,1]])
+            sage: triangle.vertices_matrix()
+            [0 1 1]
+            [1 0 1]
+            sage: (triangle/2).vertices_matrix()
+            [  0 1/2 1/2]
+            [1/2   0 1/2]
+            sage: (triangle/2).vertices_matrix(ZZ)
+            Traceback (most recent call last):
+            ...
+            TypeError: no conversion of this rational to integer
+
+        TESTS:
+
+        Check that :trac:`28828` is fixed::
+
+                sage: P.vertices_matrix().is_immutable()
+                True
+        """
+        from sage.matrix.constructor import matrix
+
+        if base_ring is None:
+            base_ring = self.base_ring()
+        m = matrix(base_ring, self.ambient_dim(), self.n_vertices())
+        for i, v in enumerate(self.vertices()):
+            for j in range(self.ambient_dim()):
+                m[j, i] = v[j]
+        m.set_immutable()
+        return m
 
     def ray_generator(self):
         """

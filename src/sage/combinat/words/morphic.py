@@ -329,7 +329,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w = m.fixed_point('a')
             Traceback (most recent call last):
             ...
-            TypeError: self (=a->ac, b->aac) is not an endomorphism
+            TypeError: self (=a->ac, b->aac) is not self-composable
 
         We check that :trac:`8595` is fixed::
 

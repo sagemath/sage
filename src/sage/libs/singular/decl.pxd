@@ -748,21 +748,21 @@ cdef extern from "singular/Singular/libsingular.h":
 
     # general number constructor
 
-    number *n_Init(int n, ring *r)
+    number *n_Init(int n, n_Procs_s *cf)
 
     # general number destructor
 
-    void n_Delete(number **n, ring *r)
+    void n_Delete(number **n, n_Procs_s *cf)
 
     # Copy this number
-    number *n_Copy(number *n, ring* r)
+    number *n_Copy(number *n, n_Procs_s *cf)
 
     # Invert this number
     int n_IsUnit(number *n, const n_Procs_s *cf)
     number *n_Invers(number *n, const n_Procs_s *cf)
 
     # Characteristic of coefficient domain
-    int n_GetChar(const ring* r)
+    int n_GetChar(const n_Procs_s *cf)
 
     # rational number from int
 

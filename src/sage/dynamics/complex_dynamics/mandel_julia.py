@@ -129,29 +129,29 @@ def mandelbrot_plot(f=None, **kwds):
     ``interact`` to ``True``. (This is only implemented for ``z^2 + c``)::
 
         sage: mandelbrot_plot(interact=True)
-        interactive(children=(FloatSlider(value=0.0, description=u'Real center', max=1.0, min=-1.0, step=1e-05),
-        FloatSlider(value=0.0, description=u'Imag center', max=1.0, min=-1.0, step=1e-05),
-        FloatSlider(value=4.0, description=u'Width', max=4.0, min=1e-05, step=1e-05),
-        IntSlider(value=500, description=u'Iterations', max=1000),
-        IntSlider(value=500, description=u'Pixels', max=1000, min=10),
-        IntSlider(value=1, description=u'Color sep', max=20, min=1),
-        IntSlider(value=30, description=u'# Colors', min=1),
-        ColorPicker(value='#ff6347', description=u'Base color'), Output()),
-        _dom_classes=(u'widget-interact',))
+        interactive(children=(FloatSlider(value=0.0, description='Real center', max=1.0, min=-1.0, step=1e-05),
+        FloatSlider(value=0.0, description='Imag center', max=1.0, min=-1.0, step=1e-05),
+        FloatSlider(value=4.0, description='Width', max=4.0, min=1e-05, step=1e-05),
+        IntSlider(value=500, description='Iterations', max=1000),
+        IntSlider(value=500, description='Pixels', max=1000, min=10),
+        IntSlider(value=1, description='Color sep', max=20, min=1),
+        IntSlider(value=30, description='# Colors', min=1),
+        ColorPicker(value='#ff6347', description='Base color'), Output()),
+        _dom_classes=('widget-interact',))
 
     ::
 
         sage: mandelbrot_plot(interact=True, x_center=-0.75, y_center=0.25,
         ....: image_width=1/2, number_of_colors=75)
-        interactive(children=(FloatSlider(value=-0.75, description=u'Real center', max=1.0, min=-1.0, step=1e-05),
-        FloatSlider(value=0.25, description=u'Imag center', max=1.0, min=-1.0, step=1e-05),
-        FloatSlider(value=0.5, description=u'Width', max=4.0, min=1e-05, step=1e-05),
-        IntSlider(value=500, description=u'Iterations', max=1000),
-        IntSlider(value=500, description=u'Pixels', max=1000, min=10),
-        IntSlider(value=1, description=u'Color sep', max=20, min=1),
-        IntSlider(value=75, description=u'# Colors', min=1),
-        ColorPicker(value='#ff6347', description=u'Base color'), Output()),
-        _dom_classes=(u'widget-interact',))
+        interactive(children=(FloatSlider(value=-0.75, description='Real center', max=1.0, min=-1.0, step=1e-05),
+        FloatSlider(value=0.25, description='Imag center', max=1.0, min=-1.0, step=1e-05),
+        FloatSlider(value=0.5, description='Width', max=4.0, min=1e-05, step=1e-05),
+        IntSlider(value=500, description='Iterations', max=1000),
+        IntSlider(value=500, description='Pixels', max=1000, min=10),
+        IntSlider(value=1, description='Color sep', max=20, min=1),
+        IntSlider(value=75, description='# Colors', min=1),
+        ColorPicker(value='#ff6347', description='Base color'), Output()),
+        _dom_classes=('widget-interact',))
 
     Polynomial maps can be defined over a multivariate polynomial ring or a
     univariate polynomial ring tower::
@@ -599,14 +599,14 @@ def julia_plot(f=None, **kwds):
     the form ``f = z^2 + c``)::
 
         sage: julia_plot(interact=True)
-        interactive(children=(FloatSlider(value=-1.0, description=u'Real c'...
+        interactive(children=(FloatSlider(value=-1.0, description='Real c'...
 
         ::
 
         sage: R.<z> = CC[]
         sage: f = z^2 + 1/2
         sage: julia_plot(f,interact=True)
-        interactive(children=(FloatSlider(value=0.5, description=u'Real c'...
+        interactive(children=(FloatSlider(value=0.5, description='Real c'...
 
     To return the Julia set of a random `c` value with (formal) cycle structure
     `(2,3)`, set ``period = [2,3]``::

@@ -70,7 +70,7 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
         .. NOTE::
 
             The base ring is required to be a `\QQ`-algebra for this
-            method to be useable, since the scalar product is defined by
+            method to be usable, since the scalar product is defined by
             its values on the power sum basis.
 
         EXAMPLES::

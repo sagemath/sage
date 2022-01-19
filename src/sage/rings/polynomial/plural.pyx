@@ -1081,7 +1081,7 @@ cdef class NCPolynomialRing_plural(Ring):
             else:
                 raise ArithmeticError("Cannot divide these coefficients.")
         else:
-            p_SetCoeff0(res, n_Init(1, r), r)
+            p_SetCoeff0(res, n_Init(1, r.cf), r)
         return new_NCP(self, res)
 
     def monomial_divides(self, NCPolynomial_plural a, NCPolynomial_plural b):
@@ -1269,7 +1269,7 @@ cdef class NCPolynomialRing_plural(Ring):
                 h = <NCPolynomial_plural>g
                 if p_LmDivisibleBy(h._poly, m, r):
                     flt = pMDivide(f._poly, h._poly)
-                    p_SetCoeff(flt, n_Init(1, r), r)
+                    p_SetCoeff(flt, n_Init(1, r.cf), r)
                     return (new_NCP(self,flt), h)
         return (self._zero_element, self._zero_element)
 
@@ -2130,7 +2130,7 @@ cdef class NCPolynomial_plural(RingElement):
                     flag = 1
             if flag == 0:
                 newptemp = p_LmInit(p,r)
-                p_SetCoeff(newptemp,n_Copy(p_GetCoeff(p,r),r),r)
+                p_SetCoeff(newptemp,n_Copy(p_GetCoeff(p,r),r.cf),r)
                 for i from 0<=i<gens:
                     if exps[i] != -1:
                         p_SetExp(newptemp,i+1,0,r)
@@ -2563,7 +2563,7 @@ cdef class NCPolynomial_plural(RingElement):
         while p:
             t = pNext(p)
             p.next = NULL
-            p_SetCoeff(p, n_Init(1,_ring), _ring)
+            p_SetCoeff(p, n_Init(1,_ring.cf), _ring)
             p_Setm(p, _ring)
             l.append( new_NCP(parent,p) )
             p = t
@@ -2668,7 +2668,7 @@ cdef class NCPolynomial_plural(RingElement):
         if self._poly == NULL:
             return (<NCPolynomialRing_plural>self._parent)._zero_element
         _p = p_Head(self._poly, _ring)
-        p_SetCoeff(_p, n_Init(1,_ring), _ring)
+        p_SetCoeff(_p, n_Init(1,_ring.cf), _ring)
         p_Setm(_p,_ring)
         return new_NCP((<NCPolynomialRing_plural>self._parent), _p)
 

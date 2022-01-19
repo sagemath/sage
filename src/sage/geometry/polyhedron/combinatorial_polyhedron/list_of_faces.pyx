@@ -127,7 +127,7 @@ cdef class ListOfFaces:
         sage: facets.matrix().dimensions()
         (5, 13)
     """
-    def __init__(self, size_t n_faces, size_t n_atoms, size_t n_coatoms):
+    def __cinit__(self, size_t n_faces, size_t n_atoms, size_t n_coatoms):
         r"""
         Initialize :class:`ListOfFaces`.
 
@@ -137,8 +137,32 @@ cdef class ListOfFaces:
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces.ListOfFaces).run()
         """
-        self._mem = MemoryAllocator()
-        face_list_init(self.data, n_faces, n_atoms, n_coatoms, self._mem)
+        # Note that all values are set to zero at the time ``__cinit__`` is called:
+        # https://cython.readthedocs.io/en/latest/src/userguide/special_methods.html#initialisation-methods
+        # In particular, ``__dealloc__`` will not do harm in this case.
+
+        face_list_init(self.data, n_faces, n_atoms, n_coatoms)
+
+    def __dealloc__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces import ListOfFaces
+            sage: ListOfFaces(-1, -1, -1)  # indirect doctest
+            Traceback (most recent call last):
+            ...
+            OverflowError: can't convert negative value to size_t
+
+            sage: from memory_allocator.test import TestMemoryAllocator
+            sage: t = TestMemoryAllocator()
+            sage: m = t.size_t_max()
+            # The following is only certain to fail on 64-bit
+            sage: ListOfFaces(1, m, 1)
+            Traceback (most recent call last):          # 64-bit
+            ...
+            MemoryError: failed to allocate ...         # 64-bit
+        """
+        face_list_free(self.data)
 
     def _test_alignment(self):
         r"""

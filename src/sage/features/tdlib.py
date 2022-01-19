@@ -1,10 +1,14 @@
+r"""
+Features for testing the presence of ``tdlib``
+"""
+
 from . import PythonModule
 from .join_feature import JoinFeature
 
 
 class Tdlib(JoinFeature):
     r"""
-    A :class:`sage.features.Feature` describing the presence of the ``TDLib``.
+    A :class:`~sage.features.Feature` describing the presence of the ``tdlib``.
     """
     def __init__(self):
         r"""

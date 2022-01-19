@@ -890,7 +890,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
                 ...
                 NotImplementedError: This has only been implemented in finite type A so far!
             """
-            from sage.graphs.all import Graph
+            from sage.graphs.graph import Graph
             R = [tuple(v) for v in self.reduced_words()]
             G = Graph()
             G.add_vertices(R)

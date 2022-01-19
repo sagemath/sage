@@ -695,7 +695,10 @@ ex power::normal(exmap & repl, exmap & rev_lookup, int level, unsigned options) 
 	ex n_exponent = ex_to<basic>(exponent).normal(repl, rev_lookup, level-1);
 	n_exponent = n_exponent.op(0) / n_exponent.op(1);
 
-	if (n_exponent.is_integer()) {
+	if (n_exponent.is_integer()
+            // exponents must be numbers, e.g. x^n if n is declared to
+            // be an integer is replaced by a single symbol instead of sym^n
+            && is_exactly_a<numeric>(n_exponent)) {
 
 		if (n_exponent.is_positive()) {
 			// (a/b)^n -> {a^n, b^n}

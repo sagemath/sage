@@ -1191,7 +1191,7 @@ class FriCASElement(ExpectElement):
             \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4\end{array} \right]
 
             sage: latex(fricas("integrate(sin(x+1/x),x)"))                      # optional - fricas
-            \int ^{\displaystyle x} {{\sin \left( {{{{{ \%O} ^{2}}+1} \over  \%O}} \right)} \  {d \%O}}
+            \int ^{\displaystyle x} {{\sin \left( {{{{{ \%...} ^{2}}+1} \over  \%...}} \right)} \  {d \%...}}
         """
         replacements = [(r'\sp ', '^'),
                         (r'\sp{', '^{'),

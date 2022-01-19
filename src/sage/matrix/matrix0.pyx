@@ -3933,18 +3933,22 @@ cdef class Matrix(sage.structure.element.Matrix):
                     return False
         return True
 
-    def _is_hermitian(self, skew = False):
+    def _is_hermitian(self, skew, tolerance):
         r"""
-        Return ``True`` if the matrix is (skew-)Hermitian.
+        Return ``True`` if the matrix is (skew-)Hermitian up to the
+        entry-wise ``tolerance``.
 
-        For internal purposes. This function is used in `is_hermitian`
-        and `is_skew_hermitian` functions.
+        For internal purposes. This function is used to implement both
+        the :meth:`is_hermitian` and :meth:`is_skew_hermitian` methods.
 
         INPUT:
 
-        - ``skew`` - default: ``False`` - Specifies the type of the
-          test. Set to ``True`` to check whether the matrix is
-          skew-Hermitian.
+        - ``skew`` - boolean (default: ``False``); Set to ``True`` to
+          check if the matrix is skew-Hermitian instead of Hermitian.
+
+        - ``tolerance`` - a real number; the maximum difference we'll
+          tolerate between entries of the given matrix and its conjugate-
+          transpose.
 
         OUTPUT:
 
@@ -3955,16 +3959,6 @@ cdef class Matrix(sage.structure.element.Matrix):
         ring (such as for integers), then the :meth:`is_(skew_)symmetric`
         method is equivalent and faster.
 
-        This routine is for matrices over exact rings and so may not
-        work properly for matrices over ``RR`` or ``CC``.  For
-        matrices with approximate entries, the rings of
-        double-precision floating-point numbers, ``RDF`` and ``CDF``,
-        are a better choice since the
-        :meth:`sage.matrix.matrix_double_dense.Matrix_double_dense.is_(skew_)hermitian`
-        method has a tolerance parameter.  This provides control over
-        allowing for minor discrepancies between entries when checking
-        equality.
-
         The result is cached.
 
         EXAMPLES::
@@ -3972,60 +3966,61 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A = matrix(QQbar, [[ 1 + I,  1 - 6*I, -1 - I],
             ....:                    [-3 - I,     -4*I,     -2],
             ....:                    [-1 + I, -2 - 8*I,  2 + I]])
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             False
             sage: B = A*A.conjugate_transpose()
-            sage: B._is_hermitian()
+            sage: B._is_hermitian(skew=False, tolerance=0)
             True
 
         Sage has several fields besides the entire complex numbers
-        where conjugation is non-trivial. ::
+        where conjugation is non-trivial::
 
             sage: F.<b> = QuadraticField(-7)
             sage: C = matrix(F, [[-2*b - 3,  7*b - 6, -b + 3],
             ....:                [-2*b - 3, -3*b + 2,   -2*b],
             ....:                [   b + 1,        0,     -2]])
-            sage: C._is_hermitian()
+            sage: C._is_hermitian(skew=False, tolerance=0)
             False
             sage: C = C*C.conjugate_transpose()
-            sage: C._is_hermitian()
+            sage: C._is_hermitian(skew=False, tolerance=0)
             True
 
         A matrix that is nearly Hermitian, but for a non-real
-        diagonal entry. ::
+        diagonal entry::
 
             sage: A = matrix(QQbar, [[    2,   2-I, 1+4*I],
             ....:                    [  2+I,   3+I, 2-6*I],
             ....:                    [1-4*I, 2+6*I,     5]])
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             False
             sage: A[1,1] = 132
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             True
 
-        Rectangular matrices are never Hermitian. ::
+        Rectangular matrices are never Hermitian::
 
             sage: A = matrix(QQbar, 3, 4)
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             False
 
-        A square, empty matrix is trivially Hermitian. ::
+        A square, empty matrix is trivially Hermitian::
 
             sage: A = matrix(QQ, 0, 0)
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             True
 
-        A matrix that is skew-Hermitian. ::
+        A matrix that is skew-Hermitian::
             sage: A = matrix(QQbar, [[-I, 2+I], [-2+I, 0]])
-            sage: A._is_hermitian()
+            sage: A._is_hermitian(skew=False, tolerance=0)
             False
-            sage: A._is_hermitian(skew = True)
+            sage: A._is_hermitian(skew=True, tolerance=0)
             True
         """
-        key = 'skew_hermitian' if skew else 'hermitian'
-        h = self.fetch(key)
-        if not h is None:
-            return h
+        key = ("_is_hermitian", skew, tolerance)
+
+        cached = self.fetch(key)
+        if cached is not None:
+            return cached
         if not self.is_square():
             self.cache(key, False)
             return False
@@ -4033,18 +4028,38 @@ cdef class Matrix(sage.structure.element.Matrix):
             self.cache(key, True)
             return True
 
-        s = -1 if skew else 1
+        s = 1
+        if skew:
+            s = -1
         cdef Py_ssize_t i,j
-        hermitian = True
-        for i in range(self._nrows):
-            for j in range(i+1):
-                if self.get_unsafe(i,j) != s*self.get_unsafe(j,i).conjugate():
-                    hermitian = False
-                    break
-            if not hermitian:
-                break
-        self.cache(key, hermitian)
-        return hermitian
+
+        if self.is_sparse_c():
+            # The dense algorithm checks all of the on-or-below-diagonal
+            # entries, of which there are (n^2 + n)/2. If the matrix
+            # is sparse, however, we can get away with checking only
+            # the non-zero positions. This will be faster if the matrix
+            # is truly sparse (if there are not so many of those positions)
+            # even after taking numerical issues into account.
+            for (i,j) in self.nonzero_positions():
+                d = self.get_unsafe(i,j) - s*self.get_unsafe(j,i).conjugate()
+
+                # avoid abs() which is missing for finite fields.
+                if d > tolerance or -d > tolerance:
+                    self.cache(key, False)
+                    return False
+        else:
+            for i in range(self._nrows):
+                for j in range(i+1):
+                    d = (   self.get_unsafe(i,j)
+                          - s*self.get_unsafe(j,i).conjugate() )
+                    # avoid abs() which is missing for finite fields.
+                    if d > tolerance or -d > tolerance:
+                        self.cache(key, False)
+                        return False
+
+        self.cache(key, True)
+        return True
+
 
     def is_hermitian(self):
         r"""
@@ -4118,7 +4133,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A.is_hermitian()
             True
         """
-        return self._is_hermitian(skew = False)
+        return self._is_hermitian(skew=False, tolerance=0)
 
     def is_skew_hermitian(self):
         r"""
@@ -4176,7 +4191,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A.is_skew_hermitian()
             True
         """
-        return self._is_hermitian(skew = True)
+        return self._is_hermitian(skew=True, tolerance=0)
 
     def is_skew_symmetric(self):
         """
@@ -5009,8 +5024,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             (1 + O(5^5), O(5))
 
         """
-        M = sage.modules.free_module.FreeModule(self._base_ring, self.ncols(), sparse=self.is_sparse())
-        if self.nrows() != v.degree():
+        M = self._row_ambient_module()
+        if self._nrows != v._degree:
             raise ArithmeticError("number of rows of matrix must equal degree of vector")
         cdef Py_ssize_t i
         return sum([v[i] * self.row(i, from_list=True)
@@ -5043,8 +5058,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             (1 + O(5^5), O(5))
 
         """
-        M = sage.modules.free_module.FreeModule(self._base_ring, self.nrows(), sparse=self.is_sparse())
-        if self.ncols() != v.degree():
+        M = self._column_ambient_module()
+        if self._ncols != v._degree:
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
         cdef Py_ssize_t i
         return sum([self.column(i, from_list=True) * v[i]

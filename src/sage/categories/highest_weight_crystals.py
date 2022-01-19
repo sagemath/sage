@@ -497,7 +497,7 @@ class HighestWeightCrystals(Category_singleton):
                 raise NotImplementedError("crystals not known to be finite must"
                                           " specify either the subset or depth")
 
-            from sage.graphs.all import DiGraph
+            from sage.graphs.digraph import DiGraph
             if index_set is None:
                 index_set = self.index_set()
 

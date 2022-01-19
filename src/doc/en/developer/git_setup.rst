@@ -6,17 +6,13 @@ Setting Up Git
 
 To work on the Sage source code, you need
 
-* a working git installation, see :ref:`section-git-install`. Sage
-  actually comes with git, see below. However, it is recommended that
-  you have a system-wide install if only to save you some typing.
+* a working ``git`` installation, see :ref:`section-git-install`.
 
-* configure git to use your name and email address for commits, see
-  :ref:`section-git-setup-name`. The Sage development scripts will
-  prompt you if you don't. But, especially if you use git for other
-  projects in the future as well, you really should configure git.
+* configure ``git`` to use your name and email address for commits, see
+  :ref:`section-git-setup-name`.
 
 The :ref:`chapter-git-background` chapter contains further information
-about git that might be useful to some but are not required.
+about ``git`` that might be useful to some but are not required.
 
 
 .. _section-git-install:
@@ -34,24 +30,17 @@ Debian / Ubuntu
 Fedora
     ``sudo yum install git-core``
 
-Windows
-    Download and install `Git for Windows
-    <https://github.com/git-for-windows/git/releases/latest>`_
+Windows (Cygwin)
+    Install the Cygwin package ``git``. Do not attempt to use native
+    Windows installations of ``git``.
 
-OS X
-    Use the `git OSX installer
-    <https://sourceforge.net/projects/git-osx-installer/files/>`_.  If you
-    have an older Mac, be sure to get the correct version. (Alternately you
-    may get it from the Command Line Tools or even simply by attempting to
-    use ``git`` and then following instructions.)
+Windows (WSL)
+    We strongly recommend to install the package using the Linux
+    distribution's package manager.  Native Windows installations of
+    ``git`` may also work, but there are possible pitfalls.
 
-Finally, Sage includes git. Obviously there is a chicken-and-egg
-problem to checkout the Sage source code from its git repository, but
-one can always download a Sage source tarball or binary
-distribution. You can then run git via the ``sage -git`` command line
-switch. So, for example, ``git help`` becomes ``sage -git help`` and
-so on. Note that the examples in the developer guide will assume that
-you have a system-wide git installation.
+macOS
+    Install the Xcode Command Line Tools.
 
 Some further resources for installation help are:
 
@@ -71,7 +60,7 @@ Your Name and Email
 
 The commit message of any change contains your name and email address
 to acknowledge your contribution and to have a point of contact if
-there are questions in the future; Filling it in is required if you
+there are questions in the future; filling it in is required if you
 want to share your changes. The simplest way to do this is from the
 command line:
 

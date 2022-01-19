@@ -1,5 +1,4 @@
 cimport cython
-from memory_allocator           cimport MemoryAllocator
 from sage.structure.sage_object cimport SageObject
 from .list_of_faces             cimport ListOfFaces
 from .face_data_structure       cimport face_t
@@ -54,7 +53,6 @@ ctypedef iter_s iter_t[1]
 cdef class FaceIterator_base(SageObject):
     cdef iter_t structure
     cdef readonly bint dual         # if 1, then iterate over dual Polyhedron
-    cdef MemoryAllocator _mem
 
     # some copies from ``CombinatorialPolyhedron``
     cdef tuple _Vrep, _facet_names, _equations

@@ -1753,7 +1753,7 @@ class WordGenerator(object):
             sage: words.s_adic(tmword, repeat('a'), [tm,fib])
             word: abbaababbaabbaabbaababbaababbaabbaababba...
 
-        The correspondance of the indices may be given as a dict::
+        The correspondence of the indices may be given as a dict::
 
             sage: words.s_adic(tmword, repeat('a'), {0:tm,1:fib})
             word: abbaababbaabbaabbaababbaababbaabbaababba...

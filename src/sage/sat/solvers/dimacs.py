@@ -517,27 +517,12 @@ class Glucose(DIMACS):
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: solve_sat(F, solver=sage.sat.solvers.Glucose)  # optional - glucose
-            [{k003: 1,
-              k002: 1,
-              k001: 0,
-              k000: 1,
-              s003: 1,
-              s002: 0,
-              s001: 1,
-              s000: 0,
-              w103: 1,
-              w102: 1,
-              w101: 1,
-              w100: 1,
-              x103: 0,
-              x102: 0,
-              x101: 0,
-              x100: 1,
-              k103: 1,
-              k102: 0,
-              k101: 1,
-              k100: 1}]
+            sage: [sol] = solve_sat(F, solver=sage.sat.solvers.Glucose)  # optional - glucose
+            sage: Fsol = F.subs(sol)                                     # optional - glucose
+            sage: Fsol                                                   # optional - glucose
+            Polynomial Sequence with 36 Polynomials in 0 Variables
+            sage: Fsol.reduced()                                         # optional - glucose
+            []
 
         ::
 
@@ -604,27 +589,14 @@ class GlucoseSyrup(DIMACS):
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: solve_sat(F, solver=sage.sat.solvers.GlucoseSyrup)  # optional - glucose
-            [{k003: 1,
-            k002: 1,
-            k001: 0,
-            k000: 1,
-            s003: 1,
-            s002: 0,
-            s001: 1,
-            s000: 0,
-            w103: 1,
-            w102: 1,
-            w101: 1,
-            w100: 1,
-            x103: 0,
-            x102: 0,
-            x101: 0,
-            x100: 1,
-            k103: 1,
-            k102: 0,
-            k101: 1,
-            k100: 1}]
+            sage: [sol] = solve_sat(F, solver=sage.sat.solvers.GlucoseSyrup)  # optional - glucose
+            sage: Fsol = F.subs(sol)                                          # optional - glucose
+            sage: Fsol                                                        # optional - glucose
+            Polynomial Sequence with 36 Polynomials in 0 Variables
+            sage: Fsol.reduced()                                              # optional - glucose
+            []
+
+        ::
 
             sage: from sage.sat.solvers.dimacs import GlucoseSyrup
             sage: solver = GlucoseSyrup()

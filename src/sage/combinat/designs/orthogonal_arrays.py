@@ -1567,7 +1567,7 @@ def OA_n_times_2_pow_c_from_matrix(k,c,G,A,Y,check=True):
 
     - let `s_1` and `s_2` denote the two values of `s` given above, then exactly
       one of `C_{i,s_1} - C_{j,s_1}` and `C_{i,s_2} - C_{j,s_2}` belongs to the
-      `GF(2)`-hyperplane `(Y_i - Y_j) \cdot H` (we implicitely assumed that `Y_i
+      `GF(2)`-hyperplane `(Y_i - Y_j) \cdot H` (we implicitly assumed that `Y_i
       \not= Y_j`).
 
     Under these conditions, it is easy to check that the array whose `k-1` rows

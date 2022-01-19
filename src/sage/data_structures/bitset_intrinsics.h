@@ -29,7 +29,7 @@ const mp_bitcnt_t LIMB_SIZE = sizeof(mp_limb_t);
 #elif __SSE4_1__
     const mp_bitcnt_t ALIGNMENT = 16;
 #else
-    const mp_bitcnt_t ALIGNMENT = 8;
+    const mp_bitcnt_t ALIGNMENT = sizeof(mp_limb_t);
 #endif
 
 // We assume that ``GMP_LIMB_BITS`` is a divisor of 64

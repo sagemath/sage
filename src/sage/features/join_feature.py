@@ -7,7 +7,7 @@ from . import Feature, FeatureTestResult
 
 class JoinFeature(Feature):
     r"""
-    Join of several :class:`sage.features.Feature` instances.
+    Join of several :class:`~sage.features.Feature` instances.
 
     EXAMPLES::
 

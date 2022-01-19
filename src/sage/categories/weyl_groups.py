@@ -1,5 +1,10 @@
 r"""
 Weyl Groups
+
+REFERENCES:
+
+.. [Dye] Dyer. *Bruhat intervals, polyhedral cones and Kazhdan-Lusztig-Stanley polynomials*. Math.Z., 215(2):223-236, 1994.
+.. [JahStu] Jahn and Stump. *Bruhat intervals, subword complexes and brick polyhedra for finite Coxeter groups*. Preprint, available at :arxiv:`2103.03715`, 2021.
 """
 #*****************************************************************************
 #  Copyright (C) 2009    Nicolas M. Thiery <nthiery at users.sf.net>
@@ -150,6 +155,78 @@ class WeylGroups(Category_singleton):
             if hasattr(ct, "PieriFactors"):
                 return ct.PieriFactors(self, *args, **keywords)
             raise NotImplementedError("Pieri factors for type {}".format(ct))
+        
+        def bruhat_cone(self, x, y, side='upper', backend='cdd'):
+            r"""
+            Return the (upper or lower) Bruhat cone associated to the interval ``[x,y]``.
+
+            To a cover relation `v \prec w` in strong Bruhat order you can assign a positive
+            root `\beta` given by the unique reflection `s_\beta` such that `s_\beta v = w`.
+
+            The upper Bruhat cone of the interval `[x,y]` is the non-empty, polyhedral cone generated
+            by the roots corresponding to `x \prec a` for all atoms `a` in the interval.
+            The lower Bruhat cone of the interval `[x,y]` is the non-empty, polyhedral cone generated
+            by the roots corresponding to `c \prec y` for all coatoms `c` in the interval.
+
+            INPUT:
+
+            - ``x`` - an element in the group `W`
+
+            - ``y`` - an element in the group `W`
+
+            - ``side`` (default: ``'upper'``) -- must be one of the following:
+
+              * ``'upper'`` - return the upper Bruhat cone of the interval [``x``, ``y``]
+              * ``'lower'`` - return the lower Bruhat cone of the interval [``x``, ``y``]
+
+            - ``backend`` -- string (default: ``'cdd'``); the backend to use to create the polyhedron
+
+            EXAMPLES::
+
+                sage: W = WeylGroup(['A',2])
+                sage: x = W.from_reduced_word([1])
+                sage: y = W.w0
+                sage: W.bruhat_cone(x, y)
+                A 2-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex and 2 rays
+
+                sage: W = WeylGroup(['E',6])
+                sage: x = W.one()
+                sage: y = W.w0
+                sage: W.bruhat_cone(x, y, side='lower')
+                A 6-dimensional polyhedron in QQ^8 defined as the convex hull of 1 vertex and 6 rays
+
+            TESTS::
+
+                sage: W = WeylGroup(['A',2])
+                sage: x = W.one()
+                sage: y = W.w0
+                sage: W.bruhat_cone(x, y, side='nonsense')
+                Traceback (most recent call last):
+                ...
+                ValueError: side must be either 'upper' or 'lower'
+
+            REFERENCES:
+
+            - [Dye]_
+            - [JahStu]_
+            """
+            from sage.modules.free_module_element import vector
+            if side == 'upper':
+                roots = [vector((x * r * x.inverse()).reflection_to_root().to_ambient())
+                         for z, r in x.bruhat_upper_covers_reflections()
+                         if z.bruhat_le(y)]
+            elif side == 'lower':
+                roots = [vector((y * r * y.inverse()).reflection_to_root().to_ambient())
+                         for z, r in y.bruhat_lower_covers_reflections()
+                         if x.bruhat_le(z)]
+            else:
+                raise ValueError("side must be either 'upper' or 'lower'")
+
+            from sage.geometry.polyhedron.constructor import Polyhedron
+            return Polyhedron(vertices=[vector([0] * self.degree())],
+                              rays=roots,
+                              ambient_dim=self.degree(),
+                              backend=backend)
 
         @cached_method
         def quantum_bruhat_graph(self, index_set=()):

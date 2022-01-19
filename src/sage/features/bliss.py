@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Checks for bliss
+Features for testing the presence of ``bliss``
 """
 from . import CythonFeature, PythonModule
 from .join_feature import JoinFeature
@@ -24,13 +24,13 @@ sig_off()
 
 class BlissLibrary(CythonFeature):
     r"""
-    A :class:`Feature` which describes whether the Bliss library is
+    A :class:`~sage.features.Feature` which describes whether the Bliss library is
     present and functional.
 
     EXAMPLES::
 
         sage: from sage.features.bliss import BlissLibrary
-        sage: BlissLibrary().require()  # optional: libbliss
+        sage: BlissLibrary().require()  # optional - libbliss
     """
 
     def __init__(self):
@@ -48,13 +48,13 @@ class BlissLibrary(CythonFeature):
 
 class Bliss(JoinFeature):
     r"""
-    A :class:`Feature` which describes whether the :mod:`sage.graphs.bliss`
+    A :class:`~sage.features.Feature` which describes whether the :mod:`sage.graphs.bliss`
     module is available in this installation of Sage.
 
     EXAMPLES::
 
         sage: from sage.features.bliss import Bliss
-        sage: Bliss().require()  # optional: bliss
+        sage: Bliss().require()  # optional - bliss
     """
     def __init__(self):
         r"""

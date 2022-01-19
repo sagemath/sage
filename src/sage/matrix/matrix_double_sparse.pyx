@@ -15,6 +15,92 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         <class 'sage.matrix.matrix_double_sparse.Matrix_double_sparse'>
 
     """
+
+    def is_hermitian(self, tolerance=1e-12):
+        r"""
+        Return whether or not the matrix is Hermitian, up to the
+        entry-wise ``tolerance``.
+
+        A matrix is said to be Hermitian if it is equal to its
+        conjugate-transpose. We default to a small but non-zero
+        entry-wise tolerance because, otherwise, numerical issues
+        can cause false negatives (Trac #33023).
+
+        Otherwise this method is identical to the superclass method,
+        which simply defers to :meth:`_is_hermitian`.
+
+        INPUT:
+
+        - ``tolerance`` - a real number; the maximum difference we'll
+          tolerate between entries of the given matrix and its conjugate-
+          transpose.
+
+        OUTPUT:
+
+        A boolean, either ``True`` or ``False``.
+
+        EXAMPLES::
+
+            sage: A = matrix(RDF,
+            ....:            [ [1, 1e-13],
+            ....:              [0, 1    ] ],
+            ....:            sparse=True)
+            sage: A.is_hermitian()
+            True
+
+        TESTS::
+
+            sage: A = matrix.random(CDF, 2, sparse=True)
+            sage: (A*A.conjugate_transpose()).is_hermitian()
+            True
+
+        """
+        return self._is_hermitian(skew=False, tolerance=tolerance)
+
+
+    def is_skew_hermitian(self, tolerance=1e-12):
+        r"""
+        Return whether or not the matrix is skew-Hermitian, up to the
+        entry-wise ``tolerance``.
+
+        A matrix is said to be skew-Hermitian if it is equal to the
+        negation of its conjugate-transpose. We default to a small but
+        non-zero entry-wise tolerance because, otherwise, numerical
+        issues can cause false negatives (Trac #33023).
+
+        Otherwise this method is identical to the superclass method,
+        which simply defers to :meth:`_is_hermitian` (passing
+        ``skew=True``).
+
+        INPUT:
+
+        - ``tolerance`` - a real number; the maximum difference we'll
+          tolerate between entries of the given matrix and the
+          negation of its conjugate-transpose.
+
+        OUTPUT:
+
+        A boolean, either ``True`` or ``False``.
+
+        EXAMPLES::
+
+            sage: A = matrix(RDF,
+            ....:            [ [0, 1e-13],
+            ....:              [0, 0    ] ],
+            ....:            sparse=True)
+            sage: A.is_skew_hermitian()
+            True
+
+        TESTS::
+
+            sage: A = matrix.random(CDF, 2, sparse=True)
+            sage: (A - A.conjugate_transpose()).is_skew_hermitian()
+            True
+
+        """
+        return self._is_hermitian(skew=True, tolerance=tolerance)
+
+
     def cholesky(self):
         r"""
         Returns the Cholesky decomposition of a Hermitian matrix.
@@ -70,10 +156,9 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
 
         Test the properties of a Cholesky factorization using "random"
         symmetric/Hermitian positive-definite matrices. We also
-        compare with the factorizations obtained over ``RR`` or
-        ``CC``, which (when cvxopt is available) use a different
-        implementation. This ensures that both implementations return
-        comparable answers::
+        compare with the dense factorizations, which, when cvxopt is
+        available, use a different implementation. This ensures that
+        both implementations return comparable answers::
 
             sage: n = ZZ.random_element(1,5)
             sage: A = matrix.random(RDF, n, sparse=True)
@@ -82,7 +167,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: L = A.cholesky()
             sage: (A - L*L.T).norm(1) < 1e-10
             True
-            sage: B = A.change_ring(RR)
+            sage: B = A.dense_matrix()
             sage: (B.cholesky() - L).norm(1) < 1e-10
             True
 
@@ -95,7 +180,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             sage: L = A.cholesky()
             sage: (A - L*L.H).norm(1) < 1e-10
             True
-            sage: B = A.change_ring(CC)
+            sage: B = A.dense_matrix()
             sage: (B.cholesky() - L).norm(1) < 1e-10
             True
         """
@@ -105,7 +190,6 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
         if L is not None:
             return L
 
-        # The superclass method does this, so we should too...
         if not self.is_hermitian():
             raise ValueError("matrix is not Hermitian")
 
@@ -116,7 +200,7 @@ cdef class Matrix_double_sparse(Matrix_generic_sparse):
             # handle the case where cvxopt is not present. The
             # superclass method is slow, but no longer raises an
             # error, so let's try that.
-            L = super().cholesky()
+            return super().cholesky()
 
         cdef list idx_pairs = self.nonzero_positions(copy=False)
         cdef list row_idxs = [r for (r, c) in idx_pairs]

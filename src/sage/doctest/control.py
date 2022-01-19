@@ -408,17 +408,6 @@ class DocTestController(SageObject):
                     from sage.features import package_systems
                     options.optional.update(system.name
                                             for system in package_systems())
-
-                    from sage.features.sphinx import Sphinx
-                    doc_features = [feature for feature in [Sphinx()]
-                                    if feature.is_present()]
-                    options.optional.update(feature.name for feature in doc_features)
-
-                    logger = sys.stderr if options.verbose else None
-                    from sage.features.sagemath import sage_features
-                    options.optional.update(feature.name
-                                            for feature in sage_features(logger=logger))
-
                 # Check that all tags are valid
                 for o in options.optional:
                     if not optionaltag_regex.search(o):
@@ -597,7 +586,7 @@ class DocTestController(SageObject):
             ....:     json.dump({'sage.doctest.control':{'walltime':1.0r}}, stats_file)
             sage: DC.load_stats(filename)
             sage: DC.stats['sage.doctest.control']
-            {u'walltime': 1.0}
+            {'walltime': 1.0}
 
         If the file doesn't exist, nothing happens. If there is an
         error, print a message. In any case, leave the stats alone::
@@ -607,7 +596,7 @@ class DocTestController(SageObject):
             Error loading stats from ...
             sage: DC.load_stats(os.path.join(d, "no_such_file"))
             sage: DC.stats['sage.doctest.control']
-            {u'walltime': 1.0}
+            {'walltime': 1.0}
         """
         # Simply ignore non-existing files
         if not os.path.exists(filename):
@@ -636,7 +625,7 @@ class DocTestController(SageObject):
             sage: with open(filename) as f:
             ....:     D = json.load(f)
             sage: D['sage.doctest.control']
-            {u'walltime': 1.0}
+            {'walltime': 1.0}
         """
         from sage.misc.temporary_file import atomic_write
         with atomic_write(filename) as stats_file:

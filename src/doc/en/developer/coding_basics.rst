@@ -152,17 +152,31 @@ Then in the file ``SAGE_ROOT/src/sage/all.py``, add a line ::
 
     from sage.measure_theory.all import *
 
-Non-Python Sage source code and supporting files should be placed in
-appropriate subdirectories of ``SAGE_ROOT/src/sage/ext_data/``. They will then be
-automatically copied to the corresponding subdirectories of
-``SAGE_ROOT/local/share/sage/ext/`` during the build process and can be
-accessed at runtime using ``SAGE_EXTCODE``.  For example, if ``file`` is placed
-in ``SAGE_ROOT/src/sage/ext_data/directory/`` it can be accessed with ::
+Non-Python Sage source code and supporting files can be included in one
+of the following places:
+
+- In the directory of the Python code that uses that file.  When the
+  Sage library is installed, the file will be installed in the same
+  location as the Python code. For example,
+  ``SAGE_ROOT/src/sage/interfaces/maxima.py`` needs to use the file
+  ``SAGE_ROOT/src/sage/interfaces/maxima.lisp`` at runtime, so it refers
+  to it as ::
+
+    os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
+
+- In an appropriate subdirectory of ``SAGE_ROOT/src/sage/ext_data/``.
+  (At runtime, it is then available in the directory indicated by
+  ``SAGE_EXTCODE``).  For example, if ``file`` is placed in
+  ``SAGE_ROOT/src/sage/ext_data/directory/`` it can be accessed with ::
 
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
-``SAGE_EXTCODE`` is used because not all distributions have ``SAGE_ROOT``.
+In both cases, the files must be listed (explicitly or via wildcards) in
+the section ``options.package_data`` of the file
+``SAGE_ROOT/pkgs/sagemath-standard/setup.cfg.m4`` (or the corresponding
+file of another distribution).
+
 
 
 Learn by copy/paste
@@ -1113,7 +1127,7 @@ framework. Here is a comprehensive list:
 
         The following should yield 4.  See :trac:`2`. ::
 
-            sage: 2+2  # optional: bug
+            sage: 2+2  # optional - bug
             5
             sage: 2+2  # known bug
             5

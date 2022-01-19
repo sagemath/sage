@@ -893,7 +893,7 @@ class Singular(ExtraTabCompletion, Expect):
                 gens2.append(self.new(g))
             else:
                 gens2.append(g)
-        return self(",".join([g.name() for g in gens2]), 'ideal')
+        return self(",".join(g.name() for g in gens2), 'ideal')
 
     def list(self, x):
         r"""
@@ -971,18 +971,18 @@ class Singular(ExtraTabCompletion, Expect):
         singular_elements = []
 
         def strify(x):
-           if isinstance(x, (list, tuple, Sequence_generic)):
-              return 'list(' + ','.join([strify(i) for i in x]) + ')'
-           elif isinstance(x, SingularElement):
-              return x.name()
-           elif isinstance(x, (int, sage.rings.integer.Integer)):
-              return repr(x)
-           elif hasattr(x, '_singular_'):
-              e = x._singular_()
-              singular_elements.append(e)
-              return e.name()
-           else:
-              return str(x)
+            if isinstance(x, (list, tuple, Sequence_generic)):
+                return 'list(' + ','.join(strify(i) for i in x) + ')'
+            elif isinstance(x, SingularElement):
+                return x.name()
+            elif isinstance(x, (int, sage.rings.integer.Integer)):
+                return repr(x)
+            elif hasattr(x, '_singular_'):
+                e = x._singular_()
+                singular_elements.append(e)
+                return e.name()
+            else:
+                return str(x)
 
         return self(strify(x), 'list')
 
@@ -1097,16 +1097,16 @@ class Singular(ExtraTabCompletion, Expect):
             3*a
         """
         if len(vars) > 2:
-            s = '; '.join(['if(defined(%s)>0){kill %s;};'%(x,x)
-                           for x in vars[1:-1].split(',')])
+            s = '; '.join('if(defined(%s)>0){kill %s;};' % (x, x)
+                          for x in vars[1:-1].split(','))
             self.eval(s)
 
         if check and isinstance(char, (int, sage.rings.integer.Integer)):
-            if char != 0:
+            if char:
                 n = sage.rings.integer.Integer(char)
                 if not n.is_prime():
                     raise ValueError("the characteristic must be 0 or prime")
-        R = self('%s,%s,%s'%(char, vars, order), 'ring')
+        R = self('%s,%s,%s' % (char, vars, order), 'ring')
         self.eval('short=0')  # make output include *'s for multiplication for *THIS* ring.
         return R
 

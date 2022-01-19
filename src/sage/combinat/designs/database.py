@@ -1484,7 +1484,7 @@ def OA_17_560():
     m     = 16
     n     = p**alpha
 
-    G = GF(p**alpha,prefix='x')
+    G = GF((p, alpha), prefix='x')
     G_set = sorted(G) # sorted by lexicographic order, G[1] = 1
     G_to_int = {v:i for i,v in enumerate(G_set)}
     # Builds an OA(n+1,n) whose last n-1 columns are

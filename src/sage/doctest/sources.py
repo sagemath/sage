@@ -715,7 +715,7 @@ class FileDocTestSource(DocTestSource):
             sage: doctests[18].name
             'sage.doctest.sources.FileDocTestSource.create_doctests'
             sage: doctests[18].examples[10].source
-            u'doctests[Integer(18)].examples[Integer(10)].source\n'
+            'doctests[Integer(18)].examples[Integer(10)].source\n'
 
         TESTS:
 

@@ -766,6 +766,7 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
             rfd.append(fderr)
         if len(rfd) == 0:
             break
+        timeout = float(timeout)
         rlist = select.select(rfd, [], [], timeout)[0]
 
         if len(rlist) == 0:

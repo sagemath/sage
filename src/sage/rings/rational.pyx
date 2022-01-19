@@ -4221,12 +4221,7 @@ cdef class int_to_Q(Morphism):
             sage: f = sage.rings.rational.int_to_Q()
             sage: f(int(4)) # indirect doctest
             4
-            sage: f(4^100)  # py2 - this will crash on Python 3
-            Traceback (most recent call last):
-            ...
-            TypeError: must be a Python int object
         """
-
         cdef Rational rat
 
         if type(a) is not int:

@@ -25,7 +25,9 @@ def is_CommutativeAlgebra(x):
 
     EXAMPLES::
 
-        sage: sage.rings.commutative_algebra.is_CommutativeAlgebra(sage.rings.ring.CommutativeAlgebra(ZZ))
+        sage: from sage.rings.commutative_algebra import is_CommutativeAlgebra
+        sage: from sage.rings.ring import CommutativeAlgebra
+        sage: is_CommutativeAlgebra(CommutativeAlgebra(ZZ))
         True
     """
     return isinstance(x, CommutativeAlgebra)

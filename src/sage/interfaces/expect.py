@@ -1198,7 +1198,7 @@ If this all works, you can then make calls like:
         ::
 
             sage: singular._expect.before.decode('ascii')
-            u'...10\r\n> '
+            '...10\r\n> '
 
         We test interrupting ``_expect_expr`` using the GP interface,
         see :trac:`6661`.  Unfortunately, this test doesn't work reliably using

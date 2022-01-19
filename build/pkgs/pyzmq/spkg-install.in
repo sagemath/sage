@@ -1,11 +1,3 @@
 cd src
-
-# Generate setup.cfg
-cat > setup.cfg <<EOF
-[global]
-zmq_prefix = $SAGE_LOCAL
-no_libzmq_extension = True
-EOF
-
 # Configure and install
 sdh_pip_install .
