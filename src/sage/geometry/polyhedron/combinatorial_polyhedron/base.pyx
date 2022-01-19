@@ -355,7 +355,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         # ``self._length_edges_list*2*sizeof(size_t *)``.
         self._length_edges_list = 16348
 
-    def __init__(self, data, Vrep=None, facets=None, unbounded=False, far_face=None, Vrepr=None):
+    def __init__(self, data, Vrep=None, facets=None, unbounded=False, far_face=None):
         r"""
         Initialize :class:`CombinatorialPolyhedron`.
 
@@ -367,16 +367,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             ....: [0,2,3],[1,2,3]])    # indirect doctest
 
             sage: TestSuite(sage.geometry.polyhedron.combinatorial_polyhedron.base.CombinatorialPolyhedron).run()
-
-            sage: C = CombinatorialPolyhedron(Matrix([[1,0],[0,1]]), Vrepr=['zero', 'one'])
-            doctest:...: DeprecationWarning: the keyword ``Vrepr`` is deprecated; use ``Vrep``
-            See https://trac.sagemath.org/28608 for details.
-
         """
-        if Vrepr:
-            from sage.misc.superseded import deprecation
-            deprecation(28608, "the keyword ``Vrepr`` is deprecated; use ``Vrep``", 3)
-            Vrep = Vrepr
         data_modified = None
 
         if isinstance(data, Polyhedron_base):
@@ -1332,30 +1323,6 @@ cdef class CombinatorialPolyhedron(SageObject):
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
-    def edge_graph(self, names=True):
-        r"""
-        Return the edge graph.
-
-        If ``names`` is set to ``False``, the Vrepresentatives will
-        carry names according to the indexing of the Vrepresentation.
-
-        EXAMPLES::
-
-            sage: P = polytopes.cyclic_polytope(3,5)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.edge_graph()
-            doctest:...: DeprecationWarning: the method edge_graph of CombinatorialPolyhedron is deprecated; use vertex_graph
-            See https://trac.sagemath.org/28603 for details.
-            Graph on 5 vertices
-            sage: G = C.edge_graph()
-            sage: sorted(G.degree())
-            [3, 3, 4, 4, 4]
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(28603, "the method edge_graph of CombinatorialPolyhedron is deprecated; use vertex_graph", 3)
-        from sage.graphs.graph import Graph
-        return Graph(self.edges(names=names), format="list_of_edges")
-
     def ridges(self, add_equations=False, names=True, add_equalities=False):
         r"""
         Return the ridges.
@@ -1582,30 +1549,6 @@ cdef class CombinatorialPolyhedron(SageObject):
             V = list(v[0] for v in V)
         from sage.graphs.graph import Graph
         return Graph([V, E], format="vertices_and_edges")
-
-    def ridge_graph(self, names=True):
-        r"""
-        Return the ridge graph.
-
-        The ridge graph of a polyhedron consists of
-        ridges as edges and facets as vertices.
-
-        If ``names`` is ``False``, the ``vertices`` of the graph  will
-        be the incidences of the facets in the Hrepresentation.
-
-        EXAMPLES::
-
-            sage: P = polytopes.cyclic_polytope(4,6)
-            sage: C = CombinatorialPolyhedron(P)
-            sage: C.ridge_graph()
-            doctest:...: DeprecationWarning: the method ridge_graph of CombinatorialPolyhedron is deprecated; use facet_graph
-            See https://trac.sagemath.org/28604 for details.
-            Graph on 9 vertices
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(28604, "the method ridge_graph of CombinatorialPolyhedron is deprecated; use facet_graph", 3)
-        from sage.graphs.graph import Graph
-        return Graph(self.ridges(names=names), format="list_of_edges")
 
     @cached_method
     def vertex_facet_graph(self, names=True):
