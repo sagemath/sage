@@ -3146,12 +3146,12 @@ class GradedModularFormElement(ModuleElement):
         sage: M(D).parent()
         Ring of Modular Forms for Modular Group SL(2,Z) over Rational Field
 
-    A graded modular form can be initated via a dictionnary or a list::
+    A graded modular form can be initiated via a dictionary or a list::
 
         sage: E4 = ModularForms(1, 4).0
-        sage: M({4:E4, 12:D}) # dictionnary
+        sage: M({4:E4, 12:D})  # dictionary
         1 + 241*q + 2136*q^2 + 6972*q^3 + 16048*q^4 + 35070*q^5 + O(q^6)
-        sage: M([E4, D]) # list
+        sage: M([E4, D])  # list
         1 + 241*q + 2136*q^2 + 6972*q^3 + 16048*q^4 + 35070*q^5 + O(q^6)
 
     Also, when adding two modular forms of different weights, a graded modular form element will be created::
@@ -3218,7 +3218,7 @@ class GradedModularFormElement(ModuleElement):
         """
         forms_dictionary = {}
         if isinstance(forms_datum, dict):
-            for k,f in forms_datum.items():
+            for k, f in forms_datum.items():
                 if isinstance(k, (int, Integer)):
                     k = ZZ(k)
                     if k == 0:
@@ -3505,9 +3505,9 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``c`` - an element of the base ring of self
+        - ``c`` -- an element of the base ring of self
 
-        OUPUT: A ``GradedModularFormElement``.
+        OUTPUT: A ``GradedModularFormElement``.
 
         TESTS::
 

@@ -1974,12 +1974,12 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: get_plot_labels(P1.plot(label_elements=False))
             []
             sage: get_plot_labels(P1.plot(label_elements=True))
-            [u'0', u'1', u'2', u'3', u'4']
+            ['0', '1', '2', '3', '4']
             sage: element_labels = {0:'a', 1:'b', 2:'c', 3:'d', 4:'e'}
             sage: get_plot_labels(P1.plot(element_labels=element_labels))
-            [u'a', u'b', u'c', u'd', u'e']
+            ['a', 'b', 'c', 'd', 'e']
             sage: get_plot_labels(P2.plot(element_labels=element_labels))
-            [u'a', u'b', u'c', u'd', u'e']
+            ['a', 'b', 'c', 'd', 'e']
 
         The following checks that :trac:`18936` has been fixed and labels still work::
 
@@ -7441,9 +7441,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         n = rk(maxi)
         if n == 0:
             return PolynomialRing(ZZ, 'x', 1).one()
-        anneau = PolynomialRing(ZZ, 'x', n+1)
+        anneau = PolynomialRing(ZZ, 'x', n + 1)
         x = anneau.gens()
-        return x[n] * sum(prod(x[rk(i)] for i in ch) for ch in hasse.chains(exclude=[mini, maxi]))
+        return x[n] * sum(prod(x[rk(i)] for i in ch)
+                          for ch in hasse.chains(exclude=[mini, maxi]))
 
     def flag_h_polynomial(self):
         r"""

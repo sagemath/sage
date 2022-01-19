@@ -41,7 +41,7 @@ jobs:
         # This list is different from the one in tox.yml:
         # Trac #31526 switches gcc 4.x-based distributions to using the gcc_spkg configuration factor
         # Trac #32281 removes gcc 4.x-based distributions whose binutils are unusable
-        tox_system_factor: [ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-groovy, ubuntu-hirsute, ubuntu-impish, ubunty-jammy, debian-stretch, debian-buster, debian-bullseye, debian-bookworm, debian-sid, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, linuxmint-20.2. linuxmint-20.3, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, fedora-35, fedora-36,  centos-7-gcc_spkg, centos-8, gentoo-python3.9, gentoo-python3.10, archlinux-latest, opensuse-15, opensuse-15.3, opensuse-tumbleweed, slackware-14.2, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386-gcc_spkg]
+        tox_system_factor: [ubuntu-xenial, ubuntu-bionic, ubuntu-focal, ubuntu-hirsute, ubuntu-impish, ubuntu-jammy, debian-stretch, debian-buster, debian-bullseye, debian-bookworm, debian-sid, linuxmint-18, linuxmint-19, linuxmint-19.3, linuxmint-20.1, linuxmint-20.2. linuxmint-20.3, fedora-26, fedora-27, fedora-28, fedora-29, fedora-30, fedora-31, fedora-32, fedora-33, fedora-34, fedora-35, fedora-36,  centos-7-gcc_spkg, centos-8, gentoo-python3.9, gentoo-python3.10, archlinux-latest, opensuse-15, opensuse-15.3, opensuse-tumbleweed, slackware-14.2, conda-forge, ubuntu-bionic-i386, manylinux-2_24-i686, debian-buster-i386, centos-7-i386-gcc_spkg]
         tox_packages_factor: [maximal]
         targets_pattern: [0-g, h-o, p, q-z]
     env:
@@ -108,81 +108,4 @@ jobs:
           if [ -f .tox/$TOX_ENV/Dockertags ]; then
              cat .tox/$TOX_ENV/Dockertags
           fi
-        if: always()
-
-  local-macos:
-
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      max-parallel: 3
-      matrix:
-        tox_system_factor: [homebrew-macos, conda-forge-macos, homebrew-macos-python3_xcode]
-        tox_packages_factor: [maximal]
-        # As of 2021-03, default xcode is 12.4
-        # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#xcode
-        xcode_version_factor: [default]
-        targets_pattern: [0-g, h-o, p, q-z]
-        os: [ macos-10.15, macos-11.0 ]
-        include:
-          # Test xcode 11.7 only on macos-10.15
-          - tox_system_factor: homebrew-macos
-            tox_packages_factor: maximal
-            xcode_version_factor: 11.7
-            targets_pattern: 0-g
-            os: macos-10.15
-          - tox_system_factor: homebrew-macos
-            tox_packages_factor: maximal
-            xcode_version_factor: 11.7
-            targets_pattern: h-o
-            os: macos-10.15
-          - tox_system_factor: homebrew-macos
-            tox_packages_factor: maximal
-            xcode_version_factor: 11.7
-            targets_pattern: p
-            os: macos-10.15
-          - tox_system_factor: homebrew-macos
-            tox_packages_factor: maximal
-            xcode_version_factor: 11.7
-            targets_pattern: q-z
-            os: macos-10.15
-    env:
-      TOX_ENV: local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}
-      LOGS_ARTIFACT_NAME: logs-commit-${{ github.sha }}-tox-local-${{ matrix.tox_system_factor }}-${{ matrix.tox_packages_factor }}-${{ matrix.os }}-xcode_${{ matrix.xcode_version_factor }}
-      # Test all non-dummy optional packages, but do not test huge packages
-      # and do not test packages that require external software
-      TARGETS_OPTIONAL: "$( echo $(export PATH=build/bin:$PATH && (sage-package list :optional: --has-file spkg-install.in && sage-package list :optional: --has-file spkg-install && sage-package list :optional: --has-file requirements.txt) | grep -v ^_ | grep -v  database_stein_watkins\\$ | grep -v polytopes_db_4d | grep -v cplex | grep -v gurobi | grep '^[${{ matrix.targets_pattern }}]' ) )"
-    steps:
-      - uses: actions/checkout@v2
-      - name: Select Xcode version
-        run: |
-          if [ ${{ matrix.xcode_version_factor }} != default ]; then sudo xcode-select -s /Applications/Xcode_${{ matrix.xcode_version_factor }}.app; fi
-      - name: Install test prerequisites
-        run: |
-          brew install tox
-      - name: Install python3 from python.org
-        # As of 2020-03-30 (https://github.com/actions/virtual-environments/blob/master/images/macos/macos-10.15-Readme.md),
-        # Python 3.7.7 is installed on GitHub Actions runners.  But we install our own copy from the python.org binary package.
-        run: |
-          curl -o python3.pkg https://www.python.org/ftp/python/3.7.7/python-3.7.7-macosx10.9.pkg
-          sudo installer -verbose -pkg python3.pkg -target /
-        if: contains(matrix.tox_system_factor, 'python3_pythonorg')
-      - name: Build and test with tox
-        # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
-        # For doctesting, we use a lower parallelization to avoid timeouts.
-        run: |
-          MAKE="make -j12" tox -e $TOX_ENV -- SAGE_NUM_THREADS=4 $TARGETS
-      - name: Prepare logs artifact
-        run: |
-          mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
-        if: always()
-      - uses: actions/upload-artifact@v1
-        with:
-          path: artifacts
-          name: ${{ env.LOGS_ARTIFACT_NAME }}
-        if: always()
-      - name: Print out logs for immediate inspection
-        # and markup the output with GitHub Actions logging commands
-        run: |
-          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()

@@ -274,7 +274,7 @@ Test all interacts from the Sage interact library::
       show_alt: Checkbox(value=False, description='Altitudes')
       show_ab: Checkbox(value=False, description='Angle Bisectors')
       show_incircle: Checkbox(value=False, description='Incircle')
-      show_euler: Checkbox(value=False, description=u"Euler's Line")
+      show_euler: Checkbox(value=False, description="Euler's Line")
 
     sage: test(interacts.statistics.coin)
     Interactive function <function coin at ...> with 2 widgets

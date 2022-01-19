@@ -344,7 +344,7 @@ if [ -n "$SAGE_LOCAL" ]; then
 fi
 
 if [ -z "$SAGE_REPO_ANONYMOUS" ]; then
-    SAGE_REPO_ANONYMOUS="https://gitlab.com/sagemath/dev/tracmirror.git"
+    SAGE_REPO_ANONYMOUS="https://github.com/sagemath/sagetrac-mirror.git"
     export SAGE_REPO_ANONYMOUS
 fi
 if [ -z "$SAGE_REPO_AUTHENTICATED" ]; then

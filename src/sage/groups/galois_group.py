@@ -408,7 +408,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         This will be the degree of the original number field if `_gc_numbering``
         is ``False``, or the degree of the Galois closure otherwise.
 
-        EXAMPES::
+        EXAMPLES::
 
             sage: R.<x> = ZZ[]
             sage: K.<a> = NumberField(x^5-2)

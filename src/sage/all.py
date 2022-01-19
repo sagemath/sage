@@ -21,6 +21,7 @@ except for the known bad apples::
     sage: allowed = [
     ....:     'IPython', 'prompt_toolkit', 'jedi',     # sage dependencies
     ....:     'threading', 'multiprocessing',  # doctest dependencies
+    ....:     'pytz', 'importlib.resources',   # doctest dependencies
     ....:     '__main__', 'sage.doctest',      # doctesting
     ....:     'signal', 'enum', 'types'        # may appear in Python 3
     ....: ]
@@ -94,6 +95,10 @@ warnings.filterwarnings('ignore', category=DeprecationWarning,
 # Ignore numpy warnings triggered by pythran
 warnings.filterwarnings('ignore', category=DeprecationWarning,
                         module='pythran')
+
+warnings.filterwarnings('ignore', category=DeprecationWarning,
+                        message='The distutils(.sysconfig module| package) is deprecated',
+                        module='Cython|distutils|numpy|sage.env|sage.features')
 
 ################ end setup warnings ###############################
 

@@ -1386,7 +1386,7 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
                 sage: f =   F.monomial(1) + 2 * F.monomial(2)
                 sage: g = 2*G.monomial(3) +     G.monomial(4)
                 sage: latex(tensor([f, g])) # indirect doctest
-                2x_{1} \otimes y_{3} + x_{1} \otimes y_{4} + 4x_{2} \otimes y_{3} + 2x_{2} \otimes y_{4}
+                2 x_{1} \otimes y_{3} + x_{1} \otimes y_{4} + 4 x_{2} \otimes y_{3} + 2 x_{2} \otimes y_{4}
             """
             symb = " \\otimes "
             return symb.join(module._latex_term(t) for (module, t) in zip(self._sets, term))

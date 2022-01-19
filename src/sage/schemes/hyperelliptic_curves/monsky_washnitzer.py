@@ -2530,7 +2530,7 @@ class SpecialHyperellipticQuotientElement(CommutativeAlgebraElement):
             sage: E = HyperellipticCurve(x^5-3*x+1)
             sage: x,y = E.monsky_washnitzer_gens()
             sage: (x+3*y)._latex_()
-            '3y1 + x'
+            '3y 1 + x'
         """
         x = PolynomialRing(QQ, 'x').gen(0)
         coeffs = self._f.list()

@@ -1,0 +1,4 @@
+$(PYTHON) pluggy packaging attrs py pyparsing importlib_metadata | $(PYTHON_TOOLCHAIN)
+
+----------
+All lines of this file are ignored except the first.

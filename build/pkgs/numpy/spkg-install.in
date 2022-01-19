@@ -1,3 +1,4 @@
+# -*- shell-script -*-
 cd src
 
 set -e
@@ -39,6 +40,7 @@ fi
 
 ################################################
 
-eval sdh_pip_install \
+# Trac #33138: numpy is a PEP 517 package, so the crucial "--build-option"s would be ignored.
+eval sdh_pip_install --no-use-pep517 \
      $(eval sdh_prefix_args "--build-option" build ${NUMPY_CONFIG} ${NUMPY_FCONFIG}) \
      .

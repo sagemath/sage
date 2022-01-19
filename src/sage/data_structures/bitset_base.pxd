@@ -262,7 +262,7 @@ cdef inline void bitset_copy_flex(fused_bitset_t dst, fused_bitset_t src):
     We assume ``dst.limbs >= src.limbs``.
     """
     mpn_copyi(dst.bits, src.bits, src.limbs)
-    mpn_zero(dst.bits+src.limbs, src.limbs-dst.limbs)
+    mpn_zero(dst.bits + src.limbs, dst.limbs - src.limbs)
     if fused_bitset_t is sparse_bitset_t:
         dst.non_zero_chunks_are_initialized = False
 

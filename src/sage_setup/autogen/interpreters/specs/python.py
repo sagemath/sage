@@ -47,7 +47,7 @@ class MemoryChunkPythonArguments(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkPythonArguments('args', ty_python)
             sage: mc.init_class_members()
-            u"        count = args['args']\n        self._n_args = count\n"
+            "        count = args['args']\n        self._n_args = count\n"
         """
         return je(ri(8,
             """
@@ -133,7 +133,7 @@ class MemoryChunkPyConstant(MemoryChunk):
             sage: from sage_setup.autogen.interpreters import *
             sage: mc = MemoryChunkPyConstant('domain')
             sage: mc.init_class_members()
-            u"        self._domain = args['domain']\n"
+            "        self._domain = args['domain']\n"
         """
         return je(ri(8,
             """

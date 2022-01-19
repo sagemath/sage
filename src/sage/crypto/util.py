@@ -350,7 +350,7 @@ def carmichael_lambda(n):
     Here, we verify Carmichael's theorem. ::
 
         sage: from sage.crypto.util import carmichael_lambda
-        sage: n = randint(1, 1000)
+        sage: n = randint(2, 1000)
         sage: c = carmichael_lambda(n)
         sage: ZnZ = IntegerModRing(n)
         sage: M = ZnZ.list_of_elements_of_multiplicative_group()

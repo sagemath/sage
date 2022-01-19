@@ -1454,10 +1454,10 @@ def OrthogonalDualPolarGraph(e, d, q):
         sage: G = graphs.OrthogonalDualPolarGraph(1,3,2)
         sage: G.is_distance_regular(True)
         ([7, 6, 4, None], [None, 1, 3, 7])
-        sage: G = graphs.OrthogonalDualPolarGraph(0,3,3)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.OrthogonalDualPolarGraph(0,3,3) # long time
+        sage: G.is_distance_regular(True) # long time
         ([39, 36, 27, None], [None, 1, 4, 13])
-        sage: G.order()
+        sage: G.order() # long time
         1120
 
     REFERENCES:
@@ -1469,8 +1469,8 @@ def OrthogonalDualPolarGraph(e, d, q):
         sage: G = graphs.OrthogonalDualPolarGraph(0,3,2)
         sage: G.is_distance_regular(True)
         ([14, 12, 8, None], [None, 1, 3, 7])
-        sage: G = graphs.OrthogonalDualPolarGraph(-1,3,2)
-        sage: G.is_distance_regular(True)
+        sage: G = graphs.OrthogonalDualPolarGraph(-1,3,2) # long time
+        sage: G.is_distance_regular(True) # long time
         ([28, 24, 16, None], [None, 1, 3, 7])
         sage: G = graphs.OrthogonalDualPolarGraph(1,3,4)
         sage: G.is_distance_regular(True)

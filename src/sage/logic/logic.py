@@ -155,11 +155,11 @@ class SymbolicLogic:
                'a',
                'CPAREN',
                'CPAREN'],
-              {'a': 'False', 'b': 'False', 'c': 'True'},
+              {'a': 'True', 'b': 'False', 'c': 'False'},
               ['a', 'b', 'c']],
              ['False', 'False', 'True', 'False'],
              ['False', 'True', 'False', 'True'],
-             ['False', 'True', 'True', 'True'],
+             ['False', 'True', 'True', 'False'],
              ['True', 'False', 'False', 'False']]
 
         .. NOTE::
@@ -167,6 +167,16 @@ class SymbolicLogic:
             When sent with no start or end parameters this is an
             exponential time function requiring `O(2^n)` time, where
             `n` is the number of variables in the logic expression
+
+        TESTS:
+
+        Verify that :trac:`32676` is fixed::
+
+            sage: s = log.statement("a&b|!(c|a)")
+            sage: copy_s2 = copy(s[2])
+            sage: t = log.truthtable(s)
+            sage: s[2] == copy_s2
+            True
         """
         global vars, vars_order
         toks, vars, vars_order = statement
@@ -174,11 +184,10 @@ class SymbolicLogic:
             end = 2 ** len(vars)
         table = [statement]
         keys = vars_order
-        keys.reverse()
         for i in range(start,end):
             j = 0
             row = []
-            for key in keys:
+            for key in reversed(keys):
                 bit = get_bit(i, j)
                 vars[key] = bit
                 j += 1
@@ -224,19 +233,29 @@ class SymbolicLogic:
 
             sage: t = log.truthtable(s, 1, 5)
             sage: log.print_table(t)
-            a     | b     | c     | value | value |
-            ----------------------------------------
-            False | False | False | True  | True  |
-            False | False | True  | False | False |
-            False | False | True  | True  | False |
-            False | True  | False | False | True  |
+            a     | b     | c     | value |
+            --------------------------------
+            False | False | True  | False |
+            False | True  | False | True  |
+            False | True  | True  | False |
+            True  | False | False | False |
+
+        TESTS:
+
+        Verify that :trac:`32676` is fixed::
+
+            sage: table = log.truthtable(log.statement("A->B"))
+            sage: table_copy = table.copy()
+            sage: log.print_table(table)
+            ...
+            sage: table_copy == table
+            True
         """
         statement = table[0]
-        del table[0]
-        vars_order = statement[2]
+        table = table[1:]
+        vars_order = statement[2].copy()
         vars_len = []
         line = s = ""
-        vars_order.reverse()
         vars_order.append('value')
         for var in vars_order:
             vars_len.append(len(var))

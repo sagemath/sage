@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: SageMath
+abstract: SageMath is a free open-source mathematics software system.
+authors:
+- name: "The SageMath Developers"
+version: 9.5
+doi: 10.5281/zenodo.593563
+date-released: 2022-01-18
+repository-code: "https://github.com/sagemath/sage"
+url: "https://www.sagemath.org/"

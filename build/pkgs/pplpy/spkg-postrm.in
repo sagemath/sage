@@ -1,3 +1,0 @@
-# Delete pplpy's documentation
-echo Remove $SAGE_SHARE/doc/pplpy directory.
-rm -rf $SAGE_SHARE/doc/pplpy

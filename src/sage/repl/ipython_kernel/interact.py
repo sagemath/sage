@@ -19,9 +19,9 @@ EXAMPLES::
     ....: def f(x=(0,10)):
     ....:     pass
     Interactive function <function f at ...> with 1 widget
-      x: IntSlider(value=5, description=u'x', max=10)
+      x: IntSlider(value=5, description='x', max=10)
     sage: f.widget.children
-    (IntSlider(value=5, description=u'x', max=10), Output())
+    (IntSlider(value=5, description='x', max=10), Output())
 """
 
 # ****************************************************************************
@@ -58,9 +58,9 @@ class sage_interactive(interactive):
         sage: def myfunc(x=10, y="hello", z=None): pass
         sage: sage_interactive(myfunc, x=(0,100), z=["one", "two", "three"])
         Interactive function <function myfunc at ...> with 3 widgets
-          x: IntSlider(value=10, description=u'x')
-          y: Text(value=u'hello', description=u'y')
-          z: Dropdown(description=u'z', options=('one', 'two', 'three'), value=None)
+          x: IntSlider(value=10, description='x')
+          y: Text(value='hello', description='y')
+          z: Dropdown(description='z', options=('one', 'two', 'three'), value=None)
     """
     def __init__(*args, **kwds):
         """
@@ -159,12 +159,12 @@ class sage_interactive(interactive):
 
             sage: from sage.repl.ipython_kernel.interact import sage_interactive
             sage: sage_interactive.widget_from_single_value("sin(x)")
-            Text(value=u'sin(x)')
+            Text(value='sin(x)')
             sage: sage_interactive.widget_from_single_value(sin(x))
-            EvalText(value=u'sin(x)')
+            EvalText(value='sin(x)')
             sage: from sage.plot.colors import Color
             sage: sage_interactive.widget_from_single_value(matrix([[1, 2], [3, 4]]))
-            Grid(value=[[1, 2], [3, 4]], children=(Label(value=u''), VBox(children=(EvalText(value=u'1', layout=Layout(max_width=u'5em')), EvalText(value=u'3', layout=Layout(max_width=u'5em')))), VBox(children=(EvalText(value=u'2', layout=Layout(max_width=u'5em')), EvalText(value=u'4', layout=Layout(max_width=u'5em'))))))
+            Grid(value=[[1, 2], [3, 4]], children=(Label(value=''), VBox(children=(EvalText(value='1', layout=Layout(max_width='5em')), EvalText(value='3', layout=Layout(max_width='5em')))), VBox(children=(EvalText(value='2', layout=Layout(max_width='5em')), EvalText(value='4', layout=Layout(max_width='5em'))))))
             sage: sage_interactive.widget_from_single_value(Color('cornflowerblue'))
             SageColorPicker(value='#6495ed')
         """
@@ -199,7 +199,7 @@ class sage_interactive(interactive):
             sage: sage_interactive.widget_from_tuple( (0, 10) )
             IntSlider(value=5, max=10)
             sage: sage_interactive.widget_from_tuple( ("number", (0, 10)) )
-            IntSlider(value=5, description=u'number', max=10)
+            IntSlider(value=5, description='number', max=10)
             sage: sage_interactive.widget_from_tuple( (3, (0, 10)) )
             IntSlider(value=3, max=10)
             sage: sage_interactive.widget_from_tuple((2, dict(one=1, two=2, three=3)))

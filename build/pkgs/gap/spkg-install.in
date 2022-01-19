@@ -80,8 +80,8 @@ chmod +x "$SAGE_DESTDIR$SAGE_BIN/gap"
 
 # Create symlinks under $GAP_ROOT for these executables, as they are expected
 # (especially when building kernel packages) to exist
-ln -sf "$SAGE_BIN/gap-bin" "$DESTDIR_GAP_ROOT/gap"
-ln -sf "$SAGE_BIN/gac" "$DESTDIR_GAP_ROOT/gac"
+ln -sf "../../bin/gap-bin" "$DESTDIR_GAP_ROOT/gap"
+ln -sf "../../bin/gac" "$DESTDIR_GAP_ROOT/gac"
 
 # Fix the $GAP_ROOT/bin/<arch>/src symlink to be relative (otherwise it links
 # to the actual path of the sources GAP was compiled from)

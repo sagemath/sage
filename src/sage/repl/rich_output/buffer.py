@@ -17,7 +17,7 @@ EXAMPLES::
     sage: buf = OutputBuffer('this is the buffer content');  buf
     buffer containing 26 bytes
     sage: buf.get().decode('ascii')
-    u'this is the buffer content'
+    'this is the buffer content'
     sage: type(buf.get()) is bytes
     True
 """
@@ -173,10 +173,10 @@ class OutputBuffer(SageObject):
 
             sage: from sage.repl.rich_output.buffer import OutputBuffer
             sage: c = OutputBuffer('test1234').get(); c.decode('ascii')
-            u'test1234'
+            'test1234'
             sage: type(c) is bytes
             True
-            sage: c = OutputBuffer(u'été').get()
+            sage: c = OutputBuffer('été').get()
             sage: type(c) is bytes
             True
         """
@@ -198,9 +198,9 @@ class OutputBuffer(SageObject):
 
             sage: from sage.repl.rich_output.buffer import OutputBuffer
             sage: OutputBuffer('test1234').get().decode('ascii')
-            u'test1234'
+            'test1234'
             sage: OutputBuffer('test1234').get_unicode()
-            u'test1234'
+            'test1234'
         """
         return self.get().decode('utf-8')
 
@@ -226,11 +226,10 @@ class OutputBuffer(SageObject):
             'test1234'
             sage: type(c) is str
             True
-            sage: c = OutputBuffer(u'été').get_str()
+            sage: c = OutputBuffer('été').get_str()
             sage: type(c) is str
             True
         """
-
         return self.get_unicode()
 
     def filename(self, ext=None):

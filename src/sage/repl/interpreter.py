@@ -697,11 +697,11 @@ class SageCrashHandler(IPAppCrashHandler):
             sage: sch = SageCrashHandler(app); sch
             <sage.repl.interpreter.SageCrashHandler object at 0x...>
             sage: sorted(sch.info.items())
-            [('app_name', u'Sage'),
+            [('app_name', 'Sage'),
              ('bug_tracker', 'http://trac.sagemath.org'),
              ('contact_email', 'sage-support@googlegroups.com'),
              ('contact_name', 'sage-support'),
-             ('crash_report_fname', u'Crash_report_Sage.txt')]
+             ('crash_report_fname', 'Crash_report_Sage.txt')]
         """
         contact_name = 'sage-support'
         contact_email = 'sage-support@googlegroups.com'
@@ -712,7 +712,7 @@ class SageCrashHandler(IPAppCrashHandler):
 
 
 class SageTerminalApp(TerminalIPythonApp):
-    name = u'Sage'
+    name = 'Sage'
     crash_handler_class = SageCrashHandler
 
     test_shell = Bool(False, help='Whether the shell is a test shell')

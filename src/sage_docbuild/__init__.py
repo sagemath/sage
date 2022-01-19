@@ -1732,7 +1732,7 @@ def main():
             logger.error('''
     Note: incremental documentation builds sometimes cause spurious
     error messages. To be certain that these are real errors, run
-    "make doc-clean" first and try again.''')
+    "make doc-clean doc-uninstall" first and try again.''')
 
     sys.excepthook = excepthook
 

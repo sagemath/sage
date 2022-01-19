@@ -396,7 +396,7 @@ class kRegularSequenceSpace(RecognizableSeriesSpace):
           The recurrence relations above uniquely determine a `k`-regular sequence;
           see [HKL2021]_ for further information.
 
-        - ``function`` -- symbolic function ``f`` occuring in the equations
+        - ``function`` -- symbolic function ``f`` occurring in the equations
 
         - ``var`` -- symbolic variable (``n`` in the above description of ``equations``)
 

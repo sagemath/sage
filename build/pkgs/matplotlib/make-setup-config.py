@@ -9,8 +9,7 @@ config.set('directories', 'basedirlist', os.environ['SAGE_LOCAL'])
 
 config.add_section('libs')
 config.set('libs', 'system_freetype', 'True')
-if pkgconfig.installed('qhull', '>= 7.2.0'):
-    config.set('libs', 'system_qhull', 'True')
+config.set('libs', 'system_qhull', 'True')
 # lto is problematic if we mix libraries from the OS with our own libraries,
 # which are not necessarily compiled with the same gcc version
 # https://trac.sagemath.org/ticket/27754
@@ -38,5 +37,5 @@ config.add_section('gui_support')
 for backend in ('gtk', 'gtkagg', 'tkagg', 'wxagg', 'macosx', 'windowing'):
     config.set('gui_support', backend,  graphical_backend)
 
-with open('src/setup.cfg', 'w') as configfile:
+with open('src/mplsetup.cfg', 'w') as configfile:
     config.write(configfile)

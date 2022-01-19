@@ -97,6 +97,8 @@ AC_ARG_WITH([sage-venv],
             [SAGE_VENV="auto"])
 AC_SUBST([SAGE_VENV])
 
+AC_SUBST([SAGE_DOCS], ['${SAGE_LOCAL}'])dnl Quoted so that it is resolved at build time by shell/Makefile
+
 #---------------------------------------------------------
 
 AC_ARG_ENABLE([build-as-root],
@@ -455,7 +457,7 @@ AC_ARG_ENABLE([cvxopt],
 AC_ARG_ENABLE([notebook],
   AS_HELP_STRING([--disable-notebook],
                  [disable build of the Jupyter notebook and related packages]), [
-    for pkg in notebook nbconvert sagenb_export nbformat terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi; do
+    for pkg in notebook nbconvert sagenb_export nbformat nbclient terminado send2trash prometheus_client mistune pandocfilters bleach defusedxml jsonschema jupyter_jsmol argon2_cffi; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
   ])
@@ -472,6 +474,17 @@ AC_ARG_ENABLE([r],
     for pkg in r rpy2 r_jupyter pcre; do
       AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
     done
+  ])
+
+AC_ARG_ENABLE([doc],
+  AS_HELP_STRING([--disable-doc],
+                 [disable build of the Sage documentation and packages depending on it]), [
+    dnl Disable packages needed for docbuilding
+    for pkg in sage_docbuild alabaster babel snowballstemmer imagesize sphinx sphinxcontrib_devhelp sphinxcontrib_jsmath sphinxcontrib_serializinghtml sphinxcontrib_applehelp sphinxcontrib_htmlhelp sphinxcontrib_qthelp sphinxcontrib_websupport; do
+      AS_VAR_SET([SAGE_ENABLE_$pkg], [$enableval])
+    done
+    dnl Disable the docbuild by disabling the install tree for documentation
+    AS_VAR_SET([SAGE_DOCS], [])
   ])
 
 AC_ARG_ENABLE([sagelib],

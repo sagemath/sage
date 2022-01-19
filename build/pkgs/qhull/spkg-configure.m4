@@ -19,8 +19,11 @@ SAGE_SPKG_CONFIGURE([qhull], [
                ], [
                   AC_MSG_RESULT([no. Install qhull])
                   sage_spkg_install_qhull=yes
-               ]) dnl CHECK_HEADER
-     ]) dnl COMPARE_VERSION
+               ]), dnl CHECK_HEADER
+           ], [
+               AC_MSG_RESULT([no. Install qhull])
+               sage_spkg_install_qhull=yes
+           ]) dnl AX_COMPARE_VERSION
     ]) dnl IF
     m4_popdef([SAGE_QHULL_MINVER])
 ])

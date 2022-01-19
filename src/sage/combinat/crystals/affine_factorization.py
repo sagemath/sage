@@ -184,7 +184,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
         """
         return "Crystal on affine factorizations of type A{} associated to {}".format(self.n-1, self.w)
 
-    # temporary workaround while an_element is overriden by Parent
+    # temporary workaround while an_element is overridden by Parent
     _an_element_ = EnumeratedSets.ParentMethods._an_element_
 
     @lazy_attribute

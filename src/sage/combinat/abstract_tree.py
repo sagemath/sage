@@ -1454,12 +1454,12 @@ class AbstractTree(object):
                 (a) edge (b) edge (e);
             \end{tikzpicture}}
         """
-        ###############################################################################
+        #######################################################################
         # load tikz in the preamble for *view*
         from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available("tikz")
-        ###############################################################################
-        # latex environnement : TikZ
+        #######################################################################
+        # latex environment : TikZ
         begin_env = "\\begin{tikzpicture}[auto]\n"
         end_env = "\\end{tikzpicture}"
         # it uses matrix trick to place each node

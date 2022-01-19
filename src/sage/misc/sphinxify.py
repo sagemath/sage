@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*
+# sage.doctest: optional - sphinx
 r"""
 Process docstrings with Sphinx
 

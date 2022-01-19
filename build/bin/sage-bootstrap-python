@@ -30,6 +30,9 @@ fi
 # is accessible by this python; this is to guard on Cygwin against Pythons
 # installed somewhere else in Windows.
 
+# Trac #29285: Do not accept pythons that manipulate PATH, such as
+# the shims provided by pyenv.
+
 # Trac #30008: Make it work even if the environment tries to sabotage UTF-8
 # operation in Python 3.0.x-3.6.x by setting LC_ALL=C or similar.
 
@@ -47,7 +50,7 @@ PYTHONS="python python3 python3.10 python3.9 python3.8 python3.7 python2.7 pytho
 for PY in $PYTHONS; do
     PYTHON="$(PATH="$SAGE_ORIG_PATH" command -v $PY)"
     if [ -n "$PYTHON" ]; then
-        if "$PYTHON" -c "import argparse; import urllib; from hashlib import sha1; from ssl import HAS_SNI; assert HAS_SNI; from os import listdir; listdir(\"$(pwd)\");" 2>/dev/null; then
+        if CHECK_PATH="$PATH" "$PYTHON" -c "import argparse; import urllib; from hashlib import sha1; from ssl import HAS_SNI; assert HAS_SNI; from os import listdir, environ; listdir(\"$(pwd)\"); assert environ[\"PATH\"] == environ[\"CHECK_PATH\"];" 2>/dev/null; then
             exec "$PYTHON" "$@"
         fi
     fi
@@ -56,10 +59,10 @@ done
 for PY in $PYTHONS; do
     PYTHON="$(PATH="$SAGE_ORIG_PATH" command -v $PY)"
     if [ -n "$PYTHON" ]; then
-        if "$PYTHON" -c "import argparse; import urllib; from hashlib import sha1; from os import listdir; listdir(\"$(pwd)\");" 2>/dev/null; then
+        if CHECK_PATH="$PATH" "$PYTHON" -c "import argparse; import urllib; from hashlib import sha1; from os import listdir, environ; listdir(\"$(pwd)\"); assert environ[\"PATH\"] == environ[\"CHECK_PATH\"];" 2>/dev/null; then
             exec "$PYTHON" "$@"
         fi
     fi
 done
-echo >&2 "$0: error: none of $PYTHONS is a suitable Python with urllib"
+echo >&2 "$0: error: none of $PYTHONS is a suitable Python"
 exit 1

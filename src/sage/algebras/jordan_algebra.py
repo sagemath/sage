@@ -392,7 +392,7 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 sage: J = JordanAlgebra(F)
                 sage: a,b,c = map(J, F.gens())
                 sage: latex(a + 2*b - c)
-                x_{0} + 2x_{1} - x_{2}
+                x_{0} + 2 x_{1} - x_{2}
             """
             from sage.misc.latex import latex
             return latex(self._x)

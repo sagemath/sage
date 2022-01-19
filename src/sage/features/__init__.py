@@ -56,7 +56,7 @@ import os
 import shutil
 
 from sage.env import SAGE_SHARE
-from sage.misc.lazy_string import lazy_string
+
 
 class TrivialClasscallMetaClass(type):
     """
@@ -229,28 +229,25 @@ class Feature(TrivialUniqueRepresentation):
 
         OUTPUT:
 
-        A string, a lazy string, or ``None``.  The default implementation always
-        returns a lazy string.
+        A string.
 
         EXAMPLES::
 
             sage: from sage.features import Executable
             sage: Executable(name="CSDP", spkg="csdp", executable="theta", url="https://github.com/dimpase/csdp").resolution()  # optional - sage_spkg
-            l'...To install CSDP...you can try to run...sage -i csdp...Further installation instructions might be available at https://github.com/dimpase/csdp.'
+            '...To install CSDP...you can try to run...sage -i csdp...Further installation instructions might be available at https://github.com/dimpase/csdp.'
         """
-        def find_resolution():
-            if self._cache_resolution is not None:
-                return self._cache_resolution
-            lines = []
-            if self.spkg:
-                for ps in package_systems():
-                    lines.append(ps.spkg_installation_hint(self.spkg, feature=self.name))
-            if self.url:
-                lines.append("Further installation instructions might be available at {url}.".format(url=self.url))
-            self._cache_resolution = "\n".join(lines)
+        if self._cache_resolution is not None:
             return self._cache_resolution
+        lines = []
+        if self.spkg:
+            for ps in package_systems():
+                lines.append(ps.spkg_installation_hint(self.spkg, feature=self.name))
+        if self.url:
+            lines.append("Further installation instructions might be available at {url}.".format(url=self.url))
+        self._cache_resolution = "\n".join(lines)
+        return self._cache_resolution
 
-        return lazy_string(find_resolution)
 
 
 class FeatureNotPresentError(RuntimeError):
@@ -272,7 +269,13 @@ class FeatureNotPresentError(RuntimeError):
     def __init__(self, feature, reason=None, resolution=None):
         self.feature = feature
         self.reason = reason
-        self.resolution = resolution or feature.resolution()
+        self._resolution = resolution
+
+    @property
+    def resolution(self):
+        if self._resolution:
+            return self._resolution
+        return self.feature.resolution()
 
     def __str__(self):
         r"""
@@ -290,8 +293,9 @@ class FeatureNotPresentError(RuntimeError):
         lines = ["{feature} is not available.".format(feature=self.feature.name)]
         if self.reason:
             lines.append(self.reason)
-        if self.resolution:
-            lines.append(str(self.resolution))
+        resolution = self.resolution
+        if resolution:
+            lines.append(str(resolution))
         return "\n".join(lines)
 
 
@@ -342,7 +346,13 @@ class FeatureTestResult(object):
         self.feature = feature
         self.is_present = is_present
         self.reason = reason
-        self.resolution = resolution or feature.resolution()
+        self._resolution = resolution
+
+    @property
+    def resolution(self):
+        if self._resolution:
+            return self._resolution
+        return self.feature.resolution()
 
     def __bool__(self):
         r"""
@@ -544,7 +554,7 @@ class StaticFile(Feature):
         """
         for directory in self.search_path:
             path = os.path.join(directory, self.filename)
-            if os.path.isfile(path):
+            if os.path.isfile(path) or os.path.isdir(path):
                 return os.path.abspath(path)
         raise FeatureNotPresentError(self,
             reason="{filename!r} not found in any of {search_path}".format(filename=self.filename, search_path=self.search_path),

@@ -221,7 +221,11 @@ save () {
 	environment.yml \
 	src/environment.yml \
 	environment-optional.yml \
-	src/environment-optional.yml
+	src/environment-optional.yml \
+	src/Pipfile \
+	src/pyproject.toml \
+	src/requirements.txt \
+	src/setup.cfg
 
     # Update version
     echo "$NEWCONFVERSION" >$PKG/package-version.txt
