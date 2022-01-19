@@ -3419,7 +3419,10 @@ class Polytopes():
     # --------------------------------------------------------
     # imports from other files
     # --------------------------------------------------------
-    associahedron = staticmethod(Associahedron)
+    try:
+        associahedron = staticmethod(Associahedron)
+    except ImportError:
+        pass
 
     try:
         flow_polytope = staticmethod(DiGraph.flow_polytope)
