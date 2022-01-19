@@ -2984,7 +2984,7 @@ class MagmaGBDefaultContext:
             0
         """
         if magma is None:
-            from sage.interfaces.all import magma as magma_default
+            from sage.interfaces.magma import magma as magma_default
             magma = magma_default
 
         self.magma = magma

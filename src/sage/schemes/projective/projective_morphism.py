@@ -64,7 +64,7 @@ import sys
 
 from sage.arith.all import gcd, lcm
 
-from sage.interfaces.all import singular
+from sage.interfaces.singular import singular
 
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_method

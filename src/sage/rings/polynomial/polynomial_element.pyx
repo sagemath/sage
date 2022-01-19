@@ -81,7 +81,7 @@ from sage.structure.factorization import Factorization
 from sage.structure.richcmp cimport (richcmp, richcmp_item,
         rich_to_bool, rich_to_bool_sgn)
 
-from sage.libs.all import pari, pari_gen, PariError
+from sage.libs.pari.all import pari, pari_gen, PariError
 
 cimport sage.rings.abc
 from sage.rings.real_mpfr import RealField, RR

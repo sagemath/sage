@@ -127,7 +127,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.cachefunc import cached_method
 
 from sage.arith.misc import binomial
-from sage.interfaces.all import singular
+from sage.interfaces.singular import singular
 from builtins import sum as add
 
 from sage.categories.fields import Fields

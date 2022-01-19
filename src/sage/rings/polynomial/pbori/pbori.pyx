@@ -218,7 +218,7 @@ from sage.categories.action cimport Action
 from sage.monoids.monoid import Monoid_class
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.interfaces.all import singular as singular_default
+from sage.interfaces.singular import singular as singular_default
 from sage.interfaces.singular import SingularElement
 
 order_dict = {"lp": pblp,

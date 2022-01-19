@@ -57,8 +57,8 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.algebras.quatalg.all import QuaternionAlgebra
 from sage.quadratic_forms.all import QuadraticForm
 from sage.graphs.all import Graph
-from sage.libs.all import pari
-from sage.interfaces.all import magma
+from sage.libs.pari.all import pari
+from sage.interfaces.magma import magma
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.colors", "rainbow")
 from sage.rings.number_field.all import NumberField

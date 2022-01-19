@@ -99,7 +99,7 @@ from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
 
 from sage.rings.real_double import RDF
-from sage.interfaces.all import gap
+from sage.interfaces.gap import gap
 from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.polygon", "polygon")

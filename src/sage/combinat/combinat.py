@@ -158,7 +158,7 @@ from sage.rings.infinity import infinity
 from sage.arith.all import bernoulli, factorial
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.libs.all import pari
+from sage.libs.pari.all import pari
 from sage.misc.prandom import randint
 from sage.misc.misc_c import prod
 from sage.misc.cachefunc import cached_function

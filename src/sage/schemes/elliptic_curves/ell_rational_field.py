@@ -93,7 +93,7 @@ import sage.matrix.all as matrix
 from sage.libs.pari.all import pari
 from sage.functions.gamma import gamma_inc
 from math import sqrt
-from sage.interfaces.all import gp
+from sage.interfaces.gp import gp
 from sage.misc.cachefunc import cached_method
 from copy import copy
 
@@ -471,9 +471,9 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             Regulator = 95.98037...
         """
         if not options:
-            from sage.interfaces.all import mwrank
+            from sage.interfaces.mwrank import mwrank
         else:
-            from sage.interfaces.all import Mwrank
+            from sage.interfaces.mwrank import Mwrank
             mwrank = Mwrank(options=options)
         return mwrank(list(self.a_invariants()))
 
@@ -1544,7 +1544,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         elif algorithm == 'magma':
             if leading_coefficient:
                 raise NotImplementedError("Cannot compute leading coefficient using magma")
-            from sage.interfaces.all import magma
+            from sage.interfaces.magma import magma
             return rings.Integer(magma(self).AnalyticRank())
         elif algorithm == 'zero_sum':
             if leading_coefficient:
@@ -1970,7 +1970,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: EllipticCurve('681b').three_selmer_rank(algorithm='Heuristic')   # long time (10 seconds); optional - magma
             2
         """
-        from sage.interfaces.all import magma
+        from sage.interfaces.magma import magma
         E = magma(self)
         return Integer(E.ThreeSelmerGroup(MethodForFinalStep = magma('"%s"'%algorithm)).Ngens())
 
@@ -3753,7 +3753,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
                     from sage.lfunctions.all import sympow
                     m = sympow.modular_degree(self)
                 elif algorithm == 'magma':
-                    from sage.interfaces.all import magma
+                    from sage.interfaces.magma import magma
                     m = rings.Integer(magma(self).ModularDegree())
                 else:
                     raise ValueError("unknown algorithm %s"%algorithm)
