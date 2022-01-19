@@ -7240,10 +7240,30 @@ cdef int sizeof_Integer
 
 # We use a global Integer element to steal all the references
 # from. DO NOT INITIALIZE IT AGAIN and DO NOT REFERENCE IT!
-#
-# Use actual calculation to avoid libgmp's new lazy allocation :trac:`31340`
 cdef Integer global_dummy_Integer
-global_dummy_Integer = Integer(1) - Integer(1)
+global_dummy_Integer = Integer()
+# Reallocate to one limb to fix :trac:`31340` and :trac:`33081`
+_mpz_realloc(global_dummy_Integer.value, 1)
+
+def _check_global_dummy_Integer():
+    """
+    Return true if the global dummy Integer is ok.
+
+    TEST::
+
+        sage: from sage.rings.integer import _check_global_dummy_Integer
+        sage: _check_global_dummy_Integer()
+        True
+    """
+    # Check that it has exactly one limb allocated
+    # This is assumed later in fast_tp_new() :trac:`33081`
+    cdef mpz_ptr dummy = global_dummy_Integer.value
+    if dummy._mp_alloc == 1 and dummy._mp_size == 0:
+        return True
+
+    raise AssertionError(
+      "global dummy Integer is corrupt (_mp_alloc = %d, _mp_size = %d)"
+      % (dummy._mp_alloc, dummy._mp_size))
 
 
 # A global pool for performance when integers are rapidly created and destroyed.
@@ -7318,6 +7338,8 @@ cdef PyObject* fast_tp_new(type t, args, kwds) except NULL:
         #  various internals described here may change in future GMP releases.
         #  Applications expecting to be compatible with future releases should use
         #  only the documented interfaces described in previous chapters."
+        #
+        # NOTE: This assumes global_dummy_Integer.value._mp_alloc == 1
         new_mpz = <mpz_ptr>((<Integer>new).value)
         new_mpz._mp_d = <mp_ptr>check_malloc(GMP_LIMB_BITS >> 3)
 

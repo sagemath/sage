@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 VERSION="1.0.4"
-PATCHLEVEL="p1"
+PATCHLEVEL="p2"
 
 if [ $# -ne 0 ]; then
     UPSTREAM_SOURCE_DIRECTORY=$1
@@ -22,4 +22,6 @@ else
 fi
 
 mv "iml-$VERSION" "iml-$VERSION$PATCHLEVEL"
+# Regenerate build scripts
+(cd "iml-$VERSION$PATCHLEVEL" && autoreconf -fi)
 tar cjf "iml-$VERSION$PATCHLEVEL.tar.bz2" "iml-$VERSION$PATCHLEVEL"
