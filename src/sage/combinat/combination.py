@@ -26,7 +26,8 @@ AUTHORS:
 # ****************************************************************************
 import itertools
 
-from sage.rings.all import ZZ, Integer
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.arith.all import binomial
 from .integer_vector import IntegerVectors
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
